@@ -5,8 +5,8 @@
 			<id>{45BBEBFF-C6B7-D445-8682-DE30DE15DF49}</id>
 			<comment/>
 			<position>
-				<first>-23</first>
-				<second>170</second>
+				<first>-116</first>
+				<second>159</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -73,8 +73,8 @@
 			<id>{793D93D5-EC6B-C445-B28B-92CB462FE313}</id>
 			<comment/>
 			<position>
-				<first>388</first>
-				<second>223</second>
+				<first>377</first>
+				<second>219</second>
 			</position>
 			<parameterName>Fade</parameterName>
 			<type>Scalar</type>
@@ -84,8 +84,8 @@
 			<id>{C03A9CC4-6665-534F-B24E-AAF087475243}</id>
 			<comment/>
 			<position>
-				<first>185</first>
-				<second>158</second>
+				<first>117</first>
+				<second>151</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -93,15 +93,15 @@
 			<id>{068513DD-8D21-3D47-9E10-075E198EBB0A}</id>
 			<comment/>
 			<position>
-				<first>622</first>
-				<second>111</second>
+				<first>610</first>
+				<second>126</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{86FBE038-4A03-8346-8BDF-9FBE7FB3C1A2}</id>
 			<comment/>
 			<position>
-				<first>843</first>
+				<first>863</first>
 				<second>176</second>
 			</position>
 		</item>
@@ -126,7 +126,7 @@
 			<id>{35CC06F1-0FE3-0C44-A727-ABA76492238E}</id>
 			<comment/>
 			<position>
-				<first>1362</first>
+				<first>1365</first>
 				<second>225</second>
 			</position>
 			<min>0</min>
@@ -136,16 +136,16 @@
 			<id>{6B969098-0FD9-4642-856E-F3CB3F61530B}</id>
 			<comment/>
 			<position>
-				<first>-300</first>
-				<second>87</second>
+				<first>-564</first>
+				<second>76</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{D22121C0-3AB0-2A4F-A032-33683C4BE204}</id>
 			<comment/>
 			<position>
-				<first>-159</first>
-				<second>104</second>
+				<first>-353</first>
+				<second>93</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -153,8 +153,8 @@
 			<id>{2A4B13FA-A2D0-8948-B8F6-56F242BB1541}</id>
 			<comment/>
 			<position>
-				<first>-158</first>
-				<second>72</second>
+				<first>-352</first>
+				<second>61</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -162,16 +162,16 @@
 			<id>{6D401CBA-2D28-CD44-BE0C-FE8E5789EF08}</id>
 			<comment/>
 			<position>
-				<first>-35</first>
-				<second>62</second>
+				<first>-148</first>
+				<second>51</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{1C4C26CC-8809-394D-85D4-8320165B57D1}</id>
 			<comment/>
 			<position>
-				<first>184</first>
-				<second>98</second>
+				<first>117</first>
+				<second>91</second>
 			</position>
 			<swizzle>1x</swizzle>
 		</item>
@@ -187,7 +187,7 @@
 			<id>{7FC9F15E-605C-144A-80A6-AA44F9FE687F}</id>
 			<comment/>
 			<position>
-				<first>547</first>
+				<first>594</first>
 				<second>223</second>
 			</position>
 		</item>
@@ -195,7 +195,7 @@
 			<id>{9CD58435-05E9-9241-855B-DF63A4C35CC1}</id>
 			<comment/>
 			<position>
-				<first>361</first>
+				<first>388</first>
 				<second>273</second>
 			</position>
 			<value>2</value>
@@ -204,7 +204,7 @@
 			<id>{156A9ED9-28C9-5848-856A-4F040C22D355}</id>
 			<comment/>
 			<position>
-				<first>1270</first>
+				<first>1273</first>
 				<second>109</second>
 			</position>
 			<color>1, 1, 1, 1</color>

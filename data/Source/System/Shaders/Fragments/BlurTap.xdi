@@ -5,16 +5,16 @@
 			<id>{31C114AB-6A43-0D45-BAC5-0769CB7147D5}</id>
 			<comment/>
 			<position>
-				<first>864</first>
-				<second>885</second>
+				<first>1747</first>
+				<second>882</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{6941E60C-529F-B148-B22E-7FBA9E787E29}</id>
 			<comment/>
 			<position>
-				<first>-69</first>
-				<second>564</second>
+				<first>-343</first>
+				<second>738</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -22,8 +22,8 @@
 			<id>{51F9A2AB-2302-BD46-960F-4615B484CFD1}</id>
 			<comment/>
 			<position>
-				<first>-108</first>
-				<second>535</second>
+				<first>-366</first>
+				<second>694</second>
 			</position>
 			<name>Taps</name>
 			<connectable>false</connectable>
@@ -35,16 +35,16 @@
 			<id>{46D4168B-A267-394A-93C9-04CE635C0D41}</id>
 			<comment/>
 			<position>
-				<first>33</first>
-				<second>521</second>
+				<first>-118</first>
+				<second>686</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{40316E9F-FFD9-CD41-A316-53AAA12069DA}</id>
 			<comment/>
 			<position>
-				<first>60</first>
-				<second>483</second>
+				<first>-77</first>
+				<second>627</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -52,16 +52,16 @@
 			<id>{D4527FC9-F44A-BF40-A19B-81657A003D48}</id>
 			<comment/>
 			<position>
-				<first>161</first>
-				<second>488</second>
+				<first>179</first>
+				<second>645</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{794AD207-4726-F643-B89F-6D65D8CAF549}</id>
 			<comment/>
 			<position>
-				<first>171</first>
-				<second>661</second>
+				<first>196</first>
+				<second>741</second>
 			</position>
 			<value>3.142</value>
 		</item>
@@ -69,24 +69,24 @@
 			<id>{58B1D126-6B86-6841-AD32-A4248326C399}</id>
 			<comment/>
 			<position>
-				<first>296</first>
-				<second>620</second>
+				<first>421</first>
+				<second>745</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{21367BA8-9C7C-6C4B-BEA1-CAB0ECD42D9E}</id>
 			<comment/>
 			<position>
-				<first>424</first>
-				<second>657</second>
+				<first>670</first>
+				<second>760</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{DA803733-7F6C-6442-BFEE-B1E4619414BC}</id>
 			<comment/>
 			<position>
-				<first>323</first>
-				<second>716</second>
+				<first>453</first>
+				<second>833</second>
 			</position>
 			<value>2</value>
 		</item>
@@ -94,8 +94,8 @@
 			<id>{5E89B7C8-6DCD-514E-B8D8-841E1B136DDF}</id>
 			<comment/>
 			<position>
-				<first>431</first>
-				<second>588</second>
+				<first>739</first>
+				<second>710</second>
 			</position>
 			<value>3.142</value>
 		</item>
@@ -103,16 +103,16 @@
 			<id>{46E5ACF7-29AB-ED4B-B98E-C5ED4DCBE7A4}</id>
 			<comment/>
 			<position>
-				<first>565</first>
-				<second>611</second>
+				<first>995</first>
+				<second>734</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{0779E8CC-08F1-1245-8827-057DC5896B61}</id>
 			<comment/>
 			<position>
-				<first>234</first>
-				<second>859</second>
+				<first>-8</first>
+				<second>988</second>
 			</position>
 			<name>Tap</name>
 			<connectable>true</connectable>
@@ -124,32 +124,32 @@
 			<id>{F3E33C84-61A7-FF4F-A86A-4E8133C70AE1}</id>
 			<comment/>
 			<position>
-				<first>368</first>
-				<second>808</second>
+				<first>683</first>
+				<second>873</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{F24A0673-C833-7E41-A3AC-15C56349A1AE}</id>
 			<comment/>
 			<position>
-				<first>591</first>
-				<second>794</second>
+				<first>1247</first>
+				<second>798</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{F8E5DA93-E526-F34B-9EB4-B58CDC25BDBB}</id>
 			<comment/>
 			<position>
-				<first>717</first>
-				<second>895</second>
+				<first>1495</first>
+				<second>859</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{C6FCFDF9-5CEA-4347-BCC5-466407D381E0}</id>
 			<comment/>
 			<position>
-				<first>1208</first>
-				<second>920</second>
+				<first>2151</first>
+				<second>905</second>
 			</position>
 			<name>Weight</name>
 		</item>
@@ -157,16 +157,16 @@
 			<id>{05D564ED-0414-1849-A0D0-CD3A2C7267A4}</id>
 			<comment/>
 			<position>
-				<first>1027</first>
-				<second>900</second>
+				<first>1970</first>
+				<second>885</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{80A2D01F-33B2-FD45-A812-4EE259A8C791}</id>
 			<comment/>
 			<position>
-				<first>846</first>
-				<second>969</second>
+				<first>1710</first>
+				<second>956</second>
 			</position>
 			<name>Total weight</name>
 			<connectable>false</connectable>
@@ -178,24 +178,24 @@
 			<id>{E5A4C065-94E1-7C4E-91B5-4452BB845D25}</id>
 			<comment/>
 			<position>
-				<first>433</first>
-				<second>944</second>
+				<first>244</first>
+				<second>1071</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{4608D0D4-5074-F147-9AB7-183A44830315}</id>
 			<comment/>
 			<position>
-				<first>99</first>
-				<second>915</second>
+				<first>2</first>
+				<second>1065</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{FE43C7AE-F1D2-D943-8D5F-8FF3569EAEE2}</id>
 			<comment/>
 			<position>
-				<first>3</first>
-				<second>979</second>
+				<first>-198</first>
+				<second>1121</second>
 			</position>
 			<value>2</value>
 		</item>
@@ -203,8 +203,8 @@
 			<id>{AE58FD90-42B0-A643-AAA2-C4DA66384195}</id>
 			<comment/>
 			<position>
-				<first>586</first>
-				<second>996</second>
+				<first>513</first>
+				<second>1111</second>
 			</position>
 			<name>Offset</name>
 		</item>

@@ -189,7 +189,6 @@ $Output = vec4(direction, 0.0f);
 			</outputPins>
 			<script>
 			<![CDATA[
-
 CloudConfig config = GetDefaultCloudConfig();
 config.ambientTop = $CloudAmbientTop.xyz;
 config.ambientBottom = $CloudAmbientBottom.xyz;
@@ -214,7 +213,6 @@ const vec4 clr = RenderClouds(
 
 $Output = clr;
 $Distance = dist;
-
 			]]>
 			</script>
 		</item>
@@ -462,6 +460,7 @@ $Output = imageLoad($Image, $Coord.xy);
 			<![CDATA[
 ivec2 sz = imageSize($Input);
 $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
+
 			]]>
 			</script>
 		</item>

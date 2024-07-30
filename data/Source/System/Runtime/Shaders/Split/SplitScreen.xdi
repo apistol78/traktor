@@ -101,7 +101,7 @@
 			<id>{227124CD-3956-46B3-A7CB-EBE98386866C}</id>
 			<comment/>
 			<position>
-				<first>127</first>
+				<first>116</first>
 				<second>430</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
@@ -119,8 +119,8 @@
 			<id>{C4B39964-BC5D-41C7-AB87-1E2FADF26FEC}</id>
 			<comment/>
 			<position>
-				<first>-73</first>
-				<second>431</second>
+				<first>-117</first>
+				<second>439</second>
 			</position>
 			<parameterName>SplitLeft</parameterName>
 			<type>Texture2D</type>
@@ -130,7 +130,7 @@
 			<id>{0BC1A2E7-4960-4160-B77F-9A1785908ED6}</id>
 			<comment/>
 			<position>
-				<first>-338</first>
+				<first>-330</first>
 				<second>531</second>
 			</position>
 		</item>
@@ -138,8 +138,8 @@
 			<id>{2053DF3F-BAE9-4FC5-BC77-78239FF28EF3}</id>
 			<comment/>
 			<position>
-				<first>-554</first>
-				<second>521</second>
+				<first>-647</first>
+				<second>515</second>
 			</position>
 			<value>2, 1, 0, 0</value>
 		</item>
@@ -165,8 +165,8 @@
 			<id>{0492BB34-C8CE-4372-A04D-603B70179349}</id>
 			<comment/>
 			<position>
-				<first>-65</first>
-				<second>603</second>
+				<first>-117</first>
+				<second>610</second>
 			</position>
 			<parameterName>SplitRight</parameterName>
 			<type>Texture2D</type>

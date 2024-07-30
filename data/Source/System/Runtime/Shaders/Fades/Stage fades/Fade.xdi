@@ -5,8 +5,8 @@
 			<id>{CF49F2CC-D158-984D-AB65-1D705DF122CB}</id>
 			<comment/>
 			<position>
-				<first>238</first>
-				<second>261</second>
+				<first>211</first>
+				<second>282</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -73,8 +73,8 @@
 			<id>{E99607C9-EB3B-9D49-A6F6-F683549CB97B}</id>
 			<comment/>
 			<position>
-				<first>254</first>
-				<second>181</second>
+				<first>205</first>
+				<second>185</second>
 			</position>
 			<parameterName>Fade</parameterName>
 			<type>Scalar</type>
@@ -84,8 +84,8 @@
 			<id>{0A8D4BFC-D632-6945-8A76-CC0696F886E6}</id>
 			<comment/>
 			<position>
-				<first>463</first>
-				<second>217</second>
+				<first>408</first>
+				<second>221</second>
 			</position>
 			<swizzle>000x</swizzle>
 		</item>

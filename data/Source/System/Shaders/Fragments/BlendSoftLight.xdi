@@ -5,8 +5,8 @@
 			<id>{4826205C-309E-DC49-BE7F-AB67DE12CC79}</id>
 			<comment/>
 			<position>
-				<first>462</first>
-				<second>295</second>
+				<first>293</first>
+				<second>282</second>
 			</position>
 			<name>A</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{DAD6CB65-60FB-A042-A930-835AFA4C2165}</id>
 			<comment/>
 			<position>
-				<first>463</first>
-				<second>385</second>
+				<first>294</first>
+				<second>372</second>
 			</position>
 			<name>B</name>
 			<connectable>true</connectable>
@@ -31,8 +31,8 @@
 			<id>{3D51D922-A025-6042-86A7-8AA09BFD9F82}</id>
 			<comment/>
 			<position>
-				<first>1608</first>
-				<second>307</second>
+				<first>1733</first>
+				<second>312</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -40,16 +40,16 @@
 			<id>{F9714916-0FA9-F14F-A4B1-F3BF13BA2C26}</id>
 			<comment/>
 			<position>
-				<first>693</first>
-				<second>349</second>
+				<first>719</first>
+				<second>396</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{8A6CE2A7-4434-1649-8D06-3661DE08CA34}</id>
 			<comment/>
 			<position>
-				<first>485</first>
-				<second>118</second>
+				<first>316</first>
+				<second>105</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -57,8 +57,8 @@
 			<id>{08305238-E65F-3D46-B78C-3151CAA05E81}</id>
 			<comment/>
 			<position>
-				<first>485</first>
-				<second>176</second>
+				<first>316</first>
+				<second>163</second>
 			</position>
 			<value>2</value>
 		</item>
@@ -66,8 +66,8 @@
 			<id>{119EE476-153C-654B-B805-6FDBC84D9AD2}</id>
 			<comment/>
 			<position>
-				<first>679</first>
-				<second>198</second>
+				<first>570</first>
+				<second>200</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
@@ -90,32 +90,32 @@
 			<id>{709D9BC8-88FF-9347-94F5-1D0AF1104377}</id>
 			<comment/>
 			<position>
-				<first>1018</first>
-				<second>208</second>
+				<first>1105</first>
+				<second>216</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{839281AE-E315-B848-8C68-EBF7447BC9F4}</id>
 			<comment/>
 			<position>
-				<first>1352</first>
-				<second>287</second>
+				<first>1477</first>
+				<second>292</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{9E55153F-E90D-8E43-8D90-E8B8AE625141}</id>
 			<comment/>
 			<position>
-				<first>1149</first>
-				<second>333</second>
+				<first>1137</first>
+				<second>358</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{FE4C2437-DB18-814F-B9C3-796A947CFD93}</id>
 			<comment/>
 			<position>
-				<first>963</first>
-				<second>338</second>
+				<first>951</first>
+				<second>363</second>
 			</position>
 			<value>2</value>
 		</item>
