@@ -72,6 +72,8 @@ public:
 
 	static Transform lookAt(const BoxedVector4* position, const BoxedVector4* target, const BoxedVector4* up);
 
+	static Transform fromEulerAngles(float head, float pitch, float bank);
+
 	const Transform& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const override final;
