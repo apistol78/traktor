@@ -8,17 +8,16 @@
  */
 #include "Core/Log/Log.h"
 #include "Net/BidirectionalObjectTransport.h"
-#include "Runtime/Editor/TargetConnection.h"
-#include "Runtime/Editor/TargetScriptDebugger.h"
-#include "Runtime/Target/ScriptDebuggerBreadcrumbs.h"
-#include "Runtime/Target/ScriptDebuggerBreakpoint.h"
-#include "Runtime/Target/ScriptDebuggerControl.h"
-#include "Runtime/Target/ScriptDebuggerLocals.h"
-#include "Runtime/Target/ScriptDebuggerStateChange.h"
-#include "Runtime/Target/ScriptDebuggerStackFrame.h"
-#include "Runtime/Target/ScriptDebuggerStatus.h"
+#include "Script/Remote/RemoteScriptDebugger.h"
+#include "Script/Remote/ScriptDebuggerBreadcrumbs.h"
+#include "Script/Remote/ScriptDebuggerBreakpoint.h"
+#include "Script/Remote/ScriptDebuggerControl.h"
+#include "Script/Remote/ScriptDebuggerLocals.h"
+#include "Script/Remote/ScriptDebuggerStateChange.h"
+#include "Script/Remote/ScriptDebuggerStackFrame.h"
+#include "Script/Remote/ScriptDebuggerStatus.h"
 
-namespace traktor::runtime
+namespace traktor::script
 {
 	namespace
 	{
@@ -27,15 +26,15 @@ const int32_t c_timeout = 30000;
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetScriptDebugger", TargetScriptDebugger, script::IScriptDebugger)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.RemoteScriptDebugger", RemoteScriptDebugger, script::IScriptDebugger)
 
-TargetScriptDebugger::TargetScriptDebugger(net::BidirectionalObjectTransport* transport)
+RemoteScriptDebugger::RemoteScriptDebugger(net::BidirectionalObjectTransport* transport)
 :	m_transport(transport)
 ,	m_running(true)
 {
 }
 
-void TargetScriptDebugger::update()
+void RemoteScriptDebugger::update()
 {
 	Ref< ScriptDebuggerStateChange > stateChange;
 	while (m_transport->recv< ScriptDebuggerStateChange >(0, stateChange) == net::BidirectionalObjectTransport::Result::Success)
@@ -46,7 +45,7 @@ void TargetScriptDebugger::update()
 	}
 }
 
-bool TargetScriptDebugger::setBreakpoint(const Guid& scriptId, int32_t lineNumber)
+bool RemoteScriptDebugger::setBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
 	const ScriptDebuggerBreakpoint bp(true, scriptId, lineNumber);
 	if (!m_transport->send(&bp))
@@ -57,7 +56,7 @@ bool TargetScriptDebugger::setBreakpoint(const Guid& scriptId, int32_t lineNumbe
 	return true;
 }
 
-bool TargetScriptDebugger::removeBreakpoint(const Guid& scriptId, int32_t lineNumber)
+bool RemoteScriptDebugger::removeBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
 	const ScriptDebuggerBreakpoint bp(false, scriptId, lineNumber);
 	if (!m_transport->send(&bp))
@@ -68,7 +67,7 @@ bool TargetScriptDebugger::removeBreakpoint(const Guid& scriptId, int32_t lineNu
 	return true;
 }
 
-bool TargetScriptDebugger::captureStackFrame(uint32_t depth, Ref< script::StackFrame >& outStackFrame)
+bool RemoteScriptDebugger::captureStackFrame(uint32_t depth, Ref< script::StackFrame >& outStackFrame)
 {
 	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureStack, depth);
 	if (!m_transport->send(&ctrl))
@@ -88,7 +87,7 @@ bool TargetScriptDebugger::captureStackFrame(uint32_t depth, Ref< script::StackF
 	return outStackFrame != nullptr;
 }
 
-bool TargetScriptDebugger::captureLocals(uint32_t depth, RefArray< script::Variable >& outLocals)
+bool RemoteScriptDebugger::captureLocals(uint32_t depth, RefArray< script::Variable >& outLocals)
 {
 	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureLocals, depth);
 	if (!m_transport->send(&ctrl))
@@ -108,7 +107,7 @@ bool TargetScriptDebugger::captureLocals(uint32_t depth, RefArray< script::Varia
 	return true;
 }
 
-bool TargetScriptDebugger::captureObject(uint32_t object, RefArray< script::Variable >& outMembers)
+bool RemoteScriptDebugger::captureObject(uint32_t object, RefArray< script::Variable >& outMembers)
 {
 	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureObject, object);
 	if (!m_transport->send(&ctrl))
@@ -128,7 +127,7 @@ bool TargetScriptDebugger::captureObject(uint32_t object, RefArray< script::Vari
 	return true;
 }
 
-bool TargetScriptDebugger::captureBreadcrumbs(AlignedVector< uint32_t >& outBreadcrumbs)
+bool RemoteScriptDebugger::captureBreadcrumbs(AlignedVector< uint32_t >& outBreadcrumbs)
 {
 	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureBreadcrumbs);
 	if (!m_transport->send(&ctrl))
@@ -148,12 +147,12 @@ bool TargetScriptDebugger::captureBreadcrumbs(AlignedVector< uint32_t >& outBrea
 	return true;
 }
 
-bool TargetScriptDebugger::isRunning() const
+bool RemoteScriptDebugger::isRunning() const
 {
 	return m_running;
 }
 
-bool TargetScriptDebugger::actionBreak()
+bool RemoteScriptDebugger::actionBreak()
 {
 	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcBreak);
 	if (!m_transport->send(&ctrl))
@@ -164,7 +163,7 @@ bool TargetScriptDebugger::actionBreak()
 	return true;
 }
 
-bool TargetScriptDebugger::actionContinue()
+bool RemoteScriptDebugger::actionContinue()
 {
 	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcContinue);
 	if (!m_transport->send(&ctrl))
@@ -175,7 +174,7 @@ bool TargetScriptDebugger::actionContinue()
 	return true;
 }
 
-bool TargetScriptDebugger::actionStepInto()
+bool RemoteScriptDebugger::actionStepInto()
 {
 	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStepInto);
 	if (!m_transport->send(&ctrl))
@@ -186,7 +185,7 @@ bool TargetScriptDebugger::actionStepInto()
 	return true;
 }
 
-bool TargetScriptDebugger::actionStepOver()
+bool RemoteScriptDebugger::actionStepOver()
 {
 	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStepOver);
 	if (!m_transport->send(&ctrl))
@@ -197,17 +196,19 @@ bool TargetScriptDebugger::actionStepOver()
 	return true;
 }
 
-void TargetScriptDebugger::addListener(IListener* listener)
+void RemoteScriptDebugger::addListener(IListener* listener)
 {
 	T_ASSERT(listener);
 	m_listeners.push_back(listener);
 	listener->debugeeStateChange(this);
 }
 
-void TargetScriptDebugger::removeListener(IListener* listener)
+void RemoteScriptDebugger::removeListener(IListener* listener)
 {
 	T_ASSERT(listener);
-	m_listeners.remove(listener);
+	auto it = std::find(m_listeners.begin(), m_listeners.end(), listener);
+	if (it != m_listeners.end())
+		m_listeners.erase(it);
 }
 
 }

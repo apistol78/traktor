@@ -8,12 +8,12 @@
  */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Runtime/Target/ScriptDebuggerBreakpoint.h"
+#include "Script/Remote/ScriptDebuggerBreakpoint.h"
 
-namespace traktor::runtime
+namespace traktor::script
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScriptDebuggerBreakpoint", 0, ScriptDebuggerBreakpoint, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptDebuggerBreakpoint", 0, ScriptDebuggerBreakpoint, ISerializable)
 
 ScriptDebuggerBreakpoint::ScriptDebuggerBreakpoint(bool add, const Guid& scriptId, uint32_t lineNumber)
 :	m_add(add)

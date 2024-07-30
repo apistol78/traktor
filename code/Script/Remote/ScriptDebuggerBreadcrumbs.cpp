@@ -8,12 +8,12 @@
  */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
-#include "Runtime/Target/ScriptDebuggerBreadcrumbs.h"
+#include "Script/Remote/ScriptDebuggerBreadcrumbs.h"
 
-namespace traktor::runtime
+namespace traktor::script
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScriptDebuggerBreadcrumbs", 0, ScriptDebuggerBreadcrumbs, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptDebuggerBreadcrumbs", 0, ScriptDebuggerBreadcrumbs, ISerializable)
 
 ScriptDebuggerBreadcrumbs::ScriptDebuggerBreadcrumbs(const AlignedVector< uint32_t >& breadcrumbs)
 :	m_breadcrumbs(breadcrumbs)

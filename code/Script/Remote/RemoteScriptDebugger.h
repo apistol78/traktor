@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,16 @@
  */
 #pragma once
 
-#include <list>
+#include "Core/Containers/AlignedVector.h"
 #include "Script/IScriptDebugger.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SCRIPT_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor::net
 {
@@ -18,18 +26,18 @@ class BidirectionalObjectTransport;
 
 }
 
-namespace traktor::runtime
+namespace traktor::script
 {
 
 /*!
- * \ingroup Runtime
+ * \ingroup Script
  */
-class TargetScriptDebugger : public script::IScriptDebugger
+class T_DLLCLASS RemoteScriptDebugger : public script::IScriptDebugger
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit TargetScriptDebugger(net::BidirectionalObjectTransport* transport);
+	explicit RemoteScriptDebugger(net::BidirectionalObjectTransport* transport);
 
 	void update();
 
@@ -61,7 +69,7 @@ public:
 
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
-	std::list< IListener* > m_listeners;
+	AlignedVector< IListener* > m_listeners;
 	bool m_running;
 
 	void notifyListeners();

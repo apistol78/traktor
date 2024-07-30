@@ -8,13 +8,13 @@
  */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Runtime/Target/ScriptDebuggerStackFrame.h"
+#include "Script/Remote/ScriptDebuggerStackFrame.h"
 #include "Script/StackFrame.h"
 
-namespace traktor::runtime
+namespace traktor::script
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScriptDebuggerStackFrame", 0, ScriptDebuggerStackFrame, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptDebuggerStackFrame", 0, ScriptDebuggerStackFrame, ISerializable)
 
 ScriptDebuggerStackFrame::ScriptDebuggerStackFrame(script::StackFrame* frame)
 :	m_frame(frame)
