@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,10 +14,8 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Sound/Editor/Encoders/OggStreamEncoder.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class OggStreamEncoderImpl : public Object
 {
@@ -45,7 +43,7 @@ public:
 			vorbis_info_clear(&m_info);
 		}
 
-		m_stream = 0;
+		m_stream = nullptr;
 		m_encoderInitialized = false;
 	}
 
@@ -129,7 +127,7 @@ private:
 
 			for (;;)
 			{
-				int result = ogg_stream_flush(&m_outputStream, &m_page);
+				const int result = ogg_stream_flush(&m_outputStream, &m_page);
 				if(result == 0)
 					break;
 
@@ -157,7 +155,7 @@ private:
 				// Write out pages (if any).
 				for (;;)
 				{
-					int32_t res = ogg_stream_pageout(&m_outputStream, &m_page);
+					const int32_t res = ogg_stream_pageout(&m_outputStream, &m_page);
 					if (res == 0)
 						break;
 
@@ -176,7 +174,7 @@ bool OggStreamEncoder::create(IStream* stream)
 	m_impl = new OggStreamEncoderImpl();
 	if (!m_impl->create(stream))
 	{
-		m_impl = 0;
+		m_impl = nullptr;
 		return false;
 	}
 	return true;
@@ -192,5 +190,4 @@ bool OggStreamEncoder::putBlock(AudioBlock& block)
 	return m_impl ? m_impl->putBlock(block) : false;
 }
 
-	}
 }

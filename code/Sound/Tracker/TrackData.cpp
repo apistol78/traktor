@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,17 +18,15 @@
 #include "Sound/Tracker/Track.h"
 #include "Sound/Tracker/TrackData.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.TrackData", 0, TrackData, ISerializable)
 
 Ref< Track > TrackData::createInstance(resource::IResourceManager* resourceManager) const
 {
 	Ref< Track > track = new Track();
-	for (auto keyData : m_keys)
+	for (const auto& keyData : m_keys)
 	{
 		Track::Key& key = track->m_keys.push_back();
 		key.at = keyData.at;
@@ -72,11 +70,6 @@ void TrackData::serialize(ISerializer& s)
 	s >> MemberAlignedVector< Key, MemberComposite< Key > >(L"keys", m_keys);
 }
 
-TrackData::Key::Key()
-:	at(0)
-{
-}
-
 void TrackData::Key::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"at", at);
@@ -84,5 +77,4 @@ void TrackData::Key::serialize(ISerializer& s)
 	s >> MemberRefArray< IEventData >(L"events", events);
 }
 
-	}
 }

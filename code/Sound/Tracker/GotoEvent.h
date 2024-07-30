@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class T_DLLCLASS GotoEvent : public IEvent
 {
 	T_RTTI_CLASS;
 
 public:
-	GotoEvent(int32_t pattern, int32_t row);
+	explicit GotoEvent(int32_t pattern, int32_t row);
 
 	virtual bool execute(AudioChannel* audioChannel, int32_t& bpm, int32_t& pattern, int32_t& row) const override final;
 
@@ -37,5 +35,4 @@ private:
 	int32_t m_row;
 };
 
-	}
 }

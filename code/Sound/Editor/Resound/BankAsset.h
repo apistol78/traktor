@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class IGrainData;
 
@@ -32,8 +30,6 @@ class T_DLLCLASS BankAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	BankAsset();
-
 	void addGrain(IGrainData* grain);
 
 	void removeGrain(IGrainData* grain);
@@ -46,11 +42,9 @@ private:
 	friend class BankPipeline;
 
 	Guid m_category;
-	float m_presence;
-	float m_presenceRate;
+	float m_presence = 0.0f;
+	float m_presenceRate = 0.25f;
 	RefArray< IGrainData > m_grains;
 };
 
-	}
 }
-

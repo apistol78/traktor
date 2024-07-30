@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class Sound;
 
@@ -31,7 +29,7 @@ class T_DLLCLASS Play : public Object
 	T_RTTI_CLASS;
 
 public:
-	Play(const resource::Proxy< Sound >& sound, int32_t note, int32_t repeatFrom, int32_t repeatLength);
+	explicit Play(const resource::Proxy< Sound >& sound, int32_t note, int32_t repeatFrom, int32_t repeatLength);
 
 	const resource::Proxy< Sound >& getSound() const { return m_sound; }
 
@@ -48,5 +46,4 @@ private:
 	int32_t m_repeatLength;
 };
 
-	}
 }

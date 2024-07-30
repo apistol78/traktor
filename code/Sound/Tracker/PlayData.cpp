@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,19 +14,10 @@
 #include "Sound/Tracker/Play.h"
 #include "Sound/Tracker/PlayData.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.PlayData", 0, PlayData, ISerializable)
-
-PlayData::PlayData()
-:	m_note(57)	// A4
-,	m_repeatFrom(0)
-,	m_repeatLength(0)
-{
-}
 
 PlayData::PlayData(const resource::Id< Sound >& sound, int32_t note, int32_t repeatFrom, int32_t repeatLength)
 :	m_sound(sound)
@@ -54,5 +45,4 @@ void PlayData::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"repeatLength", m_repeatLength);
 }
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,18 +11,10 @@
 #include "Sound/Tracker/GotoEvent.h"
 #include "Sound/Tracker/GotoEventData.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.GotoEventData", 0, GotoEventData, IEventData)
-
-GotoEventData::GotoEventData()
-:	m_pattern(0)
-,	m_row(0)
-{
-}
 
 GotoEventData::GotoEventData(int32_t pattern, int32_t row)
 :	m_pattern(pattern)
@@ -41,5 +33,4 @@ void GotoEventData::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"row", m_row);
 }
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,18 +11,14 @@
 #include "Sound/Editor/Resound/BankAssetEditor.h"
 #include "Sound/Editor/Resound/BankAssetEditorFactory.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankAssetEditorFactory", 0, BankAssetEditorFactory, editor::IObjectEditorFactory)
 
 const TypeInfoSet BankAssetEditorFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< BankAsset >();
-	return typeSet;
+	return makeTypeInfoSet< BankAsset >();
 }
 
 bool BankAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
@@ -44,5 +40,4 @@ Ref< ISerializable > BankAssetEditorFactory::cloneAsset(const ISerializable* ass
 	return DeepClone(asset).create();
 }
 
-	}
 }
