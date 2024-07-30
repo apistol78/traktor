@@ -663,7 +663,6 @@ $Output = vec4(clr, 1.0f);
 			</outputPins>
 			<script>
 			<![CDATA[
-
 CloudConfig config = GetDefaultCloudConfig();
 config.ambientTop = $CloudAmbientTop.xyz;
 config.ambientBottom = $CloudAmbientBottom.xyz;
@@ -688,7 +687,6 @@ const vec4 clr = RenderClouds(
 
 $Output = clr;
 $Distance = dist;
-
 			]]>
 			</script>
 		</item>
@@ -1799,16 +1797,6 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[64]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[63]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[25]"/>
 				<id>{CCC98877-74A3-BB48-A972-448902805009}</id>
 			</source>
@@ -2015,6 +2003,16 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[33]"/>
 				<id>{FA94D259-22C0-4243-9837-74F3B1664F1F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[64]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[63]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 	</edges>

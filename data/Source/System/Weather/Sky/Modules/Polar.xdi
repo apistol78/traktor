@@ -8,8 +8,8 @@
 
 vec3 TexCoordToDirection(in vec2 texCoord)
 {
-	float theta = texCoord.x * TWO_PI;
-	float radius = texCoord.y; // cos(texCoord.y * HALF_PI);
+	const float theta = texCoord.x * TWO_PI;
+	const float radius = texCoord.y;
 	return vec3(
 		cos(theta) * radius,
 		1.0f - radius,
@@ -19,10 +19,11 @@ vec3 TexCoordToDirection(in vec2 texCoord)
 
 vec2 DirectionToTexCoord(in vec3 direction)
 {
-	float phi = 1 - acos(direction.y) / HALF_PI;
-	float theta = atan(-direction.z, -direction.x) / TWO_PI + 0.5f;
-	return vec2( theta, 1 - phi);
+	const float phi = 1.0f - direction.y;
+	const float theta = atan(-direction.z, -direction.x) / TWO_PI + 0.5f;
+	return vec2(theta, phi);
 }
+
 	]]>
 	</text>
 </object>

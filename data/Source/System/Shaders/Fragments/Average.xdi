@@ -9,8 +9,8 @@
 			]]>
 			</comment>
 			<position>
-				<first>-122</first>
-				<second>62</second>
+				<first>-273</first>
+				<second>70</second>
 			</position>
 			<name>Color</name>
 			<connectable>true</connectable>
@@ -26,8 +26,8 @@
 			]]>
 			</comment>
 			<position>
-				<first>38</first>
-				<second>70</second>
+				<first>-35</first>
+				<second>76</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
@@ -50,8 +50,8 @@
 			]]>
 			</comment>
 			<position>
-				<first>295</first>
-				<second>77</second>
+				<first>400</first>
+				<second>84</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
@@ -62,8 +62,8 @@
 			]]>
 			</comment>
 			<position>
-				<first>454</first>
-				<second>77</second>
+				<first>659</first>
+				<second>113</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
@@ -74,8 +74,8 @@
 			]]>
 			</comment>
 			<position>
-				<first>346</first>
-				<second>160</second>
+				<first>428</first>
+				<second>174</second>
 			</position>
 			<value>3</value>
 		</item>
@@ -87,8 +87,8 @@
 			]]>
 			</comment>
 			<position>
-				<first>617</first>
-				<second>67</second>
+				<first>917</first>
+				<second>116</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -101,8 +101,8 @@ Output = (R + G + B) / 3
 			]]>
 			</comment>
 			<position>
-				<first>-210</first>
-				<second>-162</second>
+				<first>193</first>
+				<second>-36</second>
 			</position>
 		</item>
 	</nodes>
