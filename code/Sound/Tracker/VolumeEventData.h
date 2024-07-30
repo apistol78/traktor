@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,27 +18,24 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class T_DLLCLASS VolumeEventData : public IEventData
 {
 	T_RTTI_CLASS;
 
 public:
-	VolumeEventData();
+	VolumeEventData() = default;
 
-	VolumeEventData(float volume);
+	explicit VolumeEventData(float volume);
 
 	virtual Ref< IEvent > createInstance() const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	float m_volume;
+	float m_volume = 0.0f;
 };
 
-	}
 }

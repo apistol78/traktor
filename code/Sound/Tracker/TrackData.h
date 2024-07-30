@@ -44,11 +44,9 @@ class T_DLLCLASS TrackData : public ISerializable
 public:
 	struct T_DLLCLASS Key
 	{
-		int32_t at;
+		int32_t at = 0;
 		Ref< PlayData > play;
 		RefArray< IEventData > events;
-
-		Key();
 
 		void serialize(ISerializer& s);
 	};

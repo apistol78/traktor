@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
 class Play;
 class Sound;
@@ -39,9 +37,9 @@ class T_DLLCLASS PlayData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	PlayData();
+	PlayData() = default;
 
-	PlayData(const resource::Id< Sound >& sound, int32_t note, int32_t repeatFrom, int32_t repeatLength);
+	explicit PlayData(const resource::Id< Sound >& sound, int32_t note, int32_t repeatFrom, int32_t repeatLength);
 
 	Ref< Play > createInstance(resource::IResourceManager* resourceManager) const;
 
@@ -53,10 +51,9 @@ public:
 
 private:
 	resource::Id< Sound > m_sound;
-	int32_t m_note;
-	int32_t m_repeatFrom;
-	int32_t m_repeatLength;
+	int32_t m_note = 57;
+	int32_t m_repeatFrom = 0;
+	int32_t m_repeatLength = 0;
 };
 
-	}
 }

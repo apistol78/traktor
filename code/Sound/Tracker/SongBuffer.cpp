@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,12 +19,10 @@
 #include "Sound/Tracker/SongBuffer.h"
 #include "Sound/Tracker/Track.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_maxTrackCount = 16;
 
@@ -68,7 +66,7 @@ public:
 
 const uint32_t c_outputSamplesBlockCount = 8;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SongBuffer", SongBuffer, IAudioBuffer)
 
@@ -216,5 +214,4 @@ int32_t SongBuffer::getCurrentRow(const IAudioBufferCursor* cursor) const
 	return soundBufferCursor->m_currentRow;
 }
 
-	}
 }

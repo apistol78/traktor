@@ -9,10 +9,8 @@
 #include "Sound/AudioChannel.h"
 #include "Sound/Tracker/VolumeEvent.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.VolumeEvent", VolumeEvent, IEvent)
 
@@ -27,5 +25,4 @@ bool VolumeEvent::execute(AudioChannel* audioChannel, int32_t& bpm, int32_t& pat
 	return true;
 }
 
-	}
 }

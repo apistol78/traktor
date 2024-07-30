@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,19 +14,10 @@
 #include "Sound/Tracker/SongBuffer.h"
 #include "Sound/Tracker/SongResource.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SongResource", 0, SongResource, IAudioResource)
-
-SongResource::SongResource()
-:	m_gain(0.0f)
-,	m_range(0.0f)
-,	m_bpm(120)
-{
-}
 
 SongResource::SongResource(
 	const RefArray< const PatternData >& patterns,
@@ -72,5 +63,4 @@ void SongResource::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"bpm", m_bpm);
 }
 
-	}
 }

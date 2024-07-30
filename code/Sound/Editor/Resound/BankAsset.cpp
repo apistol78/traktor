@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,18 +15,10 @@
 #include "Sound/Editor/SoundCategory.h"
 #include "Sound/Editor/Resound/BankAsset.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.BankAsset", 3, BankAsset, ISerializable)
-
-BankAsset::BankAsset()
-:	m_presence(0.0f)
-,	m_presenceRate(0.25f)
-{
-}
 
 void BankAsset::addGrain(IGrainData* grain)
 {
@@ -57,5 +49,4 @@ void BankAsset::serialize(ISerializer& s)
 	s >> MemberRefArray< IGrainData >(L"grains", m_grains);
 }
 
-	}
 }
