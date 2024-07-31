@@ -290,8 +290,7 @@ bool InputMappingEditor::handleCommand(const ui::Command& command)
 			T_FATAL_ASSERT (m_mappingAsset);
 
 			updateGraphView();
-
-			m_propertiesView->setPropertyObject(nullptr);
+			updatePropertiesView();
 		}
 	}
 	else if (command == L"Editor.Redo")
@@ -302,8 +301,7 @@ bool InputMappingEditor::handleCommand(const ui::Command& command)
 			T_FATAL_ASSERT (m_mappingAsset);
 
 			updateGraphView();
-
-			m_propertiesView->setPropertyObject(nullptr);
+			updatePropertiesView();
 		}
 	}
 	else if (command == L"Input.Editor.AlignLeft")
@@ -397,6 +395,26 @@ void InputMappingEditor::updateGraphView()
 	}
 
 	m_graph->update();
+}
+
+void InputMappingEditor::updatePropertiesView()
+{
+	Ref< IInputSourceData > sourceData = m_listValueSources->getSelectedData< IInputSourceData >();
+	if (sourceData)
+	{
+		m_propertiesView->setPropertyObject(sourceData);
+		return;
+	}
+
+	RefArray< ui::Node > nodes = m_graph->getSelectedNodes();
+	if (nodes.size() == 1)
+	{
+		m_propertiesView->setPropertyObject(nodes[0]->getData< ISerializable >(L"DATA"));
+		return;
+	}
+
+	// Nothing selected; set default document as property object.
+	m_propertiesView->setPropertyObject(nullptr);
 }
 
 void InputMappingEditor::eventToolBarGraphClick(ui::ToolBarButtonClickEvent* event)
@@ -498,16 +516,16 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 void InputMappingEditor::eventListValueSourceSelect(ui::SelectionChangeEvent* event)
 {
-	Ref< IInputSourceData > sourceData = m_listValueSources->getSelectedData< IInputSourceData >();
-	if (sourceData)
-		m_propertiesView->setPropertyObject(sourceData);
+	m_graph->deselectAllNodes();
+	m_graph->update();
+	updatePropertiesView();
 }
 
 void InputMappingEditor::eventNodeSelect(ui::SelectEvent* event)
 {
-	const RefArray< ui::Node >& nodes = event->getNodes();
-	if (nodes.size() == 1)
-		m_propertiesView->setPropertyObject(nodes[0]->getData< ISerializable >(L"DATA"));
+	m_listValueSources->deselectAll();
+	m_listValueSources->requestUpdate();
+	updatePropertiesView();
 }
 
 void InputMappingEditor::eventListValueEdit(ui::EditListEditEvent* event)

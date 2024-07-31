@@ -147,6 +147,12 @@ bool ListBox::selected(int32_t index) const
 		return false;
 }
 
+void ListBox::deselectAll()
+{
+	for (auto item : m_items)
+		item->setSelected(false);
+}
+
 int32_t ListBox::getSelected(std::vector< int32_t >& selected) const
 {
 	selected.resize(0);

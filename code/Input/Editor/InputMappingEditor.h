@@ -87,6 +87,8 @@ private:
 
 	void updateGraphView();
 
+	void updatePropertiesView();
+
 	void eventToolBarGraphClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
