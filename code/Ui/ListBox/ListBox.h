@@ -68,6 +68,8 @@ public:
 
 	bool selected(int32_t index) const;
 
+	void deselectAll();
+
 	int32_t getSelected(std::vector< int32_t >& selected) const;
 
 	int32_t getSelected() const;
