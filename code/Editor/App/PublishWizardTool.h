@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,18 +10,10 @@
 
 #include "Editor/IWizardTool.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_STORE_EDITOR_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
-namespace traktor::store
+namespace traktor::editor
 {
 
-class T_DLLCLASS PublishWizardTool : public editor::IWizardTool
+class PublishWizardTool : public editor::IWizardTool
 {
 	T_RTTI_CLASS;
 
@@ -31,7 +23,7 @@ class T_DLLCLASS PublishWizardTool : public editor::IWizardTool
 
 	virtual uint32_t getFlags() const override final;
 
-	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance) override final;
+	virtual bool launch(ui::Widget* parent, IEditor* editor, db::Group* group, db::Instance* instance) override final;
 };
 
 }

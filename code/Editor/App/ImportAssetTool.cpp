@@ -21,12 +21,12 @@
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
 #include "Editor/IEditor.h"
+#include "Editor/App/ImportAssetTool.h"
 #include "I18N/Text.h"
-#include "Store/Editor/ImportAssetTool.h"
 #include "Ui/BackgroundWorkerDialog.h"
 #include "Ui/FileDialog.h"
 
-namespace traktor::store
+namespace traktor::editor
 {
 	namespace
 	{
@@ -171,7 +171,7 @@ bool copyFiles(const Path& targetPath, db::Group* sourceGroup)
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.store.ImportAssetTool", 0, ImportAssetTool, IEditorTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ImportAssetTool", 0, ImportAssetTool, IEditorTool)
 
 std::wstring ImportAssetTool::getDescription() const
 {
@@ -188,7 +188,7 @@ bool ImportAssetTool::needOutputResources(std::set< Guid >& outDependencies) con
 	return false;
 }
 
-bool ImportAssetTool::launch(ui::Widget* parent, editor::IEditor* editor, const PropertyGroup* param)
+bool ImportAssetTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGroup* param)
 {
 	std::vector< Path > fileNames;
 
