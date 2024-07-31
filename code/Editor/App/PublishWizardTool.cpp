@@ -21,11 +21,11 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/PipelineDependencySet.h"
 #include "Editor/PipelineDependency.h"
+#include "Editor/App/PublishWizardTool.h"
 #include "I18N/Text.h"
-#include "Store/Editor/PublishWizardTool.h"
 #include "Ui/FileDialog.h"
 
-namespace traktor::store
+namespace traktor::editor
 {
 	namespace
 	{
@@ -42,7 +42,7 @@ bool isSystemInstance(db::Instance* instance)
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.store.PublishWizardTool", 0, PublishWizardTool, editor::IWizardTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PublishWizardTool", 0, PublishWizardTool, editor::IWizardTool)
 
 std::wstring PublishWizardTool::getDescription() const
 {
@@ -59,7 +59,7 @@ uint32_t PublishWizardTool::getFlags() const
 	return editor::IWizardTool::WfInstance;
 }
 
-bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
+bool PublishWizardTool::launch(ui::Widget* parent, IEditor* editor, db::Group* group, db::Instance* instance)
 {
 	const Path assetPath = FileSystem::getInstance().getAbsolutePath(Path(L"data/Assets"));
 	Path fileName;

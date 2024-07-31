@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,20 +10,10 @@
 
 #include "Editor/IEditorTool.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_STORE_EDITOR_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
-namespace traktor
+namespace traktor::editor
 {
-	namespace store
-	{
 
-class T_DLLCLASS ImportAssetTool : public editor::IEditorTool
+class ImportAssetTool : public IEditorTool
 {
 	T_RTTI_CLASS;
 
@@ -34,8 +24,7 @@ public:
 
 	virtual bool needOutputResources(std::set< Guid >& outDependencies) const override final;
 
-	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, const PropertyGroup* param) override final;
+	virtual bool launch(ui::Widget* parent, IEditor* editor, const PropertyGroup* param) override final;
 };
 
-	}
 }
