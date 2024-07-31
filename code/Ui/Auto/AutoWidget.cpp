@@ -271,11 +271,23 @@ void AutoWidget::updateLayout()
 	m_scrollBarV->setVisible(rowCount > rowPageCount);
 	m_scrollBarV->update();
 
-	// Need to re-layout cells in case scroll bar visibility state has changed.
-	if (
+	bool relayout =
 		m_scrollBarH->isVisible(false) != scrollBarVisibleH ||
-		m_scrollBarV->isVisible(false) != scrollBarVisibleV
-	)
+		m_scrollBarV->isVisible(false) != scrollBarVisibleV;
+
+	// Check if scroll offset has changed.
+	Size scrollOffset(
+		-m_scrollBarH->getPosition() * c_scrollBarDenom,
+		-m_scrollBarV->getPosition() * c_scrollBarDenom
+	);
+	if (scrollOffset != m_scrollOffset)
+	{
+		m_scrollOffset = scrollOffset;
+		relayout = true;
+	}
+
+	// Need to re-layout cells in case scroll bar visibility state or offset has changed.
+	if (relayout)
 	{
 		placeScrollBars();
 
