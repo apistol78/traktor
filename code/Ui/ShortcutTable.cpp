@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,19 +10,17 @@
 #include "Ui/ShortcutTable.h"
 #include "Ui/Events/ShortcutEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 uint32_t buildMapKey(int keyState, VirtualKey keyCode)
 {
 	return uint32_t(((keyState << 16) & 0xffff0000) | (uint32_t(keyCode) & 0x0000ffff));
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ShortcutTable", ShortcutTable, EventSubject)
 
@@ -61,8 +59,8 @@ void ShortcutTable::removeAllCommands()
 
 void ShortcutTable::eventKeyDown(KeyDownEvent* event)
 {
-	int keyState = event->getKeyState();
-	VirtualKey keyCode = event->getVirtualKey();
+	const int keyState = event->getKeyState();
+	const VirtualKey keyCode = event->getVirtualKey();
 
 	// Get command; ignore explicit KsControl as we should only
 	// trigger on KsCommand which is defined as KsControl on Windows.
@@ -90,5 +88,4 @@ void ShortcutTable::eventKeyDown(KeyDownEvent* event)
 	}
 }
 
-	}
 }
