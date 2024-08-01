@@ -360,7 +360,7 @@ void GraphEditor::updateView()
 			);
 		}
 
-		size_t ipc = node->getInputPinCount();
+		const size_t ipc = node->getInputPinCount();
 		for (size_t i = 0; i < ipc; ++i)
 		{
 			const InputPin* ip = node->getInputPin(i);
@@ -372,7 +372,7 @@ void GraphEditor::updateView()
 			inputPinMap[ip] = up;
 		}
 
-		size_t opc = node->getOutputPinCount();
+		const size_t opc = node->getOutputPinCount();
 		for (size_t i = 0; i < opc; ++i)
 		{
 			const OutputPin* op = node->getOutputPin(i);

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,10 +13,8 @@
 #include "Sound/Processor/Graph.h"
 #include "Sound/Processor/Node.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.Graph", 0, Graph, ISerializable)
 
@@ -88,7 +86,7 @@ void Graph::removeEdge(Edge* edge)
 
 void Graph::removeAll()
 {
-	for (SmallMap< const OutputPin*, RefSet< Edge >* >::iterator i = m_outputPinEdges.begin(); i != m_outputPinEdges.end(); ++i)
+	for (auto i = m_outputPinEdges.begin(); i != m_outputPinEdges.end(); ++i)
 		delete i->second;
 
 	m_edges.resize(0);
@@ -100,23 +98,23 @@ void Graph::removeAll()
 
 size_t Graph::findNodesOf(const TypeInfo& nodeType, RefArray< Node >& outNodes) const
 {
-	for (RefArray< Node >::const_iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+	for (auto node : m_nodes)
 	{
-		if (is_type_of(nodeType, type_of(*i)))
-			outNodes.push_back(*i);
+		if (is_type_of(nodeType, type_of(node)))
+			outNodes.push_back(node);
 	}
 	return outNodes.size();
 }
 
 Edge* Graph::findEdge(const InputPin* inputPin) const
 {
-	SmallMap< const InputPin*, Edge* >::const_iterator i = m_inputPinEdge.find(inputPin);
-	return i != m_inputPinEdge.end() ? i->second : 0;
+	auto i = m_inputPinEdge.find(inputPin);
+	return i != m_inputPinEdge.end() ? i->second : nullptr;
 }
 
 uint32_t Graph::findEdges(const OutputPin* outputPin, RefSet< Edge >& outEdges) const
 {
-	SmallMap< const OutputPin*, RefSet< Edge >* >::const_iterator i = m_outputPinEdges.find(outputPin);
+	auto i = m_outputPinEdges.find(outputPin);
 	if (i != m_outputPinEdges.end())
 		outEdges = *(i->second);
 	else
@@ -127,7 +125,7 @@ uint32_t Graph::findEdges(const OutputPin* outputPin, RefSet< Edge >& outEdges) 
 const OutputPin* Graph::findSourcePin(const InputPin* inputPin) const
 {
 	Edge* edge = findEdge(inputPin);
-	return edge ? edge->getSource() : 0;
+	return edge ? edge->getSource() : nullptr;
 }
 
 uint32_t Graph::findDestinationPins(const OutputPin* outputPin, AlignedVector< const InputPin* >& outDestinations) const
@@ -145,20 +143,20 @@ uint32_t Graph::findDestinationPins(const OutputPin* outputPin, AlignedVector< c
 
 uint32_t Graph::getDestinationCount(const OutputPin* outputPin) const
 {
-	SmallMap< const OutputPin*, RefSet< Edge >* >::const_iterator i = m_outputPinEdges.find(outputPin);
+	auto i = m_outputPinEdges.find(outputPin);
 	return i != m_outputPinEdges.end() ? uint32_t(i->second->size()) : 0;
 }
 
 void Graph::detach(const Node* node)
 {
-	int32_t inputPinCount = node->getInputPinCount();
+	const int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		Edge* edge = findEdge(node->getInputPin(i));
 		if (edge)
 			removeEdge(edge);
 	}
-	int32_t outputPinCount = node->getOutputPinCount();
+	const int32_t outputPinCount = node->getOutputPinCount();
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
 		RefSet< Edge > edges;
@@ -202,24 +200,23 @@ void Graph::updateAdjacency()
 	m_inputPinEdge.clear();
 
 	// Clear all sets; keep associations so we don't have to reallocate for each update.
-	for (SmallMap< const OutputPin*, RefSet< Edge >* >::iterator i = m_outputPinEdges.begin(); i != m_outputPinEdges.end(); ++i)
+	for (auto i = m_outputPinEdges.begin(); i != m_outputPinEdges.end(); ++i)
 	{
 		T_ASSERT(i->second);
 		i->second->clear();
 	}
 
 	// Map edges input and output pins.
-	for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+	for (auto edge : m_edges)
 	{
-		m_inputPinEdge[(*i)->getDestination()] = *i;
+		m_inputPinEdge[edge->getDestination()] = edge;
 
-		RefSet< Edge >*& set = m_outputPinEdges[(*i)->getSource()];
+		RefSet< Edge >*& set = m_outputPinEdges[edge->getSource()];
 		if (!set)
 			set = new RefSet< Edge >();
 
-		set->insert(*i);
+		set->insert(edge);
 	}
 }
 
-	}
 }
