@@ -326,8 +326,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSplitWorldLayer->addProperty< double >("alternateTime", &SplitWorldLayer::setAlternateTime, &SplitWorldLayer::getAlternateTime);
 	// classSplitWorldLayer->addProperty< const world::Entity* >("camera", &SplitWorldLayer::setCamera, &SplitWorldLayer::getCamera);
 	classSplitWorldLayer->addMethod("createEntity", &SplitWorldLayer::createEntity);
-	classSplitWorldLayer->addMethod("setControllerEnable", &SplitWorldLayer::setControllerEnable);
-	classSplitWorldLayer->addMethod("resetController", &SplitWorldLayer::resetController);
 	// classSplitWorldLayer->addMethod("worldToView", &SplitWorldLayer_worldToView);
 	// classSplitWorldLayer->addMethod("viewToWorld", &SplitWorldLayer_viewToWorld);
 	// classSplitWorldLayer->addMethod("worldToScreen", &SplitWorldLayer_worldToScreen);
@@ -358,8 +356,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldLayer->addProperty< double >("alternateTime", &WorldLayer::setAlternateTime, &WorldLayer::getAlternateTime);
 	classWorldLayer->addProperty< const world::Entity* >("camera", &WorldLayer::setCamera, &WorldLayer::getCamera);
 	classWorldLayer->addMethod("createEntity", &WorldLayer::createEntity);
-	classWorldLayer->addMethod("setControllerEnable", &WorldLayer::setControllerEnable);
-	classWorldLayer->addMethod("resetController", &WorldLayer::resetController);
 	classWorldLayer->addMethod("worldToView", &WorldLayer_worldToView);
 	classWorldLayer->addMethod("viewToWorld", &WorldLayer_viewToWorld);
 	classWorldLayer->addMethod("worldToScreen", &WorldLayer_worldToScreen);

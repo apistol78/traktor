@@ -167,21 +167,6 @@ void WorldLayer::update(const UpdateInfo& info)
 	if (!m_worldRenderer)
 		return;
 
-	// Update scene controller.
-	//if (m_controllerEnable)
-	//{
-	//	if (m_controllerTime < 0.0f)
-	//		m_controllerTime = info.getSimulationTime();
-
-	//	world::UpdateParams up;
-	//	up.contextObject = getStage();
-	//	up.totalTime = info.getSimulationTime() - m_controllerTime;
-	//	up.alternateTime = m_alternateTime;
-	//	up.deltaTime = info.getSimulationDeltaTime();
-
-	//	m_scene->updateController(up);
-	//}
-
 	{
 		world::UpdateParams up;
 		up.contextObject = getStage();
@@ -337,16 +322,6 @@ Ref< world::Entity > WorldLayer::createEntity(const Guid& entityDataId) const
 		m_scene->getWorld()
 	);
 	return entityBuilder.create(entityData);
-}
-
-void WorldLayer::setControllerEnable(bool controllerEnable)
-{
-	m_controllerEnable = controllerEnable;
-}
-
-void WorldLayer::resetController()
-{
-	m_controllerTime = -1.0f;
 }
 
 const Frustum& WorldLayer::getViewFrustum() const
