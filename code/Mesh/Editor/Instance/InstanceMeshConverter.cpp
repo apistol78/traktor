@@ -55,7 +55,7 @@ bool InstanceMeshConverter::getOperations(const MeshAsset* meshAsset, bool edito
 
 bool InstanceMeshConverter::convert(
 	const MeshAsset* meshAsset,
-	const RefArray< model::Model >& models,
+	const model::Model* model,
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const AlignedVector< render::VertexElement >& vertexElements,
@@ -63,9 +63,6 @@ bool InstanceMeshConverter::convert(
 	IStream* meshResourceStream
 ) const
 {
-	const model::Model* model = models[0];
-	T_FATAL_ASSERT(model != nullptr);
-
 	// Create render mesh.
 	const uint32_t vertexSize = render::getVertexSize(vertexElements);
 	T_ASSERT(vertexSize > 0);

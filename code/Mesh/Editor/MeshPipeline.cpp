@@ -249,9 +249,7 @@ bool MeshPipeline::buildOutput(
 ) const
 {
 	SmallMap< std::wstring, model::Material > materials;
-	RefArray< model::Model > models;
-	uint32_t polygonCount = 0;
-	Aabb3 boundingBox;
+	Ref< model::Model > model;
 
 	Ref< render::IProgramCompiler > programCompiler = getProgramCompiler();
 	if (!programCompiler)
@@ -306,120 +304,96 @@ bool MeshPipeline::buildOutput(
 	{
 		// Create a mutable copy of model since we modify it.
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline clone model");
-		Ref< model::Model > model = DeepClone(checked_type_cast< const ISerializable* >(buildParams)).create< model::Model >();
+		model = DeepClone(checked_type_cast< const ISerializable* >(buildParams)).create< model::Model >();
 		pipelineBuilder->getProfiler()->end();
-		if (model->getPolygonCount() == 0)
-		{
-			log::error << L"Mesh pipeline failed; no polygons in parametric source model." << Endl;
-			return false;
-		}
-
-		for (auto operation : operations)
-		{
-			pipelineBuilder->getProfiler()->begin(type_of(operation));
-			operation->apply(*model);
-			pipelineBuilder->getProfiler()->end();
-		}
-
-		models.push_back(model);
 	}
 	else
 	{
 		log::info << L"Loading model \"" << asset->getFileName().getFileName() << L"\"..." << Endl;
 
 		// Load and prepare models through model cache.
-		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + asset->getFileName());
-		Ref< model::Model > model = model::ModelCache::getInstance().getMutable(m_modelCachePath, filePath, asset->getImportFilter());
-		if (!model)
-		{
-			log::error << L"Mesh pipeline failed; unable to read source model (" << asset->getFileName().getOriginal() << L")." << Endl;
-			return false;
-		}
-
-		if (model->getPolygonCount() == 0)
-		{
-			log::error << L"Mesh pipeline failed; no polygons in source model (" << asset->getFileName().getOriginal() << L")." << Endl;
-			return false;
-		}
-
-		for (auto operation : operations)
-		{
-			pipelineBuilder->getProfiler()->begin(type_of(operation));
-			operation->apply(*model);
-			pipelineBuilder->getProfiler()->end();
-		}		
-
-		models.push_back(model);
+		const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + asset->getFileName());
+		model = model::ModelCache::getInstance().getMutable(m_modelCachePath, filePath, asset->getImportFilter());
 	}
 
-	if (models.empty())
+	if (model == nullptr)
 	{
-		log::error << L"Mesh pipeline failed; no models." << Endl;
+		log::error << L"Mesh pipeline failed; unable to read source model (" << asset->getFileName().getOriginal() << L")." << Endl;
 		return false;
 	}
 
-	// Merge all materials into a single list (duplicates will be overridden).
-	for (auto model : models)
+	if (model->getPolygonCount() == 0)
 	{
-		if (asset->getCenter())
-		{
-			const Aabb3 boundingBox = model->getBoundingBox();
-			model::Transform(translate(-boundingBox.getCenter())).apply(*model);
-		}
-
-		if (asset->getGrounded())
-		{
-			const Aabb3 boundingBox = model->getBoundingBox();
-			model::Transform(translate(Vector4(0.0f, -boundingBox.mn.y(), 0.0f))).apply(*model);
-		}
-
-		const AlignedVector< model::Material >& modelMaterials = model->getMaterials();
-		if (model->getMaterials().empty())
-		{
-			log::error << L"Mesh pipeline failed; no materials in source model(s)." << Endl;
-			return false;
-		}
-
-		// Merge materials, set textures specified in MeshAsset into material maps.
-		for (const auto& modelMaterial : modelMaterials)
-		{
-			const auto& name = modelMaterial.getName();
-
-			auto& m = materials[name];
-			m = modelMaterial;
-
-			model::Material::Map maps[] =
-			{
-				m.getDiffuseMap(),
-				m.getSpecularMap(),
-				m.getRoughnessMap(),
-				m.getMetalnessMap(),
-				m.getTransparencyMap(),
-				m.getEmissiveMap(),
-				m.getReflectiveMap(),
-				m.getNormalMap()
-			};
-			
-			for (auto& map : maps)
-			{
-				auto it = materialTextures.find(map.name);
-				if (it != materialTextures.end())
-					map.texture = it->second;
-			}
-
-			m.setDiffuseMap(maps[0]);
-			m.setSpecularMap(maps[1]);
-			m.setRoughnessMap(maps[2]);
-			m.setMetalnessMap(maps[3]);
-			m.setTransparencyMap(maps[4]);
-			m.setEmissiveMap(maps[5]);
-			m.setReflectiveMap(maps[6]);
-			m.setNormalMap(maps[7]);
-		}
-
-		boundingBox.contain(model->getBoundingBox());
-		polygonCount += model->getPolygonCount();
+		log::error << L"Mesh pipeline failed; no polygons in source model (" << asset->getFileName().getOriginal() << L")." << Endl;
+		return false;
 	}
+
+	for (auto operation : operations)
+	{
+		pipelineBuilder->getProfiler()->begin(type_of(operation));
+		operation->apply(*model);
+		pipelineBuilder->getProfiler()->end();
+	}		
+
+	// Merge all materials into a single list (duplicates will be overridden).
+	if (asset->getCenter())
+	{
+		const Aabb3 boundingBox = model->getBoundingBox();
+		model::Transform(translate(-boundingBox.getCenter())).apply(*model);
+	}
+
+	if (asset->getGrounded())
+	{
+		const Aabb3 boundingBox = model->getBoundingBox();
+		model::Transform(translate(Vector4(0.0f, -boundingBox.mn.y(), 0.0f))).apply(*model);
+	}
+
+	const AlignedVector< model::Material >& modelMaterials = model->getMaterials();
+	if (model->getMaterials().empty())
+	{
+		log::error << L"Mesh pipeline failed; no materials in source model(s)." << Endl;
+		return false;
+	}
+
+	// Merge materials, set textures specified in MeshAsset into material maps.
+	for (const auto& modelMaterial : modelMaterials)
+	{
+		const auto& name = modelMaterial.getName();
+
+		auto& m = materials[name];
+		m = modelMaterial;
+
+		model::Material::Map maps[] =
+		{
+			m.getDiffuseMap(),
+			m.getSpecularMap(),
+			m.getRoughnessMap(),
+			m.getMetalnessMap(),
+			m.getTransparencyMap(),
+			m.getEmissiveMap(),
+			m.getReflectiveMap(),
+			m.getNormalMap()
+		};
+			
+		for (auto& map : maps)
+		{
+			auto it = materialTextures.find(map.name);
+			if (it != materialTextures.end())
+				map.texture = it->second;
+		}
+
+		m.setDiffuseMap(maps[0]);
+		m.setSpecularMap(maps[1]);
+		m.setRoughnessMap(maps[2]);
+		m.setMetalnessMap(maps[3]);
+		m.setTransparencyMap(maps[4]);
+		m.setEmissiveMap(maps[5]);
+		m.setReflectiveMap(maps[6]);
+		m.setNormalMap(maps[7]);
+	}
+
+	const Aabb3 boundingBox = model->getBoundingBox();
+	const uint32_t polygonCount = model->getPolygonCount();
 
 	// Build embedded textures and assign generated id;s to materials.
 	for (auto& materialPair : materials)
@@ -450,8 +424,8 @@ bool MeshPipeline::buildOutput(
 
 	MaterialShaderGenerator generator([&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); });
 
-	const int32_t jointCount = models[0]->getJointCount();
-	const bool vertexColor = haveVertexColors(*models[0]);
+	const int32_t jointCount = model->getJointCount();
+	const bool vertexColor = haveVertexColors(*model);
 
 	for (const auto& materialPair : materials)
 	{
@@ -460,7 +434,7 @@ bool MeshPipeline::buildOutput(
 
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateSurface");
 		Ref< const render::ShaderGraph > meshSurfaceShaderGraph = generator.generateSurface(
-			*models[0],
+			*model,
 			materialPair.second,
 			vertexColor,
 			asset->getDecalResponse()
@@ -502,7 +476,7 @@ bool MeshPipeline::buildOutput(
 
 			pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateMesh");
 			materialShaderGraph = generator.generateMesh(
-				*models[0],
+				*model,
 				materialPair.second,
 				customMeshSurfaceShaderGraph,
 				vertexShaderGuid
@@ -528,7 +502,7 @@ bool MeshPipeline::buildOutput(
 
 			pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateMesh");
 			materialShaderGraph = generator.generateMesh(
-				*models[0],
+				*model,
 				materialPair.second,
 				meshSurfaceShaderGraph,
 				vertexShaderGuid
@@ -818,7 +792,7 @@ bool MeshPipeline::buildOutput(
 	// Convert mesh asset.
 	if (!converter->convert(
 		asset,
-		models,
+		model,
 		materialGuid,
 		materialTechniqueMap,
 		vertexElements,
