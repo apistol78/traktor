@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,10 +14,8 @@
 #include "Sound/Processor/Node.h"
 #include "Sound/Processor/OutputPin.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_VERSION_CLASS(L"traktor.sound.Node", 0, Node, ISerializable)
 
@@ -64,7 +62,7 @@ const std::pair< int, int >& Node::getPosition() const
 
 const InputPin* Node::findInputPin(const std::wstring& name) const
 {
-	int count = getInputPinCount();
+	const int count = getInputPinCount();
 	for (int i = 0; i < count; ++i)
 	{
 		const InputPin* inputPin = getInputPin(i);
@@ -73,12 +71,12 @@ const InputPin* Node::findInputPin(const std::wstring& name) const
 		if (inputPin->getName() == name)
 			return inputPin;
 	}
-	return 0;
+	return nullptr;
 }
 
 const OutputPin* Node::findOutputPin(const std::wstring& name) const
 {
-	int count = getOutputPinCount();
+	const int count = getOutputPinCount();
 	for (int i = 0; i < count; ++i)
 	{
 		const OutputPin* outputPin = getOutputPin(i);
@@ -87,7 +85,7 @@ const OutputPin* Node::findOutputPin(const std::wstring& name) const
 		if (outputPin->getName() == name)
 			return outputPin;
 	}
-	return 0;
+	return nullptr;
 }
 
 void Node::serialize(ISerializer& s)
@@ -101,5 +99,4 @@ void Node::serialize(ISerializer& s)
 	s >> MemberStlPair< int, int >(L"position", m_position, AttributePrivate());
 }
 
-	}
 }

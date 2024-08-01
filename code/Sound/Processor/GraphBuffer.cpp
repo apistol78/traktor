@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,12 +12,10 @@
 #include "Sound/Processor/GraphEvaluator.h"
 #include "Sound/Processor/Nodes/Output.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 class GraphBufferCursor : public RefCountImpl< IAudioBufferCursor >
 {
@@ -35,7 +33,7 @@ public:
 	virtual void reset() override final {}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.GraphBuffer", GraphBuffer, Object)
 
@@ -85,5 +83,4 @@ bool GraphBuffer::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer,
 	);
 }
 
-	}
 }

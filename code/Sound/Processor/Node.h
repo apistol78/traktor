@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,17 +20,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
 class GraphEvaluator;
 class IAudioMixer;
@@ -130,23 +128,23 @@ public:
 	 */
 	const OutputPin* findOutputPin(const std::wstring& name) const;
 
-	/*! \brief
+	/*!
 	 */
 	virtual bool bind(resource::IResourceManager* resourceManager) = 0;
 
-	/*! \brief
+	/*!
 	 */
 	virtual Ref< IAudioBufferCursor > createCursor() const = 0;
 
-	/*! \brief
+	/*!
 	 */
 	virtual bool getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const = 0;
 
-	/*! \brief
+	/*!
 	 */
 	virtual bool getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const = 0;
 
-	/*! \brief
+	/*!
 	 */
 	virtual void serialize(ISerializer& s) override;
 
@@ -156,5 +154,4 @@ private:
 	std::pair< int, int > m_position;
 };
 
-	}
 }

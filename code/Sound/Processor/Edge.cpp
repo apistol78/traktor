@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,12 +13,10 @@
 #include "Sound/Processor/Node.h"
 #include "Sound/Processor/OutputPin.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 struct OutputPinAccessor
 {
@@ -38,7 +36,7 @@ template < typename PinType, typename PinAccessor >
 class MemberPin : public MemberComplex
 {
 public:
-	MemberPin(const wchar_t* const name, PinType*& pin)
+	explicit MemberPin(const wchar_t* const name, PinType*& pin)
 	:	MemberComplex(name, true)
 	,	m_pin(pin)
 	{
@@ -48,7 +46,7 @@ public:
 	{
 		if (s.getDirection() == ISerializer::Direction::Write)
 		{
-			Ref< Node > node = m_pin ? m_pin->getNode() : 0;
+			Ref< Node > node = m_pin ? m_pin->getNode() : nullptr;
 			std::wstring name = m_pin ? m_pin->getName() : L"";
 
 			s >> MemberRef< Node >(L"node", node);
@@ -65,7 +63,7 @@ public:
 			if (node)
 				m_pin = PinAccessor::get(node, name);
 			else
-				m_pin = 0;
+				m_pin = nullptr;
 		}
 	}
 
@@ -73,7 +71,7 @@ private:
 	PinType*& m_pin;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.Edge", 0, Edge, ISerializable)
 
@@ -109,5 +107,4 @@ void Edge::serialize(ISerializer& s)
 	s >> MemberPin< const InputPin, InputPinAccessor >(L"destination", m_destination);
 }
 
-	}
 }

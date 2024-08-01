@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,10 +22,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 /*! Immutable processor graph node.
  * \ingroup Sound
@@ -48,7 +46,7 @@ public:
 		NodePinType type;
 	};
 
-	ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc* outputPins);
+	explicit ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc* outputPins);
 
 	virtual size_t getInputPinCount() const override final;
 
@@ -65,5 +63,4 @@ private:
 	ImmutableNode& operator = (const ImmutableNode&) { T_FATAL_ERROR; return *this; }
 };
 
-	}
 }
