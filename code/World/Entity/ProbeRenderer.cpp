@@ -406,12 +406,11 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 #else
 		rgtsd.targets[0].colorFormat = render::TfR8G8B8A8;
 #endif
-		auto filteredTargetSetId0 = renderGraph.addTransientTargetSet(L"Probe filter intermediate", rgtsd);
-		auto filteredTargetSetId1 = renderGraph.addTransientTargetSet(L"Probe filter intermediate", rgtsd);
+		auto filteredTargetSetId = renderGraph.addTransientTargetSet(L"Probe filter intermediate", rgtsd);
 
-		Ref< render::RenderPass > filterPassX = new render::RenderPass(L"Probe filter X");
-		filterPassX->setOutput(filteredTargetSetId0, render::TfNone, render::TfColor);
-		filterPassX->addBuild(
+		Ref< render::RenderPass > filterPass = new render::RenderPass(L"Probe filter");
+		filterPass->setOutput(filteredTargetSetId, render::TfNone, render::TfColor);
+		filterPass->addBuild(
 			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
 				Vector4 corners[4];
@@ -427,36 +426,15 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 				m_screenRenderer->draw(renderContext, m_filterShader, pp);
 			}
 		);
-		renderGraph.addPass(filterPassX);
-
-		Ref< render::RenderPass > filterPassY = new render::RenderPass(L"Probe filter Y");
-		filterPassY->setOutput(filteredTargetSetId1, render::TfNone, render::TfColor);
-		filterPassY->addInput(filteredTargetSetId0);
-		filterPassY->addBuild(
-			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-			{
-				Vector4 corners[4];
-				getCorners(side, corners);
-
-				auto pp = renderContext->alloc< render::ProgramParameters >();
-				pp->beginParameters(renderContext);
-				pp->setFloatParameter(s_handleProbeRoughness, roughness);
-				pp->setTextureParameter(s_handleProbeTexture, probeTexture);
-				pp->setVectorArrayParameter(s_handleProbeFilterCorners, corners, sizeof_array(corners));
-				pp->endParameters(renderContext);
-
-				m_screenRenderer->draw(renderContext, m_filterShader, pp);
-			}
-		);
-		renderGraph.addPass(filterPassY);
+		renderGraph.addPass(filterPass);
 
 		// Write back filtered targets into cube map mip level.
 		Ref< render::RenderPass > copyPass = new render::RenderPass(L"Probe copy filtered");
-		copyPass->addInput(filteredTargetSetId1);
+		copyPass->addInput(filteredTargetSetId);
 		copyPass->addBuild(
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
-				auto filteredTargetSet = renderGraph.getTargetSet(filteredTargetSetId1);
+				auto filteredTargetSet = renderGraph.getTargetSet(filteredTargetSetId);
 				auto lrb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Probe transfer filtered -> cube");
 				lrb->lambda = [=](render::IRenderView* renderView)
 				{
