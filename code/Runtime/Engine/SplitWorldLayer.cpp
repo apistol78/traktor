@@ -408,15 +408,6 @@ Ref< world::Entity > SplitWorldLayer::createEntity(const Guid& entityDataId) con
 	return entityBuilder.create(entityData);
 }
 
-void SplitWorldLayer::setControllerEnable(bool controllerEnable)
-{
-	m_controllerEnable = controllerEnable;
-}
-
-void SplitWorldLayer::resetController()
-{
-}
-
 const Frustum& SplitWorldLayer::getViewFrustum(int32_t split) const
 {
 	return m_worldRenderViews[split].getViewFrustum();

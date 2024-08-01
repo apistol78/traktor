@@ -102,10 +102,6 @@ public:
 
 	Ref< world::Entity > createEntity(const Guid& entityDataId) const;
 
-	void setControllerEnable(bool controllerEnable);
-
-	void resetController();
-
 	const Frustum& getViewFrustum(int32_t split) const;
 
 	bool worldToView(int32_t split, const Vector4& worldPosition, Vector4& outViewPosition) const;
@@ -145,7 +141,6 @@ private:
 	double m_alternateTime = 0.0;
 	double m_deltaTime = 0.0;
 	float m_fieldOfView = 70.0f;
-	bool m_controllerEnable = true;
 	SmallMap< Guid, Transform > m_entityTransforms;
 };
 
