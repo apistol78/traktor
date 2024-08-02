@@ -109,16 +109,21 @@ bool TextureVk::create(
 		const uint32_t mipHeight = getTextureMipSize(desc.height, mip);
 		const uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, mip);
 
-		VkBufferImageCopy region = {};
-		region.bufferOffset = offset;
-		region.bufferRowLength = 0;
-		region.bufferImageHeight = 0;
-		region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		region.imageSubresource.mipLevel = mip;
-		region.imageSubresource.baseArrayLayer = 0;
-		region.imageSubresource.layerCount = 1;
-		region.imageOffset = { 0, 0, 0 };
-		region.imageExtent = { mipWidth, mipHeight, 1 };
+		const VkBufferImageCopy region =
+		{
+			.bufferOffset = offset,
+			.bufferRowLength = 0,
+			.bufferImageHeight = 0,
+			.imageSubresource =
+			{
+				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+				.mipLevel = (uint32_t)mip,
+				.baseArrayLayer = 0,
+				.layerCount = 1
+			},
+			.imageOffset = { 0, 0, 0 },
+			.imageExtent = { mipWidth, mipHeight, 1 }
+		};
 
 		vkCmdCopyBufferToImage(
 			*commandBuffer,
@@ -230,16 +235,21 @@ bool TextureVk::create(
 			const uint32_t mipSide = getTextureMipSize(desc.side, mip);
 			const uint32_t mipSize = getTextureMipPitch(desc.format, desc.side, desc.side, mip);
 
-			VkBufferImageCopy region = {};
-			region.bufferOffset = offset;
-			region.bufferRowLength = 0;
-			region.bufferImageHeight = 0;
-			region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-			region.imageSubresource.mipLevel = mip;
-			region.imageSubresource.baseArrayLayer = side;
-			region.imageSubresource.layerCount = 1;
-			region.imageOffset = { 0, 0, 0 };
-			region.imageExtent = { mipSide, mipSide, 1 };
+			const VkBufferImageCopy region =
+			{
+				.bufferOffset = offset,
+				.bufferRowLength = 0,
+				.bufferImageHeight = 0,
+				.imageSubresource =
+				{
+					.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+					.mipLevel = (uint32_t)mip,
+					.baseArrayLayer = (uint32_t)side,
+					.layerCount = 1,
+				},
+				.imageOffset = { 0, 0, 0 },
+				.imageExtent = { mipSide, mipSide, 1 }
+			};
 
 			vkCmdCopyBufferToImage(
 				*commandBuffer,
@@ -342,16 +352,21 @@ bool TextureVk::create(
 		const uint32_t mipHeight = getTextureMipSize(desc.height, 0);
 		const uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, 0);
 
-		VkBufferImageCopy region = {};
-		region.bufferOffset = offset;
-		region.bufferRowLength = 0;
-		region.bufferImageHeight = 0;
-		region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		region.imageSubresource.mipLevel = 0;
-		region.imageSubresource.baseArrayLayer = 0;
-		region.imageSubresource.layerCount = 1;
-		region.imageOffset = { 0, 0, slice };
-		region.imageExtent = { mipWidth, mipHeight, 1 };
+		const VkBufferImageCopy region =
+		{
+			.bufferOffset = offset,
+			.bufferRowLength = 0,
+			.bufferImageHeight = 0,
+			.imageSubresource =
+			{
+				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+				.mipLevel = 0,
+				.baseArrayLayer = 0,
+				.layerCount = 1
+			},
+			.imageOffset = { 0, 0, slice },
+			.imageExtent = { mipWidth, mipHeight, 1 }
+		};
 
 		vkCmdCopyBufferToImage(
 			*commandBuffer,
@@ -429,16 +444,21 @@ void TextureVk::unlock(int32_t side, int32_t level)
 	const uint32_t mipWidth = getTextureMipSize(m_size.x, level);
 	const uint32_t mipHeight = getTextureMipSize(m_size.y, level);
 
-	VkBufferImageCopy region = {};
-	region.bufferOffset = 0;
-	region.bufferRowLength = 0;
-	region.bufferImageHeight = 0;
-	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	region.imageSubresource.mipLevel = level;
-	region.imageSubresource.baseArrayLayer = side;
-	region.imageSubresource.layerCount = 1;
-	region.imageOffset = { 0, 0, 0 };
-	region.imageExtent = { mipWidth, mipHeight, 1 };
+	const VkBufferImageCopy region =
+	{
+		.bufferOffset = 0,
+		.bufferRowLength = 0,
+		.bufferImageHeight = 0,
+		.imageSubresource =
+		{
+			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+			.mipLevel = (uint32_t)level,
+			.baseArrayLayer = (uint32_t)side,
+			.layerCount = 1
+		},
+		.imageOffset = { 0, 0, 0 },
+		.imageExtent = { mipWidth, mipHeight, 1 }
+	};
 
 	vkCmdCopyBufferToImage(
 		*commandBuffer,

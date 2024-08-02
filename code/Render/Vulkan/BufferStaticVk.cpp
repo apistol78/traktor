@@ -67,8 +67,10 @@ void BufferStaticVk::unlock()
 
 	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
 
-	VkBufferCopy bc = {};
-	bc.size = getBufferSize();
+	const VkBufferCopy bc =
+	{
+		.size = getBufferSize()
+	};
 	vkCmdCopyBuffer(
 		*commandBuffer,
 		*m_stageBuffer,

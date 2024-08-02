@@ -191,14 +191,16 @@ bool RenderTargetSetVk::prepareAsTarget(
 		else if (m_setDesc.usingPrimaryDepthStencil)
 			fba.push_back(primaryDepthTarget->getImage()->getVkImageView());
 
-		VkFramebufferCreateInfo fbci = {};
-		fbci.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		fbci.renderPass = renderPass;
-		fbci.attachmentCount = (uint32_t)fba.size();
-		fbci.pAttachments = fba.ptr();
-		fbci.width = m_setDesc.width;
-		fbci.height = m_setDesc.height;
-		fbci.layers = 1;
+		const VkFramebufferCreateInfo fbci =
+		{
+			.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+			.renderPass = renderPass,
+			.attachmentCount = (uint32_t)fba.size(),
+			.pAttachments = fba.ptr(),
+			.width = (uint32_t)m_setDesc.width,
+			.height = (uint32_t)m_setDesc.height,
+			.layers = 1
+		};
 		if (vkCreateFramebuffer(m_context->getLogicalDevice(), &fbci, nullptr, &frameBuffer) != VK_SUCCESS)
 			return false;
 	}
