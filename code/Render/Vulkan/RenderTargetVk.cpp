@@ -106,13 +106,15 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 
 	m_imageResolved->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
 
-	VkClearColorValue color = {};
-	VkImageSubresourceRange range;
-	range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	range.baseMipLevel = 0;
-	range.levelCount = 1;
-	range.baseArrayLayer = 0;
-	range.layerCount = 1;
+	const VkClearColorValue color = {};
+	const VkImageSubresourceRange range =
+	{
+		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+		.baseMipLevel = 0,
+		.levelCount = 1,
+		.baseArrayLayer = 0,
+		.layerCount = 1
+	};
 	vkCmdClearColorImage(
 		*commandBuffer,
 		m_imageResolved->getVkImage(),
