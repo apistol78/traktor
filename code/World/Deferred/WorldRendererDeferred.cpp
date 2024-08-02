@@ -387,12 +387,7 @@ void WorldRendererDeferred::setupVisualPass(
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Visual; copy");
 		rp->addInput(visualWriteTargetSetId);
-
-		render::Clear clear;
-		clear.mask = render::CfColor;
-		clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-		rp->setOutput(visualCopyTargetSetId, clear, render::TfNone, render::TfColor | render::TfDepth);
-
+		rp->setOutput(visualCopyTargetSetId, render::TfNone, render::TfColor | render::TfDepth);
 		rp->addBuild(
 			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
