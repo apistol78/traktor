@@ -17,10 +17,8 @@
 #include "Ui/Rect.h"
 #include "Ui/Size.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class IFontMetric;
 class ISystemBitmap;
@@ -86,6 +84,4 @@ public:
 	virtual void* getSystemHandle() = 0;
 };
 
-	}
 }
-
