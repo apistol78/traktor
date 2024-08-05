@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -43,7 +43,7 @@ Event::~Event()
 	delete in;
 }
 
-void Event::pulse(int count)
+void Event::pulse(int32_t count)
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	EnterCriticalSection(&in->lock);
@@ -76,14 +76,14 @@ void Event::reset()
 	LeaveCriticalSection(&in->lock);
 }
 
-bool Event::wait(int timeout)
+bool Event::wait(int32_t timeout)
 {
 	bool result = false;
 
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	InterlockedIncrement((LPLONG)&in->listeners);
 
-	MMRESULT mmresult = timeBeginPeriod(1);
+	const MMRESULT mmresult = timeBeginPeriod(1);
 	
 	for (;;)
 	{

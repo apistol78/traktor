@@ -31,7 +31,7 @@ public:
 
 	virtual ~Event();
 
-	void pulse(int count = 1);
+	void pulse(int32_t count = 1);
 
 	void broadcast();
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,15 +32,12 @@ void Signal::reset()
 	ResetEvent(m_handle);
 }
 
-bool Signal::wait(int timeout)
+bool Signal::wait(int32_t timeout)
 {
-	MMRESULT result = timeBeginPeriod(1);
-
-	bool ret = bool(WaitForSingleObject(m_handle, (timeout < 0) ? INFINITE : timeout) == WAIT_OBJECT_0);
-
+	const MMRESULT result = timeBeginPeriod(1);
+	const bool ret = bool(WaitForSingleObject(m_handle, (timeout < 0) ? INFINITE : timeout) == WAIT_OBJECT_0);
 	if (result == TIMERR_NOERROR)
 		timeEndPeriod(1);
-
 	return ret;
 }
 
