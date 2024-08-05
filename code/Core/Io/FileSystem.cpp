@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -69,7 +69,7 @@ void FileSystem::umount(const std::wstring& id)
 
 int32_t FileSystem::getVolumeCount() const
 {
-	return int(std::distance(m_volumes.begin(), m_volumes.end()));
+	return (int32_t)std::distance(m_volumes.begin(), m_volumes.end());
 }
 
 IVolume* FileSystem::getVolume(int32_t index) const
@@ -166,8 +166,8 @@ bool FileSystem::remove(const Path& fileName)
 
 bool FileSystem::move(const Path& destination, const Path& source, bool overwrite)
 {
-	Path destinationPath = getAbsolutePath(destination).normalized();
-	Path sourcePath = getAbsolutePath(source).normalized();
+	const Path destinationPath = getAbsolutePath(destination).normalized();
+	const Path sourcePath = getAbsolutePath(source).normalized();
 
 	if (compareIgnoreCase(destinationPath.getPathOnly(), sourcePath.getPathOnly()) == 0)
 	{
@@ -192,8 +192,8 @@ bool FileSystem::move(const Path& destination, const Path& source, bool overwrit
 
 bool FileSystem::copy(const Path& destination, const Path& source, bool overwrite)
 {
-	Path destinationPath = getAbsolutePath(destination).normalized();
-	Path sourcePath = getAbsolutePath(source).normalized();
+	const Path destinationPath = getAbsolutePath(destination).normalized();
+	const Path sourcePath = getAbsolutePath(source).normalized();
 
 	if (compareIgnoreCase(destinationPath.getPathOnly(), sourcePath.getPathOnly()) == 0)
 	{
@@ -232,7 +232,7 @@ bool FileSystem::copy(const Path& destination, const Path& source, bool overwrit
 	}
 
 	// Copy entire content.
-	bool result = StreamCopy(dst, src).execute();
+	const bool result = StreamCopy(dst, src).execute();
 
 	// Finished, close streams.
 	dst->close();
@@ -253,7 +253,7 @@ bool FileSystem::makeAllDirectories(const Path& directory)
 	if (!volume)
 		return false;
 
-	std::vector< std::wstring > directories;
+	AlignedVector< std::wstring > directories;
 	if (!Split< std::wstring >::any(directory.getPathNameNoVolume(), L"/", directories))
 		return true;
 
@@ -297,7 +297,7 @@ Path FileSystem::getAbsolutePath(const Path& relativePath) const
 
 Path FileSystem::getAbsolutePath(const Path& basePath, const Path& relativePath) const
 {
-	Path absoluteBasePath = basePath.isRelative() ? getAbsolutePath(basePath) : basePath;
+	const Path absoluteBasePath = basePath.isRelative() ? getAbsolutePath(basePath) : basePath;
 
 	if (relativePath.hasVolume())
 	{
@@ -305,7 +305,7 @@ Path FileSystem::getAbsolutePath(const Path& basePath, const Path& relativePath)
 			return relativePath;
 	}
 
-	Path absolutePath = relativePath.isRelative() ?
+	const Path absolutePath = relativePath.isRelative() ?
 		Path(absoluteBasePath.getPathName() + L"/" + relativePath.getPathNameNoVolume()) :
 		Path(absoluteBasePath.getVolume() + L":" + relativePath.getPathNameNoVolume());
 
@@ -324,7 +324,6 @@ bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeT
 	}
 
 	AlignedVector< std::wstring > absoluteParts, relativeParts;
-
 	Split< std::wstring >::any(absolutePath.getPathNameNoVolume(), L"/", absoluteParts);
 	Split< std::wstring >::any(relativeToPath.getPathNameNoVolume(), L"/", relativeParts);
 
@@ -363,7 +362,7 @@ IVolume* FileSystem::getVolume(const Path& path) const
 
 	if (path.hasVolume() == true)
 	{
-		auto it = m_volumes.find(toLower(path.getVolume()));
+		const auto it = m_volumes.find(toLower(path.getVolume()));
 		if (it != m_volumes.end())
 			volume = it->second;
 #if defined(_DEBUG)

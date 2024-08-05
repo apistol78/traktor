@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,10 +19,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.SeparateAlphaFilter", SeparateAlphaFilt
 
 void SeparateAlphaFilter::apply(Image* image) const
 {
-	Color4f in;
-
-	int32_t width = image->getWidth();
-	int32_t height = image->getHeight();
+	const int32_t width = image->getWidth();
+	const int32_t height = image->getHeight();
 
 	AlignedVector< Color4f > span(width);
 	for (int32_t y = 0; y < height; ++y)
@@ -30,7 +28,7 @@ void SeparateAlphaFilter::apply(Image* image) const
 		image->getSpanUnsafe(y, span.ptr());
 		for (int32_t x = 0; x < width; ++x)
 		{
-			Scalar a = span[x].getAlpha();
+			const Scalar a = span[x].getAlpha();
 			if (a > FUZZY_EPSILON)
 			{
 				span[x] = span[x] / a;
