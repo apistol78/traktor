@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Sequencer range.
  * \ingroup UI
@@ -31,7 +29,7 @@ class T_DLLCLASS Range : public Key
 	T_RTTI_CLASS;
 
 public:
-	Range(int32_t start, int32_t end, bool movable);
+	explicit Range(int32_t start, int32_t end, bool movable);
 
 	void setStart(int32_t start);
 
@@ -53,6 +51,4 @@ private:
 	bool m_movable;
 };
 
-	}
 }
-

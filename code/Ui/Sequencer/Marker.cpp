@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,16 +12,14 @@
 #include "Ui/Sequencer/Sequence.h"
 #include "Ui/Sequencer/SequencerControl.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const Unit c_sequenceHeight = 25_ut;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Marker", Marker, Key)
 
@@ -82,5 +80,4 @@ void Marker::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequen
 
 }
 
-	}
 }

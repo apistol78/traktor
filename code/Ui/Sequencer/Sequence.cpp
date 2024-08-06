@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,16 +17,14 @@
 #include "Ui/Sequencer/Key.h"
 #include "Ui/Sequencer/KeyMoveEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const int c_buttonSize = 18;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Sequence", Sequence, SequenceItem)
 
@@ -252,7 +250,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 	// Draw tickers.
 	canvas.setForeground(ss->getColor(this, L"tick-color"));
 	const int32_t cy = (rc.top + rc.bottom) / 2;
-	for (int32_t i = 0; i < sequencer->getLength(); i += 100)
+	for (int32_t i = 100; i < sequencer->getLength(); i += 100)
 	{
 		const int32_t cx = separator + clientFromTime(i) - scrollOffset;
 		if (cx > rc.right)
@@ -273,5 +271,4 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 	}
 }
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,36 +13,34 @@
 #include "Ui/Sequencer/SequencerControl.h"
 #include "Ui/Sequencer/Tick.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const Unit c_sequenceHeight = 25_ut;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Tick", Tick, Key)
 
-Tick::Tick(int time, bool movable)
+Tick::Tick(int32_t time, bool movable)
 :	m_time(time)
 ,	m_movable(movable)
 {
 }
 
-void Tick::setTime(int time)
+void Tick::setTime(int32_t time)
 {
 	m_time = time;
 }
 
-int Tick::getTime() const
+int32_t Tick::getTime() const
 {
 	return m_time;
 }
 
-void Tick::move(int offset)
+void Tick::move(int32_t offset)
 {
 	if (m_movable)
 		m_time += offset;
@@ -85,5 +83,4 @@ void Tick::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence
 	canvas.drawRect(rc);
 }
 
-	}
 }

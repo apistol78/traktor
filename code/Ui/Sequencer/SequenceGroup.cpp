@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,16 +14,14 @@
 #include "Ui/Sequencer/SequenceGroup.h"
 #include "Ui/Sequencer/SequencerControl.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const int TIME_SCALE_DIVISOR = 8;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.SequenceGroup", SequenceGroup, SequenceItem)
 
@@ -79,13 +77,13 @@ void SequenceGroup::mouseDown(SequencerControl* sequencer, const Point& at, cons
 	IBitmap* imageExpand = m_expanded ? m_imageCollapse : m_imageExpand;
 
 	// Calculate left edges.
-	int32_t expandLeft = rc.left + 4 + getDepth() * 16;
-	int32_t visibleLeft = expandLeft + imageExpand->getSize(sequencer).cx + 4;
+	const int32_t expandLeft = rc.left + 4 + getDepth() * 16;
+	const int32_t visibleLeft = expandLeft + imageExpand->getSize(sequencer).cx + 4;
 
 	// Check which icon user pressed, if any.
 	if (at.x >= expandLeft && at.x <= expandLeft + int(imageExpand->getSize(sequencer).cx))
 	{
-		int32_t top = (rc.getHeight() - imageExpand->getSize(sequencer).cy) / 2;
+		const int32_t top = (rc.getHeight() - imageExpand->getSize(sequencer).cy) / 2;
 		if (at.y >= top && at.y <= top + int(imageExpand->getSize(sequencer).cy))
 			m_expanded = !m_expanded;
 	}
@@ -130,7 +128,7 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 
 	// Draw sequence group text.
 	canvas.setForeground(ss->getColor(this, L"color"));
-	Size ext = canvas.getFontMetric().getExtent(getName());
+	const Size ext = canvas.getFontMetric().getExtent(getName());
 	canvas.drawText(
 		Point(
 			rc.left + sequencer->pixel(Unit(32 + getDepth() * 16)),
@@ -161,9 +159,9 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 		rc.bottom
 	));
 
-	int32_t start = separator + m_start / TIME_SCALE_DIVISOR - scrollOffset;
-	int32_t end = separator + m_end / TIME_SCALE_DIVISOR - scrollOffset;
-	int32_t y = rc.getCenter().y;
+	const int32_t start = separator + m_start / TIME_SCALE_DIVISOR - scrollOffset;
+	const int32_t end = separator + m_end / TIME_SCALE_DIVISOR - scrollOffset;
+	const int32_t y = rc.getCenter().y;
 
 	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawLine(start, y - 2, start, y + 3);
@@ -171,5 +169,4 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 	canvas.drawLine(end, y - 2, end, y + 3);
 }
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,41 +12,39 @@
 #include "Ui/Sequencer/SequencerControl.h"
 #include "Ui/Sequencer/Track.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Track", Track, Key)
 
-Track::Track(int start, int end, bool movable)
+Track::Track(int32_t start, int32_t end, bool movable)
 :	m_start(start)
 ,	m_end(end)
 ,	m_movable(movable)
 {
 }
 
-void Track::setStart(int start)
+void Track::setStart(int32_t start)
 {
 	m_start = start;
 }
 
-int Track::getStart() const
+int32_t Track::getStart() const
 {
 	return m_start;
 }
 
-void Track::setEnd(int end)
+void Track::setEnd(int32_t end)
 {
 	m_end = end;
 }
 
-int Track::getEnd() const
+int32_t Track::getEnd() const
 {
 	return m_end;
 }
 
-void Track::move(int offset)
+void Track::move(int32_t offset)
 {
 	if (m_movable)
 	{
@@ -79,5 +77,4 @@ void Track::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequenc
 	canvas.drawRect(rc);
 }
 
-	}
 }
