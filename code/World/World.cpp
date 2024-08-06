@@ -150,9 +150,11 @@ RefArray< Entity > World::getEntitiesWithinRange(const Vector4& position, float 
 
 void World::update(const UpdateParams& update)
 {
+	// Update all world components.
 	for (auto component : m_components)
 		component->update(this, update);
 
+	// Update all entities.
 	m_update = true;
 	for (auto entity : m_entities)
 	{
@@ -161,12 +163,14 @@ void World::update(const UpdateParams& update)
 	}
 	m_update = false;
 	
+	// Add entities which has been added during entity update.
 	if (!m_deferredAdd.empty())
 	{
 		m_entities.insert(m_entities.end(), m_deferredAdd.begin(), m_deferredAdd.end());
 		m_deferredAdd.resize(0);
 	}
 
+	// Remove entities which has been removed during entity update.
 	if (!m_deferredRemove.empty())
 	{
 		for (auto entity : m_deferredRemove)

@@ -36,13 +36,13 @@
 #include "Runtime/Editor/GameEntityWizardDialog.h"
 #include "Script/Editor/Script.h"
 #include "Ui/Application.h"
-#include "Ui/DropDown.h"
+#include "Ui/Button.h"
 #include "Ui/CheckBox.h"
+#include "Ui/DropDown.h"
 #include "Ui/Edit.h"
+#include "Ui/FileDialog.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/FileDialog.h"
-#include "Ui/MiniButton.h"
 #include "World/EntityData.h"
 #include "World/Entity/ScriptComponentData.h"
 
@@ -82,75 +82,66 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	m_editName->addEventHandler< ui::ContentChangeEvent >(this, &GameEntityWizardDialog::eventNameChange);
 
 	// Visual mesh
-	Ref< ui::Container > containerVisualMesh = new ui::Container();
-	containerVisualMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0_ut, 8_ut));
+	Ref< ui::Container > containerMesh = new ui::Container();
+	containerMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0_ut, 8_ut));
 
 	Ref< ui::Static > staticVisualMesh = new ui::Static();
-	staticVisualMesh->create(containerVisualMesh, i18n::Text(L"GAMEENTITY_WIZARD_VISUAL_MESH"));
+	staticVisualMesh->create(containerMesh, i18n::Text(L"GAMEENTITY_WIZARD_VISUAL_MESH"));
 
 	m_editVisualMesh = new ui::Edit();
-	m_editVisualMesh->create(containerVisualMesh, L"");
+	m_editVisualMesh->create(containerMesh, L"");
 
-	Ref< ui::MiniButton > buttonBrowseVisualMesh = new ui::MiniButton();
-	buttonBrowseVisualMesh->create(containerVisualMesh, L"...");
+	Ref< ui::Button > buttonBrowseVisualMesh = new ui::Button();
+	buttonBrowseVisualMesh->create(containerMesh, L"...");
 	buttonBrowseVisualMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventBrowseVisualMeshClick);
 
-	Ref< ui::MiniButton > buttonCopyVisualMesh = new ui::MiniButton();
-	buttonCopyVisualMesh->create(containerVisualMesh, L"Copy");
+	Ref< ui::Button > buttonCopyVisualMesh = new ui::Button();
+	buttonCopyVisualMesh->create(containerMesh, L"Copy");
 	buttonCopyVisualMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventCopyVisualMeshClick);
 
 	// Skeleton mesh
-	Ref< ui::Container > containerSkeletonMesh = new ui::Container();
-	containerSkeletonMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0_ut, 8_ut));
-
 	Ref< ui::Static > staticSkeletonMesh = new ui::Static();
-	staticSkeletonMesh->create(containerSkeletonMesh, i18n::Text(L"GAMEENTITY_WIZARD_SKELETON_MESH"));
+	staticSkeletonMesh->create(containerMesh, i18n::Text(L"GAMEENTITY_WIZARD_SKELETON_MESH"));
 
 	m_editSkeletonMesh = new ui::Edit();
-	m_editSkeletonMesh->create(containerSkeletonMesh, L"");
+	m_editSkeletonMesh->create(containerMesh, L"");
 
-	Ref< ui::MiniButton > buttonBrowseSkeletonMesh = new ui::MiniButton();
-	buttonBrowseSkeletonMesh->create(containerSkeletonMesh, L"...");
+	Ref< ui::Button > buttonBrowseSkeletonMesh = new ui::Button();
+	buttonBrowseSkeletonMesh->create(containerMesh, L"...");
 	buttonBrowseSkeletonMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventBrowseSkeletonMeshClick);
 
-	Ref< ui::MiniButton > buttonCopySkeletonMesh = new ui::MiniButton();
-	buttonCopySkeletonMesh->create(containerSkeletonMesh, L"Copy");
+	Ref< ui::Button > buttonCopySkeletonMesh = new ui::Button();
+	buttonCopySkeletonMesh->create(containerMesh, L"Copy");
 	buttonCopySkeletonMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventCopySkeletonMeshClick);
 
 	// Animation mesh
-	Ref< ui::Container > containerAnimationMesh = new ui::Container();
-	containerAnimationMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0_ut, 8_ut));
-
 	Ref< ui::Static > staticAnimationMesh = new ui::Static();
-	staticAnimationMesh->create(containerAnimationMesh, i18n::Text(L"GAMEENTITY_WIZARD_ANIMATION_MESH"));
+	staticAnimationMesh->create(containerMesh, i18n::Text(L"GAMEENTITY_WIZARD_ANIMATION_MESH"));
 
 	m_editAnimationMesh = new ui::Edit();
-	m_editAnimationMesh->create(containerAnimationMesh, L"");
+	m_editAnimationMesh->create(containerMesh, L"");
 
-	Ref< ui::MiniButton > buttonBrowseAnimationMesh = new ui::MiniButton();
-	buttonBrowseAnimationMesh->create(containerAnimationMesh, L"...");
+	Ref< ui::Button > buttonBrowseAnimationMesh = new ui::Button();
+	buttonBrowseAnimationMesh->create(containerMesh, L"...");
 	buttonBrowseAnimationMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventBrowseAnimationMeshClick);
 
-	Ref< ui::MiniButton > buttonCopyAnimationMesh = new ui::MiniButton();
-	buttonCopyAnimationMesh->create(containerAnimationMesh, L"Copy");
+	Ref< ui::Button > buttonCopyAnimationMesh = new ui::Button();
+	buttonCopyAnimationMesh->create(containerMesh, L"Copy");
 	buttonCopyAnimationMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventCopyAnimationMeshClick);
 
 	// Collision mesh
-	Ref< ui::Container > containerCollisionMesh = new ui::Container();
-	containerCollisionMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0_ut, 8_ut));
-
 	Ref< ui::Static > staticCollisionMesh = new ui::Static();
-	staticCollisionMesh->create(containerCollisionMesh, i18n::Text(L"GAMEENTITY_WIZARD_COLLISION_MESH"));
+	staticCollisionMesh->create(containerMesh, i18n::Text(L"GAMEENTITY_WIZARD_COLLISION_MESH"));
 
 	m_editCollisionMesh = new ui::Edit();
-	m_editCollisionMesh->create(containerCollisionMesh, L"");
+	m_editCollisionMesh->create(containerMesh, L"");
 
-	Ref< ui::MiniButton > buttonBrowseCollisionMesh = new ui::MiniButton();
-	buttonBrowseCollisionMesh->create(containerCollisionMesh, L"...");
+	Ref< ui::Button > buttonBrowseCollisionMesh = new ui::Button();
+	buttonBrowseCollisionMesh->create(containerMesh, L"...");
 	buttonBrowseCollisionMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventBrowseCollisionMeshClick);
 
-	Ref< ui::MiniButton > buttonCopyCollisionMesh = new ui::MiniButton();
-	buttonCopyCollisionMesh->create(containerCollisionMesh, L"Copy");
+	Ref< ui::Button > buttonCopyCollisionMesh = new ui::Button();
+	buttonCopyCollisionMesh->create(containerMesh, L"Copy");
 	buttonCopyCollisionMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventCopyCollisionMeshClick);
 
 	// Type of entity.

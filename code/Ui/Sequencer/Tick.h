@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Sequencer tick.
  * \ingroup UI
@@ -31,23 +29,21 @@ class T_DLLCLASS Tick : public Key
 	T_RTTI_CLASS;
 
 public:
-	Tick(int time, bool movable);
+	explicit Tick(int32_t time, bool movable);
 
-	void setTime(int time);
+	void setTime(int32_t time);
 
-	int getTime() const;
+	int32_t getTime() const;
 
-	virtual void move(int offset) override;
+	virtual void move(int32_t offset) override;
 
 	virtual void getRect(SequencerControl* sequencer, const Sequence* sequence, const Rect& rcClient, Rect& outRect) const override;
 
 	virtual void paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) override;
 
 private:
-	int m_time;
+	int32_t m_time;
 	bool m_movable;
 };
 
-	}
 }
-

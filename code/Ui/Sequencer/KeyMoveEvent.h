@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,14 +18,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Key;
 
-/*! \brief
+/*!
  * \ingroup UI
  */
 class T_DLLCLASS KeyMoveEvent : public Event
@@ -33,7 +31,7 @@ class T_DLLCLASS KeyMoveEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	KeyMoveEvent(EventSubject* sender, Key* key, int32_t offset);
+	explicit KeyMoveEvent(EventSubject* sender, Key* key, int32_t offset);
 
 	Key* getKey() const;
 
@@ -44,6 +42,4 @@ private:
 	int32_t m_offset;
 };
 
-	}
 }
-

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Sequencer range.
  * \ingroup UI
@@ -31,28 +29,26 @@ class T_DLLCLASS Track : public Key
 	T_RTTI_CLASS;
 
 public:
-	Track(int start, int end, bool movable);
+	explicit Track(int32_t start, int32_t end, bool movable);
 
-	void setStart(int start);
+	void setStart(int32_t start);
 
-	int getStart() const;
+	int32_t getStart() const;
 
-	void setEnd(int end);
+	void setEnd(int32_t end);
 
-	int getEnd() const;
+	int32_t getEnd() const;
 
-	virtual void move(int offset) override;
+	virtual void move(int32_t offset) override;
 
 	virtual void getRect(SequencerControl* sequencer, const Sequence* sequence, const Rect& rcClient, Rect& outRect) const override;
 
 	virtual void paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) override;
 
 private:
-	int m_start;
-	int m_end;
+	int32_t m_start;
+	int32_t m_end;
 	bool m_movable;
 };
 
-	}
 }
-

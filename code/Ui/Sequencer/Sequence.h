@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include <vector>
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Ui/Command.h"
 #include "Ui/Rect.h"
 #include "Ui/Sequencer/SequenceItem.h"
@@ -22,10 +22,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Command;
 class IBitmap;
@@ -83,13 +81,11 @@ private:
 	};
 
 	RefArray< Key > m_keys;
-	std::vector< Button > m_buttons;
+	AlignedVector< Button > m_buttons;
 	Ref< Key > m_selectedKey;
 	Ref< Key > m_trackKey;
 	int32_t m_previousPosition;
 	int32_t m_timeScale;
 };
 
-	}
 }
-

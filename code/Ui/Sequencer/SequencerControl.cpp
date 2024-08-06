@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -213,10 +213,10 @@ void SequencerControl::eventSize(SizeEvent* event)
 {
 	event->consume();
 
-	Rect rc = getInnerRect();
+	const Rect rc = getInnerRect();
 
-	int32_t scrollWidth = m_scrollBarV->getPreferredSize(rc.getSize()).cx;
-	int32_t scrollHeight = m_scrollBarH->getPreferredSize(rc.getSize()).cy;
+	const int32_t scrollWidth = m_scrollBarV->getPreferredSize(rc.getSize()).cx;
+	const int32_t scrollHeight = m_scrollBarH->getPreferredSize(rc.getSize()).cy;
 
 	m_scrollBarV->setRect(Rect(
 		rc.right - scrollWidth,
@@ -237,27 +237,27 @@ void SequencerControl::eventSize(SizeEvent* event)
 
 void SequencerControl::updateScrollBars()
 {
-	int32_t sequenceHeight = pixel(c_sequenceHeight);
+	const int32_t sequenceHeight = pixel(c_sequenceHeight);
 
 	// Get all items, including descendants.
 	RefArray< SequenceItem > sequenceItems = getSequenceItems(GfDescendants | GfExpandedOnly);
 
-	Size sequences(
+	const Size sequences(
 		m_separator + m_length / m_timeScale + c_endWidth,
 		int32_t(sequenceItems.size() * sequenceHeight) + 1
 	);
 
-	Rect rc = getInnerRect();
+	const Rect rc = getInnerRect();
 
-	int32_t scrollWidth = m_scrollBarV->getPreferredSize(rc.getSize()).cx;
-	int32_t scrollHeight = m_scrollBarH->getPreferredSize(rc.getSize()).cy;
+	const int32_t scrollWidth = m_scrollBarV->getPreferredSize(rc.getSize()).cx;
+	const int32_t scrollHeight = m_scrollBarH->getPreferredSize(rc.getSize()).cy;
 
-	int32_t overflowV = std::max< int32_t >(0, sequences.cy - rc.getHeight() + scrollHeight);
+	const int32_t overflowV = std::max< int32_t >(0, sequences.cy - rc.getHeight() + scrollHeight);
 	m_scrollBarV->setRange(overflowV);
 	m_scrollBarV->setEnable(overflowV > 0);
 	m_scrollBarV->setPage(sequenceHeight);
 
-	int32_t overflowH = std::max< int32_t >(0, sequences.cx - rc.getWidth() + scrollWidth);
+	const int32_t overflowH = std::max< int32_t >(0, sequences.cx - rc.getWidth() + scrollWidth);
 	m_scrollBarH->setRange(overflowH);
 	m_scrollBarH->setEnable(overflowH > 0);
 	m_scrollBarH->setPage(100);
@@ -268,9 +268,9 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 	if (event->getButton() != MbtLeft)
 		return;
 
-	int32_t sequenceHeight = pixel(c_sequenceHeight);
-	Point position = event->getPosition();
-	Rect rc = getInnerRect();
+	const int32_t sequenceHeight = pixel(c_sequenceHeight);
+	const Point position = event->getPosition();
+	const Rect rc = getInnerRect();
 
 	// Grab focus, need it to be able to get key events.
 	setFocus();
@@ -291,7 +291,7 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 		}
 
 		// Ensure sequence is selected.
-		int32_t sequenceId = (position.y + m_scrollBarV->getPosition()) / sequenceHeight;
+		const int32_t sequenceId = (position.y + m_scrollBarV->getPosition()) / sequenceHeight;
 		if (sequenceId >= 0 && sequenceId < (int32_t)sequenceItems.size())
 		{
 			auto it = sequenceItems.begin();
@@ -308,7 +308,7 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 	}
 
 	// Issue local mouse down event on sequence item.
-	int32_t sequenceId = (position.y + m_scrollBarV->getPosition()) / sequenceHeight;
+	const int32_t sequenceId = (position.y + m_scrollBarV->getPosition()) / sequenceHeight;
 	if (sequenceId >= 0 && sequenceId < (int32_t)sequenceItems.size())
 	{
 		auto it = sequenceItems.begin();
@@ -368,7 +368,6 @@ void SequencerControl::eventButtonUp(MouseButtonUpEvent* event)
 
 		// Get all items, including descendants.
 		RefArray< SequenceItem > sequenceItems = getSequenceItems(GfDescendants | GfExpandedOnly);
-
 		if (m_dropIndex < int32_t(m_sequenceItems.size()))
 		{
 			SequenceItem* beforeItem = sequenceItems[m_dropIndex];
@@ -417,13 +416,13 @@ void SequencerControl::eventMouseMove(MouseMoveEvent* event)
 
 	event->consume();
 
-	int32_t sequenceHeight = pixel(c_sequenceHeight);
-	Point position = event->getPosition();
+	const int32_t sequenceHeight = pixel(c_sequenceHeight);
+	const Point position = event->getPosition();
 
 	// Check if begin moving.
 	if (m_moveTrack == 1)
 	{
-		Size diff = m_startPosition - position;
+		const Size diff = m_startPosition - position;
 		if (abs(diff.cx) > 2 || abs(diff.cy) > 2)
 		{
 			removeSequenceItem(m_mouseTrackItem.item);
@@ -439,7 +438,7 @@ void SequencerControl::eventMouseMove(MouseMoveEvent* event)
 		// Get all items, including descendants.
 		RefArray< SequenceItem > sequenceItems = getSequenceItems(GfDescendants | GfExpandedOnly);
 
-		int32_t sequenceId = (position.y + sequenceHeight / 2 + m_scrollBarV->getPosition()) / sequenceHeight;
+		const int32_t sequenceId = (position.y + sequenceHeight / 2 + m_scrollBarV->getPosition()) / sequenceHeight;
 		if (sequenceId >= 0 && sequenceId < int(sequenceItems.size()))
 			m_dropIndex = sequenceId;
 		else
@@ -453,7 +452,7 @@ void SequencerControl::eventMouseMove(MouseMoveEvent* event)
 	if (m_moveTrack == 0)
 	{
 		// Calculate current cursor display position.
-		int32_t scrollOffsetX = m_scrollBarH->getPosition();
+		const int32_t scrollOffsetX = m_scrollBarH->getPosition();
 
 		int32_t cursor;
 		cursor = (event->getPosition().x - m_separator + scrollOffsetX) * m_timeScale;
@@ -490,10 +489,8 @@ void SequencerControl::eventMouseMove(MouseMoveEvent* event)
 
 void SequencerControl::eventMouseWheel(MouseWheelEvent* event)
 {
-	int32_t wheel = event->getRotation();
-
+	const int32_t wheel = event->getRotation();
 	m_timeScale = clamp(m_timeScale + wheel, 1, 32);
-
 	updateScrollBars();
 	update();
 }
