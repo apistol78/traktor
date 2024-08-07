@@ -162,7 +162,7 @@
 			<colors>
 				<item>
 					<first>color</first>
-					<second>34</second>
+					<second>23</second>
 				</item>
 			</colors>
 		</item>
@@ -171,11 +171,11 @@
 			<colors>
 				<item>
 					<first>gripper-color</first>
-					<second>23</second>
+					<second>24</second>
 				</item>
 				<item>
 					<first>splitter-color</first>
-					<second>24</second>
+					<second>25</second>
 				</item>
 				<item>
 					<first>tab-background-color</first>
@@ -229,7 +229,7 @@
 				</item>
 				<item>
 					<first>color-hover</first>
-					<second>25</second>
+					<second>26</second>
 				</item>
 				<item>
 					<first>color-label</first>
@@ -254,11 +254,11 @@
 				</item>
 				<item>
 					<first>background-color-hover</first>
-					<second>26</second>
+					<second>27</second>
 				</item>
 				<item>
 					<first>background-color-selection</first>
-					<second>27</second>
+					<second>28</second>
 				</item>
 				<item>
 					<first>border-color</first>
@@ -279,11 +279,11 @@
 				</item>
 				<item>
 					<first>color-cursor</first>
-					<second>28</second>
+					<second>29</second>
 				</item>
 				<item>
 					<first>color-line</first>
-					<second>29</second>
+					<second>30</second>
 				</item>
 			</colors>
 		</item>
@@ -292,11 +292,11 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>26</second>
+					<second>27</second>
 				</item>
 				<item>
 					<first>color-arrow-hints</first>
-					<second>28</second>
+					<second>29</second>
 				</item>
 				<item>
 					<first>color-edge-hint</first>
@@ -304,11 +304,11 @@
 				</item>
 				<item>
 					<first>color-grid</first>
-					<second>30</second>
+					<second>31</second>
 				</item>
 				<item>
 					<first>color-label</first>
-					<second>31</second>
+					<second>32</second>
 				</item>
 			</colors>
 		</item>
@@ -317,11 +317,11 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>24</second>
+					<second>25</second>
 				</item>
 				<item>
 					<first>line-color</first>
-					<second>32</second>
+					<second>33</second>
 				</item>
 			</colors>
 		</item>
@@ -367,7 +367,7 @@
 				</item>
 				<item>
 					<first>line-color-selected</first>
-					<second>27</second>
+					<second>28</second>
 				</item>
 			</colors>
 		</item>
@@ -389,11 +389,11 @@
 				</item>
 				<item>
 					<first>color-comment</first>
-					<second>32</second>
+					<second>33</second>
 				</item>
 				<item>
 					<first>color-hot</first>
-					<second>33</second>
+					<second>34</second>
 				</item>
 				<item>
 					<first>color-info</first>
@@ -553,7 +553,7 @@
 				</item>
 				<item>
 					<first>color-subtext</first>
-					<second>23</second>
+					<second>24</second>
 				</item>
 			</colors>
 		</item>
@@ -575,11 +575,11 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>32</second>
+					<second>33</second>
 				</item>
 				<item>
 					<first>grid-color</first>
-					<second>28</second>
+					<second>29</second>
 				</item>
 			</colors>
 		</item>
@@ -651,7 +651,7 @@
 				</item>
 				<item>
 					<first>background-color-selection</first>
-					<second>27</second>
+					<second>28</second>
 				</item>
 				<item>
 					<first>background-found-line</first>
@@ -680,11 +680,11 @@
 				</item>
 				<item>
 					<first>color-arrow</first>
-					<second>32</second>
+					<second>33</second>
 				</item>
 				<item>
 					<first>color-slider</first>
-					<second>32</second>
+					<second>33</second>
 				</item>
 				<item>
 					<first>color-slider-hover</first>
@@ -705,7 +705,7 @@
 				</item>
 				<item>
 					<first>line-color</first>
-					<second>32</second>
+					<second>33</second>
 				</item>
 				<item>
 					<first>tick-color</first>
@@ -726,7 +726,7 @@
 				</item>
 				<item>
 					<first>line-color</first>
-					<second>32</second>
+					<second>33</second>
 				</item>
 			</colors>
 		</item>
@@ -739,15 +739,15 @@
 				</item>
 				<item>
 					<first>control-background-color</first>
-					<second>26</second>
+					<second>27</second>
 				</item>
 				<item>
 					<first>cursor-color</first>
-					<second>28</second>
+					<second>29</second>
 				</item>
 				<item>
 					<first>drop-line-color</first>
-					<second>28</second>
+					<second>29</second>
 				</item>
 				<item>
 					<first>info-background-color</first>
@@ -866,7 +866,7 @@
 				</item>
 				<item>
 					<first>color-number</first>
-					<second>29</second>
+					<second>30</second>
 				</item>
 				<item>
 					<first>color-preprocessor</first>
@@ -899,7 +899,7 @@
 				</item>
 				<item>
 					<first>tab-background-color-hover</first>
-					<second>25</second>
+					<second>26</second>
 				</item>
 				<item>
 					<first>tab-color-active</first>
@@ -1041,6 +1041,7 @@
 		<item>117, 113, 94, 255</item>
 		<item>62, 62, 64, 255</item>
 		<item>255, 255, 255, 255</item>
+		<item>110, 199, 47, 255</item>
 		<item>120, 120, 120, 255</item>
 		<item>61, 61, 61, 255</item>
 		<item>28, 151, 234, 255</item>
@@ -1052,7 +1053,6 @@
 		<item>58, 58, 58, 255</item>
 		<item>81, 82, 80, 255</item>
 		<item>20, 20, 20, 255</item>
-		<item>110, 199, 47, 255</item>
 		<item>168, 0, 0, 255</item>
 		<item>30, 31, 28, 0</item>
 		<item>71, 40, 0, 255</item>

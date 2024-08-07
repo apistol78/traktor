@@ -197,11 +197,34 @@ std::wstring StyleSheet::getValue(const std::wstring_view& name) const
 	return value;
 }
 
+Ref< StyleSheet > StyleSheet::cleanup() const
+{
+	Ref< StyleSheet > ss = new StyleSheet();
+
+	ss->m_include = m_include;
+	ss->m_values = m_values;
+
+	for (const auto& entity : m_entities)
+	{
+		for (const auto& it : entity.colors)
+		{
+			const Color4ub& rclr = m_palette[it.second];
+			ss->setColor(entity.typeName, it.first, rclr);
+		}
+	}
+
+	return ss;
+}
+
 Ref< StyleSheet > StyleSheet::merge(const StyleSheet* right) const
 {
 	Ref< StyleSheet > ss = new StyleSheet();
 
+	ss->m_include = m_include;
 	ss->m_entities = m_entities;
+	ss->m_palette = m_palette;
+	ss->m_values = m_values;
+
 	for (const auto& entity : right->m_entities)
 	{
 		for (const auto& it : entity.colors)
@@ -211,7 +234,6 @@ Ref< StyleSheet > StyleSheet::merge(const StyleSheet* right) const
 		}
 	}
 
-	ss->m_values = m_values;
 	for (const auto& it : right->m_values)
 		ss->setValue(it.first, it.second);
 
