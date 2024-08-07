@@ -83,10 +83,13 @@ public:
 
 	//@}
 
+	/*! Cleanup this style sheet, i.e. remove unused colors in palette etc. */
+	Ref< StyleSheet > cleanup() const;
+
 	/*! Merge this style sheet with another.
 	 *
 	 * Styles defined in right override existing styles.
-	 * */
+	 */
 	Ref< StyleSheet > merge(const StyleSheet* right) const;
 
 	virtual void serialize(ISerializer& s) override;

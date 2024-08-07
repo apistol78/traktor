@@ -97,6 +97,7 @@ Ref< StyleSheet > loadStyleSheet(const Path& pathName, bool resolve)
 			return lh.typeName < rh.typeName;
 		});
 
+		styleSheet = styleSheet->cleanup();
 		return styleSheet;
 	}
 	else
@@ -107,7 +108,7 @@ bool saveStyleSheet(const Path& pathName, const StyleSheet* styleSheet)
 {
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, File::FmWrite);
 	if (file)
-		return xml::XmlSerializer(file).writeObject(styleSheet);
+		return xml::XmlSerializer(file).writeObject(styleSheet->cleanup());
 	else
 		return false;
 }
@@ -537,8 +538,13 @@ void ThemeForm::eventTreeActivateItem(TreeViewItemActivateEvent* event)
 	TreeViewItem* itemEntity = getEntity(itemElement);
 	T_ASSERT(itemEntity != nullptr);
 
+	const Color4ub currentColor = m_styleSheet->getColor(
+		itemEntity->getText(),
+		itemElement->getText()
+	);
+
 	ColorDialog colorDialog;
-	colorDialog.create(this, L"Set Element Color", Dialog::WsDefaultFixed | ColorDialog::WsAlpha);
+	colorDialog.create(this, L"Set Element Color", Dialog::WsDefaultFixed | ColorDialog::WsAlpha, Color4f::fromColor4ub(currentColor));
 	if (colorDialog.showModal() == ui::DialogResult::Ok)
 	{
 		const int32_t imageIndex = itemElement->getImage(0);
