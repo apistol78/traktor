@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Math/Color4f.h"
 #include "Shape/Editor/Bake/IProbe.h"
 
 namespace traktor::shape
@@ -20,14 +21,16 @@ class SkyProbe : public IProbe
 public:
 	SkyProbe() = default;
 
-	explicit SkyProbe(const Vector4& sunDirection);
+	explicit SkyProbe(const Color4f& skyOverHorizon, const Color4f& skyUnderHorizon, float intensity);
 
 	virtual Color4f sampleRadiance(const Vector4& direction) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	Vector4 m_sunDirection;
+	Color4f m_skyOverHorizon;
+	Color4f m_skyUnderHorizon;
+	float m_intensity;
 };
 	
 }

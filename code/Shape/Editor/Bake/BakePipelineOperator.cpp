@@ -195,7 +195,11 @@ void addSky(
 )
 {
 	const Vector4 sunDirection = entityData->getTransform().axisY();
-	tracerTask->addTracerEnvironment(new TracerEnvironment(new SkyProbe(sunDirection)));
+	tracerTask->addTracerEnvironment(new TracerEnvironment(new SkyProbe(
+		skyComponentData->getSkyOverHorizon(),
+		skyComponentData->getSkyUnderHorizon(),
+		skyComponentData->getIntensity()
+	)));
 
 	/*
 	const auto& textureId = skyComponentData->getTexture();

@@ -66,11 +66,16 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
+	float getIntensity() const { return m_intensity; }
+
+	const Color4f& getSkyOverHorizon() const { return m_skyOverHorizon; }
+
+	const Color4f& getSkyUnderHorizon() const { return m_skyUnderHorizon; }
+
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 	const resource::Id< render::ITexture >& getTexture() const { return m_texture; }
 
-	float getIntensity() const { return m_intensity; }
 
 private:
 	friend class SkyComponent;
