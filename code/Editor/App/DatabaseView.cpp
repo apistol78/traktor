@@ -22,6 +22,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringArray.h"
 #include "Core/System/OS.h"
+#include "Core/Thread/JobManager.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -1131,6 +1132,18 @@ void DatabaseView::setEnable(bool enable)
 	ui::Container::setEnable(enable);
 }
 
+void DatabaseView::cancelPreviewJobs()
+{
+	for (auto job : m_previewJobs)
+		job->cancel();
+
+	while (!m_previewJobs.empty())
+	{
+		m_previewJobs.front()->wait();
+		m_previewJobs.pop_front();
+	}
+}
+
 int32_t DatabaseView::getIconIndex(const TypeInfo* instanceType) const
 {
 	int32_t iconIndex = 2;
@@ -1262,6 +1275,8 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView,
 
 void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 {
+	cancelPreviewJobs();
+
 	// Grid is only visible in "split" mode.
 	const int32_t viewMode = m_toolViewMode->getSelected();
 	if (viewMode != 1)
@@ -1315,29 +1330,30 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 		// Get thumbnail preview of instance.
 		const TypeInfo* instanceType = childInstance->getPrimaryType();
 
+		for (const TypeInfo* type = instanceType; type != nullptr; type = type->getSuper())
+		{
+			Ref< ui::StyleBitmap > itemImage = new ui::StyleBitmap(type->getName());
+			if (itemImage->getSystemBitmap(m_listInstances) != nullptr)
+			{
+				item->setImage(itemImage);
+				break;
+			}
+		}
+
 		for (auto browsePreview : m_browsePreview)
 		{
 			const TypeInfoSet previewTypes = browsePreview->getPreviewTypes();
 			if (previewTypes.find(instanceType) != previewTypes.end())
 			{
-				item->setImage(browsePreview->generate(
-					m_editor,
-					childInstance
-				));
-				break;
-			}
-		}
-
-		if (item->getImage() == nullptr)
-		{
-			for (const TypeInfo* type = instanceType; type != nullptr; type = type->getSuper())
-			{
-				Ref< ui::StyleBitmap > itemImage = new ui::StyleBitmap(type->getName());
-				if (itemImage->getSystemBitmap(m_listInstances) != nullptr)
+				m_previewJobs.push_back(JobManager::getInstance().add([=]()
 				{
-					item->setImage(itemImage);
-					break;
-				}
+					item->setImage(browsePreview->generate(
+						m_editor,
+						childInstance
+					));
+					m_listInstances->requestUpdate();
+				}));
+				break;
 			}
 		}
 	}

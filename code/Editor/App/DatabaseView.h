@@ -15,6 +15,7 @@
 namespace traktor
 {
 
+class Job;
 class PropertyGroup;
 
 }
@@ -107,11 +108,14 @@ private:
 	Ref< db::Database > m_db;
 	AutoPtr< Filter > m_filter;
 	RefArray< const IBrowsePreview > m_browsePreview;
+	RefArray< Job > m_previewJobs;
 	RefArray< IWizardTool > m_wizardTools;
 	std::set< Guid > m_rootInstances;
 	std::set< Guid > m_favoriteInstances;
 	std::wstring m_filterText;
 	int32_t m_filterCountDown;
+
+	void cancelPreviewJobs();
 
 	int32_t getIconIndex(const TypeInfo* instanceType) const;
 

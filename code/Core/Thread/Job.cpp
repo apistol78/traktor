@@ -98,6 +98,11 @@ bool Job::wait(int32_t timeout)
 	return m_finished;
 }
 
+void Job::cancel()
+{
+	m_task = nullptr;
+}
+
 void Job::stop()
 {
 	m_finished = true;

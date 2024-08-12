@@ -37,6 +37,8 @@ public:
 
 	virtual bool wait(int32_t timeout = -1) override final;
 
+	void cancel();
+
 	void stop();
 
 	bool stopped() const;

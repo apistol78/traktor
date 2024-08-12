@@ -137,8 +137,9 @@ void JobQueue::threadWorker()
 		}
 
 		// Execute job.
-		if (job->m_task)
-			job->m_task();
+		auto task = job->m_task;
+		if (task)
+			task();
 		job->m_finished = true;
 		T_SAFE_RELEASE(job);
 
