@@ -1346,11 +1346,12 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 			const TypeInfoSet previewTypes = browsePreview->getPreviewTypes();
 			if (previewTypes.find(instanceType) != previewTypes.end())
 			{
-				m_previewJobs.push_back(JobManager::getInstance().add([=]()
+				Ref< db::Instance > childInstanceRef = childInstance;
+				m_previewJobs.push_back(JobManager::getInstance().add([=, this]()
 				{
 					item->setImage(browsePreview->generate(
 						m_editor,
-						childInstance
+						childInstanceRef
 					));
 					m_listInstances->requestUpdate();
 				}));

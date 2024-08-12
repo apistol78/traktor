@@ -61,8 +61,8 @@ protected:
 	virtual void destroy() { delete this; }
 
 private:
-	enum { MaxJobCount = 512 * 1024 };
-	enum { MaxJobSize = sizeof(Job) };
+	static constexpr size_t MaxJobCount = 512 * 1024;
+	static constexpr size_t MaxJobSize = sizeof(Job);
 
 	void* m_block;
 	BlockAllocator m_blockAllocator;
