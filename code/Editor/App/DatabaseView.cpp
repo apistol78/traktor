@@ -520,6 +520,7 @@ bool DatabaseView::create(ui::Widget* parent)
 
 void DatabaseView::destroy()
 {
+	cancelPreviewJobs();
 	ui::Container::destroy();
 }
 
