@@ -18,6 +18,12 @@
 
 namespace traktor::runtime
 {
+	namespace
+	{
+	
+const int32_t c_playPriority = 1000;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.AudioLayer", AudioLayer, Layer)
 
@@ -61,7 +67,7 @@ void AudioLayer::play()
 
 	sound::SoundPlayer* soundPlayer = m_environment->getAudio()->getSoundPlayer();
 	if (soundPlayer)
-		m_handle = soundPlayer->play(m_sound, 0);
+		m_handle = soundPlayer->play(m_sound, c_playPriority);
 	else
 		m_handle = nullptr;
 }
@@ -141,6 +147,7 @@ void AudioLayer::update(const UpdateInfo& info)
 {
 	T_PROFILER_SCOPE(L"AudioLayer update");
 
+	// Stop sound if resource has changed.
 	if (m_sound.changed())
 	{
 		if (m_handle != nullptr)
@@ -149,8 +156,12 @@ void AudioLayer::update(const UpdateInfo& info)
 			m_handle = nullptr;
 		}
 		m_sound.consume();
+
+		if (m_repeat)
+			m_autoPlay = true;
 	}
 
+	// Start playing sound if auto play is enabled.
 	if (
 		m_autoPlay &&
 		(!m_handle || !m_handle->isPlaying())
@@ -158,12 +169,13 @@ void AudioLayer::update(const UpdateInfo& info)
 	{
 		sound::SoundPlayer* soundPlayer = m_environment->getAudio()->getSoundPlayer();
 		if (soundPlayer)
-			m_handle = soundPlayer->play(m_sound, 0);
+			m_handle = soundPlayer->play(m_sound, c_playPriority);
 
 		if (!m_repeat)
 			m_autoPlay = false;
 	}
 
+	// Update tweens and set playback parameters.
 	if (m_handle)
 	{
 		for (auto& it : m_tweens)
