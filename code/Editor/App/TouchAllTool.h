@@ -1,20 +1,17 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#ifndef traktor_editor_TouchAllTool_H
-#define traktor_editor_TouchAllTool_H
+#pragma once
 
 #include "Editor/IEditorTool.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class TouchAllTool : public IEditorTool
 {
@@ -30,8 +27,5 @@ public:
 	virtual bool launch(ui::Widget* parent, IEditor* editor, const PropertyGroup* param) override final;
 };
 
-	}
 }
-
-#endif	// traktor_editor_TouchAllTool_H
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,8 +15,10 @@ namespace traktor
 
 class Job;
 
-	namespace ui
-	{
+}
+
+namespace traktor::ui
+{
 
 class Button;
 class CheckBox;
@@ -24,10 +26,10 @@ class Edit;
 class GridView;
 class ProgressBar;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IEditor;
 
@@ -36,7 +38,7 @@ class SearchToolDialog : public ui::Dialog
 	T_RTTI_CLASS;
 
 public:
-	SearchToolDialog(IEditor* editor);
+	explicit SearchToolDialog(IEditor* editor);
 
 	virtual void destroy() override final;
 
@@ -74,6 +76,4 @@ private:
 	void jobSearch(std::wstring needle, bool regExp, bool caseSensitive);
 };
 
-	}
 }
-

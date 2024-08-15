@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,12 +17,10 @@
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
+	namespace
 	{
-		namespace
-		{
 
 struct SettingsPagePredicate
 {
@@ -35,7 +33,7 @@ struct SettingsPagePredicate
 			return false;
 
 		// Sort using name of type.
-		int32_t r = compareIgnoreCase(lh->getName(), rh->getName());
+		const int32_t r = compareIgnoreCase(lh->getName(), rh->getName());
 		if (r < 0)
 			return true;
 		else
@@ -43,7 +41,7 @@ struct SettingsPagePredicate
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.SettingsDialog", SettingsDialog, ui::ConfigDialog)
 
@@ -119,5 +117,4 @@ void SettingsDialog::eventDialogClick(ui::ButtonClickEvent* event)
 	}
 }
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -44,12 +44,10 @@
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridView.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
+	namespace
 	{
-		namespace
-		{
 
 /*! Stylize member name.
  *
@@ -201,7 +199,7 @@ Ref< const ReflectionMember > searchMember(db::Instance* instance, Reflection* r
 			return member;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void searchInstance(db::Instance* instance, const std::wstring& needle, bool regExp, bool caseSensitive, ui::GridView* gridResults)
@@ -253,7 +251,7 @@ void searchGroup(db::Group* group, const std::wstring& needle, bool regExp, bool
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.SearchToolDialog", SearchToolDialog, ui::Dialog)
 
@@ -337,8 +335,8 @@ void SearchToolDialog::show()
 
 void SearchToolDialog::search(const std::wstring& needle)
 {
-	bool regExp = m_checkRegExp->isChecked();
-	bool caseSensitive = m_checkCaseSensitive->isChecked();
+	const bool regExp = m_checkRegExp->isChecked();
+	const bool caseSensitive = m_checkCaseSensitive->isChecked();
 
 	m_gridResults->removeAllRows();
 	m_jobSearch = JobManager::getInstance().add([=, this](){
@@ -359,7 +357,7 @@ void SearchToolDialog::eventSearchKey(ui::KeyDownEvent* event)
 {
 	if (m_editSearch->isEnable(true) && event->getVirtualKey() == ui::VkReturn)
 	{
-		std::wstring needle = m_editSearch->getText();
+		const std::wstring needle = m_editSearch->getText();
 		if (!needle.empty())
 			search(needle);
 	}
@@ -367,7 +365,7 @@ void SearchToolDialog::eventSearchKey(ui::KeyDownEvent* event)
 
 void SearchToolDialog::eventButtonSearchClick(ui::ButtonClickEvent* event)
 {
-	std::wstring needle = m_editSearch->getText();
+	const std::wstring needle = m_editSearch->getText();
 	if (!needle.empty())
 		search(needle);
 }
@@ -477,5 +475,4 @@ void SearchToolDialog::jobSearch(std::wstring needle, bool regExp, bool caseSens
 	);
 }
 
-	}
 }

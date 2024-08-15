@@ -1,13 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#ifndef traktor_editor_WorkspaceDialog_H
-#define traktor_editor_WorkspaceDialog_H
+#pragma once
 
 #include "Ui/ConfigDialog.h"
 
@@ -16,15 +15,17 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace ui
-	{
+}
+
+namespace traktor::ui
+{
 
 class Edit;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class WorkspaceDialog : public ui::ConfigDialog
 {
@@ -43,7 +44,4 @@ private:
 	void eventDialogClick(ui::ButtonClickEvent* event);
 };
 
-	}
 }
-
-#endif	// traktor_editor_SettingsDialog_H

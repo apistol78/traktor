@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,19 +10,17 @@
 #include "Editor/App/Shortcut.h"
 #include "Ui/Application.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 std::pair< int, ui::VirtualKey > parseShortcut(const std::wstring& keyDesc)
 {
 	std::pair< int, ui::VirtualKey > value;
 	value.first = 0;
 
-	size_t pos = keyDesc.find_first_of(L',');
-	std::wstring state = pos != keyDesc.npos ? keyDesc.substr(0, pos) : L"";
-	std::wstring key = pos != keyDesc.npos ? keyDesc.substr(pos + 1) : keyDesc;
+	const size_t pos = keyDesc.find_first_of(L',');
+	const std::wstring state = pos != keyDesc.npos ? keyDesc.substr(0, pos) : L"";
+	const std::wstring key = pos != keyDesc.npos ? keyDesc.substr(pos + 1) : keyDesc;
 
 	if (!key.empty())
 	{
@@ -82,5 +80,4 @@ std::wstring describeShortcut(const std::pair< int, ui::VirtualKey >& shortcut)
 	return keyDesc;
 }
 
-	}
 }

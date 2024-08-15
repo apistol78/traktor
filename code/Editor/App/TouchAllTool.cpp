@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,10 +15,8 @@
 #include "Editor/App/TouchAllTool.h"
 #include "I18N/Text.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.TouchAllTool", 0, TouchAllTool, IEditorTool)
 
@@ -83,5 +81,4 @@ bool TouchAllTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGro
 	return true;
 }
 
-	}
 }

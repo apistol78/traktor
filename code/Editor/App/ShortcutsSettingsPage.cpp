@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,10 +24,8 @@
 #include "Ui/GridView/GridItem.h"
 #include "Ui/ShortcutEdit.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ShortcutsSettingsPage", 0, ShortcutsSettingsPage, ISettingsPage)
 
@@ -96,7 +94,7 @@ bool ShortcutsSettingsPage::apply(PropertyGroup* settings)
 		Ref< PropertyString > propertyKey = row->getData< PropertyString >(L"PROPERTYKEY");
 		T_ASSERT(propertyKey);
 
-		PropertyString::value_type_t value = PropertyString::get(propertyKey);
+		const PropertyString::value_type_t value = PropertyString::get(propertyKey);
 		if (!value.empty())
 			settings->setProperty(
 				L"Editor.Shortcuts/" + items[0]->getText(),
@@ -116,7 +114,7 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 		Ref< PropertyString > propertyKey = row->getData< PropertyString >(L"PROPERTYKEY");
 		T_ASSERT(propertyKey);
 
-		std::pair< int, ui::VirtualKey > key = parseShortcut(PropertyString::get(propertyKey));
+		const std::pair< int, ui::VirtualKey > key = parseShortcut(PropertyString::get(propertyKey));
 		if (key.first || key.second != ui::VkNull)
 		{
 			std::wstring keyDesc = L"";
@@ -222,12 +220,11 @@ void ShortcutsSettingsPage::eventResetAll(ui::ButtonClickEvent* event)
 			const RefArray< ui::GridItem >& items = row->get();
 			T_ASSERT(items.size() == 2);
 
-			std::wstring value = m_originalSettings->getProperty< std::wstring >(L"Editor.Shortcuts/" + items[0]->getText());
+			const std::wstring value = m_originalSettings->getProperty< std::wstring >(L"Editor.Shortcuts/" + items[0]->getText());
 			row->setData(L"PROPERTYKEY", new PropertyString(value));
 		}
 		updateShortcutGrid();
 	}
 }
 
-	}
 }
