@@ -117,6 +117,11 @@ void GridRow::set(uint32_t index, GridItem* item)
 	m_items[index] = item;
 }
 
+void GridRow::set(uint32_t index, IBitmap* image)
+{
+	set(index, new GridItem(image));
+}
+
 Ref< GridItem > GridRow::get(uint32_t index) const
 {
 	return index < m_items.size() ? m_items[index] : nullptr;
