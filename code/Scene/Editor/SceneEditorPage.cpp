@@ -359,6 +359,8 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_NEW_LAYER"), 5, ui::Command(L"Scene.Editor.NewLayer")));
 	m_entityToolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &SceneEditorPage::eventEntityToolClick);
 
+	m_imageStatic = new ui::StyleBitmap(L"Scene.LayerStatic");
+	m_imageDynamic = new ui::StyleBitmap(L"Scene.LayerDynamic");
 	m_imageHidden = new ui::StyleBitmap(L"Scene.LayerHidden");
 	m_imageVisible = new ui::StyleBitmap(L"Scene.LayerVisible");
 	m_imageLocked = new ui::StyleBitmap(L"Scene.LayerLocked");
@@ -367,6 +369,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_instanceGrid = new ui::GridView();
 	m_instanceGrid->create(m_entityPanel, ui::GridView::WsMultiSelect | ui::GridView::WsAutoEdit | ui::WsDoubleBuffer);
 	m_instanceGrid->addColumn(new ui::GridColumn(L"", 200_ut, true));
+	m_instanceGrid->addColumn(new ui::GridColumn(L"", 30_ut));
 	m_instanceGrid->addColumn(new ui::GridColumn(L"", 30_ut));
 	m_instanceGrid->addColumn(new ui::GridColumn(L"", 30_ut));
 	m_instanceGrid->addEventHandler< ui::SelectionChangeEvent >(this, &SceneEditorPage::eventInstanceSelect);
@@ -1153,6 +1156,9 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 
 	row->add(item);
 
+	// Create "dynamic" check box.
+	row->add(entityAdapter->isDynamic(false) ? m_imageDynamic : m_imageStatic);
+
 	// Create "visible" check box.
 	row->add(entityAdapter->isVisible(false) ? m_imageVisible : m_imageHidden);
 
@@ -1561,6 +1567,27 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 		T_ASSERT(entityAdapter);
 
+		if (entityAdapter->isDynamic(false))
+		{
+			item->setImage(m_imageStatic);
+			entityAdapter->setDynamic(false);
+		}
+		else
+		{
+			item->setImage(m_imageDynamic);
+			entityAdapter->setDynamic(true);
+		}
+
+		m_instanceGrid->update();
+	}
+	else if (event->getColumn() == 2)
+	{
+		ui::GridRow* row = event->getRow();
+		ui::GridItem* item = row->get(2);
+
+		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
+		T_ASSERT(entityAdapter);
+
 		if (entityAdapter->isVisible(false))
 		{
 			item->setImage(m_imageHidden);
@@ -1575,15 +1602,15 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 		m_instanceGrid->update();
 		m_context->enqueueRedraw(nullptr);
 	}
-	else if (event->getColumn() == 2)
+	else if (event->getColumn() == 3)
 	{
 		ui::GridRow* row = event->getRow();
-		ui::GridItem* item = row->get(2);
+		ui::GridItem* item = row->get(3);
 
 		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 		T_ASSERT(entityAdapter);
 
-		if (entityAdapter->isLocked())
+		if (entityAdapter->isLocked(false))
 		{
 			item->setImage(m_imageUnlocked);
 			entityAdapter->setLocked(false);

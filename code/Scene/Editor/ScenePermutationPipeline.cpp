@@ -113,16 +113,6 @@ Ref< ISerializable > ScenePermutationPipeline::buildProduct(
 	if (scenePermutationAsset->m_overrideWorldRenderSettings)
 		scenePermutation->setWorldRenderSettings(scenePermutationAsset->m_overrideWorldRenderSettings);
 
-	//for (auto layer : scenePermutation->getLayers())
-	//{
-	//	if (std::find(includeLayers.begin(), includeLayers.end(), layer->getName()) != includeLayers.end())
-	//	{
-	//		auto editorAttributes = layer->getComponent< world::EditorAttributesComponentData >();
-	//		if (editorAttributes)
-	//			editorAttributes->include = true;
-	//	}
-	//}
-
 	return scenePermutation;
 }
 

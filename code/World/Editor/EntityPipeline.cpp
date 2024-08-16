@@ -20,7 +20,6 @@
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"
 #include "World/IEntityEventData.h"
-#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/EntityPipeline.h"
 
 namespace traktor::world
@@ -205,10 +204,6 @@ Ref< ISerializable > EntityPipeline::buildProduct(
 	else if (auto componentData = dynamic_type_cast< const IEntityComponentData* >(sourceAsset))
 	{
 		auto ownerEntityData = mandatory_non_null_type_cast< const EntityData* >(buildParams);
-
-		// Remove editor only component data.
-		if (is_a< EditorAttributesComponentData >(componentData))
-			return nullptr;
 
 		// Create a reflection of the component data.
 		Ref< Reflection > reflection = Reflection::create(sourceAsset);

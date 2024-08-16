@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="10">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="39">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="40">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<exposureMode>Fixed</exposureMode>
@@ -61,7 +61,6 @@
 		<fogDensity>0</fogDensity>
 		<fogDensityMax>1</fogDensityMax>
 		<fogColor>1, 1, 1, 1</fogColor>
-		<irradianceGrid>{2D8C2976-00FC-7548-BBFC-3A4CBF1A15AB}</irradianceGrid>
 		<imageProcess>
 			<disabled>{00000000-0000-0000-0000-000000000000}</disabled>
 			<low>{00000000-0000-0000-0000-000000000000}</low>
@@ -101,10 +100,16 @@
 								<rotation>-0.406247, 0.249812, 0.116489, 0.871199</rotation>
 							</transform>
 							<components>
-								<item type="traktor.weather.SkyComponentData" version="4">
+								<item type="traktor.weather.SkyComponentData" version="8">
 									<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
 									<texture>{6B82B195-D88E-7845-BDC3-AF813E924CE1}</texture>
 									<intensity>1</intensity>
+									<saturation>1</saturation>
+									<skyOverHorizon>0.2, 0.5, 0.85, 1</skyOverHorizon>
+									<skyUnderHorizon>0.1, 0.1, 0.12, 1</skyUnderHorizon>
+									<clouds>true</clouds>
+									<cloudAmbientTop>0.99, 0.98, 1.18, 1</cloudAmbientTop>
+									<cloudAmbientBottom>0.23, 0.39, 0.51, 1</cloudAmbientBottom>
 								</item>
 								<item type="traktor.world.LightComponentData" version="12">
 									<lightType>Directional</lightType>
@@ -194,12 +199,6 @@
 						</item>
 					</entityData>
 				</item>
-				<item type="traktor.world.EditorAttributesComponentData">
-					<visible>true</visible>
-					<locked>false</locked>
-					<include>true</include>
-					<dynamic>false</dynamic>
-				</item>
 			</components>
 		</item>
 		<item type="traktor.world.EntityData" version="2">
@@ -217,12 +216,6 @@
 			<components>
 				<item type="traktor.world.GroupComponentData">
 					<entityData/>
-				</item>
-				<item type="traktor.world.EditorAttributesComponentData">
-					<visible>true</visible>
-					<locked>false</locked>
-					<include>true</include>
-					<dynamic>false</dynamic>
 				</item>
 			</components>
 		</item>

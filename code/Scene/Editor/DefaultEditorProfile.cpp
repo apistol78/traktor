@@ -27,7 +27,6 @@
 // Entity factories
 #include "Weather/WeatherFactory.h"
 #include "World/Entity/WorldEntityFactory.h"
-#include "World/Editor/WorldEditorEntityFactory.h"
 
 // Entity renderers
 #include "World/Entity/CullingRenderer.h"
@@ -89,7 +88,6 @@ void DefaultEditorProfile::createEntityFactories(
 ) const
 {
 	outEntityFactories.push_back(new world::WorldEntityFactory(true));
-	outEntityFactories.push_back(new world::WorldEditorEntityFactory());
 	outEntityFactories.push_back(new weather::WeatherFactory());
 }
 

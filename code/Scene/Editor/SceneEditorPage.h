@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -118,6 +118,8 @@ private:
 	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::ToolBar > m_entityToolBar;
 	Ref< ui::ToolBarButton > m_buttonFilterEntity;
+	Ref< ui::IBitmap > m_imageStatic;
+	Ref< ui::IBitmap > m_imageDynamic;
 	Ref< ui::IBitmap > m_imageHidden;
 	Ref< ui::IBitmap > m_imageVisible;
 	Ref< ui::IBitmap > m_imageLocked;

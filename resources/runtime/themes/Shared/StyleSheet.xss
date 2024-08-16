@@ -217,6 +217,14 @@
 			<second>$(Images.Path)/Scene/LayerAdd.svg</second>
 		</item>
 		<item>
+			<first>Scene.LayerStatic</first>
+			<second>$(Images.Path)/Scene/LayerStatic.svg</second>
+		</item>
+		<item>
+			<first>Scene.LayerDynamic</first>
+			<second>$(Images.Path)/Scene/LayerDynamic.svg</second>
+		</item>
+		<item>
 			<first>Scene.LayerHidden</first>
 			<second>$(Images.Path)/Scene/LayerHidden.svg</second>
 		</item>

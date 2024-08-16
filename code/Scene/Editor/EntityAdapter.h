@@ -207,7 +207,7 @@ public:
 
 	void setDynamic(bool dynamic);
 
-	bool isDynamic() const;
+	bool isDynamic(bool includingParents = true) const;
 
 	bool isPrefab() const;
 

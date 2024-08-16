@@ -429,12 +429,18 @@ void EntityAdapter::setDynamic(bool dynamic)
 		m_entity->setDynamic(dynamic);
 }
 
-bool EntityAdapter::isDynamic() const
+bool EntityAdapter::isDynamic(bool includingParents) const
 {
 	if (m_entityData->getState().dynamic)
 		return true;
 
-	return m_parent != nullptr ? m_parent->isDynamic() : false;
+	if (includingParents)
+	{
+		if (m_parent != nullptr && m_parent->isDynamic(true))
+			return true;
+	}
+
+	return false;
 }
 
 bool EntityAdapter::isPrefab() const
