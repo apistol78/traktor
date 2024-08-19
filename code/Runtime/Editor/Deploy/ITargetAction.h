@@ -32,7 +32,7 @@ class T_DLLCLASS ITargetAction : public Object
 public:
 	struct IProgressListener : public IRefCount
 	{
-		virtual void notifyLog(const std::wstring& log) = 0;
+		virtual void notifyLog(int32_t level, const std::wstring& log) = 0;
 
 		virtual void notifyTargetActionProgress(int32_t currentStep, int32_t maxStep) = 0;
 	};

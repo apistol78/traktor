@@ -259,6 +259,7 @@ private:
 
 LogStream::LogStream(int32_t level, ILogTarget* globalTarget)
 :	OutputStream(new LogStreamGlobalBuffer(level, globalTarget), LineEnd::Unix)
+,	m_level(level)
 {
 }
 
@@ -267,6 +268,11 @@ LogStream::~LogStream()
 	T_EXCEPTION_GUARD_BEGIN
 	setBuffer(nullptr);
 	T_EXCEPTION_GUARD_END
+}
+
+int32_t LogStream::getLevel() const
+{
+	return m_level;
 }
 
 ILogTarget* LogStream::getGlobalTarget()

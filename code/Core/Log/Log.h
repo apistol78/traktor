@@ -40,6 +40,8 @@ public:
 
 	virtual ~LogStream();
 
+	int32_t getLevel() const;
+
 	ILogTarget* getGlobalTarget();
 
 	void setGlobalTarget(ILogTarget* target);
@@ -47,6 +49,9 @@ public:
 	ILogTarget* getLocalTarget();
 
 	void setLocalTarget(ILogTarget* target);
+
+private:
+	int32_t m_level;
 };
 
 	namespace log

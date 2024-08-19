@@ -111,9 +111,9 @@ public:
 	{
 	}
 
-	virtual void notifyLog(const std::wstring& log) override final
+	virtual void notifyLog(int32_t level, const std::wstring& log) override final
 	{
-		m_buildLogTarget->log(0, 0, log.c_str());
+		m_buildLogTarget->log(0, level, log.c_str());
 	}
 
 	virtual void notifyTargetActionProgress(int32_t currentStep, int32_t maxStep) override final

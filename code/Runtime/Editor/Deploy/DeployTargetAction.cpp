@@ -290,7 +290,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 				while ((result = stdOutReader.readLine(str)) == PipeReader::RtOk)
 				{
 					if (progressListener)
-						progressListener->notifyLog(str);
+						progressListener->notifyLog(log::info.getLevel(), str);
 					else
 						log::info << str << Endl;
 				}
@@ -301,7 +301,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 				while ((result = stdErrReader.readLine(str)) == PipeReader::RtOk)
 				{
 					if (progressListener)
-						progressListener->notifyLog(str);
+						progressListener->notifyLog(log::error.getLevel(), str);
 					else
 						log::error << str << Endl;
 				}

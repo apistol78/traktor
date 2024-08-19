@@ -244,7 +244,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 						}
 					}
 					else if (progressListener)
-						progressListener->notifyLog(str);
+						progressListener->notifyLog(log::info.getLevel(), str);
 					else
 						log::info << str << Endl;
 				}
@@ -258,7 +258,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 					if (!str.empty())
 					{
 						if (progressListener)
-							progressListener->notifyLog(str);
+							progressListener->notifyLog(log::error.getLevel(), str);
 						else
 							log::error << str << Endl;
 						errors.push_back(str);
