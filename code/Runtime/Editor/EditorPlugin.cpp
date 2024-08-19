@@ -103,14 +103,20 @@ const struct { const wchar_t* human; const wchar_t* code; } c_languageCodes[] =
 class TargetInstanceProgressListener : public RefCountImpl< ITargetAction::IProgressListener >
 {
 public:
-	explicit TargetInstanceProgressListener(TargetListControl* targetListControl, TargetInstance* targetInstance, TargetState targetState)
-	:	m_targetListControl(targetListControl)
+	explicit TargetInstanceProgressListener(ILogTarget* buildLogTarget, TargetListControl* targetListControl, TargetInstance* targetInstance, TargetState targetState)
+	:	m_buildLogTarget(buildLogTarget)
+	,	m_targetListControl(targetListControl)
 	,	m_targetInstance(targetInstance)
 	,	m_targetState(targetState)
 	{
 	}
 
-	void notifyTargetActionProgress(int32_t currentStep, int32_t maxStep)
+	virtual void notifyLog(const std::wstring& log) override final
+	{
+		m_buildLogTarget->log(0, 0, log.c_str());
+	}
+
+	virtual void notifyTargetActionProgress(int32_t currentStep, int32_t maxStep) override final
 	{
 		m_targetInstance->setState(m_targetState);
 		m_targetInstance->setBuildProgress((currentStep * 100) / maxStep);
@@ -118,6 +124,7 @@ public:
 	}
 
 private:
+	Ref< ILogTarget > m_buildLogTarget;
 	Ref< TargetListControl > m_targetListControl;
 	Ref< TargetInstance > m_targetInstance;
 	TargetState m_targetState;
@@ -307,7 +314,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 				Ref< PropertyGroup > tweakSettings = getTweakSettings();
 
 				// Add build output data action.
-				action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
+				action.listener = new TargetInstanceProgressListener(m_buildLogTarget, m_targetList, targetInstance, TsBuilding);
 				action.action = new BuildTargetAction(
 					m_editor->getSourceDatabase(),
 					m_editor->getSettings(),
@@ -370,6 +377,9 @@ void EditorPlugin::handleWorkspaceOpened()
 
 	// Enable widgets.
 	m_toolBar->setEnable(true);
+
+	// Create build/launch/migrate log target.
+	m_buildLogTarget = createLogTarget(L"Output");
 
 	updateTargetManagers();
 }
@@ -603,7 +613,7 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 		Ref< PropertyGroup > tweakSettings = getTweakSettings();
 
 		// Add build output data action.
-		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
+		action.listener = new TargetInstanceProgressListener(m_buildLogTarget, m_targetList, targetInstance, TsBuilding);
 		action.action = new BuildTargetAction(
 			m_editor->getSourceDatabase(),
 			m_editor->getSettings(),
@@ -617,7 +627,7 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 		chain.actions.push_back(action);
 
 		// Add deploy and launch actions.
-		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsDeploying);
+		action.listener = new TargetInstanceProgressListener(m_buildLogTarget, m_targetList, targetInstance, TsDeploying);
 		action.action = new DeployTargetAction(
 			m_editor->getSourceDatabase(),
 			m_editor->getSettings(),
@@ -635,7 +645,7 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 		);
 		chain.actions.push_back(action);
 
-		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsLaunching);
+		action.listener = new TargetInstanceProgressListener(m_buildLogTarget, m_targetList, targetInstance, TsLaunching);
 		action.action = new LaunchTargetAction(
 			m_editor->getSourceDatabase(),
 			m_editor->getSettings(),
@@ -684,7 +694,7 @@ void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
 		Ref< PropertyGroup > tweakSettings = getTweakSettings();
 
 		// Add build output data action.
-		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
+		action.listener = new TargetInstanceProgressListener(m_buildLogTarget, m_targetList, targetInstance, TsBuilding);
 		action.action = new BuildTargetAction(
 			m_editor->getSourceDatabase(),
 			m_editor->getSettings(),
@@ -768,7 +778,7 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 		pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);
 
 		// Add build output data action.
-		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
+		action.listener = new TargetInstanceProgressListener(m_buildLogTarget, m_targetList, targetInstance, TsBuilding);
 		action.action = new BuildTargetAction(
 			m_editor->getSourceDatabase(),
 			m_editor->getSettings(),
@@ -782,7 +792,7 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 		chain.actions.push_back(action);
 
 		// Add migrate actions.
-		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsMigrating);
+		action.listener = new TargetInstanceProgressListener(m_buildLogTarget, m_targetList, targetInstance, TsMigrating);
 		action.action = new MigrateTargetAction(
 			m_editor->getSourceDatabase(),
 			m_editor->getSettings(),

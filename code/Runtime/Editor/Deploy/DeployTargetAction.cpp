@@ -288,13 +288,23 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 			{
 				PipeReader::Result result;
 				while ((result = stdOutReader.readLine(str)) == PipeReader::RtOk)
-					log::info << str << Endl;
+				{
+					if (progressListener)
+						progressListener->notifyLog(str);
+					else
+						log::info << str << Endl;
+				}
 			}
 			else if (pipe == process->getPipeStream(IProcess::SpStdErr))
 			{
 				PipeReader::Result result;
 				while ((result = stdErrReader.readLine(str)) == PipeReader::RtOk)
-					log::error << str << Endl;
+				{
+					if (progressListener)
+						progressListener->notifyLog(str);
+					else
+						log::error << str << Endl;
+				}
 			}
 		}
 		else if (result == IProcess::Terminated)
@@ -302,8 +312,8 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	}
 
 	const int32_t exitCode = process->exitCode();
-	if (exitCode != 0)
-		log::error << L"Process \"" << deployTool.getExecutable() << L" deploy\" failed with exit code " << exitCode << L"." << Endl;
+	//if (exitCode != 0)
+	//	log::error << L"Process \"" << deployTool.getExecutable() << L" deploy\" failed with exit code " << exitCode << L"." << Endl;
 
 	if (progressListener)
 		progressListener->notifyTargetActionProgress(2, 2);

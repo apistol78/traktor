@@ -117,6 +117,7 @@ private:
 	Ref< ui::ToolBarDropDown > m_toolLanguage;
 	Ref< TargetListControl > m_targetList;
 	Ref< ui::Tab > m_tabOutput;
+	Ref< ILogTarget > m_buildLogTarget;
 	std::map< std::wstring, Ref< ILogTarget > > m_logTargets;
 	// \}
 

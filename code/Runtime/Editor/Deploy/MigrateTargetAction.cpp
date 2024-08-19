@@ -302,6 +302,8 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 							}
 						}
 					}
+					else if (progressListener)
+						progressListener->notifyLog(str);
 					else
 						log::info << str << Endl;
 				}
@@ -314,7 +316,10 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 					str = trim(str);
 					if (!str.empty())
 					{
-						log::error << str << Endl;
+						if (progressListener)
+							progressListener->notifyLog(str);
+						else
+							log::error << str << Endl;
 						errors.push_back(str);
 					}
 				}
@@ -324,16 +329,16 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 			break;
 	}
 
-	if (!errors.empty())
-	{
-		log::error << L"Unsuccessful migrate, error(s):" << Endl;
-		for (std::list< std::wstring >::const_iterator i = errors.begin(); i != errors.end(); ++i)
-			log::error << L"\t" << *i << Endl;
-	}
+	//if (!errors.empty())
+	//{
+	//	log::error << L"Unsuccessful migrate, error(s):" << Endl;
+	//	for (std::list< std::wstring >::const_iterator i = errors.begin(); i != errors.end(); ++i)
+	//		log::error << L"\t" << *i << Endl;
+	//}
 
 	const int32_t exitCode = process->exitCode();
-	if (exitCode != 0)
-		log::error << L"Process \"" << deployTool.getExecutable() << L" migrate\" failed with exit code " << exitCode << L"." << Endl;
+	//if (exitCode != 0)
+	//	log::error << L"Process \"" << deployTool.getExecutable() << L" migrate\" failed with exit code " << exitCode << L"." << Endl;
 
 	return exitCode == 0;
 }

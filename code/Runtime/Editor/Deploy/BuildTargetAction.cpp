@@ -360,6 +360,8 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 							}
 						}
 					}
+					else if (progressListener)
+						progressListener->notifyLog(str);
 					else
 						log::info << str << Endl;
 				}
@@ -372,7 +374,10 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 					str = trim(str);
 					if (!str.empty())
 					{
-						log::error << str << Endl;
+						if (progressListener)
+							progressListener->notifyLog(str);
+						else
+							log::error << str << Endl;
 						errors.push_back(str);
 					}
 				}
@@ -382,16 +387,16 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 			break;
 	}
 
-	if (!errors.empty())
-	{
-		log::error << L"Unsuccessful build, error(s):" << Endl;
-		for (const auto& error : errors)
-			log::error << L"\t" << error << Endl;
-	}
+	//if (!errors.empty())
+	//{
+	//	log::error << L"Unsuccessful build, error(s):" << Endl;
+	//	for (const auto& error : errors)
+	//		log::error << L"\t" << error << Endl;
+	//}
 
 	const int32_t exitCode = process->exitCode();
-	if (exitCode != 0)
-		log::error << L"Process \"" << ss.str() << L"\" failed with exit code " << exitCode << L"." << Endl;
+	//if (exitCode != 0)
+	//	log::error << L"Process \"" << ss.str() << L"\" failed with exit code " << exitCode << L"." << Endl;
 
 	return exitCode == 0;
 }
