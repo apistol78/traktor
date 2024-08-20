@@ -880,7 +880,7 @@ int ScriptManagerLua::classGc(lua_State* luaState)
 #endif
 
 	ITypedObject* object = toTypedObject(luaState, 1);
-	if (object)
+	if (object) [[likely]]
 	{
 #if T_LOG_OBJECT_GC
 		if (typeName.empty())
@@ -912,7 +912,7 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 #endif
 	{
 		Ref< ITypedObject > object = runtimeDispatch->invoke(0, top - 1, argv).getObject();
-		if (!object)
+		if (!object) [[unlikely]]
 			return 0;
 
 		lua_rawgeti(luaState, LUA_REGISTRYINDEX, rc.classTableRef);
@@ -953,14 +953,14 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	T_ASSERT(runtimeDispatch);
 
 	const int32_t top = lua_gettop(luaState);
-	if (top < 2)
+	if (top < 2) [[unlikely]]
 		return 0;
 
 	const char* methodName = lua_tostring(luaState, 1);
 	T_ASSERT(methodName);
 
 	ITypedObject* object = toTypedObject(luaState, 2);
-	if (!object)
+	if (!object) [[unlikely]]
 	{
 		log::error << L"Unable to call method \"" << mbstows(methodName) << L"\", class " << runtimeClass->getExportType().getName() << L"; null object" << Endl;
 		return 0;
@@ -996,11 +996,11 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	T_ASSERT(runtimeDispatch);
 
 	const int32_t top = lua_gettop(luaState);
-	if (top < 1)
+	if (top < 1) [[unlikely]]
 		return 0;
 
 	ITypedObject* object = toTypedObject(luaState, 1);
-	if (!object)
+	if (!object) [[unlikely]]
 	{
 		const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 		log::error << L"Unable to call method \"" << mbstows(findRuntimeClassMethodName(runtimeClass, runtimeDispatch)) << L"\"; null object." << Endl;
@@ -1036,7 +1036,7 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 	T_ASSERT(runtimeDispatch);
 
 	const int32_t top = lua_gettop(luaState);
-	if (top < 0)
+	if (top < 0) [[unlikely]]
 		return 0;
 
 	Any argv[10];
@@ -1068,7 +1068,7 @@ int ScriptManagerLua::classSetProperty(lua_State* luaState)
 	T_ASSERT(runtimeDispatch);
 
 	ITypedObject* object = toTypedObject(luaState, 1);
-	if (!object)
+	if (!object) [[unlikely]]
 	{
 		const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 		log::error << L"Unable to set property \"" << mbstows(findRuntimeClassPropertyName(runtimeClass, runtimeDispatch)) << L"\"; null object" << Endl;
@@ -1100,7 +1100,7 @@ int ScriptManagerLua::classGetProperty(lua_State* luaState)
 	T_ASSERT(runtimeDispatch);
 
 	ITypedObject* object = toTypedObject(luaState, 1);
-	if (!object)
+	if (!object) [[unlikely]]
 	{
 		const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 		log::error << L"Unable to get property \"" << mbstows(findRuntimeClassPropertyName(runtimeClass, runtimeDispatch)) << L"\"; null object" << Endl;
@@ -1135,7 +1135,7 @@ int ScriptManagerLua::classAdd(lua_State* luaState)
 	T_ASSERT(runtimeDispatch);
 
 	const int32_t top = lua_gettop(luaState);
-	if (top < 1)
+	if (top < 1) [[unlikely]]
 		return 0;
 
 	ITypedObject* object = nullptr;
@@ -1152,7 +1152,7 @@ int ScriptManagerLua::classAdd(lua_State* luaState)
 		arg = ms_instance->toAny(1);
 	}
 
-	if (!object)
+	if (!object) [[unlikely]]
 	{
 		log::error << L"Unable to call add operator, class " << runtimeClass->getExportType().getName() << L"; null object" << Endl;
 		return 0;
@@ -1186,11 +1186,11 @@ int ScriptManagerLua::classSubtract(lua_State* luaState)
 	T_ASSERT(runtimeDispatch);
 
 	const int32_t top = lua_gettop(luaState);
-	if (top < 1)
+	if (top < 1) [[unlikely]]
 		return 0;
 
 	ITypedObject* object = toTypedObject(luaState, 1);
-	if (!object)
+	if (!object) [[unlikely]]
 	{
 		log::error << L"Unable to call subtract operator, class " << runtimeClass->getExportType().getName() << L"; null object" << Endl;
 		return 0;
@@ -1226,7 +1226,7 @@ int ScriptManagerLua::classMultiply(lua_State* luaState)
 	T_ASSERT(runtimeDispatch);
 
 	const int32_t top = lua_gettop(luaState);
-	if (top < 1)
+	if (top < 1) [[unlikely]]
 		return 0;
 
 	ITypedObject* object = nullptr;
@@ -1243,7 +1243,7 @@ int ScriptManagerLua::classMultiply(lua_State* luaState)
 		arg = ms_instance->toAny(1);
 	}
 
-	if (!object)
+	if (!object) [[unlikely]]
 	{
 		log::error << L"Unable to call multiply operator, class " << runtimeClass->getExportType().getName() << L"; null object" << Endl;
 		return 0;
@@ -1277,11 +1277,11 @@ int ScriptManagerLua::classDivide(lua_State* luaState)
 	T_ASSERT(runtimeDispatch);
 
 	const int32_t top = lua_gettop(luaState);
-	if (top < 1)
+	if (top < 1) [[unlikely]]
 		return 0;
 
 	ITypedObject* object = toTypedObject(luaState, 1);
-	if (!object)
+	if (!object) [[unlikely]]
 	{
 		log::error << L"Unable to call divide operator, class " << runtimeClass->getExportType().getName() << L"; null object" << Endl;
 		return 0;
