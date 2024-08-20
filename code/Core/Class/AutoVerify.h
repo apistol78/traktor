@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -44,7 +44,7 @@ namespace traktor
 		static void __check__(int32_t index, const class Any& arg)
 		{
 #	if T_VERIFY_USING_EXCEPTIONS
-			if (!CastAny< ArgumentType >::accept(arg))
+			if (!CastAny< ArgumentType >::accept(arg)) [[unlikely]]
 				throw traktor::RuntimeException(str(
 					L"Incorrect type of argument %d; expect %s, got %ls.",
 					index + 1,

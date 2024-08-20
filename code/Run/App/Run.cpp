@@ -561,7 +561,7 @@ std::wstring Run::evaluate(const std::wstring& fileName)
 	return o->getProduct();
 }
 
-void Run::registerRuntimeClasses(script::IScriptManager* scriptManager)
+void Run::registerRuntimeClasses(IRuntimeClassRegistrar* runtimeRegistrar)
 {
 	OrderedClassRegistrar registrar;
 
@@ -659,7 +659,7 @@ void Run::registerRuntimeClasses(script::IScriptManager* scriptManager)
 	registrar.registerClass(classRun);
 
 	// Register all classes to script manager; in class hierarchy order.
-	registrar.registerClassesInOrder(scriptManager);
+	registrar.registerClassesInOrder(runtimeRegistrar);
 }
 
 }

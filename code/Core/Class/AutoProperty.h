@@ -147,7 +147,7 @@ struct FnPropertyGet final : public IRuntimeDispatch
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
-		ValueType value = (*m_method)((ClassType*)(self));
+		const ValueType value = (*m_method)((ClassType*)(self));
 		return CastAny< ValueType >::set(value);
 	}
 };

@@ -48,13 +48,13 @@ struct Operator final : public IRuntimeDispatch
 	{
 		T_VERIFY_ARGUMENT_COUNT(1)
 
-		if (CastAny< Argument1Type >::accept(argv[0]))
+		if (CastAny< Argument1Type >::accept(argv[0])) [[likely]]
 		{
 			return CastAny< ReturnType >::set((T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 				CastAny< Argument1Type >::get(argv[0])
 			));
 		}
-		else
+		else [[unlikely]]
 			return Any();
 	}
 };

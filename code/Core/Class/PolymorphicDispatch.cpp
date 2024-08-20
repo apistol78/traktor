@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,9 +41,9 @@ void PolymorphicDispatch::signature(OutputStream& os) const
 
 Any PolymorphicDispatch::invoke(ITypedObject* self, uint32_t argc, const Any* argv) const
 {
-	if (argc < m_dispatches.size() && m_dispatches[argc])
+	if (argc < m_dispatches.size() && m_dispatches[argc]) [[likely]]
 		return m_dispatches[argc]->invoke(self, argc, argv);
-	else
+	else [[unlikely]]
 		return Any();
 }
 
