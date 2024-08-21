@@ -896,7 +896,11 @@ bool BakePipelineOperator::build(
 			// Replace with modified layer in output scene.
 			layers.push_back(flattenedLayer);
 		}
-		inoutSceneAsset->setLayers(layers);
+
+		// Only replace layers if we're actually tracing lightmaps.
+		if (configuration->getEnableLightmaps())
+			inoutSceneAsset->setLayers(layers);
+
 		images.clear();
 	}
 
