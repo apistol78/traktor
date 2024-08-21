@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "World/IEntityComponent.h"
+#include "World/IWorldComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,12 +26,21 @@ class IrradianceGrid;
 /*!
  * \ingroup World
  */
-class T_DLLCLASS IIrradianceGridComponent : public IEntityComponent
+class T_DLLCLASS IrradianceGridComponent : public IWorldComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual const IrradianceGrid* getIrradianceGrid() const = 0;
+	virtual void destroy() override final;
+
+	virtual void update(World* world, const UpdateParams& update) override final;
+
+	void setIrradianceGrid(const IrradianceGrid* irradianceGrid);
+
+	const IrradianceGrid* getIrradianceGrid() const;
+
+private:
+	Ref< const IrradianceGrid > m_irradianceGrid;
 };
 
 }

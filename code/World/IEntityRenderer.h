@@ -38,6 +38,12 @@ class WorldSetupContext;
  *
  * Each renderable type should have
  * a matching EntityRenderer.
+ * 
+ * "Setup" - Is called once per frame and view per renderable to prepare for frame.
+ * "Build" - Is called for each render pass, i.e. g-buffer, forward, velocity etc.
+ * 
+ * "Setup" and "Build" without renderable are called once per frame and view to prepare the renderer
+ * it self. Allow systems that, for example, gather renderables to do batching before rendering.
  */
 class T_DLLCLASS IEntityRenderer : public Object
 {

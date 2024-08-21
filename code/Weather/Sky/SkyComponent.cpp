@@ -20,9 +20,11 @@
 #include "Weather/Sky/SkyComponent.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
+#include "World/World.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
+#include "World/Entity/IrradianceGridComponent.h"
 #include "World/Entity/LightComponent.h"
 
 namespace traktor::weather
@@ -64,7 +66,7 @@ const int32_t c_indexCount = c_triangleCount * 3;
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.SkyComponent", SkyComponent, world::IIrradianceGridComponent)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.SkyComponent", SkyComponent, world::IEntityComponent)
 
 SkyComponent::SkyComponent(
 	const SkyComponentData& data,
@@ -211,6 +213,16 @@ void SkyComponent::destroy()
 void SkyComponent::setOwner(world::Entity* owner)
 {
 	m_owner = owner;
+}
+
+void SkyComponent::setWorld(world::World* world)
+{
+	if (world != nullptr)
+	{
+		world::IrradianceGridComponent* irradianceGridComponent = world->getComponent< world::IrradianceGridComponent >();
+		if (irradianceGridComponent)
+			irradianceGridComponent->setIrradianceGrid(m_irradianceGrid);
+	}
 }
 
 void SkyComponent::setTransform(const Transform& transform)

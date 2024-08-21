@@ -11,6 +11,7 @@
 #include "World/World.h"
 #include "World/Entity/CullingComponent.h"
 #include "World/Entity/EventManagerComponent.h"
+#include "World/Entity/IrradianceGridComponent.h"
 
 namespace traktor::world
 {
@@ -21,6 +22,7 @@ World::World(resource::IResourceManager* resourceManager, render::IRenderSystem*
 {
 	setComponent(new CullingComponent(resourceManager, renderSystem));
 	setComponent(new EventManagerComponent(512));
+	setComponent(new IrradianceGridComponent());
 }
 
 void World::destroy()

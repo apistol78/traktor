@@ -12,7 +12,7 @@
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
 #include "Weather/Sky/SkyComponentData.h"
-#include "World/Entity/IIrradianceGridComponent.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -61,7 +61,7 @@ namespace traktor::weather
 /*! Sky background component.
  * \ingroup Weather
  */
-class T_DLLCLASS SkyComponent : public world::IIrradianceGridComponent
+class T_DLLCLASS SkyComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
@@ -81,13 +81,13 @@ public:
 
 	virtual void setOwner(world::Entity* owner) override final;
 
+	virtual void setWorld(world::World* world) override final;
+
 	virtual void setTransform(const Transform& transform) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual void update(const world::UpdateParams& update) override final;
-
-	virtual const world::IrradianceGrid* getIrradianceGrid() const override final { return m_irradianceGrid; }
 
 	void setup(
 		const world::WorldSetupContext& context,

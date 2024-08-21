@@ -28,7 +28,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/IIrradianceGridComponent.h"
+#include "World/Entity/IrradianceGridComponent.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeComponent.h"
 #include "World/Entity/VolumetricFogComponent.h"
@@ -218,6 +218,10 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 		IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
 		if (entityRenderer)
 			m_gatheredView.renderables.push_back({ entityRenderer, component, EntityState::All });
+
+		// Filter out components used to setup frame's lighting etc.
+		if (auto irradianceGridComponent = dynamic_type_cast< const IrradianceGridComponent* >(component))
+			m_gatheredView.irradianceGrid = irradianceGridComponent->getIrradianceGrid();
 	}
 
 	for (auto entity : world->getEntities())
@@ -245,8 +249,6 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 				m_gatheredView.probes.push_back(probeComponent);
 			else if (auto volumetricFogComponent = dynamic_type_cast< const VolumetricFogComponent* >(component))
 				m_gatheredView.fog = volumetricFogComponent;
-			else if (auto irradianceGridComponent = dynamic_type_cast< const IIrradianceGridComponent* >(component))
-				m_gatheredView.irradianceGrid = irradianceGridComponent->getIrradianceGrid();
 		}
 	}
 
