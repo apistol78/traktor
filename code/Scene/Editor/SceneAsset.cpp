@@ -40,6 +40,19 @@ Ref< world::WorldRenderSettings > SceneAsset::getWorldRenderSettings() const
 	return m_worldRenderSettings;
 }
 
+void SceneAsset::setWorldComponent(world::IWorldComponentData* worldComponent)
+{
+	for (auto component : m_worldComponents)
+	{
+		if (is_type_a(type_of(worldComponent), type_of(component)))
+		{
+			component = worldComponent;
+			return;
+		}
+	}
+	m_worldComponents.push_back(worldComponent);
+}
+
 void SceneAsset::setWorldComponents(const RefArray< world::IWorldComponentData >& worldComponents)
 {
 	m_worldComponents = worldComponents;

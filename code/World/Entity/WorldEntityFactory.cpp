@@ -11,11 +11,12 @@
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
-#include "World/IEntityBuilder.h"
-#include "World/Entity/CameraComponent.h"
-#include "World/Entity/CameraComponentData.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
+#include "World/IEntityBuilder.h"
+#include "World/IrradianceGrid.h"
+#include "World/Entity/CameraComponent.h"
+#include "World/Entity/CameraComponentData.h"
 #include "World/Entity/DecalComponent.h"
 #include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEvent.h"
@@ -27,6 +28,8 @@
 #include "World/Entity/FacadeComponentData.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupComponentData.h"
+#include "World/Entity/IrradianceGridComponent.h"
+#include "World/Entity/IrradianceGridComponentData.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/PathComponent.h"
@@ -62,17 +65,15 @@ bool WorldEntityFactory::initialize(const ObjectStore& objectStore)
 
 const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< EntityData >();
-	typeSet.insert< ExternalEntityData >();
-	return typeSet;
+	return makeTypeInfoSet<
+		EntityData,
+		ExternalEntityData
+	>();
 }
 
 const TypeInfoSet WorldEntityFactory::getEntityEventTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< DecalEventData >();
-	return typeSet;
+	return makeTypeInfoSet< DecalEventData >();
 }
 
 const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
@@ -91,6 +92,11 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< VolumeComponentData >();
 	typeSet.insert< VolumetricFogComponentData >();
 	return typeSet;
+}
+
+const TypeInfoSet WorldEntityFactory::getWorldComponentTypes() const
+{
+	return makeTypeInfoSet< IrradianceGridComponentData >();
 }
 
 Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, const EntityData& entityData) const
@@ -172,7 +178,7 @@ Ref< IEntityEvent > WorldEntityFactory::createEntityEvent(const IEntityBuilder* 
 	return nullptr;
 }
 
-Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const
+Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const
 {
 	if (auto cameraComponentData = dynamic_type_cast< const CameraComponentData* >(&entityComponentData))
 		return new CameraComponent(cameraComponentData);
@@ -305,6 +311,19 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 	if (auto volumetricFogComponentData = dynamic_type_cast< const VolumetricFogComponentData* >(&entityComponentData))
 		return volumetricFogComponentData->createComponent(m_resourceManager, m_renderSystem);
 
+	return nullptr;
+}
+
+Ref< IWorldComponent > WorldEntityFactory::createWorldComponent(const IEntityBuilder* builder, const IWorldComponentData& worldComponentData) const
+{
+	if (auto irradianceGridComponentData = dynamic_type_cast< const IrradianceGridComponentData* >(&worldComponentData))
+	{
+		resource::Proxy< IrradianceGrid > irradianceGrid;
+		if (!m_resourceManager->bind(irradianceGridComponentData->getIrradianceGrid(), irradianceGrid))
+			return nullptr;
+
+		return new IrradianceGridComponent(irradianceGrid);
+	}
 	return nullptr;
 }
 

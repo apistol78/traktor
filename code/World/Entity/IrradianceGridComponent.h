@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Resource/Proxy.h"
 #include "World/IWorldComponent.h"
 
 // import/export mechanism.
@@ -31,16 +32,21 @@ class T_DLLCLASS IrradianceGridComponent : public IWorldComponent
 	T_RTTI_CLASS;
 
 public:
-	virtual void destroy() override final;
+	IrradianceGridComponent() = default;
 
-	virtual void update(World* world, const UpdateParams& update) override final;
+	explicit IrradianceGridComponent(const resource::Proxy< IrradianceGrid >& irradianceGrid);
 
 	void setIrradianceGrid(const IrradianceGrid* irradianceGrid);
 
 	const IrradianceGrid* getIrradianceGrid() const;
 
+	virtual void destroy() override final;
+
+	virtual void update(World* world, const UpdateParams& update) override final;
+
 private:
-	Ref< const IrradianceGrid > m_irradianceGrid;
+	resource::Proxy< IrradianceGrid > m_irradianceGrid;
+	bool m_explicit = false;
 };
 
 }

@@ -55,11 +55,15 @@ public:
 
 	virtual const TypeInfoSet getEntityComponentTypes() const override final;
 
+	virtual const TypeInfoSet getWorldComponentTypes() const override final;
+
 	virtual Ref< Entity > createEntity(const IEntityBuilder* builder, const EntityData& entityData) const override final;
 
 	virtual Ref< IEntityEvent > createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const override final;
 
-	virtual Ref< IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const override final;
+	virtual Ref< IEntityComponent > createEntityComponent(const IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const override final;
+
+	virtual Ref< IWorldComponent > createWorldComponent(const IEntityBuilder* builder, const IWorldComponentData& worldComponentData) const override final;
 
 private:
 	mutable Ref< resource::IResourceManager > m_resourceManager;

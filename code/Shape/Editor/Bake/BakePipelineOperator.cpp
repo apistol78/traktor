@@ -87,6 +87,7 @@
 #include "World/Entity/CameraComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponentData.h"
+#include "World/Entity/IrradianceGridComponentData.h"
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/VolumeComponentData.h"
 #include "Weather/Sky/SkyComponentData.h"
@@ -961,10 +962,9 @@ bool BakePipelineOperator::build(
 		));
 
 		// Modify scene with our generated irradiance grid resource.
-		// inoutSceneAsset->getWorldRenderSettings()->irradianceGrid = resource::Id< world::IrradianceGrid >(
-		// 	irradianceGridId
-		// );
-		// #fixme Need to add world component to reference baked irradiance grid.
+		inoutSceneAsset->setWorldComponent(new world::IrradianceGridComponentData(
+			resource::Id< world::IrradianceGrid >(irradianceGridId)
+		));
 	}
 
 	// Finally enqueue task to tracer processor.

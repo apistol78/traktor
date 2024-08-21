@@ -44,6 +44,8 @@ public:
 
 	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
 
+	void setWorldComponent(world::IWorldComponentData* worldComponents);
+
 	void setWorldComponents(const RefArray< world::IWorldComponentData >& worldComponents);
 
 	const RefArray< world::IWorldComponentData >& getWorldComponents() const;
