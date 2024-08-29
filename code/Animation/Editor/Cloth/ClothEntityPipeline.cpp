@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,7 +29,10 @@ bool ClothEntityPipeline::buildDependencies(
 ) const
 {
 	if (auto clothComponentData = dynamic_type_cast< const ClothComponentData* >(sourceAsset))
+	{
+		pipelineDepends->addDependency(clothComponentData->getCloth(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(clothComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
+	}
 	return true;
 }
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,6 +40,7 @@ class IResourceManager;
 namespace traktor::animation
 {
 
+class Cloth;
 class ClothComponent;
 
 /*!
@@ -71,13 +72,13 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
+	const resource::Id< Cloth >& getCloth() const { return m_cloth; }
+
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
+	resource::Id< Cloth > m_cloth;
 	resource::Id< render::Shader > m_shader;
-	uint32_t m_resolutionX = 10;
-	uint32_t m_resolutionY = 10;
-	float m_scale = 1.0f;
 	float m_jointRadius = 0.1f;
 	AlignedVector< Anchor > m_anchors;
 	uint32_t m_solverIterations = 4;

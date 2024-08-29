@@ -10,6 +10,7 @@
 #include "Animation/AnimatedMeshComponentRenderer.h"
 #include "Animation/AnimationResourceFactory.h"
 #include "Animation/Cloth/ClothRenderer.h"
+#include "Animation/Cloth/ClothResourceFactory.h"
 #include "Animation/Editor/AnimationEditorProfile.h"
 #include "Animation/Editor/AnimationComponentEditorFactory.h"
 #include "Animation/Editor/Cloth/ClothEntityEditorFactory.h"
@@ -52,6 +53,7 @@ void AnimationEditorProfile::createResourceFactories(
 ) const
 {
 	outResourceFactories.push_back(new AnimationResourceFactory());
+	outResourceFactories.push_back(new ClothResourceFactory());
 }
 
 void AnimationEditorProfile::createEntityFactories(

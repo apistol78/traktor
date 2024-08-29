@@ -43,6 +43,8 @@ class WorldRenderView;
 namespace traktor::animation
 {
 
+class Cloth;
+
 /*!
  * \ingroup Animation
  */
@@ -69,9 +71,7 @@ public:
 	bool create(
 		render::IRenderSystem* renderSystem,
 		const resource::Proxy< render::Shader >& shader,
-		uint32_t resolutionX,
-		uint32_t resolutionY,
-		float scale,
+		const resource::Proxy< Cloth >& cloth,
 		float jointRadius,
 		float damping,
 		uint32_t solverIterations
@@ -97,23 +97,18 @@ public:
 
 	void setNodeAnchor(render::handle_t jointName, const Vector4& jointOffset, uint32_t x, uint32_t y);
 
-	const AlignedVector< Node >& getNodes() const { return m_nodes; }
-
-	const AlignedVector< Edge >& getEdges() const { return m_edges; }
-
 private:
 	world::Entity* m_owner = nullptr;
+
+	resource::Proxy< Cloth > m_cloth;
+
 	AlignedVector< Node > m_nodes;
-	AlignedVector< Edge > m_edges;
 	Transform m_transform;
 	float m_time = 4.0f;
 	float m_updateTime = 0.0f;
-	float m_scale = 1.0f;
 	Scalar m_damping = 0.1_simd;
 	Scalar m_jointRadius = 0.1_simd;
 	uint32_t m_solverIterations = 4;
-	uint32_t m_resolutionX = 10;
-	uint32_t m_resolutionY = 10;
 	uint32_t m_triangleCount = 0;
 	traktor::Aabb3 m_aabb;
 	bool m_updateRequired = true;

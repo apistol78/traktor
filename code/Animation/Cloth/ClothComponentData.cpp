@@ -1,11 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Animation/Cloth/Cloth.h"
 #include "Animation/Cloth/ClothComponent.h"
 #include "Animation/Cloth/ClothComponentData.h"
 #include "Core/Serialization/AttributeRange.h"
@@ -21,24 +22,26 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.ClothComponentData", 1, ClothComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.ClothComponentData", 0, ClothComponentData, world::IEntityComponentData)
 
 Ref< ClothComponent > ClothComponentData::createComponent(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem
 ) const
 {
+	resource::Proxy< Cloth > cloth;
+	if (!resourceManager->bind(m_cloth, cloth))
+		return nullptr;
+
 	resource::Proxy< render::Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
 		return nullptr;
 
-	Ref< ClothComponent > clothEntity = new ClothComponent();
-	if (!clothEntity->create(
+	Ref< ClothComponent > clothComponent = new ClothComponent();
+	if (!clothComponent->create(
 		renderSystem,
 		shader,
-		m_resolutionX,
-		m_resolutionY,
-		m_scale,
+		cloth,
 		m_jointRadius,
 		m_damping,
 		m_solverIterations
@@ -48,7 +51,7 @@ Ref< ClothComponent > ClothComponentData::createComponent(
 	// Fixate nodes by setting infinite mass.
 	for (const auto& anchor : m_anchors)
 	{
-		clothEntity->setNodeAnchor(
+		clothComponent->setNodeAnchor(
 			render::getParameterHandle(anchor.jointName),
 			anchor.jointOffset,
 			anchor.x,
@@ -56,7 +59,7 @@ Ref< ClothComponent > ClothComponentData::createComponent(
 		);
 	}
 
-	return clothEntity;
+	return clothComponent;
 }
 
 int32_t ClothComponentData::getOrdinal() const
@@ -71,11 +74,8 @@ void ClothComponentData::setTransform(const world::EntityData* owner, const Tran
 void ClothComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
-	s >> Member< uint32_t >(L"resolutionX", m_resolutionX);
-	s >> Member< uint32_t >(L"resolutionY", m_resolutionY);
-	s >> Member< float >(L"scale", m_scale, AttributeRange(0.0f));
-	if (s.getVersion< ClothComponentData >() >= 1)
-		s >> Member< float >(L"jointRadius", m_jointRadius, AttributeRange(0.0f));
+	s >> resource::Member< Cloth >(L"cloth", m_cloth);
+	s >> Member< float >(L"jointRadius", m_jointRadius, AttributeRange(0.0f));
 	s >> MemberAlignedVector< Anchor, MemberComposite< Anchor > >(L"anchors", m_anchors);
 	s >> Member< uint32_t >(L"solverIterations", m_solverIterations, AttributeRange(0));
 	s >> Member< float >(L"damping", m_damping, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));

@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Animation/SkeletonComponent.h"
+#include "Animation/Cloth/Cloth.h"
 #include "Animation/Cloth/ClothComponent.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
@@ -37,70 +38,24 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothComponent", ClothComponent, worl
 bool ClothComponent::create(
 	render::IRenderSystem* renderSystem,
 	const resource::Proxy< render::Shader >& shader,
-	uint32_t resolutionX,
-	uint32_t resolutionY,
-	float scale,
+	const resource::Proxy< Cloth >& cloth,
 	float jointRadius,
 	float damping,
 	uint32_t solverIterations
 )
 {
-	const Vector4 positionBase(-scale / 2.0f, 0.0f, 0.0f, 1.0f);
-	const Vector4 positionScale(scale / resolutionX, 0.0f, -scale / resolutionX, 0.0f);
+	m_cloth = cloth;
 
-	m_nodes.resize(resolutionX * resolutionY);
-	for (uint32_t y = 0; y < resolutionY; ++y)
+	m_nodes.reserve(cloth->m_nodes.size());
+	for (const auto& node : cloth->m_nodes)
 	{
-		for (uint32_t x = 0; x < resolutionX; ++x)
-		{
-			m_nodes[x + y * resolutionX].jointName = 0;
-			m_nodes[x + y * resolutionX].position[0] =
-			m_nodes[x + y * resolutionX].position[1] = Vector4(float(x), 0.0f, float(y), 0.0f) * positionScale + positionBase;
-			m_nodes[x + y * resolutionX].texCoord = Vector2(float(x) / (resolutionX - 1), float(y) / (resolutionY - 1));
-			m_nodes[x + y * resolutionX].invMass = 1.0_simd;
-		}
+		auto& n = m_nodes.push_back();
+		n.jointName = 0;
+		n.position[0] =
+		n.position[1] = node.position;
+		n.texCoord = Vector2::zero(); // Vector2(float(x) / (resolutionX - 1), float(y) / (resolutionY - 1));
+		n.invMass = 1.0_simd;
 	}
-
-	uint32_t quadsX = resolutionX - 1;
-	uint32_t quadsY = resolutionY - 1;
-	Edge edge;
-
-	for (uint32_t y = 0; y < resolutionY; ++y)
-	{
-		for (uint32_t x = 0; x < quadsX; ++x)
-		{
-			edge.index[0] = y * resolutionX + x;
-			edge.index[1] = y * resolutionX + x + 1;
-			m_edges.push_back(edge);
-		}
-	}
-
-	for (uint32_t x = 0; x < resolutionX; ++x)
-	{
-		for (uint32_t y = 0; y < quadsY; ++y)
-		{
-			edge.index[0] = y * resolutionX + x;
-			edge.index[1] = y * resolutionX + x + resolutionX;
-			m_edges.push_back(edge);
-		}
-	}
-
-	for (uint32_t y = 0; y < quadsY; ++y)
-	{
-		for (uint32_t x = 0; x < quadsX; ++x)
-		{
-			edge.index[0] = y * resolutionX + x;
-			edge.index[1] = y * resolutionX + x + resolutionX + 1;
-			m_edges.push_back(edge);
-
-			edge.index[0] = y * resolutionX + x + 1;
-			edge.index[1] = y * resolutionX + x + resolutionX;
-			m_edges.push_back(edge);
-		}
-	}
-
-	for (auto& edge : m_edges)
-		edge.length = (m_nodes[edge.index[0]].position[0] - m_nodes[edge.index[1]].position[0]).xyz0().length();
 
 	m_solverIterations = solverIterations;
 
@@ -110,50 +65,24 @@ bool ClothComponent::create(
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat2, offsetof(ClothVertex, texCoord)));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, 2 * resolutionX * resolutionY * sizeof(ClothVertex), true);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, m_nodes.size() * sizeof(ClothVertex), true);
 	if (!m_vertexBuffer)
 		return false;
 
-	m_resolutionX = resolutionX;
-	m_resolutionY = resolutionY;
-	m_triangleCount = quadsX * quadsY * 2 * 2;
+	m_triangleCount = cloth->m_triangles.size() / 3;
 
-	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, m_triangleCount * 3 * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, cloth->m_triangles.size() * sizeof(uint16_t), false);
 	if (!m_indexBuffer)
 		return false;
 
 	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
 	T_ASSERT(index);
 
-	const uint16_t back = (uint16_t)(resolutionX * resolutionY);
-
-	for (uint32_t y = 0; y < quadsY; ++y)
-	{
-		for (uint32_t x = 0; x < quadsX; ++x)
-		{
-			// Front face
-			*index++ = x + y * resolutionX;
-			*index++ = x + y * resolutionX + 1;
-			*index++ = x + y * resolutionX + resolutionX;
-
-			*index++ = x + y * resolutionX + 1;
-			*index++ = x + y * resolutionX + 1 + resolutionX;
-			*index++ = x + y * resolutionX + resolutionX;
-
-			// Back face
-			*index++ = back + x + y * resolutionX + resolutionX;
-			*index++ = back + x + y * resolutionX + 1;
-			*index++ = back + x + y * resolutionX;
-
-			*index++ = back + x + y * resolutionX + resolutionX;
-			*index++ = back + x + y * resolutionX + 1 + resolutionX;
-			*index++ = back + x + y * resolutionX + 1;
-		}
-	}
+	for (auto t : cloth->m_triangles)
+		*index++ = (uint16_t)t;
 
 	m_indexBuffer->unlock();
 
-	m_scale = scale;
 	m_damping = Scalar(1.0f - damping);
 	m_jointRadius = Scalar(jointRadius);
 	m_shader = shader;
@@ -179,36 +108,26 @@ void ClothComponent::build(
 		ClothVertex* vertexFront = static_cast< ClothVertex* >(m_vertexBuffer->lock());
 		T_ASSERT(vertexFront);
 
-		ClothVertex* vertexBack = vertexFront + (m_resolutionX * m_resolutionY);
-
-		for (uint32_t y = 0; y < m_resolutionY; ++y)
+		for (uint32_t i = 0; i < (uint32_t)m_nodes.size(); ++i)
 		{
-			for (uint32_t x = 0; x < m_resolutionX; ++x)
+			const Cloth::Node& cn = m_cloth->m_nodes[i];
+			const Node& node = m_nodes[i];
+
+			const Vector4& p = node.position[0];
+
+			Vector4 nf = Vector4::zero();
+			if (cn.east != -1 && cn.north != -1)
 			{
-				const uint32_t offset = x + y * m_resolutionX;
-				const Node& node = m_nodes[offset];
-				const Vector4& p = node.position[0];
-
-				const Vector4 nx = x < (m_resolutionX - 1) ? m_nodes[offset + 1].position[0] : p;
-				const Vector4 px = x > 0 ? m_nodes[offset - 1].position[0] : p;
-
-				const Vector4 ny = y < (m_resolutionY - 1) ? m_nodes[offset + m_resolutionX].position[0] : p;
-				const Vector4 py = y > 0 ? m_nodes[offset - m_resolutionX].position[0] : p;
-
-				const Vector4 nf = cross(ny - py, nx - px).normalized();
-
-				p.storeUnaligned(vertexFront->position);
-				nf.storeUnaligned(vertexFront->normal);
-				vertexFront->texCoord[0] = node.texCoord.x;
-				vertexFront->texCoord[1] = node.texCoord.y;
-				vertexFront++;
-
-				p.storeUnaligned(vertexBack->position);
-				(-nf).storeUnaligned(vertexBack->normal);
-				vertexBack->texCoord[0] = node.texCoord.x;
-				vertexBack->texCoord[1] = node.texCoord.y;
-				vertexBack++;
+				const Vector4& nx = m_nodes[cn.east].position[0];
+				const Vector4& ny = m_nodes[cn.north].position[0];
+				nf = cross(ny - p, nx - p).normalized();
 			}
+
+			p.storeUnaligned(vertexFront->position);
+			nf.storeUnaligned(vertexFront->normal);
+			vertexFront->texCoord[0] = node.texCoord.x;
+			vertexFront->texCoord[1] = node.texCoord.y;
+			vertexFront++;
 		}
 
 		m_vertexBuffer->unlock();
@@ -310,15 +229,15 @@ void ClothComponent::update(const world::UpdateParams& update)
 			for (uint32_t i = 0; i < m_solverIterations; ++i)
 			{
 				// Satisfy edge lengths.
-				for (const auto& edge : m_edges)
+				for (const auto& edge : m_cloth->m_edges)
 				{
-					const Vector4 delta = m_nodes[edge.index[1]].position[0] - m_nodes[edge.index[0]].position[0];
+					const Vector4 delta = m_nodes[edge.indices[1]].position[0] - m_nodes[edge.indices[0]].position[0];
 					const Scalar deltaLength = delta.length();
 					if (deltaLength > FUZZY_EPSILON)
 					{
-						const Scalar diff = (deltaLength - edge.length) / deltaLength;
-						m_nodes[edge.index[0]].position[0] += delta * diff * m_nodes[edge.index[0]].invMass * 0.5_simd;
-						m_nodes[edge.index[1]].position[0] -= delta * diff * m_nodes[edge.index[1]].invMass * 0.5_simd;
+						const Scalar diff = (deltaLength - Scalar(edge.length)) / deltaLength;
+						m_nodes[edge.indices[0]].position[0] += delta * diff * m_nodes[edge.indices[0]].invMass * 0.5_simd;
+						m_nodes[edge.indices[1]].position[0] -= delta * diff * m_nodes[edge.indices[1]].invMass * 0.5_simd;
 					}
 				}
 
@@ -363,27 +282,16 @@ void ClothComponent::update(const world::UpdateParams& update)
 
 void ClothComponent::reset()
 {
-	const Vector4 positionBase(-m_scale / 2.0f, m_scale / 2.0f, 0.0f, 1.0f);
-	const Vector4 positionScale(m_scale / m_resolutionX, -m_scale / m_resolutionY, 0.0f, 0.0f);
-
-	for (uint32_t y = 0; y < m_resolutionY; ++y)
-	{
-		for (uint32_t x = 0; x < m_resolutionX; ++x)
-		{
-			m_nodes[x + y * m_resolutionX].position[0] =
-			m_nodes[x + y * m_resolutionX].position[1] = Vector4(float(x), float(y), 0.0f, 0.0f) * positionScale + positionBase;
-		}
-	}
 }
 
 void ClothComponent::setNodeAnchor(render::handle_t jointName, const Vector4& jointOffset, uint32_t x, uint32_t y)
 {
-	const uint32_t index = x + y * m_resolutionX;
-	if (index < m_resolutionX * m_resolutionY)
-	{
-		m_nodes[index].jointName = jointName;
-		m_nodes[index].jointOffset = jointOffset;
-	}
+	//const uint32_t index = x + y * m_resolutionX;
+	//if (index < m_resolutionX * m_resolutionY)
+	//{
+	//	m_nodes[index].jointName = jointName;
+	//	m_nodes[index].jointOffset = jointOffset;
+	//}
 }
 
 void ClothComponent::synchronize() const
