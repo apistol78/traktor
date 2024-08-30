@@ -53,8 +53,8 @@ bool ClothComponent::create(
 		n.jointName = 0;
 		n.position[0] =
 		n.position[1] = node.position;
-		n.texCoord = Vector2::zero(); // Vector2(float(x) / (resolutionX - 1), float(y) / (resolutionY - 1));
-		n.invMass = 1.0_simd;
+		n.texCoord = node.texCoord;
+		n.invMass = Scalar(node.invMass);
 	}
 
 	m_solverIterations = solverIterations;
@@ -177,7 +177,26 @@ void ClothComponent::destroy()
 
 void ClothComponent::setOwner(world::Entity* owner)
 {
-	m_owner = owner;
+	if (owner != m_owner)
+	{
+		m_owner = owner;
+		
+		// Reset time and update.
+		m_time = 4.0f;
+		m_updateTime = 0.0f;
+		m_updateRequired = true;
+
+		// Reset node positions.
+		if (m_cloth != nullptr)
+		{
+			for (size_t i = 0; i < m_nodes.size(); ++i)
+			{
+				auto& n = m_nodes[i];
+				n.position[0] =
+				n.position[1] = m_cloth->m_nodes[i].position;
+			}
+		}
+	}
 }
 
 void ClothComponent::setTransform(const Transform& transform)

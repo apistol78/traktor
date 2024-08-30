@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -34,16 +35,18 @@ public:
 	struct Node
 	{
 		Vector4 position;
-		int32_t east;
-		int32_t north;
+		Vector2 texCoord;
+		float invMass = 0.0f;
+		int32_t east = -1;
+		int32_t north = -1;
 
 		void serialize(ISerializer& s);
 	};
 
 	struct Edge
 	{
-		int32_t indices[2];
-		float length;
+		int32_t indices[2] = { 0, 0 };
+		float length = 0.0f;
 
 		void serialize(ISerializer& s);
 	};

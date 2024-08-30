@@ -27,6 +27,8 @@ void Cloth::serialize(ISerializer& s)
 void Cloth::Node::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"position", position);
+	s >> Member< Vector2 >(L"texCoord", texCoord);
+	s >> Member< float >(L"invMass", invMass);
 	s >> Member< int32_t >(L"east", east);
 	s >> Member< int32_t >(L"north", north);
 }
