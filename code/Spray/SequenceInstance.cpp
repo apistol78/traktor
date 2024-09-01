@@ -8,6 +8,8 @@
  */
 #include "Spray/Sequence.h"
 #include "Spray/SequenceInstance.h"
+#include "World/Entity.h"
+#include "World/World.h"
 #include "World/Entity/EventManagerComponent.h"
 
 namespace traktor::spray
@@ -30,11 +32,15 @@ void SequenceInstance::update(Context& context, const Transform& transform, floa
 
 	if (index != m_index && index >= 0 && index < (int32_t)keys.size())
 	{
-		//context.eventManager->raise(
-		//	keys[index].event,
-		//	context.owner,
-		//	context.owner ? Transform::identity() : transform
-		//);
+		world::EventManagerComponent* eventManager = context.owner->getWorld()->getComponent< world::EventManagerComponent >();
+		if (eventManager != nullptr)
+		{
+			eventManager->raise(
+				keys[index].event,
+				context.owner,
+				context.owner ? Transform::identity() : transform
+			);
+		}
 		m_index = index;
 	}
 }
