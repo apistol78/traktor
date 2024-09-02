@@ -24,6 +24,8 @@ namespace traktor::spray
 	namespace
 	{
 
+const resource::Id< render::Shader > c_shaderLifetime(L"{A83B0679-4DA7-7B4C-92F4-7A17738B8804}");
+
 void buildEffectDependencies(editor::IPipelineDepends* pipelineDepends, const EffectData* effectData)
 {
 	for (auto layer : effectData->getLayers())
@@ -139,6 +141,8 @@ bool EffectPipeline::buildDependencies(
 {
 	const EffectData* effectData = checked_type_cast< const EffectData* >(sourceAsset);
 	buildEffectDependencies(pipelineDepends, effectData);
+
+	pipelineDepends->addDependency(c_shaderLifetime, editor::PdfBuild | editor::PdfResource);
 	return true;
 }
 

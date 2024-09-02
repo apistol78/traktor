@@ -94,13 +94,6 @@ void EmitterInstanceGPU::update(Context& context, const Transform& transform, bo
 	m_needLifetimeUpdate = true;
 }
 
-void EmitterInstanceGPU::setup()
-{
-	// Kill points (swap with tail).
-	// Emit new points
-	// Evolve points
-}
-
 void EmitterInstanceGPU::render(
 	render::handle_t technique,
 	render::RenderContext* renderContext,

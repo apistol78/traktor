@@ -5,8 +5,8 @@
 			<id>{6B64B451-AE7F-A944-B65A-46884FB3F875}</id>
 			<comment/>
 			<position>
-				<first>91</first>
-				<second>214</second>
+				<first>107</first>
+				<second>195</second>
 			</position>
 			<parameterName>Spray_Points</parameterName>
 			<elements>
@@ -93,10 +93,10 @@ for (int i = 0; i < emitCount; ++i)
 		0.0f,	// orientation
 		1.0f,	// size
 		1.0f,	// inverseMass
-		0.0f	// age
+		0.0f		// age
 	);
 	$Points[id].msra = vec4(
-		1.0f,	// maxAge
+		2.0f,	// maxAge
 		0.3f,	// size
 		0.0f,	// random
 		1.0f		// alpha
@@ -104,7 +104,7 @@ for (int i = 0; i < emitCount; ++i)
 }
 
 // Evolve points.
-const vec4 G = vec4(0.0f, -1.0f, 0.0f, 0.0f) * $DeltaTime;
+const vec4 G = vec4(0.0f, -4.0f, 0.0f, 0.0f) * $DeltaTime;
 
 for (int i = 0; i < alive; ++i)
 {
@@ -130,7 +130,7 @@ $Head[0].alive = alive;
 			<id>{07182D2B-117D-9948-8785-F3DDC816EB9C}</id>
 			<comment/>
 			<position>
-				<first>72</first>
+				<first>107</first>
 				<second>110</second>
 			</position>
 			<parameterName>Spray_Head</parameterName>
@@ -166,7 +166,7 @@ $Head[0].alive = alive;
 			<comment/>
 			<position>
 				<first>129</first>
-				<second>273</second>
+				<second>280</second>
 			</position>
 			<parameterName>Spray_EmitCount</parameterName>
 			<type>Scalar</type>
@@ -176,7 +176,7 @@ $Head[0].alive = alive;
 			<id>{EFC7B03E-EBAC-E14F-9FA7-8448BD32A01E}</id>
 			<comment/>
 			<position>
-				<first>116</first>
+				<first>145</first>
 				<second>365</second>
 			</position>
 			<parameterName>Spray_DeltaTime</parameterName>

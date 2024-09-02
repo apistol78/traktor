@@ -203,10 +203,6 @@ void EmitterInstanceCPU::update(Context& context, const Transform& transform, bo
 #endif
 }
 
-void EmitterInstanceCPU::setup()
-{
-}
-
 void EmitterInstanceCPU::render(
 	render::handle_t technique,
 	render::RenderContext* renderContext,

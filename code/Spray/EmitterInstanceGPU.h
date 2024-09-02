@@ -55,8 +55,6 @@ public:
 
 	virtual void update(Context& context, const Transform& transform, bool emit, bool singleShot) override final;
 
-	virtual void setup() override final;
-
 	virtual void render(
 		render::handle_t technique,
 		render::RenderContext* renderContext,

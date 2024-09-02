@@ -117,12 +117,6 @@ void EffectLayerInstance::synchronize()
 		m_emitterInstance->synchronize();
 }
 
-void EffectLayerInstance::setup()
-{
-	if (m_emitterInstance)
-		m_emitterInstance->setup();
-}
-
 void EffectLayerInstance::render(
 	render::handle_t technique,
 	render::RenderContext* renderContext,

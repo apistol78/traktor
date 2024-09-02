@@ -121,12 +121,6 @@ void EffectComponent::update(const world::UpdateParams& update)
 	}
 }
 
-void EffectComponent::setup() const
-{
-	if (m_effectInstance)
-		m_effectInstance->setup();
-}
-
 void EffectComponent::render(
 	render::handle_t technique,
 	render::RenderContext* renderContext,

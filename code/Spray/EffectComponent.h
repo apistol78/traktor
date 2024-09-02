@@ -60,8 +60,6 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	void setup() const;
-
 	void render(
 		render::handle_t technique,
 		render::RenderContext* renderContext,

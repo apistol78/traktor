@@ -46,8 +46,6 @@ class T_DLLCLASS IEmitterInstance : public Object
 public:
 	virtual void update(Context& context, const Transform& transform, bool emit, bool singleShot) = 0;
 
-	virtual void setup() = 0;
-
 	virtual void render(
 		render::handle_t technique,
 		render::RenderContext* renderContext,

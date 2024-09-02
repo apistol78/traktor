@@ -54,8 +54,6 @@ public:
 
 	void synchronize();
 
-	void setup();
-
 	void render(
 		render::handle_t technique,
 		render::RenderContext* renderContext,

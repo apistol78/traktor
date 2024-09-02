@@ -49,19 +49,6 @@ void EffectRenderer::setup(
 	Object* renderable
 )
 {
-	auto effectComponent = static_cast< const EffectComponent* >(renderable);
-
-	const Aabb3 boundingBox = effectComponent->getWorldBoundingBox();
-	if (boundingBox.empty())
-		return;
-
-	// Early out of bounding sphere is outside of frustum.
-	const Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
-	const Scalar radius = boundingBox.getExtent().length();
-	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
-		return;
-
-	effectComponent->setup();
 }
 
 void EffectRenderer::setup(
