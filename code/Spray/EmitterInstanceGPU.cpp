@@ -80,14 +80,36 @@ EmitterInstanceGPU::~EmitterInstanceGPU()
 
 void EmitterInstanceGPU::update(Context& context, const Transform& transform, bool emit, bool singleShot)
 {
-	const Source* source = m_emitter->getSource();
-	if (source)
-	{
-		const float emitVelocity = 0.0f; // context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (dm.length() / context.deltaTime) : 0.0f;
-		const float emitConstant = source->getConstantRate() * context.deltaTime + m_emitFraction;
+	const Vector4 lastPosition = m_transform.translation();
+	m_transform = transform;
 
-		m_pendingEmit = (int32_t)emitConstant;
-		m_emitFraction = emitConstant - m_pendingEmit;
+	if (emit)
+	{
+		const Source* source = m_emitter->getSource();
+		if (source)
+		{
+			if (!singleShot)
+			{
+				const Vector4 dm = (lastPosition - m_transform.translation()).xyz0();
+
+				const float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (dm.length() / context.deltaTime) : 0.0f;
+				const float emitConstant = source->getConstantRate() * context.deltaTime + m_emitFraction;
+				const float emitTotal = emitVelocity + emitConstant;
+
+				m_pendingEmit = (int32_t)emitTotal;
+				m_emitFraction = emitTotal - m_pendingEmit;
+			}
+			else
+			{
+				m_pendingEmit = (int32_t)source->getConstantRate();
+				m_emitFraction = 0.0f;
+			}
+		}
+	}
+	else
+	{
+		m_pendingEmit = 0;
+		m_emitFraction = 0.0f;
 	}
 
 	m_pendingDeltaTime += context.deltaTime;

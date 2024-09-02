@@ -91,7 +91,7 @@ for (int i = 0; i < emitCount; ++i)
 	$Points[id].velocity = vec4(1, 4, 0, 0);
 	$Points[id].oaia = vec4(
 		0.0f,	// orientation
-		1.0f,	// size
+		2.0f,	// angularVelocity
 		1.0f,	// inverseMass
 		0.0f		// age
 	);
@@ -109,14 +109,19 @@ const vec4 G = vec4(0.0f, -4.0f, 0.0f, 0.0f) * $DeltaTime;
 for (int i = 0; i < alive; ++i)
 {
 	vec4 position = $Points[i].position;
+	float orientation = $Points[i].oaia.x;
 	vec4 velocity = $Points[i].velocity;
+	float angularVelocity = $Points[i].oaia.y;
 	float inverseMass = $Points[i].oaia.z;
 
 	position += velocity * inverseMass * $DeltaTime;
 	velocity += G * inverseMass;
 
+	orientation += angularVelocity * inverseMass * $DeltaTime;
+
 	$Points[i].position = position;
 	$Points[i].velocity = velocity;
+	$Points[i].oaia.x = orientation;
 	$Points[i].oaia.w += $DeltaTime;
 }
 
