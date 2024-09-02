@@ -34,7 +34,7 @@ struct VirtualSourceCallback
 		const Transform& transform,
 		const Vector4& deltaMotion,
 		uint32_t emitCount,
-		class EmitterInstance& emitterInstance
+		class EmitterInstanceCPU& emitterInstance
 	) = 0;
 };
 

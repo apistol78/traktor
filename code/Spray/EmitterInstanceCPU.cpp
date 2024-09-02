@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,7 +14,7 @@
 #include "Spray/Effect.h"
 #include "Spray/EffectInstance.h"
 #include "Spray/Emitter.h"
-#include "Spray/EmitterInstance.h"
+#include "Spray/EmitterInstanceCPU.h"
 #include "Spray/Types.h"
 #include "Spray/MeshRenderer.h"
 #include "Spray/Modifier.h"
@@ -43,28 +43,19 @@ const uint32_t c_maxAlive = c_maxEmitSingleShot;
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstance", EmitterInstance, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstanceCPU", EmitterInstanceCPU, IEmitterInstance)
 
-EmitterInstance::EmitterInstance(const Emitter* emitter, float duration)
-:	m_emitter(emitter)
-,	m_transform(Transform::identity())
-,	m_sortPlane(Vector4(0.0f, 0.0f, -1.0f), 0.0_simd)
-,	m_totalTime(0.0f)
-,	m_emitFraction(0.0f)
-,	m_warm(false)
-,	m_count(0)
-,	m_skip(1)
+Ref< EmitterInstanceCPU > EmitterInstanceCPU::createInstance(render::IRenderSystem* renderSystem, const Emitter* emitter, float duration)
 {
-	m_points.reserve(c_maxAlive);
-	m_renderPoints.reserve(c_maxAlive);
+	return new EmitterInstanceCPU(emitter, duration);
 }
 
-EmitterInstance::~EmitterInstance()
+EmitterInstanceCPU::~EmitterInstanceCPU()
 {
 	synchronize();
 }
 
-void EmitterInstance::update(Context& context, const Transform& transform, bool emit, bool singleShot)
+void EmitterInstanceCPU::update(Context& context, const Transform& transform, bool emit, bool singleShot)
 {
 	synchronize();
 
@@ -212,8 +203,13 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 #endif
 }
 
-void EmitterInstance::render(
+void EmitterInstanceCPU::setup()
+{
+}
+
+void EmitterInstanceCPU::render(
 	render::handle_t technique,
+	render::RenderContext* renderContext,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer,
@@ -244,7 +240,7 @@ void EmitterInstance::render(
 		m_emitter->getShader()->hasTechnique(technique)
 	)
 	{
-		pointRenderer->render(
+		pointRenderer->batchUntilFlush(
 			m_emitter->getShader(),
 			cameraPlane,
 			m_renderPoints,
@@ -260,7 +256,7 @@ void EmitterInstance::render(
 		distance < m_emitter->getCullMeshDistance()
 	)
 	{
-		meshRenderer->render(
+		meshRenderer->batchUntilFlush(
 			m_emitter->getMesh(),
 			m_emitter->meshOrientationFromVelocity(),
 			m_renderPoints
@@ -281,6 +277,7 @@ void EmitterInstance::render(
 
 			m_effectInstances[i]->render(
 				technique,
+				renderContext,
 				pointRenderer,
 				meshRenderer,
 				trailRenderer,
@@ -295,7 +292,7 @@ void EmitterInstance::render(
 	}
 }
 
-void EmitterInstance::synchronize() const
+void EmitterInstanceCPU::synchronize() const
 {
 #if defined(T_USE_UPDATE_JOBS)
 	if (m_job)
@@ -306,7 +303,21 @@ void EmitterInstance::synchronize() const
 #endif
 }
 
-void EmitterInstance::updateTask(float deltaTime)
+EmitterInstanceCPU::EmitterInstanceCPU(const Emitter* emitter, float duration)
+:	m_emitter(emitter)
+,	m_transform(Transform::identity())
+,	m_sortPlane(Vector4(0.0f, 0.0f, -1.0f), 0.0_simd)
+,	m_totalTime(0.0f)
+,	m_emitFraction(0.0f)
+,	m_warm(false)
+,	m_count(0)
+,	m_skip(1)
+{
+	m_points.reserve(c_maxAlive);
+	m_renderPoints.reserve(c_maxAlive);
+}
+
+void EmitterInstanceCPU::updateTask(float deltaTime)
 {
 	const Transform updateTransform = m_emitter->worldSpace() ? m_transform : Transform::identity();
 	const Scalar deltaTimeScalar(deltaTime);

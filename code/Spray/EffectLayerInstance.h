@@ -22,6 +22,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::render
+{
+
+class RenderContext;
+
+}
+
 namespace traktor::world
 {
 
@@ -34,7 +41,7 @@ namespace traktor::spray
 
 struct Context;
 class EffectLayer;
-class EmitterInstance;
+class IEmitterInstance;
 class MeshRenderer;
 class PointRenderer;
 class SequenceInstance;
@@ -48,7 +55,7 @@ class T_DLLCLASS EffectLayerInstance : public Object
 public:
 	explicit EffectLayerInstance(
 		const EffectLayer* layer,
-		EmitterInstance* emitterInstance,
+		IEmitterInstance* emitterInstance,
 		TrailInstance* trailInstance,
 		SequenceInstance* sequenceInstance
 	);
@@ -59,8 +66,11 @@ public:
 
 	void synchronize();
 
+	void setup();
+
 	void render(
 		render::handle_t technique,
+		render::RenderContext* renderContext,
 		PointRenderer* pointRenderer,
 		MeshRenderer* meshRenderer,
 		TrailRenderer* trailRenderer,
@@ -72,7 +82,7 @@ public:
 
 	Aabb3 getBoundingBox() const;
 
-	const EmitterInstance* getEmitterInstance() const { return m_emitterInstance; }
+	const IEmitterInstance* getEmitterInstance() const { return m_emitterInstance; }
 
 	const TrailInstance* getTrailInstance() const { return m_trailInstance; }
 
@@ -82,7 +92,7 @@ public:
 
 private:
 	Ref< const EffectLayer > m_layer;
-	Ref< EmitterInstance > m_emitterInstance;
+	Ref< IEmitterInstance > m_emitterInstance;
 	Ref< TrailInstance > m_trailInstance;
 	Ref< SequenceInstance > m_sequenceInstance;
 	Ref< world::IEntityEventInstance > m_triggerInstance;

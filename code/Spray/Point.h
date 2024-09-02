@@ -17,18 +17,37 @@ namespace traktor::spray
 /*! Particle point.
  * \ingroup Spray
  */
+#pragma pack(1)
 struct T_MATH_ALIGN16 Point
 {
 	Vector4 position;
 	Vector4 velocity;
-	float orientation;
-	float angularVelocity;
-	float inverseMass;
-	float age;
-	float maxAge;
-	float size;
-	float random;
+
+	union
+	{
+		struct
+		{
+			float orientation;
+			float angularVelocity;
+			float inverseMass;
+			float age;
+		};
+		float oaia[4];
+	};
+
+	union
+	{
+		struct
+		{
+			float maxAge;
+			float size;
+			float random;
+			float alpha;
+		};
+		float msra[4];
+	};
 };
+#pragma pack()
 
 /*! Array of particles.
  * \ingroup Spray

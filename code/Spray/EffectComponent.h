@@ -22,6 +22,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::render
+{
+
+class RenderContext;
+
+}
+
 namespace traktor::spray
 {
 
@@ -53,8 +60,11 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
+	void setup() const;
+
 	void render(
 		render::handle_t technique,
+		render::RenderContext* renderContext,
 		const Vector4& cameraPosition,
 		const Plane& cameraPlane,
 		PointRenderer* pointRenderer,

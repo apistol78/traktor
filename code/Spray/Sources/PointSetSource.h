@@ -51,7 +51,7 @@ public:
 		const Transform& transform,
 		const Vector4& deltaMotion,
 		uint32_t emitCount,
-		EmitterInstance& emitterInstance
+		EmitterInstanceCPU& emitterInstance
 	) const override final;
 
 	const resource::Proxy< PointSet >& getPointSet() const { return m_pointSet; }

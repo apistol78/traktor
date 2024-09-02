@@ -8,7 +8,7 @@
  */
 #include "Spray/EffectLayerInstance.h"
 #include "Spray/EffectLayer.h"
-#include "Spray/EmitterInstance.h"
+#include "Spray/IEmitterInstance.h"
 #include "Spray/SequenceInstance.h"
 #include "Spray/TrailInstance.h"
 #include "World/Entity.h"
@@ -30,7 +30,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectLayerInstance", EffectLayerInstance
 
 EffectLayerInstance::EffectLayerInstance(
 	const EffectLayer* layer,
-	EmitterInstance* emitterInstance,
+	IEmitterInstance* emitterInstance,
 	TrailInstance* trailInstance,
 	SequenceInstance* sequenceInstance
 )
@@ -117,8 +117,15 @@ void EffectLayerInstance::synchronize()
 		m_emitterInstance->synchronize();
 }
 
+void EffectLayerInstance::setup()
+{
+	if (m_emitterInstance)
+		m_emitterInstance->setup();
+}
+
 void EffectLayerInstance::render(
 	render::handle_t technique,
+	render::RenderContext* renderContext,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer,
@@ -129,7 +136,7 @@ void EffectLayerInstance::render(
 ) const
 {
 	if (m_emitterInstance && time >= m_start)
-		m_emitterInstance->render(technique, pointRenderer, meshRenderer, trailRenderer, transform, cameraPosition, cameraPlane);
+		m_emitterInstance->render(technique, renderContext, pointRenderer, meshRenderer, trailRenderer, transform, cameraPosition, cameraPlane);
 	if (m_trailInstance && time >= m_start)
 		m_trailInstance->render(technique, trailRenderer, transform, cameraPosition, cameraPlane);
 }

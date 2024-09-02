@@ -50,7 +50,7 @@ public:
 		const Transform& transform,
 		const Vector4& deltaMotion,
 		uint32_t emitCount,
-		EmitterInstance& emitterInstance
+		EmitterInstanceCPU& emitterInstance
 	) const override final;
 
 	const Vector4& getStartPosition() const { return m_startPosition; }

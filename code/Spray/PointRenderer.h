@@ -44,8 +44,6 @@ class IWorldRenderPass;
 namespace traktor::spray
 {
 
-struct EmitterPoint;
-
 /*! Particle renderer.
  * \ingroup Spray
  */
@@ -60,7 +58,14 @@ public:
 
 	void destroy();
 
-	void render(
+	void batchUntilFlush(
+		render::Shader* shader,
+		render::Buffer* headBuffer,
+		render::Buffer* pointBuffer,
+		float distance
+	);
+
+	void batchUntilFlush(
 		render::Shader* shader,
 		const Plane& cameraPlane,
 		const pointVector_t& points,
@@ -88,19 +93,21 @@ public:
 private:
 	struct Batch
 	{
+		render::Shader* shader;
+		render::Buffer* headBuffer;
+		render::Buffer* pointBuffer;
+		uint32_t offset;
 		uint32_t count;
 		float distance;
-		render::Shader* shader;
-		uint32_t offset;
 	};
 
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
-	Ref< render::Buffer > m_structBuffer;
+	Ref< render::Buffer > m_pointBuffer;
 	float m_lod1Distance;
 	float m_lod2Distance;
-	EmitterPoint* m_point;
+	Point* m_point;
 	int32_t m_pointOffset;
 	
 	AlignedVector< Batch > m_batches;

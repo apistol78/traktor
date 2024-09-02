@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Spray/EmitterInstance.h"
+#include "Spray/EmitterInstanceCPU.h"
 #include "Spray/Types.h"
 #include "Spray/Sources/DiscSource.h"
 
@@ -46,7 +46,7 @@ void DiscSource::emit(
 	const Transform& transform,
 	const Vector4& deltaMotion,
 	uint32_t emitCount,
-	EmitterInstance& emitterInstance
+	EmitterInstanceCPU& emitterInstance
 ) const
 {
 	const Vector4 axisZ(0.0f, 0.0f, 1.0f, 0.0f);

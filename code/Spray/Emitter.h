@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,7 +30,15 @@ class InstanceMesh;
 namespace traktor::render
 {
 
+class IRenderSystem;
 class Shader;
+
+}
+
+namespace traktor::resource
+{
+
+class IResourceManager;
 
 }
 
@@ -38,7 +46,7 @@ namespace traktor::spray
 {
 
 class Effect;
-class EmitterInstance;
+class IEmitterInstance;
 class Modifier;
 class Source;
 
@@ -67,7 +75,7 @@ public:
 		bool meshOrientationFromVelocity
 	);
 
-	Ref< EmitterInstance > createInstance(float duration) const;
+	Ref< IEmitterInstance > createInstance(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager, float duration) const;
 
 	const Source* getSource() const { return m_source; }
 

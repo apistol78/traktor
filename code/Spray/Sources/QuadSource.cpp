@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Spray/EmitterInstance.h"
+#include "Spray/EmitterInstanceCPU.h"
 #include "Spray/Types.h"
 #include "Spray/Sources/QuadSource.h"
 
@@ -48,7 +48,7 @@ void QuadSource::emit(
 	const Transform& transform,
 	const Vector4& deltaMotion,
 	uint32_t emitCount,
-	EmitterInstance& emitterInstance
+	EmitterInstanceCPU& emitterInstance
 ) const
 {
 	const Vector4 center = transform * m_center;

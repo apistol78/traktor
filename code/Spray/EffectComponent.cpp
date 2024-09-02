@@ -113,7 +113,7 @@ void EffectComponent::update(const world::UpdateParams& update)
 
 	if (m_effectInstance)
 	{
-		m_context.deltaTime = update.deltaTime;
+		m_context.deltaTime = (float)update.deltaTime;
 		m_context.deltaTime = min(m_context.deltaTime, c_maxDeltaTime);
 		m_context.deltaTime *= c_updateDenom;
 
@@ -121,8 +121,15 @@ void EffectComponent::update(const world::UpdateParams& update)
 	}
 }
 
+void EffectComponent::setup() const
+{
+	if (m_effectInstance)
+		m_effectInstance->setup();
+}
+
 void EffectComponent::render(
 	render::handle_t technique,
+	render::RenderContext* renderContext,
 	const Vector4& cameraPosition,
 	const Plane& cameraPlane,
 	PointRenderer* pointRenderer,
@@ -133,6 +140,7 @@ void EffectComponent::render(
 	if (m_effectInstance)
 		m_effectInstance->render(
 			technique,
+			renderContext,
 			pointRenderer,
 			meshRenderer,
 			trailRenderer,

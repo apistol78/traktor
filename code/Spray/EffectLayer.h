@@ -19,6 +19,20 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::render
+{
+
+class IRenderSystem;
+
+}
+
+namespace traktor::resource
+{
+
+class IResourceManager;
+
+}
+
 namespace traktor::world
 {
 
@@ -52,7 +66,7 @@ public:
 		const world::IEntityEvent* triggerDisable
 	);
 
-	Ref< EffectLayerInstance > createInstance() const;
+	Ref< EffectLayerInstance > createInstance(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager) const;
 
 	float getTime() const { return m_time; }
 

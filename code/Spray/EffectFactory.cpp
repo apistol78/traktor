@@ -9,6 +9,7 @@
 #include "Core/Io/Reader.h"
 #include "Core/Misc/ObjectStore.h"
 #include "Database/Instance.h"
+#include "Render/IRenderSystem.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectData.h"
 #include "Spray/EffectFactory.h"
@@ -21,13 +22,15 @@ namespace traktor::spray
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectFactory", 0, EffectFactory, resource::IResourceFactory)
 
-EffectFactory::EffectFactory(const world::IEntityFactory* entityFactory)
-:	m_entityFactory(entityFactory)
+EffectFactory::EffectFactory(render::IRenderSystem* renderSystem, const world::IEntityFactory* entityFactory)
+:	m_renderSystem(renderSystem)
+,	m_entityFactory(entityFactory)
 {
 }
 
 bool EffectFactory::initialize(const ObjectStore& objectStore)
 {
+	m_renderSystem = objectStore.get< render::IRenderSystem >();
 	m_entityFactory = objectStore.get< world::IEntityFactory >();
 	return true;
 }
@@ -58,7 +61,7 @@ Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager,
 	{
 		Ref< const EffectData > effectData = instance->getObject< EffectData >();
 		if (effectData)
-			return effectData->createEffect(resourceManager, m_entityFactory);
+			return effectData->createEffect(m_renderSystem, resourceManager, m_entityFactory);
 		else
 			return nullptr;
 	}

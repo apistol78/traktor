@@ -36,15 +36,15 @@ EffectLayer::EffectLayer(
 {
 }
 
-Ref< EffectLayerInstance > EffectLayer::createInstance() const
+Ref< EffectLayerInstance > EffectLayer::createInstance(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager) const
 {
-	Ref< EmitterInstance > emitterInstance;
+	Ref< IEmitterInstance > emitterInstance;
 	Ref< TrailInstance > trailInstance;
 	Ref< SequenceInstance > sequenceInstance;
 
 	if (m_emitter)
 	{
-		emitterInstance = m_emitter->createInstance(m_duration);
+		emitterInstance = m_emitter->createInstance(renderSystem, resourceManager, m_duration);
 		if (!emitterInstance)
 			return nullptr;
 	}

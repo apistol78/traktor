@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,8 @@
  */
 #include "Render/Shader.h"
 #include "Spray/Emitter.h"
-#include "Spray/EmitterInstance.h"
+#include "Spray/EmitterInstanceCPU.h"
+#include "Spray/EmitterInstanceGPU.h"
 #include "Spray/Modifier.h"
 #include "Spray/Source.h"
 
@@ -50,9 +51,12 @@ Emitter::Emitter(
 {
 }
 
-Ref< EmitterInstance > Emitter::createInstance(float duration) const
+Ref< IEmitterInstance > Emitter::createInstance(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager, float duration) const
 {
-	return new EmitterInstance(this, duration);
+	if (true)
+		return EmitterInstanceGPU::createInstance(renderSystem, resourceManager, this, duration);
+	else
+		return EmitterInstanceCPU::createInstance(renderSystem, this, duration);
 }
 
 }

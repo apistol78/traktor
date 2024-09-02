@@ -18,6 +18,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::render
+{
+
+class IRenderSystem;
+
+}
+
 namespace traktor::resource
 {
 
@@ -49,7 +56,7 @@ class T_DLLCLASS EffectLayerData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Ref< EffectLayer > createEffectLayer(resource::IResourceManager* resourceManager, const world::IEntityFactory* entityFactory) const;
+	Ref< EffectLayer > createEffectLayer(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager, const world::IEntityFactory* entityFactory) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

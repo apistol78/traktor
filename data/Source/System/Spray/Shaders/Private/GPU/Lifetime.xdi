@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+			<id>{6B64B451-AE7F-A944-B65A-46884FB3F875}</id>
+			<comment/>
+			<position>
+				<first>91</first>
+				<second>214</second>
+			</position>
+			<parameterName>Spray_Points</parameterName>
+			<elements>
+				<item>
+					<name>position</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>velocity</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>oaia</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>msra</name>
+					<type>DtFloat4</type>
+				</item>
+			</elements>
+		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{78C52B18-3CB8-4049-9FE1-1024BA685487}</id>
+			<comment/>
+			<position>
+				<first>483</first>
+				<second>145</second>
+			</position>
+			<name>Lifetime</name>
+			<technique>Default</technique>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{F06B4BD8-C3F9-964A-ABBF-490E30E9BE0E}</id>
+					<name>Head</name>
+				</item>
+				<item>
+					<id>{51D6EBF1-11D4-DC4C-8C0F-C0FC5D4991A4}</id>
+					<name>Points</name>
+				</item>
+				<item>
+					<id>{EEC620E2-4A2E-834C-B3D0-C14A6890B2D0}</id>
+					<name>EmitCount</name>
+				</item>
+				<item>
+					<id>{EB593768-0A14-234B-AD0D-43436082516C}</id>
+					<name>DeltaTime</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script>
+			<![CDATA[
+int alive = $Head[0].alive;
+
+// Delete old points.
+for (int i = 0; i < alive; )
+{
+	const float age = $Points[i].oaia.w;
+	const float maxAge = $Points[i].msra.x;
+	if (age >= maxAge)
+	{
+		$Points[i] = $Points[alive - 1];
+		alive--;
+	}
+	else
+		i++;
+}
+
+// Emit new points.
+const int available = 10000 - alive;
+const int emitCount = min(int($EmitCount), available);
+for (int i = 0; i < emitCount; ++i)
+{
+	const int id = alive++;
+
+	$Points[id].position = vec4(0, 0, 0, 1);
+	$Points[id].velocity = vec4(1, 4, 0, 0);
+	$Points[id].oaia = vec4(
+		0.0f,	// orientation
+		1.0f,	// size
+		1.0f,	// inverseMass
+		0.0f	// age
+	);
+	$Points[id].msra = vec4(
+		1.0f,	// maxAge
+		0.3f,	// size
+		0.0f,	// random
+		1.0f		// alpha
+	);
+}
+
+// Evolve points.
+const vec4 G = vec4(0.0f, -1.0f, 0.0f, 0.0f) * $DeltaTime;
+
+for (int i = 0; i < alive; ++i)
+{
+	vec4 position = $Points[i].position;
+	vec4 velocity = $Points[i].velocity;
+	float inverseMass = $Points[i].oaia.z;
+
+	position += velocity * inverseMass * $DeltaTime;
+	velocity += G * inverseMass;
+
+	$Points[i].position = position;
+	$Points[i].velocity = velocity;
+	$Points[i].oaia.w += $DeltaTime;
+}
+
+$Head[0].instanceCount = alive;
+$Head[0].alive = alive;
+
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+			<id>{07182D2B-117D-9948-8785-F3DDC816EB9C}</id>
+			<comment/>
+			<position>
+				<first>72</first>
+				<second>110</second>
+			</position>
+			<parameterName>Spray_Head</parameterName>
+			<elements>
+				<item>
+					<name>indexCount</name>
+					<type>DtInteger1</type>
+				</item>
+				<item>
+					<name>instanceCount</name>
+					<type>DtInteger1</type>
+				</item>
+				<item>
+					<name>firstIndex</name>
+					<type>DtInteger1</type>
+				</item>
+				<item>
+					<name>vertexOffset</name>
+					<type>DtInteger1</type>
+				</item>
+				<item>
+					<name>firstInstance</name>
+					<type>DtInteger1</type>
+				</item>
+				<item>
+					<name>alive</name>
+					<type>DtInteger1</type>
+				</item>
+			</elements>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{E897E72A-6539-5541-8C8C-0D3DF72E8A87}</id>
+			<comment/>
+			<position>
+				<first>129</first>
+				<second>273</second>
+			</position>
+			<parameterName>Spray_EmitCount</parameterName>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{EFC7B03E-EBAC-E14F-9FA7-8448BD32A01E}</id>
+			<comment/>
+			<position>
+				<first>116</first>
+				<second>365</second>
+			</position>
+			<parameterName>Spray_DeltaTime</parameterName>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{51D6EBF1-11D4-DC4C-8C0F-C0FC5D4991A4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{F06B4BD8-C3F9-964A-ABBF-490E30E9BE0E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{EEC620E2-4A2E-834C-B3D0-C14A6890B2D0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{EB593768-0A14-234B-AD0D-43436082516C}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>

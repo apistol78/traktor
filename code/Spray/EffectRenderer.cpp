@@ -49,6 +49,19 @@ void EffectRenderer::setup(
 	Object* renderable
 )
 {
+	auto effectComponent = static_cast< const EffectComponent* >(renderable);
+
+	const Aabb3 boundingBox = effectComponent->getWorldBoundingBox();
+	if (boundingBox.empty())
+		return;
+
+	// Early out of bounding sphere is outside of frustum.
+	const Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
+	const Scalar radius = boundingBox.getExtent().length();
+	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
+		return;
+
+	effectComponent->setup();
 }
 
 void EffectRenderer::setup(
@@ -70,21 +83,22 @@ void EffectRenderer::build(
 	if (!effectComponent->haveTechnique(worldRenderPass.getTechnique()))
 		return;
 
-	const Aabb3 boundingBox = effectComponent->getWorldBoundingBox();
-	if (boundingBox.empty())
-		return;
+	//const Aabb3 boundingBox = effectComponent->getWorldBoundingBox();
+	//if (boundingBox.empty())
+	//	return;
 
-	// Early out of bounding sphere is outside of frustum.
-	const Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
-	const Scalar radius = boundingBox.getExtent().length();
-	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
-		return;
+	//// Early out of bounding sphere is outside of frustum.
+	//const Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
+	//const Scalar radius = boundingBox.getExtent().length();
+	//if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
+	//	return;
 
 	const Vector4 cameraPosition = worldRenderView.getEyePosition();
 	const Plane cameraPlane(worldRenderView.getEyeDirection(), cameraPosition);
 
 	effectComponent->render(
 		worldRenderPass.getTechnique(),
+		context.getRenderContext(),
 		cameraPosition,
 		cameraPlane,
 		m_pointRenderer,

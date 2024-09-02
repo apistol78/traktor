@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,11 +9,10 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Plane.h"
-#include "Core/Math/Transform.h"
 #include "Render/Types.h"
+#include "Spray/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,30 +32,23 @@ class RenderContext;
 namespace traktor::spray
 {
 
-struct Context;
-class Effect;
-class EffectLayerInstance;
 class MeshRenderer;
 class PointRenderer;
 class TrailRenderer;
 
-/*! Effect instance.
+/*! Emitter instance.
  * \ingroup Spray
  */
-class T_DLLCLASS EffectInstance : public Object
+class T_DLLCLASS IEmitterInstance : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit EffectInstance(const Effect* effect);
+	virtual void update(Context& context, const Transform& transform, bool emit, bool singleShot) = 0;
 
-	void update(Context& context, const Transform& transform, bool enable);
+	virtual void setup() = 0;
 
-	void synchronize();
-
-	void setup();
-
-	void render(
+	virtual void render(
 		render::handle_t technique,
 		render::RenderContext* renderContext,
 		PointRenderer* pointRenderer,
@@ -65,28 +57,12 @@ public:
 		const Transform& transform,
 		const Vector4& cameraPosition,
 		const Plane& cameraPlane
-	) const;
+	) = 0;
 
-	void setTime(float time) { m_time = time; }
+	virtual void synchronize() const = 0;
 
-	float getTime() const { return m_time; }
-
-	void setLoopEnable(bool loopEnable) { m_loopEnable = loopEnable; }
-
-	bool getLoopEnable() const { return m_loopEnable; }
-
-	const Aabb3& getBoundingBox() const { return m_boundingBox; }
-
-	const RefArray< EffectLayerInstance >& getLayerInstances() const { return m_layerInstances; }
-
-private:
-	friend class Effect;
-
-	Ref< const Effect > m_effect;
-	float m_time;
-	bool m_loopEnable;
-	Aabb3 m_boundingBox;
-	RefArray< EffectLayerInstance > m_layerInstances;
+	virtual Aabb3 getBoundingBox() const = 0;
 };
 
 }
+#pragma once

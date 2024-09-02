@@ -82,8 +82,8 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Dist
 	*index++ = 3;
 	m_indexBuffer->unlock();
 
-	m_structBuffer = renderSystem->createBuffer(render::BuStructured, c_pointCount * sizeof(EmitterPoint), true);
-	T_ASSERT_M (m_structBuffer, L"Unable to create struct buffer");
+	m_pointBuffer = renderSystem->createBuffer(render::BuStructured, c_pointCount * sizeof(Point), true);
+	T_ASSERT_M (m_pointBuffer, L"Unable to create struct buffer");
 }
 
 PointRenderer::~PointRenderer()
@@ -95,16 +95,33 @@ void PointRenderer::destroy()
 {
 	if (m_point)
 	{
-		m_structBuffer->unlock();
+		m_pointBuffer->unlock();
 		m_point = nullptr;
 	}
 
 	safeDestroy(m_indexBuffer);
 	safeDestroy(m_vertexBuffer);
-	safeDestroy(m_structBuffer);
+	safeDestroy(m_pointBuffer);
 }
 
-void PointRenderer::render(
+void PointRenderer::batchUntilFlush(
+	render::Shader* shader,
+	render::Buffer* headBuffer,
+	render::Buffer* pointBuffer,
+	float distance
+)
+{
+	m_batches.push_back({
+		shader,
+		headBuffer,
+		pointBuffer,
+		0,
+		0,
+		distance
+	});
+}
+
+void PointRenderer::batchUntilFlush(
 	render::Shader* shader,
 	const Plane& cameraPlane,
 	const pointVector_t& points,
@@ -126,13 +143,15 @@ void PointRenderer::render(
 
 	if (!m_point)
 	{
-		m_point = (EmitterPoint*)m_structBuffer->lock();
+		m_point = (Point*)m_pointBuffer->lock();
 		if (!m_point)
 			return;
 	}
 
 	Batch& back = m_batches.push_back();
 	back.shader = shader;
+	back.headBuffer = nullptr;
+	back.pointBuffer = m_pointBuffer;
 	back.offset = m_pointOffset;
 	back.count = 0;
 	back.distance = std::numeric_limits< float >::max();
@@ -161,20 +180,13 @@ void PointRenderer::render(
 		if (alpha < FUZZY_EPSILON)
 			continue;
 
-		const Vector4 position = point.position + cameraOffsetV;
-
-		// \note We're assuming locked vertex buffer is 16-aligned.
-		position.storeAligned(m_point->positionAndOrientation);
-		point.velocity.storeAligned(m_point->velocityAndRandom);
-		m_point->positionAndOrientation[3] = point.orientation;
-		m_point->velocityAndRandom[3] = point.random;
-		m_point->alphaSizeAge[0] = alpha;
-		m_point->alphaSizeAge[1] = point.size;
-		m_point->alphaSizeAge[2] = age;
+		*m_point = point;
+		m_point->position = point.position + cameraOffsetV;
+		m_point->alpha = alpha;
 		m_point++;
 
-		back.distance = min(back.distance, distance);
 		back.count++;
+		back.distance = min(back.distance, distance);
 
 		m_pointOffset++;
 	}
@@ -187,17 +199,49 @@ void PointRenderer::flush(
 {
 	if (m_pointOffset > 0)
 	{
-		m_structBuffer->unlock();
+		m_pointBuffer->unlock();
+		m_pointOffset = 0;
+		m_point = nullptr;
+	}
 
-		for (const auto& batch : m_batches)
+	for (const auto& batch : m_batches)
+	{
+		if (!batch.shader)
+			continue;
+
+		auto sp = worldRenderPass.getProgram(batch.shader);
+		if (!sp)
+			continue;
+
+		if (batch.headBuffer != nullptr)
 		{
-			if (!batch.count || !batch.shader)
-				continue;
+			// Indirect draw; used by GPU particles.
+			auto renderBlock = renderContext->allocNamed< render::IndirectRenderBlock >(T_FILE_LINE_W);
 
-			auto sp = worldRenderPass.getProgram(batch.shader);
-			if (!sp)
-				continue;
+			renderBlock->distance = batch.distance;
+			renderBlock->program = sp.program;
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->indexBuffer = m_indexBuffer->getBufferView();
+			renderBlock->indexType = render::IndexType::UInt16;
+			renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+			renderBlock->vertexLayout = m_vertexLayout;
+			renderBlock->primitive = render::PrimitiveType::Triangles;
+			renderBlock->drawBuffer = batch.headBuffer->getBufferView();
+			renderBlock->drawCount = 1;
 
+			renderBlock->programParams->beginParameters(renderContext);
+			worldRenderPass.setProgramParameters(renderBlock->programParams);
+			renderBlock->programParams->setFloatParameter(s_handlePointsOffset, (float)batch.offset);
+			renderBlock->programParams->setBufferViewParameter(s_handlePoints, batch.pointBuffer->getBufferView());
+			renderBlock->programParams->endParameters(renderContext);
+
+			renderContext->draw(
+				sp.priority,
+				renderBlock
+			);
+		}
+		else if (batch.count > 0)
+		{
 			auto renderBlock = renderContext->allocNamed< render::IndexedInstancingRenderBlock >(T_FILE_LINE_W);
 
 			renderBlock->distance = batch.distance;
@@ -216,8 +260,8 @@ void PointRenderer::flush(
 
 			renderBlock->programParams->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(renderBlock->programParams);
-			renderBlock->programParams->setFloatParameter(s_handlePointsOffset, batch.offset);
-			renderBlock->programParams->setBufferViewParameter(s_handlePoints, m_structBuffer->getBufferView());
+			renderBlock->programParams->setFloatParameter(s_handlePointsOffset, (float)batch.offset);
+			renderBlock->programParams->setBufferViewParameter(s_handlePoints, batch.pointBuffer->getBufferView());
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->draw(
@@ -225,9 +269,6 @@ void PointRenderer::flush(
 				renderBlock
 			);
 		}
-
-		m_point = nullptr;
-		m_pointOffset = 0;
 	}
 
 	m_batches.resize(0);

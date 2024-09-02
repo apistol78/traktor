@@ -37,6 +37,7 @@ class IResourceManager;
 namespace traktor::render
 {
 
+class IRenderSystem;
 class Shader;
 
 }
@@ -64,7 +65,7 @@ class T_DLLCLASS EmitterData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Ref< Emitter > createEmitter(resource::IResourceManager* resourceManager, const world::IEntityFactory* entityFactory) const;
+	Ref< Emitter > createEmitter(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager, const world::IEntityFactory* entityFactory) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

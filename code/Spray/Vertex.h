@@ -21,15 +21,6 @@ struct EmitterVertex
 };
 #pragma pack()
 
-#pragma pack(1)
-struct EmitterPoint
-{
-	float positionAndOrientation[4];
-	float velocityAndRandom[4];
-	float alphaSizeAge[4];
-};
-#pragma pack()
-
 /*! Ribbon trail vertex.
  * \ingroup Spray
  */

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,14 +8,9 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Math/Transform.h"
-#include "Core/Math/Plane.h"
-#include "Core/Math/Aabb3.h"
 #include "Core/Thread/Job.h"
-#include "Render/Types.h"
-#include "Spray/Types.h"
+#include "Spray/IEmitterInstance.h"
 #include "Spray/Modifier.h"
 #include "Spray/Point.h"
 
@@ -34,40 +29,49 @@ class Job;
 
 }
 
+namespace traktor::render
+{
+
+class IRenderSystem;
+
+}
+
 namespace traktor::spray
 {
 
 class EffectInstance;
 class Emitter;
-class MeshRenderer;
-class PointRenderer;
-class TrailRenderer;
 
 /*! Emitter instance.
  * \ingroup Spray
  */
-class T_DLLCLASS EmitterInstance : public Object
+class T_DLLCLASS EmitterInstanceCPU : public IEmitterInstance
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit EmitterInstance(const Emitter* emitter, float duration);
+	static Ref< EmitterInstanceCPU > createInstance(render::IRenderSystem* renderSystem, const Emitter* emitter, float duration);
 
-	virtual ~EmitterInstance();
+	virtual ~EmitterInstanceCPU();
 
-	void update(Context& context, const Transform& transform, bool emit, bool singleShot);
+	virtual void update(Context& context, const Transform& transform, bool emit, bool singleShot) override final;
 
-	void render(
+	virtual void setup() override final;
+
+	virtual void render(
 		render::handle_t technique,
+		render::RenderContext* renderContext,
 		PointRenderer* pointRenderer,
 		MeshRenderer* meshRenderer,
 		TrailRenderer* trailRenderer,
 		const Transform& transform,
 		const Vector4& cameraPosition,
 		const Plane& cameraPlane
-	);
+	) override final;
 
-	void synchronize() const;
+	virtual void synchronize() const override final;
+
+	virtual Aabb3 getBoundingBox() const override final { return m_boundingBox; }
 
 	void setTotalTime(float totalTime) { m_totalTime = totalTime; }
 
@@ -76,8 +80,6 @@ public:
 	void reservePoints(uint32_t npoints) { m_points.reserve(m_points.size() + npoints); }
 
 	const pointVector_t& getPoints() const { return m_points; }
-
-	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
 	Point* addPoints(uint32_t points)
 	{
@@ -100,6 +102,8 @@ private:
 	uint32_t m_count;
 	uint32_t m_skip;
 	mutable Ref< Job > m_job;
+
+	explicit EmitterInstanceCPU(const Emitter* emitter, float duration);
 
 	void updateTask(float deltaTime);
 };

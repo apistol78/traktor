@@ -556,6 +556,18 @@ Position
 					<name>Alpha</name>
 				</item>
 				<item>
+					<id>{07A342EE-57D3-E94E-BC7F-73395AA972A6}</id>
+					<name>AngularVelocity</name>
+				</item>
+				<item>
+					<id>{AD82C774-8B06-DD4A-AFDE-13D02D7E709C}</id>
+					<name>InverseMass</name>
+				</item>
+				<item>
+					<id>{3A0AA9BF-D40A-EE4F-A79E-BE66DA9B52DE}</id>
+					<name>MaxAge</name>
+				</item>
+				<item>
 					<id>{0B58B458-24AC-B14B-8384-DECF2E7A05F9}</id>
 					<name>Orientation</name>
 				</item>

@@ -18,6 +18,7 @@
 #include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
@@ -393,7 +394,7 @@ ShaderGraphValidator::ShaderGraphType ShaderGraphValidator::estimateType() const
 	{
 		haveVertex |= is_a< VertexOutput >(root);
 		havePixel |= is_a< PixelOutput >(root);
-		haveCompute |= is_a< ComputeOutput >(root);
+		haveCompute |= is_a< ComputeOutput >(root) || is_a< Script >(root);
 	}
 	if ((haveVertex && havePixel) || haveCompute)
 		return SgtProgram;

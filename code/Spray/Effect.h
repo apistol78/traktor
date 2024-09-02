@@ -20,6 +20,20 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::render
+{
+
+class IRenderSystem;
+
+}
+
+namespace traktor::resource
+{
+
+class IResourceManager;
+
+}
+
 namespace traktor::spray
 {
 
@@ -35,6 +49,8 @@ class T_DLLCLASS Effect : public Object
 
 public:
 	explicit Effect(
+		render::IRenderSystem* renderSystem,
+		resource::IResourceManager* resourceManager,
 		float duration,
 		float loopStart,
 		float loopEnd,
@@ -52,6 +68,8 @@ public:
 	const RefArray< EffectLayer >& getLayers() const { return m_layers; }
 
 private:
+	Ref< render::IRenderSystem > m_renderSystem;
+	Ref< resource::IResourceManager > m_resourceManager;
 	float m_duration;
 	float m_loopStart;
 	float m_loopEnd;

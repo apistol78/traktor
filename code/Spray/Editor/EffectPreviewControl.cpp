@@ -36,7 +36,7 @@
 #include "Spray/EffectRenderer.h"
 #include "Spray/Emitter.h"
 #include "Spray/EmitterData.h"
-#include "Spray/EmitterInstance.h"
+#include "Spray/EmitterInstanceCPU.h"
 #include "Spray/Editor/BoxSourceRenderer.h"
 #include "Spray/Editor/ConeSourceRenderer.h"
 #include "Spray/Editor/DiscSourceRenderer.h"
@@ -210,7 +210,7 @@ uint32_t EffectPreviewControl::getEffectLayerPoints(const EffectLayer* effectLay
 	{
 		if (layerInstance->getLayer() == effectLayer)
 		{
-			auto emitterInstance = layerInstance->getEmitterInstance();
+			auto emitterInstance = dynamic_type_cast< const EmitterInstanceCPU* >(layerInstance->getEmitterInstance());
 			if (emitterInstance)
 				return (uint32_t)emitterInstance->getPoints().size();
 			else
@@ -534,7 +534,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		if (m_effectEntity && m_guideVisible)
 		{
-			Transform transform = m_effectEntity->getTransform();
+			const Transform transform = m_effectEntity->getTransform();
 			m_primitiveRenderer->drawWireFrame(transform.toMatrix44(), 1.0f);
 
 			auto effectComponent = m_effectEntity->getComponent< EffectComponent >();
@@ -545,14 +545,14 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 			{
 				for (auto layerInstance : effectInstance->getLayerInstances())
 				{
-					auto emitterInstance = layerInstance->getEmitterInstance();
+					auto emitterInstance = dynamic_type_cast< const EmitterInstanceCPU* >(layerInstance->getEmitterInstance());
 					if (emitterInstance)
 					{
 						for (const auto& pnt : emitterInstance->getPoints())
 						{
 							if (pnt.velocity.length() > FUZZY_EPSILON)
 							{
-								Vector4 tail = pnt.position + pnt.velocity;
+								const Vector4 tail = pnt.position + pnt.velocity;
 								m_primitiveRenderer->drawLine(pnt.position, tail, Color4ub(255, 255, 255, 255));
 								m_primitiveRenderer->drawArrowHead(tail, tail + pnt.velocity.normalized() * 0.2_simd, 0.8f, Color4ub(255, 255, 255, 255));
 							}

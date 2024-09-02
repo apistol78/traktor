@@ -48,7 +48,7 @@ void SprayEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new spray::EffectFactory(0));
+	outResourceFactories.push_back(new spray::EffectFactory(context->getRenderSystem(), nullptr));
 }
 
 void SprayEditorProfile::createEntityFactories(

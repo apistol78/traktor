@@ -159,7 +159,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new scene::SceneFactory(renderSystem, entityFactory));
 	m_resourceManager->addFactory(new sound::AudioResourceFactory());
 	m_resourceManager->addFactory(new world::WorldResourceFactory(renderSystem, nullptr));
-	m_resourceManager->addFactory(new EffectFactory(nullptr));
+	m_resourceManager->addFactory(new EffectFactory(renderSystem, nullptr));
 
 	m_effectData = m_document->getObject< EffectData >(0);
 	if (!m_effectData)
@@ -424,6 +424,10 @@ void EffectEditorPage::handleDatabaseEvent(db::Database* database, const Guid& e
 
 void EffectEditorPage::updateEffectPreview()
 {
+	render::IRenderSystem* renderSystem = m_editor->getObjectStore()->get< render::IRenderSystem >();
+	if (!renderSystem)
+		return;
+
 	if (m_resourceManager)
 	{
 		RefArray< EffectLayer > effectLayers;
@@ -437,7 +441,7 @@ void EffectEditorPage::updateEffectPreview()
 				EffectLayerData* effectLayerData = layerItem->getData< EffectLayerData >(L"LAYERDATA");
 				T_ASSERT(effectLayerData);
 
-				Ref< EffectLayer > effectLayer = effectLayerData->createEffectLayer(m_resourceManager, nullptr);
+				Ref< EffectLayer > effectLayer = effectLayerData->createEffectLayer(renderSystem, m_resourceManager, nullptr);
 				if (effectLayer)
 					effectLayers.push_back(effectLayer);
 
@@ -449,6 +453,8 @@ void EffectEditorPage::updateEffectPreview()
 
 		// Create effect.
 		Ref< Effect > effect = new Effect(
+			renderSystem,
+			m_resourceManager,
 			m_effectData->getDuration(),
 			m_effectData->getLoopStart(),
 			m_effectData->getLoopEnd(),

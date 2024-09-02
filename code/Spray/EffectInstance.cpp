@@ -47,8 +47,15 @@ void EffectInstance::synchronize()
 		layerInstance->synchronize();
 }
 
+void EffectInstance::setup()
+{
+	for (auto layerInstance : m_layerInstances)
+		layerInstance->setup();
+}
+
 void EffectInstance::render(
 	render::handle_t technique,
+	render::RenderContext* renderContext,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer,
@@ -61,6 +68,7 @@ void EffectInstance::render(
 	{
 		layerInstance->render(
 			technique,
+			renderContext,
 			pointRenderer,
 			meshRenderer,
 			trailRenderer,

@@ -51,7 +51,7 @@ public:
 		const Transform& transform,
 		const Vector4& deltaMotion,
 		uint32_t emitCount,
-		EmitterInstance& emitterInstance
+		EmitterInstanceCPU& emitterInstance
 	) const override final;
 
 	const Vector4& getCenter() const { return m_center; }

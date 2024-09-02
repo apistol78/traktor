@@ -18,6 +18,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::render
+{
+
+class IRenderSystem;
+
+}
+
 namespace traktor::world
 {
 
@@ -38,7 +45,7 @@ class T_DLLCLASS EffectFactory : public resource::IResourceFactory
 public:
 	EffectFactory() = default;
 
-	explicit EffectFactory(const world::IEntityFactory* entityFactory);
+	explicit EffectFactory(render::IRenderSystem* renderSystem, const world::IEntityFactory* entityFactory);
 
 	virtual bool initialize(const ObjectStore& objectStore) override final;
 
@@ -51,6 +58,7 @@ public:
 	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const override final;
 
 private:
+	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< const world::IEntityFactory > m_entityFactory;
 };
 
