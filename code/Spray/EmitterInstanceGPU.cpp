@@ -23,6 +23,7 @@ namespace traktor::spray
 	{
 	
 const resource::Id< render::Shader > c_shaderLifetime(L"{A83B0679-4DA7-7B4C-92F4-7A17738B8804}");
+const resource::Id< render::Shader > c_shaderEvolve(L"{BAA7E3FC-7E27-4FD9-96D8-DC8CDD084E4C}");
 
 const uint32_t c_maxPointCount = 10000;
 
@@ -52,6 +53,8 @@ Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(render::IRenderSyst
 
 	// Bind shaders.
 	if (!resourceManager->bind(c_shaderLifetime, emitterInstance->m_shaderLifetime))
+		return nullptr;
+	if (!resourceManager->bind(c_shaderEvolve, emitterInstance->m_shaderEvolve))
 		return nullptr;
 
 	if (emitter->getSource() != nullptr && emitter->getSource()->getShader().isValid())
@@ -151,11 +154,25 @@ void EmitterInstanceGPU::render(
 			rb->program = m_shaderLifetime->getProgram().program;
 			rb->programParams = renderContext->alloc< render::ProgramParameters >();
 			rb->programParams->beginParameters(renderContext);
-			rb->programParams->setFloatParameter(s_handleDeltaTime, m_pendingDeltaTime);
 			rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
 			rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
 			rb->programParams->endParameters(renderContext);
 			renderContext->compute(rb);
+		}
+
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
+
+		// Evolve points; prepare indirect draw.
+		{
+			auto rb = renderContext->alloc< render::ComputeRenderBlock >();
+			rb->program = m_shaderEvolve->getProgram().program;
+			rb->programParams = renderContext->alloc< render::ProgramParameters >();
+			rb->programParams->beginParameters(renderContext);
+			rb->programParams->setFloatParameter(s_handleDeltaTime, m_pendingDeltaTime);
+			rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
+			rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
+			rb->programParams->endParameters(renderContext);
+			renderContext->compute(rb);			
 		}
 
 		// Emit new points.

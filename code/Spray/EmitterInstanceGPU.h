@@ -73,6 +73,7 @@ public:
 private:
 	Ref< const Emitter > m_emitter;
 	resource::Proxy< render::Shader > m_shaderLifetime;
+	resource::Proxy< render::Shader > m_shaderEvolve;
 	resource::Proxy< render::Shader > m_shaderSource;
 	Ref< render::Buffer > m_headBuffer;
 	Ref< render::Buffer > m_pointBuffer;
