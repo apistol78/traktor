@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>107</first>
-				<second>195</second>
+				<second>151</second>
 			</position>
 			<parameterName>Spray_Points</parameterName>
 			<elements>
@@ -32,8 +32,8 @@
 			<id>{78C52B18-3CB8-4049-9FE1-1024BA685487}</id>
 			<comment/>
 			<position>
-				<first>483</first>
-				<second>145</second>
+				<first>432</first>
+				<second>104</second>
 			</position>
 			<name>Lifetime</name>
 			<technique>Default</technique>
@@ -51,10 +51,6 @@
 				<item>
 					<id>{51D6EBF1-11D4-DC4C-8C0F-C0FC5D4991A4}</id>
 					<name>Points</name>
-				</item>
-				<item>
-					<id>{EEC620E2-4A2E-834C-B3D0-C14A6890B2D0}</id>
-					<name>EmitCount</name>
 				</item>
 				<item>
 					<id>{EB593768-0A14-234B-AD0D-43436082516C}</id>
@@ -80,31 +76,8 @@ for (int i = 0; i < alive; )
 		i++;
 }
 
-// Emit new points.
-const int available = 10000 - alive;
-const int emitCount = min(int($EmitCount), available);
-for (int i = 0; i < emitCount; ++i)
-{
-	const int id = alive++;
-
-	$Points[id].position = vec4(0, 0, 0, 1);
-	$Points[id].velocity = vec4(1, 4, 0, 0);
-	$Points[id].oaia = vec4(
-		0.0f,	// orientation
-		2.0f,	// angularVelocity
-		1.0f,	// inverseMass
-		0.0f		// age
-	);
-	$Points[id].msra = vec4(
-		2.0f,	// maxAge
-		0.3f,	// size
-		0.0f,	// random
-		1.0f		// alpha
-	);
-}
-
 // Evolve points.
-const vec4 G = vec4(0.0f, -4.0f, 0.0f, 0.0f) * $DeltaTime;
+const vec4 G = vec4(0.0f, -1.0f, 0.0f, 0.0f) * $DeltaTime;
 
 for (int i = 0; i < alive; ++i)
 {
@@ -127,7 +100,6 @@ for (int i = 0; i < alive; ++i)
 
 $Head[0].instanceCount = alive;
 $Head[0].alive = alive;
-
 			]]>
 			</script>
 		</item>
@@ -135,7 +107,7 @@ $Head[0].alive = alive;
 			<id>{07182D2B-117D-9948-8785-F3DDC816EB9C}</id>
 			<comment/>
 			<position>
-				<first>107</first>
+				<first>123</first>
 				<second>110</second>
 			</position>
 			<parameterName>Spray_Head</parameterName>
@@ -161,28 +133,21 @@ $Head[0].alive = alive;
 					<type>DtInteger1</type>
 				</item>
 				<item>
+					<name>capacity</name>
+					<type>DtInteger1</type>
+				</item>
+				<item>
 					<name>alive</name>
 					<type>DtInteger1</type>
 				</item>
 			</elements>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{E897E72A-6539-5541-8C8C-0D3DF72E8A87}</id>
-			<comment/>
-			<position>
-				<first>129</first>
-				<second>280</second>
-			</position>
-			<parameterName>Spray_EmitCount</parameterName>
-			<type>Scalar</type>
-			<frequency>Frame</frequency>
-		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{EFC7B03E-EBAC-E14F-9FA7-8448BD32A01E}</id>
 			<comment/>
 			<position>
 				<first>145</first>
-				<second>365</second>
+				<second>192</second>
 			</position>
 			<parameterName>Spray_DeltaTime</parameterName>
 			<type>Scalar</type>
@@ -213,16 +178,6 @@ $Head[0].alive = alive;
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[3]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{EEC620E2-4A2E-834C-B3D0-C14A6890B2D0}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>

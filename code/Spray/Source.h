@@ -10,6 +10,7 @@
 
 #include "Core/Object.h"
 #include "Core/Math/Transform.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,6 +19,14 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
+
+namespace traktor::render
+{
+
+class ProgramParameters;
+class Shader;
+
+}
 
 namespace traktor::spray
 {
@@ -37,6 +46,10 @@ public:
 		float constantRate,
 		float velocityRate
 	);
+
+	virtual resource::Id< render::Shader > getShader() const { return resource::Id< render::Shader >(); }
+
+	virtual void setShaderParameters(render::ProgramParameters* pp) const {}
 
 	virtual void emit(
 		Context& context,

@@ -73,6 +73,19 @@ public:
 	virtual void render(IRenderView* renderView) const override final;
 };
 
+/*! Indirect compute render block.
+ * \ingroup Render
+ */
+class T_DLLCLASS IndirectComputeRenderBlock : public RenderBlock
+{
+public:
+	IProgram* program = nullptr;
+	ProgramParameters* programParams = nullptr;
+	const IBufferView* workBuffer = nullptr;
+
+	virtual void render(IRenderView* renderView) const override final;
+};
+
 /*! Drawable render block base class.
  * \ingroup Render
  *

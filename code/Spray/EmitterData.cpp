@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,7 +23,7 @@
 namespace traktor::spray
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EmitterData", 7, EmitterData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EmitterData", 8, EmitterData, ISerializable)
 
 Ref< Emitter > EmitterData::createEmitter(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager, const world::IEntityFactory* entityFactory) const
 {
@@ -57,20 +57,12 @@ Ref< Emitter > EmitterData::createEmitter(render::IRenderSystem* renderSystem, r
 		effect = m_effect->createEffect(renderSystem, resourceManager, entityFactory);
 
 	return new Emitter(
+		this,
 		source,
 		modifiers,
 		shader,
 		mesh,
-		effect,
-		m_middleAge,
-		m_cullNearDistance,
-		m_cullMeshDistance,
-		m_fadeNearRange,
-		m_viewOffset,
-		m_warmUp,
-		m_sort,
-		m_worldSpace,
-		m_meshOrientationFromVelocity
+		effect
 	);
 }
 
@@ -92,6 +84,9 @@ void EmitterData::serialize(ISerializer& s)
 	s >> Member< bool >(L"sort", m_sort);
 	s >> Member< bool >(L"worldSpace", m_worldSpace);
 	s >> Member< bool >(L"meshOrientationFromVelocity", m_meshOrientationFromVelocity);
+
+	if (s.getVersion< EmitterData >() >= 8)
+		s >> Member< bool >(L"gpu", m_gpu);
 }
 
 }

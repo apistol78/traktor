@@ -73,11 +73,13 @@ public:
 private:
 	Ref< const Emitter > m_emitter;
 	resource::Proxy< render::Shader > m_shaderLifetime;
+	resource::Proxy< render::Shader > m_shaderSource;
 	Ref< render::Buffer > m_headBuffer;
 	Ref< render::Buffer > m_pointBuffer;
 	Aabb3 m_boundingBox;
 	Transform m_transform;
 	int32_t m_pendingEmit = 0;
+	int32_t m_pendingSeed = 0;
 	float m_pendingDeltaTime = 0.0f;
 	float m_emitFraction = 0.0f;
 	bool m_needLifetimeUpdate = false;

@@ -11,6 +11,7 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Resource/Proxy.h"
+#include "Spray/EmitterData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -59,20 +60,12 @@ class T_DLLCLASS Emitter : public Object
 
 public:
 	explicit Emitter(
+		const EmitterData* data,
 		const Source* source,
 		const RefArray< const Modifier >& modifiers,
 		const resource::Proxy< render::Shader >& shader,
 		const resource::Proxy< mesh::InstanceMesh >& mesh,
-		const Effect* effect,
-		float middleAge,
-		float cullNearDistance,
-		float cullMeshDistance,
-		float fadeNearRange,
-		float viewOffset,
-		float warmUp,
-		bool sort,
-		bool worldSpace,
-		bool meshOrientationFromVelocity
+		const Effect* effect
 	);
 
 	Ref< IEmitterInstance > createInstance(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager, float duration) const;
@@ -87,39 +80,31 @@ public:
 
 	const Effect* getEffect() const { return m_effect; }
 
-	float getMiddleAge() const { return m_middleAge; }
+	float getMiddleAge() const { return m_data->m_middleAge; }
 
-	float getCullNearDistance() const { return m_cullNearDistance; }
+	float getCullNearDistance() const { return m_data->m_cullNearDistance; }
 
-	float getCullMeshDistance() const { return m_cullMeshDistance; }
+	float getCullMeshDistance() const { return m_data->m_cullMeshDistance; }
 
-	float getFadeNearRange() const { return m_fadeNearRange; }
+	float getFadeNearRange() const { return m_data->m_fadeNearRange; }
 
-	float getViewOffset() const { return m_viewOffset; }
+	float getViewOffset() const { return m_data->m_viewOffset; }
 
-	float getWarmUp() const { return m_warmUp; }
+	float getWarmUp() const { return m_data->m_warmUp; }
 
-	bool getSort() const { return m_sort; }
+	bool getSort() const { return m_data->m_sort; }
 
-	bool worldSpace() const { return m_worldSpace; }
+	bool worldSpace() const { return m_data->m_worldSpace; }
 
-	bool meshOrientationFromVelocity() const { return m_meshOrientationFromVelocity; }
+	bool meshOrientationFromVelocity() const { return m_data->m_meshOrientationFromVelocity; }
 
 private:
+	Ref< const EmitterData > m_data;
 	Ref< const Source > m_source;
 	RefArray< const Modifier > m_modifiers;
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< mesh::InstanceMesh > m_mesh;
 	Ref< const Effect > m_effect;
-	float m_middleAge;
-	float m_cullNearDistance;
-	float m_cullMeshDistance;
-	float m_fadeNearRange;
-	float m_viewOffset;
-	float m_warmUp;
-	bool m_sort;
-	bool m_worldSpace;
-	bool m_meshOrientationFromVelocity;
 };
 
 }

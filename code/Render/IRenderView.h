@@ -174,6 +174,12 @@ public:
 	 */
 	virtual void compute(IProgram* program, const int32_t* workSize) = 0;
 
+	/*! Enqueue indirect compute task.
+	 *
+	 * \param workBuffer Buffer containing work size.
+	 */
+	virtual void computeIndirect(IProgram* program, const IBufferView* workBuffer) = 0;
+
 	/*! Enqueue a barrier. */
 	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip) = 0;
 

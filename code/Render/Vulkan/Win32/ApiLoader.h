@@ -87,6 +87,7 @@ extern PFN_vkCmdCopyImage vkCmdCopyImage;
 extern PFN_vkGetImageSubresourceLayout vkGetImageSubresourceLayout;
 extern PFN_vkDestroyImage vkDestroyImage;
 extern PFN_vkCmdDispatch vkCmdDispatch;
+extern PFN_vkCmdDispatchIndirect vkCmdDispatchIndirect;
 extern PFN_vkInvalidateMappedMemoryRanges vkInvalidateMappedMemoryRanges;
 extern PFN_vkCmdCopyBuffer vkCmdCopyBuffer;
 extern PFN_vkDestroyShaderModule vkDestroyShaderModule;

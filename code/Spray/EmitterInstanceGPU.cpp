@@ -26,8 +26,10 @@ const resource::Id< render::Shader > c_shaderLifetime(L"{A83B0679-4DA7-7B4C-92F4
 
 const uint32_t c_maxPointCount = 10000;
 
+const render::Handle s_handleSeed(L"Spray_Seed");
 const render::Handle s_handleDeltaTime(L"Spray_DeltaTime");
 const render::Handle s_handleEmitCount(L"Spray_EmitCount");
+const render::Handle s_handleTransform(L"Spray_Transform");
 const render::Handle s_handleHead(L"Spray_Head");
 const render::Handle s_handlePoints(L"Spray_Points");
 
@@ -36,6 +38,7 @@ const render::Handle s_handlePoints(L"Spray_Points");
 struct Head
 {
 	render::IndexedIndirectDraw indirectDraw;
+	int32_t capacity;
 	int32_t alive;
 };
 
@@ -50,6 +53,12 @@ Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(render::IRenderSyst
 	// Bind shaders.
 	if (!resourceManager->bind(c_shaderLifetime, emitterInstance->m_shaderLifetime))
 		return nullptr;
+
+	if (emitter->getSource() != nullptr && emitter->getSource()->getShader().isValid())
+	{
+		if (!resourceManager->bind(emitter->getSource()->getShader(), emitterInstance->m_shaderSource))
+			return nullptr;
+	}
 
 	// Create buffers.
 	emitterInstance->m_headBuffer = renderSystem->createBuffer(render::BuStructured | render::BuIndirect, sizeof(Head), false);
@@ -67,6 +76,7 @@ Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(render::IRenderSyst
 	head->indirectDraw.firstIndex = 0;
 	head->indirectDraw.vertexOffset = 0;
 	head->indirectDraw.firstInstance = 0;
+	head->capacity = c_maxPointCount;
 	head->alive = 0;
 	emitterInstance->m_headBuffer->unlock();
 
@@ -82,6 +92,7 @@ void EmitterInstanceGPU::update(Context& context, const Transform& transform, bo
 {
 	const Vector4 lastPosition = m_transform.translation();
 	m_transform = transform;
+	m_pendingSeed = context.random.next();
 
 	if (emit)
 	{
@@ -134,18 +145,40 @@ void EmitterInstanceGPU::render(
 
 	if (m_needLifetimeUpdate)
 	{
-		auto rb = renderContext->alloc< render::ComputeRenderBlock >();
+		// Update life time of points; prepare indirect draw.
+		{
+			auto rb = renderContext->alloc< render::ComputeRenderBlock >();
+			rb->program = m_shaderLifetime->getProgram().program;
+			rb->programParams = renderContext->alloc< render::ProgramParameters >();
+			rb->programParams->beginParameters(renderContext);
+			rb->programParams->setFloatParameter(s_handleDeltaTime, m_pendingDeltaTime);
+			rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
+			rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
+			rb->programParams->endParameters(renderContext);
+			renderContext->compute(rb);
+		}
 
-		rb->program = m_shaderLifetime->getProgram().program;
-		rb->programParams = renderContext->alloc< render::ProgramParameters >();
-		rb->programParams->beginParameters(renderContext);
-		rb->programParams->setFloatParameter(s_handleDeltaTime, m_pendingDeltaTime);
-		rb->programParams->setFloatParameter(s_handleEmitCount, m_pendingEmit);
-		rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
-		rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
-		rb->programParams->endParameters(renderContext);
+		// Emit new points.
+		if (m_emitter->getSource() && m_shaderSource && m_pendingEmit > 0)
+		{
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
 
-		renderContext->compute(rb);
+			auto rb = renderContext->alloc< render::ComputeRenderBlock >();
+			rb->program = m_shaderSource->getProgram().program;
+			rb->programParams = renderContext->alloc< render::ProgramParameters >();
+			rb->programParams->beginParameters(renderContext);
+			rb->programParams->setFloatParameter(s_handleSeed, (float)m_pendingSeed);
+			rb->programParams->setFloatParameter(s_handleDeltaTime, m_pendingDeltaTime);
+			rb->programParams->setFloatParameter(s_handleEmitCount, (float)m_pendingEmit);
+			rb->programParams->setMatrixParameter(s_handleTransform, m_transform.toMatrix44());
+			rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
+			rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
+			m_emitter->getSource()->setShaderParameters(rb->programParams);
+			rb->programParams->endParameters(renderContext);
+			renderContext->compute(rb);
+		}
+
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex | render::Stage::Indirect, nullptr, 0);
 
 		m_pendingDeltaTime = 0.0f;
 		m_needLifetimeUpdate = false;

@@ -1047,7 +1047,7 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 
 void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 {
-	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
+	ProgramVk* p = static_cast< ProgramVk* >(program);
 	const auto& frame = m_frames[m_currentImageIndex];
 
 	if (!validateComputePipeline(p))
@@ -1063,6 +1063,26 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 		(workSize[0] + lwgs[0] - 1) / lwgs[0],
 		(workSize[1] + lwgs[1] - 1) / lwgs[1],
 		(workSize[2] + lwgs[2] - 1) / lwgs[2]
+	);
+}
+
+void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuffer)
+{
+	const BufferViewVk* wbv = static_cast< const BufferViewVk* >(workBuffer);
+	ProgramVk* p = static_cast< ProgramVk* >(program);
+
+	const auto& frame = m_frames[m_currentImageIndex];
+
+	if (!validateComputePipeline(p))
+		return;
+
+	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, nullptr))
+		return;
+
+	vkCmdDispatchIndirect(
+		*frame.graphicsCommandBuffer,
+		wbv->getVkBuffer(),
+		wbv->getVkBufferOffset()
 	);
 }
 

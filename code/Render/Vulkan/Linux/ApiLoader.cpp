@@ -103,6 +103,7 @@ T_DEFINE_VK(vkCmdCopyImage);
 T_DEFINE_VK(vkGetImageSubresourceLayout);
 T_DEFINE_VK(vkDestroyImage);
 T_DEFINE_VK(vkCmdDispatch);
+T_DEFINE_VK(vkCmdDispatchIndirect);
 T_DEFINE_VK(vkInvalidateMappedMemoryRanges);
 T_DEFINE_VK(vkCmdCopyBuffer);
 T_DEFINE_VK(vkDestroyShaderModule);
@@ -239,6 +240,7 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkGetImageSubresourceLayout);
 	T_RESOLVE_VK(vkDestroyImage);
 	T_RESOLVE_VK(vkCmdDispatch);
+	T_RESOLVE_VK(vkCmdDispatchIndirect);
 	T_RESOLVE_VK(vkInvalidateMappedMemoryRanges);
 	T_RESOLVE_VK(vkCmdCopyBuffer);
 	T_RESOLVE_VK(vkDestroyShaderModule);

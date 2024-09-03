@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+			<id>{3EAEAD61-D6BD-964E-B9A8-659564FB5D25}</id>
+			<comment/>
+			<position>
+				<first>549</first>
+				<second>-392</second>
+			</position>
+			<parameterName>Spray_Points</parameterName>
+			<elements>
+				<item>
+					<name>position</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>velocity</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>oaia</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>msra</name>
+					<type>DtFloat4</type>
+				</item>
+			</elements>
+		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{A3A3987E-1D25-854C-91C6-C9148EDD2941}</id>
+			<comment/>
+			<position>
+				<first>970</first>
+				<second>-354</second>
+			</position>
+			<name>Source</name>
+			<technique>Default</technique>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include>
+				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
+				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{F06B4BD8-C3F9-964A-ABBF-490E30E9BE0E}</id>
+					<name>Head</name>
+				</item>
+				<item>
+					<id>{51D6EBF1-11D4-DC4C-8C0F-C0FC5D4991A4}</id>
+					<name>Points</name>
+				</item>
+				<item>
+					<id>{EEC620E2-4A2E-834C-B3D0-C14A6890B2D0}</id>
+					<name>EmitCount</name>
+				</item>
+				<item>
+					<id>{EB593768-0A14-234B-AD0D-43436082516C}</id>
+					<name>DeltaTime</name>
+				</item>
+				<item>
+					<id>{295861D2-2471-BA4C-A966-6D5E48332A57}</id>
+					<name>SourcePosition</name>
+				</item>
+				<item>
+					<id>{283DEC9E-4E9F-5C45-8822-5863701E277B}</id>
+					<name>SourceNormal</name>
+				</item>
+				<item>
+					<id>{DE091A4C-EFA3-3E40-9345-013474864908}</id>
+					<name>SourceAngles</name>
+				</item>
+				<item>
+					<id>{776EEBAA-64F5-7347-A7C9-06F845916D6D}</id>
+					<name>SourceVelocity</name>
+				</item>
+				<item>
+					<id>{C2526157-F8F3-2246-9461-9C9712C958D0}</id>
+					<name>SourceInheritVelocity</name>
+				</item>
+				<item>
+					<id>{73E51DA5-ECD5-2544-9B98-A8CAF0C29A1A}</id>
+					<name>SourceOrientation</name>
+				</item>
+				<item>
+					<id>{ACFF1F5E-A3FB-B541-B15A-784789385A78}</id>
+					<name>SourceAngularVelocity</name>
+				</item>
+				<item>
+					<id>{ACC44F09-3A89-E24B-9FA2-AFC5271D2796}</id>
+					<name>SourceAge</name>
+				</item>
+				<item>
+					<id>{E9EB9FAF-7212-CE43-A824-91EF4FAF3C2B}</id>
+					<name>SourceMass</name>
+				</item>
+				<item>
+					<id>{C84933AA-EEA8-1046-BCE3-95A1C6B685DE}</id>
+					<name>SourceSize</name>
+				</item>
+				<item>
+					<id>{762AE0B8-154C-3B4E-8D6A-9312E0671139}</id>
+					<name>Transform</name>
+				</item>
+				<item>
+					<id>{DD12574A-72DA-3C40-915B-6E7EB83D1C37}</id>
+					<name>Seed</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script>
+			<![CDATA[
+const uint NR = 64;
+
+int capacity = $Head[0].capacity;
+int alive = $Head[0].alive;
+
+const vec4 position = $Transform * $SourcePosition;
+const vec4 normal = $Transform * $SourceNormal;
+
+const vec4 tx = axisX($Transform) * $SourceAngles.x;
+const vec4 tz = axisZ($Transform) * $SourceAngles.y;
+
+const int available = capacity - alive;
+const int emitCount = min(int($EmitCount), available);
+
+for (int i = 0; i < emitCount; ++i)
+{
+	const int id = alive++;
+
+	const float phi = hash(uint($Seed + i * NR + 0)) * TWO_PI;
+	const float gamma = hash(uint($Seed + i * NR + 0));
+	const float beta = hash(uint($Seed + i * NR + 1));
+
+	const float r0 = hash(uint($Seed + i * NR + 2));
+	const float r1 = hash(uint($Seed + i * NR + 3));
+	const float r2 = hash(uint($Seed + i * NR + 4));
+	const float r3 = hash(uint($Seed + i * NR + 5));
+	const float r4 = hash(uint($Seed + i * NR + 6));
+	const float r5 = hash(uint($Seed + i * NR + 7));
+
+	const float x = sin(phi + HALF_PI);
+	const float z = sin(phi);
+
+	const vec4 ax = tx * x;
+	const vec4 az = tz * z;
+
+	const vec4 extent = ax + az;
+	const vec4 direction = normalize(normal + extent * gamma);
+
+	const vec4 velocity = direction * lerpXY($SourceVelocity, r0);
+
+	$Points[id].position = position + velocity * beta * $DeltaTime;
+	$Points[id].velocity = velocity;
+	$Points[id].oaia = vec4(
+		lerpXY($SourceOrientation, r1),	// orientation
+		lerpXY($SourceAngularVelocity, r2),	// angularVelocity
+		1.0f / lerpXY($SourceMass, r3),	// inverseMass
+		0.0f		// age
+	);
+	$Points[id].msra = vec4(
+		lerpXY($SourceAge, r4),	// maxAge
+		lerpXY($SourceSize, r5),	// size
+		0.0f,	// random
+		1.0f		// alpha
+	);
+}
+
+$Head[0].alive = alive;
+
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{9A24165F-4A46-F449-A7E1-7E01B1CD347B}</id>
+			<comment/>
+			<position>
+				<first>587</first>
+				<second>-353</second>
+			</position>
+			<parameterName>Spray_EmitCount</parameterName>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{8538C320-4D5F-404B-A66C-B058527CF3F4}</id>
+			<comment/>
+			<position>
+				<first>587</first>
+				<second>-314</second>
+			</position>
+			<parameterName>Spray_DeltaTime</parameterName>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{2BC8389E-6BDE-8F4D-A219-B36D85862629}</id>
+			<comment/>
+			<position>
+				<first>539</first>
+				<second>-73</second>
+			</position>
+			<parameterName>Spray_SourceOrientation</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{1BFFB43D-3F52-A24B-A40C-E001C6816206}</id>
+			<comment/>
+			<position>
+				<first>523</first>
+				<second>-40</second>
+			</position>
+			<parameterName>Spray_SourceAngularVelocity</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{4EE42050-0281-534A-BBF0-BC7A91D9EDC7}</id>
+			<comment/>
+			<position>
+				<first>587</first>
+				<second>-7</second>
+			</position>
+			<parameterName>Spray_SourceAge</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{A70217D8-952E-2640-A313-7DDFBD42C829}</id>
+			<comment/>
+			<position>
+				<first>571</first>
+				<second>26</second>
+			</position>
+			<parameterName>Spray_SourceMass</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{090DABE3-F0ED-D94B-A724-EEF5F80551A7}</id>
+			<comment/>
+			<position>
+				<first>587</first>
+				<second>59</second>
+			</position>
+			<parameterName>Spray_SourceSize</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{2C1DFC81-C3EB-384C-8C27-EAC7D39D8A6C}</id>
+			<comment/>
+			<position>
+				<first>571</first>
+				<second>-238</second>
+			</position>
+			<parameterName>Spray_SourcePosition</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{796A59E5-C205-794C-8F1E-934047076F58}</id>
+			<comment/>
+			<position>
+				<first>571</first>
+				<second>-205</second>
+			</position>
+			<parameterName>Spray_SourceNormal</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{2A80B256-DE39-8346-A83F-87E0A8174CF4}</id>
+			<comment/>
+			<position>
+				<first>571</first>
+				<second>-172</second>
+			</position>
+			<parameterName>Spray_SourceAngles</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{91477240-C404-4142-9767-21A5621C270D}</id>
+			<comment/>
+			<position>
+				<first>571</first>
+				<second>-139</second>
+			</position>
+			<parameterName>Spray_SourceVelocity</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{C46B4C8D-A2F5-ED42-AB03-326D18F4A23B}</id>
+			<comment/>
+			<position>
+				<first>523</first>
+				<second>-106</second>
+			</position>
+			<parameterName>Spray_SourceInheritVelocity</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{3A879437-C1ED-4941-B04F-137FB53C3D9E}</id>
+			<comment/>
+			<position>
+				<first>587</first>
+				<second>135</second>
+			</position>
+			<parameterName>Spray_Transform</parameterName>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{EA214315-2E16-6349-8532-323644205DD6}</id>
+			<comment/>
+			<position>
+				<first>603</first>
+				<second>172</second>
+			</position>
+			<parameterName>Spray_Seed</parameterName>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+			<id>{78731411-703F-7C4A-A6D8-2CD7644DA9B5}</id>
+			<comment/>
+			<position>
+				<first>565</first>
+				<second>-431</second>
+			</position>
+			<parameterName>Spray_Head</parameterName>
+			<elements>
+				<item>
+					<name>indexCount</name>
+					<type>DtInteger1</type>
+				</item>
+				<item>
+					<name>instanceCount</name>
+					<type>DtInteger1</type>
+				</item>
+				<item>
+					<name>firstIndex</name>
+					<type>DtInteger1</type>
+				</item>
+				<item>
+					<name>vertexOffset</name>
+					<type>DtInteger1</type>
+				</item>
+				<item>
+					<name>firstInstance</name>
+					<type>DtInteger1</type>
+				</item>
+				<item>
+					<name>capacity</name>
+					<type>DtInteger1</type>
+				</item>
+				<item>
+					<name>alive</name>
+					<type>DtInteger1</type>
+				</item>
+			</elements>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{51D6EBF1-11D4-DC4C-8C0F-C0FC5D4991A4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{EEC620E2-4A2E-834C-B3D0-C14A6890B2D0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{EB593768-0A14-234B-AD0D-43436082516C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{295861D2-2471-BA4C-A966-6D5E48332A57}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{283DEC9E-4E9F-5C45-8822-5863701E277B}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{DE091A4C-EFA3-3E40-9345-013474864908}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{776EEBAA-64F5-7347-A7C9-06F845916D6D}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{C2526157-F8F3-2246-9461-9C9712C958D0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{73E51DA5-ECD5-2544-9B98-A8CAF0C29A1A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{ACFF1F5E-A3FB-B541-B15A-784789385A78}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{ACC44F09-3A89-E24B-9FA2-AFC5271D2796}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{E9EB9FAF-7212-CE43-A824-91EF4FAF3C2B}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{C84933AA-EEA8-1046-BCE3-95A1C6B685DE}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{762AE0B8-154C-3B4E-8D6A-9312E0671139}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{DD12574A-72DA-3C40-915B-6E7EB83D1C37}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{F06B4BD8-C3F9-964A-ABBF-490E30E9BE0E}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>

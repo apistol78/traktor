@@ -80,6 +80,8 @@ public:
 	const EffectData* getEffect() const { return m_effect; }
 
 private:
+	friend class Emitter;
+
 	Ref< SourceData > m_source;
 	RefArray< ModifierData > m_modifiers;
 	resource::Id< render::Shader > m_shader;
@@ -94,6 +96,7 @@ private:
 	bool m_sort = false;
 	bool m_worldSpace = true;
 	bool m_meshOrientationFromVelocity = true;
+	bool m_gpu = true;
 };
 
 }

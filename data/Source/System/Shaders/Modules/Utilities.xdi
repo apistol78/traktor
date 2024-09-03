@@ -2,6 +2,12 @@
 <object type="traktor.render.ShaderModule">
 	<text>
 	<![CDATA[
+
+const float PI = 3.142f;
+const float TWO_PI = PI * 2.0f;
+const float HALF_PI = PI / 2.0f;
+
+// Check if X and Y are within [0;max] range.
 bool CheckRange(ivec2 p, ivec2 mx)
 {
 	if (p.x < 0 || p.y < 0)
@@ -11,6 +17,27 @@ bool CheckRange(ivec2 p, ivec2 mx)
 	else
 		return true;
 }
+
+vec4 axisX(mat4 m)
+{
+	return m[0];
+}
+
+vec4 axisY(mat4 m)
+{
+	return m[1];
+}
+
+vec4 axisZ(mat4 m)
+{
+	return m[2];
+}
+
+float lerpXY(vec4 v, float f)
+{
+	return mix(v.x, v.y, f);
+}
+
 
 	]]>
 	</text>
