@@ -23,6 +23,8 @@ class Modifier : public Object
 	T_RTTI_CLASS;
 
 public:
+	virtual void writeSequence(Vector4*& inoutSequence) const {};
+
 	virtual void update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const = 0;
 };
 

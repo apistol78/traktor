@@ -19,9 +19,9 @@ GlslStorageBuffer::GlslStorageBuffer(const std::wstring& name, Set set, uint8_t 
 {
 }
 
-bool GlslStorageBuffer::add(const std::wstring& elementName, DataType elementType)
+bool GlslStorageBuffer::add(const std::wstring& elementName, DataType elementType, int32_t elementLength)
 {
-	m_elements.push_back({ elementName, elementType });
+	m_elements.push_back({ elementName, elementType, elementLength });
 	return true;
 }
 

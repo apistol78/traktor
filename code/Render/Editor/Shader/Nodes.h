@@ -1027,9 +1027,8 @@ public:
 	struct NamedElement
 	{
 		std::wstring name;
-		DataType type;
-
-		NamedElement();
+		DataType type = DtFloat1;
+		int32_t length = 0;
 
 		void serialize(ISerializer& s);
 	};

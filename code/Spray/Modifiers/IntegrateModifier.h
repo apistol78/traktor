@@ -21,7 +21,11 @@ class IntegrateModifier : public Modifier
 	T_RTTI_CLASS;
 
 public:
+	static constexpr int32_t OperationCode = 1;
+
 	explicit IntegrateModifier(float timeScale, bool linear, bool angular);
+
+	virtual void writeSequence(Vector4*& inoutSequence) const override final;
 
 	virtual void update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const override final;
 

@@ -22,7 +22,11 @@ class BrownianModifier : public Modifier
 	T_RTTI_CLASS;
 
 public:
+	static constexpr int32_t OperationCode = 3;
+
 	explicit BrownianModifier(float factor);
+
+	virtual void writeSequence(Vector4*& inoutSequence) const override final;
 
 	virtual void update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const override final;
 

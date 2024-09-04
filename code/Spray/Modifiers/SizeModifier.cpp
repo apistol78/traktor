@@ -18,6 +18,16 @@ SizeModifier::SizeModifier(float adjustRate)
 {
 }
 
+void SizeModifier::writeSequence(Vector4*& inoutSequence) const
+{
+	*inoutSequence++ = Vector4(
+		OperationCode,
+		m_adjustRate,
+		0.0f,
+		0.0f
+	);
+}
+
 void SizeModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
 	const float deltaSize = m_adjustRate * deltaTime;

@@ -343,7 +343,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 				getBindStage(cx)
 			);
 			for (const auto& element : storageStructNode->getElements())
-				storageBuffer->add(element.name, element.type);
+				storageBuffer->add(element.name, element.type, element.length);
 			cx.getLayout().add(storageBuffer);
 
 			auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -2522,7 +2522,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 			getBindStage(cx)
 		);
 		for (const auto& element : node->getElements())
-			storageBuffer->add(element.name, element.type);
+			storageBuffer->add(element.name, element.type, element.length);
 		cx.getLayout().add(storageBuffer);
 	}
 

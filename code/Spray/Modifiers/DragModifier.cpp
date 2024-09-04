@@ -19,6 +19,16 @@ DragModifier::DragModifier(float linearDrag, float angularDrag)
 {
 }
 
+void DragModifier::writeSequence(Vector4*& inoutSequence) const
+{
+	*inoutSequence++ = Vector4(
+		OperationCode,
+		m_linearDrag,
+		m_angularDrag,
+		0.0f
+	);
+}
+
 void DragModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
 	const Scalar dv = 1.0_simd - m_linearDrag * deltaTime;

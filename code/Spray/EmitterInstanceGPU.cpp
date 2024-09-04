@@ -13,6 +13,7 @@
 #include "Resource/IResourceManager.h"
 #include "Spray/Emitter.h"
 #include "Spray/EmitterInstanceGPU.h"
+#include "Spray/Modifier.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/Source.h"
 #include "Spray/Vertex.h"
@@ -41,6 +42,7 @@ struct Head
 	render::IndexedIndirectDraw indirectDraw;
 	int32_t capacity;
 	int32_t alive;
+	Vector4 modifiers[16];
 };
 
 	}
@@ -81,6 +83,12 @@ Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(render::IRenderSyst
 	head->indirectDraw.firstInstance = 0;
 	head->capacity = c_maxPointCount;
 	head->alive = 0;
+
+	Vector4* write = &head->modifiers[0];
+	for (auto modifier : emitter->getModifiers())
+		modifier->writeSequence(write);
+	*write++ = Vector4::zero();
+
 	emitterInstance->m_headBuffer->unlock();
 
 	return emitterInstance;

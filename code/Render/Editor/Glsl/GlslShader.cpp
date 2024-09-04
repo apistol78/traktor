@@ -385,7 +385,10 @@ std::wstring GlslShader::getGeneratedShader(
 					// Force high precision on SSBO since they share signature.
 					if (element.type >= DtFloat1 && element.type <= DtFloat4)
 						ss << L"highp ";
-					ss << glsl_storage_type(element.type) << L" " << element.name << L";" << Endl;
+					if (element.length <= 0)
+						ss << glsl_storage_type(element.type) << L" " << element.name << L";" << Endl;
+					else
+						ss << glsl_storage_type(element.type) << L" " << element.name << L"[" << element.length << L"];" << Endl;
 				}
 				ss << DecreaseIndent;
 				ss << L"};" << Endl;

@@ -18,6 +18,16 @@ BrownianModifier::BrownianModifier(float factor)
 {
 }
 
+void BrownianModifier::writeSequence(Vector4*& inoutSequence) const
+{
+	*inoutSequence++ = Vector4(
+		OperationCode,
+		m_factor,
+		0.0f,
+		0.0f
+	);
+}
+
 void BrownianModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
 	for (size_t i = first; i < last; ++i)

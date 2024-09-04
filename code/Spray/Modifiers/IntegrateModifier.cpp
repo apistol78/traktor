@@ -20,6 +20,16 @@ IntegrateModifier::IntegrateModifier(float timeScale, bool linear, bool angular)
 {
 }
 
+void IntegrateModifier::writeSequence(Vector4*& inoutSequence) const
+{
+	*inoutSequence++ = Vector4(
+		OperationCode,
+		m_timeScale,
+		m_linear ? 1.0f : 0.0f,
+		m_angular ? 1.0f : 0.0f
+	);
+}
+
 void IntegrateModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
 	const Scalar scaledDeltaTime = deltaTime * m_timeScale;

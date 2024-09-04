@@ -31,11 +31,12 @@ public:
 	{
 		std::wstring name;
 		DataType type;
+		int32_t length;
 	};
 
 	explicit GlslStorageBuffer(const std::wstring& name, Set set, uint8_t stages);
 
-	bool add(const std::wstring& elementName, DataType elementType);
+	bool add(const std::wstring& elementName, DataType elementType, int32_t elementLength);
 
 	const AlignedVector< Element >& get() const { return m_elements; }
 

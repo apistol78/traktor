@@ -1,30 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{169D7368-70D8-4827-9B33-96B03E76BE72}</id>
 			<comment/>
 			<position>
-				<first>107</first>
-				<second>151</second>
+				<first>108</first>
+				<second>152</second>
 			</position>
 			<parameterName>Spray_Points</parameterName>
 			<elements>
 				<item>
 					<name>position</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>velocity</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>oaia</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>msra</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -32,8 +36,8 @@
 			<id>{2833BE6B-8529-4D27-80F2-D30971E6C437}</id>
 			<comment/>
 			<position>
-				<first>432</first>
-				<second>104</second>
+				<first>436</first>
+				<second>124</second>
 			</position>
 			<name>Evolve</name>
 			<technique>Default</technique>
@@ -42,7 +46,9 @@
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
-			<include/>
+			<include>
+				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
+			</include>
 			<inputPins>
 				<item>
 					<id>{F06B4BD8-C3F9-964A-ABBF-490E30E9BE0E}</id>
@@ -63,24 +69,64 @@
 int alive = $Head[0].alive;
 
 // Evolve points.
-const vec4 G = vec4(0.0f, -1.0f, 0.0f, 0.0f) * $DeltaTime;
-
 for (int i = 0; i < alive; ++i)
 {
-	vec4 position = $Points[i].position;
-	float orientation = $Points[i].oaia.x;
-	vec4 velocity = $Points[i].velocity;
-	float angularVelocity = $Points[i].oaia.y;
-	float inverseMass = $Points[i].oaia.z;
+	for (int j = 0;; ++j)
+	{
+		const vec4 modifier = $Head[0].modifiers[j];
 
-	position += velocity * inverseMass * $DeltaTime;
-	velocity += G * inverseMass;
+		int op = int(modifier.x);
+		if (op == 0)
+			break;
 
-	orientation += angularVelocity * inverseMass * $DeltaTime;
+		vec4 position = $Points[i].position;
+		float orientation = $Points[i].oaia.x;
+		vec4 velocity = $Points[i].velocity;
+		float angularVelocity = $Points[i].oaia.y;
+		float inverseMass = $Points[i].oaia.z;
+		float size = $Points[i].msra.y;
 
-	$Points[i].position = position;
-	$Points[i].velocity = velocity;
-	$Points[i].oaia.x = orientation;
+		if (op == 1)	// IntegrateModifier
+		{
+			const float scaledDeltaTime = $DeltaTime * modifier.y;
+			position += (velocity * inverseMass * scaledDeltaTime) * modifier.z;
+			orientation += (angularVelocity * inverseMass * scaledDeltaTime) * modifier.w;
+		}
+		else if (op == 2)	// GravityModifier
+		{
+			const vec4 gravity = vec4(
+				modifier.yzw * $DeltaTime,
+				0.0f
+			);
+			velocity += gravity * inverseMass;
+		}
+		else if (op == 3)	// BrownianModifier
+		{
+			const float rx = hash(i * 3 + 0) * 2.0f - 1.0f;
+			const float ry = hash(i * 3 + 1) * 2.0f - 1.0f;
+			const float rz = hash(i * 3 + 2) * 2.0f - 1.0f;
+			velocity += vec4(rx, ry, rz, 0.0f) * modifier.y * $DeltaTime * inverseMass;
+		}
+		else if (op == 4)	// DragModifier
+		{
+			const float dv = 1.0f - modifier.y * $DeltaTime;
+			const float da = 1.0f - modifier.z * $DeltaTime;
+			velocity *= dv;
+			angularVelocity * da;
+		}
+		else if (op == 5)	// SizeModifier
+		{
+			const float deltaSize = modifier.y * $DeltaTime;
+			size += deltaSize;
+		}
+	
+		$Points[i].position = position;
+		$Points[i].velocity = velocity;
+		$Points[i].oaia.x = orientation;
+		$Points[i].oaia.y = angularVelocity;
+		$Points[i].msra.y = size;
+	}
+
 	$Points[i].oaia.w += $DeltaTime;
 }
 
@@ -90,11 +136,11 @@ $Head[0].alive = alive;
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{D78F3808-A1DC-4E0E-B64A-802EF0A9C5CF}</id>
 			<comment/>
 			<position>
-				<first>123</first>
+				<first>124</first>
 				<second>110</second>
 			</position>
 			<parameterName>Spray_Head</parameterName>
@@ -102,30 +148,42 @@ $Head[0].alive = alive;
 				<item>
 					<name>indexCount</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>instanceCount</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>firstIndex</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>vertexOffset</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>firstInstance</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>capacity</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>alive</name>
 					<type>DtInteger1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>modifiers</name>
+					<type>DtFloat4</type>
+					<length>16</length>
 				</item>
 			</elements>
 		</item>
@@ -133,8 +191,8 @@ $Head[0].alive = alive;
 			<id>{C260B0AE-EF94-47D2-985B-6EDD3607DE58}</id>
 			<comment/>
 			<position>
-				<first>145</first>
-				<second>192</second>
+				<first>146</first>
+				<second>194</second>
 			</position>
 			<parameterName>Spray_DeltaTime</parameterName>
 			<type>Scalar</type>

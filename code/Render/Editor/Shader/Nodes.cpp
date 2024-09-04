@@ -2611,7 +2611,7 @@ Step::Step()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Struct", 0, Struct, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Struct", 1, Struct, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_Struct_o[] =
 {
@@ -2655,11 +2655,6 @@ void Struct::serialize(ISerializer& s)
 	s >> MemberAlignedVector< NamedElement, MemberComposite< NamedElement > >(L"elements", m_elements);
 }
 
-Struct::NamedElement::NamedElement()
-:	type(DtFloat1)
-{
-}
-
 void Struct::NamedElement::serialize(ISerializer& s)
 {
 	const MemberEnum< DataType >::Key kDataType[] =
@@ -2685,6 +2680,9 @@ void Struct::NamedElement::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"name", name);
 	s >> MemberEnum< DataType >(L"type", type, kDataType);
+
+	if (s.getVersion< Struct >() >= 1)
+		s >> Member< int32_t >(L"length", length, AttributeRange(0));
 }
 
 /*---------------------------------------------------------------------------*/

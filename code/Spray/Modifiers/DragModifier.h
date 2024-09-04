@@ -21,7 +21,11 @@ class DragModifier : public Modifier
 	T_RTTI_CLASS;
 
 public:
+	static constexpr int32_t OperationCode = 4;
+
 	explicit DragModifier(float linearDrag, float angularDrag);
+
+	virtual void writeSequence(Vector4*& inoutSequence) const override final;
 
 	virtual void update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const override final;
 

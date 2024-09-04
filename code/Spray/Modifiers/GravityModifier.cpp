@@ -19,6 +19,16 @@ GravityModifier::GravityModifier(const Vector4& gravity, bool world)
 {
 }
 
+void GravityModifier::writeSequence(Vector4*& inoutSequence) const
+{
+	*inoutSequence++ = Vector4(
+		OperationCode,
+		m_gravity.x(),
+		m_gravity.y(),
+		m_gravity.z()
+	);
+}
+
 void GravityModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
 	const Vector4 gravity = (m_world ? m_gravity : transform * m_gravity) * deltaTime;
