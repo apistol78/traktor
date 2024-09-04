@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{3EAEAD61-D6BD-964E-B9A8-659564FB5D25}</id>
 			<comment/>
 			<position>
@@ -13,18 +13,22 @@
 				<item>
 					<name>position</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>velocity</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>oaia</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>msra</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -115,48 +119,48 @@
 			<outputPins/>
 			<script>
 			<![CDATA[
-const uint NR = 64;
 
 int capacity = $Head[0].capacity;
 int alive = $Head[0].alive;
 
-const vec4 position = $Transform * $SourcePosition;
-const vec4 normal = $Transform * $SourceNormal;
+const vec3 position = ($Transform * $SourcePosition).xyz;
+const vec3 normal = ($Transform * $SourceNormal).xyz;
 
-const vec4 tx = axisX($Transform) * $SourceAngles.x;
-const vec4 tz = axisZ($Transform) * $SourceAngles.y;
+const vec3 tx = axisX($Transform).xyz * $SourceAngles.x;
+const vec3 tz = axisZ($Transform).xyz * $SourceAngles.y;
 
 const int available = capacity - alive;
 const int emitCount = min(int($EmitCount), available);
+
+uint seed = uint($Seed);
 
 for (int i = 0; i < emitCount; ++i)
 {
 	const int id = alive++;
 
-	const float phi = hash(uint($Seed + i * NR + 0)) * TWO_PI;
-	const float gamma = hash(uint($Seed + i * NR + 0));
-	const float beta = hash(uint($Seed + i * NR + 1));
+	const float phi = hash(seed++) * TWO_PI;
+	const float gamma = hash(seed++);
+	const float beta = hash(seed++);
 
-	const float r0 = hash(uint($Seed + i * NR + 2));
-	const float r1 = hash(uint($Seed + i * NR + 3));
-	const float r2 = hash(uint($Seed + i * NR + 4));
-	const float r3 = hash(uint($Seed + i * NR + 5));
-	const float r4 = hash(uint($Seed + i * NR + 6));
-	const float r5 = hash(uint($Seed + i * NR + 7));
+	const float r0 = hash(seed++);
+	const float r1 = hash(seed++);
+	const float r2 = hash(seed++);
+	const float r3 = hash(seed++);
+	const float r4 = hash(seed++);
+	const float r5 = hash(seed++);
 
-	const float x = sin(phi + HALF_PI);
+	const float x = cos(phi);
 	const float z = sin(phi);
 
-	const vec4 ax = tx * x;
-	const vec4 az = tz * z;
+	const vec3 ax = tx * x;
+	const vec3 az = tz * z;
 
-	const vec4 extent = ax + az;
-	const vec4 direction = normalize(normal + extent * gamma);
+	const vec3 extent = ax + az;
+	const vec3 direction = normalize(normal + extent * gamma);
+	const vec3 velocity = direction * lerpXY($SourceVelocity, r0);
 
-	const vec4 velocity = direction * lerpXY($SourceVelocity, r0);
-
-	$Points[id].position = position + velocity * beta * $DeltaTime;
-	$Points[id].velocity = velocity;
+	$Points[id].position = vec4(position + velocity * beta * $DeltaTime, 1.0f);
+	$Points[id].velocity = vec4(velocity, 0.0f);
 	$Points[id].oaia = vec4(
 		lerpXY($SourceOrientation, r1),	// orientation
 		lerpXY($SourceAngularVelocity, r2),	// angularVelocity
@@ -330,7 +334,7 @@ $Head[0].alive = alive;
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{78731411-703F-7C4A-A6D8-2CD7644DA9B5}</id>
 			<comment/>
 			<position>
@@ -342,30 +346,37 @@ $Head[0].alive = alive;
 				<item>
 					<name>indexCount</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>instanceCount</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>firstIndex</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>vertexOffset</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>firstInstance</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>capacity</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>alive</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>

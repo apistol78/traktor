@@ -82,6 +82,13 @@ public:
 	virtual Aabb3 getBoundingBox() const override final { return m_boundingBox; }
 
 private:
+	struct Update
+	{
+		float deltaTime;
+		int32_t emit;
+		int32_t seed;
+	};
+
 	Ref< const Emitter > m_emitter;
 	resource::Proxy< render::Shader > m_shaderLifetime;
 	resource::Proxy< render::Shader > m_shaderEvolve;
@@ -91,11 +98,8 @@ private:
 	Ref< render::Buffer > m_pointBuffer;
 	Aabb3 m_boundingBox;
 	Transform m_transform;
-	int32_t m_pendingEmit = 0;
-	int32_t m_pendingSeed = 0;
-	float m_pendingDeltaTime = 0.0f;
 	float m_emitFraction = 0.0f;
-	bool m_needLifetimeUpdate = false;
+	AlignedVector< Update > m_updates;
 
 	explicit EmitterInstanceGPU(const Emitter* emitter);
 };

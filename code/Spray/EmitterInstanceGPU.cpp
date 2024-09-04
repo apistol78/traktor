@@ -100,7 +100,6 @@ void EmitterInstanceGPU::update(Context& context, const Transform& transform, bo
 {
 	const Vector4 lastPosition = m_transform.translation();
 	m_transform = transform;
-	m_pendingSeed = context.random.next();
 
 	if (emit)
 	{
@@ -115,24 +114,36 @@ void EmitterInstanceGPU::update(Context& context, const Transform& transform, bo
 				const float emitConstant = source->getConstantRate() * context.deltaTime + m_emitFraction;
 				const float emitTotal = emitVelocity + emitConstant;
 
-				m_pendingEmit = (int32_t)emitTotal;
-				m_emitFraction = emitTotal - m_pendingEmit;
+				m_emitFraction += std::floor(emitTotal);
+				const int32_t emitExtra = int32_t(m_emitFraction);
+				m_emitFraction -= emitExtra;
+
+				m_updates.push_back({
+					context.deltaTime,
+					(int32_t)emitTotal + emitExtra,
+					(int32_t)context.random.next()
+				});
 			}
 			else
 			{
-				m_pendingEmit = (int32_t)source->getConstantRate();
 				m_emitFraction = 0.0f;
+				m_updates.push_back({
+					context.deltaTime,
+					(int32_t)source->getConstantRate(),
+					(int32_t)context.random.next()
+				});
 			}
 		}
 	}
 	else
 	{
-		m_pendingEmit = 0;
 		m_emitFraction = 0.0f;
+		m_updates.push_back({
+			context.deltaTime,
+			0,
+			(int32_t)context.random.next()
+		});
 	}
-
-	m_pendingDeltaTime += context.deltaTime;
-	m_needLifetimeUpdate = true;
 }
 
 void EmitterInstanceGPU::render(
@@ -151,7 +162,7 @@ void EmitterInstanceGPU::render(
 	if (!m_emitter->getShader()->hasTechnique(technique))
 		return;
 
-	if (m_needLifetimeUpdate)
+	for (const auto& update : m_updates)
 	{
 		// Update life time of points; prepare indirect draw.
 		{
@@ -173,7 +184,7 @@ void EmitterInstanceGPU::render(
 			rb->program = m_shaderEvolve->getProgram().program;
 			rb->programParams = renderContext->alloc< render::ProgramParameters >();
 			rb->programParams->beginParameters(renderContext);
-			rb->programParams->setFloatParameter(s_handleDeltaTime, m_pendingDeltaTime);
+			rb->programParams->setFloatParameter(s_handleDeltaTime, update.deltaTime);
 			rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
 			rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
 			rb->programParams->endParameters(renderContext);
@@ -181,7 +192,7 @@ void EmitterInstanceGPU::render(
 		}
 
 		// Emit new points.
-		if (m_emitter->getSource() && m_shaderSource && m_pendingEmit > 0)
+		if (m_emitter->getSource() && m_shaderSource && update.emit > 0)
 		{
 			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
 
@@ -189,9 +200,9 @@ void EmitterInstanceGPU::render(
 			rb->program = m_shaderSource->getProgram().program;
 			rb->programParams = renderContext->alloc< render::ProgramParameters >();
 			rb->programParams->beginParameters(renderContext);
-			rb->programParams->setFloatParameter(s_handleSeed, (float)m_pendingSeed);
-			rb->programParams->setFloatParameter(s_handleDeltaTime, m_pendingDeltaTime);
-			rb->programParams->setFloatParameter(s_handleEmitCount, (float)m_pendingEmit);
+			rb->programParams->setFloatParameter(s_handleSeed, (float)update.seed);
+			rb->programParams->setFloatParameter(s_handleDeltaTime, update.deltaTime);
+			rb->programParams->setFloatParameter(s_handleEmitCount, (float)update.emit);
 			rb->programParams->setMatrixParameter(s_handleTransform, m_transform.toMatrix44());
 			rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
 			rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
@@ -201,10 +212,9 @@ void EmitterInstanceGPU::render(
 		}
 
 		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex | render::Stage::Indirect, nullptr, 0);
-
-		m_pendingDeltaTime = 0.0f;
-		m_needLifetimeUpdate = false;
 	}
+
+	m_updates.resize(0);
 
 	pointRenderer->batchUntilFlush(
 		m_emitter->getShader(),
@@ -220,7 +230,6 @@ void EmitterInstanceGPU::synchronize() const
 
 EmitterInstanceGPU::EmitterInstanceGPU(const Emitter* emitter)
 :	m_emitter(emitter)
-,	m_needLifetimeUpdate(false)
 {
 }
 
