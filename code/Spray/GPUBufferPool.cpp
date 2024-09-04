@@ -19,11 +19,27 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.GPUBufferPool", GPUBufferPool, Object)
 
 GPUBufferPool::GPUBufferPool(render::IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
+,	m_destroyed(false)
 {
+}
+
+void GPUBufferPool::destroy()
+{
+	for (auto buffer : m_pointBuffers)
+		buffer->destroy();
+	for (auto buffer : m_headBuffers)
+		buffer->destroy();
+
+	m_pointBuffers.clear();
+	m_headBuffers.clear();
+
+	m_destroyed = true;
 }
 
 bool GPUBufferPool::allocBuffers(uint32_t capacity, Ref< render::Buffer >& outHeadBuffer, Ref< render::Buffer >& outPointBuffer)
 {
+	T_FATAL_ASSERT(m_destroyed == false);
+
 	outHeadBuffer = nullptr;
 	outPointBuffer = nullptr;
 
@@ -68,6 +84,7 @@ bool GPUBufferPool::allocBuffers(uint32_t capacity, Ref< render::Buffer >& outHe
 
 void GPUBufferPool::freeBuffers(Ref< render::Buffer >& inoutHeadBuffer, Ref< render::Buffer >& inoutPointBuffer)
 {
+	T_FATAL_ASSERT(m_destroyed == false);
 	T_FATAL_ASSERT(inoutHeadBuffer != nullptr);
 	T_FATAL_ASSERT(inoutPointBuffer != nullptr);
 

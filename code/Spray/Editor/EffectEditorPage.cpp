@@ -259,6 +259,7 @@ void EffectEditorPage::destroy()
 	safeDestroy(m_containerSequencer);
 	safeDestroy(m_previewControl);
 	safeDestroy(m_resourceManager);
+	safeDestroy(m_gpuBufferPool);
 
 	m_site = nullptr;
 }

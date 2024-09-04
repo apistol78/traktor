@@ -37,6 +37,8 @@ class T_DLLCLASS GPUBufferPool : public Object
 public:
 	explicit GPUBufferPool(render::IRenderSystem* renderSystem);
 
+	void destroy();
+
 	bool allocBuffers(uint32_t capacity, Ref< render::Buffer >& outHeadBuffer, Ref< render::Buffer >& outPointBuffer);
 
 	void freeBuffers(Ref< render::Buffer >& inoutHeadBuffer, Ref< render::Buffer >& inoutPointBuffer);
@@ -45,6 +47,7 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	RefArray< render::Buffer > m_headBuffers;
 	RefArray< render::Buffer > m_pointBuffers;
+	bool m_destroyed;
 };
 
 }
