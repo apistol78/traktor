@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/RefArray.h"
+#include "Render/Types.h"
 #include "Resource/Proxy.h"
 #include "Spray/IEmitterInstance.h"
 
@@ -24,7 +25,6 @@ namespace traktor::render
 {
 
 class Buffer;
-class IRenderSystem;
 class Shader;
 
 }
@@ -40,6 +40,17 @@ namespace traktor::spray
 {
 
 class Emitter;
+class GPUBufferPool;
+
+// Buffer containing information about particle system instance.
+// Suitable for indirect draw thus IndexedIndirectDraw must be at top.
+struct Head
+{
+	render::IndexedIndirectDraw indirectDraw;
+	int32_t capacity;
+	int32_t alive;
+	Vector4 modifiers[16];
+};
 
 /*! Emitter instance.
  * \ingroup Spray
@@ -49,7 +60,7 @@ class T_DLLCLASS EmitterInstanceGPU : public IEmitterInstance
 	T_RTTI_CLASS;
 
 public:
-	static Ref< EmitterInstanceGPU > createInstance(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager, const Emitter* emitter, float duration);
+	static Ref< EmitterInstanceGPU > createInstance(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, const Emitter* emitter, float duration);
 
 	virtual ~EmitterInstanceGPU();
 
@@ -75,6 +86,7 @@ private:
 	resource::Proxy< render::Shader > m_shaderLifetime;
 	resource::Proxy< render::Shader > m_shaderEvolve;
 	resource::Proxy< render::Shader > m_shaderSource;
+	Ref< GPUBufferPool > m_gpuBufferPool;
 	Ref< render::Buffer > m_headBuffer;
 	Ref< render::Buffer > m_pointBuffer;
 	Aabb3 m_boundingBox;

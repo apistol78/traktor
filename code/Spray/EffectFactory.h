@@ -35,6 +35,8 @@ class IEntityFactory;
 namespace traktor::spray
 {
 
+class GPUBufferPool;
+
 /*! Emitter resource factory.
  * \ingroup Spray
  */
@@ -60,6 +62,7 @@ public:
 private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< const world::IEntityFactory > m_entityFactory;
+	Ref< GPUBufferPool > m_gpuBufferPool;
 };
 
 }

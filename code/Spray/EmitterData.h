@@ -37,7 +37,6 @@ class IResourceManager;
 namespace traktor::render
 {
 
-class IRenderSystem;
 class Shader;
 
 }
@@ -54,6 +53,7 @@ namespace traktor::spray
 
 class EffectData;
 class Emitter;
+class GPUBufferPool;
 class ModifierData;
 class SourceData;
 
@@ -65,7 +65,7 @@ class T_DLLCLASS EmitterData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Ref< Emitter > createEmitter(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager, const world::IEntityFactory* entityFactory) const;
+	Ref< Emitter > createEmitter(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, const world::IEntityFactory* entityFactory) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

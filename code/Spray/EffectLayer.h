@@ -19,13 +19,6 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::render
-{
-
-class IRenderSystem;
-
-}
-
 namespace traktor::resource
 {
 
@@ -45,6 +38,7 @@ namespace traktor::spray
 
 class EffectLayerInstance;
 class Emitter;
+class GPUBufferPool;
 class Sequence;
 class Trail;
 
@@ -66,7 +60,7 @@ public:
 		const world::IEntityEvent* triggerDisable
 	);
 
-	Ref< EffectLayerInstance > createInstance(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager) const;
+	Ref< EffectLayerInstance > createInstance(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool) const;
 
 	float getTime() const { return m_time; }
 

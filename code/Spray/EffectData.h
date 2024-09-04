@@ -20,13 +20,6 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::render
-{
-
-class IRenderSystem;
-
-}
-
 namespace traktor::resource
 {
 
@@ -46,6 +39,7 @@ namespace traktor::spray
 
 class Effect;
 class EffectLayerData;
+class GPUBufferPool;
 
 /*! Effect persistent data.
  * \ingroup Spray
@@ -64,7 +58,7 @@ public:
 		const RefArray< EffectLayerData >& layers
 	);
 
-	Ref< Effect > createEffect(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager, const world::IEntityFactory* entityFactory) const;
+	Ref< Effect > createEffect(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, const world::IEntityFactory* entityFactory) const;
 
 	void addLayer(EffectLayerData* layer);
 

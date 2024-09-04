@@ -7,12 +7,12 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Render/Buffer.h"
-#include "Render/IRenderSystem.h"
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Spray/Emitter.h"
 #include "Spray/EmitterInstanceGPU.h"
+#include "Spray/GPUBufferPool.h"
 #include "Spray/Modifier.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/Source.h"
@@ -35,22 +35,16 @@ const render::Handle s_handleTransform(L"Spray_Transform");
 const render::Handle s_handleHead(L"Spray_Head");
 const render::Handle s_handlePoints(L"Spray_Points");
 
-// Buffer containing information about particle system instance.
-// Suitable for indirect draw thus IndexedIndirectDraw must be at top.
-struct Head
-{
-	render::IndexedIndirectDraw indirectDraw;
-	int32_t capacity;
-	int32_t alive;
-	Vector4 modifiers[16];
-};
-
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstanceGPU", EmitterInstanceGPU, IEmitterInstance)
 
-Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager, const Emitter* emitter, float duration)
+Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, const Emitter* emitter, float duration)
 {
+	// GPU emitter only support up to 15 modifiers.
+	if (emitter->getModifiers().size() >= 16)
+		return nullptr;
+
 	Ref< EmitterInstanceGPU > emitterInstance = new EmitterInstanceGPU(emitter);
 
 	// Bind shaders.
@@ -66,13 +60,10 @@ Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(render::IRenderSyst
 	}
 
 	// Create buffers.
-	emitterInstance->m_headBuffer = renderSystem->createBuffer(render::BuStructured | render::BuIndirect, sizeof(Head), false);
-	if (!emitterInstance->m_headBuffer)
+	if (!gpuBufferPool->allocBuffers(c_maxPointCount, emitterInstance->m_headBuffer, emitterInstance->m_pointBuffer))
 		return nullptr;
 
-	emitterInstance->m_pointBuffer = renderSystem->createBuffer(render::BuStructured, c_maxPointCount * sizeof(Point), false);
-	if (!emitterInstance->m_pointBuffer)
-		return nullptr;
+	emitterInstance->m_gpuBufferPool = gpuBufferPool;
 
 	// Prepare head data.
 	Head* head = (Head*)emitterInstance->m_headBuffer->lock();
@@ -97,6 +88,12 @@ Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(render::IRenderSyst
 EmitterInstanceGPU::~EmitterInstanceGPU()
 {
 	synchronize();
+
+	if (m_gpuBufferPool)
+	{
+		m_gpuBufferPool->freeBuffers(m_headBuffer, m_pointBuffer);
+		m_gpuBufferPool = nullptr;
+	}
 }
 
 void EmitterInstanceGPU::update(Context& context, const Transform& transform, bool emit, bool singleShot)

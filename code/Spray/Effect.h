@@ -20,13 +20,6 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::render
-{
-
-class IRenderSystem;
-
-}
-
 namespace traktor::resource
 {
 
@@ -39,6 +32,7 @@ namespace traktor::spray
 
 class EffectInstance;
 class EffectLayer;
+class GPUBufferPool;
 
 /*! Effect immutable descriptor.
  * \ingroup Spray
@@ -49,8 +43,8 @@ class T_DLLCLASS Effect : public Object
 
 public:
 	explicit Effect(
-		render::IRenderSystem* renderSystem,
 		resource::IResourceManager* resourceManager,
+		GPUBufferPool* gpuBufferPool,
 		float duration,
 		float loopStart,
 		float loopEnd,
@@ -68,8 +62,8 @@ public:
 	const RefArray< EffectLayer >& getLayers() const { return m_layers; }
 
 private:
-	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< GPUBufferPool > m_gpuBufferPool;
 	float m_duration;
 	float m_loopStart;
 	float m_loopEnd;

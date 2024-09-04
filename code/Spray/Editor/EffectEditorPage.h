@@ -66,6 +66,7 @@ namespace traktor::spray
 
 class EffectData;
 class EffectPreviewControl;
+class GPUBufferPool;
 
 class T_DLLCLASS EffectEditorPage : public editor::IEditorPage
 {
@@ -99,6 +100,7 @@ private:
 	Ref< ui::Menu > m_popupMenu;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< sound::AudioSystem > m_audioSystem;
+	Ref< GPUBufferPool > m_gpuBufferPool;
 	bool m_velocityVisible;
 	bool m_guideVisible;
 

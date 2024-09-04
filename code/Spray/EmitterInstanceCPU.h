@@ -29,13 +29,6 @@ class Job;
 
 }
 
-namespace traktor::render
-{
-
-class IRenderSystem;
-
-}
-
 namespace traktor::spray
 {
 
@@ -50,7 +43,7 @@ class T_DLLCLASS EmitterInstanceCPU : public IEmitterInstance
 	T_RTTI_CLASS;
 
 public:
-	static Ref< EmitterInstanceCPU > createInstance(render::IRenderSystem* renderSystem, const Emitter* emitter, float duration);
+	static Ref< EmitterInstanceCPU > createInstance(const Emitter* emitter, float duration);
 
 	virtual ~EmitterInstanceCPU();
 

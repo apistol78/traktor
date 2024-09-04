@@ -45,7 +45,7 @@ const uint32_t c_maxAlive = c_maxEmitSingleShot;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstanceCPU", EmitterInstanceCPU, IEmitterInstance)
 
-Ref< EmitterInstanceCPU > EmitterInstanceCPU::createInstance(render::IRenderSystem* renderSystem, const Emitter* emitter, float duration)
+Ref< EmitterInstanceCPU > EmitterInstanceCPU::createInstance(const Emitter* emitter, float duration)
 {
 	return new EmitterInstanceCPU(emitter, duration);
 }

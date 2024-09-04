@@ -31,7 +31,6 @@ class InstanceMesh;
 namespace traktor::render
 {
 
-class IRenderSystem;
 class Shader;
 
 }
@@ -47,6 +46,7 @@ namespace traktor::spray
 {
 
 class Effect;
+class GPUBufferPool;
 class IEmitterInstance;
 class Modifier;
 class Source;
@@ -68,7 +68,7 @@ public:
 		const Effect* effect
 	);
 
-	Ref< IEmitterInstance > createInstance(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager, float duration) const;
+	Ref< IEmitterInstance > createInstance(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, float duration) const;
 
 	const Source* getSource() const { return m_source; }
 

@@ -13,6 +13,7 @@
 #include "Spray/Effect.h"
 #include "Spray/EffectData.h"
 #include "Spray/EffectFactory.h"
+#include "Spray/GPUBufferPool.h"
 #include "Spray/PointSet.h"
 #include "Spray/PointSetResource.h"
 #include "World/IEntityFactory.h"
@@ -25,6 +26,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectFactory", 0, EffectFactory,
 EffectFactory::EffectFactory(render::IRenderSystem* renderSystem, const world::IEntityFactory* entityFactory)
 :	m_renderSystem(renderSystem)
 ,	m_entityFactory(entityFactory)
+,	m_gpuBufferPool(new GPUBufferPool(renderSystem))
 {
 }
 
@@ -32,6 +34,7 @@ bool EffectFactory::initialize(const ObjectStore& objectStore)
 {
 	m_renderSystem = objectStore.get< render::IRenderSystem >();
 	m_entityFactory = objectStore.get< world::IEntityFactory >();
+	m_gpuBufferPool = new GPUBufferPool(m_renderSystem);
 	return true;
 }
 
@@ -61,7 +64,7 @@ Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager,
 	{
 		Ref< const EffectData > effectData = instance->getObject< EffectData >();
 		if (effectData)
-			return effectData->createEffect(m_renderSystem, resourceManager, m_entityFactory);
+			return effectData->createEffect(resourceManager, m_gpuBufferPool, m_entityFactory);
 		else
 			return nullptr;
 	}

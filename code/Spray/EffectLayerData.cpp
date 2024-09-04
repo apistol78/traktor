@@ -23,7 +23,7 @@ namespace traktor::spray
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectLayerData", 4, EffectLayerData, ISerializable)
 
-Ref< EffectLayer > EffectLayerData::createEffectLayer(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager, const world::IEntityFactory* entityFactory) const
+Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, const world::IEntityFactory* entityFactory) const
 {
 	Ref< Emitter > emitter;
 	Ref< Trail > trail;
@@ -33,7 +33,7 @@ Ref< EffectLayer > EffectLayerData::createEffectLayer(render::IRenderSystem* ren
 
 	if (m_emitter)
 	{
-		emitter = m_emitter->createEmitter(renderSystem, resourceManager, entityFactory);
+		emitter = m_emitter->createEmitter(resourceManager, gpuBufferPool, entityFactory);
 		if (!emitter)
 			return nullptr;
 	}

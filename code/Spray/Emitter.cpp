@@ -35,12 +35,12 @@ Emitter::Emitter(
 {
 }
 
-Ref< IEmitterInstance > Emitter::createInstance(render::IRenderSystem* renderSystem, resource::IResourceManager* resourceManager, float duration) const
+Ref< IEmitterInstance > Emitter::createInstance(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, float duration) const
 {
 	if (m_data->m_gpu)
-		return EmitterInstanceGPU::createInstance(renderSystem, resourceManager, this, duration);
+		return EmitterInstanceGPU::createInstance(resourceManager, gpuBufferPool, this, duration);
 	else
-		return EmitterInstanceCPU::createInstance(renderSystem, this, duration);
+		return EmitterInstanceCPU::createInstance(this, duration);
 }
 
 }

@@ -16,15 +16,15 @@ namespace traktor::spray
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.Effect", Effect, Object)
 
 Effect::Effect(
-	render::IRenderSystem* renderSystem,
 	resource::IResourceManager* resourceManager,
+	GPUBufferPool* gpuBufferPool,
 	float duration,
 	float loopStart,
 	float loopEnd,
 	const RefArray< EffectLayer >& layers
 )
-:	m_renderSystem(renderSystem)
-,	m_resourceManager(resourceManager)
+:	m_resourceManager(resourceManager)
+,	m_gpuBufferPool(gpuBufferPool)
 ,	m_duration(duration)
 ,	m_loopStart(loopStart)
 ,	m_loopEnd(loopEnd)
@@ -37,7 +37,7 @@ Ref< EffectInstance > Effect::createInstance() const
 	Ref< EffectInstance > effectInstance = new EffectInstance(this);
 	for (auto layer : m_layers)
 	{
-		Ref< EffectLayerInstance > layerInstance = layer->createInstance(m_renderSystem, m_resourceManager);
+		Ref< EffectLayerInstance > layerInstance = layer->createInstance(m_resourceManager, m_gpuBufferPool);
 		if (layerInstance)
 			effectInstance->m_layerInstances.push_back(layerInstance);
 	}
