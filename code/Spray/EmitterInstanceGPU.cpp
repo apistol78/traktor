@@ -184,6 +184,7 @@ void EmitterInstanceGPU::render(
 			rb->program = m_shaderEvolve->getProgram().program;
 			rb->programParams = renderContext->alloc< render::ProgramParameters >();
 			rb->programParams->beginParameters(renderContext);
+			rb->programParams->setFloatParameter(s_handleSeed, (float)update.seed);
 			rb->programParams->setFloatParameter(s_handleDeltaTime, update.deltaTime);
 			rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
 			rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());

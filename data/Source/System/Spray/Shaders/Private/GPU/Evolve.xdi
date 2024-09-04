@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>108</first>
-				<second>152</second>
+				<second>150</second>
 			</position>
 			<parameterName>Spray_Points</parameterName>
 			<elements>
@@ -36,8 +36,8 @@
 			<id>{2833BE6B-8529-4D27-80F2-D30971E6C437}</id>
 			<comment/>
 			<position>
-				<first>436</first>
-				<second>124</second>
+				<first>435</first>
+				<second>117</second>
 			</position>
 			<name>Evolve</name>
 			<technique>Default</technique>
@@ -62,11 +62,16 @@
 					<id>{EB593768-0A14-234B-AD0D-43436082516C}</id>
 					<name>DeltaTime</name>
 				</item>
+				<item>
+					<id>{EA03207C-C818-EA4E-AF7E-D0C7B81C11A6}</id>
+					<name>Seed</name>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<script>
 			<![CDATA[
 int alive = $Head[0].alive;
+uint seed = uint($Seed);
 
 // Evolve points.
 for (int i = 0; i < alive; ++i)
@@ -102,9 +107,9 @@ for (int i = 0; i < alive; ++i)
 		}
 		else if (op == 3)	// BrownianModifier
 		{
-			const float rx = hash(i * 3 + 0) * 2.0f - 1.0f;
-			const float ry = hash(i * 3 + 1) * 2.0f - 1.0f;
-			const float rz = hash(i * 3 + 2) * 2.0f - 1.0f;
+			const float rx = hash(seed++) * 2.0f - 1.0f;
+			const float ry = hash(seed++) * 2.0f - 1.0f;
+			const float rz = hash(seed++) * 2.0f - 1.0f;
 			velocity += vec4(rx, ry, rz, 0.0f) * modifier.y * $DeltaTime * inverseMass;
 		}
 		else if (op == 4)	// DragModifier
@@ -192,9 +197,20 @@ $Head[0].alive = alive;
 			<comment/>
 			<position>
 				<first>146</first>
-				<second>194</second>
+				<second>190</second>
 			</position>
 			<parameterName>Spray_DeltaTime</parameterName>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{5E3FDD9A-10DD-EC47-8797-DA68DB0C2954}</id>
+			<comment/>
+			<position>
+				<first>162</first>
+				<second>230</second>
+			</position>
+			<parameterName>Spray_Seed</parameterName>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -228,6 +244,16 @@ $Head[0].alive = alive;
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{EB593768-0A14-234B-AD0D-43436082516C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{EA03207C-C818-EA4E-AF7E-D0C7B81C11A6}</id>
 			</destination>
 		</item>
 	</edges>
