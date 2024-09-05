@@ -16,8 +16,6 @@ namespace traktor::spray
 	namespace
 	{
 
-const resource::Id< render::Shader > c_shaderConeSource(L"{1BF7210A-0A23-E041-988D-44AADC38D06E}");
-
 static render::Handle s_handleSourcePosition(L"Spray_SourcePosition");
 static render::Handle s_handleSourceNormal(L"Spray_SourceNormal");
 static render::Handle s_handleSourceAngles(L"Spray_SourceAngles");
@@ -61,11 +59,6 @@ ConeSource::ConeSource(
 ,	m_mass(mass)
 ,	m_size(size)
 {
-}
-
-resource::Id< render::Shader > ConeSource::getShader() const
-{
-	return c_shaderConeSource;
 }
 
 void ConeSource::setShaderParameters(render::ProgramParameters* pp) const

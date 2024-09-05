@@ -18,6 +18,12 @@
 
 namespace traktor::spray
 {
+	namespace
+	{
+
+const resource::Id< render::Shader > c_shaderConeSource(L"{1BF7210A-0A23-E041-988D-44AADC38D06E}");
+
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.ConeSourceData", 1, ConeSourceData, SourceData)
 
@@ -35,6 +41,11 @@ ConeSourceData::ConeSourceData()
 ,	m_mass(1.0f, 1.0f)
 ,	m_size(1.0f, 1.0f)
 {
+}
+
+resource::Id< render::Shader > ConeSourceData::getShader() const
+{
+	return c_shaderConeSource;
 }
 
 Ref< const Source > ConeSourceData::createSource(resource::IResourceManager* resourceManager) const

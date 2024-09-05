@@ -10,6 +10,7 @@
 
 #include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,6 +19,13 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
+
+namespace traktor::render
+{
+
+class Shader;
+
+}
 
 namespace traktor::resource
 {
@@ -39,6 +47,8 @@ class T_DLLCLASS SourceData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	virtual resource::Id< render::Shader > getShader() const { return resource::Id< render::Shader >(); }
+
 	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const = 0;
 
 	virtual void serialize(ISerializer& s) override;

@@ -24,7 +24,6 @@ namespace traktor::render
 {
 
 class ProgramParameters;
-class Shader;
 
 }
 
@@ -46,8 +45,6 @@ public:
 		float constantRate,
 		float velocityRate
 	);
-
-	virtual resource::Id< render::Shader > getShader() const { return resource::Id< render::Shader >(); }
 
 	virtual void setShaderParameters(render::ProgramParameters* pp) const {}
 

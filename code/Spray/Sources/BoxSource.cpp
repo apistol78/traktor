@@ -16,8 +16,6 @@ namespace traktor::spray
 	namespace
 	{
 
-const resource::Id< render::Shader > c_shaderBoxSource(L"{7A15F36C-25BD-664D-8818-47A7F023127D}");
-
 static render::Handle s_handleSourcePosition(L"Spray_SourcePosition");
 static render::Handle s_handleSourceExtent(L"Spray_SourceExtent");
 static render::Handle s_handleSourceVelocity(L"Spray_SourceVelocity");
@@ -53,11 +51,6 @@ BoxSource::BoxSource(
 ,	m_mass(mass)
 ,	m_size(size)
 {
-}
-
-resource::Id< render::Shader > BoxSource::getShader() const
-{
-	return c_shaderBoxSource;
 }
 
 void BoxSource::setShaderParameters(render::ProgramParameters* pp) const

@@ -16,6 +16,12 @@
 
 namespace traktor::spray
 {
+	namespace
+	{
+
+const resource::Id< render::Shader > c_shaderBoxSource(L"{7A15F36C-25BD-664D-8818-47A7F023127D}");
+
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.BoxSourceData", 0, BoxSourceData, SourceData)
 
@@ -30,6 +36,11 @@ BoxSourceData::BoxSourceData()
 ,	m_mass(1.0f, 1.0f)
 ,	m_size(1.0f, 1.0f)
 {
+}
+
+resource::Id< render::Shader > BoxSourceData::getShader() const
+{
+	return c_shaderBoxSource;
 }
 
 Ref< const Source > BoxSourceData::createSource(resource::IResourceManager* resourceManager) const

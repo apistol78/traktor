@@ -16,8 +16,6 @@ namespace traktor::spray
 	namespace
 	{
 
-const resource::Id< render::Shader > c_shaderQuadSource(L"{97043C88-124A-D14F-8B42-CF975518E081}");
-
 static render::Handle s_handleSourcePosition(L"Spray_SourcePosition");
 static render::Handle s_handleSourceNormal(L"Spray_SourceNormal");
 static render::Handle s_handleSourceAxis1(L"Spray_SourceAxis1");
@@ -59,11 +57,6 @@ QuadSource::QuadSource(
 ,	m_mass(mass)
 ,	m_size(size)
 {
-}
-
-resource::Id< render::Shader > QuadSource::getShader() const
-{
-	return c_shaderQuadSource;
 }
 
 void QuadSource::setShaderParameters(render::ProgramParameters* pp) const

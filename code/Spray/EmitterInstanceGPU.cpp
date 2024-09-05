@@ -16,6 +16,7 @@
 #include "Spray/Modifier.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/Source.h"
+#include "Spray/SourceData.h"
 #include "Spray/Vertex.h"
 
 namespace traktor::spray
@@ -53,9 +54,10 @@ Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(resource::IResource
 	if (!resourceManager->bind(c_shaderEvolve, emitterInstance->m_shaderEvolve))
 		return nullptr;
 
-	if (emitter->getSource() != nullptr && emitter->getSource()->getShader().isValid())
+	const SourceData* sourceData = emitter->getData()->getSource();
+	if (sourceData != nullptr && sourceData->getShader().isValid())
 	{
-		if (!resourceManager->bind(emitter->getSource()->getShader(), emitterInstance->m_shaderSource))
+		if (!resourceManager->bind(sourceData->getShader(), emitterInstance->m_shaderSource))
 			return nullptr;
 	}
 

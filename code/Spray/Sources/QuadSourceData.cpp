@@ -16,6 +16,12 @@
 
 namespace traktor::spray
 {
+	namespace
+	{
+
+const resource::Id< render::Shader > c_shaderQuadSource(L"{97043C88-124A-D14F-8B42-CF975518E081}");
+
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.QuadSourceData", 0, QuadSourceData, SourceData)
 
@@ -32,6 +38,11 @@ QuadSourceData::QuadSourceData()
 ,	m_mass(1.0f, 1.0f)
 ,	m_size(1.0f, 1.0f)
 {
+}
+
+resource::Id< render::Shader > QuadSourceData::getShader() const
+{
+	return c_shaderQuadSource;
 }
 
 Ref< const Source > QuadSourceData::createSource(resource::IResourceManager* resourceManager) const

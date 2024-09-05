@@ -70,6 +70,8 @@ public:
 
 	Ref< IEmitterInstance > createInstance(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, float duration) const;
 
+	const EmitterData* getData() const { return m_data; }
+
 	const Source* getSource() const { return m_source; }
 
 	const RefArray< const Modifier >& getModifiers() const { return m_modifiers; }

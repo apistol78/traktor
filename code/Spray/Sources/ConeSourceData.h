@@ -33,6 +33,8 @@ class T_DLLCLASS ConeSourceData : public SourceData
 public:
 	ConeSourceData();
 
+	virtual resource::Id< render::Shader > getShader() const override final;
+
 	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
