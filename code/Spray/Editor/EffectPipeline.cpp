@@ -28,6 +28,7 @@ const resource::Id< render::Shader > c_shaderLifetime(L"{A83B0679-4DA7-7B4C-92F4
 const resource::Id< render::Shader > c_shaderEvolve(L"{BAA7E3FC-7E27-4FD9-96D8-DC8CDD084E4C}");
 const resource::Id< render::Shader > c_shaderConeSource(L"{1BF7210A-0A23-E041-988D-44AADC38D06E}");
 const resource::Id< render::Shader > c_shaderBoxSource(L"{7A15F36C-25BD-664D-8818-47A7F023127D}");
+const resource::Id< render::Shader > c_shaderQuadSource(L"{97043C88-124A-D14F-8B42-CF975518E081}");
 
 void buildEffectDependencies(editor::IPipelineDepends* pipelineDepends, const EffectData* effectData)
 {
@@ -149,6 +150,7 @@ bool EffectPipeline::buildDependencies(
 	pipelineDepends->addDependency(c_shaderEvolve, editor::PdfBuild | editor::PdfResource);
 	pipelineDepends->addDependency(c_shaderConeSource, editor::PdfBuild | editor::PdfResource);
 	pipelineDepends->addDependency(c_shaderBoxSource, editor::PdfBuild | editor::PdfResource);
+	pipelineDepends->addDependency(c_shaderQuadSource, editor::PdfBuild | editor::PdfResource);
 	return true;
 }
 

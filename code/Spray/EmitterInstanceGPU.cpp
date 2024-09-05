@@ -111,11 +111,12 @@ void EmitterInstanceGPU::update(Context& context, const Transform& transform, bo
 				const Vector4 dm = (lastPosition - m_transform.translation()).xyz0();
 
 				const float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (dm.length() / context.deltaTime) : 0.0f;
-				const float emitConstant = source->getConstantRate() * context.deltaTime + m_emitFraction;
+				const float emitConstant = source->getConstantRate() * context.deltaTime;
 				const float emitTotal = emitVelocity + emitConstant;
 
-				m_emitFraction += std::floor(emitTotal);
-				const int32_t emitExtra = int32_t(m_emitFraction);
+				m_emitFraction += emitTotal - std::floor(emitTotal);
+
+				const int32_t emitExtra = (int32_t)m_emitFraction;
 				m_emitFraction -= emitExtra;
 
 				m_updates.push_back({
