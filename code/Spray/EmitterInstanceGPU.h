@@ -47,6 +47,7 @@ class GPUBufferPool;
 struct Head
 {
 	render::IndexedIndirectDraw indirectDraw;
+	render::IndirectCompute indirectCompute;
 	int32_t capacity;
 	int32_t alive;
 	Vector4 modifiers[16];

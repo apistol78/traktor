@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+			<id>{D04CCED7-111D-3046-B0F6-F35D6D7C00C2}</id>
+			<comment/>
+			<position>
+				<first>123</first>
+				<second>110</second>
+			</position>
+			<parameterName>Spray_Head</parameterName>
+			<elements>
+				<item>
+					<name>indexCount</name>
+					<type>DtInteger1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>instanceCount</name>
+					<type>DtInteger1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>firstIndex</name>
+					<type>DtInteger1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>vertexOffset</name>
+					<type>DtInteger1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>firstInstance</name>
+					<type>DtInteger1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>compute_x</name>
+					<type>DtInteger1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>compute_y</name>
+					<type>DtInteger1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>compute_z</name>
+					<type>DtInteger1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>capacity</name>
+					<type>DtInteger1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>alive</name>
+					<type>DtInteger1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>modifiers</name>
+					<type>DtFloat4</type>
+					<length>16</length>
+				</item>
+			</elements>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{F748F84A-E97B-414C-B25D-33C72B670007}</id>
+			<comment/>
+			<position>
+				<first>405</first>
+				<second>128</second>
+			</position>
+			<name>Output</name>
+		</item>
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{8FE4D45D-EEEF-6244-B4DF-1C505F398783}</id>
+			<comment>
+			<![CDATA[
+Define Head struct
+			]]>
+			</comment>
+			<position>
+				<first>132</first>
+				<second>48</second>
+			</position>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>

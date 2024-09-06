@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>554</first>
-				<second>-392</second>
+				<second>-394</second>
 			</position>
 			<parameterName>Spray_Points</parameterName>
 			<elements>
@@ -165,7 +165,6 @@ for (int i = 0; i < emitCount; ++i)
 }
 
 $Head[0].alive = alive;
-
 			]]>
 			</script>
 		</item>
@@ -174,7 +173,7 @@ $Head[0].alive = alive;
 			<comment/>
 			<position>
 				<first>592</first>
-				<second>-353</second>
+				<second>-355</second>
 			</position>
 			<parameterName>Spray_EmitCount</parameterName>
 			<type>Scalar</type>
@@ -185,7 +184,7 @@ $Head[0].alive = alive;
 			<comment/>
 			<position>
 				<first>592</first>
-				<second>-314</second>
+				<second>-316</second>
 			</position>
 			<parameterName>Spray_DeltaTime</parameterName>
 			<type>Scalar</type>
@@ -301,52 +300,6 @@ $Head[0].alive = alive;
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
-			<id>{02248756-939F-FC47-98FB-631AF4FD09F4}</id>
-			<comment/>
-			<position>
-				<first>570</first>
-				<second>-431</second>
-			</position>
-			<parameterName>Spray_Head</parameterName>
-			<elements>
-				<item>
-					<name>indexCount</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>instanceCount</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>firstIndex</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>vertexOffset</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>firstInstance</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>capacity</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>alive</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-			</elements>
-		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{5159FD1D-0DF1-D044-A7FA-B04B12991B97}</id>
 			<comment/>
@@ -368,6 +321,23 @@ $Head[0].alive = alive;
 			<parameterName>Spray_SourceAxis2</parameterName>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{0993C4D0-E6FF-5649-BAF1-FACC7695A3FB}</id>
+			<comment/>
+			<position>
+				<first>630</first>
+				<second>-455</second>
+			</position>
+			<fragmentGuid>{AD39D757-5411-AC40-8FD9-CE8A538E96E4}</fragmentGuid>
+			<inputPins/>
+			<outputPins>
+				<item>
+					<id>{F748F84A-E97B-414C-B25D-33C72B670007}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
@@ -403,16 +373,6 @@ $Head[0].alive = alive;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{F06B4BD8-C3F9-964A-ABBF-490E30E9BE0E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[9]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
@@ -433,7 +393,7 @@ $Head[0].alive = alive;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[14]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
@@ -443,7 +403,7 @@ $Head[0].alive = alive;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
@@ -529,6 +489,16 @@ $Head[0].alive = alive;
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{DD12574A-72DA-3C40-915B-6E7EB83D1C37}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{F748F84A-E97B-414C-B25D-33C72B670007}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{F06B4BD8-C3F9-964A-ABBF-490E30E9BE0E}</id>
 			</destination>
 		</item>
 	</edges>

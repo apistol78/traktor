@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{6B64B451-AE7F-A944-B65A-46884FB3F875}</id>
 			<comment/>
 			<position>
@@ -13,18 +13,22 @@
 				<item>
 					<name>position</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>velocity</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>oaia</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>msra</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -73,49 +77,30 @@ for (int i = 0; i < alive; )
 }
 
 $Head[0].instanceCount = alive;
+$Head[0].compute_x = (alive + 15) / 16;
+$Head[0].compute_y = 1;
+$Head[0].compute_z = 1;
 $Head[0].alive = alive;
 
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
-			<id>{07182D2B-117D-9948-8785-F3DDC816EB9C}</id>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{F9F95089-E45F-D448-A1C0-6705B962DAD8}</id>
 			<comment/>
 			<position>
-				<first>123</first>
-				<second>110</second>
+				<first>183</first>
+				<second>95</second>
 			</position>
-			<parameterName>Spray_Head</parameterName>
-			<elements>
+			<fragmentGuid>{AD39D757-5411-AC40-8FD9-CE8A538E96E4}</fragmentGuid>
+			<inputPins/>
+			<outputPins>
 				<item>
-					<name>indexCount</name>
-					<type>DtInteger1</type>
+					<id>{F748F84A-E97B-414C-B25D-33C72B670007}</id>
+					<name>Output</name>
 				</item>
-				<item>
-					<name>instanceCount</name>
-					<type>DtInteger1</type>
-				</item>
-				<item>
-					<name>firstIndex</name>
-					<type>DtInteger1</type>
-				</item>
-				<item>
-					<name>vertexOffset</name>
-					<type>DtInteger1</type>
-				</item>
-				<item>
-					<name>firstInstance</name>
-					<type>DtInteger1</type>
-				</item>
-				<item>
-					<name>capacity</name>
-					<type>DtInteger1</type>
-				</item>
-				<item>
-					<name>alive</name>
-					<type>DtInteger1</type>
-				</item>
-			</elements>
+			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
@@ -132,7 +117,7 @@ $Head[0].alive = alive;
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+				<id>{F748F84A-E97B-414C-B25D-33C72B670007}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>

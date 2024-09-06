@@ -74,6 +74,9 @@ Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(resource::IResource
 	head->indirectDraw.firstIndex = 0;
 	head->indirectDraw.vertexOffset = 0;
 	head->indirectDraw.firstInstance = 0;
+	head->indirectCompute.x = 0;
+	head->indirectCompute.y = 0;
+	head->indirectCompute.z = 0;
 	head->capacity = c_maxPointCount;
 	head->alive = 0;
 
@@ -167,7 +170,7 @@ void EmitterInstanceGPU::render(
 
 	for (const auto& update : m_updates)
 	{
-		// Update life time of points; prepare indirect draw.
+		// Update life time of points; prepare indirect compute.
 		{
 			auto rb = renderContext->alloc< render::ComputeRenderBlock >();
 			rb->program = m_shaderLifetime->getProgram().program;
@@ -183,7 +186,7 @@ void EmitterInstanceGPU::render(
 
 		// Evolve points; prepare indirect draw.
 		{
-			auto rb = renderContext->alloc< render::ComputeRenderBlock >();
+			auto rb = renderContext->alloc< render::IndirectComputeRenderBlock >();
 			rb->program = m_shaderEvolve->getProgram().program;
 			rb->programParams = renderContext->alloc< render::ProgramParameters >();
 			rb->programParams->beginParameters(renderContext);
@@ -192,7 +195,9 @@ void EmitterInstanceGPU::render(
 			rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
 			rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
 			rb->programParams->endParameters(renderContext);
-			renderContext->compute(rb);			
+			rb->workBuffer = m_headBuffer->getBufferView();
+			rb->workOffset = offsetof(Head, indirectCompute);
+			renderContext->compute(rb);
 		}
 
 		// Emit new points.

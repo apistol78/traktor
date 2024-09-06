@@ -227,6 +227,7 @@ void PointRenderer::flush(
 			renderBlock->vertexLayout = m_vertexLayout;
 			renderBlock->primitive = render::PrimitiveType::Triangles;
 			renderBlock->drawBuffer = batch.headBuffer->getBufferView();
+			renderBlock->drawOffset = 0;
 			renderBlock->drawCount = 1;
 
 			renderBlock->programParams->beginParameters(renderContext);
