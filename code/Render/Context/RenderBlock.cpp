@@ -51,7 +51,8 @@ void IndirectComputeRenderBlock::render(IRenderView* renderView) const
 
 	renderView->computeIndirect(
 		program,
-		workBuffer
+		workBuffer,
+		workOffset
 	);
 
 	T_CONTEXT_POP_MARKER(renderView);
@@ -178,6 +179,7 @@ void IndirectRenderBlock::render(IRenderView* renderView) const
 		program,
 		primitive,
 		drawBuffer,
+		drawOffset,
 		drawCount
 	);
 

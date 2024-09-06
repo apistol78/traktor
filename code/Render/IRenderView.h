@@ -163,10 +163,11 @@ public:
 	 * \param indexType Type of indices in index buffer.
 	 * \param program Program to be used.
 	 * \param primitiveType Type of primitive.
-	 * \param drawBuffer Buffer containing draw offsets.
+	 * \param drawBuffer Buffer containing draw instructions.
+	 * \param drawOffset Byte offset into buffer where draw data is located.
 	 * \param drawCount Number of indirect draws.
 	 */
-	virtual void drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawCount) = 0;
+	virtual void drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawOffset, uint32_t drawCount) = 0;
 
 	/*! Enqueue compute task.
 	 *
@@ -177,8 +178,9 @@ public:
 	/*! Enqueue indirect compute task.
 	 *
 	 * \param workBuffer Buffer containing work size.
+	 * \param workOffset Byte offset into buffer where work size data is located.
 	 */
-	virtual void computeIndirect(IProgram* program, const IBufferView* workBuffer) = 0;
+	virtual void computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset) = 0;
 
 	/*! Enqueue a barrier. */
 	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip) = 0;

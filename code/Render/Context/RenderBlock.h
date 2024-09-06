@@ -82,6 +82,7 @@ public:
 	IProgram* program = nullptr;
 	ProgramParameters* programParams = nullptr;
 	const IBufferView* workBuffer = nullptr;
+	uint32_t workOffset = 0;
 
 	virtual void render(IRenderView* renderView) const override final;
 };
@@ -197,6 +198,7 @@ public:
 	const IVertexLayout* vertexLayout = nullptr;
 	PrimitiveType primitive = PrimitiveType::Points;
 	const IBufferView* drawBuffer = nullptr;
+	uint32_t drawOffset = 0;
 	uint32_t drawCount = 0;
 
 	virtual void render(IRenderView* renderView) const override final;

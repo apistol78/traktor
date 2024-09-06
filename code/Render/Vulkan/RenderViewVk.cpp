@@ -983,7 +983,7 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 	m_primitiveCount += primitives.count * instanceCount;
 }
 
-void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawCount)
+void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawOffset, uint32_t drawCount)
 {
 	const BufferViewVk* dbv = static_cast< const BufferViewVk* >(drawBuffer);
 	const BufferViewVk* vbv = static_cast< const BufferViewVk* >(vertexBuffer);
@@ -1026,7 +1026,7 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 		vkCmdDrawIndexedIndirect(
 			*frame.graphicsCommandBuffer,
 			dbv->getVkBuffer(),
-			dbv->getVkBufferOffset(),
+			dbv->getVkBufferOffset() + drawOffset,
 			drawCount,
 			sizeof(VkDrawIndexedIndirectCommand)
 		);
@@ -1066,7 +1066,7 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 	);
 }
 
-void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuffer)
+void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset)
 {
 	const BufferViewVk* wbv = static_cast< const BufferViewVk* >(workBuffer);
 	ProgramVk* p = static_cast< ProgramVk* >(program);
@@ -1082,7 +1082,7 @@ void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuf
 	vkCmdDispatchIndirect(
 		*frame.graphicsCommandBuffer,
 		wbv->getVkBuffer(),
-		wbv->getVkBufferOffset()
+		wbv->getVkBufferOffset() + workOffset
 	);
 }
 

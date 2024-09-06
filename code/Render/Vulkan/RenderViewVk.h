@@ -105,11 +105,11 @@ public:
 
 	virtual void draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount) override final;
 
-	virtual void drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawCount) override final;
+	virtual void drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawOffset, uint32_t drawCount) override final;
 
 	virtual void compute(IProgram* program, const int32_t* workSize) override final;
 
-	virtual void computeIndirect(IProgram* program, const IBufferView* workBuffer) override final;
+	virtual void computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset) override final;
 
 	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip) override final;
 

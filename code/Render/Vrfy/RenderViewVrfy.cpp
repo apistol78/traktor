@@ -309,7 +309,7 @@ void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 	m_renderView->draw(vertexBuffer, vertexLayout, indexBuffer, indexType, programVrfy->m_program, primitives, instanceCount);
 }
 
-void RenderViewVrfy::drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawCount)
+void RenderViewVrfy::drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawOffset, uint32_t drawCount)
 {
 	T_CAPTURE_TRACE(L"drawIndirect");
 	T_CAPTURE_ASSERT(m_insidePass, L"Cannot draw outside of beginPass/endPass.");
@@ -329,7 +329,7 @@ void RenderViewVrfy::drawIndirect(const IBufferView* vertexBuffer, const IVertex
 
 	programVrfy->verify();
 
-	m_renderView->drawIndirect(vertexBuffer, vertexLayout, indexBuffer, indexType, programVrfy->m_program, primitiveType, drawBuffer, drawCount);
+	m_renderView->drawIndirect(vertexBuffer, vertexLayout, indexBuffer, indexType, programVrfy->m_program, primitiveType, drawBuffer, drawOffset, drawCount);
 }
 
 void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize)
@@ -350,7 +350,7 @@ void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize)
 	m_renderView->compute(programVrfy->m_program, workSize);
 }
 
-void RenderViewVrfy::computeIndirect(IProgram* program, const IBufferView* workBuffer)
+void RenderViewVrfy::computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset)
 {
 	T_CAPTURE_TRACE(L"computeIndirect");
 	T_CAPTURE_ASSERT(m_insideFrame, L"Cannot compute outside of beginFrame/endFrame.");
@@ -364,7 +364,7 @@ void RenderViewVrfy::computeIndirect(IProgram* program, const IBufferView* workB
 
 	programVrfy->verify();
 
-	m_renderView->computeIndirect(programVrfy->m_program, workBuffer);
+	m_renderView->computeIndirect(programVrfy->m_program, workBuffer, workOffset);
 }
 
 void RenderViewVrfy::barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip)
