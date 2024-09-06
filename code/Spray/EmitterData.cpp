@@ -23,7 +23,7 @@
 namespace traktor::spray
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EmitterData", 8, EmitterData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EmitterData", 9, EmitterData, ISerializable)
 
 Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, const world::IEntityFactory* entityFactory) const
 {
@@ -87,6 +87,9 @@ void EmitterData::serialize(ISerializer& s)
 
 	if (s.getVersion< EmitterData >() >= 8)
 		s >> Member< bool >(L"gpu", m_gpu);
+
+	if (s.getVersion< EmitterData >() >= 9)
+		s >> Member< uint32_t >(L"capacity", m_capacity);
 }
 
 }

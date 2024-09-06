@@ -27,10 +27,9 @@ namespace traktor::spray
 const resource::Id< render::Shader > c_shaderLifetime(L"{A83B0679-4DA7-7B4C-92F4-7A17738B8804}");
 const resource::Id< render::Shader > c_shaderEvolve(L"{BAA7E3FC-7E27-4FD9-96D8-DC8CDD084E4C}");
 
-const uint32_t c_maxPointCount = 10000;
-
 const render::Handle s_handleSeed(L"Spray_Seed");
 const render::Handle s_handleDeltaTime(L"Spray_DeltaTime");
+const render::Handle s_handleMiddleAge(L"Spray_MiddleAge");
 const render::Handle s_handleEmitCount(L"Spray_EmitCount");
 const render::Handle s_handleTransform(L"Spray_Transform");
 const render::Handle s_handleHead(L"Spray_Head");
@@ -40,7 +39,7 @@ const render::Handle s_handlePoints(L"Spray_Points");
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstanceGPU", EmitterInstanceGPU, IEmitterInstance)
 
-Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, const Emitter* emitter, float duration)
+Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, const Emitter* emitter, uint32_t capacity, float duration)
 {
 	// GPU emitter only support up to 15 modifiers.
 	if (emitter->getModifiers().size() >= 16)
@@ -62,7 +61,7 @@ Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(resource::IResource
 	}
 
 	// Create buffers.
-	if (!gpuBufferPool->allocBuffers(c_maxPointCount, emitterInstance->m_headBuffer, emitterInstance->m_pointBuffer))
+	if (!gpuBufferPool->allocBuffers(capacity, emitterInstance->m_headBuffer, emitterInstance->m_pointBuffer))
 		return nullptr;
 
 	emitterInstance->m_gpuBufferPool = gpuBufferPool;
@@ -77,7 +76,7 @@ Ref< EmitterInstanceGPU > EmitterInstanceGPU::createInstance(resource::IResource
 	head->indirectCompute.x = 0;
 	head->indirectCompute.y = 0;
 	head->indirectCompute.z = 0;
-	head->capacity = c_maxPointCount;
+	head->capacity = (int32_t)capacity;
 	head->alive = 0;
 
 	Vector4* write = &head->modifiers[0];
@@ -192,6 +191,7 @@ void EmitterInstanceGPU::render(
 			rb->programParams->beginParameters(renderContext);
 			rb->programParams->setFloatParameter(s_handleSeed, (float)update.seed);
 			rb->programParams->setFloatParameter(s_handleDeltaTime, update.deltaTime);
+			rb->programParams->setFloatParameter(s_handleMiddleAge, m_emitter->getMiddleAge());
 			rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
 			rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
 			rb->programParams->endParameters(renderContext);

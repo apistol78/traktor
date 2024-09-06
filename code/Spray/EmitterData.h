@@ -97,6 +97,7 @@ private:
 	bool m_worldSpace = true;
 	bool m_meshOrientationFromVelocity = true;
 	bool m_gpu = true;
+	uint32_t m_capacity = 1000;
 };
 
 }

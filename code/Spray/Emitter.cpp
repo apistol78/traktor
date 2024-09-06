@@ -37,8 +37,8 @@ Emitter::Emitter(
 
 Ref< IEmitterInstance > Emitter::createInstance(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, float duration) const
 {
-	if (m_data->m_gpu)
-		return EmitterInstanceGPU::createInstance(resourceManager, gpuBufferPool, this, duration);
+	if (m_data->m_gpu && m_data->m_capacity > 0)
+		return EmitterInstanceGPU::createInstance(resourceManager, gpuBufferPool, this, m_data->m_capacity, duration);
 	else
 		return EmitterInstanceCPU::createInstance(this, duration);
 }

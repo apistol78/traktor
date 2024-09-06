@@ -47,8 +47,7 @@
 				<Z>1</Z>
 			</localSize>
 			<include>
-				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
-				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
+				<item>{46432A5B-AA0B-D243-B1B4-05C5CA2525BB}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -138,33 +137,27 @@ for (int i = 0; i < emitCount; ++i)
 {
 	const int id = alive++;
 
-	const float r0 = hash(seed++);
-	const float r1 = hash(seed++);
-	const float r2 = hash(seed++);
-	const float r3 = hash(seed++);
-	const float r4 = hash(seed++);
-	const float r5 = hash(seed++);
-
-	const float u = hash(seed++) * 2.0f - 1.0f;
-	const float v = hash(seed++) * 2.0f - 1.0f;
+	const float u = RandomFloat(seed) * 2.0f - 1.0f;
+	const float v = RandomFloat(seed) * 2.0f - 1.0f;
 
 	$Points[id].position = position + axis1 * u + axis2 * v;
-	$Points[id].velocity = normal * lerpXY($SourceVelocity, r3);
+	$Points[id].velocity = normal * RandomXY($SourceVelocity, seed);
 	$Points[id].oaia = vec4(
-		lerpXY($SourceOrientation, r1),	// orientation
-		lerpXY($SourceAngularVelocity, r2),	// angularVelocity
-		1.0f / lerpXY($SourceMass, r3),	// inverseMass
+		RandomXY($SourceOrientation, seed),	// orientation
+		RandomXY($SourceAngularVelocity, seed),	// angularVelocity
+		1.0f / RandomXY($SourceMass, seed),	// inverseMass
 		0.0f		// age
 	);
 	$Points[id].msra = vec4(
-		lerpXY($SourceAge, r4),	// maxAge
-		lerpXY($SourceSize, r5),	// size
+		RandomXY($SourceAge, seed),	// maxAge
+		RandomXY($SourceSize, seed),	// size
 		0.0f,	// random
 		1.0f		// alpha
 	);
 }
 
 $Head[0].alive = alive;
+
 			]]>
 			</script>
 		</item>

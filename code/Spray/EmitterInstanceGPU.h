@@ -61,7 +61,7 @@ class T_DLLCLASS EmitterInstanceGPU : public IEmitterInstance
 	T_RTTI_CLASS;
 
 public:
-	static Ref< EmitterInstanceGPU > createInstance(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, const Emitter* emitter, float duration);
+	static Ref< EmitterInstanceGPU > createInstance(resource::IResourceManager* resourceManager, GPUBufferPool* gpuBufferPool, const Emitter* emitter, uint32_t capacity, float duration);
 
 	virtual ~EmitterInstanceGPU();
 

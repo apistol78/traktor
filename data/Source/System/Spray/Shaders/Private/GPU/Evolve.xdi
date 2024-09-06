@@ -36,8 +36,8 @@
 			<id>{2833BE6B-8529-4D27-80F2-D30971E6C437}</id>
 			<comment/>
 			<position>
-				<first>435</first>
-				<second>117</second>
+				<first>438</first>
+				<second>131</second>
 			</position>
 			<name>Evolve</name>
 			<technique>Default</technique>
@@ -68,6 +68,10 @@
 				</item>
 				<item>
 					<id>{D13DAB72-B1BE-F945-BBC4-7E9B19A49E9D}</id>
+					<name>MiddleAge</name>
+				</item>
+				<item>
+					<id>{56F42C1D-BDF3-D54C-A691-4B57A5BA1A38}</id>
 					<name>Index</name>
 				</item>
 			</inputPins>
@@ -133,7 +137,8 @@ if ($Index.x < alive)
 		// Calculate alpha.
 		const float age = $Points[i].oaia.w;
 		const float maxAge = $Points[i].msra.x;
-		const float alpha = 1.0f - age / maxAge;
+		const float f = age / maxAge;
+		const float alpha = (f < $MiddleAge) ? f / $MiddleAge : 1.0f - (f - $MiddleAge) / (1.0f - $MiddleAge);
 	
 		$Points[i].position = position;
 		$Points[i].velocity = velocity;
@@ -193,9 +198,20 @@ if ($Index.x < alive)
 			<comment/>
 			<position>
 				<first>148</first>
-				<second>270</second>
+				<second>309</second>
 			</position>
 			<scope>Global</scope>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{9242D3EE-5E01-2144-AF20-85D901D4574E}</id>
+			<comment/>
+			<position>
+				<first>146</first>
+				<second>270</second>
+			</position>
+			<parameterName>Spray_MiddleAge</parameterName>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -241,12 +257,22 @@ if ($Index.x < alive)
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{D13DAB72-B1BE-F945-BBC4-7E9B19A49E9D}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[5]"/>
 				<id>{AAE82FD3-522F-43C6-A594-2E13D126E5DB}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
-				<id>{D13DAB72-B1BE-F945-BBC4-7E9B19A49E9D}</id>
+				<id>{56F42C1D-BDF3-D54C-A691-4B57A5BA1A38}</id>
 			</destination>
 		</item>
 	</edges>
