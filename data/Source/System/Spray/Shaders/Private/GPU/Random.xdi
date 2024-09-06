@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule">
+	<text>
+	<![CDATA[
+#using \{921BBC45-4C75-624A-AA78-9B5FEC80645B}
+#using \{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}
+
+float RandomFloat(inout uint seed)
+{
+	return hash(seed++);
+}
+
+vec4 RandomVector(inout uint seed)
+{
+	return vec4(
+		RandomFloat(seed),
+		RandomFloat(seed),
+		RandomFloat(seed),
+		0.0f
+	);
+}
+
+vec4 RandomDirection(inout uint seed)
+{
+	const float x = hash(seed++) * 2.0f - 1.0f;
+	const float y = hash(seed++) * 2.0f - 1.0f;
+	const float z = hash(seed++) * 2.0f - 1.0f;
+	return normalize(vec4(x, y, z, 0.0f));
+}
+
+float RandomXY(vec4 v, inout uint seed)
+{
+	return lerpXY(v, hash(seed++));
+}
+
+
+	]]>
+	</text>
+</object>

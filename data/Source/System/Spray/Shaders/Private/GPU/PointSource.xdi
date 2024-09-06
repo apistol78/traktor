@@ -2,10 +2,10 @@
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
-			<id>{0481EC43-9A0E-B943-ACCF-859F6631F623}</id>
+			<id>{8C067DA6-D75C-9C46-BBD4-975892FBD553}</id>
 			<comment/>
 			<position>
-				<first>554</first>
+				<first>550</first>
 				<second>-392</second>
 			</position>
 			<parameterName>Spray_Points</parameterName>
@@ -33,11 +33,11 @@
 			</elements>
 		</item>
 		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
-			<id>{89C71EEA-9D98-B145-9A50-0DF3F0D4DB33}</id>
+			<id>{735660C5-9E5E-C24F-A8EB-B3BA22C0859B}</id>
 			<comment/>
 			<position>
 				<first>970</first>
-				<second>-298</second>
+				<second>-354</second>
 			</position>
 			<name>Source</name>
 			<technique>Default</technique>
@@ -47,8 +47,7 @@
 				<Z>1</Z>
 			</localSize>
 			<include>
-				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
-				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
+				<item>{46432A5B-AA0B-D243-B1B4-05C5CA2525BB}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -70,18 +69,6 @@
 				<item>
 					<id>{295861D2-2471-BA4C-A966-6D5E48332A57}</id>
 					<name>SourcePosition</name>
-				</item>
-				<item>
-					<id>{283DEC9E-4E9F-5C45-8822-5863701E277B}</id>
-					<name>SourceNormal</name>
-				</item>
-				<item>
-					<id>{A352A438-4A76-6142-8623-D5958BA4D1C9}</id>
-					<name>SourceAxis1</name>
-				</item>
-				<item>
-					<id>{119FD0B2-250F-8349-8D66-C46E27952B50}</id>
-					<name>SourceAxis2</name>
 				</item>
 				<item>
 					<id>{776EEBAA-64F5-7347-A7C9-06F845916D6D}</id>
@@ -125,9 +112,6 @@ int capacity = $Head[0].capacity;
 int alive = $Head[0].alive;
 
 const vec4 position = $Transform * $SourcePosition;
-const vec4 normal = $Transform * $SourceNormal;
-const vec4 axis1 = $Transform * $SourceAxis1;
-const vec4 axis2 = $Transform * $SourceAxis2;
 
 const int available = capacity - alive;
 const int emitCount = min(int($EmitCount), available);
@@ -138,28 +122,20 @@ for (int i = 0; i < emitCount; ++i)
 {
 	const int id = alive++;
 
-	const float r0 = hash(seed++);
-	const float r1 = hash(seed++);
-	const float r2 = hash(seed++);
-	const float r3 = hash(seed++);
-	const float r4 = hash(seed++);
-	const float r5 = hash(seed++);
+	const vec4 direction = RandomDirection(seed);
 
-	const float u = hash(seed++) * 2.0f - 1.0f;
-	const float v = hash(seed++) * 2.0f - 1.0f;
-
-	$Points[id].position = position + axis1 * u + axis2 * v;
-	$Points[id].velocity = normal * lerpXY($SourceVelocity, r3);
+	$Points[id].position = position;
+	$Points[id].velocity = direction * lerpXY($SourceVelocity, RandomFloat(seed));
 	$Points[id].oaia = vec4(
-		lerpXY($SourceOrientation, r1),	// orientation
-		lerpXY($SourceAngularVelocity, r2),	// angularVelocity
-		1.0f / lerpXY($SourceMass, r3),	// inverseMass
+		RandomXY($SourceOrientation, seed),	// orientation
+		RandomXY($SourceAngularVelocity, seed),	// angularVelocity
+		1.0f / RandomXY($SourceMass, seed),	// inverseMass
 		0.0f		// age
 	);
 	$Points[id].msra = vec4(
-		lerpXY($SourceAge, r4),	// maxAge
-		lerpXY($SourceSize, r5),	// size
-		0.0f,	// random
+		RandomXY($SourceAge, seed),	// maxAge
+		RandomXY($SourceSize, seed),	// size
+		RandomFloat(seed),	// random
 		1.0f		// alpha
 	);
 }
@@ -170,10 +146,10 @@ $Head[0].alive = alive;
 			</script>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{805A9BEF-B437-124D-9654-3DB1A14A49B8}</id>
+			<id>{DDEADB97-3898-7745-8E38-A44DDA118424}</id>
 			<comment/>
 			<position>
-				<first>592</first>
+				<first>588</first>
 				<second>-353</second>
 			</position>
 			<parameterName>Spray_EmitCount</parameterName>
@@ -181,10 +157,10 @@ $Head[0].alive = alive;
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{F4154741-E589-FF41-AC14-3A94BAD3D580}</id>
+			<id>{AEC63B4E-3B84-D645-8D90-D220CF422939}</id>
 			<comment/>
 			<position>
-				<first>592</first>
+				<first>588</first>
 				<second>-314</second>
 			</position>
 			<parameterName>Spray_DeltaTime</parameterName>
@@ -192,65 +168,65 @@ $Head[0].alive = alive;
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{A2F3466D-4ADA-3A42-8DD6-A3E111DE6353}</id>
+			<id>{9D3F3DC0-EBBE-7641-8760-3D461689DC76}</id>
 			<comment/>
 			<position>
-				<first>544</first>
-				<second>-78</second>
+				<first>540</first>
+				<second>-172</second>
 			</position>
 			<parameterName>Spray_SourceOrientation</parameterName>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{4D74FCF4-F934-5143-9A85-CBC2CC84F034}</id>
+			<id>{35193A8D-60A5-8E4B-A3CD-D455D06E8A60}</id>
 			<comment/>
 			<position>
-				<first>528</first>
-				<second>-46</second>
+				<first>524</first>
+				<second>-139</second>
 			</position>
 			<parameterName>Spray_SourceAngularVelocity</parameterName>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{B2A139D8-9876-3042-8D29-3D0E8C43F630}</id>
+			<id>{51ECCCB4-D6EA-144F-B777-F40A9C37A3AB}</id>
 			<comment/>
 			<position>
-				<first>592</first>
-				<second>-14</second>
+				<first>588</first>
+				<second>-106</second>
 			</position>
 			<parameterName>Spray_SourceAge</parameterName>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{E5662F4B-8FD6-314A-8128-D6992BFF5504}</id>
+			<id>{1FBE3886-6303-3B4D-AA14-A2FBB2DF3655}</id>
 			<comment/>
 			<position>
-				<first>576</first>
-				<second>18</second>
+				<first>572</first>
+				<second>-73</second>
 			</position>
 			<parameterName>Spray_SourceMass</parameterName>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{E4BA06A2-1C31-4942-878D-44287DA94E99}</id>
+			<id>{72F4721C-92E0-5446-A9E5-CAC092E2CE71}</id>
 			<comment/>
 			<position>
-				<first>592</first>
-				<second>50</second>
+				<first>588</first>
+				<second>-40</second>
 			</position>
 			<parameterName>Spray_SourceSize</parameterName>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{7102F26A-A0F8-8140-B885-44FD5B196223}</id>
+			<id>{CD5FBFB9-BB5B-A34F-9D2D-50BF98D74592}</id>
 			<comment/>
 			<position>
-				<first>576</first>
+				<first>572</first>
 				<second>-238</second>
 			</position>
 			<parameterName>Spray_SourcePosition</parameterName>
@@ -258,54 +234,43 @@ $Head[0].alive = alive;
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{6E48C9BD-F0B9-C647-B5A3-A25554ECFBED}</id>
+			<id>{2E4FF082-E1A2-DA4D-9644-310F93E90A6A}</id>
 			<comment/>
 			<position>
-				<first>576</first>
-				<second>-206</second>
-			</position>
-			<parameterName>Spray_SourceNormal</parameterName>
-			<type>Vector</type>
-			<frequency>Frame</frequency>
-		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{7A520E0E-66E7-2F4F-B8D2-D1C0C285C625}</id>
-			<comment/>
-			<position>
-				<first>576</first>
-				<second>-110</second>
+				<first>572</first>
+				<second>-205</second>
 			</position>
 			<parameterName>Spray_SourceVelocity</parameterName>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{D6B34C31-F7AD-2C48-8A5E-23BC4035DB78}</id>
+			<id>{5C286839-291A-4849-858D-E9BFB6873A50}</id>
 			<comment/>
 			<position>
-				<first>592</first>
-				<second>154</second>
+				<first>588</first>
+				<second>29</second>
 			</position>
 			<parameterName>Spray_Transform</parameterName>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{58E0DC49-79F6-FF42-9AAF-1B197C35B8FB}</id>
+			<id>{6B8A9A64-C005-9546-851F-BFAAA4ED80BB}</id>
 			<comment/>
 			<position>
-				<first>608</first>
-				<second>191</second>
+				<first>604</first>
+				<second>66</second>
 			</position>
 			<parameterName>Spray_Seed</parameterName>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
-			<id>{02248756-939F-FC47-98FB-631AF4FD09F4}</id>
+			<id>{1CB16A13-D1D5-8F4A-8A7D-73B6CE0E13E3}</id>
 			<comment/>
 			<position>
-				<first>570</first>
+				<first>566</first>
 				<second>-431</second>
 			</position>
 			<parameterName>Spray_Head</parameterName>
@@ -347,28 +312,6 @@ $Head[0].alive = alive;
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{5159FD1D-0DF1-D044-A7FA-B04B12991B97}</id>
-			<comment/>
-			<position>
-				<first>576</first>
-				<second>-174</second>
-			</position>
-			<parameterName>Spray_SourceAxis1</parameterName>
-			<type>Vector</type>
-			<frequency>Frame</frequency>
-		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{B8D8FC02-DC9B-5345-81B9-6E8489FD97C3}</id>
-			<comment/>
-			<position>
-				<first>576</first>
-				<second>-142</second>
-			</position>
-			<parameterName>Spray_SourceAxis2</parameterName>
-			<type>Vector</type>
-			<frequency>Frame</frequency>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -403,7 +346,7 @@ $Head[0].alive = alive;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
+				<node ref="/object/nodes/item[13]"/>
 				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
 			</source>
 			<destination>
@@ -424,36 +367,6 @@ $Head[0].alive = alive;
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[10]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{283DEC9E-4E9F-5C45-8822-5863701E277B}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{A352A438-4A76-6142-8623-D5958BA4D1C9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{119FD0B2-250F-8349-8D66-C46E27952B50}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
@@ -513,7 +426,7 @@ $Head[0].alive = alive;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
@@ -523,7 +436,7 @@ $Head[0].alive = alive;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[13]"/>
+				<node ref="/object/nodes/item[12]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>

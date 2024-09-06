@@ -15,6 +15,12 @@
 
 namespace traktor::spray
 {
+	namespace
+	{
+
+const resource::Id< render::Shader > c_shaderPointSource(L"{2F2A8976-9411-1548-B927-121AD623A3D6}");
+
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSourceData", 0, PointSourceData, SourceData)
 
@@ -28,6 +34,11 @@ PointSourceData::PointSourceData()
 ,	m_mass(1.0f, 1.0f)
 ,	m_size(1.0f, 1.0f)
 {
+}
+
+resource::Id< render::Shader > PointSourceData::getShader() const
+{
+	return c_shaderPointSource;
 }
 
 Ref< const Source > PointSourceData::createSource(resource::IResourceManager* resourceManager) const

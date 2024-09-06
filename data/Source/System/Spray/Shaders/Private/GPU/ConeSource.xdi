@@ -119,7 +119,6 @@
 			<outputPins/>
 			<script>
 			<![CDATA[
-
 int capacity = $Head[0].capacity;
 int alive = $Head[0].alive;
 
@@ -132,7 +131,7 @@ const vec3 tz = axisZ($Transform).xyz * $SourceAngles.y;
 const int available = capacity - alive;
 const int emitCount = min(int($EmitCount), available);
 
-uint seed = uint($Seed);
+uint seed = floatBitsToUint($Seed);
 
 for (int i = 0; i < emitCount; ++i)
 {
