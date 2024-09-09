@@ -1105,8 +1105,11 @@ void PixelFormat::serialize(ISerializer& s)
 const PixelFormat PixelFormat::ms_pfP4(4, 0, 0, 0, 0, true, false);
 const PixelFormat PixelFormat::ms_pfP8(8, 0, 0, 0, 0, true, false);
 const PixelFormat PixelFormat::ms_pfA8(8, 0x00, 0x00, 0x00, 0xff, false, false);
+const PixelFormat PixelFormat::ms_pfA16(16, 0x0000, 0x0000, 0x0000, 0xffff, false, false);
 const PixelFormat PixelFormat::ms_pfR8(8, 0xff, 0x00, 0x00, 0x00, false, false);
 const PixelFormat PixelFormat::ms_pfR16(16, 0xffff, 0x0000, 0x0000, 0x0000, false, false);
+const PixelFormat PixelFormat::ms_pfR8A8(16, 0xff00, 0x00, 0x00, 0x00ff, false, false);
+const PixelFormat PixelFormat::ms_pfR16A16(32, 0xffff000, 0x0000, 0x0000, 0x0000ffff, false, false);
 const PixelFormat PixelFormat::ms_pfR5G5B5(15, 0x7c00, 0x03e0, 0x001f, 0x0000, false, false);
 const PixelFormat PixelFormat::ms_pfR5G6B5(16, 0xf800, 0x07e0, 0x001f, 0x0000, false, false);
 const PixelFormat PixelFormat::ms_pfR5G5B5A1(16, 0xf800, 0x07d0, 0x003e, 0x0001, false, false);

@@ -118,6 +118,13 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 			pixelFormat = PixelFormat::getR16();
 		break;
 
+	case PNG_COLOR_TYPE_GRAY_ALPHA:
+		if (bit_depth == 8)
+			pixelFormat = PixelFormat::getR8A8();
+		else if (bit_depth == 16)
+			pixelFormat = PixelFormat::getR16A16();
+		break;
+
 	case PNG_COLOR_TYPE_RGB:
 		if (bit_depth == 8)
 			pixelFormat = PixelFormat::getR8G8B8();
