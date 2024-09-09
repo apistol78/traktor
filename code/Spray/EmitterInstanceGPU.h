@@ -68,14 +68,13 @@ public:
 	virtual void update(Context& context, const Transform& transform, bool emit, bool singleShot) override final;
 
 	virtual void render(
-		render::handle_t technique,
+		const world::WorldRenderView& worldRenderView,
+		const world::IWorldRenderPass& worldRenderPass,
 		render::RenderContext* renderContext,
 		PointRenderer* pointRenderer,
 		MeshRenderer* meshRenderer,
 		TrailRenderer* trailRenderer,
-		const Transform& transform,
-		const Vector4& cameraPosition,
-		const Plane& cameraPlane
+		const Transform& transform
 	) override final;
 
 	virtual void synchronize() const override final;

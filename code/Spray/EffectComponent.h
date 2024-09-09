@@ -29,6 +29,14 @@ class RenderContext;
 
 }
 
+namespace traktor::world
+{
+
+class IWorldRenderPass;
+class WorldRenderView;
+
+}
+
 namespace traktor::spray
 {
 
@@ -61,10 +69,9 @@ public:
 	virtual void update(const world::UpdateParams& update) override final;
 
 	void render(
-		render::handle_t technique,
+		const world::WorldRenderView& worldRenderView,
+		const world::IWorldRenderPass& worldRenderPass,
 		render::RenderContext* renderContext,
-		const Vector4& cameraPosition,
-		const Plane& cameraPlane,
 		PointRenderer* pointRenderer,
 		MeshRenderer* meshRenderer,
 		TrailRenderer* trailRenderer

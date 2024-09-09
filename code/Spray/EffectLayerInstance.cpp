@@ -118,21 +118,20 @@ void EffectLayerInstance::synchronize()
 }
 
 void EffectLayerInstance::render(
-	render::handle_t technique,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass,
 	render::RenderContext* renderContext,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer,
 	const Transform& transform,
-	const Vector4& cameraPosition,
-	const Plane& cameraPlane,
 	float time
 ) const
 {
 	if (m_emitterInstance && time >= m_start)
-		m_emitterInstance->render(technique, renderContext, pointRenderer, meshRenderer, trailRenderer, transform, cameraPosition, cameraPlane);
+		m_emitterInstance->render(worldRenderView, worldRenderPass, renderContext, pointRenderer, meshRenderer, trailRenderer, transform);
 	if (m_trailInstance && time >= m_start)
-		m_trailInstance->render(technique, trailRenderer, transform, cameraPosition, cameraPlane);
+		m_trailInstance->render(worldRenderView, worldRenderPass, trailRenderer, transform);
 }
 
 Aabb3 EffectLayerInstance::getBoundingBox() const

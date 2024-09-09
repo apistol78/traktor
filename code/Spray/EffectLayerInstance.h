@@ -33,6 +33,8 @@ namespace traktor::world
 {
 
 class IEntityEventInstance;
+class IWorldRenderPass;
+class WorldRenderView;
 
 }
 
@@ -67,14 +69,13 @@ public:
 	void synchronize();
 
 	void render(
-		render::handle_t technique,
+		const world::WorldRenderView& worldRenderView,
+		const world::IWorldRenderPass& worldRenderPass,
 		render::RenderContext* renderContext,
 		PointRenderer* pointRenderer,
 		MeshRenderer* meshRenderer,
 		TrailRenderer* trailRenderer,
 		const Transform& transform,
-		const Vector4& cameraPosition,
-		const Plane& cameraPlane,
 		float time
 	) const;
 

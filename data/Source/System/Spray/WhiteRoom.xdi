@@ -171,29 +171,20 @@
 							</components>
 						</item>
 						<item type="traktor.world.EntityData" version="2">
-							<id>{C29F416D-281D-8346-9DC2-11812B32DEDA}</id>
-							<name>Light</name>
+							<id>{F38A4A4D-336C-CC4F-A4C8-7C4E9E342D28}</id>
+							<name>GroundPlane</name>
 							<state>
 								<visible>true</visible>
 								<dynamic>false</dynamic>
 								<locked>false</locked>
 							</state>
 							<transform>
-								<translation>0.504307, 0, 0.353142, 0</translation>
-								<rotation>0.463313, 0.225609, -0.123251, 0.848087</rotation>
+								<translation>0, 0, 0, 0</translation>
+								<rotation>0, 0, 0, 1</rotation>
 							</transform>
 							<components>
-								<item type="traktor.world.LightComponentData" version="12">
-									<lightType>Directional</lightType>
-									<color>1, 1, 1, 0</color>
-									<intensity>0.5</intensity>
-									<castShadow>false</castShadow>
-									<nearRange>0</nearRange>
-									<farRange>20</farRange>
-									<radius>1.570796</radius>
-									<flickerAmount>0</flickerAmount>
-									<flickerFilter>0</flickerFilter>
-									<bakeMode>LbmIndirect</bakeMode>
+								<item type="traktor.mesh.MeshComponentData" version="1">
+									<mesh>{37CCDC5C-80DF-3F43-AC13-715D4E2C3E5C}</mesh>
 								</item>
 							</components>
 						</item>

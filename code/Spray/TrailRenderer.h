@@ -36,6 +36,7 @@ namespace traktor::world
 {
 
 class IWorldRenderPass;
+class WorldRenderView;
 
 }
 
@@ -59,10 +60,9 @@ public:
 	void destroy();
 
 	void render(
+		const world::WorldRenderView& worldRenderView,
 		render::Shader* shader,
 		const CircularVector< Vector4, 64 >& points,
-		const Vector4& cameraPosition,
-		const Plane& cameraPlane,
 		float width,
 		float time,
 		float age

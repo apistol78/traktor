@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,6 +20,14 @@ namespace traktor::render
 {
 
 class Shader;
+
+}
+
+namespace traktor::world
+{
+
+class IWorldRenderPass;
+class WorldRenderView;
 
 }
 
@@ -46,7 +54,7 @@ public:
 
 	void update(Context& context, const Transform& transform, bool enable);
 
-	void render(render::handle_t technique, TrailRenderer* trailRenderer, const Transform& transform, const Vector4& cameraPosition, const Plane& cameraPlane);
+	void render(const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass, TrailRenderer* trailRenderer, const Transform& transform);
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 

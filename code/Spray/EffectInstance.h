@@ -30,6 +30,14 @@ class RenderContext;
 
 }
 
+namespace traktor::world
+{
+
+class IWorldRenderPass;
+class WorldRenderView;
+
+}
+
 namespace traktor::spray
 {
 
@@ -55,14 +63,13 @@ public:
 	void synchronize();
 
 	void render(
-		render::handle_t technique,
+		const world::WorldRenderView& worldRenderView,
+		const world::IWorldRenderPass& worldRenderPass,
 		render::RenderContext* renderContext,
 		PointRenderer* pointRenderer,
 		MeshRenderer* meshRenderer,
 		TrailRenderer* trailRenderer,
-		const Transform& transform,
-		const Vector4& cameraPosition,
-		const Plane& cameraPlane
+		const Transform& transform
 	) const;
 
 	void setTime(float time) { m_time = time; }

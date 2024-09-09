@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 #include "Render/Shader.h"
 #include "Spray/TrailInstance.h"
 #include "Spray/TrailRenderer.h"
+#include "World/IWorldRenderPass.h"
 
 namespace traktor::spray
 {
@@ -119,14 +120,13 @@ void TrailInstance::update(Context& context, const Transform& transform, bool en
 		m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
 }
 
-void TrailInstance::render(render::handle_t technique, TrailRenderer* trailRenderer, const Transform& transform, const Vector4& cameraPosition, const Plane& cameraPlane)
+void TrailInstance::render(const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass, TrailRenderer* trailRenderer, const Transform& transform)
 {
-	if (m_shader->hasTechnique(technique))
+	if (m_shader->hasTechnique(worldRenderPass.getTechnique()))
 		trailRenderer->render(
+			worldRenderView,
 			m_shader,
 			m_points,
-			cameraPosition,
-			cameraPlane,
 			m_width,
 			m_time.w(),
 			m_age

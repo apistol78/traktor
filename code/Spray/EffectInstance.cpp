@@ -48,27 +48,25 @@ void EffectInstance::synchronize()
 }
 
 void EffectInstance::render(
-	render::handle_t technique,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass,
 	render::RenderContext* renderContext,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer,
-	const Transform& transform,
-	const Vector4& cameraPosition,
-	const Plane& cameraPlane
+	const Transform& transform
 ) const
 {
 	for (auto layerInstance : m_layerInstances)
 	{
 		layerInstance->render(
-			technique,
+			worldRenderView,
+			worldRenderPass,
 			renderContext,
 			pointRenderer,
 			meshRenderer,
 			trailRenderer,
 			transform,
-			cameraPosition,
-			cameraPlane,
 			m_time
 		);
 	}

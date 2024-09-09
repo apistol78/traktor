@@ -66,10 +66,6 @@ void EffectRenderer::build(
 {
 	auto effectComponent = static_cast< const EffectComponent* >(renderable);
 
-	// Do we need to render anything with this technique?
-	if (!effectComponent->haveTechnique(worldRenderPass.getTechnique()))
-		return;
-
 	//const Aabb3 boundingBox = effectComponent->getWorldBoundingBox();
 	//if (boundingBox.empty())
 	//	return;
@@ -80,14 +76,13 @@ void EffectRenderer::build(
 	//if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
 	//	return;
 
-	const Vector4 cameraPosition = worldRenderView.getEyePosition();
-	const Plane cameraPlane(worldRenderView.getEyeDirection(), cameraPosition);
+	//const Vector4 cameraPosition = worldRenderView.getEyePosition();
+	//const Plane cameraPlane(worldRenderView.getEyeDirection(), cameraPosition);
 
 	effectComponent->render(
-		worldRenderPass.getTechnique(),
+		worldRenderView,
+		worldRenderPass,
 		context.getRenderContext(),
-		cameraPosition,
-		cameraPlane,
 		m_pointRenderer,
 		m_meshRenderer,
 		m_trailRenderer

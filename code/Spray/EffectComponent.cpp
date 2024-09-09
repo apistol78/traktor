@@ -122,10 +122,9 @@ void EffectComponent::update(const world::UpdateParams& update)
 }
 
 void EffectComponent::render(
-	render::handle_t technique,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass,
 	render::RenderContext* renderContext,
-	const Vector4& cameraPosition,
-	const Plane& cameraPlane,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer
@@ -133,14 +132,13 @@ void EffectComponent::render(
 {
 	if (m_effectInstance)
 		m_effectInstance->render(
-			technique,
+			worldRenderView,
+			worldRenderPass,
 			renderContext,
 			pointRenderer,
 			meshRenderer,
 			trailRenderer,
-			m_transform,
-			cameraPosition,
-			cameraPlane
+			m_transform
 		);
 }
 

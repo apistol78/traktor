@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,6 +19,7 @@
 #include "Spray/TrailRenderer.h"
 #include "Spray/Vertex.h"
 #include "World/IWorldRenderPass.h"
+#include "World/WorldRenderView.h"
 
 namespace traktor::spray
 {
@@ -75,10 +76,9 @@ void TrailRenderer::destroy()
 }
 
 void TrailRenderer::render(
+	const world::WorldRenderView& worldRenderView,
 	render::Shader* shader,
 	const CircularVector< Vector4, 64 >& points,
-	const Vector4& cameraPosition,
-	const Plane& cameraPlane,
 	float width,
 	float time,
 	float age
@@ -97,6 +97,8 @@ void TrailRenderer::render(
 		if (!m_vertex)
 			return;
 	}
+
+	const Vector4 cameraPosition = worldRenderView.getEyePosition();
 
 	m_batches.push_back(Batch());
 	m_batches.back().shader = shader;

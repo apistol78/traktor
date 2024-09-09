@@ -20,6 +20,8 @@
 #include "Spray/Modifier.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/Source.h"
+#include "World/IWorldRenderPass.h"
+#include "World/WorldRenderView.h"
 
 #if !defined(__IOS__) && !defined(__ANDROID__)
 #	define T_USE_UPDATE_JOBS
@@ -204,19 +206,21 @@ void EmitterInstanceCPU::update(Context& context, const Transform& transform, bo
 }
 
 void EmitterInstanceCPU::render(
-	render::handle_t technique,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass,
 	render::RenderContext* renderContext,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer,
-	const Transform& transform,
-	const Vector4& cameraPosition,
-	const Plane& cameraPlane
+	const Transform& transform
 )
 {
 	T_ASSERT(m_count > 0);
 
 	synchronize();
+
+	const Vector4 cameraPosition = worldRenderView.getEyePosition();
+	const Plane cameraPlane(worldRenderView.getEyeDirection(), cameraPosition);
 
 	m_sortPlane = cameraPlane;
 
@@ -233,7 +237,7 @@ void EmitterInstanceCPU::render(
 
 	if (
 		m_emitter->getShader() &&
-		m_emitter->getShader()->hasTechnique(technique)
+		m_emitter->getShader()->hasTechnique(worldRenderPass.getTechnique())
 	)
 	{
 		pointRenderer->batchUntilFlush(
@@ -272,7 +276,8 @@ void EmitterInstanceCPU::render(
 			const Point& point = m_renderPoints[i];
 
 			m_effectInstances[i]->render(
-				technique,
+				worldRenderView,
+				worldRenderPass,
 				renderContext,
 				pointRenderer,
 				meshRenderer,
@@ -280,9 +285,7 @@ void EmitterInstanceCPU::render(
 				Transform(
 					point.position,
 					Quaternion(Vector4(0.0f, 1.0f, 0.0f), point.velocity)
-				),
-				cameraPosition,
-				cameraPlane
+				)
 			);
 		}
 	}

@@ -10,7 +10,6 @@
 
 #include "Core/Object.h"
 #include "Core/Math/Aabb3.h"
-#include "Core/Math/Plane.h"
 #include "Render/Types.h"
 #include "Spray/Types.h"
 
@@ -26,6 +25,14 @@ namespace traktor::render
 {
 
 class RenderContext;
+
+}
+
+namespace traktor::world
+{
+
+class IWorldRenderPass;
+class WorldRenderView;
 
 }
 
@@ -47,14 +54,13 @@ public:
 	virtual void update(Context& context, const Transform& transform, bool emit, bool singleShot) = 0;
 
 	virtual void render(
-		render::handle_t technique,
+		const world::WorldRenderView& worldRenderView,
+		const world::IWorldRenderPass& worldRenderPass,
 		render::RenderContext* renderContext,
 		PointRenderer* pointRenderer,
 		MeshRenderer* meshRenderer,
 		TrailRenderer* trailRenderer,
-		const Transform& transform,
-		const Vector4& cameraPosition,
-		const Plane& cameraPlane
+		const Transform& transform
 	) = 0;
 
 	virtual void synchronize() const = 0;
