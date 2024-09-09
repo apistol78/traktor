@@ -107,6 +107,8 @@ public:
 
 	void showGuide(bool guideVisible);
 
+	void showGrid(bool gridVisible);
+
 	void showVelocity(bool velocityVisible);
 
 	void setMoveEmitter(bool moveEmitter);
@@ -146,6 +148,7 @@ private:
 	float m_timeScale;
 	double m_lastDeltaTime;
 	bool m_guideVisible;
+	bool m_gridVisible;
 	bool m_velocityVisible;
 	bool m_moveEmitter;
 	ui::Size m_dirtySize = ui::Size(0, 0);

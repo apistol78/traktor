@@ -1198,10 +1198,36 @@ void SceneEditorPage::updateInstanceGridRow(ui::GridRow* row)
 {
 	EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 
+	// Assume root entities are layers.
+	const bool layer = (bool)(entityAdapter->getParent() == nullptr);
+
 	row->setState(
 		(entityAdapter->isSelected() ? ui::GridRow::Selected : 0) |
 		(entityAdapter->isExpanded() ? ui::GridRow::Expanded : 0)
 	);
+
+	std::wstring entityName = entityAdapter->getName();
+	if (entityName.empty())
+		entityName = i18n::Text(L"SCENE_EDITOR_UNNAMED_ENTITY");
+
+	// Create entity name item.
+	Ref< ui::GridItem > item = new ui::GridItem(entityName);
+
+	if (layer)
+		item->setFont(m_instanceGridFontHuge);
+	else if (entityAdapter->isExternal())
+		item->setFont(m_instanceGridFontBold);
+
+	if (entityAdapter->isGroup())
+		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributeGroup"));
+	if (entityAdapter->isPrefab())
+		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributePrefab"));
+	if (entityAdapter->isDynamic())
+		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributeDynamic"));
+	if (entityAdapter->isExternal())
+		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributeExternal"));
+
+	row->set(0, item);
 
 	for (auto childRow : row->getChildren())
 		updateInstanceGridRow(childRow);
@@ -1578,7 +1604,7 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 			entityAdapter->setDynamic(true);
 		}
 
-		m_instanceGrid->update();
+		updateInstanceGrid();
 	}
 	else if (event->getColumn() == 2)
 	{

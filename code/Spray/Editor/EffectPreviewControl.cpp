@@ -94,6 +94,7 @@ EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
 ,	m_timeScale(1.0f)
 ,	m_lastDeltaTime(1.0 / c_updateInterval)
 ,	m_guideVisible(true)
+,	m_gridVisible(false)
 ,	m_velocityVisible(false)
 ,	m_moveEmitter(false)
 {
@@ -244,6 +245,11 @@ void EffectPreviewControl::setTotalTime(float totalTime)
 void EffectPreviewControl::showGuide(bool guideVisible)
 {
 	m_guideVisible = guideVisible;
+}
+
+void EffectPreviewControl::showGrid(bool gridVisible)
+{
+	m_gridVisible = gridVisible;
 }
 
 void EffectPreviewControl::showVelocity(bool velocityVisible)
@@ -516,22 +522,25 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_primitiveRenderer->begin(0, m_worldRenderView.getProjection());
 		m_primitiveRenderer->pushView(view);
 
-		for (int x = -10; x <= 10; ++x)
+		if (m_gridVisible)
 		{
-			m_primitiveRenderer->drawLine(
-				Vector4(float(x), 0.0f, -10.0f, 1.0f),
-				Vector4(float(x), 0.0f, 10.0f, 1.0f),
-				(x == 0) ? 2.0f : 0.0f,
-				m_colorGrid
-			);
-			m_primitiveRenderer->drawLine(
-				Vector4(-10.0f, 0.0f, float(x), 1.0f),
-				Vector4(10.0f, 0.0f, float(x), 1.0f),
-				(x == 0) ? 2.0f : 0.0f,
-				m_colorGrid
-			);
+			for (int x = -10; x <= 10; ++x)
+			{
+				m_primitiveRenderer->drawLine(
+					Vector4(float(x), 0.0f, -10.0f, 1.0f),
+					Vector4(float(x), 0.0f, 10.0f, 1.0f),
+					(x == 0) ? 2.0f : 0.0f,
+					m_colorGrid
+				);
+				m_primitiveRenderer->drawLine(
+					Vector4(-10.0f, 0.0f, float(x), 1.0f),
+					Vector4(10.0f, 0.0f, float(x), 1.0f),
+					(x == 0) ? 2.0f : 0.0f,
+					m_colorGrid
+				);
+			}
 		}
-
+		
 		if (m_effectEntity && m_guideVisible)
 		{
 			const Transform transform = m_effectEntity->getTransform();

@@ -126,6 +126,7 @@ EffectEditorPage::EffectEditorPage(editor::IEditor* editor, editor::IEditorPageS
 ,	m_document(document)
 ,	m_velocityVisible(false)
 ,	m_guideVisible(true)
+,	m_gridVisible(false)
 {
 }
 
@@ -172,6 +173,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	m_toolToggleGuide = new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), 6, ui::Command(L"Effect.Editor.ToggleGuide"), ui::ToolBarButton::BsDefaultToggle);
+	m_toolToggleGrid = new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GRID"), 9, ui::Command(L"Effect.Editor.ToggleGrid"), ui::ToolBarButton::BsDefaultToggle);
 
 	Ref< const PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT(settings);
@@ -186,13 +188,15 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleGuideLines"));
 	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleMoveEmitter"));
 	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleGroundClip"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleGrid"));
 	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.Randomize"));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_REWIND"), 0, ui::Command(L"Effect.Editor.Rewind")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_PLAY"), 1, ui::Command(L"Effect.Editor.Play")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_STOP"), 2, ui::Command(L"Effect.Editor.Stop")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolToggleGuide);
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), 11, ui::Command(L"Effect.Editor.RandomizeSeed")));
+	m_toolBar->addItem(m_toolToggleGrid);
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), 10, ui::Command(L"Effect.Editor.RandomizeSeed")));
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolBarClick);
 
 	m_previewControl = new EffectPreviewControl(m_editor);
@@ -307,6 +311,12 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		m_guideVisible = !m_guideVisible;
 		m_previewControl->showGuide(m_guideVisible);
 		m_toolToggleGuide->setToggled(m_guideVisible);
+	}
+	else if (command == L"Effect.Editor.ToggleGrid")
+	{
+		m_gridVisible = !m_gridVisible;
+		m_previewControl->showGrid(m_gridVisible);
+		m_toolToggleGrid->setToggled(m_gridVisible);
 	}
 	else if (command == L"Effect.Editor.ToggleVelocity")
 	{

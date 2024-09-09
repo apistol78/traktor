@@ -552,7 +552,11 @@
 			<first>Spray.ToggleMoveEmitter</first>
 			<second>$(Images.Path)/Spray/ToggleMoveEmitter.svg</second>
 		</item>
-
+		<item>
+			<first>Spray.ToggleGrid</first>
+			<second>$(Images.Path)/Spray/ToggleGrid.svg</second>
+		</item>
+		
 		<!-- Terrain -->
 		<item>
 			<first>Terrain.Terrain</first>
