@@ -134,7 +134,7 @@
 			<item>
 				<first>Render.MipBias</first>
 				<second type="traktor.PropertyFloat">
-					<value>-1</value>
+					<value>-2</value>
 				</second>
 			</item>
 		</value>
