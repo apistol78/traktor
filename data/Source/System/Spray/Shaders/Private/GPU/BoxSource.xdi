@@ -139,12 +139,13 @@ for (int i = 0; i < emitCount; ++i)
 	$Points[id].msra = vec4(
 		RandomXY($SourceAge, seed),	// maxAge
 		RandomXY($SourceSize, seed),	// size
-		0.0f,	// random
+		RandomFloat(seed),	// random
 		1.0f		// alpha
 	);
 }
 
 $Head[0].alive = alive;
+
 			]]>
 			</script>
 		</item>
