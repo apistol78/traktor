@@ -277,8 +277,8 @@ Generated texture from surface cache.
 			<id>{180FE1F2-614A-514D-8E2F-ED363C0245BA}</id>
 			<comment/>
 			<position>
-				<first>-154</first>
-				<second>-703</second>
+				<first>111</first>
+				<second>-689</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -316,8 +316,8 @@ Generated texture from surface cache.
 			<id>{62A562A9-FB71-EB42-80E7-98A5AF9F5287}</id>
 			<comment/>
 			<position>
-				<first>-358</first>
-				<second>-658</second>
+				<first>-93</first>
+				<second>-644</second>
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>Matrix</type>
@@ -479,8 +479,8 @@ Generated texture from surface cache.
 			<id>{B547F714-60D5-2342-8C0E-90D80676B9D8}</id>
 			<comment/>
 			<position>
-				<first>1355</first>
-				<second>-1170</second>
+				<first>1449</first>
+				<second>-1167</second>
 			</position>
 			<name>L_SurfaceAlbedo</name>
 		</item>
@@ -506,7 +506,7 @@ Generated texture from surface cache.
 			<id>{466847D9-69C1-FB40-92A9-B8A368FEFA2F}</id>
 			<comment/>
 			<position>
-				<first>-1179</first>
+				<first>-1148</first>
 				<second>-618</second>
 			</position>
 			<name>L_GeometryNormal</name>
@@ -515,7 +515,7 @@ Generated texture from surface cache.
 			<id>{6999ECE0-9BC3-C34C-80CA-6926A9C98E1B}</id>
 			<comment/>
 			<position>
-				<first>-1607</first>
+				<first>-1598</first>
 				<second>-617</second>
 			</position>
 			<name>L_GeometryNormal</name>
@@ -549,7 +549,7 @@ Generated texture from surface cache.
 			<id>{5FF4BEC5-00F2-5A46-AD00-1616E1E52C57}</id>
 			<comment/>
 			<position>
-				<first>-890</first>
+				<first>-867</first>
 				<second>-590</second>
 			</position>
 		</item>
@@ -557,8 +557,8 @@ Generated texture from surface cache.
 			<id>{EFCE9FC4-5E73-3C4E-B763-5AEA373E2191}</id>
 			<comment/>
 			<position>
-				<first>-605</first>
-				<second>-625</second>
+				<first>-617</first>
+				<second>-628</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
@@ -574,8 +574,8 @@ Generated texture from surface cache.
 			<id>{732D0940-5786-D74C-A231-6968FE7A5A01}</id>
 			<comment/>
 			<position>
-				<first>1355</first>
-				<second>-1122</second>
+				<first>1449</first>
+				<second>-1119</second>
 			</position>
 			<name>L_SurfaceNormal</name>
 		</item>
@@ -583,8 +583,8 @@ Generated texture from surface cache.
 			<id>{36D3D25E-A79B-9D4C-B978-174DC2DAFD43}</id>
 			<comment/>
 			<position>
-				<first>109</first>
-				<second>-665</second>
+				<first>371</first>
+				<second>-651</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -698,8 +698,8 @@ Generated texture from surface cache.
 			<id>{C72A149C-D8E5-0344-9A87-676FCD57F888}</id>
 			<comment/>
 			<position>
-				<first>1355</first>
-				<second>-1074</second>
+				<first>1449</first>
+				<second>-1071</second>
 			</position>
 			<name>L_SurfaceRoughness</name>
 		</item>
@@ -910,7 +910,7 @@ $Output = vec4(mix(t, b, f), 0.0f);
 			</position>
 			<name>L_Cut</name>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{34FFFB38-2908-D34B-A5AC-EF33209726FE}</id>
 			<comment/>
 			<position>
@@ -922,18 +922,22 @@ $Output = vec4(mix(t, b, f), 0.0f);
 				<item>
 					<name>patchOrigin</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>surfaceOffset</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>patchBoundingBoxMn</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>patchBoundingBoxMx</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -1049,8 +1053,8 @@ $Output = gl_DrawID;
 			<id>{3529083A-FB00-D741-B0B8-2D79F9D5A07B}</id>
 			<comment/>
 			<position>
-				<first>-98</first>
-				<second>-1141</second>
+				<first>-172</first>
+				<second>-1127</second>
 			</position>
 			<name>L_GeometryNormal</name>
 		</item>
@@ -1058,8 +1062,8 @@ $Output = gl_DrawID;
 			<id>{C5E8F8E1-7C3C-5E4A-9D29-8C1FC1A54419}</id>
 			<comment/>
 			<position>
-				<first>-82</first>
-				<second>-1099</second>
+				<first>-156</first>
+				<second>-1085</second>
 			</position>
 			<name>L_PatchTexCoord</name>
 		</item>
@@ -1094,8 +1098,8 @@ $Output = gl_DrawID;
 			<id>{F3EACC5B-AEB4-2346-A342-8EA7728B0D76}</id>
 			<comment/>
 			<position>
-				<first>-50</first>
-				<second>-1057</second>
+				<first>-140</first>
+				<second>-1043</second>
 			</position>
 			<name>L_TexCoord</name>
 		</item>
@@ -1111,8 +1115,8 @@ $Output = gl_DrawID;
 			<id>{A550A9D4-6122-614B-A8D9-AA31FE164B72}</id>
 			<comment/>
 			<position>
-				<first>-378</first>
-				<second>-735</second>
+				<first>-103</first>
+				<second>-721</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
@@ -1137,8 +1141,8 @@ $Output = gl_DrawID;
 			<id>{80D4B36D-6350-0A42-A883-CB3CDEE7800A}</id>
 			<comment/>
 			<position>
-				<first>-50</first>
-				<second>-1183</second>
+				<first>-140</first>
+				<second>-1169</second>
 			</position>
 			<name>L_Elevation</name>
 		</item>
@@ -1335,8 +1339,8 @@ $Output = gl_DrawID;
 			<id>{487A8D55-8859-4F13-BC41-CF56C048AC0D}</id>
 			<comment/>
 			<position>
-				<first>106</first>
-				<second>-554</second>
+				<first>371</first>
+				<second>-540</second>
 			</position>
 			<name>L_ViewDetailNormal</name>
 		</item>
@@ -1344,16 +1348,16 @@ $Output = gl_DrawID;
 			<id>{29EBBD88-E595-47E9-BAD2-D9C6EA2BD354}</id>
 			<comment/>
 			<position>
-				<first>-372</first>
-				<second>-619</second>
+				<first>-103</first>
+				<second>-605</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{E67F493C-9E67-4C07-BA70-15DED108BE7E}</id>
 			<comment/>
 			<position>
-				<first>-359</first>
-				<second>-548</second>
+				<first>-93</first>
+				<second>-534</second>
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>Matrix</type>
@@ -1363,16 +1367,16 @@ $Output = gl_DrawID;
 			<id>{DD9EDFAC-3B65-4A37-A9D6-C3FD0E39A0E5}</id>
 			<comment/>
 			<position>
-				<first>-155</first>
-				<second>-593</second>
+				<first>111</first>
+				<second>-579</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{FCFFF5B2-BA84-42A5-8373-4E7945C0F560}</id>
 			<comment/>
 			<position>
-				<first>1355</first>
-				<second>-1026</second>
+				<first>1449</first>
+				<second>-1023</second>
 			</position>
 			<name>L_SurfaceSpecular</name>
 		</item>
@@ -1388,8 +1392,8 @@ $Output = gl_DrawID;
 			<id>{AF3BD9BA-0433-46DD-AF03-CD8CEFFCA69A}</id>
 			<comment/>
 			<position>
-				<first>866</first>
-				<second>-960</second>
+				<first>817</first>
+				<second>-963</second>
 			</position>
 			<value>0.25</value>
 		</item>
@@ -1397,8 +1401,8 @@ $Output = gl_DrawID;
 			<id>{D04FF15E-4843-416A-854A-154CF11430AE}</id>
 			<comment/>
 			<position>
-				<first>1222</first>
-				<second>-1002</second>
+				<first>1248</first>
+				<second>-987</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -1410,6 +1414,23 @@ $Output = gl_DrawID;
 				<second>161</second>
 			</position>
 			<name>L_SurfaceSpecular</name>
+		</item>
+		<item type="traktor.render.Neg" version="traktor.render.Node:1">
+			<id>{DCC13175-8FA6-4F49-BFBB-40B66474F899}</id>
+			<comment/>
+			<position>
+				<first>-1126</first>
+				<second>-541</second>
+			</position>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{A251953F-F7EF-EC4F-A293-F2D3658E7B73}</id>
+			<comment/>
+			<position>
+				<first>-334</first>
+				<second>-580</second>
+			</position>
+			<swizzle>xyz</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -1741,26 +1762,6 @@ $Output = gl_DrawID;
 			<destination>
 				<node ref="/object/nodes/item[52]"/>
 				<id>{71A0310C-3928-44C3-8D4F-7D9AFF9EAE70}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[50]"/>
-				<id>{04ABEE84-0049-4827-A742-D44EB2D15560}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[51]"/>
-				<id>{06867C72-4921-4EB8-8806-EFCF09BD0C34}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[48]"/>
-				<id>{04ABEE84-0049-4827-A742-D44EB2D15560}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[51]"/>
-				<id>{CB2AD645-8548-45AA-8E8F-FB5226460883}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -2525,16 +2526,6 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[52]"/>
-				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[116]"/>
-				<id>{FE413452-19EB-4DC9-B724-2984FA17CC20}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[118]"/>
 				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
 			</source>
@@ -2613,6 +2604,56 @@ $Output = gl_DrawID;
 				<id>{1D7FFB3D-01E1-BF42-9E16-D5247E953065}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[48]"/>
+				<id>{04ABEE84-0049-4827-A742-D44EB2D15560}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[124]"/>
+				<id>{98BF7CC4-A80C-43DA-B7FD-21BA4C039E28}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[124]"/>
+				<id>{D74E3627-9E70-4BAD-A6CE-2087D41D6ED7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
+				<id>{CB2AD645-8548-45AA-8E8F-FB5226460883}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{04ABEE84-0049-4827-A742-D44EB2D15560}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
+				<id>{06867C72-4921-4EB8-8806-EFCF09BD0C34}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[52]"/>
+				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[125]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[125]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[116]"/>
+				<id>{FE413452-19EB-4DC9-B724-2984FA17CC20}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -2635,8 +2676,8 @@ $Output = gl_DrawID;
 				<second>-763</second>
 			</position>
 			<size>
-				<first>1955</first>
-				<second>281</second>
+				<first>2229</first>
+				<second>335</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
@@ -2647,8 +2688,8 @@ $Output = gl_DrawID;
 				<second>-1371</second>
 			</position>
 			<size>
-				<first>1812</first>
-				<second>608</second>
+				<first>1909</first>
+				<second>552</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
