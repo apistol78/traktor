@@ -24,7 +24,7 @@ Color4f SkyProbe::sampleRadiance(const Vector4& direction) const
 {
     const Vector4 rd = direction;
 
-	Vector4 col = m_skyOverHorizon.linear() - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;
+	Vector4 col = Vector4(m_skyOverHorizon.linear()) - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;
 	col = lerp(col, m_skyUnderHorizon.linear(), power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
 
     return Color4f(col) * Scalar(m_intensity);
