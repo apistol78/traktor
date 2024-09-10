@@ -10,6 +10,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Math/Format.h"
 #include "Core/Serialization/AttributeHdr.h"
+#include "Core/Serialization/AttributeHex.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
@@ -164,7 +165,7 @@ public:
 			s >> MemberEnum< StencilOperation >(L"stencilPass", m_ref.stencilPass, kStencilOperations);
 			s >> MemberEnum< CompareFunction >(L"stencilFunction", m_ref.stencilFunction, kCompareFunctions);
 			s >> Member< uint32_t >(L"stencilReference", m_ref.stencilReference);
-			s >> Member< uint32_t >(L"stencilMask", m_ref.stencilMask);
+			s >> Member< uint32_t >(L"stencilMask", m_ref.stencilMask, AttributeHex());
 		}
 	}
 
