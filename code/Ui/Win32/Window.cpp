@@ -61,6 +61,10 @@ Window::Window()
 
 Window::~Window()
 {
+	// Ensure message handlers are cleared before we remove our callback since
+	// SetWindowLong seems to be called when removing callback.
+	m_messageHandlers.clear();
+
 	if (m_originalWndProc)
 		SET_WINDOW_LONG_PTR(m_hWnd, GWLP_WNDPROC, (LONG_PTR)m_originalWndProc);
 

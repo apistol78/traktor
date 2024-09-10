@@ -61,26 +61,28 @@ void ConfigDialog::destroy()
 
 void ConfigDialog::update(const Rect* rc, bool immediate)
 {
-	const Rect rcInner = getInnerRect();
-
-	const Size ok = m_ok->getPreferredSize(rcInner.getSize());
-	const Size cancel = m_cancel->getPreferredSize(rcInner.getSize());
-
-	const int32_t four = pixel(4_ut);
-	if (m_apply)
+	if (m_ok && m_cancel)
 	{
-		const Size apply = m_apply->getPreferredSize(rcInner.getSize());
+		const Rect rcInner = getInnerRect();
 
-		m_ok->setRect(Rect(Point(rcInner.right - ok.cx - cancel.cx - apply.cx - 3 * four, rcInner.bottom + four + four), ok));
-		m_cancel->setRect(Rect(Point(rcInner.right - cancel.cx - apply.cx - 2 * four, rcInner.bottom + four + four), cancel));
-		m_apply->setRect(Rect(Point(rcInner.right - apply.cx - 1 * four, rcInner.bottom + four + four), apply));
-	}
-	else
-	{
-		m_ok->setRect(Rect(Point(rcInner.right - ok.cx - cancel.cx - 2 * four, rcInner.bottom + four + four), ok));
-		m_cancel->setRect(Rect(Point(rcInner.right - cancel.cx - 1 * four, rcInner.bottom + four + four), cancel));
-	}
+		const Size ok = m_ok->getPreferredSize(rcInner.getSize());
+		const Size cancel = m_cancel->getPreferredSize(rcInner.getSize());
 
+		const int32_t four = pixel(4_ut);
+		if (m_apply)
+		{
+			const Size apply = m_apply->getPreferredSize(rcInner.getSize());
+
+			m_ok->setRect(Rect(Point(rcInner.right - ok.cx - cancel.cx - apply.cx - 3 * four, rcInner.bottom + four + four), ok));
+			m_cancel->setRect(Rect(Point(rcInner.right - cancel.cx - apply.cx - 2 * four, rcInner.bottom + four + four), cancel));
+			m_apply->setRect(Rect(Point(rcInner.right - apply.cx - 1 * four, rcInner.bottom + four + four), apply));
+		}
+		else
+		{
+			m_ok->setRect(Rect(Point(rcInner.right - ok.cx - cancel.cx - 2 * four, rcInner.bottom + four + four), ok));
+			m_cancel->setRect(Rect(Point(rcInner.right - cancel.cx - 1 * four, rcInner.bottom + four + four), cancel));
+		}
+	}
 	Dialog::update(rc, immediate);
 }
 
