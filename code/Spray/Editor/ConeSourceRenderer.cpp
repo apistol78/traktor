@@ -18,8 +18,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.ConeSourceRenderer", ConeSourceRenderer, 
 void ConeSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const SourceData* sourceData) const
 {
 	const ConeSourceData* coneSource = checked_type_cast< const ConeSourceData* >(sourceData);
+
+	Vector4 x, y;
+	orthogonalFrame(coneSource->m_normal, x, y);
+	const Matrix44 m(x, y, coneSource->m_normal, coneSource->m_position);
+
 	primitiveRenderer->drawCone(
-		translate(coneSource->m_position) * Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), coneSource->m_normal).toMatrix44(),
+		m,
 		coneSource->m_angle2,
 		coneSource->m_angle1,
 		1.0f,
