@@ -609,7 +609,11 @@
 			<first>SHADERGRAPH_REMOVE_UNUSED_NODES</first>
 			<second>Remove unused nodes</second>
 		</item>
-		<item>
+        <item>
+            <first>SHADERGRAPH_RESOLVE_BUNDLES</first>
+            <second>Resolve bundles</second>
+        </item>
+        <item>
 			<first>SHADERGRAPH_SAMPLER</first>
 			<second>Sampler</second>
 		</item>
@@ -669,7 +673,11 @@
 			<first>SHADERGRAPH_SCRIPT_TYPE_STRUCT_BUFFER</first>
 			<second>Struct Buffer</second>
 		</item>
-		<item>
+        <item>
+            <first>SHADERGRAPH_SWIZZLED_PERMUTATION</first>
+            <second>Swizzled permutation</second>
+        </item>
+        <item>
 			<first>SHADERGRAPH_TOUCH_ALL</first>
 			<second>Touch all shadergraphs</second>
 		</item>
