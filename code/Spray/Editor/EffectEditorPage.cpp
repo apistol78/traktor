@@ -51,11 +51,13 @@
 #include "Ui/Container.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/Slider.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarEmbed.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
 #include "Ui/Sequencer/CursorMoveEvent.h"
 #include "Ui/Sequencer/KeyMoveEvent.h"
@@ -172,6 +174,9 @@ bool EffectEditorPage::create(ui::Container* parent)
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
+	m_toolBar = new ui::ToolBar();
+	m_toolBar->create(container);
+
 	m_toolToggleGuide = new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), 6, ui::Command(L"Effect.Editor.ToggleGuide"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleGrid = new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GRID"), 9, ui::Command(L"Effect.Editor.ToggleGrid"), ui::ToolBarButton::BsDefaultToggle);
 
@@ -181,8 +186,12 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_guideVisible = settings->getProperty< bool >(L"EffectEditor.ToggleGuide", m_guideVisible);
 	m_toolToggleGuide->setToggled(m_guideVisible);
 
-	m_toolBar = new ui::ToolBar();
-	m_toolBar->create(container);
+	m_sliderExtraVelocity= new ui::Slider();
+	m_sliderExtraVelocity->create(m_toolBar);
+	m_sliderExtraVelocity->setRange(0, 100);
+	m_sliderExtraVelocity->setValue(0);
+	m_sliderExtraVelocity->addEventHandler< ui::ContentChangeEvent >(this, &EffectEditorPage::eventSliderExtraVelocityChange);
+
 	for (int32_t i = 0; i < 6; ++i)
 		m_toolBar->addImage(new ui::StyleBitmap(L"Spray.Playback", i));
 	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleGuideLines"));
@@ -197,6 +206,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(m_toolToggleGuide);
 	m_toolBar->addItem(m_toolToggleGrid);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), 10, ui::Command(L"Effect.Editor.RandomizeSeed")));
+	m_toolBar->addItem(new ui::ToolBarEmbed(m_sliderExtraVelocity, 30_ut));
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolBarClick);
 
 	m_previewControl = new EffectPreviewControl(m_editor);
@@ -317,11 +327,6 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		m_gridVisible = !m_gridVisible;
 		m_previewControl->showGrid(m_gridVisible);
 		m_toolToggleGrid->setToggled(m_gridVisible);
-	}
-	else if (command == L"Effect.Editor.ToggleVelocity")
-	{
-		m_velocityVisible = !m_velocityVisible;
-		m_previewControl->showVelocity(m_velocityVisible);
 	}
 	else if (command == L"Effect.Editor.RandomizeSeed")
 	{
@@ -485,7 +490,7 @@ void EffectEditorPage::updateEffectPreview()
 		// Update effect preview.
 		const float time = m_sequencer->getCursor() / 1000.0f;
 		m_previewControl->setEffect(m_effectData, effect);
-		m_previewControl->setMoveEmitter(moveEmitter);
+		m_previewControl->setExtraVelocity(m_sliderExtraVelocity->getValue() / 100.0f);
 		m_previewControl->setTotalTime(time);
 		m_previewControl->syncEffect();
 	}
@@ -596,6 +601,11 @@ void EffectEditorPage::updateProfile()
 	//}
 
 	m_sequencer->update();
+}
+
+void EffectEditorPage::eventSliderExtraVelocityChange(ui::ContentChangeEvent* event)
+{
+	updateEffectPreview();
 }
 
 void EffectEditorPage::eventToolBarClick(ui::ToolBarButtonClickEvent* event)

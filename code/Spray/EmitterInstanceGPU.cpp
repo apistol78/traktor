@@ -116,7 +116,7 @@ void EmitterInstanceGPU::update(Context& context, const Transform& transform, bo
 				const Vector4 dm = (lastPosition - m_transform.translation()).xyz0();
 				const Scalar distance = min(dm.length(), 2.0_simd);
 
-				const float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (distance / context.deltaTime) : 0.0f;
+				const float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (distance / context.deltaTime + context.extraVelocity) : 0.0f;
 				const float emitConstant = source->getConstantRate() * context.deltaTime;
 				const float emitTotal = emitVelocity + emitConstant;
 

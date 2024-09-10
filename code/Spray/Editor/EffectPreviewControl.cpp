@@ -92,11 +92,11 @@ EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
 ,	m_angleHead(0.0f)
 ,	m_anglePitch(0.0f)
 ,	m_timeScale(1.0f)
+,	m_extraVelocity(0.0f)
 ,	m_lastDeltaTime(1.0 / c_updateInterval)
 ,	m_guideVisible(true)
 ,	m_gridVisible(false)
 ,	m_velocityVisible(false)
-,	m_moveEmitter(false)
 {
 	m_sourceRenderers[&type_of< BoxSourceData >()] = new BoxSourceRenderer();
 	m_sourceRenderers[&type_of< ConeSourceData >()] = new ConeSourceRenderer();
@@ -242,6 +242,11 @@ void EffectPreviewControl::setTotalTime(float totalTime)
 	effectInstance->setTime(totalTime);
 }
 
+void EffectPreviewControl::setExtraVelocity(float extraVelocity)
+{
+	m_extraVelocity = extraVelocity;
+}
+
 void EffectPreviewControl::showGuide(bool guideVisible)
 {
 	m_guideVisible = guideVisible;
@@ -255,11 +260,6 @@ void EffectPreviewControl::showGrid(bool gridVisible)
 void EffectPreviewControl::showVelocity(bool velocityVisible)
 {
 	m_velocityVisible = velocityVisible;
-}
-
-void EffectPreviewControl::setMoveEmitter(bool moveEmitter)
-{
-	m_moveEmitter = moveEmitter;
 }
 
 void EffectPreviewControl::randomizeSeed()
@@ -286,6 +286,7 @@ void EffectPreviewControl::syncEffect()
 	
 	Context context;
 	context.deltaTime = 0.0f;
+	context.extraVelocity = m_extraVelocity;
 	context.random = RandomGeometry(m_randomSeed);
 
 	// Create new effect instance.
@@ -295,25 +296,13 @@ void EffectPreviewControl::syncEffect()
 	const float c_deltaTime = 1.0f / 30.0f;
 	for (float T = 0.0f; T < currentTime; T += c_deltaTime)
 	{
-		Transform effectTransform = Transform::identity();
-		if (m_moveEmitter)
-		{
-			const Vector4 effectPosition(
-				std::sin(T) * 8.0f,
-				0.0f,
-				std::cos(T) * 8.0f,
-				1.0f
-			);
-			effectTransform = Transform(effectPosition);
-		}
-
 		const float deltaTime = min(c_deltaTime, currentTime - T);
 		context.deltaTime = deltaTime;
 
-		effectInstance->update(context, effectTransform, true);
+		effectInstance->update(context, Transform::identity(), true);
 		effectInstance->synchronize();
 
-		m_effectEntity->setTransform(effectTransform);
+		m_effectEntity->setTransform(Transform::identity());
 	}
 
 	m_effectEntity->setComponent(new EffectComponent(
@@ -471,21 +460,8 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	if (m_effectEntity)
 	{
-		const float T = m_effectEntity->getComponent< EffectComponent >()->getEffectInstance()->getTime();
-
-		Transform effectTransform = Transform::identity();
-		if (m_moveEmitter)
-		{
-			const Vector4 effectPosition(
-				std::sin(T) * 8.0f,
-				0.0f,
-				std::cos(T) * 8.0f,
-				1.0f
-			);
-			effectTransform = Transform(effectPosition);
-		}
-
-		m_effectEntity->setTransform(effectTransform);
+		m_effectEntity->setTransform(Transform::identity());
+		m_effectEntity->getComponent< EffectComponent >()->setExtraVelocity(m_extraVelocity);
 
 		// Temporarily add effect entity to world.
 		m_sceneInstance->getWorld()->addEntity(m_effectEntity);

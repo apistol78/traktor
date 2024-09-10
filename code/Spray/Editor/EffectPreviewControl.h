@@ -105,13 +105,13 @@ public:
 
 	void setTotalTime(float totalTime);
 
+	void setExtraVelocity(float extraVelocity);
+
 	void showGuide(bool guideVisible);
 
 	void showGrid(bool gridVisible);
 
 	void showVelocity(bool velocityVisible);
-
-	void setMoveEmitter(bool moveEmitter);
 
 	void randomizeSeed();
 
@@ -146,11 +146,11 @@ private:
 	float m_anglePitch;
 	ui::Point m_lastMousePosition;
 	float m_timeScale;
+	float m_extraVelocity;
 	double m_lastDeltaTime;
 	bool m_guideVisible;
 	bool m_gridVisible;
 	bool m_velocityVisible;
-	bool m_moveEmitter;
 	ui::Size m_dirtySize = ui::Size(0, 0);
 
 	void updateWorldRenderer();

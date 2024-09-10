@@ -87,6 +87,8 @@ public:
 
 	bool isFinished() const;
 
+	void setExtraVelocity(float extraVelocity);
+
 	const resource::Proxy< Effect >& getEffect() const { return m_effect; }
 
 	EffectInstance* getEffectInstance() const { return m_effectInstance; }

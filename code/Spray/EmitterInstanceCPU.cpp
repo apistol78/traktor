@@ -127,7 +127,7 @@ void EmitterInstanceCPU::update(Context& context, const Transform& transform, bo
 
 			if (!singleShot)
 			{
-				const float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (dm.length() / context.deltaTime) : 0.0f;
+				const float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (dm.length() / context.deltaTime + context.extraVelocity) : 0.0f;
 				const float emitConstant = source->getConstantRate() * context.deltaTime;
 				const float emit = emitVelocity + emitConstant + m_emitFraction;
 				uint32_t emitCountFrame = uint32_t(emit);

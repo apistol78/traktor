@@ -179,6 +179,11 @@ bool EffectComponent::isFinished() const
 	return m_effectInstance->getTime() >= m_effect->getDuration();
 }
 
+void EffectComponent::setExtraVelocity(float extraVelocity)
+{
+	m_context.extraVelocity = extraVelocity;
+}
+
 void EffectComponent::updateTechniques()
 {
 	// Collect set of techniques used by this effect; we store

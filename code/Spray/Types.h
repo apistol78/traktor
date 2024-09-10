@@ -44,6 +44,7 @@ struct VirtualSourceCallback
 struct Context
 {
 	float deltaTime = 0.0f;
+	float extraVelocity = 0.0f;
 	RandomGeometry random;
 	world::Entity* owner = nullptr;
 	VirtualSourceCallback* virtualSourceCallback = nullptr;

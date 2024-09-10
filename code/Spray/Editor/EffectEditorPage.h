@@ -41,6 +41,7 @@ class Menu;
 class SequenceButtonClickEvent;
 class SequenceMovedEvent;
 class SequencerControl;
+class Slider;
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
@@ -93,6 +94,7 @@ private:
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::ToolBarButton > m_toolToggleGrid;
+	Ref< ui::Slider > m_sliderExtraVelocity;
 	Ref< EffectPreviewControl > m_previewControl;
 	Ref< ui::Container > m_containerSequencer;
 	Ref< ui::ToolBar > m_toolBarLayers;
@@ -111,6 +113,8 @@ private:
 	void updateSequencer();
 
 	void updateProfile();
+
+	void eventSliderExtraVelocityChange(ui::ContentChangeEvent* event);
 
 	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 
