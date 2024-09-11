@@ -35,12 +35,17 @@ bool LaunchThemeEditorTool::needOutputResources(std::set< Guid >& outDependencie
 
 bool LaunchThemeEditorTool::launch(ui::Widget* parent, editor::IEditor* editor, const PropertyGroup* param)
 {
+#if !defined(__DEBUG)
+	const std::wstring buildConfigurationProducts = L"releaseshared";
+#else
+	const std::wstring buildConfigurationProducts = L"debugshared";
+#endif
 	const std::wstring styleSheet = editor->getSettings()->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss");
 	return OS::getInstance().execute(
 #if defined(_WIN32)
-		std::wstring(L"$(TRAKTOR_HOME)/bin/latest/win64/releaseshared/Traktor.Ui.Theme.App.exe -styleSheet=\"") + styleSheet + L"\" \"" + styleSheet + L"\"",
+		std::wstring(L"$(TRAKTOR_HOME)/bin/latest/win64/" + buildConfigurationProducts + L"/Traktor.Ui.Theme.App.exe -styleSheet=\"") + styleSheet + L"\" \"" + styleSheet + L"\"",
 #else
-		std::wstring(L"$(TRAKTOR_HOME)/bin/latest/linux/releaseshared/Traktor.Ui.Theme.App -styleSheet=\"") + styleSheet + L"\" \"" + styleSheet + L"\"",
+		std::wstring(L"$(TRAKTOR_HOME)/bin/latest/linux/" + buildConfigurationProducts + L"/Traktor.Ui.Theme.App -styleSheet=\"") + styleSheet + L"\" \"" + styleSheet + L"\"",
 #endif
 		L"",
 		nullptr,

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -175,15 +175,20 @@ void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			env->set(L"WIZARD_OUTPUT_PATH", outputPath);
 			env->set(L"WIZARD_TEMPLATE_FILE", file->getPath().getPathName());
 
+#if !defined(__DEBUG)
+			const std::wstring buildConfigurationProducts = L"releaseshared";
+#else
+			const std::wstring buildConfigurationProducts = L"debugshared";
+#endif
 			Ref< IProcess > process = OS::getInstance().execute(
 #if defined(_WIN64)
-				L"$(TRAKTOR_HOME)/bin/latest/win64/releaseshared/Traktor.Run.App \"$(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run\"",
+				L"$(TRAKTOR_HOME)/bin/latest/win64/" + buildConfigurationProducts + L"/Traktor.Run.App \"$(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run\"",
 #elif defined(_WIN32)
-				L"$(TRAKTOR_HOME)/bin/latest/win32/releaseshared/Traktor.Run.App \"$(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run\"",
+				L"$(TRAKTOR_HOME)/bin/latest/win32/" + buildConfigurationProducts + L"/Traktor.Run.App \"$(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run\"",
 #elif defined(__APPLE__)
-				L"$(TRAKTOR_HOME)/bin/latest/osx/releaseshared/Traktor.Run.App \"$(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run\"",
+				L"$(TRAKTOR_HOME)/bin/latest/osx/" + buildConfigurationProducts + L"/Traktor.Run.App \"$(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run\"",
 #elif defined(__LINUX__) || defined(__RPI__)
-				L"$(TRAKTOR_HOME)/bin/latest/linux/releaseshared/Traktor.Run.App \"$(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run\"",
+				L"$(TRAKTOR_HOME)/bin/latest/linux/" + buildConfigurationProducts + L"/Traktor.Run.App \"$(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run\"",
 #endif
 				file->getPath().getPathOnly(),
 				env,

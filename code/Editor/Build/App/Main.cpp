@@ -277,15 +277,21 @@ int main(int argc, const char** argv)
 		return 1;
 	}
 
+#if !defined(__DEBUG)
+	const std::wstring buildConfigurationProducts = L"releaseshared";
+#else
+	const std::wstring buildConfigurationProducts = L"debugshared";
+#endif
+
 	StringOutputStream ss;
 #if defined(_WIN32)
-	ss << L"$(TRAKTOR_HOME)/bin/latest/win64/releaseshared/Traktor.Pipeline.App -s=Pipeline";
+	ss << L"$(TRAKTOR_HOME)/bin/latest/win64/" + buildConfigurationProducts + L"/Traktor.Pipeline.App -s=Pipeline";
 #elif defined(__LINUX__)
-	ss << L"$(TRAKTOR_HOME)/bin/latest/linux/releaseshared/Traktor.Pipeline.App -s=Pipeline";
+	ss << L"$(TRAKTOR_HOME)/bin/latest/linux/" + buildConfigurationProducts + L"/Traktor.Pipeline.App -s=Pipeline";
 #elif defined(__RPI__)
-	ss << L"$(TRAKTOR_HOME)/bin/latest/rpi/releaseshared/Traktor.Pipeline.App -s=Pipeline";
+	ss << L"$(TRAKTOR_HOME)/bin/latest/rpi/" + buildConfigurationProducts + L"/Traktor.Pipeline.App -s=Pipeline";
 #elif defined(__APPLE__)
-	ss << L"$(TRAKTOR_HOME)/bin/latest/osx/releaseshared/Traktor.Pipeline.App -s=Pipeline";
+	ss << L"$(TRAKTOR_HOME)/bin/latest/osx/" + buildConfigurationProducts + L"/Traktor.Pipeline.App -s=Pipeline";
 #endif
 	if (cmdLine.hasOption(L'v', L"verbose"))
 		ss << L" -v";
