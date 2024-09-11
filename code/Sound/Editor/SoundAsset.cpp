@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,10 +15,8 @@
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundCategory.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundAsset", 8, SoundAsset, editor::Asset)
 
@@ -59,5 +57,4 @@ void SoundAsset::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

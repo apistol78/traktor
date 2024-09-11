@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,26 +11,24 @@
 #include "Core/RefArray.h"
 #include "Ui/ConfigDialog.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class AutoPropertyList;
 class ListBox;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
 class SoundAsset;
 
@@ -39,7 +37,7 @@ class SoundBatchDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	SoundBatchDialog(editor::IEditor* editor);
+	explicit SoundBatchDialog(editor::IEditor* editor);
 
 	bool create(ui::Widget* parent);
 
@@ -61,6 +59,4 @@ private:
 	void eventSoundListSelect(ui::SelectionChangeEvent* event);
 };
 
-	}
 }
-

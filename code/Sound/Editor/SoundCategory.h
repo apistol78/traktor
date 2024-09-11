@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,18 +19,14 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class T_DLLCLASS SoundCategory : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	SoundCategory();
-
 	virtual void serialize(ISerializer& s) override final;
 
 	const Guid& getParent() const { return m_parent; }
@@ -48,12 +44,10 @@ public:
 private:
 	Guid m_parent;
 	std::wstring m_configurationId;
-	float m_gain;
-	float m_presence;
-	float m_presenceRate;
-	float m_range;
+	float m_gain = 0.0f;
+	float m_presence = 0.0f;
+	float m_presenceRate = 0.25f;
+	float m_range = 0.0f;
 };
 
-	}
 }
-

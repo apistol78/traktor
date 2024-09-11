@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,10 +16,8 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.WaveformControl", WaveformControl, Widget)
 
@@ -29,7 +27,6 @@ bool WaveformControl::create(ui::Widget* parent)
 		return false;
 
 	addEventHandler< ui::PaintEvent >(this, &WaveformControl::eventPaint);
-
 	return true;
 }
 
@@ -86,13 +83,11 @@ void WaveformControl::render(int32_t width, int32_t height, float start)
 			if (!m_buffer->getBlock(cursor, &mixer, block))
 				break;
 
-			float dT = 1.0f / block.sampleRate;
-
+			const float dT = 1.0f / block.sampleRate;
 			for (int32_t i = 0; i < block.samplesCount; ++i)
 			{
-				float v = block.samples[0][i];
-
-				int32_t x = int32_t(time * pixelsPerSecond);
+				const float v = block.samples[0][i];
+				const int32_t x = int32_t(time * pixelsPerSecond);
 				if (x < width)
 				{
 					Span& s = spans[x];
@@ -111,7 +106,6 @@ void WaveformControl::render(int32_t width, int32_t height, float start)
 					going = false;
 					break;
 				}
-
 				time += dT;
 			}
 		}
@@ -130,8 +124,8 @@ void WaveformControl::render(int32_t width, int32_t height, float start)
 		{
 			Span& s = spans[i];
 
-			int32_t y1 = int32_t((-s.mx * 0.5f + 0.5f) * height);
-			int32_t y2 = int32_t((-s.mn * 0.5f + 0.5f) * height);
+			const int32_t y1 = int32_t((-s.mx * 0.5f + 0.5f) * height);
+			const int32_t y2 = int32_t((-s.mn * 0.5f + 0.5f) * height);
 
 			for (int32_t y = y1; y <= y2; ++y)
 				image->setPixel(i, y, Color4f(0.0f, 0.0f, 0.0f, 1.0f));
@@ -162,5 +156,4 @@ void WaveformControl::eventPaint(ui::PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,21 +14,10 @@
 #include "Sound/Types.h"
 #include "Sound/Editor/SoundCategory.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundCategory", 5, SoundCategory, ISerializable)
-
-
-SoundCategory::SoundCategory()
-:	m_gain(0.0f)
-,	m_presence(0.0f)
-,	m_presenceRate(0.25f)
-,	m_range(0.0f)
-{
-}
 
 void SoundCategory::serialize(ISerializer& s)
 {
@@ -56,5 +45,4 @@ void SoundCategory::serialize(ISerializer& s)
 		s >> Member< float >(L"range", m_range, AttributeRange(0.0f));
 }
 
-	}
 }

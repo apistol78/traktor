@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,12 +34,10 @@
 #include "Sound/Decoders/TssStreamDecoder.h"
 #include "Sound/Decoders/WavStreamDecoder.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 const float c_isMuteThreshold = 16.0f / 32767.0f;
 
@@ -61,13 +59,9 @@ bool isMute(const AudioBlock& block, uint32_t& outMuteOffset)
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 33, SoundPipeline, editor::IPipeline)
-
-SoundPipeline::SoundPipeline()
-{
-}
 
 bool SoundPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -389,5 +383,4 @@ Ref< ISerializable > SoundPipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }

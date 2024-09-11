@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,13 +30,10 @@
 #include "Sound/Tracker/VolumeEventData.h"
 #include "Sound/Tracker/VolumeSlideEventData.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
-
 
 const int c_periodNote[][2] =
 {
@@ -82,8 +79,7 @@ const int c_periodNote[][2] =
 	{ 0, 0, }	// C2
 };
 
-
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.ImportMod", ImportMod, Object)
 
@@ -327,5 +323,4 @@ bool ImportMod::import(const Path& fileName, const Path& assetPath, const Path& 
 	return true;
 }
 
-	}
 }

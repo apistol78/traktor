@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,36 +19,34 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IDocument;
 class IEditor;
 class IEditorPageSite;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class GridView;
 class TimerEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
 class AudioChannel;
 class AudioSystem;
@@ -60,7 +58,7 @@ class T_DLLCLASS SongEditor : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	SongEditor(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
+	explicit SongEditor(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
 	virtual bool create(ui::Container* parent) override final;
 
@@ -99,5 +97,4 @@ private:
 	void eventTimer(ui::TimerEvent* event);
 };
 
-	}
 }

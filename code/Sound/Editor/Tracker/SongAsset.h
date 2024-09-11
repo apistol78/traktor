@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class PatternData;
 
@@ -32,8 +30,6 @@ class T_DLLCLASS SongAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	SongAsset();
-
 	void setBpm(int32_t bpm);
 
 	int32_t getBpm() const { return m_bpm; }
@@ -48,11 +44,10 @@ private:
 	friend class SongPipeline;
 
 	Guid m_category;
-	float m_presence;
-	float m_presenceRate;
-	int32_t m_bpm;
+	float m_presence = 0.0f;
+	float m_presenceRate = 0.25f;
+	int32_t m_bpm = 125;
 	RefArray< const PatternData > m_patterns;
 };
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,15 +15,17 @@ namespace traktor
 
 class Path;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Group;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
 class ImportMod : public Object
 {
@@ -33,5 +35,4 @@ public:
 	bool import(const Path& fileName, const Path& assetPath, const Path& samplePath, db::Group* group) const;
 };
 
-	}
 }

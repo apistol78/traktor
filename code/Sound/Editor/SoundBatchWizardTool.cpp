@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,10 +17,8 @@
 #include "Sound/Editor/SoundBatchWizardTool.h"
 #include "Ui/FileDialog.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundBatchWizardTool", 0, SoundBatchWizardTool, editor::IWizardTool)
 
@@ -51,7 +49,7 @@ bool SoundBatchWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, d
 	{
 		for (RefArray< SoundAsset >::iterator i = soundAssets.begin(); i != soundAssets.end(); ++i)
 		{
-			std::wstring instanceName = Path((*i)->getFileName()).getFileNameNoExtension();
+			const std::wstring instanceName = Path((*i)->getFileName()).getFileNameNoExtension();
 			Ref< db::Instance > soundAssetInstance = group->createInstance(instanceName);
 			if (soundAssetInstance)
 			{
@@ -67,5 +65,4 @@ bool SoundBatchWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, d
 	return true;
 }
 
-	}
 }
