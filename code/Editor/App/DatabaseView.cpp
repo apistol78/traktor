@@ -653,7 +653,8 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
 			return false;
 
-		group = items.front()->getData< db::Group >(L"GROUP");
+		treeItem = items.front();
+		group = treeItem->getData< db::Group >(L"GROUP");
 
 		auto selectedItem = m_listInstances->getSelectedItem();
 		if (selectedItem)
