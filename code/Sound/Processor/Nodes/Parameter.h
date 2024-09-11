@@ -40,6 +40,8 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
+	const std::wstring& getName() const { return m_name; }
+
 private:
 	std::wstring m_name;
 	float m_defaultValue = 0.0f;

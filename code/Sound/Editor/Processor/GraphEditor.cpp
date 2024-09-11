@@ -15,6 +15,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
@@ -39,9 +40,11 @@
 #include "Sound/Processor/InputPin.h"
 #include "Sound/Processor/Node.h"
 #include "Sound/Processor/OutputPin.h"
+#include "Sound/Processor/Nodes/Output.h"
+#include "Sound/Processor/Nodes/Parameter.h"
 #include "Sound/Processor/Nodes/Scalar.h"
 #include "Sound/Processor/Nodes/Source.h"
-#include "Sound/Processor/Nodes/Output.h"
+#include "Sound/Processor/Nodes/Time.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/Menu.h"
@@ -337,6 +340,34 @@ void GraphEditor::updateView()
 			un = m_graph->createNode(
 				L"Scalar",
 				toString(scalar->getValue()),
+				ui::UnitPoint(ui::Unit(position.first), ui::Unit(position.second)),
+				new ui::InputNodeShape()
+			);
+		}
+		else if (Parameter* parameter = dynamic_type_cast< Parameter* >(node))
+		{
+			un = m_graph->createNode(
+				L"Parameter",
+				parameter->getName(),
+				ui::UnitPoint(ui::Unit(position.first), ui::Unit(position.second)),
+				new ui::InputNodeShape()
+			);
+		}
+		else if (Source* source = dynamic_type_cast< Source* >(node))
+		{
+			Ref< const db::Instance > sourceInstance = m_editor->getSourceDatabase()->getInstance(source->getSound().getId());
+			un = m_graph->createNode(
+				L"Source",
+				sourceInstance != nullptr ? sourceInstance->getName() : source->getSound().getId().format(),
+				ui::UnitPoint(ui::Unit(position.first), ui::Unit(position.second)),
+				new ui::InputNodeShape()
+			);
+		}
+		else if (Time* time = dynamic_type_cast< Time* >(node))
+		{
+			un = m_graph->createNode(
+				L"Time",
+				L"",
 				ui::UnitPoint(ui::Unit(position.first), ui::Unit(position.second)),
 				new ui::InputNodeShape()
 			);
