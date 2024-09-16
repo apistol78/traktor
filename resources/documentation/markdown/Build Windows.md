@@ -5,7 +5,7 @@
 **Note! This will download and install Vulkan SDK automatically!**
 
 ```
-.\script\update-3rdp.bat
+.\scripts\update-3rdp.bat
 ```
 
 ---
