@@ -11,15 +11,7 @@
 
 #include <glslang/Public/ShaderLang.h>
 #include <SPIRV/GlslangToSpv.h>
-
-#if defined(__LINUX__)
-#	include <GLSL.std.450.h>
-#else
-#	include <spirv-headers/GLSL.std.450.h>
-#endif
-
 #include <spirv-tools/optimizer.hpp>
-
 #include <spirv_hlsl.hpp>
 #include <spirv_glsl.hpp>
 #include <spirv_msl.hpp>
@@ -416,7 +408,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (!program->link(EShMsgDefault))
 		return nullptr;
 
-	const int32_t optimize = 0; // (settings != nullptr ? settings->getProperty< int32_t >(L"Glsl.Vulkan.Optimize", 1) : 1);
+	const int32_t optimize = (settings != nullptr ? settings->getProperty< int32_t >(L"Glsl.Vulkan.Optimize", 1) : 1);
 	const bool convertRelaxedToHalf = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ConvertRelaxedToHalf", false) : false);
 
 	// Create output resource.
@@ -710,7 +702,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		programResource->m_layoutHash = checksum.get();
 	}
 
-	// \note Need to delete program before shaders due to glslang weirdness.
+	// #note Need to delete program before shaders due to glslang weirdness.
 	delete program;
 	delete fragmentShader;
 	delete vertexShader;
