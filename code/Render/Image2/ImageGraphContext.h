@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,8 +11,10 @@
 //#include <functional>
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Containers/StaticMap.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
+#include "Render/Shader.h"
 #include "Render/Image2/ImageGraphTypes.h"
 
 // import/export mechanism.
@@ -78,6 +80,10 @@ public:
 
 	Buffer* findSBuffer(const RenderGraph& renderGraph, img_handle_t sbufferId) const;
 
+	void setTechniqueFlag(const handle_t techniqueId, bool flag);
+
+	void applyTechniqueFlags(const Shader* shader, Shader::Permutation& inoutPermutation) const;
+
 private:
 	struct TextureTargetSet
 	{
@@ -88,6 +94,7 @@ private:
 
 	SmallMap< img_handle_t, TextureTargetSet > m_textureTargetSet;
 	SmallMap< img_handle_t, handle_t > m_sbufferHandles;
+	StaticMap< handle_t, bool, 16 > m_techniqueFlags;
 };
 
 }

@@ -116,9 +116,10 @@ void ShadowProject::build(
 	pp->endParameters(renderContext);
 
 	// Draw fullscreen quad with shader.
-	Shader::Permutation perm;
-	m_shader->setCombination(s_handleLastSlice, (bool)(view.sliceIndex >= (view.sliceCount - 1)), perm);
-	screenRenderer->draw(renderContext, m_shader, perm, pp);
+	Shader::Permutation permutation;
+	context.applyTechniqueFlags(m_shader, permutation);
+	m_shader->setCombination(s_handleLastSlice, (bool)(view.sliceIndex >= (view.sliceCount - 1)), permutation);
+	screenRenderer->draw(renderContext, m_shader, permutation, pp);
 }
 
 }

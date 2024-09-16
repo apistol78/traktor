@@ -36,6 +36,7 @@ extern const render::Handle T_DLLCLASS s_techniqueShadow;
 extern const render::Handle T_DLLCLASS s_handleIrradianceEnable;
 extern const render::Handle T_DLLCLASS s_handleIrradianceSingle;
 extern const render::Handle T_DLLCLASS s_handleVolumetricFogEnable;
+extern const render::Handle T_DLLCLASS s_handleColorGradingEnable;
 
 // Shader parameters.
 extern const render::Handle T_DLLCLASS s_handleDecalParamsA;

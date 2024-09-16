@@ -135,7 +135,9 @@ void Compute::build(
 
 	pp->endParameters(renderContext);
 
-	IProgram* program = m_shader->getProgram().program;
+	Shader::Permutation permutation;
+	context.applyTechniqueFlags(m_shader, permutation);
+	IProgram* program = m_shader->getProgram(permutation).program;
 	if (!program)
 		return;
 

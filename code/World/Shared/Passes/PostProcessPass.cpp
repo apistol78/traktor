@@ -143,7 +143,7 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 	}
 
 	// Create color grading texture.
-	if (m_settings.colorGrading.isValid())
+	if (m_settings.colorGrading.isValid() && !m_settings.colorGrading.isNull())
 	{
 		if (!resourceManager->bind(m_settings.colorGrading, m_colorGrading))
 		{
@@ -172,14 +172,15 @@ void PostProcessPass::setup(
 ) const
 {
 	T_PROFILER_SCOPE(L"PostProcessPass::setup");
-	render::ImageGraphView view;
-
-	view.viewFrustum = worldRenderView.getViewFrustum();
-	view.viewToLight = Matrix44::identity();
-	view.view = worldRenderView.getView();
-	view.projection = worldRenderView.getProjection();
-	view.deltaTime = (float)worldRenderView.getDeltaTime();
-	view.time = (float)worldRenderView.getTime();
+	const render::ImageGraphView view =
+	{
+		.viewFrustum = worldRenderView.getViewFrustum(),
+		.view = worldRenderView.getView(),
+		.viewToLight = Matrix44::identity(),
+		.projection = worldRenderView.getProjection(),
+		.deltaTime = (float)worldRenderView.getDeltaTime(),
+		.time = (float)worldRenderView.getTime()
+	};
 
 	render::ImageGraphContext igctx;
 	igctx.associateTextureTargetSet(s_handleInputColor, visualTargetSetId.current, 0);
@@ -188,12 +189,14 @@ void PostProcessPass::setup(
 	igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 	igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
 	igctx.associateTexture(s_handleInputColorGrading, m_colorGrading);
+	igctx.setTechniqueFlag(s_handleColorGradingEnable, (bool)(m_colorGrading != nullptr));
 
 	// Expose gamma, exposure and jitter.
 	const float time = (float)worldRenderView.getTime();
 	const Vector2 rc = jitter(frameCount) / worldRenderView.getViewSize();
 	const Vector2 rp = jitter(frameCount - 1) / worldRenderView.getViewSize();
-	auto setParameters = [=, this](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
+	auto setParameters = [=, this](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
+	{
 		params->setFloatParameter(s_handleTime, time);
 		params->setFloatParameter(s_handleGamma, m_gamma);
 		params->setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);

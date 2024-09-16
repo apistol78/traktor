@@ -26,6 +26,7 @@ const render::Handle s_techniqueShadow(L"World_ShadowWrite");
 const render::Handle s_handleIrradianceEnable(L"World_IrradianceEnable");
 const render::Handle s_handleIrradianceSingle(L"World_IrradianceSingle");
 const render::Handle s_handleVolumetricFogEnable(L"World_VolumetricFogEnable");
+const render::Handle s_handleColorGradingEnable(L"World_ColorGradingEnable");
 
 // Shader parameters.
 const render::Handle s_handleDecalParamsA(L"World_DecalParamsA");

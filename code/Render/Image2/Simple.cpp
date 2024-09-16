@@ -90,7 +90,9 @@ void Simple::build(
 	pp->endParameters(renderContext);
 
 	// Draw fullscreen quad with shader.
-	screenRenderer->draw(renderContext, m_shader, Shader::Permutation(), pp);
+	Shader::Permutation permutation;
+	context.applyTechniqueFlags(m_shader, permutation);
+	screenRenderer->draw(renderContext, m_shader, permutation, pp);
 }
 
 }
