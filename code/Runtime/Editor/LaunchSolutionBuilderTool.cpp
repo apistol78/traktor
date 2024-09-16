@@ -35,7 +35,7 @@ bool LaunchSolutionBuilderTool::needOutputResources(std::set< Guid >& outDepende
 
 bool LaunchSolutionBuilderTool::launch(ui::Widget* parent, editor::IEditor* editor, const PropertyGroup* param)
 {
-#if !defined(__DEBUG)
+#if !defined(_DEBUG)
 	const std::wstring buildConfigurationProducts = L"releaseshared";
 #else
 	const std::wstring buildConfigurationProducts = L"debugshared";

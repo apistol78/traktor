@@ -175,7 +175,7 @@ void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			env->set(L"WIZARD_OUTPUT_PATH", outputPath);
 			env->set(L"WIZARD_TEMPLATE_FILE", file->getPath().getPathName());
 
-#if !defined(__DEBUG)
+#if !defined(_DEBUG)
 			const std::wstring buildConfigurationProducts = L"releaseshared";
 #else
 			const std::wstring buildConfigurationProducts = L"debugshared";

@@ -277,7 +277,7 @@ int main(int argc, const char** argv)
 		return 1;
 	}
 
-#if !defined(__DEBUG)
+#if !defined(_DEBUG)
 	const std::wstring buildConfigurationProducts = L"releaseshared";
 #else
 	const std::wstring buildConfigurationProducts = L"debugshared";

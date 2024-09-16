@@ -35,7 +35,7 @@ bool LaunchThemeEditorTool::needOutputResources(std::set< Guid >& outDependencie
 
 bool LaunchThemeEditorTool::launch(ui::Widget* parent, editor::IEditor* editor, const PropertyGroup* param)
 {
-#if !defined(__DEBUG)
+#if !defined(_DEBUG)
 	const std::wstring buildConfigurationProducts = L"releaseshared";
 #else
 	const std::wstring buildConfigurationProducts = L"debugshared";
