@@ -55,6 +55,7 @@
 #include "Ui/Splitter.h"
 #include "Ui/PreviewList/PreviewContentChangeEvent.h"
 #include "Ui/PreviewList/PreviewItem.h"
+#include "Ui/PreviewList/PreviewItemMouseButtonDownEvent.h"
 #include "Ui/PreviewList/PreviewItems.h"
 #include "Ui/PreviewList/PreviewList.h"
 #include "Ui/ToolBar/ToolBar.h"
@@ -68,6 +69,7 @@
 #include "Ui/TreeView/TreeViewDragEvent.h"
 #include "Ui/TreeView/TreeViewItem.h"
 #include "Ui/TreeView/TreeViewItemActivateEvent.h"
+#include "Ui/TreeView/TreeViewItemMouseButtonDownEvent.h"
 #include "Ui/TreeView/TreeViewItemStateChangeEvent.h"
 
 namespace traktor::editor
@@ -405,7 +407,7 @@ bool DatabaseView::create(ui::Widget* parent)
 		m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.TypesHidden", i));
 	m_treeDatabase->addEventHandler< ui::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
 	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &DatabaseView::eventInstanceSelect);
-	m_treeDatabase->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
+	m_treeDatabase->addEventHandler< ui::TreeViewItemMouseButtonDownEvent >(this, &DatabaseView::eventTreeInstanceButtonDown);
 	m_treeDatabase->addEventHandler< ui::TreeViewContentChangeEvent >(this, &DatabaseView::eventTreeContentChange);
 	m_treeDatabase->addEventHandler< ui::DragEvent >(this, &DatabaseView::eventInstanceDrag);
 	m_treeDatabase->setEnable(false);
@@ -413,7 +415,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_listInstances = new ui::PreviewList();
 	if (!m_listInstances->create(m_splitter, ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
-	m_listInstances->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
+	m_listInstances->addEventHandler< ui::PreviewItemMouseButtonDownEvent >(this, &DatabaseView::eventPreviewInstanceButtonDown);
 	m_listInstances->addEventHandler< ui::MouseDoubleClickEvent >(this, &DatabaseView::eventInstancePreviewActivate);
 	m_listInstances->addEventHandler< ui::PreviewContentChangeEvent >(this, &DatabaseView::eventPreviewContentChange);
 	m_listInstances->addEventHandler< ui::DragEvent >(this, &DatabaseView::eventInstanceDrag);
@@ -1450,6 +1452,106 @@ void DatabaseView::listInstanceDependents(db::Instance* instance)
 	}
 }
 
+void DatabaseView::handleInstanceButtonDown(ui::Event* event, const ui::Point& position)
+{
+	ui::Associative* selectedItem = nullptr;
+	if (event->getSender() == m_treeDatabase)
+	{
+		RefArray< ui::TreeViewItem > items;
+		if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
+			return;
+		selectedItem = items.front();
+	}
+	else if (event->getSender() == m_listInstances)
+	{
+		if ((selectedItem = m_listInstances->getSelectedItem()) == nullptr)
+			return;
+	}
+	else
+		return;
+
+	T_FATAL_ASSERT(selectedItem);
+
+	Ref< db::Group > group = selectedItem->getData< db::Group >(L"GROUP");
+	Ref< db::Instance > instance = selectedItem->getData< db::Instance >(L"INSTANCE");
+
+	if (group && instance)
+	{
+		m_menuInstanceWizards->removeAll();
+
+		// Rebuild instance wizard menu to ensure only valid wizards are enabled.
+		int32_t nextWizardId = 0;
+		for (auto wizardTool : m_wizardTools)
+		{
+			const std::wstring wizardDescription = wizardTool->getDescription();
+			T_ASSERT(!wizardDescription.empty());
+
+			const int32_t wizardId = nextWizardId++;
+
+			if ((wizardTool->getFlags() & IWizardTool::WfInstance) != 0)
+			{
+				Ref< ui::MenuItem > item = new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription);
+				const TypeInfoSet supportedTypes = wizardTool->getSupportedTypes();
+				if (!supportedTypes.empty())
+				{
+					bool enabled = false;
+					for (auto supportedType : supportedTypes)
+					{
+						if (is_type_of(*supportedType, *instance->getPrimaryType()))
+						{
+							enabled = true;
+							break;
+						}
+					}
+					item->setEnable(enabled);
+				}
+				m_menuInstanceWizards->add(item);
+			}
+		}
+
+		Ref< ui::Menu > menuInstance;
+		if (is_type_of< Asset >(*instance->getPrimaryType()))
+			menuInstance = m_menuInstanceAsset;
+		else
+			menuInstance = m_menuInstance;
+
+		const ui::MenuItem* selected = menuInstance->showModal(
+			mandatory_non_null_type_cast< ui::Widget* >(event->getSender()),
+			position
+		);
+		if (selected)
+			handleCommand(selected->getCommand());
+	}
+	else if (group)
+	{
+		m_menuGroupWizards->removeAll();
+
+		// Rebuild instance wizard menu to ensure only valid wizards are enabled.
+		int32_t nextWizardId = 0;
+		for (auto wizardTool : m_wizardTools)
+		{
+			const std::wstring wizardDescription = wizardTool->getDescription();
+			T_ASSERT(!wizardDescription.empty());
+
+			const int32_t wizardId = nextWizardId++;
+
+			if ((wizardTool->getFlags() & IWizardTool::WfGroup) != 0)
+			{
+				Ref< ui::MenuItem > item = new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription);
+				m_menuGroupWizards->add(item);
+			}
+		}
+
+		const bool showFavorites = m_toolFavoritesShow->isToggled();
+		const ui::MenuItem* selected = m_menuGroup[showFavorites ? 1 : 0]->showModal(
+			mandatory_non_null_type_cast< ui::Widget* >(event->getSender()),
+			position
+		);
+		if (selected)
+			handleCommand(selected->getCommand());
+	}
+}
+
 void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& cmd = event->getCommand();
@@ -1579,108 +1681,11 @@ void DatabaseView::eventInstanceSelect(ui::SelectionChangeEvent* event)
 	updateGridInstances(nullptr);
 }
 
-void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
+void DatabaseView::eventTreeInstanceButtonDown(ui::TreeViewItemMouseButtonDownEvent* event)
 {
 	if (event->getButton() != ui::MbtRight)
 		return;
-
-	ui::Associative* selectedItem = nullptr;
-	if (event->getSender() == m_treeDatabase)
-	{
-		RefArray< ui::TreeViewItem > items;
-		if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
-			return;
-		selectedItem = items.front();
-	}
-	else if (event->getSender() == m_listInstances)
-	{
-		if ((selectedItem = m_listInstances->getSelectedItem()) == nullptr)
-			return;
-	}
-	else
-		return;
-
-	T_FATAL_ASSERT(selectedItem);
-
-	Ref< db::Group > group = selectedItem->getData< db::Group >(L"GROUP");
-	Ref< db::Instance > instance = selectedItem->getData< db::Instance >(L"INSTANCE");
-
-	if (group && instance)
-	{
-		m_menuInstanceWizards->removeAll();
-
-		// Rebuild instance wizard menu to ensure only valid wizards are enabled.
-		int32_t nextWizardId = 0;
-		for (auto wizardTool : m_wizardTools)
-		{
-			const std::wstring wizardDescription = wizardTool->getDescription();
-			T_ASSERT(!wizardDescription.empty());
-
-			const int32_t wizardId = nextWizardId++;
-
-			if ((wizardTool->getFlags() & IWizardTool::WfInstance) != 0)
-			{
-				Ref< ui::MenuItem > item = new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription);
-				const TypeInfoSet supportedTypes = wizardTool->getSupportedTypes();
-				if (!supportedTypes.empty())
-				{
-					bool enabled = false;
-					for (auto supportedType : supportedTypes)
-					{
-						if (is_type_of(*supportedType, *instance->getPrimaryType()))
-						{
-							enabled = true;
-							break;
-						}
-					}
-					item->setEnable(enabled);
-				}
-				m_menuInstanceWizards->add(item);
-			}
-		}
-
-		Ref< ui::Menu > menuInstance;
-		if (is_type_of< Asset >(*instance->getPrimaryType()))
-			menuInstance = m_menuInstanceAsset;
-		else
-			menuInstance = m_menuInstance;
-
-		const ui::MenuItem* selected = menuInstance->showModal(
-			mandatory_non_null_type_cast< ui::Widget* >(event->getSender()),
-			event->getPosition()
-		);
-		if (selected)
-			handleCommand(selected->getCommand());
-	}
-	else if (group)
-	{
-		m_menuGroupWizards->removeAll();
-
-		// Rebuild instance wizard menu to ensure only valid wizards are enabled.
-		int32_t nextWizardId = 0;
-		for (auto wizardTool : m_wizardTools)
-		{
-			const std::wstring wizardDescription = wizardTool->getDescription();
-			T_ASSERT(!wizardDescription.empty());
-
-			const int32_t wizardId = nextWizardId++;
-
-			if ((wizardTool->getFlags() & IWizardTool::WfGroup) != 0)
-			{
-				Ref< ui::MenuItem > item = new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription);
-				m_menuGroupWizards->add(item);
-			}
-		}
-
-		const bool showFavorites = m_toolFavoritesShow->isToggled();
-		const ui::MenuItem* selected = m_menuGroup[showFavorites ? 1 : 0]->showModal(
-			mandatory_non_null_type_cast< ui::Widget* >(event->getSender()),
-			event->getPosition()
-		);
-		if (selected)
-			handleCommand(selected->getCommand());
-	}
-
+	handleInstanceButtonDown(event, event->getPosition());
 	event->consume();
 }
 
@@ -1708,6 +1713,14 @@ void DatabaseView::eventTreeContentChange(ui::TreeViewContentChangeEvent* event)
 
 	if (result)
 		event->consume();
+}
+
+void DatabaseView::eventPreviewInstanceButtonDown(ui::PreviewItemMouseButtonDownEvent* event)
+{
+	if (event->getButton() != ui::MbtRight)
+		return;
+	handleInstanceButtonDown(event, event->getPosition());
+	event->consume();
 }
 
 void DatabaseView::eventPreviewContentChange(ui::PreviewContentChangeEvent* event)

@@ -10,6 +10,7 @@
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Edit.h"
+#include "Ui/HierarchicalState.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridColumnClickEvent.h"
@@ -18,8 +19,8 @@
 #include "Ui/GridView/GridItemContentChangeEvent.h"
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridRowDoubleClickEvent.h"
+#include "Ui/GridView/GridRowMouseButtonDownEvent.h"
 #include "Ui/GridView/GridView.h"
-#include "Ui/HierarchicalState.h"
 
 namespace traktor::ui
 {
@@ -33,7 +34,7 @@ struct SortRowPredicateLexical
 	int32_t columnIndex;
 	bool ascending;
 
-	SortRowPredicateLexical(int32_t columnIndex_, bool ascending_)
+	explicit SortRowPredicateLexical(int32_t columnIndex_, bool ascending_)
 	:	columnIndex(columnIndex_)
 	,	ascending(ascending_)
 	{
@@ -56,7 +57,7 @@ struct SortRowPredicateNumerical
 	int32_t columnIndex;
 	bool ascending;
 
-	SortRowPredicateNumerical(int32_t columnIndex_, bool ascending_)
+	explicit SortRowPredicateNumerical(int32_t columnIndex_, bool ascending_)
 	:	columnIndex(columnIndex_)
 	,	ascending(ascending_)
 	{
@@ -441,11 +442,7 @@ void GridView::eventEditKey(KeyDownEvent* event)
 void GridView::eventButtonDown(MouseButtonDownEvent* event)
 {
 	const Point& position = event->getPosition();
-	int32_t state = event->getKeyState();
-
-	// Only allow selection with left mouse button.
-	if (event->getButton() != MbtLeft)
-		return;
+	const int32_t state = event->getKeyState();
 
 	AutoWidgetCell* cell = hitTest(position);
 
@@ -454,7 +451,7 @@ void GridView::eventButtonDown(MouseButtonDownEvent* event)
 	{
 		if (!row->getChildren().empty())
 		{
-			int32_t rx = row->getDepth() * 16 + 16;
+			const int32_t rx = row->getDepth() * 16 + 16;
 			if (position.x <= rx)
 				return;
 		}
@@ -509,6 +506,16 @@ void GridView::eventButtonDown(MouseButtonDownEvent* event)
 
 	SelectionChangeEvent selectionChange(this);
 	raiseEvent(&selectionChange);
+
+	// Issue specialized mouse down event.
+	if (m_clickRow)
+	{
+		GridRowMouseButtonDownEvent buttonEvent(this, m_clickRow, event->getButton(), event->getPosition());
+		raiseEvent(&buttonEvent);
+		if (buttonEvent.consumed())
+			m_clickRow->m_editMode = 0;
+	}
+
 	requestUpdate();
 }
 

@@ -10,6 +10,7 @@
 #include "Ui/Edit.h"
 #include "Ui/PreviewList/PreviewContentChangeEvent.h"
 #include "Ui/PreviewList/PreviewItem.h"
+#include "Ui/PreviewList/PreviewItemMouseButtonDownEvent.h"
 #include "Ui/PreviewList/PreviewItems.h"
 #include "Ui/PreviewList/PreviewList.h"
 #include "Ui/PreviewList/PreviewSelectionChangeEvent.h"
@@ -198,9 +199,6 @@ void PreviewList::eventEditKeyDownEvent(KeyDownEvent* event)
 
 void PreviewList::eventButtonDown(MouseButtonDownEvent* event)
 {
-	if (event->getButton() != MbtLeft)
-		return;
-
 	m_dragMode = 0;
 	m_dragOriginPosition = event->getPosition();
 
@@ -223,7 +221,11 @@ void PreviewList::eventButtonDown(MouseButtonDownEvent* event)
 			PreviewSelectionChangeEvent selectionChangeEvent(this, item);
 			raiseEvent(&selectionChangeEvent);
 
-			m_dragMode = 1;
+			PreviewItemMouseButtonDownEvent mouseDownEvent(this, item, event->getButton(), event->getPosition());
+			raiseEvent(&mouseDownEvent);
+
+			if (event->getButton() == MbtLeft && !mouseDownEvent.consumed())
+				m_dragMode = 1;
 		}
 		else
 		{

@@ -365,9 +365,6 @@ void AutoWidget::placeScrollBars()
 
 void AutoWidget::eventButtonDown(MouseButtonDownEvent* event)
 {
-	if (event->getButton() != MbtLeft)
-		return;
-
 	Ref< AutoWidgetCell > hitItem = hitTest(event->getPosition());
 	if (hitItem)
 	{
@@ -386,9 +383,6 @@ void AutoWidget::eventButtonDown(MouseButtonDownEvent* event)
 
 void AutoWidget::eventButtonUp(MouseButtonUpEvent* event)
 {
-	if (event->getButton() != MbtLeft)
-		return;
-
 	if (m_captureCell)
 	{
 		const Point clientPosition = event->getPosition() - m_scrollOffset;

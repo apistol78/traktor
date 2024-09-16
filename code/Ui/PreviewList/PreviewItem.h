@@ -51,6 +51,8 @@ public:
 
 	const Rect& getTextRect() const { return m_textRect; }
 
+	virtual void interval() override final;
+
 	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position) override final;
 
 	virtual void mouseUp(MouseButtonUpEvent* event, const Point& position) override final;

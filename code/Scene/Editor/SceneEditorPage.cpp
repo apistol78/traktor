@@ -84,6 +84,7 @@
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridColumnClickEvent.h"
 #include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridRowMouseButtonDownEvent.h"
 #include "Ui/GridView/GridRowStateChangeEvent.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridItemContentChangeEvent.h"
@@ -374,7 +375,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_instanceGrid->addColumn(new ui::GridColumn(L"", 30_ut));
 	m_instanceGrid->addEventHandler< ui::SelectionChangeEvent >(this, &SceneEditorPage::eventInstanceSelect);
 	m_instanceGrid->addEventHandler< ui::GridRowStateChangeEvent >(this, &SceneEditorPage::eventInstanceExpand);
-	m_instanceGrid->addEventHandler< ui::MouseButtonDownEvent >(this, &SceneEditorPage::eventInstanceButtonDown);
+	m_instanceGrid->addEventHandler< ui::GridRowMouseButtonDownEvent >(this, &SceneEditorPage::eventInstanceButtonDown);
 	m_instanceGrid->addEventHandler< ui::GridColumnClickEvent >(this, &SceneEditorPage::eventInstanceClick);
 	m_instanceGrid->addEventHandler< ui::GridItemContentChangeEvent >(this, &SceneEditorPage::eventInstanceRename);
 
@@ -1558,7 +1559,7 @@ void SceneEditorPage::eventInstanceExpand(ui::GridRowStateChangeEvent* event)
 	entityAdapter->setExpanded((row->getState() & ui::GridRow::Expanded) != 0);
 }
 
-void SceneEditorPage::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
+void SceneEditorPage::eventInstanceButtonDown(ui::GridRowMouseButtonDownEvent* event)
 {
 	if (event->getButton() == ui::MbtRight)
 	{

@@ -72,20 +72,25 @@ bool PreviewItem::isSelected() const
 	return m_selected;
 }
 
+void PreviewItem::interval()
+{
+	m_editMode = 0;
+}
+
 void PreviewItem::mouseDown(MouseButtonDownEvent* event, const Point& position)
 {
-	if (m_editable)
+	if (m_editable && m_textRect.inside(position))
 	{
 		if (m_editMode == 0)
 		{
-			// Wait for next tap; cancel wait after 2 seconds.
-			getWidget()->requestInterval(this, 2000);
+			// Wait for next tap; cancel wait after 1/2 seconds.
+			getWidget()->requestInterval(this, 500);
 			m_editMode = 1;
 		}
 		else if (m_editMode == 1)
 		{
 			// Double tap detected; begin edit after mouse is released.
-			getWidget()->requestInterval(this, 1000);
+			getWidget()->requestInterval(this, 2000);
 			m_editMode = 2;
 		}
 	}

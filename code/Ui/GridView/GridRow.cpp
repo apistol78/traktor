@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -272,13 +272,13 @@ void GridRow::mouseDown(MouseButtonDownEvent* event, const Point& position)
 		if (m_editMode == 0)
 		{
 			// Wait for next tap; cancel wait after 2 seconds.
-			getWidget< GridView >()->requestInterval(this, 2000);
+			getWidget< GridView >()->requestInterval(this, 500);
 			m_editMode = 1;
 		}
 		else if (m_editMode == 1)
 		{
 			// Double tap detected; begin edit after mouse is released.
-			getWidget< GridView >()->requestInterval(this, 1000);
+			getWidget< GridView >()->requestInterval(this, 2000);
 			m_editMode = 2;
 		}
 	}

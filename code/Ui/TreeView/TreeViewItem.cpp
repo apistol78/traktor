@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,6 +18,7 @@
 #include "Ui/TreeView/TreeViewDragEvent.h"
 #include "Ui/TreeView/TreeViewItem.h"
 #include "Ui/TreeView/TreeViewItemActivateEvent.h"
+#include "Ui/TreeView/TreeViewItemMouseButtonDownEvent.h"
 #include "Ui/TreeView/TreeViewItemStateChangeEvent.h"
 
 namespace traktor::ui
@@ -425,14 +426,21 @@ void TreeViewItem::mouseDown(MouseButtonDownEvent* event, const Point& position)
 			m_selected = true;
 
 			// Update immediately because we possibly want user to notice selection
-			// change before popups etc.
+			// change before pop-ups etc.
 			m_view->update(nullptr, true);
 
 			SelectionChangeEvent selectionChangeEvent(m_view);
 			m_view->raiseEvent(&selectionChangeEvent);
 		}
 
-		if (calculateLabelRect().inside(event->getPosition()))
+		TreeViewItemMouseButtonDownEvent mouseButtonEvent(event->getSender(), this, event->getButton(), event->getPosition());
+		m_view->raiseEvent(&mouseButtonEvent);
+
+		if (
+			!mouseButtonEvent.consumed() &&
+			event->getButton() == MbtLeft &&
+			calculateLabelRect().inside(event->getPosition())
+		)
 		{
 			if (m_editable)
 			{
@@ -467,7 +475,7 @@ void TreeViewItem::mouseUp(MouseButtonUpEvent* event, const Point& position)
 	{
 		if (!m_view->getInnerRect().inside(event->getPosition()))
 		{
-			Point position = m_view->clientToScreen(event->getPosition());
+			const Point position = m_view->clientToScreen(event->getPosition());
 			TreeViewDragEvent dragEvent(m_view, this, TreeViewDragEvent::Moment::Drop, position);
 			m_view->raiseEvent(&dragEvent);
 		}

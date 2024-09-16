@@ -53,6 +53,7 @@ class ToolBarButtonClickEvent;
 class GridColumnClickEvent;
 class GridItemContentChangeEvent;
 class GridRow;
+class GridRowMouseButtonDownEvent;
 class GridRowStateChangeEvent;
 class GridView;
 
@@ -172,7 +173,7 @@ private:
 
 	void eventInstanceExpand(ui::GridRowStateChangeEvent* event);
 
-	void eventInstanceButtonDown(ui::MouseButtonDownEvent* event);
+	void eventInstanceButtonDown(ui::GridRowMouseButtonDownEvent* event);
 
 	void eventInstanceClick(ui::GridColumnClickEvent* event);
 

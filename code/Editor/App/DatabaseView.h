@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,6 +27,7 @@ class Edit;
 class HierarchicalState;
 class Menu;
 class PreviewContentChangeEvent;
+class PreviewItemMouseButtonDownEvent;
 class PreviewList;
 class Splitter;
 class ToolBar;
@@ -38,6 +39,7 @@ class TreeViewContentChangeEvent;
 class TreeViewDragEvent;
 class TreeViewItem;
 class TreeViewItemActivateEvent;
+class TreeViewItemMouseButtonDownEvent;
 class TreeViewItemStateChangeEvent;
 
 }
@@ -131,6 +133,8 @@ private:
 
 	void listInstanceDependents(db::Instance* instance);
 
+	void handleInstanceButtonDown(ui::Event* event, const ui::Point& position);
+
 	void eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event);
 
 	void eventFilterKey(ui::KeyUpEvent* event);
@@ -143,9 +147,11 @@ private:
 
 	void eventInstanceSelect(ui::SelectionChangeEvent* event);
 
-	void eventInstanceButtonDown(ui::MouseButtonDownEvent* event);
+	void eventTreeInstanceButtonDown(ui::TreeViewItemMouseButtonDownEvent* event);
 
 	void eventTreeContentChange(ui::TreeViewContentChangeEvent* event);
+
+	void eventPreviewInstanceButtonDown(ui::PreviewItemMouseButtonDownEvent* event);
 
 	void eventPreviewContentChange(ui::PreviewContentChangeEvent* event);
 
