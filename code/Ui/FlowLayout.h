@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,7 @@
  */
 #pragma once
 
-#include <utility>
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Ui/Layout.h"
 #include "Ui/Unit.h"
 #include "Ui/Widget.h"
@@ -45,7 +44,7 @@ private:
 	Size m_margin;
 	Size m_pad;
 
-	bool calculateRects(Widget* widget, const Size& bounds, std::vector< WidgetRect >& outRects) const;
+	bool calculateRects(Widget* widget, const Size& bounds, AlignedVector< WidgetRect >& outRects) const;
 };
 
 }

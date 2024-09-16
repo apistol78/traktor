@@ -1,13 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Ui/FlowLayout.h"
 #include "Ui/Container.h"
+#include "Ui/FlowLayout.h"
 
 namespace traktor::ui
 {
@@ -28,7 +28,7 @@ FlowLayout::FlowLayout(Unit marginX, Unit marginY, Unit padX, Unit padY)
 
 bool FlowLayout::fit(Widget* widget, const Size& bounds, Size& result)
 {
-	std::vector< WidgetRect > rects;
+	AlignedVector< WidgetRect > rects;
 	if (!calculateRects(widget, bounds, rects))
 		return false;
 
@@ -46,13 +46,14 @@ bool FlowLayout::fit(Widget* widget, const Size& bounds, Size& result)
 
 void FlowLayout::update(Widget* widget)
 {
-	std::vector< WidgetRect > widgetRects;
+	AlignedVector< WidgetRect > widgetRects;
 	if (!calculateRects(widget, widget->getInnerRect().getSize(), widgetRects))
 		return;
-	widget->setChildRects(&widgetRects[0], (uint32_t)widgetRects.size(), true);
+	if (!widgetRects.empty())
+		widget->setChildRects(&widgetRects[0], (uint32_t)widgetRects.size(), true);
 }
 
-bool FlowLayout::calculateRects(Widget* widget, const Size& bounds, std::vector< WidgetRect >& outRects) const
+bool FlowLayout::calculateRects(Widget* widget, const Size& bounds, AlignedVector< WidgetRect >& outRects) const
 {
 	Point pos(m_margin.cx, m_margin.cy);
 	int32_t max = 0;
