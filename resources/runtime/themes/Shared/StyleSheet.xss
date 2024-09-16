@@ -912,5 +912,17 @@
 			<first>traktor.script.Script</first>
 			<second>$(Images.Path)/Thumbnails/script_Script.svg</second>
 		</item>
+		<item>
+			<first>traktor.spray.EffectData</first>
+			<second>$(Images.Path)/Thumbnails/spray_EffectData.svg</second>
+		</item>
+		<item>
+			<first>traktor.sound.SoundAsset</first>
+			<second>$(Images.Path)/Thumbnails/sound_SoundAsset.svg</second>
+		</item>
+		<item>
+			<first>traktor.sound.BankAsset</first>
+			<second>$(Images.Path)/Thumbnails/sound_SoundAsset.svg</second>
+		</item>
 	</values>
 </object>
