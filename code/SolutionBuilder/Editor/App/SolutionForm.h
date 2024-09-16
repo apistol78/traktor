@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,6 +20,7 @@
 #include "Ui/TreeView/TreeViewContentChangeEvent.h"
 #include "Ui/TreeView/TreeViewEditEvent.h"
 #include "Ui/TreeView/TreeViewItem.h"
+#include "Ui/TreeView/TreeViewItemMouseButtonDownEvent.h"
 
 namespace traktor::sb
 {
@@ -119,7 +120,7 @@ private:
 
 	void eventMenuClick(ui::ToolBarButtonClickEvent*);
 
-	void eventTreeButtonDown(ui::MouseButtonDownEvent*);
+	void eventTreeButtonDown(ui::TreeViewItemMouseButtonDownEvent*);
 
 	void eventTreeSelect(ui::SelectionChangeEvent*);
 

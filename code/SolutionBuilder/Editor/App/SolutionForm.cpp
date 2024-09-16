@@ -180,7 +180,7 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Aggregation"));
 	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.AggregationRule"));
 
-	m_treeSolution->addEventHandler< ui::MouseButtonDownEvent >(this, &SolutionForm::eventTreeButtonDown);
+	m_treeSolution->addEventHandler< ui::TreeViewItemMouseButtonDownEvent >(this, &SolutionForm::eventTreeButtonDown);
 	m_treeSolution->addEventHandler< ui::SelectionChangeEvent >(this, &SolutionForm::eventTreeSelect);
 	m_treeSolution->addEventHandler< ui::TreeViewContentChangeEvent >(this, &SolutionForm::eventTreeChange);
 
@@ -856,7 +856,7 @@ void SolutionForm::eventMenuClick(ui::ToolBarButtonClickEvent* event)
 	}
 }
 
-void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
+void SolutionForm::eventTreeButtonDown(ui::TreeViewItemMouseButtonDownEvent* event)
 {
 	if (event->getButton() != ui::MbtRight)
 		return;

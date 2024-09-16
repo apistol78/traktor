@@ -45,6 +45,7 @@
 #include "Ui/TreeView/TreeViewContentChangeEvent.h"
 #include "Ui/TreeView/TreeViewItem.h"
 #include "Ui/TreeView/TreeViewItemActivateEvent.h"
+#include "Ui/TreeView/TreeViewItemMouseButtonDownEvent.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
@@ -214,7 +215,7 @@ bool ThemeForm::create(const CommandLine& cmdLine)
 	);
 	m_treeTheme->addEventHandler< SelectionChangeEvent >(this, &ThemeForm::eventTreeSelectionChange);
 	m_treeTheme->addEventHandler< TreeViewItemActivateEvent >(this, &ThemeForm::eventTreeActivateItem);
-	m_treeTheme->addEventHandler< MouseButtonDownEvent >(this, &ThemeForm::eventTreeButtonDown);
+	m_treeTheme->addEventHandler< TreeViewItemMouseButtonDownEvent >(this, &ThemeForm::eventTreeButtonDown);
 	m_treeTheme->addEventHandler< TreeViewContentChangeEvent >(this, &ThemeForm::eventTreeChange);
 
 	Ref< Tab > tab = new Tab();
@@ -568,7 +569,7 @@ void ThemeForm::eventTreeActivateItem(TreeViewItemActivateEvent* event)
 	colorDialog.destroy();
 }
 
-void ThemeForm::eventTreeButtonDown(MouseButtonDownEvent* event)
+void ThemeForm::eventTreeButtonDown(TreeViewItemMouseButtonDownEvent* event)
 {
 	if (event->getButton() != ui::MbtRight)
 		return;
