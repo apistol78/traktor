@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,7 +12,7 @@
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallSet.h"
 #include "Resource/Id.h"
-#include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,57 +22,59 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-    namespace physics
-    {
 
 class CollisionSpecification;
 
-    }
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 
-	}
+}
 
-    namespace resource
-    {
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-    }
+}
 
-    namespace world
-    {
+namespace traktor::world
+{
 
 class IEntityBuilder;
 
-    }
+}
 
-    namespace shape
-    {
+namespace traktor::shape
+{
 
 class PrimitiveEntityData;
-class SolidEntity;
+class SolidComponent;
 
-/*! Solid geometry entity data.
+/*! Solid geometry component data.
  * \ingroup Shape
  *
  * Contain solid geometry primitives along with operation (intersection, union, difference etc).
  */
-class T_DLLCLASS SolidEntityData : public world::EntityData
+class T_DLLCLASS SolidComponentData : public world::IEntityComponentData
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-	SolidEntityData();
+	SolidComponentData();
 
-    Ref< SolidEntity > createEntity(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
+	Ref< SolidComponent > createComponent(const world::IEntityBuilder* builder, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-    virtual void serialize(ISerializer& s) override final;
+	virtual int32_t getOrdinal() const override final;
+
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
+
+	virtual void serialize(ISerializer& s) override final;
 
 	void setCollisionGroup(const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionGroup);
 
@@ -87,5 +89,4 @@ private:
 	SmallSet< resource::Id< physics::CollisionSpecification > > m_collisionMask;
 };
 
-    }
 }

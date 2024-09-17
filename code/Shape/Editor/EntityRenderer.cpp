@@ -7,7 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Shape/Editor/EntityRenderer.h"
-#include "Shape/Editor/Solid/SolidEntity.h"
+#include "Shape/Editor/Solid/SolidComponent.h"
 #include "Shape/Editor/Spline/SplineComponent.h"
 
 namespace traktor::shape
@@ -23,7 +23,7 @@ bool EntityRenderer::initialize(const ObjectStore& objectStore)
 const TypeInfoSet EntityRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet<
-		SolidEntity,
+		SolidComponent,
 		SplineComponent
 	>();
 }
@@ -49,9 +49,9 @@ void EntityRenderer::build(
 	Object* renderable
 )
 {
-	if (auto solidEntity = dynamic_type_cast< SolidEntity* >(renderable))
+	if (auto solidComponent = dynamic_type_cast< SolidComponent* >(renderable))
 	{
-		solidEntity->build(
+		solidComponent->build(
 			context,
 			worldRenderView,
 			worldRenderPass

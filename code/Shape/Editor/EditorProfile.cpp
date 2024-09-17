@@ -14,14 +14,12 @@
 #include "Shape/Editor/EntityFactory.h"
 #include "Shape/Editor/EntityRenderer.h"
 #include "Shape/Editor/Solid/SolidEditorPlugin.h"
-#include "Shape/Editor/Solid/SolidEntityEditorFactory.h"
+#include "Shape/Editor/Solid/SolidComponentEditorFactory.h"
 #include "Shape/Editor/Spline/ControlPointComponentEditorFactory.h"
 #include "Shape/Editor/Spline/SplineComponentEditorFactory.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.EditorProfile", 0, EditorProfile, scene::ISceneEditorProfile)
 
@@ -91,7 +89,6 @@ void EditorProfile::createEntityEditorFactories(
 	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
-	outEntityEditorFactories.push_back(new SolidEntityEditorFactory());
 }
 
 void EditorProfile::createComponentEditorFactories(
@@ -100,6 +97,7 @@ void EditorProfile::createComponentEditorFactories(
 ) const
 {
 	outComponentEditorFactories.push_back(new ControlPointComponentEditorFactory());
+	outComponentEditorFactories.push_back(new SolidComponentEditorFactory());
 	outComponentEditorFactories.push_back(new SplineComponentEditorFactory());
 }
 
@@ -111,5 +109,4 @@ Ref< world::EntityData > EditorProfile::createEntityData(
 	return nullptr;
 }
 
-	}
 }

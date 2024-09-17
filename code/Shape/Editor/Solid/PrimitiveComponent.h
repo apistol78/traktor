@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,7 @@
 
 #include "Core/Ref.h"
 #include "Shape/Editor/Solid/SolidTypes.h"
-#include "World/Entity.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,29 +20,31 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 class Model;
 
-	}
+}
 
-    namespace shape
-    {
+namespace traktor::shape
+{
 
-class PrimitiveEntityData;
+class PrimitiveComponentData;
 
 /*! Primitive entity.
  * \ingroup Shape
  */
-class T_DLLCLASS PrimitiveEntity : public world::Entity
+class T_DLLCLASS PrimitiveComponent : public world::IEntityComponent
 {
     T_RTTI_CLASS;
 
 public:
-    PrimitiveEntity(const PrimitiveEntityData* data, const Transform& transform);
+    explicit PrimitiveComponent(const PrimitiveComponentData* data);
+
+    virtual void destroy() override final;
+
+    virtual void setOwner(world::Entity* owner) override final;
 
     virtual void setTransform(const Transform& transform) override final;
 
@@ -50,7 +52,7 @@ public:
 
     virtual void update(const world::UpdateParams& update) override final;
 
-	const PrimitiveEntityData* getData() const { return m_data; }
+	const PrimitiveComponentData* getData() const { return m_data; }
 
     const model::Model* getModel() const { return m_model; }
 
@@ -63,14 +65,14 @@ public:
     void resetDirty() { m_dirty = false; }
 
 protected:
-    friend class PrimitiveEntityData;
+    friend class PrimitiveComponentData;
 
-	Ref< const PrimitiveEntityData > m_data;
+	Ref< const PrimitiveComponentData > m_data;
 	Ref< const model::Model > m_model;
+    Transform m_transform;
 	Aabb3 m_boundingBox;
     uint32_t m_selectedMaterial;
     bool m_dirty;
 };
 
-    }
 }

@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Scene/Editor/DefaultEntityEditor.h"
+#include "Scene/Editor/DefaultComponentEditor.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,16 +24,14 @@ namespace traktor::shape
 /*!
  * \ingroup Shape
  */
-class T_DLLCLASS SolidEntityEditor : public scene::DefaultEntityEditor
+class T_DLLCLASS SolidComponentEditor : public scene::DefaultComponentEditor
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit SolidEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
+	explicit SolidComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
 
-	virtual bool isPickable() const override final;
-
-	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer, const ui::Size& clientSize) const override final;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 };
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,18 +11,16 @@
 #include "Core/RefArray.h"
 #include "Scene/Editor/IModifier.h"
 
-namespace traktor
+namespace traktor::scene
 {
-    namespace scene
-    {
 
 class EntityAdapter;
 class SceneEditorContext;
 
-    }
+}
 
-	namespace shape
-	{
+namespace traktor::shape
+{
 
 /*! Primitive editor modifier.
  * \ingroup Shape
@@ -78,5 +76,4 @@ private:
 	RefArray< scene::EntityAdapter > m_entityAdapters;
 };
 
-	}
 }

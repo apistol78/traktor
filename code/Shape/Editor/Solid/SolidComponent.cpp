@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,21 +21,20 @@
 #include "Render/Shader.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
-#include "Shape/Editor/Solid/PrimitiveEntity.h"
-#include "Shape/Editor/Solid/PrimitiveEntityData.h"
-#include "Shape/Editor/Solid/SolidEntity.h"
+#include "Shape/Editor/Solid/PrimitiveComponent.h"
+#include "Shape/Editor/Solid/PrimitiveComponentData.h"
+#include "Shape/Editor/Solid/SolidComponent.h"
+#include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/Entity/GroupComponent.h"
 
 // https://github.com/evanw/csg.js/blob/master/csg.js
 
-namespace traktor
+namespace traktor::shape
 {
-    namespace shape
-    {
-        namespace
-        {
+	namespace
+	{
 
 #pragma pack(1)
 struct Vertex
@@ -46,14 +45,13 @@ struct Vertex
 };
 #pragma pack()
 
-        }
+	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SolidEntity", SolidEntity, world::Entity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SolidComponent", SolidComponent, world::IEntityComponent)
 
-SolidEntity::SolidEntity(
-    render::IRenderSystem* renderSystem,
-    const resource::Proxy< render::Shader >& shader,
-    const Transform& transform
+SolidComponent::SolidComponent(
+	render::IRenderSystem* renderSystem,
+	const resource::Proxy< render::Shader >& shader
 )
 :	m_renderSystem(renderSystem)
 ,	m_shader(shader)
@@ -61,102 +59,124 @@ SolidEntity::SolidEntity(
 {
 }
 
-void SolidEntity::update(const world::UpdateParams& update)
+void SolidComponent::destroy()
 {
-    world::Entity::update(update);
+}
 
-	auto group = getComponent< world::GroupComponent >();
+void SolidComponent::setOwner(world::Entity* owner)
+{
+	m_owner = owner;
+}
+
+void SolidComponent::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 SolidComponent::getBoundingBox() const
+{
+	return Aabb3();
+}
+
+void SolidComponent::update(const world::UpdateParams& update)
+{
+	auto group = m_owner->getComponent< world::GroupComponent >();
 	if (!group)
 		return;
 
-    RefArray< PrimitiveEntity > primitiveEntities;
+	RefArray< world::Entity > primitiveEntities;
 	for (auto entity : group->getEntities())
 	{
-		if (is_a< PrimitiveEntity >(entity))
-			primitiveEntities.push_back(checked_type_cast< PrimitiveEntity* >(entity));
+		if (entity->getComponent< PrimitiveComponent >() != nullptr)
+			primitiveEntities.push_back(entity);
 	}
 
-    // Check if any child entity is dirty and if so update our preview geometry.
-    bool dirty = m_dirty;
-    for (auto primitiveEntity : primitiveEntities)
-    {
-        dirty |= primitiveEntity->isDirty();
-        primitiveEntity->resetDirty();
-    }
-    if (dirty)
-    {
+	// Check if any child entity is dirty and if so update our preview geometry.
+	bool dirty = m_dirty;
+	for (auto entity : primitiveEntities)
+	{
+		dirty |= entity->getComponent< PrimitiveComponent >()->isDirty();
+		entity->getComponent< PrimitiveComponent >()->resetDirty();
+	}
+	if (dirty)
+	{
 		model::Model current;
 
-        auto it = primitiveEntities.begin();
-        if (it != primitiveEntities.end())
-        {
-			auto model = (*it)->getModel();
+		auto it = primitiveEntities.begin();
+		if (it != primitiveEntities.end())
+		{
+			world::Entity* firstEntity = *it;
+			PrimitiveComponent* firstPrimitiveComponent = firstEntity->getComponent< PrimitiveComponent >();
+
+			const model::Model* model = firstPrimitiveComponent->getModel();
 			if (!model)
 				return;
 
 			current = *model;
-			model::Transform((*it)->getTransform().toMatrix44()).apply(current);
+			model::Transform(firstEntity->getTransform().toMatrix44()).apply(current);
 
-            for (++it; it != primitiveEntities.end(); ++it)
-            {
-				auto other = (*it)->getModel();
+			for (++it; it != primitiveEntities.end(); ++it)
+			{
+				world::Entity* entity = *it;
+				PrimitiveComponent* primitiveComponent = entity->getComponent< PrimitiveComponent >();
+
+				const model::Model* other = primitiveComponent->getModel();
 				if (!other)
 					continue;
 
 				model::Model result;
 
-                switch ((*it)->getData()->getOperation())
-                {
-                case BooleanOperation::Union:
-                    {
+				switch (primitiveComponent->getData()->getOperation())
+				{
+				case BooleanOperation::Union:
+					{
 						model::Boolean(
 							current,
 							Transform::identity(),
 							*other,
-							(*it)->getTransform(),
+							entity->getTransform(),
 							model::Boolean::BoUnion
 						).apply(result);
-                    }
-                    break;
+					}
+					break;
 
-                case BooleanOperation::Intersection:
-                    {
+				case BooleanOperation::Intersection:
+					{
 						model::Boolean(
 							current,
 							Transform::identity(),
 							*other,
-							(*it)->getTransform(),
+							entity->getTransform(),
 							model::Boolean::BoIntersection
 						).apply(result);
 					}
-                    break;
+					break;
 
-                case BooleanOperation::Difference:
-                    {
+				case BooleanOperation::Difference:
+					{
 						model::Boolean(
 							current,
 							Transform::identity(),
 							*other,
-							(*it)->getTransform(),
+							entity->getTransform(),
 							model::Boolean::BoDifference
 						).apply(result);
 					}
-                    break;
-                }
+					break;
+				}
 
 				current = std::move(result);
 				model::CleanDegenerate().apply(current);
 				model::MergeCoplanarAdjacents().apply(current);
-            }
-        }
+			}
+		}
 
 		model::Triangulate().apply(current);
 
-        const uint32_t nvertices = current.getVertexCount();
+		const uint32_t nvertices = current.getVertexCount();
 		const uint32_t nindices = current.getPolygonCount() * 3;
 
-        if (nvertices > 0 && nindices > 0)
-        {
+		if (nvertices > 0 && nindices > 0)
+		{
 			if (m_vertexBuffer == nullptr || m_vertexBuffer->getBufferSize() < nvertices * sizeof(Vertex))
 			{
 				safeDestroy(m_vertexBuffer);
@@ -174,9 +194,9 @@ void SolidEntity::update(const world::UpdateParams& update)
 				);
 			}
 
-            Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
+			Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
 			for (const auto& v : current.getVertices())
-            {
+			{
 				Vector4 p = current.getPosition(v.getPosition());
 				Vector4 n = (v.getNormal() != model::c_InvalidIndex) ? current.getNormal(v.getNormal()) : Vector4::zero();
 				Vector2 uv = (v.getTexCoord(0) != model::c_InvalidIndex) ? current.getTexCoord(v.getTexCoord(0)) : Vector2::zero();
@@ -186,19 +206,19 @@ void SolidEntity::update(const world::UpdateParams& update)
 
 				vertex->texCoord[0] = uv.x;
 				vertex->texCoord[1] = uv.y;
-                    
+					
 				++vertex;
-            }
-            m_vertexBuffer->unlock();
+			}
+			m_vertexBuffer->unlock();
 
-            // Create indices and material batches.
+			// Create indices and material batches.
 			if (m_indexBuffer == nullptr || m_indexBuffer->getBufferSize() < nindices * sizeof(uint16_t))
 			{
 				safeDestroy(m_indexBuffer);
-            	m_indexBuffer = m_renderSystem->createBuffer(render::BuIndex, (nindices + 3 * 128) * sizeof(uint16_t), false);
+				m_indexBuffer = m_renderSystem->createBuffer(render::BuIndex, (nindices + 3 * 128) * sizeof(uint16_t), false);
 			}
 
-            uint16_t* index = (uint16_t*)m_indexBuffer->lock();
+			uint16_t* index = (uint16_t*)m_indexBuffer->lock();
 			uint32_t offset = 0;
 			for (uint32_t i = 0; i < current.getMaterialCount(); ++i)
 			{
@@ -228,8 +248,8 @@ void SolidEntity::update(const world::UpdateParams& update)
 
 				offset += count * 3;
 			}
-            m_indexBuffer->unlock();
-        }
+			m_indexBuffer->unlock();
+		}
 		else
 		{
 			safeDestroy(m_vertexBuffer);
@@ -237,10 +257,10 @@ void SolidEntity::update(const world::UpdateParams& update)
 		}
 
 		m_dirty = false;
-    }
+	}
 }
 
-void SolidEntity::build(
+void SolidComponent::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
@@ -281,5 +301,4 @@ void SolidEntity::build(
 	}
 }
 
-    }
 }

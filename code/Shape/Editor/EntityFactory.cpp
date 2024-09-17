@@ -15,10 +15,10 @@
 #include "Resource/IResourceManager.h"
 #include "Shape/Editor/EntityFactory.h"
 #include "Shape/Editor/Prefab/PrefabComponentData.h"
-#include "Shape/Editor/Solid/PrimitiveEntity.h"
-#include "Shape/Editor/Solid/PrimitiveEntityData.h"
-#include "Shape/Editor/Solid/SolidEntity.h"
-#include "Shape/Editor/Solid/SolidEntityData.h"
+#include "Shape/Editor/Solid/PrimitiveComponent.h"
+#include "Shape/Editor/Solid/PrimitiveComponentData.h"
+#include "Shape/Editor/Solid/SolidComponent.h"
+#include "Shape/Editor/Solid/SolidComponentData.h"
 #include "Shape/Editor/Spline/ControlPointComponent.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
 #include "Shape/Editor/Spline/SplineComponent.h"
@@ -58,17 +58,16 @@ bool EntityFactory::initialize(const ObjectStore& objectStore)
 
 const TypeInfoSet EntityFactory::getEntityTypes() const
 {
-	return makeTypeInfoSet<
-		PrimitiveEntityData,
-		SolidEntityData
-	>();
+	return TypeInfoSet();
 }
 
 const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 {
 	return makeTypeInfoSet<
-		PrefabComponentData,
 		ControlPointComponentData,
+		PrefabComponentData,
+		PrimitiveComponentData,
+		SolidComponentData,
 		SplineComponentData,
 		SplineLayerComponentData
 	>();
@@ -76,18 +75,17 @@ const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 
 Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	if (auto primitiveEntityData = dynamic_type_cast< const PrimitiveEntityData* >(&entityData))
-		return primitiveEntityData->createEntity();
-	else if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(&entityData))
-		return solidEntityData->createEntity(builder, m_resourceManager, m_renderSystem);
-	else
-		return nullptr;
+	return nullptr;
 }
 
 Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	if (auto controlPointData = dynamic_type_cast< const ControlPointComponentData* >(&entityComponentData))
 		return controlPointData->createComponent();
+	else if (auto primitiveComponentData = dynamic_type_cast< const PrimitiveComponentData* >(&entityComponentData))
+		return primitiveComponentData->createComponent();
+	else if (auto solidComponentData = dynamic_type_cast< const SolidComponentData* >(&entityComponentData))
+		return solidComponentData->createComponent(builder, m_resourceManager, m_renderSystem);
 	else if (auto splineLayerData = dynamic_type_cast< const SplineLayerComponentData* >(&entityComponentData))
 	{
 		return splineLayerData->createComponent(
