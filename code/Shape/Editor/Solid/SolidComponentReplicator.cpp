@@ -86,106 +86,107 @@ Ref< model::Model > SolidComponentReplicator::createModel(
 	Usage usage
 ) const
 {
-	//const SolidComponentData* solidEntityData = mandatory_non_null_type_cast< const SolidComponentData* >(entityData);
-	//
-	//auto group = solidEntityData->getComponent< world::GroupComponentData >();
-	//if (!group)
-	//	return nullptr;
+	const SolidComponentData* solidComponentData = mandatory_non_null_type_cast< const SolidComponentData* >(componentData);
+	
+	auto group = entityData->getComponent< world::GroupComponentData >();
+	if (!group)
+		return nullptr;
 
-	return nullptr;
+	// Get all primitive entities with shape.
+	RefArray< const world::EntityData > primitiveEntityDatas;
+	for (auto entityData : group->getEntityData())
+	{
+		if (entityData->getComponent< PrimitiveComponentData >() != nullptr)
+			primitiveEntityDatas.push_back(entityData);
+	}
 
-	//// Get all primitive entities with shape.
-	//RefArray< const PrimitiveComponentData > primitiveEntityDatas;
-	//for (auto entityData : group->getEntityData())
-	//{
-	//	if (const auto primitiveEntityData = dynamic_type_cast< const PrimitiveComponentData* >(entityData))
-	//	{
-	//		if (primitiveEntityData->getShape() != nullptr)
-	//			primitiveEntityDatas.push_back(primitiveEntityData);
-	//	}
-	//}
+	// Merge all primitives.
+	model::Model current;
 
-	//// Merge all primitives.
-	//model::Model current;
+	auto it = primitiveEntityDatas.begin();
+	if (it != primitiveEntityDatas.end())
+	{
+		const world::EntityData* firstEntityData = *it;
+		const PrimitiveComponentData* firstPrimitiveComponentData = firstEntityData->getComponent< PrimitiveComponentData >();
 
-	//auto it = primitiveEntityDatas.begin();
-	//if (it != primitiveEntityDatas.end())
-	//{
-	//	auto model = (*it)->getShape()->createModel();
-	//	if (!model)
-	//		return nullptr;
+		auto model = firstPrimitiveComponentData->getShape()->createModel();
+		if (!model)
+			return nullptr;
 
-	//	//associateMaterials(
-	//	//	pipelineBuilder->getSourceDatabase(),
-	//	//	model,
-	//	//	(*it)->getMaterials()
-	//	//);
+		//associateMaterials(
+		//	pipelineBuilder->getSourceDatabase(),
+		//	model,
+		//	(*it)->getMaterials()
+		//);
 
-	//	current = *model;
-	//	model::Transform((*it)->getTransform().toMatrix44()).apply(current);
+		current = *model;
+		model::Transform(firstEntityData->getTransform().toMatrix44()).apply(current);
 
-	//	for (++it; it != primitiveEntityDatas.end(); ++it)
-	//	{
-	//		auto other = (*it)->getShape()->createModel();
-	//		if (!other)
-	//			continue;
+		for (++it; it != primitiveEntityDatas.end(); ++it)
+		{
+			const world::EntityData* entityData = *it;
+			const PrimitiveComponentData* primitiveComponentData = entityData->getComponent< PrimitiveComponentData >();
 
-	//		//associateMaterials(
-	//		//	pipelineBuilder->getSourceDatabase(),
-	//		//	other,
-	//		//	(*it)->getMaterials()
-	//		//);
+			auto other = primitiveComponentData->getShape()->createModel();
+			if (!other)
+				continue;
 
-	//		model::Model result;
+			//associateMaterials(
+			//	pipelineBuilder->getSourceDatabase(),
+			//	other,
+			//	(*it)->getMaterials()
+			//);
 
-	//		switch ((*it)->getOperation())
-	//		{
-	//		case BooleanOperation::Union:
-	//			{
-	//				model::Boolean(
-	//					current,
-	//					Transform::identity(),
-	//					*other,
-	//					(*it)->getTransform(),
-	//					model::Boolean::BoUnion
-	//				).apply(result);
-	//			}
-	//			break;
+			model::Model result;
 
-	//		case BooleanOperation::Intersection:
-	//			{
-	//				model::Boolean(
-	//					current,
-	//					Transform::identity(),
-	//					*other,
-	//					(*it)->getTransform(),
-	//					model::Boolean::BoIntersection
-	//				).apply(result);
-	//			}
-	//			break;
+			switch (primitiveComponentData->getOperation())
+			{
+			case BooleanOperation::Union:
+				{
+					model::Boolean(
+						current,
+						Transform::identity(),
+						*other,
+						entityData->getTransform(),
+						model::Boolean::BoUnion
+					).apply(result);
+				}
+				break;
 
-	//		case BooleanOperation::Difference:
-	//			{
-	//				model::Boolean(
-	//					current,
-	//					Transform::identity(),
-	//					*other,
-	//					(*it)->getTransform(),
-	//					model::Boolean::BoDifference
-	//				).apply(result);
-	//			}
-	//			break;
-	//		}
+			case BooleanOperation::Intersection:
+				{
+					model::Boolean(
+						current,
+						Transform::identity(),
+						*other,
+						entityData->getTransform(),
+						model::Boolean::BoIntersection
+					).apply(result);
+				}
+				break;
 
-	//		current = std::move(result);
-	//		model::CleanDegenerate().apply(current);
-	//		model::MergeCoplanarAdjacents().apply(current);
-	//	}
-	//}
+			case BooleanOperation::Difference:
+				{
+					model::Boolean(
+						current,
+						Transform::identity(),
+						*other,
+						entityData->getTransform(),
+						model::Boolean::BoDifference
+					).apply(result);
+				}
+				break;
+			}
 
-	//model::Transform(solidEntityData->getTransform().inverse().toMatrix44()).apply(current);
+			current = std::move(result);
+			model::CleanDegenerate().apply(current);
+			model::MergeCoplanarAdjacents().apply(current);
+		}
+	}
 
-	//return new model::Model(current);
+	model::Transform(entityData->getTransform().inverse().toMatrix44()).apply(current);
+
+	return new model::Model(current);
 }
 
 }

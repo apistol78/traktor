@@ -101,70 +101,72 @@ Ref< ISerializable > SolidComponentPipeline::buildProduct(
 	const Object* buildParams
 ) const
 {
-	//if (auto solidComponentData = dynamic_type_cast< const SolidComponentData* >(sourceAsset))
-	//{
-	//	Ref< model::Model > outputModel = SolidComponentReplicator().createModel(pipelineBuilder, solidComponentData, nullptr, world::IEntityReplicator::Usage::Visual);
-	//	if (!outputModel)
-	//		return nullptr;
+	if (auto solidComponentData = dynamic_type_cast< const SolidComponentData* >(sourceAsset))
+	{
+		const world::EntityData* entityData = mandatory_non_null_type_cast< const world::EntityData* >(buildParams);
 
-	//	const Guid& entityId = solidComponentData->getId();
-	//	if (entityId.isNull())
-	//		return nullptr;
+		Ref< model::Model > outputModel = SolidComponentReplicator().createModel(pipelineBuilder, entityData, solidComponentData, world::IEntityReplicator::Usage::Visual);
+		if (!outputModel)
+			return nullptr;
 
-	//	Guid outputRenderMeshGuid = entityId.permutation(c_renderMeshIdSeed);
-	//	Guid outputCollisionShapeGuid = entityId.permutation(c_collisionShapeIdSeed);
+		const Guid& entityId = entityData->getId();
+		if (entityId.isNull())
+			return nullptr;
 
-	//	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
-	//	std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
+		Guid outputRenderMeshGuid = entityId.permutation(c_renderMeshIdSeed);
+		Guid outputCollisionShapeGuid = entityId.permutation(c_collisionShapeIdSeed);
 
-	//	// Create our output entity which will only contain the merged meshes.
-	//	Ref< world::EntityData > outputEntityData = new world::EntityData();
-	//	outputEntityData->setId(solidEntityData->getId());
-	//	outputEntityData->setName(solidEntityData->getName());
-	//	outputEntityData->setTransform(solidEntityData->getTransform());
+		std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
+		std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
 
-	//	// Build output mesh from merged model.
-	//	Ref< mesh::MeshAsset > visualMeshAsset = new mesh::MeshAsset();
-	//	visualMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-	//	pipelineBuilder->buildAdHocOutput(
-	//		visualMeshAsset,
-	//		outputRenderMeshPath,
-	//		outputRenderMeshGuid,
-	//		outputModel
-	//	);
+		// Create our output entity which will only contain the merged meshes.
+		Ref< world::EntityData > outputEntityData = new world::EntityData();
+		outputEntityData->setId(entityData->getId());
+		outputEntityData->setName(entityData->getName());
+		outputEntityData->setTransform(entityData->getTransform());
 
-	//	// Replace mesh component referencing our merged mesh.
-	//	outputEntityData->setComponent(new mesh::MeshComponentData(
-	//		resource::Id< mesh::IMesh >(outputRenderMeshGuid)
-	//	));
+		// Build output mesh from merged model.
+		Ref< mesh::MeshAsset > visualMeshAsset = new mesh::MeshAsset();
+		visualMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+		pipelineBuilder->buildAdHocOutput(
+			visualMeshAsset,
+			outputRenderMeshPath,
+			outputRenderMeshGuid,
+			outputModel
+		);
 
-	//	// Build output mesh from merged model.
-	//	Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
-	//	physicsMeshAsset->setMargin(0.0f);
-	//	physicsMeshAsset->setCalculateConvexHull(false);
-	//	pipelineBuilder->buildAdHocOutput(
-	//		physicsMeshAsset,
-	//		outputCollisionShapePath,
-	//		outputCollisionShapeGuid,
-	//		outputModel
-	//	);
+		// Replace mesh component referencing our merged mesh.
+		outputEntityData->setComponent(new mesh::MeshComponentData(
+			resource::Id< mesh::IMesh >(outputRenderMeshGuid)
+		));
 
-	//	// Replace mesh component referencing our merged physics mesh.
-	//	Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc();
-	//	outputShapeDesc->setMesh(resource::Id< physics::Mesh >(outputCollisionShapeGuid));
-	//	outputShapeDesc->setCollisionGroup(solidEntityData->getCollisionGroup());
-	//	outputShapeDesc->setCollisionMask(solidEntityData->getCollisionMask());
+		// Build output mesh from merged model.
+		Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
+		physicsMeshAsset->setMargin(0.0f);
+		physicsMeshAsset->setCalculateConvexHull(false);
+		pipelineBuilder->buildAdHocOutput(
+			physicsMeshAsset,
+			outputCollisionShapePath,
+			outputCollisionShapeGuid,
+			outputModel
+		);
 
-	//	Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
-	//	outputBodyDesc->setShape(outputShapeDesc);
+		// Replace mesh component referencing our merged physics mesh.
+		Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc();
+		outputShapeDesc->setMesh(resource::Id< physics::Mesh >(outputCollisionShapeGuid));
+		outputShapeDesc->setCollisionGroup(solidComponentData->getCollisionGroup());
+		outputShapeDesc->setCollisionMask(solidComponentData->getCollisionMask());
 
-	//	outputEntityData->setComponent(new physics::RigidBodyComponentData(
-	//		outputBodyDesc
-	//	));
+		Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
+		outputBodyDesc->setShape(outputShapeDesc);
 
-	//	return outputEntityData;
-	//}
-	//else
+		outputEntityData->setComponent(new physics::RigidBodyComponentData(
+			outputBodyDesc
+		));
+
+		return outputEntityData;
+	}
+	else
 		return world::EntityPipeline::buildProduct(
 			pipelineBuilder,
 			sourceInstance,
