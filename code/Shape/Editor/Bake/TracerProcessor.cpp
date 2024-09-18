@@ -574,9 +574,9 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		const Vector4 worldSize = boundingBox.getExtent() * 2.0_simd;
 
-		const int32_t gridX = clamp((int32_t)(worldSize.x() * gridDensity.x() + 0.5f), 2, 64);
-		const int32_t gridY = clamp((int32_t)(worldSize.y() * gridDensity.y() + 0.5f), 2, 64);
-		const int32_t gridZ = clamp((int32_t)(worldSize.z() * gridDensity.z() + 0.5f), 2, 64);
+		const int32_t gridX = clamp((int32_t)(worldSize.x() * gridDensity.x() + 0.5f), 2, 128);
+		const int32_t gridY = clamp((int32_t)(worldSize.y() * gridDensity.y() + 0.5f), 2, 128);
+		const int32_t gridZ = clamp((int32_t)(worldSize.z() * gridDensity.z() + 0.5f), 2, 128);
 
 		log::debug << L"Irradiance bounding box " << boundingBox.mn << L" -> " << boundingBox.mx << Endl;
 		log::debug << L"Grid size " << gridX << L", " << gridY << L", " << gridZ << Endl;

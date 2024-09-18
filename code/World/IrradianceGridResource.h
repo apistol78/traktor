@@ -18,14 +18,32 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor
+{
+
+class IStream;
+
+}
+
+namespace traktor::render
+{
+
+class IRenderSystem;
+
+}
+
 namespace traktor::world
 {
+
+class IrradianceGrid;
 
 class T_DLLCLASS IrradianceGridResource : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
+	Ref< IrradianceGrid > createInstance(IStream* stream, render::IRenderSystem* renderSystem) const;
+
 	virtual void serialize(ISerializer& s) override final;
 };
 
