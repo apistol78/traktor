@@ -1297,8 +1297,15 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 	// Select type of entity to create.
 	if (!entityType)
 	{
-		if ((entityType = m_context->getEditor()->browseType(makeTypeInfoSet< world::EntityData >(), false, true)) == nullptr)
-			return false;
+		// If there exist more than two EntityData types (EntityData and ExternalEntityData) then
+		// the user must select which type to instantiate.
+		if (type_of< world::EntityData >().findAllOf().size() > 2)
+		{
+			if ((entityType = m_context->getEditor()->browseType(makeTypeInfoSet< world::EntityData >(), false, true)) == nullptr)
+				return false;
+		}
+		else
+			entityType = &type_of< world::EntityData >();
 	}
 
 	Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(entityType->createInstance());
