@@ -457,11 +457,16 @@ void GridView::eventButtonDown(MouseButtonDownEvent* event)
 		}
 	}
 
+	RefArray< GridRow > allRows = getRows(GfDescendants);
+	AlignedVector< uint32_t > allRowStates(allRows.size(), 0);
+	for (uint32_t i = 0; i < allRows.size(); ++i)
+		allRowStates[i] = allRows[i]->getState();
+
 	// De-select all rows if no modifier key or only single select.
 	const bool modifier = bool((state & (KsShift | KsControl)) != 0);
 	if (!modifier || !m_multiSelect)
 	{
-		for (auto row : getRows(GfDescendants))
+		for (auto row : allRows)
 			row->setState(row->getState() & ~GridRow::Selected);
 	}
 
@@ -504,8 +509,16 @@ void GridView::eventButtonDown(MouseButtonDownEvent* event)
 		m_clickColumn = -1;
 	}
 
-	SelectionChangeEvent selectionChange(this);
-	raiseEvent(&selectionChange);
+	// Issue selection change if any row state has been modified.
+	for (uint32_t i = 0; i < allRows.size(); ++i)
+	{
+		if ((allRowStates[i] & GridRow::Selected) != (allRows[i]->getState() & GridRow::Selected))
+		{
+			SelectionChangeEvent selectionChange(this);
+			raiseEvent(&selectionChange);
+			break;
+		}
+	}
 
 	// Issue specialized mouse down event.
 	if (m_clickRow)
