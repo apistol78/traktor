@@ -8,13 +8,18 @@
  */
 #include "Core/Io/IStream.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineCommon.h"
+#include "Editor/IPipelineSettings.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/ConvertHeightfield.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Model/Model.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphPreview.h"
 #include "Terrain/TerrainComponentData.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "Terrain/Editor/TerrainEntityReplicator.h"
@@ -27,6 +32,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.TerrainEntityReplicator", 0, Terr
 
 bool TerrainEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
+    m_assetPath = settings->getPropertyIncludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
     return true;
 }
 
@@ -80,7 +86,29 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 
     safeClose(sourceData);
 
-    return hf::ConvertHeightfield().convert(heightfield, 16);
+    Ref< model::Model > heightfieldModel = hf::ConvertHeightfield().convert(heightfield, 64);
+    if (!heightfieldModel)
+        return nullptr;
+
+    Ref< const render::ShaderGraph > surfaceShader = pipelineCommon->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(terrainAsset->getSurfaceShader());
+    if (surfaceShader)
+    {
+        Ref< drawing::Image > surfaceImage = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(surfaceShader, 1024, 1024);
+        if (surfaceImage)
+        {
+            AlignedVector< model::Material > materials = heightfieldModel->getMaterials();
+            materials.front().setDiffuseMap(model::Material::Map(
+                L"Diffuse",
+                L"Base",
+                true,
+                Guid(),
+                surfaceImage
+            ));
+            heightfieldModel->setMaterials(materials);
+        }
+    }
+
+    return heightfieldModel;
 }
 
 }

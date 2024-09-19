@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::terrain
 {
-    namespace terrain
-    {
 
 class T_DLLCLASS TerrainEntityReplicator : public world::IEntityReplicator
 {
@@ -43,7 +41,9 @@ public:
 	    const world::IEntityComponentData* componentData,
 		Usage usage
     ) const override final;
+
+private:
+    std::wstring m_assetPath;
 };
 
-    }
 }

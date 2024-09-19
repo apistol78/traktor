@@ -41,11 +41,11 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
     // Add single material for entire heightfield.
     model::Material material;
     material.setName(L"Heightfield");
-	material.setColor(Color4f(0.15f, 0.4f, 0.2f, 1.0f));
     model->addMaterial(material);
 
     // Convert vertices.
 	model->reservePositions(outputSize * outputSize);
+	model->reserveNormals(outputSize * outputSize);
     model->reserveVertices(outputSize * outputSize);
 
 	model::Vertex vertex;
@@ -63,12 +63,16 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 				1.0f
 			));
 
+			const Vector4 normal = heightfield->normalAt(ix0 + ix * step, iz0 + iz * step);
+			const uint32_t normalId = model->addNormal(normal.xyz0());
+
 			const uint32_t texCoordId = model->addTexCoord(Vector2(
 				float(ix) / (outputSize - 1),
 				float(iz) / (outputSize - 1)
 			));
 
 			vertex.setPosition(positionId);
+			vertex.setNormal(normalId);
 			vertex.setTexCoord(baseChannel, texCoordId);
             vertex.setTexCoord(lightmapChannel, texCoordId);
 
