@@ -196,7 +196,7 @@ uint8_t Server::handleDeploy(net::TcpSocket* clientSocket)
 			uint8_t buffer[4096];
 			int64_t nread;
 			while ((nread = fileStream->read(buffer, sizeof(buffer))) > 0)
-				adler.feed(buffer, nread);
+				adler.feedBuffer(buffer, nread);
 
 			adler.end();
 

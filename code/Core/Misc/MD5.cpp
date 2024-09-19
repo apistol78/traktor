@@ -260,7 +260,7 @@ bool MD5::create(const std::wstring& md5)
 bool MD5::createFromString(const std::wstring& str)
 {
 	const std::string s = wstombs(str);
-	feed(s.c_str(), uint32_t(s.length()));
+	feedBuffer(s.c_str(), uint32_t(s.length()));
 	end();
 	return true;
 }
@@ -278,7 +278,7 @@ void MD5::begin()
 	m_md5[3] = MD5_INIT_STATE_3;
 }
 
-void MD5::feed(const void* buffer, uint64_t bufferSize)
+void MD5::feedBuffer(const void* buffer, uint64_t bufferSize)
 {
 	uint32_t index = (m_count[0] >> 3) & 0x3f;
 
@@ -309,9 +309,9 @@ void MD5::end()
 
 	const uint32_t index = (m_count[0] >> 3) & 0x3f;
 	const uint32_t padSize = (index < 56) ? (56 - index) : (120 - index);
-	feed(PADDING, padSize);
+	feedBuffer(PADDING, padSize);
 
-	feed(bits, 8);
+	feedBuffer(bits, 8);
 }
 
 const uint32_t* MD5::get() const

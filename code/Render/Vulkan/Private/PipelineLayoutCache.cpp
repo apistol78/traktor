@@ -143,7 +143,7 @@ VkSampler PipelineLayoutCache::getSampler(const VkSamplerCreateInfo& sci)
 {
 	Murmur3 cs;
 	cs.begin();
-	cs.feed(&sci, sizeof(sci));
+	cs.feedBuffer(&sci, sizeof(sci));
 	cs.end();
 	
 	const uint32_t samplerHash = cs.get();

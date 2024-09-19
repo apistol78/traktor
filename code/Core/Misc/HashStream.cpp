@@ -72,7 +72,7 @@ int64_t HashStream::read(void* block, int64_t nbytes)
 int64_t HashStream::write(const void* block, int64_t nbytes)
 {
 	T_ASSERT(m_hash);
-	m_hash->feed(block, nbytes);
+	m_hash->feedBuffer(block, nbytes);
 	return nbytes;
 }
 

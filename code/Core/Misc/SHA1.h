@@ -43,7 +43,7 @@ public:
 	 * \param buffer Pointer to data.
 	 * \param bufferSize Amount of data in bytes.
 	 */
-	virtual void feed(const void* buffer, uint64_t bufferSize) override final;
+	virtual void feedBuffer(const void* buffer, uint64_t bufferSize) override final;
 
 	/*! End feeding data for SHA1 checksum calculation. */
 	virtual void end() override final;

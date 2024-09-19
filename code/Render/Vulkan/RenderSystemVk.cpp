@@ -634,7 +634,7 @@ Ref< const IVertexLayout > RenderSystemVk::createVertexLayout(const AlignedVecto
 
 	Murmur3 cs;
 	cs.begin();
-	cs.feed(vertexElements.c_ptr(), vertexElements.size() * sizeof(VertexElement));
+	cs.feedBuffer(vertexElements.c_ptr(), vertexElements.size() * sizeof(VertexElement));
 	cs.end();
 
 	return new VertexLayoutVk(vibd, vads, cs.get());

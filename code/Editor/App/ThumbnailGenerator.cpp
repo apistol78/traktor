@@ -40,7 +40,7 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 	// Generate checksum of full path to source image.
 	Adler32 adler;
 	adler.begin();
-	adler.feed(pathName.c_str(), pathName.length());
+	adler.feed(pathName);
 	adler.end();
 
 	const Path thumbFileName =

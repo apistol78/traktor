@@ -20,7 +20,7 @@ void CaseMurmur::run()
 
 	Murmur3 m;
 	m.begin();
-	m.feed(text, sizeof(text));
+	m.feedBuffer(text, sizeof(text));
 	m.end();
 
 	const uint32_t h = m.get();

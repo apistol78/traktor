@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,7 +41,7 @@ void Murmur3::begin()
 	m_h = m_seed;
 }
 
-void Murmur3::feed(const void* buffer, uint64_t bufferSize)
+void Murmur3::feedBuffer(const void* buffer, uint64_t bufferSize)
 {
 	const uint8_t* start = (const uint8_t*)buffer;
     const uint8_t* key = start;

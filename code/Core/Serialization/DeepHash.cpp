@@ -121,7 +121,7 @@ public:
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
 			const std::string& str = m;
-			m_hasher.feed(str.data(), str.size());
+			m_hasher.feedBuffer(str.data(), str.size());
 		}
 	}
 
@@ -130,11 +130,7 @@ public:
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
 			const std::wstring& str = m;
-			for (size_t i = 0; i < str.length(); ++i)
-			{
-				uint32_t ch = (uint32_t)str[i];
-				m_hasher.feed(ch);
-			}
+			m_hasher.feed(str);
 		}
 	}
 
@@ -143,7 +139,7 @@ public:
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
 			const Guid& guid = m;
-			m_hasher.feed((const uint8_t*)guid, 16);
+			m_hasher.feedBuffer((const uint8_t*)guid, 16);
 		}
 	}
 
@@ -152,11 +148,7 @@ public:
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
 			const std::wstring path = m->getOriginal();
-			for (size_t i = 0; i < path.length(); ++i)
-			{
-				const uint32_t ch = (uint32_t)path[i];
-				m_hasher.feed(ch);
-			}
+			m_hasher.feed(path);
 		}
 	}
 
@@ -177,7 +169,7 @@ public:
 		{
 			float T_MATH_ALIGN16 e[4];
 			m->storeAligned(e);
-			m_hasher.feed(e, sizeof(e));
+			m_hasher.feedBuffer(e, sizeof(e));
 		}
 	}
 
@@ -205,7 +197,7 @@ public:
 		{
 			float T_MATH_ALIGN16 e[4];
 			m->storeAligned(e);
-			m_hasher.feed(e, sizeof(e));
+			m_hasher.feedBuffer(e, sizeof(e));
 		}
 	}
 
@@ -224,7 +216,7 @@ public:
 		{
 			float T_MATH_ALIGN16 e[16];
 			m->storeAligned(e);
-			m_hasher.feed(e, sizeof(e));
+			m_hasher.feedBuffer(e, sizeof(e));
 		}
 	}
 
@@ -234,7 +226,7 @@ public:
 		{
 			float T_MATH_ALIGN16 e[4];
 			m->e.storeAligned(e);
-			m_hasher.feed(e, sizeof(e));
+			m_hasher.feedBuffer(e, sizeof(e));
 		}
 	}
 
@@ -269,7 +261,7 @@ public:
 
 	virtual void operator >> (const Member< void* >& m) override final
 	{
-		m_hasher.feed(m.getBlob(), m.getBlobSize());
+		m_hasher.feedBuffer(m.getBlob(), m.getBlobSize());
 	}
 
 	virtual void operator >> (const MemberArray& m) override final

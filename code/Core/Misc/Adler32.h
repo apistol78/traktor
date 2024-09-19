@@ -32,23 +32,11 @@ class T_DLLCLASS Adler32 : public IHash
 public:
 	virtual void begin() override final;
 
-	virtual void feed(const void* buffer, uint64_t bufferSize) override final;
+	virtual void feedBuffer(const void* buffer, uint64_t bufferSize) override final;
 
 	virtual void end() override final;
 
 	uint32_t get() const;
-
-	template < typename T >
-	void feed(const T& value)
-	{
-		feed(&value, sizeof(value));
-	}
-
-	void feed(const std::wstring& value)
-	{
-		if (!value.empty())
-			feed(value.c_str(), (uint64_t)(value.length() * sizeof(wchar_t)));
-	}
 
 private:
 	uint32_t m_A = 0;

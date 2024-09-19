@@ -405,7 +405,7 @@ void PipelineDependsIncremental::updateDependencyHashes(
 
 				a32.begin();
 				while ((r = dataStream->read(buffer, sizeof(buffer))) > 0)
-					a32.feed(buffer, r);
+					a32.feedBuffer(buffer, r);
 				a32.end();
 
 				dependency->sourceDataHash += a32.get();
@@ -450,7 +450,7 @@ void PipelineDependsIncremental::updateDependencyHashes(
 		{
 			Murmur3 a32;
 			a32.begin();
-			a32.feed(mf->getBase(), mf->getSize());
+			a32.feedBuffer(mf->getBase(), mf->getSize());
 			a32.end();
 
 			mf = nullptr;

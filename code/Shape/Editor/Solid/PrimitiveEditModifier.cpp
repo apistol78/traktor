@@ -152,53 +152,53 @@ void PrimitiveEditModifier::end(const scene::TransformChain& transformChain)
 
 void PrimitiveEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	//for (auto entityAdapter : m_entityAdapters)
-	//{
-	//	auto PrimitiveComponent = dynamic_type_cast< PrimitiveComponent* >(entityAdapter->getEntity());
-	//	if (!PrimitiveComponent)
-	//		continue;
+	for (auto entityAdapter : m_entityAdapters)
+	{
+		PrimitiveComponent* primitiveComponent = entityAdapter->getComponent< PrimitiveComponent >();
+		if (!primitiveComponent)
+			continue;
 
-	//	uint32_t selected = PrimitiveComponent->getSelectedMaterial();
-	//	if (selected == model::c_InvalidIndex)
-	//		continue;
+		const uint32_t selected = primitiveComponent->getSelectedMaterial();
+		if (selected == model::c_InvalidIndex)
+			continue;
 
-	//	const model::Model* model = PrimitiveComponent->getModel();
-	//	if (!model)
-	//		continue;
+		const model::Model* model = primitiveComponent->getModel();
+		if (!model)
+			continue;
 
-	//	for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
-	//	{
-	//		const model::Polygon& polygon = model->getPolygon(i);
-	//		if (polygon.getMaterial() != selected)
-	//			continue;
+		for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
+		{
+			const model::Polygon& polygon = model->getPolygon(i);
+			if (polygon.getMaterial() != selected)
+				continue;
 
-	//		Winding3 w;
-	//		for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
-	//			w.push(model->getVertexPosition(polygon.getVertex(j)));
+			Winding3 w;
+			for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
+				w.push(model->getVertexPosition(polygon.getVertex(j)));
 
-	//		Plane wp;
-	//		if (!w.getPlane(wp))
-	//			continue;
+			Plane wp;
+			if (!w.getPlane(wp))
+				continue;
 
-	//		primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
+			primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
 
-	//		Triangulator().freeze(
-	//			w.get(),
-	//			wp.normal(),
-	//			Triangulator::Mode::Sequential,
-	//			[&](size_t i0, size_t i1, size_t i2) {
-	//				primitiveRenderer->drawSolidTriangle(
-	//					w[(uint32_t)i0],
-	//					w[(uint32_t)i1],
-	//					w[(uint32_t)i2],
-	//					Color4ub(80, 120, 255, 120)
-	//				);
-	//			}
-	//		);
+			Triangulator().freeze(
+				w.get(),
+				wp.normal(),
+				Triangulator::Mode::Sequential,
+				[&](size_t i0, size_t i1, size_t i2) {
+					primitiveRenderer->drawSolidTriangle(
+						w[(uint32_t)i0],
+						w[(uint32_t)i1],
+						w[(uint32_t)i2],
+						Color4ub(80, 120, 255, 120)
+					);
+				}
+			);
 
-	//		primitiveRenderer->popWorld();
-	//	}
-	//}
+			primitiveRenderer->popWorld();
+		}
+	}
 }
 
 }

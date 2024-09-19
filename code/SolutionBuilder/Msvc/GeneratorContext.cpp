@@ -85,7 +85,7 @@ std::wstring GeneratorContext::generateGUID(const std::wstring& key) const
 	MD5 md5;
 
 	md5.begin();
-	md5.feed(key.c_str(), int(key.length() * sizeof(wchar_t)));
+	md5.feed(key);
 	md5.end();
 
 	const uint8_t* cs = reinterpret_cast< const uint8_t* >(md5.get());

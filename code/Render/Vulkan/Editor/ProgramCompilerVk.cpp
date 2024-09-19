@@ -618,21 +618,21 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	{
 		Murmur3 checksum;
 		checksum.begin();
-		checksum.feed(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
+		checksum.feedBuffer(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
 		checksum.end();
 		programResource->m_vertexShaderHash = checksum.get();
 	}
 	{
 		Murmur3 checksum;
 		checksum.begin();
-		checksum.feed(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
+		checksum.feedBuffer(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
 		checksum.end();
 		programResource->m_fragmentShaderHash = checksum.get();
 	}
 	{
 		Murmur3 checksum;
 		checksum.begin();
-		checksum.feed(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size() * sizeof(uint32_t));
+		checksum.feedBuffer(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size() * sizeof(uint32_t));
 		checksum.end();
 		programResource->m_computeShaderHash = checksum.get();
 	}
@@ -640,9 +640,9 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		Murmur3 checksum;
 		checksum.begin();
 		checksum.feed(cx.getRenderState());
-		checksum.feed(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
-		checksum.feed(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
-		checksum.feed(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size() * sizeof(uint32_t));
+		checksum.feedBuffer(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
+		checksum.feedBuffer(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
+		checksum.feedBuffer(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size() * sizeof(uint32_t));
 		checksum.end();
 		programResource->m_shaderHash = checksum.get();
 	}

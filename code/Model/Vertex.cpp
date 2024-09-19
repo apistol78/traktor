@@ -95,15 +95,15 @@ uint32_t Vertex::getHash() const
 	Murmur3 adler;
 
 	adler.begin();
-	adler.feed(&m_position, sizeof(m_position));
-	adler.feed(&m_color, sizeof(m_color));
-	adler.feed(&m_normal, sizeof(m_normal));
-	adler.feed(&m_tangent, sizeof(m_tangent));
-	adler.feed(&m_binormal, sizeof(m_binormal));
+	adler.feed(m_position);
+	adler.feed(m_color);
+	adler.feed(m_normal);
+	adler.feed(m_tangent);
+	adler.feed(m_binormal);
 	if (!m_texCoords.empty())
-		adler.feed(&m_texCoords[0], m_texCoords.size() * sizeof(uint32_t));
+		adler.feedBuffer(&m_texCoords[0], m_texCoords.size() * sizeof(uint32_t));
 	if (!m_jointInfluences.empty())
-		adler.feed(&m_jointInfluences[0], m_jointInfluences.size() * sizeof(float));
+		adler.feedBuffer(&m_jointInfluences[0], m_jointInfluences.size() * sizeof(float));
 	adler.end();
 
 	return adler.get();
