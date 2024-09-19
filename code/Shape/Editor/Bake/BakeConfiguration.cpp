@@ -23,6 +23,7 @@ uint32_t BakeConfiguration::calculateModelRelevanteHash() const
 {
 	Murmur3 cs;
 	cs.begin();
+	cs.feed(m_enableLightmaps);
 	cs.feed(m_lumelDensity);
 	cs.feed(m_minimumLightMapSize);
 	cs.feed(m_maximumLightMapSize);

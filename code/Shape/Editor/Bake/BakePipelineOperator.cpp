@@ -574,7 +574,7 @@ bool BakePipelineOperator::build(
 				if (inoutEntityData->getId().isNull())
 					return scene::Traverser::Result::Continue;
 
-				// Light, sky and irradiance volume must be included.
+				// Add entities which always be included.
 				if (
 					inoutEntityData->getComponent< world::LightComponentData >() != nullptr ||
 					inoutEntityData->getComponent< weather::SkyComponentData >() != nullptr ||
@@ -600,13 +600,18 @@ bool BakePipelineOperator::build(
 				return scene::Traverser::Result::Continue;
 			});
 
+			log::info << L"Found " << bakeEntityData.size() << L" entities to include in bake." << Endl;
+
 			// Traverse and visit all entities in layer.
 			for (auto inoutEntityData : bakeEntityData)
 			{
 				// Add light source.
 				if (auto lightComponentData = inoutEntityData->getComponent< world::LightComponentData >())
 				{
-					if (addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask))
+					if (
+						addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask) &&
+						configuration->getEnableLightmaps()
+					)
 						inoutEntityData->removeComponent(lightComponentData);
 				}
 
@@ -683,57 +688,60 @@ bool BakePipelineOperator::build(
 							model::Triangulate().apply(*model);
 							model::CalculateTangents(false).apply(*model);
 
-							// Check if model already contain lightmap UV or if we need to unwrap.
-							uint32_t channel = model->getTexCoordChannel(L"Lightmap");
-							bool generated = false;
-							if (channel == model::c_InvalidIndex)
+							if (configuration->getEnableLightmaps())
 							{
-								// No lightmap UV channel, need to add and unwrap automatically.
-								channel = model->addUniqueTexCoordChannel(L"Lightmap");
-								model::UnwrapUV(channel, /*lightmapSize*/1024).apply(*model);
-								generated = true;
-							}
-
-							// Evaluate lightmap size by measuring each edge ratio.
-							double ratio = 0.0;
-							for (int32_t i = 0; i < model->getPolygonCount(); ++i)
-							{
-								const auto& polygon = model->getPolygon(i);
-								T_FATAL_ASSERT(polygon.getVertexCount() == 3);
-
-								Vector4 pt[3];
-								Vector2 uv[3];
-
-								for (int32_t j = 0; j < 3; ++j)
+								// Check if model already contain lightmap UV or if we need to unwrap.
+								uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+								bool generated = false;
+								if (channel == model::c_InvalidIndex)
 								{
-									const auto& vertex = model->getVertex(polygon.getVertex(j));
-									pt[j] = model->getPosition(vertex.getPosition());
-									uv[j] = model->getTexCoord(vertex.getTexCoord(channel));
+									// No lightmap UV channel, need to add and unwrap automatically.
+									channel = model->addUniqueTexCoordChannel(L"Lightmap");
+									model::UnwrapUV(channel, /*lightmapSize*/1024).apply(*model);
+									generated = true;
 								}
 
-								for (int32_t j = 0; j < 3; ++j)
+								// Evaluate lightmap size by measuring each edge ratio.
+								double ratio = 0.0;
+								for (int32_t i = 0; i < model->getPolygonCount(); ++i)
 								{
-									const float ptl = (pt[(j + 1) % 3] - pt[j]).length();
-									const float uvl = (uv[(j + 1) % 3] - uv[j]).length();
-									if (ptl > 0.0f)
-										ratio += (double)(uvl / ptl);
+									const auto& polygon = model->getPolygon(i);
+									T_FATAL_ASSERT(polygon.getVertexCount() == 3);
+
+									Vector4 pt[3];
+									Vector2 uv[3];
+
+									for (int32_t j = 0; j < 3; ++j)
+									{
+										const auto& vertex = model->getVertex(polygon.getVertex(j));
+										pt[j] = model->getPosition(vertex.getPosition());
+										uv[j] = model->getTexCoord(vertex.getTexCoord(channel));
+									}
+
+									for (int32_t j = 0; j < 3; ++j)
+									{
+										const float ptl = (pt[(j + 1) % 3] - pt[j]).length();
+										const float uvl = (uv[(j + 1) % 3] - uv[j]).length();
+										if (ptl > 0.0f)
+											ratio += (double)(uvl / ptl);
+									}
 								}
+								ratio /= (double)(model->getPolygonCount() * 3);
+
+								const int32_t lightmapDesiredSize = configuration->getLumelDensity() / ratio;
+
+								int32_t lightmapSize = lightmapDesiredSize;
+								lightmapSize = std::max< int32_t >(configuration->getMinimumLightMapSize(), lightmapSize);
+								lightmapSize = std::min< int32_t >(configuration->getMaximumLightMapSize(), lightmapSize);
+								lightmapSize = alignUp(lightmapSize, 4);
+
+								// Re-run UV unwrapping with proper lightmap size.
+								if (generated)
+									model::UnwrapUV(channel, lightmapSize).apply(*model);
+
+								model->setProperty< PropertyInteger >(L"LightmapDesiredSize", lightmapDesiredSize);
+								model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);
 							}
-							ratio /= (double)(model->getPolygonCount() * 3);
-
-							const int32_t lightmapDesiredSize = configuration->getLumelDensity() / ratio;
-
-							int32_t lightmapSize = lightmapDesiredSize;
-							lightmapSize = std::max< int32_t >(configuration->getMinimumLightMapSize(), lightmapSize);
-							lightmapSize = std::min< int32_t >(configuration->getMaximumLightMapSize(), lightmapSize);
-							lightmapSize = alignUp(lightmapSize, 4);
-
-							// Re-run UV unwrapping with proper lightmap size.
-							if (generated)
-								model::UnwrapUV(channel, lightmapSize).apply(*model);
-
-							model->setProperty< PropertyInteger >(L"LightmapDesiredSize", lightmapDesiredSize);
-							model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);
 
 							// Attach an unique ID for this mesh; since visual model is cached this will get reused automatically.
 							model->setProperty< PropertyString >(L"ID", Guid::create().format());
@@ -764,18 +772,19 @@ bool BakePipelineOperator::build(
 					// Add visual model to tracer task.
 					if (visualModel)
 					{
-						// Get calculated lightmap size.
-						const int32_t lightmapSize = visualModel->getProperty< int32_t >(L"LightmapSize");
-						const int32_t lightmapDesiredSize = visualModel->getProperty< int32_t >(L"LightmapDesiredSize");
-
-						log::info << 
-							L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L"), " << 
-							L"lightmap ID " << lightmapDiffuseId.format() << L", " <<
-							L"lightmap size " << lightmapSize << L" (" << lightmapDesiredSize << L"), " <<
-							L"model hash " << str(L"%08x", modelHash) << L"..." << Endl;
+						log::info << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L") " << str(L"%08x", modelHash) << Endl;
 
 						if (configuration->getEnableLightmaps())
 						{
+							// Get calculated lightmap size.
+							const int32_t lightmapSize = visualModel->getProperty< int32_t >(L"LightmapSize", 0);
+							const int32_t lightmapDesiredSize = visualModel->getProperty< int32_t >(L"LightmapDesiredSize", 0);
+
+							log::info << 
+								L"lightmap ID " << lightmapDiffuseId.format() << L", " <<
+								L"lightmap size " << lightmapSize << L" (" << lightmapDesiredSize << L"), " <<
+								L"model hash " << str(L"%08x", modelHash) << L"..." << Endl;
+
 							// Register lightmap ID as being built.
 							pipelineBuilder->buildAdHocOutput(lightmapDiffuseId);
 
@@ -975,10 +984,10 @@ bool BakePipelineOperator::build(
 	ms_tracerProcessor->enqueue(tracerTask);
 
 	if (m_asynchronous)
-		log::info << L"Lightmap tasks created, enqueued and ready to be processed." << Endl;
+		log::info << L"Bake light tasks created, enqueued and ready to be processed." << Endl;
 	else
 	{
-		log::info << L"Waiting for lightmap baking to complete..." << Endl;
+		log::info << L"Waiting for light baking to complete..." << Endl;
 		ms_tracerProcessor->waitUntilIdle();
 	}
 
