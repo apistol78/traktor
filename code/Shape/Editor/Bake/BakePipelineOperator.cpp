@@ -534,6 +534,7 @@ bool BakePipelineOperator::build(
 		Vector4(-100.0f, -100.0f, -100.0f),
 		Vector4( 100.0f,  100.0f,  100.0f)
 	);
+	bool irradianceBoundingBoxExplicit = false;
 
 	{
 		RefArray< world::EntityData > layers;
@@ -635,7 +636,10 @@ bool BakePipelineOperator::build(
 				if (inoutEntityData->getName() == L"Irradiance")
 				{
 					if (auto volumeComponentData = inoutEntityData->getComponent< world::VolumeComponentData >())
+					{
 						irradianceBoundingBox = volumeComponentData->getBoundingBox().transform(inoutEntityData->getTransform());
+						irradianceBoundingBoxExplicit = true;
+					}
 				}
 
 				// Calculate synthesized ids.
@@ -807,6 +811,13 @@ bool BakePipelineOperator::build(
 							visualModel,
 							inoutEntityData->getTransform()
 						));
+
+						// Expand irradiance grid bounding box.
+						if (!irradianceBoundingBoxExplicit)
+						{
+							const Aabb3 modelBoundingBox = visualModel->getBoundingBox().transform(inoutEntityData->getTransform());
+							irradianceBoundingBox.contain(modelBoundingBox);
+						}
 					}
 
 					// Modify entity.

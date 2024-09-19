@@ -80,7 +80,7 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 
     safeClose(sourceData);
 
-    return hf::ConvertHeightfield().convert(heightfield, 64);
+    return hf::ConvertHeightfield().convert(heightfield, 16);
 }
 
 }

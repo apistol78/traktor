@@ -41,6 +41,7 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
     // Add single material for entire heightfield.
     model::Material material;
     material.setName(L"Heightfield");
+	material.setColor(Color4f(0.15f, 0.4f, 0.2f, 1.0f));
     model->addMaterial(material);
 
     // Convert vertices.
