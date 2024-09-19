@@ -43,6 +43,7 @@
 #include "Weather/Sky/SkyRenderer.h"
 #include "World/Entity.h"
 #include "World/EntityFactory.h"
+#include "World/World.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldResourceFactory.h"
@@ -52,7 +53,7 @@
 #include "World/Entity/ProbeRenderer.h"
 #include "World/Entity/VolumetricFogRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
-#include "World/Forward/WorldRendererForward.h"
+#include "World/Deferred/WorldRendererDeferred.h"
 
 namespace traktor::animation
 {
@@ -257,14 +258,14 @@ void AnimationPreviewControl::updateWorldRenderer()
 	worldEntityRenderers->add(new world::ProbeRenderer(
 		m_resourceManager,
 		m_renderSystem,
-		type_of< world::WorldRendererForward >()
+		type_of< world::WorldRendererDeferred >()
 	));
 
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
 	wcd.entityRenderers = worldEntityRenderers;
 
-	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();
+	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererDeferred();
 	if (!worldRenderer->create(
 		m_resourceManager,
 		m_renderSystem,
@@ -388,26 +389,16 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		viewInverse.translation()
 	);
 
+	// Temporarily add mesh entity to world.
+	if (m_entity)
+		m_sceneInstance->getWorld()->addEntity(m_entity);
+
 	// Update scene entities.
 	world::UpdateParams update;
 	update.totalTime = time;
 	update.alternateTime = time;
 	update.deltaTime = deltaTime;
 	m_sceneInstance->update(update);
-
-	// Build a root entity by gathering entities from containers.
-	//Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
-	//Ref< world::Entity > rootEntity = new world::Entity();
-	//rootEntity->setComponent(rootGroup);
-
-	//rootGroup->addEntity(m_sceneInstance->getRootEntity());
-
-	//// Update and add animated mesh entity.
-	//if (m_entity)
-	//{
-	//	m_entity->update(update);
-	//	rootGroup->addEntity(m_entity);
-	//}
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
@@ -422,6 +413,10 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	m_worldRenderView.setTimes(time, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), viewTransform);
 	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0, nullptr);
+
+	// Remove mesh entity from world.
+	if (m_entity)
+		m_sceneInstance->getWorld()->removeEntity(m_entity);
 
 	// Draw debug wires.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
