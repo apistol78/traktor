@@ -98,7 +98,13 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style
 	cs.begin();
 	cs.feed(style.getGradientType());
 	for (const auto& colorRecord : colorRecords)
-		cs.feed(colorRecord);
+	{
+		cs.feed(colorRecord.ratio);
+		cs.feed((float)colorRecord.color.getRed());
+		cs.feed((float)colorRecord.color.getGreen());
+		cs.feed((float)colorRecord.color.getBlue());
+		cs.feed((float)colorRecord.color.getAlpha());
+	}
 	cs.end();
 
 	const uint64_t hash = cs.get();

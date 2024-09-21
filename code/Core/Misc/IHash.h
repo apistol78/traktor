@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string>
+#include <type_traits>
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -45,12 +46,6 @@ public:
 
 	//@{
 
-	template < typename T >
-	void feed(const T& value)
-	{
-		feedBuffer(&value, sizeof(value));
-	}
-
 	void feed(bool value)
 	{
 		const uint8_t ub = value ? 0xff : 0x00;
@@ -59,23 +54,27 @@ public:
 
 	void feed(const wchar_t* value)
 	{
-		if (value != nullptr)
-		{
-			for (const wchar_t* ch = value; *ch != 0; ++ch)
-				feed(*ch);
-		}
+		for (const wchar_t* ch = value; value != nullptr && *ch != 0; ++ch)
+			feed(*ch);
 	}
 
 	void feed(const std::wstring& value)
 	{
-		if (!value.empty())
-			feedBuffer(value.c_str(), (uint64_t)(value.length() * sizeof(wchar_t)));
+		for (wchar_t ch : value)
+			feed(ch);
 	}
 
 	void feed(const std::wstring_view& value)
 	{
 		for (wchar_t ch : value)
 			feed(ch);
+	}
+
+	template < typename T >
+	void feed(const T& value)
+	{
+		static_assert(std::is_trivially_copyable_v< T >);
+		feedBuffer(&value, sizeof(value));
 	}
 
 	//@}
