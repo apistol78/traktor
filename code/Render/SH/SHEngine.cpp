@@ -39,7 +39,7 @@ void SHEngine::generateSamplePoints(uint32_t count)
 {
 	RandomGeometry rg;
 
-	const uint32_t sqrtCount = uint32_t(std::sqrt(double(count)));
+	const uint32_t sqrtCount = (uint32_t)std::sqrt((double)count);
 	count = sqrtCount * sqrtCount;
 
 	m_samplePoints.resize(count);
@@ -64,7 +64,7 @@ void SHEngine::generateSamplePoints(uint32_t count)
 				for (int32_t m = -l; m <= l; ++m)
 				{
 					const int32_t index = l * (l + 1) + m;
-					const float shc = float(SH(l, m, phi, theta));
+					const float shc = (float)SH(l, m, phi, theta);
 					m_samplePoints[o].coefficients[index] = Vector4(shc, shc, shc, 0.0f);
 				}
 			}
@@ -74,19 +74,18 @@ void SHEngine::generateSamplePoints(uint32_t count)
 
 void SHEngine::generateCoefficients(SHFunction* function, bool parallell, SHCoeffs& outResult)
 {
-	const double weight = 4.0 * PI;
-
-	const uint32_t sc = uint32_t(m_samplePoints.size() >> 2);
-
-	SHCoeffs intermediate[4];
-	intermediate[0].resize(m_bandCount);
-	intermediate[1].resize(m_bandCount);
-	intermediate[2].resize(m_bandCount);
-	intermediate[3].resize(m_bandCount);
+	const float weight = 4.0 * PI;
+	const uint32_t nsp = (uint32_t)m_samplePoints.size();
 
 	if (parallell)
 	{
-		const uint32_t nsp = (uint32_t)m_samplePoints.size();
+		const uint32_t sc = nsp >> 2;
+
+		SHCoeffs intermediate[4];
+		intermediate[0].resize(m_bandCount);
+		intermediate[1].resize(m_bandCount);
+		intermediate[2].resize(m_bandCount);
+		intermediate[3].resize(m_bandCount);
 
 		Job::task_t jobs[4];
 		jobs[0] = [&](){ generateCoefficientsJob(function, 0 * sc, 1 * sc, &intermediate[0]); };
@@ -94,20 +93,18 @@ void SHEngine::generateCoefficients(SHFunction* function, bool parallell, SHCoef
 		jobs[2] = [&](){ generateCoefficientsJob(function, 2 * sc, 3 * sc, &intermediate[2]); };
 		jobs[3] = [&](){ generateCoefficientsJob(function, 3 * sc,    nsp, &intermediate[3]); };
 		JobManager::getInstance().fork(jobs, sizeof_array(jobs));
+
+		outResult.resize(m_bandCount);
+		for (uint32_t i = 0; i < m_coefficientCount; ++i)
+			outResult[i] = intermediate[0][i] + intermediate[1][i] + intermediate[2][i] + intermediate[3][i];
 	}
 	else
 	{
-		generateCoefficientsJob(function, 0 * sc, 1 * sc, &intermediate[0]);
-		generateCoefficientsJob(function, 1 * sc, 2 * sc, &intermediate[1]);
-		generateCoefficientsJob(function, 2 * sc, 3 * sc, &intermediate[2]);
-		generateCoefficientsJob(function, 3 * sc, (uint32_t)m_samplePoints.size(), &intermediate[3]);
+		outResult.resize(m_bandCount);
+		generateCoefficientsJob(function, 0, nsp, &outResult);
 	}
 
-	outResult.resize(m_bandCount);
-	for (uint32_t i = 0; i < m_coefficientCount; ++i)
-		outResult[i] = intermediate[0][i] + intermediate[1][i] + intermediate[2][i] + intermediate[3][i];
-
-	Scalar factor(float(weight / m_samplePoints.size()));
+	const Scalar factor(weight / nsp);
 	for (uint32_t i = 0; i < m_coefficientCount; ++i)
 		outResult[i] *= factor;
 }

@@ -784,10 +784,9 @@ bool BakePipelineOperator::build(
 							const int32_t lightmapSize = visualModel->getProperty< int32_t >(L"LightmapSize", 0);
 							const int32_t lightmapDesiredSize = visualModel->getProperty< int32_t >(L"LightmapDesiredSize", 0);
 
-							log::info << 
-								L"lightmap ID " << lightmapDiffuseId.format() << L", " <<
-								L"lightmap size " << lightmapSize << L" (" << lightmapDesiredSize << L"), " <<
-								L"model hash " << str(L"%08x", modelHash) << L"..." << Endl;
+							log::info <<
+								L"Lightmap ID " << lightmapDiffuseId.format() << L", " <<
+								L"Lightmap size " << lightmapSize << L" (" << lightmapDesiredSize << L")" << Endl;
 
 							// Register lightmap ID as being built.
 							pipelineBuilder->buildAdHocOutput(lightmapDiffuseId);

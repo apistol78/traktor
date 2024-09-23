@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,12 +34,10 @@
 #	define T_ALIGN64 __attribute__((aligned(64)))
 #endif
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
+	namespace
 	{
-		namespace
-		{
 
 const Scalar p(1.0f / (2.0f * PI));
 const float c_epsilonOffset = 0.00001f;
@@ -48,7 +46,7 @@ const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 class WrappedSHFunction : public render::SHFunction
 {
 public:
-	WrappedSHFunction(const std::function< Vector4 (const Vector4&) >& fn)
+	explicit WrappedSHFunction(const std::function< Vector4 (const Vector4&) >& fn)
 	:	m_fn(fn)
 	{
 	}
@@ -159,7 +157,7 @@ float wrap(float n)
 	return n - std::floor(n);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.RayTracerEmbree", 0, RayTracerEmbree, IRayTracer)
 
@@ -173,9 +171,7 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 
 	// Create SH sampling engine.
 	m_shEngine = new render::SHEngine(3);
-	m_shEngine->generateSamplePoints(
-		60 // configuration->getIrradianceSampleCount()
-	);
+	m_shEngine->generateSamplePoints(100);
 
 	// Calculate sampling pattern of shadows, using uniform pattern within a disc.
 	uint32_t sampleCount = m_configuration->getShadowSampleCount();
@@ -318,9 +314,32 @@ void RayTracerEmbree::commit()
 Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) const
 {
 	static thread_local RandomGeometry random;
+	static const float ProbeSize = 4.0f;
 
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
-		return tracePath0(position, unit, random, 0);
+
+		RTCRayHit T_ALIGN64 rh;
+		constructRayHit(position, unit, ProbeSize, rh);
+
+		RTCIntersectArguments iargs;
+		rtcInitIntersectArguments(&iargs);
+		iargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+		rtcIntersect1(m_scene, &rh, &iargs);
+
+		if (rh.hit.geomID != RTC_INVALID_GEOMETRY_ID)
+		{
+			float T_MATH_ALIGN16 normal[4];
+			const RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
+			rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, normal, 3);
+			const Vector4 hitNormal = Vector4::loadAligned(normal).xyz0().normalized();
+			if (dot3(hitNormal, unit) > 0.0f)
+			{
+				// Probe most likely inside geometry; offset position.
+				return tracePath0(position + unit * Scalar(ProbeSize), unit, random, 0);
+			}
+		}
+
+		return tracePath0(position + unit * 0.1_simd, unit, random, 0);
 	});
 
 	Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
@@ -940,5 +959,4 @@ void RayTracerEmbree::shadowOccluded(const RTCFilterFunctionNArguments* args)
 	}
 }
 
-	}
 }
