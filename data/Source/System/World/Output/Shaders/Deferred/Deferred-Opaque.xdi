@@ -229,7 +229,7 @@ World_DeferredGBufferWrite
 			<id>{C94C36B7-EF68-554B-BCEB-50880319F18B}</id>
 			<comment/>
 			<position>
-				<first>-412</first>
+				<first>-400</first>
 				<second>-176</second>
 			</position>
 			<parameterName>World_ViewInverse</parameterName>
@@ -240,7 +240,7 @@ World_DeferredGBufferWrite
 			<id>{DA905233-ED84-5249-85B9-39A22608F780}</id>
 			<comment/>
 			<position>
-				<first>-338</first>
+				<first>-368</first>
 				<second>-229</second>
 			</position>
 			<swizzle>xyz1</swizzle>
@@ -249,8 +249,8 @@ World_DeferredGBufferWrite
 			<id>{AF9759BC-2FB5-1643-99AA-9CBC3DC2A51C}</id>
 			<comment/>
 			<position>
-				<first>-326</first>
-				<second>-395</second>
+				<first>-368</first>
+				<second>-391</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -286,8 +286,8 @@ World_DeferredGBufferWrite
 			<id>{6CC459DA-EBF3-9349-B1DE-74668CE97BA7}</id>
 			<comment/>
 			<position>
-				<first>-562</first>
-				<second>-249</second>
+				<first>-585</first>
+				<second>-256</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -298,7 +298,7 @@ World_DeferredGBufferWrite
 				<first>745</first>
 				<second>-223</second>
 			</position>
-			<color>1, 0, 0, 1</color>
+			<color>0, 0, 0, 1</color>
 			<linear>false</linear>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
@@ -322,7 +322,7 @@ World_DeferredGBufferWrite
 			<id>{7BFD17EC-2217-294E-9C66-DC4B3E3F5831}</id>
 			<comment/>
 			<position>
-				<first>-668</first>
+				<first>-703</first>
 				<second>-420</second>
 			</position>
 			<name>ViewNormalGeometry</name>
@@ -375,7 +375,7 @@ World_DeferredGBufferWrite
 			<id>{5DC46841-21EE-7A44-A31C-AAD08839A065}</id>
 			<comment/>
 			<position>
-				<first>167</first>
+				<first>175</first>
 				<second>-446</second>
 			</position>
 			<fragmentGuid>{1F5FB15A-CCA0-264F-A150-7EDEAD93E644}</fragmentGuid>
