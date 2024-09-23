@@ -52,7 +52,6 @@ void ToolTip::show(const Point& at, const std::wstring& text)
 	tipPosition.y += pixel(c_cursorHeight);
 
 	setRect(Rect(tipPosition, extent));
-
 	setVisible(true);
 }
 
@@ -66,9 +65,9 @@ void ToolTip::eventTimer(TimerEvent* event)
 		return;
 	}
 
-	Point mousePosition = parent->getMousePosition();
-	bool inside = false;
+	const Point mousePosition = parent->getMousePosition();
 
+	bool inside = false;
 	if (mousePosition.x >= 0 && mousePosition.y >= 0)
 	{
 		const Size parentSize = parent->getRect().getSize();
@@ -76,9 +75,7 @@ void ToolTip::eventTimer(TimerEvent* event)
 			inside = true;
 	}
 
-	inside &= parent->getRect().inside(mousePosition);
-
-	if (inside && !isVisible(true))
+	if (inside && !isVisible(false))
 	{
 		if (!m_tracking)
 		{
@@ -95,7 +92,7 @@ void ToolTip::eventTimer(TimerEvent* event)
 			m_tracking = false;
 		}
 	}
-	else if (!inside && isVisible(true))
+	else if (!inside && isVisible(false))
 	{
 		// Hide tooltip if mouse is outside of parent widget.
 		setVisible(false);
@@ -105,7 +102,6 @@ void ToolTip::eventTimer(TimerEvent* event)
 void ToolTip::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-
 	Rect innerRect = getInnerRect();
 
 	canvas.setForeground(Color4ub(80, 80, 40));
