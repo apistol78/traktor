@@ -467,10 +467,6 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->present();
 	}
 
-	// Need to clear all entities from our root group since when our root entity
-	// goes out of scope it's automatically destroyed.
-	//rootGroup->removeAllEntities();
-
 	event->consume();
 }
 
