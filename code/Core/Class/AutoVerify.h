@@ -8,6 +8,8 @@
  */
 #pragma once
 
+#include <utility>
+
 #if defined(__IOS__)
 #	define T_VERIFY_ENABLE 0
 #	define T_VERIFY_USING_EXCEPTIONS 0

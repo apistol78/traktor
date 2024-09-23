@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,6 @@
 
 #include <initializer_list>
 #include <iterator>
-#include <utility>
 #include "Core/Config.h"
 #include "Core/Containers/VectorConstructor.h"
 #include "Core/Memory/IAllocator.h"
@@ -669,7 +668,7 @@ public:
 			if (capacityAlignment > MaxCapacityAlignment)
 				capacityAlignment = MaxCapacityAlignment;
 
-			size_t newCapacity = alignUp(capacity, capacityAlignment);
+			const size_t newCapacity = alignUp(capacity, capacityAlignment);
 			ItemType* data = reinterpret_cast< ItemType* >(getAllocator()->alloc(newCapacity * sizeof(ItemType), Alignment, T_FILE_LINE));
 			if (m_data)
 			{
@@ -1063,7 +1062,7 @@ private:
 
 	void grow(size_t count)
 	{
-		size_t newSize = m_size + count;
+		const size_t newSize = m_size + count;
 		if (newSize > m_capacity)
 			reserve(newSize);
 		m_size = newSize;
