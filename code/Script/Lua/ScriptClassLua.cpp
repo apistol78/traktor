@@ -32,10 +32,13 @@ public:
 
 	virtual ~ScriptClassConstructorDispatch()
 	{
-		if (m_constructorRef)
-			luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_constructorRef);
-		if (m_classRef)
-			luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_classRef);
+		if (m_luaState != nullptr)
+		{
+			if (m_constructorRef)
+				luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_constructorRef);
+			if (m_classRef)
+				luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_classRef);
+		}
 	}
 
 #if defined(T_NEED_RUNTIME_SIGNATURE)
