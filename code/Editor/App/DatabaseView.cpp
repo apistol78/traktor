@@ -951,6 +951,12 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			if (wizard->launch(this, m_editor, group, instance))
 				updateView();
 		}
+		else if (command == L"Editor.Rename")
+		{
+			auto selectedItem = m_listInstances->getSelectedItem();
+			T_FATAL_ASSERT(selectedItem != nullptr);
+			m_listInstances->beginEdit(selectedItem);
+		}
 		else
 			return false;
 	}
@@ -1118,6 +1124,11 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			if (wizard->launch(this, m_editor, group, 0))
 				updateView();
 		}
+		else if (command == L"Editor.Rename")
+		{
+			T_FATAL_ASSERT(treeItem != nullptr);
+			treeItem->edit();
+		}
 		else
 			return false;
 	}
@@ -1179,6 +1190,8 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemHierarchy(ui::TreeView* treeV
 		groupItem->setTextColor(getStyleSheet()->getColor(this, L"color-link"));
 		groupItem->setBold(true);
 	}
+	else if (parentItem == nullptr)
+		groupItem->setEditable(false);
 	else
 		groupItem->setEditable(true);
 
@@ -1262,6 +1275,8 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView,
 		groupItem->setTextColor(ui::ColorReference(this, L"color-link"));
 		groupItem->setBold(true);
 	}
+	else if (parentItem == nullptr)
+		groupItem->setEditable(false);
 	else
 		groupItem->setEditable(true);
 
