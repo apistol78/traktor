@@ -11,6 +11,7 @@
 
 #include <glslang/Public/ShaderLang.h>
 #include <SPIRV/GlslangToSpv.h>
+#include <spirv-tools/libspirv.hpp>
 #include <spirv-tools/optimizer.hpp>
 #include <spirv_hlsl.hpp>
 #include <spirv_glsl.hpp>
@@ -42,6 +43,10 @@ namespace traktor::render
 {
 	namespace
 	{
+
+const glslang::EShTargetClientVersion c_clientVersion = glslang::EShTargetVulkan_1_3;
+const glslang::EShTargetLanguageVersion c_targetSPV = glslang::EShTargetSpv_1_6;
+const spv_target_env c_targetENV = SPV_ENV_VULKAN_1_3;
 
 TBuiltInResource getDefaultBuiltInResource()
 {
@@ -157,9 +162,7 @@ TBuiltInResource getDefaultBuiltInResource()
 
 void performOptimization(bool convertRelaxedToHalf, AlignedVector< uint32_t >& spirv)
 {
-	spv_target_env target_env = SPV_ENV_VULKAN_1_2;
-
-	spvtools::Optimizer optimizer(target_env);
+	spvtools::Optimizer optimizer(c_targetENV);
 	optimizer.SetMessageConsumer([](spv_message_level_t level, const char* source, const spv_position_t& position, const char* message) {
 		switch (level)
 		{
@@ -214,6 +217,18 @@ void performOptimization(bool convertRelaxedToHalf, AlignedVector< uint32_t >& s
 		spirv = AlignedVector< uint32_t >(opted.begin(), opted.end());
 	else
 		log::warning << L"SPIR-V optimizer failed; using unoptimized IL." << Endl;
+}
+
+bool performValidation(const AlignedVector< uint32_t >& spirv)
+{
+	spvtools::SpirvTools st(c_targetENV);
+	st.SetMessageConsumer([](
+		spv_message_level_t /* level */, const char* /* source */,
+		const spv_position_t& /* position */, const char* message
+	){
+		log::error << Endl << mbstows(message) << Endl;
+	});
+	return st.Validate(spirv.c_ptr(), (size_t)spirv.size());
 }
 
 	}
@@ -305,7 +320,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		// Vertex shader.
 		const char* vst = vertexShaderText.c_str();
 		vertexShader = new glslang::TShader(EShLangVertex);
-		vertexShader->setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_2);
+		vertexShader->setEnvClient(glslang::EShClientVulkan, c_clientVersion);
+		vertexShader->setEnvTarget(glslang::EShTargetSpv, c_targetSPV);
 		vertexShader->setStrings(&vst, 1);
 		vertexShader->setEntryPoint("main");
 		vertexShader->setSourceEntryPoint("main");
@@ -328,7 +344,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		// Fragment shader.
 		const char* fst = fragmentShaderText.c_str();
 		fragmentShader = new glslang::TShader(EShLangFragment);
-		fragmentShader->setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_2);
+		fragmentShader->setEnvClient(glslang::EShClientVulkan, c_clientVersion);
+		fragmentShader->setEnvTarget(glslang::EShTargetSpv, c_targetSPV);
 		fragmentShader->setStrings(&fst, 1);
 		fragmentShader->setEntryPoint("main");
 		fragmentShader->setSourceEntryPoint("main");
@@ -376,7 +393,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 		// Compute shader.
 		computeShader = new glslang::TShader(EShLangCompute);
-		computeShader->setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_2);
+		computeShader->setEnvClient(glslang::EShClientVulkan, c_clientVersion);
+		computeShader->setEnvTarget(glslang::EShTargetSpv, c_targetSPV);
 		computeShader->setStrings(&computeShaderText, 1);
 		computeShader->setEntryPoint("main");
 		computeShader->setSourceEntryPoint("main");
@@ -405,10 +423,11 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	}
 
 	// Link shaders into a program.
-	if (!program->link(EShMsgDefault))
+	if (!program->link((EShMessages)(EShMsgSpvRules | EShMsgVulkanRules)))
 		return nullptr;
 
 	const int32_t optimize = (settings != nullptr ? settings->getProperty< int32_t >(L"Glsl.Vulkan.Optimize", 1) : 1);
+	const bool validate = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.Validate", false) : false);
 	const bool convertRelaxedToHalf = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ConvertRelaxedToHalf", false) : false);
 
 	// Create output resource.
@@ -435,6 +454,15 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 		if (optimize > 0)
 			performOptimization(convertRelaxedToHalf, programResource->m_vertexShader);
+
+		if (validate)
+		{
+			if (!performValidation(programResource->m_vertexShader))
+			{
+				log::error << L"Validation of generated SPIR-V failed; vertex shader compile failed." << Endl;
+				return nullptr;
+			}
+		}
 	}
 
 	auto fsi = program->getIntermediate(EShLangFragment);
@@ -447,6 +475,15 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 		if (optimize > 0)
 			performOptimization(convertRelaxedToHalf, programResource->m_fragmentShader);
+
+		if (validate)
+		{
+			if (!performValidation(programResource->m_fragmentShader))
+			{
+				log::error << L"Validation of generated SPIR-V failed; fragment shader compile failed." << Endl;
+				return nullptr;
+			}
+		}
 	}
 
 	auto csi = program->getIntermediate(EShLangCompute);
@@ -459,6 +496,15 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		
 		if (optimize > 0)
 			performOptimization(convertRelaxedToHalf, programResource->m_computeShader);
+
+		if (validate)
+		{
+			if (!performValidation(programResource->m_computeShader))
+			{
+				log::error << L"Validation of generated SPIR-V failed; compute shader compile failed." << Endl;
+				return nullptr;
+			}
+		}
 	}
 
 	// Map parameters to uniforms.

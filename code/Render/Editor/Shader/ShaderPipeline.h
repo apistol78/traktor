@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IProgramCompiler;
 class IProgramHints;
@@ -32,8 +30,6 @@ class T_DLLCLASS ShaderPipeline : public editor::IPipeline
 	T_RTTI_CLASS;
 
 public:
-	ShaderPipeline();
-
 	virtual bool create(const editor::IPipelineSettings* settings) override final;
 
 	virtual void destroy() override final;
@@ -79,15 +75,11 @@ private:
 	SmallSet< std::wstring > m_includeOnlyTechniques;
 	Ref< const PropertyGroup > m_compilerSettings;
 	std::wstring m_platform;
-	int32_t m_optimize;
-	bool m_validate;
-	bool m_debugCompleteGraphs;
+	bool m_debugCompleteGraphs = false;
 	std::wstring m_debugPath;
-	bool m_editor;
+	bool m_editor = false;
 
 	IProgramCompiler* getProgramCompiler() const;
 };
 
-	}
 }
-
