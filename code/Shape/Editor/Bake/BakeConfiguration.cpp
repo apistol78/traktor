@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Misc/Murmur3.h"
+#include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeUnit.h"
@@ -64,7 +65,7 @@ void BakeConfiguration::serialize(ISerializer& s)
 	s >> Member< float >(L"lumelDensity", m_lumelDensity, AttributeRange(0.0f));
 
 	if (s.getVersion< BakeConfiguration >() >= 31)
-		s >> Member< Vector4 >(L"irradianceGridDensity", m_irradianceGridDensity, AttributeRange(0.0f));
+		s >> Member< Vector4 >(L"irradianceGridDensity", m_irradianceGridDensity, AttributeDirection() | AttributeRange(0.0f));
 	else
 	{
 		float value;
