@@ -5736,16 +5736,7 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.VulkanMemoryAllocator.lib</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Extern.VulkanMemoryAllocator.pdb</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
+					<aggregationItems/>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
@@ -5766,16 +5757,7 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Extern.VulkanMemoryAllocator.lib</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Extern.VulkanMemoryAllocator.pdb</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
+					<aggregationItems/>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
