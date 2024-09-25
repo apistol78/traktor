@@ -553,6 +553,12 @@ void DatabaseView::setDatabase(db::Database* db)
 	// Ensure database views is cleaned.
 	m_treeDatabase->removeAllItems();
 	updateView();
+
+	// Expand root items by default after setting a new database.
+	RefArray< ui::TreeViewItem > items;
+	m_treeDatabase->getItems(items, ui::TreeView::GfDefault);
+	for (auto item : items)
+		item->expand();
 }
 
 void DatabaseView::updateView()
