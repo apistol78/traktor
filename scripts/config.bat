@@ -44,6 +44,9 @@ set UFBX_SDK=%TRAKTOR_HOME%\3rdp\ufbx
 :: Vulkan SDK
 set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan-windows\vulkan-sdk
 
+:: SPIRV tools
+set SPIRVTOOLS_SDK=%TRAKTOR_HOME%\3rdp\spirv-tools\install
+
 :: Vulkan Memory Allocator
 set VMA_SDK=%TRAKTOR_HOME%\3rdp\VulkanMemoryAllocator
 

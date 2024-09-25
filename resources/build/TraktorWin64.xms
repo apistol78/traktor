@@ -19404,13 +19404,14 @@
 					<includePaths>
 						<item>$(VULKAN_SDK)/include</item>
 						<item>$(VULKAN_SDK)/include/glslang</item>
-						<item>$(VULKAN_SDK)/include/spirv_cross</item>
+						<item>$(SPIRVTOOLS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EDITOR_EXPORT</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(VULKAN_SDK)/Lib</item>
+						<item>$(SPIRVTOOLS_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>MachineIndependentd.lib</item>
@@ -19419,10 +19420,6 @@
 						<item>SPIRV-Toolsd.lib</item>
 						<item>SPIRV-Tools-optd.lib</item>
 						<item>glslangd.lib</item>
-						<item>spirv-cross-cored.lib</item>
-						<item>spirv-cross-glsld.lib</item>
-						<item>spirv-cross-hlsld.lib</item>
-						<item>spirv-cross-msld.lib</item>
 						<item>shaderc_combinedd.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -19456,13 +19453,14 @@
 					<includePaths>
 						<item>$(VULKAN_SDK)/include</item>
 						<item>$(VULKAN_SDK)/include/glslang</item>
-						<item>$(VULKAN_SDK)/include/spirv_cross</item>
+						<item>$(SPIRVTOOLS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EDITOR_EXPORT</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(VULKAN_SDK)/Lib</item>
+						<item>$(SPIRVTOOLS_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>MachineIndependent.lib</item>
@@ -19471,10 +19469,6 @@
 						<item>SPIRV-Tools.lib</item>
 						<item>SPIRV-Tools-opt.lib</item>
 						<item>glslang.lib</item>
-						<item>spirv-cross-core.lib</item>
-						<item>spirv-cross-glsl.lib</item>
-						<item>spirv-cross-hlsl.lib</item>
-						<item>spirv-cross-msl.lib</item>
 						<item>shaderc_combined.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -19508,13 +19502,14 @@
 					<includePaths>
 						<item>$(VULKAN_SDK)/include</item>
 						<item>$(VULKAN_SDK)/include/glslang</item>
-						<item>$(VULKAN_SDK)/include/spirv_cross</item>
+						<item>$(SPIRVTOOLS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(VULKAN_SDK)/Lib</item>
+						<item>$(SPIRVTOOLS_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>MachineIndependentd.lib</item>
@@ -19523,10 +19518,6 @@
 						<item>SPIRV-Toolsd.lib</item>
 						<item>SPIRV-Tools-optd.lib</item>
 						<item>glslangd.lib</item>
-						<item>spirv-cross-cored.lib</item>
-						<item>spirv-cross-glsld.lib</item>
-						<item>spirv-cross-hlsld.lib</item>
-						<item>spirv-cross-msld.lib</item>
 						<item>shaderc_combinedd.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -19556,13 +19547,14 @@
 					<includePaths>
 						<item>$(VULKAN_SDK)/include</item>
 						<item>$(VULKAN_SDK)/include/glslang</item>
-						<item>$(VULKAN_SDK)/include/spirv_cross</item>
+						<item>$(SPIRVTOOLS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(VULKAN_SDK)/Lib</item>
+						<item>$(SPIRVTOOLS_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>MachineIndependent.lib</item>
@@ -19571,10 +19563,6 @@
 						<item>SPIRV-Tools.lib</item>
 						<item>SPIRV-Tools-opt.lib</item>
 						<item>glslang.lib</item>
-						<item>spirv-cross-core.lib</item>
-						<item>spirv-cross-glsl.lib</item>
-						<item>spirv-cross-hlsl.lib</item>
-						<item>spirv-cross-msl.lib</item>
 						<item>shaderc_combined.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>

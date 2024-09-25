@@ -331,6 +331,27 @@ local PACKAGES =
 		end
 	},
 
+	-- SPIRV tools
+	{
+		type = "GET",
+		name = "spirv-tools",
+		os = "linux",		
+		url = "https://storage.googleapis.com/spirv-tools/badges/build_link_linux_gcc_release.html",
+		patch = function()
+			run:execute(UNZIP .. " -qq install.zip")
+		end,
+	},
+	{
+		type = "GET",
+		name = "spirv-tools",
+		os = "windows",
+		-- url = "https://storage.googleapis.com/spirv-tools/badges/build_link_windows_vs2019_release.html"
+		url = "https://storage.googleapis.com/spirv-tools/artifacts/prod/graphics_shader_compiler/spirv-tools/windows-msvc-2019-release/continuous/515/20240924-081643/install.zip",
+		patch = function()
+			run:execute(UNZIP .. " -qq install.zip")
+		end,
+	},
+
 	-- Vulkan Memory Allocator
 	{
 		type = "GIT",

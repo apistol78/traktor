@@ -1,21 +1,19 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <cstring>
+#include <map>
 #include <sstream>
 
 #include <glslang/Public/ShaderLang.h>
 #include <SPIRV/GlslangToSpv.h>
 #include <spirv-tools/libspirv.hpp>
 #include <spirv-tools/optimizer.hpp>
-#include <spirv_hlsl.hpp>
-#include <spirv_glsl.hpp>
-#include <spirv_msl.hpp>
 
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
@@ -966,111 +964,6 @@ bool ProgramCompilerVk::generate(
 			//	outComputeShader = mbstows(ss.str());
 			//}
 			return true;
-		}
-		else if (crossDialect == L"MSL")
-		{
-			spirv_cross::CompilerMSL::Options options;
-			options.platform = spirv_cross::CompilerMSL::Options::iOS;
-			options.set_msl_version(2, 6);
-
-			if (!programResource->m_vertexShader.empty())
-			{
-				spirv_cross::CompilerMSL msl(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size());
-				msl.set_msl_options(options);
-				msl.build_dummy_sampler_for_combined_images();
-				msl.build_combined_image_samplers();
-				std::string source = msl.compile();
-				outVertexShader = mbstows(source);
-			}
-
-			if (!programResource->m_fragmentShader.empty())
-			{
-				spirv_cross::CompilerMSL msl(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size());
-				msl.set_msl_options(options);
-				msl.build_dummy_sampler_for_combined_images();
-				msl.build_combined_image_samplers();
-				std::string source = msl.compile();
-				outPixelShader = mbstows(source);
-			}
-
-			if (!programResource->m_computeShader.empty())
-			{
-				spirv_cross::CompilerMSL msl(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size());
-				msl.set_msl_options(options);
-				msl.build_dummy_sampler_for_combined_images();
-				msl.build_combined_image_samplers();
-				std::string source = msl.compile();
-				outComputeShader = mbstows(source);
-			}
-		}
-		else if (crossDialect == L"GLSL")
-		{
-			spirv_cross::CompilerGLSL::Options options;
-			options.vulkan_semantics = true;
-
-			if (!programResource->m_vertexShader.empty())
-			{
-				spirv_cross::CompilerGLSL glsl(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size());
-				glsl.set_common_options(options);
-				// glsl.build_dummy_sampler_for_combined_images();
-				// glsl.build_combined_image_samplers();
-				std::string source = glsl.compile();
-				outVertexShader = mbstows(source);
-			}
-
-			if (!programResource->m_fragmentShader.empty())
-			{
-				spirv_cross::CompilerGLSL glsl(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size());
-				glsl.set_common_options(options);
-				// glsl.build_dummy_sampler_for_combined_images();
-				// glsl.build_combined_image_samplers();
-				std::string source = glsl.compile();
-				outPixelShader = mbstows(source);
-			}
-
-			if (!programResource->m_computeShader.empty())
-			{
-				spirv_cross::CompilerGLSL glsl(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size());
-				glsl.set_common_options(options);
-				// glsl.build_dummy_sampler_for_combined_images();
-				// glsl.build_combined_image_samplers();
-				std::string source = glsl.compile();
-				outComputeShader = mbstows(source);
-			}
-		}
-		else if (crossDialect == L"HLSL")
-		{
-			spirv_cross::CompilerHLSL::Options options;
-
-			if (!programResource->m_vertexShader.empty())
-			{
-				spirv_cross::CompilerHLSL hlsl(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size());
-				hlsl.set_hlsl_options(options);
-				hlsl.build_dummy_sampler_for_combined_images();
-				hlsl.build_combined_image_samplers();
-				std::string source = hlsl.compile();
-				outVertexShader = mbstows(source);
-			}
-
-			if (!programResource->m_fragmentShader.empty())
-			{
-				spirv_cross::CompilerHLSL hlsl(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size());
-				hlsl.set_hlsl_options(options);
-				hlsl.build_dummy_sampler_for_combined_images();
-				hlsl.build_combined_image_samplers();
-				std::string source = hlsl.compile();
-				outPixelShader = mbstows(source);
-			}
-
-			if (!programResource->m_computeShader.empty())
-			{
-				spirv_cross::CompilerHLSL hlsl(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size());
-				hlsl.set_hlsl_options(options);
-				hlsl.build_dummy_sampler_for_combined_images();
-				hlsl.build_combined_image_samplers();
-				std::string source = hlsl.compile();
-				outComputeShader = mbstows(source);
-			}
 		}
 		else
 		{
