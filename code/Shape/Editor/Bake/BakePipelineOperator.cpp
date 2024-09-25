@@ -199,7 +199,8 @@ void addSky(
 	tracerTask->addTracerEnvironment(new TracerEnvironment(new SkyProbe(
 		skyComponentData->getSkyOverHorizon(),
 		skyComponentData->getSkyUnderHorizon(),
-		skyComponentData->getIntensity()
+		skyComponentData->getIntensity(),
+		skyComponentData->getSaturation()
 	)));
 
 	/*
@@ -776,7 +777,7 @@ bool BakePipelineOperator::build(
 					// Add visual model to tracer task.
 					if (visualModel)
 					{
-						log::info << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L") " << str(L"%08x", modelHash) << Endl;
+						log::debug << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L") " << str(L"%08x", modelHash) << Endl;
 
 						if (configuration->getEnableLightmaps())
 						{
@@ -784,7 +785,7 @@ bool BakePipelineOperator::build(
 							const int32_t lightmapSize = visualModel->getProperty< int32_t >(L"LightmapSize", 0);
 							const int32_t lightmapDesiredSize = visualModel->getProperty< int32_t >(L"LightmapDesiredSize", 0);
 
-							log::info <<
+							log::debug <<
 								L"Lightmap ID " << lightmapDiffuseId.format() << L", " <<
 								L"Lightmap size " << lightmapSize << L" (" << lightmapDesiredSize << L")" << Endl;
 

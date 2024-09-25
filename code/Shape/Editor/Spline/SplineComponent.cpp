@@ -280,7 +280,8 @@ void SplineComponent::update(const world::UpdateParams& update)
 
 					auto& batch = m_batches.push_back();
 
-					const uint32_t materialHash = DeepHash(&outputModel->getMaterial(i)).get();
+					const model::Material material = outputModel->getMaterial(i);
+					const uint32_t materialHash = DeepHash(&material).get();
 					const Guid materialId = Guid(L"{8BB018D2-7AAC-4F9D-A5A4-DE396604862C}").permutation(materialHash);
 
 					if (!m_resourceManager->bind(resource::Id< render::Shader >(materialId), batch.shader))

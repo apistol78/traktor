@@ -51,9 +51,9 @@ public:
 	{
 	}
 
-	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final
+	virtual Vector4 evaluate(const Polar& direction) const override final
 	{
-		return m_fn(unit);
+		return m_fn(direction.toUnitCartesian());
 	}
 
 private:

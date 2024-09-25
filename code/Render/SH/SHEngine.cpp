@@ -10,7 +10,6 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
-#include "Core/Math/Polar.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Thread/JobManager.h"
@@ -54,9 +53,7 @@ void SHEngine::generateSamplePoints(uint32_t count)
 			const float phi = 2.0f * std::acos(std::sqrt(1.0f - uv.x));
 			const float theta = 2.0f * PI * uv.y;
 
-			m_samplePoints[o].unit = Polar(phi, theta).toUnitCartesian();
-			m_samplePoints[o].phi = phi;
-			m_samplePoints[o].theta = theta;
+			m_samplePoints[o].direction = Polar(phi, theta);
 			m_samplePoints[o].coefficients.resize(m_coefficientCount);
 
 			for (int32_t l = 0; l < (int32_t)m_bandCount; ++l)
@@ -134,9 +131,7 @@ void SHEngine::generateCoefficientsJob(SHFunction* function, uint32_t start, uin
 {
 	for (uint32_t i = start; i < end; ++i)
 	{
-		const float phi = m_samplePoints[i].phi;
-		const float theta = m_samplePoints[i].theta;
-		const Vector4 fs = function->evaluate(phi, theta, m_samplePoints[i].unit);
+		const Vector4 fs = function->evaluate(m_samplePoints[i].direction);
 		for (uint32_t n = 0; n < m_coefficientCount; ++n)
 			(*outResult)[n] += fs * m_samplePoints[i].coefficients[n];
 	}

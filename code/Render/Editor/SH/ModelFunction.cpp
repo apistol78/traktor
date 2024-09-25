@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -42,7 +42,7 @@ void ModelFunction::setEvaluationPoint(const Vector4& position, const Vector4& n
 	m_normal = normal;
 }
 
-Vector4 ModelFunction::evaluate(float phi, float theta, const Vector4& unit) const
+Vector4 ModelFunction::evaluate(const Polar& direction) const
 {
 	return Vector4::zero();
 }

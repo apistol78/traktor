@@ -13,10 +13,10 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_CLASS(L"RayLeighPhaseFunction", RayLeighPhaseFunction, SHFunction)
 
-Vector4 RayLeighPhaseFunction::evaluate(float phi, float theta, const Vector4& unit) const
+Vector4 RayLeighPhaseFunction::evaluate(const Polar& direction) const
 {
 	const Vector4 c_viewDirection(0.0f, 0.0f, 1.0f, 0.0f);
-	const Scalar a = max(dot3(c_viewDirection, unit) * 2.0_simd, 0.0_simd);
+	const Scalar a = max(dot3(c_viewDirection, direction.toUnitCartesian()) * 2.0_simd, 0.0_simd);
 	//return 1.0f - (a * a + 1.0f) * 3.0f / 4.0f;
 	return Vector4(a, a, a, 0.0f);
 }

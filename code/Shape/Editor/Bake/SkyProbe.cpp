@@ -6,28 +6,75 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <functional>
+#include "Core/Math/Quasirandom.h"
+#include "Render/SH/SHEngine.h"
+#include "Render/SH/SHFunction.h"
 #include "Shape/Editor/Bake/SkyProbe.h"
 
 namespace traktor::shape
 {
+	namespace
+	{
+
+class WrappedSHFunction : public render::SHFunction
+{
+public:
+	explicit WrappedSHFunction(const std::function< Vector4 (const Vector4&) >& fn)
+	:	m_fn(fn)
+	{
+	}
+
+	virtual Vector4 evaluate(const Polar& direction) const override final
+	{
+		return m_fn(direction.toUnitCartesian());
+	}
+
+private:
+	std::function< Vector4 (const Vector4&) > m_fn;
+};
+
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SkyProbe", 0, SkyProbe, IProbe)
 
-SkyProbe::SkyProbe(const Color4f& skyOverHorizon, const Color4f& skyUnderHorizon, float intensity)
-:   m_skyOverHorizon(skyOverHorizon)
-,	m_skyUnderHorizon(skyUnderHorizon)
-,	m_intensity(intensity)
+SkyProbe::SkyProbe(const Color4f& skyOverHorizon, const Color4f& skyUnderHorizon, float intensity_, float saturation_)
 {
+	const Scalar intensity(intensity_);
+	const Scalar saturation(saturation_);
+
+	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
+		Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
+
+		// Sample over hemisphere.
+		for (int32_t i = 0; i < 1000; ++i)
+		{
+			const Vector2 uv = Quasirandom::hammersley(i, 1000);
+			const Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
+			const Vector4 rd = unit;
+			
+			Vector4 col = Vector4(skyOverHorizon.linear()) - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;
+			col = lerp(col, skyUnderHorizon.linear(), power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
+
+			const Scalar w = dot3(direction, unit);
+			cl += Color4f(col * w);
+		}
+
+		// Apply saturation.
+		const Scalar bw = dot3(cl, Vector4(1.0f, 1.0f, 1.0f)) / 3.0_simd;
+		cl = Color4f(lerp(Vector4(bw, bw, bw, 0.0f), cl, saturation));
+
+		return (cl * intensity * 2.0_simd) / 1000.0_simd;
+	});
+
+	render::SHEngine shEngine(3);
+	shEngine.generateSamplePoints(10000);
+	shEngine.generateCoefficients(&shFunction, true, m_shCoeffs);
 }
 
 Color4f SkyProbe::sampleRadiance(const Vector4& direction) const
 {
-    const Vector4 rd = direction;
-
-	Vector4 col = Vector4(m_skyOverHorizon.linear()) - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;
-	col = lerp(col, m_skyUnderHorizon.linear(), power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
-
-    return Color4f(col) * Scalar(m_intensity);
+	return Color4f(m_shCoeffs.evaluate3(Polar::fromUnitCartesian(direction)));
 }
 
 void SkyProbe::serialize(ISerializer& s)

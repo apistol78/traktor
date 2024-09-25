@@ -44,7 +44,7 @@ public:
 
 	void setEvaluationPoint(const Vector4& position, const Vector4& normal);
 
-	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final;
+	virtual Vector4 evaluate(const Polar& direction) const override final;
 
 private:
 	Ref< model::Model > m_model;

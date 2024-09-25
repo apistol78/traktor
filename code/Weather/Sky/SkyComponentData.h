@@ -68,6 +68,8 @@ public:
 
 	float getIntensity() const { return m_intensity; }
 
+	float getSaturation() const { return m_saturation; }
+
 	const Color4f& getSkyOverHorizon() const { return m_skyOverHorizon; }
 
 	const Color4f& getSkyUnderHorizon() const { return m_skyUnderHorizon; }

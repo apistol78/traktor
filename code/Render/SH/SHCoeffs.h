@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Polar.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -39,9 +40,9 @@ public:
 
 	SHCoeffs transform(const SHMatrix& matrix) const;
 
-	Vector4 evaluate(float phi, float theta) const;
+	Vector4 evaluate(const Polar& direction) const;
 
-	Vector4 evaluate3(float phi, float theta) const;
+	Vector4 evaluate3(const Polar& direction) const;
 
 	Vector4 operator * (const SHCoeffs& coeffs) const;
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,7 +31,7 @@ class T_DLLCLASS DirectionalLight : public SHFunction
 public:
 	explicit DirectionalLight(const Vector4& direction);
 
-	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final;
+	virtual Vector4 evaluate(const Polar& direction) const override final;
 
 private:
 	Vector4 m_direction;

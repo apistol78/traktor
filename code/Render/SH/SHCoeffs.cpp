@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -47,7 +47,7 @@ SHCoeffs SHCoeffs::transform(const SHMatrix& matrix) const
 	return out;
 }
 
-Vector4 SHCoeffs::evaluate(float phi, float theta) const
+Vector4 SHCoeffs::evaluate(const Polar& direction) const
 {
 	Vector4 result = Vector4::zero();
 	for (int32_t l = 0; l < m_bandCount; ++l)
@@ -55,16 +55,16 @@ Vector4 SHCoeffs::evaluate(float phi, float theta) const
 		for (int32_t m = -l; m <= l; ++m)
 		{
 			const int32_t index = l * (l + 1) + m;
-			result += Scalar(SH(l, m, phi, theta)) * m_data[index];
+			result += Scalar(SH(l, m, direction.phi, direction.theta)) * m_data[index];
 		}
 	}
 	return result;
 }
 
-Vector4 SHCoeffs::evaluate3(float phi, float theta) const
+Vector4 SHCoeffs::evaluate3(const Polar& direction) const
 {
 #if !defined(__ANDROID__)
-	Vector4 dir = Polar(phi, theta).toUnitCartesian();
+	const Vector4 dir = direction.toUnitCartesian();
 
 	float shd[9];
 	shEvaluate3(dir.x(), dir.y(), dir.z(), shd);

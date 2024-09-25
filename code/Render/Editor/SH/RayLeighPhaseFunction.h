@@ -29,7 +29,7 @@ class T_DLLCLASS RayLeighPhaseFunction : public SHFunction
 	T_RTTI_CLASS;
 
 public:
-	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final;
+	virtual Vector4 evaluate(const Polar& direction) const override final;
 };
 
 }

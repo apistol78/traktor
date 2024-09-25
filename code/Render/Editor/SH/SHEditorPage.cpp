@@ -43,15 +43,15 @@ Vector4 polarToCartesian(float phi, float theta)
 // Evaluate point directly using source function.
 Vector4 Pfs(const SHFunction* function, float phi, float theta)
 {
-	const Vector4 p = polarToCartesian(phi, theta);
-	return p * function->evaluate(phi, theta, p);
+	const Polar polar(phi, theta);
+	return polar.toUnitCartesian() * function->evaluate(polar);
 }
 
 // Evaluate point using SH.
 Vector4 Psh(const SHCoeffs& coefficients, float phi, float theta)
 {
-	const Vector4 p = polarToCartesian(phi, theta);
-	return p * coefficients.evaluate3(phi, theta);
+	const Polar polar(phi, theta);
+	return polar.toUnitCartesian() * coefficients.evaluate3(polar);
 }
 
 SHMatrix concate(const SHMatrix& m1, const SHMatrix& m2)

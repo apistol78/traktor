@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,10 +20,10 @@ IBLProbe::IBLProbe(drawing::Image* image)
 {
 }
 
-Vector4 IBLProbe::evaluate(float phi, float theta, const Vector4& unit) const
+Vector4 IBLProbe::evaluate(const Polar& direction) const
 {
 	float T_MATH_ALIGN16 u[4];
-	unit.storeAligned(u);
+	direction.toUnitCartesian().storeAligned(u);
 
 	const float r = (float)((1.0f / PI) * acos(u[2]) / sqrt(u[0] * u[0] + u[1] * u[1]));
 

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Math/Color4f.h"
+#include "Render/SH/SHCoeffs.h"
 #include "Shape/Editor/Bake/IProbe.h"
 
 namespace traktor::shape
@@ -21,16 +22,14 @@ class SkyProbe : public IProbe
 public:
 	SkyProbe() = default;
 
-	explicit SkyProbe(const Color4f& skyOverHorizon, const Color4f& skyUnderHorizon, float intensity);
+	explicit SkyProbe(const Color4f& skyOverHorizon, const Color4f& skyUnderHorizon, float intensity, float saturation);
 
 	virtual Color4f sampleRadiance(const Vector4& direction) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	Color4f m_skyOverHorizon;
-	Color4f m_skyUnderHorizon;
-	float m_intensity;
+	render::SHCoeffs m_shCoeffs;
 };
 	
 }
