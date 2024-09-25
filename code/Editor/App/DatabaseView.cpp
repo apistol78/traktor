@@ -426,7 +426,7 @@ bool DatabaseView::create(ui::Widget* parent)
 
 	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewInstance"), i18n::Text(L"DATABASE_NEW_INSTANCE")));
 	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewGroup"), i18n::Text(L"DATABASE_NEW_GROUP")));
-	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
+	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Rename"), i18n::Text(L"DATABASE_RENAME")));
 	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	m_menuGroup[0]->add(new ui::MenuItem(L"-"));
 	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Database.FavoriteEntireGroup"), i18n::Text(L"DATABASE_FAVORITE_ENTIRE_GROUP")));
@@ -435,7 +435,7 @@ bool DatabaseView::create(ui::Widget* parent)
 
 	m_menuGroup[1]->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewInstance"), i18n::Text(L"DATABASE_NEW_INSTANCE")));
 	m_menuGroup[1]->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewGroup"), i18n::Text(L"DATABASE_NEW_GROUP")));
-	m_menuGroup[1]->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
+	m_menuGroup[1]->add(new ui::MenuItem(ui::Command(L"Editor.Rename"), i18n::Text(L"DATABASE_RENAME")));
 	m_menuGroup[1]->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	m_menuGroup[1]->add(new ui::MenuItem(L"-"));
 	m_menuGroup[1]->add(new ui::MenuItem(ui::Command(L"Editor.Database.UnFavoriteEntireGroup"), i18n::Text(L"DATABASE_UNFAVORITE_ENTIRE_GROUP")));
@@ -444,7 +444,7 @@ bool DatabaseView::create(ui::Widget* parent)
 
 	m_menuInstance = new ui::Menu();
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.ReplaceInstance"), i18n::Text(L"DATABASE_REPLACE_INSTANCE")));
-	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Rename"), i18n::Text(L"DATABASE_RENAME")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.DefaultEditInstance"), i18n::Text(L"DATABASE_DEFAULT_EDIT_INSTANCE")));
@@ -471,7 +471,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Explore"), i18n::Text(L"DATABASE_EXPLORE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.ReplaceInstance"), i18n::Text(L"DATABASE_REPLACE_INSTANCE")));
-	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Rename"), i18n::Text(L"DATABASE_RENAME")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.DefaultEditInstance"), i18n::Text(L"DATABASE_DEFAULT_EDIT_INSTANCE")));
@@ -712,11 +712,6 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			}
 
 			browseTypeDlg.destroy();
-		}
-		else if (command == L"Editor.Database.Rename")	// Rename
-		{
-			if (treeItem)
-				treeItem->edit();
 		}
 		else if (command == L"Editor.Delete")	// Delete
 		{
@@ -1026,11 +1021,6 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			Ref< db::Group > newGroup = group->createGroup(i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"));
 			if (newGroup)
 				updateView();
-		}
-		else if (command == L"Editor.Database.Rename")	// Rename
-		{
-			if (treeItem)
-				treeItem->edit();
 		}
 		else if (command == L"Editor.Delete")	// Delete
 		{
