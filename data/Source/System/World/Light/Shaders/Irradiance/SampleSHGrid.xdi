@@ -1974,16 +1974,13 @@ YZ, Z, 1
 			</outputPins>
 			<script>
 			<![CDATA[
-//$Output = $Input;
 
 const vec3 wp = $WorldPosition.xyz;
 const vec3 mn = $GridBoundsMin.xyz;
 const vec3 mx = $GridBoundsMax.xyz;
 const vec3 gs = $GridSize.xyz;
 
-vec3 h = (mx - mn) / (gs * 2.0f);
-
-const vec3 t = clamp((wp - h - mn) / (mx - mn), vec3(0.0f), vec3(1.0f));
+const vec3 t = clamp((wp - mn) / (mx - mn), vec3(0.0f), vec3(1.0f));
 const vec3 p = t * gs;
 
 $BlendFactors = vec4(fract(p), 0.0f);
