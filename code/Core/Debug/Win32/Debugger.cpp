@@ -45,7 +45,7 @@ INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	{
 	case WM_INITDIALOG:
 		{
-			DialogParams* params = reinterpret_cast< DialogParams* >(lParam);
+			const DialogParams* params = reinterpret_cast< const DialogParams* >(lParam);
 			std::stringstream ss;
 			ss << params->file << " (" << params->line << ")";
 			SetDlgItemText(hWnd, IDC_EXPRESSION, mbstots(params->expression).c_str());
@@ -89,11 +89,7 @@ Debugger& Debugger::getInstance()
 void Debugger::assertionFailed(const char* const expression, const char* const file, int line, const wchar_t* const message)
 {
 #if !defined(T_STATIC)
-#   if defined(_DEBUG)
-	HINSTANCE hInstance = GetModuleHandle(_T("Traktor.Core_d.dll"));
-#   else
 	HINSTANCE hInstance = GetModuleHandle(_T("Traktor.Core.dll"));
-#   endif
 #else
 	HINSTANCE hInstance = GetModuleHandle(NULL);
 #endif
@@ -129,9 +125,8 @@ void Debugger::assertionFailed(const char* const expression, const char* const f
 		msg = cs.str();
 	}
 
-	DialogParams params = { expression, file, line, msg.c_str() };
-
-	INT_PTR result = DialogBoxParam(
+	const DialogParams params = { expression, file, line, msg.c_str() };
+	const INT_PTR result = DialogBoxParam(
 		hInstance,
 		MAKEINTRESOURCE(IDD_ASSERT_DIALOG),
 		NULL,
