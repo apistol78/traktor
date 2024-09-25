@@ -924,5 +924,9 @@
 			<first>traktor.sound.BankAsset</first>
 			<second>$(Images.Path)/Thumbnails/sound_SoundAsset.svg</second>
 		</item>
+		<item>
+			<first>traktor.input.InputMappingAsset</first>
+			<second>$(Images.Path)/Thumbnails/input_InputMappingAsset.svg</second>
+		</item>
 	</values>
 </object>
