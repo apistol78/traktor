@@ -466,8 +466,7 @@ bool ModelToolDialog::saveModel(Model* model)
 
 void ModelToolDialog::updateModel()
 {
-	RefArray< ui::TreeViewItem > items;
-	m_modelTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > items = m_modelTree->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 
 	if (items.size() == 1)
 		m_model = items[0]->getData< Model >(L"MODEL");
@@ -659,8 +658,8 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	RefArray< ui::TreeViewItem > items;
-	if (m_modelTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
+	RefArray< ui::TreeViewItem > items = m_modelTree->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	if (items.size() != 1)
 		return;
 
 	T_ASSERT(items.front());
@@ -971,10 +970,8 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 		{
 			T_ASSERT(m_modelTris);
 
-			int32_t channel = m_toolChannel->getSelected();
-
-			RefArray< ui::TreeViewItem > selectedItems;
-			m_skeletonTree->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+			RefArray< ui::TreeViewItem > selectedItems = m_skeletonTree->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+			const int32_t channel = m_toolChannel->getSelected();
 
 			int32_t weightJoint = -1;
 			if (selectedItems.size() == 1)

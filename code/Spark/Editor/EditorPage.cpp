@@ -415,8 +415,7 @@ void EditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 
 void EditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::TreeViewItem > selectedItems;
-	m_treeMovie->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > selectedItems = m_treeMovie->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 
 	if (m_selectedCharacterInstance)
 	{

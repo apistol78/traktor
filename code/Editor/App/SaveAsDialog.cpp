@@ -122,8 +122,8 @@ ui::TreeViewItem* SaveAsDialog::buildGroupItems(ui::TreeView* treeView, ui::Tree
 
 void SaveAsDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::TreeViewItem > items;
-	if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) == 1)
+	RefArray< ui::TreeViewItem > items = m_treeDatabase->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	if (items.size() == 1)
 		m_group = items.back()->getData< db::Group >(L"GROUP");
 	else
 		m_group = nullptr;

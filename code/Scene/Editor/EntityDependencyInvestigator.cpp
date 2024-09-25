@@ -162,8 +162,8 @@ void EntityDependencyInvestigator::eventDependencyButtonDown(ui::MouseButtonDown
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	RefArray< ui::TreeViewItem > items;
-	if (m_dependencyTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
+	RefArray< ui::TreeViewItem > items = m_dependencyTree->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	if (items.size() != 1)
 		return;
 
 	ui::TreeViewItem* treeItem = items.front();

@@ -427,8 +427,7 @@ ui::TreeViewItem* SolutionForm::createTreeAggregationItemItem(ui::TreeViewItem* 
 
 Solution* SolutionForm::getSelectedSolution() const
 {
-	RefArray< ui::TreeViewItem > selectedItems;
-	m_treeSolution->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > selectedItems = m_treeSolution->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 	if (selectedItems.size() != 1)
 		return nullptr;
 
@@ -447,8 +446,7 @@ Solution* SolutionForm::getSelectedSolution() const
 
 Project* SolutionForm::getSelectedProject() const
 {
-	RefArray< ui::TreeViewItem > selectedItems;
-	m_treeSolution->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > selectedItems = m_treeSolution->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 	if (selectedItems.size() != 1)
 		return nullptr;
 
@@ -467,8 +465,7 @@ Project* SolutionForm::getSelectedProject() const
 
 Configuration* SolutionForm::getSelectedConfiguration() const
 {
-	RefArray< ui::TreeViewItem > selectedItems;
-	m_treeSolution->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > selectedItems = m_treeSolution->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 	if (selectedItems.size() != 1)
 		return nullptr;
 
@@ -487,8 +484,7 @@ Configuration* SolutionForm::getSelectedConfiguration() const
 
 Filter* SolutionForm::getSelectedFilter() const
 {
-	RefArray< ui::TreeViewItem > selectedItems;
-	m_treeSolution->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > selectedItems = m_treeSolution->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 	if (selectedItems.size() != 1)
 		return nullptr;
 
@@ -635,8 +631,7 @@ bool SolutionForm::commandExit()
 
 void SolutionForm::commandCopy(bool cut)
 {
-	RefArray< ui::TreeViewItem > selectedItems;
-	m_treeSolution->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > selectedItems = m_treeSolution->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 	if (selectedItems.size() != 1)
 		return;
 
@@ -861,8 +856,7 @@ void SolutionForm::eventTreeButtonDown(ui::TreeViewItemMouseButtonDownEvent* eve
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	RefArray< ui::TreeViewItem > selectedItems;
-	m_treeSolution->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > selectedItems = m_treeSolution->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 	if (selectedItems.size() != 1)
 		return;
 
@@ -1192,8 +1186,7 @@ void SolutionForm::eventTreeButtonDown(ui::TreeViewItemMouseButtonDownEvent* eve
 
 void SolutionForm::eventTreeSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::TreeViewItem > selectedItems;
-	m_treeSolution->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > selectedItems = m_treeSolution->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 	if (selectedItems.size() != 1)
 		return;
 

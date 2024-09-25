@@ -555,9 +555,7 @@ void DatabaseView::setDatabase(db::Database* db)
 	updateView();
 
 	// Expand root items by default after setting a new database.
-	RefArray< ui::TreeViewItem > items;
-	m_treeDatabase->getItems(items, ui::TreeView::GfDefault);
-	for (auto item : items)
+	for (auto item : m_treeDatabase->getItems(ui::TreeView::GfDefault))
 		item->expand();
 }
 
@@ -604,13 +602,9 @@ void DatabaseView::updateView()
 bool DatabaseView::highlight(const db::Instance* instance)
 {
 	const int32_t viewMode = m_toolViewMode->getSelected();
-
-	RefArray< ui::TreeViewItem > items;
-	m_treeDatabase->getItems(items, ui::TreeView::GfDescendants);
-
 	if (viewMode == 0)
 	{
-		for (auto item : items)
+		for (auto item : m_treeDatabase->getItems(ui::TreeView::GfDescendants))
 		{
 			if (item->getData< db::Instance >(L"INSTANCE") == instance)
 			{
@@ -622,7 +616,7 @@ bool DatabaseView::highlight(const db::Instance* instance)
 	}
 	else if (viewMode == 1)
 	{
-		for (auto item : items)
+		for (auto item : m_treeDatabase->getItems(ui::TreeView::GfDescendants))
 		{
 			if (item->getData< db::Group >(L"GROUP") == instance->getParent())
 			{
@@ -633,7 +627,6 @@ bool DatabaseView::highlight(const db::Instance* instance)
 		updateGridInstances(instance);
 		return true;
 	}
-
 	return false;
 }
 
@@ -647,8 +640,8 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 	const int32_t viewMode = m_toolViewMode->getSelected();
 	if (viewMode == 0)	// Hierarchy
 	{	
-		RefArray< ui::TreeViewItem > items;
-		if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
+		RefArray< ui::TreeViewItem > items = m_treeDatabase->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+		if (items.size() != 1)
 			return false;
 
 		treeItem = items.front();
@@ -657,8 +650,8 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 	}
 	else if (viewMode == 1)	// Split
 	{
-		RefArray< ui::TreeViewItem > items;
-		if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
+		RefArray< ui::TreeViewItem > items = m_treeDatabase->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+		if (items.size() != 1)
 			return false;
 
 		treeItem = items.front();
@@ -1299,8 +1292,8 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 
 	m_listInstances->setItems(nullptr);
 
-	RefArray< ui::TreeViewItem > items;
-	if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) <= 0)
+	RefArray< ui::TreeViewItem > items = m_treeDatabase->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	if (items.empty())
 		return;
 
 	RefArray< db::Instance > childInstances;
@@ -1468,8 +1461,8 @@ void DatabaseView::handleInstanceButtonDown(ui::Event* event, const ui::Point& p
 	ui::Associative* selectedItem = nullptr;
 	if (event->getSender() == m_treeDatabase)
 	{
-		RefArray< ui::TreeViewItem > items;
-		if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
+		RefArray< ui::TreeViewItem > items = m_treeDatabase->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+		if (items.size() != 1)
 			return;
 		selectedItem = items.front();
 	}
@@ -1685,8 +1678,7 @@ void DatabaseView::eventInstanceActivate(ui::TreeViewItemActivateEvent* event)
 
 void DatabaseView::eventInstanceSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::TreeViewItem > items;
-	if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) <= 0)
+	if (m_treeDatabase->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly).empty())
 		return;
 
 	updateGridInstances(nullptr);

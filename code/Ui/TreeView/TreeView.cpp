@@ -104,9 +104,11 @@ void TreeView::removeAllItems()
 	requestUpdate();
 }
 
-uint32_t TreeView::getItems(RefArray< TreeViewItem >& outItems, uint32_t flags) const
+RefArray< TreeViewItem > TreeView::getItems(uint32_t flags) const
 {
 	typedef std::pair< RefArray< TreeViewItem >::const_iterator, RefArray< TreeViewItem >::const_iterator > range_t;
+
+	RefArray< TreeViewItem > items;
 
 	std::stack< range_t > stack;
 	stack.push(std::make_pair(m_roots.begin(), m_roots.end()));
@@ -121,10 +123,10 @@ uint32_t TreeView::getItems(RefArray< TreeViewItem >& outItems, uint32_t flags) 
 			if (flags & GfSelectedOnly)
 			{
 				if (item->isSelected())
-					outItems.push_back(item);
+					items.push_back(item);
 			}
 			else
-				outItems.push_back(item);
+				items.push_back(item);
 
 			if (flags & GfDescendants)
 			{
@@ -140,23 +142,19 @@ uint32_t TreeView::getItems(RefArray< TreeViewItem >& outItems, uint32_t flags) 
 			stack.pop();
 	}
 
-	return uint32_t(outItems.size());
+	return items;
 }
 
 void TreeView::deselectAll()
 {
-	RefArray< TreeViewItem > selectedItems;
-	getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly);
-	for (auto selectedItem : selectedItems)
+	for (auto selectedItem : getItems(TreeView::GfDescendants | TreeView::GfSelectedOnly))
 		selectedItem->unselect();
 }
 
 Ref< HierarchicalState > TreeView::captureState() const
 {
 	Ref< HierarchicalState > state = new HierarchicalState();
-	RefArray< TreeViewItem > items;
-	getItems(items, GfDescendants);
-	for (auto item : items)
+	for (auto item : getItems(GfDescendants))
 	{
 		state->addState(
 			item->getPath(),
@@ -170,8 +168,7 @@ Ref< HierarchicalState > TreeView::captureState() const
 void TreeView::applyState(const HierarchicalState* state)
 {
 	RefArray< TreeViewItem > items;
-	getItems(items, GfDescendants);
-	for (auto item : items)
+	for (auto item : getItems(GfDescendants))
 	{
 		const std::wstring path = item->getPath();
 
@@ -198,9 +195,7 @@ int32_t TreeView::getMaxImageHeight() const
 void TreeView::layoutCells(const Rect& rc)
 {
 	int32_t height = getFontMetric().getHeight() + pixel(6_ut);
-
-	RefArray< TreeViewItem > items;
-	getItems(items, GfDescendants | GfExpandedOnly);
+	RefArray< TreeViewItem > items = getItems(GfDescendants | GfExpandedOnly);
 
 	int32_t maxWidth = rc.right - rc.left;
 	for (auto item : items)
@@ -288,8 +283,7 @@ void TreeView::eventScroll(ScrollEvent* event)
 
 void TreeView::eventKeyDown(KeyDownEvent* event)
 {
-	RefArray< TreeViewItem > items;
-	getItems(items, TreeView::GfDescendants | TreeView::GfExpandedOnly);
+	RefArray< TreeViewItem > items = getItems(TreeView::GfDescendants | TreeView::GfExpandedOnly);
 
 	// Find index of selected item.
 	int32_t current = -1;

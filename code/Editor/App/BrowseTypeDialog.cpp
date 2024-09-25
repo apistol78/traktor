@@ -204,8 +204,7 @@ const TypeInfo* BrowseTypeDialog::getSelectedType() const
 
 void BrowseTypeDialog::updatePreviewList()
 {
-	RefArray< ui::TreeViewItem > items;
-	m_categoryTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > items = m_categoryTree->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 	if (!items.empty())
 	{
 		Ref< ui::PreviewItems > previewItems = items[0]->getData< ui::PreviewItems >(L"ITEMS");

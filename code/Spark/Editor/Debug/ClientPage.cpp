@@ -133,10 +133,9 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 
 void ClientPage::updateSelection()
 {
-	RefArray< ui::TreeViewItem > items;
-	m_debugTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
-
 	Ref< InstanceDebugInfo > debugInfo;
+
+	RefArray< ui::TreeViewItem > items = m_debugTree->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 	if (items.size() == 1)
 		debugInfo = items.front()->getData< InstanceDebugInfo >(L"DEBUGINFO");
 

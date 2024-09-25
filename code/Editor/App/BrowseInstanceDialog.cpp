@@ -229,8 +229,7 @@ ui::TreeViewItem* BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, 
 
 void BrowseInstanceDialog::updatePreviewList()
 {
-	RefArray< ui::TreeViewItem > items;
-	m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > items = m_treeDatabase->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 
 	// Stop all pending preview tasks.
 	m_previewTasks.clear();

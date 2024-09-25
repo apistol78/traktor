@@ -62,7 +62,7 @@ public:
 
 	void removeAllItems();
 
-	uint32_t getItems(RefArray< TreeViewItem >& outItems, uint32_t flags) const;
+	RefArray< TreeViewItem > getItems(uint32_t flags) const;
 
 	void deselectAll();
 

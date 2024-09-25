@@ -345,8 +345,8 @@ void ThemeForm::updatePreview()
 
 	if (!m_pinnedElementItem)
 	{
-		RefArray< TreeViewItem > selectedItems;
-		if (m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly) != 1)
+		RefArray< TreeViewItem > selectedItems = m_treeTheme->getItems(TreeView::GfDescendants | TreeView::GfSelectedOnly);
+		if (selectedItems.size() != 1)
 			return;
 		selectedEntityItem = getEntity(selectedItems.front());
 	}
@@ -459,8 +459,8 @@ void ThemeForm::handleCommand(const Command& command)
 		ui::Application::getInstance()->exit(0);
 	else if (command == L"Edit.Copy")
 	{
-		RefArray< TreeViewItem > selectedItems;
-		if (m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly) != 1)
+		RefArray< TreeViewItem > selectedItems = m_treeTheme->getItems(TreeView::GfDescendants | TreeView::GfSelectedOnly);
+		if (selectedItems.size() != 1)
 			return;
 
 		Ref< TreeViewItem > selectedItem = selectedItems.front();
@@ -480,8 +480,8 @@ void ThemeForm::handleCommand(const Command& command)
 	}
 	else if (command == L"Edit.Paste")
 	{
-		RefArray< TreeViewItem > selectedItems;
-		if (m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly) != 1)
+		RefArray< TreeViewItem > selectedItems = m_treeTheme->getItems(TreeView::GfDescendants | TreeView::GfSelectedOnly);
+		if (selectedItems.size() != 1)
 			return;
 
 		Ref< PropertyGroup > props = dynamic_type_cast< PropertyGroup* >(Application::getInstance()->getClipboard()->getObject());
@@ -574,8 +574,7 @@ void ThemeForm::eventTreeButtonDown(TreeViewItemMouseButtonDownEvent* event)
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	RefArray< ui::TreeViewItem > selectedItems;
-	m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly);
+	RefArray< TreeViewItem > selectedItems = m_treeTheme->getItems(TreeView::GfDescendants | TreeView::GfSelectedOnly);
 	if (selectedItems.size() != 1)
 		return;
 
@@ -698,8 +697,7 @@ void ThemeForm::eventPaletteDoubleClick(MouseDoubleClickEvent* event)
 
 	const Color4ub color = PropertyColor::get(selectedRow->getData< PropertyColor >(L"COLOR"));
 
-	RefArray< ui::TreeViewItem > selectedItems;
-	m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly);
+	RefArray< TreeViewItem > selectedItems = m_treeTheme->getItems(TreeView::GfDescendants | TreeView::GfSelectedOnly);
 	if (selectedItems.size() != 1)
 		return;
 

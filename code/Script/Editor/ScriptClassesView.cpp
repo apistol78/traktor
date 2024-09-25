@@ -191,9 +191,7 @@ bool ScriptClassesView::create(ui::Widget* parent)
 			runtimeClassFactory->createClasses(&registrar);
 	}
 
-	RefArray< ui::TreeViewItem > items;
-	m_treeClasses->getItems(items, ui::TreeView::GfDefault);
-	for (auto item : items)
+	for (auto item : m_treeClasses->getItems(ui::TreeView::GfDefault))
 		item->sort(
 			true,
 			[](const ui::TreeViewItem* item1, const ui::TreeViewItem* item2) -> bool {
