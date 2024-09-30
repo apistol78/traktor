@@ -18,7 +18,7 @@
 #include "World/Entity/IrradianceGridComponentData.h"
 #include "World/Entity/ProbeComponentData.h"
 #include "World/Entity/ScriptComponentData.h"
-#include "World/Entity/VolumetricFogComponentData.h"
+#include "World/Entity/FogComponentData.h"
 
 namespace traktor::world
 {
@@ -36,7 +36,7 @@ TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 	typeSet.insert< IrradianceGridComponentData >();
 	typeSet.insert< ProbeComponentData >();
 	typeSet.insert< ScriptComponentData >();
-	typeSet.insert< VolumetricFogComponentData >();
+	typeSet.insert< FogComponentData >();
 	return typeSet;
 }
 
@@ -70,8 +70,8 @@ bool WorldEntityPipeline::buildDependencies(
 		pipelineDepends->addDependency(irradianceGridComponentData->getIrradianceGrid(), editor::PdfBuild | editor::PdfResource);
 	else if (auto probeComponentData = dynamic_type_cast<const ProbeComponentData*>(sourceAsset))
 		pipelineDepends->addDependency(probeComponentData->getTexture(), editor::PdfBuild | editor::PdfResource);
-	else if (auto volumetricFogComponentData = dynamic_type_cast< const VolumetricFogComponentData* >(sourceAsset))
-		pipelineDepends->addDependency(volumetricFogComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
+	else if (auto fogComponentData = dynamic_type_cast< const FogComponentData* >(sourceAsset))
+		pipelineDepends->addDependency(fogComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 	else
 	{
 		log::error << L"Unsupported component data type in world pipeline, \"" << type_name(sourceAsset) << L"\"." << Endl;

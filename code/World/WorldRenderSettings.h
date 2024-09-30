@@ -70,10 +70,6 @@ public:
 	ExposureMode exposureMode = Fixed;
 	float exposure = 1.0f;
 	ShadowSettings shadowSettings[(int)Quality::Last];
-	float fogDistance = 90.0f;
-	float fogDensity = 0.0f;
-	float fogDensityMax = 1.0f;
-	Color4f fogColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	resource::Id< render::ImageGraph > imageProcess[(int)Quality::Last];
 	resource::Id< render::ITexture > colorGrading;
 

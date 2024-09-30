@@ -31,8 +31,8 @@
 // Entity renderers
 #include "World/Entity/CullingRenderer.h"
 #include "World/Entity/DecalRenderer.h"
+#include "World/Entity/FogRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
-#include "World/Entity/VolumetricFogRenderer.h"
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
 
@@ -102,7 +102,7 @@ void DefaultEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(new world::CullingRenderer());
 	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));
 	outEntityRenderers.push_back(new world::ProbeRenderer(context->getResourceManager(), context->getRenderSystem(), worldRendererType));
-	outEntityRenderers.push_back(new world::VolumetricFogRenderer());
+	outEntityRenderers.push_back(new world::FogRenderer());
 	outEntityRenderers.push_back(new weather::PrecipitationRenderer());
 	outEntityRenderers.push_back(new weather::SkyRenderer());
 }

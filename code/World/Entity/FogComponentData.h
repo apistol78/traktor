@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,19 +38,19 @@ class Shader;
 namespace traktor::world
 {
 
-class VolumetricFogComponent;
+class FogComponent;
 
 /*!
  * \ingroup World
  */
-class T_DLLCLASS VolumetricFogComponentData : public IEntityComponentData
+class T_DLLCLASS FogComponentData : public IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	VolumetricFogComponentData();
+	Ref< FogComponent > createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	Ref< VolumetricFogComponent > createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
+	const resource::Id< render::Shader >& getShader() const;
 
 	virtual int32_t getOrdinal() const override final;
 
@@ -58,12 +58,17 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const resource::Id< render::Shader >& getShader() const { return m_shader; }
-
 private:
-	friend class VolumetricFogComponent;
+	friend class FogComponent;
 
-	resource::Id< render::Shader > m_shader;
+	// Distance fog.
+	float m_fogDistance = 90.0f;
+	float m_fogDensity = 0.0f;
+	float m_fogDensityMax = 1.0f;
+	Color4f m_fogColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+	// Volumetric fog.
+	bool m_volumetricFogEnable = false;
 	float m_maxDistance = 100.0f;
 	float m_maxScattering = 10.0f;
 	int32_t m_sliceCount = 128;

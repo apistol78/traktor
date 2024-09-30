@@ -24,11 +24,11 @@
 namespace traktor::world
 {
 
+class FogComponent;
 class IEntityRenderer;
 class IrradianceGrid;
 class LightComponent;
 class ProbeComponent;
-class VolumetricFogComponent;
 
 enum
 {
@@ -107,7 +107,7 @@ struct GatherView
     AlignedVector< Renderable > renderables;
 	AlignedVector< const LightComponent* > lights;
 	AlignedVector< const ProbeComponent* > probes;
-	const VolumetricFogComponent* fog;
+	const FogComponent* fog;
 	const IrradianceGrid* irradianceGrid;
 };
 

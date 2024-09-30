@@ -52,7 +52,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 40, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 41, WorldRenderSettings, ISerializable)
 
 void WorldRenderSettings::serialize(ISerializer& s)
 {
@@ -137,31 +137,24 @@ void WorldRenderSettings::serialize(ISerializer& s)
 			s >> ObsoleteMember< bool >(L"fogEnabled");
 	}
 
-	if (s.getVersion() >= 21)
+	if (s.getVersion() < 41)
 	{
+		T_FATAL_ASSERT(s.getVersion() >= 26);
 		if (s.getVersion() >= 34)
 		{
-			s >> Member< float >(L"fogDistance", fogDistance, AttributeUnit(UnitType::Metres));
-			s >> Member< float >(L"fogDensity", fogDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
+			s >> ObsoleteMember< float >(L"fogDistance");
+			s >> ObsoleteMember< float >(L"fogDensity");
 			if (s.getVersion() >= 39)
-				s >> Member< float >(L"fogDensityMax", fogDensityMax, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
+				s >> ObsoleteMember< float >(L"fogDensityMax");
 		}
 		else
 		{
-			s >> ObsoleteMember< float >(L"fogDistanceY", AttributeUnit(UnitType::Metres));
-			s >> Member< float >(L"fogDistanceZ", fogDistance, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
-			s >> ObsoleteMember< float >(L"fogDensityY", AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Metres));
-			s >> Member< float >(L"fogDensityZ", fogDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Metres));
+			s >> ObsoleteMember< float >(L"fogDistanceY");
+			s >> ObsoleteMember< float >(L"fogDistanceZ");
+			s >> ObsoleteMember< float >(L"fogDensityY");
+			s >> ObsoleteMember< float >(L"fogDensityZ");
 		}
-	}
-
-	if (s.getVersion() >= 26)
-		s >> Member< Color4f >(L"fogColor", fogColor, AttributeHdr());
-	else
-	{
-		Color4ub fc;
-		s >> Member< Color4ub >(L"fogColor", fc);
-		fogColor = Color4f(fc.r / 255.0f, fc.g / 255.0f, fc.b / 255.0f, fc.a / 255.0f);
+		s >> ObsoleteMember< Color4f >(L"fogColor");
 	}
 
 	if (s.getVersion() >= 20 && s.getVersion() <= 30)

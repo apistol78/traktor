@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,19 +34,19 @@ namespace traktor::world
 {
 
 class IWorldRenderPass;
-class VolumetricFogComponentData;
+class FogComponentData;
 class WorldBuildContext;
 class WorldRenderView;
 class WorldSetupContext;
 
 /*!
  */
-class T_DLLCLASS VolumetricFogComponent : public IEntityComponent
+class T_DLLCLASS FogComponent : public IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit VolumetricFogComponent(const VolumetricFogComponentData* data, const resource::Proxy< render::Shader >& shader);
+	explicit FogComponent(const FogComponentData* data, const resource::Proxy< render::Shader >& shader);
 
 	bool create(render::IRenderSystem* renderSystem);
 
@@ -71,9 +71,21 @@ public:
 	int32_t getSliceCount() const { return m_sliceCount; }
 
 private:
+	friend class WorldRendererDeferred;
+	friend class WorldRendererForward;
+
 	Entity* m_owner = nullptr;
+
+	// Distance fog.
+	float m_fogDistance = 90.0f;
+	float m_fogDensity = 0.0f;
+	float m_fogDensityMax = 1.0f;
+	Color4f m_fogColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+	// Volumetric fog.
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::ITexture > m_fogVolumeTexture;
+	bool m_volumetricFogEnable = false;
 	float m_maxDistance = 0.0f;
 	float m_maxScattering = 0.0f;
 	int32_t m_sliceCount = 0;

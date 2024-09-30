@@ -34,9 +34,9 @@
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
+#include "World/Entity/FogComponent.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeComponent.h"
-#include "World/Entity/VolumetricFogComponent.h"
 #include "World/Forward/WorldRendererForward.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
@@ -196,7 +196,7 @@ void WorldRendererForward::setupVisualPass(
 	}
 
 	// Get volumetric fog volume.
-	const VolumetricFogComponent* fog = !worldRenderView.getSnapshot() ? m_gatheredView.fog : nullptr;
+	const FogComponent* fog = m_gatheredView.fog;
 
 	// Create render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
@@ -281,13 +281,20 @@ void WorldRendererForward::setupVisualPass(
 					0.0f
 				);
 
+				// Distance fog.
+				sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, 0.0f));
+				sharedParams->setVectorParameter(s_handleFogColor, fog->m_fogColor);
+
+				// Volumetric fog.
 				sharedParams->setFloatParameter(s_handleFogVolumeSliceCount, (float)fog->getSliceCount());
 				sharedParams->setVectorParameter(s_handleFogVolumeRange, fogRange);
 				sharedParams->setTextureParameter(s_handleFogVolumeTexture, fog->getFogVolumeTexture());
 			}
-
-			sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(m_settings.fogDistance, m_settings.fogDensity, m_settings.fogDensityMax, 0.0f));
-			sharedParams->setVectorParameter(s_handleFogColor, m_settings.fogColor);
+			else
+			{
+				sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4::zero());
+				sharedParams->setVectorParameter(s_handleFogColor, Vector4::zero());
+			}
 
 			if (shadowAtlasTargetSet != nullptr)
 			{
@@ -328,7 +335,7 @@ void WorldRendererForward::setupVisualPass(
 				{
 					{ s_handleIrradianceEnable, irradianceEnable },
 					{ s_handleIrradianceSingle, irradianceSingle },
-					{ s_handleVolumetricFogEnable, (bool)(fog != nullptr )}
+					{ s_handleVolumetricFogEnable, (bool)(fog != nullptr && fog->m_volumetricFogEnable) }
 				}
 			);
 

@@ -28,10 +28,10 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
+#include "World/Entity/FogComponent.h"
 #include "World/Entity/IrradianceGridComponent.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeComponent.h"
-#include "World/Entity/VolumetricFogComponent.h"
 #include "World/Shared/WorldRendererShared.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
@@ -247,8 +247,8 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 			}
 			else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(component))
 				m_gatheredView.probes.push_back(probeComponent);
-			else if (auto volumetricFogComponent = dynamic_type_cast< const VolumetricFogComponent* >(component))
-				m_gatheredView.fog = volumetricFogComponent;
+			else if (auto fogComponent = dynamic_type_cast< const FogComponent* >(component))
+				m_gatheredView.fog = fogComponent;
 		}
 	}
 
