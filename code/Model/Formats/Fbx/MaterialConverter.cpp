@@ -141,18 +141,24 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		if (material->pbr.base_factor.has_value)
 			mm.setDiffuseTerm(material->pbr.base_factor.value_real);
 
+		float specularTerm = 1.0f;
 		if (material->pbr.glossiness.has_value)
 		{
 			const float sf = material->pbr.glossiness.value_real;
-			mm.setSpecularTerm(clamp(sf, 0.0f, 1.0f));
+			specularTerm *= clamp(sf, 0.0f, 1.0f);
 		}
-
+		if (material->pbr.specular_factor.has_value)
+		{
+			const float sf = material->pbr.specular_factor.value_real;
+			specularTerm *= clamp(sf, 0.0f, 1.0f);			
+		}
 		if (material->pbr.specular_ior.has_value)
 		{
 			const float ior = material->pbr.specular_ior.value_real;
 			const float sf = std::pow((ior - 1.0f) / (ior + 1.0f), 2.0f) / 0.08f;
-			mm.setSpecularTerm(clamp(sf, 0.0f, 1.0f));
+			specularTerm *= clamp(sf, 0.0f, 1.0f);
 		}
+		mm.setSpecularTerm(specularTerm);
 
 		if (material->pbr.roughness.has_value)
 			mm.setRoughness(material->pbr.roughness.value_real);
