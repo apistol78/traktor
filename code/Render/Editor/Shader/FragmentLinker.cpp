@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,6 +38,9 @@ public:
 	,	m_inputPin(this, Guid(L"{7efbd768-2381-11ef-a168-7fa583325338}"), L"Input", false)
 	,	m_outputPin(this, Guid(L"{8a3561bc-2381-11ef-9b5c-3f9b39355b23}"), L"Output")
 	{
+#if defined(_DEBUG)
+		setId(Guid::create());
+#endif
 	}
 
 	virtual int getInputPinCount() const override final
@@ -137,6 +140,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 	for (auto externalNode : externalNodes)
 	{
 		const Guid& fragmentId = externalNode->getFragmentGuid();
+		log::debug << L"Resolving external fragment \"" << fragmentId.format() << L"\"..." << Endl;
 
 		// Read fragment shader.
 		Ref< const ShaderGraph > fragmentShaderGraph = m_fragmentReader->read(fragmentId);
@@ -146,6 +150,10 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 			return nullptr;
 		}
 		T_VALIDATE_SHADERGRAPH(fragmentShaderGraph);
+
+		// Ensure fragment is unique so we can safely modify it.
+		fragmentShaderGraph = DeepClone(fragmentShaderGraph).create< ShaderGraph >();
+		T_FATAL_ASSERT(fragmentShaderGraph);
 
 		// Resolve variables of each read fragment.
 		fragmentShaderGraph = ShaderGraphStatic(fragmentShaderGraph, fragmentId).getVariableResolved();
@@ -305,6 +313,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 	// Create a unique clone of the resolved shader before returning.
 	mutableShaderGraph = DeepClone(mutableShaderGraph).create< ShaderGraph >();
 	T_VALIDATE_SHADERGRAPH(mutableShaderGraph);
+	T_FATAL_ASSERT(mutableShaderGraph->findNodesOf< PortConnector >().empty());
 
 	return mutableShaderGraph;
 }
