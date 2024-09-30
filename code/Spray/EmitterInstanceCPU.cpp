@@ -215,8 +215,6 @@ void EmitterInstanceCPU::render(
 	const Transform& transform
 )
 {
-	T_ASSERT(m_count > 0);
-
 	synchronize();
 
 	const Vector4 cameraPosition = worldRenderView.getEyePosition();

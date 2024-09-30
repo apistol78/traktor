@@ -62,9 +62,7 @@ Node* GlslContext::getInputNode(const InputPin* inputPin)
 Node* GlslContext::getInputNode(Node* node, const std::wstring& inputPinName)
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
-	T_ASSERT(inputPin);
-
-	return getInputNode(inputPin);
+	return inputPin ? getInputNode(inputPin) : nullptr;
 }
 
 bool GlslContext::emit(Node* node)

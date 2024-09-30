@@ -21,7 +21,6 @@ void GroupComponent::destroy()
 
 void GroupComponent::setOwner(Entity* owner)
 {
-	T_ASSERT(m_owner == nullptr);
 	if ((m_owner = owner) != nullptr)
 		m_transform = m_owner->getTransform();
 }
