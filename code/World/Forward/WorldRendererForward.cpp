@@ -158,6 +158,7 @@ void WorldRendererForward::setup(
 		worldRenderView,
 		renderGraph,
 		visualTargetSetId.current,
+		visualTargetSetId.previous,
 		gbufferTargetSetId,
 		ambientOcclusionTargetSetId,
 		reflectionsTargetSetId,
@@ -173,6 +174,7 @@ void WorldRendererForward::setupVisualPass(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
 	render::handle_t visualWriteTargetSetId,
+	render::handle_t visualReadTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t ambientOcclusionTargetSetId,
 	render::handle_t reflectionsTargetSetId,
@@ -231,6 +233,7 @@ void WorldRendererForward::setupVisualPass(
 			const auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
 			const auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
 			const auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
+			const auto visualCopyTargetSet = renderGraph.getTargetSet(visualReadTargetSetId);
 
 			const float viewNearZ = worldRenderView.getViewFrustum().getNearZ();
 			const float viewFarZ = worldRenderView.getViewFrustum().getFarZ();
@@ -321,6 +324,11 @@ void WorldRendererForward::setupVisualPass(
 				sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));
 			else
 				sharedParams->setTextureParameter(s_handleReflectionMap, m_blackTexture);
+
+			if (visualCopyTargetSet != nullptr)
+				sharedParams->setTextureParameter(s_handleVisualCopyMap, visualCopyTargetSet->getColorTexture(0));
+			else
+				sharedParams->setTextureParameter(s_handleVisualCopyMap, m_blackTexture);
 
 			sharedParams->endParameters(wc.getRenderContext());
 

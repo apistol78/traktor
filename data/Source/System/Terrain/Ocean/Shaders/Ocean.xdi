@@ -382,8 +382,8 @@
 			<id>{2AE0A49E-87BC-B24E-8FCC-34F02B6271D1}</id>
 			<comment/>
 			<position>
-				<first>8239</first>
-				<second>1511</second>
+				<first>8243</first>
+				<second>1383</second>
 			</position>
 			<technique>World_DeferredColor</technique>
 			<priority>
@@ -1179,7 +1179,7 @@ $Output = vec4(scatter, 0.0f);
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{0007AFF3-5BCD-DC4B-B85E-12295A37349A}</id>
 			<comment/>
 			<position>
@@ -1191,42 +1191,52 @@ $Output = vec4(scatter, 0.0f);
 				<item>
 					<name>Type</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>RangeRadius</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>Position</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>Direction</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>Color</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>ViewToLight0</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>ViewToLight1</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>ViewToLight2</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>ViewToLight3</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>AtlasTransform</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -1999,6 +2009,53 @@ $Output = vec4(r * -0.05f, 0.0f);
 				<first>6297</first>
 				<second>1751</second>
 			</position>
+		</item>
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
+			<id>{F5D83716-9501-D944-B40E-54A5ACE808F7}</id>
+			<comment/>
+			<position>
+				<first>8243</first>
+				<second>1551</second>
+			</position>
+			<technique>World_ForwardColor</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>true</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
+			<cullMode>Never</cullMode>
+			<blendEnable>false</blendEnable>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
+			<colorWriteMask>
+				<red>true</red>
+				<green>true</green>
+				<blue>true</blue>
+				<alpha>true</alpha>
+			</colorWriteMask>
+			<depthEnable>true</depthEnable>
+			<depthWriteEnable>true</depthWriteEnable>
+			<depthFunction>CfLessEqual</depthFunction>
+			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestFunction>CfLess</alphaTestFunction>
+			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
+			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>2147483648</stencilMask>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 	</nodes>
 	<edges>
@@ -3569,6 +3626,16 @@ $Output = vec4(r * -0.05f, 0.0f);
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[39]"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[73]"/>
+				<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[169]"/>
 				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>

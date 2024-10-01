@@ -63,6 +63,7 @@ private:
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
 		render::handle_t visualWriteTargetSetId,
+		render::handle_t visualReadTargetSetId,
 		render::handle_t gbufferTargetSetId,
 		render::handle_t ambientOcclusionTargetSetId,
 		render::handle_t reflectionsTargetSetId,

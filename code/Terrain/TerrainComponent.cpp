@@ -446,7 +446,7 @@ void TerrainComponent::build(
 		m_dataBuffer->unlock();
 	}
 
-	// Cull draw buffer to HiZ target.
+	// Cull draw buffer to HiZ target; only deferred renderer using HiZ culling.
 	if (worldRenderPass.getTechnique() == world::s_techniqueDeferredGBufferWrite)
 	{
 		const Vector2 viewSize = worldRenderView.getViewSize();
