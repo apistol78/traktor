@@ -48,7 +48,7 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 }
 
 /*! Calculate lighting. */
-vec3 CalculateLighting(vec3 N, vec3 V, vec3 L, vec3 albedo, float metallic, float roughness, vec3 radiance)
+vec3 CalculateLighting(vec3 N, vec3 V, vec3 L, vec3 albedo, float metallic, float roughness, vec3 radiance, float specularG)
 {
 	const float PI = 3.14159265359f;
 	const vec3 H = normalize(V + L);
@@ -63,7 +63,7 @@ vec3 CalculateLighting(vec3 N, vec3 V, vec3 L, vec3 albedo, float metallic, floa
 	const vec3 specular = numerator / denominator; 
 	const vec3 kS = F;
 	const vec3 kD = (vec3(1.0f) - kS) * (1.0f - metallic);
-	return (kD * albedo / PI + specular) * radiance * NdotL;
+	return (kD * albedo / PI + specular * specularG) * radiance * NdotL;
 }
 
 /*! Calculate reflection. */
@@ -77,7 +77,6 @@ vec3 CalculateReflection(vec3 N, vec3 V, vec3 albedo, float metallic)
 	const vec3 F = FresnelSchlick(HdotV, F0);
 	return clamp(F * 1.0f, 0.0f, 1.0f);
 }
-
 
 	]]>
 	</text>

@@ -154,8 +154,8 @@
 			<id>{E26349BA-AC44-B54F-902D-39E9FBEA759E}</id>
 			<comment/>
 			<position>
-				<first>2999</first>
-				<second>273</second>
+				<first>3115</first>
+				<second>274</second>
 			</position>
 			<name>L_ViewDirection</name>
 		</item>
@@ -163,8 +163,8 @@
 			<id>{463E68F6-5985-EB4C-9F82-3C842AD6DE50}</id>
 			<comment/>
 			<position>
-				<first>3015</first>
-				<second>405</second>
+				<first>3131</first>
+				<second>409</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -172,7 +172,7 @@
 			<id>{C748925A-7998-764A-8AED-A2D33FEBC3D1}</id>
 			<comment/>
 			<position>
-				<first>3015</first>
+				<first>3131</first>
 				<second>229</second>
 			</position>
 			<name>L_ViewNormal</name>
@@ -181,8 +181,8 @@
 			<id>{92EB8BFF-FF78-DC44-BBD6-FFFBA0B9749C}</id>
 			<comment/>
 			<position>
-				<first>3220</first>
-				<second>-476</second>
+				<first>3252</first>
+				<second>-475</second>
 			</position>
 			<name>L_ViewDirection</name>
 		</item>
@@ -190,8 +190,8 @@
 			<id>{EF868FA6-C7AF-2A4B-965D-63F60D8D8044}</id>
 			<comment/>
 			<position>
-				<first>3236</first>
-				<second>-374</second>
+				<first>3268</first>
+				<second>-370</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -199,7 +199,7 @@
 			<id>{B8CAD56A-9E9C-294D-8CBD-E8B5C0414532}</id>
 			<comment/>
 			<position>
-				<first>3236</first>
+				<first>3268</first>
 				<second>-510</second>
 			</position>
 			<name>L_ViewNormal</name>
@@ -208,7 +208,7 @@
 			<id>{87E006FB-B6AF-3A40-B149-4B02D2BD9081}</id>
 			<comment/>
 			<position>
-				<first>3283</first>
+				<first>3315</first>
 				<second>-1345</second>
 			</position>
 			<name>L_ViewDirection</name>
@@ -217,7 +217,7 @@
 			<id>{23C6739E-572F-8A48-8AF4-A75BB3C3894F}</id>
 			<comment/>
 			<position>
-				<first>3299</first>
+				<first>3331</first>
 				<second>-1185</second>
 			</position>
 			<name>L_Roughness</name>
@@ -226,7 +226,7 @@
 			<id>{ED4DE7CE-1AC0-8F4C-824F-0F852AAD902B}</id>
 			<comment/>
 			<position>
-				<first>3299</first>
+				<first>3331</first>
 				<second>-1385</second>
 			</position>
 			<name>L_ViewNormal</name>
@@ -395,8 +395,8 @@
 			<id>{7183EFD7-B364-7A42-B5E5-56FB0F80A347}</id>
 			<comment/>
 			<position>
-				<first>3047</first>
-				<second>449</second>
+				<first>3131</first>
+				<second>454</second>
 			</position>
 			<name>L_Color</name>
 		</item>
@@ -505,7 +505,7 @@
 			<comment/>
 			<position>
 				<first>3268</first>
-				<second>-340</second>
+				<second>-335</second>
 			</position>
 			<name>L_Color</name>
 		</item>
@@ -522,7 +522,7 @@
 			<id>{15C7C6B1-6472-ED47-B0A5-31DF2CF79B06}</id>
 			<comment/>
 			<position>
-				<first>3315</first>
+				<first>3331</first>
 				<second>-1305</second>
 			</position>
 			<name>L_Direction</name>
@@ -902,7 +902,7 @@
 			</position>
 			<name>LightIndex</name>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{D496820C-CA50-9147-8BB5-0031B514E44E}</id>
 			<comment/>
 			<position>
@@ -914,6 +914,7 @@
 				<item>
 					<name>LightIndex</name>
 					<type>DtInteger4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -1695,7 +1696,7 @@ Eye direction
 			<id>{D7715944-974F-3C49-925D-01298D53CBEF}</id>
 			<comment/>
 			<position>
-				<first>3315</first>
+				<first>3331</first>
 				<second>-1225</second>
 			</position>
 			<name>L_Metalness</name>
@@ -1704,8 +1705,8 @@ Eye direction
 			<id>{BB5FF138-C3F0-4246-8A27-DC5F5E7C079C}</id>
 			<comment/>
 			<position>
-				<first>3252</first>
-				<second>-408</second>
+				<first>3268</first>
+				<second>-405</second>
 			</position>
 			<name>L_Metalness</name>
 		</item>
@@ -1713,8 +1714,8 @@ Eye direction
 			<id>{017B6022-5602-974C-8AE2-55C57DB07FE0}</id>
 			<comment/>
 			<position>
-				<first>3031</first>
-				<second>361</second>
+				<first>3131</first>
+				<second>364</second>
 			</position>
 			<name>L_Metalness</name>
 		</item>
@@ -1767,7 +1768,7 @@ Eye direction
 				<item>AtlasTransform</item>
 			</names>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{BC664F17-D6A3-3F46-944D-3080193E4BC4}</id>
 			<comment/>
 			<position>
@@ -1779,42 +1780,52 @@ Eye direction
 				<item>
 					<name>Type</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>RangeRadius</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>Position</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>Direction</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>Color</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>ViewToLight0</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>ViewToLight1</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>ViewToLight2</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>ViewToLight3</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>AtlasTransform</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -2191,6 +2202,10 @@ Check max shadow distance
 					<id>{FC909227-92BE-AE40-B66F-96092F18AAD5}</id>
 					<name>Radiance</name>
 				</item>
+				<item>
+					<id>{547365E3-9AC2-4052-B2B5-D349D68EC72E}</id>
+					<name>SpecularG</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -2208,12 +2223,14 @@ const vec3 albedo = $Albedo.xyz;
 const float metallic = $Metallic.x;
 const float roughness = $Roughness.x;
 const vec3 radiance = $Radiance.xyz;
+const float specularG = $SpecularG.x;
 
 const vec3 Lout = CalculateLighting(
 	N, V, L, albedo,
 	metallic,
 	roughness,
-	radiance
+	radiance,
+	specularG
 );
 
 $Output = vec4(Lout.xyz, 0.0f);
@@ -2284,6 +2301,10 @@ $Output = vec4(Lout.xyz, 0.0f);
 					<id>{FC909227-92BE-AE40-B66F-96092F18AAD5}</id>
 					<name>Radiance</name>
 				</item>
+				<item>
+					<id>{7D87CBA6-9AA6-4B75-8004-606692B60E54}</id>
+					<name>SpecularG</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -2301,12 +2322,14 @@ const vec3 albedo = $Albedo.xyz;
 const float metallic = $Metallic.x;
 const float roughness = $Roughness.x;
 const vec3 radiance = $Radiance.xyz;
+const float specularG = $SpecularG.x;
 
 const vec3 Lout = CalculateLighting(
 	N, V, L, albedo,
 	metallic,
 	roughness,
-	radiance
+	radiance,
+	specularG
 );
 
 $Output = vec4(Lout.xyz, 0.0f);
@@ -2318,7 +2341,7 @@ $Output = vec4(Lout.xyz, 0.0f);
 			<comment/>
 			<position>
 				<first>3268</first>
-				<second>-442</second>
+				<second>-440</second>
 			</position>
 			<name>L_Albedo</name>
 		</item>
@@ -2368,6 +2391,10 @@ $Output = vec4(Lout.xyz, 0.0f);
 					<id>{FC909227-92BE-AE40-B66F-96092F18AAD5}</id>
 					<name>Radiance</name>
 				</item>
+				<item>
+					<id>{7D54F99E-6221-4D8D-9406-6054A72F51C1}</id>
+					<name>SpecularG</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -2385,12 +2412,14 @@ const vec3 albedo = $Albedo.xyz;
 const float metallic = $Metallic.x;
 const float roughness = $Roughness.x;
 const vec3 radiance = $Radiance.xyz;
+const float specularG = $SpecularG.x;
 
 const vec3 Lout = CalculateLighting(
 	N, V, L, albedo,
 	metallic,
 	roughness,
-	radiance
+	radiance,
+	specularG
 );
 
 $Output = vec4(Lout.xyz, 0.0f);
@@ -2401,8 +2430,8 @@ $Output = vec4(Lout.xyz, 0.0f);
 			<id>{A2A9B3D9-BC4F-1847-97D6-7E534B813886}</id>
 			<comment/>
 			<position>
-				<first>3047</first>
-				<second>317</second>
+				<first>3131</first>
+				<second>319</second>
 			</position>
 			<name>L_Albedo</name>
 		</item>
@@ -2543,6 +2572,33 @@ $Output = vec4(r, 0.0f);
 				<second>1132</second>
 			</position>
 			<swizzle>xyz</swizzle>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{1FFE13E3-E7F4-4108-A5B2-054BCD5EEE7F}</id>
+			<comment/>
+			<position>
+				<first>3331</first>
+				<second>-1105</second>
+			</position>
+			<name>L_SpecularG</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{1B1C07A0-BFC7-4DA9-8C6F-E9308114BBF0}</id>
+			<comment/>
+			<position>
+				<first>3268</first>
+				<second>-300</second>
+			</position>
+			<name>L_SpecularG</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{A1EA9D79-2802-41E3-942F-1A19737C3482}</id>
+			<comment/>
+			<position>
+				<first>3131</first>
+				<second>499</second>
+			</position>
+			<name>L_SpecularG</name>
 		</item>
 	</nodes>
 	<edges>
@@ -2859,16 +2915,6 @@ $Output = vec4(r, 0.0f);
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item"/>
-				<id>{011933FB-5EDC-4E0F-84A4-0352D345A548}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[56]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item"/>
 				<id>{E25BC49C-C55C-41F2-96B8-15E4C572AF23}</id>
 			</source>
 			<destination>
@@ -2954,16 +3000,6 @@ $Output = vec4(r, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{421BCBCE-2DFA-664E-BE65-0E4297B45DD2}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[68]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -4596,6 +4632,56 @@ $Output = vec4(r, 0.0f);
 				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{011933FB-5EDC-4E0F-84A4-0352D345A548}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[209]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[192]"/>
+				<id>{547365E3-9AC2-4052-B2B5-D349D68EC72E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[210]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[195]"/>
+				<id>{7D87CBA6-9AA6-4B75-8004-606692B60E54}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[211]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[197]"/>
+				<id>{7D54F99E-6221-4D8D-9406-6054A72F51C1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{421BCBCE-2DFA-664E-BE65-0E4297B45DD2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[68]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -4614,8 +4700,8 @@ $Output = vec4(r, 0.0f);
 			<title>Point</title>
 			<comment/>
 			<position>
-				<first>2420</first>
-				<second>-566</second>
+				<first>2565</first>
+				<second>-577</second>
 			</position>
 			<size>
 				<first>2066</first>
