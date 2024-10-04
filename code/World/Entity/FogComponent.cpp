@@ -92,17 +92,13 @@ void FogComponent::update(const UpdateParams& update)
 
 void FogComponent::build(const WorldBuildContext& context, const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass)
 {
-	if (!m_volumetricFogEnable || worldRenderView.getSnapshot())
+	if (!m_owner || !m_volumetricFogEnable || worldRenderView.getSnapshot())
 		return;
+
 	if (
 		worldRenderPass.getTechnique() != s_techniqueDeferredColor &&
 		worldRenderPass.getTechnique() != s_techniqueForwardColor
 	)
-		return;
-
-	auto renderContext = context.getRenderContext();
-
-	if (!m_owner)
 		return;
 
 	auto permutation = worldRenderPass.getPermutation(m_shader);
@@ -122,34 +118,32 @@ void FogComponent::build(const WorldBuildContext& context, const WorldRenderView
 	const Scalar p11 = worldRenderView.getProjection().get(0, 0);
 	const Scalar p22 = worldRenderView.getProjection().get(1, 1);
 
-	//if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
-	{
-		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Volumetric fog, inject analytical lights");
+	auto renderContext = context.getRenderContext();
+	auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Volumetric fog, inject analytical lights");
 
-		renderBlock->program = injectLightsProgram.program;
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->workSize[0] = 128;
-		renderBlock->workSize[1] = 128;
-		renderBlock->workSize[2] = m_sliceCount / c_interleave;
+	renderBlock->program = injectLightsProgram.program;
+	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+	renderBlock->workSize[0] = 128;
+	renderBlock->workSize[1] = 128;
+	renderBlock->workSize[2] = m_sliceCount / c_interleave;
 
-		renderBlock->programParams->beginParameters(renderContext);
+	renderBlock->programParams->beginParameters(renderContext);
 
-		worldRenderPass.setProgramParameters(renderBlock->programParams);
+	worldRenderPass.setProgramParameters(renderBlock->programParams);
 
-		renderBlock->programParams->setImageViewParameter(s_handleFogVolume, m_fogVolumeTexture, 0);
-		renderBlock->programParams->setVectorParameter(s_handleFogVolumeRange, fogRange);
-		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-		renderBlock->programParams->setVectorParameter(s_handleFogVolumeMediumColor, m_mediumColor);
-		renderBlock->programParams->setFloatParameter(s_handleFogVolumeMediumDensity, m_mediumDensity / m_sliceCount);
-		renderBlock->programParams->setFloatParameter(s_handleFogVolumeSliceCount, (float)m_sliceCount);
-		renderBlock->programParams->setFloatParameter(s_handleFogVolumeSliceCurrent, (float)m_sliceCurrent);
-		renderBlock->programParams->endParameters(renderContext);
+	renderBlock->programParams->setImageViewParameter(s_handleFogVolume, m_fogVolumeTexture, 0);
+	renderBlock->programParams->setVectorParameter(s_handleFogVolumeRange, fogRange);
+	renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	renderBlock->programParams->setVectorParameter(s_handleFogVolumeMediumColor, m_mediumColor);
+	renderBlock->programParams->setFloatParameter(s_handleFogVolumeMediumDensity, m_mediumDensity / m_sliceCount);
+	renderBlock->programParams->setFloatParameter(s_handleFogVolumeSliceCount, (float)m_sliceCount);
+	renderBlock->programParams->setFloatParameter(s_handleFogVolumeSliceCurrent, (float)m_sliceCurrent);
+	renderBlock->programParams->endParameters(renderContext);
 
-		renderContext->compute(renderBlock);
-		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, m_fogVolumeTexture, 0);
+	renderContext->compute(renderBlock);
+	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, m_fogVolumeTexture, 0);
 
-		m_sliceCurrent = (m_sliceCurrent + 1) % c_interleave;
-	}
+	m_sliceCurrent = (m_sliceCurrent + 1) % c_interleave;
 }
 
 }
