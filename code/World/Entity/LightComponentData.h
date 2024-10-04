@@ -93,7 +93,7 @@ public:
 private:
 	LightType m_lightType = LightType::Disabled;
 	Color4f m_color = Color4f(1.0f, 1.0f, 1.0f, 0.0f);
-	float m_intensity = 1000.0f;
+	float m_intensity = 10.0f;
 	bool m_castShadow = true;
 	float m_nearRange = 0.0f;
 	float m_farRange = 10.0f;
