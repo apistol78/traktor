@@ -5579,16 +5579,6 @@
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="Filter">
-							<name>unix</name>
-							<items>
-								<item type="File" version="1">
-									<fileName>prim/unix/*.c</fileName>
-									<excludeFilter/>
-									<items/>
-								</item>
-							</items>
-						</item>
 					</items>
 				</item>
 			</items>
