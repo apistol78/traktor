@@ -43,7 +43,7 @@ namespace traktor::render
 	{
 
 const glslang::EShTargetClientVersion c_clientVersion = glslang::EShTargetVulkan_1_2;
-const glslang::EShTargetLanguageVersion c_targetSPV = glslang::EShTargetSpv_1_6;
+const glslang::EShTargetLanguageVersion c_targetSPV = glslang::EShTargetSpv_1_5;
 const spv_target_env c_targetENV = SPV_ENV_VULKAN_1_2;
 
 TBuiltInResource getDefaultBuiltInResource()
