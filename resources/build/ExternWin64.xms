@@ -6593,7 +6593,7 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>*.*</fileName>
-					<excludeFilter>arena-abandon.c;alloc-override.c;page-queue.c;free.c</excludeFilter>
+					<excludeFilter>arena-abandon.c;alloc-override.c;page-queue.c;static.c;free.c</excludeFilter>
 					<items/>
 				</item>
 				<item type="Filter">
@@ -6603,16 +6603,6 @@
 							<fileName>prim/*.c</fileName>
 							<excludeFilter/>
 							<items/>
-						</item>
-						<item type="Filter">
-							<name>windows</name>
-							<items>
-								<item type="File" version="1">
-									<fileName>prim/windows/*.c</fileName>
-									<excludeFilter/>
-									<items/>
-								</item>
-							</items>
 						</item>
 					</items>
 				</item>
