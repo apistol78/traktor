@@ -279,7 +279,7 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>src/*.cpp</fileName>
-					<excludeFilter/>
+					<excludeFilter>btBulletCollisionAll.cpp;btBulletDynamicsAll.cpp;btLinearMathAll.cpp</excludeFilter>
 					<items/>
 				</item>
 				<item type="File" version="1">
