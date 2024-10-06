@@ -151,7 +151,7 @@ void WorldRendererDeferred::setup(
 	rgtsd.referenceWidthDenom = 1;
 	rgtsd.referenceHeightDenom = 1;
 	rgtsd.targets[0].colorFormat = render::TfR16G16B16A16F;
-	const render::handle_t visualCopyTargetSetId = renderGraph.addTransientTargetSet(L"Visual Copy", rgtsd, outputTargetSetId, outputTargetSetId);
+	const render::handle_t visualCopyTargetSetId = renderGraph.addTransientTargetSet(L"Visual Copy", rgtsd, ~0U, outputTargetSetId);
 	
 	// Add Hi-Z texture.
 	const render::handle_t hizTextureId = m_hiZPass->addTexture(worldRenderView, renderGraph);
@@ -394,7 +394,7 @@ void WorldRendererDeferred::setupVisualPass(
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Visual; copy");
 		rp->addInput(visualWriteTargetSetId);
-		rp->setOutput(visualCopyTargetSetId, render::TfNone, render::TfColor | render::TfDepth);
+		rp->setOutput(visualCopyTargetSetId, render::TfNone, render::TfColor);
 		rp->addBuild(
 			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
