@@ -441,9 +441,9 @@ local PACKAGES =
 		type = "GET",
 		name = "renderdoc",
 		os = "linux",
-		url = "https://renderdoc.org/stable/1.29/renderdoc_1.29.tar.gz",
+		url = "https://renderdoc.org/stable/1.35/renderdoc_1.35.tar.gz",
 		patch = function()
-			run:execute(TAR .. " -xf renderdoc_1.29.tar.gz")
+			run:execute(TAR .. " -xf renderdoc_1.35.tar.gz")
 		end
 	},
 	{

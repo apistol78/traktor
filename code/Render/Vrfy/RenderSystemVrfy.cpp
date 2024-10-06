@@ -50,7 +50,7 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 		if (m_libRenderDoc->open(renderDocDLL.c_str()))
 		{
 			pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)m_libRenderDoc->find(L"RENDERDOC_GetAPI");
-			int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_6_0, (void **)&m_apiRenderDoc);
+			const int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_6_0, (void **)&m_apiRenderDoc);
 			if (ret != 1)
 				m_apiRenderDoc = nullptr;
 		}
@@ -58,7 +58,11 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 			m_libRenderDoc = nullptr;
 
 		if (m_apiRenderDoc)
+		{
 			m_apiRenderDoc->SetCaptureTitle("Traktor");
+			m_apiRenderDoc->MaskOverlayBits(eRENDERDOC_Overlay_All, eRENDERDOC_Overlay_Default);
+			log::info << L"RenderDoc integration initialized." << Endl;
+		}
 	}
 #endif
 
@@ -134,6 +138,12 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 		m_apiRenderDoc->SetActiveWindow(
 			m_renderSystem->getInternalHandle(),
 			desc.syswin.hWnd
+		);
+#elif defined(__LINUX__)
+	if (m_apiRenderDoc)
+		m_apiRenderDoc->SetActiveWindow(
+			m_renderSystem->getInternalHandle(),
+			(RENDERDOC_WindowHandle)desc.syswin.window
 		);
 #endif
 
