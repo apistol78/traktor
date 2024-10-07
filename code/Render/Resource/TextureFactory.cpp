@@ -16,6 +16,7 @@
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Render/Resource/TextureResource.h"
+#include "Render/Resource/VirtualTexture.h"
 #include "Resource/IResourceManager.h"
 
 #undef min
@@ -116,7 +117,22 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 	if (textureType == Tt2D)	// 2D
 	{
-		int32_t skipMips = (!system && m_skipMips < mipCount) ? m_skipMips : 0;
+		const bool createVirtual = !system && std::max(imageWidth, imageHeight) > 32;
+
+		int32_t skipMips = 0;
+		if (createVirtual)
+		{
+			while (skipMips < mipCount - 1)
+			{
+				const int32_t mipWidth = std::max(imageWidth >> skipMips, 1);
+				const int32_t mipHeight = std::max(imageHeight >> skipMips, 1);
+				if (std::max(mipWidth, mipHeight) <= 32)
+					break;
+				skipMips++;
+			}
+		}
+		else
+			skipMips = (!system && m_skipMips < mipCount) ? m_skipMips : 0;
 
 		// Do not skip mips on already small enough textures.
 		if (imageWidth <= 16 || imageHeight <= 16)
@@ -173,6 +189,11 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		texture = m_renderSystem->createSimpleTexture(desc, instance->getName().c_str());
 		if (!texture)
 			log::error << L"Unable to create 2D texture resource; failed to create renderable texture." << Endl;
+
+		// If we're creating a virtual texture then return here since we want the stream to
+		// be kept open.
+		if (createVirtual)
+			return new VirtualTexture(m_renderSystem, stream, texture);
 	}
 	else if (textureType == Tt3D)	// 3D
 	{

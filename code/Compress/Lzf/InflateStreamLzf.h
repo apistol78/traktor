@@ -34,8 +34,6 @@ class T_DLLCLASS InflateStreamLzf : public IStream
 public:
 	explicit InflateStreamLzf(IStream* stream, uint32_t blockSize = 64 * 1024);
 
-	virtual ~InflateStreamLzf();
-
 	virtual void close() override final;
 
 	virtual bool canRead() const override final;

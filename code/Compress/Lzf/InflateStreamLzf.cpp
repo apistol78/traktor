@@ -244,11 +244,6 @@ InflateStreamLzf::InflateStreamLzf(IStream* stream, uint32_t blockSize)
 {
 }
 
-InflateStreamLzf::~InflateStreamLzf()
-{
-	close();
-}
-
 void InflateStreamLzf::close()
 {
 	if (m_impl)
