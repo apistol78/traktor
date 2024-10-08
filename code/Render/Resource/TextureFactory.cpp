@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,18 +24,6 @@
 
 namespace traktor::render
 {
-	namespace
-	{
-
-uint32_t mipChainSize(TextureFormat format, int width, int height, int mipCount)
-{
-	uint32_t totalSize = 0;
-	for (int i = 0; i < mipCount; ++i)
-		totalSize += getTextureMipPitch(format, width, height, i);
-	return totalSize;
-}
-
-	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureFactory", 0, TextureFactory, resource::IResourceFactory)
 
@@ -146,7 +134,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		desc.sRGB = sRGB;
 		desc.immutable = true;
 
-		const uint32_t textureDataSize = mipChainSize(desc.format, desc.width, desc.height, desc.mipCount);
+		const uint32_t textureDataSize = getTextureSize(desc.format, desc.width, desc.height, desc.mipCount);
 		AutoArrayPtr< uint8_t > buffer(new uint8_t [textureDataSize]);
 
 		Ref< IStream > readerStream = stream;
@@ -213,7 +201,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		desc.sRGB = sRGB;
 		desc.immutable = true;
 
-		const uint32_t sliceDataSize = mipChainSize(desc.format, desc.width, desc.height, desc.mipCount);
+		const uint32_t sliceDataSize = getTextureSize(desc.format, desc.width, desc.height, desc.mipCount);
 		const uint32_t textureDataSize = sliceDataSize * desc.depth;
 		AutoArrayPtr< uint8_t > buffer(new uint8_t [textureDataSize]);
 
@@ -293,7 +281,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		desc.sRGB = sRGB;
 		desc.immutable = true;
 
-		const uint32_t textureDataSize = mipChainSize(desc.format, desc.side, desc.side, desc.mipCount);
+		const uint32_t textureDataSize = getTextureSize(desc.format, desc.side, desc.side, desc.mipCount);
 
 		AutoArrayPtr< uint8_t > buffer[6];
 

@@ -18,18 +18,6 @@
 
 namespace traktor::render
 {
-	namespace
-	{
-
-uint32_t mipChainSize(TextureFormat format, int width, int height, int mipCount)
-{
-	uint32_t totalSize = 0;
-	for (int i = 0; i < mipCount; ++i)
-		totalSize += getTextureMipPitch(format, width, height, i);
-	return totalSize;
-}
-
-	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VirtualTexture", VirtualTexture, ITexture)
 
@@ -112,7 +100,7 @@ bool VirtualTexture::loadHighQuality()
 	desc.sRGB = m_sRGB;
 	desc.immutable = true;
 
-	const uint32_t textureDataSize = mipChainSize(desc.format, desc.width, desc.height, desc.mipCount);
+	const uint32_t textureDataSize = getTextureSize(desc.format, desc.width, desc.height, desc.mipCount);
 	AutoArrayPtr< uint8_t > buffer(new uint8_t [textureDataSize]);
 
 	m_stream->seek(IStream::SeekSet, m_textureDataOffset);
