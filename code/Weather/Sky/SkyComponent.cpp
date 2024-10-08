@@ -157,7 +157,7 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 		stcd.width = 512;
 		stcd.height = 512;
 		stcd.mipCount = 1;
-		stcd.format = render::TfR32G32B32A32F;
+		stcd.format = render::TfR16G16B16A16F;
 		stcd.shaderStorage = true;
 		m_cloudTextures[0] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 
@@ -172,7 +172,7 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 		stcd.width = 1024;
 		stcd.height = 256;
 		stcd.mipCount = 1;
-		stcd.format = render::TfR32G32B32A32F;
+		stcd.format = render::TfR16G16B16A16F;
 		stcd.shaderStorage = true;
 		m_cloudDomeTexture[0] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 		m_cloudDomeTexture[1] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
