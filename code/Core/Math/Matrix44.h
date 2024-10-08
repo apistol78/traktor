@@ -94,6 +94,8 @@ public:
 
 	T_MATH_INLINE Matrix44 inverse() const;
 
+	T_MATH_INLINE void transform(const Vector4* s, Vector4* d, size_t n) const;
+
 	/*! Load elements column major.
 	 *
 	 * \param in Pointer to 16 floats.

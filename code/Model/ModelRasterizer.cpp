@@ -59,6 +59,16 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 	const auto& texCoords = model->getTexCoords();
 
 	AlignedVector< float > zbuffer(outImage->getWidth() * outImage->getHeight(), 1.0f);
+	AlignedVector< Vector4 > positionsClip(positions.size());
+	AlignedVector< Vector4 > normalsView(normals.size());
+
+	(projection * modelView)	.transform(positions.c_ptr(), positionsClip.ptr(), positions.size());
+	modelView					.transform(normals.c_ptr(), normalsView.ptr(), normals.size());
+
+	Vector4 cp[3];
+	Vector4 nm[3];
+	Vector2 sp[3];
+	Vector2 uv[3];
 
 	for (const auto& polygon : polygons)
 	{
@@ -69,11 +79,6 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 		if (polygonVertices.size() != 3)
 			continue;
 
-		Vector4 cp[3];
-		Vector4 nm[3];
-		Vector2 sp[3];
-		Vector2 uv[3];
-
 		for (size_t i = 0; i < 3; ++i)
 		{
 			if (polygonVertices[i] >= vertices.size())
@@ -83,15 +88,11 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 			if (vertex.getPosition() == model::c_InvalidIndex || vertex.getNormal() == model::c_InvalidIndex)
 				return false;
 
-			const Vector4& position = positions[vertex.getPosition()];
-			const Vector4& normal = normals[vertex.getNormal()];
+			const Vector4& position = positionsClip[vertex.getPosition()];
+			const Vector4& normal = normalsView[vertex.getNormal()];
 
-			Vector4 vp = modelView * position;
-			cp[i] = projection * vp;
-			cp[i] = cp[i] / cp[i].w();
-
-			nm[i] = (modelView * normal).normalized();
-
+			cp[i] = position / position.w();
+			nm[i] = normal.normalized();
 			sp[i] = Vector2(
 				cp[i].x() * hw + hw,
 				hh - (cp[i].y() * hh)

@@ -240,6 +240,15 @@ T_MATH_INLINE Matrix44 Matrix44::inverse() const
 	);
 }
 
+T_MATH_INLINE void Matrix44::transform(const Vector4* s, Vector4* d, size_t n) const
+{
+	for (size_t i = 0; i < n; ++i)
+	{
+		const Vector4 v = s[i];
+		d[i] = v.x() * m_c[0] + v.y() * m_c[1] + v.z() * m_c[2] + v.w() * m_c[3];
+	}
+}
+
 T_MATH_INLINE Matrix44 Matrix44::loadAligned(const float* in)
 {
 	Matrix44 m;
