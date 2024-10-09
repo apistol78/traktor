@@ -1688,13 +1688,20 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		vsci.pScissors = &sc;
 
 		VkPipelineVertexInputStateCreateInfo visci = {};
+		visci.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		if (vertexLayout != nullptr)
 		{
-			visci.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 			visci.vertexBindingDescriptionCount = 1;
 			visci.pVertexBindingDescriptions = &vertexLayout->getVkVertexInputBindingDescription();
 			visci.vertexAttributeDescriptionCount = (uint32_t)vertexLayout->getVkVertexInputAttributeDescriptions().size();
 			visci.pVertexAttributeDescriptions = vertexLayout->getVkVertexInputAttributeDescriptions().c_ptr();
+		}
+		else
+		{
+			visci.vertexBindingDescriptionCount = 0;
+			visci.pVertexBindingDescriptions = nullptr;
+			visci.vertexAttributeDescriptionCount = 0;
+			visci.pVertexAttributeDescriptions = nullptr;
 		}
 
 		VkPipelineShaderStageCreateInfo ssci[2] = {};
@@ -1797,7 +1804,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		gpci.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		gpci.stageCount = 2;
 		gpci.pStages = ssci;
-		gpci.pVertexInputState = (vertexLayout != nullptr) ? &visci : nullptr;
+		gpci.pVertexInputState = &visci;
 		gpci.pInputAssemblyState = &iasci;
 		gpci.pTessellationState = nullptr;
 		gpci.pViewportState = &vsci;

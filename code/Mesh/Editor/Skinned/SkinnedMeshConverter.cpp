@@ -12,6 +12,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
 #include "Core/Misc/String.h"
+#include "Editor/IPipelineDepends.h"
 #include "Mesh/Editor/IndexRange.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
@@ -29,6 +30,12 @@
 
 namespace traktor::mesh
 {
+	namespace
+	{
+
+const resource::Id< render::Shader > c_shaderUpdateSkin(L"{E520B46A-24BC-764C-A3E2-819DB57B7515}");
+
+	}
 
 Ref< MeshResource > SkinnedMeshConverter::createResource() const
 {
@@ -274,6 +281,11 @@ bool SkinnedMeshConverter::convert(
 		checked_type_cast< SkinnedMeshResource* >(meshResource)->m_jointMap[model->getJoint(i).getName()] = i;
 
 	return true;
+}
+
+void SkinnedMeshConverter::addDependencies(editor::IPipelineDepends* pipelineDepends)
+{
+	pipelineDepends->addDependency(c_shaderUpdateSkin, editor::PdfBuild);
 }
 
 }

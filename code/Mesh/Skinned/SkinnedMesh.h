@@ -71,13 +71,19 @@ public:
 
 	bool supportTechnique(render::handle_t technique) const;
 
+	void buildSkin(
+		render::RenderContext* renderContext,
+		render::Buffer* jointTransforms,
+		render::Buffer* skinBuffer
+	);
+
 	void build(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
 		const Transform& lastWorldTransform,
 		const Transform& worldTransform,
-		render::Buffer* lastJointTransforms,
-		render::Buffer* jointTransforms,
+		render::Buffer* lastSkinBuffer,
+		render::Buffer* skinBuffer,
 		float distance,
 		const IMeshParameterCallback* parameterCallback
 	);
@@ -85,6 +91,8 @@ public:
 	int32_t getJointCount() const;
 
 	const SmallMap< std::wstring, int32_t >& getJointMap() const;
+
+	Ref< render::Buffer > createSkinBuffer(render::IRenderSystem* renderSystem) const;
 
 	static Ref< render::Buffer > createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount);
 
@@ -97,6 +105,7 @@ private:
 		uint32_t meshPart;
 	};
 
+	resource::Proxy< render::Shader > m_shaderUpdateSkin;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_mesh;
 	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;

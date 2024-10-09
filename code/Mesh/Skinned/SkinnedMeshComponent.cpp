@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,18 +27,22 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshComponent", SkinnedMeshComponen
 
 SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, render::IRenderSystem* renderSystem)
 :	m_mesh(mesh)
-,	m_count(0)
 {
+	// Create buffer to contain the joint matrix palette.
 	const auto& jointMap = m_mesh->getJointMap();
-	m_jointTransforms[0] = SkinnedMesh::createJointBuffer(renderSystem, (uint32_t)jointMap.size());
-	m_jointTransforms[1] = SkinnedMesh::createJointBuffer(renderSystem, (uint32_t)jointMap.size());
+	m_jointBuffer = SkinnedMesh::createJointBuffer(renderSystem, (uint32_t)jointMap.size());
+
+	// Create skin buffers.
+	m_skinBuffer[0] = m_mesh->createSkinBuffer(renderSystem);
+	m_skinBuffer[1] = m_mesh->createSkinBuffer(renderSystem);
 }
 
 void SkinnedMeshComponent::destroy()
 {
 	m_mesh.clear();
-	safeDestroy(m_jointTransforms[1]);
-	safeDestroy(m_jointTransforms[0]);
+	safeDestroy(m_jointBuffer);
+	safeDestroy(m_skinBuffer[0]);
+	safeDestroy(m_skinBuffer[1]);
 	MeshComponent::destroy();
 }
 
@@ -49,6 +53,12 @@ Aabb3 SkinnedMeshComponent::getBoundingBox() const
 
 void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
+	{
+		std::swap(m_skinBuffer[0], m_skinBuffer[1]);
+		m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0]);
+	}
+
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
 
@@ -75,8 +85,8 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 		worldRenderPass,
 		lastWorldTransform,
 		worldTransform,
-		m_jointTransforms[1 - m_count],
-		m_jointTransforms[m_count],
+		m_skinBuffer[1],
+		m_skinBuffer[0],
 		distance,
 		m_parameterCallback
 	);
@@ -84,8 +94,7 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 
 void SkinnedMeshComponent::setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms_)
 {
-	render::Buffer* jointTransforms = m_jointTransforms[m_count];
-	SkinnedMesh::JointData* jointData = (SkinnedMesh::JointData*)jointTransforms->lock();
+	SkinnedMesh::JointData* jointData = (SkinnedMesh::JointData*)m_jointBuffer->lock();
 
 	const uint32_t size = (uint32_t)jointTransforms_.size();
 	for (uint32_t i = 0; i < size; ++i)
@@ -95,8 +104,7 @@ void SkinnedMeshComponent::setJointTransforms(const AlignedVector< Matrix44 >& j
 		joint.rotation().e.storeAligned(jointData[i].rotation);
 	}
 
-	jointTransforms->unlock();
-	m_count = 1 - m_count;
+	m_jointBuffer->unlock();
 }
 
 }

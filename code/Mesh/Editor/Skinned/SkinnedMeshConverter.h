@@ -10,6 +10,13 @@
 
 #include "Mesh/Editor/IMeshConverter.h"
 
+namespace traktor::editor
+{
+
+class IPipelineDepends;
+
+}
+
 namespace traktor::mesh
 {
 
@@ -29,6 +36,8 @@ public:
 		MeshResource* meshResource,
 		IStream* meshResourceStream
 	) const override final;
+
+	static void addDependencies(editor::IPipelineDepends* pipelineDepends);
 };
 
 }

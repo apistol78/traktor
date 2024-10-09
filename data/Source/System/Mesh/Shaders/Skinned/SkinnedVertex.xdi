@@ -21,8 +21,8 @@
 			<id>{5711E12F-1428-5240-8D2E-90C05753F498}</id>
 			<comment/>
 			<position>
-				<first>-640</first>
-				<second>451</second>
+				<first>-639</first>
+				<second>443</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -30,8 +30,8 @@
 			<id>{C8C353EB-09DD-444E-B954-5E5D7F2B3272}</id>
 			<comment/>
 			<position>
-				<first>-942</first>
-				<second>383</second>
+				<first>-930</first>
+				<second>902</second>
 			</position>
 			<fragmentGuid>{4D067CD9-D2A2-DF4B-8839-277EA2663A82}</fragmentGuid>
 			<inputPins>
@@ -165,8 +165,8 @@
 			<id>{CA941E5D-6943-2D4D-A687-D1B31A08E8B5}</id>
 			<comment/>
 			<position>
-				<first>-942</first>
-				<second>484</second>
+				<first>-932</first>
+				<second>1001</second>
 			</position>
 			<fragmentGuid>{C39DDCC5-D584-2149-B630-D6C5695B6F10}</fragmentGuid>
 			<inputPins>
@@ -215,8 +215,8 @@
 			<id>{EEC1254C-93CC-B947-AE52-15F50D6AF4B0}</id>
 			<comment/>
 			<position>
-				<first>-942</first>
-				<second>585</second>
+				<first>-932</first>
+				<second>1102</second>
 			</position>
 			<fragmentGuid>{C39DDCC5-D584-2149-B630-D6C5695B6F10}</fragmentGuid>
 			<inputPins>
@@ -471,8 +471,8 @@
 			<id>{8476D607-4E64-0444-9508-7EC5CDBA2DFD}</id>
 			<comment/>
 			<position>
-				<first>-942</first>
-				<second>686</second>
+				<first>-932</first>
+				<second>1203</second>
 			</position>
 			<fragmentGuid>{C39DDCC5-D584-2149-B630-D6C5695B6F10}</fragmentGuid>
 			<inputPins>
@@ -646,7 +646,7 @@ Object
 			<id>{78EA4494-34EB-EC4B-B7C7-EA35B7651122}</id>
 			<comment/>
 			<position>
-				<first>1153</first>
+				<first>1108</first>
 				<second>33</second>
 			</position>
 			<name>ObjectPosition</name>
@@ -655,7 +655,7 @@ Object
 			<id>{AC8C683C-A8E9-2144-A1F2-3D1F7C4FDA40}</id>
 			<comment/>
 			<position>
-				<first>1153</first>
+				<first>1108</first>
 				<second>86</second>
 			</position>
 			<name>ObjectNormal</name>
@@ -664,7 +664,7 @@ Object
 			<id>{35119AC2-40A7-5149-88EB-7A3404F01463}</id>
 			<comment/>
 			<position>
-				<first>1153</first>
+				<first>1108</first>
 				<second>145</second>
 			</position>
 			<name>ObjectTangent</name>
@@ -673,7 +673,7 @@ Object
 			<id>{8FBC777D-7D5E-894D-A208-CB70550F1246}</id>
 			<comment/>
 			<position>
-				<first>1137</first>
+				<first>1092</first>
 				<second>198</second>
 			</position>
 			<name>ObjectBinormal</name>
@@ -776,8 +776,8 @@ Object
 			<id>{7A29F8D3-E744-1341-BECE-D14B0B447B42}</id>
 			<comment/>
 			<position>
-				<first>-1182</first>
-				<second>414</second>
+				<first>-1171</first>
+				<second>924</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -785,8 +785,8 @@ Object
 			<id>{7A867EDA-259A-2B41-8A19-8D4258DA6A8F}</id>
 			<comment/>
 			<position>
-				<first>-1182</first>
-				<second>496</second>
+				<first>-1172</first>
+				<second>1013</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -794,8 +794,8 @@ Object
 			<id>{D7CB6F04-D8FA-AC47-B23B-6892E683254D}</id>
 			<comment/>
 			<position>
-				<first>-1182</first>
-				<second>578</second>
+				<first>-1172</first>
+				<second>1095</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -803,8 +803,8 @@ Object
 			<id>{013FB0BA-85E1-9341-81D8-B683FDA65EAF}</id>
 			<comment/>
 			<position>
-				<first>-1182</first>
-				<second>660</second>
+				<first>-1172</first>
+				<second>1177</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -861,16 +861,6 @@ $Output = gl_VertexIndex;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{AB377EA7-A139-CE4F-ABFC-27AC9AC091CE}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
@@ -911,16 +901,6 @@ $Output = gl_VertexIndex;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{0A5EA92B-C739-8A46-93DD-0400E4447593}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
@@ -937,16 +917,6 @@ $Output = gl_VertexIndex;
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{0A5EA92B-C739-8A46-93DD-0400E4447593}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -997,16 +967,6 @@ $Output = gl_VertexIndex;
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
 				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{3237AD99-45A5-2E47-B1C0-78CCD43C06D4}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1147,16 +1107,6 @@ $Output = gl_VertexIndex;
 			<destination>
 				<node ref="/object/nodes/item[31]"/>
 				<id>{E23CF1C9-F916-D24B-815A-CC7E01284D75}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[37]"/>
-				<id>{0A5EA92B-C739-8A46-93DD-0400E4447593}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1627,6 +1577,56 @@ $Output = gl_VertexIndex;
 			<destination>
 				<node ref="/object/nodes/item[37]"/>
 				<id>{F3C069BD-3AAA-3349-88AD-B9BBD103CB7D}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{0FF6511C-0293-41A8-850E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{0FF6511C-0293-41A8-860E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{0FF6511C-0293-41A8-870E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{0FF6511C-0293-41A8-880E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{0FF6511C-0293-41A8-850E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>

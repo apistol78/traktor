@@ -20,7 +20,9 @@ namespace traktor::mesh
 	{
 
 const render::Handle s_handleSkinBuffer(L"Mesh_SkinBuffer");
-const render::Handle s_handleLastJoints(L"Mesh_LastJoints");
+const render::Handle s_handleSkinBufferLast(L"Mesh_SkinBufferLast");
+const render::Handle s_handleSkinBufferOutput(L"Mesh_SkinBufferOutput");
+//const render::Handle s_handleLastJoints(L"Mesh_LastJoints");
 const render::Handle s_handleJoints(L"Mesh_Joints");
 
 	}
@@ -37,13 +39,35 @@ bool SkinnedMesh::supportTechnique(render::handle_t technique) const
 	return m_parts.find(technique) != m_parts.end();
 }
 
+void SkinnedMesh::buildSkin(
+	render::RenderContext* renderContext,
+	render::Buffer* jointTransforms,
+	render::Buffer* skinBuffer
+)
+{
+	const uint32_t vertexCount = m_mesh->getAuxBuffer()->getBufferSize() / (6 * 4 * sizeof(float));
+
+	auto programParams = renderContext->alloc< render::ProgramParameters >();
+	programParams->beginParameters(renderContext);
+	programParams->setBufferViewParameter(s_handleSkinBuffer, m_mesh->getAuxBuffer()->getBufferView());
+	programParams->setBufferViewParameter(s_handleSkinBufferOutput, skinBuffer->getBufferView());
+	programParams->setBufferViewParameter(s_handleJoints, jointTransforms->getBufferView());
+	programParams->endParameters(renderContext);
+
+	auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >();
+	renderBlock->program = m_shaderUpdateSkin->getProgram().program;
+	renderBlock->programParams = programParams;
+	renderBlock->workSize[0] = vertexCount;
+	renderContext->compute(renderBlock);
+}
+
 void SkinnedMesh::build(
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& lastWorldTransform,
 	const Transform& worldTransform,
-	render::Buffer* lastJointTransforms,
-	render::Buffer* jointTransforms,
+	render::Buffer* lastSkinBuffer,
+	render::Buffer* skinBuffer,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
 )
@@ -64,9 +88,8 @@ void SkinnedMesh::build(
 	if (parameterCallback)
 		parameterCallback->setParameters(programParams);
 
-	programParams->setBufferViewParameter(s_handleSkinBuffer, m_mesh->getAuxBuffer()->getBufferView());
-	programParams->setBufferViewParameter(s_handleLastJoints, lastJointTransforms->getBufferView());
-	programParams->setBufferViewParameter(s_handleJoints, jointTransforms->getBufferView());
+	programParams->setBufferViewParameter(s_handleSkinBufferLast, lastSkinBuffer->getBufferView());
+	programParams->setBufferViewParameter(s_handleSkinBuffer, skinBuffer->getBufferView());
 
 	programParams->endParameters(renderContext);
 
@@ -105,6 +128,12 @@ int32_t SkinnedMesh::getJointCount() const
 const SmallMap< std::wstring, int >& SkinnedMesh::getJointMap() const
 {
 	return m_jointMap;
+}
+
+Ref< render::Buffer > SkinnedMesh::createSkinBuffer(render::IRenderSystem* renderSystem) const
+{
+	const uint32_t vertexCount = m_mesh->getAuxBuffer()->getBufferSize() / (6 * 4 * sizeof(float));
+	return renderSystem->createBuffer(render::BuStructured, vertexCount * 6 * 4 * sizeof(float), false);
 }
 
 Ref< render::Buffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount)

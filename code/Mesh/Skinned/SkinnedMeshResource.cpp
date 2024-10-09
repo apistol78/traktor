@@ -21,6 +21,12 @@
 
 namespace traktor::mesh
 {
+	namespace
+	{
+
+const resource::Id< render::Shader > c_shaderUpdateSkin(L"{E520B46A-24BC-764C-A3E2-819DB57B7515}");
+
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.SkinnedMeshResource", 5, SkinnedMeshResource, MeshResource)
 
@@ -40,6 +46,9 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 	}
 
 	Ref< SkinnedMesh > skinnedMesh = new SkinnedMesh();
+
+	if (!resourceManager->bind(c_shaderUpdateSkin, skinnedMesh->m_shaderUpdateSkin))
+		return nullptr;
 
 	if (!resourceManager->bind(m_shader, skinnedMesh->m_shader))
 		return nullptr;

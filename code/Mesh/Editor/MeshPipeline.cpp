@@ -233,6 +233,7 @@ bool MeshPipeline::buildDependencies(
 
 	// Add dependencies from mesh subsystems.
 	InstanceMeshConverter::addDependencies(pipelineDepends);
+	SkinnedMeshConverter::addDependencies(pipelineDepends);
 	return true;
 }
 

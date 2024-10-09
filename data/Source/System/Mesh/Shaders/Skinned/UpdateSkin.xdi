@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+			<id>{FC687025-5E6E-0B44-8167-0CF51A1F17D6}</id>
+			<comment/>
+			<position>
+				<first>30</first>
+				<second>323</second>
+			</position>
+			<parameterName>Mesh_SkinBufferOutput</parameterName>
+			<elements>
+				<item>
+					<name>Position</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>Normal</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>Tangent</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>Binormal</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>BlendIndices</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>BlendWeights</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+			</elements>
+		</item>
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+			<id>{2A2AC9CA-7AD9-3646-AC03-275033239255}</id>
+			<comment/>
+			<position>
+				<first>37</first>
+				<second>262</second>
+			</position>
+			<parameterName>Mesh_SkinBuffer</parameterName>
+			<elements>
+				<item>
+					<name>Position</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>Normal</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>Tangent</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>Binormal</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>BlendIndices</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>BlendWeights</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+			</elements>
+		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{8C6FBA2D-BC40-574D-B811-23C989BE918E}</id>
+			<comment/>
+			<position>
+				<first>393</first>
+				<second>249</second>
+			</position>
+			<name>Skin</name>
+			<technique>Default</technique>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{575BD8FB-16B5-1647-950A-08C59A8F00B9}</id>
+					<name>SkinBufferInput</name>
+				</item>
+				<item>
+					<id>{7660C501-EDA7-E349-BDC2-02A6326797DA}</id>
+					<name>SkinBufferOutput</name>
+				</item>
+				<item>
+					<id>{C6875BAF-B95F-CF48-9777-1ABC17B87E4F}</id>
+					<name>Joints</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script>
+			<![CDATA[
+const uint index = gl_GlobalInvocationID.x;
+
+vec4 position = $SkinBufferInput[index].Position;
+vec4 normal = $SkinBufferInput[index].Normal;
+vec4 tangent = $SkinBufferInput[index].Tangent;
+vec4 binormal = $SkinBufferInput[index].Binormal;
+
+$SkinBufferOutput[index].Position = position;
+$SkinBufferOutput[index].Normal = normal;
+$SkinBufferOutput[index].Tangent = tangent;
+$SkinBufferOutput[index].Binormal = binormal;
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+			<id>{92A9B959-3767-F141-AED5-664F9EE0D94B}</id>
+			<comment/>
+			<position>
+				<first>70</first>
+				<second>384</second>
+			</position>
+			<parameterName>Mesh_Joints</parameterName>
+			<elements>
+				<item>
+					<name>Translation</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>Rotation</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+			</elements>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{575BD8FB-16B5-1647-950A-08C59A8F00B9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{7660C501-EDA7-E349-BDC2-02A6326797DA}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>

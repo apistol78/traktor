@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -76,7 +76,8 @@ private:
 	AlignedVector< int32_t > m_jointRemap;
 	AlignedVector< Transform > m_jointInverseTransforms;
 	AlignedVector< Transform > m_poseTransforms[2];
-	Ref< render::Buffer > m_jointBuffers[2];
+	Ref< render::Buffer > m_jointBuffer;
+	Ref< render::Buffer > m_skinBuffer[2];
 	Transform m_lastWorldTransform[2];
 	std::atomic< int32_t > m_index;
 };

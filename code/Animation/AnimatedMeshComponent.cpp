@@ -45,22 +45,24 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 {
 	const uint32_t skinJointCount = m_mesh->getJointCount();
 
-	m_jointBuffers[0] = mesh::SkinnedMesh::createJointBuffer(renderSystem, skinJointCount);
-	m_jointBuffers[1] = mesh::SkinnedMesh::createJointBuffer(renderSystem, skinJointCount);
+	// Create buffer to contain the joint matrix palette.
+	m_jointBuffer = mesh::SkinnedMesh::createJointBuffer(renderSystem, skinJointCount);
+
+	// Create skin buffers.
+	m_skinBuffer[0] = m_mesh->createSkinBuffer(renderSystem);
+	m_skinBuffer[1] = m_mesh->createSkinBuffer(renderSystem);
 
 	m_jointInverseTransforms.resize(skinJointCount, Transform::identity());
-
 	m_poseTransforms[0].resize(skinJointCount, Transform::identity());
 	m_poseTransforms[1].resize(skinJointCount, Transform::identity());
 }
 
 void AnimatedMeshComponent::destroy()
 {
-	safeDestroy(m_jointBuffers[1]);
-	safeDestroy(m_jointBuffers[0]);
-
 	m_mesh.clear();
-
+	safeDestroy(m_jointBuffer);
+	safeDestroy(m_skinBuffer[0]);
+	safeDestroy(m_skinBuffer[1]);
 	mesh::MeshComponent::destroy();
 }
 
@@ -144,18 +146,9 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 {
 	const Scalar interval(worldRenderView.getInterval());
 	const Transform worldTransform = m_transform.get(interval);
-	auto& jointBufferLast = m_jointBuffers[0];
-	auto& jointBufferCurrent = m_jointBuffers[1];
 
 	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0 && worldRenderView.getIndex() == 0)
 	{
-		// Update joint buffers only for first pass of frame, buffers are implicitly double buffered
-		// and cannot be updated multiple times per frame.
-		std::swap< Ref< render::Buffer > >(
-			jointBufferLast,
-			jointBufferCurrent
-		);
-
 		m_lastWorldTransform[1] = m_lastWorldTransform[0];
 		m_lastWorldTransform[0] = worldTransform;
 
@@ -166,7 +159,7 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 		const auto& jointTransforms = skeletonComponent->getJointTransforms();
 
 		// Interpolate between updates to get current build skin transforms.
-		mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)jointBufferCurrent->lock();
+		mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)m_jointBuffer->lock();
 		for (uint32_t i = 0; i < poseTransformsCurrentUpdate.size(); ++i)
 		{
 			const Transform poseTransform = lerp(poseTransformsLastUpdate[i], poseTransformsCurrentUpdate[i], interval);
@@ -175,7 +168,10 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 			skinTransform.rotation().e.storeAligned(jointData->rotation);
 			jointData++;
 		}
-		jointBufferCurrent->unlock();
+		m_jointBuffer->unlock();
+
+		std::swap(m_skinBuffer[0], m_skinBuffer[1]);
+		m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0]);
 	}
 
 	if (m_mesh->supportTechnique(worldRenderPass.getTechnique()))
@@ -192,8 +188,8 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 				worldRenderPass,
 				m_lastWorldTransform[1],
 				worldTransform,
-				jointBufferLast,
-				jointBufferCurrent,
+				m_skinBuffer[1],
+				m_skinBuffer[0],
 				distance,
 				getParameterCallback()
 			);
