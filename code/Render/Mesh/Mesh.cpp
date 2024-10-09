@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,6 +36,11 @@ void Mesh::setIndexType(IndexType indexType)
 void Mesh::setIndexBuffer(Buffer* indexBuffer)
 {
 	m_indexBuffer = indexBuffer;
+}
+
+void Mesh::setAuxBuffer(Buffer* auxBuffer)
+{
+	m_auxBuffer = auxBuffer;
 }
 
 void Mesh::setParts(const AlignedVector< Part >& parts)

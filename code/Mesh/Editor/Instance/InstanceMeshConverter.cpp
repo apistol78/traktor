@@ -78,7 +78,8 @@ bool InstanceMeshConverter::convert(
 		vertexElements,
 		vertexBufferSize,
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
-		indexBufferSize
+		indexBufferSize,
+		0
 	);
 
 	// Create vertex buffer.

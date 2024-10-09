@@ -52,6 +52,8 @@ public:
 
 	void setIndexBuffer(Buffer* indexBuffer);
 
+	void setAuxBuffer(Buffer* auxBuffer);
+
 	void setParts(const AlignedVector< Part >& parts);
 
 	void setBoundingBox(const Aabb3& boundingBox);
@@ -66,6 +68,8 @@ public:
 
 	Buffer* getIndexBuffer() const { return m_indexBuffer; }
 
+	Buffer* getAuxBuffer() const { return m_auxBuffer; }
+
 	const AlignedVector< Part >& getParts() const { return m_parts; }
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
@@ -76,6 +80,7 @@ private:
 	Ref< Buffer > m_vertexBuffer;
 	IndexType m_indexType;
 	Ref< Buffer > m_indexBuffer;
+	Ref< Buffer > m_auxBuffer;
 	AlignedVector< Part > m_parts;
 	Aabb3 m_boundingBox;
 };

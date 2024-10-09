@@ -31,9 +31,10 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 
 	uint32_t version;
 	reader >> version;
-	if (version != 4)
+	if (version != 5)
 		return nullptr;
 
+	// Read vertex declaration.
 	uint32_t vertexElementCount;
 	reader >> vertexElementCount;
 
@@ -42,36 +43,42 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 
 	for (uint32_t i = 0; i < vertexElementCount; ++i)
 	{
-		uint32_t usage;
+		uint32_t usage, type, offset, index;
 		reader >> usage;
-
-		uint32_t type;
 		reader >> type;
-
-		uint32_t offset;
 		reader >> offset;
-
-		uint32_t index;
 		reader >> index;
-
 		vertexElements.push_back(VertexElement(
-			DataUsage(usage),
-			DataType(type),
+			(DataUsage)usage,
+			(DataType)type,
 			offset,
 			index
 		));
 	}
 
+	// Read vertex buffer size.
 	uint32_t vertexBufferSize;
 	reader >> vertexBufferSize;
 
+	// Read index declaration.
 	uint32_t indexType;
 	reader >> indexType;
 
+	// Read index buffer size.
 	uint32_t indexBufferSize;
 	reader >> indexBufferSize;
 
-	Ref< Mesh > mesh = m_meshFactory->createMesh(vertexElements, vertexBufferSize, IndexType(indexType), indexBufferSize);
+	// Read aux buffer size.
+	uint32_t auxBufferSize;
+	reader >> auxBufferSize;
+
+	Ref< Mesh > mesh = m_meshFactory->createMesh(
+		vertexElements,
+		vertexBufferSize,
+		(IndexType)indexType,
+		indexBufferSize,
+		auxBufferSize
+	);
 	if (!mesh)
 		return nullptr;
 
@@ -80,70 +87,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 		uint8_t* vertex = static_cast< uint8_t* >(mesh->getVertexBuffer()->lock());
 		if (!vertex)
 			return nullptr;
-
 		reader.read(vertex, vertexBufferSize);
-
-#if !defined(T_LITTLE_ENDIAN)
-		uint32_t vertexSize = getVertexSize(vertexElements);
-		for (uint32_t i = 0; i < vertexBufferSize; i += vertexSize)
-		{
-			for (AlignedVector< VertexElement >::iterator j = vertexElements.begin(); j != vertexElements.end(); ++j)
-			{
-				uint8_t* vertexElm = &vertex[i + j->getOffset()];
-				switch (j->getDataType())
-				{
-				case DtFloat1:
-					swap8in32(*(float*)vertexElm);
-					break;
-
-				case DtFloat2:
-					swap8in32(*(float*)vertexElm);
-					swap8in32(*(float*)(vertexElm + 4));
-					break;
-
-				case DtFloat3:
-					swap8in32(*(float*)vertexElm);
-					swap8in32(*(float*)(vertexElm + 4));
-					swap8in32(*(float*)(vertexElm + 8));
-					break;
-
-				case DtFloat4:
-					swap8in32(*(float*)vertexElm);
-					swap8in32(*(float*)(vertexElm + 4));
-					swap8in32(*(float*)(vertexElm + 8));
-					swap8in32(*(float*)(vertexElm + 12));
-					break;
-
-				case DtShort2:
-				case DtShort2N:
-					swap8in32(*(uint16_t*)vertexElm);
-					swap8in32(*(uint16_t*)(vertexElm + 2));
-					break;
-
-				case DtShort4:
-				case DtShort4N:
-					swap8in32(*(uint16_t*)vertexElm);
-					swap8in32(*(uint16_t*)(vertexElm + 2));
-					swap8in32(*(uint16_t*)(vertexElm + 4));
-					swap8in32(*(uint16_t*)(vertexElm + 6));
-					break;
-
-				case DtHalf2:
-					swap8in32(*(uint16_t*)vertexElm);
-					swap8in32(*(uint16_t*)(vertexElm + 2));
-					break;
-
-				case DtHalf4:
-					swap8in32(*(uint16_t*)vertexElm);
-					swap8in32(*(uint16_t*)(vertexElm + 2));
-					swap8in32(*(uint16_t*)(vertexElm + 4));
-					swap8in32(*(uint16_t*)(vertexElm + 6));
-					break;
-				}
-			}
-		}
-#endif
-
 		mesh->getVertexBuffer()->unlock();
 	}
 
@@ -152,25 +96,17 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 		uint8_t* index = static_cast< uint8_t* >(mesh->getIndexBuffer()->lock());
 		if (!index)
 			return nullptr;
-
 		reader.read(index, indexBufferSize);
-
-#if !defined(T_LITTLE_ENDIAN)
-		switch (indexType)
-		{
-		case ItUInt16:
-			for (uint32_t i = 0; i < indexBufferSize; i += 2)
-				swap8in32(*(uint16_t*)(index + i));
-			break;
-
-		case ItUInt32:
-			for (uint32_t i = 0; i < indexBufferSize; i += 4)
-				swap8in32(*(uint32_t*)(index + i));
-			break;
-		}
-#endif
-
 		mesh->getIndexBuffer()->unlock();
+	}
+
+	if (auxBufferSize > 0)
+	{
+		uint8_t* aux = static_cast<uint8_t*>(mesh->getAuxBuffer()->lock());
+		if (!aux)
+			return nullptr;
+		reader.read(aux, auxBufferSize);
+		mesh->getAuxBuffer()->unlock();
 	}
 
 	uint32_t partCount;

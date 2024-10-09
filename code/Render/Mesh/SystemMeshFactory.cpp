@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,32 +41,34 @@ Ref< Mesh > SystemMeshFactory::createMesh(
 	const AlignedVector< VertexElement >& vertexElements,
 	uint32_t vertexBufferSize,
 	IndexType indexType,
-	uint32_t indexBufferSize
+	uint32_t indexBufferSize,
+	uint32_t auxBufferSize
 ) const
 {
 	Ref< Buffer > vertexBuffer;
 	Ref< Buffer > indexBuffer;
+	Ref< Buffer > auxBuffer;
 
 	if (vertexBufferSize > 0)
 	{
 		const uint32_t vertexSize = getVertexSize(vertexElements);
 		if (vertexSize == 0)
 			return nullptr;
-
 		vertexBuffer = new InternalBuffer(vertexBufferSize);
 	}
 
 	if (indexBufferSize > 0)
-	{
-		const uint32_t indexSize = (indexType == IndexType::UInt16) ? 2 : 4;
 		indexBuffer = new InternalBuffer(indexBufferSize);
-	}
+
+	if (auxBufferSize > 0)
+		auxBuffer = new InternalBuffer(auxBufferSize);
 
 	Ref< Mesh > mesh = new Mesh();
 	mesh->setVertexElements(vertexElements);
 	mesh->setVertexBuffer(vertexBuffer);
 	mesh->setIndexType(indexType);
 	mesh->setIndexBuffer(indexBuffer);
+	mesh->setAuxBuffer(auxBuffer);
 	return mesh;
 }
 

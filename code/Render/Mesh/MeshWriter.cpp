@@ -1,16 +1,16 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Mesh/MeshWriter.h"
-#include "Render/Mesh/Mesh.h"
-#include "Render/Buffer.h"
 #include "Core/Math/Half.h"
 #include "Core/Io/Writer.h"
+#include "Render/Buffer.h"
+#include "Render/Mesh/Mesh.h"
+#include "Render/Mesh/MeshWriter.h"
 
 namespace traktor::render
 {
@@ -21,23 +21,20 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 {
 	Writer writer(stream);
 
-	writer << uint32_t(4);
+	writer << (uint32_t)5;
 
 	const auto& vertexElements = mesh->getVertexElements();
-	writer << uint32_t(vertexElements.size());
+	writer << (uint32_t)vertexElements.size();
 
 	for (const auto& vertexElement : vertexElements)
 	{
-		writer << uint32_t(vertexElement.getDataUsage());
-		writer << uint32_t(vertexElement.getDataType());
-		writer << uint32_t(vertexElement.getOffset());
-		writer << uint32_t(vertexElement.getIndex());
+		writer << (uint32_t)vertexElement.getDataUsage();
+		writer << (uint32_t)vertexElement.getDataType();
+		writer << (uint32_t)vertexElement.getOffset();
+		writer << (uint32_t)vertexElement.getIndex();
 	}
 
-	uint32_t vertexBufferSize = 0;
-	if (mesh->getVertexBuffer())
-		vertexBufferSize = mesh->getVertexBuffer()->getBufferSize();
-
+	const uint32_t vertexBufferSize = (mesh->getVertexBuffer() != nullptr) ? mesh->getVertexBuffer()->getBufferSize() : 0;
 	writer << vertexBufferSize;
 
 	IndexType indexType = IndexType::UInt16;
@@ -48,8 +45,11 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 		indexBufferSize = mesh->getIndexBuffer()->getBufferSize();
 	}
 
-	writer << uint32_t(indexType);
+	writer << (uint32_t)indexType;
 	writer << indexBufferSize;
+
+	const uint32_t auxBufferSize = (mesh->getAuxBuffer() != nullptr) ? mesh->getAuxBuffer()->getBufferSize() : 0;
+	writer << auxBufferSize;
 
 	if (vertexBufferSize > 0)
 	{
@@ -111,7 +111,6 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 	if (indexBufferSize > 0)
 	{
 		uint8_t* index = static_cast< uint8_t* >(mesh->getIndexBuffer()->lock());
-
 		switch (indexType)
 		{
 		case IndexType::UInt16:
@@ -125,8 +124,14 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 		default:
 			break;
 		}
-
 		mesh->getIndexBuffer()->unlock();
+	}
+
+	if (auxBufferSize > 0)
+	{
+		uint8_t* aux = static_cast< uint8_t* >(mesh->getAuxBuffer()->lock());
+		writer.write(aux, auxBufferSize);
+		mesh->getAuxBuffer()->unlock();
 	}
 
 	const AlignedVector< Mesh::Part >& parts = mesh->getParts();

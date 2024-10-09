@@ -24,12 +24,14 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 	const AlignedVector< VertexElement >& vertexElements,
 	uint32_t vertexBufferSize,
 	IndexType indexType,
-	uint32_t indexBufferSize
+	uint32_t indexBufferSize,
+	uint32_t auxBufferSize
 ) const
 {
 	Ref< const IVertexLayout > vertexLayout;
 	Ref< Buffer > vertexBuffer;
 	Ref< Buffer > indexBuffer;
+	Ref< Buffer > auxBuffer;
 
 	if (vertexBufferSize > 0)
 	{
@@ -48,9 +50,15 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 
 	if (indexBufferSize > 0)
 	{
-		const uint32_t indexSize = (indexType == IndexType::UInt16) ? 2 : 4;
 		indexBuffer = m_renderSystem->createBuffer(BuIndex, indexBufferSize, false);
 		if (!indexBuffer)
+			return nullptr;
+	}
+
+	if (auxBufferSize > 0)
+	{
+		auxBuffer = m_renderSystem->createBuffer(BuStructured, auxBufferSize, false);
+		if (!auxBuffer)
 			return nullptr;
 	}
 
@@ -60,6 +68,7 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 	mesh->setVertexBuffer(vertexBuffer);
 	mesh->setIndexType(indexType);
 	mesh->setIndexBuffer(indexBuffer);
+	mesh->setAuxBuffer(auxBuffer);
 	return mesh;
 }
 

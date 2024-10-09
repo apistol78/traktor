@@ -57,20 +57,21 @@ bool SkinnedMeshConverter::convert(
 ) const
 {
 	// Create render mesh.
-	uint32_t vertexSize = render::getVertexSize(vertexElements);
+	const uint32_t vertexSize = render::getVertexSize(vertexElements);
 	T_ASSERT(vertexSize > 0);
 
-	bool useLargeIndices = (bool)(model->getVertexCount() >= 65536);
-	uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
+	const bool useLargeIndices = (bool)(model->getVertexCount() >= 65536);
+	const uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
 
-	uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
-	uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
+	const uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
+	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
 
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
-		indexBufferSize
+		indexBufferSize,
+		0
 	);
 
 	// Create vertex buffer.
