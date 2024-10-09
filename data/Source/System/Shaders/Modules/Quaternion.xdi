@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule">
+	<text>
+	<![CDATA[
+// Quaternion
+
+vec4 QuaternionMultiply(vec4 l, vec4 r)
+{
+	return
+		l.wwww * r +
+		l.xyzx * r.wwww * vec4(1.0f, 1.0f, 1.0f, -1.0f) +
+		l.yzxy * r.zxyy * vec4(1.0f, 1.0f, 1.0f, -1.0f) -
+		l.zxyz * r.yzxz;
+}
+
+vec4 QuaternionConjugate(vec4 q)
+{
+	return q * vec4(-1.0f, -1.0f, -1.0f, 1.0f);
+}
+
+vec4 QuaternionRotate(vec4 q, vec4 v)
+{
+	const vec4 t0 = QuaternionMultiply(q, v);
+	const vec4 t1 = QuaternionConjugate(q);
+	return QuaternionMultiply(t0, t1);
+}
+
+
+	]]>
+	</text>
+</object>

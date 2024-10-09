@@ -46,7 +46,7 @@
 			<id>{2A2AC9CA-7AD9-3646-AC03-275033239255}</id>
 			<comment/>
 			<position>
-				<first>37</first>
+				<first>78</first>
 				<second>262</second>
 			</position>
 			<parameterName>Mesh_SkinBuffer</parameterName>
@@ -87,8 +87,8 @@
 			<id>{8C6FBA2D-BC40-574D-B811-23C989BE918E}</id>
 			<comment/>
 			<position>
-				<first>393</first>
-				<second>249</second>
+				<first>392</first>
+				<second>272</second>
 			</position>
 			<name>Skin</name>
 			<technique>Default</technique>
@@ -97,7 +97,9 @@
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
-			<include/>
+			<include>
+				<item>{22B84E07-E5B1-4714-86C8-1FBBE55017E3}</item>
+			</include>
 			<inputPins>
 				<item>
 					<id>{575BD8FB-16B5-1647-950A-08C59A8F00B9}</id>
@@ -122,10 +124,39 @@ vec4 normal = $SkinBufferInput[index].Normal;
 vec4 tangent = $SkinBufferInput[index].Tangent;
 vec4 binormal = $SkinBufferInput[index].Binormal;
 
-$SkinBufferOutput[index].Position = position;
+ivec4 blendIndices = ivec4($SkinBufferInput[index].BlendIndices);
+vec4 blendWeights = $SkinBufferInput[index].BlendWeights;
+
+vec4 t0 = $Joints[blendIndices.x].Translation;
+vec4 r0 = $Joints[blendIndices.x].Rotation;
+vec4 p0 = QuaternionRotate(r0, position) + t0;
+
+vec4 t1 = $Joints[blendIndices.y].Translation;
+vec4 r1 = $Joints[blendIndices.y].Rotation;
+vec4 p1 = QuaternionRotate(r1, position) + t1;
+
+vec4 t2 = $Joints[blendIndices.z].Translation;
+vec4 r2 = $Joints[blendIndices.z].Rotation;
+vec4 p2 = QuaternionRotate(r2, position) + t2;
+
+vec4 t3 = $Joints[blendIndices.w].Translation;
+vec4 r3 = $Joints[blendIndices.w].Rotation;
+vec4 p3 = QuaternionRotate(r3, position) + t3;
+
+float k = 1.0f - dot(blendWeights, vec4(1.0f));
+
+vec4 p =
+	p0 * blendWeights.x +
+	p1 * blendWeights.y +
+	p2 * blendWeights.z +
+	p3 * blendWeights.w +
+	position * k;
+
+$SkinBufferOutput[index].Position = vec4(p.xyz, 1.0f);
 $SkinBufferOutput[index].Normal = normal;
 $SkinBufferOutput[index].Tangent = tangent;
 $SkinBufferOutput[index].Binormal = binormal;
+
 			]]>
 			</script>
 		</item>
@@ -133,7 +164,7 @@ $SkinBufferOutput[index].Binormal = binormal;
 			<id>{92A9B959-3767-F141-AED5-664F9EE0D94B}</id>
 			<comment/>
 			<position>
-				<first>70</first>
+				<first>110</first>
 				<second>384</second>
 			</position>
 			<parameterName>Mesh_Joints</parameterName>
@@ -170,6 +201,16 @@ $SkinBufferOutput[index].Binormal = binormal;
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{7660C501-EDA7-E349-BDC2-02A6326797DA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{C6875BAF-B95F-CF48-9777-1ABC17B87E4F}</id>
 			</destination>
 		</item>
 	</edges>
