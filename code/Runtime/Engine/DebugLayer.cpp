@@ -50,6 +50,7 @@ void DebugLayer::preUpdate(const UpdateInfo& info)
 {
 	m_points.resize(0);
 	m_lines.resize(0);
+	m_frames.resize(0);
 }
 
 void DebugLayer::update(const UpdateInfo& info)
@@ -97,13 +98,21 @@ void DebugLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 		);
 	}
 
+	for (const auto& frame : m_frames)
+	{
+		m_primitiveRenderer->drawWireFrame(
+			frame.frame,
+			frame.length
+		);
+	}
+
 	m_primitiveRenderer->popDepthState();
 	m_primitiveRenderer->popView();
 	m_primitiveRenderer->end(m_count);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug");
 	rp->setOutput(0, render::TfAll, render::TfAll);
-	rp->addBuild([=, count = m_count, points = m_points](const render::RenderGraph&, render::RenderContext* renderContext) {
+	rp->addBuild([=, count = m_count](const render::RenderGraph&, render::RenderContext* renderContext) {
 		auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Debug wire");
 		rb->lambda = [=](render::IRenderView* renderView) {
 			m_primitiveRenderer->render(renderView, count);
@@ -143,6 +152,11 @@ void DebugLayer::point(const Vector4& position, float size, const Color4f& color
 void DebugLayer::line(const Vector4& from, const Vector4& to, float width, const Color4f& color)
 {
 	m_lines.push_back({ from, to, color, width });
+}
+
+void DebugLayer::frame(const Matrix44& frame, float length)
+{
+	m_frames.push_back({ frame, length });
 }
 
 }

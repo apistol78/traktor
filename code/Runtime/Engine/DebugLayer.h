@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Math/Matrix44.h"
 #include "Runtime/Engine/Layer.h"
 
 // import/export mechanism.
@@ -71,6 +72,8 @@ public:
 
 	void line(const Vector4& from, const Vector4& to, float width, const Color4f& color);
 
+	void frame(const Matrix44& frame, float length);
+
 private:
 	struct Point
 	{
@@ -87,10 +90,17 @@ private:
 		float width;
 	};
 
+	struct Frame
+	{
+		Matrix44 frame;
+		float length;
+	};
+
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	int32_t m_count = 0;
 	AlignedVector< Point > m_points;
 	AlignedVector< Line > m_lines;
+	AlignedVector< Frame > m_frames;
 };
 
 }

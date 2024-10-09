@@ -13,6 +13,7 @@
 #include "Core/Class/Boxes/BoxedColor4f.h"
 #include "Core/Class/Boxes/BoxedFrustum.h"
 #include "Core/Class/Boxes/BoxedGuid.h"
+#include "Core/Class/Boxes/BoxedMatrix44.h"
 #include "Core/Class/Boxes/BoxedRay3.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedTypeInfo.h"
@@ -311,6 +312,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classDebugLayer = new AutoRuntimeClass< DebugLayer >();
 	classDebugLayer->addMethod("point", &DebugLayer::point);
 	classDebugLayer->addMethod("line", &DebugLayer::line);
+	classDebugLayer->addMethod("frame", &DebugLayer::frame);
 	registrar->registerClass(classDebugLayer);
 
 	auto classScreenLayer = new AutoRuntimeClass< ScreenLayer >();
