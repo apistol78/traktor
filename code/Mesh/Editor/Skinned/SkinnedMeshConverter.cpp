@@ -65,42 +65,49 @@ bool SkinnedMeshConverter::convert(
 
 	const uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
 	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
+	const uint32_t auxBufferSize = (uint32_t)(model->getVertices().size() * (6 * 4 * sizeof(float)));
 
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize,
-		0
+		auxBufferSize
 	);
 
-	// Create vertex buffer.
-	uint8_t* vertex = static_cast< uint8_t* >(mesh->getVertexBuffer()->lock());
-	std::memset(vertex, 0, vertexBufferSize);
+	// Create vertex and aux buffers.
+	uint8_t* vertex = nullptr;
+	if (vertexBufferSize > 0)
+	{
+		vertex = static_cast<uint8_t*>(mesh->getVertexBuffer()->lock());
+		std::memset(vertex, 0, vertexBufferSize);
+	}
+
+	float* aux = static_cast< float* >(mesh->getAuxBuffer()->lock());
+	std::memset(aux, 0, auxBufferSize);
 
 	AlignedVector< std::pair< uint32_t, float > > jointInfluences;
 	for (const auto& v : model->getVertices())
 	{
-		writeVertexData(vertexElements, vertex, render::DataUsage::Position, 0, model->getPosition(v.getPosition()));
-		if (v.getNormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DataUsage::Normal, 0, model->getNormal(v.getNormal()));
-		if (v.getTangent() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DataUsage::Tangent, 0, model->getNormal(v.getTangent()));
-		if (v.getBinormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DataUsage::Binormal, 0, model->getNormal(v.getBinormal()));
-		if (v.getColor() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DataUsage::Color, 0, model->getColor(v.getColor()));
-		if (v.getTexCoord(0) != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 2, model->getTexCoord(v.getTexCoord(0)));
-		if (v.getTexCoord(1) != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 3, model->getTexCoord(v.getTexCoord(1)));
+		// Write vertex data.
+		if (vertex != nullptr)
+		{
+			if (v.getColor() != model::c_InvalidIndex)
+				writeVertexData(vertexElements, vertex, render::DataUsage::Color, 0, model->getColor(v.getColor()));
+			if (v.getTexCoord(0) != model::c_InvalidIndex)
+				writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 2, model->getTexCoord(v.getTexCoord(0)));
+			if (v.getTexCoord(1) != model::c_InvalidIndex)
+				writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 3, model->getTexCoord(v.getTexCoord(1)));
+			vertex += vertexSize;
+		}
 
+		// Gather joints and write weights to vertex.
 		uint32_t jointCount = model->getJointCount();
 
 		jointInfluences.resize(0);
 		for (uint32_t i = 0; i < jointCount; ++i)
 		{
-			float w = v.getJointInfluence(i);
+			const float w = v.getJointInfluence(i);
 			if (std::abs(w) > FUZZY_EPSILON)
 				jointInfluences.push_back(std::make_pair(i, w));
 		}
@@ -144,13 +151,23 @@ bool SkinnedMeshConverter::convert(
 			}
 		}
 
-		writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 0, blendIndices);
-		writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 1, blendWeights);
-
-		vertex += vertexSize;
+		// Write aux data.
+		{
+			const Vector4 position = model->getPosition(v.getPosition());
+			const Vector4 normal = (v.getNormal() != model::c_InvalidIndex) ? model->getNormal(v.getNormal()) : Vector4::zero();
+			const Vector4 tangent = (v.getTangent() != model::c_InvalidIndex) ? model->getNormal(v.getTangent()) : Vector4::zero();
+			const Vector4 binormal = (v.getBinormal() != model::c_InvalidIndex) ? model->getNormal(v.getBinormal()) : Vector4::zero();
+			position.storeUnaligned(aux); aux += 4;
+			normal.storeUnaligned(aux); aux += 4;
+			tangent.storeUnaligned(aux); aux += 4;
+			binormal.storeUnaligned(aux); aux += 4;
+			std::memcpy(aux, blendIndices, 4 * sizeof(float)); aux += 4;
+			std::memcpy(aux, blendWeights, 4 * sizeof(float)); aux += 4;
+		}
 	}
 
-	mesh->getVertexBuffer()->unlock();
+	if (vertex)
+		mesh->getVertexBuffer()->unlock();
 
 	// Create index buffer.
 	std::map< std::wstring, AlignedVector< IndexRange > > techniqueRanges;

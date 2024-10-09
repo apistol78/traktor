@@ -19,6 +19,7 @@ namespace traktor::mesh
 	namespace
 	{
 
+const render::Handle s_handleSkinBuffer(L"Mesh_SkinBuffer");
 const render::Handle s_handleLastJoints(L"Mesh_LastJoints");
 const render::Handle s_handleJoints(L"Mesh_Joints");
 
@@ -63,6 +64,7 @@ void SkinnedMesh::build(
 	if (parameterCallback)
 		parameterCallback->setParameters(programParams);
 
+	programParams->setBufferViewParameter(s_handleSkinBuffer, m_mesh->getAuxBuffer()->getBufferView());
 	programParams->setBufferViewParameter(s_handleLastJoints, lastJointTransforms->getBufferView());
 	programParams->setBufferViewParameter(s_handleJoints, jointTransforms->getBufferView());
 
@@ -84,7 +86,7 @@ void SkinnedMesh::build(
 		renderBlock->programParams = programParams;
 		renderBlock->indexBuffer = m_mesh->getIndexBuffer()->getBufferView();
 		renderBlock->indexType = m_mesh->getIndexType();
-		renderBlock->vertexBuffer = m_mesh->getVertexBuffer()->getBufferView();
+		renderBlock->vertexBuffer = (m_mesh->getVertexBuffer() != nullptr) ? m_mesh->getVertexBuffer()->getBufferView() : nullptr;
 		renderBlock->vertexLayout = m_mesh->getVertexLayout();
 		renderBlock->primitives = meshParts[part.meshPart].primitives;
 

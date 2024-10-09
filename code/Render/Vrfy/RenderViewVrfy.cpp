@@ -249,10 +249,6 @@ void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 		return;
 
 	T_CAPTURE_ASSERT(programVrfy->m_program, L"Trying to draw with destroyed program.");
-	T_CAPTURE_ASSERT(vertexBuffer, L"No vertex buffer.");
-
-	if (!vertexBuffer)
-		return;
 
 	//VertexBufferVrfy* vb = checked_type_cast< VertexBufferVrfy* >(vertexBuffer);
 	//IndexBufferVrfy* ib = checked_type_cast< IndexBufferVrfy* >(indexBuffer);
@@ -322,10 +318,6 @@ void RenderViewVrfy::drawIndirect(const IBufferView* vertexBuffer, const IVertex
 		return;
 
 	T_CAPTURE_ASSERT(programVrfy->m_program, L"Trying to draw with destroyed program.");
-	T_CAPTURE_ASSERT(vertexBuffer, L"No vertex buffer.");
-
-	if (!vertexBuffer)
-		return;
 
 	programVrfy->verify();
 

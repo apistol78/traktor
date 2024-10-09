@@ -935,13 +935,15 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, targetSize))
 		return;
 
-	if (frame.boundVertexBuffer != *vbv)
+	if (vbv != nullptr && frame.boundVertexBuffer != *vbv)
 	{
 		const VkBuffer buffer = vbv->getVkBuffer();
 		const VkDeviceSize offset = vbv->getVkBufferOffset();
 		vkCmdBindVertexBuffers(*frame.graphicsCommandBuffer, 0, 1, &buffer, &offset);
 		frame.boundVertexBuffer = *vbv;
 	}
+	else
+		frame.boundVertexBuffer = BufferViewVk();
 
 	if (indexBuffer && primitives.indexed)
 	{
@@ -999,13 +1001,15 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,  targetSize))
 		return;
 
-	if (frame.boundVertexBuffer != *vbv)
+	if (vbv != nullptr && frame.boundVertexBuffer != *vbv)
 	{
 		const VkBuffer buffer = vbv->getVkBuffer();
 		const VkDeviceSize offset = vbv->getVkBufferOffset();
 		vkCmdBindVertexBuffers(*frame.graphicsCommandBuffer, 0, 1, &buffer, &offset);
 		frame.boundVertexBuffer = *vbv;
 	}
+	else
+		frame.boundVertexBuffer = BufferViewVk();
 
 	if (indexBuffer)
 	{
@@ -1649,7 +1653,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 	
 	// Calculate pipeline key.
 	const uint8_t primitiveId = (uint8_t)pt;
-	const uint32_t declHash = vertexLayout->getHash();
+	const uint32_t declHash = (vertexLayout != nullptr) ? vertexLayout->getHash() : 0;
 	const uint32_t shaderHash = p->getShaderHash();
 	const auto key = std::make_tuple(primitiveId, m_targetRenderPassHash, declHash, shaderHash);
 
@@ -1684,11 +1688,14 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		vsci.pScissors = &sc;
 
 		VkPipelineVertexInputStateCreateInfo visci = {};
-		visci.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		visci.vertexBindingDescriptionCount = 1;
-		visci.pVertexBindingDescriptions = &vertexLayout->getVkVertexInputBindingDescription();
-		visci.vertexAttributeDescriptionCount = (uint32_t)vertexLayout->getVkVertexInputAttributeDescriptions().size();
-		visci.pVertexAttributeDescriptions = vertexLayout->getVkVertexInputAttributeDescriptions().c_ptr();
+		if (vertexLayout != nullptr)
+		{
+			visci.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+			visci.vertexBindingDescriptionCount = 1;
+			visci.pVertexBindingDescriptions = &vertexLayout->getVkVertexInputBindingDescription();
+			visci.vertexAttributeDescriptionCount = (uint32_t)vertexLayout->getVkVertexInputAttributeDescriptions().size();
+			visci.pVertexAttributeDescriptions = vertexLayout->getVkVertexInputAttributeDescriptions().c_ptr();
+		}
 
 		VkPipelineShaderStageCreateInfo ssci[2] = {};
 		ssci[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -1790,7 +1797,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		gpci.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		gpci.stageCount = 2;
 		gpci.pStages = ssci;
-		gpci.pVertexInputState = &visci;
+		gpci.pVertexInputState = (vertexLayout != nullptr) ? &visci : nullptr;
 		gpci.pInputAssemblyState = &iasci;
 		gpci.pTessellationState = nullptr;
 		gpci.pViewportState = &vsci;
