@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -67,25 +67,25 @@ Ref< IrradianceGrid > IrradianceGridResource::createInstance(IStream* stream, re
 					reader >> tmp[0];
 					reader >> tmp[1];
 					reader >> tmp[2];
-					g.shR0_3[i] = tmp[0];
-					g.shG0_3[i] = tmp[1];
-					g.shB0_3[i] = tmp[2];
+					g.shR0_3[i] = floatToHalf(tmp[0]);
+					g.shG0_3[i] = floatToHalf(tmp[1]);
+					g.shB0_3[i] = floatToHalf(tmp[2]);
 				}
 				for (int32_t i = 0; i < 4; ++i)
 				{
 					reader >> tmp[0];
 					reader >> tmp[1];
 					reader >> tmp[2];
-					g.shR4_7[i] = tmp[0];
-					g.shG4_7[i] = tmp[1];
-					g.shB4_7[i] = tmp[2];
+					g.shR4_7[i] = floatToHalf(tmp[0]);
+					g.shG4_7[i] = floatToHalf(tmp[1]);
+					g.shB4_7[i] = floatToHalf(tmp[2]);
 				}
 				reader >> tmp[0];
 				reader >> tmp[1];
 				reader >> tmp[2];
-				g.shRGB_8[0] = tmp[0];
-				g.shRGB_8[1] = tmp[1];
-				g.shRGB_8[2] = tmp[2];
+				g.shRGB_8[0] = floatToHalf(tmp[0]);
+				g.shRGB_8[1] = floatToHalf(tmp[1]);
+				g.shRGB_8[2] = floatToHalf(tmp[2]);
 			}
 		}
 	}

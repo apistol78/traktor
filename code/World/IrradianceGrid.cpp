@@ -46,22 +46,22 @@ Ref< IrradianceGrid > IrradianceGrid::createSingle(render::IRenderSystem* render
 	for (int32_t i = 0; i < 4; ++i)
 	{
 		const Vector4& shc = shCoeffs[i];
-		g.shR0_3[i] = shc.x();
-		g.shG0_3[i] = shc.y();
-		g.shB0_3[i] = shc.z();
+		g.shR0_3[i] = floatToHalf(shc.x());
+		g.shG0_3[i] = floatToHalf(shc.y());
+		g.shB0_3[i] = floatToHalf(shc.z());
 	}
 	for (int32_t i = 0; i < 4; ++i)
 	{
 		const Vector4& shc = shCoeffs[4 + i];
-		g.shR4_7[i] = shc.x();
-		g.shG4_7[i] = shc.y();
-		g.shB4_7[i] = shc.z();
+		g.shR4_7[i] = floatToHalf(shc.x());
+		g.shG4_7[i] = floatToHalf(shc.y());
+		g.shB4_7[i] = floatToHalf(shc.z());
 	}
 
 	const Vector4& shc = shCoeffs[8];
-	g.shRGB_8[0] = shc.x();
-	g.shRGB_8[1] = shc.y();
-	g.shRGB_8[2] = shc.z();
+	g.shRGB_8[0] = floatToHalf(shc.x());
+	g.shRGB_8[1] = floatToHalf(shc.y());
+	g.shRGB_8[2] = floatToHalf(shc.z());
 
 	buffer->unlock();
 

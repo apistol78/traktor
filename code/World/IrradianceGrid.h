@@ -40,13 +40,17 @@ namespace traktor::world
  */
 struct IrradianceGridData
 {
-	float shR0_3[4];
-	float shR4_7[4];
-	float shG0_3[4];
-	float shG4_7[4];
-	float shB0_3[4];
-	float shB4_7[4];
-	float shRGB_8[4];
+	half_t shR0_3[4];
+	half_t shR4_7[4];
+
+	half_t shG0_3[4];
+	half_t shG4_7[4];
+
+	half_t shB0_3[4];
+	half_t shB4_7[4];
+
+	half_t shRGB_8[4];
+	half_t dummy[4];
 };
 
 #pragma pack()

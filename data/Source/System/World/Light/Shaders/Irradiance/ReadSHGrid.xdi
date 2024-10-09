@@ -77,7 +77,7 @@
 			</position>
 			<name>shRGB_8</name>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{1072694C-AB6C-F344-9451-4029E4D4848C}</id>
 			<comment/>
 			<position>
@@ -88,31 +88,43 @@
 			<elements>
 				<item>
 					<name>shR0_3</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>shR4_7</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>shG0_3</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>shG4_7</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>shB0_3</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>shB4_7</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>shRGB_8</name>
-					<type>DtFloat4</type>
+					<type>DtHalf4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>dummy</name>
+					<type>DtHalf4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
