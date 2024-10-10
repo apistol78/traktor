@@ -147,7 +147,22 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 	const Scalar interval(worldRenderView.getInterval());
 	const Transform worldTransform = m_transform.get(interval);
 
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0 && worldRenderView.getIndex() == 0)
+	const bool firstInFrame = ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0 && worldRenderView.getIndex() == 0);
+	const bool supportTechnique = (m_mesh->supportTechnique(worldRenderPass.getTechnique()));
+
+	bool isVisible = false;
+	float distance = 0.0f;
+
+	if (firstInFrame || supportTechnique)
+	{
+		isVisible = worldRenderView.isBoxVisible(
+			m_mesh->getBoundingBox(),
+			worldTransform,
+			distance
+		);
+	}
+
+	if (firstInFrame)
 	{
 		m_lastWorldTransform[1] = m_lastWorldTransform[0];
 		m_lastWorldTransform[0] = worldTransform;
@@ -158,43 +173,42 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 		auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
 		const auto& jointTransforms = skeletonComponent->getJointTransforms();
 
-		// Interpolate between updates to get current build skin transforms.
-		mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)m_jointBuffer->lock();
-		for (uint32_t i = 0; i < poseTransformsCurrentUpdate.size(); ++i)
+		if (isVisible)
 		{
-			const Transform poseTransform = lerp(poseTransformsLastUpdate[i], poseTransformsCurrentUpdate[i], interval);
-			const Transform skinTransform = poseTransform * m_jointInverseTransforms[i];
-			skinTransform.translation().storeAligned(jointData->translation);
-			skinTransform.rotation().e.storeAligned(jointData->rotation);
-			jointData++;
-		}
-		m_jointBuffer->unlock();
+			// Interpolate between updates to get current build skin transforms.
+			mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)m_jointBuffer->lock();
+			for (uint32_t i = 0; i < poseTransformsCurrentUpdate.size(); ++i)
+			{
+				const Transform poseTransform = lerp(poseTransformsLastUpdate[i], poseTransformsCurrentUpdate[i], interval);
+				const Transform skinTransform = poseTransform * m_jointInverseTransforms[i];
+				skinTransform.translation().storeAligned(jointData->translation);
+				skinTransform.rotation().e.storeAligned(jointData->rotation);
+				jointData++;
+			}
+			m_jointBuffer->unlock();
 
-		std::swap(m_skinBuffer[0], m_skinBuffer[1]);
-		m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0]);
+			// Update skin.
+			std::swap(m_skinBuffer[0], m_skinBuffer[1]);
+			m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0]);
+		}
 	}
 
-	if (m_mesh->supportTechnique(worldRenderPass.getTechnique()))
+	if (supportTechnique && isVisible)
 	{
-		float distance = 0.0f;
-		if (worldRenderView.isBoxVisible(
-			m_mesh->getBoundingBox(),
+		m_mesh->build(
+			context.getRenderContext(),
+			worldRenderPass,
+			m_lastWorldTransform[1],
 			worldTransform,
-			distance
-		))
-		{
-			m_mesh->build(
-				context.getRenderContext(),
-				worldRenderPass,
-				m_lastWorldTransform[1],
-				worldTransform,
-				m_skinBuffer[1],
-				m_skinBuffer[0],
-				distance,
-				getParameterCallback()
-			);
-		}
+			m_lastIsVisible ? m_skinBuffer[1] : m_skinBuffer[0],
+			m_skinBuffer[0],
+			distance,
+			getParameterCallback()
+		);
 	}
+
+	if (firstInFrame)
+		m_lastIsVisible = isVisible;
 }
 
 bool AnimatedMeshComponent::getSkinTransform(render::handle_t jointName, Transform& outTransform) const

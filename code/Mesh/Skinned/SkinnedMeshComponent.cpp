@@ -53,7 +53,7 @@ Aabb3 SkinnedMeshComponent::getBoundingBox() const
 
 void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0 && worldRenderView.getIndex() == 0)
 	{
 		std::swap(m_skinBuffer[0], m_skinBuffer[1]);
 		m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0]);

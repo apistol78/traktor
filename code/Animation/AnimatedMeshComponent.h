@@ -80,6 +80,7 @@ private:
 	Ref< render::Buffer > m_skinBuffer[2];
 	Transform m_lastWorldTransform[2];
 	std::atomic< int32_t > m_index;
+	bool m_lastIsVisible = false;
 };
 
 }
