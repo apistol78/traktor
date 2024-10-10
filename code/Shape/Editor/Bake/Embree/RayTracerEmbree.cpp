@@ -24,7 +24,6 @@
 #include "Shape/Editor/Bake/GBuffer.h"
 #include "Shape/Editor/Bake/IProbe.h"
 #include "Shape/Editor/Bake/Embree/RayTracerEmbree.h"
-#include "Shape/Editor/Bake/Embree/SplitModel.h"
 
 #define USE_LAMBERTIAN_DIRECTION
 
@@ -246,58 +245,51 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 		m_boundingBox.contain(p);
 	}
 
-	RefArray< const model::Model > splits;
-	// splitModel(model, splits);
-	splits.push_back(model);
+	RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
+	rtcSetGeometryVertexAttributeCount(mesh, 2);
 
-	for (auto split : splits)
+	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, positions, 0, 3 * sizeof(float), model->getVertices().size());
+	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, RTC_FORMAT_FLOAT3, normals, 0, 3 * sizeof(float), model->getVertices().size());
+	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 1, RTC_FORMAT_FLOAT2, texCoords, 0, 2 * sizeof(float), model->getVertices().size());
+
+	uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), model->getPolygons().size());
+	for (const auto& polygon : model->getPolygons())
 	{
-		RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
-		rtcSetGeometryVertexAttributeCount(mesh, 2);
+		T_FATAL_ASSERT(polygon.getVertexCount() == 3);
+		*triangles++ = polygon.getVertex(2);
+		*triangles++ = polygon.getVertex(1);
+		*triangles++ = polygon.getVertex(0);
+	}
 
-		rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, positions, 0, 3 * sizeof(float), model->getVertices().size());
-		rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, RTC_FORMAT_FLOAT3, normals, 0, 3 * sizeof(float), model->getVertices().size());
-		rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 1, RTC_FORMAT_FLOAT2, texCoords, 0, 2 * sizeof(float), model->getVertices().size());
+	// Add filter functions if model contain alpha-test material.
+	for (const auto& material : model->getMaterials())
+	{
+		//if (
+		//	material.getBlendOperator() == model::Material::BoAlphaTest &&
+		//	material.getDiffuseMap().image != nullptr
+		//)
+		//{
+		//	rtcSetGeometryOccludedFilterFunction(mesh, alphaTestFilter);
+		//	rtcSetGeometryIntersectFilterFunction(mesh, alphaTestFilter);
+		//}
 
-		uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), split->getPolygons().size());
-		for (const auto& polygon : split->getPolygons())
-		{
-			T_FATAL_ASSERT(polygon.getVertexCount() == 3);
-			*triangles++ = polygon.getVertex(2);
-			*triangles++ = polygon.getVertex(1);
-			*triangles++ = polygon.getVertex(0);
-		}
+		if (material.getBlendOperator() != model::Material::BoDecal)
+			rtcSetGeometryOccludedFilterFunction(mesh, shadowOccluded);
+	}
 
-		// Add filter functions if model contain alpha-test material.
-		for (const auto& material : split->getMaterials())
-		{
-			//if (
-			//	material.getBlendOperator() == model::Material::BoAlphaTest &&
-			//	material.getDiffuseMap().image != nullptr
-			//)
-			//{
-			//	rtcSetGeometryOccludedFilterFunction(mesh, alphaTestFilter);
-			//	rtcSetGeometryIntersectFilterFunction(mesh, alphaTestFilter);
-			//}
+	// Attach this class as user data to geometry.
+	rtcSetGeometryUserData(mesh, this);
 
-			if (material.getBlendOperator() != model::Material::BoDecal)
-				rtcSetGeometryOccludedFilterFunction(mesh, shadowOccluded);
-		}
+	rtcCommitGeometry(mesh);
+	const uint32_t geomID = rtcAttachGeometry(m_scene, mesh);
+	rtcReleaseGeometry(mesh);
 
-		// Attach this class as user data to geometry.
-		rtcSetGeometryUserData(mesh, this);
-
-		rtcCommitGeometry(mesh);
-		const uint32_t geomID = rtcAttachGeometry(m_scene, mesh);
-		rtcReleaseGeometry(mesh);
-
-		// Create a flatten list of materials to reduce number of indirections while tracing.
-		m_materialOffset.push_back((uint32_t)m_materials.size());
-		for (const auto& polygon : split->getPolygons())
-		{
-			const auto& material = split->getMaterial(polygon.getMaterial());
-			m_materials.push_back(&material);
-		}
+	// Create a flatten list of materials to reduce number of indirections while tracing.
+	m_materialOffset.push_back((uint32_t)m_materials.size());
+	for (const auto& polygon : model->getPolygons())
+	{
+		const auto& material = model->getMaterial(polygon.getMaterial());
+		m_materials.push_back(&material);
 	}
 
 	m_models.push_back(model);
