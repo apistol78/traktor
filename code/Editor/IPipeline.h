@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,6 +31,7 @@ class ISerializable;
 namespace traktor::db
 {
 
+class Database;
 class Instance;
 
 }
@@ -55,9 +56,10 @@ public:
 	/*! Create pipeline.
 	 *
 	 * \param settings Pipeline settings.
+	 * \param database Source database.
 	 * \return True if pipeline created successfully.
 	 */
-	virtual bool create(const IPipelineSettings* settings) = 0;
+	virtual bool create(const IPipelineSettings* settings, db::Database* database) = 0;
 
 	/*! Destroy pipeline. */
 	virtual void destroy() = 0;

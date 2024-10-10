@@ -19,7 +19,7 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderModulePipeline", 0, ShaderModulePipeline, editor::IPipeline)
 
-bool ShaderModulePipeline::create(const editor::IPipelineSettings* settings)
+bool ShaderModulePipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }

@@ -43,7 +43,7 @@ class T_DLLCLASS MeshPipeline : public editor::IPipeline
 public:
 	MeshPipeline();
 
-	virtual bool create(const editor::IPipelineSettings* settings) override final;
+	virtual bool create(const editor::IPipelineSettings* settings, db::Database* database) override final;
 
 	virtual void destroy() override final;
 

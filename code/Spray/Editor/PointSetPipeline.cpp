@@ -26,7 +26,7 @@ namespace traktor::spray
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSetPipeline", 4, PointSetPipeline, editor::IPipeline)
 
-bool PointSetPipeline::create(const editor::IPipelineSettings* settings)
+bool PointSetPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	return true;

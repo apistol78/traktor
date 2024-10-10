@@ -27,7 +27,7 @@ namespace traktor::hf
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldPipeline", 2, HeightfieldPipeline, editor::IPipeline)
 
-bool HeightfieldPipeline::create(const editor::IPipelineSettings* settings)
+bool HeightfieldPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	return true;

@@ -19,7 +19,7 @@
 			</position>
 			<scope>Global</scope>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{9772F569-3912-1B46-AB4B-157B8CC99284}</id>
 			<comment/>
 			<position>
@@ -31,10 +31,11 @@
 				<item>
 					<name>visible</name>
 					<type>DtFloat1</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{B6ABD193-2075-0442-A1B6-92D4C05F99CB}</id>
 			<comment/>
 			<position>
@@ -46,22 +47,27 @@
 				<item>
 					<name>indexCount</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>instanceCount</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>firstIndex</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>vertexOffset</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>firstInstance</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -119,7 +125,6 @@ $DrawBuffer[index].instanceCount = visible ? 1 : 0;
 $DrawBuffer[index].firstIndex = int($PrimFirstIndex);
 $DrawBuffer[index].vertexOffset = 0;
 $DrawBuffer[index].firstInstance = 0;
-
 			]]>
 			</script>
 		</item>

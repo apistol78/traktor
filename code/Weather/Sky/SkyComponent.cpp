@@ -57,6 +57,7 @@ const render::Handle s_handleWeather_SkyCloudAmbientTop(L"Weather_SkyCloudAmbien
 const render::Handle s_handleWeather_SkyCloudAmbientBottom(L"Weather_SkyCloudAmbientBottom");
 const render::Handle s_handleWeather_InputTexture(L"Weather_InputTexture");
 const render::Handle s_handleWeather_OutputTexture(L"Weather_OutputTexture");
+const render::Handle s_handleWeather_OutputTexture3D(L"Weather_OutputTexture3D");
 
 const int32_t c_longitudes = 16;
 const int32_t c_latitudes = 24;
@@ -284,7 +285,7 @@ void SkyComponent::setup(
 
 					renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 					renderBlock->programParams->beginParameters(renderContext);
-					renderBlock->programParams->setImageViewParameter(s_handleWeather_OutputTexture, m_cloudTextures[1], 0);
+					renderBlock->programParams->setImageViewParameter(s_handleWeather_OutputTexture3D, m_cloudTextures[1], 0);
 					renderBlock->programParams->endParameters(renderContext);
 
 					renderContext->compute(renderBlock);

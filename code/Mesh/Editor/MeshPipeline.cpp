@@ -155,7 +155,7 @@ MeshPipeline::MeshPipeline()
 {
 }
 
-bool MeshPipeline::create(const editor::IPipelineSettings* settings)
+bool MeshPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath");
 	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path");

@@ -42,7 +42,7 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.EnvironmentTexturePipeline", 6, EnvironmentTexturePipeline, editor::DefaultPipeline)
 
-bool EnvironmentTexturePipeline::create(const editor::IPipelineSettings* settings)
+bool EnvironmentTexturePipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_compressionQuality = settings->getPropertyIncludeHash< int32_t >(L"TexturePipeline.CompressionQuality", 1);

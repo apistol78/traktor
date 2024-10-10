@@ -28,7 +28,7 @@ class T_DLLCLASS PrefabComponentPipeline : public world::EntityPipeline
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const editor::IPipelineSettings* settings) override final;
+	virtual bool create(const editor::IPipelineSettings* settings, db::Database* database) override final;
 
 	virtual TypeInfoSet getAssetTypes() const override final;
 

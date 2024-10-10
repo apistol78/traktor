@@ -307,7 +307,7 @@
 			</position>
 			<name>L_LightPosition</name>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{AECDF040-E464-A54B-8A5E-DD333DB1A59C}</id>
 			<comment/>
 			<position>
@@ -319,42 +319,52 @@
 				<item>
 					<name>Type</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>RangeRadius</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>Position</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>Direction</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>Color</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>ViewToLight0</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>ViewToLight1</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>ViewToLight2</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>ViewToLight3</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>AtlasTransform</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -789,7 +799,7 @@
 			</position>
 			<name>L_RadiusFallOff</name>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{6ABCCE9F-BDDC-1746-A211-212A27B1818D}</id>
 			<comment/>
 			<position>
@@ -801,6 +811,7 @@
 				<item>
 					<name>LightIndex</name>
 					<type>DtInteger4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>

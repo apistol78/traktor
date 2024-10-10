@@ -31,7 +31,7 @@ class T_DLLCLASS SolidComponentPipeline : public world::EntityPipeline
 public:
 	SolidComponentPipeline();
 
-	virtual bool create(const editor::IPipelineSettings* settings) override final;
+	virtual bool create(const editor::IPipelineSettings* settings, db::Database* database) override final;
 	
 	virtual TypeInfoSet getAssetTypes() const override final;
 

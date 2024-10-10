@@ -39,7 +39,7 @@ float fract(float v)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 5, HeightfieldTexturePipeline, editor::DefaultPipeline)
 
-bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* settings)
+bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 

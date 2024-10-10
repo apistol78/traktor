@@ -30,7 +30,7 @@ class T_DLLCLASS Pipeline : public editor::IPipeline
 public:
 	Pipeline();
 
-	virtual bool create(const editor::IPipelineSettings* settings) override final;
+	virtual bool create(const editor::IPipelineSettings* settings, db::Database* database) override final;
 
 	virtual void destroy() override final;
 

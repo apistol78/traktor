@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{C22838E6-D4D4-CD4A-87E7-3AE7C65E1DAE}</id>
 			<comment/>
 			<position>
@@ -13,6 +13,7 @@
 				<item>
 					<name>value</name>
 					<type>DtFloat1</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -44,7 +45,6 @@
 			<outputPins/>
 			<script>
 			<![CDATA[
-
 const float AdapationRate = 0.03f;
 
 const float MinIllum = 0.2f;
@@ -52,12 +52,10 @@ const float MaxIllum = 0.8f;
 
 const float last = $Buffer[0].value.x;
 $Buffer[0].value.x = clamp($Current * AdapationRate + last * (1.0f - AdapationRate), MinIllum, MaxIllum);
-
-
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{0CB85F82-C86E-4A1C-922D-095F50C2FD3D}</id>
 			<comment/>
 			<position>
@@ -69,6 +67,7 @@ $Buffer[0].value.x = clamp($Current * AdapationRate + last * (1.0f - AdapationRa
 				<item>
 					<name>B</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>

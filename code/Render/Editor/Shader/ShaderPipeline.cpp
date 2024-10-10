@@ -27,7 +27,9 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
+#include "Database/Group.h"
 #include "Database/Instance.h"
+#include "Database/Traverse.h"
 #include "Editor/DataAccessCache.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -43,6 +45,7 @@
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderModule.h"
 #include "Render/Editor/Shader/ShaderPipeline.h"
+#include "Render/Editor/Shader/UniformDeclaration.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
@@ -138,9 +141,9 @@ std::wstring resolveShaderModule(editor::IPipelineCommon* pipelineCommon, const 
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 104, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 105, ShaderPipeline, editor::IPipeline)
 
-bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
+bool ShaderPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_programCompilerTypeName = settings->getPropertyIncludeHash< std::wstring >(L"ShaderPipeline.ProgramCompiler");
 	m_compilerSettings = settings->getPropertyIncludeHash< PropertyGroup >(L"ShaderPipeline.ProgramCompilerSettings");
@@ -149,6 +152,20 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 	m_debugCompleteGraphs = settings->getPropertyExcludeHash< bool >(L"ShaderPipeline.DebugCompleteGraphs", false);
 	m_debugPath = settings->getPropertyExcludeHash< std::wstring >(L"ShaderPipeline.DebugPath", L"");
 	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
+
+	// Scan database for all declarations.
+	RefArray< db::Instance > uniformDeclarationInstances;
+	db::recursiveFindChildInstances(
+		database->getRootGroup(),
+		db::FindInstanceByType(type_of< UniformDeclaration >()),
+		uniformDeclarationInstances
+	);
+	for (auto uniformDeclarationInstance : uniformDeclarationInstances)
+	{
+		const std::wstring name = uniformDeclarationInstance->getName();
+		m_uniformDeclarations[name] = uniformDeclarationInstance->getObject< const UniformDeclaration >();
+	}
+
 	return true;
 }
 
@@ -342,6 +359,13 @@ bool ShaderPipeline::buildOutput(
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to remove unused branches." << Endl;
+		return false;
+	}
+
+	// Ensure parameters are correct.
+	if (!checkParameters(shaderGraph))
+	{
+		log::error << L"ShaderPipeline failed; check parameters failed." << Endl;
 		return false;
 	}
 
@@ -751,6 +775,67 @@ IProgramCompiler* ShaderPipeline::getProgramCompiler() const
 	}
 
 	return m_programCompiler;
+}
+
+bool ShaderPipeline::checkParameters(const ShaderGraph* shaderGraph) const
+{
+	for (auto uniform : shaderGraph->findNodesOf< Uniform >())
+	{
+		const auto it = m_uniformDeclarations.find(uniform->getParameterName());
+		if (it != m_uniformDeclarations.end())
+		{
+			const UniformDeclaration* decl = it->second;
+			if (decl->getLength() > 1)
+			{
+				log::error << L"Parameter \"" << uniform->getParameterName() << L"\" do not match declaration; Is an array." << Endl;
+				return false;
+			}
+			if (decl->getParameterType() != uniform->getParameterType())
+			{
+				log::error << L"Parameter \"" << uniform->getParameterName() << L"\" do not match declaration; Type mismatch." << Endl;
+				return false;
+			}
+			if (decl->getFrequency() != uniform->getFrequency())
+			{
+				log::error << L"Parameter \"" << uniform->getParameterName() << L"\" do not match declaration; Frequency mismatch." << Endl;
+				return false;
+			}
+		}
+		else
+		{
+			log::warning << L"No parameter declaration \"" << uniform->getParameterName() << L"\" found; unable to verify parameter usage." << Endl;
+		}
+	}
+
+	for (auto indexedUniform : shaderGraph->findNodesOf< IndexedUniform >())
+	{
+		const auto it = m_uniformDeclarations.find(indexedUniform->getParameterName());
+		if (it != m_uniformDeclarations.end())
+		{
+			const UniformDeclaration* decl = it->second;
+			if (decl->getLength() != indexedUniform->getLength())
+			{
+				log::error << L"Parameter \"" << indexedUniform->getParameterName() << L"\" do not match declaration; Array length mismatch." << Endl;
+				return false;
+			}
+			if (decl->getParameterType() != indexedUniform->getParameterType())
+			{
+				log::error << L"Parameter \"" << indexedUniform->getParameterName() << L"\" do not match declaration; Type mismatch." << Endl;
+				return false;
+			}
+			if (decl->getFrequency() != indexedUniform->getFrequency())
+			{
+				log::error << L"Parameter \"" << indexedUniform->getParameterName() << L"\" do not match declaration; Frequency mismatch." << Endl;
+				return false;
+			}
+		}
+		else
+		{
+			log::warning << L"No parameter declaration \"" << indexedUniform->getParameterName() << L"\" found; unable to verify parameter usage." << Endl;
+		}
+	}
+
+	return true;
 }
 
 }

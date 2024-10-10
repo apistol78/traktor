@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Semaphore.h"
 #include "Editor/IPipeline.h"
 
@@ -24,13 +25,15 @@ namespace traktor::render
 
 class IProgramCompiler;
 class IProgramHints;
+class ShaderGraph;
+class UniformDeclaration;
 
 class T_DLLCLASS ShaderPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const editor::IPipelineSettings* settings) override final;
+	virtual bool create(const editor::IPipelineSettings* settings, db::Database* database) override final;
 
 	virtual void destroy() override final;
 
@@ -74,12 +77,16 @@ private:
 	Ref< IProgramHints > m_programHints;
 	SmallSet< std::wstring > m_includeOnlyTechniques;
 	Ref< const PropertyGroup > m_compilerSettings;
+	SmallMap< std::wstring, Ref< const UniformDeclaration > > m_uniformDeclarations;
 	std::wstring m_platform;
 	bool m_debugCompleteGraphs = false;
 	std::wstring m_debugPath;
 	bool m_editor = false;
 
+
 	IProgramCompiler* getProgramCompiler() const;
+
+	bool checkParameters(const ShaderGraph* shaderGraph) const;
 };
 
 }

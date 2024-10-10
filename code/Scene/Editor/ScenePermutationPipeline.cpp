@@ -22,7 +22,7 @@ namespace traktor::scene
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePermutationPipeline", 4, ScenePermutationPipeline, editor::IPipeline)
 
-bool ScenePermutationPipeline::create(const editor::IPipelineSettings* settings)
+bool ScenePermutationPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }

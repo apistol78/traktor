@@ -19,10 +19,10 @@
 			<id>{A95A5C28-CA0D-4667-B94A-77B27C112621}</id>
 			<comment/>
 			<position>
-				<first>56</first>
-				<second>63</second>
+				<first>42</first>
+				<second>62</second>
 			</position>
-			<parameterName>Weather_OutputTexture</parameterName>
+			<parameterName>Weather_OutputTexture3D</parameterName>
 			<type>Image3D</type>
 			<frequency>Frame</frequency>
 		</item>

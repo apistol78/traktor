@@ -1378,7 +1378,6 @@ const vec3 Lout = CalculateLighting(
 );
 
 $Output = vec4(Lout.xyz, 0.0f);
-
 			]]>
 			</script>
 		</item>
@@ -1456,7 +1455,6 @@ const vec3 Lout = CalculateLighting(
 );
 
 $Output = vec4(Lout.xyz, 0.0f);
-
 			]]>
 			</script>
 		</item>
@@ -1588,7 +1586,6 @@ const vec3 Lout = CalculateLighting(
 );
 
 $Output = vec4(Lout.xyz, 0.0f);
-
 			]]>
 			</script>
 		</item>

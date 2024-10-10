@@ -16,7 +16,7 @@ namespace traktor::model
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.MaterialPipeline", 0, MaterialPipeline, editor::IPipeline)
 
-bool MaterialPipeline::create(const editor::IPipelineSettings* settings)
+bool MaterialPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }

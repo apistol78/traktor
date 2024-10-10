@@ -56,7 +56,7 @@ void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::P
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ResourceBundlePipeline", 6, ResourceBundlePipeline, editor::IPipeline)
 
-bool ResourceBundlePipeline::create(const editor::IPipelineSettings* settings)
+bool ResourceBundlePipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }

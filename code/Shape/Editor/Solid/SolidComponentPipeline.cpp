@@ -47,9 +47,9 @@ SolidComponentPipeline::SolidComponentPipeline()
 {
 }
 
-bool SolidComponentPipeline::create(const editor::IPipelineSettings* settings)
+bool SolidComponentPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
-	if (!world::EntityPipeline::create(settings))
+	if (!world::EntityPipeline::create(settings, database))
 		return false;
 
 	m_targetEditor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor");

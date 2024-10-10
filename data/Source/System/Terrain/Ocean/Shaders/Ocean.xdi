@@ -121,7 +121,7 @@
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>Matrix</type>
-			<frequency>Draw</frequency>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{5F6DE751-DC9F-BA4D-8A3F-B4CBE65A783D}</id>
@@ -150,7 +150,7 @@
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>Matrix</type>
-			<frequency>Draw</frequency>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{C064C355-A337-E245-BFE2-95A5A0ABB6C8}</id>

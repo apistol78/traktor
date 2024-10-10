@@ -34,7 +34,7 @@ class T_DLLCLASS EntityPipeline : public editor::IPipeline
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const editor::IPipelineSettings* settings) override;
+	virtual bool create(const editor::IPipelineSettings* settings, db::Database* database) override;
 
 	virtual void destroy() override;
 

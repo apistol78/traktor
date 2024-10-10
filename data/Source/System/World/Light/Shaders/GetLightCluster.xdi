@@ -198,7 +198,7 @@
 			</position>
 			<value>32</value>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{692B2ECD-F11F-CD41-B4C2-E30283B24D43}</id>
 			<comment/>
 			<position>
@@ -210,6 +210,7 @@
 				<item>
 					<name>LightOffsetAndCount</name>
 					<type>DtInteger4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>

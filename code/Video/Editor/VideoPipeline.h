@@ -28,7 +28,7 @@ class T_DLLCLASS VideoPipeline : public editor::IPipeline
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const editor::IPipelineSettings* settings) override final;
+	virtual bool create(const editor::IPipelineSettings* settings, db::Database* database) override final;
 
 	virtual void destroy() override final;
 

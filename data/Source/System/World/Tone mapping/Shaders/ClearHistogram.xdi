@@ -10,7 +10,7 @@
 			</position>
 			<scope>Global</scope>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{23A209F0-CBDF-45DD-95B6-A8FB3B1F9DFF}</id>
 			<comment/>
 			<position>
@@ -22,6 +22,7 @@
 				<item>
 					<name>B</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>

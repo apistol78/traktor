@@ -58,7 +58,7 @@ void collectFiles(const Path& mask, bool recursive, RefArray< File >& outFiles)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.FileBundlePipeline", 4, FileBundlePipeline, editor::IPipeline)
 
-bool FileBundlePipeline::create(const editor::IPipelineSettings* settings)
+bool FileBundlePipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	return true;

@@ -17,7 +17,7 @@ namespace traktor::mesh
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshComponentPipeline", 0, MeshComponentPipeline, editor::IPipeline)
 
-bool MeshComponentPipeline::create(const editor::IPipelineSettings* settings)
+bool MeshComponentPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }

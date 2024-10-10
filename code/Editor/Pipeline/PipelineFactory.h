@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,6 +28,13 @@ class PropertyGroup;
 
 }
 
+namespace traktor::db
+{
+
+class Database;
+
+}
+
 namespace traktor::editor
 {
 
@@ -38,7 +45,7 @@ class T_DLLCLASS PipelineFactory : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit PipelineFactory(const PropertyGroup* settings);
+	explicit PipelineFactory(const PropertyGroup* settings, db::Database* database);
 
 	virtual ~PipelineFactory();
 

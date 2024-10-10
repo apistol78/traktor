@@ -20,7 +20,7 @@ namespace traktor::theater
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterComponentPipeline", 2, TheaterComponentPipeline, editor::IPipeline)
 
-bool TheaterComponentPipeline::create(const editor::IPipelineSettings* settings)
+bool TheaterComponentPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }

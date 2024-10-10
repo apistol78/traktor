@@ -230,7 +230,7 @@ W
 			</position>
 			<name>value</name>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{236107C4-F249-8441-B9FF-F4E6C246E398}</id>
 			<comment/>
 			<position>
@@ -242,6 +242,7 @@ W
 				<item>
 					<name>value</name>
 					<type>DtFloat1</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -319,7 +320,6 @@ $Output = vec4(
 	clamp((x * (a * x + b)) / (x * (c * x + d) + e), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f)),
 	1.0f
 );
-
 			]]>
 			</script>
 		</item>

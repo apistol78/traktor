@@ -150,7 +150,6 @@ if ($Index.x < alive)
 
 	$Points[i].oaia.w += $DeltaTime;
 }
-
 			]]>
 			</script>
 		</item>

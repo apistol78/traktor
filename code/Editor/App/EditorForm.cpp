@@ -1748,7 +1748,7 @@ void EditorForm::buildAssetsThread(AlignedVector< Guid > assetGuids, bool rebuil
 	const std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
 
 	// Create pipeline factory.
-	PipelineFactory pipelineFactory(m_mergedSettings);
+	PipelineFactory pipelineFactory(m_mergedSettings, m_sourceDatabase);
 	PipelineDependencySet dependencySet;
 	PipelineInstanceCache instanceCache(m_sourceDatabase, cachePath);
 
@@ -1952,7 +1952,7 @@ Ref< IPipelineDepends> EditorForm::createPipelineDepends(PipelineDependencySet* 
 
 	const std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
 
-	Ref< PipelineFactory > pipelineFactory = new PipelineFactory(m_mergedSettings);
+	Ref< PipelineFactory > pipelineFactory = new PipelineFactory(m_mergedSettings, m_sourceDatabase);
 	Ref< PipelineInstanceCache > instanceCache = new PipelineInstanceCache(m_sourceDatabase, cachePath);
 
 	return new PipelineDependsIncremental(

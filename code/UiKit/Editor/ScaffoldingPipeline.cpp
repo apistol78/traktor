@@ -16,7 +16,7 @@ namespace traktor::uikit
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.uikit.ScaffoldingPipeline", 0, ScaffoldingPipeline, editor::IPipeline)
 
-bool ScaffoldingPipeline::create(const editor::IPipelineSettings* settings)
+bool ScaffoldingPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }

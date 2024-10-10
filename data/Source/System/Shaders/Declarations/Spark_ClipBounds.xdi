@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.UniformDeclaration">
+	<type>Vector</type>
+	<length>0</length>
+	<frequency>Draw</frequency>
+</object>

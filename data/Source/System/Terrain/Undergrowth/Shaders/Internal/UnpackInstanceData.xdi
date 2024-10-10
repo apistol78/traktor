@@ -79,7 +79,7 @@
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{7EAD4B2B-38EE-0E46-8860-115A421F3F33}</id>
 			<comment/>
 			<position>
@@ -91,10 +91,12 @@
 				<item>
 					<name>A</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>B</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -110,7 +112,7 @@
 				<item>B</item>
 			</names>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{06243977-BC43-E949-8649-37978D186BB0}</id>
 			<comment/>
 			<position>
@@ -122,6 +124,7 @@
 				<item>
 					<name>Index</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>

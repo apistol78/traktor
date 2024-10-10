@@ -37,7 +37,7 @@ namespace traktor::physics
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 12, MeshPipeline, editor::IPipeline)
 
-bool MeshPipeline::create(const editor::IPipelineSettings* settings)
+bool MeshPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path");

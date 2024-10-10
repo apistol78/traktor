@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,10 +24,10 @@ namespace traktor::i18n
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.i18n.DictionaryPipeline", 0, DictionaryPipeline, editor::DefaultPipeline)
 
-bool DictionaryPipeline::create(const editor::IPipelineSettings* settings)
+bool DictionaryPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
-	return editor::DefaultPipeline::create(settings);
+	return editor::DefaultPipeline::create(settings, database);
 }
 
 TypeInfoSet DictionaryPipeline::getAssetTypes() const

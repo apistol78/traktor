@@ -81,7 +81,6 @@ $Head[0].compute_x = (alive + 15) / 16;
 $Head[0].compute_y = 1;
 $Head[0].compute_z = 1;
 $Head[0].alive = alive;
-
 			]]>
 			</script>
 		</item>

@@ -63,7 +63,7 @@ bool isMute(const AudioBlock& block, uint32_t& outMuteOffset)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 33, SoundPipeline, editor::IPipeline)
 
-bool SoundPipeline::create(const editor::IPipelineSettings* settings)
+bool SoundPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	return true;

@@ -116,9 +116,9 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 10, SplineEntityPipeline, world::EntityPipeline)
 
-bool SplineEntityPipeline::create(const editor::IPipelineSettings* settings)
+bool SplineEntityPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
-	if (!world::EntityPipeline::create(settings))
+	if (!world::EntityPipeline::create(settings, database))
 		return false;
 
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");

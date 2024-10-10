@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,7 +21,7 @@ namespace traktor::editor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineFactory", PipelineFactory, Object)
 
-PipelineFactory::PipelineFactory(const PropertyGroup* settings)
+PipelineFactory::PipelineFactory(const PropertyGroup* settings, db::Database* database)
 {
 	const bool verbose = false; // settings->getProperty< bool >(L"Pipeline.Verbose", false);
 
@@ -45,7 +45,7 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 			continue;
 
 		PipelineSettings pipelineSettings(settings);
-		if (!pipeline->create(&pipelineSettings))
+		if (!pipeline->create(&pipelineSettings, database))
 		{
 			log::error << L"Failed to create pipeline \"" << type_name(pipeline) << L"\"." << Endl;			
 			continue;

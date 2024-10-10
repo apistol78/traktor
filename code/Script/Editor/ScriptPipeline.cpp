@@ -113,7 +113,7 @@ bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const std::w
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 21, ScriptPipeline, editor::DefaultPipeline)
 
-bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
+bool ScriptPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	// Get implementation type name; return true if no type specified to silence error from pipeline if scripting isn't used.
 	std::wstring scriptCompilerTypeName = settings->getPropertyIncludeHash< std::wstring >(L"Editor.ScriptCompilerType");
@@ -143,7 +143,7 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 
-	return editor::DefaultPipeline::create(settings);
+	return editor::DefaultPipeline::create(settings, database);
 }
 
 TypeInfoSet ScriptPipeline::getAssetTypes() const

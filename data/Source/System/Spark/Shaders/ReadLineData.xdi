@@ -63,7 +63,7 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{CDC614C9-95C9-0848-8D2C-22338B0D1B8B}</id>
 			<comment/>
 			<position>
@@ -75,10 +75,12 @@
 				<item>
 					<name>Start</name>
 					<type>DtFloat2</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>End</name>
 					<type>DtFloat2</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>

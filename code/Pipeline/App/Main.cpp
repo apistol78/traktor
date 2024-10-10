@@ -405,7 +405,7 @@ bool perform(const PipelineParameters& params)
 		log::info << L"Pipeline cache disabled." << Endl;
 
 	// Create pipeline factory.
-	editor::PipelineFactory pipelineFactory(settings);
+	editor::PipelineFactory pipelineFactory(settings, sourceDatabaseAndCache.database);
 	editor::PipelineDependencySet pipelineDependencySet;
 
 	// Collect dependencies.

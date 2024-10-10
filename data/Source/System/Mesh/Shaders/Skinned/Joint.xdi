@@ -50,7 +50,7 @@
 			</position>
 			<name>LastTranslation</name>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{BD50284C-54C1-A840-846E-199CF3E36D17}</id>
 			<comment/>
 			<position>
@@ -62,14 +62,16 @@
 				<item>
 					<name>Translation</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>Rotation</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{573429A0-2EE8-1C47-AF99-A1EC6088A136}</id>
 			<comment/>
 			<position>
@@ -81,10 +83,12 @@
 				<item>
 					<name>Translation</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>Rotation</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>

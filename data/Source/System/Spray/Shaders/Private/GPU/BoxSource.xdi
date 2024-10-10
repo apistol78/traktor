@@ -145,7 +145,6 @@ for (int i = 0; i < emitCount; ++i)
 }
 
 $Head[0].alive = alive;
-
 			]]>
 			</script>
 		</item>

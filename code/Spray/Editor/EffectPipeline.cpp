@@ -111,7 +111,7 @@ bool effectLayerPred(EffectLayerData* layerData)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectPipeline", 4, EffectPipeline, editor::IPipeline)
 
-bool EffectPipeline::create(const editor::IPipelineSettings* settings)
+bool EffectPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }

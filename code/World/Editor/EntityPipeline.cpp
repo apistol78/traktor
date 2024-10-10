@@ -49,7 +49,7 @@ bool removeMember(RfmCompound* owner, ReflectionMember* member)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityPipeline", 1, EntityPipeline, editor::IPipeline)
 
-bool EntityPipeline::create(const editor::IPipelineSettings* settings)
+bool EntityPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }

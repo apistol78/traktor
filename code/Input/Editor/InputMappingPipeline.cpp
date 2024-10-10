@@ -22,7 +22,7 @@ namespace traktor::input
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputMappingPipeline", 0, InputMappingPipeline, editor::IPipeline)
 
-bool InputMappingPipeline::create(const editor::IPipelineSettings* settings)
+bool InputMappingPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }

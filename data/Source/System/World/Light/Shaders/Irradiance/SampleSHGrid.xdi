@@ -1974,7 +1974,6 @@ YZ, Z, 1
 			</outputPins>
 			<script>
 			<![CDATA[
-
 const vec3 wp = $WorldPosition.xyz;
 const vec3 mn = $GridBoundsMin.xyz;
 const vec3 mx = $GridBoundsMax.xyz;
@@ -1986,7 +1985,6 @@ const vec3 p = t * gs;
 $BlendFactors = vec4(fract(p), 0.0f);
 $GridPosition = vec4(trunc(p), 0.0f);
 $GridWorldCenter = vec4(mn + (mx - mn) * trunc(p) / gs, 1.0f);
-
 			]]>
 			</script>
 		</item>

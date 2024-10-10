@@ -22,7 +22,6 @@ namespace traktor::mesh
 const render::Handle s_handleSkinBuffer(L"Mesh_SkinBuffer");
 const render::Handle s_handleSkinBufferLast(L"Mesh_SkinBufferLast");
 const render::Handle s_handleSkinBufferOutput(L"Mesh_SkinBufferOutput");
-//const render::Handle s_handleLastJoints(L"Mesh_LastJoints");
 const render::Handle s_handleJoints(L"Mesh_Joints");
 
 	}

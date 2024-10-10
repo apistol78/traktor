@@ -23,7 +23,7 @@ namespace traktor::physics
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsPipeline", 2, PhysicsPipeline, editor::IPipeline)
 
-bool PhysicsPipeline::create(const editor::IPipelineSettings* settings)
+bool PhysicsPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }

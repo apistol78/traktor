@@ -41,7 +41,7 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 15, ImageGraphPipeline, editor::IPipeline)
 
-bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings)
+bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }

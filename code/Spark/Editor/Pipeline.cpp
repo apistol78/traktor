@@ -73,7 +73,7 @@ Pipeline::Pipeline()
 {
 }
 
-bool Pipeline::create(const editor::IPipelineSettings* settings)
+bool Pipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_generateMips = settings->getPropertyIncludeHash< bool >(L"Pipeline.GenerateMips", false);

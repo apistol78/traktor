@@ -129,7 +129,7 @@
 			</position>
 			<parameterName>Direction</parameterName>
 			<type>Vector</type>
-			<frequency>Frame</frequency>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.TextureSize" version="traktor.render.Node:1">
 			<id>{C37EB848-FE5B-1749-B28E-07C54D077967}</id>
@@ -157,7 +157,7 @@
 			</position>
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>Vector</type>
-			<frequency>Frame</frequency>
+			<frequency>Once</frequency>
 			<length>15</length>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">

@@ -144,7 +144,7 @@ $Buffer[index].visible = $Input;
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{32AF829B-BE26-9242-99ED-1189D698205D}</id>
 			<comment/>
 			<position>
@@ -156,6 +156,7 @@ $Buffer[index].visible = $Input;
 				<item>
 					<name>visible</name>
 					<type>DtFloat1</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -188,7 +189,7 @@ $Buffer[index].visible = $Input;
 				<second>676</second>
 			</position>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{FAD1FE60-D90C-8A4F-BEFD-145108FE5466}</id>
 			<comment/>
 			<position>
@@ -200,18 +201,22 @@ $Buffer[index].visible = $Input;
 				<item>
 					<name>rotation</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>translation</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>boundingBoxMin</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>boundingBoxMax</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>

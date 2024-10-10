@@ -156,7 +156,7 @@ $Output = visible ? 1.0f : 0.0f;
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{0B4842AF-8301-42BA-8A59-8F749002877B}</id>
 			<comment/>
 			<position>
@@ -168,26 +168,31 @@ $Output = visible ? 1.0f : 0.0f;
 				<item>
 					<name>indexCount</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>instanceCount</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>firstIndex</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>vertexOffset</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>firstInstance</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{B210749B-2773-47CC-A54F-0C4C950DB6CF}</id>
 			<comment/>
 			<position>
@@ -199,22 +204,27 @@ $Output = visible ? 1.0f : 0.0f;
 				<item>
 					<name>indexCount</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>instanceCount</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>firstIndex</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>vertexOffset</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>firstInstance</name>
 					<type>DtInteger1</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>
@@ -274,7 +284,7 @@ $CulledDrawBuffer[index].firstInstance = $DrawBuffer[index].firstInstance;
 			</position>
 			<scope>Global</scope>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{1C9830DB-621E-714F-810F-84964217FFBB}</id>
 			<comment/>
 			<position>
@@ -286,18 +296,22 @@ $CulledDrawBuffer[index].firstInstance = $DrawBuffer[index].firstInstance;
 				<item>
 					<name>patchOrigin</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>surfaceOffset</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>patchBoundingBoxMn</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 				<item>
 					<name>patchBoundingBoxMx</name>
 					<type>DtFloat4</type>
+					<length>0</length>
 				</item>
 			</elements>
 		</item>

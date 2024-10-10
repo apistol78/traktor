@@ -36,7 +36,7 @@ namespace traktor::shape
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabComponentPipeline", 2, PrefabComponentPipeline, world::EntityPipeline)
 
-bool PrefabComponentPipeline::create(const editor::IPipelineSettings* settings)
+bool PrefabComponentPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
 

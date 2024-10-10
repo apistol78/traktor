@@ -128,7 +128,6 @@ $Output = CalculateSpectrum(
 	ivec3(position, 0),
 	0
 );
-
 			]]>
 			</script>
 		</item>
@@ -306,7 +305,7 @@ imageStore($OutputSlope, position, slope);
 			</position>
 			<parameterName>World_Time</parameterName>
 			<type>Scalar</type>
-			<frequency>Once</frequency>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{A880A2E3-6968-034C-B650-7C33CA1A1461}</id>
