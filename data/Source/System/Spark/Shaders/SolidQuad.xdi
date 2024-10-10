@@ -79,14 +79,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{0A7C3BC7-1B35-3747-9B7D-78D119572586}</id>
 			<comment/>
 			<position>
 				<first>50</first>
 				<second>-38</second>
 			</position>
-			<parameterName>Spark_CxFormAdd</parameterName>
+			<declaration>{47CC6C7A-327B-D349-AAC3-18321E48781B}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>

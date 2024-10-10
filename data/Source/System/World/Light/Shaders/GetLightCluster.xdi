@@ -9,14 +9,15 @@
 				<second>60</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{430BDB9F-6997-7C40-AE84-DEDF79B6DE43}</id>
 			<comment/>
 			<position>
 				<first>-982</first>
 				<second>49</second>
 			</position>
-			<parameterName>World_ViewDistance</parameterName>
+			<declaration>{FBA38C9D-9E3D-D74D-9C3D-70FF588A23C4}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -473,14 +474,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{4704B457-F8FA-BD49-A3AC-E9C777F576E9}</id>
 			<comment/>
 			<position>
 				<first>-1349</first>
 				<second>-583</second>
 			</position>
-			<parameterName>World_Projection</parameterName>
+			<declaration>{5FA54E3B-AD14-E148-B385-979BD586BD69}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>

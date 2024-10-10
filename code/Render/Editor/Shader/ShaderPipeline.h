@@ -83,10 +83,7 @@ private:
 	std::wstring m_debugPath;
 	bool m_editor = false;
 
-
 	IProgramCompiler* getProgramCompiler() const;
-
-	bool checkParameters(const ShaderGraph* shaderGraph) const;
 };
 
 }

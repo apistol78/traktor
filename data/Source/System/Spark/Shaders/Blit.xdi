@@ -78,14 +78,15 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{66535231-6525-0247-BF2A-354073475CBD}</id>
 			<comment/>
 			<position>
 				<first>1382</first>
 				<second>658</second>
 			</position>
-			<parameterName>Spark_Texture</parameterName>
+			<declaration>{5AAA49E4-97A6-5049-8C4E-D309F5DE77CD}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Draw</frequency>
 		</item>

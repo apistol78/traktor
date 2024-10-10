@@ -19,14 +19,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{28997D18-B46E-A44D-B2B3-41DDE3F1966E}</id>
 			<comment/>
 			<position>
 				<first>230</first>
 				<second>182</second>
 			</position>
-			<parameterName>Scene_DebugTexture</parameterName>
+			<declaration>{5991F33F-0855-4544-979D-9FBA30FE2C40}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -1171,14 +1172,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8B0FFDAF-D170-B642-B607-FF762FE0DC84}</id>
 			<comment/>
 			<position>
 				<first>-1036</first>
 				<second>1411</second>
 			</position>
-			<parameterName>Scene_ViewDistance</parameterName>
+			<declaration>{B128D6E9-5BC1-2B46-AE11-611DC6DF4743}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -1280,14 +1282,15 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{7B377026-76F5-4A47-8EB1-5F1EF9DEA757}</id>
 			<comment/>
 			<position>
 				<first>1853</first>
 				<second>2635</second>
 			</position>
-			<parameterName>Scene_DebugMagicCoeffs</parameterName>
+			<declaration>{8C4FBC75-01BC-6444-A473-7B6F997043CD}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -1568,14 +1571,15 @@
 			</position>
 			<name>DebugValue</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{5DCE99C0-B494-B048-A4BE-3F8C97C52389}</id>
 			<comment/>
 			<position>
 				<first>-231</first>
 				<second>2731</second>
 			</position>
-			<parameterName>Scene_DebugSlicePositions</parameterName>
+			<declaration>{1207553A-9AE1-544E-970F-841A6584E69E}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -2055,14 +2059,15 @@ else
 				<second>-14</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8E541D2E-677E-9547-B466-390BACAB93A9}</id>
 			<comment/>
 			<position>
 				<first>1433</first>
 				<second>62</second>
 			</position>
-			<parameterName>Scene_DebugViewInverse</parameterName>
+			<declaration>{933E0E53-2A14-A148-98A7-37FA6E4C4838}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -2204,14 +2209,15 @@ else
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B215A6DE-86D1-2F4B-A606-D8EC68126A45}</id>
 			<comment/>
 			<position>
 				<first>-881</first>
 				<second>4009</second>
 			</position>
-			<parameterName>Scene_DebugTexture</parameterName>
+			<declaration>{5991F33F-0855-4544-979D-9FBA30FE2C40}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -2233,14 +2239,15 @@ else
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{65D0FCDE-495B-1840-96A1-724F2A9C3D7C}</id>
 			<comment/>
 			<position>
 				<first>-1183</first>
 				<second>4208</second>
 			</position>
-			<parameterName>Scene_DebugMip</parameterName>
+			<declaration>{3D5593E4-1B4C-D542-B831-CC6297E1E146}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>

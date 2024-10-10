@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{AA980B87-902C-0C41-B948-B65E95841777}</id>
 			<comment/>
 			<position>
 				<first>291</first>
 				<second>411</second>
 			</position>
-			<parameterName>Spark_CxFormAdd</parameterName>
+			<declaration>{47CC6C7A-327B-D349-AAC3-18321E48781B}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>

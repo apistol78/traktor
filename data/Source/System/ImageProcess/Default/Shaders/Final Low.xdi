@@ -66,14 +66,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{CF620028-24D4-644E-B20C-75693B5C154E}</id>
 			<comment/>
 			<position>
 				<first>1884</first>
 				<second>207</second>
 			</position>
-			<parameterName>Blur</parameterName>
+			<declaration>{01FA7A97-779C-DB4C-AE14-C800CA43E0BC}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -98,14 +99,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A86CD548-8F36-7740-98AB-2B75B7706FBA}</id>
 			<comment/>
 			<position>
 				<first>1882</first>
 				<second>47</second>
 			</position>
-			<parameterName>Base</parameterName>
+			<declaration>{FC7C0936-ED10-EB4E-84C5-9F9DC8F16413}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>

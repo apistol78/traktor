@@ -19,25 +19,27 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{D49FA81D-23DC-4D88-89DE-2BB75B119F5C}</id>
 			<comment/>
 			<position>
 				<first>326</first>
 				<second>380</second>
 			</position>
-			<parameterName>World_View</parameterName>
+			<declaration>{0DE9B6CF-1F7E-BC44-8ED6-F5EFC99E6F1C}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{ABB90199-B133-44AE-BB92-BE5C5C381F39}</id>
 			<comment/>
 			<position>
 				<first>294</first>
 				<second>425</second>
 			</position>
-			<parameterName>World_HiZTexture</parameterName>
+			<declaration>{58DB3C8D-DADA-EE43-BA2C-655C271C9244}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -145,14 +147,15 @@ $Output = visible ? 1.0f : 0.0f;
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{068AB477-6E13-43B5-BC99-858E85F280E4}</id>
 			<comment/>
 			<position>
 				<first>294</first>
 				<second>509</second>
 			</position>
-			<parameterName>Terrain_TargetSize</parameterName>
+			<declaration>{6709386C-8ECA-0040-8112-B34DE8CDF05B}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -437,14 +440,15 @@ else
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{991B3EA1-1899-A14C-B01F-33E280761FF8}</id>
 			<comment/>
 			<position>
 				<first>300</first>
 				<second>713</second>
 			</position>
-			<parameterName>Terrain_TargetSize</parameterName>
+			<declaration>{6709386C-8ECA-0040-8112-B34DE8CDF05B}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -466,25 +470,27 @@ else
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{347A384A-9A0A-D142-A1ED-7F20D6421A7A}</id>
 			<comment/>
 			<position>
 				<first>300</first>
 				<second>629</second>
 			</position>
-			<parameterName>World_HiZTexture</parameterName>
+			<declaration>{58DB3C8D-DADA-EE43-BA2C-655C271C9244}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{5D0D873F-C267-E14F-AD02-DA254695CA31}</id>
 			<comment/>
 			<position>
 				<first>268</first>
 				<second>584</second>
 			</position>
-			<parameterName>Terrain_ViewProjection</parameterName>
+			<declaration>{0D02DC97-3FFF-EC4E-BF4F-A880430DABFE}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>

@@ -78,14 +78,15 @@
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{2FB54AE6-EBB7-E241-9028-7C943106196A}</id>
 			<comment/>
 			<position>
 				<first>-283</first>
 				<second>440</second>
 			</position>
-			<parameterName>Terrain_WorldExtent</parameterName>
+			<declaration>{F5CC056E-E04D-E448-B39E-40C11BE1C86C}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -122,14 +123,15 @@
 			</position>
 			<value>-0.5</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{EDA54323-45F7-BD48-968E-265D74B49654}</id>
 			<comment/>
 			<position>
 				<first>711</first>
 				<second>253</second>
 			</position>
-			<parameterName>Terrain_Heightfield</parameterName>
+			<declaration>{F720713A-A71F-A442-BA2A-F071774169EA}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -258,14 +260,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{D0C9FA1E-59C2-1641-823B-7C3197E6FA69}</id>
 			<comment/>
 			<position>
 				<first>709</first>
 				<second>136</second>
 			</position>
-			<parameterName>Terrain_SurfaceAlbedo</parameterName>
+			<declaration>{38B6F926-0F0B-7749-8228-524A5A441299}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Draw</frequency>
 		</item>

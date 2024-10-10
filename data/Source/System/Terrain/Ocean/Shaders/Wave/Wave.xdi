@@ -33,14 +33,15 @@
 				<Z>1</Z>
 			</localSize>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A34B08DA-1CB4-8348-B635-78CE22751D09}</id>
 			<comment/>
 			<position>
 				<first>764</first>
 				<second>66</second>
 			</position>
-			<parameterName>Ocean_WaveTexture</parameterName>
+			<declaration>{9DA1C765-3690-9A41-BF8D-F5B94A4E447B}</declaration>
+			<parameterName/>
 			<type>Image2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -131,14 +132,15 @@ $Output = CalculateSpectrum(
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{80323036-2A9F-EB4D-85F0-AED26A8E87B3}</id>
 			<comment/>
 			<position>
 				<first>-117</first>
 				<second>700</second>
 			</position>
-			<parameterName>Ocean_WaveTexture</parameterName>
+			<declaration>{9DA1C765-3690-9A41-BF8D-F5B94A4E447B}</declaration>
+			<parameterName/>
 			<type>Image2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -210,13 +212,14 @@ $Output = vec4(h0, h0conj);
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{05EC9E4B-B5E0-9B47-AA1A-9E9E45995A89}</id>
 			<comment/>
 			<position>
 				<first>-136</first>
 				<second>902</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture0</parameterName>
 			<type>Image2D</type>
 			<frequency>Once</frequency>
@@ -285,25 +288,27 @@ imageStore($OutputSlope, position, slope);
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{975A118C-A191-E54E-B1DD-CC9C97D87067}</id>
 			<comment/>
 			<position>
 				<first>-136</first>
 				<second>868</second>
 			</position>
-			<parameterName>Ocean_WaveTexture</parameterName>
+			<declaration>{9DA1C765-3690-9A41-BF8D-F5B94A4E447B}</declaration>
+			<parameterName/>
 			<type>Image2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{1E96A92E-E667-DA41-B576-A4EC4F26EB5C}</id>
 			<comment/>
 			<position>
 				<first>-69</first>
 				<second>1086</second>
 			</position>
-			<parameterName>World_Time</parameterName>
+			<declaration>{FBA61D55-529C-5D41-A0F6-EA3D6DF25948}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -353,14 +358,15 @@ $Output = FFT($Index, inputData);
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A1E17E8B-C37E-034A-9736-C38F804627EC}</id>
 			<comment/>
 			<position>
 				<first>-117</first>
 				<second>1294</second>
 			</position>
-			<parameterName>Ocean_WaveTexture</parameterName>
+			<declaration>{9DA1C765-3690-9A41-BF8D-F5B94A4E447B}</declaration>
+			<parameterName/>
 			<type>Image2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -378,24 +384,26 @@ $Output = FFT($Index, inputData);
 				<Z>1</Z>
 			</localSize>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{83138D11-0CA2-AA49-8D4E-C68E9809EC9F}</id>
 			<comment/>
 			<position>
 				<first>514</first>
 				<second>1150</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture0</parameterName>
 			<type>Image2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{2FCB98ED-A313-174F-A4A0-6B0AC1BFEA50}</id>
 			<comment/>
 			<position>
 				<first>514</first>
 				<second>1330</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture0</parameterName>
 			<type>Image2D</type>
 			<frequency>Once</frequency>
@@ -544,135 +552,147 @@ imageStore($FoamTexture, position, vec4(foam));
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{BAE9354B-059B-4513-B205-385F37871512}</id>
 			<comment/>
 			<position>
 				<first>-117</first>
 				<second>1630</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture0</parameterName>
 			<type>Image2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{DCEFB545-7BE8-D64A-A595-BB39B444FBDC}</id>
 			<comment/>
 			<position>
 				<first>-165</first>
 				<second>948</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture1</parameterName>
 			<type>Image2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E1D8EA5F-6F8F-2C47-8DCD-E815CA8CA614}</id>
 			<comment/>
 			<position>
 				<first>-145</first>
 				<second>1694</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture1</parameterName>
 			<type>Image2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{F078BECA-8CA8-304D-AA8F-E44737657B1C}</id>
 			<comment/>
 			<position>
 				<first>-152</first>
 				<second>1764</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture2</parameterName>
 			<type>Image2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B09DAA56-FFE5-BA41-92B4-6FF7E0553EAA}</id>
 			<comment/>
 			<position>
 				<first>97</first>
 				<second>167</second>
 			</position>
-			<parameterName>Ocean_SpectrumScale</parameterName>
+			<declaration>{4B26EC1F-4E86-3942-847E-249F51A00C73}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{63EF89F2-D10D-3A44-877A-B927E38AE501}</id>
 			<comment/>
 			<position>
 				<first>97</first>
 				<second>203</second>
 			</position>
-			<parameterName>Ocean_SpectrumAngle</parameterName>
+			<declaration>{BE42D0B8-5066-F349-8D1D-642E4B5EC28E}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{54C08262-6172-B042-8A30-5F93E895118F}</id>
 			<comment/>
 			<position>
 				<first>65</first>
 				<second>239</second>
 			</position>
-			<parameterName>Ocean_SpectrumSpreadBlend</parameterName>
+			<declaration>{F4912F7F-02B5-B34D-B0F8-91D2DCD724C5}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{0CDF5161-468E-8B41-BBD7-08E607F6DA08}</id>
 			<comment/>
 			<position>
 				<first>97</first>
 				<second>275</second>
 			</position>
-			<parameterName>Ocean_SpectrumSwell</parameterName>
+			<declaration>{81D4C6C0-E88C-FB40-8004-BDB0DC13D562}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C8984909-6F8B-E746-A81C-0691562980BD}</id>
 			<comment/>
 			<position>
 				<first>49</first>
 				<second>419</second>
 			</position>
-			<parameterName>Ocean_SpectrumShortWavesFade</parameterName>
+			<declaration>{0BD40BC5-FE07-E24B-809D-3133F06ADFF9}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{EC55661C-7664-1745-996C-D7218B9A6EB2}</id>
 			<comment/>
 			<position>
 				<first>81</first>
 				<second>383</second>
 			</position>
-			<parameterName>Ocean_SpectrumGamma</parameterName>
+			<declaration>{0E3930A3-AF61-B547-AD67-3033C0E2763B}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E3FEED5B-4099-FD41-AB25-935D36894E6C}</id>
 			<comment/>
 			<position>
 				<first>65</first>
 				<second>347</second>
 			</position>
-			<parameterName>Ocean_SpectrumPeakOmega</parameterName>
+			<declaration>{9FF06300-FFCB-6341-A5ED-CAF9C0BBDA4F}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{2C85F222-9C0F-2E43-8278-1CBF71978645}</id>
 			<comment/>
 			<position>
 				<first>97</first>
 				<second>311</second>
 			</position>
-			<parameterName>Ocean_SpectrumAlpha</parameterName>
+			<declaration>{A80501FB-C40E-AA40-915A-2467C73C0733}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>

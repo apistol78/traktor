@@ -23,14 +23,15 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{FD8EF879-3ABA-7C43-99D8-DE17D5DCDF86}</id>
 			<comment/>
 			<position>
 				<first>1032</first>
 				<second>110</second>
 			</position>
-			<parameterName>World_GBufferA</parameterName>
+			<declaration>{D888D241-397A-2148-8041-E576091FE763}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

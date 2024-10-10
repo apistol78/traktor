@@ -169,58 +169,63 @@ $Output = TemporalAntiAlias(
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{40658543-2850-D54B-8061-7776F36EA408}</id>
 			<comment/>
 			<position>
 				<first>2608</first>
 				<second>-21</second>
 			</position>
-			<parameterName>Current</parameterName>
+			<declaration>{8E8C78CC-A643-6B44-A236-9BFCDBEB21F4}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{6970CCDB-C0A0-014F-B8BF-44E801105694}</id>
 			<comment/>
 			<position>
 				<first>2616</first>
 				<second>22</second>
 			</position>
-			<parameterName>Last</parameterName>
+			<declaration>{05ED8C9E-07AB-EA44-87BF-3B9B31F7AEA7}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{0AB838FE-0EFA-6147-AA40-F0A603BF3BA6}</id>
 			<comment/>
 			<position>
 				<first>2608</first>
 				<second>65</second>
 			</position>
-			<parameterName>Velocity</parameterName>
+			<declaration>{B98DFF6C-6228-B945-B698-6CB2673E1A87}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{F77CC690-64D3-234A-9A17-65785F782009}</id>
 			<comment/>
 			<position>
 				<first>2616</first>
 				<second>108</second>
 			</position>
-			<parameterName>Depth</parameterName>
+			<declaration>{57C9794D-569A-E143-816D-37D78E63755C}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{7732D799-0740-AA47-BC7C-9E32A75C9A4D}</id>
 			<comment/>
 			<position>
 				<first>2592</first>
 				<second>194</second>
 			</position>
-			<parameterName>World_Jitter</parameterName>
+			<declaration>{89925F19-BD6D-8F47-809D-A21A1BA4D0B5}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>

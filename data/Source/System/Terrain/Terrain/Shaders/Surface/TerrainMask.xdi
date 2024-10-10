@@ -27,14 +27,15 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A4403F3E-47D6-A446-8C48-E827911CB9D7}</id>
 			<comment/>
 			<position>
 				<first>48</first>
 				<second>-673</second>
 			</position>
-			<parameterName>Terrain_SplatMap</parameterName>
+			<declaration>{5A4C74FA-BC09-A444-BF5D-F17108C6DDA4}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>

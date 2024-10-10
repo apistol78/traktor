@@ -20,12 +20,12 @@ class INodeShape;
 namespace traktor::render
 {
 
-class UniformNodeFacade : public INodeFacade
+class IndexedUniformNodeFacade : public INodeFacade
 {
 	T_RTTI_CLASS;
 
 public:
-	UniformNodeFacade();
+	IndexedUniformNodeFacade();
 
 	virtual Ref< Node > createShaderNode(
 		const TypeInfo* nodeType,

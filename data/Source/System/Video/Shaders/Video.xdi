@@ -66,14 +66,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{6368F71D-A87D-7F4A-B1EA-15301863F7E7}</id>
 			<comment/>
 			<position>
 				<first>605</first>
 				<second>-99</second>
 			</position>
-			<parameterName>Texture</parameterName>
+			<declaration>{308C9D43-A6B7-1540-85AD-587A46A407EA}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -186,14 +187,15 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{ED55A80C-D831-1940-BA1A-09F36493139A}</id>
 			<comment/>
 			<position>
 				<first>-702</first>
 				<second>-252</second>
 			</position>
-			<parameterName>Bounds</parameterName>
+			<declaration>{C727381E-8990-B544-B8EA-0F3284AC0224}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>

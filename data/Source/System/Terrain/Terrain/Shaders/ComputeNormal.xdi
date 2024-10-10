@@ -28,14 +28,15 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{3C310444-CB20-554A-90FF-986FE1E428B2}</id>
 			<comment/>
 			<position>
 				<first>-203</first>
 				<second>205</second>
 			</position>
-			<parameterName>Terrain_Normals</parameterName>
+			<declaration>{CED77432-5C55-A146-AACE-CF7787EDDFAB}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

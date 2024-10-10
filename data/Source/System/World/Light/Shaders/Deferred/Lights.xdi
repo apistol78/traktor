@@ -327,14 +327,15 @@
 			</position>
 			<name>L_ViewToLight</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{62C3E795-63BE-6E49-AFCA-506CD8B7CC58}</id>
 			<comment/>
 			<position>
 				<first>3341</first>
 				<second>1213</second>
 			</position>
-			<parameterName>World_ShadowMapAtlas</parameterName>
+			<declaration>{81E28D7D-15BA-EC49-BF0B-683958298F33}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -751,14 +752,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{2F962D12-917E-E34A-9693-70683A88B6D2}</id>
 			<comment/>
 			<position>
 				<first>5368</first>
 				<second>1686</second>
 			</position>
-			<parameterName>World_ReflectionMap</parameterName>
+			<declaration>{5D2D92AB-219D-3647-99B3-336E93252B0A}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -796,14 +798,15 @@
 				<second>1723</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{671C5EF1-2A13-6C4F-ABC6-AB927F28A76B}</id>
 			<comment/>
 			<position>
 				<first>5902</first>
 				<second>2498</second>
 			</position>
-			<parameterName>World_OcclusionMap</parameterName>
+			<declaration>{7CF04C7B-5D33-AB46-8098-4785A72C89D6}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -981,14 +984,15 @@
 			</position>
 			<name>L_LightIndex</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{80881F0B-6386-8C44-A2CF-A38D49B53517}</id>
 			<comment/>
 			<position>
 				<first>-459</first>
 				<second>-600</second>
 			</position>
-			<parameterName>World_SlicePositions</parameterName>
+			<declaration>{C1E9C8EA-BE95-ED41-93D4-37BB8E871E36}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -1279,14 +1283,15 @@ else
 			</position>
 			<name>L_Radius</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C6CB774D-3022-B14F-A110-5B1864AB8EDB}</id>
 			<comment/>
 			<position>
 				<first>3357</first>
 				<second>1169</second>
 			</position>
-			<parameterName>World_ShadowBias</parameterName>
+			<declaration>{7B9EBA48-EB11-5449-A1D6-F2B72843C2E6}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
@@ -1340,14 +1345,15 @@ Check max shadow distance
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{47EA879F-9E2E-754E-93E9-39FD309B93B1}</id>
 			<comment/>
 			<position>
 				<first>3395</first>
 				<second>-974</second>
 			</position>
-			<parameterName>World_SlicePositions</parameterName>
+			<declaration>{C1E9C8EA-BE95-ED41-93D4-37BB8E871E36}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -1421,14 +1427,15 @@ Check max shadow distance
 			</position>
 			<name>L_AtlasTransform</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{EEF7DC83-7641-1849-8FD6-EF32118EAFEB}</id>
 			<comment/>
 			<position>
 				<first>2427</first>
 				<second>-881</second>
 			</position>
-			<parameterName>World_ShadowMapAtlas</parameterName>
+			<declaration>{81E28D7D-15BA-EC49-BF0B-683958298F33}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -1590,14 +1597,15 @@ Check max shadow distance
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{F180C0E3-5811-C141-8855-C09DF5DA0E68}</id>
 			<comment/>
 			<position>
 				<first>3261</first>
 				<second>2261</second>
 			</position>
-			<parameterName>World_ViewInverse</parameterName>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -2051,14 +2059,15 @@ Check max shadow distance
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{AFCDB829-8B95-A24B-BBA0-950C8C800540}</id>
 			<comment/>
 			<position>
 				<first>5894</first>
 				<second>3192</second>
 			</position>
-			<parameterName>World_ContactShadowsMap</parameterName>
+			<declaration>{C463F1F1-8B01-ED43-B144-CDE2854F9537}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -2102,14 +2111,15 @@ Check max shadow distance
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8D015F58-94B8-4B88-9B8F-2034A4E515A7}</id>
 			<comment/>
 			<position>
 				<first>267</first>
 				<second>-517</second>
 			</position>
-			<parameterName>World_ShadowBias</parameterName>
+			<declaration>{7B9EBA48-EB11-5449-A1D6-F2B72843C2E6}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>

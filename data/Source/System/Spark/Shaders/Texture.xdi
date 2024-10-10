@@ -157,25 +157,27 @@
 				<second>288</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8EE40D91-C677-1B46-B170-DC44C18324D1}</id>
 			<comment/>
 			<position>
 				<first>72</first>
 				<second>280</second>
 			</position>
-			<parameterName>Spark_CxFormMul</parameterName>
+			<declaration>{0FFAD3A2-E8C5-7F49-8AD0-BDF41555DBBF}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E9225AE8-651D-7241-895F-FB4F04DD8597}</id>
 			<comment/>
 			<position>
 				<first>66</first>
 				<second>446</second>
 			</position>
-			<parameterName>Spark_CxFormAdd</parameterName>
+			<declaration>{47CC6C7A-327B-D349-AAC3-18321E48781B}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -233,14 +235,15 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{96E58520-2B83-4545-A0A5-08D3023ACB46}</id>
 			<comment/>
 			<position>
 				<first>-730</first>
 				<second>108</second>
 			</position>
-			<parameterName>Spark_TextureClamp</parameterName>
+			<declaration>{E6D319AB-774E-2742-A102-8EB02DABF8A5}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>

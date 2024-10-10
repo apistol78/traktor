@@ -12,7 +12,7 @@
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/Facades/UniformNodeFacade.h"
+#include "Render/Editor/Shader/Facades/IndexedUniformNodeFacade.h"
 #include "Ui/Application.h"
 #include "Ui/Edit.h"
 #include "Ui/Graph/GraphControl.h"
@@ -22,22 +22,22 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.UniformNodeFacade", UniformNodeFacade, INodeFacade)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexedUniformNodeFacade", IndexedUniformNodeFacade, INodeFacade)
 
-UniformNodeFacade::UniformNodeFacade()
+IndexedUniformNodeFacade::IndexedUniformNodeFacade()
 {
 	m_nodeShape = new ui::InOutNodeShape(ui::InOutNodeShape::StUniform);
 }
 
-Ref< Node > UniformNodeFacade::createShaderNode(
+Ref< Node > IndexedUniformNodeFacade::createShaderNode(
 	const TypeInfo* nodeType,
 	editor::IEditor* editor
 )
 {
-	return new Uniform();
+	return new IndexedUniform();
 }
 
-Ref< ui::Node > UniformNodeFacade::createEditorNode(
+Ref< ui::Node > IndexedUniformNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
@@ -46,7 +46,7 @@ Ref< ui::Node > UniformNodeFacade::createEditorNode(
 {
 	std::wstring information;
 
-	const Guid declarationId = mandatory_non_null_type_cast< Uniform* >(shaderNode)->getDeclaration();
+	const Guid declarationId = mandatory_non_null_type_cast< IndexedUniform* >(shaderNode)->getDeclaration();
 	if (declarationId.isNotNull())
 	{
 		Ref< db::Instance > instance = editor->getSourceDatabase()->getInstance(declarationId);
@@ -90,7 +90,7 @@ Ref< ui::Node > UniformNodeFacade::createEditorNode(
 	return editorNode;
 }
 
-void UniformNodeFacade::editShaderNode(
+void IndexedUniformNodeFacade::editShaderNode(
 	editor::IEditor* editor,
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
@@ -100,7 +100,7 @@ void UniformNodeFacade::editShaderNode(
 {
 }
 
-void UniformNodeFacade::refreshEditorNode(
+void IndexedUniformNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
@@ -110,7 +110,7 @@ void UniformNodeFacade::refreshEditorNode(
 {
 	std::wstring information;
 
-	const Guid declarationId = mandatory_non_null_type_cast< Uniform* >(shaderNode)->getDeclaration();
+	const Guid declarationId = mandatory_non_null_type_cast< IndexedUniform* >(shaderNode)->getDeclaration();
 	if (declarationId.isNotNull())
 	{
 		Ref< db::Instance > instance = editor->getSourceDatabase()->getInstance(declarationId);
@@ -123,7 +123,7 @@ void UniformNodeFacade::refreshEditorNode(
 	editorNode->setInfo(information);
 }
 
-void UniformNodeFacade::setValidationIndicator(
+void IndexedUniformNodeFacade::setValidationIndicator(
 	ui::Node* editorNode,
 	bool validationSucceeded
 )

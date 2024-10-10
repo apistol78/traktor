@@ -73,14 +73,15 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{418DA77F-A63B-4123-8E9A-9E3629AB5D86}</id>
 			<comment/>
 			<position>
 				<first>-903</first>
 				<second>879</second>
 			</position>
-			<parameterName>World_ViewInverse</parameterName>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>

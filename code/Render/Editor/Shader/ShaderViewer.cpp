@@ -19,6 +19,7 @@
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Render/Editor/IProgramCompiler.h"
@@ -27,6 +28,8 @@
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderModule.h"
 #include "Render/Editor/Shader/ShaderViewer.h"
+#include "Render/Editor/Shader/UniformDeclaration.h"
+#include "Render/Editor/Shader/UniformLinker.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
@@ -395,6 +398,23 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	};
 	if ((shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true)) == 0)
 		return;
+
+	// Link uniform declarations.
+	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t
+	{
+		Ref< db::Instance > declarationInstance = m_editor->getSourceDatabase()->getInstance(declarationId);
+		if (declarationInstance != nullptr)
+		{
+			return
+			{
+				declarationInstance->getName(),
+				declarationInstance->getObject< UniformDeclaration >()
+			};
+		}
+		else
+			return { L"", nullptr };
+	};
+	shaderGraph = UniformLinker(uniformDeclarationReader).resolve(shaderGraph);
 
 	// Resolve all bundles.
 	shaderGraph = render::ShaderGraphStatic(shaderGraph, Guid()).getBundleResolved();

@@ -206,14 +206,15 @@ World_DeferredGBufferWrite
 				<second>-392</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{87C348B6-7BDD-1A42-B89E-2AEAF7B8A20B}</id>
 			<comment/>
 			<position>
 				<first>-400</first>
 				<second>-334</second>
 			</position>
-			<parameterName>World_ViewInverse</parameterName>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -225,14 +226,15 @@ World_DeferredGBufferWrite
 				<second>-227</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C94C36B7-EF68-554B-BCEB-50880319F18B}</id>
 			<comment/>
 			<position>
 				<first>-400</first>
 				<second>-176</second>
 			</position>
-			<parameterName>World_ViewInverse</parameterName>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>

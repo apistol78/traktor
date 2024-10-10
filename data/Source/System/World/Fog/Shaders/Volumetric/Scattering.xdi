@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{4D7FBF8A-E00F-DC4A-91AF-649A141F06B4}</id>
 			<comment/>
 			<position>
 				<first>557</first>
 				<second>66</second>
 			</position>
-			<parameterName>World_FogVolume</parameterName>
+			<declaration>{F4609FEE-2CFD-1543-BF6F-2C85577A83C8}</declaration>
+			<parameterName/>
 			<type>Image3D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -132,14 +133,15 @@ NDC
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{FA6B5F5B-2883-9A4F-90C9-268471258D80}</id>
 			<comment/>
 			<position>
 				<first>258</first>
 				<second>852</second>
 			</position>
-			<parameterName>World_MagicCoeffs</parameterName>
+			<declaration>{530D6B3A-EE00-9D43-AB36-022D3ED4B7D6}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -336,14 +338,15 @@ NDC
 			</position>
 			<name>L_SliceDistributionExponent</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{620D4273-184F-CA46-B90B-0DE4E6BAA5CB}</id>
 			<comment/>
 			<position>
 				<first>-255</first>
 				<second>-522</second>
 			</position>
-			<parameterName>World_FogVolumeSliceCount</parameterName>
+			<declaration>{D737DAFA-B24B-CE4A-A56B-0874CD048D3A}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
@@ -417,14 +420,15 @@ $Output = hash13($Seed.xyz);
 				<second>431</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B8705BCB-7832-AD47-9D83-DCCDAFC6CDAB}</id>
 			<comment/>
 			<position>
 				<first>-359</first>
 				<second>65</second>
 			</position>
-			<parameterName>World_FogVolumeMediumColor</parameterName>
+			<declaration>{2EA62A83-1CBE-0B43-8C11-4BBDC3256AA1}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -607,14 +611,15 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{7BFA521C-70E8-224E-8F66-80CB653A704D}</id>
 			<comment/>
 			<position>
 				<first>-602</first>
 				<second>212</second>
 			</position>
-			<parameterName>World_FogVolumeMediumDensity</parameterName>
+			<declaration>{99DF57D0-3C95-A74A-B1D5-F10F89069548}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
@@ -635,14 +640,15 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			</position>
 			<value>0.75</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A1E3DF67-45D5-8544-919B-A61DE8D94B16}</id>
 			<comment/>
 			<position>
 				<first>178</first>
 				<second>948</second>
 			</position>
-			<parameterName>World_FogVolumeRange</parameterName>
+			<declaration>{5E5B7264-DB82-404F-AAD4-E9D70C8770A1}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -698,14 +704,15 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{F10862B1-BEE4-4F6A-8FCC-0C7ECD0D7937}</id>
 			<comment/>
 			<position>
 				<first>-770</first>
 				<second>840</second>
 			</position>
-			<parameterName>World_FogVolumeSliceCurrent</parameterName>
+			<declaration>{2586A604-115B-B44F-BE82-BBC362B3AF55}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>

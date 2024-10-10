@@ -9,25 +9,27 @@
 				<second>212</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{1248B307-C85D-8648-B001-25EEB0EA9498}</id>
 			<comment/>
 			<position>
 				<first>572</first>
 				<second>240</second>
 			</position>
-			<parameterName>Spark_CxFormMul</parameterName>
+			<declaration>{0FFAD3A2-E8C5-7F49-8AD0-BDF41555DBBF}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{96C994FF-BB26-3748-8F06-39A895F777D9}</id>
 			<comment/>
 			<position>
 				<first>568</first>
 				<second>394</second>
 			</position>
-			<parameterName>Spark_CxFormAdd</parameterName>
+			<declaration>{47CC6C7A-327B-D349-AAC3-18321E48781B}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>

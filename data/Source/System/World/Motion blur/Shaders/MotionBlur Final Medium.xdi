@@ -108,14 +108,15 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{ED3D5851-C67B-4F4C-87EF-8E34E7A439AF}</id>
 			<comment/>
 			<position>
 				<first>1303</first>
 				<second>719</second>
 			</position>
-			<parameterName>Source</parameterName>
+			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -137,14 +138,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{6533583C-95EC-41A2-8F2D-7DDE3C532FF8}</id>
 			<comment/>
 			<position>
 				<first>578</first>
 				<second>753</second>
 			</position>
-			<parameterName>Velocity</parameterName>
+			<declaration>{B98DFF6C-6228-B945-B698-6CB2673E1A87}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -183,14 +185,15 @@
 			</position>
 			<value>1, -1, 0, 0</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E9E165D5-1B75-4973-8A3A-B2E785168CED}</id>
 			<comment/>
 			<position>
 				<first>-183</first>
 				<second>628</second>
 			</position>
-			<parameterName>World_Time</parameterName>
+			<declaration>{FBA61D55-529C-5D41-A0F6-EA3D6DF25948}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>

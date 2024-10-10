@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{2864DA67-F2FE-3941-946B-10A420BECFE6}</id>
 			<comment/>
 			<position>
 				<first>1713</first>
 				<second>778</second>
 			</position>
-			<parameterName>World_Projection</parameterName>
+			<declaration>{5FA54E3B-AD14-E148-B385-979BD586BD69}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8AA18707-44AC-2644-8B41-ED4A2140AB74}</id>
 			<comment/>
 			<position>
 				<first>190</first>
 				<second>-358</second>
 			</position>
-			<parameterName>World_World</parameterName>
+			<declaration>{588FB1F4-B99F-8844-BB94-0F5455CB78B0}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -112,14 +114,15 @@
 			<technique/>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A0F26B53-3964-584F-905E-75CDA320B52E}</id>
 			<comment/>
 			<position>
 				<first>1248</first>
 				<second>747</second>
 			</position>
-			<parameterName>World_View</parameterName>
+			<declaration>{0DE9B6CF-1F7E-BC44-8ED6-F5EFC99E6F1C}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -141,14 +144,15 @@
 			</position>
 			<name>L_WorldPosition</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{DC3CEE50-9A81-AC49-98C1-68FFC40D67BA}</id>
 			<comment/>
 			<position>
 				<first>922</first>
 				<second>471</second>
 			</position>
-			<parameterName>World_View</parameterName>
+			<declaration>{0DE9B6CF-1F7E-BC44-8ED6-F5EFC99E6F1C}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -257,36 +261,39 @@
 			</position>
 			<value>0.1</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{F2F64AEA-AF10-DD4F-BECA-CB693C8C4EDA}</id>
 			<comment/>
 			<position>
 				<first>5917</first>
 				<second>675</second>
 			</position>
-			<parameterName>Ocean_ShallowTint</parameterName>
+			<declaration>{87941B16-E6D6-2F40-B01F-81AE36121657}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{11033B75-D663-EF4C-931D-3E9930075BEC}</id>
 			<comment/>
 			<position>
 				<first>5349</first>
 				<second>662</second>
 			</position>
-			<parameterName>Ocean_Opacity</parameterName>
+			<declaration>{7549F84E-BD88-B64A-B670-90F8BF337639}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{1A8032F5-2B64-454F-B755-BD8DFCC369AA}</id>
 			<comment/>
 			<position>
 				<first>5917</first>
 				<second>718</second>
 			</position>
-			<parameterName>Ocean_DeepColor</parameterName>
+			<declaration>{E46335EB-69CD-3141-B473-566065639392}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -425,14 +432,15 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E7699DB6-936F-9942-8A80-59AD6B0ACB4A}</id>
 			<comment/>
 			<position>
 				<first>6624</first>
 				<second>1525</second>
 			</position>
-			<parameterName>World_VisualCopyMap</parameterName>
+			<declaration>{3AC10D97-E3DF-E244-8047-BDE8AFEE1CD5}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -617,14 +625,15 @@
 				<second>3523</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{1C2C6BCC-66BE-C34E-83C5-BB6AC9FDDD97}</id>
 			<comment/>
 			<position>
 				<first>1336</first>
 				<second>3655</second>
 			</position>
-			<parameterName>World_ViewInverse</parameterName>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -775,24 +784,26 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B98A0CA0-E868-5F45-BB27-0E7AE5933066}</id>
 			<comment/>
 			<position>
 				<first>-12</first>
 				<second>496</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture0</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{48883B80-B73D-A74A-9D23-D547F65DDF05}</id>
 			<comment/>
 			<position>
 				<first>-12</first>
 				<second>580</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture1</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
@@ -806,13 +817,14 @@
 			</position>
 			<value>0.1</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A1E20EC6-F0DC-B446-B119-A44D9207F866}</id>
 			<comment/>
 			<position>
 				<first>-12</first>
 				<second>538</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture2</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
@@ -921,14 +933,15 @@
 				<second>4758</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{4D429102-7139-6548-B671-0E695FC4EF1C}</id>
 			<comment/>
 			<position>
 				<first>-133</first>
 				<second>4816</second>
 			</position>
-			<parameterName>World_ViewInverse</parameterName>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -940,14 +953,15 @@
 				<second>4923</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{BA1F769E-0583-A843-A9B8-9831FA097409}</id>
 			<comment/>
 			<position>
 				<first>-145</first>
 				<second>4974</second>
 			</position>
-			<parameterName>World_ViewInverse</parameterName>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -1041,14 +1055,15 @@
 				<second>990</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{2392BDB6-7FA5-5F42-9FB8-2DDDEE167E06}</id>
 			<comment/>
 			<position>
 				<first>5333</first>
 				<second>700</second>
 			</position>
-			<parameterName>Ocean_DeepColor</parameterName>
+			<declaration>{E46335EB-69CD-3141-B473-566065639392}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -1543,35 +1558,38 @@ $Output = vec4(scatter, 0.0f);
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{3B819EC1-7C7C-6A42-9A6B-77BFBBE4A1F2}</id>
 			<comment/>
 			<position>
 				<first>238</first>
 				<second>1737</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture2</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{EEB058EB-16D1-264D-88E1-64ACCFEF9FC7}</id>
 			<comment/>
 			<position>
 				<first>239</first>
 				<second>1847</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture3</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{1825C40D-0B05-7148-BF48-3843C94C003A}</id>
 			<comment/>
 			<position>
 				<first>239</first>
 				<second>1805</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture0</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
@@ -1631,14 +1649,15 @@ Dummy
 				<second>1782</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{19E61054-FBD1-E545-95C3-0976F73BE706}</id>
 			<comment/>
 			<position>
 				<first>1304</first>
 				<second>1891</second>
 			</position>
-			<parameterName>World_LastView</parameterName>
+			<declaration>{D63D7376-9F2E-A540-B5B9-C47AC483CAE8}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -1782,14 +1801,15 @@ Dummy
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E32B5F6B-A498-664C-B4DE-0C921773FDD8}</id>
 			<comment/>
 			<position>
 				<first>483</first>
 				<second>2169</second>
 			</position>
-			<parameterName>World_Projection</parameterName>
+			<declaration>{5FA54E3B-AD14-E148-B385-979BD586BD69}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -1947,14 +1967,15 @@ $Output = vec4(r * -0.05f, 0.0f);
 			</position>
 			<value>100</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{EEFF6D5B-70D2-AB46-B4E9-B42CD4385764}</id>
 			<comment/>
 			<position>
 				<first>271</first>
 				<second>-507</second>
 			</position>
-			<parameterName>Ocean_Tile</parameterName>
+			<declaration>{FC35457F-677A-864D-9C81-A02656A3DBEE}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>

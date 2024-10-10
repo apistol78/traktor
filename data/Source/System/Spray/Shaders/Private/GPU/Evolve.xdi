@@ -153,25 +153,27 @@ if ($Index.x < alive)
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C260B0AE-EF94-47D2-985B-6EDD3607DE58}</id>
 			<comment/>
 			<position>
 				<first>146</first>
 				<second>192</second>
 			</position>
-			<parameterName>Spray_DeltaTime</parameterName>
+			<declaration>{575BF7CA-27BA-2C4D-BAB9-769EB1C2AE72}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{5E3FDD9A-10DD-EC47-8797-DA68DB0C2954}</id>
 			<comment/>
 			<position>
 				<first>162</first>
 				<second>231</second>
 			</position>
-			<parameterName>Spray_Seed</parameterName>
+			<declaration>{7AF8C76A-EACE-0842-AF23-400884936409}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -201,14 +203,15 @@ if ($Index.x < alive)
 			</position>
 			<scope>Global</scope>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{9242D3EE-5E01-2144-AF20-85D901D4574E}</id>
 			<comment/>
 			<position>
 				<first>146</first>
 				<second>270</second>
 			</position>
-			<parameterName>Spray_MiddleAge</parameterName>
+			<declaration>{65B2A467-B8AF-FC48-A068-9D7C3BD65BFB}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>

@@ -37,14 +37,15 @@ Tag_DiffuseColor
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A5875DBF-8F5A-4692-B0B3-401F60B11E4B}</id>
 			<comment/>
 			<position>
 				<first>756</first>
 				<second>284</second>
 			</position>
-			<parameterName>Mesh_DiffuseColor</parameterName>
+			<declaration>{6F8A260C-C294-5E4F-B202-A526878F4C85}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>

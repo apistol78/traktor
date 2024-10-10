@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{9E7508E1-4078-B448-980F-48F8C88D53A4}</id>
 			<comment/>
 			<position>
 				<first>181</first>
 				<second>418</second>
 			</position>
-			<parameterName>Source</parameterName>
+			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Draw</frequency>
 		</item>

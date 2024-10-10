@@ -74,14 +74,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E1616475-2F49-6849-8180-9E1508907204}</id>
 			<comment/>
 			<position>
 				<first>351</first>
 				<second>362</second>
 			</position>
-			<parameterName>Source</parameterName>
+			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -178,14 +179,15 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8DF54514-99D3-4A92-A4A5-1033B167AD39}</id>
 			<comment/>
 			<position>
 				<first>-370</first>
 				<second>526</second>
 			</position>
-			<parameterName>Source</parameterName>
+			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>

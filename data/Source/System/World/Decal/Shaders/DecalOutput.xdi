@@ -44,14 +44,15 @@
 				<second>26</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{6E6007A5-8D3E-A146-9FAE-942574FCCAEF}</id>
 			<comment/>
 			<position>
 				<first>522</first>
 				<second>198</second>
 			</position>
-			<parameterName>World_DecalThinkness</parameterName>
+			<declaration>{4362150E-F412-3A45-B7B7-CF7B15A67852}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>

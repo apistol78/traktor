@@ -36,14 +36,15 @@ Tag_Roughness
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{31E08E7B-A0EF-4EBE-8B8D-D27D06D2CF4D}</id>
 			<comment/>
 			<position>
 				<first>633</first>
 				<second>467</second>
 			</position>
-			<parameterName>Mesh_Roughness</parameterName>
+			<declaration>{344ABE62-4354-1348-BF20-467FBD550D12}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>

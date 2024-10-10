@@ -22,14 +22,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C957843A-D370-294D-9DD2-F91034ACAC6E}</id>
 			<comment/>
 			<position>
 				<first>409</first>
 				<second>404</second>
 			</position>
-			<parameterName>AO</parameterName>
+			<declaration>{D47AF46E-E6D2-AA48-8D65-4AF0AFD1146E}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>

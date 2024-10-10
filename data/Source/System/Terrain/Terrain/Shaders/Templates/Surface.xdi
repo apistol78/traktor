@@ -98,14 +98,15 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B78E267A-B884-1548-9322-61DD01D2069E}</id>
 			<comment/>
 			<position>
 				<first>1518</first>
 				<second>563</second>
 			</position>
-			<parameterName>Terrain_Heightfield</parameterName>
+			<declaration>{F720713A-A71F-A442-BA2A-F071774169EA}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -149,25 +150,27 @@
 			</position>
 			<swizzle>x0y0</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{16B11429-167E-9A44-9F0C-660D5A16DF90}</id>
 			<comment/>
 			<position>
 				<first>856</first>
 				<second>501</second>
 			</position>
-			<parameterName>Terrain_PatchExtent</parameterName>
+			<declaration>{EB7D5274-ED31-E942-A50F-0D894993DFC2}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{5EDF7F5F-F675-3F40-ADF3-825E51CBEC82}</id>
 			<comment/>
 			<position>
 				<first>862</first>
 				<second>543</second>
 			</position>
-			<parameterName>Terrain_PatchOrigin</parameterName>
+			<declaration>{0F395AAD-849D-824E-B479-8003625B0CB1}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>

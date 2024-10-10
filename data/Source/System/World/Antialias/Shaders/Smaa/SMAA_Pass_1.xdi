@@ -53,14 +53,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{123011D0-3CA3-AC44-941D-BF8C93D7D790}</id>
 			<comment/>
 			<position>
 				<first>460</first>
 				<second>134</second>
 			</position>
-			<parameterName>Source</parameterName>
+			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>

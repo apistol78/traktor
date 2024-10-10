@@ -252,14 +252,15 @@ Eye direction
 				<second>-1098</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{AFEDF1CB-2D27-BA41-9E3E-915922334156}</id>
 			<comment/>
 			<position>
 				<first>313</first>
 				<second>-1040</second>
 			</position>
-			<parameterName>World_ViewInverse</parameterName>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -271,14 +272,15 @@ Eye direction
 				<second>-933</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{6F0C57FE-DDFB-764B-9E3E-058418DDC166}</id>
 			<comment/>
 			<position>
 				<first>301</first>
 				<second>-882</second>
 			</position>
-			<parameterName>World_ViewInverse</parameterName>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -520,14 +522,15 @@ Eye direction
 			</position>
 			<name>L_ViewNormalDetail</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{88FC6BE7-BD97-E449-8E62-CEAB2AE28FD8}</id>
 			<comment/>
 			<position>
 				<first>603</first>
 				<second>-433</second>
 			</position>
-			<parameterName>World_ViewInverse</parameterName>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>

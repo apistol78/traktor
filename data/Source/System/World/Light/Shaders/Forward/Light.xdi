@@ -248,14 +248,15 @@
 			</position>
 			<name>L_ViewToLight</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E19F39E1-425F-7C40-A51F-85AB0FEAC6C0}</id>
 			<comment/>
 			<position>
 				<first>514</first>
 				<second>1121</second>
 			</position>
-			<parameterName>World_ShadowMapAtlas</parameterName>
+			<declaration>{81E28D7D-15BA-EC49-BF0B-683958298F33}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -598,14 +599,15 @@
 				<second>3029</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{43DBC7D4-B2F3-534E-B7F0-CDE501066DA7}</id>
 			<comment/>
 			<position>
 				<first>1495</first>
 				<second>3400</second>
 			</position>
-			<parameterName>World_ShadowMapAtlas</parameterName>
+			<declaration>{81E28D7D-15BA-EC49-BF0B-683958298F33}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -1024,47 +1026,51 @@ else
 				<second>-1031</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{F8EEA79E-5028-2344-BDE4-5D0EF6419ABA}</id>
 			<comment/>
 			<position>
 				<first>104</first>
 				<second>-859</second>
 			</position>
-			<parameterName>World_SlicePositions</parameterName>
+			<declaration>{C1E9C8EA-BE95-ED41-93D4-37BB8E871E36}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{77B111EC-C162-634F-82A7-3FC53E143C3D}</id>
 			<comment/>
 			<position>
 				<first>530</first>
 				<second>1085</second>
 			</position>
-			<parameterName>World_ShadowBias</parameterName>
+			<declaration>{7B9EBA48-EB11-5449-A1D6-F2B72843C2E6}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A9E3AF97-9D1A-524C-A0A5-3242C089D5FC}</id>
 			<comment/>
 			<position>
 				<first>1511</first>
 				<second>3356</second>
 			</position>
-			<parameterName>World_ShadowBias</parameterName>
+			<declaration>{7B9EBA48-EB11-5449-A1D6-F2B72843C2E6}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{9D83F9D3-AFC1-6846-8891-C6267B8888F9}</id>
 			<comment/>
 			<position>
 				<first>1006</first>
 				<second>1016</second>
 			</position>
-			<parameterName>World_SlicePositions</parameterName>
+			<declaration>{C1E9C8EA-BE95-ED41-93D4-37BB8E871E36}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>

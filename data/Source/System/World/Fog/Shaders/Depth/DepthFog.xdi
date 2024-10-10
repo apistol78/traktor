@@ -37,14 +37,15 @@
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8945EE68-9230-F74A-A54C-F8F097F2E0EC}</id>
 			<comment/>
 			<position>
 				<first>29</first>
 				<second>414</second>
 			</position>
-			<parameterName>World_FogDistanceAndDensity</parameterName>
+			<declaration>{B2B8118D-E1A3-CE4A-871A-F12DDADCF4A3}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -98,14 +99,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8D8DABD7-3C8A-6841-8D66-C54DFC629F46}</id>
 			<comment/>
 			<position>
 				<first>1161</first>
 				<second>366</second>
 			</position>
-			<parameterName>World_FogColor</parameterName>
+			<declaration>{DADD63B0-C098-6148-B0A3-A0844C5A80D0}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>

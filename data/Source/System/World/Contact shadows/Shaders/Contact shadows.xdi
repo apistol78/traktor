@@ -71,14 +71,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{906B531A-4665-3E40-BABB-887DAF58E3ED}</id>
 			<comment/>
 			<position>
 				<first>-281</first>
 				<second>-215</second>
 			</position>
-			<parameterName>MagicCoeffs</parameterName>
+			<declaration>{D9C57745-37BC-544B-8524-952C79C3FBA1}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -170,25 +171,27 @@
 				<second>-253</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C19E4880-0EF8-644F-B85B-4B62C6B3E864}</id>
 			<comment/>
 			<position>
 				<first>-53</first>
 				<second>196</second>
 			</position>
-			<parameterName>World_GBufferA</parameterName>
+			<declaration>{D888D241-397A-2148-8041-E576091FE763}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{995D600C-7FB4-404B-8238-1DB7E9A7AF27}</id>
 			<comment/>
 			<position>
 				<first>-21</first>
 				<second>148</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<declaration>{B6BC3CAA-175A-2341-8275-4B64E8EB24F3}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -309,14 +312,15 @@ if (pos.z < 4.0f)
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{DB60E996-06F4-4047-B842-9A7FC90A00BC}</id>
 			<comment/>
 			<position>
 				<first>-117</first>
 				<second>98</second>
 			</position>
-			<parameterName>World_ContactLightDirection</parameterName>
+			<declaration>{0990904B-8D60-7F47-A2C8-DCBB1B9E9424}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>

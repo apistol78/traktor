@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C182FDFF-24B2-49B1-A851-8368714C6AD8}</id>
 			<comment/>
 			<position>
 				<first>301</first>
 				<second>408</second>
 			</position>
-			<parameterName>Scene_DebugAlpha</parameterName>
+			<declaration>{37C8E947-3ECD-0D4F-9425-D4D6A6993106}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>

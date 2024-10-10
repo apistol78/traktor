@@ -440,6 +440,10 @@ public:
 		int32_t length = 0
 	);
 
+	void setDeclaration(const Guid& declaration);
+
+	const Guid& getDeclaration() const;
+
 	void setParameterName(const std::wstring& parameterName);
 
 	const std::wstring& getParameterName() const;
@@ -461,6 +465,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	Guid m_declaration;
 	std::wstring m_parameterName;
 	ParameterType m_type;
 	UpdateFrequency m_frequency;
@@ -1266,6 +1271,10 @@ public:
 		UpdateFrequency frequency = UpdateFrequency::Frame
 	);
 
+	void setDeclaration(const Guid& declaration);
+
+	const Guid& getDeclaration() const;
+
 	void setParameterName(const std::wstring& parameterName);
 
 	const std::wstring& getParameterName() const;
@@ -1283,6 +1292,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	Guid m_declaration;
 	std::wstring m_parameterName;
 	ParameterType m_type;
 	UpdateFrequency m_frequency;

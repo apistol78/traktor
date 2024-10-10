@@ -36,14 +36,15 @@ Tag_Metalness
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{2C6270B1-F543-4DB3-8586-6F2AAE44C19F}</id>
 			<comment/>
 			<position>
 				<first>349</first>
 				<second>459</second>
 			</position>
-			<parameterName>Mesh_Metalness</parameterName>
+			<declaration>{4121C3A1-9DB6-B646-A455-05762C9A3D67}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>

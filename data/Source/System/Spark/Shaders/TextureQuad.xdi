@@ -79,14 +79,15 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Low</precisionHint>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B66E31CD-D8FE-CD43-8DE4-2711AED837AD}</id>
 			<comment/>
 			<position>
 				<first>220</first>
 				<second>277</second>
 			</position>
-			<parameterName>Spark_CxFormMul</parameterName>
+			<declaration>{0FFAD3A2-E8C5-7F49-8AD0-BDF41555DBBF}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -98,14 +99,15 @@
 				<second>233</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{2A6C1CC2-EE72-D34F-A227-E060ABD6B8E6}</id>
 			<comment/>
 			<position>
 				<first>219</first>
 				<second>352</second>
 			</position>
-			<parameterName>Spark_CxFormAdd</parameterName>
+			<declaration>{47CC6C7A-327B-D349-AAC3-18321E48781B}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -156,14 +158,15 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{56BE5D45-05DF-8546-BEBB-9BBF6A7C89B6}</id>
 			<comment/>
 			<position>
 				<first>-595</first>
 				<second>292</second>
 			</position>
-			<parameterName>Spark_TextureOffset</parameterName>
+			<declaration>{13693ED3-FFF2-6D49-AC67-792A7F1FA171}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -193,14 +196,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{888FD7A5-71E8-B947-8124-53B7B6D2A347}</id>
 			<comment/>
 			<position>
 				<first>-99</first>
 				<second>103</second>
 			</position>
-			<parameterName>Spark_Texture</parameterName>
+			<declaration>{5AAA49E4-97A6-5049-8C4E-D309F5DE77CD}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Draw</frequency>
 		</item>

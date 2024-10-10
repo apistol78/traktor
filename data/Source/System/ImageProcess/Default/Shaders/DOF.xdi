@@ -75,13 +75,14 @@
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="4,traktor.render.Node:1">
 			<id>{3816B653-1194-8D48-A536-FEAF65FD6040}</id>
 			<comment/>
 			<position>
 				<first>577</first>
 				<second>-248</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
@@ -105,14 +106,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{478B06AA-98BD-BC40-B082-7ED2580E73CC}</id>
 			<comment/>
 			<position>
 				<first>377</first>
 				<second>-64</second>
 			</position>
-			<parameterName>Source</parameterName>
+			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -157,14 +159,15 @@
 				<second>-368</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{076F94A1-5EA2-6445-99C1-4F03D33CE98A}</id>
 			<comment/>
 			<position>
 				<first>496</first>
 				<second>-397</second>
 			</position>
-			<parameterName>Direction</parameterName>
+			<declaration>{BFE86EE6-73AD-6245-923C-C3418358D143}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -240,14 +243,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B735A146-FAFC-5943-9FEE-B0C0C67B6D14}</id>
 			<comment/>
 			<position>
 				<first>144</first>
 				<second>76</second>
 			</position>
-			<parameterName>Depth</parameterName>
+			<declaration>{57C9794D-569A-E143-816D-37D78E63755C}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>

@@ -208,14 +208,15 @@
 			</position>
 			<name>L_ViewToLight</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{9CCF63ED-DD6D-7A47-AEDF-1DCBBCC4931D}</id>
 			<comment/>
 			<position>
 				<first>-105</first>
 				<second>913</second>
 			</position>
-			<parameterName>World_ShadowMapAtlas</parameterName>
+			<declaration>{81E28D7D-15BA-EC49-BF0B-683958298F33}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -601,14 +602,15 @@
 				<second>2615</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{CEA5199E-F592-7D4A-A088-1B2A2F66E68D}</id>
 			<comment/>
 			<position>
 				<first>766</first>
 				<second>3077</second>
 			</position>
-			<parameterName>World_ShadowMapAtlas</parameterName>
+			<declaration>{81E28D7D-15BA-EC49-BF0B-683958298F33}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -944,25 +946,27 @@ else
 				<second>-10</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{313F9DDD-9B07-654E-8B73-B5D37AB7083C}</id>
 			<comment/>
 			<position>
 				<first>-674</first>
 				<second>162</second>
 			</position>
-			<parameterName>World_SlicePositions</parameterName>
+			<declaration>{C1E9C8EA-BE95-ED41-93D4-37BB8E871E36}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A8125E80-AC28-2546-87E0-B0AAACC6CA49}</id>
 			<comment/>
 			<position>
 				<first>384</first>
 				<second>808</second>
 			</position>
-			<parameterName>World_SlicePositions</parameterName>
+			<declaration>{C1E9C8EA-BE95-ED41-93D4-37BB8E871E36}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>

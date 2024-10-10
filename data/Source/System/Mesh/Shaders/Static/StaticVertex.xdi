@@ -184,14 +184,15 @@
 				<item>Origin</item>
 			</names>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C108F5A9-81D5-0642-9AA7-FD876AB6F4A8}</id>
 			<comment/>
 			<position>
 				<first>-438</first>
 				<second>1193</second>
 			</position>
-			<parameterName>World_World</parameterName>
+			<declaration>{588FB1F4-B99F-8844-BB94-0F5455CB78B0}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>

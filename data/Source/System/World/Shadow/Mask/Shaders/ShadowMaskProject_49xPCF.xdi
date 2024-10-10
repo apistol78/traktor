@@ -126,7 +126,7 @@ Light space position
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E5D9AC03-3F19-5C4B-8CF9-D204A84DA0C8}</id>
 			<comment>
 			<![CDATA[
@@ -137,7 +137,8 @@ View to light space transform
 				<first>156</first>
 				<second>510</second>
 			</position>
-			<parameterName>ViewToLight</parameterName>
+			<declaration>{1B4CB69E-CACC-4E42-9036-37B73837A44B}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -224,14 +225,15 @@ Shadow map texcoord
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{D876841B-81F7-E347-830B-881E7ED4623D}</id>
 			<comment/>
 			<position>
 				<first>813</first>
 				<second>779</second>
 			</position>
-			<parameterName>ShadowMapSizeAndBias</parameterName>
+			<declaration>{9AF7B576-E8FE-3B47-AD9E-D016AF6B7065}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>

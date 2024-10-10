@@ -22,14 +22,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B7533633-0945-714E-ACDF-5D9FE6C15B3B}</id>
 			<comment/>
 			<position>
 				<first>383</first>
 				<second>242</second>
 			</position>
-			<parameterName>Input1</parameterName>
+			<declaration>{EFAA46F3-F47B-7944-8D8C-F2820A953A57}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -116,14 +117,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{EF6A14E4-EFE3-CC43-8CED-4297BD343975}</id>
 			<comment/>
 			<position>
 				<first>383</first>
 				<second>369</second>
 			</position>
-			<parameterName>Input2</parameterName>
+			<declaration>{8FAA43B5-F7DF-7044-A345-6EF18AC0084D}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -145,14 +147,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{33DDA2BD-9738-8347-8F6D-841209C2852B}</id>
 			<comment/>
 			<position>
 				<first>378</first>
 				<second>497</second>
 			</position>
-			<parameterName>Input3</parameterName>
+			<declaration>{CB8093C8-F9E9-664E-AF69-F334AA0CAC28}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -174,14 +177,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{26A348CD-25E9-3E44-948C-395C5B6EBCDC}</id>
 			<comment/>
 			<position>
 				<first>373</first>
 				<second>624</second>
 			</position>
-			<parameterName>Input4</parameterName>
+			<declaration>{58660DFA-CEC8-0A47-ADAA-E68E9F96CFC3}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -209,14 +213,15 @@
 				<second>491</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A6D878C3-ECF4-5042-9F4D-4AA4A8378747}</id>
 			<comment/>
 			<position>
 				<first>609</first>
 				<second>457</second>
 			</position>
-			<parameterName>Input4</parameterName>
+			<declaration>{58660DFA-CEC8-0A47-ADAA-E68E9F96CFC3}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>

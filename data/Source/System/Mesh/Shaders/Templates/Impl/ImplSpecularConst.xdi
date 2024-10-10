@@ -36,14 +36,15 @@ Tag_Specular
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{3C8FE5EA-229D-49D3-B7A1-82C983870169}</id>
 			<comment/>
 			<position>
 				<first>556</first>
 				<second>405</second>
 			</position>
-			<parameterName>Mesh_Specular</parameterName>
+			<declaration>{ACE670BB-96D6-DE4D-9F94-2ED30A91A76B}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>

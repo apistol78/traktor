@@ -55,36 +55,39 @@ if (pt.x < sz.x && pt.y < sz.y)
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{CBB170DD-96E3-CF46-948E-47E5006E153F}</id>
 			<comment/>
 			<position>
 				<first>-21</first>
 				<second>476</second>
 			</position>
-			<parameterName>World_HiZInput</parameterName>
+			<declaration>{312C5590-6015-7C4B-ACC9-5D33B51E42C1}</declaration>
+			<parameterName/>
 			<type>Image2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{9E8F9562-547A-AA44-9F23-C243E184C92C}</id>
 			<comment/>
 			<position>
 				<first>-59</first>
 				<second>556</second>
 			</position>
-			<parameterName>World_HiZOutput</parameterName>
+			<declaration>{72518D9A-003C-2946-A389-B3356F111C2F}</declaration>
+			<parameterName/>
 			<type>Image2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{17342A62-7710-F841-9D31-0EA156A70A34}</id>
 			<comment/>
 			<position>
 				<first>-61</first>
 				<second>616</second>
 			</position>
-			<parameterName>World_HiZWorkSize</parameterName>
+			<declaration>{CC5C8CAA-4E5D-EF48-937A-4B906A48CF93}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>

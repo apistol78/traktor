@@ -37,14 +37,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{4351C80B-091F-6844-A958-7BD6B7059A40}</id>
 			<comment/>
 			<position>
 				<first>159</first>
 				<second>125</second>
 			</position>
-			<parameterName>Depth</parameterName>
+			<declaration>{57C9794D-569A-E143-816D-37D78E63755C}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -138,14 +139,15 @@
 				<second>229</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{6EAF7F92-116F-D344-9F13-0E8A172DCF58}</id>
 			<comment/>
 			<position>
 				<first>293</first>
 				<second>47</second>
 			</position>
-			<parameterName>MagicCoeffs</parameterName>
+			<declaration>{D9C57745-37BC-544B-8524-952C79C3FBA1}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>

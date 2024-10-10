@@ -50,14 +50,15 @@
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{68A16A52-2000-40FA-B33E-B99D52FB7C50}</id>
 			<comment/>
 			<position>
 				<first>1334</first>
 				<second>100</second>
 			</position>
-			<parameterName>World_GBufferC</parameterName>
+			<declaration>{FD1BAF81-D951-784A-BE86-EB15E2F0E812}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

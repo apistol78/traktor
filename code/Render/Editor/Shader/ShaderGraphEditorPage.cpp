@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,6 +38,8 @@
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
 #include "Render/Editor/Shader/ShaderViewer.h"
 #include "Render/Editor/Shader/QuickMenuTool.h"
+#include "Render/Editor/Shader/UniformDeclaration.h"
+#include "Render/Editor/Shader/UniformLinker.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
@@ -48,6 +50,7 @@
 #include "Render/Editor/Shader/Facades/ColorNodeFacade.h"
 #include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
+#include "Render/Editor/Shader/Facades/IndexedUniformNodeFacade.h"
 #include "Render/Editor/Shader/Facades/InterpolatorNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ScalarNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ScriptNodeFacade.h"
@@ -483,6 +486,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_nodeFacades[&type_of< Swizzle >()] = new SwizzleNodeFacade();
 	m_nodeFacades[&type_of< Texture >()] = new TextureNodeFacade();
 	m_nodeFacades[&type_of< Uniform >()] = new UniformNodeFacade();
+	m_nodeFacades[&type_of< IndexedUniform >()] = new IndexedUniformNodeFacade();
 	m_nodeFacades[&type_of< Variable >()] = new VariableNodeFacade();
 
 	createEditorGraph();
@@ -1288,6 +1292,26 @@ void ShaderGraphEditorPage::updateGraph()
 	// Fully resolve shader graph so we can inspect all uniforms etc.
 	FragmentReaderAdapter reader(m_editor->getSourceDatabase());
 	Ref< ShaderGraph > resolvedShaderGraph = FragmentLinker(reader).resolve(m_shaderGraph, true);
+
+	// Link uniform declarations.
+	if (resolvedShaderGraph)
+	{
+		const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t
+		{
+			Ref< db::Instance > declarationInstance = m_editor->getSourceDatabase()->getInstance(declarationId);
+			if (declarationInstance != nullptr)
+			{
+				return
+				{
+					declarationInstance->getName(),
+					declarationInstance->getObject< UniformDeclaration >()
+				};
+			}
+			else
+				return { L"", nullptr };
+		};
+		resolvedShaderGraph = UniformLinker(uniformDeclarationReader).resolve(resolvedShaderGraph);
+	}
 
 	// Extract techniques.
 	m_toolTechniques->removeAll();	

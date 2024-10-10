@@ -115,14 +115,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A82A3983-A547-3A41-9941-E8FF0089C8BB}</id>
 			<comment/>
 			<position>
 				<first>-74</first>
 				<second>524</second>
 			</position>
-			<parameterName>ColorTexture</parameterName>
+			<declaration>{052C12B7-2DC7-E947-AEC0-5E59CE5F01B6}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -210,14 +211,15 @@ W
 			</position>
 			<value>0.55</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{21525D23-DCF0-B641-9A54-9E392F1BAAE5}</id>
 			<comment/>
 			<position>
 				<first>-304</first>
 				<second>232</second>
 			</position>
-			<parameterName>World_Exposure</parameterName>
+			<declaration>{9BE45FD8-3632-164B-A1C2-3F6EEBE39B6B}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>

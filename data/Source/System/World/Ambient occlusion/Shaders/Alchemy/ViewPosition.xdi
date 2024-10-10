@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{06D1793E-E321-2F47-876F-F0E2F5DB880A}</id>
 			<comment/>
 			<position>
 				<first>781</first>
 				<second>607</second>
 			</position>
-			<parameterName>MagicCoeffs</parameterName>
+			<declaration>{D9C57745-37BC-544B-8524-952C79C3FBA1}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>

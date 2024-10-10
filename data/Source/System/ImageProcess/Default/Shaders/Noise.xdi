@@ -9,14 +9,15 @@
 				<second>244</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{65D07688-2EE2-4C4D-B01A-761E4E9557AF}</id>
 			<comment/>
 			<position>
 				<first>174</first>
 				<second>207</second>
 			</position>
-			<parameterName>NoiseOffset</parameterName>
+			<declaration>{2445BB15-4F9E-6441-96FF-2B001699319D}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>

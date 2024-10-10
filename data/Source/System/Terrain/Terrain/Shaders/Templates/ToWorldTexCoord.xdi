@@ -18,14 +18,15 @@
 				<second>412</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E15455A9-C985-BA4D-8560-B4D10312157C}</id>
 			<comment/>
 			<position>
 				<first>512</first>
 				<second>471</second>
 			</position>
-			<parameterName>Terrain_WorldExtent</parameterName>
+			<declaration>{F5CC056E-E04D-E448-B39E-40C11BE1C86C}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -37,14 +38,15 @@
 				<second>387</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{5D8FB29B-3812-5041-B96E-0B23EF11D62F}</id>
 			<comment/>
 			<position>
 				<first>316</first>
 				<second>436</second>
 			</position>
-			<parameterName>Terrain_WorldOrigin</parameterName>
+			<declaration>{0BEC58AC-31AF-BD40-98DB-39105313BF81}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>

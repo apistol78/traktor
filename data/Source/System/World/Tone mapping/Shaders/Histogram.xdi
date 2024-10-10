@@ -26,14 +26,15 @@
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{115BF9A7-0496-4C21-8DFB-C54E5BF9E9D6}</id>
 			<comment/>
 			<position>
 				<first>-744</first>
 				<second>370</second>
 			</position>
-			<parameterName>Input</parameterName>
+			<declaration>{4961F367-B0B8-A642-A469-E40234EAC9FC}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>

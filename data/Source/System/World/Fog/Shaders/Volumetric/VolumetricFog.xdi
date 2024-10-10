@@ -130,14 +130,15 @@
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{105AA7F2-78A4-9D4E-861C-E6F635E104AB}</id>
 			<comment/>
 			<position>
 				<first>874</first>
 				<second>600</second>
 			</position>
-			<parameterName>World_FogVolumeRange</parameterName>
+			<declaration>{5E5B7264-DB82-404F-AAD4-E9D70C8770A1}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -204,14 +205,15 @@
 			</position>
 			<name>L_SliceDistributionExponent</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{7772DA15-4E62-144C-9EF7-0629E3BECDD8}</id>
 			<comment/>
 			<position>
 				<first>934</first>
 				<second>463</second>
 			</position>
-			<parameterName>World_FogVolumeSliceCount</parameterName>
+			<declaration>{D737DAFA-B24B-CE4A-A56B-0874CD048D3A}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
@@ -232,14 +234,15 @@
 			</position>
 			<name>L_FogVolumeSize</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{0BCDCE77-AB8F-124F-91CE-A0F0B4F56B83}</id>
 			<comment/>
 			<position>
 				<first>2164</first>
 				<second>298</second>
 			</position>
-			<parameterName>World_FogVolumeTexture</parameterName>
+			<declaration>{4CA8804B-B31C-2743-A99F-8A429FD9F2C6}</declaration>
+			<parameterName/>
 			<type>Texture3D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -542,14 +545,15 @@
 			</position>
 			<swizzle>00x</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{D765FFBD-A0B1-D249-A7CA-AF46555FBF7F}</id>
 			<comment/>
 			<position>
 				<first>1273</first>
 				<second>1976</second>
 			</position>
-			<parameterName>World_Time</parameterName>
+			<declaration>{FBA61D55-529C-5D41-A0F6-EA3D6DF25948}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -656,14 +660,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{EE0ABAF4-B6AD-A940-B9B9-4AF498C71687}</id>
 			<comment/>
 			<position>
 				<first>1890</first>
 				<second>1679</second>
 			</position>
-			<parameterName>World_Projection</parameterName>
+			<declaration>{5FA54E3B-AD14-E148-B385-979BD586BD69}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>

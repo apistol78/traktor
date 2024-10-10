@@ -130,36 +130,39 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A9FC6965-4736-4B25-84B7-3C0B166CF261}</id>
 			<comment/>
 			<position>
 				<first>-126</first>
 				<second>51</second>
 			</position>
-			<parameterName>Weather_SkyRadius</parameterName>
+			<declaration>{A1201C67-E532-3642-AE78-788A9DFFD81E}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{6D4ADA9B-578E-4DB5-952A-BAB41439C1B9}</id>
 			<comment/>
 			<position>
 				<first>575</first>
 				<second>24</second>
 			</position>
-			<parameterName>World_WorldView</parameterName>
+			<declaration>{26FF4AB9-E08E-BD48-A2D0-C97C1B269891}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{9D315C53-5ED5-4EBF-AFCA-E4E682D47AD1}</id>
 			<comment/>
 			<position>
 				<first>1182</first>
 				<second>75</second>
 			</position>
-			<parameterName>World_Projection</parameterName>
+			<declaration>{5FA54E3B-AD14-E148-B385-979BD586BD69}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -228,14 +231,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C5388BA8-94D9-4BFF-BB02-4E6E7AF855D8}</id>
 			<comment/>
 			<position>
 				<first>-139</first>
 				<second>224</second>
 			</position>
-			<parameterName>Weather_SkyTexture</parameterName>
+			<declaration>{12BB7EC8-5D85-3C44-B71E-9512F087920A}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -396,14 +400,15 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>High</precisionHint>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B79F8A22-D722-6F49-8A68-CD1591DE6FDD}</id>
 			<comment/>
 			<position>
 				<first>-999</first>
 				<second>392</second>
 			</position>
-			<parameterName>Weather_SkyRotation</parameterName>
+			<declaration>{804504F1-1C34-A848-9560-F349D18AA3F3}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
@@ -501,14 +506,15 @@
 				<second>218</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{AEC5981A-D6C8-4BE1-B676-7753A98ADC44}</id>
 			<comment/>
 			<position>
 				<first>147</first>
 				<second>186</second>
 			</position>
-			<parameterName>Weather_SkyIntensity</parameterName>
+			<declaration>{CE468EC1-CF38-E343-9DE1-CB062490408C}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
@@ -708,25 +714,27 @@ $Distance = dist;
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{1AD17D96-8F2E-457A-AAB5-8EBCE60711EA}</id>
 			<comment/>
 			<position>
 				<first>-807</first>
 				<second>786</second>
 			</position>
-			<parameterName>Weather_SkyCloud2D</parameterName>
+			<declaration>{764B6339-A064-7C47-B3A1-B97732C9E15F}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{20235D86-BCB0-485E-91F7-F7E2ADE78B21}</id>
 			<comment/>
 			<position>
 				<first>-807</first>
 				<second>826</second>
 			</position>
-			<parameterName>Weather_SkyCloud3D</parameterName>
+			<declaration>{55CE89A2-DD9D-3F4B-A1B9-FAA9CDAFE7FD}</declaration>
+			<parameterName/>
 			<type>Texture3D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -747,36 +755,39 @@ $Distance = dist;
 				<second>1206</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{21D1CC08-6848-49CB-BA67-E49974F893C6}</id>
 			<comment/>
 			<position>
 				<first>-759</first>
 				<second>906</second>
 			</position>
-			<parameterName>World_Time</parameterName>
+			<declaration>{FBA61D55-529C-5D41-A0F6-EA3D6DF25948}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{49BB686E-3893-4F3E-AFAC-FAC0AC817383}</id>
 			<comment/>
 			<position>
 				<first>-807</first>
 				<second>626</second>
 			</position>
-			<parameterName>Weather_SkySunColor</parameterName>
+			<declaration>{87CE6C08-36A3-7941-9ADF-6EBD9E656DAA}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{CFE120E4-0277-41B4-A10C-9C932F6764B0}</id>
 			<comment/>
 			<position>
 				<first>-823</first>
 				<second>586</second>
 			</position>
-			<parameterName>Weather_SkySunDirection</parameterName>
+			<declaration>{BC6BF257-A480-6B43-8977-583EA7A13F02}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -814,25 +825,27 @@ $Distance = dist;
 			</position>
 			<value>0.25</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{3CC2F2B4-36BD-B54E-8E1B-D12B69ADE23F}</id>
 			<comment/>
 			<position>
 				<first>-807</first>
 				<second>946</second>
 			</position>
-			<parameterName>Weather_SkyEyePosition</parameterName>
+			<declaration>{2C7039AB-93F1-614C-9F68-DD33EE49D551}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C695B623-EE0B-5C4F-A3DF-EF89E099DA96}</id>
 			<comment/>
 			<position>
 				<first>-244</first>
 				<second>1288</second>
 			</position>
-			<parameterName>Weather_SkyCloudTexture</parameterName>
+			<declaration>{E2CC655D-089A-344F-8374-46B150E40D2F}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -890,14 +903,15 @@ $Distance = dist;
 			</position>
 			<name>Clouds1</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{4DA8342F-E6B2-D54D-884D-BA1D1171C134}</id>
 			<comment/>
 			<position>
 				<first>1293</first>
 				<second>738</second>
 			</position>
-			<parameterName>Weather_SkyRadius</parameterName>
+			<declaration>{A1201C67-E532-3642-AE78-788A9DFFD81E}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
@@ -909,14 +923,15 @@ $Distance = dist;
 				<second>731</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{571FA538-44A4-2848-9594-1F82EA1A2487}</id>
 			<comment/>
 			<position>
 				<first>1150</first>
 				<second>642</second>
 			</position>
-			<parameterName>Weather_SkyRadius</parameterName>
+			<declaration>{A1201C67-E532-3642-AE78-788A9DFFD81E}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
@@ -1081,14 +1096,15 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{FEFCFA44-EE4B-BD42-8B49-0C612D635020}</id>
 			<comment/>
 			<position>
 				<first>-246</first>
 				<second>1166</second>
 			</position>
-			<parameterName>Weather_SkyCloudTextureLast</parameterName>
+			<declaration>{69539CA8-62FF-D941-8023-2790A1A247EC}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -1100,14 +1116,15 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 				<second>1250</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{6909ED7B-8A9B-4E4D-A605-CFCB8C61AEEF}</id>
 			<comment/>
 			<position>
 				<first>238</first>
 				<second>1386</second>
 			</position>
-			<parameterName>Weather_SkyCloudBlend</parameterName>
+			<declaration>{CE2F16D0-918D-274F-AAFB-109EA10FA531}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -1138,58 +1155,63 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			</position>
 			<parameterName>Weather_CloudsEnable</parameterName>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{06CE4BB1-B8C6-E24F-9E10-0719CFA745EF}</id>
 			<comment/>
 			<position>
 				<first>1838</first>
 				<second>852</second>
 			</position>
-			<parameterName>Weather_SkyRadius</parameterName>
+			<declaration>{A1201C67-E532-3642-AE78-788A9DFFD81E}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{0CF0ACDC-F017-5E45-8BA8-266248431786}</id>
 			<comment/>
 			<position>
 				<first>-823</first>
 				<second>666</second>
 			</position>
-			<parameterName>Weather_SkyOverHorizon</parameterName>
+			<declaration>{D0194303-48D8-2A4E-B298-DD30A55B4D4F}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{3F5650EA-F241-BC47-B523-B8813F1C899C}</id>
 			<comment/>
 			<position>
 				<first>-823</first>
 				<second>706</second>
 			</position>
-			<parameterName>Weather_SkyUnderHorizon</parameterName>
+			<declaration>{293FB04C-A438-5D43-8377-66E9D1678B27}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A1A5F0FA-50D4-3A4A-B6E4-B5B132ECC274}</id>
 			<comment/>
 			<position>
 				<first>-871</first>
 				<second>1066</second>
 			</position>
-			<parameterName>Weather_SkyCloudAmbientBottom</parameterName>
+			<declaration>{0C3BE862-A73B-A147-8291-AEB8286B4FB7}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A14A6472-9C96-BE4F-96A1-420BA685CC91}</id>
 			<comment/>
 			<position>
 				<first>-855</first>
 				<second>1026</second>
 			</position>
-			<parameterName>Weather_SkyCloudAmbientTop</parameterName>
+			<declaration>{7F4DC1F2-6F58-854D-B8FC-2F6A8817F667}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{7220E19C-8DAA-4498-A463-05F005A8DC8F}</id>
 			<comment/>
 			<position>
 				<first>39</first>
 				<second>407</second>
 			</position>
-			<parameterName>UpscaleTexture</parameterName>
+			<declaration>{1DD00E64-2BD8-BB41-A92A-9E9C6CDBC555}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>

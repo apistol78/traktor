@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,6 +22,7 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Render/ITexture.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/UniformDeclaration.h"
 
 namespace traktor::render
 {
@@ -1083,7 +1084,7 @@ FrontFace::FrontFace()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IndexedUniform", 3, IndexedUniform, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IndexedUniform", 4, IndexedUniform, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_IndexedUniform_i[] =
 {
@@ -1108,6 +1109,16 @@ IndexedUniform::IndexedUniform(
 ,	m_frequency(frequency)
 ,	m_length(length)
 {
+}
+
+void IndexedUniform::setDeclaration(const Guid& declaration)
+{
+	m_declaration = declaration;
+}
+
+const Guid& IndexedUniform::getDeclaration() const
+{
+	return m_declaration;
 }
 
 void IndexedUniform::setParameterName(const std::wstring& parameterName)
@@ -1153,13 +1164,19 @@ int32_t IndexedUniform::getLength() const
 std::wstring IndexedUniform::getInformation() const
 {
 	StringOutputStream ss;
-	ss << m_parameterName << L"[" << m_length << L"]";
+	if (m_declaration.isNotNull())
+		ss << m_declaration.format();
+	else
+		ss << m_parameterName << L"[" << m_length << L"]";
 	return ss.str();
 }
 
 void IndexedUniform::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
+
+	if (s.getVersion() >= 4)
+		s >> Member< Guid >(L"declaration", m_declaration, AttributeType(type_of< UniformDeclaration >()));
 
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 
@@ -3184,7 +3201,7 @@ Type::Type()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 3, Uniform, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 4, Uniform, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Uniform_i[] =
 {
@@ -3207,6 +3224,16 @@ Uniform::Uniform(
 ,	m_type(type)
 ,	m_frequency(frequency)
 {
+}
+
+void Uniform::setDeclaration(const Guid& declaration)
+{
+	m_declaration = declaration;
+}
+
+const Guid& Uniform::getDeclaration() const
+{
+	return m_declaration;
 }
 
 void Uniform::setParameterName(const std::wstring& parameterName)
@@ -3241,12 +3268,18 @@ UpdateFrequency Uniform::getFrequency() const
 
 std::wstring Uniform::getInformation() const
 {
-	return m_parameterName;
+	if (m_declaration.isNotNull())
+		return m_declaration.format();
+	else
+		return m_parameterName;
 }
 
 void Uniform::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
+
+	if (s.getVersion() >= 4)
+		s >> Member< Guid >(L"declaration", m_declaration, AttributeType(type_of< UniformDeclaration >()));
 
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 

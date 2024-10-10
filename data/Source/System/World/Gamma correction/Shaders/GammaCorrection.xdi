@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{777B613C-19C5-0146-808C-FD1924B77DF4}</id>
 			<comment/>
 			<position>
 				<first>265</first>
 				<second>399</second>
 			</position>
-			<parameterName>Source</parameterName>
+			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -115,14 +116,15 @@
 			</position>
 			<swizzle>xxx1</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{69ACCBEC-ADFD-354B-9DA3-2F14EAD11F25}</id>
 			<comment/>
 			<position>
 				<first>1205</first>
 				<second>284</second>
 			</position>
-			<parameterName>World_GammaInverse</parameterName>
+			<declaration>{1FB5F47D-FA48-594C-9F1A-2F5E209F9C62}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
@@ -154,14 +156,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{6359961F-0D8D-E84C-8FAB-A35139B3BD91}</id>
 			<comment/>
 			<position>
 				<first>619</first>
 				<second>579</second>
 			</position>
-			<parameterName>LUT</parameterName>
+			<declaration>{D459FCDF-8FF8-CB47-B735-0F78C604928E}</declaration>
+			<parameterName/>
 			<type>Texture3D</type>
 			<frequency>Once</frequency>
 		</item>

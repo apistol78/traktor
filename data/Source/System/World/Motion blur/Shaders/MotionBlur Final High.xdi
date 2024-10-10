@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{F19CA492-CDEB-A149-A794-8CA1CCC4DD57}</id>
 			<comment/>
 			<position>
 				<first>1909</first>
 				<second>349</second>
 			</position>
-			<parameterName>Source</parameterName>
+			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -98,14 +99,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{2792FEEE-F64F-5744-ACCC-1166E1EB011B}</id>
 			<comment/>
 			<position>
 				<first>412</first>
 				<second>515</second>
 			</position>
-			<parameterName>Velocity</parameterName>
+			<declaration>{B98DFF6C-6228-B945-B698-6CB2673E1A87}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>

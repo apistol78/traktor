@@ -51,14 +51,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{EB9094B7-0D20-724D-8F61-5FAB6C46AF0A}</id>
 			<comment/>
 			<position>
 				<first>1011</first>
 				<second>90</second>
 			</position>
-			<parameterName>World_DBufferNormalMap</parameterName>
+			<declaration>{9A7E041F-19E5-A24E-8BF0-3BE0979D9ECF}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

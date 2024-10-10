@@ -130,25 +130,27 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{7A4ED2B4-F82F-1242-96B1-AA693395CC2B}</id>
 			<comment/>
 			<position>
 				<first>298</first>
 				<second>596</second>
 			</position>
-			<parameterName>Source</parameterName>
+			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B5C67749-0AD8-244D-B9C4-344CCC884E5C}</id>
 			<comment/>
 			<position>
 				<first>409</first>
 				<second>428</second>
 			</position>
-			<parameterName>Blend</parameterName>
+			<declaration>{C55199AB-63DA-1C44-A71A-4B847CEEF391}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>

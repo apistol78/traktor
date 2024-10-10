@@ -13,25 +13,27 @@
 			<type>DtFloat4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{174C9A67-2BB4-3C42-BACB-0D3D126F2A52}</id>
 			<comment/>
 			<position>
 				<first>-329</first>
 				<second>558</second>
 			</position>
-			<parameterName>World_View</parameterName>
+			<declaration>{0DE9B6CF-1F7E-BC44-8ED6-F5EFC99E6F1C}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8E0A928A-690D-E64B-8FFB-9F920DE4D351}</id>
 			<comment/>
 			<position>
 				<first>-206</first>
 				<second>-100</second>
 			</position>
-			<parameterName>World_Projection</parameterName>
+			<declaration>{5FA54E3B-AD14-E148-B385-979BD586BD69}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -631,14 +633,15 @@ World
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{7F972C4C-142A-6845-B262-9CF171272EDB}</id>
 			<comment/>
 			<position>
 				<first>859</first>
 				<second>-526</second>
 			</position>
-			<parameterName>World_ViewInverse</parameterName>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -668,14 +671,15 @@ World
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{F0180CD6-5F87-D74F-9DA3-9EA4D4C135C7}</id>
 			<comment/>
 			<position>
 				<first>876</first>
 				<second>-340</second>
 			</position>
-			<parameterName>World_ViewInverse</parameterName>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>

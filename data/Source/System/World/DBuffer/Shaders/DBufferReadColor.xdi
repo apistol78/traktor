@@ -23,14 +23,15 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A7CE9AE0-8FC1-0F44-A05E-781A72D45E77}</id>
 			<comment/>
 			<position>
 				<first>974</first>
 				<second>75</second>
 			</position>
-			<parameterName>World_DBufferColorMap</parameterName>
+			<declaration>{7BB33DD4-4725-834E-9F98-837C4A0925D6}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

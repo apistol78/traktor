@@ -70,14 +70,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{03A15DE8-AEDC-6445-A1F2-59AABB88642B}</id>
 			<comment/>
 			<position>
 				<first>-221</first>
 				<second>480</second>
 			</position>
-			<parameterName>World_MagicCoeffs</parameterName>
+			<declaration>{530D6B3A-EE00-9D43-AB36-022D3ED4B7D6}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>

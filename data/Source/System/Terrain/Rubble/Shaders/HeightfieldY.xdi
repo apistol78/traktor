@@ -78,14 +78,15 @@
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{08D29DAF-86C6-2C4E-A266-2A2DE1270728}</id>
 			<comment/>
 			<position>
 				<first>-279</first>
 				<second>400</second>
 			</position>
-			<parameterName>WorldExtent</parameterName>
+			<declaration>{FAA46D50-1316-484A-A3D3-614C571C425A}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -122,14 +123,15 @@
 			</position>
 			<value>-0.5</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E176011A-D254-6C4A-BD6C-82A170EA0360}</id>
 			<comment/>
 			<position>
 				<first>638</first>
 				<second>176</second>
 			</position>
-			<parameterName>Heightfield</parameterName>
+			<declaration>{D3BC864F-DC79-914D-9307-29BB9B322521}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -258,14 +260,15 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{60B7C0A3-3A5A-DE44-88A8-3500646B0064}</id>
 			<comment/>
 			<position>
 				<first>670</first>
 				<second>-95</second>
 			</position>
-			<parameterName>Surface</parameterName>
+			<declaration>{4A0D60F1-0989-484B-A4AB-6DEBAD4D54F1}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

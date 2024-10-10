@@ -13,14 +13,15 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{64410BF1-4B5D-3944-B269-274EFAE12049}</id>
 			<comment/>
 			<position>
 				<first>849</first>
 				<second>474</second>
 			</position>
-			<parameterName>Spark_Texture</parameterName>
+			<declaration>{5AAA49E4-97A6-5049-8C4E-D309F5DE77CD}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Draw</frequency>
 		</item>

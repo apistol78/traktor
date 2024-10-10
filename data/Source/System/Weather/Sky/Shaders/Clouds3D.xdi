@@ -15,14 +15,15 @@
 				<Z>1</Z>
 			</localSize>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A95A5C28-CA0D-4667-B94A-77B27C112621}</id>
 			<comment/>
 			<position>
 				<first>42</first>
 				<second>62</second>
 			</position>
-			<parameterName>Weather_OutputTexture3D</parameterName>
+			<declaration>{7F91FFB3-3E73-6747-AE59-D69A0E2FD34B}</declaration>
+			<parameterName/>
 			<type>Image3D</type>
 			<frequency>Frame</frequency>
 		</item>

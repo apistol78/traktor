@@ -105,14 +105,15 @@ Sample shadow
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{BD130BC4-C204-8549-9DCD-70D5F31B1226}</id>
 			<comment/>
 			<position>
 				<first>-178</first>
 				<second>582</second>
 			</position>
-			<parameterName>Source</parameterName>
+			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -133,13 +134,14 @@ Sample shadow
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="4,traktor.render.Node:1">
 			<id>{EAC1DFC8-9722-2C46-B12B-1CC4B554B641}</id>
 			<comment/>
 			<position>
 				<first>1380</first>
 				<second>825</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>Vector</type>
 			<frequency>Once</frequency>
@@ -153,14 +155,15 @@ Sample shadow
 				<second>803</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{909005C3-BE16-C640-86B0-CB5C531E4E8E}</id>
 			<comment/>
 			<position>
 				<first>-16</first>
 				<second>804</second>
 			</position>
-			<parameterName>Direction</parameterName>
+			<declaration>{BFE86EE6-73AD-6245-923C-C3418358D143}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -215,14 +218,15 @@ Shadow; adjusted for msaa.
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C1C516CA-37E9-1540-BFB6-A04EFEC094D9}</id>
 			<comment/>
 			<position>
 				<first>1111</first>
 				<second>669</second>
 			</position>
-			<parameterName>Source</parameterName>
+			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Draw</frequency>
 		</item>

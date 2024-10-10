@@ -1142,14 +1142,15 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{7A076C6E-36F3-43F1-9533-2D663558D4BA}</id>
 			<comment/>
 			<position>
 				<first>1499</first>
 				<second>-175</second>
 			</position>
-			<parameterName>Random</parameterName>
+			<declaration>{85AE3209-AEBC-1143-B9AA-15E7E29380B0}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>

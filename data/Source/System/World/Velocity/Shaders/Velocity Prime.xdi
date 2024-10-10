@@ -48,14 +48,15 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>High</precisionHint>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{DAD5F02A-C950-EE40-94EF-6AA901EC73D6}</id>
 			<comment/>
 			<position>
 				<first>2393</first>
 				<second>791</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<declaration>{B6BC3CAA-175A-2341-8275-4B64E8EB24F3}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -139,14 +140,15 @@
 				<second>200</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{1E27F5E7-AEAA-114B-ABDE-F3996C6D2AB1}</id>
 			<comment/>
 			<position>
 				<first>2378</first>
 				<second>211</second>
 			</position>
-			<parameterName>MagicCoeffs</parameterName>
+			<declaration>{D9C57745-37BC-544B-8524-952C79C3FBA1}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -186,14 +188,15 @@
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{99651B1A-4A49-E841-8939-E699BA1A3B45}</id>
 			<comment/>
 			<position>
 				<first>2090</first>
 				<second>734</second>
 			</position>
-			<parameterName>View</parameterName>
+			<declaration>{0FB16DCA-70F5-CB42-9D79-FED1990BCCFA}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>

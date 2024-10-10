@@ -9,25 +9,27 @@
 				<second>-526</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B9F76AF3-4713-FB4E-AF1D-C6C1266E8F8F}</id>
 			<comment/>
 			<position>
 				<first>2422</first>
 				<second>-506</second>
 			</position>
-			<parameterName>Spark_CxFormMul</parameterName>
+			<declaration>{0FFAD3A2-E8C5-7F49-8AD0-BDF41555DBBF}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{9D45952E-4E8E-B843-BE7A-BA36603D5FAB}</id>
 			<comment/>
 			<position>
 				<first>2423</first>
 				<second>-458</second>
 			</position>
-			<parameterName>Spark_CxFormAdd</parameterName>
+			<declaration>{47CC6C7A-327B-D349-AAC3-18321E48781B}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -325,25 +327,27 @@ else
 				<second>-111</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E7D1EE5E-B0E6-B34F-8298-A51FBC33EAB4}</id>
 			<comment/>
 			<position>
 				<first>1359</first>
 				<second>-262</second>
 			</position>
-			<parameterName>Spark_LineWidth</parameterName>
+			<declaration>{2B6BDDD1-CE23-3141-A90E-F40C6EC18DE7}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{3D60FAFE-087B-B547-80CA-5F65ED5C4379}</id>
 			<comment/>
 			<position>
 				<first>2423</first>
 				<second>-548</second>
 			</position>
-			<parameterName>Spark_LineColor</parameterName>
+			<declaration>{05C87148-7D82-8743-A36F-DD027D4F08A2}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>

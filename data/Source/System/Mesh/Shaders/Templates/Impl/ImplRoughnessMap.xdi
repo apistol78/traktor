@@ -51,14 +51,15 @@ Tag_RoughnessMap
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{F17AB02C-908B-4C41-B755-6D66C23BF52D}</id>
 			<comment/>
 			<position>
 				<first>599</first>
 				<second>18</second>
 			</position>
-			<parameterName>Mesh_Roughness</parameterName>
+			<declaration>{344ABE62-4354-1348-BF20-467FBD550D12}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>

@@ -93,14 +93,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B38DC00C-6871-B642-B1E2-2A475AF92BEF}</id>
 			<comment/>
 			<position>
 				<first>-436</first>
 				<second>32</second>
 			</position>
-			<parameterName>Source</parameterName>
+			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -120,14 +121,15 @@
 				<second>176</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{F149471F-15B5-0E4E-B396-4A468A32E3FB}</id>
 			<comment/>
 			<position>
 				<first>-291</first>
 				<second>157</second>
 			</position>
-			<parameterName>Direction</parameterName>
+			<declaration>{BFE86EE6-73AD-6245-923C-C3418358D143}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -148,13 +150,14 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="4,traktor.render.Node:1">
 			<id>{263DDCAD-2E09-C842-87FD-BCE9F0F763F9}</id>
 			<comment/>
 			<position>
 				<first>11</first>
 				<second>427</second>
 			</position>
+			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>Vector</type>
 			<frequency>Once</frequency>

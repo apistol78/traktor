@@ -248,14 +248,15 @@ $Output = gl_DrawID;
 				<second>905</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{ECE608D7-5F60-4A4F-A5D9-17256271FD77}</id>
 			<comment/>
 			<position>
 				<first>152</first>
 				<second>962</second>
 			</position>
-			<parameterName>InstanceMesh_InstanceOffset</parameterName>
+			<declaration>{2360BCAB-71A5-5B4E-A7BE-8B8EAC17CDE0}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>

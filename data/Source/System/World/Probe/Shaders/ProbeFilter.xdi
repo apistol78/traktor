@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{4788F4B4-9A36-B944-974F-CFBC98E7AC4F}</id>
 			<comment/>
 			<position>
 				<first>-202</first>
 				<second>-680</second>
 			</position>
-			<parameterName>World_ProbeTexture</parameterName>
+			<declaration>{90B406A4-EDD8-7540-88A4-5BFF81175876}</declaration>
+			<parameterName/>
 			<type>TextureCube</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -107,14 +108,15 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="4,traktor.render.Node:1">
 			<id>{D21A6ED5-7C91-43E1-B140-C923E4FED61B}</id>
 			<comment/>
 			<position>
 				<first>42</first>
 				<second>-2119</second>
 			</position>
-			<parameterName>World_ProbeFilterCorners</parameterName>
+			<declaration>{1B3246F4-D2BA-D244-926F-E143B6A841CD}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 			<length>4</length>
@@ -127,14 +129,15 @@
 				<second>-2057</second>
 			</position>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="4,traktor.render.Node:1">
 			<id>{7F06A51A-3804-44CE-BE9F-7B897C13DA7D}</id>
 			<comment/>
 			<position>
 				<first>40</first>
 				<second>-2032</second>
 			</position>
-			<parameterName>World_ProbeFilterCorners</parameterName>
+			<declaration>{1B3246F4-D2BA-D244-926F-E143B6A841CD}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 			<length>4</length>
@@ -157,26 +160,28 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="4,traktor.render.Node:1">
 			<id>{EE01FA95-7F2E-4D87-9471-BE145C41CF75}</id>
 			<comment/>
 			<position>
 				<first>42</first>
 				<second>-1947</second>
 			</position>
-			<parameterName>World_ProbeFilterCorners</parameterName>
+			<declaration>{1B3246F4-D2BA-D244-926F-E143B6A841CD}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 			<length>4</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="4,traktor.render.Node:1">
 			<id>{134B470F-2386-4A31-A651-C1DD322F47E1}</id>
 			<comment/>
 			<position>
 				<first>42</first>
 				<second>-1861</second>
 			</position>
-			<parameterName>World_ProbeFilterCorners</parameterName>
+			<declaration>{1B3246F4-D2BA-D244-926F-E143B6A841CD}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 			<length>4</length>
@@ -505,14 +510,15 @@ $Output = vec4(normalize(sampleVec), 0);
 			</position>
 			<name>L_Normal</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A0043244-66C5-BB47-87A6-6771E27A124B}</id>
 			<comment/>
 			<position>
 				<first>-413</first>
 				<second>-1237</second>
 			</position>
-			<parameterName>World_ProbeRoughness</parameterName>
+			<declaration>{644CE221-A8B4-7340-9648-3F021DD4119B}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -695,14 +701,15 @@ V
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{FC8733EA-6890-AE42-A139-5FBF406232CC}</id>
 			<comment/>
 			<position>
 				<first>1021</first>
 				<second>-460</second>
 			</position>
-			<parameterName>World_ProbeRoughness</parameterName>
+			<declaration>{644CE221-A8B4-7340-9648-3F021DD4119B}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -783,14 +790,15 @@ V
 			</position>
 			<value>10</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{AB40A50F-C13B-4B4E-A13D-3AA8F8F1C157}</id>
 			<comment/>
 			<position>
 				<first>22</first>
 				<second>-2459</second>
 			</position>
-			<parameterName>World_ProbeRoughness</parameterName>
+			<declaration>{644CE221-A8B4-7340-9648-3F021DD4119B}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>

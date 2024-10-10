@@ -194,14 +194,15 @@
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E36C6DAB-5E3F-DD40-8ED7-5C92B7F9B3F5}</id>
 			<comment/>
 			<position>
 				<first>-268</first>
 				<second>401</second>
 			</position>
-			<parameterName>Spray_PointsOffset</parameterName>
+			<declaration>{09362364-70AC-0546-901F-5C875EAB0268}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>

@@ -36,14 +36,15 @@ Tag_Emissive
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{1CFC5D71-338B-4628-A9B8-43C380B106F4}</id>
 			<comment/>
 			<position>
 				<first>744</first>
 				<second>386</second>
 			</position>
-			<parameterName>Mesh_Emissive</parameterName>
+			<declaration>{8F4A088A-BCB1-1741-999A-2E07307193A0}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>

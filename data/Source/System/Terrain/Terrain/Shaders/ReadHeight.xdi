@@ -36,25 +36,27 @@
 			</position>
 			<value>-1, 0, -1, 0</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{045E5235-C4FD-554E-B54E-8333E60ABB5D}</id>
 			<comment/>
 			<position>
 				<first>-233</first>
 				<second>1015</second>
 			</position>
-			<parameterName>Terrain_WorldExtent</parameterName>
+			<declaration>{F5CC056E-E04D-E448-B39E-40C11BE1C86C}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{D4CB84EB-2581-664F-BA74-3E20CA2FC77F}</id>
 			<comment/>
 			<position>
 				<first>-487</first>
 				<second>813</second>
 			</position>
-			<parameterName>Terrain_WorldOrigin</parameterName>
+			<declaration>{0BEC58AC-31AF-BD40-98DB-39105313BF81}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -140,14 +142,15 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{11C845C3-B0D3-B842-98E2-97DDB332C99F}</id>
 			<comment/>
 			<position>
 				<first>379</first>
 				<second>808</second>
 			</position>
-			<parameterName>Terrain_Heightfield</parameterName>
+			<declaration>{F720713A-A71F-A442-BA2A-F071774169EA}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

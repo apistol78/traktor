@@ -28,14 +28,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{D8A24B34-CA4F-8147-8BB4-DB3408399E82}</id>
 			<comment/>
 			<position>
 				<first>38</first>
 				<second>274</second>
 			</position>
-			<parameterName>ShadowMap</parameterName>
+			<declaration>{DB94DECF-5CFC-684F-B947-B6B2704EAE6D}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -112,25 +113,27 @@ Constant bias
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{06275A36-4552-FC43-B61E-44FE404912F5}</id>
 			<comment/>
 			<position>
 				<first>-860</first>
 				<second>502</second>
 			</position>
-			<parameterName>ShadowMapSizeAndBias</parameterName>
+			<declaration>{9AF7B576-E8FE-3B47-AD9E-D016AF6B7065}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{0E494CBA-DC50-7C4D-BFC8-DB76200DC210}</id>
 			<comment/>
 			<position>
 				<first>-899</first>
 				<second>375</second>
 			</position>
-			<parameterName>ShadowMapUvTransform</parameterName>
+			<declaration>{EDD4C9E5-C8E0-4F49-8307-C4795F841FDC}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>

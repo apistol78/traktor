@@ -115,14 +115,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C4B39964-BC5D-41C7-AB87-1E2FADF26FEC}</id>
 			<comment/>
 			<position>
 				<first>-117</first>
 				<second>439</second>
 			</position>
-			<parameterName>SplitLeft</parameterName>
+			<declaration>{E30B6CB9-3307-F441-BD77-EF9C0FC947EF}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -161,14 +162,15 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{0492BB34-C8CE-4372-A04D-603B70179349}</id>
 			<comment/>
 			<position>
 				<first>-117</first>
 				<second>610</second>
 			</position>
-			<parameterName>SplitRight</parameterName>
+			<declaration>{08E6D537-BCDF-B142-81AC-BFE5698E9926}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>

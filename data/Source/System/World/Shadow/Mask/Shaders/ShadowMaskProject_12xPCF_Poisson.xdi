@@ -126,7 +126,7 @@ Light space position
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8912EB04-B873-794A-874B-0125987104C4}</id>
 			<comment>
 			<![CDATA[
@@ -137,7 +137,8 @@ View to light space transform
 				<first>260</first>
 				<second>457</second>
 			</position>
-			<parameterName>ViewToLight</parameterName>
+			<declaration>{1B4CB69E-CACC-4E42-9036-37B73837A44B}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -224,14 +225,15 @@ Shadow map texcoord
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{F8617F57-7065-384D-BB51-6F3B56AE005D}</id>
 			<comment/>
 			<position>
 				<first>1063</first>
 				<second>649</second>
 			</position>
-			<parameterName>ShadowMapSizeAndBias</parameterName>
+			<declaration>{9AF7B576-E8FE-3B47-AD9E-D016AF6B7065}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -330,14 +332,15 @@ Shadow map texcoord
 			<from>0</from>
 			<to>5</to>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="4,traktor.render.Node:1">
 			<id>{5B94D0A4-2DFB-A843-823E-722118C7EE4B}</id>
 			<comment/>
 			<position>
 				<first>1615</first>
 				<second>-184</second>
 			</position>
-			<parameterName>ShadowMapPoissonTaps</parameterName>
+			<declaration>{115B7236-EC7D-3747-97C7-18E84BDB3925}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 			<length>6</length>
@@ -451,14 +454,15 @@ Shadow map texcoord
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8CED6BFA-ADBD-5748-8090-9221DD672859}</id>
 			<comment/>
 			<position>
 				<first>586</first>
 				<second>-576</second>
 			</position>
-			<parameterName>ShadowMapDiscRotation</parameterName>
+			<declaration>{87A70A38-6E4C-CD46-81AF-F39958E07382}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

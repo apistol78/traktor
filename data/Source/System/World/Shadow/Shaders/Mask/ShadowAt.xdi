@@ -37,14 +37,15 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A6A7BB17-447F-4244-9700-45B9278A7919}</id>
 			<comment/>
 			<position>
 				<first>1159</first>
 				<second>769</second>
 			</position>
-			<parameterName>World_ShadowMask</parameterName>
+			<declaration>{363FBC2B-B189-EC48-B8E6-48C312A71916}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

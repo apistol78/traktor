@@ -70,14 +70,15 @@
 				<second>215</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{2F8F2B64-064A-024E-9151-D354B3712177}</id>
 			<comment/>
 			<position>
 				<first>665</first>
 				<second>242</second>
 			</position>
-			<parameterName>World_MagicCoeffs</parameterName>
+			<declaration>{530D6B3A-EE00-9D43-AB36-022D3ED4B7D6}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>

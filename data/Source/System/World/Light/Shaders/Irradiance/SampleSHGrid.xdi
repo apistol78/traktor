@@ -1687,25 +1687,27 @@ xYZ+y*Z+z
 				<second>222</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E6A0C7D9-85AB-4254-B437-E45F8E6FE084}</id>
 			<comment/>
 			<position>
 				<first>-219</first>
 				<second>-434</second>
 			</position>
-			<parameterName>World_IrradianceGridBoundsMin</parameterName>
+			<declaration>{0551F39E-CA48-7848-AF9D-B3887167654C}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A9134122-D67E-4E77-B622-4D221E301D4B}</id>
 			<comment/>
 			<position>
 				<first>-219</first>
 				<second>-389</second>
 			</position>
-			<parameterName>World_IrradianceGridBoundsMax</parameterName>
+			<declaration>{A09CAD30-68B0-234B-B160-F70AC239254B}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -1744,14 +1746,15 @@ xYZ+y*Z+z
 				<second>-337</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{18A6386C-6B9A-D242-853D-A8ADE00DEC91}</id>
 			<comment/>
 			<position>
 				<first>-416</first>
 				<second>-291</second>
 			</position>
-			<parameterName>World_IrradianceGridSize</parameterName>
+			<declaration>{1C32B189-18D9-2A4C-AFB8-D2A248A433A7}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>

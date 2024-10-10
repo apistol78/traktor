@@ -45,14 +45,15 @@
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{48A610BD-A630-D547-8C8F-D7A2ECEE442F}</id>
 			<comment/>
 			<position>
 				<first>2139</first>
 				<second>383</second>
 			</position>
-			<parameterName>ViewInverse</parameterName>
+			<declaration>{02618F85-C0E7-4649-BA22-A1B61C43102E}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>

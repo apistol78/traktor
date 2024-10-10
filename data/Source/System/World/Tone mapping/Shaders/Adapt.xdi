@@ -119,14 +119,15 @@ $Output = average;
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{14F9CB16-07E2-4288-B46E-43FD280D844D}</id>
 			<comment/>
 			<position>
 				<first>77</first>
 				<second>-471</second>
 			</position>
-			<parameterName>InputColor</parameterName>
+			<declaration>{F073ECA2-E341-8C43-8619-7150ACC45D51}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>

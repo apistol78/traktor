@@ -36,25 +36,27 @@
 			</position>
 			<name>L_WorldPosition</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{15BD27BD-B183-AA49-AE52-925EBAD65409}</id>
 			<comment/>
 			<position>
 				<first>-335</first>
 				<second>1086</second>
 			</position>
-			<parameterName>World_View</parameterName>
+			<declaration>{0DE9B6CF-1F7E-BC44-8ED6-F5EFC99E6F1C}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{3D2E3E3F-5E43-3E4F-9B35-40CB8042E6A5}</id>
 			<comment/>
 			<position>
 				<first>356</first>
 				<second>1017</second>
 			</position>
-			<parameterName>World_Projection</parameterName>
+			<declaration>{5FA54E3B-AD14-E148-B385-979BD586BD69}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -201,14 +203,15 @@
 			</position>
 			<name>L_V</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{53462AD0-79DE-504D-B6B0-A28A5680FA91}</id>
 			<comment/>
 			<position>
 				<first>-458</first>
 				<second>2421</second>
 			</position>
-			<parameterName>World_View</parameterName>
+			<declaration>{0DE9B6CF-1F7E-BC44-8ED6-F5EFC99E6F1C}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -332,14 +335,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{6437C761-900A-BD46-8C5C-3F56FCE72945}</id>
 			<comment/>
 			<position>
 				<first>-1712</first>
 				<second>893</second>
 			</position>
-			<parameterName>World_View</parameterName>
+			<declaration>{0DE9B6CF-1F7E-BC44-8ED6-F5EFC99E6F1C}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -440,14 +444,15 @@
 				<second>329</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{07D6BB42-410F-9A49-BB93-08EA4C13AC05}</id>
 			<comment/>
 			<position>
 				<first>-2011</first>
 				<second>407</second>
 			</position>
-			<parameterName>Undergrowth_Eye</parameterName>
+			<declaration>{514BD5F4-A26B-8643-983B-CF4124731B97}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -878,14 +883,15 @@
 				<second>257</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{2F41B13B-F23C-7641-9BB8-1C75CA4BAA2A}</id>
 			<comment/>
 			<position>
 				<first>-1215</first>
 				<second>236</second>
 			</position>
-			<parameterName>Undergrowth_MaxDistance</parameterName>
+			<declaration>{8D15011D-3A24-1A4D-BE55-C2F7911FD325}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>

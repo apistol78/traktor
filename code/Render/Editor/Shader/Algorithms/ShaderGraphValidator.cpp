@@ -184,18 +184,25 @@ public:
 	{
 		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
 		{
+			Guid declaration;
 			std::wstring parameterName;
 
 			if (is_a< Uniform >(*i))
+			{
+				declaration = static_cast< const Uniform* >(*i)->getDeclaration();
 				parameterName = static_cast< const Uniform* >(*i)->getParameterName();
+			}
 			else if (is_a< IndexedUniform >(*i))
+			{
+				declaration = static_cast< const IndexedUniform* >(*i)->getDeclaration();
 				parameterName = static_cast< const IndexedUniform* >(*i)->getParameterName();
+			}
 			else if (is_a< Branch >(*i))
 				parameterName = static_cast< const Branch* >(*i)->getParameterName();
 			else
 				continue;
 
-			if (parameterName.empty())
+			if (declaration.isNull() && parameterName.empty())
 				outReport.addError(L"Invalid node name, no parameter name", *i);
 		}
 	}

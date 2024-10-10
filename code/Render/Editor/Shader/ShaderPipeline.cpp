@@ -46,6 +46,7 @@
 #include "Render/Editor/Shader/ShaderModule.h"
 #include "Render/Editor/Shader/ShaderPipeline.h"
 #include "Render/Editor/Shader/UniformDeclaration.h"
+#include "Render/Editor/Shader/UniformLinker.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
@@ -141,7 +142,7 @@ std::wstring resolveShaderModule(editor::IPipelineCommon* pipelineCommon, const 
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 105, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 106, ShaderPipeline, editor::IPipeline)
 
 bool ShaderPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -239,10 +240,22 @@ bool ShaderPipeline::buildDependencies(
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches(true);
 	T_ASSERT(shaderGraph);
 
-	// Add fragment, texture and text dependencies.
+	// Add declaration, fragment, texture and text dependencies.
 	for (auto node : shaderGraph->getNodes())
 	{
-		if (const auto externalNode = dynamic_type_cast< External* >(node))
+		if (const auto uniformNode = dynamic_type_cast< Uniform* >(node))
+		{
+			const Guid& declarationGuid = uniformNode->getDeclaration();
+			if (declarationGuid.isNotNull())
+				pipelineDepends->addDependency(declarationGuid, editor::PdfUse);
+		}
+		else if (const auto indexedUniformNode = dynamic_type_cast< IndexedUniform* >(node))
+		{
+			const Guid& declarationGuid = indexedUniformNode->getDeclaration();
+			if (declarationGuid.isNotNull())
+				pipelineDepends->addDependency(declarationGuid, editor::PdfUse);
+		}
+		else if (const auto externalNode = dynamic_type_cast< External* >(node))
 		{
 			const Guid& fragmentGuid = externalNode->getFragmentGuid();
 			pipelineDepends->addDependency(fragmentGuid, editor::PdfUse);
@@ -309,6 +322,30 @@ bool ShaderPipeline::buildOutput(
 		return false;
 	}
 
+	// Link uniform declarations.
+	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline link uniform declarations");
+	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t
+	{
+		Ref< db::Instance > declarationInstance = pipelineBuilder->getSourceDatabase()->getInstance(declarationId);
+		if (declarationInstance != nullptr)
+		{
+			return
+			{
+				declarationInstance->getName(),
+				declarationInstance->getObject< UniformDeclaration >()
+			};
+		}
+		else
+			return { L"", nullptr };
+	};
+	shaderGraph = UniformLinker(uniformDeclarationReader).resolve(shaderGraph);
+	pipelineBuilder->getProfiler()->end();
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to link uniform declarations." << Endl;
+		return false;
+	}
+
 	// Keep a reference to the resolved graph; in case of failure it's good for debugging.
 	Ref< const ShaderGraph > resolvedGraph = shaderGraph;
 
@@ -359,13 +396,6 @@ bool ShaderPipeline::buildOutput(
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to remove unused branches." << Endl;
-		return false;
-	}
-
-	// Ensure parameters are correct.
-	if (!checkParameters(shaderGraph))
-	{
-		log::error << L"ShaderPipeline failed; check parameters failed." << Endl;
 		return false;
 	}
 
@@ -557,15 +587,15 @@ bool ShaderPipeline::buildOutput(
 					const Node* outputNode = outputPin->getNode();
 					T_ASSERT(outputNode);
 
-					if (const Scalar* scalarNode = dynamic_type_cast<const Scalar*>(outputNode))
+					if (const Scalar* scalarNode = dynamic_type_cast< const Scalar* >(outputNode))
 					{
 						shaderCombination.initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar(uniformNode->getParameterName(), scalarNode->get()));
 					}
-					else if (const Vector* vectorNode = dynamic_type_cast<const Vector*>(outputNode))
+					else if (const Vector* vectorNode = dynamic_type_cast< const Vector* >(outputNode))
 					{
 						shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(uniformNode->getParameterName(), vectorNode->get()));
 					}
-					else if (const Color* colorNode = dynamic_type_cast<const Color*>(outputNode))
+					else if (const Color* colorNode = dynamic_type_cast< const Color* >(outputNode))
 					{
 						shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(uniformNode->getParameterName(), colorNode->getColor()));
 					}
@@ -775,67 +805,6 @@ IProgramCompiler* ShaderPipeline::getProgramCompiler() const
 	}
 
 	return m_programCompiler;
-}
-
-bool ShaderPipeline::checkParameters(const ShaderGraph* shaderGraph) const
-{
-	for (auto uniform : shaderGraph->findNodesOf< Uniform >())
-	{
-		const auto it = m_uniformDeclarations.find(uniform->getParameterName());
-		if (it != m_uniformDeclarations.end())
-		{
-			const UniformDeclaration* decl = it->second;
-			if (decl->getLength() > 1)
-			{
-				log::error << L"Parameter \"" << uniform->getParameterName() << L"\" do not match declaration; Is an array." << Endl;
-				return false;
-			}
-			if (decl->getParameterType() != uniform->getParameterType())
-			{
-				log::error << L"Parameter \"" << uniform->getParameterName() << L"\" do not match declaration; Type mismatch." << Endl;
-				return false;
-			}
-			if (decl->getFrequency() != uniform->getFrequency())
-			{
-				log::error << L"Parameter \"" << uniform->getParameterName() << L"\" do not match declaration; Frequency mismatch." << Endl;
-				return false;
-			}
-		}
-		else
-		{
-			log::warning << L"No parameter declaration \"" << uniform->getParameterName() << L"\" found; unable to verify parameter usage." << Endl;
-		}
-	}
-
-	for (auto indexedUniform : shaderGraph->findNodesOf< IndexedUniform >())
-	{
-		const auto it = m_uniformDeclarations.find(indexedUniform->getParameterName());
-		if (it != m_uniformDeclarations.end())
-		{
-			const UniformDeclaration* decl = it->second;
-			if (decl->getLength() != indexedUniform->getLength())
-			{
-				log::error << L"Parameter \"" << indexedUniform->getParameterName() << L"\" do not match declaration; Array length mismatch." << Endl;
-				return false;
-			}
-			if (decl->getParameterType() != indexedUniform->getParameterType())
-			{
-				log::error << L"Parameter \"" << indexedUniform->getParameterName() << L"\" do not match declaration; Type mismatch." << Endl;
-				return false;
-			}
-			if (decl->getFrequency() != indexedUniform->getFrequency())
-			{
-				log::error << L"Parameter \"" << indexedUniform->getParameterName() << L"\" do not match declaration; Frequency mismatch." << Endl;
-				return false;
-			}
-		}
-		else
-		{
-			log::warning << L"No parameter declaration \"" << indexedUniform->getParameterName() << L"\" found; unable to verify parameter usage." << Endl;
-		}
-	}
-
-	return true;
 }
 
 }

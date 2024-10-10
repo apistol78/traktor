@@ -69,14 +69,15 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E99607C9-EB3B-9D49-A6F6-F683549CB97B}</id>
 			<comment/>
 			<position>
 				<first>205</first>
 				<second>185</second>
 			</position>
-			<parameterName>Fade</parameterName>
+			<declaration>{8689BF20-0FB6-C94C-8138-B62EA9366062}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>

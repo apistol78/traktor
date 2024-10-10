@@ -26,25 +26,27 @@
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{22BEB760-5387-4142-9F01-0A873CB6682D}</id>
 			<comment/>
 			<position>
 				<first>-182</first>
 				<second>371</second>
 			</position>
-			<parameterName>World_WorldView</parameterName>
+			<declaration>{26FF4AB9-E08E-BD48-A2D0-C97C1B269891}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{736E39F2-5BF6-3F47-9E3A-67CC2983777D}</id>
 			<comment/>
 			<position>
 				<first>321</first>
 				<second>831</second>
 			</position>
-			<parameterName>World_Projection</parameterName>
+			<declaration>{5FA54E3B-AD14-E148-B385-979BD586BD69}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -192,36 +194,39 @@
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{BAB4898C-4EB2-9F45-8D4E-85ED0F4EC303}</id>
 			<comment/>
 			<position>
 				<first>-336</first>
 				<second>911</second>
 			</position>
-			<parameterName>World_LastWorldView</parameterName>
+			<declaration>{6F7877E2-12B0-3E42-879B-0D020282A53A}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{FF85C20F-66EA-FA41-9C5B-706442618ADA}</id>
 			<comment/>
 			<position>
 				<first>856</first>
 				<second>1003</second>
 			</position>
-			<parameterName>World_Projection</parameterName>
+			<declaration>{5FA54E3B-AD14-E148-B385-979BD586BD69}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B8C94F78-1B4E-EF41-968B-D61043E090A1}</id>
 			<comment/>
 			<position>
 				<first>-76</first>
 				<second>271</second>
 			</position>
-			<parameterName>World_World</parameterName>
+			<declaration>{588FB1F4-B99F-8844-BB94-0F5455CB78B0}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -560,14 +565,15 @@ Object
 			</position>
 			<name>ClipPosition</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{D696635D-DB94-9444-8440-2C72C2B8008C}</id>
 			<comment/>
 			<position>
 				<first>1623</first>
 				<second>681</second>
 			</position>
-			<parameterName>World_World</parameterName>
+			<declaration>{588FB1F4-B99F-8844-BB94-0F5455CB78B0}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>

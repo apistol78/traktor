@@ -22,14 +22,15 @@
 				<second>620</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{AAAA335A-15DD-3946-8752-17564B022A56}</id>
 			<comment/>
 			<position>
 				<first>978</first>
 				<second>713</second>
 			</position>
-			<parameterName>World_Projection</parameterName>
+			<declaration>{5FA54E3B-AD14-E148-B385-979BD586BD69}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -58,25 +59,27 @@
 				<second>843</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{435AFBF6-78F1-9D4D-8F9B-B7B4F1556FD5}</id>
 			<comment/>
 			<position>
 				<first>593</first>
 				<second>893</second>
 			</position>
-			<parameterName>World_LastWorldView</parameterName>
+			<declaration>{6F7877E2-12B0-3E42-879B-0D020282A53A}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{75AD71BE-C629-1A47-8B2D-1886B06BB6F4}</id>
 			<comment/>
 			<position>
 				<first>610</first>
 				<second>620</second>
 			</position>
-			<parameterName>World_WorldView</parameterName>
+			<declaration>{26FF4AB9-E08E-BD48-A2D0-C97C1B269891}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -139,14 +142,15 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{61832549-56FF-7943-A42E-76782E82D0D7}</id>
 			<comment/>
 			<position>
 				<first>883</first>
 				<second>1489</second>
 			</position>
-			<parameterName>World_WorldView</parameterName>
+			<declaration>{26FF4AB9-E08E-BD48-A2D0-C97C1B269891}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -183,14 +187,15 @@
 				<second>1618</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{CD468C4B-F895-7647-A634-78B8C119B592}</id>
 			<comment/>
 			<position>
 				<first>599</first>
 				<second>453</second>
 			</position>
-			<parameterName>World_World</parameterName>
+			<declaration>{588FB1F4-B99F-8844-BB94-0F5455CB78B0}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>

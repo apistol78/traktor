@@ -144,124 +144,135 @@ $Head[0].alive = alive;
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{DDEADB97-3898-7745-8E38-A44DDA118424}</id>
 			<comment/>
 			<position>
 				<first>588</first>
 				<second>-354</second>
 			</position>
-			<parameterName>Spray_EmitCount</parameterName>
+			<declaration>{87CCCB70-F3C6-B94D-944B-624682590539}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{AEC63B4E-3B84-D645-8D90-D220CF422939}</id>
 			<comment/>
 			<position>
 				<first>588</first>
 				<second>-315</second>
 			</position>
-			<parameterName>Spray_DeltaTime</parameterName>
+			<declaration>{575BF7CA-27BA-2C4D-BAB9-769EB1C2AE72}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{9D3F3DC0-EBBE-7641-8760-3D461689DC76}</id>
 			<comment/>
 			<position>
 				<first>540</first>
 				<second>-172</second>
 			</position>
-			<parameterName>Spray_SourceOrientation</parameterName>
+			<declaration>{37185CF8-678C-114F-9520-DEF6F0254152}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{35193A8D-60A5-8E4B-A3CD-D455D06E8A60}</id>
 			<comment/>
 			<position>
 				<first>524</first>
 				<second>-139</second>
 			</position>
-			<parameterName>Spray_SourceAngularVelocity</parameterName>
+			<declaration>{B99AB037-5EE0-334B-A2DB-C2F9A05758B5}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{51ECCCB4-D6EA-144F-B777-F40A9C37A3AB}</id>
 			<comment/>
 			<position>
 				<first>588</first>
 				<second>-106</second>
 			</position>
-			<parameterName>Spray_SourceAge</parameterName>
+			<declaration>{510B220D-2E80-AF41-90BE-AE48880C385E}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{1FBE3886-6303-3B4D-AA14-A2FBB2DF3655}</id>
 			<comment/>
 			<position>
 				<first>572</first>
 				<second>-73</second>
 			</position>
-			<parameterName>Spray_SourceMass</parameterName>
+			<declaration>{BEF9EB46-F521-3349-A0E0-663CAD4295B9}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{72F4721C-92E0-5446-A9E5-CAC092E2CE71}</id>
 			<comment/>
 			<position>
 				<first>588</first>
 				<second>-40</second>
 			</position>
-			<parameterName>Spray_SourceSize</parameterName>
+			<declaration>{1CC66D96-84F5-8948-BC55-4A6DECC1409B}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{CD5FBFB9-BB5B-A34F-9D2D-50BF98D74592}</id>
 			<comment/>
 			<position>
 				<first>572</first>
 				<second>-238</second>
 			</position>
-			<parameterName>Spray_SourcePosition</parameterName>
+			<declaration>{E0B48211-23C9-674C-BB59-4431D5FEACFE}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{2E4FF082-E1A2-DA4D-9644-310F93E90A6A}</id>
 			<comment/>
 			<position>
 				<first>572</first>
 				<second>-205</second>
 			</position>
-			<parameterName>Spray_SourceVelocity</parameterName>
+			<declaration>{A4CBB337-FE2F-F548-8B42-BF68588CE189}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{5C286839-291A-4849-858D-E9BFB6873A50}</id>
 			<comment/>
 			<position>
 				<first>588</first>
 				<second>29</second>
 			</position>
-			<parameterName>Spray_Transform</parameterName>
+			<declaration>{70EF3FEB-5C16-F646-98DB-9916DD87B3EA}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{6B8A9A64-C005-9546-851F-BFAAA4ED80BB}</id>
 			<comment/>
 			<position>
 				<first>604</first>
 				<second>66</second>
 			</position>
-			<parameterName>Spray_Seed</parameterName>
+			<declaration>{7AF8C76A-EACE-0842-AF23-400884936409}</declaration>
+			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>

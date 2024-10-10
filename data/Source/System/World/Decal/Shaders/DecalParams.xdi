@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{9FCC49C0-7007-074B-8483-BF1EA9B2BCDD}</id>
 			<comment/>
 			<position>
 				<first>169</first>
 				<second>247</second>
 			</position>
-			<parameterName>World_DecalParamsA</parameterName>
+			<declaration>{F347A1CE-86D9-724D-B129-0974BB0A23BF}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -48,14 +49,15 @@
 			</position>
 			<name>Age</name>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E9C8942F-FCCC-8942-9FEE-B0E8C3E23DA8}</id>
 			<comment/>
 			<position>
 				<first>169</first>
 				<second>395</second>
 			</position>
-			<parameterName>World_DecalParamsB</parameterName>
+			<declaration>{B6D9E1C7-7BEF-4543-951C-A54A6C3444AC}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>

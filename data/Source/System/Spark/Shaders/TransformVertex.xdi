@@ -13,14 +13,15 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{321A3525-1384-374A-BE1E-3C72B162B8D9}</id>
 			<comment/>
 			<position>
 				<first>-456</first>
 				<second>288</second>
 			</position>
-			<parameterName>Spark_FrameBounds</parameterName>
+			<declaration>{190B7673-AFCE-AF41-8B01-7C316E1A2616}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -66,14 +67,15 @@
 				<second>145</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C0845EBF-6D7D-6842-9A2B-23C4ECE37A63}</id>
 			<comment/>
 			<position>
 				<first>-551</first>
 				<second>176</second>
 			</position>
-			<parameterName>Spark_Transform</parameterName>
+			<declaration>{68DA054F-B8FA-2247-B4CF-978EFAC4FA2A}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Draw</frequency>
 		</item>
@@ -182,14 +184,15 @@
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E9CE0B79-04C5-A04B-912F-683E6351E53F}</id>
 			<comment/>
 			<position>
 				<first>199</first>
 				<second>364</second>
 			</position>
-			<parameterName>Spark_FrameTransform</parameterName>
+			<declaration>{FF44D828-0A88-3248-9176-DEA27A8007AA}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -219,14 +222,15 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{1323FC13-3948-6D4B-8D8A-605A8972B286}</id>
 			<comment/>
 			<position>
 				<first>27</first>
 				<second>-141</second>
 			</position>
-			<parameterName>Spark_ClipBounds</parameterName>
+			<declaration>{5D4BB82F-D6FB-254E-8557-C1FFC3D20095}</declaration>
+			<parameterName/>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>

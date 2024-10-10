@@ -120,14 +120,15 @@
 				<second>-64</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{6A86A7C3-FF6B-B045-B962-24858ECA28FD}</id>
 			<comment/>
 			<position>
 				<first>-642</first>
 				<second>-198</second>
 			</position>
-			<parameterName>Texture</parameterName>
+			<declaration>{308C9D43-A6B7-1540-85AD-587A46A407EA}</declaration>
+			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -400,14 +401,15 @@
 				<second>-280</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{7AE61008-858F-0344-8541-E04DFFC11DFF}</id>
 			<comment/>
 			<position>
 				<first>170</first>
 				<second>-474</second>
 			</position>
-			<parameterName>Projection</parameterName>
+			<declaration>{B6BC3CAA-175A-2341-8275-4B64E8EB24F3}</declaration>
+			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
