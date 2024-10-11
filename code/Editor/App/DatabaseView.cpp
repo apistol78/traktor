@@ -947,9 +947,17 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		}
 		else if (command == L"Editor.Rename")
 		{
-			auto selectedItem = m_listInstances->getSelectedItem();
-			T_FATAL_ASSERT(selectedItem != nullptr);
-			m_listInstances->beginEdit(selectedItem);
+			if (viewMode == 0)	// Hierarchy
+			{
+				T_FATAL_ASSERT(treeItem != nullptr);
+				treeItem->edit();
+			}
+			else
+			{
+				auto selectedItem = m_listInstances->getSelectedItem();
+				T_FATAL_ASSERT(selectedItem != nullptr);
+				m_listInstances->beginEdit(selectedItem);
+			}
 		}
 		else
 			return false;
