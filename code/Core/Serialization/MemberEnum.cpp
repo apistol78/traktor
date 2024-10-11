@@ -1,19 +1,24 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberEnum.h"
 
 namespace traktor
 {
 
 MemberEnumBase::MemberEnumBase(const wchar_t* const name)
 :	MemberComplex(name, false)
+{
+}
+
+MemberEnumBase::MemberEnumBase(const wchar_t* const name, const Attribute& attributes)
+:	MemberComplex(name, false, attributes)
 {
 }
 

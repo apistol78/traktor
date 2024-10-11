@@ -29,7 +29,9 @@ namespace traktor
 class T_DLLCLASS MemberEnumBase : public MemberComplex
 {
 public:
-	MemberEnumBase(const wchar_t* const name);
+	explicit MemberEnumBase(const wchar_t* const name);
+
+	explicit MemberEnumBase(const wchar_t* const name, const Attribute& attributes);
 
 	virtual bool set(const std::wstring& id) const = 0;
 
@@ -57,6 +59,13 @@ public:
 
 	explicit MemberEnum(const wchar_t* const name, EnumType& en, const Key* keys)
 	:	MemberEnumBase(name)
+	,	m_keys(keys)
+	,	m_en(en)
+	{
+	}
+
+	explicit MemberEnum(const wchar_t* const name, EnumType& en, const Key* keys, const Attribute& attributes)
+	:	MemberEnumBase(name, attributes)
 	,	m_keys(keys)
 	,	m_en(en)
 	{

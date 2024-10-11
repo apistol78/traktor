@@ -11,6 +11,7 @@
 #include "Core/Math/Format.h"
 #include "Core/Serialization/AttributeHdr.h"
 #include "Core/Serialization/AttributeHex.h"
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
@@ -1178,7 +1179,7 @@ void IndexedUniform::serialize(ISerializer& s)
 	if (s.getVersion() >= 4)
 		s >> Member< Guid >(L"declaration", m_declaration, AttributeType(type_of< UniformDeclaration >()));
 
-	s >> Member< std::wstring >(L"parameterName", m_parameterName);
+	s >> Member< std::wstring >(L"parameterName", m_parameterName, AttributePrivate());
 
 	if (s.getVersion() >= 3)
 	{
@@ -1189,7 +1190,7 @@ void IndexedUniform::serialize(ISerializer& s)
 			{ L"Matrix", ParameterType::Matrix },
 			{ 0 }
 		};
-		s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
+		s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys, AttributePrivate());
 	}
 	else
 	{
@@ -1200,7 +1201,7 @@ void IndexedUniform::serialize(ISerializer& s)
 			{ L"PtMatrix", ParameterType::Matrix },
 			{ 0 }
 		};
-		s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
+		s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys, AttributePrivate());
 	}
 
 	if (s.getVersion() >= 1)
@@ -1214,7 +1215,7 @@ void IndexedUniform::serialize(ISerializer& s)
 				{ L"Draw", UpdateFrequency::Draw },
 				{ 0 }
 			};
-			s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
+			s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys, AttributePrivate());
 		}
 		else
 		{
@@ -1225,11 +1226,11 @@ void IndexedUniform::serialize(ISerializer& s)
 				{ L"UfDraw", UpdateFrequency::Draw },
 				{ 0 }
 			};
-			s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
+			s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys, AttributePrivate());
 		}
 	}
 
-	s >> Member< int32_t >(L"length", m_length);
+	s >> Member< int32_t >(L"length", m_length, AttributePrivate());
 }
 
 /*---------------------------------------------------------------------------*/
@@ -3281,7 +3282,7 @@ void Uniform::serialize(ISerializer& s)
 	if (s.getVersion() >= 4)
 		s >> Member< Guid >(L"declaration", m_declaration, AttributeType(type_of< UniformDeclaration >()));
 
-	s >> Member< std::wstring >(L"parameterName", m_parameterName);
+	s >> Member< std::wstring >(L"parameterName", m_parameterName, AttributePrivate());
 
 	if (s.getVersion() >= 3)
 	{
@@ -3298,7 +3299,7 @@ void Uniform::serialize(ISerializer& s)
 			{ L"ImageCube", ParameterType::ImageCube },
 			{ 0 }
 		};
-		s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
+		s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys, AttributePrivate());
 	}
 	else
 	{
@@ -3315,7 +3316,7 @@ void Uniform::serialize(ISerializer& s)
 			{ L"PtImageCube", ParameterType::ImageCube },
 			{ 0 }
 		};
-		s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
+		s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys, AttributePrivate());
 	}
 
 	if (s.getVersion() >= 1)
@@ -3329,7 +3330,7 @@ void Uniform::serialize(ISerializer& s)
 				{ L"Draw", UpdateFrequency::Draw },
 				{ 0 }
 			};
-			s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
+			s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys, AttributePrivate());
 		}
 		else
 		{
@@ -3340,7 +3341,7 @@ void Uniform::serialize(ISerializer& s)
 				{ L"UfDraw", UpdateFrequency::Draw },
 				{ 0 }
 			};
-			s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
+			s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys, AttributePrivate());
 		}
 	}
 }

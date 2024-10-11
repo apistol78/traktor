@@ -694,11 +694,13 @@ void InspectReflector::operator >> (const MemberComplex& m)
 
 void InspectReflector::operator >> (const MemberEnumBase& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
+
 	Ref< ListPropertyItem > propertyItem = new ListPropertyItem(stylizeMemberName(m.getName()));
-	addPropertyItem(propertyItem, false);
+	addPropertyItem(propertyItem, memberPrivate);
 
 	m.enumerate([&](const wchar_t* id) {
-		int32_t i = propertyItem->add(id);
+		const int32_t i = propertyItem->add(id);
 		if (m.get() == id)
 			propertyItem->select(i);		
 	});
