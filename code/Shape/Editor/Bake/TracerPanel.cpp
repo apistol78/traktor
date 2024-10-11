@@ -75,8 +75,6 @@ bool TracerPanel::create(ui::Widget* parent)
 				m_idle = true;
 				update();
 			}
-
-			processor->setEnable(m_editor->isBuilding());
 		}
 	});
 

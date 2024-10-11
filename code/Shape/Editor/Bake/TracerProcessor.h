@@ -63,8 +63,6 @@ public:
 
 	Status getStatus() const;
 
-	void setEnable(bool enable);
-
 private:
 	const TypeInfo* m_rayTracerType = nullptr;
 	std::wstring m_compressionMethod;
@@ -77,7 +75,6 @@ private:
 	Ref< const TracerTask > m_activeTask;
 	Status m_status;
 	bool m_cancelled = false;
-	bool m_enable = true;
 
 	void processorThread();
 

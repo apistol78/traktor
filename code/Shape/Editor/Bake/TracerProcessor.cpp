@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -275,13 +275,13 @@ TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, const std::wstri
 	m_thread = ThreadManager::getInstance().create([=, this](){ processorThread(); }, L"Tracer");
 	m_thread->start();
 
-	//if (!m_editor)
+	if (!m_editor)
 		m_queue = &JobManager::getInstance().getQueue();
-	//else
-	//{
-	//	m_queue = new JobQueue();
-	//	m_queue->create(4, Thread::Below);
-	//}
+	else
+	{
+		m_queue = new JobQueue();
+		m_queue->create(4, Thread::Below);
+	}
 }
 
 TracerProcessor::~TracerProcessor()
@@ -303,8 +303,8 @@ TracerProcessor::~TracerProcessor()
 		m_thread = nullptr;
 	}
 
-	//if (m_editor)
-	//	safeDestroy(m_queue);
+	if (m_editor)
+		safeDestroy(m_queue);
 }
 
 void TracerProcessor::enqueue(const TracerTask* task)
@@ -356,10 +356,10 @@ TracerProcessor::Status TracerProcessor::getStatus() const
 	return m_status;
 }
 
-void TracerProcessor::setEnable(bool enable)
-{
-	m_enable = enable;
-}
+//void TracerProcessor::setEnable(bool enable)
+//{
+//	m_enable = enable;
+//}
 
 void TracerProcessor::processorThread()
 {
@@ -369,8 +369,6 @@ void TracerProcessor::processorThread()
 	while (!m_thread->stopped())
 	{
 		m_event.wait(100);
-		if (!m_enable)
-			continue;
 
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
