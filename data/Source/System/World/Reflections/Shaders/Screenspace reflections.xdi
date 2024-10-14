@@ -5,8 +5,8 @@
 			<id>{049C6FDD-6C3D-4216-A876-C503BF713C26}</id>
 			<comment/>
 			<position>
-				<first>-121</first>
-				<second>-620</second>
+				<first>-180</first>
+				<second>-616</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -43,7 +43,7 @@
 			<id>{D9E8CB02-8318-F444-9A5F-908C730E682F}</id>
 			<comment/>
 			<position>
-				<first>-127</first>
+				<first>-180</first>
 				<second>-702</second>
 			</position>
 			<name>L_ViewNormal</name>
@@ -258,8 +258,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{5A303AB2-8932-4D7F-87D5-135804F43B8C}</id>
 			<comment/>
 			<position>
-				<first>1208</first>
-				<second>-824</second>
+				<first>1179</first>
+				<second>-826</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -267,8 +267,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{561E0999-03FB-4719-9937-0D6659523A89}</id>
 			<comment/>
 			<position>
-				<first>1248</first>
-				<second>-920</second>
+				<first>1169</first>
+				<second>-928</second>
 			</position>
 			<declaration>{6851A221-3302-D14A-A0A7-2A1F882AD029}</declaration>
 			<parameterName/>
@@ -297,8 +297,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{B1F40F4A-B3F6-40FD-B295-8E87C0573303}</id>
 			<comment/>
 			<position>
-				<first>2398</first>
-				<second>-880</second>
+				<first>2618</first>
+				<second>-901</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -344,8 +344,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{3764C2E4-8EFB-442B-81AC-1CC816B8947E}</id>
 			<comment/>
 			<position>
-				<first>1248</first>
-				<second>-870</second>
+				<first>1169</first>
+				<second>-877</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -353,16 +353,16 @@ for (int i = 0; i < 64; ++i)
 			<id>{89F17B5C-2A32-4F64-A539-A8802692D343}</id>
 			<comment/>
 			<position>
-				<first>1781</first>
-				<second>-760</second>
+				<first>1888</first>
+				<second>-792</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{4BF1EBDF-2BDA-419A-BEC3-18D2339B0B7D}</id>
 			<comment/>
 			<position>
-				<first>1387</first>
-				<second>-707</second>
+				<first>1419</first>
+				<second>-704</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -370,8 +370,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{3FCF8FB2-14D3-4238-85A4-72C8219D3150}</id>
 			<comment/>
 			<position>
-				<first>1846</first>
-				<second>-858</second>
+				<first>1761</first>
+				<second>-994</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -379,10 +379,10 @@ for (int i = 0; i < 64; ++i)
 			<id>{9AF24C39-E70C-4964-9BEE-5D6D968C3626}</id>
 			<comment/>
 			<position>
-				<first>1864</first>
-				<second>-818</second>
+				<first>2054</first>
+				<second>-848</second>
 			</position>
-			<value>0.4</value>
+			<value>0.5</value>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{453DEA23-A89C-474F-8476-D96B0F96A631}</id>
@@ -397,16 +397,16 @@ for (int i = 0; i < 64; ++i)
 			<id>{1CD944BD-F376-454A-B888-CE52AB1A91B3}</id>
 			<comment/>
 			<position>
-				<first>2110</first>
-				<second>-852</second>
+				<first>2330</first>
+				<second>-873</second>
 			</position>
-			<operator>CoLess</operator>
+			<operator>CoGreater</operator>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2BC6C1F9-5E1E-7F45-9DBD-14E4F5BD033B}</id>
 			<comment/>
 			<position>
-				<first>-486</first>
+				<first>-488</first>
 				<second>-731</second>
 			</position>
 			<fragmentGuid>{B8A2B203-34E6-3543-8502-522D0F16791C}</fragmentGuid>
@@ -482,6 +482,87 @@ for (int i = 0; i < 64; ++i)
 			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{05F7BA81-98C2-8649-97D4-E2129F9DDBEA}</id>
+			<comment/>
+			<position>
+				<first>-488</first>
+				<second>-575</second>
+			</position>
+			<fragmentGuid>{F5F800CD-4CF7-524E-AC4F-2AF7591871E0}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{520ED0D2-881F-D044-B213-28592C3F0C9C}</id>
+					<name>UV</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{66678BA7-49BD-6A4E-BF71-3A7C57F06519}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{796E693E-08F8-9744-A616-D0BB2785766E}</id>
+			<comment/>
+			<position>
+				<first>-180</first>
+				<second>-530</second>
+			</position>
+			<name>L_Specular</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{1D1E1329-9CDA-E747-95A8-0AF3897F6ECB}</id>
+			<comment/>
+			<position>
+				<first>1759</first>
+				<second>-948</second>
+			</position>
+			<name>L_Specular</name>
+		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{295C719A-6EEA-FD4E-94E7-B57C33BEC162}</id>
+			<comment/>
+			<position>
+				<first>2001</first>
+				<second>-986</second>
+			</position>
+			<name>Should discard</name>
+			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{5BBA7813-6213-B24E-B024-A4DBF5A408CA}</id>
+					<name>Roughness</name>
+				</item>
+				<item>
+					<id>{1D6E5B28-AB80-4046-849A-ADBBA766CD0D}</id>
+					<name>Specular</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{E59D2F63-C39B-174D-B4DC-126989EFB60C}</id>
+					<name>Output</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+$Output = ($Roughness < 0.4f && $Specular > 0.1f) ? 1.0f : 0.0f;
+
+
+			]]>
+			</script>
 		</item>
 	</nodes>
 	<edges>
@@ -697,16 +778,6 @@ for (int i = 0; i < 64; ++i)
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[25]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[28]"/>
-				<id>{5438A442-AF6D-45EB-8163-DF351C6DBF4B}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[27]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
@@ -823,6 +894,56 @@ for (int i = 0; i < 64; ++i)
 			<destination>
 				<node ref="/object/nodes/item[27]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[33]"/>
+				<id>{520ED0D2-881F-D044-B213-28592C3F0C9C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<id>{66678BA7-49BD-6A4E-BF71-3A7C57F06519}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<id>{1D6E5B28-AB80-4046-849A-ADBBA766CD0D}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<id>{5BBA7813-6213-B24E-B024-A4DBF5A408CA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[36]"/>
+				<id>{E59D2F63-C39B-174D-B4DC-126989EFB60C}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{5438A442-AF6D-45EB-8163-DF351C6DBF4B}</id>
 			</destination>
 		</item>
 	</edges>

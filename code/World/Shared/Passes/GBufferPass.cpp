@@ -67,7 +67,7 @@ render::handle_t GBufferPass::setup(
 	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
 	clear.colors[0] = Color4f(clearZ, 0.5f, 0.5f, 0.0f);
 	clear.colors[1] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-	clear.colors[2] = Color4f(0.8f, 0.0f, 0.5f, 1.0f);
+	clear.colors[2] = Color4f(0.8f, 0.0f, 0.0f, 0.0f);
 	clear.colors[3] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 	clear.depth = 1.0f;
 	clear.stencil = 0;
