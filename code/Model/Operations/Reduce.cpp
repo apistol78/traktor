@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,23 +11,41 @@
 #include "Core/Math/Plane.h"
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
+#include "Model/Operations/CleanDegenerate.h"
+#include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/Reduce.h"
 #include "Model/Operations/Triangulate.h"
 
 // Loosely based on following paper
 // http://www.jofcis.com/publishedpapers/2013_9_11_4271_4279.pdf
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 Scalar tetrahedronVolume(const Vector4& A, const Vector4& B, const Vector4& C, const Vector4& u)
 {
 	const Scalar area = cross(A - B, C - B).length() / 2.0_simd;
 	return abs((1.0_simd / 3.0_simd) * area * Plane(A, B, C).distance(u));
+}
+
+bool isTriangleDegenerate(const Model& model, uint32_t triangleId)
+{
+	const Polygon& polygon = model.getPolygon(triangleId);
+	if (polygon.getVertexCount() != 3)
+		return true;
+
+	auto& vertices = polygon.getVertices();
+	for (size_t j = 0; j < vertices.size(); ++j)
+	{
+		const uint32_t p0 = model.getVertex(vertices[j]).getPosition();
+		const uint32_t p1 = model.getVertex(vertices[(j + 1) % vertices.size()]).getPosition();
+		if (p0 == p1)
+			return true;
+	}
+		
+	return false;
 }
 
 Vector4 triangleNormal(const Model& model, uint32_t triangleId)
@@ -99,7 +117,7 @@ Vector4 triangleTipPoint(const Model& model, const ModelAdjacency& adjacency, ui
 
 	for (uint32_t j = 0; j < 3; ++j)
 	{
-		adjacency.getSharedEdges(triangleId, j, sharedEdges);
+		sharedEdges = adjacency.getSharedEdges(triangleId, j);
 		if (sharedEdges.size() > 0)
 		{
 			const uint32_t sharedTriangleId = adjacency.getPolygon(sharedEdges[0]);
@@ -147,7 +165,7 @@ void triangleEdgeNeighbors(const Model& model, const ModelAdjacency& adjacency, 
 	ModelAdjacency::share_vector_t sharedEdges;
 	for (uint32_t j = 0; j < 3; ++j)
 	{
-		adjacency.getSharedEdges(triangleId, j, sharedEdges);
+		sharedEdges = adjacency.getSharedEdges(triangleId, j);
 		if (sharedEdges.size() > 0)
 		{
 			const uint32_t sharedTriangleId = adjacency.getPolygon(sharedEdges[0]);
@@ -222,10 +240,10 @@ float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, u
 	ModelAdjacency::share_vector_t sharedEdges;
 	for (uint32_t j = 0; j < 3; ++j)
 	{
-		adjacency.getSharedEdges(triangleId, j, sharedEdges);
+		sharedEdges = adjacency.getSharedEdges(triangleId, j);
 		if (sharedEdges.size() > 0)
 		{
-			uint32_t sharedTriangleId = adjacency.getPolygon(sharedEdges[0]);
+			const uint32_t sharedTriangleId = adjacency.getPolygon(sharedEdges[0]);
 			const Polygon& sharedTriangle = model.getPolygon(sharedTriangleId);
 			error += tetrahedronVolume(
 				model.getVertexPosition(sharedTriangle.getVertex(0)),
@@ -264,7 +282,7 @@ float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, u
 	return error;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Reduce", Reduce, IModelOperation)
 
@@ -275,102 +293,77 @@ Reduce::Reduce(float target)
 
 bool Reduce::apply(Model& model) const
 {
-	ModelAdjacency::share_vector_t sharedEdges;
-	AlignedVector< uint32_t > edgeNeighborTriangleIds;
-	AlignedVector< std::pair< uint32_t, uint32_t > > singleNeighborTriangleIds;
-
 	// Model must be triangulated.
 	Triangulate().apply(model);
 
-	Ref< ModelAdjacency > adjacency = new ModelAdjacency(&model, ModelAdjacency::Mode::ByPosition);
-	AlignedVector< Polygon >& polygons = model.getPolygons();
-
-	// Calculate triangle errors.
-	AlignedVector< float > errors(polygons.size());
-	for (uint32_t i = 0; i < polygons.size(); ++i)
-		errors[i] = triangleVolumeError(model, *adjacency, i);
-
 	// Iterate and discard triangles until target is meet.
-	const int32_t targetPolygonCount = int32_t(model.getPolygonCount() * m_target + 0.5f);
-	int32_t currentPolygonCount = model.getPolygonCount();
-	while (currentPolygonCount > targetPolygonCount)
+	const int32_t targetPolygonCount = (int32_t)(model.getPolygonCount() * m_target + 0.5f);
+	while (model.getPolygonCount() > targetPolygonCount)
 	{
-		// Find triangle with smallest error.
-		uint32_t minErrorTriangleId = c_InvalidIndex;
-		float minError = std::numeric_limits< float >::max();
+		Ref< ModelAdjacency > adjacency = new ModelAdjacency(&model, ModelAdjacency::Mode::ByPosition);
 
-		for (uint32_t i = 0; i < polygons.size(); ++i)
+		// Find triangle with smallest error to collapse.
+		// One minus max so error function can force some triangles to not even
+		// being taken into account.
+		uint32_t minErrorTriangleId = c_InvalidIndex;
+		float minError = std::numeric_limits< float >::max() - 1.0f;
+		for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
 		{
-			if (errors[i] < minError)
+			const float error = triangleVolumeError(model, *adjacency, i);
+			if (error < minError)
 			{
 				minErrorTriangleId = i;
-				minError = errors[i];
+				minError = error;
 			}
 		}
-
-		// Check if unable to find an suitable triangle.
 		if (minErrorTriangleId == c_InvalidIndex)
 			break;
 
-		const Polygon& minErrorTriangle = model.getPolygon(minErrorTriangleId);
+		// Get all position ids from collapsing triangle.
+		StaticVector< uint32_t, 32 > errorTrianglePositionIds;
+		for (uint32_t vertex : model.getPolygon(minErrorTriangleId).getVertices())
+			errorTrianglePositionIds.push_back(model.getVertex(vertex).getPosition());
 
-		// Calculate join point and add to model.
+		// Calculate new join position.
 		const Vector4 tipPoint = triangleTipPoint(model, *adjacency, minErrorTriangleId);
 		const Vector4 midPoint = triangleMidPoint(model, minErrorTriangleId);
-		const Vector4 joinPoint = lerp(tipPoint, midPoint, Scalar(0.6f)).xyz1();
-		const Vector2 joinTexCoord = triangleMidTexCoord(model, minErrorTriangleId);
+		const Vector2 midTexCoord = triangleMidTexCoord(model, minErrorTriangleId);
+		const Vector4 joinPoint = lerp(tipPoint, midPoint, 0.6_simd).xyz1();
+		const Vector2 joinTexCoord = midTexCoord;
+		const uint32_t joinPointId = model.addUniquePosition(joinPoint);
+		const uint32_t joinTexCoordId = model.addUniqueTexCoord(joinTexCoord);
 
-		// All triangles which share a single vertex with the triangle is updated.
-		singleNeighborTriangleIds.resize(0);
-		triangleSingleVertexNeighbors(model, minErrorTriangleId, singleNeighborTriangleIds);
-
-		// Discard first-order adjacent triangles which share edges with triangle.
-		for (uint32_t i = 0; i < 3; ++i)
+		// Replace all vertices which reference any of the collapsing triangle's positions.
+		auto& polygons = model.getPolygons();
+		for (size_t i = 0; i < polygons.size(); )
 		{
-			adjacency->getSharedEdges(minErrorTriangleId, i, sharedEdges);
-			if (sharedEdges.size() != 1)
-				continue;
+			Polygon& polygon = polygons[i];
+			bool polygonModified = false;
 
-			const uint32_t sharedTriangleId = adjacency->getPolygon(sharedEdges[0]);
+			for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
+			{
+				Vertex vrtx = model.getVertex(polygon.getVertex(j));
+				const auto it = std::find(errorTrianglePositionIds.begin(), errorTrianglePositionIds.end(), vrtx.getPosition());
+				if (it != errorTrianglePositionIds.end())
+				{
+					vrtx.setPosition(joinPointId);
+					vrtx.setTexCoord(0, joinTexCoordId);
+					const uint32_t replaceVrtxId = model.addUniqueVertex(vrtx);
+					polygon.setVertex(j, replaceVrtxId);
+					polygonModified = true;
+				}
+			}
 
-			polygons[sharedTriangleId].clearVertices();
-			errors[sharedTriangleId] = std::numeric_limits< float >::max();
-			adjacency->remove(sharedTriangleId);
-			--currentPolygonCount;
-		}
-
-		// Discard triangle.
-		polygons[minErrorTriangleId].clearVertices();
-		errors[minErrorTriangleId] = std::numeric_limits< float >::max();
-		adjacency->remove(minErrorTriangleId);
-		--currentPolygonCount;
-
-		// Update neighbor triangles.
-		for (const auto& singleNeighborTriangleId : singleNeighborTriangleIds)
-		{
-			Vertex vertex = model.getVertex(singleNeighborTriangleId.second);
-			vertex.setPosition(model.addUniquePosition(joinPoint));
-			vertex.setTexCoord(0, model.addUniqueTexCoord(joinTexCoord));
-			model.setVertex(singleNeighborTriangleId.second, vertex);
-
-			adjacency->update(singleNeighborTriangleId.first);
-
-			errors[singleNeighborTriangleId.first] = triangleVolumeError(model, *adjacency, singleNeighborTriangleId.first);
-
-			edgeNeighborTriangleIds.resize(0);
-			triangleEdgeNeighbors(model, *adjacency, singleNeighborTriangleId.first, edgeNeighborTriangleIds);
-			for (const auto edgeNeighborTriangleId : edgeNeighborTriangleIds)
-				errors[edgeNeighborTriangleId] = triangleVolumeError(model, *adjacency, edgeNeighborTriangleId);
-
-			singleNeighborTriangleIds.resize(0);
-			triangleSingleVertexNeighbors(model, singleNeighborTriangleId.first, singleNeighborTriangleIds);
-			for (const auto& singleNeighborTriangleId : singleNeighborTriangleIds)
-				errors[singleNeighborTriangleId.first] = triangleVolumeError(model, *adjacency, singleNeighborTriangleId.first);
+			if (polygonModified && isTriangleDegenerate(model, i))
+				polygons.erase(polygons.begin() + i);
+			else
+				++i;
 		}
 	}
 
+	// Remove unused vertices etc which will be a left over from reducing.
+	CleanDuplicates(FUZZY_EPSILON).apply(model);
 	return true;
 }
 
-	}
 }

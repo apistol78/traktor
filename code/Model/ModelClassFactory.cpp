@@ -125,15 +125,13 @@ AlignedVector< uint32_t > ModelAdjacency_getLeavingEdges(ModelAdjacency* self, u
 
 AlignedVector< uint32_t > ModelAdjacency_getSharedEdges_2(ModelAdjacency* self, uint32_t edge)
 {
-	ModelAdjacency::share_vector_t edges;
-	self->getSharedEdges(edge, edges);
+	ModelAdjacency::share_vector_t edges = self->getSharedEdges(edge);
 	return AlignedVector< uint32_t >(edges.begin(), edges.end());
 }
 
 AlignedVector< uint32_t > ModelAdjacency_getSharedEdges_3(ModelAdjacency* self, uint32_t polygon, uint32_t polygonEdge)
 {
-	ModelAdjacency::share_vector_t edges;
-	self->getSharedEdges(polygon, polygonEdge, edges);
+	ModelAdjacency::share_vector_t edges = self->getSharedEdges(polygon, polygonEdge);
 	return AlignedVector< uint32_t >(edges.begin(), edges.end());
 }
 

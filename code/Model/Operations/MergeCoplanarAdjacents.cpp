@@ -64,17 +64,17 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 			Polygon& leftPolygon = polygons[i];
 			for (size_t j = 0; j < leftPolygon.getVertexCount(); ++j)
 			{
-				adjacency.getSharedEdges(i, j, sharedEdges);
+				sharedEdges = adjacency.getSharedEdges(i, j);
 				if (sharedEdges.size() != 1)
 					continue;
 
-				uint32_t sharedEdge = sharedEdges.front();
-				uint32_t sharedPolygon = adjacency.getPolygon(sharedEdge);
+				const uint32_t sharedEdge = sharedEdges.front();
+				const uint32_t sharedPolygon = adjacency.getPolygon(sharedEdge);
 
 				if (sharedPolygon <= i)
 					continue;
 
-				float phi = acos(abs(dot3(normals[i], normals[sharedPolygon])));
+				const float phi = acos(abs(dot3(normals[i], normals[sharedPolygon])));
 				if (phi <= c_planarAngleThreshold)
 				{
 					Polygon& rightPolygon = polygons[sharedPolygon];
@@ -99,8 +99,8 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 					// Remove internal loops.
 					for (size_t k = 0; k < mergedVertices.size(); ++k)
 					{
-						uint32_t i0 = mergedVertices[k];
-						uint32_t i1 = mergedVertices[(k + 2) % mergedVertices.size()];
+						const uint32_t i0 = mergedVertices[k];
+						const uint32_t i1 = mergedVertices[(k + 2) % mergedVertices.size()];
 						if (i0 == i1)
 						{
 							mergedVertices.erase(mergedVertices.begin() + k);
@@ -113,21 +113,21 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 					removeIndices.resize(0);
 					for (size_t i0 = 0; i0 < mergedVertices.size(); ++i0)
 					{
-						size_t i1 = (i0 + 1) % mergedVertices.size();
-						size_t i2 = (i0 + 2) % mergedVertices.size();
+						const size_t i1 = (i0 + 1) % mergedVertices.size();
+						const size_t i2 = (i0 + 2) % mergedVertices.size();
 
 						const Vector4& v0 = model.getVertexPosition(mergedVertices[i0]);
 						const Vector4& v1 = model.getVertexPosition(mergedVertices[i1]);
 						const Vector4& v2 = model.getVertexPosition(mergedVertices[i2]);
 
-						Vector4 v0_2 = (v2 - v0).xyz0();
-						Vector4 v0_1 = (v1 - v0).xyz0();
+						const Vector4 v0_2 = (v2 - v0).xyz0();
+						const Vector4 v0_1 = (v1 - v0).xyz0();
 
-						Scalar k = dot3(v0_2, v0_1) / v0_2.length2();
+						const Scalar k = dot3(v0_2, v0_1) / v0_2.length2();
 						if (k >= 0.0f && k <= 1.0f)
 						{
-							Vector4 vp = v0 + v0_2 * k;
-							Scalar dist = (v1 - vp).xyz0().length();
+							const Vector4 vp = v0 + v0_2 * k;
+							const Scalar dist = (v1 - vp).xyz0().length();
 							if (dist <= c_vertexDistanceThreshold)
 								removeIndices.push_back(i1);
 						}

@@ -65,10 +65,10 @@ public:
 	void getLeavingEdges(uint32_t vertexId, share_vector_t& outLeavingEdges) const;
 
 	/*! Get sharing edges; ie opposite edges. */
-	void getSharedEdges(uint32_t edge,share_vector_t& outSharedEdges) const;
+	const share_vector_t& getSharedEdges(uint32_t edge) const;
 
 	/*! Get sharing edges; ie opposite edges. */
-	void getSharedEdges(uint32_t polygon, uint32_t polygonEdge, share_vector_t& outSharedEdges) const;
+	share_vector_t getSharedEdges(uint32_t polygon, uint32_t polygonEdge) const;
 
 	/*! Count number of sharing edges. */
 	uint32_t getSharedEdgeCount(uint32_t edge) const;
@@ -92,7 +92,7 @@ private:
 	struct Edge
 	{
 		uint32_t polygon;
-		uint32_t index;
+		uint32_t polygonEdge;
 		share_vector_t share;
 	};
 
