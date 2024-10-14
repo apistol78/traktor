@@ -93,6 +93,8 @@ private:
 	friend class ProgramVk;
 	friend class ProgramCompilerVk;
 
+	std::wstring m_name;
+
 	RenderState m_renderState;
 
 	AlignedVector< uint32_t > m_vertexShader;

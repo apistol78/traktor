@@ -430,6 +430,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 	// Create output resource.
 	Ref< ProgramResourceVk > programResource = new ProgramResourceVk();
+	programResource->m_name = name;
 	programResource->m_renderState = cx.getRenderState();
 	programResource->m_useTargetSize = cx.requirements().useTargetSize;
 	programResource->m_localWorkGroupSize[0] = cx.requirements().localSize[0];

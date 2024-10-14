@@ -134,12 +134,17 @@ bool ProgramVk::create(
 		if ((m_fragmentShaderModule = shaderModuleCache->get(resource->m_fragmentShader, resource->m_fragmentShaderHash)) == 0)
 			return false;
 
+		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_vertexShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
+		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_fragmentShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
+
 		stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
 	}
 	else if (!resource->m_computeShader.empty())
 	{
 		if ((m_computeShaderModule = shaderModuleCache->get(resource->m_computeShader, resource->m_computeShaderHash)) == 0)
 			return false;
+
+		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_computeShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
 
 		stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
 	}
