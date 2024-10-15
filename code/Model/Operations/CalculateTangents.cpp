@@ -17,11 +17,6 @@ namespace traktor::model
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CalculateTangents", CalculateTangents, IModelOperation)
 
-CalculateTangents::CalculateTangents(bool replace)
-:	m_replace(replace)
-{
-}
-
 bool CalculateTangents::apply(Model& model) const
 {
 	struct UserData
@@ -93,11 +88,6 @@ bool CalculateTangents::apply(Model& model) const
 		const Vector4 binormal(fn[0], fn[1], fn[2], 0.0f);
 
 		Vertex vertex = ud->model->getVertex(polygon.getVertex(iVert));
-		if (vertex.getNormal() == c_InvalidIndex)
-		{
-			const Vector4 normal = cross(tangent, binormal).normalized();
-			vertex.setNormal(ud->model->addUniqueNormal(normal));
-		}
 		vertex.setTangent(ud->model->addUniqueNormal(tangent));
 		vertex.setBinormal(ud->model->addUniqueNormal(binormal));
 		ud->model->setVertex(polygon.getVertex(iVert), vertex);

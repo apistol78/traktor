@@ -50,7 +50,7 @@ public:
 	void add(uint32_t polygon);
 
 	/*! Remove a polygon from adjacency structure. */
-	void remove(uint32_t polygon);
+	void remove(uint32_t polygon, bool reindex);
 
 	/*! Update polygon in adjacency structure. */
 	void update(uint32_t polygon);

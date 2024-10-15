@@ -25,6 +25,7 @@
 #include "Model/Pose.h"
 #include "Model/Editor/ModelToolDialog.h"
 #include "Model/Operations/CalculateConvexHull.h"
+#include "Model/Operations/CalculateNormals.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
@@ -254,6 +255,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_modelRootPopup = new ui::Menu();
 	Ref< ui::MenuItem > modelRootPopupAdd = new ui::MenuItem(i18n::Text(L"MODEL_TOOL_ADD_OPERATION"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Clear"), L"Clear"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CalculateNormals"), L"Calculate Normals"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CalculateTangents"), L"Calculate Tangents"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CleanDegenerate"), L"Clean Degenerate"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CleanDuplicates"), L"Clean Duplicates"));
@@ -676,10 +678,16 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 				itemOperation->setData(L"OPERATION", new Clear( Model::CfMaterials | Model::CfColors | Model::CfNormals | Model::CfTexCoords | Model::CfJoints ));
 				updateOperations(itemModel);
 			}
+			else if (command == L"ModelTool.CalculateNormals")
+			{
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Calculate Normals", 0);
+				itemOperation->setData(L"OPERATION", new CalculateNormals());
+				updateOperations(itemModel);
+			}
 			else if (command == L"ModelTool.CalculateTangents")
 			{
 				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Calculate Tangents", 0);
-				itemOperation->setData(L"OPERATION", new CalculateTangents(true));
+				itemOperation->setData(L"OPERATION", new CalculateTangents());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.CleanDegenerate")

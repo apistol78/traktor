@@ -51,7 +51,7 @@
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/ModelFormat.h"
-#include "Model/Operations/CalculateTangents.h"
+#include "Model/Operations/CalculateNormals.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/Triangulate.h"
@@ -691,7 +691,7 @@ bool BakePipelineOperator::build(
 							// Prepare model for baking.
 							model->clear(model::Model::CfColors | model::Model::CfJoints);
 							model::Triangulate().apply(*model);
-							model::CalculateTangents(false).apply(*model);
+							model::CalculateNormals().apply(*model);
 
 							if (configuration->getEnableLightmaps())
 							{

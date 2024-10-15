@@ -68,12 +68,14 @@ void ModelAdjacency::add(uint32_t polygon)
 	}
 }
 
-void ModelAdjacency::remove(uint32_t polygon)
+void ModelAdjacency::remove(uint32_t polygon, bool reindex)
 {
 	for (size_t i = 0; i < m_edges.size(); )
 	{
 		if (m_edges[i].polygon != polygon)
 		{
+			if (reindex && m_edges[i].polygon > polygon)
+				--m_edges[i].polygon;
 			++i;
 			continue;
 		}
@@ -103,7 +105,7 @@ void ModelAdjacency::remove(uint32_t polygon)
 void ModelAdjacency::update(uint32_t polygon)
 {
 	T_FATAL_ASSERT(polygon < m_model->getPolygonCount());
-	remove(polygon);
+	remove(polygon, false);
 	add(polygon);
 }
 

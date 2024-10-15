@@ -17,6 +17,7 @@
 #include "Model/Formats/Fbx/MeshConverter.h"
 #include "Model/Formats/Fbx/ModelFormatFbx.h"
 #include "Model/Formats/Fbx/SkeletonConverter.h"
+#include "Model/Operations/CleanDuplicates.h"
 
 namespace traktor::model
 {
@@ -282,6 +283,8 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 		}
 		model->setMaterials(materials);
 	}
+
+	CleanDuplicates(std::numeric_limits< float >::min()).apply(*model);
 
 	return model;
 }

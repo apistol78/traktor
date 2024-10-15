@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,6 +24,7 @@
 #include "Model/Pose.h"
 #include "Model/Operations/Boolean.h"
 #include "Model/Operations/CalculateConvexHull.h"
+#include "Model/Operations/CalculateNormals.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
@@ -363,8 +364,12 @@ void ModelClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCalculateConvexHull->addConstructor();
 	registrar->registerClass(classCalculateConvexHull);
 
+	auto classCalculateNormals = new AutoRuntimeClass< CalculateNormals >();
+	classCalculateNormals->addConstructor();
+	registrar->registerClass(classCalculateNormals);
+
 	auto classCalculateTangents = new AutoRuntimeClass< CalculateTangents >();
-	classCalculateTangents->addConstructor< bool >();
+	classCalculateTangents->addConstructor();
 	registrar->registerClass(classCalculateTangents);
 
 	auto classCleanDegenerate = new AutoRuntimeClass< CleanDegenerate >();

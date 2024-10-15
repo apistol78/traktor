@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <limits>
+#include "Core/Containers/StaticSet.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
 #include "Model/Model.h"
@@ -296,12 +297,25 @@ bool Reduce::apply(Model& model) const
 	// Model must be triangulated.
 	Triangulate().apply(model);
 
+	// Prepare initial adjacency.
+	Ref< ModelAdjacency > adjacency = new ModelAdjacency(&model, ModelAdjacency::Mode::ByPosition);
+
+	// Calculate initial set of errors.
+	AlignedVector< float > errors;
+	for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
+	{
+		const float error = triangleVolumeError(model, *adjacency, i);
+		errors.push_back(error);
+	}
+
+	StaticVector< uint32_t, 4 > errorTrianglePositionIds;
+	StaticVector< uint32_t, 64 > modifiedPolygons;
+	StaticSet< uint32_t, 64 > modifiedPositions;
+
 	// Iterate and discard triangles until target is meet.
-	const int32_t targetPolygonCount = (int32_t)(model.getPolygonCount() * m_target + 0.5f);
+	const uint32_t targetPolygonCount = (int32_t)(model.getPolygonCount() * m_target + 0.5f);
 	while (model.getPolygonCount() > targetPolygonCount)
 	{
-		Ref< ModelAdjacency > adjacency = new ModelAdjacency(&model, ModelAdjacency::Mode::ByPosition);
-
 		// Find triangle with smallest error to collapse.
 		// One minus max so error function can force some triangles to not even
 		// being taken into account.
@@ -309,7 +323,7 @@ bool Reduce::apply(Model& model) const
 		float minError = std::numeric_limits< float >::max() - 1.0f;
 		for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
 		{
-			const float error = triangleVolumeError(model, *adjacency, i);
+			const float error = errors[i];
 			if (error < minError)
 			{
 				minErrorTriangleId = i;
@@ -319,8 +333,10 @@ bool Reduce::apply(Model& model) const
 		if (minErrorTriangleId == c_InvalidIndex)
 			break;
 
+		errorTrianglePositionIds.resize(0);
+		modifiedPositions.reset();
+
 		// Get all position ids from collapsing triangle.
-		StaticVector< uint32_t, 32 > errorTrianglePositionIds;
 		for (uint32_t vertex : model.getPolygon(minErrorTriangleId).getVertices())
 			errorTrianglePositionIds.push_back(model.getVertex(vertex).getPosition());
 
@@ -335,7 +351,7 @@ bool Reduce::apply(Model& model) const
 
 		// Replace all vertices which reference any of the collapsing triangle's positions.
 		auto& polygons = model.getPolygons();
-		for (size_t i = 0; i < polygons.size(); )
+		for (uint32_t i = 0; i < (uint32_t)polygons.size(); )
 		{
 			Polygon& polygon = polygons[i];
 			bool polygonModified = false;
@@ -355,10 +371,46 @@ bool Reduce::apply(Model& model) const
 			}
 
 			if (polygonModified && isTriangleDegenerate(model, i))
+			{
 				polygons.erase(polygons.begin() + i);
+				errors.erase(errors.begin() + i);
+				adjacency->remove(i, true);
+			}
 			else
+			{
+				if (polygonModified)
+				{
+					for (uint32_t vertexId : polygon.getVertices())
+					{
+						const Vertex& vrtx = model.getVertex(vertexId);
+						modifiedPositions.insert(vrtx.getPosition());
+					}
+				}
 				++i;
+			}
 		}
+
+		// Get array of all modified polygons, directly or indirectly.
+		modifiedPolygons.resize(0);
+		for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
+		{
+			const Polygon& polygon = model.getPolygon(i);
+			const Polygon::vertices_t& vertices = polygon.getVertices();
+			const auto it = std::find_if(vertices.begin(), vertices.end(), [&](uint32_t vertexId) {
+				const uint32_t positionId = model.getVertex(vertexId).getPosition();
+				return modifiedPositions.find(positionId) != modifiedPositions.end();
+			});
+			if (it != vertices.end())
+				modifiedPolygons.push_back(i);
+		}
+
+		// Update adjacency.
+		for (uint32_t modifiedPolygon : modifiedPolygons)
+			adjacency->update(modifiedPolygon);
+
+		// Update errors on polygons which has been modified.
+		for (uint32_t modifiedPolygon : modifiedPolygons)
+			errors[modifiedPolygon] = triangleVolumeError(model, *adjacency, modifiedPolygon);
 	}
 
 	// Remove unused vertices etc which will be a left over from reducing.

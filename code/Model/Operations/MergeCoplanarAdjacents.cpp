@@ -144,7 +144,7 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 					rightPolygon.clearVertices();
 
 					// Re-build adjacency.
-					adjacency.remove(sharedPolygon);
+					adjacency.remove(sharedPolygon, false);
 					adjacency.update(i);
 
 					++merged;

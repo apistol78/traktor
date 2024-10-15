@@ -69,7 +69,7 @@ void CaseModelAdjacency::run()
 		uint32_t pn = ma->getPolygon(edges[0]);
 		CASE_ASSERT(pn == 1);
 
-		ma->remove(1);
+		ma->remove(1, false);
 
 		edges = ma->getSharedEdges(i);
 		CASE_ASSERT(edges.size() == 0);

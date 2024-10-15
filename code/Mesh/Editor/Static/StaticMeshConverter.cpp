@@ -16,7 +16,6 @@
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
 #include "Mesh/Static/StaticMeshResource.h"
 #include "Model/Model.h"
-#include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/FlattenDoubleSided.h"
 #include "Model/Operations/SortCacheCoherency.h"
 #include "Model/Operations/SortProjectedArea.h"
@@ -40,7 +39,6 @@ bool StaticMeshConverter::getOperations(const MeshAsset* meshAsset, bool editor,
 	outOperations.push_back(new model::Triangulate());
 	if (!editor)
 		outOperations.push_back(new model::SortCacheCoherency());
-	outOperations.push_back(new model::CalculateTangents(false));
 	outOperations.push_back(new model::SortProjectedArea(false));
 	outOperations.push_back(new model::FlattenDoubleSided());
 	return true;

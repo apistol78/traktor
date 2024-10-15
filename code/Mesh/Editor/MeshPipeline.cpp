@@ -37,6 +37,7 @@
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
+#include "Model/Operations/CalculateNormals.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CullDistantFaces.h"
 #include "Model/Operations/Transform.h"
@@ -297,7 +298,8 @@ bool MeshPipeline::buildOutput(
 
 	// Recalculate normals regardless if already exist in model.
 	if (asset->getRenormalize())
-		operations.push_back(new model::CalculateTangents(true));
+		operations.push_back(new model::CalculateNormals());
+	operations.push_back(new model::CalculateTangents());
 
 	// We allow models to be passed as build parameters in case models
 	// are procedurally generated.

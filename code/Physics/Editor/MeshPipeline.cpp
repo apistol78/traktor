@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,7 +20,7 @@
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/Operations/CalculateConvexHull.h"
-#include "Model/Operations/CalculateTangents.h"
+#include "Model/Operations/CalculateNormals.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/ScaleAlongNormal.h"
@@ -146,7 +146,7 @@ bool MeshPipeline::buildOutput(
 	// as we don't want smooth groups or anything else mess with the normals.
 	if (abs(meshAsset->m_margin) > FUZZY_EPSILON)
 	{
-		model::CalculateTangents(false).apply(*model);
+		model::CalculateNormals().apply(*model);
 		model::ScaleAlongNormal(-meshAsset->m_margin).apply(*model);
 		model->clear(model::Model::CfNormals);
 		model::CleanDuplicates(0.01f).apply(*model);
