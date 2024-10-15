@@ -101,23 +101,11 @@ public:
 	/*! */
 	bool getDecalResponse() const { return m_decalResponse; }
 
-	/*! Set number of manual lod steps. */
-	void setLodSteps(int32_t lodSteps) { m_lodSteps = lodSteps; }
+	/*! */
+	void setReduce(float reduce) { m_reduce = reduce; }
 
-	/*! Get number of manual lod steps. */
-	int32_t getLodSteps() const { return m_lodSteps; }
-
-	/*! Set distance when lowest lod should be used. */
-	void setLodMaxDistance(float lodMaxDistance) { m_lodMaxDistance = lodMaxDistance; }
-
-	/*! Get distance when lowest lod should be used. */
-	float getLodMaxDistance() const { return m_lodMaxDistance; }
-
-	/*! Set distance to when mesh should no longer be rendered. */
-	void setLodCullDistance(float lodCullDistance) { m_lodCullDistance = lodCullDistance; }
-
-	/*! Get distance to when mesh should no longer be rendered. */
-	float getLodCullDistance() const { return m_lodCullDistance; }
+	/*! */
+	float getReduce() const { return m_reduce; }
 
 	/*! */
 	void setPreviewAngle(float previewAngle) { m_previewAngle = previewAngle; }
@@ -136,9 +124,7 @@ private:
 	bool m_center = false;
 	bool m_grounded = false;
 	bool m_decalResponse = true;
-	int32_t m_lodSteps = 8;
-	float m_lodMaxDistance = 100.0f;
-	float m_lodCullDistance = 200.0f;
+	float m_reduce = 1.0f;
 	float m_previewAngle = 0.0f;
 };
 

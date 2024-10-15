@@ -23,6 +23,7 @@
 #include "Model/Operations/CalculateNormals.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
+#include "Model/Operations/Reduce.h"
 #include "Model/Operations/ScaleAlongNormal.h"
 #include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"
@@ -107,7 +108,7 @@ bool MeshPipeline::buildOutput(
 	}
 	else
 	{
-		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
+		const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
 		model = model::ModelCache::getInstance().getMutable(m_modelCachePath, filePath, meshAsset->getImportFilter());
 	}
 
@@ -125,6 +126,9 @@ bool MeshPipeline::buildOutput(
 	// Cleanup model suitable for physics.
 	model->clear(model::Model::CfColors | model::Model::CfNormals | model::Model::CfTexCoords | model::Model::CfJoints);
 	model::CleanDuplicates(0.01f).apply(*model);
+
+	if (meshAsset->getReduce() < 1.0f)
+		model::Reduce(meshAsset->getReduce()).apply(*model);
 
 	model::Transform(
 		scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())

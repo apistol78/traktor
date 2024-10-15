@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,6 +48,12 @@ public:
 	/*! Get scale factor. */
 	float getScaleFactor() const { return m_scaleFactor; }
 
+	/*! */
+	void setReduce(float reduce) { m_reduce = reduce; }
+
+	/*! */
+	float getReduce() const { return m_reduce; }
+	
 	/*! Set if model should be centered around origo before converted. */
 	void setCenter(bool center) { m_center = center; }
 
@@ -71,6 +77,7 @@ private:
 	bool m_calculateConvexHull = true;
 	float m_margin = 0.04f;
 	float m_scaleFactor = 1.0f;
+	float m_reduce = 1.0f;
 	bool m_center = false;
 	bool m_grounded = false;
 	SmallMap< std::wstring, Guid > m_materials;	//!< References to Material instances.

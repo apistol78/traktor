@@ -40,6 +40,7 @@
 #include "Model/Operations/CalculateNormals.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CullDistantFaces.h"
+#include "Model/Operations/Reduce.h"
 #include "Model/Operations/Transform.h"
 #include "Render/Editor/IProgramCompiler.h"
 #include "Render/Editor/Shader/External.h"
@@ -284,6 +285,10 @@ bool MeshPipeline::buildOutput(
 
 	// Create list of model operations we need to perform on model before converting it.
 	RefArray< const model::IModelOperation > operations;
+
+	if (asset->getReduce() < 1.0f)
+		operations.push_back(new model::Reduce(asset->getReduce()));
+
 	if (!converter->getOperations(asset, m_editor, operations))
 	{
 		log::error << L"Mesh pipeline failed; unable to create model operations." << Endl;

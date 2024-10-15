@@ -18,7 +18,7 @@
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 23, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 24, MeshAsset, editor::Asset)
 
 void MeshAsset::serialize(ISerializer& s)
 {
@@ -86,11 +86,11 @@ void MeshAsset::serialize(ISerializer& s)
 	if (s.getVersion() < 12)
 		s >> ObsoleteMember< bool >(L"generateOccluder");
 
-	if (s.getVersion() >= 10)
+	if (s.getVersion() >= 10 && s.getVersion() < 24)
 	{
-		s >> Member< int32_t >(L"lodSteps", m_lodSteps);
-		s >> Member< float >(L"lodMaxDistance", m_lodMaxDistance);
-		s >> Member< float >(L"lodCullDistance", m_lodCullDistance);
+		s >> ObsoleteMember< int32_t >(L"lodSteps");
+		s >> ObsoleteMember< float >(L"lodMaxDistance");
+		s >> ObsoleteMember< float >(L"lodCullDistance");
 	}
 
 	if (s.getVersion() < 12)
@@ -98,6 +98,9 @@ void MeshAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() <= 8)
 		s >> ObsoleteMember< float >(L"autoDetailLevel", AttributeRange(0.0f, 1.0f));
+
+	if (s.getVersion() >= 24)
+		s >> Member< float >(L"reduce", m_reduce, AttributeRange(0.0f, 1.0f));
 
 	if (s.getVersion() >= 20)
 		s >> Member< float >(L"previewAngle", m_previewAngle, AttributeNoHash());
