@@ -62,9 +62,9 @@ local PACKAGES =
 		type = "GET",
 		name = "embree-linux",
 		os = "linux",
-		url = "https://github.com/embree/embree/releases/download/v4.3.0/embree-4.3.0.x86_64.linux.tar.gz",
+		url = "https://github.com/RenderKit/embree/releases/download/v4.3.3/embree-4.3.3.x86_64.linux.tar.gz",
 		patch = function()
-			run:execute(TAR .. " -xzf embree-4.3.0.x86_64.linux.tar.gz")
+			run:execute(TAR .. " -xzf embree-4.3.3.x86_64.linux.tar.gz")
 		end,
 		license = "Apache 2.0"
 	},
@@ -72,9 +72,9 @@ local PACKAGES =
 		type = "GET",
 		name = "embree-windows",
 		os = "windows",
-		url = "https://github.com/embree/embree/releases/download/v4.3.0/embree-4.3.0.x64.windows.zip",
+		url = "https://github.com/RenderKit/embree/releases/download/v4.3.3/embree-4.3.3.x64.windows.zip",
 		patch = function()
-			run:execute(UNZIP .. " -qq embree-4.3.0.x64.windows.zip")
+			run:execute(UNZIP .. " -qq embree-4.3.3.x64.windows.zip")
 		end,
 		license = "Apache 2.0"
 	},
@@ -82,9 +82,9 @@ local PACKAGES =
 		type = "GET",
 		name = "embree-macOS",
 		os = "macos",
-		url = "https://github.com/embree/embree/releases/download/v4.3.0/embree-4.3.0.x86_64.macosx.zip",
+		url = "https://github.com/RenderKit/embree/releases/download/v4.3.3/embree-4.3.3.x86_64.macosx.zip",
 		patch = function()
-			run:execute(UNZIP .. " -qq embree-4.3.0.x86_64.macosx.zip")
+			run:execute(UNZIP .. " -qq embree-4.3.3.x86_64.macosx.zip")
 		end,
 		license = "Apache 2.0"
 	},
