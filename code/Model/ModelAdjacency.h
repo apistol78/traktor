@@ -93,6 +93,8 @@ private:
 	{
 		uint32_t polygon;
 		uint32_t polygonEdge;
+		uint32_t index0;
+		uint32_t index1;
 		share_vector_t share;
 	};
 
@@ -100,6 +102,7 @@ private:
 	Mode m_mode;
 	uint32_t m_channel;
 	AlignedVector< Edge > m_edges;
+	AlignedVector< uint32_t > m_polygonToFirstEdge;
 };
 
 }
