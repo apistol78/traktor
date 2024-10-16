@@ -145,6 +145,9 @@ void ModelAdjacency::update(uint32_t polygon)
 		Edge& e = m_edges[edgeIndex];
 		T_FATAL_ASSERT(e.polygon == polygon);
 		T_FATAL_ASSERT(e.polygonEdge == i);
+
+		getEdgeIndices(edgeIndex, e.index0, e.index1);
+
 		for (uint32_t j = 0; j < (uint32_t)m_edges.size(); ++j)
 		{
 			Edge& rightEdge = m_edges[j];
