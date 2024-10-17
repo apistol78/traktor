@@ -1486,11 +1486,22 @@ bool SceneEditorPage::moveDown()
 void SceneEditorPage::placeOnGround()
 {
 	const physics::QueryFilter filter;
-
 	for (auto entity : m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
 	{
 		const Transform transform = entity->getTransform();
-		const Vector4 position = transform.translation().xyz1();
+		const Aabb3 boundingBox = entity->getBoundingBox();
+
+		Vector4 corners[8];
+		boundingBox.getExtents(corners);
+
+		// Get bottom most position.
+		Vector4 position = transform.translation().xyz1();
+		for (int32_t i = 0; i < sizeof_array(corners); ++i)
+		{
+			const Scalar y = (transform * corners[i]).y();
+			if (y < position.y())
+				position.set(1, y);
+		}
 
 		physics::QueryResult result;
 		if (m_context->getPhysicsManager()->queryRay(
