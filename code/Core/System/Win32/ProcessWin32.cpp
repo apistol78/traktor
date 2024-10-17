@@ -20,9 +20,10 @@ namespace traktor
 class PipeStream : public IStream
 {
 public:
-	explicit PipeStream(HANDLE hProcess, HANDLE hPipe)
+	explicit PipeStream(HANDLE hProcess, HANDLE hPipe, Event& pipeEvent)
 	:	m_hProcess(hProcess)
 	,	m_hPipe(hPipe)
+	,	m_pipeEvent(pipeEvent)
 	{
 		ThreadPool::getInstance().spawn(
 			[=, this]() { threadPipeReader(); },
@@ -101,6 +102,7 @@ public:
 private:
 	HANDLE m_hProcess = INVALID_HANDLE_VALUE;
 	HANDLE m_hPipe = INVALID_HANDLE_VALUE;
+	Event& m_pipeEvent;
 	Thread* m_thread = nullptr;
 	mutable Semaphore m_lock;
 	AlignedVector< uint8_t > m_buffer;
@@ -119,6 +121,8 @@ private:
 				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 				m_buffer.insert(m_buffer.end(), &block[0], &block[nread]);
 			}
+
+			m_pipeEvent.broadcast();
 		}
 	}
 };
@@ -142,8 +146,8 @@ ProcessWin32::ProcessWin32(
 ,	m_hStdOutRead(hStdOutRead)
 ,	m_hStdErrRead(hStdErrRead)
 {
-	m_pipeStdOut = new PipeStream(m_hProcess, m_hStdOutRead);
-	m_pipeStdErr = new PipeStream(m_hProcess, m_hStdErrRead);
+	m_pipeStdOut = new PipeStream(m_hProcess, m_hStdOutRead, m_pipeEvent);
+	m_pipeStdErr = new PipeStream(m_hProcess, m_hStdErrRead, m_pipeEvent);
 }
 
 ProcessWin32::~ProcessWin32()
@@ -209,7 +213,10 @@ IProcess::WaitPipeResult ProcessWin32::waitPipeStream(int32_t timeout, Ref< IStr
 		if (terminated)
 			return Terminated;
 
-		terminated = wait(10);
+		if (m_pipeEvent.wait(10))
+			continue;
+
+		terminated = wait(0);
 	}
 
 	return Timeout;
