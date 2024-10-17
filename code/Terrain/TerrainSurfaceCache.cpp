@@ -25,6 +25,10 @@ namespace traktor::terrain
 	namespace
 	{
 
+// Techniques
+const render::Handle c_handleTerrain_SurfaceBase(L"Terrain_SurfaceBase");
+const render::Handle c_handleTerrain_SurfacePatch(L"Terrain_SurfacePatch");
+
 const render::Handle c_handleTerrain_ColorEnable(L"Terrain_ColorEnable");
 const render::Handle c_handleTerrain_Heightfield(L"Terrain_Heightfield");
 const render::Handle c_handleTerrain_Normals(L"Terrain_Normals");
@@ -195,7 +199,7 @@ void TerrainSurfaceCache::setupBaseColor(
 			render::ITexture* colorMap = terrain->getColorMap();
 			render::ITexture* splatMap = terrain->getSplatMap();
 
-			render::Shader::Permutation perm;
+			render::Shader::Permutation perm(c_handleTerrain_SurfaceBase);
 			shader->setCombination(c_handleTerrain_ColorEnable, colorMap != nullptr, perm);
 
 			auto sp = shader->getProgram(perm);
@@ -325,7 +329,7 @@ void TerrainSurfaceCache::setupPatch(
 			render::ITexture* colorMap = terrain->getColorMap();
 			render::ITexture* splatMap = terrain->getSplatMap();
 
-			render::Shader::Permutation perm;
+			render::Shader::Permutation perm(c_handleTerrain_SurfacePatch);
 			shader->setCombination(c_handleTerrain_ColorEnable, colorMap != nullptr, perm);
 
 			auto sp = shader->getProgram(perm);

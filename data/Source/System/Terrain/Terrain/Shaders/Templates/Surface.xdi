@@ -5,10 +5,10 @@
 			<id>{3E90F329-FCAD-BB43-951D-04B20FD2A776}</id>
 			<comment/>
 			<position>
-				<first>3918</first>
-				<second>349</second>
+				<first>3932</first>
+				<second>375</second>
 			</position>
-			<technique>Default</technique>
+			<technique>Terrain_SurfacePatch</technique>
 			<priority>
 				<setup>false</setup>
 				<opaque>false</opaque>
@@ -222,16 +222,16 @@
 			<id>{8BDDADC1-0698-3644-988C-0AFF676F400F}</id>
 			<comment/>
 			<position>
-				<first>3620</first>
-				<second>449</second>
+				<first>3664</first>
+				<second>443</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{D7968D0D-4532-8341-94AD-A36C9B7B16CE}</id>
 			<comment/>
 			<position>
-				<first>3434</first>
-				<second>492</second>
+				<first>3483</first>
+				<second>486</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -239,7 +239,7 @@
 			<id>{5CACBBB4-70E1-7D45-8647-19DA4FB21C8B}</id>
 			<comment/>
 			<position>
-				<first>3470</first>
+				<first>3473</first>
 				<second>324</second>
 			</position>
 			<swizzle>xyz0</swizzle>
@@ -248,7 +248,7 @@
 			<id>{FD5A9D9A-F6B1-D74E-AD03-DE2EE5326459}</id>
 			<comment/>
 			<position>
-				<first>3662</first>
+				<first>3664</first>
 				<second>326</second>
 			</position>
 		</item>
@@ -287,6 +287,53 @@
 				<item>Normal</item>
 				<item>Roughness</item>
 			</names>
+		</item>
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
+			<id>{E41C71BF-374F-7643-AC74-DD7904D0708C}</id>
+			<comment/>
+			<position>
+				<first>3932</first>
+				<second>191</second>
+			</position>
+			<technique>Terrain_SurfaceBase</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
+			<cullMode>Never</cullMode>
+			<blendEnable>false</blendEnable>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
+			<colorWriteMask>
+				<red>true</red>
+				<green>true</green>
+				<blue>true</blue>
+				<alpha>true</alpha>
+			</colorWriteMask>
+			<depthEnable>false</depthEnable>
+			<depthWriteEnable>false</depthWriteEnable>
+			<depthFunction>CfLessEqual</depthFunction>
+			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestFunction>CfGreater</alphaTestFunction>
+			<alphaTestReference>0</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
+			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>2147483648</stencilMask>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 	</nodes>
 	<edges>
@@ -528,6 +575,16 @@
 			<destination>
 				<node ref="/object/nodes/item[18]"/>
 				<id>{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>
