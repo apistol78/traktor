@@ -346,7 +346,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	VkPhysicalDeviceVulkan11Features v11 = {};
 	v11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
-	v11.storageBuffer16BitAccess = VK_FALSE;
+	v11.storageBuffer16BitAccess = VK_TRUE;
 	v11.uniformAndStorageBuffer16BitAccess = VK_TRUE;
 	v11.storagePushConstant16 = VK_FALSE;
 	v11.storageInputOutput16 = VK_FALSE;
