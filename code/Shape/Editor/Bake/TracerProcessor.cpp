@@ -356,11 +356,6 @@ TracerProcessor::Status TracerProcessor::getStatus() const
 	return m_status;
 }
 
-//void TracerProcessor::setEnable(bool enable)
-//{
-//	m_enable = enable;
-//}
-
 void TracerProcessor::processorThread()
 {
 	int32_t pending = 0;
@@ -383,23 +378,31 @@ void TracerProcessor::processorThread()
 		if (m_activeTask)
 		{
 			m_status.active = true;
+			m_status.scene = m_activeTask->getSceneId();
 			m_cancelled = false;
 
-			if (pending > 0)
-				log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" started (" << pending << L" pending)." << Endl;
-			else
-				log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" started." << Endl;
+			if (!m_editor)
+			{
+				if (pending > 0)
+					log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" started (" << pending << L" pending)." << Endl;
+				else
+					log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" started." << Endl;
+			}
 
 			const double Tstart = timer.getElapsedTime();
-
 			process(m_activeTask);
-
 			const double Tend = timer.getElapsedTime();
-			if (!m_cancelled)
+
+			if (!m_editor && !m_cancelled)
 				log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" finished in " << formatDuration(Tend - Tstart) << L"." << Endl;
 
 			m_status.active = false;
+			m_status.lastDuration = Tend - Tstart;
 			m_activeTask = nullptr;
+
+			// #hack Sleep for a short while when in editor; the progress panel polls status.
+			if (m_editor)
+				ThreadManager::getInstance().getCurrentThread()->sleep(200);
 		}
 	}
 
@@ -583,6 +586,8 @@ bool TracerProcessor::process(const TracerTask* task)
 		m_status.current = 0;
 		m_status.total = gridX * gridY * gridZ;
 
+		const Vector4 probeSize = worldSize / Vector4(gridX, gridY, gridZ, 1.0f);
+
 		RefArray< render::SHCoeffs > shs(gridX * gridY * gridZ);
 		RefArray< Job > jobs;
 
@@ -600,7 +605,7 @@ bool TracerProcessor::process(const TracerTask* task)
 					const uint32_t index = x * gridY * gridZ + y * gridZ + z;
 
 					Ref< Job > job = m_queue->add([&, position, index]() {
-						shs[index] = rayTracer->traceProbe(position.xyz1());
+						shs[index] = rayTracer->traceProbe(position.xyz1(), probeSize);
 					});
 					jobs.push_back(job);
 

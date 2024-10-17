@@ -46,7 +46,9 @@ public:
 		bool active = false;
 		uint32_t current = 0;
 		uint32_t total = 0;
+		Guid scene;
 		std::wstring description;
+		double lastDuration = 0.0;
 	};
 
 	explicit TracerProcessor(const TypeInfo* rayTracerType, const std::wstring& compressionMethod, bool editor);

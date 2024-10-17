@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,10 +12,8 @@
 #include "Core/Math/SahTree.h"
 #include "Shape/Editor/Bake/IRayTracer.h"
 
-namespace traktor
+namespace traktor::shape
 {
-    namespace shape
-    {
 
 class RayTracer;
 
@@ -24,8 +22,6 @@ class RayTracerLocal : public IRayTracer
     T_RTTI_CLASS;
 
 public:
-    RayTracerLocal();
-
     virtual bool create(const BakeConfiguration* configuration) override final;
 
     virtual void destroy() override final;
@@ -38,7 +34,7 @@ public:
 
     virtual void commit() override final;
 
-    virtual Ref< render::SHCoeffs > traceProbe(const Vector4& position) const override final;
+    virtual Ref< render::SHCoeffs > traceProbe(const Vector4& position, const Vector4& size) const override final;
 
     virtual void traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmapDiffuse, const int32_t region[4]) const override final;
 
@@ -55,7 +51,7 @@ private:
 	AlignedVector< Light > m_lights;
 	AlignedVector< Winding3 > m_windings;
 	AlignedVector< Surface > m_surfaces;
-	float m_maxDistance;
+	float m_maxDistance = 100.0f;
 
     void cullLights(const GBuffer* gbuffer, AlignedVector< Light >& outLights) const;
 
@@ -70,5 +66,4 @@ private:
     ) const;
 };
 
-    }
 }

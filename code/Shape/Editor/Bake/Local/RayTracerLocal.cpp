@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,12 +14,10 @@
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/Local/RayTracerLocal.h"
 
-namespace traktor
+namespace traktor::shape
 {
-    namespace shape
-    {
-		namespace
-		{
+	namespace
+	{
 
 const Scalar p(1.0f / (2.0f * PI));
 const Scalar c_epsilonOffset(0.1f);
@@ -57,13 +55,9 @@ Scalar attenuation(const Scalar& distance, const Scalar& range)
 	return k0 * k1;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.RayTracerLocal", 0, RayTracerLocal, IRayTracer)
-
-RayTracerLocal::RayTracerLocal()
-{
-}
 
 bool RayTracerLocal::create(const BakeConfiguration* configuration)
 {
@@ -113,7 +107,7 @@ void RayTracerLocal::commit()
 	m_sah.build(m_windings);
 }
 
-Ref< render::SHCoeffs > RayTracerLocal::traceProbe(const Vector4& position) const
+Ref< render::SHCoeffs > RayTracerLocal::traceProbe(const Vector4& position, const Vector4& size) const
 {
 	// // Raytrace IBL probes.
 	// render::SHEngine shEngine(3);
@@ -466,5 +460,4 @@ Color4f RayTracerLocal::sampleAnalyticalLights(
 	return contribution;
 }
 
-    }
 }

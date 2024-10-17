@@ -210,10 +210,12 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 {
 	T_FATAL_ASSERT(model->getPolygonCount() > 0);
 
+	const uint32_t vertexCount = model->getVertexCount();
+
 	// Allocate buffers with positions and texCoords.
-	float* positions = (float*)Alloc::acquireAlign(3 * model->getVertices().size() * sizeof(float), 16, T_FILE_LINE);
-	float* normals = (float*)Alloc::acquireAlign(3 * model->getVertices().size() * sizeof(float), 16, T_FILE_LINE);
-	float* texCoords = (float*)Alloc::acquireAlign(2 * model->getVertices().size() * sizeof(float), 16, T_FILE_LINE);
+	float* positions = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float), 16, T_FILE_LINE);
+	float* normals = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float), 16, T_FILE_LINE);
+	float* texCoords = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float), 16, T_FILE_LINE);	// Allocating tuples of 3 instead of two; seems embree read outside of range.
 
 	m_buffers.push_back(positions);
 	m_buffers.push_back(normals);
@@ -223,7 +225,7 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 	float* pp = positions;
 	float* pn = normals;
 	float* pt = texCoords;
-	for (uint32_t i = 0; i < model->getVertexCount(); ++i)
+	for (uint32_t i = 0; i < vertexCount; ++i)
 	{
 		const auto& vertex = model->getVertex(i);
 		T_FATAL_ASSERT(vertex.getNormal() != model::c_InvalidIndex);
@@ -248,9 +250,9 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 	RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
 	rtcSetGeometryVertexAttributeCount(mesh, 2);
 
-	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, positions, 0, 3 * sizeof(float), model->getVertices().size());
-	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, RTC_FORMAT_FLOAT3, normals, 0, 3 * sizeof(float), model->getVertices().size());
-	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 1, RTC_FORMAT_FLOAT2, texCoords, 0, 2 * sizeof(float), model->getVertices().size());
+	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, positions, 0, 3 * sizeof(float), vertexCount);
+	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, RTC_FORMAT_FLOAT3, normals, 0, 3 * sizeof(float), vertexCount);
+	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 1, RTC_FORMAT_FLOAT2, texCoords, 0, 2 * sizeof(float), vertexCount);
 
 	uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), model->getPolygons().size());
 	for (const auto& polygon : model->getPolygons())
@@ -303,15 +305,18 @@ void RayTracerEmbree::commit()
 	T_FATAL_ASSERT(error == RTC_ERROR_NONE);
 }
 
-Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) const
+Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position, const Vector4& size) const
 {
 	static thread_local RandomGeometry random;
 	static const float ProbeSize = 4.0f;
 
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
 
+		// Jitter origin within probe volume.
+		const Vector4 jitteredPosition = position + size * random.nextUnit() * 0.5_simd;
+
 		RTCRayHit T_ALIGN64 rh;
-		constructRayHit(position, unit, ProbeSize, rh);
+		constructRayHit(jitteredPosition, unit, ProbeSize, rh);
 
 		RTCIntersectArguments iargs;
 		rtcInitIntersectArguments(&iargs);
@@ -327,11 +332,11 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 			if (dot3(hitNormal, unit) > 0.0f)
 			{
 				// Probe most likely inside geometry; offset position.
-				return tracePath0(position + unit * Scalar(ProbeSize), unit, random, 0);
+				return tracePath0(jitteredPosition + unit * Scalar(ProbeSize), unit, random, 0);
 			}
 		}
 
-		return tracePath0(position + unit * 0.1_simd, unit, random, 0);
+		return tracePath0(jitteredPosition + unit * 0.1_simd, unit, random, 0);
 	});
 
 	Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();

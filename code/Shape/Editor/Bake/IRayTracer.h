@@ -68,7 +68,7 @@ public:
 
 	virtual void commit() = 0;
 
-	virtual Ref< render::SHCoeffs > traceProbe(const Vector4& position) const = 0;
+	virtual Ref< render::SHCoeffs > traceProbe(const Vector4& position, const Vector4& size) const = 0;
 
 	virtual void traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmapDiffuse, const int32_t region[4]) const = 0;
 

@@ -602,7 +602,7 @@ bool BakePipelineOperator::build(
 				return scene::Traverser::Result::Continue;
 			});
 
-			log::info << L"Found " << bakeEntityData.size() << L" entities to include in bake." << Endl;
+			log::info << L"Found " << bakeEntityData.size() << L" entities to include in bake from layer \"" << layer->getName() << L"\"." << Endl;
 
 			// Traverse and visit all entities in layer.
 			for (auto inoutEntityData : bakeEntityData)

@@ -48,7 +48,7 @@ public:
 
 	virtual void commit() override final;
 
-	virtual Ref< render::SHCoeffs > traceProbe(const Vector4& position) const override final;
+	virtual Ref< render::SHCoeffs > traceProbe(const Vector4& position, const Vector4& size) const override final;
 
 	virtual void traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmapDiffuse, const int32_t region[4]) const override final;
 
