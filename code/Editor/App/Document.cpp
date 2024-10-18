@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,17 +12,10 @@
 #include "Database/Instance.h"
 #include "Editor/App/Document.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Document", Document, IDocument)
-
-Document::Document()
-:	m_modified(false)
-{
-}
 
 Document::~Document()
 {
@@ -31,10 +24,10 @@ Document::~Document()
 
 void Document::editInstance(db::Instance* instance, ISerializable* object)
 {
-	RefArray< db::Instance >::iterator i = std::find(m_instances.begin(), m_instances.end(), instance);
-	if (i != m_instances.end())
+	auto it = std::find(m_instances.begin(), m_instances.end(), instance);
+	if (it != m_instances.end())
 	{
-		uint32_t index = std::distance(m_instances.begin(), i);
+		const uint32_t index = std::distance(m_instances.begin(), it);
 		setObject(index, object);
 		return;
 	}
@@ -46,8 +39,8 @@ void Document::editInstance(db::Instance* instance, ISerializable* object)
 
 bool Document::containInstance(db::Instance* instance) const
 {
-	RefArray< db::Instance >::const_iterator i = std::find(m_instances.begin(), m_instances.end(), instance);
-	return i != m_instances.end();
+	const auto it = std::find(m_instances.begin(), m_instances.end(), instance);
+	return it != m_instances.end();
 }
 
 uint32_t Document::getInstanceCount() const
@@ -83,7 +76,7 @@ void Document::push(const ISerializable* meta)
 {
 	if (!m_undoHistory.empty())
 	{
-		const std::vector< uint32_t >& lastHashes = m_undoHistory.back().objectHashes;
+		const AlignedVector< uint32_t >& lastHashes = m_undoHistory.back().objectHashes;
 		if (lastHashes.size() == m_objects.size())
 		{
 			bool eq = true;
@@ -99,7 +92,6 @@ void Document::push(const ISerializable* meta)
 	}
 
 	HistoryState state;
-
 	state.objects.resize(m_objects.size());
 	state.objectHashes.resize(m_objectHashes.size());
 	state.meta = meta;
@@ -120,7 +112,6 @@ bool Document::undo(const ISerializable* redoMeta, Ref< const ISerializable >* o
 		return false;
 
 	HistoryState redoState;
-
 	redoState.objects.resize(m_objects.size());
 	redoState.objectHashes.resize(m_objectHashes.size());
 	redoState.meta = redoMeta;
@@ -141,7 +132,6 @@ bool Document::undo(const ISerializable* redoMeta, Ref< const ISerializable >* o
 		*outMeta = undoState.meta;
 
 	m_undoHistory.pop_back();
-
 	return true;
 }
 
@@ -219,5 +209,4 @@ bool Document::close()
 	return true;
 }
 
-	}
 }

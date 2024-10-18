@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,10 +20,8 @@
 #include "Ui/MessageBox.h"
 #include "Ui/StyleBitmap.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.ObjectEditorDialog", ObjectEditorDialog, ui::ConfigDialog)
 
@@ -192,8 +190,8 @@ void ObjectEditorDialog::eventTimer(ui::TimerEvent* event)
 
 	// Check if object has been modified since last update.
 	Ref< ISerializable > object = m_instance->getObject();
-	uint32_t objectHash = DeepHash(object).get();
-	bool modified = (objectHash != m_objectHash);
+	const uint32_t objectHash = DeepHash(object).get();
+	const bool modified = (objectHash != m_objectHash);
 	if (modified != m_modified)
 	{
 		StringOutputStream ss;
@@ -203,5 +201,4 @@ void ObjectEditorDialog::eventTimer(ui::TimerEvent* event)
 	}
 }
 
-	}
 }

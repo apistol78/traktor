@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,18 +15,20 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace ui
-	{
+}
+
+namespace traktor::ui
+{
 
 class Edit;
 class ListView;
 class PreviewList;
 class TreeView;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class NewInstanceDialog : public ui::ConfigDialog
 {
@@ -60,6 +62,4 @@ private:
 	void eventInstanceNameKey(ui::KeyEvent* event);
 };
 
-	}
 }
-

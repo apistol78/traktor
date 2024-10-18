@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,25 +32,23 @@
 
 #pragma warning(disable: 4344)
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
+	namespace
 	{
-		namespace
-		{
 
 class TypeInfoWrapper : public Object
 {
 public:
 	const TypeInfo& m_typeInfo;
 
-	TypeInfoWrapper(const TypeInfo& typeInfo)
+	explicit TypeInfoWrapper(const TypeInfo& typeInfo)
 	:	m_typeInfo(typeInfo)
 	{
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.NewInstanceDialog", NewInstanceDialog, ui::ConfigDialog)
 
@@ -285,5 +283,5 @@ void NewInstanceDialog::eventInstanceNameKey(ui::KeyEvent* event)
 	}
 }
 
-	}
 }
+

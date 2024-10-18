@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,22 +9,18 @@
 #pragma once
 
 #include <list>
-#include <vector>
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Editor/IDocument.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class Document : public IDocument
 {
 	T_RTTI_CLASS;
 
 public:
-	Document();
-
 	virtual ~Document();
 
 	virtual void editInstance(db::Instance* instance, ISerializable* object) override final;
@@ -61,18 +57,17 @@ private:
 	struct HistoryState
 	{
 		RefArray< ISerializable > objects;
-		std::vector< uint32_t > objectHashes;
+		AlignedVector< uint32_t > objectHashes;
 		Ref< const ISerializable > meta;
 	};
 
 	RefArray< db::Instance > m_instances;
 	RefArray< ISerializable > m_objects;
-	std::vector< uint32_t > m_objectHashes;
+	AlignedVector< uint32_t > m_objectHashes;
 	std::list< HistoryState > m_undoHistory;
 	std::list< HistoryState > m_redoHistory;
-	bool m_modified;
+	bool m_modified = false;
 };
 
-	}
 }
 
