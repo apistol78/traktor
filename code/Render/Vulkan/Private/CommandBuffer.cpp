@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -92,13 +92,11 @@ bool CommandBuffer::wait()
 	if (!m_submitted)
 		return true;
 
-    if (vkWaitForFences(m_context->getLogicalDevice(), 1, &m_inFlight, VK_TRUE, UINT64_MAX) != VK_SUCCESS)
-		return false;
-
+	const bool result = (vkWaitForFences(m_context->getLogicalDevice(), 1, &m_inFlight, VK_TRUE, UINT64_MAX) == VK_SUCCESS);
 	vkResetFences(m_context->getLogicalDevice(), 1, &m_inFlight);
 
 	m_submitted = false;
-	return true;
+	return result;
 }
 
 bool CommandBuffer::submitAndWait()

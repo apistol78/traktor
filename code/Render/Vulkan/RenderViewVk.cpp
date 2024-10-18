@@ -1575,9 +1575,12 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		return false;
 
 	// Ensure all queries are reset to silence validation layer.
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
-	vkCmdResetQueryPool(*commandBuffer, m_queryPool, 0, imageCount * 2 * T_QUERY_SEGMENT_SIZE);
-	commandBuffer->submitAndWait();
+	{
+		Ref< CommandBuffer > commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+		vkCmdResetQueryPool(*commandBuffer, m_queryPool, 0, imageCount * 2 * T_QUERY_SEGMENT_SIZE);
+		if (!commandBuffer->submitAndWait())
+			return false;
+	}
 #endif
 
 	// Create primary depth target.
