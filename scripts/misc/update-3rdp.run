@@ -323,7 +323,7 @@ local PACKAGES =
 		patch = function()
 			local p = run.cwd .. "/vulkan-sdk"
 			run:execute(
-				"vulkan-sdk.exe --root " .. p .. " --accept-licenses --default-answer --confirm-command install com.lunarg.vulkan.vma com.lunarg.vulkan.debug",
+				"vulkan-sdk.exe --root " .. p .. " --accept-licenses --default-answer --confirm-command install com.lunarg.vulkan.vma com.lunarg.vulkan.debug copy_only=1",
 				nil,
 				nil,
 				true
