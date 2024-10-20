@@ -1514,13 +1514,13 @@ void SceneEditorPage::placeOnGround()
 		))
 		{
 			const Quaternion Qrot(
-				Vector4(0.0f, 1.0f, 0.0f),
+				transform.axisY(),
 				result.normal
 			);
 
 			entity->setTransform(Transform(
 				result.position,
-				Qrot // transform.rotation()
+				Qrot * transform.rotation()
 			));
 		}
 	}
