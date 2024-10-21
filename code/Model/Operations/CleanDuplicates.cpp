@@ -53,7 +53,6 @@ bool CleanDuplicates::apply(Model& model) const
 	for (const auto& polygon : model.getPolygons())
 	{
 		Polygon cleanedPolygon;
-
 		cleanedPolygon.setMaterial(polygon.getMaterial());
 
 		id = polygon.getNormal();
@@ -88,7 +87,7 @@ bool CleanDuplicates::apply(Model& model) const
 			if (id != c_InvalidIndex)
 				cleanedVertex.setBinormal(cleaned.addUniqueNormal(model.getNormal(id).normalized()));
 
-			uint32_t texCoordCount = vertex.getTexCoordCount();
+			const uint32_t texCoordCount = vertex.getTexCoordCount();
 			for (uint32_t k = 0; k < texCoordCount; ++k)
 			{
 				id = vertex.getTexCoord(k);
@@ -96,10 +95,10 @@ bool CleanDuplicates::apply(Model& model) const
 					cleanedVertex.setTexCoord(k, cleaned.addUniqueTexCoord(model.getTexCoord(id)));
 			}
 
-			uint32_t influenceCount = vertex.getJointInfluenceCount();
+			const uint32_t influenceCount = vertex.getJointInfluenceCount();
 			for (uint32_t k = 0; k < influenceCount; ++k)
 			{
-				float influence = vertex.getJointInfluence(k);
+				const float influence = vertex.getJointInfluence(k);
 				if (influence > FUZZY_EPSILON)
 					cleanedVertex.setJointInfluence(k, influence);
 			}
@@ -111,6 +110,12 @@ bool CleanDuplicates::apply(Model& model) const
 		if (addedPolygonHashes.insert(hash))
 			cleaned.addPolygon(cleanedPolygon);
 	}
+
+	for (const auto& joint : model.getJoints())
+		cleaned.addJoint(joint);
+
+	for (const auto& animation : model.getAnimations())
+		cleaned.addAnimation(animation);
 
 	model = cleaned;
 	return true;
