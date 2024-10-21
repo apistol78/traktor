@@ -152,7 +152,7 @@ void CullingComponent::build(
 		renderBlock->workSize[0] = (int32_t)m_instances.size();
 
 		renderContext->compute(renderBlock);
-		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Indirect, nullptr, 0);
 	}
 
 	// Batch draw instances; assumes m_instances are sorted by "ordinal" so we can scan for run length.

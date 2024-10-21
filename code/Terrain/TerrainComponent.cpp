@@ -470,7 +470,7 @@ void TerrainComponent::build(
 		renderBlock->workSize[0] = (int32_t)m_view[viewIndex].visiblePatches.size();
 
 		renderContext->compute(renderBlock);
-		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Indirect, nullptr, 0);
 	}
 
 	// Render all patches using indirect draw.

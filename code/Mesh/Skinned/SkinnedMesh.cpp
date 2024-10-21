@@ -58,6 +58,8 @@ void SkinnedMesh::buildSkin(
 	renderBlock->programParams = programParams;
 	renderBlock->workSize[0] = vertexCount;
 	renderContext->compute(renderBlock);
+
+	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
 }
 
 void SkinnedMesh::build(
@@ -137,7 +139,22 @@ Ref< render::Buffer > SkinnedMesh::createSkinBuffer(render::IRenderSystem* rende
 
 Ref< render::Buffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount)
 {
-	return renderSystem->createBuffer(render::BuStructured, std::max< uint32_t >(jointCount, 1) * sizeof(JointData), true);
+	jointCount = std::max< uint32_t >(jointCount, 1);
+
+	Ref< render::Buffer > jointBuffer = renderSystem->createBuffer(render::BuStructured, jointCount * sizeof(JointData), true);
+	if (!jointBuffer)
+		return nullptr;
+
+	JointData* jointData = (JointData*)jointBuffer->lock();
+	for (uint32_t i = 0; i < jointCount; ++i)
+	{
+		Vector4::zero().storeAligned(jointData->translation);
+		Quaternion::identity().e.storeAligned(jointData->rotation);
+		jointData++;
+	}
+	jointBuffer->unlock();
+
+	return jointBuffer;
 }
 
 }

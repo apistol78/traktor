@@ -176,16 +176,19 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 		if (isVisible)
 		{
 			// Interpolate between updates to get current build skin transforms.
-			mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)m_jointBuffer->lock();
-			for (uint32_t i = 0; i < poseTransformsCurrentUpdate.size(); ++i)
+			if (poseTransformsCurrentUpdate.size() > 0)
 			{
-				const Transform poseTransform = lerp(poseTransformsLastUpdate[i], poseTransformsCurrentUpdate[i], interval);
-				const Transform skinTransform = poseTransform * m_jointInverseTransforms[i];
-				skinTransform.translation().storeAligned(jointData->translation);
-				skinTransform.rotation().e.storeAligned(jointData->rotation);
-				jointData++;
+				mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)m_jointBuffer->lock();
+				for (uint32_t i = 0; i < poseTransformsCurrentUpdate.size(); ++i)
+				{
+					const Transform poseTransform = lerp(poseTransformsLastUpdate[i], poseTransformsCurrentUpdate[i], interval);
+					const Transform skinTransform = poseTransform * m_jointInverseTransforms[i];
+					skinTransform.translation().storeAligned(jointData->translation);
+					skinTransform.rotation().e.storeAligned(jointData->rotation);
+					jointData++;
+				}
+				m_jointBuffer->unlock();
 			}
-			m_jointBuffer->unlock();
 
 			// Update skin.
 			std::swap(m_skinBuffer[0], m_skinBuffer[1]);
