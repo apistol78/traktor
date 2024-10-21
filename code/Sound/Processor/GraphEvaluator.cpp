@@ -162,12 +162,13 @@ AudioBlock* GraphEvaluator::copyBlock(const AudioBlock& sourceBlock) const
 	{
 		if (sourceBlock.samples[i])
 		{
-			block.samples[i] = (float*)Alloc::acquireAlign(sourceBlock.samplesCount * sizeof(float), 16, T_FILE_LINE);
+			block.samples[i] = (float*)Alloc::acquireAlign(alignUp(sourceBlock.samplesCount, 4) * sizeof(float), 16, T_FILE_LINE);
 
 			const float* sp = sourceBlock.samples[i];
 			float* dp = block.samples[i];
 
-			for (uint32_t j = 0; j < sourceBlock.samplesCount; j += 4 * 4)
+			int32_t j = 0;
+			for (; j < (int32_t)sourceBlock.samplesCount - 16; j += 4 * 4)
 			{
 				const Vector4 s0 = Vector4::loadAligned(sp); sp += 4;
 				const Vector4 s1 = Vector4::loadAligned(sp); sp += 4;
@@ -178,6 +179,11 @@ AudioBlock* GraphEvaluator::copyBlock(const AudioBlock& sourceBlock) const
 				s1.storeAligned(dp); dp += 4;
 				s2.storeAligned(dp); dp += 4;
 				s3.storeAligned(dp); dp += 4;
+			}
+			for (; j < (int32_t)sourceBlock.samplesCount; j += 4)
+			{
+				const Vector4 s0 = Vector4::loadAligned(sp); sp += 4;
+				s0.storeAligned(dp); dp += 4;
 			}
 		}
 		else
