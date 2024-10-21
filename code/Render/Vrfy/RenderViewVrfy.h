@@ -41,6 +41,8 @@ class RenderViewVrfy : public IRenderView
 public:
 	explicit RenderViewVrfy(const RenderViewDesc& desc, IRenderSystem* renderSystem, IRenderView* renderView);
 
+	virtual ~RenderViewVrfy();
+
 	virtual bool nextEvent(RenderEvent& outEvent) override final;
 
 	virtual void close() override final;
@@ -122,6 +124,7 @@ private:
 	RenderViewDesc m_desc;
 	Ref< IRenderSystem > m_renderSystem;
 	Ref< IRenderView > m_renderView;
+	bool m_closed = false;
 	bool m_insideFrame = false;
 	bool m_insidePass = false;
 	Thread* m_threadFrame = nullptr;

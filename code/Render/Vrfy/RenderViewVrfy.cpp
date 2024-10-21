@@ -33,6 +33,11 @@ RenderViewVrfy::RenderViewVrfy(const RenderViewDesc& desc, IRenderSystem* render
 {
 }
 
+RenderViewVrfy::~RenderViewVrfy()
+{
+	T_CAPTURE_ASSERT(m_closed, L"Render view not properly closed.");
+}
+
 bool RenderViewVrfy::nextEvent(RenderEvent& outEvent)
 {
 	T_CAPTURE_TRACE(L"nextEvent");
@@ -43,6 +48,7 @@ void RenderViewVrfy::close()
 {
 	T_CAPTURE_TRACE(L"close");
 	m_renderView->close();
+	m_closed = true;
 }
 
 bool RenderViewVrfy::reset(const RenderViewDefaultDesc& desc)
