@@ -159,6 +159,7 @@ private:
 	Ref< AccGradientCache > m_gradientCache;
 	Ref< AccTextureCache > m_textureCache;
 	Ref< AccGlyph > m_glyph;
+	Ref< render::IRenderTargetSet > m_glyphTargetSet;
 	Ref< AccQuad > m_quad;
 	SmallMap< int32_t, ShapeCache > m_shapeCache;
 	SmallMap< int32_t, GlyphCache > m_glyphCache;

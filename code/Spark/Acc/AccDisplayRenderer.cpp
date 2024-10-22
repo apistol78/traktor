@@ -155,6 +155,21 @@ bool AccDisplayRenderer::create(
 		return false;
 	}
 
+	// Create glyph cache target.
+	const render::RenderTargetSetCreateDesc rtscd =
+	{
+		.count = 1,
+		.width = c_cacheGlyphDimX,
+		.height = c_cacheGlyphDimY,
+		.targets =
+		{
+			{
+				.format = render::TfR8
+			}
+		}
+	};
+	m_glyphTargetSet = renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
+
 	m_quad = new AccQuad();
 	if (!m_quad->create(resourceManager, renderSystem))
 	{
@@ -170,6 +185,7 @@ void AccDisplayRenderer::destroy()
 	m_renderSystem = nullptr;
 
 	safeDestroy(m_glyph);
+	safeDestroy(m_glyphTargetSet);
 	safeDestroy(m_quad);
 	safeDestroy(m_gradientCache);
 	safeDestroy(m_textureCache);
@@ -191,37 +207,28 @@ void AccDisplayRenderer::destroy()
 void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 {
 	m_renderGraph = renderGraph;
-
-	render::RenderGraphTargetSetDesc rgtsd;
-	rgtsd.count = 1;
-	rgtsd.width = c_cacheGlyphDimX;
-	rgtsd.height = c_cacheGlyphDimY;
-	rgtsd.targets[0].colorFormat = render::TfR8;
-
-	m_glyphsTargetSetId = m_renderGraph->addPersistentTargetSet(
-		L"Spark glyphs",
-		c_glyphsTargetSetId,
-		false,
-		rgtsd
-	);
-
+	m_glyphsTargetSetId = m_renderGraph->addExplicitTargetSet(L"Spark glyphs", m_glyphTargetSet);
 	m_renderPassOutput = new render::RenderPass(L"Spark");
 	m_renderPassOutput->addInput(m_glyphsTargetSetId);
 
 	if (m_clearBackground)
 	{
-		render::Clear cl;
-		cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
-		cl.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 0.0);
-		cl.depth = 1.0f;
-		cl.stencil = 0;
+		const render::Clear cl =
+		{
+			.mask = render::CfColor | render::CfDepth | render::CfStencil,
+			.colors = { Color4f(1.0f, 1.0f, 1.0f, 0.0) },
+			.depth = 1.0f,
+			.stencil = 0
+		};
 		m_renderPassOutput->setOutput(0, cl, render::TfNone, render::TfColor | render::TfDepth);
 	}
 	else
 	{
-		render::Clear cl;
-		cl.mask = render::CfStencil;
-		cl.stencil = 0;
+		const render::Clear cl =
+		{
+			.mask = render::CfStencil,
+			.stencil = 0
+		};
 		m_renderPassOutput->setOutput(0, cl, render::TfColor | render::TfDepth, render::TfColor | render::TfDepth);
 	}
 
@@ -230,9 +237,11 @@ void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 		m_renderPassGlyph->setOutput(m_glyphsTargetSetId, render::TfColor, render::TfColor);
 	else
 	{
-		render::Clear cl;
-		cl.mask = render::CfColor;
-		cl.colors[0] = Color4f(0.5f, 0.5f, 0.5f, 1.0);
+		const render::Clear cl =
+		{
+			.mask = render::CfColor,
+			.colors = { Color4f(0.5f, 0.5f, 0.5f, 1.0) }
+		};
 		m_renderPassGlyph->setOutput(m_glyphsTargetSetId, cl, render::TfNone, render::TfColor);
 	}
 
