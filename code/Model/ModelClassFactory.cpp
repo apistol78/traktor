@@ -365,11 +365,11 @@ void ModelClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classCalculateConvexHull);
 
 	auto classCalculateNormals = new AutoRuntimeClass< CalculateNormals >();
-	classCalculateNormals->addConstructor();
+	classCalculateNormals->addConstructor< bool >();
 	registrar->registerClass(classCalculateNormals);
 
 	auto classCalculateTangents = new AutoRuntimeClass< CalculateTangents >();
-	classCalculateTangents->addConstructor();
+	classCalculateTangents->addConstructor< bool >();
 	registrar->registerClass(classCalculateTangents);
 
 	auto classCleanDegenerate = new AutoRuntimeClass< CleanDegenerate >();

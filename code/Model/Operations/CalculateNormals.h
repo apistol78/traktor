@@ -29,7 +29,12 @@ class T_DLLCLASS CalculateNormals : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
+	explicit CalculateNormals(bool replaceExisting);
+
 	virtual bool apply(Model& model) const override final;
+
+private:
+	bool m_replaceExisting;
 };
 
 }

@@ -681,13 +681,13 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			else if (command == L"ModelTool.CalculateNormals")
 			{
 				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Calculate Normals", 0);
-				itemOperation->setData(L"OPERATION", new CalculateNormals());
+				itemOperation->setData(L"OPERATION", new CalculateNormals(true));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.CalculateTangents")
 			{
 				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Calculate Tangents", 0);
-				itemOperation->setData(L"OPERATION", new CalculateTangents());
+				itemOperation->setData(L"OPERATION", new CalculateTangents(true));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.CleanDegenerate")

@@ -17,14 +17,21 @@ namespace traktor::model
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CalculateTangents", CalculateTangents, IModelOperation)
 
+CalculateTangents::CalculateTangents(bool replaceExisting)
+:	m_replaceExisting(replaceExisting)
+{
+}
+
 bool CalculateTangents::apply(Model& model) const
 {
 	struct UserData
 	{
 		Model* model;
+		bool replaceExisting;
 	} ud;
 
 	ud.model = &model;
+	ud.replaceExisting = m_replaceExisting;
 
 	SMikkTSpaceInterface itf = { 0 };
 	itf.m_getNumFaces = [](const SMikkTSpaceContext * pContext) -> int {
@@ -88,8 +95,10 @@ bool CalculateTangents::apply(Model& model) const
 		const Vector4 binormal(fn[0], fn[1], fn[2], 0.0f);
 
 		Vertex vertex = ud->model->getVertex(polygon.getVertex(iVert));
-		vertex.setTangent(ud->model->addUniqueNormal(tangent));
-		vertex.setBinormal(ud->model->addUniqueNormal(binormal));
+		if (ud->replaceExisting || vertex.getTangent() == c_InvalidIndex)
+			vertex.setTangent(ud->model->addUniqueNormal(tangent));
+		if (ud->replaceExisting || vertex.getBinormal() == c_InvalidIndex)
+			vertex.setBinormal(ud->model->addUniqueNormal(binormal));
 		ud->model->setVertex(polygon.getVertex(iVert), vertex);
 	};
 

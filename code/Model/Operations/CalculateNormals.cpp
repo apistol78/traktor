@@ -53,6 +53,11 @@ bool findBaseIndex(const Model& model, const Polygon& polygon, uint32_t& outBase
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CalculateNormals", CalculateNormals, IModelOperation)
 
+CalculateNormals::CalculateNormals(bool replaceExisting)
+:	m_replaceExisting(replaceExisting)
+{
+}
+
 bool CalculateNormals::apply(Model& model) const
 {
 	const AlignedVector< Polygon >& polygons = model.getPolygons();
@@ -117,7 +122,8 @@ bool CalculateNormals::apply(Model& model) const
 			}
 		}
 
-		polygon.setNormal(model.addUniqueNormal(polygonNormals[i]));
+		if (m_replaceExisting || polygon.getNormal() == c_InvalidIndex)
+			polygon.setNormal(model.addUniqueNormal(polygonNormals[i]));
 		model.setPolygon(i, polygon);
 	}
 
@@ -133,7 +139,8 @@ bool CalculateNormals::apply(Model& model) const
 	{
 		Vertex vertex = model.getVertex(i);
 		const Vector4& n = positionNormals[vertex.getPosition()];
-		vertex.setNormal(model.addUniqueNormal(n));
+		if (m_replaceExisting || vertex.getNormal() == c_InvalidIndex)
+			vertex.setNormal(model.addUniqueNormal(n));
 		model.setVertex(i, vertex);
 	}
 

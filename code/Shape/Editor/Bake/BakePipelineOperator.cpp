@@ -691,7 +691,7 @@ bool BakePipelineOperator::build(
 							// Prepare model for baking.
 							model->clear(model::Model::CfColors | model::Model::CfJoints);
 							model::Triangulate().apply(*model);
-							model::CalculateNormals().apply(*model);
+							model::CalculateNormals(false).apply(*model);
 
 							if (configuration->getEnableLightmaps())
 							{

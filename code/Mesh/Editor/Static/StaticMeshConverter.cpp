@@ -35,7 +35,6 @@ Ref< MeshResource > StaticMeshConverter::createResource() const
 
 bool StaticMeshConverter::getOperations(const MeshAsset* meshAsset, bool editor, RefArray< const model::IModelOperation >& outOperations) const
 {
-	outOperations.reserve(5);
 	outOperations.push_back(new model::Triangulate());
 	if (!editor)
 		outOperations.push_back(new model::SortCacheCoherency());

@@ -303,8 +303,12 @@ bool MeshPipeline::buildOutput(
 
 	// Recalculate normals regardless if already exist in model.
 	if (asset->getRenormalize())
-		operations.push_back(new model::CalculateNormals());
-	operations.push_back(new model::CalculateTangents());
+	{
+		operations.push_back(new model::CalculateNormals(true));
+		operations.push_back(new model::CalculateTangents(true));
+	}
+	else
+		operations.push_back(new model::CalculateTangents(false));
 
 	// We allow models to be passed as build parameters in case models
 	// are procedurally generated.

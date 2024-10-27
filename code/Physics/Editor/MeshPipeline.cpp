@@ -150,7 +150,7 @@ bool MeshPipeline::buildOutput(
 	// as we don't want smooth groups or anything else mess with the normals.
 	if (abs(meshAsset->m_margin) > FUZZY_EPSILON)
 	{
-		model::CalculateNormals().apply(*model);
+		model::CalculateNormals(false).apply(*model);
 		model::ScaleAlongNormal(-meshAsset->m_margin).apply(*model);
 		model->clear(model::Model::CfNormals);
 		model::CleanDuplicates(0.01f).apply(*model);

@@ -29,7 +29,12 @@ class T_DLLCLASS CalculateTangents : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
+	explicit CalculateTangents(bool replaceExisting);
+
 	virtual bool apply(Model& model) const override final;
+
+private:
+	bool m_replaceExisting;
 };
 
 }
