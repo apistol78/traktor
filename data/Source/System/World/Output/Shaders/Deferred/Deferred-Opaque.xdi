@@ -307,8 +307,8 @@ World_DeferredGBufferWrite
 			<id>{3E2C5AB4-9A59-DC4C-B1DB-6CB3FC9BE5FD}</id>
 			<comment/>
 			<position>
-				<first>894</first>
-				<second>-365</second>
+				<first>906</first>
+				<second>-442</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
@@ -417,6 +417,18 @@ World_DeferredGBufferWrite
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>1</defaultValue>
+		</item>
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{2C511BE9-CD1A-47E7-92B2-1BE24EA174AE}</id>
+			<comment>
+			<![CDATA[
+Connect this to have SH sampled per vertex
+			]]>
+			</comment>
+			<position>
+				<first>803</first>
+				<second>-486</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -632,16 +644,6 @@ World_DeferredGBufferWrite
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[21]"/>
-				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[9]"/>
 				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
 			</source>
@@ -718,6 +720,16 @@ World_DeferredGBufferWrite
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{870F030C-C903-46FF-A6D1-1F1A3BBAD32B}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
 			</destination>
 		</item>
 	</edges>
