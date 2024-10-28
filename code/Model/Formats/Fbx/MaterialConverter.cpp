@@ -111,9 +111,6 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 
 		const std::wstring name = mbstows(material->name.data);
 
-		if (!material->features.pbr.enabled)
-			log::warning << L"FBX model importer; material \"" << name << L"\" isn't PBR enabled." << Endl;
-
 		// Check if material has already been added.
 		const auto& materials = outModel.getMaterials();
 		auto it = std::find_if(materials.begin(), materials.end(), [&](const Material& m) {
