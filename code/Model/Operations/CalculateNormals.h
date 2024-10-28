@@ -31,6 +31,7 @@ class T_DLLCLASS CalculateNormals : public IModelOperation
 public:
 	explicit CalculateNormals(bool replaceExisting);
 
+protected:
 	virtual bool apply(Model& model) const override final;
 
 private:

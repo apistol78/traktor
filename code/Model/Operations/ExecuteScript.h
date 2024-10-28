@@ -39,6 +39,7 @@ class T_DLLCLASS ExecuteScript : public IModelOperation
 public:
     explicit ExecuteScript(const IRuntimeClass* scriptClass);
 
+protected:
 	virtual bool apply(Model& model) const override final;
 
 private:

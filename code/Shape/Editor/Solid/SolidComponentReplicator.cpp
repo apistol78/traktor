@@ -120,7 +120,7 @@ Ref< model::Model > SolidComponentReplicator::createModel(
 		//);
 
 		current = *model;
-		model::Transform(firstEntityData->getTransform().toMatrix44()).apply(current);
+		current.apply(model::Transform(firstEntityData->getTransform().toMatrix44()));
 
 		for (++it; it != primitiveEntityDatas.end(); ++it)
 		{
@@ -143,48 +143,48 @@ Ref< model::Model > SolidComponentReplicator::createModel(
 			{
 			case BooleanOperation::Union:
 				{
-					model::Boolean(
+					result.apply(model::Boolean(
 						current,
 						Transform::identity(),
 						*other,
 						entityData->getTransform(),
 						model::Boolean::BoUnion
-					).apply(result);
+					));
 				}
 				break;
 
 			case BooleanOperation::Intersection:
 				{
-					model::Boolean(
+					result.apply(model::Boolean(
 						current,
 						Transform::identity(),
 						*other,
 						entityData->getTransform(),
 						model::Boolean::BoIntersection
-					).apply(result);
+					));
 				}
 				break;
 
 			case BooleanOperation::Difference:
 				{
-					model::Boolean(
+					result.apply(model::Boolean(
 						current,
 						Transform::identity(),
 						*other,
 						entityData->getTransform(),
 						model::Boolean::BoDifference
-					).apply(result);
+					));
 				}
 				break;
 			}
 
 			current = std::move(result);
-			model::CleanDegenerate().apply(current);
-			model::MergeCoplanarAdjacents().apply(current);
+			current.apply(model::CleanDegenerate());
+			current.apply(model::MergeCoplanarAdjacents());
 		}
 	}
 
-	model::Transform(entityData->getTransform().inverse().toMatrix44()).apply(current);
+	current.apply(model::Transform(entityData->getTransform().inverse().toMatrix44()));
 
 	return new model::Model(current);
 }

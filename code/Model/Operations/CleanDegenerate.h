@@ -28,7 +28,9 @@ class T_DLLCLASS CleanDegenerate : public IModelOperation
 {
 	T_RTTI_CLASS;
 
-public:
+protected:
+	virtual bool required(const IModelOperation* lastOperation) const override final;
+
 	virtual bool apply(Model& model) const override final;
 };
 

@@ -317,7 +317,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 		if (model)
 		{
 			if (std::abs(scale - 1.0f) > FUZZY_EPSILON)
-				Transform(traktor::scale(scale, scale, scale)).apply(*model);
+				model->apply(Transform(traktor::scale(scale, scale, scale)));
 
 			Ref< ui::TreeViewItem > item = m_modelTree->createItem(0, fileName, 0);
 			item->setData(L"MODEL", model);
@@ -460,7 +460,7 @@ bool ModelToolDialog::saveModel(Model* model)
 			vertex.setTexCoord(0, tc);
 		}
 		clone.setVertices(vertices);
-		CleanDuplicates(0.01f).apply(clone);
+		clone.apply(CleanDuplicates(0.01f));
 	}
 
 	return ModelFormat::writeAny(fileName, &clone);
@@ -487,7 +487,7 @@ void ModelToolDialog::updateModel()
 	if (m_model)
 	{
 		m_modelTris = new Model(*m_model);
-		Triangulate().apply(*m_modelTris);
+		m_modelTris->apply(Triangulate());
 
 		Aabb3 boundingBox = m_model->getBoundingBox();
 		Vector4 extent = boundingBox.getExtent();
@@ -624,7 +624,7 @@ void ModelToolDialog::updateOperations(ui::TreeViewItem* itemModel)
 		model = DeepClone(model).create< Model >();
 		T_ASSERT(model != nullptr);
 
-		operation->apply(*model);
+		model->apply(*operation);
 
 		child->setData(L"MODEL", model);
 	}

@@ -362,7 +362,7 @@ bool OcclusionTexturePipeline::buildOutput(
 
 			log::info << L"Generating trace tree..." << Endl;
 
-			model::Triangulate().apply(*model);
+			model->apply(model::Triangulate());
 
 			const AlignedVector< model::Polygon >& polygons = model->getPolygons();
 			const AlignedVector< model::Vertex >& vertices = model->getVertices();

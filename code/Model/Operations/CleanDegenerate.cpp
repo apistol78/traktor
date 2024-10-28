@@ -15,6 +15,11 @@ namespace traktor::model
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CleanDegenerate", CleanDegenerate, IModelOperation)
 
+bool CleanDegenerate::required(const IModelOperation* lastOperation) const
+{
+	return &type_of(lastOperation) != &type_of(this);
+}
+
 bool CleanDegenerate::apply(Model& model) const
 {
 	auto& polygons = model.getPolygons();

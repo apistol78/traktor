@@ -32,6 +32,7 @@ class T_DLLCLASS MergeModel : public IModelOperation
 public:
 	explicit MergeModel(const Model& sourceModel, const Transform& sourceTransform, float positionDistance);
 
+protected:
 	virtual bool apply(Model& model) const override final;
 
 private:

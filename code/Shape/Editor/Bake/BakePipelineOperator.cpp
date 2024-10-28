@@ -690,8 +690,8 @@ bool BakePipelineOperator::build(
 
 							// Prepare model for baking.
 							model->clear(model::Model::CfColors | model::Model::CfJoints);
-							model::Triangulate().apply(*model);
-							model::CalculateNormals(false).apply(*model);
+							model->apply(model::Triangulate());
+							model->apply(model::CalculateNormals(false));
 
 							if (configuration->getEnableLightmaps())
 							{
@@ -702,7 +702,7 @@ bool BakePipelineOperator::build(
 								{
 									// No lightmap UV channel, need to add and unwrap automatically.
 									channel = model->addUniqueTexCoordChannel(L"Lightmap");
-									model::UnwrapUV(channel, /*lightmapSize*/1024).apply(*model);
+									model->apply(model::UnwrapUV(channel, /*lightmapSize*/1024));
 									generated = true;
 								}
 
@@ -742,7 +742,7 @@ bool BakePipelineOperator::build(
 
 								// Re-run UV unwrapping with proper lightmap size.
 								if (generated)
-									model::UnwrapUV(channel, lightmapSize).apply(*model);
+									model->apply(model::UnwrapUV(channel, lightmapSize));
 
 								model->setProperty< PropertyInteger >(L"LightmapDesiredSize", lightmapDesiredSize);
 								model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);

@@ -226,7 +226,7 @@ bool ClothPipeline::buildOutput(
 	}
 
 	// Triangulate all quads.
-	model::Triangulate().apply(*model);
+	model->apply(model::Triangulate());
 
 	// Create triangle index buffer.
 	for (const auto& polygon : model->getPolygons())

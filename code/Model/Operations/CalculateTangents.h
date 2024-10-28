@@ -31,6 +31,7 @@ class T_DLLCLASS CalculateTangents : public IModelOperation
 public:
 	explicit CalculateTangents(bool replaceExisting);
 
+protected:
 	virtual bool apply(Model& model) const override final;
 
 private:

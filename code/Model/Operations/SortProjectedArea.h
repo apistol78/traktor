@@ -33,6 +33,7 @@ class T_DLLCLASS SortProjectedArea : public IModelOperation
 public:
 	explicit SortProjectedArea(bool insideOut);
 
+protected:
 	virtual bool apply(Model& model) const override final;
 
 private:

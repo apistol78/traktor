@@ -202,7 +202,7 @@ bool NavMeshPipeline::buildOutput(
 
 		if (model)
 		{
-			model::Triangulate().apply(*model);
+			model->apply(model::Triangulate());
 			navModels.push_back(NavMeshSourceModel(
 				model,
 				entityData->getTransform()
@@ -628,7 +628,7 @@ bool NavMeshPipeline::buildOutput(
 			pmeshModel->addPolygon(polygon);
 		}
 
-		model::Triangulate().apply(*pmeshModel);
+		pmeshModel->apply(model::Triangulate());
 
 		model::ModelFormat::writeAny(L"data/Temp/NavMesh_nav.obj", pmeshModel);
 	}

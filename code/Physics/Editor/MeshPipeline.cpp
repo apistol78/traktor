@@ -125,41 +125,41 @@ bool MeshPipeline::buildOutput(
 
 	// Cleanup model suitable for physics.
 	model->clear(model::Model::CfColors | model::Model::CfNormals | model::Model::CfTexCoords | model::Model::CfJoints);
-	model::CleanDuplicates(0.01f).apply(*model);
+	model->apply(model::CleanDuplicates(0.01f));
 
 	if (meshAsset->getReduce() < 1.0f)
-		model::Reduce(meshAsset->getReduce()).apply(*model);
+		model->apply(model::Reduce(meshAsset->getReduce()));
 
-	model::Transform(
+	model->apply(model::Transform(
 		scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())
-	).apply(*model);
+	));
 
 	if (meshAsset->getCenter())
 	{
 		const Aabb3 boundingBox = model->getBoundingBox();
-		model::Transform(translate(-boundingBox.getCenter())).apply(*model);
+		model->apply(model::Transform(translate(-boundingBox.getCenter())));
 	}
 
 	if (meshAsset->getGrounded())
 	{
 		const Aabb3 boundingBox = model->getBoundingBox();
-		model::Transform(translate(Vector4(0.0f, -boundingBox.mn.y(), 0.0f))).apply(*model);
+		model->apply(model::Transform(translate(Vector4(0.0f, -boundingBox.mn.y(), 0.0f))));
 	}
 
 	// Shrink model by margin; need to calculate normals from positions only
 	// as we don't want smooth groups or anything else mess with the normals.
 	if (abs(meshAsset->m_margin) > FUZZY_EPSILON)
 	{
-		model::CalculateNormals(false).apply(*model);
-		model::ScaleAlongNormal(-meshAsset->m_margin).apply(*model);
+		model->apply(model::CalculateNormals(false));
+		model->apply(model::ScaleAlongNormal(-meshAsset->m_margin));
 		model->clear(model::Model::CfNormals);
-		model::CleanDuplicates(0.01f).apply(*model);
+		model->apply(model::CleanDuplicates(0.01f));
 	}
 
 	// Triangulate and ensure no degenerate polygons.
-	model::Triangulate().apply(*model);
-	model::CleanDegenerate().apply(*model);
-	model::CleanDuplicates(0.01f).apply(*model);
+	model->apply(model::Triangulate());
+	model->apply(model::CleanDegenerate());
+	model->apply(model::CleanDuplicates(0.01f));
 
 	// Calculate bounding box; used for center of gravity estimation.
 	const Aabb3 boundingBox = model->getBoundingBox();
@@ -231,7 +231,7 @@ bool MeshPipeline::buildOutput(
 		log::info << L"Calculating convex hull..." << Endl;
 
 		model::Model hull = *model;
-		model::CalculateConvexHull().apply(hull);
+		hull.apply(model::CalculateConvexHull());
 
 		// Extract hull triangles.
 		for (const auto& triangle : hull.getPolygons())

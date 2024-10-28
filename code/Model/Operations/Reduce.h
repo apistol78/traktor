@@ -33,6 +33,7 @@ class T_DLLCLASS Reduce : public IModelOperation
 public:
 	explicit Reduce(float target);
 
+protected:
 	virtual bool apply(Model& model) const override final;
 
 private:

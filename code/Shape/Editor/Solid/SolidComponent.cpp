@@ -112,7 +112,7 @@ void SolidComponent::update(const world::UpdateParams& update)
 				return;
 
 			current = *model;
-			model::Transform(firstEntity->getTransform().toMatrix44()).apply(current);
+			current.apply(model::Transform(firstEntity->getTransform().toMatrix44()));
 
 			for (++it; it != primitiveEntities.end(); ++it)
 			{
@@ -129,48 +129,48 @@ void SolidComponent::update(const world::UpdateParams& update)
 				{
 				case BooleanOperation::Union:
 					{
-						model::Boolean(
+						result.apply(model::Boolean(
 							current,
 							Transform::identity(),
 							*other,
 							entity->getTransform(),
 							model::Boolean::BoUnion
-						).apply(result);
+						));
 					}
 					break;
 
 				case BooleanOperation::Intersection:
 					{
-						model::Boolean(
+						result.apply(model::Boolean(
 							current,
 							Transform::identity(),
 							*other,
 							entity->getTransform(),
 							model::Boolean::BoIntersection
-						).apply(result);
+						));
 					}
 					break;
 
 				case BooleanOperation::Difference:
 					{
-						model::Boolean(
+						result.apply(model::Boolean(
 							current,
 							Transform::identity(),
 							*other,
 							entity->getTransform(),
 							model::Boolean::BoDifference
-						).apply(result);
+						));
 					}
 					break;
 				}
 
 				current = std::move(result);
-				model::CleanDegenerate().apply(current);
-				model::MergeCoplanarAdjacents().apply(current);
+				current.apply(model::CleanDegenerate());
+				current.apply(model::MergeCoplanarAdjacents());
 			}
 		}
 
-		model::Triangulate().apply(current);
+		current.apply(model::Triangulate());
 
 		const uint32_t nvertices = current.getVertexCount();
 		const uint32_t nindices = current.getPolygonCount() * 3;

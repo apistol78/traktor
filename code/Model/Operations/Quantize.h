@@ -35,6 +35,7 @@ public:
 
 	explicit Quantize(const Vector4& step);
 
+protected:
 	virtual bool apply(Model& model) const override final;
 
 private:

@@ -34,7 +34,7 @@ Ref< model::Model > readModel(const mesh::MeshAsset* meshAsset, const Path& mode
 		return nullptr;
 
 	// Only triangles; this method must only return triangle meshes.
-	model::Triangulate().apply(*model);
+	model->apply(model::Triangulate());
 	return model;
 }
 		

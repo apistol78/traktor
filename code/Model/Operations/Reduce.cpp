@@ -295,7 +295,7 @@ Reduce::Reduce(float target)
 bool Reduce::apply(Model& model) const
 {
 	// Model must be triangulated.
-	Triangulate().apply(model);
+	model.apply(Triangulate());
 
 	// Prepare initial adjacency.
 	Ref< ModelAdjacency > adjacency = new ModelAdjacency(&model, ModelAdjacency::Mode::ByPosition);
@@ -414,7 +414,7 @@ bool Reduce::apply(Model& model) const
 	}
 
 	// Remove unused vertices etc which will be a left over from reducing.
-	CleanDuplicates(FUZZY_EPSILON).apply(model);
+	model.apply(CleanDuplicates(FUZZY_EPSILON));
 	return true;
 }
 

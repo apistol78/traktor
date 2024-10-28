@@ -43,6 +43,7 @@ public:
 		BooleanOperation operation
 	);
 
+protected:
 	virtual bool apply(Model& model) const override final;
 
 private:

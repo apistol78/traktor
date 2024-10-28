@@ -40,7 +40,7 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 	if (!model)
 		return false;
 
-	if (!model::Triangulate().apply(*model))
+	if (!model->apply(model::Triangulate()))
 		return false;
 
 	// Rasterize model.

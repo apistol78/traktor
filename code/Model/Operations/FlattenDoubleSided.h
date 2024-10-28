@@ -28,7 +28,7 @@ class T_DLLCLASS FlattenDoubleSided : public IModelOperation
 {
 	T_RTTI_CLASS;
 
-public:
+protected:
 	virtual bool apply(Model& model) const override final;
 };
 

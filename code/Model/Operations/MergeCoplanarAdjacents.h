@@ -30,7 +30,7 @@ class T_DLLCLASS MergeCoplanarAdjacents : public IModelOperation
 {
 	T_RTTI_CLASS;
 
-public:
+protected:
 	virtual bool apply(Model& model) const override final;
 };
 

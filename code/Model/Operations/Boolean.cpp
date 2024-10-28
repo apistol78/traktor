@@ -47,13 +47,13 @@ bool Boolean::apply(Model& model) const
 
 	if (m_modelA.getPolygonCount() == 0)
 	{
-		MergeModel(m_modelB, m_modelTransformB, 0.001f).apply(model);
+		model.apply(MergeModel(m_modelB, m_modelTransformB, 0.001f));
 		return true;
 	}
 
 	if (m_modelB.getPolygonCount() == 0)
 	{
-		MergeModel(m_modelA, m_modelTransformA, 0.001f).apply(model);
+		model.apply(MergeModel(m_modelA, m_modelTransformA, 0.001f));
 		return true;
 	}
 

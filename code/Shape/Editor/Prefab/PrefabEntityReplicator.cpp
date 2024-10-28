@@ -125,13 +125,13 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 			}
 
 			// Transform model into world space.
-			model::Transform(
+			model->apply(model::Transform(
 				translate(meshAsset->getOffset()) *
 				scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())
-			).apply(*model);
-			model::Transform(
+			));
+			model->apply(model::Transform(
 				inEntityData->getTransform().toMatrix44()
-			).apply(*model);
+			));
 
 			model->clear(model::Model::CfColors | model::Model::CfJoints);
 			models.push_back(model);
@@ -149,11 +149,11 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 	// Create merged model.
 	Ref< model::Model > outputModel = new model::Model();
 	for (auto mdl : models)
-		model::MergeModel(*mdl, Transform::identity(), 0.001f).apply(*outputModel);
+		outputModel->apply(model::MergeModel(*mdl, Transform::identity(), 0.001f));
 
-	model::Transform(
+	outputModel->apply(model::Transform(
 		entityData->getTransform().inverse().toMatrix44()
-	).apply(*outputModel);
+	));
 
 	// Bind texture references in material maps.
 	for (auto& material : outputModel->getMaterials())
@@ -236,9 +236,9 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 			}
 
 			// Transform model into world space.
-			model::Transform(
+			shapeModel->apply(model::Transform(
 				inEntityData->getTransform().toMatrix44()
-			).apply(*shapeModel);
+			));
 
 			models.push_back(shapeModel);
 
@@ -266,11 +266,11 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 	// Create merged model.
 	Ref< model::Model > outputModel = new model::Model();
 	for (auto mdl : models)
-		model::MergeModel(*mdl, Transform::identity(), 0.001f).apply(*outputModel);
+		outputModel->apply(model::MergeModel(*mdl, Transform::identity(), 0.001f));
 
-	model::Transform(
+	outputModel->apply(model::Transform(
 		entityData->getTransform().inverse().toMatrix44()
-	).apply(*outputModel);
+	));
 
 	// Create shape descriptor; used by bake pipeline to set appropriate collision materials.
  	Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();

@@ -90,7 +90,7 @@ bool SkeletonPipeline::buildOutput(
 	}
 
 	// Scale model according to scale factor in asset.
-	model::Transform(scale(skeletonAsset->getScale(), skeletonAsset->getScale(), skeletonAsset->getScale())).apply(*model);
+	model->apply(model::Transform(scale(skeletonAsset->getScale(), skeletonAsset->getScale(), skeletonAsset->getScale())));
 
 	// Convert model's skeleton to an animation skeleton.
 	Ref< Skeleton > skeleton = new Skeleton();

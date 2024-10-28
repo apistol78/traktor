@@ -238,7 +238,7 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path_, b
 
 	// Cleanup since there are probably a lot of duplicates.
 	if (!preview)
-		model::CleanDuplicates(0.01f).apply(*outputModel);
+		outputModel->apply(model::CleanDuplicates(0.01f));
 
 	outputModel->setProperty< PropertyObject >(type_name(m_meshRepeat), m_meshRepeat);
 	return outputModel;

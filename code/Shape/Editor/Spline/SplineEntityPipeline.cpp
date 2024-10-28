@@ -404,7 +404,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 			for (auto splitVisualModel : splitVisualModels)
 			{
 				// Ensure each split doesn't contain more than what is used.
-				model::CleanDuplicates(0.01f).apply(*splitVisualModel);
+				splitVisualModel->apply(model::CleanDuplicates(0.01f));
 
 				// Create split output entity data.
 				Ref< world::EntityData > visualEntityData = new world::EntityData();

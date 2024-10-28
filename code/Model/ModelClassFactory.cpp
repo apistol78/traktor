@@ -169,7 +169,6 @@ void ModelClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classAnimation);
 
 	auto classIModelOperation = new AutoRuntimeClass< IModelOperation >();
-	classIModelOperation->addMethod("apply", &IModelOperation::apply);
 	registrar->registerClass(classIModelOperation);
 
 	auto classJoint = new AutoRuntimeClass< Joint >();

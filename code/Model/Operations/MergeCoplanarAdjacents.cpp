@@ -163,7 +163,7 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 	polygons.erase(it, polygons.end());
 
 	// Cleanup model from unused vertices etc.
-	if (!CleanDuplicates(0.001f).apply(model))
+	if (!model.apply(CleanDuplicates(0.001f)))
 		return false;
 
 	return true;

@@ -126,10 +126,10 @@ bool AnimationPipeline::buildOutput(
 	}
 
 	// Scale and/or translate animation data.
-	model::Transform(
+	modelAnimation->apply(model::Transform(
 		translate(animationAsset->getTranslate()) *
 		scale(animationAsset->getScale(), animationAsset->getScale(), animationAsset->getScale())
-	).apply(*modelAnimation);
+	));
 
 	// Set joint orientations in animation rest/poses to match skeleton.
 	for (uint32_t i = 0; i < modelSkeleton->getJointCount(); ++i)

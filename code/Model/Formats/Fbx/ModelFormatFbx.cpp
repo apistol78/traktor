@@ -284,7 +284,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 		model->setMaterials(materials);
 	}
 
-	CleanDuplicates(std::numeric_limits< float >::min()).apply(*model);
+	model->apply(CleanDuplicates(std::numeric_limits< float >::min()));
 
 	return model;
 }

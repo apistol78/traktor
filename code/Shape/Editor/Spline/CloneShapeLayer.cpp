@@ -121,7 +121,7 @@ Ref< model::Model > CloneShapeLayer::createModel(const TransformPath& path, bool
 
 	// Cleanup since there are probably a lot of duplicates.
 	if (!preview)
-		model::CleanDuplicates(0.01f).apply(*outputModel);
+		outputModel->apply(model::CleanDuplicates(0.01f));
 
 	outputModel->setProperty< PropertyObject >(type_name(m_mesh), m_mesh);
 	return outputModel;

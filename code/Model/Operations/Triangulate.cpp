@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,12 +11,15 @@
 #include "Model/Model.h"
 #include "Model/Operations/Triangulate.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Triangulate", Triangulate, IModelOperation)
+
+bool Triangulate::required(const IModelOperation* lastOperation) const
+{
+	return &type_of(lastOperation) != &type_of(this);
+}
 
 bool Triangulate::apply(Model& model) const
 {
@@ -70,5 +73,4 @@ bool Triangulate::apply(Model& model) const
 	return true;
 }
 
-	}
 }

@@ -28,7 +28,7 @@ class T_DLLCLASS CalculateConvexHull : public IModelOperation
 {
 	T_RTTI_CLASS;
 
-public:
+protected:
 	virtual bool apply(Model& model) const override final;
 };
 

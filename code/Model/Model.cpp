@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,6 +14,7 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Model/ContainerHelpers.h"
+#include "Model/IModelOperation.h"
 #include "Model/Model.h"
 #include "Model/Pose.h"
 
@@ -412,6 +413,27 @@ const Vector4& Model::getBlendTargetPosition(uint32_t blendTargetIndex, uint32_t
 		return it->second[positionIndex];
 	else
 		return Vector4::origo();
+}
+
+bool Model::apply(const IModelOperation& operation)
+{
+	return operation.apply(*this);
+}
+
+bool Model::apply(const RefArray< const IModelOperation >& operations)
+{
+	const IModelOperation* lastOperation = nullptr;
+	for (auto operation : operations)
+	{
+		if (lastOperation != nullptr && !operation->required(lastOperation))
+			return true;
+
+		if (!operation->apply(*this))
+			return false;
+
+		lastOperation = operation;
+	}
+	return true;
 }
 
 void Model::serialize(ISerializer& s)

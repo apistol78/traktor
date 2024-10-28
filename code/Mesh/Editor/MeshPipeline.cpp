@@ -340,24 +340,19 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
-	for (auto operation : operations)
-	{
-		pipelineBuilder->getProfiler()->begin(type_of(operation));
-		operation->apply(*model);
-		pipelineBuilder->getProfiler()->end();
-	}		
+	model->apply(operations);
 
 	// Merge all materials into a single list (duplicates will be overridden).
 	if (asset->getCenter())
 	{
 		const Aabb3 boundingBox = model->getBoundingBox();
-		model::Transform(translate(-boundingBox.getCenter())).apply(*model);
+		model->apply(model::Transform(translate(-boundingBox.getCenter())));
 	}
 
 	if (asset->getGrounded())
 	{
 		const Aabb3 boundingBox = model->getBoundingBox();
-		model::Transform(translate(Vector4(0.0f, -boundingBox.mn.y(), 0.0f))).apply(*model);
+		model->apply(model::Transform(translate(Vector4(0.0f, -boundingBox.mn.y(), 0.0f))));
 	}
 
 	const AlignedVector< model::Material >& modelMaterials = model->getMaterials();

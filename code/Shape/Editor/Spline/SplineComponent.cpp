@@ -139,8 +139,8 @@ void SplineComponent::update(const world::UpdateParams& update)
 
 				if (outputModel)
 				{
-					model::MergeModel merge(*layerModel, Transform::identity(), 0.01f);
-					merge.apply(*outputModel);
+					const model::MergeModel merge(*layerModel, Transform::identity(), 0.01f);
+					outputModel->apply(merge);
 				}
 				else
 					outputModel = layerModel;

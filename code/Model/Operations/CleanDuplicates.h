@@ -31,6 +31,7 @@ class T_DLLCLASS CleanDuplicates : public IModelOperation
 public:
 	explicit CleanDuplicates(float positionDistance);
 
+protected:
 	virtual bool apply(Model& model) const override final;
 
 private:

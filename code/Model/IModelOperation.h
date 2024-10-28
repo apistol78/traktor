@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,7 +30,11 @@ class T_DLLCLASS IModelOperation : public Object
 {
 	T_RTTI_CLASS;
 
-public:
+protected:
+	friend class Model;
+
+	virtual bool required(const IModelOperation* lastOperation) const { return true; }
+
 	virtual bool apply(Model& model) const = 0;
 };
 

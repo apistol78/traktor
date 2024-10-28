@@ -132,8 +132,8 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 			continue;
 
 		// Merge all models into a single model.
-		model::MergeModel merge(*layerModel, entityData->getTransform().inverse(), 0.01f);
-		merge.apply(*outputModel);
+		const model::MergeModel merge(*layerModel, entityData->getTransform().inverse(), 0.01f);
+		outputModel->apply(merge);
 	}
 
 	// Setup visual mesh information.

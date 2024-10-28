@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,6 +32,8 @@
 
 namespace traktor::model
 {
+
+class IModelOperation;
 
 /*! Intermediate 3D model.
  * \ingroup Model
@@ -264,6 +266,15 @@ public:
 
 	//!@}
 
+	/*! \name Blend targets, aka morphs. */
+	//!@{
+
+	bool apply(const IModelOperation& operation);
+
+	bool apply(const RefArray< const IModelOperation >& operations);
+
+	//!@}
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -279,6 +290,7 @@ private:
 	RefArray< Animation > m_animations;
 	AlignedVector< std::wstring > m_blendTargets;
 	SmallMap< uint32_t, AlignedVector< Vector4 > > m_blendTargetPositions;
+	const TypeInfo* m_lastOperationType = nullptr;
 
 	void validate() const;
 };

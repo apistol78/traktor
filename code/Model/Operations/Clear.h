@@ -31,6 +31,7 @@ class T_DLLCLASS Clear : public IModelOperation
 public:
 	explicit Clear(uint32_t clearFlags);
 
+protected:
 	virtual bool apply(Model& model) const override final;
 
 private:
