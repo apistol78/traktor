@@ -38,7 +38,7 @@ public:
 
 	explicit UniformLinker(const fn_reader_t& declarationReader);
 
-	Ref< ShaderGraph > resolve(const ShaderGraph* shaderGraph) const;
+	bool resolve(ShaderGraph* shaderGraph) const;
 
 private:
 	fn_reader_t m_declarationReader;

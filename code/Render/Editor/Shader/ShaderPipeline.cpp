@@ -15,6 +15,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/WildCompare.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -328,17 +329,15 @@ bool ShaderPipeline::buildOutput(
 	{
 		Ref< db::Instance > declarationInstance = pipelineBuilder->getSourceDatabase()->getInstance(declarationId);
 		if (declarationInstance != nullptr)
-		{
-			return
-			{
-				declarationInstance->getName(),
-				declarationInstance->getObject< UniformDeclaration >()
-			};
-		}
+			return { declarationInstance->getName(), declarationInstance->getObject< UniformDeclaration >() };
 		else
 			return { L"", nullptr };
 	};
-	shaderGraph = UniformLinker(uniformDeclarationReader).resolve(shaderGraph);
+	Ref< ShaderGraph > mutableShaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
+	if (UniformLinker(uniformDeclarationReader).resolve(mutableShaderGraph))
+		shaderGraph = mutableShaderGraph;
+	else
+		shaderGraph = nullptr;
 	pipelineBuilder->getProfiler()->end();
 	if (!shaderGraph)
 	{

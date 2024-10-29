@@ -6,7 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/UniformDeclaration.h"
@@ -22,18 +21,15 @@ UniformLinker::UniformLinker(const fn_reader_t& declarationReader)
 {
 }
 
-Ref< ShaderGraph > UniformLinker::resolve(const ShaderGraph* shaderGraph) const
+bool UniformLinker::resolve(ShaderGraph* shaderGraph) const
 {
-	Ref< ShaderGraph > mutableShaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
-	T_FATAL_ASSERT(mutableShaderGraph != nullptr);
-
-	for (auto uniform : mutableShaderGraph->findNodesOf< Uniform >())
+	for (auto uniform : shaderGraph->findNodesOf< Uniform >())
 	{
 		if (uniform->getDeclaration().isNotNull())
 		{
 			named_decl_t nd = m_declarationReader(uniform->getDeclaration());
 			if (!nd.second)
-				return nullptr;
+				return false;
 
 			uniform->setParameterName(nd.first);
 			uniform->setParameterType(nd.second->getParameterType());
@@ -41,13 +37,13 @@ Ref< ShaderGraph > UniformLinker::resolve(const ShaderGraph* shaderGraph) const
 		}
 	}
 
-	for (auto indexedUniform : mutableShaderGraph->findNodesOf< IndexedUniform >())
+	for (auto indexedUniform : shaderGraph->findNodesOf< IndexedUniform >())
 	{
 		if (indexedUniform->getDeclaration().isNotNull())
 		{
 			named_decl_t nd = m_declarationReader(indexedUniform->getDeclaration());
 			if (!nd.second)
-				return nullptr;
+				return false;
 
 			indexedUniform->setParameterName(nd.first);
 			indexedUniform->setParameterType(nd.second->getParameterType());
@@ -56,7 +52,7 @@ Ref< ShaderGraph > UniformLinker::resolve(const ShaderGraph* shaderGraph) const
 		}
 	}
 
-	return mutableShaderGraph;
+	return true;
 }
 
 }

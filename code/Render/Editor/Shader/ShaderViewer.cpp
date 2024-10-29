@@ -404,17 +404,15 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	{
 		Ref< db::Instance > declarationInstance = m_editor->getSourceDatabase()->getInstance(declarationId);
 		if (declarationInstance != nullptr)
-		{
-			return
-			{
-				declarationInstance->getName(),
-				declarationInstance->getObject< UniformDeclaration >()
-			};
-		}
+			return { declarationInstance->getName(), declarationInstance->getObject< UniformDeclaration >() };
 		else
 			return { L"", nullptr };
 	};
-	shaderGraph = UniformLinker(uniformDeclarationReader).resolve(shaderGraph);
+	if (!UniformLinker(uniformDeclarationReader).resolve(shaderGraph))
+	{
+		log::error << L"Shader viewer failed; unable to resolve uniforms." << Endl;
+		return;
+	}
 
 	// Resolve all bundles.
 	shaderGraph = render::ShaderGraphStatic(shaderGraph, Guid()).getBundleResolved();

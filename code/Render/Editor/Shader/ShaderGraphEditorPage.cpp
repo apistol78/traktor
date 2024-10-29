@@ -1289,29 +1289,29 @@ void ShaderGraphEditorPage::updateGraph()
 	};
 	std::map< std::wstring, VariableInfo > variables;
 
-	// Fully resolve shader graph so we can inspect all uniforms etc.
-	FragmentReaderAdapter reader(m_editor->getSourceDatabase());
-	Ref< ShaderGraph > resolvedShaderGraph = FragmentLinker(reader).resolve(m_shaderGraph, true);
+	const auto fragmentReader = [&](const Guid& fragmentGuid) -> Ref< const ShaderGraph >
+	{
+		return m_editor->getSourceDatabase()->getObjectReadOnly< ShaderGraph >(fragmentGuid);
+	};
+
+	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t
+	{
+		Ref< db::Instance > declarationInstance = m_editor->getSourceDatabase()->getInstance(declarationId);
+		if (declarationInstance != nullptr)
+			return { declarationInstance->getName(), declarationInstance->getObject< UniformDeclaration >() };
+		else
+			return { L"", nullptr };
+	};
 
 	// Link uniform declarations.
+	UniformLinker(uniformDeclarationReader).resolve(m_shaderGraph);
+
+	// Fully resolve shader graph so we can inspect all uniforms etc.
+	Ref< ShaderGraph > resolvedShaderGraph = FragmentLinker(fragmentReader).resolve(m_shaderGraph, true);
+
+	// Link uniform declarations in resolved shader graph.
 	if (resolvedShaderGraph)
-	{
-		const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t
-		{
-			Ref< db::Instance > declarationInstance = m_editor->getSourceDatabase()->getInstance(declarationId);
-			if (declarationInstance != nullptr)
-			{
-				return
-				{
-					declarationInstance->getName(),
-					declarationInstance->getObject< UniformDeclaration >()
-				};
-			}
-			else
-				return { L"", nullptr };
-		};
-		resolvedShaderGraph = UniformLinker(uniformDeclarationReader).resolve(resolvedShaderGraph);
-	}
+		UniformLinker(uniformDeclarationReader).resolve(resolvedShaderGraph);
 
 	// Extract techniques.
 	m_toolTechniques->removeAll();	
@@ -1478,7 +1478,7 @@ void ShaderGraphEditorPage::updateGraph()
 	{
 		do
 		{
-			// Prepare evaluation graph, ie graph which contain less meta nodes so evaluator can process graph properly.
+			// Prepare evaluation graph, i.e. graph which contain less meta nodes so evaluator can process graph properly.
 			Ref< ShaderGraph > evaluationGraph = ShaderGraphStatic(resolvedShaderGraph, Guid()).getVariableResolved();
 			if (!evaluationGraph)
 				break;
