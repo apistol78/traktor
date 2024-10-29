@@ -2,7 +2,7 @@
 <object type="traktor.runtime.Platform" version="3">
 	<iconIndex>9</iconIndex>
 	<deployToolWin64>
-		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releaseshared/Traktor.Run.App &quot;$(TRAKTOR_HOME)/scripts/runtime/deploy/deploy-android.run&quot;</executable>
+		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/win64/releasestatic/Traktor.Run.App &quot;$(TRAKTOR_HOME)/scripts/runtime/deploy/deploy-android.run&quot;</executable>
 		<environment>
 			<item>
 				<first>DEPLOY_HOST_OS</first>
@@ -11,7 +11,7 @@
 		</environment>
 	</deployToolWin64>
 	<deployToolOsX>
-		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/releaseshared/Traktor.Run.App &quot;$(TRAKTOR_HOME)/scripts/runtime/deploy/deploy-android.run&quot;</executable>
+		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/osx/releasestatic/Traktor.Run.App &quot;$(TRAKTOR_HOME)/scripts/runtime/deploy/deploy-android.run&quot;</executable>
 		<environment>
 			<item>
 				<first>DEPLOY_HOST_OS</first>
@@ -20,7 +20,7 @@
 		</environment>
 	</deployToolOsX>
 	<deployToolLinux>
-		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/latest/linux/releaseshared/Traktor.Run.App &quot;$(TRAKTOR_HOME)/scripts/runtime/deploy/deploy-android.run&quot;</executable>
+		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/linux/releasestatic/Traktor.Run.App &quot;$(TRAKTOR_HOME)/scripts/runtime/deploy/deploy-android.run&quot;</executable>
 		<environment>
 			<item>
 				<first>DEPLOY_HOST_OS</first>

@@ -253,11 +253,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	// Launch pipeline through deploy tool; set cwd to output directory.
 	const Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
 	Ref< Environment > env = OS::getInstance().getEnvironment();
-#if defined(_WIN32)
-	env->set(L"DEPLOY_PROJECT_ROOT", projectRoot.getPathName());
-#else
-	env->set(L"DEPLOY_PROJECT_ROOT", projectRoot.getPathNameNoVolume());
-#endif
+	env->set(L"DEPLOY_PROJECT_ROOT", projectRoot.getPathNameOS());
 	env->set(L"DEPLOY_SYSTEM_ROOT", m_globalSettings->getProperty< std::wstring >(L"Runtime.SystemRoot", L"$(TRAKTOR_HOME)"));
 	env->set(L"DEPLOY_OUTPUT_PATH", m_outputPath);
 	env->set(L"DEPLOY_DEBUG", m_globalSettings->getProperty< bool >(L"Runtime.UseDebugBinaries", false) ? L"YES" : L"");

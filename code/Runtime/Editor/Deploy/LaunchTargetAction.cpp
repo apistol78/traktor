@@ -142,11 +142,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 	FileSystem::getInstance().getRelativePath(m_outputPath, projectRoot, outputRelativePath);
 
 	Ref< Environment > env = OS::getInstance().getEnvironment();
-#if defined(_WIN32)
-	env->set(L"DEPLOY_PROJECT_ROOT", projectRoot.getPathName());
-#else
-	env->set(L"DEPLOY_PROJECT_ROOT", projectRoot.getPathNameNoVolume());
-#endif
+	env->set(L"DEPLOY_PROJECT_ROOT", projectRoot.getPathNameOS());
 	env->set(L"DEPLOY_PROJECT_NAME", m_targetName);
 	env->set(L"DEPLOY_PROJECT_IDENTIFIER", m_target->getIdentifier());
 	env->set(L"DEPLOY_PROJECT_VERSION", m_target->getVersion());
