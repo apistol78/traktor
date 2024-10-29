@@ -280,7 +280,7 @@ TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, const std::wstri
 	else
 	{
 		m_queue = new JobQueue();
-		m_queue->create(4, Thread::Below);
+		m_queue->create(4, Thread::Lowest);
 	}
 }
 
@@ -610,7 +610,7 @@ bool TracerProcessor::process(const TracerTask* task)
 					jobs.push_back(job);
 
 					// Keep number of pending jobs at a reasonable level.
-					while (jobs.size() > 128)
+					while (jobs.size() > 32)
 					{
 						m_queue->waitCurrent();
 						auto it = std::remove_if(jobs.begin(), jobs.end(), [](Job* job) {
