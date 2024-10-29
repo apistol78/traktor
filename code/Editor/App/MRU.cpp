@@ -8,7 +8,7 @@
  */
 #include "Core/Io/FileSystem.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Misc/String.h"
 #include "Editor/App/MRU.h"
 
@@ -34,7 +34,7 @@ void MRU::usedFile(const Path& filePath)
 		m_filePaths.pop_back();
 }
 
-bool MRU::getUsedFiles(std::vector< Path >& outFilePaths) const
+bool MRU::getUsedFiles(AlignedVector< Path >& outFilePaths) const
 {
 	for (const auto& filePath : m_filePaths)
 		outFilePaths.push_back(Path(filePath));
@@ -48,7 +48,7 @@ Path MRU::getMostRecentlyUseFile() const
 
 void MRU::serialize(ISerializer& s)
 {
-	s >> MemberStlVector< std::wstring >(L"filePaths", m_filePaths);
+	s >> MemberAlignedVector< std::wstring >(L"filePaths", m_filePaths);
 }
 
 }

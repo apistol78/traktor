@@ -1996,7 +1996,7 @@ void EditorForm::updateMRU()
 {
 	m_menuItemRecent->removeAll();
 
-	std::vector< Path > recentFiles;
+	AlignedVector< Path > recentFiles;
 	m_mru->getUsedFiles(recentFiles);
 
 	bool first = true;
@@ -3183,7 +3183,11 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 	progress = 100;
 
 	// Change working directory to workspace file.
-	FileSystem::getInstance().setCurrentVolumeAndDirectory(workspacePath.getPathOnly());
+	if (!FileSystem::getInstance().setCurrentVolumeAndDirectory(workspacePath.getPathOnly()))
+	{
+		log::error << L"Failed to open workspace \"" << workspacePath.getOriginal() << L"\"; unable to set working directory." << Endl;
+		return;
+	}
 
 	// Create merged settings.
 	Ref< PropertyGroup > mergedSettings = m_globalSettings->merge(workspaceSettings, PropertyGroup::MmJoin);
