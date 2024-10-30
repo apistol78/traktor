@@ -1179,7 +1179,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 		batch.depthState = m_depthState.back();
 		batch.vertexBuffer = m_currentFrame->vertexBuffers.back();
 		batch.texture = texture;
-		batch.primitives = Primitives(primitiveType, uint32_t(m_vertexTail - m_vertexHead), 0);
+		batch.primitives = Primitives::setNonIndexed(primitiveType, (uint32_t)(m_vertexTail - m_vertexHead), 0);
 		batches.push_back(batch);
 	}
 	batches.back().primitives.count += primitiveCount;

@@ -142,12 +142,10 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 
 	m_indexBuffer->unlock();
 
-	m_primitives = render::Primitives(
+	m_primitives = render::Primitives::setIndexed(
 		render::PrimitiveType::Triangles,
 		0,
-		c_triangleCount,
-		0,
-		c_vertexCount - 1
+		c_triangleCount
 	);
 
 	if (m_data.m_clouds)

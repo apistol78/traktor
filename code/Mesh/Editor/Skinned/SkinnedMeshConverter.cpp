@@ -183,11 +183,8 @@ bool SkinnedMeshConverter::convert(
 	for (const auto& mt : materialTechniqueMap)
 	{
 		IndexRange range;
-
 		range.offsetFirst = uint32_t(index - indexFirst) / indexSize;
 		range.offsetLast = 0;
-		range.minIndex = std::numeric_limits< int32_t >::max();
-		range.maxIndex = -std::numeric_limits< int32_t >::max();
 
 		for (const auto& polygon : model->getPolygons())
 		{
@@ -203,9 +200,6 @@ bool SkinnedMeshConverter::convert(
 				else
 					*(uint16_t*)index = polygon.getVertex(k);
 
-				range.minIndex = std::min< int32_t >(range.minIndex, polygon.getVertex(k));
-				range.maxIndex = std::max< int32_t >(range.maxIndex, polygon.getVertex(k));
-
 				index += indexSize;
 			}
 		}
@@ -216,7 +210,7 @@ bool SkinnedMeshConverter::convert(
 
 		for (const auto& mtt : mt.second)
 		{
-			std::wstring technique = mtt.worldTechnique + L"/" + mtt.shaderTechnique;
+			const std::wstring technique = mtt.worldTechnique + L"/" + mtt.shaderTechnique;
 			range.mergeInto(techniqueRanges[technique]);
 		}
 	}
@@ -253,12 +247,10 @@ bool SkinnedMeshConverter::convert(
 			if (part.meshPart >= meshParts.size())
 			{
 				render::Mesh::Part meshPart;
-				meshPart.primitives.setIndexed(
+				meshPart.primitives = render::Primitives::setIndexed(
 					render::PrimitiveType::Triangles,
 					j->offsetFirst,
-					(j->offsetLast - j->offsetFirst) / 3,
-					j->minIndex,
-					j->maxIndex
+					(j->offsetLast - j->offsetFirst) / 3
 				);
 				meshParts.push_back(meshPart);
 			}

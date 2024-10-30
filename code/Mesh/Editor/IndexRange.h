@@ -18,8 +18,6 @@ struct IndexRange
 {
 	int32_t offsetFirst = 0;
 	int32_t offsetLast = 0;
-	int32_t minIndex = 0;
-	int32_t maxIndex = 0;
 	bool opaque = true;
 
 	void mergeInto(AlignedVector< IndexRange >& ranges) const;

@@ -100,8 +100,6 @@ void InstancingRenderBlock::render(IRenderView* renderView) const
 
 void IndexedInstancingRenderBlock::render(IRenderView* renderView) const
 {
-	const Primitives p(primitive, offset, count, minIndex, maxIndex);
-
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	if (programParams)
@@ -113,7 +111,7 @@ void IndexedInstancingRenderBlock::render(IRenderView* renderView) const
 		indexBuffer,
 		indexType,
 		program,
-		p,
+		Primitives::setIndexed(primitive, offset, count),
 		instanceCount
 	);
 
@@ -122,8 +120,6 @@ void IndexedInstancingRenderBlock::render(IRenderView* renderView) const
 
 void NonIndexedRenderBlock::render(IRenderView* renderView) const
 {
-	const Primitives p(primitive, offset, count);
-
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	if (programParams)
@@ -135,7 +131,7 @@ void NonIndexedRenderBlock::render(IRenderView* renderView) const
 		nullptr,
 		IndexType::Void,
 		program,
-		p,
+		Primitives::setNonIndexed(primitive, offset, count),
 		1
 	);
 
@@ -144,8 +140,6 @@ void NonIndexedRenderBlock::render(IRenderView* renderView) const
 
 void IndexedRenderBlock::render(IRenderView* renderView) const
 {
-	const Primitives p(primitive, offset, count, minIndex, maxIndex);
-
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	if (programParams)
@@ -157,7 +151,7 @@ void IndexedRenderBlock::render(IRenderView* renderView) const
 		indexBuffer,
 		indexType,
 		program,
-		p,
+		Primitives::setIndexed(primitive, offset, count),
 		1
 	);
 

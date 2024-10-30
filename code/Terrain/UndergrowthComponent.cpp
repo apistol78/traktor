@@ -273,8 +273,6 @@ void UndergrowthComponent::build(
 	renderBlock->primitive = render::PrimitiveType::Triangles;
 	renderBlock->offset = 0;
 	renderBlock->count = 2 * 2;
-	renderBlock->minIndex = 0;
-	renderBlock->maxIndex = 3;
 	renderBlock->instanceCount = vs.drawInstanceCount;
 
 	renderBlock->programParams->beginParameters(renderContext);

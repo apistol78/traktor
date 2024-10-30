@@ -255,8 +255,6 @@ void PointRenderer::flush(
 			renderBlock->primitive = render::PrimitiveType::Triangles;
 			renderBlock->offset = 0;
 			renderBlock->count = 2;
-			renderBlock->minIndex = 0;
-			renderBlock->maxIndex = 3;
 			renderBlock->instanceCount = batch.count;
 
 			renderBlock->programParams->beginParameters(renderContext);

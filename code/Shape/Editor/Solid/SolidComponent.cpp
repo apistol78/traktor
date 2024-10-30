@@ -238,12 +238,10 @@ void SolidComponent::update(const world::UpdateParams& update)
 					continue;
 
 				auto& batch = m_batches.push_back();
-				batch.primitives.setIndexed(
+				batch.primitives = render::Primitives::setIndexed(
 					render::PrimitiveType::Triangles,
 					offset,
-					count,
-					0,
-					nvertices - 1
+					count
 				);
 
 				offset += count * 3;

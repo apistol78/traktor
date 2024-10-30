@@ -145,8 +145,6 @@ public:
 	PrimitiveType primitive = PrimitiveType::Points;
 	uint32_t offset = 0;
 	uint32_t count = 0;
-	uint32_t minIndex = 0;
-	uint32_t maxIndex = 0;
 	uint32_t instanceCount = 0;
 
 	virtual void render(IRenderView* renderView) const override final;
@@ -180,8 +178,6 @@ public:
 	PrimitiveType primitive = PrimitiveType::Points;
 	uint32_t offset = 0;
 	uint32_t count = 0;
-	uint32_t minIndex = 0;
-	uint32_t maxIndex = 0;
 
 	virtual void render(IRenderView* renderView) const override final;
 };

@@ -223,8 +223,6 @@ void AccGlyph::render(
 		renderBlock->primitive = render::PrimitiveType::Triangles;
 		renderBlock->offset = offset * 6;
 		renderBlock->count = count * 2;
-		renderBlock->minIndex = 0;
-		renderBlock->maxIndex = c_glyphCount * 4 - 1;
 
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->programParams->beginParameters(renderContext);

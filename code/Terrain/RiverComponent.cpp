@@ -151,12 +151,10 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 
 	m_indexBuffer->unlock();
 
-	m_primitives.setIndexed(
+	m_primitives = render::Primitives::setIndexed(
 		render::PrimitiveType::Triangles,
 		0,
-		triangleCount,
-		0,
-		(uint32_t)(silouette.size() - 1)
+		triangleCount
 	);
 
 	if (!resourceManager->bind(data.getShader(), m_shader))

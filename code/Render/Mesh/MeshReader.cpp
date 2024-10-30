@@ -31,7 +31,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 
 	uint32_t version;
 	reader >> version;
-	if (version != 5)
+	if (version != 6)
 		return nullptr;
 
 	// Read vertex declaration.
@@ -124,8 +124,6 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 		reader >> parts[i].primitives.indexed;
 		reader >> parts[i].primitives.offset;
 		reader >> parts[i].primitives.count;
-		reader >> parts[i].primitives.minIndex;
-		reader >> parts[i].primitives.maxIndex;
 	}
 
 	mesh->setParts(parts);

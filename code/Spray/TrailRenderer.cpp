@@ -220,8 +220,6 @@ void TrailRenderer::flush(
 		renderBlock->primitive = render::PrimitiveType::TriangleStrip;
 		renderBlock->offset = offset;
 		renderBlock->count = batch.points * 2 - 2;
-		renderBlock->minIndex = 0;
-		renderBlock->maxIndex = c_trailCount * c_stripeLength * 2;
 
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(renderBlock->programParams);

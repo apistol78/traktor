@@ -21,7 +21,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 {
 	Writer writer(stream);
 
-	writer << (uint32_t)5;
+	writer << (uint32_t)6;
 
 	const auto& vertexElements = mesh->getVertexElements();
 	writer << (uint32_t)vertexElements.size();
@@ -146,8 +146,6 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 		writer << parts[i].primitives.indexed;
 		writer << parts[i].primitives.offset;
 		writer << parts[i].primitives.count;
-		writer << parts[i].primitives.minIndex;
-		writer << parts[i].primitives.maxIndex;
 	}
 
 	const Aabb3& boundingBox = mesh->getBoundingBox();

@@ -106,11 +106,8 @@ bool StaticMeshConverter::convert(
 	for (const auto& mt : materialTechniqueMap)
 	{
 		IndexRange range;
-
 		range.offsetFirst = uint32_t(index - indexFirst) / indexSize;
 		range.offsetLast = 0;
-		range.minIndex = std::numeric_limits< int32_t >::max();
-		range.maxIndex = -std::numeric_limits< int32_t >::max();
 
 		for (const auto& polygon : model->getPolygons())
 		{
@@ -125,9 +122,6 @@ bool StaticMeshConverter::convert(
 					*(uint32_t*)index = polygon.getVertex(k);
 				else
 					*(uint16_t*)index = polygon.getVertex(k);
-
-				range.minIndex = std::min< int32_t >(range.minIndex, polygon.getVertex(k));
-				range.maxIndex = std::max< int32_t >(range.maxIndex, polygon.getVertex(k));
 
 				index += indexSize;
 			}
@@ -197,9 +191,7 @@ bool StaticMeshConverter::convert(
 				meshPart.primitives.setIndexed(
 					render::PrimitiveType::Triangles,
 					range.offsetFirst,
-					(range.offsetLast - range.offsetFirst) / 3,
-					range.minIndex,
-					range.maxIndex
+					(range.offsetLast - range.offsetFirst) / 3
 				);
 				meshParts.push_back(meshPart);
 			}

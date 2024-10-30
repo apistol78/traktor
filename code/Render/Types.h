@@ -593,39 +593,27 @@ struct Primitives
 	bool indexed;
 	uint32_t offset;
 	uint32_t count;
-	uint32_t minIndex;
-	uint32_t maxIndex;
 
-	Primitives() = default;
-
-	Primitives(PrimitiveType type_, uint32_t offset_, uint32_t count_)
+	inline static Primitives setIndexed(PrimitiveType type_, uint32_t offset_, uint32_t count_)
 	{
-		setNonIndexed(type_, offset_, count_);
+		return
+		{
+			.type = type_,
+			.indexed = true,
+			.offset = offset_,
+			.count = count_
+		};
 	}
 
-	Primitives(PrimitiveType type_, uint32_t offset_, uint32_t count_, uint32_t minIndex_, uint32_t maxIndex_)
+	inline static Primitives setNonIndexed(PrimitiveType type_, uint32_t offset_, uint32_t count_)
 	{
-		setIndexed(type_, offset_, count_, minIndex_, maxIndex_);
-	}
-
-	inline void setNonIndexed(PrimitiveType type_, uint32_t offset_, uint32_t count_)
-	{
-		type = type_;
-		indexed = false;
-		offset = offset_;
-		count = count_;
-		minIndex = 0;
-		maxIndex = 0;
-	}
-
-	inline void setIndexed(PrimitiveType type_, uint32_t offset_, uint32_t count_, uint32_t minIndex_, uint32_t maxIndex_)
-	{
-		type = type_;
-		indexed = true;
-		offset = offset_;
-		count = count_;
-		minIndex = minIndex_;
-		maxIndex = maxIndex_;
+		return Primitives
+		{
+			.type = type_,
+			.indexed = false,
+			.offset = offset_,
+			.count = count_
+		};
 	}
 
 	inline uint32_t getVertexCount() const

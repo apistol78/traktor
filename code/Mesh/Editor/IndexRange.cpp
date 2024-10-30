@@ -28,8 +28,6 @@ void IndexRange::mergeInto(AlignedVector< IndexRange >& ranges) const
 		)
 		{
 			ranges[i + 1].offsetFirst = ranges[i].offsetFirst;
-			ranges[i + 1].minIndex = std::min(ranges[i + 1].minIndex, ranges[i].minIndex);
-			ranges[i + 1].maxIndex = std::max(ranges[i + 1].maxIndex, ranges[i].maxIndex);
 			ranges.erase(ranges.begin() + i);
 		}
 		else

@@ -170,7 +170,11 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 
 	m_indexBuffer->unlock();
 
-	m_primitives.setIndexed(render::PrimitiveType::Triangles, 0, c_gridCells * 2, 0, c_gridSize * c_gridSize - 1);
+	m_primitives = render::Primitives::setIndexed(
+		render::PrimitiveType::Triangles,
+		0,
+		c_gridCells * 2
+	);
 
 	if (!resourceManager->bind(data.m_shaderWave, m_shaderWave))
 		return false;

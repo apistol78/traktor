@@ -811,18 +811,10 @@ bool TerrainComponent::createPatches()
 		const size_t indexEndOffset = indices.size();
 		T_ASSERT((indexEndOffset - indexOffset) % 3 == 0);
 
-		const uint32_t minIndex = *std::min_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
-		const uint32_t maxIndex = *std::max_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
-
-		T_ASSERT(minIndex < patchVertexCount);
-		T_ASSERT(maxIndex < patchVertexCount);
-
-		m_primitives[lod].setIndexed(
+		m_primitives[lod] = render::Primitives::setIndexed(
 			render::PrimitiveType::Triangles,
 			(uint32_t)indexOffset,
-			(uint32_t)(indexEndOffset - indexOffset) / 3,
-			minIndex,
-			maxIndex
+			(uint32_t)(indexEndOffset - indexOffset) / 3
 		);
 	}
 

@@ -138,8 +138,6 @@ void DecalRenderer::build(
 		renderBlock->primitive = render::PrimitiveType::Triangles;
 		renderBlock->offset = 0;
 		renderBlock->count = 12;
-		renderBlock->minIndex = 0;
-		renderBlock->maxIndex = 7;
 
 		renderBlock->programParams->beginParameters(renderContext);
 

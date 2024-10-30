@@ -287,12 +287,10 @@ void SplineComponent::update(const world::UpdateParams& update)
 					if (!m_resourceManager->bind(resource::Id< render::Shader >(materialId), batch.shader))
 						batch.shader = m_defaultShader;
 
-					batch.primitives.setIndexed(
+					batch.primitives = render::Primitives::setIndexed(
 						render::PrimitiveType::Triangles,
 						offset,
-						count,
-						0,
-						nvertices - 1
+						count
 					);
 
 					offset += count * 3;

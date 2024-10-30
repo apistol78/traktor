@@ -152,8 +152,6 @@ void ClothComponent::build(
 	renderBlock->primitive = render::PrimitiveType::Triangles;
 	renderBlock->offset = 0;
 	renderBlock->count = m_triangleCount;
-	renderBlock->minIndex = 0;
-	renderBlock->maxIndex = (uint32_t)(m_nodes.size() * 2 - 1);
 
 	renderBlock->programParams->beginParameters(renderContext);
 	worldRenderPass.setProgramParameters(
