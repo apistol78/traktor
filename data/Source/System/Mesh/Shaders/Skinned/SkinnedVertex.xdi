@@ -616,7 +616,7 @@ Object
 				</item>
 				<item>
 					<name>BlendIndices</name>
-					<type>DtInteger4</type>
+					<type>DtFloat4</type>
 					<length>0</length>
 				</item>
 				<item>
@@ -668,7 +668,6 @@ Object
 			<script>
 			<![CDATA[
 $Output = gl_VertexIndex;
-
 			]]>
 			</script>
 		</item>

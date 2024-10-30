@@ -32,7 +32,7 @@
 				</item>
 				<item>
 					<name>BlendIndices</name>
-					<type>DtInteger4</type>
+					<type>DtFloat4</type>
 					<length>0</length>
 				</item>
 				<item>
@@ -73,7 +73,7 @@
 				</item>
 				<item>
 					<name>BlendIndices</name>
-					<type>DtInteger4</type>
+					<type>DtFloat4</type>
 					<length>0</length>
 				</item>
 				<item>
@@ -124,7 +124,7 @@ vec4 normal = $SkinBufferInput[index].Normal;
 vec4 tangent = $SkinBufferInput[index].Tangent;
 vec4 binormal = $SkinBufferInput[index].Binormal;
 
-ivec4 blendIndices = $SkinBufferInput[index].BlendIndices;
+ivec4 blendIndices = ivec4($SkinBufferInput[index].BlendIndices);
 vec4 blendWeights = $SkinBufferInput[index].BlendWeights;
 
 vec4 t0 = $Joints[blendIndices.x].Translation;
@@ -149,14 +149,13 @@ vec4 p =
 	p0 * blendWeights.x +
 	p1 * blendWeights.y +
 	p2 * blendWeights.z +
-	p3 * blendWeights.w;
+	p3 * blendWeights.w +
 	position * k;
 
 $SkinBufferOutput[index].Position = vec4(p.xyz, 1.0f);
 $SkinBufferOutput[index].Normal = normal;
 $SkinBufferOutput[index].Tangent = tangent;
 $SkinBufferOutput[index].Binormal = binormal;
-
 			]]>
 			</script>
 		</item>

@@ -128,8 +128,7 @@ bool SkinnedMeshConverter::convert(
 		for (uint32_t j = 0; j < jointCount; ++j)
 			totalInfluence += jointInfluences[j].second;
 
-		int32_t blendIndices[4];
-		float blendWeights[4];
+		float blendIndices[4], blendWeights[4];
 		if (std::abs(totalInfluence) > FUZZY_EPSILON)
 		{
 			// Don't normalize single bone vertices; skinned with world.
@@ -138,21 +137,21 @@ bool SkinnedMeshConverter::convert(
 
 			for (uint32_t i = 0; i < jointCount; ++i)
 			{
-				blendIndices[i] = jointInfluences[i].first;
+				blendIndices[i] = (float)jointInfluences[i].first;
 				blendWeights[i] = jointInfluences[i].second / totalInfluence;
 			}
 
 			for (uint32_t i = jointCount; i < 4; ++i)
 			{
-				blendIndices[i] = 0;
+				blendIndices[i] =
 				blendWeights[i] = 0.0f;
 			}
 		}
 		else
 		{
-			for (uint32_t i = 0; i < 4; ++i)
+			for (uint32_t i = jointCount; i < 4; ++i)
 			{
-				blendIndices[i] = 0;
+				blendIndices[i] =
 				blendWeights[i] = 0.0f;
 			}
 		}
@@ -167,15 +166,13 @@ bool SkinnedMeshConverter::convert(
 			normal.storeUnaligned(aux); aux += 4;
 			tangent.storeUnaligned(aux); aux += 4;
 			binormal.storeUnaligned(aux); aux += 4;
-			std::memcpy(aux, blendIndices, 4 * sizeof(int32_t)); aux += 4;
+			std::memcpy(aux, blendIndices, 4 * sizeof(float)); aux += 4;
 			std::memcpy(aux, blendWeights, 4 * sizeof(float)); aux += 4;
 		}
 	}
 
 	if (vertex)
 		mesh->getVertexBuffer()->unlock();
-	if (aux)
-		mesh->getAuxBuffer()->unlock();
 
 	// Create index buffer.
 	std::map< std::wstring, AlignedVector< IndexRange > > techniqueRanges;
@@ -219,7 +216,7 @@ bool SkinnedMeshConverter::convert(
 
 		for (const auto& mtt : mt.second)
 		{
-			const std::wstring technique = mtt.worldTechnique + L"/" + mtt.shaderTechnique;
+			std::wstring technique = mtt.worldTechnique + L"/" + mtt.shaderTechnique;
 			range.mergeInto(techniqueRanges[technique]);
 		}
 	}
