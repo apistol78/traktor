@@ -232,6 +232,10 @@
 							<name>LanguageStandard</name>
 							<value>stdcpp20</value>
 						</item>
+						<item>
+							<name>BasicRuntimeChecks</name>
+							<value>EnableFastChecks</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -285,6 +289,10 @@
 						<item>
 							<name>LanguageStandard</name>
 							<value>stdcpp20</value>
+						</item>
+						<item>
+							<name>BasicRuntimeChecks</name>
+							<value>EnableFastChecks</value>
 						</item>
 					</options>
 				</item>
@@ -392,6 +400,10 @@
 							<name>LanguageStandard</name>
 							<value>stdcpp20</value>
 						</item>
+						<item>
+							<name>BasicRuntimeChecks</name>
+							<value>EnableFastChecks</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -493,6 +505,10 @@
 						<item>
 							<name>LanguageStandard</name>
 							<value>stdcpp20</value>
+						</item>
+						<item>
+							<name>BasicRuntimeChecks</name>
+							<value>EnableFastChecks</value>
 						</item>
 					</options>
 				</item>
