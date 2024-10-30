@@ -3201,39 +3201,6 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 				break;
 			}
 		}
-		else if (node->getDataUsage() == DataUsage::Color)
-		{
-			out = cx.getShader().createTemporaryVariable(
-				node->findOutputPin(L"Output"),
-				type
-			);
-			auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-			switch (type)
-			{
-			case GlslType::Float:
-				comment(f, node);
-				assign(f, out) << attributeName << L".z;" << Endl;
-				break;
-
-			case GlslType::Float2:
-				comment(f, node);
-				assign(f, out) << attributeName << L".zy;" << Endl;
-				break;
-
-			case GlslType::Float3:
-				comment(f, node);
-				assign(f, out) << attributeName << L".zyx;" << Endl;
-				break;
-
-			case GlslType::Float4:
-				comment(f, node);
-				assign(f, out) << attributeName << L".zyxw;" << Endl;
-				break;
-
-			default:
-				break;
-			}
-		}
 		else
 		{
 			out = cx.getShader().createVariable(
