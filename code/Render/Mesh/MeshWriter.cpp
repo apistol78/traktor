@@ -143,9 +143,9 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 	{
 		writer << parts[i].name;
 		writer << (int32_t)parts[i].primitives.type;
-		writer << parts[i].primitives.indexed;
 		writer << parts[i].primitives.offset;
 		writer << parts[i].primitives.count;
+		writer << parts[i].primitives.indexed;
 	}
 
 	const Aabb3& boundingBox = mesh->getBoundingBox();

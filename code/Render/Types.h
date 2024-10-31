@@ -589,30 +589,30 @@ struct Clear
 /*! Draw primitives. */
 struct Primitives
 {
-	PrimitiveType type;
-	bool indexed;
-	uint32_t offset;
-	uint32_t count;
+	PrimitiveType type = PrimitiveType::Points;
+	uint32_t offset = 0;
+	uint32_t count = 0;		//!< Primitive count, i.e. number of triangles etc.
+	bool indexed = false;
 
 	inline static Primitives setIndexed(PrimitiveType type_, uint32_t offset_, uint32_t count_)
 	{
 		return
 		{
 			.type = type_,
-			.indexed = true,
 			.offset = offset_,
-			.count = count_
+			.count = count_,
+			.indexed = true
 		};
 	}
 
 	inline static Primitives setNonIndexed(PrimitiveType type_, uint32_t offset_, uint32_t count_)
 	{
-		return Primitives
+		return
 		{
 			.type = type_,
-			.indexed = false,
 			.offset = offset_,
-			.count = count_
+			.count = count_,
+			.indexed = false
 		};
 	}
 

@@ -188,7 +188,7 @@ bool StaticMeshConverter::convert(
 			if (part.meshPart >= meshParts.size())
 			{
 				render::Mesh::Part meshPart;
-				meshPart.primitives.setIndexed(
+				meshPart.primitives = render::Primitives::setIndexed(
 					render::PrimitiveType::Triangles,
 					range.offsetFirst,
 					(range.offsetLast - range.offsetFirst) / 3

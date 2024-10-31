@@ -59,7 +59,7 @@ bool ScreenRenderer::create(IRenderSystem* renderSystem)
 
 	m_vertexBuffer->unlock();
 
-	m_primitives.setNonIndexed(PrimitiveType::Triangles, 0, 2);
+	m_primitives = render::Primitives::setNonIndexed(PrimitiveType::Triangles, 0, 2);
 	return true;
 }
 

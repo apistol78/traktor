@@ -102,7 +102,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 
 	if (auxBufferSize > 0)
 	{
-		uint8_t* aux = static_cast<uint8_t*>(mesh->getAuxBuffer()->lock());
+		uint8_t* aux = static_cast< uint8_t* >(mesh->getAuxBuffer()->lock());
 		if (!aux)
 			return nullptr;
 		reader.read(aux, auxBufferSize);
@@ -115,15 +115,14 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 	AlignedVector< Mesh::Part > parts;
 	parts.resize(partCount);
 
+	int32_t primitiveType;
 	for (uint32_t i = 0; i < partCount; ++i)
 	{
-		int32_t primitiveType;
-
 		reader >> parts[i].name;
 		reader >> primitiveType; parts[i].primitives.type = PrimitiveType(primitiveType);
-		reader >> parts[i].primitives.indexed;
 		reader >> parts[i].primitives.offset;
 		reader >> parts[i].primitives.count;
+		reader >> parts[i].primitives.indexed;
 	}
 
 	mesh->setParts(parts);
