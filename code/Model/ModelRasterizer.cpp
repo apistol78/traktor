@@ -25,12 +25,12 @@ int32_t wrap(int32_t v, int32_t l)
 	return (c < 0) ? c + l : c;
 }
 
-Color4f lighting(const Vector4& p, const Vector4& n, const Color4f& materialColor)
+Color4f lighting(const Vector4& p, const Vector4& n, const Color4f& materialColor, const Scalar& specularTerm)
 {
 	const Vector4 viewDirection = p.xyz0().normalized();
 	const Vector4 halfWay = (c_sunDirection + viewDirection).normalized();
 	const Scalar diffuse = clamp(dot3(c_sunDirection, -n), 0.4_simd, 1.0_simd) + 0.1_simd;
-	const Scalar specular = power(clamp(dot3(halfWay, -n), 0.0_simd, 1.0_simd), 2.0_simd) * 0.25_simd;
+	const Scalar specular = power(clamp(dot3(halfWay, -n), 0.0_simd, 1.0_simd), 2.0_simd) * specularTerm;
 	return materialColor * diffuse + Color4f(1.0f, 1.0f, 1.0f, 0.0f) * specular;
 }
 
@@ -111,6 +111,8 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 			continue;
 
 		const auto& polygonMaterial = materials[polygon.getMaterial()];
+		const Scalar specularTerm = Scalar(polygonMaterial.getSpecularTerm());
+
 		const drawing::Image* texture = polygonMaterial.getDiffuseMap().image;
 		if (texture != nullptr)
 		{
@@ -141,7 +143,7 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 						color = color.linear();
 
 					const Vector4 n = (nm[0] * salpha + nm[1] * sbeta + nm[2] * sgamma).normalized();
-					const Color4f d = lighting(p, n, color);
+					const Color4f d = lighting(p, n, color, specularTerm);
 
 					outImage->setPixelUnsafe(x, y, d.sRGB().rgb1());
 					zbuffer[offset] = p.z();
@@ -165,7 +167,7 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 					const Color4f color = polygonMaterial.getColor().linear();
 
 					const Vector4 n = (nm[0] * salpha + nm[1] * sbeta + nm[2] * sgamma).normalized();
-					const Color4f d = lighting(p, n, color);
+					const Color4f d = lighting(p, n, color, specularTerm);
 
 					outImage->setPixelUnsafe(x, y, d.sRGB().rgb1());
 					zbuffer[offset] = p.z();
