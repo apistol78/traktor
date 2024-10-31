@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Vrfy/BufferViewVrfy.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ProgramVrfy.h"
 #include "Render/Vrfy/ResourceTracker.h"
@@ -234,8 +235,13 @@ void ProgramVrfy::setBufferViewParameter(handle_t handle, const IBufferView* buf
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 
+	const BufferViewVrfy* bv = checked_type_cast< const BufferViewVrfy* >(bufferView);
+	const IBufferView* wrappedBufferView = bv != nullptr ? bv->getWrappedBufferView() : nullptr;
+	if (!wrappedBufferView)
+		return;
+
 	if (m_program)
-		m_program->setBufferViewParameter(handle, bufferView);
+		m_program->setBufferViewParameter(handle, wrappedBufferView);
 
 	const auto it = m_shadow.find(handle);
 	if (it != m_shadow.end())

@@ -31,6 +31,7 @@ BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_
 :	Buffer(bufferSize)
 ,	m_resourceTracker(resourceTracker)
 ,	m_buffer(buffer)
+,	m_bufferView(this)
 {
 	m_resourceTracker->add(this);
 	m_shadow = (uint8_t*)Alloc::acquireAlign(bufferSize + 2 * c_guardBytes, 16, T_FILE_LINE);
@@ -97,7 +98,8 @@ void BufferVrfy::unlock()
 const IBufferView* BufferVrfy::getBufferView() const
 {
 	T_CAPTURE_ASSERT(m_buffer, L"Buffer destroyed.");
-	return m_buffer->getBufferView();
+	m_bufferView.m_wrappedBufferView = m_buffer->getBufferView();
+	return &m_bufferView;
 }
 
 void BufferVrfy::verifyGuard() const

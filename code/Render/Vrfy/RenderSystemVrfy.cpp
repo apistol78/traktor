@@ -20,6 +20,7 @@
 #include "Render/Vrfy/RenderViewVrfy.h"
 #include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/TextureVrfy.h"
+#include "Render/Vrfy/VertexLayoutVrfy.h"
 
 namespace traktor::render
 {
@@ -167,7 +168,12 @@ Ref< const IVertexLayout > RenderSystemVrfy::createVertexLayout(const AlignedVec
 {
 	T_CAPTURE_TRACE(L"createBuffer");
 	T_CAPTURE_ASSERT(!vertexElements.empty(), L"Invalid vertex layout.");
-	return m_renderSystem->createVertexLayout(vertexElements);
+	
+	Ref< const IVertexLayout > vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
+	if (!vertexLayout)
+		return nullptr;
+
+	return new VertexLayoutVrfy(vertexLayout, getVertexSize(vertexElements));
 }
 
 Ref< ITexture > RenderSystemVrfy::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)

@@ -10,6 +10,7 @@
 
 #include "Core/Ref.h"
 #include "Render/Buffer.h"
+#include "Render/Vrfy/BufferViewVrfy.h"
 
 namespace traktor::render
 {
@@ -39,6 +40,7 @@ public:
 protected:
 	Ref< ResourceTracker > m_resourceTracker;
 	Ref< Buffer > m_buffer;
+	mutable BufferViewVrfy m_bufferView;
 	bool m_locked = false;
 	uint8_t* m_device = nullptr;
 	uint8_t* m_shadow = nullptr;
