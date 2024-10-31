@@ -231,6 +231,20 @@ bool ProgramVk::create(
 		});
 	}
 
+	// Append acceleration structure bindings.
+	for (const auto& as : resource->m_accelerationStructures)
+	{
+		if (as.binding < 0)
+			continue;
+
+		dslb.push_back({
+			.binding = (uint32_t)as.binding,
+			.descriptorType = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+			.descriptorCount = 1,
+			.stageFlags = getShaderStageFlags(as.stages)
+		});
+	}
+
 	VkDescriptorSetLayoutCreateInfo dlci = {};
 	dlci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	dlci.pNext = nullptr;
@@ -305,6 +319,11 @@ bool ProgramVk::create(
 	for (const auto& resourceSBuffer : resource->m_sbuffers)
 		m_sbuffers.push_back({ resourceSBuffer.name + L" (" + getShaderStageNames(resourceSBuffer.stages) + L")", resourceSBuffer.binding });
 
+	// Create acceleration structures.
+	m_accelerationStructures.reserve(resource->m_accelerationStructures.size());
+	for (const auto& resourceAS : resource->m_accelerationStructures)
+		m_accelerationStructures.push_back({ resourceAS.name + L" (" + getShaderStageNames(resourceAS.stages) + L")", resourceAS.binding });
+
 	// Setup parameter mapping.
 	for (auto p : resource->m_parameters)
 	{
@@ -316,6 +335,7 @@ bool ProgramVk::create(
 		pm.textureIndex = p.textureIndex;
 		pm.imageIndex = p.imageIndex;
 		pm.sbufferIndex = p.sbufferIndex;
+		pm.accelerationStructureIndex = p.accelerationStructureIndex;
 	}
 
 	return true;
@@ -602,6 +622,16 @@ void ProgramVk::setBufferViewParameter(handle_t handle, const IBufferView* buffe
 	}
 }
 
+void ProgramVk::setAccelerationStructureParameter(handle_t handle, const IAccelerationStructure* accelerationStructure)
+{
+	auto i = m_parameterMap.find(handle);
+	if (i != m_parameterMap.end())
+	{
+		T_FATAL_ASSERT(i->second.accelerationStructureIndex >= 0);
+		m_accelerationStructures[i->second.accelerationStructureIndex].as = (const AccelerationStructureVk*)accelerationStructure;
+	}
+}
+
 void ProgramVk::setStencilReference(uint32_t stencilReference)
 {
 	m_stencilReference = stencilReference;
@@ -826,6 +856,28 @@ bool ProgramVk::validateDescriptorSet()
 			.dstBinding = (uint32_t)sbuffer.binding,
 			.descriptorCount = 1,
 			.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
+			.pBufferInfo = &bufferInfo
+		});
+	}
+
+	// Add acceleration structure bindings.
+	for (const auto& as : m_accelerationStructures)
+	{
+		if (as.binding < 0)
+			continue;
+
+		auto& bufferInfo = bufferInfos.push_back({
+			//.buffer = as.as->getVkBuffer(),
+			//.range = as.as->getVkBufferRange()
+		});
+
+		writes.push_back({
+			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+			.pNext = nullptr,
+			.dstSet = m_descriptorSet,
+			.dstBinding = (uint32_t)as.binding,
+			.descriptorCount = 1,
+			.descriptorType = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
 			.pBufferInfo = &bufferInfo
 		});
 	}

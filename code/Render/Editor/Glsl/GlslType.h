@@ -44,7 +44,8 @@ enum class GlslType
 	StructBuffer = 14,
 	Image2D = 15,
 	Image3D = 16,
-	ImageCube = 17
+	ImageCube = 17,
+	AccelerationStructure = 18
 };
 
 struct GlslRequirements

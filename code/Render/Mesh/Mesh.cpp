@@ -43,11 +43,6 @@ void Mesh::setAuxBuffer(Buffer* auxBuffer)
 	m_auxBuffer = auxBuffer;
 }
 
-void Mesh::setAccelerationStructure(IAccelerationStructure* accelerationStructure)
-{
-	m_accelerationStructure = accelerationStructure;
-}
-
 void Mesh::setParts(const AlignedVector< Part >& parts)
 {
 	m_parts = parts;

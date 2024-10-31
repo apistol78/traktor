@@ -47,6 +47,7 @@ public:
 		int32_t textureIndex = -1;
 		int32_t imageIndex = -1;
 		int32_t sbufferIndex = -1;
+		int32_t accelerationStructureIndex = -1;
 
 		void serialize(ISerializer& s);
 	};
@@ -87,6 +88,15 @@ public:
 		void serialize(ISerializer& s);
 	};
 
+	struct AccelerationStructureDesc
+	{
+		std::wstring name;
+		int32_t binding = -1;
+		uint8_t stages = 0;
+
+		void serialize(ISerializer& s);
+	};
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -109,6 +119,7 @@ private:
 	AlignedVector< TextureDesc > m_textures;
 	AlignedVector< ImageDesc > m_images;
 	AlignedVector< SBufferDesc > m_sbuffers;
+	AlignedVector< AccelerationStructureDesc > m_accelerationStructures;
 
 	int32_t m_localWorkGroupSize[3] = { 1, 1, 1 };
 

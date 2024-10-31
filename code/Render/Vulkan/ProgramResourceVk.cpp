@@ -88,7 +88,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 13, ProgramResourceVk, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 14, ProgramResourceVk, ProgramResource)
 
 void ProgramResourceVk::serialize(ISerializer& s)
 {
@@ -104,6 +104,7 @@ void ProgramResourceVk::serialize(ISerializer& s)
 	s >> MemberAlignedVector< TextureDesc, MemberComposite< TextureDesc > >(L"textures", m_textures);
 	s >> MemberAlignedVector< ImageDesc, MemberComposite< ImageDesc > >(L"images", m_images);
 	s >> MemberAlignedVector< SBufferDesc, MemberComposite< SBufferDesc > >(L"sbuffers", m_sbuffers);
+	s >> MemberAlignedVector< AccelerationStructureDesc, MemberComposite< AccelerationStructureDesc > >(L"accelerationStructures", m_accelerationStructures);
 	s >> MemberStaticArray< int32_t, 3 >(L"localWorkGroupSize", m_localWorkGroupSize);
 	s >> Member< uint32_t >(L"vertexShaderHash", m_vertexShaderHash);
 	s >> Member< uint32_t >(L"fragmentShaderHash", m_fragmentShaderHash);
@@ -122,6 +123,7 @@ void ProgramResourceVk::ParameterDesc::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"textureIndex", textureIndex);
 	s >> Member< int32_t >(L"imageIndex", imageIndex);
 	s >> Member< int32_t >(L"sbufferIndex", sbufferIndex);
+	s >> Member< int32_t >(L"accelerationStructureIndex", accelerationStructureIndex);
 }
 
 void ProgramResourceVk::SamplerDesc::serialize(ISerializer& s)
@@ -146,6 +148,13 @@ void ProgramResourceVk::TextureDesc::serialize(ISerializer& s)
  }
 
 void ProgramResourceVk::SBufferDesc::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"name", name);
+	s >> Member< int32_t >(L"binding", binding);
+	s >> Member< uint8_t >(L"stages", stages);
+}
+
+void ProgramResourceVk::AccelerationStructureDesc::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
 	s >> Member< int32_t >(L"binding", binding);

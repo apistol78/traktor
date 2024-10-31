@@ -337,7 +337,8 @@ T checked_type_cast(const T0* obj)
 template < typename T, typename T0 >
 T mandatory_non_null_type_cast(T0* obj)
 {
-	T_FATAL_ASSERT (obj && is_a< T >(obj));
+	T_FATAL_ASSERT(obj != nullptr);
+	T_FATAL_ASSERT(is_a< T >(obj));
 	return static_cast< T >(obj);
 }
 
@@ -353,7 +354,8 @@ T mandatory_non_null_type_cast(T0* obj)
 template < typename T, typename T0 >
 T mandatory_non_null_type_cast(const T0* obj)
 {
-	T_FATAL_ASSERT (obj && is_a< T >(obj));
+	T_FATAL_ASSERT(obj != nullptr);
+	T_FATAL_ASSERT(is_a< T >(obj));
 	return static_cast< T >(obj);
 }
 

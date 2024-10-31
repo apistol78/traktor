@@ -37,6 +37,8 @@ public:
 
 	virtual const IBufferView* getBufferView() const override final;
 
+	Buffer* getWrappedBuffer() const { return m_buffer; }
+
 protected:
 	Ref< ResourceTracker > m_resourceTracker;
 	Ref< Buffer > m_buffer;

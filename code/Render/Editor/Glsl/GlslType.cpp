@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,13 +27,14 @@ std::wstring glsl_type_name(GlslType type)
 		L"vec3",
 		L"vec4",
 		L"mat4",
-		L"tex",			// GtTexture2D
+		L"tex",			// Texture2D
 		L"tex",
-		L"tex",			// GtTextureCube
-		L"",			// GtStructBuffer
-		L"image2D",		// GtImage2D
+		L"tex",			// TextureCube
+		L"",			// StructBuffer
+		L"image2D",		// Image2D
 		L"image3D",
-		L"imageCube"	// GtImageCube
+		L"imageCube",	// ImageCube
+		L""				// AccelerationStructure
 	};
 	T_FATAL_ASSERT((int32_t)type < sizeof_array(c));
 	return c[(int32_t)type];
@@ -43,24 +44,25 @@ int32_t glsl_type_width(GlslType type)
 {
 	const int32_t w[] =
 	{
-		0,	// GtVoid
-		0,	// GtBoolean
-		1,	// GtInteger
-		2,	// GtInteger2
-		3,	// GtInteger3
-		4,	// GtInteger4
-		1,	// GtFloat
-		2,	// GtFloat2
-		3,	// GtFloat3
-		4,	// GtFloat4
-		16,	// GtFloat4x4
-		0,	// GtTexture2D
-		0,	// GtTexture3D
-		0,	// GtTextureCube
-		0,	// GtStructBuffer
-		0,	// GtImage2D
-		0,	// GtImage3D
-		0	// GtImageCube
+		0,	// Void
+		0,	// Boolean
+		1,	// Integer
+		2,	// Integer2
+		3,	// Integer3
+		4,	// Integer4
+		1,	// Float
+		2,	// Float2
+		3,	// Float3
+		4,	// Float4
+		16,	// Float4x4
+		0,	// Texture2D
+		0,	// Texture3D
+		0,	// TextureCube
+		0,	// StructBuffer
+		0,	// Image2D
+		0,	// Image3D
+		0,	// ImageCube
+		0	// AccelerationStructure
 	};
 	T_FATAL_ASSERT((int32_t)type < sizeof_array(w));
 	return w[(int32_t)type];
@@ -87,7 +89,8 @@ GlslType glsl_promote_to_float(GlslType type)
 		GlslType::Void,		// StructBuffer
 		GlslType::Void,		// Image2D
 		GlslType::Void,		// Image3D
-		GlslType::Void		// ImageCube
+		GlslType::Void,		// ImageCube
+		GlslType::Void		// AccelerationStructure
 	};
 	T_FATAL_ASSERT((int32_t)type < sizeof_array(w));
 	return w[(int32_t)type];
@@ -114,7 +117,8 @@ GlslType glsl_degrade_to_integer(GlslType type)
 		GlslType::Void,		// StructBuffer
 		GlslType::Void,		// Image2D
 		GlslType::Void,		// Image3D
-		GlslType::Void		// ImageCube
+		GlslType::Void,		// ImageCube
+		GlslType::Void		// AccelerationStructure
 	};
 	T_FATAL_ASSERT((int32_t)type < sizeof_array(w));
 	return w[(int32_t)type];	
@@ -122,8 +126,8 @@ GlslType glsl_degrade_to_integer(GlslType type)
 
 GlslType glsl_precedence(GlslType typeA, GlslType typeB)
 {
-	bool intA = (typeA >= GlslType::Boolean && typeA <= GlslType::Integer4);
-	bool intB = (typeB >= GlslType::Boolean && typeB <= GlslType::Integer4);
+	const bool intA = (typeA >= GlslType::Boolean && typeA <= GlslType::Integer4);
+	const bool intB = (typeB >= GlslType::Boolean && typeB <= GlslType::Integer4);
 
 	if (intA && !intB)
 		typeA = glsl_promote_to_float(typeA);
@@ -170,7 +174,8 @@ GlslType glsl_from_parameter_type(ParameterType type)
 		GlslType::StructBuffer,
 		GlslType::Image2D,
 		GlslType::Image3D,
-		GlslType::ImageCube
+		GlslType::ImageCube,
+		GlslType::AccelerationStructure
 	};
 	T_FATAL_ASSERT((int32_t)type < sizeof_array(c));
 	return c[(int32_t)type];
@@ -227,7 +232,7 @@ int32_t glsl_vertex_attribute_location(DataUsage usage, int32_t index)
 		5,
 		16
 	};
-	int32_t location = base[(int)usage] + index;
+	const int32_t location = base[(int)usage] + index;
 	return (location < base[(int)usage + 1]) ? location : -1;
 }
 

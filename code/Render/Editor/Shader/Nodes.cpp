@@ -3297,6 +3297,7 @@ void Uniform::serialize(ISerializer& s)
 			{ L"Image2D", ParameterType::Image2D },
 			{ L"Image3D", ParameterType::Image3D },
 			{ L"ImageCube", ParameterType::ImageCube },
+			{ L"AccelerationStructure", ParameterType::AccelerationStructure },
 			{ 0 }
 		};
 		s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys, AttributePrivate());

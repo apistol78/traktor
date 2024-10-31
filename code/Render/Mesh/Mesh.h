@@ -57,8 +57,6 @@ public:
 	void setParts(const AlignedVector< Part >& parts);
 
 	void setBoundingBox(const Aabb3& boundingBox);
-
-	void setAccelerationStructure(IAccelerationStructure* accelerationStructure);
 	
 	const AlignedVector< VertexElement >& getVertexElements() const { return m_vertexElements; }
 
@@ -72,8 +70,6 @@ public:
 
 	Buffer* getAuxBuffer() const { return m_auxBuffer; }
 
-	IAccelerationStructure* getAccelerationStructure() const { return m_accelerationStructure; }
-
 	const AlignedVector< Part >& getParts() const { return m_parts; }
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
@@ -85,7 +81,6 @@ private:
 	IndexType m_indexType;
 	Ref< Buffer > m_indexBuffer;
 	Ref< Buffer > m_auxBuffer;
-	Ref< IAccelerationStructure > m_accelerationStructure;
 	AlignedVector< Part > m_parts;
 	Aabb3 m_boundingBox;
 };

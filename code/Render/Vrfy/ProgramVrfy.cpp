@@ -252,6 +252,12 @@ void ProgramVrfy::setBufferViewParameter(handle_t handle, const IBufferView* buf
 	}
 }
 
+void ProgramVrfy::setAccelerationStructureParameter(handle_t handle, const IAccelerationStructure* accelerationStructure)
+{
+	if (m_program)
+		m_program->setAccelerationStructureParameter(handle, accelerationStructure);
+}
+
 void ProgramVrfy::setStencilReference(uint32_t stencilReference)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");

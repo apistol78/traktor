@@ -17,6 +17,7 @@
 #include "Render/VertexElement.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Script.h"
+#include "Render/Editor/Glsl/GlslAccelerationStructure.h"
 #include "Render/Editor/Glsl/GlslContext.h"
 #include "Render/Editor/Glsl/GlslEmitter.h"
 #include "Render/Editor/Glsl/GlslImage.h"
@@ -3115,6 +3116,34 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 		ub->addStage(getBindStage(cx));
 		if (!ub->add(node->getParameterName(), GlslType::Integer, 1))
 			return false;
+	}
+	else if (out->getType() == GlslType::AccelerationStructure)
+	{
+		const auto existing = cx.getLayout().getByName(node->getParameterName());
+		if (existing != nullptr)
+		{
+			if (auto existingAS = dynamic_type_cast< GlslAccelerationStructure* >(existing))
+			{
+				// Acceleration structure already exist.
+				existingAS->addStage(getBindStage(cx));
+			}
+			else
+			{
+				// Resource already exist but is not an acceleration structure.
+				return false;
+			}
+		}
+		else
+		{
+			// Acceleration structure do not exist; add new AS resource.
+			cx.getLayout().add(
+				new GlslAccelerationStructure(
+					node->getParameterName(),
+					GlslResource::Set::Default,
+					getBindStage(cx)
+				)
+			);
+		}
 	}
 
 	// Define parameter in context.

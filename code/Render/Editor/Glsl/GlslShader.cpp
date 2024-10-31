@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Render/Editor/OutputPin.h"
+#include "Render/Editor/Glsl/GlslAccelerationStructure.h"
 #include "Render/Editor/Glsl/GlslImage.h"
 #include "Render/Editor/Glsl/GlslLayout.h"
 #include "Render/Editor/Glsl/GlslSampler.h"
@@ -161,7 +162,7 @@ std::wstring GlslShader::getGeneratedShader(
 {
 	StringOutputStream ss;
 
-	ss << L"#version 460" << Endl;
+	ss << L"#version 460 core" << Endl;
 	ss << L"#extension GL_ARB_separate_shader_objects : enable" << Endl;
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
 	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
@@ -190,8 +191,8 @@ std::wstring GlslShader::getGeneratedShader(
 		ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_float16 : enable" << Endl;
 	}
 
-	if (m_shaderType == StRayGen || m_shaderType == StRayHit || m_shaderType == StRayMiss)
-		ss << L"#extension GL_EXT_ray_tracing : require" << Endl;
+	ss << L"#extension GL_EXT_ray_tracing : enable" << Endl;
+	ss << L"#extension GL_EXT_ray_query : enable" << Endl;
 
 	ss << Endl;
 
@@ -433,6 +434,20 @@ std::wstring GlslShader::getGeneratedShader(
 				ss << Endl;
 			}
 		}
+	}
+
+	if (layout.count< GlslAccelerationStructure >(stageMask) > 0)
+	{
+		ss << L"// Acceleration structures." << Endl;
+		for (auto resource : layout.getByStage(stageMask))
+		{
+			if (resource->getBinding() < 0)
+				continue;
+
+			if (const auto accelerationStructure = dynamic_type_cast<const GlslAccelerationStructure*>(resource))
+				ss << L"layout (binding = " << accelerationStructure->getBinding() << L", set = " << (int32_t)accelerationStructure->getSet() << L") uniform accelerationStructureEXT " << accelerationStructure->getName() << L";" << Endl;
+		}
+		ss << Endl;
 	}
 
 	const std::wstring inputText = getOutputStream(BtInput).str();

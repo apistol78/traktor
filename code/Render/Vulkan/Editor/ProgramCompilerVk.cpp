@@ -24,6 +24,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Render/Editor/Glsl/GlslAccelerationStructure.h"
 #include "Render/Editor/Glsl/GlslContext.h"
 #include "Render/Editor/Glsl/GlslImage.h"
 #include "Render/Editor/Glsl/GlslSampler.h"
@@ -581,6 +582,17 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			auto& pm = parameterMapping[storageBuffer->getName()];
 			pm.resourceIndex = (int32_t)programResource->m_sbuffers.size() - 1;
 		}
+		else if (const auto accelerationStructure = dynamic_type_cast< const GlslAccelerationStructure* >(resource))
+		{
+			programResource->m_accelerationStructures.push_back({
+				accelerationStructure->getName(),
+				accelerationStructure->getBinding(),
+				accelerationStructure->getStages()
+			});
+
+			auto& pm = parameterMapping[accelerationStructure->getName()];
+			pm.resourceIndex = (int32_t)programResource->m_sbuffers.size() - 1;
+		}
 	}
 
 	for (auto p : cx.getParameters())
@@ -616,6 +628,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 				pm.ubufferLength,
 				pm.resourceIndex,
 				-1,
+				-1,
 				-1
 			});
 		}
@@ -635,7 +648,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 				pm.ubufferLength,
 				-1,
 				-1,
-				pm.resourceIndex
+				pm.resourceIndex,
+				-1
 			});
 		}
 		else if (p.type >= ParameterType::Image2D && p.type <= ParameterType::ImageCube)
@@ -654,7 +668,28 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 				pm.ubufferLength,
 				-1,
 				pm.resourceIndex,
+				-1,
 				-1
+			});
+		}
+		else if (p.type == ParameterType::AccelerationStructure)
+		{
+			auto it = parameterMapping.find(p.name);
+			if (it == parameterMapping.end())
+				return nullptr;
+
+			const auto& pm = it->second;
+			T_FATAL_ASSERT(pm.resourceIndex >= 0);
+
+			programResource->m_parameters.push_back({
+				p.name,
+				pm.ubuffer,
+				pm.ubufferOffset,
+				pm.ubufferLength,
+				-1,
+				-1,
+				-1,
+				pm.resourceIndex
 			});
 		}
 	}
@@ -875,13 +910,18 @@ bool ProgramCompilerVk::generate(
 			}
 			ss << L"//   }" << Endl;
 		}
+		else if (const auto accelerationStructure = dynamic_type_cast< const GlslAccelerationStructure* >(resource))
+		{
+			ss << L"// [binding = " << accelerationStructure->getBinding() << L", set = " << (int32_t)accelerationStructure->getSet() << L"] = acceleration structure" << Endl;
+			ss << L"//   .name = \"" << accelerationStructure->getName() << L"\"" << Endl;
+		}
 	}
 
 	ss << Endl;
 	ss << L"// Parameters" << Endl;
 	for (auto p : cx.getParameters())
 	{
-		const wchar_t* c_parameterTypeNames[] = { L"scalar", L"vector", L"matrix", L"texture2d", L"texture3d", L"textureCube", L"sbuffer", L"image2d", L"image3d", L"imageCube" };
+		const wchar_t* c_parameterTypeNames[] = { L"scalar", L"vector", L"matrix", L"texture2d", L"texture3d", L"textureCube", L"sbuffer", L"image2d", L"image3d", L"imageCube", L"accelerationStructureEXT" };
 		ss << L"// " << c_parameterTypeNames[(int32_t)p.type] << L" " << p.name << L", length = " << p.length << L", frequency = " << (int32_t)p.frequency << Endl;
 	}
 #endif

@@ -37,6 +37,8 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	if ((m_renderSystem = desc.capture) == nullptr)
 		return false;
 
+	m_useRenderDoc = false;
+
 #if defined(_WIN32) || defined(__LINUX__)
 	// Try to load RenderDoc capture.
 	if (m_useRenderDoc)
@@ -309,7 +311,12 @@ Ref< IAccelerationStructure > RenderSystemVrfy::createTopLevelAccelerationStruct
 Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
 {
 	T_CAPTURE_TRACE(L"createAccelerationStructure");
-	return m_renderSystem->createAccelerationStructure(vertexBuffer, vertexLayout, indexBuffer, indexType, primitives);
+
+	const BufferVrfy* vb = mandatory_non_null_type_cast< const BufferVrfy* >(vertexBuffer);
+	const BufferVrfy* ib = mandatory_non_null_type_cast< const BufferVrfy* >(indexBuffer);
+	const VertexLayoutVrfy* vl = mandatory_non_null_type_cast< const VertexLayoutVrfy* >(vertexLayout);
+
+	return m_renderSystem->createAccelerationStructure(vb->getWrappedBuffer(), vl->getWrappedVertexLayout(), ib->getWrappedBuffer(), indexType, primitives);
 }
 
 Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programResource, const wchar_t* const tag)

@@ -18,6 +18,7 @@
 namespace traktor::render
 {
 
+class AccelerationStructureVk;
 class Buffer;
 class BufferViewVk;
 class CommandBuffer;
@@ -71,6 +72,8 @@ public:
 
 	virtual void setBufferViewParameter(handle_t handle, const IBufferView* bufferView) override final;
 
+	virtual void setAccelerationStructureParameter(handle_t handle, const IAccelerationStructure* accelerationStructure) override final;
+
 	virtual void setStencilReference(uint32_t stencilReference) override final;
 
 	const RenderState& getRenderState() const { return m_renderState; }
@@ -101,6 +104,7 @@ private:
 		int32_t textureIndex = -1;
 		int32_t imageIndex = -1;
 		int32_t sbufferIndex = -1;
+		int32_t accelerationStructureIndex = -1;
 	};
 
 	struct UniformBuffer
@@ -140,6 +144,13 @@ private:
 		const BufferViewVk* bufferView = nullptr;
 	};
 
+	struct AccelerationStructure
+	{
+		std::wstring name;
+		int32_t binding;
+		const AccelerationStructureVk* as = nullptr;
+	};
+
 	std::wstring m_tag;
 	Context* m_context = nullptr;
 	uint32_t& m_instances;
@@ -158,6 +169,7 @@ private:
 	AlignedVector< Texture > m_textures;
 	AlignedVector< Image > m_images;
 	AlignedVector< SBuffer > m_sbuffers;
+	AlignedVector< AccelerationStructure > m_accelerationStructures;
 	uint32_t m_stencilReference = 0;
 	uint32_t m_shaderHash = 0;
 	bool m_useTargetSize = false;

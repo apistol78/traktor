@@ -49,6 +49,8 @@ public:
 
 	virtual void setBufferViewParameter(handle_t handle, const IBufferView* bufferView) override final;
 
+	virtual void setAccelerationStructureParameter(handle_t handle, const IAccelerationStructure* accelerationStructure) override final;
+
 	virtual void setStencilReference(uint32_t stencilReference) override final;
 
 	void verify();
