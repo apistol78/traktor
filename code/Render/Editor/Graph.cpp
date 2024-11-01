@@ -225,12 +225,12 @@ void Graph::replace(Node* oldNode, Node* newNode)
 	{
 		const OutputPin* newSource = nullptr;
 		const InputPin* newDestination = nullptr;
-		if (edge->getSource()->getNode() == oldNode)
+		if (edge->getSource() != nullptr && edge->getSource()->getNode() == oldNode)
 		{
 			newSource = newNode->findOutputPin(edge->getSource()->getName());
 			deleteEdges.push_back(edge);
 		}
-		if (edge->getDestination()->getNode() == oldNode)
+		if (edge->getDestination() != nullptr && edge->getDestination()->getNode() == oldNode)
 		{
 			newDestination = newNode->findInputPin(edge->getDestination()->getName());
 			deleteEdges.push_back(edge);

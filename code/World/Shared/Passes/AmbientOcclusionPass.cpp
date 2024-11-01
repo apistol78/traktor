@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -124,12 +124,18 @@ render::handle_t AmbientOcclusionPass::setup(
 	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	rp->setOutput(ambientOcclusionTargetSetId, clear, render::TfNone, render::TfColor);
 
-	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
+	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
+	{
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
+		params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+		params->setMatrixParameter(s_handleView, worldRenderView.getView());
+		params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 		params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 		params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 		params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
 		params->setTextureParameter(s_handleGBufferD, gbufferTargetSet->getColorTexture(3));
+		params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.tlas);
 	};
 
 	m_ambientOcclusion->addPasses(

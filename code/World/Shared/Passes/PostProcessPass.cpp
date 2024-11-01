@@ -202,6 +202,7 @@ void PostProcessPass::setup(
 		params->setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
 		params->setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
 		params->setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));	// Texture space.
+		params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.tlas);
 	};
 
 	StaticVector< render::ImageGraph*, 5 > processes;
