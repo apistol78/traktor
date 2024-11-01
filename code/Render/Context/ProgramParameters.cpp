@@ -109,6 +109,7 @@ enum ParameterTypes
 	PmtTexture,
 	PmtImageView,
 	PmtBufferView,
+	PmtAccelerationStructure,
 	PmtStencilReference,
 	PmtAttachedParameters
 };
@@ -205,6 +206,14 @@ void ProgramParameters::setBufferViewParameter(handle_t handle, const IBufferVie
 	write< const IBufferView* >(m_parameterLast, bufferView);
 }
 
+void ProgramParameters::setAccelerationStructureParameter(handle_t handle, const IAccelerationStructure* accelerationStructure)
+{
+	T_ASSERT(m_parameterLast);
+	write< handle_t >(m_parameterLast, handle);
+	write< int8_t >(m_parameterLast, PmtAccelerationStructure);
+	write< const IAccelerationStructure* >(m_parameterLast, accelerationStructure);
+}
+
 void ProgramParameters::setStencilReference(uint32_t stencilReference)
 {
 	T_ASSERT(m_parameterLast);
@@ -283,6 +292,13 @@ void ProgramParameters::fixup(IProgram* program) const
 			{
 				auto bufferView = read< const IBufferView* >(parameter);
 				program->setBufferViewParameter(handle, bufferView);
+			}
+			break;
+
+		case PmtAccelerationStructure:
+			{
+				auto accelerationStructure = read< const IAccelerationStructure* >(parameter);
+				program->setAccelerationStructureParameter(handle, accelerationStructure);
 			}
 			break;
 

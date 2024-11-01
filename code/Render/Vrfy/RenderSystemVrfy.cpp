@@ -37,8 +37,6 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	if ((m_renderSystem = desc.capture) == nullptr)
 		return false;
 
-	m_useRenderDoc = false;
-
 #if defined(_WIN32) || defined(__LINUX__)
 	// Try to load RenderDoc capture.
 	if (m_useRenderDoc)

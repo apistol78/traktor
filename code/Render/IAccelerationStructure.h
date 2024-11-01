@@ -9,6 +9,8 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
+#include "Core/Math/Matrix44.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,6 +29,16 @@ namespace traktor::render
 class T_DLLCLASS IAccelerationStructure : public Object
 {
 	T_RTTI_CLASS;
+
+public:
+	struct Instance
+	{
+		Matrix44 transform;
+		Ref< const IAccelerationStructure > blas;
+	};
+
+	/*! Update all instances in the top level AS. */
+	virtual bool writeInstances(const AlignedVector< Instance >& instances) = 0;
 };
 
 }

@@ -21,6 +21,7 @@
 namespace traktor::render
 {
 
+class IAccelerationStructure;
 class ITexture;
 
 }
@@ -71,6 +72,8 @@ private:
 	Ref< render::ITexture > m_depthTexture;
 	AlignedVector< Gather > m_gathered;
 	AlignedVector< render::handle_t > m_visualAttachments;
+
+	Ref< render::IAccelerationStructure > m_tlas;
 };
 
 }

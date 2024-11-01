@@ -11,6 +11,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Thread/Atomic.h"
+#include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
@@ -713,6 +714,7 @@ bool ProgramVk::validateDescriptorSet()
 	StaticVector< VkDescriptorBufferInfo, 16 > bufferInfos;
 	StaticVector< VkDescriptorImageInfo, 32 + 32 > imageInfos;
 	StaticVector< VkWriteDescriptorSet, 16 + 32 + 32 > writes;
+	StaticVector< VkWriteDescriptorSetAccelerationStructureKHR, 16 > writeAS;
 
 	// Add uniform buffer bindings.
 	for (uint32_t i = 0; i < 3; ++i)
@@ -866,19 +868,21 @@ bool ProgramVk::validateDescriptorSet()
 		if (as.binding < 0)
 			continue;
 
-		auto& bufferInfo = bufferInfos.push_back({
-			//.buffer = as.as->getVkBuffer(),
-			//.range = as.as->getVkBufferRange()
+		auto& was = writeAS.push_back({
+			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR,
+			.pNext = nullptr,
+			.accelerationStructureCount = 1,
+			.pAccelerationStructures = &as.as->getVkAccelerationStructureKHR()
 		});
 
 		writes.push_back({
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-			.pNext = nullptr,
+			.pNext = &was,
 			.dstSet = m_descriptorSet,
 			.dstBinding = (uint32_t)as.binding,
 			.descriptorCount = 1,
 			.descriptorType = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
-			.pBufferInfo = &bufferInfo
+			.pBufferInfo = nullptr
 		});
 	}
 

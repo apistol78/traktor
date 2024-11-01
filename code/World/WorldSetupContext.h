@@ -11,6 +11,9 @@
 #include "Core/Object.h"
 #include "World/WorldTypes.h"
 
+//#remove
+#include "Render/IAccelerationStructure.h"
+
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
@@ -55,6 +58,9 @@ public:
 	render::RenderGraph& getRenderGraph() const { return m_renderGraph; }
 
 	AlignedVector< render::handle_t >& getVisualAttachments() const { return m_visualAttachments; }
+
+	//#remove
+	mutable render::IAccelerationStructure::Instance tlasInstance;
 
 private:
 	const World* m_world;

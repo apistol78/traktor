@@ -29,6 +29,7 @@ class Matrix44;
 namespace traktor::render
 {
 
+class IAccelerationStructure;
 class IBufferView;
 class IProgram;
 class ITexture;
@@ -67,6 +68,8 @@ public:
 	void setImageViewParameter(handle_t handle, ITexture* imageView, int mip);
 
 	void setBufferViewParameter(handle_t handle, const IBufferView* bufferView);
+
+	void setAccelerationStructureParameter(handle_t handle, const IAccelerationStructure* accelerationStructure);
 
 	void setStencilReference(uint32_t stencilReference);
 

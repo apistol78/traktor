@@ -47,7 +47,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 	instanceBuffer->create(
 		numInstances * sizeof(VkAccelerationStructureInstanceKHR),
 		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
-		false,
+		true,
 		true
 	);
 
@@ -113,7 +113,12 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 
 	// Create buffer to hold AS hierarchial data.
 	Ref< ApiBuffer > hierarchyBuffer = new ApiBuffer(context);
-	if (!hierarchyBuffer->create(topLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize, VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR, false, true))
+	if (!hierarchyBuffer->create(
+		topLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,
+		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR,
+		false,
+		true
+	))
 	{
 		safeDestroy(instanceBuffer);
 		return nullptr;
@@ -121,7 +126,12 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 
 	// Create scratch buffer used when building the hierarchy.
 	Ref< ApiBuffer > scratchBuffer = new ApiBuffer(context);
-	if (!scratchBuffer->create(topLevelAccelerationStructureBuildSizesInfo.buildScratchSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT, false, true))
+	if (!scratchBuffer->create(
+		topLevelAccelerationStructureBuildSizesInfo.buildScratchSize,
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+		false,
+		true
+	))
 	{
 		safeDestroy(instanceBuffer);
 		safeDestroy(hierarchyBuffer);
@@ -241,12 +251,22 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 
 	// Create buffer to hold AS hierarchial data.
 	Ref< ApiBuffer > hierarchyBuffer = new ApiBuffer(context);
-	if (!hierarchyBuffer->create(bottomLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize, VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR, false, true))
+	if (!hierarchyBuffer->create(
+		bottomLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,
+		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+		false,
+		true
+	))
 		return nullptr;
 
 	// Create scratch buffer used when building the hierarchy.
 	Ref< ApiBuffer > scratchBuffer = new ApiBuffer(context);
-	if (!scratchBuffer->create(bottomLevelAccelerationStructureBuildSizesInfo.buildScratchSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT, false, true))
+	if (!scratchBuffer->create(
+		bottomLevelAccelerationStructureBuildSizesInfo.buildScratchSize,
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+		false,
+		true
+	))
 	{
 		safeDestroy(hierarchyBuffer);
 		return nullptr;
@@ -308,30 +328,44 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 	return new AccelerationStructureVk(context, hierarchyBuffer, scratchBuffer, accelerationStructure);
 }
 
-void AccelerationStructureVk::updateTopLevel()
+bool AccelerationStructureVk::writeInstances(const AlignedVector< Instance >& instances)
 {
-	//void* ptr = instanceBuffer->lock();
-	//if (!ptr)
-	//	return nullptr;
+	VkAccelerationStructureInstanceKHR* ptr = (VkAccelerationStructureInstanceKHR*)m_instanceBuffer->lock();
+	if (!ptr)
+		return false;
 
-	//{
-	//	VkAccelerationStructureInstanceKHR instance =
-	//	{
-	//		//.transform.matrix =
-	//		//{
-	//		//	{1.0, 0.0, 0.0, 0.0},
-	//		//	{0.0, 1.0, 0.0, 0.0},
-	//		//	{0.0, 0.0, 1.0, 0.0}
-	//		//},
-	//		.instanceCustomIndex = 0,
-	//		.mask = 0xff,
-	//		.instanceShaderBindingTableRecordOffset = 0,
-	//		.flags = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR
-	//		//.accelerationStructureReference = bottomLevelAccelerationStructureDeviceAddress;
-	//	};
-	//}
+	for (const auto& instance : instances)
+	{
+		const VkAccelerationStructureDeviceAddressInfoKHR asai =
+		{
+			.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR,
+			.pNext = nullptr,
+			.accelerationStructure = mandatory_non_null_type_cast< const AccelerationStructureVk* >(instance.blas)->getVkAccelerationStructureKHR()
+		};
 
-	//instanceBuffer->unlock();
+		const VkDeviceAddress deviceAddress = vkGetAccelerationStructureDeviceAddressKHR(m_context->getLogicalDevice(), &asai);
+
+		const auto& M = instance.transform;
+		*ptr++ =
+		{
+			.transform =
+			{
+				.matrix =
+				{
+					{ M(0, 0), M(0, 1), M(0, 2), M(0, 3) },
+					{ M(1, 0), M(1, 1), M(1, 2), M(1, 3) },
+					{ M(2, 0), M(2, 1), M(2, 2), M(2, 3) }
+				}
+			},
+			.instanceCustomIndex = 0,
+			.mask = 0xff,
+			.instanceShaderBindingTableRecordOffset = 0,
+			.flags = VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_KHR | VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR,
+			.accelerationStructureReference = deviceAddress
+		};
+	}
+
+	m_instanceBuffer->unlock();
 
 	VkAccelerationStructureGeometryDataKHR topLevelAccelerationStructureGeometryData =
 	{
@@ -392,6 +426,8 @@ void AccelerationStructureVk::updateTopLevel()
 		&topLevelAccelerationStructureBuildRangeInfos
 	);
 	commandBuffer->submitAndWait();
+
+	return true;
 }
 
 AccelerationStructureVk::AccelerationStructureVk(Context* context, ApiBuffer* hierarchyBuffer, ApiBuffer* instanceBuffer, ApiBuffer* scratchBuffer, VkAccelerationStructureKHR as)

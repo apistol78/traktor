@@ -9,6 +9,11 @@
 #include "Mesh/MeshComponent.h"
 #include "Mesh/MeshComponentRenderer.h"
 
+#include "Mesh/Static/StaticMesh.h"
+#include "Mesh/Static/StaticMeshComponent.h"
+#include "Render/IAccelerationStructure.h"
+#include "World/WorldSetupContext.h"
+
 namespace traktor::mesh
 {
 
@@ -30,6 +35,16 @@ void MeshComponentRenderer::setup(
 	Object* renderable
 )
 {
+
+
+	StaticMeshComponent* smc = dynamic_type_cast< StaticMeshComponent* >(renderable);
+	
+	context.tlasInstance = render::IAccelerationStructure::Instance
+	{
+		.transform = smc->getTransform().get0().toMatrix44(),
+		.blas = smc->m_mesh->m_accelerationStructure
+	};
+
 }
 
 void MeshComponentRenderer::setup(

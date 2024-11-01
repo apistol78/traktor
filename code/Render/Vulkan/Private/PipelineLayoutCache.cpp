@@ -45,7 +45,10 @@ std::wstring describe(const VkDescriptorSetLayoutCreateInfo& dlci)
 		const auto& binding = dlci.pBindings[i];
 		ss << L".pBindings[" << i << L"] = {" << Endl;
 		ss << L"\t.binding = " << binding.binding << Endl;
-		ss << L"\t.descriptorType = " << c_descriptorTypes[binding.descriptorType] << Endl;
+		if (binding.descriptorType < sizeof_array(c_descriptorTypes))
+			ss << L"\t.descriptorType = " << c_descriptorTypes[binding.descriptorType] << Endl;
+		else if (binding.descriptorType == VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR)
+			ss << L"\t.descriptorType = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR" << Endl;
 		ss << L"\t.stageFlags = " << (uint32_t)binding.stageFlags << Endl;
 		ss << L"}" << Endl;
 	}

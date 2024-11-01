@@ -84,6 +84,9 @@ public:
 private:
 	friend class StaticMeshResource;
 
+	//#remove
+	friend class MeshComponentRenderer;
+
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_renderMesh;
 	Ref< render::IAccelerationStructure > m_accelerationStructure;

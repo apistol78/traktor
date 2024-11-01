@@ -256,6 +256,14 @@ void ProgramVrfy::setAccelerationStructureParameter(handle_t handle, const IAcce
 {
 	if (m_program)
 		m_program->setAccelerationStructureParameter(handle, accelerationStructure);
+
+	const auto it = m_shadow.find(handle);
+	if (it != m_shadow.end())
+	{
+		T_CAPTURE_ASSERT(it->second.length <= 0, L"Incorrect parameter type, not a single uniform.");
+		T_CAPTURE_ASSERT(it->second.type == ParameterType::AccelerationStructure, L"Incorrect parameter type, not acceleration structure.");
+		it->second.set = true;
+	}
 }
 
 void ProgramVrfy::setStencilReference(uint32_t stencilReference)

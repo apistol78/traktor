@@ -709,7 +709,19 @@
 			<first>SHADERGRAPH_VIEWER_PIXEL</first>
 			<second>Pixel</second>
 		</item>
-		<item>
+        <item>
+            <first>SHADERGRAPH_VIEWER_RAYGEN</first>
+            <second>RayGen</second>
+        </item>
+        <item>
+            <first>SHADERGRAPH_VIEWER_RAYHIT</first>
+            <second>RayHit</second>
+        </item>
+        <item>
+            <first>SHADERGRAPH_VIEWER_RAYMISS</first>
+            <second>RayMiss</second>
+        </item>
+        <item>
 			<first>SHADERGRAPH_VIEWER_TECHNIQUE</first>
 			<second>Technique</second>
 		</item>

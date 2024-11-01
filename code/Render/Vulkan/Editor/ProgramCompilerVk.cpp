@@ -591,7 +591,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			});
 
 			auto& pm = parameterMapping[accelerationStructure->getName()];
-			pm.resourceIndex = (int32_t)programResource->m_sbuffers.size() - 1;
+			pm.resourceIndex = (int32_t)programResource->m_accelerationStructures.size() - 1;
 		}
 	}
 
@@ -776,6 +776,15 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			checksum.feed(i);
 			checksum.feed(programResource->m_sbuffers[i].binding);
 			checksum.feed(programResource->m_sbuffers[i].stages);
+		}
+
+		checksum.feed(programResource->m_accelerationStructures.size());
+		for (uint32_t i = 0; i < programResource->m_accelerationStructures.size(); ++i)
+		{
+			checksum.feed(L"AS");
+			checksum.feed(i);
+			checksum.feed(programResource->m_accelerationStructures[i].binding);
+			checksum.feed(programResource->m_accelerationStructures[i].stages);
 		}
 
 		checksum.end();

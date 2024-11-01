@@ -89,7 +89,8 @@ const char* c_deviceExtensions[] =
 	// Ray tracing
 	"VK_KHR_deferred_host_operations",
 	"VK_KHR_ray_tracing_pipeline",
-	"VK_KHR_acceleration_structure"
+	"VK_KHR_acceleration_structure",
+	"VK_KHR_ray_query"
 };
 #endif
 
@@ -375,6 +376,10 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	rtp.rayTraversalPrimitiveCulling = VK_FALSE;
 	asf.pNext = &rtp;
 
+	VkPhysicalDeviceRayQueryFeaturesKHR rq{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR };
+	rq.rayQuery = VK_TRUE;
+	rtp.pNext = &rq;
+
 	VkPhysicalDeviceVulkan11Features v11 = {};
 	v11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
 	v11.storageBuffer16BitAccess = VK_TRUE;
@@ -389,7 +394,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	v11.protectedMemory = VK_FALSE;
 	v11.samplerYcbcrConversion = VK_FALSE;
 	v11.shaderDrawParameters = VK_TRUE;
-	rtp.pNext = &v11;
+	rq.pNext = &v11;
 #endif
 
     if ((result = vkCreateDevice(m_physicalDevice, &dci, 0, &m_logicalDevice)) != VK_SUCCESS)

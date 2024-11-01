@@ -43,6 +43,10 @@ public:
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
 private:
+
+	//#remove
+	friend class MeshComponentRenderer;
+
 	resource::Proxy< StaticMesh > m_mesh;
 	Transform m_lastTransform;		//!< Last rendered transform.
 };

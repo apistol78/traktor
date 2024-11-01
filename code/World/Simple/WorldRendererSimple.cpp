@@ -55,6 +55,9 @@ bool WorldRendererSimple::create(
 {
 	m_entityRenderers = desc.entityRenderers;
 	m_depthTexture = create1x1Texture(renderSystem, desc.worldRenderSettings->viewFarZ);
+
+	m_tlas = renderSystem->createTopLevelAccelerationStructure(1024);
+
 	return true;
 }
 
@@ -79,12 +82,12 @@ void WorldRendererSimple::setup(
 		m_gathered.resize(0);
 		for (auto entity : world->getEntities())
 		{
-			if (filter != nullptr && filter(entity->getState()) == false)
-				continue;
+			const EntityState state = entity->getState();
 
-			IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(entity));
-			if (entityRenderer)
-				m_gathered.push_back({ entityRenderer, entity });
+			if (filter != nullptr && filter(state) == false)
+				continue;
+			else if (filter == nullptr && state.visible == false)
+				continue;
 
 			for (auto component : entity->getComponents())
 			{
@@ -105,6 +108,11 @@ void WorldRendererSimple::setup(
 	
 		for (auto entityRenderer : m_entityRenderers->get())
 			entityRenderer->setup(context);
+
+		//#remove
+		m_tlas->writeInstances({
+			context.tlasInstance
+		});
 	}
 
 	// Add passes to render graph.
@@ -133,6 +141,10 @@ void WorldRendererSimple::setup(
 			globalProgramParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 			globalProgramParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			globalProgramParams->setTextureParameter(s_handleGBufferA, m_depthTexture);
+			globalProgramParams->setAccelerationStructureParameter(
+				render::getParameterHandle(L"World_TLAS"),
+				m_tlas
+			);
 			globalProgramParams->endParameters(renderContext);
 
 			// Build visual context.
