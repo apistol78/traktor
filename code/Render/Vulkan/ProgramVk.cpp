@@ -28,6 +28,7 @@
 #include "Render/Vulkan/Private/Utilities.h"
 
 #undef max
+#undef None
 
 namespace traktor::render
 {
