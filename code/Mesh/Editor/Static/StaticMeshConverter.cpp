@@ -151,7 +151,7 @@ bool StaticMeshConverter::convert(
 		for (uint32_t i = 0; i < tr.second.size(); ++i)
 		{
 			const IndexRange& range = tr.second[i];
-			log::info << i << L". offset from " << range.offsetFirst << L" to " << range.offsetLast << L", index min " << range.minIndex << L" max " << range.maxIndex << Endl;
+			log::info << i << L". offset from " << range.offsetFirst << L" to " << range.offsetLast << Endl;
 		}
 		log::info << DecreaseIndent;
 	}
