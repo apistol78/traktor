@@ -2,7 +2,6 @@
 <object type="traktor.render.ShaderModule">
 	<text>
 	<![CDATA[
-
 const float PI = 3.142f;
 const float TWO_PI = PI * 2.0f;
 const float HALF_PI = PI / 2.0f;
@@ -36,6 +35,29 @@ vec4 axisZ(mat4 m)
 float lerpXY(vec4 v, float f)
 {
 	return mix(v.x, v.y, f);
+}
+
+int MajorAxis(vec3 v)
+{
+	const vec3 av = abs(v);
+	if (av.x > av.y)
+		return (av.x > av.z) ? 0 : 2;
+	else
+		return (av.y > av.z) ? 1 : 2;
+}
+
+void OrthogonalFrame(vec3 d, out vec3 u, out vec3 v)
+{
+	const vec3 c_axises[] =
+	{
+		vec3(0.0f, 1.0f, 0.0f),
+		vec3(0.0f, 0.0f, 1.0f),
+		vec3(1.0f, 0.0f, 0.0f)
+	};
+
+	const int major = MajorAxis(d);
+	u = normalize(cross(d, c_axises[major]));
+	v = normalize(cross(u, d));
 }
 
 
