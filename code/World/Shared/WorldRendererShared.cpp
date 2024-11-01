@@ -32,6 +32,7 @@
 #include "World/Entity/IrradianceGridComponent.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeComponent.h"
+#include "World/Entity/RTWorldComponent.h"
 #include "World/Shared/WorldRendererShared.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
@@ -212,6 +213,7 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 	m_gatheredView.probes.resize(0);
 	m_gatheredView.fog = nullptr;
 	m_gatheredView.irradianceGrid = nullptr;
+	m_gatheredView.tlas = nullptr;
 
 	for (auto component : world->getComponents())
 	{
@@ -222,6 +224,8 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 		// Filter out components used to setup frame's lighting etc.
 		if (auto irradianceGridComponent = dynamic_type_cast< const IrradianceGridComponent* >(component))
 			m_gatheredView.irradianceGrid = irradianceGridComponent->getIrradianceGrid();
+		else if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
+			m_gatheredView.tlas = rtWorldComponent->getTLAS();
 	}
 
 	for (auto entity : world->getEntities())

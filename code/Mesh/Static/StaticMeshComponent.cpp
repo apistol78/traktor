@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 #include "Mesh/Static/StaticMeshComponent.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
+#include "World/World.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
@@ -41,6 +42,56 @@ void StaticMeshComponent::setOwner(world::Entity* owner)
 	if (owner != nullptr)
 		m_lastTransform = owner->getTransform();
 	MeshComponent::setOwner(owner);
+}
+
+void StaticMeshComponent::setWorld(world::World* world)
+{
+	// Remove from last world.
+	if (m_world != nullptr && m_rtwInstance != nullptr)
+	{
+		world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
+		rtw->releaseInstance(m_rtwInstance);
+	}
+
+	// Add to new world.
+	if (world != nullptr)
+	{
+		T_FATAL_ASSERT(m_rtwInstance == nullptr);
+		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
+		m_rtwInstance = rtw->allocateInstance(m_mesh->getAccelerationStructure());
+	}
+
+	m_world = world;
+}
+
+void StaticMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask)
+{
+	const bool visible = (state.visible && mask.visible);
+	if (visible)
+	{
+		if (!m_rtwInstance)
+		{
+			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
+			m_rtwInstance = rtw->allocateInstance(m_mesh->getAccelerationStructure());
+			m_rtwInstance->setTransform(m_transform.get0());
+		}
+	}
+	else
+	{
+		if (m_rtwInstance)
+		{
+			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
+			rtw->releaseInstance(m_rtwInstance);
+		}
+	}
+}
+
+void StaticMeshComponent::setTransform(const Transform& transform)
+{
+	MeshComponent::setTransform(transform);
+
+	if (m_rtwInstance)
+		m_rtwInstance->setTransform(transform);
 }
 
 Aabb3 StaticMeshComponent::getBoundingBox() const

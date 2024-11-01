@@ -81,11 +81,10 @@ public:
 		const IMeshParameterCallback* parameterCallback
 	);
 
+	const render::IAccelerationStructure* getAccelerationStructure() const { return m_accelerationStructure; }
+
 private:
 	friend class StaticMeshResource;
-
-	//#remove
-	friend class MeshComponentRenderer;
 
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_renderMesh;

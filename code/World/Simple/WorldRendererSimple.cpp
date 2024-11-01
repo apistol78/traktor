@@ -21,6 +21,7 @@
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
+#include "World/Entity/RTWorldComponent.h"
 #include "World/Simple/WorldRendererSimple.h"
 #include "World/Simple/WorldRenderPassSimple.h"
 
@@ -55,9 +56,6 @@ bool WorldRendererSimple::create(
 {
 	m_entityRenderers = desc.entityRenderers;
 	m_depthTexture = create1x1Texture(renderSystem, desc.worldRenderSettings->viewFarZ);
-
-	m_tlas = renderSystem->createTopLevelAccelerationStructure(1024);
-
 	return true;
 }
 
@@ -80,6 +78,18 @@ void WorldRendererSimple::setup(
 		T_PROFILER_SCOPE(L"WorldRendererSimple gather");
 
 		m_gathered.resize(0);
+		m_gatheredTLAS = nullptr;
+
+		for (auto component : world->getComponents())
+		{
+			IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
+			if (entityRenderer)
+				m_gathered.push_back({ entityRenderer, component });
+
+			if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
+				m_gatheredTLAS = rtWorldComponent->getTLAS();
+		}
+
 		for (auto entity : world->getEntities())
 		{
 			const EntityState state = entity->getState();
@@ -108,11 +118,6 @@ void WorldRendererSimple::setup(
 	
 		for (auto entityRenderer : m_entityRenderers->get())
 			entityRenderer->setup(context);
-
-		//#remove
-		m_tlas->writeInstances({
-			context.tlasInstance
-		});
 	}
 
 	// Add passes to render graph.
@@ -141,10 +146,7 @@ void WorldRendererSimple::setup(
 			globalProgramParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 			globalProgramParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			globalProgramParams->setTextureParameter(s_handleGBufferA, m_depthTexture);
-			globalProgramParams->setAccelerationStructureParameter(
-				render::getParameterHandle(L"World_TLAS"),
-				m_tlas
-			);
+			globalProgramParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredTLAS);
 			globalProgramParams->endParameters(renderContext);
 
 			// Build visual context.

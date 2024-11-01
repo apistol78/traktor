@@ -410,7 +410,7 @@ bool AccelerationStructureVk::writeInstances(const AlignedVector< Instance >& in
 
 	VkAccelerationStructureBuildRangeInfoKHR topLevelAccelerationStructureBuildRangeInfo =
 	{
-		.primitiveCount = 1,
+		.primitiveCount = (uint32_t)instances.size(),
 		.primitiveOffset = 0,
 		.firstVertex = 0,
 		.transformOffset = 0

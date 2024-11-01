@@ -81,6 +81,7 @@ extern const render::Handle T_DLLCLASS s_handleDBufferColorMap;
 extern const render::Handle T_DLLCLASS s_handleDBufferMiscMap;
 extern const render::Handle T_DLLCLASS s_handleDBufferNormalMap;
 extern const render::Handle T_DLLCLASS s_handleHiZTexture;
+extern const render::Handle T_DLLCLASS s_handleTLAS;
 
 // Irradiance grid.
 extern const render::Handle T_DLLCLASS s_handleIrradianceGridBoundsMax;

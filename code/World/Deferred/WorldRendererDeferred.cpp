@@ -371,6 +371,8 @@ void WorldRendererDeferred::setupVisualPass(
 				else
 					sharedParams->setTextureParameter(s_handleReflectionMap, m_blackTexture);
 
+				sharedParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredView.tlas);
+
 				sharedParams->endParameters(renderContext);
 
 				const bool irradianceEnable = (bool)(m_gatheredView.irradianceGrid != nullptr);
@@ -560,6 +562,8 @@ void WorldRendererDeferred::setupVisualPass(
 					sharedParams->setTextureParameter(s_handleVisualCopyMap, visualCopyTargetSet->getColorTexture(0));
 				else
 					sharedParams->setTextureParameter(s_handleVisualCopyMap, m_blackTexture);
+
+				sharedParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredView.tlas);
 
 				sharedParams->endParameters(renderContext);
 

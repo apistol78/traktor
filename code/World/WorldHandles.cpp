@@ -71,6 +71,7 @@ const render::Handle s_handleDBufferColorMap(L"World_DBufferColorMap");
 const render::Handle s_handleDBufferMiscMap(L"World_DBufferMiscMap");
 const render::Handle s_handleDBufferNormalMap(L"World_DBufferNormalMap");
 const render::Handle s_handleHiZTexture(L"World_HiZTexture");
+const render::Handle s_handleTLAS(L"World_TLAS");
 
 // Irradiance grid.
 const render::Handle s_handleIrradianceGridBoundsMax(L"World_IrradianceGridBoundsMax");

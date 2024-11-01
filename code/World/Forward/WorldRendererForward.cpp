@@ -330,6 +330,8 @@ void WorldRendererForward::setupVisualPass(
 			else
 				sharedParams->setTextureParameter(s_handleVisualCopyMap, m_blackTexture);
 
+			sharedParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredView.tlas);
+
 			sharedParams->endParameters(wc.getRenderContext());
 
 			const bool irradianceEnable = (bool)(m_gatheredView.irradianceGrid != nullptr);

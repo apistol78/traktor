@@ -52,6 +52,7 @@
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeRenderer.h"
+#include "World/Entity/RTWorldRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 
@@ -260,6 +261,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 		m_renderSystem,
 		type_of< world::WorldRendererDeferred >()
 	));
+	worldEntityRenderers->add(new world::RTWorldRenderer());
 
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = m_sceneInstance->getWorldRenderSettings();

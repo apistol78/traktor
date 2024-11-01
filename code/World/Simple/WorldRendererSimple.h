@@ -70,10 +70,9 @@ private:
 
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< render::ITexture > m_depthTexture;
+	const render::IAccelerationStructure* m_gatheredTLAS;
 	AlignedVector< Gather > m_gathered;
 	AlignedVector< render::handle_t > m_visualAttachments;
-
-	Ref< render::IAccelerationStructure > m_tlas;
 };
 
 }

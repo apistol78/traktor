@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "World/Entity/RTWorldComponent.h"
 #include "Mesh/MeshComponent.h"
 #include "Resource/Proxy.h"
 
@@ -38,15 +39,19 @@ public:
 
 	virtual void setOwner(world::Entity* owner) override final;
 
+	virtual void setWorld(world::World* world) override final;
+
+	virtual void setState(const world::EntityState& state, const world::EntityState& mask) override final;
+
+	virtual void setTransform(const Transform& transform) override final;
+
 	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
 private:
-
-	//#remove
-	friend class MeshComponentRenderer;
-
+	world::World* m_world = nullptr;
+	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
 	resource::Proxy< StaticMesh > m_mesh;
 	Transform m_lastTransform;		//!< Last rendered transform.
 };

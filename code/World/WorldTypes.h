@@ -21,6 +21,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::render
+{
+
+class IAccelerationStructure;
+
+}
+
 namespace traktor::world
 {
 
@@ -109,6 +116,7 @@ struct GatherView
 	AlignedVector< const ProbeComponent* > probes;
 	const FogComponent* fog;
 	const IrradianceGrid* irradianceGrid;
+	const render::IAccelerationStructure* tlas;
 };
 
 /*!
