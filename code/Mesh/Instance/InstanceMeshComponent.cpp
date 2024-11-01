@@ -41,6 +41,11 @@ void InstanceMeshComponent::destroy()
 void InstanceMeshComponent::setWorld(world::World* world)
 {
 	// Remove from last world.
+	if (m_world != nullptr && m_rtwInstance != nullptr)
+	{
+		world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
+		rtw->releaseInstance(m_rtwInstance);
+	}
 	if (m_world != nullptr && m_cullingInstance != nullptr)
 	{
 		world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
@@ -48,6 +53,12 @@ void InstanceMeshComponent::setWorld(world::World* world)
 	}
 
 	// Add to new world.
+	if (world != nullptr)
+	{
+		T_FATAL_ASSERT(m_rtwInstance == nullptr);
+		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
+		m_rtwInstance = rtw->allocateInstance(m_mesh->getAccelerationStructure());
+	}
 	if (world != nullptr)
 	{
 		T_FATAL_ASSERT(m_cullingInstance == nullptr);
@@ -63,6 +74,12 @@ void InstanceMeshComponent::setState(const world::EntityState& state, const worl
 	const bool visible = (state.visible && mask.visible);
 	if (visible)
 	{
+		if (!m_rtwInstance)
+		{
+			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
+			m_rtwInstance = rtw->allocateInstance(m_mesh->getAccelerationStructure());
+			m_rtwInstance->setTransform(m_transform.get0());
+		}
 		if (!m_cullingInstance)
 		{
 			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
@@ -72,6 +89,11 @@ void InstanceMeshComponent::setState(const world::EntityState& state, const worl
 	}
 	else
 	{
+		if (m_rtwInstance)
+		{
+			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
+			rtw->releaseInstance(m_rtwInstance);
+		}
 		if (m_cullingInstance)
 		{
 			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
@@ -84,6 +106,8 @@ void InstanceMeshComponent::setTransform(const Transform& transform)
 {
 	MeshComponent::setTransform(transform);
 
+	if (m_rtwInstance)
+		m_rtwInstance->setTransform(transform);
 	if (m_cullingInstance)
 		m_cullingInstance->setTransform(transform);
 }

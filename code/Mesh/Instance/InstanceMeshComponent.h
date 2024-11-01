@@ -11,6 +11,7 @@
 #include "Mesh/MeshComponent.h"
 #include "Resource/Proxy.h"
 #include "World/Entity/CullingComponent.h"
+#include "World/Entity/RTWorldComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -74,6 +75,7 @@ public:
 private:
 	resource::Proxy< InstanceMesh > m_mesh;
 	world::World* m_world = nullptr;
+	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
 	world::CullingComponent::Instance* m_cullingInstance = nullptr;
 };
 

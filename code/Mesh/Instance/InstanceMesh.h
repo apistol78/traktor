@@ -89,6 +89,8 @@ public:
 		uint32_t count
 	);
 
+	const render::IAccelerationStructure* getAccelerationStructure() const { return m_accelerationStructure; }
+
 private:
 	friend class InstanceMeshResource;
 

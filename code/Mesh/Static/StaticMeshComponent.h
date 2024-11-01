@@ -50,9 +50,9 @@ public:
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
 private:
+	resource::Proxy< StaticMesh > m_mesh;
 	world::World* m_world = nullptr;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
-	resource::Proxy< StaticMesh > m_mesh;
 	Transform m_lastTransform;		//!< Last rendered transform.
 };
 
