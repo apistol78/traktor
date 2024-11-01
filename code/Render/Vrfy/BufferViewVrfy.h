@@ -23,7 +23,7 @@ class BufferViewVrfy : public IBufferView
 	T_RTTI_CLASS;
 
 public:
-	const BufferViewVrfy(const BufferVrfy* buffer);
+	explicit BufferViewVrfy(const BufferVrfy* buffer);
 
 	const BufferVrfy* getBuffer() const { return m_buffer; }
 

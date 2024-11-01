@@ -22,7 +22,7 @@ class VertexLayoutVrfy : public IVertexLayout
 	T_RTTI_CLASS;
 
 public:
-	const VertexLayoutVrfy(const IVertexLayout* wrappedVertexLayout, uint32_t vertexSize);
+	explicit VertexLayoutVrfy(const IVertexLayout* wrappedVertexLayout, uint32_t vertexSize);
 
 	const IVertexLayout* getWrappedVertexLayout() const { return m_wrappedVertexLayout; }
 
