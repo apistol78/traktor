@@ -72,6 +72,8 @@ public:
 	virtual bool setGamma(float gamma) override final;
 
 	virtual void setViewport(const Viewport& viewport) override final;
+    
+	virtual void setScissor(const Rectangle& scissor) override final;
 
 	virtual SystemWindow getSystemWindow() override final;
 

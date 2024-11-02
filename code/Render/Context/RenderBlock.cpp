@@ -221,6 +221,13 @@ void SetViewportRenderBlock::render(IRenderView* renderView) const
 	T_CONTEXT_POP_MARKER(renderView);
 }
 
+void SetScissorRenderBlock::render(IRenderView* renderView) const
+{
+	T_CONTEXT_PUSH_MARKER(renderView, name);
+	renderView->setScissor(scissor);
+	T_CONTEXT_POP_MARKER(renderView);
+}
+
 void BarrierRenderBlock::render(IRenderView* renderView) const
 {
 	T_CONTEXT_PUSH_MARKER(renderView, name);

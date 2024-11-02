@@ -245,6 +245,16 @@ public:
 	virtual void render(IRenderView* renderView) const override final;
 };
 
+/*! Set target scissor block.
+ * \ingroup Render
+ */
+class T_DLLCLASS SetScissorRenderBlock : public RenderBlock
+{
+public:
+	Rectangle scissor;
+	virtual void render(IRenderView* renderView) const override final;
+};
+
 /*! Barrier block.
  * \ingroup Render
  */
