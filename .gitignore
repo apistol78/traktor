@@ -3,9 +3,11 @@
 /build
 /bin/latest
 /bin/git
+/bin/win64/.wget-hsts
 /data/Temp
 /data/Output
 /.vs
 /resources/documentation/html
 /resources/documentation/latest
 /resources/documentation/latex
+/jconfig.h
