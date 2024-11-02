@@ -7,17 +7,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Misc/SafeDestroy.h"
-//#include "Core/Misc/String.h"
-//#include "Render/Buffer.h"
 #include "Render/IAccelerationStructure.h"
 #include "Render/IRenderSystem.h"
-//#include "Render/Shader.h"
-//#include "Render/Context/RenderContext.h"
-//#include "Resource/IResourceManager.h"
-//#include "World/IWorldRenderPass.h"
-//#include "World/WorldBuildContext.h"
-//#include "World/WorldHandles.h"
-//#include "World/WorldRenderView.h"
 #include "World/Entity/RTWorldComponent.h"
 
 namespace traktor::world
@@ -34,8 +25,7 @@ RTWorldComponent::RTWorldComponent(render::IRenderSystem* renderSystem)
 void RTWorldComponent::destroy()
 {
 	T_FATAL_ASSERT_M(m_instances.empty(), L"Culling instances not empty.");
-	//safeDestroy(m_tlas);
-	m_tlas = nullptr;
+	safeDestroy(m_tlas);
 	m_renderSystem = nullptr;
 }
 
@@ -50,6 +40,7 @@ RTWorldComponent::Instance* RTWorldComponent::allocateInstance(const render::IAc
 	instance->transform = Transform::identity();
 	instance->blas = blas;
 	m_instances.push_back(instance);
+	m_instanceBufferDirty = true;
 	return instance;
 }
 
@@ -69,6 +60,7 @@ void RTWorldComponent::setup()
 	if (!m_instanceBufferDirty)
 		return;
 
+	// Update TLAS with all instances.
 	AlignedVector< render::IAccelerationStructure::Instance > tlasInstances;
 	for (const auto& instance : m_instances)
 	{

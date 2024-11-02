@@ -34,8 +34,16 @@ class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
 
-/*!
- * \ingroup Mesh
+/*! Ray tracing world.
+ * \ingroup World
+ *
+ * The RT world contains information about all instances
+ * and ensure the top level (TLAS) structure is updated
+ * as required.
+ * 
+ * The world renderer uses component's TLAS when
+ * exposing to entity renderers during rastization
+ * passes.
  */
 class T_DLLCLASS RTWorldComponent : public IWorldComponent
 {
@@ -46,7 +54,7 @@ public:
 	{
 		RTWorldComponent* owner;
 		Transform transform;
-		Ref< const render::IAccelerationStructure > blas;
+		const render::IAccelerationStructure* blas;
 
 		void setTransform(const Transform& transform);
 	};

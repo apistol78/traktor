@@ -46,7 +46,7 @@ class WorldBuildContext;
 class WorldRenderView;
 
 /*!
- * \ingroup Mesh
+ * \ingroup World
  */
 class T_DLLCLASS CullingComponent : public IWorldComponent
 {

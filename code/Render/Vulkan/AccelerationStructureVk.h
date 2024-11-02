@@ -33,6 +33,8 @@ public:
 
 	static Ref< AccelerationStructureVk > createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives);
 
+	virtual void destroy() override final;
+
 	virtual bool writeInstances(const AlignedVector< Instance >& instances) override final;
 
 	const VkAccelerationStructureKHR& getVkAccelerationStructureKHR() const { return m_as; }

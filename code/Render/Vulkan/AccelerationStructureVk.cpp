@@ -24,18 +24,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.AccelerationStructureVk", AccelerationSt
 
 AccelerationStructureVk::~AccelerationStructureVk()
 {
-	if (m_context != nullptr)
-	{
-		m_context->addDeferredCleanup([
-			as = m_as
-		](Context* cx) {
-			vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr);
-		});
-	}
-	safeDestroy(m_hierarchyBuffer);
-	safeDestroy(m_instanceBuffer);
-	safeDestroy(m_scratchBuffer);
-	m_context = nullptr;
+	destroy();
 }
 
 Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* context, uint32_t numInstances)
@@ -326,6 +315,22 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 	commandBuffer->submitAndWait();
 
 	return new AccelerationStructureVk(context, hierarchyBuffer, scratchBuffer, accelerationStructure);
+}
+
+void AccelerationStructureVk::destroy()
+{
+	if (m_context != nullptr)
+	{
+		m_context->addDeferredCleanup([
+			as = m_as
+		](Context* cx) {
+			vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr);
+		});
+	}
+	safeDestroy(m_hierarchyBuffer);
+	safeDestroy(m_instanceBuffer);
+	safeDestroy(m_scratchBuffer);
+	m_context = nullptr;
 }
 
 bool AccelerationStructureVk::writeInstances(const AlignedVector< Instance >& instances)

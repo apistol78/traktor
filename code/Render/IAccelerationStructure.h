@@ -37,6 +37,9 @@ public:
 		Ref< const IAccelerationStructure > blas;
 	};
 
+	/*! */
+	virtual void destroy() = 0;
+
 	/*! Update all instances in the top level AS. */
 	virtual bool writeInstances(const AlignedVector< Instance >& instances) = 0;
 };
