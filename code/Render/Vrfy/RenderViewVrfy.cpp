@@ -134,6 +134,13 @@ void RenderViewVrfy::setViewport(const Viewport& viewport)
 	m_renderView->setViewport(viewport);
 }
 
+void RenderViewVrfy::setScissor(const Rectangle& scissor)
+{
+	T_CAPTURE_TRACE(L"setScissor");
+	T_CAPTURE_ASSERT(m_insideFrame, L"Cannot set scissor outside of frame.");
+	m_renderView->setScissor(scissor);
+}
+
 SystemWindow RenderViewVrfy::getSystemWindow()
 {
 	T_CAPTURE_TRACE(L"getSystemWindow");

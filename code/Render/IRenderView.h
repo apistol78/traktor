@@ -94,6 +94,8 @@ public:
 	virtual bool setGamma(float gamma) = 0;
 
 	virtual void setViewport(const Viewport& viewport) = 0;
+    
+	virtual void setScissor(const Rectangle& scissor) = 0;
 
 	virtual SystemWindow getSystemWindow() = 0;
 

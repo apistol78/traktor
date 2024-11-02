@@ -525,6 +525,20 @@ void RenderViewVk::setViewport(const Viewport& viewport)
 	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 }
 
+void RenderViewVk::setScissor(const Rectangle& scissor)
+{
+	T_ASSERT(scissorRect.left >= 0);
+	T_ASSERT(scissorRect.top >= 0);
+	T_ASSERT(scissorRect.width >= 0);
+	T_ASSERT(scissorRect.height >= 0);
+
+	const auto& frame = m_frames[m_currentImageIndex];
+	VkRect2D vkScissor = {};
+	vkScissor.offset = VkOffset2D { scissor.left, scissor.top };
+	vkScissor.extent = VkExtent2D { static_cast<uint32_t>(scissor.width), static_cast<uint32_t>(scissor.height) };
+	vkCmdSetScissor(*frame.graphicsCommandBuffer, 0, 1, &vkScissor);
+}
+
 SystemWindow RenderViewVk::getSystemWindow()
 {
 #if defined(_WIN32)
@@ -787,6 +801,12 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	};
 	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 
+	// Set scissor
+	VkRect2D vkScissor = {};
+	vkScissor.offset = VkOffset2D{ 0, 0 };
+	vkScissor.extent = VkExtent2D{ (uint32_t)m_targetSet->getWidth(), (uint32_t)m_targetSet->getHeight() };
+	vkCmdSetScissor(*frame.graphicsCommandBuffer, 0, 1, &vkScissor);
+
 	m_passCount++;
 	return true;
 }
@@ -898,6 +918,12 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 		.maxDepth = 1.0f
 	};
 	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
+
+	// Set scissor
+	VkRect2D vkScissor = {};
+	vkScissor.offset = VkOffset2D{ 0, 0 };
+	vkScissor.extent = VkExtent2D{ (uint32_t)m_targetSet->getWidth(), (uint32_t)m_targetSet->getHeight() };
+	vkCmdSetScissor(*frame.graphicsCommandBuffer, 0, 1, &vkScissor);
 
 	m_passCount++;
 	return true;
@@ -1845,11 +1871,11 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 			.blendConstants = { 0.0f, 0.0f, 0.0f, 0.0f }
 		};
 
-		const VkDynamicState ds[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_STENCIL_REFERENCE };
+		const VkDynamicState ds[3] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR, VK_DYNAMIC_STATE_STENCIL_REFERENCE };
 		const VkPipelineDynamicStateCreateInfo dsci =
 		{
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-			.dynamicStateCount = rs.stencilEnable ? 2U : 1U,
+			.dynamicStateCount = rs.stencilEnable ? 3U : 2U,
 			.pDynamicStates = ds
 		};
 

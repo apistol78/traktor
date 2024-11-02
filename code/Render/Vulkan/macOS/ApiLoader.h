@@ -81,6 +81,7 @@ extern PFN_vkQueueWaitIdle vkQueueWaitIdle;
 extern PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage;
 extern PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties;
 extern PFN_vkCmdSetViewport vkCmdSetViewport;
+extern PFN_vkCmdSetScissor vkCmdSetScissor;
 extern PFN_vkFreeMemory vkFreeMemory;
 extern PFN_vkDestroyBuffer vkDestroyBuffer;
 extern PFN_vkCmdCopyImage vkCmdCopyImage;

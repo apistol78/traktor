@@ -97,6 +97,7 @@ T_DEFINE_VK(vkQueueWaitIdle);
 T_DEFINE_VK(vkCmdCopyBufferToImage);
 T_DEFINE_VK(vkEnumerateDeviceExtensionProperties);
 T_DEFINE_VK(vkCmdSetViewport);
+T_DEFINE_VK(vkCmdSetScissor);
 T_DEFINE_VK(vkFreeMemory);
 T_DEFINE_VK(vkDestroyBuffer);
 T_DEFINE_VK(vkCmdCopyImage);
@@ -232,6 +233,7 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkCmdCopyBufferToImage);
 	T_RESOLVE_VK(vkEnumerateDeviceExtensionProperties);
 	T_RESOLVE_VK(vkCmdSetViewport);
+	T_RESOLVE_VK(vkCmdSetScissor);
 	T_RESOLVE_VK(vkFreeMemory);
 	T_RESOLVE_VK(vkDestroyBuffer);
 	T_RESOLVE_VK(vkCmdCopyImage);
