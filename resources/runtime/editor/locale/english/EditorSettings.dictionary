@@ -226,6 +226,10 @@
 			<second>Enable RenderDoc integration</second>
 		</item>
 		<item>
+			<first>EDITOR_SETTINGS_RENDERER_RAY_TRACING</first>
+			<second>Enable hardware ray tracing</second>
+		</item>
+		<item>
 			<first>EDITOR_SETTINGS_RENDERER_CLAMP_TEXTURE_SIZE</first>
 			<second>Clamp max texture size</second>
 		</item>

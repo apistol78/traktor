@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -86,6 +86,9 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editClampSize = new ui::Edit();
 	m_editClampSize->create(containerTop, L"", ui::WsNone, new ui::NumericEditValidator(false, 0));
 
+	m_checkRayTracing = new ui::CheckBox();
+	m_checkRayTracing->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_RAY_TRACING"), false);
+
 	m_checkBoxValidation = new ui::CheckBox();
 	m_checkBoxValidation->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_VALIDATION"), false);
 
@@ -118,6 +121,7 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editClampSize->setText(toString(settings->getProperty< int32_t >(L"TexturePipeline.ClampSize", 0)));
 	m_checkBoxValidation->setChecked(settings->getProperty< bool >(L"Editor.RenderValidation", true));
 	m_checkBoxRenderDoc->setChecked(settings->getProperty< bool >(L"Editor.UseRenderDoc", false));
+	m_checkRayTracing->setChecked(settings->getProperty< bool >(L"Editor.RayTracing", false));
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_RENDERER"));
 	return true;
@@ -139,6 +143,7 @@ bool RenderSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyInteger >(L"TexturePipeline.ClampSize", parseString< int32_t >(m_editClampSize->getText()));
 	settings->setProperty< PropertyBoolean >(L"Editor.RenderValidation", m_checkBoxValidation->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.UseRenderDoc", m_checkBoxRenderDoc->isChecked());
+	settings->setProperty< PropertyBoolean >(L"Editor.RayTracing", m_checkRayTracing->isChecked());
 	return true;
 }
 
