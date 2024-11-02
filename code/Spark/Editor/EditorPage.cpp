@@ -119,6 +119,7 @@ bool EditorPage::create(ui::Container* parent)
 void EditorPage::destroy()
 {
 	safeDestroy(m_previewControl);
+	safeDestroy(m_resourceManager);
 }
 
 bool EditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
