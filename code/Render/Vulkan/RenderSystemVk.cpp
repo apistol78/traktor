@@ -1,6 +1,3 @@
-#pragma optimize( "", off )
-// https://github.com/WilliamLewww/vulkan_ray_tracing_minimal_abstraction/blob/master/headless/src/main.cpp
-
 /*
  * TRAKTOR
  * Copyright (c) 2022-2024 Anders Pistol.
@@ -52,6 +49,8 @@
 #	include "Render/Vulkan/iOS/Utilities.h"
 #endif
 
+// https://github.com/WilliamLewww/vulkan_ray_tracing_minimal_abstraction/blob/master/headless/src/main.cpp
+
 namespace traktor::render
 {
 	namespace
@@ -85,7 +84,9 @@ const char* c_deviceExtensions[] =
 	"VK_EXT_memory_budget",
 	"VK_EXT_descriptor_indexing",
 	"VK_KHR_buffer_device_address",
-
+};
+const char* c_deviceExtensionsRayTracing[] =
+{
 	// Ray tracing
 	"VK_KHR_deferred_host_operations",
 	"VK_KHR_ray_tracing_pipeline",
@@ -302,86 +303,58 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
+	// Build array of required extensions.
+	AlignedVector< const char* > deviceExtensions;
+	for (int32_t i = 0; i < sizeof_array(c_deviceExtensions); ++i)
+		deviceExtensions.push_back(c_deviceExtensions[i]);
+	if (desc.rayTracing)
+	{
+		for (int32_t i = 0; i < sizeof_array(c_deviceExtensionsRayTracing); ++i)
+			deviceExtensions.push_back(c_deviceExtensionsRayTracing[i]);
+	}
+
 	// Create logical device.
-	const float queuePriorities[] = { 1.0f, 1.0f };
-
-    VkDeviceQueueCreateInfo dqci = {};
-	dqci.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	dqci.queueFamilyIndex = graphicsQueueIndex;
-	dqci.queueCount = 1;
-	dqci.pQueuePriorities = queuePriorities;
-
-    VkDeviceCreateInfo dci = {};
-    dci.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	dci.pNext = nullptr;
-    dci.queueCreateInfoCount = 1;
-    dci.pQueueCreateInfos = &dqci;
-	dci.enabledLayerCount = (uint32_t)validationLayers.size();
-	dci.ppEnabledLayerNames = validationLayers.c_ptr();
-    dci.enabledExtensionCount = sizeof_array(c_deviceExtensions);
-    dci.ppEnabledExtensionNames = c_deviceExtensions;
-
-#if !defined(__ANDROID__) && !defined(__RPI__)
     VkPhysicalDeviceFeatures features = {};
 	features.sampleRateShading = VK_TRUE;
 	features.multiDrawIndirect = VK_TRUE;
     features.shaderClipDistance = VK_TRUE;
 	features.samplerAnisotropy = VK_TRUE;
-    dci.pEnabledFeatures = &features;
 
-	VkPhysicalDevice8BitStorageFeaturesKHR s8 = {};
+	const void* headFeature = nullptr;
+
+#if !defined(__ANDROID__) && !defined(__RPI__)
+	static VkPhysicalDevice8BitStorageFeaturesKHR s8 = {};
 	s8.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR;
 	s8.pNext = nullptr;
 	s8.storageBuffer8BitAccess = VK_FALSE;
 	s8.uniformAndStorageBuffer8BitAccess = VK_TRUE;
 	s8.storagePushConstant8 = VK_FALSE;
-	dci.pNext = &s8;
 
-	VkPhysicalDeviceFloat16Int8FeaturesKHR f16 = {};
+	static VkPhysicalDeviceFloat16Int8FeaturesKHR f16 = {};
 	f16.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR;
-	f16.pNext = nullptr;
+	f16.pNext = &s8;
 	f16.shaderFloat16 = VK_FALSE;
 	f16.shaderInt8 = VK_TRUE;
-	s8.pNext = &f16;
 
 	// Bindless textures.
-	VkPhysicalDeviceDescriptorIndexingFeatures di = {};
+	static VkPhysicalDeviceDescriptorIndexingFeatures di = {};
 	di.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+	di.pNext = &f16;
 	di.runtimeDescriptorArray = VK_TRUE;
 	di.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE;
 	di.descriptorBindingStorageImageUpdateAfterBind = VK_TRUE;
 	di.descriptorBindingPartiallyBound = VK_TRUE;
 	di.descriptorBindingVariableDescriptorCount = VK_TRUE;
-	f16.pNext = &di;
 
-	VkPhysicalDeviceBufferDeviceAddressFeatures daf{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES };
+	static VkPhysicalDeviceBufferDeviceAddressFeatures daf{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES };
+	daf.pNext = &di;
 	daf.bufferDeviceAddress = VK_TRUE;
 	daf.bufferDeviceAddressCaptureReplay = VK_FALSE;
 	daf.bufferDeviceAddressMultiDevice = VK_FALSE;
-	di.pNext = &daf;
 
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR asf{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR };
-	asf.accelerationStructure = VK_TRUE;
-	asf.accelerationStructureCaptureReplay = VK_FALSE;
-	asf.accelerationStructureIndirectBuild = VK_FALSE;
-	asf.accelerationStructureHostCommands = VK_FALSE;
-	asf.descriptorBindingAccelerationStructureUpdateAfterBind = VK_FALSE;
-	daf.pNext = &asf;
-
-	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtp{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR };
-	rtp.rayTracingPipeline = VK_TRUE;
-	rtp.rayTracingPipelineShaderGroupHandleCaptureReplay = VK_FALSE;
-	rtp.rayTracingPipelineShaderGroupHandleCaptureReplayMixed = VK_FALSE;
-	rtp.rayTracingPipelineTraceRaysIndirect = VK_FALSE;
-	rtp.rayTraversalPrimitiveCulling = VK_FALSE;
-	asf.pNext = &rtp;
-
-	VkPhysicalDeviceRayQueryFeaturesKHR rq{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR };
-	rq.rayQuery = VK_TRUE;
-	rtp.pNext = &rq;
-
-	VkPhysicalDeviceVulkan11Features v11 = {};
+	static VkPhysicalDeviceVulkan11Features v11 = {};
 	v11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
+	v11.pNext = &daf;
 	v11.storageBuffer16BitAccess = VK_TRUE;
 	v11.uniformAndStorageBuffer16BitAccess = VK_TRUE;
 	v11.storagePushConstant16 = VK_FALSE;
@@ -394,8 +367,58 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	v11.protectedMemory = VK_FALSE;
 	v11.samplerYcbcrConversion = VK_FALSE;
 	v11.shaderDrawParameters = VK_TRUE;
-	rq.pNext = &v11;
+
+	headFeature = &v11;
+
+	if (desc.rayTracing)
+	{
+		static VkPhysicalDeviceAccelerationStructureFeaturesKHR asf{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR };
+		asf.pNext = &v11;
+		asf.accelerationStructure = VK_TRUE;
+		asf.accelerationStructureCaptureReplay = VK_FALSE;
+		asf.accelerationStructureIndirectBuild = VK_FALSE;
+		asf.accelerationStructureHostCommands = VK_FALSE;
+		asf.descriptorBindingAccelerationStructureUpdateAfterBind = VK_FALSE;
+
+		static VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtp{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR };
+		rtp.pNext = &asf;
+		rtp.rayTracingPipeline = VK_TRUE;
+		rtp.rayTracingPipelineShaderGroupHandleCaptureReplay = VK_FALSE;
+		rtp.rayTracingPipelineShaderGroupHandleCaptureReplayMixed = VK_FALSE;
+		rtp.rayTracingPipelineTraceRaysIndirect = VK_FALSE;
+		rtp.rayTraversalPrimitiveCulling = VK_FALSE;
+
+		static VkPhysicalDeviceRayQueryFeaturesKHR rq{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR };
+		rq.pNext = &rtp;
+		rq.rayQuery = VK_TRUE;
+
+		headFeature = &rq;
+	}
 #endif
+
+	const float queuePriorities[] = { 1.0f, 1.0f };
+
+    const VkDeviceQueueCreateInfo dqci =
+	{
+		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+		.queueFamilyIndex = graphicsQueueIndex,
+		.queueCount = 1,
+		.pQueuePriorities = queuePriorities
+	};
+
+    const VkDeviceCreateInfo dci =
+	{
+		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+		.pNext = headFeature,
+		.flags = 0,
+		.queueCreateInfoCount = 1,
+		.pQueueCreateInfos = &dqci,
+		.enabledLayerCount = (uint32_t)validationLayers.size(),
+		.ppEnabledLayerNames = validationLayers.c_ptr(),
+		.enabledExtensionCount = (uint32_t)deviceExtensions.size(),
+		.ppEnabledExtensionNames = deviceExtensions.c_ptr(),
+		.pEnabledFeatures = &features
+	};
 
     if ((result = vkCreateDevice(m_physicalDevice, &dci, 0, &m_logicalDevice)) != VK_SUCCESS)
 	{
@@ -464,6 +487,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	m_pipelineLayoutCache = new PipelineLayoutCache(m_context);
 	m_maxAnisotropy = desc.maxAnisotropy;
 	m_mipBias = desc.mipBias;
+	m_rayTracing = desc.rayTracing;
 
 	log::info << L"Vulkan render system created successfully." << Endl;
 	return true;
@@ -489,6 +513,11 @@ void RenderSystemVk::getInformation(RenderSystemInformation& outInfo) const
 	outInfo.sharedMemoryTotal = 0;
 	outInfo.dedicatedMemoryAvailable = 0;
 	outInfo.sharedMemoryAvailable = 0;
+}
+
+bool RenderSystemVk::supportRayTracing() const
+{
+	return m_rayTracing;
 }
 
 uint32_t RenderSystemVk::getDisplayCount() const
@@ -720,12 +749,18 @@ Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTarget
 
 Ref< IAccelerationStructure > RenderSystemVk::createTopLevelAccelerationStructure(uint32_t numInstances)
 {
-	return AccelerationStructureVk::createTopLevel(m_context, numInstances);
+	if (m_rayTracing)
+		return AccelerationStructureVk::createTopLevel(m_context, numInstances);
+	else
+		return nullptr;
 }
 
 Ref< IAccelerationStructure > RenderSystemVk::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
 {
-	return AccelerationStructureVk::createBottomLevel(m_context, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives);
+	if (m_rayTracing)
+		return AccelerationStructureVk::createBottomLevel(m_context, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives);
+	else
+		return nullptr;
 }
 
 Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programResource, const wchar_t* const tag)

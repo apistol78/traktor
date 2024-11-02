@@ -90,6 +90,11 @@ void RenderSystemVrfy::getInformation(RenderSystemInformation& outInfo) const
 	m_renderSystem->getInformation(outInfo);
 }
 
+bool RenderSystemVrfy::supportRayTracing() const
+{
+	return m_renderSystem->supportRayTracing();
+}
+
 uint32_t RenderSystemVrfy::getDisplayCount() const
 {
 	return m_renderSystem->getDisplayCount();

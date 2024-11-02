@@ -75,8 +75,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 		r.second = (uint32_t)staticMesh->m_parts.size();
 	}
 
-	const bool rayTracingEnable = true;
-	if (rayTracingEnable)
+	if (renderSystem->supportRayTracing())
 	{
 		AlignedVector< render::Primitives > primitives;
 		for (const auto& part : renderMesh->getParts())

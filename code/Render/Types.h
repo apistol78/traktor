@@ -465,6 +465,7 @@ struct RenderSystemDesc
 	int32_t adapter = -1;
 	float mipBias = 0.0f;
 	int32_t maxAnisotropy = 1;
+	bool rayTracing = false;
 	bool validation = false;
 	bool programCache = true;
 	bool verbose = false;

@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/IRenderSystem.h"
 #include "World/Entity.h"
 #include "World/IWorldComponent.h"
 #include "World/World.h"
@@ -24,7 +25,8 @@ World::World(resource::IResourceManager* resourceManager, render::IRenderSystem*
 	setComponent(new CullingComponent(resourceManager, renderSystem));
 	setComponent(new EventManagerComponent(512));
 	setComponent(new IrradianceGridComponent());
-	setComponent(new RTWorldComponent(renderSystem));
+	if (renderSystem->supportRayTracing())
+		setComponent(new RTWorldComponent(renderSystem));
 }
 
 void World::destroy()

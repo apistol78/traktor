@@ -59,6 +59,8 @@ public:
 
 	virtual void getInformation(RenderSystemInformation& outInfo) const override final;
 
+	virtual bool supportRayTracing() const override final;
+
 	virtual uint32_t getDisplayCount() const override final;
 
 	virtual uint32_t getDisplayModeCount(uint32_t display) const override final;

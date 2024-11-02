@@ -49,6 +49,8 @@ public:
 
 	virtual void getInformation(RenderSystemInformation& outInfo) const override final;
 
+	virtual bool supportRayTracing() const override final;
+
 	virtual uint32_t getDisplayCount() const override final;
 
 	virtual uint32_t getDisplayModeCount(uint32_t display) const override final;
@@ -109,6 +111,7 @@ private:
 	VmaAllocator m_allocator = 0;
 	int32_t m_maxAnisotropy = 0;
 	float m_mipBias = 0.0f;
+	bool m_rayTracing = false;
 };
 
 }

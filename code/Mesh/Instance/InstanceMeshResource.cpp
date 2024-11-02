@@ -76,8 +76,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 		}
 	}
 
-	const bool rayTracingEnable = true;
-	if (rayTracingEnable)
+	if (renderSystem->supportRayTracing())
 	{
 		AlignedVector< render::Primitives > primitives;
 		for (const auto& part : renderMesh->getParts())

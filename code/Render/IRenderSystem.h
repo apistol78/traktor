@@ -63,6 +63,9 @@ public:
 	/*! Get render system information. */
 	virtual void getInformation(RenderSystemInformation& outInfo) const = 0;
 
+	/*! Support raytracing. */
+	virtual bool supportRayTracing() const = 0;
+
 	//@}
 
 	/*! \name Display mode enumeration. */
