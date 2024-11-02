@@ -54,6 +54,7 @@ struct GlslRequirements
 	PrecisionHint fragmentPrecisionHint = PrecisionHint::Undefined;
 	int32_t localSize[3] = { 1, 1, 1 };
 	bool useTargetSize = false;
+	bool useRayTracing = false;
 };
 
 std::wstring T_DLLCLASS glsl_type_name(GlslType type);

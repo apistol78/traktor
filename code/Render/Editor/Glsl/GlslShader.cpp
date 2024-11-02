@@ -191,8 +191,16 @@ std::wstring GlslShader::getGeneratedShader(
 		ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_float16 : enable" << Endl;
 	}
 
-	ss << L"#extension GL_EXT_ray_tracing : enable" << Endl;
-	ss << L"#extension GL_EXT_ray_query : enable" << Endl;
+	if (
+		requirements.useRayTracing ||
+		m_shaderType == StRayGen ||
+		m_shaderType == StRayHit ||
+		m_shaderType == StRayMiss
+	)
+	{
+		ss << L"#extension GL_EXT_ray_tracing : enable" << Endl;
+		ss << L"#extension GL_EXT_ray_query : enable" << Endl;
+	}
 
 	ss << Endl;
 

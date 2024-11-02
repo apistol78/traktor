@@ -224,7 +224,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 7, Script, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 8, Script, Node)
 
 Script::Script()
 {
@@ -266,6 +266,11 @@ Script::Domain Script::getDomain() const
 const int32_t* Script::getLocalSize() const
 {
 	return m_localSize;
+}
+
+bool Script::useRayTracing() const
+{
+	return m_useRayTracing;
 }
 
 const AlignedVector< Guid >& Script::getIncludes() const
@@ -391,6 +396,9 @@ void Script::serialize(ISerializer& s)
 		const wchar_t* c_localSizeElements[] = { L"X", L"Y", L"Z" };
 		s >> MemberStaticArray< int32_t, 3 >(L"localSize", m_localSize, AttributeRange(1), c_localSizeElements);
 	}
+
+	if (s.getVersion< Script >() >= 8)
+		s >> Member< bool >(L"useRayTracing", m_useRayTracing);
 
 	if (s.getVersion< Script >() >= 5)
 		s >> MemberAlignedVector< Guid >(L"include", m_includes); // , AttributeType(type_of< ShaderModule >()));
