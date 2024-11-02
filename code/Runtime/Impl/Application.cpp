@@ -413,10 +413,13 @@ void Application::destroy()
 	if (m_scriptServer)
 		m_scriptServer->cleanup(true);
 
-	// Shutdown plugins.
-	for (auto plugin : m_plugins)
+	// Shutdown plugins (in reverse order).
+	while (!m_plugins.empty())
+	{
+		auto plugin = m_plugins.back();
 		plugin->destroy(m_environment);
-	m_plugins.clear();
+		m_plugins.pop_back();
+	}
 
 	// Destroy environment servers.
 	safeDestroy(m_resourceServer);

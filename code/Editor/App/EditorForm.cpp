@@ -846,10 +846,13 @@ void EditorForm::destroy()
 {
 	closeWorkspace();
 
-	// Destroy all plugins.
-	for (auto editorPluginSite : m_editorPluginSites)
+	// Destroy all plugins (in reverse order).
+	while (!m_editorPluginSites.empty())
+	{
+		auto editorPluginSite = m_editorPluginSites.back();
 		editorPluginSite->destroy();
-	m_editorPluginSites.clear();
+		m_editorPluginSites.pop_back();
+	}
 
 	// Destroy shortcut table.
 	safeDestroy(m_shortcutTable);
