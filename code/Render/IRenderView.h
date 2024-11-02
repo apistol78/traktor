@@ -11,6 +11,7 @@
 #include "Core/Object.h"
 #include "Core/Platform.h"
 #include "Core/Math/Color4f.h"
+#include "Render/IAccelerationStructure.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -193,6 +194,9 @@ public:
 	 * \param sourceRegion Source region.
 	 */
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) = 0;
+
+	/*! */
+	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances) = 0;
 
 	/*! \name Time queries. */
 	//@{

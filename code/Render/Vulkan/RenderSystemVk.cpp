@@ -769,6 +769,9 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 	if (!resource)
 		return nullptr;
 
+	if (resource->m_useRayTracing && !m_rayTracing)
+		return nullptr;
+
 	Ref< ProgramVk > program = new ProgramVk(m_context, m_statistics.programs);
 	if (program->create(m_shaderModuleCache, m_pipelineLayoutCache, resource, m_maxAnisotropy, m_mipBias, tag))
 		return program;

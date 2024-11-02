@@ -434,6 +434,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	programResource->m_name = name;
 	programResource->m_renderState = cx.getRenderState();
 	programResource->m_useTargetSize = cx.requirements().useTargetSize;
+	programResource->m_useRayTracing = cx.requirements().useRayTracing;
 	programResource->m_localWorkGroupSize[0] = cx.requirements().localSize[0];
 	programResource->m_localWorkGroupSize[1] = cx.requirements().localSize[1];
 	programResource->m_localWorkGroupSize[2] = cx.requirements().localSize[2];

@@ -30,9 +30,7 @@ class IRenderSystem;
 namespace traktor::world
 {
 
-class IWorldRenderPass;
 class WorldBuildContext;
-class WorldRenderView;
 
 /*! Ray tracing world.
  * \ingroup World
@@ -69,7 +67,7 @@ public:
 
 	void releaseInstance(Instance*& instance);
 
-	void setup();
+	void build(const WorldBuildContext& context);
 
 	const render::IAccelerationStructure* getTLAS() const { return m_tlas; }
 

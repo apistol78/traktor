@@ -19,6 +19,7 @@ namespace traktor::render
 
 class ApiBuffer;
 class Buffer;
+class CommandBuffer;
 class Context;
 class IVertexLayout;
 
@@ -35,7 +36,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual bool writeInstances(const AlignedVector< Instance >& instances) override final;
+	bool writeInstances(CommandBuffer* commandBuffer, const AlignedVector< Instance >& instances);
 
 	const VkAccelerationStructureKHR& getVkAccelerationStructureKHR() const { return m_as; }
 

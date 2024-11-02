@@ -88,7 +88,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 14, ProgramResourceVk, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 15, ProgramResourceVk, ProgramResource)
 
 void ProgramResourceVk::serialize(ISerializer& s)
 {
@@ -112,6 +112,7 @@ void ProgramResourceVk::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"shaderHash", m_shaderHash);
 	s >> Member< uint32_t >(L"layoutHash", m_layoutHash);
 	s >> Member< bool >(L"useTargetSize", m_useTargetSize);
+	s >> Member< bool >(L"useRayTracing", m_useRayTracing);
 }
 
 void ProgramResourceVk::ParameterDesc::serialize(ISerializer& s)

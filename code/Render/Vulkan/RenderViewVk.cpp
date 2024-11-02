@@ -17,6 +17,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
@@ -1280,6 +1281,14 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		return false;
 
 	return true;
+}
+
+void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances)
+{
+	const auto& frame = m_frames[m_currentImageIndex];
+
+	AccelerationStructureVk* as = mandatory_non_null_type_cast< AccelerationStructureVk* >(accelerationStructure);
+	as->writeInstances(frame.graphicsCommandBuffer, instances);
 }
 
 int32_t RenderViewVk::beginTimeQuery()

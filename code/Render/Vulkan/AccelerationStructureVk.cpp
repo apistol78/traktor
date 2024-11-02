@@ -291,13 +291,16 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 	AlignedVector< VkAccelerationStructureBuildRangeInfoKHR > buildRanges;
 	for (const auto& primitive : primitives)
 	{
-		if (primitive.type != PrimitiveType::Triangles)
+		if (
+			primitive.type != PrimitiveType::Triangles ||
+			primitive.indexed == false
+		)
 			continue;
 
 		VkAccelerationStructureBuildRangeInfoKHR& offset = buildRanges.push_back();
-		offset.firstVertex = primitive.offset;
+		offset.firstVertex = 0;
 		offset.primitiveCount = primitive.count;
-		offset.primitiveOffset = 0;
+		offset.primitiveOffset = primitive.offset * ((indexType == IndexType::UInt32) ? 4 : 2);
 		offset.transformOffset = 0;
 	}
 
@@ -333,7 +336,7 @@ void AccelerationStructureVk::destroy()
 	m_context = nullptr;
 }
 
-bool AccelerationStructureVk::writeInstances(const AlignedVector< Instance >& instances)
+bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const AlignedVector< Instance >& instances)
 {
 	VkAccelerationStructureInstanceKHR* ptr = (VkAccelerationStructureInstanceKHR*)m_instanceBuffer->lock();
 	if (!ptr)
@@ -422,15 +425,12 @@ bool AccelerationStructureVk::writeInstances(const AlignedVector< Instance >& in
 	};
 
 	const VkAccelerationStructureBuildRangeInfoKHR* topLevelAccelerationStructureBuildRangeInfos = &topLevelAccelerationStructureBuildRangeInfo;
-
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
 	vkCmdBuildAccelerationStructuresKHR(
 		*commandBuffer,
 		1,
 		&topLevelAccelerationStructureBuildGeometryInfo,
 		&topLevelAccelerationStructureBuildRangeInfos
 	);
-	commandBuffer->submitAndWait();
 
 	return true;
 }

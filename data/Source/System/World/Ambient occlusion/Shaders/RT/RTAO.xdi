@@ -256,7 +256,7 @@
 			<type>AccelerationStructure</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Script" version="7,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{EAC774D6-AC45-ED49-8CDF-6D31CD814190}</id>
 			<comment/>
 			<position>
@@ -271,6 +271,7 @@
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>true</useRayTracing>
 			<include>
 				<item>{1C13688E-63BC-3141-ACB1-58EEE72EEF2F}</item>
 				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
@@ -338,7 +339,6 @@ for (int i = 0; i < N; ++i)
 
 const float f = 1.0f - occlusions / float(N);
 $Output = f;
-
 			]]>
 			</script>
 		</item>

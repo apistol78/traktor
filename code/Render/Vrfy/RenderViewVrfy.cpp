@@ -408,6 +408,11 @@ bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinatio
 	return m_renderView->copy(destinationTextureUnwrapped, destinationRegion, sourceTextureUnwrapped, sourceRegion);
 }
 
+void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances)
+{
+	m_renderView->writeAccelerationStructure(accelerationStructure, instances);
+}
+
 int32_t RenderViewVrfy::beginTimeQuery()
 {
 	T_CAPTURE_TRACE(L"beginTimeQuery");

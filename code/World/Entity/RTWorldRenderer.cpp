@@ -30,8 +30,6 @@ void RTWorldRenderer::setup(
 	Object* renderable
 )
 {
-	auto rtWorldComponent = static_cast< RTWorldComponent* >(renderable);
-	rtWorldComponent->setup();
 }
 
 void RTWorldRenderer::setup(
@@ -47,6 +45,8 @@ void RTWorldRenderer::build(
 	Object* renderable
 )
 {
+	auto rtWorldComponent = static_cast< RTWorldComponent* >(renderable);
+	rtWorldComponent->build(context);
 }
 
 void RTWorldRenderer::build(

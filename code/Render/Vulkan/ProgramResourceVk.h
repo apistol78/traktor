@@ -100,6 +100,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	friend class RenderSystemVk;
 	friend class ProgramVk;
 	friend class ProgramCompilerVk;
 
@@ -130,6 +131,7 @@ private:
 	uint32_t m_layoutHash = 0;
 
 	bool m_useTargetSize = false;
+	bool m_useRayTracing = false;
 };
 
 }

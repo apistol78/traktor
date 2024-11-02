@@ -101,6 +101,8 @@ public:
 
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) override final;
 
+	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances) override final;
+
 	virtual int32_t beginTimeQuery() override final;
 
 	virtual void endTimeQuery(int32_t query) override final;

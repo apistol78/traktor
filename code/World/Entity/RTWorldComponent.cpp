@@ -9,6 +9,9 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IAccelerationStructure.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
+#include "Render/Context/RenderContext.h"
+#include "World/WorldBuildContext.h"
 #include "World/Entity/RTWorldComponent.h"
 
 namespace traktor::world
@@ -55,7 +58,7 @@ void RTWorldComponent::releaseInstance(Instance*& instance)
 	m_instanceBufferDirty = true;
 }
 
-void RTWorldComponent::setup()
+void RTWorldComponent::build(const WorldBuildContext& context)
 {
 	if (!m_instanceBufferDirty)
 		return;
@@ -69,7 +72,16 @@ void RTWorldComponent::setup()
 			.blas = instance->blas
 		});
 	}
-	m_tlas->writeInstances(tlasInstances);
+
+	render::RenderContext* renderContext = context.getRenderContext();
+	T_ASSERT(renderContext);
+
+	auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"RTWorldComponent");
+	rb->lambda = [=](render::IRenderView* renderView)
+	{
+		renderView->writeAccelerationStructure(m_tlas, tlasInstances);
+	};
+	renderContext->compute(rb);
 
 	m_instanceBufferDirty = false;
 }
