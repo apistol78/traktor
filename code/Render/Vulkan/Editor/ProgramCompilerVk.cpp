@@ -732,7 +732,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		checksum.begin();
 
 		checksum.feed(L"PC");
-		checksum.feed(programResource->m_useTargetSize ? 1 : 0);
+		checksum.feed< uint8_t >(programResource->m_useTargetSize ? 1 : 0);
+		checksum.feed< uint8_t >(programResource->m_useRayTracing ? 1 : 0);
 
 		for (int32_t i = 0; i < 3; ++i)
 		{
