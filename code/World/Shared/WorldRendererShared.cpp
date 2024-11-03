@@ -520,7 +520,17 @@ void WorldRendererShared::setupLightPass(
 							0.0f,
 							1.0f
 						);
-						renderContext->draw(svrb);	
+						renderContext->draw(svrb);
+
+						// Set scissor.
+						auto ssrb = renderContext->alloc< render::SetScissorRenderBlock >();
+						ssrb->scissor = render::Rectangle(
+							svrb->viewport.left,
+							svrb->viewport.top,
+							svrb->viewport.width,
+							svrb->viewport.height
+						);
+						renderContext->draw(ssrb);
 
 						// Render entities into shadow map.
 						auto sharedParams = renderContext->alloc< render::ProgramParameters >();
@@ -666,6 +676,17 @@ void WorldRendererShared::setupLightPass(
 						1.0f
 					);
 					renderContext->draw(svrb);	
+
+					// Set scissor.
+					auto ssrb = renderContext->alloc< render::SetScissorRenderBlock >();
+					ssrb->scissor = render::Rectangle(
+						svrb->viewport.left,
+						svrb->viewport.top,
+						svrb->viewport.width,
+						svrb->viewport.height
+					);
+					renderContext->draw(ssrb);
+
 
 					// Render entities into shadow map.
 					auto sharedParams = renderContext->alloc< render::ProgramParameters >();
