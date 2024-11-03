@@ -6,12 +6,27 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Context/ProgramParameters.h"
 #include "Spray/EmitterInstanceCPU.h"
 #include "Spray/Types.h"
 #include "Spray/Sources/DiscSource.h"
 
 namespace traktor::spray
 {
+	namespace
+	{
+
+static render::Handle s_handleSourcePosition(L"Spray_SourcePosition");
+static render::Handle s_handleSourceNormal(L"Spray_SourceNormal");
+static render::Handle s_handleSourceRadius(L"Spray_SourceRadius");
+static render::Handle s_handleSourceVelocity(L"Spray_SourceVelocity");
+static render::Handle s_handleSourceOrientation(L"Spray_SourceOrientation");
+static render::Handle s_handleSourceAngularVelocity(L"Spray_SourceAngularVelocity");
+static render::Handle s_handleSourceAge(L"Spray_SourceAge");
+static render::Handle s_handleSourceMass(L"Spray_SourceMass");
+static render::Handle s_handleSourceSize(L"Spray_SourceSize");
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.DiscSource", DiscSource, Source)
 
@@ -39,6 +54,19 @@ DiscSource::DiscSource(
 ,	m_mass(mass)
 ,	m_size(size)
 {
+}
+
+void DiscSource::setShaderParameters(render::ProgramParameters* pp) const
+{
+	pp->setVectorParameter(s_handleSourcePosition, m_position);
+	pp->setVectorParameter(s_handleSourceNormal, m_normal);
+	pp->setVectorParameter(s_handleSourceRadius, Vector4(m_radius.min, m_radius.max, 0.0f, 0.0f));
+	pp->setVectorParameter(s_handleSourceVelocity, Vector4(m_velocity.min, m_velocity.max, 0.0f, 0.0f));
+	pp->setVectorParameter(s_handleSourceOrientation, Vector4(m_orientation.min, m_orientation.max, 0.0f, 0.0f));
+	pp->setVectorParameter(s_handleSourceAngularVelocity, Vector4(m_angularVelocity.min, m_angularVelocity.max, 0.0f, 0.0f));
+	pp->setVectorParameter(s_handleSourceAge, Vector4(m_age.min, m_age.max, 0.0f, 0.0f));
+	pp->setVectorParameter(s_handleSourceMass, Vector4(m_mass.min, m_mass.max, 0.0f, 0.0f));
+	pp->setVectorParameter(s_handleSourceSize, Vector4(m_size.min, m_size.max, 0.0f, 0.0f));
 }
 
 void DiscSource::emit(

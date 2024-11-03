@@ -16,6 +16,12 @@
 
 namespace traktor::spray
 {
+	namespace
+	{
+
+const resource::Id< render::Shader > c_shaderDiscSource(L"{83FA30DA-8CAA-5A42-A807-6BF398DE52FA}");
+
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.DiscSourceData", 0, DiscSourceData, SourceData)
 
@@ -31,6 +37,11 @@ DiscSourceData::DiscSourceData()
 ,	m_mass(1.0f, 1.0f)
 ,	m_size(1.0f, 1.0f)
 {
+}
+
+resource::Id< render::Shader > DiscSourceData::getShader() const
+{
+	return c_shaderDiscSource;
 }
 
 Ref< const Source > DiscSourceData::createSource(resource::IResourceManager* resourceManager) const

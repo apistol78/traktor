@@ -45,6 +45,8 @@ public:
 		const Range< float >& size
 	);
 
+	virtual void setShaderParameters(render::ProgramParameters* pp) const override final;
+
 	virtual void emit(
 		Context& context,
 		const Transform& transform,
