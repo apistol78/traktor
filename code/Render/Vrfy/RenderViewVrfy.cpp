@@ -350,6 +350,10 @@ void RenderViewVrfy::computeIndirect(IProgram* program, const IBufferView* workB
 	T_CAPTURE_ASSERT(m_insideFrame, L"Cannot compute outside of beginFrame/endFrame.");
 	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
 
+	const BufferViewVrfy* wbv = checked_type_cast< const BufferViewVrfy* >(workBuffer);
+	if (!wbv)
+		return;
+
 	ProgramVrfy* programVrfy = dynamic_type_cast< ProgramVrfy* >(program);
 	T_CAPTURE_ASSERT(programVrfy, L"Incorrect program type.");
 
@@ -358,7 +362,9 @@ void RenderViewVrfy::computeIndirect(IProgram* program, const IBufferView* workB
 
 	programVrfy->verify();
 
-	m_renderView->computeIndirect(programVrfy->m_program, workBuffer, workOffset);
+	const IBufferView* wrappedWorldView = wbv != nullptr ? wbv->getWrappedBufferView() : nullptr;
+
+	m_renderView->computeIndirect(programVrfy->m_program, wrappedWorldView, workOffset);
 }
 
 void RenderViewVrfy::barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip)
