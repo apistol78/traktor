@@ -273,10 +273,15 @@ render::handle_t ReflectionsPass::setup(
 	// Apply screen-space traced reflections.
 	if (m_screenReflections)
 	{
-		auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
-
+		auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
+		{
 			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 			const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
+
+			params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
+			params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+			params->setMatrixParameter(s_handleView, worldRenderView.getView());
+			params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 
 			params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 			params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
@@ -289,6 +294,8 @@ render::handle_t ReflectionsPass::setup(
 				params->setTextureParameter(s_handleDBufferMiscMap, dbufferTargetSet->getColorTexture(1));
 				params->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
 			}
+
+			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.tlas);
 		};
 
 		m_screenReflections->addPasses(
