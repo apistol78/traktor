@@ -251,30 +251,29 @@ std::wstring GlslShader::getGeneratedShader(
 	else if (m_shaderType == StCompute)
 		stageMask = GlslResource::BsCompute;
 
-	if (m_shaderType == StRayGen)
+	if (m_shaderType == StRayGen || m_shaderType == StRayHit || m_shaderType == StRayMiss)
 	{
 		ss << L"// Ray tracing pay load." << Endl;
 		ss << L"layout (location = 0) rayPayloadEXT rt" << Endl;
 		ss << L"{" << Endl;
 		ss << IncreaseIndent;
-		ss << L"vec3 rayOrigin;" << Endl;
-		ss << L"vec3 rayDirection;" << Endl;
+		ss << L"vec4 hitOutput;" << Endl;
 		ss << DecreaseIndent;
 		ss << L"};" << Endl;
 		ss << Endl;
 	}
-	else if (m_shaderType == StRayHit || m_shaderType == StRayMiss)
-	{
-		ss << L"// Ray tracing pay load." << Endl;
-		ss << L"layout (location = 0) rayPayloadInEXT rt" << Endl;
-		ss << L"{" << Endl;
-		ss << IncreaseIndent;
-		ss << L"vec3 rayOrigin;" << Endl;
-		ss << L"vec3 rayDirection;" << Endl;
-		ss << DecreaseIndent;
-		ss << L"};" << Endl;
-		ss << Endl;
-	}
+	//else if (m_shaderType == StRayHit || m_shaderType == StRayMiss)
+	//{
+	//	ss << L"// Ray tracing pay load." << Endl;
+	//	ss << L"layout (location = 0) rayPayloadInEXT rt" << Endl;
+	//	ss << L"{" << Endl;
+	//	ss << IncreaseIndent;
+	//	ss << L"vec3 rayOrigin;" << Endl;
+	//	ss << L"vec3 rayDirection;" << Endl;
+	//	ss << DecreaseIndent;
+	//	ss << L"};" << Endl;
+	//	ss << Endl;
+	//}
 
 	if (requirements.useTargetSize)
 	{

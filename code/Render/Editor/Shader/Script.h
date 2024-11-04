@@ -40,15 +40,15 @@ class T_DLLCLASS Script : public Node
 	T_RTTI_CLASS;
 
 public:
-	enum Domain
+	enum Domain : int32_t
 	{
-		Undefined,
-		Vertex,
-		Pixel,
-		Compute,
-		RayGen,
-		RayHit,
-		RayMiss
+		Undefined = 0,
+		Vertex = 1,
+		Pixel = 2,
+		Compute = 3,
+		RayGen = 4,
+		RayHit = 5,
+		RayMiss = 6
 	};
 
 	Script();

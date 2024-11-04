@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -116,7 +116,7 @@ bool ProgramVk::create(
 	const wchar_t* const tag
 )
 {
-	VkShaderStageFlags stageFlags;
+	VkShaderStageFlags stageFlags = 0;
 
 	m_tag = tag;
 	m_renderState = resource->m_renderState;
@@ -129,8 +129,6 @@ bool ProgramVk::create(
 	// Get shader modules.
 	if (!resource->m_vertexShader.empty() && !resource->m_fragmentShader.empty())
 	{
-		T_FATAL_ASSERT(resource->m_computeShader.empty());
-
 		if ((m_vertexShaderModule = shaderModuleCache->get(resource->m_vertexShader, resource->m_vertexShaderHash)) == 0)
 			return false;
 		if ((m_fragmentShaderModule = shaderModuleCache->get(resource->m_fragmentShader, resource->m_fragmentShaderHash)) == 0)
@@ -138,24 +136,44 @@ bool ProgramVk::create(
 
 		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_vertexShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
 		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_fragmentShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
-
-		stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
+		stageFlags |= VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
 	}
-	else if (!resource->m_computeShader.empty())
+	if (!resource->m_computeShader.empty())
 	{
 		if ((m_computeShaderModule = shaderModuleCache->get(resource->m_computeShader, resource->m_computeShaderHash)) == 0)
 			return false;
 
 		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_computeShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
-
-		stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+		stageFlags |= VK_SHADER_STAGE_COMPUTE_BIT;
 	}
-	else
-		return false;
+	if (!resource->m_rayGenShader.empty())
+	{
+		if ((m_rayGenShaderModule = shaderModuleCache->get(resource->m_rayGenShader, resource->m_rayGenShaderHash)) == 0)
+			return false;
+
+		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_rayGenShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
+		stageFlags |= VK_SHADER_STAGE_RAYGEN_BIT_KHR;
+	}
+	if (!resource->m_rayHitShader.empty())
+	{
+		if ((m_rayHitShaderModule = shaderModuleCache->get(resource->m_rayHitShader, resource->m_rayHitShaderHash)) == 0)
+			return false;
+
+		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_rayHitShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
+		stageFlags |= VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR;
+	}
+	if (!resource->m_rayMissShader.empty())
+	{
+		if ((m_rayMissShaderModule = shaderModuleCache->get(resource->m_rayMissShader, resource->m_rayMissShaderHash)) == 0)
+			return false;
+
+		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_rayMissShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
+		stageFlags |= VK_SHADER_STAGE_MISS_BIT_KHR;
+	}
 
 	VkPhysicalDeviceProperties deviceProperties;
 	vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &deviceProperties);
-	uint32_t uniformBufferOffsetAlignment = std::max< uint32_t >(
+	const uint32_t uniformBufferOffsetAlignment = std::max< uint32_t >(
 		(uint32_t)deviceProperties.limits.minUniformBufferOffsetAlignment,
 		sizeof(intptr_t)
 	);
@@ -520,7 +538,9 @@ void ProgramVk::destroy()
 	m_vertexShaderModule = 0;
 	m_fragmentShaderModule = 0;
 	m_computeShaderModule = 0;
-
+	m_rayGenShaderModule = 0;
+	m_rayHitShaderModule = 0;
+	m_rayMissShaderModule = 0;
 	m_descriptorSetLayout = 0;
 	m_pipelineLayout = 0;
 

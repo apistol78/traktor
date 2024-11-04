@@ -164,6 +164,12 @@ public:
 
 	GlslShader& getComputeShader() { return m_computeShader; }
 
+	GlslShader& getRayGenShader() { return m_rayGenShader; }
+	
+	GlslShader& getRayHitShader() { return m_rayHitShader; }
+
+	GlslShader& getRayMissShader() { return m_rayMissShader; }
+
 	GlslEmitter& getEmitter() { return m_emitter; }
 
 	/*! \} */

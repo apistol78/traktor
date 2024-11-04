@@ -262,7 +262,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	RefArray< VertexOutput > vertexOutputs;
 	RefArray< PixelOutput > pixelOutputs;
 	RefArray< ComputeOutput > computeOutputs;
-	RefArray< Script > scriptOutputs;
+	RefArray< Script > scriptOutputs[7];
 	
 	// Gather all output nodes from shader graph, type and number
 	// of output nodes determine type of shader program (vertex-, 
@@ -278,7 +278,11 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		else if (auto script = dynamic_type_cast< Script* >(node))
 		{
 			if (!script->getTechnique().empty())
-				scriptOutputs.push_back(script);
+			{
+				if (script->getDomain() == Script::Undefined)
+					return nullptr;
+				scriptOutputs[(int32_t)script->getDomain()].push_back(script);
+			}
 		}
 	}
 
@@ -292,6 +296,9 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	glslang::TShader* vertexShader = nullptr;
 	glslang::TShader* fragmentShader = nullptr;
 	glslang::TShader* computeShader = nullptr;
+	glslang::TShader* rayGenShader = nullptr;
+	glslang::TShader* rayHitShader = nullptr;
+	glslang::TShader* rayMissShader = nullptr;
 
 	// Generate and compile vertex and fragment shaders.
 	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
@@ -368,14 +375,14 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		program->addShader(fragmentShader);
 	}
 	// Generate and compile compute shader.
-	else if (computeOutputs.size() >= 1 || scriptOutputs.size() >= 1)
+	if (computeOutputs.size() >= 1 || scriptOutputs[Script::Compute].size() >= 1)
 	{
 		const auto defaultBuiltInResource = getDefaultBuiltInResource();
 
 		// Emit shader code by traversing from output nodes.
 		for (auto computeOutput : computeOutputs)
 			cx.getEmitter().emit(cx, computeOutput);
-		for (auto scriptOutput : scriptOutputs)
+		for (auto scriptOutput : scriptOutputs[Script::Compute])
 			cx.getEmitter().emit(cx, scriptOutput);
 
 		const std::wstring errorReport = cx.getErrorReport();
@@ -415,10 +422,143 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 		program->addShader(computeShader);
 	}
-	else
+	// Generate and compile ray gen shader.
+	if (scriptOutputs[Script::RayGen].size() >= 1)
 	{
-		log::error << L"Unable to generate Vulkan GLSL shader; incorrect number of outputs." << Endl;
-		return nullptr;
+		const auto defaultBuiltInResource = getDefaultBuiltInResource();
+
+		// Emit shader code by traversing from output nodes.
+		for (auto scriptOutput : scriptOutputs[Script::RayGen])
+			cx.getEmitter().emit(cx, scriptOutput);
+
+		const std::wstring errorReport = cx.getErrorReport();
+		if (!errorReport.empty())
+		{
+			log::error << errorReport;
+			return nullptr;
+		}
+
+		const GlslRequirements requirements = cx.requirements();
+
+		const auto& layout = cx.getLayout();
+		const char* rayGenShaderText = strdup(wstombs(cx.getRayGenShader().getGeneratedShader(settings, layout, requirements, resolveModuleText)).c_str());
+
+		// Ray gen shader.
+		rayGenShader = new glslang::TShader(EShLangRayGen);
+		rayGenShader->setEnvClient(glslang::EShClientVulkan, c_clientVersion);
+		rayGenShader->setEnvTarget(glslang::EShTargetSpv, c_targetSPV);
+		rayGenShader->setStrings(&rayGenShaderText, 1);
+		rayGenShader->setEntryPoint("main");
+		rayGenShader->setSourceEntryPoint("main");
+		rayGenShader->setDebugInfo(true);
+		
+		const bool result = rayGenShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings | EShMsgDebugInfo));
+		if (rayGenShader->getInfoLog())
+		{
+			if (!result)
+			{
+				outErrors.push_back({
+					trim(mbstows(rayGenShader->getInfoLog())),
+					mbstows(rayGenShaderText)
+				});
+			}
+		}
+		if (!result)
+			return nullptr;
+
+		program->addShader(rayGenShader);
+	}
+	// Generate and compile ray hit shader.
+	if (scriptOutputs[Script::RayHit].size() >= 1)
+	{
+		const auto defaultBuiltInResource = getDefaultBuiltInResource();
+
+		// Emit shader code by traversing from output nodes.
+		for (auto scriptOutput : scriptOutputs[Script::RayHit])
+			cx.getEmitter().emit(cx, scriptOutput);
+
+		const std::wstring errorReport = cx.getErrorReport();
+		if (!errorReport.empty())
+		{
+			log::error << errorReport;
+			return nullptr;
+		}
+
+		const GlslRequirements requirements = cx.requirements();
+
+		const auto& layout = cx.getLayout();
+		const char* rayHitShaderText = strdup(wstombs(cx.getRayHitShader().getGeneratedShader(settings, layout, requirements, resolveModuleText)).c_str());
+
+		// Ray hit shader.
+		rayHitShader = new glslang::TShader(EShLangClosestHit);
+		rayHitShader->setEnvClient(glslang::EShClientVulkan, c_clientVersion);
+		rayHitShader->setEnvTarget(glslang::EShTargetSpv, c_targetSPV);
+		rayHitShader->setStrings(&rayHitShaderText, 1);
+		rayHitShader->setEntryPoint("main");
+		rayHitShader->setSourceEntryPoint("main");
+		rayHitShader->setDebugInfo(true);
+		
+		const bool result = rayHitShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings | EShMsgDebugInfo));
+		if (rayHitShader->getInfoLog())
+		{
+			if (!result)
+			{
+				outErrors.push_back({
+					trim(mbstows(rayHitShader->getInfoLog())),
+					mbstows(rayHitShaderText)
+				});
+			}
+		}
+		if (!result)
+			return nullptr;
+
+		program->addShader(rayHitShader);
+	}
+	// Generate and compile ray miss shader.
+	if (scriptOutputs[Script::RayMiss].size() >= 1)
+	{
+		const auto defaultBuiltInResource = getDefaultBuiltInResource();
+
+		// Emit shader code by traversing from output nodes.
+		for (auto scriptOutput : scriptOutputs[Script::RayMiss])
+			cx.getEmitter().emit(cx, scriptOutput);
+
+		const std::wstring errorReport = cx.getErrorReport();
+		if (!errorReport.empty())
+		{
+			log::error << errorReport;
+			return nullptr;
+		}
+
+		const GlslRequirements requirements = cx.requirements();
+
+		const auto& layout = cx.getLayout();
+		const char* rayMissShaderText = strdup(wstombs(cx.getRayMissShader().getGeneratedShader(settings, layout, requirements, resolveModuleText)).c_str());
+
+		// Ray miss shader.
+		rayMissShader = new glslang::TShader(EShLangClosestHit);
+		rayMissShader->setEnvClient(glslang::EShClientVulkan, c_clientVersion);
+		rayMissShader->setEnvTarget(glslang::EShTargetSpv, c_targetSPV);
+		rayMissShader->setStrings(&rayMissShaderText, 1);
+		rayMissShader->setEntryPoint("main");
+		rayMissShader->setSourceEntryPoint("main");
+		rayMissShader->setDebugInfo(true);
+		
+		const bool result = rayMissShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings | EShMsgDebugInfo));
+		if (rayMissShader->getInfoLog())
+		{
+			if (!result)
+			{
+				outErrors.push_back({
+					trim(mbstows(rayMissShader->getInfoLog())),
+					mbstows(rayMissShaderText)
+				});
+			}
+		}
+		if (!result)
+			return nullptr;
+
+		program->addShader(rayMissShader);
 	}
 
 	// Link shaders into a program.
@@ -503,6 +643,69 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			if (!performValidation(programResource->m_computeShader))
 			{
 				log::error << L"Validation of generated SPIR-V failed; compute shader compile failed." << Endl;
+				return nullptr;
+			}
+		}
+	}
+
+	auto rgi = program->getIntermediate(EShLangRayGen);
+	if (rgi != nullptr)
+	{
+		std::vector< uint32_t > rgs;
+		glslang::GlslangToSpv(*rgi, rgs, &options);
+
+		programResource->m_rayGenShader = AlignedVector< uint32_t >(rgs.begin(), rgs.end());
+		
+		if (optimize > 0)
+			performOptimization(convertRelaxedToHalf, programResource->m_rayGenShader);
+
+		if (validate)
+		{
+			if (!performValidation(programResource->m_rayGenShader))
+			{
+				log::error << L"Validation of generated SPIR-V failed; ray gen shader compile failed." << Endl;
+				return nullptr;
+			}
+		}
+	}
+
+	auto rhi = program->getIntermediate(EShLangClosestHit);
+	if (rhi != nullptr)
+	{
+		std::vector< uint32_t > rhs;
+		glslang::GlslangToSpv(*rhi, rhs, &options);
+
+		programResource->m_rayHitShader = AlignedVector< uint32_t >(rhs.begin(), rhs.end());
+		
+		if (optimize > 0)
+			performOptimization(convertRelaxedToHalf, programResource->m_rayHitShader);
+
+		if (validate)
+		{
+			if (!performValidation(programResource->m_rayHitShader))
+			{
+				log::error << L"Validation of generated SPIR-V failed; ray hit shader compile failed." << Endl;
+				return nullptr;
+			}
+		}
+	}
+
+	auto rmi = program->getIntermediate(EShLangMiss);
+	if (rmi != nullptr)
+	{
+		std::vector< uint32_t > rms;
+		glslang::GlslangToSpv(*rmi, rms, &options);
+
+		programResource->m_rayMissShader = AlignedVector< uint32_t >(rms.begin(), rms.end());
+		
+		if (optimize > 0)
+			performOptimization(convertRelaxedToHalf, programResource->m_rayMissShader);
+
+		if (validate)
+		{
+			if (!performValidation(programResource->m_rayMissShader))
+			{
+				log::error << L"Validation of generated SPIR-V failed; ray miss shader compile failed." << Endl;
 				return nullptr;
 			}
 		}
@@ -720,10 +923,35 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	{
 		Murmur3 checksum;
 		checksum.begin();
+		checksum.feedBuffer(programResource->m_rayGenShader.c_ptr(), programResource->m_rayGenShader.size() * sizeof(uint32_t));
+		checksum.end();
+		programResource->m_rayGenShaderHash = checksum.get();
+	}
+	{
+		Murmur3 checksum;
+		checksum.begin();
+		checksum.feedBuffer(programResource->m_rayHitShader.c_ptr(), programResource->m_rayHitShader.size() * sizeof(uint32_t));
+		checksum.end();
+		programResource->m_rayHitShaderHash = checksum.get();
+	}
+	{
+		Murmur3 checksum;
+		checksum.begin();
+		checksum.feedBuffer(programResource->m_rayMissShader.c_ptr(), programResource->m_rayMissShader.size() * sizeof(uint32_t));
+		checksum.end();
+		programResource->m_rayMissShaderHash = checksum.get();
+	}
+
+	{
+		Murmur3 checksum;
+		checksum.begin();
 		checksum.feed(cx.getRenderState());
 		checksum.feedBuffer(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
 		checksum.feedBuffer(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
 		checksum.feedBuffer(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size() * sizeof(uint32_t));
+		checksum.feedBuffer(programResource->m_rayGenShader.c_ptr(), programResource->m_rayGenShader.size() * sizeof(uint32_t));
+		checksum.feedBuffer(programResource->m_rayHitShader.c_ptr(), programResource->m_rayHitShader.size() * sizeof(uint32_t));
+		checksum.feedBuffer(programResource->m_rayMissShader.c_ptr(), programResource->m_rayMissShader.size() * sizeof(uint32_t));
 		checksum.end();
 		programResource->m_shaderHash = checksum.get();
 	}
@@ -798,6 +1026,9 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	delete fragmentShader;
 	delete vertexShader;
 	delete computeShader;
+	delete rayGenShader;
+	delete rayHitShader;
+	delete rayMissShader;
 	return programResource;
 }
 
@@ -816,7 +1047,7 @@ bool ProgramCompilerVk::generate(
 	RefArray< VertexOutput > vertexOutputs;
 	RefArray< PixelOutput > pixelOutputs;
 	RefArray< ComputeOutput > computeOutputs;
-	RefArray< Script > scriptOutputs;
+	RefArray< Script > scriptOutputs[7];
 
 	for (auto node : shaderGraph->getNodes())
 	{
@@ -829,7 +1060,11 @@ bool ProgramCompilerVk::generate(
 		else if (auto script = dynamic_type_cast< Script* >(node))
 		{
 			if (!script->getTechnique().empty())
-				scriptOutputs.push_back(script);
+			{
+				if (script->getDomain() == Script::Undefined)
+					return false;
+				scriptOutputs[(int32_t)script->getDomain()].push_back(script);
+			}
 		}
 	}
 
@@ -846,12 +1081,13 @@ bool ProgramCompilerVk::generate(
 			return false;
 		}
 	}
-	else if (computeOutputs.size() >= 1 || scriptOutputs.size() >= 1)
+
+	if (computeOutputs.size() >= 1 || scriptOutputs[Script::Compute].size() >= 1)
 	{
 		bool result = true;
 		for (auto computeOutput : computeOutputs)
 			result &= cx.getEmitter().emit(cx, computeOutput);
-		for (auto scriptOutput : scriptOutputs)
+		for (auto scriptOutput : scriptOutputs[Script::Compute])
 			result &= cx.getEmitter().emit(cx, scriptOutput);
 		if (!result)
 		{
@@ -859,20 +1095,41 @@ bool ProgramCompilerVk::generate(
 			return false;
 		}
 	}
-	else
+
+	if (scriptOutputs[Script::RayGen].size() >= 1)
 	{
-		log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); incorrect number of outputs (" << 
-			vertexOutputs.size() << L", " <<
-			pixelOutputs.size() << L", " <<
-			computeOutputs.size() <<
-		L"):" << Endl;
-		for (auto pixelOutput : pixelOutputs)
-			log::error << L"P " << pixelOutput->getId().format() << Endl;
-		for (auto vertexOutput : vertexOutputs)
-			log::error << L"V " << vertexOutput->getId().format() << Endl;
-		for (auto computeOutput : computeOutputs)
-			log::error << L"C " << computeOutput->getId().format() << Endl;
-		return false;
+		bool result = true;
+		for (auto scriptOutput : scriptOutputs[Script::RayGen])
+			result &= cx.getEmitter().emit(cx, scriptOutput);
+		if (!result)
+		{
+			log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
+			return false;
+		}
+	}
+
+	if (scriptOutputs[Script::RayHit].size() >= 1)
+	{
+		bool result = true;
+		for (auto scriptOutput : scriptOutputs[Script::RayHit])
+			result &= cx.getEmitter().emit(cx, scriptOutput);
+		if (!result)
+		{
+			log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
+			return false;
+		}
+	}
+
+	if (scriptOutputs[Script::RayMiss].size() >= 1)
+	{
+		bool result = true;
+		for (auto scriptOutput : scriptOutputs[Script::RayMiss])
+			result &= cx.getEmitter().emit(cx, scriptOutput);
+		if (!result)
+		{
+			log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
+			return false;
+		}
 	}
 
 	const auto& layout = cx.getLayout();
@@ -962,7 +1219,7 @@ bool ProgramCompilerVk::generate(
 	}
 
 	// Compute
-	if (computeOutputs.size() >= 1 || scriptOutputs.size() >= 1)
+	if (computeOutputs.size() >= 1 || scriptOutputs[Script::Compute].size() >= 1)
 	{
 		StringOutputStream css;
 		css << cx.getComputeShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
@@ -970,6 +1227,39 @@ bool ProgramCompilerVk::generate(
 		css << ss.str();
 		css << Endl;
 		output.compute = css.str();
+	}
+
+	// Ray gen
+	if (scriptOutputs[Script::RayGen].size() >= 1)
+	{
+		StringOutputStream css;
+		css << cx.getRayGenShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
+		css << Endl;
+		css << ss.str();
+		css << Endl;
+		output.rayGen = css.str();
+	}
+
+	// Ray hit
+	if (scriptOutputs[Script::RayHit].size() >= 1)
+	{
+		StringOutputStream css;
+		css << cx.getRayHitShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
+		css << Endl;
+		css << ss.str();
+		css << Endl;
+		output.rayHit = css.str();
+	}
+
+	// Ray miss
+	if (scriptOutputs[Script::RayMiss].size() >= 1)
+	{
+		StringOutputStream css;
+		css << cx.getRayMissShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
+		css << Endl;
+		css << ss.str();
+		css << Endl;
+		output.rayMiss = css.str();
 	}
 
 	return true;

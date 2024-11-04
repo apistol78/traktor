@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -111,6 +111,9 @@ private:
 	AlignedVector< uint32_t > m_vertexShader;
 	AlignedVector< uint32_t > m_fragmentShader;
 	AlignedVector< uint32_t > m_computeShader;
+	AlignedVector< uint32_t > m_rayGenShader;
+	AlignedVector< uint32_t > m_rayHitShader;
+	AlignedVector< uint32_t > m_rayMissShader;
 
 	uint32_t m_uniformBufferSizes[3];	// Once(0), Frame(1) and Draw(2)
 
@@ -127,6 +130,9 @@ private:
 	uint32_t m_vertexShaderHash = 0;
 	uint32_t m_fragmentShaderHash = 0;
 	uint32_t m_computeShaderHash = 0;
+	uint32_t m_rayGenShaderHash = 0;
+	uint32_t m_rayHitShaderHash = 0;
+	uint32_t m_rayMissShaderHash = 0;
 	uint32_t m_shaderHash = 0;
 	uint32_t m_layoutHash = 0;
 
