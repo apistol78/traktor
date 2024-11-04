@@ -9,6 +9,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Buffer.h"
 #include "Render/Vulkan/AccelerationStructureVk.h"
+#include "Render/Vulkan/BufferDynamicVk.h"
 #include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/VertexLayoutVk.h"
 #include "Render/Vulkan/Private/ApiBuffer.h"
@@ -27,17 +28,20 @@ AccelerationStructureVk::~AccelerationStructureVk()
 	destroy();
 }
 
-Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* context, uint32_t numInstances)
+Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* context, uint32_t numInstances, uint32_t inFlightCount)
 {
 	VkResult result;
 
 	// Allocate buffer containing all the transforms and references to BLAS.
-	Ref< ApiBuffer > instanceBuffer = new ApiBuffer(context);
-	instanceBuffer->create(
+	static uint32_t instances = 0;
+	Ref< BufferDynamicVk > instanceBuffer = new BufferDynamicVk(
+		context,
 		numInstances * sizeof(VkAccelerationStructureInstanceKHR),
+		instances
+	);
+	instanceBuffer->create(
 		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
-		true,
-		true
+		inFlightCount
 	);
 
 	// Create the AS object.
@@ -50,7 +54,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 			.arrayOfPointers = VK_FALSE,
 			.data =
 			{
-				.deviceAddress = instanceBuffer->getDeviceAddress()
+				.deviceAddress = static_cast< const BufferViewVk* >(instanceBuffer->getBufferView())->getDeviceAddress(context)
 			}
 		}
 	};
@@ -384,7 +388,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 			.arrayOfPointers = VK_FALSE,
 			.data =
 			{
-				.deviceAddress = m_instanceBuffer->getDeviceAddress()
+				.deviceAddress = static_cast< const BufferViewVk* >(m_instanceBuffer->getBufferView())->getDeviceAddress(m_context)
 			}
 		}
 	};
@@ -435,7 +439,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 	return true;
 }
 
-AccelerationStructureVk::AccelerationStructureVk(Context* context, ApiBuffer* hierarchyBuffer, ApiBuffer* instanceBuffer, ApiBuffer* scratchBuffer, VkAccelerationStructureKHR as)
+AccelerationStructureVk::AccelerationStructureVk(Context* context, ApiBuffer* hierarchyBuffer, BufferDynamicVk* instanceBuffer, ApiBuffer* scratchBuffer, VkAccelerationStructureKHR as)
 :	m_context(context)
 ,	m_hierarchyBuffer(hierarchyBuffer)
 ,	m_instanceBuffer(instanceBuffer)

@@ -57,6 +57,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 
 	staticMesh->m_renderMesh = renderMesh;
 
+	// Create rasterization parts.
 	for (const auto& tp : m_parts)
 	{
 		const render::handle_t worldTechnique = render::getParameterHandle(tp.first);
@@ -75,6 +76,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 		r.second = (uint32_t)staticMesh->m_parts.size();
 	}
 
+	// Create ray tracing structures.
 	if (renderSystem->supportRayTracing())
 	{
 		const auto& part = renderMesh->getParts().back();

@@ -750,7 +750,7 @@ Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTarget
 Ref< IAccelerationStructure > RenderSystemVk::createTopLevelAccelerationStructure(uint32_t numInstances)
 {
 	if (m_rayTracing)
-		return AccelerationStructureVk::createTopLevel(m_context, numInstances);
+		return AccelerationStructureVk::createTopLevel(m_context, numInstances, 3 * 4);
 	else
 		return nullptr;
 }

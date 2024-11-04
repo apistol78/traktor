@@ -19,6 +19,7 @@ namespace traktor::render
 
 class ApiBuffer;
 class Buffer;
+class BufferDynamicVk;
 class CommandBuffer;
 class Context;
 class IVertexLayout;
@@ -30,7 +31,7 @@ class AccelerationStructureVk : public IAccelerationStructure
 public:
 	virtual ~AccelerationStructureVk();
 
-	static Ref< AccelerationStructureVk > createTopLevel(Context* context, uint32_t numInstances);
+	static Ref< AccelerationStructureVk > createTopLevel(Context* context, uint32_t numInstances, uint32_t inFlightCount);
 
 	static Ref< AccelerationStructureVk > createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives);
 
@@ -42,13 +43,13 @@ public:
 
 protected:
 	Context* m_context = nullptr;
+	Ref< BufferDynamicVk > m_instanceBuffer;
 	Ref< ApiBuffer > m_hierarchyBuffer;
-	Ref< ApiBuffer > m_instanceBuffer;
 	Ref< ApiBuffer > m_scratchBuffer;
 	VkAccelerationStructureKHR m_as;
 
 	// Top level constructor.
-	explicit AccelerationStructureVk(Context* context, ApiBuffer* hierarchyBuffer, ApiBuffer* instanceBuffer, ApiBuffer* scratchBuffer, VkAccelerationStructureKHR as);
+	explicit AccelerationStructureVk(Context* context, ApiBuffer* hierarchyBuffer, BufferDynamicVk* instanceBuffer, ApiBuffer* scratchBuffer, VkAccelerationStructureKHR as);
 
 	// Bottom level constructor.
 	explicit AccelerationStructureVk(Context* context, ApiBuffer* hierarchyBuffer, ApiBuffer* scratchBuffer, VkAccelerationStructureKHR as);

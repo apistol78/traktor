@@ -9,6 +9,7 @@
 #define NOMINMAX
 #include <algorithm>
 #include <cstring>
+#include <numeric>
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -1659,7 +1660,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	return true;
 }
 
-bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, ProgramVk* p, PrimitiveType pt)
+bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* p, PrimitiveType pt)
 {
 	auto& frame = m_frames[m_currentImageIndex];
 	
@@ -1866,7 +1867,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 	return true;
 }
 
-bool RenderViewVk::validateComputePipeline(ProgramVk* p)
+bool RenderViewVk::validateComputePipeline(const ProgramVk* p)
 {
 	auto& frame = m_frames[m_currentImageIndex];
 
@@ -1929,6 +1930,100 @@ bool RenderViewVk::validateComputePipeline(ProgramVk* p)
 	{
 		vkCmdBindPipeline(*frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
 		frame.boundComputePipeline = pipeline;
+	}
+	return true;
+}
+
+bool RenderViewVk::validateRayTracePipeline(const AlignedVector< const ProgramVk* >& programs)
+{
+	auto& frame = m_frames[m_currentImageIndex];
+
+	// Calculate pipeline key.
+	const uint8_t primitiveId = 0;
+	const uint32_t declHash = 0;
+	const uint32_t shaderHash = std::accumulate(programs.begin(), programs.end(), 0, [](uint32_t v, const ProgramVk* p) { return v + p->getShaderHash(); });
+	const auto key = std::make_tuple(primitiveId, 0, declHash, shaderHash);
+
+	VkPipeline pipeline = 0;
+
+	auto it = m_pipelines.find(key);
+	if (it != m_pipelines.end())
+	{
+		it->second.lastAcquired = m_counter;
+		pipeline = it->second.pipeline;
+	}
+	else
+	{
+		AlignedVector< VkPipelineShaderStageCreateInfo > shaderStageCreateInfos;
+		for (const ProgramVk* program : programs)
+		{
+			shaderStageCreateInfos.push_back({
+				.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+				.stage = VK_SHADER_STAGE_COMPUTE_BIT,
+				.module = program->getRayHitVkShaderModule(),
+				.pName = "main",
+				.pSpecializationInfo = nullptr
+			});
+		}
+
+		const VkRayTracingShaderGroupCreateInfoKHR hitGroupInfo =
+		{
+			.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR,
+			.pNext = nullptr,
+			.type = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR,
+			.generalShader = VK_SHADER_UNUSED_KHR,
+			.closestHitShader = 0,
+			.anyHitShader = VK_SHADER_UNUSED_KHR,
+			.intersectionShader = VK_SHADER_UNUSED_KHR
+		};
+
+		const VkRayTracingPipelineCreateInfoKHR rtpci =
+		{
+			.sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_KHR,
+			.pNext = nullptr,
+			.flags = 0,
+			.stageCount = (uint32_t)shaderStageCreateInfos.size(),
+			.pStages = shaderStageCreateInfos.c_ptr(),
+			.groupCount = 1,
+			.pGroups = &hitGroupInfo,
+			.maxPipelineRayRecursionDepth = 1,
+			//.layout = pipelineLayout_->Handle(),
+			.basePipelineHandle = nullptr,
+			.basePipelineIndex = 0
+		};
+
+		VkResult result = vkCreateRayTracingPipelinesKHR(
+			m_context->getLogicalDevice(),
+			nullptr,
+			m_context->getPipelineCache(),
+			1,
+			&rtpci,
+			nullptr,
+			&pipeline
+		);
+		if (result != VK_SUCCESS)
+		{
+#if defined(_DEBUG)
+			log::error << L"Unable to create Vulkan ray tracing pipeline (" << getHumanResult(result) << L"), \"" << p->getTag() << L"\"." << Endl;
+#else
+			log::error << L"Unable to create Vulkan ray tracing pipeline (" << getHumanResult(result) << L")." << Endl;
+#endif
+			return false;
+		}
+
+		m_pipelines[key] = { m_counter, pipeline };
+#if defined(_DEBUG)
+		log::debug << L"Ray tracing pipeline created (" << p->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
+#endif
+	}
+
+	if (!pipeline)
+		return false;
+
+	if (pipeline != frame.boundRayTracingPipeline)
+	{
+		vkCmdBindPipeline(*frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, pipeline);
+		frame.boundRayTracingPipeline = pipeline;
 	}
 	return true;
 }
