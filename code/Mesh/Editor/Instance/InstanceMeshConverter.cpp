@@ -178,6 +178,7 @@ bool InstanceMeshConverter::convert(
 			if (part.meshPart >= meshParts.size())
 			{
 				render::Mesh::Part meshPart;
+				meshPart.name = techniqueRange.first;
 				meshPart.primitives = render::Primitives::setIndexed(
 					render::PrimitiveType::Triangles,
 					range.offsetFirst,
@@ -188,6 +189,18 @@ bool InstanceMeshConverter::convert(
 
 			parts[worldTechnique].push_back(part);
 		}
+	}
+
+	// Add ray tracing part.
+	{
+		render::Mesh::Part meshPart;
+		meshPart.name = L"__RT__";
+		meshPart.primitives = render::Primitives::setIndexed(
+			render::PrimitiveType::Triangles,
+			0,
+			model->getPolygons().size()
+		);
+		meshParts.push_back(meshPart);
 	}
 
 	renderMesh->setParts(meshParts);

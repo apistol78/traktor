@@ -167,7 +167,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 	const BufferViewVk* vb = mandatory_non_null_type_cast< const BufferViewVk* >(vertexBuffer->getBufferView());
 	const BufferViewVk* ib = mandatory_non_null_type_cast< const BufferViewVk* >(indexBuffer->getBufferView());
 
-	VkAccelerationStructureGeometryDataKHR bottomLevelAccelerationStructureGeometryData =
+	const VkAccelerationStructureGeometryDataKHR bottomLevelAccelerationStructureGeometryData =
 	{
 		.triangles =
 		{
@@ -192,7 +192,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 		}
 	};
 
-	VkAccelerationStructureGeometryKHR bottomLevelAccelerationStructureGeometry =
+	const VkAccelerationStructureGeometryKHR bottomLevelAccelerationStructureGeometry =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR,
 		.pNext = nullptr,
@@ -238,7 +238,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 		&bottomLevelAccelerationStructureBuildSizesInfo
 	);
 
-	// Create buffer to hold AS hierarchial data.
+	// Create buffer to hold AS hierarchical data.
 	Ref< ApiBuffer > hierarchyBuffer = new ApiBuffer(context);
 	if (!hierarchyBuffer->create(
 		bottomLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,

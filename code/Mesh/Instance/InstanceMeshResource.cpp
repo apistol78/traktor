@@ -78,9 +78,11 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 
 	if (renderSystem->supportRayTracing())
 	{
+		const auto& part = renderMesh->getParts().back();
+		T_FATAL_ASSERT(part.name == L"__RT__");
+
 		AlignedVector< render::Primitives > primitives;
-		for (const auto& part : renderMesh->getParts())
-			primitives.push_back(part.primitives);
+		primitives.push_back(part.primitives);
 
 		instanceMesh->m_accelerationStructure = renderSystem->createAccelerationStructure(
 			renderMesh->getVertexBuffer(),
