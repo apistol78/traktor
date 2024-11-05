@@ -90,17 +90,9 @@ public:
 
 	bool inCompute() const;
 
-	void enterRayGen();
+	void enterCallable();
 
-	bool inRayGen() const;
-
-	void enterRayHit();
-
-	bool inRayHit() const;
-
-	void enterRayMiss();
-
-	bool inRayMiss() const;
+	bool inCallable() const;
 
 	GlslShader& getShader() { return *m_currentShader; }
 
@@ -164,6 +156,8 @@ public:
 
 	GlslShader& getComputeShader() { return m_computeShader; }
 
+	GlslShader& getCallableShader() { return m_callableShader; }
+
 	GlslEmitter& getEmitter() { return m_emitter; }
 
 	/*! \} */
@@ -203,6 +197,7 @@ private:
 	GlslShader m_vertexShader;
 	GlslShader m_fragmentShader;
 	GlslShader m_computeShader;
+	GlslShader m_callableShader;
 	GlslShader* m_currentShader;
 	GlslEmitter m_emitter;
 	GlslRequirements m_requirements;

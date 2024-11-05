@@ -262,7 +262,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	RefArray< VertexOutput > vertexOutputs;
 	RefArray< PixelOutput > pixelOutputs;
 	RefArray< ComputeOutput > computeOutputs;
-	RefArray< Script > scriptOutputs[4];
+	RefArray< Script > scriptOutputs[5];
 	
 	// Gather all output nodes from shader graph, type and number
 	// of output nodes determine type of shader program (vertex-, 
@@ -296,6 +296,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	glslang::TShader* vertexShader = nullptr;
 	glslang::TShader* fragmentShader = nullptr;
 	glslang::TShader* computeShader = nullptr;
+	glslang::TShader* callableShader = nullptr;
 
 	// Generate and compile vertex and fragment shaders.
 	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
@@ -419,6 +420,52 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 		program->addShader(computeShader);
 	}
+	// Generate and compile callable shader.
+	if (scriptOutputs[Script::Callable].size() >= 1)
+	{
+		const auto defaultBuiltInResource = getDefaultBuiltInResource();
+
+		// Emit shader code by traversing from output nodes.
+		for (auto scriptOutput : scriptOutputs[Script::Callable])
+			cx.getEmitter().emit(cx, scriptOutput);
+
+		const std::wstring errorReport = cx.getErrorReport();
+		if (!errorReport.empty())
+		{
+			log::error << errorReport;
+			return nullptr;
+		}
+
+		const GlslRequirements computeRequirements = cx.requirements();
+
+		const auto& layout = cx.getLayout();
+		const char* callableShaderText = strdup(wstombs(cx.getComputeShader().getGeneratedShader(settings, layout, computeRequirements, resolveModuleText)).c_str());
+
+		// Callable shader.
+		callableShader = new glslang::TShader(EShLangCallable);
+		callableShader->setEnvClient(glslang::EShClientVulkan, c_clientVersion);
+		callableShader->setEnvTarget(glslang::EShTargetSpv, c_targetSPV);
+		callableShader->setStrings(&callableShaderText, 1);
+		callableShader->setEntryPoint("main");
+		callableShader->setSourceEntryPoint("main");
+		callableShader->setDebugInfo(true);
+		
+		const bool callableResult = callableShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings | EShMsgDebugInfo));
+		if (callableShader->getInfoLog())
+		{
+			if (!callableResult)
+			{
+				outErrors.push_back({
+					trim(mbstows(callableShader->getInfoLog())),
+					mbstows(callableShaderText)
+				});
+			}
+		}
+		if (!callableResult)
+			return nullptr;
+
+		program->addShader(callableShader);
+	}
 
 	// Link shaders into a program.
 	if (!program->link((EShMessages)(EShMsgSpvRules | EShMsgVulkanRules)))
@@ -502,6 +549,27 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			if (!performValidation(programResource->m_computeShader))
 			{
 				log::error << L"Validation of generated SPIR-V failed; compute shader compile failed." << Endl;
+				return nullptr;
+			}
+		}
+	}
+
+	auto cli = program->getIntermediate(EShLangCallable);
+	if (cli != nullptr)
+	{
+		std::vector< uint32_t > cl;
+		glslang::GlslangToSpv(*cli, cl, &options);
+
+		programResource->m_callableShader = AlignedVector< uint32_t >(cl.begin(), cl.end());
+		
+		if (optimize > 0)
+			performOptimization(convertRelaxedToHalf, programResource->m_callableShader);
+
+		if (validate)
+		{
+			if (!performValidation(programResource->m_callableShader))
+			{
+				log::error << L"Validation of generated SPIR-V failed; callable shader compile failed." << Endl;
 				return nullptr;
 			}
 		}
@@ -716,6 +784,13 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		checksum.end();
 		programResource->m_computeShaderHash = checksum.get();
 	}
+	{
+		Murmur3 checksum;
+		checksum.begin();
+		checksum.feedBuffer(programResource->m_callableShader.c_ptr(), programResource->m_callableShader.size() * sizeof(uint32_t));
+		checksum.end();
+		programResource->m_callableShaderHash = checksum.get();
+	}
 
 	{
 		Murmur3 checksum;
@@ -724,6 +799,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		checksum.feedBuffer(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
 		checksum.feedBuffer(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
 		checksum.feedBuffer(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size() * sizeof(uint32_t));
+		checksum.feedBuffer(programResource->m_callableShader.c_ptr(), programResource->m_callableShader.size() * sizeof(uint32_t));
 		checksum.end();
 		programResource->m_shaderHash = checksum.get();
 	}
@@ -798,6 +874,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	delete fragmentShader;
 	delete vertexShader;
 	delete computeShader;
+	delete callableShader;
 	return programResource;
 }
 
@@ -816,7 +893,7 @@ bool ProgramCompilerVk::generate(
 	RefArray< VertexOutput > vertexOutputs;
 	RefArray< PixelOutput > pixelOutputs;
 	RefArray< ComputeOutput > computeOutputs;
-	RefArray< Script > scriptOutputs[4];
+	RefArray< Script > scriptOutputs[5];
 
 	for (auto node : shaderGraph->getNodes())
 	{
@@ -857,6 +934,18 @@ bool ProgramCompilerVk::generate(
 		for (auto computeOutput : computeOutputs)
 			result &= cx.getEmitter().emit(cx, computeOutput);
 		for (auto scriptOutput : scriptOutputs[Script::Compute])
+			result &= cx.getEmitter().emit(cx, scriptOutput);
+		if (!result)
+		{
+			log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
+			return false;
+		}
+	}
+
+	if (scriptOutputs[Script::Callable].size() >= 1)
+	{
+		bool result = true;
+		for (auto scriptOutput : scriptOutputs[Script::Callable])
 			result &= cx.getEmitter().emit(cx, scriptOutput);
 		if (!result)
 		{
@@ -960,6 +1049,17 @@ bool ProgramCompilerVk::generate(
 		css << ss.str();
 		css << Endl;
 		output.compute = css.str();
+	}
+
+	// Callable
+	if (scriptOutputs[Script::Callable].size() >= 1)
+	{
+		StringOutputStream css;
+		css << cx.getCallableShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
+		css << Endl;
+		css << ss.str();
+		css << Endl;
+		output.callable = css.str();
 	}
 
 	return true;

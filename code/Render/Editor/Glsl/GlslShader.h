@@ -49,7 +49,8 @@ public:
 	{
 		StVertex,
 		StFragment,
-		StCompute
+		StCompute,
+		StCallable
 	};
 
 	enum BlockType

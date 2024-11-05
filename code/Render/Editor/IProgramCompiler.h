@@ -56,6 +56,7 @@ public:
 		std::wstring vertex;
 		std::wstring pixel;
 		std::wstring compute;
+		std::wstring callable;
 	};
 
 	typedef std::function< std::wstring (const Guid& id) > resolveModule_fn;

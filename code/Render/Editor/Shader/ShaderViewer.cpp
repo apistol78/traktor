@@ -188,13 +188,14 @@ bool ShaderViewer::create(ui::Widget* parent)
 	const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
 	const ui::Unit fontSize = ui::Unit(m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11));
 
-	for (int32_t i = 0; i < 3; ++i)
+	for (int32_t i = 0; i < 4; ++i)
 	{
 		const wchar_t* names[] =
 		{
 			L"SHADERGRAPH_VIEWER_VERTEX",
 			L"SHADERGRAPH_VIEWER_PIXEL",
-			L"SHADERGRAPH_VIEWER_COMPUTE"
+			L"SHADERGRAPH_VIEWER_COMPUTE",
+			L"SHADERGRAPH_VIEWER_CALLABLE"
 		};
 
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
@@ -228,7 +229,7 @@ bool ShaderViewer::handleCommand(const ui::Command& command)
 		const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
 		const ui::Unit fontSize = ui::Unit(m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11));
 
-		for (int32_t i = 0; i < 6; ++i)
+		for (int32_t i = 0; i < sizeof_array(m_shaderEditors); ++i)
 		{
 			m_shaderEditors[i]->setFont(ui::Font(font, fontSize));
 			m_shaderEditors[i]->update();
@@ -263,7 +264,7 @@ void ShaderViewer::updateTechniques()
 
 void ShaderViewer::updateCombinations()
 {
-	// Remove all previous checkboxes.
+	// Remove all previous check boxes.
 	m_dropCombinations->removeAll();
 
 	// Create check boxes for combination in selected technique.
@@ -288,8 +289,8 @@ void ShaderViewer::updateShaders()
 	for (auto index : selectedCombinations)
 		value |= 1 << index;
 
-	int32_t scrollOffsets[3];
-	for (int32_t i = 0; i < 3; ++i)
+	int32_t scrollOffsets[4];
+	for (int32_t i = 0; i < 4; ++i)
 	{
 		scrollOffsets[i] = m_shaderEditors[i]->getScrollLine();
 		m_shaderEditors[i]->setText(L"");
@@ -304,14 +305,14 @@ void ShaderViewer::updateShaders()
 		{
 			if ((j->mask & value) == j->value)
 			{
-				for (int32_t i = 0; i < 3; ++i)
+				for (int32_t i = 0; i < 4; ++i)
 					m_shaderEditors[i]->setText(j->shaders[i]);
 				break;
 			}
 		}
 	}
 
-	for (int32_t i = 0; i < 3; ++i)
+	for (int32_t i = 0; i < 4; ++i)
 	{
 		m_shaderEditors[i]->scrollToLine(scrollOffsets[i]);
 		m_shaderEditors[i]->update();
@@ -559,12 +560,14 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 					ci.shaders[0] = output.vertex;
 					ci.shaders[1] = output.pixel;
 					ci.shaders[2] = output.compute;
+					ci.shaders[3] = output.callable;
 				}
 				else
 				{
 					ci.shaders[0] = L"Failed to generate vertex shader!";
 					ci.shaders[1] = L"Failed to generate pixel shader!";;
 					ci.shaders[2] = L"Failed to generate compute shader!";
+					ci.shaders[3] = L"Failed to generate callable shader!";
 				}
 			}
 		}

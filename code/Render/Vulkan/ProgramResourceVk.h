@@ -111,6 +111,7 @@ private:
 	AlignedVector< uint32_t > m_vertexShader;
 	AlignedVector< uint32_t > m_fragmentShader;
 	AlignedVector< uint32_t > m_computeShader;
+	AlignedVector< uint32_t > m_callableShader;
 
 	uint32_t m_uniformBufferSizes[3];	// Once(0), Frame(1) and Draw(2)
 
@@ -127,6 +128,7 @@ private:
 	uint32_t m_vertexShaderHash = 0;
 	uint32_t m_fragmentShaderHash = 0;
 	uint32_t m_computeShaderHash = 0;
+	uint32_t m_callableShaderHash = 0;
 	uint32_t m_shaderHash = 0;
 	uint32_t m_layoutHash = 0;
 
