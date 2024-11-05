@@ -1287,7 +1287,7 @@ void ShaderGraphEditorPage::updateGraph()
 		uint32_t readCount = 0;
 		PinType type = PinType::Void;
 	};
-	std::map< std::wstring, VariableInfo > variables;
+	SmallMap< std::wstring, VariableInfo > variables;
 
 	const auto fragmentReader = [&](const Guid& fragmentGuid) -> Ref< const ShaderGraph >
 	{
@@ -1303,9 +1303,6 @@ void ShaderGraphEditorPage::updateGraph()
 			return { L"", nullptr };
 	};
 
-	// Link uniform declarations.
-	UniformLinker(uniformDeclarationReader).resolve(m_shaderGraph);
-
 	// Fully resolve shader graph so we can inspect all uniforms etc.
 	Ref< ShaderGraph > resolvedShaderGraph = FragmentLinker(fragmentReader).resolve(m_shaderGraph, true);
 
@@ -1314,134 +1311,155 @@ void ShaderGraphEditorPage::updateGraph()
 		UniformLinker(uniformDeclarationReader).resolve(resolvedShaderGraph);
 
 	// Extract techniques.
-	m_toolTechniques->removeAll();	
-	for (const auto& technique : ShaderGraphTechniques(m_shaderGraph, Guid()).getNames())
-		m_toolTechniques->add(technique);
+	{
+		m_toolTechniques->removeAll();
+		for (const auto& technique : ShaderGraphTechniques(m_shaderGraph, Guid()).getNames())
+			m_toolTechniques->add(technique);
+	}
 
 	// Update variables grid.
-	for (auto variableNode : m_shaderGraph->findNodesOf< Variable >())
 	{
-		auto& vi = variables[variableNode->getName()];
-
-		vi.count++;
-		vi.readCount += m_shaderGraph->getDestinationCount(variableNode->getOutputPin(0));
-
-		const Edge* sourceEdge = m_shaderGraph->findEdge(variableNode->getInputPin(0));
-		if (sourceEdge != nullptr)
+		for (auto variableNode : m_shaderGraph->findNodesOf< Variable >())
 		{
-			++vi.writeCount;
+			auto& vi = variables[variableNode->getName()];
 
-			Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(sourceEdge->getSource());
-			vi.type = value.getType();
+			vi.count++;
+			vi.readCount += m_shaderGraph->getDestinationCount(variableNode->getOutputPin(0));
+
+			const Edge* sourceEdge = m_shaderGraph->findEdge(variableNode->getInputPin(0));
+			if (sourceEdge != nullptr)
+			{
+				++vi.writeCount;
+
+				Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(sourceEdge->getSource());
+				vi.type = value.getType();
+			}
 		}
-	}
-	m_variablesGrid->removeAllRows();
-	for (const auto& variable : variables)
-	{
-		Ref< ui::GridRow > row = new ui::GridRow();
-		row->add(variable.first);
+		m_variablesGrid->removeAllRows();
+		for (const auto& variable : variables)
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(variable.first);
 
-		if (variable.second.readCount > 0 && variable.second.writeCount == 0)
-			row->setBackground(Color4ub(255, 0, 0, 255));
+			if (variable.second.readCount > 0 && variable.second.writeCount == 0)
+				row->setBackground(Color4ub(255, 0, 0, 255));
 
-		row->add(toString(variable.second.readCount));
-		row->add(c_pinTypeNames[(int32_t)variable.second.type]);
-		m_variablesGrid->addRow(row);
+			row->add(toString(variable.second.readCount));
+			row->add(c_pinTypeNames[(int32_t)variable.second.type]);
+			m_variablesGrid->addRow(row);
+		}
 	}
 
 	// Update uniforms grid.
-	m_uniformsGrid->removeAllRows();
-	for (auto node : m_shaderGraph->getNodes())
 	{
-		if (Uniform* uniformNode = dynamic_type_cast< Uniform* >(node))
-		{
-			Ref< ui::GridRow > row = new ui::GridRow();
-			row->setData(L"SHADERNODE", uniformNode);
-			row->add(uniformNode->getParameterName());
-			row->add(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]);
-			row->add(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]);
-			m_uniformsGrid->addRow(row);
-		}
-		else if (IndexedUniform* indexedUniformNode = dynamic_type_cast< IndexedUniform* >(node))
-		{
-			Ref< ui::GridRow > row = new ui::GridRow();
-			row->setData(L"SHADERNODE", indexedUniformNode);
-			row->add(indexedUniformNode->getParameterName());
-			row->add(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]);
-			row->add(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]);
-			m_uniformsGrid->addRow(row);
-		}
-	}
-	if (resolvedShaderGraph)
-	{
-		// Add non-local uniforms to grid as well, color coded.
-		for (auto node : resolvedShaderGraph->getNodes())
+		m_uniformsGrid->removeAllRows();
+		for (auto node : m_shaderGraph->getNodes())
 		{
 			auto it = std::find_if(
-				m_shaderGraph->getNodes().begin(), m_shaderGraph->getNodes().end(),
+				resolvedShaderGraph->getNodes().begin(), resolvedShaderGraph->getNodes().end(),
 				[&](const Node* n) {
 					return node->getId() == n->getId();
 				}
 			);
-			if (it != m_shaderGraph->getNodes().end())
+			if (it != resolvedShaderGraph->getNodes().end())
 				continue;
 
-			if (Uniform* uniformNode = dynamic_type_cast< Uniform* >(node))
+			Node* resolvedNode = *it;
+
+			if (Uniform* uniformNode = dynamic_type_cast< Uniform* >(resolvedNode))
 			{
 				Ref< ui::GridRow > row = new ui::GridRow();
+				row->setData(L"SHADERNODE", node);
 				row->add(uniformNode->getParameterName());
 				row->add(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]);
 				row->add(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]);
-				row->setBackground(Color4ub(90, 60, 40, 255));
 				m_uniformsGrid->addRow(row);
 			}
-			else if (IndexedUniform* indexedUniformNode = dynamic_type_cast< IndexedUniform* >(node))
+			else if (IndexedUniform* indexedUniformNode = dynamic_type_cast< IndexedUniform* >(resolvedNode))
 			{
 				Ref< ui::GridRow > row = new ui::GridRow();
+				row->setData(L"SHADERNODE", node);
 				row->add(indexedUniformNode->getParameterName());
 				row->add(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]);
 				row->add(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]);
-				row->setBackground(Color4ub(90, 60, 40, 255));
 				m_uniformsGrid->addRow(row);
+			}
+		}
+		if (resolvedShaderGraph)
+		{
+			// Add non-local uniforms to grid as well, color coded.
+			for (auto node : resolvedShaderGraph->getNodes())
+			{
+				auto it = std::find_if(
+					m_shaderGraph->getNodes().begin(), m_shaderGraph->getNodes().end(),
+					[&](const Node* n) {
+						return node->getId() == n->getId();
+					}
+				);
+				if (it != m_shaderGraph->getNodes().end())
+					continue;
+
+				if (Uniform* uniformNode = dynamic_type_cast< Uniform* >(node))
+				{
+					Ref< ui::GridRow > row = new ui::GridRow();
+					row->add(uniformNode->getParameterName());
+					row->add(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]);
+					row->add(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]);
+					row->setBackground(Color4ub(90, 60, 40, 255));
+					m_uniformsGrid->addRow(row);
+				}
+				else if (IndexedUniform* indexedUniformNode = dynamic_type_cast< IndexedUniform* >(node))
+				{
+					Ref< ui::GridRow > row = new ui::GridRow();
+					row->add(indexedUniformNode->getParameterName());
+					row->add(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]);
+					row->add(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]);
+					row->setBackground(Color4ub(90, 60, 40, 255));
+					m_uniformsGrid->addRow(row);
+				}
 			}
 		}
 	}
 
 	// Update ports grid.
-	m_portsGrid->removeAllRows();
-	for (auto node : m_shaderGraph->getNodes())
 	{
-		if (InputPort* inputPortNode = dynamic_type_cast< InputPort* >(node))
+		m_portsGrid->removeAllRows();
+		for (auto node : m_shaderGraph->getNodes())
 		{
-			Ref< ui::GridRow > row = new ui::GridRow();
-			row->setData(L"SHADERNODE", inputPortNode);
-			row->add(inputPortNode->getName());
-			row->add(L"Input");
-			m_portsGrid->addRow(row);
-		}
-		else if (OutputPort* outputPortNode = dynamic_type_cast< OutputPort* >(node))
-		{
-			Ref< ui::GridRow > row = new ui::GridRow();
-			row->setData(L"SHADERNODE", outputPortNode);
-			row->add(outputPortNode->getName());
-			row->add(L"Output");
-			m_portsGrid->addRow(row);
+			if (InputPort* inputPortNode = dynamic_type_cast< InputPort* >(node))
+			{
+				Ref< ui::GridRow > row = new ui::GridRow();
+				row->setData(L"SHADERNODE", inputPortNode);
+				row->add(inputPortNode->getName());
+				row->add(L"Input");
+				m_portsGrid->addRow(row);
+			}
+			else if (OutputPort* outputPortNode = dynamic_type_cast< OutputPort* >(node))
+			{
+				Ref< ui::GridRow > row = new ui::GridRow();
+				row->setData(L"SHADERNODE", outputPortNode);
+				row->add(outputPortNode->getName());
+				row->add(L"Output");
+				m_portsGrid->addRow(row);
+			}
 		}
 	}
 
 	// Update node count grid.
-	m_nodeCountGrid->removeAllRows();
-
-	SmallMap< const TypeInfo*, int32_t > nodeCounts;
-	for (auto node : m_shaderGraph->getNodes())
-		nodeCounts[&type_of(node)]++;
-
-	for (const auto& it : nodeCounts)
 	{
-		Ref< ui::GridRow > row = new ui::GridRow();
-		row->add(it.first->getName());
-		row->add(str(L"%d", it.second));
-		m_nodeCountGrid->addRow(row);
+		m_nodeCountGrid->removeAllRows();
+
+		SmallMap< const TypeInfo*, int32_t > nodeCounts;
+		for (auto node : m_shaderGraph->getNodes())
+			nodeCounts[&type_of(node)]++;
+
+		for (const auto& it : nodeCounts)
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(it.first->getName());
+			row->add(str(L"%d", it.second));
+			m_nodeCountGrid->addRow(row);
+		}
 	}
 
 	// Determine type of shader graph.
@@ -1536,7 +1554,10 @@ void ShaderGraphEditorPage::updateGraph()
 						if (value.isConst(i))
 							ss << value.getValue(i);
 						else
-							ss << L"X";
+						{
+							const wchar_t xyzw[] = { L"XYZW" };
+							ss << xyzw[i];
+						}
 					}
 					break;
 
