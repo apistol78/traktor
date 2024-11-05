@@ -23,6 +23,8 @@ namespace traktor::render
 {
 
 class IAccelerationStructure;
+class IProgram;
+class IProgramDispatchTable;
 class IRenderSystem;
 
 }
@@ -53,6 +55,7 @@ public:
 		RTWorldComponent* owner;
 		Transform transform;
 		const render::IAccelerationStructure* blas;
+		render::IProgram* program;
 
 		void setTransform(const Transform& transform);
 	};
@@ -63,7 +66,7 @@ public:
 
 	virtual void update(World* world, const UpdateParams& update) override final;
 
-	Instance* allocateInstance(const render::IAccelerationStructure* blas);
+	Instance* allocateInstance(const render::IAccelerationStructure* blas, render::IProgram* program);
 
 	void releaseInstance(Instance*& instance);
 
@@ -74,8 +77,10 @@ public:
 private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IAccelerationStructure > m_tlas;
+	Ref< render::IProgramDispatchTable > m_programTable;
 	AlignedVector< Instance* > m_instances;
 	bool m_instanceBufferDirty = false;
+	bool m_programTableDirty = false;
 };
 
 }

@@ -16,7 +16,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramDispatchTableVk", ProgramDispatch
 
 int32_t ProgramDispatchTableVk::addProgram(IProgram* program)
 {
-	m_programs.push_back(mandatory_non_null_type_cast< ProgramVk* >(program));
+	ProgramVk* pvk = mandatory_non_null_type_cast< ProgramVk* >(program);
+	m_programs.push_back(pvk);
+	m_hash += pvk->getShaderHash();	//#fixme Should be noncommutative.
 	return (int32_t)m_programs.size() - 1;
 }
 

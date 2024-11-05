@@ -25,8 +25,11 @@ public:
 
 	const RefArray< ProgramVk >& getPrograms() const { return m_programs; }
 
+	uint32_t getHash() const { return m_hash; }
+
 private:
 	RefArray< ProgramVk > m_programs;
+	uint32_t m_hash = 0;
 };
 
 }

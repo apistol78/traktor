@@ -8,6 +8,7 @@
  */
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IAccelerationStructure.h"
+#include "Render/IProgramDispatchTable.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/Context/RenderContext.h"
@@ -36,54 +37,74 @@ void RTWorldComponent::update(World* world, const UpdateParams& update)
 {
 }
 
-RTWorldComponent::Instance* RTWorldComponent::allocateInstance(const render::IAccelerationStructure* blas)
+RTWorldComponent::Instance* RTWorldComponent::allocateInstance(const render::IAccelerationStructure* blas, render::IProgram* program)
 {
 	Instance* instance = new Instance();
 	instance->owner = this;
 	instance->transform = Transform::identity();
 	instance->blas = blas;
+	instance->program = program;
+
 	m_instances.push_back(instance);
+
 	m_instanceBufferDirty = true;
+	m_programTableDirty = true;
+
 	return instance;
 }
 
 void RTWorldComponent::releaseInstance(Instance*& instance)
 {
 	T_FATAL_ASSERT(instance->owner == this);
+
 	auto it = std::find(m_instances.begin(), m_instances.end(), instance);
 	T_FATAL_ASSERT(it != m_instances.end());
+	
 	m_instances.erase(it);
+
 	delete instance;
 	instance = nullptr;
+	
 	m_instanceBufferDirty = true;
+	m_programTableDirty = true;
 }
 
 void RTWorldComponent::build(const WorldBuildContext& context)
 {
-	if (!m_instanceBufferDirty)
-		return;
-
-	// Update TLAS with all instances.
-	AlignedVector< render::IAccelerationStructure::Instance > tlasInstances;
-	for (const auto& instance : m_instances)
+	if (m_instanceBufferDirty)
 	{
-		tlasInstances.push_back({
-			.transform = instance->transform.toMatrix44(),
-			.blas = instance->blas
-		});
+		// Update TLAS with all instances.
+		AlignedVector< render::IAccelerationStructure::Instance > tlasInstances;
+		for (const auto& instance : m_instances)
+		{
+			tlasInstances.push_back({
+				.transform = instance->transform.toMatrix44(),
+				.blas = instance->blas
+			});
+		}
+
+		render::RenderContext* renderContext = context.getRenderContext();
+		T_ASSERT(renderContext);
+
+		auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"RTWorldComponent");
+		rb->lambda = [=, this](render::IRenderView* renderView)
+		{
+			renderView->writeAccelerationStructure(m_tlas, tlasInstances);
+		};
+		renderContext->compute(rb);
+
+		m_instanceBufferDirty = false;
 	}
 
-	render::RenderContext* renderContext = context.getRenderContext();
-	T_ASSERT(renderContext);
-
-	auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"RTWorldComponent");
-	rb->lambda = [=](render::IRenderView* renderView)
+	if (m_programTableDirty)
 	{
-		renderView->writeAccelerationStructure(m_tlas, tlasInstances);
-	};
-	renderContext->compute(rb);
+		m_programTable = m_renderSystem->createProgramDispatchTable();
 
-	m_instanceBufferDirty = false;
+		for (const auto& instance : m_instances)
+			m_programTable->addProgram(instance->program);
+
+		m_programTableDirty = false;
+	}
 }
 
 void RTWorldComponent::Instance::setTransform(const Transform& transform)
