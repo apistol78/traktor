@@ -74,11 +74,12 @@ bool LengthNodeTraits::evaluatePartial(
 {
 	if (inputConstants[0].isAllConst())
 	{
+		const Constant c = inputConstants[0].cast(PinType::Scalar4);
 		outputConstant = Constant(std::sqrt(
-			inputConstants[0].x() * inputConstants[0].x() +
-			inputConstants[0].y() * inputConstants[0].y() +
-			inputConstants[0].z() * inputConstants[0].z() +
-			inputConstants[0].w() * inputConstants[0].w()
+			c.x() * c.x() +
+			c.y() * c.y() +
+			c.z() * c.z() +
+			c.w() * c.w()
 		));
 		return true;
 	}

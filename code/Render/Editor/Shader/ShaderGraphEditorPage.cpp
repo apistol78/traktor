@@ -135,7 +135,8 @@ const wchar_t* c_parameterTypeNames[] =
 	L"Struct Buffer",
 	L"Image 2D",
 	L"Image 3D",
-	L"Image Cube"
+	L"Image Cube",
+	L"Acceleration Structure"
 };
 
 const wchar_t* c_uniformFrequencyNames[] =
@@ -1355,16 +1356,15 @@ void ShaderGraphEditorPage::updateGraph()
 		m_uniformsGrid->removeAllRows();
 		for (auto node : m_shaderGraph->getNodes())
 		{
-			auto it = std::find_if(
-				resolvedShaderGraph->getNodes().begin(), resolvedShaderGraph->getNodes().end(),
-				[&](const Node* n) {
-					return node->getId() == n->getId();
+			Node* resolvedNode = nullptr;
+			for (auto it : resolvedShaderGraph->getNodes())
+			{
+				if (it->getId() == node->getId())
+				{
+					resolvedNode = it;
+					break;
 				}
-			);
-			if (it != resolvedShaderGraph->getNodes().end())
-				continue;
-
-			Node* resolvedNode = *it;
+			}
 
 			if (Uniform* uniformNode = dynamic_type_cast< Uniform* >(resolvedNode))
 			{
@@ -1390,13 +1390,16 @@ void ShaderGraphEditorPage::updateGraph()
 			// Add non-local uniforms to grid as well, color coded.
 			for (auto node : resolvedShaderGraph->getNodes())
 			{
-				auto it = std::find_if(
-					m_shaderGraph->getNodes().begin(), m_shaderGraph->getNodes().end(),
-					[&](const Node* n) {
-						return node->getId() == n->getId();
+				Node* originalNode = nullptr;
+				for (auto it : m_shaderGraph->getNodes())
+				{
+					if (it->getId() == node->getId())
+					{
+						originalNode = it;
+						break;
 					}
-				);
-				if (it != m_shaderGraph->getNodes().end())
+				}
+				if (originalNode)
 					continue;
 
 				if (Uniform* uniformNode = dynamic_type_cast< Uniform* >(node))

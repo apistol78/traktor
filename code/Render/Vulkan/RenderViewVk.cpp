@@ -1880,7 +1880,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		if (result != VK_SUCCESS)
 		{
 #if defined(_DEBUG)
-			log::error << L"Unable to create Vulkan graphics pipeline (" << getHumanResult(result) << L"), \"" << p->getTag() << L"\"." << Endl;
+			log::error << L"Unable to create Vulkan graphics pipeline (" << getHumanResult(result) << L"), \"" << program->getTag() << L"\"." << Endl;
 #else
 			log::error << L"Unable to create Vulkan graphics pipeline (" << getHumanResult(result) << L")." << Endl;
 #endif
@@ -1889,7 +1889,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 
 		m_pipelines[key] = { m_counter, pipeline };
 #if defined(_DEBUG)
-		log::debug << L"Graphics pipeline created (" << p->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
+		log::debug << L"Graphics pipeline created (" << program->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
 #endif
 	}
 

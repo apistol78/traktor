@@ -63,7 +63,6 @@ bool SkinnedMeshConverter::convert(
 {
 	// Create render mesh.
 	const uint32_t vertexSize = render::getVertexSize(vertexElements);
-	T_ASSERT(vertexSize > 0);
 
 	const bool useLargeIndices = (bool)(model->getVertexCount() >= 65536);
 	const uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
