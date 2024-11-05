@@ -21,6 +21,7 @@
 #include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/ProgramVk.h"
+#include "Render/Vulkan/ProgramDispatchTableVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
@@ -922,15 +923,16 @@ void RenderViewVk::endPass()
 	m_targetFrameBuffer = 0;
 }
 
-void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
+void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, IProgramDispatchTable* programDispatchTable, const Primitives& primitives, uint32_t instanceCount)
 {
 	const BufferViewVk* vbv = static_cast< const BufferViewVk* >(vertexBuffer);
 	const VertexLayoutVk* vlv = static_cast< const VertexLayoutVk* >(vertexLayout);
 	ProgramVk* p = static_cast< ProgramVk* >(program);
+	ProgramDispatchTableVk* pdt = static_cast< ProgramDispatchTableVk* >(programDispatchTable);
 
 	auto& frame = m_frames[m_currentImageIndex];
 
-	if (!validateGraphicsPipeline(vlv, p, primitives.type))
+	if (!validateGraphicsPipeline(vlv, p, pdt, primitives.type))
 		return;
 
 	const float targetSize[] = { (float)m_targetSet->getWidth(), (float)m_targetSet->getHeight() };
@@ -996,7 +998,7 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 
 	auto& frame = m_frames[m_currentImageIndex];
 
-	if (!validateGraphicsPipeline(vlv, p, primitiveType))
+	if (!validateGraphicsPipeline(vlv, p, nullptr, primitiveType))
 		return;
 
 	const float targetSize[] = { (float)m_targetSet->getWidth(), (float)m_targetSet->getHeight() };
@@ -1660,14 +1662,14 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	return true;
 }
 
-bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* p, PrimitiveType pt)
+bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, ProgramDispatchTableVk* programDispatchTable, PrimitiveType pt)
 {
 	auto& frame = m_frames[m_currentImageIndex];
 	
 	// Calculate pipeline key.
 	const uint8_t primitiveId = (uint8_t)pt;
 	const uint32_t declHash = (vertexLayout != nullptr) ? vertexLayout->getHash() : 0;
-	const uint32_t shaderHash = p->getShaderHash();
+	const uint32_t shaderHash = program->getShaderHash();
 	const auto key = std::make_tuple(primitiveId, m_targetRenderPassHash, declHash, shaderHash);
 
 	VkPipeline pipeline = 0;
@@ -1680,7 +1682,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 	}
 	else
 	{
-		const RenderState& rs = p->getRenderState();
+		const RenderState& rs = program->getRenderState();
 		const uint32_t colorAttachmentCount = m_targetSet->getColorTargetCount();
 
 		const VkViewport vp =
@@ -1723,21 +1725,35 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 			visci.pVertexAttributeDescriptions = nullptr;
 		}
 
-		StaticVector< VkPipelineShaderStageCreateInfo, 16 > ssci;
+		StaticVector< VkPipelineShaderStageCreateInfo, 256 > ssci;
 		ssci.push_back({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
 			.stage = VK_SHADER_STAGE_VERTEX_BIT,
-			.module = p->getVertexVkShaderModule(),
+			.module = program->getVertexVkShaderModule(),
 			.pName = "main",
 			.pSpecializationInfo = nullptr
 		});
 		ssci.push_back({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
 			.stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-			.module = p->getFragmentVkShaderModule(),
+			.module = program->getFragmentVkShaderModule(),
 			.pName = "main",
 			.pSpecializationInfo = nullptr
 		});
+
+		if (programDispatchTable != nullptr)
+		{
+			for (auto pdt : programDispatchTable->getPrograms())
+			{
+				ssci.push_back({
+					.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+					.stage = VK_SHADER_STAGE_CALLABLE_BIT_KHR,
+					.module = program->getCallableVkShaderModule(),
+					.pName = "main",
+					.pSpecializationInfo = nullptr
+				});
+			}
+		}
 
 		const VkPipelineRasterizationStateCreateInfo rsci =
 		{
@@ -1846,7 +1862,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 			.pDepthStencilState = &dssci,
 			.pColorBlendState = &cbsci,
 			.pDynamicState = &dsci,
-			.layout = p->getPipelineLayout(),
+			.layout = program->getPipelineLayout(),
 			.renderPass = m_targetRenderPass,
 			.subpass = 0,
 			.basePipelineHandle = 0,

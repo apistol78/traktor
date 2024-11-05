@@ -26,6 +26,7 @@ namespace traktor::render
 
 class IBufferView;
 class IProgram;
+class IProgramDispatchTable;
 class IRenderTargetSet;
 class IRenderView;
 class ITexture;
@@ -98,6 +99,7 @@ class T_DLLCLASS DrawableRenderBlock : public RenderBlock
 public:
 	float distance = 0.0f;
 	IProgram* program = nullptr;
+	IProgramDispatchTable* programDispatchTable = nullptr;
 	ProgramParameters* programParams = nullptr;
 };
 

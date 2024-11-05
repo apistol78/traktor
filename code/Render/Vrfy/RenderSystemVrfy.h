@@ -93,6 +93,8 @@ public:
 
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) override final;
 
+	virtual Ref< IProgramDispatchTable > createProgramDispatchTable() override final;
+
 	virtual void purge() override final;
 
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const override final;

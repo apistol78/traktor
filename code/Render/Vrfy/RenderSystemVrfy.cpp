@@ -361,6 +361,12 @@ Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programRe
 	return programVrfy;
 }
 
+Ref< IProgramDispatchTable > RenderSystemVrfy::createProgramDispatchTable()
+{
+	T_CAPTURE_TRACE(L"createProgram");
+	return m_renderSystem->createProgramDispatchTable();
+}
+
 void RenderSystemVrfy::purge()
 {
 	m_renderSystem->purge();

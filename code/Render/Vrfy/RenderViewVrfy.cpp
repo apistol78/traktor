@@ -243,7 +243,7 @@ void RenderViewVrfy::endPass()
 	m_insidePass = false;
 }
 
-void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
+void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, IProgramDispatchTable* programDispatchTable, const Primitives& primitives, uint32_t instanceCount)
 {
 	T_CAPTURE_TRACE(L"draw");
 	T_CAPTURE_ASSERT(m_insidePass, L"Cannot draw outside of beginPass/endPass.");
@@ -290,7 +290,7 @@ void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 	const IBufferView* wrappedVertexView = vbv != nullptr ? vbv->getWrappedBufferView() : nullptr;
 	const IBufferView* wrappedIndexView = ibv != nullptr ? ibv->getWrappedBufferView() : nullptr;
 
-	m_renderView->draw(wrappedVertexView, vl->getWrappedVertexLayout(), wrappedIndexView, indexType, programVrfy->m_program, primitives, instanceCount);
+	m_renderView->draw(wrappedVertexView, vl->getWrappedVertexLayout(), wrappedIndexView, indexType, programVrfy->m_program, programDispatchTable, primitives, instanceCount);
 }
 
 void RenderViewVrfy::drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawOffset, uint32_t drawCount)

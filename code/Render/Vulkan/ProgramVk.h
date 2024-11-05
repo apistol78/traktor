@@ -84,6 +84,8 @@ public:
 
 	VkShaderModule getComputeVkShaderModule() const { return m_computeShaderModule; }
 
+	VkShaderModule getCallableVkShaderModule() const { return m_callableShaderModule; }
+
 	VkPipelineLayout getPipelineLayout() const { return m_pipelineLayout; }
 
 	const int32_t* getLocalWorkGroupSize() const { return m_localWorkGroupSize; }
@@ -158,6 +160,7 @@ private:
 	VkShaderModule m_vertexShaderModule = 0;
 	VkShaderModule m_fragmentShaderModule = 0;
 	VkShaderModule m_computeShaderModule = 0;
+	VkShaderModule m_callableShaderModule = 0;
 	VkDescriptorSetLayout m_descriptorSetLayout = 0;
 	VkPipelineLayout m_pipelineLayout = 0;
 	uint32_t m_descriptorPoolRevision = ~0U;
