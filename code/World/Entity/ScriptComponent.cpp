@@ -40,7 +40,6 @@ void ScriptComponent::destroy()
 
 void ScriptComponent::setOwner(Entity* owner)
 {
-	T_ASSERT(m_owner == nullptr);
 	m_owner = owner;
 	m_object = nullptr;
 	m_methodSetTransform = nullptr;
