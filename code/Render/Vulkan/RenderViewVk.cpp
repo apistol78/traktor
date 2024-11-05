@@ -2003,17 +2003,13 @@ bool RenderViewVk::validateRayTracePipeline(const AlignedVector< const ProgramVk
 		);
 		if (result != VK_SUCCESS)
 		{
-#if defined(_DEBUG)
-			log::error << L"Unable to create Vulkan ray tracing pipeline (" << getHumanResult(result) << L"), \"" << p->getTag() << L"\"." << Endl;
-#else
 			log::error << L"Unable to create Vulkan ray tracing pipeline (" << getHumanResult(result) << L")." << Endl;
-#endif
 			return false;
 		}
 
 		m_pipelines[key] = { m_counter, pipeline };
 #if defined(_DEBUG)
-		log::debug << L"Ray tracing pipeline created (" << p->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
+		log::debug << L"Ray tracing pipeline created (" << m_pipelines.size() << L" pipelines)." << Endl;
 #endif
 	}
 
