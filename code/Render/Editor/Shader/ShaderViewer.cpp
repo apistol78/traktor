@@ -188,16 +188,13 @@ bool ShaderViewer::create(ui::Widget* parent)
 	const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
 	const ui::Unit fontSize = ui::Unit(m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11));
 
-	for (int32_t i = 0; i < 6; ++i)
+	for (int32_t i = 0; i < 3; ++i)
 	{
 		const wchar_t* names[] =
 		{
 			L"SHADERGRAPH_VIEWER_VERTEX",
 			L"SHADERGRAPH_VIEWER_PIXEL",
-			L"SHADERGRAPH_VIEWER_COMPUTE",
-			L"SHADERGRAPH_VIEWER_RAYGEN",
-			L"SHADERGRAPH_VIEWER_RAYHIT",
-			L"SHADERGRAPH_VIEWER_RAYMISS"
+			L"SHADERGRAPH_VIEWER_COMPUTE"
 		};
 
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
@@ -291,8 +288,8 @@ void ShaderViewer::updateShaders()
 	for (auto index : selectedCombinations)
 		value |= 1 << index;
 
-	int32_t scrollOffsets[6];
-	for (int32_t i = 0; i < 6; ++i)
+	int32_t scrollOffsets[3];
+	for (int32_t i = 0; i < 3; ++i)
 	{
 		scrollOffsets[i] = m_shaderEditors[i]->getScrollLine();
 		m_shaderEditors[i]->setText(L"");
@@ -307,14 +304,14 @@ void ShaderViewer::updateShaders()
 		{
 			if ((j->mask & value) == j->value)
 			{
-				for (int32_t i = 0; i < 6; ++i)
+				for (int32_t i = 0; i < 3; ++i)
 					m_shaderEditors[i]->setText(j->shaders[i]);
 				break;
 			}
 		}
 	}
 
-	for (int32_t i = 0; i < 6; ++i)
+	for (int32_t i = 0; i < 3; ++i)
 	{
 		m_shaderEditors[i]->scrollToLine(scrollOffsets[i]);
 		m_shaderEditors[i]->update();
@@ -562,18 +559,12 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 					ci.shaders[0] = output.vertex;
 					ci.shaders[1] = output.pixel;
 					ci.shaders[2] = output.compute;
-					ci.shaders[3] = output.rayGen;
-					ci.shaders[4] = output.rayHit;
-					ci.shaders[5] = output.rayMiss;
 				}
 				else
 				{
 					ci.shaders[0] = L"Failed to generate vertex shader!";
 					ci.shaders[1] = L"Failed to generate pixel shader!";;
 					ci.shaders[2] = L"Failed to generate compute shader!";
-					ci.shaders[3] = L"Failed to generate ray-gen shader!";
-					ci.shaders[4] = L"Failed to generate ray-hit shader!";
-					ci.shaders[5] = L"Failed to generate ray-miss shader!";
 				}
 			}
 		}

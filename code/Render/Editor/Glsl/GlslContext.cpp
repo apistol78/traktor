@@ -40,9 +40,6 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 ,	m_vertexShader(GlslShader::StVertex)
 ,	m_fragmentShader(GlslShader::StFragment)
 ,	m_computeShader(GlslShader::StCompute)
-,	m_rayGenShader(GlslShader::StRayGen)
-,	m_rayHitShader(GlslShader::StRayHit)
-,	m_rayMissShader(GlslShader::StRayMiss)
 ,	m_currentShader(nullptr)
 {
 	m_layout.addStatic(new GlslTexture(L"__bindlessTextures2D__",   GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::Texture2D, true),   /* binding */ 0);
@@ -225,36 +222,6 @@ void GlslContext::enterCompute()
 bool GlslContext::inCompute() const
 {
 	return bool(m_currentShader == &m_computeShader);
-}
-
-void GlslContext::enterRayGen()
-{
-	m_currentShader = &m_rayGenShader;
-}
-
-bool GlslContext::inRayGen() const
-{
-	return bool(m_currentShader == &m_rayGenShader);
-}
-
-void GlslContext::enterRayHit()
-{
-	m_currentShader = &m_rayHitShader;
-}
-
-bool GlslContext::inRayHit() const
-{
-	return bool(m_currentShader == &m_rayHitShader);
-}
-
-void GlslContext::enterRayMiss()
-{
-	m_currentShader = &m_rayMissShader;
-}
-
-bool GlslContext::inRayMiss() const
-{
-	return bool(m_currentShader == &m_rayMissShader);
 }
 
 const PropertyGroup* GlslContext::getSettings() const

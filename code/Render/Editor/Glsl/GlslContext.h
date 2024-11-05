@@ -164,12 +164,6 @@ public:
 
 	GlslShader& getComputeShader() { return m_computeShader; }
 
-	GlslShader& getRayGenShader() { return m_rayGenShader; }
-	
-	GlslShader& getRayHitShader() { return m_rayHitShader; }
-
-	GlslShader& getRayMissShader() { return m_rayMissShader; }
-
 	GlslEmitter& getEmitter() { return m_emitter; }
 
 	/*! \} */
@@ -209,9 +203,6 @@ private:
 	GlslShader m_vertexShader;
 	GlslShader m_fragmentShader;
 	GlslShader m_computeShader;
-	GlslShader m_rayGenShader;
-	GlslShader m_rayHitShader;
-	GlslShader m_rayMissShader;
 	GlslShader* m_currentShader;
 	GlslEmitter m_emitter;
 	GlslRequirements m_requirements;

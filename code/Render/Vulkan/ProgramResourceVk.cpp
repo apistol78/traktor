@@ -88,7 +88,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 16, ProgramResourceVk, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 17, ProgramResourceVk, ProgramResource)
 
 void ProgramResourceVk::serialize(ISerializer& s)
 {
@@ -98,9 +98,6 @@ void ProgramResourceVk::serialize(ISerializer& s)
 	s >> MemberAlignedVector< uint32_t >(L"vertexShader", m_vertexShader);
 	s >> MemberAlignedVector< uint32_t >(L"fragmentShader", m_fragmentShader);
 	s >> MemberAlignedVector< uint32_t >(L"computeShader", m_computeShader);
-	s >> MemberAlignedVector< uint32_t >(L"rayGenShader", m_rayGenShader);
-	s >> MemberAlignedVector< uint32_t >(L"rayHitShader", m_rayHitShader);
-	s >> MemberAlignedVector< uint32_t >(L"rayMissShader", m_rayMissShader);
 	s >> MemberStaticArray< uint32_t, 3 >(L"uniformBufferSizes", m_uniformBufferSizes);
 	s >> MemberAlignedVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
 	s >> MemberAlignedVector< SamplerDesc, MemberComposite< SamplerDesc > >(L"samplers", m_samplers);
@@ -112,9 +109,6 @@ void ProgramResourceVk::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"vertexShaderHash", m_vertexShaderHash);
 	s >> Member< uint32_t >(L"fragmentShaderHash", m_fragmentShaderHash);
 	s >> Member< uint32_t >(L"computeShaderHash", m_computeShaderHash);
-	s >> Member< uint32_t >(L"rayGenShaderHash", m_rayGenShaderHash);
-	s >> Member< uint32_t >(L"rayHitShaderHash", m_rayHitShaderHash);
-	s >> Member< uint32_t >(L"rayMissShaderHash", m_rayMissShaderHash);
 	s >> Member< uint32_t >(L"shaderHash", m_shaderHash);
 	s >> Member< uint32_t >(L"layoutHash", m_layoutHash);
 	s >> Member< bool >(L"useTargetSize", m_useTargetSize);

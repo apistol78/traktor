@@ -2279,18 +2279,6 @@ bool emitScript(GlslContext& cx, Script* node)
 			cx.requirements().localSize[2] = node->getLocalSize()[2];
 			break;
 
-		case Script::RayGen:
-			cx.enterRayGen();
-			break;
-
-		case Script::RayHit:
-			cx.enterRayHit();
-			break;
-
-		case Script::RayMiss:
-			cx.enterRayMiss();
-			break;
-
 		default:
 			cx.pushError(L"Invalid domain");
 			return false;

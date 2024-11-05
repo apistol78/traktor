@@ -59,10 +59,7 @@ private:
 	{
 		uint32_t mask;
 		uint32_t value;
-		//std::wstring vertexShader;
-		//std::wstring pixelShader;
-		//std::wstring computeShader;
-		std::wstring shaders[6];
+		std::wstring shaders[3];
 	};
 
 	struct TechniqueInfo

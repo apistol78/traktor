@@ -119,6 +119,9 @@ private:
 
 	struct Technique
 	{
+#if defined(_DEBUG)
+		std::wstring name;
+#endif
 		uint32_t mask;
 		AlignedVector< Combination > combinations;
 	};

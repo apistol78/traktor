@@ -191,12 +191,7 @@ std::wstring GlslShader::getGeneratedShader(
 		ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_float16 : enable" << Endl;
 	}
 
-	if (
-		requirements.useRayTracing ||
-		m_shaderType == StRayGen ||
-		m_shaderType == StRayHit ||
-		m_shaderType == StRayMiss
-	)
+	if (requirements.useRayTracing)
 	{
 		ss << L"#extension GL_EXT_ray_tracing : enable" << Endl;
 		ss << L"#extension GL_EXT_ray_query : enable" << Endl;
@@ -250,30 +245,6 @@ std::wstring GlslShader::getGeneratedShader(
 		stageMask = GlslResource::BsFragment;
 	else if (m_shaderType == StCompute)
 		stageMask = GlslResource::BsCompute;
-
-	if (m_shaderType == StRayGen || m_shaderType == StRayHit || m_shaderType == StRayMiss)
-	{
-		ss << L"// Ray tracing pay load." << Endl;
-		ss << L"layout (location = 0) rayPayloadEXT rt" << Endl;
-		ss << L"{" << Endl;
-		ss << IncreaseIndent;
-		ss << L"vec4 hitOutput;" << Endl;
-		ss << DecreaseIndent;
-		ss << L"};" << Endl;
-		ss << Endl;
-	}
-	//else if (m_shaderType == StRayHit || m_shaderType == StRayMiss)
-	//{
-	//	ss << L"// Ray tracing pay load." << Endl;
-	//	ss << L"layout (location = 0) rayPayloadInEXT rt" << Endl;
-	//	ss << L"{" << Endl;
-	//	ss << IncreaseIndent;
-	//	ss << L"vec3 rayOrigin;" << Endl;
-	//	ss << L"vec3 rayDirection;" << Endl;
-	//	ss << DecreaseIndent;
-	//	ss << L"};" << Endl;
-	//	ss << Endl;
-	//}
 
 	if (requirements.useTargetSize)
 	{

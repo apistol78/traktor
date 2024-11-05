@@ -378,9 +378,6 @@ void Script::serialize(ISerializer& s)
 			{ L"Vertex", Domain::Vertex },
 			{ L"Pixel", Domain::Pixel },
 			{ L"Compute", Domain::Compute },
-			{ L"RayGen", Domain::RayGen },
-			{ L"RayHit", Domain::RayHit },
-			{ L"RayMiss", Domain::RayMiss },
 			{ 0 }
 		};
 		s >> MemberEnum< Domain >(L"domain", m_domain, c_Domain_Keys);

@@ -146,30 +146,6 @@ bool ProgramVk::create(
 		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_computeShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
 		stageFlags |= VK_SHADER_STAGE_COMPUTE_BIT;
 	}
-	if (!resource->m_rayGenShader.empty())
-	{
-		if ((m_rayGenShaderModule = shaderModuleCache->get(resource->m_rayGenShader, resource->m_rayGenShaderHash)) == 0)
-			return false;
-
-		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_rayGenShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
-		stageFlags |= VK_SHADER_STAGE_RAYGEN_BIT_KHR;
-	}
-	if (!resource->m_rayHitShader.empty())
-	{
-		if ((m_rayHitShaderModule = shaderModuleCache->get(resource->m_rayHitShader, resource->m_rayHitShaderHash)) == 0)
-			return false;
-
-		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_rayHitShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
-		stageFlags |= VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR;
-	}
-	if (!resource->m_rayMissShader.empty())
-	{
-		if ((m_rayMissShaderModule = shaderModuleCache->get(resource->m_rayMissShader, resource->m_rayMissShaderHash)) == 0)
-			return false;
-
-		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_rayMissShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
-		stageFlags |= VK_SHADER_STAGE_MISS_BIT_KHR;
-	}
 
 	VkPhysicalDeviceProperties deviceProperties;
 	vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &deviceProperties);
@@ -538,9 +514,6 @@ void ProgramVk::destroy()
 	m_vertexShaderModule = 0;
 	m_fragmentShaderModule = 0;
 	m_computeShaderModule = 0;
-	m_rayGenShaderModule = 0;
-	m_rayHitShaderModule = 0;
-	m_rayMissShaderModule = 0;
 	m_descriptorSetLayout = 0;
 	m_pipelineLayout = 0;
 

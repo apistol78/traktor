@@ -100,6 +100,9 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 		const std::wstring programName = shaderName + L"[" + resourceTechnique.name + L"]";
 
 		Shader::Technique& technique = shader->m_techniques[getParameterHandle(resourceTechnique.name)];
+#if defined(_DEBUG)
+		technique.name = resourceTechnique.name;
+#endif
 		technique.mask = resourceTechnique.mask;
 
 		for (const auto& resourceCombination : resourceTechnique.combinations)

@@ -140,7 +140,6 @@ private:
 
 		VkPipeline boundPipeline = 0;
 		VkPipeline boundComputePipeline = 0;
-		VkPipeline boundRayTracingPipeline = 0;
 		BufferViewVk boundIndexBuffer;
 		BufferViewVk boundVertexBuffer;
 
@@ -208,8 +207,6 @@ private:
 	bool validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* p, PrimitiveType pt);
 
 	bool validateComputePipeline(const ProgramVk* p);
-
-	bool validateRayTracePipeline(const AlignedVector< const ProgramVk* >& programs);
 
 #if defined(_WIN32)
 	// \name IWindowListener implementation.
