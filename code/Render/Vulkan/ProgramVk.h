@@ -23,6 +23,7 @@ class Buffer;
 class BufferViewVk;
 class CommandBuffer;
 class PipelineLayoutCache;
+class ProgramDispatchTableVk;
 class ProgramResourceVk;
 class ShaderModuleCache;
 
@@ -74,6 +75,8 @@ public:
 
 	virtual void setAccelerationStructureParameter(handle_t handle, const IAccelerationStructure* accelerationStructure) override final;
 
+	virtual void setProgramDispatchTable(const IProgramDispatchTable* dispatchTable) override final;
+
 	virtual void setStencilReference(uint32_t stencilReference) override final;
 
 	const RenderState& getRenderState() const { return m_renderState; }
@@ -91,6 +94,8 @@ public:
 	const int32_t* getLocalWorkGroupSize() const { return m_localWorkGroupSize; }
 
 	uint32_t getShaderHash() const { return m_shaderHash; }
+
+	const ProgramDispatchTableVk* getProgramDispatchTable() const { return m_dispatchTable; }
 
 #if defined(_DEBUG)
 	const std::wstring& getTag() const { return m_tag; }
@@ -173,6 +178,7 @@ private:
 	AlignedVector< Image > m_images;
 	AlignedVector< SBuffer > m_sbuffers;
 	AlignedVector< AccelerationStructure > m_accelerationStructures;
+	Ref< const ProgramDispatchTableVk > m_dispatchTable;
 	uint32_t m_stencilReference = 0;
 	uint32_t m_shaderHash = 0;
 	bool m_useTargetSize = false;

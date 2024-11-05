@@ -14,6 +14,7 @@
 #include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/ProgramVk.h"
+#include "Render/Vulkan/ProgramDispatchTableVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
@@ -634,6 +635,11 @@ void ProgramVk::setAccelerationStructureParameter(handle_t handle, const IAccele
 		T_FATAL_ASSERT(i->second.accelerationStructureIndex >= 0);
 		m_accelerationStructures[i->second.accelerationStructureIndex].as = (const AccelerationStructureVk*)accelerationStructure;
 	}
+}
+
+void ProgramVk::setProgramDispatchTable(const IProgramDispatchTable* dispatchTable)
+{
+	m_dispatchTable = checked_type_cast< const ProgramDispatchTableVk* >(dispatchTable);
 }
 
 void ProgramVk::setStencilReference(uint32_t stencilReference)

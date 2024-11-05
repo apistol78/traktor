@@ -296,6 +296,7 @@ render::handle_t ReflectionsPass::setup(
 			}
 
 			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.tlas);
+			//params->setProgramDispatchTable(gatheredView.materialPrograms);
 		};
 
 		m_screenReflections->addPasses(

@@ -71,7 +71,6 @@ void SimpleRenderBlock::render(IRenderView* renderView) const
 		indexBuffer,
 		indexType,
 		program,
-		programDispatchTable,
 		primitives,
 		1
 	);
@@ -92,7 +91,6 @@ void InstancingRenderBlock::render(IRenderView* renderView) const
 		indexBuffer,
 		indexType,
 		program,
-		programDispatchTable,
 		primitives,
 		count
 	);
@@ -113,7 +111,6 @@ void IndexedInstancingRenderBlock::render(IRenderView* renderView) const
 		indexBuffer,
 		indexType,
 		program,
-		programDispatchTable,
 		Primitives::setIndexed(primitive, offset, count),
 		instanceCount
 	);
@@ -134,7 +131,6 @@ void NonIndexedRenderBlock::render(IRenderView* renderView) const
 		nullptr,
 		IndexType::Void,
 		program,
-		programDispatchTable,
 		Primitives::setNonIndexed(primitive, offset, count),
 		1
 	);
@@ -155,7 +151,6 @@ void IndexedRenderBlock::render(IRenderView* renderView) const
 		indexBuffer,
 		indexType,
 		program,
-		programDispatchTable,
 		Primitives::setIndexed(primitive, offset, count),
 		1
 	);

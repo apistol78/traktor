@@ -71,7 +71,7 @@ void ScreenRenderer::destroy()
 void ScreenRenderer::draw(IRenderView* renderView, IProgram* program)
 {
 	if (program)
-		renderView->draw(m_vertexBuffer->getBufferView(), m_vertexLayout, nullptr, IndexType::Void, program, nullptr, m_primitives, 1);
+		renderView->draw(m_vertexBuffer->getBufferView(), m_vertexLayout, nullptr, IndexType::Void, program, m_primitives, 1);
 }
 
 void ScreenRenderer::draw(IRenderView* renderView, const Shader* shader)

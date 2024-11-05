@@ -110,6 +110,7 @@ enum ParameterTypes
 	PmtImageView,
 	PmtBufferView,
 	PmtAccelerationStructure,
+	PmtDispatchTable,
 	PmtStencilReference,
 	PmtAttachedParameters
 };
@@ -212,6 +213,14 @@ void ProgramParameters::setAccelerationStructureParameter(handle_t handle, const
 	write< handle_t >(m_parameterLast, handle);
 	write< int8_t >(m_parameterLast, PmtAccelerationStructure);
 	write< const IAccelerationStructure* >(m_parameterLast, accelerationStructure);
+}
+
+void ProgramParameters::setProgramDispatchTable(const IProgramDispatchTable* dispatchTable)
+{
+	T_ASSERT(m_parameterLast);
+	write< handle_t >(m_parameterLast, 0);
+	write< int8_t >(m_parameterLast, PmtDispatchTable);
+	write< const IProgramDispatchTable* >(m_parameterLast, dispatchTable);
 }
 
 void ProgramParameters::setStencilReference(uint32_t stencilReference)

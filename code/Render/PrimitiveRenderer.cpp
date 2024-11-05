@@ -181,7 +181,6 @@ void PrimitiveRenderer::render(IRenderView* renderView, uint32_t frame)
 			nullptr,
 			IndexType::Void,
 			program,
-			nullptr,
 			batch.primitives,
 			1
 		);

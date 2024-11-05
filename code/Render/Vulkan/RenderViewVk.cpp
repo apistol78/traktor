@@ -923,16 +923,15 @@ void RenderViewVk::endPass()
 	m_targetFrameBuffer = 0;
 }
 
-void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, IProgramDispatchTable* programDispatchTable, const Primitives& primitives, uint32_t instanceCount)
+void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
 	const BufferViewVk* vbv = static_cast< const BufferViewVk* >(vertexBuffer);
 	const VertexLayoutVk* vlv = static_cast< const VertexLayoutVk* >(vertexLayout);
 	ProgramVk* p = static_cast< ProgramVk* >(program);
-	ProgramDispatchTableVk* pdt = static_cast< ProgramDispatchTableVk* >(programDispatchTable);
 
 	auto& frame = m_frames[m_currentImageIndex];
 
-	if (!validateGraphicsPipeline(vlv, p, pdt, primitives.type))
+	if (!validateGraphicsPipeline(vlv, p, primitives.type))
 		return;
 
 	const float targetSize[] = { (float)m_targetSet->getWidth(), (float)m_targetSet->getHeight() };
@@ -998,7 +997,7 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 
 	auto& frame = m_frames[m_currentImageIndex];
 
-	if (!validateGraphicsPipeline(vlv, p, nullptr, primitiveType))
+	if (!validateGraphicsPipeline(vlv, p, primitiveType))
 		return;
 
 	const float targetSize[] = { (float)m_targetSet->getWidth(), (float)m_targetSet->getHeight() };
@@ -1662,7 +1661,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	return true;
 }
 
-bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, ProgramDispatchTableVk* programDispatchTable, PrimitiveType pt)
+bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt)
 {
 	auto& frame = m_frames[m_currentImageIndex];
 	
@@ -1741,9 +1740,9 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 			.pSpecializationInfo = nullptr
 		});
 
-		if (programDispatchTable != nullptr)
+		if (program->getProgramDispatchTable() != nullptr)
 		{
-			for (auto pdt : programDispatchTable->getPrograms())
+			for (auto pdt : program->getProgramDispatchTable()->getPrograms())
 			{
 				ssci.push_back({
 					.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,

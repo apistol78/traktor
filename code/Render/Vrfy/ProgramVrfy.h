@@ -51,6 +51,8 @@ public:
 
 	virtual void setAccelerationStructureParameter(handle_t handle, const IAccelerationStructure* accelerationStructure) override final;
 
+	virtual void setProgramDispatchTable(const IProgramDispatchTable* dispatchTable) override final;
+
 	virtual void setStencilReference(uint32_t stencilReference) override final;
 
 	void verify();

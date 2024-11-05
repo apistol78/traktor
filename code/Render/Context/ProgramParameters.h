@@ -32,6 +32,7 @@ namespace traktor::render
 class IAccelerationStructure;
 class IBufferView;
 class IProgram;
+class IProgramDispatchTable;
 class ITexture;
 class RenderContext;
 
@@ -70,6 +71,8 @@ public:
 	void setBufferViewParameter(handle_t handle, const IBufferView* bufferView);
 
 	void setAccelerationStructureParameter(handle_t handle, const IAccelerationStructure* accelerationStructure);
+
+	void setProgramDispatchTable(const IProgramDispatchTable* dispatchTable); 
 
 	void setStencilReference(uint32_t stencilReference);
 

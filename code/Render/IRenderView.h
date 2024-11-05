@@ -26,7 +26,6 @@ namespace traktor::render
 {
 
 class IBufferView;
-class IProgramDispatchTable;
 class IRenderSystem;
 class IRenderTargetSet;
 class ITexture;
@@ -156,7 +155,7 @@ public:
 	 * \param primitives Set of primitives to render.
 	 * \param instanceCount Number of instances.
 	 */
-	virtual void draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, IProgramDispatchTable* programDispatchTable, const Primitives& primitives, uint32_t instanceCount) = 0;
+	virtual void draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount) = 0;
 
 	/*! Draw primitives using indirect draw.
 	 *

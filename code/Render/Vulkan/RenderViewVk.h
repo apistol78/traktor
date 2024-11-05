@@ -29,7 +29,6 @@ class BufferViewVk;
 class CommandBuffer;
 class Context;
 class ProgramVk;
-class ProgramDispatchTableVk;
 class Queue;
 class RenderPassCache;
 class RenderTargetSetVk;
@@ -104,7 +103,7 @@ public:
 
 	virtual void endPass() override final;
 
-	virtual void draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, IProgramDispatchTable* programDispatchTable, const Primitives& primitives, uint32_t instanceCount) override final;
+	virtual void draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount) override final;
 
 	virtual void drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawOffset, uint32_t drawCount) override final;
 
@@ -205,7 +204,7 @@ private:
 
 	bool create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks);
 
-	bool validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, ProgramDispatchTableVk* programDispatchTable, PrimitiveType pt);
+	bool validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt);
 
 	bool validateComputePipeline(const ProgramVk* p);
 
