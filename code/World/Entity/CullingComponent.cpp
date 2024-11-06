@@ -179,7 +179,7 @@ void CullingComponent::build(
 	}
 }
 
-CullingComponent::Instance* CullingComponent::allocateInstance(ICullable* cullable, intptr_t ordinal)
+CullingComponent::Instance* CullingComponent::createInstance(ICullable* cullable, intptr_t ordinal)
 {
 	Instance* instance = new Instance();
 	instance->owner = this;
@@ -196,15 +196,20 @@ CullingComponent::Instance* CullingComponent::allocateInstance(ICullable* cullab
 	return instance;
 }
 
-void CullingComponent::releaseInstance(Instance*& instance)
+void CullingComponent::destroyInstance(Instance* instance)
 {
 	T_FATAL_ASSERT(instance->owner == this);
 	auto it = std::find(m_instances.begin(), m_instances.end(), instance);
 	T_FATAL_ASSERT(it != m_instances.end());
 	m_instances.erase(it);
-	delete instance;
-	instance = nullptr;
 	m_instanceBufferDirty = true;
+	delete instance;
+}
+
+void CullingComponent::Instance::destroy()
+{
+	T_FATAL_ASSERT(this->owner);
+	this->owner->destroyInstance(this);
 }
 
 void CullingComponent::Instance::setTransform(const Transform& transform)

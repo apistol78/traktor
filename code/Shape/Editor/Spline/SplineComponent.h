@@ -13,6 +13,7 @@
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
 #include "World/IEntityComponent.h"
+#include "World/Entity/RTWorldComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,6 +35,7 @@ namespace traktor::render
 {
 
 class Buffer;
+class IAccelerationStructure;
 class IRenderSystem;
 class IVertexLayout;
 class Shader;
@@ -51,6 +53,7 @@ namespace traktor::world
 {
 
 class IWorldRenderPass;
+class World;
 class WorldBuildContext;
 class WorldRenderView;
 
@@ -77,9 +80,13 @@ public:
 		const SplineComponentData* data
 	);
 
+	virtual ~SplineComponent();
+
 	virtual void destroy() override final;
 
 	virtual void setOwner(world::Entity* owner) override final;
+
+	virtual void setWorld(world::World* world) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -110,6 +117,7 @@ private:
 
 	Ref< const SplineComponentData > m_data;
 	world::Entity* m_owner = nullptr;
+	world::World* m_world = nullptr;
 
 	TransformPath m_path;
 	bool m_dirty;
@@ -118,6 +126,7 @@ private:
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
 	AlignedVector< MaterialBatch > m_batches;
+	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
 
 	Ref< physics::Body > m_body;
 };

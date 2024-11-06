@@ -86,6 +86,8 @@ public:
 		Transform transform;
 		Aabb3 boundingBox;
 
+		void destroy();
+
 		void setTransform(const Transform& transform);
 	};
 
@@ -101,9 +103,7 @@ public:
 		const IWorldRenderPass& worldRenderPass
 	);
 
-	Instance* allocateInstance(ICullable* cullable, intptr_t ordinal);
-
-	void releaseInstance(Instance*& instance);
+	Instance* createInstance(ICullable* cullable, intptr_t ordinal);
 
 private:
 	Ref< render::IRenderSystem > m_renderSystem;
@@ -113,6 +113,8 @@ private:
 	RefArray< render::Buffer > m_visibilityBuffers;
 	uint32_t m_instanceAllocatedCount = 0;
 	bool m_instanceBufferDirty = false;
+
+	void destroyInstance(Instance* instance);
 };
 
 }

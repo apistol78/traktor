@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Ref.h"
 #include "Core/Math/Transform.h"
 #include "World/IWorldComponent.h"
 
@@ -41,7 +42,7 @@ class WorldBuildContext;
  * as required.
  * 
  * The world renderer uses component's TLAS when
- * exposing to entity renderers during rastization
+ * exposing to entity renderers during rasterization
  * passes.
  */
 class T_DLLCLASS RTWorldComponent : public IWorldComponent
@@ -53,7 +54,9 @@ public:
 	{
 		RTWorldComponent* owner;
 		Transform transform;
-		const render::IAccelerationStructure* blas;
+		Ref< const render::IAccelerationStructure > blas;
+
+		void destroy();
 
 		void setTransform(const Transform& transform);
 	};
@@ -64,9 +67,7 @@ public:
 
 	virtual void update(World* world, const UpdateParams& update) override final;
 
-	Instance* allocateInstance(const render::IAccelerationStructure* blas);
-
-	void releaseInstance(Instance*& instance);
+	Instance* createInstance(const render::IAccelerationStructure* blas);
 
 	void build(const WorldBuildContext& context);
 
@@ -77,6 +78,8 @@ private:
 	Ref< render::IAccelerationStructure > m_tlas;
 	AlignedVector< Instance* > m_instances;
 	bool m_instanceBufferDirty = false;
+
+	void destroyInstance(Instance* instance);
 };
 
 }

@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/SafeDestroy.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshComponent.h"
 #include "World/Entity.h"
@@ -34,6 +35,8 @@ InstanceMeshComponent::~InstanceMeshComponent()
 
 void InstanceMeshComponent::destroy()
 {
+	safeDestroy(m_cullingInstance);
+	safeDestroy(m_rtwInstance);
 	m_mesh.clear();
 	MeshComponent::destroy();
 }
@@ -41,30 +44,22 @@ void InstanceMeshComponent::destroy()
 void InstanceMeshComponent::setWorld(world::World* world)
 {
 	// Remove from last world.
-	if (m_world != nullptr && m_rtwInstance != nullptr)
-	{
-		world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
-		rtw->releaseInstance(m_rtwInstance);
-	}
-	if (m_world != nullptr && m_cullingInstance != nullptr)
-	{
-		world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
-		culling->releaseInstance(m_cullingInstance);
-	}
+	safeDestroy(m_cullingInstance);
+	safeDestroy(m_rtwInstance);
 
 	// Add to new world.
 	if (world != nullptr)
 	{
 		T_FATAL_ASSERT(m_rtwInstance == nullptr);
+		T_FATAL_ASSERT(m_cullingInstance == nullptr);
+
 		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
 		if (rtw != nullptr)
-			m_rtwInstance = rtw->allocateInstance(m_mesh->getAccelerationStructure());
-	}
-	if (world != nullptr)
-	{
-		T_FATAL_ASSERT(m_cullingInstance == nullptr);
+			m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure());
+
 		world::CullingComponent* culling = world->getComponent< world::CullingComponent >();
-		m_cullingInstance = culling->allocateInstance(this, (intptr_t)m_mesh.getResource());
+		if (culling)
+			m_cullingInstance = culling->createInstance(this, (intptr_t)m_mesh.getResource());
 	}
 
 	m_world = world;
@@ -80,29 +75,21 @@ void InstanceMeshComponent::setState(const world::EntityState& state, const worl
 			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
 			if (rtw != nullptr)
 			{
-				m_rtwInstance = rtw->allocateInstance(m_mesh->getAccelerationStructure());
+				m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure());
 				m_rtwInstance->setTransform(m_transform.get0());
 			}
 		}
 		if (!m_cullingInstance)
 		{
 			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
-			m_cullingInstance = culling->allocateInstance(this, (intptr_t)m_mesh.getResource());
+			m_cullingInstance = culling->createInstance(this, (intptr_t)m_mesh.getResource());
 			m_cullingInstance->setTransform(m_transform.get0());
 		}
 	}
 	else
 	{
-		if (m_rtwInstance)
-		{
-			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
-			rtw->releaseInstance(m_rtwInstance);
-		}
-		if (m_cullingInstance)
-		{
-			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
-			culling->releaseInstance(m_cullingInstance);
-		}
+		safeDestroy(m_cullingInstance);
+		safeDestroy(m_rtwInstance);
 	}
 }
 

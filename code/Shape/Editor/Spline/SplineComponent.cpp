@@ -28,6 +28,7 @@
 #include "Shape/Editor/Spline/SplineComponentData.h"
 #include "Shape/Editor/Spline/SplineLayerComponent.h"
 #include "World/IWorldRenderPass.h"
+#include "World/World.h"
 #include "World/WorldBuildContext.h"
 #include "World/Entity.h"
 #include "World/Entity/GroupComponent.h"
@@ -66,13 +67,28 @@ SplineComponent::SplineComponent(
 {
 }
 
+SplineComponent::~SplineComponent()
+{
+	// Need to call destroy here since editor doesn't always call destroy on components
+	// but instead rely on reference counting to do the cleanup.
+	destroy();
+}
+
 void SplineComponent::destroy()
 {
+	safeDestroy(m_rtwInstance);
 }
 
 void SplineComponent::setOwner(world::Entity* owner)
 {
 	m_owner = owner;
+}
+
+void SplineComponent::setWorld(world::World* world)
+{
+	safeDestroy(m_rtwInstance);
+	m_world = world;
+	m_dirty = true;
 }
 
 void SplineComponent::setTransform(const Transform& transform)
@@ -151,7 +167,8 @@ void SplineComponent::update(const world::UpdateParams& update)
 		if (!outputModel)
 		{
 			safeDestroy(m_vertexBuffer);
-			safeDestroy(m_indexBuffer);	
+			safeDestroy(m_indexBuffer);
+			safeDestroy(m_rtwInstance);
 			m_dirty = false;
 			return;
 		}
@@ -296,11 +313,29 @@ void SplineComponent::update(const world::UpdateParams& update)
 					offset += count * 3;
 				}
 				m_indexBuffer->unlock();
+
+				world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
+				if (rtw != nullptr)
+				{
+					safeDestroy(m_rtwInstance);
+
+					AlignedVector< render::Primitives > primitives;
+					primitives.push_back(render::Primitives::setIndexed(
+						render::PrimitiveType::Triangles,
+						0,
+						nindices / 3
+					));
+
+					Ref< render::IAccelerationStructure > blas = m_renderSystem->createAccelerationStructure(m_vertexBuffer, m_vertexLayout, m_indexBuffer, render::IndexType::UInt32, primitives);
+					if (blas != nullptr)
+						m_rtwInstance = rtw->createInstance(blas);
+				}
 			}
 			else
 			{
 				safeDestroy(m_vertexBuffer);
 				safeDestroy(m_indexBuffer);
+				safeDestroy(m_rtwInstance);
 			}
 		}
 

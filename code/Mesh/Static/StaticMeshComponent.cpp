@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/SafeDestroy.h"
 #include "Mesh/Static/StaticMesh.h"
 #include "Mesh/Static/StaticMeshComponent.h"
 #include "World/Entity.h"
@@ -33,6 +34,7 @@ StaticMeshComponent::StaticMeshComponent(const resource::Proxy< StaticMesh >& me
 
 void StaticMeshComponent::destroy()
 {
+	safeDestroy(m_rtwInstance);
 	m_mesh.clear();
 	MeshComponent::destroy();
 }
@@ -47,11 +49,7 @@ void StaticMeshComponent::setOwner(world::Entity* owner)
 void StaticMeshComponent::setWorld(world::World* world)
 {
 	// Remove from last world.
-	if (m_world != nullptr && m_rtwInstance != nullptr)
-	{
-		world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
-		rtw->releaseInstance(m_rtwInstance);
-	}
+	safeDestroy(m_rtwInstance);
 
 	// Add to new world.
 	if (world != nullptr)
@@ -59,7 +57,7 @@ void StaticMeshComponent::setWorld(world::World* world)
 		T_FATAL_ASSERT(m_rtwInstance == nullptr);
 		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
 		if (rtw != nullptr)
-			m_rtwInstance = rtw->allocateInstance(m_mesh->getAccelerationStructure());
+			m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure());
 	}
 
 	m_world = world;
@@ -75,18 +73,14 @@ void StaticMeshComponent::setState(const world::EntityState& state, const world:
 			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
 			if (rtw != nullptr)
 			{
-				m_rtwInstance = rtw->allocateInstance(m_mesh->getAccelerationStructure());
+				m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure());
 				m_rtwInstance->setTransform(m_transform.get0());
 			}
 		}
 	}
 	else
 	{
-		if (m_rtwInstance)
-		{
-			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
-			rtw->releaseInstance(m_rtwInstance);
-		}
+		safeDestroy(m_rtwInstance);
 	}
 }
 
