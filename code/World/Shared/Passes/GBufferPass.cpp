@@ -103,7 +103,7 @@ render::handle_t GBufferPass::setup(
 				sharedParams->setTextureParameter(s_handleHiZTexture, hiZTexture);
 			}
 
-			sharedParams->setAccelerationStructureParameter(s_handleTLAS, gatheredView.tlas);
+			sharedParams->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
 
 			sharedParams->endParameters(renderContext);
 

@@ -116,7 +116,7 @@ struct GatherView
 	AlignedVector< const ProbeComponent* > probes;
 	const FogComponent* fog;
 	const IrradianceGrid* irradianceGrid;
-	const render::IAccelerationStructure* tlas;
+	const render::IAccelerationStructure* rtWorldTopLevel;
 };
 
 /*!

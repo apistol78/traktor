@@ -58,8 +58,9 @@ void RTWorldComponent::build(const WorldBuildContext& context)
 		for (const auto& instance : m_instances)
 		{
 			tlasInstances.push_back({
+				.blas = instance->blas,
 				.transform = instance->transform.toMatrix44(),
-				.blas = instance->blas
+				.index = 0
 			});
 		}
 

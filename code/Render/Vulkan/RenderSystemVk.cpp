@@ -779,11 +779,6 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 		return nullptr;
 }
 
-Ref< IProgramDispatchTable > RenderSystemVk::createProgramDispatchTable()
-{
-	return nullptr;
-}
-
 void RenderSystemVk::purge()
 {
 	if (m_context)

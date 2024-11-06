@@ -71,7 +71,7 @@ public:
 
 	void build(const WorldBuildContext& context);
 
-	const render::IAccelerationStructure* getTLAS() const { return m_tlas; }
+	const render::IAccelerationStructure* getTopLevel() const { return m_tlas; }
 
 private:
 	Ref< render::IRenderSystem > m_renderSystem;

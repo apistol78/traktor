@@ -330,7 +330,7 @@ void WorldRendererForward::setupVisualPass(
 			else
 				sharedParams->setTextureParameter(s_handleVisualCopyMap, m_blackTexture);
 
-			sharedParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredView.tlas);
+			sharedParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredView.rtWorldTopLevel);
 
 			sharedParams->endParameters(wc.getRenderContext());
 

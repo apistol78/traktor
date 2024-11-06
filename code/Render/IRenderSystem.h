@@ -27,7 +27,6 @@ namespace traktor::render
 class Buffer;
 class IAccelerationStructure;
 class IProgram;
-class IProgramDispatchTable;
 class IRenderTargetSet;
 class IRenderView;
 class IVertexLayout;
@@ -160,9 +159,6 @@ public:
 	 * \return Program suitable for rendering with this render system.
 	 */
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) = 0;
-
-	/*! */
-	virtual Ref< IProgramDispatchTable > createProgramDispatchTable() = 0;
 
 	/*! Purge any resource which might be pending destruction.
 	 */

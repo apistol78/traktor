@@ -369,7 +369,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 					{ M(2, 0), M(2, 1), M(2, 2), M(2, 3) }
 				}
 			},
-			.instanceCustomIndex = 0,
+			.instanceCustomIndex = instance.index,
 			.mask = 0xff,
 			.instanceShaderBindingTableRecordOffset = 0,
 			.flags = VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_KHR | VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR,

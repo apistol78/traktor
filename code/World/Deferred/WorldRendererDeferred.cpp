@@ -371,7 +371,7 @@ void WorldRendererDeferred::setupVisualPass(
 				else
 					sharedParams->setTextureParameter(s_handleReflectionMap, m_blackTexture);
 
-				sharedParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredView.tlas);
+				sharedParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredView.rtWorldTopLevel);
 
 				sharedParams->endParameters(renderContext);
 
@@ -563,7 +563,7 @@ void WorldRendererDeferred::setupVisualPass(
 				else
 					sharedParams->setTextureParameter(s_handleVisualCopyMap, m_blackTexture);
 
-				sharedParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredView.tlas);
+				sharedParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredView.rtWorldTopLevel);
 
 				sharedParams->endParameters(renderContext);
 

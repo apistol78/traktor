@@ -87,12 +87,12 @@ void WorldRendererSimple::setup(
 				m_gathered.push_back({ entityRenderer, component });
 
 			if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
-				m_gatheredTLAS = rtWorldComponent->getTLAS();
+				m_gatheredTLAS = rtWorldComponent->getTopLevel();
 		}
 
 		for (auto entity : world->getEntities())
 		{
-			const EntityState state = entity->getState();
+			const EntityState& state = entity->getState();
 
 			if (filter != nullptr && filter(state) == false)
 				continue;

@@ -213,7 +213,7 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 	m_gatheredView.probes.resize(0);
 	m_gatheredView.fog = nullptr;
 	m_gatheredView.irradianceGrid = nullptr;
-	m_gatheredView.tlas = nullptr;
+	m_gatheredView.rtWorldTopLevel = nullptr;
 
 	for (auto component : world->getComponents())
 	{
@@ -225,7 +225,7 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 		if (auto irradianceGridComponent = dynamic_type_cast< const IrradianceGridComponent* >(component))
 			m_gatheredView.irradianceGrid = irradianceGridComponent->getIrradianceGrid();
 		else if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
-			m_gatheredView.tlas = rtWorldComponent->getTLAS();
+			m_gatheredView.rtWorldTopLevel = rtWorldComponent->getTopLevel();
 	}
 
 	for (auto entity : world->getEntities())

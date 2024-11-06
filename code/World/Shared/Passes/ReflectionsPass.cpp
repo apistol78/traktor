@@ -295,8 +295,7 @@ render::handle_t ReflectionsPass::setup(
 				params->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
 			}
 
-			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.tlas);
-			//params->setProgramDispatchTable(gatheredView.materialPrograms);
+			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
 		};
 
 		m_screenReflections->addPasses(

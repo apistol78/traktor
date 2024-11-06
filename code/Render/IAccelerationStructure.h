@@ -33,8 +33,9 @@ class T_DLLCLASS IAccelerationStructure : public Object
 public:
 	struct Instance
 	{
-		Matrix44 transform;
 		Ref< const IAccelerationStructure > blas;
+		Matrix44 transform;
+		uint32_t index;
 	};
 
 	/*! */
