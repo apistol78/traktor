@@ -188,7 +188,7 @@ bool ShaderViewer::create(ui::Widget* parent)
 	const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
 	const ui::Unit fontSize = ui::Unit(m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11));
 
-	for (int32_t i = 0; i < 3; ++i)
+	for (int32_t i = 0; i < sizeof_array(m_shaderEditors); ++i)
 	{
 		const wchar_t* names[] =
 		{
@@ -196,6 +196,7 @@ bool ShaderViewer::create(ui::Widget* parent)
 			L"SHADERGRAPH_VIEWER_PIXEL",
 			L"SHADERGRAPH_VIEWER_COMPUTE"
 		};
+		static_assert(sizeof_array(names) == sizeof_array(m_shaderEditors));
 
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
 		tabPage->create(m_tab, i18n::Text(names[i]), new ui::FloodLayout());
@@ -280,6 +281,7 @@ void ShaderViewer::updateCombinations()
 
 void ShaderViewer::updateShaders()
 {
+	constexpr int32_t N = sizeof_array(m_shaderEditors);
 	uint32_t value = 0;
 
 	// Calculate combination value.
@@ -288,8 +290,8 @@ void ShaderViewer::updateShaders()
 	for (auto index : selectedCombinations)
 		value |= 1 << index;
 
-	int32_t scrollOffsets[3];
-	for (int32_t i = 0; i < 3; ++i)
+	int32_t scrollOffsets[N];
+	for (int32_t i = 0; i < N; ++i)
 	{
 		scrollOffsets[i] = m_shaderEditors[i]->getScrollLine();
 		m_shaderEditors[i]->setText(L"");
@@ -304,14 +306,14 @@ void ShaderViewer::updateShaders()
 		{
 			if ((j->mask & value) == j->value)
 			{
-				for (int32_t i = 0; i < 4; ++i)
+				for (int32_t i = 0; i < N; ++i)
 					m_shaderEditors[i]->setText(j->shaders[i]);
 				break;
 			}
 		}
 	}
 
-	for (int32_t i = 0; i < 3; ++i)
+	for (int32_t i = 0; i < N; ++i)
 	{
 		m_shaderEditors[i]->scrollToLine(scrollOffsets[i]);
 		m_shaderEditors[i]->update();
