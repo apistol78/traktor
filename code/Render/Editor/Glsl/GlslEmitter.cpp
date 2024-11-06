@@ -2279,10 +2279,6 @@ bool emitScript(GlslContext& cx, Script* node)
 			cx.requirements().localSize[2] = node->getLocalSize()[2];
 			break;
 
-		case Script::Callable:
-			cx.enterCallable();
-			break;
-
 		default:
 			cx.pushError(L"Invalid domain");
 			return false;

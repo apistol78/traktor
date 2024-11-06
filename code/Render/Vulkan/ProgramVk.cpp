@@ -14,7 +14,6 @@
 #include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/ProgramVk.h"
-#include "Render/Vulkan/ProgramDispatchTableVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
@@ -146,14 +145,6 @@ bool ProgramVk::create(
 
 		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_computeShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
 		stageFlags |= VK_SHADER_STAGE_COMPUTE_BIT;
-	}
-	if (!resource->m_callableShader.empty())
-	{
-		if ((m_callableShaderModule = shaderModuleCache->get(resource->m_callableShader, resource->m_callableShaderHash)) == 0)
-			return false;
-
-		setObjectDebugName(m_context->getLogicalDevice(), resource->m_name.c_str(), (uint64_t)m_callableShaderModule, VK_OBJECT_TYPE_SHADER_MODULE);
-		stageFlags |= VK_SHADER_STAGE_CALLABLE_BIT_KHR;
 	}
 
 	VkPhysicalDeviceProperties deviceProperties;
@@ -523,7 +514,6 @@ void ProgramVk::destroy()
 	m_vertexShaderModule = 0;
 	m_fragmentShaderModule = 0;
 	m_computeShaderModule = 0;
-	m_callableShaderModule = 0;
 	m_descriptorSetLayout = 0;
 	m_pipelineLayout = 0;
 
@@ -635,11 +625,6 @@ void ProgramVk::setAccelerationStructureParameter(handle_t handle, const IAccele
 		T_FATAL_ASSERT(i->second.accelerationStructureIndex >= 0);
 		m_accelerationStructures[i->second.accelerationStructureIndex].as = (const AccelerationStructureVk*)accelerationStructure;
 	}
-}
-
-void ProgramVk::setProgramDispatchTable(const IProgramDispatchTable* dispatchTable)
-{
-	m_dispatchTable = checked_type_cast< const ProgramDispatchTableVk* >(dispatchTable);
 }
 
 void ProgramVk::setStencilReference(uint32_t stencilReference)

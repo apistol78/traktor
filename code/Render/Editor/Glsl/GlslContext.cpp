@@ -40,7 +40,6 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 ,	m_vertexShader(GlslShader::StVertex)
 ,	m_fragmentShader(GlslShader::StFragment)
 ,	m_computeShader(GlslShader::StCompute)
-,	m_callableShader(GlslShader::StCallable)
 ,	m_currentShader(nullptr)
 {
 	m_layout.addStatic(new GlslTexture(L"__bindlessTextures2D__",   GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::Texture2D, true),   /* binding */ 0);
@@ -223,16 +222,6 @@ void GlslContext::enterCompute()
 bool GlslContext::inCompute() const
 {
 	return bool(m_currentShader == &m_computeShader);
-}
-
-void GlslContext::enterCallable()
-{
-	m_currentShader = &m_callableShader;
-}
-
-bool GlslContext::inCallable() const
-{
-	return bool(m_currentShader == &m_callableShader);
 }
 
 const PropertyGroup* GlslContext::getSettings() const

@@ -21,7 +21,6 @@
 #include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/ProgramVk.h"
-#include "Render/Vulkan/ProgramDispatchTableVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
@@ -1724,7 +1723,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 			visci.pVertexAttributeDescriptions = nullptr;
 		}
 
-		StaticVector< VkPipelineShaderStageCreateInfo, 256 > ssci;
+		StaticVector< VkPipelineShaderStageCreateInfo, 2 > ssci;
 		ssci.push_back({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
 			.stage = VK_SHADER_STAGE_VERTEX_BIT,
@@ -1739,20 +1738,6 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 			.pName = "main",
 			.pSpecializationInfo = nullptr
 		});
-
-		if (program->getProgramDispatchTable() != nullptr)
-		{
-			for (auto pdt : program->getProgramDispatchTable()->getPrograms())
-			{
-				ssci.push_back({
-					.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-					.stage = VK_SHADER_STAGE_CALLABLE_BIT_KHR,
-					.module = program->getCallableVkShaderModule(),
-					.pName = "main",
-					.pSpecializationInfo = nullptr
-				});
-			}
-		}
 
 		const VkPipelineRasterizationStateCreateInfo rsci =
 		{

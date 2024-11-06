@@ -378,7 +378,6 @@ void Script::serialize(ISerializer& s)
 			{ L"Vertex", Domain::Vertex },
 			{ L"Pixel", Domain::Pixel },
 			{ L"Compute", Domain::Compute },
-			{ L"Callable", Domain::Callable },
 			{ 0 }
 		};
 		s >> MemberEnum< Domain >(L"domain", m_domain, c_Domain_Keys);

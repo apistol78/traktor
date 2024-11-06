@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -90,10 +90,6 @@ public:
 
 	bool inCompute() const;
 
-	void enterCallable();
-
-	bool inCallable() const;
-
 	GlslShader& getShader() { return *m_currentShader; }
 
 	/*! \} */
@@ -156,8 +152,6 @@ public:
 
 	GlslShader& getComputeShader() { return m_computeShader; }
 
-	GlslShader& getCallableShader() { return m_callableShader; }
-
 	GlslEmitter& getEmitter() { return m_emitter; }
 
 	/*! \} */
@@ -197,7 +191,6 @@ private:
 	GlslShader m_vertexShader;
 	GlslShader m_fragmentShader;
 	GlslShader m_computeShader;
-	GlslShader m_callableShader;
 	GlslShader* m_currentShader;
 	GlslEmitter m_emitter;
 	GlslRequirements m_requirements;

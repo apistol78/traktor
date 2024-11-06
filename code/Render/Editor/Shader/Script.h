@@ -45,8 +45,7 @@ public:
 		Undefined = 0,
 		Vertex = 1,
 		Pixel = 2,
-		Compute = 3,
-		Callable = 4
+		Compute = 3
 	};
 
 	Script();

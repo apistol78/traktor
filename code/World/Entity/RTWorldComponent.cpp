@@ -8,7 +8,6 @@
  */
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IAccelerationStructure.h"
-#include "Render/IProgramDispatchTable.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/Context/RenderContext.h"
@@ -37,18 +36,15 @@ void RTWorldComponent::update(World* world, const UpdateParams& update)
 {
 }
 
-RTWorldComponent::Instance* RTWorldComponent::allocateInstance(const render::IAccelerationStructure* blas, render::IProgram* program)
+RTWorldComponent::Instance* RTWorldComponent::allocateInstance(const render::IAccelerationStructure* blas)
 {
 	Instance* instance = new Instance();
 	instance->owner = this;
 	instance->transform = Transform::identity();
 	instance->blas = blas;
-	instance->program = program;
 
 	m_instances.push_back(instance);
-
 	m_instanceBufferDirty = true;
-	m_programTableDirty = true;
 
 	return instance;
 }
@@ -66,7 +62,6 @@ void RTWorldComponent::releaseInstance(Instance*& instance)
 	instance = nullptr;
 	
 	m_instanceBufferDirty = true;
-	m_programTableDirty = true;
 }
 
 void RTWorldComponent::build(const WorldBuildContext& context)
@@ -94,16 +89,6 @@ void RTWorldComponent::build(const WorldBuildContext& context)
 		renderContext->compute(rb);
 
 		m_instanceBufferDirty = false;
-	}
-
-	if (m_programTableDirty)
-	{
-		m_programTable = m_renderSystem->createProgramDispatchTable();
-
-		for (const auto& instance : m_instances)
-			m_programTable->addProgram(instance->program);
-
-		m_programTableDirty = false;
 	}
 }
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,7 +23,6 @@ class Buffer;
 class BufferViewVk;
 class CommandBuffer;
 class PipelineLayoutCache;
-class ProgramDispatchTableVk;
 class ProgramResourceVk;
 class ShaderModuleCache;
 
@@ -75,8 +74,6 @@ public:
 
 	virtual void setAccelerationStructureParameter(handle_t handle, const IAccelerationStructure* accelerationStructure) override final;
 
-	virtual void setProgramDispatchTable(const IProgramDispatchTable* dispatchTable) override final;
-
 	virtual void setStencilReference(uint32_t stencilReference) override final;
 
 	const RenderState& getRenderState() const { return m_renderState; }
@@ -87,15 +84,11 @@ public:
 
 	VkShaderModule getComputeVkShaderModule() const { return m_computeShaderModule; }
 
-	VkShaderModule getCallableVkShaderModule() const { return m_callableShaderModule; }
-
 	VkPipelineLayout getPipelineLayout() const { return m_pipelineLayout; }
 
 	const int32_t* getLocalWorkGroupSize() const { return m_localWorkGroupSize; }
 
 	uint32_t getShaderHash() const { return m_shaderHash; }
-
-	const ProgramDispatchTableVk* getProgramDispatchTable() const { return m_dispatchTable; }
 
 #if defined(_DEBUG)
 	const std::wstring& getTag() const { return m_tag; }
@@ -165,7 +158,6 @@ private:
 	VkShaderModule m_vertexShaderModule = 0;
 	VkShaderModule m_fragmentShaderModule = 0;
 	VkShaderModule m_computeShaderModule = 0;
-	VkShaderModule m_callableShaderModule = 0;
 	VkDescriptorSetLayout m_descriptorSetLayout = 0;
 	VkPipelineLayout m_pipelineLayout = 0;
 	uint32_t m_descriptorPoolRevision = ~0U;
@@ -178,7 +170,6 @@ private:
 	AlignedVector< Image > m_images;
 	AlignedVector< SBuffer > m_sbuffers;
 	AlignedVector< AccelerationStructure > m_accelerationStructures;
-	Ref< const ProgramDispatchTableVk > m_dispatchTable;
 	uint32_t m_stencilReference = 0;
 	uint32_t m_shaderHash = 0;
 	bool m_useTargetSize = false;

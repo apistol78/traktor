@@ -75,7 +75,7 @@ private:
 	Ref< ui::DropDown > m_dropLanguages;
 	Ref< ui::CheckBox > m_checkRelaxed;
 	Ref< ui::Tab > m_tab;
-	Ref< ui::SyntaxRichEdit > m_shaderEditors[4];
+	Ref< ui::SyntaxRichEdit > m_shaderEditors[3];
 	Ref< ShaderGraph > m_pendingShaderGraph;
 	Ref< ShaderGraph > m_lastShaderGraph;
 	Ref< Job > m_reflectJob;

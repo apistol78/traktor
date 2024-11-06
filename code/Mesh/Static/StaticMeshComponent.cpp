@@ -59,7 +59,7 @@ void StaticMeshComponent::setWorld(world::World* world)
 		T_FATAL_ASSERT(m_rtwInstance == nullptr);
 		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
 		if (rtw != nullptr)
-			m_rtwInstance = rtw->allocateInstance(m_mesh->getAccelerationStructure(), nullptr);
+			m_rtwInstance = rtw->allocateInstance(m_mesh->getAccelerationStructure());
 	}
 
 	m_world = world;
@@ -75,7 +75,7 @@ void StaticMeshComponent::setState(const world::EntityState& state, const world:
 			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
 			if (rtw != nullptr)
 			{
-				m_rtwInstance = rtw->allocateInstance(m_mesh->getAccelerationStructure(), nullptr);
+				m_rtwInstance = rtw->allocateInstance(m_mesh->getAccelerationStructure());
 				m_rtwInstance->setTransform(m_transform.get0());
 			}
 		}

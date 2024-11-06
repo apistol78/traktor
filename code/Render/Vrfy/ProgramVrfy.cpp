@@ -266,13 +266,6 @@ void ProgramVrfy::setAccelerationStructureParameter(handle_t handle, const IAcce
 	}
 }
 
-void ProgramVrfy::setProgramDispatchTable(const IProgramDispatchTable* dispatchTable)
-{
-	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
-	if (m_program)
-		m_program->setProgramDispatchTable(dispatchTable);
-}
-
 void ProgramVrfy::setStencilReference(uint32_t stencilReference)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
