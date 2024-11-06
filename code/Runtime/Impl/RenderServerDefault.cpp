@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -180,6 +180,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	rsd.adapter = settings->getProperty< int32_t >(L"Render.Adapter", -1);
 	rsd.mipBias = settings->getProperty< float >(L"Render.MipBias", 0.0f);
 	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);
+	rsd.rayTracing = settings->getProperty< bool >(L"Render.RayTracing", false);
 	rsd.validation = settings->getProperty< bool >(L"Render.Validation", false);
 	rsd.programCache = settings->getProperty< bool >(L"Render.UseProgramCache", true);
 	rsd.verbose = true;

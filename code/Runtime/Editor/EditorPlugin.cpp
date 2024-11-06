@@ -185,6 +185,7 @@ bool EditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::I
 		m_toolTweaks->add(createTweakMenuItem(L"Disable Baked Lighting", false));
 		m_toolTweaks->add(createTweakMenuItem(L"Validate Rendering", false));
 		m_toolTweaks->add(createTweakMenuItem(L"Debug Layer", true));
+		m_toolTweaks->add(createTweakMenuItem(L"Ray Tracing", false));
 		m_toolBar->addItem(m_toolTweaks);
 
 		m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Runtime.Language"), 85_ut, i18n::Text(L"RUNTIME_LANGUAGE"));
@@ -564,6 +565,8 @@ Ref< PropertyGroup > EditorPlugin::getTweakSettings() const
 	}
 	if (m_toolTweaks->get(12)->isChecked())
 		tweakSettings->setProperty< PropertyBoolean >(L"Runtime.DebugLayer", true);
+	if (m_toolTweaks->get(13)->isChecked())
+		tweakSettings->setProperty< PropertyBoolean >(L"Render.RayTracing", true);
 
 	const int32_t language = m_toolLanguage->getSelected();
 	if (language > 0)
