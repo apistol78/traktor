@@ -32,10 +32,9 @@ class T_DLLCLASS GlslResource : public Object
 public:
 	enum class Set
 	{
-		Undefined			= -1,
-		Default				= 0,
-		BindlessTextures	= 1,
-		BindlessImages		= 2
+		Undefined	= -1,
+		Default		= 0,
+		Bindless	= 1
 	};
 
 	enum BindStages

@@ -91,13 +91,9 @@ public:
 
 	UniformBufferPool* getUniformBufferPool(int32_t index) const { return m_uniformBufferPools[index]; }
 
-	VkDescriptorSetLayout getBindlessTexturesSetLayout() const { return m_bindlessTexturesDescriptorLayout; }
+	VkDescriptorSetLayout getBindlessSetLayout() const { return m_bindlessDescriptorLayout; }
 
-	VkDescriptorSet getBindlessTexturesDescriptorSet() const { return m_bindlessTexturesDescriptorSet; }
-
-	VkDescriptorSetLayout getBindlessImagesSetLayout() const { return m_bindlessImagesDescriptorLayout; }
-
-	VkDescriptorSet getBindlessImagesDescriptorSet() const { return m_bindlessImagesDescriptorSet; }
+	VkDescriptorSet getBindlessDescriptorSet() const { return m_bindlessDescriptorSet; }
 
 	uint32_t allocateSampledResourceIndex();
 
@@ -112,18 +108,16 @@ private:
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
 	uint32_t m_graphicsQueueIndex;
-	VkPipelineCache m_pipelineCache;
-	VkDescriptorPool m_descriptorPool;
-	int32_t m_views;
+	VkPipelineCache m_pipelineCache = 0;
+	VkDescriptorPool m_descriptorPool = 0;
+	int32_t m_views = 0;
 	Ref< Queue > m_graphicsQueue;
 	Ref< UniformBufferPool > m_uniformBufferPools[3];
 	Semaphore m_cleanupLock;
 	AlignedVector< cleanup_fn_t > m_cleanupFns;
 	AlignedVector< ICleanupListener* > m_cleanupListeners;
-	VkDescriptorSetLayout m_bindlessTexturesDescriptorLayout;
-	VkDescriptorSet m_bindlessTexturesDescriptorSet;
-	VkDescriptorSetLayout m_bindlessImagesDescriptorLayout;
-	VkDescriptorSet m_bindlessImagesDescriptorSet;
+	VkDescriptorSetLayout m_bindlessDescriptorLayout = 0;
+	VkDescriptorSet m_bindlessDescriptorSet = 0;
 	IdAllocator m_sampledResourceIndexAllocator;
 	IdAllocator m_storageResourceIndexAllocator;
 };

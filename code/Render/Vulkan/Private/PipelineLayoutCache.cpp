@@ -107,8 +107,7 @@ bool PipelineLayoutCache::get(uint32_t pipelineHash, bool useTargetSize, const V
 		const VkDescriptorSetLayout setLayouts[] =
 		{
 			outDescriptorSetLayout,
-			m_context->getBindlessTexturesSetLayout(),
-			m_context->getBindlessImagesSetLayout()
+			m_context->getBindlessSetLayout()
 		};
 
 		VkPushConstantRange pcr = {};
