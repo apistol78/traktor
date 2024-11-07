@@ -99,14 +99,19 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 			return nullptr;
 		}
 
-		instanceMesh->m_rtPerPrimitiveColor = renderSystem->createBuffer(render::BuStructured, 1 * 4 * sizeof(float), false);
+		const uint32_t numTriangles = part.primitives.count;
+
+		instanceMesh->m_rtPerPrimitiveColor = renderSystem->createBuffer(render::BuStructured, numTriangles * 4 * sizeof(float), false);
 		
 		static Random s_rnd;
 		float* ptr = (float*)instanceMesh->m_rtPerPrimitiveColor->lock();
-		*ptr++ = s_rnd.nextFloat();
-		*ptr++ = s_rnd.nextFloat();
-		*ptr++ = s_rnd.nextFloat();
-		*ptr++ = 1.0f;
+		for (uint32_t i = 0; i < numTriangles; ++i)
+		{
+			*ptr++ = s_rnd.nextFloat();
+			*ptr++ = s_rnd.nextFloat();
+			*ptr++ = s_rnd.nextFloat();
+			*ptr++ = 1.0f;
+		}
 
 		instanceMesh->m_rtPerPrimitiveColor->unlock();
 	}

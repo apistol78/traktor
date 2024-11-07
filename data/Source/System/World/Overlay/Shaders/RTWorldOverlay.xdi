@@ -152,7 +152,8 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 {
 	const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
 	const uint id = rayQueryGetIntersectionInstanceCustomIndexEXT(rayQuery, true);
-	$Output = __bindlessBufferVec4__[id].data[0].value;
+	const uint triangle = rayQueryGetIntersectionPrimitiveIndexEXT(rayQuery, true);
+	$Output = __bindlessBufferVec4__[id].data[triangle].value;
 }
 
 			]]>
