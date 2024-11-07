@@ -349,7 +349,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			cx.getLayout().add(storageBuffer);
 
 			auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-			f << storageStructNode->getParameterName() << L"_Data[" << offset->cast(GlslType::Integer) << L"]." << /*node->getName()*/L"fieldName" << L" = " << in->cast(GlslType::Float4) << L";" << Endl;
+			f << storageStructNode->getParameterName() << L".data[" << offset->cast(GlslType::Integer) << L"]." << /*node->getName()*/L"fieldName" << L" = " << in->cast(GlslType::Float4) << L";" << Endl;
 
 			// Define parameter in context.
 			cx.addParameter(
@@ -2516,7 +2516,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 {
 	Ref< GlslVariable > out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
-		node->getParameterName() + L"_Data",
+		node->getParameterName() + L".data",
 		GlslType::StructBuffer
 	);
 

@@ -401,14 +401,18 @@ std::wstring GlslShader::getGeneratedShader(
 				ss << L"};" << Endl;
 				ss << Endl;
 				if (m_shaderType != StCompute)
-					ss << L"layout (std430, binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L") readonly buffer " << storageBuffer->getName() << (storageBuffer->isIndexed() ? L"[];" : L";") << Endl;
+					ss << L"layout (std430, binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L") readonly buffer " << storageBuffer->getName() << L"_Buffer" << Endl;
 				else
-					ss << L"layout (std430, binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L") buffer " << storageBuffer->getName() << (storageBuffer->isIndexed() ? L"[];" : L";") << Endl;
+					ss << L"layout (std430, binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L") buffer " << storageBuffer->getName() << L"_Buffer" << Endl;
 				ss << L"{" << Endl;
 				ss << IncreaseIndent;
-				ss << storageBuffer->getName() << L"_Type " << storageBuffer->getName() << L"_Data[];" << Endl;
+				ss << storageBuffer->getName() << L"_Type data[];" << Endl;
 				ss << DecreaseIndent;
-				ss << L"};" << Endl;
+				ss << L"}" << Endl;
+				if (storageBuffer->isIndexed())
+					ss << storageBuffer->getName() << L"[];" << Endl;
+				else
+					ss << storageBuffer->getName() << L";" << Endl;
 				ss << Endl;
 			}
 		}
