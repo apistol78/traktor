@@ -36,6 +36,13 @@ Context::Context(
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
 ,	m_graphicsQueueIndex(graphicsQueueIndex)
+,	m_pipelineCache(0)
+,	m_descriptorPool(0)
+,	m_views(0)
+,	m_bindlessTexturesDescriptorLayout(0)
+,	m_bindlessTexturesDescriptorSet(0)
+,	m_bindlessImagesDescriptorLayout(0)
+,	m_bindlessImagesDescriptorSet(0)
 ,	m_sampledResourceIndexAllocator(0, MaxBindlessResources - 1)
 {
 }
@@ -130,45 +137,32 @@ bool Context::create()
 	m_uniformBufferPools[2] = new UniformBufferPool(this, 100000, L"Draw");
 
 	// Bindless resources.
-	{
-		const VkDescriptorBindingFlags bindlessFlags[] =
-		{
-			// BindlessTexturesBinding
-			VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT |
-			VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT |
-			VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT,/* |
-			VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT_EXT;*/
+	const uint32_t bindings[] = { BindlessTexturesBinding, BindlessImagesBinding };
+	VkDescriptorSetLayout* layouts[] = { &m_bindlessTexturesDescriptorLayout, &m_bindlessImagesDescriptorLayout };
+	VkDescriptorSet* descriptorSets[] = { &m_bindlessTexturesDescriptorSet, &m_bindlessImagesDescriptorSet };
 
-			// BindlessImagesBinding
+	for (int32_t i = 0; i < sizeof_array(bindings); ++i)
+	{
+		const VkDescriptorBindingFlags bindlessFlags = 
 			VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT |
 			VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT |
-			VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT,/* |
+			VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT;/* |
 			VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT_EXT;*/
-		};
 
 		const VkDescriptorSetLayoutBindingFlagsCreateInfoEXT extendedInfo =
 		{
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT,
-			.bindingCount = 2,
-			.pBindingFlags = bindlessFlags
+			.bindingCount = 1,
+			.pBindingFlags = &bindlessFlags
 		};
 
-		const VkDescriptorSetLayoutBinding bindings[] =
+		const VkDescriptorSetLayoutBinding binding =
 		{
-			{
-				.binding = BindlessTexturesBinding,
-				.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-				.descriptorCount = MaxBindlessResources,
-				.stageFlags = VK_SHADER_STAGE_ALL,
-				.pImmutableSamplers = nullptr
-			},
-			{
-				.binding = BindlessImagesBinding,
-				.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
-				.descriptorCount = MaxBindlessResources,
-				.stageFlags = VK_SHADER_STAGE_ALL,
-				.pImmutableSamplers = nullptr
-			}
+			.binding = bindings[i],
+			.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+			.descriptorCount = MaxBindlessResources,
+			.stageFlags = VK_SHADER_STAGE_ALL,
+			.pImmutableSamplers = nullptr
 		};
 
 		const VkDescriptorSetLayoutCreateInfo layoutInfo =
@@ -176,11 +170,11 @@ bool Context::create()
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 			.pNext = &extendedInfo,
 			.flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT,
-			.bindingCount = sizeof_array(bindings),
-			.pBindings = bindings
+			.bindingCount = 1,
+			.pBindings = &binding
 		};
 
-		if (vkCreateDescriptorSetLayout(m_logicalDevice, &layoutInfo, nullptr, &m_bindlessDescriptorLayout) != VK_SUCCESS)
+		if (vkCreateDescriptorSetLayout(m_logicalDevice, &layoutInfo, nullptr, layouts[i]) != VK_SUCCESS)
 		{
 			log::error << L"Failed to create Vulkan; failed to create bindless descriptor layout." << Endl;
 			return false;
@@ -202,11 +196,11 @@ bool Context::create()
 			.pNext = &countInfo,
 			.descriptorPool = m_descriptorPool,
 			.descriptorSetCount = 1,
-			.pSetLayouts = &m_bindlessDescriptorLayout
+			.pSetLayouts = layouts[i]
 		};
 
 		VkResult result;
-		if ((result = vkAllocateDescriptorSets(m_logicalDevice, &allocInfo, &m_bindlessDescriptorSet)) != VK_SUCCESS)
+		if ((result = vkAllocateDescriptorSets(m_logicalDevice, &allocInfo, descriptorSets[i])) != VK_SUCCESS)
 		{
 			log::error << L"Failed to create Vulkan; failed to create bindless descriptor set. " << getHumanResult(result) << Endl;
 			return false;

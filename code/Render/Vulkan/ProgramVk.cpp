@@ -469,7 +469,8 @@ bool ProgramVk::validate(
 	const VkDescriptorSet descriptorSets[] =
 	{
 		m_descriptorSet,
-		m_context->getBindlessDescriptorSet()
+		m_context->getBindlessTexturesDescriptorSet(),
+		m_context->getBindlessImagesDescriptorSet()
 	};
 
 	vkCmdBindDescriptorSets(

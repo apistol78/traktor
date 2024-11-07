@@ -619,7 +619,7 @@ bool Image::updateSampledResource()
 	VkWriteDescriptorSet write = {};
 	write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	write.pNext = nullptr;
-	write.dstSet = m_context->getBindlessDescriptorSet();
+	write.dstSet = m_context->getBindlessTexturesDescriptorSet();
 	write.descriptorCount = 1;
 	write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 	write.pImageInfo = &imageInfo;
@@ -661,7 +661,7 @@ bool Image::updateStorageResource()
 		VkWriteDescriptorSet write = {};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.pNext = nullptr;
-		write.dstSet = m_context->getBindlessDescriptorSet();
+		write.dstSet = m_context->getBindlessImagesDescriptorSet();
 		write.descriptorCount = 1;
 		write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
 		write.pImageInfo = &imageInfo;
