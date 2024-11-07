@@ -23,6 +23,8 @@
 namespace traktor::render
 {
 
+class Buffer;
+
 /*!
  * \ingroup Render
  */
@@ -34,8 +36,8 @@ public:
 	struct Instance
 	{
 		Ref< const IAccelerationStructure > blas;
+		Ref< const Buffer > perPrimitiveVec4;
 		Matrix44 transform;
-		uint32_t index;
 	};
 
 	/*! */

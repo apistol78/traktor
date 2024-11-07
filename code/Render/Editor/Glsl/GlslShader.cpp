@@ -401,9 +401,9 @@ std::wstring GlslShader::getGeneratedShader(
 				ss << L"};" << Endl;
 				ss << Endl;
 				if (m_shaderType != StCompute)
-					ss << L"layout (std430, binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L") readonly buffer " << storageBuffer->getName() << Endl;
+					ss << L"layout (std430, binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L") readonly buffer " << storageBuffer->getName() << (storageBuffer->isIndexed() ? L"[];" : L";") << Endl;
 				else
-					ss << L"layout (std430, binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L") buffer " << storageBuffer->getName() << Endl;
+					ss << L"layout (std430, binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L") buffer " << storageBuffer->getName() << (storageBuffer->isIndexed() ? L"[];" : L";") << Endl;
 				ss << L"{" << Endl;
 				ss << IncreaseIndent;
 				ss << storageBuffer->getName() << L"_Type " << storageBuffer->getName() << L"_Data[];" << Endl;

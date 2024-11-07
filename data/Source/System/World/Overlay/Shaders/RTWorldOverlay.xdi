@@ -119,7 +119,7 @@
 				<item>
 					<id>{A026543F-9CEC-6D4D-90CB-AE68CF56A052}</id>
 					<name>Output</name>
-					<type>Scalar</type>
+					<type>Vector</type>
 				</item>
 			</outputPins>
 			<script>
@@ -146,14 +146,14 @@ while(rayQueryProceedEXT(rayQuery))
 {
 }
 
-$Output = 1.0f;
+$Output = vec4(1.0f);
 
 if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
 {
 	const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
-	$Output = 0.0f;
+	const uint id = rayQueryGetIntersectionInstanceCustomIndexEXT(rayQuery, true);
+	$Output = __bindlessBufferVec4___Data[0].value;
 }
-
 			]]>
 			</script>
 		</item>

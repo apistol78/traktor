@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Config.h"
+#include "Core/Log/Log.h"
 #include "Render/Vulkan/Private/ApiBuffer.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/Context.h"
@@ -52,6 +53,7 @@ bool ApiBuffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, 
 	if (vmaCreateBuffer(m_context->getAllocator(), &bci, &aci, &m_buffer, &m_allocation, nullptr) != VK_SUCCESS)
 		return false;
 
+	m_bufferSize = bufferSize;
     return true;
 }
 
@@ -67,6 +69,13 @@ void ApiBuffer::destroy()
 			vmaDestroyBuffer(cx->getAllocator(), buffer, allocation);
 		});
 	}
+
+	if (m_resourceIndex != ~0U)
+	{
+		m_context->freeBufferResourceIndex(m_resourceIndex);
+		m_resourceIndex = ~0U;
+	}
+
 	m_allocation = 0;
 	m_buffer = 0;
 	m_context = nullptr;
@@ -92,6 +101,44 @@ VkDeviceAddress ApiBuffer::getDeviceAddress()
 	VkBufferDeviceAddressInfo bdai{ VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO };
 	bdai.buffer = m_buffer;
 	return vkGetBufferDeviceAddressKHR(m_context->getLogicalDevice(), &bdai);
+}
+
+uint32_t ApiBuffer::makeResourceIndex() const
+{
+	if (m_resourceIndex != ~0U)
+		return m_resourceIndex;
+
+	m_resourceIndex = m_context->allocateBufferResourceIndex();
+	T_FATAL_ASSERT(m_resourceIndex != ~0U);
+
+	const VkDescriptorBufferInfo bufferInfo =
+	{
+		.buffer = m_buffer,
+		.offset = 0,
+		.range = m_bufferSize
+	};
+
+	const VkWriteDescriptorSet write =
+	{
+		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+		.pNext = nullptr,
+		.dstSet = m_context->getBindlessBuffersDescriptorSet(),
+		.dstBinding = Context::BindlessBuffersBinding,
+		.dstArrayElement = m_resourceIndex,
+		.descriptorCount = 1,
+		.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+		.pBufferInfo = &bufferInfo
+	};
+
+	vkUpdateDescriptorSets(
+		m_context->getLogicalDevice(),
+		1,
+		&write,
+		0,
+		nullptr
+	);
+
+	return m_resourceIndex;
 }
 
 }

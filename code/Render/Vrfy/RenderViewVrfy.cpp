@@ -416,7 +416,22 @@ bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinatio
 
 void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances)
 {
-	m_renderView->writeAccelerationStructure(accelerationStructure, instances);
+	T_CAPTURE_TRACE(L"writeAccelerationStructure");
+
+	AlignedVector< IAccelerationStructure::Instance > unwrappedInstances;
+	unwrappedInstances.reserve(instances.size());
+
+	for (const auto& instance : instances)
+	{
+		const BufferVrfy* bv = dynamic_type_cast< const BufferVrfy* >(instance.perPrimitiveVec4);
+		unwrappedInstances.push_back({
+			instance.blas,
+			(bv != nullptr) ? bv->getWrappedBuffer() : nullptr,
+			instance.transform
+		});
+	}
+
+	m_renderView->writeAccelerationStructure(accelerationStructure, unwrappedInstances);
 }
 
 int32_t RenderViewVrfy::beginTimeQuery()

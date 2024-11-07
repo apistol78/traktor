@@ -328,7 +328,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 
 					Ref< render::IAccelerationStructure > blas = m_renderSystem->createAccelerationStructure(m_vertexBuffer, m_vertexLayout, m_indexBuffer, render::IndexType::UInt32, primitives);
 					if (blas != nullptr)
-						m_rtwInstance = rtw->createInstance(blas);
+						m_rtwInstance = rtw->createInstance(blas, nullptr);
 				}
 			}
 			else

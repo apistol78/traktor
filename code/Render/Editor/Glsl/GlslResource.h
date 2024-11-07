@@ -35,7 +35,8 @@ public:
 		Undefined			= -1,
 		Default				= 0,
 		BindlessTextures	= 1,
-		BindlessImages		= 2
+		BindlessImages		= 2,
+		BindlessBuffers		= 3
 	};
 
 	enum BindStages

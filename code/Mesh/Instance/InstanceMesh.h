@@ -89,15 +89,22 @@ public:
 		uint32_t count
 	);
 
-	const render::IAccelerationStructure* getAccelerationStructure() const { return m_accelerationStructure; }
+	const render::IAccelerationStructure* getAccelerationStructure() const { return m_rtAccelerationStructure; }
+
+	const render::Buffer* getPerPrimitiveColor() const { return m_rtPerPrimitiveColor; }
 
 private:
 	friend class InstanceMeshResource;
 
+	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
+
+	// Rasterization
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_renderMesh;
-	Ref< render::IAccelerationStructure > m_accelerationStructure;
-	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
+
+	// Ray tracing
+	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
+	Ref< render::Buffer > m_rtPerPrimitiveColor;
 
 	//#todo All instances are bookkeep;ed in InstanceMesh which should be a resource.
 	Ref< render::IRenderSystem > m_renderSystem;	

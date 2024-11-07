@@ -470,7 +470,8 @@ bool ProgramVk::validate(
 	{
 		m_descriptorSet,
 		m_context->getBindlessTexturesDescriptorSet(),
-		m_context->getBindlessImagesDescriptorSet()
+		m_context->getBindlessImagesDescriptorSet(),
+		m_context->getBindlessBuffersDescriptorSet()
 	};
 
 	vkCmdBindDescriptorSets(
@@ -725,7 +726,7 @@ bool ProgramVk::validateDescriptorSet()
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
 			.dstSet = m_descriptorSet,
-			.dstBinding = i + 2,
+			.dstBinding = i + Context::NonBindlessFirstBinding,
 			.descriptorCount = 1,
 			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
 			.pBufferInfo = &bufferInfo

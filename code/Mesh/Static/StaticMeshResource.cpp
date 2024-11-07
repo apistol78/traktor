@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Log/Log.h"
+#include "Core/Math/Random.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
@@ -14,6 +15,7 @@
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Mesh/Static/StaticMesh.h"
 #include "Mesh/Static/StaticMeshResource.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshReader.h"
@@ -85,18 +87,29 @@ Ref< IMesh > StaticMeshResource::createMesh(
 		AlignedVector< render::Primitives > primitives;
 		primitives.push_back(part.primitives);
 
-		staticMesh->m_accelerationStructure = renderSystem->createAccelerationStructure(
+		staticMesh->m_rtAccelerationStructure = renderSystem->createAccelerationStructure(
 			renderMesh->getVertexBuffer(),
 			renderMesh->getVertexLayout(),
 			renderMesh->getIndexBuffer(),
 			renderMesh->getIndexType(),
 			primitives
 		);
-		if (!staticMesh->m_accelerationStructure)
+		if (!staticMesh->m_rtAccelerationStructure)
 		{
 			log::error << L"Static mesh create failed; unable to create RT acceleration structure." << Endl;
 			return nullptr;
 		}
+
+		staticMesh->m_rtPerPrimitiveColor = renderSystem->createBuffer(render::BuStructured, 1 * 4 * sizeof(float), false);
+		
+		static Random s_rnd;
+		float* ptr = (float*)staticMesh->m_rtPerPrimitiveColor->lock();
+		*ptr++ = s_rnd.nextFloat();
+		*ptr++ = s_rnd.nextFloat();
+		*ptr++ = s_rnd.nextFloat();
+		*ptr++ = 1.0f;
+
+		staticMesh->m_rtPerPrimitiveColor->unlock();
 	}
 
 #if defined(_DEBUG)

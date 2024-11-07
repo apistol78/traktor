@@ -343,6 +343,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	di.runtimeDescriptorArray = VK_TRUE;
 	di.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE;
 	di.descriptorBindingStorageImageUpdateAfterBind = VK_TRUE;
+	di.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE;
 	di.descriptorBindingPartiallyBound = VK_TRUE;
 	di.descriptorBindingVariableDescriptorCount = VK_TRUE;
 

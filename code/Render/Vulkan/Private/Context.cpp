@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,14 +36,9 @@ Context::Context(
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
 ,	m_graphicsQueueIndex(graphicsQueueIndex)
-,	m_pipelineCache(0)
-,	m_descriptorPool(0)
-,	m_views(0)
-,	m_bindlessTexturesDescriptorLayout(0)
-,	m_bindlessTexturesDescriptorSet(0)
-,	m_bindlessImagesDescriptorLayout(0)
-,	m_bindlessImagesDescriptorSet(0)
 ,	m_sampledResourceIndexAllocator(0, MaxBindlessResources - 1)
+,	m_storageResourceIndexAllocator(0, MaxBindlessResources - 1)
+,	m_bufferResourceIndexAllocator(0, MaxBindlessResources - 1)
 {
 }
 
@@ -137,9 +132,10 @@ bool Context::create()
 	m_uniformBufferPools[2] = new UniformBufferPool(this, 100000, L"Draw");
 
 	// Bindless resources.
-	const uint32_t bindings[] = { BindlessTexturesBinding, BindlessImagesBinding };
-	VkDescriptorSetLayout* layouts[] = { &m_bindlessTexturesDescriptorLayout, &m_bindlessImagesDescriptorLayout };
-	VkDescriptorSet* descriptorSets[] = { &m_bindlessTexturesDescriptorSet, &m_bindlessImagesDescriptorSet };
+	const uint32_t bindings[] = { BindlessTexturesBinding, BindlessImagesBinding, BindlessBuffersBinding };
+	VkDescriptorType descriptorTypes[] = { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER };
+	VkDescriptorSetLayout* layouts[] = { &m_bindlessTexturesDescriptorLayout, &m_bindlessImagesDescriptorLayout, &m_bindlessBuffersDescriptorLayout };
+	VkDescriptorSet* descriptorSets[] = { &m_bindlessTexturesDescriptorSet, &m_bindlessImagesDescriptorSet, &m_bindlessBuffersDescriptorSet };
 
 	for (int32_t i = 0; i < sizeof_array(bindings); ++i)
 	{
@@ -159,7 +155,7 @@ bool Context::create()
 		const VkDescriptorSetLayoutBinding binding =
 		{
 			.binding = bindings[i],
-			.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+			.descriptorType = descriptorTypes[i],
 			.descriptorCount = MaxBindlessResources,
 			.stageFlags = VK_SHADER_STAGE_ALL,
 			.pImmutableSamplers = nullptr
@@ -346,6 +342,18 @@ void Context::freeStorageResourceIndex(uint32_t& resourceIndex, uint32_t span)
 {
 	T_FATAL_ASSERT(resourceIndex != ~0U);
 	m_storageResourceIndexAllocator.freeSequential(resourceIndex, span);
+	resourceIndex = ~0U;
+}
+
+uint32_t Context::allocateBufferResourceIndex()
+{
+	return m_bufferResourceIndexAllocator.alloc();
+}
+
+void Context::freeBufferResourceIndex(uint32_t& resourceIndex)
+{
+	T_FATAL_ASSERT(resourceIndex != ~0U);
+	m_bufferResourceIndexAllocator.free(resourceIndex);
 	resourceIndex = ~0U;
 }
 

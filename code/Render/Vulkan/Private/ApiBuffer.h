@@ -45,12 +45,16 @@ public:
 
 	VkDeviceAddress getDeviceAddress();
 
+	uint32_t makeResourceIndex() const;
+
 	operator VkBuffer () const { return m_buffer; }
 
 private:
 	Context* m_context = nullptr;
 	VmaAllocation m_allocation = 0;
 	VkBuffer m_buffer = 0;
+	uint32_t m_bufferSize = 0;
+	mutable uint32_t m_resourceIndex = ~0U;
 	void* m_locked = nullptr;
 };
 		

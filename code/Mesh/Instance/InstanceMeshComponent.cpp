@@ -55,7 +55,7 @@ void InstanceMeshComponent::setWorld(world::World* world)
 
 		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
 		if (rtw != nullptr)
-			m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure());
+			m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getPerPrimitiveColor());
 
 		world::CullingComponent* culling = world->getComponent< world::CullingComponent >();
 		if (culling)
@@ -75,7 +75,7 @@ void InstanceMeshComponent::setState(const world::EntityState& state, const worl
 			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
 			if (rtw != nullptr)
 			{
-				m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure());
+				m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getPerPrimitiveColor());
 				m_rtwInstance->setTransform(m_transform.get0());
 			}
 		}

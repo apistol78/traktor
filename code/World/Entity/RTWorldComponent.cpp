@@ -36,12 +36,13 @@ void RTWorldComponent::update(World* world, const UpdateParams& update)
 {
 }
 
-RTWorldComponent::Instance* RTWorldComponent::createInstance(const render::IAccelerationStructure* blas)
+RTWorldComponent::Instance* RTWorldComponent::createInstance(const render::IAccelerationStructure* blas, const render::Buffer* perPrimitiveColor)
 {
 	Instance* instance = new Instance();
 	instance->owner = this;
 	instance->transform = Transform::identity();
 	instance->blas = blas;
+	instance->perPrimitiveColor = perPrimitiveColor;
 
 	m_instances.push_back(instance);
 	m_instanceBufferDirty = true;
@@ -53,14 +54,13 @@ void RTWorldComponent::build(const WorldBuildContext& context)
 {
 	if (m_instanceBufferDirty)
 	{
-		// Update TLAS with all instances.
 		AlignedVector< render::IAccelerationStructure::Instance > tlasInstances;
 		for (const auto& instance : m_instances)
 		{
 			tlasInstances.push_back({
 				.blas = instance->blas,
-				.transform = instance->transform.toMatrix44(),
-				.index = 0
+				.perPrimitiveVec4 = instance->perPrimitiveColor,
+				.transform = instance->transform.toMatrix44()
 			});
 		}
 

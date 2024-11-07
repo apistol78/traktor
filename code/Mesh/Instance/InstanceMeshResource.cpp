@@ -8,11 +8,13 @@
  */
 #include <algorithm>
 #include "Core/Log/Log.h"
+#include "Core/Math/Random.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshResource.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshReader.h"
@@ -84,18 +86,29 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 		AlignedVector< render::Primitives > primitives;
 		primitives.push_back(part.primitives);
 
-		instanceMesh->m_accelerationStructure = renderSystem->createAccelerationStructure(
+		instanceMesh->m_rtAccelerationStructure = renderSystem->createAccelerationStructure(
 			renderMesh->getVertexBuffer(),
 			renderMesh->getVertexLayout(),
 			renderMesh->getIndexBuffer(),
 			renderMesh->getIndexType(),
 			primitives
 		);
-		if (!instanceMesh->m_accelerationStructure)
+		if (!instanceMesh->m_rtAccelerationStructure)
 		{
 			log::error << L"Instance mesh create failed; unable to create RT acceleration structure." << Endl;
 			return nullptr;
 		}
+
+		instanceMesh->m_rtPerPrimitiveColor = renderSystem->createBuffer(render::BuStructured, 1 * 4 * sizeof(float), false);
+		
+		static Random s_rnd;
+		float* ptr = (float*)instanceMesh->m_rtPerPrimitiveColor->lock();
+		*ptr++ = s_rnd.nextFloat();
+		*ptr++ = s_rnd.nextFloat();
+		*ptr++ = s_rnd.nextFloat();
+		*ptr++ = 1.0f;
+
+		instanceMesh->m_rtPerPrimitiveColor->unlock();
 	}
 
 	return instanceMesh;

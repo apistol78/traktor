@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,6 +17,7 @@
 #include "Render/Editor/Glsl/GlslContext.h"
 #include "Render/Editor/Glsl/GlslImage.h"
 #include "Render/Editor/Glsl/GlslShader.h"
+#include "Render/Editor/Glsl/GlslStorageBuffer.h"
 #include "Render/Editor/Glsl/GlslTexture.h"
 #include "Render/Editor/Glsl/GlslUniformBuffer.h"
 
@@ -48,9 +49,18 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 	m_layout.addStatic(new GlslImage(L"__bindlessImages2D__",   GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::Image2D, true),   /* binding */ 1);
 	m_layout.addStatic(new GlslImage(L"__bindlessImages3D__",   GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::Image3D, true),   /* binding */ 1);
 	m_layout.addStatic(new GlslImage(L"__bindlessImagesCube__", GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::ImageCube, true), /* binding */ 1);
-	m_layout.addStatic(new GlslUniformBuffer(L"UbOnce",  GlslResource::Set::Default , 0), /* binding */ 2);
-	m_layout.addStatic(new GlslUniformBuffer(L"UbFrame", GlslResource::Set::Default, 0), /* binding */ 3);
-	m_layout.addStatic(new GlslUniformBuffer(L"UbDraw",  GlslResource::Set::Default, 0), /* binding */ 4);
+
+	Ref< GlslStorageBuffer > sbuint4 = new GlslStorageBuffer(L"__bindlessBufferUInt4__", GlslResource::Set::BindlessBuffers, GlslResource::BsAll, true);
+	sbuint4->add(L"value", DtInteger4, 0);
+	m_layout.addStatic(sbuint4, /* binding */ 2);
+
+	Ref< GlslStorageBuffer > sbvec4= new GlslStorageBuffer(L"__bindlessBufferVec4__", GlslResource::Set::BindlessBuffers, GlslResource::BsAll, true);
+	sbvec4->add(L"value", DtFloat4, 0);
+	m_layout.addStatic(sbvec4, /* binding */ 2);
+
+	m_layout.addStatic(new GlslUniformBuffer(L"UbOnce",  GlslResource::Set::Default , 0), /* binding */ 3);
+	m_layout.addStatic(new GlslUniformBuffer(L"UbFrame", GlslResource::Set::Default, 0), /* binding */ 4);
+	m_layout.addStatic(new GlslUniformBuffer(L"UbDraw",  GlslResource::Set::Default, 0), /* binding */ 5);
 }
 
 Node* GlslContext::getInputNode(const InputPin* inputPin)

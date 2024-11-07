@@ -10,6 +10,7 @@
 #include "Render/Buffer.h"
 #include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferDynamicVk.h"
+#include "Render/Vulkan/BufferStaticVk.h"
 #include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/VertexLayoutVk.h"
 #include "Render/Vulkan/Private/ApiBuffer.h"
@@ -348,6 +349,8 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 
 	for (const auto& instance : instances)
 	{
+		const BufferStaticVk* bvk = checked_type_cast< const BufferStaticVk* >( instance.perPrimitiveVec4 );
+
 		const VkAccelerationStructureDeviceAddressInfoKHR asai =
 		{
 			.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR,
@@ -369,7 +372,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 					{ M(2, 0), M(2, 1), M(2, 2), M(2, 3) }
 				}
 			},
-			.instanceCustomIndex = instance.index,
+			.instanceCustomIndex = (bvk != nullptr) ? bvk->getApiBuffer()->makeResourceIndex() : 0,
 			.mask = 0xff,
 			.instanceShaderBindingTableRecordOffset = 0,
 			.flags = VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_KHR | VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR,

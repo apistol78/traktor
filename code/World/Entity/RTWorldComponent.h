@@ -23,6 +23,7 @@
 namespace traktor::render
 {
 
+class Buffer;
 class IAccelerationStructure;
 class IProgram;
 class IRenderSystem;
@@ -55,6 +56,7 @@ public:
 		RTWorldComponent* owner;
 		Transform transform;
 		Ref< const render::IAccelerationStructure > blas;
+		Ref< const render::Buffer > perPrimitiveColor;
 
 		void destroy();
 
@@ -67,7 +69,7 @@ public:
 
 	virtual void update(World* world, const UpdateParams& update) override final;
 
-	Instance* createInstance(const render::IAccelerationStructure* blas);
+	Instance* createInstance(const render::IAccelerationStructure* blas, const render::Buffer* perPrimitiveColor);
 
 	void build(const WorldBuildContext& context);
 

@@ -35,6 +35,7 @@
 #include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderModule.h"
+#include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/Editor/ProgramCompilerVk.h"
 
@@ -552,7 +553,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
 		{
 			// Runtime CPU buffer index; remap from UB binding locations.
-			const int32_t ubufferIndex = uniformBuffer->getBinding() - 2;
+			const int32_t ubufferIndex = uniformBuffer->getBinding() - Context::NonBindlessFirstBinding;
 			T_FATAL_ASSERT(ubufferIndex >= 0 && ubufferIndex <= 2);
 
 			uint32_t size = 0;

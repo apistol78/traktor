@@ -341,7 +341,8 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(
 				storageStructNode->getParameterName(),
 				GlslResource::Set::Default,
-				getBindStage(cx)
+				getBindStage(cx),
+				false
 			);
 			for (const auto& element : storageStructNode->getElements())
 				storageBuffer->add(element.name, element.type, element.length);
@@ -2540,7 +2541,8 @@ bool emitStruct(GlslContext& cx, Struct* node)
 		Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(
 			node->getParameterName(),
 			GlslResource::Set::Default,
-			getBindStage(cx)
+			getBindStage(cx),
+			false
 		);
 		for (const auto& element : node->getElements())
 			storageBuffer->add(element.name, element.type, element.length);

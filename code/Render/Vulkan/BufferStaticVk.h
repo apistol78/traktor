@@ -37,6 +37,8 @@ public:
 
 	virtual const IBufferView* getBufferView() const override final;
 
+	const ApiBuffer* getApiBuffer() const { return m_buffer; }
+
 private:
 	Ref< ApiBuffer > m_buffer;
 	Ref< ApiBuffer > m_stageBuffer;

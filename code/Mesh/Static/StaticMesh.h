@@ -26,10 +26,11 @@
 namespace traktor::render
 {
 
-class RenderContext;
-class Mesh;
+class Buffer;
 class IAccelerationStructure;
 class ITexture;
+class Mesh;
+class RenderContext;
 
 }
 
@@ -81,16 +82,24 @@ public:
 		const IMeshParameterCallback* parameterCallback
 	);
 
-	const render::IAccelerationStructure* getAccelerationStructure() const { return m_accelerationStructure; }
+	const render::IAccelerationStructure* getAccelerationStructure() const { return m_rtAccelerationStructure; }
+
+	const render::Buffer* getPerPrimitiveColor() const { return m_rtPerPrimitiveColor; }
 
 private:
 	friend class StaticMeshResource;
 
-	resource::Proxy< render::Shader > m_shader;
-	Ref< render::Mesh > m_renderMesh;
-	Ref< render::IAccelerationStructure > m_accelerationStructure;
 	AlignedVector< Part > m_parts;
 	SmallMap< render::handle_t, techniqueParts_t > m_techniqueParts;
+
+	// Rasterization
+	resource::Proxy< render::Shader > m_shader;
+	Ref< render::Mesh > m_renderMesh;
+	
+	// Ray tracing
+	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
+	Ref< render::Buffer > m_rtPerPrimitiveColor;
+
 #if defined(_DEBUG)
 	std::string m_name;
 #endif
