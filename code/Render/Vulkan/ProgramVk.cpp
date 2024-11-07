@@ -164,7 +164,7 @@ bool ProgramVk::create(
 			continue;
 
 		dslb.push_back({
-			.binding = i + 2,
+			.binding = i + Context::NonBindlessFirstBinding,
 			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
 			.descriptorCount = 1,
 			.stageFlags = stageFlags

@@ -35,6 +35,7 @@ public:
 	constexpr static uint32_t MaxBindlessResources = 16536;
 	constexpr static uint32_t BindlessTexturesBinding = 0;
 	constexpr static uint32_t BindlessImagesBinding = 1;
+	constexpr static uint32_t NonBindlessFirstBinding = 2;
 
 	typedef std::function< void(Context*) > cleanup_fn_t;
 
