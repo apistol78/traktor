@@ -46,7 +46,7 @@ bool ContactShadowsOverlay::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-void ContactShadowsOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
+void ContactShadowsOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
 	render::handle_t contactShadowsId = findTargetByName(renderGraph, L"Contact shadows");
 	if (!contactShadowsId)

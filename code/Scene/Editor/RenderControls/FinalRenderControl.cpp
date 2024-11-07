@@ -522,6 +522,7 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 		m_overlay->setup(
 			*m_renderGraph,
 			m_screenRenderer,
+			m_sceneInstance->getWorld(),
 			m_worldRenderer,
 			m_worldRenderView,
 			m_overlayAlpha,

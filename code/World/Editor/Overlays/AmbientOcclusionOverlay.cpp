@@ -46,7 +46,7 @@ bool AmbientOcclusionOverlay::create(resource::IResourceManager* resourceManager
 	return true;
 }
 
-void AmbientOcclusionOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
+void AmbientOcclusionOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
 	render::handle_t ambientOcclusionId = findTargetByName(renderGraph, L"Ambient occlusion");
 	if (!ambientOcclusionId)

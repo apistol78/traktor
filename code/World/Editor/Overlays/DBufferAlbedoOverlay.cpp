@@ -46,7 +46,7 @@ bool DBufferAlbedoOverlay::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-void DBufferAlbedoOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
+void DBufferAlbedoOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
 	render::handle_t dbufferId = findTargetByName(renderGraph, L"DBuffer");
 	if (!dbufferId)

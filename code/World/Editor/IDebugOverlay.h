@@ -37,6 +37,7 @@ namespace traktor::world
 {
 
 class IWorldRenderer;
+class World;
 class WorldRenderView;
 
 /*! Debug render overlay interface.
@@ -55,7 +56,7 @@ class T_DLLCLASS IDebugOverlay : public Object
 public:
     virtual bool create(resource::IResourceManager* resourceManager) = 0;
 
-    virtual void setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const = 0;
+    virtual void setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const = 0;
 };
 
 }

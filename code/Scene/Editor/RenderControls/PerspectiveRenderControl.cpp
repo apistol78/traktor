@@ -584,6 +584,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		m_overlay->setup(
 			*m_renderGraph,
 			m_screenRenderer,
+			sceneInstance->getWorld(),
 			m_worldRenderer,
 			m_worldRenderView,
 			m_overlayAlpha,
