@@ -77,6 +77,8 @@ SplineComponent::~SplineComponent()
 void SplineComponent::destroy()
 {
 	safeDestroy(m_rtwInstance);
+	safeDestroy(m_indexBuffer);
+	safeDestroy(m_vertexBuffer);
 }
 
 void SplineComponent::setOwner(world::Entity* owner)
@@ -314,8 +316,8 @@ void SplineComponent::update(const world::UpdateParams& update)
 				}
 				m_indexBuffer->unlock();
 
-				world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
-				if (rtw != nullptr)
+				world::RTWorldComponent* rtw = m_world ? m_world->getComponent< world::RTWorldComponent >() : nullptr;
+				if (rtw != nullptr && nindices > 0)
 				{
 					safeDestroy(m_rtwInstance);
 

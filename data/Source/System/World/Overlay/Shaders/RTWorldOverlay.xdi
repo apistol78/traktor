@@ -151,9 +151,15 @@ $Output = vec4(1.0f);
 if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
 {
 	const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
+
 	const uint id = rayQueryGetIntersectionInstanceCustomIndexEXT(rayQuery, true);
-	const uint triangle = rayQueryGetIntersectionPrimitiveIndexEXT(rayQuery, true);
-	$Output = __bindlessBufferVec4__[id].data[triangle].value;
+	if (id != (1 << 24) - 1)
+	{
+		const uint triangle = rayQueryGetIntersectionPrimitiveIndexEXT(rayQuery, true);
+		$Output = __bindlessBufferVec4__[id].data[triangle].value;
+	}
+	else
+		$Output = vec4(1.0f, 0.5f, 0.0f, 1.0f);
 }
 
 			]]>

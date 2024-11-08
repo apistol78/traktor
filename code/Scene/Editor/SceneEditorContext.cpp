@@ -465,15 +465,25 @@ void SceneEditorContext::buildEntities()
 			}
 		}
 
-		Ref< world::World > world = new world::World(getResourceManager(), getRenderSystem());
-
-		// Create world components.
-		for (auto worldComponentData : m_sceneAsset->getWorldComponents())
+		Ref< world::World > world = m_scene ? m_scene->getWorld() : nullptr;
+		if (world)
 		{
-			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityFactory, world, nullptr);
-			Ref< world::IWorldComponent > worldComponent = entityAdapterBuilder->create(worldComponentData);
-			if (worldComponent)
-				world->setComponent(worldComponent);
+			// Remove all entities from world, will get re-added.
+			RefArray< world::Entity > entities = world->getEntities();
+			for (auto entity : entities)
+				world->removeEntity(entity);
+		}
+		else
+		{
+			// Create world and it's components.
+			world = new world::World(getResourceManager(), getRenderSystem());
+			for (auto worldComponentData : m_sceneAsset->getWorldComponents())
+			{
+				Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityFactory, world, nullptr);
+				Ref< world::IWorldComponent > worldComponent = entityAdapterBuilder->create(worldComponentData);
+				if (worldComponent)
+					world->setComponent(worldComponent);
+			}
 		}
 
 		// Create entities from scene layers.

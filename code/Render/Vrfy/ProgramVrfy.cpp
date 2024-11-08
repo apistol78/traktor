@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Vrfy/AccelerationStructureVrfy.h"
 #include "Render/Vrfy/BufferViewVrfy.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ProgramVrfy.h"
@@ -254,8 +255,19 @@ void ProgramVrfy::setBufferViewParameter(handle_t handle, const IBufferView* buf
 
 void ProgramVrfy::setAccelerationStructureParameter(handle_t handle, const IAccelerationStructure* accelerationStructure)
 {
+	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
+
+	const AccelerationStructureVrfy* as = dynamic_type_cast< const AccelerationStructureVrfy* >(accelerationStructure);
+	T_CAPTURE_ASSERT(as != nullptr, L"Invalid acceleration structure.");
+	if (!as)
+		return;
+
+	T_CAPTURE_ASSERT(as->getWrappedAS(), L"Cannot write AS; AS destroyed.");
+	if (!as->getWrappedAS())
+		return;
+
 	if (m_program)
-		m_program->setAccelerationStructureParameter(handle, accelerationStructure);
+		m_program->setAccelerationStructureParameter(handle, as->getWrappedAS());
 
 	const auto it = m_shadow.find(handle);
 	if (it != m_shadow.end())

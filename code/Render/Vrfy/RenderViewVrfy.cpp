@@ -14,8 +14,9 @@
 #include "Drawing/PixelFormat.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
-#include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/AccelerationStructureVrfy.h"
 #include "Render/Vrfy/BufferVrfy.h"
+#include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ProgramVrfy.h"
 #include "Render/Vrfy/RenderTargetSetVrfy.h"
 #include "Render/Vrfy/RenderViewVrfy.h"
@@ -417,21 +418,41 @@ bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinatio
 void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances)
 {
 	T_CAPTURE_TRACE(L"writeAccelerationStructure");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
+
+	AccelerationStructureVrfy* as = dynamic_type_cast< AccelerationStructureVrfy* >(accelerationStructure);
+	T_CAPTURE_ASSERT(as != nullptr, L"Invalid acceleration structure (TLAS).");
+	if (!as)
+		return;
+
+	T_CAPTURE_ASSERT(as->getWrappedAS(), L"Cannot write TLAS; TLAS destroyed.");
+	if (!as->getWrappedAS())
+		return;
 
 	AlignedVector< IAccelerationStructure::Instance > unwrappedInstances;
 	unwrappedInstances.reserve(instances.size());
 
 	for (const auto& instance : instances)
 	{
+		const AccelerationStructureVrfy* blas = dynamic_type_cast< const AccelerationStructureVrfy* >(instance.blas);
+		T_CAPTURE_ASSERT(blas != nullptr, L"Invalid acceleration structure (instance BLAS).");
+		if (!blas)
+			continue;
+
+		T_CAPTURE_ASSERT(blas->getWrappedAS(), L"Cannot write BLAS into TLAS; BLAS destroyed.");
+		if (!blas->getWrappedAS())
+			continue;
+
 		const BufferVrfy* bv = dynamic_type_cast< const BufferVrfy* >(instance.perPrimitiveVec4);
+
 		unwrappedInstances.push_back({
-			instance.blas,
+			blas->getWrappedAS(),
 			(bv != nullptr) ? bv->getWrappedBuffer() : nullptr,
 			instance.transform
 		});
 	}
 
-	m_renderView->writeAccelerationStructure(accelerationStructure, unwrappedInstances);
+	m_renderView->writeAccelerationStructure(as->getWrappedAS(), unwrappedInstances);
 }
 
 int32_t RenderViewVrfy::beginTimeQuery()

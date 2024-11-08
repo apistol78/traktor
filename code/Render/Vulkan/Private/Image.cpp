@@ -504,16 +504,18 @@ void Image::destroy()
 		}
 	}
 
-	if (m_sampledResourceIndex != ~0U)
+	if (m_sampledResourceIndex != ~0U || m_storageResourceIndex != ~0U)
 	{
-		m_context->freeSampledResourceIndex(m_sampledResourceIndex);
-		m_sampledResourceIndex = ~0U;
-	}
-
-	if (m_storageResourceIndex != ~0U)
-	{
-		m_context->freeStorageResourceIndex(m_storageResourceIndex, span);
-		m_storageResourceIndex = ~0U;
+		m_context->addDeferredCleanup([
+			sampledResourceIndex = m_sampledResourceIndex,
+			storageResourceIndex = m_storageResourceIndex,
+			span
+		](Context* cx) {
+			if (sampledResourceIndex != ~0U)
+				cx->freeSampledResourceIndex(sampledResourceIndex);
+			if (storageResourceIndex != ~0U)
+				cx->freeStorageResourceIndex(storageResourceIndex, span);
+		});
 	}
 
 	m_allocation = 0;
@@ -521,6 +523,8 @@ void Image::destroy()
 	m_imageView = 0;
 	m_storageImageViews.clear();
 	m_context = nullptr;
+	m_sampledResourceIndex = ~0U;
+	m_storageResourceIndex = ~0U;
 }
 
 void* Image::lock()

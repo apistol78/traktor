@@ -47,12 +47,9 @@ protected:
 	Ref< ApiBuffer > m_hierarchyBuffer;
 	Ref< ApiBuffer > m_scratchBuffer;
 	VkAccelerationStructureKHR m_as;
+	uint32_t m_scratchAlignment = 0;
 
-	// Top level constructor.
-	explicit AccelerationStructureVk(Context* context, ApiBuffer* hierarchyBuffer, BufferDynamicVk* instanceBuffer, ApiBuffer* scratchBuffer, VkAccelerationStructureKHR as);
-
-	// Bottom level constructor.
-	explicit AccelerationStructureVk(Context* context, ApiBuffer* hierarchyBuffer, ApiBuffer* scratchBuffer, VkAccelerationStructureKHR as);
+	explicit AccelerationStructureVk(Context* context);
 };
 
 }

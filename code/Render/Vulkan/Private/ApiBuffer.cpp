@@ -64,21 +64,19 @@ void ApiBuffer::destroy()
 	{
 		m_context->addDeferredCleanup([
 			buffer = m_buffer,
-			allocation = m_allocation
+			allocation = m_allocation,
+			resourceIndex = m_resourceIndex
 		](Context* cx) {
 			vmaDestroyBuffer(cx->getAllocator(), buffer, allocation);
+			if (resourceIndex != ~0U)
+				cx->freeBufferResourceIndex(resourceIndex);
 		});
-	}
-
-	if (m_resourceIndex != ~0U)
-	{
-		m_context->freeBufferResourceIndex(m_resourceIndex);
-		m_resourceIndex = ~0U;
 	}
 
 	m_allocation = 0;
 	m_buffer = 0;
 	m_context = nullptr;
+	m_resourceIndex = ~0U;
 }
 
 void* ApiBuffer::lock()

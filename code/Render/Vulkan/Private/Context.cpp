@@ -323,38 +323,41 @@ bool Context::savePipelineCache()
 
 uint32_t Context::allocateSampledResourceIndex()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_resourceIndexLock);
 	return m_sampledResourceIndexAllocator.alloc();
 }
 
-void Context::freeSampledResourceIndex(uint32_t& resourceIndex)
+void Context::freeSampledResourceIndex(uint32_t resourceIndex)
 {
 	T_FATAL_ASSERT(resourceIndex != ~0U);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_resourceIndexLock);
 	m_sampledResourceIndexAllocator.free(resourceIndex);
-	resourceIndex = ~0U;
 }
 
 uint32_t Context::allocateStorageResourceIndex(uint32_t span)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_resourceIndexLock);
 	return m_storageResourceIndexAllocator.allocSequential(span);
 }
 
-void Context::freeStorageResourceIndex(uint32_t& resourceIndex, uint32_t span)
+void Context::freeStorageResourceIndex(uint32_t resourceIndex, uint32_t span)
 {
 	T_FATAL_ASSERT(resourceIndex != ~0U);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_resourceIndexLock);
 	m_storageResourceIndexAllocator.freeSequential(resourceIndex, span);
-	resourceIndex = ~0U;
 }
 
 uint32_t Context::allocateBufferResourceIndex()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_resourceIndexLock);
 	return m_bufferResourceIndexAllocator.alloc();
 }
 
-void Context::freeBufferResourceIndex(uint32_t& resourceIndex)
+void Context::freeBufferResourceIndex(uint32_t resourceIndex)
 {
 	T_FATAL_ASSERT(resourceIndex != ~0U);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_resourceIndexLock);
 	m_bufferResourceIndexAllocator.free(resourceIndex);
-	resourceIndex = ~0U;
 }
 
 }

@@ -106,15 +106,15 @@ public:
 
 	uint32_t allocateSampledResourceIndex();
 
-	void freeSampledResourceIndex(uint32_t& resourceIndex);
+	void freeSampledResourceIndex(uint32_t resourceIndex);
 
 	uint32_t allocateStorageResourceIndex(uint32_t span);
 
-	void freeStorageResourceIndex(uint32_t& resourceIndex, uint32_t span);
+	void freeStorageResourceIndex(uint32_t resourceIndex, uint32_t span);
 
 	uint32_t allocateBufferResourceIndex();
 
-	void freeBufferResourceIndex(uint32_t& resourceIndex);
+	void freeBufferResourceIndex(uint32_t resourceIndex);
 
 private:
 	VkPhysicalDevice m_physicalDevice;
@@ -127,6 +127,7 @@ private:
 	Ref< Queue > m_graphicsQueue;
 	Ref< UniformBufferPool > m_uniformBufferPools[3];
 	Semaphore m_cleanupLock;
+	Semaphore m_resourceIndexLock;
 	AlignedVector< cleanup_fn_t > m_cleanupFns;
 	AlignedVector< ICleanupListener* > m_cleanupListeners;
 	VkDescriptorSetLayout m_bindlessTexturesDescriptorLayout = 0;

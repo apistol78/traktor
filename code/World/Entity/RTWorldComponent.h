@@ -64,7 +64,7 @@ public:
 	};
 
 	explicit RTWorldComponent(render::IRenderSystem* renderSystem);
-	
+
 	virtual void destroy() override final;
 
 	virtual void update(World* world, const UpdateParams& update) override final;

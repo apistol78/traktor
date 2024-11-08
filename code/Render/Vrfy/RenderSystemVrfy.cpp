@@ -11,6 +11,7 @@
 #endif
 #include "Core/Library/Library.h"
 #include "Render/VertexElement.h"
+#include "Render/Vrfy/AccelerationStructureVrfy.h"
 #include "Render/Vrfy/BufferVrfy.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ProgramVrfy.h"
@@ -308,7 +309,12 @@ Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTarg
 Ref< IAccelerationStructure > RenderSystemVrfy::createTopLevelAccelerationStructure(uint32_t numInstances)
 {
 	T_CAPTURE_TRACE(L"createTopLevelAccelerationStructure");
-	return m_renderSystem->createTopLevelAccelerationStructure(numInstances);
+	
+	Ref< IAccelerationStructure > as = m_renderSystem->createTopLevelAccelerationStructure(numInstances);
+	if (!as)
+		return nullptr;
+
+	return new AccelerationStructureVrfy(as);
 }
 
 Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
@@ -319,7 +325,11 @@ Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(cons
 	const BufferVrfy* ib = mandatory_non_null_type_cast< const BufferVrfy* >(indexBuffer);
 	const VertexLayoutVrfy* vl = mandatory_non_null_type_cast< const VertexLayoutVrfy* >(vertexLayout);
 
-	return m_renderSystem->createAccelerationStructure(vb->getWrappedBuffer(), vl->getWrappedVertexLayout(), ib->getWrappedBuffer(), indexType, primitives);
+	Ref< IAccelerationStructure > as = m_renderSystem->createAccelerationStructure(vb->getWrappedBuffer(), vl->getWrappedVertexLayout(), ib->getWrappedBuffer(), indexType, primitives);
+	if (!as)
+		return nullptr;
+
+	return new AccelerationStructureVrfy(as);
 }
 
 Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
