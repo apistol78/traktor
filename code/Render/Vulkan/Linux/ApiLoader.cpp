@@ -33,6 +33,7 @@ T_DEFINE_VK(vkEnumerateInstanceLayerProperties);
 T_DEFINE_VK(vkEnumerateInstanceExtensionProperties);
 T_DEFINE_VK(vkEnumeratePhysicalDevices);
 T_DEFINE_VK(vkGetPhysicalDeviceProperties);
+T_DEFINE_VK(vkGetPhysicalDeviceProperties2);
 T_DEFINE_VK(vkGetPhysicalDeviceQueueFamilyProperties);
 T_DEFINE_VK(vkGetPhysicalDeviceMemoryProperties);
 T_DEFINE_VK(vkGetPhysicalDeviceFormatProperties);
@@ -179,6 +180,7 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkEnumerateInstanceExtensionProperties);
 	T_RESOLVE_VK(vkEnumeratePhysicalDevices);
 	T_RESOLVE_VK(vkGetPhysicalDeviceProperties);
+	T_RESOLVE_VK(vkGetPhysicalDeviceProperties2);
 	T_RESOLVE_VK(vkGetPhysicalDeviceQueueFamilyProperties);
 	T_RESOLVE_VK(vkGetPhysicalDeviceMemoryProperties);
 	T_RESOLVE_VK(vkGetPhysicalDeviceFormatProperties);
