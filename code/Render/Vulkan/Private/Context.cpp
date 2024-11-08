@@ -104,7 +104,7 @@ bool Context::create()
 	);
 
 	// Create descriptor set pool.
-	VkDescriptorPoolSize dps[5];
+	VkDescriptorPoolSize dps[6];
 	dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
 	dps[0].descriptorCount = 80000;
 	dps[1].type = VK_DESCRIPTOR_TYPE_SAMPLER;
@@ -115,6 +115,8 @@ bool Context::create()
 	dps[3].descriptorCount = 8000;
 	dps[4].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
 	dps[4].descriptorCount = MaxBindlessResources;
+	dps[5].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	dps[5].descriptorCount = MaxBindlessResources;
 
 	VkDescriptorPoolCreateInfo dpci = {};
 	dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;

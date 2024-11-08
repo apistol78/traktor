@@ -146,7 +146,8 @@ void WorldRendererSimple::setup(
 			globalProgramParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 			globalProgramParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			globalProgramParams->setTextureParameter(s_handleGBufferA, m_depthTexture);
-			globalProgramParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredTLAS);
+			if (m_gatheredTLAS != nullptr)
+				globalProgramParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredTLAS);
 			globalProgramParams->endParameters(renderContext);
 
 			// Build visual context.

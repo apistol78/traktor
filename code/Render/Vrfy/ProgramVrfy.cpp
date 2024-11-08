@@ -258,7 +258,7 @@ void ProgramVrfy::setAccelerationStructureParameter(handle_t handle, const IAcce
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 
 	const AccelerationStructureVrfy* as = dynamic_type_cast< const AccelerationStructureVrfy* >(accelerationStructure);
-	T_CAPTURE_ASSERT(as != nullptr, L"Invalid acceleration structure.");
+	T_CAPTURE_ASSERT(as != nullptr, L"setAccelerationStructureParameter; Invalid acceleration structure.");
 	if (!as)
 		return;
 

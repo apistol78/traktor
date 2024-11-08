@@ -135,7 +135,8 @@ render::handle_t AmbientOcclusionPass::setup(
 		params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 		params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
 		params->setTextureParameter(s_handleGBufferD, gbufferTargetSet->getColorTexture(3));
-		params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
+		if (gatheredView.rtWorldTopLevel != nullptr)
+			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
 	};
 
 	m_ambientOcclusion->addPasses(
