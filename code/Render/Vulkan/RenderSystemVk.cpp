@@ -655,15 +655,23 @@ Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t bufferSize, 
 {
 	uint32_t usageBits = 0;
 	if ((usage & BuVertex) != 0)
-		usageBits |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR;
+		usageBits |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
 	if ((usage & BuIndex) != 0)
-		usageBits |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR;
+		usageBits |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
 	if ((usage & BuStructured) != 0)
 		usageBits |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 	if ((usage & BuIndirect) != 0)
 		usageBits |= VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
 	if (usageBits == 0)
 		return nullptr;
+
+	if (supportRayTracing())
+	{
+		if ((usage & BuVertex) != 0)
+			usageBits |= VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR;
+		if ((usage & BuIndex) != 0)
+			usageBits |= VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR;
+	}
 
 	if (dynamic)
 	{
