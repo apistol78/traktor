@@ -38,10 +38,13 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.GBufferDepthOverlay", 0, GBufferDepthOverlay, IDebugOverlay)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.GBufferDepthOverlay", 0, GBufferDepthOverlay, BaseOverlay)
 
 bool GBufferDepthOverlay::create(resource::IResourceManager* resourceManager)
 {
+	if (!BaseOverlay::create(resourceManager))
+		return false;
+
 	if (!resourceManager->bind(c_debugShader, m_shader))
 		return false;
 
@@ -52,7 +55,10 @@ void GBufferDepthOverlay::setup(render::RenderGraph& renderGraph, render::Screen
 {
 	render::handle_t gbufferId = findTargetByName(renderGraph, L"GBuffer");
 	if (!gbufferId)
+	{
+		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
+	}
 
 	const float nearZ = worldRenderView.getViewFrustum().getNearZ();
 	const float farZ = worldRenderView.getViewFrustum().getFarZ();

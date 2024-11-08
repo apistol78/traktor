@@ -70,7 +70,7 @@ ui::MenuItem* getChecked(ui::MenuItem* menu)
 
 std::wstring getOverlayText(const TypeInfo* overlayType)
 {
-	std::wstring id = L"SCENE_EDITOR_OVERLAY_" + replaceAll(toUpper(std::wstring(overlayType->getName())), L".", L"_");
+	const std::wstring id = L"SCENE_EDITOR_OVERLAY_" + replaceAll(toUpper(std::wstring(overlayType->getName())), L".", L"_");
 	return i18n::Text(id, overlayType->getName());
 }
 
@@ -226,7 +226,17 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolDebugOverlay = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.DebugOverlay"), 140_ut, i18n::Text(L"SCENE_EDITOR_DEBUG_OVERLAY"));
 	m_toolDebugOverlay->add(L"None");
 	
-	for (const auto overlayType : type_of< world::IDebugOverlay >().findAllOf(false))
+	const TypeInfoSet overlayTypes = type_of< world::IDebugOverlay >().findAllOf(false);
+	for (const TypeInfo* overlayType : overlayTypes)
+	{
+		if (overlayType->isInstantiable())
+			m_overlayTypes.push_back(overlayType);
+	}
+	std::sort(m_overlayTypes.begin(), m_overlayTypes.end(), [](const TypeInfo* lh, const TypeInfo* rh) {
+		return getOverlayText(lh) < getOverlayText(rh);
+	});
+
+	for (const TypeInfo* overlayType : m_overlayTypes)
 		m_toolDebugOverlay->add(getOverlayText(overlayType));
 
 	m_toolDebugOverlay->select(0);
@@ -589,12 +599,10 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	}
 	else if (event->getCommand() == L"Scene.Editor.DebugOverlay")
 	{
-		int32_t index = m_toolDebugOverlay->getSelected();
+		const int32_t index = m_toolDebugOverlay->getSelected();
 		if (index > 0)
 		{
-			TypeInfoSet overlayTypes = type_of< world::IDebugOverlay >().findAllOf(false);
-			auto overlayType = overlayTypes[index - 1];
-
+			const TypeInfo* overlayType = m_overlayTypes[index - 1];
 			Ref< world::IDebugOverlay > overlay = mandatory_non_null_type_cast< world::IDebugOverlay* >(overlayType->createInstance());
 			if (overlay->create(m_context->getResourceManager()))
 				m_renderControl->setDebugOverlay(overlay);

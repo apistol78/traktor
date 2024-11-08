@@ -38,10 +38,13 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.GBufferRoughnessOverlay", 0, GBufferRoughnessOverlay, IDebugOverlay)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.GBufferRoughnessOverlay", 0, GBufferRoughnessOverlay, BaseOverlay)
 
 bool GBufferRoughnessOverlay::create(resource::IResourceManager* resourceManager)
 {
+	if (!BaseOverlay::create(resourceManager))
+		return false;
+
 	if (!resourceManager->bind(c_debugShader, m_shader))
 		return false;
 
@@ -52,7 +55,10 @@ void GBufferRoughnessOverlay::setup(render::RenderGraph& renderGraph, render::Sc
 {
 	render::handle_t gbufferId = findTargetByName(renderGraph, L"GBuffer");
 	if (!gbufferId)
+	{
+		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
+	}
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer roughness overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);

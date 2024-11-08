@@ -36,10 +36,13 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.ShadowMaskOverlay", 0, ShadowMaskOverlay, IDebugOverlay)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.ShadowMaskOverlay", 0, ShadowMaskOverlay, BaseOverlay)
 
 bool ShadowMaskOverlay::create(resource::IResourceManager* resourceManager)
 {
+	if (!BaseOverlay::create(resourceManager))
+		return false;
+
 	if (!resourceManager->bind(c_debugShader, m_shader))
 		return false;
 
@@ -50,7 +53,10 @@ void ShadowMaskOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRe
 {
 	render::handle_t shadowMaskId = findTargetByName(renderGraph, L"Shadow mask");
 	if (!shadowMaskId)
+	{
+		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
+	}
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow mask overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);

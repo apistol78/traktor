@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Resource/Proxy.h"
-#include "World/Editor/Overlays/BaseOverlay.h"
+#include "World/Editor/IDebugOverlay.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,14 +29,14 @@ class Shader;
 namespace traktor::world
 {
 
-class T_DLLCLASS GBufferNormalsOverlay : public BaseOverlay
+class T_DLLCLASS BaseOverlay : public IDebugOverlay
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(resource::IResourceManager* resourceManager) override final;
+	virtual bool create(resource::IResourceManager* resourceManager) override;
 
-	virtual void setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const override final;
+	virtual void setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const override;
 
 private:
 	resource::Proxy< render::Shader > m_shader;

@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Resource/Proxy.h"
-#include "World/Editor/IDebugOverlay.h"
+#include "World/Editor/Overlays/BaseOverlay.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +29,7 @@ class Shader;
 namespace traktor::world
 {
 
-class T_DLLCLASS HistoryOverlay : public IDebugOverlay
+class T_DLLCLASS HistoryOverlay : public BaseOverlay
 {
 	T_RTTI_CLASS;
 

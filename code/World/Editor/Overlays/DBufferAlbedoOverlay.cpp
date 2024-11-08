@@ -36,10 +36,13 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.DBufferAlbedoOverlay", 0, DBufferAlbedoOverlay, IDebugOverlay)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.DBufferAlbedoOverlay", 0, DBufferAlbedoOverlay, BaseOverlay)
 
 bool DBufferAlbedoOverlay::create(resource::IResourceManager* resourceManager)
 {
+	if (!BaseOverlay::create(resourceManager))
+		return false;
+
 	if (!resourceManager->bind(c_debugShader, m_shader))
 		return false;
 
@@ -50,7 +53,10 @@ void DBufferAlbedoOverlay::setup(render::RenderGraph& renderGraph, render::Scree
 {
 	render::handle_t dbufferId = findTargetByName(renderGraph, L"DBuffer");
 	if (!dbufferId)
+	{
+		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
+	}
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"DBuffer albedo overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);

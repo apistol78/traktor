@@ -36,10 +36,13 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.ContactShadowsOverlay", 0, ContactShadowsOverlay, IDebugOverlay)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.ContactShadowsOverlay", 0, ContactShadowsOverlay, BaseOverlay)
 
 bool ContactShadowsOverlay::create(resource::IResourceManager* resourceManager)
 {
+	if (!BaseOverlay::create(resourceManager))
+		return false;
+
 	if (!resourceManager->bind(c_debugShader, m_shader))
 		return false;
 
@@ -50,7 +53,10 @@ void ContactShadowsOverlay::setup(render::RenderGraph& renderGraph, render::Scre
 {
 	render::handle_t contactShadowsId = findTargetByName(renderGraph, L"Contact shadows");
 	if (!contactShadowsId)
+	{
+		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
+	}
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Contact shadows overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);

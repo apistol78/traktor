@@ -37,10 +37,13 @@ render::handle_t findTextureByName(const render::RenderGraph& renderGraph, const
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.HiZOverlay", 0, HiZOverlay, IDebugOverlay)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.HiZOverlay", 0, HiZOverlay, BaseOverlay)
 
 bool HiZOverlay::create(resource::IResourceManager* resourceManager)
 {
+	if (!BaseOverlay::create(resourceManager))
+		return false;
+
 	if (!resourceManager->bind(c_debugShader, m_shader))
 		return false;
 
@@ -51,7 +54,10 @@ void HiZOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer*
 {
 	const render::handle_t hiZId = findTextureByName(renderGraph, L"HiZ");
 	if (!hiZId)
+	{
+		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
+	}
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Hi-Z overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);

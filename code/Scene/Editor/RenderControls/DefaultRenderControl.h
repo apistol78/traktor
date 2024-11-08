@@ -67,6 +67,7 @@ public:
 
 private:
 	Ref< SceneEditorContext > m_context;
+	AlignedVector< const TypeInfo* > m_overlayTypes;
 	int32_t m_cameraId;
 	int32_t m_viewId;
 	Ref< ui::Container > m_container;

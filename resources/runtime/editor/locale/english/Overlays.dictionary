@@ -89,5 +89,9 @@
 			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_CONTACTSHADOWSOVERLAY</first>
 			<second>Contact Shadows</second>
 		</item>
+		<item>
+			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_RTWORLDOVERLAY</first>
+			<second>Ray Tracing World</second>
+		</item>
 	</map>
 </object>

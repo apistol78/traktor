@@ -27,10 +27,13 @@ const resource::Id< render::Shader > c_debugShader(Guid(L"{385D649D-56CD-EF47-8D
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.RTWorldOverlay", 0, RTWorldOverlay, IDebugOverlay)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.RTWorldOverlay", 0, RTWorldOverlay, BaseOverlay)
 
 bool RTWorldOverlay::create(resource::IResourceManager* resourceManager)
 {
+	if (!BaseOverlay::create(resourceManager))
+		return false;
+
 	if (!resourceManager->bind(c_debugShader, m_shader))
 		return false;
 
@@ -41,7 +44,10 @@ void RTWorldOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRende
 {
 	RTWorldComponent* rtw = world->getComponent< RTWorldComponent >();
 	if (!rtw || !rtw->getTopLevel())
+	{
+		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
+	}
 
 	const Matrix44 viewInverse = worldRenderView.getView().inverse();
 

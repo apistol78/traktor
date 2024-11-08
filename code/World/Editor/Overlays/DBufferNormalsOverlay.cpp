@@ -38,10 +38,13 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.DBufferNormalsOverlay", 0, DBufferNormalsOverlay, IDebugOverlay)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.DBufferNormalsOverlay", 0, DBufferNormalsOverlay, BaseOverlay)
 
 bool DBufferNormalsOverlay::create(resource::IResourceManager* resourceManager)
 {
+	if (!BaseOverlay::create(resourceManager))
+		return false;
+
 	if (!resourceManager->bind(c_debugShader, m_shader))
 		return false;
 
@@ -52,7 +55,10 @@ void DBufferNormalsOverlay::setup(render::RenderGraph& renderGraph, render::Scre
 {
 	render::handle_t dbufferId = findTargetByName(renderGraph, L"DBuffer");
 	if (!dbufferId)
+	{
+		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
+	}
 
 	const Matrix44 viewInverse = worldRenderView.getView().inverse();
 

@@ -36,10 +36,13 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.GBufferSpecularOverlay", 0, GBufferSpecularOverlay, IDebugOverlay)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.GBufferSpecularOverlay", 0, GBufferSpecularOverlay, BaseOverlay)
 
 bool GBufferSpecularOverlay::create(resource::IResourceManager* resourceManager)
 {
+	if (!BaseOverlay::create(resourceManager))
+		return false;
+
 	if (!resourceManager->bind(c_debugShader, m_shader))
 		return false;
 
@@ -50,7 +53,10 @@ void GBufferSpecularOverlay::setup(render::RenderGraph& renderGraph, render::Scr
 {
 	render::handle_t gbufferId = findTargetByName(renderGraph, L"GBuffer");
 	if (!gbufferId)
+	{
+		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
+	}
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer specular overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);

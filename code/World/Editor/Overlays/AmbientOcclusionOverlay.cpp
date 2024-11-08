@@ -36,10 +36,13 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.AmbientOcclusionOverlay", 0, AmbientOcclusionOverlay, IDebugOverlay)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.AmbientOcclusionOverlay", 0, AmbientOcclusionOverlay, BaseOverlay)
 
 bool AmbientOcclusionOverlay::create(resource::IResourceManager* resourceManager)
 {
+	if (!BaseOverlay::create(resourceManager))
+		return false;
+
 	if (!resourceManager->bind(c_debugShader, m_shader))
 		return false;
 
@@ -50,7 +53,10 @@ void AmbientOcclusionOverlay::setup(render::RenderGraph& renderGraph, render::Sc
 {
 	render::handle_t ambientOcclusionId = findTargetByName(renderGraph, L"Ambient occlusion");
 	if (!ambientOcclusionId)
+	{
+		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
+	}
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);

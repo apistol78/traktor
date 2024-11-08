@@ -43,10 +43,13 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.TilesOverlay", 0, TilesOverlay, IDebugOverlay)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.TilesOverlay", 0, TilesOverlay, BaseOverlay)
 
 bool TilesOverlay::create(resource::IResourceManager* resourceManager)
 {
+	if (!BaseOverlay::create(resourceManager))
+		return false;
+
 	if (!resourceManager->bind(c_debugShader, m_shader))
 		return false;
 
@@ -57,11 +60,17 @@ void TilesOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRendere
 {
 	WorldRendererShared* worldRendererShared = dynamic_type_cast<WorldRendererShared* >(worldRenderer);
 	if (!worldRendererShared)
+	{
+		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
+	}
 
 	render::handle_t gbufferId = findTargetByName(renderGraph, L"GBuffer");
 	if (!gbufferId)
+	{
+		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
+	}
 
 	const Matrix44& projection = worldRenderView.getProjection();
 	const Matrix44& view = worldRenderView.getView();

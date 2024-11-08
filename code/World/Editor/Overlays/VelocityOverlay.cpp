@@ -36,10 +36,13 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.VelocityOverlay", 0, VelocityOverlay, IDebugOverlay)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.VelocityOverlay", 0, VelocityOverlay, BaseOverlay)
 
 bool VelocityOverlay::create(resource::IResourceManager* resourceManager)
 {
+	if (!BaseOverlay::create(resourceManager))
+		return false;
+
 	if (!resourceManager->bind(c_debugShader, m_shader))
 		return false;
 
@@ -50,7 +53,10 @@ void VelocityOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRend
 {
 	render::handle_t velocityId = findTargetByName(renderGraph, L"Velocity");
 	if (!velocityId)
+	{
+		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
+	}
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
