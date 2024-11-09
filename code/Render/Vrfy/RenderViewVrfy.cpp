@@ -258,10 +258,7 @@ void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 
 	const BufferViewVrfy* vbv = checked_type_cast< const BufferViewVrfy* >(vertexBuffer);
 	const BufferViewVrfy* ibv = checked_type_cast< const BufferViewVrfy* >(indexBuffer);
-
 	const VertexLayoutVrfy* vl = checked_type_cast< const VertexLayoutVrfy* >(vertexLayout);
-	if (!vl)
-		return;
 
 	// Validate draw call.
 	const uint32_t vertexCount = primitives.getVertexCount();
@@ -277,7 +274,7 @@ void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 
 		T_CAPTURE_ASSERT(primitives.offset + vertexCount <= maxVertexCount, L"Trying to draw more primitives than size of index buffer.");
 	}
-	else if (vbv)
+	else if (vbv && vl)
 	{
 		T_CAPTURE_ASSERT(!ibv, L"Drawing non-indexed primitives but index buffer provided.");
 
@@ -290,8 +287,9 @@ void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 
 	const IBufferView* wrappedVertexView = vbv != nullptr ? vbv->getWrappedBufferView() : nullptr;
 	const IBufferView* wrappedIndexView = ibv != nullptr ? ibv->getWrappedBufferView() : nullptr;
+	const IVertexLayout* wrappedVertexLayout = vl != nullptr ? vl->getWrappedVertexLayout() : nullptr;
 
-	m_renderView->draw(wrappedVertexView, vl->getWrappedVertexLayout(), wrappedIndexView, indexType, programVrfy->m_program, primitives, instanceCount);
+	m_renderView->draw(wrappedVertexView, wrappedVertexLayout, wrappedIndexView, indexType, programVrfy->m_program, primitives, instanceCount);
 }
 
 void RenderViewVrfy::drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawOffset, uint32_t drawCount)
