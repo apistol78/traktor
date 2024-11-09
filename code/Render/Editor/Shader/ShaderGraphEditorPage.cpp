@@ -1471,7 +1471,7 @@ void ShaderGraphEditorPage::updateGraph()
 	
 	// Validate shader graph.
 	AlignedVector< const Node* > errorNodes;
-	const ShaderGraphValidator validator(m_shaderGraph);
+	const ShaderGraphValidator validator(resolvedShaderGraph);
 	const bool validationResult = validator.validate(graphType, &errorNodes);
 
 	// Update validation status of each node.
@@ -1483,7 +1483,10 @@ void ShaderGraphEditorPage::updateGraph()
 		Ref< INodeFacade > nodeFacade = editorNode->getData< INodeFacade >(L"FACADE");
 		T_ASSERT(nodeFacade);
 
-		if (std::find(errorNodes.begin(), errorNodes.end(), shaderNode) != errorNodes.end())
+		const auto it = std::find_if(errorNodes.begin(), errorNodes.end(), [&](const Node* node) {
+			return node->getId() == shaderNode->getId();
+		});
+		if (it != errorNodes.end())
 			nodeFacade->setValidationIndicator(editorNode, false);
 		else
 			nodeFacade->setValidationIndicator(editorNode, true);
