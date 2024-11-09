@@ -52,7 +52,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 41, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 42, WorldRenderSettings, ISerializable)
 
 void WorldRenderSettings::serialize(ISerializer& s)
 {
@@ -203,8 +203,12 @@ void WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"cascadingSlices", cascadingSlices, AttributeRange(1, MaxSliceCount));
 	s >> Member< float >(L"cascadingLambda", cascadingLambda, AttributeRange(0.0f, 10.0f));
 	s >> Member< bool >(L"quantizeProjection", quantizeProjection);
-	s >> Member< int32_t >(L"maskDenominator", maskDenominator, AttributeRange(1));
-	s >> resource::Member< render::ImageGraph >(L"maskProject", maskProject);
+
+	if (s.getVersion() < 42)
+	{
+		s >> ObsoleteMember< int32_t >(L"maskDenominator");
+		s >> resource::ObsoleteMember< render::ImageGraph >(L"maskProject");
+	}
 
 	if (s.getVersion() < 27)
 	{

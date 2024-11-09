@@ -144,12 +144,6 @@ bool ScenePipeline::buildDependencies(
 	const world::WorldRenderSettings* wrs = mutableSceneAsset->getWorldRenderSettings();
 	if (wrs)
 	{
-		if (!m_suppressShadows)
-		{
-			for (int32_t i = 0; i < sizeof_array(wrs->shadowSettings); ++i)
-				pipelineDepends->addDependency(wrs->shadowSettings[i].maskProject, editor::PdfBuild);
-		}
-
 		if (!m_suppressImageProcess)
 		{
 			for (int32_t i = 0; i < sizeof_array(wrs->imageProcess); ++i)
@@ -267,8 +261,6 @@ bool ScenePipeline::buildOutput(
 			if (m_shadowMapMaxSlices > 0)
 				shadowSetting.cascadingSlices = std::min(shadowSetting.cascadingSlices, m_shadowMapMaxSlices);
 		}
-		else
-			shadowSetting.maskProject = resource::Id< render::ImageGraph >();
 	}
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);

@@ -59,8 +59,6 @@ public:
 		int32_t cascadingSlices = 4;
 		float cascadingLambda = 1.0f;
 		bool quantizeProjection = true;
-		int32_t maskDenominator = 1;
-		resource::Id< render::ImageGraph > maskProject;
 
 		void serialize(ISerializer& s);
 	};
