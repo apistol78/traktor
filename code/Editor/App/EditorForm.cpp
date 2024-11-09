@@ -498,11 +498,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuBar->addItem(new ui::ToolBarButton(L"Traktor", 0, ui::Command()));
 
 	m_menuItemRecent = new ui::MenuItem(i18n::Text(L"MENU_FILE_OPEN_RECENT_WORKSPACE"));
+	m_menuItemRecentInstance = new ui::MenuItem(i18n::Text(L"MENU_FILE_OPEN_RECENT_INSTANCE"));
 
 	Ref< ui::ToolBarMenu > menuFile = new ui::ToolBarMenu(i18n::Text(L"MENU_FILE"), L"");
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.NewWorkspace"), i18n::Text(L"MENU_FILE_NEW_WORKSPACE")));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.OpenWorkspace"), i18n::Text(L"MENU_FILE_OPEN_WORKSPACE")));
 	menuFile->add(m_menuItemRecent);
+	menuFile->add(m_menuItemRecentInstance);
 	menuFile->add(new ui::MenuItem(L"-"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Save"), i18n::Text(L"MENU_FILE_SAVE")));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.SaveAs"), i18n::Text(L"MENU_FILE_SAVE_AS")));
@@ -1165,6 +1167,10 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 		// Activate newly created editor page.
 		setActiveEditorPage(editorPage);
+
+		m_mru->usedInstance(instance->getGuid());
+		saveRecent(OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Traktor.Editor.mru", m_mru);
+		updateMRU();
 	}
 	else if (objectEditorFactory)
 	{
@@ -1191,8 +1197,11 @@ bool EditorForm::openEditor(db::Instance* instance)
 		}
 
 		objectEditorDialog->setData(L"PRIMARY", instance);
-
 		objectEditorDialog->show();
+
+		m_mru->usedInstance(instance->getGuid());
+		saveRecent(OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Traktor.Editor.mru", m_mru);
+		updateMRU();
 	}
 	else
 	{
@@ -1240,6 +1249,11 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 	}
 
 	objectEditorDialog->show();
+
+	m_mru->usedInstance(instance->getGuid());
+	saveRecent(OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Traktor.Editor.mru", m_mru);
+	updateMRU();
+
 	return true;
 }
 
@@ -1537,7 +1551,6 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 		editorPluginSite->handleWorkspaceOpened();
 
 	m_mru->usedFile(workspacePath);
-
 	saveRecent(OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Traktor.Editor.mru", m_mru);
 	updateMRU();
 	updateTitle();
@@ -1997,23 +2010,47 @@ void EditorForm::endBuild(int32_t index, int32_t count, const PipelineDependency
 
 void EditorForm::updateMRU()
 {
+	// Workspaces
 	m_menuItemRecent->removeAll();
 
-	AlignedVector< Path > recentFiles;
-	m_mru->getUsedFiles(recentFiles);
-
 	bool first = true;
+	const AlignedVector< Path > recentFiles = m_mru->getUsedFiles();
 	for (const auto& recentFile : recentFiles)
 	{
 		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Editor.OpenRecentWorkspace", new Path(recentFile)), recentFile.getPathName());
 		m_menuItemRecent->add(menuItem);
-
 		if (first && recentFiles.size() >= 2)
 		{
 			m_menuItemRecent->add(new ui::MenuItem(L"-"));
 			first = false;
 		}
 	}
+
+	// Instances
+	if (m_sourceDatabase)
+	{
+		m_menuItemRecentInstance->setEnable(true);
+		m_menuItemRecentInstance->removeAll();
+
+		bool first = true;
+		const AlignedVector< Guid > recentInstances = m_mru->getUsedInstances();
+		for (const auto& recentInstance : recentInstances)
+		{
+			Ref< db::Instance > instance = m_sourceDatabase->getInstance(recentInstance);
+			if (!instance)
+				continue;
+
+			Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Editor.OpenRecentInstance", instance), instance->getName());
+			m_menuItemRecentInstance->add(menuItem);
+			if (first && recentInstances.size() >= 2)
+			{
+				m_menuItemRecentInstance->add(new ui::MenuItem(L"-"));
+				first = false;
+			}
+		}
+	}
+	else
+		m_menuItemRecentInstance->setEnable(false);
 }
 
 void EditorForm::updateTitle()
@@ -2574,6 +2611,12 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		Ref< Path > recentPath = dynamic_type_cast< Path* >(command.getData());
 		if (recentPath)
 			openWorkspace(*recentPath);
+	}
+	else if (command == L"Editor.OpenRecentInstance")
+	{
+		Ref< db::Instance > recentInstance = dynamic_type_cast< db::Instance* >(command.getData());
+		if (recentInstance)
+			openEditor(recentInstance);
 	}
 	else if (command == L"Editor.Save")
 		saveCurrentDocument();

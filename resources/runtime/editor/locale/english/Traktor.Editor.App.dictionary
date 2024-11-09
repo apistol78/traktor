@@ -506,6 +506,10 @@
 			<second>Open recent workspace...</second>
 		</item>
 		<item>
+			<first>MENU_FILE_OPEN_RECENT_INSTANCE</first>
+			<second>Open recent instance...</second>
+		</item>
+		<item>
 			<first>MENU_FILE_OPEN_WORKSPACE</first>
 			<second>Open workspace...</second>
 		</item>

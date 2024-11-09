@@ -15,7 +15,7 @@
 namespace traktor::editor
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.MRU", 0, MRU, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.MRU", 1, MRU, ISerializable)
 
 void MRU::usedFile(const Path& filePath)
 {
@@ -34,11 +34,12 @@ void MRU::usedFile(const Path& filePath)
 		m_filePaths.pop_back();
 }
 
-bool MRU::getUsedFiles(AlignedVector< Path >& outFilePaths) const
+AlignedVector< Path > MRU::getUsedFiles() const
 {
+	AlignedVector< Path > filePaths;
 	for (const auto& filePath : m_filePaths)
-		outFilePaths.push_back(Path(filePath));
-	return true;
+		filePaths.push_back(Path(filePath));
+	return filePaths;
 }
 
 Path MRU::getMostRecentlyUseFile() const
@@ -46,9 +47,28 @@ Path MRU::getMostRecentlyUseFile() const
 	return !m_filePaths.empty() ? m_filePaths.front() : Path();
 }
 
+void MRU::usedInstance(const Guid& instance)
+{
+	// Remove existing entry; we will re-add below as most recent.
+	auto it = std::find(m_instances.begin(), m_instances.end(), instance);
+	if (it != m_instances.end())
+		m_instances.erase(it);
+
+	m_instances.insert(m_instances.begin(), instance);
+	if (m_instances.size() > 8)
+		m_instances.pop_back();
+}
+
+AlignedVector< Guid > MRU::getUsedInstances() const
+{
+	return m_instances;
+}
+
 void MRU::serialize(ISerializer& s)
 {
 	s >> MemberAlignedVector< std::wstring >(L"filePaths", m_filePaths);
+	if (s.getVersion< MRU >() >= 1)
+		s >> MemberAlignedVector< Guid >(L"instances", m_instances);
 }
 
 }

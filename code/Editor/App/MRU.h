@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Guid.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Io/Path.h"
 #include "Core/Serialization/ISerializable.h"
@@ -25,15 +26,22 @@ public:
 	void usedFile(const Path& filePath);
 
 	/*! Get array of most recently used files. */
-	bool getUsedFiles(AlignedVector< Path >& outFilePaths) const;
+	AlignedVector< Path > getUsedFiles() const;
 
 	/*! Get most recently used file; return empty string if no file used. */
 	Path getMostRecentlyUseFile() const;
+
+	/*! */
+	void usedInstance(const Guid& instance);
+
+	/*! */
+	AlignedVector< Guid > getUsedInstances() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	AlignedVector< std::wstring > m_filePaths;
+	AlignedVector< Guid > m_instances;
 };
 
 }

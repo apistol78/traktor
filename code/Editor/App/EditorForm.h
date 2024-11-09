@@ -194,6 +194,7 @@ private:
 	Ref< ui::CaptionBar > m_menuBar;
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::MenuItem > m_menuItemRecent;
+	Ref< ui::MenuItem > m_menuItemRecentInstance;
 	Ref< ui::MenuItem > m_menuItemOtherPanels;
 	Ref< ui::StatusBar > m_statusBar;
 	Ref< ui::ProgressBar > m_buildProgress;
