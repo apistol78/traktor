@@ -111,7 +111,6 @@ ProbeRenderer::ProbeRenderer(
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 ,	m_worldRendererType(worldRendererType)
-,	m_captureState(0)
 {
 	resourceManager->bind(c_idFilterShader, m_filterShader);
 
@@ -265,7 +264,6 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		wcd.quality.imageProcess = world::Quality::Disabled;
 		wcd.multiSample = 0;
 		wcd.gamma = 1.0f;
-		// wcd.irradianceGrid = context.getIrradianceGrid();
 
 		if (!m_worldRenderer->create(
 			m_resourceManager,
@@ -481,6 +479,10 @@ void ProbeRenderer::build(
 )
 {
 	auto probeComponent = static_cast< ProbeComponent* >(renderable);
+
+	// Do not update anything in snapshot mode.
+	if (worldRenderView.getSnapshot())
+		return;
 
 	// Cull local probes to frustum.
 	if (probeComponent->getLocal())

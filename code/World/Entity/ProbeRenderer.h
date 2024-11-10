@@ -99,8 +99,8 @@ private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	RefArray< const ProbeComponent > m_captureQueue;	//!< Probes queued for capture.
 	Ref< const ProbeComponent > m_capture;				//!< Probe being captured.
-	int32_t m_captureState;
-	int32_t m_captureMip;
+	int32_t m_captureState = 0;
+	int32_t m_captureMip = 0;
 };
 
 }

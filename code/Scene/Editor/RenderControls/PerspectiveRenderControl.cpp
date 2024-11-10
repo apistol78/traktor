@@ -49,11 +49,13 @@
 #include "Ui/Itf/IWidget.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderer.h"
+#include "World/World.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
 #include "World/Editor/IDebugOverlay.h"
 #include "World/Entity/GroupComponent.h"
+#include "World/Entity/ProbeComponent.h"
 
 namespace traktor::scene
 {
@@ -433,6 +435,14 @@ void PerspectiveRenderControl::updateWorldRenderer()
 
 	m_worldRenderer = worldRenderer;
 	m_worldRendererHash = DeepHash(sceneInstance->getWorldRenderSettings()).get();
+
+	// Mark all probes as dirty.
+	for (auto entity : sceneInstance->getWorld()->getEntities())
+	{
+		auto probeComponent = entity->getComponent< world::ProbeComponent >();
+		if (probeComponent != nullptr)
+			probeComponent->setDirty(true);
+	}
 }
 
 void PerspectiveRenderControl::updateSettings()
