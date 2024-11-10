@@ -85,8 +85,8 @@
 			<id>{BC7D2173-F3FF-E44F-836B-098322F69726}</id>
 			<comment/>
 			<position>
-				<first>551</first>
-				<second>-211</second>
+				<first>550</first>
+				<second>-210</second>
 			</position>
 			<name>Raytracing</name>
 			<technique/>
@@ -134,7 +134,7 @@ rayQueryEXT rayQuery;
 rayQueryInitializeEXT(
 	rayQuery,              // Ray query
 	$AS,                  // Top-level acceleration structure
-	gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,  // Ray flags, here saying "treat all geometry as opaque"
+	gl_RayFlagsOpaqueEXT,  // Ray flags, here saying "treat all geometry as opaque"
 	0xFF,                  // 8-bit instance mask, here saying "trace against all instances"
 	rayOrigin,             // Ray origin
 	Near,                   // Minimum t-value
