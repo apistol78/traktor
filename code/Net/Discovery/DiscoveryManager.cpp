@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +9,7 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Core/Serialization/BinarySerializer.h"
+#include "Core/Serialization/CompactSerializer.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Timer/Timer.h"
 #include "Net/MulticastUdpSocket.h"
@@ -19,7 +19,7 @@
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Discovery/DmFindServices.h"
 #include "Net/Discovery/DmServiceInfo.h"
-#include "Net/Discovery/IService.h"
+#include "Net/Discovery/NetworkService.h"
 
 namespace traktor::net
 {
@@ -29,6 +29,13 @@ namespace traktor::net
 const wchar_t* c_discoveryMulticastGroup = L"225.0.0.37";
 const uint16_t c_discoveryMulticastPort = 41100;
 const int32_t c_maxUnresponsiveTickCount = 30;
+
+const TypeInfo* c_knownTypes[] =
+{
+	&type_of< DmFindServices >(),
+	&type_of< DmServiceInfo >(),
+	&type_of< NetworkService >()
+};
 
 OutputStream& operator << (OutputStream& os, const net::SocketAddressIPv4& addr)
 {
@@ -284,7 +291,7 @@ int32_t DiscoveryManager::sendMessage(UdpSocket* socket, const SocketAddressIPv4
 	uint8_t buffer[1024];
 
 	MemoryStream ms(buffer, sizeof(buffer), false, true);
-	if (!BinarySerializer(&ms).writeObject(message))
+	if (!CompactSerializer(&ms, c_knownTypes, sizeof_array(c_knownTypes)).writeObject(message))
 		return 1;
 
 	const uint32_t written = ms.tell();
@@ -306,7 +313,7 @@ Ref< IDiscoveryMessage > DiscoveryManager::recvMessage(UdpSocket* socket, Socket
 		return nullptr;
 
 	MemoryStream ms(buffer, nrecv, true, false);
-	return BinarySerializer(&ms).readObject< IDiscoveryMessage >();
+	return CompactSerializer(&ms, c_knownTypes, sizeof_array(c_knownTypes)).readObject< IDiscoveryMessage >();
 }
 
 }
