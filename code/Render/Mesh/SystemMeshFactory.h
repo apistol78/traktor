@@ -34,7 +34,7 @@ public:
 		uint32_t vertexBufferSize,
 		IndexType indexType,
 		uint32_t indexBufferSize,
-		uint32_t auxBufferSize
+		const SmallMap< FourCC, uint32_t >& auxBufferSizes
 	) const override final;
 };
 

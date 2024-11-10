@@ -21,8 +21,9 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 {
 	Writer writer(stream);
 
-	writer << (uint32_t)6;
+	writer << (uint32_t)7;
 
+	// Write vertex buffer.
 	const auto& vertexElements = mesh->getVertexElements();
 	writer << (uint32_t)vertexElements.size();
 
@@ -37,6 +38,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 	const uint32_t vertexBufferSize = (mesh->getVertexBuffer() != nullptr) ? mesh->getVertexBuffer()->getBufferSize() : 0;
 	writer << vertexBufferSize;
 
+	// Write index buffer.
 	IndexType indexType = IndexType::UInt16;
 	uint32_t indexBufferSize = 0;
 	if (mesh->getIndexBuffer())
@@ -48,9 +50,19 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 	writer << (uint32_t)indexType;
 	writer << indexBufferSize;
 
-	const uint32_t auxBufferSize = (mesh->getAuxBuffer() != nullptr) ? mesh->getAuxBuffer()->getBufferSize() : 0;
-	writer << auxBufferSize;
+	// Write auxiliary buffers.
+	writer << (uint32_t)mesh->getAuxBuffers().size();
+	for (const auto aux : mesh->getAuxBuffers())
+	{
+		Ref< Buffer > auxBuffer = aux.second;
+		if (!auxBuffer)
+			return false;
 
+		writer << (uint32_t)aux.first;
+		writer << (uint32_t)auxBuffer->getBufferSize();
+	}
+
+	// Write buffer data.
 	if (vertexBufferSize > 0)
 	{
 		uint8_t* vertex = static_cast< uint8_t* >(mesh->getVertexBuffer()->lock());
@@ -127,13 +139,15 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 		mesh->getIndexBuffer()->unlock();
 	}
 
-	if (auxBufferSize > 0)
+	for (const auto aux : mesh->getAuxBuffers())
 	{
-		uint8_t* aux = static_cast< uint8_t* >(mesh->getAuxBuffer()->lock());
-		writer.write(aux, auxBufferSize);
-		mesh->getAuxBuffer()->unlock();
+		const uint32_t auxBufferSize = aux.second->getBufferSize();
+		uint8_t* ptr = static_cast< uint8_t* >(aux.second->lock());
+		writer.write(ptr, auxBufferSize);
+		aux.second->unlock();
 	}
 
+	// Write parts.
 	const AlignedVector< Mesh::Part >& parts = mesh->getParts();
 
 	const uint32_t partCount = (uint32_t)parts.size();
@@ -148,6 +162,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 		writer << parts[i].primitives.indexed;
 	}
 
+	// Write bounding box.
 	const Aabb3& boundingBox = mesh->getBoundingBox();
 	writer << boundingBox.mn.x();
 	writer << boundingBox.mn.y();

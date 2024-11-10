@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,7 +25,7 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 	uint32_t vertexBufferSize,
 	IndexType indexType,
 	uint32_t indexBufferSize,
-	uint32_t auxBufferSize
+	const SmallMap< FourCC, uint32_t >& auxBufferSizes
 ) const
 {
 	Ref< const IVertexLayout > vertexLayout;
@@ -55,11 +55,13 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 			return nullptr;
 	}
 
-	if (auxBufferSize > 0)
+	SmallMap< FourCC, Ref< Buffer > > auxBuffers;
+	for (auto aux : auxBufferSizes)
 	{
-		auxBuffer = m_renderSystem->createBuffer(BuStructured, auxBufferSize, false);
+		auxBuffer = m_renderSystem->createBuffer(BuStructured, aux.second, false);
 		if (!auxBuffer)
 			return nullptr;
+		auxBuffers[aux.first] = auxBuffer;
 	}
 
 	Ref< Mesh > mesh = new Mesh();
@@ -68,7 +70,7 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 	mesh->setVertexBuffer(vertexBuffer);
 	mesh->setIndexType(indexType);
 	mesh->setIndexBuffer(indexBuffer);
-	mesh->setAuxBuffer(auxBuffer);
+	mesh->setAuxBuffers(auxBuffers);
 	return mesh;
 }
 

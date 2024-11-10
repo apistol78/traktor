@@ -38,9 +38,14 @@ void Mesh::setIndexBuffer(Buffer* indexBuffer)
 	m_indexBuffer = indexBuffer;
 }
 
-void Mesh::setAuxBuffer(Buffer* auxBuffer)
+void Mesh::setAuxBuffer(const FourCC& id, Buffer* auxBuffer)
 {
-	m_auxBuffer = auxBuffer;
+	m_auxBuffers[id] = auxBuffer;
+}
+
+void Mesh::setAuxBuffers(const SmallMap< FourCC, Ref< Buffer > >& auxBuffers)
+{
+	m_auxBuffers = auxBuffers;
 }
 
 void Mesh::setParts(const AlignedVector< Part >& parts)

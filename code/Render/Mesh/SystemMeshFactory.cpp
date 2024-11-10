@@ -42,7 +42,7 @@ Ref< Mesh > SystemMeshFactory::createMesh(
 	uint32_t vertexBufferSize,
 	IndexType indexType,
 	uint32_t indexBufferSize,
-	uint32_t auxBufferSize
+	const SmallMap< FourCC, uint32_t >& auxBufferSizes
 ) const
 {
 	Ref< Buffer > vertexBuffer;
@@ -60,15 +60,16 @@ Ref< Mesh > SystemMeshFactory::createMesh(
 	if (indexBufferSize > 0)
 		indexBuffer = new InternalBuffer(indexBufferSize);
 
-	if (auxBufferSize > 0)
-		auxBuffer = new InternalBuffer(auxBufferSize);
+	SmallMap< FourCC, Ref< Buffer > > auxBuffers;
+	for (auto aux : auxBufferSizes)
+		auxBuffers[aux.first] = new InternalBuffer(aux.second);
 
 	Ref< Mesh > mesh = new Mesh();
 	mesh->setVertexElements(vertexElements);
 	mesh->setVertexBuffer(vertexBuffer);
 	mesh->setIndexType(indexType);
 	mesh->setIndexBuffer(indexBuffer);
-	mesh->setAuxBuffer(auxBuffer);
+	mesh->setAuxBuffers(auxBuffers);
 	return mesh;
 }
 

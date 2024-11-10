@@ -11,7 +11,9 @@
 #include <string>
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
+#include "Core/Misc/FourCC.h"
 #include "Render/VertexElement.h"
 
 // import/export mechanism.
@@ -52,7 +54,9 @@ public:
 
 	void setIndexBuffer(Buffer* indexBuffer);
 
-	void setAuxBuffer(Buffer* auxBuffer);
+	void setAuxBuffer(const FourCC& id, Buffer* auxBuffer);
+
+	void setAuxBuffers(const SmallMap< FourCC, Ref< Buffer > >& auxBuffers);
 
 	void setParts(const AlignedVector< Part >& parts);
 
@@ -68,7 +72,9 @@ public:
 
 	Buffer* getIndexBuffer() const { return m_indexBuffer; }
 
-	Buffer* getAuxBuffer() const { return m_auxBuffer; }
+	Buffer* getAuxBuffer(const FourCC& id) const { return m_auxBuffers[id]; }
+
+	const SmallMap< FourCC, Ref< Buffer > >& getAuxBuffers() const { return m_auxBuffers; }
 
 	const AlignedVector< Part >& getParts() const { return m_parts; }
 
@@ -80,7 +86,7 @@ private:
 	Ref< Buffer > m_vertexBuffer;
 	IndexType m_indexType;
 	Ref< Buffer > m_indexBuffer;
-	Ref< Buffer > m_auxBuffer;
+	SmallMap< FourCC, Ref< Buffer > > m_auxBuffers;
 	AlignedVector< Part > m_parts;
 	Aabb3 m_boundingBox;
 };

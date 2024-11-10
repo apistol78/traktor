@@ -77,7 +77,7 @@ bool InstanceMeshConverter::convert(
 		vertexBufferSize,
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize,
-		0
+		SmallMap< FourCC, uint32_t >()
 	);
 
 	// Create vertex buffer.

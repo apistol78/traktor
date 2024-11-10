@@ -10,6 +10,8 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
+#include "Core/Misc/FourCC.h"
 #include "Render/VertexElement.h"
 
 // import/export mechanism.
@@ -38,7 +40,7 @@ public:
 		uint32_t vertexBufferSize,
 		IndexType indexType,
 		uint32_t indexBufferSize,
-		uint32_t auxBufferSize
+		const SmallMap< FourCC, uint32_t >& auxBufferSizes
 	) const = 0;
 };
 

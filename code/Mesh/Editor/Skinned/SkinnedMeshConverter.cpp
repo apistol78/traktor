@@ -71,12 +71,15 @@ bool SkinnedMeshConverter::convert(
 	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
 	const uint32_t auxBufferSize = (uint32_t)(model->getVertices().size() * (6 * 4 * sizeof(float)));
 
+	SmallMap< FourCC, uint32_t > auxBufferSizes;
+	auxBufferSizes[FourCC("SPOS")] = auxBufferSize;
+
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize,
-		auxBufferSize
+		auxBufferSizes
 	);
 
 	// Create vertex and aux buffers.
@@ -87,7 +90,7 @@ bool SkinnedMeshConverter::convert(
 		std::memset(vertex, 0, vertexBufferSize);
 	}
 
-	float* aux = static_cast< float* >(mesh->getAuxBuffer()->lock());
+	float* aux = static_cast< float* >(mesh->getAuxBuffer(FourCC("SPOS"))->lock());
 	std::memset(aux, 0, auxBufferSize);
 
 	AlignedVector< std::pair< uint32_t, float > > jointInfluences;

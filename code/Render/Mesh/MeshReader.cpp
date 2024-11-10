@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,7 +32,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 
 	uint32_t version;
 	reader >> version;
-	if (version != 6)
+	if (version != 7)
 		return nullptr;
 
 	// Read vertex declaration.
@@ -41,7 +41,6 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 
 	AlignedVector< VertexElement > vertexElements;
 	vertexElements.reserve(vertexElementCount);
-
 	for (uint32_t i = 0; i < vertexElementCount; ++i)
 	{
 		uint32_t usage, type, offset, index;
@@ -69,16 +68,26 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 	uint32_t indexBufferSize;
 	reader >> indexBufferSize;
 
-	// Read aux buffer size.
-	uint32_t auxBufferSize;
-	reader >> auxBufferSize;
+	// Read aux buffer sizes.
+	uint32_t auxBufferCount;
+	reader >> auxBufferCount;
 
+	SmallMap< FourCC, uint32_t > auxBufferSizes;
+	for (uint32_t i = 0; i < auxBufferCount; ++i)
+	{
+		uint32_t id, size;
+		reader >> id;
+		reader >> size;
+		auxBufferSizes[FourCC(id)] = size;
+	}
+
+	// Create mesh and buffers.
 	Ref< Mesh > mesh = m_meshFactory->createMesh(
 		vertexElements,
 		vertexBufferSize,
 		(IndexType)indexType,
 		indexBufferSize,
-		auxBufferSize
+		auxBufferSizes
 	);
 	if (!mesh)
 		return nullptr;
@@ -101,13 +110,13 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 		mesh->getIndexBuffer()->unlock();
 	}
 
-	if (auxBufferSize > 0)
+	for (auto aux : auxBufferSizes)
 	{
-		uint8_t* aux = static_cast< uint8_t* >(mesh->getAuxBuffer()->lock());
-		if (!aux)
+		uint8_t* ptr = static_cast< uint8_t* >(mesh->getAuxBuffer(aux.first)->lock());
+		if (!ptr)
 			return nullptr;
-		reader.read(aux, auxBufferSize);
-		mesh->getAuxBuffer()->unlock();
+		reader.read(ptr, aux.second);
+		mesh->getAuxBuffer(aux.first)->unlock();
 	}
 
 	uint32_t partCount;
