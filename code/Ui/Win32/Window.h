@@ -100,6 +100,8 @@ public:
 
 	void registerMessageHandler(const wchar_t* message, IMessageHandler* messageHandler);
 
+	bool haveMessageHandler(UINT message) const;
+
 	static void registerDefaultClass();
 
 	static void unregisterDefaultClass();

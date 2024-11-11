@@ -181,6 +181,11 @@ void Window::registerMessageHandler(const wchar_t* message, IMessageHandler* mes
 	registerMessageHandler(id, messageHandler);
 }
 
+bool Window::haveMessageHandler(UINT message) const
+{
+	return m_messageHandlers.find(message) != m_messageHandlers.end();
+}
+
 void Window::registerDefaultClass()
 {
 	WNDCLASS wc;

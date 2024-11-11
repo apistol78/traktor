@@ -60,7 +60,6 @@ bool FormWin32::create(IWidget* parent, const std::wstring& text, int width, int
 
 	m_hWnd.registerMessageHandler(WM_CLOSE, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventClose));
 	m_hWnd.registerMessageHandler(WM_DESTROY, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventDestroy));
-	//m_hWnd.registerMessageHandler(WM_ACTIVATE, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventActivate));
 	m_hWnd.registerMessageHandler(L"TaskbarButtonCreated", new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventTaskBarButtonCreated));
 
 	if ((style & WsCaption) == 0)
@@ -81,6 +80,31 @@ void FormWin32::setVisible(bool visible)
 	if (visible != isVisible())
 	{
 		ShowWindow(m_hWnd, visible ? SW_SHOW : SW_HIDE);
+
+		//#hack Force window to recalculate non-client size.
+		if (visible && m_hWnd.haveMessageHandler(WM_NCCALCSIZE))
+		{
+			RECT rc;
+			GetWindowRect(m_hWnd, &rc);
+			SetWindowPos(
+				m_hWnd,
+				NULL,
+				rc.left,
+				rc.top,
+				rc.right - rc.left + 1,
+				rc.bottom - rc.top + 1,
+				SWP_NOZORDER | SWP_NOACTIVATE
+			);
+			SetWindowPos(
+				m_hWnd,
+				NULL,
+				rc.left,
+				rc.top,
+				rc.right - rc.left,
+				rc.bottom - rc.top,
+				SWP_NOZORDER | SWP_NOACTIVATE
+			);
+		}
 
 		ShowEvent showEvent(m_owner, visible);
 		m_owner->raiseEvent(&showEvent);
