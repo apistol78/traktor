@@ -15,6 +15,7 @@
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
 #include "Mesh/MeshComponent.h"
+#include "World/Entity/RTWorldComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -62,6 +63,12 @@ public:
 
 	virtual void setOwner(world::Entity* owner) override final;
 
+	virtual void setWorld(world::World* world) override final;
+
+	virtual void setState(const world::EntityState& state, const world::EntityState& mask) override final;
+
+	virtual void setTransform(const Transform& transform) override final;
+
 	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual void update(const world::UpdateParams& update) override final;
@@ -73,6 +80,8 @@ public:
 
 private:
 	resource::Proxy< mesh::SkinnedMesh > m_mesh;
+	world::World* m_world = nullptr;
+	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
 	AlignedVector< int32_t > m_jointRemap;
 	AlignedVector< Transform > m_jointInverseTransforms;
 	AlignedVector< Transform > m_poseTransforms[2];

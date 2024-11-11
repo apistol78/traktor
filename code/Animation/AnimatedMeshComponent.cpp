@@ -19,6 +19,7 @@
 #include "Render/Buffer.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
+#include "World/World.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
@@ -63,6 +64,7 @@ void AnimatedMeshComponent::destroy()
 	safeDestroy(m_jointBuffer);
 	safeDestroy(m_skinBuffer[0]);
 	safeDestroy(m_skinBuffer[1]);
+	safeDestroy(m_rtwInstance);
 	mesh::MeshComponent::destroy();
 }
 
@@ -97,6 +99,52 @@ void AnimatedMeshComponent::setOwner(world::Entity* owner)
 			}
 		}
 	}
+}
+
+void AnimatedMeshComponent::setWorld(world::World* world)
+{
+	// Remove from last world.
+	safeDestroy(m_rtwInstance);
+
+	// Add to new world.
+	if (world != nullptr)
+	{
+		T_FATAL_ASSERT(m_rtwInstance == nullptr);
+		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
+		if (rtw != nullptr)
+			m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getRTTriangleAttributes());
+	}
+
+	m_world = world;
+}
+
+void AnimatedMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask)
+{
+	const bool visible = (state.visible && mask.visible);
+	if (visible)
+	{
+		if (!m_rtwInstance)
+		{
+			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
+			if (rtw != nullptr)
+			{
+				m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getRTTriangleAttributes());
+				m_rtwInstance->setTransform(m_transform.get0());
+			}
+		}
+	}
+	else
+	{
+		safeDestroy(m_rtwInstance);
+	}
+}
+
+void AnimatedMeshComponent::setTransform(const Transform& transform)
+{
+	MeshComponent::setTransform(transform);
+
+	if (m_rtwInstance)
+		m_rtwInstance->setTransform(transform);
 }
 
 Aabb3 AnimatedMeshComponent::getBoundingBox() const

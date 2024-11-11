@@ -132,8 +132,8 @@
 			<id>{5EF55C8C-6074-504D-ABED-E39861B50761}</id>
 			<comment/>
 			<position>
-				<first>306</first>
-				<second>-901</second>
+				<first>146</first>
+				<second>-962</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -141,8 +141,8 @@
 			<id>{23F6296D-A654-D047-84EB-86FB2A0B670C}</id>
 			<comment/>
 			<position>
-				<first>306</first>
-				<second>-855</second>
+				<first>146</first>
+				<second>-916</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -150,8 +150,8 @@
 			<id>{02B59933-9585-4D4C-9EA6-D9036CCDED37}</id>
 			<comment/>
 			<position>
-				<first>308</first>
-				<second>-721</second>
+				<first>148</first>
+				<second>-782</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -168,8 +168,8 @@
 			<id>{5406F2AA-5382-2C4C-87AF-C1C1EF246B6B}</id>
 			<comment/>
 			<position>
-				<first>322</first>
-				<second>-809</second>
+				<first>162</first>
+				<second>-870</second>
 			</position>
 			<declaration>{B6BC3CAA-175A-2341-8275-4B64E8EB24F3}</declaration>
 			<parameterName>Projection</parameterName>
@@ -323,8 +323,8 @@
 			<id>{5CE42F57-90BD-294E-ACF0-89ABE74E9316}</id>
 			<comment/>
 			<position>
-				<first>290</first>
-				<second>-765</second>
+				<first>130</first>
+				<second>-826</second>
 			</position>
 			<declaration>{D888D241-397A-2148-8041-E576091FE763}</declaration>
 			<parameterName>World_GBufferA</parameterName>
@@ -416,8 +416,8 @@ $Output = ($Roughness < 0.4f && $Specular > 0.1f) ? 1.0f : 0.0f;
 			<id>{A9D99706-2564-B045-9959-F738381CBB88}</id>
 			<comment/>
 			<position>
-				<first>1298</first>
-				<second>-447</second>
+				<first>1769</first>
+				<second>-549</second>
 			</position>
 			<name>Raytracing</name>
 			<technique/>
@@ -455,7 +455,7 @@ $Output = ($Roughness < 0.4f && $Specular > 0.1f) ? 1.0f : 0.0f;
 			</outputPins>
 			<script>
 			<![CDATA[
-const float Near = 0.5f;
+const float Near = 1.5f;
 const float Far = 200.0f;
 
 const vec3 rayOrigin = $Origin.xyz;
@@ -481,11 +481,14 @@ $Output = vec4(0.0f);
 
 if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
 {
-	const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
-		$Output = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	const uint id = rayQueryGetIntersectionInstanceCustomIndexEXT(rayQuery, true);
+	if (id != (1 << 24) - 1)
+	{
+		const uint triangle = rayQueryGetIntersectionPrimitiveIndexEXT(rayQuery, true);
+		const vec4 albedo = __bindlessBufferVec4__[id].data[triangle * 2 + 1].value;
+		$Output = albedo;
+	}
 }
-
-
 			]]>
 			</script>
 		</item>
@@ -493,8 +496,8 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 			<id>{D7BA6B77-E4DA-D749-8C5F-1959A986642F}</id>
 			<comment/>
 			<position>
-				<first>1056</first>
-				<second>-622</second>
+				<first>1495</first>
+				<second>-568</second>
 			</position>
 			<declaration>{41DB2032-2B2B-7945-8B6B-947CEC7818A4}</declaration>
 			<parameterName>World_TLAS</parameterName>
@@ -505,8 +508,8 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 			<id>{3ED95111-30B7-D148-A6CF-0E64E2CCF4B2}</id>
 			<comment/>
 			<position>
-				<first>468</first>
-				<second>-533</second>
+				<first>204</first>
+				<second>-558</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -514,16 +517,16 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 			<id>{997EBE4A-BD65-AA43-83CE-5D8CC777FC2F}</id>
 			<comment/>
 			<position>
-				<first>939</first>
-				<second>-513</second>
+				<first>821</first>
+				<second>-476</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A3AEF9C0-30BE-454E-AC7F-7F762EADE1CF}</id>
 			<comment/>
 			<position>
-				<first>636</first>
-				<second>-478</second>
+				<first>536</first>
+				<second>-429</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName>World_ViewInverse</parameterName>
@@ -534,16 +537,16 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 			<id>{AE7DB516-E355-9240-922B-A0558F4A741B}</id>
 			<comment/>
 			<position>
-				<first>942</first>
-				<second>-368</second>
+				<first>1384</first>
+				<second>-725</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{87E80477-B5F0-854D-AD79-B96DAAB49552}</id>
 			<comment/>
 			<position>
-				<first>528</first>
-				<second>-395</second>
+				<first>441</first>
+				<second>-777</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -551,8 +554,8 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 			<id>{79279D07-C9C7-D74A-9663-A4F2A9E8E5A8}</id>
 			<comment/>
 			<position>
-				<first>521</first>
-				<second>-310</second>
+				<first>1130</first>
+				<second>-667</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName>World_ViewInverse</parameterName>
@@ -563,8 +566,8 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 			<id>{E7E30B72-0E2C-504C-82A8-1E34010BD877}</id>
 			<comment/>
 			<position>
-				<first>746</first>
-				<second>-376</second>
+				<first>1153</first>
+				<second>-733</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -572,8 +575,8 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 			<id>{A6D92F0F-5C75-CE4E-A50B-120F9CF4380F}</id>
 			<comment/>
 			<position>
-				<first>718</first>
-				<second>-519</second>
+				<first>535</first>
+				<second>-477</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -581,8 +584,8 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 			<id>{344E2A41-9544-E840-AD22-00CBB4449261}</id>
 			<comment/>
 			<position>
-				<first>1584</first>
-				<second>-391</second>
+				<first>2055</first>
+				<second>-493</second>
 			</position>
 			<name>L_Reflection</name>
 		</item>
@@ -599,16 +602,16 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 			<id>{863AA911-6A60-E74E-BB6C-8DD8390D8947}</id>
 			<comment/>
 			<position>
-				<first>674</first>
-				<second>-715</second>
+				<first>656</first>
+				<second>-690</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{6401CE38-E655-4549-B2CC-F7F39D768CC9}</id>
 			<comment/>
 			<position>
-				<first>607</first>
-				<second>-615</second>
+				<first>442</first>
+				<second>-647</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -616,16 +619,16 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 			<id>{E2339071-13AD-A84D-8AAA-119824FA2B88}</id>
 			<comment/>
 			<position>
-				<first>875</first>
-				<second>-706</second>
+				<first>904</first>
+				<second>-736</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{D0F80284-FE2B-F848-B2D6-D75221015981}</id>
 			<comment/>
 			<position>
-				<first>810</first>
-				<second>-600</second>
+				<first>645</first>
+				<second>-754</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -739,16 +742,6 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
 				<id>{52792682-A02B-4627-81A2-C83D24BE7143}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[20]"/>
-				<id>{291502CF-D8D7-4CEC-8457-E867D70CD04E}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1013,8 +1006,8 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[41]"/>
-				<id>{8591EE56-8A3E-41CF-8E98-8F8DB26AABDC}</id>
+				<node ref="/object/nodes/item[44]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[43]"/>
@@ -1023,12 +1016,22 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+				<node ref="/object/nodes/item[41]"/>
+				<id>{8591EE56-8A3E-41CF-8E98-8F8DB26AABDC}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[43]"/>
 				<id>{0AAE2EAE-B01B-425A-A8C3-539576B45ECC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{291502CF-D8D7-4CEC-8457-E867D70CD04E}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>

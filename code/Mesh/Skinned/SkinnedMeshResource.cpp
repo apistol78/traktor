@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,6 +14,7 @@
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshResource.h"
+#include "Render/IRenderSystem.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Resource/IResourceManager.h"
@@ -73,6 +74,38 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 
 	skinnedMesh->m_jointMap = m_jointMap;
 	skinnedMesh->m_jointCount = jointMaxIndex + 1;
+
+	// Create ray tracing structures.
+	if (renderSystem->supportRayTracing())
+	{
+		const auto& part = mesh->getParts().back();
+		T_FATAL_ASSERT(part.name == L"__RT__");
+
+		AlignedVector< render::Primitives > primitives;
+		primitives.push_back(part.primitives);
+
+		Ref< const render::IVertexLayout > vertexLayout = renderSystem->createVertexLayout({
+			render::VertexElement(render::DataUsage::Position,	render::DtFloat4,	0 * 4 * sizeof(float)),
+			render::VertexElement(render::DataUsage::Normal,	render::DtFloat4,	1 * 4 * sizeof(float)),
+			render::VertexElement(render::DataUsage::Tangent,	render::DtFloat4,	2 * 4 * sizeof(float)),
+			render::VertexElement(render::DataUsage::Binormal,	render::DtFloat4,	3 * 4 * sizeof(float)),
+			render::VertexElement(render::DataUsage::Custom,	render::DtFloat4,	4 * 4 * sizeof(float)),
+			render::VertexElement(render::DataUsage::Custom,	render::DtFloat4,	5 * 4 * sizeof(float), 1)
+		});
+
+		skinnedMesh->m_rtAccelerationStructure = renderSystem->createAccelerationStructure(
+			mesh->getAuxBuffer(SkinnedMesh::c_fccSkinPosition),
+			vertexLayout,
+			mesh->getIndexBuffer(),
+			mesh->getIndexType(),
+			primitives
+		);
+		if (!skinnedMesh->m_rtAccelerationStructure)
+		{
+			log::error << L"Skinned mesh create failed; unable to create RT acceleration structure." << Endl;
+			return nullptr;
+		}
+	}
 
 #if defined(_DEBUG)
 	skinnedMesh->m_name = wstombs(name);

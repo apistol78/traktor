@@ -206,15 +206,21 @@ bool InstanceMeshConverter::convert(
 		meshParts.push_back(meshPart);
 
 		render::RTTriangleAttributes* ptr = (render::RTTriangleAttributes*)renderMesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->lock();
-		for (uint32_t i = 0; i < model->getPolygons().size(); ++i)
+		for (const auto& mt : materialTechniqueMap)
 		{
-			const auto& polygon = model->getPolygon(i);
-			const auto& material = model->getMaterial(polygon.getMaterial());
+			for (uint32_t i = 0; i < model->getPolygons().size(); ++i)
+			{
+				const auto& polygon = model->getPolygon(i);
+				const auto& material = model->getMaterial(polygon.getMaterial());
 
-			model->getNormal(polygon.getNormal()).storeUnaligned(ptr->normal);
-			material.getColor().storeUnaligned(ptr->albedo);
+				if (material.getName() != mt.first)
+					continue;
 
-			++ptr;
+				model->getNormal(polygon.getNormal()).storeUnaligned(ptr->normal);
+				material.getColor().storeUnaligned(ptr->albedo);
+
+				++ptr;
+			}
 		}
 		renderMesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->unlock();
 	}

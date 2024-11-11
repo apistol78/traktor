@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,8 +19,6 @@ namespace traktor::mesh
 	namespace
 	{
 
-const FourCC c_fccSPOS("SPOS");
-
 const render::Handle s_handleSkinBuffer(L"Mesh_SkinBuffer");
 const render::Handle s_handleSkinBufferLast(L"Mesh_SkinBufferLast");
 const render::Handle s_handleSkinBufferOutput(L"Mesh_SkinBufferOutput");
@@ -29,6 +27,8 @@ const render::Handle s_handleJoints(L"Mesh_Joints");
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMesh", SkinnedMesh, IMesh)
+
+const FourCC SkinnedMesh::c_fccSkinPosition("SPOS");
 
 const Aabb3& SkinnedMesh::getBoundingBox() const
 {
@@ -46,11 +46,11 @@ void SkinnedMesh::buildSkin(
 	render::Buffer* skinBuffer
 )
 {
-	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSPOS)->getBufferSize() / (6 * 4 * sizeof(float));
+	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferSize() / (6 * 4 * sizeof(float));
 
 	auto programParams = renderContext->alloc< render::ProgramParameters >();
 	programParams->beginParameters(renderContext);
-	programParams->setBufferViewParameter(s_handleSkinBuffer, m_mesh->getAuxBuffer(c_fccSPOS)->getBufferView());
+	programParams->setBufferViewParameter(s_handleSkinBuffer, m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferView());
 	programParams->setBufferViewParameter(s_handleSkinBufferOutput, skinBuffer->getBufferView());
 	programParams->setBufferViewParameter(s_handleJoints, jointTransforms->getBufferView());
 	programParams->endParameters(renderContext);
@@ -135,7 +135,7 @@ const SmallMap< std::wstring, int >& SkinnedMesh::getJointMap() const
 
 Ref< render::Buffer > SkinnedMesh::createSkinBuffer(render::IRenderSystem* renderSystem) const
 {
-	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSPOS)->getBufferSize() / (6 * 4 * sizeof(float));
+	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferSize() / (6 * 4 * sizeof(float));
 	return renderSystem->createBuffer(render::BuStructured, vertexCount * 6 * 4 * sizeof(float), false);
 }
 
@@ -157,6 +157,11 @@ Ref< render::Buffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* rend
 	jointBuffer->unlock();
 
 	return jointBuffer;
+}
+
+const render::Buffer* SkinnedMesh::getRTTriangleAttributes() const
+{
+	return m_mesh->getAuxBuffer(c_fccRayTracingTriangleAttributes);
 }
 
 }

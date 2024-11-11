@@ -162,7 +162,12 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 		mat4x3 o2w = rayQueryGetIntersectionObjectToWorldEXT(rayQuery, true);
 		vec3 wn = o2w * normal;
 
-		$Output = vec4(wn, 0.0f) * 0.5f + 0.5f;
+		$Output = vec4(
+			pow(albedo.x, 1.0f / 2.2f),
+			pow(albedo.y, 1.0f / 2.2f),
+			pow(albedo.z, 1.0f / 2.2f),
+			1.0f
+		);
 	}
 	else
 		$Output = vec4(1.0f, 0.5f, 0.0f, 1.0f);

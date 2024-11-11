@@ -16,6 +16,7 @@
 #include "Mesh/Editor/IndexRange.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
+#include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshResource.h"
 #include "Model/Model.h"
 #include "Model/Operations/FlattenDoubleSided.h"
@@ -70,16 +71,17 @@ bool SkinnedMeshConverter::convert(
 	const uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
 	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
 	const uint32_t auxBufferSize = (uint32_t)(model->getVertices().size() * (6 * 4 * sizeof(float)));
-
-	SmallMap< FourCC, uint32_t > auxBufferSizes;
-	auxBufferSizes[FourCC("SPOS")] = auxBufferSize;
+	const uint32_t rtTriangleAttributesSize = (uint32_t)(model->getPolygons().size() * sizeof(render::RTTriangleAttributes));
 
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize,
-		auxBufferSizes
+		{
+			{ SkinnedMesh::c_fccSkinPosition, auxBufferSize },
+			{ IMesh::c_fccRayTracingTriangleAttributes, rtTriangleAttributesSize }
+		}
 	);
 
 	// Create vertex and aux buffers.
@@ -90,7 +92,7 @@ bool SkinnedMeshConverter::convert(
 		std::memset(vertex, 0, vertexBufferSize);
 	}
 
-	float* aux = static_cast< float* >(mesh->getAuxBuffer(FourCC("SPOS"))->lock());
+	float* aux = static_cast< float* >(mesh->getAuxBuffer(SkinnedMesh::c_fccSkinPosition)->lock());
 	std::memset(aux, 0, auxBufferSize);
 
 	AlignedVector< std::pair< uint32_t, float > > jointInfluences;
@@ -259,6 +261,37 @@ bool SkinnedMeshConverter::convert(
 
 			parts[worldTechnique].push_back(part);
 		}
+	}
+
+	// Add ray tracing part.
+	{
+		render::Mesh::Part meshPart;
+		meshPart.name = L"__RT__";
+		meshPart.primitives = render::Primitives::setIndexed(
+			render::PrimitiveType::Triangles,
+			0,
+			model->getPolygons().size()
+		);
+		meshParts.push_back(meshPart);
+
+		render::RTTriangleAttributes* ptr = (render::RTTriangleAttributes*)mesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->lock();
+		for (const auto& mt : materialTechniqueMap)
+		{
+			for (uint32_t i = 0; i < model->getPolygons().size(); ++i)
+			{
+				const auto& polygon = model->getPolygon(i);
+				const auto& material = model->getMaterial(polygon.getMaterial());
+
+				if (material.getName() != mt.first)
+					continue;
+
+				model->getNormal(polygon.getNormal()).storeUnaligned(ptr->normal);
+				material.getColor().storeUnaligned(ptr->albedo);
+
+				++ptr;
+			}
+		}
+		mesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->unlock();
 	}
 
 	mesh->setParts(meshParts);

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,6 +26,7 @@ namespace traktor::render
 {
 
 class Buffer;
+class IAccelerationStructure;
 class IRenderSystem;
 class ITexture;
 class RenderContext;
@@ -65,6 +66,8 @@ public:
 	};
 #pragma pack()
 
+	static const FourCC c_fccSkinPosition;
+
 	SkinnedMesh() = default;
 
 	const Aabb3& getBoundingBox() const;
@@ -96,6 +99,10 @@ public:
 
 	static Ref< render::Buffer > createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount);
 
+	const render::IAccelerationStructure* getAccelerationStructure() const { return m_rtAccelerationStructure; }
+
+	const render::Buffer* getRTTriangleAttributes() const;
+
 private:
 	friend class SkinnedMeshResource;
 
@@ -104,13 +111,19 @@ private:
 		render::handle_t shaderTechnique;
 		uint32_t meshPart;
 	};
-
-	resource::Proxy< render::Shader > m_shaderUpdateSkin;
-	resource::Proxy< render::Shader > m_shader;
-	Ref< render::Mesh > m_mesh;
+	
 	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
 	SmallMap< std::wstring, int32_t > m_jointMap;
 	int32_t m_jointCount = 0;
+
+	// Rasterization
+	resource::Proxy< render::Shader > m_shaderUpdateSkin;
+	resource::Proxy< render::Shader > m_shader;
+	Ref< render::Mesh > m_mesh;
+
+	// Ray tracing
+	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
+
 #if defined(_DEBUG)
 	std::string m_name;
 #endif
