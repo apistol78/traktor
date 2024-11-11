@@ -91,7 +91,7 @@ public:
 
 	const render::IAccelerationStructure* getAccelerationStructure() const { return m_rtAccelerationStructure; }
 
-	const render::Buffer* getPerPrimitiveColor() const { return m_rtPerPrimitiveColor; }
+	const render::Buffer* getRTTriangleAttributes() const;
 
 private:
 	friend class InstanceMeshResource;
@@ -104,7 +104,6 @@ private:
 
 	// Ray tracing
 	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
-	Ref< render::Buffer > m_rtPerPrimitiveColor;
 
 	//#todo All instances are bookkeep;ed in InstanceMesh which should be a resource.
 	Ref< render::IRenderSystem > m_renderSystem;	

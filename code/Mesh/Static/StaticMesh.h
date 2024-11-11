@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -84,7 +84,7 @@ public:
 
 	const render::IAccelerationStructure* getAccelerationStructure() const { return m_rtAccelerationStructure; }
 
-	const render::Buffer* getPerPrimitiveColor() const { return m_rtPerPrimitiveColor; }
+	const render::Buffer* getRTTriangleAttributes() const;
 
 private:
 	friend class StaticMeshResource;
@@ -98,7 +98,6 @@ private:
 	
 	// Ray tracing
 	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
-	Ref< render::Buffer > m_rtPerPrimitiveColor;
 
 #if defined(_DEBUG)
 	std::string m_name;

@@ -10,10 +10,12 @@
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
+#include "Core/Math/Random.h"
 #include "Core/Misc/String.h"
 #include "Mesh/Editor/IndexRange.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
+#include "Mesh/Static/StaticMesh.h"
 #include "Mesh/Static/StaticMeshResource.h"
 #include "Model/Model.h"
 #include "Model/Operations/FlattenDoubleSided.h"
@@ -63,13 +65,16 @@ bool StaticMeshConverter::convert(
 	// Create render mesh.
 	const uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
 	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
+	const uint32_t rtTriangleAttributesSize = (uint32_t)(model->getPolygons().size() * sizeof(render::RTTriangleAttributes));
 
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize,
-		SmallMap< FourCC, uint32_t >()
+		{
+			{ IMesh::c_fccRayTracingTriangleAttributes, rtTriangleAttributesSize }
+		}
 	);
 
 	// Create vertex buffer.
@@ -211,6 +216,19 @@ bool StaticMeshConverter::convert(
 			model->getPolygons().size()
 		);
 		meshParts.push_back(meshPart);
+
+		render::RTTriangleAttributes* ptr = (render::RTTriangleAttributes*)renderMesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->lock();
+		for (uint32_t i = 0; i < model->getPolygons().size(); ++i)
+		{
+			const auto& polygon = model->getPolygon(i);
+			const auto& material = model->getMaterial(polygon.getMaterial());
+
+			model->getNormal(polygon.getNormal()).storeUnaligned(ptr->normal);
+			material.getColor().storeUnaligned(ptr->albedo);
+
+			++ptr;
+		}
+		renderMesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->unlock();
 	}
 
 	renderMesh->setParts(meshParts);

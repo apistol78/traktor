@@ -99,22 +99,6 @@ Ref< IMesh > StaticMeshResource::createMesh(
 			log::error << L"Static mesh create failed; unable to create RT acceleration structure." << Endl;
 			return nullptr;
 		}
-
-		const uint32_t numTriangles = part.primitives.count;
-
-		staticMesh->m_rtPerPrimitiveColor = renderSystem->createBuffer(render::BuStructured, numTriangles * 4 * sizeof(float), false);
-		
-		static Random s_rnd;
-		float* ptr = (float*)staticMesh->m_rtPerPrimitiveColor->lock();
-		for (uint32_t i = 0; i < numTriangles; ++i)
-		{
-			*ptr++ = s_rnd.nextFloat();
-			*ptr++ = s_rnd.nextFloat();
-			*ptr++ = s_rnd.nextFloat();
-			*ptr++ = 1.0f;
-		}
-
-		staticMesh->m_rtPerPrimitiveColor->unlock();
 	}
 
 #if defined(_DEBUG)

@@ -187,4 +187,9 @@ void InstanceMesh::build(
 	}
 }
 
+const render::Buffer* InstanceMesh::getRTTriangleAttributes() const
+{
+	return m_renderMesh->getAuxBuffer(c_fccRayTracingTriangleAttributes);
+}
+
 }

@@ -83,4 +83,9 @@ void StaticMesh::build(
 	}
 }
 
+const render::Buffer* StaticMesh::getRTTriangleAttributes() const
+{
+	return m_renderMesh->getAuxBuffer(c_fccRayTracingTriangleAttributes);
+}
+
 }

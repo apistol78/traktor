@@ -665,6 +665,13 @@ struct IndirectCompute
 	uint32_t z;
 };
 
+/*! */
+struct RTTriangleAttributes
+{
+	float normal[4];
+	float albedo[4];
+};
+
 /*! Shader parameter handle. */
 typedef uint32_t handle_t;
 

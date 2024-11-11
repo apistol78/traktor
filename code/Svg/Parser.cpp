@@ -200,8 +200,6 @@ Ref< Shape > Parser::traverse(xml::Element* elm)
 		shape = parseImage(elm);
 	else if (name == L"defs")
 		parseDefs(elm);
-	else
-		log::debug << L"Unknown SVG element \"" << name << L"\"" << Endl;
 
 	if (shape)
 	{

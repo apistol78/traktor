@@ -308,7 +308,10 @@ bool MeshPipeline::buildOutput(
 		operations.push_back(new model::CalculateTangents(true));
 	}
 	else
+	{
+		operations.push_back(new model::CalculateNormals(false));
 		operations.push_back(new model::CalculateTangents(false));
+	}
 
 	// We allow models to be passed as build parameters in case models
 	// are procedurally generated.

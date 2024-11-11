@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <string>
 #include "Core/Config.h"
 
 namespace traktor
@@ -46,7 +47,7 @@ public:
 	 *
 	 * \param str 4-letter string.
 	 */
-	inline explicit FourCC(const char* str);
+	inline  FourCC(const char* const str);
 
 	/*! Format into string. */
 	inline std::wstring format() const;
@@ -97,7 +98,7 @@ inline FourCC::FourCC(uint32_t fcc)
 {
 }
 
-inline FourCC::FourCC(const char* str)
+inline FourCC::FourCC(const char* const str)
 {
 	m_fcc = (str[3] << 24) | (str[2] << 16) | (str[1] << 8) | (str[0]);
 }

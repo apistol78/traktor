@@ -67,6 +67,12 @@ public:
 		m_data = std::move(src.m_data);
 	}
 
+
+	SmallMap(const std::initializer_list< pair_t >& iv) noexcept
+	{
+		m_data = AlignedVector< pair_t >(iv);
+	}
+
 	void swap(SmallMap& src)
 	{
 		m_data.swap(src.m_data);

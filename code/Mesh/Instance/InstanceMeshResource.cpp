@@ -8,7 +8,6 @@
  */
 #include <algorithm>
 #include "Core/Log/Log.h"
-#include "Core/Math/Random.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStl.h"
@@ -98,22 +97,6 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 			log::error << L"Instance mesh create failed; unable to create RT acceleration structure." << Endl;
 			return nullptr;
 		}
-
-		const uint32_t numTriangles = part.primitives.count;
-
-		instanceMesh->m_rtPerPrimitiveColor = renderSystem->createBuffer(render::BuStructured, numTriangles * 4 * sizeof(float), false);
-		
-		static Random s_rnd;
-		float* ptr = (float*)instanceMesh->m_rtPerPrimitiveColor->lock();
-		for (uint32_t i = 0; i < numTriangles; ++i)
-		{
-			*ptr++ = s_rnd.nextFloat();
-			*ptr++ = s_rnd.nextFloat();
-			*ptr++ = s_rnd.nextFloat();
-			*ptr++ = 1.0f;
-		}
-
-		instanceMesh->m_rtPerPrimitiveColor->unlock();
 	}
 
 	return instanceMesh;
