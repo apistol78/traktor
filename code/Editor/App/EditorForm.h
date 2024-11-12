@@ -253,6 +253,8 @@ private:
 
 	void destroyToolPanel(ui::Widget* widget);
 
+	void buildActiveAsset();
+
 	void buildAssetsForOpenedEditors();
 
 	void buildAssetsThread(AlignedVector< Guid > assetGuids, bool rebuild);

@@ -755,6 +755,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutCommands.push_back(ui::Command(L"Editor.ReplaceAll"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Rename"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Build"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.BuildActive"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Rebuild"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.CancelBuild"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.QuickOpen"));
@@ -1700,6 +1701,17 @@ void EditorForm::destroyToolPanel(ui::Widget* widget)
 	m_paneSouth->undock(widget);
 }
 
+void EditorForm::buildActiveAsset()
+{
+	if (m_activeDocument != nullptr)
+	{
+		std::set< Guid > dependencies;
+		for (auto instance : m_activeDocument->getInstances())
+			dependencies.insert(instance->getGuid());
+		buildAssets(AlignedVector< Guid >(dependencies.begin(), dependencies.end()), false);
+	}
+}
+
 void EditorForm::buildAssetsForOpenedEditors()
 {
 	const std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
@@ -2634,6 +2646,8 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		moveNewTabGroup();
 	else if (command == L"Editor.Build")
 		buildAssets(false);
+	else if (command == L"Editor.BuildActive")
+		buildActiveAsset();
 	else if (command == L"Editor.Rebuild")
 	{
 		if (ui::MessageBox::show(this, i18n::Text(L"EDITOR_SURE_TO_REBUILD_MESSAGE"), i18n::Text(L"EDITOR_SURE_TO_REBUILD_CAPTION"), ui::MbYesNo | ui::MbIconExclamation) == ui::DialogResult::Yes)
