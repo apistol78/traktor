@@ -1352,6 +1352,7 @@ void ShaderGraphEditorPage::updateGraph()
 	}
 
 	// Update uniforms grid.
+	if (resolvedShaderGraph)
 	{
 		m_uniformsGrid->removeAllRows();
 		for (auto node : m_shaderGraph->getNodes())
