@@ -168,8 +168,8 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 		vtcd.shaderStorage = true;
 		m_cloudTextures[1] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W);
 
-		stcd.width = 1024;
-		stcd.height = 256;
+		stcd.width = 1024 * 2;
+		stcd.height = 256 * 2;
 		stcd.mipCount = 1;
 		stcd.format = render::TfR16G16B16A16F;
 		stcd.shaderStorage = true;
@@ -321,8 +321,8 @@ void SkyComponent::setup(
 			rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds dome");
 				renderBlock->program = m_shaderCloudsDome->getProgram().program;
-				renderBlock->workSize[0] = 1024;
-				renderBlock->workSize[1] = 256;
+				renderBlock->workSize[0] = 1024 * 2;
+				renderBlock->workSize[1] = 256 * 2;
 				renderBlock->workSize[2] = 1;
 
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
