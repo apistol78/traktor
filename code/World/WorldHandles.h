@@ -65,6 +65,7 @@ extern const render::Handle T_DLLCLASS s_handleShadowMapAtlas;
 extern const render::Handle T_DLLCLASS s_handleShadowBias;
 extern const render::Handle T_DLLCLASS s_handleTileSBuffer;
 extern const render::Handle T_DLLCLASS s_handleTime;
+extern const render::Handle T_DLLCLASS s_handleRandom;
 extern const render::Handle T_DLLCLASS s_handleViewDistance;
 extern const render::Handle T_DLLCLASS s_handleView;
 extern const render::Handle T_DLLCLASS s_handleViewInverse;

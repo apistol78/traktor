@@ -2639,6 +2639,7 @@ $Output = vec4(r, 0.0f);
 			<include>
 				<item>{1C13688E-63BC-3141-ACB1-58EEE72EEF2F}</item>
 				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
+				<item>{4370C471-3C5D-914B-A3AC-866BE15AD328}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -2653,6 +2654,14 @@ $Output = vec4(r, 0.0f);
 					<id>{06FC1BF4-B565-2E47-9ACD-360E0BFC7F41}</id>
 					<name>Direction</name>
 				</item>
+				<item>
+					<id>{45D32A5E-5CDA-064C-9156-C2EB256BBF3F}</id>
+					<name>Random</name>
+				</item>
+				<item>
+					<id>{690235F3-58B9-684F-B2C5-0AFAF17C34DA}</id>
+					<name>Distance</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -2663,35 +2672,46 @@ $Output = vec4(r, 0.0f);
 			</outputPins>
 			<script>
 			<![CDATA[
-const float Near = 0.5f;
-const float Far = 100.0f;
+const int N = 8;
+const float near = mix(0.5f, 2.0f, clamp($Distance / 100.0f, 0.0f, 1.0f));
 
-const vec3 rayOrigin = $Origin.xyz;
-const vec3 rayDir = $Direction.xyz;
+vec3 u, v;
+OrthogonalFrame($Direction.xyz, u, v);
 
-rayQueryEXT rayQuery;
-rayQueryInitializeEXT(
-	rayQuery,              // Ray query
-	$AS,                  // Top-level acceleration structure
-	gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,  // Ray flags, here saying "treat all geometry as opaque"
-	0xFF,                  // 8-bit instance mask, here saying "trace against all instances"
-	rayOrigin,             // Ray origin
-	Near,                   // Minimum t-value
-	rayDir,         	 // Ray direction
-	Far              // Maximum t-value
-);
+mat4 R = Rotate($Direction.xyz, $Random);
+u = (R * vec4(u, 0.0f)).xyz;
+v = (R * vec4(v, 0.0f)).xyz;
 
-while(rayQueryProceedEXT(rayQuery))
+int nshadowed = 0;
+
+for (int i = 0; i < N; ++i)
 {
+	const vec2 r = (Hammersley(i, N) * 1.0f - 0.5f) * 0.1f;
+
+	const vec3 rayOrigin = $Origin.xyz;
+	const vec3 rayDir = normalize($Direction.xyz + u * r.x + v * r.y);
+	
+	rayQueryEXT rayQuery;
+	rayQueryInitializeEXT(
+		rayQuery,
+		$AS,
+		gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,
+		0xff,
+		rayOrigin,
+		near,
+		rayDir,
+		HWRT_DefaultFar
+	);
+	
+	while(rayQueryProceedEXT(rayQuery));
+	
+	if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
+	{
+		nshadowed++;
+	}
 }
 
-$Output = 1.0f;
-
-if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
-{
-	const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
-	$Output = 0.0f;
-}
+$Output = 1.0f - float(nshadowed) / N;
 
 			]]>
 			</script>
@@ -2801,6 +2821,65 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 				<second>-1099</second>
 			</position>
 			<name>L_RTShadow</name>
+		</item>
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+			<id>{788A4845-271A-BC47-99D9-2BAEC33D4A52}</id>
+			<comment/>
+			<position>
+				<first>2882</first>
+				<second>-1766</second>
+			</position>
+			<declaration>{C0A1721B-9DAA-9A4C-BD6D-90C8B517D6BE}</declaration>
+			<parameterName>World_TLAS</parameterName>
+			<type>AccelerationStructure</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{BD795EC3-288E-BD43-AA36-3ECB478DDDB6}</id>
+			<comment/>
+			<position>
+				<first>3095</first>
+				<second>-1765</second>
+			</position>
+			<name>RandomAngle</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include>
+				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{2F15EAF1-E617-4931-AF16-BA52D9315156}</id>
+					<name>Time</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
+					<name>Output</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+$Output = hash13(vec3(gl_FragCoord.xy, $Time)) * 2 * 3.14;
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{786776F2-2B55-C54A-9840-357DB13E7F41}</id>
+			<comment/>
+			<position>
+				<first>2774</first>
+				<second>-2112</second>
+			</position>
+			<swizzle>z</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -4982,6 +5061,46 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 			<destination>
 				<node ref="/object/nodes/item[47]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[224]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[225]"/>
+				<id>{2F15EAF1-E617-4931-AF16-BA52D9315156}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[225]"/>
+				<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[212]"/>
+				<id>{45D32A5E-5CDA-064C-9156-C2EB256BBF3F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[214]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[226]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[226]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[212]"/>
+				<id>{690235F3-58B9-684F-B2C5-0AFAF17C34DA}</id>
 			</destination>
 		</item>
 	</edges>

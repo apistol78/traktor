@@ -10,6 +10,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Core/Math/Float.h"
+#include "Core/Math/Random.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Timer/Profiler.h"
@@ -61,6 +62,8 @@ const render::Handle s_persistentVisualTargetSet[] =
 
 const resource::Id< render::Shader > c_lightShader(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}");
 const resource::Id< render::Shader > c_copyShader(L"{06BE4DF8-8D5D-8246-805E-B2A70B6DDB66}");
+
+Random s_random;
 
 	}
 
@@ -276,6 +279,7 @@ void WorldRendererDeferred::setupVisualPass(
 				auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 				sharedParams->beginParameters(renderContext);
 				sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
+				sharedParams->setFloatParameter(s_handleRandom, s_random.nextFloat());
 				sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
 				sharedParams->setVectorParameter(s_handleSlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
 				sharedParams->setMatrixParameter(s_handleProjection, projection);

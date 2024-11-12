@@ -55,6 +55,7 @@ const render::Handle s_handleShadowMapAtlas(L"World_ShadowMapAtlas");
 const render::Handle s_handleShadowBias(L"World_ShadowBias");
 const render::Handle s_handleTileSBuffer(L"World_TileSBuffer");
 const render::Handle s_handleTime(L"World_Time");
+const render::Handle s_handleRandom(L"World_Random");
 const render::Handle s_handleViewDistance(L"World_ViewDistance");
 const render::Handle s_handleView(L"World_View");
 const render::Handle s_handleViewInverse(L"World_ViewInverse");
