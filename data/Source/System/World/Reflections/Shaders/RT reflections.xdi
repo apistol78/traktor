@@ -195,7 +195,7 @@
 			<cullMode>Never</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
-			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorSource>BfOne</blendColorSource>
 			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
 			<blendAlphaOperation>BoAdd</blendAlphaOperation>
 			<blendAlphaSource>BfOne</blendAlphaSource>
@@ -445,6 +445,10 @@ $Output = ($Roughness < 0.4f && $Specular > 0.1f) ? 1.0f : 0.0f;
 					<id>{06FC1BF4-B565-2E47-9ACD-360E0BFC7F41}</id>
 					<name>Direction</name>
 				</item>
+				<item>
+					<id>{8F926B56-BB90-6142-BFF9-9A96718320C4}</id>
+					<name>Random</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -457,38 +461,55 @@ $Output = ($Roughness < 0.4f && $Specular > 0.1f) ? 1.0f : 0.0f;
 			<![CDATA[
 const float Near = 1.5f;
 const float Far = 200.0f;
+const int N = 8;
 
-const vec3 rayOrigin = $Origin.xyz;
-const vec3 rayDir = $Direction.xyz;
+vec3 u, v;
+OrthogonalFrame($Direction.xyz, u, v);
+
+mat4 R = Rotate($Direction.xyz, $Random);
+u = (R * vec4(u, 0.0f)).xyz;
+v = (R * vec4(v, 0.0f)).xyz;
+
+vec4 acc = vec4(0.0f);
+for (int i = 0; i < N; ++i)
+{
+	const vec2 r = (Hammersley(i, N) * 1.0f - 0.5f) * 0.1f;
 	
-rayQueryEXT rayQuery;
-rayQueryInitializeEXT(
-	rayQuery,              // Ray query
-	$AS,                  // Top-level acceleration structure
-	gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,  // Ray flags, here saying "treat all geometry as opaque"
-	0xFF,                  // 8-bit instance mask, here saying "trace against all instances"
-	rayOrigin,             // Ray origin
-	Near,                   // Minimum t-value
-	rayDir,         	 // Ray direction
-	Far              // Maximum t-value
-);
-
-while(rayQueryProceedEXT(rayQuery))
-{
-}
-
-$Output = vec4(0.0f);
-
-if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
-{
-	const uint id = rayQueryGetIntersectionInstanceCustomIndexEXT(rayQuery, true);
-	if (id != (1 << 24) - 1)
+	const vec3 rayOrigin = $Origin.xyz;
+	const vec3 rayDir = normalize($Direction.xyz + u * r.x + v * r.y);
+	
+	rayQueryEXT rayQuery;
+	rayQueryInitializeEXT(
+		rayQuery,              // Ray query
+		$AS,                  // Top-level acceleration structure
+		gl_RayFlagsOpaqueEXT,  // Ray flags, here saying "treat all geometry as opaque"
+		0xFF,                  // 8-bit instance mask, here saying "trace against all instances"
+		rayOrigin,             // Ray origin
+		Near,                   // Minimum t-value
+		rayDir,         	 // Ray direction
+		Far              // Maximum t-value
+	);
+	
+	while(rayQueryProceedEXT(rayQuery))
 	{
-		const uint triangle = rayQueryGetIntersectionPrimitiveIndexEXT(rayQuery, true);
-		const vec4 albedo = __bindlessBufferVec4__[id].data[triangle * 2 + 1].value;
-		$Output = albedo;
+	}
+	
+	
+	
+	if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
+	{
+		const uint id = rayQueryGetIntersectionInstanceCustomIndexEXT(rayQuery, true);
+		if (id != (1 << 24) - 1)
+		{
+			const uint triangle = rayQueryGetIntersectionPrimitiveIndexEXT(rayQuery, true);
+			const vec4 albedo = __bindlessBufferVec4__[id].data[triangle * 2 + 1].value;
+			acc += albedo;
+		}
 	}
 }
+
+$Output = acc / N;
+
 			]]>
 			</script>
 		</item>
@@ -631,6 +652,65 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 				<second>-754</second>
 			</position>
 			<swizzle>xyz</swizzle>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{7988199D-14B3-CC43-903C-887ECA1C5325}</id>
+			<comment/>
+			<position>
+				<first>1453</first>
+				<second>-304</second>
+			</position>
+			<name>RandomAngle</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include>
+				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{2F15EAF1-E617-4931-AF16-BA52D9315156}</id>
+					<name>Time</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
+					<name>Output</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+$Output = hash13(vec3(gl_FragCoord.xy, $Time)) * 2 * 3.14;
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+			<id>{FDA3F035-EDA7-504B-BEF4-35D83D148C5B}</id>
+			<comment/>
+			<position>
+				<first>1021</first>
+				<second>-328</second>
+			</position>
+			<declaration>{85AE3209-AEBC-1143-B9AA-15E7E29380B0}</declaration>
+			<parameterName/>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{6F7BCCC1-5AC7-604A-B013-CE07E5DA68CE}</id>
+			<comment/>
+			<position>
+				<first>1239</first>
+				<second>-306</second>
+			</position>
+			<swizzle>x</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -1026,8 +1106,38 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[20]"/>
-				<id>{291502CF-D8D7-4CEC-8457-E867D70CD04E}</id>
+				<node ref="/object/nodes/item[46]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{2F15EAF1-E617-4931-AF16-BA52D9315156}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{8F926B56-BB90-6142-BFF9-9A96718320C4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[40]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[17]"/>

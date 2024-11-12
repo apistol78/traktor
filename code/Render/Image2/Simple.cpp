@@ -32,6 +32,7 @@ const static Handle s_handleLastView(L"LastView");
 const static Handle s_handleLastViewInverse(L"LastViewInverse");
 const static Handle s_handleMagicCoeffs(L"MagicCoeffs");
 const static Handle s_handleNoiseOffset(L"NoiseOffset");
+const static Handle s_handleRandom(L"Random");
 
 Random s_random;
 
@@ -79,6 +80,7 @@ void Simple::build(
 	pp->setVectorParameter(s_handleViewEdgeBottomRight, viewEdgeBottomRight);
 	pp->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 	pp->setVectorParameter(s_handleNoiseOffset, Vector4(s_random.nextFloat(), s_random.nextFloat(), 0.0f, 0.0f));
+	pp->setVectorParameter(s_handleRandom, Vector4(s_random.nextFloat(), s_random.nextFloat(), s_random.nextFloat(), s_random.nextFloat()));
 	pp->setMatrixParameter(s_handleProjection, view.projection);
 	pp->setMatrixParameter(s_handleView, view.view);
 	pp->setMatrixParameter(s_handleViewInverse, view.view.inverse());
