@@ -27,6 +27,7 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/Mesh/SystemMeshFactory.h"
+#include "World/WorldTypes.h"
 
 namespace traktor::mesh
 {
@@ -71,7 +72,7 @@ bool SkinnedMeshConverter::convert(
 	const uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
 	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
 	const uint32_t auxBufferSize = (uint32_t)(model->getVertices().size() * (6 * 4 * sizeof(float)));
-	const uint32_t rtTriangleAttributesSize = (uint32_t)(model->getPolygons().size() * sizeof(render::RTTriangleAttributes));
+	const uint32_t rtTriangleAttributesSize = (uint32_t)(model->getPolygons().size() * sizeof(world::RTTriangleAttributes));
 
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
@@ -274,7 +275,7 @@ bool SkinnedMeshConverter::convert(
 		);
 		meshParts.push_back(meshPart);
 
-		render::RTTriangleAttributes* ptr = (render::RTTriangleAttributes*)mesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->lock();
+		world::RTTriangleAttributes* ptr = (world::RTTriangleAttributes*)mesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->lock();
 		for (const auto& mt : materialTechniqueMap)
 		{
 			for (uint32_t i = 0; i < model->getPolygons().size(); ++i)

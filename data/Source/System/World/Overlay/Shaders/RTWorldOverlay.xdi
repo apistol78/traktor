@@ -100,6 +100,7 @@
 			<include>
 				<item>{1C13688E-63BC-3141-ACB1-58EEE72EEF2F}</item>
 				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
+				<item>{4370C471-3C5D-914B-A3AC-866BE15AD328}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -142,35 +143,14 @@ rayQueryInitializeEXT(
 	Far              // Maximum t-value
 );
 
-while(rayQueryProceedEXT(rayQuery))
-{
-}
+while(rayQueryProceedEXT(rayQuery));
 
 $Output = vec4(1.0f);
 
 if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
 {
-	const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
-
-	const uint id = rayQueryGetIntersectionInstanceCustomIndexEXT(rayQuery, true);
-	if (id != (1 << 24) - 1)
-	{
-		const uint triangle = rayQueryGetIntersectionPrimitiveIndexEXT(rayQuery, true);
-		const vec4 normal = __bindlessBufferVec4__[id].data[triangle * 2 + 0].value;
-		const vec4 albedo = __bindlessBufferVec4__[id].data[triangle * 2 + 1].value;
-
-		mat4x3 o2w = rayQueryGetIntersectionObjectToWorldEXT(rayQuery, true);
-		vec3 wn = o2w * normal;
-
-		$Output = vec4(
-			pow(albedo.x, 1.0f / 2.2f),
-			pow(albedo.y, 1.0f / 2.2f),
-			pow(albedo.z, 1.0f / 2.2f),
-			1.0f
-		);
-	}
-	else
-		$Output = vec4(1.0f, 0.5f, 0.0f, 1.0f);
+	const HWRT_Material material = HWRT_GetMaterial(rayQuery);
+	$Output = material.albedo;
 }
 
 			]]>

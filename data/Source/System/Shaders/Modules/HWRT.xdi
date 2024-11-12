@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule">
+	<text>
+	<![CDATA[
+// Default configuration of rays.
+const float HWRT_DefaultNear = 0.5f;
+const float HWRT_DefaultFar = 100.0f;
+
+// Material properties.
+
+struct HWRT_Material
+{
+	highp vec4 normal;
+	highp vec4 albedo;
+};
+
+layout (std430, binding = 2, set = 3) readonly buffer __bindlessBufferMaterials__Buffer
+{
+	HWRT_Material materialPerTriangle[];
+}
+__bindlessBufferMaterials__[];
+
+
+HWRT_Material HWRT_GetMaterial(rayQueryEXT query)
+{
+	HWRT_Material material;
+	material.normal = vec4(0.0f);
+	material.albedo = vec4(0.0f);
+
+	if(rayQueryGetIntersectionTypeEXT(query, true) != gl_RayQueryCommittedIntersectionNoneEXT)
+	{
+		const uint id = rayQueryGetIntersectionInstanceCustomIndexEXT(query, true);
+		if (id != (1 << 24) - 1)
+		{
+			const uint triangle = rayQueryGetIntersectionPrimitiveIndexEXT(query, true);
+			material = __bindlessBufferMaterials__[id].materialPerTriangle[triangle];
+		}
+	}
+
+	return material;
+}
+
+	]]>
+	</text>
+</object>

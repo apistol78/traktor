@@ -2624,7 +2624,7 @@ $Output = vec4(r, 0.0f);
 			<id>{F7CF3ED7-7F34-AE4C-87F1-B2C25B54F3F2}</id>
 			<comment/>
 			<position>
-				<first>3329</first>
+				<first>3328</first>
 				<second>-1962</second>
 			</position>
 			<name>Raytracing</name>
@@ -2663,7 +2663,7 @@ $Output = vec4(r, 0.0f);
 			</outputPins>
 			<script>
 			<![CDATA[
-const float Near = 1.5f;
+const float Near = 0.5f;
 const float Far = 100.0f;
 
 const vec3 rayOrigin = $Origin.xyz;
@@ -2692,6 +2692,7 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 	const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
 	$Output = 0.0f;
 }
+
 			]]>
 			</script>
 		</item>

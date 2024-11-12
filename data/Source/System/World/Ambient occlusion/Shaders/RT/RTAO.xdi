@@ -275,6 +275,7 @@
 			<include>
 				<item>{1C13688E-63BC-3141-ACB1-58EEE72EEF2F}</item>
 				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
+				<item>{4370C471-3C5D-914B-A3AC-866BE15AD328}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -303,8 +304,7 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-const float Near = 1.5f;
-const float Far = 100.0f;
+
 const int N = 8;
 float occlusions = 0.0f;
 
@@ -329,19 +329,17 @@ for (int i = 0; i < N; ++i)
 		gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,  // Ray flags, here saying "treat all geometry as opaque"
 		0xFF,                  // 8-bit instance mask, here saying "trace against all instances"
 		rayOrigin,             // Ray origin
-		Near,                   // Minimum t-value
+		HWRT_DefaultNear,                   // Minimum t-value
 		rayDir,         	 // Ray direction
-		Far              // Maximum t-value
+		HWRT_DefaultFar              // Maximum t-value
 	);
 	
-	while(rayQueryProceedEXT(rayQuery))
-	{
-	}
+	while(rayQueryProceedEXT(rayQuery));
 	
 	if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
 	{
 		const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
-		occlusions += 1.0f - (t - Near) / (Far - Near);
+		occlusions += 1.0f - (t - HWRT_DefaultNear) / (HWRT_DefaultFar - HWRT_DefaultNear);
 	}
 }
 
