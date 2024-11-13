@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -170,20 +170,30 @@ void FinalRenderControl::destroy()
 		m_camera = nullptr;
 	}
 
+	m_renderContext = nullptr;
+
 	if (m_sceneInstance)
+	{
 		m_sceneInstance->destroy();
+		m_sceneInstance.clear();
+	}
 
 	safeDestroy(m_renderGraph);
 	safeDestroy(m_worldRenderer);
 	safeDestroy(m_screenRenderer);
 	safeClose(m_renderView);
 	safeDestroy(m_containerAspect);
+
+	m_context->getResourceManager()->unloadUnusedResident();
 }
 
 void FinalRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
 {
-	m_worldRendererType = &worldRendererType;
-	safeDestroy(m_worldRenderer);
+	if (m_worldRendererType != &worldRendererType)
+	{
+		m_worldRendererType = &worldRendererType;
+		safeDestroy(m_worldRenderer);
+	}
 }
 
 void FinalRenderControl::setAspect(float aspect)
@@ -494,14 +504,6 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	update.deltaTime = scaledDeltaTime;
 	m_sceneInstance->update(update);
 
-	//// Build a root entity by gathering entities from containers.
-	//Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
-	//Ref< world::Entity > rootEntity = new world::Entity();
-	//rootEntity->setComponent(rootGroup);
-
-	//m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
-	//rootGroup->addEntity(m_sceneInstance->getRootEntity());
-
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
 	m_worldRenderView.setPerspective(
@@ -545,10 +547,6 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->endFrame();
 		m_renderView->present();
 	}
-
-	// Need to clear all entities from our root group since when our root entity
-	// goes out of scope it's automatically destroyed.
-	//rootGroup->removeAllEntities();
 
 	event->consume();
 }

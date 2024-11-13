@@ -228,15 +228,7 @@ void Context::addDeferredCleanup(const cleanup_fn_t& fn)
 	if (m_views > 0)
 		m_cleanupFns.push_back(fn);
 	else
-	{
-		for (int32_t i = 0; i < sizeof_array(m_uniformBufferPools); ++i)
-		{
-			if (m_uniformBufferPools[i])
-				m_uniformBufferPools[i]->flush();
-		}
-
 		fn(this);
-	}
 }
 
 void Context::addCleanupListener(ICleanupListener* cleanupListener)
