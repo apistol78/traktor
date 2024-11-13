@@ -87,7 +87,6 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_imageProcessQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ImageProcessQuality", (int32_t)world::Quality::Medium);
 	m_particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", (int32_t)world::Quality::Medium);
 	m_terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", (int32_t)world::Quality::Medium);
-	m_oceanQuality = (world::Quality)settings->getProperty< int32_t >(L"World.OceanQuality", (int32_t)world::Quality::Medium);
 	m_gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
 
 	m_renderServer = renderServer;
@@ -202,7 +201,6 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	const world::Quality imageProcessQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ImageProcessQuality", (int32_t)world::Quality::Medium);
 	const world::Quality particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", (int32_t)world::Quality::Medium);
 	const world::Quality terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", (int32_t)world::Quality::Medium);
-	const world::Quality oceanQuality = (world::Quality)settings->getProperty< int32_t >(L"World.OceanQuality", (int32_t)world::Quality::Medium);
 	const float gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
 
 	// Check if we need to be reconfigured.
@@ -215,7 +213,6 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 		imageProcessQuality == m_imageProcessQuality &&
 		particleQuality == m_particleQuality &&
 		terrainQuality == m_terrainQuality &&
-		oceanQuality == m_oceanQuality &&
 		gamma == m_gamma
 	)
 		return CrUnaffected;
@@ -236,7 +233,6 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	m_antiAliasQuality = antiAliasQuality;
 	m_imageProcessQuality = imageProcessQuality;
 	m_terrainQuality = terrainQuality;
-	m_oceanQuality = oceanQuality;
 	m_gamma = gamma;
 
 	return CrAccepted;
