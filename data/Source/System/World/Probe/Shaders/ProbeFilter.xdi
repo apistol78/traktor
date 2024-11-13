@@ -334,7 +334,7 @@
 				<second>-955</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{74BFAEEC-093B-9442-B674-B26145AE7B66}</id>
 			<comment/>
 			<position>
@@ -343,11 +343,13 @@
 			</position>
 			<name>Hammersley</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -390,10 +392,10 @@ $Output = vec4(
 			<id>{11BB94C1-07C5-AD4D-9595-7B2D113553E8}</id>
 			<comment/>
 			<position>
-				<first>345</first>
+				<first>359</first>
 				<second>-2571</second>
 			</position>
-			<value>250</value>
+			<value>400</value>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{4B1A234D-6A2E-FB4B-90C8-E12083A6A04C}</id>
@@ -439,7 +441,7 @@ $Output = vec4(
 			</position>
 			<name>L_N</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{9F5C44E5-F20A-1048-A1D7-DF1CE8361B80}</id>
 			<comment/>
 			<position>
@@ -448,11 +450,13 @@ $Output = vec4(
 			</position>
 			<name>ImportanceSampleGGX</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -768,8 +772,8 @@ V
 			<id>{3BCAA781-2862-1649-B664-787D6F8A4085}</id>
 			<comment/>
 			<position>
-				<first>-166</first>
-				<second>-2463</second>
+				<first>-149</first>
+				<second>-2470</second>
 			</position>
 			<value>6</value>
 		</item>
@@ -777,8 +781,8 @@ V
 			<id>{128475F3-0B6A-9F49-8FD8-AE8B63D188E4}</id>
 			<comment/>
 			<position>
-				<first>58</first>
-				<second>-2466</second>
+				<first>75</first>
+				<second>-2473</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
@@ -788,14 +792,14 @@ V
 				<first>359</first>
 				<second>-2617</second>
 			</position>
-			<value>10</value>
+			<value>100</value>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{AB40A50F-C13B-4B4E-A13D-3AA8F8F1C157}</id>
 			<comment/>
 			<position>
-				<first>-226</first>
-				<second>-2410</second>
+				<first>-209</first>
+				<second>-2417</second>
 			</position>
 			<declaration>{644CE221-A8B4-7340-9648-3F021DD4119B}</declaration>
 			<parameterName/>
@@ -822,7 +826,7 @@ V
 			<id>{7FF08859-ADEB-904C-971B-11EDE97B047F}</id>
 			<comment/>
 			<position>
-				<first>340</first>
+				<first>355</first>
 				<second>-2520</second>
 			</position>
 			<min>0</min>
