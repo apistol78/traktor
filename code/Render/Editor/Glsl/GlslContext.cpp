@@ -49,15 +49,7 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 	m_layout.addStatic(new GlslImage(L"__bindlessImages2D__",   GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::Image2D, true),   /* binding */ 1);
 	m_layout.addStatic(new GlslImage(L"__bindlessImages3D__",   GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::Image3D, true),   /* binding */ 1);
 	m_layout.addStatic(new GlslImage(L"__bindlessImagesCube__", GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::ImageCube, true), /* binding */ 1);
-
-	Ref< GlslStorageBuffer > sbuint4 = new GlslStorageBuffer(L"__bindlessBufferUInt4__", GlslResource::Set::BindlessBuffers, GlslResource::BsAll, true);
-	sbuint4->add(L"value", DtInteger4, 0);
-	m_layout.addStatic(sbuint4, /* binding */ 2);
-
-	Ref< GlslStorageBuffer > sbvec4= new GlslStorageBuffer(L"__bindlessBufferVec4__", GlslResource::Set::BindlessBuffers, GlslResource::BsAll, true);
-	sbvec4->add(L"value", DtFloat4, 0);
-	m_layout.addStatic(sbvec4, /* binding */ 2);
-
+	//#note Binding 2 is bindless buffers, which is only accessible from shader modules.
 	m_layout.addStatic(new GlslUniformBuffer(L"UbOnce",  GlslResource::Set::Default , 0), /* binding */ 3);
 	m_layout.addStatic(new GlslUniformBuffer(L"UbFrame", GlslResource::Set::Default, 0), /* binding */ 4);
 	m_layout.addStatic(new GlslUniformBuffer(L"UbDraw",  GlslResource::Set::Default, 0), /* binding */ 5);
