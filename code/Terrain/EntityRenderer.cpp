@@ -19,11 +19,9 @@ namespace traktor::terrain
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.EntityRenderer", EntityRenderer, world::IEntityRenderer)
 
-EntityRenderer::EntityRenderer(float terrainDetailDistance, uint32_t terrainCacheSize, bool terrainLayersEnable, bool oceanReflectionEnable)
+EntityRenderer::EntityRenderer(float terrainDetailDistance, uint32_t terrainCacheSize)
 :	m_terrainDetailDistance(terrainDetailDistance)
 ,	m_terrainCacheSize(terrainCacheSize)
-,	m_terrainLayersEnable(terrainLayersEnable)
-,	m_oceanReflectionEnable(oceanReflectionEnable)
 {
 }
 
@@ -37,16 +35,6 @@ void EntityRenderer::setTerrainCacheSize(uint32_t terrainCacheSize)
 	m_terrainCacheSize = terrainCacheSize;
 }
 
-void EntityRenderer::setTerrainLayersEnable(bool terrainLayersEnable)
-{
-	m_terrainLayersEnable = terrainLayersEnable;
-}
-
-void EntityRenderer::setOceanDynamicReflectionEnable(bool oceanReflectionEnable)
-{
-	m_oceanReflectionEnable = oceanReflectionEnable;
-}
-
 bool EntityRenderer::initialize(const ObjectStore& objectStore)
 {
 	return true;
@@ -54,12 +42,12 @@ bool EntityRenderer::initialize(const ObjectStore& objectStore)
 
 const TypeInfoSet EntityRenderer::getRenderableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< OceanComponent >();
-	typeSet.insert< RiverComponent >();
-	typeSet.insert< TerrainComponent >();
-	typeSet.insert< TerrainLayerComponent >();
-	return typeSet;
+	return makeTypeInfoSet<
+		OceanComponent,
+		RiverComponent,
+		TerrainComponent,
+		TerrainLayerComponent
+	>();
 }
 
 void EntityRenderer::setup(
@@ -92,7 +80,7 @@ void EntityRenderer::build(
 	else if (auto terrainLayerComponent = dynamic_type_cast< TerrainLayerComponent* >(renderable))
 		terrainLayerComponent->build(context, worldRenderView, worldRenderPass);
 	else if (auto oceanComponent = dynamic_type_cast< OceanComponent* >(renderable))
-		oceanComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass, m_oceanReflectionEnable);
+		oceanComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
 	else if (auto riverComponent = dynamic_type_cast< RiverComponent* >(renderable))
 		riverComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
 }

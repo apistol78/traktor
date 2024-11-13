@@ -161,9 +161,7 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 
 	m_terrainEntityRenderer = new terrain::EntityRenderer(
 		c_terrainDetailDistances[(int32_t)m_terrainQuality],
-		c_terrainSurfaceCacheSizes[(int32_t)m_terrainQuality],
-		bool(m_terrainQuality >= world::Quality::Medium),
-		bool(m_oceanQuality >= world::Quality::High)
+		c_terrainSurfaceCacheSizes[(int32_t)m_terrainQuality]
 	);
 
 	m_entityRenderers->add(new world::ProbeRenderer(resourceManager, renderSystem, *m_worldType));
@@ -229,8 +227,6 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 
 	m_terrainEntityRenderer->setTerrainDetailDistance(c_terrainDetailDistances[(int32_t)terrainQuality]);
 	m_terrainEntityRenderer->setTerrainCacheSize(c_terrainSurfaceCacheSizes[(int32_t)terrainQuality]);
-	m_terrainEntityRenderer->setTerrainLayersEnable((bool)(terrainQuality >= world::Quality::Medium));
-	m_terrainEntityRenderer->setOceanDynamicReflectionEnable((bool)(oceanQuality >= world::Quality::High));
 
 	// Save ghost configuration state.
 	m_motionBlurQuality = motionBlurQuality;

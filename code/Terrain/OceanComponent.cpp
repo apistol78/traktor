@@ -431,8 +431,7 @@ void OceanComponent::setup(
 void OceanComponent::build(
 	render::RenderContext* renderContext,
 	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	bool reflectionEnable
+	const world::IWorldRenderPass& worldRenderPass
 )
 {
 	if (!m_owner)

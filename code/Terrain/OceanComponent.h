@@ -86,8 +86,7 @@ public:
 	void build(
 		render::RenderContext* renderContext,
 		const world::WorldRenderView& worldRenderView,
-		const world::IWorldRenderPass& worldRenderPass,
-		bool reflectionEnable
+		const world::IWorldRenderPass& worldRenderPass
 	);
 
 	void setShallowTint(const Color4f& shallowTint) { m_shallowTint = shallowTint; }
