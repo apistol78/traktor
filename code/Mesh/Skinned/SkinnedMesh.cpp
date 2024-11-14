@@ -159,6 +159,35 @@ Ref< render::Buffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* rend
 	return jointBuffer;
 }
 
+Ref< render::IAccelerationStructure > SkinnedMesh::createAccelerationStructure(render::IRenderSystem* renderSystem) const
+{
+	if (!renderSystem->supportRayTracing())
+		return nullptr;
+
+	const auto& part = m_mesh->getParts().back();
+	T_FATAL_ASSERT(part.name == L"__RT__");
+
+	AlignedVector< render::Primitives > primitives;
+	primitives.push_back(part.primitives);
+
+	Ref< const render::IVertexLayout > vertexLayout = renderSystem->createVertexLayout({
+		render::VertexElement(render::DataUsage::Position,	render::DtFloat4,	0 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Normal,	render::DtFloat4,	1 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Tangent,	render::DtFloat4,	2 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Binormal,	render::DtFloat4,	3 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Custom,	render::DtFloat4,	4 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Custom,	render::DtFloat4,	5 * 4 * sizeof(float), 1)
+	});
+
+	return renderSystem->createAccelerationStructure(
+		m_mesh->getAuxBuffer(SkinnedMesh::c_fccSkinPosition),
+		vertexLayout,
+		m_mesh->getIndexBuffer(),
+		m_mesh->getIndexType(),
+		primitives
+	);
+}
+
 const render::Buffer* SkinnedMesh::getRTTriangleAttributes() const
 {
 	return m_mesh->getAuxBuffer(c_fccRayTracingTriangleAttributes);

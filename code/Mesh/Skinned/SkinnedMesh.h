@@ -99,7 +99,7 @@ public:
 
 	static Ref< render::Buffer > createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount);
 
-	const render::IAccelerationStructure* getAccelerationStructure() const { return m_rtAccelerationStructure; }
+	Ref< render::IAccelerationStructure > createAccelerationStructure(render::IRenderSystem* renderSystem) const;
 
 	const render::Buffer* getRTTriangleAttributes() const;
 
@@ -120,9 +120,6 @@ private:
 	resource::Proxy< render::Shader > m_shaderUpdateSkin;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_mesh;
-
-	// Ray tracing
-	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
 
 #if defined(_DEBUG)
 	std::string m_name;

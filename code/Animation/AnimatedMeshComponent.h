@@ -36,6 +36,7 @@ namespace traktor::render
 {
 
 class Buffer;
+class IAccelerationStructure;
 class IRenderSystem;
 
 }
@@ -81,12 +82,16 @@ public:
 private:
 	resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	world::World* m_world = nullptr;
+
+	Ref< render::Buffer > m_jointBuffer;
+	Ref< render::Buffer > m_skinBuffer[2];
+
+	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
+
 	AlignedVector< int32_t > m_jointRemap;
 	AlignedVector< Transform > m_jointInverseTransforms;
 	AlignedVector< Transform > m_poseTransforms[2];
-	Ref< render::Buffer > m_jointBuffer;
-	Ref< render::Buffer > m_skinBuffer[2];
 	Transform m_lastWorldTransform[2];
 	std::atomic< int32_t > m_index;
 	bool m_lastIsVisible = false;

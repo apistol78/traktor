@@ -17,6 +17,7 @@
 #include "Core/Thread/JobManager.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Render/Buffer.h"
+#include "Render/IAccelerationStructure.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/World.h"
@@ -56,6 +57,9 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 	m_jointInverseTransforms.resize(skinJointCount, Transform::identity());
 	m_poseTransforms[0].resize(skinJointCount, Transform::identity());
 	m_poseTransforms[1].resize(skinJointCount, Transform::identity());
+
+	// Create our instance's acceleration structure.
+	m_rtAccelerationStructure = m_mesh->createAccelerationStructure(renderSystem);
 }
 
 void AnimatedMeshComponent::destroy()
@@ -65,6 +69,7 @@ void AnimatedMeshComponent::destroy()
 	safeDestroy(m_skinBuffer[0]);
 	safeDestroy(m_skinBuffer[1]);
 	safeDestroy(m_rtwInstance);
+	safeDestroy(m_rtAccelerationStructure);
 	mesh::MeshComponent::destroy();
 }
 
@@ -112,7 +117,7 @@ void AnimatedMeshComponent::setWorld(world::World* world)
 		T_FATAL_ASSERT(m_rtwInstance == nullptr);
 		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
 		if (rtw != nullptr)
-			m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getRTTriangleAttributes());
+			m_rtwInstance = rtw->createInstance(m_rtAccelerationStructure, m_mesh->getRTTriangleAttributes());
 	}
 
 	m_world = world;
@@ -128,7 +133,7 @@ void AnimatedMeshComponent::setState(const world::EntityState& state, const worl
 			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
 			if (rtw != nullptr)
 			{
-				m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getRTTriangleAttributes());
+				m_rtwInstance = rtw->createInstance(m_rtAccelerationStructure, m_mesh->getRTTriangleAttributes());
 				m_rtwInstance->setTransform(m_transform.get0());
 			}
 		}
@@ -241,6 +246,11 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 			// Update skin.
 			std::swap(m_skinBuffer[0], m_skinBuffer[1]);
 			m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0]);
+
+			if (m_rtwInstance)
+			{
+				// #fixme Rebuild acceleration structure.
+			}
 		}
 	}
 
