@@ -76,6 +76,8 @@ VkPipelineStageFlagBits convertStage(Stage st)
 		ps |= VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
 	if ((st & Stage::Indirect) == Stage::Indirect)
 		ps |= VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
+	if ((st & Stage::AccelerationStructureUpdate) == Stage::AccelerationStructureUpdate)
+		ps |= VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR;
 	return (VkPipelineStageFlagBits)ps;
 }
 
@@ -1158,6 +1160,24 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 			0, nullptr,
 			0, nullptr,
 			1, &imb
+		);
+	}
+	else if (from == Stage::Compute && to == Stage::AccelerationStructureUpdate)
+	{
+		VkMemoryBarrier mb = {};
+		mb.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+		mb.pNext = nullptr;
+		mb.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		mb.dstAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR;
+
+		vkCmdPipelineBarrier(
+			*frame.graphicsCommandBuffer,
+			convertStage(from),
+			convertStage(to),
+			0,
+			1, &mb,
+			0, nullptr,
+			0, nullptr
 		);
 	}
 	else

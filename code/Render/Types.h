@@ -355,7 +355,8 @@ enum class Stage : uint32_t
 	Vertex = 1,
 	Fragment = 2,
 	Compute = 4,
-	Indirect = 8
+	Indirect = 8,
+	AccelerationStructureUpdate = 16
 };
 
 /*! Stage */

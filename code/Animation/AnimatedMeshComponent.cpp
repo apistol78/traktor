@@ -262,6 +262,9 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 
 			if (m_rtwInstance)
 			{
+				// Wait for data to be ready for building AS.
+				context.getRenderContext()->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::AccelerationStructureUpdate, nullptr, 0);
+
 				// Rebuild acceleration structure.
 				auto rb = context.getRenderContext()->allocNamed< render::LambdaRenderBlock >(L"AnimatedMeshComponent update AS");
 				rb->lambda = [=, this](render::IRenderView* renderView)
