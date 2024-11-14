@@ -1472,8 +1472,12 @@ void ShaderGraphEditorPage::updateGraph()
 	
 	// Validate shader graph.
 	AlignedVector< const Node* > errorNodes;
-	const ShaderGraphValidator validator(resolvedShaderGraph);
-	const bool validationResult = validator.validate(graphType, &errorNodes);
+	bool validationResult = false;
+	if (resolvedShaderGraph)
+	{
+		const ShaderGraphValidator validator(resolvedShaderGraph);
+		validationResult = validator.validate(graphType, &errorNodes);
+	}
 
 	// Update validation status of each node.
 	for (auto editorNode : m_editorGraph->getNodes())
