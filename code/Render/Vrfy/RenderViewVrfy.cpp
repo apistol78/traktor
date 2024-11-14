@@ -453,11 +453,38 @@ void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelera
 	m_renderView->writeAccelerationStructure(as->getWrappedAS(), unwrappedInstances);
 }
 
+void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
+{
+	T_CAPTURE_TRACE(L"writeAccelerationStructure");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
+
+	AccelerationStructureVrfy* as = dynamic_type_cast< AccelerationStructureVrfy* >(accelerationStructure);
+	T_CAPTURE_ASSERT(as != nullptr, L"Invalid acceleration structure (TLAS).");
+	if (!as)
+		return;
+
+	T_CAPTURE_ASSERT(as->getWrappedAS(), L"Cannot write TLAS; TLAS destroyed.");
+	if (!as->getWrappedAS())
+		return;
+
+	T_CAPTURE_ASSERT(vertexBuffer, L"Missing vertex buffer.");
+	T_CAPTURE_ASSERT(indexBuffer, L"Missing index buffer.");
+	T_CAPTURE_ASSERT(vertexLayout, L"Missing vertex layout.");
+	if (!vertexBuffer || !indexBuffer || !vertexLayout)
+		return;
+
+	const BufferViewVrfy* vbv = checked_type_cast< const BufferViewVrfy* >(vertexBuffer);
+	const BufferViewVrfy* ibv = checked_type_cast< const BufferViewVrfy* >(indexBuffer);
+	const VertexLayoutVrfy* vl = checked_type_cast< const VertexLayoutVrfy* >(vertexLayout);
+
+	m_renderView->writeAccelerationStructure(as->getWrappedAS(), vbv->getWrappedBufferView(), vl->getWrappedVertexLayout(), ibv->getWrappedBufferView(), indexType, primitives);
+}
+
 int32_t RenderViewVrfy::beginTimeQuery()
 {
 	T_CAPTURE_TRACE(L"beginTimeQuery");
 
-	int32_t query = m_renderView->beginTimeQuery();
+	const int32_t query = m_renderView->beginTimeQuery();
 	if (query < 0)
 		return query;
 

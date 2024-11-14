@@ -47,6 +47,8 @@ public:
 
 	uint32_t makeResourceIndex() const;
 
+	uint32_t getSize() const { return m_bufferSize; }
+
 	operator VkBuffer () const { return m_buffer; }
 
 private:

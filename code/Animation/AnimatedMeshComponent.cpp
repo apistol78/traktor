@@ -18,6 +18,11 @@
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Render/Buffer.h"
 #include "Render/IAccelerationStructure.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
+#include "Render/Context/RenderBlock.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Mesh/Mesh.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/World.h"
@@ -60,6 +65,14 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 
 	// Create our instance's acceleration structure.
 	m_rtAccelerationStructure = m_mesh->createAccelerationStructure(renderSystem);
+	m_rtVertexLayout = renderSystem->createVertexLayout({
+		render::VertexElement(render::DataUsage::Position,	render::DtFloat4,	0 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Normal,	render::DtFloat4,	1 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Tangent,	render::DtFloat4,	2 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Binormal,	render::DtFloat4,	3 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Custom,	render::DtFloat4,	4 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Custom,	render::DtFloat4,	5 * 4 * sizeof(float), 1)
+	});
 }
 
 void AnimatedMeshComponent::destroy()
@@ -249,7 +262,29 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 
 			if (m_rtwInstance)
 			{
-				// #fixme Rebuild acceleration structure.
+				// Rebuild acceleration structure.
+				auto rb = context.getRenderContext()->allocNamed< render::LambdaRenderBlock >(L"AnimatedMeshComponent update AS");
+				rb->lambda = [=, this](render::IRenderView* renderView)
+				{
+					const render::Mesh* renderMesh = m_mesh->getRenderMesh();
+					T_FATAL_ASSERT(renderMesh != nullptr);
+
+					const auto& part = renderMesh->getParts().back();
+					T_FATAL_ASSERT(part.name == L"__RT__");
+
+					AlignedVector< render::Primitives > primitives;
+					primitives.push_back(part.primitives);
+
+					renderView->writeAccelerationStructure(
+						m_rtAccelerationStructure,
+						m_skinBuffer[0]->getBufferView(),
+						m_rtVertexLayout,
+						renderMesh->getIndexBuffer()->getBufferView(),
+						renderMesh->getIndexType(),
+						primitives
+					);
+				};
+				context.getRenderContext()->compute(rb);
 			}
 		}
 	}

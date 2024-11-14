@@ -22,6 +22,7 @@ class Buffer;
 class BufferDynamicVk;
 class CommandBuffer;
 class Context;
+class IBufferView;
 class IVertexLayout;
 
 class AccelerationStructureVk : public IAccelerationStructure
@@ -39,6 +40,8 @@ public:
 
 	bool writeInstances(CommandBuffer* commandBuffer, const AlignedVector< Instance >& instances);
 
+	bool writeGeometry(CommandBuffer* commandBuffer, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives);
+
 	const VkAccelerationStructureKHR& getVkAccelerationStructureKHR() const { return m_as; }
 
 protected:
@@ -46,7 +49,7 @@ protected:
 	Ref< BufferDynamicVk > m_instanceBuffer;
 	Ref< ApiBuffer > m_hierarchyBuffer;
 	Ref< ApiBuffer > m_scratchBuffer;
-	VkAccelerationStructureKHR m_as;
+	VkAccelerationStructureKHR m_as = 0;
 	uint32_t m_scratchAlignment = 0;
 
 	explicit AccelerationStructureVk(Context* context);

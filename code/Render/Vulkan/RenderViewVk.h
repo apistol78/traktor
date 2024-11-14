@@ -117,6 +117,8 @@ public:
 
 	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances) override final;
 
+	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives) override final;
+
 	virtual int32_t beginTimeQuery() override final;
 
 	virtual void endTimeQuery(int32_t query) override final;

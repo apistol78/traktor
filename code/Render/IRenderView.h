@@ -199,6 +199,9 @@ public:
 	/*! */
 	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances) = 0;
 
+	/*! */
+	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives) = 0;
+
 	/*! \name Time queries. */
 	//@{
 
