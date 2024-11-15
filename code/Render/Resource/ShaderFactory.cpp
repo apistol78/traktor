@@ -114,6 +114,10 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 			if (!programResource)
 				return nullptr;
 
+			// Skip programs which isn't compatible with features of the render system.
+			if (programResource->requireRayTracing() && !m_renderSystem->supportRayTracing())
+				continue;
+
 			Shader::Combination combination;
 			combination.mask = resourceCombination.mask;
 			combination.value = resourceCombination.value;

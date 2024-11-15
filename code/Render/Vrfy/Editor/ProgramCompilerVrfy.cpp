@@ -42,6 +42,7 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 
 	// Embed into custom resource, append debug data to program useful for capturing.
 	Ref< ProgramResourceVrfy > resourceVrfy = new ProgramResourceVrfy();
+	resourceVrfy->m_requireRayTracing = resource->requireRayTracing();
 	resourceVrfy->m_embedded = resource;
 
 	// Record all uniforms used in shader.

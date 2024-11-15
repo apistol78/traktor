@@ -27,6 +27,14 @@ namespace traktor::render
 class T_DLLCLASS ProgramResource : public ISerializable
 {
 	T_RTTI_CLASS;
+
+public:
+	bool requireRayTracing() const { return m_requireRayTracing; }
+
+	virtual void serialize(ISerializer& s);
+
+protected:
+	bool m_requireRayTracing = false;
 };
 
 }

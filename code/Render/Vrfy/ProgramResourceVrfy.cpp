@@ -22,6 +22,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVrfy", 0, Program
 
 void ProgramResourceVrfy::serialize(ISerializer& s)
 {
+	ProgramResource::serialize(s);
+
 	s >> MemberRef< ProgramResource >(L"embedded", m_embedded);
 	s >> Member< std::wstring >(L"vertexShader", m_vertexShader);
 	s >> Member< std::wstring >(L"pixelShader", m_pixelShader);

@@ -431,6 +431,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 	// Create output resource.
 	Ref< ProgramResourceVk > programResource = new ProgramResourceVk();
+	programResource->m_requireRayTracing = cx.requirements().useRayTracing;
 	programResource->m_name = name;
 	programResource->m_renderState = cx.getRenderState();
 	programResource->m_useTargetSize = cx.requirements().useTargetSize;

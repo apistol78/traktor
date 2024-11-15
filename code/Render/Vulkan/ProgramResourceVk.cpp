@@ -88,11 +88,14 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 19, ProgramResourceVk, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 20, ProgramResourceVk, ProgramResource)
 
 void ProgramResourceVk::serialize(ISerializer& s)
 {
 	T_FATAL_ASSERT(s.getVersion() >= type_of< ProgramResourceVk >().getVersion());
+
+	ProgramResource::serialize(s);
+
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberRenderState(L"renderState", m_renderState);
 	s >> MemberAlignedVector< uint32_t >(L"vertexShader", m_vertexShader);
