@@ -316,9 +316,9 @@ float occlusions = 0.0f;
 vec3 u, v;
 OrthogonalFrame($Direction.xyz, u, v);
 
-mat4 R = Rotate($Direction.xyz, $Random);
-u = (R * vec4(u, 0.0f)).xyz;
-v = (R * vec4(v, 0.0f)).xyz;
+mat3 R = Rotate($Direction.xyz, $Random);
+u = R * u;
+v = R * v;
 
 for (int i = 0; i < N; ++i)
 {

@@ -60,20 +60,18 @@ void OrthogonalFrame(vec3 d, out vec3 u, out vec3 v)
 	v = normalize(cross(u, d));
 }
 
-mat4 Rotate(vec3 axis, float angle)
+mat3 Rotate(vec3 axis, float angle)
 {
 	const float c = cos(angle);
 	const float s = sin(angle);
 	const float t = 1.0f - c;
 	const vec3 txyz = t * axis;
-	return mat4(
-		txyz.x * axis.x + c, txyz.x * axis.y + s * axis.z, txyz.x * axis.z - s * axis.y, 0.0f,
-		txyz.x * axis.y - s * axis.z, txyz.y * axis.y + c, txyz.y * axis.z + s * axis.x, 0.0f,
-		txyz.x * axis.z + s * axis.y, txyz.y * axis.z - s * axis.x, txyz.z * axis.z + c, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
+	return mat3(
+		txyz.x * axis.x + c, txyz.x * axis.y + s * axis.z, txyz.x * axis.z - s * axis.y,
+		txyz.x * axis.y - s * axis.z, txyz.y * axis.y + c, txyz.y * axis.z + s * axis.x,
+		txyz.x * axis.z + s * axis.y, txyz.y * axis.z - s * axis.x, txyz.z * axis.z + c
 	);
 }
-
 
 	]]>
 	</text>
