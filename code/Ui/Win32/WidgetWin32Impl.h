@@ -539,6 +539,7 @@ protected:
 		ICONMETRICS im = {};
 		im.cbSize = sizeof(im);
 		SystemParametersInfo(SPI_GETICONMETRICS, 0, &im, sizeof(im));
+		im.lfFont.lfHeight = invdpi96(im.lfFont.lfHeight);
 		m_font = logFontToFont(im.lfFont);
 
 		return true;
