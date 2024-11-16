@@ -10,7 +10,7 @@ vec3 GetSkyColor(vec3 sunDirection, vec3 sunColor, vec3 overHorizon, vec3 underH
     const float sundot = clamp(dot(rd, sunDirection), 0.0f, 1.0f);
 	vec3 col = overHorizon - max(rd.y, 0.01f) * max(rd.y, 0.01f) * 0.5f;
     col = mix(col, underHorizon, pow(1.0f - max(rd.y, 0.0f), 6.0f));
-	col += sunColor * pow(max(sundot - 0.1, 0), 8.0f);
+	col += sunColor * pow(max(sundot - 0.1, 0), 16.0f);
     return col;
 }
 
