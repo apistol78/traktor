@@ -10,6 +10,7 @@
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
@@ -44,7 +45,7 @@ void SkinnedMesh::buildSkin(
 	render::RenderContext* renderContext,
 	render::Buffer* jointTransforms,
 	render::Buffer* skinBuffer
-)
+) const
 {
 	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferSize() / (6 * 4 * sizeof(float));
 
@@ -64,6 +65,37 @@ void SkinnedMesh::buildSkin(
 	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
 }
 
+void SkinnedMesh::buildAccelerationStructure(
+	render::RenderContext* renderContext,
+	render::Buffer* skinBuffer,
+	render::IAccelerationStructure* accelerationStructure
+) const
+{
+	// Wait for data to be ready for building AS.
+	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::AccelerationStructureUpdate, nullptr, 0);
+
+	// Rebuild acceleration structure.
+	auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"AnimatedMeshComponent update AS");
+	rb->lambda = [=, this](render::IRenderView* renderView)
+	{
+		const auto& part = m_mesh->getParts().back();
+		T_FATAL_ASSERT(part.name == L"__RT__");
+
+		AlignedVector< render::Primitives > primitives;
+		primitives.push_back(part.primitives);
+
+		renderView->writeAccelerationStructure(
+			accelerationStructure,
+			skinBuffer->getBufferView(),
+			m_rtVertexLayout,
+			m_mesh->getIndexBuffer()->getBufferView(),
+			m_mesh->getIndexType(),
+			primitives
+		);
+	};
+	renderContext->compute(rb);
+}
+
 void SkinnedMesh::build(
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
@@ -73,7 +105,7 @@ void SkinnedMesh::build(
 	render::Buffer* skinBuffer,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
-)
+) const
 {
 	auto it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT(it != m_parts.end());
@@ -170,18 +202,9 @@ Ref< render::IAccelerationStructure > SkinnedMesh::createAccelerationStructure(r
 	AlignedVector< render::Primitives > primitives;
 	primitives.push_back(part.primitives);
 
-	Ref< const render::IVertexLayout > vertexLayout = renderSystem->createVertexLayout({
-		render::VertexElement(render::DataUsage::Position,	render::DtFloat4,	0 * 4 * sizeof(float)),
-		render::VertexElement(render::DataUsage::Normal,	render::DtFloat4,	1 * 4 * sizeof(float)),
-		render::VertexElement(render::DataUsage::Tangent,	render::DtFloat4,	2 * 4 * sizeof(float)),
-		render::VertexElement(render::DataUsage::Binormal,	render::DtFloat4,	3 * 4 * sizeof(float)),
-		render::VertexElement(render::DataUsage::Custom,	render::DtFloat4,	4 * 4 * sizeof(float)),
-		render::VertexElement(render::DataUsage::Custom,	render::DtFloat4,	5 * 4 * sizeof(float), 1)
-	});
-
 	return renderSystem->createAccelerationStructure(
 		m_mesh->getAuxBuffer(SkinnedMesh::c_fccSkinPosition),
-		vertexLayout,
+		m_rtVertexLayout,
 		m_mesh->getIndexBuffer(),
 		m_mesh->getIndexType(),
 		primitives

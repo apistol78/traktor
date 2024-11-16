@@ -29,6 +29,7 @@ class Buffer;
 class IAccelerationStructure;
 class IRenderSystem;
 class ITexture;
+class IVertexLayout;
 class RenderContext;
 class Mesh;
 
@@ -78,7 +79,13 @@ public:
 		render::RenderContext* renderContext,
 		render::Buffer* jointTransforms,
 		render::Buffer* skinBuffer
-	);
+	) const;
+
+	void buildAccelerationStructure(
+		render::RenderContext* renderContext,
+		render::Buffer* skinBuffer,
+		render::IAccelerationStructure* accelerationStructure
+	) const;
 
 	void build(
 		render::RenderContext* renderContext,
@@ -89,7 +96,7 @@ public:
 		render::Buffer* skinBuffer,
 		float distance,
 		const IMeshParameterCallback* parameterCallback
-	);
+	) const;
 
 	int32_t getJointCount() const;
 
@@ -122,6 +129,9 @@ private:
 	resource::Proxy< render::Shader > m_shaderUpdateSkin;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_mesh;
+
+	// Ray tracing.
+	Ref< const render::IVertexLayout > m_rtVertexLayout;
 
 #if defined(_DEBUG)
 	std::string m_name;

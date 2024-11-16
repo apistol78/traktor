@@ -38,7 +38,6 @@ namespace traktor::render
 class Buffer;
 class IAccelerationStructure;
 class IRenderSystem;
-class IVertexLayout;
 
 }
 
@@ -88,7 +87,6 @@ private:
 	Ref< render::Buffer > m_skinBuffer[2];
 
 	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
-	Ref< const render::IVertexLayout > m_rtVertexLayout;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
 
 	AlignedVector< int32_t > m_jointRemap;

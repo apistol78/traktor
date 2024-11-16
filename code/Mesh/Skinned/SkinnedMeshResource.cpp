@@ -75,6 +75,15 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 	skinnedMesh->m_jointMap = m_jointMap;
 	skinnedMesh->m_jointCount = jointMaxIndex + 1;
 
+	skinnedMesh->m_rtVertexLayout = renderSystem->createVertexLayout({
+		render::VertexElement(render::DataUsage::Position,	render::DtFloat4,	0 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Normal,	render::DtFloat4,	1 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Tangent,	render::DtFloat4,	2 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Binormal,	render::DtFloat4,	3 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Custom,	render::DtFloat4,	4 * 4 * sizeof(float)),
+		render::VertexElement(render::DataUsage::Custom,	render::DtFloat4,	5 * 4 * sizeof(float), 1)
+	});
+
 #if defined(_DEBUG)
 	skinnedMesh->m_name = wstombs(name);
 #endif
