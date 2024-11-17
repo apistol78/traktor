@@ -83,7 +83,7 @@
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{8C6FBA2D-BC40-574D-B811-23C989BE918E}</id>
 			<comment/>
 			<position>
@@ -92,11 +92,13 @@
 			</position>
 			<name>Skin</name>
 			<technique>Default</technique>
+			<domain>Compute</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{22B84E07-E5B1-4714-86C8-1FBBE55017E3}</item>
 			</include>
@@ -129,33 +131,68 @@ vec4 blendWeights = $SkinBufferInput[index].BlendWeights;
 
 vec4 t0 = $Joints[blendIndices.x].Translation;
 vec4 r0 = $Joints[blendIndices.x].Rotation;
-vec4 p0 = QuaternionRotate(r0, position) + t0;
-
 vec4 t1 = $Joints[blendIndices.y].Translation;
 vec4 r1 = $Joints[blendIndices.y].Rotation;
-vec4 p1 = QuaternionRotate(r1, position) + t1;
-
 vec4 t2 = $Joints[blendIndices.z].Translation;
 vec4 r2 = $Joints[blendIndices.z].Rotation;
-vec4 p2 = QuaternionRotate(r2, position) + t2;
-
 vec4 t3 = $Joints[blendIndices.w].Translation;
 vec4 r3 = $Joints[blendIndices.w].Rotation;
+
+vec4 p0 = QuaternionRotate(r0, position) + t0;
+vec4 p1 = QuaternionRotate(r1, position) + t1;
+vec4 p2 = QuaternionRotate(r2, position) + t2;
 vec4 p3 = QuaternionRotate(r3, position) + t3;
+
+vec4 n0 = QuaternionRotate(r0, normal);
+vec4 n1 = QuaternionRotate(r1, normal);
+vec4 n2 = QuaternionRotate(r2, normal);
+vec4 n3 = QuaternionRotate(r3, normal);
+
+vec4 tn0 = QuaternionRotate(r0, tangent);
+vec4 tn1 = QuaternionRotate(r1, tangent);
+vec4 tn2 = QuaternionRotate(r2, tangent);
+vec4 tn3 = QuaternionRotate(r3, tangent);
+
+vec4 bn0 = QuaternionRotate(r0, binormal);
+vec4 bn1 = QuaternionRotate(r1, binormal);
+vec4 bn2 = QuaternionRotate(r2, binormal);
+vec4 bn3 = QuaternionRotate(r3, binormal);
 
 float k = 1.0f - dot(blendWeights, vec4(1.0f));
 
-vec4 p =
+const vec4 p =
 	p0 * blendWeights.x +
 	p1 * blendWeights.y +
 	p2 * blendWeights.z +
 	p3 * blendWeights.w +
 	position * k;
 
+const vec4 n =
+	n0 * blendWeights.x +
+	n1 * blendWeights.y +
+	n2 * blendWeights.z +
+	n3 * blendWeights.w +
+	normal * k;
+
+const vec4 tn =
+	tn0 * blendWeights.x +
+	tn1 * blendWeights.y +
+	tn2 * blendWeights.z +
+	tn3 * blendWeights.w +
+	tangent * k;
+
+const vec4 bn =
+	bn0 * blendWeights.x +
+	bn1 * blendWeights.y +
+	bn2 * blendWeights.z +
+	bn3 * blendWeights.w +
+	binormal * k;
+
 $SkinBufferOutput[index].Position = vec4(p.xyz, 1.0f);
-$SkinBufferOutput[index].Normal = normal;
-$SkinBufferOutput[index].Tangent = tangent;
-$SkinBufferOutput[index].Binormal = binormal;
+$SkinBufferOutput[index].Normal = n;
+$SkinBufferOutput[index].Tangent = tn;
+$SkinBufferOutput[index].Binormal = bn;
+
 			]]>
 			</script>
 		</item>

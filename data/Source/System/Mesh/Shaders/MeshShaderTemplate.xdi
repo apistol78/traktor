@@ -992,14 +992,6 @@ Tag_LightmapTexCoord
 				<second>919</second>
 			</position>
 		</item>
-		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
-			<id>{957AB9E8-9B15-4CC3-8EA8-3FF0B013F9EA}</id>
-			<comment/>
-			<position>
-				<first>956</first>
-				<second>1320</second>
-			</position>
-		</item>
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
 			<id>{98158568-810A-C845-A712-2E406566828C}</id>
 			<comment>
@@ -1846,26 +1838,6 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{D596E4E4-1A78-4D80-C16B-6DEEF934EDEC}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[81]"/>
-				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[81]"/>
-				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[38]"/>
-				<id>{C458F1E6-5144-4289-ADF4-C07453D38038}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[80]"/>
 				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
@@ -1912,6 +1884,16 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition
 			<destination>
 				<node ref="/object/nodes/item[79]"/>
 				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{D596E4E4-1A78-4D80-C16B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<id>{C458F1E6-5144-4289-ADF4-C07453D38038}</id>
 			</destination>
 		</item>
 	</edges>

@@ -8,7 +8,7 @@ vec4 QuaternionMultiply(vec4 l, vec4 r)
 {
 	return
 		l.wwww * r +
-		l.xyzx * r.wwww * vec4(1.0f, 1.0f, 1.0f, -1.0f) +
+		l.xyzx * r.wwwx * vec4(1.0f, 1.0f, 1.0f, -1.0f) +
 		l.yzxy * r.zxyy * vec4(1.0f, 1.0f, 1.0f, -1.0f) -
 		l.zxyz * r.yzxz;
 }
@@ -24,7 +24,6 @@ vec4 QuaternionRotate(vec4 q, vec4 v)
 	const vec4 t1 = QuaternionConjugate(q);
 	return QuaternionMultiply(t0, t1);
 }
-
 
 	]]>
 	</text>
