@@ -105,7 +105,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 	if (textureType == Tt2D)	// 2D
 	{
-		const bool createVirtual = !system && std::max(imageWidth, imageHeight) > 32;
+		const bool createVirtual = false; // !system && std::max(imageWidth, imageHeight) > 32;
 
 		int32_t skipMips = 0;
 		if (createVirtual)
