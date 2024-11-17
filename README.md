@@ -42,9 +42,11 @@ See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binar
 ## Rendering
 
 - Advanced frame graph based renderer using Vulkan.
-- GPU based occlusion culling (work in progress).
+- GPU based occlusion culling.
 - Graph based shader editor with possibility to inline shader code when necessary.
 - Tile based deferred and forward+ rendering paths.
+- GPU skin cache for skinned meshes.
+- Hardware ray tracing support, with RTAO, RT reflections and RT shadows implementations.
 
 ## Scripting
 - LUA as primary scripting language.
@@ -59,3 +61,4 @@ See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binar
 
 ## Physics
 - Integrated Bullet physics.
+- Character and vehicle controllers.
