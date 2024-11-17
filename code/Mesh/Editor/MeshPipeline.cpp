@@ -127,7 +127,7 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 	Ref< render::TextureOutput > output = new render::TextureOutput();
 	output->m_textureType = render::Tt2D;
 	output->m_normalMap = normalMap;
-	output->m_assumeLinearGamma = normalMap;
+	output->m_assumeLinearGamma = true;
 
 	if (!pipelineBuilder->buildAdHocOutput(
 		output,
@@ -147,7 +147,7 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 46, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 47, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)

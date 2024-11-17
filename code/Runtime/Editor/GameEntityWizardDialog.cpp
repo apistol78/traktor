@@ -41,6 +41,7 @@
 #include "Ui/DropDown.h"
 #include "Ui/Edit.h"
 #include "Ui/FileDialog.h"
+#include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "World/EntityData.h"
@@ -64,7 +65,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 		parent,
 		i18n::Text(L"GAMEENTITY_WIZARD_DIALOG_TITLE"),
 		700_ut,
-		400_ut,
+		450_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::TableLayout(L"100%", L"*", 8_ut, 8_ut)
 	))
@@ -186,13 +187,19 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	staticMaterial->create(containerType, i18n::Text(L"GAMEENTITY_WIZARD_MATERIAL"));
 
 	m_editMaterial = new ui::Edit();
-	m_editMaterial->create(containerType, L"0");
+	m_editMaterial->create(containerType, L"0", ui::WsNone, new ui::NumericEditValidator(false, 0));
 
 	Ref< ui::Static > staticFriction = new ui::Static();
 	staticFriction->create(containerType, i18n::Text(L"GAMEENTITY_WIZARD_FRICTION"));
 
 	m_editFriction = new ui::Edit();
-	m_editFriction->create(containerType, L"0.75");
+	m_editFriction->create(containerType, L"0.75", ui::WsNone, new ui::NumericEditValidator(true, 0.0f));
+
+	Ref< ui::Static > staticScale = new ui::Static();
+	staticScale->create(containerType, i18n::Text(L"GAMEENTITY_WIZARD_SCALE"));
+
+	m_editScale = new ui::Edit();
+	m_editScale->create(containerType, L"1", ui::WsNone, new ui::NumericEditValidator(true, 0.0f));
 
 	// Script
 	m_checkBoxCreateScript = new ui::CheckBox();
@@ -351,6 +358,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 		const std::wstring animationMesh = m_editAnimationMesh->getText();
 		const std::wstring collisionMesh = m_editCollisionMesh->getText();
 		const int32_t entityType = m_dropEntityType->getSelected();
+		const float scale = parseString< float >(m_editScale->getText());
 
 		if (name.empty())
 		{
@@ -379,6 +387,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create skeleton mesh asset.
 			Ref< animation::SkeletonAsset > skeletonAsset = new animation::SkeletonAsset();
 			skeletonAsset->setFileName(skeletonMesh);
+			skeletonAsset->setScale(scale);
 
 			// Create asset instance.
 			skeletonAssetInstance = m_group->createInstance(
@@ -406,6 +415,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create animation asset.
 			Ref< animation::AnimationAsset > animationAsset = new animation::AnimationAsset();
 			animationAsset->setFileName(animationMesh);
+			animationAsset->setScale(scale);
 
 			// Create asset instance.
 			animationAssetInstance = m_group->createInstance(
@@ -432,6 +442,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create visual mesh asset.
 			Ref< mesh::MeshAsset > meshAsset = new mesh::MeshAsset();
 			meshAsset->setFileName(visualMesh);
+			meshAsset->setScaleFactor(scale);
 			if (entityType == 3 || entityType == 4)
 				meshAsset->setMeshType(mesh::MeshAsset::MtSkinned);
 			else
@@ -505,6 +516,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create physics mesh asset.
 			Ref< physics::MeshAsset > meshAsset = new physics::MeshAsset();
 			meshAsset->setFileName(collisionMesh);
+			meshAsset->setScaleFactor(scale);
 			meshAsset->setCalculateConvexHull(entityType == 2);
 			meshAsset->setMargin((entityType == 2) ? 0.04f : 0.0f);
 

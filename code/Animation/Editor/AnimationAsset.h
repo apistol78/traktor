@@ -37,6 +37,8 @@ public:
 
 	const std::wstring& getTake() const { return m_take; }
 
+	void setScale(float scale) { m_scale = scale; }
+
 	float getScale() const { return m_scale; }
 
 	const Vector4& getTranslate() const { return m_translate; }

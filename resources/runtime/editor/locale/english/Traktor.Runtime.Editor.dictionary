@@ -154,6 +154,10 @@
 			<second>Material</second>
 		</item>
 		<item>
+			<first>GAMEENTITY_WIZARD_SCALE</first>
+			<second>Scale</second>
+		</item>
+		<item>
 			<first>GAMEENTITY_WIZARD_TYPE_ANIMATED</first>
 			<second>Animated</second>
 		</item>

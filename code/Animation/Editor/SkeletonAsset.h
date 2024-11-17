@@ -34,6 +34,8 @@ public:
 
 	const Vector4& getOffset() const { return m_offset; }
 
+	void setScale(float scale) { m_scale = scale; }
+
 	float getScale() const { return m_scale; }
 
 	float getRadius() const { return m_radius; }
