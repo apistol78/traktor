@@ -642,20 +642,22 @@ Object
 				<item>BlendWeights</item>
 			</names>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{30E1E360-C74A-2C4F-A4B7-D0C0BD6E40BD}</id>
 			<comment/>
 			<position>
-				<first>-1270</first>
-				<second>539</second>
+				<first>-1308</first>
+				<second>588</second>
 			</position>
 			<name>Vertex Index</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins/>
 			<outputPins>
@@ -670,6 +672,63 @@ Object
 $Output = gl_VertexIndex;
 			]]>
 			</script>
+		</item>
+		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
+			<id>{9294E60D-A0B8-384F-9BD1-648CFDA4ED51}</id>
+			<comment/>
+			<position>
+				<first>-1028</first>
+				<second>716</second>
+			</position>
+			<names>
+				<item>Position</item>
+				<item>Normal</item>
+				<item>Tangent</item>
+				<item>Binormal</item>
+				<item>BlendIndices</item>
+				<item>BlendWeights</item>
+			</names>
+		</item>
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+			<id>{D832F3C3-6D43-124F-95F4-085BD33C7CC7}</id>
+			<comment/>
+			<position>
+				<first>-1329</first>
+				<second>714</second>
+			</position>
+			<parameterName>Mesh_SkinBufferLast</parameterName>
+			<elements>
+				<item>
+					<name>Position</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>Normal</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>Tangent</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>Binormal</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>BlendIndices</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>BlendWeights</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+			</elements>
 		</item>
 	</nodes>
 	<edges>
@@ -1295,7 +1354,27 @@ $Output = gl_VertexIndex;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[55]"/>
+				<node ref="/object/nodes/item[58]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[57]"/>
+				<id>{0FF6511C-0293-41A8-830E-81978BD01F7F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[56]"/>
+				<id>{CA256428-8C39-DE40-8358-55D45E5A2477}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[57]"/>
+				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[57]"/>
 				<id>{0FF6511C-0293-41A8-850E-81978BD01F7F}</id>
 			</source>
 			<destination>
