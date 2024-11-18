@@ -21,6 +21,7 @@
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainSurfaceCache.h"
 #include "World/IWorldRenderPass.h"
+#include "World/World.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
@@ -99,9 +100,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainComponent", TerrainComponent, wo
 TerrainComponent::TerrainComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
-,	m_owner(nullptr)
-,	m_cacheSize(0)
-,	m_visualizeMode(VmDefault)
 {
 }
 
@@ -123,6 +121,8 @@ bool TerrainComponent::create(const TerrainComponentData& data)
 	m_surfaceLodExponent = data.getSurfaceLodExponent();
 
 	if (!createPatches())
+		return false;
+	if (!createRayTracingPatches())
 		return false;
 
 	m_defaultColorMap = create1x1Texture(m_renderSystem, Color4ub(128, 128, 128, 128));
@@ -544,11 +544,38 @@ void TerrainComponent::destroy()
 	safeDestroy(m_vertexBuffer);
 	safeDestroy(m_drawBuffer);
 	safeDestroy(m_dataBuffer);
+
+	for (auto vb : m_rtVertexBuffers)
+		vb->destroy();
+	for (auto as : m_rtAS)
+		as->destroy();
+
+	m_rtVertexBuffers.clear();
+	m_rtAS.clear();
+	
+	safeDestroy(m_rtwInstance);
 }
 
 void TerrainComponent::setOwner(world::Entity* owner)
 {
 	m_owner = owner;
+}
+
+void TerrainComponent::setWorld(world::World* world)
+{
+	// Remove from last world.
+	safeDestroy(m_rtwInstance);
+
+	// Add to new world.
+	if (world != nullptr)
+	{
+		T_FATAL_ASSERT(m_rtwInstance == nullptr);
+		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
+		if (rtw != nullptr)
+			m_rtwInstance = rtw->createInstance(*(RefArray< const render::IAccelerationStructure >*)&m_rtAS, nullptr);
+	}
+
+	m_world = world;
 }
 
 void TerrainComponent::setTransform(const Transform& transform)
@@ -576,6 +603,8 @@ bool TerrainComponent::validate(int32_t viewIndex, uint32_t cacheSize)
 		m_terrain.consume();
 
 		if (!createPatches())
+			return false;
+		if (!createRayTracingPatches())
 			return false;
 	}
 
@@ -637,6 +666,12 @@ void TerrainComponent::updatePatches(const uint32_t* region, bool updateErrors, 
 			}
 		}
 	}
+}
+
+void TerrainComponent::updateRayTracingPatches()
+{
+	if (m_renderSystem->supportRayTracing())
+		createRayTracingPatches();
 }
 
 bool TerrainComponent::createPatches()
@@ -859,6 +894,94 @@ bool TerrainComponent::createPatches()
 	);
 	if (!m_dataBuffer)
 		return false;
+
+	return true;
+}
+
+bool TerrainComponent::createRayTracingPatches()
+{
+	if (!m_renderSystem->supportRayTracing())
+		return true;
+
+	const uint32_t heightfieldSize = m_heightfield->getSize();
+	T_ASSERT(heightfieldSize > 0);
+
+	const uint32_t patchDim = m_terrain->getPatchDim();
+	const uint32_t patchVertexCount = patchDim * patchDim;
+
+	AlignedVector< render::VertexElement > vertexElements;
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat3, 0));
+	const uint32_t vertexSize = render::getVertexSize(vertexElements);
+
+	Ref< const render::IVertexLayout > vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
+	if (!vertexLayout)
+		return false;
+
+	const Vector4& worldExtent = m_heightfield->getWorldExtent();
+	const Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
+	const Vector4 patchDeltaHalf = patchExtent * Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+	const Vector4 patchDeltaX = patchExtent * Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+	const Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+	Vector4 patchTopLeft = (-worldExtent * 0.5_simd).xyz1();
+
+	for (auto vb : m_rtVertexBuffers)
+		vb->destroy();
+	for (auto as : m_rtAS)
+		as->destroy();
+
+	m_rtVertexBuffers.resize(m_patchCount * m_patchCount);
+	m_rtAS.resize(m_patchCount * m_patchCount);
+
+	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
+	{
+		Vector4 patchOrigin = patchTopLeft;
+		for (uint32_t px = 0; px < m_patchCount; ++px)
+		{
+			const int32_t patchId = px + pz * m_patchCount;
+			const Vector4 patchCenterWorld = patchOrigin + patchDeltaHalf;
+
+			const Aabb3 patchAabb(
+				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(-patchDeltaHalf.x(), 0.0f, -patchDeltaHalf.z(), 0.0f),
+				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4( patchDeltaHalf.x(), 0.0f,  patchDeltaHalf.z(), 0.0f)
+			);
+
+			m_rtVertexBuffers[patchId] = m_renderSystem->createBuffer(
+				render::BuVertex,
+				patchVertexCount * vertexSize,
+				false
+			);
+			if (!m_rtVertexBuffers[patchId])
+				return false;
+
+			float* vertex = static_cast< float* >(m_rtVertexBuffers[patchId]->lock());
+			T_ASSERT_M (vertex, L"Unable to lock vertex buffer");
+			for (uint32_t z = 0; z < patchDim; ++z)
+			{
+				for (uint32_t x = 0; x < patchDim; ++x)
+				{
+					const float fx = float(x) / (patchDim - 1);
+					const float fz = float(z) / (patchDim - 1);
+
+					const float worldX = lerp(patchAabb.mn.x(), patchAabb.mx.x(), fx);
+					const float worldZ = lerp(patchAabb.mn.z(), patchAabb.mx.z(), fz);
+					const float worldY = m_heightfield->getWorldHeight(worldX, worldZ);
+
+					*vertex++ = worldX;
+					*vertex++ = worldY;
+					*vertex++ = worldZ;
+				}
+			}
+			m_rtVertexBuffers[patchId]->unlock();
+
+			m_rtAS[patchId] = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_indexBuffer, render::IndexType::UInt32, { m_primitives[0] });
+			if (!m_rtAS[patchId])
+				return false;
+
+			patchOrigin += patchDeltaX;
+		}
+
+		patchTopLeft += patchDeltaZ;
+	}
 
 	return true;
 }

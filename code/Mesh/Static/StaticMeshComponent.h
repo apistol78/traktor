@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include "World/Entity/RTWorldComponent.h"
 #include "Mesh/MeshComponent.h"
 #include "Resource/Proxy.h"
+#include "World/Entity/RTWorldComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

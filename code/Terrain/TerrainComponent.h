@@ -14,6 +14,7 @@
 #include "Resource/Proxy.h"
 #include "Terrain/TerrainComponentData.h"
 #include "World/IEntityComponent.h"
+#include "World/Entity/RTWorldComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -92,16 +93,6 @@ public:
 		float error[LodCount];
 	};
 
-	struct CullPatch
-	{
-		float error[4];
-		float distance;
-		float area;
-		uint32_t patchId;
-		Vector4 patchOrigin;
-		Aabb3 patchAabb;
-	};
-
 	explicit TerrainComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	bool create(const TerrainComponentData& data);
@@ -135,6 +126,8 @@ public:
 
 	virtual void setOwner(world::Entity* owner) override final;
 
+	virtual void setWorld(world::World* world) override final;
+
 	virtual void setTransform(const Transform& transform) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
@@ -145,11 +138,21 @@ private:
 	friend class TerrainEditModifier;
 	friend class TerrainComponentEditor;
 
+	struct CullPatch
+	{
+		float error[4];
+		float distance;
+		float area;
+		uint32_t patchId;
+		Vector4 patchOrigin;
+		Aabb3 patchAabb;
+	};
+
 	struct ViewPatch
 	{
-		int32_t lastPatchLod;
-		int32_t lastSurfaceLod;
-		Vector4 surfaceOffset;
+		int32_t lastPatchLod = 0;
+		int32_t lastSurfaceLod = 0;
+		Vector4 surfaceOffset = Vector4::zero();
 	};
 
 	struct View
@@ -160,17 +163,16 @@ private:
 		AlignedVector< const CullPatch* > patchLodInstances[LodCount];
 	};
 
+	world::World* m_world = nullptr;
+	world::Entity* m_owner = nullptr;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	world::Entity* m_owner;
 	resource::Proxy< Terrain > m_terrain;
 	resource::Proxy< hf::Heightfield > m_heightfield;
-
 	resource::Proxy< render::Shader > m_shaderCull;
-
 	AlignedVector< Patch > m_patches;
-	uint32_t m_patchCount;
-	uint32_t m_cacheSize;
+	uint32_t m_patchCount = 0;
+	uint32_t m_cacheSize = 0;
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_indexBuffer;
 	Ref< render::Buffer > m_vertexBuffer;
@@ -180,20 +182,27 @@ private:
 	Ref< render::ITexture > m_defaultColorMap;
 	Ref< render::ITexture > m_defaultCutMap;
 	render::Primitives m_primitives[LodCount];
-	float m_patchLodDistance;
-	float m_patchLodBias;
-	float m_patchLodExponent;
-	float m_surfaceLodDistance;
-	float m_surfaceLodBias;
-	float m_surfaceLodExponent;
-	VisualizeMode m_visualizeMode;
+	RefArray< render::Buffer > m_rtVertexBuffers;
+	RefArray< render::IAccelerationStructure > m_rtAS;
+	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
+	float m_patchLodDistance = 0.0f;
+	float m_patchLodBias = 0.0f;
+	float m_patchLodExponent = 0.0f;
+	float m_surfaceLodDistance = 0.0f;
+	float m_surfaceLodBias = 0.0f;
+	float m_surfaceLodExponent = 0.0f;
+	VisualizeMode m_visualizeMode = VmDefault;
 	View m_view[4];
 
 	bool validate(int32_t viewIndex, uint32_t cacheSize);
 
 	void updatePatches(const uint32_t* region, bool updateErrors, bool flushPatchCache);
 
+	void updateRayTracingPatches();
+
 	bool createPatches();
+
+	bool createRayTracingPatches();
 };
 
 }

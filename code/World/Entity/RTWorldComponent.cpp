@@ -38,6 +38,13 @@ void RTWorldComponent::update(World* world, const UpdateParams& update)
 
 RTWorldComponent::Instance* RTWorldComponent::createInstance(const render::IAccelerationStructure* blas, const render::Buffer* perPrimitiveColor)
 {
+	RefArray< const render::IAccelerationStructure > blases;
+	blases.push_back(blas);
+	return createInstance(blases, perPrimitiveColor);
+}
+
+RTWorldComponent::Instance* RTWorldComponent::createInstance(const RefArray< const render::IAccelerationStructure >& blas, const render::Buffer* perPrimitiveColor)
+{
 	Instance* instance = new Instance();
 	instance->owner = this;
 	instance->transform = Transform::identity();
@@ -57,11 +64,14 @@ void RTWorldComponent::build(const WorldBuildContext& context)
 		AlignedVector< render::IAccelerationStructure::Instance > tlasInstances;
 		for (const auto& instance : m_instances)
 		{
-			tlasInstances.push_back({
-				.blas = instance->blas,
-				.perPrimitiveVec4 = instance->perPrimitiveColor,
-				.transform = instance->transform.toMatrix44()
-			});
+			for (auto blas : instance->blas)
+			{
+				tlasInstances.push_back({
+					.blas = blas,
+					.perPrimitiveVec4 = instance->perPrimitiveColor,
+					.transform = instance->transform.toMatrix44()
+				});
+			}
 		}
 
 		render::RenderContext* renderContext = context.getRenderContext();

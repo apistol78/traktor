@@ -407,7 +407,7 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 	);
 
 	// Re-create buffer to hold AS hierarchical data.
-	if (m_hierarchyBuffer && m_hierarchyBuffer->getSize() != bottomLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize)
+	if (m_hierarchyBuffer && m_hierarchyBuffer->getSize() < bottomLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize)
 		safeDestroy(m_hierarchyBuffer);
 	if (!m_hierarchyBuffer)
 	{
@@ -424,7 +424,7 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 	}
 
 	// Re-create scratch buffer used when building the hierarchy.
-	if (m_scratchBuffer && m_scratchBuffer->getSize() != bottomLevelAccelerationStructureBuildSizesInfo.buildScratchSize + m_scratchAlignment)
+	if (m_scratchBuffer && m_scratchBuffer->getSize() < bottomLevelAccelerationStructureBuildSizesInfo.buildScratchSize + m_scratchAlignment)
 		safeDestroy(m_scratchBuffer);
 	if (!m_scratchBuffer)
 	{

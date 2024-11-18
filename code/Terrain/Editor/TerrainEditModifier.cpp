@@ -810,6 +810,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 
 	const uint32_t region[] = { pmnx, pmnz, pmxx, pmxz };
 	m_terrainComponent->updatePatches(region, false, true);
+	m_terrainComponent->updateRayTracingPatches();
 
 	// Track entire updated region.
 	if (m_applied)
@@ -1002,6 +1003,7 @@ void TerrainEditModifier::end()
 
 	// Update errors metrics after modifier to prevent popping while drawing.
 	m_terrainComponent->updatePatches(nullptr, true, false);
+	m_terrainComponent->updateRayTracingPatches();
 	for (auto terrainLayer : m_terrainLayers)
 		terrainLayer->updatePatches();
 

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Transform.h"
 #include "World/IWorldComponent.h"
 
@@ -55,7 +56,7 @@ public:
 	{
 		RTWorldComponent* owner;
 		Transform transform;
-		Ref< const render::IAccelerationStructure > blas;
+		RefArray< const render::IAccelerationStructure > blas;
 		Ref< const render::Buffer > perPrimitiveColor;
 
 		void destroy();
@@ -70,6 +71,8 @@ public:
 	virtual void update(World* world, const UpdateParams& update) override final;
 
 	Instance* createInstance(const render::IAccelerationStructure* blas, const render::Buffer* perPrimitiveColor);
+
+	Instance* createInstance(const RefArray< const render::IAccelerationStructure >& blas, const render::Buffer* perPrimitiveColor);
 
 	void build(const WorldBuildContext& context);
 
