@@ -533,9 +533,19 @@ void RenderViewVk::setScissor(const Rectangle& scissor)
 	T_ASSERT(scissorRect.height >= 0);
 
 	const auto& frame = m_frames[m_currentImageIndex];
-	VkRect2D vkScissor = {};
-	vkScissor.offset = VkOffset2D { scissor.left, scissor.top };
-	vkScissor.extent = VkExtent2D { static_cast<uint32_t>(scissor.width), static_cast<uint32_t>(scissor.height) };
+	VkRect2D vkScissor =
+	{
+		.offset = VkOffset2D
+		{ 
+			.x = scissor.left, 
+			.y = scissor.top 
+		},
+		.extent = VkExtent2D
+		{ 
+			.width = (uint32_t)scissor.width,
+			.height = (uint32_t)scissor.height
+		}
+	};
 	vkCmdSetScissor(*frame.graphicsCommandBuffer, 0, 1, &vkScissor);
 }
 
@@ -802,9 +812,19 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 
 	// Set scissor
-	VkRect2D vkScissor = {};
-	vkScissor.offset = VkOffset2D{ 0, 0 };
-	vkScissor.extent = VkExtent2D{ (uint32_t)m_targetSet->getWidth(), (uint32_t)m_targetSet->getHeight() };
+	VkRect2D vkScissor = 
+	{
+		.offset = VkOffset2D 
+		{
+			.x = 0,
+			.y = 0
+		},
+		.extent = VkExtent2D 
+		{
+			.width = (uint32_t)m_targetSet->getWidth(),
+			.height = (uint32_t)m_targetSet->getHeight()
+		}
+	};
 	vkCmdSetScissor(*frame.graphicsCommandBuffer, 0, 1, &vkScissor);
 
 	m_passCount++;
@@ -920,9 +940,19 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 
 	// Set scissor
-	VkRect2D vkScissor = {};
-	vkScissor.offset = VkOffset2D{ 0, 0 };
-	vkScissor.extent = VkExtent2D{ (uint32_t)m_targetSet->getWidth(), (uint32_t)m_targetSet->getHeight() };
+	VkRect2D vkScissor =
+	{
+		.offset = VkOffset2D
+		{ 
+			.x = 0, 
+			.y = 0 
+		},
+		.extent = VkExtent2D
+		{ 
+			.width = (uint32_t)m_targetSet->getWidth(), 
+			.height = (uint32_t)m_targetSet->getHeight() 
+		}
+	};
 	vkCmdSetScissor(*frame.graphicsCommandBuffer, 0, 1, &vkScissor);
 
 	m_passCount++;
