@@ -435,27 +435,20 @@ struct Rectangle
 	int32_t top = 0;
 	int32_t width = 0;
 	int32_t height = 0;
+
 	Rectangle() = default;
+
 	Rectangle(int32_t l, int32_t t, int32_t w, int32_t h)
-		: left(l)
-		, top(t)
-		, width(w)
-		, height(h)
+	: left(l)
+	, top(t)
+	, width(w)
+	, height(h)
 	{
 	}
 
-	bool operator==(const Rectangle& other) const
-	{
-		return left == other.left &&
-			top == other.top &&
-			width == other.width &&
-			height == other.height;
-	}
+	bool operator==(const Rectangle& other) const = default;
 
-	bool operator!=(const Rectangle& other) const
-	{
-		return !(*this == other);
-	}
+	bool operator!=(const Rectangle& other) const = default;
 };
 
 /*! Display mode structure. */

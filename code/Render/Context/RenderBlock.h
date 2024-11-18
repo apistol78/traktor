@@ -252,6 +252,7 @@ class T_DLLCLASS SetScissorRenderBlock : public RenderBlock
 {
 public:
 	Rectangle scissor;
+
 	virtual void render(IRenderView* renderView) const override final;
 };
 
