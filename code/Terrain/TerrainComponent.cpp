@@ -929,6 +929,8 @@ bool TerrainComponent::createRayTracingPatches()
 	for (auto as : m_rtAS)
 		as->destroy();
 
+	safeDestroy(m_rtwInstance);
+
 	m_rtVertexBuffers.resize(m_patchCount * m_patchCount);
 	m_rtAS.resize(m_patchCount * m_patchCount);
 
@@ -973,7 +975,7 @@ bool TerrainComponent::createRayTracingPatches()
 			}
 			m_rtVertexBuffers[patchId]->unlock();
 
-			m_rtAS[patchId] = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_indexBuffer, render::IndexType::UInt32, { m_primitives[0] });
+			m_rtAS[patchId] = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_indexBuffer, render::IndexType::UInt32, { m_primitives[1] });
 			if (!m_rtAS[patchId])
 				return false;
 
@@ -982,6 +984,9 @@ bool TerrainComponent::createRayTracingPatches()
 
 		patchTopLeft += patchDeltaZ;
 	}
+
+	// Reset world to create new RT instance.
+	setWorld(m_world);
 
 	return true;
 }

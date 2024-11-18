@@ -810,7 +810,6 @@ void TerrainEditModifier::apply(const Vector4& center)
 
 	const uint32_t region[] = { pmnx, pmnz, pmxx, pmxz };
 	m_terrainComponent->updatePatches(region, false, true);
-	m_terrainComponent->updateRayTracingPatches();
 
 	// Track entire updated region.
 	if (m_applied)

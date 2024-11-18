@@ -35,6 +35,11 @@ HWRT_Material HWRT_GetMaterial(rayQueryEXT query)
 			const uint triangle = rayQueryGetIntersectionPrimitiveIndexEXT(query, true);
 			material = __bindlessBufferMaterials__[id].materialPerTriangle[triangle];
 		}
+		else
+		{
+			// No assigned material; return default.
+			material.albedo = vec4(0.5f, 0.5f, 0.5f, 1.0f);
+		}
 	}
 
 	return material;
