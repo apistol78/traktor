@@ -48,7 +48,7 @@ bool CommandBuffer::reset()
 	return true;
 }
 
-bool CommandBuffer::submit(VkSemaphore waitSemaphore, VkPipelineStageFlags waitStageFlags, VkSemaphore signalSemaphore)
+bool CommandBuffer::submit(const StaticVector< VkSemaphore, 2 >& waitSemaphores, const StaticVector< VkPipelineStageFlags, 2 >& waitStageFlags, VkSemaphore signalSemaphore)
 {
 	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
 	T_ASSERT(!m_submitted);
@@ -59,11 +59,12 @@ bool CommandBuffer::submit(VkSemaphore waitSemaphore, VkPipelineStageFlags waitS
 	VkSubmitInfo si = {};
 	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-	if (waitSemaphore != VK_NULL_HANDLE)
+	if (!waitSemaphores.empty())
 	{
-		si.waitSemaphoreCount = 1;
-		si.pWaitSemaphores = &waitSemaphore;
-		si.pWaitDstStageMask = &waitStageFlags;
+		T_ASSERT(waitSemaphores.size() == waitStageFlags.size());
+		si.waitSemaphoreCount = (uint32_t)waitSemaphores.size();
+		si.pWaitSemaphores = waitSemaphores.c_ptr();
+		si.pWaitDstStageMask = waitStageFlags.c_ptr();
 	}
 
 	si.commandBufferCount = 1;
@@ -101,7 +102,7 @@ bool CommandBuffer::wait()
 
 bool CommandBuffer::submitAndWait()
 {
-	if (!submit(VK_NULL_HANDLE, 0, VK_NULL_HANDLE))
+	if (!submit({}, {}, VK_NULL_HANDLE))
 		return false;
 	if (!wait())
 		return false;

@@ -324,6 +324,7 @@ void SkyComponent::setup(
 				renderBlock->workSize[0] = 1024 * 2;
 				renderBlock->workSize[1] = 256 * 2;
 				renderBlock->workSize[2] = 1;
+				renderBlock->asynchronous = true;
 
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->programParams->beginParameters(renderContext);
@@ -341,7 +342,6 @@ void SkyComponent::setup(
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);
-				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, output, 0);
 			});
 			renderGraph.addPass(rp);
 

@@ -39,8 +39,6 @@ public:
 
 	uint32_t getQueueIndex() const { return m_queueIndex; }
 
-	VkCommandPool getCommandPool() const { return ms_commandPool; }
-
 private:
 	friend class Context;
 
@@ -48,7 +46,7 @@ private:
 	VkQueue m_queue;
 	uint32_t m_queueIndex;
 	Semaphore m_lock;
-	static thread_local VkCommandPool ms_commandPool;
+	static thread_local VkCommandPool ms_commandPools[32];
 
 	Queue(Context* context, VkQueue queue, uint32_t queueIndex);
 };

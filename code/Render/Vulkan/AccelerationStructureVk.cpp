@@ -192,7 +192,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 
 Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
 {
-	auto commandBuffer = context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+	auto commandBuffer = context->getGraphicsQueue()->acquireCommandBuffer(L"AccelerationStructureVk::createBottomLevel");
 
 	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context);
 	as->m_scratchAlignment = getScratchAlignment(context);

@@ -18,18 +18,19 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Queue", Queue, Object)
 
-thread_local VkCommandPool Queue::ms_commandPool;
+thread_local VkCommandPool Queue::ms_commandPools[32];
 
 Ref< Queue > Queue::create(Context* context, uint32_t queueIndex)
 {
 	VkQueue queue;
+	T_FATAL_ASSERT(queueIndex < sizeof_array(ms_commandPools));
 	vkGetDeviceQueue(context->getLogicalDevice(), queueIndex, 0, &queue);
 	return new Queue(context, queue, queueIndex);
 }
 
 Ref< CommandBuffer > Queue::acquireCommandBuffer(const wchar_t* const tag)
 {
-	if (!ms_commandPool)
+	if (!ms_commandPools[m_queueIndex])
 	{
 		VkCommandPool commandPool;
 
@@ -40,14 +41,14 @@ Ref< CommandBuffer > Queue::acquireCommandBuffer(const wchar_t* const tag)
 		if (vkCreateCommandPool(m_context->getLogicalDevice(), &cpci, 0, &commandPool) != VK_SUCCESS)
 			return nullptr;
 
-		ms_commandPool = commandPool;
+		ms_commandPools[m_queueIndex] = commandPool;
 	}
 
 	VkCommandBuffer commandBuffer = 0;
 
 	VkCommandBufferAllocateInfo cbai = {};
 	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	cbai.commandPool = ms_commandPool;
+	cbai.commandPool = ms_commandPools[m_queueIndex];
 	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	cbai.commandBufferCount = 1;
 	if (vkAllocateCommandBuffers(m_context->getLogicalDevice(), &cbai, &commandBuffer) != VK_SUCCESS)
@@ -61,7 +62,7 @@ Ref< CommandBuffer > Queue::acquireCommandBuffer(const wchar_t* const tag)
 	if (vkBeginCommandBuffer(commandBuffer, &cbbi) != VK_SUCCESS)
 		return nullptr;
 
-	return new CommandBuffer(m_context, this, ms_commandPool, commandBuffer);
+	return new CommandBuffer(m_context, this, ms_commandPools[m_queueIndex], commandBuffer);
 }
 
 VkResult Queue::submit(const VkSubmitInfo& si, VkFence fence)

@@ -175,7 +175,7 @@ public:
 	 *
 	 * \param workSize Work size, 3 dimensional size.
 	 */
-	virtual void compute(IProgram* program, const int32_t* workSize) = 0;
+	virtual void compute(IProgram* program, const int32_t* workSize, bool asynchronous) = 0;
 
 	/*! Enqueue indirect compute task.
 	 *

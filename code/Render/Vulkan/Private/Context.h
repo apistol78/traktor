@@ -49,7 +49,8 @@ public:
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
 		VmaAllocator allocator,
-		uint32_t graphicsQueueIndex
+		uint32_t graphicsQueueIndex,
+		uint32_t computeQueueIndex
 	);
 
 	virtual ~Context();
@@ -90,6 +91,8 @@ public:
 
 	Queue* getGraphicsQueue() const { return m_graphicsQueue; }
 
+	Queue* getComputeQueue() const { return m_computeQueue; }
+
 	UniformBufferPool* getUniformBufferPool(int32_t index) const { return m_uniformBufferPools[index]; }
 
 	VkDescriptorSetLayout getBindlessTexturesSetLayout() const { return m_bindlessTexturesDescriptorLayout; }
@@ -121,10 +124,12 @@ private:
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
 	uint32_t m_graphicsQueueIndex;
+	uint32_t m_computeQueueIndex;
 	VkPipelineCache m_pipelineCache = 0;
 	VkDescriptorPool m_descriptorPool = 0;
 	int32_t m_views = 0;
 	Ref< Queue > m_graphicsQueue;
+	Ref< Queue > m_computeQueue;
 	Ref< UniformBufferPool > m_uniformBufferPools[3];
 	Semaphore m_cleanupLock;
 	Semaphore m_resourceIndexLock;

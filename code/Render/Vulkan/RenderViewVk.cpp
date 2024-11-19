@@ -301,11 +301,15 @@ void RenderViewVk::close()
 	{
 		if (frame.graphicsCommandBuffer)
 			frame.graphicsCommandBuffer->wait();
+		if (frame.computeCommandBuffer)
+			frame.computeCommandBuffer->wait();
 
 		frame.primaryTarget->destroy();
 		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
+		vkDestroySemaphore(m_context->getLogicalDevice(), frame.computeFinishedSemaphore, nullptr);
 
 		frame.graphicsCommandBuffer = nullptr;
+		frame.computeCommandBuffer = nullptr;
 	}
 	m_frames.clear();
 
@@ -400,9 +404,12 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	{
 		if (frame.graphicsCommandBuffer)
 			frame.graphicsCommandBuffer->externalSynced();
+		if (frame.computeCommandBuffer)
+			frame.computeCommandBuffer->externalSynced();
 
 		frame.primaryTarget->destroy();
 		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
+		vkDestroySemaphore(m_context->getLogicalDevice(), frame.computeFinishedSemaphore, nullptr);
 	}
 	m_frames.clear();
 
@@ -591,8 +598,33 @@ bool RenderViewVk::beginFrame()
 	}
 	else
 	{
-		frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+		frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
 		if (!frame.graphicsCommandBuffer)
+			return false;
+	}
+	T_PROFILER_END();
+
+	T_PROFILER_BEGIN(L"Wait command queue");
+	if (frame.computeCommandBuffer)
+	{
+		// Ensure command buffer has been consumed by GPU.
+		if (!frame.computeCommandBuffer->wait())
+		{
+			// Issue an event in order to reset view.
+			RenderEvent evt;
+			evt.type = RenderEventType::Lost;
+			m_eventQueue.push_back(evt);
+			m_lost = true;
+			return false;
+		}
+
+		if (!frame.computeCommandBuffer->reset())
+			return false;
+	}
+	else
+	{
+		frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
+		if (!frame.computeCommandBuffer)
 			return false;
 	}
 	T_PROFILER_END();
@@ -619,16 +651,23 @@ void RenderViewVk::endFrame()
 	auto& frame = m_frames[m_currentImageIndex];
 
 	frame.boundPipeline = 0;
-	frame.boundComputePipeline = 0;
 	frame.boundIndexBuffer = BufferViewVk();
 	frame.boundVertexBuffer = BufferViewVk();
 
 	// Prepare primary color for presentation.
 	frame.primaryTarget->getColorTargetVk(0)->prepareForPresentation(frame.graphicsCommandBuffer);
 
+	// Submit compute command buffer.
+	frame.computeCommandBuffer->submit(
+		{},
+		{},
+		frame.computeFinishedSemaphore
+	);
+
+	// Submit graphics command buffer.
 	frame.graphicsCommandBuffer->submit(
-		m_imageAvailableSemaphores[m_counter % sizeof_array(m_imageAvailableSemaphores)],
-		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		{ m_imageAvailableSemaphores[m_counter % sizeof_array(m_imageAvailableSemaphores)] },
+		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT },
 		frame.renderFinishedSemaphore
 	);
 
@@ -656,11 +695,12 @@ void RenderViewVk::present()
 	VkResult result;
 
 	// Queue presentation of current primary target.
+	const VkSemaphore waitSemaphores[] = { frame.computeFinishedSemaphore, frame.renderFinishedSemaphore };
     const VkPresentInfoKHR pi =
 	{
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-		.waitSemaphoreCount = 1,
-		.pWaitSemaphores = &frame.renderFinishedSemaphore,
+		.waitSemaphoreCount = sizeof_array(waitSemaphores),
+		.pWaitSemaphores = waitSemaphores,
 		.swapchainCount = 1,
 		.pSwapchains = &m_swapChain,
 		.pImageIndices = &m_currentImageIndex,
@@ -1053,21 +1093,22 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 	m_drawCalls++;
 }
 
-void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
+void RenderViewVk::compute(IProgram* program, const int32_t* workSize, bool asynchronous)
 {
 	ProgramVk* p = static_cast< ProgramVk* >(program);
 	const auto& frame = m_frames[m_currentImageIndex];
+	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
 
-	if (!validateComputePipeline(p))
+	if (!validateComputePipeline(commandBuffer, p))
 		return;
 
-	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, nullptr))
+	if (!p->validate(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, nullptr))
 		return;
 
 	const int32_t* lwgs = p->getLocalWorkGroupSize();
 
 	vkCmdDispatch(
-		*frame.graphicsCommandBuffer,
+		*commandBuffer,
 		(workSize[0] + lwgs[0] - 1) / lwgs[0],
 		(workSize[1] + lwgs[1] - 1) / lwgs[1],
 		(workSize[2] + lwgs[2] - 1) / lwgs[2]
@@ -1078,10 +1119,9 @@ void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuf
 {
 	const BufferViewVk* wbv = static_cast< const BufferViewVk* >(workBuffer);
 	ProgramVk* p = static_cast< ProgramVk* >(program);
-
 	const auto& frame = m_frames[m_currentImageIndex];
 
-	if (!validateComputePipeline(p))
+	if (!validateComputePipeline(frame.graphicsCommandBuffer, p))
 		return;
 
 	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, nullptr))
@@ -1306,18 +1346,14 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 
 void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances)
 {
-	const auto& frame = m_frames[m_currentImageIndex];
-
 	AccelerationStructureVk* as = mandatory_non_null_type_cast< AccelerationStructureVk* >(accelerationStructure);
-	as->writeInstances(frame.graphicsCommandBuffer, instances);
+	as->writeInstances(m_frames[m_currentImageIndex].graphicsCommandBuffer, instances);
 }
 
 void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
 {
-	const auto& frame = m_frames[m_currentImageIndex];
-
 	AccelerationStructureVk* as = mandatory_non_null_type_cast< AccelerationStructureVk* >(accelerationStructure);
-	as->writeGeometry(frame.graphicsCommandBuffer, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives);
+	as->writeGeometry(m_frames[m_currentImageIndex].graphicsCommandBuffer, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives);
 }
 
 int32_t RenderViewVk::beginTimeQuery()
@@ -1595,8 +1631,10 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	for (int32_t i = 0; i < sizeof_array(m_imageAvailableSemaphores); ++i)
 	{
-		VkSemaphoreCreateInfo sci = {};
-		sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+		const VkSemaphoreCreateInfo sci =
+		{
+			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
+		};
 		if (vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS)
 			return false;
 		setObjectDebugName(m_context->getLogicalDevice(), L"m_imageAvailableSemaphore", (uint64_t)m_imageAvailableSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE);
@@ -1614,7 +1652,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	// Ensure all queries are reset to silence validation layer.
 	{
-		Ref< CommandBuffer > commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+		Ref< CommandBuffer > commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"RenderViewVk::create");
 		vkCmdResetQueryPool(*commandBuffer, m_queryPool, 0, imageCount * 2 * T_QUERY_SEGMENT_SIZE);
 		if (!commandBuffer->submitAndWait())
 			return false;
@@ -1644,10 +1682,14 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	{
 		auto& frame = m_frames[i];
 
-		VkSemaphoreCreateInfo sci = {};
-		sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+		const VkSemaphoreCreateInfo sci =
+		{
+			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
+		};
 		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.renderFinishedSemaphore);
 		setObjectDebugName(m_context->getLogicalDevice(), L"frame.renderFinishedSemaphore", (uint64_t)frame.renderFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
+		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.computeFinishedSemaphore);
+		setObjectDebugName(m_context->getLogicalDevice(), L"frame.computeFinishedSemaphore", (uint64_t)frame.computeFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
 
 		static uint32_t primaryInstances = 0;
 		frame.primaryTarget = new RenderTargetSetVk(m_context, primaryInstances);
@@ -1916,10 +1958,8 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 	return true;
 }
 
-bool RenderViewVk::validateComputePipeline(const ProgramVk* p)
+bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const ProgramVk* p)
 {
-	auto& frame = m_frames[m_currentImageIndex];
-
 	// Calculate pipeline key.
 	const uint8_t primitiveId = 0;
 	const uint32_t declHash = 0;
@@ -1975,11 +2015,7 @@ bool RenderViewVk::validateComputePipeline(const ProgramVk* p)
 	if (!pipeline)
 		return false;
 
-	if (pipeline != frame.boundComputePipeline)
-	{
-		vkCmdBindPipeline(*frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
-		frame.boundComputePipeline = pipeline;
-	}
+	vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
 	return true;
 }
 

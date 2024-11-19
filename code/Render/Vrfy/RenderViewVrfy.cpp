@@ -325,7 +325,7 @@ void RenderViewVrfy::drawIndirect(const IBufferView* vertexBuffer, const IVertex
 	m_renderView->drawIndirect(wrappedVertexView, vl->getWrappedVertexLayout(), wrappedIndexView, indexType, programVrfy->m_program, primitiveType, wrappedDrawView, drawOffset, drawCount);
 }
 
-void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize)
+void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize, bool asynchronous)
 {
 	T_CAPTURE_TRACE(L"compute");
 	T_CAPTURE_ASSERT(m_insideFrame, L"Cannot compute outside of beginFrame/endFrame.");
@@ -340,7 +340,7 @@ void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize)
 
 	programVrfy->verify();
 
-	m_renderView->compute(programVrfy->m_program, workSize);
+	m_renderView->compute(programVrfy->m_program, workSize, asynchronous);
 }
 
 void RenderViewVrfy::computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset)

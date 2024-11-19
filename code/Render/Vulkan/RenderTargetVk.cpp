@@ -102,7 +102,7 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	m_height = setDesc.height;
 
 	// Prepare target so it can be read by shader without first being rendered to.
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"RenderTargetVk::create");
 
 	m_imageResolved->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
 

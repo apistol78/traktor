@@ -76,7 +76,7 @@ bool TextureVk::create(
 	m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true);
 
 	// Upload initial data.
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"TextureVk::create");
 	if (!commandBuffer)
 		return false;
 
@@ -198,7 +198,7 @@ bool TextureVk::create(
 	m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true);
 
 	// Upload initial data.
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"TextureVk::create");
 	if (!commandBuffer)
 		return false;
 
@@ -339,7 +339,7 @@ bool TextureVk::create(
 	}
 	m_stagingBuffer->unlock();
 
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"TextureVk::create");
 
 	// Change layout of texture to be able to copy staging buffer into texture.
 	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
@@ -435,7 +435,7 @@ void TextureVk::unlock(int32_t side, int32_t level)
 {
 	m_stagingBuffer->unlock();
 	
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"TextureVk::unlock");
 
 	// Change layout of texture to be able to copy staging buffer into texture.
 	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, level, 1, 0, 1);

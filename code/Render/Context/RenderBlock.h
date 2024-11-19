@@ -69,6 +69,7 @@ public:
 	IProgram* program = nullptr;
 	ProgramParameters* programParams = nullptr;
 	int32_t workSize[3] = { 1, 1, 1 };
+	bool asynchronous = false;
 
 	virtual void render(IRenderView* renderView) const override final;
 };

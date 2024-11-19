@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <initializer_list>
 #include <iterator>
 #include "Core/Config.h"
 #include "Core/Containers/VectorConstructor.h"
@@ -269,6 +270,13 @@ public:
 	enum { Capacity = Capacity_ };
 
 	StaticVector() = default;
+
+	StaticVector(const std::initializer_list< ItemType >& iv) noexcept
+	:	m_size(0)
+	{
+		for (auto it = std::begin(iv); it != std::end(iv); ++it)
+			push_back(*it);
+	}
 
 	explicit StaticVector(size_t size)
 	:	m_size(size)

@@ -107,7 +107,7 @@ public:
 
 	virtual void drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawOffset, uint32_t drawCount) override final;
 
-	virtual void compute(IProgram* program, const int32_t* workSize) override final;
+	virtual void compute(IProgram* program, const int32_t* workSize, bool asynchronous) override final;
 
 	virtual void computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset) override final;
 
@@ -137,11 +137,12 @@ private:
 	struct Frame
 	{
 		Ref< CommandBuffer > graphicsCommandBuffer;
+		Ref< CommandBuffer > computeCommandBuffer;
 		VkSemaphore renderFinishedSemaphore;
+		VkSemaphore computeFinishedSemaphore;
 		Ref< RenderTargetSetVk > primaryTarget;
 
 		VkPipeline boundPipeline = 0;
-		VkPipeline boundComputePipeline = 0;
 		BufferViewVk boundIndexBuffer;
 		BufferViewVk boundVertexBuffer;
 
@@ -171,7 +172,7 @@ private:
 
 	// Swap chain.
 	VkSwapchainKHR m_swapChain = 0;
-	VkSemaphore m_imageAvailableSemaphores[4] = { 0, 0, 0, 0 };
+	VkSemaphore m_imageAvailableSemaphores[4] = {};
 	AlignedVector< Frame > m_frames;
 	uint32_t m_currentImageIndex = 0;
 	uint32_t m_multiSample = 0;
@@ -208,7 +209,7 @@ private:
 
 	bool validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt);
 
-	bool validateComputePipeline(const ProgramVk* p);
+	bool validateComputePipeline(CommandBuffer* commandBuffer, const ProgramVk* p);
 
 #if defined(_WIN32)
 	// \name IWindowListener implementation.

@@ -198,21 +198,25 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 	// Create Vulkan instance.
-	VkApplicationInfo ai = {};
-	ai.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-	ai.pNext = nullptr;
-	ai.pApplicationName = "Traktor";
-	ai.pEngineName = "Traktor";
-	ai.engineVersion = 1;
-	ai.apiVersion = VK_MAKE_VERSION(1, 2, 0);
+	const VkApplicationInfo ai =
+	{
+		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+		.pNext = nullptr,
+		.pApplicationName = "Traktor",
+		.pEngineName = "Traktor",
+		.engineVersion = 1,
+		.apiVersion = VK_MAKE_VERSION(1, 2, 0)
+	};
 
-	VkInstanceCreateInfo ii = {};
-	ii.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-	ii.pApplicationInfo = &ai;
-	ii.enabledLayerCount = (uint32_t)validationLayers.size();
-	ii.ppEnabledLayerNames = validationLayers.c_ptr();
-	ii.enabledExtensionCount = sizeof_array(c_extensions);
-	ii.ppEnabledExtensionNames = c_extensions;
+	const VkInstanceCreateInfo ii =
+	{
+		.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+		.pApplicationInfo = &ai,
+		.enabledLayerCount = (uint32_t)validationLayers.size(),
+		.ppEnabledLayerNames = validationLayers.c_ptr(),
+		.enabledExtensionCount = sizeof_array(c_extensions),
+		.ppEnabledExtensionNames = c_extensions
+	};
 
 	if ((result = vkCreateInstance(&ii, 0, &m_instance)) != VK_SUCCESS)
 	{
@@ -278,9 +282,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		m_physicalDevice = physicalDevices[0];
 	}
 
-	// Get physical device graphics queue.
-	uint32_t graphicsQueueIndex = ~0;
-
+	// Get physical device queues.
 	uint32_t queueFamilyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, 0);
 
@@ -288,20 +290,38 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, queueFamilyProperties.ptr());
 
 	// Select graphics queue.
+	uint32_t graphicsQueueIndex = ~0;
 	for (uint32_t i = 0; i < queueFamilyCount; ++i)
 	{
-		if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0)
+		if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) == VK_QUEUE_GRAPHICS_BIT)
 		{
 			graphicsQueueIndex = i;
 			break;
 		}
 	}
-
 	if (graphicsQueueIndex == ~0)
 	{
 		log::error << L"Failed to create Vulkan; no suitable graphics queue found." << Endl;
 		return false;
 	}
+
+	// Select compute queue.
+	uint32_t computeQueueIndex = ~0;
+	for (uint32_t i = 0; i < queueFamilyCount; ++i)
+	{
+		if ((queueFamilyProperties[i].queueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT)) == VK_QUEUE_COMPUTE_BIT)
+		{
+			computeQueueIndex = i;
+			break;
+		}
+	}
+	if (computeQueueIndex == ~0)
+	{
+		log::error << L"Failed to create Vulkan; no suitable compute queue found." << Endl;
+		return false;
+	}
+
+	log::info << L"Using graphics queue " << graphicsQueueIndex << L", compute queue " << computeQueueIndex << L"." << Endl;
 
 	// Build array of required extensions.
 	AlignedVector< const char* > deviceExtensions;
@@ -399,21 +419,30 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	const float queuePriorities[] = { 1.0f, 1.0f };
 
-    const VkDeviceQueueCreateInfo dqci =
-	{
+	StaticVector< VkDeviceQueueCreateInfo, 2 > dqcis;
+	dqcis.push_back({
 		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 		.queueFamilyIndex = graphicsQueueIndex,
 		.queueCount = 1,
 		.pQueuePriorities = queuePriorities
-	};
+	});
+	if (computeQueueIndex != graphicsQueueIndex)
+	{
+		dqcis.push_back({
+			.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+			.queueFamilyIndex = computeQueueIndex,
+			.queueCount = 1,
+			.pQueuePriorities = queuePriorities
+		});
+	}
 
     const VkDeviceCreateInfo dci =
 	{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		.pNext = headFeature,
 		.flags = 0,
-		.queueCreateInfoCount = 1,
-		.pQueueCreateInfos = &dqci,
+		.queueCreateInfoCount = (uint32_t)dqcis.size(),
+		.pQueueCreateInfos = dqcis.c_ptr(),
 		.enabledLayerCount = (uint32_t)validationLayers.size(),
 		.ppEnabledLayerNames = validationLayers.c_ptr(),
 		.enabledExtensionCount = (uint32_t)deviceExtensions.size(),
@@ -428,28 +457,30 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 	// Create memory allocator.
-	VmaVulkanFunctions vf = {};
-	vf.vkGetInstanceProcAddr = vkGetInstanceProcAddr;
-	vf.vkGetDeviceProcAddr = vkGetDeviceProcAddr;
-	vf.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
-	vf.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
-	vf.vkAllocateMemory = vkAllocateMemory;
-	vf.vkFreeMemory = vkFreeMemory;
-	vf.vkMapMemory = vkMapMemory;
-	vf.vkUnmapMemory = vkUnmapMemory;
-	vf.vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges;
-	vf.vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges;
-	vf.vkBindBufferMemory = vkBindBufferMemory;
-	vf.vkBindImageMemory = vkBindImageMemory;
-	vf.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements;
-	vf.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements;
-	vf.vkCreateBuffer = vkCreateBuffer;
-	vf.vkDestroyBuffer = vkDestroyBuffer;
-	vf.vkCreateImage = vkCreateImage;
-	vf.vkDestroyImage = vkDestroyImage;
-	vf.vkCmdCopyBuffer = vkCmdCopyBuffer;
-	vf.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR;
-	vf.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR;
+	const VmaVulkanFunctions vf =
+	{
+		.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
+		.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
+		.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties,
+		.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties,
+		.vkAllocateMemory = vkAllocateMemory,
+		.vkFreeMemory = vkFreeMemory,
+		.vkMapMemory = vkMapMemory,
+		.vkUnmapMemory = vkUnmapMemory,
+		.vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges,
+		.vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges,
+		.vkBindBufferMemory = vkBindBufferMemory,
+		.vkBindImageMemory = vkBindImageMemory,
+		.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements,
+		.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements,
+		.vkCreateBuffer = vkCreateBuffer,
+		.vkDestroyBuffer = vkDestroyBuffer,
+		.vkCreateImage = vkCreateImage,
+		.vkDestroyImage = vkDestroyImage,
+		.vkCmdCopyBuffer = vkCmdCopyBuffer,
+		.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR,
+		.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR
+	};
 
 	VmaAllocatorCreateInfo aci = {};
 #if !defined(__RPI__) && !defined(__ANDROID__) && !defined(__IOS__)
@@ -476,7 +507,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		m_physicalDevice,
 		m_logicalDevice,
 		m_allocator,
-		graphicsQueueIndex
+		graphicsQueueIndex,
+		computeQueueIndex
 	);
 	if (!m_context->create())
 	{

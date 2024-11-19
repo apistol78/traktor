@@ -36,7 +36,8 @@ void ComputeRenderBlock::render(IRenderView* renderView) const
 
 	renderView->compute(
 		program,
-		workSize
+		workSize,
+		asynchronous
 	);
 
 	T_CONTEXT_POP_MARKER(renderView);

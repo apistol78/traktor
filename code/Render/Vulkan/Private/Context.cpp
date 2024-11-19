@@ -30,12 +30,14 @@ Context::Context(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
 	VmaAllocator allocator,
-	uint32_t graphicsQueueIndex
+	uint32_t graphicsQueueIndex,
+	uint32_t computeQueueIndex
 )
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
 ,	m_graphicsQueueIndex(graphicsQueueIndex)
+,	m_computeQueueIndex(computeQueueIndex)
 ,	m_sampledResourceIndexAllocator(0, MaxBindlessResources - 1)
 ,	m_storageResourceIndexAllocator(0, MaxBindlessResources - 1)
 ,	m_bufferResourceIndexAllocator(0, MaxBindlessResources - 1)
@@ -65,6 +67,7 @@ bool Context::create()
 
 	// Create queues.
 	m_graphicsQueue = Queue::create(this, m_graphicsQueueIndex);
+	m_computeQueue = Queue::create(this, m_computeQueueIndex);
 
 	// Create pipeline cache.
 	VkPipelineCacheCreateInfo pcci = {};
@@ -118,13 +121,15 @@ bool Context::create()
 	dps[5].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 	dps[5].descriptorCount = MaxBindlessResources;
 
-	VkDescriptorPoolCreateInfo dpci = {};
-	dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-	dpci.pNext = nullptr;
-	dpci.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT;
-	dpci.maxSets = 32000;
-	dpci.poolSizeCount = sizeof_array(dps);
-	dpci.pPoolSizes = dps;
+	const VkDescriptorPoolCreateInfo dpci =
+	{
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT,
+		.maxSets = 32000,
+		.poolSizeCount = sizeof_array(dps),
+		.pPoolSizes = dps
+	};
 
 	vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_descriptorPool);
 
