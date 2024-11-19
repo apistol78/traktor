@@ -534,10 +534,10 @@ void RenderViewVk::setViewport(const Viewport& viewport)
 
 void RenderViewVk::setScissor(const Rectangle& scissor)
 {
-	T_ASSERT(scissorRect.left >= 0);
-	T_ASSERT(scissorRect.top >= 0);
-	T_ASSERT(scissorRect.width >= 0);
-	T_ASSERT(scissorRect.height >= 0);
+	T_ASSERT(scissor.left >= 0);
+	T_ASSERT(scissor.top >= 0);
+	T_ASSERT(scissor.width >= 0);
+	T_ASSERT(scissor.height >= 0);
 
 	const auto& frame = m_frames[m_currentImageIndex];
 	VkRect2D vkScissor =
