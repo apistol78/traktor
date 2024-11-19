@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{867A7E7A-350E-944D-BC0B-5F51C7028530}</id>
 			<comment/>
 			<position>
@@ -10,11 +10,13 @@
 			</position>
 			<name>Output</name>
 			<technique>Default</technique>
+			<domain>Compute</domain>
 			<localSize>
-				<X>1</X>
-				<Y>1</Y>
+				<X>8</X>
+				<Y>8</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
