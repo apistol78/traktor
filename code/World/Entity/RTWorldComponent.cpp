@@ -113,4 +113,9 @@ void RTWorldComponent::Instance::setTransform(const Transform& transform)
 	this->owner->m_instanceBufferDirty = true;
 }
 
+void RTWorldComponent::Instance::setDirty()
+{
+	this->owner->m_instanceBufferDirty = true;
+}
+
 }

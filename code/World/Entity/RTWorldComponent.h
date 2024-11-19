@@ -61,7 +61,11 @@ public:
 
 		void destroy();
 
+		/*! Set transform of instance, will automatically tag top level as dirty. */
 		void setTransform(const Transform& transform);
+
+		/*! Tag top level as dirty, might be necessary after bottom level has been updated. */
+		void setDirty();
 	};
 
 	explicit RTWorldComponent(render::IRenderSystem* renderSystem);

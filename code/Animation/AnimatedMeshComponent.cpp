@@ -252,7 +252,10 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 			std::swap(m_skinBuffer[0], m_skinBuffer[1]);
 			m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0]);
 			if (m_rtwInstance)
+			{
 				m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure);
+				m_rtwInstance->setDirty();
+			}
 		}
 	}
 
