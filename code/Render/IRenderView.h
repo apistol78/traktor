@@ -184,8 +184,17 @@ public:
 	 */
 	virtual void computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset) = 0;
 
-	/*! Enqueue a barrier. */
+	/*! Enqueue a barrier.
+	 * 
+	 * \param from From pipeline stage.
+	 * \param to To pipeline stage.
+	 * \param written Optional written to texture, memory barrier.
+	 * \param writtenMip Mip of written to texture.
+	 */
 	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip) = 0;
+
+	/*! Synchronize asynchronous compute work with graphics queue. */
+	virtual void synchronize() = 0;
 
 	/*! Copy texture.
 	 *
@@ -196,10 +205,10 @@ public:
 	 */
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) = 0;
 
-	/*! */
+	/*! Write instances into top level acceleration structure. */
 	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances) = 0;
 
-	/*! */
+	/*! Write geometry data into bottom level acceleration structure. */
 	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives) = 0;
 
 	/*! \name Time queries. */

@@ -277,6 +277,13 @@ class T_DLLCLASS LambdaRenderBlock : public RenderBlock
 public:
 	std::function< void(IRenderView*) > lambda;
 
+	LambdaRenderBlock() = default;
+
+	explicit LambdaRenderBlock(const std::function< void(IRenderView*) >& lambda_)
+	:	lambda(lambda_)
+	{
+	}
+
 	virtual void render(IRenderView* renderView) const override final;
 };
 

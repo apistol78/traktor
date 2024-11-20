@@ -113,6 +113,8 @@ public:
 
 	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip) override final;
 
+	virtual void synchronize() override final;
+
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) override final;
 
 	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances) override final;
@@ -146,6 +148,7 @@ private:
 		BufferViewVk boundIndexBuffer;
 		BufferViewVk boundVertexBuffer;
 
+		RefArray< CommandBuffer > flyingCommandBuffers;
 		std::list< std::string > markers;
 		AlignedVector< bool > markerStack;
 	};

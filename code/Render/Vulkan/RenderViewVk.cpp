@@ -576,9 +576,16 @@ bool RenderViewVk::beginFrame()
 	frame.markers.clear();
 
 	// Reset command buffers.
-	// \hack Lazy create since we don't know about rendering thread until beginFrame
+	// 
+	// #hack Lazy create since we don't know about rendering thread until beginFrame
 	// is called... This assumes no other thread will perform rendering during the
 	// life time of the render view.
+	//
+
+	for (auto commandBuffer : frame.flyingCommandBuffers)
+		commandBuffer->wait();
+	frame.flyingCommandBuffers.resize(0);
+
 	T_PROFILER_BEGIN(L"Wait graphics queue");
 	if (frame.graphicsCommandBuffer)
 	{
@@ -647,7 +654,6 @@ bool RenderViewVk::beginFrame()
 void RenderViewVk::endFrame()
 {
 	T_PROFILER_SCOPE(L"RenderViewVk::endFrame");
-
 	auto& frame = m_frames[m_currentImageIndex];
 
 	frame.boundPipeline = 0;
@@ -1233,6 +1239,34 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 			0, nullptr
 		);
 	}
+}
+
+void RenderViewVk::synchronize()
+{
+	T_PROFILER_SCOPE(L"RenderViewVk::synchronize");
+	auto& frame = m_frames[m_currentImageIndex];
+
+	// Submit compute command buffer.
+	frame.computeCommandBuffer->submit(
+		{},
+		{},
+		frame.computeFinishedSemaphore
+	);
+
+	// Submit graphics command buffer; wait until compute queue has finished.
+	frame.graphicsCommandBuffer->submit(
+		{ frame.computeFinishedSemaphore },
+		{ VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT },
+		VK_NULL_HANDLE
+	);
+
+	// Defer release at end of frame.
+	frame.flyingCommandBuffers.push_back(frame.computeCommandBuffer);
+	frame.flyingCommandBuffers.push_back(frame.graphicsCommandBuffer);
+
+	// Allocate new command buffers.
+	frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
+	frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
 }
 
 bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
