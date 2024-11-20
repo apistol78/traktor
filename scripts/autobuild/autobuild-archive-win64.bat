@@ -6,6 +6,7 @@ call "%~dp0..\config.bat"
 mkdir "%TRAKTOR_HOME%/build/archive/traktor"
 pushd "%TRAKTOR_HOME%/build/archive/traktor"
 
+xcopy "%TRAKTOR_HOME%\bin\win64\releasestatic\" "bin\win64\releasestatic\" /S /E /Y /R
 xcopy "%TRAKTOR_HOME%\bin\latest\win64\releaseshared\" "bin\latest\win64\releaseshared\" /S /E /Y /R
 xcopy "%TRAKTOR_HOME%\data\Assets\" "data\Assets\" /S /E /Y /R
 xcopy "%TRAKTOR_HOME%\data\Source\" "data\Source\" /S /E /Y /R
