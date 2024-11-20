@@ -115,7 +115,10 @@ void RichEdit::setText(const std::wstring& text)
 		while (i < text.length())
 		{
 			const size_t j = text.find(L'\n', i);
-			const std::wstring ln = (j != text.npos) ? text.substr(i, j - i) : text.substr(i);
+			
+			std::wstring ln = (j != text.npos) ? text.substr(i, j - i) : text.substr(i);
+			while (ln.back() == L'\n' || ln.back() == L'\r')
+				ln.pop_back();
 
 			Line& line = m_lines.push_back();
 			line.start = (int32_t)m_text.size();

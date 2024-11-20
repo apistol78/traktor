@@ -1306,6 +1306,8 @@ void ShaderGraphEditorPage::updateGraph()
 
 	// Fully resolve shader graph so we can inspect all uniforms etc.
 	Ref< ShaderGraph > resolvedShaderGraph = FragmentLinker(fragmentReader).resolve(m_shaderGraph, true);
+	if (!resolvedShaderGraph)
+		log::debug << L"Unable to resolve shader graph." << Endl;
 
 	// Link uniform declarations in resolved shader graph.
 	if (resolvedShaderGraph)
@@ -1473,10 +1475,12 @@ void ShaderGraphEditorPage::updateGraph()
 	// Validate shader graph.
 	AlignedVector< const Node* > errorNodes;
 	bool validationResult = false;
-	if (resolvedShaderGraph)
+	if (m_shaderGraph)
 	{
-		const ShaderGraphValidator validator(resolvedShaderGraph);
+		const ShaderGraphValidator validator(m_shaderGraph);
 		validationResult = validator.validate(graphType, &errorNodes);
+		if (!validationResult)
+			log::debug << L"Validation of resolve shader graph failed." << Endl;
 	}
 
 	// Update validation status of each node.
