@@ -85,8 +85,8 @@
 			<id>{BC7D2173-F3FF-E44F-836B-098322F69726}</id>
 			<comment/>
 			<position>
-				<first>550</first>
-				<second>-210</second>
+				<first>549</first>
+				<second>-209</second>
 			</position>
 			<name>Raytracing</name>
 			<technique/>
@@ -150,7 +150,9 @@ $Output = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
 {
 	const HWRT_Material material = HWRT_GetMaterial(rayQuery);
-	$Output = material.albedo;
+	const vec3 lightDirection = vec3(0.0f, 1.0f, 0.0f);
+	const float phi = clamp(dot(lightDirection, material.normal.xyz), 0.0f, 1.0f);
+	$Output = vec4(phi * 0.5f + 0.5f) * material.albedo;
 }
 
 			]]>
