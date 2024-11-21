@@ -149,12 +149,26 @@ bool TextureVk::create(
 	);
 
 	// Submit command buffer to perform transfer of stage to texture.
-	commandBuffer->submitAndWait();
+	commandBuffer->submit({}, {}, VK_NULL_HANDLE);
 
-	// Free staging buffer if immutable, no longer
-	// allowed to update texture.
 	if (desc.immutable)
-		safeDestroy(m_stagingBuffer);
+	{
+		m_context->addDeferredCleanup(
+			[commandBuffer, stagingBuffer = m_stagingBuffer](Context* cx) {
+				commandBuffer->wait();
+				stagingBuffer->destroy();
+			},
+			Context::CleanupNone
+		);
+		m_stagingBuffer = nullptr;
+	}
+	else
+	{
+		m_context->addDeferredCleanup(
+			[commandBuffer](Context* cx) { commandBuffer->wait(); },
+			Context::CleanupNone
+		);
+	}
 
 	m_size = { desc.width, desc.height, 1, desc.mipCount };
 	m_format = desc.format;

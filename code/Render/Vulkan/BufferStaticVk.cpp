@@ -65,7 +65,7 @@ void BufferStaticVk::unlock()
 {
 	m_stageBuffer->unlock();
 
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"BufferStaticVk::unlock");
+	Ref< CommandBuffer > commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"BufferStaticVk::unlock");
 
 	const VkBufferCopy bc =
 	{
@@ -79,10 +79,17 @@ void BufferStaticVk::unlock()
 		&bc
 	);
 
-	commandBuffer->submitAndWait();
+	commandBuffer->submit({}, {}, VK_NULL_HANDLE);
 
-	// Free staging buffer.
-	safeDestroy(m_stageBuffer);
+	m_context->addDeferredCleanup(
+		[commandBuffer, stageBuffer = m_stageBuffer](Context* cx) {
+			commandBuffer->wait();
+			stageBuffer->destroy();
+		},
+		Context::CleanupNone
+	);
+
+	m_stageBuffer = nullptr;
 }
 
 const IBufferView* BufferStaticVk::getBufferView() const

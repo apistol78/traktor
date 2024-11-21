@@ -38,6 +38,9 @@ public:
 	constexpr static uint32_t BindlessBuffersBinding = 2;
 	constexpr static uint32_t NonBindlessFirstBinding = 3;
 
+	constexpr static uint32_t CleanupNone = 0;
+	constexpr static uint32_t CleanupNeedFlushGPU = 1;
+
 	typedef std::function< void(Context*) > cleanup_fn_t;
 
 	struct ICleanupListener
@@ -67,7 +70,7 @@ public:
 	 * frame has finished, from the calling thread
 	 * of present.
 	 */
-	void addDeferredCleanup(const cleanup_fn_t& fn);
+	void addDeferredCleanup(const cleanup_fn_t& fn, uint32_t cleanupFlags);
 
 	void addCleanupListener(ICleanupListener* cleanupListener);
 
@@ -120,6 +123,12 @@ public:
 	void freeBufferResourceIndex(uint32_t resourceIndex);
 
 private:
+	struct DeferredCleanup
+	{
+		cleanup_fn_t fn;
+		uint32_t flags;
+	};
+
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
@@ -133,7 +142,7 @@ private:
 	Ref< UniformBufferPool > m_uniformBufferPools[3];
 	Semaphore m_cleanupLock;
 	Semaphore m_resourceIndexLock;
-	AlignedVector< cleanup_fn_t > m_cleanupFns;
+	AlignedVector< DeferredCleanup > m_cleanupFns;
 	AlignedVector< ICleanupListener* > m_cleanupListeners;
 	VkDescriptorSetLayout m_bindlessTexturesDescriptorLayout = 0;
 	VkDescriptorSet m_bindlessTexturesDescriptorSet = 0;

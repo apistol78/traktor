@@ -198,7 +198,13 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 	as->m_scratchAlignment = getScratchAlignment(context);
 	as->writeGeometry(commandBuffer, vertexBuffer->getBufferView(), vertexLayout, indexBuffer->getBufferView(), indexType, primitives);
 
-	commandBuffer->submitAndWait();
+	commandBuffer->submit({}, {}, VK_NULL_HANDLE);
+
+	context->addDeferredCleanup(
+		[=](Context* cx) { commandBuffer->wait(); },
+		Context::CleanupNone
+	);
+
 	return as;
 }
 
@@ -206,11 +212,10 @@ void AccelerationStructureVk::destroy()
 {
 	if (m_context != nullptr)
 	{
-		m_context->addDeferredCleanup([
-			as = m_as
-		](Context* cx) {
-			vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr);
-		});
+		m_context->addDeferredCleanup(
+			[as = m_as](Context* cx) { vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr); },
+			Context::CleanupNeedFlushGPU
+		);
 		m_as = 0;
 	}
 	safeDestroy(m_instanceBuffer);
@@ -458,11 +463,10 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 
 	if (recreateAS && m_as != 0)
 	{
-		m_context->addDeferredCleanup([
-			as = m_as
-		](Context* cx) {
-			vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr);
-		});
+		m_context->addDeferredCleanup(
+			[as = m_as](Context* cx) { vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr); },
+			Context::CleanupNeedFlushGPU
+		);
 		m_as = 0;
 	}
 

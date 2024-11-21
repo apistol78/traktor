@@ -228,7 +228,7 @@ Ref< IStream > BlockFile::readBlock(uint32_t blockId)
 	// No unused stream available; create new read stream.
 	if (!stream)
 	{
-		stream = FileSystem::getInstance().open(m_fileName, File::FmRead);
+		stream = FileSystem::getInstance().open(m_fileName, File::FmRead | File::FmMapped);
 		if (!stream)
 			return nullptr;
 	}

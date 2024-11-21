@@ -472,21 +472,18 @@ void Image::destroy()
 
 	if (m_allocation != 0)
 	{
-		m_context->addDeferredCleanup([
-			image = m_image,
-			allocation = m_allocation
-		](Context* cx) {
-			vmaDestroyImage(cx->getAllocator(), image, allocation);
-		});
+		m_context->addDeferredCleanup(
+			[image = m_image, allocation = m_allocation](Context* cx) { vmaDestroyImage(cx->getAllocator(), image, allocation); },
+			Context::CleanupNeedFlushGPU
+		);
 	}
 
 	if (m_imageView != 0)
 	{
-		m_context->addDeferredCleanup([
-			imageView = m_imageView
-		](Context* cx) {
-			vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
-		});
+		m_context->addDeferredCleanup(
+			[imageView = m_imageView](Context* cx) { vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr); },
+			Context::CleanupNeedFlushGPU
+		);
 	}
 
 	if (!m_storageImageViews.empty())
@@ -496,26 +493,24 @@ void Image::destroy()
 			if (storageImageView == m_imageView)
 				continue;
 
-			m_context->addDeferredCleanup([
-				imageView = storageImageView
-			](Context* cx) {
-				vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
-			});
+			m_context->addDeferredCleanup(
+				[imageView = storageImageView](Context* cx) { vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr); },
+				Context::CleanupNeedFlushGPU
+			);
 		}
 	}
 
 	if (m_sampledResourceIndex != ~0U || m_storageResourceIndex != ~0U)
 	{
-		m_context->addDeferredCleanup([
-			sampledResourceIndex = m_sampledResourceIndex,
-			storageResourceIndex = m_storageResourceIndex,
-			span
-		](Context* cx) {
-			if (sampledResourceIndex != ~0U)
-				cx->freeSampledResourceIndex(sampledResourceIndex);
-			if (storageResourceIndex != ~0U)
-				cx->freeStorageResourceIndex(storageResourceIndex, span);
-		});
+		m_context->addDeferredCleanup(
+			[sampledResourceIndex = m_sampledResourceIndex, storageResourceIndex = m_storageResourceIndex, span](Context* cx) {
+				if (sampledResourceIndex != ~0U)
+					cx->freeSampledResourceIndex(sampledResourceIndex);
+				if (storageResourceIndex != ~0U)
+					cx->freeStorageResourceIndex(storageResourceIndex, span);
+			},
+			Context::CleanupNeedFlushGPU
+		);
 	}
 
 	m_allocation = 0;

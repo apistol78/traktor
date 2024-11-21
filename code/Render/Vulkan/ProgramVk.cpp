@@ -504,11 +504,12 @@ void ProgramVk::destroy()
 
 	for (auto it : m_descriptorSets)
 	{
-		m_context->addDeferredCleanup([
-			descriptorSet = it.second
-		](Context* cx) {
-			vkFreeDescriptorSets(cx->getLogicalDevice(), cx->getDescriptorPool(), 1, &descriptorSet);
-		});
+		m_context->addDeferredCleanup(
+			[descriptorSet = it.second](Context* cx) {
+				vkFreeDescriptorSets(cx->getLogicalDevice(), cx->getDescriptorPool(), 1, &descriptorSet);
+			},
+			Context::CleanupNeedFlushGPU
+		);
 	}
 	m_descriptorSets.clear();
 

@@ -62,15 +62,14 @@ void ApiBuffer::destroy()
 	T_FATAL_ASSERT_M(m_locked == nullptr, L"Buffer still locked.");
 	if (m_buffer != 0)
 	{
-		m_context->addDeferredCleanup([
-			buffer = m_buffer,
-			allocation = m_allocation,
-			resourceIndex = m_resourceIndex
-		](Context* cx) {
-			vmaDestroyBuffer(cx->getAllocator(), buffer, allocation);
-			if (resourceIndex != ~0U)
-				cx->freeBufferResourceIndex(resourceIndex);
-		});
+		m_context->addDeferredCleanup(
+			[buffer = m_buffer, allocation = m_allocation, resourceIndex = m_resourceIndex](Context* cx) {
+				vmaDestroyBuffer(cx->getAllocator(), buffer, allocation);
+				if (resourceIndex != ~0U)
+					cx->freeBufferResourceIndex(resourceIndex);
+			},
+			Context::CleanupNeedFlushGPU
+		);
 	}
 
 	m_allocation = 0;

@@ -224,14 +224,14 @@ void Context::decrementViews()
 	Atomic::decrement(m_views);
 }
 
-void Context::addDeferredCleanup(const cleanup_fn_t& fn)
+void Context::addDeferredCleanup(const cleanup_fn_t& fn, uint32_t cleanupFlags)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
 
 	// In case there are no render views which can perform cleanup
 	// after each frame, we do this immediately.
 	if (m_views > 0)
-		m_cleanupFns.push_back(fn);
+		m_cleanupFns.push_back({ fn, cleanupFlags });
 	else
 		fn(this);
 }
@@ -258,23 +258,24 @@ void Context::performCleanup()
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_graphicsQueue->m_lock);
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
 
-		// Wait until GPU is idle to ensure resources are not used, or pending, in some queue before destroying them.
-		vkDeviceWaitIdle(m_logicalDevice);
-
+		bool gpuIdle = false;
 		while (!m_cleanupFns.empty())
 		{
 			// Take over vector in case more resources are added for cleanup from callbacks.
-			AlignedVector< cleanup_fn_t > cleanupFns;
+			AlignedVector< DeferredCleanup > cleanupFns;
 			cleanupFns.swap(m_cleanupFns);
 
-			// Invoke cleanups.
-			for (const auto& cleanupFn : cleanupFns)
-				cleanupFn(this);
+			// Invoke cleanups, flush GPU if necessary.
+			for (const DeferredCleanup& cleanupFn : cleanupFns)
+			{
+				if (!gpuIdle && (cleanupFn.flags & CleanupNeedFlushGPU) != 0)
+				{
+					vkDeviceWaitIdle(m_logicalDevice);
+					gpuIdle = true;
+				}
+				cleanupFn.fn(this);
+			}
 		}
-		
-		// Reset descriptor pool since we need to ensure programs clear their cached descriptor sets.
-		//vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0);
-		//m_descriptorPoolRevision++;
 
 		for (auto cleanupListener : m_cleanupListeners)
 			cleanupListener->postCleanup();
