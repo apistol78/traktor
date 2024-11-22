@@ -1329,24 +1329,41 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 {
 	const auto& frame = m_frames[m_currentImageIndex];
 
-	VkImageCopy region = {};
-	region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	region.srcSubresource.mipLevel = sourceRegion.mip;
-	region.srcSubresource.baseArrayLayer = 0;
-	region.srcSubresource.layerCount = 1;
-	region.srcOffset = { 0, 0, 0 };
-	region.srcOffset.x = sourceRegion.x;
-	region.srcOffset.y = sourceRegion.y;
-	region.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	region.dstSubresource.mipLevel = destinationRegion.mip;
-	region.dstSubresource.baseArrayLayer = 0;
-	region.dstSubresource.layerCount = 1;
-	region.dstOffset = { 0, 0, 0 };
-	region.dstOffset.x = destinationRegion.x;
-	region.dstOffset.y = destinationRegion.y;
-	region.extent = { 0, 0, 1 };
-	region.extent.width = sourceRegion.width;
-	region.extent.height = sourceRegion.height;
+	VkImageCopy region =
+	{
+		.srcSubresource =
+		{
+			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+			.mipLevel = (uint32_t)sourceRegion.mip,
+			.baseArrayLayer = 0,
+			.layerCount = 1
+		},
+		.srcOffset =
+		{
+			.x = sourceRegion.x,
+			.y = sourceRegion.y,
+			.z = 0
+		},
+		.dstSubresource =
+		{
+			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+			.mipLevel = (uint32_t)destinationRegion.mip,
+			.baseArrayLayer = 0,
+			.layerCount = 1
+		},
+		.dstOffset =
+		{
+			.x = destinationRegion.x,
+			.y = destinationRegion.y,
+			.z = 0
+		},
+		.extent =
+		{
+			.width = (uint32_t)sourceRegion.width,
+			.height = (uint32_t)sourceRegion.height,
+			.depth = 1
+		}
+	};
 
 	Image* sourceImage = nullptr;
 	Image* destinationImage = nullptr;
@@ -1675,21 +1692,23 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		clampedImageCount = surfaceCapabilities.maxImageCount;
 
 	// Create swap chain.
-	VkSwapchainCreateInfoKHR scci = {};
-	scci.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-	scci.surface = m_surface;
-	scci.minImageCount = clampedImageCount;
-	scci.imageFormat = colorFormat;
-	scci.imageColorSpace = colorSpace;
-	scci.imageExtent = surfaceResolution;
-	scci.imageArrayLayers = 1;
-	scci.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-	scci.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	scci.preTransform = preTransform;
-	scci.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-	scci.presentMode = presentationMode;
-	scci.clipped = VK_TRUE;
-	scci.oldSwapchain = m_swapChain;
+	VkSwapchainCreateInfoKHR scci =
+	{
+		.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+		.surface = m_surface,
+		.minImageCount = clampedImageCount,
+		.imageFormat = colorFormat,
+		.imageColorSpace = colorSpace,
+		.imageExtent = surfaceResolution,
+		.imageArrayLayers = 1,
+		.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+		.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
+		.preTransform = preTransform,
+		.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+		.presentMode = presentationMode,
+		.clipped = VK_TRUE,
+		.oldSwapchain = m_swapChain
+	};
 
 	uint32_t queueFamilyIndices[] = { m_context->getGraphicsQueue()->getQueueIndex(), m_presentQueue->getQueueIndex() };
 	if (queueFamilyIndices[0] != queueFamilyIndices[1])
@@ -1732,11 +1751,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 #if defined(T_USE_QUERY)
 	// Create time query pool.
-	VkQueryPoolCreateInfo qpci = {};
-	qpci.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
-	qpci.pNext = nullptr;
-	qpci.queryType = VK_QUERY_TYPE_TIMESTAMP;
-	qpci.queryCount = imageCount * 2 * T_QUERY_SEGMENT_SIZE;
+	const VkQueryPoolCreateInfo qpci =
+	{
+		.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO,
+		.pNext = nullptr,
+		.queryType = VK_QUERY_TYPE_TIMESTAMP,
+		.queryCount = imageCount * 2 * T_QUERY_SEGMENT_SIZE
+	};
 	if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
 		return false;
 
@@ -2013,7 +2034,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 			.basePipelineIndex = 0
 		};
 
-		VkResult result = vkCreateGraphicsPipelines(
+		const VkResult result = vkCreateGraphicsPipelines(
 			m_context->getLogicalDevice(),
 			m_context->getPipelineCache(),
 			1,
@@ -2066,19 +2087,23 @@ bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const P
 	}
 	else
 	{
-		VkPipelineShaderStageCreateInfo ssci = {};
-		ssci.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		ssci.stage = VK_SHADER_STAGE_COMPUTE_BIT;
-		ssci.module = p->getComputeVkShaderModule();
-		ssci.pName = "main";
-		ssci.pSpecializationInfo = nullptr;
+		const VkPipelineShaderStageCreateInfo ssci =
+		{
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+			.stage = VK_SHADER_STAGE_COMPUTE_BIT,
+			.module = p->getComputeVkShaderModule(),
+			.pName = "main",
+			.pSpecializationInfo = nullptr
+		};
 
-		VkComputePipelineCreateInfo cpci = {};
-		cpci.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
-		cpci.stage = ssci;
-		cpci.layout = p->getPipelineLayout();
+		const VkComputePipelineCreateInfo cpci =
+		{
+			.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
+			.stage = ssci,
+			.layout = p->getPipelineLayout()
+		};
 
-		VkResult result = vkCreateComputePipelines(
+		const VkResult result = vkCreateComputePipelines(
 			m_context->getLogicalDevice(),
 			m_context->getPipelineCache(),
 			1,
