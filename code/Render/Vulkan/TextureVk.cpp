@@ -289,12 +289,27 @@ bool TextureVk::create(
 		6
 	);
 
-	commandBuffer->submitAndWait();
+	// Submit command buffer to perform transfer of stage to texture.
+	commandBuffer->submit({}, {}, VK_NULL_HANDLE);
 
-	// Free staging buffer if immutable, no longer
-	// allowed to update texture.
 	if (desc.immutable)
-		safeDestroy(m_stagingBuffer);
+	{
+		m_context->addDeferredCleanup(
+			[commandBuffer, stagingBuffer = m_stagingBuffer](Context* cx) {
+				commandBuffer->wait();
+				stagingBuffer->destroy();
+			},
+			Context::CleanupNone
+		);
+		m_stagingBuffer = nullptr;
+	}
+	else
+	{
+		m_context->addDeferredCleanup(
+			[commandBuffer](Context* cx) { commandBuffer->wait(); },
+			Context::CleanupNone
+		);
+	}
 
 	m_size = { desc.side, desc.side, 1, desc.mipCount };
 	m_format = desc.format;
@@ -405,11 +420,27 @@ bool TextureVk::create(
 		1
 	);
 
-	commandBuffer->submitAndWait();
+	// Submit command buffer to perform transfer of stage to texture.
+	commandBuffer->submit({}, {}, VK_NULL_HANDLE);
 
-	// Free staging buffer if immutable.
 	if (desc.immutable)
-		safeDestroy(m_stagingBuffer);
+	{
+		m_context->addDeferredCleanup(
+			[commandBuffer, stagingBuffer = m_stagingBuffer](Context* cx) {
+				commandBuffer->wait();
+				stagingBuffer->destroy();
+			},
+			Context::CleanupNone
+		);
+		m_stagingBuffer = nullptr;
+	}
+	else
+	{
+		m_context->addDeferredCleanup(
+			[commandBuffer](Context* cx) { commandBuffer->wait(); },
+			Context::CleanupNone
+		);
+	}
 
 	m_size = { desc.width, desc.height, desc.depth, desc.mipCount };
 	m_format = desc.format;
@@ -486,7 +517,13 @@ void TextureVk::unlock(int32_t side, int32_t level)
 	// Change layout of texture to optimal sampling.
 	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, level, 1, 0, 1);
 
-	commandBuffer->submitAndWait();
+	// Submit command buffer to perform transfer of stage to texture.
+	commandBuffer->submit({}, {}, VK_NULL_HANDLE);
+
+	m_context->addDeferredCleanup(
+		[commandBuffer](Context* cx) { commandBuffer->wait(); },
+		Context::CleanupNone
+	);
 }
 
 }
