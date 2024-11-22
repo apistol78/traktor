@@ -277,8 +277,14 @@ void Context::performCleanup()
 			}
 		}
 
-		for (auto cleanupListener : m_cleanupListeners)
-			cleanupListener->postCleanup();
+		// Only call cleanup listeners after a flush since currently it's only
+		// used when a resource has been destroyed and the programs need to flush
+		// their descriptor sets.
+		if (gpuIdle)
+		{
+			for (auto cleanupListener : m_cleanupListeners)
+				cleanupListener->postCleanup();
+		}
 	}
 }
 
