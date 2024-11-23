@@ -35,6 +35,7 @@ namespace traktor::ui
 enum Modes
 {
 	MdNothing,
+	MdBeginMoveSelected,
 	MdMoveSelected,
 	MdMoveGraph,
 	MdDrawEdge,
@@ -790,7 +791,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 				}
 
 				// No pin selected, move the selected node(s).
-				m_mode = MdMoveSelected;
+				m_mode = MdBeginMoveSelected;
 				setCapture();
 			}
 		}
@@ -843,7 +844,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 			if (endSelectModification())
 				update();
 
-			m_mode = MdMoveSelected;
+			m_mode = MdBeginMoveSelected;
 			setCapture();
 		}
 		else
@@ -985,6 +986,17 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 		m_cursor += delta;
 		m_edgeOrigin += delta;
 		m_moveOrigin = event->getPosition() / m_scale;
+		update();
+		event->consume();
+	}
+	else if (m_mode == MdBeginMoveSelected)
+	{
+		const Size offset = event->getPosition() / m_scale - m_moveOrigin;
+		const int32_t distance = std::max(std::abs(offset.cx), std::abs(offset.cy));
+		if (distance > pixel(8_ut))
+		{
+			m_mode = MdMoveSelected;
+		}
 		update();
 		event->consume();
 	}
