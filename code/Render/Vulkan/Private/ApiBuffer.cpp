@@ -68,7 +68,7 @@ void ApiBuffer::destroy()
 				if (resourceIndex != ~0U)
 					cx->freeBufferResourceIndex(resourceIndex);
 			},
-			Context::CleanupNeedFlushGPU
+			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets
 		);
 	}
 

@@ -214,7 +214,7 @@ void AccelerationStructureVk::destroy()
 	{
 		m_context->addDeferredCleanup(
 			[as = m_as](Context* cx) { vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr); },
-			Context::CleanupNeedFlushGPU
+			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets
 		);
 		m_as = 0;
 	}
@@ -465,7 +465,7 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 	{
 		m_context->addDeferredCleanup(
 			[as = m_as](Context* cx) { vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr); },
-			Context::CleanupNeedFlushGPU
+			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets
 		);
 		m_as = 0;
 	}

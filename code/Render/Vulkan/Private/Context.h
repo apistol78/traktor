@@ -40,6 +40,7 @@ public:
 
 	constexpr static uint32_t CleanupNone = 0;
 	constexpr static uint32_t CleanupNeedFlushGPU = 1;
+	constexpr static uint32_t CleanupFreeDescriptorSets = 2;
 
 	typedef std::function< void(Context*) > cleanup_fn_t;
 

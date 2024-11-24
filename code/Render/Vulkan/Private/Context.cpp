@@ -14,6 +14,7 @@
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"
+#include "Core/Timer/Profiler.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
@@ -255,10 +256,13 @@ void Context::performCleanup()
 		return;
 
 	{
+		T_PROFILER_SCOPE(L"Context::performCleanup");
+
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_graphicsQueue->m_lock);
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
 
 		bool gpuIdle = false;
+		bool freeDescriptors = false;
 		while (!m_cleanupFns.empty())
 		{
 			// Take over vector in case more resources are added for cleanup from callbacks.
@@ -273,14 +277,13 @@ void Context::performCleanup()
 					vkDeviceWaitIdle(m_logicalDevice);
 					gpuIdle = true;
 				}
+				freeDescriptors |= (bool)((cleanupFn.flags & CleanupFreeDescriptorSets) != 0);
 				cleanupFn.fn(this);
 			}
 		}
 
-		// Only call cleanup listeners after a flush since currently it's only
-		// used when a resource has been destroyed and the programs need to flush
-		// their descriptor sets.
-		if (gpuIdle)
+		// Only call cleanup listeners to free descriptors.
+		if (freeDescriptors)
 		{
 			for (auto cleanupListener : m_cleanupListeners)
 				cleanupListener->postCleanup();

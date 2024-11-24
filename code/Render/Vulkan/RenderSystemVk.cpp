@@ -195,6 +195,13 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 			if (found)
 				validationLayers.push_back(strdup(layersAvailable[i].layerName));
 		}
+		if (!validationLayers.empty())
+		{
+			for (auto validationLayer : validationLayers)
+				log::info << L"Using validation layer \"" << mbstows(validationLayer) << L"\"." << Endl;
+		}
+		else
+			log::warning << L"No validation layers found; validation disabled." << Endl;
 	}
 
 	// Create Vulkan instance.
