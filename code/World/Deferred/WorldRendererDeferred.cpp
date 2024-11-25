@@ -44,6 +44,7 @@
 #include "World/Shared/Passes/DBufferPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
 #include "World/Shared/Passes/HiZPass.h"
+#include "World/Shared/Passes/IrradiancePass.h"
 #include "World/Shared/Passes/LightClusterPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
@@ -165,6 +166,7 @@ void WorldRendererDeferred::setup(
 	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId, hizTextureId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto irradianceTargetSetId = m_irradiancePass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto contactShadowsTargetSetId = m_contactShadowsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, outputTargetSetId);
@@ -184,6 +186,7 @@ void WorldRendererDeferred::setup(
 		visualCopyTargetSetId,
 		gbufferTargetSetId,
 		dbufferTargetSetId,
+		irradianceTargetSetId,
 		ambientOcclusionTargetSetId,
 		contactShadowsTargetSetId,
 		reflectionsTargetSetId,
@@ -203,6 +206,7 @@ void WorldRendererDeferred::setupVisualPass(
 	render::handle_t visualCopyTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t dbufferTargetSetId,
+	render::handle_t irradianceTargetSetId,
 	render::handle_t ambientOcclusionTargetSetId,
 	render::handle_t contactShadowsTargetSetId,
 	render::handle_t reflectionsTargetSetId,
@@ -235,6 +239,7 @@ void WorldRendererDeferred::setupVisualPass(
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Visual; opaque");
 		rp->addInput(gbufferTargetSetId);
 		rp->addInput(dbufferTargetSetId);
+		rp->addInput(irradianceTargetSetId);
 		rp->addInput(ambientOcclusionTargetSetId);
 		// rp->addInput(contactShadowsTargetSetId);
 		rp->addInput(reflectionsTargetSetId);
@@ -260,6 +265,7 @@ void WorldRendererDeferred::setupVisualPass(
 
 				const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 				const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
+				const auto irradianceTargetSet = renderGraph.getTargetSet(irradianceTargetSetId);
 				const auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
 				// const auto contactShadowsTargetSet = renderGraph.getTargetSet(contactShadowsTargetSetId);
 				const auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
@@ -286,15 +292,6 @@ void WorldRendererDeferred::setupVisualPass(
 				sharedParams->setMatrixParameter(s_handleView, view);
 				sharedParams->setMatrixParameter(s_handleViewInverse, view.inverse());
 				sharedParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-
-				if (m_gatheredView.irradianceGrid)
-				{
-					const auto size = m_gatheredView.irradianceGrid->getSize();
-					sharedParams->setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0] + 0.5f, (float)size[1] + 0.5f, (float)size[2] + 0.5f, 0.0f));
-					sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMin, m_gatheredView.irradianceGrid->getBoundingBox().mn);
-					sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, m_gatheredView.irradianceGrid->getBoundingBox().mx);
-					sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, m_gatheredView.irradianceGrid->getBuffer()->getBufferView());
-				}
 
 				sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
 				sharedParams->setBufferViewParameter(s_handleLightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
@@ -351,7 +348,6 @@ void WorldRendererDeferred::setupVisualPass(
 				sharedParams->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 				sharedParams->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 				sharedParams->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
-				sharedParams->setTextureParameter(s_handleGBufferD, gbufferTargetSet->getColorTexture(3));
 
 				if (dbufferTargetSet)
 				{
@@ -359,6 +355,11 @@ void WorldRendererDeferred::setupVisualPass(
 					sharedParams->setTextureParameter(s_handleDBufferMiscMap, dbufferTargetSet->getColorTexture(1));
 					sharedParams->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
 				}
+
+				if (irradianceTargetSet != nullptr)
+					sharedParams->setTextureParameter(s_handleIrradianceMap, irradianceTargetSet->getColorTexture(0));
+				else
+					sharedParams->setTextureParameter(s_handleIrradianceMap, m_whiteTexture);
 
 				if (ambientOcclusionTargetSet != nullptr)
 					sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
@@ -540,7 +541,6 @@ void WorldRendererDeferred::setupVisualPass(
 				sharedParams->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 				sharedParams->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 				sharedParams->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
-				sharedParams->setTextureParameter(s_handleGBufferD, gbufferTargetSet->getColorTexture(3));
 
 				if (dbufferTargetSet)
 				{

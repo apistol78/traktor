@@ -41,8 +41,8 @@
 			<id>{C1FCB1F9-3E1F-EF43-B1AC-17DF4CFD7FCE}</id>
 			<comment/>
 			<position>
-				<first>-1029</first>
-				<second>491</second>
+				<first>-1105</first>
+				<second>497</second>
 			</position>
 			<name>V_Discard</name>
 		</item>
@@ -59,8 +59,8 @@
 			<id>{1D3D4A99-643E-234C-BBB3-F1F72EDF15DB}</id>
 			<comment/>
 			<position>
-				<first>-1931</first>
-				<second>558</second>
+				<first>-1925</first>
+				<second>578</second>
 			</position>
 			<name>V_Discard</name>
 		</item>
@@ -68,8 +68,8 @@
 			<id>{D61645F2-F48F-DB48-B872-6DE03DD1B3BD}</id>
 			<comment/>
 			<position>
-				<first>-1045</first>
-				<second>721</second>
+				<first>-1105</first>
+				<second>727</second>
 			</position>
 			<name>V_Roughness</name>
 		</item>
@@ -77,8 +77,8 @@
 			<id>{CC473F37-D0CE-3A41-80C1-410308F84C08}</id>
 			<comment/>
 			<position>
-				<first>-1045</first>
-				<second>675</second>
+				<first>-1105</first>
+				<second>681</second>
 			</position>
 			<name>V_Metalness</name>
 		</item>
@@ -90,8 +90,8 @@ Opaque
 			]]>
 			</comment>
 			<position>
-				<first>-1029</first>
-				<second>583</second>
+				<first>-1105</first>
+				<second>589</second>
 			</position>
 			<name>E_Opaque</name>
 		</item>
@@ -99,8 +99,8 @@ Opaque
 			<id>{E34DD076-11AB-A745-BB6A-22AC5E118F18}</id>
 			<comment/>
 			<position>
-				<first>-1045</first>
-				<second>307</second>
+				<first>-1105</first>
+				<second>313</second>
 			</position>
 			<name>V_SurfaceColor</name>
 		</item>
@@ -180,8 +180,8 @@ World_ForwardColor
 			<id>{DCB390A4-43B6-E347-95D4-26DB333EDC8D}</id>
 			<comment/>
 			<position>
-				<first>-1931</first>
-				<second>763</second>
+				<first>-1925</first>
+				<second>738</second>
 			</position>
 			<name>V_Specular</name>
 		</item>
@@ -319,8 +319,8 @@ World_SimpleColor
 			<id>{2053B95F-C7B5-9B48-88FB-CD91B35D73A2}</id>
 			<comment/>
 			<position>
-				<first>-1947</first>
-				<second>681</second>
+				<first>-1925</first>
+				<second>658</second>
 			</position>
 			<name>V_Metalness</name>
 		</item>
@@ -346,8 +346,8 @@ World_SimpleColor
 			<id>{D9EEE7CE-271E-514A-997E-E8E87BCBB209}</id>
 			<comment/>
 			<position>
-				<first>-1947</first>
-				<second>722</second>
+				<first>-1925</first>
+				<second>698</second>
 			</position>
 			<name>V_Roughness</name>
 		</item>
@@ -364,8 +364,8 @@ World_SimpleColor
 			<id>{F1550B86-789C-0D43-80AE-52D39CF27234}</id>
 			<comment/>
 			<position>
-				<first>-1963</first>
-				<second>353</second>
+				<first>-1925</first>
+				<second>378</second>
 			</position>
 			<name>V_SurfaceColor</name>
 		</item>
@@ -455,8 +455,8 @@ Opaque
 			]]>
 			</comment>
 			<position>
-				<first>-1931</first>
-				<second>599</second>
+				<first>-1925</first>
+				<second>618</second>
 			</position>
 			<name>E_Opaque</name>
 		</item>
@@ -601,8 +601,8 @@ World_DeferredColor
 			<id>{67A16FEF-C52E-4747-8A19-A84243C78538}</id>
 			<comment/>
 			<position>
-				<first>-1029</first>
-				<second>629</second>
+				<first>-1105</first>
+				<second>635</second>
 			</position>
 			<name>V_Irradiance</name>
 		</item>
@@ -731,8 +731,8 @@ Opaque
 			<id>{C10904FF-3516-D042-ADAD-95702A1355A1}</id>
 			<comment/>
 			<position>
-				<first>-1029</first>
-				<second>767</second>
+				<first>-1105</first>
+				<second>773</second>
 			</position>
 			<name>V_Specular</name>
 		</item>
@@ -749,8 +749,8 @@ Opaque
 			<id>{855D672C-0763-C942-98FE-D8BC0F5074EC}</id>
 			<comment/>
 			<position>
-				<first>-1029</first>
-				<second>537</second>
+				<first>-1105</first>
+				<second>543</second>
 			</position>
 			<name>V_Emissive</name>
 		</item>
@@ -785,8 +785,8 @@ Opaque
 			<id>{D953408C-FAF8-4AAA-AAB1-8BB3CBBB9EB4}</id>
 			<comment/>
 			<position>
-				<first>-1109</first>
-				<second>399</second>
+				<first>-1169</first>
+				<second>405</second>
 			</position>
 			<name>V_ViewNormalGeometry</name>
 		</item>
@@ -794,8 +794,8 @@ Opaque
 			<id>{10A26E95-F616-49F5-BB36-65C2F3B05326}</id>
 			<comment/>
 			<position>
-				<first>-1077</first>
-				<second>353</second>
+				<first>-1137</first>
+				<second>359</second>
 			</position>
 			<name>V_ViewNormalDetail</name>
 		</item>
@@ -803,8 +803,8 @@ Opaque
 			<id>{D2088F77-9A70-4C68-97D8-179F0EE05405}</id>
 			<comment/>
 			<position>
-				<first>-1995</first>
-				<second>394</second>
+				<first>-1957</first>
+				<second>418</second>
 			</position>
 			<name>V_ViewNormalDetail</name>
 		</item>
@@ -958,8 +958,8 @@ Opaque
 			<id>{687F94B1-8EFC-DF4E-9BEE-6DFD8124EBCB}</id>
 			<comment/>
 			<position>
-				<first>-1963</first>
-				<second>476</second>
+				<first>-1925</first>
+				<second>498</second>
 			</position>
 			<name>V_ViewPosition</name>
 		</item>
@@ -967,8 +967,8 @@ Opaque
 			<id>{75316E27-36EA-4242-A81C-1DED164DBB42}</id>
 			<comment/>
 			<position>
-				<first>-1045</first>
-				<second>446</second>
+				<first>-1105</first>
+				<second>451</second>
 			</position>
 			<name>V_ViewPosition</name>
 		</item>
@@ -999,15 +999,6 @@ Opaque
 			</position>
 			<name>V_ViewVelocity</name>
 		</item>
-		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
-			<id>{E20D4F37-3754-4818-A74F-4BC3D27A369F}</id>
-			<comment/>
-			<position>
-				<first>-1947</first>
-				<second>640</second>
-			</position>
-			<name>V_Irradiance</name>
-		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{0CA5B5B9-15A6-9947-94FC-24F9AF4E16B2}</id>
 			<comment>
@@ -1032,11 +1023,6 @@ World_DeferredGBufferWrite
 					<optional>false</optional>
 				</item>
 				<item>
-					<id>{7BFD17EC-2217-294E-9C66-DC4B3E3F5831}</id>
-					<name>ViewNormalGeometry</name>
-					<optional>false</optional>
-				</item>
-				<item>
 					<id>{A664B618-FCD7-408A-81C9-A3773F959224}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
@@ -1054,11 +1040,6 @@ World_DeferredGBufferWrite
 				<item>
 					<id>{4F904B51-75A9-4D19-96EC-534FABB8BA69}</id>
 					<name>Enable</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{2616708F-F0CE-4FF6-850A-7F30E30821CA}</id>
-					<name>Irradiance</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -1084,8 +1065,8 @@ World_DeferredGBufferWrite
 			<id>{37DBD815-2118-FD44-B51A-9FD5C110F635}</id>
 			<comment/>
 			<position>
-				<first>-2011</first>
-				<second>435</second>
+				<first>-1989</first>
+				<second>458</second>
 			</position>
 			<name>V_ViewNormalGeometry</name>
 		</item>
@@ -1213,8 +1194,8 @@ World_DeferredGBufferWrite
 			<id>{236AD9C6-45CE-4F37-8EB3-8DBCC303AE35}</id>
 			<comment/>
 			<position>
-				<first>-1979</first>
-				<second>517</second>
+				<first>-1941</first>
+				<second>538</second>
 			</position>
 			<name>V_DecalResponse</name>
 		</item>
@@ -1742,7 +1723,7 @@ World_DeferredGBufferWrite
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[70]"/>
+				<node ref="/object/nodes/item[69]"/>
 				<id>{FA893653-9994-4A8E-BDE0-55917C5B2AF7}</id>
 			</destination>
 		</item>
@@ -1752,7 +1733,7 @@ World_DeferredGBufferWrite
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[70]"/>
+				<node ref="/object/nodes/item[69]"/>
 				<id>{C4793C58-4118-4914-8734-1D4FEBC4FC01}</id>
 			</destination>
 		</item>
@@ -1762,7 +1743,7 @@ World_DeferredGBufferWrite
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[70]"/>
+				<node ref="/object/nodes/item[69]"/>
 				<id>{A664B618-FCD7-408A-81C9-A3773F959224}</id>
 			</destination>
 		</item>
@@ -1772,18 +1753,8 @@ World_DeferredGBufferWrite
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[70]"/>
-				<id>{4F904B51-75A9-4D19-96EC-534FABB8BA69}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[69]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[70]"/>
-				<id>{2616708F-F0CE-4FF6-850A-7F30E30821CA}</id>
+				<id>{4F904B51-75A9-4D19-96EC-534FABB8BA69}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1792,7 +1763,7 @@ World_DeferredGBufferWrite
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[70]"/>
+				<node ref="/object/nodes/item[69]"/>
 				<id>{4F9F4253-5618-40FB-A8BF-9FBAF2E0CC39}</id>
 			</destination>
 		</item>
@@ -1802,7 +1773,7 @@ World_DeferredGBufferWrite
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[70]"/>
+				<node ref="/object/nodes/item[69]"/>
 				<id>{CA2E92C9-EAA0-4545-815F-51EE96A7A409}</id>
 			</destination>
 		</item>
@@ -1812,18 +1783,8 @@ World_DeferredGBufferWrite
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[70]"/>
+				<node ref="/object/nodes/item[69]"/>
 				<id>{4C571CDA-798F-C142-867C-44B059740876}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[71]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[70]"/>
-				<id>{7BFD17EC-2217-294E-9C66-DC4B3E3F5831}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1832,7 +1793,7 @@ World_DeferredGBufferWrite
 				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[72]"/>
+				<node ref="/object/nodes/item[71]"/>
 				<id>{05706B00-0F9C-4DBA-B455-9D4E0D96ACD2}</id>
 			</destination>
 		</item>
@@ -1842,17 +1803,17 @@ World_DeferredGBufferWrite
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[73]"/>
+				<node ref="/object/nodes/item[72]"/>
 				<id>{197CC347-3580-4502-8AA1-976E476EA843}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[73]"/>
+				<node ref="/object/nodes/item[72]"/>
 				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[72]"/>
+				<node ref="/object/nodes/item[71]"/>
 				<id>{55606599-DA57-584A-9A22-85DB6F4829EF}</id>
 			</destination>
 		</item>
@@ -1862,17 +1823,17 @@ World_DeferredGBufferWrite
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[73]"/>
+				<node ref="/object/nodes/item[72]"/>
 				<id>{3F36532A-8A98-4EE7-85ED-2DA35230BC3C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[74]"/>
+				<node ref="/object/nodes/item[73]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[73]"/>
+				<node ref="/object/nodes/item[72]"/>
 				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
 			</destination>
 		</item>
@@ -1902,7 +1863,7 @@ World_DeferredGBufferWrite
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[70]"/>
+				<node ref="/object/nodes/item[69]"/>
 				<id>{C9E7EC8E-27BE-B148-8B22-54895036386B}</id>
 			</destination>
 		</item>
@@ -1942,28 +1903,18 @@ World_DeferredGBufferWrite
 				<id>{003C21D6-AFF1-0048-900B-DFE055758556}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[75]"/>
+				<node ref="/object/nodes/item[74]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[76]"/>
+				<node ref="/object/nodes/item[75]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[79]"/>
-				<id>{197CC347-3580-4502-8AA1-976E476EA843}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[78]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[79]"/>
-				<id>{3F36532A-8A98-4EE7-85ED-2DA35230BC3C}</id>
+				<id>{197CC347-3580-4502-8AA1-976E476EA843}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1972,13 +1923,23 @@ World_DeferredGBufferWrite
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[79]"/>
+				<node ref="/object/nodes/item[78]"/>
+				<id>{3F36532A-8A98-4EE7-85ED-2DA35230BC3C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[76]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[78]"/>
 				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[80]"/>
+				<node ref="/object/nodes/item[79]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
@@ -1988,7 +1949,7 @@ World_DeferredGBufferWrite
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[82]"/>
+				<node ref="/object/nodes/item[81]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
@@ -1998,7 +1959,7 @@ World_DeferredGBufferWrite
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[83]"/>
+				<node ref="/object/nodes/item[82]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
@@ -2008,11 +1969,11 @@ World_DeferredGBufferWrite
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[84]"/>
+				<node ref="/object/nodes/item[83]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[70]"/>
+				<node ref="/object/nodes/item[69]"/>
 				<id>{7CA9EEB0-2748-4926-BEC8-603482ACA31F}</id>
 			</destination>
 		</item>
@@ -2022,43 +1983,43 @@ World_DeferredGBufferWrite
 				<id>{CD0D53B8-673F-491B-B8DE-36202C2A8E67}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[85]"/>
+				<node ref="/object/nodes/item[84]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[81]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[86]"/>
+				<node ref="/object/nodes/item[85]"/>
 				<id>{197CC347-3580-4502-8AA1-976E476EA843}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[87]"/>
+				<node ref="/object/nodes/item[86]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[86]"/>
+				<node ref="/object/nodes/item[85]"/>
 				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[81]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[86]"/>
+				<node ref="/object/nodes/item[85]"/>
 				<id>{3F36532A-8A98-4EE7-85ED-2DA35230BC3C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[79]"/>
+				<node ref="/object/nodes/item[78]"/>
 				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
 			</source>
 			<destination>
@@ -2068,7 +2029,7 @@ World_DeferredGBufferWrite
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[86]"/>
+				<node ref="/object/nodes/item[85]"/>
 				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
 			</source>
 			<destination>

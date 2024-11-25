@@ -245,10 +245,6 @@
 					<name>Depth</name>
 				</item>
 				<item>
-					<id>{160D6BFC-45BE-46F5-B37F-C88F6D2FABB8}</id>
-					<name>Irradiance</name>
-				</item>
-				<item>
 					<id>{E25BC49C-C55C-41F2-96B8-15E4C572AF23}</id>
 					<name>Metalness</name>
 				</item>

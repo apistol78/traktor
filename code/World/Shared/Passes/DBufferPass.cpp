@@ -80,24 +80,19 @@ render::handle_t DBufferPass::setup(
 			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 
 			const auto& projection = worldRenderView.getProjection();
-
 			const Scalar p11 = projection.get(0, 0);
 			const Scalar p22 = projection.get(1, 1);
 
 			auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
-
 			sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 			sharedParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-
 			sharedParams->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 			sharedParams->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 			sharedParams->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
-			sharedParams->setTextureParameter(s_handleGBufferD, gbufferTargetSet->getColorTexture(3));
-
 			sharedParams->endParameters(renderContext);
 
 			const WorldRenderPassShared dbufferPass(

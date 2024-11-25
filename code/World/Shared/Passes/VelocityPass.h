@@ -11,7 +11,6 @@
 #include "Core/Object.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "World/WorldRenderSettings.h"
 
 namespace traktor::render
 {
@@ -38,10 +37,7 @@ class VelocityPass : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit VelocityPass(
-		const WorldRenderSettings& settings,
-		WorldEntityRenderers* entityRenderers
-	);
+	explicit VelocityPass(WorldEntityRenderers* entityRenderers);
 
 	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc);
 
@@ -55,7 +51,6 @@ public:
 	) const;
 
 private:
-	WorldRenderSettings m_settings;
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::ImageGraph > m_velocityPrime;

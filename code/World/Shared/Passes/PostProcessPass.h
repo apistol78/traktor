@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,7 +28,6 @@ namespace traktor::world
 
 struct WorldCreateDesc;
 
-class WorldEntityRenderers;
 class WorldRenderView;
 
 /*!
@@ -38,10 +37,7 @@ class PostProcessPass : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit PostProcessPass(
-		const WorldRenderSettings& settings,
-		WorldEntityRenderers* entityRenderers
-	);
+	explicit PostProcessPass(const WorldRenderSettings& settings);
 
 	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc);
 
@@ -60,7 +56,6 @@ public:
 
 private:
 	WorldRenderSettings m_settings;
-	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::ImageGraph > m_toneMap;
 	resource::Proxy< render::ImageGraph > m_motionBlur;

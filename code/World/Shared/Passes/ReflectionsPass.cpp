@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,15 +38,6 @@ const resource::Id< render::ImageGraph > c_screenReflections(L"{2F8EC56A-FD46-DF
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ReflectionsPass", ReflectionsPass, Object)
-
-ReflectionsPass::ReflectionsPass(
-    const WorldRenderSettings& settings,
-    WorldEntityRenderers* entityRenderers
-)
-:   m_settings(settings)
-,   m_entityRenderers(entityRenderers)
-{
-}
 
 bool ReflectionsPass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
@@ -189,7 +180,6 @@ render::handle_t ReflectionsPass::setup(
 				params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 				params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 				params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
-				params->setTextureParameter(s_handleGBufferD, gbufferTargetSet->getColorTexture(3));
 
 				if (dbufferTargetSet)
 				{
@@ -239,7 +229,6 @@ render::handle_t ReflectionsPass::setup(
 					params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 					params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 					params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
-					params->setTextureParameter(s_handleGBufferD, gbufferTargetSet->getColorTexture(3));
 
 					if (dbufferTargetSet)
 					{
@@ -286,7 +275,6 @@ render::handle_t ReflectionsPass::setup(
 			params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 			params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 			params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
-			params->setTextureParameter(s_handleGBufferD, gbufferTargetSet->getColorTexture(3));
 
 			if (dbufferTargetSet)
 			{

@@ -5,8 +5,8 @@
 			<id>{343C11E4-138F-5C4B-BCAF-AE58FE7C90A9}</id>
 			<comment/>
 			<position>
-				<first>-308</first>
-				<second>-248</second>
+				<first>-494</first>
+				<second>-152</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{FAD658EA-AD74-3441-B80F-7AE26C1AAA91}</id>
 			<comment/>
 			<position>
-				<first>-354</first>
-				<second>-287</second>
+				<first>-540</first>
+				<second>-191</second>
 			</position>
 			<name>Discard</name>
 			<connectable>true</connectable>
@@ -27,8 +27,8 @@
 			<id>{3036374F-A2DE-2449-9CCD-8F6B0B4501E3}</id>
 			<comment/>
 			<position>
-				<first>-332</first>
-				<second>389</second>
+				<first>-351</first>
+				<second>303</second>
 			</position>
 			<name>Metalness</name>
 			<connectable>true</connectable>
@@ -40,16 +40,16 @@
 			<id>{0DA060C9-11D7-F745-8CCC-03B4F101E30C}</id>
 			<comment/>
 			<position>
-				<first>-207</first>
-				<second>-183</second>
+				<first>-393</first>
+				<second>-87</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{BC894102-6AA4-8A44-B457-164F743338EF}</id>
 			<comment/>
 			<position>
-				<first>-343</first>
-				<second>-183</second>
+				<first>-529</first>
+				<second>-87</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -57,8 +57,8 @@
 			<id>{6550EFC8-7BFE-FA42-818D-9CFD79B76C78}</id>
 			<comment/>
 			<position>
-				<first>-294</first>
-				<second>-124</second>
+				<first>-480</first>
+				<second>-28</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -70,8 +70,8 @@
 			<id>{37B694B9-5EAE-E74C-8C04-5C2AEA9BA104}</id>
 			<comment/>
 			<position>
-				<first>153</first>
-				<second>-154</second>
+				<first>-33</first>
+				<second>-58</second>
 			</position>
 			<swizzle>0xyz</swizzle>
 		</item>
@@ -79,8 +79,8 @@
 			<id>{75522A04-667E-B04A-8043-594C80AA7720}</id>
 			<comment/>
 			<position>
-				<first>156</first>
-				<second>-193</second>
+				<first>-30</first>
+				<second>-97</second>
 			</position>
 			<swizzle>x000</swizzle>
 		</item>
@@ -88,8 +88,8 @@
 			<id>{9C242EE7-002A-484F-836F-EE3397A7B537}</id>
 			<comment/>
 			<position>
-				<first>-90</first>
-				<second>-268</second>
+				<first>-276</first>
+				<second>-172</second>
 			</position>
 			<operator>CoLess</operator>
 		</item>
@@ -97,8 +97,8 @@
 			<id>{698C2B9C-1AB0-9343-BF2D-280E52AE24F7}</id>
 			<comment/>
 			<position>
-				<first>-68</first>
-				<second>-150</second>
+				<first>-254</first>
+				<second>-54</second>
 			</position>
 			<fragmentGuid>{DE7C9D55-4AB8-4749-85C4-43A6E40B9596}</fragmentGuid>
 			<inputPins>
@@ -120,8 +120,8 @@
 			<id>{5C316768-37E7-7243-95D1-0CC9BEE59335}</id>
 			<comment/>
 			<position>
-				<first>-633</first>
-				<second>-161</second>
+				<first>-819</first>
+				<second>-65</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -133,16 +133,16 @@
 			<id>{7EC4BA44-646E-764B-811C-770E1F306B0B}</id>
 			<comment/>
 			<position>
-				<first>299</first>
-				<second>-199</second>
+				<first>176</first>
+				<second>-107</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{00F69F49-46F9-E348-A6C8-0C7F6C37D33E}</id>
 			<comment/>
 			<position>
-				<first>-316</first>
-				<second>425</second>
+				<first>-335</first>
+				<second>339</second>
 			</position>
 			<name>Specular</name>
 			<connectable>true</connectable>
@@ -176,8 +176,8 @@
 			<id>{4F2C8427-67C6-DE4A-941B-42C8C5105FD4}</id>
 			<comment/>
 			<position>
-				<first>-111</first>
-				<second>343</second>
+				<first>-84</first>
+				<second>253</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -185,8 +185,8 @@
 			<id>{4271EFCF-CBB0-6047-BE16-AB2D3A288CF1}</id>
 			<comment/>
 			<position>
-				<first>-111</first>
-				<second>380</second>
+				<first>-84</first>
+				<second>290</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -194,8 +194,8 @@
 			<id>{D73B5B59-A412-7845-9BD5-5A0D92952566}</id>
 			<comment/>
 			<position>
-				<first>-111</first>
-				<second>417</second>
+				<first>-84</first>
+				<second>327</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -203,8 +203,8 @@
 			<id>{FF8424B3-6850-9B40-8A00-61A736E91015}</id>
 			<comment/>
 			<position>
-				<first>-348</first>
-				<second>461</second>
+				<first>-367</first>
+				<second>375</second>
 			</position>
 			<name>DecalResponse</name>
 			<connectable>true</connectable>
@@ -216,8 +216,8 @@
 			<id>{4E440996-1057-3842-80C8-624AC3906DF1}</id>
 			<comment/>
 			<position>
-				<first>-111</first>
-				<second>454</second>
+				<first>-84</first>
+				<second>364</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -225,8 +225,8 @@
 			<id>{B651E82C-5049-DA48-8D51-DFCAFC4D4FDC}</id>
 			<comment/>
 			<position>
-				<first>-332</first>
-				<second>353</second>
+				<first>-351</first>
+				<second>267</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
@@ -238,29 +238,16 @@
 			<id>{9080FA6C-001E-F249-B9C3-AD62AEB9C48D}</id>
 			<comment/>
 			<position>
-				<first>92</first>
-				<second>357</second>
+				<first>119</first>
+				<second>267</second>
 			</position>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{EA66BEFA-15E3-2547-950A-06888A3BA8BB}</id>
-			<comment/>
-			<position>
-				<first>-178</first>
-				<second>647</second>
-			</position>
-			<name>Irradiance</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{D09B7176-BA5C-1C48-A0C9-A352FA079673}</id>
 			<comment/>
 			<position>
-				<first>825</first>
-				<second>179</second>
+				<first>829</first>
+				<second>79</second>
 			</position>
 			<technique>World_ForwardGBufferWrite</technique>
 			<priority>
@@ -306,8 +293,8 @@
 			<id>{BE761236-BC6C-814F-98B3-B5C94B82C254}</id>
 			<comment/>
 			<position>
-				<first>574</first>
-				<second>192</second>
+				<first>578</first>
+				<second>92</second>
 			</position>
 			<name>Enable</name>
 			<connectable>true</connectable>
@@ -369,11 +356,11 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[23]"/>
+				<node ref="/object/nodes/item[22]"/>
 				<id>{185C5A67-11F2-4641-B007-2EA8FCB020D7}</id>
 			</destination>
 		</item>
@@ -473,18 +460,8 @@
 				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[22]"/>
-				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{1EB6B476-B7FE-48E3-A12E-EE40F79FEBE0}</id>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -493,7 +470,7 @@
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[23]"/>
+				<node ref="/object/nodes/item[22]"/>
 				<id>{1BE35A74-64EA-4C68-926E-B66760B718DB}</id>
 			</destination>
 		</item>
@@ -553,7 +530,7 @@
 				<id>{28E6DBB6-876B-4DB2-9A84-4801CAE6A2C2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[23]"/>
+				<node ref="/object/nodes/item[22]"/>
 				<id>{6642BD4D-39D8-4AF4-A31B-5D7A491E0C48}</id>
 			</destination>
 		</item>

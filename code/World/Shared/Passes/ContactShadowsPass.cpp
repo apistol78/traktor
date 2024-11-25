@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,15 +35,6 @@ const resource::Id< render::ImageGraph > c_contactShadows(L"{9A8273AE-06A0-8649-
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ContactShadowsPass", ContactShadowsPass, Object)
-
-ContactShadowsPass::ContactShadowsPass(
-    const WorldRenderSettings& settings,
-    WorldEntityRenderers* entityRenderers
-)
-:   m_settings(settings)
-,   m_entityRenderers(entityRenderers)
-{
-}
 
 bool ContactShadowsPass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
@@ -123,7 +114,6 @@ render::handle_t ContactShadowsPass::setup(
 		params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 		params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 		params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
-		params->setTextureParameter(s_handleGBufferD, gbufferTargetSet->getColorTexture(3));
 		params->setVectorParameter(s_handleContactLightDirection, lightDirection);
 	};
 

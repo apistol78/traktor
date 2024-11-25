@@ -40,6 +40,7 @@
 #include "World/Shared/Passes/DBufferPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
 #include "World/Shared/Passes/HiZPass.h"
+#include "World/Shared/Passes/IrradiancePass.h"
 #include "World/Shared/Passes/LightClusterPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
@@ -159,23 +160,27 @@ bool WorldRendererShared::create(
 	if (!m_hiZPass->create(resourceManager))
 		return false;
 
-	m_velocityPass = new VelocityPass(m_settings, m_entityRenderers);
+	m_velocityPass = new VelocityPass(m_entityRenderers);
 	if (!m_velocityPass->create(resourceManager, renderSystem, desc))
 		return false;
 
-	m_ambientOcclusionPass = new AmbientOcclusionPass(m_settings, m_entityRenderers);
+	m_irradiancePass = new IrradiancePass();
+	if (!m_irradiancePass->create(resourceManager, renderSystem, desc))
+		return false;
+
+	m_ambientOcclusionPass = new AmbientOcclusionPass();
 	if (!m_ambientOcclusionPass->create(resourceManager, renderSystem, desc))
 		return false;
 
-	m_contactShadowsPass = new ContactShadowsPass(m_settings, m_entityRenderers);
+	m_contactShadowsPass = new ContactShadowsPass();
 	if (!m_contactShadowsPass->create(resourceManager, renderSystem, desc))
 		return false;
 
-	m_reflectionsPass = new ReflectionsPass(m_settings, m_entityRenderers);
+	m_reflectionsPass = new ReflectionsPass();
 	if (!m_reflectionsPass->create(resourceManager, renderSystem, desc))
 		return false;
 
-	m_postProcessPass = new PostProcessPass(m_settings, m_entityRenderers);
+	m_postProcessPass = new PostProcessPass(m_settings);
 	if (!m_postProcessPass->create(resourceManager, renderSystem, desc))
 		return false;
 
@@ -193,8 +198,9 @@ void WorldRendererShared::destroy()
 
 	m_postProcessPass = nullptr;
 	m_reflectionsPass = nullptr;
-	m_ambientOcclusionPass = nullptr;
 	m_contactShadowsPass = nullptr;
+	m_ambientOcclusionPass = nullptr;
+	m_irradiancePass = nullptr;
 	m_velocityPass = nullptr;
 	m_hiZPass = nullptr;
 	m_dbufferPass = nullptr;

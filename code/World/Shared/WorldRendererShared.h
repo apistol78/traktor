@@ -34,6 +34,7 @@ class DBufferPass;
 class GBufferPass;
 class HiZPass;
 class IEntityRenderer;
+class IrradiancePass;
 class LightClusterPass;
 class LightComponent;
 class Packer;
@@ -89,6 +90,7 @@ protected:
 	Ref< DBufferPass > m_dbufferPass;
 	Ref< HiZPass > m_hiZPass;
 	Ref< VelocityPass > m_velocityPass;
+	Ref< IrradiancePass > m_irradiancePass;
 	Ref< AmbientOcclusionPass > m_ambientOcclusionPass;
 	Ref< ContactShadowsPass > m_contactShadowsPass;
 	Ref< ReflectionsPass > m_reflectionsPass;

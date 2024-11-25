@@ -35,12 +35,8 @@ const resource::Id< render::ImageGraph > c_velocityPrime(L"{CB34E98B-55C9-E447-B
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VelocityPass", VelocityPass, Object)
 
-VelocityPass::VelocityPass(
-    const WorldRenderSettings& settings,
-    WorldEntityRenderers* entityRenderers
-)
-:   m_settings(settings)
-,   m_entityRenderers(entityRenderers)
+VelocityPass::VelocityPass(WorldEntityRenderers* entityRenderers)
+:   m_entityRenderers(entityRenderers)
 {
 }
 
@@ -107,7 +103,6 @@ render::handle_t VelocityPass::setup(
 			params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 			params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 			params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
-			params->setTextureParameter(s_handleGBufferD, gbufferTargetSet->getColorTexture(3));
 		};
 
 		m_velocityPrime->addPasses(

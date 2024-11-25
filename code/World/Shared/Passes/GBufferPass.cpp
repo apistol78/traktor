@@ -7,11 +7,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Timer/Profiler.h"
-#include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "World/IEntityRenderer.h"
-#include "World/IrradianceGrid.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
@@ -48,14 +46,13 @@ render::handle_t GBufferPass::setup(
 
 	// Add GBuffer target set.
 	render::RenderGraphTargetSetDesc rgtd;
-	rgtd.count = 4;
+	rgtd.count = 3;
 	rgtd.createDepthStencil = false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;	// (GBufferA) Depth (R), Normal (GBA)
 	rgtd.targets[1].colorFormat = render::TfR8G8B8A8;		// (GBufferB) Albedo (RGB)
 	rgtd.targets[2].colorFormat = render::TfR8G8B8A8;		// (GBufferC) Roughness (R), Metalness (G), Specular (B), Decal Response (A)
-	rgtd.targets[3].colorFormat = render::TfR8G8B8A8;	// (GBufferD) Irradiance (RGB)
 
 	auto gbufferTargetSetId = renderGraph.addTransientTargetSet(L"GBuffer", rgtd, outputTargetSetId, outputTargetSetId);
 
@@ -68,7 +65,6 @@ render::handle_t GBufferPass::setup(
 	clear.colors[0] = Color4f(clearZ, 0.5f, 0.5f, 0.0f);
 	clear.colors[1] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	clear.colors[2] = Color4f(0.8f, 0.0f, 0.0f, 0.0f);
-	clear.colors[3] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 	clear.depth = 1.0f;
 	clear.stencil = 0;
 	rp->setOutput(gbufferTargetSetId, clear, render::TfNone, render::TfAll);
@@ -88,15 +84,6 @@ render::handle_t GBufferPass::setup(
 			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 
-			if (gatheredView.irradianceGrid)
-			{
-				const auto size = gatheredView.irradianceGrid->getSize();
-				sharedParams->setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0] + 0.5f, (float)size[1] + 0.5f, (float)size[2] + 0.5f, 0.0f));
-				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMin, gatheredView.irradianceGrid->getBoundingBox().mn);
-				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, gatheredView.irradianceGrid->getBoundingBox().mx);
-				sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, gatheredView.irradianceGrid->getBuffer()->getBufferView());
-			}
-
 			if (hiZTextureId != 0)
 			{
 				auto hiZTexture = renderGraph.getTexture(hiZTextureId);
@@ -108,18 +95,12 @@ render::handle_t GBufferPass::setup(
 
 			sharedParams->endParameters(renderContext);
 
-			const bool irradianceEnable = (bool)(gatheredView.irradianceGrid != nullptr);
-			const bool irradianceSingle = irradianceEnable && gatheredView.irradianceGrid->isSingle();
-
 			const WorldRenderPassShared gbufferPass(
 				gbufferWriteTechnique,
 				sharedParams,
 				worldRenderView,
 				IWorldRenderPass::First,
-				{
-					{ s_handleIrradianceEnable, irradianceEnable },
-					{ s_handleIrradianceSingle, irradianceSingle }
-				}
+				{}
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());

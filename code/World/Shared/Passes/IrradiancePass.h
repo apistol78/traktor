@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2024 Anders Pistol.
+ * Copyright (c) 2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,7 +17,6 @@ namespace traktor::render
 
 class ImageGraph;
 class IRenderSystem;
-class ITexture;
 class RenderGraph;
 class ScreenRenderer;
 
@@ -28,11 +27,12 @@ namespace traktor::world
 
 struct WorldCreateDesc;
 
+class WorldEntityRenderers;
 class WorldRenderView;
 
 /*!
  */
-class ReflectionsPass : public Object
+class IrradiancePass : public Object
 {
 	T_RTTI_CLASS;
 
@@ -44,17 +44,12 @@ public:
 		const GatherView& gatheredView,
 		render::RenderGraph& renderGraph,
 		render::handle_t gbufferTargetSetId,
-		render::handle_t dbufferTargetSetId,
-		render::handle_t visualReadTargetSetId,
 		render::handle_t outputTargetSetId
 	) const;
 
 private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	resource::Proxy< render::ImageGraph > m_probeGlobalReflections;
-	resource::Proxy< render::ImageGraph > m_probeLocalReflections;
-	resource::Proxy< render::ImageGraph > m_screenReflections;
-	Quality m_reflectionsQuality = Quality::Disabled;
+	resource::Proxy< render::ImageGraph > m_irradiance;
 };
 
 }

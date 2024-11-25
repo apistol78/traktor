@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2024 Anders Pistol.
+ * Copyright (c) 2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include "Core/Log/Log.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
@@ -16,57 +17,32 @@
 #include "Render/Image2/ImageGraphContext.h"
 #include "Resource/IResourceManager.h"
 #include "World/IEntityRenderer.h"
+#include "World/IrradianceGrid.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/Shared/WorldRenderPassShared.h"
-#include "World/Shared/Passes/AmbientOcclusionPass.h"
+#include "World/Shared/Passes/IrradiancePass.h"
 
 namespace traktor::world
 {
 	namespace
 	{
 
-const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{416745F9-93C7-8D45-AE28-F2823DEE636A}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionHigh(L"{45F9CD9F-C700-9942-BB36-443629C88748}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionUltra(L"{302E57C8-711D-094F-A764-75F76553E81B}");
-
-resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
-{
-	switch (quality)
-	{
-	default:
-	case Quality::Disabled:
-		return resource::Id< render::ImageGraph >();
-	case Quality::Low:
-		return c_ambientOcclusionLow;
-	case Quality::Medium:
-		return c_ambientOcclusionMedium;
-	case Quality::High:
-		return c_ambientOcclusionHigh;
-	case Quality::Ultra:
-		return c_ambientOcclusionUltra;
-	}
-}
+const resource::Id< render::ImageGraph > c_irradiance(L"{14A0E977-7C13-9B43-A26E-F1D21117AEC6}");
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.AmbientOcclusionPass", AmbientOcclusionPass, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.IrradiancePass", IrradiancePass, Object)
 
-bool AmbientOcclusionPass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
+bool IrradiancePass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
-	// Create ambient occlusion processing.
-	if (desc.quality.ambientOcclusion > Quality::Disabled)
+	if (!resourceManager->bind(c_irradiance, m_irradiance))
 	{
-		resource::Id< render::ImageGraph > ambientOcclusion = getAmbientOcclusionId(desc.quality.ambientOcclusion);
-		if (!resourceManager->bind(ambientOcclusion, m_ambientOcclusion))
-		{
-			log::error << L"Unable to create ambient occlusion process." << Endl;
-			return false;
-		}
+		log::error << L"Unable to create irradiance process." << Endl;
+		return false;
 	}
 
 	// Create screen renderer.
@@ -77,7 +53,7 @@ bool AmbientOcclusionPass::create(resource::IResourceManager* resourceManager, r
 	return true;
 }
 
-render::handle_t AmbientOcclusionPass::setup(
+render::handle_t IrradiancePass::setup(
 	const WorldRenderView& worldRenderView,
     const GatherView& gatheredView,
 	render::RenderGraph& renderGraph,
@@ -85,11 +61,14 @@ render::handle_t AmbientOcclusionPass::setup(
 	render::handle_t outputTargetSetId
 ) const
 {
-	T_PROFILER_SCOPE(L"AmbientOcclusionPass::setup");
+	T_PROFILER_SCOPE(L"IrradiancePass::setup");
 	render::ImageGraphView view;
 
-	if (m_ambientOcclusion == nullptr || gbufferTargetSetId == 0)
+	if (m_irradiance == nullptr || gbufferTargetSetId == 0)
 		return 0;
+
+	const bool irradianceEnable = (bool)(gatheredView.irradianceGrid != nullptr);
+	const bool irradianceSingle = irradianceEnable && gatheredView.irradianceGrid->isSingle();
 
 	// Add ambient occlusion target set.
 	render::RenderGraphTargetSetDesc rgtd;
@@ -97,8 +76,9 @@ render::handle_t AmbientOcclusionPass::setup(
 	rgtd.createDepthStencil = false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
-	auto ambientOcclusionTargetSetId = renderGraph.addTransientTargetSet(L"Ambient occlusion", rgtd, ~0U, outputTargetSetId);
+	rgtd.targets[0].colorFormat = render::TfR8G8B8A8;	// Irradiance (RGB)
+
+	auto irradianceTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance", rgtd, ~0U, outputTargetSetId);
 
 	// Add ambient occlusion render pass.
 	view.viewFrustum = worldRenderView.getViewFrustum();
@@ -106,18 +86,21 @@ render::handle_t AmbientOcclusionPass::setup(
 	view.projection = worldRenderView.getProjection();
 
 	render::ImageGraphContext igctx;
+	igctx.setTechniqueFlag(s_handleIrradianceEnable, irradianceEnable);
+	igctx.setTechniqueFlag(s_handleIrradianceSingle, irradianceSingle);
 
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance");
 	rp->addInput(gbufferTargetSetId);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
-	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	rp->setOutput(ambientOcclusionTargetSetId, clear, render::TfNone, render::TfColor);
+	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+	rp->setOutput(irradianceTargetSetId, clear, render::TfNone, render::TfColor);
 
 	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
 	{
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+		
 		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 		params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 		params->setMatrixParameter(s_handleView, worldRenderView.getView());
@@ -125,11 +108,21 @@ render::handle_t AmbientOcclusionPass::setup(
 		params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 		params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 		params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
+
+		if (gatheredView.irradianceGrid)
+		{
+			const auto size = gatheredView.irradianceGrid->getSize();
+			params->setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0] + 0.5f, (float)size[1] + 0.5f, (float)size[2] + 0.5f, 0.0f));
+			params->setVectorParameter(s_handleIrradianceGridBoundsMin, gatheredView.irradianceGrid->getBoundingBox().mn);
+			params->setVectorParameter(s_handleIrradianceGridBoundsMax, gatheredView.irradianceGrid->getBoundingBox().mx);
+			params->setBufferViewParameter(s_handleIrradianceGridSBuffer, gatheredView.irradianceGrid->getBuffer()->getBufferView());
+		}
+
 		if (gatheredView.rtWorldTopLevel != nullptr)
 			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
 	};
 
-	m_ambientOcclusion->addPasses(
+	m_irradiance->addPasses(
 		m_screenRenderer,
 		renderGraph,
 		rp,
@@ -139,7 +132,7 @@ render::handle_t AmbientOcclusionPass::setup(
 	);
 
 	renderGraph.addPass(rp);
-	return ambientOcclusionTargetSetId;
+	return irradianceTargetSetId;
 }
 
 }

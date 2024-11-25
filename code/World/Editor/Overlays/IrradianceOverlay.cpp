@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,7 +12,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
-#include "World/Editor/Overlays/GBufferIrradianceOverlay.h"
+#include "World/Editor/Overlays/IrradianceOverlay.h"
 
 namespace traktor::world
 {
@@ -36,9 +36,9 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.GBufferIrradianceOverlay", 0, GBufferIrradianceOverlay, BaseOverlay)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.IrradianceOverlay", 0, IrradianceOverlay, BaseOverlay)
 
-bool GBufferIrradianceOverlay::create(resource::IResourceManager* resourceManager)
+bool IrradianceOverlay::create(resource::IResourceManager* resourceManager)
 {
 	if (!BaseOverlay::create(resourceManager))
 		return false;
@@ -49,21 +49,21 @@ bool GBufferIrradianceOverlay::create(resource::IResourceManager* resourceManage
 	return true;
 }
 
-void GBufferIrradianceOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
+void IrradianceOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
-	render::handle_t gbufferId = findTargetByName(renderGraph, L"GBuffer");
-	if (!gbufferId)
+	render::handle_t irradianceId = findTargetByName(renderGraph, L"Irradiance");
+	if (!irradianceId)
 	{
 		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
 	}
 
-	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer irradiance overlay");
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
-	rp->addInput(gbufferId);
+	rp->addInput(irradianceId);
 	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-		auto gbufferTargetSet = renderGraph.getTargetSet(gbufferId);
-		if (!gbufferTargetSet || gbufferTargetSet->getColorTexture(3) == nullptr)
+		auto irradianceTargetSet = renderGraph.getTargetSet(irradianceId);
+		if (!irradianceTargetSet || irradianceTargetSet->getColorTexture(0) == nullptr)
 			return;
 
 		const render::Shader::Permutation perm(c_handleDebugTechnique);
@@ -71,7 +71,7 @@ void GBufferIrradianceOverlay::setup(render::RenderGraph& renderGraph, render::S
 		auto pp = renderContext->alloc< render::ProgramParameters >();
 		pp->beginParameters(renderContext);
 		pp->setFloatParameter(c_handleDebugAlpha, alpha);
-		pp->setTextureParameter(c_handleDebugTexture, gbufferTargetSet->getColorTexture(3));
+		pp->setTextureParameter(c_handleDebugTexture, irradianceTargetSet->getColorTexture(0));
 		pp->endParameters(renderContext);
 
 		screenRenderer->draw(renderContext, m_shader, perm, pp);

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,7 +11,6 @@
 #include "Core/Object.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "World/WorldRenderSettings.h"
 
 namespace traktor::render
 {
@@ -28,7 +27,6 @@ namespace traktor::world
 
 struct WorldCreateDesc;
 
-class WorldEntityRenderers;
 class WorldRenderView;
 
 /*!
@@ -38,11 +36,6 @@ class AmbientOcclusionPass : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit AmbientOcclusionPass(
-		const WorldRenderSettings& settings,
-		WorldEntityRenderers* entityRenderers
-	);
-
 	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc);
 
 	render::handle_t setup(
@@ -54,8 +47,6 @@ public:
 	) const;
 
 private:
-	WorldRenderSettings m_settings;
-	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::ImageGraph > m_ambientOcclusion;
 };
