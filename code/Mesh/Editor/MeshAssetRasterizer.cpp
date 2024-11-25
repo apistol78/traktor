@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,12 +25,10 @@
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureSet.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
+	namespace
 	{
-		namespace
-		{
 
 int32_t wrap(int32_t v, int32_t l)
 {
@@ -38,8 +36,7 @@ int32_t wrap(int32_t v, int32_t l)
 	return (c < 0) ? c + l : c;
 }
 
-		}
-
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshAssetRasterizer", MeshAssetRasterizer, Object)
 
@@ -49,7 +46,6 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 	const std::wstring modelCachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 
 	const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
-
 	Ref< model::Model > model = model::ModelCache::getInstance().getMutable(modelCachePath, fileName, asset->getImportFilter());
 	if (!model)
 		return false;
@@ -76,6 +72,8 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 	SmallMap< Path, Ref< drawing::Image > > images;
 	for (auto& material : model->getMaterials())
 	{
+		model::Material::Map& diffuseMap = material.getDiffuseMap();
+
 		const auto it = materialShaders.find(material.getName());
 		if (it != materialShaders.end())
 		{
@@ -87,39 +85,38 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 			if (!image)
 				continue;
 
-			auto diffuseMap = material.getDiffuseMap();
+			
 			diffuseMap.image = image;			
-			material.setDiffuseMap(diffuseMap);
 		}
 
-		//auto diffuseMap = material.getDiffuseMap();
-		//if (diffuseMap.texture.isNotNull())
-		//{
-		//	Ref< const render::TextureAsset > textureAsset = editor->getSourceDatabase()->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
-		//	if (!textureAsset)
-		//		continue;
+		if (diffuseMap.image == nullptr && diffuseMap.texture.isNotNull())
+		{
+			Ref< const render::TextureAsset > textureAsset = editor->getSourceDatabase()->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
+			if (!textureAsset)
+				continue;
 
-		//	const Path filePath = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
-		//	Ref< drawing::Image > image = images[filePath];
-		//	if (image == nullptr)
-		//	{
-		//		Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-		//		if (file)
-		//		{
-		//			image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-		//			if (image && textureAsset->m_output.m_assumeLinearGamma)
-		//			{
-		//				// Convert to gamma color space.
-		//				const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
-		//				image->apply(&gammaFilter);							
-		//			}
-		//			images[filePath] = image;
-		//		}
-		//	}
+			const Path filePath = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
+			Ref< drawing::Image > image = images[filePath];
+			if (image == nullptr)
+			{
+				Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
+				if (file)
+				{
+					image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
+					if (image && textureAsset->m_output.m_assumeLinearGamma)
+					{
+						// Convert to gamma color space.
+						const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
+						image->apply(&gammaFilter);							
+					}
+					images[filePath] = image;
+				}
+			}
 
-		//	diffuseMap.image = image;			
-		//	material.setDiffuseMap(diffuseMap);
-		//}
+			diffuseMap.image = image;
+		}
+
+		material.setDiffuseMap(diffuseMap);
 	}
 
 	// Rasterize model.
@@ -130,5 +127,4 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 	return model::ModelRasterizer().generate(model, modelView, outImage);
 }
 
-	}
 }
