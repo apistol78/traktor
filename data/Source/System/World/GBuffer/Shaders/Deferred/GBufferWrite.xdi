@@ -5,8 +5,8 @@
 			<id>{DF015B38-4B91-6C48-BB5E-81FC8355D961}</id>
 			<comment/>
 			<position>
-				<first>-148</first>
-				<second>98</second>
+				<first>-155</first>
+				<second>107</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -18,7 +18,7 @@
 			<id>{30E85928-7B55-E740-9734-68440CE06674}</id>
 			<comment/>
 			<position>
-				<first>191</first>
+				<first>161</first>
 				<second>135</second>
 			</position>
 			<name>ViewNormal</name>
@@ -31,7 +31,7 @@
 			<id>{8D3DC51D-D9AA-DC4F-B3E3-558D3B60192F}</id>
 			<comment/>
 			<position>
-				<first>153</first>
+				<first>112</first>
 				<second>612</second>
 			</position>
 			<name>Roughness</name>
@@ -44,7 +44,7 @@
 			<id>{A326DE3C-1B9E-7848-9560-7C28ACC9158D}</id>
 			<comment/>
 			<position>
-				<first>142</first>
+				<first>112</first>
 				<second>76</second>
 			</position>
 			<swizzle>z</swizzle>
@@ -53,7 +53,7 @@
 			<id>{B2E457BD-A3DC-AA49-A8DA-90B28E752AF0}</id>
 			<comment/>
 			<position>
-				<first>278</first>
+				<first>248</first>
 				<second>76</second>
 			</position>
 		</item>
@@ -61,7 +61,7 @@
 			<id>{FFD206CC-6EDD-B446-9919-0C1E61B9E3D1}</id>
 			<comment/>
 			<position>
-				<first>417</first>
+				<first>387</first>
 				<second>109</second>
 			</position>
 			<fragmentGuid>{DE7C9D55-4AB8-4749-85C4-43A6E40B9596}</fragmentGuid>
@@ -170,7 +170,7 @@
 			<id>{327CBB43-0B18-0F4A-9C61-ADEAD84B701C}</id>
 			<comment/>
 			<position>
-				<first>153</first>
+				<first>112</first>
 				<second>648</second>
 			</position>
 			<name>Metalness</name>
@@ -205,7 +205,7 @@
 			<id>{38143377-57B7-4388-9D3F-3AA62077F273}</id>
 			<comment/>
 			<position>
-				<first>131</first>
+				<first>101</first>
 				<second>-28</second>
 			</position>
 			<name>Discard</name>
@@ -218,7 +218,7 @@
 			<id>{D301496E-DDAC-4860-B8DD-15359A619FF7}</id>
 			<comment/>
 			<position>
-				<first>177</first>
+				<first>147</first>
 				<second>11</second>
 			</position>
 			<value>0.5</value>
@@ -227,7 +227,7 @@
 			<id>{C92A4654-C294-433A-A5B0-B3B0F004122A}</id>
 			<comment/>
 			<position>
-				<first>395</first>
+				<first>365</first>
 				<second>-9</second>
 			</position>
 			<operator>CoLess</operator>
@@ -245,7 +245,7 @@
 			<id>{E965B68D-2C18-1547-B41D-F4766F74530B}</id>
 			<comment/>
 			<position>
-				<first>169</first>
+				<first>128</first>
 				<second>684</second>
 			</position>
 			<name>Specular</name>
@@ -258,8 +258,8 @@
 			<id>{7F94F69A-4243-4617-921D-F6FF7FC71D16}</id>
 			<comment/>
 			<position>
-				<first>307</first>
-				<second>906</second>
+				<first>318</first>
+				<second>883</second>
 			</position>
 			<name>Irradiance</name>
 			<connectable>true</connectable>
@@ -271,7 +271,7 @@
 			<id>{870F030C-C903-46FF-A6D1-1F1A3BBAD32B}</id>
 			<comment/>
 			<position>
-				<first>137</first>
+				<first>96</first>
 				<second>720</second>
 			</position>
 			<name>DecalResponse</name>
@@ -284,7 +284,7 @@
 			<id>{F6E2ED06-2482-44DB-8996-3424B5E630CB}</id>
 			<comment/>
 			<position>
-				<first>638</first>
+				<first>608</first>
 				<second>105</second>
 			</position>
 			<swizzle>0xyz</swizzle>
@@ -293,7 +293,7 @@
 			<id>{164F9F58-08EA-4C95-A4F8-827B3C3FEC29}</id>
 			<comment/>
 			<position>
-				<first>641</first>
+				<first>611</first>
 				<second>66</second>
 			</position>
 			<swizzle>x000</swizzle>
@@ -302,7 +302,7 @@
 			<id>{DD30262A-EDE3-47F1-811C-0EC30A1075F9}</id>
 			<comment/>
 			<position>
-				<first>784</first>
+				<first>821</first>
 				<second>60</second>
 			</position>
 		</item>
@@ -563,23 +563,23 @@
 			<title>GBufferA</title>
 			<comment/>
 			<position>
-				<first>-230</first>
-				<second>-88</second>
+				<first>-207</first>
+				<second>-94</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1212</first>
+				<second>327</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
 			<title>GBufferB</title>
 			<comment/>
 			<position>
-				<first>-215</first>
+				<first>-204</first>
 				<second>256</second>
 			</position>
 			<size>
-				<first>1225</first>
+				<first>1214</first>
 				<second>233</second>
 			</size>
 		</item>
@@ -587,24 +587,24 @@
 			<title>GBufferC</title>
 			<comment/>
 			<position>
-				<first>-172</first>
-				<second>547</second>
+				<first>-199</first>
+				<second>516</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1209</first>
+				<second>271</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
 			<title>GBufferD</title>
 			<comment/>
 			<position>
-				<first>-206</first>
-				<second>831</second>
+				<first>-195</first>
+				<second>808</second>
 			</position>
 			<size>
-				<first>1213</first>
-				<second>208</second>
+				<first>1207</first>
+				<second>206</second>
 			</size>
 		</item>
 	</groups>

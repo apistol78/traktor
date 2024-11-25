@@ -74,7 +74,7 @@
 			<id>{03A15DE8-AEDC-6445-A1F2-59AABB88642B}</id>
 			<comment/>
 			<position>
-				<first>-221</first>
+				<first>-212</first>
 				<second>480</second>
 			</position>
 			<declaration>{530D6B3A-EE00-9D43-AB36-022D3ED4B7D6}</declaration>
@@ -102,7 +102,7 @@
 			<id>{A8DE26EA-C3AA-E04E-842F-691B7B816B0A}</id>
 			<comment/>
 			<position>
-				<first>485</first>
+				<first>534</first>
 				<second>330</second>
 			</position>
 			<swizzle>00x1</swizzle>
@@ -111,7 +111,7 @@
 			<id>{AFC0C0A3-A7E3-894D-BB58-907FE723406B}</id>
 			<comment/>
 			<position>
-				<first>485</first>
+				<first>534</first>
 				<second>372</second>
 			</position>
 			<swizzle>xy00</swizzle>
@@ -120,7 +120,7 @@
 			<id>{2F966CD9-B8B2-FF40-8AC9-56DF25499539}</id>
 			<comment/>
 			<position>
-				<first>644</first>
+				<first>747</first>
 				<second>327</second>
 			</position>
 		</item>
@@ -128,7 +128,7 @@
 			<id>{568AAF2D-6F5A-4449-B191-A0F65D964B18}</id>
 			<comment/>
 			<position>
-				<first>928</first>
+				<first>1031</first>
 				<second>306</second>
 			</position>
 			<name>ViewPosition</name>
@@ -137,7 +137,7 @@
 			<id>{F4CC0B28-0DE2-BB4F-A6B3-5C7DBE57A96F}</id>
 			<comment/>
 			<position>
-				<first>1449</first>
+				<first>1439</first>
 				<second>1579</second>
 			</position>
 			<name>Roughness</name>
@@ -349,8 +349,8 @@
 			<id>{DAEC4CE7-26EF-E149-BD4B-B3FC379EDB1E}</id>
 			<comment/>
 			<position>
-				<first>526</first>
-				<second>1273</second>
+				<first>592</first>
+				<second>1270</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -391,16 +391,16 @@
 			<id>{13BC9224-1D91-3E47-BE72-067E453E75CB}</id>
 			<comment/>
 			<position>
-				<first>1190</first>
-				<second>1427</second>
+				<first>1194</first>
+				<second>1426</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{CEB6862C-BF28-BF44-A88C-6E318FAF7779}</id>
 			<comment/>
 			<position>
-				<first>715</first>
-				<second>1280</second>
+				<first>813</first>
+				<second>1277</second>
 			</position>
 			<name>DecalK</name>
 		</item>
@@ -408,7 +408,7 @@
 			<id>{9D6AAA72-A719-F048-BF65-C0D61F97D528}</id>
 			<comment/>
 			<position>
-				<first>1063</first>
+				<first>983</first>
 				<second>1348</second>
 			</position>
 			<name>DecalK</name>
@@ -417,7 +417,7 @@
 			<id>{5EA307AB-122C-9547-BF56-0F8EEEB2C9CB}</id>
 			<comment/>
 			<position>
-				<first>1056</first>
+				<first>983</first>
 				<second>1507</second>
 			</position>
 			<name>DecalK</name>
@@ -426,8 +426,8 @@
 			<id>{A0AAB085-56DA-F148-8DC5-997CF8A15850}</id>
 			<comment/>
 			<position>
-				<first>1451</first>
-				<second>1407</second>
+				<first>1439</first>
+				<second>1405</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -457,7 +457,7 @@
 			<id>{16AE2761-62D1-B046-8666-8221F1A707BD}</id>
 			<comment/>
 			<position>
-				<first>1049</first>
+				<first>983</first>
 				<second>1664</second>
 			</position>
 			<name>DecalK</name>
@@ -466,7 +466,7 @@
 			<id>{75462ADC-2209-1F41-AC60-F1F9B42E4972}</id>
 			<comment/>
 			<position>
-				<first>1183</first>
+				<first>1194</first>
 				<second>1584</second>
 			</position>
 		</item>
@@ -487,7 +487,7 @@
 			<id>{549211CF-35F1-BD4D-8473-E92737D3C822}</id>
 			<comment/>
 			<position>
-				<first>-194</first>
+				<first>-202</first>
 				<second>369</second>
 			</position>
 			<value>-1, 1, 0, 0</value>
@@ -504,7 +504,7 @@
 			<id>{B98FB775-7626-A74C-B798-1CBC4EC04AFA}</id>
 			<comment/>
 			<position>
-				<first>-199</first>
+				<first>-202</first>
 				<second>331</second>
 			</position>
 			<value>2, -2, 0, 0</value>
@@ -531,7 +531,7 @@
 			<id>{1CA8B41E-F013-044B-BD21-250110E87D24}</id>
 			<comment/>
 			<position>
-				<first>-148</first>
+				<first>-180</first>
 				<second>437</second>
 			</position>
 			<name>Depth</name>
@@ -563,7 +563,7 @@
 			<id>{2C5D7CD6-AEF8-4F6A-AA29-61777C8D90FD}</id>
 			<comment/>
 			<position>
-				<first>330</first>
+				<first>367</first>
 				<second>1276</second>
 			</position>
 		</item>

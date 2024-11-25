@@ -9,8 +9,8 @@ World_DeferredGBufferWrite
 			]]>
 			</comment>
 			<position>
-				<first>351</first>
-				<second>203</second>
+				<first>759</first>
+				<second>255</second>
 			</position>
 			<fragmentGuid>{A18C08DA-399A-B949-AD8D-4E22CFCC2FE4}</fragmentGuid>
 			<inputPins>
@@ -72,8 +72,8 @@ World_DeferredGBufferWrite
 			<id>{4F904B51-75A9-4D19-96EC-534FABB8BA69}</id>
 			<comment/>
 			<position>
-				<first>25</first>
-				<second>469</second>
+				<first>364</first>
+				<second>514</second>
 			</position>
 			<name>Enable</name>
 			<connectable>true</connectable>
@@ -85,8 +85,8 @@ World_DeferredGBufferWrite
 			<id>{CA2E92C9-EAA0-4545-815F-51EE96A7A409}</id>
 			<comment/>
 			<position>
-				<first>9</first>
-				<second>239</second>
+				<first>348</first>
+				<second>284</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
@@ -98,8 +98,8 @@ World_DeferredGBufferWrite
 			<id>{C4793C58-4118-4914-8734-1D4FEBC4FC01}</id>
 			<comment/>
 			<position>
-				<first>-39</first>
-				<second>353</second>
+				<first>300</first>
+				<second>398</second>
 			</position>
 			<name>ViewNormalDetail</name>
 			<connectable>true</connectable>
@@ -111,8 +111,8 @@ World_DeferredGBufferWrite
 			<id>{FA893653-9994-4A8E-BDE0-55917C5B2AF7}</id>
 			<comment/>
 			<position>
-				<first>-7</first>
-				<second>315</second>
+				<first>332</first>
+				<second>360</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -124,8 +124,8 @@ World_DeferredGBufferWrite
 			<id>{4F9F4253-5618-40FB-A8BF-9FBAF2E0CC39}</id>
 			<comment/>
 			<position>
-				<first>9</first>
-				<second>201</second>
+				<first>348</first>
+				<second>246</second>
 			</position>
 			<name>Metalness</name>
 			<connectable>true</connectable>
@@ -137,8 +137,8 @@ World_DeferredGBufferWrite
 			<id>{4C571CDA-798F-C142-867C-44B059740876}</id>
 			<comment/>
 			<position>
-				<first>9</first>
-				<second>277</second>
+				<first>348</first>
+				<second>322</second>
 			</position>
 			<name>Specular</name>
 			<connectable>true</connectable>
@@ -150,8 +150,8 @@ World_DeferredGBufferWrite
 			<id>{C9E7EC8E-27BE-B148-8B22-54895036386B}</id>
 			<comment/>
 			<position>
-				<first>25</first>
-				<second>431</second>
+				<first>364</first>
+				<second>476</second>
 			</position>
 			<name>Discard</name>
 			<connectable>true</connectable>
@@ -163,7 +163,7 @@ World_DeferredGBufferWrite
 			<id>{2616708F-F0CE-4FF6-850A-7F30E30821CA}</id>
 			<comment/>
 			<position>
-				<first>1065</first>
+				<first>1069</first>
 				<second>-390</second>
 			</position>
 			<name>Irradiance</name>
@@ -176,7 +176,7 @@ World_DeferredGBufferWrite
 			<id>{985A838A-3AAE-9D4D-869C-47BD0CB3CAF1}</id>
 			<comment/>
 			<position>
-				<first>1453</first>
+				<first>1457</first>
 				<second>-372</second>
 			</position>
 		</item>
@@ -184,7 +184,7 @@ World_DeferredGBufferWrite
 			<id>{846EC956-68F3-2640-8854-16DB0583207E}</id>
 			<comment/>
 			<position>
-				<first>1689</first>
+				<first>1693</first>
 				<second>-303</second>
 			</position>
 			<name>L_Irradiance</name>
@@ -193,7 +193,7 @@ World_DeferredGBufferWrite
 			<id>{9AFA1282-3E95-294A-8AB7-1D36230B5FCF}</id>
 			<comment/>
 			<position>
-				<first>1169</first>
+				<first>1173</first>
 				<second>-309</second>
 			</position>
 			<parameterName>World_IrradianceEnable</parameterName>
@@ -202,7 +202,7 @@ World_DeferredGBufferWrite
 			<id>{76860935-0E03-1640-B0CD-18637B4C9F24}</id>
 			<comment/>
 			<position>
-				<first>-176</first>
+				<first>-172</first>
 				<second>-392</second>
 			</position>
 		</item>
@@ -210,7 +210,7 @@ World_DeferredGBufferWrite
 			<id>{87C348B6-7BDD-1A42-B89E-2AEAF7B8A20B}</id>
 			<comment/>
 			<position>
-				<first>-400</first>
+				<first>-396</first>
 				<second>-334</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
@@ -222,7 +222,7 @@ World_DeferredGBufferWrite
 			<id>{5DC1F47F-D24F-2249-8667-050B6E912E7D}</id>
 			<comment/>
 			<position>
-				<first>-173</first>
+				<first>-169</first>
 				<second>-227</second>
 			</position>
 		</item>
@@ -230,7 +230,7 @@ World_DeferredGBufferWrite
 			<id>{C94C36B7-EF68-554B-BCEB-50880319F18B}</id>
 			<comment/>
 			<position>
-				<first>-400</first>
+				<first>-396</first>
 				<second>-176</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
@@ -242,7 +242,7 @@ World_DeferredGBufferWrite
 			<id>{DA905233-ED84-5249-85B9-39A22608F780}</id>
 			<comment/>
 			<position>
-				<first>-368</first>
+				<first>-364</first>
 				<second>-229</second>
 			</position>
 			<swizzle>xyz1</swizzle>
@@ -251,7 +251,7 @@ World_DeferredGBufferWrite
 			<id>{AF9759BC-2FB5-1643-99AA-9CBC3DC2A51C}</id>
 			<comment/>
 			<position>
-				<first>-368</first>
+				<first>-364</first>
 				<second>-391</second>
 			</position>
 			<swizzle>xyz</swizzle>
@@ -260,7 +260,7 @@ World_DeferredGBufferWrite
 			<id>{73F7BE56-3064-DF41-A6F1-F8729131E6D5}</id>
 			<comment/>
 			<position>
-				<first>175</first>
+				<first>179</first>
 				<second>-336</second>
 			</position>
 			<fragmentGuid>{ADFB49ED-56BB-4981-8121-E9154AB0B2D4}</fragmentGuid>
@@ -288,7 +288,7 @@ World_DeferredGBufferWrite
 			<id>{6CC459DA-EBF3-9349-B1DE-74668CE97BA7}</id>
 			<comment/>
 			<position>
-				<first>-585</first>
+				<first>-581</first>
 				<second>-256</second>
 			</position>
 			<name>L_ViewPosition</name>
@@ -297,7 +297,7 @@ World_DeferredGBufferWrite
 			<id>{C128A2E4-742A-1B40-B5EC-344D12926C7C}</id>
 			<comment/>
 			<position>
-				<first>745</first>
+				<first>749</first>
 				<second>-223</second>
 			</position>
 			<color>0, 0, 0, 1</color>
@@ -307,7 +307,7 @@ World_DeferredGBufferWrite
 			<id>{3E2C5AB4-9A59-DC4C-B1DB-6CB3FC9BE5FD}</id>
 			<comment/>
 			<position>
-				<first>906</first>
+				<first>910</first>
 				<second>-442</second>
 			</position>
 		</item>
@@ -315,8 +315,8 @@ World_DeferredGBufferWrite
 			<id>{638BECF5-367E-D54A-B232-14979F9BEA33}</id>
 			<comment/>
 			<position>
-				<first>63</first>
-				<second>161</second>
+				<first>402</first>
+				<second>206</second>
 			</position>
 			<name>L_Irradiance</name>
 		</item>
@@ -324,7 +324,7 @@ World_DeferredGBufferWrite
 			<id>{7BFD17EC-2217-294E-9C66-DC4B3E3F5831}</id>
 			<comment/>
 			<position>
-				<first>-703</first>
+				<first>-699</first>
 				<second>-420</second>
 			</position>
 			<name>ViewNormalGeometry</name>
@@ -337,8 +337,8 @@ World_DeferredGBufferWrite
 			<id>{AC919A17-C77D-944D-AC98-ECECE0B956F3}</id>
 			<comment/>
 			<position>
-				<first>-138</first>
-				<second>-733</second>
+				<first>233</first>
+				<second>-766</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -350,8 +350,8 @@ World_DeferredGBufferWrite
 			<id>{44C89D25-DBD7-814B-9C2A-98727781EAA9}</id>
 			<comment/>
 			<position>
-				<first>153</first>
-				<second>-754</second>
+				<first>524</first>
+				<second>-787</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -359,8 +359,8 @@ World_DeferredGBufferWrite
 			<id>{33FE628C-0A6F-2642-9EE4-3F143586FD45}</id>
 			<comment/>
 			<position>
-				<first>397</first>
-				<second>-786</second>
+				<first>768</first>
+				<second>-819</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -368,8 +368,8 @@ World_DeferredGBufferWrite
 			<id>{3342B6F0-6662-9948-A4F8-F236075FAB6A}</id>
 			<comment/>
 			<position>
-				<first>47</first>
-				<second>391</second>
+				<first>386</first>
+				<second>436</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -377,7 +377,7 @@ World_DeferredGBufferWrite
 			<id>{5DC46841-21EE-7A44-A31C-AAD08839A065}</id>
 			<comment/>
 			<position>
-				<first>175</first>
+				<first>179</first>
 				<second>-446</second>
 			</position>
 			<fragmentGuid>{1F5FB15A-CCA0-264F-A150-7EDEAD93E644}</fragmentGuid>
@@ -400,7 +400,7 @@ World_DeferredGBufferWrite
 			<id>{2219AE88-BC3C-6B45-A207-206FE960936F}</id>
 			<comment/>
 			<position>
-				<first>616</first>
+				<first>620</first>
 				<second>-423</second>
 			</position>
 			<parameterName>World_IrradianceSingle</parameterName>
@@ -409,8 +409,8 @@ World_DeferredGBufferWrite
 			<id>{7CA9EEB0-2748-4926-BEC8-603482ACA31F}</id>
 			<comment/>
 			<position>
-				<first>-23</first>
-				<second>123</second>
+				<first>316</first>
+				<second>168</second>
 			</position>
 			<name>DecalResponse</name>
 			<connectable>true</connectable>
@@ -426,7 +426,7 @@ Connect this to have SH sampled per vertex
 			]]>
 			</comment>
 			<position>
-				<first>803</first>
+				<first>807</first>
 				<second>-486</second>
 			</position>
 		</item>
@@ -742,8 +742,32 @@ Connect this to have SH sampled per vertex
 				<second>-554</second>
 			</position>
 			<size>
-				<first>2614</first>
-				<second>522</second>
+				<first>2621</first>
+				<second>504</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Common</title>
+			<comment/>
+			<position>
+				<first>139</first>
+				<second>-946</second>
+			</position>
+			<size>
+				<first>858</first>
+				<second>325</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Output</title>
+			<comment/>
+			<position>
+				<first>60</first>
+				<second>45</second>
+			</position>
+			<size>
+				<first>1015</first>
+				<second>621</second>
 			</size>
 		</item>
 	</groups>

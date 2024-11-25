@@ -5,8 +5,8 @@
 			<id>{E6FE72A5-B871-0A4C-AC4A-A2FD90779FF0}</id>
 			<comment/>
 			<position>
-				<first>2927</first>
-				<second>959</second>
+				<first>3119</first>
+				<second>965</second>
 			</position>
 			<technique>World_ForwardColor</technique>
 			<priority>
@@ -56,16 +56,16 @@ Eye direction
 			]]>
 			</comment>
 			<position>
-				<first>-8</first>
-				<second>302</second>
+				<first>463</first>
+				<second>-527</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{505DD2CD-E305-084F-8673-848F43B149F0}</id>
 			<comment/>
 			<position>
-				<first>-814</first>
-				<second>257</second>
+				<first>-343</first>
+				<second>-572</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -77,8 +77,8 @@ Eye direction
 			<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
 			<comment/>
 			<position>
-				<first>-814</first>
-				<second>133</second>
+				<first>-343</first>
+				<second>-696</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -90,8 +90,8 @@ Eye direction
 			<id>{C15FFA71-480D-3948-BF4B-5D1FD2F40B3C}</id>
 			<comment/>
 			<position>
-				<first>-830</first>
-				<second>316</second>
+				<first>-359</first>
+				<second>-513</second>
 			</position>
 			<name>ViewNormalDetail</name>
 			<connectable>true</connectable>
@@ -103,8 +103,8 @@ Eye direction
 			<id>{28AF9CD6-D160-E641-AF57-D097F6C47895}</id>
 			<comment/>
 			<position>
-				<first>-798</first>
-				<second>195</second>
+				<first>-327</first>
+				<second>-634</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
@@ -116,16 +116,16 @@ Eye direction
 			<id>{5013D9A3-9C34-1745-946D-1B071166CA24}</id>
 			<comment/>
 			<position>
-				<first>-228</first>
-				<second>279</second>
+				<first>243</first>
+				<second>-550</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{90915AE3-5221-0149-9582-FC06B2EF0B10}</id>
 			<comment/>
 			<position>
-				<first>-541</first>
-				<second>236</second>
+				<first>-70</first>
+				<second>-593</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -133,16 +133,16 @@ Eye direction
 			<id>{C69E8B72-4A8F-5946-B8E5-094E5673E7CE}</id>
 			<comment/>
 			<position>
-				<first>-350</first>
-				<second>246</second>
+				<first>121</first>
+				<second>-583</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{980741C9-0C50-9148-BA4E-9D2C18C63559}</id>
 			<comment/>
 			<position>
-				<first>-541</first>
-				<second>349</second>
+				<first>-70</first>
+				<second>-480</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -150,8 +150,8 @@ Eye direction
 			<id>{72048415-F7D0-42B2-BF26-7F7F4D97A902}</id>
 			<comment/>
 			<position>
-				<first>-782</first>
-				<second>71</second>
+				<first>-311</first>
+				<second>-758</second>
 			</position>
 			<name>Enable</name>
 			<connectable>true</connectable>
@@ -163,8 +163,8 @@ Eye direction
 			<id>{FBE1DC23-F020-460C-844B-D3941514452E}</id>
 			<comment/>
 			<position>
-				<first>1067</first>
-				<second>382</second>
+				<first>1670</first>
+				<second>289</second>
 			</position>
 			<fragmentGuid>{9E812171-5BC3-4EEC-B689-B677968BA08A}</fragmentGuid>
 			<inputPins>
@@ -205,8 +205,8 @@ Eye direction
 			<id>{11CC706F-9C87-4161-9063-1CBB049A1A86}</id>
 			<comment/>
 			<position>
-				<first>-798</first>
-				<second>579</second>
+				<first>-327</first>
+				<second>-250</second>
 			</position>
 			<name>Metalness</name>
 			<connectable>true</connectable>
@@ -218,8 +218,8 @@ Eye direction
 			<id>{89E1CDA2-8640-461E-8677-775630A147CB}</id>
 			<comment/>
 			<position>
-				<first>-456</first>
-				<second>1572</second>
+				<first>-396</first>
+				<second>786</second>
 			</position>
 			<name>F0</name>
 		</item>
@@ -228,7 +228,7 @@ Eye direction
 			<comment/>
 			<position>
 				<first>-828</first>
-				<second>1549</second>
+				<second>766</second>
 			</position>
 			<value>0.1</value>
 		</item>
@@ -236,16 +236,16 @@ Eye direction
 			<id>{D06FE992-E16E-4E32-AE97-90030243A595}</id>
 			<comment/>
 			<position>
-				<first>-648</first>
-				<second>1564</second>
+				<first>-588</first>
+				<second>778</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{AD00EC4D-533C-4F99-90F6-20F925463AE9}</id>
 			<comment/>
 			<position>
-				<first>1170</first>
-				<second>1193</second>
+				<first>1362</first>
+				<second>1199</second>
 			</position>
 			<name>kS</name>
 		</item>
@@ -253,8 +253,8 @@ Eye direction
 			<id>{CD6AE713-E5F4-49AA-B73F-E50B34F6A711}</id>
 			<comment/>
 			<position>
-				<first>1170</first>
-				<second>1231</second>
+				<first>1362</first>
+				<second>1237</second>
 			</position>
 			<name>BRDF</name>
 		</item>
@@ -262,8 +262,8 @@ Eye direction
 			<id>{2D7E85C3-B38E-4177-B5AE-575F7976F1B6}</id>
 			<comment/>
 			<position>
-				<first>710</first>
-				<second>1271</second>
+				<first>800</first>
+				<second>485</second>
 			</position>
 			<name>BRDF</name>
 		</item>
@@ -271,8 +271,8 @@ Eye direction
 			<id>{B1B8C9CA-87C6-4A33-AD49-D72E7C94DE7D}</id>
 			<comment/>
 			<position>
-				<first>534</first>
-				<second>1283</second>
+				<first>594</first>
+				<second>497</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -280,16 +280,16 @@ Eye direction
 			<id>{A77FB6B0-6335-4093-AA6F-783CD5A3B837}</id>
 			<comment/>
 			<position>
-				<first>74</first>
-				<second>1305</second>
+				<first>134</first>
+				<second>519</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{9CF8ABBA-CC65-49B9-A135-CDCD99E11FAE}</id>
 			<comment/>
 			<position>
-				<first>268</first>
-				<second>1251</second>
+				<first>328</first>
+				<second>465</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -306,8 +306,8 @@ Eye direction
 			<id>{1629109C-DE99-473C-840F-5DA08DDD77BA}</id>
 			<comment/>
 			<position>
-				<first>64</first>
-				<second>1169</second>
+				<first>124</first>
+				<second>383</second>
 			</position>
 			<external>{934F1D92-C961-485A-A5B8-6703A51266D8}</external>
 			<type>Texture2D</type>
@@ -316,8 +316,8 @@ Eye direction
 			<id>{4BAD39E7-54DA-45EA-B095-7D8699ECBB16}</id>
 			<comment/>
 			<position>
-				<first>1146</first>
-				<second>1155</second>
+				<first>1338</first>
+				<second>1161</second>
 			</position>
 			<name>L_Specular</name>
 		</item>
@@ -325,8 +325,8 @@ Eye direction
 			<id>{D8E55AD1-4E5B-4926-AA3D-9CD45B9F38E8}</id>
 			<comment/>
 			<position>
-				<first>-256</first>
-				<second>1523</second>
+				<first>-196</first>
+				<second>737</second>
 			</position>
 			<name>F0</name>
 		</item>
@@ -334,16 +334,16 @@ Eye direction
 			<id>{62B11440-436C-4FA4-8262-9031BB911E4C}</id>
 			<comment/>
 			<position>
-				<first>-440</first>
-				<second>1165</second>
+				<first>-380</first>
+				<second>379</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{1A89549B-E637-46FF-98AF-B83C4F0E346F}</id>
 			<comment/>
 			<position>
-				<first>1170</first>
-				<second>1117</second>
+				<first>1362</first>
+				<second>1123</second>
 			</position>
 			<name>kD</name>
 		</item>
@@ -351,8 +351,8 @@ Eye direction
 			<id>{4398B2E5-9279-4C58-A0EF-FD27648150C4}</id>
 			<comment/>
 			<position>
-				<first>1162</first>
-				<second>1079</second>
+				<first>1354</first>
+				<second>1085</second>
 			</position>
 			<name>L_Diffuse</name>
 		</item>
@@ -360,8 +360,8 @@ Eye direction
 			<id>{B065C46B-7687-4F8D-AD4E-2EADE6527B75}</id>
 			<comment/>
 			<position>
-				<first>-96</first>
-				<second>1192</second>
+				<first>-36</first>
+				<second>406</second>
 			</position>
 			<name>kD</name>
 		</item>
@@ -369,8 +369,8 @@ Eye direction
 			<id>{F576288F-1517-48E0-BB9F-E880F3536EB0}</id>
 			<comment/>
 			<position>
-				<first>-800</first>
-				<second>1238</second>
+				<first>-740</first>
+				<second>452</second>
 			</position>
 			<name>kS</name>
 		</item>
@@ -378,8 +378,8 @@ Eye direction
 			<id>{6F39E350-B6CE-429E-A2FE-92C3D97AF145}</id>
 			<comment/>
 			<position>
-				<first>282</first>
-				<second>1504</second>
+				<first>37</first>
+				<second>772</second>
 			</position>
 			<name>kS</name>
 		</item>
@@ -387,8 +387,8 @@ Eye direction
 			<id>{B770A0B1-3336-4E79-8541-541B6806ED42}</id>
 			<comment/>
 			<position>
-				<first>-382</first>
-				<second>1391</second>
+				<first>-322</first>
+				<second>605</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -397,16 +397,16 @@ Eye direction
 			<id>{6AAC8BF8-C1F8-4A13-981F-F035F22A4BEA}</id>
 			<comment/>
 			<position>
-				<first>-610</first>
-				<second>1372</second>
+				<first>-550</first>
+				<second>586</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{FCB3ED1B-2235-4740-93D0-866EB7F74FC1}</id>
 			<comment/>
 			<position>
-				<first>206</first>
-				<second>290</second>
+				<first>677</first>
+				<second>-539</second>
 			</position>
 			<name>L_EyeDirection</name>
 		</item>
@@ -414,8 +414,8 @@ Eye direction
 			<id>{A6B5D9E5-5700-49CE-AFBC-625D5D23283F}</id>
 			<comment/>
 			<position>
-				<first>-804</first>
-				<second>1369</second>
+				<first>-744</first>
+				<second>583</second>
 			</position>
 			<name>L_EyeDirection</name>
 		</item>
@@ -423,8 +423,8 @@ Eye direction
 			<id>{56D10940-03F3-410C-82C8-4701B4D3A5EE}</id>
 			<comment/>
 			<position>
-				<first>-365</first>
-				<second>370</second>
+				<first>106</first>
+				<second>-459</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
 		</item>
@@ -432,8 +432,8 @@ Eye direction
 			<id>{A6716D93-BCE9-4467-94B8-D6BB9E0BEA55}</id>
 			<comment/>
 			<position>
-				<first>-822</first>
-				<second>1422</second>
+				<first>-762</first>
+				<second>636</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
 		</item>
@@ -441,8 +441,8 @@ Eye direction
 			<id>{07A5ADCA-D0DC-42A1-86D4-D75F0E6AFB43}</id>
 			<comment/>
 			<position>
-				<first>1654</first>
-				<second>414</second>
+				<first>2257</first>
+				<second>321</second>
 			</position>
 			<name>L_Specular</name>
 		</item>
@@ -450,8 +450,8 @@ Eye direction
 			<id>{9949DA8D-D8EB-4ABC-A734-455E538642CE}</id>
 			<comment/>
 			<position>
-				<first>2157</first>
-				<second>225</second>
+				<first>2760</first>
+				<second>132</second>
 			</position>
 			<name>L_Diffuse</name>
 		</item>
@@ -459,16 +459,16 @@ Eye direction
 			<id>{5C0A78D5-5B32-4F58-99B1-0452EEDB5D3F}</id>
 			<comment/>
 			<position>
-				<first>1930</first>
-				<second>229</second>
+				<first>2533</first>
+				<second>136</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{D53C4325-4624-4BFC-910A-8A2380F34C3E}</id>
 			<comment/>
 			<position>
-				<first>1349</first>
-				<second>442</second>
+				<first>1952</first>
+				<second>349</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -476,8 +476,8 @@ Eye direction
 			<id>{83B1E1E9-9EDB-4253-A1DE-6C768469A086}</id>
 			<comment/>
 			<position>
-				<first>1614</first>
-				<second>309</second>
+				<first>2217</first>
+				<second>216</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -485,8 +485,8 @@ Eye direction
 			<id>{5F5E8D5B-9842-D645-8574-C0EAE0355422}</id>
 			<comment/>
 			<position>
-				<first>880</first>
-				<second>-921</second>
+				<first>1449</first>
+				<second>-819</second>
 			</position>
 			<declaration>{7CF04C7B-5D33-AB46-8098-4785A72C89D6}</declaration>
 			<parameterName/>
@@ -497,32 +497,32 @@ Eye direction
 			<id>{82E78EEA-807E-2C41-8D8A-E3FDD3C6F309}</id>
 			<comment/>
 			<position>
-				<first>900</first>
-				<second>-851</second>
+				<first>1469</first>
+				<second>-749</second>
 			</position>
 		</item>
 		<item type="traktor.render.TargetSize" version="traktor.render.Node:1">
 			<id>{FFA5A0A5-1675-8C44-A23F-4F67FD491104}</id>
 			<comment/>
 			<position>
-				<first>724</first>
-				<second>-803</second>
+				<first>1293</first>
+				<second>-701</second>
 			</position>
 		</item>
 		<item type="traktor.render.FragmentPosition" version="traktor.render.Node:1">
 			<id>{1B7C8C17-2F8B-8148-9C15-36275D18A976}</id>
 			<comment/>
 			<position>
-				<first>674</first>
-				<second>-849</second>
+				<first>1243</first>
+				<second>-747</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{75B4C33F-C24C-4045-92D6-21CF192D129E}</id>
 			<comment/>
 			<position>
-				<first>1132</first>
-				<second>-905</second>
+				<first>1701</first>
+				<second>-803</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -539,8 +539,8 @@ Eye direction
 			<id>{29AAFE09-9BE2-3348-BABE-6B484E0A6551}</id>
 			<comment/>
 			<position>
-				<first>1391</first>
-				<second>-871</second>
+				<first>1960</first>
+				<second>-769</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -548,8 +548,8 @@ Eye direction
 			<id>{5FF0897F-0A11-2E41-A05B-674C94077CC3}</id>
 			<comment/>
 			<position>
-				<first>1894</first>
-				<second>-959</second>
+				<first>2463</first>
+				<second>-857</second>
 			</position>
 			<name>L_Occlusion</name>
 		</item>
@@ -557,8 +557,8 @@ Eye direction
 			<id>{EA858AF2-B41E-4B2E-9E23-3D2FD34828DC}</id>
 			<comment/>
 			<position>
-				<first>-136</first>
-				<second>-483</second>
+				<first>3879</first>
+				<second>1001</second>
 			</position>
 			<fragmentGuid>{55898E80-6B69-4F55-A40C-138A23496B50}</fragmentGuid>
 			<inputPins>
@@ -620,8 +620,8 @@ Eye direction
 			<id>{10790711-A620-41B4-9872-DAD870F1B693}</id>
 			<comment/>
 			<position>
-				<first>-402</first>
-				<second>-328</second>
+				<first>3613</first>
+				<second>1156</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
 		</item>
@@ -629,8 +629,8 @@ Eye direction
 			<id>{DA9AEFAB-8EB8-EE43-8FB3-AC4C4B40083E}</id>
 			<comment/>
 			<position>
-				<first>-782</first>
-				<second>9</second>
+				<first>-311</first>
+				<second>-820</second>
 			</position>
 			<name>Discard</name>
 			<connectable>true</connectable>
@@ -642,8 +642,8 @@ Eye direction
 			<id>{E3FF4346-2F4F-534C-941C-14797D532ADB}</id>
 			<comment/>
 			<position>
-				<first>1146</first>
-				<second>1269</second>
+				<first>1338</first>
+				<second>1275</second>
 			</position>
 			<name>L_Occlusion</name>
 		</item>
@@ -651,16 +651,16 @@ Eye direction
 			<id>{D3EB98B7-1713-0D40-9398-59E2C998A2B9}</id>
 			<comment/>
 			<position>
-				<first>1909</first>
-				<second>-337</second>
+				<first>2615</first>
+				<second>-262</second>
 			</position>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{998EDF2E-72BF-964F-B235-EB49FE84E2C7}</id>
 			<comment/>
 			<position>
-				<first>1780</first>
-				<second>-244</second>
+				<first>2486</first>
+				<second>-169</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>
@@ -669,8 +669,8 @@ Eye direction
 			<id>{E8C3655D-0D60-224C-9007-F982B52BED7A}</id>
 			<comment/>
 			<position>
-				<first>583</first>
-				<second>-444</second>
+				<first>1289</first>
+				<second>-369</second>
 			</position>
 			<name>L_ViewNormalGeometry</name>
 		</item>
@@ -678,8 +678,8 @@ Eye direction
 			<id>{BB547C26-DFE8-3C43-8FF3-751BDA97DCFC}</id>
 			<comment/>
 			<position>
-				<first>586</first>
-				<second>-284</second>
+				<first>1292</first>
+				<second>-209</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -687,8 +687,8 @@ Eye direction
 			<id>{EE807C59-1E0B-E04B-8A36-8FFC84C0BD1E}</id>
 			<comment/>
 			<position>
-				<first>1323</first>
-				<second>-371</second>
+				<first>2029</first>
+				<second>-296</second>
 			</position>
 			<fragmentGuid>{ADFB49ED-56BB-4981-8121-E9154AB0B2D4}</fragmentGuid>
 			<inputPins>
@@ -715,8 +715,8 @@ Eye direction
 			<id>{87C0B3AE-3240-7446-B98C-B118BF0FF706}</id>
 			<comment/>
 			<position>
-				<first>822</first>
-				<second>-430</second>
+				<first>1528</first>
+				<second>-355</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -724,8 +724,8 @@ Eye direction
 			<id>{6060DEDA-C0EE-5C4D-98FD-06C3B88E0ADD}</id>
 			<comment/>
 			<position>
-				<first>810</first>
-				<second>-264</second>
+				<first>1516</first>
+				<second>-189</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -733,8 +733,8 @@ Eye direction
 			<id>{021A9A0E-9DF3-E54A-8541-8A7F9DE84693}</id>
 			<comment/>
 			<position>
-				<first>736</first>
-				<second>-211</second>
+				<first>1442</first>
+				<second>-136</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName/>
@@ -745,16 +745,16 @@ Eye direction
 			<id>{56F1FC07-A38D-E745-9D18-281730CE709B}</id>
 			<comment/>
 			<position>
-				<first>975</first>
-				<second>-262</second>
+				<first>1681</first>
+				<second>-187</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{D53E987C-464C-3F41-9578-DDB668178FB6}</id>
 			<comment/>
 			<position>
-				<first>748</first>
-				<second>-369</second>
+				<first>1454</first>
+				<second>-294</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName/>
@@ -765,16 +765,16 @@ Eye direction
 			<id>{72453B77-3C3F-2C49-AE18-702930450E42}</id>
 			<comment/>
 			<position>
-				<first>972</first>
-				<second>-427</second>
+				<first>1678</first>
+				<second>-352</second>
 			</position>
 		</item>
 		<item type="traktor.render.Branch" version="traktor.render.Node:1">
 			<id>{77657994-B57A-FA4E-834D-73E9D1F2630E}</id>
 			<comment/>
 			<position>
-				<first>2051</first>
-				<second>-332</second>
+				<first>2757</first>
+				<second>-257</second>
 			</position>
 			<parameterName>World_IrradianceEnable</parameterName>
 		</item>
@@ -782,8 +782,8 @@ Eye direction
 			<id>{38A7D038-BD22-A844-8A39-D24E1799B677}</id>
 			<comment/>
 			<position>
-				<first>2558</first>
-				<second>-352</second>
+				<first>3264</first>
+				<second>-277</second>
 			</position>
 			<name>L_Irradiance</name>
 		</item>
@@ -791,8 +791,8 @@ Eye direction
 			<id>{C45D2BBA-550B-6A43-8EFE-93A302BBF653}</id>
 			<comment/>
 			<position>
-				<first>1175</first>
-				<second>293</second>
+				<first>1778</first>
+				<second>200</second>
 			</position>
 			<name>L_Irradiance</name>
 		</item>
@@ -800,16 +800,16 @@ Eye direction
 			<id>{84C899F4-B857-024D-B4CC-1B0E5B9F79F8}</id>
 			<comment/>
 			<position>
-				<first>1374</first>
-				<second>307</second>
+				<first>1977</first>
+				<second>214</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{01240D19-A0B2-B040-B4AB-4787CAE81EA5}</id>
 			<comment/>
 			<position>
-				<first>-246</first>
-				<second>165</second>
+				<first>225</first>
+				<second>-664</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -817,8 +817,8 @@ Eye direction
 			<id>{D9CA157E-44A4-6940-871F-B050C16705C9}</id>
 			<comment/>
 			<position>
-				<first>-370</first>
-				<second>-288</second>
+				<first>3645</first>
+				<second>1196</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -826,8 +826,8 @@ Eye direction
 			<id>{9F55ED10-02DC-DC49-AB39-59A7D00322D5}</id>
 			<comment/>
 			<position>
-				<first>2055</first>
-				<second>-411</second>
+				<first>2761</first>
+				<second>-336</second>
 			</position>
 			<name>Irradiance</name>
 			<connectable>true</connectable>
@@ -839,16 +839,16 @@ Eye direction
 			<id>{31E140DA-BD21-F54D-B2E7-D311F1BBC52C}</id>
 			<comment/>
 			<position>
-				<first>2335</first>
-				<second>-399</second>
+				<first>3041</first>
+				<second>-324</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{D56E3FA7-E8B2-0742-A7F5-B33F1400A029}</id>
 			<comment/>
 			<position>
-				<first>-541</first>
-				<second>176</second>
+				<first>-70</first>
+				<second>-653</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -856,8 +856,8 @@ Eye direction
 			<id>{EC114A98-BA84-AC4A-A2AC-8C9BDE431A38}</id>
 			<comment/>
 			<position>
-				<first>901</first>
-				<second>402</second>
+				<first>1504</first>
+				<second>309</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -865,8 +865,8 @@ Eye direction
 			<id>{9A86486C-DD5D-6A42-A2E4-E654085E5265}</id>
 			<comment/>
 			<position>
-				<first>-120</first>
-				<second>1365</second>
+				<first>-60</first>
+				<second>579</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -874,8 +874,8 @@ Eye direction
 			<id>{C9AB5079-0DE8-F349-AD91-A756DF1E384A}</id>
 			<comment/>
 			<position>
-				<first>-279</first>
-				<second>1567</second>
+				<first>-219</first>
+				<second>781</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -883,8 +883,8 @@ Eye direction
 			<id>{2EE305A4-C691-0248-AE78-F7DBDB4697EA}</id>
 			<comment/>
 			<position>
-				<first>-541</first>
-				<second>595</second>
+				<first>-70</first>
+				<second>-234</second>
 			</position>
 			<name>L_Metalness</name>
 		</item>
@@ -893,7 +893,7 @@ Eye direction
 			<comment/>
 			<position>
 				<first>-812</first>
-				<second>1653</second>
+				<second>870</second>
 			</position>
 			<name>L_Metalness</name>
 		</item>
@@ -901,8 +901,8 @@ Eye direction
 			<id>{E01114DF-99D3-FE44-A771-23C27F793AE6}</id>
 			<comment/>
 			<position>
-				<first>-814</first>
-				<second>1165</second>
+				<first>-754</first>
+				<second>379</second>
 			</position>
 			<name>L_Metalness</name>
 		</item>
@@ -910,8 +910,8 @@ Eye direction
 			<id>{4CDEEAB5-76C4-2F45-A50C-FB3288EBFDCD}</id>
 			<comment/>
 			<position>
-				<first>-541</first>
-				<second>116</second>
+				<first>-70</first>
+				<second>-713</second>
 			</position>
 			<name>L_SurfaceColor</name>
 		</item>
@@ -920,7 +920,7 @@ Eye direction
 			<comment/>
 			<position>
 				<first>-828</first>
-				<second>1600</second>
+				<second>817</second>
 			</position>
 			<name>L_SurfaceColor</name>
 		</item>
@@ -928,8 +928,8 @@ Eye direction
 			<id>{A18E7D8A-918D-F044-964B-1D7151D13B5D}</id>
 			<comment/>
 			<position>
-				<first>1741</first>
-				<second>233</second>
+				<first>2344</first>
+				<second>140</second>
 			</position>
 			<name>L_SurfaceColor</name>
 		</item>
@@ -937,8 +937,8 @@ Eye direction
 			<id>{337A6046-D5ED-7745-B4F9-2084E9E4A493}</id>
 			<comment/>
 			<position>
-				<first>-541</first>
-				<second>56</second>
+				<first>-70</first>
+				<second>-773</second>
 			</position>
 			<name>L_Enable</name>
 		</item>
@@ -946,8 +946,8 @@ Eye direction
 			<id>{9A706E51-B954-6C42-9CDC-FD27CCA085F2}</id>
 			<comment/>
 			<position>
-				<first>2681</first>
-				<second>971</second>
+				<first>2873</first>
+				<second>977</second>
 			</position>
 			<name>L_Enable</name>
 		</item>
@@ -955,8 +955,8 @@ Eye direction
 			<id>{2421E9E3-07E6-114E-84CD-5FE488248544}</id>
 			<comment/>
 			<position>
-				<first>-370</first>
-				<second>-208</second>
+				<first>3645</first>
+				<second>1276</second>
 			</position>
 			<name>L_Enable</name>
 		</item>
@@ -964,8 +964,8 @@ Eye direction
 			<id>{21E1D8D4-1BF3-DB4D-A7F4-ABE6BEB0E6C9}</id>
 			<comment/>
 			<position>
-				<first>-541</first>
-				<second>-4</second>
+				<first>-70</first>
+				<second>-833</second>
 			</position>
 			<name>L_Discard</name>
 		</item>
@@ -973,8 +973,8 @@ Eye direction
 			<id>{D3FEC089-5DDC-1548-A514-B67998C090A4}</id>
 			<comment/>
 			<position>
-				<first>-370</first>
-				<second>-248</second>
+				<first>3645</first>
+				<second>1236</second>
 			</position>
 			<name>L_Discard</name>
 		</item>
@@ -982,8 +982,8 @@ Eye direction
 			<id>{A91E0D2C-F7E8-1A40-8ECA-CA1E5A8671E1}</id>
 			<comment/>
 			<position>
-				<first>-370</first>
-				<second>-448</second>
+				<first>3645</first>
+				<second>1036</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -991,16 +991,16 @@ Eye direction
 			<id>{B0F0CD6B-58B8-6A48-AE9B-8D29F122F7D8}</id>
 			<comment/>
 			<position>
-				<first>4729</first>
-				<second>-300</second>
+				<first>5060</first>
+				<second>420</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{3BB24261-439C-B541-8371-757516091D9B}</id>
 			<comment/>
 			<position>
-				<first>4241</first>
-				<second>-234</second>
+				<first>4572</first>
+				<second>486</second>
 			</position>
 			<name>L_SpecularG</name>
 		</item>
@@ -1008,8 +1008,8 @@ Eye direction
 			<id>{499274E6-02F1-5340-A455-BDC5ECCF3EC3}</id>
 			<comment/>
 			<position>
-				<first>-541</first>
-				<second>653</second>
+				<first>-70</first>
+				<second>-176</second>
 			</position>
 			<name>L_SpecularG</name>
 		</item>
@@ -1017,8 +1017,8 @@ Eye direction
 			<id>{5ADBD1B4-3A4C-BE48-8780-349630FF199F}</id>
 			<comment/>
 			<position>
-				<first>5053</first>
-				<second>-251</second>
+				<first>5384</first>
+				<second>469</second>
 			</position>
 			<name>L_Reflections</name>
 		</item>
@@ -1026,8 +1026,8 @@ Eye direction
 			<id>{9BCE3437-5A6E-0340-B5B2-CFCADCAFF928}</id>
 			<comment/>
 			<position>
-				<first>1259</first>
-				<second>545</second>
+				<first>1862</first>
+				<second>452</second>
 			</position>
 			<name>L_Reflections</name>
 		</item>
@@ -1035,16 +1035,16 @@ Eye direction
 			<id>{DE634EFD-CEEF-3749-AFBD-DFEB27B19FF1}</id>
 			<comment/>
 			<position>
-				<first>1719</first>
-				<second>482</second>
+				<first>2322</first>
+				<second>389</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{BE4CDD51-167A-5448-890E-F78C5AB3F05E}</id>
 			<comment/>
 			<position>
-				<first>-782</first>
-				<second>641</second>
+				<first>-311</first>
+				<second>-188</second>
 			</position>
 			<name>Specular</name>
 			<connectable>true</connectable>
@@ -1056,8 +1056,8 @@ Eye direction
 			<id>{4035DB65-856C-A04D-8C62-D49A6BF36C85}</id>
 			<comment/>
 			<position>
-				<first>-782</first>
-				<second>703</second>
+				<first>-311</first>
+				<second>-126</second>
 			</position>
 			<name>Emissive</name>
 			<connectable>true</connectable>
@@ -1069,8 +1069,8 @@ Eye direction
 			<id>{9D1F4C59-3878-4B49-987B-F76A79D81B5B}</id>
 			<comment/>
 			<position>
-				<first>-541</first>
-				<second>711</second>
+				<first>-70</first>
+				<second>-118</second>
 			</position>
 			<name>L_Emissive</name>
 		</item>
@@ -1078,8 +1078,8 @@ Eye direction
 			<id>{B2B4BBE3-F2EF-F344-8862-189E4A89410E}</id>
 			<comment/>
 			<position>
-				<first>1146</first>
-				<second>1003</second>
+				<first>1338</first>
+				<second>1009</second>
 			</position>
 			<name>L_Emissive</name>
 		</item>
@@ -1087,8 +1087,8 @@ Eye direction
 			<id>{32C2041C-85A8-F64F-8F94-FC284AF4341B}</id>
 			<comment/>
 			<position>
-				<first>1130</first>
-				<second>1041</second>
+				<first>1322</first>
+				<second>1047</second>
 			</position>
 			<name>L_SurfaceColor</name>
 		</item>
@@ -1096,8 +1096,8 @@ Eye direction
 			<id>{0EBC4690-DCF0-450E-BF96-8AB97BF09A8B}</id>
 			<comment/>
 			<position>
-				<first>1960</first>
-				<second>1098</second>
+				<first>2152</first>
+				<second>1104</second>
 			</position>
 			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
 			<inputPins>
@@ -1124,8 +1124,8 @@ Eye direction
 			<id>{CAC18849-EBED-488C-ABE3-92646976BF8D}</id>
 			<comment/>
 			<position>
-				<first>1711</first>
-				<second>1147</second>
+				<first>1903</first>
+				<second>1153</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -1133,8 +1133,8 @@ Eye direction
 			<id>{780EAAFE-CB16-0545-B3D9-713C4C5E6EE5}</id>
 			<comment/>
 			<position>
-				<first>2454</first>
-				<second>1029</second>
+				<first>2646</first>
+				<second>1035</second>
 			</position>
 			<operator>CoLess</operator>
 		</item>
@@ -1142,8 +1142,8 @@ Eye direction
 			<id>{096C945C-B68B-FE4C-A862-262560A58A47}</id>
 			<comment/>
 			<position>
-				<first>2216</first>
-				<second>1056</second>
+				<first>2408</first>
+				<second>1062</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -1151,8 +1151,8 @@ Eye direction
 			<id>{DA5E1C63-BE33-9348-8D0D-229C383A91C6}</id>
 			<comment/>
 			<position>
-				<first>2244</first>
-				<second>995</second>
+				<first>2436</first>
+				<second>1001</second>
 			</position>
 			<name>L_Discard</name>
 		</item>
@@ -1160,16 +1160,16 @@ Eye direction
 			<id>{234E4422-3085-6C43-8C91-DD3821BCE5B1}</id>
 			<comment/>
 			<position>
-				<first>1590</first>
-				<second>-999</second>
+				<first>2159</first>
+				<second>-897</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{6A134DF7-D231-FD4F-A167-23F507B11279}</id>
 			<comment/>
 			<position>
-				<first>1388</first>
-				<second>-966</second>
+				<first>1957</first>
+				<second>-864</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -1177,16 +1177,16 @@ Eye direction
 			<id>{B50377A8-8E13-5A45-8A05-AC3BCD50A917}</id>
 			<comment/>
 			<position>
-				<first>4445</first>
-				<second>-197</second>
+				<first>4776</first>
+				<second>523</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{D3402BB6-8743-FC4D-BC62-30A68D33F155}</id>
 			<comment/>
 			<position>
-				<first>4241</first>
-				<second>-173</second>
+				<first>4572</first>
+				<second>547</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -1194,8 +1194,8 @@ Eye direction
 			<id>{CAFF03E4-A2F7-FD43-9D18-419ECD8697B4}</id>
 			<comment/>
 			<position>
-				<first>4241</first>
-				<second>-114</second>
+				<first>4572</first>
+				<second>606</second>
 			</position>
 			<name>L_Metalness</name>
 		</item>
@@ -1203,8 +1203,8 @@ Eye direction
 			<id>{3A825DF0-414E-5B40-A746-47426E43780E}</id>
 			<comment/>
 			<position>
-				<first>4042</first>
-				<second>-480</second>
+				<first>4373</first>
+				<second>240</second>
 			</position>
 			<fragmentGuid>{2231E81B-359A-3149-B2EB-26BE4588529B}</fragmentGuid>
 			<inputPins>
@@ -1231,24 +1231,24 @@ Eye direction
 			<id>{DB31404B-B426-8D4D-9FD2-3BD81EDAAFAA}</id>
 			<comment/>
 			<position>
-				<first>3745</first>
-				<second>-513</second>
+				<first>4076</first>
+				<second>207</second>
 			</position>
 		</item>
 		<item type="traktor.render.Reflect" version="traktor.render.Node:1">
 			<id>{A9C3F1B9-3C28-0348-A886-B2101FE6E8DE}</id>
 			<comment/>
 			<position>
-				<first>3163</first>
-				<second>-584</second>
+				<first>3494</first>
+				<second>136</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{55A0D49C-D588-E140-A0FF-6FBC14E3628F}</id>
 			<comment/>
 			<position>
-				<first>3484</first>
-				<second>-452</second>
+				<first>3815</first>
+				<second>268</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName/>
@@ -1259,8 +1259,8 @@ Eye direction
 			<id>{341016E0-D9D9-5F41-ABEF-0B0FF2BCB81B}</id>
 			<comment/>
 			<position>
-				<first>2930</first>
-				<second>-589</second>
+				<first>3261</first>
+				<second>131</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
 		</item>
@@ -1268,8 +1268,8 @@ Eye direction
 			<id>{27AEF5E0-2310-134F-8751-A50AD2BA0D6E}</id>
 			<comment/>
 			<position>
-				<first>2946</first>
-				<second>-526</second>
+				<first>3277</first>
+				<second>194</second>
 			</position>
 			<name>L_EyeDirection</name>
 		</item>
@@ -1277,8 +1277,8 @@ Eye direction
 			<id>{8D8A9056-E94C-A04E-8EBE-AD1AC45D04B8}</id>
 			<comment/>
 			<position>
-				<first>3794</first>
-				<second>-421</second>
+				<first>4125</first>
+				<second>299</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -1286,8 +1286,8 @@ Eye direction
 			<id>{95CFFD0E-0AD5-9E46-A54C-27F64B57F7FD}</id>
 			<comment/>
 			<position>
-				<first>3378</first>
-				<second>-548</second>
+				<first>3709</first>
+				<second>172</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -1295,16 +1295,16 @@ Eye direction
 			<id>{E6DB73EC-5E31-C543-B26A-89E8A7DE705F}</id>
 			<comment/>
 			<position>
-				<first>3543</first>
-				<second>-540</second>
+				<first>3874</first>
+				<second>180</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{D2EBE885-3AB2-4C81-8E46-CA3DA580B54F}</id>
 			<comment/>
 			<position>
-				<first>869</first>
-				<second>443</second>
+				<first>1472</first>
+				<second>350</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
 		</item>
@@ -1312,8 +1312,8 @@ Eye direction
 			<id>{64E274DD-42A5-4EBB-99AF-628FE6B9D74B}</id>
 			<comment/>
 			<position>
-				<first>-862</first>
-				<second>410</second>
+				<first>-391</first>
+				<second>-419</second>
 			</position>
 			<name>ViewNormalGeometry</name>
 			<connectable>true</connectable>
@@ -1325,8 +1325,8 @@ Eye direction
 			<id>{30BC2CDE-7327-464A-86EF-19816694630E}</id>
 			<comment/>
 			<position>
-				<first>-541</first>
-				<second>438</second>
+				<first>-70</first>
+				<second>-391</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -1334,8 +1334,8 @@ Eye direction
 			<id>{43975828-F944-4701-9A5C-A03CAAAF3430}</id>
 			<comment/>
 			<position>
-				<first>-364</first>
-				<second>456</second>
+				<first>107</first>
+				<second>-373</second>
 			</position>
 			<name>L_ViewNormalGeometry</name>
 		</item>
@@ -1343,8 +1343,8 @@ Eye direction
 			<id>{8A729959-A886-459E-ACE7-9790A135CFAD}</id>
 			<comment/>
 			<position>
-				<first>3688</first>
-				<second>-313</second>
+				<first>4019</first>
+				<second>407</second>
 			</position>
 			<declaration>{5D2D92AB-219D-3647-99B3-336E93252B0A}</declaration>
 			<parameterName/>
@@ -1355,8 +1355,8 @@ Eye direction
 			<id>{BA3CC7BF-AA53-4A2E-963E-CCB8E06A48BD}</id>
 			<comment/>
 			<position>
-				<first>3992</first>
-				<second>-314</second>
+				<first>4323</first>
+				<second>406</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -1373,40 +1373,40 @@ Eye direction
 			<id>{44F6BCFB-CE01-4E8E-A568-DE488F7DEA94}</id>
 			<comment/>
 			<position>
-				<first>3466</first>
-				<second>-264</second>
+				<first>3797</first>
+				<second>456</second>
 			</position>
 		</item>
 		<item type="traktor.render.TargetSize" version="traktor.render.Node:1">
 			<id>{76D64FAE-3233-4016-9464-C11B7EE47D72}</id>
 			<comment/>
 			<position>
-				<first>3518</first>
-				<second>-220</second>
+				<first>3849</first>
+				<second>500</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{E3C152EF-7EE5-43B5-800E-2DC90F1F25E8}</id>
 			<comment/>
 			<position>
-				<first>3716</first>
-				<second>-268</second>
+				<first>4047</first>
+				<second>452</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{CE098C28-DF2A-404E-B76B-DAC2B0E69005}</id>
 			<comment/>
 			<position>
-				<first>4399</first>
-				<second>-420</second>
+				<first>4730</first>
+				<second>300</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{5CD34CAA-A866-9646-B555-7640BE7A1A5B}</id>
 			<comment/>
 			<position>
-				<first>-370</first>
-				<second>-488</second>
+				<first>3645</first>
+				<second>996</second>
 			</position>
 			<name>L_Metalness</name>
 		</item>
@@ -1414,25 +1414,27 @@ Eye direction
 			<id>{493F0EF8-AA4C-704B-8AE1-DFD675345422}</id>
 			<comment/>
 			<position>
-				<first>-370</first>
-				<second>-368</second>
+				<first>3645</first>
+				<second>1116</second>
 			</position>
 			<name>L_SurfaceColor</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{24A3BDF6-F3FF-0E47-8193-D202728C0FB7}</id>
 			<comment/>
 			<position>
-				<first>1413</first>
-				<second>1063</second>
+				<first>1605</first>
+				<second>1069</second>
 			</position>
 			<name>Combine</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -1489,8 +1491,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{BCF4C0F6-0775-3949-AE84-B7759A6AD3CE}</id>
 			<comment/>
 			<position>
-				<first>-660</first>
-				<second>1139</second>
+				<first>-600</first>
+				<second>353</second>
 			</position>
 			<fragmentGuid>{F94569E5-AAAB-DC4B-BC80-A499121F0295}</fragmentGuid>
 			<inputPins>
@@ -1512,8 +1514,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{C1577D3E-71ED-F741-8306-90831DF56196}</id>
 			<comment/>
 			<position>
-				<first>-658</first>
-				<second>1208</second>
+				<first>-598</first>
+				<second>422</second>
 			</position>
 			<fragmentGuid>{F94569E5-AAAB-DC4B-BC80-A499121F0295}</fragmentGuid>
 			<inputPins>
@@ -1535,8 +1537,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{E90F29A9-6F0C-ED43-B50D-D4894008DF6C}</id>
 			<comment/>
 			<position>
-				<first>-244</first>
-				<second>1204</second>
+				<first>-184</first>
+				<second>418</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -1544,8 +1546,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{2E756F77-F2A2-4B98-87BD-68D68E60BF8F}</id>
 			<comment/>
 			<position>
-				<first>688</first>
-				<second>673</second>
+				<first>1291</first>
+				<second>580</second>
 			</position>
 			<name>L_Irradiance</name>
 		</item>
@@ -1553,8 +1555,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{E48ED68A-1A6C-4539-983B-476A057F29D4}</id>
 			<comment/>
 			<position>
-				<first>865</first>
-				<second>639</second>
+				<first>1468</first>
+				<second>546</second>
 			</position>
 			<fragmentGuid>{ED89170C-A890-D540-843D-6FA811FCD029}</fragmentGuid>
 			<inputPins>
@@ -1576,8 +1578,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{AD239D9C-B9A2-45DA-A54C-55C5E5310CBD}</id>
 			<comment/>
 			<position>
-				<first>1249</first>
-				<second>610</second>
+				<first>1852</first>
+				<second>517</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -1586,24 +1588,24 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{7620CE35-CAD2-45FC-97A9-6759998E8CB3}</id>
 			<comment/>
 			<position>
-				<first>1461</first>
-				<second>573</second>
+				<first>2064</first>
+				<second>480</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{FA77E3BE-1AB8-4AF2-BFEE-25E59C7CE979}</id>
 			<comment/>
 			<position>
-				<first>1056</first>
-				<second>613</second>
+				<first>1659</first>
+				<second>520</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{A1D42868-1E74-451E-96CB-43B7ED78C77F}</id>
 			<comment/>
 			<position>
-				<first>882</first>
-				<second>591</second>
+				<first>1485</first>
+				<second>498</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -1611,8 +1613,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{0C0692B6-BA81-874E-8F4D-FF7229D219DD}</id>
 			<comment/>
 			<position>
-				<first>917</first>
-				<second>361</second>
+				<first>1520</first>
+				<second>268</second>
 			</position>
 			<name>L_Metalness</name>
 		</item>
@@ -1620,8 +1622,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{C45C89E5-BB12-5644-82FF-EF3E10769FBD}</id>
 			<comment/>
 			<position>
-				<first>1320</first>
-				<second>-450</second>
+				<first>2026</first>
+				<second>-375</second>
 			</position>
 			<fragmentGuid>{1F5FB15A-CCA0-264F-A150-7EDEAD93E644}</fragmentGuid>
 			<inputPins>
@@ -1643,8 +1645,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{33A560B4-BF33-DA4C-8E3A-070121FB522D}</id>
 			<comment/>
 			<position>
-				<first>1638</first>
-				<second>-423</second>
+				<first>2344</first>
+				<second>-348</second>
 			</position>
 			<parameterName>World_IrradianceSingle</parameterName>
 		</item>
@@ -1652,8 +1654,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{7AEB9E8F-3D4F-FB4D-8949-9433B63B6BA3}</id>
 			<comment/>
 			<position>
-				<first>-360</first>
-				<second>-568</second>
+				<first>3655</first>
+				<second>916</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -1661,8 +1663,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{D19E424B-3432-D84D-AF38-6DFBF748BA5E}</id>
 			<comment/>
 			<position>
-				<first>-392</first>
-				<second>-528</second>
+				<first>3623</first>
+				<second>956</second>
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
@@ -1670,8 +1672,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{4642DBFC-C038-6344-AD1C-591A1E064062}</id>
 			<comment/>
 			<position>
-				<first>2728</first>
-				<second>1042</second>
+				<first>2920</first>
+				<second>1048</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -1679,8 +1681,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{E7FBA9F6-9737-1443-A823-92DC01C4FD19}</id>
 			<comment/>
 			<position>
-				<first>901</first>
-				<second>484</second>
+				<first>1504</first>
+				<second>391</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -1688,8 +1690,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<id>{5A477FFE-1778-DC4C-89B2-2685E0124638}</id>
 			<comment/>
 			<position>
-				<first>-370</first>
-				<second>-408</second>
+				<first>3645</first>
+				<second>1076</second>
 			</position>
 			<name>L_SpecularG</name>
 		</item>
@@ -3001,8 +3003,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<title>Ambient Occlusion</title>
 			<comment/>
 			<position>
-				<first>638</first>
-				<second>-1072</second>
+				<first>1207</first>
+				<second>-970</second>
 			</position>
 			<size>
 				<first>1424</first>
@@ -3013,8 +3015,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<title>Irradiance</title>
 			<comment/>
 			<position>
-				<first>509</first>
-				<second>-540</second>
+				<first>1215</first>
+				<second>-465</second>
 			</position>
 			<size>
 				<first>2215</first>
@@ -3025,8 +3027,8 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<title>Reflection</title>
 			<comment/>
 			<position>
-				<first>2751</first>
-				<second>-666</second>
+				<first>3082</first>
+				<second>54</second>
 			</position>
 			<size>
 				<first>2502</first>
@@ -3037,24 +3039,48 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<title>Lighting</title>
 			<comment/>
 			<position>
-				<first>618</first>
-				<second>153</second>
+				<first>1221</first>
+				<second>60</second>
 			</position>
 			<size>
-				<first>1727</first>
-				<second>602</second>
+				<first>1757</first>
+				<second>674</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
 			<title>Combine diffuse and specular</title>
 			<comment/>
 			<position>
-				<first>1040</first>
-				<second>801</second>
+				<first>1232</first>
+				<second>807</second>
 			</position>
 			<size>
 				<first>2146</first>
 				<second>606</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Output GBuffer</title>
+			<comment/>
+			<position>
+				<first>3478</first>
+				<second>816</second>
+			</position>
+			<size>
+				<first>665</first>
+				<second>578</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Input</title>
+			<comment/>
+			<position>
+				<first>-518</first>
+				<second>-953</second>
+			</position>
+			<size>
+				<first>1360</first>
+				<second>966</second>
 			</size>
 		</item>
 	</groups>

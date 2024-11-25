@@ -5,8 +5,8 @@
 			<id>{E6FE72A5-B871-0A4C-AC4A-A2FD90779FF0}</id>
 			<comment/>
 			<position>
-				<first>155</first>
-				<second>-61</second>
+				<first>216</first>
+				<second>-57</second>
 			</position>
 			<technique>World_SimpleColor</technique>
 			<priority>
@@ -65,8 +65,8 @@
 			<id>{72048415-F7D0-42B2-BF26-7F7F4D97A902}</id>
 			<comment/>
 			<position>
-				<first>-272</first>
-				<second>-61</second>
+				<first>-81</first>
+				<second>-38</second>
 			</position>
 			<name>Enable</name>
 			<connectable>true</connectable>
@@ -78,8 +78,8 @@
 			<id>{6D722E55-DD93-064C-AE1B-9AB93797FEFA}</id>
 			<comment/>
 			<position>
-				<first>-434</first>
-				<second>-1</second>
+				<first>-505</first>
+				<second>8</second>
 			</position>
 			<swizzle>xxx1</swizzle>
 		</item>
@@ -95,8 +95,8 @@
 			<id>{CBA313E0-474F-324A-A55C-721D9BBCFFF8}</id>
 			<comment/>
 			<position>
-				<first>-688</first>
-				<second>-33</second>
+				<first>-722</first>
+				<second>-13</second>
 			</position>
 			<value>0.45</value>
 		</item>
@@ -172,5 +172,18 @@
 			</destination>
 		</item>
 	</edges>
-	<groups/>
+	<groups>
+		<item type="traktor.render.Group">
+			<title>Output</title>
+			<comment/>
+			<position>
+				<first>-829</first>
+				<second>-165</second>
+			</position>
+			<size>
+				<first>200</first>
+				<second>200</second>
+			</size>
+		</item>
+	</groups>
 </object>
