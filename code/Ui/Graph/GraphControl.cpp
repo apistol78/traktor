@@ -832,8 +832,21 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 		{
 			beginSelectModification();
 
-			for (auto node : m_nodes)
-				node->setSelected(false);
+			if (m_groupAnchor < 0)
+			{
+				for (auto node : m_nodes)
+				{
+					const UnitRect nodeRect = node->calculateRect();
+					const UnitRect groupRect = selectedGroup->calculateRect();
+					const bool selected = groupRect.intersect(nodeRect);
+					node->setSelected(selected);
+				}
+			}
+			else
+			{
+				for (auto node : m_nodes)
+					node->setSelected(false);
+			}
 
 			for (auto edge : m_edges)
 				edge->setSelected(false);
