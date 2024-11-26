@@ -451,7 +451,7 @@ void WorldRendererShared::setupLightPass(
 				sliceViewFrustum.setNearZ(zn);
 				sliceViewFrustum.setFarZ(zf);
 
-#if 1
+#if 0
 				// Check if this slice is still inside
 				// the expanded slice frustum.
 				if (slice != 0)
