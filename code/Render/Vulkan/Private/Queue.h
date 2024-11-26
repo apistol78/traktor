@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include <atomic>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Thread/Semaphore.h"
@@ -46,7 +45,6 @@ private:
 	VkQueue m_queue;
 	uint32_t m_queueIndex;
 	Semaphore m_lock;
-	static thread_local VkCommandPool ms_commandPools[32];
 
 	Queue(Context* context, VkQueue queue, uint32_t queueIndex);
 };
