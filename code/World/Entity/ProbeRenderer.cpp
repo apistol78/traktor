@@ -211,6 +211,13 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 {
 	render::RenderGraph& renderGraph = context.getRenderGraph();
 
+	// In case shader has been modified we need to re-capture all probes.
+	if (m_filterShader.changed())
+	{
+		m_filterShader.consume();
+		m_revision++;
+	}
+
 	if (!m_capture)
 	{
 		// Get probe which needs to be updated.
@@ -496,11 +503,12 @@ void ProbeRenderer::build(
 	}
 
 	// Add to capture queue if probe is "dirty".
-	if (probeComponent->getDirty() && probeComponent->shouldCapture())
+	if ((probeComponent->getDirty() || probeComponent->getRevision() != m_revision) && probeComponent->shouldCapture())
 	{
 		if (std::find(m_captureQueue.begin(), m_captureQueue.end(), probeComponent) == m_captureQueue.end())
 			m_captureQueue.push_back(probeComponent);
 		probeComponent->setDirty(false);
+		probeComponent->setRevision(m_revision);
 	}
 }
 

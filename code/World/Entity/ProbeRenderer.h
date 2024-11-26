@@ -101,6 +101,7 @@ private:
 	Ref< const ProbeComponent > m_capture;				//!< Probe being captured.
 	int32_t m_captureState = 0;
 	int32_t m_captureMip = 0;
+	int32_t m_revision = 0;
 };
 
 }

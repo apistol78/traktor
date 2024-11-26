@@ -76,15 +76,20 @@ public:
 
 	bool getDirty() const { return m_dirty; }
 
+	void setRevision(int32_t revision) { m_revision = revision; }
+
+	int32_t getRevision() const { return m_revision; }
+
 private:
-	Entity* m_owner;
+	Entity* m_owner = nullptr;
 	resource::Proxy< render::ITexture > m_texture;
-	float m_intensity;
+	float m_intensity = 0.0f;
 	Aabb3 m_volume;
-	Vector4 m_last;
-	bool m_local;
-	bool m_capture;
-	bool m_dirty;
+	Vector4 m_last = Vector4::zero();
+	bool m_local = false;
+	bool m_capture = false;
+	bool m_dirty = false;
+	int32_t m_revision = 0;
 };
 
 }
