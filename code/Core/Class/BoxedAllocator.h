@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,18 +12,35 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/BlockAllocator.h"
 #include "Core/Misc/Align.h"
-#if defined(T_BOXES_USE_MT_LOCK)
-#	include "Core/Thread/Acquire.h"
-#	include "Core/Thread/SpinLock.h"
-#endif
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/SpinLock.h"
 
 namespace traktor
 {
 
+/*!
+ * \ingroup Core
+ */
+struct BoxedAllocatorNoLock
+{
+	bool wait() { return true; }
+	void release() {}
+};
+
+/*!
+ * \ingroup Core
+ */
+struct BoxedAllocatorLock
+{
+	SpinLock lock;
+	bool wait() { return lock.wait(); }
+	void release() { lock.release(); }
+};
+
 /*! Specialized allocator for boxed values.
  * \ingroup Core
  */
-template < typename BoxedType, int BoxesPerBlock >
+template < typename BoxedType, int BoxesPerBlock, typename LockType = BoxedAllocatorNoLock >
 class BoxedAllocator
 {
 public:
@@ -35,9 +52,7 @@ public:
 
 	[[nodiscard]] BoxedType* alloc()
 	{
-#if defined(T_BOXES_USE_MT_LOCK)
-		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
-#endif
+		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
 		void* ptr = nullptr;
 
 		// First try last successful allocator.
@@ -69,9 +84,7 @@ public:
 
 	void free(void* ptr)
 	{
-#if defined(T_BOXES_USE_MT_LOCK)
-		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
-#endif
+		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
 		for (auto& allocator : m_allocators)
 		{
 			if (allocator.free(ptr))
@@ -81,9 +94,7 @@ public:
 	}
 
 private:
-#if defined(T_BOXES_USE_MT_LOCK)
-	SpinLock m_lock;
-#endif
+	LockType m_lock;
 	AlignedVector< BlockAllocator > m_allocators;
 	BlockAllocator* m_allocator = nullptr;
 };

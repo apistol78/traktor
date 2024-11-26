@@ -1,12 +1,11 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#define T_BOXES_USE_MT_LOCK
 #include "Core/Class/BoxedAllocator.h"
 #include "Core/Thread/Acquire.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
@@ -16,7 +15,7 @@ namespace traktor::editor
 	namespace
 	{
 
-BoxedAllocator< PipelineProfiler::Scope, 256 > s_allocScope;
+BoxedAllocator< PipelineProfiler::Scope, 256, BoxedAllocatorLock > s_allocScope;
 
 	}
 
