@@ -38,7 +38,7 @@ Matrix44 convertMatrix(const ufbx_matrix& m)
 
 Color4f convertColor(const ufbx_vec4& c)
 {
-	return Color4f(c.x, c.y, c.z, c.w);
+	return Color4f(c.z, c.y, c.x, c.w).sRGB();
 }
 
 Matrix44 calculateAxisTransform(ufbx_coordinate_axes axisSystem)

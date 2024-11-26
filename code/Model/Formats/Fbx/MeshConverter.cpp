@@ -143,7 +143,7 @@ bool convertMesh(
 
 			if (meshNode->mesh->vertex_color.exists)
 			{
-				vertex.setNormal(outModel.addUniqueColor(convertColor(
+				vertex.setColor(outModel.addUniqueColor(convertColor(
 					ufbx_get_vertex_vec4(&meshNode->mesh->vertex_color, vertexIndex)
 				)));
 			}
