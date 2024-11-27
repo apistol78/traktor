@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -42,9 +42,14 @@ int32_t Serializer::getVersion() const
 int32_t Serializer::getVersion(const TypeInfo& typeInfo) const
 {
 	T_ASSERT(m_versionPointer > 0);
-	const dataVersionMap_t& dv = m_versions[m_versionPointer - 1].dvm;
-	dataVersionMap_t::const_iterator it = dv.find(&typeInfo);
-	return it != dv.end() ? it->second : 0;
+	const dataVersionMap_t* dv = m_versions[m_versionPointer - 1].dvm;
+	if (dv != nullptr)
+	{
+		dataVersionMap_t::const_iterator it = dv->find(&typeInfo);
+		return it != dv->end() ? it->second : 0;
+	}
+	else
+		return 0;
 }
 
 void Serializer::failure()
@@ -80,7 +85,7 @@ void Serializer::serialize(ISerializable* inner, const dataVersionMap_t& dataVer
 	// Push version scope.
 	{
 		Version& v = m_versions[m_versionPointer++];
-		v.dvm = dataVersions;
+		v.dvm = &dataVersions;
 		v.v = (it != dataVersions.end()) ? it->second : 0;
 	}
 
@@ -89,7 +94,7 @@ void Serializer::serialize(ISerializable* inner, const dataVersionMap_t& dataVer
 	// Pop version scope.
 	{
 		Version& v = m_versions[--m_versionPointer];
-		v.dvm.clear();
+		v.dvm = nullptr;
 	}
 }
 
