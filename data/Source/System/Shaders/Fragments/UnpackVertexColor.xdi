@@ -5,17 +5,17 @@
 			<id>{A8D396C6-9136-E449-B994-4129BDB8EBDF}</id>
 			<comment/>
 			<position>
-				<first>635</first>
+				<first>606</first>
 				<second>406</second>
 			</position>
-			<swizzle>zyxw</swizzle>
+			<swizzle>xyzw</swizzle>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{CC5DC130-E372-0B4F-807D-3646BE794EA7}</id>
 			<comment/>
 			<position>
-				<first>397</first>
-				<second>430</second>
+				<first>372</first>
+				<second>429</second>
 			</position>
 			<name>Input</name>
 			<connectable>true</connectable>

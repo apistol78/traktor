@@ -217,8 +217,19 @@ bool InstanceMeshConverter::convert(
 				if (material.getName() != mt.first)
 					continue;
 
+				Vector4 albedo = material.getColor();
+				for (const auto& vertex : polygon.getVertices())
+				{
+					const uint32_t colorId = model->getVertex(vertex).getColor();
+					if (colorId != model::c_InvalidIndex)
+					{
+						albedo = model->getColor(colorId);
+						break;
+					}
+				}
+
 				model->getNormal(polygon.getNormal()).storeUnaligned(ptr->normal);
-				material.getColor().storeUnaligned(ptr->albedo);
+				albedo.storeUnaligned(ptr->albedo);
 
 				++ptr;
 			}
