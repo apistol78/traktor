@@ -48,7 +48,7 @@ public:
 private:
 	Ref< PhysicsManager > m_physicsManager;
 	Ref< const JointDesc > m_jointDesc;
-	world::Entity* m_owner;
+	world::Entity* m_owner = nullptr;
 	Ref< Joint > m_joint;
 };
 

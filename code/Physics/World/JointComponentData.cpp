@@ -30,7 +30,7 @@ Ref< JointComponent > JointComponentData::createComponent(PhysicsManager* physic
 
 int32_t JointComponentData::getOrdinal() const
 {
-	return -100;
+	return -50;
 }
 
 void JointComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
