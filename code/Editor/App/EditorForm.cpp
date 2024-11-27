@@ -923,13 +923,12 @@ Ref< db::Database > EditorForm::getOutputDatabase() const
 
 void EditorForm::updateDatabaseView()
 {
-	T_ASSERT(m_dataBaseView);
 	m_dataBaseView->updateView();
 }
 
 bool EditorForm::highlightInstance(const db::Instance* instance)
 {
-	T_ASSERT(m_dataBaseView);
+	m_dock->showWidget(m_dataBaseView);
 	return m_dataBaseView->highlight(instance);
 }
 

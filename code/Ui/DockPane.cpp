@@ -311,9 +311,14 @@ void DockPane::showTab(int32_t tab)
 
 void DockPane::showWidget(Widget* widget)
 {
+	for (int32_t i = 0; i < (int32_t)m_widgets.size(); ++i)
+		m_widgets[i].tabDepth++;
+
 	const auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](const WidgetInfo& w) { return w.widget == widget; });
 	T_FATAL_ASSERT_M(it != m_widgets.end(), L"Widget not docked in this pane.");
 	it->visible = true;
+	it->tabDepth = 0;
+
 	synchronizeVisibility();
 }
 
