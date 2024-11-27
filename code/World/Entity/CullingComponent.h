@@ -80,9 +80,9 @@ public:
 
 	struct T_DLLCLASS Instance
 	{
-		CullingComponent* owner;
-		ICullable* cullable;
-		intptr_t ordinal;
+		CullingComponent* owner = nullptr;
+		ICullable* cullable = nullptr;
+		intptr_t ordinal = 0;
 		Transform transform;
 		Aabb3 boundingBox;
 

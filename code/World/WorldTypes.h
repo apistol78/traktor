@@ -106,17 +106,17 @@ struct GatherView
 {
 	struct Renderable
 	{
-		IEntityRenderer* renderer;
-		Object* renderable;
+		IEntityRenderer* renderer = nullptr;
+		Object* renderable = nullptr;
 		EntityState state;
 	};	
 
     AlignedVector< Renderable > renderables;
 	AlignedVector< const LightComponent* > lights;
 	AlignedVector< const ProbeComponent* > probes;
-	const FogComponent* fog;
-	const IrradianceGrid* irradianceGrid;
-	const render::IAccelerationStructure* rtWorldTopLevel;
+	const FogComponent* fog = nullptr;
+	const IrradianceGrid* irradianceGrid = nullptr;
+	const render::IAccelerationStructure* rtWorldTopLevel = nullptr;
 };
 
 /*!

@@ -325,7 +325,7 @@ public:
 	std::wstring name;
 	int32_t* queryHandle = nullptr;
 	int32_t* referenceQueryHandle = nullptr;
-	double offset;
+	double offset = 0.0;
 	fn_sink_t sink;
 
 	virtual void render(IRenderView* renderView) const override final;

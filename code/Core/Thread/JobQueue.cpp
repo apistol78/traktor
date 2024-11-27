@@ -84,7 +84,7 @@ void JobQueue::fork(const Job::task_t* tasks, size_t ntasks)
 				m_jobQueue.put(jobs[i]);
 			}
 		}
-		m_pending += ntasks - 1;
+		m_pending += (int32_t)(ntasks - 1);
 		m_jobQueuedEvent.pulse((int32_t)(ntasks - 1));
 	}
 
