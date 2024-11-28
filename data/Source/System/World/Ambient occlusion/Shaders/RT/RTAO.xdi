@@ -352,7 +352,6 @@ for (int i = 0; i < N; ++i)
 
 const float f = 1.0f - occlusions / float(N);
 $Output = f * C + (1.0f - C);
-
 			]]>
 			</script>
 		</item>
@@ -386,12 +385,21 @@ $Output = f * C + (1.0f - C);
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
-			<id>{1DB6AF42-74FB-7949-B5C6-4DABD1894285}</id>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{B44E3B66-1A22-7D44-A4D2-D1D7C1BDC648}</id>
 			<comment/>
 			<position>
-				<first>2666</first>
-				<second>351</second>
+				<first>2446</first>
+				<second>-107</second>
+			</position>
+			<swizzle>z</swizzle>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{E13CCA59-0E2B-7B41-AA40-6C77520945BD}</id>
+			<comment/>
+			<position>
+				<first>2669</first>
+				<second>293</second>
 			</position>
 			<name>RandomAngle</name>
 			<technique/>
@@ -403,7 +411,7 @@ $Output = f * C + (1.0f - C);
 			</localSize>
 			<useRayTracing>false</useRayTracing>
 			<include>
-				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
+				<item>{6770B973-C860-9541-A411-28FE83D9EE82}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -420,18 +428,12 @@ $Output = f * C + (1.0f - C);
 			</outputPins>
 			<script>
 			<![CDATA[
-$Output = hash13(vec3(gl_FragCoord.xy, $Time)) * 2 * 3.14;
+uvec2 seed = uvec2(gl_FragCoord.xy);
+seed += uvec2($Time * 1543, $Time * 543);
+$Output = BlueNoise(seed) * 2.0f * 3.142f;
+
 			]]>
 			</script>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{B44E3B66-1A22-7D44-A4D2-D1D7C1BDC648}</id>
-			<comment/>
-			<position>
-				<first>2446</first>
-				<second>-107</second>
-			</position>
-			<swizzle>z</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -627,42 +629,42 @@ $Output = hash13(vec3(gl_FragCoord.xy, $Time)) * 2 * 3.14;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[21]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{2F15EAF1-E617-4931-AF16-BA52D9315156}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{40E969F8-97D1-534C-9D71-D6D9670017DA}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[17]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[19]"/>
 				<id>{3DF9CF4A-232D-5941-8FB7-8BA72ACE95A3}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[24]"/>
+				<id>{2F15EAF1-E617-4931-AF16-BA52D9315156}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{40E969F8-97D1-534C-9D71-D6D9670017DA}</id>
 			</destination>
 		</item>
 	</edges>
