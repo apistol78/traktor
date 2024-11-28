@@ -9,7 +9,11 @@
 #include <limits>
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Model/Model.h"
+#include "Model/Operations/CalculateNormals.h"
+#include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/MergeModel.h"
 #include "Physics/Body.h"
 #include "Physics/Mesh.h"
@@ -43,6 +47,8 @@ struct Vertex
 {
 	float position[3];
 	float normal[4];
+	float tangent[4];
+	float binormal[4];
 	float texCoord[2];
 };
 #pragma pack()
@@ -76,6 +82,12 @@ SplineComponent::~SplineComponent()
 
 void SplineComponent::destroy()
 {
+	if (m_updateJob)
+	{
+		m_updateJob->wait();
+		m_updateJob = nullptr;
+	}
+
 	safeDestroy(m_rtwInstance);
 	safeDestroy(m_indexBuffer);
 	safeDestroy(m_vertexBuffer);
@@ -88,9 +100,18 @@ void SplineComponent::setOwner(world::Entity* owner)
 
 void SplineComponent::setWorld(world::World* world)
 {
-	safeDestroy(m_rtwInstance);
-	m_world = world;
-	m_dirty = true;
+	if (world != m_world)
+	{
+		if (m_updateJob)
+		{
+			m_updateJob->wait();
+			m_updateJob = nullptr;
+		}
+
+		safeDestroy(m_rtwInstance);
+		m_world = world;
+		m_dirty = true;
+	}
 }
 
 void SplineComponent::setTransform(const Transform& transform)
@@ -104,34 +125,224 @@ Aabb3 SplineComponent::getBoundingBox() const
 
 void SplineComponent::update(const world::UpdateParams& update)
 {
-	// Fetch group component; contain all control point entities.
-	auto group = m_owner->getComponent< world::GroupComponent >();
-	if (!group)
-		return;
-
-	// Get control points.
-	RefArray< ControlPointComponent > controlPoints;
-	for (auto entity : group->getEntities())
+	if (m_updateJob != nullptr)
 	{
-		auto controlPoint = entity->getComponent< ControlPointComponent >();
-		if (controlPoint)
-			controlPoints.push_back(controlPoint);
-	}
-
-	// Check if any control point is dirty.
-	bool controlPointsDirty = m_dirty;
-	for (auto controlPoint : controlPoints)
-	{
-		if (controlPoint->checkDirty())
+		// Waiting for update of spline, check if job is done.
+		if (m_updateJob->wait(0))
 		{
-			controlPointsDirty |= true;
-			break;
+			m_updateJob = nullptr;
+
+			if (m_updateJobModel)
+			{
+				// Create the collision body.
+				{
+					safeDestroy(m_body);
+
+					AlignedVector< Vector4 > positions;
+					positions.reserve(m_updateJobModel->getVertices().size());
+					for (const auto& vertex : m_updateJobModel->getVertices())
+					{
+						const Vector4 position = m_updateJobModel->getPosition(vertex.getPosition());
+						positions.push_back(position.xyz1());
+					}
+
+					AlignedVector< physics::Mesh::Triangle > triangles;
+					triangles.reserve(m_updateJobModel->getPolygons().size());
+					for (const auto& polygon : m_updateJobModel->getPolygons())
+					{
+						T_FATAL_ASSERT(polygon.getVertexCount() == 3);
+						triangles.push_back(
+							{
+								{
+									polygon.getVertex(0),
+									polygon.getVertex(1),
+									polygon.getVertex(2),
+								},
+								0
+							}
+						);
+					}
+
+					AlignedVector< physics::Mesh::Material > materials;
+					materials.push_back({ 0.5f, 0.5f });
+
+					Ref< physics::Mesh > mesh = new physics::Mesh();
+					mesh->setVertices(positions);
+					mesh->setShapeTriangles(triangles);
+					mesh->setMaterials(materials);
+
+					Ref< physics::ShapeDesc > shapeDesc = new physics::ShapeDesc();
+					shapeDesc->setCollisionGroup(m_data->getCollisionGroup());
+					shapeDesc->setCollisionMask(m_data->getCollisionMask());
+
+					Ref< physics::StaticBodyDesc > bodyDesc = new physics::StaticBodyDesc(shapeDesc);
+
+					m_body = m_physicsManager->createBody(
+						m_resourceManager,
+						bodyDesc,
+						mesh,
+						T_FILE_LINE_W
+					);
+					if (m_body)
+						m_body->setEnable(true);
+				}
+
+				// Create runtime render mesh from model.
+				{
+					m_batches.resize(0);
+
+					const uint32_t nvertices = m_updateJobModel->getVertexCount();
+					const uint32_t nindices = m_updateJobModel->getPolygonCount() * 3;
+
+					if (nvertices > 0 && nindices > 0)
+					{
+						if (m_vertexBuffer == nullptr || m_vertexBuffer->getBufferSize() < nvertices * sizeof(Vertex))
+						{
+							safeDestroy(m_vertexBuffer);
+
+							AlignedVector< render::VertexElement > vertexElements;
+							vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat3, offsetof(Vertex, position)));
+							vertexElements.push_back(render::VertexElement(render::DataUsage::Normal, render::DtFloat4, offsetof(Vertex, normal)));
+							vertexElements.push_back(render::VertexElement(render::DataUsage::Tangent, render::DtFloat4, offsetof(Vertex, tangent)));
+							vertexElements.push_back(render::VertexElement(render::DataUsage::Binormal, render::DtFloat4, offsetof(Vertex, binormal)));
+							vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat2, offsetof(Vertex, texCoord)));
+							m_vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
+
+							m_vertexBuffer = m_renderSystem->createBuffer(
+								render::BuVertex,
+								(nvertices + 4 * 128) * sizeof(Vertex),
+								false
+							);
+						}
+
+						Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
+						for (const auto& v : m_updateJobModel->getVertices())
+						{
+							const Vector4 p = m_updateJobModel->getPosition(v.getPosition());
+							const Vector4 n = (v.getNormal() != model::c_InvalidIndex) ? m_updateJobModel->getNormal(v.getNormal()).xyz0() : Vector4::zero();
+							const Vector4 t = (v.getTangent() != model::c_InvalidIndex) ? m_updateJobModel->getNormal(v.getTangent()).xyz0() : Vector4::zero();
+							const Vector4 b = (v.getBinormal() != model::c_InvalidIndex) ? m_updateJobModel->getNormal(v.getBinormal()).xyz0() : Vector4::zero();
+							const Vector2 uv = (v.getTexCoord(0) != model::c_InvalidIndex) ? m_updateJobModel->getTexCoord(v.getTexCoord(0)) : Vector2::zero();
+
+							p.storeUnaligned(vertex->position);
+							n.storeUnaligned(vertex->normal);
+							t.storeUnaligned(vertex->tangent);
+							b.storeUnaligned(vertex->binormal);
+
+							vertex->texCoord[0] = uv.x;
+							vertex->texCoord[1] = uv.y;
+
+							++vertex;
+						}
+						m_vertexBuffer->unlock();
+
+						// Create indices and material batches.
+						if (m_indexBuffer == nullptr || m_indexBuffer->getBufferSize() < nindices * sizeof(uint32_t))
+						{
+							safeDestroy(m_indexBuffer);
+							m_indexBuffer = m_renderSystem->createBuffer(render::BuIndex, (nindices + 3 * 128) * sizeof(uint32_t), false);
+						}
+
+						uint32_t* index = (uint32_t*)m_indexBuffer->lock();
+						uint32_t offset = 0;
+						for (uint32_t i = 0; i < m_updateJobModel->getMaterialCount(); ++i)
+						{
+							uint32_t count = 0;
+							for (const auto& p : m_updateJobModel->getPolygons())
+							{
+								if (p.getMaterial() == i)
+								{
+									*index++ = (uint32_t)p.getVertex(0);
+									*index++ = (uint32_t)p.getVertex(1);
+									*index++ = (uint32_t)p.getVertex(2);
+									++count;
+								}
+							}
+
+							if (!count)
+								continue;
+
+							auto& batch = m_batches.push_back();
+
+							const model::Material material = m_updateJobModel->getMaterial(i);
+							const uint32_t materialHash = DeepHash(&material).get();
+							const Guid materialId = Guid(L"{8BB018D2-7AAC-4F9D-A5A4-DE396604862C}").permutation(materialHash);
+
+							if (!m_resourceManager->bind(resource::Id< render::Shader >(materialId), batch.shader))
+								batch.shader = m_defaultShader;
+
+							batch.primitives = render::Primitives::setIndexed(
+								render::PrimitiveType::Triangles,
+								offset,
+								count
+							);
+
+							offset += count * 3;
+						}
+						m_indexBuffer->unlock();
+
+						world::RTWorldComponent* rtw = m_world ? m_world->getComponent< world::RTWorldComponent >() : nullptr;
+						if (rtw != nullptr && nindices > 0)
+						{
+							safeDestroy(m_rtwInstance);
+
+							AlignedVector< render::Primitives > primitives;
+							primitives.push_back(render::Primitives::setIndexed(
+								render::PrimitiveType::Triangles,
+								0,
+								nindices / 3
+							));
+
+							Ref< render::IAccelerationStructure > blas = m_renderSystem->createAccelerationStructure(m_vertexBuffer, m_vertexLayout, m_indexBuffer, render::IndexType::UInt32, primitives);
+							if (blas != nullptr)
+								m_rtwInstance = rtw->createInstance(blas, nullptr);
+						}
+					}
+					else
+					{
+						safeDestroy(m_vertexBuffer);
+						safeDestroy(m_indexBuffer);
+						safeDestroy(m_rtwInstance);
+					}
+				}
+			}
+			else
+			{
+				safeDestroy(m_vertexBuffer);
+				safeDestroy(m_indexBuffer);
+				safeDestroy(m_rtwInstance);
+			}
 		}
 	}
-
-	// Update transform path if any control point is dirty.
-	if (controlPointsDirty)
+	else
 	{
+		// Fetch group component; contain all control point entities.
+		auto group = m_owner->getComponent< world::GroupComponent >();
+		if (!group)
+			return;
+
+		// Get control points.
+		RefArray< ControlPointComponent > controlPoints;
+		for (auto entity : group->getEntities())
+		{
+			auto controlPoint = entity->getComponent< ControlPointComponent >();
+			if (controlPoint)
+				controlPoints.push_back(controlPoint);
+		}
+
+		// Check if any control point is dirty.
+		bool controlPointsDirty = m_dirty;
+		for (auto controlPoint : controlPoints)
+		{
+			if (controlPoint->checkDirty())
+			{
+				controlPointsDirty |= true;
+				break;
+			}
+		}
+		if (!controlPointsDirty)
+			return;
+
 		m_path = TransformPath();
 		for (uint32_t i = 0; i < controlPoints.size(); ++i)
 		{
@@ -145,201 +356,30 @@ void SplineComponent::update(const world::UpdateParams& update)
 			m_path.insert(k);
 		}
 
-		// Generate geometry from path.
-		Ref< model::Model > outputModel;
-		for (auto component : m_owner->getComponents())
-		{
-			if (const auto layer = dynamic_type_cast< const SplineLayerComponent* >(component))
+		m_updateJobModel = nullptr;
+		m_updateJob = JobManager::getInstance().add([controlPoints, this]()
 			{
-				Ref< model::Model > layerModel = layer->createModel(m_path, m_data->isClosed(), true);
-				if (!layerModel)
-					continue;
-
-				if (outputModel)
+				for (auto component : m_owner->getComponents())
 				{
-					const model::MergeModel merge(*layerModel, Transform::identity(), 0.01f);
-					outputModel->apply(merge);
-				}
-				else
-					outputModel = layerModel;
-			}
-		}
-
-		// In case no layers has been added yet.
-		if (!outputModel)
-		{
-			safeDestroy(m_vertexBuffer);
-			safeDestroy(m_indexBuffer);
-			safeDestroy(m_rtwInstance);
-			m_dirty = false;
-			return;
-		}
-
-		// Create the collision body.
-		{
-			safeDestroy(m_body);
-
-			AlignedVector< Vector4 > positions;
-			positions.reserve(outputModel->getVertices().size());
-			for (const auto& vertex : outputModel->getVertices())
-			{
-				const Vector4 position = outputModel->getPosition(vertex.getPosition());
-				positions.push_back(position.xyz1());
-			}
-
-			AlignedVector< physics::Mesh::Triangle > triangles;
-			triangles.reserve(outputModel->getPolygons().size());
-			for (const auto& polygon : outputModel->getPolygons())
-			{
-				T_FATAL_ASSERT(polygon.getVertexCount() == 3);
-				triangles.push_back(
+					if (const auto layer = dynamic_type_cast< const SplineLayerComponent* >(component))
 					{
-						{
-							polygon.getVertex(0),
-							polygon.getVertex(1),
-							polygon.getVertex(2),
-						},
-						0
+						Ref< model::Model > layerModel = layer->createModel(m_path, m_data->isClosed(), true);
+						if (!layerModel)
+							continue;
+
+						if (m_updateJobModel)
+							m_updateJobModel->apply(model::MergeModel(*layerModel, Transform::identity(), 0.01f));
+						else
+							m_updateJobModel = layerModel;
 					}
-				);
-			}
-
-			AlignedVector< physics::Mesh::Material > materials;
-			materials.push_back({ 0.5f, 0.5f });
-
-			Ref< physics::Mesh > mesh = new physics::Mesh();
-			mesh->setVertices(positions);
-			mesh->setShapeTriangles(triangles);
-			mesh->setMaterials(materials);
-
-			Ref< physics::ShapeDesc > shapeDesc = new physics::ShapeDesc();
-			shapeDesc->setCollisionGroup(m_data->getCollisionGroup());
-			shapeDesc->setCollisionMask(m_data->getCollisionMask());
-
-			Ref< physics::StaticBodyDesc > bodyDesc = new physics::StaticBodyDesc(shapeDesc);
-
-			m_body = m_physicsManager->createBody(
-				m_resourceManager,
-				bodyDesc,
-				mesh,
-				T_FILE_LINE_W
-			);
-			if (m_body)
-				m_body->setEnable(true);
-		}
-
-		// Create runtime render mesh from model.
-		{
-			m_batches.resize(0);
-
-			const uint32_t nvertices = outputModel->getVertexCount();
-			const uint32_t nindices = outputModel->getPolygonCount() * 3;
-
-			if (nvertices > 0 && nindices > 0)
-			{
-				if (m_vertexBuffer == nullptr || m_vertexBuffer->getBufferSize() < nvertices * sizeof(Vertex))
-				{
-					safeDestroy(m_vertexBuffer);
-
-					AlignedVector< render::VertexElement > vertexElements;
-					vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat3, offsetof(Vertex, position)));
-					vertexElements.push_back(render::VertexElement(render::DataUsage::Normal, render::DtFloat4, offsetof(Vertex, normal)));
-					vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat2, offsetof(Vertex, texCoord)));
-					m_vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
-
-					m_vertexBuffer = m_renderSystem->createBuffer(
-						render::BuVertex,
-						(nvertices + 4 * 128) * sizeof(Vertex),
-						false
-					);
 				}
-
-				Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
-				for (const auto& v : outputModel->getVertices())
+				if (m_updateJobModel)
 				{
-					const Vector4 p = outputModel->getPosition(v.getPosition());
-					const Vector4 n = (v.getNormal() != model::c_InvalidIndex) ? outputModel->getNormal(v.getNormal()).xyz0() : Vector4::zero();
-					const Vector2 uv = (v.getTexCoord(0) != model::c_InvalidIndex) ? outputModel->getTexCoord(v.getTexCoord(0)) : Vector2::zero();
-
-					p.storeUnaligned(vertex->position);
-					n.storeUnaligned(vertex->normal);
-
-					vertex->texCoord[0] = uv.x;
-					vertex->texCoord[1] = uv.y;
-
-					++vertex;
-				}
-				m_vertexBuffer->unlock();
-
-				// Create indices and material batches.
-				if (m_indexBuffer == nullptr || m_indexBuffer->getBufferSize() < nindices * sizeof(uint32_t))
-				{
-					safeDestroy(m_indexBuffer);
-					m_indexBuffer = m_renderSystem->createBuffer(render::BuIndex, (nindices + 3 * 128) * sizeof(uint32_t), false);
-				}
-
-				uint32_t* index = (uint32_t*)m_indexBuffer->lock();
-				uint32_t offset = 0;
-				for (uint32_t i = 0; i < outputModel->getMaterialCount(); ++i)
-				{
-					uint32_t count = 0;
-					for (const auto& p : outputModel->getPolygons())
-					{
-						if (p.getMaterial() == i)
-						{
-							*index++ = (uint32_t)p.getVertex(0);
-							*index++ = (uint32_t)p.getVertex(1);
-							*index++ = (uint32_t)p.getVertex(2);
-							++count;
-						}
-					}
-
-					if (!count)
-						continue;
-
-					auto& batch = m_batches.push_back();
-
-					const model::Material material = outputModel->getMaterial(i);
-					const uint32_t materialHash = DeepHash(&material).get();
-					const Guid materialId = Guid(L"{8BB018D2-7AAC-4F9D-A5A4-DE396604862C}").permutation(materialHash);
-
-					if (!m_resourceManager->bind(resource::Id< render::Shader >(materialId), batch.shader))
-						batch.shader = m_defaultShader;
-
-					batch.primitives = render::Primitives::setIndexed(
-						render::PrimitiveType::Triangles,
-						offset,
-						count
-					);
-
-					offset += count * 3;
-				}
-				m_indexBuffer->unlock();
-
-				world::RTWorldComponent* rtw = m_world ? m_world->getComponent< world::RTWorldComponent >() : nullptr;
-				if (rtw != nullptr && nindices > 0)
-				{
-					safeDestroy(m_rtwInstance);
-
-					AlignedVector< render::Primitives > primitives;
-					primitives.push_back(render::Primitives::setIndexed(
-						render::PrimitiveType::Triangles,
-						0,
-						nindices / 3
-					));
-
-					Ref< render::IAccelerationStructure > blas = m_renderSystem->createAccelerationStructure(m_vertexBuffer, m_vertexLayout, m_indexBuffer, render::IndexType::UInt32, primitives);
-					if (blas != nullptr)
-						m_rtwInstance = rtw->createInstance(blas, nullptr);
+					m_updateJobModel->apply(model::CalculateNormals(false));
+					m_updateJobModel->apply(model::CalculateTangents(false));
 				}
 			}
-			else
-			{
-				safeDestroy(m_vertexBuffer);
-				safeDestroy(m_indexBuffer);
-				safeDestroy(m_rtwInstance);
-			}
-		}
+		);
 
 		m_dirty = false;
 	}

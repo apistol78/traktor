@@ -23,6 +23,20 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor
+{
+
+class Job;
+
+}
+
+namespace traktor::model
+{
+
+class Model;
+
+}
+
 namespace traktor::physics
 {
 
@@ -129,6 +143,9 @@ private:
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
 
 	Ref< physics::Body > m_body;
+
+	Ref< Job > m_updateJob;
+	Ref< model::Model > m_updateJobModel;
 };
 
 }
