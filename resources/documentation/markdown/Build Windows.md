@@ -15,9 +15,9 @@
 ```
 
 ---
-3. Open generated solution in Visual Studio.
+3. Open generated solution in Visual Studio 2022.
 ```
-.\scripts\open-projects-win64.bat
+.\build\win64\Traktor Win64.sln
 ```
 
 ---
