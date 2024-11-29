@@ -494,7 +494,7 @@ for (int i = 0; i < N; ++i)
 		rayOrigin,
 		HWRT_DefaultNear + $Bias * 2.0f,
 		rayDir,
-		HWRT_DefaultFar
+		200.0f
 	);
 	
 	while(rayQueryProceedEXT(rayQuery));
@@ -685,7 +685,6 @@ $Output = acc / N;
 uvec2 seed = uvec2(gl_FragCoord.xy);
 seed += uvec2($Time * 1543, $Time * 543);
 $Output = BlueNoise(seed) * 2.0f * 3.142f;
-
 			]]>
 			</script>
 		</item>
