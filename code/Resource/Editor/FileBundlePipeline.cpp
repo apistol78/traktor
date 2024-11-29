@@ -1,6 +1,8 @@
+#pragma optimize( "", off )
+
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -102,7 +104,19 @@ bool FileBundlePipeline::buildDependencies(
 		collectFiles(mask, pattern.recursive, files);
 
 		for (auto file : files)
-			pipelineDepends->addDependency(Path(m_assetPath), file->getPath().getPathName());
+		{
+			const Path assetPath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath));
+			const Path filePath = FileSystem::getInstance().getAbsolutePath(file->getPath());
+
+			Path fp;
+			if (!FileSystem::getInstance().getRelativePath(filePath, assetPath, fp))
+			{
+				log::error << L"FileBundlePipeline failed; unable to resolve paths." << Endl;
+				return false;
+			}
+
+			pipelineDepends->addDependency(Path(m_assetPath), fp.getPathName());
+		}
 	}
 
 	return true;
@@ -134,17 +148,20 @@ bool FileBundlePipeline::buildOutput(
 	const auto& patterns = bundleAsset->getPatterns();
 	for (auto pattern : patterns)
 	{
-		Path mask = Path(m_assetPath) + Path(pattern.sourceBase) + Path(pattern.sourceMask);
+		Path mask = Path(m_assetPath) + pattern.sourceBase + Path(pattern.sourceMask);
 
 		RefArray< File > files;
 		collectFiles(mask, pattern.recursive, files);
 
 		for (auto file : files)
 		{
+			const Path assetPath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath));
+			const Path filePath = FileSystem::getInstance().getAbsolutePath(file->getPath());
+
 			Path fp;
 			if (!FileSystem::getInstance().getRelativePath(
-				file->getPath(),
-				Path(m_assetPath) + Path(pattern.sourceBase),
+				filePath,
+				assetPath + pattern.sourceBase,
 				fp
 			))
 			{
@@ -152,7 +169,7 @@ bool FileBundlePipeline::buildOutput(
 				return false;
 			}
 
-			const Path outputPath = Path(pattern.outputBase) + fp;
+			const Path outputPath = pattern.outputBase + fp;
 			const Guid dataId = Guid::create();
 
 			Ref< IStream > is = FileSystem::getInstance().open(file->getPath(), File::FmRead);

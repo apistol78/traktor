@@ -302,6 +302,10 @@
 			<second>Choose file</second>
 		</item>
 		<item>
+			<first>EDITOR_BROWSE_PATH</first>
+			<second>Choose directory</second>
+		</item>
+		<item>
 			<first>EDITOR_BROWSE_WORKSPACE</first>
 			<second>Choose workspace</second>
 		</item>

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Ui/PropertyList/PropertyItem.h"
 #include "Core/Io/Path.h"
+#include "Ui/PropertyList/PropertyItem.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Edit;
 class MiniButton;
@@ -35,11 +33,13 @@ class T_DLLCLASS FilePropertyItem : public PropertyItem
 	T_RTTI_CLASS;
 
 public:
-	FilePropertyItem(const std::wstring& text, const Path& path);
+	explicit FilePropertyItem(const std::wstring& text, const Path& path, bool directory);
 
 	void setPath(const Path& path);
 
 	const Path& getPath() const;
+
+	bool isDirectory() const;
 
 protected:
 	virtual void createInPlaceControls(PropertyList* parent) override;
@@ -60,12 +60,11 @@ private:
 	Ref< Edit > m_editor;
 	Ref< MiniButton > m_buttonEdit;
 	Path m_path;
+	bool m_directory;
 
 	void eventEditFocus(FocusEvent* event);
 
 	void eventClick(ButtonClickEvent* event);
 };
 
-	}
 }
-

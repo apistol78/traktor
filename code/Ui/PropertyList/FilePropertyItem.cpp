@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,16 +15,15 @@
 #include "Ui/PropertyList/FilePropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.FilePropertyItem", FilePropertyItem, PropertyItem)
 
-FilePropertyItem::FilePropertyItem(const std::wstring& text, const Path& path)
+FilePropertyItem::FilePropertyItem(const std::wstring& text, const Path& path, bool directory)
 :	PropertyItem(text)
 ,	m_path(path)
+,	m_directory(directory)
 {
 }
 
@@ -36,6 +35,11 @@ void FilePropertyItem::setPath(const Path& path)
 const Path& FilePropertyItem::getPath() const
 {
 	return m_path;
+}
+
+bool FilePropertyItem::isDirectory() const
+{
+	return m_directory;
 }
 
 void FilePropertyItem::createInPlaceControls(PropertyList* parent)
@@ -151,5 +155,4 @@ void FilePropertyItem::eventClick(ButtonClickEvent* event)
 	notifyCommand(Command(L"Property.Browse"));
 }
 
-	}
 }

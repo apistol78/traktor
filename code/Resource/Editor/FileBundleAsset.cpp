@@ -1,11 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Serialization/AttributeDirectory.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStl.h"
@@ -28,8 +29,8 @@ void FileBundleAsset::serialize(ISerializer& s)
 
 void FileBundleAsset::Pattern::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"sourceBase", sourceBase);
-	s >> Member< std::wstring >(L"outputBase", outputBase);
+	s >> Member< Path >(L"sourceBase", sourceBase, AttributeDirectory());
+	s >> Member< Path >(L"outputBase", outputBase, AttributeDirectory());
 	s >> Member< std::wstring >(L"sourceMask", sourceMask);
 	s >> Member< bool >(L"recursive", recursive);
 }

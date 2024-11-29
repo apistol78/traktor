@@ -31,6 +31,7 @@
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
+#include "Ui/PathDialog.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/PropertyList/ArrayPropertyItem.h"
@@ -257,18 +258,36 @@ void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 		ui::FilePropertyItem* fileItem = dynamic_type_cast< ui::FilePropertyItem* >(event->getItem());
 		if (fileItem)
 		{
-			ui::FileDialog fileDialog;
-			if (!fileDialog.create(m_propertyList, type_name(this), i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
-				return;
-
-			Path path = fileItem->getPath();
-			if (fileDialog.showModal(path) == ui::DialogResult::Ok)
+			if (!fileItem->isDirectory())
 			{
-				fileItem->setPath(path);
-				m_propertyList->apply();
-			}
+				ui::FileDialog fileDialog;
+				if (!fileDialog.create(m_propertyList, type_name(this), i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
+					return;
 
-			fileDialog.destroy();
+				Path path = fileItem->getPath();
+				if (fileDialog.showModal(path) == ui::DialogResult::Ok)
+				{
+					fileItem->setPath(path);
+					m_propertyList->apply();
+				}
+
+				fileDialog.destroy();
+			}
+			else
+			{
+				ui::PathDialog pathDialog;
+				if (!pathDialog.create(m_propertyList, i18n::Text(L"EDITOR_BROWSE_PATH")))
+					return;
+
+				Path path = fileItem->getPath();
+				if (pathDialog.showModal(path) == ui::DialogResult::Ok)
+				{
+					fileItem->setPath(path);
+					m_propertyList->apply();
+				}
+
+				pathDialog.destroy();
+			}
 		}
 
 		ui::ObjectPropertyItem* objectItem = dynamic_type_cast< ui::ObjectPropertyItem* >(event->getItem());

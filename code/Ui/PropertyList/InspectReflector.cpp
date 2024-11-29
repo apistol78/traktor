@@ -19,6 +19,7 @@
 #include "Core/Math/Quaternion.h"
 #include "Core/Misc/Split.h"
 #include "Core/Serialization/AttributeDirection.h"
+#include "Core/Serialization/AttributeDirectory.h"
 #include "Core/Serialization/AttributeHdr.h"
 #include "Core/Serialization/AttributeHex.h"
 #include "Core/Serialization/AttributeMultiLine.h"
@@ -471,8 +472,9 @@ void InspectReflector::operator >> (const Member< Guid >& m)
 void InspectReflector::operator >> (const Member< Path >& m)
 {
 	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
+	const bool memberDirectory = bool(findAttribute< AttributeDirectory >(m) != nullptr);
 	addPropertyItem(
-		new FilePropertyItem(stylizeMemberName(m.getName()), *m),
+		new FilePropertyItem(stylizeMemberName(m.getName()), *m, memberDirectory),
 		memberPrivate
 	);
 }
