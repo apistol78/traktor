@@ -205,7 +205,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 	// Create Vulkan instance.
-	const VkApplicationInfo ai =
+	const VkApplicationInfo applicationInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 		.pNext = nullptr,
@@ -215,17 +215,17 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.apiVersion = VK_MAKE_VERSION(1, 2, 0)
 	};
 
-	const VkInstanceCreateInfo ii =
+	const VkInstanceCreateInfo instanceCreateInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-		.pApplicationInfo = &ai,
+		.pApplicationInfo = &applicationInfo,
 		.enabledLayerCount = (uint32_t)validationLayers.size(),
 		.ppEnabledLayerNames = validationLayers.c_ptr(),
 		.enabledExtensionCount = sizeof_array(c_extensions),
 		.ppEnabledExtensionNames = c_extensions
 	};
 
-	if ((result = vkCreateInstance(&ii, 0, &m_instance)) != VK_SUCCESS)
+	if ((result = vkCreateInstance(&instanceCreateInfo, 0, &m_instance)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan instance (" << getHumanResult(result) << L")." << Endl;
 		return false;
@@ -341,86 +341,109 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 	// Create logical device.
-    VkPhysicalDeviceFeatures features = {};
-	features.sampleRateShading = VK_TRUE;
-	features.multiDrawIndirect = VK_TRUE;
-    features.shaderClipDistance = VK_TRUE;
-	features.samplerAnisotropy = VK_TRUE;
+    const VkPhysicalDeviceFeatures features =
+	{
+		.sampleRateShading = VK_TRUE,
+		.multiDrawIndirect = VK_TRUE,
+		.samplerAnisotropy = VK_TRUE,
+		.shaderClipDistance = VK_TRUE
+	};
 
 	const void* headFeature = nullptr;
 
 #if !defined(__ANDROID__) && !defined(__RPI__)
-	static VkPhysicalDevice8BitStorageFeaturesKHR s8 = {};
-	s8.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR;
-	s8.pNext = nullptr;
-	s8.storageBuffer8BitAccess = VK_FALSE;
-	s8.uniformAndStorageBuffer8BitAccess = VK_TRUE;
-	s8.storagePushConstant8 = VK_FALSE;
+	const VkPhysicalDevice8BitStorageFeaturesKHR features8bitStorage =
+	{
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR,
+		.pNext = nullptr,
+		.storageBuffer8BitAccess = VK_FALSE,
+		.uniformAndStorageBuffer8BitAccess = VK_TRUE,
+		.storagePushConstant8 = VK_FALSE
+	};
 
-	static VkPhysicalDeviceFloat16Int8FeaturesKHR f16 = {};
-	f16.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR;
-	f16.pNext = &s8;
-	f16.shaderFloat16 = VK_FALSE;
-	f16.shaderInt8 = VK_TRUE;
+	const VkPhysicalDeviceFloat16Int8FeaturesKHR features16bitFloat =
+	{
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR,
+		.pNext = (void*)&features8bitStorage,
+		.shaderFloat16 = VK_FALSE,
+		.shaderInt8 = VK_TRUE
+	};
 
 	// Bindless textures.
-	static VkPhysicalDeviceDescriptorIndexingFeatures di = {};
-	di.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
-	di.pNext = &f16;
-	di.runtimeDescriptorArray = VK_TRUE;
-	di.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE;
-	di.descriptorBindingStorageImageUpdateAfterBind = VK_TRUE;
-	di.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE;
-	di.descriptorBindingPartiallyBound = VK_TRUE;
-	di.descriptorBindingVariableDescriptorCount = VK_TRUE;
+	const VkPhysicalDeviceDescriptorIndexingFeatures featuresDescriptorIndexing =
+	{
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES,
+		.pNext = (void*)&features16bitFloat,
+		.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE,
+		.descriptorBindingStorageImageUpdateAfterBind = VK_TRUE,
+		.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE,
+		.descriptorBindingPartiallyBound = VK_TRUE,
+		.descriptorBindingVariableDescriptorCount = VK_TRUE,
+		.runtimeDescriptorArray = VK_TRUE
+	};
 
-	static VkPhysicalDeviceBufferDeviceAddressFeatures daf{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES };
-	daf.pNext = &di;
-	daf.bufferDeviceAddress = VK_TRUE;
-	daf.bufferDeviceAddressCaptureReplay = VK_FALSE;
-	daf.bufferDeviceAddressMultiDevice = VK_FALSE;
+	const VkPhysicalDeviceBufferDeviceAddressFeatures featuresBufferDeviceAddress
+	{
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
+		.pNext = (void*)&featuresDescriptorIndexing,
+		.bufferDeviceAddress = VK_TRUE,
+		.bufferDeviceAddressCaptureReplay = VK_FALSE,
+		.bufferDeviceAddressMultiDevice = VK_FALSE
+	};
 
-	static VkPhysicalDeviceVulkan11Features v11 = {};
-	v11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
-	v11.pNext = &daf;
-	v11.storageBuffer16BitAccess = VK_TRUE;
-	v11.uniformAndStorageBuffer16BitAccess = VK_TRUE;
-	v11.storagePushConstant16 = VK_FALSE;
-	v11.storageInputOutput16 = VK_FALSE;
-	v11.multiview = VK_FALSE;
-	v11.multiviewGeometryShader = VK_FALSE;
-	v11.multiviewTessellationShader = VK_FALSE;
-	v11.variablePointersStorageBuffer = VK_FALSE;
-	v11.variablePointers = VK_FALSE;
-	v11.protectedMemory = VK_FALSE;
-	v11.samplerYcbcrConversion = VK_FALSE;
-	v11.shaderDrawParameters = VK_TRUE;
+	const VkPhysicalDeviceVulkan11Features featuresVulkan1_1 =
+	{
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
+		.pNext = (void*)&featuresBufferDeviceAddress,
+		.storageBuffer16BitAccess = VK_TRUE,
+		.uniformAndStorageBuffer16BitAccess = VK_TRUE,
+		.storagePushConstant16 = VK_FALSE,
+		.storageInputOutput16 = VK_FALSE,
+		.multiview = VK_FALSE,
+		.multiviewGeometryShader = VK_FALSE,
+		.multiviewTessellationShader = VK_FALSE,
+		.variablePointersStorageBuffer = VK_FALSE,
+		.variablePointers = VK_FALSE,
+		.protectedMemory = VK_FALSE,
+		.samplerYcbcrConversion = VK_FALSE,
+		.shaderDrawParameters = VK_TRUE
+	};
 
-	headFeature = &v11;
+	headFeature = &featuresVulkan1_1;
 
 	if (desc.rayTracing)
 	{
-		static VkPhysicalDeviceAccelerationStructureFeaturesKHR asf{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR };
-		asf.pNext = &v11;
-		asf.accelerationStructure = VK_TRUE;
-		asf.accelerationStructureCaptureReplay = VK_FALSE;
-		asf.accelerationStructureIndirectBuild = VK_FALSE;
-		asf.accelerationStructureHostCommands = VK_FALSE;
-		asf.descriptorBindingAccelerationStructureUpdateAfterBind = VK_FALSE;
+		static const VkPhysicalDeviceAccelerationStructureFeaturesKHR featuresAccelerationStructure =
+		{
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR,
+			.pNext = (void*)&featuresVulkan1_1,
+			.accelerationStructure = VK_TRUE,
+			.accelerationStructureCaptureReplay = VK_FALSE,
+			.accelerationStructureIndirectBuild = VK_FALSE,
+			.accelerationStructureHostCommands = VK_FALSE,
+			.descriptorBindingAccelerationStructureUpdateAfterBind = VK_FALSE
+		};
 
-		static VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtp{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR };
-		rtp.pNext = &asf;
-		rtp.rayTracingPipeline = VK_TRUE;
-		rtp.rayTracingPipelineShaderGroupHandleCaptureReplay = VK_FALSE;
-		rtp.rayTracingPipelineShaderGroupHandleCaptureReplayMixed = VK_FALSE;
-		rtp.rayTracingPipelineTraceRaysIndirect = VK_FALSE;
-		rtp.rayTraversalPrimitiveCulling = VK_FALSE;
+		//static const VkPhysicalDeviceRayTracingPipelineFeaturesKHR featuresRayTracingPipeline =
+		//{
+		//	.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
+		//	.pNext = (void*)&featuresAccelerationStructure,
+		//	.rayTracingPipeline = VK_TRUE,
+		//	.rayTracingPipelineShaderGroupHandleCaptureReplay = VK_FALSE,
+		//	.rayTracingPipelineShaderGroupHandleCaptureReplayMixed = VK_FALSE,
+		//	.rayTracingPipelineTraceRaysIndirect = VK_FALSE,
+		//	.rayTraversalPrimitiveCulling = VK_FALSE
+		//};
 
-		static VkPhysicalDeviceRayQueryFeaturesKHR rq{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR };
-		rq.pNext = &rtp;
-		rq.rayQuery = VK_TRUE;
+		static const VkPhysicalDeviceRayQueryFeaturesKHR featuresRayQuery =
+		{
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR,
+			//.pNext = (void*)&featuresRayTracingPipeline,
+			.pNext = (void*)&featuresAccelerationStructure,
+			.rayQuery = VK_TRUE
+		};
 
-		headFeature = &rq;
+		headFeature = &featuresRayQuery;
 	}
 #endif
 
@@ -443,7 +466,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		});
 	}
 
-    const VkDeviceCreateInfo dci =
+    const VkDeviceCreateInfo deviceCreateInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		.pNext = headFeature,
@@ -457,14 +480,14 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.pEnabledFeatures = &features
 	};
 
-    if ((result = vkCreateDevice(m_physicalDevice, &dci, 0, &m_logicalDevice)) != VK_SUCCESS)
+    if ((result = vkCreateDevice(m_physicalDevice, &deviceCreateInfo, 0, &m_logicalDevice)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create logical device (" << getHumanResult(result) << L")." << Endl;
 		return false;
 	}
 
 	// Create memory allocator.
-	const VmaVulkanFunctions vf =
+	const VmaVulkanFunctions memoryAllocatorFunctions =
 	{
 		.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
 		.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
@@ -492,14 +515,14 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	VmaAllocatorCreateInfo aci = {};
 #if !defined(__RPI__) && !defined(__ANDROID__) && !defined(__IOS__)
 	// \note Disabled for now, not clear if we need it and until we do let's leave it disabled.
-	//if (vf.vkGetBufferMemoryRequirements2KHR != nullptr && vf.vkGetImageMemoryRequirements2KHR != nullptr)
+	//if (memoryAllocatorFunctions.vkGetBufferMemoryRequirements2KHR != nullptr && memoryAllocatorFunctions.vkGetImageMemoryRequirements2KHR != nullptr)
 	//	aci.vulkanApiVersion = VK_API_VERSION_1_2;
 
 	aci.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT | VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
 #endif
 	aci.physicalDevice = m_physicalDevice;
 	aci.device = m_logicalDevice;
-	aci.pVulkanFunctions = &vf;
+	aci.pVulkanFunctions = &memoryAllocatorFunctions;
 	aci.instance = m_instance;
 #if defined(__IOS__)
 	aci.preferredLargeHeapBlockSize = 32 * 1024 * 1024;
