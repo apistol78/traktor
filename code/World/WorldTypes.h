@@ -135,6 +135,13 @@ struct RTTriangleAttributes
 };
 
 /*! */
+struct RTVertexAttributes
+{
+	float normal[4];
+	float albedo[4];
+};
+
+/*! */
 Vector2 jitter(int32_t count);
 
 }

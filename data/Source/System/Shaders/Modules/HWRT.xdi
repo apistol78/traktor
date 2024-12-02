@@ -7,7 +7,6 @@ const float HWRT_DefaultNear = 0.5f;
 const float HWRT_DefaultFar = 100.0f;
 
 // Material properties.
-
 struct HWRT_Material
 {
 	highp vec4 normal;
@@ -16,10 +15,14 @@ struct HWRT_Material
 
 layout (std430, binding = 2, set = 3) readonly buffer __bindlessBufferMaterials__Buffer
 {
-	HWRT_Material materialPerTriangle[];
+	HWRT_Material perVertex[];
 }
 __bindlessBufferMaterials__[];
 
+vec4 blend3(vec4 v0, float w0, vec4 v1, float w1, vec4 v2, float w2)
+{
+	return v0 * w0 + v1 * w1 + v2 * w2;
+}
 
 HWRT_Material HWRT_GetMaterial(rayQueryEXT query)
 {
@@ -32,8 +35,25 @@ HWRT_Material HWRT_GetMaterial(rayQueryEXT query)
 		const uint id = rayQueryGetIntersectionInstanceCustomIndexEXT(query, true);
 		if (id != (1 << 24) - 1)
 		{
+			const vec2 bary = rayQueryGetIntersectionBarycentricsEXT(query, true);
 			const uint triangle = rayQueryGetIntersectionPrimitiveIndexEXT(query, true);
-			material = __bindlessBufferMaterials__[id].materialPerTriangle[triangle];
+
+			// Get material information for each vertex.
+			const HWRT_Material m0 = __bindlessBufferMaterials__[id].perVertex[triangle * 3 + 0];
+			const HWRT_Material m1 = __bindlessBufferMaterials__[id].perVertex[triangle * 3 + 1];
+			const HWRT_Material m2 = __bindlessBufferMaterials__[id].perVertex[triangle * 3 + 2];
+
+			// Blend material using barycentrics from intersection.
+			material.normal = blend3(
+				m0.normal, 1.0f - (bary.x + bary.y),
+				m1.normal, bary.x,
+				m2.normal, bary.y
+			);
+			material.albedo = blend3(
+				m0.albedo, 1.0f - (bary.x + bary.y),
+				m1.albedo, bary.x,
+				m2.albedo, bary.y
+			);
 		}
 		else
 		{

@@ -572,7 +572,7 @@ void TerrainComponent::setWorld(world::World* world)
 		T_FATAL_ASSERT(m_rtwInstance == nullptr);
 		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
 		if (rtw != nullptr)
-			m_rtwInstance = rtw->createInstance(*(RefArray< const render::IAccelerationStructure >*)&m_rtAS, nullptr);
+			m_rtwInstance = rtw->createInstance(*(RefArray< const render::IAccelerationStructure >*)&m_rtAS, nullptr, nullptr);
 	}
 
 	m_world = world;

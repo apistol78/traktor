@@ -57,7 +57,8 @@ public:
 		RTWorldComponent* owner;
 		Transform transform;
 		RefArray< const render::IAccelerationStructure > blas;
-		Ref< const render::Buffer > perPrimitiveColor;
+		Ref< const render::Buffer > perTriangleData;
+		Ref< const render::Buffer > perVertexData;
 
 		void destroy();
 
@@ -74,9 +75,9 @@ public:
 
 	virtual void update(World* world, const UpdateParams& update) override final;
 
-	Instance* createInstance(const render::IAccelerationStructure* blas, const render::Buffer* perPrimitiveColor);
+	Instance* createInstance(const render::IAccelerationStructure* blas, const render::Buffer* perTriangleData, const render::Buffer* perVertexData);
 
-	Instance* createInstance(const RefArray< const render::IAccelerationStructure >& blas, const render::Buffer* perPrimitiveColor);
+	Instance* createInstance(const RefArray< const render::IAccelerationStructure >& blas, const render::Buffer* perTriangleData, const render::Buffer* perVertexData);
 
 	void build(const WorldBuildContext& context);
 

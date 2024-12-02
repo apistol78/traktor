@@ -93,6 +93,8 @@ public:
 
 	const render::Buffer* getRTTriangleAttributes() const;
 
+	const render::Buffer* getRTVertexAttributes() const;
+
 private:
 	friend class InstanceMeshResource;
 

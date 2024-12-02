@@ -1,3 +1,4 @@
+
 /*
  * TRAKTOR
  * Copyright (c) 2022-2024 Anders Pistol.
@@ -67,6 +68,7 @@ bool StaticMeshConverter::convert(
 	const uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
 	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
 	const uint32_t rtTriangleAttributesSize = (uint32_t)(model->getPolygons().size() * sizeof(world::RTTriangleAttributes));
+	const uint32_t rtVertexAttributesSize = (uint32_t)(model->getPolygons().size() * 3 * sizeof(world::RTVertexAttributes));
 
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
@@ -74,7 +76,8 @@ bool StaticMeshConverter::convert(
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize,
 		{
-			{ IMesh::c_fccRayTracingTriangleAttributes, rtTriangleAttributesSize }
+			{ IMesh::c_fccRayTracingTriangleAttributes, rtTriangleAttributesSize },
+			{ IMesh::c_fccRayTracingVertexAttributes, rtVertexAttributesSize }
 		}
 	);
 
@@ -218,7 +221,9 @@ bool StaticMeshConverter::convert(
 		);
 		meshParts.push_back(meshPart);
 
-		world::RTTriangleAttributes* ptr = (world::RTTriangleAttributes*)renderMesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->lock();
+		world::RTTriangleAttributes* tptr = (world::RTTriangleAttributes*)renderMesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->lock();
+		world::RTVertexAttributes* vptr = (world::RTVertexAttributes*)renderMesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
+
 		for (const auto& mt : materialTechniqueMap)
 		{
 			for (uint32_t i = 0; i < model->getPolygons().size(); ++i)
@@ -240,13 +245,29 @@ bool StaticMeshConverter::convert(
 					}
 				}
 
-				model->getNormal(polygon.getNormal()).storeUnaligned(ptr->normal);
-				albedo.storeUnaligned(ptr->albedo);
+				model->getNormal(polygon.getNormal()).storeUnaligned(tptr->normal);
+				albedo.storeUnaligned(tptr->albedo);
 
-				++ptr;
+				++tptr;
+
+				for (uint32_t j = 0; j < 3; ++j)
+				{
+					const auto& vertex = model->getVertex(polygon.getVertex(j));
+
+					model->getNormal(vertex.getNormal()).storeUnaligned(vptr->normal);
+
+					if (vertex.getColor() != model::c_InvalidIndex)
+						model->getColor(vertex.getColor()).storeUnaligned(vptr->albedo);
+					else
+						albedo.storeUnaligned(vptr->albedo);
+
+					++vptr;
+				}
 			}
 		}
+
 		renderMesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->unlock();
+		renderMesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->unlock();
 	}
 
 	renderMesh->setParts(meshParts);

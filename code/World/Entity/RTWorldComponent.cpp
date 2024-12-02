@@ -36,20 +36,21 @@ void RTWorldComponent::update(World* world, const UpdateParams& update)
 {
 }
 
-RTWorldComponent::Instance* RTWorldComponent::createInstance(const render::IAccelerationStructure* blas, const render::Buffer* perPrimitiveColor)
+RTWorldComponent::Instance* RTWorldComponent::createInstance(const render::IAccelerationStructure* blas, const render::Buffer* perTriangleData, const render::Buffer* perVertexData)
 {
 	RefArray< const render::IAccelerationStructure > blases;
 	blases.push_back(blas);
-	return createInstance(blases, perPrimitiveColor);
+	return createInstance(blases, perTriangleData, perVertexData);
 }
 
-RTWorldComponent::Instance* RTWorldComponent::createInstance(const RefArray< const render::IAccelerationStructure >& blas, const render::Buffer* perPrimitiveColor)
+RTWorldComponent::Instance* RTWorldComponent::createInstance(const RefArray< const render::IAccelerationStructure >& blas, const render::Buffer* perTriangleData, const render::Buffer* perVertexData)
 {
 	Instance* instance = new Instance();
 	instance->owner = this;
 	instance->transform = Transform::identity();
 	instance->blas = blas;
-	instance->perPrimitiveColor = perPrimitiveColor;
+	instance->perTriangleData = perTriangleData;
+	instance->perVertexData = perVertexData;
 
 	m_instances.push_back(instance);
 	m_instanceBufferDirty = true;
@@ -68,7 +69,8 @@ void RTWorldComponent::build(const WorldBuildContext& context)
 			{
 				tlasInstances.push_back({
 					.blas = blas,
-					.perPrimitiveVec4 = instance->perPrimitiveColor,
+					.perTriangleData = instance->perTriangleData,
+					.perVertexData = instance->perVertexData,
 					.transform = instance->transform.toMatrix44()
 				});
 			}

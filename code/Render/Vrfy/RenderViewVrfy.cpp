@@ -456,11 +456,13 @@ void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelera
 		if (!blas->getWrappedAS())
 			continue;
 
-		const BufferVrfy* bv = dynamic_type_cast< const BufferVrfy* >(instance.perPrimitiveVec4);
+		const BufferVrfy* td = dynamic_type_cast< const BufferVrfy* >(instance.perTriangleData);
+		const BufferVrfy* vd = dynamic_type_cast< const BufferVrfy* >(instance.perVertexData);
 
 		unwrappedInstances.push_back({
 			blas->getWrappedAS(),
-			(bv != nullptr) ? bv->getWrappedBuffer() : nullptr,
+			(td != nullptr) ? td->getWrappedBuffer() : nullptr,
+			(vd != nullptr) ? vd->getWrappedBuffer() : nullptr,
 			instance.transform
 		});
 	}

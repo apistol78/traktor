@@ -232,7 +232,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 
 	for (const auto& instance : instances)
 	{
-		const BufferStaticVk* bvk = checked_type_cast< const BufferStaticVk* >( instance.perPrimitiveVec4 );
+		const BufferStaticVk* vd = checked_type_cast< const BufferStaticVk* >( instance.perVertexData );
 
 		const VkAccelerationStructureDeviceAddressInfoKHR asai =
 		{
@@ -255,7 +255,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 					{ M(2, 0), M(2, 1), M(2, 2), M(2, 3) }
 				}
 			},
-			.instanceCustomIndex = (bvk != nullptr) ? bvk->getApiBuffer()->makeResourceIndex() : ~0U,
+			.instanceCustomIndex = (vd != nullptr) ? vd->getApiBuffer()->makeResourceIndex() : ~0U,
 			.mask = 0xff,
 			.instanceShaderBindingTableRecordOffset = 0,
 			.flags = VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_KHR | VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR,
@@ -265,7 +265,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 
 	m_instanceBuffer->unlock();
 
-	VkAccelerationStructureGeometryDataKHR topLevelAccelerationStructureGeometryData =
+	const VkAccelerationStructureGeometryDataKHR topLevelAccelerationStructureGeometryData =
 	{
 		.instances =
 		{
@@ -279,7 +279,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 		}
 	};
 
-	VkAccelerationStructureGeometryKHR topLevelAccelerationStructureGeometry =
+	const VkAccelerationStructureGeometryKHR topLevelAccelerationStructureGeometry =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR,
 		.pNext = nullptr,
@@ -288,7 +288,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 		.flags = VK_GEOMETRY_OPAQUE_BIT_KHR
 	};
 
-	VkAccelerationStructureBuildGeometryInfoKHR topLevelAccelerationStructureBuildGeometryInfo =
+	const VkAccelerationStructureBuildGeometryInfoKHR topLevelAccelerationStructureBuildGeometryInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
 		.pNext = nullptr,
@@ -306,7 +306,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 		}
 	};
 
-	VkAccelerationStructureBuildRangeInfoKHR topLevelAccelerationStructureBuildRangeInfo =
+	const VkAccelerationStructureBuildRangeInfoKHR topLevelAccelerationStructureBuildRangeInfo =
 	{
 		.primitiveCount = (uint32_t)instances.size(),
 		.primitiveOffset = 0,

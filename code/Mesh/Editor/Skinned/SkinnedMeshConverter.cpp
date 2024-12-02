@@ -73,6 +73,7 @@ bool SkinnedMeshConverter::convert(
 	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
 	const uint32_t auxBufferSize = (uint32_t)(model->getVertices().size() * (6 * 4 * sizeof(float)));
 	const uint32_t rtTriangleAttributesSize = (uint32_t)(model->getPolygons().size() * sizeof(world::RTTriangleAttributes));
+	const uint32_t rtVertexAttributesSize = (uint32_t)(model->getPolygons().size() * 3 * sizeof(world::RTVertexAttributes));
 
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
@@ -81,7 +82,8 @@ bool SkinnedMeshConverter::convert(
 		indexBufferSize,
 		{
 			{ SkinnedMesh::c_fccSkinPosition, auxBufferSize },
-			{ IMesh::c_fccRayTracingTriangleAttributes, rtTriangleAttributesSize }
+			{ IMesh::c_fccRayTracingTriangleAttributes, rtTriangleAttributesSize },
+			{ IMesh::c_fccRayTracingVertexAttributes, rtVertexAttributesSize }
 		}
 	);
 
@@ -275,7 +277,9 @@ bool SkinnedMeshConverter::convert(
 		);
 		meshParts.push_back(meshPart);
 
-		world::RTTriangleAttributes* ptr = (world::RTTriangleAttributes*)mesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->lock();
+		world::RTTriangleAttributes* tptr = (world::RTTriangleAttributes*)mesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->lock();
+		world::RTVertexAttributes* vptr = (world::RTVertexAttributes*)mesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
+
 		for (const auto& mt : materialTechniqueMap)
 		{
 			for (uint32_t i = 0; i < model->getPolygons().size(); ++i)
@@ -297,13 +301,29 @@ bool SkinnedMeshConverter::convert(
 					}
 				}
 
-				model->getNormal(polygon.getNormal()).storeUnaligned(ptr->normal);
-				albedo.storeUnaligned(ptr->albedo);
+				model->getNormal(polygon.getNormal()).storeUnaligned(tptr->normal);
+				albedo.storeUnaligned(tptr->albedo);
 
-				++ptr;
+				++tptr;
+
+				for (uint32_t j = 0; j < 3; ++j)
+				{
+					const auto& vertex = model->getVertex(polygon.getVertex(j));
+
+					model->getNormal(vertex.getNormal()).storeUnaligned(vptr->normal);
+
+					if (vertex.getColor() != model::c_InvalidIndex)
+						model->getColor(vertex.getColor()).storeUnaligned(vptr->albedo);
+					else
+						albedo.storeUnaligned(vptr->albedo);
+
+					++vptr;
+				}
 			}
 		}
+
 		mesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->unlock();
+		mesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->unlock();
 	}
 
 	mesh->setParts(meshParts);

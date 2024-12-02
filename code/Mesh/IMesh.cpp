@@ -14,5 +14,6 @@ namespace traktor::mesh
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.IMesh", IMesh, Object)
 
 const FourCC IMesh::c_fccRayTracingTriangleAttributes("RTTA");
+const FourCC IMesh::c_fccRayTracingVertexAttributes("RTVA");
 
 }

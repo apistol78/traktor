@@ -110,6 +110,8 @@ public:
 
 	const render::Buffer* getRTTriangleAttributes() const;
 
+	const render::Buffer* getRTVertexAttributes() const;
+
 	const render::Mesh* getRenderMesh() const { return m_mesh; }
 
 private:
