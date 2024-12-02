@@ -21,7 +21,7 @@ struct RenderTargetSetCreateDesc;
 struct RenderTargetCreateDesc;
 
 /*!
- * \ingroup Vulkan
+ * \ingroup Render
  */
 class RenderTargetVk : public ITexture
 {

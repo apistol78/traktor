@@ -16,18 +16,16 @@
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Render/Vulkan/Linux/Window.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 const int32_t _NET_WM_STATE_REMOVE = 0;
 const int32_t _NET_WM_STATE_ADD = 1;
 const int32_t _NET_WM_STATE_TOGGLE = 2;
 
-		}
+	}
 
 Window::Window()
 :	m_display(nullptr)
@@ -359,6 +357,4 @@ void Window::setWmProperty(Atom property1, Atom property2, int32_t value)
 	);
 }
 
-	}
 }
-

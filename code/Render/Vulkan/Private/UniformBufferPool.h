@@ -15,6 +15,9 @@
 namespace traktor::render
 {
 
+/*!
+ * \ingroup Render
+ */
 class UniformBufferPool : public Object
 {
 public:

@@ -21,6 +21,9 @@
 namespace traktor::render
 {
 
+/*!
+ * \ingroup Render
+ */
 class T_DLLCLASS VertexAttributes
 {;
 public:

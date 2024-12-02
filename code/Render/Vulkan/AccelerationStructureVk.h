@@ -25,6 +25,9 @@ class Context;
 class IBufferView;
 class IVertexLayout;
 
+/*!
+ * \ingroup Render
+ */
 class AccelerationStructureVk : public IAccelerationStructure
 {
 	T_RTTI_CLASS;

@@ -17,6 +17,9 @@ namespace traktor::render
 
 class Context;
 
+/*!
+ * \ingroup Render
+ */
 class PipelineLayoutCache : public Object
 {
 public:

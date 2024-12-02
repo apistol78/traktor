@@ -24,7 +24,7 @@ namespace traktor::render
 {
 
 /*!
- * \ingroup Vulkan
+ * \ingroup Render
  */
 class T_DLLCLASS ProgramResourceVk : public ProgramResource
 {

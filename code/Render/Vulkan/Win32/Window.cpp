@@ -189,12 +189,12 @@ Window::operator HWND () const
 	return m_hWnd;
 }
 
-void Window::addListener(IWindowListener* listener)
+void Window::addListener(IListener* listener)
 {
 	m_listeners.insert(listener);
 }
 
-void Window::removeListener(IWindowListener* listener)
+void Window::removeListener(IListener* listener)
 {
 	m_listeners.erase(listener);
 }
@@ -217,8 +217,8 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		window = reinterpret_cast< Window* >(GetWindowLongPtr(hWnd, 0));
 		if (window)
 		{
-			for (std::set< IWindowListener* >::iterator i = window->m_listeners.begin(); i != window->m_listeners.end(); ++i)
-				handled |= (*i)->windowListenerEvent(window, message, wParam, lParam, result);
+			for (const auto& listener : window->m_listeners)
+				handled |= listener->windowListenerEvent(window, message, wParam, lParam, result);
 		}
 
 		if (!handled)

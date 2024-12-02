@@ -18,6 +18,9 @@ namespace traktor::render
 
 class ApiBuffer;
 
+/*!
+ * \ingroup Render
+ */
 class BufferStaticVk : public BufferVk
 {
 	T_RTTI_CLASS;

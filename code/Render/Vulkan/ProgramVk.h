@@ -27,7 +27,7 @@ class ProgramResourceVk;
 class ShaderModuleCache;
 
 /*!
- * \ingroup Vulkan
+ * \ingroup Render
  */
 class ProgramVk
 :	public IProgram

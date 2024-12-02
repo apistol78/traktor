@@ -16,6 +16,9 @@
 namespace traktor::render
 {
 
+/*!
+ * \ingroup Render
+ */
 class BufferDynamicVk : public BufferVk
 {
 	T_RTTI_CLASS;

@@ -14,6 +14,9 @@
 namespace traktor::render
 {
 
+/*!
+ * \ingroup Render
+ */
 class VertexLayoutVk : public IVertexLayout
 {
 	T_RTTI_CLASS;

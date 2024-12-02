@@ -20,14 +20,17 @@
 namespace traktor::render
 {
 
-struct IWindowListener
-{
-	virtual bool windowListenerEvent(class Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult) = 0;
-};
-
+/*!
+ * \ingroup Render
+ */
 class Window : public Object
 {
 public:
+	struct IListener
+	{
+		virtual bool windowListenerEvent(class Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult) = 0;
+	};
+
 	Window();
 
 	virtual ~Window();
@@ -50,9 +53,9 @@ public:
 
 	operator HWND () const;
 
-	void addListener(IWindowListener* listener);
+	void addListener(IListener* listener);
 
-	void removeListener(IWindowListener* listener);
+	void removeListener(IListener* listener);
 
 	bool haveWindowedStyle() const { return !m_fullScreen; }
 
@@ -61,7 +64,7 @@ public:
 private:
 	HWND m_hWnd;
 	bool m_fullScreen;
-	std::set< IWindowListener* > m_listeners;
+	std::set< IListener* > m_listeners;
 	POINT m_windowPosition;
 
 	static LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

@@ -15,6 +15,9 @@
 namespace traktor::render
 {
 
+/*!
+ * \ingroup Render
+ */
 class RenderPassCache : public Object
 {
 	T_RTTI_CLASS;

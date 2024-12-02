@@ -19,6 +19,9 @@ class ApiBuffer;
 class Context;
 class UniformBufferChain;
 
+/*!
+ * \ingroup Render
+ */
 struct UniformBufferRange
 {
 	UniformBufferChain* chain = nullptr;
@@ -26,6 +29,9 @@ struct UniformBufferRange
 	void* ptr = nullptr;
 };
 
+/*!
+ * \ingroup Render
+ */
 class UniformBufferChain : public Object
 {
 public:

@@ -26,6 +26,9 @@ namespace traktor::render
 class Context;
 class Queue;
 
+/*!
+ * \ingroup Render
+ */
 class CommandBuffer : public Object
 {
 	T_RTTI_CLASS;

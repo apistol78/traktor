@@ -18,7 +18,7 @@ namespace traktor::render
 class Context;
 
 /*!
- * \ingroup Vulkan
+ * \ingroup Render
  */
 class ApiBuffer : public Object
 {

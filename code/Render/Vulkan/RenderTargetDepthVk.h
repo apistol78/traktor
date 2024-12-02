@@ -20,7 +20,7 @@ class Image;
 struct RenderTargetSetCreateDesc;
 
 /*!
- * \ingroup Vulkan
+ * \ingroup Render
  */
 class RenderTargetDepthVk : public ITexture
 {

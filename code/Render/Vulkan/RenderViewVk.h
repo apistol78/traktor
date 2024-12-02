@@ -35,12 +35,12 @@ class RenderTargetSetVk;
 class VertexLayoutVk;
 
 /*!
- * \ingroup Vulkan
+ * \ingroup Render
  */
 class RenderViewVk
 :	public IRenderView
 #if defined(_WIN32)
-,	public IWindowListener
+,	public Window::IListener
 #endif
 {
 	T_RTTI_CLASS;

@@ -32,7 +32,7 @@ class Window;
 #endif
 
 /*! Vulkan render system.
- * \ingroup Vulkan
+ * \ingroup Render
  *
  * Vulkan render system implementation.
  */

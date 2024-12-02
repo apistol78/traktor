@@ -25,7 +25,7 @@ class RenderTargetVk;
 struct RenderTargetSetCreateDesc;
 
 /*!
- * \ingroup Vulkan
+ * \ingroup Render
  */
 class RenderTargetSetVk : public IRenderTargetSet
 {

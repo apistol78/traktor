@@ -16,11 +16,12 @@
 #include "Core/Object.h"
 #include "Render/Types.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
+/*!
+ * \ingroup Render
+ */
 class Window : public Object
 {
 public:
@@ -84,6 +85,4 @@ private:
 	void setWmProperty(Atom property1, Atom property2, int32_t value);
 };
 
-	}
 }
-

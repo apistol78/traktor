@@ -23,6 +23,7 @@ class Queue;
 class UniformBufferPool;
 
 /*! Render system shared context.
+ * \ingroup Render
  *
  * This context is owned by render system and shared
  * across all render views.

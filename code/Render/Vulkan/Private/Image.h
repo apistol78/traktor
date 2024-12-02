@@ -19,7 +19,7 @@ class CommandBuffer;
 class Context;
 
 /*!
- * \ingroup Vulkan
+ * \ingroup Render
  */
 class Image : public Object
 {

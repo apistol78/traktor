@@ -15,6 +15,9 @@ namespace traktor::render
 
 class Context;
 
+/*!
+ * \ingroup Render
+ */
 class BufferVk : public Buffer
 {
 	T_RTTI_CLASS;

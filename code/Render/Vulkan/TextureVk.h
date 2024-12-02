@@ -22,7 +22,7 @@ class Image;
 struct SimpleTextureCreateDesc;
 
 /*!
- * \ingroup Vulkan
+ * \ingroup Render
  */
 class TextureVk : public ITexture
 {
