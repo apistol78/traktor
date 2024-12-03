@@ -6402,6 +6402,10 @@
 																			<sourceFile>libTraktor.Render.Vrfy.so</sourceFile>
 																			<targetPath>debugshared</targetPath>
 																		</item>
+																		<item type="AggregationItem">
+																			<sourceFile>$(RENDERDOC_SDK)/lib/librenderdoc.so</sourceFile>
+																			<targetPath>debugshared</targetPath>
+																		</item>
 																	</aggregationItems>
 																	<consumerLibraryPath>debugshared</consumerLibraryPath>
 																</item>
@@ -6429,6 +6433,10 @@
 																	<aggregationItems>
 																		<item type="AggregationItem">
 																			<sourceFile>libTraktor.Render.Vrfy.so</sourceFile>
+																			<targetPath>releaseshared</targetPath>
+																		</item>
+																		<item type="AggregationItem">
+																			<sourceFile>$(RENDERDOC_SDK)/lib/librenderdoc.so</sourceFile>
 																			<targetPath>releaseshared</targetPath>
 																		</item>
 																	</aggregationItems>
@@ -6460,6 +6468,10 @@
 																			<sourceFile>libTraktor.Render.Vrfy.a</sourceFile>
 																			<targetPath>debugstatic</targetPath>
 																		</item>
+																		<item type="AggregationItem">
+																			<sourceFile>$(RENDERDOC_SDK)/lib/librenderdoc.so</sourceFile>
+																			<targetPath>debugstatic</targetPath>
+																		</item>
 																	</aggregationItems>
 																	<consumerLibraryPath>debugstatic</consumerLibraryPath>
 																</item>
@@ -6487,6 +6499,10 @@
 																	<aggregationItems>
 																		<item type="AggregationItem">
 																			<sourceFile>libTraktor.Render.Vrfy.a</sourceFile>
+																			<targetPath>releasestatic</targetPath>
+																		</item>
+																		<item type="AggregationItem">
+																			<sourceFile>$(RENDERDOC_SDK)/lib/librenderdoc.so</sourceFile>
 																			<targetPath>releasestatic</targetPath>
 																		</item>
 																	</aggregationItems>
