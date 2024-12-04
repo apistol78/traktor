@@ -458,7 +458,7 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-const int N = 32;
+const int N = 8;
 const mat3 R = Rotate($Direction.xyz, $Random);
 
 vec4 acc = vec4(0.0f);
@@ -479,21 +479,46 @@ for (int i = 0; i < N; ++i)
 		rayDir,
 		200.0f
 	);
-	
 	while(rayQueryProceedEXT(rayQuery));
 	
-	if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
+	if (rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT)
 	{
-		const HWRT_Material m = HWRT_GetMaterial(rayQuery);
-		float phi = clamp(dot($LightDirection.xyz, m.normal.xyz), 0.0f, 1.0f);
-		acc += vec4(
-			(m.albedo *  phi * $LightColor).xyz * 2.0f,
-			1.0f
-		);
+		const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
+		const vec3 hit = rayOrigin + rayDir * t;
+
+		// Cast shadow ray.
+		bool shadowed = false;
+		{
+			rayQueryEXT rayQueryShadow;
+			rayQueryInitializeEXT(
+				rayQueryShadow,
+				$AS,
+				gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,
+				0xff,
+				hit,
+				1.0f,
+				$LightDirection.xyz,
+				100.0f
+			);
+			while(rayQueryProceedEXT(rayQueryShadow));
+			if (rayQueryGetIntersectionTypeEXT(rayQueryShadow, true) != gl_RayQueryCommittedIntersectionNoneEXT)
+				shadowed = true;
+		}
+
+		if (!shadowed)
+		{
+			const HWRT_Material m = HWRT_GetMaterial(rayQuery);
+			float phi = clamp(dot($LightDirection.xyz, m.normal.xyz), 0.0f, 1.0f);
+			acc += vec4(
+				(m.albedo *  phi * $LightColor).xyz * 4.0f,
+				1.0f
+			);
+		}
 	}
 }
 
 $Output = (acc / N);
+
 			]]>
 			</script>
 		</item>
