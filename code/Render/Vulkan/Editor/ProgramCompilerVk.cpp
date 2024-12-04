@@ -231,6 +231,24 @@ bool performValidation(const AlignedVector< uint32_t >& spirv)
 	return st.Validate(spirv.c_ptr(), (size_t)spirv.size());
 }
 
+const std::wstring& lookupFilterName(Filter filter)
+{
+	const static std::wstring names[] = { L"Point", L"Linear" };
+	return names[(int32_t)filter];
+}
+
+const std::wstring& lookupAddressName(Address address)
+{
+	const static std::wstring names[] = { L"Wrap", L"Mirror", L"Clamp", L"Border" };
+	return names[(int32_t)address];
+}
+
+const std::wstring& lookupCompareFunctionName(CompareFunction compareFunction)
+{
+	const static std::wstring names[] = { L"Always", L"Never", L"Less", L"LessEqual", L"Greater", L"GreaterEqual", L"Equal", L"NotEqual", L"None" };
+	return names[(int32_t)compareFunction];
+}
+
 	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerVk", 0, ProgramCompilerVk, IProgramCompiler)
@@ -876,8 +894,19 @@ bool ProgramCompilerVk::generate(
 	{
 		if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 		{
+			const SamplerState& state = sampler->getState();
 			ss << L"// [binding = " << sampler->getBinding() << L", set = " << (int32_t)sampler->getSet() << L"] = sampler" << Endl;
 			ss << L"//   .name = \"" << sampler->getName() << L"\"" << Endl;
+			ss << L"//   .minFilter = " << lookupFilterName(state.minFilter) << Endl;
+			ss << L"//   .mipFilter = " << lookupFilterName(state.mipFilter) << Endl;
+			ss << L"//   .magFilter = " << lookupFilterName(state.magFilter) << Endl;
+			ss << L"//   .addressU = " << lookupAddressName(state.addressU) << Endl;
+			ss << L"//   .addressV = " << lookupAddressName(state.addressV) << Endl;
+			ss << L"//   .addressW = " << lookupAddressName(state.addressW) << Endl;
+			ss << L"//   .compare = " << lookupCompareFunctionName(state.compare) << Endl;
+			ss << L"//   .mipBias = " << state.mipBias << Endl;
+			ss << L"//   .ignoreMips = " << (state.ignoreMips ? L"YES" : L"NO") << Endl;
+			ss << L"//   .useAnisotropic = " << (state.ignoreMips ? L"YES" : L"NO") << Endl;
 		}
 		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
 		{

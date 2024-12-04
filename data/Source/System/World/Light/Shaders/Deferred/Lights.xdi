@@ -52,8 +52,8 @@
 			<id>{41E87F6F-D99A-B34D-9B53-3940EDA30A76}</id>
 			<comment/>
 			<position>
-				<first>6589</first>
-				<second>-327</second>
+				<first>6583</first>
+				<second>-276</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -665,8 +665,8 @@
 			<id>{E782D441-9FC4-0040-A370-64AD4BE418E7}</id>
 			<comment/>
 			<position>
-				<first>6354</first>
-				<second>-1594</second>
+				<first>6318</first>
+				<second>-1584</second>
 			</position>
 			<name>L_Iteration</name>
 		</item>
@@ -786,7 +786,7 @@
 			<addressW>AdWrap</addressW>
 			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.FragmentPosition" version="traktor.render.Node:1">
@@ -835,8 +835,8 @@
 			<id>{51ABC7C2-89D0-2C44-B879-26B3CB8DBF96}</id>
 			<comment/>
 			<position>
-				<first>5625</first>
-				<second>-325</second>
+				<first>5619</first>
+				<second>-273</second>
 			</position>
 			<name>L_Occlusion</name>
 		</item>
@@ -1430,8 +1430,8 @@ Check max shadow distance
 			<id>{6535FC88-25D1-F341-9B9F-2117E3923A66}</id>
 			<comment/>
 			<position>
-				<first>6360</first>
-				<second>-1454</second>
+				<first>6318</first>
+				<second>-1531</second>
 			</position>
 			<name>L_Light_Analytical</name>
 		</item>
@@ -1475,8 +1475,8 @@ Check max shadow distance
 			<id>{97EEDDED-5F2A-7F4A-BD92-4AFFDD0DA48F}</id>
 			<comment/>
 			<position>
-				<first>6072</first>
-				<second>-303</second>
+				<first>6066</first>
+				<second>-252</second>
 			</position>
 			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
 			<inputPins>
@@ -1503,8 +1503,8 @@ Check max shadow distance
 			<id>{49D85CEA-D8A4-F249-A015-3175C4C314FD}</id>
 			<comment/>
 			<position>
-				<first>5853</first>
-				<second>-227</second>
+				<first>5847</first>
+				<second>-176</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -1512,8 +1512,8 @@ Check max shadow distance
 			<id>{D7B6A146-B2DD-7848-AC6F-2632E1E61A84}</id>
 			<comment/>
 			<position>
-				<first>5615</first>
-				<second>-195</second>
+				<first>5596</first>
+				<second>-222</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
@@ -1901,7 +1901,7 @@ Check max shadow distance
 			<addressW>AdWrap</addressW>
 			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
@@ -2300,8 +2300,8 @@ $Output = vec4(Lout.xyz, 0.0f);
 			<id>{FDF46E6B-7D21-5C46-8976-5D5332D72610}</id>
 			<comment/>
 			<position>
-				<first>5831</first>
-				<second>-325</second>
+				<first>5825</first>
+				<second>-273</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
@@ -2414,8 +2414,8 @@ $Output = vec4(r, 0.0f);
 			<id>{BE98BDC5-0C97-7B4E-9D93-4C0C48AC3C6B}</id>
 			<comment/>
 			<position>
-				<first>6381</first>
-				<second>-264</second>
+				<first>6375</first>
+				<second>-213</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -2664,7 +2664,7 @@ $Output = vec4(r, 0.0f);
 			<addressW>AdWrap</addressW>
 			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
@@ -2709,8 +2709,8 @@ $Output = vec4(r, 0.0f);
 			<id>{57C4ABED-9310-EB45-8503-8FEB9593243A}</id>
 			<comment/>
 			<position>
-				<first>5372</first>
-				<second>-199</second>
+				<first>5354</first>
+				<second>-226</second>
 			</position>
 			<name>L_Light_Analytical</name>
 		</item>
@@ -2727,8 +2727,8 @@ $Output = vec4(r, 0.0f);
 			<id>{50B7F27F-66AF-8A4A-BE15-2743D702882E}</id>
 			<comment/>
 			<position>
-				<first>5390</first>
-				<second>-129</second>
+				<first>5371</first>
+				<second>-157</second>
 			</position>
 			<name>L_Light_IB</name>
 		</item>
@@ -4722,16 +4722,6 @@ $Output = vec4(r, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[184]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[132]"/>
-				<id>{AFF255D0-F99A-7B4E-BB42-5C8D3D7B7336}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[135]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -4922,16 +4912,6 @@ $Output = vec4(r, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[219]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[218]"/>
-				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[39]"/>
 				<id>{C55FBCBA-5E27-4B38-ACFE-831F8DB3CCA4}</id>
 			</source>
@@ -4958,6 +4938,26 @@ $Output = vec4(r, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[201]"/>
 				<id>{44AE64A5-E05F-C047-A013-D291FB572E52}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[184]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[132]"/>
+				<id>{AFF255D0-F99A-7B4E-BB42-5C8D3D7B7336}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[219]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[218]"/>
+				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
 			</destination>
 		</item>
 	</edges>
