@@ -21,6 +21,7 @@ class CommandLine;
 namespace traktor::ui
 {
 
+class CaptionBar;
 class GridView;
 class ShortcutEvent;
 class ShortcutTable;
@@ -42,7 +43,7 @@ public:
 
 private:
 	Ref< ShortcutTable > m_shortcutTable;
-	Ref< ToolBar > m_menuBar;
+	Ref< CaptionBar > m_menuBar;
 	Ref< TreeView > m_treeTheme;
 	Ref< TreeViewItem > m_pinnedElementItem;
 	Ref< GridView > m_gridPalette;

@@ -17,6 +17,7 @@
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/CaptionBar.h"
 #include "Ui/Clipboard.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
@@ -39,6 +40,7 @@
 #include "Ui/Theme/App/PreviewWidgetFactory.h"
 #include "Ui/Theme/App/ThemeForm.h"
 #include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/ToolBar/ToolBarMenu.h"
 #include "Ui/TreeView/TreeView.h"
@@ -160,7 +162,13 @@ bool ThemeForm::create(const CommandLine& cmdLine)
 
 	Application::getInstance()->setStyleSheet(styleSheet);
 
-	if (!Form::create(L"Theme Editor", 1000_ut, 800_ut, Form::WsDefault, new TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
+	if (!Form::create(
+		L"Theme Editor",
+		1000_ut,
+		800_ut,
+		ui::WsResizable | ui::WsSystemBox | ui::WsMinimizeBox | ui::WsMaximizeBox | ui::WsNoCanvas,
+		new TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)
+	))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"ThemeEditor.Icon"));
@@ -178,9 +186,11 @@ bool ThemeForm::create(const CommandLine& cmdLine)
 	m_shortcutTable->addCommand(ui::KsCommand, ui::VkC, ui::Command(L"Edit.Copy"));
 	m_shortcutTable->addCommand(ui::KsCommand, ui::VkV, ui::Command(L"Edit.Paste"));
 
-	m_menuBar = new ToolBar();
+	m_menuBar = new CaptionBar();
 	m_menuBar->create(this);
 	m_menuBar->addEventHandler< ToolBarButtonClickEvent >(this, &ThemeForm::eventMenuClick);
+	m_menuBar->addImage(new ui::StyleBitmap(L"Editor.IconSmall"));
+	m_menuBar->addItem(new ui::ToolBarButton(L"Traktor", 0, ui::Command()));
 
 	//m_menuItemMRU = new MenuItem(L"Recent");
 

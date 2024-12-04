@@ -7,8 +7,11 @@
    viewBox="0 0 135.46666 135.46667"
    version="1.1"
    id="svg1"
-   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
    sodipodi:docname="Icon.svg"
+   inkscape:export-filename="..\..\..\..\..\..\..\..\Icon.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,15 +27,15 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="px"
      showgrid="true"
-     inkscape:zoom="0.15815587"
-     inkscape:cx="-989.53017"
-     inkscape:cy="-417.30985"
-     inkscape:window-width="1440"
-     inkscape:window-height="747"
-     inkscape:window-x="0"
-     inkscape:window-y="32"
+     inkscape:zoom="0.44733235"
+     inkscape:cx="-575.63465"
+     inkscape:cy="-342.02758"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     inkscape:window-x="1272"
+     inkscape:window-y="2152"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer2">
+     inkscape:current-layer="layer1">
     <inkscape:grid
        id="grid1"
        units="px"
@@ -68,17 +71,17 @@
      id="layer1"
      style="display:inline">
     <circle
-       style="fill:none;stroke:#545454;stroke-width:10.8062;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;stroke:#545454;stroke-width:6.25527909;stroke-dasharray:none;stroke-opacity:1"
        id="path11"
        cy="67.73333"
        cx="67.73333"
        r="55.033333" />
     <circle
-       style="fill:none;stroke:#ffffff;stroke-width:4.95644;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;stroke:#ffffff;stroke-width:5.47254;stroke-dasharray:none;stroke-opacity:1"
        id="circle13"
        cy="67.73333"
        cx="67.73333"
-       r="55.033329" />
+       r="60.763729" />
   </g>
   <g
      inkscape:groupmode="layer"

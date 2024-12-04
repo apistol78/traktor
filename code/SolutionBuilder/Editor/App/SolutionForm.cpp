@@ -17,6 +17,7 @@
 #include "Core/System/OS.h"
 #include "Drawing/Formats/ImageFormatBmp.h"
 #include "Ui/Application.h"
+#include "Ui/CaptionBar.h"
 #include "Ui/Clipboard.h"
 #include "Ui/MessageBox.h"
 #include "Ui/FloodLayout.h"
@@ -25,6 +26,7 @@
 #include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
 #include "Ui/Splitter.h"
+#include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarMenu.h"
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
@@ -107,7 +109,7 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 		SB_TITLE,
 		1000_ut,
 		800_ut,
-		ui::Form::WsDefault,
+		ui::WsResizable | ui::WsSystemBox | ui::WsMinimizeBox | ui::WsMaximizeBox | ui::WsNoCanvas,
 		new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)
 	))
 		return false;
@@ -129,9 +131,11 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_shortcutTable->addCommand(ui::KsCommand, ui::VkV, ui::Command(L"Edit.Paste"));
 	m_shortcutTable->addEventHandler< ui::ShortcutEvent >(this, &SolutionForm::eventShortcut);
 
-	m_menuBar = new ui::ToolBar();
+	m_menuBar = new ui::CaptionBar();
 	m_menuBar->create(this);
 	m_menuBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &SolutionForm::eventMenuClick);
+	m_menuBar->addImage(new ui::StyleBitmap(L"Editor.IconSmall"));
+	m_menuBar->addItem(new ui::ToolBarButton(L"Traktor", 0, ui::Command()));
 
 	m_menuItemMRU = new ui::MenuItem(L"Recent");
 

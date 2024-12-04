@@ -22,6 +22,13 @@
 #include "Ui/TreeView/TreeViewItem.h"
 #include "Ui/TreeView/TreeViewItemMouseButtonDownEvent.h"
 
+namespace traktor::ui
+{
+
+class CaptionBar;
+
+}
+
 namespace traktor::sb
 {
 
@@ -51,7 +58,7 @@ public:
 
 private:
 	Ref< ui::ShortcutTable > m_shortcutTable;
-	Ref< ui::ToolBar > m_menuBar;
+	Ref< ui::CaptionBar > m_menuBar;
 	Ref< ui::MenuItem > m_menuItemMRU;
 	Ref< ui::TreeView > m_treeSolution;
 	Ref< ui::Menu > m_menuSolution;
