@@ -5,16 +5,16 @@
 			<id>{759DE9C5-E63A-5143-9D1E-42AFC75E5224}</id>
 			<comment/>
 			<position>
-				<first>914</first>
-				<second>324</second>
+				<first>1676</first>
+				<second>316</second>
 			</position>
 		</item>
 		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{3B08D7B7-89D6-334E-BDD9-8DB84A2CDE9C}</id>
 			<comment/>
 			<position>
-				<first>573</first>
-				<second>281</second>
+				<first>421</first>
+				<second>234</second>
 			</position>
 			<name>Irradiance</name>
 			<clear>
@@ -43,6 +43,134 @@
 				</item>
 			</steps>
 		</item>
+		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
+			<id>{65C8D247-5851-A849-8944-6C5071D06434}</id>
+			<comment/>
+			<position>
+				<first>656</first>
+				<second>254</second>
+			</position>
+			<targetSetId>Irradiance</targetSetId>
+			<persistent>false</persistent>
+			<width>0</width>
+			<height>0</height>
+			<screenWidthDenom>2</screenWidthDenom>
+			<screenHeightDenom>2</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<createDepthStencil>false</createDepthStencil>
+			<ignoreStencil>false</ignoreStencil>
+			<generateMips>false</generateMips>
+			<targets>
+				<item>
+					<textureId>Output</textureId>
+					<colorFormat>TfR16G16B16A16F</colorFormat>
+				</item>
+			</targets>
+		</item>
+		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
+			<id>{508B945F-08BF-8747-8B91-7C8EC004DAF9}</id>
+			<comment/>
+			<position>
+				<first>1215</first>
+				<second>296</second>
+			</position>
+			<targetSetId>Temporary</targetSetId>
+			<persistent>false</persistent>
+			<width>0</width>
+			<height>0</height>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<createDepthStencil>false</createDepthStencil>
+			<ignoreStencil>false</ignoreStencil>
+			<generateMips>false</generateMips>
+			<targets>
+				<item>
+					<textureId>Output</textureId>
+					<colorFormat>TfR16G16B16A16F</colorFormat>
+				</item>
+			</targets>
+		</item>
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
+			<id>{B3F5BEB7-F83A-904D-9DF2-DF093C895543}</id>
+			<comment/>
+			<position>
+				<first>958</first>
+				<second>237</second>
+			</position>
+			<name>Irradiance blur X</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
+			<steps>
+				<item type="traktor.render.ImgStepDirectionalBlur" version="1,traktor.render.IImgStep:2">
+					<blurType>Gaussian</blurType>
+					<direction>3, 0</direction>
+					<taps>16</taps>
+					<shader>{B122496C-B9E3-C649-9B03-A2E5F842D6E8}</shader>
+					<parameters>
+						<item>Source</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
+			<id>{9329FA91-9567-9F4F-B7EB-C6AABA94E853}</id>
+			<comment/>
+			<position>
+				<first>1443</first>
+				<second>259</second>
+			</position>
+			<name>Irradiance blur Y</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
+			<steps>
+				<item type="traktor.render.ImgStepDirectionalBlur" version="1,traktor.render.IImgStep:2">
+					<blurType>Gaussian</blurType>
+					<direction>0, 3</direction>
+					<taps>16</taps>
+					<shader>{B122496C-B9E3-C649-9B03-A2E5F842D6E8}</shader>
+					<parameters>
+						<item>Source</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -51,8 +179,48 @@
 				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
 	</edges>

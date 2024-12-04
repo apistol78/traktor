@@ -73,6 +73,25 @@ mat3 Rotate(vec3 axis, float angle)
 	);
 }
 
+vec3 Sphere(vec2 rnd)
+{
+	const float z = 2.0f * rnd.x - 1.0f;
+	const float t = 2.0f * 3.142f * rnd.y;
+	const float w = sqrt(1.0f - z * z);
+	const float x = w * cos(t);
+	const float y = w * sin(t);
+	return vec3(x, y, z);
+}
+
+vec3 Hemi(vec3 direction, vec2 rnd)
+{
+	vec3 ot = Sphere(rnd);
+	if (dot(ot, direction) < 0.0f)
+		ot = -ot;
+	return ot;
+}
+
+
 	]]>
 	</text>
 </object>

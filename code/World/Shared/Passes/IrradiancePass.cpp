@@ -23,6 +23,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
+#include "World/Entity/LightComponent.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/Shared/Passes/IrradiancePass.h"
 
@@ -32,6 +33,9 @@ namespace traktor::world
 	{
 
 const resource::Id< render::ImageGraph > c_irradiance(L"{14A0E977-7C13-9B43-A26E-F1D21117AEC6}");
+
+const render::Handle s_handleDominantLightDirection(L"World_DominantLightDirection");
+const render::Handle s_handleDominantLightColor(L"World_DominantLightColor");
 
 	}
 
@@ -69,6 +73,7 @@ render::handle_t IrradiancePass::setup(
 
 	const bool irradianceEnable = (bool)(gatheredView.irradianceGrid != nullptr);
 	const bool irradianceSingle = irradianceEnable && gatheredView.irradianceGrid->isSingle();
+	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr);
 
 	// Add ambient occlusion target set.
 	render::RenderGraphTargetSetDesc rgtd;
@@ -88,6 +93,7 @@ render::handle_t IrradiancePass::setup(
 	render::ImageGraphContext igctx;
 	igctx.setTechniqueFlag(s_handleIrradianceEnable, irradianceEnable);
 	igctx.setTechniqueFlag(s_handleIrradianceSingle, irradianceSingle);
+	igctx.setTechniqueFlag(s_handleRayTracingEnable, rayTracingEnable);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance");
 	rp->addInput(gbufferTargetSetId);
@@ -117,6 +123,22 @@ render::handle_t IrradiancePass::setup(
 			params->setVectorParameter(s_handleIrradianceGridBoundsMax, gatheredView.irradianceGrid->getBoundingBox().mx);
 			params->setBufferViewParameter(s_handleIrradianceGridSBuffer, gatheredView.irradianceGrid->getBuffer()->getBufferView());
 		}
+
+		Vector4 lightDirection = Vector4::zero();
+		Vector4 lightColor = Vector4::zero();
+
+		if (!gatheredView.lights.empty())
+		{
+			if (gatheredView.lights[0] != nullptr && gatheredView.lights[0]->getLightType() == LightType::Directional)
+			{
+				const Matrix44 lightTransform = worldRenderView.getView() * gatheredView.lights[0]->getTransform().toMatrix44();
+				lightDirection = lightTransform.axisY().xyz0();
+				lightColor = gatheredView.lights[0]->getColor();
+			}
+		}
+
+		params->setVectorParameter(s_handleDominantLightDirection, lightDirection);
+		params->setVectorParameter(s_handleDominantLightColor, lightColor);
 
 		if (gatheredView.rtWorldTopLevel != nullptr)
 			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);

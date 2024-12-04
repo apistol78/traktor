@@ -2465,6 +2465,11 @@ $Output = vec4(r, 0.0f);
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
+				<item>
+					<id>{44AE64A5-E05F-C047-A013-D291FB572E52}</id>
+					<name>MaxDistance</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -2511,6 +2516,11 @@ $Output = vec4(r, 0.0f);
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
+				<item>
+					<id>{44AE64A5-E05F-C047-A013-D291FB572E52}</id>
+					<name>MaxDistance</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -2556,6 +2566,11 @@ $Output = vec4(r, 0.0f);
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
+				<item>
+					<id>{44AE64A5-E05F-C047-A013-D291FB572E52}</id>
+					<name>MaxDistance</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -2587,8 +2602,8 @@ $Output = vec4(r, 0.0f);
 			<id>{ED8AB8E6-BCAC-41C8-8AF6-52F649A4F6D6}</id>
 			<comment/>
 			<position>
-				<first>4167</first>
-				<second>-337</second>
+				<first>4173</first>
+				<second>-454</second>
 			</position>
 			<parameterName>World_RayTracingEnable</parameterName>
 		</item>
@@ -4667,16 +4682,6 @@ $Output = vec4(r, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[204]"/>
-				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[36]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[37]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
@@ -4923,6 +4928,36 @@ $Output = vec4(r, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[218]"/>
 				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[39]"/>
+				<id>{C55FBCBA-5E27-4B38-ACFE-831F8DB3CCA4}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[198]"/>
+				<id>{44AE64A5-E05F-C047-A013-D291FB572E52}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[204]"/>
+				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{C55FBCBA-5E27-4B38-ACFE-831F8DB3CCA4}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[201]"/>
+				<id>{44AE64A5-E05F-C047-A013-D291FB572E52}</id>
 			</destination>
 		</item>
 	</edges>

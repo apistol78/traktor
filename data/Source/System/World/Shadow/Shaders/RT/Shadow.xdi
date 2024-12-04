@@ -5,8 +5,8 @@
 			<id>{19EFE6E9-FEC4-7144-95C9-51B4E342DD7D}</id>
 			<comment/>
 			<position>
-				<first>2008</first>
-				<second>665</second>
+				<first>1992</first>
+				<second>683</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{6711C4F9-06DE-D84F-90DA-F303DD71D90C}</id>
 			<comment/>
 			<position>
-				<first>2016</first>
-				<second>1029</second>
+				<first>2015</first>
+				<second>1048</second>
 			</position>
 			<declaration>{C0A1721B-9DAA-9A4C-BD6D-90C8B517D6BE}</declaration>
 			<parameterName>World_TLAS</parameterName>
@@ -26,8 +26,8 @@
 			<id>{E33C3258-EF52-AE43-8182-9B3411A454FD}</id>
 			<comment/>
 			<position>
-				<first>1982</first>
-				<second>743</second>
+				<first>2000</first>
+				<second>738</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -44,8 +44,8 @@
 			<id>{1FABF8E8-9D70-2044-B4EE-4C152393BA4C}</id>
 			<comment/>
 			<position>
-				<first>1786</first>
-				<second>953</second>
+				<first>1977</first>
+				<second>939</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName>World_ViewInverse</parameterName>
@@ -64,8 +64,8 @@
 			<id>{299D5B9B-AC82-9E47-B3CD-0592F057580C}</id>
 			<comment/>
 			<position>
-				<first>1901</first>
-				<second>785</second>
+				<first>1965</first>
+				<second>791</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName>World_ViewInverse</parameterName>
@@ -84,8 +84,8 @@
 			<id>{1F6AB3C8-B7F9-184E-B1A1-0E403AA79CF1}</id>
 			<comment/>
 			<position>
-				<first>2285</first>
-				<second>656</second>
+				<first>2257</first>
+				<second>660</second>
 			</position>
 			<declaration>{41DB2032-2B2B-7945-8B6B-947CEC7818A4}</declaration>
 			<parameterName>World_TLAS</parameterName>
@@ -134,6 +134,10 @@
 					<id>{690235F3-58B9-684F-B2C5-0AFAF17C34DA}</id>
 					<name>Distance</name>
 				</item>
+				<item>
+					<id>{D05A18C4-5FA4-6746-A960-86CBB0908A76}</id>
+					<name>MaxDistance</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -172,7 +176,7 @@ for (int i = 0; i < N; ++i)
 		rayOrigin,
 		near,
 		rayDir,
-		HWRT_DefaultFar
+		$MaxDistance
 	);
 	
 	while(rayQueryProceedEXT(rayQuery));
@@ -184,6 +188,7 @@ for (int i = 0; i < N; ++i)
 }
 
 $Output = 1.0f - float(nshadowed) / N;
+
 			]]>
 			</script>
 		</item>
@@ -191,8 +196,8 @@ $Output = 1.0f - float(nshadowed) / N;
 			<id>{D8EC541E-FBF8-1D43-8A57-76299D502A4F}</id>
 			<comment/>
 			<position>
-				<first>1716</first>
-				<second>696</second>
+				<first>1712</first>
+				<second>707</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -204,8 +209,8 @@ $Output = 1.0f - float(nshadowed) / N;
 			<id>{4461C127-EEC1-5944-8802-4227BDDA64A7}</id>
 			<comment/>
 			<position>
-				<first>1600</first>
-				<second>852</second>
+				<first>1712</first>
+				<second>868</second>
 			</position>
 			<name>ViewDirection</name>
 			<connectable>true</connectable>
@@ -226,8 +231,8 @@ $Output = 1.0f - float(nshadowed) / N;
 			<id>{A788E533-8EF9-DD41-B73F-03C373F0E887}</id>
 			<comment/>
 			<position>
-				<first>2319</first>
-				<second>988</second>
+				<first>2256</first>
+				<second>1018</second>
 			</position>
 			<name>RandomAngle</name>
 			<technique/>
@@ -259,9 +264,21 @@ $Output = 1.0f - float(nshadowed) / N;
 uvec2 seed = uvec2(gl_FragCoord.xy);
 seed += uvec2($Time * 1543, $Time * 543);
 $Output = BlueNoise(seed) * 2.0f * 3.142f;
-
 			]]>
 			</script>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{44AE64A5-E05F-C047-A013-D291FB572E52}</id>
+			<comment/>
+			<position>
+				<first>2206</first>
+				<second>1108</second>
+			</position>
+			<name>MaxDistance</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>100</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -403,6 +420,16 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<id>{45D32A5E-5CDA-064C-9156-C2EB256BBF3F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{D05A18C4-5FA4-6746-A960-86CBB0908A76}</id>
 			</destination>
 		</item>
 	</edges>

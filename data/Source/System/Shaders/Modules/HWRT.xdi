@@ -54,6 +54,10 @@ HWRT_Material HWRT_GetMaterial(rayQueryEXT query)
 				m1.albedo, bary.x,
 				m2.albedo, bary.y
 			);
+
+			// Transform normal into world space.
+			const mat4x3 o2w = rayQueryGetIntersectionObjectToWorldEXT(query, true);
+			material.normal = vec4(o2w * material.normal, 0.0f);
 		}
 		else
 		{
