@@ -64,7 +64,7 @@
 			<targets>
 				<item>
 					<textureId>Output</textureId>
-					<colorFormat>TfR16G16B16A16F</colorFormat>
+					<colorFormat>TfR11G11B10F</colorFormat>
 				</item>
 			</targets>
 		</item>
@@ -79,8 +79,8 @@
 			<persistent>false</persistent>
 			<width>0</width>
 			<height>0</height>
-			<screenWidthDenom>1</screenWidthDenom>
-			<screenHeightDenom>1</screenHeightDenom>
+			<screenWidthDenom>2</screenWidthDenom>
+			<screenHeightDenom>2</screenHeightDenom>
 			<maxWidth>0</maxWidth>
 			<maxHeight>0</maxHeight>
 			<createDepthStencil>false</createDepthStencil>
@@ -89,7 +89,7 @@
 			<targets>
 				<item>
 					<textureId>Output</textureId>
-					<colorFormat>TfR16G16B16A16F</colorFormat>
+					<colorFormat>TfR11G11B10F</colorFormat>
 				</item>
 			</targets>
 		</item>
