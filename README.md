@@ -1,7 +1,7 @@
-# Traktor
+# ![image info](resources/documentation/images/logo.svg)
 Traktor is an open-source 3d game engine written in C++, it has powered several successful commercial titles across various platforms including Steam, PSN, iOS, and the Mac Store.
 
-![image info](resources/documentation/images/screenshot%20-%20editor%20-%2004.png)
+![image info](resources/documentation/images/screenshot%20-%20editor%20-%2005.png)
 
 [YouTube - Editing a level](https://youtu.be/eoL9xyd9PKg)
 
