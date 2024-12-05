@@ -70,6 +70,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	os << L"import bpy" << Endl;
 	os << L"bpy.ops.export_scene.fbx(" << Endl;
 	os << L"	filepath=\"" << scratchPath << L"/" << intermediate << L"\"," << Endl;
+	os << L"    object_types={'ARMATURE', 'MESH', 'OTHER'}," << Endl;
 	os << L"	axis_forward=\"Z\"," << Endl;
 	os << L"	axis_up=\"Y\"," << Endl;
 	os << L"	use_selection=False," << Endl;
