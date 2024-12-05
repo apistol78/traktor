@@ -543,7 +543,6 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 		shaderNode->setPosition(std::make_pair(absolutePosition.x, absolutePosition.y));
 
 		createEditorNode(shaderNode);
-
 		updateGraph();
 	}
 	// Create an external node in case of ShaderGraph.
@@ -567,7 +566,19 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 		shaderNode->setPosition(std::make_pair(absolutePosition.x, absolutePosition.y));
 
 		createEditorNode(shaderNode);
+		updateGraph();
+	}
+	// Create uniform in case of UniformDeclaration.
+	else if (is_type_of< UniformDeclaration >(*primaryType))
+	{
+		Ref< Uniform > shaderNode = new Uniform(instance->getGuid());
+		shaderNode->setId(Guid::create());
+		m_shaderGraph->addNode(shaderNode);
 
+		const ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
+		shaderNode->setPosition(std::make_pair(absolutePosition.x, absolutePosition.y));
+
+		createEditorNode(shaderNode);
 		updateGraph();
 	}
 	else

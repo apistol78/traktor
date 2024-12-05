@@ -160,17 +160,6 @@ void WorldRendererDeferred::setup(
 	// Add Hi-Z texture.
 	const render::handle_t hizTextureId = m_hiZPass->addTexture(worldRenderView, renderGraph);
 
-	// Add passes to render graph.
-	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
-	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, s_techniqueDeferredGBufferWrite, renderGraph, hizTextureId, outputTargetSetId);
-	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId, hizTextureId);
-	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto irradianceTargetSetId = m_irradiancePass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto contactShadowsTargetSetId = m_contactShadowsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, outputTargetSetId);
-
 	render::handle_t shadowMapAtlasTargetSetId = 0;
 	setupLightPass(
 		worldRenderView,
@@ -178,6 +167,19 @@ void WorldRendererDeferred::setup(
 		outputTargetSetId,
 		shadowMapAtlasTargetSetId
 	);
+
+	const render::Buffer* lightSBuffer = m_state[worldRenderView.getIndex()].lightSBuffer;
+
+	// Add passes to render graph.
+	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
+	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, s_techniqueDeferredGBufferWrite, renderGraph, hizTextureId, outputTargetSetId);
+	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId, hizTextureId);
+	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto irradianceTargetSetId = m_irradiancePass->setup(worldRenderView, m_gatheredView, lightSBuffer, count, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto contactShadowsTargetSetId = m_contactShadowsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, outputTargetSetId);
 
 	setupVisualPass(
 		worldRenderView,

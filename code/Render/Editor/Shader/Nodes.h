@@ -1265,6 +1265,8 @@ class T_DLLCLASS Uniform : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
+	explicit Uniform(const Guid& declaration);
+
 	explicit Uniform(
 		const std::wstring& parameterName = L"",
 		ParameterType type = ParameterType::Scalar,

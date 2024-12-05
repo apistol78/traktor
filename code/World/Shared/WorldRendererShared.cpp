@@ -122,7 +122,7 @@ bool WorldRendererShared::create(
 	{
 		m_state[i].lightSBuffer = renderSystem->createBuffer(
 			render::BuStructured,
-			LightClusterPass::c_maxLightCount * sizeof(LightShaderData),
+			(LightClusterPass::c_maxLightCount + 3) * sizeof(LightShaderData),
 			true
 		);
 		if (!m_state[i].lightSBuffer)
@@ -264,15 +264,11 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 
 	// Arrange lights.
 	{
+		m_gatheredView.lights.resize(0);
+		m_gatheredView.cascadingDirectionalLight = nullptr;
+
+		// Find cascade shadow directional light.
 		const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
-
-		m_gatheredView.lights.resize(4);
-		m_gatheredView.lights[0] = nullptr;
-		m_gatheredView.lights[1] = nullptr;
-		m_gatheredView.lights[2] = nullptr;
-		m_gatheredView.lights[3] = nullptr;
-
-		// Find cascade shadow light; must be first.
 		if (shadowsEnable)
 		{
 			for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
@@ -283,19 +279,23 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 					light->getLightType() == LightType::Directional
 				)
 				{
-					m_gatheredView.lights[0] = light;
+					m_gatheredView.cascadingDirectionalLight = light;
 					break;
 				}
 			}
 		}
 
-		// Add all other lights.
+		// Add all lights, skip cascade shadow directional light.
 		for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
 		{
 			auto& light = lights[i];
-			if (light != m_gatheredView.lights[0])
+			if (light != m_gatheredView.cascadingDirectionalLight)
 				m_gatheredView.lights.push_back(light);
 		}
+
+		// Append cascade shadow directional light last.
+		if (m_gatheredView.cascadingDirectionalLight != nullptr)
+			m_gatheredView.lights.push_back(m_gatheredView.cascadingDirectionalLight);
 	}
 }
 
@@ -335,55 +335,19 @@ void WorldRendererShared::setupLightPass(
 		for (int32_t i = 0; i < (int32_t)m_gatheredView.lights.size(); ++i)
 		{
 			const auto& light = m_gatheredView.lights[i];
-			if (
-				light != nullptr &&
-				light->getCastShadow() &&
-				light->getLightType() == LightType::Spot
-			)
+			if (light->getCastShadow() && light->getLightType() == LightType::Spot)
 				lightAtlasIndices.push_back(i);
 		}
 	}
 
 	// Write all lights to sbuffer; without shadow map information.
 	{
-		// First 4 entires are cascading shadow light.
-		if (m_gatheredView.lights[0] != nullptr)
-		{
-			const auto& light = m_gatheredView.lights[0];
-			auto* lsd = lightShaderData;
-
-			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
-			{
-				lsd->type[0] = (float)light->getLightType();
-
-				lsd->rangeRadius[0] = light->getNearRange();
-				lsd->rangeRadius[1] = light->getFarRange();
-				lsd->rangeRadius[2] = std::cos((light->getRadius() - deg2rad(8.0f)) / 2.0f);
-				lsd->rangeRadius[3] = std::cos(light->getRadius() / 2.0f);
-
-				const Matrix44 lightTransform = view * light->getTransform().toMatrix44();
-				lightTransform.translation().xyz1().storeUnaligned(lsd->position);
-				lightTransform.axisY().xyz0().storeUnaligned(lsd->direction);
-				(light->getColor() * light->getFlickerCoeff()).storeUnaligned(lsd->color);
-
-				Vector4::zero().storeUnaligned(lsd->viewToLight0);
-				Vector4::zero().storeUnaligned(lsd->viewToLight1);
-				Vector4::zero().storeUnaligned(lsd->viewToLight2);
-				Vector4::zero().storeUnaligned(lsd->viewToLight3);
-				Vector4::zero().storeUnaligned(lsd->atlasTransform);
-
-				++lsd;
-			}
-		}
-
-		// Append all other lights.
-		for (int32_t i = 4; i < (int32_t)m_gatheredView.lights.size(); ++i)
+		for (int32_t i = 0; i < (int32_t)m_gatheredView.lights.size(); ++i)
 		{
 			const auto& light = m_gatheredView.lights[i];
 			auto* lsd = &lightShaderData[i];
 
-			lsd->type[0] = (float)light->getLightType();
-
+			lsd->type = (float)light->getLightType();
 			lsd->rangeRadius[0] = light->getNearRange();
 			lsd->rangeRadius[1] = light->getFarRange();
 			lsd->rangeRadius[2] = std::cos((light->getRadius() - deg2rad(8.0f)) / 2.0f);
@@ -400,13 +364,26 @@ void WorldRendererShared::setupLightPass(
 			Vector4::zero().storeUnaligned(lsd->viewToLight3);
 			Vector4::zero().storeUnaligned(lsd->atlasTransform);
 		}
+
+		for (int32_t i = (int32_t)m_gatheredView.lights.size(); i < (int32_t)m_gatheredView.lights.size() + 3; ++i)
+		{
+			auto* lsd = &lightShaderData[i];
+
+			lsd->type = 0.0f;
+
+			Vector4::zero().storeUnaligned(lsd->viewToLight0);
+			Vector4::zero().storeUnaligned(lsd->viewToLight1);
+			Vector4::zero().storeUnaligned(lsd->viewToLight2);
+			Vector4::zero().storeUnaligned(lsd->viewToLight3);
+			Vector4::zero().storeUnaligned(lsd->atlasTransform);
+		}
 	}
 
 	// If shadow casting directional light found add cascade shadow map pass
 	// and update light sbuffer.
 	if (shadowsEnable)
 	{
-		const int32_t cascadingSlices = (m_gatheredView.lights[0] != nullptr) ? shadowSettings.cascadingSlices : 0;
+		const int32_t cascadingSlices = (m_gatheredView.cascadingDirectionalLight != nullptr) ? shadowSettings.cascadingSlices : 0;
 		const int32_t shmw = shadowSettings.resolution * (cascadingSlices + 1);
 		const int32_t shmh = shadowSettings.resolution;
 		const int32_t sliceDim = shadowSettings.resolution;
@@ -431,9 +408,9 @@ void WorldRendererShared::setupLightPass(
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow map");
 		rp->setOutput(outShadowMapAtlasTargetSetId, render::TfNone, render::TfDepth);
 
-		if (m_gatheredView.lights[0] != nullptr)
+		if (m_gatheredView.cascadingDirectionalLight != nullptr)
 		{
-			const auto& light = m_gatheredView.lights[0];
+			const LightComponent* light = m_gatheredView.cascadingDirectionalLight;
 			const Transform lightTransform = light->getTransform();
 			const Vector4 lightPosition = lightTransform.translation().xyz1();
 			const Vector4 lightDirection = lightTransform.axisY().xyz0();
@@ -565,7 +542,7 @@ void WorldRendererShared::setupLightPass(
 			}
 
 			// Expose slice data to shaders.
-			auto* lsd = lightShaderData;
+			auto* lsd = lightShaderData + m_gatheredView.lights.size() - 1;
 			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
 			{
 				const Matrix44 viewToLightSpace = shadowLightViews[slice] * viewInverse;

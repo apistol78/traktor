@@ -34,8 +34,7 @@ namespace traktor::world
 
 const resource::Id< render::ImageGraph > c_irradiance(L"{14A0E977-7C13-9B43-A26E-F1D21117AEC6}");
 
-const render::Handle s_handleDominantLightDirection(L"World_DominantLightDirection");
-const render::Handle s_handleDominantLightColor(L"World_DominantLightColor");
+const render::Handle s_handleLightCount(L"World_LightCount");
 
 	}
 
@@ -60,6 +59,8 @@ bool IrradiancePass::create(resource::IResourceManager* resourceManager, render:
 render::handle_t IrradiancePass::setup(
 	const WorldRenderView& worldRenderView,
     const GatherView& gatheredView,
+	const render::Buffer* lightSBuffer,
+	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t outputTargetSetId
@@ -72,16 +73,16 @@ render::handle_t IrradiancePass::setup(
 		return 0;
 
 	const bool irradianceEnable = (bool)(gatheredView.irradianceGrid != nullptr);
-	const bool irradianceSingle = irradianceEnable && gatheredView.irradianceGrid->isSingle();
+	const bool irradianceSingle = (bool)(gatheredView.irradianceGrid != nullptr && gatheredView.irradianceGrid->isSingle());
 	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr);
 
-	// Add ambient occlusion target set.
+	// Add irradiance target set.
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR8G8B8A8;	// Irradiance (RGB)
+	rgtd.targets[0].colorFormat = render::TfR11G11B10F;	// Irradiance (RGB)
 
 	auto irradianceTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance", rgtd, ~0U, outputTargetSetId);
 
@@ -103,11 +104,15 @@ render::handle_t IrradiancePass::setup(
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 	rp->setOutput(irradianceTargetSetId, clear, render::TfNone, render::TfColor);
 
+	const Vector2 jrc = jitter(frameCount) / worldRenderView.getViewSize();
+	const Vector2 jrp = jitter(frameCount - 1) / worldRenderView.getViewSize();
+
 	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
 	{
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 		
 		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
+		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
 		params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 		params->setMatrixParameter(s_handleView, worldRenderView.getView());
 		params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
@@ -124,21 +129,13 @@ render::handle_t IrradiancePass::setup(
 			params->setBufferViewParameter(s_handleIrradianceGridSBuffer, gatheredView.irradianceGrid->getBuffer()->getBufferView());
 		}
 
-		Vector4 lightDirection = Vector4::zero();
-		Vector4 lightColor = Vector4::zero();
-
-		if (!gatheredView.lights.empty())
+		if (lightSBuffer != nullptr)
 		{
-			if (gatheredView.lights[0] != nullptr && gatheredView.lights[0]->getLightType() == LightType::Directional)
-			{
-				const Matrix44 lightTransform = worldRenderView.getView() * gatheredView.lights[0]->getTransform().toMatrix44();
-				lightDirection = lightTransform.axisY().xyz0();
-				lightColor = gatheredView.lights[0]->getColor();
-			}
+			params->setBufferViewParameter(s_handleLightSBuffer, lightSBuffer->getBufferView());
+			params->setFloatParameter(s_handleLightCount, (float)gatheredView.lights.size());
 		}
-
-		params->setVectorParameter(s_handleDominantLightDirection, lightDirection);
-		params->setVectorParameter(s_handleDominantLightColor, lightColor);
+		else
+			params->setFloatParameter(s_handleLightCount, 0.0f);
 
 		if (gatheredView.rtWorldTopLevel != nullptr)
 			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);

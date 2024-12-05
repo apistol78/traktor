@@ -52,8 +52,8 @@
 			<id>{EAC4C422-7984-3E4A-B5E9-F4CA679C464E}</id>
 			<comment/>
 			<position>
-				<first>1582</first>
-				<second>-645</second>
+				<first>1557</first>
+				<second>-631</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -182,7 +182,7 @@
 			<comment/>
 			<position>
 				<first>2394</first>
-				<second>134</second>
+				<second>151</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -190,8 +190,8 @@
 			<id>{54F953DA-C316-324C-818D-D1E7E064C225}</id>
 			<comment/>
 			<position>
-				<first>2169</first>
-				<second>200</second>
+				<first>2328</first>
+				<second>215</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName>World_ViewInverse</parameterName>
@@ -202,8 +202,8 @@
 			<id>{97E5DC6F-199E-0746-9F49-369CDB1EC11F}</id>
 			<comment/>
 			<position>
-				<first>2176</first>
-				<second>115</second>
+				<first>2187</first>
+				<second>137</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -211,8 +211,8 @@
 			<id>{2520CF27-6733-4949-8D6E-DAA9A36B5E31}</id>
 			<comment/>
 			<position>
-				<first>2590</first>
-				<second>142</second>
+				<first>2614</first>
+				<second>165</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
@@ -239,8 +239,8 @@
 			<id>{05BF3599-71C5-4A41-B697-BDB2B9EBB9D5}</id>
 			<comment/>
 			<position>
-				<first>2116</first>
-				<second>-23</second>
+				<first>2015</first>
+				<second>38</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -309,7 +309,8 @@
 			<script>
 			<![CDATA[
 const int N = 8;
-const float near = mix(HWRT_DefaultNear, 2.0f, clamp($Distance / 100.0f, 0.0f, 1.0f));
+const float near = mix(0.1f, 1.0f, clamp($Distance / 100.0f, 0.0f, 1.0f));
+const float far = 10.0f;
 const float W = 6.0f;
 const float C = 0.8f;
 
@@ -331,27 +332,27 @@ for (int i = 0; i < N; ++i)
 	
 	rayQueryEXT rayQuery;
 	rayQueryInitializeEXT(
-		rayQuery,              // Ray query
-		$AS,                  // Top-level acceleration structure
-		gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,  // Ray flags, here saying "treat all geometry as opaque"
-		0xFF,                  // 8-bit instance mask, here saying "trace against all instances"
-		rayOrigin,             // Ray origin
-		near,                   // Minimum t-value
-		rayDir,         	 // Ray direction
-		HWRT_DefaultFar              // Maximum t-value
+		rayQuery,
+		$AS,
+		gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,
+		0xff,
+		rayOrigin,
+		near,
+		rayDir,
+		far
 	);
-	
 	while(rayQueryProceedEXT(rayQuery));
 	
 	if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
 	{
 		const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
-		occlusions += 1.0f - (t - near) / (HWRT_DefaultFar - near);
+		occlusions += 1.0f - (t - near) / (far - near);
 	}
 }
 
 const float f = 1.0f - occlusions / float(N);
 $Output = f * C + (1.0f - C);
+
 			]]>
 			</script>
 		</item>
@@ -368,8 +369,8 @@ $Output = f * C + (1.0f - C);
 			<id>{1D06EFCB-51A9-3C42-8E31-15D8D88FF5ED}</id>
 			<comment/>
 			<position>
-				<first>2452</first>
-				<second>349</second>
+				<first>2418</first>
+				<second>386</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -377,8 +378,8 @@ $Output = f * C + (1.0f - C);
 			<id>{43D8E6EA-692D-5D4E-89CC-34E306BAFD20}</id>
 			<comment/>
 			<position>
-				<first>2234</first>
-				<second>327</second>
+				<first>2200</first>
+				<second>364</second>
 			</position>
 			<declaration>{85AE3209-AEBC-1143-B9AA-15E7E29380B0}</declaration>
 			<parameterName/>
@@ -389,8 +390,8 @@ $Output = f * C + (1.0f - C);
 			<id>{B44E3B66-1A22-7D44-A4D2-D1D7C1BDC648}</id>
 			<comment/>
 			<position>
-				<first>2446</first>
-				<second>-107</second>
+				<first>2619</first>
+				<second>93</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -398,8 +399,8 @@ $Output = f * C + (1.0f - C);
 			<id>{E13CCA59-0E2B-7B41-AA40-6C77520945BD}</id>
 			<comment/>
 			<position>
-				<first>2669</first>
-				<second>293</second>
+				<first>2624</first>
+				<second>353</second>
 			</position>
 			<name>RandomAngle</name>
 			<technique/>
@@ -431,7 +432,6 @@ $Output = f * C + (1.0f - C);
 uvec2 seed = uvec2(gl_FragCoord.xy);
 seed += uvec2($Time * 1543, $Time * 543);
 $Output = BlueNoise(seed) * 2.0f * 3.142f;
-
 			]]>
 			</script>
 		</item>

@@ -67,7 +67,8 @@ protected:
 #pragma pack(1)
 	struct LightShaderData
 	{
-		float type[4];
+		float type;
+		float unused[3];
 		float rangeRadius[4];
 		float position[4];
 		float direction[4];

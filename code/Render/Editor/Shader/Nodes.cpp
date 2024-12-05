@@ -3215,6 +3215,14 @@ const ImmutableNode::OutputPinDesc c_Uniform_o[] =
 	{ 0 }
 };
 
+Uniform::Uniform(const Guid& declaration)
+:	ImmutableNode(c_Uniform_i, c_Uniform_o)
+,	m_declaration(declaration)
+,	m_type(ParameterType::Scalar)
+,	m_frequency(UpdateFrequency::Once)
+{
+}
+
 Uniform::Uniform(
 	const std::wstring& parameterName,
 	ParameterType type,

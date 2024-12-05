@@ -133,9 +133,6 @@ void LightClusterPass::setup(
 		for (uint32_t i = 0; i < gatheredView.lights.size(); ++i)
 		{
 			const auto light = gatheredView.lights[i];
-			if (light == nullptr)
-				continue;
-
 			if (light->getLightType() == LightType::Directional)
 			{
 				sliceLights.push_back(i);
@@ -156,9 +153,9 @@ void LightClusterPass::setup(
 					Frustum spotFrustum;
 					spotFrustum.buildPerspective(light->getRadius(), 1.0f, 0.0f, lr);
 
-					Matrix44 lmt = light->getTransform().toMatrix44() * rotateX(deg2rad(90.0f));
+					const Matrix44 lmt = light->getTransform().toMatrix44() * rotateX(deg2rad(90.0f));
 
-					Vector4 fr[4] =
+					const Vector4 fr[4] =
 					{
 						lmt * spotFrustum.corners[4],
 						lmt * spotFrustum.corners[5],

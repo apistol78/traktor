@@ -844,8 +844,8 @@
 			<id>{9DA4A779-1376-E64A-8EDD-00C456404816}</id>
 			<comment/>
 			<position>
-				<first>1081</first>
-				<second>-401</second>
+				<first>1185</first>
+				<second>-306</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -853,16 +853,16 @@
 			<id>{259C9DC9-0152-1D45-90F1-68643C4FD6DB}</id>
 			<comment/>
 			<position>
-				<first>676</first>
-				<second>-354</second>
+				<first>680</first>
+				<second>-259</second>
 			</position>
 		</item>
 		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
 			<id>{FCC634BD-F406-1342-A5F9-DAA7AD038A72}</id>
 			<comment/>
 			<position>
-				<first>882</first>
-				<second>-420</second>
+				<first>959</first>
+				<second>-325</second>
 			</position>
 			<name>LightIndex</name>
 		</item>
@@ -870,8 +870,8 @@
 			<id>{D496820C-CA50-9147-8BB5-0031B514E44E}</id>
 			<comment/>
 			<position>
-				<first>545</first>
-				<second>-420</second>
+				<first>549</first>
+				<second>-325</second>
 			</position>
 			<parameterName>World_LightIndexSBuffer</parameterName>
 			<elements>
@@ -886,8 +886,8 @@
 			<id>{BE346824-D693-2341-999A-8457403F4297}</id>
 			<comment/>
 			<position>
-				<first>220</first>
-				<second>-229</second>
+				<first>-74</first>
+				<second>-230</second>
 			</position>
 			<fragmentGuid>{3A77B694-1267-9A46-84F5-F8D06EAC5771}</fragmentGuid>
 			<inputPins>
@@ -913,8 +913,8 @@
 			<id>{E860E955-2C72-CB4E-8A7F-CED461BFE203}</id>
 			<comment/>
 			<position>
-				<first>32</first>
-				<second>-233</second>
+				<first>-297</first>
+				<second>-235</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -922,8 +922,8 @@
 			<id>{52488F24-D824-D742-BB02-A7C3BBD812B7}</id>
 			<comment/>
 			<position>
-				<first>500</first>
-				<second>-233</second>
+				<first>263</first>
+				<second>-251</second>
 			</position>
 			<name>L_Tile_LightCount</name>
 		</item>
@@ -931,8 +931,8 @@
 			<id>{23FD4CD8-2CB2-C84D-B952-14E4E1E9D5E2}</id>
 			<comment/>
 			<position>
-				<first>516</first>
-				<second>-347</second>
+				<first>454</first>
+				<second>-250</second>
 			</position>
 			<name>L_Iteration</name>
 		</item>
@@ -940,8 +940,8 @@
 			<id>{A53FDF14-A255-0841-91FD-077BC6B9DC23}</id>
 			<comment/>
 			<position>
-				<first>1289</first>
-				<second>-420</second>
+				<first>1393</first>
+				<second>-325</second>
 			</position>
 			<name>L_LightIndex</name>
 		</item>
@@ -961,16 +961,16 @@
 			<id>{7BD0A878-4EBF-4740-B3A4-AE8BFBFC4E7F}</id>
 			<comment/>
 			<position>
-				<first>333</first>
-				<second>-772</second>
+				<first>390</first>
+				<second>-762</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{905F8D64-3794-1D4C-BFF0-FB7396E03282}</id>
 			<comment/>
 			<position>
-				<first>107</first>
-				<second>-790</second>
+				<first>164</first>
+				<second>-780</second>
 			</position>
 			<name>L_LightIndex</name>
 		</item>
@@ -978,7 +978,7 @@
 			<id>{104CB90A-48DE-3D42-8EB2-57B8CBF0BE62}</id>
 			<comment/>
 			<position>
-				<first>-136</first>
+				<first>-98</first>
 				<second>-690</second>
 			</position>
 			<value>1</value>
@@ -987,7 +987,7 @@
 			<id>{0F3EC887-F237-644C-8C5E-1DBB0B0E9ACD}</id>
 			<comment/>
 			<position>
-				<first>-136</first>
+				<first>-98</first>
 				<second>-568</second>
 			</position>
 			<value>0</value>
@@ -996,8 +996,8 @@
 			<id>{08F0B0F5-5573-0346-9470-CA5CB0B5C8F4}</id>
 			<comment/>
 			<position>
-				<first>51</first>
-				<second>-725</second>
+				<first>108</first>
+				<second>-715</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoEqual</operator>
@@ -1024,10 +1024,10 @@
 			<id>{E282ED40-06D6-2A40-8326-605F55D7EBA5}</id>
 			<comment/>
 			<position>
-				<first>-220</first>
+				<first>-198</first>
 				<second>-649</second>
 			</position>
-			<name>GetSlice</name>
+			<name>Get shadow slice</name>
 			<technique/>
 			<domain>Undefined</domain>
 			<localSize>
@@ -1083,8 +1083,8 @@ else
 			<id>{812684CB-37DB-DF4E-87DC-567D3BDBF713}</id>
 			<comment/>
 			<position>
-				<first>1365</first>
-				<second>-1186</second>
+				<first>1402</first>
+				<second>-1178</second>
 			</position>
 			<name>L_RadiusFallOff</name>
 		</item>
@@ -1092,8 +1092,8 @@ else
 			<id>{EC854AD8-5264-5D4C-83FF-8167663DA901}</id>
 			<comment/>
 			<position>
-				<first>1194</first>
-				<second>-678</second>
+				<first>1208</first>
+				<second>-590</second>
 			</position>
 			<name>L_AtlasTransform</name>
 		</item>
@@ -1101,16 +1101,16 @@ else
 			<id>{263D4672-45AF-6343-9C19-EB96B45D6423}</id>
 			<comment/>
 			<position>
-				<first>1190</first>
-				<second>-822</second>
+				<first>1204</first>
+				<second>-734</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{068CBD76-B11C-DD49-81F6-7C2733DCDE13}</id>
 			<comment/>
 			<position>
-				<first>1410</first>
-				<second>-818</second>
+				<first>1446</first>
+				<second>-731</second>
 			</position>
 			<name>L_ViewToLight</name>
 		</item>
@@ -1127,8 +1127,8 @@ else
 			<id>{AD1B963F-4889-D949-AD4E-D1B9EE7CD931}</id>
 			<comment/>
 			<position>
-				<first>1365</first>
-				<second>-1238</second>
+				<first>1402</first>
+				<second>-1230</second>
 			</position>
 			<name>L_Radius</name>
 		</item>
@@ -1181,8 +1181,8 @@ else
 			<id>{8AF7269E-2DA3-8E4B-8D45-F2D78BBDBEF7}</id>
 			<comment/>
 			<position>
-				<first>1365</first>
-				<second>-1290</second>
+				<first>1402</first>
+				<second>-1282</second>
 			</position>
 			<name>L_FarRange</name>
 		</item>
@@ -1190,8 +1190,8 @@ else
 			<id>{13570312-DC3D-AF47-8010-8A91AFDDAE13}</id>
 			<comment/>
 			<position>
-				<first>1365</first>
-				<second>-1394</second>
+				<first>1402</first>
+				<second>-1386</second>
 			</position>
 			<name>L_Type</name>
 		</item>
@@ -1695,8 +1695,8 @@ Eye direction
 			<id>{C46DE7C8-8CDE-5041-8986-EDA3DFE1F8FC}</id>
 			<comment/>
 			<position>
-				<first>1365</first>
-				<second>-1342</second>
+				<first>1402</first>
+				<second>-1334</second>
 			</position>
 			<name>L_NearRange</name>
 		</item>
@@ -1752,8 +1752,8 @@ Eye direction
 			<id>{6BA5343F-7379-E34F-8F4D-9A93077667BB}</id>
 			<comment/>
 			<position>
-				<first>1481</first>
-				<second>-966</second>
+				<first>1581</first>
+				<second>-972</second>
 			</position>
 			<name>L_ShadowEnable</name>
 		</item>
@@ -1770,8 +1770,8 @@ Eye direction
 			<id>{BA38E741-ECAB-8C45-B47A-F1F006988D4F}</id>
 			<comment/>
 			<position>
-				<first>1233</first>
-				<second>-981</second>
+				<first>1308</first>
+				<second>-985</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoGreater</operator>
@@ -1780,7 +1780,7 @@ Eye direction
 			<id>{64E59F0F-B2DF-954C-B077-ACB9462A34F3}</id>
 			<comment/>
 			<position>
-				<first>1045</first>
+				<first>1085</first>
 				<second>-947</second>
 			</position>
 			<value>0</value>
@@ -1789,7 +1789,7 @@ Eye direction
 			<id>{F63A734B-70E0-234A-BCD8-5DD73610E09C}</id>
 			<comment/>
 			<position>
-				<first>1045</first>
+				<first>1085</first>
 				<second>-911</second>
 			</position>
 			<value>1</value>
@@ -1798,7 +1798,7 @@ Eye direction
 			<id>{C221B779-515D-A048-BC6A-4E523387463A}</id>
 			<comment/>
 			<position>
-				<first>1045</first>
+				<first>1085</first>
 				<second>-875</second>
 			</position>
 			<value>0</value>
@@ -1960,8 +1960,8 @@ Check max shadow distance
 			<id>{8D015F58-94B8-4B88-9B8F-2034A4E515A7}</id>
 			<comment/>
 			<position>
-				<first>267</first>
-				<second>-517</second>
+				<first>385</first>
+				<second>-509</second>
 			</position>
 			<declaration>{7B9EBA48-EB11-5449-A1D6-F2B72843C2E6}</declaration>
 			<parameterName>World_ShadowBias</parameterName>
@@ -1972,16 +1972,16 @@ Check max shadow distance
 			<id>{DF1E2A9F-9C48-4BCA-9698-BF3002375BBA}</id>
 			<comment/>
 			<position>
-				<first>504</first>
-				<second>-578</second>
+				<first>622</first>
+				<second>-570</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{C5795D66-23ED-4948-A777-3D38540A3817}</id>
 			<comment/>
 			<position>
-				<first>61</first>
-				<second>-562</second>
+				<first>179</first>
+				<second>-554</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -1989,16 +1989,16 @@ Check max shadow distance
 			<id>{CF7E7675-80D5-47D8-A2F5-F7E56A89B2E0}</id>
 			<comment/>
 			<position>
-				<first>277</first>
-				<second>-619</second>
+				<first>395</first>
+				<second>-611</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{39AE303F-C580-4D49-B54F-175E80494127}</id>
 			<comment/>
 			<position>
-				<first>782</first>
-				<second>-529</second>
+				<first>843</first>
+				<second>-531</second>
 			</position>
 			<name>L_ShadowBias</name>
 		</item>

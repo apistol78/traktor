@@ -37,14 +37,11 @@ class IrradianceGrid;
 class LightComponent;
 class ProbeComponent;
 
-enum
-{
-	MaxSliceCount = 4,
-	MaxLightShadowCount = 2,
-	MaxLightsPerCluster = 8,
-	ClusterDimXY = 16,
-	ClusterDimZ = 32
-};
+static constexpr int32_t MaxSliceCount = 4;
+static constexpr int32_t MaxLightShadowCount = 2;
+static constexpr int32_t MaxLightsPerCluster = 8;
+static constexpr int32_t ClusterDimXY = 16;
+static constexpr int32_t ClusterDimZ = 32;
 
 enum class Cancel
 {
@@ -114,6 +111,7 @@ struct GatherView
     AlignedVector< Renderable > renderables;
 	AlignedVector< const LightComponent* > lights;
 	AlignedVector< const ProbeComponent* > probes;
+	const LightComponent* cascadingDirectionalLight = nullptr;
 	const FogComponent* fog = nullptr;
 	const IrradianceGrid* irradianceGrid = nullptr;
 	const render::IAccelerationStructure* rtWorldTopLevel = nullptr;
