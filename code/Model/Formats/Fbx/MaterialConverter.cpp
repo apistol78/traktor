@@ -132,7 +132,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 				material->pbr.base_color.value_vec3.y,
 				material->pbr.base_color.value_vec3.z,
 				1.0f
-			));
+			).linear());
 		}
 
 		if (material->pbr.base_factor.has_value)

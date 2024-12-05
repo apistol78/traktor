@@ -462,7 +462,6 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-
 const int lightIndex = int($Random * $LightCount) % int($LightCount);
 const World_LightSBuffer_Type light = $Lights[lightIndex];
 
