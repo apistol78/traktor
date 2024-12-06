@@ -33,12 +33,16 @@ void EventSubject::raiseEvent(Event* event)
 
 		// Invoke event handlers reversed as the most prioritized are at the end and they should
 		// be able to "consume" the event so it wont reach other, less prioritized, handlers.
-		const auto& eventHandlers = i->second;
-		for (Ref< IEventHandler > eventHandler : eventHandlers.handlers)
+		const RefArray< IEventHandler >& eventHandlers = i->second.handlers;
+		for (Ref< IEventHandler > eventHandler : eventHandlers)
 		{
 			eventHandler->notify(event);
 			if (event->consumed())
 				break;
+
+			// In case this subject has been destroyed in any handler we leave quickly.
+			if (m_eventHandlers.empty())
+				return;
 		}
 	}
 }
@@ -47,6 +51,7 @@ void EventSubject::removeAllEventHandlers()
 {
 	for (auto i = m_eventHandlers.begin(); i != m_eventHandlers.end(); ++i)
 		i->second.handlers.clear();
+	m_eventHandlers.clear();
 }
 
 void EventSubject::addEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler)
