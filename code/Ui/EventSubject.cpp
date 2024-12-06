@@ -37,12 +37,13 @@ void EventSubject::raiseEvent(Event* event)
 		for (Ref< IEventHandler > eventHandler : eventHandlers)
 		{
 			eventHandler->notify(event);
-			if (event->consumed())
-				break;
 
 			// In case this subject has been destroyed in any handler we leave quickly.
 			if (m_eventHandlers.empty())
 				return;
+
+			if (event->consumed())
+				break;
 		}
 	}
 }
