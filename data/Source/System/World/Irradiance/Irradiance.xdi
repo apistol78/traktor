@@ -123,7 +123,7 @@
 			<steps>
 				<item type="traktor.render.ImgStepDirectionalBlur" version="1,traktor.render.IImgStep:2">
 					<blurType>Gaussian</blurType>
-					<direction>3, 0</direction>
+					<direction>2, 0</direction>
 					<taps>16</taps>
 					<shader>{B122496C-B9E3-C649-9B03-A2E5F842D6E8}</shader>
 					<parameters>
@@ -162,7 +162,7 @@
 			<steps>
 				<item type="traktor.render.ImgStepDirectionalBlur" version="1,traktor.render.IImgStep:2">
 					<blurType>Gaussian</blurType>
-					<direction>0, 3</direction>
+					<direction>0, 2</direction>
 					<taps>16</taps>
 					<shader>{B122496C-B9E3-C649-9B03-A2E5F842D6E8}</shader>
 					<parameters>

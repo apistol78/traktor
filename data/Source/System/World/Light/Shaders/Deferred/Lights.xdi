@@ -1520,8 +1520,8 @@ Check max shadow distance
 			<id>{F9E67DE5-3704-224A-96AE-9228482CEB38}</id>
 			<comment/>
 			<position>
-				<first>6201</first>
-				<second>-700</second>
+				<first>6199</first>
+				<second>-697</second>
 			</position>
 			<name>L_Irradiance</name>
 		</item>
@@ -2700,8 +2700,8 @@ $Output = vec4(r, 0.0f);
 			<id>{D9CC3269-B3CD-44CC-A5E9-140B87B33BCF}</id>
 			<comment/>
 			<position>
-				<first>6197</first>
-				<second>-653</second>
+				<first>5811</first>
+				<second>-591</second>
 			</position>
 			<name>L_Albedo</name>
 		</item>
@@ -2747,6 +2747,46 @@ $Output = vec4(r, 0.0f);
 				<first>6627</first>
 				<second>-666</second>
 			</position>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{2837F7FD-AC65-9D4B-807B-1BF12EE5AB3C}</id>
+			<comment/>
+			<position>
+				<first>6021</first>
+				<second>-648</second>
+			</position>
+			<fragmentGuid>{D3DAC6EE-8F3F-754C-B0D9-04B6F7867D0F}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{E9711D6F-F18A-574F-B270-B270C70C239A}</id>
+					<name>Input</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{653E9830-471D-574B-AE12-AA835F4FFFEE}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
+			<id>{E3BDE108-3BCF-154E-8D19-2A1EB9DFC4EA}</id>
+			<comment/>
+			<position>
+				<first>6205</first>
+				<second>-619</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{2FC4F936-2CB5-F844-9FA8-6771FFE42099}</id>
+			<comment/>
+			<position>
+				<first>6050</first>
+				<second>-548</second>
+			</position>
+			<value>0.75</value>
 		</item>
 	</nodes>
 	<edges>
@@ -4792,16 +4832,6 @@ $Output = vec4(r, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[214]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[185]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[186]"/>
 				<id>{26124FFB-5851-A149-800A-2611E58573AD}</id>
 			</source>
@@ -4958,6 +4988,56 @@ $Output = vec4(r, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[218]"/>
 				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[214]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[220]"/>
+				<id>{E9711D6F-F18A-574F-B270-B270C70C239A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[220]"/>
+				<id>{653E9830-471D-574B-AE12-AA835F4FFFEE}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[221]"/>
+				<id>{8760B263-C70C-46BA-9E97-A3D6B08941E9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[214]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[221]"/>
+				<id>{7ACEE4C2-A92D-4E50-BFAE-C1D744BEE5E0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[221]"/>
+				<id>{0D78442F-AA88-4B95-A497-E86A86E07FB8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[185]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[222]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[221]"/>
+				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
 			</destination>
 		</item>
 	</edges>
