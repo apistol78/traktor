@@ -26,7 +26,7 @@ void EventSubject::raiseEvent(Event* event)
 	const TypeInfo& eventType = type_of(event);
 	for (auto i = m_eventHandlers.begin(); i != m_eventHandlers.end(); ++i)
 	{
-		if (!is_type_of(*i->first, eventType))
+		if (i->second.handlers.empty() || !is_type_of(*i->first, eventType))
 			continue;
 		if (i->second.disableCounter != 0)
 			continue;
@@ -68,7 +68,11 @@ void EventSubject::removeEventHandler(IEventHandler* eventHandler)
 
 bool EventSubject::hasEventHandler(const TypeInfo& eventType)
 {
-	return !m_eventHandlers[&eventType].handlers.empty();
+	const auto it = m_eventHandlers.find(&eventType);
+	if (it != m_eventHandlers.end())
+		return !it->second.handlers.empty();
+	else
+		return false;
 }
 
 void EventSubject::enableEventHandlers(const TypeInfo& eventType)
