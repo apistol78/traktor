@@ -2405,34 +2405,54 @@ bool emitScript(GlslContext& cx, Script* node)
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		const std::wstring variableName = L"$" + node->getInputPin(i)->getName();
+		const std::wstring typeOfName = L"$typeof(" + node->getInputPin(i)->getName() + L")";
+
 		switch (ins[i]->getType())
 		{
 		case GlslType::Texture2D:
 			reps.push_back({ variableName, L"__bindlessTextures2D__[" + ins[i]->getName() + L"]" });
+			reps.push_back({ typeOfName, L"tex" });
 			break;
 
 		case GlslType::Texture3D:
 			reps.push_back({ variableName, L"__bindlessTextures3D__[" + ins[i]->getName() + L"]" });
+			reps.push_back({ typeOfName, L"tex" });
 			break;
 
 		case GlslType::TextureCube:
 			reps.push_back({ variableName, L"__bindlessTexturesCube__[" + ins[i]->getName() + L"]" });
+			reps.push_back({ typeOfName, L"tex" });
 			break;
 
 		case GlslType::Image2D:
 			reps.push_back({ variableName, L"__bindlessImages2D__[" + ins[i]->getName() + L"]" });
+			reps.push_back({ typeOfName, L"image2D" });
 			break;
 
 		case GlslType::Image3D:
 			reps.push_back({ variableName, L"__bindlessImages3D__[" + ins[i]->getName() + L"]" });
+			reps.push_back({ typeOfName, L"image3D" });
 			break;
 
 		case GlslType::ImageCube:
 			reps.push_back({ variableName, L"__bindlessImagesCube__[" + ins[i]->getName() + L"]" });
+			reps.push_back({ typeOfName, L"imageCube" });
+			break;
+
+		case GlslType::StructBuffer:
+			{
+				std::wstring tn = ins[i]->getName();
+				T_ASSERT(tn.length() > 5);
+				tn = tn.substr(0, tn.length() - 5) + L"_Type";
+
+				reps.push_back({ variableName, ins[i]->getName() });
+				reps.push_back({ typeOfName, tn });
+			}
 			break;
 
 		default:
 			reps.push_back({ variableName, ins[i]->getName() });
+			reps.push_back({ typeOfName, glsl_type_name(ins[i]->getType()) });
 			break;
 		}
 	}

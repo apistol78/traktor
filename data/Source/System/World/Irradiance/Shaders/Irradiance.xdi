@@ -463,7 +463,7 @@
 			<script>
 			<![CDATA[
 const int lightIndex = int($Random * $LightCount) % int($LightCount);
-const World_LightSBuffer_Type light = $Lights[lightIndex];
+const $typeof(Lights) light = $Lights[lightIndex];
 
 const int N = 16;
 const mat3 R = Rotate($Direction.xyz, $Random);
