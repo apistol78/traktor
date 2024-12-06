@@ -465,6 +465,7 @@
 const int lightIndex = int($Random * $LightCount) % int($LightCount);
 const $typeof(Lights) light = $Lights[lightIndex];
 
+const float Far = 50.0f;
 const int N = 16;
 const mat3 R = Rotate($Direction.xyz, $Random);
 
@@ -484,7 +485,7 @@ for (int i = 0; i < N; ++i)
 		rayOrigin,
 		1.5f,
 		rayDir,
-		100.0f
+		Far
 	);
 	while(rayQueryProceedEXT(rayQuery));
 	
@@ -501,7 +502,7 @@ for (int i = 0; i < N; ++i)
 		if (int(light.Type) == 1)	// Directional
 		{
 			lightDirection = ($ViewInverse * light.Direction).xyz;
-			lightAttenuation = 10.0f;
+			lightAttenuation = 5.0f;
 		}
 		else if (int(light.Type) == 2)	// Point
 		{
@@ -511,6 +512,10 @@ for (int i = 0; i < N; ++i)
 			lightDirection /= lightDistance;
 			lightAttenuation = clamp(1.0f / (lightDistance * lightDistance), 0.0f, 1.0f);
 		}
+
+		// Attenuate with distance of first ray.
+		const float nt = t / Far;
+		lightAttenuation *= clamp(1.0f / (nt * nt), 0.0f, 1.0f);
 
 		if (lightAttenuation > 0.0f)
 		{

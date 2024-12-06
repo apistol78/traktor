@@ -27,7 +27,7 @@ vec4 blend3(vec4 v0, float w0, vec4 v1, float w1, vec4 v2, float w2)
 HWRT_Material HWRT_GetMaterial(rayQueryEXT query)
 {
 	HWRT_Material material;
-	material.normal = vec4(0.0f);
+	material.normal = vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	material.albedo = vec4(0.0f);
 
 	if(rayQueryGetIntersectionTypeEXT(query, true) != gl_RayQueryCommittedIntersectionNoneEXT)
@@ -62,7 +62,7 @@ HWRT_Material HWRT_GetMaterial(rayQueryEXT query)
 		else
 		{
 			// No assigned material; return default.
-			material.albedo = vec4(0.5f, 0.5f, 0.5f, 1.0f);
+			material.albedo = vec4(0.25f, 0.25f, 0.25f, 1.0f);
 		}
 	}
 
