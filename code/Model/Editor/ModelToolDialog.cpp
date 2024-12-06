@@ -24,6 +24,7 @@
 #include "Model/ModelFormat.h"
 #include "Model/Pose.h"
 #include "Model/Editor/ModelToolDialog.h"
+#include "Model/Operations/BakeVertexColors.h"
 #include "Model/Operations/CalculateConvexHull.h"
 #include "Model/Operations/CalculateNormals.h"
 #include "Model/Operations/CalculateTangents.h"
@@ -272,6 +273,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.UnwrapUV"), L"Unwrap UV"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.SortCacheCoherency"), L"Sort Cache Coherency"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.SortProjectedArea"), L"Sort Projected Area"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.BakeVertexColors"), L"Bake Vertex Colors"));
 	modelRootPopupAdd->add(new ui::MenuItem(L"-"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.ExecuteScript"), L"Execute script..."));
 	m_modelRootPopup->add(modelRootPopupAdd);
@@ -672,7 +674,13 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 		if (selected)
 		{
 			const ui::Command& command = selected->getCommand();
-			if (command == L"ModelTool.Clear")
+			if (command == L"ModelTool.BakeVertexColors")
+			{
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Bake Vertex Colors", 0);
+				itemOperation->setData(L"OPERATION", new BakeVertexColors());
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.Clear")
 			{
 				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clear", 0);
 				itemOperation->setData(L"OPERATION", new Clear( Model::CfMaterials | Model::CfColors | Model::CfNormals | Model::CfTexCoords | Model::CfJoints ));
