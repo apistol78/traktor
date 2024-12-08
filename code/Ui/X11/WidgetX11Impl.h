@@ -151,13 +151,6 @@ public:
 			}
 			else	// Becoming hidden.
 			{
-				if (m_focus)
-				{
-					FocusEvent focusEvent(m_owner, false);
-					m_owner->raiseEvent(&focusEvent);
-					m_focus = false;
-				}
-
 				if (m_data.mapped)
 				{
 					XUnmapWindow(m_context->getDisplay(), m_data.window);
