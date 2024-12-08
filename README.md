@@ -62,3 +62,9 @@ See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binar
 ## Physics
 - Integrated Bullet physics.
 - Character and vehicle controllers.
+
+
+## Contact
+Join our discord server to read about Traktor or ask any questions regarding Traktor.
+
+https://discord.gg/fSMrww2B7C
