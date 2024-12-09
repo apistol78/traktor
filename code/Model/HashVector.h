@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <unordered_map>
 #include "Core/Containers/SmallMap.h"
 #include "Core/Containers/SmallSet.h"
 
@@ -29,7 +30,7 @@ public:
 	void swap(AlignedVector< ValueType >& values)
 	{
 		m_values.swap(values);
-		m_indices.reset();		
+		m_indices.clear();		
 		for (uint32_t i = 0; i < (uint32_t)m_values.size(); ++i)
 		{
 			const uint32_t hash = HashFunction::get(m_values[i]);
@@ -40,7 +41,7 @@ public:
 	void replace(const AlignedVector< ValueType >& values)
 	{
 		m_values = values;
-		m_indices.reset();
+		m_indices.clear();
 		for (uint32_t i = 0; i < (uint32_t)m_values.size(); ++i)
 		{
 			const uint32_t hash = HashFunction::get(m_values[i]);
@@ -89,15 +90,21 @@ public:
 	uint32_t find(const ValueType& v) const
 	{
 		const uint32_t hash = HashFunction::get(v);
-		for (uint32_t index : m_indices[hash])
+
+		const auto it = m_indices.find(hash);
+		if (it == m_indices.end())
+			return InvalidIndex;
+
+		for (uint32_t index : it->second)
 		{
 			if (m_values[index] == v)
 				return index;
 		}
+
 		return InvalidIndex;
 	}
 
-	const SmallMap< uint32_t, SmallSet< uint32_t > >& indices() const
+	const std::unordered_map< uint32_t, SmallSet< uint32_t > >& indices() const
 	{
 		return m_indices;
 	}
@@ -113,7 +120,7 @@ public:
 	}
 
 private:
-	SmallMap< uint32_t, SmallSet< uint32_t > > m_indices;
+	std::unordered_map< uint32_t, SmallSet< uint32_t > > m_indices;
 	AlignedVector< ValueType > m_values;	
 };
 

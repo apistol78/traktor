@@ -64,9 +64,19 @@ const AlignedVector< Vertex >& Model_getVertices(Model* self)
 	return self->getVertices();
 }
 
+uint32_t Model_addPolygon(Model* self, const Polygon& polygon)
+{
+	return self->addPolygon(polygon);
+}
+
 const AlignedVector< Polygon >& Model_getPolygons(Model* self)
 {
 	return self->getPolygons();
+}
+
+uint32_t Model_addUniquePosition(Model* self, const Vector4& position)
+{
+	return self->addUniquePosition(position);
 }
 
 AlignedVector< uint32_t > Model_findChildJoints(Model* self, uint32_t jointId)
@@ -231,7 +241,7 @@ void ModelClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classModel->addMethod("setVertices", &Model::setVertices);
 	classModel->addMethod("getVertices", &Model_getVertices);
 	classModel->addMethod("reservePolygons", &Model::reservePolygons);
-	classModel->addMethod("addPolygon", &Model::addPolygon);
+	classModel->addMethod("addPolygon", &Model_addPolygon);
 	classModel->addMethod("addUniquePolygon", &Model::addUniquePolygon);
 	classModel->addMethod("setPolygon", &Model::setPolygon);
 	classModel->addMethod("getPolygon", &Model::getPolygon);
@@ -239,7 +249,7 @@ void ModelClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classModel->addMethod("getPolygons", &Model_getPolygons);
 	classModel->addMethod("reservePositions", &Model::reservePositions);
 	classModel->addMethod("addPosition", &Model::addPosition);
-	classModel->addMethod("addUniquePosition", &Model::addUniquePosition);
+	classModel->addMethod("addUniquePosition", &Model_addUniquePosition);
 	classModel->addMethod("setPosition", &Model::setPosition);
 	classModel->addMethod("getPosition", &Model::getPosition);
 	classModel->addMethod("getVertexPosition", &Model::getVertexPosition);

@@ -38,7 +38,7 @@ protected:
 private:
 	const Model& m_sourceModel;
 	Transform m_sourceTransform;
-	float m_positionDistance;
+	Scalar m_positionDistance;
 };
 
 }

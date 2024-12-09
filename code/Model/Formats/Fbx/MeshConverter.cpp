@@ -111,6 +111,66 @@ bool convertMesh(
 		}
 	}
 
+	const uint32_t baseOutputVertexOffset = outModel.getVertexCount();
+
+	// Convert vertices.
+	for (size_t i = 0; i < meshNode->mesh->num_indices; ++i)
+	{
+		const uint32_t vertexIndex = i;
+		const uint32_t pointIndex = meshNode->mesh->vertex_indices[vertexIndex];
+
+		Vertex vertex;
+		vertex.setPosition(positionBase + pointIndex);
+
+		if (pointIndex < int32_t(vertexJoints.size()))
+		{
+			for (const auto& k : vertexJoints[pointIndex])
+				vertex.setJointInfluence(k.first, k.second);
+		}
+
+		if (meshNode->mesh->vertex_color.exists)
+		{
+			vertex.setColor(outModel.addUniqueColor(convertColor(
+				ufbx_get_vertex_vec4(&meshNode->mesh->vertex_color, vertexIndex)
+			)));
+		}
+
+		for (size_t k = 0; k < meshNode->mesh->uv_sets.count; ++k)
+		{
+			const ufbx_uv_set& uvSet = meshNode->mesh->uv_sets.data[k];
+			if (uvSet.vertex_uv.exists)
+			{
+				const uint32_t channel = texCoordChannels[k];
+				vertex.setTexCoord(channel, outModel.addUniqueTexCoord(convertVector2(
+					ufbx_get_vertex_vec2(&uvSet.vertex_uv, vertexIndex)
+				) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f)));
+			}
+		}
+
+		if (meshNode->mesh->vertex_normal.exists)
+		{
+			vertex.setNormal(outModel.addUniqueNormal(MglobalN * convertNormal(
+				ufbx_get_vertex_vec3(&meshNode->mesh->vertex_normal, vertexIndex)
+			)));
+		}
+
+		if (meshNode->mesh->vertex_tangent.exists)
+		{
+			vertex.setTangent(outModel.addUniqueNormal(MglobalN * convertNormal(
+				ufbx_get_vertex_vec3(&meshNode->mesh->vertex_tangent, vertexIndex)
+			)));
+		}
+
+		if (meshNode->mesh->vertex_bitangent.exists)
+		{
+			vertex.setBinormal(outModel.addUniqueNormal(MglobalN * convertNormal(
+				ufbx_get_vertex_vec3(&meshNode->mesh->vertex_bitangent, vertexIndex)
+			)));
+		}
+
+		outModel.addVertex(vertex);
+	}
+
 	// Convert polygons.
 	for (size_t i = 0; i < meshNode->mesh->num_faces; ++i)
 	{
@@ -122,7 +182,7 @@ bool convertMesh(
 			continue;
 		}
 
-		Polygon polygon;
+		Polygon& polygon = outModel.addPolygon();
 
 		if (meshNode->mesh->face_material.count > 0)
 			polygon.setMaterial(materialMap[meshNode->mesh->face_material[i]]);
@@ -130,61 +190,8 @@ bool convertMesh(
 		for (uint32_t j = 0; j < face.num_indices; ++j)
 		{
 			const uint32_t vertexIndex = face.index_begin + j;
-			const uint32_t pointIndex = meshNode->mesh->vertex_indices[vertexIndex];
-
-			Vertex vertex;
-			vertex.setPosition(positionBase + pointIndex);
-
-			if (pointIndex < int32_t(vertexJoints.size()))
-			{
-				for (const auto& k : vertexJoints[pointIndex])
-					vertex.setJointInfluence(k.first, k.second);
-			}
-
-			if (meshNode->mesh->vertex_color.exists)
-			{
-				vertex.setColor(outModel.addUniqueColor(convertColor(
-					ufbx_get_vertex_vec4(&meshNode->mesh->vertex_color, vertexIndex)
-				)));
-			}
-
-			for (size_t k = 0; k < meshNode->mesh->uv_sets.count; ++k)
-			{
-				const ufbx_uv_set& uvSet = meshNode->mesh->uv_sets.data[k];
-				if (uvSet.vertex_uv.exists)
-				{
-					const uint32_t channel = texCoordChannels[k];
-					vertex.setTexCoord(channel, outModel.addUniqueTexCoord(convertVector2(
-						ufbx_get_vertex_vec2(&uvSet.vertex_uv, vertexIndex)
-					) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f)));
-				}
-			}
-
-			if (meshNode->mesh->vertex_normal.exists)
-			{
-				vertex.setNormal(outModel.addUniqueNormal(MglobalN * convertNormal(
-					ufbx_get_vertex_vec3(&meshNode->mesh->vertex_normal, vertexIndex)
-				)));
-			}
-
-			if (meshNode->mesh->vertex_tangent.exists)
-			{
-				vertex.setTangent(outModel.addUniqueNormal(MglobalN * convertNormal(
-					ufbx_get_vertex_vec3(&meshNode->mesh->vertex_tangent, vertexIndex)
-				)));
-			}
-
-			if (meshNode->mesh->vertex_bitangent.exists)
-			{
-				vertex.setBinormal(outModel.addUniqueNormal(MglobalN * convertNormal(
-					ufbx_get_vertex_vec3(&meshNode->mesh->vertex_bitangent, vertexIndex)
-				)));
-			}
-
-			polygon.addVertex(outModel.addVertex(vertex));
+			polygon.addVertex(baseOutputVertexOffset + vertexIndex);
 		}
-
-		outModel.addPolygon(polygon);
 	}
 
 	return true;

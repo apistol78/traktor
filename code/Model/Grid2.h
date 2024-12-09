@@ -176,9 +176,9 @@ public:
 	}
 
 private:
-	float m_cellSize;
 	AlignedVector< uint32_t > m_indices[HashBuckets];
 	AlignedVector< ValueType > m_values;
+	float m_cellSize;
 };
 
 }

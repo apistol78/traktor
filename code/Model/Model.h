@@ -109,6 +109,8 @@ public:
 
 	void reservePolygons(uint32_t polygonCapacity) { m_polygons.reserve(polygonCapacity); }
 
+	Polygon& addPolygon();
+
 	uint32_t addPolygon(const Polygon& polygon);
 
 	uint32_t addUniquePolygon(const Polygon& polygon);
@@ -134,7 +136,9 @@ public:
 
 	uint32_t addPosition(const Vector4& position);
 
-	uint32_t addUniquePosition(const Vector4& position, float distance = 0.01f);
+	uint32_t addUniquePosition(const Vector4& position);
+
+	uint32_t addUniquePosition(const Vector4& position, const Scalar& distance);
 
 	uint32_t getPositionCount() const { return m_positions.size(); }
 

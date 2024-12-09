@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Vector4.h"
 
 namespace traktor::model
@@ -105,18 +106,36 @@ public:
 		m_values[index] = v;
 	}
 
-	uint32_t get(const ValueType& v, float distance) const
+	uint32_t get(const ValueType& v) const
 	{
-		T_ASSERT(distance <= m_cellSize / 2.0f);
+		const Vector4 p = PositionAccessor::get(v);
+		const Vector4 pq = p / m_cellSize;
 
-		const Scalar sd(distance);
-		const Scalar sd2(distance * distance);
+		T_MATH_ALIGN16 int32_t ipq[4];
+		pq.storeIntegersAligned(ipq);
+
+		const uint32_t hash = HashFunction::get(ipq[0], ipq[1], ipq[2]);
+		for (auto index : m_indices[hash & (HashBuckets - 1)])
+		{
+			const Vector4 pv = PositionAccessor::get(m_values[index]);
+			if ((pv - p).length2() <= Scalar(FUZZY_EPSILON))
+				return index;
+		}
+
+		return InvalidIndex;
+	}
+
+	uint32_t get(const ValueType& v, const Scalar& distance) const
+	{
+		T_ASSERT(distance <= m_cellSize / 2.0_simd);
+
+		const Scalar distance2 = distance * distance;
 
 		const Vector4 p = PositionAccessor::get(v);
 		const Vector4 pq = p / m_cellSize;
 
-		const Vector4 mnpq = pq - sd - 0.5_simd;
-		const Vector4 mxpq = pq + sd + 0.5_simd;
+		const Vector4 mnpq = pq - distance - 0.5_simd;
+		const Vector4 mxpq = pq + distance + 0.5_simd;
 
 		T_MATH_ALIGN16 int32_t mne[4];
 		mnpq.storeIntegersAligned(mne);
@@ -141,7 +160,7 @@ public:
 					for (auto index : m_indices[hash & (HashBuckets - 1)])
 					{
 						const Vector4 pv = PositionAccessor::get(m_values[index]);
-						if ((pv - p).length2() <= sd2)
+						if ((pv - p).length2() <= distance2)
 							return index;
 					}
 				}
@@ -201,9 +220,9 @@ public:
 	}
 
 private:
-	Scalar m_cellSize;
 	AlignedVector< uint32_t > m_indices[HashBuckets];
 	AlignedVector< ValueType > m_values;
+	Scalar m_cellSize;
 
 	void rehash()
 	{

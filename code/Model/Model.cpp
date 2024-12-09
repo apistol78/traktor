@@ -189,6 +189,11 @@ uint32_t Model::addUniqueVertex(const Vertex& vertex)
 	return id != m_vertices.InvalidIndex ? id : m_vertices.add(vertex);
 }
 
+Polygon& Model::addPolygon()
+{
+	return m_polygons.push_back();
+}
+
 uint32_t Model::addPolygon(const Polygon& polygon)
 {
 	return addId(m_polygons, polygon);
@@ -209,7 +214,13 @@ uint32_t Model::addPosition(const Vector4& position)
 	return m_positions.add(position);
 }
 
-uint32_t Model::addUniquePosition(const Vector4& position, float distance)
+uint32_t Model::addUniquePosition(const Vector4& position)
+{
+	const uint32_t id = m_positions.get(position, 0.01_simd);
+	return id != m_positions.InvalidIndex ? id : m_positions.add(position);
+}
+
+uint32_t Model::addUniquePosition(const Vector4& position, const Scalar& distance)
 {
 	const uint32_t id = m_positions.get(position, distance);
 	return id != m_positions.InvalidIndex ? id : m_positions.add(position);
@@ -222,7 +233,7 @@ uint32_t Model::addColor(const Vector4& color)
 
 uint32_t Model::addUniqueColor(const Vector4& color)
 {
-	const uint32_t id = m_colors.get(color, 1.0f / (4.0f * 256.0f));
+	const uint32_t id = m_colors.get(color, 1.0_simd / (4.0_simd * 256.0_simd));
 	return id != m_colors.InvalidIndex ? id : m_colors.add(color);
 }
 
@@ -239,7 +250,7 @@ uint32_t Model::addNormal(const Vector4& normal)
 uint32_t Model::addUniqueNormal(const Vector4& normal)
 {
 	const Vector4 quantizedNormal = ((normal * 255.0_simd).floor() / 255.0_simd).xyz0();
-	const uint32_t id = m_normals.get(quantizedNormal, 0.1f / 255.0f);
+	const uint32_t id = m_normals.get(quantizedNormal);
 	return id != m_normals.InvalidIndex ? id : m_normals.add(quantizedNormal);
 }
 

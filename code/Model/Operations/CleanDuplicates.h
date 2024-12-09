@@ -35,7 +35,7 @@ protected:
 	virtual bool apply(Model& model) const override final;
 
 private:
-	float m_positionDistance;
+	Scalar m_positionDistance;
 };
 
 }
