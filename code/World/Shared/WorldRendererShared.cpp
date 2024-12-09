@@ -309,7 +309,7 @@ void WorldRendererShared::setupLightPass(
 	T_PROFILER_SCOPE(L"WorldRendererShared setupLightPass");
 
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
-	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
+	const bool shadowMapEnable = (bool)(m_shadowsQuality != Quality::Disabled && m_gatheredView.rtWorldTopLevel == nullptr);
 	const UniformShadowProjection shadowProjection(shadowSettings.resolution);
 
 	LightShaderData* lightShaderData = (LightShaderData*)m_state[worldRenderView.getIndex()].lightSBuffer->lock();
@@ -330,7 +330,7 @@ void WorldRendererShared::setupLightPass(
 
 	// Find atlas shadow lights.
 	StaticVector< int32_t, 32 > lightAtlasIndices;
-	if (shadowsEnable)
+	if (shadowMapEnable)
 	{
 		for (int32_t i = 0; i < (int32_t)m_gatheredView.lights.size(); ++i)
 		{
@@ -381,7 +381,7 @@ void WorldRendererShared::setupLightPass(
 
 	// If shadow casting directional light found add cascade shadow map pass
 	// and update light sbuffer.
-	if (shadowsEnable)
+	if (shadowMapEnable)
 	{
 		const int32_t cascadingSlices = (m_gatheredView.cascadingDirectionalLight != nullptr) ? shadowSettings.cascadingSlices : 0;
 		const int32_t shmw = shadowSettings.resolution * (cascadingSlices + 1);

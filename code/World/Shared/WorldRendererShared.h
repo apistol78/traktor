@@ -81,11 +81,20 @@ protected:
 	};
 #pragma pack()
 
-	WorldRenderSettings m_settings;
+	struct State
+	{
+		Ref< render::Buffer > lightSBuffer;
+		Frustum shadowSlices[4];
+		Matrix44 shadowLightViews[4];
+		uint32_t count = 0;
+	};
 
+	WorldRenderSettings m_settings;
 	Quality m_shadowsQuality = Quality::Disabled;
 	float m_slicePositions[MaxSliceCount + 1];
 
+	/*! \name Render passes. */
+	//@{
 	Ref< LightClusterPass > m_lightClusterPass;
 	Ref< GBufferPass > m_gbufferPass;
 	Ref< DBufferPass > m_dbufferPass;
@@ -96,28 +105,18 @@ protected:
 	Ref< ContactShadowsPass > m_contactShadowsPass;
 	Ref< ReflectionsPass > m_reflectionsPass;
 	Ref< PostProcessPass > m_postProcessPass;
+	//@}
 
     Ref< WorldEntityRenderers > m_entityRenderers;
     Ref< render::ScreenRenderer > m_screenRenderer;
-
 	Ref< render::ITexture > m_blackTexture;
 	Ref< render::ITexture > m_whiteTexture;
 	Ref< render::ITexture > m_blackCubeTexture;
-
 	resource::Proxy< render::Shader > m_clearDepthShader;
 
-	Ref< Packer > m_shadowAtlasPacker;
-
 	GatherView m_gatheredView;
+	Ref< Packer > m_shadowAtlasPacker;
 	AlignedVector< render::handle_t > m_visualAttachments;
-
-	struct State
-	{
-		Ref< render::Buffer > lightSBuffer;
-		Frustum shadowSlices[4];
-		Matrix44 shadowLightViews[4];
-		uint32_t count = 0;
-	};
 	State m_state[4];
 
 	void gather(const World* world, const std::function< bool(const EntityState& state) >& filter);
