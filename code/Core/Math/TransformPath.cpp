@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,6 +17,7 @@
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStaticArray.h"
+#include "Core/Thread/Acquire.h"
 
 namespace traktor
 {
@@ -285,6 +286,7 @@ TransformPath::Key TransformPath::evaluate(float at, bool closed) const
 		return m_keys[0];
 	else
 	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		if (!m_spline.ptr() || m_closed != closed)
 		{
 			if (closed)
@@ -523,6 +525,7 @@ TransformPath& TransformPath::operator = (const TransformPath& path)
 
 void TransformPath::flush() const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_spline.release();
 	m_length = -1.0f;
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,6 +14,7 @@
 #include "Core/Math/Transform.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -160,6 +161,7 @@ public:
 
 private:
 	AlignedVector< Key > m_keys;
+	mutable Semaphore m_lock;
 	mutable AutoPtr< ISpline< Key > > m_spline;
 	mutable bool m_closed = false;
 	mutable float m_length = -1.0f;
