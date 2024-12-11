@@ -36,21 +36,19 @@ void RTWorldComponent::update(World* world, const UpdateParams& update)
 {
 }
 
-RTWorldComponent::Instance* RTWorldComponent::createInstance(const render::IAccelerationStructure* blas, const render::Buffer* perTriangleData, const render::Buffer* perVertexData)
+RTWorldComponent::Instance* RTWorldComponent::createInstance(const render::IAccelerationStructure* blas, const render::Buffer* perVertexData)
 {
-	RefArray< const render::IAccelerationStructure > blases;
-	blases.push_back(blas);
-	return createInstance(blases, perTriangleData, perVertexData);
+	AlignedVector< Part > parts;
+	parts.push_back({ blas, perVertexData });
+	return createInstance(parts);
 }
 
-RTWorldComponent::Instance* RTWorldComponent::createInstance(const RefArray< const render::IAccelerationStructure >& blas, const render::Buffer* perTriangleData, const render::Buffer* perVertexData)
+RTWorldComponent::Instance* RTWorldComponent::createInstance(const AlignedVector< Part >& parts)
 {
 	Instance* instance = new Instance();
 	instance->owner = this;
 	instance->transform = Transform::identity();
-	instance->blas = blas;
-	instance->perTriangleData = perTriangleData;
-	instance->perVertexData = perVertexData;
+	instance->parts = parts;
 
 	m_instances.push_back(instance);
 	m_instanceBufferDirty = true;
@@ -65,12 +63,11 @@ void RTWorldComponent::build(const WorldBuildContext& context)
 		AlignedVector< render::IAccelerationStructure::Instance > tlasInstances;
 		for (const auto& instance : m_instances)
 		{
-			for (auto blas : instance->blas)
+			for (auto part : instance->parts)
 			{
 				tlasInstances.push_back({
-					.blas = blas,
-					.perTriangleData = instance->perTriangleData,
-					.perVertexData = instance->perVertexData,
+					.blas = part.blas,
+					.perVertexData = part.perVertexData,
 					.transform = instance->transform.toMatrix44()
 				});
 			}

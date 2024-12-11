@@ -52,13 +52,17 @@ class T_DLLCLASS RTWorldComponent : public IWorldComponent
 	T_RTTI_CLASS;
 
 public:
+	struct Part
+	{
+		Ref< const render::IAccelerationStructure > blas;
+		Ref< const render::Buffer > perVertexData;
+	};
+
 	struct T_DLLCLASS Instance
 	{
 		RTWorldComponent* owner;
 		Transform transform;
-		RefArray< const render::IAccelerationStructure > blas;
-		Ref< const render::Buffer > perTriangleData;
-		Ref< const render::Buffer > perVertexData;
+		AlignedVector< Part > parts;
 
 		void destroy();
 
@@ -75,9 +79,9 @@ public:
 
 	virtual void update(World* world, const UpdateParams& update) override final;
 
-	Instance* createInstance(const render::IAccelerationStructure* blas, const render::Buffer* perTriangleData, const render::Buffer* perVertexData);
+	Instance* createInstance(const render::IAccelerationStructure* blas, const render::Buffer* perVertexData);
 
-	Instance* createInstance(const RefArray< const render::IAccelerationStructure >& blas, const render::Buffer* perTriangleData, const render::Buffer* perVertexData);
+	Instance* createInstance(const AlignedVector< Part >& parts);
 
 	void build(const WorldBuildContext& context);
 

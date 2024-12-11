@@ -211,11 +211,6 @@ Ref< render::IAccelerationStructure > SkinnedMesh::createAccelerationStructure(r
 	);
 }
 
-const render::Buffer* SkinnedMesh::getRTTriangleAttributes() const
-{
-	return m_mesh->getAuxBuffer(c_fccRayTracingTriangleAttributes);
-}
-
 const render::Buffer* SkinnedMesh::getRTVertexAttributes() const
 {
 	return m_mesh->getAuxBuffer(c_fccRayTracingVertexAttributes);

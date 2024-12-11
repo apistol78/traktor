@@ -545,13 +545,16 @@ void TerrainComponent::destroy()
 	safeDestroy(m_drawBuffer);
 	safeDestroy(m_dataBuffer);
 
-	for (auto vb : m_rtVertexBuffers)
-		vb->destroy();
-	for (auto as : m_rtAS)
-		as->destroy();
+	//for (auto vb : m_rtVertexBuffers)
+	//	vb->destroy();
+	//for (auto va : m_rtPerVertexAttributes)
+	//	va->destroy();
+	//for (auto as : m_rtAS)
+	//	as->destroy();
 
-	m_rtVertexBuffers.clear();
-	m_rtAS.clear();
+	//m_rtVertexBuffers.clear();
+	//m_rtPerVertexAttributes.clear();
+	//m_rtAS.clear();
 	
 	safeDestroy(m_rtwInstance);
 }
@@ -572,7 +575,7 @@ void TerrainComponent::setWorld(world::World* world)
 		T_FATAL_ASSERT(m_rtwInstance == nullptr);
 		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
 		if (rtw != nullptr)
-			m_rtwInstance = rtw->createInstance(*(RefArray< const render::IAccelerationStructure >*)&m_rtAS, nullptr, nullptr);
+			m_rtwInstance = rtw->createInstance(m_rtParts);
 	}
 
 	m_world = world;
@@ -741,10 +744,10 @@ bool TerrainComponent::createPatches()
 
 	updatePatches(nullptr, true, true);
 
-	AlignedVector< uint32_t > indices;
+	m_indices.resize(0);
 	for (uint32_t lod = 0; lod < LodCount; ++lod)
 	{
-		const size_t indexOffset = indices.size();
+		const size_t indexOffset = m_indices.size();
 		const uint32_t lodSkip = 1 << lod;
 
 		for (uint32_t y = 0; y < patchDim - 1; y += lodSkip)
@@ -758,92 +761,92 @@ bool TerrainComponent::createPatches()
 
 					if (x == 0)
 					{
-						indices.push_back(mid);
-						indices.push_back(lodSkip + offset);
-						indices.push_back(lodSkip + offset + lodSkip * patchDim);
+						m_indices.push_back(mid);
+						m_indices.push_back(lodSkip + offset);
+						m_indices.push_back(lodSkip + offset + lodSkip * patchDim);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
-							indices.push_back(mid);
-							indices.push_back(offset + i * patchDim + patchDim);
-							indices.push_back(offset + i * patchDim);
+							m_indices.push_back(mid);
+							m_indices.push_back(offset + i * patchDim + patchDim);
+							m_indices.push_back(offset + i * patchDim);
 						}
 					}
 					else if (x == patchDim - 1 - lodSkip)
 					{
-						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * patchDim);
-						indices.push_back(x + offset);
+						m_indices.push_back(mid);
+						m_indices.push_back(x + offset + lodSkip * patchDim);
+						m_indices.push_back(x + offset);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
-							indices.push_back(mid);
-							indices.push_back(x + offset + i * patchDim + lodSkip);
-							indices.push_back(x + offset + i * patchDim + lodSkip + patchDim);
+							m_indices.push_back(mid);
+							m_indices.push_back(x + offset + i * patchDim + lodSkip);
+							m_indices.push_back(x + offset + i * patchDim + lodSkip + patchDim);
 						}
 					}
 					else
 					{
-						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * patchDim);
-						indices.push_back(x + offset);
+						m_indices.push_back(mid);
+						m_indices.push_back(x + offset + lodSkip * patchDim);
+						m_indices.push_back(x + offset);
 
-						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip);
-						indices.push_back(x + offset + lodSkip + lodSkip * patchDim);
+						m_indices.push_back(mid);
+						m_indices.push_back(x + offset + lodSkip);
+						m_indices.push_back(x + offset + lodSkip + lodSkip * patchDim);
 					}
 
 					if (y == 0)
 					{
-						indices.push_back(mid);
-						indices.push_back(x + lodSkip * patchDim + offset + lodSkip);
-						indices.push_back(x + lodSkip * patchDim + offset);
+						m_indices.push_back(mid);
+						m_indices.push_back(x + lodSkip * patchDim + offset + lodSkip);
+						m_indices.push_back(x + lodSkip * patchDim + offset);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
-							indices.push_back(mid);
-							indices.push_back(x + offset + i);
-							indices.push_back(x + offset + i + 1);
+							m_indices.push_back(mid);
+							m_indices.push_back(x + offset + i);
+							m_indices.push_back(x + offset + i + 1);
 						}
 					}
 					else if (y == patchDim - 1 - lodSkip)
 					{
-						indices.push_back(mid);
-						indices.push_back(x + offset);
-						indices.push_back(x + offset + lodSkip);
+						m_indices.push_back(mid);
+						m_indices.push_back(x + offset);
+						m_indices.push_back(x + offset + lodSkip);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
-							indices.push_back(mid);
-							indices.push_back(x + offset + i + lodSkip * patchDim + 1);
-							indices.push_back(x + offset + i + lodSkip * patchDim);
+							m_indices.push_back(mid);
+							m_indices.push_back(x + offset + i + lodSkip * patchDim + 1);
+							m_indices.push_back(x + offset + i + lodSkip * patchDim);
 						}
 					}
 					else
 					{
-						indices.push_back(mid);
-						indices.push_back(x + offset);
-						indices.push_back(x + offset + lodSkip);
+						m_indices.push_back(mid);
+						m_indices.push_back(x + offset);
+						m_indices.push_back(x + offset + lodSkip);
 
-						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * patchDim + lodSkip);
-						indices.push_back(x + offset + lodSkip * patchDim);
+						m_indices.push_back(mid);
+						m_indices.push_back(x + offset + lodSkip * patchDim + lodSkip);
+						m_indices.push_back(x + offset + lodSkip * patchDim);
 					}
 				}
 				else
 				{
-					indices.push_back(x + offset);
-					indices.push_back(lodSkip + x + offset);
-					indices.push_back(lodSkip * patchDim + x + offset);
+					m_indices.push_back(x + offset);
+					m_indices.push_back(lodSkip + x + offset);
+					m_indices.push_back(lodSkip* patchDim + x + offset);
 
-					indices.push_back(lodSkip + x + offset);
-					indices.push_back(lodSkip * patchDim + lodSkip + x + offset);
-					indices.push_back(lodSkip * patchDim + x + offset);
+					m_indices.push_back(lodSkip + x + offset);
+					m_indices.push_back(lodSkip * patchDim + lodSkip + x + offset);
+					m_indices.push_back(lodSkip * patchDim + x + offset);
 				}
 			}
 		}
 
-		const size_t indexEndOffset = indices.size();
+		const size_t indexEndOffset = m_indices.size();
 		T_ASSERT((indexEndOffset - indexOffset) % 3 == 0);
 
 		m_primitives[lod] = render::Primitives::setIndexed(
@@ -855,7 +858,7 @@ bool TerrainComponent::createPatches()
 
 	m_indexBuffer = m_renderSystem->createBuffer(
 		render::BuIndex,
-		(uint32_t)indices.size() * sizeof(uint32_t),
+		(uint32_t)m_indices.size() * sizeof(uint32_t),
 		false
 	);
 	if (!m_indexBuffer)
@@ -864,8 +867,8 @@ bool TerrainComponent::createPatches()
 	uint32_t* index = static_cast< uint32_t* >(m_indexBuffer->lock());
 	T_ASSERT_M (index, L"Unable to lock index buffer");
 
-	for (uint32_t i = 0; i < uint32_t(indices.size()); ++i)
-		index[i] = indices[i];
+	for (uint32_t i = 0; i < uint32_t(m_indices.size()); ++i)
+		index[i] = m_indices[i];
 
 	m_indexBuffer->unlock();
 
@@ -924,15 +927,16 @@ bool TerrainComponent::createRayTracingPatches()
 	const Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
 	Vector4 patchTopLeft = (-worldExtent * 0.5_simd).xyz1();
 
-	for (auto vb : m_rtVertexBuffers)
-		vb->destroy();
-	for (auto as : m_rtAS)
-		as->destroy();
+	//for (auto& part : m_rtParts)
+	//{
+	//	safeDestroy(part.perVertexData);
+	//	safeDestroy(part.blas);
+	//}
 
 	safeDestroy(m_rtwInstance);
 
 	m_rtVertexBuffers.resize(m_patchCount * m_patchCount);
-	m_rtAS.resize(m_patchCount * m_patchCount);
+	m_rtParts.resize(m_patchCount * m_patchCount);
 
 	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
 	{
@@ -947,6 +951,7 @@ bool TerrainComponent::createRayTracingPatches()
 				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4( patchDeltaHalf.x(), 0.0f,  patchDeltaHalf.z(), 0.0f)
 			);
 
+			// Create vertex buffer.
 			m_rtVertexBuffers[patchId] = m_renderSystem->createBuffer(
 				render::BuVertex,
 				patchVertexCount * vertexSize,
@@ -975,8 +980,53 @@ bool TerrainComponent::createRayTracingPatches()
 			}
 			m_rtVertexBuffers[patchId]->unlock();
 
-			m_rtAS[patchId] = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_indexBuffer, render::IndexType::UInt32, { m_primitives[1] });
-			if (!m_rtAS[patchId])
+			// Create "per-vertex" attribute buffer.
+			const uint32_t vertexAttribCount = m_primitives[1].count * 3;
+
+			Ref< render::Buffer > perVertexData = m_renderSystem->createBuffer(
+				render::BuStructured,
+				vertexAttribCount * sizeof(world::RTVertexAttributes),
+				false
+			);
+			if (!perVertexData)
+				return false;
+
+			world::RTVertexAttributes* va = static_cast< world::RTVertexAttributes* >(perVertexData->lock());
+			T_ASSERT_M (va, L"Unable to lock vertex attribute buffer");
+			for (uint32_t i = 0; i < vertexAttribCount; ++i)
+			{
+				const uint32_t index = m_indices[m_primitives[1].offset + i];
+
+				int32_t ix = index % patchDim;
+				int32_t iz = index / patchDim;
+
+				const float fx = float(ix) / (patchDim - 1);
+				const float fz = float(iz) / (patchDim - 1);
+
+				const float worldX = lerp(patchAabb.mn.x(), patchAabb.mx.x(), fx);
+				const float worldZ = lerp(patchAabb.mn.z(), patchAabb.mx.z(), fz);
+
+				float gridX, gridZ;
+				m_heightfield->worldToGrid(worldX, worldZ, gridX, gridZ);
+
+				const Vector4 normal = m_heightfield->normalAt(gridX, gridZ);
+
+				Vector4(0.3f, 0.6f, 0.1f, 1.0f).storeUnaligned(va->albedo);
+				normal.storeUnaligned(va->normal);
+
+				va->texCoord[0] =
+				va->texCoord[1] = 0.0f;
+				va->albedoMap = -1;
+
+				va++;
+			}
+			perVertexData->unlock();
+
+			m_rtParts[patchId].perVertexData = perVertexData;
+
+			// Create bottom level acceleration structure.
+			m_rtParts[patchId].blas = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_indexBuffer, render::IndexType::UInt32, { m_primitives[1] });
+			if (!m_rtParts[patchId].blas)
 				return false;
 
 			patchOrigin += patchDeltaX;

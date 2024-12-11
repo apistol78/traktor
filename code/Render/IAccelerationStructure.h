@@ -36,7 +36,6 @@ public:
 	struct Instance
 	{
 		Ref< const IAccelerationStructure > blas;
-		Ref< const Buffer > perTriangleData;
 		Ref< const Buffer > perVertexData;
 		Matrix44 transform;
 	};

@@ -72,7 +72,6 @@ bool SkinnedMeshConverter::convert(
 	const uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
 	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
 	const uint32_t auxBufferSize = (uint32_t)(model->getVertices().size() * (6 * 4 * sizeof(float)));
-	const uint32_t rtTriangleAttributesSize = (uint32_t)(model->getPolygons().size() * sizeof(world::RTTriangleAttributes));
 	const uint32_t rtVertexAttributesSize = (uint32_t)(model->getPolygons().size() * 3 * sizeof(world::RTVertexAttributes));
 
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
@@ -82,7 +81,6 @@ bool SkinnedMeshConverter::convert(
 		indexBufferSize,
 		{
 			{ SkinnedMesh::c_fccSkinPosition, auxBufferSize },
-			{ IMesh::c_fccRayTracingTriangleAttributes, rtTriangleAttributesSize },
 			{ IMesh::c_fccRayTracingVertexAttributes, rtVertexAttributesSize }
 		}
 	);
@@ -277,7 +275,6 @@ bool SkinnedMeshConverter::convert(
 		);
 		meshParts.push_back(meshPart);
 
-		world::RTTriangleAttributes* tptr = (world::RTTriangleAttributes*)mesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->lock();
 		world::RTVertexAttributes* vptr = (world::RTVertexAttributes*)mesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
 
 		for (const auto& mt : materialTechniqueMap)
@@ -301,11 +298,6 @@ bool SkinnedMeshConverter::convert(
 					}
 				}
 
-				model->getNormal(polygon.getNormal()).storeUnaligned(tptr->normal);
-				albedo.storeUnaligned(tptr->albedo);
-
-				++tptr;
-
 				for (uint32_t j = 0; j < 3; ++j)
 				{
 					const auto& vertex = model->getVertex(polygon.getVertex(j));
@@ -317,12 +309,15 @@ bool SkinnedMeshConverter::convert(
 					else
 						albedo.storeUnaligned(vptr->albedo);
 
+					vptr->texCoord[0] =
+					vptr->texCoord[1] = 0.0f;
+					vptr->albedoMap = -1;
+
 					++vptr;
 				}
 			}
 		}
 
-		mesh->getAuxBuffer(IMesh::c_fccRayTracingTriangleAttributes)->unlock();
 		mesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->unlock();
 	}
 

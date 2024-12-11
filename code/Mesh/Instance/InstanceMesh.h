@@ -91,8 +91,6 @@ public:
 
 	const render::IAccelerationStructure* getAccelerationStructure() const { return m_rtAccelerationStructure; }
 
-	const render::Buffer* getRTTriangleAttributes() const;
-
 	const render::Buffer* getRTVertexAttributes() const;
 
 private:

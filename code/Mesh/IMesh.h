@@ -30,7 +30,6 @@ class T_DLLCLASS IMesh : public Object
 	T_RTTI_CLASS;
 
 public:
-	static const FourCC c_fccRayTracingTriangleAttributes;
 	static const FourCC c_fccRayTracingVertexAttributes;
 };
 

@@ -126,17 +126,13 @@ struct DoubleBufferedTarget
 };
 
 /*! */
-struct RTTriangleAttributes
-{
-	float normal[4];
-	float albedo[4];
-};
-
-/*! */
 struct RTVertexAttributes
 {
 	float normal[4];
 	float albedo[4];
+	float texCoord[4];
+	int32_t albedoMap;
+	int32_t pad[3];
 };
 
 /*! */

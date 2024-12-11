@@ -11,6 +11,8 @@ struct HWRT_Material
 {
 	highp vec4 normal;
 	highp vec4 albedo;
+	highp vec4 texCoord;
+	ivec4 albedoMap;
 };
 
 layout (std430, binding = 2, set = 3) readonly buffer __bindlessBufferMaterials__Buffer

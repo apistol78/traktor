@@ -182,8 +182,9 @@ private:
 	Ref< render::ITexture > m_defaultColorMap;
 	Ref< render::ITexture > m_defaultCutMap;
 	render::Primitives m_primitives[LodCount];
+	AlignedVector< uint32_t > m_indices;
 	RefArray< render::Buffer > m_rtVertexBuffers;
-	RefArray< render::IAccelerationStructure > m_rtAS;
+	AlignedVector< world::RTWorldComponent::Part > m_rtParts;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
 	float m_patchLodDistance = 0.0f;
 	float m_patchLodBias = 0.0f;
