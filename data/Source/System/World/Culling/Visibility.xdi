@@ -31,7 +31,7 @@
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{A12CD3AB-ABC5-BE47-882A-206186C7504A}</id>
 			<comment/>
 			<position>
@@ -40,11 +40,13 @@
 			</position>
 			<name>Frustum</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{45D674A1-6AC4-6B4E-B7CB-DC7F9C2EC215}</item>
 			</include>
@@ -107,7 +109,7 @@ $Output = (inside0 && inside1) ? 1.0f : 0.0f;
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{861D7610-0664-6C4B-A21F-0D64852C2041}</id>
 			<comment/>
 			<position>
@@ -116,11 +118,13 @@ $Output = (inside0 && inside1) ? 1.0f : 0.0f;
 			</position>
 			<name>WriteOut</name>
 			<technique>Default</technique>
+			<domain>Compute</domain>
 			<localSize>
 				<X>16</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -149,10 +153,10 @@ $Buffer[index].visible = $Input;
 			<id>{32AF829B-BE26-9242-99ED-1189D698205D}</id>
 			<comment/>
 			<position>
-				<first>1350</first>
+				<first>1382</first>
 				<second>493</second>
 			</position>
-			<parameterName>InstanceMesh_Visibility</parameterName>
+			<parameterName>World_Visibility</parameterName>
 			<elements>
 				<item>
 					<name>visible</name>
@@ -236,7 +240,7 @@ $Buffer[index].visible = $Input;
 				<item>boundingBoxMax</item>
 			</names>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{1215F567-09D7-9241-B2B2-AA428BF8F819}</id>
 			<comment/>
 			<position>
@@ -245,11 +249,13 @@ $Buffer[index].visible = $Input;
 			</position>
 			<name>HiZ</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{45D674A1-6AC4-6B4E-B7CB-DC7F9C2EC215}</item>
 			</include>

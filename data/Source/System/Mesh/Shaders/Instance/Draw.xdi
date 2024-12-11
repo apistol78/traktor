@@ -23,10 +23,10 @@
 			<id>{9772F569-3912-1B46-AB4B-157B8CC99284}</id>
 			<comment/>
 			<position>
-				<first>-23</first>
+				<first>49</first>
 				<second>273</second>
 			</position>
-			<parameterName>InstanceMesh_Visibility</parameterName>
+			<parameterName>World_Visibility</parameterName>
 			<elements>
 				<item>
 					<name>visible</name>
@@ -39,7 +39,7 @@
 			<id>{B6ABD193-2075-0442-A1B6-92D4C05F99CB}</id>
 			<comment/>
 			<position>
-				<first>-7</first>
+				<first>33</first>
 				<second>226</second>
 			</position>
 			<parameterName>InstanceMesh_Draw</parameterName>
@@ -71,7 +71,7 @@
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{EF3C22BB-6DAD-ED47-B381-BF0850063421}</id>
 			<comment/>
 			<position>
@@ -80,11 +80,13 @@
 			</position>
 			<name>WriteOut</name>
 			<technique>Default</technique>
+			<domain>Compute</domain>
 			<localSize>
 				<X>16</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -132,7 +134,7 @@ $DrawBuffer[index].firstInstance = 0;
 			<id>{3491574B-839F-B74B-8747-0C4A10BECB57}</id>
 			<comment/>
 			<position>
-				<first>15</first>
+				<first>55</first>
 				<second>367</second>
 			</position>
 			<declaration>{B3E861C9-6744-BB4A-AD7D-1FF8EF264290}</declaration>
@@ -144,7 +146,7 @@ $DrawBuffer[index].firstInstance = 0;
 			<id>{89C29FEB-0F4E-714E-88DE-0BA91E135B7D}</id>
 			<comment/>
 			<position>
-				<first>31</first>
+				<first>55</first>
 				<second>414</second>
 			</position>
 			<declaration>{87E7C40F-56AB-2047-BE5A-149DB39C8DB3}</declaration>
@@ -156,7 +158,7 @@ $DrawBuffer[index].firstInstance = 0;
 			<id>{2FB4EA3D-40CC-3548-B4A5-D965E96D6C05}</id>
 			<comment/>
 			<position>
-				<first>-1</first>
+				<first>39</first>
 				<second>461</second>
 			</position>
 			<declaration>{2360BCAB-71A5-5B4E-A7BE-8B8EAC17CDE0}</declaration>

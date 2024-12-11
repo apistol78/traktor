@@ -29,7 +29,6 @@ namespace traktor::mesh
 
 render::Handle s_handleInstanceWorld(L"InstanceWorld");
 render::Handle s_handleInstanceWorldLast(L"InstanceWorldLast");
-render::Handle s_handleVisibility(L"InstanceMesh_Visibility");
 render::Handle s_handleDraw(L"InstanceMesh_Draw");
 render::Handle s_handleIndexCount(L"InstanceMesh_IndexCount");
 render::Handle s_handleFirstIndex(L"InstanceMesh_FirstIndex");
@@ -128,7 +127,7 @@ void InstanceMesh::build(
 		renderBlock->programParams->setFloatParameter(s_handleIndexCount, primitives.getVertexCount() + 0.5f);
 		renderBlock->programParams->setFloatParameter(s_handleFirstIndex, primitives.offset + 0.5f);
 		renderBlock->programParams->setFloatParameter(s_handleInstanceOffset, start + 0.5f);
-		renderBlock->programParams->setBufferViewParameter(s_handleVisibility, visibilityBuffer->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(world::s_handleVisibility, visibilityBuffer->getBufferView());
 		renderBlock->programParams->setBufferViewParameter(s_handleDraw, drawBuffer->getBufferView());
 		renderBlock->programParams->endParameters(renderContext);
 

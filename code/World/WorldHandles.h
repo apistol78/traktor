@@ -85,6 +85,12 @@ extern const render::Handle T_DLLCLASS s_handleDBufferNormalMap;
 extern const render::Handle T_DLLCLASS s_handleHiZTexture;
 extern const render::Handle T_DLLCLASS s_handleTLAS;
 
+// Culling.
+extern const render::Handle T_DLLCLASS s_handleTargetSize;
+extern const render::Handle T_DLLCLASS s_handleViewProjection;
+extern const render::Handle T_DLLCLASS s_handleVisibility;
+extern const render::Handle T_DLLCLASS s_handleCullFrustum;
+
 // Irradiance grid.
 extern const render::Handle T_DLLCLASS s_handleIrradianceGridBoundsMax;
 extern const render::Handle T_DLLCLASS s_handleIrradianceGridBoundsMin;

@@ -75,6 +75,12 @@ const render::Handle s_handleDBufferNormalMap(L"World_DBufferNormalMap");
 const render::Handle s_handleHiZTexture(L"World_HiZTexture");
 const render::Handle s_handleTLAS(L"World_TLAS");
 
+// Culling.
+const render::Handle s_handleTargetSize(L"World_TargetSize");
+const render::Handle s_handleViewProjection(L"World_ViewProjection");
+const render::Handle s_handleVisibility(L"World_Visibility");
+const render::Handle s_handleCullFrustum(L"World_CullFrustum");
+
 // Irradiance grid.
 const render::Handle s_handleIrradianceGridBoundsMax(L"World_IrradianceGridBoundsMax");
 const render::Handle s_handleIrradianceGridBoundsMin(L"World_IrradianceGridBoundsMin");

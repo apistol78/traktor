@@ -27,10 +27,6 @@ namespace traktor::world
 const resource::Id< render::Shader > c_shaderInstanceMeshCull(L"{37998131-BDA1-DE45-B175-35B088FEE61C}");
 
 render::Handle s_handleInstanceWorld(L"InstanceWorld");
-render::Handle s_handleTargetSize(L"InstanceMesh_TargetSize");
-render::Handle s_handleViewProjection(L"InstanceMesh_ViewProjection");
-render::Handle s_handleVisibility(L"InstanceMesh_Visibility");
-render::Handle s_handleCullFrustum(L"InstanceMesh_CullFrustum");
 
 	}
 
