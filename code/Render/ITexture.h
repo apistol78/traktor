@@ -63,6 +63,12 @@ public:
 	 */
 	virtual Size getSize() const = 0;
 
+	/*! Get bindless index of texture.
+	 * 
+	 * \return Bindless index, -1 if no index associated.
+	 */
+	virtual int32_t getBindlessIndex() const = 0;
+
 	/*! Lock access to texture data.
 	 *
 	 * \param side Cube map side (0 if not cube map).

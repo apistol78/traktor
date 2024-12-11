@@ -59,6 +59,8 @@ public:
 
 	virtual Size getSize() const override final;
 
+	virtual int32_t getBindlessIndex() const override final;
+
 	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
 
 	virtual void unlock(int32_t side, int32_t level) override final;

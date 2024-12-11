@@ -464,6 +464,11 @@ ITexture::Size TextureVk::getSize() const
 	return m_size;
 }
 
+int32_t TextureVk::getBindlessIndex() const
+{
+	return (int32_t)m_textureImage->getSampledResourceIndex();
+}
+
 bool TextureVk::lock(int32_t side, int32_t level, Lock& lock)
 {
 	if (m_stagingBuffer != nullptr)

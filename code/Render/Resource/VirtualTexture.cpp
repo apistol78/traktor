@@ -63,6 +63,11 @@ ITexture::Size VirtualTexture::getSize() const
 	return { m_imageWidth, m_imageHeight, 1, m_mipCount };
 }
 
+int32_t VirtualTexture::getBindlessIndex() const
+{
+	return -1;
+}
+
 bool VirtualTexture::lock(int32_t side, int32_t level, Lock& lock)
 {
 	return false;

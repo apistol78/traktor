@@ -42,6 +42,12 @@ ITexture::Size TextureVrfy::getSize() const
 	return m_texture ? m_texture->getSize() : Size{ 0 };
 }
 
+int32_t TextureVrfy::getBindlessIndex() const
+{
+	T_CAPTURE_ASSERT (m_texture, L"Texture destroyed.");
+	return m_texture ? m_texture->getBindlessIndex() : -1;
+}
+
 bool TextureVrfy::lock(int32_t side, int32_t level, Lock& lock)
 {
 	T_CAPTURE_ASSERT (m_texture, L"Texture destroyed.");

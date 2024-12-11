@@ -80,6 +80,11 @@ render::ITexture::Size VideoTexture::getSize() const
 	return m_textures[0]->getSize();
 }
 
+int32_t VideoTexture::getBindlessIndex() const
+{
+	return m_textures[m_current]->getBindlessIndex();
+}
+
 bool VideoTexture::lock(int32_t side, int32_t level, render::ITexture::Lock& lock)
 {
 	return false;

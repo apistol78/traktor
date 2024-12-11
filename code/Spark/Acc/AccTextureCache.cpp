@@ -50,6 +50,11 @@ public:
 		return m_texture->getSize();
 	}
 
+	virtual int32_t getBindlessIndex() const override final
+	{
+		return m_texture->getBindlessIndex();
+	}
+
 	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final
 	{
 		return m_texture->lock(side, level, lock);
