@@ -91,6 +91,8 @@ std::wstring getMemberValue(const ReflectionMember* member)
 		return mbstows(memberString->get());
 	else if (const RfmPrimitiveWideString* memberWideString = dynamic_type_cast< const RfmPrimitiveWideString* >(member))
 		return memberWideString->get();
+	else if (const RfmPrimitiveGuid* memberGuid = dynamic_type_cast< const RfmPrimitiveGuid* >(member))
+		return memberGuid->get().format();
 	else if (const RfmPrimitivePath* memberPath = dynamic_type_cast< const RfmPrimitivePath* >(member))
 		return memberPath->get().getPathName();
 	else
@@ -193,6 +195,11 @@ Ref< const ReflectionMember > searchMember(db::Instance* instance, Reflection* r
 		if (match(memberWideString->get(), needle, regExp, caseSensitive))
 			return member;
 	}
+	else if (const RfmPrimitiveGuid* memberGuid = dynamic_type_cast< const RfmPrimitiveGuid* >(member))
+	{
+		if (match(memberGuid->get().format(), needle, regExp, caseSensitive))
+			return member;
+	}
 	else if (const RfmPrimitivePath* memberPath = dynamic_type_cast< const RfmPrimitivePath* >(member))
 	{
 		if (match(memberPath->get().getPathName(), needle, regExp, caseSensitive))
@@ -220,7 +227,7 @@ void searchInstance(db::Instance* instance, const std::wstring& needle, bool reg
 		Ref< const ReflectionMember > foundMember = searchMember(instance, reflection, *i, visited, needle, regExp, caseSensitive, gridResults);
 		if (foundMember)
 		{
-			std::wstring value = getMemberValue(foundMember);
+			const std::wstring value = getMemberValue(foundMember);
 
 			Ref< ui::GridRow > row = new ui::GridRow();
 			row->add(instance->getPath());
