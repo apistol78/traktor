@@ -114,7 +114,7 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 10, SplineEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 11, SplineEntityPipeline, world::EntityPipeline)
 
 bool SplineEntityPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -197,6 +197,8 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 			if (!model)
 				continue;
 
+			const SmallMap< std::wstring, Guid >& materialShaders = meshAsset->getMaterialShaders();
+
 			for (uint32_t i = 0; i < model->getMaterialCount(); ++i)
 			{
 				model::Material material = model->getMaterial(i);
@@ -204,21 +206,34 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				const uint32_t materialHash = DeepHash(&material).get();
 				const Guid outputGuid = Guid(L"{8BB018D2-7AAC-4F9D-A5A4-DE396604862C}").permutation(materialHash);
 
-				buildEmbeddedTexture(pipelineBuilder, material.getDiffuseMap(), false);
-				buildEmbeddedTexture(pipelineBuilder, material.getSpecularMap(), false);
-				buildEmbeddedTexture(pipelineBuilder, material.getRoughnessMap(), false);
-				buildEmbeddedTexture(pipelineBuilder, material.getMetalnessMap(), false);
-				buildEmbeddedTexture(pipelineBuilder, material.getTransparencyMap(), false);
-				buildEmbeddedTexture(pipelineBuilder, material.getEmissiveMap(), false);
-				buildEmbeddedTexture(pipelineBuilder, material.getReflectiveMap(), false);
-				buildEmbeddedTexture(pipelineBuilder, material.getNormalMap(), true);
+				Ref< const render::ShaderGraph > meshSurfaceShaderGraph;
 
-				Ref< const render::ShaderGraph > meshSurfaceShaderGraph = materialGenerator.generateSurface(
-					*model,
-					material,
-					false,
-					true
-				);
+				// Try to get surface shader from explicit list first.
+				const auto it = materialShaders.find(material.getName());
+				if (it != materialShaders.end())
+				{
+					meshSurfaceShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
+				}
+
+				// Generate surface shader from material.
+				if (!meshSurfaceShaderGraph)
+				{
+					buildEmbeddedTexture(pipelineBuilder, material.getDiffuseMap(), false);
+					buildEmbeddedTexture(pipelineBuilder, material.getSpecularMap(), false);
+					buildEmbeddedTexture(pipelineBuilder, material.getRoughnessMap(), false);
+					buildEmbeddedTexture(pipelineBuilder, material.getMetalnessMap(), false);
+					buildEmbeddedTexture(pipelineBuilder, material.getTransparencyMap(), false);
+					buildEmbeddedTexture(pipelineBuilder, material.getEmissiveMap(), false);
+					buildEmbeddedTexture(pipelineBuilder, material.getReflectiveMap(), false);
+					buildEmbeddedTexture(pipelineBuilder, material.getNormalMap(), true);
+
+					meshSurfaceShaderGraph = materialGenerator.generateSurface(
+						*model,
+						material,
+						false,
+						true
+					);
+				}
 
 				Ref< const render::ShaderGraph > materialShaderGraph = materialGenerator.generateMesh(
 					*model,
