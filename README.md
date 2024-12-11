@@ -1,4 +1,10 @@
 # ![image info](resources/documentation/images/logo.svg)
+<a href="https://discord.gg/fSMrww2B7C"><img src="https://discordapp.com/api/guilds/1315317355194220614/widget.png"/></a>&nbsp;&nbsp;&nbsp;&nbsp;
+[![linux](https://github.com/apistol78/traktor/actions/workflows/build-linux.yml/badge.svg)](https://github.com/apistol78/traktor/actions/workflows/build-linux.yml)
+&nbsp;&nbsp;&nbsp;&nbsp;[![windows](https://github.com/apistol78/traktor/actions/workflows/build-windows.yml/badge.svg)](https://github.com/apistol78/traktor/actions/workflows/build-windows.yml)
+
+---
+
 Traktor is an open-source 3d game engine written in C++, it has powered several successful commercial titles across various platforms including Steam, PSN, iOS, and the Mac Store.
 
 ![image info](resources/documentation/images/screenshot%20-%20editor%20-%2005.png)
@@ -65,6 +71,5 @@ See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binar
 
 
 ## Contact
-Join our discord server to read about Traktor or ask any questions regarding Traktor.
-
+Join our discord server to read about Traktor or ask any questions regarding Traktor.<br>
 https://discord.gg/fSMrww2B7C
