@@ -178,6 +178,12 @@ bool Model::removeMaterial(uint32_t index)
 	return true;
 }
 
+uint32_t Model::findMaterial(const std::wstring& name) const
+{
+	const auto it = std::find_if(m_materials.begin(), m_materials.end(), [&](const Material& m) { return m.getName() == name; });
+	return it != m_materials.end() ? (uint32_t)std::distance(m_materials.begin(), it) : c_InvalidIndex;
+}
+
 uint32_t Model::addVertex(const Vertex& vertex)
 {
 	return m_vertices.add(vertex);
@@ -202,6 +208,18 @@ uint32_t Model::addPolygon(const Polygon& polygon)
 uint32_t Model::addUniquePolygon(const Polygon& polygon)
 {
 	return addUniqueId< AlignedVector< Polygon >, Polygon, DefaultPredicate< Polygon > >(m_polygons, polygon);
+}
+
+AlignedVector< Polygon > Model::getPolygonsByMaterial(uint32_t material) const
+{
+	AlignedVector< Polygon > polygons;
+	polygons.reserve(m_polygons.size());
+	for (const auto& polygon : m_polygons)
+	{
+		if (polygon.getMaterial() == material)
+			polygons.push_back(polygon);
+	}
+	return polygons;
 }
 
 void Model::reservePositions(uint32_t positionCapacity)

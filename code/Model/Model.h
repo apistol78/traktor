@@ -81,6 +81,8 @@ public:
 
 	AlignedVector< Material >& getMaterials() { return m_materials; }
 
+	uint32_t findMaterial(const std::wstring& name) const;
+
 	//!@}
 
 	/*! \name Vertices */
@@ -126,6 +128,8 @@ public:
 	const AlignedVector< Polygon >& getPolygons() const { return m_polygons; }
 
 	AlignedVector< Polygon >& getPolygons() { return m_polygons; }
+
+	AlignedVector< Polygon > getPolygonsByMaterial(uint32_t material) const;
 
 	//!@}
 

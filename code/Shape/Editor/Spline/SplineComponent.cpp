@@ -286,6 +286,48 @@ void SplineComponent::update(const world::UpdateParams& update)
 						{
 							safeDestroy(m_rtwInstance);
 
+							Ref< render::Buffer > vertexAttributes = m_renderSystem->createBuffer(render::BuStructured, m_updateJobModel->getPolygonCount() * 3 * sizeof(world::RTVertexAttributes), false);
+							world::RTVertexAttributes* vptr = (world::RTVertexAttributes*)vertexAttributes->lock();
+
+							for (uint32_t i = 0; i < m_updateJobModel->getMaterialCount(); ++i)
+							{
+								for (const auto& polygon : m_updateJobModel->getPolygonsByMaterial(i))
+								{
+									const auto& material = m_updateJobModel->getMaterial(polygon.getMaterial());
+
+									Vector4 albedo = material.getColor();
+									for (const auto& vertex : polygon.getVertices())
+									{
+										const uint32_t colorId = m_updateJobModel->getVertex(vertex).getColor();
+										if (colorId != model::c_InvalidIndex)
+										{
+											albedo = m_updateJobModel->getColor(colorId);
+											break;
+										}
+									}
+
+									for (uint32_t j = 0; j < 3; ++j)
+									{
+										const auto& vertex = m_updateJobModel->getVertex(polygon.getVertex(j));
+
+										m_updateJobModel->getNormal(vertex.getNormal()).storeUnaligned(vptr->normal);
+
+										if (vertex.getColor() != model::c_InvalidIndex)
+											m_updateJobModel->getColor(vertex.getColor()).storeUnaligned(vptr->albedo);
+										else
+											albedo.storeUnaligned(vptr->albedo);
+
+										vptr->texCoord[0] =
+										vptr->texCoord[1] = 0.0f;
+										vptr->albedoMap = -1;
+
+										++vptr;
+									}
+								}
+							}
+
+							vertexAttributes->unlock();
+
 							AlignedVector< render::Primitives > primitives;
 							primitives.push_back(render::Primitives::setIndexed(
 								render::PrimitiveType::Triangles,
@@ -295,7 +337,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 
 							Ref< render::IAccelerationStructure > blas = m_renderSystem->createAccelerationStructure(m_vertexBuffer, m_vertexLayout, m_indexBuffer, render::IndexType::UInt32, primitives);
 							if (blas != nullptr)
-								m_rtwInstance = rtw->createInstance(blas, nullptr);
+								m_rtwInstance = rtw->createInstance(blas, vertexAttributes);
 						}
 					}
 					else

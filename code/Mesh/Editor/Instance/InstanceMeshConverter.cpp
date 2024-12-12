@@ -210,14 +210,13 @@ bool InstanceMeshConverter::convert(
 
 		for (const auto& mt : materialTechniqueMap)
 		{
-			for (uint32_t i = 0; i < model->getPolygons().size(); ++i)
+			const uint32_t materialId = model->findMaterial(mt.first);
+			if (materialId == model::c_InvalidIndex)
+				continue;
+
+			const auto& material = model->getMaterial(materialId);
+			for (const auto& polygon : model->getPolygonsByMaterial(materialId))
 			{
-				const auto& polygon = model->getPolygon(i);
-				const auto& material = model->getMaterial(polygon.getMaterial());
-
-				if (material.getName() != mt.first)
-					continue;
-
 				Vector4 albedo = material.getColor();
 				for (const auto& vertex : polygon.getVertices())
 				{
