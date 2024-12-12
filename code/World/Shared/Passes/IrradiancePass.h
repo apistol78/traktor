@@ -44,6 +44,7 @@ public:
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
 		const render::Buffer* lightSBuffer,
+		bool needJitter,
 		uint32_t frameCount,
 		render::RenderGraph& renderGraph,
 		render::handle_t gbufferTargetSetId,

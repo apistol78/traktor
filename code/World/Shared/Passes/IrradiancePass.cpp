@@ -60,6 +60,7 @@ render::handle_t IrradiancePass::setup(
 	const WorldRenderView& worldRenderView,
     const GatherView& gatheredView,
 	const render::Buffer* lightSBuffer,
+	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
@@ -104,8 +105,8 @@ render::handle_t IrradiancePass::setup(
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 	rp->setOutput(irradianceTargetSetId, clear, render::TfNone, render::TfColor);
 
-	const Vector2 jrc = jitter(frameCount) / worldRenderView.getViewSize();
-	const Vector2 jrp = jitter(frameCount - 1) / worldRenderView.getViewSize();
+	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();
+	const Vector2 jrp = needJitter ? jitter(frameCount - 1) / worldRenderView.getViewSize() : Vector2::zero();
 
 	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
 	{

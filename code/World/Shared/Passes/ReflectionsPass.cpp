@@ -81,6 +81,8 @@ bool ReflectionsPass::create(resource::IResourceManager* resourceManager, render
 render::handle_t ReflectionsPass::setup(
 	const WorldRenderView& worldRenderView,
     const GatherView& gatheredView,
+	bool needJitter,
+	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t dbufferTargetSetId,
@@ -157,6 +159,9 @@ render::handle_t ReflectionsPass::setup(
 	render::ImageGraphContext igctx;
 	igctx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
 
+	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();
+	const Vector2 jrp = needJitter ? jitter(frameCount - 1) / worldRenderView.getViewSize() : Vector2::zero();
+
 	// Global reflections.
 	if (m_probeGlobalReflections)
 	{
@@ -189,6 +194,7 @@ render::handle_t ReflectionsPass::setup(
 				}
 
 				params->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
+				params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
 				params->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
 				params->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
 				params->setTextureParameter(s_handleProbeTexture, probe->getTexture());
@@ -238,6 +244,7 @@ render::handle_t ReflectionsPass::setup(
 					}
 
 					params->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
+					params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
 					params->setMatrixParameter(s_handleWorldView, worldView);
 					params->setMatrixParameter(s_handleWorldViewInv, worldView.inverse());
 					params->setFloatParameter(s_handleProbeIntensity, p->getIntensity());
@@ -268,6 +275,7 @@ render::handle_t ReflectionsPass::setup(
 			const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
 
 			params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
+			params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
 			params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			params->setMatrixParameter(s_handleView, worldRenderView.getView());
 			params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());

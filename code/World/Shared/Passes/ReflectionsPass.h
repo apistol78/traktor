@@ -42,6 +42,8 @@ public:
 	render::handle_t setup(
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
+		bool needJitter,
+		uint32_t frameCount,
 		render::RenderGraph& renderGraph,
 		render::handle_t gbufferTargetSetId,
 		render::handle_t dbufferTargetSetId,

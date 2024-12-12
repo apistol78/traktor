@@ -50,7 +50,7 @@ render::handle_t GBufferPass::setup(
 	rgtd.createDepthStencil = false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;	// (GBufferA) Depth (R), Normal (GBA)
+	rgtd.targets[0].colorFormat = render::TfR32G32B32A32F; // TfR16G16B16A16F;	// (GBufferA) Depth (R), Normal (GBA)
 	rgtd.targets[1].colorFormat = render::TfR8G8B8A8;		// (GBufferB) Albedo (RGB)
 	rgtd.targets[2].colorFormat = render::TfR8G8B8A8;		// (GBufferC) Roughness (R), Metalness (G), Specular (B), Decal Response (A)
 

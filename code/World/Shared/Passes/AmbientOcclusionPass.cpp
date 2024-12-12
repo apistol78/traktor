@@ -80,6 +80,8 @@ bool AmbientOcclusionPass::create(resource::IResourceManager* resourceManager, r
 render::handle_t AmbientOcclusionPass::setup(
 	const WorldRenderView& worldRenderView,
     const GatherView& gatheredView,
+	bool needJitter,
+	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t outputTargetSetId
@@ -115,10 +117,14 @@ render::handle_t AmbientOcclusionPass::setup(
 	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	rp->setOutput(ambientOcclusionTargetSetId, clear, render::TfNone, render::TfColor);
 
+	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();
+	const Vector2 jrp = needJitter ? jitter(frameCount - 1) / worldRenderView.getViewSize() : Vector2::zero();
+
 	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
 	{
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
+		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
 		params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 		params->setMatrixParameter(s_handleView, worldRenderView.getView());
 		params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());

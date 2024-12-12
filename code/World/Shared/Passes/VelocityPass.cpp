@@ -66,7 +66,6 @@ bool VelocityPass::create(resource::IResourceManager* resourceManager, render::I
 render::handle_t VelocityPass::setup(
 	const WorldRenderView& worldRenderView,
     const GatherView& gatheredView,
-	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t outputTargetSetId
