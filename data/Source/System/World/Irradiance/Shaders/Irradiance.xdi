@@ -454,7 +454,7 @@ for (int i = 0; i < N; ++i)
 		gl_RayFlagsOpaqueEXT,
 		0xff,
 		rayOrigin,
-		0.5f,
+		0.01f,
 		rayDir,
 		Far
 	);
@@ -500,7 +500,7 @@ for (int i = 0; i < N; ++i)
 					gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,
 					0xff,
 					hit,
-					0.1f,
+					0.01f,
 					lightDirection,
 					lightDistance - 0.1f
 				);

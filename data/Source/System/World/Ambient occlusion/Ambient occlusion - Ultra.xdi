@@ -60,6 +60,40 @@
 			</targets>
 		</item>
 		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
+			<id>{23FA7ED0-9D6F-934E-8339-1E8C74500B18}</id>
+			<comment/>
+			<position>
+				<first>412</first>
+				<second>266</second>
+			</position>
+			<name>Ambient occlusion</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
+			<steps>
+				<item type="traktor.render.ImgStepAmbientOcclusion" version="traktor.render.IImgStep:2">
+					<shader>{68A54E43-AD57-8648-8B00-2B69E11A3BD8}</shader>
+					<parameters/>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{24FF23FF-E024-9548-A200-0B292E95DA0D}</id>
 			<comment/>
 			<position>
@@ -89,7 +123,7 @@
 			<steps>
 				<item type="traktor.render.ImgStepDirectionalBlur" version="1,traktor.render.IImgStep:2">
 					<blurType>Gaussian</blurType>
-					<direction>2, 0</direction>
+					<direction>1, 0</direction>
 					<taps>32</taps>
 					<shader>{546D17AA-03A0-4FBA-9D5F-79907612567B}</shader>
 					<parameters>
@@ -128,7 +162,7 @@
 			<steps>
 				<item type="traktor.render.ImgStepDirectionalBlur" version="1,traktor.render.IImgStep:2">
 					<blurType>Gaussian</blurType>
-					<direction>0, 2</direction>
+					<direction>0, 1</direction>
 					<taps>32</taps>
 					<shader>{546D17AA-03A0-4FBA-9D5F-79907612567B}</shader>
 					<parameters>
@@ -137,45 +171,41 @@
 				</item>
 			</steps>
 		</item>
-		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
-			<id>{23FA7ED0-9D6F-934E-8339-1E8C74500B18}</id>
-			<comment/>
-			<position>
-				<first>412</first>
-				<second>266</second>
-			</position>
-			<name>Ambient occlusion</name>
-			<clear>
-				<mask>
-					<Color>true</Color>
-					<Depth>false</Depth>
-					<Stencil>false</Stencil>
-				</mask>
-				<colors>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-				</colors>
-				<depth>1</depth>
-				<stencil>0</stencil>
-			</clear>
-			<steps>
-				<item type="traktor.render.ImgStepAmbientOcclusion" version="traktor.render.IImgStep:2">
-					<shader>{68A54E43-AD57-8648-8B00-2B69E11A3BD8}</shader>
-					<parameters/>
-				</item>
-			</steps>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
+			</source>
+			<destination>
+				<node/>
+				<id>{00000000-0000-0000-0000-000000000000}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
+			</source>
+			<destination>
+				<node/>
+				<id>{00000000-0000-0000-0000-000000000000}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[3]"/>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
 				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
@@ -186,46 +216,6 @@
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
-			</source>
-			<destination>
-				<node/>
-				<id>{00000000-0000-0000-0000-000000000000}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
-			</source>
-			<destination>
-				<node/>
-				<id>{00000000-0000-0000-0000-000000000000}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item"/>
 				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
 			</source>
 			<destination>
@@ -239,8 +229,18 @@
 				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
 	</edges>
