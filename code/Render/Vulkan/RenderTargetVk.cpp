@@ -144,7 +144,7 @@ ITexture::Size RenderTargetVk::getSize() const
 
 int32_t RenderTargetVk::getBindlessIndex() const
 {
-	return -1;
+	return (int32_t)m_imageResolved->getSampledResourceIndex();
 }
 
 bool RenderTargetVk::lock(int32_t side, int32_t level, Lock& lock)
