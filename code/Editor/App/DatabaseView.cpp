@@ -394,7 +394,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_toolSelection->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DatabaseView::eventToolSelectionClicked);
 
 	m_splitter = new ui::Splitter();
-	m_splitter->create(this, false, 30_ut, true);
+	m_splitter->create(this, false, 280_ut, false);
 
 	m_treeDatabase = new ui::TreeView();
 	if (!m_treeDatabase->create(m_splitter, (ui::TreeView::WsDefault | ui::TreeView::WsDrag | ui::WsAccelerated) & ~ui::WsClientBorder))
