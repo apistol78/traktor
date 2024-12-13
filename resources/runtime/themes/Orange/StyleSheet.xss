@@ -458,7 +458,7 @@
 				</item>
 				<item>
 					<first>background-color-info</first>
-					<second>33</second>
+					<second>13</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
@@ -466,7 +466,7 @@
 				</item>
 				<item>
 					<first>background-color-warning</first>
-					<second>34</second>
+					<second>33</second>
 				</item>
 				<item>
 					<first>color-error</first>
@@ -537,7 +537,7 @@
 				</item>
 				<item>
 					<first>color-disabled</first>
-					<second>35</second>
+					<second>34</second>
 				</item>
 			</colors>
 		</item>
@@ -558,7 +558,7 @@
 				</item>
 				<item>
 					<first>caption-color-no-focus</first>
-					<second>36</second>
+					<second>35</second>
 				</item>
 			</colors>
 		</item>
@@ -567,7 +567,7 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>37</second>
+					<second>36</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
@@ -618,11 +618,11 @@
 				</item>
 				<item>
 					<first>progress-color</first>
-					<second>38</second>
+					<second>37</second>
 				</item>
 				<item>
 					<first>progress-color-disabled</first>
-					<second>39</second>
+					<second>38</second>
 				</item>
 			</colors>
 		</item>
@@ -656,7 +656,7 @@
 				</item>
 				<item>
 					<first>line-color</first>
-					<second>40</second>
+					<second>39</second>
 				</item>
 			</colors>
 		</item>
@@ -665,11 +665,11 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>41</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-margin</first>
-					<second>42</second>
+					<second>41</second>
 				</item>
 				<item>
 					<first>background-color-selection</first>
@@ -677,7 +677,7 @@
 				</item>
 				<item>
 					<first>background-found-line</first>
-					<second>39</second>
+					<second>38</second>
 				</item>
 				<item>
 					<first>color-caret</first>
@@ -698,7 +698,7 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>40</second>
+					<second>39</second>
 				</item>
 				<item>
 					<first>color-arrow</first>
@@ -719,11 +719,11 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>37</second>
+					<second>36</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>37</second>
+					<second>36</second>
 				</item>
 				<item>
 					<first>line-color</first>
@@ -753,7 +753,7 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>33</second>
+					<second>13</second>
 				</item>
 				<item>
 					<first>control-background-color</first>
@@ -778,15 +778,15 @@
 				</item>
 				<item>
 					<first>background-color-focus</first>
-					<second>43</second>
+					<second>42</second>
 				</item>
 				<item>
 					<first>color</first>
-					<second>44</second>
+					<second>43</second>
 				</item>
 				<item>
 					<first>color-focus</first>
-					<second>44</second>
+					<second>43</second>
 				</item>
 			</colors>
 		</item>
@@ -812,7 +812,7 @@
 				</item>
 				<item>
 					<first>background-color-alert</first>
-					<second>45</second>
+					<second>44</second>
 				</item>
 				<item>
 					<first>color</first>
@@ -825,55 +825,55 @@
 			<colors>
 				<item>
 					<first>background-color-comment</first>
-					<second>46</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-default</first>
-					<second>46</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-error</first>
-					<second>45</second>
+					<second>44</second>
 				</item>
 				<item>
 					<first>background-color-function</first>
-					<second>46</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-keyword</first>
-					<second>46</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-number</first>
-					<second>46</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-preprocessor</first>
-					<second>46</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-self</first>
-					<second>46</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-special</first>
-					<second>46</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-string</first>
-					<second>46</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-type</first>
-					<second>46</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>color-comment</first>
-					<second>47</second>
+					<second>45</second>
 				</item>
 				<item>
 					<first>color-default</first>
-					<second>48</second>
+					<second>46</second>
 				</item>
 				<item>
 					<first>color-error</first>
@@ -889,11 +889,11 @@
 				</item>
 				<item>
 					<first>color-number</first>
-					<second>49</second>
+					<second>47</second>
 				</item>
 				<item>
 					<first>color-preprocessor</first>
-					<second>50</second>
+					<second>48</second>
 				</item>
 				<item>
 					<first>color-self</first>
@@ -901,15 +901,15 @@
 				</item>
 				<item>
 					<first>color-special</first>
-					<second>51</second>
+					<second>49</second>
 				</item>
 				<item>
 					<first>color-string</first>
-					<second>52</second>
+					<second>50</second>
 				</item>
 				<item>
 					<first>color-type</first>
-					<second>53</second>
+					<second>51</second>
 				</item>
 			</colors>
 		</item>
@@ -1035,7 +1035,7 @@
 				</item>
 				<item>
 					<first>color-selected-disabled</first>
-					<second>54</second>
+					<second>52</second>
 				</item>
 			</colors>
 		</item>
@@ -1061,7 +1061,7 @@
 		<item>40, 40, 30, 255</item>
 		<item>80, 80, 20, 255</item>
 		<item>80, 80, 80, 255</item>
-		<item>224, 91, 0, 255</item>
+		<item>184, 93, 16, 255</item>
 		<item>40, 40, 40, 255</item>
 		<item>62, 62, 64, 255</item>
 		<item>110, 199, 47, 255</item>
@@ -1074,7 +1074,6 @@
 		<item>57, 135, 214, 255</item>
 		<item>51, 153, 255, 255</item>
 		<item>168, 0, 0, 255</item>
-		<item>37, 37, 38, 255</item>
 		<item>71, 40, 0, 255</item>
 		<item>220, 220, 220, 255</item>
 		<item>208, 208, 208, 255</item>
@@ -1087,7 +1086,6 @@
 		<item>230, 230, 230, 255</item>
 		<item>0, 0, 0, 255</item>
 		<item>255, 0, 0, 255</item>
-		<item>30, 30, 30, 255</item>
 		<item>96, 139, 78, 255</item>
 		<item>218, 218, 218, 255</item>
 		<item>181, 206, 168, 255</item>
