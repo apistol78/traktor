@@ -960,6 +960,10 @@ bool TerrainComponent::createRayTracingPatches()
 			if (!m_rtVertexBuffers[patchId])
 				return false;
 
+			// Shrink to RT terrain a bit to reduce self intersection due
+			// to mismatch between GBuffer and RT geometry.
+			const Scalar elevationOffset = -1.0_simd;
+
 			float* vertex = static_cast< float* >(m_rtVertexBuffers[patchId]->lock());
 			T_ASSERT_M (vertex, L"Unable to lock vertex buffer");
 			for (uint32_t z = 0; z < patchDim; ++z)
@@ -973,9 +977,14 @@ bool TerrainComponent::createRayTracingPatches()
 					const float worldZ = lerp(patchAabb.mn.z(), patchAabb.mx.z(), fz);
 					const float worldY = m_heightfield->getWorldHeight(worldX, worldZ);
 
-					*vertex++ = worldX;
-					*vertex++ = worldY;
-					*vertex++ = worldZ;
+					float gridX, gridZ;
+					m_heightfield->worldToGrid(worldX, worldZ, gridX, gridZ);
+
+					const Vector4 normal = m_heightfield->normalAt(gridX, gridZ);
+
+					*vertex++ = worldX + normal.x() * elevationOffset;
+					*vertex++ = worldY + normal.y() * elevationOffset;
+					*vertex++ = worldZ + normal.z() * elevationOffset;
 				}
 			}
 			m_rtVertexBuffers[patchId]->unlock();
@@ -1011,7 +1020,7 @@ bool TerrainComponent::createRayTracingPatches()
 
 				const Vector4 normal = m_heightfield->normalAt(gridX, gridZ);
 
-				Vector4(0.3f, 0.6f, 0.1f, 1.0f).storeUnaligned(va->albedo);
+				Vector4(0.2f, 0.4f, 0.1f, 1.0f).storeUnaligned(va->albedo);
 				normal.storeUnaligned(va->normal);
 
 				va->texCoord[0] =
