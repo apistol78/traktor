@@ -82,6 +82,8 @@ public:
 
 	void setTechniqueFlag(const handle_t techniqueId, bool flag);
 
+	const StaticMap< handle_t, bool, 16 >& getTechniqueFlags() const;
+
 	void applyTechniqueFlags(const Shader* shader, Shader::Permutation& inoutPermutation) const;
 
 private:

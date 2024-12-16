@@ -5,54 +5,18 @@
 			<id>{A24C08E3-CDBB-F540-A23E-D2DDEE8715EB}</id>
 			<comment/>
 			<position>
-				<first>1181</first>
-				<second>274</second>
+				<first>1410</first>
+				<second>318</second>
 			</position>
 		</item>
 		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
 			<id>{58AF53DD-58E0-9349-BCBE-9B285E5A292C}</id>
 			<comment/>
 			<position>
-				<first>438</first>
-				<second>291</second>
+				<first>434</first>
+				<second>379</second>
 			</position>
 			<textureId>InputColorLast</textureId>
-		</item>
-		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
-			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
-			<comment/>
-			<position>
-				<first>799</first>
-				<second>187</second>
-			</position>
-			<name>Screen space reflections</name>
-			<clear>
-				<mask>
-					<Color>true</Color>
-					<Depth>false</Depth>
-					<Stencil>false</Stencil>
-				</mask>
-				<colors>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-				</colors>
-				<depth>1</depth>
-				<stencil>0</stencil>
-			</clear>
-			<steps>
-				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:2">
-					<shader>{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}</shader>
-					<parameters>
-						<item>Color</item>
-					</parameters>
-				</item>
-			</steps>
 		</item>
 		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{5358B6D3-C079-D247-A204-B9F46BA9257F}</id>
@@ -90,6 +54,51 @@
 				</item>
 			</steps>
 		</item>
+		<item type="traktor.render.ImgPermutation" version="traktor.render.Node:1">
+			<id>{F632392A-1141-0348-B739-2B4F40EBD4C7}</id>
+			<comment/>
+			<position>
+				<first>1079</first>
+				<second>325</second>
+			</position>
+			<name>World_RayTracingEnable</name>
+		</item>
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
+			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
+			<comment/>
+			<position>
+				<first>799</first>
+				<second>399</second>
+			</position>
+			<name>Screen space reflections</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>1, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
+			<steps>
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:2">
+					<shader>{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}</shader>
+					<parameters>
+						<item>Color</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -98,18 +107,48 @@
 				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{71E4277E-8919-4FC6-B289-532EF34E0702}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{9B51E249-A97B-40E3-9CD0-FA2C714FE243}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{21DBF30F-4888-47EA-943C-AC8ABF38E8DF}</id>
 			</destination>
 		</item>
 	</edges>

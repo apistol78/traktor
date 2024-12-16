@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -53,12 +53,22 @@ public:
 private:
     friend class ImageGraphPipeline;
 
+    struct PermutationData
+    {
+		uint32_t mask = 0;
+		uint32_t value = 0;
+		RefArray< ImageStructBufferData > sbuffers;
+		RefArray< ImageTextureData > textures;
+		RefArray< ImageTargetSetData > targetSets;
+		RefArray< ImagePassData > passes;
+		RefArray< ImagePassStepData > steps;
+
+        void serialize(ISerializer& s);
+    };
+
     std::wstring m_name;
-    RefArray< ImageStructBufferData > m_sbuffers;
-    RefArray< ImageTextureData > m_textures;
-    RefArray< ImageTargetSetData > m_targetSets;
-    RefArray< ImagePassData > m_passes;
-    RefArray< ImagePassStepData > m_steps;
+    SmallMap< std::wstring, uint32_t > m_permutationBits;
+    AlignedVector< PermutationData > m_permutations;
 };
 
 }

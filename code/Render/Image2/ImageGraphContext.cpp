@@ -95,11 +95,15 @@ void ImageGraphContext::setTechniqueFlag(const handle_t techniqueId, bool flag)
 	m_techniqueFlags[techniqueId] = flag;
 }
 
+const StaticMap< handle_t, bool, 16 >& ImageGraphContext::getTechniqueFlags() const
+{
+	return m_techniqueFlags;
+}
+
 void ImageGraphContext::applyTechniqueFlags(const Shader* shader, Shader::Permutation& inoutPermutation) const
 {
 	for (auto it : m_techniqueFlags)
 		shader->setCombination(it.first, it.second, inoutPermutation);
 }
-
 
 }

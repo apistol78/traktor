@@ -95,6 +95,8 @@ render::handle_t ReflectionsPass::setup(
 	if (m_reflectionsQuality == Quality::Disabled)
 		return 0;
 
+	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr && m_reflectionsQuality == Quality::Ultra);
+
 	// Add reflections target.
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
@@ -157,6 +159,7 @@ render::handle_t ReflectionsPass::setup(
 	view.deltaTime = (float)worldRenderView.getDeltaTime();
 
 	render::ImageGraphContext igctx;
+	igctx.setTechniqueFlag(s_handleRayTracingEnable, rayTracingEnable);
 	igctx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
 
 	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();
@@ -178,9 +181,17 @@ render::handle_t ReflectionsPass::setup(
 
 		if (probe != nullptr)
 		{
-			auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
+			auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
+			{
 				const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 				const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
+
+				params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
+				params->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
+				params->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
+				params->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
+				params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
+				params->setTextureParameter(s_handleProbeTexture, probe->getTexture());
 
 				params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 				params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
@@ -193,11 +204,8 @@ render::handle_t ReflectionsPass::setup(
 					params->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
 				}
 
-				params->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
-				params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
-				params->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
-				params->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
-				params->setTextureParameter(s_handleProbeTexture, probe->getTexture());
+				if (gatheredView.rtWorldTopLevel != nullptr)
+					params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
 			};
 
 			m_probeGlobalReflections->addPasses(
@@ -227,10 +235,21 @@ render::handle_t ReflectionsPass::setup(
 
 				const Aabb3 worldVolume = p->getBoundingBox();
 
-				auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
-
+				auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
+				{
 					const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 					const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
+
+					params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
+					params->setFloatParameter(s_handleProbeIntensity, p->getIntensity());
+					params->setFloatParameter(s_handleProbeTextureMips, (float)p->getTexture()->getSize().mips);
+					params->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
+					params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
+					params->setVectorParameter(s_handleProbeVolumeCenter,worldVolume.getCenter());
+					params->setVectorParameter(s_handleProbeVolumeExtent, worldVolume.getExtent());
+					params->setMatrixParameter(s_handleWorldView, worldView);
+					params->setMatrixParameter(s_handleWorldViewInv, worldView.inverse());
+					params->setTextureParameter(s_handleProbeTexture, p->getTexture());
 
 					params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 					params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
@@ -243,15 +262,8 @@ render::handle_t ReflectionsPass::setup(
 						params->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
 					}
 
-					params->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
-					params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
-					params->setMatrixParameter(s_handleWorldView, worldView);
-					params->setMatrixParameter(s_handleWorldViewInv, worldView.inverse());
-					params->setFloatParameter(s_handleProbeIntensity, p->getIntensity());
-					params->setFloatParameter(s_handleProbeTextureMips, (float)p->getTexture()->getSize().mips);
-					params->setTextureParameter(s_handleProbeTexture, p->getTexture());
-					params->setVectorParameter(s_handleProbeVolumeCenter,worldVolume.getCenter());
-					params->setVectorParameter(s_handleProbeVolumeExtent, worldVolume.getExtent());
+					if (gatheredView.rtWorldTopLevel != nullptr)
+						params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
 				};
 
 				m_probeLocalReflections->addPasses(

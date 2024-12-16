@@ -46,11 +46,11 @@ HWRT_Material HWRT_GetMaterial(rayQueryEXT query)
 			const HWRT_Material m2 = __bindlessBufferMaterials__[id].perVertex[triangle * 3 + 2];
 
 			// Blend material using barycentrics from intersection.
-			material.normal = blend3(
+			material.normal = normalize(blend3(
 				m0.normal, 1.0f - (bary.x + bary.y),
 				m1.normal, bary.x,
 				m2.normal, bary.y
-			);
+			));
 			material.albedo = blend3(
 				m0.albedo, 1.0f - (bary.x + bary.y),
 				m1.albedo, bary.x,

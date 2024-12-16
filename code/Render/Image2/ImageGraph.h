@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include <functional>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -56,15 +57,25 @@ public:
         const std::function< void(const RenderGraph& renderGraph, ProgramParameters*) >& parametersFn
     ) const;
 
+    void setPermutation(handle_t handle, bool param, uint32_t& inoutPermutationValue) const;
+
 private:
     friend class ImageGraphData;
 
+    struct Permutation
+    {
+        uint32_t mask;
+        uint32_t value;
+        RefArray< const ImageStructBuffer > sbuffers;
+        RefArray< const ImageTexture > textures;
+        RefArray< const ImageTargetSet > targetSets;
+        RefArray< const ImagePass > passes;
+        RefArray< const ImagePassStep > steps;
+    };
+
     std::wstring m_name;
-    RefArray< const ImageStructBuffer > m_sbuffers;
-    RefArray< const ImageTexture > m_textures;
-    RefArray< const ImageTargetSet > m_targetSets;
-    RefArray< const ImagePass > m_passes;
-    RefArray< const ImagePassStep > m_steps;
+    SmallMap< handle_t, uint32_t > m_permutationBits;
+    AlignedVector< Permutation > m_permutations;
 };
 
 }

@@ -93,6 +93,8 @@ render::handle_t AmbientOcclusionPass::setup(
 	if (m_ambientOcclusion == nullptr || gbufferTargetSetId == 0)
 		return 0;
 
+	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr);
+
 	// Add ambient occlusion target set.
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
@@ -108,6 +110,7 @@ render::handle_t AmbientOcclusionPass::setup(
 	view.projection = worldRenderView.getProjection();
 
 	render::ImageGraphContext igctx;
+	igctx.setTechniqueFlag(s_handleRayTracingEnable, rayTracingEnable);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
 	rp->addInput(gbufferTargetSetId);

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,6 +13,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/Image2/ImageGraphAsset.h"
+#include "Render/Editor/Image2/ImageGraphPermutations.h"
 #include "Render/Editor/Image2/ImageGraphPipeline.h"
 #include "Render/Editor/Image2/ImgInput.h"
 #include "Render/Editor/Image2/ImgOutput.h"
@@ -39,7 +40,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 15, ImageGraphPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 19, ImageGraphPipeline, editor::IPipeline)
 
 bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -124,147 +125,164 @@ bool ImageGraphPipeline::buildOutput(
 ) const
 {
 	const ImageGraphAsset* asset = mandatory_non_null_type_cast< const ImageGraphAsset* >(sourceAsset);
-	
-	// Find output node in graph.
-	RefArray< ImgOutput > outputs = asset->findNodesOf< ImgOutput >();
-	if (outputs.size() != 1)
+	const ImageGraphPermutations permutations(asset);
+
+	const uint32_t permutationCount = permutations.getPermutationCount();
+	if (permutationCount == 0)
 	{
-		log::error << L"Image graph pipeline failed; graph must only contain one output node." << Endl;
+		log::error << L"Image graph pipeline failed; no permutations." << Endl;
 		return false;
 	}
 
-	// Collect nodes starting from output node.
-	RefArray< const Node > nodes;
-	GraphTraverse(asset, outputs.front()).preorder([&](const Node* node)
-	{
-		nodes.push_back(node);
-		return true;
-	});
-	T_ASSERT(is_a< ImgOutput >(nodes.front()));
-	nodes.pop_front();
-
-	auto rootPass = mandatory_non_null_type_cast< const ImgPass* >(nodes.front());
-
 	// Create output resource.
 	Ref< ImageGraphData > data = new ImageGraphData();
-	data->m_name = rootPass->getName();
 
-	// First node in array is the "main" pass of the output image graph.
-	T_ASSERT(is_a< ImgPass >(nodes.front()));
-	convertAssetPassToSteps(
-		asset,
-		rootPass,
-		data->m_steps
-	);
-
-	// Convert all textures and target sets.
-	for (size_t i = 1; i < nodes.size(); ++i)
+	const auto& parameterNames = permutations.getParameterNames();
+	for (uint32_t i = 0; i < parameterNames.size(); ++i)
 	{
-		if (auto sbufferNode = dynamic_type_cast< const ImgStructBuffer* >(nodes[i]))
-		{
-			Ref< ImageStructBufferData > sbd = new ImageStructBufferData();
-
-			sbd->m_id = sbufferNode->getId().format();
-
-			if (sbufferNode->getPersistent())
-				sbd->m_persistentHandle = Guid::create().format();
-
-			sbd->m_bufferSize = sbufferNode->m_elementCount * sbufferNode->m_elementSize;
-
-			data->m_sbuffers.push_back(sbd);
-		}
-		else if (auto textureNode = dynamic_type_cast< const ImgTexture* >(nodes[i]))
-		{
-			Ref< ImageTextureData > td = new ImageTextureData();
-
-			td->m_textureId = textureNode->getId().format();
-			td->m_texture = textureNode->m_texture;
-
-			data->m_textures.push_back(td);
-		}		
-		else if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(nodes[i]))
-		{
-			Ref< ImageTargetSetData > tsd = new ImageTargetSetData();
-			
-			tsd->m_targetSetId = targetSetNode->getTargetSetId();
-
-			if (targetSetNode->getPersistent())
-				tsd->m_persistentHandle = Guid::create().format();
-
-			for (int32_t i = 0; i < targetSetNode->getTextureCount(); ++i)
-				tsd->m_textureIds[i] = targetSetNode->getTargetSetId() + L"/" + targetSetNode->getTextureId(i);
-
-			tsd->m_targetSetDesc = targetSetNode->getRenderGraphTargetSetDesc();
-
-			data->m_targetSets.push_back(tsd);
-		}
+		data->m_permutationBits.insert(
+			parameterNames[i],
+			1 << i
+		);
 	}
 
-	// Convert rest of nodes.
-	for (size_t i = 1; i < nodes.size(); ++i)
+	for (uint32_t i = 0; i < permutationCount; ++i)
 	{
-		if (auto pass = dynamic_type_cast< const ImgPass* >(nodes[i]))
+		Ref< const ImageGraphAsset > permutation = permutations.getPermutationImageGraph(i);
+		T_FATAL_ASSERT(permutation);
+
+		// Find output node in graph.
+		RefArray< ImgOutput > outputs = permutation->findNodesOf< ImgOutput >();
+		if (outputs.size() != 1)
 		{
-			AlignedVector< const InputPin* > destinationPins = asset->findDestinationPins(pass->getOutputPin(0));
-			if (destinationPins.size() != 1)
+			log::error << L"Image graph pipeline failed; graph must only contain one output node." << Endl;
+			return false;
+		}
+
+		// Collect nodes starting from output node.
+		RefArray< const Node > nodes;
+		GraphTraverse(permutation, outputs.front()).preorder([&](const Node* node)
 			{
-				log::error << L"Image graph pipeline failed; pass output only be connected to exactly one output node." << Endl;
-				return false;
+				nodes.push_back(node);
+				return true;
+			});
+		T_ASSERT(is_a< ImgOutput >(nodes.front()));
+		nodes.pop_front();
+
+		auto rootPass = mandatory_non_null_type_cast< const ImgPass* >(nodes.front());
+		data->m_name = rootPass->getName();
+
+		auto& pd = data->m_permutations.push_back();
+		pd.mask = permutations.getPermutationMask(i);
+		pd.value = permutations.getPermutationValue(i);
+
+		// First node in array is the "main" pass of the output image graph.
+		T_ASSERT(is_a< ImgPass >(nodes.front()));
+		convertAssetPassToSteps(
+			permutation,
+			rootPass,
+			pd.steps
+		);
+
+		// Convert all textures and target sets so they are known
+		// when we convert all other nodes.
+		for (size_t i = 1; i < nodes.size(); ++i)
+		{
+			if (auto sbufferNode = dynamic_type_cast<const ImgStructBuffer*>(nodes[i]))
+			{
+				Ref< ImageStructBufferData > sbd = new ImageStructBufferData();
+				sbd->m_id = sbufferNode->getId().format();
+				if (sbufferNode->getPersistent())
+					sbd->m_persistentHandle = Guid::create().format();
+				sbd->m_bufferSize = sbufferNode->m_elementCount * sbufferNode->m_elementSize;
+				pd.sbuffers.push_back(sbd);
 			}
-
-			if (auto targetSet = dynamic_type_cast< const ImgTargetSet* >(destinationPins[0]->getNode()))
+			else if (auto textureNode = dynamic_type_cast<const ImgTexture*>(nodes[i]))
 			{
-				Ref< ImagePassData > passData = new ImagePassData();
-				passData->m_name = pass->getName();
-				passData->m_clear = pass->getClear();
+				Ref< ImageTextureData > td = new ImageTextureData();
+				td->m_textureId = textureNode->getId().format();
+				td->m_texture = textureNode->m_texture;
+				pd.textures.push_back(td);
+			}
+			else if (auto targetSetNode = dynamic_type_cast<const ImgTargetSet*>(nodes[i]))
+			{
+				Ref< ImageTargetSetData > tsd = new ImageTargetSetData();
+				tsd->m_targetSetId = targetSetNode->getTargetSetId();
+				if (targetSetNode->getPersistent())
+					tsd->m_persistentHandle = Guid::create().format();
+				for (int32_t i = 0; i < targetSetNode->getTextureCount(); ++i)
+					tsd->m_textureIds[i] = targetSetNode->getTargetSetId() + L"/" + targetSetNode->getTextureId(i);
+				tsd->m_targetSetDesc = targetSetNode->getRenderGraphTargetSetDesc();
+				pd.targetSets.push_back(tsd);
+			}
+		}
 
-				// Find index of output target set.
-				int32_t targetSetIndex = 0;
-				for (size_t i = 1; i < nodes.size(); ++i)
+		// Convert rest of nodes.
+		for (size_t i = 1; i < nodes.size(); ++i)
+		{
+			if (auto pass = dynamic_type_cast<const ImgPass*>(nodes[i]))
+			{
+				AlignedVector< const InputPin* > destinationPins = permutation->findDestinationPins(pass->getOutputPin(0));
+				if (destinationPins.size() != 1)
 				{
-					if (!is_a< ImgTargetSet >(nodes[i]))
-						continue;
-
-					if (targetSet == nodes[i])
-					{
-						passData->m_outputTargetSet = targetSetIndex;
-						break;
-					}
-					else
-						++targetSetIndex;
+					log::error << L"Image graph pipeline failed; pass output only be connected to exactly one output node." << Endl;
+					return false;
 				}
 
-				// Convert pass's steps.
-				convertAssetPassToSteps(asset, pass, passData->m_steps);
-
-				data->m_passes.push_back(passData);
-			}
-			else if (auto sbuffer = dynamic_type_cast< const ImgStructBuffer* >(destinationPins[0]->getNode()))
-			{
-				Ref< ImagePassData > passData = new ImagePassData();
-				passData->m_name = pass->getName();
-				passData->m_clear = pass->getClear();
-
-				// Find index of output sbuffer.
-				int32_t sbufferIndex = 0;
-				for (size_t i = 1; i < nodes.size(); ++i)
+				if (auto targetSet = dynamic_type_cast<const ImgTargetSet*>(destinationPins[0]->getNode()))
 				{
-					if (!is_a< ImgStructBuffer >(nodes[i]))
-						continue;
+					Ref< ImagePassData > passData = new ImagePassData();
+					passData->m_name = pass->getName();
+					passData->m_clear = pass->getClear();
 
-					if (sbuffer == nodes[i])
+					// Find index of output target set.
+					int32_t targetSetIndex = 0;
+					for (size_t i = 1; i < nodes.size(); ++i)
 					{
-						passData->m_outputSBuffer = sbufferIndex;
-						break;
+						if (!is_a< ImgTargetSet >(nodes[i]))
+							continue;
+
+						if (targetSet == nodes[i])
+						{
+							passData->m_outputTargetSet = targetSetIndex;
+							break;
+						}
+						else
+							++targetSetIndex;
 					}
-					else
-						++sbufferIndex;
+
+					// Convert pass's steps.
+					convertAssetPassToSteps(permutation, pass, passData->m_steps);
+
+					pd.passes.push_back(passData);
 				}
+				else if (auto sbuffer = dynamic_type_cast<const ImgStructBuffer*>(destinationPins[0]->getNode()))
+				{
+					Ref< ImagePassData > passData = new ImagePassData();
+					passData->m_name = pass->getName();
+					passData->m_clear = pass->getClear();
 
-				// Convert pass's steps.
-				convertAssetPassToSteps(asset, pass, passData->m_steps);
+					// Find index of output sbuffer.
+					int32_t sbufferIndex = 0;
+					for (size_t i = 1; i < nodes.size(); ++i)
+					{
+						if (!is_a< ImgStructBuffer >(nodes[i]))
+							continue;
 
-				data->m_passes.push_back(passData);
+						if (sbuffer == nodes[i])
+						{
+							passData->m_outputSBuffer = sbufferIndex;
+							break;
+						}
+						else
+							++sbufferIndex;
+					}
+
+					// Convert pass's steps.
+					convertAssetPassToSteps(permutation, pass, passData->m_steps);
+
+					pd.passes.push_back(passData);
+				}
 			}
 		}
 	}

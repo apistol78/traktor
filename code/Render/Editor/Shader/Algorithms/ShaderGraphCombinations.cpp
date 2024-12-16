@@ -57,7 +57,7 @@ Ref< ShaderGraph > replaceBranch(const ShaderGraph* shaderGraph, Branch* branch,
 	return shaderGraphResult;
 }
 
-void buildCombinations(
+void buildPermutations(
 	const ShaderGraph* shaderGraph,
 	const Guid& shaderGraphId,
 	const AlignedVector< std::wstring >& parameterNames,
@@ -78,7 +78,7 @@ void buildCombinations(
 		Ref< ShaderGraph > shaderGraphBranchTrue = replaceBranch(shaderGraph, branch, true);
 		if (shaderGraphBranchTrue)
 		{
-			buildCombinations(
+			buildPermutations(
 				shaderGraphBranchTrue,
 				shaderGraphId,
 				parameterNames,
@@ -91,7 +91,7 @@ void buildCombinations(
 		Ref< ShaderGraph > shaderGraphBranchFalse = replaceBranch(shaderGraph, branch, false);
 		if (shaderGraphBranchFalse)
 		{
-			buildCombinations(
+			buildPermutations(
 				shaderGraphBranchFalse,
 				shaderGraphId,
 				parameterNames,
@@ -108,6 +108,7 @@ void buildCombinations(
 		});
 		if (it == outCombinations.end())
 		{
+			// Check with constant folding to see if this entire graph should be discarded, ie PixelOutput disabled etc.
 			Ref< ShaderGraph > shaderGraphNoBranch = ShaderGraphStatic(shaderGraph, shaderGraphId).getConstantFolded();
 			if (shaderGraphNoBranch)
 			{
@@ -142,7 +143,7 @@ ShaderGraphCombinations::ShaderGraphCombinations(const ShaderGraph* shaderGraph,
 		parameterNames.insert(name);
 	}
 
-	buildCombinations(m_shaderGraph, shaderGraphId, m_parameterNames, 0, 0, m_combinations);
+	buildPermutations(m_shaderGraph, shaderGraphId, m_parameterNames, 0, 0, m_combinations);
 }
 
 const AlignedVector< std::wstring >& ShaderGraphCombinations::getParameterNames() const

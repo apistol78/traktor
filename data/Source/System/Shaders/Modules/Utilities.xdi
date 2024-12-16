@@ -65,11 +65,19 @@ mat3 Rotate(vec3 axis, float angle)
 	const float c = cos(angle);
 	const float s = sin(angle);
 	const float t = 1.0f - c;
-	const vec3 txyz = t * axis;
+	const vec3 tv = t * axis;
 	return mat3(
-		txyz.x * axis.x + c, txyz.x * axis.y + s * axis.z, txyz.x * axis.z - s * axis.y,
-		txyz.x * axis.y - s * axis.z, txyz.y * axis.y + c, txyz.y * axis.z + s * axis.x,
-		txyz.x * axis.z + s * axis.y, txyz.y * axis.z - s * axis.x, txyz.z * axis.z + c
+		tv.x * axis.x + c,
+		tv.x * axis.y + s * axis.z,
+		tv.x * axis.z - s * axis.y,
+
+		tv.x * axis.y - s * axis.z,
+		tv.y * axis.y + c,
+		tv.y * axis.z + s * axis.x,
+
+		tv.x * axis.z + s * axis.y,
+		tv.y * axis.z - s * axis.x,
+		tv.z * axis.z + c
 	);
 }
 
@@ -90,7 +98,6 @@ vec3 Hemi(vec3 direction, vec2 rnd)
 		ot = -ot;
 	return ot;
 }
-
 
 	]]>
 	</text>

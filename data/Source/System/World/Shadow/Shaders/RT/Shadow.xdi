@@ -149,7 +149,7 @@
 			<script>
 			<![CDATA[
 const int N = 8;
-const float near = mix(0.1f, 1.0f, clamp($Distance / 100.0f, 0.0f, 1.0f));
+const float near = mix(0.2f, 1.0f, clamp($Distance / 100.0f, 0.0f, 1.0f));
 
 vec3 u, v;
 OrthogonalFrame($Direction.xyz, u, v);

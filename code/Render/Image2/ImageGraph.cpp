@@ -41,68 +41,85 @@ void ImageGraph::addPasses(
 	targetSetVector_t sbufferIds;
 	targetSetVector_t targetSetIds;
 
+	// Find permutation.
+	uint32_t permutationValue = 0;
+	for (const auto it : cx.getTechniqueFlags())
+		setPermutation(it.first, it.second, permutationValue);
+
+	const Permutation* permutation = nullptr;
+	for (const auto& p : m_permutations)
+	{
+		if ((permutationValue & p.mask) == p.value)
+		{
+			permutation = &p;
+			break;
+		}
+	}
+	if (!permutation)
+		return;
+
 	// Copy context and append our internal textures and targets so
 	// steps can have a single method of accessing input textures.
 	ImageGraphContext context = cx;
 
-	sbufferIds.resize(m_sbuffers.size());
-	for (int32_t i = 0; i < (int32_t)m_sbuffers.size(); ++i)
+	sbufferIds.resize(permutation->sbuffers.size());
+	for (int32_t i = 0; i < (int32_t)permutation->sbuffers.size(); ++i)
 	{
-		if (m_sbuffers[i]->getPersistentHandle() != 0)
+		if (permutation->sbuffers[i]->getPersistentHandle() != 0)
 		{
 			sbufferIds[i] = renderGraph.addPersistentBuffer(
-				m_sbuffers[i]->getName().c_str(),
-				m_sbuffers[i]->getPersistentHandle(),
-				m_sbuffers[i]->getBufferSize()
+				permutation->sbuffers[i]->getName().c_str(),
+				permutation->sbuffers[i]->getPersistentHandle(),
+				permutation->sbuffers[i]->getBufferSize()
 			);
 		}
 		else
 		{
 			sbufferIds[i] = renderGraph.addTransientBuffer(
-				m_sbuffers[i]->getName().c_str(),
-				m_sbuffers[i]->getBufferSize()
+				permutation->sbuffers[i]->getName().c_str(),
+				permutation->sbuffers[i]->getBufferSize()
 			);
 		}
 		context.associateSBuffer(
-			m_sbuffers[i]->getId(),
+			permutation->sbuffers[i]->getId(),
 			sbufferIds[i]
 		);
 	}
 
-	for (int32_t i = 0; i < (int32_t)m_textures.size(); ++i)
+	for (int32_t i = 0; i < (int32_t)permutation->textures.size(); ++i)
 	{
 		context.associateTexture(
-			m_textures[i]->getTextureId(),
-			m_textures[i]->getTexture()
+			permutation->textures[i]->getTextureId(),
+			permutation->textures[i]->getTexture()
 		);
 	}
 
-	targetSetIds.resize(m_targetSets.size());
-	for (int32_t i = 0; i < (int32_t)m_targetSets.size(); ++i)
+	targetSetIds.resize(permutation->targetSets.size());
+	for (int32_t i = 0; i < (int32_t)permutation->targetSets.size(); ++i)
 	{
-		if (m_targetSets[i]->getPersistentHandle() != 0)
+		if (permutation->targetSets[i]->getPersistentHandle() != 0)
 		{
 			targetSetIds[i] = renderGraph.addPersistentTargetSet(
-				m_targetSets[i]->getName().c_str(),
-				m_targetSets[i]->getPersistentHandle(),
+				permutation->targetSets[i]->getName().c_str(),
+				permutation->targetSets[i]->getPersistentHandle(),
 				true,
-				m_targetSets[i]->getTargetSetDesc()
+				permutation->targetSets[i]->getTargetSetDesc()
 			);
 		}
 		else
 		{
 			targetSetIds[i] = renderGraph.addTransientTargetSet(
-				m_targetSets[i]->getName().c_str(),
-				m_targetSets[i]->getTargetSetDesc()
+				permutation->targetSets[i]->getName().c_str(),
+				permutation->targetSets[i]->getTargetSetDesc()
 			);
 		}
 
 		// Associate each target in the set.
-		const auto& desc = m_targetSets[i]->getTargetSetDesc();
+		const auto& desc = permutation->targetSets[i]->getTargetSetDesc();
 		for (int32_t j = 0; j < desc.count; ++j)
 		{
 			context.associateTextureTargetSet(
-				m_targetSets[i]->getTextureId(j),
+				permutation->targetSets[i]->getTextureId(j),
 				targetSetIds[i],
 				j
 			);
@@ -112,7 +129,7 @@ void ImageGraph::addPasses(
 	// Add all steps to render graph,
 	// each pass added need to inherit input dependencies from root pass
 	// since we can add parameters through callback.
-	for (auto imagePass : m_passes)
+	for (auto imagePass : permutation->passes)
 	{
 		RenderPass* rp = imagePass->addRenderGraphPasses(this, context, view, targetSetIds, sbufferIds, parametersFn, screenRenderer, renderGraph);
 		for (auto input : pass->getInputs())
@@ -123,7 +140,7 @@ void ImageGraph::addPasses(
 	pass->setName(m_name);
 
 	// Add render pass inputs from each step.
-	for (auto step : m_steps)
+	for (auto step : permutation->steps)
 		step->addRenderPassInputs(this, context, *pass);
 
 	pass->addBuild(
@@ -135,7 +152,7 @@ void ImageGraph::addPasses(
 				parametersFn(renderGraph, sharedParams);
 			sharedParams->endParameters(renderContext);
 
-			for (auto step : m_steps)
+			for (auto step : permutation->steps)
 				step->build(
 					this,
 					context,
@@ -150,6 +167,16 @@ void ImageGraph::addPasses(
 				);
 		}
 	);
+}
+
+
+void ImageGraph::setPermutation(handle_t handle, bool param, uint32_t& inoutPermutationValue) const
+{
+	const uint32_t bit = m_permutationBits[handle];
+	if (param)
+		inoutPermutationValue |= bit;
+	else
+		inoutPermutationValue &= ~bit;
 }
 
 }

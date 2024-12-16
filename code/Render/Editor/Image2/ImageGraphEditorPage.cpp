@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,6 +25,7 @@
 #include "Render/Editor/Image2/ImgInput.h"
 #include "Render/Editor/Image2/ImgOutput.h"
 #include "Render/Editor/Image2/ImgPass.h"
+#include "Render/Editor/Image2/ImgPermutation.h"
 #include "Render/Editor/Image2/ImgStructBuffer.h"
 #include "Render/Editor/Image2/ImgTargetSet.h"
 #include "Render/Editor/Image2/ImgTexture.h"
@@ -111,6 +112,7 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTargetSet"), i18n::Text(L"IMAGEGRAPH_CREATE_TARGETSET")));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTexture"), i18n::Text(L"IMAGEGRAPH_CREATE_TEXTURE")));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddStructBuffer"), i18n::Text(L"IMAGEGRAPH_CREATE_STRUCT_BUFFER")));
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddPermutation"), i18n::Text(L"IMAGEGRAPH_CREATE_PERMUTATION")));
 	m_menuPopup->add(menuItemCreate);
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"IMAGEGRAPH_DELETE")));
 
@@ -388,6 +390,16 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		// Create node in graph control.
 		createEditorNode(sbuffer);
 	}
+	else if (command == L"ImageGraph.Editor.AddPermutation")
+	{
+		// Create image graph permutation.
+		Ref< ImgPermutation > permutation = new ImgPermutation();
+		permutation->setId(Guid::create());
+		m_imageGraph->addNode(permutation);
+
+		// Create node in graph control.
+		createEditorNode(permutation);
+	}
 	else
 		return false;
 
@@ -429,6 +441,15 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 		editorNode = m_editorGraph->createNode(
 			L"Pass",
 			pass->getName(),
+			position,
+			new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault)
+		);
+	}
+	else if (auto permutation = dynamic_type_cast< ImgPermutation* >(node))
+	{
+		editorNode = m_editorGraph->createNode(
+			L"Permutation",
+			permutation->getName(),
 			position,
 			new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault)
 		);
@@ -625,12 +646,15 @@ void ImageGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 	T_ASSERT(destinationNode);
 
 	// Ensure compatible types of nodes are connected.
-	const bool sourceTarget = is_a< ImgInput >(sourceNode) || is_a< ImgOutput >(sourceNode) || is_a< ImgStructBuffer >(sourceNode) || is_a< ImgTargetSet >(sourceNode) || is_a< ImgTexture >(sourceNode);
-	const bool destinationTarget = is_a< ImgInput >(destinationNode) || is_a< ImgOutput >(destinationNode) || is_a< ImgStructBuffer >(destinationNode) || is_a< ImgTargetSet >(destinationNode);
-	if (sourceTarget == destinationTarget)
+	if (!is_a< ImgPermutation >(sourceNode) && !is_a< ImgPermutation >(destinationNode))
 	{
-		log::warning << L"Only \"pass to target\" or \"target to pass\" can be connected." << Endl;
-		return;
+		const bool sourceTarget = is_a< ImgInput >(sourceNode) || is_a< ImgOutput >(sourceNode) || is_a< ImgStructBuffer >(sourceNode) || is_a< ImgTargetSet >(sourceNode) || is_a< ImgTexture >(sourceNode);
+		const bool destinationTarget = is_a< ImgInput >(destinationNode) || is_a< ImgOutput >(destinationNode) || is_a< ImgStructBuffer >(destinationNode) || is_a< ImgTargetSet >(destinationNode);
+		if (sourceTarget == destinationTarget)
+		{
+			log::warning << L"Only \"pass to target\" or \"target to pass\" can be connected." << Endl;
+			return;
+		}
 	}
 
 	const OutputPin* sourcePin = sourceNode->findOutputPin(editorSourcePin->getName());

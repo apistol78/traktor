@@ -309,8 +309,8 @@
 			<script>
 			<![CDATA[
 const int N = 8;
-const float near = mix(0.01f, 1.0f, clamp($Distance / 10.0f, 0.0f, 1.0f));
-const float far = 10.0f;
+const float near = 0.05f; //mix(0.01f, 1.0f, clamp($Distance / 10.0f, 0.0f, 1.0f));
+const float far = 20.0f;
 const float W = 6.0f;
 const float C = 0.8f;
 

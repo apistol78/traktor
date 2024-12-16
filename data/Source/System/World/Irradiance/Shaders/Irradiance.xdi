@@ -445,7 +445,7 @@ for (int i = 0; i < N; ++i)
 {
 	const vec2 r = Hammersley(i, N);
 	const vec3 rayOrigin = $Origin.xyz;
-	const vec3 rayDir = R * Hemi($Direction.xyz, r);
+	const vec3 rayDir = R * normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.2f);
 	
 	rayQueryEXT rayQuery;
 	rayQueryInitializeEXT(
@@ -500,7 +500,7 @@ for (int i = 0; i < N; ++i)
 					gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,
 					0xff,
 					hit,
-					0.01f,
+					0.1f,
 					lightDirection,
 					lightDistance - 0.1f
 				);
