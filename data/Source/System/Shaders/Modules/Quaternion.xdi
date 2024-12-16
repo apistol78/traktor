@@ -25,6 +25,13 @@ vec4 QuaternionRotate(vec4 q, vec4 v)
 	return QuaternionMultiply(t0, t1);
 }
 
+vec4 QuaternionFromAxisAngle(vec3 axis, float angle)
+{
+	const float hlf = angle / 2.0f;
+	return vec4(axis * sin(hlf), cos(hlf));
+}
+
+
 	]]>
 	</text>
 </object>
