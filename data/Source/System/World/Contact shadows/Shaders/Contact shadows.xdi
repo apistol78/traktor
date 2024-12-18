@@ -222,7 +222,7 @@
 			</position>
 			<name>ViewPosition</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{5A11D6CE-EC0C-4447-A1B6-B6F076063D79}</id>
 			<comment/>
 			<position>
@@ -231,11 +231,13 @@
 			</position>
 			<name>Trace</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
 			</include>
@@ -283,7 +285,7 @@ if (pos.z < 4.0f)
 {
 	vec3 stp = $LightDirection.xyz * traceLength / traceSteps;
 
-	pos += stp * hash13(pos);
+	pos += stp * Hash13(pos);
 
 	for (int i = 0; i < traceSteps; ++i)
 	{
@@ -309,6 +311,7 @@ if (pos.z < 4.0f)
 		}
 	}
 }
+
 			]]>
 			</script>
 		</item>

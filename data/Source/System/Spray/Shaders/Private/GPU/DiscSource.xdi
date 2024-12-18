@@ -127,7 +127,7 @@ for (int i = 0; i < emitCount; ++i)
 	const vec4 direction = RandomDirection(seed);
 
 	$Points[id].position = position;
-	$Points[id].velocity = direction * lerpXY($SourceVelocity, RandomFloat(seed));
+	$Points[id].velocity = direction * LerpXY($SourceVelocity, RandomFloat(seed));
 	$Points[id].oaia = vec4(
 		RandomXY($SourceOrientation, seed),	// orientation
 		RandomXY($SourceAngularVelocity, seed),	// angularVelocity
@@ -143,6 +143,7 @@ for (int i = 0; i < emitCount; ++i)
 }
 
 $Head[0].alive = alive;
+
 			]]>
 			</script>
 		</item>

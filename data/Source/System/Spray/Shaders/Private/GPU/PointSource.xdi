@@ -32,7 +32,7 @@
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{735660C5-9E5E-C24F-A8EB-B3BA22C0859B}</id>
 			<comment/>
 			<position>
@@ -41,11 +41,13 @@
 			</position>
 			<name>Source</name>
 			<technique>Default</technique>
+			<domain>Compute</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{46432A5B-AA0B-D243-B1B4-05C5CA2525BB}</item>
 			</include>
@@ -125,7 +127,7 @@ for (int i = 0; i < emitCount; ++i)
 	const vec4 direction = RandomDirection(seed);
 
 	$Points[id].position = position;
-	$Points[id].velocity = direction * lerpXY($SourceVelocity, RandomFloat(seed));
+	$Points[id].velocity = direction * LerpXY($SourceVelocity, RandomFloat(seed));
 	$Points[id].oaia = vec4(
 		RandomXY($SourceOrientation, seed),	// orientation
 		RandomXY($SourceAngularVelocity, seed),	// angularVelocity
@@ -141,6 +143,7 @@ for (int i = 0; i < emitCount; ++i)
 }
 
 $Head[0].alive = alive;
+
 			]]>
 			</script>
 		</item>

@@ -32,7 +32,7 @@
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{2833BE6B-8529-4D27-80F2-D30971E6C437}</id>
 			<comment/>
 			<position>
@@ -41,11 +41,13 @@
 			</position>
 			<name>Evolve</name>
 			<technique>Default</technique>
+			<domain>Compute</domain>
 			<localSize>
 				<X>16</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
 			</include>
@@ -116,9 +118,9 @@ if ($Index.x < alive)
 		}
 		else if (op == 3)	// BrownianModifier
 		{
-			const float rx = hash(seed++) * 2.0f - 1.0f;
-			const float ry = hash(seed++) * 2.0f - 1.0f;
-			const float rz = hash(seed++) * 2.0f - 1.0f;
+			const float rx = Hash(seed++) * 2.0f - 1.0f;
+			const float ry = Hash(seed++) * 2.0f - 1.0f;
+			const float rz = Hash(seed++) * 2.0f - 1.0f;
 			velocity += vec4(rx, ry, rz, 0.0f) * modifier.y * $DeltaTime * inverseMass;
 		}
 		else if (op == 4)	// DragModifier
@@ -150,6 +152,7 @@ if ($Index.x < alive)
 
 	$Points[i].oaia.w += $DeltaTime;
 }
+
 			]]>
 			</script>
 		</item>

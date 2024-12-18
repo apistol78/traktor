@@ -1018,7 +1018,7 @@ Edge
 			</position>
 			<name>L_SampleCount</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{AD786D3A-11F0-B94B-A0D4-5B17438E962C}</id>
 			<comment/>
 			<position>
@@ -1027,11 +1027,13 @@ Edge
 			</position>
 			<name>RandomAngle</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
 			</include>
@@ -1050,11 +1052,12 @@ Edge
 			</outputPins>
 			<script>
 			<![CDATA[
-$Output = hash13(vec3(gl_FragCoord.xy, $Time)) * 2 * 3.14;
+$Output = Hash13(vec3(gl_FragCoord.xy, $Time)) * 2 * 3.14;
+
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{43F91428-6EFD-D446-96FA-4E3A41B0ACC1}</id>
 			<comment/>
 			<position>
@@ -1063,11 +1066,13 @@ $Output = hash13(vec3(gl_FragCoord.xy, $Time)) * 2 * 3.14;
 			</position>
 			<name>Hammersley</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>

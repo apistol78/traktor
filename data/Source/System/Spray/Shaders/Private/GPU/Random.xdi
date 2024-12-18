@@ -7,7 +7,7 @@
 
 float RandomFloat(inout uint seed)
 {
-	return hash(seed++);
+	return Hash(seed++);
 }
 
 vec4 RandomVector(inout uint seed)
@@ -22,17 +22,16 @@ vec4 RandomVector(inout uint seed)
 
 vec4 RandomDirection(inout uint seed)
 {
-	const float x = hash(seed++) * 2.0f - 1.0f;
-	const float y = hash(seed++) * 2.0f - 1.0f;
-	const float z = hash(seed++) * 2.0f - 1.0f;
+	const float x = Hash(seed++) * 2.0f - 1.0f;
+	const float y = Hash(seed++) * 2.0f - 1.0f;
+	const float z = Hash(seed++) * 2.0f - 1.0f;
 	return normalize(vec4(x, y, z, 0.0f));
 }
 
 float RandomXY(vec4 v, inout uint seed)
 {
-	return lerpXY(v, hash(seed++));
+	return LerpXY(v, Hash(seed++));
 }
-
 
 	]]>
 	</text>

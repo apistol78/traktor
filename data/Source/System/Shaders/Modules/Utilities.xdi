@@ -17,22 +17,22 @@ bool CheckRange(ivec2 p, ivec2 mx)
 		return true;
 }
 
-vec4 axisX(mat4 m)
+vec4 AxisX(mat4 m)
 {
 	return m[0];
 }
 
-vec4 axisY(mat4 m)
+vec4 AxisY(mat4 m)
 {
 	return m[1];
 }
 
-vec4 axisZ(mat4 m)
+vec4 AxisZ(mat4 m)
 {
 	return m[2];
 }
 
-float lerpXY(vec4 v, float f)
+float LerpXY(vec4 v, float f)
 {
 	return mix(v.x, v.y, f);
 }

@@ -176,7 +176,7 @@ vec4 RenderClouds(const CloudConfig config, vec3 ro, vec3 rd, float time, vec3 s
     float d = start;
     float dD = (end - start) / float(CLOUD_MARCH_STEPS);
 
-    float h = hash13(rd + fract(time));
+    float h = Hash13(rd + fract(time));
     d -= dD * h;
 
     float scattering = mix(
@@ -268,7 +268,7 @@ float voronoi(vec3 x, float tile)
                     c = mod( c, vec3(tile) );
                 }
 
-                vec3 r = vec3(b) - f + hash13( c );
+                vec3 r = vec3(b) - f + Hash13( c );
                 float d = dot(r, r);
 
                 if (d < res) {

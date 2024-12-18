@@ -155,7 +155,7 @@ vec4 CalculateSpectrum(Configuration configuration, SpectrumParameters spectrum,
 {
 	uint seed = id.x + SIZE * id.y + SIZE;
 	seed += configuration.seed;
-	seed += tile + uint(hash(seed)) * 10;
+	seed += tile + uint(Hash(seed)) * 10;
 	
 	const float lengthScale = configuration.lengthScales[tile];
 	
@@ -165,7 +165,7 @@ vec4 CalculateSpectrum(Configuration configuration, SpectrumParameters spectrum,
 	const vec2 K = (id.xy - halfN) * deltaK;
 	const float kLength = length(K);
 
-	const vec4 uniformRandSamples = vec4(hash(seed), hash(seed * 2), hash(seed * 3), hash(seed * 4));
+	const vec4 uniformRandSamples = vec4(Hash(seed), Hash(seed * 2), Hash(seed * 3), Hash(seed * 4));
 	const vec2 gauss1 = UniformToGaussian(uniformRandSamples.x, uniformRandSamples.y);
 	const vec2 gauss2 = UniformToGaussian(uniformRandSamples.z, uniformRandSamples.w);
 
