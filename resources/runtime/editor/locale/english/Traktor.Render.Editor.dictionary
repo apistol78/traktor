@@ -206,6 +206,10 @@
 			<second>Favourites...</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_DOT</first>
+			<second>Create DOT file from shaders</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_DELETE_NODE</first>
 			<second>Delete</second>
 		</item>
@@ -232,6 +236,10 @@
 		<item>
 			<first>SHADERGRAPH_INSERT_INTERPOLATORS</first>
 			<second>Insert interpolators</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_LIST_UNIFORMS</first>
+			<second>List all used uniforms by shaders</second>
 		</item>
 		<item>
 			<first>SHADERGRAPH_MISCELLANEOUS</first>
@@ -896,6 +904,14 @@
 		<item>
 			<first>IMAGEGRAPH_CREATE_PASS</first>
 			<second>Pass</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_CREATE_PERMUTATION</first>
+			<second>Permutation</second>
+		</item>
+		<item>
+			<first>IMAGEGRAPH_CREATE_STRUCT_BUFFER</first>
+			<second>Struct buffer</second>
 		</item>
 		<item>
 			<first>IMAGEGRAPH_CREATE_TARGETSET</first>

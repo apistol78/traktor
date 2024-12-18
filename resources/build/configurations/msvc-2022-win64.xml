@@ -1127,7 +1127,11 @@
 			<item type="SolutionBuilderMsvcVCXBuildTool">
 				<name>Natvis</name>
 				<fileType>natvis</fileType>
-			</item>			
+			</item>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>None</name>
+				<fileType>dictionary</fileType>
+			</item>
 		</buildTools>
 	</project>
 </object>
