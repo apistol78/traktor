@@ -39,11 +39,6 @@ bool convertMesh(
 {
 	T_FATAL_ASSERT(meshNode->mesh != nullptr);
 
-	// Convert materials.
-	SmallMap< int32_t, int32_t > materialMap;
-	if (!convertMaterials(outModel, materialMap, meshNode))
-		return false;
-
 	const uint32_t positionBase = uint32_t(outModel.getPositions().size());
 
 	const Matrix44 Mnode = convertMatrix(meshNode->geometry_to_world);
@@ -111,9 +106,13 @@ bool convertMesh(
 		}
 	}
 
-	const uint32_t baseOutputVertexOffset = outModel.getVertexCount();
+	// Convert materials.
+	SmallMap< int32_t, int32_t > materialMap;
+	if (!convertMaterials(outModel, materialMap, meshNode))
+		return false;
 
 	// Convert vertices.
+	const uint32_t baseOutputVertexOffset = outModel.getVertexCount();
 	for (size_t i = 0; i < meshNode->mesh->num_indices; ++i)
 	{
 		const uint32_t vertexIndex = i;
