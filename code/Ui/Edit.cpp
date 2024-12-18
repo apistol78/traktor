@@ -319,6 +319,10 @@ void Edit::eventButtonDown(MouseButtonDownEvent* event)
 		}
 
 		m_caret = caret;
+		m_caretBlink = true;
+
+		stopTimer();
+		startTimer(500);
 		update();
 	}
 }
@@ -429,6 +433,10 @@ void Edit::eventKeyDown(KeyDownEvent* event)
 		}
 
 		m_caret = caret;
+		m_caretBlink = true;
+
+		stopTimer();
+		startTimer(500);
 		update();
 	}
 }
