@@ -69,6 +69,7 @@ void LogList::add(uint32_t threadId, LogLevel level, const std::wstring& text)
 	e.threadId = threadId;
 	e.level = level;
 	e.text = text;
+	e.rendered = false;
 
 	// Parse embedded guid;s in log.
 	if (m_lookup)
@@ -98,11 +99,11 @@ void LogList::add(uint32_t threadId, LogLevel level, const std::wstring& text)
 	}
 
 	if ((level & (LvInfo | LvDebug)) != 0)
-		m_logCount[0]++;
+		++m_logCount[0];
 	if ((level & LvWarning) != 0)
-		m_logCount[1]++;
+		++m_logCount[1];
 	if ((level & LvError) != 0)
-		m_logCount[2]++;
+		++m_logCount[2];
 
 	// Add to pending list; coalesced before control is redrawn.
 	{
@@ -121,7 +122,9 @@ void LogList::removeAll()
 {
 	m_logFull.clear();
 	m_logFiltered.clear();
-	m_logCount[0] = m_logCount[1] = m_logCount[2] = 0;
+	m_logCount[0] =
+	m_logCount[1] =
+	m_logCount[2] = Count();
 	m_threadIndices.clear();
 	m_maxLineWidth = 0;
 	m_nextThreadIndex = 0;
@@ -137,10 +140,11 @@ void LogList::setFilter(uint8_t filter)
 	m_logFiltered.clear();
 	m_selectedEntry = -1;
 
-	for (const auto& log : m_logFull)
+	for (size_t i = 0; i < m_logFull.size(); ++i)
 	{
+		const Entry& log = m_logFull[i];
 		if ((log.level & m_filter) != 0)
-			m_logFiltered.push_back(log);
+			m_logFiltered.push_back(i);
 	}
 
 	updateScrollBar();
@@ -183,18 +187,34 @@ uint32_t LogList::countLog(uint8_t level) const
 	switch (level)
 	{
 	case LvInfo:
-		return m_logCount[0];
+		return m_logCount[0].total;
 	case LvWarning:
-		return m_logCount[1];
+		return m_logCount[1].total;
 	case LvError:
-		return m_logCount[2];
+		return m_logCount[2].total;
 	case LvDebug:
-		return m_logCount[3];
+		return m_logCount[3].total;
 	default:
 		return 0;
 	}
 }
 
+uint32_t LogList::countUnrenderedLog(uint8_t level) const
+{
+	switch (level)
+	{
+	case LvInfo:
+		return m_logCount[0].unrendered;
+	case LvWarning:
+		return m_logCount[1].unrendered;
+	case LvError:
+		return m_logCount[2].unrendered;
+	case LvDebug:
+		return m_logCount[3].unrendered;
+	default:
+		return 0;
+	}
+}
 void LogList::forEachLine(const std::function< void(int32_t line, const std::wstring& text) >& fn) const
 {
 	for (int32_t line = 0; line < (int32_t)m_logFull.size(); ++line)
@@ -204,7 +224,10 @@ void LogList::forEachLine(const std::function< void(int32_t line, const std::wst
 void LogList::forEachFilteredLine(const std::function< void(int32_t line, const std::wstring& text) >& fn) const
 {
 	for (int32_t line = 0; line < (int32_t)m_logFiltered.size(); ++line)
-		fn(line, m_logFiltered[line].text);
+	{
+		const Entry& log = m_logFull[m_logFiltered[line]];
+		fn(line, log.text);
+	}
 }
 
 Size LogList::getPreferredSize(const Size& hint) const
@@ -268,7 +291,7 @@ void LogList::eventPaint(PaintEvent* event)
 			m_logFull.push_back(log);
 			if ((log.level & m_filter) != 0)
 			{
-				m_logFiltered.push_back(log);
+				m_logFiltered.push_back(m_logFull.size() - 1);
 				needUpdateScrollBars = true;
 			}
 		}
@@ -321,11 +344,22 @@ void LogList::eventPaint(PaintEvent* event)
 
 	for (int32_t row = advanceCount; row < (int32_t)m_logFiltered.size() && rc.top < inner.bottom; ++row)
 	{
-		const auto& entry = m_logFiltered[row];
-		const uint32_t threadIndex = m_threadIndices[entry.threadId];
+		Entry& entry = m_logFull[m_logFiltered[row]];
 
-		Size iconSize(m_icons->getSize(this).cy, m_icons->getSize(this).cy);
-		Point iconPos = rc.getTopLeft() + Size(0, (rc.getHeight() - iconSize.cy) / 2);
+		const uint32_t threadIndex = m_threadIndices[entry.threadId];
+		const Size iconSize(m_icons->getSize(this).cy, m_icons->getSize(this).cy);
+		const Point iconPos = rc.getTopLeft() + Size(0, (rc.getHeight() - iconSize.cy) / 2);
+
+		if (!entry.rendered)
+		{
+			if ((entry.level & (LvInfo | LvDebug)) != 0)
+				--m_logCount[0];
+			if ((entry.level & LvWarning) != 0)
+				--m_logCount[1];
+			if ((entry.level & LvError) != 0)
+				--m_logCount[2];
+			entry.rendered = true;
+		}
 
 		Color4ub fg(0, 0, 0, 0);
 		Color4ub bg(0, 0, 0, 0);
@@ -413,10 +447,10 @@ void LogList::eventPaint(PaintEvent* event)
 	}
 
 	// Draw number of warnings or errors.
-	if (m_logCount[1] > 0 || m_logCount[2] > 0)
+	if (m_logCount[1].total > 0 || m_logCount[2].total > 0)
 	{
-		std::wstring ws = str(L"%d", m_logCount[1]);
-		std::wstring es = str(L"%d", m_logCount[2]);
+		const std::wstring ws = str(L"%d", m_logCount[1].total);
+		const std::wstring es = str(L"%d", m_logCount[2].total);
 
 		int32_t w = std::max< int32_t>(
 			canvas.getFontMetric().getExtent(ws).cx,
@@ -429,7 +463,7 @@ void LogList::eventPaint(PaintEvent* event)
 		rcCount.top = rcCount.bottom - pixel(m_itemHeight);
 
 		int32_t x = inner.right;
-		if (m_logCount[2] > 0)
+		if (m_logCount[2].total > 0)
 		{
 			rcCount.left = x - w;
 			rcCount.right = x;
@@ -441,7 +475,7 @@ void LogList::eventPaint(PaintEvent* event)
 
 			x -= w;	
 		}
-		if (m_logCount[1] > 0)
+		if (m_logCount[1].total > 0)
 		{
 			rcCount.left = x - w;
 			rcCount.right = x;
@@ -494,7 +528,7 @@ void LogList::eventMouseDoubleClick(MouseDoubleClickEvent* event)
 	if (m_selectedEntry < 0)
 		return;
 
-	const auto& entry = m_logFiltered[m_selectedEntry];
+	const auto& entry = m_logFull[m_logFiltered[m_selectedEntry]];
 	if (entry.symbolId.isNotNull())
 	{
 		LogActivateEvent event(this, entry.symbolId);
@@ -522,6 +556,17 @@ void LogList::eventTimer(TimerEvent* event)
 void LogList::eventScroll(ScrollEvent* event)
 {
 	update();
+}
+
+void LogList::Count::operator ++ ()
+{
+	total++;
+	unrendered++;
+}
+
+void LogList::Count::operator -- ()
+{
+	unrendered--;
 }
 
 }

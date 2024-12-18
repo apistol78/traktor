@@ -132,12 +132,12 @@ bool LogView::create(ui::Widget* parent)
 
 bool LogView::haveWarnings() const
 {
-	return m_log->countLog(ui::LogList::LvWarning) != 0;
+	return m_log->countUnrenderedLog(ui::LogList::LvWarning) != 0;
 }
 
 bool LogView::haveErrors() const
 {
-	return m_log->countLog(ui::LogList::LvError) != 0;
+	return m_log->countUnrenderedLog(ui::LogList::LvError) != 0;
 }
 
 void LogView::eventToolClick(ui::ToolBarButtonClickEvent* event)

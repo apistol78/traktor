@@ -68,6 +68,8 @@ public:
 
 	uint32_t countLog(uint8_t level) const;
 
+	uint32_t countUnrenderedLog(uint8_t level) const;
+
 	void forEachLine(const std::function< void(int32_t line, const std::wstring& text) >& fn) const;
 
 	void forEachFilteredLine(const std::function< void(int32_t line, const std::wstring& text) >& fn) const;
@@ -81,6 +83,17 @@ private:
 		LogLevel level;
 		std::wstring text;
 		Guid symbolId;
+		bool rendered;
+	};
+
+	struct Count
+	{
+		int32_t total = 0;
+		int32_t unrendered = 0;
+
+		void operator ++ ();
+
+		void operator -- ();
 	};
 
 	typedef AlignedVector< Entry > log_list_t;
@@ -92,8 +105,8 @@ private:
 	log_list_t m_pending;
 	Semaphore m_pendingLock;
 	log_list_t m_logFull;
-	log_list_t m_logFiltered;
-	uint32_t m_logCount[3] = { 0, 0, 0 };
+	AlignedVector< size_t > m_logFiltered;
+	Count m_logCount[3];
 	StaticMap< uint32_t, uint32_t, 128 > m_threadIndices;
 	Unit m_itemHeight = 0_ut;
 	int32_t m_maxLineWidth = 0;
