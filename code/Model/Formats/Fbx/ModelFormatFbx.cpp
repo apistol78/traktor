@@ -228,56 +228,55 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 	const auto& channels = model->getTexCoordChannels();
 	if (!channels.empty())
 	{
-		const std::wstring& channel = channels[0];
 		auto materials = model->getMaterials();
 		for (auto& material : materials)
 		{
 			{
 				auto map = material.getDiffuseMap();
-				if (map.channel == L"")
-					map.channel = channel;
+				if (map.channel == c_InvalidIndex)
+					map.channel = 0;
 				material.setDiffuseMap(map);
 			}
 			{
 				auto map = material.getSpecularMap();
-				if (map.channel == L"")
-					map.channel = channel;
+				if (map.channel == c_InvalidIndex)
+					map.channel = 0;
 				material.setSpecularMap(map);
 			}
 			{
 				auto map = material.getRoughnessMap();
-				if (map.channel == L"")
-					map.channel = channel;
+				if (map.channel == c_InvalidIndex)
+					map.channel = 0;
 				material.setRoughnessMap(map);
 			}
 			{
 				auto map = material.getMetalnessMap();
-				if (map.channel == L"")
-					map.channel = channel;
+				if (map.channel == c_InvalidIndex)
+					map.channel = 0;
 				material.setMetalnessMap(map);
 			}
 			{
 				auto map = material.getTransparencyMap();
-				if (map.channel == L"")
-					map.channel = channel;
+				if (map.channel == c_InvalidIndex)
+					map.channel = 0;
 				material.setTransparencyMap(map);
 			}
 			{
 				auto map = material.getEmissiveMap();
-				if (map.channel == L"")
-					map.channel = channel;
+				if (map.channel == c_InvalidIndex)
+					map.channel = 0;
 				material.setEmissiveMap(map);
 			}
 			{
 				auto map = material.getReflectiveMap();
-				if (map.channel == L"")
-					map.channel = channel;
+				if (map.channel == c_InvalidIndex)
+					map.channel = 0;
 				material.setReflectiveMap(map);
 			}
 			{
 				auto map = material.getNormalMap();
-				if (map.channel == L"")
-					map.channel = channel;
+				if (map.channel == c_InvalidIndex)
+					map.channel = 0;
 				material.setNormalMap(map);
 			}
 		}

@@ -334,7 +334,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 	auto images = docobj->getMemberValue(L"images").getObject< json::JsonArray >();
 
 	Ref< Model > md = new Model();
-	md->addUniqueTexCoordChannel(L"UV0");
+	const uint32_t uv0 = md->addUniqueTexCoordChannel(L"UV0");
 
 	// Parse materials.
 	auto materials = docobj->getMemberValue(L"materials").getObject< json::JsonArray >();
@@ -373,7 +373,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 				if (name.empty())
 					return nullptr;
 
-				Material::Map normalMap(name, L"UV0", true);
+				Material::Map normalMap(name, uv0, true);
 
 				// Embedded texture.
 				const int32_t bufferViewIndex = image->getMemberInt32(L"bufferView", -1);
@@ -428,7 +428,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 					if (name.empty())
 						return nullptr;
 
-					Material::Map diffuseMap(name, L"UV0", true);
+					Material::Map diffuseMap(name, uv0, true);
 
 					// Embedded texture.
 					const int32_t bufferViewIndex = image->getMemberInt32(L"bufferView", -1);
@@ -476,8 +476,8 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 					if (name.empty())
 						return nullptr;
 
-					Material::Map metallicMap(name + L"_M", L"UV0", true);
-					Material::Map roughnessMap(name + L"_R", L"UV0", true);
+					Material::Map metallicMap(name + L"_M", uv0, true);
+					Material::Map roughnessMap(name + L"_R", uv0, true);
 
 					// Embedded texture.
 					Ref< drawing::Image > metallicRoughness;

@@ -228,7 +228,6 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 					buildEmbeddedTexture(pipelineBuilder, material.getNormalMap(), true);
 
 					meshSurfaceShaderGraph = materialGenerator.generateSurface(
-						*model,
 						material,
 						false,
 						true

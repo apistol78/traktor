@@ -107,7 +107,6 @@ MaterialShaderGenerator::MaterialShaderGenerator(const std::function< Ref< const
 }
 
 Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
-	const model::Model& model,
 	const model::Material& material,
 	bool vertexColor,
 	bool decalResponse
@@ -209,50 +208,43 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 		if (comment == L"Tag_DiffuseTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			const uint32_t channel = model.getTexCoordChannel(material.getDiffuseMap().channel);
-			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
+			externalNode->setFragmentGuid(material.getDiffuseMap().channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (comment == L"Tag_EmissiveTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			const uint32_t channel = model.getTexCoordChannel(material.getEmissiveMap().channel);
-			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
+			externalNode->setFragmentGuid(material.getEmissiveMap().channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (comment == L"Tag_NormalTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			const uint32_t channel = model.getTexCoordChannel(material.getNormalMap().channel);
-			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
+			externalNode->setFragmentGuid(material.getNormalMap().channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (comment == L"Tag_RoughnessTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			const uint32_t channel = model.getTexCoordChannel(material.getRoughnessMap().channel);
-			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
+			externalNode->setFragmentGuid(material.getRoughnessMap().channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (comment == L"Tag_SpecularTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			const uint32_t channel = model.getTexCoordChannel(material.getSpecularMap().channel);
-			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
+			externalNode->setFragmentGuid(material.getSpecularMap().channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (comment == L"Tag_MetalnessTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			const uint32_t channel = model.getTexCoordChannel(material.getMetalnessMap().channel);
-			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
+			externalNode->setFragmentGuid(material.getMetalnessMap().channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (comment == L"Tag_TransparencyTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			const uint32_t channel = model.getTexCoordChannel(material.getTransparencyMap().channel);
-			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
+			externalNode->setFragmentGuid(material.getTransparencyMap().channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 	}

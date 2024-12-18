@@ -24,6 +24,8 @@ namespace traktor::model
 	namespace
 	{
 
+const static int32_t c_cacheVersion = 1;
+
 uint32_t hash(const std::wstring& text)
 {
 	Murmur3 cs;
@@ -72,7 +74,7 @@ Ref< const Model > ModelCache::get(const Path& cachePath, const Path& fileName, 
 	const uint32_t fileNameHash = hash(fileName.getPathName() + L"!" + filter);
 
 	// Generate file name of cached model.
-	const Path cachedFileName = cachePath.getPathName() + L"/" + str(L"%08x.tmd", fileNameHash);
+	const Path cachedFileName = cachePath.getPathName() + L"/" + str(L"%08x_%d.tmd", fileNameHash, c_cacheVersion);
 
 	// Check if cached file exist and if it's time stamp match source file's.
 	bool haveCachedFile = false;

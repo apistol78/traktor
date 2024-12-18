@@ -20,39 +20,39 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 {
 	int32_t size = heightfield->getSize();
 
-    int32_t ix0, iz0;
-    int32_t ix1, iz1;
+	int32_t ix0, iz0;
+	int32_t ix1, iz1;
 
-    ix0 = 0;
-    iz0 = 0;
-    ix1 = size;
-    iz1 = size;
+	ix0 = 0;
+	iz0 = 0;
+	ix1 = size;
+	iz1 = size;
 
-    size = max(ix1 - ix0, iz1 - iz0);
+	size = max(ix1 - ix0, iz1 - iz0);
 
 	const int32_t outputSize = max(size / step, 1);
 
 	Ref< model::Model > model = new model::Model();
 
-    // Add texcoord channels.
-    const uint32_t baseChannel = model->addUniqueTexCoordChannel(L"Base");
-    const uint32_t lightmapChannel = model->addUniqueTexCoordChannel(L"Lightmap");
+	// Add texcoord channels.
+	const uint32_t baseChannel = model->addUniqueTexCoordChannel(L"Base");
+	const uint32_t lightmapChannel = model->addUniqueTexCoordChannel(L"Lightmap");
 
-    // Add single material for entire heightfield.
-    model::Material material;
-    material.setName(L"Heightfield");
-    model->addMaterial(material);
+	// Add single material for entire heightfield.
+	model::Material material;
+	material.setName(L"Heightfield");
+	model->addMaterial(material);
 
-    // Convert vertices.
+	// Convert vertices.
 	model->reservePositions(outputSize * outputSize);
 	model->reserveNormals(outputSize * outputSize);
-    model->reserveVertices(outputSize * outputSize);
+	model->reserveVertices(outputSize * outputSize);
 
 	model::Vertex vertex;
 	for (int32_t iz = 0; iz < outputSize; ++iz)
-    {
+	{
 		for (int32_t ix = 0; ix < outputSize; ++ix)
-        {
+		{
 			float wx, wz;
 			heightfield->gridToWorld(ix0 + ix * step, iz0 + iz * step, wx, wz);
 
@@ -74,13 +74,13 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 			vertex.setPosition(positionId);
 			vertex.setNormal(normalId);
 			vertex.setTexCoord(baseChannel, texCoordId);
-            vertex.setTexCoord(lightmapChannel, texCoordId);
+			vertex.setTexCoord(lightmapChannel, texCoordId);
 
 			model->addVertex(vertex);
 		}
 	}
 
-    // Convert polygons.
+	// Convert polygons.
 	model::Polygon polygon;
 	for (int32_t iz = 0; iz < outputSize - 1; ++iz)
 	{
@@ -91,7 +91,7 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 			const int32_t gz = iz0 + iz * step;
 
 			float wx, wz;
-            heightfield->gridToWorld(gx, gz, wx, wz);
+			heightfield->gridToWorld(gx, gz, wx, wz);
 
 			if (!heightfield->getWorldCut(wx, wz))
 				continue;
@@ -166,7 +166,7 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 		}
 	}
 
-    return model;
+	return model;
 }
 
 }

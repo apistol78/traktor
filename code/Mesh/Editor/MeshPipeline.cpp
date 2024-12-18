@@ -435,7 +435,7 @@ bool MeshPipeline::buildOutput(
 	MaterialShaderGenerator generator([&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); });
 
 	const int32_t jointCount = model->getJointCount();
-	const bool vertexColor = haveVertexColors(*model);
+	const bool haveVertexColor = haveVertexColors(*model);
 
 	for (const auto& materialPair : materials)
 	{
@@ -444,9 +444,8 @@ bool MeshPipeline::buildOutput(
 
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateSurface");
 		Ref< const render::ShaderGraph > meshSurfaceShaderGraph = generator.generateSurface(
-			*model,
 			materialPair.second,
-			vertexColor,
+			haveVertexColor,
 			asset->getDecalResponse()
 		);
 		pipelineBuilder->getProfiler()->end();
@@ -475,6 +474,10 @@ bool MeshPipeline::buildOutput(
 				return false;
 			}
 
+			// Combine generated surface shader with custom; this allows the custom surface shader
+			// to access/pass through surface properties from the generated surface shader without having
+			// to ensure all are set in the custom shader itself.
+
 			pipelineBuilder->getProfiler()->begin(L"MeshPipeline combineSurface");
 			customMeshSurfaceShaderGraph = generator.combineSurface(customMeshSurfaceShaderGraph, meshSurfaceShaderGraph);
 			pipelineBuilder->getProfiler()->end();
@@ -502,14 +505,6 @@ bool MeshPipeline::buildOutput(
 		}
 		else
 		{
-			//Guid materialTemplate;
-			//if (m_enableCustomTemplates)
-			//{
-			//	auto it = materialTemplates.find(materialPair.first);
-			//	if (it != materialTemplates.end())
-			//		materialTemplate = it->second;
-			//}
-
 			pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateMesh");
 			materialShaderGraph = generator.generateMesh(
 				*model,

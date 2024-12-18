@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -173,7 +173,12 @@ void Material::serialize(ISerializer& s)
 void Material::Map::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
-	s >> Member< std::wstring >(L"channel", channel);
+	
+	if (s.getVersion() >= 5)
+		s >> Member< uint32_t >(L"channel", channel);
+	else
+		s >> ObsoleteMember< std::wstring >(L"channel");
+
 	s >> Member< bool >(L"anisotropic", anisotropic);
 	s >> Member< Guid >(L"texture", texture);
 

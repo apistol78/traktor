@@ -52,7 +52,6 @@ public:
 	explicit MaterialShaderGenerator(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve);
 
 	Ref< render::ShaderGraph > generateSurface(
-		const model::Model& model,
 		const model::Material& material,
 		bool vertexColor,
 		bool decalResponse

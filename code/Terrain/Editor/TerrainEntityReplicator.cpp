@@ -32,83 +32,85 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.TerrainEntityReplicator", 0, Terr
 
 bool TerrainEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
-    m_assetPath = settings->getPropertyIncludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
-    return true;
+	m_assetPath = settings->getPropertyIncludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
+	return true;
 }
 
 TypeInfoSet TerrainEntityReplicator::getSupportedTypes() const
 {
-    return makeTypeInfoSet< TerrainComponentData >();
+	return makeTypeInfoSet< TerrainComponentData >();
 }
 
 RefArray< const world::IEntityComponentData > TerrainEntityReplicator::getDependentComponents(
-    const world::EntityData* entityData,
-    const world::IEntityComponentData* componentData
+	const world::EntityData* entityData,
+	const world::IEntityComponentData* componentData
 ) const
 {
-    RefArray< const world::IEntityComponentData > dependentComponentData;
-    dependentComponentData.push_back(componentData);
-    return dependentComponentData;
+	RefArray< const world::IEntityComponentData > dependentComponentData;
+	dependentComponentData.push_back(componentData);
+	return dependentComponentData;
 }
 
 Ref< model::Model > TerrainEntityReplicator::createModel(
-    editor::IPipelineCommon* pipelineCommon,
+	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData,
-    Usage usage
+	Usage usage
 ) const
 {
 	const TerrainComponentData* terrainComponentData = mandatory_non_null_type_cast< const TerrainComponentData* >(componentData);
-    const resource::Id< terrain::Terrain >& terrain = terrainComponentData->getTerrain();
+	const resource::Id< terrain::Terrain >& terrain = terrainComponentData->getTerrain();
 
-    Ref< const terrain::TerrainAsset > terrainAsset = pipelineCommon->getObjectReadOnly< terrain::TerrainAsset >(terrain);
-    if (!terrain)
-        return nullptr;
+	Ref< const terrain::TerrainAsset > terrainAsset = pipelineCommon->getObjectReadOnly< terrain::TerrainAsset >(terrain);
+	if (!terrain)
+		return nullptr;
 
-    Ref< db::Instance > heightfieldAssetInstance = pipelineCommon->getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
-    if (!heightfieldAssetInstance)
-        return nullptr;
+	Ref< db::Instance > heightfieldAssetInstance = pipelineCommon->getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
+	if (!heightfieldAssetInstance)
+		return nullptr;
 
-    Ref< const hf::HeightfieldAsset > heightfieldAsset = heightfieldAssetInstance->getObject< const hf::HeightfieldAsset >();
-    if (!heightfieldAsset)
-        return nullptr;
+	Ref< const hf::HeightfieldAsset > heightfieldAsset = heightfieldAssetInstance->getObject< const hf::HeightfieldAsset >();
+	if (!heightfieldAsset)
+		return nullptr;
 
-    Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
-    if (!sourceData)
-        return nullptr;
+	Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
+	if (!sourceData)
+		return nullptr;
 
-    Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
-        sourceData,
-        heightfieldAsset->getWorldExtent()
-    );
-    if (!heightfield)
-        return nullptr;
+	Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
+		sourceData,
+		heightfieldAsset->getWorldExtent()
+	);
+	if (!heightfield)
+		return nullptr;
 
-    safeClose(sourceData);
+	safeClose(sourceData);
 
-    Ref< model::Model > heightfieldModel = hf::ConvertHeightfield().convert(heightfield, 64);
-    if (!heightfieldModel)
-        return nullptr;
+	Ref< model::Model > heightfieldModel = hf::ConvertHeightfield().convert(heightfield, 64);
+	if (!heightfieldModel)
+		return nullptr;
 
-    Ref< const render::ShaderGraph > surfaceShader = pipelineCommon->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(terrainAsset->getSurfaceShader());
-    if (surfaceShader)
-    {
-        Ref< drawing::Image > surfaceImage = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(surfaceShader, 1024, 1024);
-        if (surfaceImage)
-        {
-            AlignedVector< model::Material > materials = heightfieldModel->getMaterials();
-            materials.front().setDiffuseMap(model::Material::Map(
-                L"Diffuse",
-                L"Base",
-                true,
-                Guid(),
-                surfaceImage
-            ));
-            heightfieldModel->setMaterials(materials);
-        }
-    }
+	const uint32_t baseChannel = heightfieldModel->getTexCoordChannel(L"Base");
 
-    return heightfieldModel;
+	Ref< const render::ShaderGraph > surfaceShader = pipelineCommon->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(terrainAsset->getSurfaceShader());
+	if (surfaceShader)
+	{
+		Ref< drawing::Image > surfaceImage = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(surfaceShader, 1024, 1024);
+		if (surfaceImage)
+		{
+			AlignedVector< model::Material > materials = heightfieldModel->getMaterials();
+			materials.front().setDiffuseMap(model::Material::Map(
+				L"Diffuse",
+				baseChannel,
+				true,
+				Guid(),
+				surfaceImage
+			));
+			heightfieldModel->setMaterials(materials);
+		}
+	}
+
+	return heightfieldModel;
 }
 
 }
