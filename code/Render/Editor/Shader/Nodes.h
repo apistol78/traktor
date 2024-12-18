@@ -847,6 +847,15 @@ private:
 	PrecisionHint m_precisionHint;
 };
 
+/*! Preview input. */
+class T_DLLCLASS PreviewInput : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	PreviewInput();
+};
+
 /*! Preview output. */
 class T_DLLCLASS PreviewOutput : public ImmutableNode
 {

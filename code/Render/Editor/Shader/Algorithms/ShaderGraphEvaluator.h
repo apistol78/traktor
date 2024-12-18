@@ -11,6 +11,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Render/Editor/Shader/Constant.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphTypePropagation.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -43,10 +44,14 @@ class T_DLLCLASS ShaderGraphEvaluator : public Object
 public:
 	explicit ShaderGraphEvaluator(const ShaderGraph* shaderGraph);
 
+	void setValue(const OutputPin* outputPin, const Constant& value);
+
 	Constant evaluate(const OutputPin* outputPin) const;
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
+	ShaderGraphTypePropagation m_typePropagation;
+	SmallMap< const OutputPin*, Constant > m_explicitValues;
 };
 
 }

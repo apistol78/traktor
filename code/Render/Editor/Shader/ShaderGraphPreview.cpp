@@ -9,6 +9,7 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphPreview.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 
 namespace traktor::render
@@ -30,6 +31,8 @@ ShaderGraphPreview::ShaderGraphPreview(const std::wstring& assetPath, db::Databa
 
 Ref< drawing::Image > ShaderGraphPreview::generate(const ShaderGraph* shaderGraph, int32_t width, int32_t height) const
 {
+	Ref< drawing::Image > image;
+
 	Ref< ShaderGraph > resolvedShaderGraph = FragmentLinker([&](const Guid& fragmentId) -> Ref< const ShaderGraph > {
 		return m_database->getObjectReadOnly< ShaderGraph >(fragmentId);
 	}).resolve(shaderGraph, true);
@@ -40,37 +43,60 @@ Ref< drawing::Image > ShaderGraphPreview::generate(const ShaderGraph* shaderGrap
 	if (previewOutputs.empty())
 		return nullptr;
 
-	Ref< drawing::Image > image;
-
 	const InputPin* inputPin = previewOutputs.front()->getInputPin(0);
 	const OutputPin* outputPin = resolvedShaderGraph->findSourcePin(inputPin);
 	if (outputPin == nullptr)
 		return nullptr;
 
-	if (auto colorNode = dynamic_type_cast< const Color* >(outputPin->getNode()))
+	const RefArray< PreviewInput > previewInputs = resolvedShaderGraph->findNodesOf< PreviewInput >();
+	if (!previewInputs.empty())
 	{
+		const OutputPin* positionPin = previewInputs.front()->getOutputPin(0);
+		ShaderGraphEvaluator evaluator(resolvedShaderGraph);
+
 		image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), width, height);
-		image->clear(colorNode->getColor());
-	}
-	else if (auto textureNode = dynamic_type_cast< const Texture* >(outputPin->getNode()))
-	{
-		Ref< const render::TextureAsset > textureAsset = m_database->getObjectReadOnly< render::TextureAsset >(textureNode->getExternal());
-		if (textureAsset)
+		for (int32_t y = 0; y < height; ++y)
 		{
-			const Path filePath = FileSystem::getInstance().getAbsolutePath(m_assetPath, textureAsset->getFileName());
-			Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-			if (file)
+			for (int32_t x = 0; x < width; ++x)
 			{
-				image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-				if (image)
+				evaluator.setValue(positionPin, Constant(
+					float(x) / (width - 1),
+					float(y) / (height - 1),
+					0.0f,
+					0.0f
+				));
+				const Constant c = evaluator.evaluate(outputPin).cast(PinType::Scalar4);
+				image->setPixelUnsafe(x, y, Color4f(c.x(), c.y(), c.z(), c.w()));
+			}
+		}
+	}
+	else
+	{
+		if (auto colorNode = dynamic_type_cast<const Color*>(outputPin->getNode()))
+		{
+			image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), width, height);
+			image->clear(colorNode->getColor());
+		}
+		else if (auto textureNode = dynamic_type_cast<const Texture*>(outputPin->getNode()))
+		{
+			Ref< const render::TextureAsset > textureAsset = m_database->getObjectReadOnly< render::TextureAsset >(textureNode->getExternal());
+			if (textureAsset)
+			{
+				const Path filePath = FileSystem::getInstance().getAbsolutePath(m_assetPath, textureAsset->getFileName());
+				Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
+				if (file)
 				{
-					const drawing::ScaleFilter scaleFilter(width, height, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
-					image->apply(&scaleFilter);
+					image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
+					if (image)
+					{
+						const drawing::ScaleFilter scaleFilter(width, height, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
+						image->apply(&scaleFilter);
+					}
 				}
 			}
 		}
 	}
-	
+
 	return image;
 }
 

@@ -100,10 +100,10 @@ bool LerpNodeTraits::evaluatePartial(
 		if (
 			inputConstants[0].isConst(i) &&
 			inputConstants[1].isConst(i) &&
-			inputConstants[2].isConst(i)
+			inputConstants[2].isConst(0)
 		)
 		{
-			float k = inputConstants[2].getValue(i);
+			const float k = inputConstants[2].getValue(0);
 			outputConstant.setValue(i, inputConstants[0].getValue(i) * (1.0f - k) + inputConstants[1].getValue(i) * k);
 		}
 	}

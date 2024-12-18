@@ -44,6 +44,7 @@ TypeInfoSet MetaNodeTraits::getNodeTypes() const
 	typeSet.insert< InputPort >();
 	typeSet.insert< OutputPort >();
 	typeSet.insert< Platform >();
+	typeSet.insert< PreviewInput >();
 	typeSet.insert< PreviewOutput >();
 	typeSet.insert< Renderer >();
 	typeSet.insert< Type >();
@@ -53,7 +54,7 @@ TypeInfoSet MetaNodeTraits::getNodeTypes() const
 
 bool MetaNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
-	if (is_a< InputPort >(node) || is_a< OutputPort >(node))
+	if (is_a< InputPort >(node) || is_a< OutputPort >(node) || is_a< PreviewOutput >(node))
 		return true;
 	else if (const External* externalNode = dynamic_type_cast< const External* >(node))
 		return externalNode->getOutputPinCount() == 0;
@@ -132,6 +133,8 @@ PinType MetaNodeTraits::getOutputPinType(
 			break;
 		}
 	}
+	else if (is_a< PreviewInput >(node))
+		outputPinType = PinType::Scalar4;
 	return outputPinType;
 }
 

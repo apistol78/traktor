@@ -316,6 +316,8 @@ bool MathNodeTraits::evaluatePartial(
 				else
 					outputConstant.setVariant(i);
 			}
+			else if (inputConstants[0].isConst(i) && inputConstants[1].isConst(i) && inputConstants[2].isConst(i))
+				outputConstant.setValue(i, inputConstants[0].getValue(i) * inputConstants[1].getValue(i) + inputConstants[2].getValue(i));
 			else
 				outputConstant.setVariant(i);
 		}

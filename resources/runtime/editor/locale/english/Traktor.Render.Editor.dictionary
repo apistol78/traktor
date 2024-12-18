@@ -454,6 +454,10 @@
 			<second>Platform</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_NODE_PREVIEWINPUT</first>
+			<second>Preview input</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_NODE_PREVIEWOUTPUT</first>
 			<second>Preview output</second>
 		</item>

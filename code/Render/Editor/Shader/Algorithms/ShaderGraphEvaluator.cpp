@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 /*
  * TRAKTOR
  * Copyright (c) 2022 Anders Pistol.
@@ -20,7 +22,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphEvaluator", ShaderGraphEvalua
 
 ShaderGraphEvaluator::ShaderGraphEvaluator(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
+,	m_typePropagation(shaderGraph, Guid::null)
 {
+}
+
+void ShaderGraphEvaluator::setValue(const OutputPin* outputPin, const Constant& value)
+{
+	m_explicitValues[outputPin] = value;
 }
 
 Constant ShaderGraphEvaluator::evaluate(const OutputPin* outputPin) const
@@ -52,6 +60,9 @@ Constant ShaderGraphEvaluator::evaluate(const OutputPin* outputPin) const
 				inputPinTypes[i] = PinType::Void;
 				inputConstants[i] = Constant();
 			}
+
+			const PinType castToType = m_typePropagation.evaluate(inputPin);
+			inputConstants[i] = inputConstants[i].cast(castToType);
 		}
 
 		// Evaluate output constants from input set.
@@ -59,23 +70,28 @@ Constant ShaderGraphEvaluator::evaluate(const OutputPin* outputPin) const
 		for (int32_t i = 0; i < outputPinCount; ++i)
 		{
 			const OutputPin* outputPin = node->getOutputPin(i);
+			const auto it = m_explicitValues.find(outputPin);
+			if (it == m_explicitValues.end())
+			{
+				const PinType outputPinType = nodeTraits->getOutputPinType(
+					m_shaderGraph,
+					node,
+					outputPin,
+					inputPinTypes.c_ptr()
+				);
 
-			const PinType outputPinType = nodeTraits->getOutputPinType(
-				m_shaderGraph,
-				node,
-				outputPin,
-				inputPinTypes.c_ptr()
-			);
+				evaluatedConstants[outputPin] = Constant(outputPinType);
 
-			evaluatedConstants[outputPin] = Constant(outputPinType);
-
-			nodeTraits->evaluatePartial(
-				m_shaderGraph,
-				node,
-				outputPin,
-				inputConstants.c_ptr(),
-				evaluatedConstants[outputPin]
-			);
+				nodeTraits->evaluatePartial(
+					m_shaderGraph,
+					node,
+					outputPin,
+					inputConstants.c_ptr(),
+					evaluatedConstants[outputPin]
+				);
+			}
+			else
+				evaluatedConstants[outputPin] = it->second;
 		}
 		return true;
 	});
