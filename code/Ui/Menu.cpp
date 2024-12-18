@@ -112,8 +112,6 @@ const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width, 
 	if (!shell->create(form, maxItems))
 		return nullptr;
 
-	shell->setFont(parent->getFont());
-
 	shell->addEventHandler< MenuClickEvent >([&](MenuClickEvent* e) {
 		selectedItem = e->getItem();
 		form->endModal(DialogResult::Ok);
