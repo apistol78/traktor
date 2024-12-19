@@ -50,7 +50,7 @@ public:
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
-	ShaderGraphTypePropagation m_typePropagation;
+	Ref< ShaderGraphTypePropagation > m_typePropagation;
 	SmallMap< const OutputPin*, Constant > m_explicitValues;
 };
 

@@ -25,18 +25,53 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 :	m_shaderGraph(shaderGraph)
 ,	m_valid(true)
 {
+	RefArray< Node > roots;
+	for (auto node : m_shaderGraph->getNodes())
+	{
+		const INodeTraits* traits = INodeTraits::find(node);
+		if (traits != nullptr && traits->isRoot(m_shaderGraph, node))
+			roots.push_back(node);
+	}
+	initialize(roots, shaderGraphId);
+}
+
+ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shaderGraph, const RefArray< Node >& roots, const Guid& shaderGraphId)
+:	m_shaderGraph(shaderGraph)
+,	m_valid(true)
+{
+	initialize(roots, shaderGraphId);
+}
+
+PinType ShaderGraphTypePropagation::evaluate(const InputPin* inputPin) const
+{
+	auto i = m_inputPinTypes.find(inputPin);
+	return i != m_inputPinTypes.end() ? i->second : PinType::Void;
+}
+
+PinType ShaderGraphTypePropagation::evaluate(const OutputPin* outputPin) const
+{
+	auto i = m_outputPinTypes.find(outputPin);
+	return i != m_outputPinTypes.end() ? i->second : PinType::Void;
+}
+
+void ShaderGraphTypePropagation::set(const InputPin* inputPin, PinType inputPinType)
+{
+	T_ASSERT(inputPinType != PinType::Void);
+	m_inputPinTypes[inputPin] = inputPinType;
+}
+
+void ShaderGraphTypePropagation::set(const OutputPin* outputPin, PinType outputPinType)
+{
+	T_ASSERT(outputPinType != PinType::Void);
+	m_outputPinTypes[outputPin] = outputPinType;
+}
+
+void ShaderGraphTypePropagation::initialize(const RefArray< Node >& roots, const Guid& shaderGraphId)
+{
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
 
 	// Initial estimate of output types.
 	{
-		RefArray< Node > roots;
-		for (auto node : nodes)
-		{
-			const INodeTraits* traits = INodeTraits::find(node);
-			if (traits != nullptr && traits->isRoot(m_shaderGraph, node))
-				roots.push_back(node);
-		}
-
 		GraphTraverse traverse(m_shaderGraph, roots);
 		traverse.postorder([&](const Node* node) {
 			const INodeTraits* nodeTraits = INodeTraits::find(node);
@@ -211,30 +246,6 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 	}
 
 	T_DEBUG(L"Type propagation solved in " << iterationCount << L" iteration(s)");
-}
-
-PinType ShaderGraphTypePropagation::evaluate(const InputPin* inputPin) const
-{
-	auto i = m_inputPinTypes.find(inputPin);
-	return i != m_inputPinTypes.end() ? i->second : PinType::Void;
-}
-
-PinType ShaderGraphTypePropagation::evaluate(const OutputPin* outputPin) const
-{
-	auto i = m_outputPinTypes.find(outputPin);
-	return i != m_outputPinTypes.end() ? i->second : PinType::Void;
-}
-
-void ShaderGraphTypePropagation::set(const InputPin* inputPin, PinType inputPinType)
-{
-	T_ASSERT(inputPinType != PinType::Void);
-	m_inputPinTypes[inputPin] = inputPinType;
-}
-
-void ShaderGraphTypePropagation::set(const OutputPin* outputPin, PinType outputPinType)
-{
-	T_ASSERT(outputPinType != PinType::Void);
-	m_outputPinTypes[outputPin] = outputPinType;
 }
 
 }

@@ -11,6 +11,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/GraphTraverse.h"
+#include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
@@ -22,8 +23,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphEvaluator", ShaderGraphEvalua
 
 ShaderGraphEvaluator::ShaderGraphEvaluator(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
-,	m_typePropagation(shaderGraph, Guid::null)
 {
+	RefArray< Node > roots;
+	m_shaderGraph->findNodesOf(type_of< PreviewOutput >(), roots);
+	m_typePropagation = new ShaderGraphTypePropagation(m_shaderGraph, roots, Guid::null);
 }
 
 void ShaderGraphEvaluator::setValue(const OutputPin* outputPin, const Constant& value)
@@ -61,7 +64,7 @@ Constant ShaderGraphEvaluator::evaluate(const OutputPin* outputPin) const
 				inputConstants[i] = Constant();
 			}
 
-			const PinType castToType = m_typePropagation.evaluate(inputPin);
+			const PinType castToType = m_typePropagation->evaluate(inputPin);
 			inputConstants[i] = inputConstants[i].cast(castToType);
 		}
 

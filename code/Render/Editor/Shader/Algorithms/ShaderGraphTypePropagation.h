@@ -44,6 +44,8 @@ class T_DLLCLASS ShaderGraphTypePropagation : public Object
 public:
 	explicit ShaderGraphTypePropagation(const ShaderGraph* shaderGraph, const Guid& shaderGraphId);
 
+	explicit ShaderGraphTypePropagation(const ShaderGraph* shaderGraph, const RefArray< Node >& roots, const Guid& shaderGraphId);
+
 	PinType evaluate(const InputPin* inputPin) const;
 
 	PinType evaluate(const OutputPin* outputPin) const;
@@ -59,6 +61,8 @@ private:
 	SmallMap< const InputPin*, PinType > m_inputPinTypes;
 	SmallMap< const OutputPin*, PinType > m_outputPinTypes;
 	bool m_valid;
+
+	void initialize(const RefArray< Node >& roots, const Guid& shaderGraphId);
 };
 
 }
