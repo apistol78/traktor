@@ -356,12 +356,15 @@ void TerrainComponent::setup(
 	}
 
 	// Update base color texture.
-	m_view[viewIndex].surfaceCache->setupBaseColor(
-		context.getRenderGraph(),
-		m_terrain,
-		-worldExtent * 0.5_simd,
-		worldExtent
-	);
+	if (!snapshot)
+	{
+		m_view[viewIndex].surfaceCache->setupBaseColor(
+			context.getRenderGraph(),
+			m_terrain,
+			-worldExtent * 0.5_simd,
+			worldExtent
+		);
+	}
 }
 
 void TerrainComponent::build(
@@ -447,7 +450,7 @@ void TerrainComponent::build(
 	}
 
 	// Cull draw buffer to HiZ target; only deferred renderer using HiZ culling.
-	if (worldRenderPass.getTechnique() == world::s_techniqueDeferredGBufferWrite)
+	if (!snapshot && worldRenderPass.getTechnique() == world::s_techniqueDeferredGBufferWrite)
 	{
 		const Vector2 viewSize = worldRenderView.getViewSize();
 
