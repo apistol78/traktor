@@ -5659,6 +5659,16 @@
 												</item>
 											</items>
 										</item>
+										<item type="Filter">
+											<name>Material</name>
+											<items>
+												<item type="File" version="1">
+													<fileName>Material/*.*</fileName>
+													<excludeFilter/>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
