@@ -177,8 +177,6 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		if (material->pbr.base_color.texture)
 		{
 			const uint32_t channel = outModel.getTexCoordChannel(mbstows(material->pbr.base_color.texture->uv_set.data));
-			T_FATAL_ASSERT(channel != c_InvalidIndex);
-
 			Ref< drawing::Image > diffuseImage = getEmbeddedTexture(material->pbr.base_color.texture);
 			mm.setDiffuseMap(Material::Map(
 				getTextureName(material->pbr.base_color.texture),
@@ -192,8 +190,6 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		if (material->pbr.specular_color.texture)
 		{
 			const uint32_t channel = outModel.getTexCoordChannel(mbstows(material->pbr.specular_color.texture->uv_set.data));
-			T_FATAL_ASSERT(channel != c_InvalidIndex);
-
 			Ref< drawing::Image > specularImage = getEmbeddedTexture(material->pbr.specular_color.texture);
 			mm.setSpecularMap(Material::Map(
 				getTextureName(material->pbr.specular_color.texture),
@@ -207,8 +203,6 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		if (material->pbr.roughness.texture)
 		{
 			const uint32_t channel = outModel.getTexCoordChannel(mbstows(material->pbr.roughness.texture->uv_set.data));
-			T_FATAL_ASSERT(channel != c_InvalidIndex);
-
 			Ref< drawing::Image > roughnessImage = getEmbeddedTexture(material->pbr.roughness.texture);
 			mm.setRoughnessMap(Material::Map(
 				getTextureName(material->pbr.roughness.texture),
@@ -223,8 +217,6 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		if (material->pbr.metalness.texture)
 		{
 			const uint32_t channel = outModel.getTexCoordChannel(mbstows(material->pbr.metalness.texture->uv_set.data));
-			T_FATAL_ASSERT(channel != c_InvalidIndex);
-
 			Ref< drawing::Image > metalnessImage = getEmbeddedTexture(material->pbr.metalness.texture);
 			mm.setMetalnessMap(Material::Map(
 				getTextureName(material->pbr.metalness.texture),
@@ -239,8 +231,6 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		if (material->pbr.normal_map.texture)
 		{
 			const uint32_t channel = outModel.getTexCoordChannel(mbstows(material->pbr.normal_map.texture->uv_set.data));
-			T_FATAL_ASSERT(channel != c_InvalidIndex);
-
 			Ref< drawing::Image > normalImage = getEmbeddedTexture(material->pbr.normal_map.texture);
 			mm.setNormalMap(Material::Map(
 				getTextureName(material->pbr.normal_map.texture),
@@ -254,8 +244,6 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		if (material->pbr.opacity.texture)
 		{
 			const uint32_t channel = outModel.getTexCoordChannel(mbstows(material->pbr.opacity.texture->uv_set.data));
-			T_FATAL_ASSERT(channel != c_InvalidIndex);
-
 			Ref< drawing::Image > transparencyImage = getEmbeddedTexture(material->pbr.opacity.texture);
 			mm.setTransparencyMap(Material::Map(
 				getTextureName(material->pbr.opacity.texture),
@@ -270,8 +258,6 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		if (material->pbr.emission_color.texture)
 		{
 			const uint32_t channel = outModel.getTexCoordChannel(mbstows(material->pbr.emission_color.texture->uv_set.data));
-			T_FATAL_ASSERT(channel != c_InvalidIndex);
-
 			Ref< drawing::Image > emissiveImage = getEmbeddedTexture(material->pbr.emission_color.texture);
 			mm.setEmissiveMap(Material::Map(
 				getTextureName(material->pbr.emission_color.texture),
