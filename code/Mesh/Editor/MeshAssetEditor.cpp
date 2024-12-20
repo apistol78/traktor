@@ -26,7 +26,6 @@
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetRasterizer.h"
 #include "Mesh/Editor/MeshAssetEditor.h"
-#include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Render/ITexture.h"
@@ -55,6 +54,7 @@
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "World/Editor/Material/MaterialShaderGenerator.h"
 
 namespace traktor::mesh
 {
@@ -563,7 +563,7 @@ void MeshAssetEditor::createMaterialShader()
 	m_model->setMaterials(materials);
 
 	// Generate shader.
-	Ref< render::ShaderGraph > materialShader = MaterialShaderGenerator(
+	Ref< render::ShaderGraph > materialShader = world::MaterialShaderGenerator(
 		[&](const Guid& fragmentId) { return m_editor->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(fragmentId); }
 	).generateSurface(
 		*it,

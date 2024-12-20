@@ -2,33 +2,33 @@
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{7A12AE49-505A-E547-9216-ED181717258B}</id>
+			<id>{9A56C56D-030D-5746-A8C1-1BBB418D0C59}</id>
 			<comment/>
 			<position>
-				<first>572</first>
-				<second>489</second>
+				<first>912</first>
+				<second>437</second>
 			</position>
-			<name>T_Metalness</name>
+			<name>T_Roughness</name>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{A66F16CB-8574-7246-B6EF-8DF30F3B39C5}</id>
+			<id>{BB4E9854-6F1D-FF4F-B8F6-73BC566E81A4}</id>
 			<comment>
 			<![CDATA[
-Tag_Metalness
+Tag_Roughness
 			]]>
 			</comment>
 			<position>
-				<first>160</first>
-				<second>419</second>
+				<first>433</first>
+				<second>422</second>
 			</position>
 			<value>0</value>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{EBEA0C56-F5B2-6044-B82A-5510785DAF8E}</id>
+			<id>{F40E8D07-44B3-A54D-8A02-31FA6447C6CC}</id>
 			<comment/>
 			<position>
-				<first>83</first>
-				<second>484</second>
+				<first>371</first>
+				<second>486</second>
 			</position>
 			<name>T_Attributes</name>
 			<connectable>true</connectable>
@@ -37,13 +37,13 @@ Tag_Metalness
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{2C6270B1-F543-4DB3-8586-6F2AAE44C19F}</id>
+			<id>{31E08E7B-A0EF-4EBE-8B8D-D27D06D2CF4D}</id>
 			<comment/>
 			<position>
-				<first>349</first>
-				<second>459</second>
+				<first>633</first>
+				<second>467</second>
 			</position>
-			<declaration>{4121C3A1-9DB6-B646-A455-05762C9A3D67}</declaration>
+			<declaration>{344ABE62-4354-1348-BF20-467FBD550D12}</declaration>
 			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>

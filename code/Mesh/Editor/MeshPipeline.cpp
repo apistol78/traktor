@@ -29,9 +29,9 @@
 #include "Editor/IPipelineSettings.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
 #include "Mesh/MeshResource.h"
-#include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshPipeline.h"
+#include "Mesh/Editor/VertexShaderGenerator.h"
 #include "Mesh/Editor/Instance/InstanceMeshConverter.h"
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
@@ -54,6 +54,7 @@
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "Render/Editor/Texture/TextureSet.h"
+#include "World/Editor/Material/MaterialShaderGenerator.h"
 
 namespace traktor::mesh
 {
@@ -218,7 +219,8 @@ bool MeshPipeline::buildDependencies(
 	pipelineDepends->addDependency(vertexShaderGuid, editor::PdfUse);
 
 	// Add dependencies to generator fragments.
-	MaterialShaderGenerator::addDependencies(pipelineDepends);
+	VertexShaderGenerator::addDependencies(pipelineDepends);
+	world::MaterialShaderGenerator::addDependencies(pipelineDepends);
 
 	// Add dependencies to "fixed" material shaders.
 	if (m_enableCustomShaders)
@@ -432,7 +434,10 @@ bool MeshPipeline::buildOutput(
 	const Guid materialGuid = vertexShaderGuid.permutation(outputGuid);
 	T_ASSERT(materialGuid.isValid());
 
-	MaterialShaderGenerator generator([&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); });
+	const auto fragmentReader = [&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); };
+
+	VertexShaderGenerator vertexGenerator(fragmentReader);
+	world::MaterialShaderGenerator materialGenerator(fragmentReader);
 
 	const int32_t jointCount = model->getJointCount();
 	const bool haveVertexColor = haveVertexColors(*model);
@@ -443,7 +448,7 @@ bool MeshPipeline::buildOutput(
 		Guid materialShaderGraphId;
 
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateSurface");
-		Ref< const render::ShaderGraph > meshSurfaceShaderGraph = generator.generateSurface(
+		Ref< const render::ShaderGraph > meshSurfaceShaderGraph = materialGenerator.generateSurface(
 			materialPair.second,
 			haveVertexColor,
 			asset->getDecalResponse()
@@ -479,7 +484,7 @@ bool MeshPipeline::buildOutput(
 			// to ensure all are set in the custom shader itself.
 
 			pipelineBuilder->getProfiler()->begin(L"MeshPipeline combineSurface");
-			customMeshSurfaceShaderGraph = generator.combineSurface(customMeshSurfaceShaderGraph, meshSurfaceShaderGraph);
+			customMeshSurfaceShaderGraph = materialGenerator.combineSurface(customMeshSurfaceShaderGraph, meshSurfaceShaderGraph);
 			pipelineBuilder->getProfiler()->end();
 			if (!customMeshSurfaceShaderGraph)
 			{
@@ -488,7 +493,7 @@ bool MeshPipeline::buildOutput(
 			}
 
 			pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateMesh");
-			materialShaderGraph = generator.generateMesh(
+			materialShaderGraph = vertexGenerator.generateMesh(
 				*model,
 				materialPair.second,
 				customMeshSurfaceShaderGraph,
@@ -506,7 +511,7 @@ bool MeshPipeline::buildOutput(
 		else
 		{
 			pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateMesh");
-			materialShaderGraph = generator.generateMesh(
+			materialShaderGraph = vertexGenerator.generateMesh(
 				*model,
 				materialPair.second,
 				meshSurfaceShaderGraph,

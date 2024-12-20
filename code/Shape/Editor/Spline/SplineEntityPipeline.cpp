@@ -19,7 +19,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
-#include "Mesh/Editor/MaterialShaderGenerator.h"
+#include "Mesh/Editor/VertexShaderGenerator.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
@@ -30,7 +30,13 @@
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
 #include "Render/Shader.h"
+#include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphTechniques.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "Shape/Editor/Spline/CloneShapeLayerData.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
@@ -42,13 +48,7 @@
 #include "World/EntityData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/PathComponentData.h"
-
-#include "Render/Editor/Shader/FragmentLinker.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphTechniques.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
+#include "World/Editor/Material/MaterialShaderGenerator.h"
 
 namespace traktor::shape
 {
@@ -181,9 +181,10 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 {
 	if (m_targetEditor)
 	{
-		mesh::MaterialShaderGenerator materialGenerator(
-			[&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); }
-		);
+		const auto fragmentReader = [&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); };
+
+		mesh::VertexShaderGenerator vertexGenerator(fragmentReader);
+		world::MaterialShaderGenerator materialGenerator(fragmentReader);
 
 		for (const auto& meshId : gatherMeshIds(sourceAsset))
 		{
@@ -234,7 +235,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 					);
 				}
 
-				Ref< const render::ShaderGraph > materialShaderGraph = materialGenerator.generateMesh(
+				Ref< const render::ShaderGraph > materialShaderGraph = vertexGenerator.generateMesh(
 					*model,
 					material,
 					meshSurfaceShaderGraph,

@@ -44,23 +44,12 @@ class Model;
 namespace traktor::mesh
 {
 
-class T_DLLCLASS MaterialShaderGenerator : public Object
+class T_DLLCLASS VertexShaderGenerator : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit MaterialShaderGenerator(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve);
-
-	Ref< render::ShaderGraph > generateSurface(
-		const model::Material& material,
-		bool vertexColor,
-		bool decalResponse
-	) const;
-
-	Ref< render::ShaderGraph > combineSurface(
-		const render::ShaderGraph* customSurfaceShaderGraph,
-		const render::ShaderGraph* materialSurfaceShaderGraph
-	) const;
+	explicit VertexShaderGenerator(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve);
 
 	Ref< render::ShaderGraph > generateMesh(
 		const model::Model& model,

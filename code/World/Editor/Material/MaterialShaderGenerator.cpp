@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,26 +13,21 @@
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Editor/IPipelineDepends.h"
-#include "Mesh/Editor/MaterialShaderGenerator.h"
-#include "Model/Model.h"
+#include "Model/Material.h"
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
+#include "World/Editor/Material/MaterialShaderGenerator.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace mesh
+	namespace
 	{
-		namespace
-		{
 
-const Guid c_meshSurfaceTemplate(L"{CCDB27F2-644B-0742-857D-680E846B5BA3}");
-const Guid c_meshShaderTemplate(L"{E657266C-4925-1A40-9225-0776ACC3B0E8}");
-
-const Guid c_meshVertexInterface(L"{4015ACBD-D998-6243-B379-21BB383B864E}");
-const Guid c_meshSurfaceInterface(L"{139CACBD-2A79-5644-B9BC-B113F66D50EA}");
+const Guid c_materialTemplate(L"{CCDB27F2-644B-0742-857D-680E846B5BA3}");
+const Guid c_materialInterface(L"{139CACBD-2A79-5644-B9BC-B113F66D50EA}");
 
 // Templates
 const Guid c_tplDiffuseParams(L"{4AC7418D-FF43-FE40-ADDC-33A162636FDC}");
@@ -97,9 +92,9 @@ void propagateAnisotropic(render::ShaderGraph* shaderGraph, render::Texture* tex
 	}
 }
 
-		}
+	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MaterialShaderGenerator", MaterialShaderGenerator, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.MaterialShaderGenerator", MaterialShaderGenerator, Object)
 
 MaterialShaderGenerator::MaterialShaderGenerator(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve)
 :	m_resolve(resolve)
@@ -113,7 +108,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 ) const
 {
 	// Create a mutable material surface shader.
-	Ref< render::ShaderGraph > meshSurfaceShaderGraph = DeepClone(m_resolve(c_meshSurfaceTemplate)).create< render::ShaderGraph >();
+	Ref< render::ShaderGraph > meshSurfaceShaderGraph = DeepClone(m_resolve(c_materialTemplate)).create< render::ShaderGraph >();
 	if (!meshSurfaceShaderGraph)
 		return nullptr;
 
@@ -353,7 +348,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 	}
 
 	// Validate integrity and then return complete mesh material shader.
-	if (!render::ShaderGraphValidator(meshSurfaceShaderGraph, c_meshSurfaceTemplate).validateIntegrity())
+	if (!render::ShaderGraphValidator(meshSurfaceShaderGraph, c_materialTemplate).validateIntegrity())
 		return nullptr;
 
 	return meshSurfaceShaderGraph;
@@ -371,95 +366,23 @@ Ref< render::ShaderGraph >  MaterialShaderGenerator::combineSurface(
 	for (auto externalNode : customSurfaceShaderGraph->findNodesOf< render::External >())
 	{
 		const Guid& fragmentGuid = externalNode->getFragmentGuid();
-		if (fragmentGuid == c_meshSurfaceInterface)
+		if (fragmentGuid == c_materialInterface)
 			resolveNodes.push_back(externalNode);
 	}
 
 	// Link all found fragments.
 	Ref< render::ShaderGraph > meshShaderGraph = render::FragmentLinker([&](const Guid& fragmentGuid) -> Ref< const render::ShaderGraph > {
-		T_FATAL_ASSERT(fragmentGuid == c_meshSurfaceInterface);
+		T_FATAL_ASSERT(fragmentGuid == c_materialInterface);
 		return DeepClone(materialSurfaceShaderGraph).create< render::ShaderGraph >();
 	}).resolve(customSurfaceShaderGraph, resolveNodes, false);
 
 	return meshShaderGraph;
 }
 
-Ref< render::ShaderGraph > MaterialShaderGenerator::generateMesh(
-	const model::Model& model,
-	const model::Material& material,
-	const render::ShaderGraph* meshSurfaceShaderGraph,
-	const Guid& vertexShaderGuid
-) const
-{
-	// Create a mutable material mesh shader.
-	Ref< render::ShaderGraph > meshShaderGraph = DeepClone(m_resolve(c_meshShaderTemplate)).create< render::ShaderGraph >();
-	if (!meshShaderGraph)
-		return nullptr;
-
-	const uint32_t lightMapChannel = model.getTexCoordChannel(L"Lightmap");
-
-	// Insert surface shader into mesh shader.
-	{
-		RefArray< render::External > resolveNodes;
-		for (auto externalNode : meshShaderGraph->findNodesOf< render::External >())
-		{
-			const Guid& fragmentGuid = externalNode->getFragmentGuid();
-			T_ASSERT(fragmentGuid.isValid());
-
-			if (fragmentGuid == c_meshSurfaceInterface)
-				resolveNodes.push_back(externalNode);
-			else if (fragmentGuid == c_tplLightMapParams)
-			{
-				if (lightMapChannel == model::c_InvalidIndex)
-					externalNode->setFragmentGuid(c_implLightMapNull);
-				else
-					externalNode->setFragmentGuid(c_implLightMap);
-				resolveNodes.push_back(externalNode);
-			}
-		}
-		T_FATAL_ASSERT(!resolveNodes.empty());
-
-		// Determine texture channel fragments.
-		for (auto node : meshShaderGraph->getNodes())
-		{
-			const std::wstring comment = node->getComment();
-			if (comment == L"Tag_LightmapTexCoord")
-			{
-				render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-				externalNode->setFragmentGuid(lightMapChannel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
-				resolveNodes.push_back(externalNode);
-			}
-		}
-
-		// Resolve mesh shader; load all patched fragments and merge into a complete shader.
-		meshShaderGraph = render::FragmentLinker([&](const Guid& fragmentGuid) -> Ref< const render::ShaderGraph > {
-			if (fragmentGuid == c_meshSurfaceInterface)
-				return DeepClone(meshSurfaceShaderGraph).create< render::ShaderGraph >();
-			else
-				return m_resolve(fragmentGuid);
-		}).resolve(meshShaderGraph, resolveNodes, false);
-		if (!meshShaderGraph)
-			return nullptr;
-	}
-
-	// Replace vertex interface with concrete implementation fragment.
-	for (auto externalNode : meshShaderGraph->findNodesOf< render::External >())
-	{
-		const Guid& fragmentGuid = externalNode->getFragmentGuid();
-		if (fragmentGuid == c_meshVertexInterface)
-			externalNode->setFragmentGuid(vertexShaderGuid);
-	}
-
-	return meshShaderGraph;
-}
-
 void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipelineDepends)
 {
-	pipelineDepends->addDependency(c_meshSurfaceTemplate, editor::PdfUse);
-	pipelineDepends->addDependency(c_meshShaderTemplate, editor::PdfUse);
-
-	pipelineDepends->addDependency(c_meshVertexInterface, editor::PdfUse);
-	pipelineDepends->addDependency(c_meshSurfaceInterface, editor::PdfUse);
+	pipelineDepends->addDependency(c_materialTemplate, editor::PdfUse);
+	pipelineDepends->addDependency(c_materialInterface, editor::PdfUse);
 
 	// Templates
 	pipelineDepends->addDependency(c_tplDiffuseParams, editor::PdfUse);
@@ -495,5 +418,4 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_implTexCoordSelect1, editor::PdfUse);
 }
 
-	}
 }

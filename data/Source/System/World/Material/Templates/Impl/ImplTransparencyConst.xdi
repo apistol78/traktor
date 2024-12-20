@@ -2,33 +2,33 @@
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{9A56C56D-030D-5746-A8C1-1BBB418D0C59}</id>
+			<id>{5F0DE021-A3D8-3949-A580-75D95070530A}</id>
 			<comment/>
 			<position>
-				<first>858</first>
-				<second>422</second>
+				<first>940</first>
+				<second>441</second>
 			</position>
-			<name>T_Roughness</name>
+			<name>T_Transparency</name>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{BB4E9854-6F1D-FF4F-B8F6-73BC566E81A4}</id>
+			<id>{8754C104-D6D0-EA4D-B7B8-F6BA9AFEB865}</id>
 			<comment>
 			<![CDATA[
-Tag_Roughness
+Tag_Transparency
 			]]>
 			</comment>
 			<position>
-				<first>468</first>
-				<second>392</second>
+				<first>746</first>
+				<second>417</second>
 			</position>
 			<value>0</value>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{F40E8D07-44B3-A54D-8A02-31FA6447C6CC}</id>
+			<id>{CDFE7478-7B61-6146-9C00-871B63C36BDC}</id>
 			<comment/>
 			<position>
-				<first>220</first>
-				<second>399</second>
+				<first>682</first>
+				<second>480</second>
 			</position>
 			<name>T_Attributes</name>
 			<connectable>true</connectable>
@@ -36,34 +36,12 @@ Tag_Roughness
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{31E08E7B-A0EF-4EBE-8B8D-D27D06D2CF4D}</id>
-			<comment/>
-			<position>
-				<first>633</first>
-				<second>467</second>
-			</position>
-			<declaration>{344ABE62-4354-1348-BF20-467FBD550D12}</declaration>
-			<parameterName/>
-			<type>Scalar</type>
-			<frequency>Draw</frequency>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{CDD51665-CD39-444D-8D5C-5FD37C1646B7}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
