@@ -14,7 +14,8 @@ namespace traktor::ui
 {
 
 PathDialogWin32::PathDialogWin32(EventSubject* owner)
-:	m_owner(owner)
+:	m_owner(owner),
+	m_pidlRoot(NULL)
 {
 }
 
@@ -22,9 +23,16 @@ bool PathDialogWin32::create(IWidget* parent, const std::wstring& title)
 {
 	_tcscpy_s(m_title, sizeof_array(m_title), wstots(title).c_str());
 
+	// CSIDL_DRIVES = "This PC"
+	if (!SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_DRIVES, &m_pidlRoot)))
+	{
+		// The Desktop
+		m_pidlRoot = NULL;
+	}
+
 	std::memset(&m_bi, 0, sizeof(m_bi));
 	m_bi.hwndOwner = parent ? (HWND)parent->getInternalHandle() : NULL;
-	m_bi.pidlRoot = NULL;
+	m_bi.pidlRoot = m_pidlRoot;
 	m_bi.pszDisplayName = m_title;
 	m_bi.lpszTitle = m_title;
 	m_bi.ulFlags = BIF_USENEWUI;
@@ -37,6 +45,10 @@ bool PathDialogWin32::create(IWidget* parent, const std::wstring& title)
 
 void PathDialogWin32::destroy()
 {
+	if (m_pidlRoot)
+	{
+		CoTaskMemFree(m_pidlRoot);
+	}
 }
 
 DialogResult PathDialogWin32::showModal(Path& outPath)

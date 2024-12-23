@@ -35,6 +35,7 @@ private:
 	EventSubject* m_owner;
 	Window m_hWnd;
 
+	LPITEMIDLIST m_pidlRoot;
 	BROWSEINFO m_bi;
 	TCHAR m_title[64];
 };
