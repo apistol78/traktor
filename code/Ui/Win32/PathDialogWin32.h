@@ -33,10 +33,10 @@ public:
 
 private:
 	EventSubject* m_owner;
-	Window m_hWnd;
+	HWND m_hWnd;
 
-	LPITEMIDLIST m_pidlRoot;
-	BROWSEINFO m_bi;
+	DWORD m_openDialogOptions;
+	IFileDialog* m_pFileDialog;
 	TCHAR m_title[64];
 };
 
