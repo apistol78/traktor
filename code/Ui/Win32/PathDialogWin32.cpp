@@ -14,54 +14,68 @@ namespace traktor::ui
 {
 
 PathDialogWin32::PathDialogWin32(EventSubject* owner)
-:	m_owner(owner),
-	m_pidlRoot(NULL)
+	: m_owner{ owner }
+	, m_hWnd{ nullptr }
+	, m_openDialogOptions{ 0 }
+	, m_pFileDialog{ nullptr }
+	, m_title{ 0 }
 {
 }
 
 bool PathDialogWin32::create(IWidget* parent, const std::wstring& title)
 {
+	m_hWnd = (HWND)parent->getInternalHandle();
 	_tcscpy_s(m_title, sizeof_array(m_title), wstots(title).c_str());
 
-	// CSIDL_DRIVES = "This PC"
-	if (!SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_DRIVES, &m_pidlRoot)))
+	if (!SUCCEEDED(CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_pFileDialog))))
 	{
-		// The Desktop
-		m_pidlRoot = NULL;
+		return false;
 	}
 
-	std::memset(&m_bi, 0, sizeof(m_bi));
-	m_bi.hwndOwner = parent ? (HWND)parent->getInternalHandle() : NULL;
-	m_bi.pidlRoot = m_pidlRoot;
-	m_bi.pszDisplayName = m_title;
-	m_bi.lpszTitle = m_title;
-	m_bi.ulFlags = BIF_USENEWUI;
-	m_bi.lpfn = NULL;
-	m_bi.lParam = NULL;
-	m_bi.iImage = 0;
+	// Set the options to select folders
+	m_pFileDialog->GetOptions(&m_openDialogOptions);
+	m_pFileDialog->SetOptions(m_openDialogOptions | FOS_PICKFOLDERS);
+	m_pFileDialog->SetTitle(m_title);
 
 	return true;
 }
 
 void PathDialogWin32::destroy()
 {
-	if (m_pidlRoot)
+	if (m_pFileDialog)
 	{
-		CoTaskMemFree(m_pidlRoot);
+		m_pFileDialog->Release();
 	}
 }
 
 DialogResult PathDialogWin32::showModal(Path& outPath)
 {
-	PIDLIST_ABSOLUTE idl = SHBrowseForFolder(&m_bi);
-	if (idl == NULL)
+	if (!SUCCEEDED(m_pFileDialog->Show(m_hWnd)))
+	{
 		return DialogResult::Cancel;
+	}
 
-	TCHAR path[MAX_PATH];
-	if (!SHGetPathFromIDList(idl, path))
+	// Retrieve the selected folder
+	IShellItem* pItem = nullptr;
+
+	if (!SUCCEEDED(m_pFileDialog->GetResult(&pItem)))
+	{
 		return DialogResult::Cancel;
+	}
 
-	outPath = tstows(path);
+	PWSTR pszFolderPath = nullptr;
+
+	if (!SUCCEEDED(pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFolderPath)))
+	{
+		pItem->Release();
+		return DialogResult::Cancel;
+	}
+
+	outPath = tstows(pszFolderPath);
+
+	CoTaskMemFree(pszFolderPath);
+	pItem->Release();
+
 	return DialogResult::Ok;
 }
 
