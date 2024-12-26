@@ -156,19 +156,19 @@ uint32_t ImageGraphPermutations::getPermutationCount() const
 
 uint32_t ImageGraphPermutations::getPermutationMask(uint32_t index) const
 {
-	T_ASSERT(index < m_combinations.size());
+	T_ASSERT(index < m_permutations.size());
 	return m_permutations[index].mask;
 }
 
 uint32_t ImageGraphPermutations::getPermutationValue(uint32_t index) const
 {
-	T_ASSERT(index < m_combinations.size());
+	T_ASSERT(index < m_permutations.size());
 	return m_permutations[index].value;
 }
 
 Ref< const ImageGraphAsset > ImageGraphPermutations::getPermutationImageGraph(uint32_t index) const
 {
-	T_ASSERT(index < m_combinations.size());
+	T_ASSERT(index < m_permutations.size());
 	return m_permutations[index].imageGraph;
 }
 
