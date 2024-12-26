@@ -22,7 +22,11 @@
 namespace JPH
 {
 
+class BroadPhaseLayerInterface;
+class ContactListener;
 class JobSystemThreadPool;
+class ObjectLayerPairFilter;
+class ObjectVsBroadPhaseLayerFilter;
 class PhysicsSystem;
 class TempAllocatorImpl;
 
@@ -142,6 +146,10 @@ public:
 private:
 	AutoPtr< JPH::TempAllocatorImpl > m_tempAllocator;
 	AutoPtr< JPH::JobSystemThreadPool > m_jobSystem;
+	AutoPtr< JPH::BroadPhaseLayerInterface > m_broadPhaseLayerInterface;
+	AutoPtr< JPH::ObjectVsBroadPhaseLayerFilter > m_objectVsBroadPhaseLayerFilter;
+	AutoPtr< JPH::ObjectLayerPairFilter > m_objectVsObjectLayerFilter;
+	AutoPtr< JPH::ContactListener > m_contactListener;
 	AutoPtr< JPH::PhysicsSystem > m_physicsSystem;
 };
 

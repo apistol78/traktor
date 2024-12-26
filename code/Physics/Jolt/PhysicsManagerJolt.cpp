@@ -134,6 +134,34 @@ public:
 	}
 };
 
+class MyContactListener : public JPH::ContactListener
+{
+public:
+	// See: ContactListener
+	virtual JPH::ValidateResult	OnContactValidate(const JPH::Body &inBody1, const JPH::Body &inBody2, JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult &inCollisionResult) override
+	{
+		//cout << "Contact validate callback" << endl;
+
+		// Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
+		return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
+	}
+
+	virtual void OnContactAdded(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
+	{
+		//cout << "A contact was added" << endl;
+	}
+
+	virtual void OnContactPersisted(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
+	{
+		//cout << "A contact was persisted" << endl;
+	}
+
+	virtual void OnContactRemoved(const JPH::SubShapeIDPair &inSubShapePair) override
+	{
+		//cout << "A contact was removed" << endl;
+	}
+};
+
 	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerJolt", 0, PhysicsManagerJolt, PhysicsManager)
@@ -159,9 +187,9 @@ bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 	const JPH::uint cMaxBodyPairs = 1024;
 	const JPH::uint cMaxContactConstraints = 1024;
 
-	BPLayerInterfaceImpl broadPhaseLayerInterface;
-	ObjectVsBroadPhaseLayerFilterImpl objectVsBroadPhaseLayerFilter;
-	ObjectLayerPairFilterImpl objectVsObjectLayerFilter;
+	m_broadPhaseLayerInterface.reset(new BPLayerInterfaceImpl());
+	m_objectVsBroadPhaseLayerFilter.reset(new ObjectVsBroadPhaseLayerFilterImpl());
+	m_objectVsObjectLayerFilter.reset(new ObjectLayerPairFilterImpl());
 
 	m_physicsSystem.reset(new JPH::PhysicsSystem);
 	m_physicsSystem->Init(
@@ -169,10 +197,15 @@ bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 		cNumBodyMutexes,
 		cMaxBodyPairs,
 		cMaxContactConstraints,
-		broadPhaseLayerInterface,
-		objectVsBroadPhaseLayerFilter,
-		objectVsObjectLayerFilter
+		*m_broadPhaseLayerInterface.ptr(),
+		*m_objectVsBroadPhaseLayerFilter.ptr(),
+		*m_objectVsObjectLayerFilter.ptr()
 	);
+
+	m_contactListener.reset(new MyContactListener());
+	m_physicsSystem->SetContactListener(m_contactListener.ptr());
+
+	m_physicsSystem->SetGravity(JPH::Vec3(0.0f, -9.2f, 0.0f));
 
 	return true;
 }
@@ -193,6 +226,34 @@ Vector4 PhysicsManagerJolt::getGravity() const
 
 Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag)
 {
+	if (!desc)
+		return nullptr;
+
+	const ShapeDesc* shapeDesc = desc->getShape();
+	if (!shapeDesc)
+	{
+		log::error << L"Unable to create body, no shape defined." << Endl;
+		return nullptr;
+	}
+
+	// Create collision shape.
+	if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
+	{
+		resource::Proxy< Mesh > mesh;
+		if (!resourceManager->bind(meshShape->getMesh(), mesh))
+		{
+			log::error << L"Unable to load collision mesh resource " << Guid(meshShape->getMesh()).format() << L"." << Endl;
+			return nullptr;
+		}
+
+		return createBody(resourceManager, desc, mesh, tag);
+	}
+	else
+	{
+		log::error << L"Unsupported shape type \"" << type_name(shapeDesc) << L"\"." << Endl;
+		return nullptr;
+	}
+
 	return nullptr;
 }
 
@@ -212,7 +273,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		}
 
 		JPH::IndexedTriangleList triangleList;	// Array<IndexedTriangle>
-		for (const auto& triangle : mesh->getHullTriangles())
+		for (const auto& triangle : mesh->getShapeTriangles())
 		{
 			triangleList.push_back(JPH::IndexedTriangle(
 				triangle.indices[0],
@@ -260,7 +321,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		}
 
 		JPH::IndexedTriangleList triangleList;	// Array<IndexedTriangle>
-		for (const auto& triangle : mesh->getShapeTriangles())
+		for (const auto& triangle : mesh->getHullTriangles())
 		{
 			triangleList.push_back(JPH::IndexedTriangle(
 				triangle.indices[0],
@@ -289,6 +350,10 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			Layers::MOVING
 		);
 
+		const float mass = dynamicDesc->getMass();
+		settings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
+		settings.mMassPropertiesOverride.SetMassAndInertiaOfSolidBox(JPH::Vec3::sReplicate(1.0f), mass);
+	 
 		// Create the actual rigid body
 		body = bodyInterface.CreateBody(settings);
 		if (!body)
@@ -298,7 +363,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		bodyInterface.AddBody(body->GetID(), JPH::EActivation::Activate);
 	}
 	T_FATAL_ASSERT(body != nullptr);
-	return new BodyJolt(tag, body);
+	return new BodyJolt(tag, m_physicsSystem.ptr(), body);
 }
 
 Ref< Joint > PhysicsManagerJolt::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)

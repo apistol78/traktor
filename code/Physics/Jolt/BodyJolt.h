@@ -24,6 +24,7 @@ namespace JPH
 {
 
 class Body;
+class PhysicsSystem;
 
 }
 
@@ -40,6 +41,7 @@ class T_DLLCLASS BodyJolt : public Body
 public:
 	explicit BodyJolt(
 		const wchar_t* const tag,
+		JPH::PhysicsSystem* physicsSystem,
 		JPH::Body* body
 	);
 
@@ -100,6 +102,7 @@ public:
 	virtual void integrate(float deltaTime) override final;
 
 private:
+	JPH::PhysicsSystem* m_physicsSystem;
 	JPH::Body* m_body;
 };
 

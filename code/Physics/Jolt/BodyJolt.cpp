@@ -23,13 +23,9 @@ namespace traktor::physics
 	namespace
 	{
 
-inline Vector4 convert(const BodyJolt* body, const Vector4& v, bool localSpace)
+JPH::Vec3 convert(const Vector4& v)
 {
-	T_CONVERT_ASSERT(!isNanOrInfinite((v).x()));
-	T_CONVERT_ASSERT(!isNanOrInfinite((v).y()));
-	T_CONVERT_ASSERT(!isNanOrInfinite((v).z()));
-	T_CONVERT_ASSERT(!isNanOrInfinite((v).w()));
-	return localSpace ? body->getTransform() * v : v;
+	return JPH::Vec3(v.x(), v.y(), v.z());
 }
 
 	}
@@ -38,9 +34,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyJolt", BodyJolt, Body)
 
 BodyJolt::BodyJolt(
 	const wchar_t* const tag,
+	JPH::PhysicsSystem* physicsSystem,
 	JPH::Body* body
 )
 :	Body(tag)
+,	m_physicsSystem(physicsSystem)
 ,	m_body(body)
 {
 }
@@ -52,6 +50,8 @@ void BodyJolt::destroy()
 
 void BodyJolt::setTransform(const Transform& transform)
 {
+	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
+	bodyInterface.SetPosition(m_body->GetID(), convert(transform.translation()), JPH::EActivation::Activate);
 }
 
 Transform BodyJolt::getTransform() const
@@ -72,12 +72,12 @@ void BodyJolt::setKinematic(bool kinematic)
 
 bool BodyJolt::isStatic() const
 {
-	return false;
+	return m_body->IsStatic();
 }
 
 bool BodyJolt::isKinematic() const
 {
-	return false;
+	return m_body->IsKinematic();
 }
 
 void BodyJolt::setActive(bool active)
@@ -86,7 +86,7 @@ void BodyJolt::setActive(bool active)
 
 bool BodyJolt::isActive() const
 {
-	return false;
+	return m_body->IsActive();
 }
 
 void BodyJolt::setEnable(bool enable)
@@ -118,22 +118,32 @@ Matrix33 BodyJolt::getInertiaTensorInverseWorld() const
 
 void BodyJolt::addForceAt(const Vector4& at, const Vector4& force, bool localSpace)
 {
+	T_FATAL_ASSERT(!localSpace);
+	m_body->AddForce(convert(force), convert(at));
 }
 
 void BodyJolt::addTorque(const Vector4& torque, bool localSpace)
 {
+	T_FATAL_ASSERT(!localSpace);
+	m_body->AddTorque(convert(torque));
 }
 
 void BodyJolt::addLinearImpulse(const Vector4& linearImpulse, bool localSpace)
 {
+	T_FATAL_ASSERT(!localSpace);
+	m_body->AddImpulse(convert(linearImpulse));
 }
 
 void BodyJolt::addAngularImpulse(const Vector4& angularImpulse, bool localSpace)
 {
+	T_FATAL_ASSERT(!localSpace);
+	m_body->AddAngularImpulse(convert(angularImpulse));
 }
 
 void BodyJolt::addImpulse(const Vector4& at, const Vector4& impulse, bool localSpace)
 {
+	T_FATAL_ASSERT(!localSpace);
+	m_body->AddImpulse(convert(impulse), convert(at));
 }
 
 void BodyJolt::setLinearVelocity(const Vector4& linearVelocity)
