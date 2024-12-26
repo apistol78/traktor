@@ -86,7 +86,7 @@ namespace BroadPhaseLayers
 {
 	static constexpr JPH::BroadPhaseLayer NON_MOVING(0);
 	static constexpr JPH::BroadPhaseLayer MOVING(1);
-	static constexpr uint NUM_LAYERS(2);
+	static constexpr JPH::uint NUM_LAYERS(2);
 };
 
 // BroadPhaseLayerInterface implementation
@@ -101,7 +101,7 @@ public:
 		mObjectToBroadPhase[Layers::MOVING] = BroadPhaseLayers::MOVING;
 	}
 
-	virtual uint GetNumBroadPhaseLayers() const override
+	virtual JPH::uint GetNumBroadPhaseLayers() const override
 	{
 		return BroadPhaseLayers::NUM_LAYERS;
 	}
@@ -153,10 +153,10 @@ bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 	m_tempAllocator.reset(new JPH::TempAllocatorImpl(10 * 1024 * 1024));
 	m_jobSystem.reset(new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1));
 
-	const uint cMaxBodies = 1024;
-	const uint cNumBodyMutexes = 0;
-	const uint cMaxBodyPairs = 1024;
-	const uint cMaxContactConstraints = 1024;
+	const JPH::uint cMaxBodies = 1024;
+	const JPH::uint cNumBodyMutexes = 0;
+	const JPH::uint cMaxBodyPairs = 1024;
+	const JPH::uint cMaxContactConstraints = 1024;
 
 	BPLayerInterfaceImpl broadPhaseLayerInterface;
 	ObjectVsBroadPhaseLayerFilterImpl objectVsBroadPhaseLayerFilter;

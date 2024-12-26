@@ -6713,5 +6713,424 @@
 			</items>
 			<dependencies/>
 		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.jolt</name>
+			<sourcePath>$(JOLT_SDK)/Jolt</sourcePath>
+			<configurations>
+				<item type="Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(JOLT_SDK)</item>
+					</includePaths>
+					<definitions/>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(JOLT_SDK)</item>
+					</includePaths>
+					<definitions/>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(JOLT_SDK)</item>
+					</includePaths>
+					<definitions/>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(JOLT_SDK)</item>
+					</includePaths>
+					<definitions/>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File" version="1">
+					<fileName>*.cpp</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>*.h</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>Core</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>Core/*.cpp</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="File" version="1">
+							<fileName>Core/*.h</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="File" version="1">
+							<fileName>Core/*.inl</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Geometry</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>Geometry/*.cpp</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="File" version="1">
+							<fileName>Geometry/*.h</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Math</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>Math/*.cpp</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="File" version="1">
+							<fileName>Math/*.h</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="File" version="1">
+							<fileName>Math/*.inl</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Physics</name>
+					<items>
+						<item type="Filter">
+							<name>Body</name>
+							<items>
+								<item type="File" version="1">
+									<fileName>Physics/Body/*.cpp</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+								<item type="File" version="1">
+									<fileName>Physics/Body/*.h</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>Character</name>
+							<items>
+								<item type="File" version="1">
+									<fileName>Physics/Character/*.cpp</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+								<item type="File" version="1">
+									<fileName>Physics/Character/*.h</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>Collision</name>
+							<items>
+								<item type="File" version="1">
+									<fileName>Physics/Collision/*.cpp</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+								<item type="File" version="1">
+									<fileName>Physics/Collision/*.h</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+								<item type="Filter">
+									<name>BroadPhase</name>
+									<items>
+										<item type="File" version="1">
+											<fileName>Physics/Collision/BroadPhase/*.cpp</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
+										<item type="File" version="1">
+											<fileName>Physics/Collision/BroadPhase/*.h</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="Filter">
+									<name>Shape</name>
+									<items>
+										<item type="File" version="1">
+											<fileName>Physics/Collision/Shape/*.cpp</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
+										<item type="File" version="1">
+											<fileName>Physics/Collision/Shape/*.h</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>Ragdoll</name>
+							<items>
+								<item type="File" version="1">
+									<fileName>Physics/Ragdoll/*.cpp</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+								<item type="File" version="1">
+									<fileName>Physics/Ragdoll/*.h</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>SoftBody</name>
+							<items>
+								<item type="File" version="1">
+									<fileName>Physics/SoftBody/*.cpp</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+								<item type="File" version="1">
+									<fileName>Physics/SoftBody/*.h</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>Vehicle</name>
+							<items>
+								<item type="File" version="1">
+									<fileName>Physics/Vehicle/*.cpp</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+								<item type="File" version="1">
+									<fileName>Physics/Vehicle/*.h</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="File" version="1">
+							<fileName>Physics/*.cpp</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="File" version="1">
+							<fileName>Physics/*.h</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="Filter">
+							<name>Constraints</name>
+							<items>
+								<item type="Filter">
+									<name>ConstraintPart</name>
+									<items>
+										<item type="File" version="1">
+											<fileName>Physics/Constraints/ConstraintPart/*.cpp</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
+										<item type="File" version="1">
+											<fileName>Physics/Constraints/ConstraintPart/*.h</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="File" version="1">
+									<fileName>Physics/Constraints/*.cpp</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+								<item type="File" version="1">
+									<fileName>Physics/Constraints/*.h</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+							</items>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>ObjectStream</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>ObjectStream/*.cpp</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="File" version="1">
+							<fileName>ObjectStream/*.h</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>TriangleGrouper</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>TriangleGrouper/*.cpp</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="File" version="1">
+							<fileName>TriangleGrouper/*.h</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>TriangleSplitter</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>TriangleSplitter/*.cpp</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="File" version="1">
+							<fileName>TriangleSplitter/*.h</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Skeleton</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>Skeleton/*.cpp</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="File" version="1">
+							<fileName>Skeleton/*.h</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>AABBTree</name>
+					<items>
+						<item type="Filter">
+							<name>NodeCodec</name>
+							<items>
+								<item type="File" version="1">
+									<fileName>AABBTree/NodeCodec/*.h</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>TriangleCodec</name>
+							<items>
+								<item type="File" version="1">
+									<fileName>AABBTree/TriangleCodec/*.h</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="File" version="1">
+							<fileName>AABBTree/*.cpp</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="File" version="1">
+							<fileName>AABBTree/*.h</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
 	</projects>
 </object>
