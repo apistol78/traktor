@@ -20,6 +20,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace JPH
+{
+
+class Body;
+
+}
+
 namespace traktor::physics
 {
 
@@ -32,7 +39,8 @@ class T_DLLCLASS BodyJolt : public Body
 
 public:
 	explicit BodyJolt(
-		const wchar_t* const tag
+		const wchar_t* const tag,
+		JPH::Body* body
 	);
 
 	virtual void destroy() override final;
@@ -92,6 +100,7 @@ public:
 	virtual void integrate(float deltaTime) override final;
 
 private:
+	JPH::Body* m_body;
 };
 
 }

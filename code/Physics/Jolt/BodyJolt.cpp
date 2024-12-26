@@ -14,6 +14,10 @@
 #include "Physics/Jolt/Conversion.h"
 #include "Physics/Jolt/BodyJolt.h"
 
+// Keep Jolt includes here, Jolt.h must be first.
+#include <Jolt/Jolt.h>
+#include <Jolt/Physics/PhysicsSystem.h>
+
 namespace traktor::physics
 {
 	namespace
@@ -33,9 +37,11 @@ inline Vector4 convert(const BodyJolt* body, const Vector4& v, bool localSpace)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyJolt", BodyJolt, Body)
 
 BodyJolt::BodyJolt(
-	const wchar_t* const tag
+	const wchar_t* const tag,
+	JPH::Body* body
 )
 :	Body(tag)
+,	m_body(body)
 {
 }
 
@@ -50,12 +56,14 @@ void BodyJolt::setTransform(const Transform& transform)
 
 Transform BodyJolt::getTransform() const
 {
-	return Transform::identity();
+	const JPH::Vec3 position = m_body->GetCenterOfMassPosition();
+	return Transform(Vector4(position.GetX(), position.GetY(), position.GetZ(), 1.0f));
 }
 
 Transform BodyJolt::getCenterTransform() const
 {
-	return Transform();
+	const JPH::Vec3 position = m_body->GetCenterOfMassPosition();
+	return Transform(Vector4(position.GetX(), position.GetY(), position.GetZ(), 1.0f));
 }
 
 void BodyJolt::setKinematic(bool kinematic)

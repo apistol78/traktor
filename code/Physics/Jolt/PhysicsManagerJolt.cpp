@@ -46,6 +46,7 @@
 #include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
+#include <Jolt/Physics/Collision/Shape/MeshShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
@@ -198,42 +199,106 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const Mesh* mesh, const wchar_t* const tag)
 {
 	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
+	JPH::Body* body = nullptr;
 
 	if (auto staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
 	{
-		// JPH::VertexList vertexList;	// Array<Float3>
-		// vertexList.
+		JPH::VertexList vertexList;	// Array<Float3>
+		for (const auto& vertex : mesh->getVertices())
+		{
+			vertexList.push_back(JPH::Float3(
+				vertex.x(), vertex.y(), vertex.z()
+			));
+		}
+
+		JPH::IndexedTriangleList triangleList;	// Array<IndexedTriangle>
+		for (const auto& triangle : mesh->getHullTriangles())
+		{
+			triangleList.push_back(JPH::IndexedTriangle(
+				triangle.indices[0],
+				triangle.indices[1],
+				triangle.indices[2],
+				triangle.material
+			));
+		}
 
 		// // Next we can create a rigid body to serve as the floor, we make a large box
 		// // Create the settings for the collision volume (the shape).
 		// // Note that for simple shapes (like boxes) you can also directly construct a BoxShape.
-		// JPH::MeshShapeSettings shapeSettings(JPH::Vec3(100.0f, 1.0f, 100.0f));
-		// floorShapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
+		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList);
+		shapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
 
-		// // Create the shape
-		// JPH::ShapeSettings::ShapeResult floorShapeResult = floorShapeSettings.Create();
-		// JPH::ShapeRefC floorShape = floorShapeResult.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
+		// Create the shape
+		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+		JPH::ShapeRefC shape = shapeResult.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
 
-		// // Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
-		// JPH::BodyCreationSettings floorSettings(
-		// 	floorShape,
-		// 	JPH::RVec3(0.0_r, -1.0_r, 0.0_r),
-		// 	JPH::Quat::sIdentity(),
-		// 	JPH::EMotionType::Static,
-		// 	Layers::NON_MOVING
-		// );
+		// Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
+		JPH::BodyCreationSettings settings(
+			shape,
+			JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
+			JPH::Quat::sIdentity(),
+			staticDesc->isKinematic() ? JPH::EMotionType::Kinematic : JPH::EMotionType::Static,
+			Layers::NON_MOVING
+		);
 
-		// // Create the actual rigid body
-		// JPH::Body* floor = bodyInterface.CreateBody(floorSettings);
-		// if (!floor)
-		// 	return nullptr;
+		// Create the actual rigid body
+		body = bodyInterface.CreateBody(settings);
+		if (!body)
+			return nullptr;
 
-		// // Add it to the world
-		// bodyInterface.AddBody(floor->GetID(), JPH::EActivation::DontActivate);
+		// Add it to the world
+		bodyInterface.AddBody(body->GetID(), JPH::EActivation::Activate);
 	}
+	else if (auto dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
+	{
+		JPH::VertexList vertexList;	// Array<Float3>
+		for (const auto& vertex : mesh->getVertices())
+		{
+			vertexList.push_back(JPH::Float3(
+				vertex.x(), vertex.y(), vertex.z()
+			));
+		}
 
+		JPH::IndexedTriangleList triangleList;	// Array<IndexedTriangle>
+		for (const auto& triangle : mesh->getShapeTriangles())
+		{
+			triangleList.push_back(JPH::IndexedTriangle(
+				triangle.indices[0],
+				triangle.indices[1],
+				triangle.indices[2],
+				triangle.material
+			));
+		}
 
-	return nullptr;
+		// // Next we can create a rigid body to serve as the floor, we make a large box
+		// // Create the settings for the collision volume (the shape).
+		// // Note that for simple shapes (like boxes) you can also directly construct a BoxShape.
+		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList);
+		shapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
+
+		// Create the shape
+		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+		JPH::ShapeRefC shape = shapeResult.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
+
+		// Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
+		JPH::BodyCreationSettings settings(
+			shape,
+			JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
+			JPH::Quat::sIdentity(),
+			JPH::EMotionType::Dynamic,
+			Layers::MOVING
+		);
+
+		// Create the actual rigid body
+		body = bodyInterface.CreateBody(settings);
+		if (!body)
+			return nullptr;
+
+		// Add it to the world
+		bodyInterface.AddBody(body->GetID(), JPH::EActivation::Activate);
+	}
+	T_FATAL_ASSERT(body != nullptr);
+	return new BodyJolt(tag, body);
 }
 
 Ref< Joint > PhysicsManagerJolt::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
