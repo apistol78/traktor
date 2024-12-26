@@ -497,6 +497,14 @@ local PACKAGES =
 		url = "https://github.com/ufbx/ufbx.git",
 		license = "MIT"
 	},
+
+	-- jolt
+	{
+		type = "GIT",
+		name = "jolt",
+		url = "https://github.com/jrouwe/JoltPhysics.git",
+		license = "MIT"
+	},
 }
 
 --[[
