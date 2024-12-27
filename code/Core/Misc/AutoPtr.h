@@ -132,12 +132,12 @@ public:
 
 	Type* operator -> ()
 	{
-		return ptr();
+		return m_ptr;
 	}
 
 	const Type* operator -> () const
 	{
-		return ptr();
+		return m_ptr;
 	}
 
 	AutoPtr< Type, ReleasePolicy >& operator = (const AutoPtr< Type, ReleasePolicy >& lh) = delete;

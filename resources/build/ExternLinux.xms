@@ -6069,6 +6069,41 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>AABBTree</name>
+					<items>
+						<item type="Filter">
+							<name>NodeCodec</name>
+							<items>
+								<item type="File" version="1">
+									<fileName>AABBTree/NodeCodec/*.h</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>TriangleCodec</name>
+							<items>
+								<item type="File" version="1">
+									<fileName>AABBTree/TriangleCodec/*.h</fileName>
+									<excludeFilter/>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="File" version="1">
+							<fileName>AABBTree/*.cpp</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="File" version="1">
+							<fileName>AABBTree/*.h</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies/>
 		</item>

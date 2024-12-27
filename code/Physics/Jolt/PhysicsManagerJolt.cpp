@@ -45,7 +45,11 @@
 #include <Jolt/Core/JobSystemThreadPool.h>
 #include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/PhysicsSystem.h>
+#include <Jolt/Physics/Collision/PhysicsMaterialSimple.h>
+#include <Jolt/Physics/Collision/RayCast.h>
+#include <Jolt/Physics/Collision/ShapeCast.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
+#include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
 #include <Jolt/Physics/Collision/Shape/MeshShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
@@ -213,15 +217,23 @@ bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 void PhysicsManagerJolt::destroy()
 {
 	m_physicsSystem.release();
+	m_contactListener.release();
+	m_objectVsObjectLayerFilter.release();
+	m_objectVsBroadPhaseLayerFilter.release();
+	m_broadPhaseLayerInterface.release();
+	m_jobSystem.release();
+	m_tempAllocator.release();
 }
 
 void PhysicsManagerJolt::setGravity(const Vector4& gravity)
 {
+	m_physicsSystem->SetGravity(convertToJolt(gravity));
 }
 
 Vector4 PhysicsManagerJolt::getGravity() const
 {
-	return Vector4::zero();
+	const JPH::Vec3 gravity = m_physicsSystem->GetGravity();
+	return convertFromJolt(gravity, 0.0f);
 }
 
 Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag)
@@ -276,18 +288,22 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		for (const auto& triangle : mesh->getShapeTriangles())
 		{
 			triangleList.push_back(JPH::IndexedTriangle(
-				triangle.indices[0],
-				triangle.indices[1],
 				triangle.indices[2],
-				triangle.material
+				triangle.indices[1],
+				triangle.indices[0],
+				0 // triangle.material
 			));
 		}
+
+		JPH::PhysicsMaterialList materials;
+		materials.push_back(new JPH::PhysicsMaterialSimple("Material0", JPH::Color::sGetDistinctColor(0)));
 
 		// // Next we can create a rigid body to serve as the floor, we make a large box
 		// // Create the settings for the collision volume (the shape).
 		// // Note that for simple shapes (like boxes) you can also directly construct a BoxShape.
-		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList);
+		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList, std::move(materials));
 		shapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
+
 
 		// Create the shape
 		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
@@ -308,33 +324,23 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			return nullptr;
 
 		// Add it to the world
-		bodyInterface.AddBody(body->GetID(), JPH::EActivation::Activate);
+		bodyInterface.AddBody(body->GetID(), JPH::EActivation::DontActivate);
 	}
 	else if (auto dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
 	{
-		JPH::VertexList vertexList;	// Array<Float3>
-		for (const auto& vertex : mesh->getVertices())
+		JPH::Array< JPH::Vec3 > vertexList;	// Array<Float3>
+
+		const auto& vertices = mesh->getVertices();
+		const auto& hullIndices = mesh->getHullIndices();
+		for (const auto& hullIndex : hullIndices)
 		{
-			vertexList.push_back(JPH::Float3(
+			const auto& vertex = vertices[hullIndex];
+			vertexList.push_back(JPH::Vec3(
 				vertex.x(), vertex.y(), vertex.z()
 			));
 		}
 
-		JPH::IndexedTriangleList triangleList;	// Array<IndexedTriangle>
-		for (const auto& triangle : mesh->getHullTriangles())
-		{
-			triangleList.push_back(JPH::IndexedTriangle(
-				triangle.indices[0],
-				triangle.indices[1],
-				triangle.indices[2],
-				triangle.material
-			));
-		}
-
-		// // Next we can create a rigid body to serve as the floor, we make a large box
-		// // Create the settings for the collision volume (the shape).
-		// // Note that for simple shapes (like boxes) you can also directly construct a BoxShape.
-		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList);
+		JPH::ConvexHullShapeSettings shapeSettings(vertexList);
 		shapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
 
 		// Create the shape
@@ -439,6 +445,41 @@ bool PhysicsManagerJolt::querySweep(
 	QueryResult& outResult
 ) const
 {
+	const JPH::NarrowPhaseQuery& narrowPhaseQuery = m_physicsSystem->GetNarrowPhaseQuery();
+
+
+	class MyCollector : public JPH::CastShapeCollector
+	{
+	public:
+		virtual void AddHit(const JPH::ShapeCastResult &inResult) override
+		{
+			if (inResult.mFraction < GetEarlyOutFraction())
+			{
+				UpdateEarlyOutFraction(inResult.mFraction);
+			}
+		}
+	};
+
+
+	MyCollector collector;
+
+
+	JPH::SphereShape sphere(radius);
+	sphere.SetEmbedded();
+
+	JPH::RShapeCast shapeCast(
+		&sphere,
+		JPH::Vec3::sReplicate(1.0f),
+		JPH::RMat44::sTranslation(convertToJolt(at)),
+		convertToJolt(direction * Scalar(maxLength))
+	);
+
+	JPH::ShapeCastSettings settings;
+	settings.mUseShrunkenShapeAndConvexRadius = true;
+	settings.mReturnDeepestPoint = true;
+
+	narrowPhaseQuery.CastShape(shapeCast, settings, JPH::Vec3::sReplicate(0.0f), collector);
+
 	return false;
 }
 
