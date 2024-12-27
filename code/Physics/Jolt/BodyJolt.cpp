@@ -18,6 +18,7 @@
 #include "Physics/Mesh.h"
 #include "Physics/Jolt/Conversion.h"
 #include "Physics/Jolt/BodyJolt.h"
+#include "Physics/Jolt/Types.h"
 
 namespace traktor::physics
 {
@@ -26,18 +27,36 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyJolt", BodyJolt, Body)
 
 BodyJolt::BodyJolt(
 	const wchar_t* const tag,
+	IWorldCallback* callback,
 	JPH::PhysicsSystem* physicsSystem,
-	JPH::Body* body
+	JPH::Body* body,
+	uint32_t collisionGroup,
+	uint32_t collisionMask
 )
 :	Body(tag)
+,	m_callback(callback)
 ,	m_physicsSystem(physicsSystem)
 ,	m_body(body)
+,	m_collisionGroup(collisionGroup)
+,	m_collisionMask(collisionMask)
 {
+	m_body->SetUserData((JPH::uint64)this);
 }
 
 void BodyJolt::destroy()
 {
-	Body::destroy();
+	if (m_callback)
+	{
+		m_callback->destroyBody(this);
+		m_callback = nullptr;
+
+		JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
+		bodyInterface.RemoveBody(m_body->GetID());
+		bodyInterface.DestroyBody(m_body->GetID());
+		Body::destroy();
+
+		m_body = nullptr;
+	}
 }
 
 void BodyJolt::setTransform(const Transform& transform)
@@ -102,6 +121,9 @@ bool BodyJolt::isEnable() const
 
 void BodyJolt::reset()
 {
+	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
+	bodyInterface.SetLinearVelocity(m_body->GetID(), JPH::Vec3::sReplicate(0.0f));
+	bodyInterface.SetAngularVelocity(m_body->GetID(), JPH::Vec3::sReplicate(0.0f));
 }
 
 void BodyJolt::setMass(float mass, const Vector4& inertiaTensor)
@@ -120,8 +142,17 @@ Matrix33 BodyJolt::getInertiaTensorInverseWorld() const
 
 void BodyJolt::addForceAt(const Vector4& at, const Vector4& force, bool localSpace)
 {
-	T_FATAL_ASSERT(!localSpace);
-	m_body->AddForce(convertToJolt(force), convertToJolt(at));
+	Vector4 wat = at;
+	Vector4 wforce = force;
+
+	if (localSpace)
+	{
+		const Transform transform = getTransform();
+		wat = transform * at;
+		wforce = transform * force;
+	}
+
+	m_body->AddForce(convertToJolt(wforce), convertToJolt(wat));
 }
 
 void BodyJolt::addTorque(const Vector4& torque, bool localSpace)
@@ -154,7 +185,7 @@ void BodyJolt::setLinearVelocity(const Vector4& linearVelocity)
 
 Vector4 BodyJolt::getLinearVelocity() const
 {
-	return Vector4::zero();
+	return convertFromJolt(m_body->GetLinearVelocity(), 0.0f);
 }
 
 void BodyJolt::setAngularVelocity(const Vector4& angularVelocity)
@@ -163,12 +194,15 @@ void BodyJolt::setAngularVelocity(const Vector4& angularVelocity)
 
 Vector4 BodyJolt::getAngularVelocity() const
 {
-	return Vector4::zero();
+	return convertFromJolt(m_body->GetAngularVelocity(), 0.0f);
 }
 
 Vector4 BodyJolt::getVelocityAt(const Vector4& at, bool localSpace) const
 {
-	return Vector4::zero();
+	Vector4 wat = at;
+	if (localSpace)
+		wat = getTransform() * at;
+	return convertFromJolt(m_body->GetPointVelocity(convertToJolt(at)), 0.0f);
 }
 
 void BodyJolt::setState(const BodyState& state)

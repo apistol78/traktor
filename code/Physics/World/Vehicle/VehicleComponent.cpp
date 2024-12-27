@@ -275,7 +275,7 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 				{
 					// If no previous contact then we estimate velocity by projecting onto ground.
 					const Vector4 wheelVelocity = body->getVelocityAt(result.position.xyz1(), false);
-					const Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
+					const Vector4 groundVelocity = result.body ? result.body->getVelocityAt(result.position.xyz1(), false) : Vector4::zero();
 					const Vector4 velocity = wheelVelocity - groundVelocity;
 					const Scalar k = dot3(normal, velocity);
 					contactVelocity = velocity - normal * (-k);
@@ -283,7 +283,7 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 				else
 				{
 					// Calculate explicit velocity based on contact movement.
-					const Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
+					const Vector4 groundVelocity = result.body ? result.body->getVelocityAt(result.position.xyz1(), false) : Vector4::zero();
 					const Vector4 contactMovement = (result.position - wheel->contactPosition - groundVelocity * Scalar(dT)).xyz0();
 					contactVelocity = contactMovement / Scalar(dT);
 				}

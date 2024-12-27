@@ -45,6 +45,7 @@
 #include <Jolt/Core/JobSystemThreadPool.h>
 #include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/PhysicsSystem.h>
+#include <Jolt/Physics/Collision/CollisionCollectorImpl.h>
 #include <Jolt/Physics/Collision/PhysicsMaterialSimple.h>
 #include <Jolt/Physics/Collision/RayCast.h>
 #include <Jolt/Physics/Collision/ShapeCast.h>
@@ -216,6 +217,9 @@ bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 
 void PhysicsManagerJolt::destroy()
 {
+	while (!m_bodies.empty())
+		m_bodies.front()->destroy();
+
 	m_physicsSystem.release();
 	m_contactListener.release();
 	m_objectVsObjectLayerFilter.release();
@@ -274,6 +278,31 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
 	JPH::Body* body = nullptr;
 
+	// Resolve collision group and mask value.
+	uint32_t mergedCollisionGroup = 0;
+	for (const auto& group : desc->getShape()->getCollisionGroup())
+	{
+		resource::Proxy< CollisionSpecification > collisionGroup;
+		if (!resourceManager->bind(group, collisionGroup))
+		{
+			log::error << L"Unable to bind collision group specification." << Endl;
+			return nullptr;
+		}
+		mergedCollisionGroup |= collisionGroup->getBitMask();
+	}
+
+	uint32_t mergedCollisionMask = 0;
+	for (const auto& mask : desc->getShape()->getCollisionMask())
+	{
+		resource::Proxy< CollisionSpecification > collisionMask;
+		if (!resourceManager->bind(mask, collisionMask))
+		{
+			log::error << L"Unable to bind collision mask specification." << Endl;
+			return nullptr;
+		}
+		mergedCollisionMask |= collisionMask->getBitMask();
+	}
+
 	if (auto staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
 	{
 		JPH::VertexList vertexList;	// Array<Float3>
@@ -303,7 +332,6 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		// // Note that for simple shapes (like boxes) you can also directly construct a BoxShape.
 		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList, std::move(materials));
 		shapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
-
 
 		// Create the shape
 		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
@@ -358,7 +386,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 
 		const float mass = dynamicDesc->getMass();
 		settings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
-		settings.mMassPropertiesOverride.SetMassAndInertiaOfSolidBox(JPH::Vec3::sReplicate(1.0f), mass);
+		settings.mMassPropertiesOverride.SetMassAndInertiaOfSolidBox(JPH::Vec3::sReplicate(2.0f), mass / (2.0f * 2.0f * 2.0f));
 	 
 		// Create the actual rigid body
 		body = bodyInterface.CreateBody(settings);
@@ -369,7 +397,10 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		bodyInterface.AddBody(body->GetID(), JPH::EActivation::Activate);
 	}
 	T_FATAL_ASSERT(body != nullptr);
-	return new BodyJolt(tag, m_physicsSystem.ptr(), body);
+
+	Ref< BodyJolt > bj = new BodyJolt(tag, this, m_physicsSystem.ptr(), body, mergedCollisionGroup, mergedCollisionMask);
+	m_bodies.push_back(bj);
+	return bj;
 }
 
 Ref< Joint > PhysicsManagerJolt::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
@@ -451,18 +482,61 @@ bool PhysicsManagerJolt::querySweep(
 	class MyCollector : public JPH::CastShapeCollector
 	{
 	public:
+		explicit MyCollector(const PhysicsManagerJolt* outer, const JPH::RShapeCast& shapeCast, const QueryFilter& queryFilter, QueryResult& outResult)
+		:	m_outer(outer)
+		,	m_shapeCast(shapeCast)
+		,	m_queryFilter(queryFilter)
+		,	m_outResult(outResult)
+		{
+		}
+
 		virtual void AddHit(const JPH::ShapeCastResult &inResult) override
 		{
 			if (inResult.mFraction < GetEarlyOutFraction())
 			{
-				UpdateEarlyOutFraction(inResult.mFraction);
+				JPH::BodyLockRead lock(m_outer->m_physicsSystem->GetBodyLockInterface(), inResult.mBodyID2);
+				if (lock.Succeeded())
+				{
+					const JPH::Body& hitBody = lock.GetBody();
+
+					BodyJolt* unwrappedBody = (BodyJolt*)hitBody.GetUserData();
+					if (m_queryFilter.ignoreClusterId != 0 && unwrappedBody->getClusterId() == m_queryFilter.ignoreClusterId)
+						return;
+
+					const uint32_t group = unwrappedBody->getCollisionGroup();
+					if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
+						return;
+
+					JPH::Vec3 position = m_shapeCast.GetPointOnRay(inResult.mFraction);
+					JPH::Vec3 normal = -inResult.mPenetrationAxis.Normalized();
+
+					m_outResult.body = nullptr; // unwrappedBody;
+					m_outResult.position = convertFromJolt(position, 1.0f);
+					m_outResult.normal = convertFromJolt(normal, 0.0f);
+					m_outResult.fraction = inResult.mFraction;
+					//m_outResult.distance = dot3(m_outResult.position - at, direction);
+					//m_outResult.material = ;
+
+					m_anyHit = true;
+
+					UpdateEarlyOutFraction(inResult.mFraction);
+				}
 			}
 		}
+
+		bool AnyHit() const { return m_anyHit; }
+
+	private:
+		const PhysicsManagerJolt* m_outer;
+		const JPH::RShapeCast& m_shapeCast;
+		const QueryFilter& m_queryFilter;
+		QueryResult& m_outResult;
+		bool m_anyHit = false;
 	};
 
 
-	MyCollector collector;
 
+	//JPH::ClosestHitCollisionCollector< JPH::CastShapeCollector > collector;
 
 	JPH::SphereShape sphere(radius);
 	sphere.SetEmbedded();
@@ -478,9 +552,12 @@ bool PhysicsManagerJolt::querySweep(
 	settings.mUseShrunkenShapeAndConvexRadius = true;
 	settings.mReturnDeepestPoint = true;
 
+	MyCollector collector(this, shapeCast, queryFilter, outResult);
 	narrowPhaseQuery.CastShape(shapeCast, settings, JPH::Vec3::sReplicate(0.0f), collector);
 
-	return false;
+	outResult.distance = dot3(outResult.position - at, direction);
+
+	return collector.AnyHit();
 }
 
 bool PhysicsManagerJolt::querySweep(
@@ -524,6 +601,12 @@ void PhysicsManagerJolt::getStatistics(PhysicsStatistics& outStatistics) const
 	outStatistics.activeCount = 0;
 	outStatistics.manifoldCount = 0;
 	outStatistics.queryCount = 0;
+}
+
+void PhysicsManagerJolt::destroyBody(BodyJolt* body)
+{
+	const bool removed = m_bodies.remove(body);
+	T_FATAL_ASSERT(removed);
 }
 
 }

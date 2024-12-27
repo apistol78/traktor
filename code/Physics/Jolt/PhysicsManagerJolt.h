@@ -10,6 +10,7 @@
 
 #include "Core/Misc/AutoPtr.h"
 #include "Physics/PhysicsManager.h"
+#include "Physics/Jolt/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -42,7 +43,7 @@ class ShapeDesc;
 /*!
  * \ingroup Jolt
  */
-class T_DLLCLASS PhysicsManagerJolt : public PhysicsManager
+class T_DLLCLASS PhysicsManagerJolt : public PhysicsManager, public IWorldCallback
 {
 	T_RTTI_CLASS;
 
@@ -151,6 +152,12 @@ private:
 	AutoPtr< JPH::ObjectLayerPairFilter > m_objectVsObjectLayerFilter;
 	AutoPtr< JPH::ContactListener > m_contactListener;
 	AutoPtr< JPH::PhysicsSystem > m_physicsSystem;
+
+	RefArray< BodyJolt > m_bodies;
+
+	// IWorldCallback
+
+	virtual void destroyBody(BodyJolt* body) override final;
 };
 
 }

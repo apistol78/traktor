@@ -10,6 +10,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Physics/Body.h"
+#include "Physics/Jolt/Types.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -41,8 +42,11 @@ class T_DLLCLASS BodyJolt : public Body
 public:
 	explicit BodyJolt(
 		const wchar_t* const tag,
+		IWorldCallback* callback,
 		JPH::PhysicsSystem* physicsSystem,
-		JPH::Body* body
+		JPH::Body* body,
+		uint32_t collisionGroup,
+		uint32_t collisionMask
 	);
 
 	virtual void destroy() override final;
@@ -101,9 +105,16 @@ public:
 
 	virtual void integrate(float deltaTime) override final;
 
+	uint32_t getCollisionGroup() const { return m_collisionGroup; }
+
+	uint32_t getCollisionMask() const { return m_collisionMask; }
+
 private:
+	IWorldCallback* m_callback;
 	JPH::PhysicsSystem* m_physicsSystem;
 	JPH::Body* m_body;
+	uint32_t m_collisionGroup;
+	uint32_t m_collisionMask;
 };
 
 }
