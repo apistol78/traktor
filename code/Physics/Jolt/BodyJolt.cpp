@@ -30,6 +30,7 @@ BodyJolt::BodyJolt(
 	IWorldCallback* callback,
 	JPH::PhysicsSystem* physicsSystem,
 	JPH::Body* body,
+	const Vector4& centerOfGravity,
 	uint32_t collisionGroup,
 	uint32_t collisionMask
 )
@@ -37,6 +38,7 @@ BodyJolt::BodyJolt(
 ,	m_callback(callback)
 ,	m_physicsSystem(physicsSystem)
 ,	m_body(body)
+,	m_centerOfGravity(centerOfGravity)
 ,	m_collisionGroup(collisionGroup)
 ,	m_collisionMask(collisionMask)
 {
@@ -61,24 +63,26 @@ void BodyJolt::destroy()
 
 void BodyJolt::setTransform(const Transform& transform)
 {
+	const Transform ct = transform * Transform(m_centerOfGravity);
+
 	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
 	bodyInterface.SetPositionAndRotation(
 		m_body->GetID(),
-		convertToJolt(transform.translation()),
-		convertToJolt(transform.rotation()),
-		JPH::EActivation::Activate
+		convertToJolt(ct.translation()),
+		convertToJolt(ct.rotation()),
+		JPH::EActivation::DontActivate
 	);
 }
 
 Transform BodyJolt::getTransform() const
 {
 	const JPH::RMat44 transform = m_body->GetWorldTransform();
-	return convertFromJolt(transform);
+	return convertFromJolt(transform) * Transform(-m_centerOfGravity);
 }
 
 Transform BodyJolt::getCenterTransform() const
 {
-	const JPH::RMat44 transform = m_body->GetCenterOfMassTransform();
+	const JPH::RMat44 transform = m_body->GetWorldTransform();
 	return convertFromJolt(transform);
 }
 
@@ -112,11 +116,18 @@ bool BodyJolt::isActive() const
 
 void BodyJolt::setEnable(bool enable)
 {
+	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
+	const bool enabled = bodyInterface.IsAdded(m_body->GetID());
+	if (enable && !enabled)
+		bodyInterface.AddBody(m_body->GetID(), JPH::EActivation::DontActivate);
+	else if (!enable && enabled)
+		bodyInterface.RemoveBody(m_body->GetID());
 }
 
 bool BodyJolt::isEnable() const
 {
-	return false;
+	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
+	return bodyInterface.IsAdded(m_body->GetID());
 }
 
 void BodyJolt::reset()

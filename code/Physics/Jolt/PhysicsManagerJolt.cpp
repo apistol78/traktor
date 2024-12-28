@@ -51,6 +51,7 @@
 #include <Jolt/Physics/Collision/ShapeCast.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
+#include <Jolt/Physics/Collision/Shape/HeightFieldShape.h>
 #include <Jolt/Physics/Collision/Shape/MeshShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
@@ -242,6 +243,9 @@ Vector4 PhysicsManagerJolt::getGravity() const
 
 Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag)
 {
+	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
+	JPH::Body* body = nullptr;
+
 	if (!desc)
 		return nullptr;
 
@@ -252,7 +256,8 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		return nullptr;
 	}
 
-	// Create collision shape.
+	T_FATAL_ASSERT(shapeDesc->getLocalTransform() == Transform::identity());
+
 	if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 	{
 		resource::Proxy< Mesh > mesh;
@@ -264,10 +269,103 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 
 		return createBody(resourceManager, desc, mesh, tag);
 	}
+	else if (const HeightfieldShapeDesc* heightfieldShape = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
+	{
+		resource::Proxy< hf::Heightfield > heightfield;
+		if (!resourceManager->bind(heightfieldShape->getHeightfield(), heightfield))
+		{
+			log::error << L"Unable to load heightfield resource." << Endl;
+			return nullptr;
+		}
+
+		AlignedVector< float > samples;
+		samples.resize(heightfield->getSize() * heightfield->getSize());
+
+		for (int32_t y = 0; y < heightfield->getSize(); ++y)
+		{
+			for (int32_t x = 0; x < heightfield->getSize(); ++x)
+			{
+				samples[x + y * heightfield->getSize()] = heightfield->getGridHeightNearest(x, y);
+			}
+		}
+
+		Vector4 s(
+			1.0f / heightfield->getSize(),
+			1.0f,
+			1.0f / heightfield->getSize(),
+			1.0f
+		);
+
+		const Vector4& worldExtent = heightfield->getWorldExtent();
+
+		JPH::HeightFieldShapeSettings shapeSettings(
+			samples.c_ptr(),
+			convertToJolt(-worldExtent * 0.5_simd),	// offset
+			convertToJolt(worldExtent * s),	// scale
+			heightfield->getSize()
+		);
+
+		shapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
+
+		// Create the shape
+		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+		JPH::ShapeRefC shape = shapeResult.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
+
+		// Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
+		JPH::BodyCreationSettings settings(
+			shape,
+			JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
+			JPH::Quat::sIdentity(),
+			JPH::EMotionType::Static,
+			Layers::NON_MOVING
+		);
+
+		// Create the actual rigid body
+		body = bodyInterface.CreateBody(settings);
+		if (!body)
+			return nullptr;
+
+		// Resolve collision group and mask value.
+		uint32_t mergedCollisionGroup = 0;
+		for (const auto& group : desc->getShape()->getCollisionGroup())
+		{
+			resource::Proxy< CollisionSpecification > collisionGroup;
+			if (!resourceManager->bind(group, collisionGroup))
+			{
+				log::error << L"Unable to bind collision group specification." << Endl;
+				return nullptr;
+			}
+			mergedCollisionGroup |= collisionGroup->getBitMask();
+		}
+
+		uint32_t mergedCollisionMask = 0;
+		for (const auto& mask : desc->getShape()->getCollisionMask())
+		{
+			resource::Proxy< CollisionSpecification > collisionMask;
+			if (!resourceManager->bind(mask, collisionMask))
+			{
+				log::error << L"Unable to bind collision mask specification." << Endl;
+				return nullptr;
+			}
+			mergedCollisionMask |= collisionMask->getBitMask();
+		}
+
+		Ref< BodyJolt > bj = new BodyJolt(
+			tag,
+			this,
+			m_physicsSystem.ptr(),
+			body,
+			Vector4::zero(),
+			mergedCollisionGroup,
+			mergedCollisionMask
+		);
+		m_bodies.push_back(bj);
+		return bj;
+	}
+
 	else
 	{
 		log::error << L"Unsupported shape type \"" << type_name(shapeDesc) << L"\"." << Endl;
-		return nullptr;
 	}
 
 	return nullptr;
@@ -277,6 +375,8 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 {
 	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
 	JPH::Body* body = nullptr;
+
+	Vector4 centerOfGravity = mesh->getOffset();
 
 	// Resolve collision group and mask value.
 	uint32_t mergedCollisionGroup = 0;
@@ -350,9 +450,6 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		body = bodyInterface.CreateBody(settings);
 		if (!body)
 			return nullptr;
-
-		// Add it to the world
-		bodyInterface.AddBody(body->GetID(), JPH::EActivation::DontActivate);
 	}
 	else if (auto dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
 	{
@@ -392,13 +489,18 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		body = bodyInterface.CreateBody(settings);
 		if (!body)
 			return nullptr;
-
-		// Add it to the world
-		bodyInterface.AddBody(body->GetID(), JPH::EActivation::Activate);
 	}
 	T_FATAL_ASSERT(body != nullptr);
 
-	Ref< BodyJolt > bj = new BodyJolt(tag, this, m_physicsSystem.ptr(), body, mergedCollisionGroup, mergedCollisionMask);
+	Ref< BodyJolt > bj = new BodyJolt(
+		tag,
+		this,
+		m_physicsSystem.ptr(),
+		body,
+		centerOfGravity,
+		mergedCollisionGroup,
+		mergedCollisionMask
+	);
 	m_bodies.push_back(bj);
 	return bj;
 }
@@ -500,6 +602,9 @@ bool PhysicsManagerJolt::querySweep(
 					const JPH::Body& hitBody = lock.GetBody();
 
 					BodyJolt* unwrappedBody = (BodyJolt*)hitBody.GetUserData();
+					if (!unwrappedBody)
+						return;
+
 					if (m_queryFilter.ignoreClusterId != 0 && unwrappedBody->getClusterId() == m_queryFilter.ignoreClusterId)
 						return;
 

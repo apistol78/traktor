@@ -45,6 +45,7 @@ public:
 		IWorldCallback* callback,
 		JPH::PhysicsSystem* physicsSystem,
 		JPH::Body* body,
+		const Vector4& centerOfGravity,
 		uint32_t collisionGroup,
 		uint32_t collisionMask
 	);
@@ -113,6 +114,7 @@ private:
 	IWorldCallback* m_callback;
 	JPH::PhysicsSystem* m_physicsSystem;
 	JPH::Body* m_body;
+	Vector4 m_centerOfGravity;
 	uint32_t m_collisionGroup;
 	uint32_t m_collisionMask;
 };
