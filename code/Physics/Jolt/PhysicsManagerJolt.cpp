@@ -10,6 +10,7 @@
 #include <thread>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/Save.h"
 #include "Core/Thread/Acquire.h"
@@ -71,7 +72,6 @@ namespace Layers
 	static constexpr JPH::ObjectLayer NUM_LAYERS = 2;
 };
 
-/// Class that determines if two object layers can collide
 class ObjectLayerPairFilterImpl : public JPH::ObjectLayerPairFilter
 {
 public:
@@ -80,9 +80,11 @@ public:
 		switch (inObject1)
 		{
 		case Layers::NON_MOVING:
-			return inObject2 == Layers::MOVING; // Non moving only collides with moving
+			return inObject2 == Layers::MOVING;
+
 		case Layers::MOVING:
-			return true; // Moving collides with everything
+			return true;
+
 		default:
 			return false;
 		}
@@ -96,16 +98,13 @@ namespace BroadPhaseLayers
 	static constexpr JPH::uint NUM_LAYERS(2);
 };
 
-// BroadPhaseLayerInterface implementation
-// This defines a mapping between object and broadphase layers.
 class BPLayerInterfaceImpl final : public JPH::BroadPhaseLayerInterface
 {
 public:
 	BPLayerInterfaceImpl()
 	{
-		// Create a mapping table from object to broad phase layer
-		mObjectToBroadPhase[Layers::NON_MOVING] = BroadPhaseLayers::NON_MOVING;
-		mObjectToBroadPhase[Layers::MOVING] = BroadPhaseLayers::MOVING;
+		m_objectToBroadPhase[Layers::NON_MOVING] = BroadPhaseLayers::NON_MOVING;
+		m_objectToBroadPhase[Layers::MOVING] = BroadPhaseLayers::MOVING;
 	}
 
 	virtual JPH::uint GetNumBroadPhaseLayers() const override
@@ -115,12 +114,12 @@ public:
 
 	virtual JPH::BroadPhaseLayer GetBroadPhaseLayer(JPH::ObjectLayer inLayer) const override
 	{
-		JPH_ASSERT(inLayer < Layers::NUM_LAYERS);
-		return mObjectToBroadPhase[inLayer];
+		T_ASSERT(inLayer < Layers::NUM_LAYERS);
+		return m_objectToBroadPhase[inLayer];
 	}
 
 private:
-	JPH::BroadPhaseLayer mObjectToBroadPhase[Layers::NUM_LAYERS];
+	JPH::BroadPhaseLayer m_objectToBroadPhase[Layers::NUM_LAYERS];
 };
 
 class ObjectVsBroadPhaseLayerFilterImpl : public JPH::ObjectVsBroadPhaseLayerFilter
@@ -132,8 +131,10 @@ public:
 		{
 		case Layers::NON_MOVING:
 			return inLayer2 == BroadPhaseLayers::MOVING;
+
 		case Layers::MOVING:
 			return true;
+
 		default:
 			return false;
 		}
@@ -143,28 +144,21 @@ public:
 class MyContactListener : public JPH::ContactListener
 {
 public:
-	// See: ContactListener
 	virtual JPH::ValidateResult	OnContactValidate(const JPH::Body &inBody1, const JPH::Body &inBody2, JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult &inCollisionResult) override
 	{
-		//cout << "Contact validate callback" << endl;
-
-		// Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
 		return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
 	}
 
 	virtual void OnContactAdded(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
 	{
-		//cout << "A contact was added" << endl;
 	}
 
 	virtual void OnContactPersisted(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
 	{
-		//cout << "A contact was persisted" << endl;
 	}
 
 	virtual void OnContactRemoved(const JPH::SubShapeIDPair &inSubShapePair) override
 	{
-		//cout << "A contact was removed" << endl;
 	}
 };
 
@@ -180,9 +174,7 @@ PhysicsManagerJolt::~PhysicsManagerJolt()
 bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 {
 	JPH::RegisterDefaultAllocator();
-
 	JPH::Factory::sInstance = new JPH::Factory();
-
 	JPH::RegisterTypes();
 
 	m_tempAllocator.reset(new JPH::TempAllocatorImpl(10 * 1024 * 1024));
@@ -237,8 +229,7 @@ void PhysicsManagerJolt::setGravity(const Vector4& gravity)
 
 Vector4 PhysicsManagerJolt::getGravity() const
 {
-	const JPH::Vec3 gravity = m_physicsSystem->GetGravity();
-	return convertFromJolt(gravity, 0.0f);
+	return convertFromJolt(m_physicsSystem->GetGravity(), 0.0f);
 }
 
 Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag)
@@ -258,6 +249,32 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 
 	T_FATAL_ASSERT(shapeDesc->getLocalTransform() == Transform::identity());
 
+	// Resolve collision group and mask value.
+	uint32_t mergedCollisionGroup = 0;
+	for (const auto& group : desc->getShape()->getCollisionGroup())
+	{
+		resource::Proxy< CollisionSpecification > collisionGroup;
+		if (!resourceManager->bind(group, collisionGroup))
+		{
+			log::error << L"Unable to bind collision group specification." << Endl;
+			return nullptr;
+		}
+		mergedCollisionGroup |= collisionGroup->getBitMask();
+	}
+
+	uint32_t mergedCollisionMask = 0;
+	for (const auto& mask : desc->getShape()->getCollisionMask())
+	{
+		resource::Proxy< CollisionSpecification > collisionMask;
+		if (!resourceManager->bind(mask, collisionMask))
+		{
+			log::error << L"Unable to bind collision mask specification." << Endl;
+			return nullptr;
+		}
+		mergedCollisionMask |= collisionMask->getBitMask();
+	}
+
+	// Create collision shape.
 	if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 	{
 		resource::Proxy< Mesh > mesh;
@@ -267,7 +284,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			return nullptr;
 		}
 
-		return createBody(resourceManager, desc, mesh, tag);
+		return createBody(resourceManager, desc, mesh, mergedCollisionGroup, mergedCollisionMask, tag);
 	}
 	else if (const HeightfieldShapeDesc* heightfieldShape = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 	{
@@ -304,12 +321,11 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			convertToJolt(worldExtent * s),	// scale
 			heightfield->getSize()
 		);
-
-		shapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
+		shapeSettings.SetEmbedded();
 
 		// Create the shape
 		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
-		JPH::ShapeRefC shape = shapeResult.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
+		JPH::ShapeRefC shape = shapeResult.Get();
 
 		// Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
 		JPH::BodyCreationSettings settings(
@@ -325,31 +341,6 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		if (!body)
 			return nullptr;
 
-		// Resolve collision group and mask value.
-		uint32_t mergedCollisionGroup = 0;
-		for (const auto& group : desc->getShape()->getCollisionGroup())
-		{
-			resource::Proxy< CollisionSpecification > collisionGroup;
-			if (!resourceManager->bind(group, collisionGroup))
-			{
-				log::error << L"Unable to bind collision group specification." << Endl;
-				return nullptr;
-			}
-			mergedCollisionGroup |= collisionGroup->getBitMask();
-		}
-
-		uint32_t mergedCollisionMask = 0;
-		for (const auto& mask : desc->getShape()->getCollisionMask())
-		{
-			resource::Proxy< CollisionSpecification > collisionMask;
-			if (!resourceManager->bind(mask, collisionMask))
-			{
-				log::error << L"Unable to bind collision mask specification." << Endl;
-				return nullptr;
-			}
-			mergedCollisionMask |= collisionMask->getBitMask();
-		}
-
 		Ref< BodyJolt > bj = new BodyJolt(
 			tag,
 			this,
@@ -362,7 +353,6 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		m_bodies.push_back(bj);
 		return bj;
 	}
-
 	else
 	{
 		log::error << L"Unsupported shape type \"" << type_name(shapeDesc) << L"\"." << Endl;
@@ -373,11 +363,6 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 
 Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const Mesh* mesh, const wchar_t* const tag)
 {
-	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
-	JPH::Body* body = nullptr;
-
-	Vector4 centerOfGravity = mesh->getOffset();
-
 	// Resolve collision group and mask value.
 	uint32_t mergedCollisionGroup = 0;
 	for (const auto& group : desc->getShape()->getCollisionGroup())
@@ -403,106 +388,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		mergedCollisionMask |= collisionMask->getBitMask();
 	}
 
-	if (auto staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
-	{
-		JPH::VertexList vertexList;	// Array<Float3>
-		for (const auto& vertex : mesh->getVertices())
-		{
-			vertexList.push_back(JPH::Float3(
-				vertex.x(), vertex.y(), vertex.z()
-			));
-		}
-
-		JPH::IndexedTriangleList triangleList;	// Array<IndexedTriangle>
-		for (const auto& triangle : mesh->getShapeTriangles())
-		{
-			triangleList.push_back(JPH::IndexedTriangle(
-				triangle.indices[2],
-				triangle.indices[1],
-				triangle.indices[0],
-				0 // triangle.material
-			));
-		}
-
-		JPH::PhysicsMaterialList materials;
-		materials.push_back(new JPH::PhysicsMaterialSimple("Material0", JPH::Color::sGetDistinctColor(0)));
-
-		// // Next we can create a rigid body to serve as the floor, we make a large box
-		// // Create the settings for the collision volume (the shape).
-		// // Note that for simple shapes (like boxes) you can also directly construct a BoxShape.
-		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList, std::move(materials));
-		shapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
-
-		// Create the shape
-		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
-		JPH::ShapeRefC shape = shapeResult.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
-
-		// Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
-		JPH::BodyCreationSettings settings(
-			shape,
-			JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
-			JPH::Quat::sIdentity(),
-			staticDesc->isKinematic() ? JPH::EMotionType::Kinematic : JPH::EMotionType::Static,
-			Layers::NON_MOVING
-		);
-
-		// Create the actual rigid body
-		body = bodyInterface.CreateBody(settings);
-		if (!body)
-			return nullptr;
-	}
-	else if (auto dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
-	{
-		JPH::Array< JPH::Vec3 > vertexList;	// Array<Float3>
-
-		const auto& vertices = mesh->getVertices();
-		const auto& hullIndices = mesh->getHullIndices();
-		for (const auto& hullIndex : hullIndices)
-		{
-			const auto& vertex = vertices[hullIndex];
-			vertexList.push_back(JPH::Vec3(
-				vertex.x(), vertex.y(), vertex.z()
-			));
-		}
-
-		JPH::ConvexHullShapeSettings shapeSettings(vertexList);
-		shapeSettings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
-
-		// Create the shape
-		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
-		JPH::ShapeRefC shape = shapeResult.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
-
-		// Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
-		JPH::BodyCreationSettings settings(
-			shape,
-			JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
-			JPH::Quat::sIdentity(),
-			JPH::EMotionType::Dynamic,
-			Layers::MOVING
-		);
-
-		const float mass = dynamicDesc->getMass();
-		settings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
-		settings.mMassPropertiesOverride.SetMassAndInertiaOfSolidBox(JPH::Vec3::sReplicate(2.0f), mass / (2.0f * 2.0f * 2.0f));
-	 
-		// Create the actual rigid body
-		body = bodyInterface.CreateBody(settings);
-		if (!body)
-			return nullptr;
-	}
-	T_FATAL_ASSERT(body != nullptr);
-
-	Ref< BodyJolt > bj = new BodyJolt(
-		tag,
-		this,
-		m_physicsSystem.ptr(),
-		body,
-		centerOfGravity,
-		mergedCollisionGroup,
-		mergedCollisionMask
-	);
-	m_bodies.push_back(bj);
-	return bj;
+	return createBody(resourceManager, desc, mesh, mergedCollisionGroup, mergedCollisionMask, tag);
 }
 
 Ref< Joint > PhysicsManagerJolt::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
@@ -580,7 +466,6 @@ bool PhysicsManagerJolt::querySweep(
 {
 	const JPH::NarrowPhaseQuery& narrowPhaseQuery = m_physicsSystem->GetNarrowPhaseQuery();
 
-
 	class MyCollector : public JPH::CastShapeCollector
 	{
 	public:
@@ -615,7 +500,7 @@ bool PhysicsManagerJolt::querySweep(
 					JPH::Vec3 position = m_shapeCast.GetPointOnRay(inResult.mFraction);
 					JPH::Vec3 normal = -inResult.mPenetrationAxis.Normalized();
 
-					m_outResult.body = nullptr; // unwrappedBody;
+					m_outResult.body = unwrappedBody;
 					m_outResult.position = convertFromJolt(position, 1.0f);
 					m_outResult.normal = convertFromJolt(normal, 0.0f);
 					m_outResult.fraction = inResult.mFraction;
@@ -638,10 +523,6 @@ bool PhysicsManagerJolt::querySweep(
 		QueryResult& m_outResult;
 		bool m_anyHit = false;
 	};
-
-
-
-	//JPH::ClosestHitCollisionCollector< JPH::CastShapeCollector > collector;
 
 	JPH::SphereShape sphere(radius);
 	sphere.SetEmbedded();
@@ -706,6 +587,110 @@ void PhysicsManagerJolt::getStatistics(PhysicsStatistics& outStatistics) const
 	outStatistics.activeCount = 0;
 	outStatistics.manifoldCount = 0;
 	outStatistics.queryCount = 0;
+}
+
+Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const Mesh* mesh, uint32_t collisionGroup, uint32_t collisionMask, const wchar_t* const tag)
+{
+	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
+	JPH::Body* body = nullptr;
+
+	const Vector4 centerOfGravity = mesh->getOffset();
+
+	if (auto staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
+	{
+		JPH::VertexList vertexList;
+		for (const auto& vertex : mesh->getVertices())
+		{
+			vertexList.push_back(JPH::Float3(
+				vertex.x(), vertex.y(), vertex.z()
+			));
+		}
+
+		JPH::IndexedTriangleList triangleList;
+		for (const auto& triangle : mesh->getShapeTriangles())
+		{
+			triangleList.push_back(JPH::IndexedTriangle(
+				triangle.indices[2],
+				triangle.indices[1],
+				triangle.indices[0],
+				0 // triangle.material
+			));
+		}
+
+		JPH::PhysicsMaterialList materials;
+		materials.push_back(new JPH::PhysicsMaterialSimple("Material0", JPH::Color::sGetDistinctColor(0)));
+
+		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList, std::move(materials));
+		shapeSettings.SetEmbedded();
+
+		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+		JPH::ShapeRefC shape = shapeResult.Get();
+
+		JPH::BodyCreationSettings settings(
+			shape,
+			JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
+			JPH::Quat::sIdentity(),
+			staticDesc->isKinematic() ? JPH::EMotionType::Kinematic : JPH::EMotionType::Static,
+			Layers::NON_MOVING
+		);
+
+		body = bodyInterface.CreateBody(settings);
+		if (!body)
+			return nullptr;
+	}
+	else if (auto dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
+	{
+		JPH::Array< JPH::Vec3 > vertexList;
+		Aabb3 boundingBox;
+
+		const auto& vertices = mesh->getVertices();
+		const auto& hullIndices = mesh->getHullIndices();
+		for (const auto& hullIndex : hullIndices)
+		{
+			const auto& vertex = vertices[hullIndex];
+			vertexList.push_back(JPH::Vec3(
+				vertex.x(), vertex.y(), vertex.z()
+			));
+			boundingBox.contain(vertex);
+		}
+
+		JPH::ConvexHullShapeSettings shapeSettings(vertexList);
+		shapeSettings.SetEmbedded();
+
+		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+		JPH::ShapeRefC shape = shapeResult.Get();
+
+		JPH::BodyCreationSettings settings(
+			shape,
+			JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
+			JPH::Quat::sIdentity(),
+			JPH::EMotionType::Dynamic,
+			Layers::MOVING
+		);
+
+		const Vector4 bbs = boundingBox.getExtent() * 2.0_simd;
+
+		const float mass = dynamicDesc->getMass();
+		settings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
+		settings.mMassPropertiesOverride.SetMassAndInertiaOfSolidBox(convertToJolt(bbs), mass / (bbs.x() * bbs.y() * bbs.z()));
+	 
+		body = bodyInterface.CreateBody(settings);
+		if (!body)
+			return nullptr;
+	}
+	T_FATAL_ASSERT(body != nullptr);
+
+	Ref< BodyJolt > bj = new BodyJolt(
+		tag,
+		this,
+		m_physicsSystem.ptr(),
+		body,
+		centerOfGravity,
+		collisionGroup,
+		collisionMask
+	);
+	m_bodies.push_back(bj);
+	return bj;
 }
 
 void PhysicsManagerJolt::destroyBody(BodyJolt* body)

@@ -155,6 +155,8 @@ private:
 
 	RefArray< BodyJolt > m_bodies;
 
+	Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const Mesh* mesh, uint32_t collisionGroup, uint32_t collisionMask, const wchar_t* const tag);
+
 	// IWorldCallback
 
 	virtual void destroyBody(BodyJolt* body) override final;
