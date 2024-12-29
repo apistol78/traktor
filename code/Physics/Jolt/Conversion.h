@@ -10,6 +10,7 @@
 
 #include "Core/Math/Float.h"
 #include "Core/Math/Matrix33.h"
+#include "Core/Math/Matrix44.h"
 #include "Core/Math/Transform.h"
 
 // Keep Jolt includes here, Jolt.h must be first.
@@ -32,25 +33,40 @@ inline JPH::Vec3 convertToJolt(const Vector4& v)
 
 inline JPH::Quat convertToJolt(const Quaternion& q)
 {
-    return JPH::Quat(q.e.x(), q.e.y(), q.e.z(), q.e.w());
+	return JPH::Quat(q.e.x(), q.e.y(), q.e.z(), q.e.w());
 }
 
 inline Vector4 convertFromJolt(const JPH::Vec3& v, float w = 0.0f)
 {
-    return Vector4(v.GetX(), v.GetY(), v.GetZ(), w);
+	return Vector4(v.GetX(), v.GetY(), v.GetZ(), w);
+}
+
+inline Vector4 convertFromJolt(const JPH::Vec4& v)
+{
+	return Vector4(v.GetX(), v.GetY(), v.GetZ(), v.GetW());
 }
 
 inline Quaternion convertFromJolt(const JPH::Quat& q)
 {
-    return Quaternion(q.GetX(), q.GetY(), q.GetZ(), q.GetW());
+	return Quaternion(q.GetX(), q.GetY(), q.GetZ(), q.GetW());
 }
 
-inline Transform convertFromJolt(const JPH::RMat44& transform)
+inline Transform convertFromJoltAsTransform(const JPH::Mat44& transform)
 {
-    return Transform(
-        convertFromJolt(transform.GetTranslation(), 1.0f),
-        convertFromJolt(transform.GetQuaternion())
-    );
+	return Transform(
+		convertFromJolt(transform.GetTranslation(), 1.0f),
+		convertFromJolt(transform.GetQuaternion())
+	);
+}
+
+inline Matrix44 convertFromJoltAsMatrix44(const JPH::Mat44& m)
+{
+	return Matrix44(
+		convertFromJolt(m.GetColumn4(0)),
+		convertFromJolt(m.GetColumn4(1)),
+		convertFromJolt(m.GetColumn4(2)),
+		convertFromJolt(m.GetColumn4(3))
+	);
 }
 
 //@}

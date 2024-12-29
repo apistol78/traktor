@@ -323,11 +323,9 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		);
 		shapeSettings.SetEmbedded();
 
-		// Create the shape
 		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
 		JPH::ShapeRefC shape = shapeResult.Get();
 
-		// Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
 		JPH::BodyCreationSettings settings(
 			shape,
 			JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
@@ -336,7 +334,6 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			Layers::NON_MOVING
 		);
 
-		// Create the actual rigid body
 		body = bodyInterface.CreateBody(settings);
 		if (!body)
 			return nullptr;
@@ -346,6 +343,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			this,
 			m_physicsSystem.ptr(),
 			body,
+			0.0f,
 			Vector4::zero(),
 			mergedCollisionGroup,
 			mergedCollisionMask
@@ -595,6 +593,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 	JPH::Body* body = nullptr;
 
 	const Vector4 centerOfGravity = mesh->getOffset();
+	float inverseMass = 0.0f;
 
 	if (auto staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
 	{
@@ -677,6 +676,8 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		body = bodyInterface.CreateBody(settings);
 		if (!body)
 			return nullptr;
+
+		inverseMass = 1.0f / mass;
 	}
 	T_FATAL_ASSERT(body != nullptr);
 
@@ -685,6 +686,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		this,
 		m_physicsSystem.ptr(),
 		body,
+		inverseMass,
 		centerOfGravity,
 		collisionGroup,
 		collisionMask

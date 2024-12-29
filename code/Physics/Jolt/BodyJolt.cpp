@@ -30,6 +30,7 @@ BodyJolt::BodyJolt(
 	IWorldCallback* callback,
 	JPH::PhysicsSystem* physicsSystem,
 	JPH::Body* body,
+	float inverseMass,
 	const Vector4& centerOfGravity,
 	uint32_t collisionGroup,
 	uint32_t collisionMask
@@ -38,6 +39,7 @@ BodyJolt::BodyJolt(
 ,	m_callback(callback)
 ,	m_physicsSystem(physicsSystem)
 ,	m_body(body)
+,	m_inverseMass(inverseMass)
 ,	m_centerOfGravity(centerOfGravity)
 ,	m_collisionGroup(collisionGroup)
 ,	m_collisionMask(collisionMask)
@@ -77,13 +79,13 @@ void BodyJolt::setTransform(const Transform& transform)
 Transform BodyJolt::getTransform() const
 {
 	const JPH::RMat44 transform = m_body->GetWorldTransform();
-	return convertFromJolt(transform) * Transform(-m_centerOfGravity);
+	return convertFromJoltAsTransform(transform) * Transform(-m_centerOfGravity);
 }
 
 Transform BodyJolt::getCenterTransform() const
 {
 	const JPH::RMat44 transform = m_body->GetWorldTransform();
-	return convertFromJolt(transform);
+	return convertFromJoltAsTransform(transform);
 }
 
 void BodyJolt::setKinematic(bool kinematic)
@@ -143,7 +145,7 @@ void BodyJolt::setMass(float mass, const Vector4& inertiaTensor)
 
 float BodyJolt::getInverseMass() const
 {
-	return 1.0f;
+	return m_inverseMass;
 }
 
 Matrix33 BodyJolt::getInertiaTensorInverseWorld() const
