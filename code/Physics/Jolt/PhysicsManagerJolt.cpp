@@ -205,6 +205,7 @@ bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 
 	m_physicsSystem->SetGravity(JPH::Vec3(0.0f, -9.2f, 0.0f));
 
+	m_timeScale = desc.timeScale;
 	return true;
 }
 
@@ -334,6 +335,19 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			Layers::NON_MOVING
 		);
 
+		if (auto staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
+		{
+			settings.mFriction = staticDesc->getFriction();
+			settings.mRestitution = staticDesc->getRestitution();
+		}
+		else if (auto dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
+		{
+			settings.mLinearDamping = dynamicDesc->getLinearDamping();
+			settings.mAngularDamping = dynamicDesc->getAngularDamping();
+			settings.mFriction = dynamicDesc->getFriction();
+			settings.mRestitution = dynamicDesc->getRestitution();
+		}
+
 		body = bodyInterface.CreateBody(settings);
 		if (!body)
 			return nullptr;
@@ -396,8 +410,8 @@ Ref< Joint > PhysicsManagerJolt::createJoint(const JointDesc* desc, const Transf
 
 void PhysicsManagerJolt::update(float simulationDeltaTime, bool issueCollisionEvents)
 {
-	const int cCollisionSteps = 1;
-	m_physicsSystem->Update(simulationDeltaTime, cCollisionSteps, m_tempAllocator.ptr(), m_jobSystem.ptr());
+	const int cCollisionSteps = 2;
+	m_physicsSystem->Update(simulationDeltaTime * m_timeScale, cCollisionSteps, m_tempAllocator.ptr(), m_jobSystem.ptr());
 }
 
 void PhysicsManagerJolt::solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints)
@@ -406,7 +420,7 @@ void PhysicsManagerJolt::solveConstraints(const RefArray< Body >& bodies, const 
 
 RefArray< Body > PhysicsManagerJolt::getBodies() const
 {
-	return RefArray< Body >();
+	return *(RefArray< Body >*)&m_bodies;
 }
 
 uint32_t PhysicsManagerJolt::getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const
@@ -502,7 +516,6 @@ bool PhysicsManagerJolt::querySweep(
 					m_outResult.position = convertFromJolt(position, 1.0f);
 					m_outResult.normal = convertFromJolt(normal, 0.0f);
 					m_outResult.fraction = inResult.mFraction;
-					//m_outResult.distance = dot3(m_outResult.position - at, direction);
 					//m_outResult.material = ;
 
 					m_anyHit = true;
@@ -581,7 +594,7 @@ void PhysicsManagerJolt::queryTriangles(const Vector4& center, float radius, Ali
 
 void PhysicsManagerJolt::getStatistics(PhysicsStatistics& outStatistics) const
 {
-	outStatistics.bodyCount = 0;
+	outStatistics.bodyCount = (uint32_t)m_bodies.size();
 	outStatistics.activeCount = 0;
 	outStatistics.manifoldCount = 0;
 	outStatistics.queryCount = 0;
@@ -616,10 +629,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			));
 		}
 
-		JPH::PhysicsMaterialList materials;
-		materials.push_back(new JPH::PhysicsMaterialSimple("Material0", JPH::Color::sGetDistinctColor(0)));
-
-		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList, std::move(materials));
+		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList);
 		shapeSettings.SetEmbedded();
 
 		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
@@ -666,6 +676,10 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			JPH::EMotionType::Dynamic,
 			Layers::MOVING
 		);
+		settings.mLinearDamping = dynamicDesc->getLinearDamping();
+		settings.mAngularDamping = dynamicDesc->getAngularDamping();
+		settings.mFriction = dynamicDesc->getFriction();
+		settings.mRestitution = dynamicDesc->getRestitution();
 
 		const Vector4 bbs = boundingBox.getExtent() * 2.0_simd;
 

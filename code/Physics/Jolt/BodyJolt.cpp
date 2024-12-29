@@ -150,7 +150,7 @@ float BodyJolt::getInverseMass() const
 
 Matrix33 BodyJolt::getInertiaTensorInverseWorld() const
 {
-	return Matrix33::identity();
+	return convertFromJoltAsMatrix33(m_body->GetInverseInertia());
 }
 
 void BodyJolt::addForceAt(const Vector4& at, const Vector4& force, bool localSpace)
@@ -194,6 +194,8 @@ void BodyJolt::addImpulse(const Vector4& at, const Vector4& impulse, bool localS
 
 void BodyJolt::setLinearVelocity(const Vector4& linearVelocity)
 {
+	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
+	bodyInterface.SetLinearVelocity(m_body->GetID(), convertToJolt(linearVelocity));
 }
 
 Vector4 BodyJolt::getLinearVelocity() const
@@ -203,6 +205,8 @@ Vector4 BodyJolt::getLinearVelocity() const
 
 void BodyJolt::setAngularVelocity(const Vector4& angularVelocity)
 {
+	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
+	bodyInterface.SetAngularVelocity(m_body->GetID(), convertToJolt(angularVelocity));
 }
 
 Vector4 BodyJolt::getAngularVelocity() const

@@ -152,8 +152,8 @@ private:
 	AutoPtr< JPH::ObjectLayerPairFilter > m_objectVsObjectLayerFilter;
 	AutoPtr< JPH::ContactListener > m_contactListener;
 	AutoPtr< JPH::PhysicsSystem > m_physicsSystem;
-
 	RefArray< BodyJolt > m_bodies;
+	float m_timeScale = 1.0f;
 
 	Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const Mesh* mesh, uint32_t collisionGroup, uint32_t collisionMask, const wchar_t* const tag);
 

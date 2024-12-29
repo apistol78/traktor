@@ -69,6 +69,15 @@ inline Matrix44 convertFromJoltAsMatrix44(const JPH::Mat44& m)
 	);
 }
 
+inline Matrix33 convertFromJoltAsMatrix33(const JPH::Mat44& m)
+{
+	return Matrix33(
+		convertFromJolt(m.GetColumn4(0)),
+		convertFromJolt(m.GetColumn4(1)),
+		convertFromJolt(m.GetColumn4(2))
+	);
+}
+
 //@}
 
 }
