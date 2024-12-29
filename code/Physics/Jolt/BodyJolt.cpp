@@ -161,7 +161,7 @@ void BodyJolt::addForceAt(const Vector4& at, const Vector4& force, bool localSpa
 	if (localSpace)
 	{
 		const Transform transform = getTransform();
-		wat = transform * at;
+		wat = transform * (at + m_centerOfGravity);
 		wforce = transform * force;
 	}
 
@@ -188,8 +188,17 @@ void BodyJolt::addAngularImpulse(const Vector4& angularImpulse, bool localSpace)
 
 void BodyJolt::addImpulse(const Vector4& at, const Vector4& impulse, bool localSpace)
 {
-	T_FATAL_ASSERT(!localSpace);
-	m_body->AddImpulse(convertToJolt(impulse), convertToJolt(at));
+	Vector4 wat = at;
+	Vector4 wimpulse = impulse;
+
+	if (localSpace)
+	{
+		const Transform transform = getTransform();
+		wat = transform * (at + m_centerOfGravity);
+		wimpulse = transform * impulse;
+	}
+
+	m_body->AddImpulse(convertToJolt(wimpulse), convertToJolt(wat));
 }
 
 void BodyJolt::setLinearVelocity(const Vector4& linearVelocity)
