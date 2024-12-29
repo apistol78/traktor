@@ -50,6 +50,7 @@
 #include <Jolt/Physics/Collision/PhysicsMaterialSimple.h>
 #include <Jolt/Physics/Collision/RayCast.h>
 #include <Jolt/Physics/Collision/ShapeCast.h>
+#include <Jolt/Physics/Collision/CastResult.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
 #include <Jolt/Physics/Collision/Shape/HeightFieldShape.h>
@@ -442,7 +443,77 @@ bool PhysicsManagerJolt::queryRay(
 	QueryResult& outResult
 ) const
 {
-	return false;
+	const JPH::NarrowPhaseQuery& narrowPhaseQuery = m_physicsSystem->GetNarrowPhaseQuery();
+
+	class RayCollector : public JPH::CastRayCollector
+	{
+	public:
+		explicit RayCollector(const PhysicsManagerJolt* outer, const JPH::RRayCast& ray, const QueryFilter& queryFilter, QueryResult& outResult)
+		:	m_outer(outer)
+		,	m_ray(ray)
+		,	m_queryFilter(queryFilter)
+		,	m_outResult(outResult)
+		{
+		}
+
+		virtual void AddHit(const JPH::RayCastResult &inResult) override
+		{
+			if (inResult.mFraction < GetEarlyOutFraction())
+			{
+				JPH::BodyLockRead lock(m_outer->m_physicsSystem->GetBodyLockInterface(), inResult.mBodyID);
+				if (lock.Succeeded())
+				{
+					const JPH::Body& hitBody = lock.GetBody();
+
+					BodyJolt* unwrappedBody = (BodyJolt*)hitBody.GetUserData();
+					if (!unwrappedBody)
+						return;
+
+					if (m_queryFilter.ignoreClusterId != 0 && unwrappedBody->getClusterId() == m_queryFilter.ignoreClusterId)
+						return;
+
+					const uint32_t group = unwrappedBody->getCollisionGroup();
+					if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
+						return;
+
+					JPH::Vec3 position = m_ray.GetPointOnRay(inResult.mFraction);
+					JPH::Vec3 normal = hitBody.GetWorldSpaceSurfaceNormal(inResult.mSubShapeID2, position);
+
+					m_outResult.body = unwrappedBody;
+					m_outResult.position = convertFromJolt(position, 1.0f);
+					m_outResult.normal = convertFromJolt(normal, 0.0f);
+					m_outResult.fraction = inResult.mFraction;
+					//m_outResult.material = ;
+
+					m_anyHit = true;
+
+					UpdateEarlyOutFraction(inResult.mFraction);
+				}
+			}
+		}
+
+		bool AnyHit() const { return m_anyHit; }
+
+	private:
+		const PhysicsManagerJolt* m_outer;
+		const JPH::RRayCast& m_ray;
+		const QueryFilter& m_queryFilter;
+		QueryResult& m_outResult;
+		bool m_anyHit = false;
+	};
+
+	JPH::RRayCast ray { convertToJolt(at), convertToJolt(direction * Scalar(maxLength)) };
+
+	JPH::RayCastSettings settings;
+	// settings.mBackFaceModeTriangles = true;
+	// settings.mBackFaceModeConvex = true;
+	settings.mTreatConvexAsSolid = true;
+
+	RayCollector collector(this, ray, queryFilter, outResult);
+	narrowPhaseQuery.CastRay(ray, settings, collector);
+
+	outResult.distance = dot3(outResult.position - at, direction);
+	return collector.AnyHit();
 }
 
 bool PhysicsManagerJolt::queryShadowRay(
@@ -553,7 +624,6 @@ bool PhysicsManagerJolt::querySweep(
 	narrowPhaseQuery.CastShape(shapeCast, settings, JPH::Vec3::sReplicate(0.0f), collector);
 
 	outResult.distance = dot3(outResult.position - at, direction);
-
 	return collector.AnyHit();
 }
 
