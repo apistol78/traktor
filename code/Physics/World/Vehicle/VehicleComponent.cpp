@@ -461,14 +461,12 @@ void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 		if (!data->getDrive())
 			continue;
 
-		const Vector4 direction = (wheel->direction * Vector4(1.0f, 0.0f, 1.0f, 0.0f)).normalized();
-
 		// Apply more force on wheels with less grip, fake differential.
 		const Scalar grip = Scalar(1.0f - wheel->grip * differentialCoeff);
 
 		body->addForceAt(
 			wheel->center,
-			direction * engineForce * grip,
+			wheel->direction * engineForce * grip,
 			true
 		);
 	}
