@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <algorithm>
+#include <cstring>
 #include <thread>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -174,7 +175,22 @@ PhysicsManagerJolt::~PhysicsManagerJolt()
 
 bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 {
-	JPH::RegisterDefaultAllocator();
+	// Hook our memory allocators to Jolt.
+	JPH::Allocate = [](size_t size) { return Alloc::acquire(size, T_FILE_LINE); };
+	JPH::Reallocate = [](void* block, size_t olds, size_t news) {
+		void* newp = nullptr;
+		if (news > 0)
+		{
+			newp = Alloc::acquire(news, T_FILE_LINE);
+			std::memcpy(newp, block, std::min(olds, news));
+		}
+		Alloc::free(block);
+		return newp;
+	};
+	JPH::Free = [](void* block) { Alloc::free(block); };
+	JPH::AlignedAllocate = [](size_t size, size_t align) { return Alloc::acquireAlign(size, align, T_FILE_LINE); };
+	JPH::AlignedFree = [](void* block) { Alloc::freeAlign(block); };
+
 	JPH::Factory::sInstance = new JPH::Factory();
 	JPH::RegisterTypes();
 
@@ -800,7 +816,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 
 		const auto& vertices = mesh->getVertices();
 		const auto& hullIndices = mesh->getHullIndices();
-		
+
 		vertexList.reserve(hullIndices.size());
 		for (const auto& hullIndex : hullIndices)
 		{
