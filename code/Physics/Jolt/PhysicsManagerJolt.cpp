@@ -76,12 +76,12 @@ namespace Layers
 class ObjectLayerPairFilterImpl : public JPH::ObjectLayerPairFilter
 {
 public:
-	virtual bool ShouldCollide(JPH::ObjectLayer inObject1, JPH::ObjectLayer inObject2) const override
+	virtual bool ShouldCollide(JPH::ObjectLayer object1, JPH::ObjectLayer object2) const override
 	{
-		switch (inObject1)
+		switch (object1)
 		{
 		case Layers::NON_MOVING:
-			return inObject2 == Layers::MOVING;
+			return object2 == Layers::MOVING;
 
 		case Layers::MOVING:
 			return true;
@@ -113,10 +113,10 @@ public:
 		return BroadPhaseLayers::NUM_LAYERS;
 	}
 
-	virtual JPH::BroadPhaseLayer GetBroadPhaseLayer(JPH::ObjectLayer inLayer) const override
+	virtual JPH::BroadPhaseLayer GetBroadPhaseLayer(JPH::ObjectLayer layer) const override
 	{
-		T_ASSERT(inLayer < Layers::NUM_LAYERS);
-		return m_objectToBroadPhase[inLayer];
+		T_ASSERT(layer < Layers::NUM_LAYERS);
+		return m_objectToBroadPhase[layer];
 	}
 
 private:
@@ -126,12 +126,12 @@ private:
 class ObjectVsBroadPhaseLayerFilterImpl : public JPH::ObjectVsBroadPhaseLayerFilter
 {
 public:
-	virtual bool ShouldCollide(JPH::ObjectLayer inLayer1, JPH::BroadPhaseLayer inLayer2) const override
+	virtual bool ShouldCollide(JPH::ObjectLayer layer1, JPH::BroadPhaseLayer layer2) const override
 	{
-		switch (inLayer1)
+		switch (layer1)
 		{
 		case Layers::NON_MOVING:
-			return inLayer2 == BroadPhaseLayers::MOVING;
+			return layer2 == BroadPhaseLayers::MOVING;
 
 		case Layers::MOVING:
 			return true;
@@ -145,20 +145,20 @@ public:
 class MyContactListener : public JPH::ContactListener
 {
 public:
-	virtual JPH::ValidateResult	OnContactValidate(const JPH::Body &inBody1, const JPH::Body &inBody2, JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult &inCollisionResult) override
+	virtual JPH::ValidateResult	OnContactValidate(const JPH::Body& body1, const JPH::Body& body2, JPH::RVec3Arg baseOffset, const JPH::CollideShapeResult& collisionResult) override
 	{
 		return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
 	}
 
-	virtual void OnContactAdded(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
+	virtual void OnContactAdded(const JPH::Body& body1, const JPH::Body& body2, const JPH::ContactManifold& manifold, JPH::ContactSettings& inoutSettings) override
 	{
 	}
 
-	virtual void OnContactPersisted(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
+	virtual void OnContactPersisted(const JPH::Body& body1, const JPH::Body& body2, const JPH::ContactManifold& manifold, JPH::ContactSettings& inoutSettings) override
 	{
 	}
 
-	virtual void OnContactRemoved(const JPH::SubShapeIDPair &inSubShapePair) override
+	virtual void OnContactRemoved(const JPH::SubShapeIDPair& subShapePair) override
 	{
 	}
 };
@@ -308,7 +308,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			}
 		}
 
-		Vector4 s(
+		const Vector4 s(
 			1.0f / heightfield->getSize(),
 			1.0f,
 			1.0f / heightfield->getSize(),
@@ -456,11 +456,11 @@ bool PhysicsManagerJolt::queryRay(
 		{
 		}
 
-		virtual void AddHit(const JPH::RayCastResult &inResult) override
+		virtual void AddHit(const JPH::RayCastResult& result) override
 		{
-			if (inResult.mFraction < GetEarlyOutFraction())
+			if (result.mFraction < GetEarlyOutFraction())
 			{
-				JPH::BodyLockRead lock(m_outer->m_physicsSystem->GetBodyLockInterface(), inResult.mBodyID);
+				JPH::BodyLockRead lock(m_outer->m_physicsSystem->GetBodyLockInterface(), result.mBodyID);
 				if (lock.Succeeded())
 				{
 					const JPH::Body& hitBody = lock.GetBody();
@@ -476,18 +476,18 @@ bool PhysicsManagerJolt::queryRay(
 					if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
 						return;
 
-					JPH::Vec3 position = m_ray.GetPointOnRay(inResult.mFraction);
-					JPH::Vec3 normal = hitBody.GetWorldSpaceSurfaceNormal(inResult.mSubShapeID2, position);
+					JPH::Vec3 position = m_ray.GetPointOnRay(result.mFraction);
+					JPH::Vec3 normal = hitBody.GetWorldSpaceSurfaceNormal(result.mSubShapeID2, position);
 
 					m_outResult.body = unwrappedBody;
 					m_outResult.position = convertFromJolt(position, 1.0f);
 					m_outResult.normal = convertFromJolt(normal, 0.0f);
-					m_outResult.fraction = inResult.mFraction;
+					m_outResult.fraction = result.mFraction;
 					//m_outResult.material = ;
 
 					m_anyHit = true;
 
-					UpdateEarlyOutFraction(inResult.mFraction);
+					UpdateEarlyOutFraction(result.mFraction);
 				}
 			}
 		}
@@ -502,11 +502,11 @@ bool PhysicsManagerJolt::queryRay(
 		bool m_anyHit = false;
 	};
 
-	JPH::RRayCast ray { convertToJolt(at), convertToJolt(direction * Scalar(maxLength)) };
+	const JPH::RRayCast ray { convertToJolt(at), convertToJolt(direction * Scalar(maxLength)) };
 
 	JPH::RayCastSettings settings;
-	// settings.mBackFaceModeTriangles = true;
-	// settings.mBackFaceModeConvex = true;
+	settings.mBackFaceModeTriangles = JPH::EBackFaceMode::IgnoreBackFaces;
+	settings.mBackFaceModeConvex = JPH::EBackFaceMode::IgnoreBackFaces;
 	settings.mTreatConvexAsSolid = true;
 
 	RayCollector collector(this, ray, queryFilter, outResult);
@@ -549,10 +549,10 @@ bool PhysicsManagerJolt::querySweep(
 {
 	const JPH::NarrowPhaseQuery& narrowPhaseQuery = m_physicsSystem->GetNarrowPhaseQuery();
 
-	class MyCollector : public JPH::CastShapeCollector
+	class SweepCollector : public JPH::CastShapeCollector
 	{
 	public:
-		explicit MyCollector(const PhysicsManagerJolt* outer, const JPH::RShapeCast& shapeCast, const QueryFilter& queryFilter, QueryResult& outResult)
+		explicit SweepCollector(const PhysicsManagerJolt* outer, const JPH::RShapeCast& shapeCast, const QueryFilter& queryFilter, QueryResult& outResult)
 		:	m_outer(outer)
 		,	m_shapeCast(shapeCast)
 		,	m_queryFilter(queryFilter)
@@ -560,11 +560,11 @@ bool PhysicsManagerJolt::querySweep(
 		{
 		}
 
-		virtual void AddHit(const JPH::ShapeCastResult &inResult) override
+		virtual void AddHit(const JPH::ShapeCastResult& result) override
 		{
-			if (inResult.mFraction < GetEarlyOutFraction())
+			if (result.mFraction < GetEarlyOutFraction())
 			{
-				JPH::BodyLockRead lock(m_outer->m_physicsSystem->GetBodyLockInterface(), inResult.mBodyID2);
+				JPH::BodyLockRead lock(m_outer->m_physicsSystem->GetBodyLockInterface(), result.mBodyID2);
 				if (lock.Succeeded())
 				{
 					const JPH::Body& hitBody = lock.GetBody();
@@ -580,18 +580,18 @@ bool PhysicsManagerJolt::querySweep(
 					if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
 						return;
 
-					JPH::Vec3 position = m_shapeCast.GetPointOnRay(inResult.mFraction);
-					JPH::Vec3 normal = -inResult.mPenetrationAxis.Normalized();
+					JPH::Vec3 position = m_shapeCast.GetPointOnRay(result.mFraction);
+					JPH::Vec3 normal = -result.mPenetrationAxis.Normalized();
 
 					m_outResult.body = unwrappedBody;
 					m_outResult.position = convertFromJolt(position, 1.0f);
 					m_outResult.normal = convertFromJolt(normal, 0.0f);
-					m_outResult.fraction = inResult.mFraction;
+					m_outResult.fraction = result.mFraction;
 					//m_outResult.material = ;
 
 					m_anyHit = true;
 
-					UpdateEarlyOutFraction(inResult.mFraction);
+					UpdateEarlyOutFraction(result.mFraction);
 				}
 			}
 		}
@@ -620,7 +620,7 @@ bool PhysicsManagerJolt::querySweep(
 	settings.mUseShrunkenShapeAndConvexRadius = true;
 	settings.mReturnDeepestPoint = true;
 
-	MyCollector collector(this, shapeCast, queryFilter, outResult);
+	SweepCollector collector(this, shapeCast, queryFilter, outResult);
 	narrowPhaseQuery.CastShape(shapeCast, settings, JPH::Vec3::sReplicate(0.0f), collector);
 
 	outResult.distance = dot3(outResult.position - at, direction);
@@ -649,6 +649,80 @@ void PhysicsManagerJolt::querySweep(
 	AlignedVector< QueryResult >& outResult
 ) const
 {
+	const JPH::NarrowPhaseQuery& narrowPhaseQuery = m_physicsSystem->GetNarrowPhaseQuery();
+
+	class SweepCollector : public JPH::CastShapeCollector
+	{
+	public:
+		explicit SweepCollector(const PhysicsManagerJolt* outer, const JPH::RShapeCast& shapeCast, const QueryFilter& queryFilter, AlignedVector< QueryResult >& outResult)
+		:	m_outer(outer)
+		,	m_shapeCast(shapeCast)
+		,	m_queryFilter(queryFilter)
+		,	m_outResult(outResult)
+		{
+		}
+
+		virtual void AddHit(const JPH::ShapeCastResult& result) override
+		{
+			if (result.mFraction < GetEarlyOutFraction())
+			{
+				JPH::BodyLockRead lock(m_outer->m_physicsSystem->GetBodyLockInterface(), result.mBodyID2);
+				if (lock.Succeeded())
+				{
+					const JPH::Body& hitBody = lock.GetBody();
+
+					BodyJolt* unwrappedBody = (BodyJolt*)hitBody.GetUserData();
+					if (!unwrappedBody)
+						return;
+
+					if (m_queryFilter.ignoreClusterId != 0 && unwrappedBody->getClusterId() == m_queryFilter.ignoreClusterId)
+						return;
+
+					const uint32_t group = unwrappedBody->getCollisionGroup();
+					if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
+						return;
+
+					JPH::Vec3 position = m_shapeCast.GetPointOnRay(result.mFraction);
+					JPH::Vec3 normal = -result.mPenetrationAxis.Normalized();
+
+					auto& outResult = m_outResult.push_back();
+					outResult.body = unwrappedBody;
+					outResult.position = convertFromJolt(position, 1.0f);
+					outResult.normal = convertFromJolt(normal, 0.0f);
+					outResult.fraction = result.mFraction;
+					//outResult.material = ;
+
+					UpdateEarlyOutFraction(result.mFraction);
+				}
+			}
+		}
+
+	private:
+		const PhysicsManagerJolt* m_outer;
+		const JPH::RShapeCast& m_shapeCast;
+		const QueryFilter& m_queryFilter;
+		AlignedVector< QueryResult >& m_outResult;
+	};
+
+	JPH::SphereShape sphere(radius);
+	sphere.SetEmbedded();
+
+	JPH::RShapeCast shapeCast(
+		&sphere,
+		JPH::Vec3::sReplicate(1.0f),
+		JPH::RMat44::sTranslation(convertToJolt(at)),
+		convertToJolt(direction * Scalar(maxLength))
+	);
+
+	JPH::ShapeCastSettings settings;
+	settings.mUseShrunkenShapeAndConvexRadius = true;
+	settings.mReturnDeepestPoint = true;
+
+	SweepCollector collector(this, shapeCast, queryFilter, outResult);
+	narrowPhaseQuery.CastShape(shapeCast, settings, JPH::Vec3::sReplicate(0.0f), collector);
+
+	for (auto& result : outResult)
+		result.distance = dot3(result.position - at, direction);
 }
 
 void PhysicsManagerJolt::queryOverlap(
@@ -681,6 +755,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 	if (auto staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
 	{
 		JPH::VertexList vertexList;
+		vertexList.reserve(mesh->getVertices().size());
 		for (const auto& vertex : mesh->getVertices())
 		{
 			vertexList.push_back(JPH::Float3(
@@ -689,6 +764,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		}
 
 		JPH::IndexedTriangleList triangleList;
+		triangleList.reserve(mesh->getShapeTriangles().size());
 		for (const auto& triangle : mesh->getShapeTriangles())
 		{
 			triangleList.push_back(JPH::IndexedTriangle(
@@ -724,6 +800,8 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 
 		const auto& vertices = mesh->getVertices();
 		const auto& hullIndices = mesh->getHullIndices();
+		
+		vertexList.reserve(hullIndices.size());
 		for (const auto& hullIndex : hullIndices)
 		{
 			const auto& vertex = vertices[hullIndex];
