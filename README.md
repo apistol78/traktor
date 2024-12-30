@@ -43,16 +43,18 @@ See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binar
 - Clean separation of editor code, easy to add new editors etc.
 - Undo/redo, localization, themes etc.
 - Formalized pipeline/flow to cook assets to runtime optimized data; highly parallized and easy to add new pipelines.
-- Light and dark themes, easily customizable.
+- Quick iterative build times, only build and reload modified assets.
+- Light, dark and more themes, easily customizable.
 
 ## Rendering
 
 - Advanced frame graph based renderer using Vulkan.
 - GPU based occlusion culling.
-- Graph based shader editor with possibility to inline shader code when necessary.
+- Graph based shader editor with possibility to inline shader code when necessary for all exposed stages (vertex, fragment and compute).
 - Tile based deferred and forward+ rendering paths.
 - GPU skin cache for skinned meshes.
 - Hardware ray tracing support, with RTAO, RT reflections and RT shadows implementations.
+- Easy to use graph based image processing system for fullscreen effects.
 
 ## Scripting
 - LUA as primary scripting language.
@@ -66,8 +68,8 @@ See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binar
 - MP3, Flac, OGG streaming.
 
 ## Physics
-- Integrated Bullet physics.
-- Character and vehicle controllers.
+- Integrated Jolt and Bullet physics.
+- Easy to use character and vehicle controllers.
 
 
 ## Contact
