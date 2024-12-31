@@ -33,11 +33,11 @@ public:
 
 private:
 	EventSubject* m_owner;
-	HWND m_hWnd;
+	HWND m_hWnd = NULL;
 
-	DWORD m_openDialogOptions;
-	IFileDialog* m_pFileDialog;
-	TCHAR m_title[64];
+	DWORD m_openDialogOptions = 0;
+	IFileDialog* m_pFileDialog = nullptr;
+	TCHAR m_title[64] = {};
 };
 
 }

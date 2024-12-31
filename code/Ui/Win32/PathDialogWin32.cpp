@@ -14,11 +14,7 @@ namespace traktor::ui
 {
 
 PathDialogWin32::PathDialogWin32(EventSubject* owner)
-	: m_owner{ owner }
-	, m_hWnd{ nullptr }
-	, m_openDialogOptions{ 0 }
-	, m_pFileDialog{ nullptr }
-	, m_title{ 0 }
+	: m_owner(owner)
 {
 }
 
@@ -45,6 +41,7 @@ void PathDialogWin32::destroy()
 	if (m_pFileDialog)
 	{
 		m_pFileDialog->Release();
+		m_pFileDialog = nullptr;
 	}
 }
 
