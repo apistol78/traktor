@@ -272,13 +272,12 @@ void AudioSystem::threadMixer()
 	timerMixer.reset();
 	while (!m_threadMixer->stopped())
 	{
-		double startTime = timerMixer.getElapsedTime();
-		double deltaTime = timerMixer.getDeltaTime();
+		const double startTime = timerMixer.getElapsedTime();
 
 		// Read blocks from channels.
 		m_channelsLock.wait();
 		{
-			channelsCount = uint32_t(m_channels.size());
+			channelsCount = (uint32_t)m_channels.size();
 			for (uint32_t i = 0; i < channelsCount; ++i)
 			{
 				m_requestBlocks[i].samplesCount = m_desc.driverDesc.frameSamples;
@@ -350,8 +349,8 @@ void AudioSystem::threadMixer()
 		// Move block back into heap.
 		m_samplesBlocks.push_back(frameBlock.samples[0]);
 
-		double endTime = timerMixer.getElapsedTime();
-		m_mixerThreadTime = (endTime - startTime) * 0.1f + m_mixerThreadTime * 0.9f;
+		const double endTime = timerMixer.getElapsedTime();
+		m_mixerThreadTime = (endTime - startTime) * 0.1 + m_mixerThreadTime * 0.9;
 	}
 }
 
