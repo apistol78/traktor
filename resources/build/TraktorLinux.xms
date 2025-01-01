@@ -17013,7 +17013,6 @@
 						<item>OSDependent</item>
 						<item>SPIRV</item>
 						<item>SPIRV-Tools</item>
-						<item>SPIRV-Tools-shared</item>
 						<item>SPIRV-Tools-opt</item>
 						<item>shaderc_combined</item>
 						<item>glslang</item>
@@ -17060,7 +17059,6 @@
 						<item>OSDependent</item>
 						<item>SPIRV</item>
 						<item>SPIRV-Tools</item>
-						<item>SPIRV-Tools-shared</item>
 						<item>SPIRV-Tools-opt</item>
 						<item>shaderc_combined</item>
 						<item>glslang</item>
@@ -17107,7 +17105,6 @@
 						<item>OSDependent</item>
 						<item>SPIRV</item>
 						<item>SPIRV-Tools</item>
-						<item>SPIRV-Tools-shared</item>
 						<item>SPIRV-Tools-opt</item>
 						<item>shaderc_combined</item>
 						<item>glslang</item>
@@ -17154,7 +17151,6 @@
 						<item>OSDependent</item>
 						<item>SPIRV</item>
 						<item>SPIRV-Tools</item>
-						<item>SPIRV-Tools-shared</item>
 						<item>SPIRV-Tools-opt</item>
 						<item>shaderc_combined</item>
 						<item>glslang</item>

@@ -55,7 +55,7 @@ public:
 	AlignedVector< Edge > m_edges;
 	AlignedVector< int32_t > m_triangles;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) override;
 };
 
 }

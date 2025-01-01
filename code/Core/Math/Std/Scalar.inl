@@ -61,32 +61,32 @@ T_MATH_INLINE Scalar& Scalar::operator /= (const Scalar& v)
 	return *this;
 }
 
-T_MATH_INLINE bool Scalar::operator < (const Scalar& r)
+T_MATH_INLINE bool Scalar::operator < (const Scalar& r) const
 {
 	return m_data < r.m_data;
 }
 
-T_MATH_INLINE bool Scalar::operator <= (const Scalar& r)
+T_MATH_INLINE bool Scalar::operator <= (const Scalar& r) const
 {
 	return m_data <= r.m_data;
 }
 
-T_MATH_INLINE bool Scalar::operator > (const Scalar& r)
+T_MATH_INLINE bool Scalar::operator > (const Scalar& r) const
 {
 	return m_data > r.m_data;
 }
 
-T_MATH_INLINE bool Scalar::operator >= (const Scalar& r)
+T_MATH_INLINE bool Scalar::operator >= (const Scalar& r) const
 {
 	return m_data >= r.m_data;
 }
 
-T_MATH_INLINE bool Scalar::operator == (const Scalar& r)
+T_MATH_INLINE bool Scalar::operator == (const Scalar& r) const
 {
 	return m_data == r.m_data;
 }
 
-T_MATH_INLINE bool Scalar::operator != (const Scalar& r)
+T_MATH_INLINE bool Scalar::operator != (const Scalar& r) const
 {
 	return m_data != r.m_data;
 }

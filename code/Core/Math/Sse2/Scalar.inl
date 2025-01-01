@@ -68,42 +68,42 @@ T_MATH_INLINE Scalar& Scalar::operator /= (const Scalar& v)
 	return *this;
 }
 
-T_MATH_INLINE bool Scalar::operator < (const Scalar& r)
+T_MATH_INLINE bool Scalar::operator < (const Scalar& r) const
 {
 	__m128 tmp = _mm_cmplt_ps(m_data, r.m_data);
 	uint32_t imm; _mm_store_ss((float*)&imm, tmp);
 	return imm != 0;
 }
 
-T_MATH_INLINE bool Scalar::operator <= (const Scalar& r)
+T_MATH_INLINE bool Scalar::operator <= (const Scalar& r) const
 {
 	__m128 tmp = _mm_cmple_ps(m_data, r.m_data);
 	uint32_t imm; _mm_store_ss((float*)&imm, tmp);
 	return imm != 0;
 }
 
-T_MATH_INLINE bool Scalar::operator > (const Scalar& r)
+T_MATH_INLINE bool Scalar::operator > (const Scalar& r) const
 {
 	__m128 tmp = _mm_cmpgt_ps(m_data, r.m_data);
 	uint32_t imm; _mm_store_ss((float*)&imm, tmp);
 	return imm != 0;
 }
 
-T_MATH_INLINE bool Scalar::operator >= (const Scalar& r)
+T_MATH_INLINE bool Scalar::operator >= (const Scalar& r) const
 {
 	__m128 tmp = _mm_cmpge_ps(m_data, r.m_data);
 	uint32_t imm; _mm_store_ss((float*)&imm, tmp);
 	return imm != 0;
 }
 
-T_MATH_INLINE bool Scalar::operator == (const Scalar& r)
+T_MATH_INLINE bool Scalar::operator == (const Scalar& r) const
 {
 	__m128 tmp = _mm_cmpeq_ps(m_data, r.m_data);
 	uint32_t imm; _mm_store_ss((float*)&imm, tmp);
 	return imm != 0;
 }
 
-T_MATH_INLINE bool Scalar::operator != (const Scalar& r)
+T_MATH_INLINE bool Scalar::operator != (const Scalar& r) const
 {
 	__m128 tmp = _mm_cmpneq_ps(m_data, r.m_data);
 	uint32_t imm; _mm_store_ss((float*)&imm, tmp);

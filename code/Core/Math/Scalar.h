@@ -60,17 +60,17 @@ public:
 
 	T_MATH_INLINE Scalar& operator /= (const Scalar& v);
 
-	T_MATH_INLINE bool operator < (const Scalar& r);
+	T_MATH_INLINE bool operator < (const Scalar& r) const;
 
-	T_MATH_INLINE bool operator <= (const Scalar& r);
+	T_MATH_INLINE bool operator <= (const Scalar& r) const;
 
-	T_MATH_INLINE bool operator > (const Scalar& r);
+	T_MATH_INLINE bool operator > (const Scalar& r) const;
 
-	T_MATH_INLINE bool operator >= (const Scalar& r);
+	T_MATH_INLINE bool operator >= (const Scalar& r) const;
 
-	T_MATH_INLINE bool operator == (const Scalar& r);
+	T_MATH_INLINE bool operator == (const Scalar& r) const;
 
-	T_MATH_INLINE bool operator != (const Scalar& r);
+	T_MATH_INLINE bool operator != (const Scalar& r) const;
 
 	T_MATH_INLINE operator float () const;
 

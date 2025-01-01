@@ -68,6 +68,8 @@ public:
 	class Filter
 	{
 	public:
+		virtual ~Filter() = default;
+
 		virtual bool acceptInstance(const db::Instance* instance) const = 0;
 
 		virtual bool acceptEmptyGroups() const = 0;

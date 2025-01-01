@@ -31,7 +31,7 @@ class T_DLLCLASS ProgramResource : public ISerializable
 public:
 	bool requireRayTracing() const { return m_requireRayTracing; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) override;
 
 protected:
 	bool m_requireRayTracing = false;

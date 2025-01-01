@@ -41,6 +41,8 @@ class T_DLLCLASS FragmentLinker : public Object
 public:
 	struct IFragmentReader
 	{
+		virtual ~IFragmentReader() = default;
+
 		/*! Read callback.
 		 *
 		 * Read fragments from user defined source,

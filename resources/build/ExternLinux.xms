@@ -4563,7 +4563,7 @@
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
@@ -4586,7 +4586,7 @@
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>

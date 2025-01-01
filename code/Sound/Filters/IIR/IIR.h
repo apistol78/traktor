@@ -34,7 +34,9 @@ public:
 	double a2;
 
 	BiquadSection();
+
 	BiquadSection(const BiquadSection& init);
+
 	BiquadSection(const PolarBiquadSection& init);
 
 	void clear();
@@ -42,6 +44,7 @@ public:
 	void resetTaps();
 
 	BiquadSection& operator=(const BiquadSection& init);
+
 	BiquadSection& operator=(const PolarBiquadSection& init);
 
 	void computeOutput(double* buffer, const int numSamples);
@@ -60,9 +63,12 @@ class BiquadsCascade
 {
 public:
 	BiquadsCascade();
+
 	BiquadsCascade(const BiquadsCascade& init);
+
 	BiquadsCascade(const PolarBiquadsCascade& init);
-	~BiquadsCascade();
+
+	virtual ~BiquadsCascade();
 
 	bool setSize(int numberBiquadSections);
 
@@ -91,19 +97,22 @@ private:
 class PolarBiquadSection
 {
 public:
-	PolarBiquadSection();
-	PolarBiquadSection(const PolarBiquadSection& init);
-	PolarBiquadSection(const BiquadSection& init);
-
-	void clear();
-
 	double zeroR; // alpha
 	double zeroAngle; // alpha
 	double poleR; // beta
 	double poleAngle; // beta
 	double k;
 
+	PolarBiquadSection();
+
+	PolarBiquadSection(const PolarBiquadSection& init);
+
+	PolarBiquadSection(const BiquadSection& init);
+
+	void clear();
+
 	PolarBiquadSection& operator=(const PolarBiquadSection& init);
+
 	PolarBiquadSection& operator=(const BiquadSection& init);
 
 	void getPoles(double& out_reP1, double& out_imP1, double& out_reP2, double& out_imP2);
@@ -120,10 +129,12 @@ class PolarBiquadsCascade
 {
 public:
 	PolarBiquadsCascade();
+
 	PolarBiquadsCascade(const PolarBiquadsCascade& init);
+
 	PolarBiquadsCascade(const BiquadsCascade& init);
 
-	~PolarBiquadsCascade();
+	virtual ~PolarBiquadsCascade();
 
 	bool setSize(int numberBiquadSections);
 
@@ -157,6 +168,8 @@ private:
 class BiquadFilter
 {
 public:
+	virtual ~BiquadFilter() = default;
+
 	bool createLowPass(double cutFreq_rads, double passBand_dB, double stopFreq_rads, double stopBand_dB);
 
 	bool createHighPass(double cutFreq_rads, double passBand_dB, double stopFreq_rads, double stopBand_dB);

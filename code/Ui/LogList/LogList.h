@@ -106,7 +106,7 @@ private:
 	Semaphore m_pendingLock;
 	log_list_t m_logFull;
 	AlignedVector< size_t > m_logFiltered;
-	Count m_logCount[3];
+	Count m_logCount[4];
 	StaticMap< uint32_t, uint32_t, 128 > m_threadIndices;
 	Unit m_itemHeight = 0_ut;
 	int32_t m_maxLineWidth = 0;

@@ -52,9 +52,9 @@ public:
 
 	virtual UpdateResult update(PropertyGroup* settings);
 
-	virtual double getCPUDuration() const;
+	virtual double getCPUDuration() const override final;
 
-	virtual double getGPUDuration() const;
+	virtual double getGPUDuration() const override final;
 
 	virtual int32_t getFrameRate() const override final;
 
