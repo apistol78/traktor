@@ -88,8 +88,6 @@ bool CommandBuffer::submit(const StaticVector< VkSemaphore, 2 >& waitSemaphores,
 
 bool CommandBuffer::wait()
 {
-	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
-
 	if (!m_submitted)
 		return true;
 
