@@ -486,6 +486,7 @@ local PACKAGES =
 	{
 		type = "GIT",
 		name = "mimalloc",
+		hash = "095abc9e3d71ced049d7b6a400cb3866cc2d5999",
 		url = "https://github.com/microsoft/mimalloc.git",
 		license = "MIT"
 	},
@@ -595,7 +596,7 @@ function update(pkg)
 			end			
 		else
 			stdout:printLn("Cloning " .. pkg.url)
-			result = (run:execute(GIT .. " clone --depth 1 --recurse-submodules " .. pkg.url) == 0)
+			result = (run:execute(GIT .. " clone --recurse-submodules " .. pkg.url) == 0)
 			if result and pkg.post_clone ~= nil then
 				stdout:printLn("Running post clone...")
 				run:pushd(name)
@@ -604,14 +605,21 @@ function update(pkg)
 			end
 		end
 
+		if pkg.hash ~= nil then
+			stdout:printLn("Checkout hash " .. pkg.hash .. "...")
+			run:pushd(name)
+			result = (run:execute(GIT .. " reset --hard " .. pkg.hash) == 0)
+			run:popd()
+		end
+
 		if not result then
 			stderr:printLn("GIT failed!")
 			return false
 		end
 
 		if pkg.patch ~= nil then
-			run:pushd(name)
 			stdout:printLn("Patching (" .. run.cwd .. ")...")
+			run:pushd(name)
 			pkg.patch()
 			run:popd()
 		end
