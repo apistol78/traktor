@@ -1,0 +1,19 @@
+name: Build Windows (Debug)
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install 3rdp dependencies
+      run: ./scripts/update-3rdp.bat
+    - name: Generate build files
+      run: ./scripts/build-projects-vs2022-win64.bat
+    - name: Build DebugShared
+      run: ./scripts/autobuild/autobuild-latest-win64.bat DebugShared
