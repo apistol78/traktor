@@ -1132,6 +1132,10 @@
 				<name>None</name>
 				<fileType>dictionary</fileType>
 			</item>
-		</buildTools>
+            <item type="SolutionBuilderMsvcVCXBuildTool">
+                <name>None</name>
+                <fileType>clang-format</fileType>
+            </item>
+        </buildTools>
 	</project>
 </object>

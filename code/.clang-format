@@ -1,0 +1,92 @@
+---
+AlignAfterOpenBracket: DontAlign
+BreakAfterAttributes: Always
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Allman
+BreakBeforeConceptDeclarations: Always
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+#BreakFunctionDefinitionParameters: false
+BreakInheritanceList: BeforeComma
+BreakStringLiterals: false
+# BreakTemplateDeclarations: No
+CompactNamespaces: false
+Cpp11BracedListStyle: false
+EmptyLineAfterAccessModifier: Never
+EmptyLineBeforeAccessModifier: Always
+FixNamespaceComments: true
+IncludeBlocks: Regroup
+IndentAccessModifiers: false
+IndentCaseBlocks: true
+IndentCaseLabels: false
+IndentExternBlock: NoIndent
+IndentGotoLabels: false
+IndentPPDirectives: AfterHash
+IndentRequiresClause: false
+IndentWidth: 4
+IndentWrappedFunctionNames: false
+InsertBraces: true
+InsertNewlineAtEOF: true
+# KeepEmptyLines:
+#   AtEndOfFile: false
+#   AtStartOfBlock: false
+#   AtStartOfFile: false
+KeepEmptyLinesAtEOF: false
+KeepEmptyLinesAtTheStartOfBlocks: false
+LambdaBodyIndentation: Signature
+Language: Cpp
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: None
+PPIndentWidth: -1
+PackConstructorInitializers: Never
+PointerAlignment: Left
+QualifierAlignment: Left
+ReferenceAlignment: Left
+RemoveBracesLLVM: true
+RemoveParentheses: ReturnStatement
+RemoveSemicolon: true
+RequiresClausePosition: WithPreceding
+RequiresExpressionIndentation: OuterScope
+ShortNamespaceLines: 100000
+SeparateDefinitionBlocks: Always
+SortIncludes: CaseInsensitive
+SortUsingDeclarations: Lexicographic
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: true
+SpaceAroundPointerQualifiers: Before
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeJsonColon: true
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
+SpacesInAngles: Always
+SpacesInContainerLiterals: true
+SpacesInLineCommentPrefix:
+  Minimum: 1
+  Maximum: -1
+SpacesInParens: Never
+SpacesInSquareBrackets: false
+Standard: Latest
+TabWidth: 4
+UseTab: Always
+AccessModifierOffset: -4
+AllowAllParametersOfDeclarationOnNextLine: false
+BinPackArguments: false
+AllowShortLoopsOnASingleLine: false
+AllowShortLambdasOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+AllowShortEnumsOnASingleLine: false
+AllowShortCompoundRequirementOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: false
+# AllowShortCaseExpressionOnASingleLine: false
+AllowShortBlocksOnASingleLine: Empty
+AllowBreakBeforeNoexceptSpecifier: Never
+AllowAllArgumentsOnNextLine: false
+AlignOperands: DontAlign
+AlignEscapedNewlines: DontAlign

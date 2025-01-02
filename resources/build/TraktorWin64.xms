@@ -214,6 +214,11 @@
 						</item>
 					</items>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -659,6 +664,11 @@
 									</item>
 								</items>
 							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+								<excludeFilter/>
+								<items/>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ExternalDependency" version="3">
@@ -890,6 +900,11 @@
 										<items/>
 									</item>
 								</items>
+							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+								<excludeFilter/>
+								<items/>
 							</item>
 						</items>
 						<dependencies>
@@ -1151,6 +1166,11 @@
 												</item>
 											</items>
 										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -1298,6 +1318,11 @@
 												<items>
 													<item type="File" version="1">
 														<fileName>*.*</fileName>
+														<excludeFilter/>
+														<items/>
+													</item>
+													<item type="File" version="1">
+														<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 														<excludeFilter/>
 														<items/>
 													</item>
@@ -1483,6 +1508,11 @@
 																<items/>
 															</item>
 														</items>
+													</item>
+													<item type="File" version="1">
+														<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+														<excludeFilter/>
+														<items/>
 													</item>
 												</items>
 												<dependencies>
@@ -1677,6 +1707,11 @@
 												</item>
 											</items>
 										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -1824,6 +1859,11 @@
 												<items>
 													<item type="File" version="1">
 														<fileName>*.*</fileName>
+														<excludeFilter/>
+														<items/>
+													</item>
+													<item type="File" version="1">
+														<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 														<excludeFilter/>
 														<items/>
 													</item>
@@ -2026,6 +2066,11 @@
 										<items/>
 									</item>
 								</items>
+							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+								<excludeFilter/>
+								<items/>
 							</item>
 						</items>
 						<dependencies>
@@ -2250,6 +2295,11 @@
 									</item>
 								</items>
 							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+								<excludeFilter/>
+								<items/>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
@@ -2412,6 +2462,11 @@
 									<items>
 										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 											<excludeFilter/>
 											<items/>
 										</item>
@@ -2602,6 +2657,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/Traktor.Animation.Editor.dictionary</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -2804,6 +2864,11 @@
 										</items>
 									</item>
 								</items>
+							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+								<excludeFilter/>
+								<items/>
 							</item>
 						</items>
 						<dependencies>
@@ -3225,6 +3290,11 @@
 												</item>
 											</items>
 										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -3404,6 +3474,11 @@
 																<items/>
 															</item>
 														</items>
+													</item>
+													<item type="File" version="1">
+														<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+														<excludeFilter/>
+														<items/>
 													</item>
 												</items>
 												<dependencies>
@@ -3609,6 +3684,11 @@
 												<items>
 													<item type="File" version="1">
 														<fileName>*.*</fileName>
+														<excludeFilter/>
+														<items/>
+													</item>
+													<item type="File" version="1">
+														<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 														<excludeFilter/>
 														<items/>
 													</item>
@@ -3855,6 +3935,11 @@
 												</item>
 											</items>
 										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -4008,6 +4093,11 @@
 											<excludeFilter/>
 											<items/>
 										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -4158,6 +4248,11 @@
 									<items>
 										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 											<excludeFilter/>
 											<items/>
 										</item>
@@ -4335,6 +4430,11 @@
 												</item>
 											</items>
 										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -4498,6 +4598,11 @@
 											<excludeFilter/>
 											<items/>
 										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -4650,6 +4755,11 @@
 												<items>
 													<item type="File" version="1">
 														<fileName>*.*</fileName>
+														<excludeFilter/>
+														<items/>
+													</item>
+													<item type="File" version="1">
+														<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 														<excludeFilter/>
 														<items/>
 													</item>
@@ -4813,6 +4923,11 @@
 												<items>
 													<item type="File" version="1">
 														<fileName>*.*</fileName>
+														<excludeFilter/>
+														<items/>
+													</item>
+													<item type="File" version="1">
+														<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 														<excludeFilter/>
 														<items/>
 													</item>
@@ -5030,6 +5145,11 @@
 												</item>
 											</items>
 										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -5190,6 +5310,11 @@
 									<items>
 										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 											<excludeFilter/>
 											<items/>
 										</item>
@@ -5409,6 +5534,11 @@
 								<excludeFilter/>
 								<items/>
 							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+								<excludeFilter/>
+								<items/>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
@@ -5581,6 +5711,11 @@
 									<items>
 										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 											<excludeFilter/>
 											<items/>
 										</item>
@@ -5776,6 +5911,11 @@
 													<items/>
 												</item>
 											</items>
+										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
 										</item>
 									</items>
 									<dependencies>
@@ -5984,6 +6124,11 @@
 													<items/>
 												</item>
 											</items>
+										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
 										</item>
 									</items>
 									<dependencies>
@@ -6288,6 +6433,11 @@
 														<excludeFilter/>
 														<items/>
 													</item>
+													<item type="File" version="1">
+														<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+														<excludeFilter/>
+														<items/>
+													</item>
 												</items>
 												<dependencies>
 													<item type="ProjectDependency" version="3">
@@ -6506,6 +6656,11 @@
 															<items>
 																<item type="File" version="1">
 																	<fileName>*.*</fileName>
+																	<excludeFilter/>
+																	<items/>
+																</item>
+																<item type="File" version="1">
+																	<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 																	<excludeFilter/>
 																	<items/>
 																</item>
@@ -6773,6 +6928,11 @@
 															</item>
 														</items>
 													</item>
+													<item type="File" version="1">
+														<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+														<excludeFilter/>
+														<items/>
+													</item>
 												</items>
 												<dependencies>
 													<item type="ProjectDependency" version="3">
@@ -6948,6 +7108,11 @@
 															<items>
 																<item type="File" version="1">
 																	<fileName>*.*</fileName>
+																	<excludeFilter/>
+																	<items/>
+																</item>
+																<item type="File" version="1">
+																	<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 																	<excludeFilter/>
 																	<items/>
 																</item>
@@ -7131,6 +7296,11 @@
 													<items/>
 												</item>
 											</items>
+										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
 										</item>
 									</items>
 									<dependencies>
@@ -7423,6 +7593,11 @@
 												</item>
 											</items>
 										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -7607,6 +7782,11 @@
 													<items/>
 												</item>
 											</items>
+										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
 										</item>
 									</items>
 									<dependencies>
@@ -7821,6 +8001,11 @@
 							</item>
 							<item type="File" version="1">
 								<fileName>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/Traktor.Mesh.Editor.dictionary</fileName>
+								<excludeFilter/>
+								<items/>
+							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
@@ -8067,6 +8252,11 @@
 								<excludeFilter/>
 								<items/>
 							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+								<excludeFilter/>
+								<items/>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
@@ -8279,6 +8469,11 @@
 										</item>
 										<item type="File" version="1">
 											<fileName>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/Traktor.Heightfield.Editor.dictionary</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 											<excludeFilter/>
 											<items/>
 										</item>
@@ -8521,6 +8716,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/Traktor.Editor.App.dictionary</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -8768,6 +8968,11 @@
 									</item>
 								</items>
 							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+								<excludeFilter/>
+								<items/>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
@@ -8988,6 +9193,11 @@
 						</item>
 					</items>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -9160,6 +9370,11 @@
 						<items>
 							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
+								<items/>
+							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
@@ -9360,6 +9575,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/Traktor.Spark.Editor.dictionary</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -9613,6 +9833,11 @@
 								<excludeFilter/>
 								<items/>
 							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+								<excludeFilter/>
+								<items/>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
@@ -9845,6 +10070,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -10024,6 +10254,11 @@
 						</item>
 					</items>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -10190,6 +10425,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -10341,6 +10581,11 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -10506,6 +10751,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -10665,6 +10915,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -10820,6 +11075,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -11000,6 +11260,11 @@
 						<items>
 							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
+								<items/>
+							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
@@ -11191,6 +11456,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -11369,6 +11639,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -11542,6 +11817,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -11705,6 +11985,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -11856,6 +12141,11 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -12042,6 +12332,11 @@
 							<items/>
 						</item>
 					</items>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
 				</item>
 			</items>
 			<dependencies>
@@ -12234,6 +12529,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/Traktor.Spray.Editor.dictionary</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -12461,6 +12761,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -12647,6 +12952,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/Traktor.Terrain.Editor.dictionary</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -12946,6 +13256,11 @@
 								<excludeFilter/>
 								<items/>
 							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+								<excludeFilter/>
+								<items/>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
@@ -13202,6 +13517,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -13352,6 +13672,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -13530,6 +13855,11 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -13727,6 +14057,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -13913,6 +14248,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/Traktor.Runtime.Editor.dictionary</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -14170,6 +14510,11 @@
 										<items/>
 									</item>
 								</items>
+							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+								<excludeFilter/>
+								<items/>
 							</item>
 						</items>
 						<dependencies>
@@ -14441,6 +14786,11 @@
 												</item>
 											</items>
 										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -14611,6 +14961,11 @@
 									<items>
 										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 											<excludeFilter/>
 											<items/>
 										</item>
@@ -14788,6 +15143,11 @@
 											<excludeFilter/>
 											<items/>
 										</item>
+										<item type="File" version="1">
+											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+											<excludeFilter/>
+											<items/>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -14959,6 +15319,11 @@
 						<items>
 							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
+								<items/>
+							</item>
+							<item type="File" version="1">
+								<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
@@ -15147,6 +15512,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -15304,6 +15674,11 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -15486,6 +15861,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/Traktor.Theater.Editor.dictionary</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -15693,6 +16073,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -15879,6 +16264,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -16104,6 +16494,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -16266,6 +16661,11 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -16589,6 +16989,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -16753,6 +17158,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -16914,6 +17324,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/Traktor.Model.Editor.dictionary</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -17122,6 +17537,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -17276,6 +17696,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -17426,6 +17851,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -17639,6 +18069,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -17795,6 +18230,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -18009,6 +18449,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -18191,6 +18636,11 @@
 						</item>
 					</items>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -18344,6 +18794,11 @@
 							<items/>
 						</item>
 					</items>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
 				</item>
 			</items>
 			<dependencies>
@@ -18622,6 +19077,11 @@
 						</item>
 					</items>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -18775,6 +19235,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -18915,6 +19380,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -19097,6 +19567,11 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -19302,6 +19777,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -19489,6 +19969,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -19711,6 +20196,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -19901,6 +20391,11 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -20112,6 +20607,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -20290,6 +20790,11 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -20476,6 +20981,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -20637,6 +21147,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -20814,6 +21329,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -20981,6 +21501,11 @@
 				</item>
 				<item type="File" version="1">
 					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -21179,6 +21704,11 @@
 						</item>
 					</items>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -21352,6 +21882,11 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>

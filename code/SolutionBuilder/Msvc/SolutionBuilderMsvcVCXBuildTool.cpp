@@ -27,8 +27,11 @@ bool SolutionBuilderMsvcVCXBuildTool::generateProject(
 	OutputStream& os
 ) const
 {
-	if (compareIgnoreCase(m_fileType, fileName.getExtension()) != 0)
-		return true;
+	if (!m_fileType.empty() || !fileName.getExtension().empty())
+	{
+		if (compareIgnoreCase(m_fileType, fileName.getExtension()) != 0)
+			return true;
+	}
 
 	os << L"<" << m_name << L" Include=\"" << fileName.getPathName() << L"\" />" << Endl;
 	return true;
@@ -43,8 +46,11 @@ bool SolutionBuilderMsvcVCXBuildTool::generateFilter(
 	OutputStream& os
 ) const
 {
-	if (compareIgnoreCase(m_fileType, fileName.getExtension()) != 0)
-		return true;
+	if (!m_fileType.empty() || !fileName.getExtension().empty())
+	{
+		if (compareIgnoreCase(m_fileType, fileName.getExtension()) != 0)
+			return true;
+	}
 
 	if (filter.empty())
 		os << L"<" << m_name << L" Include=\"" << fileName.getPathName() << L"\" />" << Endl;
