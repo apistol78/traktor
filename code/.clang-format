@@ -1,5 +1,5 @@
 ---
-AlignAfterOpenBracket: DontAlign
+AlignAfterOpenBracket: BlockIndent
 #BreakAfterAttributes: Always
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Allman
