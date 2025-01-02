@@ -19,10 +19,10 @@ vec4 ColorClamp(in texture2D currentFrame, in sampler currentSampler, vec4 curre
 	const vec4 bmn = min(currentColor, min(n0, min(n1, min(n2, n3))));
 	const vec4 bmx = max(currentColor, max(n0, max(n1, max(n2, n3))));
 
-	const float e = 0.01f;
-	const vec4 E = vec4(e, e, e, 0.0f);
+	const vec4 Emn = vec4(0.01f.xxx, 0.0f);
+	const vec4 Emx = vec4(0.001f.xxx, 0.0f);
 
-	return clamp(historyColor, bmn - E, bmx + E);
+	return clamp(historyColor, bmn - Emn, bmx + Emx);
 }
 
 vec4 CatmullRomFilterSample(in texture2D tx, in sampler smp, vec2 uv)
@@ -32,19 +32,19 @@ vec4 CatmullRomFilterSample(in texture2D tx, in sampler smp, vec2 uv)
 #define TEX sampler2D(tx, smp)
 
 	vec2 texsiz = vec2(textureSize( TEX, 0 ).xy);
-	vec4 rtMetrics = vec4( 1.0 / texsiz.xy, texsiz.xy );
+	vec4 rtMetrics = vec4(1.0f / texsiz.xy, texsiz.xy);
 
 	vec2 position = rtMetrics.zw * uv;
-	vec2 centerPosition = floor(position - 0.5) + 0.5;
+	vec2 centerPosition = floor(position - 0.5f) + 0.5f;
 	vec2 f = position - centerPosition;
 	vec2 f2 = f * f;
 	vec2 f3 = f * f2;
 
-	const float c = 0.5; //note: [0;1] ( SMAA_FILMIC_REPROJECTION_SHARPNESS / 100.0 )
-	vec2 w0 =        -c  * f3 +  2.0 * c         * f2 - c * f;
-	vec2 w1 =  (2.0 - c) * f3 - (3.0 - c)        * f2         + 1.0;
-	vec2 w2 = -(2.0 - c) * f3 + (3.0 -  2.0 * c) * f2 + c * f;
-	vec2 w3 =         c  * f3 -                c * f2;
+	const float c = 0.5f; //note: [0;1] ( SMAA_FILMIC_REPROJECTION_SHARPNESS / 100.0 )
+	vec2 w0 =         -c  * f3 +  2.0f * c         * f2 - c * f;
+	vec2 w1 =  (2.0f - c) * f3 - (3.0f - c)        * f2 + 1.0f;
+	vec2 w2 = -(2.0f - c) * f3 + (3.0f - 2.0f * c) * f2 + c * f;
+	vec2 w3 =          c  * f3 -                 c * f2;
 
 	vec2 w12 = w1 + w2;
 	vec2 tc12 = rtMetrics.xy * (centerPosition + w2 / w12);
@@ -53,13 +53,13 @@ vec4 CatmullRomFilterSample(in texture2D tx, in sampler smp, vec2 uv)
 	vec2 tc0 = rtMetrics.xy * (centerPosition - 1.0);
 	vec2 tc3 = rtMetrics.xy * (centerPosition + 2.0);
 	vec4 color =
-		vec4(textureLod(TEX, vec2(tc12.x, tc0.y ), 0).rgb, 1.0) * (w12.x * w0.y ) +
-		 vec4(textureLod(TEX, vec2(tc0.x,  tc12.y), 0).rgb, 1.0) * (w0.x  * w12.y) +
-		 vec4(centerColor,                                 1.0) * (w12.x * w12.y) +
-		 vec4(textureLod(TEX, vec2(tc3.x,  tc12.y), 0).rgb, 1.0) * (w3.x  * w12.y) +
-		 vec4(textureLod(TEX, vec2(tc12.x, tc3.y ), 0).rgb, 1.0) * (w12.x * w3.y );
+		vec4(textureLod(TEX, vec2(tc12.x, tc0.y ), 0).rgb, 1.0f) * (w12.x * w0.y ) +
+		 vec4(textureLod(TEX, vec2(tc0.x, tc12.y), 0).rgb, 1.0f) * (w0.x  * w12.y) +
+		 vec4(centerColor,                                 1.0f) * (w12.x * w12.y) +
+		 vec4(textureLod(TEX, vec2(tc3.x, tc12.y), 0).rgb, 1.0f) * (w3.x  * w12.y) +
+		 vec4(textureLod(TEX, vec2(tc12.x, tc3.y ), 0).rgb, 1.0f) * (w12.x * w3.y );
 
-	return vec4( color.rgb / color.a, 1.0 );
+	return vec4(color.rgb / color.a, 1.0f);
 }
 
 vec4 TemporalAntiAlias(
@@ -75,17 +75,14 @@ vec4 TemporalAntiAlias(
 {
 	const float f = 1.0f / TAPS;
 
-	// Convert current jitter to UV space.
-	const vec2 Juv = jitter.xy;
-
 	// Get velocity of current pixel, in NDC space.
-	const vec2 v = texture(sampler2D(velocity, pointSampler), uv - Juv).xy;
+	const vec2 v = texture(sampler2D(velocity, pointSampler), uv).xy;
 
 	// Convert velocity to UV space.
 	const vec2 Vuv = v * vec2(-0.5f, 0.5f);
 
 	// Sample current colour.
-	const vec4 cc = texture(sampler2D(currentFrame, linearSampler), uv - Juv);
+	const vec4 cc = texture(sampler2D(currentFrame, linearSampler), uv);
 
 	// Blend with previous colour.
 	if (!Clipped(uv - Vuv))
@@ -94,13 +91,13 @@ vec4 TemporalAntiAlias(
 		const vec2 pv = texture(sampler2D(velocity, pointSampler), uv - Vuv).xy;
 		
 		// Sample previous colour,
-		const vec4 cp = CatmullRomFilterSample(previousFrame, linearSampler, uv - Vuv);
+		const vec4 cp = CatmullRomFilterSample(previousFrame, linearSampler, uv - Vuv); // + jitter.xy);
 
 		// Clamp previous colour to current color neighbourhood.
-		vec4 ccp = ColorClamp(currentFrame, linearSampler, cc, cp, uv - Juv);
+		vec4 ccp = ColorClamp(currentFrame, linearSampler, cc, cp, uv);
 
 		// Compare velocities; if wastly different then don't merge samples.
-		const float fr = clamp(length(pv - v) * 20.0f, 0.0f, 1.0f);
+		const float fr = clamp(length(pv - v) * 40.0f, 0.0f, 1.0f);
 		ccp = cc * fr + ccp * (1.0f - fr);
 
 		return cc * f + ccp * (1.0f - f);
@@ -108,6 +105,7 @@ vec4 TemporalAntiAlias(
 
 	return cc;
 }
+
 	]]>
 	</text>
 </object>
