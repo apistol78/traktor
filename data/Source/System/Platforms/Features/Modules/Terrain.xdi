@@ -700,6 +700,7 @@
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Ocean_*</item>
+						<item>Terrain_*</item>
 					</value>
 				</second>
 			</item>			
