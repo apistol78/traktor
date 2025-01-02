@@ -1,15 +1,16 @@
 ---
 AlignAfterOpenBracket: DontAlign
-BreakAfterAttributes: Always
+#BreakAfterAttributes: Always
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Allman
-BreakBeforeConceptDeclarations: Always
+#BreakBeforeConceptDeclarations: Always
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeComma
 #BreakFunctionDefinitionParameters: false
 BreakInheritanceList: BeforeComma
 BreakStringLiterals: false
 # BreakTemplateDeclarations: No
+ColumnLimit: 0
 CompactNamespaces: false
 Cpp11BracedListStyle: false
 EmptyLineAfterAccessModifier: Never
@@ -22,16 +23,16 @@ IndentCaseLabels: false
 IndentExternBlock: NoIndent
 IndentGotoLabels: false
 IndentPPDirectives: AfterHash
-IndentRequiresClause: false
+#IndentRequiresClause: false
 IndentWidth: 4
 IndentWrappedFunctionNames: false
-InsertBraces: true
-InsertNewlineAtEOF: true
+#InsertBraces: true
+#InsertNewlineAtEOF: true
 # KeepEmptyLines:
 #   AtEndOfFile: false
 #   AtStartOfBlock: false
 #   AtStartOfFile: false
-KeepEmptyLinesAtEOF: false
+#KeepEmptyLinesAtEOF: false
 KeepEmptyLinesAtTheStartOfBlocks: false
 LambdaBodyIndentation: Signature
 Language: Cpp
@@ -43,14 +44,14 @@ PointerAlignment: Left
 QualifierAlignment: Left
 ReferenceAlignment: Left
 RemoveBracesLLVM: true
-RemoveParentheses: ReturnStatement
-RemoveSemicolon: true
-RequiresClausePosition: WithPreceding
-RequiresExpressionIndentation: OuterScope
+#RemoveParentheses: ReturnStatement
+#RemoveSemicolon: true
+#RequiresClausePosition: WithPreceding
+#RequiresExpressionIndentation: OuterScope
 ShortNamespaceLines: 100000
 SeparateDefinitionBlocks: Always
 SortIncludes: CaseInsensitive
-SortUsingDeclarations: Lexicographic
+#SortUsingDeclarations: Lexicographic
 SpaceAfterCStyleCast: false
 SpaceAfterLogicalNot: false
 SpaceAfterTemplateKeyword: true
@@ -60,7 +61,7 @@ SpaceBeforeCaseColon: false
 SpaceBeforeCpp11BracedList: false
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
-SpaceBeforeJsonColon: true
+#SpaceBeforeJsonColon: true
 SpaceBeforeRangeBasedForLoopColon: true
 SpaceBeforeSquareBrackets: false
 SpaceInEmptyBlock: false
@@ -69,7 +70,7 @@ SpacesInContainerLiterals: true
 SpacesInLineCommentPrefix:
   Minimum: 1
   Maximum: -1
-SpacesInParens: Never
+#SpacesInParens: Never
 SpacesInSquareBrackets: false
 Standard: Latest
 TabWidth: 4
@@ -77,16 +78,17 @@ UseTab: Always
 AccessModifierOffset: -4
 AllowAllParametersOfDeclarationOnNextLine: false
 BinPackArguments: false
+BinPackParameters: true
 AllowShortLoopsOnASingleLine: false
 AllowShortLambdasOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
-AllowShortFunctionsOnASingleLine: None
+AllowShortFunctionsOnASingleLine: Inline
 AllowShortEnumsOnASingleLine: false
-AllowShortCompoundRequirementOnASingleLine: true
+#AllowShortCompoundRequirementOnASingleLine: true
 AllowShortCaseLabelsOnASingleLine: false
 # AllowShortCaseExpressionOnASingleLine: false
 AllowShortBlocksOnASingleLine: Empty
-AllowBreakBeforeNoexceptSpecifier: Never
+#AllowBreakBeforeNoexceptSpecifier: Never
 AllowAllArgumentsOnNextLine: false
 AlignOperands: DontAlign
 AlignEscapedNewlines: DontAlign
