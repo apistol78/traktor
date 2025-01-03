@@ -23,9 +23,17 @@ class ScreenRenderer;
 
 }
 
+namespace traktor::resource
+{
+
+class IResourceManager;
+
+}
+
 namespace traktor::world
 {
 
+struct GatherView;
 struct WorldCreateDesc;
 
 class WorldEntityRenderers;

@@ -234,6 +234,18 @@ $Output = ($Roughness < 0.4f && $Specular > 0.1f) ? 1.0f : 0.0f;
 					<id>{FCB5960F-C2DF-4A41-9085-0D5B95EE6D5B}</id>
 					<name>Bias</name>
 				</item>
+				<item>
+					<id>{A284471E-C0D6-6241-83C2-D1FDA0AF072A}</id>
+					<name>Lights</name>
+				</item>
+				<item>
+					<id>{4DB4298C-CFCC-C741-AF89-05BC7406992C}</id>
+					<name>LightCount</name>
+				</item>
+				<item>
+					<id>{1ACBC572-0089-9C4A-AC3E-C8699BD40E14}</id>
+					<name>ViewInverse</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -244,7 +256,11 @@ $Output = ($Roughness < 0.4f && $Specular > 0.1f) ? 1.0f : 0.0f;
 			</outputPins>
 			<script>
 			<![CDATA[
+const int lightIndex = int($Random * $LightCount) % int($LightCount);
+const $typeof(Lights) light = $Lights[lightIndex];
+
 const int N = 8;
+const float Far = 200.0f;
 
 vec3 u, v;
 OrthogonalFrame($Direction.xyz, u, v);
@@ -272,11 +288,46 @@ for (int i = 0; i < N; ++i)
 		rayDir,
 		200.0f
 	);
-	
 	while(rayQueryProceedEXT(rayQuery));
 
-	const HWRT_Material m = HWRT_GetMaterial(rayQuery);
-	acc += m.albedo;
+	if (rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT)
+	{
+		const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
+		const vec3 hit = rayOrigin + rayDir * t;
+
+		vec3 lightPosition = vec3(0.0f);
+		vec3 lightDirection = vec3(0.0f);
+		float lightDistance = 100.0f;
+		float lightAttenuation = 0.0f;
+
+		if (int(light.Type) == 1)	// Directional
+		{
+			lightDirection = ($ViewInverse * light.Direction).xyz;
+			lightAttenuation = 2.0f;
+		}
+		else if (int(light.Type) == 2)	// Point
+		{
+			lightPosition = ($ViewInverse * vec4(light.Position.xyz, 1.0f)).xyz;
+			lightDirection = lightPosition - hit;
+			lightDistance = length(lightDirection);
+			lightDirection /= lightDistance;
+			lightAttenuation = clamp(1.0f / (lightDistance * lightDistance), 0.0f, 1.0f);
+		}
+
+		// Attenuate with distance of first ray.
+		const float nt = t / Far;
+		lightAttenuation *= clamp(1.0f / (nt * nt), 0.0f, 1.0f);
+
+		if (lightAttenuation > 0.0f)
+		{
+			const HWRT_Material m = HWRT_GetMaterial(rayQuery);
+			const float phi = clamp(dot(lightDirection, m.normal.xyz), 0.5f, 1.0f);
+			acc += vec4(
+				(m.albedo * phi * light.Color).xyz * lightAttenuation,
+				1.0f
+			);
+		}
+	}
 }
 
 $Output = acc / N;
@@ -288,8 +339,8 @@ $Output = acc / N;
 			<id>{D7BA6B77-E4DA-D749-8C5F-1959A986642F}</id>
 			<comment/>
 			<position>
-				<first>1429</first>
-				<second>-805</second>
+				<first>1403</first>
+				<second>-774</second>
 			</position>
 			<declaration>{41DB2032-2B2B-7945-8B6B-947CEC7818A4}</declaration>
 			<parameterName>World_TLAS</parameterName>
@@ -428,8 +479,8 @@ $Output = acc / N;
 			<id>{7988199D-14B3-CC43-903C-887ECA1C5325}</id>
 			<comment/>
 			<position>
-				<first>1137</first>
-				<second>-332</second>
+				<first>1336</first>
+				<second>-387</second>
 			</position>
 			<name>RandomAngle</name>
 			<technique/>
@@ -468,8 +519,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{FDA3F035-EDA7-504B-BEF4-35D83D148C5B}</id>
 			<comment/>
 			<position>
-				<first>705</first>
-				<second>-356</second>
+				<first>875</first>
+				<second>-385</second>
 			</position>
 			<declaration>{85AE3209-AEBC-1143-B9AA-15E7E29380B0}</declaration>
 			<parameterName/>
@@ -480,8 +531,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{6F7BCCC1-5AC7-604A-B013-CE07E5DA68CE}</id>
 			<comment/>
 			<position>
-				<first>923</first>
-				<second>-334</second>
+				<first>1108</first>
+				<second>-374</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -489,8 +540,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{3804218D-AAFA-B243-98A7-D1322FA0F4B9}</id>
 			<comment/>
 			<position>
-				<first>1219</first>
-				<second>-240</second>
+				<first>1297</first>
+				<second>-269</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -498,24 +549,24 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{C40533A0-11D5-6844-94F9-05837B35ECE4}</id>
 			<comment/>
 			<position>
-				<first>560</first>
-				<second>-176</second>
+				<first>687</first>
+				<second>-276</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{54967A60-0203-D149-BC1D-BDB3BB7763E4}</id>
 			<comment/>
 			<position>
-				<first>797</first>
-				<second>-148</second>
+				<first>924</first>
+				<second>-248</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{DC937577-28C8-B947-9BF8-C258DBB7375A}</id>
 			<comment/>
 			<position>
-				<first>586</first>
-				<second>-45</second>
+				<first>713</first>
+				<second>-145</second>
 			</position>
 			<value>100</value>
 		</item>
@@ -523,8 +574,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{7BBFFC33-69FB-4B4C-AB62-737CF95FD70B}</id>
 			<comment/>
 			<position>
-				<first>1165</first>
-				<second>-99</second>
+				<first>1292</first>
+				<second>-199</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -659,6 +710,91 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+			<id>{934D658E-01BB-1D4A-9C48-A2F019D4D0D7}</id>
+			<comment/>
+			<position>
+				<first>1267</first>
+				<second>21</second>
+			</position>
+			<declaration>{23B778E5-02E9-3A41-A252-D491C301D479}</declaration>
+			<parameterName/>
+			<type>Scalar</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+			<id>{47C0506B-ECB7-3C4B-BF40-082D76BE2168}</id>
+			<comment/>
+			<position>
+				<first>1205</first>
+				<second>-64</second>
+			</position>
+			<parameterName>World_LightSBuffer</parameterName>
+			<elements>
+				<item>
+					<name>Type</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>RangeRadius</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>Position</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>Direction</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>Color</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>ViewToLight0</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>ViewToLight1</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>ViewToLight2</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>ViewToLight3</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>AtlasTransform</name>
+					<type>DtFloat4</type>
+					<length>0</length>
+				</item>
+			</elements>
+		</item>
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+			<id>{72188EED-61A7-7C4C-A1F5-CBFDB9801E38}</id>
+			<comment/>
+			<position>
+				<first>1278</first>
+				<second>101</second>
+			</position>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName>World_ViewInverse</parameterName>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -1090,6 +1226,36 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<destination>
 				<node ref="/object/nodes/item[34]"/>
 				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{A284471E-C0D6-6241-83C2-D1FDA0AF072A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[44]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{4DB4298C-CFCC-C741-AF89-05BC7406992C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[46]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{1ACBC572-0089-9C4A-AC3E-C8699BD40E14}</id>
 			</destination>
 		</item>
 	</edges>

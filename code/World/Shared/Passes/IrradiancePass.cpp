@@ -1,42 +1,41 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Shared/Passes/IrradiancePass.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
-#include "Render/IRenderTargetSet.h"
-#include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
+#include "Render/IRenderTargetSet.h"
+#include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
+#include "World/Entity/LightComponent.h"
 #include "World/IEntityRenderer.h"
 #include "World/IrradianceGrid.h"
 #include "World/IWorldRenderer.h"
+#include "World/Shared/WorldRenderPassShared.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/LightComponent.h"
-#include "World/Shared/WorldRenderPassShared.h"
-#include "World/Shared/Passes/IrradiancePass.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::ImageGraph > c_irradiance(L"{14A0E977-7C13-9B43-A26E-F1D21117AEC6}");
 
-const render::Handle s_handleLightCount(L"World_LightCount");
-
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.IrradiancePass", IrradiancePass, Object)
 
@@ -58,7 +57,7 @@ bool IrradiancePass::create(resource::IResourceManager* resourceManager, render:
 
 render::handle_t IrradiancePass::setup(
 	const WorldRenderView& worldRenderView,
-    const GatherView& gatheredView,
+	const GatherView& gatheredView,
 	const render::Buffer* lightSBuffer,
 	bool needJitter,
 	uint32_t frameCount,
@@ -83,7 +82,7 @@ render::handle_t IrradiancePass::setup(
 	rgtd.createDepthStencil = false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR11G11B10F;	// Irradiance (RGB)
+	rgtd.targets[0].colorFormat = render::TfR11G11B10F; // Irradiance (RGB)
 
 	auto irradianceTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance", rgtd, ~0U, outputTargetSetId);
 
@@ -111,9 +110,9 @@ render::handle_t IrradiancePass::setup(
 	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
 	{
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
-		
+
 		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
+		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
 		params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 		params->setMatrixParameter(s_handleView, worldRenderView.getView());
 		params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());

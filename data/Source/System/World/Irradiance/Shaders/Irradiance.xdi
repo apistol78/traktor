@@ -512,7 +512,7 @@ for (int i = 0; i < N; ++i)
 			if (!shadowed)
 			{
 				const HWRT_Material m = HWRT_GetMaterial(rayQuery);
-				float phi = clamp(dot(lightDirection, m.normal.xyz), 0.0f, 1.0f);
+				const float phi = clamp(dot(lightDirection, m.normal.xyz), 0.0f, 1.0f);
 				acc += vec4(
 					(m.albedo * phi * light.Color).xyz * lightAttenuation,
 					1.0f

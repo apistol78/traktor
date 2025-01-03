@@ -10,7 +10,7 @@
 
 #include "Render/Types.h"
 
- // import/export mechanism.
+// import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
@@ -51,11 +51,10 @@ extern const render::Handle T_DLLCLASS s_handleGammaInverse;
 extern const render::Handle T_DLLCLASS s_handleLastWorld;
 extern const render::Handle T_DLLCLASS s_handleLastView;
 extern const render::Handle T_DLLCLASS s_handleLastWorldView;
-extern const render::Handle T_DLLCLASS s_handleLightDiffuseMap;
 extern const render::Handle T_DLLCLASS s_handleLightIndexSBuffer;
 extern const render::Handle T_DLLCLASS s_handleLightMap;
 extern const render::Handle T_DLLCLASS s_handleLightSBuffer;
-extern const render::Handle T_DLLCLASS s_handleLightSpecularMap;
+extern const render::Handle T_DLLCLASS s_handleLightCount;
 extern const render::Handle T_DLLCLASS s_handleMagicCoeffs;
 extern const render::Handle T_DLLCLASS s_handleIrradianceMap;
 extern const render::Handle T_DLLCLASS s_handleOcclusionMap;

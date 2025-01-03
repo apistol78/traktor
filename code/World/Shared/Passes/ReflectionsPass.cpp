@@ -1,41 +1,43 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2024 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Shared/Passes/ReflectionsPass.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Timer/Profiler.h"
-#include "Render/IRenderTargetSet.h"
-#include "Render/ITexture.h"
-#include "Render/ScreenRenderer.h"
+#include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
+#include "Render/IRenderTargetSet.h"
+#include "Render/ITexture.h"
+#include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
+#include "World/Entity/ProbeComponent.h"
 #include "World/IEntityRenderer.h"
 #include "World/IWorldRenderer.h"
+#include "World/Shared/WorldRenderPassShared.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/ProbeComponent.h"
-#include "World/Shared/WorldRenderPassShared.h"
-#include "World/Shared/Passes/ReflectionsPass.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::ImageGraph > c_probeGlobalReflections(L"{79208A82-A65C-2045-A8AD-85E4DA2D160D}");
 const resource::Id< render::ImageGraph > c_probeLocalReflections(L"{3DCB8715-1E44-074A-8D1D-151BE6A8BF81}");
 const resource::Id< render::ImageGraph > c_screenReflections(L"{2F8EC56A-FD46-DF42-94B5-9DD676B8DD8A}");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ReflectionsPass", ReflectionsPass, Object)
 
@@ -80,7 +82,8 @@ bool ReflectionsPass::create(resource::IResourceManager* resourceManager, render
 
 render::handle_t ReflectionsPass::setup(
 	const WorldRenderView& worldRenderView,
-    const GatherView& gatheredView,
+	const GatherView& gatheredView,
+	const render::Buffer* lightSBuffer,
 	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
@@ -108,26 +111,26 @@ render::handle_t ReflectionsPass::setup(
 	{
 	default:
 	case Quality::Low:
-		rgtd.referenceWidthDenom = 2;	// 50%
+		rgtd.referenceWidthDenom = 2; // 50%
 		rgtd.referenceHeightDenom = 2;
 		break;
 
 	case Quality::Medium:
-		rgtd.referenceWidthMul = 2;		// 67%
+		rgtd.referenceWidthMul = 2; // 67%
 		rgtd.referenceWidthDenom = 3;
 		rgtd.referenceHeightMul = 2;
 		rgtd.referenceHeightDenom = 3;
 		break;
 
 	case Quality::High:
-		rgtd.referenceWidthMul = 4;		// 80%
+		rgtd.referenceWidthMul = 4; // 80%
 		rgtd.referenceWidthDenom = 5;
 		rgtd.referenceHeightMul = 4;
 		rgtd.referenceHeightDenom = 5;
 		break;
 
 	case Quality::Ultra:
-		rgtd.referenceWidthDenom = 1;	// 100%
+		rgtd.referenceWidthDenom = 1; // 100%
 		rgtd.referenceHeightDenom = 1;
 		break;
 	}
@@ -190,7 +193,7 @@ render::handle_t ReflectionsPass::setup(
 				params->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
 				params->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
 				params->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
-				params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
+				params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
 				params->setTextureParameter(s_handleProbeTexture, probe->getTexture());
 
 				params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
@@ -244,8 +247,8 @@ render::handle_t ReflectionsPass::setup(
 					params->setFloatParameter(s_handleProbeIntensity, p->getIntensity());
 					params->setFloatParameter(s_handleProbeTextureMips, (float)p->getTexture()->getSize().mips);
 					params->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
-					params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
-					params->setVectorParameter(s_handleProbeVolumeCenter,worldVolume.getCenter());
+					params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
+					params->setVectorParameter(s_handleProbeVolumeCenter, worldVolume.getCenter());
 					params->setVectorParameter(s_handleProbeVolumeExtent, worldVolume.getExtent());
 					params->setMatrixParameter(s_handleWorldView, worldView);
 					params->setMatrixParameter(s_handleWorldViewInv, worldView.inverse());
@@ -287,7 +290,7 @@ render::handle_t ReflectionsPass::setup(
 			const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
 
 			params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-			params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
+			params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
 			params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			params->setMatrixParameter(s_handleView, worldRenderView.getView());
 			params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
@@ -302,6 +305,14 @@ render::handle_t ReflectionsPass::setup(
 				params->setTextureParameter(s_handleDBufferMiscMap, dbufferTargetSet->getColorTexture(1));
 				params->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
 			}
+
+			if (lightSBuffer != nullptr)
+			{
+				params->setBufferViewParameter(s_handleLightSBuffer, lightSBuffer->getBufferView());
+				params->setFloatParameter(s_handleLightCount, (float)gatheredView.lights.size());
+			}
+			else
+				params->setFloatParameter(s_handleLightCount, 0.0f);
 
 			if (gatheredView.rtWorldTopLevel != nullptr)
 				params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);

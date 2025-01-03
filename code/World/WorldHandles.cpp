@@ -41,11 +41,10 @@ const render::Handle s_handleGammaInverse(L"World_GammaInverse");
 const render::Handle s_handleLastWorld(L"World_LastWorld");
 const render::Handle s_handleLastView(L"World_LastView");
 const render::Handle s_handleLastWorldView(L"World_LastWorldView");
-const render::Handle s_handleLightDiffuseMap(L"World_LightDiffuseMap");
 const render::Handle s_handleLightIndexSBuffer(L"World_LightIndexSBuffer");
 const render::Handle s_handleLightMap(L"World_LightMap");
 const render::Handle s_handleLightSBuffer(L"World_LightSBuffer");
-const render::Handle s_handleLightSpecularMap(L"World_LightSpecularMap");
+const render::Handle s_handleLightCount(L"World_LightCount");
 const render::Handle s_handleMagicCoeffs(L"World_MagicCoeffs");
 const render::Handle s_handleIrradianceMap(L"World_IrradianceMap");
 const render::Handle s_handleOcclusionMap(L"World_OcclusionMap");
@@ -121,12 +120,11 @@ const render::Handle s_handleInputVelocity(L"InputVelocity");
 const render::Handle s_handleInputColorGrading(L"InputColorGrading");
 
 // Persistent targets.
-const render::Handle s_handleTargetShadowMap[] =
-{
-    render::Handle(L"World_ShadowMap0"),
-    render::Handle(L"World_ShadowMap1"),
-    render::Handle(L"World_ShadowMap2"),
-    render::Handle(L"World_ShadowMap3")
+const render::Handle s_handleTargetShadowMap[] = {
+	render::Handle(L"World_ShadowMap0"),
+	render::Handle(L"World_ShadowMap1"),
+	render::Handle(L"World_ShadowMap2"),
+	render::Handle(L"World_ShadowMap3")
 };
 
 }
