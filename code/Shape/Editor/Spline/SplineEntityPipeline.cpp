@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Shape/Editor/Spline/SplineEntityPipeline.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -18,42 +20,41 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Mesh/MeshComponentData.h"
-#include "Mesh/Editor/VertexShaderGenerator.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Mesh/Editor/VertexShaderGenerator.h"
+#include "Mesh/MeshComponentData.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/CleanDuplicates.h"
+#include "Physics/Editor/MeshAsset.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
-#include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
-#include "Render/Shader.h"
-#include "Render/Editor/Shader/FragmentLinker.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
+#include "Render/Editor/Shader/FragmentLinker.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Texture/TextureOutput.h"
+#include "Render/Shader.h"
+#include "Shape/Editor/Bake/Embree/SplitModel.h"
 #include "Shape/Editor/Spline/CloneShapeLayerData.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
 #include "Shape/Editor/Spline/ExtrudeShapeLayerData.h"
-#include "Shape/Editor/Bake/Embree/SplitModel.h"
 #include "Shape/Editor/Spline/SplineComponentData.h"
-#include "Shape/Editor/Spline/SplineEntityPipeline.h"
 #include "Shape/Editor/Spline/SplineEntityReplicator.h"
-#include "World/EntityData.h"
+#include "World/Editor/Material/MaterialShaderGenerator.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/PathComponentData.h"
-#include "World/Editor/Material/MaterialShaderGenerator.h"
+#include "World/EntityData.h"
 
 namespace traktor::shape
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-9A17-899B44D5414E}"));
 
@@ -61,7 +62,7 @@ class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
 {
 public:
 	explicit FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
-	:	m_pipelineBuilder(pipelineBuilder)
+		: m_pipelineBuilder(pipelineBuilder)
 	{
 	}
 
@@ -102,17 +103,17 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 	output->m_assumeLinearGamma = normalMap;
 
 	if (!pipelineBuilder->buildAdHocOutput(
-		output,
-		outputGuid,
-		map.image
-	))
+			output,
+			outputGuid,
+			map.image
+		))
 		return false;
 
 	map.texture = outputGuid;
 	return true;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 11, SplineEntityPipeline, world::EntityPipeline)
 
@@ -125,7 +126,7 @@ bool SplineEntityPipeline::create(const editor::IPipelineSettings* settings, db:
 	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path", L"");
 	m_platform = settings->getPropertyIncludeHash< std::wstring >(L"ShaderPipeline.Platform");
 	m_targetEditor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
-	
+
 	m_replicator = new SplineEntityReplicator();
 	m_replicator->create(settings);
 
@@ -138,8 +139,7 @@ TypeInfoSet SplineEntityPipeline::getAssetTypes() const
 		CloneShapeLayerData,
 		ControlPointComponentData,
 		ExtrudeShapeLayerData,
-		SplineComponentData
-	>();
+		SplineComponentData >();
 }
 
 bool SplineEntityPipeline::buildDependencies(
@@ -157,14 +157,11 @@ bool SplineEntityPipeline::buildDependencies(
 		for (auto id : splineComponentData->getCollisionGroup())
 			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
 		for (auto id : splineComponentData->getCollisionMask())
-			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);	
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
 	}
 
 	for (const auto& meshId : gatherMeshIds(sourceAsset))
-	{
-		const uint32_t flags = m_targetEditor ? editor::PdfBuild | editor::PdfUse : editor::PdfUse;
-		pipelineDepends->addDependency(meshId, flags);
-	}
+		pipelineDepends->addDependency(meshId, editor::PdfUse);
 
 	if (m_targetEditor)
 		pipelineDepends->addDependency(c_defaultShader, editor::PdfBuild | editor::PdfResource);
@@ -181,7 +178,10 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 {
 	if (m_targetEditor)
 	{
-		const auto fragmentReader = [&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); };
+		const auto fragmentReader = [&](const Guid& fragmentId)
+		{
+			return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId);
+		};
 
 		mesh::VertexShaderGenerator vertexGenerator(fragmentReader);
 		world::MaterialShaderGenerator materialGenerator(fragmentReader);
@@ -207,40 +207,62 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				const uint32_t materialHash = DeepHash(&material).get();
 				const Guid outputGuid = Guid(L"{8BB018D2-7AAC-4F9D-A5A4-DE396604862C}").permutation(materialHash);
 
-				Ref< const render::ShaderGraph > meshSurfaceShaderGraph;
+				Ref< const render::ShaderGraph > materialShaderGraph;
+
+				// Generate surface shader from material.
+				buildEmbeddedTexture(pipelineBuilder, material.getDiffuseMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getSpecularMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getRoughnessMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getMetalnessMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getTransparencyMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getEmissiveMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getReflectiveMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getNormalMap(), true);
+
+				Ref< const render::ShaderGraph > meshSurfaceShaderGraph = materialGenerator.generateSurface(
+					material,
+					false,
+					true
+				);
 
 				// Try to get surface shader from explicit list first.
 				const auto it = materialShaders.find(material.getName());
 				if (it != materialShaders.end())
 				{
-					meshSurfaceShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
-				}
+					Ref< const render::ShaderGraph > customMeshSurfaceShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
+					if (!customMeshSurfaceShaderGraph)
+					{
+						// log::error << L"SplineEntityPipeline failed; unable to read material surface shader \"" << materialPair.first << L"\"." << Endl;
+						return nullptr;
+					}
 
-				// Generate surface shader from material.
-				if (!meshSurfaceShaderGraph)
-				{
-					buildEmbeddedTexture(pipelineBuilder, material.getDiffuseMap(), false);
-					buildEmbeddedTexture(pipelineBuilder, material.getSpecularMap(), false);
-					buildEmbeddedTexture(pipelineBuilder, material.getRoughnessMap(), false);
-					buildEmbeddedTexture(pipelineBuilder, material.getMetalnessMap(), false);
-					buildEmbeddedTexture(pipelineBuilder, material.getTransparencyMap(), false);
-					buildEmbeddedTexture(pipelineBuilder, material.getEmissiveMap(), false);
-					buildEmbeddedTexture(pipelineBuilder, material.getReflectiveMap(), false);
-					buildEmbeddedTexture(pipelineBuilder, material.getNormalMap(), true);
+					// Combine generated surface shader with custom; this allows the custom surface shader
+					// to access/pass through surface properties from the generated surface shader without having
+					// to ensure all are set in the custom shader itself.
 
-					meshSurfaceShaderGraph = materialGenerator.generateSurface(
+					customMeshSurfaceShaderGraph = materialGenerator.combineSurface(customMeshSurfaceShaderGraph, meshSurfaceShaderGraph);
+					if (!customMeshSurfaceShaderGraph)
+					{
+						// log::error << L"SplineEntityPipeline failed; unable to combine material surface shaders \"" << materialPair.first << L"\"." << Endl;
+						return nullptr;
+					}
+
+					materialShaderGraph = vertexGenerator.generateMesh(
+						*model,
 						material,
-						false,
-						true
+						customMeshSurfaceShaderGraph,
+						Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}")
 					);
 				}
-
-				Ref< const render::ShaderGraph > materialShaderGraph = vertexGenerator.generateMesh(
-					*model,
-					material,
-					meshSurfaceShaderGraph,
-					Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}")
-				);
+				else
+				{
+					materialShaderGraph = vertexGenerator.generateMesh(
+						*model,
+						material,
+						meshSurfaceShaderGraph,
+						Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}")
+					);
+				}
 
 				// Resolve all variables.
 				materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, outputGuid).getVariableResolved();
@@ -364,10 +386,8 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 			for (auto entityData : group->getEntityData())
 			{
 				for (auto componentData : entityData->getComponents())
-				{
 					if (is_a< ControlPointComponentData >(componentData))
 						controlPointCount++;
-				}
 			}
 			if (controlPointCount <= 0)
 			{

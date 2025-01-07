@@ -5,8 +5,8 @@
 			<id>{7B5B03E8-DA14-FB4E-B761-E801FE9A0268}</id>
 			<comment/>
 			<position>
-				<first>-145</first>
-				<second>212</second>
+				<first>-101</first>
+				<second>190</second>
 			</position>
 			<name>VertexAttributes</name>
 			<connectable>true</connectable>
@@ -18,33 +18,80 @@
 			<id>{FC36C352-F0F8-0448-8453-A512A453938E}</id>
 			<comment/>
 			<position>
-				<first>931</first>
-				<second>217</second>
+				<first>952</first>
+				<second>211</second>
 			</position>
 			<name>SurfaceAttributes</name>
 		</item>
-		<item type="traktor.render.BundleUnite" version="traktor.render.Node:1">
-			<id>{A5542704-8F70-394F-BF43-08D375161742}</id>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{EAB86259-9DA5-4260-8E53-B29D56F4DDEF}</id>
 			<comment/>
 			<position>
-				<first>634</first>
-				<second>164</second>
+				<first>561</first>
+				<second>146</second>
 			</position>
-			<names>
-				<item>Albedo</item>
-				<item>Metalness</item>
-				<item>Roughness</item>
-				<item>Specular</item>
-				<item>Normal</item>
-				<item>Alpha</item>
-			</names>
+			<fragmentGuid>{0524A94E-4377-42AC-8A13-26FFE3491CC3}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{AAB0F959-D4F8-42B4-95ED-08AE1EABD898}</id>
+					<name>Albedo</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{851EEB8C-0FDE-4133-8821-8AFDCA63A98E}</id>
+					<name>Alpha</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{D7F0FE21-607C-48DB-98F1-BEA2607C6733}</id>
+					<name>Decal response</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{5E226B83-0061-4026-B5B7-ED42DBF63446}</id>
+					<name>Inherit</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{E2BC6128-4B47-45F2-90DD-EAB08727C84C}</id>
+					<name>Metalness</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{5D56B51C-EF42-4669-9F88-07D446673255}</id>
+					<name>Normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{90D3E596-1415-4837-89CF-F3507AAAE050}</id>
+					<name>Roughness</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{B3745189-7FD6-48F0-A2AC-E5769DA17166}</id>
+					<name>Specular</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{E17C87D4-085A-409D-9642-1926DBAADBBC}</id>
+					<name>World position offse</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{4CBEFFF7-322F-43C2-BEAD-057E8A93B57A}</id>
+					<name>SurfaceAttributes</name>
+				</item>
+			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<id>{EEB495BD-DE7F-4DE8-9A3A-7E9B220B927F}</id>
+				<id>{4CBEFFF7-322F-43C2-BEAD-057E8A93B57A}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
