@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
@@ -66,9 +67,6 @@ public:
 
 	/*! Remove disabled outputs. */
 	Ref< ShaderGraph > removeDisabledOutputs() const;
-
-	/*! Set values in external nodes from constant inputs. */
-	Ref< ShaderGraph > propagateConstantExternalValues() const;
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;

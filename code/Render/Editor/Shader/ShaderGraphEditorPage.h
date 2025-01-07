@@ -8,11 +8,12 @@
  */
 #pragma once
 
-#include <map>
 #include "Core/RefArray.h"
 #include "Editor/IEditorPage.h"
-#include "Ui/Point.h"
 #include "Ui/Events/AllEvents.h"
+#include "Ui/Point.h"
+
+#include <map>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,18 +25,18 @@
 
 namespace traktor
 {
-	namespace editor
-	{
+namespace editor
+{
 
 class IDocument;
 class IEditor;
 class IEditorPageSite;
 class PropertiesView;
 
-	}
+}
 
-	namespace ui
-	{
+namespace ui
+{
 
 class Container;
 class EdgeConnectEvent;
@@ -57,13 +58,14 @@ class ToolBar;
 class ToolBarButtonClickEvent;
 class ToolBarDropDown;
 
-	}
+}
 
-	namespace render
-	{
+namespace render
+{
 
 class Edge;
 class External;
+class Group;
 class INodeFacade;
 class Node;
 class QuickMenuTool;
@@ -166,6 +168,5 @@ private:
 	void eventUniformOrPortDoubleClick(ui::GridRowDoubleClickEvent* event);
 };
 
-	}
 }
-
+}

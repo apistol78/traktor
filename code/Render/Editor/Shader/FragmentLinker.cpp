@@ -6,21 +6,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/FragmentLinker.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/Node.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/External.h"
-#include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
+#include "Render/Editor/Shader/External.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 #if defined(_DEBUG)
 #	define T_VALIDATE_SHADERGRAPH(sg) T_FATAL_ASSERT(ShaderGraphValidator(sg).validateIntegrity())
@@ -34,9 +35,9 @@ class PortConnector : public Node
 
 public:
 	explicit PortConnector(const Guid& fromFragmentId)
-	:	m_fromFragmentId(fromFragmentId)
-	,	m_inputPin(this, Guid(L"{7efbd768-2381-11ef-a168-7fa583325338}"), L"Input", false)
-	,	m_outputPin(this, Guid(L"{8a3561bc-2381-11ef-9b5c-3f9b39355b23}"), L"Output")
+		: m_fromFragmentId(fromFragmentId)
+		, m_inputPin(this, Guid(L"{7efbd768-2381-11ef-a168-7fa583325338}"), L"Input", false)
+		, m_outputPin(this, Guid(L"{8a3561bc-2381-11ef-9b5c-3f9b39355b23}"), L"Output")
 	{
 #if defined(_DEBUG)
 		setId(Guid::create());
@@ -95,19 +96,19 @@ const OutputPin* findExternalOutputPin(const External* externalNode, const Outpu
 	return nullptr;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.FragmentLinker", FragmentLinker, Object)
 
 FragmentLinker::FragmentLinker(const IFragmentReader& fragmentReader)
-:	m_fragmentReader(&fragmentReader)
-,	m_own(false)
+	: m_fragmentReader(&fragmentReader)
+	, m_own(false)
 {
 }
 
 FragmentLinker::FragmentLinker(const std::function< Ref< const ShaderGraph >(const Guid&) >& fragmentReader)
-:	m_fragmentReader(new LambdaFragmentReader(fragmentReader))
-,	m_own(true)
+	: m_fragmentReader(new LambdaFragmentReader(fragmentReader))
+	, m_own(true)
 {
 }
 
@@ -133,8 +134,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 
 	Ref< ShaderGraph > mutableShaderGraph = new ShaderGraph(
 		shaderGraph->getNodes(),
-		shaderGraph->getEdges()
-	);
+		shaderGraph->getEdges());
 	T_VALIDATE_SHADERGRAPH(mutableShaderGraph);
 
 	for (auto externalNode : externalNodes)
@@ -185,56 +185,19 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 
 			if (const InputPort* inputPort = dynamic_type_cast< const InputPort* >(edge->getSource()->getNode()))
 			{
-				if (inputPort->isConnectable())
+				const InputPin* externalInputPin = findExternalInputPin(externalNode, inputPort);
+				const OutputPin* externalSourcePin = mutableShaderGraph->findSourcePin(externalInputPin);
+				if (externalInputPin && externalSourcePin)
 				{
-					const InputPin* externalInputPin = findExternalInputPin(externalNode, inputPort);
-					const OutputPin* externalSourcePin = mutableShaderGraph->findSourcePin(externalInputPin);
-					if (externalInputPin && externalSourcePin)
-					{
-						Ref< PortConnector > connector = new PortConnector(fragmentId);
-						mutableShaderGraph->addNode(connector);
-						mutableShaderGraph->addEdge(new Edge(externalSourcePin, connector->getInputPin(0)));
-						sourcePin = connector->getOutputPin(0);
-					}
-					else if (inputPort->isOptional())
-					{
-						Ref< Scalar > scalarNode;
-
-						const auto& values = externalNode->getValues();
-						auto it = values.find(inputPort->getName());
-						if (it != values.end())
-							scalarNode = new Scalar(it->second);
-						else if (inputPort->haveDefaultValue())
-							scalarNode = new Scalar(inputPort->getDefaultValue());
-
-						if (scalarNode)
-						{
-							mutableShaderGraph->addNode(scalarNode);
-							sourcePin = scalarNode->getOutputPin(0);
-						}
-					}
-					else
-					{
-						log::error << errorPrefix << L"mandatory input port \"" << inputPort->getName() << L"\" of fragment \"" << fragmentId.format() << L"\" not connected." << Endl;
-						return nullptr;
-					}
+					Ref< PortConnector > connector = new PortConnector(fragmentId);
+					mutableShaderGraph->addNode(connector);
+					mutableShaderGraph->addEdge(new Edge(externalSourcePin, connector->getInputPin(0)));
+					sourcePin = connector->getOutputPin(0);
 				}
-				else
+				else if (!inputPort->isOptional())
 				{
-					Ref< Scalar > scalarNode;
-
-					const auto& values = externalNode->getValues();
-					auto it = values.find(inputPort->getName());
-					if (it != values.end())
-						scalarNode = new Scalar(it->second);
-					else if (inputPort->haveDefaultValue())
-						scalarNode = new Scalar(inputPort->getDefaultValue());
-
-					if (scalarNode)
-					{
-						mutableShaderGraph->addNode(scalarNode);
-						sourcePin = scalarNode->getOutputPin(0);
-					}
+					log::error << errorPrefix << L"mandatory input port \"" << inputPort->getName() << L"\" of fragment \"" << fragmentId.format() << L"\" not connected." << Endl;
+					return nullptr;
 				}
 			}
 			else
@@ -254,8 +217,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 						mutableShaderGraph->removeEdge(externalDestinationEdge);
 						mutableShaderGraph->addEdge(new Edge(
 							connector->getOutputPin(0),
-							externalDestinationEdge->getDestination()
-						));
+							externalDestinationEdge->getDestination()));
 					}
 					destinationPin = connector->getInputPin(0);
 				}
@@ -266,16 +228,13 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 			if (sourcePin && destinationPin)
 				mutableShaderGraph->addEdge(new Edge(
 					sourcePin,
-					destinationPin
-				));
+					destinationPin));
 		}
 
 		// Move over all non-port nodes from fragment as-is.
 		for (auto node : fragmentShaderGraph->getNodes())
-		{
 			if (!is_a< InputPort >(node) && !is_a< OutputPort >(node))
 				mutableShaderGraph->addNode(node);
-		}
 
 		// Remove external node.
 		mutableShaderGraph->removeNode(externalNode);
@@ -291,7 +250,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 			mutableShaderGraph->removeNode(connector);
 			continue;
 		}
-		
+
 		AlignedVector< const InputPin* > destinationPins = mutableShaderGraph->findDestinationPins(connector->getOutputPin(0));
 		for (auto destinationPin : destinationPins)
 		{
@@ -303,8 +262,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 
 			mutableShaderGraph->addEdge(new Edge(
 				sourcePin,
-				destinationPin
-			));
+				destinationPin));
 		}
 
 		mutableShaderGraph->removeNode(connector);

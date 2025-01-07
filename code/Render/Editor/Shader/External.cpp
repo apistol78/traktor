@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
+#include "Render/Editor/Shader/External.h"
+
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeReadOnly.h"
 #include "Core/Serialization/AttributeType.h"
@@ -17,14 +18,15 @@
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/OutputPin.h"
-#include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 
+#include <algorithm>
+
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 class MemberInputPin : public MemberComplex
 {
@@ -32,9 +34,9 @@ public:
 	typedef InputPin* value_type;
 
 	explicit MemberInputPin(const wchar_t* const name, Node* node, value_type& pin)
-	:	MemberComplex(name, true)
-	,	m_node(node)
-	,	m_pin(pin)
+		: MemberComplex(name, true)
+		, m_node(node)
+		, m_pin(pin)
 	{
 	}
 
@@ -54,7 +56,7 @@ public:
 			if (s.getVersion() >= 1)
 				s >> Member< bool >(L"optional", optional);
 		}
-		else	// Direction::Read
+		else // Direction::Read
 		{
 			Guid id;
 			std::wstring name = L"";
@@ -69,23 +71,17 @@ public:
 				s >> Member< bool >(L"optional", optional);
 
 			if (m_pin)
-			{
 				*m_pin = InputPin(
 					m_node,
 					id,
 					name,
-					optional
-				);
-			}
+					optional);
 			else
-			{
 				m_pin = new InputPin(
 					m_node,
 					id,
 					name,
-					optional
-				);
-			}
+					optional);
 		}
 	}
 
@@ -100,9 +96,9 @@ public:
 	typedef OutputPin* value_type;
 
 	explicit MemberOutputPin(const wchar_t* const name, Node* node, value_type& pin)
-	:	MemberComplex(name, true)
-	,	m_node(node)
-	,	m_pin(pin)
+		: MemberComplex(name, true)
+		, m_node(node)
+		, m_pin(pin)
 	{
 	}
 
@@ -118,7 +114,7 @@ public:
 
 			s >> Member< std::wstring >(L"name", name);
 		}
-		else	// Direction::Read
+		else // Direction::Read
 		{
 			Guid id;
 			std::wstring name;
@@ -129,21 +125,15 @@ public:
 			s >> Member< std::wstring >(L"name", name);
 
 			if (m_pin)
-			{
 				*m_pin = OutputPin(
 					m_node,
 					id,
-					name
-				);
-			}
+					name);
 			else
-			{
 				m_pin = new OutputPin(
 					m_node,
 					id,
-					name
-				);
-			}
+					name);
 		}
 	}
 
@@ -160,10 +150,10 @@ public:
 	typedef AlignedVector< pin_type > value_type;
 
 	explicit MemberPinArray(const wchar_t* const name, Node* node, value_type& pins)
-	:	MemberArray(name, &m_attribute)
-	,	m_node(node)
-	,	m_pins(pins)
-	,	m_index(0)
+		: MemberArray(name, &m_attribute)
+		, m_node(node)
+		, m_pins(pins)
+		, m_index(0)
 	{
 	}
 
@@ -204,7 +194,7 @@ private:
 
 struct SortInputPinPredicate
 {
-	bool operator () (const InputPin* pl, const InputPin* pr) const
+	bool operator()(const InputPin* pl, const InputPin* pr) const
 	{
 		if (!pl->isOptional() && pr->isOptional())
 			return true;
@@ -218,18 +208,18 @@ struct SortInputPinPredicate
 
 struct SortOutputPinPredicate
 {
-	bool operator () (const OutputPin* pl, const OutputPin* pr) const
+	bool operator()(const OutputPin* pl, const OutputPin* pr) const
 	{
 		return pl->getName().compare(pr->getName()) < 0;
 	}
 };
 
-	}
+}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.External", 2, External, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.External", 3, External, Node)
 
 External::External(const Guid& fragmentGuid, const ShaderGraph* fragmentGraph)
-:	m_fragmentGuid(fragmentGuid)
+	: m_fragmentGuid(fragmentGuid)
 {
 	for (auto fragmentNode : fragmentGraph->getNodes())
 	{
@@ -238,18 +228,11 @@ External::External(const Guid& fragmentGuid, const ShaderGraph* fragmentGraph)
 			const Guid& id = inputPort->getId();
 			const std::wstring name = inputPort->getName();
 
-			if (inputPort->isConnectable())
-			{
-				m_inputPins.push_back(new InputPin(
-					this,
-					id,
-					name,
-					inputPort->isOptional()
-				));
-			}
-
-			if (inputPort->haveDefaultValue() && (inputPort->isOptional() || !inputPort->isConnectable()))
-				m_values[name] = inputPort->getDefaultValue();
+			m_inputPins.push_back(new InputPin(
+				this,
+				id,
+				name,
+				inputPort->isOptional()));
 		}
 		else if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >(fragmentNode))
 		{
@@ -259,8 +242,7 @@ External::External(const Guid& fragmentGuid, const ShaderGraph* fragmentGraph)
 			m_outputPins.push_back(new OutputPin(
 				this,
 				id,
-				name
-			));
+				name));
 		}
 	}
 
@@ -291,29 +273,6 @@ const Guid& External::getFragmentGuid() const
 	return m_fragmentGuid;
 }
 
-void External::setValue(const std::wstring& name, float value)
-{
-	m_values[name] = value;
-}
-
-float External::getValue(const std::wstring& name, float defaultValue) const
-{
-	auto it = m_values.find(name);
-	return it != m_values.end() ? it->second : defaultValue;
-}
-
-bool External::haveValue(const std::wstring& name) const
-{
-	return m_values.find(name) != m_values.end();
-}
-
-void External::removeValue(const std::wstring& name)
-{
-	auto it = m_values.find(name);
-	if (it != m_values.end())
-		m_values.erase(it);
-}
-
 const InputPin* External::createInputPin(const Guid& id, const std::wstring& name, bool optional)
 {
 	InputPin* inputPin = new InputPin(this, id, name, optional);
@@ -334,14 +293,16 @@ void External::removeInputPin(const InputPin* inputPin)
 {
 	auto it = std::find(m_inputPins.begin(), m_inputPins.end(), inputPin);
 	T_ASSERT(it != m_inputPins.end());
-	delete *it; m_inputPins.erase(it);
+	delete *it;
+	m_inputPins.erase(it);
 }
 
 void External::removeOutputPin(const OutputPin* outputPin)
 {
 	auto it = std::find(m_outputPins.begin(), m_outputPins.end(), outputPin);
 	T_ASSERT(it != m_outputPins.end());
-	delete *it; m_outputPins.erase(it);
+	delete *it;
+	m_outputPins.erase(it);
 }
 
 std::wstring External::getInformation() const
@@ -379,8 +340,11 @@ void External::serialize(ISerializer& s)
 	s >> MemberPinArray< MemberInputPin >(L"inputPins", this, m_inputPins);
 	s >> MemberPinArray< MemberOutputPin >(L"outputPins", this, m_outputPins);
 
-	if (s.getVersion() >= 1)
-		s >> MemberSmallMap< std::wstring, float >(L"values", m_values);
+	if (s.getVersion() >= 1 && s.getVersion() < 2)
+	{
+		SmallMap< std::wstring, float > values;
+		s >> MemberSmallMap< std::wstring, float >(L"values", values);
+	}
 }
 
 }

@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 /*
  * TRAKTOR
  * Copyright (c) 2022 Anders Pistol.
@@ -8,13 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/RefSet.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphTypePropagation.h"
+
 #include "Core/Log/Log.h"
+#include "Core/RefSet.h"
 #include "Render/Editor/GraphTraverse.h"
+#include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/INodeTraits.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphTypePropagation.h"
 
 namespace traktor::render
 {
@@ -22,8 +21,8 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTypePropagation", ShaderGraphTypePropagation, Object)
 
 ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shaderGraph, const Guid& shaderGraphId)
-:	m_shaderGraph(shaderGraph)
-,	m_valid(true)
+	: m_shaderGraph(shaderGraph)
+	, m_valid(true)
 {
 	RefArray< Node > roots;
 	for (auto node : m_shaderGraph->getNodes())
@@ -36,8 +35,8 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 }
 
 ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shaderGraph, const RefArray< Node >& roots, const Guid& shaderGraphId)
-:	m_shaderGraph(shaderGraph)
-,	m_valid(true)
+	: m_shaderGraph(shaderGraph)
+	, m_valid(true)
 {
 	initialize(roots, shaderGraphId);
 }
@@ -91,7 +90,7 @@ void ShaderGraphTypePropagation::initialize(const RefArray< Node >& roots, const
 				{
 					if (!inputPin->isOptional())
 					{
-						log::warning << L"Mandatory input pin \"" << inputPin->getName() << L"\" of node " << node->getId().format() << L" (" << type_name(node) << L") not connected in fragment " << shaderGraphId.format() << L"." << Endl;
+						log::warning << L"Mandatory input pin \"" << inputPin->getName() << L"\" of node " << node->getId().format() << L" (" << type_name(node) << L" / " << node->getInformation() << L") not connected in fragment " << shaderGraphId.format() << L"." << Endl;
 						m_valid = false;
 					}
 

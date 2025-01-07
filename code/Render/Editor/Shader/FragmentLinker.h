@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,11 +8,13 @@
  */
 #pragma once
 
-#include <functional>
-#include <string>
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/RefArray.h"
+
+#include <functional>
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -89,7 +91,7 @@ private:
 	{
 	public:
 		explicit LambdaFragmentReader(const std::function< Ref< const ShaderGraph >(const Guid&) >& lambda)
-		:	m_lambda(lambda)
+			: m_lambda(lambda)
 		{
 		}
 

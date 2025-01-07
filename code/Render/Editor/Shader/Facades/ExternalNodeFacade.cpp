@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
+
 #include "Core/Io/StringOutputStream.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -16,7 +18,6 @@
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
 #include "Ui/Application.h"
 #include "Ui/Graph/DefaultNodeShape.h"
 #include "Ui/Graph/GraphControl.h"
@@ -25,8 +26,8 @@
 
 namespace traktor
 {
-	namespace render
-	{
+namespace render
+{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ExternalNodeFacade", ExternalNodeFacade, INodeFacade)
 
@@ -37,8 +38,7 @@ ExternalNodeFacade::ExternalNodeFacade()
 
 Ref< Node > ExternalNodeFacade::createShaderNode(
 	const TypeInfo* nodeType,
-	editor::IEditor* editor
-)
+	editor::IEditor* editor)
 {
 	editor::TypeBrowseFilter filter(type_of< ShaderGraph >());
 	Ref< db::Instance > fragmentInstance = editor->browseInstance(&filter);
@@ -51,16 +51,14 @@ Ref< Node > ExternalNodeFacade::createShaderNode(
 
 	return new External(
 		fragmentInstance->getGuid(),
-		fragmentGraph
-	);
+		fragmentGraph);
 }
 
 Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	External* externalNode = mandatory_non_null_type_cast< External* >(shaderNode);
 	std::wstring title;
@@ -78,21 +76,17 @@ Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 		L"",
 		ui::UnitPoint(
 			ui::Unit(shaderNode->getPosition().first),
-			ui::Unit(shaderNode->getPosition().second)
-		),
-		m_nodeShape
-	);
+			ui::Unit(shaderNode->getPosition().second)),
+		m_nodeShape);
 
 	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
 	{
 		const InputPin* inputPin = shaderNode->getInputPin(j);
-		const bool usingDefaultValue = (shaderGraph->findSourcePin(inputPin) == nullptr && externalNode->haveValue(inputPin->getName()));
 		editorNode->createInputPin(
 			inputPin->getName(),
 			inputPin->getId(),
 			!inputPin->isOptional(),
-			usingDefaultValue
-		);
+			false);
 	}
 
 	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
@@ -100,8 +94,7 @@ Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 		const OutputPin* outputPin = shaderNode->getOutputPin(j);
 		editorNode->createOutputPin(
 			outputPin->getName(),
-			outputPin->getId()
-		);
+			outputPin->getId());
 	}
 
 	editorNode->setComment(shaderNode->getComment());
@@ -114,12 +107,10 @@ void ExternalNodeFacade::editShaderNode(
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	Ref< db::Instance > instance = editor->getSourceDatabase()->getInstance(
-		checked_type_cast< External* >(shaderNode)->getFragmentGuid()
-	);
+		checked_type_cast< External* >(shaderNode)->getFragmentGuid());
 	if (instance)
 		editor->openEditor(instance);
 }
@@ -129,8 +120,7 @@ void ExternalNodeFacade::refreshEditorNode(
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	External* external = checked_type_cast< External*, false >(shaderNode);
 	Ref< db::Instance > instance = editor->getSourceDatabase()->getInstance(static_cast< External* >(shaderNode)->getFragmentGuid());
@@ -140,11 +130,10 @@ void ExternalNodeFacade::refreshEditorNode(
 
 void ExternalNodeFacade::setValidationIndicator(
 	ui::Node* editorNode,
-	bool validationSucceeded
-)
+	bool validationSucceeded)
 {
 	editorNode->setState(validationSucceeded ? 0 : 1);
 }
 
-	}
+}
 }

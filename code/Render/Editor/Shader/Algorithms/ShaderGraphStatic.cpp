@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cctype>
+#include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
+
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -14,20 +15,21 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/GraphTraverse.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphTypeEvaluator.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphTypePropagation.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphTypeEvaluator.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphTypePropagation.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
+
+#include <cctype>
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 #if defined(_DEBUG)
 #	define T_VALIDATE_SHADERGRAPH(sg) T_FATAL_ASSERT(ShaderGraphValidator(sg).validateIntegrity())
@@ -41,18 +43,18 @@ struct ConstantFoldingVisitor
 	const SmallMap< const OutputPin*, Constant >& m_outputConstants;
 
 	explicit ConstantFoldingVisitor(ShaderGraph* shaderGraph, const SmallMap< const OutputPin*, Constant >& outputConstants)
-	:	m_shaderGraph(shaderGraph)
-	,	m_outputConstants(outputConstants)
+		: m_shaderGraph(shaderGraph)
+		, m_outputConstants(outputConstants)
 	{
 	}
 
-	bool operator () (Node* node)
+	bool operator()(Node* node)
 	{
 		m_shaderGraph->addNode(node);
 		return true;
 	}
 
-	bool operator () (Edge* edge)
+	bool operator()(Edge* edge)
 	{
 		const OutputPin* source = edge->getSource();
 
@@ -120,7 +122,7 @@ struct ConstantFoldingVisitor
 	}
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphStatic", ShaderGraphStatic, Object)
 
@@ -137,8 +139,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring&
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
+		m_shaderGraph->getEdges());
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	for (const auto node : shaderGraph->findNodesOf< Platform >())
@@ -168,8 +169,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring&
 			shaderGraph->removeEdge(destinationEdge);
 			shaderGraph->addEdge(new Edge(
 				sourceEdge->getSource(),
-				destinationEdge->getDestination()
-			));
+				destinationEdge->getDestination()));
 		}
 
 		shaderGraph->removeNode(node);
@@ -185,8 +185,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getRendererPermutation(const std::wstring&
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
+		m_shaderGraph->getEdges());
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	for (const auto node : shaderGraph->findNodesOf< Renderer >())
@@ -216,8 +215,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getRendererPermutation(const std::wstring&
 			shaderGraph->removeEdge(destinationEdge);
 			shaderGraph->addEdge(new Edge(
 				sourceEdge->getSource(),
-				destinationEdge->getDestination()
-			));
+				destinationEdge->getDestination()));
 		}
 
 		shaderGraph->removeNode(node);
@@ -233,8 +231,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
+		m_shaderGraph->getEdges());
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	RefArray< Connected > connectedNodes = shaderGraph->findNodesOf< Connected >();
@@ -274,8 +271,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 			shaderGraph->removeEdge(destinationEdge);
 			shaderGraph->addEdge(new Edge(
 				sourceOutputPin,
-				destinationEdge->getDestination()
-			));
+				destinationEdge->getDestination()));
 		}
 
 		shaderGraph->removeNode(connectedNode);
@@ -291,8 +287,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
+		m_shaderGraph->getEdges());
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	RefArray< Type > nodes = shaderGraph->findNodesOf< Type >();
@@ -310,28 +305,18 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 		const InputPin* inputPin = nullptr;
 
 		if (isPinTypeScalar(inputType))
-		{
 			if (getPinTypeWidth(inputType) <= 1)
 				inputPin = node->findInputPin(L"Scalar");
 			else
 				inputPin = node->findInputPin(L"Vector");
-		}
 		else if (inputType == PinType::Matrix)
-		{
 			inputPin = node->findInputPin(L"Matrix");
-		}
 		else if (isPinTypeTexture(inputType))
-		{
 			inputPin = node->findInputPin(L"Texture");
-		}
 		else if (isPinTypeState(inputType))
-		{
 			inputPin = node->findInputPin(L"State");
-		}
 		else if (inputType == PinType::Void)
-		{
 			inputPin = node->findInputPin(L"Default");
-		}
 
 		if (!inputPin)
 			return nullptr;
@@ -355,8 +340,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 			shaderGraph->removeEdge(destinationEdge);
 			shaderGraph->addEdge(new Edge(
 				sourceEdge->getSource(),
-				destinationEdge->getDestination()
-			));
+				destinationEdge->getDestination()));
 		}
 	}
 
@@ -370,8 +354,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
+		m_shaderGraph->getEdges());
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	ShaderGraphTypePropagation typePropagation(shaderGraph, m_shaderGraphId);
@@ -402,8 +385,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 
 		std::pair< int, int > p(
 			(p1.first + p2.first) / 2,
-			(p1.second + p2.second) / 2
-		);
+			(p1.second + p2.second) / 2);
 
 		Ref< Swizzle > swizzleNode = new Swizzle(c_swizzles[getPinTypeWidth(destinationType) - 1]);
 		swizzleNode->setPosition(p);
@@ -430,8 +412,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
+		m_shaderGraph->getEdges());
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	ShaderGraphTypePropagation typePropagation(shaderGraph, m_shaderGraphId);
@@ -445,7 +426,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 	for (const auto node : nodes)
 	{
 		const INodeTraits* nodeTraits = INodeTraits::find(node);
-		T_FATAL_ASSERT (nodeTraits);
+		T_FATAL_ASSERT(nodeTraits);
 
 		int32_t outputPinCount = node->getOutputPinCount();
 		for (int32_t i = 0; i < outputPinCount; ++i)
@@ -495,7 +476,7 @@ restart_iteration:
 					if (isPinTypeScalar(inputPinType))
 					{
 						auto it = outputConstants.find(outputPin);
-						T_FATAL_ASSERT (it != outputConstants.end());
+						T_FATAL_ASSERT(it != outputConstants.end());
 
 						inputConstants[j] = it->second.cast(inputPinType);
 					}
@@ -519,13 +500,12 @@ restart_iteration:
 				{
 					const OutputPin* foldOutputPin = nullptr;
 					if (nodeTraits->evaluatePartial(
-						shaderGraph,
-						node,
-						outputPin,
-						&inputOutputPins[0],
-						&inputConstants[0],
-						foldOutputPin
-					))
+							shaderGraph,
+							node,
+							outputPin,
+							&inputOutputPins[0],
+							&inputConstants[0],
+							foldOutputPin))
 					{
 						T_FATAL_ASSERT(foldOutputPin != outputPin);
 						const PinType foldOutputPinType = typePropagation.evaluate(foldOutputPin);
@@ -592,12 +572,11 @@ restart_iteration:
 				// Then attempt to evaluate as much output as possible.
 				Constant outputConstant(outputPinType);
 				if (nodeTraits->evaluatePartial(
-					shaderGraph,
-					node,
-					outputPin,
-					inputPinCount > 0 ? &inputConstants[0] : nullptr,
-					outputConstant
-				))
+						shaderGraph,
+						node,
+						outputPin,
+						inputPinCount > 0 ? &inputConstants[0] : nullptr,
+						outputConstant))
 				{
 					// If the output of the pin has changed then a propagation must have taken place.
 					if (outputConstants[outputPin] != outputConstant)
@@ -636,7 +615,7 @@ Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	RefArray< Swizzle > swizzleNodes = shaderGraph->findNodesOf< Swizzle >();
-	for (auto i = swizzleNodes.begin(); i != swizzleNodes.end(); )
+	for (auto i = swizzleNodes.begin(); i != swizzleNodes.end();)
 	{
 		Swizzle* swizzleRightNode = *i;
 		T_ASSERT(swizzleRightNode);
@@ -689,12 +668,9 @@ Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
 
 		const OutputPin* sourcePin = shaderGraph->findSourcePin(swizzleLeftNode->getInputPin(0));
 		if (sourcePin != nullptr)
-		{
 			shaderGraph->addEdge(new Edge(
 				sourcePin,
-				swizzleRightNode->getInputPin(0)
-			));
-		}
+				swizzleRightNode->getInputPin(0)));
 
 		T_VALIDATE_SHADERGRAPH(shaderGraph);
 
@@ -712,8 +688,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
+		m_shaderGraph->getEdges());
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	// Pixel output state.
@@ -771,8 +746,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
+		m_shaderGraph->getEdges());
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	RefArray< BundleSplit > splitNodes = shaderGraph->findNodesOf< BundleSplit >();
@@ -781,7 +755,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
 	RefArray< BundleSplit > workSplitNodes = splitNodes;
 	RefArray< BundleSplit > retrySplitNodes;
 
-	do 
+	do
 	{
 		for (const auto splitNode : workSplitNodes)
 		{
@@ -791,7 +765,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
 				log::error << L"No bundle connected to split node " << splitNode->getId().format() << L"." << Endl;
 				return nullptr;
 			}
-		
+
 			BundleUnite* uniteNode = dynamic_type_cast< BundleUnite* >(sourcePin->getNode());
 			if (!uniteNode)
 			{
@@ -852,10 +826,8 @@ Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
 					shaderGraph->removeEdge(edge);
 
 				if (sourcePin)
-				{
 					for (auto destinationPin : destinationPins)
 						shaderGraph->addEdge(new Edge(sourcePin, destinationPin));
-				}
 			}
 		}
 
@@ -883,8 +855,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved() const
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
+		m_shaderGraph->getEdges());
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	// Get all variable nodes from shader graph.
@@ -936,8 +907,7 @@ Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
+		m_shaderGraph->getEdges());
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	for (const auto pixelOutputNode : shaderGraph->findNodesOf< PixelOutput >())
@@ -982,37 +952,6 @@ Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 		}
 		else // if (!is_a< InputPort >(enableSource->getNode()))
 			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of \"traktor.render.ComputeOutput\". " << type_name(enableSource->getNode()) << L" not supported." << Endl;
-	}
-
-	T_VALIDATE_SHADERGRAPH(shaderGraph);
-	return shaderGraph;
-}
-
-Ref< ShaderGraph > ShaderGraphStatic::propagateConstantExternalValues() const
-{
-	T_IMMUTABLE_CHECK(m_shaderGraph);
-
-	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
-	T_VALIDATE_SHADERGRAPH(shaderGraph);
-
-	for (auto externalNode : shaderGraph->findNodesOf< External >())
-	{
-		for (auto inputPin : externalNode->getInputPins())
-		{
-			if (!inputPin->isOptional() || !externalNode->haveValue(inputPin->getName()))
-				continue;
-
-			Edge* edge = shaderGraph->findEdge(inputPin);
-			if (!edge)
-				continue;
-
-			const Scalar* scalarNode = dynamic_type_cast< const Scalar* >(edge->getSource()->getNode());
-			if (!scalarNode)
-				continue;
-
-			externalNode->setValue(inputPin->getName(), scalarNode->get());
-			shaderGraph->removeEdge(edge);
-		}
 	}
 
 	T_VALIDATE_SHADERGRAPH(shaderGraph);

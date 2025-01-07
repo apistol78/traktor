@@ -8,16 +8,17 @@
  */
 #pragma once
 
-#include <functional>
-#include "Core/Ref.h"
-#include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/SmallSet.h"
+#include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/Graph.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/Node.h"
 #include "Render/Editor/OutputPin.h"
+
+#include <functional>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,14 +38,14 @@ class GraphTraverse
 {
 public:
 	explicit GraphTraverse(const Graph* graph, Node* root)
-	:	m_graph(graph)
+		: m_graph(graph)
 	{
 		m_roots.push_back(root);
 	}
 
 	explicit GraphTraverse(const Graph* graph, const RefArray< Node >& roots)
-	:	m_graph(graph)
-	,	m_roots(roots)
+		: m_graph(graph)
+		, m_roots(roots)
 	{
 	}
 
@@ -91,16 +92,16 @@ private:
 	{
 	public:
 		LambdaVisitor(const std::function< bool(const Node*) >& fn)
-		:	m_fn(fn)
+			: m_fn(fn)
 		{
 		}
 
-		bool operator () (const Node* node)
+		bool operator()(const Node* node)
 		{
 			return m_fn(node);
 		}
 
-		bool operator () (const Edge* edge)
+		bool operator()(const Edge* edge)
 		{
 			return true;
 		}

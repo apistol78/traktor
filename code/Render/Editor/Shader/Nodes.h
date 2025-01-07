@@ -8,13 +8,14 @@
  */
 #pragma once
 
-#include <string>
-#include "Core/Guid.h"
 #include "Core/Containers/StaticVector.h"
+#include "Core/Guid.h"
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Vector4.h"
-#include "Render/Types.h"
 #include "Render/Editor/ImmutableNode.h"
+#include "Render/Types.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -358,9 +359,9 @@ class T_DLLCLASS DispatchIndex : public ImmutableNode
 public:
 	enum class Scope
 	{
-		Global,		//!< Global thread index.
-		Local,		//!< Local thread index within work group.
-		Group		//!< Work group index.
+		Global, //!< Global thread index.
+		Local,	//!< Local thread index within work group.
+		Group	//!< Work group index.
 	};
 
 	DispatchIndex();
@@ -437,8 +438,7 @@ public:
 		const std::wstring& parameterName = L"",
 		ParameterType type = ParameterType::Scalar,
 		UpdateFrequency frequency = UpdateFrequency::Frame,
-		int32_t length = 0
-	);
+		int32_t length = 0);
 
 	void setDeclaration(const Guid& declaration);
 
@@ -480,27 +480,15 @@ class T_DLLCLASS InputPort : public ImmutableNode
 public:
 	InputPort();
 
-	explicit InputPort(const std::wstring& name, bool connectable, bool optional, bool haveDefaultValue, float defaultValue);
+	explicit InputPort(const std::wstring& name, bool optional);
 
 	void setName(const std::wstring& name);
 
 	const std::wstring& getName() const;
 
-	void setConnectable(bool connectable);
-
-	bool isConnectable() const;
-
 	void setOptional(bool optional);
 
 	bool isOptional() const;
-
-	void setHaveDefaultValue(bool haveDefaultValue);
-
-	bool haveDefaultValue() const;
-
-	void setDefaultValue(float defaultValue);
-
-	float getDefaultValue() const;
 
 	virtual std::wstring getInformation() const override final;
 
@@ -508,10 +496,7 @@ public:
 
 private:
 	std::wstring m_name;
-	bool m_connectable;
 	bool m_optional;
-	bool m_haveDefaultValue;
-	float m_defaultValue;
 };
 
 /*! Instance index input. */
@@ -1062,7 +1047,6 @@ public:
 private:
 	std::wstring m_parameterName;
 	AlignedVector< NamedElement > m_elements;
-
 };
 
 /*! Subtract. */
@@ -1279,8 +1263,7 @@ public:
 	explicit Uniform(
 		const std::wstring& parameterName = L"",
 		ParameterType type = ParameterType::Scalar,
-		UpdateFrequency frequency = UpdateFrequency::Frame
-	);
+		UpdateFrequency frequency = UpdateFrequency::Frame);
 
 	void setDeclaration(const Guid& declaration);
 

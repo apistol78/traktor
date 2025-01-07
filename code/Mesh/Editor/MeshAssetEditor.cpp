@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
+#include "Mesh/Editor/MeshAssetEditor.h"
+
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
@@ -15,71 +16,70 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
-#include "Database/Instance.h"
 #include "Database/Group.h"
+#include "Database/Instance.h"
+#include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IEditor.h"
 #include "I18N/Format.h"
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetRasterizer.h"
-#include "Mesh/Editor/MeshAssetEditor.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
-#include "Render/ITexture.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/ITexture.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Button.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
-#include "Ui/Edit.h"
-#include "Ui/Image.h"
-#include "Ui/NumericEditValidator.h"
-#include "Ui/Slider.h"
-#include "Ui/Static.h"
-#include "Ui/TableLayout.h"
 #include "Ui/DropDown.h"
+#include "Ui/Edit.h"
 #include "Ui/FileDialog.h"
-#include "Ui/InputDialog.h"
-#include "Ui/MessageBox.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridView.h"
+#include "Ui/Image.h"
+#include "Ui/InputDialog.h"
+#include "Ui/MessageBox.h"
+#include "Ui/NumericEditValidator.h"
+#include "Ui/Slider.h"
+#include "Ui/Static.h"
+#include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "World/Editor/Material/MaterialShaderGenerator.h"
 
+#include <algorithm>
+
 namespace traktor::mesh
 {
-	namespace
-	{
+namespace
+{
 
 bool haveVertexColors(const model::Model& model)
 {
 	for (uint32_t i = 0; i < model.getVertexCount(); ++i)
-	{
 		if (model.getVertex(i).getColor() != model::c_InvalidIndex)
 			return true;
-	}
 	return false;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshAssetEditor", MeshAssetEditor, editor::IObjectEditor)
 
 MeshAssetEditor::MeshAssetEditor(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 	m_assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath");
-	m_modelCachePath =  m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
+	m_modelCachePath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 }
 
 bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
@@ -302,8 +302,7 @@ ui::Size MeshAssetEditor::getPreferredSize() const
 {
 	return ui::Size(
 		800,
-		600
-	);
+		600);
 }
 
 void MeshAssetEditor::updateModel()
@@ -343,9 +342,8 @@ void MeshAssetEditor::updatePreview()
 	Ref< drawing::Image > meshThumb = new drawing::Image(
 		drawing::PixelFormat::getR8G8B8A8(),
 		m_imagePreview->pixel(256_ut),
-		m_imagePreview->pixel(256_ut)
-	);
-	meshThumb->clear(Color4f(0.6f, 0.6f, 0.6f, 1.0f));	
+		m_imagePreview->pixel(256_ut));
+	meshThumb->clear(Color4f(0.6f, 0.6f, 0.6f, 1.0f));
 
 	if (MeshAssetRasterizer().generate(m_editor, m_asset, meshThumb))
 	{
@@ -353,8 +351,7 @@ void MeshAssetEditor::updatePreview()
 			m_imagePreview->pixel(128_ut),
 			m_imagePreview->pixel(128_ut),
 			drawing::ScaleFilter::MnAverage,
-			drawing::ScaleFilter::MgLinear
-		);
+			drawing::ScaleFilter::MgLinear);
 		meshThumb->apply(&scaleFilter);
 		m_imagePreview->setImage(new ui::Bitmap(meshThumb));
 	}
@@ -405,16 +402,19 @@ void MeshAssetEditor::updateMaterialList()
 		const SmallMap< std::wstring, Guid >& materialTextures = m_asset->getMaterialTextures();
 		for (const auto& material : materials)
 		{
-			struct { std::wstring name; drawing::Image* embedded; } modelTextures[] =
+			struct
 			{
-				{ material.getDiffuseMap().name,		material.getDiffuseMap().image },
-				{ material.getSpecularMap().name,		material.getSpecularMap().image },
-				{ material.getRoughnessMap().name,		material.getRoughnessMap().image },
-				{ material.getMetalnessMap().name,		material.getMetalnessMap().image },
-				{ material.getTransparencyMap().name,	material.getTransparencyMap().image },
-				{ material.getEmissiveMap().name,		material.getEmissiveMap().image },
-				{ material.getReflectiveMap().name,		material.getReflectiveMap().image },
-				{ material.getNormalMap().name,			material.getNormalMap().image }
+				std::wstring name;
+				drawing::Image* embedded;
+			} modelTextures[] = {
+				{ material.getDiffuseMap().name, material.getDiffuseMap().image },
+				{ material.getSpecularMap().name, material.getSpecularMap().image },
+				{ material.getRoughnessMap().name, material.getRoughnessMap().image },
+				{ material.getMetalnessMap().name, material.getMetalnessMap().image },
+				{ material.getTransparencyMap().name, material.getTransparencyMap().image },
+				{ material.getEmissiveMap().name, material.getEmissiveMap().image },
+				{ material.getReflectiveMap().name, material.getReflectiveMap().image },
+				{ material.getNormalMap().name, material.getNormalMap().image }
 			};
 
 			for (uint32_t j = 0; j < sizeof_array(modelTextures); ++j)
@@ -425,9 +425,7 @@ void MeshAssetEditor::updateMaterialList()
 				textureNames.insert(modelTextures[j].name);
 
 				Ref< db::Instance > materialTextureInstance;
-				std::wstring materialTexture = (modelTextures[j].embedded != nullptr) ?
-					i18n::Text(L"MESHASSET_EDITOR_TEXTURE_EMBEDDED") :
-					i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED");
+				std::wstring materialTexture = (modelTextures[j].embedded != nullptr) ? i18n::Text(L"MESHASSET_EDITOR_TEXTURE_EMBEDDED") : i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED");
 
 				auto it = materialTextures.find(modelTextures[j].name);
 				if (it != materialTextures.end())
@@ -492,8 +490,7 @@ void MeshAssetEditor::createMaterialShader()
 	// Query user about material name; default model's material name.
 	ui::InputDialog::Field materialNameField(
 		L"",
-		outputName
-	);
+		outputName);
 
 	ui::InputDialog materialNameDialog;
 	if (materialNameDialog.create(m_materialShaderList, i18n::Text(L"MESHASSET_EDITOR_ENTER_NAME"), i18n::Text(L"MESHASSET_EDITOR_ENTER_NAME"), &materialNameField, 1))
@@ -516,24 +513,22 @@ void MeshAssetEditor::createMaterialShader()
 			m_materialShaderList,
 			i18n::Text(L"MESHASSET_EDITOR_MESSAGE_ALREADY_EXIST"),
 			i18n::Text(L"MESHASSET_EDITOR_CAPTION_ALREADY_EXIST"),
-			ui::MbOk | ui::MbIconExclamation
-		);
+			ui::MbOk | ui::MbIconExclamation);
 		return;
 	}
 
 	//// Use material template if specified.
-	//Guid materialTemplate;
-	//const auto& materialTemplates = m_asset->getMaterialTemplates();
-	//auto it2 = materialTemplates.find(materialName);
-	//if (it2 != materialTemplates.end())
+	// Guid materialTemplate;
+	// const auto& materialTemplates = m_asset->getMaterialTemplates();
+	// auto it2 = materialTemplates.find(materialName);
+	// if (it2 != materialTemplates.end())
 	//	materialTemplate = it2->second;
 
 	// Set textures specified in MeshAsset into material maps.
 	const auto& materialTextures = m_asset->getMaterialTextures();
 	for (auto& m : materials)
 	{
-		model::Material::Map maps[] =
-		{
+		model::Material::Map maps[] = {
 			m.getDiffuseMap(),
 			m.getSpecularMap(),
 			m.getRoughnessMap(),
@@ -543,7 +538,7 @@ void MeshAssetEditor::createMaterialShader()
 			m.getReflectiveMap(),
 			m.getNormalMap()
 		};
-			
+
 		for (auto& map : maps)
 		{
 			auto it = materialTextures.find(map.name);
@@ -564,17 +559,11 @@ void MeshAssetEditor::createMaterialShader()
 
 	// Generate shader.
 	Ref< render::ShaderGraph > materialShader = world::MaterialShaderGenerator(
-		[&](const Guid& fragmentId) { return m_editor->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(fragmentId); }
-	).generateSurface(
-		*it,
-		haveVertexColors(*m_model),
-		m_asset->getDecalResponse()
-	);
+		[&](const Guid& fragmentId) {
+		return m_editor->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(fragmentId);
+	}).generateSurface(*it, haveVertexColors(*m_model), m_asset->getDecalResponse());
 	if (materialShader)
 	{
-		materialShader = render::ShaderGraphStatic(materialShader, Guid()).propagateConstantExternalValues();
-		T_ASSERT(materialShader != nullptr);
-
 		materialShader = render::ShaderGraphOptimizer(materialShader).removeUnusedBranches(true);
 		T_ASSERT(materialShader != nullptr);
 
@@ -666,7 +655,7 @@ void MeshAssetEditor::extractMaterialTexture()
 	Path path;
 	if (fileDialog.showModal(path) == ui::DialogResult::Ok)
 		embeddedImage->save(path);
-	
+
 	fileDialog.destroy();
 }
 

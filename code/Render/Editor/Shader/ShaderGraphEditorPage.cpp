@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/ShaderGraphEditorPage.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -27,28 +29,15 @@
 #include "I18N/Text.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/Group.h"
-#include "Render/Editor/Shader/FragmentLinker.h"
-#include "Render/Editor/Shader/INodeFacade.h"
-#include "Render/Editor/Shader/NodeCategories.h"
-#include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/ShaderDependencyPane.h"
-#include "Render/Editor/Shader/ShaderDependencyTracker.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
-#include "Render/Editor/Shader/ShaderGraphEditorPage.h"
-#include "Render/Editor/Shader/ShaderViewer.h"
-#include "Render/Editor/Shader/QuickMenuTool.h"
-#include "Render/Editor/Shader/UniformDeclaration.h"
-#include "Render/Editor/Shader/UniformLinker.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
-#include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ColorNodeFacade.h"
 #include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
+#include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
 #include "Render/Editor/Shader/Facades/IndexedUniformNodeFacade.h"
 #include "Render/Editor/Shader/Facades/InterpolatorNodeFacade.h"
@@ -58,26 +47,30 @@
 #include "Render/Editor/Shader/Facades/TextureNodeFacade.h"
 #include "Render/Editor/Shader/Facades/UniformNodeFacade.h"
 #include "Render/Editor/Shader/Facades/VariableNodeFacade.h"
+#include "Render/Editor/Shader/FragmentLinker.h"
+#include "Render/Editor/Shader/INodeFacade.h"
+#include "Render/Editor/Shader/NodeCategories.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/QuickMenuTool.h"
+#include "Render/Editor/Shader/ShaderDependencyPane.h"
+#include "Render/Editor/Shader/ShaderDependencyTracker.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
+#include "Render/Editor/Shader/ShaderViewer.h"
+#include "Render/Editor/Shader/UniformDeclaration.h"
+#include "Render/Editor/Shader/UniformLinker.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/Menu.h"
-#include "Ui/MenuItem.h"
-#include "Ui/MessageBox.h"
-#include "Ui/Splitter.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/Tab.h"
-#include "Ui/TableLayout.h"
-#include "Ui/TabPage.h"
-#include "Ui/Graph/GraphControl.h"
-#include "Ui/Graph/Group.h"
-#include "Ui/Graph/GroupMovedEvent.h"
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/EdgeConnectEvent.h"
 #include "Ui/Graph/EdgeDisconnectEvent.h"
+#include "Ui/Graph/GraphControl.h"
+#include "Ui/Graph/Group.h"
+#include "Ui/Graph/GroupMovedEvent.h"
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/NodeActivateEvent.h"
 #include "Ui/Graph/NodeMovedEvent.h"
@@ -90,8 +83,16 @@
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridRowDoubleClickEvent.h"
 #include "Ui/GridView/GridView.h"
+#include "Ui/Menu.h"
+#include "Ui/MenuItem.h"
+#include "Ui/MessageBox.h"
+#include "Ui/Splitter.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/SyntaxRichEdit/SyntaxLanguageGlsl.h"
 #include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
+#include "Ui/Tab.h"
+#include "Ui/TableLayout.h"
+#include "Ui/TabPage.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -103,11 +104,10 @@
 
 namespace traktor::render
 {
-	namespace
-	{
-
-const wchar_t* c_pinTypeNames[] =
+namespace
 {
+
+const wchar_t* c_pinTypeNames[] = {
 	L"",
 	L"Scalar",
 	L"Vector 2",
@@ -124,8 +124,7 @@ const wchar_t* c_pinTypeNames[] =
 	L"State"
 };
 
-const wchar_t* c_parameterTypeNames[] =
-{
+const wchar_t* c_parameterTypeNames[] = {
 	L"Scalar",
 	L"Vector",
 	L"Matrix",
@@ -139,8 +138,7 @@ const wchar_t* c_parameterTypeNames[] =
 	L"Acceleration Structure"
 };
 
-const wchar_t* c_uniformFrequencyNames[] =
-{
+const wchar_t* c_uniformFrequencyNames[] = {
 	L"Once",
 	L"Frame",
 	L"Draw"
@@ -150,7 +148,7 @@ class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
 {
 public:
 	explicit FragmentReaderAdapter(db::Database* db)
-	:	m_db(db)
+		: m_db(db)
 	{
 	}
 
@@ -167,7 +165,7 @@ class EntryCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacter >
 {
 public:
 	explicit EntryCharacter(Script* script)
-	:	m_script(script)
+		: m_script(script)
 	{
 	}
 
@@ -215,14 +213,14 @@ private:
 	}
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphEditorPage", ShaderGraphEditorPage, editor::IEditorPage)
 
 ShaderGraphEditorPage::ShaderGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
-:	m_editor(editor)
-,	m_site(site)
-,	m_document(document)
+	: m_editor(editor)
+	, m_site(site)
+	, m_document(document)
 {
 }
 
@@ -445,8 +443,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 			title = i18n::Text(L"SHADERGRAPH_NODE_" + toUpper(title.substr(p + 1)));
 
 		categories[c_nodeCategories[i].category]->add(
-			new ui::MenuItem(ui::Command(i, L"ShaderGraph.Editor.Create"), title)
-		);
+			new ui::MenuItem(ui::Command(i, L"ShaderGraph.Editor.Create"), title));
 	}
 
 	// Add favourites.
@@ -557,8 +554,7 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 
 		Ref< External > shaderNode = new External(
 			instance->getGuid(),
-			fragmentGraph
-		);
+			fragmentGraph);
 		shaderNode->setId(Guid::create());
 		m_shaderGraph->addNode(shaderNode);
 
@@ -649,8 +645,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		else if (command == L"Editor.Paste")
 		{
 			Ref< ShaderGraphEditorClipboardData > data = dynamic_type_cast< ShaderGraphEditorClipboardData* >(
-				ui::Application::getInstance()->getClipboard()->getObject()
-			);
+				ui::Application::getInstance()->getClipboard()->getObject());
 			if (data)
 			{
 				// Save undo state.
@@ -669,8 +664,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 				createEditorNodes(
 					data->getNodes(),
 					data->getEdges(),
-					&editorNodes
-				);
+					&editorNodes);
 
 				// Move all new nodes to center of view.
 				ui::UnitRect bounds(65535_ut, 65535_ut, -65535_ut, -65535_ut);
@@ -1007,8 +1001,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 				createNode(
 					typeInfo,
-					m_editorGraph->clientToVirtual(m_editorGraph->getInnerRect().getCenter())
-				);
+					m_editorGraph->clientToVirtual(m_editorGraph->getInnerRect().getCenter()));
 			}
 			m_editorGraph->setFocus();
 		}
@@ -1039,8 +1032,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 					db::recursiveFindChildInstances(
 						m_editor->getSourceDatabase()->getRootGroup(),
 						db::FindInstanceByType(type_of< ShaderGraph >()),
-						shaderGraphInstances
-					);
+						shaderGraphInstances);
 					for (auto shaderGraphInstance : shaderGraphInstances)
 					{
 						auto shaderGraph = shaderGraphInstance->getObject< ShaderGraph >();
@@ -1048,10 +1040,8 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 							continue;
 
 						for (auto node : shaderGraph->getNodes())
-						{
 							if (node->getId() == selectedNodeId)
 								log::info << L"Found node in " << shaderGraphInstance->getGuid().format() << Endl;
-						}
 					}
 				}
 			}
@@ -1133,8 +1123,7 @@ void ShaderGraphEditorPage::createEditorGraph()
 	createEditorNodes(
 		m_shaderGraph->getNodes(),
 		m_shaderGraph->getEdges(),
-		nullptr
-	);
+		nullptr);
 
 	for (auto group : m_shaderGraph->getGroups())
 		createEditorGroup(group);
@@ -1144,11 +1133,9 @@ void ShaderGraphEditorPage::createEditorGraph()
 	if (scriptId.isNotNull())
 	{
 		for (auto node : m_shaderGraph->getNodes())
-		{
 			if (node->getId() == scriptId)
 				editScript(dynamic_type_cast< Script* >(node));
-		}
-	}	
+	}
 
 	m_propertiesView->setPropertyObject(nullptr);
 }
@@ -1222,14 +1209,13 @@ void ShaderGraphEditorPage::createEditorNodes(const RefArray< Node >& shaderNode
 Ref< ui::Node > ShaderGraphEditorPage::createEditorNode(Node* shaderNode)
 {
 	Ref< INodeFacade > nodeFacade = m_nodeFacades[&type_of(shaderNode)];
-	T_ASSERT_M (nodeFacade, L"No node facade class found");
+	T_ASSERT_M(nodeFacade, L"No node facade class found");
 
 	Ref< ui::Node > editorNode = nodeFacade->createEditorNode(
 		m_editor,
 		m_editorGraph,
 		m_shaderGraph,
-		shaderNode
-	);
+		shaderNode);
 
 	if (!editorNode)
 		return nullptr;
@@ -1248,8 +1234,7 @@ Ref< ui::Group > ShaderGraphEditorPage::createEditorGroup(Group* shaderGroup)
 	Ref< ui::Group > editorGroup = m_editorGraph->createGroup(
 		shaderGroup->getTitle(),
 		ui::UnitPoint(ui::Unit(p.first), ui::Unit(p.second)),
-		ui::UnitSize(ui::Unit(s.first), ui::Unit(s.second))
-	);
+		ui::UnitSize(ui::Unit(s.first), ui::Unit(s.second)));
 	editorGroup->setData(L"SHADERGROUP", shaderGroup);
 	return editorGroup;
 }
@@ -1299,15 +1284,14 @@ void ShaderGraphEditorPage::updateGraph()
 		uint32_t readCount = 0;
 		PinType type = PinType::Void;
 	};
+
 	SmallMap< std::wstring, VariableInfo > variables;
 
-	const auto fragmentReader = [&](const Guid& fragmentGuid) -> Ref< const ShaderGraph >
-	{
+	const auto fragmentReader = [&](const Guid& fragmentGuid) -> Ref< const ShaderGraph > {
 		return m_editor->getSourceDatabase()->getObjectReadOnly< ShaderGraph >(fragmentGuid);
 	};
 
-	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t
-	{
+	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t {
 		Ref< db::Instance > declarationInstance = m_editor->getSourceDatabase()->getInstance(declarationId);
 		if (declarationInstance != nullptr)
 			return { declarationInstance->getName(), declarationInstance->getObject< UniformDeclaration >() };
@@ -1482,7 +1466,7 @@ void ShaderGraphEditorPage::updateGraph()
 	// Determine type of shader graph.
 	const auto graphType = resolvedShaderGraph ? ShaderGraphValidator(resolvedShaderGraph).estimateType() : ShaderGraphValidator::SgtFragment;
 	m_editorGraph->setText(graphType == ShaderGraphValidator::SgtFragment ? L"FRAGMENT" : L"SHADER");
-	
+
 	// Validate shader graph.
 	AlignedVector< const Node* > errorNodes;
 	bool validationResult = false;
@@ -1545,13 +1529,9 @@ void ShaderGraphEditorPage::updateGraph()
 					if (
 						(
 							shaderEdge->getSource()->getNode()->getId() == edge->getSource()->getNode()->getId() &&
-							shaderEdge->getSource()->getId() == edge->getSource()->getId()
-						) ||
-						(
-							shaderEdge->getDestination()->getNode()->getId() == edge->getDestination()->getNode()->getId() &&
-							shaderEdge->getDestination()->getId() == edge->getDestination()->getId()
-						)
-					)
+							shaderEdge->getSource()->getId() == edge->getSource()->getId()) ||
+						(shaderEdge->getDestination()->getNode()->getId() == edge->getDestination()->getNode()->getId() &&
+							shaderEdge->getDestination()->getId() == edge->getDestination()->getId()))
 					{
 						value = evaluator.evaluate(edge->getSource());
 						break;
@@ -1664,25 +1644,12 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		ui::MessageBox::show(
 			i18n::Text(L"SHADERGRAPH_ERROR_MISSING_FRAGMENT_MESSAGE"),
 			i18n::Text(L"SHADERGRAPH_ERROR_MISSING_FRAGMENT_CAPTION"),
-			ui::MbIconError | ui::MbOk
-		);
+			ui::MbIconError | ui::MbOk);
 		return;
 	}
 
-	// Get input ports; remove non-connectable ports.
+	// Get input and output ports.
 	RefArray< InputPort > fragmentInputs = fragmentGraph->findNodesOf< InputPort >();
-
-	RefArray< InputPort >::iterator it;
-	it = std::remove_if(fragmentInputs.begin(), fragmentInputs.end(), [](InputPort* ip) {
-		return ip->isConnectable() == false && ip->isOptional() == false;
-	});
-	fragmentInputs.erase(it, fragmentInputs.end());
-	it = std::remove_if(fragmentInputs.begin(), fragmentInputs.end(), [](InputPort* ip) {
-		return ip->isConnectable() == false && ip->isOptional() == true;
-	});
-	fragmentInputs.erase(it, fragmentInputs.end());
-
-	// Get output ports.
 	RefArray< OutputPort > fragmentOutputs = fragmentGraph->findNodesOf< OutputPort >();
 
 	// Get input-/output pins; these might differ if fragment has been updated.
@@ -1698,11 +1665,10 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		externalOutputPins[i] = external->getOutputPin(i);
 
 	// Remove input ports and pins which match.
-	for (RefArray< InputPort >::iterator i = fragmentInputs.begin(); i != fragmentInputs.end(); )
+	for (RefArray< InputPort >::iterator i = fragmentInputs.begin(); i != fragmentInputs.end();)
 	{
 		auto j = std::find_if(externalInputPins.begin(), externalInputPins.end(), [&](const InputPin* externalInputPin) {
-			return
-				externalInputPin->getName() == (*i)->getName() &&
+			return externalInputPin->getName() == (*i)->getName() &&
 				externalInputPin->isOptional() == (*i)->isOptional();
 		});
 		if (j != externalInputPins.end())
@@ -1715,7 +1681,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	}
 
 	// Remove output ports and pins which match.
-	for (RefArray< OutputPort >::iterator i = fragmentOutputs.begin(); i != fragmentOutputs.end(); )
+	for (RefArray< OutputPort >::iterator i = fragmentOutputs.begin(); i != fragmentOutputs.end();)
 	{
 		auto j = std::find_if(externalOutputPins.begin(), externalOutputPins.end(), [&](const OutputPin* externalOutputPin) {
 			return externalOutputPin->getName() == (*i)->getName();
@@ -1734,8 +1700,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		fragmentInputs.empty() &&
 		fragmentOutputs.empty() &&
 		externalInputPins.empty() &&
-		externalOutputPins.empty()
-	)
+		externalOutputPins.empty())
 		return;
 
 	// Remove pins which have their respective ports removed.
@@ -1745,9 +1710,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		if (edge)
 			m_shaderGraph->removeEdge(edge);
 
-		external->removeValue(externalInputPins.back()->getName());
 		external->removeInputPin(externalInputPins.back());
-
 		externalInputPins.pop_back();
 	}
 	while (!externalOutputPins.empty())
@@ -1785,10 +1748,8 @@ void ShaderGraphEditorPage::updateVariableHints()
 	for (auto selectVariableNode : selectedVariableNodes)
 	{
 		for (auto variableNode : variableNodes)
-		{
 			if (variableNode->getInfo() == selectVariableNode->getInfo())
 				m_editorGraph->addDependencyHint(variableNode, selectVariableNode);
-		}
 	}
 
 	m_editorGraph->update();
@@ -1831,12 +1792,12 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 		const ui::Command& command = selected->getCommand();
 
-		if (command == L"ShaderGraph.Editor.Create")	// Create node
+		if (command == L"ShaderGraph.Editor.Create") // Create node
 		{
 			m_document->push();
 			createNode(&c_nodeCategories[command.getId()].type, position);
 		}
-		else if (command == L"ShaderGraph.Editor.CreateGroup")	// Create group.
+		else if (command == L"ShaderGraph.Editor.CreateGroup") // Create group.
 		{
 			m_document->push();
 
@@ -1851,7 +1812,7 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 			updateGraph();
 		}
-		else if (command == L"ShaderGraph.Editor.CreateFavourite")	// Create favourite fragment node.
+		else if (command == L"ShaderGraph.Editor.CreateFavourite") // Create favourite fragment node.
 		{
 			Ref< db::Instance > instance = selected->getData< db::Instance >(L"INSTANCE");
 			T_FATAL_ASSERT(instance != nullptr);
@@ -1865,8 +1826,7 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 				// Add to shader graph.
 				Ref< External > shaderNode = new External(
 					instance->getGuid(),
-					fragmentGraph
-				);
+					fragmentGraph);
 				shaderNode->setId(Guid::create());
 				shaderNode->setPosition({ position.x, position.y });
 				m_shaderGraph->addNode(shaderNode);
@@ -1919,12 +1879,12 @@ void ShaderGraphEditorPage::eventGroupMoved(ui::GroupMovedEvent* event)
 
 	const ui::UnitRect rc = editorGroup->calculateRect();
 
-	//if (
+	// if (
 	//	rc.left != shaderGroup->getPosition().first || rc.top != shaderGroup->getPosition().second ||
 	//	rc.left != shaderGroup->getPosition().first || rc.top != shaderGroup->getPosition().second
 	//)
 	{
-		//m_document->push();
+		// m_document->push();
 		shaderGroup->setPosition({ rc.left.get(), rc.top.get() });
 		shaderGroup->setSize({ rc.getSize().cx.get(), rc.getSize().cy.get() });
 	}
@@ -1963,8 +1923,7 @@ void ShaderGraphEditorPage::eventNodeDoubleClick(ui::NodeActivateEvent* event)
 		m_editorGraph,
 		editorNode,
 		m_shaderGraph,
-		shaderNode
-	);
+		shaderNode);
 
 	// Update properties.
 	m_propertiesView->setPropertyObject(shaderNode);
@@ -2035,14 +1994,13 @@ void ShaderGraphEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 
 	// Transform editor text into "escaped" text.
 	std::wstring text = m_scriptEditor->getText(
-		[&] (wchar_t ch) -> std::wstring {
+		[&](wchar_t ch) -> std::wstring {
 			return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
 		},
-		[&] (const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+		[&](const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
 			const EntryCharacter* dc = static_cast< const EntryCharacter* >(sc);
 			return L"ENTRY";
-		}
-	);
+		});
 
 	m_script->setScript(text);
 }
@@ -2117,10 +2075,8 @@ void ShaderGraphEditorPage::eventVariableDoubleClick(ui::GridRowDoubleClickEvent
 
 	m_editorGraph->deselectAllNodes();
 	for (auto editorNode : m_editorGraph->getNodes())
-	{
 		if (editorNode->getData< Node >(L"SHADERNODE") == variable)
 			editorNode->setSelected(true);
-	}
 
 	m_editorGraph->center(true);
 	m_editorGraph->update();
@@ -2138,10 +2094,8 @@ void ShaderGraphEditorPage::eventUniformOrPortDoubleClick(ui::GridRowDoubleClick
 
 	m_editorGraph->deselectAllNodes();
 	for (auto editorNode : m_editorGraph->getNodes())
-	{
 		if (editorNode->getData< Node >(L"SHADERNODE") == node)
 			editorNode->setSelected(true);
-	}
 
 	m_editorGraph->center(true);
 	m_editorGraph->update();

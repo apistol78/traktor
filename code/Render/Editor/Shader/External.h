@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,11 +8,12 @@
  */
 #pragma once
 
-#include <string>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
-#include "Core/Containers/SmallMap.h"
 #include "Render/Editor/Node.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -50,14 +51,6 @@ public:
 
 	const Guid& getFragmentGuid() const;
 
-	void setValue(const std::wstring& name, float value);
-
-	float getValue(const std::wstring& name, float defaultValue) const;
-
-	bool haveValue(const std::wstring& name) const;
-
-	void removeValue(const std::wstring& name);
-
 	const InputPin* createInputPin(const Guid& id, const std::wstring& name, bool optional);
 
 	const OutputPin* createOutputPin(const Guid& id, const std::wstring& name);
@@ -82,13 +75,10 @@ public:
 
 	AlignedVector< OutputPin* >& getOutputPins() { return m_outputPins; }
 
-	const SmallMap< std::wstring, float >& getValues() const { return m_values; }
-
 private:
 	Guid m_fragmentGuid;
 	AlignedVector< InputPin* > m_inputPins;
 	AlignedVector< OutputPin* > m_outputPins;
-	SmallMap< std::wstring, float > m_values;
 };
 
 }
