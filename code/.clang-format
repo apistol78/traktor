@@ -1,15 +1,11 @@
 ---
-AlignAfterOpenBracket: BlockIndent
-#BreakAfterAttributes: Always
+AlignAfterOpenBracket: DontAlign
 BreakBeforeBinaryOperators: None
-BreakBeforeBraces: Allman
-#BreakBeforeConceptDeclarations: Always
+BreakBeforeBraces: Custom
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeComma
-#BreakFunctionDefinitionParameters: false
 BreakInheritanceList: BeforeComma
 BreakStringLiterals: false
-# BreakTemplateDeclarations: No
 ColumnLimit: 0
 CompactNamespaces: false
 Cpp11BracedListStyle: false
@@ -23,18 +19,10 @@ IndentCaseLabels: false
 IndentExternBlock: NoIndent
 IndentGotoLabels: false
 IndentPPDirectives: AfterHash
-#IndentRequiresClause: false
 IndentWidth: 4
 IndentWrappedFunctionNames: false
-#InsertBraces: true
-#InsertNewlineAtEOF: true
-# KeepEmptyLines:
-#   AtEndOfFile: false
-#   AtStartOfBlock: false
-#   AtStartOfFile: false
-#KeepEmptyLinesAtEOF: false
 KeepEmptyLinesAtTheStartOfBlocks: false
-LambdaBodyIndentation: Signature
+LambdaBodyIndentation: OuterScope
 Language: Cpp
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: None
@@ -44,14 +32,9 @@ PointerAlignment: Left
 QualifierAlignment: Left
 ReferenceAlignment: Left
 RemoveBracesLLVM: true
-#RemoveParentheses: ReturnStatement
-#RemoveSemicolon: true
-#RequiresClausePosition: WithPreceding
-#RequiresExpressionIndentation: OuterScope
 ShortNamespaceLines: 100000
 SeparateDefinitionBlocks: Always
 SortIncludes: CaseInsensitive
-#SortUsingDeclarations: Lexicographic
 SpaceAfterCStyleCast: false
 SpaceAfterLogicalNot: false
 SpaceAfterTemplateKeyword: true
@@ -61,7 +44,6 @@ SpaceBeforeCaseColon: false
 SpaceBeforeCpp11BracedList: false
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
-#SpaceBeforeJsonColon: true
 SpaceBeforeRangeBasedForLoopColon: true
 SpaceBeforeSquareBrackets: false
 SpaceInEmptyBlock: false
@@ -70,7 +52,6 @@ SpacesInContainerLiterals: true
 SpacesInLineCommentPrefix:
   Minimum: 1
   Maximum: -1
-#SpacesInParens: Never
 SpacesInSquareBrackets: false
 Standard: Latest
 TabWidth: 4
@@ -84,11 +65,23 @@ AllowShortLambdasOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortFunctionsOnASingleLine: Inline
 AllowShortEnumsOnASingleLine: false
-#AllowShortCompoundRequirementOnASingleLine: true
 AllowShortCaseLabelsOnASingleLine: false
-# AllowShortCaseExpressionOnASingleLine: false
 AllowShortBlocksOnASingleLine: Empty
-#AllowBreakBeforeNoexceptSpecifier: Never
 AllowAllArgumentsOnNextLine: false
 AlignOperands: DontAlign
 AlignEscapedNewlines: DontAlign
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: false
+  BeforeWhile: true
+  IndentBraces: false
