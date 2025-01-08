@@ -58,7 +58,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Low</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{DDFB3A63-B05F-C540-8543-05A7830FD0A2}</id>
 			<comment/>
 			<position>
@@ -77,7 +77,6 @@
 					<name>Color</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{0A7C3BC7-1B35-3747-9B7D-78D119572586}</id>

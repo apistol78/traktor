@@ -45,7 +45,7 @@
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{17CFF000-1CEE-8045-B935-8FD024DED5A3}</id>
 			<comment/>
 			<position>
@@ -76,9 +76,8 @@
 					<name>Cartesian</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{392B9012-3BA1-0448-99E4-FADB3419C1FB}</id>
 			<comment/>
 			<position>
@@ -108,7 +107,6 @@
 					<name>Theta</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.MixOut" version="traktor.render.Node:1">
 			<id>{34DC2F92-521F-3C45-B839-CB9F0A24CAEA}</id>
@@ -373,7 +371,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>High</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{14D2A6E9-D1FD-7444-A8B9-C3B3ED27EF1D}</id>
 			<comment/>
 			<position>
@@ -409,7 +407,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{077B9427-B411-164D-A273-18A138D08126}</id>

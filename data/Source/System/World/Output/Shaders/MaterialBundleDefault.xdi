@@ -33,7 +33,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{C34F0994-7EB8-4400-AA03-09F70BF54859}</id>
 			<comment/>
 			<position>
@@ -41,10 +41,7 @@
 				<second>45</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{85D15D6A-87EC-4EA1-A2E7-4C17B1AEE11F}</id>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{75DD0C65-19CD-47E0-AFF8-33CD09EC9E1B}</id>
 			<comment/>
 			<position>
@@ -10,11 +10,13 @@
 			</position>
 			<name>Random</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -41,7 +43,7 @@ $Output = fract(sin(sn) * c);
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{C71FF072-CC11-4351-97E0-7682163F850D}</id>
 			<comment/>
 			<position>
@@ -49,10 +51,7 @@ $Output = fract(sin(sn) * c);
 				<second>230</second>
 			</position>
 			<name>Seed</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{4C116F4D-E995-4560-920D-4CA4A4FBF431}</id>

@@ -6,39 +6,42 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
-#include <cctype>
-#include <map>
-#include <set>
-#include <stack>
+#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
+
 #include "Core/Log/Log.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/OutputPin.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
+
+#include <algorithm>
+#include <cctype>
+#include <map>
+#include <set>
+#include <stack>
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 struct CollectVisitor
 {
 	std::set< const Node* > m_nodes;
 
-	bool operator () (Node* node)
+	bool operator()(Node* node)
 	{
 		m_nodes.insert(node);
 		return true;
 	}
 
-	bool operator () (Edge* edge) {
+	bool operator()(Edge* edge)
+	{
 		return true;
 	}
 };
@@ -47,8 +50,8 @@ class Report
 {
 public:
 	Report(AlignedVector< const Node* >* outErrorNodes)
-	:	m_errorCount(0)
-	,	m_outErrorNodes(outErrorNodes)
+		: m_errorCount(0)
+		, m_outErrorNodes(outErrorNodes)
 	{
 	}
 
@@ -234,12 +237,30 @@ public:
 
 			if (portName.empty())
 				outReport.addError(L"Invalid port name, no name", node);
+			else if (usedNames->find(portName) != usedNames->end())
+				outReport.addError(L"Port name \"" + portName + L"\" already in use", node);
 			else
+				usedNames->insert(portName);
+		}
+	}
+};
+
+class CheckOptionalPorts : public Specification
+{
+public:
+	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
+	{
+		for (auto node : activeNodes)
+		{
+			if (auto inputPort = dynamic_type_cast< const InputPort* >(node))
 			{
-				if (usedNames->find(portName) != usedNames->end())
-					outReport.addError(L"Port name \"" + portName + L"\" already in use", node);
-				else
-					usedNames->insert(portName);
+				if (inputPort->isOptional())
+				{
+					const AlignedVector< const InputPin* > destinationPins = shaderGraph->findDestinationPins(inputPort->getOutputPin(0));
+					for (auto destinationPin : destinationPins)
+						if (!destinationPin->isOptional())
+							outReport.addError(L"Optional input port \"" + inputPort->getName() + L"\" connected to a non-optional input \"" + destinationPin->getName() + L"\".", node);
+				}
 			}
 		}
 	}
@@ -251,10 +272,8 @@ public:
 	virtual void check(Report& outReport, const ShaderGraph* ShaderGraph, const std::set< const Node* >& activeNodes)
 	{
 		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
-		{
 			if (is_a< InputPort >(*i) || is_a< OutputPort >(*i))
 				outReport.addError(L"Cannot have Input- or OutputPort in non-fragment shader", *i);
-		}
 	}
 };
 
@@ -264,10 +283,8 @@ public:
 	virtual void check(Report& outReport, const ShaderGraph* ShaderGraph, const std::set< const Node* >& activeNodes)
 	{
 		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
-		{
 			if (is_a< Branch >(*i))
 				outReport.addError(L"Cannot have Branch node in program shader", *i);
-		}
 	}
 };
 
@@ -279,7 +296,7 @@ public:
 		// Ensure all variables has a name.
 		for (auto activeNode : activeNodes)
 		{
-			if (const Variable * variableNode = dynamic_type_cast<const Variable*>(activeNode))
+			if (const Variable* variableNode = dynamic_type_cast< const Variable* >(activeNode))
 			{
 				if (variableNode->getName().empty())
 					outReport.addError(L"Invalid variable name.", variableNode);
@@ -290,7 +307,7 @@ public:
 		std::set< std::wstring > written;
 		for (auto activeNode : activeNodes)
 		{
-			if (const Variable * variableNode = dynamic_type_cast<const Variable*>(activeNode))
+			if (const Variable* variableNode = dynamic_type_cast< const Variable* >(activeNode))
 			{
 				if (shaderGraph->findSourcePin(variableNode->findInputPin(L"Input")) != nullptr)
 				{
@@ -307,18 +324,18 @@ public:
 		written.clear();
 		for (auto activeNode : activeNodes)
 		{
-			if (const Variable * variableNode = dynamic_type_cast<const Variable*>(activeNode))
+			if (const Variable* variableNode = dynamic_type_cast< const Variable* >(activeNode))
 			{
 				if (shaderGraph->findSourcePin(variableNode->findInputPin(L"Input")) == nullptr)
 					continue;
 
-				const auto & name = variableNode->getName();
+				const auto& name = variableNode->getName();
 				written.insert(name);
 			}
 		}
 		for (auto activeNode : activeNodes)
 		{
-			if (const Variable * variableNode = dynamic_type_cast<const Variable*>(activeNode))
+			if (const Variable* variableNode = dynamic_type_cast< const Variable* >(activeNode))
 			{
 				if (shaderGraph->getDestinationCount(variableNode->findOutputPin(L"Output")) > 0)
 				{
@@ -356,25 +373,24 @@ public:
 				if (!traits->isInputTypeValid(shaderGraph, activeNode, edge->getDestination(), value.getType()))
 					outReport.addError(
 						L"Invalid data type into \"" + edge->getDestination()->getName() + L"\".",
-						activeNode
-					);
+						activeNode);
 			}
 		}
 	}
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphValidator", ShaderGraphValidator, Object)
 
 ShaderGraphValidator::ShaderGraphValidator(const ShaderGraph* shaderGraph)
-:	m_shaderGraph(shaderGraph)
+	: m_shaderGraph(shaderGraph)
 {
 }
 
 ShaderGraphValidator::ShaderGraphValidator(const ShaderGraph* shaderGraph, const Guid& shaderGraphId)
-:	m_shaderGraph(shaderGraph)
-,	m_shaderGraphId(shaderGraphId)
+	: m_shaderGraph(shaderGraph)
+	, m_shaderGraphId(shaderGraphId)
 {
 }
 
@@ -438,7 +454,10 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, AlignedVector< const N
 	CheckTypes().check(report, m_shaderGraph, visitor.m_nodes);
 
 	if (type == SgtFragment)
+	{
 		PortNames().check(report, m_shaderGraph, visitor.m_nodes);
+		CheckOptionalPorts().check(report, m_shaderGraph, visitor.m_nodes);
+	}
 	else if (type == SgtProgram)
 	{
 		NoPorts().check(report, m_shaderGraph, visitor.m_nodes);

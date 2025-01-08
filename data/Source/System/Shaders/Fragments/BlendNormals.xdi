@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D9FAF7FD-2667-2848-A8DD-60D6E63AD22D}</id>
 			<comment/>
 			<position>
@@ -9,12 +9,9 @@
 				<second>169</second>
 			</position>
 			<name>A</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{23A028E0-91CB-EB4A-84FA-58770420870F}</id>
 			<comment/>
 			<position>
@@ -22,10 +19,7 @@
 				<second>345</second>
 			</position>
 			<name>B</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{CC89B2FF-D241-C049-B8D1-2C8B6977820B}</id>
@@ -69,7 +63,7 @@
 				<second>136</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{CFE127C9-B3AE-554B-8CEE-6C927ED411CD}</id>
 			<comment/>
 			<position>
@@ -77,10 +71,7 @@
 				<second>118</second>
 			</position>
 			<name>A_weight</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>1</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{F6E445E0-87B6-7146-9F25-CC26FCAE5C4E}</id>
@@ -99,7 +90,7 @@
 				<second>311</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{7499DDA4-8923-A24B-B3DD-49764E3B72C4}</id>
 			<comment/>
 			<position>
@@ -107,10 +98,7 @@
 				<second>289</second>
 			</position>
 			<name>B_weight</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>1</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{52012783-E491-B749-BB42-E3CC4ABF62E6}</id>

@@ -57,7 +57,7 @@
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{73D97C2F-08E0-E243-BAE8-745276AD3666}</id>
 			<comment/>
 			<position>
@@ -78,7 +78,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{553642FB-C93E-AF4B-A342-0D9C17BF3961}</id>
@@ -98,7 +97,7 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AA3FAB81-9CB3-9B44-A274-F8167DD3FFAD}</id>
 			<comment/>
 			<position>
@@ -119,7 +118,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Branch" version="traktor.render.Node:1">
 			<id>{74A416FC-B84D-AE42-A015-0FB230061B61}</id>
@@ -130,7 +128,7 @@
 			</position>
 			<parameterName>World_IrradianceSingle</parameterName>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{501322AB-35CF-9F46-AD41-305B87A93547}</id>
 			<comment/>
 			<position>
@@ -151,7 +149,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{0258FFB4-18FC-1C40-8C17-0D6712BCDFB0}</id>
@@ -172,7 +169,7 @@
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{A6803CD9-B6E4-B040-9D91-7D8EF9DF7BF8}</id>
 			<comment/>
 			<position>
@@ -198,7 +195,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{E384AB7B-5C09-CC4E-B883-12D5DE798757}</id>
@@ -525,7 +521,6 @@ for (int i = 0; i < N; ++i)
 vec4 o = acc / N;
 
 $Output = vec4(o.xyz, pow(o.w, 0.3f));
-
 			]]>
 			</script>
 		</item>
@@ -727,7 +722,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0152BB9A-6281-084F-B488-D3E4A2EB023F}</id>
 			<comment/>
 			<position>
@@ -746,7 +741,6 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C2F21640-93F9-C046-8BAE-0CF8B35A923D}</id>

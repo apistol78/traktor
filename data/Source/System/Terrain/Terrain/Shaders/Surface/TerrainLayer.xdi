@@ -32,7 +32,7 @@ Color
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>true</useAnisotropic>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{C6EFA042-9409-384F-A55B-2F2ED7138D07}</id>
 			<comment/>
 			<position>
@@ -40,12 +40,9 @@ Color
 				<second>438</second>
 			</position>
 			<name>ColorMap</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{4990114A-759E-6E49-8B35-BFCA525CC2D8}</id>
 			<comment/>
 			<position>
@@ -53,12 +50,9 @@ Color
 				<second>300</second>
 			</position>
 			<name>NormalMap</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{B8F7658C-AE8C-044A-B8EF-84431C9C2B88}</id>
 			<comment/>
 			<position>
@@ -66,10 +60,7 @@ Color
 				<second>370</second>
 			</position>
 			<name>TexCoord</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{75081155-EEF4-154C-8CCD-B5851DFDE202}</id>
@@ -98,7 +89,7 @@ Color
 			</position>
 			<value>0, 0, 1, 0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{1B5C10E5-B1BB-0842-BAC1-F5BC96F97E44}</id>
 			<comment/>
 			<position>
@@ -106,10 +97,7 @@ Color
 				<second>500</second>
 			</position>
 			<name>RoughnessMap</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{02092CA8-E885-0C40-813D-314C83BE9D88}</id>
@@ -176,7 +164,7 @@ Roughness
 				<second>671</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{614971A4-D745-4447-A7CC-4D30BC43C4CC}</id>
 			<comment/>
 			<position>
@@ -221,7 +209,6 @@ Roughness
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.PreviewOutput" version="traktor.render.Node:1">
 			<id>{5465827E-28A0-A24C-9A24-CC23139F822D}</id>

@@ -29,12 +29,12 @@
 			<id>{9D13C425-2DBE-B241-AE2D-C174C8D77790}</id>
 			<comment/>
 			<position>
-				<first>1118</first>
-				<second>217</second>
+				<first>1195</first>
+				<second>210</second>
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{98A97471-F8FE-4946-9379-DD12C5FD39D7}</id>
 			<comment/>
 			<position>
@@ -42,25 +42,19 @@
 				<second>341</second>
 			</position>
 			<name>Roughness</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0.8</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{E0A19334-5502-FC49-AB32-3860B9607516}</id>
 			<comment/>
 			<position>
-				<first>433</first>
+				<first>449</first>
 				<second>203</second>
 			</position>
 			<name>Emissive</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{26E555E1-554E-644E-9D5D-5344AD399B49}</id>
 			<comment/>
 			<position>
@@ -68,25 +62,19 @@
 				<second>295</second>
 			</position>
 			<name>Metalness</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{1D7FFB3D-01E1-BF42-9E16-D5247E953065}</id>
 			<comment/>
 			<position>
-				<first>433</first>
+				<first>449</first>
 				<second>387</second>
 			</position>
 			<name>Specular</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>1</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{17DB9995-C5C3-824C-9CDA-5D3A524A7346}</id>
 			<comment/>
 			<position>
@@ -94,12 +82,9 @@
 				<second>249</second>
 			</position>
 			<name>Irradiance</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{5B462651-D228-E441-A9AA-767FB3A2F497}</id>
 			<comment/>
 			<position>
@@ -107,12 +92,9 @@
 				<second>111</second>
 			</position>
 			<name>Alpha</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>1</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{33FE3E39-0A9A-3B46-BC14-39E943720774}</id>
 			<comment/>
 			<position>
@@ -120,12 +102,9 @@
 				<second>479</second>
 			</position>
 			<name>View normal</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
 			<comment/>
 			<position>
@@ -133,12 +112,9 @@
 				<second>433</second>
 			</position>
 			<name>Discard</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{53E30D04-04A2-3043-83E2-E637DD7494DF}</id>
 			<comment/>
 			<position>
@@ -146,12 +122,9 @@
 				<second>157</second>
 			</position>
 			<name>Cast shadow</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>1</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{950F8770-82FA-124D-8656-D9F1F489C10E}</id>
 			<comment/>
 			<position>
@@ -159,12 +132,9 @@
 				<second>65</second>
 			</position>
 			<name>SurfaceColor</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{10CC7B54-4F11-1645-967D-E3693051A121}</id>
 			<comment/>
 			<position>
@@ -172,12 +142,9 @@
 				<second>525</second>
 			</position>
 			<name>View position</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{B8945579-8010-0B4D-BF63-30B36673C260}</id>
 			<comment/>
 			<position>
@@ -185,12 +152,9 @@
 				<second>571</second>
 			</position>
 			<name>View velocity</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{91FF0666-4296-9248-8DED-8DFE98C8F815}</id>
 			<comment/>
 			<position>
@@ -198,10 +162,7 @@
 				<second>-344</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{3BE0E29A-3FD3-467C-BB57-DD27D58A6973}</id>
@@ -225,7 +186,7 @@
 			<id>{20A1FFB4-17CA-4F9C-AD9B-59BB171FC38B}</id>
 			<comment/>
 			<position>
-				<first>-12</first>
+				<first>4</first>
 				<second>-68</second>
 			</position>
 			<value>0.5</value>
@@ -234,7 +195,7 @@
 			<id>{FFE6C613-E285-4B3E-937E-9AF09E77BC0E}</id>
 			<comment/>
 			<position>
-				<first>-12</first>
+				<first>4</first>
 				<second>-114</second>
 			</position>
 			<value>0.8</value>
@@ -270,7 +231,7 @@
 			<id>{84C8B477-A130-47AE-86BD-FB87ED380EF0}</id>
 			<comment/>
 			<position>
-				<first>-140</first>
+				<first>-108</first>
 				<second>-298</second>
 			</position>
 			<color>0.501961, 0.501961, 0.501961, 1</color>
@@ -301,7 +262,7 @@
 				<item>Decal response</item>
 			</names>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{65D9215E-45E9-BA48-8F10-4BCC7C576CC6}</id>
 			<comment/>
 			<position>
@@ -309,23 +270,17 @@
 				<second>617</second>
 			</position>
 			<name>View detail normal</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{BD60374C-74A9-4DFA-8C93-8FB46F07C9B0}</id>
 			<comment/>
 			<position>
-				<first>401</first>
+				<first>417</first>
 				<second>663</second>
 			</position>
 			<name>Decal response</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{C8139D47-0F89-43C1-91E8-5B5A5047FA7C}</id>

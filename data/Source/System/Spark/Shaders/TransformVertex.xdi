@@ -152,7 +152,7 @@
 			</position>
 			<name>Color</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5E6C7830-3B8C-F744-AECE-2F77DB137FB8}</id>
 			<comment/>
 			<position>
@@ -173,7 +173,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{E5E58680-4524-314A-BE7A-85582419B4EA}</id>
@@ -243,7 +242,7 @@
 			</position>
 			<name>Clip</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{8ACC84B8-20E5-9441-B65D-4574BA43DB2F}</id>
 			<comment/>
 			<position>
@@ -252,11 +251,13 @@
 			</position>
 			<name>ClipBounds_Vulkan</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>

@@ -97,7 +97,7 @@
 				<second>-2008</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{8A4DB95E-0926-584E-A7A7-3DC132A243FB}</id>
 			<comment/>
 			<position>
@@ -118,7 +118,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{BE3E7A5C-F480-B040-8A53-523C1AE43215}</id>
@@ -266,7 +265,7 @@
 			</position>
 			<value>-2, -2, 0, 0</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{9238952F-F1F8-1543-B41D-DF49133C0759}</id>
 			<comment/>
 			<position>
@@ -287,12 +286,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Offset</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{2CCC5602-A23F-3F42-BE9C-FC3EF05AABC9}</id>
@@ -395,7 +388,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Low</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AB9FDD0E-0569-7A45-86CC-D9752BF0C0EF}</id>
 			<comment/>
 			<position>
@@ -410,7 +403,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{6392BF13-6586-5342-9F26-22DDBC9378AC}</id>
@@ -422,7 +414,7 @@
 			<technique/>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{D156D6CB-CD42-914B-BAD4-941F1984E878}</id>
 			<comment/>
 			<position>
@@ -443,12 +435,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Offset</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{A0B5FFF7-BF0B-0C47-9372-EB06CEED7747}</id>

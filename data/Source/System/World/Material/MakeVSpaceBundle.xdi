@@ -5,8 +5,7 @@
 			<id>{F3CA9F94-2259-42B9-846D-6626470ACED6}</id>
 			<comment>
 			<![CDATA[
-
-
+	
 			]]>
 			</comment>
 			<position>
@@ -30,7 +29,7 @@
 			</position>
 			<name>VSpace</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{2422B884-8E93-4B2A-9831-5071BD3AEA29}</id>
 			<comment/>
 			<position>
@@ -38,12 +37,9 @@
 				<second>77</second>
 			</position>
 			<name>Inherit</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{9AA653E8-079E-4ABF-87F5-40F9D2C21980}</id>
 			<comment/>
 			<position>
@@ -51,12 +47,9 @@
 				<second>115</second>
 			</position>
 			<name>Position</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D29B0FEE-D900-4D10-A075-5D14658CCBE4}</id>
 			<comment/>
 			<position>
@@ -64,12 +57,9 @@
 				<second>153</second>
 			</position>
 			<name>Normal</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{586707CA-79D8-4DBF-8B71-A6B2C7B62BA2}</id>
 			<comment/>
 			<position>
@@ -77,12 +67,9 @@
 				<second>191</second>
 			</position>
 			<name>Tangent</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{0F138C38-B7EA-4953-8197-6D46C387A334}</id>
 			<comment/>
 			<position>
@@ -90,12 +77,9 @@
 				<second>229</second>
 			</position>
 			<name>Binormal</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{3B75A886-D2DF-4F5C-8F79-A3EC26A2BD82}</id>
 			<comment/>
 			<position>
@@ -103,10 +87,7 @@
 				<second>267</second>
 			</position>
 			<name>Velocity</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

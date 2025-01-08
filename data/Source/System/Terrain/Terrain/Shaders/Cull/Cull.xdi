@@ -43,7 +43,7 @@
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{EBE8DE46-0230-4EFA-9298-A0D667904DAA}</id>
 			<comment/>
 			<position>
@@ -52,11 +52,13 @@
 			</position>
 			<name>HiZ</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{45D674A1-6AC4-6B4E-B7CB-DC7F9C2EC215}</item>
 			</include>
@@ -231,7 +233,7 @@ $Output = visible ? 1.0f : 0.0f;
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{6DE9EB4E-1DF3-4579-B9D1-FB65908F81A0}</id>
 			<comment/>
 			<position>
@@ -240,11 +242,13 @@ $Output = visible ? 1.0f : 0.0f;
 			</position>
 			<name>Copy draw</name>
 			<technique>Default</technique>
+			<domain>Compute</domain>
 			<localSize>
 				<X>16</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -330,7 +334,7 @@ $CulledDrawBuffer[index].firstInstance = $DrawBuffer[index].firstInstance;
 				<item>patchBoundingBoxMx</item>
 			</names>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{2C55D863-1E49-434C-A7F9-515A3405D189}</id>
 			<comment/>
 			<position>
@@ -339,11 +343,13 @@ $CulledDrawBuffer[index].firstInstance = $DrawBuffer[index].firstInstance;
 			</position>
 			<name>HiZ</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{45D674A1-6AC4-6B4E-B7CB-DC7F9C2EC215}</item>
 			</include>

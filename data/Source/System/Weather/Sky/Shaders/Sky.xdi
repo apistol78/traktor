@@ -45,7 +45,7 @@
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{88B6E16C-438C-48C5-B1AD-CCCB701F78B5}</id>
 			<comment/>
 			<position>
@@ -76,9 +76,8 @@
 					<name>Cartesian</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B5F208C7-78DF-403B-A2CC-BCB14D4C90B1}</id>
 			<comment/>
 			<position>
@@ -108,7 +107,6 @@
 					<name>Theta</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.MixOut" version="traktor.render.Node:1">
 			<id>{5A294363-F109-4A98-8271-641DA92E4043}</id>
@@ -446,7 +444,7 @@
 			</position>
 			<value>6.28</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B229DF57-A4C7-6D43-B9BD-9A2150252068}</id>
 			<comment/>
 			<position>
@@ -477,7 +475,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{00AD6047-BC93-5C45-8A16-27768422591D}</id>
@@ -518,7 +515,7 @@
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{3878417E-8F73-4CE4-8C47-53D163131E1F}</id>
 			<comment/>
 			<position>
@@ -527,11 +524,13 @@
 			</position>
 			<name>Sky color</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{2103B1F3-97E1-4D94-A8C0-48E7D4C0C6A9}</item>
 			</include>
@@ -596,7 +595,7 @@ $Output = vec4(clr, 1.0f);
 			</position>
 			<name>WorldPosition</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{3D50C5B7-186C-4798-A7E6-79FB8597A7B9}</id>
 			<comment/>
 			<position>
@@ -605,11 +604,13 @@ $Output = vec4(clr, 1.0f);
 			</position>
 			<name>Clouds</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{2103B1F3-97E1-4D94-A8C0-48E7D4C0C6A9}</item>
 			</include>
@@ -943,7 +944,7 @@ $Distance = dist;
 				<second>635</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{FB5A4F83-417E-A643-92BF-B121F2A7E4C7}</id>
 			<comment/>
 			<position>
@@ -952,11 +953,13 @@ $Distance = dist;
 			</position>
 			<name>DirectionToTexCoord</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{055423F4-A0F5-4840-8020-D5C93F97F8E5}</item>
 			</include>

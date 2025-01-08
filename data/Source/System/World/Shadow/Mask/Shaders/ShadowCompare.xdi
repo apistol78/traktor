@@ -57,7 +57,7 @@
 			</position>
 			<swizzle>xy0</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{762AE495-C2A9-5547-AF06-AA55ED4C1348}</id>
 			<comment/>
 			<position>
@@ -65,10 +65,7 @@
 				<second>310</second>
 			</position>
 			<name>ShadowMapUV</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{BF7138D1-CDF8-8F47-81F3-F11A40120ABB}</id>
@@ -87,7 +84,7 @@
 				<second>442</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{770B842D-4CD8-0049-A6F3-F1C0B1E8ECB5}</id>
 			<comment/>
 			<position>
@@ -95,10 +92,7 @@
 				<second>442</second>
 			</position>
 			<name>ReferenceZ</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{5C83E220-79CE-664F-AA25-6F43687C039E}</id>

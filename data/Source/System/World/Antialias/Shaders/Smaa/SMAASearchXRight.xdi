@@ -9,7 +9,7 @@
 				<second>407</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{A75B75A4-5036-4642-B1EF-17EF3EC42281}</id>
 			<comment/>
 			<position>
@@ -17,10 +17,7 @@
 				<second>317</second>
 			</position>
 			<name>TexCoord</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{841D97E4-00DD-DD4F-9F0C-0A11F14B4C09}</id>
@@ -59,7 +56,7 @@
 			<branch>BrAuto</branch>
 			<operator>CoLess</operator>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{8A88B824-64DA-5D49-81C2-7EA9D7B5C636}</id>
 			<comment/>
 			<position>
@@ -67,10 +64,7 @@
 				<second>675</second>
 			</position>
 			<name>End</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{F7FCC872-28BD-884E-A97C-FA0F0DB83684}</id>
@@ -173,7 +167,7 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{F483342C-2DED-3145-AFCC-B083818886D8}</id>
 			<comment/>
 			<position>
@@ -181,12 +175,9 @@
 				<second>313</second>
 			</position>
 			<name>EdgesTexture</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{83E1CA6D-BC4A-1946-ACBA-9204A514A5D5}</id>
 			<comment/>
 			<position>
@@ -212,7 +203,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{FA15A06F-90A4-394F-8C80-06FEC99528FB}</id>
@@ -240,7 +230,7 @@
 			</position>
 			<value>2, 0, 0, 0</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{DBB07EFF-B071-E346-B9A6-F258E9FCA939}</id>
 			<comment/>
 			<position>
@@ -255,7 +245,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{DE76A48C-8D6A-E643-AEFA-47AA45237E58}</id>
@@ -326,7 +315,7 @@
 			</position>
 			<name>e</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0D4BE1E6-B4D5-4B47-968C-E2F630421483}</id>
 			<comment/>
 			<position>
@@ -357,9 +346,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{1152B851-6BFF-6F44-BC9A-B8C3C1A1E2BB}</id>
 			<comment/>
 			<position>
@@ -367,10 +355,7 @@
 				<second>1635</second>
 			</position>
 			<name>SearchTexture</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9A2935C7-E6B0-BA49-890D-A200CA59583C}</id>
@@ -417,7 +402,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{04F07199-B615-B947-A182-F05A60CAFEA9}</id>
 			<comment/>
 			<position>
@@ -432,7 +417,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{510C1A9C-9562-564D-99AF-0A255584F6F7}</id>

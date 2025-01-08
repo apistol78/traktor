@@ -71,7 +71,7 @@
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{E26BF610-EE95-0D4A-BD32-F7095A91EFB3}</id>
 			<comment/>
 			<position>
@@ -79,12 +79,9 @@
 				<second>75</second>
 			</position>
 			<name>Input1</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{6A94B8A2-4897-294D-AB99-F1E6D9A0D205}</id>
 			<comment/>
 			<position>
@@ -92,12 +89,9 @@
 				<second>104</second>
 			</position>
 			<name>Input2</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D2425621-59E5-1E4B-9FC8-799103ACFDA1}</id>
 			<comment/>
 			<position>
@@ -105,12 +99,9 @@
 				<second>133</second>
 			</position>
 			<name>Input3</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{0E76DF35-1F1E-1A44-AEC8-6D07B6DDB3F5}</id>
 			<comment/>
 			<position>
@@ -118,10 +109,7 @@
 				<second>272</second>
 			</position>
 			<name>Blend</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{DF034004-5A73-764E-974D-E115BDEBBA7E}</id>

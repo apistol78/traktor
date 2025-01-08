@@ -63,7 +63,7 @@
 				<second>364</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{989F14A3-559A-6547-86AC-547520992458}</id>
 			<comment/>
 			<position>
@@ -71,12 +71,9 @@
 				<second>522</second>
 			</position>
 			<name>Roughness</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{7331EB56-B549-F54D-8AB5-4634E4C1EFAD}</id>
 			<comment/>
 			<position>
@@ -84,10 +81,7 @@
 				<second>461</second>
 			</position>
 			<name>Direction</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{3ABDCC1D-F1BC-134E-A3EE-5E8786652058}</id>
@@ -98,7 +92,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{438930E4-FDFE-714A-A4D6-690F169C66E6}</id>
 			<comment/>
 			<position>
@@ -107,11 +101,13 @@
 			</position>
 			<name>RoughnessMip</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>

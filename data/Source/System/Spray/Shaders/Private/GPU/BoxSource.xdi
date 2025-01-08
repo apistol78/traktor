@@ -32,7 +32,7 @@
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{ED7DA73C-7668-9F40-AF8F-D517B4D1F632}</id>
 			<comment/>
 			<position>
@@ -41,11 +41,13 @@
 			</position>
 			<name>Source</name>
 			<technique>Default</technique>
+			<domain>Compute</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{46432A5B-AA0B-D243-B1B4-05C5CA2525BB}</item>
 			</include>
@@ -292,7 +294,7 @@ $Head[0].alive = alive;
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AD06EBC9-A72E-6148-8A9A-76FEC87EE3CE}</id>
 			<comment/>
 			<position>
@@ -307,7 +309,6 @@ $Head[0].alive = alive;
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

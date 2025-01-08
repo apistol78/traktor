@@ -48,7 +48,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{450A501F-CEDF-FE44-947A-8FF5363475F4}</id>
 			<comment/>
 			<position>
@@ -69,7 +69,6 @@
 					<name>T_SurfaceAttributes</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{A91649D2-703A-E244-95C1-2BB1120C5950}</id>
@@ -110,7 +109,7 @@
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7793C1D2-1DC7-634D-8652-9C53F1953C8C}</id>
 			<comment/>
 			<position>
@@ -131,7 +130,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{D7CE11DF-BB9D-F746-8A0A-65D86C7B5E31}</id>
@@ -174,7 +172,7 @@
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{A142ECBF-26EE-764E-91CA-2F9E6F3A1D38}</id>
 			<comment/>
 			<position>
@@ -195,9 +193,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{63A70538-19B3-FE46-9FE6-0B79C99F3054}</id>
 			<comment/>
 			<position>
@@ -216,7 +213,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{8BDDADC1-0698-3644-988C-0AFF676F400F}</id>

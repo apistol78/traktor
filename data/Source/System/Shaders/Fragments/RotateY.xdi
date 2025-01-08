@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{50A2F295-26DE-D145-914A-42D442E6ED38}</id>
 			<comment/>
 			<position>
@@ -27,9 +27,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{62D9169A-CC93-EC4F-8DCC-37F423CC260E}</id>
 			<comment/>
 			<position>
@@ -37,12 +36,9 @@
 				<second>410</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{3C21FB1B-016C-4B4C-988A-A71CCA99324E}</id>
 			<comment/>
 			<position>
@@ -50,10 +46,7 @@
 				<second>321</second>
 			</position>
 			<name>Angle</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{A4D18F88-B0D2-9544-B2FD-A7D8E6E36564}</id>

@@ -177,7 +177,7 @@
 				<second>975</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{8A459FBA-5749-254B-9853-127DB9AF95F8}</id>
 			<comment/>
 			<position>
@@ -186,11 +186,13 @@
 			</position>
 			<name>gl_DrawID</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins/>
 			<outputPins>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{3A92C6B3-2115-F44C-86C4-80047968C27A}</id>
 			<comment/>
 			<position>
@@ -30,9 +30,8 @@
 					<name>Offset_2</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{201CB914-10A6-9043-BD3A-6BFC77AA3C30}</id>
 			<comment/>
 			<position>
@@ -51,7 +50,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{123011D0-3CA3-AC44-941D-BF8C93D7D790}</id>
@@ -69,8 +67,8 @@
 			<id>{735AA0BE-9977-4446-8C58-6147815C761E}</id>
 			<comment/>
 			<position>
-				<first>1169</first>
-				<second>431</second>
+				<first>1252</first>
+				<second>427</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -112,7 +110,7 @@
 			<stencilMask>4294967295</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{15796A28-1FED-2F4B-969E-0388AA9D9698}</id>
 			<comment/>
 			<position>
@@ -158,12 +156,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>PredicationTexture</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 	</nodes>
 	<edges>

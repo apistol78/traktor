@@ -78,7 +78,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{CCA3BBF6-51D2-BB4B-AE3B-1FF6F4F599BA}</id>
 			<comment/>
 			<position>
@@ -97,7 +97,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{AD4EC002-38BC-4852-9A42-7C6CD004E7A1}</id>

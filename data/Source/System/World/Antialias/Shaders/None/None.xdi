@@ -31,7 +31,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F2E34944-089B-A841-BAED-9654F4FABF72}</id>
 			<comment/>
 			<position>
@@ -50,7 +50,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{CDC8E2E4-D16B-E349-92DC-24DB3B8081A1}</id>

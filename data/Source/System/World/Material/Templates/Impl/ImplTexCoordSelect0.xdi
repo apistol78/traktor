@@ -10,7 +10,7 @@
 			</position>
 			<name>T_TexCoord</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{48B9D210-F4D7-3F46-9223-BE6F521277B6}</id>
 			<comment/>
 			<position>
@@ -18,10 +18,7 @@
 				<second>433</second>
 			</position>
 			<name>T_Attributes</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.BundleUnite" version="traktor.render.Node:1">
 			<id>{455E9F6C-AAA6-524B-89C8-754D8C29F0E7}</id>

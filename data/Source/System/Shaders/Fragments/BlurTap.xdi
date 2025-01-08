@@ -18,7 +18,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{51F9A2AB-2302-BD46-960F-4615B484CFD1}</id>
 			<comment/>
 			<position>
@@ -26,10 +26,7 @@
 				<second>694</second>
 			</position>
 			<name>Taps</name>
-			<connectable>false</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>15</defaultValue>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{46D4168B-A267-394A-93C9-04CE635C0D41}</id>
@@ -107,7 +104,7 @@
 				<second>734</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{0779E8CC-08F1-1245-8827-057DC5896B61}</id>
 			<comment/>
 			<position>
@@ -115,10 +112,7 @@
 				<second>988</second>
 			</position>
 			<name>Tap</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{F3E33C84-61A7-FF4F-A86A-4E8133C70AE1}</id>
@@ -161,7 +155,7 @@
 				<second>885</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{80A2D01F-33B2-FD45-A812-4EE259A8C791}</id>
 			<comment/>
 			<position>
@@ -169,10 +163,7 @@
 				<second>956</second>
 			</position>
 			<name>Total weight</name>
-			<connectable>false</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>9.6153</defaultValue>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{E5A4C065-94E1-7C4E-91B5-4452BB845D25}</id>

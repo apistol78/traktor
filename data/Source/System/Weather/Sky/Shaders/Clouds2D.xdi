@@ -36,7 +36,7 @@
 			</position>
 			<scope>Global</scope>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{61F8C3BC-64E9-432E-9FC2-64C8CBB6AECE}</id>
 			<comment/>
 			<position>
@@ -45,11 +45,13 @@
 			</position>
 			<name>Noise</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{2103B1F3-97E1-4D94-A8C0-48E7D4C0C6A9}</item>
 			</include>

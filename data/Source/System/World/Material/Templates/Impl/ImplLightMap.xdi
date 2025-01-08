@@ -10,7 +10,7 @@
 			</position>
 			<name>T_Irradiance</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{BA94814B-BB35-CD44-9EC4-AD493052CB0F}</id>
 			<comment/>
 			<position>
@@ -31,9 +31,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{8E6D7FFA-0D1B-8041-879B-4FED6C7CC6A3}</id>
 			<comment/>
 			<position>
@@ -59,7 +58,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Platform" version="traktor.render.Node:1">
 			<id>{14320055-B63A-3E4D-BDDE-BDB9DC5861A6}</id>
@@ -87,7 +85,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{42AEDE1B-9345-E949-9910-F440004F7766}</id>
 			<comment/>
 			<position>
@@ -95,10 +93,7 @@
 				<second>64</second>
 			</position>
 			<name>T_Attributes</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
 			<id>{2A37A270-60BF-6C4A-B37C-29BF5A471878}</id>

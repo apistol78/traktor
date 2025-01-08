@@ -27,7 +27,7 @@
 			</position>
 			<name>VertexAttributes</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{A0DA8F54-A879-408D-AD3F-A4F6A2EECE8A}</id>
 			<comment/>
 			<position>
@@ -35,12 +35,9 @@
 				<second>94</second>
 			</position>
 			<name>Inherit</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{E9D42E3C-F5D5-4F49-B401-65050CF54EB9}</id>
 			<comment/>
 			<position>
@@ -48,12 +45,9 @@
 				<second>135</second>
 			</position>
 			<name>Object</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{0D26FDA8-3EB2-4B6F-AC89-93C624546B30}</id>
 			<comment/>
 			<position>
@@ -61,12 +55,9 @@
 				<second>176</second>
 			</position>
 			<name>World</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{AE93938F-DB62-4733-8B0D-25ED42422494}</id>
 			<comment/>
 			<position>
@@ -74,12 +65,9 @@
 				<second>217</second>
 			</position>
 			<name>View</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D5BD271D-589D-48AB-8D33-9AD9B4BCD3FD}</id>
 			<comment/>
 			<position>
@@ -87,12 +75,9 @@
 				<second>258</second>
 			</position>
 			<name>TexCoord0</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{3BC92886-21AD-4F53-B6C2-48CA77B18F0C}</id>
 			<comment/>
 			<position>
@@ -100,12 +85,9 @@
 				<second>299</second>
 			</position>
 			<name>TexCoord1</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{428F0218-6773-4996-B0C2-FCC6DB1856DD}</id>
 			<comment/>
 			<position>
@@ -113,12 +95,9 @@
 				<second>340</second>
 			</position>
 			<name>VertexColor</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{43FDF85D-AF63-4E9B-9867-801E931F805F}</id>
 			<comment/>
 			<position>
@@ -126,10 +105,7 @@
 				<second>381</second>
 			</position>
 			<name>Origin</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

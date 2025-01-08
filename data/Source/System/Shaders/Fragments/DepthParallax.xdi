@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{02BDE4A8-7ED1-6145-9378-1E4F99AE12E6}</id>
 			<comment>
 			<![CDATA[
@@ -13,12 +13,9 @@ Tangent space
 				<second>164</second>
 			</position>
 			<name>Layer0_Normal</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{97CC0060-C30A-A149-8449-0567E20F1D03}</id>
 			<comment>
 			<![CDATA[
@@ -30,10 +27,7 @@ Tangent space
 				<second>227</second>
 			</position>
 			<name>ViewDirection</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Reflect" version="traktor.render.Node:1">
 			<id>{82F1441F-4B9E-2B4C-BA9D-1B82B169FD69}</id>
@@ -60,7 +54,7 @@ Tangent space
 			</position>
 			<value>1, 1, -1, 0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{A089E776-5F05-2F45-8799-BC2F7DEDCCFB}</id>
 			<comment/>
 			<position>
@@ -68,10 +62,7 @@ Tangent space
 				<second>174</second>
 			</position>
 			<name>Thickness</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{9CC59101-3E3B-7244-A66A-403645CD48BD}</id>
@@ -89,7 +80,7 @@ Tangent space
 				<second>232</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{C0B955D0-07A9-3B43-BBA3-15BC0613C78C}</id>
 			<comment/>
 			<position>
@@ -97,10 +88,7 @@ Tangent space
 				<second>282</second>
 			</position>
 			<name>OffsetScale</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{CA7CEF69-9780-C948-9D65-58E371808DFC}</id>
@@ -118,7 +106,7 @@ Tangent space
 				<second>133</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{7129A16C-DB3E-0C46-88FA-50993DD85183}</id>
 			<comment/>
 			<position>
@@ -126,10 +114,7 @@ Tangent space
 				<second>339</second>
 			</position>
 			<name>Layer0_TexCoord</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{EC43BBF8-E565-8C49-B4A0-776B79FC054D}</id>

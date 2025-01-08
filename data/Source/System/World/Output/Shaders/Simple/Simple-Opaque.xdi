@@ -48,7 +48,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Low</precisionHint>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
 			<comment/>
 			<position>
@@ -56,12 +56,9 @@
 				<second>63</second>
 			</position>
 			<name>SurfaceColor</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{72048415-F7D0-42B2-BF26-7F7F4D97A902}</id>
 			<comment/>
 			<position>
@@ -69,10 +66,7 @@
 				<second>-38</second>
 			</position>
 			<name>Enable</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>1</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{6D722E55-DD93-064C-AE1B-9AB93797FEFA}</id>

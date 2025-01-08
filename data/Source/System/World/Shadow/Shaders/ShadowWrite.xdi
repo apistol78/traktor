@@ -57,7 +57,7 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{1E4CDB6E-7BF6-4A07-B523-90C1C4E9C379}</id>
 			<comment/>
 			<position>
@@ -65,10 +65,7 @@
 				<second>520</second>
 			</position>
 			<name>Enable</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Discard" version="traktor.render.Node:1">
 			<id>{D3098DBA-1D58-FE43-A644-125882D1BB22}</id>
@@ -88,7 +85,7 @@
 			</position>
 			<value>0.5</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{80219DDE-09DB-C048-A166-6BBAA2D77549}</id>
 			<comment/>
 			<position>
@@ -96,10 +93,7 @@
 				<second>594</second>
 			</position>
 			<name>Discard</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

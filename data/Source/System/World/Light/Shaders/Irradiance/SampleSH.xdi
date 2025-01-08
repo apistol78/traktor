@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7B86965D-F6DA-45A6-AB97-E604C13301EF}</id>
 			<comment/>
 			<position>
@@ -37,7 +37,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{F58C9CC4-ECE0-42A7-B0D0-583D779BE587}</id>
@@ -66,7 +65,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{422128F2-DC38-4D7D-9FBA-164C1F530E84}</id>
 			<comment/>
 			<position>
@@ -102,9 +101,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5419B302-E7C8-4D51-B351-1515CE7CF2BC}</id>
 			<comment/>
 			<position>
@@ -140,7 +138,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.MixIn" version="traktor.render.Node:1">
 			<id>{AE13EB16-3E3C-418C-9DE4-9905C182EC61}</id>
@@ -159,7 +156,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{DE98332B-0513-442C-B08C-234969B7C79F}</id>
 			<comment/>
 			<position>
@@ -167,12 +164,9 @@
 				<second>1005</second>
 			</position>
 			<name>WorldNormal</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F61F2360-5659-384E-B5BF-08CD5DBF428D}</id>
 			<comment/>
 			<position>
@@ -217,7 +211,6 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{C7BC3231-918A-F548-89CF-A3881574BC43}</id>

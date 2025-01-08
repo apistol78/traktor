@@ -105,8 +105,7 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 	if (!pipelineBuilder->buildAdHocOutput(
 			output,
 			outputGuid,
-			map.image
-		))
+			map.image))
 		return false;
 
 	map.texture = outputGuid;
@@ -147,8 +146,7 @@ bool SplineEntityPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	AlignedVector< Guid > meshIds;
 
@@ -173,13 +171,11 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const Object* buildParams
-) const
+	const Object* buildParams) const
 {
 	if (m_targetEditor)
 	{
-		const auto fragmentReader = [&](const Guid& fragmentId)
-		{
+		const auto fragmentReader = [&](const Guid& fragmentId) {
 			return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId);
 		};
 
@@ -222,8 +218,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				Ref< const render::ShaderGraph > meshSurfaceShaderGraph = materialGenerator.generateSurface(
 					material,
 					false,
-					true
-				);
+					true);
 
 				// Try to get surface shader from explicit list first.
 				const auto it = materialShaders.find(material.getName());
@@ -232,7 +227,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 					Ref< const render::ShaderGraph > customMeshSurfaceShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
 					if (!customMeshSurfaceShaderGraph)
 					{
-						// log::error << L"SplineEntityPipeline failed; unable to read material surface shader \"" << materialPair.first << L"\"." << Endl;
+						log::error << L"SplineEntityPipeline failed; unable to read material surface shader." << Endl;
 						return nullptr;
 					}
 
@@ -243,7 +238,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 					customMeshSurfaceShaderGraph = materialGenerator.combineSurface(customMeshSurfaceShaderGraph, meshSurfaceShaderGraph);
 					if (!customMeshSurfaceShaderGraph)
 					{
-						// log::error << L"SplineEntityPipeline failed; unable to combine material surface shaders \"" << materialPair.first << L"\"." << Endl;
+						log::error << L"SplineEntityPipeline failed; unable to combine material surface shaders." << Endl;
 						return nullptr;
 					}
 
@@ -251,8 +246,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 						*model,
 						material,
 						customMeshSurfaceShaderGraph,
-						Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}")
-					);
+						Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}"));
 				}
 				else
 				{
@@ -260,8 +254,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 						*model,
 						material,
 						meshSurfaceShaderGraph,
-						Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}")
-					);
+						Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}"));
 				}
 
 				// Resolve all variables.
@@ -330,7 +323,11 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 					return nullptr;
 				}
 
-				pipelineBuilder->buildAdHocOutput(materialShaderGraph, outputGuid);
+				if (!pipelineBuilder->buildAdHocOutput(materialShaderGraph, outputGuid))
+				{
+					log::error << L"SplineEntityPipeline failed; unable to build material shader." << Endl;
+					return nullptr;
+				}
 			}
 		}
 
@@ -430,8 +427,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 			log::info << L"Split model into " << (int32_t)splitVisualModels.size() << L" pieces." << Endl;
 
 			Ref< const mesh::MeshAsset > meshAsset = dynamic_type_cast< const mesh::MeshAsset* >(
-				visualModel->getProperty< ISerializable >(type_name< mesh::MeshAsset >())
-			);
+				visualModel->getProperty< ISerializable >(type_name< mesh::MeshAsset >()));
 
 			Guid outputMeshId = baseOutputMeshId;
 
@@ -461,8 +457,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				pipelineBuilder->buildAdHocOutput(
 					outputMeshAsset,
 					outputMeshId,
-					splitVisualModel
-				);
+					splitVisualModel);
 
 				outputMeshId.permutate();
 			}
@@ -474,16 +469,13 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 			const Guid outputShapeId = baseShapeId;
 
 			Ref< const physics::MeshAsset > meshAsset = dynamic_type_cast< const physics::MeshAsset* >(
-				collisionModel->getProperty< ISerializable >(type_name< physics::MeshAsset >())
-			);
+				collisionModel->getProperty< ISerializable >(type_name< physics::MeshAsset >()));
 
 			Ref< const physics::ShapeDesc > shapeDesc = dynamic_type_cast< const physics::ShapeDesc* >(
-				collisionModel->getProperty< ISerializable >(type_name< physics::ShapeDesc >())
-			);
+				collisionModel->getProperty< ISerializable >(type_name< physics::ShapeDesc >()));
 
 			Ref< const physics::StaticBodyDesc > bodyDesc = dynamic_type_cast< const physics::StaticBodyDesc* >(
-				collisionModel->getProperty< ISerializable >(type_name< physics::StaticBodyDesc >())
-			);
+				collisionModel->getProperty< ISerializable >(type_name< physics::StaticBodyDesc >()));
 
 			// Build collision shape mesh.
 			Ref< physics::MeshAsset > outputMeshAsset = new physics::MeshAsset();
@@ -511,8 +503,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 			pipelineBuilder->buildAdHocOutput(
 				outputMeshAsset,
 				outputShapeId,
-				collisionModel
-			);
+				collisionModel);
 		}
 
 		return replacementEntityData;

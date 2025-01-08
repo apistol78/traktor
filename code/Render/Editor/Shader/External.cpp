@@ -340,7 +340,7 @@ void External::serialize(ISerializer& s)
 	s >> MemberPinArray< MemberInputPin >(L"inputPins", this, m_inputPins);
 	s >> MemberPinArray< MemberOutputPin >(L"outputPins", this, m_outputPins);
 
-	if (s.getVersion() >= 1 && s.getVersion() < 2)
+	if (s.getVersion() >= 1 && s.getVersion() < 3)
 	{
 		SmallMap< std::wstring, float > values;
 		s >> MemberSmallMap< std::wstring, float >(L"values", values);

@@ -33,7 +33,7 @@
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{92F1019A-BBC5-E240-96B2-CA2ADC377460}</id>
 			<comment/>
 			<position>
@@ -56,7 +56,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{4A0DA636-4718-A34B-9A20-979C348D2728}</id>
@@ -68,7 +67,7 @@
 			<technique/>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2DBCEC5B-BBC4-684C-8947-9771B8CD57F1}</id>
 			<comment/>
 			<position>
@@ -93,9 +92,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0D92A5EC-6178-C94D-A036-2EB378B4FF43}</id>
 			<comment/>
 			<position>
@@ -121,16 +119,6 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values>
-				<item>
-					<first>Edge</first>
-					<second>1</second>
-				</item>
-				<item>
-					<first>Opaque</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{6F9569D9-C881-B640-A374-15D4484B9402}</id>

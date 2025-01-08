@@ -10,7 +10,7 @@
 			</position>
 			<swizzle>xyzw</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{CC5DC130-E372-0B4F-807D-3646BE794EA7}</id>
 			<comment/>
 			<position>
@@ -18,10 +18,7 @@
 				<second>429</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{97544039-E417-514E-BA37-0529DAA2C665}</id>

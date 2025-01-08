@@ -60,7 +60,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2520EB9C-2762-BA42-9605-51D45CF76526}</id>
 			<comment/>
 			<position>
@@ -79,7 +79,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{66E10D98-76E5-9A4F-BC1E-8139CE1152D2}</id>
@@ -93,7 +92,7 @@
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{2FB13476-129D-4961-8326-E3F1D26A8681}</id>
 			<comment/>
 			<position>
@@ -102,11 +101,13 @@
 			</position>
 			<name>MotionBlur</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
 			</include>

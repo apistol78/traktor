@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{9EE92C6C-4FEB-E445-B5C8-0D66293F1261}</id>
 			<comment/>
 			<position>
@@ -32,12 +32,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Translation</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{368E63A4-F96F-034E-9073-DC8F859F09C0}</id>
@@ -81,7 +75,7 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{299C234A-CB7A-5147-B383-660C76E45228}</id>
 			<comment/>
 			<position>
@@ -112,12 +106,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Translation</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{DA0FB948-C99B-914D-8421-B045742EE1D9}</id>
@@ -140,7 +128,7 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{6E9D327B-AE7B-5C45-98E4-2EF567D99E6C}</id>
 			<comment/>
 			<position>
@@ -171,12 +159,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Translation</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{2992B836-5021-614E-801B-FDD6F76395BE}</id>
@@ -199,7 +181,7 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{C3BF109D-DC4C-E944-A20B-DA5F2B879C31}</id>
 			<comment/>
 			<position>
@@ -230,12 +212,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Translation</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{1D09091F-45DA-B148-B6B0-11506248FC2D}</id>
@@ -249,7 +225,7 @@
 			<type>DtHalf4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2F07227C-C9D5-E942-8225-8F4829963715}</id>
 			<comment/>
 			<position>
@@ -270,7 +246,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{527D73C2-014C-B24F-A9EC-DAAB3793BD53}</id>
@@ -305,7 +280,7 @@
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{477B1B56-8CE8-E149-BB72-2F8B63F04F2F}</id>
 			<comment/>
 			<position>
@@ -340,9 +315,8 @@
 					<name>TranslationLast</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{E2553150-7C5C-5847-AD53-AAE413BE9AF2}</id>
 			<comment/>
 			<position>
@@ -395,7 +369,6 @@
 					<name>World</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{9272BDB3-C584-4D45-9C2E-BCAB848DB254}</id>
@@ -406,7 +379,7 @@
 			</position>
 			<name>Attributes</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{3A28F638-03A6-40D1-939C-9C1D34529A39}</id>
 			<comment/>
 			<position>
@@ -437,14 +410,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Translation</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7FC60B53-9905-4262-841A-8E8BC0DFDEA6}</id>
 			<comment/>
 			<position>
@@ -500,9 +467,8 @@
 					<name>VertexAttributes</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2D6C7A57-151B-4A93-BE29-7A8FE1FDDD57}</id>
 			<comment/>
 			<position>
@@ -548,7 +514,6 @@
 					<name>VSpace</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

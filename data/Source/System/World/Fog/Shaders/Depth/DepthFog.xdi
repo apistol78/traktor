@@ -66,7 +66,7 @@
 				<second>466</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{685661DA-2187-CB47-B88E-AD608A89B98F}</id>
 			<comment/>
 			<position>
@@ -97,7 +97,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8D8DABD7-3C8A-6841-8D66-C54DFC629F46}</id>
@@ -119,7 +118,7 @@
 				<second>344</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{C0183ABA-B1EE-1B42-BD22-D9203854AB80}</id>
 			<comment/>
 			<position>
@@ -127,12 +126,9 @@
 				<second>22</second>
 			</position>
 			<name>ViewPosition</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{DCB98B38-69AF-F640-B75E-99EC7EA2D285}</id>
 			<comment/>
 			<position>
@@ -140,10 +136,7 @@
 				<second>-39</second>
 			</position>
 			<name>Color</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{80F266CE-F4F1-0043-AEE9-5D0890ED52E2}</id>
@@ -188,7 +181,7 @@
 				<second>101</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{51EA7D6F-840D-46B9-9B20-09A837C1300E}</id>
 			<comment/>
 			<position>
@@ -196,10 +189,7 @@
 				<second>175</second>
 			</position>
 			<name>ViewDistance</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

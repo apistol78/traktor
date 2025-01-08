@@ -48,7 +48,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{55606599-DA57-584A-9A22-85DB6F4829EF}</id>
 			<comment/>
 			<position>
@@ -56,12 +56,9 @@
 				<second>711</second>
 			</position>
 			<name>ViewVelocity</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{05706B00-0F9C-4DBA-B455-9D4E0D96ACD2}</id>
 			<comment/>
 			<position>
@@ -69,10 +66,7 @@
 				<second>604</second>
 			</position>
 			<name>Enable</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{1F2263E4-899A-A346-BCDE-3B70152CE7AE}</id>

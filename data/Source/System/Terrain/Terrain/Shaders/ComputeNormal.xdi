@@ -40,7 +40,7 @@
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{FDC5017A-52BB-5442-BD52-BE105519E49E}</id>
 			<comment/>
 			<position>
@@ -48,10 +48,7 @@
 				<second>272</second>
 			</position>
 			<name>TexCoord</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{850B2EDF-0700-B34A-B5DC-EAECAA581113}</id>

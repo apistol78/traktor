@@ -17,7 +17,7 @@
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{1EE7F2FC-7358-654E-9DF8-1A7634AA03D4}</id>
 			<comment/>
 			<position>
@@ -26,11 +26,13 @@
 			</position>
 			<name>Adaptation</name>
 			<technique>Default</technique>
+			<domain>Compute</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -71,7 +73,7 @@ $Buffer[0].value.x = clamp($Current * AdapationRate + last * (1.0f - AdapationRa
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{504BABBC-FF21-4433-9586-EE33E832E238}</id>
 			<comment/>
 			<position>
@@ -80,11 +82,13 @@ $Buffer[0].value.x = clamp($Current * AdapationRate + last * (1.0f - AdapationRa
 			</position>
 			<name>Average</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>

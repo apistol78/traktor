@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{3A098A1E-0DEB-114C-B039-0C93189C8EA4}</id>
 			<comment/>
 			<position>
@@ -9,12 +9,9 @@
 				<second>1041</second>
 			</position>
 			<name>SearchTexture</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{107B03C6-B3B5-A249-9C11-6FCFFA95251F}</id>
 			<comment/>
 			<position>
@@ -22,12 +19,9 @@
 				<second>859</second>
 			</position>
 			<name>e</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{62D7655D-6142-8942-9E94-F573CDAB7148}</id>
 			<comment/>
 			<position>
@@ -35,12 +29,9 @@
 				<second>573</second>
 			</position>
 			<name>Offset</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{D1DF6273-6CEC-7149-B274-027ED17BB2D6}</id>
 			<comment/>
 			<position>
@@ -103,7 +94,6 @@
 					<name>SMAA_THRESHOLD</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{8B2A10E4-4EF2-8244-A5CD-1B2CDD57FDA2}</id>
@@ -233,7 +223,7 @@
 				<second>405</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{CC58E400-F033-224D-882B-7084923C1436}</id>
 			<comment/>
 			<position>
@@ -259,7 +249,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{0D2ADB8E-E364-994F-8ABF-83DC171CB740}</id>

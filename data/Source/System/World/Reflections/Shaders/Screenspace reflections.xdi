@@ -18,7 +18,7 @@
 				<second>-712</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{789EC3A5-F082-FE49-87B0-E3D8922F6C33}</id>
 			<comment/>
 			<position>
@@ -37,7 +37,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{D9E8CB02-8318-F444-9A5F-908C730E682F}</id>
@@ -128,7 +127,7 @@
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{74D309C3-371D-451E-877C-3EFCE94DFEB7}</id>
 			<comment/>
 			<position>
@@ -137,11 +136,13 @@
 			</position>
 			<name>Trace</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -402,7 +403,7 @@ for (int i = 0; i < 64; ++i)
 			</position>
 			<operator>CoGreater</operator>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2BC6C1F9-5E1E-7F45-9DBD-14E4F5BD033B}</id>
 			<comment/>
 			<position>
@@ -423,9 +424,8 @@ for (int i = 0; i < 64; ++i)
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{92AC2C64-36D2-B14C-8C0C-881E12EA0174}</id>
 			<comment/>
 			<position>
@@ -446,9 +446,8 @@ for (int i = 0; i < 64; ++i)
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{9E407016-44C9-964A-AB7C-A3914450E0F3}</id>
 			<comment/>
 			<position>
@@ -469,7 +468,6 @@ for (int i = 0; i < 64; ++i)
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{45DC6ED4-E90E-5146-97CF-B85A254CDB94}</id>
@@ -483,7 +481,7 @@ for (int i = 0; i < 64; ++i)
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{05F7BA81-98C2-8649-97D4-E2129F9DDBEA}</id>
 			<comment/>
 			<position>
@@ -504,7 +502,6 @@ for (int i = 0; i < 64; ++i)
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{796E693E-08F8-9744-A616-D0BB2785766E}</id>
@@ -524,7 +521,7 @@ for (int i = 0; i < 64; ++i)
 			</position>
 			<name>L_Specular</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{295C719A-6EEA-FD4E-94E7-B57C33BEC162}</id>
 			<comment/>
 			<position>
@@ -533,11 +530,13 @@ for (int i = 0; i < 64; ++i)
 			</position>
 			<name>Should discard</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -559,8 +558,6 @@ for (int i = 0; i < 64; ++i)
 			<script>
 			<![CDATA[
 $Output = ($Roughness < 0.4f && $Specular > 0.1f) ? 1.0f : 0.0f;
-
-
 			]]>
 			</script>
 		</item>

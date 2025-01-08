@@ -37,7 +37,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{C90B489B-ADED-9F47-8C78-07B3088D3A1F}</id>
 			<comment/>
 			<position>
@@ -45,12 +45,9 @@
 				<second>131</second>
 			</position>
 			<name>DepthMap</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{315B0CBC-40D3-AF48-A6A4-8A54299BFE42}</id>
 			<comment/>
 			<position>
@@ -58,10 +55,7 @@
 				<second>181</second>
 			</position>
 			<name>DepthMapUV</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

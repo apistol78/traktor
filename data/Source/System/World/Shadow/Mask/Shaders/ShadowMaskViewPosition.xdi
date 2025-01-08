@@ -49,7 +49,7 @@
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{9528F8A0-C9E5-0948-942B-76FEF31DBB26}</id>
 			<comment/>
 			<position>
@@ -68,7 +68,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{EB7C21FD-ED93-5040-AF65-E04A18CB961C}</id>

@@ -55,7 +55,7 @@
 				<second>-447</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{2ACFE341-37C9-EF41-9FB2-F2EBE4B8D7C5}</id>
 			<comment/>
 			<position>
@@ -63,10 +63,7 @@
 				<second>-456</second>
 			</position>
 			<name>OcclusionMap</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{E7E8F510-2835-0D4B-AD2E-7288D3308D78}</id>
@@ -112,7 +109,7 @@
 				<second>-219</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{AA37DD13-4A4C-6345-AC16-BC2721126D3F}</id>
 			<comment/>
 			<position>
@@ -120,10 +117,7 @@
 				<second>-226</second>
 			</position>
 			<name>CavityMap</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
 			<id>{75A94EED-A528-E649-82EB-9E972413FFD8}</id>
@@ -179,7 +173,7 @@
 				<second>-1659</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B0F81D13-75AC-A748-A33B-500CC2CC9E0D}</id>
 			<comment/>
 			<position>
@@ -220,7 +214,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{D056F968-432B-784B-944D-2D39AFCE18E6}</id>
@@ -249,7 +242,7 @@
 			</position>
 			<name>V_Weights</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{65537E67-F53A-A94C-8E37-5FBF305753B2}</id>
 			<comment/>
 			<position>
@@ -290,7 +283,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{FD95A39A-87D7-AB40-8EA7-19547B990019}</id>
@@ -328,7 +320,7 @@
 			</position>
 			<name>V_Weights</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{CFF1FFD2-1FC5-E242-BF29-DAF40D01752D}</id>
 			<comment/>
 			<position>
@@ -369,9 +361,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{5331ECCB-9127-8348-B9BB-5212CB4570DC}</id>
 			<comment/>
 			<position>
@@ -379,12 +370,9 @@
 				<second>-1491</second>
 			</position>
 			<name>SurfaceAttributes1</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{1E551F53-78F8-994C-9212-A496404B7755}</id>
 			<comment/>
 			<position>
@@ -392,12 +380,9 @@
 				<second>-1390</second>
 			</position>
 			<name>SurfaceAttributes2</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{C5C43A94-AFFE-0641-BFF9-39EAD0E4C82E}</id>
 			<comment/>
 			<position>
@@ -405,12 +390,9 @@
 				<second>-1289</second>
 			</position>
 			<name>SurfaceAttributes3</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{14B70960-BD5E-0A48-A3A7-4E2049294CE4}</id>
 			<comment/>
 			<position>
@@ -418,10 +400,7 @@
 				<second>-1188</second>
 			</position>
 			<name>SurfaceAttributes4</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
 			<id>{44A839B6-604D-4A4F-8F92-698021A4C021}</id>
@@ -708,7 +687,7 @@
 				<item>Height</item>
 			</names>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{42DAA83F-B406-9C41-9C29-B62C8F625953}</id>
 			<comment/>
 			<position>
@@ -716,10 +695,7 @@
 				<second>-414</second>
 			</position>
 			<name>TerrainAttributes</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.BundleUnite" version="traktor.render.Node:1">
 			<id>{5948BE9D-059A-EA4B-AD85-76AB5C02495B}</id>
@@ -816,7 +792,7 @@
 			</position>
 			<name>Specular1</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{EC9B1722-2B5E-B94B-9213-BDB785261218}</id>
 			<comment/>
 			<position>
@@ -857,7 +833,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

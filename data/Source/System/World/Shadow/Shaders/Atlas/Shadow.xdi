@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{DFBE684D-C1FF-9644-9A8D-7E562F232CE9}</id>
 			<comment/>
 			<position>
@@ -9,12 +9,9 @@
 				<second>1901</second>
 			</position>
 			<name>ViewPosition</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{5AD1E6A5-CBF8-2642-A06D-D78DAD2D920C}</id>
 			<comment/>
 			<position>
@@ -22,12 +19,9 @@
 				<second>2012</second>
 			</position>
 			<name>ViewToLight</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{8C367FB2-DBCC-1646-8C1C-FB6B90C128EF}</id>
 			<comment/>
 			<position>
@@ -35,10 +29,7 @@
 				<second>2428</second>
 			</position>
 			<name>AtlasTransform</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{A7D9AE88-308A-E842-AC54-BD1036B198BC}</id>
@@ -206,7 +197,7 @@ Light space position
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{2A0E04B1-B1D0-3D45-91D5-559E94641FD0}</id>
 			<comment/>
 			<position>
@@ -214,10 +205,7 @@ Light space position
 				<second>2188</second>
 			</position>
 			<name>Bias</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{59E34155-A8FC-FE4C-8E6E-8CFABAD0614D}</id>
@@ -584,7 +572,7 @@ Light space position
 			</position>
 			<name>L_ShadowMap</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{74F6E20E-7381-4558-9866-BCB3FA49EFCB}</id>
 			<comment/>
 			<position>
@@ -592,10 +580,7 @@ Light space position
 				<second>1757</second>
 			</position>
 			<name>ShadowMap</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{40B8A67D-F8AE-4F3E-95F0-9A335A66C6A6}</id>

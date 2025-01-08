@@ -302,7 +302,7 @@
 				<second>320</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{665004FF-097A-C647-8AF4-859670B9861C}</id>
 			<comment/>
 			<position>
@@ -317,7 +317,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{F0127BC7-20F5-584F-A658-9172B29A3DE6}</id>
@@ -467,7 +466,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{53623A36-4E0C-8D42-91F3-985B4B2F0C6A}</id>
 			<comment/>
 			<position>
@@ -493,9 +492,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{25098B3A-6C90-2A4C-93AF-3005EB94261D}</id>
 			<comment/>
 			<position>
@@ -504,11 +502,13 @@
 			</position>
 			<name>Fetch</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>

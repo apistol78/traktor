@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{498DB440-34E8-DE45-8D94-5F7E53F4147C}</id>
 			<comment/>
 			<position>
@@ -9,12 +9,9 @@
 				<second>245</second>
 			</position>
 			<name>Distance</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D809F4D9-90FA-494B-9F22-DB08167D0708}</id>
 			<comment/>
 			<position>
@@ -22,10 +19,7 @@
 				<second>300</second>
 			</position>
 			<name>Density</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{F2B39EF6-AA99-D64C-8324-919D3B44BEAB}</id>
@@ -36,7 +30,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{4CF2DFFD-4DD0-1E4D-B24D-577A751BB6ED}</id>
 			<comment/>
 			<position>
@@ -44,12 +38,9 @@
 				<second>355</second>
 			</position>
 			<name>MaxDensity</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{2EF61F74-709E-2C43-9CC9-C0AD2147E2C3}</id>
 			<comment/>
 			<position>
@@ -58,11 +49,13 @@
 			</position>
 			<name>FogFactor</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>

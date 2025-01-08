@@ -101,7 +101,7 @@ NDC
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{08CCEE66-2163-D54A-B653-C605FB935C34}</id>
 			<comment/>
 			<position>
@@ -131,7 +131,6 @@ NDC
 					<name>Direction</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{FA6B5F5B-2883-9A4F-90C9-268471258D80}</id>
@@ -411,7 +410,6 @@ NDC
 			<script>
 			<![CDATA[
 $Output = Hash13($Seed.xyz);
-
 			]]>
 			</script>
 		</item>
@@ -469,7 +467,7 @@ $Output = Hash13($Seed.xyz);
 				<second>153</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{3BC7A3C5-B101-4BDA-A9D2-FE599E29F3BB}</id>
 			<comment/>
 			<position>
@@ -494,7 +492,6 @@ $Output = Hash13($Seed.xyz);
 					<name>LightOffset</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{75E1712E-1B95-4EF4-BD9D-9C73A64BA49E}</id>
@@ -522,7 +519,7 @@ $Output = Hash13($Seed.xyz);
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{542CF808-CD67-044F-A00E-7EDC425F4820}</id>
 			<comment/>
 			<position>
@@ -543,7 +540,6 @@ $Output = Hash13($Seed.xyz);
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{9F6CE8B4-419B-7E4E-9E2F-55469947E24A}</id>

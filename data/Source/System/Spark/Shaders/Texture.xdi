@@ -11,7 +11,7 @@
 			<technique/>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{BFE2F27C-D766-2D44-A9FA-28635FCF73F2}</id>
 			<comment/>
 			<position>
@@ -34,9 +34,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0B2B8B61-74F1-BA49-A4F9-E1414E63BF34}</id>
 			<comment/>
 			<position>
@@ -62,18 +61,8 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values>
-				<item>
-					<first>Edge</first>
-					<second>1</second>
-				</item>
-				<item>
-					<first>Opaque</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{616D25A3-59CD-D44E-A103-365D1874DDCC}</id>
 			<comment/>
 			<position>
@@ -98,7 +87,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{BA979FD4-90C7-0A4E-B3EF-FA0825AEB43E}</id>
@@ -116,7 +104,7 @@
 				<second>100</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{E1FF206B-CD72-944F-9308-3348938C74A7}</id>
 			<comment/>
 			<position>
@@ -142,12 +130,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Clamp</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{F3C9F629-A3D6-904F-89DD-B0B2945031BA}</id>
@@ -193,7 +175,7 @@
 			<type>DtFloat2</type>
 			<index>1</index>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7E16FF53-A601-8C4A-8F54-D986B310126B}</id>
 			<comment/>
 			<position>
@@ -219,12 +201,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Clamp</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{F75AC9E7-3FD8-D048-8FAF-124562457E5C}</id>

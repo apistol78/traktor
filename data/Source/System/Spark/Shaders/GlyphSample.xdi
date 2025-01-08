@@ -33,7 +33,7 @@
 				<second>340</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{DC86CD51-DFE1-3349-9134-3EE083055CB1}</id>
 			<comment/>
 			<position>
@@ -41,10 +41,7 @@
 				<second>340</second>
 			</position>
 			<name>Offset</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{188A17E2-1BEE-CB4A-BB86-08463153BA97}</id>
@@ -188,7 +185,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{441FB1E2-3D57-8940-A790-0827F2837AED}</id>
 			<comment/>
 			<position>
@@ -197,11 +194,13 @@
 			</position>
 			<name>InRange</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>

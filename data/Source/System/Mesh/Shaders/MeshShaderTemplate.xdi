@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{81512F74-8DC4-934F-86DA-93DCE9658F80}</id>
 			<comment/>
 			<position>
@@ -22,9 +22,8 @@
 					<name>SurfaceAttributes</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{FA64CB58-5298-2547-8D18-DA2514FD5E94}</id>
 			<comment/>
 			<position>
@@ -115,23 +114,13 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Cast shadow</first>
-					<second>1</second>
-				</item>
-				<item>
-					<first>Emissive</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2C6FCD7B-A9EC-3844-9DCC-D07CCD7B6A38}</id>
 			<comment/>
 			<position>
-				<first>2865</first>
-				<second>288</second>
+				<first>2914</first>
+				<second>293</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
@@ -142,7 +131,6 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{0CE7F284-3E55-994A-95CD-89B344CBCF81}</id>
@@ -403,7 +391,7 @@
 			</position>
 			<name>Roughness</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{1F7BA6A5-17E1-134B-A711-E7AEA9A07291}</id>
 			<comment/>
 			<position>
@@ -448,7 +436,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{6EC304BA-DA1E-7349-9A11-3EA5ADC55145}</id>
@@ -664,7 +651,7 @@
 			</position>
 			<name>ViewVelocity</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{1B0646F2-CFEC-4545-AE81-0C11F738F051}</id>
 			<comment/>
 			<position>
@@ -679,7 +666,6 @@
 					<name>Attributes</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{67F2CCC7-2247-4845-B3A3-82279FDA2840}</id>
@@ -704,7 +690,7 @@ on type of mesh.
 				<second>96</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{15E3D590-DC47-1D42-A70C-6CA4C3ECC220}</id>
 			<comment>
 			<![CDATA[
@@ -729,9 +715,8 @@ Tag_LightmapTexCoord
 					<name>T_TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{91B7907E-8A31-954E-93BE-7A8A2351608B}</id>
 			<comment/>
 			<position>
@@ -752,7 +737,6 @@ Tag_LightmapTexCoord
 					<name>T_Irradiance</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E03BECA2-B818-EB44-8CC3-29CA3B383DBA}</id>
@@ -940,7 +924,7 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition
 				<second>801</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{3BFC6A97-5DA3-4CA9-A043-0AB94CC900BD}</id>
 			<comment/>
 			<position>
@@ -989,9 +973,8 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition
 					<name>World position offset</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0E7F406C-79E1-49BF-A5C5-1EB9C077C8EB}</id>
 			<comment/>
 			<position>
@@ -1032,9 +1015,8 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition
 					<name>World</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{4D73DFD2-296D-4AA4-B7BF-DFCBC376FB70}</id>
 			<comment/>
 			<position>
@@ -1071,9 +1053,8 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition
 					<name>Velocity</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5CB9CB28-07B6-4CDC-84CA-2F7E2DCA212E}</id>
 			<comment/>
 			<position>
@@ -1110,7 +1091,6 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition
 					<name>Velocity</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

@@ -48,7 +48,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>High</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{EAC4C422-7984-3E4A-B5E9-F4CA679C464E}</id>
 			<comment/>
 			<position>
@@ -67,7 +67,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{7B13EFFB-2A9E-904A-93CE-3A01883451B2}</id>
@@ -78,7 +77,7 @@
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{CCB3B9F9-D165-E349-8CA3-3527AC0487CF}</id>
 			<comment/>
 			<position>
@@ -99,7 +98,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{2BA3761F-6C94-1949-ADC1-2D8C5EDBA320}</id>
@@ -127,7 +125,7 @@
 				<second>-600</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B87EC87E-7FA2-5745-96EB-606D5D1507C3}</id>
 			<comment/>
 			<position>
@@ -148,7 +146,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{F1341CF9-015E-A644-B047-AE94392FD17F}</id>
@@ -353,7 +350,6 @@ for (int i = 0; i < N; ++i)
 
 const float f = 1.0f - occlusions / float(N);
 $Output = f * C + (1.0f - C);
-
 			]]>
 			</script>
 		</item>

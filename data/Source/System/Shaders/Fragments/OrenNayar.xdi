@@ -10,7 +10,7 @@
 			</position>
 			<name>Diffuse</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{041F9339-7BE4-014D-9A60-DA59AC182F52}</id>
 			<comment/>
 			<position>
@@ -18,12 +18,9 @@
 				<second>-5</second>
 			</position>
 			<name>Roughness</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0.5</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{549B9A5D-D869-4541-A3AD-9A68FFD62A18}</id>
 			<comment/>
 			<position>
@@ -31,12 +28,9 @@
 				<second>553</second>
 			</position>
 			<name>Normal</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{0AFF2486-6B2C-7B42-A486-E6CBF168CEAA}</id>
 			<comment/>
 			<position>
@@ -44,10 +38,7 @@
 				<second>484</second>
 			</position>
 			<name>LightDirection</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Dot" version="traktor.render.Node:1">
 			<id>{42DBFDBB-1DCC-3C44-81E0-37EAD441C739}</id>
@@ -174,7 +165,7 @@ B
 				<second>95</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{FDB90D54-29F9-8942-ADE4-68F106E06AEF}</id>
 			<comment/>
 			<position>
@@ -182,10 +173,7 @@ B
 				<second>656</second>
 			</position>
 			<name>EyeDirection</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Dot" version="traktor.render.Node:1">
 			<id>{F9C2F204-5C48-7342-A71B-C07CEC8E7627}</id>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{7EC30AFC-4040-4E4F-8AA9-AC48DE76BF6F}</id>
 			<comment/>
 			<position>
@@ -9,10 +9,7 @@
 				<second>152</second>
 			</position>
 			<name>UV</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{D47095EC-06E3-A243-9AC4-528DAF2AF7B5}</id>

@@ -72,7 +72,7 @@
 				<second>446</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5BF0E273-BB25-41FC-A108-1EEDAF062683}</id>
 			<comment/>
 			<position>
@@ -93,7 +93,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{1FE79F5F-D970-4246-807C-2CB9A84D6464}</id>
@@ -151,7 +150,7 @@ Max intensity
 				<second>432</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{F4CFA5BC-021D-44D7-BCAE-B1B786DF046E}</id>
 			<comment/>
 			<position>
@@ -160,11 +159,13 @@ Max intensity
 			</position>
 			<name>IncrementBin</name>
 			<technique>Default</technique>
+			<domain>Compute</domain>
 			<localSize>
 				<X>8</X>
 				<Y>8</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>

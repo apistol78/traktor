@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{BCD7AD3C-20EF-2045-AA9D-3F9E50BC0A9B}</id>
 			<comment/>
 			<position>
@@ -9,10 +9,7 @@
 				<second>168</second>
 			</position>
 			<name>Position</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{6494A505-45ED-8F43-AA17-53A8CE197CD1}</id>
@@ -207,7 +204,7 @@
 				<second>163</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{6932397F-4C34-8D41-A801-AA6ED6930EF3}</id>
 			<comment/>
 			<position>
@@ -233,9 +230,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{C90FC21A-94C5-3740-BA08-909C2B39AFF7}</id>
 			<comment/>
 			<position>
@@ -261,7 +257,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{A9B1FB78-C658-D54B-9072-CD7DDC0FA61D}</id>
@@ -488,7 +483,7 @@
 			</position>
 			<name>ObjectPosition</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{27637254-39F7-CD4C-AE12-456B48991F9F}</id>
 			<comment/>
 			<position>
@@ -496,10 +491,7 @@
 				<second>569</second>
 			</position>
 			<name>Normal</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{2C8F3A09-6B72-4F4E-9CCC-F82AA3EAF711}</id>
@@ -519,7 +511,7 @@
 			</position>
 			<name>ObjectNormal</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D5644C3C-95DC-F846-BE5D-1EECA511ABD5}</id>
 			<comment/>
 			<position>
@@ -527,10 +519,7 @@
 				<second>677</second>
 			</position>
 			<name>Tangent</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{F776A813-3ED1-0F42-A612-AAA9916FC6EC}</id>
@@ -541,7 +530,7 @@
 			</position>
 			<name>ObjectTangent</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{0B2C554F-E548-4F42-82A6-837BD28A7B13}</id>
 			<comment/>
 			<position>
@@ -549,10 +538,7 @@
 				<second>785</second>
 			</position>
 			<name>Binormal</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{C6CCAF2E-D47C-7A49-B3B9-C6E40BEB9B10}</id>
@@ -649,7 +635,7 @@
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D0459366-1874-4789-8E83-1262B61F8D5A}</id>
 			<comment/>
 			<position>
@@ -657,10 +643,7 @@
 				<second>314</second>
 			</position>
 			<name>LastPosition</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{EE39361D-1731-4D03-8C94-0EAB85F67F08}</id>
@@ -775,7 +758,7 @@
 				<second>895</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{25DD1A5C-5C20-4105-B788-9089B8113BFA}</id>
 			<comment/>
 			<position>
@@ -821,9 +804,8 @@
 					<name>VSpace</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{FB50BC97-F1D3-4642-9AF2-E3C57C6DDC6E}</id>
 			<comment/>
 			<position>
@@ -869,9 +851,8 @@
 					<name>VSpace</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{EACDAB29-BDAC-4638-BDB6-9B5A570E959B}</id>
 			<comment/>
 			<position>
@@ -917,9 +898,8 @@
 					<name>VSpace</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{8C9DC737-4B5A-4ECE-BFF6-7C36E58B4096}</id>
 			<comment/>
 			<position>
@@ -965,7 +945,6 @@
 					<name>VSpace</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

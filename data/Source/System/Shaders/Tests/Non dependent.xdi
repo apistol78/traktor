@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{E2E9BF0A-2AA5-E845-B52B-159984AB604C}</id>
 			<comment/>
 			<position>
@@ -17,7 +17,6 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B090D8E1-1102-3749-93D8-AE9ABF472B3B}</id>

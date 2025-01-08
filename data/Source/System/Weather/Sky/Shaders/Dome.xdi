@@ -62,7 +62,7 @@
 			</position>
 			<name>TexCoord</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{407FAE78-CAC7-E140-AB3B-C1C025FEC0D5}</id>
 			<comment/>
 			<position>
@@ -71,11 +71,13 @@
 			</position>
 			<name>TexCoordToDirection</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{055423F4-A0F5-4840-8020-D5C93F97F8E5}</item>
 			</include>
@@ -117,7 +119,7 @@ $Output = vec4(direction, 0.0f);
 			</position>
 			<name>Clouds</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{1853FE71-10CD-2743-B521-886CDCD1130D}</id>
 			<comment/>
 			<position>
@@ -126,11 +128,13 @@ $Output = vec4(direction, 0.0f);
 			</position>
 			<name>Clouds</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{2103B1F3-97E1-4D94-A8C0-48E7D4C0C6A9}</item>
 			</include>
@@ -369,7 +373,7 @@ $Distance = dist;
 			</position>
 			<name>Clouds</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{8FAF1B30-81D3-2746-BDCC-D5FD3B49A925}</id>
 			<comment/>
 			<position>
@@ -378,11 +382,13 @@ $Distance = dist;
 			</position>
 			<name>Load image</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -436,7 +442,7 @@ $Output = imageLoad($Image, $Coord.xy);
 				<second>225</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{7352EF91-A455-4C36-8BD3-59F7838C52FE}</id>
 			<comment/>
 			<position>
@@ -445,11 +451,13 @@ $Output = imageLoad($Image, $Coord.xy);
 			</position>
 			<name>Image size</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>

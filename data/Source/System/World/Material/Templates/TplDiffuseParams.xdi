@@ -19,7 +19,7 @@
 			</position>
 			<name>T_DiffuseColor</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D8BBF197-D52A-D746-BA35-4BC794A783C8}</id>
 			<comment/>
 			<position>
@@ -27,10 +27,7 @@
 				<second>250</second>
 			</position>
 			<name>T_Attributes</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{25ED877A-29B3-0F40-B910-E47DBD3BC811}</id>
 			<comment/>
 			<position>
@@ -9,12 +9,9 @@
 				<second>309</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{451A0D58-C21A-E24E-B94C-0C1ED8287162}</id>
 			<comment>
 			<![CDATA[
@@ -26,12 +23,9 @@ As quaternion
 				<second>419</second>
 			</position>
 			<name>Rotation</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{25AD423B-24C1-0043-90FD-B06FA8092F32}</id>
 			<comment/>
 			<position>
@@ -39,12 +33,9 @@ As quaternion
 				<second>161</second>
 			</position>
 			<name>Translation</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{363EFAAB-3E35-6B4F-BBBB-C646A3AC6886}</id>
 			<comment/>
 			<position>
@@ -65,7 +56,6 @@ As quaternion
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{BD330A77-C3E5-1942-989A-27F39CED2A94}</id>
@@ -94,7 +84,7 @@ As quaternion
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{EA28E173-9C32-DB43-9453-763357655A3E}</id>
 			<comment/>
 			<position>
@@ -120,9 +110,8 @@ As quaternion
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{8C4B0E6A-E47F-FE48-8656-9CE94C8825D7}</id>
 			<comment/>
 			<position>
@@ -148,7 +137,6 @@ As quaternion
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{9DBD32E2-D5A7-0947-9A21-A5BDFC63BA35}</id>

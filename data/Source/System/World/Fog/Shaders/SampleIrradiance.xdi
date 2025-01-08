@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{AAF68AA1-6F09-BE4C-978A-5CE8928EBE29}</id>
 			<comment/>
 			<position>
@@ -9,10 +9,7 @@
 				<second>-212</second>
 			</position>
 			<name>ViewPosition</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{5DC24E9F-DEF0-9C45-984B-B27493D02914}</id>
@@ -96,8 +93,8 @@
 			<id>{DDD64A0D-5A74-EE4B-95FC-662E28E5530A}</id>
 			<comment/>
 			<position>
-				<first>675</first>
-				<second>1679</second>
+				<first>649</first>
+				<second>1673</second>
 			</position>
 			<name>L_Range</name>
 		</item>
@@ -220,7 +217,7 @@
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2DF620F3-DE41-B44E-AC2D-B11CBCD85188}</id>
 			<comment/>
 			<position>
@@ -261,7 +258,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{8F2E786C-7041-A647-B90B-4777FF643714}</id>
@@ -449,7 +445,7 @@
 			</position>
 			<name>L_Range</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{C2D0C01A-0B19-7E43-B50E-B8CDC367BA77}</id>
 			<comment/>
 			<position>
@@ -480,7 +476,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{AA16D827-1DA0-5847-87B3-792A7F2DC7D8}</id>
@@ -658,7 +653,7 @@
 			</position>
 			<name>L_AtlasTransform</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7056F5FC-287D-FF42-AC2E-51ACD3967A4D}</id>
 			<comment/>
 			<position>
@@ -699,9 +694,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5E07D6B4-CE09-C846-B432-91750751A107}</id>
 			<comment/>
 			<position>
@@ -732,7 +726,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{406FB92D-8D53-7645-9FBD-F5164B67B981}</id>
@@ -835,7 +828,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{09E5FCEB-DF24-624E-B871-1ECDFCD7A8B9}</id>
 			<comment/>
 			<position>
@@ -844,11 +837,13 @@
 			</position>
 			<name>GetSlice</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -1078,7 +1073,7 @@ Check max shadow distance
 				<item>AtlasTransform</item>
 			</names>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{1DB29D7E-49B7-4594-BEBF-F84E54FF5C35}</id>
 			<comment/>
 			<position>
@@ -1086,10 +1081,7 @@ Check max shadow distance
 				<second>-337</second>
 			</position>
 			<name>LightIndex</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{77EDB702-84F1-744C-88F7-268AA4CA17B2}</id>

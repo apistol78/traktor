@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{3BEE6FBC-73D2-40AE-8491-667E79827E2E}</id>
 			<comment/>
 			<position>
@@ -9,10 +9,7 @@
 				<second>1204</second>
 			</position>
 			<name>Texture</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{1A2E1C23-7F96-4CB8-90B1-50C178F9B27F}</id>
@@ -23,7 +20,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{EBDEF8BE-3369-8449-ADF0-B56DC2E37011}</id>
 			<comment/>
 			<position>
@@ -31,10 +28,7 @@
 				<second>452</second>
 			</position>
 			<name>TexCoord</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.TextureSize" version="traktor.render.Node:1">
 			<id>{D36F2DEF-FB2A-CD47-BE2D-66DB2188F0CA}</id>
@@ -120,7 +114,7 @@
 			</position>
 			<name>Fuv</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7E503C4B-9FB9-3D47-B47E-5F947F29B72E}</id>
 			<comment/>
 			<position>
@@ -141,9 +135,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{32955DB6-9051-B34E-B731-FCD48C36C582}</id>
 			<comment/>
 			<position>
@@ -164,7 +157,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{3ED2575F-7ECD-7441-9F50-F4AE99BCAB73}</id>

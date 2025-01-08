@@ -13,7 +13,7 @@
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{95DC569C-8B63-4FFB-B84D-53E7A76C0D8F}</id>
 			<comment/>
 			<position>
@@ -61,7 +61,6 @@
 					<name>World</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{48732833-7403-4681-910A-39C97A972E6F}</id>
@@ -125,7 +124,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7D9E79E4-30FD-4D66-85D7-60A649157A35}</id>
 			<comment/>
 			<position>
@@ -141,9 +140,8 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7FB1DE86-A13A-4BFB-9962-0BBAD63469DE}</id>
 			<comment/>
 			<position>
@@ -234,7 +232,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
 			<id>{C378ABD9-A8C9-4A41-A2B1-97A07B03F077}</id>

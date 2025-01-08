@@ -216,7 +216,7 @@ Maximum
 				<second>664</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{A327AB5A-BBA8-954C-81F5-F233B34DB36A}</id>
 			<comment/>
 			<position>
@@ -237,7 +237,6 @@ Maximum
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{0BF09122-6520-734B-86B2-358F18F66FE6}</id>
@@ -332,7 +331,7 @@ zw
 			</position>
 			<value>0.5</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{E6423019-178B-C941-83A4-666A68E4D3D2}</id>
 			<comment/>
 			<position>
@@ -351,7 +350,6 @@ zw
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C8415AD4-EF55-5C48-9753-5E2C3A0B29E4}</id>
@@ -365,7 +363,7 @@ zw
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B60F65A3-D756-9D40-8267-EFDCCEDE06BB}</id>
 			<comment/>
 			<position>
@@ -386,7 +384,6 @@ zw
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{5CCECC2F-D16F-184E-BB8B-163101163B7D}</id>
@@ -443,7 +440,7 @@ SW
 				<second>589</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B0D53C4D-9D9D-5C4F-8B4D-E586F50CCF04}</id>
 			<comment/>
 			<position>
@@ -464,7 +461,6 @@ SW
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{EA7D4341-F5C7-B341-A0B1-93353E20799D}</id>
@@ -513,7 +509,7 @@ NE
 			</position>
 			<value>1, 0, 0, 0</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F3763895-0326-4C43-8472-45E693852C66}</id>
 			<comment/>
 			<position>
@@ -534,7 +530,6 @@ NE
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{25753573-6B4A-5F41-8544-75A8225578A5}</id>
@@ -713,7 +708,7 @@ Span max
 			</position>
 			<value>0.167</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F4BC961F-3DE4-144D-901A-A857EE240DE3}</id>
 			<comment/>
 			<position>
@@ -732,7 +727,6 @@ Span max
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{7A997669-BE72-3C4A-9131-EEA872969748}</id>
@@ -980,7 +974,7 @@ Minimum
 				<second>923</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{047933B4-BB75-2E49-B55B-9123F3FD7DED}</id>
 			<comment/>
 			<position>
@@ -1001,7 +995,6 @@ Minimum
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{26472CBC-1387-E74A-8049-4F77C4DDA49F}</id>
@@ -1025,7 +1018,7 @@ Middle
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{074E17A3-85F9-EF43-B010-A0EFBD1AFF43}</id>
 			<comment/>
 			<position>
@@ -1046,7 +1039,6 @@ Middle
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Max" version="traktor.render.Node:1">
 			<id>{748BA791-2C25-4D47-964F-4B8EACFEB37C}</id>

@@ -10,7 +10,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{6D9C5BED-2B3B-3546-B807-CD618017F552}</id>
 			<comment/>
 			<position>
@@ -18,10 +18,7 @@
 				<second>756</second>
 			</position>
 			<name>ViewPosition</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{AB99160D-F70B-4822-9B63-D706C5C1A590}</id>
@@ -32,7 +29,7 @@
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{EC9AE568-7089-4B8D-9874-73DE5599266E}</id>
 			<comment/>
 			<position>
@@ -40,10 +37,7 @@
 				<second>695</second>
 			</position>
 			<name>Color</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{C360D5E3-3E9F-4972-B038-99BC140BDB79}</id>
@@ -125,7 +119,7 @@
 				<second>1404</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B8D53C83-DFFA-8C48-A5D0-4356D110542C}</id>
 			<comment/>
 			<position>
@@ -151,7 +145,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{00C2631D-DA0C-5745-822A-76C3C689B39A}</id>
@@ -180,7 +173,7 @@
 			</position>
 			<name>L_VolumetricFog</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{97212322-59DB-6B4A-B04F-9DCCC0960D59}</id>
 			<comment/>
 			<position>
@@ -210,7 +203,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{F91CDC89-5C04-9D4C-97BC-855DE857BFD0}</id>

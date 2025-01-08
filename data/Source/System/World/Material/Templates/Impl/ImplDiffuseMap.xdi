@@ -64,7 +64,7 @@ Tag_DiffuseColor
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{294F9CD5-8590-2E4A-A76D-8825710F4E38}</id>
 			<comment/>
 			<position>
@@ -72,10 +72,7 @@ Tag_DiffuseColor
 				<second>257</second>
 			</position>
 			<name>T_Attributes</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
 			<id>{64AB4F0E-41E1-DD41-ABF6-90D8520EF029}</id>

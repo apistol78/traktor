@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{806D2771-CD50-4E41-ABA9-E4A9388ACEDE}</id>
 			<comment/>
 			<position>
@@ -32,9 +32,8 @@
 					<name>T_DiffuseColor</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{55865767-1511-8540-B902-534F15D73F6A}</id>
 			<comment/>
 			<position>
@@ -92,9 +91,8 @@
 					<name>T_ViewTangent</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{C8DE3546-0601-0E4C-885A-F9B65E6405CA}</id>
 			<comment/>
 			<position>
@@ -150,14 +148,8 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values>
-				<item>
-					<first>T_Roughness</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{57C6EDDB-B43B-9E4D-8288-209662B3E8D0}</id>
 			<comment/>
 			<position>
@@ -183,9 +175,8 @@
 					<name>T_Emissive</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{A2EBA3DC-D9B0-FC47-BEDB-0C9A6EAC93B0}</id>
 			<comment/>
 			<position>
@@ -211,9 +202,8 @@
 					<name>T_Transparency</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{4FC19706-1B32-A845-B71E-C4F54FF00278}</id>
 			<comment/>
 			<position>
@@ -239,9 +229,8 @@
 					<name>T_Irradiance</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{166D5561-5C65-E049-B3E6-7C45AC6EFB8D}</id>
 			<comment/>
 			<position>
@@ -274,7 +263,6 @@
 					<name>y</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{3D139479-B256-EA4E-9415-777369C58C83}</id>
@@ -293,7 +281,7 @@
 				<second>8</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{51D50377-4A53-A64C-A7FB-11009510D42B}</id>
 			<comment/>
 			<position>
@@ -344,9 +332,8 @@
 					<name>WorldTranslation</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{4C69B5C5-18C4-4AA1-A59B-F2A53C786C43}</id>
 			<comment/>
 			<position>
@@ -372,9 +359,8 @@
 					<name>T_Roughness</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{31E731C7-30A7-489B-8944-58B9E06D0B98}</id>
 			<comment/>
 			<position>
@@ -400,7 +386,6 @@
 					<name>T_Metalness</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

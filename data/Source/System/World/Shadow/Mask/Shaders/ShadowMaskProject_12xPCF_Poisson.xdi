@@ -56,7 +56,7 @@
 				<second>504</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AC361DA9-AB78-9A4A-96BA-6223D5F8C56E}</id>
 			<comment/>
 			<position>
@@ -82,7 +82,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{4355C166-2ECB-7647-9150-1C222BC52655}</id>
@@ -105,7 +104,7 @@ Light space position
 				<second>425</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0D59A2C3-353F-A443-BADD-C68A61BD2E6C}</id>
 			<comment/>
 			<position>
@@ -124,7 +123,6 @@ Light space position
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8912EB04-B873-794A-874B-0125987104C4}</id>
@@ -379,7 +377,7 @@ Shadow map texcoord
 				<second>237</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{FE02727F-A8FE-3E4B-BE80-15F15F834721}</id>
 			<comment/>
 			<position>
@@ -405,7 +403,6 @@ Shadow map texcoord
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{14E235A8-5F2A-004B-9D94-FCADACBF3D4F}</id>
@@ -415,7 +412,7 @@ Shadow map texcoord
 				<second>346</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{86AA159E-F420-0A4A-B324-E4DA0B1717CA}</id>
 			<comment/>
 			<position>
@@ -434,7 +431,6 @@ Shadow map texcoord
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{DC398033-22D7-024E-B656-859149E25181}</id>

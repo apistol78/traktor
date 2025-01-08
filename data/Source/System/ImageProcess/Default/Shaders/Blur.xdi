@@ -163,7 +163,7 @@
 			<frequency>Once</frequency>
 			<length>15</length>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B05434B8-896A-BB4B-8BCD-58DFC85D24C8}</id>
 			<comment/>
 			<position>
@@ -182,7 +182,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{EF3E97B7-100C-0043-81DF-40AD3F40B22F}</id>

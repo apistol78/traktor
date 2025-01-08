@@ -78,7 +78,7 @@
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{DF62C36F-91A3-CD47-BB55-4B83460F47FF}</id>
 			<comment/>
 			<position>
@@ -97,7 +97,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A86CD548-8F36-7740-98AB-2B75B7706FBA}</id>
@@ -155,7 +154,7 @@
 			</position>
 			<value>0.1</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{6332D24C-9633-B841-BDAB-0428C7F26B9D}</id>
 			<comment/>
 			<position>
@@ -176,7 +175,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{091700D2-E05D-B740-B81E-9F4E917276B9}</id>

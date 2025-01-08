@@ -55,7 +55,7 @@
 				<second>548</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{EFA75610-467C-2646-815C-3FDF07121D59}</id>
 			<comment/>
 			<position>
@@ -63,10 +63,7 @@
 				<second>617</second>
 			</position>
 			<name>UV</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{14495B5A-EE63-5B4A-9EA5-8F5152D77E3A}</id>
@@ -111,7 +108,7 @@
 				<second>634</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{27C54453-568D-CA41-8A99-6E4A129E49F5}</id>
 			<comment/>
 			<position>
@@ -132,7 +129,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

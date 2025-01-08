@@ -188,7 +188,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>High</precisionHint>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{DE77F819-3F20-CB4D-999F-B81EF7508A0B}</id>
 			<comment/>
 			<position>
@@ -196,12 +196,9 @@
 				<second>207</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{6432D95E-81C2-EB49-95F4-D99E3AB23174}</id>
 			<comment/>
 			<position>
@@ -209,10 +206,7 @@
 				<second>408</second>
 			</position>
 			<name>State</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Connected" version="traktor.render.Node:1">
 			<id>{1F0F38FB-DE69-5643-8C82-F99D0355BE11}</id>

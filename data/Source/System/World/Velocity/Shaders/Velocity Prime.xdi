@@ -77,7 +77,7 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{4715EE0F-492B-6B44-82F4-FB6742082706}</id>
 			<comment/>
 			<position>
@@ -96,7 +96,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{B314F076-29E7-E843-A892-B24A76486256}</id>
@@ -220,7 +219,7 @@
 				<second>573</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{BCD49989-5CE1-8B40-85EA-682D3D668581}</id>
 			<comment/>
 			<position>
@@ -246,9 +245,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B8237025-1E84-E846-9C8C-28F782D94F90}</id>
 			<comment/>
 			<position>
@@ -274,9 +272,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{381664C9-1303-9349-94AC-F1F73DE1DF06}</id>
 			<comment/>
 			<position>
@@ -297,7 +294,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

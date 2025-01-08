@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{8EEA610B-3789-9943-8CCC-E16E51ED850C}</id>
 			<comment/>
 			<position>
@@ -9,12 +9,9 @@
 				<second>221</second>
 			</position>
 			<name>LightDirection</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{FCF97AFC-4FB4-554E-909A-3F25A5E99A2B}</id>
 			<comment/>
 			<position>
@@ -22,10 +19,7 @@
 				<second>279</second>
 			</position>
 			<name>HalfAngleVector</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Dot" version="traktor.render.Node:1">
 			<id>{FABDC5EE-0803-AD43-B194-D866FE915590}</id>
@@ -59,7 +53,7 @@
 				<second>406</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{004DC8C7-DE1F-A340-B59C-AF7E9E16F0CD}</id>
 			<comment/>
 			<position>
@@ -67,10 +61,7 @@
 				<second>425</second>
 			</position>
 			<name>RefractionIndex</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{CB1B1B76-A55E-9442-815F-D3077941FEFA}</id>

@@ -17,7 +17,7 @@
 				<item>VertexColor</item>
 			</names>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D538902D-07DE-47CB-BBDD-F16DB56C37FC}</id>
 			<comment/>
 			<position>
@@ -25,10 +25,7 @@
 				<second>100</second>
 			</position>
 			<name>VertexAttributes</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{C899C6EC-2017-4A43-96B1-266ED92593EE}</id>

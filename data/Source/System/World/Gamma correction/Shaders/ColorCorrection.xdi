@@ -19,7 +19,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{810280B5-9BAA-8B4A-91CE-3501B08F422D}</id>
 			<comment/>
 			<position>
@@ -27,10 +27,7 @@
 				<second>251</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{9FFC9877-C807-E344-96A3-A4601B0CB72D}</id>
@@ -41,7 +38,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D567927C-FD66-3646-AE55-4E13A7CE2F68}</id>
 			<comment/>
 			<position>
@@ -49,10 +46,7 @@
 				<second>206</second>
 			</position>
 			<name>LUT</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

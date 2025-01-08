@@ -104,7 +104,7 @@ Opaque
 			</position>
 			<name>V_SurfaceColor</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{A6CE7256-207D-3F46-9452-541DA87B4DE1}</id>
 			<comment>
 			<![CDATA[
@@ -174,7 +174,6 @@ World_ForwardColor
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{DCB390A4-43B6-E347-95D4-26DB333EDC8D}</id>
@@ -194,7 +193,7 @@ World_ForwardColor
 			</position>
 			<name>V_Specular</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{58420A0C-FF37-7D47-9BD4-B8BD7FC54A1C}</id>
 			<comment/>
 			<position>
@@ -215,7 +214,6 @@ World_ForwardColor
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{400059CB-51FE-6D4B-A29A-83FF23179276}</id>
@@ -261,7 +259,7 @@ Opaque
 			</position>
 			<name>V_SurfaceColor</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{E2EFABF1-394F-EC43-814F-2391902517C4}</id>
 			<comment>
 			<![CDATA[
@@ -286,9 +284,8 @@ World_SimpleColor
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{BEBB215B-23B6-624C-8CA9-5C1862DD2524}</id>
 			<comment>
 			<![CDATA[
@@ -313,7 +310,6 @@ World_SimpleColor
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{2053B95F-C7B5-9B48-88FB-CD91B35D73A2}</id>
@@ -473,7 +469,7 @@ Opaque
 			</position>
 			<name>E_Opaque</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{D4012B19-1C6B-474D-9DDD-00D31CD6D043}</id>
 			<comment>
 			<![CDATA[
@@ -498,9 +494,8 @@ World_ShadowWrite
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{336A89C9-F9D6-D243-8FE7-99822DF4AF4B}</id>
 			<comment/>
 			<position>
@@ -521,9 +516,8 @@ World_ShadowWrite
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{060C12ED-8FC1-9A4F-AF04-2C3C8B2513A7}</id>
 			<comment>
 			<![CDATA[
@@ -578,7 +572,6 @@ World_DeferredColor
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
 		<item type="traktor.render.Connected" version="traktor.render.Node:1">
 			<id>{0309576C-2944-864A-A027-EB7FCA5B8A35}</id>
@@ -606,7 +599,7 @@ World_DeferredColor
 			</position>
 			<name>V_Irradiance</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{E3E5014E-5F4E-504C-9E7F-C599D4A678E7}</id>
 			<comment>
 			<![CDATA[
@@ -666,14 +659,8 @@ World_ForwardColor
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values>
-				<item>
-					<first>Alpha</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{FEC6451C-E218-7846-8DF6-05E08F515E48}</id>
 			<comment/>
 			<position>
@@ -694,7 +681,6 @@ World_ForwardColor
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{78EC3951-0474-5E4D-A106-7327B3ABB039}</id>
@@ -844,7 +830,7 @@ Opaque
 			</position>
 			<name>V_Specular</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F9987929-C0D9-F346-AB4F-1E5F6367DFAB}</id>
 			<comment/>
 			<position>
@@ -921,9 +907,8 @@ Opaque
 					<name>View velocity</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{AAF55877-5DC7-E249-B955-565B5D3EEFBA}</id>
 			<comment/>
 			<position>
@@ -931,10 +916,7 @@ Opaque
 				<second>1236</second>
 			</position>
 			<name>Attributes</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{29C45F2F-B2B6-844B-9064-B1B5CF210924}</id>
@@ -999,7 +981,7 @@ Opaque
 			</position>
 			<name>V_ViewVelocity</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0CA5B5B9-15A6-9947-94FC-24F9AF4E16B2}</id>
 			<comment>
 			<![CDATA[
@@ -1059,7 +1041,6 @@ World_DeferredGBufferWrite
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{37DBD815-2118-FD44-B51A-9FD5C110F635}</id>
@@ -1070,7 +1051,7 @@ World_DeferredGBufferWrite
 			</position>
 			<name>V_ViewNormalGeometry</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{C152968E-D610-40A9-B517-1B84E48264FF}</id>
 			<comment/>
 			<position>
@@ -1091,7 +1072,6 @@ World_DeferredGBufferWrite
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
 		<item type="traktor.render.Connected" version="traktor.render.Node:1">
 			<id>{1123EF01-F738-4F6A-8230-32C35B694F2E}</id>

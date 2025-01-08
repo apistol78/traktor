@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{0A6531FA-CD61-594D-BA4F-755B9F3D48AC}</id>
 			<comment/>
 			<position>
@@ -9,12 +9,9 @@
 				<second>88</second>
 			</position>
 			<name>Phi</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{A920BEB0-7318-3C40-BE30-24772DC49F59}</id>
 			<comment/>
 			<position>
@@ -22,10 +19,7 @@
 				<second>202</second>
 			</position>
 			<name>Theta</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Sin" version="traktor.render.Node:1">
 			<id>{8FED6565-DAA6-5448-9C7E-3AD9134154CD}</id>
@@ -91,7 +85,7 @@
 				<second>132</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{E7ECF544-9C2C-8642-96DA-F36EAD4F1128}</id>
 			<comment/>
 			<position>
@@ -99,10 +93,7 @@
 				<second>241</second>
 			</position>
 			<name>Radius</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{83A3E3DA-244F-434F-924D-3B7F4E12CF35}</id>

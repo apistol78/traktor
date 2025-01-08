@@ -49,7 +49,7 @@
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{CE082FF6-37F0-5F4B-8338-58B7AF63CEDF}</id>
 			<comment/>
 			<position>
@@ -57,10 +57,7 @@
 				<second>833</second>
 			</position>
 			<name>ShadowUV</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

@@ -19,7 +19,7 @@
 			</position>
 			<name>T_Emissive</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{F9272C05-7D08-3141-A7D4-CBDE462A9728}</id>
 			<comment/>
 			<position>
@@ -27,10 +27,7 @@
 				<second>232</second>
 			</position>
 			<name>T_Attributes</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

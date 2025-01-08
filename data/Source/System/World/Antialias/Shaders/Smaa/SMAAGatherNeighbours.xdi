@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{A4A99D71-A510-304A-A400-421DBABBA5AD}</id>
 			<comment/>
 			<position>
@@ -27,9 +27,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{9E998452-BE22-0147-842E-FA30CA358D3B}</id>
 			<comment/>
 			<position>
@@ -55,9 +54,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{171F705F-0BBC-6A41-84B8-5CCFA5A642DE}</id>
 			<comment/>
 			<position>
@@ -83,9 +81,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{72F00D41-DCFC-4542-B841-A0EFCCE9D4D1}</id>
 			<comment/>
 			<position>
@@ -93,12 +90,9 @@
 				<second>339</second>
 			</position>
 			<name>TexCoord</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{C4AD9ABC-E5AA-BA4A-B636-E32F1AAACB5C}</id>
 			<comment/>
 			<position>
@@ -106,12 +100,9 @@
 				<second>726</second>
 			</position>
 			<name>Texture</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{45A45776-C1EC-254B-8662-33C86CA4544C}</id>
 			<comment/>
 			<position>
@@ -119,10 +110,7 @@
 				<second>433</second>
 			</position>
 			<name>Offset</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{1E99A62D-2559-3840-916F-D0183D10F5D7}</id>

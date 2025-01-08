@@ -192,7 +192,6 @@ $SkinBufferOutput[index].Position = vec4(p.xyz, 1.0f);
 $SkinBufferOutput[index].Normal = n;
 $SkinBufferOutput[index].Tangent = tn;
 $SkinBufferOutput[index].Binormal = bn;
-
 			]]>
 			</script>
 		</item>

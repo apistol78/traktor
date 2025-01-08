@@ -191,7 +191,7 @@
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{C1439711-F197-B847-819D-44565E902E93}</id>
 			<comment/>
 			<position>
@@ -206,7 +206,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{4B4FB66B-F6AD-4F49-9FCB-BDB61C236915}</id>
@@ -494,7 +493,7 @@
 				<second>1473</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2176EAE9-1EED-204C-9DC6-639F25290A53}</id>
 			<comment/>
 			<position>
@@ -534,7 +533,6 @@
 					<name>Specular</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{ED95106E-9A75-CF45-B982-753F812F5AD3}</id>
@@ -581,7 +579,7 @@
 			</position>
 			<name>L_ProbeReflection</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{849D351C-E61C-D140-9D03-360086EAF9D4}</id>
 			<comment/>
 			<position>
@@ -607,7 +605,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{C679F242-1C46-E54A-9D28-3644C12EED0F}</id>
@@ -729,11 +726,11 @@
 			<comment/>
 			<position>
 				<first>-12</first>
-				<second>622</second>
+				<second>656</second>
 			</position>
 			<name>L_BaseWorldPosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{A64C7126-7488-6847-BFC0-A429B4287616}</id>
 			<comment/>
 			<position>
@@ -758,6 +755,11 @@
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{ED2A6A1C-E9DE-0341-8233-813AA59F80A6}</id>
+					<name>TileIndex</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<id>{17CACE84-6798-2B44-A575-4A44864947B5}</id>
 					<name>WorldPosition</name>
 					<optional>false</optional>
@@ -777,12 +779,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>TileIndex</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{B98A0CA0-E868-5F45-BB27-0E7AE5933066}</id>
@@ -801,7 +797,7 @@
 			<comment/>
 			<position>
 				<first>-12</first>
-				<second>580</second>
+				<second>576</second>
 			</position>
 			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture1</parameterName>
@@ -822,7 +818,7 @@
 			<comment/>
 			<position>
 				<first>-12</first>
-				<second>538</second>
+				<second>536</second>
 			</position>
 			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
 			<parameterName>Ocean_WaveTexture2</parameterName>
@@ -838,7 +834,7 @@
 			</position>
 			<name>L_Foam</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{3AD3C24B-55BA-B348-AC87-05BFAC3A9993}</id>
 			<comment/>
 			<position>
@@ -864,7 +860,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9E5ECDF6-5770-0D48-AD2A-E63522339F57}</id>
@@ -884,7 +879,7 @@
 			</position>
 			<parameterName>World_IrradianceSingle</parameterName>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7089B3FD-827F-A847-9B8C-8EC0A5A0AFF4}</id>
 			<comment/>
 			<position>
@@ -905,7 +900,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{866C43DA-8E8E-EF49-ADBC-CB48FD71E8EA}</id>
@@ -983,7 +977,7 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{1074768A-A6CB-C646-93B7-BADED8903BED}</id>
 			<comment/>
 			<position>
@@ -1009,7 +1003,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{56BD4693-BD0F-4045-AF4C-5975FF8E7E17}</id>
@@ -1111,7 +1104,7 @@ Read current fragment
 				<second>1304</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{E1F9C6F4-AA5B-9C44-BC07-9F9A1B3CEA00}</id>
 			<comment/>
 			<position>
@@ -1120,11 +1113,13 @@ Read current fragment
 			</position>
 			<name>Scatter</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{1513C77F-E3E4-FA44-B196-35713004CFD3}</item>
 			</include>
@@ -1507,7 +1502,7 @@ $Output = vec4(scatter, 0.0f);
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{25654BE0-3FF4-194E-AC63-59801317217D}</id>
 			<comment/>
 			<position>
@@ -1532,6 +1527,11 @@ $Output = vec4(scatter, 0.0f);
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{ED2A6A1C-E9DE-0341-8233-813AA59F80A6}</id>
+					<name>TileIndex</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<id>{17CACE84-6798-2B44-A575-4A44864947B5}</id>
 					<name>WorldPosition</name>
 					<optional>false</optional>
@@ -1551,12 +1551,6 @@ $Output = vec4(scatter, 0.0f);
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>TileIndex</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{3B819EC1-7C7C-6A42-9A6B-77BFBBE4A1F2}</id>
@@ -1598,8 +1592,8 @@ $Output = vec4(scatter, 0.0f);
 			<id>{7302CEBA-D288-5041-9F67-52CA95AC4E01}</id>
 			<comment/>
 			<position>
-				<first>236</first>
-				<second>1905</second>
+				<first>222</first>
+				<second>1929</second>
 			</position>
 			<name>L_LastBaseWorldPosition</name>
 		</item>
@@ -1713,7 +1707,7 @@ Dummy
 				<second>2068</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AB891957-3CFC-9C49-A759-284678D1FC71}</id>
 			<comment/>
 			<position>
@@ -1734,7 +1728,6 @@ Dummy
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{97E7F047-9917-6F49-BEDA-E686416485EC}</id>
@@ -1745,7 +1738,7 @@ Dummy
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{14F4F535-3F8C-9B4D-B9F1-5F609E5DE312}</id>
 			<comment/>
 			<position>
@@ -1771,9 +1764,8 @@ Dummy
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0969A88C-527A-3C4C-A2EC-9F0AE6DA0BA0}</id>
 			<comment/>
 			<position>
@@ -1799,7 +1791,6 @@ Dummy
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E32B5F6B-A498-664C-B4DE-0C921773FDD8}</id>
@@ -1875,7 +1866,7 @@ Read sun direction
 				<second>2078</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{88111C5D-C57F-6146-A14F-5DCA4A8F5CB3}</id>
 			<comment/>
 			<position>
@@ -1884,11 +1875,13 @@ Read sun direction
 			</position>
 			<name>Refraction</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -2077,6 +2070,24 @@ $Output = vec4(r * -0.05f, 0.0f);
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{C1DA86FF-A23B-884F-B4F7-8F24D4B8F765}</id>
+			<comment/>
+			<position>
+				<first>284</first>
+				<second>1889</second>
+			</position>
+			<value>0</value>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{10832249-108C-6147-8599-4FEF3670BC74}</id>
+			<comment/>
+			<position>
+				<first>30</first>
+				<second>616</second>
+			</position>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -3658,6 +3669,26 @@ $Output = vec4(r * -0.05f, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[169]"/>
 				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[170]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[126]"/>
+				<id>{ED2A6A1C-E9DE-0341-8233-813AA59F80A6}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[171]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[67]"/>
+				<id>{ED2A6A1C-E9DE-0341-8233-813AA59F80A6}</id>
 			</destination>
 		</item>
 	</edges>

@@ -10,7 +10,7 @@
 			</position>
 			<name>T_Irradiance</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{827D4160-D224-6241-80AF-90893915790B}</id>
 			<comment/>
 			<position>
@@ -18,10 +18,7 @@
 				<second>129</second>
 			</position>
 			<name>T_Attributes</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges/>

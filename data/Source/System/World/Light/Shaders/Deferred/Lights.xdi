@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7F42A76B-91D3-3B47-A39D-AC28EE6C30AE}</id>
 			<comment/>
 			<position>
@@ -46,7 +46,6 @@
 					<name>ViewPosition</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{41E87F6F-D99A-B34D-9B53-3940EDA30A76}</id>
@@ -218,7 +217,7 @@
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0B0450C1-5C54-FD43-8CC2-8355E167593C}</id>
 			<comment/>
 			<position>
@@ -259,7 +258,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{F28165CC-3537-434A-853A-37914AF641E0}</id>
@@ -568,7 +566,7 @@
 			</position>
 			<name>L_Color</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7C18F6AA-3D57-EA4E-A493-024A09B9F589}</id>
 			<comment/>
 			<position>
@@ -599,14 +597,13 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{51E9A1F5-2864-7148-86DC-78235EFD7714}</id>
 			<comment/>
 			<position>
-				<first>3211</first>
-				<second>602</second>
+				<first>3524</first>
+				<second>654</second>
 			</position>
 			<fragmentGuid>{B26E6F5B-AE70-D74E-B393-6E64C222CF25}</fragmentGuid>
 			<inputPins>
@@ -632,7 +629,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E979C720-90A9-0C42-AD6D-7F47067BD77E}</id>
@@ -674,8 +670,8 @@
 			<id>{44A620E3-078B-1545-A091-D0058FDC09EC}</id>
 			<comment/>
 			<position>
-				<first>3027</first>
-				<second>668</second>
+				<first>3283</first>
+				<second>724</second>
 			</position>
 			<name>L_FarRange</name>
 		</item>
@@ -882,7 +878,7 @@
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{BE346824-D693-2341-999A-8457403F4297}</id>
 			<comment/>
 			<position>
@@ -907,7 +903,6 @@
 					<name>LightOffset</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E860E955-2C72-CB4E-8A7F-CED461BFE203}</id>
@@ -1320,7 +1315,7 @@ Check max shadow distance
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0FE951E8-049E-2548-8A51-A1C2F778E646}</id>
 			<comment/>
 			<position>
@@ -1361,7 +1356,6 @@ Check max shadow distance
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{45E460A6-B70D-6C48-927A-E8D765DE6FA2}</id>
@@ -1471,7 +1465,7 @@ Check max shadow distance
 			</position>
 			<name>L_Type</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{97EEDDED-5F2A-7F4A-BD92-4AFFDD0DA48F}</id>
 			<comment/>
 			<position>
@@ -1497,7 +1491,6 @@ Check max shadow distance
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{49D85CEA-D8A4-F249-A015-3175C4C314FD}</id>
@@ -1704,8 +1697,8 @@ Eye direction
 			<id>{28152E85-CF5F-C546-AEF1-23DE501EEA1B}</id>
 			<comment/>
 			<position>
-				<first>3011</first>
-				<second>711</second>
+				<first>3304</first>
+				<second>767</second>
 			</position>
 			<name>L_NearRange</name>
 		</item>
@@ -1713,7 +1706,7 @@ Eye direction
 			<id>{12A4C87A-8167-2F49-AA83-E30557962BDC}</id>
 			<comment/>
 			<position>
-				<first>3377</first>
+				<first>3350</first>
 				<second>-214</second>
 			</position>
 			<name>L_FarRange</name>
@@ -1727,7 +1720,7 @@ Eye direction
 			</position>
 			<name>L_NearRange</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F55F5D6A-7F02-F84E-A048-1759B8D95794}</id>
 			<comment/>
 			<position>
@@ -1746,7 +1739,6 @@ Eye direction
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{6BA5343F-7379-E34F-8F4D-9A93077667BB}</id>
@@ -1933,7 +1925,7 @@ Check max shadow distance
 				<second>-1230</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{BB9537DD-EBC4-AE43-AC9F-732DF625EA73}</id>
 			<comment/>
 			<position>
@@ -1954,7 +1946,6 @@ Check max shadow distance
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8D015F58-94B8-4B88-9B8F-2034A4E515A7}</id>
@@ -2446,7 +2437,7 @@ $Output = vec4(r, 0.0f);
 			</position>
 			<name>L_SpecularG</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{39C6545A-9B51-714E-87B2-66BA4C750DFA}</id>
 			<comment/>
 			<position>
@@ -2477,7 +2468,6 @@ $Output = vec4(r, 0.0f);
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E4480737-8DF2-EE48-AE8E-FE10A90AFCA4}</id>
@@ -2497,7 +2487,7 @@ $Output = vec4(r, 0.0f);
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{CFF85FF9-A502-7140-8F67-130266C24BEC}</id>
 			<comment/>
 			<position>
@@ -2528,7 +2518,6 @@ $Output = vec4(r, 0.0f);
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{98ABBA2F-00C5-6542-87D4-4CBB1BDCB04D}</id>
@@ -2547,7 +2536,7 @@ $Output = vec4(r, 0.0f);
 				<second>-692</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{DA4683FE-2D9C-2C42-BABF-CD2EEFAD4F1E}</id>
 			<comment/>
 			<position>
@@ -2578,14 +2567,13 @@ $Output = vec4(r, 0.0f);
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{C7F4EDC7-7870-7C41-A163-8EA6BFB6C205}</id>
 			<comment/>
 			<position>
-				<first>3409</first>
-				<second>1121</second>
+				<first>3351</first>
+				<second>1132</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -2748,7 +2736,7 @@ $Output = vec4(r, 0.0f);
 				<second>-666</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2837F7FD-AC65-9D4B-807B-1BF12EE5AB3C}</id>
 			<comment/>
 			<position>
@@ -2769,7 +2757,6 @@ $Output = vec4(r, 0.0f);
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
 			<id>{E3BDE108-3BCF-154E-8D19-2A1EB9DFC4EA}</id>

@@ -150,7 +150,7 @@
 			</position>
 			<name>Normal</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{774B595A-7136-AC4C-8AE2-6AD9410B88AB}</id>
 			<comment/>
 			<position>
@@ -171,9 +171,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{818C57BD-7552-D447-9A5C-C22A7A998A6F}</id>
 			<comment/>
 			<position>
@@ -194,7 +193,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

@@ -69,7 +69,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{5C39A070-30AE-874B-931A-3480A9C1E523}</id>
 			<comment/>
 			<position>
@@ -77,10 +77,7 @@
 				<second>-177</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{4F5EA818-F7AD-AB4A-A5DA-DFD4E4BAE0B0}</id>
@@ -106,7 +103,7 @@
 				<second>281</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{EA30C519-150E-4A46-B7A0-9B378EC16257}</id>
 			<comment/>
 			<position>
@@ -137,14 +134,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Translation</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5FEB60AB-9FBE-AD4B-BCDD-AE39F4F6E66B}</id>
 			<comment/>
 			<position>
@@ -177,7 +168,6 @@
 					<name>Translation</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.MixOut" version="traktor.render.Node:1">
 			<id>{2506A3B8-65D5-A541-9EC8-46F27847792A}</id>
@@ -203,7 +193,7 @@
 				<second>68</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{D8B63A30-18A7-4241-A024-F545A4987B4D}</id>
 			<comment/>
 			<position>
@@ -234,14 +224,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Translation</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{D7A46975-AE28-1046-B024-3809346C5CD4}</id>
 			<comment/>
 			<position>
@@ -274,7 +258,6 @@
 					<name>Translation</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{10441949-BE98-0949-A92D-613817EA1D8E}</id>
@@ -284,7 +267,7 @@
 				<second>-20</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{04F70A9F-A7F7-0240-A6A0-16840F134AF6}</id>
 			<comment/>
 			<position>
@@ -315,14 +298,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Translation</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{CF6E1696-BBE2-D747-A0BF-30C78ED8169F}</id>
 			<comment/>
 			<position>
@@ -355,9 +332,8 @@
 					<name>Translation</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{6F51A2D2-D86B-5C46-8C8D-01EFC01AA119}</id>
 			<comment/>
 			<position>
@@ -365,12 +341,9 @@
 				<second>2</second>
 			</position>
 			<name>BlendIndices</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{F3C069BD-3AAA-3349-88AD-B9BBD103CB7D}</id>
 			<comment/>
 			<position>
@@ -378,10 +351,7 @@
 				<second>404</second>
 			</position>
 			<name>BlendWeights</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

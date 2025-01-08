@@ -152,7 +152,6 @@ if ($Index.x < alive)
 
 	$Points[i].oaia.w += $DeltaTime;
 }
-
 			]]>
 			</script>
 		</item>
@@ -180,7 +179,7 @@ if ($Index.x < alive)
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{4F1BECE6-5F15-1849-8B14-5C77DD70CC2B}</id>
 			<comment/>
 			<position>
@@ -195,7 +194,6 @@ if ($Index.x < alive)
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.DispatchIndex" version="1,traktor.render.Node:1">
 			<id>{AB1C2F26-2E45-BC47-A2A6-62161A83585D}</id>

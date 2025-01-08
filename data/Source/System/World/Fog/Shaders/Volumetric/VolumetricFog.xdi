@@ -36,7 +36,7 @@
 			</position>
 			<name>L_MaxScattering</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{6B1A0CF9-FBFB-C04B-9570-7404B15B622D}</id>
 			<comment/>
 			<position>
@@ -57,7 +57,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{3DAC6BB2-255B-C54C-9ECC-7D819B9F3ABE}</id>
@@ -504,7 +503,7 @@
 			</position>
 			<value>1234</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{298E7D6A-DDF0-9A47-885D-EE46A39F55E8}</id>
 			<comment/>
 			<position>
@@ -525,7 +524,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{D191FA5B-F3D0-5C42-89FC-3C8204415671}</id>
@@ -582,7 +580,7 @@
 			</position>
 			<value>1000</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{ED09BDD1-F1A4-7048-9A10-874CF678B151}</id>
 			<comment/>
 			<position>
@@ -603,7 +601,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{B361C21B-F534-F840-81BB-E1024931A62F}</id>
@@ -632,7 +629,7 @@
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{D5B173AC-08AD-4B49-9D96-D6CF74EF4F63}</id>
 			<comment/>
 			<position>
@@ -658,7 +655,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{EE0ABAF4-B6AD-A940-B9B9-4AF498C71687}</id>
@@ -698,7 +694,7 @@
 			</position>
 			<name>L_InputColor</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{7A2F080F-74F7-6E41-B1D5-0D0001A48A9A}</id>
 			<comment/>
 			<position>
@@ -706,10 +702,7 @@
 				<second>1132</second>
 			</position>
 			<name>Color</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{76234B6F-7481-3644-8BE6-96469A68307D}</id>
@@ -720,7 +713,7 @@
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{4F431F8A-9B2E-704F-9DC3-4A29EC6BD0DB}</id>
 			<comment/>
 			<position>
@@ -728,10 +721,7 @@
 				<second>1193</second>
 			</position>
 			<name>ViewPosition</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{B13ABE65-F2F3-F04F-9CD1-40D1CBDA2DA4}</id>

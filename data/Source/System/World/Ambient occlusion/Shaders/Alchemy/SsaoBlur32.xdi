@@ -175,7 +175,7 @@ Sample shadow
 				<second>856</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{C409F53B-32CD-4E57-9343-D9F6CE94C40C}</id>
 			<comment/>
 			<position>
@@ -194,7 +194,6 @@ Sample shadow
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{A3DA28E3-DD39-486A-80D7-07705FA52D9A}</id>
@@ -318,7 +317,7 @@ Shadow; adjusted for msaa.
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{56CA9413-D3E8-D44A-A1D1-3CCE0B99CBB3}</id>
 			<comment/>
 			<position>
@@ -339,9 +338,8 @@ Shadow; adjusted for msaa.
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{C4DEA1EF-2D8E-F345-8433-97B56E23CE28}</id>
 			<comment/>
 			<position>
@@ -362,7 +360,6 @@ Shadow; adjusted for msaa.
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7B4FFACE-E593-6D47-A07E-3A82BD12C62F}</id>
 			<comment/>
 			<position>
@@ -49,7 +49,6 @@
 					<name>World</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{DDD6B2A7-3CDD-F844-9487-62A4DE410B7B}</id>
@@ -99,7 +98,7 @@
 			<type>DtHalf4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{4471ED5E-181A-7F4D-9285-0A80AC612BAC}</id>
 			<comment/>
 			<position>
@@ -120,7 +119,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{D6489C3F-9073-6845-ABF5-226E27C9D4BE}</id>
@@ -187,7 +185,7 @@
 				<second>1205</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B46A7250-4619-4390-9A78-849849D92F36}</id>
 			<comment/>
 			<position>
@@ -243,7 +241,6 @@
 					<name>VertexAttributes</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

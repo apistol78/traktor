@@ -25,7 +25,7 @@
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{28BCDD4A-F82F-A043-BEEB-D92C4FE6871C}</id>
 			<comment/>
 			<position>
@@ -44,7 +44,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{715675F6-7C06-0A47-AB24-E8FEFABF7332}</id>
@@ -144,7 +143,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{EDC95EEB-5556-467F-BD8B-34622CB6204A}</id>
 			<comment/>
 			<position>
@@ -165,9 +164,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{47E0FFDE-A106-4527-94E9-23D5793116E1}</id>
 			<comment/>
 			<position>
@@ -188,7 +186,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{1468416E-D14D-4A4A-BFD3-4C8ACDBA5003}</id>
@@ -203,7 +200,7 @@ W
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{95E1E131-C36E-6241-921E-BEE81E849E0E}</id>
 			<comment/>
 			<position>
@@ -212,11 +209,13 @@ W
 			</position>
 			<name>Filmic</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>

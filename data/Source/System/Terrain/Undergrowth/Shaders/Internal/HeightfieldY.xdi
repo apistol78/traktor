@@ -153,7 +153,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{349FD249-5446-D749-8B0C-0FE7F2782639}</id>
 			<comment/>
 			<position>
@@ -161,10 +161,7 @@
 				<second>255</second>
 			</position>
 			<name>x0z</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{BA7055AC-8659-1E4D-A416-A4B8682130D2}</id>
@@ -210,7 +207,7 @@
 			</position>
 			<swizzle>x0z</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{41725196-BEAF-B44F-ABF7-4B4B4AAD6C29}</id>
 			<comment/>
 			<position>
@@ -231,7 +228,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{01CD9BE4-992F-CA4E-AD4F-D20FE28BE893}</id>

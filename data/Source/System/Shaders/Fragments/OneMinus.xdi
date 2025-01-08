@@ -18,7 +18,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{4D17834E-31F4-E84F-A53E-EE7D783BD8F9}</id>
 			<comment/>
 			<position>
@@ -26,10 +26,7 @@
 				<second>433</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{59A0CAB3-F7AE-5242-8451-C868437381A0}</id>

@@ -115,7 +115,7 @@
 				<second>225</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{1BA562D6-B100-784E-BAEE-F4327C67682E}</id>
 			<comment/>
 			<position>
@@ -123,12 +123,9 @@
 				<second>53</second>
 			</position>
 			<name>Input1</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{3F15A786-2EA8-E84E-B758-4D4F819A5405}</id>
 			<comment/>
 			<position>
@@ -136,12 +133,9 @@
 				<second>116</second>
 			</position>
 			<name>Input2</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{AACFF681-0AE5-8945-92FF-FF429041D1E4}</id>
 			<comment/>
 			<position>
@@ -149,12 +143,9 @@
 				<second>179</second>
 			</position>
 			<name>Input3</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{67F14430-F44D-3440-B298-203224CA0B2C}</id>
 			<comment/>
 			<position>
@@ -162,10 +153,7 @@
 				<second>242</second>
 			</position>
 			<name>Input4</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{FB500316-DD43-7948-B393-84ED817061D1}</id>
@@ -176,7 +164,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{224DB9CB-2270-C340-A94A-8B0153BCAE79}</id>
 			<comment/>
 			<position>
@@ -184,12 +172,9 @@
 				<second>333</second>
 			</position>
 			<name>InputBase</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{7B1A8C7A-28FF-BE45-A2AB-76060B87AA4D}</id>
 			<comment/>
 			<position>
@@ -197,10 +182,7 @@
 				<second>387</second>
 			</position>
 			<name>BlendWeights</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

@@ -48,7 +48,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{4D50A853-EC98-2743-A8D4-A633F2A33659}</id>
 			<comment/>
 			<position>
@@ -67,7 +67,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{692138E5-BF82-C545-9CCF-C0A894B38FEB}</id>
@@ -245,7 +244,7 @@
 			</position>
 			<name>L_SamplePosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{FA55C3E9-16A9-4144-A353-8012E34EEDED}</id>
 			<comment/>
 			<position>
@@ -266,7 +265,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{9541D660-8598-1142-A4A0-F6E3AD59B86A}</id>
@@ -286,7 +284,7 @@
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{1587F997-F271-8944-855D-B6A9116FE02A}</id>
 			<comment/>
 			<position>
@@ -307,7 +305,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{1013A4D9-51EB-1D45-94CD-A921ECBCA8B6}</id>
@@ -1053,7 +1050,6 @@ Edge
 			<script>
 			<![CDATA[
 $Output = Hash13(vec3(gl_FragCoord.xy, $Time)) * 2 * 3.14;
-
 			]]>
 			</script>
 		</item>
@@ -1115,7 +1111,7 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 				<second>10</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{6E5A9E28-424F-A345-8413-E1AA204FB61B}</id>
 			<comment/>
 			<position>
@@ -1136,7 +1132,6 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{64CEBBEE-A45E-4FDC-9DE1-779A92D849CC}</id>

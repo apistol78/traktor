@@ -48,7 +48,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>High</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{C984A5D8-9C05-D846-956C-BDC1527097D1}</id>
 			<comment/>
 			<position>
@@ -69,7 +69,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{906B531A-4665-3E40-BABB-887DAF58E3ED}</id>
@@ -142,7 +141,7 @@
 			</position>
 			<name>ViewPosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F36D3D0B-2EA1-AB41-8150-4AB443EB5A74}</id>
 			<comment/>
 			<position>
@@ -161,7 +160,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{C8B0AD38-AA39-E648-8D24-9E3FC0DBCD8B}</id>
@@ -311,7 +309,6 @@ if (pos.z < 4.0f)
 		}
 	}
 }
-
 			]]>
 			</script>
 		</item>

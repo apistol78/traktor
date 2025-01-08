@@ -85,7 +85,7 @@
 				<second>852</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{C5938D0D-4452-0B45-A229-A2AACA093238}</id>
 			<comment/>
 			<position>
@@ -93,10 +93,7 @@
 				<second>874</second>
 			</position>
 			<name>WorldPosition</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{3DD8E9F0-668E-5645-9906-0AD7448F61F1}</id>

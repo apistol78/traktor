@@ -26,7 +26,7 @@
 			</position>
 			<value>0.2125, 0.7154, 0.0721, 0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{F6276849-154C-A441-844A-D05B40B46839}</id>
 			<comment>
 			<![CDATA[
@@ -38,10 +38,7 @@
 				<second>451</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{156B2576-EA1C-D64A-98EF-217ACD5F4B25}</id>

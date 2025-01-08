@@ -45,7 +45,7 @@
 			<type>Image2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{8AC97192-AF20-F74E-AC89-E8C504E23B4F}</id>
 			<comment/>
 			<position>
@@ -54,11 +54,13 @@
 			</position>
 			<name>Spectrum</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>16</X>
 				<Y>16</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
 			</include>
@@ -158,7 +160,7 @@ $Output = CalculateSpectrum(
 				<Z>1</Z>
 			</localSize>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{2270E03A-1B79-8D4F-8171-C50166D59B7E}</id>
 			<comment/>
 			<position>
@@ -167,11 +169,13 @@ $Output = CalculateSpectrum(
 			</position>
 			<name>PackConjugate</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>16</X>
 				<Y>16</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
 			</include>
@@ -224,7 +228,7 @@ $Output = vec4(h0, h0conj);
 			<type>Image2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{E164314D-F74E-B34F-8849-B4EDE073F8D3}</id>
 			<comment/>
 			<position>
@@ -233,11 +237,13 @@ $Output = vec4(h0, h0conj);
 			</position>
 			<name>EvolveSpectrum</name>
 			<technique>Ocean_SpectrumEvolve</technique>
+			<domain>Compute</domain>
 			<localSize>
 				<X>16</X>
 				<Y>16</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
 			</include>
@@ -312,7 +318,7 @@ imageStore($OutputSlope, position, slope);
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{A880A2E3-6968-034C-B650-7C33CA1A1461}</id>
 			<comment/>
 			<position>
@@ -321,11 +327,13 @@ imageStore($OutputSlope, position, slope);
 			</position>
 			<name>Inverse FFT</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>16</X>
 				<Y>16</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
 			</include>
@@ -440,7 +448,7 @@ $Output = FFT($Index, inputData);
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{F4ADB174-3EE5-5442-B261-8400E435EA74}</id>
 			<comment/>
 			<position>
@@ -449,11 +457,13 @@ $Output = FFT($Index, inputData);
 			</position>
 			<name>Inverse FFT</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>16</X>
 				<Y>16</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
 			</include>
@@ -486,7 +496,7 @@ $Output = FFT($Index, inputData);
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{4DFB091D-8730-4548-A500-22D99D929C05}</id>
 			<comment/>
 			<position>
@@ -495,11 +505,13 @@ $Output = FFT($Index, inputData);
 			</position>
 			<name>Generate displacement</name>
 			<technique>Ocean_Generate</technique>
+			<domain>Compute</domain>
 			<localSize>
 				<X>16</X>
 				<Y>16</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
 			</include>

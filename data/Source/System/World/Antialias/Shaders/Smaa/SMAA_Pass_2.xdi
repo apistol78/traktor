@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AB49A5AB-4D0F-764A-BC73-27BC30637555}</id>
 			<comment/>
 			<position>
@@ -20,7 +20,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{29515A38-DF07-6542-91E1-0039116262E8}</id>
@@ -69,7 +68,7 @@
 			<stencilMask>4294967295</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2674AD51-CDFE-FD44-B9B2-A765F90531C5}</id>
 			<comment/>
 			<position>
@@ -102,9 +101,8 @@
 					<name>PixCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{FC0A81BE-AC43-AF4A-A6D4-0AD9673E19FB}</id>
 			<comment/>
 			<position>
@@ -165,7 +163,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Vector" version="traktor.render.Node:1">
 			<id>{F9B8D11E-FF79-2240-A674-E5D16BCEAC9C}</id>

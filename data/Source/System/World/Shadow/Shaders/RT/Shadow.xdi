@@ -188,11 +188,10 @@ for (int i = 0; i < N; ++i)
 }
 
 $Output = 1.0f - float(nshadowed) / N;
-
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D8EC541E-FBF8-1D43-8A57-76299D502A4F}</id>
 			<comment/>
 			<position>
@@ -200,12 +199,9 @@ $Output = 1.0f - float(nshadowed) / N;
 				<second>707</second>
 			</position>
 			<name>ViewPosition</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{4461C127-EEC1-5944-8802-4227BDDA64A7}</id>
 			<comment/>
 			<position>
@@ -213,10 +209,7 @@ $Output = 1.0f - float(nshadowed) / N;
 				<second>868</second>
 			</position>
 			<name>ViewDirection</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{6C21D078-3BDD-6149-9EE9-86E27876DB1B}</id>
@@ -267,18 +260,32 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{44AE64A5-E05F-C047-A013-D291FB572E52}</id>
 			<comment/>
 			<position>
-				<first>2206</first>
-				<second>1108</second>
+				<first>2055</first>
+				<second>1146</second>
 			</position>
 			<name>MaxDistance</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>100</defaultValue>
+		</item>
+		<item type="traktor.render.Connected" version="traktor.render.Node:1">
+			<id>{DD9C8674-4169-5A4A-AD61-0ABE2585670A}</id>
+			<comment/>
+			<position>
+				<first>2341</first>
+				<second>1138</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{5B22F071-43AD-5C40-945A-2F8F0957403E}</id>
+			<comment/>
+			<position>
+				<first>2125</first>
+				<second>1217</second>
+			</position>
+			<value>100</value>
 		</item>
 	</nodes>
 	<edges>
@@ -428,8 +435,38 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{197CC347-3580-4502-8AA1-976E476EA843}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{3F36532A-8A98-4EE7-85ED-2DA35230BC3C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<id>{D05A18C4-5FA4-6746-A960-86CBB0908A76}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
 			</destination>
 		</item>
 	</edges>

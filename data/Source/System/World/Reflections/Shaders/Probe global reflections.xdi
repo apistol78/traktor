@@ -73,7 +73,7 @@
 				<second>322</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{1603A654-96D9-7D42-87B4-45DA0D2AF0CC}</id>
 			<comment/>
 			<position>
@@ -99,7 +99,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{4A956BD0-D4DE-5449-977F-81FC01E8445A}</id>
@@ -157,7 +156,7 @@
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0AE1E319-0F73-5448-9389-A0129A1033C0}</id>
 			<comment/>
 			<position>
@@ -176,7 +175,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{32E8F842-01FA-5544-A89B-084987BB296A}</id>
@@ -220,7 +218,7 @@
 				<second>704</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{54C17EA2-4AED-B048-9778-907067DC6652}</id>
 			<comment/>
 			<position>
@@ -265,7 +263,6 @@
 					<name>ViewPosition</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{CE20DB7C-A52D-EA43-BB90-99B4EC70927E}</id>

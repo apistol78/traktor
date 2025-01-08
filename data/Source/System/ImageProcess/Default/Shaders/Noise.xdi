@@ -64,7 +64,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{1E623283-8683-6448-A845-79F5CDE2A816}</id>
 			<comment/>
 			<position>
@@ -72,10 +72,7 @@
 				<second>306</second>
 			</position>
 			<name>TexCoord</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.TargetSize" version="traktor.render.Node:1">
 			<id>{5F7B071A-B0E4-284B-954D-62AFE93A18A6}</id>
@@ -89,8 +86,8 @@
 			<id>{91261820-1786-EA46-AAA2-5317AB1017D1}</id>
 			<comment/>
 			<position>
-				<first>1409</first>
-				<second>256</second>
+				<first>1466</first>
+				<second>253</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -98,8 +95,8 @@
 			<id>{292F4020-B9AF-9642-882F-1CCDEB4F6D22}</id>
 			<comment/>
 			<position>
-				<first>1239</first>
-				<second>277</second>
+				<first>1255</first>
+				<second>264</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>

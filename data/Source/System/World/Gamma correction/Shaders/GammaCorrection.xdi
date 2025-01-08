@@ -31,7 +31,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F7A15469-6147-1347-A154-8D105B3FB3C5}</id>
 			<comment/>
 			<position>
@@ -50,7 +50,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{B8246A10-C4CA-4841-864A-56F7A1F7206E}</id>
@@ -128,7 +127,7 @@
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{E4D9ECEE-9D98-4C42-ABD6-03206C05DAD5}</id>
 			<comment/>
 			<position>
@@ -154,7 +153,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{6359961F-0D8D-E84C-8FAB-A35139B3BD91}</id>

@@ -33,7 +33,7 @@
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{3FFA1598-C757-3A4A-9797-2D4F8FF0A1AE}</id>
 			<comment/>
 			<position>
@@ -52,7 +52,6 @@
 					<name>Color</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{262E7F3E-FEEF-4F49-A849-5F0FB23F410C}</id>
@@ -64,7 +63,7 @@
 			<technique/>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{C4C3BACB-A683-B14B-B7FF-8F98A921F3E0}</id>
 			<comment/>
 			<position>
@@ -90,16 +89,6 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values>
-				<item>
-					<first>Edge</first>
-					<second>1</second>
-				</item>
-				<item>
-					<first>Opaque</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{D34C03A0-1958-754C-A282-F4FC4922BA95}</id>
@@ -122,7 +111,7 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{19749137-9CB2-374F-B260-623743177045}</id>
 			<comment/>
 			<position>
@@ -131,11 +120,13 @@
 			</position>
 			<name>DistanceToLine</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -251,7 +242,7 @@ else
 				<second>-299</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{17A90B08-B12E-6743-AD92-2234408C9BDF}</id>
 			<comment/>
 			<position>
@@ -281,7 +272,6 @@ else
 					<name>Start</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{1AA14ABF-9D48-B74C-BDF6-3804F49B9660}</id>

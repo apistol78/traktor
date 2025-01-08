@@ -10,7 +10,7 @@
 			</position>
 			<name>Diffuse</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{CD70F62C-2726-1E47-999D-D4DAFEC87EDB}</id>
 			<comment/>
 			<position>
@@ -18,12 +18,9 @@
 				<second>394</second>
 			</position>
 			<name>Roughness</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0.5</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{4666D0EC-DE58-214D-8EE2-5BD6FCD2E21A}</id>
 			<comment/>
 			<position>
@@ -31,12 +28,9 @@
 				<second>553</second>
 			</position>
 			<name>Normal</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{E254A735-D7E9-C14E-A252-3D723D16D3A8}</id>
 			<comment/>
 			<position>
@@ -44,10 +38,7 @@
 				<second>484</second>
 			</position>
 			<name>LightDirection</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Dot" version="traktor.render.Node:1">
 			<id>{08C74221-A500-8A43-8347-94D4B10798EE}</id>
@@ -57,7 +48,7 @@
 				<second>488</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{8BDBDF2F-1A2A-6346-9F2C-B435FEA75A6B}</id>
 			<comment/>
 			<position>
@@ -65,10 +56,7 @@
 				<second>656</second>
 			</position>
 			<name>EyeDirection</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

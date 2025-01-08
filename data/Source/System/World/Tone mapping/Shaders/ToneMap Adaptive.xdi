@@ -48,7 +48,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AC7B207D-E2EA-B849-BF43-7A4B9FB71AD5}</id>
 			<comment/>
 			<position>
@@ -74,7 +74,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{4997F9D3-60D1-3F41-8294-E64EA7129F70}</id>
@@ -94,7 +93,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{02DEDA05-2823-0745-B30B-5FC90C02D156}</id>
 			<comment/>
 			<position>
@@ -113,7 +112,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A82A3983-A547-3A41-9941-E8FF0089C8BB}</id>
@@ -127,7 +125,7 @@
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5C1ACEAB-A501-314F-8A24-21A5587ED7D7}</id>
 			<comment/>
 			<position>
@@ -148,7 +146,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{0C64B9E8-3543-5F49-B820-67A5A5A4229B}</id>
@@ -167,7 +164,7 @@
 				<second>351</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B1862643-6889-494E-89CA-785522238022}</id>
 			<comment/>
 			<position>
@@ -188,7 +185,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{0DD7D26B-3CE3-7545-A67B-22EC53BD5D07}</id>
@@ -282,7 +278,7 @@ W
 				<second>284</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{76366C69-69F9-D941-8A1F-F4CE61CF15B8}</id>
 			<comment/>
 			<position>
@@ -291,11 +287,13 @@ W
 			</position>
 			<name>Filmic</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>

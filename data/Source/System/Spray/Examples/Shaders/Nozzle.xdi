@@ -47,7 +47,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AD4BEE1F-5D06-E24A-8BBA-26C1788187F6}</id>
 			<comment/>
 			<position>
@@ -68,7 +68,6 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{938F2F8F-07DE-3540-AA55-59A7360D0110}</id>
@@ -80,7 +79,7 @@
 			<color>0.733333, 0.47451, 0.054902, 1</color>
 			<linear>false</linear>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F88B704C-B5B6-B04B-9922-EA444FDC4B33}</id>
 			<comment/>
 			<position>
@@ -131,20 +130,6 @@
 					<name>ViewPosition</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>DepthFade</first>
-					<second>0.1</second>
-				</item>
-				<item>
-					<first>Offset</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Scale</first>
-					<second>1</second>
-				</item>
-			</values>
 		</item>
 	</nodes>
 	<edges>

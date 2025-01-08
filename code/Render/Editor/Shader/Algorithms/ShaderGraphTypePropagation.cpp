@@ -90,7 +90,7 @@ void ShaderGraphTypePropagation::initialize(const RefArray< Node >& roots, const
 				{
 					if (!inputPin->isOptional())
 					{
-						log::warning << L"Mandatory input pin \"" << inputPin->getName() << L"\" of node " << node->getId().format() << L" (" << type_name(node) << L" / " << node->getInformation() << L") not connected in fragment " << shaderGraphId.format() << L"." << Endl;
+						log::warning << L"Mandatory input pin \"" << inputPin->getName() << L"\" of node " << node->getId().format() << L" (" << type_name(node) << L" / " << node->getComment() << L") not connected in fragment " << shaderGraphId.format() << L"." << Endl;
 						m_valid = false;
 					}
 

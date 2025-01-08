@@ -83,7 +83,7 @@ Tag_Metalness
 				<item>TexCoord</item>
 			</names>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{BE96E095-32D6-C240-9EDE-947E1A14E90E}</id>
 			<comment/>
 			<position>
@@ -91,10 +91,7 @@ Tag_Metalness
 				<second>207</second>
 			</position>
 			<name>T_Attributes</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

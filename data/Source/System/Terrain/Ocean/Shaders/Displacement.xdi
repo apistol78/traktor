@@ -45,7 +45,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{17CACE84-6798-2B44-A575-4A44864947B5}</id>
 			<comment/>
 			<position>
@@ -53,12 +53,9 @@
 				<second>41</second>
 			</position>
 			<name>WorldPosition</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{F0CBF543-3ABA-D346-B737-070FE06DBEC9}</id>
 			<comment/>
 			<position>
@@ -66,10 +63,7 @@
 				<second>14</second>
 			</position>
 			<name>DisplacementTexture</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{335AF6FD-1E3E-A545-B933-1479607B86CF}</id>
@@ -114,7 +108,7 @@
 			</position>
 			<name>Normal</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{ED2A6A1C-E9DE-0341-8233-813AA59F80A6}</id>
 			<comment/>
 			<position>
@@ -122,10 +116,7 @@
 				<second>393</second>
 			</position>
 			<name>TileIndex</name>
-			<connectable>false</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{92A01B06-7D09-4B47-A7DD-802C51417604}</id>
@@ -161,7 +152,7 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{A62A00A9-83D9-5546-9E26-6D5A40821D7E}</id>
 			<comment/>
 			<position>
@@ -169,10 +160,7 @@
 				<second>216</second>
 			</position>
 			<name>SlopeTexture</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{320BDDF5-B8DD-0B4D-A58E-8B930C09D361}</id>
@@ -237,7 +225,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{37007839-EF02-2147-9676-C1C38A214D0F}</id>
 			<comment/>
 			<position>
@@ -245,10 +233,7 @@
 				<second>382</second>
 			</position>
 			<name>FoamTexture</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{B88F94EA-829C-1948-9827-F0DCB2609F12}</id>

@@ -47,7 +47,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{3847A8E3-E7FB-8C4A-97BD-997BBD44A920}</id>
 			<comment/>
 			<position>
@@ -68,9 +68,8 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B5701662-83D6-7440-B037-5612131978F9}</id>
 			<comment/>
 			<position>
@@ -125,12 +124,6 @@
 					<name>World</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>DepthFade</first>
-					<second>0.1</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{0F8545D6-1ECB-0149-9685-F5053D49E11C}</id>

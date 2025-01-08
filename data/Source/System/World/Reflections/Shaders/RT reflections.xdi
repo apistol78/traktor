@@ -84,7 +84,7 @@
 			</position>
 			<operator>CoGreater</operator>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{DB6113C6-EBF5-1741-AD89-FD5E7E243F68}</id>
 			<comment/>
 			<position>
@@ -105,9 +105,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{D8501B2B-E904-B140-9A68-F0B31E6E5818}</id>
 			<comment/>
 			<position>
@@ -128,7 +127,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E06E5135-8931-6048-AF43-D93860225F1F}</id>
@@ -331,7 +329,6 @@ for (int i = 0; i < N; ++i)
 }
 
 $Output = acc / N;
-
 			]]>
 			</script>
 		</item>
@@ -609,7 +606,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{4828452D-324C-0948-AF63-5FB5A4359472}</id>
 			<comment/>
 			<position>
@@ -630,7 +627,6 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{D3B2BDEF-53CD-9D47-A8EC-784EB791FC87}</id>
@@ -658,7 +654,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{501E24E8-F230-8B4F-A667-94AA7E50DA51}</id>
 			<comment/>
 			<position>
@@ -679,7 +675,6 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9742249C-C716-8F47-8479-BAD08B19F6A7}</id>
@@ -690,7 +685,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{74534EF4-9CBF-3447-9970-8CCC54FD7657}</id>
 			<comment/>
 			<position>
@@ -709,7 +704,6 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{934D658E-01BB-1D4A-9C48-A2F019D4D0D7}</id>

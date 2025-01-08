@@ -23,7 +23,7 @@ Tag_Metalness
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{EBEA0C56-F5B2-6044-B82A-5510785DAF8E}</id>
 			<comment/>
 			<position>
@@ -31,10 +31,7 @@ Tag_Metalness
 				<second>484</second>
 			</position>
 			<name>T_Attributes</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{2C6270B1-F543-4DB3-8586-6F2AAE44C19F}</id>

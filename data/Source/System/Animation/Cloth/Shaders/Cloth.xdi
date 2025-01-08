@@ -23,7 +23,7 @@
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{9AF9D3C3-9B05-4C95-969D-37C0B417284C}</id>
 			<comment/>
 			<position>
@@ -71,7 +71,6 @@
 					<name>World</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{4E367554-5362-4F26-AB8B-C30BF039FF25}</id>
@@ -83,7 +82,7 @@
 			<color>1, 0, 0, 0</color>
 			<linear>false</linear>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{EDE3B640-C01A-0A49-8E86-9310091D8194}</id>
 			<comment/>
 			<position>
@@ -99,7 +98,6 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
 		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{DE737504-258C-044F-9131-059D2D9E219A}</id>
@@ -113,7 +111,7 @@
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F9B66BC4-6737-4D65-87DD-FDAC9AF7D103}</id>
 			<comment/>
 			<position>
@@ -204,7 +202,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
 			<id>{3F2DE269-8D39-A44E-B308-C8180B8A35BE}</id>

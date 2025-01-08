@@ -39,7 +39,7 @@
 			</position>
 			<swizzle>xxx</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{30CE9745-14D3-4AA1-A4A2-ED7F9F952934}</id>
 			<comment/>
 			<position>
@@ -47,10 +47,7 @@
 				<second>170</second>
 			</position>
 			<name>DebugValue</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{4C1806FA-EA34-4D16-8397-709989F7E0E4}</id>

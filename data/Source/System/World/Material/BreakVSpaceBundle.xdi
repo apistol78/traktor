@@ -16,7 +16,7 @@
 				<item>Velocity</item>
 			</names>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{6A859835-BE63-4D29-90FB-14AB34696658}</id>
 			<comment/>
 			<position>
@@ -24,10 +24,7 @@
 				<second>147</second>
 			</position>
 			<name>VSpace</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{0430F53F-6040-47FA-A060-5973773F3CA6}</id>

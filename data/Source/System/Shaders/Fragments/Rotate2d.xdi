@@ -10,7 +10,7 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{ED32B114-1165-E341-92C9-BD684C26B19A}</id>
 			<comment/>
 			<position>
@@ -18,12 +18,9 @@
 				<second>142</second>
 			</position>
 			<name>Angle</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{DE25C017-660D-654C-91C2-EB740BFAD5DD}</id>
 			<comment/>
 			<position>
@@ -31,10 +28,7 @@
 				<second>273</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{F78C1D3D-284D-0941-BB2A-27E07F798F8A}</id>

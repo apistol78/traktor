@@ -103,7 +103,7 @@
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B9DB8A68-618B-6C42-AA01-550EEF5C38E7}</id>
 			<comment/>
 			<position>
@@ -124,7 +124,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{40EB4E15-1037-074E-907B-0AB205EEF761}</id>
@@ -288,7 +287,7 @@ Generated texture from surface cache.
 				<second>-689</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{19A79279-80E8-E141-A954-9E18A85AA347}</id>
 			<comment/>
 			<position>
@@ -309,7 +308,6 @@ Generated texture from surface cache.
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{9638EE19-69BE-CF49-8606-546B48AAC882}</id>
@@ -815,7 +813,7 @@ Generated texture from surface cache.
 			</position>
 			<name>L_Color</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{2BD768C2-6224-7F4E-84F5-2735B266A95E}</id>
 			<comment/>
 			<position>
@@ -824,11 +822,13 @@ Generated texture from surface cache.
 			</position>
 			<name>Overlay</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -1016,7 +1016,7 @@ $Output = vec4(mix(t, b, f), 0.0f);
 			</position>
 			<name>L_SurfaceOffset</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{7DC69742-485E-674F-8F87-C8516E556FB6}</id>
 			<comment/>
 			<position>
@@ -1025,11 +1025,13 @@ $Output = vec4(mix(t, b, f), 0.0f);
 			</position>
 			<name>Draw index</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins/>
 			<outputPins>
@@ -1190,7 +1192,7 @@ $Output = gl_DrawID;
 				<item>WorldTexCoord</item>
 			</names>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AC48C2AE-14F0-B243-AF1D-002AD68DDE4B}</id>
 			<comment/>
 			<position>
@@ -1211,7 +1213,6 @@ $Output = gl_DrawID;
 					<name>T_SurfaceAttributes</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
 			<id>{35B6B660-8CC4-D24C-A379-8143755A0AB3}</id>
@@ -1227,7 +1228,7 @@ $Output = gl_DrawID;
 				<item>Specular</item>
 			</names>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AF50C41C-209E-BC49-BF52-46FDD513C28F}</id>
 			<comment/>
 			<position>
@@ -1243,9 +1244,8 @@ $Output = gl_DrawID;
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2FEEE9E8-0070-4C63-BE83-192DA56737B5}</id>
 			<comment/>
 			<position>
@@ -1336,7 +1336,6 @@ $Output = gl_DrawID;
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{72FAE0C4-091C-450D-BA1F-031A7CB948C0}</id>

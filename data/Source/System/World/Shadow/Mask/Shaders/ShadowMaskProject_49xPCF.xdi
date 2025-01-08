@@ -56,7 +56,7 @@
 				<second>557</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{34C50EA0-BB78-6147-81C3-3249A71D6FA8}</id>
 			<comment/>
 			<position>
@@ -82,7 +82,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{E58A933B-CE1A-7548-81D3-CA066A336024}</id>
@@ -105,7 +104,7 @@ Light space position
 				<second>444</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{A1CA40DA-6247-E744-A156-F8A61E39059F}</id>
 			<comment/>
 			<position>
@@ -124,7 +123,6 @@ Light space position
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{E5D9AC03-3F19-5C4B-8CF9-D204A84DA0C8}</id>

@@ -10,7 +10,7 @@
 			</position>
 			<name>SurfaceAttributes</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{5E226B83-0061-4026-B5B7-ED42DBF63446}</id>
 			<comment/>
 			<position>
@@ -18,12 +18,9 @@
 				<second>63</second>
 			</position>
 			<name>Inherit</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{AAB0F959-D4F8-42B4-95ED-08AE1EABD898}</id>
 			<comment/>
 			<position>
@@ -31,12 +28,9 @@
 				<second>100</second>
 			</position>
 			<name>Albedo</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{E2BC6128-4B47-45F2-90DD-EAB08727C84C}</id>
 			<comment/>
 			<position>
@@ -44,12 +38,9 @@
 				<second>137</second>
 			</position>
 			<name>Metalness</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{90D3E596-1415-4837-89CF-F3507AAAE050}</id>
 			<comment/>
 			<position>
@@ -57,12 +48,9 @@
 				<second>174</second>
 			</position>
 			<name>Roughness</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{B3745189-7FD6-48F0-A2AC-E5769DA17166}</id>
 			<comment/>
 			<position>
@@ -70,12 +58,9 @@
 				<second>211</second>
 			</position>
 			<name>Specular</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{5D56B51C-EF42-4669-9F88-07D446673255}</id>
 			<comment/>
 			<position>
@@ -83,12 +68,9 @@
 				<second>248</second>
 			</position>
 			<name>Normal</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{851EEB8C-0FDE-4133-8821-8AFDCA63A98E}</id>
 			<comment/>
 			<position>
@@ -96,10 +78,7 @@
 				<second>285</second>
 			</position>
 			<name>Alpha</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.BundleUnite" version="traktor.render.Node:1">
 			<id>{CE2A2F3E-E55F-440C-8704-72569838880A}</id>
@@ -119,7 +98,7 @@
 				<item>World position offset</item>
 			</names>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D7F0FE21-607C-48DB-98F1-BEA2607C6733}</id>
 			<comment/>
 			<position>
@@ -127,12 +106,9 @@
 				<second>322</second>
 			</position>
 			<name>Decal response</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{E17C87D4-085A-409D-9642-1926DBAADBBC}</id>
 			<comment/>
 			<position>
@@ -140,10 +116,7 @@
 				<second>359</second>
 			</position>
 			<name>World position offse</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

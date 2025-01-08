@@ -143,7 +143,6 @@ for (int i = 0; i < emitCount; ++i)
 }
 
 $Head[0].alive = alive;
-
 			]]>
 			</script>
 		</item>
@@ -279,7 +278,7 @@ $Head[0].alive = alive;
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{1875FB6B-1783-B04A-AECF-46A922D9D4F1}</id>
 			<comment/>
 			<position>
@@ -294,7 +293,6 @@ $Head[0].alive = alive;
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

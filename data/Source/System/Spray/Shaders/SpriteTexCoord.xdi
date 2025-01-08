@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{2B0FFEB2-C65F-1F4E-8607-B95ADCC683D5}</id>
 			<comment>
 			<![CDATA[
@@ -13,12 +13,9 @@ Sprite index
 				<second>310</second>
 			</position>
 			<name>Index</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{2B44E6B6-4B2D-0542-911E-258B03A2FCCB}</id>
 			<comment/>
 			<position>
@@ -26,12 +23,9 @@ Sprite index
 				<second>517</second>
 			</position>
 			<name>Rows</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>2</defaultValue>
+			<optional>false</optional>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{918EF4D1-B244-9E44-BD43-D1770070D73F}</id>
 			<comment/>
 			<position>
@@ -39,10 +33,7 @@ Sprite index
 				<second>456</second>
 			</position>
 			<name>Columns</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>2</defaultValue>
+			<optional>false</optional>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{5920969C-26B5-8F41-A3A5-12E15C93A64D}</id>
@@ -93,7 +84,7 @@ Sprite index
 				<second>258</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{72517205-7342-D34F-A5D9-3F258E5F0484}</id>
 			<comment/>
 			<position>
@@ -101,10 +92,7 @@ Sprite index
 				<second>121</second>
 			</position>
 			<name>TexCoord</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{1DD4F3B8-5DC0-1446-8CCF-5A43452F90F1}</id>
@@ -139,18 +127,15 @@ Sprite index
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{9083E88E-3373-764F-B56F-EB5589C383F8}</id>
 			<comment/>
 			<position>
-				<first>-216</first>
-				<second>754</second>
+				<first>-167</first>
+				<second>747</second>
 			</position>
 			<name>Random</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
+			<optional>false</optional>
 		</item>
 		<item type="traktor.render.Connected" version="traktor.render.Node:1">
 			<id>{37107607-9832-3A49-931A-D5A09FD44CA1}</id>

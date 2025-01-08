@@ -94,7 +94,7 @@
 				<second>437</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{41FC2486-3C0E-FD45-9D4A-E32E75651E06}</id>
 			<comment/>
 			<position>
@@ -113,7 +113,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{91A9CECD-2E6A-9147-87CF-EB0E85DC3294}</id>

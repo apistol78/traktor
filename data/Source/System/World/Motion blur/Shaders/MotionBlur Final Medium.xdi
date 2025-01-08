@@ -223,7 +223,7 @@
 				<second>1022</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5EF72E72-8CD6-4FA7-8B08-2239EF128072}</id>
 			<comment/>
 			<position>
@@ -242,9 +242,8 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F1AE5CCF-24A9-4AD9-A528-AC92A20E268A}</id>
 			<comment/>
 			<position>
@@ -265,7 +264,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{9B88D121-DEE0-46EB-B519-E57AEE994AD8}</id>

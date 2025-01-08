@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5EA93E71-78A1-7C4D-9417-89EC17FA7424}</id>
 			<comment/>
 			<position>
@@ -60,14 +60,8 @@
 					<name>World</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>DepthFade</first>
-					<second>0.1</second>
-				</item>
-			</values>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{97F2F49D-3A4C-1541-A9A8-B1793D4EC8B1}</id>
 			<comment/>
 			<position>
@@ -83,7 +77,6 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{A6519AF9-A598-F749-892E-CEEBE675D94E}</id>
@@ -95,7 +88,7 @@
 			<color>1, 0, 0, 1</color>
 			<linear>false</linear>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{EE75C799-852F-424A-9784-4754E8DA2D17}</id>
 			<comment/>
 			<position>
@@ -186,7 +179,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

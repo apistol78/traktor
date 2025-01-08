@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{9DA3F5DA-A389-4755-AAAC-10DB368D8881}</id>
 			<comment/>
 			<position>
@@ -41,7 +41,6 @@
 					<name>Specular</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{2939F585-429D-4982-B940-27F35410282B}</id>
@@ -107,7 +106,7 @@
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{0039A870-485C-43DB-B7DB-3F1D9D85F624}</id>
 			<comment/>
 			<position>
@@ -115,10 +114,7 @@
 				<second>124</second>
 			</position>
 			<name>Enable</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{834F701C-4CE1-4ED0-A23C-EF0A1FD747DA}</id>
@@ -154,7 +150,7 @@
 				<second>513</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{BE08FACA-EF3C-463C-A71E-E01BE2FE4A3C}</id>
 			<comment/>
 			<position>
@@ -162,12 +158,9 @@
 				<second>314</second>
 			</position>
 			<name>Roughness</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0.8</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{C6107199-E0CA-40E1-A6F6-67B8EFE9DB7A}</id>
 			<comment/>
 			<position>
@@ -175,12 +168,9 @@
 				<second>655</second>
 			</position>
 			<name>ViewNormalDetail</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{459FB55C-A624-439A-8C4D-FB0B60DF5493}</id>
 			<comment/>
 			<position>
@@ -188,10 +178,7 @@
 				<second>219</second>
 			</position>
 			<name>SurfaceColor</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{9127FE62-1A1A-48F8-92B2-71AB6FDC6B70}</id>
@@ -201,7 +188,7 @@
 				<second>645</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{B2A1061B-7FD2-4C5D-89E2-EDCBCAFEE774}</id>
 			<comment/>
 			<position>
@@ -209,10 +196,7 @@
 				<second>519</second>
 			</position>
 			<name>ViewPosition</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Neg" version="traktor.render.Node:1">
 			<id>{4C948811-1F40-4030-8A48-D385198D8836}</id>
@@ -235,7 +219,7 @@ Eye direction
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D2DE1271-56BA-EC4B-8888-11763D0E783F}</id>
 			<comment/>
 			<position>
@@ -243,10 +227,7 @@ Eye direction
 				<second>773</second>
 			</position>
 			<name>Alpha</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{96BC7C2E-EB08-074E-98A3-94DB64250C70}</id>
@@ -266,7 +247,7 @@ Eye direction
 			</position>
 			<name>L_Alpha</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B2FEB637-28BC-594C-8AEE-90D311871668}</id>
 			<comment/>
 			<position>
@@ -292,7 +273,6 @@ Eye direction
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{00BAD985-6636-B24F-B283-11132F0606A6}</id>
@@ -411,7 +391,7 @@ Eye direction
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{347680BF-DD44-E84D-AD68-236A87615F15}</id>
 			<comment/>
 			<position>
@@ -437,7 +417,6 @@ Eye direction
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{1ED3EB24-C280-BE49-A6CB-E40BDE6B4F8D}</id>
@@ -593,7 +572,7 @@ Eye direction
 			</position>
 			<name>L_Metalness</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{073CDDDA-9226-DC42-A9F3-6E22EE02DDBF}</id>
 			<comment/>
 			<position>
@@ -619,7 +598,6 @@ Eye direction
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{740F5D11-AE86-2142-90B8-ADD3DD5073F1}</id>
@@ -702,7 +680,7 @@ Eye direction
 			</position>
 			<name>L_SpecularG</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D0EFC45B-60BB-1845-BB33-7ED82D69DBC0}</id>
 			<comment/>
 			<position>
@@ -710,12 +688,9 @@ Eye direction
 				<second>1049</second>
 			</position>
 			<name>Specular</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>1</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{B60B2D97-A1BA-B945-9F21-0A5060EADD81}</id>
 			<comment/>
 			<position>
@@ -723,10 +698,7 @@ Eye direction
 				<second>956</second>
 			</position>
 			<name>Metalness</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E4406C33-0E8B-C040-B4FF-A14B4FBD102C}</id>
@@ -780,7 +752,7 @@ Eye direction
 			</position>
 			<name>L_Metalness</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F8D7B76B-C918-7842-96F8-3AF0A14AA5BF}</id>
 			<comment/>
 			<position>
@@ -801,7 +773,6 @@ Eye direction
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Branch" version="traktor.render.Node:1">
 			<id>{B0279451-EE05-644C-8CB3-A305E0404006}</id>

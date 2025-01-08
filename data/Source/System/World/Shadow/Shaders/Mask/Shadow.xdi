@@ -34,7 +34,7 @@
 				<second>829</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0A351338-E259-4D93-A2EF-4ACBF1E8DE7D}</id>
 			<comment/>
 			<position>
@@ -55,7 +55,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

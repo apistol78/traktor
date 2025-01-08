@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{8159BE48-C353-BC41-97A6-B8AA34887102}</id>
 			<comment/>
 			<position>
@@ -9,10 +9,7 @@
 				<second>338</second>
 			</position>
 			<name>Sh0_3</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{F9B5DC90-8071-7449-AA2C-FE654A9A43D1}</id>
@@ -23,7 +20,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{B5A4F6A8-0D9B-9242-AD3C-F30293167C0C}</id>
 			<comment/>
 			<position>
@@ -31,12 +28,9 @@
 				<second>379</second>
 			</position>
 			<name>Sh4_7</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{2304FDFC-57EA-EE49-90EF-673C8A561E3A}</id>
 			<comment/>
 			<position>
@@ -44,12 +38,9 @@
 				<second>419</second>
 			</position>
 			<name>Sh8</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{DA398D53-370D-1946-913E-7119C254764E}</id>
 			<comment/>
 			<position>
@@ -57,12 +48,9 @@
 				<second>298</second>
 			</position>
 			<name>Normal</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{57C4947D-BD2D-44FC-A467-3AAC61DD0747}</id>
 			<comment/>
 			<position>
@@ -71,11 +59,13 @@
 			</position>
 			<name>EvaluateSH</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>

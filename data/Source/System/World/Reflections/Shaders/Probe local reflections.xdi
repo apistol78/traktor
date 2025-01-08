@@ -10,7 +10,7 @@
 			</position>
 			<name>L_Roughness</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{9F22531E-4440-9F40-B890-6A08B221884A}</id>
 			<comment/>
 			<position>
@@ -36,7 +36,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{1ECD35F7-512E-304D-9AAB-F2178F366BC0}</id>
@@ -709,7 +708,7 @@
 				<second>387</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{D41B519E-A590-C248-BC27-79E46032CD88}</id>
 			<comment/>
 			<position>
@@ -728,9 +727,8 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{921939F2-71E5-3D42-A1C4-01BA447B4AC3}</id>
 			<comment/>
 			<position>
@@ -775,7 +773,6 @@
 					<name>ViewPosition</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

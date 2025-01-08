@@ -1231,16 +1231,16 @@ void InputPort::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"name", m_name);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< InputPort >() >= 1)
 	{
-		if (s.getVersion() < 3)
+		if (s.getVersion< InputPort >() < 3)
 			s >> ObsoleteMember< bool >(L"connectable");
 
 		s >> Member< bool >(L"optional", m_optional);
 
-		if (s.getVersion() < 3)
+		if (s.getVersion< InputPort >() < 3)
 		{
-			if (s.getVersion() >= 2)
+			if (s.getVersion< InputPort >() >= 2)
 				s >> ObsoleteMember< bool >(L"haveDefaultValue");
 
 			s >> ObsoleteMember< float >(L"defaultValue");

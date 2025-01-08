@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{EC845A42-0743-44FF-BC81-699D7ED7E96D}</id>
 			<comment/>
 			<position>
@@ -46,7 +46,6 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E046FC70-3E6B-4B32-948E-4AB0E8F1F0D3}</id>
@@ -57,7 +56,7 @@
 			</position>
 			<name>L_Index</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B70E0914-2F23-47E4-9C20-65BE2AAB4B59}</id>
 			<comment/>
 			<position>
@@ -102,7 +101,6 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{45B12E3C-3E0A-419C-A687-4C5B873251D9}</id>
@@ -130,7 +128,7 @@
 			</position>
 			<name>L_IndexStep</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{809E63B2-CEC2-4842-AD2A-112497E7ADBC}</id>
 			<comment/>
 			<position>
@@ -245,7 +243,6 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.MixOut" version="traktor.render.Node:1">
 			<id>{E78208A2-4174-4920-A37B-2BB9B9980909}</id>
@@ -264,7 +261,7 @@
 			</position>
 			<name>L_Blend</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7B86965D-F6DA-45A6-AB97-E604C13301EF}</id>
 			<comment/>
 			<position>
@@ -300,9 +297,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{DE98332B-0513-442C-B08C-234969B7C79F}</id>
 			<comment/>
 			<position>
@@ -310,12 +306,9 @@
 				<second>965</second>
 			</position>
 			<name>WorldNormal</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5B91D8FF-CC93-425B-A034-594084172A57}</id>
 			<comment/>
 			<position>
@@ -430,9 +423,8 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{CC10DCF7-1177-4078-A530-E9EE12F584F6}</id>
 			<comment/>
 			<position>
@@ -547,9 +539,8 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{3BCB44A7-0AA8-425F-ABFC-A5FD0F95F601}</id>
 			<comment/>
 			<position>
@@ -664,9 +655,8 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{250C26AC-7420-48F7-8CEB-005F1807172B}</id>
 			<comment/>
 			<position>
@@ -711,7 +701,6 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{3374E8BB-0D3B-4AFE-93CB-1E211B05F502}</id>
@@ -748,7 +737,7 @@
 			</position>
 			<name>L_IndexStep</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{21F98704-EDD6-447E-A4B5-EA990FD393A0}</id>
 			<comment/>
 			<position>
@@ -793,7 +782,6 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{528387DC-6759-4E71-9834-176ACD2B77E9}</id>
@@ -821,7 +809,7 @@
 			</position>
 			<name>L_IndexStep</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{72DEB01B-17BA-47C2-809A-2FF9B29AE9DB}</id>
 			<comment/>
 			<position>
@@ -936,9 +924,8 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{81C873CE-EA36-4CF2-925D-B2C068F44161}</id>
 			<comment/>
 			<position>
@@ -1053,9 +1040,8 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{DCFBB171-55FE-488C-9336-7E4269BE0692}</id>
 			<comment/>
 			<position>
@@ -1100,7 +1086,6 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{9C3AEB0F-0B96-4DA8-8FCD-4950DEA0B79F}</id>
@@ -1137,7 +1122,7 @@
 			</position>
 			<name>L_IndexStep</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F3534ED9-8069-4CF5-9F8F-9B2275543B65}</id>
 			<comment/>
 			<position>
@@ -1182,7 +1167,6 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{E642DC39-BBAE-4F3E-B1AC-6023B2B7146E}</id>
@@ -1227,7 +1211,7 @@
 			</position>
 			<name>L_Blend</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{907D9812-B037-4BEE-B7F0-55CC114AA44D}</id>
 			<comment/>
 			<position>
@@ -1342,9 +1326,8 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{3957CAE6-6BE1-46B2-A807-98087DBC0675}</id>
 			<comment/>
 			<position>
@@ -1389,7 +1372,6 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{9D7C9A3B-131A-4C40-AEC6-F2E9C8CA3488}</id>
@@ -1443,7 +1425,7 @@
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{FCEEEAF4-1C58-4726-8E27-7692A4965B1A}</id>
 			<comment/>
 			<position>
@@ -1488,7 +1470,6 @@
 					<name>shRGB_8</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{3A392AAA-D219-40A5-97FA-8DC953149CDB}</id>
@@ -1542,7 +1523,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{422128F2-DC38-4D7D-9FBA-164C1F530E84}</id>
 			<comment/>
 			<position>
@@ -1578,7 +1559,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{75A84254-5D63-49A4-92D8-D279BE090800}</id>
@@ -1589,7 +1569,7 @@
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5419B302-E7C8-4D51-B351-1515CE7CF2BC}</id>
 			<comment/>
 			<position>
@@ -1625,7 +1605,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{F58C9CC4-ECE0-42A7-B0D0-583D779BE587}</id>
@@ -1653,7 +1632,7 @@
 				<second>1204</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{A30C6A23-2170-447A-A127-17A60A09574F}</id>
 			<comment/>
 			<position>
@@ -1661,10 +1640,7 @@
 				<second>-479</second>
 			</position>
 			<name>WorldPosition</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{B46F3584-FDF8-4653-9BC1-976DA101C738}</id>
@@ -1925,7 +1901,7 @@ YZ, Z, 1
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{9B390FE9-AD84-B246-A2CF-786A27C43DA1}</id>
 			<comment/>
 			<position>
@@ -1934,11 +1910,13 @@ YZ, Z, 1
 			</position>
 			<name>World2Grid</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>

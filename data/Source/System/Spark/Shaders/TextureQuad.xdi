@@ -11,7 +11,7 @@
 			<technique>Default</technique>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{78F92054-50DE-5842-B646-D42492F635DB}</id>
 			<comment/>
 			<position>
@@ -30,7 +30,6 @@
 					<name>Color</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{D49C4B75-056C-B841-9E63-B887F095181A}</id>

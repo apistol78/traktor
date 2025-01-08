@@ -50,7 +50,7 @@
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2868158B-A273-C94F-8470-27BC5BFC6AE4}</id>
 			<comment/>
 			<position>
@@ -71,7 +71,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{F78B6560-4F2D-DA4E-A75C-FE9D9B2BEB8A}</id>
@@ -279,7 +278,7 @@
 			</position>
 			<name>L_ViewVelocity</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{A1DB3D09-5C0C-344C-8BFB-B87CA4D55343}</id>
 			<comment/>
 			<position>
@@ -305,9 +304,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{ECB3DD46-429E-C14E-909F-56574F44EDC9}</id>
 			<comment/>
 			<position>
@@ -333,7 +331,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{26F66FCA-4A19-974E-9126-154AE763F642}</id>
@@ -656,7 +653,7 @@ $Output = gl_VertexIndex;
 				</item>
 			</elements>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{E3D5D598-8F5E-46B4-A855-B006BCBE90E3}</id>
 			<comment/>
 			<position>
@@ -712,9 +709,8 @@ $Output = gl_VertexIndex;
 					<name>VertexAttributes</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{A60FA7EC-F176-47DB-BFE2-D3CF0E68830C}</id>
 			<comment/>
 			<position>
@@ -760,9 +756,8 @@ $Output = gl_VertexIndex;
 					<name>VSpace</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0B01FBB1-A41F-4D76-BEF9-369D0279BDF0}</id>
 			<comment/>
 			<position>
@@ -808,9 +803,8 @@ $Output = gl_VertexIndex;
 					<name>VSpace</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{C7DE613F-DCD1-4380-B935-BEE0BBD6B3D7}</id>
 			<comment/>
 			<position>
@@ -856,7 +850,6 @@ $Output = gl_VertexIndex;
 					<name>VSpace</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

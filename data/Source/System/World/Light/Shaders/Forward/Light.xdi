@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{99E003AF-999D-4AC3-AF6E-397B5B356E97}</id>
 			<comment/>
 			<position>
@@ -9,12 +9,9 @@
 				<second>-828</second>
 			</position>
 			<name>ViewNormal</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{E20F65BD-1750-4B62-A70F-5D1A0C22A2D8}</id>
 			<comment/>
 			<position>
@@ -22,12 +19,9 @@
 				<second>-786</second>
 			</position>
 			<name>Roughness</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{B9FF4045-892D-49D6-814B-0587812583B5}</id>
 			<comment/>
 			<position>
@@ -35,10 +29,7 @@
 				<second>-870</second>
 			</position>
 			<name>ViewPosition</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{E84967EC-2203-42D7-B34C-0EFBF0E9DF16}</id>
@@ -260,7 +251,7 @@
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{A41A83F2-37E2-B942-80C3-8D00692E794F}</id>
 			<comment/>
 			<position>
@@ -301,7 +292,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{4892F024-5686-A64E-B480-8DF6788BAD14}</id>
@@ -455,7 +445,7 @@
 			</position>
 			<name>L_Range</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{97C2C09E-2BAE-724C-8D1C-20AA9A12A84F}</id>
 			<comment/>
 			<position>
@@ -486,7 +476,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{707DA94E-4CBF-4748-B756-7C9363D6EDB5}</id>
@@ -655,7 +644,7 @@
 			</position>
 			<name>L_AtlasTransform</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AC111070-650A-8740-8639-BF5BFF6B00D8}</id>
 			<comment/>
 			<position>
@@ -696,9 +685,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7D60EF27-76EC-4450-9F70-CF335E6A1443}</id>
 			<comment/>
 			<position>
@@ -729,7 +717,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{0E8511CE-9A8B-AC4B-A5F0-5BC2537FCFCE}</id>
@@ -803,7 +790,7 @@
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{84F88B39-5101-F146-BB04-097AD7D5874A}</id>
 			<comment/>
 			<position>
@@ -828,7 +815,6 @@
 					<name>LightOffset</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{89B80FEB-F345-354B-8067-7D900B7E33D2}</id>
@@ -915,7 +901,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{14AC015B-D5AA-7C4D-B341-901DC9B574F1}</id>
 			<comment/>
 			<position>
@@ -924,11 +910,13 @@
 			</position>
 			<name>GetSlice</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include/>
 			<inputPins>
 				<item>
@@ -1133,7 +1121,7 @@ Check max shadow distance
 			</position>
 			<name>L_Metalness</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{82B29CCB-606C-2D40-BFB1-61A801861DF0}</id>
 			<comment/>
 			<position>
@@ -1141,10 +1129,7 @@ Check max shadow distance
 				<second>-744</second>
 			</position>
 			<name>Metalness</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
 			<id>{2B63E138-4DE7-DE4C-B037-7CD924078703}</id>
@@ -1310,7 +1295,7 @@ Check max shadow distance
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{A9D8CB53-64F3-F44A-A612-B6D0FE9FAAE8}</id>
 			<comment/>
 			<position>
@@ -1319,11 +1304,13 @@ Check max shadow distance
 			</position>
 			<name>CalculateLighting</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{8541C8B0-4A05-AA42-BFE7-7DBF639AAF8B}</item>
 			</include>
@@ -1387,7 +1374,7 @@ $Output = vec4(Lout.xyz, 0.0f);
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{0F6EE36F-7E4B-7A42-9E21-32292422BD95}</id>
 			<comment/>
 			<position>
@@ -1396,11 +1383,13 @@ $Output = vec4(Lout.xyz, 0.0f);
 			</position>
 			<name>CalculateLighting</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{8541C8B0-4A05-AA42-BFE7-7DBF639AAF8B}</item>
 			</include>
@@ -1518,7 +1507,7 @@ $Output = vec4(Lout.xyz, 0.0f);
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{7BD1CF3B-5BF2-5B4B-ACED-497F623073B1}</id>
 			<comment/>
 			<position>
@@ -1527,11 +1516,13 @@ $Output = vec4(Lout.xyz, 0.0f);
 			</position>
 			<name>CalculateLighting</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{8541C8B0-4A05-AA42-BFE7-7DBF639AAF8B}</item>
 			</include>
@@ -1773,7 +1764,7 @@ $Output = vec4(Lout.xyz, 0.0f);
 			</position>
 			<name>L_Albedo</name>
 		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{1DBA7EBD-D42C-BE43-A4EB-98A34AAFF868}</id>
 			<comment/>
 			<position>
@@ -1782,11 +1773,13 @@ $Output = vec4(Lout.xyz, 0.0f);
 			</position>
 			<name>CalculateReflection</name>
 			<technique/>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<useRayTracing>false</useRayTracing>
 			<include>
 				<item>{8541C8B0-4A05-AA42-BFE7-7DBF639AAF8B}</item>
 			</include>

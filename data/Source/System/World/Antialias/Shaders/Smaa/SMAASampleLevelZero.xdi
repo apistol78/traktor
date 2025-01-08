@@ -28,7 +28,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{138030B7-1242-1F42-BF3A-6D30B53DD8FE}</id>
 			<comment/>
 			<position>
@@ -36,12 +36,9 @@
 				<second>580</second>
 			</position>
 			<name>TexCoord</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{C914255D-1E24-E844-A38F-BE29A1F4D2A4}</id>
 			<comment/>
 			<position>
@@ -49,10 +46,7 @@
 				<second>489</second>
 			</position>
 			<name>Texture</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{D5910A48-8F97-9141-9ABD-9880B562DABA}</id>

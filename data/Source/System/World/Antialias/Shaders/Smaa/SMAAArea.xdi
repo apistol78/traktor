@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{83CCB0DA-FB60-A847-8DA5-F03F9E988F97}</id>
 			<comment/>
 			<position>
@@ -9,12 +9,9 @@
 				<second>1031</second>
 			</position>
 			<name>AreaTexture</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{1C813484-28FF-5F4B-BC11-7DE3DE05D112}</id>
 			<comment/>
 			<position>
@@ -22,12 +19,9 @@
 				<second>513</second>
 			</position>
 			<name>Dist</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{95C8006C-5D19-1D4A-9124-22A449A4250D}</id>
 			<comment/>
 			<position>
@@ -35,12 +29,9 @@
 				<second>638</second>
 			</position>
 			<name>e1</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{EF9547C0-F1B0-9441-8E26-B9AD6562D5E1}</id>
 			<comment/>
 			<position>
@@ -48,12 +39,9 @@
 				<second>706</second>
 			</position>
 			<name>e2</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{163D2074-F6D4-1E4B-B970-D1B762279B2B}</id>
 			<comment/>
 			<position>
@@ -61,12 +49,9 @@
 				<second>587</second>
 			</position>
 			<name>Offset</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{E466C538-EC25-2642-B3AE-CE52ECF9739A}</id>
 			<comment/>
 			<position>
@@ -129,7 +114,6 @@
 					<name>SMAA_THRESHOLD</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{C867E71D-9C47-CA4B-907A-F2E344A8BF4B}</id>
@@ -248,7 +232,7 @@
 			</position>
 			<name>TexCoord</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{255F7F6A-F7C4-CF4F-95E9-5F75DA3A8CE3}</id>
 			<comment/>
 			<position>
@@ -274,7 +258,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{91CF6457-87D6-EB41-8AD5-EFBE2160ED36}</id>

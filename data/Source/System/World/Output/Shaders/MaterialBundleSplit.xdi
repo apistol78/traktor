@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{9FA7C9CE-3F80-7E40-B54A-EC303DB30AB2}</id>
 			<comment/>
 			<position>
@@ -9,10 +9,7 @@
 				<second>754</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
 			<id>{F66C33E8-65A1-7A46-BC9F-AC70C53799B3}</id>

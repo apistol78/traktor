@@ -35,7 +35,7 @@
 				<second>821</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{588D29E9-E625-A348-898E-C7EF17F31BFA}</id>
 			<comment/>
 			<position>
@@ -43,10 +43,7 @@
 				<second>748</second>
 			</position>
 			<name>Deg</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{FA2A3E4A-B89F-4945-B8DF-1B7C561890C8}</id>

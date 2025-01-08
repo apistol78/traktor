@@ -132,7 +132,7 @@
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{8A96EF90-091A-5E40-B68B-EDDD28827C93}</id>
 			<comment/>
 			<position>
@@ -153,7 +153,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.PixelState" version="9,traktor.render.Node:1">
 			<id>{E55C75D8-FBD9-4443-B76E-A916C5F8CB43}</id>

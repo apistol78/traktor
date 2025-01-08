@@ -50,7 +50,7 @@
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{A7C58665-DE2C-1B4B-90BA-E27FCE2CA687}</id>
 			<comment/>
 			<position>
@@ -58,10 +58,7 @@
 				<second>382</second>
 			</position>
 			<name>WorldPosition</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{D9A0E443-C5DA-B742-9179-9B9EEC290E1B}</id>

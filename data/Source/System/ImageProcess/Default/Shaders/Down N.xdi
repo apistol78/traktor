@@ -86,7 +86,7 @@
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{4AD193E3-9D51-9243-AA33-6B9C1C652F06}</id>
 			<comment/>
 			<position>
@@ -105,7 +105,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.MixIn" version="traktor.render.Node:1">
 			<id>{E91222A2-2CAF-4043-A1D7-BED4AC40A555}</id>

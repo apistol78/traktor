@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{ABDE198D-8176-C448-B221-124531E9AA23}</id>
 			<comment/>
 			<position>
@@ -9,10 +9,7 @@
 				<second>44</second>
 			</position>
 			<name>ColorTexture</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{05BEC131-6B1A-7C4D-9C90-170628505ACF}</id>
@@ -32,7 +29,7 @@
 			</position>
 			<swizzle>xx</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{0BFB9BDD-0BD9-B944-9130-232108FA032E}</id>
 			<comment/>
 			<position>
@@ -40,12 +37,9 @@
 				<second>-21</second>
 			</position>
 			<name>Offset_0</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{3408A951-27AA-0846-BECD-ACFF28BBFA12}</id>
 			<comment/>
 			<position>
@@ -53,25 +47,19 @@
 				<second>-295</second>
 			</position>
 			<name>TexCoord</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{7CE346D6-8C5E-5046-9932-6E02280C8EBC}</id>
 			<comment/>
 			<position>
-				<first>1002</first>
-				<second>-196</second>
+				<first>950</first>
+				<second>-213</second>
 			</position>
 			<name>PredicationTexture</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{55105540-DB6F-A848-B390-733B237EAED6}</id>
 			<comment/>
 			<position>
@@ -102,9 +90,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{6F69C0FD-D7A3-214F-BC88-90246E0BCD78}</id>
 			<comment/>
 			<position>
@@ -143,9 +130,8 @@
 					<name>SMAA_THRESHOLD</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{300AEF07-4BFB-064F-B317-EE45EEF24B67}</id>
 			<comment/>
 			<position>
@@ -171,7 +157,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{ECB12290-1F16-7D41-BBFE-1370BA3CCB8E}</id>
@@ -182,7 +167,7 @@
 			</position>
 			<name>C</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{CE0D7351-3AAE-2C49-92A4-F9D157F8C25F}</id>
 			<comment/>
 			<position>
@@ -208,7 +193,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{EA2529DA-4831-1F49-A3F6-FED3DFE0B05D}</id>
@@ -268,7 +252,7 @@
 			</position>
 			<name>delta_x</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{4D2ADF7B-2FD2-C842-981A-2EC02A057A98}</id>
 			<comment/>
 			<position>
@@ -294,7 +278,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{A7A42BEB-62C8-004F-8684-F937B74C8530}</id>
@@ -439,7 +422,7 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{67E6C25C-256C-3B40-AE0D-4C6055BE9C8B}</id>
 			<comment/>
 			<position>
@@ -465,7 +448,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{74DEDEB5-E6F8-9B48-B338-B28F024794AB}</id>
@@ -516,7 +498,7 @@
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AB2AFE4E-0551-4746-BE46-A4B19FFF4564}</id>
 			<comment/>
 			<position>
@@ -542,7 +524,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{B50AE8C3-4440-E54C-9DEE-916DCADAD34D}</id>
@@ -560,7 +541,7 @@
 				<second>693</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{CCACCA01-1DBD-F547-B1A5-6C27B154327A}</id>
 			<comment/>
 			<position>
@@ -568,10 +549,7 @@
 				<second>596</second>
 			</position>
 			<name>Offset_1</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{ADC948B3-7EEB-E240-805A-0D2414F5BBCD}</id>
@@ -609,7 +587,7 @@
 			</position>
 			<name>delta_zz</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{19D11163-A14D-3846-B69D-0A48C358586B}</id>
 			<comment/>
 			<position>
@@ -617,10 +595,7 @@
 				<second>1009</second>
 			</position>
 			<name>Offset_2</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Abs" version="traktor.render.Node:1">
 			<id>{E72F88A0-07E6-D240-9B63-16530F3B1722}</id>
@@ -720,7 +695,7 @@
 				<second>1123</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{27C58CA1-D5A4-FE41-AE67-7AC9531A6464}</id>
 			<comment/>
 			<position>
@@ -746,9 +721,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F0D88CC0-1D11-804D-8EB1-C7D0BEDDF419}</id>
 			<comment/>
 			<position>
@@ -774,7 +748,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{F86359B5-F5E5-6A46-A2B5-CBAC7D904547}</id>
@@ -921,7 +894,7 @@
 				<second>2356</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{813BC866-321C-3547-A785-2A4393BE393E}</id>
 			<comment/>
 			<position>
@@ -960,7 +933,6 @@
 					<name>SMAA_THRESHOLD</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{368191F7-EBED-8C4D-8D97-CF6995D3049C}</id>

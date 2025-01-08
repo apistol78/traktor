@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{00961895-E0CE-2444-98FC-D5865F8C4412}</id>
 			<comment>
 			<![CDATA[
@@ -36,9 +36,8 @@ Microfacet Distribution Function
 					<name>D</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{FED8A1E1-2072-2B46-8C42-3F8A9B15E64D}</id>
 			<comment>
 			<![CDATA[
@@ -73,7 +72,6 @@ Fresnel Reflection
 					<name>F</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{80A5CF6D-33F7-BE47-AC90-46D9217D4445}</id>
@@ -83,7 +81,7 @@ Fresnel Reflection
 				<second>194</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{C7EEEBD9-B838-3F4C-8BFF-2B75DA526F03}</id>
 			<comment/>
 			<position>
@@ -91,12 +89,9 @@ Fresnel Reflection
 				<second>228</second>
 			</position>
 			<name>Roughness</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{4B17CBAF-9066-F347-AC0D-8BE9F3B325BB}</id>
 			<comment/>
 			<position>
@@ -104,12 +99,9 @@ Fresnel Reflection
 				<second>173</second>
 			</position>
 			<name>HalfAngleVector</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{F47AB404-856E-B149-8DEF-5131CD77F152}</id>
 			<comment/>
 			<position>
@@ -117,12 +109,9 @@ Fresnel Reflection
 				<second>103</second>
 			</position>
 			<name>Normal</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D6EAD7C8-368E-7B42-8EBA-5F068FAC231E}</id>
 			<comment/>
 			<position>
@@ -130,12 +119,9 @@ Fresnel Reflection
 				<second>7</second>
 			</position>
 			<name>ViewDirection</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{38C270E2-56BE-6946-B694-F0BC93A4E02F}</id>
 			<comment/>
 			<position>
@@ -143,10 +129,7 @@ Fresnel Reflection
 				<second>328</second>
 			</position>
 			<name>RefractionIndex</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Dot" version="traktor.render.Node:1">
 			<id>{22EC0088-4149-9945-BCFD-E39D66C80B46}</id>

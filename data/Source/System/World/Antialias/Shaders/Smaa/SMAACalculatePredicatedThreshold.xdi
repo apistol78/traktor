@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{E542D870-219C-F44F-B200-C98EF7DB5E39}</id>
 			<comment/>
 			<position>
@@ -32,9 +32,8 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{BCB0119B-9FE8-F448-9B1B-3BE2E20C1D15}</id>
 			<comment/>
 			<position>
@@ -42,12 +41,9 @@
 				<second>523</second>
 			</position>
 			<name>TexCoord</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{667DAC86-4E14-3246-A978-B50F7724E8D4}</id>
 			<comment/>
 			<position>
@@ -55,12 +51,9 @@
 				<second>594</second>
 			</position>
 			<name>Texture</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{5D8E3C60-0D89-A84C-8844-2B1F523B4967}</id>
 			<comment/>
 			<position>
@@ -68,10 +61,7 @@
 				<second>454</second>
 			</position>
 			<name>Offset</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{255438E8-57FB-804A-84B5-8D5E75B086E0}</id>
@@ -115,7 +105,7 @@
 				<second>423</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{74B40766-EF91-E040-A84C-6F1B0A2DCBF8}</id>
 			<comment/>
 			<position>
@@ -146,7 +136,6 @@
 					<name>SMAA_THRESHOLD</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{18ACFCA3-0C77-AE45-BDC8-9E2B0F40A139}</id>

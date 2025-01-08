@@ -803,7 +803,7 @@
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{04537ED0-B1C7-CC42-AB99-20C72C29B62B}</id>
 			<comment/>
 			<position>
@@ -811,10 +811,7 @@
 				<second>-340</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{53B2E92F-7BFA-644E-A434-056E2949A12E}</id>
@@ -825,7 +822,7 @@
 			</position>
 			<name>Input</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{3B53CCE3-9C7B-0049-B2B1-05430FAF23DB}</id>
 			<comment/>
 			<position>
@@ -833,10 +830,7 @@
 				<second>-281</second>
 			</position>
 			<name>Edge</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>1</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{4DB3C198-F03F-7D42-904F-2696F0F53946}</id>
@@ -972,7 +966,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>High</precisionHint>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{39122197-B72A-344A-86F6-8946CFDD418D}</id>
 			<comment/>
 			<position>
@@ -980,10 +974,7 @@
 				<second>1251</second>
 			</position>
 			<name>Opaque</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Connected" version="traktor.render.Node:1">
 			<id>{B2E3296F-CEFD-794A-B0FB-D5CBB4F0A856}</id>

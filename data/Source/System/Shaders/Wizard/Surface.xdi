@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{8ED34B6F-7997-4DDF-9D81-B984B5104FB5}</id>
 			<comment/>
 			<position>
@@ -62,7 +62,6 @@
 					<name>SurfaceAttributes</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{FD2F1A7D-3261-40F4-BCE5-7BE3D3669B6B}</id>
@@ -73,7 +72,7 @@
 			</position>
 			<name>SurfaceAttributes</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{5512A8D6-ABB8-441D-8218-7608B86164AD}</id>
 			<comment/>
 			<position>
@@ -81,12 +80,9 @@
 				<second>-80</second>
 			</position>
 			<name>VertexAttributes</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F2948B25-1324-47FC-B4CC-CBA05BDE3A6E}</id>
 			<comment/>
 			<position>
@@ -127,9 +123,8 @@
 					<name>World</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{254F1AE1-E24B-4122-84A7-4BB8E8106735}</id>
 			<comment/>
 			<position>
@@ -166,9 +161,8 @@
 					<name>Velocity</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5DC2184A-6FA4-4EC6-8C8C-23520F3B59CE}</id>
 			<comment/>
 			<position>
@@ -205,9 +199,8 @@
 					<name>Velocity</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7D7F917F-AF19-4C78-985E-D0CD04DD9F66}</id>
 			<comment/>
 			<position>
@@ -244,7 +237,6 @@
 					<name>Velocity</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{A815DCBA-59C3-4B3E-BA3C-4F6260C65D7B}</id>

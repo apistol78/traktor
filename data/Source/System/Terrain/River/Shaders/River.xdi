@@ -9,7 +9,7 @@
 				<second>880</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0324E1F7-CD2D-3643-8FAE-A8B4E3C831BF}</id>
 			<comment/>
 			<position>
@@ -45,7 +45,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{4A8EF527-8E54-5740-A46B-A019893079F7}</id>
@@ -64,7 +63,7 @@
 			</position>
 			<swizzle>xxx1</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{07696C67-DFD1-0248-8541-C6FF4DD75CE8}</id>
 			<comment/>
 			<position>
@@ -104,7 +103,6 @@
 					<name>Specular</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{70BC23BE-F5B0-8B4D-A0DD-2AA5CE2CF42A}</id>
@@ -250,7 +248,7 @@
 			</position>
 			<value>0.3</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F5A8E49F-D677-5948-A0DB-C626E50A83EA}</id>
 			<comment/>
 			<position>
@@ -287,12 +285,6 @@
 					<name>Type</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>Index</first>
-					<second>0</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{5877A595-62C6-F640-97DA-DD7F88334A9A}</id>
@@ -447,7 +439,7 @@
 				<second>375</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0383AA82-5E64-6243-982F-F304C0D53947}</id>
 			<comment/>
 			<position>
@@ -462,7 +454,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{D5A00183-DE5F-A241-99F4-80ADA9190F94}</id>
@@ -553,7 +544,7 @@
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7A68F39F-680B-D242-806F-A5110E9DB90D}</id>
 			<comment/>
 			<position>
@@ -579,7 +570,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Reflect" version="traktor.render.Node:1">
 			<id>{29042084-D32E-8A4D-9BBE-D04FE0FC16F6}</id>
@@ -688,7 +678,7 @@
 			<color>0.811765, 0, 1, 1</color>
 			<linear>false</linear>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{230A1AA4-48CD-7043-975F-2AD849CBA4D9}</id>
 			<comment/>
 			<position>
@@ -724,16 +714,6 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values>
-				<item>
-					<first>Reflection</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Roughness</first>
-					<second>0.8</second>
-				</item>
-			</values>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{4A8ED7C5-9038-E745-BA5A-2DF147457819}</id>

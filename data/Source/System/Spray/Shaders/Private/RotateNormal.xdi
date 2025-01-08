@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{CDE2DE4E-43B7-B143-98EC-E1EDF56168C3}</id>
 			<comment>
 			<![CDATA[
@@ -13,10 +13,7 @@ Normal in view space
 				<second>302</second>
 			</position>
 			<name>Normal</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{93F746D7-CE31-F64E-AF85-3A442CFDD414}</id>
@@ -49,7 +46,7 @@ Rotated normal in view space
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{E4E8E3A9-A150-464F-B54D-BC54214105FB}</id>
 			<comment/>
 			<position>
@@ -75,7 +72,6 @@ Rotated normal in view space
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{8F5EA3C3-694A-E44D-8BAB-9D8F06C0E6A5}</id>
@@ -85,7 +81,7 @@ Rotated normal in view space
 				<second>244</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{0E504007-9925-1849-A552-584D1E71280C}</id>
 			<comment/>
 			<position>
@@ -93,10 +89,7 @@ Rotated normal in view space
 				<second>218</second>
 			</position>
 			<name>Orientation</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Neg" version="traktor.render.Node:1">
 			<id>{2657A503-E038-7942-A03B-1CEF10C15BBB}</id>

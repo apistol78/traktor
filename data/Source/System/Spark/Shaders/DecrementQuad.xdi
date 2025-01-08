@@ -13,7 +13,7 @@
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{078C4193-0988-8949-AE95-3159A56CB4C3}</id>
 			<comment/>
 			<position>
@@ -32,7 +32,6 @@
 					<name>Color</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{BDE1429E-2901-464A-B1AD-4BED79345F37}</id>

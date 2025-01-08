@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{716185B3-0AA7-A24D-8483-2AE68B7D7B48}</id>
 			<comment/>
 			<position>
@@ -9,12 +9,9 @@
 				<second>-129</second>
 			</position>
 			<name>Value</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{B262074B-0022-324D-B20A-4D3242662261}</id>
 			<comment/>
 			<position>
@@ -22,10 +19,7 @@
 				<second>51</second>
 			</position>
 			<name>Range Max</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>1</defaultValue>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{146FE022-7730-E74E-BF83-518EC71F000A}</id>
@@ -171,7 +165,7 @@
 				<second>154</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{4F60BA9C-F982-4F44-B32A-60B85DF3637D}</id>
 			<comment/>
 			<position>
@@ -179,10 +173,7 @@
 				<second>-39</second>
 			</position>
 			<name>Range Min</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{98F50817-B4A2-6D43-BC4C-9B39F6E440C9}</id>

@@ -44,7 +44,7 @@
 			</position>
 			<swizzle>xxx1</swizzle>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7BABECE8-0DC7-FB4D-9FAE-693BC4C47FCD}</id>
 			<comment/>
 			<position>
@@ -71,7 +71,6 @@
 					<name>Thickness</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{327EF8F0-0A44-6044-89CA-433F3B5132FA}</id>
@@ -203,7 +202,7 @@
 				<second>-288</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{7B4E7257-4C7C-0444-969B-61304D4466DD}</id>
 			<comment/>
 			<position>
@@ -226,7 +225,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{3950F983-9571-574F-8EE5-3A397EA7BB9C}</id>

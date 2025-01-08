@@ -44,7 +44,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{15D97393-3E2F-2C4D-B7FD-1058659D2674}</id>
 			<comment/>
 			<position>
@@ -52,10 +52,7 @@
 				<second>98</second>
 			</position>
 			<name>Current luminance</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{64C81402-5A65-CD42-B484-5A1E06CD4373}</id>
@@ -70,7 +67,7 @@ Middle gray
 			</position>
 			<value>0.4</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{B6AA73FC-EA74-FF40-BD7B-71298F0FBA85}</id>
 			<comment/>
 			<position>
@@ -78,10 +75,7 @@ Middle gray
 				<second>0</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Max" version="traktor.render.Node:1">
 			<id>{4254E42D-6608-E742-99B9-3B30663FA436}</id>

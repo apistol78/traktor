@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2C5B1A15-D04F-664E-8A38-97E02FBE727A}</id>
 			<comment/>
 			<position>
@@ -22,9 +22,8 @@
 					<name>T_DiffuseColor</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{2ED0BE69-9300-ED4D-9CB5-1245C5218DE0}</id>
 			<comment/>
 			<position>
@@ -45,9 +44,8 @@
 					<name>T_Normal</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{3251888A-1033-5048-A806-52F97FB71867}</id>
 			<comment/>
 			<position>
@@ -68,9 +66,8 @@
 					<name>T_Emissive</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{CAE65A0C-33E3-2E41-BC42-9AAD980EE132}</id>
 			<comment/>
 			<position>
@@ -91,9 +88,8 @@
 					<name>T_Transparency</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{6D47FF33-1F1C-D24A-BBE2-EC01E27722B5}</id>
 			<comment/>
 			<position>
@@ -114,9 +110,8 @@
 					<name>T_Roughness</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{64D70C96-0D74-5F4B-9F56-F3D766A55A23}</id>
 			<comment/>
 			<position>
@@ -137,9 +132,8 @@
 					<name>T_Metalness</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{FC560390-8F6F-4F42-A358-70AC28D3C7B8}</id>
 			<comment/>
 			<position>
@@ -160,9 +154,8 @@
 					<name>T_Specular</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{61CA8F81-F792-C743-A9CB-68C9C350854E}</id>
 			<comment>
 			<![CDATA[
@@ -187,9 +180,8 @@ Tag_DiffuseTexCoord
 					<name>T_TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{409061D1-1AB9-1647-9FAE-F22F6D4DE0DE}</id>
 			<comment>
 			<![CDATA[
@@ -214,9 +206,8 @@ Tag_EmissiveTexCoord
 					<name>T_TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{4DB5D72A-8182-3040-AFF5-88C920CC2F68}</id>
 			<comment>
 			<![CDATA[
@@ -241,9 +232,8 @@ Tag_MetalnessTexCoord
 					<name>T_TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{43C81D92-7236-8C4C-8D4F-A56A878ADCB7}</id>
 			<comment>
 			<![CDATA[
@@ -268,9 +258,8 @@ Tag_RoughnessTexCoord
 					<name>T_TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AE9286E4-4237-0C4E-9CA8-B291D9C8AD60}</id>
 			<comment>
 			<![CDATA[
@@ -295,9 +284,8 @@ Tag_SpecularTexCoord
 					<name>T_TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{C30C20B4-9E83-4A48-9FAD-06D6A2861A73}</id>
 			<comment>
 			<![CDATA[
@@ -322,9 +310,8 @@ Tag_TransparencyTexCoord
 					<name>T_TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{EBD3A38A-C841-0840-A4F9-B094879CA369}</id>
 			<comment>
 			<![CDATA[
@@ -349,9 +336,8 @@ Tag_NormalTexCoord
 					<name>T_TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{C30BA8A1-C8A5-4243-BCD4-1D82F66FBECC}</id>
 			<comment/>
 			<position>
@@ -359,10 +345,7 @@ Tag_NormalTexCoord
 				<second>375</second>
 			</position>
 			<name>VertexAttributes</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{E2B3610B-B9CB-704B-9922-2ED2D3788317}</id>
@@ -386,7 +369,7 @@ Tag_DecalResponse
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{543BF2E7-5F6C-4FDC-A69C-909D83034C8E}</id>
 			<comment/>
 			<position>
@@ -447,7 +430,6 @@ Tag_DecalResponse
 					<name>SurfaceAttributes</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>

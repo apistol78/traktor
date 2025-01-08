@@ -21,7 +21,7 @@
 			<branch>BrAuto</branch>
 			<operator>CoLess</operator>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{A697B40C-A0E7-DF47-A9E5-9234675E3617}</id>
 			<comment/>
 			<position>
@@ -29,12 +29,9 @@
 				<second>223</second>
 			</position>
 			<name>Input</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{51A8B0E1-E4A1-EB42-9D91-C335270EF42F}</id>
 			<comment/>
 			<position>
@@ -42,12 +39,9 @@
 				<second>286</second>
 			</position>
 			<name>Min</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{3B755008-8241-4B42-8A63-B6235BE1D09D}</id>
 			<comment/>
 			<position>
@@ -55,10 +49,7 @@
 				<second>333</second>
 			</position>
 			<name>Max</name>
-			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>1</defaultValue>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{09E4F2DA-8EF3-1F43-8773-0CFD1E660EFE}</id>

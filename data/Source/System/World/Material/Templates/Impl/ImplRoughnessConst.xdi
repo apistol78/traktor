@@ -23,7 +23,7 @@ Tag_Roughness
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{F40E8D07-44B3-A54D-8A02-31FA6447C6CC}</id>
 			<comment/>
 			<position>
@@ -31,10 +31,7 @@ Tag_Roughness
 				<second>486</second>
 			</position>
 			<name>T_Attributes</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{31E08E7B-A0EF-4EBE-8B8D-D27D06D2CF4D}</id>

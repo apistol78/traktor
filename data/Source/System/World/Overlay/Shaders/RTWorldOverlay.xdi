@@ -48,7 +48,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{6ADC8F77-B8BA-1A43-B557-D597F232B921}</id>
 			<comment/>
 			<position>
@@ -67,7 +67,6 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{49682D48-12C6-8948-97C5-DD5919319C4C}</id>
@@ -162,8 +161,6 @@ $Output = vec4(
 	pow($Output.z, 1.0f / 2.2f),
 	1.0f
 );
-
-
 			]]>
 			</script>
 		</item>

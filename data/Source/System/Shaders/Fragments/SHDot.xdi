@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{5C9B3BF3-FEDF-3545-825B-CB4AD158B82A}</id>
 			<comment/>
 			<position>
@@ -9,12 +9,9 @@
 				<second>286</second>
 			</position>
 			<name>ShCoeffs2_1</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{BC0A8E5D-ED73-6644-939C-7CA1A8C8409E}</id>
 			<comment/>
 			<position>
@@ -22,12 +19,9 @@
 				<second>322</second>
 			</position>
 			<name>ShCoeffs2_2</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{E834D991-5C90-6843-809A-35A5D8A3F90F}</id>
 			<comment/>
 			<position>
@@ -35,12 +29,9 @@
 				<second>358</second>
 			</position>
 			<name>ShCoeffs2_3</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{8E9417FD-CF9F-A94B-8321-77E462074E44}</id>
 			<comment/>
 			<position>
@@ -48,10 +39,7 @@
 				<second>394</second>
 			</position>
 			<name>ShCoeffs2_4</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Dot" version="traktor.render.Node:1">
 			<id>{7966D1F8-80B7-8D4A-96A3-97A5D5076A3C}</id>
@@ -109,7 +97,7 @@
 				<second>227</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{3EC3D067-67BD-6440-BCC6-62DC9F7DC589}</id>
 			<comment/>
 			<position>
@@ -117,12 +105,9 @@
 				<second>142</second>
 			</position>
 			<name>ShCoeffs1_1</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{90EB125B-0E78-044B-AFB3-9ACBCEEBBF4B}</id>
 			<comment/>
 			<position>
@@ -130,12 +115,9 @@
 				<second>178</second>
 			</position>
 			<name>ShCoeffs1_2</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{41C997D7-77A5-7047-B2F4-AF698D882FC8}</id>
 			<comment/>
 			<position>
@@ -143,12 +125,9 @@
 				<second>214</second>
 			</position>
 			<name>ShCoeffs1_3</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{037F618D-345B-204F-9C15-68FB9B53C6C5}</id>
 			<comment/>
 			<position>
@@ -156,10 +135,7 @@
 				<second>250</second>
 			</position>
 			<name>ShCoeffs1_4</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{9175D13D-D833-E74B-B0BD-A17A3A84C9D9}</id>

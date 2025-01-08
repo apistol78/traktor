@@ -64,7 +64,7 @@
 			</position>
 			<name>shRGB_8</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{DFCED3E5-110B-47BE-9560-4647EC849437}</id>
 			<comment/>
 			<position>
@@ -72,12 +72,9 @@
 				<second>-64</second>
 			</position>
 			<name>A_shR0_3</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{8841EE7D-2A8D-42A0-B936-39712C0F58A5}</id>
 			<comment/>
 			<position>
@@ -85,12 +82,9 @@
 				<second>68</second>
 			</position>
 			<name>A_shR4_7</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{B599AB4C-79CC-4F09-8968-34546E635819}</id>
 			<comment/>
 			<position>
@@ -98,12 +92,9 @@
 				<second>176</second>
 			</position>
 			<name>A_shG0_3</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{EEAAA1CA-BF4D-466A-9927-9C7D0A6B5BEE}</id>
 			<comment/>
 			<position>
@@ -111,12 +102,9 @@
 				<second>279</second>
 			</position>
 			<name>A_shG4_7</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{247A2CE0-A0DD-41A4-B6BB-2757D4CA9CAA}</id>
 			<comment/>
 			<position>
@@ -124,12 +112,9 @@
 				<second>384</second>
 			</position>
 			<name>A_shB0_3</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{288BA92C-E262-4AA0-85AF-E2BE9E40871D}</id>
 			<comment/>
 			<position>
@@ -137,12 +122,9 @@
 				<second>493</second>
 			</position>
 			<name>A_shB4_7</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{601E0B48-2D95-49C8-8D1E-AF58DC8ABEB1}</id>
 			<comment/>
 			<position>
@@ -150,12 +132,9 @@
 				<second>596</second>
 			</position>
 			<name>A_shRGB_8</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{A701D56C-DDAD-4C40-8EDE-5931F9EA273F}</id>
 			<comment/>
 			<position>
@@ -163,10 +142,7 @@
 				<second>722</second>
 			</position>
 			<name>Blend</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
 			<id>{D512AF63-DEE4-46E8-933A-796B8D36C744}</id>
@@ -224,7 +200,7 @@
 				<second>595</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{E005351C-D520-4016-8E0B-60BBA3B3DAC0}</id>
 			<comment/>
 			<position>
@@ -232,12 +208,9 @@
 				<second>-26</second>
 			</position>
 			<name>B_shR0_3</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{9B50ED21-E327-4C99-AC12-027B12B59161}</id>
 			<comment/>
 			<position>
@@ -245,12 +218,9 @@
 				<second>108</second>
 			</position>
 			<name>B_shR4_7</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{5BF75540-C284-4275-8A97-FEC7B62F6614}</id>
 			<comment/>
 			<position>
@@ -258,12 +228,9 @@
 				<second>213</second>
 			</position>
 			<name>B_shG0_3</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{CB1A2706-B923-40A4-B04A-9F742A141F5C}</id>
 			<comment/>
 			<position>
@@ -271,12 +238,9 @@
 				<second>316</second>
 			</position>
 			<name>B_shG4_7</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{68FF3588-C67D-4731-8F0C-2C21B2FE4B9B}</id>
 			<comment/>
 			<position>
@@ -284,12 +248,9 @@
 				<second>423</second>
 			</position>
 			<name>B_shB0_3</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{6D37A72F-1D63-441A-B65A-D03A48DC900B}</id>
 			<comment/>
 			<position>
@@ -297,12 +258,9 @@
 				<second>529</second>
 			</position>
 			<name>B_shB4_7</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{086E317B-A822-492A-BFA1-5CEA18C5C85A}</id>
 			<comment/>
 			<position>
@@ -310,10 +268,7 @@
 				<second>631</second>
 			</position>
 			<name>B_shRGB_8</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

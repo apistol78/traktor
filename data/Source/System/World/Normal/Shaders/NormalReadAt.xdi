@@ -10,7 +10,7 @@
 			</position>
 			<name>Normal</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{498D9767-698C-E746-8DD0-B7B3768A4612}</id>
 			<comment/>
 			<position>
@@ -31,7 +31,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{411C17F6-BCE6-E345-8182-C5A54BAD603B}</id>
@@ -51,7 +50,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{DD499BAF-B821-9347-B77D-24251AB7655D}</id>
 			<comment/>
 			<position>
@@ -59,12 +58,9 @@
 				<second>220</second>
 			</position>
 			<name>NormalMap</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{09242AE3-59FE-CB4F-A36A-17F581C6FF17}</id>
 			<comment/>
 			<position>
@@ -72,10 +68,7 @@
 				<second>292</second>
 			</position>
 			<name>NormalMapUV</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

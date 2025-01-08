@@ -132,7 +132,7 @@
 			</position>
 			<name>LightCount</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{EC06D01B-0FD3-3E48-AC42-D62F99AC514F}</id>
 			<comment/>
 			<position>
@@ -140,10 +140,7 @@
 				<second>-47</second>
 			</position>
 			<name>ViewPosition</name>
-			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{42B21C22-F01A-0040-BE9F-72F413A5A080}</id>
@@ -388,7 +385,7 @@
 			</position>
 			<name>L_ClusterDimZ</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AD44F68E-F9D5-4E59-8F5E-D937BF2B3378}</id>
 			<comment/>
 			<position>
@@ -419,7 +416,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Min" version="traktor.render.Node:1">
 			<id>{F3364AF6-AF17-476C-93A1-1244D71FA173}</id>
@@ -446,7 +442,7 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{6C2E8FEF-60A1-0D4F-90CC-6FDC77C28267}</id>
 			<comment/>
 			<position>
@@ -472,7 +468,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{4704B457-F8FA-BD49-A3AC-E9C777F576E9}</id>
@@ -512,7 +507,7 @@
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5C13785D-9AF8-C841-A3BF-EE1D22029CE6}</id>
 			<comment/>
 			<position>
@@ -533,7 +528,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{EB6DB3E6-015F-2741-89F6-7D59C254A46F}</id>
@@ -544,7 +538,7 @@
 			</position>
 			<name>ClusterPosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{A3B98FF7-F0CA-2342-8596-2480D5BEE0C0}</id>
 			<comment/>
 			<position>
@@ -565,7 +559,6 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>
