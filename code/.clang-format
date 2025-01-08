@@ -55,6 +55,7 @@ SpacesInLineCommentPrefix:
 SpacesInSquareBrackets: false
 Standard: Latest
 TabWidth: 4
+TypenameMacros: ['T_ANONYMOUS_VAR']
 UseTab: Always
 AccessModifierOffset: -4
 AllowAllParametersOfDeclarationOnNextLine: false
