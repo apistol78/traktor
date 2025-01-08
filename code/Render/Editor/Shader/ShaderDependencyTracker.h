@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,13 @@
  */
 #pragma once
 
-#include <set>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Guid.h"
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/Thread/Semaphore.h"
+
+#include <set>
 
 namespace traktor
 {
@@ -68,13 +71,13 @@ private:
 		Guid from;
 		Guid to;
 
-		bool operator < (const Dependency& rh) const;
+		bool operator<(const Dependency& rh) const;
 	};
 
 	Ref< db::Database > m_database;
 	Thread* m_scanThread;
 	Semaphore m_lock;
-	std::vector< IListener* > m_listeners;
+	AlignedVector< IListener* > m_listeners;
 	std::set< Dependency > m_dependencies;
 };
 

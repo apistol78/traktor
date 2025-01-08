@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/ShaderDependencyTracker.h"
+
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadPool.h"
 #include "Database/Database.h"
@@ -14,7 +16,6 @@
 #include "Database/Traverse.h"
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderDependencyTracker.h"
 
 namespace traktor::render
 {
@@ -22,7 +23,7 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderDependencyTracker", ShaderDependencyTracker, Object)
 
 ShaderDependencyTracker::ShaderDependencyTracker()
-:	m_scanThread(nullptr)
+	: m_scanThread(nullptr)
 {
 }
 
@@ -51,21 +52,18 @@ void ShaderDependencyTracker::scan(db::Database* database)
 	}
 
 	ThreadPool::getInstance().spawn(
-		[=]() {
-			RefArray< db::Instance > shaderGraphInstances;
-			db::recursiveFindChildInstances(database->getRootGroup(), db::FindInstanceByType(type_of< ShaderGraph >()), shaderGraphInstances);
-			for (auto shaderGraphInstance : shaderGraphInstances)
-			{
-				Ref< ShaderGraph > shaderGraph = shaderGraphInstance->getObject< ShaderGraph >();
-				if (shaderGraph)
-				{
-					for (auto externalNode : shaderGraph->findNodesOf< External >())
-						addDependency(shaderGraphInstance->getGuid(), externalNode->getFragmentGuid());
-				}
-			}
+		[=, this]() {
+		RefArray< db::Instance > shaderGraphInstances;
+		db::recursiveFindChildInstances(database->getRootGroup(), db::FindInstanceByType(type_of< ShaderGraph >()), shaderGraphInstances);
+		for (auto shaderGraphInstance : shaderGraphInstances)
+		{
+			Ref< ShaderGraph > shaderGraph = shaderGraphInstance->getObject< ShaderGraph >();
+			if (shaderGraph)
+				for (auto externalNode : shaderGraph->findNodesOf< External >())
+					addDependency(shaderGraphInstance->getGuid(), externalNode->getFragmentGuid());
+		}
 		},
-		m_scanThread
-	);
+		m_scanThread);
 }
 
 void ShaderDependencyTracker::scan(db::Database* database, const Guid& shader)
@@ -77,21 +75,20 @@ void ShaderDependencyTracker::scan(db::Database* database, const Guid& shader)
 	}
 
 	ThreadPool::getInstance().spawn(
-		[=]() {
-			Ref< db::Instance > instance = database->getInstance(shader);
-			if (instance)
+		[=, this]() {
+		Ref< db::Instance > instance = database->getInstance(shader);
+		if (instance)
+		{
+			Ref< ShaderGraph > shaderGraph = instance->getObject< ShaderGraph >();
+			if (shaderGraph)
 			{
-				Ref< ShaderGraph > shaderGraph = instance->getObject< ShaderGraph >();
-				if (shaderGraph)
-				{
-					removeDependencies(shader);
-					for (auto externalNode : shaderGraph->findNodesOf< External >())
-						addDependency(shader, externalNode->getFragmentGuid());
-				}
+				removeDependencies(shader);
+				for (auto externalNode : shaderGraph->findNodesOf< External >())
+					addDependency(shader, externalNode->getFragmentGuid());
 			}
+		}
 		},
-		m_scanThread
-	);
+		m_scanThread);
 }
 
 void ShaderDependencyTracker::addListener(IListener* listener)
@@ -115,21 +112,17 @@ void ShaderDependencyTracker::addDependency(const Guid& fromShader, const Guid& 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Dependency dependency = { fromShader, toShader };
 	if (m_dependencies.insert(dependency).second)
-	{
 		for (auto listener : m_listeners)
 			listener->dependencyAdded(fromShader, toShader);
-	}
 }
 
 void ShaderDependencyTracker::removeDependency(const Guid& fromShader, const Guid& toShader)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	Dependency dependency = { fromShader, toShader };
+	const Dependency dependency = { fromShader, toShader };
 	if (m_dependencies.erase(dependency) != 0)
-	{
 		for (auto listener : m_listeners)
 			listener->dependencyRemoved(fromShader, toShader);
-	}
 }
 
 void ShaderDependencyTracker::removeDependencies(const Guid& fromShader)
@@ -138,15 +131,13 @@ void ShaderDependencyTracker::removeDependencies(const Guid& fromShader)
 
 	std::set< Guid > toShaders;
 	for (const auto& dependency : m_dependencies)
-	{
 		if (dependency.from == fromShader)
 			toShaders.insert(dependency.to);
-	}
 	for (const auto& toShader : toShaders)
 		removeDependency(fromShader, toShader);
 }
 
-bool ShaderDependencyTracker::Dependency::operator < (const Dependency& rh) const
+bool ShaderDependencyTracker::Dependency::operator<(const Dependency& rh) const
 {
 	if (from < rh.from)
 		return true;
