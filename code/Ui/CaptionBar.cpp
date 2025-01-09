@@ -53,7 +53,8 @@ bool CaptionBar::create(Widget* parent, uint32_t style)
 
 void CaptionBar::setText(const std::wstring& text)
 {
-	m_label->setText(text);
+	if (m_label)
+		m_label->setText(text);
 	ToolBar::setText(text);
 	update();
 }
@@ -66,12 +67,14 @@ void CaptionBar::update(const Rect* rc_, bool immediate)
 	int32_t r = rc.right - pad;
 	int32_t h = rc.getHeight();
 
+	if (m_buttonClose)
 	{
 		const Size sz = m_buttonClose->getPreferredSize(Size(0, 0));
 		m_buttonClose->setRect({ Point(r - sz.cx, (h - sz.cy) / 2), Size(sz.cx, sz.cy) });
 		r -= sz.cx + pad;
 	}
 
+	if (m_buttonMaximizeOrRestore)
 	{
 		const Form* parentForm = dynamic_type_cast< const Form* >(getAncestor());
 		const bool maximized = (parentForm != nullptr) ? parentForm->isMaximized() : false;
@@ -81,12 +84,14 @@ void CaptionBar::update(const Rect* rc_, bool immediate)
 		r -= sz.cx + pad;
 	}
 
+	if (m_buttonMinimize)
 	{
 		const Size sz = m_buttonMinimize->getPreferredSize(Size(0, 0));
 		m_buttonMinimize->setRect({ Point(r - sz.cx, (h - sz.cy) / 2), Size(sz.cx, sz.cy) });
 		r -= sz.cx + pad;
 	}
 
+	if (m_label)
 	{
 		const Size sz = m_label->getPreferredSize(Size(0, 0));
 		m_label->setRect({ Point(r - sz.cx, (h - sz.cy) / 2), Size(sz.cx, sz.cy) });
