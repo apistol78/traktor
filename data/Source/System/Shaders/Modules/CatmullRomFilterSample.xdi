@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule">
+	<text>
+	<![CDATA[
+
+#define TEX sampler2D(tx, smp)
+
+// High quality texture filtering.
+vec4 CatmullRomFilterSample(in texture2D tx, in sampler smp, vec2 uv)
+{
+	const vec2 texsiz = vec2(textureSize(TEX, 0).xy);
+	const vec4 rtMetrics = vec4(1.0f / texsiz.xy, texsiz.xy);
+
+	const vec2 position = rtMetrics.zw * uv;
+	const vec2 centerPosition = floor(position - 0.5f) + 0.5f;
+	const vec2 f = position - centerPosition;
+	const vec2 f2 = f * f;
+	const vec2 f3 = f * f2;
+
+	const float c = 0.6f; //note: [0;1] ( SMAA_FILMIC_REPROJECTION_SHARPNESS / 100.0 )
+
+	const vec2 w0 =         -c  * f3 +  2.0f * c          * f2 - c * f;
+	const vec2 w1 =  (2.0f - c) * f3 - (3.0f - c)         * f2         + 1.0f;
+	const vec2 w2 = -(2.0f - c) * f3 + (3.0f -  2.0f * c) * f2 + c * f;
+	const vec2 w3 =          c  * f3 -                  c * f2;
+
+	const vec2 w12 = w1 + w2;
+	const vec2 tc12 = rtMetrics.xy * (centerPosition + w2 / w12);
+	const vec4 centerColor = textureLod(TEX, vec2(tc12.x, tc12.y), 0);
+
+	const vec2 tc0 = rtMetrics.xy * (centerPosition - 1.0f);
+	const vec2 tc3 = rtMetrics.xy * (centerPosition + 2.0f);
+
+	const float weight =
+		(w12.x * w0.y ) +
+		(w0.x  * w12.y) +
+		(w12.x * w12.y) +
+		(w3.x  * w12.y) +
+		(w12.x * w3.y );
+
+	const vec4 color =
+		textureLod(TEX, vec2(tc12.x, tc0.y ), 0) * (w12.x * w0.y ) +
+		textureLod(TEX, vec2(tc0.x,  tc12.y), 0) * (w0.x  * w12.y) +
+		centerColor * (w12.x * w12.y) +
+		textureLod(TEX, vec2(tc3.x,  tc12.y), 0) * (w3.x  * w12.y) +
+		textureLod(TEX, vec2(tc12.x, tc3.y ), 0) * (w12.x * w3.y );
+
+	return color / weight;
+}
+
+	]]>
+	</text>
+</object>

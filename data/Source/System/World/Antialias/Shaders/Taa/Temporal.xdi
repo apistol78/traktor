@@ -2,6 +2,8 @@
 <object type="traktor.render.ShaderModule">
 	<text>
 	<![CDATA[
+#using \{935D9DEF-A5F9-4D4B-85BE-9F2E059662BB}
+
 #define TAPS 16
 
 bool Clipped(vec2 uv)
@@ -23,43 +25,6 @@ vec4 ColorClamp(in texture2D currentFrame, in sampler currentSampler, vec4 curre
 	const vec4 Emx = vec4(0.001f.xxx, 0.0f);
 
 	return clamp(historyColor, bmn - Emn, bmx + Emx);
-}
-
-vec4 CatmullRomFilterSample(in texture2D tx, in sampler smp, vec2 uv)
-{
-	// return texture(sampler2D(tex, smp), uv);
-	
-#define TEX sampler2D(tx, smp)
-
-	vec2 texsiz = vec2(textureSize( TEX, 0 ).xy);
-	vec4 rtMetrics = vec4(1.0f / texsiz.xy, texsiz.xy);
-
-	vec2 position = rtMetrics.zw * uv;
-	vec2 centerPosition = floor(position - 0.5f) + 0.5f;
-	vec2 f = position - centerPosition;
-	vec2 f2 = f * f;
-	vec2 f3 = f * f2;
-
-	const float c = 0.5f; //note: [0;1] ( SMAA_FILMIC_REPROJECTION_SHARPNESS / 100.0 )
-	vec2 w0 =         -c  * f3 +  2.0f * c         * f2 - c * f;
-	vec2 w1 =  (2.0f - c) * f3 - (3.0f - c)        * f2 + 1.0f;
-	vec2 w2 = -(2.0f - c) * f3 + (3.0f - 2.0f * c) * f2 + c * f;
-	vec2 w3 =          c  * f3 -                 c * f2;
-
-	vec2 w12 = w1 + w2;
-	vec2 tc12 = rtMetrics.xy * (centerPosition + w2 / w12);
-	vec3 centerColor = textureLod(TEX, vec2(tc12.x, tc12.y), 0).rgb;
-
-	vec2 tc0 = rtMetrics.xy * (centerPosition - 1.0);
-	vec2 tc3 = rtMetrics.xy * (centerPosition + 2.0);
-	vec4 color =
-		vec4(textureLod(TEX, vec2(tc12.x, tc0.y ), 0).rgb, 1.0f) * (w12.x * w0.y ) +
-		 vec4(textureLod(TEX, vec2(tc0.x, tc12.y), 0).rgb, 1.0f) * (w0.x  * w12.y) +
-		 vec4(centerColor,                                 1.0f) * (w12.x * w12.y) +
-		 vec4(textureLod(TEX, vec2(tc3.x, tc12.y), 0).rgb, 1.0f) * (w3.x  * w12.y) +
-		 vec4(textureLod(TEX, vec2(tc12.x, tc3.y ), 0).rgb, 1.0f) * (w12.x * w3.y );
-
-	return vec4(color.rgb / color.a, 1.0f);
 }
 
 vec4 TemporalAntiAlias(
