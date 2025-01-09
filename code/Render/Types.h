@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,10 +11,10 @@
 #include "Core/Config.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Guid.h"
-#include "Core/Platform.h"
-#include "Core/Ref.h"
 #include "Core/Io/Path.h"
 #include "Core/Math/Color4f.h"
+#include "Core/Platform.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,16 +48,16 @@ enum class PrecisionHint
 
 namespace RenderPriority
 {
-	enum
-	{
-		Setup = 1,
-		Opaque = 2,
-		PostOpaque = 4,
-		AlphaBlend = 8,
-		PostAlphaBlend = 16,
-		Overlay = 32,
-		All = (Setup | Opaque | PostOpaque | AlphaBlend | PostAlphaBlend | Overlay)
-	};
+enum
+{
+	Setup = 1,
+	Opaque = 2,
+	PostOpaque = 4,
+	AlphaBlend = 8,
+	PostAlphaBlend = 16,
+	Overlay = 32,
+	All = (Setup | Opaque | PostOpaque | AlphaBlend | PostAlphaBlend | Overlay)
+};
 }
 
 enum class CullMode
@@ -92,15 +92,15 @@ enum class BlendFactor
 
 namespace ColorWrite
 {
-	enum
-	{
-		Red = 1,
-		Green = 2,
-		Blue = 4,
-		Alpha = 8,
-		RGB = ColorWrite::Red | ColorWrite::Green | ColorWrite::Blue,
-		RGBA = ColorWrite::Red | ColorWrite::Green | ColorWrite::Blue | ColorWrite::Alpha
-	};
+enum
+{
+	Red = 1,
+	Green = 2,
+	Blue = 4,
+	Alpha = 8,
+	RGB = ColorWrite::Red | ColorWrite::Green | ColorWrite::Blue,
+	RGBA = ColorWrite::Red | ColorWrite::Green | ColorWrite::Blue | ColorWrite::Alpha
+};
 }
 
 enum class CompareFunction
@@ -209,73 +209,73 @@ enum BufferUsage
 /*! Clear target flags. */
 enum ClearFlag
 {
-	CfColor		= 1,	//!< Clear color buffer.
-	CfDepth		= 2,	//!< Clear depth buffer.
-	CfStencil	= 4		//!< Clear stencil buffer.
+	CfColor = 1,  //!< Clear color buffer.
+	CfDepth = 2,  //!< Clear depth buffer.
+	CfStencil = 4 //!< Clear stencil buffer.
 };
 
 /*! Vertex element data usage. */
 enum class DataUsage
 {
-	Position	= 0,	//!< Positions
-	Normal		= 1,	//!< Normals
-	Tangent		= 2,	//!< Tangents
-	Binormal	= 3,	//!< Bi-normals
-	Color		= 4,	//!< Colors
-	Custom		= 5		//!< Custom, ex. texture coordinates etc.
+	Position = 0, //!< Positions
+	Normal = 1,	  //!< Normals
+	Tangent = 2,  //!< Tangents
+	Binormal = 3, //!< Bi-normals
+	Color = 4,	  //!< Colors
+	Custom = 5	  //!< Custom, ex. texture coordinates etc.
 };
 
 /*! Vertex element data type. */
 enum DataType
 {
-	DtFloat1	= 0,	//!< Single float.
-	DtFloat2	= 1,	//!< 2 floats.
-	DtFloat3	= 2,	//!< 3 floats.
-	DtFloat4	= 3,	//!< 4 floats.
-	DtByte4		= 4,	//!< 4 unsigned bytes.
-	DtByte4N	= 5,	//!< 4 unsigned bytes, normalized to 0 - 1.
-	DtShort2	= 6,	//!< 2 signed shorts.
-	DtShort4	= 7,	//!< 4 signed shorts.
-	DtShort2N	= 8,	//!< 2 signed shorts, normalized to -1 - 1.
-	DtShort4N	= 9,	//!< 4 signed shorts, normalized to -1 - 1.
-	DtHalf2		= 10,	//!< 2 half precision floats.
-	DtHalf4		= 11,	//!< 4 half precision floats.
-	DtInteger1  = 12,	//!< Single integer.
-	DtInteger2  = 13,	//!< 2 integers.
-	DtInteger3  = 14,	//!< 3 integers.
-	DtInteger4  = 15	//!< 4 integers.
+	DtFloat1 = 0,	 //!< Single float.
+	DtFloat2 = 1,	 //!< 2 floats.
+	DtFloat3 = 2,	 //!< 3 floats.
+	DtFloat4 = 3,	 //!< 4 floats.
+	DtByte4 = 4,	 //!< 4 unsigned bytes.
+	DtByte4N = 5,	 //!< 4 unsigned bytes, normalized to 0 - 1.
+	DtShort2 = 6,	 //!< 2 signed shorts.
+	DtShort4 = 7,	 //!< 4 signed shorts.
+	DtShort2N = 8,	 //!< 2 signed shorts, normalized to -1 - 1.
+	DtShort4N = 9,	 //!< 4 signed shorts, normalized to -1 - 1.
+	DtHalf2 = 10,	 //!< 2 half precision floats.
+	DtHalf4 = 11,	 //!< 4 half precision floats.
+	DtInteger1 = 12, //!< Single integer.
+	DtInteger2 = 13, //!< 2 integers.
+	DtInteger3 = 14, //!< 3 integers.
+	DtInteger4 = 15	 //!< 4 integers.
 };
 
 /*! Shader parameter type. */
 enum class ParameterType
 {
-	Scalar					= 0,	//!< Scalar parameter.
-	Vector					= 1,	//!< Vector parameter.
-	Matrix					= 2,	//!< Matrix parameter.
-	Texture2D				= 3,	//!< 2D texture parameter.
-	Texture3D				= 4,	//!< 3D texture parameter.
-	TextureCube				= 5,	//!< Cube texture parameter.
-	StructBuffer			= 6,	//!< Struct buffer parameter.
-	Image2D					= 7,
-	Image3D					= 8,
-	ImageCube				= 9,
-	AccelerationStructure	= 10
+	Scalar = 0,		  //!< Scalar parameter.
+	Vector = 1,		  //!< Vector parameter.
+	Matrix = 2,		  //!< Matrix parameter.
+	Texture2D = 3,	  //!< 2D texture parameter.
+	Texture3D = 4,	  //!< 3D texture parameter.
+	TextureCube = 5,  //!< Cube texture parameter.
+	StructBuffer = 6, //!< Struct buffer parameter.
+	Image2D = 7,
+	Image3D = 8,
+	ImageCube = 9,
+	AccelerationStructure = 10
 };
 
 /*! Shader parameter update frequency. */
 enum class UpdateFrequency
 {
-	Once		= 0,	//!< Once per life time.
-	Frame		= 1,	//!< Once per frame.
-	Draw		= 2		//!< Per draw call.
+	Once = 0,  //!< Once per life time.
+	Frame = 1, //!< Once per frame.
+	Draw = 2   //!< Per draw call.
 };
 
 /*! Index type. */
 enum class IndexType
 {
-	Void	= 0,	//!< No type.
-	UInt16	= 1,	//!< Unsigned 16 bit indices.
-	UInt32	= 2		//!< Unsigned 32 bit indices.
+	Void = 0,	//!< No type.
+	UInt16 = 1, //!< Unsigned 16 bit indices.
+	UInt32 = 2	//!< Unsigned 32 bit indices.
 };
 
 /*! Texture type. */
@@ -315,17 +315,17 @@ enum TextureFormat
 	/*! \name Compressed texture formats. */
 	//@{
 
-	TfDXT1 = 30,	// BC1
-	TfDXT2 = 31,	// BC2 (premul alpha)
-	TfDXT3 = 32,	// BC2
-	TfDXT4 = 33,	// BC3 (premul alpha)
-	TfDXT5 = 34,	// BC3
-	TfBC6HU = 35,	// BC6H (unsigned)
-	TfBC6HS = 36,	// BC6H (signed)
-	TfPVRTC1 = 40,	// 4bpp, no alpha
-	TfPVRTC2 = 41,	// 2bpp, no alpha
-	TfPVRTC3 = 42,	// 4bpp, alpha
-	TfPVRTC4 = 43,	// 2bpp, alpha
+	TfDXT1 = 30,   // BC1
+	TfDXT2 = 31,   // BC2 (premul alpha)
+	TfDXT3 = 32,   // BC2
+	TfDXT4 = 33,   // BC3 (premul alpha)
+	TfDXT5 = 34,   // BC3
+	TfBC6HU = 35,  // BC6H (unsigned)
+	TfBC6HS = 36,  // BC6H (signed)
+	TfPVRTC1 = 40, // 4bpp, no alpha
+	TfPVRTC2 = 41, // 2bpp, no alpha
+	TfPVRTC3 = 42, // 4bpp, alpha
+	TfPVRTC4 = 43, // 2bpp, alpha
 	TfETC1 = 44,
 	TfASTC4x4 = 45,
 	TfASTC8x8 = 46,
@@ -360,13 +360,21 @@ enum class Stage : uint32_t
 };
 
 /*! Stage */
-constexpr Stage operator | (const Stage lh, const Stage rh) { return (Stage)((uint32_t)lh | (uint32_t)rh); }
-constexpr Stage operator & (const Stage lh, const Stage rh) { return (Stage)((uint32_t)lh & (uint32_t)rh); }
+constexpr Stage operator|(const Stage lh, const Stage rh)
+{
+	return (Stage)((uint32_t)lh | (uint32_t)rh);
+}
+
+constexpr Stage operator&(const Stage lh, const Stage rh)
+{
+	return (Stage)((uint32_t)lh & (uint32_t)rh);
+}
 
 /*! Render view event. */
 struct RenderEvent
 {
 	RenderEventType type;
+
 	union
 	{
 		// ReResize
@@ -374,8 +382,7 @@ struct RenderEvent
 		{
 			int32_t width;
 			int32_t height;
-		}
-		resize;
+		} resize;
 	};
 };
 
@@ -418,12 +425,12 @@ struct Viewport
 	Viewport() = default;
 
 	Viewport(int32_t l, int32_t t, int32_t w, int32_t h, float nz, float fz)
-	:	left(l)
-	,	top(t)
-	,	width(w)
-	,	height(h)
-	,	nearZ(nz)
-	,	farZ(fz)
+		: left(l)
+		, top(t)
+		, width(w)
+		, height(h)
+		, nearZ(nz)
+		, farZ(fz)
 	{
 	}
 };
@@ -439,10 +446,10 @@ struct Rectangle
 	Rectangle() = default;
 
 	Rectangle(int32_t l, int32_t t, int32_t w, int32_t h)
-	: left(l)
-	, top(t)
-	, width(w)
-	, height(h)
+		: left(l)
+		, top(t)
+		, width(w)
+		, height(h)
 	{
 	}
 
@@ -570,7 +577,7 @@ struct VolumeTextureCreateDesc
 /*! Descriptor for render target. */
 struct RenderTargetCreateDesc
 {
-	TextureFormat format = TfInvalid;	/*< Render target pixel format. */
+	TextureFormat format = TfInvalid; /*< Render target pixel format. */
 	bool sRGB = false;
 };
 
@@ -579,7 +586,10 @@ class IRenderTargetSet;
 /*! Descriptor for render target sets. */
 struct RenderTargetSetCreateDesc
 {
-	enum { MaxTargets = 8 };
+	enum
+	{
+		MaxTargets = 8
+	};
 
 	int32_t count = 0;							/*!< Number of render targets in set; max 4 targets allowed. */
 	int32_t width = 0;							/*!< Width of render targets. */
@@ -591,7 +601,7 @@ struct RenderTargetSetCreateDesc
 	bool usingDepthStencilAsStorage = false;	/*!< Will be using depth/stencil buffer as storage input or output of compute shader. */
 	bool ignoreStencil = true;					/*!< Ignoring stencil; stencil isn't used in rendering. */
 	bool generateMips = false;					/*!< Generate complete mip-chain after target been renderered onto. */
-	RenderTargetCreateDesc targets[MaxTargets];	/*!< Descriptor for each target. */
+	RenderTargetCreateDesc targets[MaxTargets]; /*!< Descriptor for each target. */
 };
 
 /*! Target transfer flags. */
@@ -606,10 +616,10 @@ enum TransferFlags
 /*! Clear parameters. */
 struct Clear
 {
-	uint32_t mask = 0;		//!< Combination of ClearFlags.
-	Color4f colors[RenderTargetSetCreateDesc::MaxTargets];	//!< Clear color values; must be one color for each bound target.
-	float depth = 1.0f;		//!< Clear depth value.
-	int32_t stencil = 0;	//!< Clear stencil value.
+	uint32_t mask = 0;									   //!< Combination of ClearFlags.
+	Color4f colors[RenderTargetSetCreateDesc::MaxTargets]; //!< Clear color values; must be one color for each bound target.
+	float depth = 1.0f;									   //!< Clear depth value.
+	int32_t stencil = 0;								   //!< Clear stencil value.
 };
 
 /*! Draw primitives. */
@@ -617,13 +627,12 @@ struct Primitives
 {
 	PrimitiveType type = PrimitiveType::Points;
 	uint32_t offset = 0;
-	uint32_t count = 0;		//!< Primitive count, i.e. number of triangles etc.
+	uint32_t count = 0; //!< Primitive count, i.e. number of triangles etc.
 	bool indexed = false;
 
 	inline static Primitives setIndexed(PrimitiveType type_, uint32_t offset_, uint32_t count_)
 	{
-		return
-		{
+		return {
 			.type = type_,
 			.offset = offset_,
 			.count = count_,
@@ -633,8 +642,7 @@ struct Primitives
 
 	inline static Primitives setNonIndexed(PrimitiveType type_, uint32_t offset_, uint32_t count_)
 	{
-		return
-		{
+		return {
 			.type = type_,
 			.offset = offset_,
 			.count = count_,
@@ -655,7 +663,7 @@ struct Region
 {
 	int32_t x;
 	int32_t y;
-	int32_t z;		//!< Also cubemap side.
+	int32_t z; //!< Also cubemap side.
 	int32_t mip;
 	int32_t width;
 	int32_t height;
@@ -766,12 +774,12 @@ uint32_t T_DLLCLASS getTextureMipSize(uint32_t textureSize, uint32_t mipLevel);
 uint32_t T_DLLCLASS getTextureRowPitch(TextureFormat format, uint32_t textureWidth);
 
 /*! Calculate pitch in bytes from format and width.
-*
-* \param format Texture format.
-* \param textureWidth Width of texture in pixels.
-* \param mipLevel Mip level.
-* \return Texture pitch in bytes.
-*/
+ *
+ * \param format Texture format.
+ * \param textureWidth Width of texture in pixels.
+ * \param mipLevel Mip level.
+ * \return Texture pitch in bytes.
+ */
 uint32_t T_DLLCLASS getTextureRowPitch(TextureFormat format, uint32_t textureWidth, uint32_t mipLevel);
 
 /*! Calculate pitch in bytes from format and width, pitch of an entire mip.
@@ -803,19 +811,6 @@ uint32_t T_DLLCLASS getTextureMipPitch(TextureFormat format, uint32_t textureWid
  */
 uint32_t T_DLLCLASS getTextureSize(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight, uint32_t mipLevels);
 
-/*! Estimate memory usage of a render target set.
- *
- * \note
- * This is purely for debugging purposes and might
- * be grossly inaccurate. Alignment and other system
- * specifics are ignored and everything is assumed
- * to be perfectly packed.
- *
- * \param rtscd Render target set create description.
- * \return Estimate of how much memory such target set use.
- */
-uint32_t T_DLLCLASS getTargetSetMemoryEstimate(const RenderTargetSetCreateDesc& rtscd);
-
 /*! Automatically resolved handles from literal. */
 class T_DLLCLASS Handle
 {
@@ -823,7 +818,7 @@ public:
 	Handle() = default;
 
 	explicit Handle(handle_t id)
-	:	m_id(id)
+		: m_id(id)
 	{
 	}
 
@@ -832,19 +827,19 @@ public:
 		m_id = getParameterHandle(name);
 	}
 
-	Handle& operator = (handle_t id)
+	Handle& operator=(handle_t id)
 	{
 		m_id = id;
 		return *this;
 	}
 
-	Handle& operator = (const wchar_t* const name)
+	Handle& operator=(const wchar_t* const name)
 	{
 		m_id = getParameterHandle(name);
 		return *this;
 	}
 
-	operator handle_t () const
+	operator handle_t() const
 	{
 		return m_id;
 	}

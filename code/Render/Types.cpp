@@ -1,39 +1,41 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
+#include "Render/Types.h"
+
 #include "Core/Containers/StaticMap.h"
 #include "Core/Misc/String.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
-#include "Render/Types.h"
+
+#include <algorithm>
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 class HandleRegistry
 {
 public:
 	HandleRegistry()
-	:	m_nextUnusedHandle(1)
+		: m_nextUnusedHandle(1)
 	{
 	}
 
 	handle_t getHandle(const std::wstring& name)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		auto it = m_handles.find(name);
+		const auto it = m_handles.find(name);
 		if (it != m_handles.end())
 			return it->second;
-		handle_t handle = m_nextUnusedHandle++;
+		const handle_t handle = m_nextUnusedHandle++;
 		m_handles.insert(std::make_pair(name, handle));
 		return handle;
 	}
@@ -42,10 +44,8 @@ public:
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		for (const auto it : m_handles)
-		{
 			if (it.second == handle)
 				return it.first;
-		}
 		return L"";
 	}
 
@@ -62,9 +62,7 @@ struct TextureFormatInfo
 	const wchar_t* name;
 	uint32_t blockSize;
 	uint32_t blockDenom;
-}
-c_textureFormatInfo[] =
-{
+} c_textureFormatInfo[] = {
 	{ L"TfInvalid", 0, 0 },
 
 	{ L"TfR8", 1, 1 },
@@ -131,7 +129,7 @@ c_textureFormatInfo[] =
 	{ L"TfASTC12x12F", 16, 12 }
 };
 
-	}
+}
 
 handle_t getParameterHandle(const std::wstring& name)
 {
@@ -167,8 +165,7 @@ handle_t getParameterHandleFromTextureReferenceIndex(int32_t index)
 
 std::wstring getDataUsageName(DataUsage usage)
 {
-	const wchar_t* c_names[] =
-	{
+	const wchar_t* c_names[] = {
 		L"DuPosition",
 		L"DuNormal",
 		L"DuTangent",
@@ -182,8 +179,7 @@ std::wstring getDataUsageName(DataUsage usage)
 
 std::wstring getDataTypeName(DataType dataType)
 {
-	const wchar_t* c_names[] =
-	{
+	const wchar_t* c_names[] = {
 		L"DtFloat1",
 		L"DtFloat2",
 		L"DtFloat3",
@@ -232,14 +228,14 @@ uint32_t getTextureBlockDenom(TextureFormat format)
 
 uint32_t getTextureMipSize(uint32_t textureSize, uint32_t mipLevel)
 {
-	uint32_t mipSize = textureSize >> mipLevel;
+	const uint32_t mipSize = textureSize >> mipLevel;
 	return mipSize > 0 ? mipSize : 1;
 }
 
 uint32_t getTextureRowPitch(TextureFormat format, uint32_t textureWidth)
 {
-	uint32_t blockDenom = getTextureBlockDenom(format);
-	uint32_t blockWidth = (textureWidth + blockDenom - 1) / blockDenom;
+	const uint32_t blockDenom = getTextureBlockDenom(format);
+	const uint32_t blockWidth = (textureWidth + blockDenom - 1) / blockDenom;
 	return getTextureBlockSize(format) * blockWidth;
 }
 
@@ -261,10 +257,10 @@ uint32_t getTextureMipPitch(TextureFormat format, uint32_t textureWidth, uint32_
 		textureHeight = std::max< uint32_t >(textureHeight, 8);
 	}
 
-	uint32_t blockDenom = getTextureBlockDenom(format);
-	uint32_t blockWidth = (textureWidth + blockDenom - 1) / blockDenom;
-	uint32_t blockHeight = (textureHeight + blockDenom - 1) / blockDenom;
-	uint32_t blockCount = blockWidth * blockHeight;
+	const uint32_t blockDenom = getTextureBlockDenom(format);
+	const uint32_t blockWidth = (textureWidth + blockDenom - 1) / blockDenom;
+	const uint32_t blockHeight = (textureHeight + blockDenom - 1) / blockDenom;
+	const uint32_t blockCount = blockWidth * blockHeight;
 
 	return getTextureBlockSize(format) * blockCount;
 }
@@ -280,26 +276,6 @@ uint32_t getTextureSize(TextureFormat format, uint32_t textureWidth, uint32_t te
 	for (uint32_t mipLevel = 0; mipLevel < mipLevels; ++mipLevel)
 		textureSize += getTextureMipPitch(format, textureWidth, textureHeight, mipLevel);
 	return textureSize;
-}
-
-uint32_t getTargetSetMemoryEstimate(const RenderTargetSetCreateDesc& rtscd)
-{
-	uint32_t estimate = 0;
-
-	// Sum estimates of all color attachments.
-	for (int32_t i = 0; i < rtscd.count; ++i)
-	{
-		uint32_t mipLevels = 1;
-		if (rtscd.generateMips)
-			mipLevels = (uint32_t)(log2(std::max(rtscd.width, rtscd.height)) + 1);
-		estimate += getTextureSize(rtscd.targets[i].format, rtscd.width, rtscd.height, mipLevels);
-	}
-
-	// Assume (24+8)-bit depth/stencil targets.
-	if (rtscd.createDepthStencil)
-		estimate += 4 * rtscd.width * rtscd.height;
-
-	return estimate;
 }
 
 }
