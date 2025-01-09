@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
+#include "Runtime/Editor/EditorPlugin.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/ObjectStore.h"
@@ -32,15 +33,9 @@
 #include "Editor/LogView.h"
 #include "I18N/Text.h"
 #include "Net/BidirectionalObjectTransport.h"
+#include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
-#include "Net/Discovery/DiscoveryManager.h"
-#include "Runtime/Editor/EditorPlugin.h"
-#include "Runtime/Editor/HostEnumerator.h"
-#include "Runtime/Editor/ProfilerDialog.h"
-#include "Runtime/Editor/TargetConnection.h"
-#include "Runtime/Editor/TargetInstance.h"
-#include "Runtime/Editor/TargetManager.h"
 #include "Runtime/Editor/Deploy/BuildTargetAction.h"
 #include "Runtime/Editor/Deploy/DeployTargetAction.h"
 #include "Runtime/Editor/Deploy/LaunchTargetAction.h"
@@ -48,6 +43,11 @@
 #include "Runtime/Editor/Deploy/Platform.h"
 #include "Runtime/Editor/Deploy/Target.h"
 #include "Runtime/Editor/Deploy/TargetConfiguration.h"
+#include "Runtime/Editor/HostEnumerator.h"
+#include "Runtime/Editor/ProfilerDialog.h"
+#include "Runtime/Editor/TargetConnection.h"
+#include "Runtime/Editor/TargetInstance.h"
+#include "Runtime/Editor/TargetManager.h"
 #include "Runtime/Editor/Ui/TargetBuildEvent.h"
 #include "Runtime/Editor/Ui/TargetCaptureEvent.h"
 #include "Runtime/Editor/Ui/TargetCommandEvent.h"
@@ -67,8 +67,8 @@
 #include "Ui/MenuItem.h"
 #include "Ui/Splitter.h"
 #include "Ui/Tab.h"
-#include "Ui/TabPage.h"
 #include "Ui/TableLayout.h"
+#include "Ui/TabPage.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/ToolBar/ToolBarDropDown.h"
@@ -76,13 +76,18 @@
 #include "Ui/ToolBar/ToolBarEmbed.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
 
+#include <cstring>
+
 namespace traktor::runtime
 {
-	namespace
-	{
-
-const struct { const wchar_t* human; const wchar_t* code; } c_languageCodes[] =
+namespace
 {
+
+const struct
+{
+	const wchar_t* human;
+	const wchar_t* code;
+} c_languageCodes[] = {
 	{ L"RUNTIME_LANGUAGE_ENGLISH", L"en" },
 	{ L"RUNTIME_LANGUAGE_FRENCH", L"fr" },
 	{ L"RUNTIME_LANGUAGE_GERMAN", L"de" },
@@ -104,10 +109,10 @@ class TargetInstanceProgressListener : public RefCountImpl< ITargetAction::IProg
 {
 public:
 	explicit TargetInstanceProgressListener(ILogTarget* buildLogTarget, TargetListControl* targetListControl, TargetInstance* targetInstance, TargetState targetState)
-	:	m_buildLogTarget(buildLogTarget)
-	,	m_targetListControl(targetListControl)
-	,	m_targetInstance(targetInstance)
-	,	m_targetState(targetState)
+		: m_buildLogTarget(buildLogTarget)
+		, m_targetListControl(targetListControl)
+		, m_targetInstance(targetInstance)
+		, m_targetState(targetState)
 	{
 	}
 
@@ -137,7 +142,7 @@ Ref< ui::MenuItem > createTweakMenuItem(const std::wstring& text, bool initially
 	return menuItem;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.EditorPlugin", 0, EditorPlugin, editor::IEditorPlugin)
 
@@ -183,9 +188,9 @@ bool EditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::I
 		m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Updates", false));
 		m_toolTweaks->add(createTweakMenuItem(L"Launch With 1/4 Window", false));
 		m_toolTweaks->add(createTweakMenuItem(L"Disable Baked Lighting", false));
-		m_toolTweaks->add(createTweakMenuItem(L"Validate Rendering", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Validate Rendering", m_editor->getSettings()->getProperty< bool >(L"Editor.RenderValidation", false)));
 		m_toolTweaks->add(createTweakMenuItem(L"Debug Layer", true));
-		m_toolTweaks->add(createTweakMenuItem(L"Ray Tracing", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Ray Tracing", m_editor->getSettings()->getProperty< bool >(L"Editor.RayTracing", false)));
 		m_toolBar->addItem(m_toolTweaks);
 
 		m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Runtime.Language"), 85_ut, i18n::Text(L"RUNTIME_LANGUAGE"));
@@ -218,10 +223,16 @@ bool EditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::I
 	m_site->createAdditionalPanel(m_splitter, 200_ut, false);
 
 	// Create threads.
-	m_threadHostEnumerator = ThreadManager::getInstance().create([=, this](){ threadHostEnumerator(); }, L"Host enumerator");
+	m_threadHostEnumerator = ThreadManager::getInstance().create([=, this]() {
+		threadHostEnumerator();
+	},
+		L"Host enumerator");
 	m_threadHostEnumerator->start();
 
-	m_threadTargetActions = ThreadManager::getInstance().create([=, this](){ threadTargetActions(); }, L"Targets");
+	m_threadTargetActions = ThreadManager::getInstance().create([=, this]() {
+		threadTargetActions();
+	},
+		L"Targets");
 	m_threadTargetActions->start();
 
 	return true;
@@ -324,8 +335,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 					targetInstance->getTargetConfiguration(),
 					outputPath,
 					tweakSettings,
-					false
-				);
+					false);
 				chain.actions.push_back(action);
 
 				m_targetActionQueue.push_back(chain);
@@ -426,7 +436,7 @@ void EditorPlugin::updateTargetLists()
 			et.guid = targetInstance->getGuid();
 			et.name = targetInstance->getName();
 			et.target = targetInstance->getObject< Target >();
-			
+
 			if (!et.target)
 			{
 				log::error << L"Unable to register target instance \"" << targetInstance->getName() << L"\"; unable to read target." << Endl;
@@ -456,8 +466,7 @@ void EditorPlugin::updateTargetLists()
 					et.target,
 					targetConfiguration,
 					platformInstance->getName(),
-					platform
-				));
+					platform));
 			}
 		}
 	}
@@ -474,10 +483,8 @@ void EditorPlugin::updateTargetLists()
 		m_toolTargets->select(0);
 
 		for (auto targetInstance : m_targetInstances)
-		{
 			if (targetInstance->getTarget() == m_targets[0].target)
 				m_targetList->add(new TargetInstanceListItem(m_hostEnumerator, targetInstance));
-		}
 	}
 
 	m_toolBar->update();
@@ -625,8 +632,7 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 			targetInstance->getTargetConfiguration(),
 			outputPath,
 			tweakSettings,
-			false
-		);
+			false);
 		chain.actions.push_back(action);
 
 		// Add deploy and launch actions.
@@ -644,8 +650,7 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 			m_targetManager->getPort(),
 			targetInstance->getId(),
 			outputPath,
-			tweakSettings
-		);
+			tweakSettings);
 		chain.actions.push_back(action);
 
 		action.listener = new TargetInstanceProgressListener(m_buildLogTarget, m_targetList, targetInstance, TsLaunching);
@@ -656,8 +661,7 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 			targetInstance->getTarget(),
 			targetInstance->getTargetConfiguration(),
 			host,
-			outputPath
-		);
+			outputPath);
 		chain.actions.push_back(action);
 
 		m_targetActionQueue.push_back(chain);
@@ -706,8 +710,7 @@ void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
 			targetInstance->getTargetConfiguration(),
 			outputPath,
 			tweakSettings,
-			false
-		);
+			false);
 		chain.actions.push_back(action);
 
 		m_targetActionQueue.push_back(chain);
@@ -753,7 +756,7 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 	else
 		log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
 
-	// Resolve absolute output path.
+		// Resolve absolute output path.
 #if defined(_WIN32)
 	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
 #else
@@ -790,8 +793,7 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 			targetInstance->getTargetConfiguration(),
 			outputPath,
 			nullptr,
-			false
-		);
+			false);
 		chain.actions.push_back(action);
 
 		// Add migrate actions.
@@ -803,8 +805,7 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 			targetInstance->getTarget(),
 			targetInstance->getTargetConfiguration(),
 			host,
-			outputPath
-		);
+			outputPath);
 		chain.actions.push_back(action);
 
 		m_targetActionQueue.push_back(chain);
@@ -868,10 +869,8 @@ void EditorPlugin::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 	m_targetList->removeAll();
 
 	for (auto targetInstance : m_targetInstances)
-	{
 		if (targetInstance->getTarget() == et.target)
 			m_targetList->add(new TargetInstanceListItem(m_hostEnumerator, targetInstance));
-	}
 
 	m_targetList->requestUpdate();
 }
@@ -880,8 +879,7 @@ void EditorPlugin::eventTimer(ui::TimerEvent* event)
 {
 	if (
 		m_targetManager &&
-		m_targetManager->update()
-	)
+		m_targetManager->update())
 	{
 		// Doing both seems odd but deferred request is to ensure
 		// widget layout also is updated properly.

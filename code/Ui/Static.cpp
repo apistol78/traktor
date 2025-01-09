@@ -6,10 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/Static.h"
+
 #include "Core/Misc/StringSplit.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
-#include "Ui/Static.h"
 #include "Ui/StyleSheet.h"
 
 namespace traktor::ui
@@ -34,6 +35,7 @@ void Static::setText(const std::wstring& text)
 	Widget::setText(text);
 
 	// Split text into lines and also calculate bounding extent.
+	m_lines.resize(0);
 	m_extent = Size(0, 0);
 	for (auto s : StringSplit< std::wstring >(text, L"\n\r"))
 	{

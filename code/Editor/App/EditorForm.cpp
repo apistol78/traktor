@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Editor/App/EditorForm.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
@@ -14,8 +16,8 @@
 #include "Core/Log/LogRedirectTarget.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/CommandLine.h"
-#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/EnterLeave.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
@@ -30,35 +32,21 @@
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
-#include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Core/Timer/Timer.h"
 #include "Database/Database.h"
+#include "Database/Events/EvtInstanceCommitted.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
-#include "Database/Traverse.h"
-#include "Database/Events/EvtInstanceCommitted.h"
 #include "Database/Remote/Server/ConnectionManager.h"
-#include "Editor/Asset.h"
-#include "Editor/Assets.h"
-#include "Editor/IEditorPage.h"
-#include "Editor/IEditorPageFactory.h"
-#include "Editor/IEditorPlugin.h"
-#include "Editor/IEditorTool.h"
-#include "Editor/IObjectEditor.h"
-#include "Editor/IObjectEditorFactory.h"
-#include "Editor/IPipeline.h"
-#include "Editor/LogView.h"
-#include "Editor/PipelineDependency.h"
-#include "Editor/PipelineDependencySet.h"
-#include "Editor/TypeBrowseFilter.h"
+#include "Database/Traverse.h"
 #include "Editor/App/BrowseGroupDialog.h"
 #include "Editor/App/BrowseInstanceDialog.h"
 #include "Editor/App/BrowseTypeDialog.h"
 #include "Editor/App/DatabaseView.h"
 #include "Editor/App/DefaultObjectEditorFactory.h"
 #include "Editor/App/Document.h"
-#include "Editor/App/EditorForm.h"
 #include "Editor/App/EditorPageSite.h"
 #include "Editor/App/EditorPluginSite.h"
 #include "Editor/App/MRU.h"
@@ -71,48 +59,61 @@
 #include "Editor/App/Shortcut.h"
 #include "Editor/App/ThumbnailGenerator.h"
 #include "Editor/App/WorkspaceDialog.h"
+#include "Editor/Asset.h"
+#include "Editor/Assets.h"
+#include "Editor/IEditorPage.h"
+#include "Editor/IEditorPageFactory.h"
+#include "Editor/IEditorPlugin.h"
+#include "Editor/IEditorTool.h"
+#include "Editor/IObjectEditor.h"
+#include "Editor/IObjectEditorFactory.h"
+#include "Editor/IPipeline.h"
+#include "Editor/LogView.h"
+#include "Editor/Pipeline/Avalanche/AvalanchePipelineCache.h"
+#include "Editor/Pipeline/File/FilePipelineCache.h"
+#include "Editor/Pipeline/Memory/MemoryPipelineCache.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDbFlat.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 #include "Editor/Pipeline/PipelineInstanceCache.h"
-#include "Editor/Pipeline/Avalanche/AvalanchePipelineCache.h"
-#include "Editor/Pipeline/File/FilePipelineCache.h"
-#include "Editor/Pipeline/Memory/MemoryPipelineCache.h"
-#include "I18N/I18N.h"
+#include "Editor/PipelineDependency.h"
+#include "Editor/PipelineDependencySet.h"
+#include "Editor/TypeBrowseFilter.h"
 #include "I18N/Dictionary.h"
-#include "I18N/Text.h"
 #include "I18N/Format.h"
+#include "I18N/I18N.h"
+#include "I18N/Text.h"
 #include "Net/Stream/StreamServer.h"
 #include "Ui/Application.h"
+#include "Ui/BackgroundWorkerDialog.h"
 #include "Ui/Bitmap.h"
 #include "Ui/CaptionBar.h"
 #include "Ui/Dock.h"
 #include "Ui/DockPane.h"
+#include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/ShortcutTable.h"
-#include "Ui/TableLayout.h"
+#include "Ui/InputDialog.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
 #include "Ui/MultiSplitter.h"
+#include "Ui/ProgressBar.h"
+#include "Ui/ShortcutTable.h"
+#include "Ui/StatusBar/StatusBar.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Tab.h"
+#include "Ui/TableLayout.h"
 #include "Ui/TabPage.h"
-#include "Ui/BackgroundWorkerDialog.h"
-#include "Ui/FileDialog.h"
-#include "Ui/StatusBar/StatusBar.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/ToolBar/ToolBarMenu.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
-#include "Ui/ProgressBar.h"
-#include "Ui/InputDialog.h"
-#include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
+#include "Xml/XmlSerializer.h"
 
 #if defined(MessageBox)
 #	undef MessageBox
@@ -120,8 +121,8 @@
 
 namespace traktor::editor
 {
-	namespace
-	{
+namespace
+{
 
 #if defined(_DEBUG)
 const wchar_t* c_title = L"Traktor Editor - Debug build";
@@ -163,7 +164,7 @@ class OpenWorkspaceStatus : public RefCountImpl< ui::BackgroundWorkerDialog::IWo
 {
 public:
 	OpenWorkspaceStatus(int32_t& step)
-	:	m_step(step)
+		: m_step(step)
 	{
 	}
 
@@ -182,9 +183,9 @@ class BuildStatus : public RefCountImpl< ui::BackgroundWorkerDialog::IWorkerStat
 {
 public:
 	BuildStatus(int32_t& step, std::wstring& message, Semaphore& messageLock)
-	:	m_step(step)
-	,	m_message(message)
-	,	m_messageLock(messageLock)
+		: m_step(step)
+		, m_message(message)
+		, m_messageLock(messageLock)
 	{
 	}
 
@@ -207,54 +208,54 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 	Ref< IStream > file;
 
 #if defined(_WIN32)
-    const std::wstring system = L"win32";
+	const std::wstring system = L"win32";
 #elif defined(__APPLE__)
-    const std::wstring system = L"osx";
+	const std::wstring system = L"osx";
 #elif defined(__LINUX__)
-    const std::wstring system = L"linux";
+	const std::wstring system = L"linux";
 #elif defined(__RPI__)
-    const std::wstring system = L"rpi";
+	const std::wstring system = L"rpi";
 #endif
 
 	const std::wstring globalFile = pathName.getPathName();
 	const std::wstring systemFile = pathName.getPathNameNoExtension() + L"." + system + L"." + pathName.getExtension();
 
-    // Read global properties.
+	// Read global properties.
 	if ((file = FileSystem::getInstance().open(globalFile, File::FmRead)) != nullptr)
 	{
 		outOriginalSettings = xml::XmlDeserializer(file, globalFile).readObject< PropertyGroup >();
 		file->close();
 
 		if (!outOriginalSettings)
-	        log::error << L"Error while parsing properties \"" << globalFile << L"\"." << Endl;
-        else
-            T_DEBUG(L"Successfully read properties from \"" << globalFile << L"\".");
+			log::error << L"Error while parsing properties \"" << globalFile << L"\"." << Endl;
+		else
+			T_DEBUG(L"Successfully read properties from \"" << globalFile << L"\".");
 	}
 
-    // Read system properties.
-    if ((file = FileSystem::getInstance().open(systemFile, File::FmRead)) != nullptr)
-    {
-        Ref< PropertyGroup > systemSettings = xml::XmlDeserializer(file, systemFile).readObject< PropertyGroup >();
-        file->close();
+	// Read system properties.
+	if ((file = FileSystem::getInstance().open(systemFile, File::FmRead)) != nullptr)
+	{
+		Ref< PropertyGroup > systemSettings = xml::XmlDeserializer(file, systemFile).readObject< PropertyGroup >();
+		file->close();
 
-        if (systemSettings)
-        {
-            if (outOriginalSettings)
-            {
-                outOriginalSettings = outOriginalSettings->merge(systemSettings, PropertyGroup::MmJoin);
-                T_ASSERT(outOriginalSettings);
-            }
-            else
-                outOriginalSettings = systemSettings;
+		if (systemSettings)
+		{
+			if (outOriginalSettings)
+			{
+				outOriginalSettings = outOriginalSettings->merge(systemSettings, PropertyGroup::MmJoin);
+				T_ASSERT(outOriginalSettings);
+			}
+			else
+				outOriginalSettings = systemSettings;
 
-            T_DEBUG(L"Successfully read properties from \"" << systemFile << L"\".");
-        }
+			T_DEBUG(L"Successfully read properties from \"" << systemFile << L"\".");
+		}
 		else
 		{
-            log::error << L"Error while parsing properties \"" << systemFile << L"\"." << Endl;
+			log::error << L"Error while parsing properties \"" << systemFile << L"\"." << Endl;
 			return false;
 		}
-    }
+	}
 
 	if (!outOriginalSettings)
 		return false;
@@ -264,7 +265,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 		const std::wstring userFile = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/" + pathName.getFileName();
 
 		*outSettings = DeepClone(outOriginalSettings).create< PropertyGroup >();
-		T_FATAL_ASSERT (*outSettings);
+		T_FATAL_ASSERT(*outSettings);
 
 		// Read user properties.
 		if ((file = FileSystem::getInstance().open(userFile, File::FmRead)) != nullptr)
@@ -279,7 +280,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 			}
 
 			*outSettings = (*outSettings)->merge(userSettings, PropertyGroup::MmJoin);
-			T_FATAL_ASSERT (*outSettings);
+			T_FATAL_ASSERT(*outSettings);
 		}
 	}
 
@@ -420,7 +421,7 @@ ui::Size getDesktopSizeEstimate()
 	return sz;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.EditorForm", EditorForm, ui::Form)
 
@@ -472,12 +473,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_mru = loadRecent(OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Traktor.Editor.mru");
 
 	if (!ui::Form::create(
-		c_title,
-		1280_ut,
-		900_ut,
-		ui::WsResizable | ui::WsSystemBox | ui::WsMinimizeBox | ui::WsMaximizeBox | ui::WsNoCanvas,
-		new ui::TableLayout(L"100%", L"*,*,100%,*", 0_ut, 0_ut)
-	))
+			c_title,
+			1280_ut,
+			900_ut,
+			ui::WsResizable | ui::WsSystemBox | ui::WsMinimizeBox | ui::WsMaximizeBox | ui::WsNoCanvas,
+			new ui::TableLayout(L"100%", L"*,*,100%,*", 0_ut, 0_ut)))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
@@ -540,7 +540,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuBuild->add(new ui::MenuItem(ui::Command(L"Editor.Rebuild"), i18n::Text(L"MENU_BUILD_REBUILD")));
 	m_menuBar->addItem(menuBuild);
 
-	 // Create toolbar.
+	// Create toolbar.
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(this, ui::WsNone);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Save"));
@@ -799,8 +799,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	const auto desktopSize = getDesktopSizeEstimate();
 	if (
 		desktopSize.cx == m_mergedSettings->getProperty< int32_t >(L"Editor.LastDesktopWidth", -1) &&
-		desktopSize.cy == m_mergedSettings->getProperty< int32_t >(L"Editor.LastDesktopHeight", -1)
-	)
+		desktopSize.cy == m_mergedSettings->getProperty< int32_t >(L"Editor.LastDesktopHeight", -1))
 	{
 		x = m_mergedSettings->getProperty< int32_t >(L"Editor.PositionX");
 		y = m_mergedSettings->getProperty< int32_t >(L"Editor.PositionY");
@@ -1046,9 +1045,12 @@ Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
 bool EditorForm::openEditor(db::Instance* instance)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[=, this](){ setCursor(ui::Cursor::Wait); },
-		[=, this](){ resetCursor(); }
-	);
+		[=, this]() {
+		setCursor(ui::Cursor::Wait);
+		},
+		[=, this]() {
+		resetCursor();
+	});
 
 	T_ASSERT(instance);
 
@@ -1215,9 +1217,12 @@ bool EditorForm::openEditor(db::Instance* instance)
 bool EditorForm::openDefaultEditor(db::Instance* instance)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[=, this](){ setCursor(ui::Cursor::Wait); },
-		[=, this](){ resetCursor(); }
-	);
+		[=, this]() {
+		setCursor(ui::Cursor::Wait);
+		},
+		[=, this]() {
+		resetCursor();
+	});
 
 	T_ASSERT(instance);
 
@@ -1260,9 +1265,12 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 bool EditorForm::openInNewEditor(db::Instance* instance)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[=, this]() { setCursor(ui::Cursor::Wait); },
-		[=, this]() { resetCursor(); }
-	);
+		[=, this]() {
+		setCursor(ui::Cursor::Wait);
+		},
+		[=, this]() {
+		resetCursor();
+	});
 
 	T_ASSERT(instance);
 
@@ -1288,11 +1296,10 @@ bool EditorForm::openInNewEditor(db::Instance* instance)
 	// Spawn another editor.
 	const Path executable = OS::getInstance().getExecutable();
 	return OS::getInstance().execute(
-		executable.getPathName() + L" -no-splash " + m_workspacePath.getPathName() + L" " + instance->getGuid().format(),
-		L"",
-		nullptr,
-		OS::EfDetach
-	) != nullptr;
+			   executable.getPathName() + L" -no-splash " + m_workspacePath.getPathName() + L" " + instance->getGuid().format(),
+			   L"",
+			   nullptr,
+			   OS::EfDetach) != nullptr;
 }
 
 bool EditorForm::openTool(const std::wstring& toolType, const PropertyGroup* param)
@@ -1374,7 +1381,7 @@ ui::TabPage* EditorForm::getActiveTabPage() const
 			ui::TabPage* tabPage = tabGroup->getPage(i);
 			if (tabPage->getData< IEditorPage >(L"EDITORPAGE") == m_activeEditorPage)
 				return tabPage;
-		}	
+		}
 	}
 	return nullptr;
 }
@@ -1463,7 +1470,10 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 
 	int32_t progressStep = 0;
 
-	Thread* thread = ThreadManager::getInstance().create([&](){ threadOpenWorkspace(workspacePath, progressStep); }, L"Open workspace thread");
+	Thread* thread = ThreadManager::getInstance().create([&]() {
+		threadOpenWorkspace(workspacePath, progressStep);
+	},
+		L"Open workspace thread");
 	if (!thread)
 		return false;
 
@@ -1556,7 +1566,10 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	updateTitle();
 
 	// Create asset monitor thread.
-	m_threadAssetMonitor = ThreadManager::getInstance().create([=, this](){ threadAssetMonitor(); }, L"Asset monitor");
+	m_threadAssetMonitor = ThreadManager::getInstance().create([=, this]() {
+		threadAssetMonitor();
+	},
+		L"Asset monitor");
 	m_threadAssetMonitor->start();
 
 	log::info << L"Workspace opened successfully." << Endl;
@@ -1568,7 +1581,8 @@ void EditorForm::closeWorkspace()
 	// Stop asset monitor thread.
 	if (m_threadAssetMonitor)
 	{
-		while (!m_threadAssetMonitor->stop());
+		while (!m_threadAssetMonitor->stop())
+			;
 		ThreadManager::getInstance().destroy(m_threadAssetMonitor);
 		m_threadAssetMonitor = nullptr;
 	}
@@ -1624,25 +1638,17 @@ void EditorForm::createAdditionalPanel(ui::Widget* widget, ui::Unit size, int32_
 	widget->setParent(m_dock);
 
 	if (direction == -1)
-	{
 		m_paneWest->dock(
 			widget,
 			ui::DockPane::DrSouth,
-			size
-		);
-	}
+			size);
 	else if (direction == 1)
-	{
 		m_paneEast->dock(
 			widget,
 			ui::DockPane::DrSouth,
-			size
-		);
-	}
+			size);
 	else
-	{
 		m_paneSouth->dock(widget);
-	}
 }
 
 void EditorForm::destroyAdditionalPanel(ui::Widget* widget)
@@ -1682,8 +1688,7 @@ void EditorForm::updateAdditionalPanelMenu()
 		{
 			Ref< ui::MenuItem > menuItem = new ui::MenuItem(
 				ui::Command(L"Editor.ViewOther", i->first),
-				i->first->getText()
-			);
+				i->first->getText());
 			m_menuItemOtherPanels->add(menuItem);
 		}
 	}
@@ -1782,27 +1787,21 @@ void EditorForm::buildAssetsThread(AlignedVector< Guid > assetGuids, bool rebuil
 	// Build dependencies.
 	Ref< IPipelineDepends > pipelineDepends;
 	if (m_mergedSettings->getProperty< bool >(L"Pipeline.DependsThreads", true))
-	{
 		pipelineDepends = new PipelineDependsParallel(
 			&pipelineFactory,
 			m_sourceDatabase,
 			m_outputDatabase,
 			&dependencySet,
 			m_pipelineDb,
-			&instanceCache
-		);
-	}
+			&instanceCache);
 	else
-	{
 		pipelineDepends = new PipelineDependsIncremental(
 			&pipelineFactory,
 			m_sourceDatabase,
 			m_outputDatabase,
 			&dependencySet,
 			m_pipelineDb,
-			&instanceCache
-		);
-	}
+			&instanceCache);
 
 	log::info << L"Collecting dependencies..." << Endl;
 	log::info << IncreaseIndent;
@@ -1834,8 +1833,7 @@ void EditorForm::buildAssetsThread(AlignedVector< Guid > assetGuids, bool rebuil
 			m_pipelineDb,
 			&instanceCache,
 			this,
-			verbose
-		);
+			verbose);
 
 		if (rebuild)
 			log::info << L"Rebuilding " << dependencySet.size() << L" asset(s)..." << Endl;
@@ -1865,13 +1863,16 @@ void EditorForm::buildAssets(const AlignedVector< Guid >& assetGuids, bool rebui
 		return;
 
 	//// Stop current build if any.
-	//buildCancel();
+	// buildCancel();
 
 	// Wait until previous build has finished.
 	buildWaitUntilFinished();
 
 	// Create build thread.
-	m_threadBuild = ThreadManager::getInstance().create([=, this](){ buildAssetsThread(assetGuids, rebuild); }, L"Pipeline thread");
+	m_threadBuild = ThreadManager::getInstance().create([=, this]() {
+		buildAssetsThread(assetGuids, rebuild);
+	},
+		L"Pipeline thread");
 	if (m_threadBuild)
 	{
 		m_threadBuild->start(Thread::Above);
@@ -1889,9 +1890,12 @@ void EditorForm::buildAsset(const Guid& assetGuid, bool rebuild)
 void EditorForm::buildAssets(bool rebuild)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[=, this](){ setCursor(ui::Cursor::Wait); },
-		[=, this](){ resetCursor(); }
-	);
+		[=, this]() {
+		setCursor(ui::Cursor::Wait);
+		},
+		[=, this]() {
+		resetCursor();
+	});
 
 	if (!m_workspaceSettings)
 		return;
@@ -1930,9 +1934,7 @@ void EditorForm::buildCancel()
 		// Keep processing UI events until build has finished.
 		setEnable(false);
 		while (!m_threadBuild->wait(10))
-		{
 			ui::Application::getInstance()->process();
-		}
 		setEnable(true);
 	}
 	ThreadManager::getInstance().destroy(m_threadBuild);
@@ -1973,7 +1975,7 @@ bool EditorForm::isBuilding() const
 	return (bool)(m_threadBuild != nullptr);
 }
 
-Ref< IPipelineDepends> EditorForm::createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth)
+Ref< IPipelineDepends > EditorForm::createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth)
 {
 	T_ASSERT(m_sourceDatabase);
 
@@ -1990,8 +1992,7 @@ Ref< IPipelineDepends> EditorForm::createPipelineDepends(PipelineDependencySet* 
 		nullptr,
 		instanceCache,
 		nullptr,
-		recursionDepth
-	);
+		recursionDepth);
 }
 
 ObjectStore* EditorForm::getObjectStore()
@@ -2067,15 +2068,21 @@ void EditorForm::updateMRU()
 void EditorForm::updateTitle()
 {
 	StringOutputStream ss;
+
 	if (m_mergedSettings)
 	{
-		std::wstring targetTitle = m_mergedSettings->getProperty< std::wstring >(L"Editor.TargetTitle");
+		const std::wstring targetTitle = m_mergedSettings->getProperty< std::wstring >(L"Editor.TargetTitle");
 		if (!targetTitle.empty())
 			ss << targetTitle << L" - ";
+		m_menuBar->setText(targetTitle);
 	}
+	else
+		m_menuBar->setText(L"");
+
 	ss << c_title;
 	if (m_activeDocument && m_activeDocument->getInstanceCount() > 0)
 		ss << L" - " << m_activeDocument->getInstance(0)->getPath();
+
 	setText(ss.str());
 }
 
@@ -2163,9 +2170,12 @@ void EditorForm::moveNewTabGroup()
 void EditorForm::saveCurrentDocument()
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[=, this](){ setCursor(ui::Cursor::Wait); },
-		[=, this](){ resetCursor(); }
-	);
+		[=, this]() {
+		setCursor(ui::Cursor::Wait);
+		},
+		[=, this]() {
+		resetCursor();
+	});
 
 	// First iterate all object editor dialogs to see if focus is in any of those,
 	// if so then we simulate an "Apply" in active one.
@@ -2196,8 +2206,7 @@ void EditorForm::saveCurrentDocument()
 				this,
 				i18n::Text(L"ERROR_MESSAGE_UNABLE_TO_SAVE_DOCUMENT"),
 				i18n::Text(L"ERROR_TITLE_UNABLE_TO_SAVE_DOCUMENT"),
-				ui::MbOk | ui::MbIconExclamation
-			);
+				ui::MbOk | ui::MbIconExclamation);
 		}
 	}
 }
@@ -2270,17 +2279,19 @@ void EditorForm::saveAsCurrentDocument()
 			this,
 			i18n::Text(L"ERROR_MESSAGE_UNABLE_TO_SAVE_DOCUMENT"),
 			i18n::Text(L"ERROR_TITLE_UNABLE_TO_SAVE_DOCUMENT"),
-			ui::MbOk | ui::MbIconExclamation
-		);
+			ui::MbOk | ui::MbIconExclamation);
 	}
 }
 
 void EditorForm::saveAllDocuments()
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[=, this](){ setCursor(ui::Cursor::Wait); },
-		[=, this](){ resetCursor(); }
-	);
+		[=, this]() {
+		setCursor(ui::Cursor::Wait);
+		},
+		[=, this]() {
+		resetCursor();
+	});
 
 	bool allSuccessfull = true;
 	for (auto tab : m_tabGroups)
@@ -2312,8 +2323,7 @@ void EditorForm::saveAllDocuments()
 			this,
 			i18n::Text(L"ERROR_MESSAGE_UNABLE_TO_SAVE_DOCUMENT"),
 			i18n::Text(L"ERROR_TITLE_UNABLE_TO_SAVE_DOCUMENT"),
-			ui::MbOk | ui::MbIconExclamation
-		);
+			ui::MbOk | ui::MbIconExclamation);
 	}
 
 	checkModified();
@@ -2324,9 +2334,12 @@ bool EditorForm::closeEditor(ui::TabPage* tabPage)
 	// Prevent focus events being fired while we're shutting down editor,
 	// focus events are designed to swap active page which we don't want atm.
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[&](){ m_suppressTabFocusEvent = true; },
-		[&](){ m_suppressTabFocusEvent = false; }
-	);
+		[&]() {
+		m_suppressTabFocusEvent = true;
+		},
+		[&]() {
+		m_suppressTabFocusEvent = false;
+	});
 
 	Ref< ui::Tab > tab = tabPage->getTab();
 
@@ -2342,8 +2355,7 @@ bool EditorForm::closeEditor(ui::TabPage* tabPage)
 			this,
 			i18n::Text(L"QUERY_MESSAGE_INSTANCE_NOT_SAVED_CLOSE_EDITOR"),
 			i18n::Text(L"QUERY_TITLE_INSTANCE_NOT_SAVED_CLOSE_EDITOR"),
-			ui::MbIconExclamation | ui::MbYesNo
-		);
+			ui::MbIconExclamation | ui::MbYesNo);
 		if (result == ui::DialogResult::No)
 			return false;
 	}
@@ -2358,7 +2370,7 @@ bool EditorForm::closeEditor(ui::TabPage* tabPage)
 			m_tabGroupLastFocus = nullptr;
 
 		m_tabGroups.remove(tab);
-		
+
 		tab->destroy();
 		tab = m_tabGroups.front();
 
@@ -2563,13 +2575,10 @@ void EditorForm::checkModified()
 					needUpdate = true;
 				}
 			}
-			else
+			else if (tabName[tabName.length() - 1] == L'*')
 			{
-				if (tabName[tabName.length() - 1] == L'*')
-				{
-					tabPage->setText(tabName.substr(0, tabName.length() - 1));
-					needUpdate = true;
-				}
+				tabPage->setText(tabName.substr(0, tabName.length() - 1));
+				needUpdate = true;
 			}
 		}
 
@@ -2952,8 +2961,7 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 			this,
 			i18n::Text(L"QUERY_MESSAGE_INSTANCES_NOT_SAVED_CLOSE_EDITOR"),
 			i18n::Text(L"QUERY_TITLE_INSTANCES_NOT_SAVED_CLOSE_EDITOR"),
-			ui::MbIconExclamation | ui::MbYesNo
-		);
+			ui::MbIconExclamation | ui::MbYesNo);
 		if (result == ui::DialogResult::No)
 		{
 			event->consume();
@@ -3083,10 +3091,8 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 				ui::TabPage* tabPage = tab->getPage(i);
 				IEditorPage* editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 				if (editorPage)
-				{
 					for (auto eventId : m_eventIds)
 						editorPage->handleDatabaseEvent(eventId.first, eventId.second);
-				}
 			}
 		}
 
@@ -3094,18 +3100,14 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 		for (ui::Widget* child = this->getFirstChild(); child; child = child->getNextSibling())
 		{
 			if (auto objectEditor = dynamic_type_cast< ObjectEditorDialog* >(child))
-			{
 				for (auto eventId : m_eventIds)
 					objectEditor->handleDatabaseEvent(eventId.first, eventId.second);
-			}
 		}
 
 		// Propagate database event to editor plugins.
 		for (auto editorPluginSite : m_editorPluginSites)
-		{
 			for (auto eventId : m_eventIds)
 				editorPluginSite->handleDatabaseEvent(eventId.first, eventId.second);
-		}
 
 		m_lockBuild.release();
 
@@ -3162,15 +3164,13 @@ void EditorForm::threadAssetMonitor()
 		if (
 			m_sourceDatabase &&
 			m_mergedSettings->getProperty< bool >(L"Editor.BuildWhenAssetModified") &&
-			m_lockBuild.wait(0)
-		)
+			m_lockBuild.wait(0))
 		{
 			assetInstances.resize(0);
 			db::recursiveFindChildInstances(
 				m_sourceDatabase->getRootGroup(),
 				db::FindInstanceByType(type_of< Asset >()),
-				assetInstances
-			);
+				assetInstances);
 
 			const std::wstring assetPath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
@@ -3237,7 +3237,7 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 		log::error << L"Failed to open workspace \"" << workspacePath.getOriginal() << L"\"; load failed." << Endl;
 		return;
 	}
-	T_FATAL_ASSERT (workspaceSettings != nullptr)
+	T_FATAL_ASSERT(workspaceSettings != nullptr)
 
 	progress = 100;
 
@@ -3250,7 +3250,7 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 
 	// Create merged settings.
 	Ref< PropertyGroup > mergedSettings = m_globalSettings->merge(workspaceSettings, PropertyGroup::MmJoin);
-	T_FATAL_ASSERT (mergedSettings != nullptr);
+	T_FATAL_ASSERT(mergedSettings != nullptr);
 
 	progress = 200;
 

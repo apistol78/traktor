@@ -1,15 +1,17 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2024 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Ui/Application.h"
 #include "Ui/CaptionBar.h"
+
+#include "Ui/Application.h"
 #include "Ui/Form.h"
 #include "Ui/MiniButton.h"
+#include "Ui/Static.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 
@@ -36,6 +38,9 @@ bool CaptionBar::create(Widget* parent, uint32_t style)
 	m_buttonClose->create(this, new ui::StyleBitmap(L"UI.CaptionClose"), MiniButton::WsNoBorder | MiniButton::WsNoBackground);
 	m_buttonClose->addEventHandler< ButtonClickEvent >(this, &CaptionBar::eventButtonClick);
 
+	m_label = new Static();
+	m_label->create(this, L"");
+
 	addEventHandler< MouseButtonDownEvent >(this, &CaptionBar::eventMouseButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &CaptionBar::eventMouseButtonUp);
 	addEventHandler< MouseDoubleClickEvent >(this, &CaptionBar::eventMouseDoubleClick);
@@ -44,6 +49,51 @@ bool CaptionBar::create(Widget* parent, uint32_t style)
 #endif
 
 	return true;
+}
+
+void CaptionBar::setText(const std::wstring& text)
+{
+	m_label->setText(text);
+	ToolBar::setText(text);
+	update();
+}
+
+void CaptionBar::update(const Rect* rc_, bool immediate)
+{
+	const Rect rc = getInnerRect();
+	const int32_t pad = pixel(10_ut);
+
+	int32_t r = rc.right - pad;
+	int32_t h = rc.getHeight();
+
+	{
+		const Size sz = m_buttonClose->getPreferredSize(Size(0, 0));
+		m_buttonClose->setRect({ Point(r - sz.cx, (h - sz.cy) / 2), Size(sz.cx, sz.cy) });
+		r -= sz.cx + pad;
+	}
+
+	{
+		const Form* parentForm = dynamic_type_cast< const Form* >(getAncestor());
+		const bool maximized = (parentForm != nullptr) ? parentForm->isMaximized() : false;
+		const Size sz = m_buttonMaximizeOrRestore->getPreferredSize(Size(0, 0));
+		m_buttonMaximizeOrRestore->setRect({ Point(r - sz.cx, (h - sz.cy) / 2), Size(sz.cx, sz.cy) });
+		m_buttonMaximizeOrRestore->setImage(new ui::StyleBitmap(maximized ? L"UI.CaptionRestore" : L"UI.CaptionMaximize"));
+		r -= sz.cx + pad;
+	}
+
+	{
+		const Size sz = m_buttonMinimize->getPreferredSize(Size(0, 0));
+		m_buttonMinimize->setRect({ Point(r - sz.cx, (h - sz.cy) / 2), Size(sz.cx, sz.cy) });
+		r -= sz.cx + pad;
+	}
+
+	{
+		const Size sz = m_label->getPreferredSize(Size(0, 0));
+		m_label->setRect({ Point(r - sz.cx, (h - sz.cy) / 2), Size(sz.cx, sz.cy) });
+		r -= sz.cx + pad;
+	}
+
+	ToolBar::update(rc_, immediate);
 }
 
 Size CaptionBar::getPreferredSize(const Size& hint) const
@@ -142,32 +192,7 @@ void CaptionBar::eventMouseMove(MouseMoveEvent* event)
 
 void CaptionBar::eventSize(SizeEvent* event)
 {
-	const Rect rc = getInnerRect();
-	const int32_t pad = pixel(10_ut);
-
-	int32_t r = rc.right - pad;
-	int32_t h = rc.getHeight();
-
-	{
-		const Size sz = m_buttonClose->getPreferredSize(Size(0, 0));
-		m_buttonClose->setRect({ Point(r - sz.cx, (h - sz.cy) / 2), Size(sz.cx, sz.cy) });
-		r -= sz.cx + pad;
-	}
-
-	{
-		const Form* parentForm = dynamic_type_cast< const Form* >(getAncestor());
-		const bool maximized = (parentForm != nullptr) ? parentForm->isMaximized() : false;
-		const Size sz = m_buttonMaximizeOrRestore->getPreferredSize(Size(0, 0));
-		m_buttonMaximizeOrRestore->setRect({ Point(r - sz.cx, (h - sz.cy) / 2), Size(sz.cx, sz.cy) });
-		m_buttonMaximizeOrRestore->setImage(new ui::StyleBitmap(maximized ? L"UI.CaptionRestore" : L"UI.CaptionMaximize"));
-		r -= sz.cx + pad;
-	}
-
-	{
-		const Size sz = m_buttonMinimize->getPreferredSize(Size(0, 0));
-		m_buttonMinimize->setRect({ Point(r - sz.cx, (h - sz.cy) / 2), Size(sz.cx, sz.cy) });
-		r -= sz.cx + pad;
-	}
+	update();
 }
 
 }

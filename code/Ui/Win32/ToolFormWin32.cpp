@@ -1,30 +1,31 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/Win32/ToolFormWin32.h"
+
 #include "Ui/Events/NcMouseButtonDownEvent.h"
 #include "Ui/Events/NcMouseButtonUpEvent.h"
 #include "Ui/Events/NcMouseMoveEvent.h"
 #include "Ui/Win32/BitmapWin32.h"
-#include "Ui/Win32/ToolFormWin32.h"
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 const UINT WM_ENDMODAL = WM_USER + 2000;
 
-	}
+}
 
 ToolFormWin32::ToolFormWin32(EventSubject* owner)
-:	WidgetWin32Impl< IToolForm >(owner)
-,	m_modal(false)
-,	m_result(DialogResult::Ok)
+	: WidgetWin32Impl< IToolForm >(owner)
+	, m_modal(false)
+	, m_result(DialogResult::Ok)
 {
 }
 
@@ -37,16 +38,15 @@ bool ToolFormWin32::create(IWidget* parent, const std::wstring& text, int width,
 		nativeStyle |= WS_CHILD;
 
 	if (!m_hWnd.create(
-		parent ? (HWND)parent->getInternalHandle() : NULL,
-		_T("TraktorWin32Class"),
-		wstots(text).c_str(),
-		WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | nativeStyle,
-		WS_EX_NOACTIVATE | nativeStyleEx,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		width,
-		height
-	))
+			parent ? (HWND)parent->getInternalHandle() : NULL,
+			_T("TraktorWin32Class"),
+			wstots(text).c_str(),
+			WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | nativeStyle,
+			WS_EX_NOACTIVATE | nativeStyleEx,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			width,
+			height))
 		return false;
 
 	if (!WidgetWin32Impl::create(style))
@@ -85,10 +85,8 @@ DialogResult ToolFormWin32::showModal()
 	m_modal = true;
 
 	while (m_modal)
-	{
 		if (!Application::getInstance()->process())
 			break;
-	}
 
 	if (hParentWnd)
 		SetWindowPos(hParentWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
@@ -98,7 +96,7 @@ DialogResult ToolFormWin32::showModal()
 
 void ToolFormWin32::endModal(DialogResult result)
 {
-	T_ASSERT_M (m_modal, L"Not modal");
+	T_ASSERT_M(m_modal, L"Not modal");
 	SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_HIDEWINDOW);
 	PostMessage(m_hWnd, WM_ENDMODAL, (WPARAM)result, 0);
 }
@@ -111,6 +109,9 @@ LRESULT ToolFormWin32::eventNcButtonDown(HWND hWnd, UINT message, WPARAM wParam,
 	case WM_NCLBUTTONDOWN:
 		button = MbtLeft;
 		break;
+	case WM_NCMBUTTONDOWN:
+		button = MbtMiddle;
+		break;
 	case WM_NCRBUTTONDOWN:
 		button = MbtRight;
 		break;
@@ -119,8 +120,7 @@ LRESULT ToolFormWin32::eventNcButtonDown(HWND hWnd, UINT message, WPARAM wParam,
 	NcMouseButtonDownEvent m(
 		m_owner,
 		button,
-		Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
-	);
+		Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
 	m_owner->raiseEvent(&m);
 
 	if (!m.consumed())
@@ -137,6 +137,9 @@ LRESULT ToolFormWin32::eventNcButtonUp(HWND hWnd, UINT message, WPARAM wParam, L
 	case WM_NCLBUTTONDOWN:
 		button = MbtLeft;
 		break;
+	case WM_NCMBUTTONDOWN:
+		button = MbtMiddle;
+		break;
 	case WM_NCRBUTTONDOWN:
 		button = MbtRight;
 		break;
@@ -145,8 +148,7 @@ LRESULT ToolFormWin32::eventNcButtonUp(HWND hWnd, UINT message, WPARAM wParam, L
 	NcMouseButtonUpEvent m(
 		m_owner,
 		button,
-		Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
-	);
+		Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
 	m_owner->raiseEvent(&m);
 
 	if (!m.consumed())
@@ -168,8 +170,7 @@ LRESULT ToolFormWin32::eventNcMouseMove(HWND hWnd, UINT message, WPARAM wParam, 
 	NcMouseMoveEvent m(
 		m_owner,
 		button,
-		Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
-	);
+		Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
 	m_owner->raiseEvent(&m);
 
 	if (!m.consumed())

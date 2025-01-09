@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2024 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,6 +22,7 @@ namespace traktor::ui
 {
 
 class MiniButton;
+class Static;
 
 /*! Caption bar control.
  * \ingroup UI
@@ -33,12 +34,17 @@ class T_DLLCLASS CaptionBar : public ToolBar
 public:
 	bool create(Widget* parent, uint32_t style = WsNone);
 
+	virtual void setText(const std::wstring& text) override;
+
+	virtual void update(const Rect* rc = nullptr, bool immediate = false) override;
+
 	virtual Size getPreferredSize(const Size& hint) const override;
 
 private:
 	Ref< MiniButton > m_buttonMinimize;
 	Ref< MiniButton > m_buttonMaximizeOrRestore;
 	Ref< MiniButton > m_buttonClose;
+	Ref< Static > m_label;
 	Point m_mousePosition;
 	Rect m_parentRect;
 	bool m_haveCapture = false;
