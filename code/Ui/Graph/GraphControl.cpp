@@ -6,18 +6,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
-#include <limits>
+#include "Ui/Graph/GraphControl.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/StyleSheet.h"
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/EdgeConnectEvent.h"
 #include "Ui/Graph/EdgeDisconnectEvent.h"
-#include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/GraphCanvas.h"
 #include "Ui/Graph/Group.h"
 #include "Ui/Graph/GroupMovedEvent.h"
@@ -26,11 +23,16 @@
 #include "Ui/Graph/NodeMovedEvent.h"
 #include "Ui/Graph/Pin.h"
 #include "Ui/Graph/SelectEvent.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
+
+#include <algorithm>
+#include <limits>
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 enum Modes
 {
@@ -48,11 +50,11 @@ struct SortNodePred
 	GraphControl::EvenSpace m_space;
 
 	SortNodePred(GraphControl::EvenSpace space)
-	:	m_space(space)
+		: m_space(space)
 	{
 	}
 
-	bool operator () (const Node* n1, const Node* n2) const
+	bool operator()(const Node* n1, const Node* n2) const
 	{
 		const UnitPoint pt1 = n1->calculateRect().getTopLeft();
 		const UnitPoint pt2 = n2->calculateRect().getTopLeft();
@@ -60,42 +62,40 @@ struct SortNodePred
 	}
 };
 
-Point operator * (const Point& pt, float scale)
+Point operator*(const Point& pt, float scale)
 {
 	return Point(
 		(int32_t)std::floor(pt.x * scale),
-		(int32_t)std::floor(pt.y * scale)
-	);
+		(int32_t)std::floor(pt.y * scale));
 }
 
-Point operator / (const Point& pt, float scale)
+Point operator/(const Point& pt, float scale)
 {
 	return pt * (1.0f / scale);
 }
 
-Rect operator * (const Rect& rc, float scale)
+Rect operator*(const Rect& rc, float scale)
 {
 	return Rect(
 		rc.getTopLeft() * scale,
-		rc.getBottomRight() * scale
-	);
+		rc.getBottomRight() * scale);
 }
 
-Rect operator / (const Rect& rc, float scale)
+Rect operator/(const Rect& rc, float scale)
 {
 	return rc * (1.0f / scale);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GraphControl", GraphControl, Widget)
 
 GraphControl::GraphControl()
-:	m_scale(1.0f)
-,	m_mode(MdNothing)
-,	m_edgeSelectable(false)
-,	m_hotPin(nullptr)
-,	m_hotEdge(nullptr)
+	: m_scale(1.0f)
+	, m_mode(MdNothing)
+	, m_edgeSelectable(false)
+	, m_hotPin(nullptr)
+	, m_hotEdge(nullptr)
 {
 }
 
@@ -117,13 +117,13 @@ bool GraphControl::create(Widget* parent, uint32_t style)
 
 	m_scale = 1.0f;
 	m_offset.cx =
-	m_offset.cy = 0;
+		m_offset.cy = 0;
 	m_moveOrigin.x =
-	m_moveOrigin.y = 0;
+		m_moveOrigin.y = 0;
 	m_edgeOrigin.x =
-	m_edgeOrigin.y = 0;
+		m_edgeOrigin.y = 0;
 	m_cursor.x =
-	m_cursor.y = 0;
+		m_cursor.y = 0;
 	m_mode = MdNothing;
 	m_edgeSelectable = bool((style & WsEdgeSelectable) == WsEdgeSelectable);
 
@@ -178,7 +178,7 @@ Node* GraphControl::createNode(const std::wstring& title, const std::wstring& in
 void GraphControl::removeNode(Node* node)
 {
 	T_FATAL_ASSERT(node->m_owner == this);
-	
+
 	node->m_owner = nullptr;
 	m_nodes.remove(node);
 
@@ -249,10 +249,8 @@ RefArray< Group > GraphControl::getSelectedGroups() const
 {
 	RefArray< Group > out;
 	for (auto group : m_groups)
-	{
 		if (group->isSelected())
 			out.push_back(group);
-	}
 	return out;
 }
 
@@ -260,10 +258,8 @@ RefArray< Node > GraphControl::getSelectedNodes() const
 {
 	RefArray< Node > out;
 	for (auto node : m_nodes)
-	{
 		if (node->isSelected())
 			out.push_back(node);
-	}
 	return out;
 }
 
@@ -271,10 +267,8 @@ RefArray< Edge > GraphControl::getSelectedEdges() const
 {
 	RefArray< Edge > out;
 	for (auto edge : m_edges)
-	{
 		if (edge->isSelected())
 			out.push_back(edge);
-	}
 	return out;
 }
 
@@ -282,10 +276,8 @@ RefArray< Edge > GraphControl::getConnectedEdges(const Pin* pin) const
 {
 	RefArray< Edge > edges;
 	for (auto edge : m_edges)
-	{
 		if (edge->getSourcePin() == pin || edge->getDestinationPin() == pin)
 			edges.push_back(edge);
-	}
 	return edges;
 }
 
@@ -293,10 +285,8 @@ RefArray< Edge > GraphControl::getConnectedEdges(const Node* node) const
 {
 	RefArray< Edge > edges;
 	for (auto edge : m_edges)
-	{
 		if (edge->getSourcePin()->getNode() == node || edge->getDestinationPin()->getNode() == node)
 			edges.push_back(edge);
-	}
 	return edges;
 }
 
@@ -317,10 +307,8 @@ Group* GraphControl::getGroupAt(const Point& p) const
 {
 	const UnitPoint up = unit(p);
 	for (auto group : m_groups)
-	{
 		if (group->hit(up))
 			return group;
-	}
 	return nullptr;
 }
 
@@ -328,10 +316,8 @@ Node* GraphControl::getNodeAt(const Point& p) const
 {
 	const UnitPoint up = unit(p);
 	for (auto node : m_nodes)
-	{
 		if (node->hit(up))
 			return node;
-	}
 	return nullptr;
 }
 
@@ -339,10 +325,8 @@ Edge* GraphControl::getEdgeAt(const Point& p) const
 {
 	const UnitPoint up = unit(p - m_offset);
 	for (auto edge : m_edges)
-	{
 		if (edge->hit(this, up))
 			return edge;
-	}
 	return nullptr;
 }
 
@@ -363,8 +347,8 @@ void GraphControl::addDependencyHint(const Node* fromNode, const Node* toNode)
 	if (fromNode == toNode)
 		return;
 	if (std::find_if(m_dependencyHints.begin(), m_dependencyHints.end(), [&](const std::pair< const Node*, const Node* >& v) {
-		return v.first == fromNode && v.second == toNode;
-	}) == m_dependencyHints.end())
+			return v.first == fromNode && v.second == toNode;
+		}) == m_dependencyHints.end())
 		m_dependencyHints.push_back({ fromNode, toNode });
 }
 
@@ -418,8 +402,7 @@ void GraphControl::center(bool selectedOnly)
 		Unit(std::numeric_limits< int32_t >::max()),
 		Unit(std::numeric_limits< int32_t >::max()),
 		Unit(-std::numeric_limits< int32_t >::max()),
-		Unit(-std::numeric_limits< int32_t >::max())
-	);
+		Unit(-std::numeric_limits< int32_t >::max()));
 	for (auto node : nodes)
 	{
 		const UnitRect rc = node->calculateRect();
@@ -429,8 +412,8 @@ void GraphControl::center(bool selectedOnly)
 		bounds.bottom = std::max(bounds.bottom, rc.bottom);
 	}
 
-	m_offset.cx = -(pixel(bounds.left + bounds.getWidth() / 2_ut) - (inner.getWidth() / m_scale) / 2);
-	m_offset.cy = -(pixel(bounds.top + bounds.getHeight() / 2_ut) - (inner.getHeight() / m_scale) / 2);
+	m_offset.cx = -(pixel(bounds.left + bounds.getWidth() / 2_ut) - (int32_t)(inner.getWidth() / m_scale) / 2);
+	m_offset.cy = -(pixel(bounds.top + bounds.getHeight() / 2_ut) - (int32_t)(inner.getHeight() / m_scale) / 2);
 }
 
 void GraphControl::alignNodes(Alignment align)
@@ -441,8 +424,7 @@ void GraphControl::alignNodes(Alignment align)
 		Unit(std::numeric_limits< int32_t >::max()),
 		Unit(std::numeric_limits< int32_t >::max()),
 		Unit(-std::numeric_limits< int32_t >::max()),
-		Unit(-std::numeric_limits< int32_t >::max())
-	);
+		Unit(-std::numeric_limits< int32_t >::max()));
 	for (auto node : nodes)
 	{
 		const UnitRect rc = node->calculateRect();
@@ -498,8 +480,7 @@ void GraphControl::evenSpace(EvenSpace space)
 		Unit(std::numeric_limits< int32_t >::max()),
 		Unit(std::numeric_limits< int32_t >::max()),
 		Unit(-std::numeric_limits< int32_t >::max()),
-		Unit(-std::numeric_limits< int32_t >::max())
-	);
+		Unit(-std::numeric_limits< int32_t >::max()));
 
 	Unit totalWidth = 0_ut, totalHeight = 0_ut;
 
@@ -569,8 +550,7 @@ Rect GraphControl::getVirtualRect() const
 	const Rect rcClient = getInnerRect();
 	return Rect(
 		clientToVirtual(rcClient.getTopLeft()),
-		clientToVirtual(rcClient.getBottomRight())
-	);
+		clientToVirtual(rcClient.getBottomRight()));
 }
 
 void GraphControl::beginSelectModification()
@@ -596,24 +576,18 @@ bool GraphControl::endSelectModification()
 
 	T_ASSERT(m_groupSelectionStates.size() == m_groups.size());
 	for (size_t i = 0; i < m_groups.size(); ++i)
-	{
 		if (m_groups[i]->isSelected() != m_groupSelectionStates[i])
 			groupSelectChanged.push_back(m_groups[i]);
-	}
 
 	T_ASSERT(m_nodeSelectionStates.size() == m_nodes.size());
 	for (size_t i = 0; i < m_nodes.size(); ++i)
-	{
 		if (m_nodes[i]->isSelected() != m_nodeSelectionStates[i])
 			nodeSelectChanged.push_back(m_nodes[i]);
-	}
 
 	T_ASSERT(m_edgeSelectionStates.size() == m_edges.size());
 	for (size_t i = 0; i < m_edges.size(); ++i)
-	{
 		if (m_edges[i]->isSelected() != m_edgeSelectionStates[i])
 			edgeSelectChanged.push_back(m_edges[i]);
-	}
 
 	if (groupSelectChanged.empty() && nodeSelectChanged.empty() && edgeSelectChanged.empty())
 		return false;
@@ -653,7 +627,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 
 	// Save origin of drag and where the cursor is currently at.
 	m_cursor =
-	m_moveOrigin = event->getPosition() / m_scale;
+		m_moveOrigin = event->getPosition() / m_scale;
 
 	// If user holds down ALT we should move entire graph.
 	if ((event->getKeyState() & KsMenu) != 0 || event->getButton() == MbtMiddle)
@@ -703,10 +677,8 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 				{
 					// De-select all other nodes.
 					for (auto node : m_nodes)
-					{
 						if (node != selectedNode)
 							node->setSelected(false);
-					}
 				}
 				selectedNode->setSelected(true);
 
@@ -738,45 +710,41 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 				{
 					if (pin->getDirection() == Pin::DrOutput)
 						m_selectedPin = pin;
-					else
+					else if (m_mode != MdConnectEdge)
 					{
-						if (m_mode != MdConnectEdge)
+						// See if we can find an existing edge connected to this input.
+						for (Ref< Edge > edge : m_edges)
 						{
-							// See if we can find an existing edge connected to this input.
-							for (Ref< Edge > edge : m_edges)
-							{
-								if (edge->getDestinationPin() != pin)
-									continue;
+							if (edge->getDestinationPin() != pin)
+								continue;
 
-								m_selectedPin = edge->getSourcePin();
-								m_edges.remove(edge);
+							m_selectedPin = edge->getSourcePin();
+							m_edges.remove(edge);
 
-								EdgeDisconnectEvent edgeDisconnectEvent(this, edge);
-								raiseEvent(&edgeDisconnectEvent);
-								break;
-							}
+							EdgeDisconnectEvent edgeDisconnectEvent(this, edge);
+							raiseEvent(&edgeDisconnectEvent);
+							break;
 						}
-						else if (pin != m_selectedPin)
+					}
+					else if (pin != m_selectedPin)
+					{
+						// Connect edge.
+						Ref< Edge > edge = new Edge(
+							m_selectedPin,
+							pin);
+
+						EdgeConnectEvent edgeConnectEvent(this, edge);
+						raiseEvent(&edgeConnectEvent);
+
+						// Keep connecting edges if shift is being held.
+						if ((event->getKeyState() & KsShift) == 0)
 						{
-							// Connect edge.
-							Ref< Edge > edge = new Edge(
-								m_selectedPin,
-								pin
-							);
-
-							EdgeConnectEvent edgeConnectEvent(this, edge);
-							raiseEvent(&edgeConnectEvent);
-
-							// Keep connecting edges if shift is being held.
-							if ((event->getKeyState() & KsShift) == 0)
-							{
-								m_mode = MdNothing;
-								m_selectedPin = nullptr;
-								releaseCapture();
-							}
-
-							return;
+							m_mode = MdNothing;
+							m_selectedPin = nullptr;
+							releaseCapture();
 						}
+
+						return;
 					}
 
 					if (m_selectedPin)
@@ -811,10 +779,8 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 				{
 					// De-select all other edges.
 					for (auto edge : m_edges)
-					{
 						if (edge != selectedEdge)
 							edge->setSelected(false);
-					}
 
 					// De-select all nodes.
 					for (auto node : m_nodes)
@@ -927,8 +893,7 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 					{
 						Ref< Edge > edge = new Edge(
 							m_selectedPin,
-							targetPin
-						);
+							targetPin);
 						EdgeConnectEvent event(this, edge);
 						raiseEvent(&event);
 					}
@@ -1007,9 +972,7 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 		const Size offset = event->getPosition() / m_scale - m_moveOrigin;
 		const int32_t distance = std::max(std::abs(offset.cx), std::abs(offset.cy));
 		if (distance > pixel(8_ut))
-		{
 			m_mode = MdMoveSelected;
-		}
 		update();
 		event->consume();
 	}
@@ -1054,8 +1017,7 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 	{
 		Rect updateRect(
 			m_moveOrigin * m_scale,
-			m_cursor * m_scale
-		);
+			m_cursor * m_scale);
 
 		m_cursor = event->getPosition() / m_scale;
 		updateRect = updateRect.getUnified().contain(m_cursor * m_scale).inflate(4, 4);
@@ -1130,7 +1092,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 
 	if (m_scale > 0.20f)
 	{
-		const int32_t gridSpacing = m_scale * pixel(32_ut);
+		const int32_t gridSpacing = (int32_t)(m_scale * pixel(32_ut));
 
 		const int32_t ox = int32_t(m_offset.cx * m_scale) % gridSpacing;
 		const int32_t oy = int32_t(m_offset.cy * m_scale) % gridSpacing;
@@ -1166,8 +1128,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 		if ((arrowsDrawn & 1) == 0 && (int32_t)(rcNode.left * m_scale) < rc.left)
 		{
 			const Point p(rc.left + 16, center.y);
-			const Point pl[] =
-			{
+			const Point pl[] = {
 				Point(p.x - 8, p.y),
 				Point(p.x + 8, p.y - 8),
 				Point(p.x + 8, p.y + 8)
@@ -1178,8 +1139,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 		if ((arrowsDrawn & 2) == 0 && (int32_t)(rcNode.top * m_scale) < rc.top)
 		{
 			const Point p(center.x, rc.top + 16);
-			const Point pl[] =
-			{
+			const Point pl[] = {
 				Point(p.x, p.y - 8),
 				Point(p.x + 8, p.y + 8),
 				Point(p.x - 8, p.y + 8)
@@ -1190,8 +1150,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 		if ((arrowsDrawn & 4) == 0 && (int32_t)(rcNode.right * m_scale) > rc.right)
 		{
 			const Point p(rc.right - 16, center.y);
-			const Point pl[] =
-			{
+			const Point pl[] = {
 				Point(p.x + 8, p.y),
 				Point(p.x - 8, p.y - 8),
 				Point(p.x - 8, p.y + 8)
@@ -1202,8 +1161,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 		if ((arrowsDrawn & 8) == 0 && (int32_t)(rcNode.bottom * m_scale) > rc.bottom)
 		{
 			const Point p(center.x, rc.bottom - 16);
-			const Point pl[] =
-			{
+			const Point pl[] = {
 				Point(p.x, p.y + 8),
 				Point(p.x + 8, p.y - 8),
 				Point(p.x - 8, p.y - 8)
@@ -1219,8 +1177,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 		this,
 		&canvas,
 		m_paintSettings,
-		m_scale
-	);
+		m_scale);
 
 	// Draw groups.
 	for (auto group : m_groups)
@@ -1237,10 +1194,8 @@ void GraphControl::eventPaint(PaintEvent* event)
 
 	// Draw edges.
 	for (auto edge : m_edges)
-	{
 		if (!edge->isSelected() && m_hotEdge != edge)
 			edge->paint(this, &graphCanvas, m_offset, m_imageLabel, false);
-	}
 
 	// Node shapes.
 	graphCanvas.setFont(m_paintSettings.getFont());
@@ -1253,17 +1208,14 @@ void GraphControl::eventPaint(PaintEvent* event)
 #if defined(_DEBUG)
 		graphCanvas.setForeground(Color4ub(255, 255, 255, 255));
 		graphCanvas.drawRect(
-			pixel(node->calculateRect()).offset(m_offset)
-		);
+			pixel(node->calculateRect()).offset(m_offset));
 #endif
 	}
 
 	// Draw selected, or hot, edges.
 	for (auto edge : m_edges)
-	{
 		if (edge->isSelected() || m_hotEdge == edge)
 			edge->paint(this, &graphCanvas, m_offset, m_imageLabel, (bool)(m_hotEdge == edge));
-	}
 
 	// Edge cursor.
 	if (m_mode == MdConnectEdge || m_mode == MdDrawEdge)

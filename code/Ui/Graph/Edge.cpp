@@ -6,25 +6,26 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/Graph/Edge.h"
+
 #include "Core/Math/Const.h"
 #include "Core/Math/Envelope.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Math/Vector2.h"
 #include "Ui/Application.h"
 #include "Ui/Event.h"
-#include "Ui/IBitmap.h"
-#include "Ui/StyleSheet.h"
-#include "Ui/Graph/Edge.h"
 #include "Ui/Graph/GraphCanvas.h"
 #include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
-#include "Ui/Graph/Pin.h"
 #include "Ui/Graph/PaintSettings.h"
+#include "Ui/Graph/Pin.h"
+#include "Ui/IBitmap.h"
+#include "Ui/StyleSheet.h"
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 struct Dim
 {
@@ -61,40 +62,31 @@ void calculateLinearSpline(const GraphControl* graph, Point s1, Point d1, Aligne
 			m1 = Point(c.x - ar.y / 2, s.y);
 			m2 = Point(c.x + (ar.y + 1) / 2, d.y);
 		}
+		else if (s.y < d.y)
+		{
+			m1 = Point(s.x, c.y - r.x / 2);
+			m2 = Point(d.x, c.y + (r.x + 1) / 2);
+		}
 		else
 		{
-			if (s.y < d.y)
-			{
-				m1 = Point(s.x, c.y - r.x / 2);
-				m2 = Point(d.x, c.y + (r.x + 1) / 2);
-			}
-			else
-			{
-				m1 = Point(s.x, c.y + r.x / 2);
-				m2 = Point(d.x, c.y - (r.x + 1) / 2);
-			}
+			m1 = Point(s.x, c.y + r.x / 2);
+			m2 = Point(d.x, c.y - (r.x + 1) / 2);
 		}
+	}
+	else if (ar.x >= ar.y)
+	{
+		m1 = Point(s.x, c.y);
+		m2 = Point(d.x, c.y);
+	}
+	else if (s.y < d.y)
+	{
+		m1 = Point(s.x, c.y + r.x / 2);
+		m2 = Point(d.x, c.y - (r.x + 1) / 2);
 	}
 	else
 	{
-		if (ar.x >= ar.y)
-		{
-			m1 = Point(s.x, c.y);
-			m2 = Point(d.x, c.y);
-		}
-		else
-		{
-			if (s.y < d.y)
-			{
-				m1 = Point(s.x, c.y + r.x / 2);
-				m2 = Point(d.x, c.y - (r.x + 1) / 2);
-			}
-			else
-			{
-				m1 = Point(s.x, c.y - r.x / 2);
-				m2 = Point(d.x, c.y + (r.x + 1) / 2);
-			}
-		}
+		m1 = Point(s.x, c.y - r.x / 2);
+		m2 = Point(d.x, c.y + (r.x + 1) / 2);
 	}
 
 	outSpline.resize(6);
@@ -106,13 +98,13 @@ void calculateLinearSpline(const GraphControl* graph, Point s1, Point d1, Aligne
 	outSpline[5] = Point(d1.x - graph->pixel(6_ut), d1.y);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Edge", Edge, Object)
 
 Edge::Edge(Pin* source, Pin* destination)
-:	m_source(source)
-,	m_destination(destination)
+	: m_source(source)
+	, m_destination(destination)
 {
 }
 
@@ -175,8 +167,7 @@ bool Edge::hit(const GraphControl* graph, const UnitPoint& p) const
 		graph,
 		graph->pixel(m_source->getPosition()),
 		graph->pixel(m_destination->getPosition()),
-		m_spline
-	);
+		m_spline);
 
 	const float c_hitWidth = (float)graph->pixel(8_ut);
 	for (int32_t i = 1; i < (int32_t)(m_spline.size() - 2); ++i)
@@ -235,7 +226,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	int32_t dx = (d.x - s.x) / 4;
 	int32_t dy = (d.y - s.y) / 8;
 
-	dx = std::max(dx, 30);
+	dx = std::max(dx, 10);
 
 	m_spline.resize(0);
 	m_spline.push_back(Point(s.x - 10, s.y));
@@ -249,22 +240,17 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 #if defined(_DEBUG)
 	canvas->setBackground(Color4ub(255, 255, 255, 180));
 	for (const auto& p : m_spline)
-	{
 		canvas->fillRect(
 			Rect(
 				Point(p.x - 4, p.y - 4),
-				Size(8, 8)
-			)
-		);
-	}
+				Size(8, 8)));
 	canvas->setBackground(color);
 #endif
 
 	const Point at = graph->pixel(m_destination->getPosition()) + offset;
-	const Point arrow[] =
-	{
+	const Point arrow[] = {
 		Point(at.x - graph->pixel(10_ut), at.y - graph->pixel(5_ut)),
-		Point(at.x , at.y),
+		Point(at.x, at.y),
 		Point(at.x - graph->pixel(10_ut), at.y + graph->pixel(5_ut))
 	};
 	canvas->fillPolygon(arrow, 3);
@@ -279,8 +265,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 
 		const Point lpt(
 			s.x + dim.sourceLabelOffset,
-			s.y - sz.cy / 2
-		);
+			s.y - sz.cy / 2);
 
 		canvas->drawBitmap(
 			lpt,
@@ -288,8 +273,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 			Point(0, 0),
 			Size(sz.cx / 3, sz.cy),
 			imageLabel,
-			BlendMode::Alpha
-		);
+			BlendMode::Alpha);
 
 		canvas->drawBitmap(
 			lpt + Size(sz.cx / 3, 0),
@@ -297,8 +281,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 			Point(sz.cx / 3, 0),
 			Size(sz.cx / 3, sz.cy),
 			imageLabel,
-			BlendMode::Alpha
-		);
+			BlendMode::Alpha);
 
 		canvas->drawBitmap(
 			lpt + Size(sz.cx / 3 + szLabel.cx, 0),
@@ -306,18 +289,15 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 			Point((sz.cx * 2) / 3, 0),
 			Size(sz.cx / 3, sz.cy),
 			imageLabel,
-			BlendMode::Alpha
-		);
+			BlendMode::Alpha);
 
 		canvas->drawText(
 			Rect(
 				lpt + Size(sz.cx / 3, 0),
-				Size(szLabel.cx, sz.cy)
-			),
+				Size(szLabel.cx, sz.cy)),
 			m_text,
 			AnCenter,
-			AnCenter
-		);
+			AnCenter);
 	}
 }
 

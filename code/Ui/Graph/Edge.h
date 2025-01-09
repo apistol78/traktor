@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,9 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Ui/Associative.h"
 #include "Ui/Point.h"
 #include "Ui/Size.h"
@@ -35,8 +36,8 @@ class Pin;
  * \ingroup UI
  */
 class T_DLLCLASS Edge
-:	public Object
-,	public Associative
+	: public Object
+	, public Associative
 {
 	T_RTTI_CLASS;
 

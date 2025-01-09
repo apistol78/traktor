@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Object.h"
 #include "Ui/Enums.h"
 #include "Ui/Font.h"
 #include "Ui/Rect.h"
@@ -27,6 +27,7 @@ namespace traktor::ui
 class Canvas;
 class IBitmap;
 class PaintSettings;
+class Widget;
 
 class GraphCanvas : public Object
 {
