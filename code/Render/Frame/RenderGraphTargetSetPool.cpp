@@ -74,7 +74,10 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 		rtscd.multiSample = multiSample;
 
 	for (int32_t i = 0; i < targetSetDesc.count; ++i)
+	{
 		rtscd.targets[i].format = targetSetDesc.targets[i].colorFormat;
+		rtscd.targets[i].sRGB = targetSetDesc.targets[i].sRGB;
+	}
 
 	// Find pool matching target description.
 	auto it = std::find_if(

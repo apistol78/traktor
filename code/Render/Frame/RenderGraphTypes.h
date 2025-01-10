@@ -19,6 +19,7 @@ namespace traktor::render
 struct RenderGraphTargetDesc
 {
 	TextureFormat colorFormat = TfInvalid;
+	bool sRGB = false;
 };
 
 /*!

@@ -71,7 +71,7 @@ bool RenderTargetVk::createPrimary(
 
 bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc, const wchar_t* const tag)
 {
-	VkFormat format = determineSupportedTargetFormat(m_context->getPhysicalDevice(), desc.format);
+	VkFormat format = determineSupportedTargetFormat(m_context->getPhysicalDevice(), desc.format, desc.sRGB);
 	if (format == VK_FORMAT_UNDEFINED)
 		return false;
 

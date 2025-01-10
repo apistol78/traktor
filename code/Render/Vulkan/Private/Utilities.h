@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,7 +36,7 @@ std::wstring getHumanResult(VkResult result);
 
 void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t object, VkObjectType objectType);
 
-VkFormat determineSupportedTargetFormat(VkPhysicalDevice physicalDevice, TextureFormat textureFormat);
+VkFormat determineSupportedTargetFormat(VkPhysicalDevice physicalDevice, TextureFormat textureFormat, bool sRGB);
 
 VkPipelineStageFlags getPipelineStageFlags(const VkImageLayout layout);
 

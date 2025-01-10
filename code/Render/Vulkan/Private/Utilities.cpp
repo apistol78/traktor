@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -325,6 +325,72 @@ const TargetFormat c_vkTargetFormats[] =
 	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } }
 };
 
+const TargetFormat c_vkTargetFormats_sRGB[] =
+{
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+
+	{ { VK_FORMAT_R8_SRGB,                  VK_FORMAT_R8G8B8A8_SRGB,      VK_FORMAT_UNDEFINED,            VK_FORMAT_UNDEFINED } },	// TfR8
+	{ { VK_FORMAT_R8G8B8A8_SRGB,            VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },	// TfR8G8B8A8
+	{ { VK_FORMAT_R5G6B5_UNORM_PACK16,      VK_FORMAT_R8G8B8A8_SRGB,      VK_FORMAT_UNDEFINED,            VK_FORMAT_UNDEFINED } },	// TfR5G6B5
+	{ { VK_FORMAT_R5G5B5A1_UNORM_PACK16,    VK_FORMAT_R8G8B8A8_SRGB,      VK_FORMAT_UNDEFINED,            VK_FORMAT_UNDEFINED } },	// TfR5G5B5A1
+	{ { VK_FORMAT_R4G4B4A4_UNORM_PACK16,    VK_FORMAT_R8G8B8A8_SRGB,      VK_FORMAT_UNDEFINED,            VK_FORMAT_UNDEFINED } },	// TfR4G4B4A4
+	{ { VK_FORMAT_A2R10G10B10_UNORM_PACK32, VK_FORMAT_R8G8B8A8_SRGB,      VK_FORMAT_UNDEFINED,            VK_FORMAT_UNDEFINED } },	// TfR10G10B10A2
+
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+
+	{ { VK_FORMAT_R16G16B16A16_SFLOAT,      VK_FORMAT_R32G32B32A32_SFLOAT, VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },	// TfR16G16B16A16F
+	{ { VK_FORMAT_R32G32B32A32_SFLOAT,      VK_FORMAT_R16G16B16A16_SFLOAT, VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },	// TfR32G32B32A32F
+	{ { VK_FORMAT_R16G16_SFLOAT,            VK_FORMAT_R16G16B16A16_SFLOAT, VK_FORMAT_R32G32_SFLOAT,       VK_FORMAT_UNDEFINED } },	// TfR16G16F
+	{ { VK_FORMAT_R32G32_SFLOAT,            VK_FORMAT_R32G32B32A32_SFLOAT, VK_FORMAT_R16G16_SFLOAT,       VK_FORMAT_UNDEFINED } },	// TfR32G32F
+	{ { VK_FORMAT_R16_SFLOAT,               VK_FORMAT_R32_SFLOAT,          VK_FORMAT_R16G16_SFLOAT,       VK_FORMAT_R32G32_SFLOAT } },	// TfR16F
+	{ { VK_FORMAT_R32_SFLOAT,               VK_FORMAT_R16_SFLOAT,          VK_FORMAT_R32G32_SFLOAT,       VK_FORMAT_R16G16_SFLOAT } },	// TfR32F
+
+#if defined(__ANDROID__)
+	{ { VK_FORMAT_B10G11R11_UFLOAT_PACK32,  VK_FORMAT_R8G8B8A8_UNORM,      VK_FORMAT_R16G16B16A16_SFLOAT, VK_FORMAT_R32G32B32A32_SFLOAT } },	// TfR11G11B10F
+#else
+	{ { VK_FORMAT_B10G11R11_UFLOAT_PACK32,  VK_FORMAT_R16G16B16A16_SFLOAT, VK_FORMAT_R32G32B32A32_SFLOAT, VK_FORMAT_UNDEFINED } },	// TfR11G11B10F
+#endif
+
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },	// TfDXT1
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },	// TfDXT2
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },	// TfDXT3
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },	// TfDXT4
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },	// TfDXT5
+
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },	// TfPVRTC1
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },	// TfPVRTC2
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },	// TfPVRTC3
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },	// TfPVRTC4
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },	// TfETC1
+
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } },
+	{ { VK_FORMAT_UNDEFINED,                VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED,           VK_FORMAT_UNDEFINED } }
+};
+
 uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags memoryFlags, const VkMemoryRequirements& memoryRequirements)
 {
 	VkPhysicalDeviceMemoryProperties memoryProperties = {};
@@ -419,9 +485,9 @@ void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t obje
 #endif
 }
 
-VkFormat determineSupportedTargetFormat(VkPhysicalDevice physicalDevice, TextureFormat textureFormat)
+VkFormat determineSupportedTargetFormat(VkPhysicalDevice physicalDevice, TextureFormat textureFormat, bool sRGB)
 {
-	const auto& fc = c_vkTargetFormats[textureFormat];
+	const auto& fc = sRGB ? c_vkTargetFormats_sRGB[textureFormat] : c_vkTargetFormats[textureFormat];
 	for (int32_t i = 0; i < 4; ++i)
 	{
 		if (fc.formats[i] == VK_FORMAT_UNDEFINED)
