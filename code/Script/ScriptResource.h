@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,9 @@
  */
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Guid.h"
+#include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -35,14 +36,14 @@ class T_DLLCLASS ScriptResource : public ISerializable
 public:
 	virtual void serialize(ISerializer& s) override final;
 
-	const std::vector< Guid >& getDependencies() const { return m_dependencies; }
+	const AlignedVector< Guid >& getDependencies() const { return m_dependencies; }
 
 	const IScriptBlob* getBlob() const { return m_blob; }
 
 private:
 	friend class ScriptPipeline;
 
-	std::vector< Guid > m_dependencies;
+	AlignedVector< Guid > m_dependencies;
 	Ref< const IScriptBlob > m_blob;
 };
 

@@ -8,23 +8,25 @@
  */
 #if defined(T_USE_DIRECT2D)
 
-#include <limits>
-#include "Core/Log/Log.h"
-#include "Core/Math/Bezier3rd.h"
-#include "Core/Misc/String.h"
-#include "Core/Thread/Atomic.h"
-#include "Ui/Application.h"
-#include "Ui/Win32/BitmapWin32.h"
-#include "Ui/Win32/CanvasDirect2DWin32.h"
-#include "Ui/Win32/UtilitiesWin32.h"
-#include "Ui/Win32/Window.h"
+#	include "Ui/Win32/CanvasDirect2DWin32.h"
 
-#undef max
+#	include "Core/Log/Log.h"
+#	include "Core/Math/Bezier3rd.h"
+#	include "Core/Misc/String.h"
+#	include "Core/Thread/Atomic.h"
+#	include "Ui/Application.h"
+#	include "Ui/Win32/BitmapWin32.h"
+#	include "Ui/Win32/UtilitiesWin32.h"
+#	include "Ui/Win32/Window.h"
+
+#	include <limits>
+
+#	undef max
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 ComRef< ID2D1Factory > s_d2dFactory;
 ComRef< IDWriteFactory > s_dwFactory;
@@ -35,7 +37,7 @@ Vector2 pnt2vec(const Point& pt)
 	return Vector2(pt.x, pt.y);
 }
 
-	}
+}
 
 CanvasDirect2DWin32::CanvasDirect2DWin32()
 {
@@ -78,8 +80,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, const Font& font, bool double
 		hr = s_d2dFactory->CreateHwndRenderTarget(
 			D2D1::RenderTargetProperties(),
 			D2D1::HwndRenderTargetProperties(hWnd, size, D2D1_PRESENT_OPTIONS_IMMEDIATELY),
-			&m_d2dRenderTarget.getAssign()
-		);
+			&m_d2dRenderTarget.getAssign());
 		if (FAILED(hr))
 			return false;
 
@@ -157,8 +158,7 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, const Font& font, in
 			DWRITE_FONT_STRETCH_NORMAL,
 			fontSize,
 			L"",
-			&dwTextFormat.getAssign()
-		);
+			&dwTextFormat.getAssign());
 		if (!dwTextFormat)
 			return;
 
@@ -184,8 +184,7 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, const Font& font, in
 			dwTextFormat->GetFontWeight(),
 			dwTextFormat->GetFontStretch(),
 			dwTextFormat->GetFontStyle(),
-			&dwFont.getAssign()
-		);
+			&dwFont.getAssign());
 
 		DWRITE_FONT_METRICS fontMetrics;
 		dwFont->GetMetrics(&fontMetrics);
@@ -193,7 +192,7 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, const Font& font, in
 		outAscent = (int32_t)(dwTextFormat->GetFontSize() * fontMetrics.ascent / fontMetrics.designUnitsPerEm + 0.5f);
 		outDescent = (int32_t)(dwTextFormat->GetFontSize() * fontMetrics.descent / fontMetrics.designUnitsPerEm + 0.5f);
 	}
-	else	// Inside begin/end thus use current paint context.
+	else // Inside begin/end thus use current paint context.
 	{
 		return getAscentAndDescent(outAscent, outDescent);
 	}
@@ -202,13 +201,10 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, const Font& font, in
 int32_t CanvasDirect2DWin32::getAdvance(Window& hWnd, const Font& font, wchar_t ch, wchar_t next) const
 {
 	if (!m_inPaint)
-	{
 		return getExtent(hWnd, font, std::wstring(1, ch)).cx;
-	}
-	else	// Inside begin/end thus use current paint context.
-	{
+	else // Inside begin/end thus use current paint context.
+
 		return getAdvance(ch, next);
-	}
 }
 
 int32_t CanvasDirect2DWin32::getLineSpacing(Window& hWnd) const
@@ -225,7 +221,6 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const Font& font, const std::w
 
 		if (font != m_fontOffScreen || fontSize != m_fontOffScreenSize)
 		{
-
 			s_dwFactory->CreateTextFormat(
 				font.getFace().c_str(),
 				NULL,
@@ -234,8 +229,7 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const Font& font, const std::w
 				DWRITE_FONT_STRETCH_NORMAL,
 				fontSize,
 				L"",
-				&m_dwTextFormatOffScreen.getAssign()
-			);
+				&m_dwTextFormatOffScreen.getAssign());
 			if (!m_dwTextFormatOffScreen)
 				return Size(0, 0);
 
@@ -254,8 +248,7 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const Font& font, const std::w
 			m_dwTextFormatOffScreen,
 			std::numeric_limits< FLOAT >::max(),
 			std::numeric_limits< FLOAT >::max(),
-			&dwLayout.getAssign()
-		);
+			&dwLayout.getAssign());
 		if (!dwLayout)
 			return Size(0, 0);
 
@@ -264,10 +257,9 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const Font& font, const std::w
 
 		return Size(
 			dwtm.widthIncludingTrailingWhitespace,
-			dwtm.height
-		);
+			dwtm.height);
 	}
-	else	// Inside begin/end thus use current paint context.
+	else // Inside begin/end thus use current paint context.
 	{
 		return getExtent(text);
 	}
@@ -283,7 +275,7 @@ void CanvasDirect2DWin32::getAscentAndDescent(int32_t& outAscent, int32_t& outDe
 	else
 	{
 		outAscent =
-		outDescent = 0;
+			outDescent = 0;
 	}
 }
 
@@ -309,8 +301,7 @@ Size CanvasDirect2DWin32::getExtent(const std::wstring& text) const
 		m_dwTextFormat,
 		std::numeric_limits< FLOAT >::max(),
 		std::numeric_limits< FLOAT >::max(),
-		&dwLayout.getAssign()
-	);
+		&dwLayout.getAssign());
 	if (!dwLayout)
 		return Size(0, 0);
 
@@ -319,16 +310,14 @@ Size CanvasDirect2DWin32::getExtent(const std::wstring& text) const
 
 	return Size(
 		dwtm.widthIncludingTrailingWhitespace,
-		dwtm.height
-	);
+		dwtm.height);
 }
 
 void CanvasDirect2DWin32::setForeground(const Color4ub& foreground)
 {
 	m_d2dRenderTarget->CreateSolidColorBrush(
 		D2D1::ColorF(foreground, foreground.a / 255.0f),
-		&m_d2dForegroundBrush.getAssign()
-	);
+		&m_d2dForegroundBrush.getAssign());
 
 	m_gradientStops[0].color = D2D1::ColorF(foreground, foreground.a / 255.0f);
 	m_d2dGradientStops.release();
@@ -338,8 +327,7 @@ void CanvasDirect2DWin32::setBackground(const Color4ub& background)
 {
 	m_d2dRenderTarget->CreateSolidColorBrush(
 		D2D1::ColorF(background, background.a / 255.0f),
-		&m_d2dBackgroundBrush.getAssign()
-	);
+		&m_d2dBackgroundBrush.getAssign());
 
 	m_gradientStops[1].color = D2D1::ColorF(background, background.a / 255.0f);
 	m_d2dGradientStops.release();
@@ -382,8 +370,7 @@ void CanvasDirect2DWin32::setClipRect(const Rect& rc)
 
 	m_d2dRenderTarget->PushAxisAlignedClip(
 		D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
-		D2D1_ANTIALIAS_MODE_PER_PRIMITIVE
-	);
+		D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	m_clip = true;
 }
 
@@ -407,8 +394,7 @@ void CanvasDirect2DWin32::drawLine(int x1, int y1, int x2, int y2)
 		D2D1::Point2F(x1 + 0.5f, y1 + 0.5f),
 		D2D1::Point2F(x2 + 0.5f, y2 + 0.5f),
 		m_d2dForegroundBrush,
-		m_strokeWidth
-	);
+		m_strokeWidth);
 }
 
 void CanvasDirect2DWin32::drawLines(const Point* pnts, int npnts)
@@ -430,15 +416,11 @@ void CanvasDirect2DWin32::drawLines(const Point* pnts, int npnts)
 
 	d2dGeometrySink->BeginFigure(
 		D2D1::Point2F(pnts[0].x + 0.5f, pnts[0].y + 0.5f),
-		D2D1_FIGURE_BEGIN_HOLLOW
-	);
+		D2D1_FIGURE_BEGIN_HOLLOW);
 
 	for (int i = 1; i < npnts; ++i)
-	{
 		d2dGeometrySink->AddLine(
-			D2D1::Point2F(pnts[i].x + 0.5f, pnts[i].y + 0.5f)
-		);
-	}
+			D2D1::Point2F(pnts[i].x + 0.5f, pnts[i].y + 0.5f));
 
 	d2dGeometrySink->EndFigure(D2D1_FIGURE_END_OPEN);
 	d2dGeometrySink->Close();
@@ -447,8 +429,7 @@ void CanvasDirect2DWin32::drawLines(const Point* pnts, int npnts)
 	m_d2dRenderTarget->DrawGeometry(
 		d2dPathGeometry,
 		m_d2dForegroundBrush,
-		m_strokeWidth
-	);
+		m_strokeWidth);
 }
 
 void CanvasDirect2DWin32::drawCurve(const Point& start, const Point& control, const Point& end)
@@ -467,8 +448,7 @@ void CanvasDirect2DWin32::drawCurve(const Point& start, const Point& control, co
 
 	d2dGeometrySink->BeginFigure(
 		D2D1::Point2F(start.x + 0.5f, start.y + 0.5f),
-		D2D1_FIGURE_BEGIN_HOLLOW
-	);
+		D2D1_FIGURE_BEGIN_HOLLOW);
 
 	D2D1_BEZIER_SEGMENT segment;
 	segment.point1 = D2D1::Point2F(start.x + 0.5f, start.y + 0.5f);
@@ -483,8 +463,7 @@ void CanvasDirect2DWin32::drawCurve(const Point& start, const Point& control, co
 	m_d2dRenderTarget->DrawGeometry(
 		d2dPathGeometry,
 		m_d2dForegroundBrush,
-		m_strokeWidth
-	);
+		m_strokeWidth);
 }
 
 void CanvasDirect2DWin32::fillCircle(int x, int y, float radius)
@@ -492,8 +471,7 @@ void CanvasDirect2DWin32::fillCircle(int x, int y, float radius)
 	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	m_d2dRenderTarget->FillEllipse(
 		D2D1::Ellipse(D2D1::Point2F(x, y), radius, radius),
-		m_d2dBackgroundBrush
-	);
+		m_d2dBackgroundBrush);
 }
 
 void CanvasDirect2DWin32::drawCircle(int x, int y, float radius)
@@ -502,8 +480,7 @@ void CanvasDirect2DWin32::drawCircle(int x, int y, float radius)
 	m_d2dRenderTarget->DrawEllipse(
 		D2D1::Ellipse(D2D1::Point2F(x, y), radius, radius),
 		m_d2dForegroundBrush,
-		m_strokeWidth
-	);
+		m_strokeWidth);
 }
 
 void CanvasDirect2DWin32::drawEllipticArc(int x, int y, int w, int h, float start, float end)
@@ -532,16 +509,12 @@ void CanvasDirect2DWin32::drawSpline(const Point* pnts, int npnts)
 			pnt2vec(pnts[i + 1]),
 			pnt2vec(pnts[i + 2]),
 			pnt2vec(pnts[i + 3]),
-			1.0f
-		);
+			1.0f);
 
 		if (i == 0)
-		{
 			d2dGeometrySink->BeginFigure(
 				D2D1::Point2F(b.cp0.x, b.cp0.y),
-				D2D1_FIGURE_BEGIN_HOLLOW
-			);
-		}
+				D2D1_FIGURE_BEGIN_HOLLOW);
 
 		D2D1_BEZIER_SEGMENT bs;
 		bs.point1 = D2D1::Point2F(b.cp1.x, b.cp1.y);
@@ -566,15 +539,14 @@ void CanvasDirect2DWin32::fillRect(const Rect& rc)
 
 	m_d2dRenderTarget->FillRectangle(
 		D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
-		m_d2dBackgroundBrush
-	);
+		m_d2dBackgroundBrush);
 }
 
 void CanvasDirect2DWin32::fillGradientRect(const Rect& rc, bool vertical)
 {
 	HRESULT hr;
 
-	Rect rc2 = rc.getUnified();
+	const Rect rc2 = rc.getUnified();
 	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
 		return;
 
@@ -587,52 +559,42 @@ void CanvasDirect2DWin32::fillGradientRect(const Rect& rc, bool vertical)
 
 	ComRef< ID2D1LinearGradientBrush > d2dGradientBrush;
 	if (vertical)
-	{
 		hr = m_d2dRenderTarget->CreateLinearGradientBrush(
 			D2D1::LinearGradientBrushProperties(
 				D2D1::Point2F(rc2.left, rc2.top),
-				D2D1::Point2F(rc2.left, rc2.bottom)
-			),
+				D2D1::Point2F(rc2.left, rc2.bottom)),
 			m_d2dGradientStops,
-			&d2dGradientBrush.getAssign()
-		);
-	}
+			&d2dGradientBrush.getAssign());
 	else
-	{
 		hr = m_d2dRenderTarget->CreateLinearGradientBrush(
 			D2D1::LinearGradientBrushProperties(
 				D2D1::Point2F(rc2.left, rc2.top),
-				D2D1::Point2F(rc2.right, rc2.top)
-			),
+				D2D1::Point2F(rc2.right, rc2.top)),
 			m_d2dGradientStops,
-			&d2dGradientBrush.getAssign()
-		);
-	}
+			&d2dGradientBrush.getAssign());
 	if (FAILED(hr))
 		return;
 
 	m_d2dRenderTarget->FillRectangle(
 		D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
-		d2dGradientBrush
-	);
+		d2dGradientBrush);
 }
 
 void CanvasDirect2DWin32::drawRect(const Rect& rc)
 {
-	Rect rc2 = rc.getUnified();
+	const Rect rc2 = rc.getUnified();
 	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
 		return;
 
 	m_d2dRenderTarget->DrawRectangle(
 		D2D1::RectF(rc2.left + 0.5f, rc2.top + 0.5f, rc2.right - 0.5f, rc2.bottom - 0.5f),
 		m_d2dForegroundBrush,
-		m_strokeWidth
-	);
+		m_strokeWidth);
 }
 
 void CanvasDirect2DWin32::drawRoundRect(const Rect& rc, int radius)
 {
-	Rect rc2 = rc.getUnified();
+	const Rect rc2 = rc.getUnified();
 	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
 		return;
 
@@ -640,11 +602,9 @@ void CanvasDirect2DWin32::drawRoundRect(const Rect& rc, int radius)
 		D2D1::RoundedRect(
 			D2D1::RectF(rc2.left + 0.5f, rc2.top + 0.5f, rc2.right - 0.5f, rc2.bottom - 0.5f),
 			radius,
-			radius
-		),
+			radius),
 		m_d2dForegroundBrush,
-		m_strokeWidth
-	);
+		m_strokeWidth);
 }
 
 void CanvasDirect2DWin32::drawPolygon(const Point* pnts, int npnts)
@@ -666,15 +626,11 @@ void CanvasDirect2DWin32::drawPolygon(const Point* pnts, int npnts)
 
 	d2dGeometrySink->BeginFigure(
 		D2D1::Point2F(pnts[0].x, pnts[0].y),
-		D2D1_FIGURE_BEGIN_HOLLOW
-	);
+		D2D1_FIGURE_BEGIN_HOLLOW);
 
 	for (int i = 1; i < npnts; ++i)
-	{
 		d2dGeometrySink->AddLine(
-			D2D1::Point2F(pnts[i].x, pnts[i].y)
-		);
-	}
+			D2D1::Point2F(pnts[i].x, pnts[i].y));
 
 	d2dGeometrySink->EndFigure(D2D1_FIGURE_END_CLOSED);
 	d2dGeometrySink->Close();
@@ -703,15 +659,11 @@ void CanvasDirect2DWin32::fillPolygon(const Point* pnts, int npnts)
 
 	d2dGeometrySink->BeginFigure(
 		D2D1::Point2F(pnts[0].x, pnts[0].y),
-		D2D1_FIGURE_BEGIN_FILLED
-	);
+		D2D1_FIGURE_BEGIN_FILLED);
 
 	for (int i = 1; i < npnts; ++i)
-	{
 		d2dGeometrySink->AddLine(
-			D2D1::Point2F(pnts[i].x + 0.5f, pnts[i].y + 0.5f)
-		);
-	}
+			D2D1::Point2F(pnts[i].x + 0.5f, pnts[i].y + 0.5f));
 
 	d2dGeometrySink->EndFigure(D2D1_FIGURE_END_CLOSED);
 	d2dGeometrySink->Close();
@@ -719,8 +671,7 @@ void CanvasDirect2DWin32::fillPolygon(const Point* pnts, int npnts)
 	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 	m_d2dRenderTarget->FillGeometry(
 		d2dPathGeometry,
-		m_d2dBackgroundBrush
-	);
+		m_d2dBackgroundBrush);
 }
 
 void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter)
@@ -738,12 +689,6 @@ void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, co
 
 	if (blendMode == BlendMode::Modulate)
 	{
-		//ID2D1DeviceContext* deviceContext;
-		//m_d2dRenderTarget->QueryInterface(&deviceContext);
-
-		//ID2D1Effect* tintEffect;
-		//deviceContext->CreateEffect(CLSID_D2D1Tint, &tintEffect);
-
 		m_d2dTintEffect->SetInput(0, bm);
 		m_d2dTintEffect->SetValue(D2D1_TINT_PROP_COLOR, m_gradientStops[1].color);
 		m_d2dTintEffect->SetValue(D2D1_TINT_PROP_CLAMP_OUTPUT, TRUE);
@@ -752,14 +697,11 @@ void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, co
 			m_d2dTintEffect,
 			D2D1::Point2F(dstAt.x, dstAt.y),
 			D2D1::RectF(
-				srcAt.x, srcAt.y,
-				srcAt.x + srcSize.cx, srcAt.y + srcSize.cy
-			),
-			D2D1_INTERPOLATION_MODE_LINEAR
-		);
-
-		//tintEffect->Release();
-		//deviceContext->Release();
+				srcAt.x,
+				srcAt.y,
+				srcAt.x + srcSize.cx,
+				srcAt.y + srcSize.cy),
+			D2D1_INTERPOLATION_MODE_LINEAR);
 	}
 	else
 	{
@@ -772,16 +714,17 @@ void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, co
 		m_d2dRenderTarget->DrawBitmap(
 			bm,
 			D2D1::RectF(
-				dstAt.x, dstAt.y,
-				dstAt.x + dstSize.cx, dstAt.y + dstSize.cy
-			),
+				dstAt.x,
+				dstAt.y,
+				dstAt.x + dstSize.cx,
+				dstAt.y + dstSize.cy),
 			1.0f,
 			im,
 			D2D1::RectF(
-				srcAt.x, srcAt.y,
-				srcAt.x + srcSize.cx, srcAt.y + srcSize.cy
-			)
-		);
+				srcAt.x,
+				srcAt.y,
+				srcAt.x + srcSize.cx,
+				srcAt.y + srcSize.cy));
 	}
 }
 
@@ -797,8 +740,7 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 		m_dwTextFormat,
 		std::numeric_limits< FLOAT >::max(),
 		std::numeric_limits< FLOAT >::max(),
-		&dwLayout.getAssign()
-	);
+		&dwLayout.getAssign());
 	if (!dwLayout)
 		return;
 
@@ -816,8 +758,7 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 	m_d2dRenderTarget->DrawTextLayout(
 		D2D1::Point2F(at.x, at.y - lineGap),
 		dwLayout,
-		m_d2dForegroundBrush
-	);
+		m_d2dForegroundBrush);
 }
 
 void CanvasDirect2DWin32::drawGlyph(const Point& at, const wchar_t chr)
@@ -852,8 +793,7 @@ void CanvasDirect2DWin32::drawGlyph(const Point& at, const wchar_t chr)
 	m_d2dRenderTarget->DrawGlyphRun(
 		D2D1::Point2F(at.x, at.y),
 		&grun,
-		m_d2dForegroundBrush
-	);
+		m_d2dForegroundBrush);
 }
 
 void* CanvasDirect2DWin32::getSystemHandle()
@@ -886,7 +826,7 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 {
 	const BitmapWin32* bmw32 = reinterpret_cast< const BitmapWin32* >(bm);
 
-	auto it = m_cachedBitmaps.find(bmw32->getTag());
+	const auto it = m_cachedBitmaps.find(bmw32->getTag());
 	if (it != m_cachedBitmaps.end())
 	{
 		if (it->second.revision == bmw32->getRevision())
@@ -898,7 +838,7 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 	const Size size = bmw32->getSize();
 
 	const uint32_t* colorBits = (const uint32_t*)(bmw32->haveAlpha() ? bmw32->getBitsPreMulAlpha() : bmw32->getBits());
-	AutoArrayPtr< uint32_t > bits(new uint32_t [size.cx * size.cy]);
+	AutoArrayPtr< uint32_t > bits(new uint32_t[size.cx * size.cy]);
 
 	for (uint32_t y = 0; y < size.cy; ++y)
 	{
@@ -917,8 +857,7 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 		bits.c_ptr(),
 		size.cx * 4,
 		bitmapProps,
-		&d2dBitmap.getAssign()
-	);
+		&d2dBitmap.getAssign());
 	if (FAILED(hr))
 		return nullptr;
 
@@ -938,7 +877,7 @@ bool CanvasDirect2DWin32::realizeFont() const
 
 	const int32_t fontSize = (int32_t)((m_font.getSize().get() * m_dpi) / 96.0f);
 
-	auto it = m_cachedFonts.find(std::make_pair(m_font, fontSize));
+	const auto it = m_cachedFonts.find(std::make_pair(m_font, fontSize));
 	if (it != m_cachedFonts.end())
 	{
 		m_dwTextFormat = it->second.dwTextFormat;
@@ -954,8 +893,7 @@ bool CanvasDirect2DWin32::realizeFont() const
 		DWRITE_FONT_STRETCH_NORMAL,
 		fontSize,
 		L"",
-		&m_dwTextFormat.getAssign()
-	);
+		&m_dwTextFormat.getAssign());
 	if (!m_dwTextFormat)
 		return false;
 
@@ -980,8 +918,7 @@ bool CanvasDirect2DWin32::realizeFont() const
 			m_dwTextFormat->GetFontWeight(),
 			m_dwTextFormat->GetFontStretch(),
 			m_dwTextFormat->GetFontStyle(),
-			&m_dwFont.getAssign()
-		);
+			&m_dwFont.getAssign());
 
 		if (m_dwFont != nullptr)
 			m_dwFont->GetMetrics(&m_fontMetrics);
@@ -995,12 +932,9 @@ bool CanvasDirect2DWin32::realizeFont() const
 
 	m_cachedFonts.insert(
 		std::make_pair(m_font, fontSize),
-		{
-			m_dwTextFormat,
+		{ m_dwTextFormat,
 			m_dwFont,
-			m_dwFontFace
-		}
-	);
+			m_dwFontFace });
 
 	return true;
 }

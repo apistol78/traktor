@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Script/Editor/ScriptPipeline.h"
+
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -25,16 +27,15 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Script/Editor/Script.h"
 #include "Script/IErrorCallback.h"
 #include "Script/IScriptCompiler.h"
 #include "Script/ScriptResource.h"
-#include "Script/Editor/Script.h"
-#include "Script/Editor/ScriptPipeline.h"
 
 namespace traktor::script
 {
-	namespace
-	{
+namespace
+{
 
 struct ErrorCallback : public IErrorCallback
 {
@@ -54,7 +55,7 @@ bool readScript(editor::IPipelineCommon* pipelineCommon, const std::wstring& ass
 	if (const Script* script = dynamic_type_cast< const Script* >(sourceAsset))
 	{
 		// Escape script and flatten dependencies.
-		outSource = script->escape([&] (const Guid& g) -> std::wstring {
+		outSource = script->escape([&](const Guid& g) -> std::wstring {
 			return g.format();
 		});
 	}
@@ -64,7 +65,7 @@ bool readScript(editor::IPipelineCommon* pipelineCommon, const std::wstring& ass
 	return true;
 }
 
-bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const std::wstring& assetPath, const Preprocessor* prep, const Guid& scriptGuid, std::vector< Guid >& outScripts)
+bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const std::wstring& assetPath, const Preprocessor* prep, const Guid& scriptGuid, AlignedVector< Guid >& outScripts)
 {
 	Guid g;
 
@@ -109,7 +110,7 @@ bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const std::w
 	return true;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 21, ScriptPipeline, editor::DefaultPipeline)
 
@@ -156,8 +157,7 @@ bool ScriptPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	std::wstring source;
 	if (!readScript(pipelineDepends, m_assetPath, sourceAsset, source))
@@ -229,8 +229,7 @@ bool ScriptPipeline::buildOutput(
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
-	uint32_t reason
-) const
+	uint32_t reason) const
 {
 	std::wstring source;
 	if (!readScript(pipelineBuilder, m_assetPath, sourceAsset, source))
@@ -246,7 +245,7 @@ bool ScriptPipeline::buildOutput(
 	}
 
 	// Create ordered list of dependent scripts.
-	std::vector< Guid > dependencies;
+	AlignedVector< Guid > dependencies;
 	if (!flattenDependencies(pipelineBuilder, m_assetPath, m_preprocessor, outputGuid, dependencies))
 	{
 		log::error << L"Script pipeline failed; unable to resolve script dependencies, in script " << outputGuid.format() << L"." << Endl;
@@ -254,9 +253,9 @@ bool ScriptPipeline::buildOutput(
 	}
 
 	// Ensure current script isn't part of dependencies.
-	std::vector< Guid >::iterator i = std::find(dependencies.begin(), dependencies.end(), outputGuid);
-	if (i != dependencies.end())
-		dependencies.erase(i);
+	auto it = std::find(dependencies.begin(), dependencies.end(), outputGuid);
+	if (it != dependencies.end())
+		dependencies.erase(it);
 
 	// Compile script; save binary blobs if possible.
 	ErrorCallback errorCallback;
@@ -281,8 +280,7 @@ bool ScriptPipeline::buildOutput(
 		outputPath,
 		outputGuid,
 		buildParams,
-		reason
-	);
+		reason);
 }
 
 }

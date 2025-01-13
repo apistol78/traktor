@@ -88,7 +88,7 @@
 			<id>{19A2CC14-3E5E-4BB1-A4BF-43DD8B448F6F}</id>
 			<comment/>
 			<position>
-				<first>741</first>
+				<first>727</first>
 				<second>-164</second>
 			</position>
 			<external>{D9663E74-01FF-E04A-9C69-C78C4A5C7A1B}</external>
@@ -252,7 +252,7 @@
 			<id>{189882C6-A5B2-E246-AA74-86599F5A95CA}</id>
 			<comment/>
 			<position>
-				<first>781</first>
+				<first>784</first>
 				<second>201</second>
 			</position>
 			<names>
@@ -262,6 +262,14 @@
 				<item>Binormal</item>
 				<item>Velocity</item>
 			</names>
+		</item>
+		<item type="traktor.render.PreviewOutput" version="traktor.render.Node:1">
+			<id>{9AD6AF3B-C515-5340-A0B2-64EE4DC52F88}</id>
+			<comment/>
+			<position>
+				<first>967</first>
+				<second>-157</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -373,6 +381,16 @@
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
 				<id>{950F8770-82FA-124D-8656-D9F1F489C10E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{FFE19E4E-24A8-47A4-AE80-307495E31066}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{BDB32F7B-599C-42C8-A2CE-2B1BD0738E8B}</id>
 			</destination>
 		</item>
 	</edges>

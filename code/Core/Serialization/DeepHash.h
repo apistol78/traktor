@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Core/Ref.h"
 #include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,29 +36,28 @@ class T_DLLCLASS DeepHash : public Object
 	T_RTTI_CLASS;
 
 public:
-	DeepHash(const ISerializable* object);
+	explicit DeepHash(const ISerializable* object);
 
 	uint32_t get() const;
 
-	bool operator == (const DeepHash& hash) const;
+	bool operator==(const DeepHash& hash) const;
 
-	bool operator != (const DeepHash& hash) const;
+	bool operator!=(const DeepHash& hash) const;
 
-	bool operator == (const DeepHash* hash) const;
+	bool operator==(const DeepHash* hash) const;
 
-	bool operator != (const DeepHash* hash) const;
+	bool operator!=(const DeepHash* hash) const;
 
-	bool operator == (const ISerializable* object) const;
+	bool operator==(const ISerializable* object) const;
 
-	bool operator != (const ISerializable* object) const;
+	bool operator!=(const ISerializable* object) const;
 
-	bool operator == (uint32_t hash) const;
+	bool operator==(uint32_t hash) const;
 
-	bool operator != (uint32_t hash) const;
+	bool operator!=(uint32_t hash) const;
 
 private:
 	uint32_t m_hash;
 };
 
 }
-
