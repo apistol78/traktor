@@ -97,7 +97,7 @@
 				<first>-129</first>
 				<second>-1239</second>
 			</position>
-			<value>0.8</value>
+			<value>3</value>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{CE3F65A1-DE6C-9C42-B898-4A0B0E4F0661}</id>
@@ -674,7 +674,7 @@ Heaveside
 				<first>-136</first>
 				<second>-1098</second>
 			</position>
-			<value>0.5</value>
+			<value>0.3</value>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{A9C4313A-D65D-EF46-B90B-19B3F07FC281}</id>
@@ -918,7 +918,7 @@ Edge
 				<first>-137</first>
 				<second>-1057</second>
 			</position>
-			<value>32</value>
+			<value>16</value>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{6979E313-63BB-0E4C-A433-EBB932E8E11E}</id>
@@ -2304,8 +2304,8 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 				<second>-1340</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>930</first>
+				<second>478</second>
 			</size>
 		</item>
 	</groups>
