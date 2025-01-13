@@ -6,11 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Vulkan/RenderTargetVk.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
-#include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
@@ -23,7 +24,7 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetVk", RenderTargetVk, ITexture)
 
 RenderTargetVk::RenderTargetVk(Context* context)
-:	m_context(context)
+	: m_context(context)
 {
 }
 
@@ -38,23 +39,22 @@ bool RenderTargetVk::createPrimary(
 	uint32_t multiSample,
 	VkFormat format,
 	VkImage swapChainImage,
-	const wchar_t* const tag
-)
+	const wchar_t* const tag)
 {
 	if (multiSample > 1)
 	{
 		m_imageTarget = new Image(m_context);
-		if (!m_imageTarget->createTarget(width, height, multiSample, format, 0, false))
+		if (!m_imageTarget->createTarget(width, height, multiSample, format, format, 0, false))
 			return false;
 
 		m_imageResolved = new Image(m_context);
-		if (!m_imageResolved->createTarget(width, height, 1, format, swapChainImage, false))
+		if (!m_imageResolved->createTarget(width, height, 1, format, format, swapChainImage, false))
 			return false;
 	}
 	else
 	{
 		m_imageTarget = new Image(m_context);
-		if (!m_imageTarget->createTarget(width, height, 0, format, swapChainImage, false))
+		if (!m_imageTarget->createTarget(width, height, 0, format, format, swapChainImage, false))
 			return false;
 
 		m_imageResolved = m_imageTarget;
@@ -71,24 +71,25 @@ bool RenderTargetVk::createPrimary(
 
 bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc, const wchar_t* const tag)
 {
-	VkFormat format = determineSupportedTargetFormat(m_context->getPhysicalDevice(), desc.format, desc.sRGB);
-	if (format == VK_FORMAT_UNDEFINED)
+	VkFormat format = determineSupportedTargetFormat(m_context->getPhysicalDevice(), desc.format, false);
+	VkFormat formatView = determineSupportedTargetFormat(m_context->getPhysicalDevice(), desc.format, desc.sRGB);
+	if (format == VK_FORMAT_UNDEFINED || formatView == VK_FORMAT_UNDEFINED)
 		return false;
 
 	if (setDesc.multiSample > 1)
 	{
 		m_imageTarget = new Image(m_context);
-		if (!m_imageTarget->createTarget(setDesc.width, setDesc.height, setDesc.multiSample, format, 0, false))
+		if (!m_imageTarget->createTarget(setDesc.width, setDesc.height, setDesc.multiSample, format, formatView, 0, false))
 			return false;
 
 		m_imageResolved = new Image(m_context);
-		if (!m_imageResolved->createTarget(setDesc.width, setDesc.height, 1, format, 0, true))
+		if (!m_imageResolved->createTarget(setDesc.width, setDesc.height, 1, format, formatView, 0, true))
 			return false;
 	}
 	else
 	{
 		m_imageTarget = new Image(m_context);
-		if (!m_imageTarget->createTarget(setDesc.width, setDesc.height, setDesc.multiSample, format, 0, true))
+		if (!m_imageTarget->createTarget(setDesc.width, setDesc.height, setDesc.multiSample, format, formatView, 0, true))
 			return false;
 
 		m_imageResolved = m_imageTarget;
@@ -97,7 +98,7 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_imageTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_imageResolved->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 
-	m_format = format;
+	m_format = formatView;
 	m_width = setDesc.width;
 	m_height = setDesc.height;
 
@@ -107,8 +108,7 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	m_imageResolved->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
 
 	const VkClearColorValue color = {};
-	const VkImageSubresourceRange range =
-	{
+	const VkImageSubresourceRange range = {
 		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 		.baseMipLevel = 0,
 		.levelCount = 1,
@@ -121,8 +121,7 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		&color,
 		1,
-		&range
-	);
+		&range);
 
 	m_imageResolved->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
 

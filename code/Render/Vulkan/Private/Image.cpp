@@ -6,12 +6,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Vulkan/Private/Image.h"
+
 #include "Core/Config.h"
 #include "Core/Log/Log.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
-#include "Render/Vulkan/Private/Image.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
 namespace traktor::render
@@ -20,7 +21,7 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Image", Image, Object)
 
 Image::Image(Context* context)
-:	m_context(context)
+	: m_context(context)
 {
 }
 
@@ -34,8 +35,7 @@ bool Image::createSimple(
 	uint32_t height,
 	uint32_t mipLevels,
 	VkFormat format,
-	uint32_t usageBits
-)
+	uint32_t usageBits)
 {
 	T_FATAL_ASSERT(m_image == 0);
 
@@ -125,8 +125,7 @@ bool Image::createCube(
 	uint32_t height,
 	uint32_t mipLevels,
 	VkFormat format,
-	uint32_t usageBits
-)
+	uint32_t usageBits)
 {
 	T_FATAL_ASSERT(m_image == 0);
 
@@ -217,8 +216,7 @@ bool Image::createVolume(
 	uint32_t depth,
 	uint32_t mipLevels,
 	VkFormat format,
-	uint32_t usageBits
-)
+	uint32_t usageBits)
 {
 	T_FATAL_ASSERT(m_image == 0);
 
@@ -308,17 +306,18 @@ bool Image::createTarget(
 	uint32_t height,
 	uint32_t multiSample,
 	VkFormat format,
+	VkFormat formatView,
 	VkImage swapChainImage,
-	bool shaderAccessible
-)
+	bool shaderAccessible)
 {
 	T_FATAL_ASSERT(m_image == 0);
+	VkImageCreateInfo ici = {};
 
 	if (swapChainImage == 0)
 	{
 		// Create image.
-		VkImageCreateInfo ici = {};
 		ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		ici.flags = 0;
 		ici.imageType = VK_IMAGE_TYPE_2D;
 		ici.extent.width = width;
 		ici.extent.height = height;
@@ -335,7 +334,14 @@ bool Image::createTarget(
 
 		if (shaderAccessible)
 			ici.usage |= VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT;
-	
+
+		if (format != formatView)
+		{
+			ici.flags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
+			if (shaderAccessible)
+				ici.flags |= VK_IMAGE_CREATE_EXTENDED_USAGE_BIT;
+		}
+
 		VmaAllocationCreateInfo aci = {};
 		aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 		if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
@@ -350,12 +356,23 @@ bool Image::createTarget(
 		m_image = swapChainImage;
 	}
 
+	// Remove storage usage in view if we are creating sRGB target.
+	VkImageViewUsageCreateInfo usageCreateInfo = {
+		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO,
+		.pNext = nullptr,
+		.usage = ici.usage & ~VK_IMAGE_USAGE_STORAGE_BIT
+	};
+
 	// Create image view.
 	VkImageViewCreateInfo ivci = {};
 	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+
+	if (shaderAccessible && format != formatView)
+		ivci.pNext = &usageCreateInfo;
+
 	ivci.image = m_image;
 	ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
-	ivci.format = format;
+	ivci.format = formatView;
 	ivci.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
 	ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	ivci.subresourceRange.baseMipLevel = 0;
@@ -378,7 +395,8 @@ bool Image::createTarget(
 	if (shaderAccessible && swapChainImage == 0)
 	{
 		updateSampledResource();
-		updateStorageResource();
+		if (ivci.pNext == nullptr)
+			updateStorageResource();
 	}
 
 	return true;
@@ -390,8 +408,7 @@ bool Image::createDepthTarget(
 	uint32_t multiSample,
 	VkFormat format,
 	bool usedAsTexture,
-	bool usedAsStorage
-)
+	bool usedAsStorage)
 {
 	T_FATAL_ASSERT(m_image == 0);
 
@@ -471,20 +488,18 @@ void Image::destroy()
 	const uint32_t span = (uint32_t)m_storageImageViews.size();
 
 	if (m_allocation != 0)
-	{
 		m_context->addDeferredCleanup(
-			[image = m_image, allocation = m_allocation](Context* cx) { vmaDestroyImage(cx->getAllocator(), image, allocation); },
-			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets
-		);
-	}
+			[image = m_image, allocation = m_allocation](Context* cx) {
+			vmaDestroyImage(cx->getAllocator(), image, allocation);
+			},
+			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
 
 	if (m_imageView != 0)
-	{
 		m_context->addDeferredCleanup(
-			[imageView = m_imageView](Context* cx) { vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr); },
-			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets
-		);
-	}
+			[imageView = m_imageView](Context* cx) {
+			vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
+			},
+			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
 
 	if (!m_storageImageViews.empty())
 	{
@@ -494,24 +509,22 @@ void Image::destroy()
 				continue;
 
 			m_context->addDeferredCleanup(
-				[imageView = storageImageView](Context* cx) { vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr); },
-				Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets
-			);
+				[imageView = storageImageView](Context* cx) {
+				vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
+				},
+				Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
 		}
 	}
 
 	if (m_sampledResourceIndex != ~0U || m_storageResourceIndex != ~0U)
-	{
 		m_context->addDeferredCleanup(
 			[sampledResourceIndex = m_sampledResourceIndex, storageResourceIndex = m_storageResourceIndex, span](Context* cx) {
-				if (sampledResourceIndex != ~0U)
-					cx->freeSampledResourceIndex(sampledResourceIndex);
-				if (storageResourceIndex != ~0U)
-					cx->freeStorageResourceIndex(storageResourceIndex, span);
+			if (sampledResourceIndex != ~0U)
+				cx->freeSampledResourceIndex(sampledResourceIndex);
+			if (storageResourceIndex != ~0U)
+				cx->freeStorageResourceIndex(storageResourceIndex, span);
 			},
-			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets
-		);
-	}
+			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
 
 	m_allocation = 0;
 	m_image = 0;
@@ -549,8 +562,7 @@ bool Image::changeLayout(
 	uint32_t mipLevel,
 	uint32_t mipCount,
 	uint32_t layerLevel,
-	uint32_t layerCount
-)
+	uint32_t layerCount)
 {
 	T_ASSERT(mipLevel + mipCount <= m_mipCount);
 	T_ASSERT(layerLevel + layerCount <= m_layerCount);
@@ -582,18 +594,16 @@ bool Image::changeLayout(
 		getPipelineStageFlags(imb.oldLayout),
 		getPipelineStageFlags(imb.newLayout),
 		0,
-		0, nullptr,
-		0, nullptr,
-		1, &imb
-	);
+		0,
+		nullptr,
+		0,
+		nullptr,
+		1,
+		&imb);
 
 	for (uint32_t layer = 0; layer < layerCount; ++layer)
-	{
 		for (uint32_t mip = 0; mip < mipCount; ++mip)
-		{
 			m_imageLayouts[(layerLevel + layer) * m_mipCount + (mipLevel + mip)] = imb.newLayout;
-		}
-	}
 
 	return true;
 }
@@ -630,8 +640,7 @@ bool Image::updateSampledResource()
 		1,
 		&write,
 		0,
-		nullptr
-	);
+		nullptr);
 
 	return true;
 }
@@ -672,11 +681,9 @@ bool Image::updateStorageResource()
 			1,
 			&write,
 			0,
-			nullptr
-		);
+			nullptr);
 	}
 
 	return true;
 }
-
 }

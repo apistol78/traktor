@@ -41,16 +41,14 @@ public:
 		uint32_t height,
 		uint32_t mipLevels,
 		VkFormat format,
-		uint32_t usageBits
-	);
+		uint32_t usageBits);
 
 	bool createCube(
 		uint32_t width,
 		uint32_t height,
 		uint32_t mipLevels,
 		VkFormat format,
-		uint32_t usageBits
-	);
+		uint32_t usageBits);
 
 	bool createVolume(
 		uint32_t width,
@@ -58,17 +56,16 @@ public:
 		uint32_t depth,
 		uint32_t mipLevels,
 		VkFormat format,
-		uint32_t usageBits
-	);
+		uint32_t usageBits);
 
 	bool createTarget(
 		uint32_t width,
 		uint32_t height,
 		uint32_t multiSample,
 		VkFormat format,
+		VkFormat formatView,
 		VkImage swapChainImage,
-		bool shaderAccessible
-	);
+		bool shaderAccessible);
 
 	bool createDepthTarget(
 		uint32_t width,
@@ -76,8 +73,7 @@ public:
 		uint32_t multiSample,
 		VkFormat format,
 		bool usedAsTexture,
-		bool usedAsStorage
-	);
+		bool usedAsStorage);
 
 	void destroy();
 
@@ -92,8 +88,7 @@ public:
 		uint32_t mipLevel,
 		uint32_t mipCount,
 		uint32_t layerLevel,
-		uint32_t layerCount
-	);
+		uint32_t layerCount);
 
 	VkImage getVkImage() const { return m_image; }
 
@@ -117,12 +112,12 @@ private:
 	uint32_t m_mipCount = 0;
 	uint32_t m_layerCount = 0;
 	uint32_t m_sampledResourceIndex = ~0U;
-	uint32_t m_storageResourceIndex = ~0U;	//!< Base index of storage resource, each mip is sequentially exposed.
+	uint32_t m_storageResourceIndex = ~0U; //!< Base index of storage resource, each mip is sequentially exposed.
 	void* m_locked = nullptr;
 
 	bool updateSampledResource();
 
 	bool updateStorageResource();
 };
-		
+
 }
