@@ -311,40 +311,42 @@ bool Image::createTarget(
 	bool shaderAccessible)
 {
 	T_FATAL_ASSERT(m_image == 0);
-	VkImageCreateInfo ici = {};
+	VkImageCreateInfo imageCreateInfo = {};
 
 	if (swapChainImage == 0)
 	{
 		// Create image.
-		ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		ici.flags = 0;
-		ici.imageType = VK_IMAGE_TYPE_2D;
-		ici.extent.width = width;
-		ici.extent.height = height;
-		ici.extent.depth = 1;
-		ici.mipLevels = 1;
-		ici.arrayLayers = 1;
-		ici.format = format;
-		ici.tiling = VK_IMAGE_TILING_OPTIMAL;
-		ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		ici.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-		ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		ici.samples = (multiSample <= 1) ? VK_SAMPLE_COUNT_1_BIT : (VkSampleCountFlagBits)multiSample;
-		ici.flags = 0;
+		imageCreateInfo = VkImageCreateInfo{
+			.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+			.flags = 0,
+			.imageType = VK_IMAGE_TYPE_2D,
+			.format = format,
+			.extent = {
+				.width = width,
+				.height = height,
+				.depth = 1 },
+			.mipLevels = 1,
+			.arrayLayers = 1,
+			.samples = (multiSample <= 1) ? VK_SAMPLE_COUNT_1_BIT : (VkSampleCountFlagBits)multiSample,
+			.tiling = VK_IMAGE_TILING_OPTIMAL,
+			.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+			.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
+		};
 
 		if (shaderAccessible)
-			ici.usage |= VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT;
+			imageCreateInfo.usage |= VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT;
 
 		if (format != formatView)
 		{
-			ici.flags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
+			imageCreateInfo.flags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
 			if (shaderAccessible)
-				ici.flags |= VK_IMAGE_CREATE_EXTENDED_USAGE_BIT;
+				imageCreateInfo.flags |= VK_IMAGE_CREATE_EXTENDED_USAGE_BIT;
 		}
 
 		VmaAllocationCreateInfo aci = {};
 		aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-		if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
+		if (vmaCreateImage(m_context->getAllocator(), &imageCreateInfo, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
 		{
 			log::error << L"Failed to create image; unable to allocate image memory." << Endl;
 			return false;
@@ -356,30 +358,32 @@ bool Image::createTarget(
 		m_image = swapChainImage;
 	}
 
+	// Create image view.
+	VkImageViewCreateInfo viewCreateInfo = {
+		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+		.image = m_image,
+		.viewType = VK_IMAGE_VIEW_TYPE_2D,
+		.format = formatView,
+		.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A },
+		.subresourceRange = {
+			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+			.baseMipLevel = 0,
+			.levelCount = 1,
+			.baseArrayLayer = 0,
+			.layerCount = 1 }
+	};
+
 	// Remove storage usage in view if we are creating sRGB target.
 	VkImageViewUsageCreateInfo usageCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO,
 		.pNext = nullptr,
-		.usage = ici.usage & ~VK_IMAGE_USAGE_STORAGE_BIT
+		.usage = imageCreateInfo.usage & ~VK_IMAGE_USAGE_STORAGE_BIT
 	};
 
-	// Create image view.
-	VkImageViewCreateInfo ivci = {};
-	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-
 	if (shaderAccessible && format != formatView)
-		ivci.pNext = &usageCreateInfo;
+		viewCreateInfo.pNext = &usageCreateInfo;
 
-	ivci.image = m_image;
-	ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
-	ivci.format = formatView;
-	ivci.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
-	ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	ivci.subresourceRange.baseMipLevel = 0;
-	ivci.subresourceRange.levelCount = 1;
-	ivci.subresourceRange.baseArrayLayer = 0;
-	ivci.subresourceRange.layerCount = 1;
-	if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, nullptr, &m_imageView) != VK_SUCCESS)
+	if (vkCreateImageView(m_context->getLogicalDevice(), &viewCreateInfo, nullptr, &m_imageView) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create image view; unable to create image view." << Endl;
 		return false;
@@ -387,7 +391,6 @@ bool Image::createTarget(
 	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
 	m_storageImageViews.push_back(m_imageView);
-
 	m_mipCount = 1;
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
@@ -395,7 +398,7 @@ bool Image::createTarget(
 	if (shaderAccessible && swapChainImage == 0)
 	{
 		updateSampledResource();
-		if (ivci.pNext == nullptr)
+		if (viewCreateInfo.pNext == nullptr)
 			updateStorageResource();
 	}
 

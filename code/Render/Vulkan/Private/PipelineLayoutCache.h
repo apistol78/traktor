@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,9 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Object.h"
+#include "Core/Thread/Semaphore.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor::render
@@ -32,8 +33,7 @@ public:
 		bool useTargetSize,
 		const VkDescriptorSetLayoutCreateInfo& dlci,
 		VkDescriptorSetLayout& outDescriptorSetLayout,
-		VkPipelineLayout& outPipelineLayout
-	);
+		VkPipelineLayout& outPipelineLayout);
 
 	VkSampler getSampler(const VkSamplerCreateInfo& sci);
 
@@ -50,6 +50,7 @@ private:
 	Context* m_context;
 	SmallMap< uint32_t, Entry > m_entries;
 	SmallMap< uint32_t, VkSampler > m_samplers;
+	Semaphore m_lock;
 };
 
 }

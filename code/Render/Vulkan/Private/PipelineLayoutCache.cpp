@@ -1,28 +1,29 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Vulkan/Private/PipelineLayoutCache.h"
+
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Murmur3.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/Context.h"
-#include "Render/Vulkan/Private/PipelineLayoutCache.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 #if defined(_DEBUG)
 
-const wchar_t* c_descriptorTypes[] =
-{
+const wchar_t* c_descriptorTypes[] = {
 	L"VK_DESCRIPTOR_TYPE_SAMPLER",
 	L"VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER",
 	L"VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE",
@@ -57,10 +58,10 @@ std::wstring describe(const VkDescriptorSetLayoutCreateInfo& dlci)
 
 #endif
 
-	}
+}
 
 PipelineLayoutCache::PipelineLayoutCache(Context* context)
-:	m_context(context)
+	: m_context(context)
 {
 }
 
@@ -78,6 +79,8 @@ PipelineLayoutCache::~PipelineLayoutCache()
 
 bool PipelineLayoutCache::get(uint32_t pipelineHash, bool useTargetSize, const VkDescriptorSetLayoutCreateInfo& dlci, VkDescriptorSetLayout& outDescriptorSetLayout, VkPipelineLayout& outPipelineLayout)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	auto it = m_entries.find(pipelineHash);
 	if (it != m_entries.end())
 	{
@@ -104,8 +107,7 @@ bool PipelineLayoutCache::get(uint32_t pipelineHash, bool useTargetSize, const V
 			return false;
 
 		// Must match order defined in GlslResource.h
-		const VkDescriptorSetLayout setLayouts[] =
-		{
+		const VkDescriptorSetLayout setLayouts[] = {
 			outDescriptorSetLayout,
 			m_context->getBindlessTexturesSetLayout(),
 			m_context->getBindlessImagesSetLayout(),
@@ -149,20 +151,24 @@ VkSampler PipelineLayoutCache::getSampler(const VkSamplerCreateInfo& sci)
 	cs.begin();
 	cs.feedBuffer(&sci, sizeof(sci));
 	cs.end();
-	
+
 	const uint32_t samplerHash = cs.get();
-
-	auto it = m_samplers.find(samplerHash);
-	if (it != m_samplers.end())
-		return it->second;
-
 	VkSampler sampler = 0;
-	if (vkCreateSampler(m_context->getLogicalDevice(), &sci, nullptr, &sampler) != VK_SUCCESS)
-		return 0;
 
-	setObjectDebugName(m_context->getLogicalDevice(), L"Sampler", (uint64_t)sampler, VK_OBJECT_TYPE_SAMPLER);
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		auto it = m_samplers.find(samplerHash);
+		if (it != m_samplers.end())
+			return it->second;
 
-	m_samplers.insert(samplerHash, sampler);
+		if (vkCreateSampler(m_context->getLogicalDevice(), &sci, nullptr, &sampler) != VK_SUCCESS)
+			return 0;
+
+		setObjectDebugName(m_context->getLogicalDevice(), L"Sampler", (uint64_t)sampler, VK_OBJECT_TYPE_SAMPLER);
+
+		m_samplers.insert(samplerHash, sampler);
+	}
+
 	return sampler;
 }
 

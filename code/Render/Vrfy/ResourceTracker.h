@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,9 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Object.h"
+#include "Core/Thread/Semaphore.h"
 
 namespace traktor::render
 {
@@ -32,6 +33,7 @@ private:
 		void* callstack[16] = { nullptr };
 	};
 
+	Semaphore m_lock;
 	SmallMap< const Object*, Data > m_data;
 };
 
