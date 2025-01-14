@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cmath>
+#include "Weather/Sky/SkyComponentData.h"
+
 #include "Core/Math/Const.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Serialization/AttributeHdr.h"
@@ -15,28 +16,29 @@
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Resource/IResourceManager.h"
 #include "Render/ITexture.h"
-#include "Render/Shader.h"
 #include "Render/SH/SHEngine.h"
 #include "Render/SH/SHFunction.h"
+#include "Render/Shader.h"
+#include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Weather/Sky/SkyComponent.h"
-#include "Weather/Sky/SkyComponentData.h"
 #include "World/IrradianceGrid.h"
+
+#include <cmath>
 
 namespace traktor::weather
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}"));
 
 class WrappedSHFunction : public render::SHFunction
 {
 public:
-	explicit WrappedSHFunction(const std::function< Vector4 (const Vector4&) >& fn)
-	:	m_fn(fn)
+	explicit WrappedSHFunction(const std::function< Vector4(const Vector4&) >& fn)
+		: m_fn(fn)
 	{
 	}
 
@@ -46,15 +48,30 @@ public:
 	}
 
 private:
-	std::function< Vector4 (const Vector4&) > m_fn;
+	std::function< Vector4(const Vector4&) > m_fn;
 };
 
-	}
+Vector4 lambertianDirection(const Vector2& uv, const Vector4& direction)
+{
+	// Calculate random direction, with Gaussian probability distribution.
+	const float sin2_theta = uv.x;
+	const float cos2_theta = 1.0f - sin2_theta;
+	const float sin_theta = std::sqrt(sin2_theta);
+	const float cos_theta = std::sqrt(cos2_theta);
+	const float orientation = uv.y * TWO_PI;
+	const Vector4 dir(sin_theta * std::cos(orientation), sin_theta * std::sin(orientation), cos_theta, 0.0f);
+
+	Vector4 u, v;
+	orthogonalFrame(direction, u, v);
+	return (Matrix44(u, v, direction, Vector4::zero()) * dir).xyz0().normalized();
+}
+
+}
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 8, SkyComponentData, world::IEntityComponentData)
 
 SkyComponentData::SkyComponentData()
-:	m_shader(c_defaultShader)
+	: m_shader(c_defaultShader)
 {
 }
 
@@ -63,7 +80,7 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 	resource::Proxy< render::Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
 		return nullptr;
-		
+
 	resource::Proxy< render::ITexture > texture;
 	if (m_texture.isValid() && !m_texture.isNull())
 	{
@@ -75,21 +92,26 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 	const Scalar intensity(m_intensity);
 	const Scalar saturation(m_saturation);
 
-	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
+	WrappedSHFunction shFunction([&](const Vector4& unit) -> Vector4 {
 		Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
+		const Vector4 rd = unit;
 
 		// Sample over hemisphere.
 		for (int32_t i = 0; i < 1000; ++i)
 		{
 			const Vector2 uv = Quasirandom::hammersley(i, 1000);
-			const Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
-			const Vector4 rd = unit;
-			
+
+			// const Vector4 direction = Quasirandom::uniformHemiSphere(uv, rd);
+			// const Scalar probability = 1.0_simd;
+
+			const Vector4 direction = lambertianDirection(uv, rd);
+			const Scalar probability = 0.78532_simd;
+
 			Vector4 col = Vector4(m_skyOverHorizon.linear()) - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;
 			col = lerp(col, m_skyUnderHorizon.linear(), power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
 
-			const Scalar w = dot3(direction, unit);
-			cl += Color4f(col * w);
+			const Scalar cosPhi = dot3(direction, rd);
+			cl += Color4f(col * cosPhi / probability);
 		}
 
 		// Apply saturation.
@@ -113,8 +135,7 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 		*this,
 		irradianceGrid,
 		shader,
-		texture
-	);
+		texture);
 	skyComponent->create(resourceManager, renderSystem);
 	return skyComponent;
 }

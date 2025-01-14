@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Math/Color4f.h"
+#include "Core/Ref.h"
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
 
@@ -77,7 +78,6 @@ public:
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 	const resource::Id< render::ITexture >& getTexture() const { return m_texture; }
-
 
 private:
 	friend class SkyComponent;
