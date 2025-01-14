@@ -70,6 +70,10 @@
 			<second>Create external...</second>
 		</item>
 		<item>
+			<first>SCENE_EDITOR_DEBUG_OVERLAY</first>
+			<second>Debug overlay</second>
+		</item>
+		<item>
 			<first>SCENE_EDITOR_DEBUG_MODE</first>
 			<second>Debug mode</second>
 		</item>
@@ -412,6 +416,10 @@
 		<item>
 			<first>SCENE_EDITOR_LOAD_MESSAGE</first>
 			<second>Loading scene...</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_WORLD_RENDERER</first>
+			<second>World renderer</second>
 		</item>
 	</map>
 </object>
