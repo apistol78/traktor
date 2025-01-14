@@ -91,7 +91,9 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 	const Guid shaderId = instance->getGuid();
 	const std::wstring shaderName = instance->getPath();
 	Ref< Shader > shader = new Shader();
+	AlignedVector< std::function< bool() > > textureLinks;
 	RefArray< Job > jobs;
+	Semaphore lock;
 	bool succeeded = true;
 
 	// Create combination parameter mapping.
@@ -128,7 +130,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 			if (programResource->requireRayTracing() && !m_renderSystem->supportRayTracing())
 				continue;
 
-			jobs.push_back(JobManager::getInstance().add([&resourceCombination, programResource, programName, resourceManager, &shaderId, &technique, &succeeded, this]() {
+			jobs.push_back(JobManager::getInstance().add([&resourceCombination, programResource, programName, resourceManager, &shaderId, &technique, &textureLinks, &lock, &succeeded, this]() {
 				Shader::Combination combination;
 				combination.mask = resourceCombination.mask;
 				combination.value = resourceCombination.value;
@@ -141,12 +143,10 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 				}
 
 				// Set implicit texture uniforms.
-				TextureReaderAdapter textureReader(resourceManager, shaderId);
-				if (!TextureLinker(textureReader).link(resourceCombination, combination.program))
-				{
-					succeeded = false;
-					return;
-				}
+				textureLinks.push_back([&resourceCombination, resourceManager, &shaderId, program = combination.program]() {
+					TextureReaderAdapter textureReader(resourceManager, shaderId);
+					return TextureLinker(textureReader).link(resourceCombination, program);
+				});
 
 				// Set uniform default values.
 				for (const auto& ius : resourceCombination.initializeUniformScalar)
@@ -154,7 +154,11 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 				for (const auto& iuv : resourceCombination.initializeUniformVector)
 					combination.program->setVectorParameter(getParameterHandle(iuv.name), iuv.value);
 
-				technique.combinations.push_back(combination);
+				// Add combination.
+				{
+					T_ANONYMOUS_VAR(Acquire< Semaphore >)(lock);
+					technique.combinations.push_back(combination);
+				}
 			}));
 		}
 	}
@@ -165,6 +169,11 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 		jobs.back()->wait();
 		jobs.pop_back();
 	}
+
+	// Link textures, do these after all local jobs has finished so we don't dead lock the resource manager.
+	for (const auto& textureLink : textureLinks)
+		if (!textureLink())
+			return nullptr;
 
 	return succeeded ? shader : nullptr;
 }
