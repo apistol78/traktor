@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/LogList/LogList.h"
+
 #include "Core/Guid.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Split.h"
@@ -16,11 +18,10 @@
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
+#include "Ui/Events/LogActivateEvent.h"
+#include "Ui/ScrollBar.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
-#include "Ui/ScrollBar.h"
-#include "Ui/Events/LogActivateEvent.h"
-#include "Ui/LogList/LogList.h"
 
 namespace traktor::ui
 {
@@ -37,7 +38,7 @@ bool LogList::create(Widget* parent, uint32_t style, const ISymbolLookup* lookup
 	addEventHandler< MouseButtonDownEvent >(this, &LogList::eventMouseButtonDown);
 	addEventHandler< MouseDoubleClickEvent >(this, &LogList::eventMouseDoubleClick);
 	addEventHandler< MouseWheelEvent >(this, &LogList::eventMouseWheel);
-    addEventHandler< TimerEvent >(this, &LogList::eventTimer);
+	addEventHandler< TimerEvent >(this, &LogList::eventTimer);
 
 	m_scrollBarH = new ScrollBar();
 	if (!m_scrollBarH->create(this, ScrollBar::WsHorizontal))
@@ -56,7 +57,7 @@ bool LogList::create(Widget* parent, uint32_t style, const ISymbolLookup* lookup
 	m_icons = new StyleBitmap(L"UI.Log");
 	m_itemHeight = getFont().getSize() + 4_ut;
 	m_lookup = lookup;
-    
+
 #if defined(__APPLE__)
 	startTimer(100);
 #endif
@@ -123,8 +124,8 @@ void LogList::removeAll()
 	m_logFull.clear();
 	m_logFiltered.clear();
 	m_logCount[0] =
-	m_logCount[1] =
-	m_logCount[2] = Count();
+		m_logCount[1] =
+			m_logCount[2] = Count();
 	m_threadIndices.clear();
 	m_maxLineWidth = 0;
 	m_nextThreadIndex = 0;
@@ -175,10 +176,8 @@ bool LogList::copyLog(uint8_t filter)
 {
 	StringOutputStream ss;
 	for (const auto& log : m_logFull)
-	{
 		if ((log.level & filter) != 0)
 			ss << log.text << Endl;
-	}
 	return Application::getInstance()->getClipboard()->setText(ss.str());
 }
 
@@ -215,6 +214,7 @@ uint32_t LogList::countUnrenderedLog(uint8_t level) const
 		return 0;
 	}
 }
+
 void LogList::forEachLine(const std::function< void(int32_t line, const std::wstring& text) >& fn) const
 {
 	for (int32_t line = 0; line < (int32_t)m_logFull.size(); ++line)
@@ -251,6 +251,8 @@ void LogList::updateScrollBar()
 	}
 	else
 	{
+		m_scrollBarH->setRange(0);
+		m_scrollBarH->setPage(0);
 		m_scrollBarH->setPosition(0);
 		m_scrollBarH->setVisible(false);
 	}
@@ -264,6 +266,8 @@ void LogList::updateScrollBar()
 	}
 	else
 	{
+		m_scrollBarV->setRange(0);
+		m_scrollBarV->setPage(0);
 		m_scrollBarV->setPosition(0);
 		m_scrollBarV->setVisible(false);
 	}
@@ -279,6 +283,10 @@ void LogList::eventPaint(PaintEvent* event)
 	bool needUpdateScrollBars = false;
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_pendingLock);
+
+		m_logFull.reserve(m_logFull.size() + m_pending.size());
+		m_logFiltered.reserve(m_logFiltered.size() + m_pending.size());
+
 		for (const auto& log : m_pending)
 		{
 			const Size sz = canvas.getFontMetric().getExtent(log.text);
@@ -296,7 +304,7 @@ void LogList::eventPaint(PaintEvent* event)
 			}
 		}
 
-		m_pending.clear();
+		m_pending.resize(0);
 	}
 
 	if (needUpdateScrollBars)
@@ -308,14 +316,12 @@ void LogList::eventPaint(PaintEvent* event)
 	const Color4ub selectedColor = ss->getColor(this, L"color-selected");
 	const Color4ub selectedBgColor = ss->getColor(this, L"background-color-selected");
 
-	const Color4ub levelColors[] =
-	{
+	const Color4ub levelColors[] = {
 		ss->getColor(this, L"color-info"),
 		ss->getColor(this, L"color-warning"),
 		ss->getColor(this, L"color-error")
 	};
-	const Color4ub levelBgColors[] =
-	{
+	const Color4ub levelBgColors[] = {
 		ss->getColor(this, L"background-color-info"),
 		ss->getColor(this, L"background-color-warning"),
 		ss->getColor(this, L"background-color-error")
@@ -452,10 +458,9 @@ void LogList::eventPaint(PaintEvent* event)
 		const std::wstring ws = str(L"%d", m_logCount[1].total);
 		const std::wstring es = str(L"%d", m_logCount[2].total);
 
-		int32_t w = std::max< int32_t>(
+		int32_t w = std::max< int32_t >(
 			canvas.getFontMetric().getExtent(ws).cx,
-			canvas.getFontMetric().getExtent(es).cx
-		);
+			canvas.getFontMetric().getExtent(es).cx);
 
 		w += pixel(16_ut);
 
@@ -473,7 +478,7 @@ void LogList::eventPaint(PaintEvent* event)
 			canvas.fillRect(rcCount);
 			canvas.drawText(rcCount, es, AnCenter, AnCenter);
 
-			x -= w;	
+			x -= w;
 		}
 		if (m_logCount[1].total > 0)
 		{
@@ -485,7 +490,7 @@ void LogList::eventPaint(PaintEvent* event)
 			canvas.fillRect(rcCount);
 			canvas.drawText(rcCount, ws, AnCenter, AnCenter);
 
-			x -= w;	
+			x -= w;
 		}
 	}
 
@@ -543,7 +548,7 @@ void LogList::eventMouseWheel(MouseWheelEvent* event)
 	m_scrollBarV->setPosition(position);
 	update();
 }
-    
+
 void LogList::eventTimer(TimerEvent* event)
 {
 #if defined(__APPLE__)
@@ -558,13 +563,13 @@ void LogList::eventScroll(ScrollEvent* event)
 	update();
 }
 
-void LogList::Count::operator ++ ()
+void LogList::Count::operator++()
 {
 	total++;
 	unrendered++;
 }
 
-void LogList::Count::operator -- ()
+void LogList::Count::operator--()
 {
 	unrendered--;
 }
