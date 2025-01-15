@@ -130,6 +130,7 @@
 			<![CDATA[
 const int mip = int(pow($Roughness, 1) * $Mips);
 $Mip = clamp(mip, 0, int($Mips) - 1);
+
 			]]>
 			</script>
 		</item>
