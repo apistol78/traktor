@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.db.LocalInstanceMeta" version="2">
-	<guid>{934F1D92-C961-485A-A5B8-6703A51266D8}</guid>
-	<primaryType>traktor.world.BrdfTextureAsset</primaryType>
+	<guid>{1915711B-3137-3E40-BF90-77E8C7A53FD0}</guid>
+	<primaryType>traktor.render.UniformDeclaration</primaryType>
 	<blobs/>
 </object>

@@ -55,8 +55,7 @@ public:
 	virtual bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		const WorldCreateDesc& desc
-	) override;
+		const WorldCreateDesc& desc) override;
 
 	virtual void destroy() override;
 
@@ -65,6 +64,7 @@ protected:
 	friend class TilesOverlay;
 
 #pragma pack(1)
+
 	struct LightShaderData
 	{
 		float type;
@@ -79,6 +79,7 @@ protected:
 		float viewToLight3[4];
 		float atlasTransform[4];
 	};
+
 #pragma pack()
 
 	struct State
@@ -107,8 +108,8 @@ protected:
 	Ref< PostProcessPass > m_postProcessPass;
 	//@}
 
-    Ref< WorldEntityRenderers > m_entityRenderers;
-    Ref< render::ScreenRenderer > m_screenRenderer;
+	Ref< WorldEntityRenderers > m_entityRenderers;
+	Ref< render::ScreenRenderer > m_screenRenderer;
 	Ref< render::ITexture > m_blackTexture;
 	Ref< render::ITexture > m_whiteTexture;
 	Ref< render::ITexture > m_blackCubeTexture;
@@ -125,8 +126,7 @@ protected:
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
-		render::handle_t& outShadowMapAtlasTargetSetId
-	);
+		render::handle_t& outShadowMapAtlasTargetSetId);
 };
 
 }

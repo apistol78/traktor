@@ -6,35 +6,29 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
+#include "World/Shared/WorldRendererShared.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
-#include "Render/IRenderSystem.h"
-#include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
+#include "Render/IRenderSystem.h"
+#include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
-#include "World/IEntityRenderer.h"
-#include "World/IrradianceGrid.h"
-#include "World/IWorldComponent.h"
-#include "World/Packer.h"
-#include "World/World.h"
-#include "World/WorldBuildContext.h"
-#include "World/WorldEntityRenderers.h"
-#include "World/WorldHandles.h"
-#include "World/WorldRenderView.h"
 #include "World/Entity/FogComponent.h"
 #include "World/Entity/IrradianceGridComponent.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeComponent.h"
 #include "World/Entity/RTWorldComponent.h"
-#include "World/Shared/WorldRendererShared.h"
-#include "World/Shared/WorldRenderPassShared.h"
+#include "World/IEntityRenderer.h"
+#include "World/IrradianceGrid.h"
+#include "World/IWorldComponent.h"
+#include "World/Packer.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
 #include "World/Shared/Passes/ContactShadowsPass.h"
 #include "World/Shared/Passes/DBufferPass.h"
@@ -45,12 +39,20 @@
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
+#include "World/Shared/WorldRenderPassShared.h"
 #include "World/SMProj/UniformShadowProjection.h"
+#include "World/World.h"
+#include "World/WorldBuildContext.h"
+#include "World/WorldEntityRenderers.h"
+#include "World/WorldHandles.h"
+#include "World/WorldRenderView.h"
+
+#include <cstring>
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_clearDepthShader(L"{0135F7CC-FC65-4FD9-BBD5-CCE0C003B540}");
 
@@ -91,22 +93,21 @@ Ref< render::ITexture > createCubeTexture(render::IRenderSystem* renderSystem, u
 	return renderSystem->createCubeTexture(ctcd, T_FILE_LINE_W);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRendererShared", WorldRendererShared, IWorldRenderer)
 
 bool WorldRendererShared::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	const WorldCreateDesc& desc
-)
+	const WorldCreateDesc& desc)
 {
 	m_entityRenderers = desc.entityRenderers;
 
 	// Store settings.
 	m_settings = *desc.worldRenderSettings;
 	m_shadowsQuality = desc.quality.shadows;
-	
+
 	// Create screen renderer.
 	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(renderSystem))
@@ -123,8 +124,7 @@ bool WorldRendererShared::create(
 		m_state[i].lightSBuffer = renderSystem->createBuffer(
 			render::BuStructured,
 			(LightClusterPass::c_maxLightCount + 3) * sizeof(LightShaderData),
-			true
-		);
+			true);
 		if (!m_state[i].lightSBuffer)
 			return false;
 	}
@@ -132,8 +132,7 @@ bool WorldRendererShared::create(
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	m_shadowAtlasPacker = new Packer(
 		shadowSettings.resolution,
-		shadowSettings.resolution
-	);
+		shadowSettings.resolution);
 
 	// Create "clear depth" shader.
 	if (!resourceManager->bind(c_clearDepthShader, m_clearDepthShader))
@@ -276,8 +275,7 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 				auto& light = lights[i];
 				if (
 					light->getCastShadow() &&
-					light->getLightType() == LightType::Directional
-				)
+					light->getLightType() == LightType::Directional)
 				{
 					m_gatheredView.cascadingDirectionalLight = light;
 					break;
@@ -303,8 +301,7 @@ void WorldRendererShared::setupLightPass(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId,
-	render::handle_t& outShadowMapAtlasTargetSetId
-)
+	render::handle_t& outShadowMapAtlasTargetSetId)
 {
 	T_PROFILER_SCOPE(L"WorldRendererShared setupLightPass");
 
@@ -401,8 +398,7 @@ void WorldRendererShared::setupLightPass(
 			L"Shadow map atlas",
 			s_handleTargetShadowMap[worldRenderView.getIndex()],
 			false,
-			rgtd
-		);
+			rgtd);
 
 		// Add shadow map render passes.
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow map");
@@ -466,79 +462,70 @@ void WorldRendererShared::setupLightPass(
 					shadowSettings.quantizeProjection,
 					shadowLightView,
 					shadowLightProjection,
-					shadowFrustum
-				);
+					shadowFrustum);
 
 				shadowLightViews[slice] = shadowLightProjection * shadowLightView;
 
 				rp->addBuild(
-					[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+					[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+					WorldBuildContext wc(
+						m_entityRenderers,
+						renderContext);
+
+					// Render shadow map.
+					WorldRenderView shadowRenderView;
+					shadowRenderView.setIndex(worldRenderView.getIndex());
+					shadowRenderView.setCascade(slice);
+					shadowRenderView.setProjection(shadowLightProjection);
+					shadowRenderView.setView(shadowLightView, shadowLightView);
+					shadowRenderView.setViewFrustum(shadowFrustum);
+					shadowRenderView.setCullFrustum(shadowFrustum);
+					shadowRenderView.setTimes(
+						worldRenderView.getTime(),
+						worldRenderView.getDeltaTime(),
+						worldRenderView.getInterval());
+
+					// Set viewport to current cascade.
+					auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
+					svrb->viewport = render::Viewport(
+						slice * sliceDim,
+						0,
+						sliceDim,
+						sliceDim,
+						0.0f,
+						1.0f);
+					renderContext->draw(svrb);
+
+					// Render entities into shadow map.
+					auto sharedParams = renderContext->alloc< render::ProgramParameters >();
+					sharedParams->beginParameters(renderContext);
+					sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
+					sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
+					sharedParams->setMatrixParameter(s_handleView, shadowLightView);
+					sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
+					sharedParams->endParameters(renderContext);
+
+					const WorldRenderPassShared shadowPass(
+						s_techniqueShadow,
+						sharedParams,
+						shadowRenderView,
+						IWorldRenderPass::None);
+
+					T_ASSERT(!renderContext->havePendingDraws());
+
+					// Clear cascade shadow map.
 					{
-						WorldBuildContext wc(
-							m_entityRenderers,
-							renderContext
-						);
-
-						// Render shadow map.
-						WorldRenderView shadowRenderView;
-						shadowRenderView.setIndex(worldRenderView.getIndex());
-						shadowRenderView.setCascade(slice);
-						shadowRenderView.setProjection(shadowLightProjection);
-						shadowRenderView.setView(shadowLightView, shadowLightView);
-						shadowRenderView.setViewFrustum(shadowFrustum);
-						shadowRenderView.setCullFrustum(shadowFrustum);
-						shadowRenderView.setTimes(
-							worldRenderView.getTime(),
-							worldRenderView.getDeltaTime(),
-							worldRenderView.getInterval()
-						);
-
-						// Set viewport to current cascade.
-						auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
-						svrb->viewport = render::Viewport(
-							slice * sliceDim,
-							0,
-							sliceDim,
-							sliceDim,
-							0.0f,
-							1.0f
-						);
-						renderContext->draw(svrb);	
-
-						// Render entities into shadow map.
-						auto sharedParams = renderContext->alloc< render::ProgramParameters >();
-						sharedParams->beginParameters(renderContext);
-						sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-						sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
-						sharedParams->setMatrixParameter(s_handleView, shadowLightView);
-						sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
-						sharedParams->endParameters(renderContext);
-
-						const WorldRenderPassShared shadowPass(
-							s_techniqueShadow,
-							sharedParams,
-							shadowRenderView,
-							IWorldRenderPass::None
-						);
-
-						T_ASSERT(!renderContext->havePendingDraws());
-
-						// Clear cascade shadow map.
-						{
-							const render::Shader::Permutation perm;
-							m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
-						}
-
-						for (const auto& r : m_gatheredView.renderables)
-						{
-							if (includeDynamic || !r.state.dynamic)
-								r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
-						}
-	
-						for (auto entityRenderer : m_entityRenderers->get())
-							entityRenderer->build(wc, shadowRenderView, shadowPass);
+						const render::Shader::Permutation perm;
+						m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
 					}
-				);
+
+					for (const auto& r : m_gatheredView.renderables)
+						if (includeDynamic || !r.state.dynamic)
+							r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
+
+					for (auto entityRenderer : m_entityRenderers->get())
+						entityRenderer->build(wc, shadowRenderView, shadowPass);
+				});
 			}
 
 			// Expose slice data to shaders.
@@ -557,8 +544,8 @@ void WorldRendererShared::setupLightPass(
 					(float)(slice * sliceDim) / shmw,
 					0.0f,
 					(float)sliceDim / shmw,
-					1.0f
-				).storeUnaligned(lsd[slice].atlasTransform);
+					1.0f)
+					.storeUnaligned(lsd[slice].atlasTransform);
 			}
 		}
 
@@ -588,8 +575,7 @@ void WorldRendererShared::setupLightPass(
 				lightAxisX,
 				lightAxisY,
 				lightAxisZ,
-				lightPosition
-			);
+				lightPosition);
 			shadowLightView = shadowLightView.inverse();
 
 			const Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
@@ -602,7 +588,7 @@ void WorldRendererShared::setupLightPass(
 			const float distance = (worldRenderView.getEyePosition() - lightPosition).xyz0().length();
 			const int32_t denom = (int32_t)std::floor(std::sqrt(distance / 4.0f));
 			const int32_t atlasSize = std::max(512 >> std::min(denom, 8), 16);
-					
+
 			Packer::Rectangle atlasRect;
 			if (!shadowAtlasPacker->insert(atlasSize, atlasSize, atlasRect))
 				return;
@@ -612,75 +598,69 @@ void WorldRendererShared::setupLightPass(
 				(float)(atlasOffset + atlasRect.x) / shmw,
 				(float)atlasRect.y / shmh,
 				(float)atlasRect.width / shmw,
-				(float)atlasRect.height / shmh
-			).storeUnaligned(lsd->atlasTransform);	
+				(float)atlasRect.height / shmh)
+				.storeUnaligned(lsd->atlasTransform);
 
 			rp->addBuild(
-				[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+				[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+				const WorldBuildContext wc(
+					m_entityRenderers,
+					renderContext);
+
+				// Render shadow map.
+				// #todo Cascade?
+				WorldRenderView shadowRenderView;
+				shadowRenderView.setIndex(worldRenderView.getIndex());
+				// shadowRenderView.setCascade(slice);
+				shadowRenderView.setProjection(shadowLightProjection);
+				shadowRenderView.setView(shadowLightView, shadowLightView);
+				shadowRenderView.setViewFrustum(shadowFrustum);
+				shadowRenderView.setCullFrustum(shadowFrustum);
+				shadowRenderView.setTimes(
+					worldRenderView.getTime(),
+					worldRenderView.getDeltaTime(),
+					worldRenderView.getInterval());
+
+				// Set viewport to light atlas slot.
+				auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
+				svrb->viewport = render::Viewport(
+					atlasOffset + atlasRect.x,
+					atlasRect.y,
+					atlasRect.width,
+					atlasRect.height,
+					0.0f,
+					1.0f);
+				renderContext->draw(svrb);
+
+				// Render entities into shadow map.
+				auto sharedParams = renderContext->alloc< render::ProgramParameters >();
+				sharedParams->beginParameters(renderContext);
+				sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
+				sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
+				sharedParams->setMatrixParameter(s_handleView, shadowLightView);
+				sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
+				sharedParams->endParameters(renderContext);
+
+				const WorldRenderPassShared shadowPass(
+					s_techniqueShadow,
+					sharedParams,
+					shadowRenderView,
+					IWorldRenderPass::None);
+
+				T_ASSERT(!renderContext->havePendingDraws());
+
+				// Clear shadow map tile.
 				{
-					const WorldBuildContext wc(
-						m_entityRenderers,
-						renderContext
-					);
-
-					// Render shadow map.
-					// #todo Cascade?
-					WorldRenderView shadowRenderView;
-					shadowRenderView.setIndex(worldRenderView.getIndex());
-					// shadowRenderView.setCascade(slice);
-					shadowRenderView.setProjection(shadowLightProjection);
-					shadowRenderView.setView(shadowLightView, shadowLightView);
-					shadowRenderView.setViewFrustum(shadowFrustum);
-					shadowRenderView.setCullFrustum(shadowFrustum);
-					shadowRenderView.setTimes(
-						worldRenderView.getTime(),
-						worldRenderView.getDeltaTime(),
-						worldRenderView.getInterval()
-					);
-
-					// Set viewport to light atlas slot.
-					auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
-					svrb->viewport = render::Viewport(
-						atlasOffset + atlasRect.x,
-						atlasRect.y,
-						atlasRect.width,
-						atlasRect.height,
-						0.0f,
-						1.0f
-					);
-					renderContext->draw(svrb);	
-
-					// Render entities into shadow map.
-					auto sharedParams = renderContext->alloc< render::ProgramParameters >();
-					sharedParams->beginParameters(renderContext);
-					sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-					sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
-					sharedParams->setMatrixParameter(s_handleView, shadowLightView);
-					sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
-					sharedParams->endParameters(renderContext);
-
-					const WorldRenderPassShared shadowPass(
-						s_techniqueShadow,
-						sharedParams,
-						shadowRenderView,
-						IWorldRenderPass::None
-					);
-
-					T_ASSERT(!renderContext->havePendingDraws());
-
-					// Clear shadow map tile.
-					{
-						const render::Shader::Permutation perm;
-						m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
-					}
-
-					for (const auto& r : m_gatheredView.renderables)
-						r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
-	
-					for (auto entityRenderer : m_entityRenderers->get())
-						entityRenderer->build(wc, shadowRenderView, shadowPass);
+					const render::Shader::Permutation perm;
+					m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
 				}
-			);
+
+				for (const auto& r : m_gatheredView.renderables)
+					r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
+
+				for (auto entityRenderer : m_entityRenderers->get())
+					entityRenderer->build(wc, shadowRenderView, shadowPass);
+			});
 		}
 
 		renderGraph.addPass(rp);

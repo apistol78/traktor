@@ -51,8 +51,7 @@ public:
 		uint32_t alphaBits,
 		uint32_t alphaShift,
 		bool palettized,
-		bool floatPoint
-	);
+		bool floatPoint);
 
 	PixelFormat(
 		int colorBits,
@@ -61,8 +60,7 @@ public:
 		uint32_t blueMask,
 		uint32_t alphaMask,
 		bool palettized,
-		bool floatPoint
-	);
+		bool floatPoint);
 
 	void convert(
 		const Palette* srcPalette,
@@ -70,8 +68,7 @@ public:
 		const PixelFormat& dstFormat,
 		const Palette* dstPalette,
 		void* T_RESTRICT dstPixels,
-		int pixelCount
-	) const;
+		int pixelCount) const;
 
 	/*! Convert pixels to FP32 format.
 	 */
@@ -80,8 +77,7 @@ public:
 		const void* T_RESTRICT srcPixels,
 		Color4f* T_RESTRICT dstPixels,
 		int srcPixelPitch,
-		int pixelCount
-	) const;
+		int pixelCount) const;
 
 	/*! Convert pixels from FP32 format.
 	 */
@@ -90,214 +86,269 @@ public:
 		const Palette* dstPalette,
 		void* T_RESTRICT dstPixels,
 		int dstPixelPitch,
-		int pixelCount
-	) const;
+		int pixelCount) const;
 
 	/*! Get endian swapped format.
 	 */
 	PixelFormat endianSwapped() const;
 
-	const bool isPalettized() const {
+	const bool isPalettized() const
+	{
 		return m_palettized;
 	}
 
-	const bool isFloatPoint() const {
+	const bool isFloatPoint() const
+	{
 		return m_floatPoint;
 	}
 
-	const int getColorBits() const {
+	const int getColorBits() const
+	{
 		return m_colorBits;
 	}
 
-	const int getByteSize() const {
+	const int getByteSize() const
+	{
 		return m_byteSize;
 	}
 
-	const int getRedBits() const {
+	const int getRedBits() const
+	{
 		return m_redBits;
 	}
 
-	const int getRedShift() const {
+	const int getRedShift() const
+	{
 		return m_redShift;
 	}
 
-	const int getGreenBits() const {
+	const int getGreenBits() const
+	{
 		return m_greenBits;
 	}
 
-	const int getGreenShift() const {
+	const int getGreenShift() const
+	{
 		return m_greenShift;
 	}
 
-	const int getBlueBits() const {
+	const int getBlueBits() const
+	{
 		return m_blueBits;
 	}
 
-	const int getBlueShift() const {
+	const int getBlueShift() const
+	{
 		return m_blueShift;
 	}
 
-	const int getAlphaBits() const {
+	const int getAlphaBits() const
+	{
 		return m_alphaBits;
 	}
 
-	const int getAlphaShift() const {
+	const int getAlphaShift() const
+	{
 		return m_alphaShift;
 	}
 
-	bool operator == (const PixelFormat& pf) const;
+	bool operator==(const PixelFormat& pf) const;
 
-	bool operator != (const PixelFormat& pf) const;
+	bool operator!=(const PixelFormat& pf) const;
 
 	virtual void serialize(ISerializer& s) override;
 
 	/*! \group Common pixel formats. */
 	//@{
 
-	static const PixelFormat& getP4() {
+	static const PixelFormat& getP4()
+	{
 		return ms_pfP4;
 	}
 
-	static const PixelFormat& getP8() {
+	static const PixelFormat& getP8()
+	{
 		return ms_pfP8;
 	}
 
-	static const PixelFormat& getA8() {
+	static const PixelFormat& getA8()
+	{
 		return ms_pfA8;
 	}
 
-	static const PixelFormat& getA16() {
+	static const PixelFormat& getA16()
+	{
 		return ms_pfA16;
 	}
 
-	static const PixelFormat& getR8() {
+	static const PixelFormat& getR8()
+	{
 		return ms_pfR8;
 	}
 
-	static const PixelFormat& getR16() {
+	static const PixelFormat& getR16()
+	{
 		return ms_pfR16;
 	}
 
-	static const PixelFormat& getR8A8() {
+	static const PixelFormat& getR8A8()
+	{
 		return ms_pfR8A8;
 	}
 
-	static const PixelFormat& getR16A16() {
+	static const PixelFormat& getR16A16()
+	{
 		return ms_pfR16A16;
 	}
 
-	static const PixelFormat& getR5G5B5() {
+	static const PixelFormat& getR5G5B5()
+	{
 		return ms_pfR5G5B5;
 	}
 
-	static const PixelFormat& getR5G6B5() {
+	static const PixelFormat& getR5G6B5()
+	{
 		return ms_pfR5G6B5;
 	}
 
-	static const PixelFormat& getR5G5B5A1() {
+	static const PixelFormat& getR5G5B5A1()
+	{
 		return ms_pfR5G5B5A1;
 	}
 
-	static const PixelFormat& getR4G4B4A4() {
+	static const PixelFormat& getR4G4B4A4()
+	{
 		return ms_pfR4G4B4A4;
 	}
 
-	static const PixelFormat& getR8G8B8() {
+	static const PixelFormat& getR8G8B8()
+	{
 		return ms_pfR8G8B8;
 	}
 
-	static const PixelFormat& getB8G8R8() {
+	static const PixelFormat& getB8G8R8()
+	{
 		return ms_pfB8G8R8;
 	}
 
-	static const PixelFormat& getA1R5G5B5() {
+	static const PixelFormat& getA1R5G5B5()
+	{
 		return ms_pfA1R5G5B5;
 	}
 
-	static const PixelFormat& getX8R8G8B8() {
+	static const PixelFormat& getX8R8G8B8()
+	{
 		return ms_pfX8R8G8B8;
 	}
 
-	static const PixelFormat& getX8B8G8R8() {
+	static const PixelFormat& getX8B8G8R8()
+	{
 		return ms_pfX8B8G8R8;
 	}
 
-	static const PixelFormat& getR8G8B8X8() {
+	static const PixelFormat& getR8G8B8X8()
+	{
 		return ms_pfR8G8B8X8;
 	}
 
-	static const PixelFormat& getB8G8R8X8() {
+	static const PixelFormat& getB8G8R8X8()
+	{
 		return ms_pfB8G8R8X8;
 	}
 
-	static const PixelFormat& getA8R8G8B8() {
+	static const PixelFormat& getA8R8G8B8()
+	{
 		return ms_pfA8R8G8B8;
 	}
 
-	static const PixelFormat& getA8B8G8R8() {
+	static const PixelFormat& getA8B8G8R8()
+	{
 		return ms_pfA8B8G8R8;
 	}
 
-	static const PixelFormat& getR8G8B8A8() {
+	static const PixelFormat& getR8G8B8A8()
+	{
 		return ms_pfR8G8B8A8;
 	}
 
-	static const PixelFormat& getB8G8R8A8() {
+	static const PixelFormat& getB8G8R8A8()
+	{
 		return ms_pfB8G8R8A8;
 	}
 
-	static const PixelFormat& getR11G11B10() {
-		return ms_pfR11G11B10;	
+	static const PixelFormat& getR11G11B10()
+	{
+		return ms_pfR11G11B10;
 	}
 
-	static const PixelFormat& getR16G16B16() {
+	static const PixelFormat& getR16G16B16()
+	{
 		return ms_pfR16G16B16;
 	}
 
-	static const PixelFormat& getA16R16G16B16() {
+	static const PixelFormat& getA16R16G16B16()
+	{
 		return ms_pfA16R16G16B16;
 	}
 
-	static const PixelFormat& getR16F() {
+	static const PixelFormat& getRG16F()
+	{
+		return ms_pfRG16F;
+	}
+
+	static const PixelFormat& getRG32F()
+	{
+		return ms_pfRG32F;
+	}
+
+	static const PixelFormat& getR16F()
+	{
 		return ms_pfR16F;
 	}
 
-	static const PixelFormat& getR32F() {
+	static const PixelFormat& getR32F()
+	{
 		return ms_pfR32F;
 	}
 
-	static const PixelFormat& getARGBF16() {
+	static const PixelFormat& getARGBF16()
+	{
 		return ms_pfARGBF16;
 	}
 
-	static const PixelFormat& getARGBF32() {
+	static const PixelFormat& getARGBF32()
+	{
 		return ms_pfARGBF32;
 	}
 
-	static const PixelFormat& getRGBAF16() {
+	static const PixelFormat& getRGBAF16()
+	{
 		return ms_pfRGBAF16;
 	}
 
-	static const PixelFormat& getRGBAF32() {
+	static const PixelFormat& getRGBAF32()
+	{
 		return ms_pfRGBAF32;
 	}
 
-	static const PixelFormat& getABGRF16() {
+	static const PixelFormat& getABGRF16()
+	{
 		return ms_pfABGRF16;
 	}
 
-	static const PixelFormat& getABGRF32() {
+	static const PixelFormat& getABGRF32()
+	{
 		return ms_pfABGRF32;
 	}
 
 	//@}
 
 private:
-	bool m_palettized;		/**< If pixel format is describing palettized pixels. */
+	bool m_palettized; /**< If pixel format is describing palettized pixels. */
 	bool m_floatPoint;
-	int32_t m_colorBits;	/**< Number of bits for an entire pixel. */
-	int32_t m_byteSize;		/**< Number of bytes for an entire pixel. */
-	int32_t m_redBits;		/**< Red bits, only valid for non-palettized pixels. */
+	int32_t m_colorBits; /**< Number of bits for an entire pixel. */
+	int32_t m_byteSize;	 /**< Number of bytes for an entire pixel. */
+	int32_t m_redBits;	 /**< Red bits, only valid for non-palettized pixels. */
 	int32_t m_redShift;
 	int32_t m_greenBits;
 	int32_t m_greenShift;
@@ -334,6 +385,8 @@ private:
 	static const PixelFormat ms_pfR11G11B10;
 	static const PixelFormat ms_pfR16G16B16;
 	static const PixelFormat ms_pfA16R16G16B16;
+	static const PixelFormat ms_pfRG16F;
+	static const PixelFormat ms_pfRG32F;
 	static const PixelFormat ms_pfR16F;
 	static const PixelFormat ms_pfR32F;
 	static const PixelFormat ms_pfARGBF16;

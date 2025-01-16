@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -91,10 +91,10 @@ struct T_DLLCLASS EntityState
 /*! Update parameters. */
 struct UpdateParams
 {
-	Object* contextObject = nullptr;	/*!< Update context object; is Stage instance during runtime. */
-	double totalTime = 0.0;				/*!< Total time since first update. */
-	double alternateTime = 0.0;			/*!< Alternative absolute time. */
-	double deltaTime = 0.0;				/*!< Delta time since last update. */
+	Object* contextObject = nullptr; /*!< Update context object; is Stage instance during runtime. */
+	double totalTime = 0.0;			 /*!< Total time since first update. */
+	double alternateTime = 0.0;		 /*!< Alternative absolute time. */
+	double deltaTime = 0.0;			 /*!< Delta time since last update. */
 };
 
 /*!
@@ -106,9 +106,9 @@ struct GatherView
 		IEntityRenderer* renderer = nullptr;
 		Object* renderable = nullptr;
 		EntityState state;
-	};	
+	};
 
-    AlignedVector< Renderable > renderables;
+	AlignedVector< Renderable > renderables;
 	AlignedVector< const LightComponent* > lights;
 	AlignedVector< const ProbeComponent* > probes;
 	const LightComponent* cascadingDirectionalLight = nullptr;

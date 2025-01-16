@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,19 +8,20 @@
  */
 #include "World/WorldTypes.h"
 
+#include "Render/IRenderSystem.h"
+
 namespace traktor::world
 {
 
-const EntityState EntityState::None		= { false, false, false };
-const EntityState EntityState::Visible	= {  true, false, false };
-const EntityState EntityState::Dynamic	= { false,  true, false };
-const EntityState EntityState::Locked	= { false, false,  true };
-const EntityState EntityState::All		= {  true,  true,  true };
+const EntityState EntityState::None = { false, false, false };
+const EntityState EntityState::Visible = { true, false, false };
+const EntityState EntityState::Dynamic = { false, true, false };
+const EntityState EntityState::Locked = { false, false, true };
+const EntityState EntityState::All = { true, true, true };
 
 Vector2 jitter(int32_t count)
 {
-	const static Vector2 c_halton[] =
-	{
+	const static Vector2 c_halton[] = {
 		Vector2(0.500000f, 0.333333f),
 		Vector2(0.250000f, 0.666667f),
 		Vector2(0.750000f, 0.111111f),

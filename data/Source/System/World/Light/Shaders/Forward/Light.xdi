@@ -1732,8 +1732,8 @@ $Output = vec4(Lout.xyz, 0.0f);
 			<id>{BECA6705-8487-0248-A46A-CBFD64F362D2}</id>
 			<comment/>
 			<position>
-				<first>872</first>
-				<second>312</second>
+				<first>890</first>
+				<second>304</second>
 			</position>
 			<name>L_ViewDirection</name>
 		</item>
@@ -1741,8 +1741,8 @@ $Output = vec4(Lout.xyz, 0.0f);
 			<id>{EA90B62B-63AD-844E-B41C-2FEAD0953EDF}</id>
 			<comment/>
 			<position>
-				<first>888</first>
-				<second>278</second>
+				<first>906</first>
+				<second>267</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -1750,8 +1750,8 @@ $Output = vec4(Lout.xyz, 0.0f);
 			<id>{0FC33846-D772-5543-9F2B-3980CA5D9E23}</id>
 			<comment/>
 			<position>
-				<first>888</first>
-				<second>380</second>
+				<first>906</first>
+				<second>378</second>
 			</position>
 			<name>L_Metalness</name>
 		</item>
@@ -1759,8 +1759,8 @@ $Output = vec4(Lout.xyz, 0.0f);
 			<id>{CB30E244-10B0-914E-AE8D-81F77A020FE7}</id>
 			<comment/>
 			<position>
-				<first>904</first>
-				<second>346</second>
+				<first>906</first>
+				<second>341</second>
 			</position>
 			<name>L_Albedo</name>
 		</item>
@@ -1800,6 +1800,10 @@ $Output = vec4(Lout.xyz, 0.0f);
 					<id>{CD77DAB2-298A-A04F-BA9E-C535D9F7039D}</id>
 					<name>Metallic</name>
 				</item>
+				<item>
+					<id>{B73BE704-2E99-A143-9DFC-3738157E107D}</id>
+					<name>Roughness</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -1814,15 +1818,18 @@ const vec3 N = $N.xyz;
 const vec3 V = $V.xyz;
 const vec3 albedo = $Albedo.xyz;
 const float metallic = $Metallic.x;
+const float roughness = $Roughness.x;
 
 const vec3 r = CalculateReflection(
 	N,
 	V,
 	albedo,
-	metallic
+	metallic,
+	roughness
 );
 
 $Output = vec4(r, 0.0f);
+
 			]]>
 			</script>
 		</item>
@@ -1879,6 +1886,15 @@ Eye direction
 				<first>1518</first>
 				<second>325</second>
 			</position>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{E95DA4B8-2CC2-C14A-826E-87D95747C872}</id>
+			<comment/>
+			<position>
+				<first>906</first>
+				<second>415</second>
+			</position>
+			<name>L_Roughness</name>
 		</item>
 	</nodes>
 	<edges>
@@ -3340,6 +3356,16 @@ Eye direction
 			<destination>
 				<node ref="/object/nodes/item[70]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[150]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[143]"/>
+				<id>{B73BE704-2E99-A143-9DFC-3738157E107D}</id>
 			</destination>
 		</item>
 	</edges>

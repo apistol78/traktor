@@ -521,6 +521,7 @@ for (int i = 0; i < N; ++i)
 vec4 o = acc / N;
 
 $Output = vec4(o.xyz, pow(o.w, 0.3f));
+
 			]]>
 			</script>
 		</item>

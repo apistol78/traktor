@@ -79,8 +79,8 @@
 			<id>{91CC45E6-C9D1-7440-A594-D40F16253194}</id>
 			<comment/>
 			<position>
-				<first>2330</first>
-				<second>-873</second>
+				<first>2341</first>
+				<second>-951</second>
 			</position>
 			<operator>CoGreater</operator>
 		</item>
@@ -183,7 +183,6 @@
 			<script>
 			<![CDATA[
 $Output = ($Roughness < 0.6f && $Specular > 0.1f) ? 1.0f : 0.0f;
-
 			]]>
 			</script>
 		</item>
@@ -269,9 +268,10 @@ u = R * u;
 v = R * v;
 
 vec4 acc = vec4(0.0f);
+
 for (int i = 0; i < N; ++i)
 {
-	const vec2 r = (Hammersley(i, N) * 1.0f - 0.5f) * $Roughness * 0.75f;
+	const vec2 r = (Hammersley(i, N) * 2.0f - 1.0f) * $Roughness * $Roughness;
 	
 	const vec3 rayOrigin = $Origin.xyz;
 	const vec3 rayDir = normalize($Direction.xyz + u * r.x + v * r.y);
@@ -329,7 +329,7 @@ for (int i = 0; i < N; ++i)
 	}
 }
 
-$Output = acc / N;
+$Output = vec4(acc.xyz / N, acc.w / N);
 
 			]]>
 			</script>
@@ -426,8 +426,8 @@ $Output = acc / N;
 			<id>{344E2A41-9544-E840-AD22-00CBB4449261}</id>
 			<comment/>
 			<position>
-				<first>2648</first>
-				<second>-492</second>
+				<first>2067</first>
+				<second>-503</second>
 			</position>
 			<name>L_Reflection</name>
 		</item>
@@ -791,71 +791,6 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<parameterName>World_ViewInverse</parameterName>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
-		</item>
-		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
-			<id>{E3A638AD-645D-8544-8D05-10A28886DD95}</id>
-			<comment/>
-			<position>
-				<first>1981</first>
-				<second>-366</second>
-			</position>
-			<name>L_Roughness</name>
-		</item>
-		<item type="traktor.render.External" version="3,traktor.render.Node:1">
-			<id>{A30D94CA-47BD-3C41-B853-34F12EA2D284}</id>
-			<comment/>
-			<position>
-				<first>2199</first>
-				<second>-398</second>
-			</position>
-			<fragmentGuid>{F94569E5-AAAB-DC4B-BC80-A499121F0295}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{4D17834E-31F4-E84F-A53E-EE7D783BD8F9}</id>
-					<name>Input</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{59A0CAB3-F7AE-5242-8451-C868437381A0}</id>
-					<name>Output</name>
-				</item>
-			</outputPins>
-		</item>
-		<item type="traktor.render.Mul" version="traktor.render.Node:1">
-			<id>{1BEEC5B5-87D3-6043-966A-D7DC0BF0B09B}</id>
-			<comment/>
-			<position>
-				<first>2402</first>
-				<second>-485</second>
-			</position>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{6A464F6D-41DE-534A-91D4-45C4F161AEE5}</id>
-			<comment/>
-			<position>
-				<first>2463</first>
-				<second>-340</second>
-			</position>
-			<swizzle>xxx1</swizzle>
-		</item>
-		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
-			<id>{B721F6B0-3025-8545-A6F9-BE6DA9449104}</id>
-			<comment/>
-			<position>
-				<first>2165</first>
-				<second>-240</second>
-			</position>
-			<name>L_Specular</name>
-		</item>
-		<item type="traktor.render.Mul" version="traktor.render.Node:1">
-			<id>{BE95AB9A-40FD-5240-9932-7B9BF6F0B5AD}</id>
-			<comment/>
-			<position>
-				<first>2358</first>
-				<second>-226</second>
-			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -1301,12 +1236,12 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[47]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[48]"/>
-				<id>{4D17834E-31F4-E84F-A53E-EE7D783BD8F9}</id>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1315,68 +1250,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 				<id>{A026543F-9CEC-6D4D-90CB-AE68CF56A052}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[50]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[49]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[49]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[20]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[51]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[52]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[48]"/>
-				<id>{59A0CAB3-F7AE-5242-8451-C868437381A0}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[52]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[52]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[50]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{291502CF-D8D7-4CEC-8457-E867D70CD04E}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>

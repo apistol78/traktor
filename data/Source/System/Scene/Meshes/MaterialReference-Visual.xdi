@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mesh.MeshAsset" version="24">
+	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Scene/Meshes/MaterialReference.blend</fileName>
+	<importFilter/>
+	<meshType>MtStatic</meshType>
+	<materialShaders/>
+	<materialTextures/>
+	<scaleFactor>1</scaleFactor>
+	<offset>0, 0, 0, 0</offset>
+	<renormalize>false</renormalize>
+	<center>false</center>
+	<grounded>false</grounded>
+	<decalResponse>true</decalResponse>
+	<reduce>1</reduce>
+	<previewAngle>0</previewAngle>
+</object>

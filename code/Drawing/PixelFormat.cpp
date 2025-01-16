@@ -17,19 +17,20 @@
 #	endif
 #endif
 
+#include "Drawing/PixelFormat.h"
+
 #include "Core/Io/BitReader.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Math/Half.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Drawing/PixelFormat.h"
 #include "Drawing/Palette.h"
 
 namespace traktor::drawing
 {
-	namespace
-	{
+namespace
+{
 
 inline float clamp(float v)
 {
@@ -40,25 +41,25 @@ inline float clamp(float v)
 
 uint32_t unpack_1(const void* T_RESTRICT p)
 {
-	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t * T_RESTRICT >(p);
 	return c[0];
 }
 
 uint32_t unpack_2(const void* T_RESTRICT p)
 {
-	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t * T_RESTRICT >(p);
 	return (c[1] << 8) | c[0];
 }
 
 uint32_t unpack_3(const void* T_RESTRICT p)
 {
-	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t * T_RESTRICT >(p);
 	return (c[2] << 16) | (c[1] << 8) | c[0];
 }
 
 uint32_t unpack_4(const void* T_RESTRICT p)
 {
-	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t * T_RESTRICT >(p);
 	return (c[3] << 24) | (c[2] << 16) | (c[1] << 8) | c[0];
 }
 
@@ -74,20 +75,20 @@ float unpack_fp(const void* T_RESTRICT p, uint32_t nbits)
 
 void pack_1(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t * T_RESTRICT >(p);
 	d[0] = v & 255;
 }
 
 void pack_2(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t * T_RESTRICT >(p);
 	d[0] = v & 255;
 	d[1] = (v >> 8) & 255;
 }
 
 void pack_3(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t * T_RESTRICT >(p);
 	d[0] = v & 255;
 	d[1] = (v >> 8) & 255;
 	d[2] = (v >> 16) & 255;
@@ -95,7 +96,7 @@ void pack_3(void* T_RESTRICT p, uint32_t v)
 
 void pack_4(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t * T_RESTRICT >(p);
 	d[0] = v & 255;
 	d[1] = (v >> 8) & 255;
 	d[2] = (v >> 16) & 255;
@@ -105,7 +106,7 @@ void pack_4(void* T_RESTRICT p, uint32_t v)
 void pack_fp(void* T_RESTRICT p, float v, uint32_t nbits)
 {
 	if (nbits == 16)
-		*(half_t* T_RESTRICT)p = floatToHalf(traktor::clamp(v, -65504.0f, 65504.0f));
+		*(half_t * T_RESTRICT) p = floatToHalf(traktor::clamp(v, -65504.0f, 65504.0f));
 	else if (nbits == 32)
 		*(float* T_RESTRICT)p = v;
 }
@@ -114,25 +115,25 @@ void pack_fp(void* T_RESTRICT p, float v, uint32_t nbits)
 
 uint32_t unpack_1(const void* T_RESTRICT p)
 {
-	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t * T_RESTRICT >(p);
 	return c[0];
 }
 
 uint32_t unpack_2(const void* T_RESTRICT p)
 {
-	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t * T_RESTRICT >(p);
 	return (c[0] << 8) | c[1];
 }
 
 uint32_t unpack_3(const void* T_RESTRICT p)
 {
-	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t * T_RESTRICT >(p);
 	return (c[0] << 16) | (c[1] << 8) | c[2];
 }
 
 uint32_t unpack_4(const void* T_RESTRICT p)
 {
-	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t * T_RESTRICT >(p);
 	return (c[0] << 24) | (c[1] << 16) | (c[2] << 8) | c[3];
 }
 
@@ -148,20 +149,20 @@ float unpack_fp(const void* T_RESTRICT p, uint32_t nbits)
 
 void pack_1(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t * T_RESTRICT >(p);
 	d[0] = v & 255;
 }
 
 void pack_2(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t * T_RESTRICT >(p);
 	d[0] = (v >> 8) & 255;
 	d[1] = v & 255;
 }
 
 void pack_3(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t * T_RESTRICT >(p);
 	d[0] = (v >> 16) & 255;
 	d[1] = (v >> 8) & 255;
 	d[2] = v & 255;
@@ -169,7 +170,7 @@ void pack_3(void* T_RESTRICT p, uint32_t v)
 
 void pack_4(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t * T_RESTRICT >(p);
 	d[0] = (v >> 24) & 255;
 	d[1] = (v >> 16) & 255;
 	d[2] = (v >> 8) & 255;
@@ -179,7 +180,7 @@ void pack_4(void* T_RESTRICT p, uint32_t v)
 void pack_fp(void* T_RESTRICT p, float v, uint32_t nbits)
 {
 	if (nbits == 16)
-		*(half_t* T_RESTRICT)p = floatToHalf(traktor::clamp(v, -65504.0f, 65504.0f));
+		*(half_t * T_RESTRICT) p = floatToHalf(traktor::clamp(v, -65504.0f, 65504.0f));
 	else if (nbits == 32)
 		*(float* T_RESTRICT)p = v;
 }
@@ -203,25 +204,25 @@ bool isPacked32(const PixelFormat& pf)
 	return true;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drawing.PixelFormat", 0, PixelFormat, ISerializable)
 
 PixelFormat::PixelFormat()
-:	m_palettized(false)
-,	m_floatPoint(false)
-,	m_colorBits(32)
-,	m_byteSize(4)
-,	m_redBits(8)
-,	m_redShift(16)
-,	m_greenBits(8)
-,	m_greenShift(8)
-,	m_blueBits(8)
-,	m_blueShift(0)
-,	m_alphaBits(8)
-,	m_alphaShift(24)
-,	m_unpack(0)
-,	m_pack(0)
+	: m_palettized(false)
+	, m_floatPoint(false)
+	, m_colorBits(32)
+	, m_byteSize(4)
+	, m_redBits(8)
+	, m_redShift(16)
+	, m_greenBits(8)
+	, m_greenShift(8)
+	, m_blueBits(8)
+	, m_blueShift(0)
+	, m_alphaBits(8)
+	, m_alphaShift(24)
+	, m_unpack(0)
+	, m_pack(0)
 {
 	// Get pointer to unpack operation.
 	switch (m_byteSize)
@@ -269,22 +270,21 @@ PixelFormat::PixelFormat(
 	uint32_t alphaBits,
 	uint32_t alphaShift,
 	bool palettized,
-	bool floatPoint
-)
-:	m_palettized(palettized)
-,	m_floatPoint(floatPoint)
-,	m_colorBits(colorBits)
-,	m_byteSize((colorBits + 7) / 8)
-,	m_redBits(redBits)
-,	m_redShift(redShift)
-,	m_greenBits(greenBits)
-,	m_greenShift(greenShift)
-,	m_blueBits(blueBits)
-,	m_blueShift(blueShift)
-,	m_alphaBits(alphaBits)
-,	m_alphaShift(alphaShift)
-,	m_unpack(0)
-,	m_pack(0)
+	bool floatPoint)
+	: m_palettized(palettized)
+	, m_floatPoint(floatPoint)
+	, m_colorBits(colorBits)
+	, m_byteSize((colorBits + 7) / 8)
+	, m_redBits(redBits)
+	, m_redShift(redShift)
+	, m_greenBits(greenBits)
+	, m_greenShift(greenShift)
+	, m_blueBits(blueBits)
+	, m_blueShift(blueShift)
+	, m_alphaBits(alphaBits)
+	, m_alphaShift(alphaShift)
+	, m_unpack(0)
+	, m_pack(0)
 {
 	// Get pointer to unpack operation.
 	switch (m_byteSize)
@@ -328,22 +328,21 @@ PixelFormat::PixelFormat(
 	uint32_t blueMask,
 	uint32_t alphaMask,
 	bool palettized,
-	bool floatPoint
-)
-:	m_palettized(palettized)
-,	m_floatPoint(floatPoint)
-,	m_colorBits(colorBits)
-,	m_byteSize((colorBits + 7) / 8)
-,	m_redBits(0)
-,	m_redShift(0)
-,	m_greenBits(0)
-,	m_greenShift(0)
-,	m_blueBits(0)
-,	m_blueShift(0)
-,	m_alphaBits(0)
-,	m_alphaShift(0)
-,	m_unpack(0)
-,	m_pack(0)
+	bool floatPoint)
+	: m_palettized(palettized)
+	, m_floatPoint(floatPoint)
+	, m_colorBits(colorBits)
+	, m_byteSize((colorBits + 7) / 8)
+	, m_redBits(0)
+	, m_redShift(0)
+	, m_greenBits(0)
+	, m_greenShift(0)
+	, m_blueBits(0)
+	, m_blueShift(0)
+	, m_alphaBits(0)
+	, m_alphaShift(0)
+	, m_unpack(0)
+	, m_pack(0)
 {
 	// Calculate shift and bits from masks.
 	for (int i = 0; i < colorBits; ++i)
@@ -412,11 +411,10 @@ void PixelFormat::convert(
 	const PixelFormat& dstFormat,
 	const Palette* dstPalette,
 	void* T_RESTRICT dstPixels,
-	int pixelCount
-) const
+	int pixelCount) const
 {
-	const uint8_t* T_RESTRICT src = static_cast< const uint8_t* T_RESTRICT >(srcPixels);
-	uint8_t* T_RESTRICT dst = static_cast< uint8_t* T_RESTRICT >(dstPixels);
+	const uint8_t* T_RESTRICT src = static_cast< const uint8_t * T_RESTRICT >(srcPixels);
+	uint8_t* T_RESTRICT dst = static_cast< uint8_t * T_RESTRICT >(dstPixels);
 	uint32_t tmp;
 	uint32_t i;
 	float clr[4];
@@ -459,10 +457,9 @@ void PixelFormat::convert(
 			(*dstFormat.m_pack)(
 				dst,
 				(r << dstFormat.getRedShift()) |
-				(g << dstFormat.getGreenShift()) |
-				(b << dstFormat.getBlueShift()) |
-				(a << dstFormat.getAlphaShift())
-			);
+					(g << dstFormat.getGreenShift()) |
+					(b << dstFormat.getBlueShift()) |
+					(a << dstFormat.getAlphaShift()));
 
 			src += getByteSize();
 			dst += dstFormat.getByteSize();
@@ -472,9 +469,9 @@ void PixelFormat::convert(
 	// Quick-path 2; if source format <=32 and destination format is FP
 	else if (isSourcePacked32 && dstFormat.isFloatPoint())
 	{
-		uint32_t rmx = ((1 << getRedBits()  ) - 1);
+		uint32_t rmx = ((1 << getRedBits()) - 1);
 		uint32_t gmx = ((1 << getGreenBits()) - 1);
-		uint32_t bmx = ((1 << getBlueBits() ) - 1);
+		uint32_t bmx = ((1 << getBlueBits()) - 1);
 		uint32_t amx = ((1 << getAlphaBits()) - 1);
 
 		float ir = rmx ? (1.0f / rmx) : 0.0f;
@@ -504,9 +501,9 @@ void PixelFormat::convert(
 	// Quick-path 3; if source format is FP and destination format is <=32
 	else if (isFloatPoint() && isDestinationPacked32)
 	{
-		uint32_t rmx = ((1 << dstFormat.getRedBits()  ) - 1);
+		uint32_t rmx = ((1 << dstFormat.getRedBits()) - 1);
 		uint32_t gmx = ((1 << dstFormat.getGreenBits()) - 1);
-		uint32_t bmx = ((1 << dstFormat.getBlueBits() ) - 1);
+		uint32_t bmx = ((1 << dstFormat.getBlueBits()) - 1);
 		uint32_t amx = ((1 << dstFormat.getAlphaBits()) - 1);
 
 		for (int ii = 0; ii < pixelCount; ++ii)
@@ -524,10 +521,9 @@ void PixelFormat::convert(
 			(*dstFormat.m_pack)(
 				dst,
 				(r << dstFormat.getRedShift()) |
-				(g << dstFormat.getGreenShift()) |
-				(b << dstFormat.getBlueShift()) |
-				(a << dstFormat.getAlphaShift())
-			);
+					(g << dstFormat.getGreenShift()) |
+					(b << dstFormat.getBlueShift()) |
+					(a << dstFormat.getAlphaShift()));
 
 			src += getByteSize();
 			dst += dstFormat.getByteSize();
@@ -557,9 +553,9 @@ void PixelFormat::convert(
 			{
 				uint32_t s = (*m_unpack)(src);
 
-				uint32_t rmx = ((1 << getRedBits()  ) - 1);
+				uint32_t rmx = ((1 << getRedBits()) - 1);
 				uint32_t gmx = ((1 << getGreenBits()) - 1);
-				uint32_t bmx = ((1 << getBlueBits() ) - 1);
+				uint32_t bmx = ((1 << getBlueBits()) - 1);
 				uint32_t amx = ((1 << getAlphaBits()) - 1);
 
 				uint32_t r = (s >> getRedShift()) & rmx;
@@ -572,13 +568,12 @@ void PixelFormat::convert(
 				clr[2] = bmx ? (float(b) / bmx) : 0.0f;
 				clr[3] = amx ? (float(a) / amx) : 0.0f;
 			}
-			else	// getColorBits() > 32
+			else // getColorBits() > 32
 			{
 				int32_t bits[] = { m_redBits, m_greenBits, m_blueBits, m_alphaBits };
 				int32_t shft[] = { m_redShift, m_greenShift, m_blueShift, m_alphaShift };
 
 				for (int32_t i = 0; i < 4; ++i)
-				{
 					if (bits[i] > 0)
 					{
 						MemoryStream ms(src, m_byteSize);
@@ -589,7 +584,6 @@ void PixelFormat::convert(
 					}
 					else
 						clr[i] = 0.0f;
-				}
 			}
 
 			// rgba => dst
@@ -597,8 +591,7 @@ void PixelFormat::convert(
 			{
 				(*dstFormat.m_pack)(
 					dst,
-					dstPalette->find(Color4f::loadUnaligned(clr))
-				);
+					dstPalette->find(Color4f::loadUnaligned(clr)));
 			}
 			else if (dstFormat.isFloatPoint())
 			{
@@ -609,9 +602,9 @@ void PixelFormat::convert(
 			}
 			else if (dstFormat.getColorBits() <= 32)
 			{
-				uint32_t rmx = ((1 << dstFormat.getRedBits()  ) - 1);
+				uint32_t rmx = ((1 << dstFormat.getRedBits()) - 1);
 				uint32_t gmx = ((1 << dstFormat.getGreenBits()) - 1);
-				uint32_t bmx = ((1 << dstFormat.getBlueBits() ) - 1);
+				uint32_t bmx = ((1 << dstFormat.getBlueBits()) - 1);
 				uint32_t amx = ((1 << dstFormat.getAlphaBits()) - 1);
 
 				uint32_t r = uint32_t(clamp(clr[0]) * rmx);
@@ -622,12 +615,11 @@ void PixelFormat::convert(
 				(*dstFormat.m_pack)(
 					dst,
 					(r << dstFormat.getRedShift()) |
-					(g << dstFormat.getGreenShift()) |
-					(b << dstFormat.getBlueShift()) |
-					(a << dstFormat.getAlphaShift())
-				);
+						(g << dstFormat.getGreenShift()) |
+						(b << dstFormat.getBlueShift()) |
+						(a << dstFormat.getAlphaShift()));
 			}
-			else	// dstFormat.getColorBits() > 32
+			else // dstFormat.getColorBits() > 32
 			{
 				tmp = static_cast< uint8_t >(clamp(clr[0]) * 255);
 				tmp >>= (8 - dstFormat.getRedBits());
@@ -686,21 +678,19 @@ void PixelFormat::convertTo4f(
 	const void* T_RESTRICT srcPixels,
 	Color4f* T_RESTRICT dstPixels,
 	int srcPixelPitch,
-	int pixelCount
-) const
+	int pixelCount) const
 {
-	const uint8_t* T_RESTRICT src = static_cast< const uint8_t* T_RESTRICT >(srcPixels);
+	const uint8_t* T_RESTRICT src = static_cast< const uint8_t * T_RESTRICT >(srcPixels);
 	Color4f* T_RESTRICT dst = dstPixels;
 
 	if (!isPalettized() && !isFloatPoint() && getColorBits() <= 32)
 	{
-		uint32_t rmx = (1 << getRedBits()  ) - 1;
+		uint32_t rmx = (1 << getRedBits()) - 1;
 		uint32_t gmx = (1 << getGreenBits()) - 1;
-		uint32_t bmx = (1 << getBlueBits() ) - 1;
+		uint32_t bmx = (1 << getBlueBits()) - 1;
 		uint32_t amx = (1 << getAlphaBits()) - 1;
 
-		const float T_MATH_ALIGN16 finv[] =
-		{
+		const float T_MATH_ALIGN16 finv[] = {
 			rmx ? (1.0f / rmx) : 0.0f,
 			gmx ? (1.0f / gmx) : 0.0f,
 			bmx ? (1.0f / bmx) : 0.0f,
@@ -763,11 +753,11 @@ void PixelFormat::convertTo4f(
 			uint32_t b = (s >> getBlueShift()) & bmx;
 			uint32_t a = (s >> getAlphaShift()) & amx;
 			*dst = Color4f(
-				float(r),
-				float(g),
-				float(b),
-				float(a)
-			) * inv;
+					   float(r),
+					   float(g),
+					   float(b),
+					   float(a)) *
+				inv;
 #endif
 			src += srcPixelPitch * getByteSize();
 			dst++;
@@ -798,9 +788,9 @@ void PixelFormat::convertTo4f(
 			{
 				uint32_t s = (*m_unpack)(src);
 
-				uint32_t rmx = ((1 << getRedBits()  ) - 1);
+				uint32_t rmx = ((1 << getRedBits()) - 1);
 				uint32_t gmx = ((1 << getGreenBits()) - 1);
-				uint32_t bmx = ((1 << getBlueBits() ) - 1);
+				uint32_t bmx = ((1 << getBlueBits()) - 1);
 				uint32_t amx = ((1 << getAlphaBits()) - 1);
 
 				uint32_t r = (s >> getRedShift()) & rmx;
@@ -813,7 +803,7 @@ void PixelFormat::convertTo4f(
 				clr[2] = bmx ? (float(b) / bmx) : 0.0f;
 				clr[3] = amx ? (float(a) / amx) : 0.0f;
 			}
-			else	// getColorBits() > 32
+			else // getColorBits() > 32
 			{
 				for (tmp = i = 0; i < uint32_t(getRedBits()); ++i)
 				{
@@ -861,18 +851,17 @@ void PixelFormat::convertFrom4f(
 	const Palette* dstPalette,
 	void* T_RESTRICT dstPixels,
 	int dstPixelPitch,
-	int pixelCount
-) const
+	int pixelCount) const
 {
 	const Color4f* T_RESTRICT src = srcPixels;
-	uint8_t* T_RESTRICT dst = static_cast< uint8_t* T_RESTRICT >(dstPixels);
+	uint8_t* T_RESTRICT dst = static_cast< uint8_t * T_RESTRICT >(dstPixels);
 	float T_MATH_ALIGN16 clr[4];
 
 	if (!isPalettized() && !isFloatPoint() && getColorBits() <= 32)
 	{
-		uint32_t rmx = ((1 << getRedBits()  ) - 1);
+		uint32_t rmx = ((1 << getRedBits()) - 1);
 		uint32_t gmx = ((1 << getGreenBits()) - 1);
-		uint32_t bmx = ((1 << getBlueBits() ) - 1);
+		uint32_t bmx = ((1 << getBlueBits()) - 1);
 		uint32_t amx = ((1 << getAlphaBits()) - 1);
 
 		for (int ii = 0; ii < pixelCount; ++ii)
@@ -888,10 +877,9 @@ void PixelFormat::convertFrom4f(
 			(*m_pack)(
 				dst,
 				(r << getRedShift()) |
-				(g << getGreenShift()) |
-				(b << getBlueShift()) |
-				(a << getAlphaShift())
-			);
+					(g << getGreenShift()) |
+					(b << getBlueShift()) |
+					(a << getAlphaShift()));
 
 			src++;
 			dst += dstPixelPitch * getByteSize();
@@ -909,8 +897,7 @@ void PixelFormat::convertFrom4f(
 				T_ASSERT(m_pack);
 				(*m_pack)(
 					dst,
-					dstPalette->find(*src)
-				);
+					dstPalette->find(*src));
 			}
 			else if (isFloatPoint())
 			{
@@ -921,9 +908,9 @@ void PixelFormat::convertFrom4f(
 			}
 			else if (getColorBits() <= 32)
 			{
-				uint32_t rmx = ((1 << getRedBits()  ) - 1);
+				uint32_t rmx = ((1 << getRedBits()) - 1);
 				uint32_t gmx = ((1 << getGreenBits()) - 1);
-				uint32_t bmx = ((1 << getBlueBits() ) - 1);
+				uint32_t bmx = ((1 << getBlueBits()) - 1);
 				uint32_t amx = ((1 << getAlphaBits()) - 1);
 
 				uint32_t r = uint32_t(clamp(clr[0]) * rmx);
@@ -935,12 +922,11 @@ void PixelFormat::convertFrom4f(
 				(*m_pack)(
 					dst,
 					(r << getRedShift()) |
-					(g << getGreenShift()) |
-					(b << getBlueShift()) |
-					(a << getAlphaShift())
-				);
+						(g << getGreenShift()) |
+						(b << getBlueShift()) |
+						(a << getAlphaShift()));
 			}
-			else	// getColorBits() > 32
+			else // getColorBits() > 32
 			{
 				uint32_t tmp;
 				uint32_t i;
@@ -1010,11 +996,10 @@ PixelFormat PixelFormat::endianSwapped() const
 		m_alphaBits,
 		m_alphaBits > 0 ? nbits - m_alphaShift - m_alphaBits : 0,
 		m_palettized,
-		m_floatPoint
-	);
+		m_floatPoint);
 }
 
-bool PixelFormat::operator == (const PixelFormat& pf) const
+bool PixelFormat::operator==(const PixelFormat& pf) const
 {
 	if (m_palettized != pf.m_palettized)
 		return false;
@@ -1044,7 +1029,7 @@ bool PixelFormat::operator == (const PixelFormat& pf) const
 	return true;
 }
 
-bool PixelFormat::operator != (const PixelFormat& pf) const
+bool PixelFormat::operator!=(const PixelFormat& pf) const
 {
 	return !(*this == pf);
 }
@@ -1098,7 +1083,7 @@ void PixelFormat::serialize(ISerializer& s)
 		case 4:
 			m_pack = &pack_4;
 			break;
-		}		
+		}
 	}
 }
 
@@ -1128,6 +1113,8 @@ const PixelFormat PixelFormat::ms_pfB8G8R8A8(32, 0x0000ff00, 0x00ff0000, 0xff000
 const PixelFormat PixelFormat::ms_pfR11G11B10(32, 0xffe00000, 0x001ffc00, 0x000007ff, 0x00000000, false, false);
 const PixelFormat PixelFormat::ms_pfR16G16B16(48, 16, 0, 16, 16, 16, 32, 0, 0, false, false);
 const PixelFormat PixelFormat::ms_pfA16R16G16B16(64, 16, 16, 16, 32, 16, 48, 16, 0, false, false);
+const PixelFormat PixelFormat::ms_pfRG16F(32, 16, 0, 16, 16, 0, 0, 0, 0, false, true);
+const PixelFormat PixelFormat::ms_pfRG32F(64, 32, 0, 32, 32, 0, 0, 0, 0, false, true);
 const PixelFormat PixelFormat::ms_pfR16F(16, 16, 0, 0, 0, 0, 0, 0, 0, false, true);
 const PixelFormat PixelFormat::ms_pfR32F(32, 32, 0, 0, 0, 0, 0, 0, 0, false, true);
 const PixelFormat PixelFormat::ms_pfARGBF16(64, 16, 16, 16, 32, 16, 48, 16, 0, false, true);

@@ -13,6 +13,11 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
 	return F0 + (1.0f - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
 }
 
+vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0f - roughness), F0) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
+}  
+
 /*! Normal distribution function. */
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
@@ -52,29 +57,34 @@ vec3 CalculateLighting(vec3 N, vec3 V, vec3 L, vec3 albedo, float metallic, floa
 {
 	const float PI = 3.14159265359f;
 	const vec3 H = normalize(V + L);
+
 	const float NdotL = max(dot(N, L), 0.0f);
 	const float NdotV = max(dot(N, V), 0.0f);
-	const vec3 F0 = mix(vec3(0.05f), albedo, metallic);
-	const vec3 F = FresnelSchlick(max(dot(H, V), 0.0f), F0);
+
+	const vec3 F0 = mix(vec3(0.01f), albedo, metallic);
+	const vec3 F = FresnelSchlickRoughness(NdotV, F0, roughness);
+
 	const float NDF = DistributionGGX(N, H, roughness);
 	const float G = GeometrySmith(N, V, L, roughness);
+
 	const vec3 numerator = NDF * G * F;
 	const float denominator = 4.0f * NdotV * NdotL + 0.0001f;
+
 	const vec3 specular = numerator / denominator; 
 	const vec3 kS = F;
-	const vec3 kD = (vec3(1.0f) - kS) * (1.0f - metallic);
+	const vec3 kD = (vec3(1.0f) - kS);
+
 	return (kD * albedo / PI + specular * specularG) * radiance * NdotL;
 }
 
 /*! Calculate reflection. */
-vec3 CalculateReflection(vec3 N, vec3 V, vec3 albedo, float metallic)
+vec3 CalculateReflection(vec3 N, vec3 V, vec3 albedo, float metallic, float roughness)
 {
-	// Use the view reflection vector as light direction.
-	const vec3 L = -reflect(V, N);
-	const vec3 H = normalize(V + L * 1.2f);		// 20% more biased toward view to make rim reflection more pronounced.
-	const float HdotV = max(dot(H, V), 0.0f);
-	const vec3 F0 = mix(vec3(0.1f), albedo, metallic);
-	const vec3 F = FresnelSchlick(HdotV, F0);
+	const float NdotV = max(dot(N, V), 0.0f);
+
+	const vec3 F0 = mix(vec3(0.01f), albedo, metallic);
+	const vec3 F = FresnelSchlickRoughness(NdotV, F0, roughness);
+
 	return clamp(F, 0.0f, 1.0f);
 }
 

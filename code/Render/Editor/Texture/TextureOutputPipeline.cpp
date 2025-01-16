@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
+#include "Render/Editor/Texture/TextureOutputPipeline.h"
+
 #include "Compress/Lzf/DeflateStreamLzf.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
@@ -27,8 +28,6 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Instance.h"
 #include "Drawing/CubeMap.h"
-#include "Drawing/Image.h"
-#include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ChainFilter.h"
 #include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Filters/EncodeRGBM.h"
@@ -42,21 +41,24 @@
 #include "Drawing/Filters/SphereMapFilter.h"
 #include "Drawing/Filters/SwizzleFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Editor/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
-#include "Render/Types.h"
+#include "Editor/PipelineDependency.h"
 #include "Render/Editor/Texture/AstcCompressor.h"
 #include "Render/Editor/Texture/Bc6hCompressor.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
 #include "Render/Editor/Texture/EtcCompressor.h"
 #include "Render/Editor/Texture/PvrtcCompressor.h"
 #include "Render/Editor/Texture/TextureOutput.h"
-#include "Render/Editor/Texture/TextureOutputPipeline.h"
 #include "Render/Editor/Texture/UnCompressor.h"
 #include "Render/Resource/TextureResource.h"
+#include "Render/Types.h"
+
+#include <cstring>
 
 // Enable scaling texture mips as job tasks;
 // but since each task must scale from highest mip the
@@ -65,8 +67,8 @@
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 float estimateAlphaCoverage(const drawing::Image* image, float alphaCoverageRef)
 {
@@ -133,7 +135,7 @@ struct ScaleTextureTask : public Object
 	}
 };
 
-		}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 39, TextureOutputPipeline, editor::IPipeline)
 
@@ -198,8 +200,7 @@ bool TextureOutputPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	return true;
 }
@@ -213,8 +214,7 @@ bool TextureOutputPipeline::buildOutput(
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
-	uint32_t reason
-) const
+	uint32_t reason) const
 {
 	const TextureOutput* textureOutput = checked_type_cast< const TextureOutput* >(sourceAsset);
 	Ref< drawing::Image > image = const_cast< drawing::Image* >(checked_type_cast< const drawing::Image*, false >(buildParams));
@@ -257,12 +257,12 @@ bool TextureOutputPipeline::buildOutput(
 		case TfR32G32B32A32F:
 			pixelFormat = drawing::PixelFormat::getABGRF32();
 			break;
-		//case TfR16G16F:
-		//	pixelFormat = drawing::PixelFormat::getR16G16F();
-		//	break;
-		//case TfR32G32F:
-		//	pixelFormat = drawing::PixelFormat::getR32G32F();
-		//	break;
+		case TfR16G16F:
+			pixelFormat = drawing::PixelFormat::getRG16F();
+			break;
+		case TfR32G32F:
+			pixelFormat = drawing::PixelFormat::getRG32F();
+			break;
 		case TfR16F:
 			pixelFormat = drawing::PixelFormat::getR16F();
 			break;
@@ -352,15 +352,14 @@ bool TextureOutputPipeline::buildOutput(
 		// Determine texture compression format.
 		if (
 			textureOutput->m_enableCompression &&
-			(textureOutput->m_textureType == Tt2D || textureOutput->m_textureType == TtCube)
-		)
+			(textureOutput->m_textureType == Tt2D || textureOutput->m_textureType == TtCube))
 		{
 			if (m_compressionMethod == CompressionMethod::DXTn)
 			{
 				if (textureOutput->m_normalMap)
 				{
-					//log::info << L"Using BC6HU compression." << Endl;
-					//textureFormat = TfBC6HU;
+					// log::info << L"Using BC6HU compression." << Endl;
+					// textureFormat = TfBC6HU;
 					log::info << L"Using no compression (should use compression)." << Endl;
 					pixelFormat = drawing::PixelFormat::getABGRF16();
 					textureFormat = TfR16G16B16A16F;
@@ -370,26 +369,22 @@ bool TextureOutputPipeline::buildOutput(
 					log::info << L"Using DXT5 compression." << Endl;
 					textureFormat = TfDXT5;
 				}
+				else if (needAlpha)
+				{
+					log::info << L"Using DXT3 compression." << Endl;
+					textureFormat = TfDXT3;
+				}
 				else
 				{
-					if (needAlpha)
-					{
-						log::info << L"Using DXT3 compression." << Endl;
-						textureFormat = TfDXT3;
-					}
-					else
-					{
-						log::info << L"Using DXT1 compression." << Endl;
-						textureFormat = TfDXT1;
-					}
+					log::info << L"Using DXT1 compression." << Endl;
+					textureFormat = TfDXT1;
 				}
 			}
 			else if (m_compressionMethod == CompressionMethod::PVRTC)
 			{
 				if (
 					width == height &&
-					width >= 8 && width <= 2048
-				)
+					width >= 8 && width <= 2048)
 				{
 					if (needAlpha)
 					{
@@ -491,8 +486,7 @@ bool TextureOutputPipeline::buildOutput(
 	if (
 		!textureOutput->m_normalMap &&
 		!textureOutput->m_assumeLinearGamma &&
-		std::abs(m_gamma - 1.0f) > FUZZY_EPSILON
-	)
+		std::abs(m_gamma - 1.0f) > FUZZY_EPSILON)
 	{
 		if (image->getImageInfo() != nullptr)
 		{
@@ -558,15 +552,12 @@ bool TextureOutputPipeline::buildOutput(
 				textureOutput->m_inverseNormalMapX ? -1.0f : 1.0f,
 				textureOutput->m_inverseNormalMapY ? -1.0f : 1.0f,
 				1.0f,
-				1.0f
-			),
+				1.0f),
 			Color4f(
 				textureOutput->m_inverseNormalMapX ? 1.0f : 0.0f,
 				textureOutput->m_inverseNormalMapY ? 1.0f : 0.0f,
 				0.0f,
-				0.0f
-			)
-		);
+				0.0f));
 		image->apply(&transformFilter);
 	}
 
@@ -622,8 +613,7 @@ bool TextureOutputPipeline::buildOutput(
 	Ref< TextureResource > outputResource = new TextureResource();
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
 		outputPath,
-		outputGuid
-	);
+		outputGuid);
 	if (!outputInstance)
 	{
 		log::error << L"Unable to create output instance" << Endl;
@@ -712,17 +702,13 @@ bool TextureOutputPipeline::buildOutput(
 						mipHeight,
 						drawing::ScaleFilter::MnAverage,
 						drawing::ScaleFilter::MgLinear,
-						textureOutput->m_keepZeroAlpha
-					));
+						textureOutput->m_keepZeroAlpha));
 
 					// Append sharpen filter.
 					if (!textureOutput->m_normalMap && textureOutput->m_sharpenRadius > 0)
-					{
 						taskFilters->add(new drawing::SharpenFilter(
 							textureOutput->m_sharpenRadius,
-							textureOutput->m_sharpenStrength * (float(i) / (mipCount - 1))
-						));
-					}
+							textureOutput->m_sharpenStrength * (float(i) / (mipCount - 1))));
 
 					// Ensure each pixel is renormalized after scaling.
 					if (textureOutput->m_normalMap)
@@ -740,7 +726,7 @@ bool TextureOutputPipeline::buildOutput(
 
 					if (m_generateMipsThread)
 					{
-						Ref< Job > job = JobManager::getInstance().add([=](){
+						Ref< Job > job = JobManager::getInstance().add([=]() {
 							task->execute();
 						});
 						T_ASSERT(job);
@@ -807,18 +793,15 @@ bool TextureOutputPipeline::buildOutput(
 					mipHeight,
 					drawing::ScaleFilter::MnAverage,
 					drawing::ScaleFilter::MgLinear,
-					textureOutput->m_keepZeroAlpha
-				);
+					textureOutput->m_keepZeroAlpha);
 				mipImages[i]->apply(&scaleFilter);
 			}
 		}
 
 		// Adjust alpha from coverage.
 		if (alphaCoverage > 0.0f)
-		{
 			for (auto mipImage : mipImages)
 				adjustAlphaCoverage(mipImage, textureOutput->m_alphaCoverageReference, alphaCoverage);
-		}
 
 		// Ensure each pixel is renormalized after scaling.
 		if (textureOutput->m_normalMap)
@@ -847,8 +830,7 @@ bool TextureOutputPipeline::buildOutput(
 			{
 				const drawing::SharpenFilter sharpenFilter(
 					textureOutput->m_sharpenRadius,
-					textureOutput->m_sharpenStrength * (float(i) / (mipCount - 1))
-				);
+					textureOutput->m_sharpenStrength * (float(i) / (mipCount - 1)));
 				mipImages[i]->apply(&sharpenFilter);
 			}
 		}
@@ -928,8 +910,7 @@ bool TextureOutputPipeline::buildOutput(
 				slice * sliceWidth,
 				0,
 				sliceWidth,
-				sliceHeight
-			);
+				sliceHeight);
 
 			for (int32_t i = 0; i < mipCount; ++i)
 			{
@@ -940,21 +921,18 @@ bool TextureOutputPipeline::buildOutput(
 					mipSize,
 					drawing::ScaleFilter::MnAverage,
 					drawing::ScaleFilter::MgLinear,
-					textureOutput->m_keepZeroAlpha
-				);
+					textureOutput->m_keepZeroAlpha);
 				sliceImage->apply(&mipScaleFilter);
 
 				uint32_t outputSize = getTextureMipPitch(
 					textureFormat,
 					mipSize,
-					mipSize
-				);
+					mipSize);
 
-				 writerData.write(
+				writerData.write(
 					sliceImage->getData(),
 					outputSize,
-					1
-				);
+					1);
 			}
 		}
 
@@ -1018,8 +996,7 @@ bool TextureOutputPipeline::buildOutput(
 					mipSize,
 					drawing::ScaleFilter::MnAverage,
 					drawing::ScaleFilter::MgLinear,
-					textureOutput->m_keepZeroAlpha
-				);
+					textureOutput->m_keepZeroAlpha);
 				sideImage->apply(&mipScaleFilter);
 
 				mipImages[i] = sideImage->clone();
@@ -1063,8 +1040,7 @@ Ref< ISerializable > TextureOutputPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const Object* buildParams
-) const
+	const Object* buildParams) const
 {
 	T_FATAL_ERROR;
 	return nullptr;
