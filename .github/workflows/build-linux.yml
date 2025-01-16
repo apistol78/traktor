@@ -41,11 +41,11 @@ jobs:
 #      run: ./bin/latest/linux/debugshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
 #    - name: Unit tests ReleaseShared
 #      run: ./bin/latest/linux/releaseshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
-    - name: Create ZIP
-      run: ./scripts/autobuild/autobuild-archive-linux.sh
-    - name: Archive ZIP
-      uses: actions/upload-artifact@v4
-      with:
-        name: traktor
-        path: |
-          build/archive/traktor/
+    # - name: Create ZIP
+    #   run: ./scripts/autobuild/autobuild-archive-linux.sh
+    # - name: Archive ZIP
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: traktor
+    #     path: |
+    #       build/archive/traktor/
