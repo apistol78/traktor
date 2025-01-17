@@ -6,12 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
-#include <cstring>
-#include <thread>
+#include "Physics/Jolt/PhysicsManagerJolt.h"
+
 #include "Core/Log/Log.h"
-#include "Core/Math/Const.h"
 #include "Core/Math/Aabb3.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/Save.h"
 #include "Core/Thread/Acquire.h"
@@ -28,50 +27,53 @@
 #include "Physics/DofJointDesc.h"
 #include "Physics/DynamicBodyDesc.h"
 #include "Physics/HeightfieldShapeDesc.h"
-#include "Physics/HingeJointDesc.h"
 #include "Physics/Hinge2JointDesc.h"
+#include "Physics/HingeJointDesc.h"
+#include "Physics/Jolt/BodyJolt.h"
+#include "Physics/Jolt/Conversion.h"
 #include "Physics/Mesh.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/SphereShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
-#include "Physics/Jolt/Conversion.h"
-#include "Physics/Jolt/BodyJolt.h"
-#include "Physics/Jolt/PhysicsManagerJolt.h"
 #include "Resource/IResourceManager.h"
 
+#include <algorithm>
+#include <cstring>
+#include <thread>
+
 // Keep Jolt includes here, Jolt.h must be first.
-#include <Jolt/Jolt.h>
-#include <Jolt/RegisterTypes.h>
 #include <Jolt/Core/Factory.h>
-#include <Jolt/Core/TempAllocator.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
-#include <Jolt/Physics/PhysicsSettings.h>
-#include <Jolt/Physics/PhysicsSystem.h>
+#include <Jolt/Core/TempAllocator.h>
+#include <Jolt/Jolt.h>
+#include <Jolt/Physics/Body/BodyActivationListener.h>
+#include <Jolt/Physics/Body/BodyCreationSettings.h>
+#include <Jolt/Physics/Collision/CastResult.h>
 #include <Jolt/Physics/Collision/CollisionCollectorImpl.h>
 #include <Jolt/Physics/Collision/PhysicsMaterialSimple.h>
 #include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/ShapeCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
 #include <Jolt/Physics/Collision/Shape/HeightFieldShape.h>
 #include <Jolt/Physics/Collision/Shape/MeshShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
-#include <Jolt/Physics/Body/BodyCreationSettings.h>
-#include <Jolt/Physics/Body/BodyActivationListener.h>
+#include <Jolt/Physics/Collision/ShapeCast.h>
+#include <Jolt/Physics/PhysicsSettings.h>
+#include <Jolt/Physics/PhysicsSystem.h>
+#include <Jolt/RegisterTypes.h>
 
 using namespace JPH::literals;
 
 namespace traktor::physics
 {
-	namespace
-	{
+namespace
+{
 
 namespace Layers
 {
-	static constexpr JPH::ObjectLayer NON_MOVING = 0;
-	static constexpr JPH::ObjectLayer MOVING = 1;
-	static constexpr JPH::ObjectLayer NUM_LAYERS = 2;
+static constexpr JPH::ObjectLayer NON_MOVING = 0;
+static constexpr JPH::ObjectLayer MOVING = 1;
+static constexpr JPH::ObjectLayer NUM_LAYERS = 2;
 };
 
 class ObjectLayerPairFilterImpl : public JPH::ObjectLayerPairFilter
@@ -95,9 +97,9 @@ public:
 
 namespace BroadPhaseLayers
 {
-	static constexpr JPH::BroadPhaseLayer NON_MOVING(0);
-	static constexpr JPH::BroadPhaseLayer MOVING(1);
-	static constexpr JPH::uint NUM_LAYERS(2);
+static constexpr JPH::BroadPhaseLayer NON_MOVING(0);
+static constexpr JPH::BroadPhaseLayer MOVING(1);
+static constexpr JPH::uint NUM_LAYERS(2);
 };
 
 class BPLayerInterfaceImpl final : public JPH::BroadPhaseLayerInterface
@@ -146,7 +148,7 @@ public:
 class MyContactListener : public JPH::ContactListener
 {
 public:
-	virtual JPH::ValidateResult	OnContactValidate(const JPH::Body& body1, const JPH::Body& body2, JPH::RVec3Arg baseOffset, const JPH::CollideShapeResult& collisionResult) override
+	virtual JPH::ValidateResult OnContactValidate(const JPH::Body& body1, const JPH::Body& body2, JPH::RVec3Arg baseOffset, const JPH::CollideShapeResult& collisionResult) override
 	{
 		return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
 	}
@@ -164,7 +166,7 @@ public:
 	}
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerJolt", 0, PhysicsManagerJolt, PhysicsManager)
 
@@ -176,7 +178,9 @@ PhysicsManagerJolt::~PhysicsManagerJolt()
 bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 {
 	// Hook our memory allocators to Jolt.
-	JPH::Allocate = [](size_t size) { return Alloc::acquire(size, T_FILE_LINE); };
+	JPH::Allocate = [](size_t size) {
+		return Alloc::acquire(size, T_FILE_LINE);
+	};
 	JPH::Reallocate = [](void* block, size_t olds, size_t news) {
 		void* newp = nullptr;
 		if (news > 0)
@@ -187,9 +191,15 @@ bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 		Alloc::free(block);
 		return newp;
 	};
-	JPH::Free = [](void* block) { Alloc::free(block); };
-	JPH::AlignedAllocate = [](size_t size, size_t align) { return Alloc::acquireAlign(size, align, T_FILE_LINE); };
-	JPH::AlignedFree = [](void* block) { Alloc::freeAlign(block); };
+	JPH::Free = [](void* block) {
+		Alloc::free(block);
+	};
+	JPH::AlignedAllocate = [](size_t size, size_t align) {
+		return Alloc::acquireAlign(size, align, T_FILE_LINE);
+	};
+	JPH::AlignedFree = [](void* block) {
+		Alloc::freeAlign(block);
+	};
 
 	JPH::Factory::sInstance = new JPH::Factory();
 	JPH::RegisterTypes();
@@ -214,8 +224,7 @@ bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 		cMaxContactConstraints,
 		*m_broadPhaseLayerInterface.ptr(),
 		*m_objectVsBroadPhaseLayerFilter.ptr(),
-		*m_objectVsObjectLayerFilter.ptr()
-	);
+		*m_objectVsObjectLayerFilter.ptr());
 
 	m_contactListener.reset(new MyContactListener());
 	m_physicsSystem->SetContactListener(m_contactListener.ptr());
@@ -229,7 +238,11 @@ bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 void PhysicsManagerJolt::destroy()
 {
 	while (!m_bodies.empty())
-		m_bodies.front()->destroy();
+	{
+		Ref< Body > body = m_bodies.front();
+		T_FATAL_ASSERT(body != nullptr);
+		body->destroy();
+	}
 
 	m_physicsSystem.release();
 	m_contactListener.release();
@@ -317,28 +330,22 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		samples.resize(heightfield->getSize() * heightfield->getSize());
 
 		for (int32_t y = 0; y < heightfield->getSize(); ++y)
-		{
 			for (int32_t x = 0; x < heightfield->getSize(); ++x)
-			{
 				samples[x + y * heightfield->getSize()] = heightfield->getGridHeightNearest(x, y);
-			}
-		}
 
 		const Vector4 s(
 			1.0f / heightfield->getSize(),
 			1.0f,
 			1.0f / heightfield->getSize(),
-			1.0f
-		);
+			1.0f);
 
 		const Vector4& worldExtent = heightfield->getWorldExtent();
 
 		JPH::HeightFieldShapeSettings shapeSettings(
 			samples.c_ptr(),
-			convertToJolt(-worldExtent * 0.5_simd),	// offset
-			convertToJolt(worldExtent * s),	// scale
-			heightfield->getSize()
-		);
+			convertToJolt(-worldExtent * 0.5_simd), // offset
+			convertToJolt(worldExtent * s),			// scale
+			heightfield->getSize());
 		shapeSettings.SetEmbedded();
 
 		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
@@ -349,8 +356,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
 			JPH::Quat::sIdentity(),
 			JPH::EMotionType::Static,
-			Layers::NON_MOVING
-		);
+			Layers::NON_MOVING);
 
 		if (auto staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
 		{
@@ -377,8 +383,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			0.0f,
 			Vector4::zero(),
 			mergedCollisionGroup,
-			mergedCollisionMask
-		);
+			mergedCollisionMask);
 		m_bodies.push_back(bj);
 		return bj;
 	}
@@ -456,8 +461,7 @@ bool PhysicsManagerJolt::queryRay(
 	float maxLength,
 	const QueryFilter& queryFilter,
 	bool ignoreBackFace,
-	QueryResult& outResult
-) const
+	QueryResult& outResult) const
 {
 	const JPH::NarrowPhaseQuery& narrowPhaseQuery = m_physicsSystem->GetNarrowPhaseQuery();
 
@@ -465,10 +469,10 @@ bool PhysicsManagerJolt::queryRay(
 	{
 	public:
 		explicit RayCollector(const PhysicsManagerJolt* outer, const JPH::RRayCast& ray, const QueryFilter& queryFilter, QueryResult& outResult)
-		:	m_outer(outer)
-		,	m_ray(ray)
-		,	m_queryFilter(queryFilter)
-		,	m_outResult(outResult)
+			: m_outer(outer)
+			, m_ray(ray)
+			, m_queryFilter(queryFilter)
+			, m_outResult(outResult)
 		{
 		}
 
@@ -499,7 +503,7 @@ bool PhysicsManagerJolt::queryRay(
 					m_outResult.position = convertFromJolt(position, 1.0f);
 					m_outResult.normal = convertFromJolt(normal, 0.0f);
 					m_outResult.fraction = result.mFraction;
-					//m_outResult.material = ;
+					// m_outResult.material = ;
 
 					m_anyHit = true;
 
@@ -518,7 +522,7 @@ bool PhysicsManagerJolt::queryRay(
 		bool m_anyHit = false;
 	};
 
-	const JPH::RRayCast ray { convertToJolt(at), convertToJolt(direction * Scalar(maxLength)) };
+	const JPH::RRayCast ray{ convertToJolt(at), convertToJolt(direction * Scalar(maxLength)) };
 
 	JPH::RayCastSettings settings;
 	settings.mBackFaceModeTriangles = JPH::EBackFaceMode::IgnoreBackFaces;
@@ -537,8 +541,7 @@ bool PhysicsManagerJolt::queryShadowRay(
 	const Vector4& direction,
 	float maxLength,
 	const QueryFilter& queryFilter,
-	uint32_t queryTypes
-) const
+	uint32_t queryTypes) const
 {
 	return false;
 }
@@ -548,8 +551,7 @@ uint32_t PhysicsManagerJolt::querySphere(
 	float radius,
 	const QueryFilter& queryFilter,
 	uint32_t queryTypes,
-	RefArray< Body >& outBodies
-) const
+	RefArray< Body >& outBodies) const
 {
 	return false;
 }
@@ -560,8 +562,7 @@ bool PhysicsManagerJolt::querySweep(
 	float maxLength,
 	float radius,
 	const QueryFilter& queryFilter,
-	QueryResult& outResult
-) const
+	QueryResult& outResult) const
 {
 	const JPH::NarrowPhaseQuery& narrowPhaseQuery = m_physicsSystem->GetNarrowPhaseQuery();
 
@@ -569,10 +570,10 @@ bool PhysicsManagerJolt::querySweep(
 	{
 	public:
 		explicit SweepCollector(const PhysicsManagerJolt* outer, const JPH::RShapeCast& shapeCast, const QueryFilter& queryFilter, QueryResult& outResult)
-		:	m_outer(outer)
-		,	m_shapeCast(shapeCast)
-		,	m_queryFilter(queryFilter)
-		,	m_outResult(outResult)
+			: m_outer(outer)
+			, m_shapeCast(shapeCast)
+			, m_queryFilter(queryFilter)
+			, m_outResult(outResult)
 		{
 		}
 
@@ -603,7 +604,7 @@ bool PhysicsManagerJolt::querySweep(
 					m_outResult.position = convertFromJolt(position, 1.0f);
 					m_outResult.normal = convertFromJolt(normal, 0.0f);
 					m_outResult.fraction = result.mFraction;
-					//m_outResult.material = ;
+					// m_outResult.material = ;
 
 					m_anyHit = true;
 
@@ -629,8 +630,7 @@ bool PhysicsManagerJolt::querySweep(
 		&sphere,
 		JPH::Vec3::sReplicate(1.0f),
 		JPH::RMat44::sTranslation(convertToJolt(at)),
-		convertToJolt(direction * Scalar(maxLength))
-	);
+		convertToJolt(direction * Scalar(maxLength)));
 
 	JPH::ShapeCastSettings settings;
 	settings.mUseShrunkenShapeAndConvexRadius = true;
@@ -650,8 +650,7 @@ bool PhysicsManagerJolt::querySweep(
 	const Vector4& direction,
 	float maxLength,
 	const QueryFilter& queryFilter,
-	QueryResult& outResult
-) const
+	QueryResult& outResult) const
 {
 	return false;
 }
@@ -662,8 +661,7 @@ void PhysicsManagerJolt::querySweep(
 	float maxLength,
 	float radius,
 	const QueryFilter& queryFilter,
-	AlignedVector< QueryResult >& outResult
-) const
+	AlignedVector< QueryResult >& outResult) const
 {
 	const JPH::NarrowPhaseQuery& narrowPhaseQuery = m_physicsSystem->GetNarrowPhaseQuery();
 
@@ -671,10 +669,10 @@ void PhysicsManagerJolt::querySweep(
 	{
 	public:
 		explicit SweepCollector(const PhysicsManagerJolt* outer, const JPH::RShapeCast& shapeCast, const QueryFilter& queryFilter, AlignedVector< QueryResult >& outResult)
-		:	m_outer(outer)
-		,	m_shapeCast(shapeCast)
-		,	m_queryFilter(queryFilter)
-		,	m_outResult(outResult)
+			: m_outer(outer)
+			, m_shapeCast(shapeCast)
+			, m_queryFilter(queryFilter)
+			, m_outResult(outResult)
 		{
 		}
 
@@ -706,7 +704,7 @@ void PhysicsManagerJolt::querySweep(
 					outResult.position = convertFromJolt(position, 1.0f);
 					outResult.normal = convertFromJolt(normal, 0.0f);
 					outResult.fraction = result.mFraction;
-					//outResult.material = ;
+					// outResult.material = ;
 
 					UpdateEarlyOutFraction(result.mFraction);
 				}
@@ -727,8 +725,7 @@ void PhysicsManagerJolt::querySweep(
 		&sphere,
 		JPH::Vec3::sReplicate(1.0f),
 		JPH::RMat44::sTranslation(convertToJolt(at)),
-		convertToJolt(direction * Scalar(maxLength))
-	);
+		convertToJolt(direction * Scalar(maxLength)));
 
 	JPH::ShapeCastSettings settings;
 	settings.mUseShrunkenShapeAndConvexRadius = true;
@@ -743,8 +740,7 @@ void PhysicsManagerJolt::querySweep(
 
 void PhysicsManagerJolt::queryOverlap(
 	const Body* body,
-	RefArray< Body >& outResult
-) const
+	RefArray< Body >& outResult) const
 {
 }
 
@@ -773,23 +769,20 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		JPH::VertexList vertexList;
 		vertexList.reserve(mesh->getVertices().size());
 		for (const auto& vertex : mesh->getVertices())
-		{
 			vertexList.push_back(JPH::Float3(
-				vertex.x(), vertex.y(), vertex.z()
-			));
-		}
+				vertex.x(),
+				vertex.y(),
+				vertex.z()));
 
 		JPH::IndexedTriangleList triangleList;
 		triangleList.reserve(mesh->getShapeTriangles().size());
 		for (const auto& triangle : mesh->getShapeTriangles())
-		{
 			triangleList.push_back(JPH::IndexedTriangle(
 				triangle.indices[2],
 				triangle.indices[1],
 				triangle.indices[0],
 				0 // triangle.material
-			));
-		}
+				));
 
 		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList);
 		shapeSettings.SetEmbedded();
@@ -802,8 +795,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
 			JPH::Quat::sIdentity(),
 			staticDesc->isKinematic() ? JPH::EMotionType::Kinematic : JPH::EMotionType::Static,
-			Layers::NON_MOVING
-		);
+			Layers::NON_MOVING);
 
 		body = bodyInterface.CreateBody(settings);
 		if (!body)
@@ -822,8 +814,9 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		{
 			const auto& vertex = vertices[hullIndex];
 			vertexList.push_back(JPH::Vec3(
-				vertex.x(), vertex.y(), vertex.z()
-			));
+				vertex.x(),
+				vertex.y(),
+				vertex.z()));
 			boundingBox.contain(vertex);
 		}
 
@@ -838,8 +831,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
 			JPH::Quat::sIdentity(),
 			JPH::EMotionType::Dynamic,
-			Layers::MOVING
-		);
+			Layers::MOVING);
 		settings.mLinearDamping = dynamicDesc->getLinearDamping();
 		settings.mAngularDamping = dynamicDesc->getAngularDamping();
 		settings.mFriction = dynamicDesc->getFriction();
@@ -850,7 +842,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		const float mass = dynamicDesc->getMass();
 		settings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
 		settings.mMassPropertiesOverride.SetMassAndInertiaOfSolidBox(convertToJolt(bbs), mass / (bbs.x() * bbs.y() * bbs.z()));
-	 
+
 		body = bodyInterface.CreateBody(settings);
 		if (!body)
 			return nullptr;
@@ -867,8 +859,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		inverseMass,
 		centerOfGravity,
 		collisionGroup,
-		collisionMask
-	);
+		collisionMask);
 	m_bodies.push_back(bj);
 	return bj;
 }
