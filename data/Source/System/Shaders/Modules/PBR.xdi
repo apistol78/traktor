@@ -80,7 +80,7 @@ vec3 CalculateLighting(vec3 N, vec3 V, vec3 L, vec3 albedo, float metallic, floa
 /*! Calculate reflection. */
 vec3 CalculateReflection(vec3 N, vec3 V, vec3 albedo, float metallic, float roughness)
 {
-	const float NdotV = max(dot(N, V), 0.0f);
+	const float NdotV = max(dot(N, V), 0.1f);
 
 	const vec3 F0 = mix(vec3(0.01f), albedo, metallic);
 	const vec3 F = FresnelSchlickRoughness(NdotV, F0, roughness);

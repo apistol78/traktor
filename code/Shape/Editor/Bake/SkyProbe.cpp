@@ -87,7 +87,7 @@ SkyProbe::SkyProbe(const Color4f& skyOverHorizon, const Color4f& skyUnderHorizon
 		const Scalar bw = dot3(cl, Vector4(1.0f, 1.0f, 1.0f)) / 3.0_simd;
 		cl = Color4f(lerp(Vector4(bw, bw, bw, 0.0f), cl, saturation));
 
-		return (cl * intensity * 3.0_simd) / 1000.0_simd;
+		return (cl * intensity * 2.0_simd) / 1000.0_simd;
 	});
 
 	render::SHEngine shEngine(3);

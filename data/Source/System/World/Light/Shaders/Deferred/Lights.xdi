@@ -2755,9 +2755,9 @@ $Output = vec4(r, 0.0f);
 				<first>5803</first>
 				<second>-322</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
@@ -2812,11 +2812,12 @@ const vec3 N = $N.xyz;
 const vec3 V = $V.xyz;
 
 $Output = vec4(
-	max(dot(N, V), 0.01f),
+	clamp(dot(N, V), 0.01f, 0.99f),
 	$Roughness,
 	0.0f,
 	0.0f
 );
+
 			]]>
 			</script>
 		</item>
