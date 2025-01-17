@@ -1,17 +1,19 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Runtime/Editor/GameEntityWizardDialog.h"
+
 #include "Animation/AnimatedMeshComponentData.h"
-#include "Animation/SkeletonComponentData.h"
 #include "Animation/Animation/SimpleAnimationControllerData.h"
 #include "Animation/Editor/AnimationAsset.h"
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Animation/RagDoll/RagDollPoseControllerData.h"
+#include "Animation/SkeletonComponentData.h"
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
@@ -25,15 +27,14 @@
 #include "Database/Traverse.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
-#include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Mesh/MeshComponentData.h"
 #include "Physics/CollisionSpecification.h"
 #include "Physics/DynamicBodyDesc.h"
+#include "Physics/Editor/MeshAsset.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
-#include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
-#include "Runtime/Editor/GameEntityWizardDialog.h"
 #include "Script/Editor/Script.h"
 #include "Ui/Application.h"
 #include "Ui/Button.h"
@@ -41,11 +42,12 @@
 #include "Ui/DropDown.h"
 #include "Ui/Edit.h"
 #include "Ui/FileDialog.h"
+#include "Ui/MessageBox.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "World/EntityData.h"
 #include "World/Entity/ScriptComponentData.h"
+#include "World/EntityData.h"
 
 namespace traktor::runtime
 {
@@ -53,22 +55,21 @@ namespace traktor::runtime
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.GameEntityWizardDialog", GameEntityWizardDialog, ui::ConfigDialog)
 
 GameEntityWizardDialog::GameEntityWizardDialog(editor::IEditor* editor, db::Group* group)
-:	m_editor(editor)
-,	m_group(group)
-,	m_nameEdited(false)
+	: m_editor(editor)
+	, m_group(group)
+	, m_nameEdited(false)
 {
 }
 
 bool GameEntityWizardDialog::create(ui::Widget* parent)
 {
 	if (!ui::ConfigDialog::create(
-		parent,
-		i18n::Text(L"GAMEENTITY_WIZARD_DIALOG_TITLE"),
-		700_ut,
-		450_ut,
-		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
-		new ui::TableLayout(L"100%", L"*", 8_ut, 8_ut)
-	))
+			parent,
+			i18n::Text(L"GAMEENTITY_WIZARD_DIALOG_TITLE"),
+			700_ut,
+			450_ut,
+			ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
+			new ui::TableLayout(L"100%", L"*", 8_ut, 8_ut)))
 		return false;
 
 	// Name
@@ -234,8 +235,7 @@ void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* ev
 	FileSystem::getInstance().getRelativePath(
 		FileSystem::getInstance().getAbsolutePath(fileName),
 		FileSystem::getInstance().getAbsolutePath(assetPath),
-		fileName
-	);
+		fileName);
 
 	m_editVisualMesh->setText(fileName.getPathName());
 
@@ -272,8 +272,7 @@ void GameEntityWizardDialog::eventBrowseSkeletonMeshClick(ui::ButtonClickEvent* 
 	FileSystem::getInstance().getRelativePath(
 		FileSystem::getInstance().getAbsolutePath(fileName),
 		FileSystem::getInstance().getAbsolutePath(assetPath),
-		fileName
-	);
+		fileName);
 
 	m_editSkeletonMesh->setText(fileName.getPathName());
 }
@@ -304,8 +303,7 @@ void GameEntityWizardDialog::eventBrowseAnimationMeshClick(ui::ButtonClickEvent*
 	FileSystem::getInstance().getRelativePath(
 		FileSystem::getInstance().getAbsolutePath(fileName),
 		FileSystem::getInstance().getAbsolutePath(assetPath),
-		fileName
-	);
+		fileName);
 
 	m_editAnimationMesh->setText(fileName.getPathName());
 }
@@ -336,8 +334,7 @@ void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent*
 	FileSystem::getInstance().getRelativePath(
 		FileSystem::getInstance().getAbsolutePath(fileName),
 		FileSystem::getInstance().getAbsolutePath(assetPath),
-		fileName
-	);
+		fileName);
 
 	m_editCollisionMesh->setText(fileName.getPathName());
 }
@@ -360,12 +357,12 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 		const int32_t entityType = m_dropEntityType->getSelected();
 		const float scale = parseString< float >(m_editScale->getText());
 
+		// Sanity check input.
 		if (name.empty())
 		{
 			log::error << L"Game entity wizard failed; entity must have a name." << Endl;
 			return;
 		}
-
 		if ((entityType == 3 || entityType == 4) && skeletonMesh.empty())
 		{
 			log::error << L"Game entity wizard failed; \"animated\" and \"rag dolls\" must have a skeleton." << Endl;
@@ -375,6 +372,53 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 		{
 			log::error << L"Game entity wizard failed; \"animated\" and \"rag dolls\" must have an animation." << Endl;
 			return;
+		}
+
+		// Warn if we're about to replace existing instances.
+		bool haveSkeleton = false;
+		bool haveAnimation = false;
+		bool haveVisualMesh = false;
+		bool haveCollisionMesh = false;
+		bool haveScript = false;
+		bool haveEntity = false;
+
+		if (!skeletonMesh.empty())
+			haveSkeleton = (m_group->getInstance(name + L"-Skeleton") != nullptr);
+		if (!animationMesh.empty())
+			haveAnimation = (m_group->getInstance(name + L"-Animation") != nullptr);
+		if (!visualMesh.empty())
+			haveVisualMesh = (m_group->getInstance(name + L"-Visual") != nullptr);
+		if (!collisionMesh.empty())
+			haveCollisionMesh = (m_group->getInstance(name + L"-Collision") != nullptr);
+		if (m_checkBoxCreateScript->isChecked())
+			haveScript = (m_group->getInstance(name + L"-Script") != nullptr);
+
+		haveEntity = (m_group->getInstance(name) != nullptr);
+
+		const bool haveAny = (haveSkeleton || haveAnimation || haveVisualMesh || haveCollisionMesh || haveScript || haveEntity);
+		if (haveAny)
+		{
+			StringOutputStream ss;
+			ss << i18n::Text(L"GAMEENTITY_WIZARD_ALREADY_EXIST_MESSAGE") << Endl;
+
+			if (haveSkeleton)
+				ss << name + L"-Skeleton" << Endl;
+			if (haveAnimation)
+				ss << name + L"-Animation" << Endl;
+			if (haveVisualMesh)
+				ss << name + L"-Visual" << Endl;
+			if (haveCollisionMesh)
+				ss << name + L"-Collision" << Endl;
+			if (haveScript)
+				ss << name + L"-Script" << Endl;
+			if (haveEntity)
+				ss << name << Endl;
+
+			if (ui::MessageBox::show(this, ss.str(), i18n::Text(L"GAMEENTITY_WIZARD_ALREADY_EXIST_CAPTION"), ui::MbIconExclamation | ui::MbYesNo) == ui::DialogResult::No)
+			{
+				event->consume();
+				return;
+			}
 		}
 
 		Ref< world::EntityData > entityData = new world::EntityData();
@@ -392,8 +436,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create asset instance.
 			skeletonAssetInstance = m_group->createInstance(
 				name + L"-Skeleton",
-				db::CifReplaceExisting | db::CifKeepExistingGuid
-			);
+				db::CifReplaceExisting | db::CifKeepExistingGuid);
 			if (!skeletonAssetInstance)
 			{
 				log::error << L"Game entity wizard failed; unable to create skeleton asset instance." << Endl;
@@ -420,8 +463,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create asset instance.
 			animationAssetInstance = m_group->createInstance(
 				name + L"-Animation",
-				db::CifReplaceExisting | db::CifKeepExistingGuid
-			);
+				db::CifReplaceExisting | db::CifKeepExistingGuid);
 			if (!animationAssetInstance)
 			{
 				log::error << L"Game entity wizard failed; unable to create animation asset instance." << Endl;
@@ -434,7 +476,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			{
 				log::error << L"Game entity wizard failed; unable to commit animation asset instance." << Endl;
 				return;
-			}			
+			}
 		}
 
 		if (!visualMesh.empty())
@@ -451,8 +493,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create asset instance.
 			Ref< db::Instance > meshAssetInstance = m_group->createInstance(
 				name + L"-Visual",
-				db::CifReplaceExisting | db::CifKeepExistingGuid
-			);
+				db::CifReplaceExisting | db::CifKeepExistingGuid);
 			if (!meshAssetInstance)
 			{
 				log::error << L"Game entity wizard failed; unable to create visual mesh asset instance." << Endl;
@@ -472,12 +513,9 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 				entityData->setComponent(new animation::SkeletonComponentData(
 					resource::Id< animation::Skeleton >(skeletonAssetInstance->getGuid()),
 					new animation::SimpleAnimationControllerData(
-						resource::Id< animation::Animation >(animationAssetInstance->getGuid())
-					)
-				));
+						resource::Id< animation::Animation >(animationAssetInstance->getGuid()))));
 				entityData->setComponent(new animation::AnimatedMeshComponentData(
-					resource::Id< mesh::SkinnedMesh >(meshAssetInstance->getGuid())
-				));
+					resource::Id< mesh::SkinnedMesh >(meshAssetInstance->getGuid())));
 			}
 			else if (entityType == 4)
 			{
@@ -496,19 +534,16 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 					if (maskInstance)
 						mask.insert(resource::Id< physics::CollisionSpecification >(maskInstance->getGuid()));
 				}
-				
+
 				entityData->setComponent(new animation::SkeletonComponentData(
 					resource::Id< animation::Skeleton >(skeletonAssetInstance->getGuid()),
-					new animation::RagDollPoseControllerData(group, mask)
-				));
+					new animation::RagDollPoseControllerData(group, mask)));
 				entityData->setComponent(new animation::AnimatedMeshComponentData(
-					resource::Id< mesh::SkinnedMesh >(meshAssetInstance->getGuid())
-				));
+					resource::Id< mesh::SkinnedMesh >(meshAssetInstance->getGuid())));
 			}
 			else
 				entityData->setComponent(new mesh::MeshComponentData(
-					resource::Id< mesh::IMesh >(meshAssetInstance->getGuid())
-				));
+					resource::Id< mesh::IMesh >(meshAssetInstance->getGuid())));
 		}
 
 		if (!collisionMesh.empty())
@@ -523,8 +558,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create asset instance.
 			Ref< db::Instance > meshAssetInstance = m_group->createInstance(
 				name + L"-Collision",
-				db::CifReplaceExisting | db::CifKeepExistingGuid
-			);
+				db::CifReplaceExisting | db::CifKeepExistingGuid);
 			if (!meshAssetInstance)
 			{
 				log::error << L"Game entity wizard failed; unable to create collision mesh asset instance." << Endl;
@@ -603,9 +637,8 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 
 			// Create database instance.
 			Ref< db::Instance > scriptInstance = m_group->createInstance(
-				name,
-				db::CifReplaceExisting | db::CifKeepExistingGuid
-			);
+				name + L"-Script",
+				db::CifReplaceExisting | db::CifKeepExistingGuid);
 			if (!scriptInstance)
 			{
 				log::error << L"Game entity wizard failed; unable to create script instance." << Endl;
@@ -621,8 +654,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			}
 
 			entityData->setComponent(new world::ScriptComponentData(
-				resource::Id< IRuntimeClass >(scriptInstance->getGuid())
-			));
+				resource::Id< IRuntimeClass >(scriptInstance->getGuid())));
 		}
 
 		Ref< world::EntityData > instanceEntityData = entityData;
@@ -630,8 +662,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 		// Create entity asset instance.
 		Ref< db::Instance > entityDataInstance = m_group->createInstance(
 			name,
-			db::CifReplaceExisting | db::CifKeepExistingGuid
-		);
+			db::CifReplaceExisting | db::CifKeepExistingGuid);
 		if (!entityDataInstance)
 		{
 			log::error << L"Game entity wizard failed; unable to create game entity instance." << Endl;

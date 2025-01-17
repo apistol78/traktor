@@ -198,6 +198,15 @@
 			<second>Visual mesh</second>
 		</item>
 		<item>
+			<first>GAMEENTITY_WIZARD_ALREADY_EXIST_CAPTION</first>
+			<second>Replace existing instances?</second>
+		</item>		
+		<item>
+			<first>GAMEENTITY_WIZARD_ALREADY_EXIST_MESSAGE</first>
+			<second><![CDATA[Do you want to replace following instance(s)?]]></second>
+		</item>
+	
+		<item>
 			<first>RUNTIME_SETTINGS_INHERIT_EDITOR_CACHES</first>
 			<second>Inherit editor cache(s)</second>
 		</item>

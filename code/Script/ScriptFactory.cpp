@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Script/ScriptFactory.h"
+
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -16,7 +18,6 @@
 #include "Script/IScriptContext.h"
 #include "Script/IScriptManager.h"
 #include "Script/ScriptChunk.h"
-#include "Script/ScriptFactory.h"
 #include "Script/ScriptResource.h"
 
 namespace traktor::script
@@ -25,13 +26,13 @@ namespace traktor::script
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptFactory", ScriptFactory, resource::IResourceFactory)
 
 ScriptFactory::ScriptFactory(IScriptContext* scriptContext)
-:	m_scriptContext(scriptContext)
-,	m_ownContext(false)
+	: m_scriptContext(scriptContext)
+	, m_ownContext(false)
 {
 }
 
 ScriptFactory::ScriptFactory(IScriptManager* scriptManager)
-:	m_ownContext(false)
+	: m_ownContext(false)
 {
 	m_scriptContext = scriptManager->createContext(false);
 	T_FATAL_ASSERT(m_scriptContext);
@@ -77,10 +78,17 @@ Ref< Object > ScriptFactory::create(resource::IResourceManager* resourceManager,
 		if (!chunkHandle)
 			return nullptr;
 
-		Ref< const IRuntimeClass > scriptClass = m_scriptContext->findClass(wstombs(instance->getName()));
+		std::wstring className = instance->getName();
+
+		// Use everything up until first invalid character as class name.
+		const size_t pos = className.find_first_of(L" -");
+		if (pos != className.npos)
+			className = className.substr(pos - 1);
+
+		Ref< const IRuntimeClass > scriptClass = m_scriptContext->findClass(wstombs(className));
 		if (!scriptClass)
 		{
-			log::error << L"Unable to create script class; no such class \"" << instance->getName() << L"\"" << Endl;
+			log::error << L"Unable to create script class; no such class \"" << className << L"\"" << Endl;
 			return nullptr;
 		}
 

@@ -1,15 +1,16 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/ConfigDialog.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Button.h"
-#include "Ui/ConfigDialog.h"
 
 namespace traktor::ui
 {
@@ -25,16 +26,14 @@ bool ConfigDialog::create(Widget* parent, const std::wstring& text, Unit width, 
 	m_ok->create(
 		this,
 		(style & WsYesNoButtons) ? L"Yes" : L"Ok",
-		Button::WsDefaultButton
-	);
+		Button::WsDefaultButton);
 	m_ok->addEventHandler< ButtonClickEvent >(this, &ConfigDialog::eventButtonClick);
 	m_ok->unlink();
 
 	m_cancel = new Button();
 	m_cancel->create(
 		this,
-		(style & WsYesNoButtons) ? L"No" : L"Cancel"
-	);
+		(style & WsYesNoButtons) ? L"No" : L"Cancel");
 	m_cancel->addEventHandler< ButtonClickEvent >(this, &ConfigDialog::eventButtonClick);
 	m_cancel->unlink();
 
@@ -124,26 +123,31 @@ Size ConfigDialog::getMinimumSize() const
 
 void ConfigDialog::eventButtonClick(ButtonClickEvent* event)
 {
+	bool consumed = false;
+
 	if (hasEventHandler< ButtonClickEvent >())
 	{
 		if (event->getSender() == m_ok)
 		{
 			ui::ButtonClickEvent clickEvent(this, ui::Command((int32_t)DialogResult::Ok));
 			raiseEvent(&clickEvent);
+			consumed |= clickEvent.consumed();
 		}
 		else if (event->getSender() == m_cancel)
 		{
 			ui::ButtonClickEvent clickEvent(this, ui::Command((int32_t)DialogResult::Cancel));
 			raiseEvent(&clickEvent);
+			consumed |= clickEvent.consumed();
 		}
 		else if (event->getSender() == m_apply)
 		{
 			ui::ButtonClickEvent clickEvent(this, ui::Command((int32_t)DialogResult::Apply));
 			raiseEvent(&clickEvent);
+			consumed |= clickEvent.consumed();
 		}
 	}
 
-	if (!event->consumed() && isModal())
+	if (!consumed && isModal())
 	{
 		if (event->getSender() == m_ok)
 			endModal(DialogResult::Ok);
