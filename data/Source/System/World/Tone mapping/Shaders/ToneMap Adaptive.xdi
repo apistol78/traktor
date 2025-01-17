@@ -311,15 +311,16 @@ W
 			<script>
 			<![CDATA[
 vec3 x = max($Input.xyz, vec3(0.0f));
-float a = 4.5f;
-float b = 0.25f;
-float c = 1.0f;
+float a = 3.75f;
+float b = 0.05f;
+float c = 1.25f;
 float d = 1.3f;
-float e = 1.1f;
+float e = 0.5f;
 $Output = vec4(
 	clamp((x * (a * x + b)) / (x * (c * x + d) + e), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f)),
 	1.0f
 );
+
 			]]>
 			</script>
 		</item>

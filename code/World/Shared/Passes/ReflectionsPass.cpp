@@ -90,8 +90,8 @@ render::handle_t ReflectionsPass::setup(
 	render::handle_t gbufferTargetSetId,
 	render::handle_t dbufferTargetSetId,
 	render::handle_t visualReadTargetSetId,
-	render::handle_t outputTargetSetId
-) const
+	render::handle_t velocityTargetSetId,
+	render::handle_t outputTargetSetId) const
 {
 	T_PROFILER_SCOPE(L"ReflectionsPass::setup");
 
@@ -148,6 +148,7 @@ render::handle_t ReflectionsPass::setup(
 	rp->addInput(gbufferTargetSetId);
 	rp->addInput(dbufferTargetSetId);
 	rp->addInput(visualReadTargetSetId);
+	rp->addInput(velocityTargetSetId);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
@@ -164,6 +165,7 @@ render::handle_t ReflectionsPass::setup(
 	render::ImageGraphContext igctx;
 	igctx.setTechniqueFlag(s_handleRayTracingEnable, rayTracingEnable);
 	igctx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
+	igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
 
 	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();
 	const Vector2 jrp = needJitter ? jitter(frameCount - 1) / worldRenderView.getViewSize() : Vector2::zero();
@@ -184,8 +186,7 @@ render::handle_t ReflectionsPass::setup(
 
 		if (probe != nullptr)
 		{
-			auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
-			{
+			auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 				const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 				const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
 
@@ -217,8 +218,7 @@ render::handle_t ReflectionsPass::setup(
 				rp,
 				igctx,
 				view,
-				setParameters
-			);
+				setParameters);
 		}
 	}
 
@@ -238,8 +238,7 @@ render::handle_t ReflectionsPass::setup(
 
 				const Aabb3 worldVolume = p->getBoundingBox();
 
-				auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
-				{
+				auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 					const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 					const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
 
@@ -275,8 +274,7 @@ render::handle_t ReflectionsPass::setup(
 					rp,
 					igctx,
 					view,
-					setParameters
-				);
+					setParameters);
 			}
 		}
 	}
@@ -284,8 +282,7 @@ render::handle_t ReflectionsPass::setup(
 	// Apply screen-space traced reflections.
 	if (m_screenReflections)
 	{
-		auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
-		{
+		auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 			const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
 
@@ -324,8 +321,7 @@ render::handle_t ReflectionsPass::setup(
 			rp,
 			igctx,
 			view,
-			setParameters
-		);
+			setParameters);
 	}
 
 	renderGraph.addPass(rp);
