@@ -92,19 +92,19 @@ bool isCommand(wchar_t ch)
 	return bool(std::wstring(L"MLVHQTCSAZ").find(toupper(ch)) != std::wstring::npos);
 }
 
-void skipUntil(std::wstring::iterator& i, std::wstring::iterator end, bool (*isProc)(wchar_t))
+void skipUntil(std::wstring::const_iterator& i, std::wstring::const_iterator end, bool (*isProc)(wchar_t))
 {
 	while (i != end && !isProc(*i))
 		++i;
 }
 
-void skipUntilNot(std::wstring::iterator& i, std::wstring::iterator end, bool (*isProc)(wchar_t))
+void skipUntilNot(std::wstring::const_iterator& i, std::wstring::const_iterator end, bool (*isProc)(wchar_t))
 {
 	while (i != end && isProc(*i))
 		++i;
 }
 
-float parseDecimalNumber(std::wstring::iterator& i, std::wstring::iterator end)
+float parseDecimalNumber(std::wstring::const_iterator& i, std::wstring::const_iterator end)
 {
 	while (i != end && (isWhiteSpace(*i) || *i == '.' || *i == ','))
 		++i;
@@ -244,8 +244,8 @@ Ref< Shape > Parser::parseDocument(xml::Element* elm)
 
 	if (elm->hasAttribute(L"viewBox"))
 	{
-		std::wstring viewBox = elm->getAttribute(L"viewBox")->getValue();
-		std::wstring::iterator i = viewBox.begin();
+		const std::wstring& viewBox = elm->getAttribute(L"viewBox")->getValue();
+		std::wstring::const_iterator i = viewBox.begin();
 
 		const float left = parseDecimalNumber(i, viewBox.end());
 		const float top = parseDecimalNumber(i, viewBox.end());
@@ -785,7 +785,7 @@ void Parser::parseStyle(const xml::Element* elm, Style* style)
 		Split< std::wstring >::any(elm->getAttribute(L"style")->getValue(), L";", styles);
 		for (const auto& st : styles)
 		{
-			std::wstring::size_type i = st.find(L':');
+			const std::wstring::size_type i = st.find(L':');
 			if (i == std::string::npos)
 				continue;
 
@@ -900,14 +900,14 @@ Matrix33 Parser::parseTransform(const xml::Element* elm, const std::wstring& att
 
 	Matrix33 transform = Matrix33::identity();
 
-	std::wstring transformDesc = elm->getAttribute(attrName)->getValue();
-	std::wstring::iterator i = transformDesc.begin();
+	const std::wstring& transformDesc = elm->getAttribute(attrName)->getValue();
+	std::wstring::const_iterator i = transformDesc.begin();
 
 	while (i != transformDesc.end())
 	{
 		skipUntilNot(i, transformDesc.end(), isWhiteSpace);
 
-		std::wstring::iterator j = i;
+		std::wstring::const_iterator j = i;
 
 		while (i != transformDesc.end() && *i != L'(')
 			++i;
@@ -985,9 +985,8 @@ float Parser::parseAttr(const xml::Element* elm, const std::wstring& attrName, f
 {
 	if (elm && elm->hasAttribute(attrName))
 	{
-		std::wstring attrValue = elm->getAttribute(attrName)->getValue();
-		std::wstringstream ss(attrValue);
-		ss >> defValue;
+		const std::wstring& attrValue = elm->getAttribute(attrName)->getValue();
+		std::wstringstream(attrValue) >> defValue;
 	}
 	return defValue;
 }
