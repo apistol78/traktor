@@ -174,25 +174,35 @@ HICON BitmapWin32::createIcon() const
 {
 	HDC hScreenDC = GetDC(NULL);
 
-	// Create mask bitmap.
-	HDC hMaskDC = CreateCompatibleDC(hScreenDC);
-	HBITMAP hMask = CreateCompatibleBitmap(hMaskDC, m_width, m_height);
-	HBITMAP hMaskPrev = (HBITMAP)SelectObject(hMaskDC, hMask);
-
-	const uint32_t* src = (const uint32_t*)m_bitsPreMulAlpha.c_ptr();
-	for (uint32_t y = 0; y < m_height; ++y)
+	HBITMAP hMask;
 	{
-		for (uint32_t x = 0; x < m_width; ++x)
+		BITMAPINFO bmi;
+		std::memset(&bmi, 0, sizeof(bmi));
+		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		bmi.bmiHeader.biWidth = m_width;
+		bmi.bmiHeader.biHeight = m_height;
+		bmi.bmiHeader.biPlanes = 1;
+		bmi.bmiHeader.biBitCount = 32;
+		bmi.bmiHeader.biCompression = BI_RGB;
+		bmi.bmiHeader.biSizeImage = m_width * m_height * 4;
+
+		LPVOID bitsMask = nullptr;
+		hMask = CreateDIBSection(hScreenDC, &bmi, DIB_RGB_COLORS, &bitsMask, NULL, 0);
+
+		const uint32_t* src = (const uint32_t*)m_bitsPreMulAlpha.c_ptr();
+		uint32_t* dst = (uint32_t*)bitsMask;
+		for (uint32_t y = 0; y < m_height; ++y)
 		{
-			uint32_t color = src[x + y * m_width];
-			if ((color & 0xff000000) != 0x00000000)
-				SetPixel(hMaskDC, x, m_height - y - 1, RGB(0, 0, 0));
-			else
-				SetPixel(hMaskDC, x, m_height - y - 1, RGB(255, 255, 255));
+			for (uint32_t x = 0; x < m_width; ++x)
+			{
+				uint32_t color = src[x + y * m_width];
+				if ((color & 0xff000000) != 0x00000000)
+					*dst += 0U;
+				else
+					*dst += ~0U;
+			}
 		}
 	}
-
-	SelectObject(hMaskDC, hMaskPrev);
 
 	// Create color bitmap.
 	BITMAPINFO bmi;
@@ -222,7 +232,6 @@ HICON BitmapWin32::createIcon() const
 	// Cleanup
 	DeleteObject(hBitmapPreMulAlpha);
 	DeleteObject(hMask);
-	DeleteDC(hMaskDC);
 
 	ReleaseDC(NULL, hScreenDC);
 	return hIcon;
