@@ -6,8 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <locale>
-#include <sstream>
+#include "Svg/Parser.h"
+
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -19,7 +19,6 @@
 #include "Svg/Document.h"
 #include "Svg/Gradient.h"
 #include "Svg/ImageShape.h"
-#include "Svg/Parser.h"
 #include "Svg/Path.h"
 #include "Svg/PathShape.h"
 #include "Svg/Shape.h"
@@ -29,20 +28,33 @@
 #include "Xml/Document.h"
 #include "Xml/Element.h"
 
+#include <locale>
+#include <sstream>
+
 namespace traktor::svg
 {
-	namespace
-	{
-
-const struct { const wchar_t* name; Color4f color; } c_colorTable[] =
+namespace
 {
-	L"black",	Color4f( 0.0f, 0.0f, 0.0f, 1.0f),
-	L"red",		Color4f( 1.0f, 0.0f, 0.0f, 1.0f),
-	L"green",	Color4f( 0.0f, 1.0f, 0.0f, 1.0f),
-	L"blue",	Color4f( 0.0f, 0.0f, 1.0f, 1.0f),
-	L"yellow",	Color4f( 1.0f, 1.0f, 0.0f, 1.0f),
-	L"white",	Color4f( 1.0f, 1.0f, 1.0f, 1.0f),
-	L"lime",	Color4f(0.25f, 0.5f, 1.0f, 1.0f)
+
+const struct
+{
+	const wchar_t* name;
+	Color4f color;
+} c_colorTable[] = {
+	L"black",
+	Color4f(0.0f, 0.0f, 0.0f, 1.0f),
+	L"red",
+	Color4f(1.0f, 0.0f, 0.0f, 1.0f),
+	L"green",
+	Color4f(0.0f, 1.0f, 0.0f, 1.0f),
+	L"blue",
+	Color4f(0.0f, 0.0f, 1.0f, 1.0f),
+	L"yellow",
+	Color4f(1.0f, 1.0f, 0.0f, 1.0f),
+	L"white",
+	Color4f(1.0f, 1.0f, 1.0f, 1.0f),
+	L"lime",
+	Color4f(0.25f, 0.5f, 1.0f, 1.0f)
 };
 
 bool parseColor(const std::wstring& color, Color4f& outColor)
@@ -150,12 +162,12 @@ float parseNumber(const std::wstring& value, float defaultValue = 0.0f)
 	}
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Parser", Parser, Object)
 
 Parser::Parser(const class_style_fn& classStyleFn)
-:	m_classStyleFn(classStyleFn)
+	: m_classStyleFn(classStyleFn)
 {
 }
 
@@ -180,7 +192,7 @@ Ref< Shape > Parser::traverse(xml::Element* elm)
 	const std::wstring name = elm->getName();
 	if (name == L"svg")
 		shape = parseDocument(elm);
-	else if(name == L"g")
+	else if (name == L"g")
 		shape = parseGroup(elm);
 	else if (name == L"circle")
 		shape = parseCircle(elm);
@@ -254,8 +266,7 @@ Ref< Shape > Parser::parseDocument(xml::Element* elm)
 
 		doc->setViewBox(Aabb2(
 			Vector2(left, top),
-			Vector2(left + width, top + height)
-		));
+			Vector2(left + width, top + height)));
 	}
 
 	Ref< Style > defaultStyle = new Style();
@@ -284,25 +295,33 @@ Ref< Shape > Parser::parseCircle(xml::Element* elm)
 
 	path.moveTo(cx, cy + r);
 	path.cubicTo(
-		cx - rk, cy + r,
-		cx - r, cy + rk,
-		cx - r, cy
-	);
+		cx - rk,
+		cy + r,
+		cx - r,
+		cy + rk,
+		cx - r,
+		cy);
 	path.cubicTo(
-		cx - r, cy - rk,
-		cx - rk, cy - r,
-		cx, cy - r
-	);
+		cx - r,
+		cy - rk,
+		cx - rk,
+		cy - r,
+		cx,
+		cy - r);
 	path.cubicTo(
-		cx + rk, cy - r,
-		cx + r, cy - rk,
-		cx + r, cy
-	);
+		cx + rk,
+		cy - r,
+		cx + r,
+		cy - rk,
+		cx + r,
+		cy);
 	path.cubicTo(
-		cx + r, cy + rk,
-		cx + rk, cy + r,
-		cx, cy + r
-	);
+		cx + r,
+		cy + rk,
+		cx + rk,
+		cy + r,
+		cx,
+		cy + r);
 	path.close();
 
 	return new PathShape(path);
@@ -323,25 +342,33 @@ Ref< Shape > Parser::parseEllipse(xml::Element* elm)
 
 	path.moveTo(cx, cy + ry);
 	path.cubicTo(
-		cx - rxk, cy + ry,
-		cx - rx, cy + ryk,
-		cx - rx, cy
-	);
+		cx - rxk,
+		cy + ry,
+		cx - rx,
+		cy + ryk,
+		cx - rx,
+		cy);
 	path.cubicTo(
-		cx - rx, cy - ryk,
-		cx - rxk, cy - ry,
-		cx, cy - ry
-	);
+		cx - rx,
+		cy - ryk,
+		cx - rxk,
+		cy - ry,
+		cx,
+		cy - ry);
 	path.cubicTo(
-		cx + rxk, cy - ry,
-		cx + rx, cy - ryk,
-		cx + rx, cy
-	);
+		cx + rxk,
+		cy - ry,
+		cx + rx,
+		cy - ryk,
+		cx + rx,
+		cy);
 	path.cubicTo(
-		cx + rx, cy + ryk,
-		cx + rxk, cy + ry,
-		cx, cy + ry
-	);
+		cx + rx,
+		cy + ryk,
+		cx + rxk,
+		cy + ry,
+		cx,
+		cy + ry);
 	path.close();
 
 	return new PathShape(path);
@@ -362,13 +389,11 @@ Ref< Shape > Parser::parseRect(const xml::Element* elm)
 	}
 	else if (elm->hasAttribute(L"rx"))
 	{
-		rx =
-		ry = parseAttr(elm, L"rx");
+		rx = ry = parseAttr(elm, L"rx");
 	}
 	else if (elm->hasAttribute(L"ry"))
 	{
-		rx =
-		ry = parseAttr(elm, L"ry");
+		rx = ry = parseAttr(elm, L"ry");
 	}
 
 	Path path;
@@ -379,20 +404,20 @@ Ref< Shape > Parser::parseRect(const xml::Element* elm)
 		path.lineTo(x + width, y);
 		path.lineTo(x + width, y + height);
 		path.lineTo(x, y + height);
-		path.close ();
+		path.close();
 	}
 	else
 	{
-		path.moveTo   (x + rx, y);
-		path.lineTo   (x + width - rx, y);
+		path.moveTo(x + rx, y);
+		path.lineTo(x + width - rx, y);
 		path.quadricTo(x + width, y, x + width, y + ry);
-		path.lineTo   (x + width, y + height - ry);
+		path.lineTo(x + width, y + height - ry);
 		path.quadricTo(x + width, y + height, x + width - rx, y + height);
-		path.lineTo   (x + rx, y + height);
+		path.lineTo(x + rx, y + height);
 		path.quadricTo(x, y + height, x, y + height - ry);
-		path.lineTo   (x, y + ry);
+		path.lineTo(x, y + ry);
 		path.quadricTo(x, y, x + rx, y);
-		path.close    ();
+		path.close();
 	}
 
 	return new PathShape(path);
@@ -403,8 +428,8 @@ Ref< Shape > Parser::parsePolygon(xml::Element* elm)
 	Path path;
 	bool first = true;
 
-	std::wstring points = trim(elm->getAttribute(L"points")->getValue());
-	std::wstring::iterator i = points.begin();
+	const std::wstring points = trim(elm->getAttribute(L"points")->getValue());
+	std::wstring::const_iterator i = points.begin();
 	while (i != points.end())
 	{
 		const float x = parseDecimalNumber(i, points.end());
@@ -431,8 +456,8 @@ Ref< Shape > Parser::parsePolyLine(xml::Element* elm)
 	Path path;
 	bool first = true;
 
-	std::wstring points = trim(elm->getAttribute(L"points")->getValue());
-	std::wstring::iterator i = points.begin();
+	const std::wstring points = trim(elm->getAttribute(L"points")->getValue());
+	std::wstring::const_iterator i = points.begin();
 	while (i != points.end())
 	{
 		const float x = parseDecimalNumber(i, points.end());
@@ -454,8 +479,8 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 	if (!elm || !elm->hasAttribute(L"d"))
 		return nullptr;
 
-	std::wstring def = trim(elm->getAttribute(L"d")->getValue());
-	std::wstring::iterator i = def.begin();
+	const std::wstring def = trim(elm->getAttribute(L"d")->getValue());
+	std::wstring::const_iterator i = def.begin();
 	wchar_t cmdLead = 0;
 
 	Path path;
@@ -498,7 +523,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 		const bool relative = islower(cmd);
 		switch (toupper(cmd))
 		{
-		case L'M':	// Move to
+		case L'M': // Move to
 			{
 				const float x = parseDecimalNumber(i, def.end());
 				const float y = parseDecimalNumber(i, def.end());
@@ -506,7 +531,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 			}
 			break;
 
-		case L'L':	// Line to
+		case L'L': // Line to
 			{
 				const float x = parseDecimalNumber(i, def.end());
 				const float y = parseDecimalNumber(i, def.end());
@@ -514,7 +539,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 			}
 			break;
 
-		case L'V':	// Vertical line to
+		case L'V': // Vertical line to
 			{
 				const float y = parseDecimalNumber(i, def.end());
 				if (relative)
@@ -524,7 +549,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 			}
 			break;
 
-		case L'H':	// Horizontal line to
+		case L'H': // Horizontal line to
 			{
 				const float x = parseDecimalNumber(i, def.end());
 				if (relative)
@@ -534,7 +559,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 			}
 			break;
 
-		case L'Q':	// Quadric to
+		case L'Q': // Quadric to
 			{
 				const float x1 = parseDecimalNumber(i, def.end());
 				const float y1 = parseDecimalNumber(i, def.end());
@@ -544,7 +569,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 			}
 			break;
 
-		case L'T':	// Quadric to (shorthand/smooth)
+		case L'T': // Quadric to (shorthand/smooth)
 			{
 				const float x = parseDecimalNumber(i, def.end());
 				const float y = parseDecimalNumber(i, def.end());
@@ -553,7 +578,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 			}
 			break;
 
-		case L'C':	// Cubic to
+		case L'C': // Cubic to
 			{
 				const float x1 = parseDecimalNumber(i, def.end());
 				const float y1 = parseDecimalNumber(i, def.end());
@@ -565,7 +590,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 			}
 			break;
 
-		case L'S':	// Cubic to (shorthand/smooth)
+		case L'S': // Cubic to (shorthand/smooth)
 			{
 				const float x1 = parseDecimalNumber(i, def.end());
 				const float y1 = parseDecimalNumber(i, def.end());
@@ -575,7 +600,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 			}
 			break;
 
-		case L'A':	// Elliptic arc
+		case L'A': // Elliptic arc
 			{
 				const float rx = parseDecimalNumber(i, def.end());
 				const float ry = parseDecimalNumber(i, def.end());
@@ -588,7 +613,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 			}
 			break;
 
-		case L'Z':	// Close sub path
+		case L'Z': // Close sub path
 			path.close();
 			break;
 
@@ -933,11 +958,7 @@ Matrix33 Parser::parseTransform(const xml::Element* elm, const std::wstring& att
 			Split< std::wstring, float >::any(args, L",", argv, false, 6);
 
 			if (argv.size() >= 6)
-				transform = transform * Matrix33(
-					argv[0], argv[1], 0.0f,
-					argv[2], argv[3], 0.0f,
-					argv[4], argv[5], 1.0f
-				).transpose();
+				transform = transform * Matrix33(argv[0], argv[1], 0.0f, argv[2], argv[3], 0.0f, argv[4], argv[5], 1.0f).transpose();
 		}
 		else if (fnc == L"translate")
 		{
