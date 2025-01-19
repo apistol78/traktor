@@ -8,16 +8,17 @@
  */
 #pragma once
 
-#include <functional>
-#include <string>
-#include <vector>
-#include "Core/Object.h"
-#include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Containers/StaticSet.h"
 #include "Core/Containers/StaticVector.h"
+#include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Render/Frame/RenderGraphTypes.h"
 #include "Render/Frame/RenderPass.h"
+
+#include <functional>
+#include <string>
+#include <vector>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -40,12 +41,12 @@ class RenderGraphTexturePool;
 
 /*! Render graph.
  * \ingroup Render
- * 
+ *
  * A render graph describe all passes which is required
  * when rendering a frame. Since all passes is registered
  * beforehand passes can be organized to reduce
  * transitions of targets between passes.
- * 
+ *
  * External handlers are registered which
  * are called at appropriate times to render each pass.
  */
@@ -75,6 +76,7 @@ public:
 		TargetSize realized = { 0, 0 };
 		int32_t inputRefCount = 0;
 		int32_t outputRefCount = 0;
+		uint32_t writeCounter = 0;
 		bool external = false;
 	};
 
@@ -98,8 +100,7 @@ public:
 	explicit RenderGraph(
 		IRenderSystem* renderSystem,
 		uint32_t multiSample,
-		const fn_profiler_t& profiler = fn_profiler_t()
-	);
+		const fn_profiler_t& profiler = fn_profiler_t());
 
 	/*! */
 	virtual ~RenderGraph();
@@ -127,8 +128,7 @@ public:
 		const wchar_t* const name,
 		const RenderGraphTargetSetDesc& targetSetDesc,
 		handle_t sharedDepthStencilTargetSetId = ~0U,
-		handle_t sizeReferenceTargetSetId = 0
-	);
+		handle_t sizeReferenceTargetSetId = 0);
 
 	/*! Add persistent target set resource.
 	 *
@@ -153,8 +153,7 @@ public:
 		bool doubleBuffered,
 		const RenderGraphTargetSetDesc& targetSetDesc,
 		handle_t sharedDepthStencilTargetSetId = ~0U,
-		handle_t sizeReferenceTargetSetId = 0
-	);
+		handle_t sizeReferenceTargetSetId = 0);
 
 	/*! Add explicit buffer resource.
 	 *
@@ -186,7 +185,7 @@ public:
 	 * A transient texture is always created with storage texture
 	 * capabilities because it's the only reason that make sense.
 	 * Thus useful for intermediate textures between compute passes.
-	 * 
+	 *
 	 * \param name Name of texture, used for debugging only.
 	 * \param textureDesc Description of transient texture.
 	 * \return Opaque resource handle.

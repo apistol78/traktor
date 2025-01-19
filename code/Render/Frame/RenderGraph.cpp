@@ -6,24 +6,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Frame/RenderGraph.h"
+
 #include "Core/Containers/StaticSet.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Timer/Profiler.h"
-#include "Render/IRenderSystem.h"
-#include "Render/IRenderTargetSet.h"
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Render/Frame/RenderGraphBufferPool.h"
 #include "Render/Frame/RenderGraphTargetSetPool.h"
 #include "Render/Frame/RenderGraphTexturePool.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 void traverse(const RefArray< const RenderPass >& passes, int32_t depth, int32_t index, StaticVector< uint32_t, 512 >& chain, const std::function< void(int32_t, int32_t) >& fn)
 {
@@ -36,10 +37,8 @@ void traverse(const RefArray< const RenderPass >& passes, int32_t depth, int32_t
 	for (const auto& input : passes[index]->getInputs())
 	{
 		for (int32_t i = 0; i < passes.size(); ++i)
-		{
 			if (passes[i]->getOutput().resourceId == input.resourceId)
 				traverse(passes, depth + 1, i, chain, fn);
-		}
 	}
 	chain.pop_back();
 
@@ -47,22 +46,29 @@ void traverse(const RefArray< const RenderPass >& passes, int32_t depth, int32_t
 	fn(depth, index);
 }
 
-	}
+template < typename T >
+void swap(Ref< T >& lh, Ref< T >& rh)
+{
+	Ref< T > tmp = lh;
+	lh = rh;
+	rh = tmp;
+}
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraph", RenderGraph, Object)
 
 RenderGraph::RenderGraph(
 	IRenderSystem* renderSystem,
 	uint32_t multiSample,
-	const fn_profiler_t& profiler
-)
-:	m_targetSetPool(new RenderGraphTargetSetPool(renderSystem))
-,	m_bufferPool(new RenderGraphBufferPool(renderSystem))
-,	m_texturePool(new RenderGraphTexturePool(renderSystem))
-,	m_counter(0)
-,	m_multiSample(multiSample)
-,	m_nextResourceId(1)
-,	m_profiler(profiler)
+	const fn_profiler_t& profiler)
+	: m_targetSetPool(new RenderGraphTargetSetPool(renderSystem))
+	, m_bufferPool(new RenderGraphBufferPool(renderSystem))
+	, m_texturePool(new RenderGraphTexturePool(renderSystem))
+	, m_counter(0)
+	, m_multiSample(multiSample)
+	, m_nextResourceId(1)
+	, m_profiler(profiler)
 {
 }
 
@@ -107,8 +113,7 @@ handle_t RenderGraph::addTransientTargetSet(
 	const wchar_t* const name,
 	const RenderGraphTargetSetDesc& targetSetDesc,
 	handle_t sharedDepthStencilTargetSetId,
-	handle_t sizeReferenceTargetSetId
-)
+	handle_t sizeReferenceTargetSetId)
 {
 	const handle_t resourceId = m_nextResourceId++;
 
@@ -132,8 +137,7 @@ handle_t RenderGraph::addPersistentTargetSet(
 	bool doubleBuffered,
 	const RenderGraphTargetSetDesc& targetSetDesc,
 	handle_t sharedDepthStencilTargetSetId,
-	handle_t sizeReferenceTargetSetId
-)
+	handle_t sizeReferenceTargetSetId)
 {
 	const handle_t resourceId = m_nextResourceId++;
 
@@ -170,7 +174,7 @@ handle_t RenderGraph::addTransientBuffer(const wchar_t* const name, uint32_t buf
 	br.name = name;
 	br.bufferSize = bufferSize;
 
-	return resourceId;	
+	return resourceId;
 }
 
 handle_t RenderGraph::addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, uint32_t bufferSize)
@@ -275,30 +279,23 @@ bool RenderGraph::validate()
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
 		m_order[i].resize(0);
 	for (uint32_t i = 0; i < (uint32_t)m_passes.size(); ++i)
-	{
 		if (depths[i] >= 0)
 			m_order[depths[i]].push_back(i);
-	}
 
 	// Sort each depth based on output resource.
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
-	{
 		std::stable_sort(m_order[i].begin(), m_order[i].end(), [&](uint32_t lh, uint32_t rh) {
 			const auto lt = m_passes[lh]->getOutput().resourceId;
 			const auto rt = m_passes[rh]->getOutput().resourceId;
 			return lt > rt;
 		});
-	}
 
 	// Gather targets which are used as shared depth.
 	for (auto& it : m_targets)
-	{
 		if (
 			it.second.sharedDepthStencilTargetSetId != ~0U &&
-			it.second.sharedDepthStencilTargetSetId != 0
-		)
+			it.second.sharedDepthStencilTargetSetId != 0)
 			m_sharedDepthTargets.insert(it.second.sharedDepthStencilTargetSetId);
-	}
 
 	// Count input and output reference counts of all targets.
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
@@ -319,7 +316,7 @@ bool RenderGraph::validate()
 				auto it = m_targets.find(input.resourceId);
 				if (it != m_targets.end())
 					it->second.inputRefCount++;
-			}	
+			}
 		}
 	}
 	return true;
@@ -331,10 +328,8 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 
 	// Calculate size of all targets.
 	for (auto it : m_targets)
-	{
 		if (!realizeTargetDimensions(width, height, it.first))
 			return false;
-	}
 
 	// Acquire all targets which are used for sharing depth.
 	for (auto id : m_sharedDepthTargets)
@@ -356,8 +351,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		if (
 			target.writeTargetSet == nullptr &&
 			target.persistentHandle != 0 &&
-			(target.inputRefCount != 0 || target.outputRefCount != 0)
-		)
+			(target.inputRefCount != 0 || target.outputRefCount != 0))
 		{
 			if (!acquire(target))
 			{
@@ -431,7 +425,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				if (output.resourceId != 0)
 				{
 					// Continue rendering to same target if possible; else start another pass.
-					if (currentOutput != output)
+					// if (currentOutput != output)
 					{
 						if (currentOutput.resourceId != ~0U)
 						{
@@ -462,6 +456,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 							tb->store = output.store;
 							renderContext->draw(tb);
 
+							swap(target.writeTargetSet, target.readTargetSet);
+							target.writeCounter++;
+
 							currentOutput = output;
 						}
 						else
@@ -486,7 +483,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 						renderContext->draw(tb);
 
 						currentOutput = output;
-					}	
+					}
 				}
 			}
 			else if (currentOutput.resourceId != ~0U)
@@ -495,6 +492,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 					renderContext->mergeComputeIntoRender();
 				renderContext->draw< EndPassRenderBlock >();
 				renderContext->mergeDrawIntoRender();
+
 				currentOutput = RenderPass::Output();
 			}
 
@@ -585,7 +583,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				pr->queryHandle = &passQueryHandles[index];
 				pr->referenceQueryHandle = referenceQueryHandle;
 				pr->offset = referenceOffset;
-				pr->sink = [=, this](const std::wstring& name, double start, double duration) { m_profiler(ordinal, i, name, start, duration); };
+				pr->sink = [=, this](const std::wstring& name, double start, double duration) {
+					m_profiler(ordinal, i, name, start, duration);
+				};
 				renderContext->draw(pr);
 				++ordinal;
 			}
@@ -594,7 +594,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		renderContext->mergeDrawIntoRender();
 	}
 #endif
-	
+
 	T_FATAL_ASSERT(!renderContext->havePendingComputes());
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
@@ -667,15 +667,14 @@ bool RenderGraph::realizeTargetDimensions(int32_t width, int32_t height, int32_t
 
 	if (
 		target.sharedDepthStencilTargetSetId != 0 &&
-		target.sharedDepthStencilTargetSetId != ~0U
-	)
+		target.sharedDepthStencilTargetSetId != ~0U)
 	{
 		if (!realizeTargetDimensions(width, height, target.sharedDepthStencilTargetSetId))
 			return false;
 
 		const TargetResource& sharedDepthStencilTarget = m_targets[target.sharedDepthStencilTargetSetId];
 		width = sharedDepthStencilTarget.realized.width;
-		height = sharedDepthStencilTarget.realized.height;		
+		height = sharedDepthStencilTarget.realized.height;
 	}
 
 	if (targetSetDesc.referenceWidthDenom > 0)
@@ -697,8 +696,7 @@ bool RenderGraph::acquire(TargetResource& inoutTarget)
 	Ref< IRenderTargetSet > sharedDepthTargetSet;
 	if (
 		inoutTarget.sharedDepthStencilTargetSetId != ~0U &&
-		inoutTarget.sharedDepthStencilTargetSetId != 0
-	)
+		inoutTarget.sharedDepthStencilTargetSetId != 0)
 	{
 		const auto& t = m_targets[inoutTarget.sharedDepthStencilTargetSetId];
 		sharedDepthTargetSet = t.writeTargetSet;
@@ -716,8 +714,7 @@ bool RenderGraph::acquire(TargetResource& inoutTarget)
 			inoutTarget.realized.width,
 			inoutTarget.realized.height,
 			m_multiSample,
-			{ m_counter & 1, inoutTarget.persistentHandle }
-		);
+			{ 0, inoutTarget.persistentHandle });
 		inoutTarget.writeTargetSet = m_targetSetPool->acquire(
 			inoutTarget.name,
 			inoutTarget.targetSetDesc,
@@ -726,22 +723,23 @@ bool RenderGraph::acquire(TargetResource& inoutTarget)
 			inoutTarget.realized.width,
 			inoutTarget.realized.height,
 			m_multiSample,
-			{ (m_counter + 1) & 1, inoutTarget.persistentHandle }
-		);
+			{ 1, inoutTarget.persistentHandle });
+
+		if (inoutTarget.writeCounter & 1)
+			swap(inoutTarget.readTargetSet, inoutTarget.writeTargetSet);
 	}
 	else
 	{
 		inoutTarget.readTargetSet =
-		inoutTarget.writeTargetSet = m_targetSetPool->acquire(
-			inoutTarget.name,
-			inoutTarget.targetSetDesc,
-			sharedDepthTargetSet,
-			sharedPrimaryDepthStencilTargetSet,
-			inoutTarget.realized.width,
-			inoutTarget.realized.height,
-			m_multiSample,
-			{ 0, inoutTarget.persistentHandle }
-		);
+			inoutTarget.writeTargetSet = m_targetSetPool->acquire(
+				inoutTarget.name,
+				inoutTarget.targetSetDesc,
+				sharedDepthTargetSet,
+				sharedPrimaryDepthStencilTargetSet,
+				inoutTarget.realized.width,
+				inoutTarget.realized.height,
+				m_multiSample,
+				{ 0, inoutTarget.persistentHandle });
 	}
 
 	if (!inoutTarget.readTargetSet || !inoutTarget.writeTargetSet)
