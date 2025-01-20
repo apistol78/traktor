@@ -211,7 +211,6 @@ for (int i = 0; i < 32; ++i)
 		break;
 	}
 }
-
 			]]>
 			</script>
 		</item>
@@ -618,7 +617,6 @@ $Output = ($Roughness < 0.4f && $Specular > 0.1f) ? 1.0f : 0.0f;
 uvec2 seed = uvec2(gl_FragCoord.xy);
 seed += uvec2($Time * 1543, $Time * 543);
 $Output = BlueNoise(seed);
-
 			]]>
 			</script>
 		</item>
@@ -865,7 +863,7 @@ else
 				<first>2774</first>
 				<second>248</second>
 			</position>
-			<value>0.2</value>
+			<value>0.1</value>
 		</item>
 		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
 			<id>{741CB9CC-3D3C-471E-8E6E-B50589AC5329}</id>

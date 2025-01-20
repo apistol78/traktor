@@ -7,9 +7,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #define NOMINMAX
-#include <algorithm>
-#include <cstring>
-#include <numeric>
+#include "Render/Vulkan/RenderViewVk.h"
+
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -20,13 +19,6 @@
 #include "Core/Timer/Profiler.h"
 #include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferViewVk.h"
-#include "Render/Vulkan/ProgramVk.h"
-#include "Render/Vulkan/RenderTargetDepthVk.h"
-#include "Render/Vulkan/RenderTargetVk.h"
-#include "Render/Vulkan/RenderTargetSetVk.h"
-#include "Render/Vulkan/RenderViewVk.h"
-#include "Render/Vulkan/TextureVk.h"
-#include "Render/Vulkan/VertexLayoutVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
@@ -34,6 +26,16 @@
 #include "Render/Vulkan/Private/Queue.h"
 #include "Render/Vulkan/Private/RenderPassCache.h"
 #include "Render/Vulkan/Private/Utilities.h"
+#include "Render/Vulkan/ProgramVk.h"
+#include "Render/Vulkan/RenderTargetDepthVk.h"
+#include "Render/Vulkan/RenderTargetSetVk.h"
+#include "Render/Vulkan/RenderTargetVk.h"
+#include "Render/Vulkan/TextureVk.h"
+#include "Render/Vulkan/VertexLayoutVk.h"
+
+#include <algorithm>
+#include <cstring>
+#include <numeric>
 
 #if defined(__MAC__)
 #	include "Render/Vulkan/macOS/Metal.h"
@@ -48,8 +50,8 @@
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 bool presentationModeSupported(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkPresentModeKHR presentationMode)
 {
@@ -58,10 +60,8 @@ bool presentationModeSupported(VkPhysicalDevice physicalDevice, VkSurfaceKHR sur
 	AutoArrayPtr< VkPresentModeKHR > presentModes(new VkPresentModeKHR[presentModeCount]);
 	vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes.ptr());
 	for (uint32_t i = 0; i < presentModeCount; ++i)
-	{
 		if (presentModes[i] == presentationMode)
 			return true;
-	}
 	return false;
 }
 
@@ -81,16 +81,15 @@ VkPipelineStageFlagBits convertStage(Stage st)
 	return (VkPipelineStageFlagBits)ps;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVk", RenderViewVk, IRenderView)
 
 RenderViewVk::RenderViewVk(
 	Context* context,
-	VkInstance instance
-)
-:	m_context(context)
-,	m_instance(instance)
+	VkInstance instance)
+	: m_context(context)
+	, m_instance(instance)
 {
 	m_context->incrementViews();
 }
@@ -120,11 +119,11 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 
 	// Create renderable surface.
 #if defined(_WIN32)
-    VkWin32SurfaceCreateInfoKHR sci = {};
-    sci.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    sci.hinstance = GetModuleHandle(nullptr);
-    sci.hwnd = (HWND)*m_window;
-    if (vkCreateWin32SurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	VkWin32SurfaceCreateInfoKHR sci = {};
+	sci.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+	sci.hinstance = GetModuleHandle(nullptr);
+	sci.hwnd = (HWND)*m_window;
+	if (vkCreateWin32SurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface." << Endl;
 		return false;
@@ -134,7 +133,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 	sci.dpy = m_window->getDisplay();
 	sci.window = m_window->getWindow();
-    if (vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	if (vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface." << Endl;
 		return false;
@@ -144,10 +143,10 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	// Attach Metal layer to provided view.
 	attachMetalLayer(m_window->getView());
 
-	VkMetalSurfaceCreateInfoEXT  sci = {};
+	VkMetalSurfaceCreateInfoEXT sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
 	sci.pLayer = getMetalLayer(m_window->getView());
-    if (vkCreateMetalSurfaceEXT(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	if (vkCreateMetalSurfaceEXT(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create macOS renderable surface." << Endl;
 		return false;
@@ -157,7 +156,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	if (!create(desc.displayMode.width, desc.displayMode.height, desc.multiSample, desc.multiSampleShading, desc.waitVBlanks))
 		return false;
 
-	return true;	
+	return true;
 }
 
 bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
@@ -168,11 +167,11 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 
 	// Create renderable surface.
 #if defined(_WIN32)
-    VkWin32SurfaceCreateInfoKHR sci = {};
-    sci.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    sci.hinstance = GetModuleHandle(nullptr);
-    sci.hwnd = (HWND)desc.syswin.hWnd;
-    if ((result = vkCreateWin32SurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	VkWin32SurfaceCreateInfoKHR sci = {};
+	sci.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+	sci.hinstance = GetModuleHandle(nullptr);
+	sci.hwnd = (HWND)desc.syswin.hWnd;
+	if ((result = vkCreateWin32SurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
@@ -189,7 +188,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 	sci.dpy = (::Display*)desc.syswin.display;
 	sci.window = desc.syswin.window;
-    if ((result = vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	if ((result = vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
@@ -221,25 +220,25 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	// Attach Metal layer to provided view.
 	attachMetalLayer(desc.syswin.view);
 
-	VkMetalSurfaceCreateInfoEXT  sci = {};
+	VkMetalSurfaceCreateInfoEXT sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
 	sci.pLayer = getMetalLayer(desc.syswin.view);
-    if ((result = vkCreateMetalSurfaceEXT(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	if ((result = vkCreateMetalSurfaceEXT(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create macOS renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
 	}
-    
-    // Get size of surface.
-    VkSurfaceCapabilitiesKHR sc;
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &sc);
-    width = sc.currentExtent.width;
-    height = sc.currentExtent.height;
+
+	// Get size of surface.
+	VkSurfaceCapabilitiesKHR sc;
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &sc);
+	width = sc.currentExtent.width;
+	height = sc.currentExtent.height;
 #elif defined(__IOS__)
 	VkIOSSurfaceCreateInfoMVK sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK;
 	sci.pView = desc.syswin.view;
-    if ((result = vkCreateIOSSurfaceMVK(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	if ((result = vkCreateIOSSurfaceMVK(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create iOS renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
@@ -341,7 +340,7 @@ void RenderViewVk::close()
 	// Destroy previous swap chain.
 	if (m_swapChain != 0)
 	{
-		vkDestroySwapchainKHR(m_context->getLogicalDevice(), m_swapChain, nullptr);	
+		vkDestroySwapchainKHR(m_context->getLogicalDevice(), m_swapChain, nullptr);
 		m_swapChain = 0;
 	}
 
@@ -380,9 +379,8 @@ bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 #endif
 
 	if (!reset(
-		desc.displayMode.width,
-		desc.displayMode.height
-	))
+			desc.displayMode.width,
+			desc.displayMode.height))
 		return false;
 
 	return true;
@@ -540,18 +538,11 @@ void RenderViewVk::setScissor(const Rectangle& scissor)
 	T_ASSERT(scissor.height >= 0);
 
 	const auto& frame = m_frames[m_currentImageIndex];
-	VkRect2D vkScissor =
-	{
-		.offset = VkOffset2D
-		{ 
-			.x = scissor.left, 
-			.y = scissor.top 
-		},
-		.extent = VkExtent2D
-		{ 
-			.width = (uint32_t)scissor.width,
-			.height = (uint32_t)scissor.height
-		}
+	VkRect2D vkScissor = {
+		.offset = VkOffset2D{
+			.x = scissor.left,
+			.y = scissor.top },
+		.extent = VkExtent2D{ .width = (uint32_t)scissor.width, .height = (uint32_t)scissor.height }
 	};
 	vkCmdSetScissor(*frame.graphicsCommandBuffer, 0, 1, &vkScissor);
 }
@@ -579,19 +570,18 @@ bool RenderViewVk::beginFrame()
 	// Do this first so we remember, count number of frames.
 	m_counter++;
 
-	// Update VMA once each frame. 
+	// Update VMA once each frame.
 	vmaSetCurrentFrameIndex(m_context->getAllocator(), m_counter);
 
 	// Get next target from swap chain.
 	T_PROFILER_BEGIN(L"vkAcquireNextImageKHR");
-    VkResult result = vkAcquireNextImageKHR(
+	VkResult result = vkAcquireNextImageKHR(
 		m_context->getLogicalDevice(),
 		m_swapChain,
 		UINT64_MAX,
 		m_imageAvailableSemaphores[m_counter % sizeof_array(m_imageAvailableSemaphores)],
 		VK_NULL_HANDLE,
-		&m_currentImageIndex
-	);
+		&m_currentImageIndex);
 	T_PROFILER_END();
 	if (result != VK_SUCCESS || m_currentImageIndex >= m_frames.size())
 		return false;
@@ -600,7 +590,7 @@ bool RenderViewVk::beginFrame()
 	frame.markers.clear();
 
 	// Reset command buffers.
-	// 
+	//
 	// #hack Lazy create since we don't know about rendering thread until beginFrame
 	// is called... This assumes no other thread will perform rendering during the
 	// life time of the render view.
@@ -691,15 +681,13 @@ void RenderViewVk::endFrame()
 	frame.computeCommandBuffer->submit(
 		{},
 		{},
-		frame.computeFinishedSemaphore
-	);
+		frame.computeFinishedSemaphore);
 
 	// Submit graphics command buffer.
 	frame.graphicsCommandBuffer->submit(
 		{ m_imageAvailableSemaphores[m_counter % sizeof_array(m_imageAvailableSemaphores)] },
 		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT },
-		frame.renderFinishedSemaphore
-	);
+		frame.renderFinishedSemaphore);
 
 #if 0
 	// Release unused pipelines.
@@ -726,8 +714,7 @@ void RenderViewVk::present()
 
 	// Queue presentation of current primary target.
 	const VkSemaphore waitSemaphores[] = { frame.computeFinishedSemaphore, frame.renderFinishedSemaphore };
-    const VkPresentInfoKHR pi =
-	{
+	const VkPresentInfoKHR pi = {
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
 		.waitSemaphoreCount = sizeof_array(waitSemaphores),
 		.pWaitSemaphores = waitSemaphores,
@@ -763,8 +750,7 @@ bool RenderViewVk::beginPass(const Clear* clear, uint32_t load, uint32_t store)
 		0,
 		clear,
 		load,
-		store
-	);
+		store);
 }
 
 bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store)
@@ -800,18 +786,17 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 
 	// Prepare render target set as targets.
 	if (!m_targetSet->prepareAsTarget(
-		frame.graphicsCommandBuffer,
-		m_targetColorIndex,
-		m_targetRenderPass,
-		frame.primaryTarget->getDepthTargetVk(),
-		
-		// Out
-		m_targetFrameBuffer
-	))
+			frame.graphicsCommandBuffer,
+			m_targetColorIndex,
+			m_targetRenderPass,
+			frame.primaryTarget->getDepthTargetVk(),
+
+			// Out
+			m_targetFrameBuffer))
 		return false;
 
 	// Transform clear values.
-	StaticVector< VkClearValue, 16+1 > clearValues;
+	StaticVector< VkClearValue, 16 + 1 > clearValues;
 	for (int32_t i = 0; i < (int32_t)m_targetSet->getColorTargetCount(); ++i)
 	{
 		auto& cv = clearValues.push_back();
@@ -830,24 +815,20 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	}
 
 	// Begin render pass.
-	const VkRenderPassBeginInfo rpbi =
-	{
+	const VkRenderPassBeginInfo rpbi = {
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		.renderPass = m_targetRenderPass,
 		.framebuffer = m_targetFrameBuffer,
-		.renderArea =
-		{
+		.renderArea = {
 			.offset = { .x = 0, .y = 0 },
-			.extent = { .width = (uint32_t)m_targetSet->getWidth(), .height = (uint32_t)m_targetSet->getHeight() }
-		},
-		.clearValueCount = (uint32_t)clearValues.size(), 
+			.extent = { .width = (uint32_t)m_targetSet->getWidth(), .height = (uint32_t)m_targetSet->getHeight() } },
+		.clearValueCount = (uint32_t)clearValues.size(),
 		.pClearValues = clearValues.c_ptr()
 	};
-	vkCmdBeginRenderPass(*frame.graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(*frame.graphicsCommandBuffer, &rpbi, VK_SUBPASS_CONTENTS_INLINE);
 
 	// Set viewport.
-	const VkViewport vp =
-	{
+	const VkViewport vp = {
 		.x = 0.0f,
 		.y = 0.0f,
 		.width = (float)m_targetSet->getWidth(),
@@ -858,18 +839,11 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 
 	// Set scissor
-	VkRect2D vkScissor = 
-	{
-		.offset = VkOffset2D 
-		{
+	VkRect2D vkScissor = {
+		.offset = VkOffset2D{
 			.x = 0,
-			.y = 0
-		},
-		.extent = VkExtent2D 
-		{
-			.width = (uint32_t)m_targetSet->getWidth(),
-			.height = (uint32_t)m_targetSet->getHeight()
-		}
+			.y = 0 },
+		.extent = VkExtent2D{ .width = (uint32_t)m_targetSet->getWidth(), .height = (uint32_t)m_targetSet->getHeight() }
 	};
 	vkCmdSetScissor(*frame.graphicsCommandBuffer, 0, 1, &vkScissor);
 
@@ -899,10 +873,8 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	if (m_targetColorIndex >= 0)
 		rp.colorTargetFormats[0] = m_targetSet->getColorTargetVk(m_targetColorIndex)->getVkFormat();
 	else
-	{
 		for (uint32_t i = 0; i < m_targetSet->getColorTargetCount(); ++i)
 			rp.colorTargetFormats[i] = m_targetSet->getColorTargetVk(i)->getVkFormat();
-	}
 	if (m_targetSet->getDepthTargetVk())
 		rp.depthTargetFormat = m_targetSet->getDepthTargetVk()->getVkFormat();
 	else if (m_targetSet->usingPrimaryDepthStencil())
@@ -915,18 +887,17 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 
 	// Prepare render target set as targets.
 	if (!m_targetSet->prepareAsTarget(
-		frame.graphicsCommandBuffer,
-		m_targetColorIndex,
-		m_targetRenderPass,
-		frame.primaryTarget->getDepthTargetVk(),
-		
-		// Out
-		m_targetFrameBuffer
-	))
+			frame.graphicsCommandBuffer,
+			m_targetColorIndex,
+			m_targetRenderPass,
+			frame.primaryTarget->getDepthTargetVk(),
+
+			// Out
+			m_targetFrameBuffer))
 		return false;
 
 	// Transform clear values.
-	StaticVector< VkClearValue, 16+1 > clearValues;
+	StaticVector< VkClearValue, 16 + 1 > clearValues;
 	if (m_targetColorIndex >= 0)
 	{
 		auto& cv = clearValues.push_back();
@@ -958,24 +929,20 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	}
 
 	// Begin render pass.
-	const VkRenderPassBeginInfo rpbi =
-	{
+	const VkRenderPassBeginInfo rpbi = {
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		.renderPass = m_targetRenderPass,
 		.framebuffer = m_targetFrameBuffer,
-		.renderArea =
-		{
+		.renderArea = {
 			.offset = { .x = 0, .y = 0 },
-			.extent = { .width = (uint32_t)m_targetSet->getWidth(), .height = (uint32_t)m_targetSet->getHeight() }
-		},
-		.clearValueCount = (uint32_t)clearValues.size(), 
+			.extent = { .width = (uint32_t)m_targetSet->getWidth(), .height = (uint32_t)m_targetSet->getHeight() } },
+		.clearValueCount = (uint32_t)clearValues.size(),
 		.pClearValues = clearValues.c_ptr()
 	};
-	vkCmdBeginRenderPass(*frame.graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(*frame.graphicsCommandBuffer, &rpbi, VK_SUBPASS_CONTENTS_INLINE);
 
 	// Set viewport.
-	const VkViewport vp =
-	{
+	const VkViewport vp = {
 		.x = 0.0f,
 		.y = 0.0f,
 		.width = (float)m_targetSet->getWidth(),
@@ -986,18 +953,11 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 
 	// Set scissor
-	VkRect2D vkScissor =
-	{
-		.offset = VkOffset2D
-		{ 
-			.x = 0, 
-			.y = 0 
-		},
-		.extent = VkExtent2D
-		{ 
-			.width = (uint32_t)m_targetSet->getWidth(), 
-			.height = (uint32_t)m_targetSet->getHeight() 
-		}
+	VkRect2D vkScissor = {
+		.offset = VkOffset2D{
+			.x = 0,
+			.y = 0 },
+		.extent = VkExtent2D{ .width = (uint32_t)m_targetSet->getWidth(), .height = (uint32_t)m_targetSet->getHeight() }
 	};
 	vkCmdSetScissor(*frame.graphicsCommandBuffer, 0, 1, &vkScissor);
 
@@ -1014,12 +974,9 @@ void RenderViewVk::endPass()
 
 	// Transition target to texture if necessary.
 	if (m_targetSet != frame.primaryTarget)
-	{
 		m_targetSet->prepareAsTexture(
 			frame.graphicsCommandBuffer,
-			m_targetColorIndex
-		);
-	}
+			m_targetColorIndex);
 
 	m_targetSet = nullptr;
 	m_targetRenderPass = 0;
@@ -1062,28 +1019,27 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 				*frame.graphicsCommandBuffer,
 				buffer,
 				offset,
-				(indexType == IndexType::UInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
-			);
+				(indexType == IndexType::UInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
 			frame.boundIndexBuffer = *ibv;
 		}
 
 		vkCmdDrawIndexed(
 			*frame.graphicsCommandBuffer,
-			primitives.getVertexCount(),	// index count
-			instanceCount,	// instance count
-			primitives.offset,	// first index
-			0,	// vertex offset
-			0	// first instance id
+			primitives.getVertexCount(), // index count
+			instanceCount,				 // instance count
+			primitives.offset,			 // first index
+			0,							 // vertex offset
+			0							 // first instance id
 		);
 	}
 	else
 	{
 		vkCmdDraw(
 			*frame.graphicsCommandBuffer,
-			primitives.getVertexCount(),   // vertex count
-			instanceCount,   // instance count
-			primitives.offset,   // first vertex
-			0 // first instance
+			primitives.getVertexCount(), // vertex count
+			instanceCount,				 // instance count
+			primitives.offset,			 // first vertex
+			0							 // first instance
 		);
 	}
 
@@ -1104,7 +1060,7 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 		return;
 
 	const float targetSize[] = { (float)m_targetSet->getWidth(), (float)m_targetSet->getHeight() };
-	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,  targetSize))
+	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, targetSize))
 		return;
 
 	if (vbv != nullptr && frame.boundVertexBuffer != *vbv)
@@ -1128,8 +1084,7 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 				*frame.graphicsCommandBuffer,
 				buffer,
 				offset,
-				(indexType == IndexType::UInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
-			);
+				(indexType == IndexType::UInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
 			frame.boundIndexBuffer = *ibv;
 		}
 
@@ -1138,8 +1093,7 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 			dbv->getVkBuffer(),
 			dbv->getVkBufferOffset() + drawOffset,
 			drawCount,
-			sizeof(VkDrawIndexedIndirectCommand)
-		);
+			sizeof(VkDrawIndexedIndirectCommand));
 	}
 	else
 	{
@@ -1148,8 +1102,7 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 			dbv->getVkBuffer(),
 			dbv->getVkBufferOffset(),
 			drawCount,
-			sizeof(VkDrawIndexedIndirectCommand)
-		);
+			sizeof(VkDrawIndexedIndirectCommand));
 	}
 
 	m_drawCalls++;
@@ -1173,8 +1126,7 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize, bool asyn
 		*commandBuffer,
 		(workSize[0] + lwgs[0] - 1) / lwgs[0],
 		(workSize[1] + lwgs[1] - 1) / lwgs[1],
-		(workSize[2] + lwgs[2] - 1) / lwgs[2]
-	);
+		(workSize[2] + lwgs[2] - 1) / lwgs[2]);
 }
 
 void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset)
@@ -1192,8 +1144,7 @@ void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuf
 	vkCmdDispatchIndirect(
 		*frame.graphicsCommandBuffer,
 		wbv->getVkBuffer(),
-		wbv->getVkBufferOffset() + workOffset
-	);
+		wbv->getVkBufferOffset() + workOffset);
 }
 
 void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip)
@@ -1212,10 +1163,12 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 			convertStage(from),
 			convertStage(to),
 			0,
-			1, &mb,
-			0, nullptr,
-			0, nullptr
-		);
+			1,
+			&mb,
+			0,
+			nullptr,
+			0,
+			nullptr);
 	}
 	else if (from == Stage::Compute && to == Stage::Compute && written == nullptr)
 	{
@@ -1230,10 +1183,12 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 			convertStage(from),
 			convertStage(to),
 			0,
-			1, &mb,
-			0, nullptr,
-			0, nullptr
-		);
+			1,
+			&mb,
+			0,
+			nullptr,
+			0,
+			nullptr);
 	}
 	else if (from == Stage::Compute && to == Stage::Compute && written != nullptr)
 	{
@@ -1259,10 +1214,12 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 			convertStage(from),
 			convertStage(to),
 			0,
-			0, nullptr,
-			0, nullptr,
-			1, &imb
-		);
+			0,
+			nullptr,
+			0,
+			nullptr,
+			1,
+			&imb);
 	}
 	else if (from == Stage::Compute && to == Stage::AccelerationStructureUpdate)
 	{
@@ -1277,10 +1234,12 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 			convertStage(from),
 			convertStage(to),
 			0,
-			1, &mb,
-			0, nullptr,
-			0, nullptr
-		);
+			1,
+			&mb,
+			0,
+			nullptr,
+			0,
+			nullptr);
 	}
 	else
 	{
@@ -1290,10 +1249,12 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 			convertStage(from),
 			convertStage(to),
 			0,
-			0, nullptr,
-			0, nullptr,
-			0, nullptr
-		);
+			0,
+			nullptr,
+			0,
+			nullptr,
+			0,
+			nullptr);
 	}
 }
 
@@ -1306,15 +1267,13 @@ void RenderViewVk::synchronize()
 	frame.computeCommandBuffer->submit(
 		{},
 		{},
-		frame.computeFinishedSemaphore
-	);
+		frame.computeFinishedSemaphore);
 
 	// Submit graphics command buffer; wait until compute queue has finished.
 	frame.graphicsCommandBuffer->submit(
 		{ frame.computeFinishedSemaphore },
 		{ VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT },
-		VK_NULL_HANDLE
-	);
+		VK_NULL_HANDLE);
 
 	// Defer release at end of frame.
 	frame.flyingCommandBuffers.push_back(frame.computeCommandBuffer);
@@ -1329,40 +1288,16 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 {
 	const auto& frame = m_frames[m_currentImageIndex];
 
-	VkImageCopy region =
-	{
-		.srcSubresource =
-		{
+	VkImageCopy region = {
+		.srcSubresource = {
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 			.mipLevel = (uint32_t)sourceRegion.mip,
 			.baseArrayLayer = 0,
-			.layerCount = 1
-		},
-		.srcOffset =
-		{
-			.x = sourceRegion.x,
-			.y = sourceRegion.y,
-			.z = 0
-		},
-		.dstSubresource =
-		{
-			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-			.mipLevel = (uint32_t)destinationRegion.mip,
-			.baseArrayLayer = 0,
-			.layerCount = 1
-		},
-		.dstOffset =
-		{
-			.x = destinationRegion.x,
-			.y = destinationRegion.y,
-			.z = 0
-		},
-		.extent =
-		{
-			.width = (uint32_t)sourceRegion.width,
-			.height = (uint32_t)sourceRegion.height,
-			.depth = 1
-		}
+			.layerCount = 1 },
+		.srcOffset = { .x = sourceRegion.x, .y = sourceRegion.y, .z = 0 },
+		.dstSubresource = { .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, .mipLevel = (uint32_t)destinationRegion.mip, .baseArrayLayer = 0, .layerCount = 1 },
+		.dstOffset = { .x = destinationRegion.x, .y = destinationRegion.y, .z = 0 },
+		.extent = { .width = (uint32_t)sourceRegion.width, .height = (uint32_t)sourceRegion.height, .depth = 1 }
 	};
 
 	Image* sourceImage = nullptr;
@@ -1393,25 +1328,23 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 
 	// Change image layouts for optimal transfer.
 	if (!sourceImage->changeLayout(
-		frame.graphicsCommandBuffer,
-		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-		VK_IMAGE_ASPECT_COLOR_BIT,
-		sourceRegion.mip,
-		1,
-		region.srcSubresource.baseArrayLayer,
-		1
-	))
+			frame.graphicsCommandBuffer,
+			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			VK_IMAGE_ASPECT_COLOR_BIT,
+			sourceRegion.mip,
+			1,
+			region.srcSubresource.baseArrayLayer,
+			1))
 		return false;
 
 	if (!destinationImage->changeLayout(
-		frame.graphicsCommandBuffer,
-		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		VK_IMAGE_ASPECT_COLOR_BIT,
-		destinationRegion.mip,
-		1,
-		region.dstSubresource.baseArrayLayer,
-		1
-	))
+			frame.graphicsCommandBuffer,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			VK_IMAGE_ASPECT_COLOR_BIT,
+			destinationRegion.mip,
+			1,
+			region.dstSubresource.baseArrayLayer,
+			1))
 		return false;
 
 	// Perform texture image copy.
@@ -1422,30 +1355,27 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		destinationImage->getVkImage(),
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		1,
-		&region
-	);
+		&region);
 
 	// Restore image layouts.
 	if (!sourceImage->changeLayout(
-		frame.graphicsCommandBuffer,
-		sourceImageLayout,
-		VK_IMAGE_ASPECT_COLOR_BIT,
-		sourceRegion.mip,
-		1,
-		region.srcSubresource.baseArrayLayer,
-		1
-	))
+			frame.graphicsCommandBuffer,
+			sourceImageLayout,
+			VK_IMAGE_ASPECT_COLOR_BIT,
+			sourceRegion.mip,
+			1,
+			region.srcSubresource.baseArrayLayer,
+			1))
 		return false;
 
 	if (!destinationImage->changeLayout(
-		frame.graphicsCommandBuffer,
-		destinationImageLayout,
-		VK_IMAGE_ASPECT_COLOR_BIT,
-		destinationRegion.mip,
-		1,
-		region.dstSubresource.baseArrayLayer,
-		1
-	))
+			frame.graphicsCommandBuffer,
+			destinationImageLayout,
+			VK_IMAGE_ASPECT_COLOR_BIT,
+			destinationRegion.mip,
+			1,
+			region.dstSubresource.baseArrayLayer,
+			1))
 		return false;
 
 	return true;
@@ -1518,9 +1448,10 @@ void RenderViewVk::pushMarker(const std::wstring& marker)
 		{
 			frame.markers.push_back(wstombs(marker));
 
-			VkDebugUtilsLabelEXT dul = {};
-			dul.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-			dul.pLabelName = frame.markers.back().c_str();
+			const VkDebugUtilsLabelEXT dul = {
+				.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+				.pLabelName = frame.markers.back().c_str()
+			};
 			vkCmdBeginDebugUtilsLabelEXT(*frame.graphicsCommandBuffer, &dul);
 
 			frame.markerStack.push_back(true);
@@ -1540,6 +1471,23 @@ void RenderViewVk::popMarker()
 		if (frame.markerStack.back())
 			vkCmdEndDebugUtilsLabelEXT(*frame.graphicsCommandBuffer);
 		frame.markerStack.pop_back();
+	}
+#endif
+}
+
+void RenderViewVk::writeMarker(const std::wstring& marker)
+{
+#if !defined(__ANDROID__) && !defined(__IOS__)
+	if (m_haveDebugMarkers)
+	{
+		auto& frame = m_frames[m_currentImageIndex];
+		frame.markers.push_back(wstombs(marker));
+
+		const VkDebugUtilsLabelEXT dul = {
+			.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+			.pLabelName = frame.markers.back().c_str()
+		};
+		vkCmdInsertDebugUtilsLabelEXT(*frame.graphicsCommandBuffer, &dul);
 	}
 #endif
 }
@@ -1638,7 +1586,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		}
 	}
 
-	VkExtent2D surfaceResolution =  surfaceCapabilities.currentExtent;
+	VkExtent2D surfaceResolution = surfaceCapabilities.currentExtent;
 	if (surfaceResolution.width <= -1)
 	{
 		surfaceResolution.width = width;
@@ -1692,8 +1640,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		clampedImageCount = surfaceCapabilities.maxImageCount;
 
 	// Create swap chain.
-	VkSwapchainCreateInfoKHR scci =
-	{
+	VkSwapchainCreateInfoKHR scci = {
 		.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
 		.surface = m_surface,
 		.minImageCount = clampedImageCount,
@@ -1727,7 +1674,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	// Destroy previous swap chain.
 	if (scci.oldSwapchain != 0)
-		vkDestroySwapchainKHR(m_context->getLogicalDevice(), scci.oldSwapchain, 0);	
+		vkDestroySwapchainKHR(m_context->getLogicalDevice(), scci.oldSwapchain, 0);
 
 	// Get primary color images.
 	uint32_t imageCount = 0;
@@ -1740,8 +1687,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	for (int32_t i = 0; i < sizeof_array(m_imageAvailableSemaphores); ++i)
 	{
-		const VkSemaphoreCreateInfo sci =
-		{
+		const VkSemaphoreCreateInfo sci = {
 			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
 		};
 		if (vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS)
@@ -1751,8 +1697,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 #if defined(T_USE_QUERY)
 	// Create time query pool.
-	const VkQueryPoolCreateInfo qpci =
-	{
+	const VkQueryPoolCreateInfo qpci = {
 		.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO,
 		.pNext = nullptr,
 		.queryType = VK_QUERY_TYPE_TIMESTAMP,
@@ -1773,18 +1718,17 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	// Create primary depth target.
 	Ref< RenderTargetDepthVk > primaryDepth = new RenderTargetDepthVk(m_context);
 	if (!primaryDepth->createPrimary(
-		width,
-		height,
-		multiSample,
+			width,
+			height,
+			multiSample,
 #if defined(__IOS__)
-		VK_FORMAT_D16_UNORM_S8_UINT,
+			VK_FORMAT_D16_UNORM_S8_UINT,
 #elif defined(__RPI__)
-		VK_FORMAT_D24_UNORM_S8_UINT,
+			VK_FORMAT_D24_UNORM_S8_UINT,
 #else
-	    VK_FORMAT_D32_SFLOAT_S8_UINT,
+			VK_FORMAT_D32_SFLOAT_S8_UINT,
 #endif
-		L"Primary Depth"
-	))
+			L"Primary Depth"))
 		return false;
 
 	// Create frame resources.
@@ -1793,8 +1737,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	{
 		auto& frame = m_frames[i];
 
-		const VkSemaphoreCreateInfo sci =
-		{
+		const VkSemaphoreCreateInfo sci = {
 			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
 		};
 		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.renderFinishedSemaphore);
@@ -1805,14 +1748,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		static uint32_t primaryInstances = 0;
 		frame.primaryTarget = new RenderTargetSetVk(m_context, primaryInstances);
 		if (!frame.primaryTarget->createPrimary(
-			width,
-			height,
-			multiSample,
-			colorFormat,
-			presentImages[i],
-			primaryDepth,
-			str(L"Primary %d", i).c_str()
-		))
+				width,
+				height,
+				multiSample,
+				colorFormat,
+				presentImages[i],
+				primaryDepth,
+				str(L"Primary %d", i).c_str()))
 			return false;
 	}
 
@@ -1844,7 +1786,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt)
 {
 	auto& frame = m_frames[m_currentImageIndex];
-	
+
 	// Calculate pipeline key.
 	const uint8_t primitiveId = (uint8_t)pt;
 	const uint32_t declHash = (vertexLayout != nullptr) ? vertexLayout->getHash() : 0;
@@ -1864,22 +1806,19 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		const RenderState& rs = program->getRenderState();
 		const uint32_t colorAttachmentCount = m_targetSet->getColorTargetCount();
 
-		const VkViewport vp =
-		{
+		const VkViewport vp = {
 			.width = 1,
 			.height = 1,
 			.minDepth = 0.0f,
 			.maxDepth = 1.0f
 		};
 
-		const VkRect2D sc =
-		{
+		const VkRect2D sc = {
 			.offset = { 0, 0 },
 			.extent = { 65536, 65536 }
 		};
 
-		const VkPipelineViewportStateCreateInfo vsci =
-		{
+		const VkPipelineViewportStateCreateInfo vsci = {
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
 			.viewportCount = 1,
 			.pViewports = &vp,
@@ -1905,23 +1844,18 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		}
 
 		StaticVector< VkPipelineShaderStageCreateInfo, 2 > ssci;
-		ssci.push_back({
-			.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+		ssci.push_back({ .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
 			.stage = VK_SHADER_STAGE_VERTEX_BIT,
 			.module = program->getVertexVkShaderModule(),
 			.pName = "main",
-			.pSpecializationInfo = nullptr
-		});
-		ssci.push_back({
-			.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+			.pSpecializationInfo = nullptr });
+		ssci.push_back({ .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
 			.stage = VK_SHADER_STAGE_FRAGMENT_BIT,
 			.module = program->getFragmentVkShaderModule(),
 			.pName = "main",
-			.pSpecializationInfo = nullptr
-		});
+			.pSpecializationInfo = nullptr });
 
-		const VkPipelineRasterizationStateCreateInfo rsci =
-		{
+		const VkPipelineRasterizationStateCreateInfo rsci = {
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
 			.depthClampEnable = VK_FALSE,
 			.rasterizerDiscardEnable = VK_FALSE,
@@ -1949,8 +1883,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		mssci.alphaToCoverageEnable = rs.alphaToCoverageEnable ? VK_TRUE : VK_FALSE;
 		mssci.alphaToOneEnable = VK_FALSE;
 
-		const VkStencilOpState sops =
-		{
+		const VkStencilOpState sops = {
 			.failOp = c_stencilOperations[(int)rs.stencilFail],
 			.passOp = c_stencilOperations[(int)rs.stencilPass],
 			.depthFailOp = c_stencilOperations[(int)rs.stencilZFail],
@@ -1960,8 +1893,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 			.reference = rs.stencilReference
 		};
 
-		const VkPipelineDepthStencilStateCreateInfo dssci =
-		{
+		const VkPipelineDepthStencilStateCreateInfo dssci = {
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
 			.depthTestEnable = rs.depthEnable ? VK_TRUE : VK_FALSE,
 			.depthWriteEnable = rs.depthWriteEnable ? VK_TRUE : VK_FALSE,
@@ -1988,8 +1920,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 			cbas.colorWriteMask = rs.colorWriteMask;
 		}
 
-		const VkPipelineColorBlendStateCreateInfo cbsci =
-		{
+		const VkPipelineColorBlendStateCreateInfo cbsci = {
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
 			.logicOpEnable = VK_FALSE,
 			.logicOp = VK_LOGIC_OP_CLEAR,
@@ -1999,22 +1930,19 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		};
 
 		const VkDynamicState ds[3] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR, VK_DYNAMIC_STATE_STENCIL_REFERENCE };
-		const VkPipelineDynamicStateCreateInfo dsci =
-		{
+		const VkPipelineDynamicStateCreateInfo dsci = {
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
 			.dynamicStateCount = rs.stencilEnable ? 3U : 2U,
 			.pDynamicStates = ds
 		};
 
-		const VkPipelineInputAssemblyStateCreateInfo iasci =
-		{
+		const VkPipelineInputAssemblyStateCreateInfo iasci = {
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
 			.topology = c_primitiveTopology[(int32_t)pt],
 			.primitiveRestartEnable = VK_FALSE
 		};
 
-		const VkGraphicsPipelineCreateInfo gpci =
-		{
+		const VkGraphicsPipelineCreateInfo gpci = {
 			.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
 			.stageCount = (uint32_t)ssci.size(),
 			.pStages = ssci.c_ptr(),
@@ -2040,8 +1968,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 			1,
 			&gpci,
 			nullptr,
-			&pipeline
-		);
+			&pipeline);
 		if (result != VK_SUCCESS)
 		{
 #if defined(_DEBUG)
@@ -2087,8 +2014,7 @@ bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const P
 	}
 	else
 	{
-		const VkPipelineShaderStageCreateInfo ssci =
-		{
+		const VkPipelineShaderStageCreateInfo ssci = {
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
 			.stage = VK_SHADER_STAGE_COMPUTE_BIT,
 			.module = p->getComputeVkShaderModule(),
@@ -2096,8 +2022,7 @@ bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const P
 			.pSpecializationInfo = nullptr
 		};
 
-		const VkComputePipelineCreateInfo cpci =
-		{
+		const VkComputePipelineCreateInfo cpci = {
 			.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
 			.stage = ssci,
 			.layout = p->getPipelineLayout()
@@ -2109,8 +2034,7 @@ bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const P
 			1,
 			&cpci,
 			nullptr,
-			&pipeline
-		);
+			&pipeline);
 		if (result != VK_SUCCESS)
 		{
 #if defined(_DEBUG)

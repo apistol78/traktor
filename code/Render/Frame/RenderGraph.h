@@ -36,6 +36,7 @@ class IRenderSystem;
 class ITexture;
 class RenderContext;
 class RenderGraphBufferPool;
+class RenderGraphTargetSet;
 class RenderGraphTargetSetPool;
 class RenderGraphTexturePool;
 
@@ -69,14 +70,12 @@ public:
 		handle_t persistentHandle = 0;
 		bool doubleBuffered = false;
 		RenderGraphTargetSetDesc targetSetDesc;
-		Ref< IRenderTargetSet > writeTargetSet;
-		Ref< IRenderTargetSet > readTargetSet;
+		Ref< RenderGraphTargetSet > targetSet;
 		handle_t sharedDepthStencilTargetSetId = ~0U;
 		handle_t sizeReferenceTargetSetId = 0;
 		TargetSize realized = { 0, 0 };
 		int32_t inputRefCount = 0;
 		int32_t outputRefCount = 0;
-		uint32_t writeCounter = 0;
 		bool external = false;
 	};
 
@@ -266,6 +265,7 @@ private:
 	uint32_t m_multiSample;
 	handle_t m_nextResourceId;
 	fn_profiler_t m_profiler;
+	bool m_buildingPasses = false;
 
 	bool realizeTargetDimensions(int32_t width, int32_t height, int32_t targetId);
 

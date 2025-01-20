@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,10 +16,12 @@
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraphBufferPool.h"
+#include "Render/Frame/RenderGraphTargetSet.h"
 #include "Render/Frame/RenderGraphTargetSetPool.h"
 #include "Render/Frame/RenderGraphTexturePool.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
+#include "Render/IRenderView.h"
 
 namespace traktor::render
 {
@@ -44,14 +46,6 @@ void traverse(const RefArray< const RenderPass >& passes, int32_t depth, int32_t
 
 	// Call visitor for this pass.
 	fn(depth, index);
-}
-
-template < typename T >
-void swap(Ref< T >& lh, Ref< T >& rh)
-{
-	Ref< T > tmp = lh;
-	lh = rh;
-	rh = tmp;
 }
 
 }
@@ -99,8 +93,7 @@ handle_t RenderGraph::addExplicitTargetSet(const wchar_t* const name, IRenderTar
 	tr.name = name;
 	tr.persistentHandle = 0;
 	tr.doubleBuffered = false;
-	tr.readTargetSet = targetSet;
-	tr.writeTargetSet = targetSet;
+	tr.targetSet = new RenderGraphTargetSet(targetSet, targetSet);
 	tr.sizeReferenceTargetSetId = 0;
 	tr.inputRefCount = 0;
 	tr.outputRefCount = 0;
@@ -219,18 +212,21 @@ handle_t RenderGraph::addDependency()
 
 IRenderTargetSet* RenderGraph::getTargetSet(handle_t resource) const
 {
+	T_FATAL_ASSERT(m_buildingPasses);
 	auto it = m_targets.find(resource);
-	return (it != m_targets.end()) ? it->second.readTargetSet : nullptr;
+	return (it != m_targets.end()) ? it->second.targetSet->getReadTargetSet() : nullptr;
 }
 
 Buffer* RenderGraph::getBuffer(handle_t resource) const
 {
+	T_FATAL_ASSERT(m_buildingPasses);
 	auto it = m_buffers.find(resource);
 	return (it != m_buffers.end()) ? it->second.buffer : nullptr;
 }
 
 ITexture* RenderGraph::getTexture(handle_t resource) const
 {
+	T_FATAL_ASSERT(m_buildingPasses);
 	auto it = m_textures.find(resource);
 	return (it != m_textures.end()) ? it->second.texture : nullptr;
 }
@@ -289,6 +285,16 @@ bool RenderGraph::validate()
 			const auto rt = m_passes[rh]->getOutput().resourceId;
 			return lt > rt;
 		});
+
+	// Ensure all targets are unacquired.
+	// for (auto& it : m_targets)
+	//{
+	//	if (!it.second.external)
+	//	{
+	//		it.second.readTargetSet = nullptr;
+	//		it.second.writeTargetSet = nullptr;
+	//	}
+	//}
 
 	// Gather targets which are used as shared depth.
 	for (auto& it : m_targets)
@@ -349,7 +355,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	{
 		auto& target = it.second;
 		if (
-			target.writeTargetSet == nullptr &&
+			target.targetSet == nullptr &&
 			target.persistentHandle != 0 &&
 			(target.inputRefCount != 0 || target.outputRefCount != 0))
 		{
@@ -409,7 +415,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	// Since we don't want to load/store render passes, esp when using MSAA,
 	// we track current output target and automatically merge render passes.
 	//
+	TargetResource* currentTarget = nullptr;
 	RenderPass::Output currentOutput;
+
 	for (int32_t i = sizeof_array(m_order) - 1; i >= 0; --i)
 	{
 		const auto& order = m_order[i];
@@ -425,21 +433,24 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				if (output.resourceId != 0)
 				{
 					// Continue rendering to same target if possible; else start another pass.
-					// if (currentOutput != output)
+					if (currentOutput != output)
 					{
 						if (currentOutput.resourceId != ~0U)
 						{
 							renderContext->mergeComputeIntoRender();
 							renderContext->draw< EndPassRenderBlock >();
 							renderContext->mergeDrawIntoRender();
+
+							if (currentTarget && currentTarget->doubleBuffered)
+								currentTarget->targetSet->swap();
 						}
 
 						// Begin pass if resource is a target.
 						auto it = m_targets.find(output.resourceId);
 						if (it != m_targets.end())
 						{
-							auto& target = it->second;
-							if (target.writeTargetSet == nullptr)
+							TargetResource& target = it->second;
+							if (target.targetSet == nullptr)
 							{
 								T_ASSERT(!target.external);
 								if (!acquire(target))
@@ -450,23 +461,23 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 							}
 
 							auto tb = renderContext->allocNamed< BeginPassRenderBlock >(pass->getName());
-							tb->renderTargetSet = target.writeTargetSet;
+							tb->renderTargetSet = target.targetSet->getWriteTargetSet();
 							tb->clear = output.clear;
 							tb->load = output.load;
 							tb->store = output.store;
 							renderContext->draw(tb);
 
-							swap(target.writeTargetSet, target.readTargetSet);
-							target.writeCounter++;
-
+							currentTarget = &target;
 							currentOutput = output;
 						}
 						else
+						{
+							currentTarget = nullptr;
 							currentOutput = RenderPass::Output();
+						}
 					}
 				}
 				else // Output to framebuffer; implicit as target 0.
-				{
 					if (currentOutput.resourceId != 0)
 					{
 						if (currentOutput.resourceId != ~0U)
@@ -474,6 +485,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 							renderContext->mergeComputeIntoRender();
 							renderContext->draw< EndPassRenderBlock >();
 							renderContext->mergeDrawIntoRender();
+
+							if (currentTarget && currentTarget->doubleBuffered)
+								currentTarget->targetSet->swap();
 						}
 
 						auto tb = renderContext->allocNamed< BeginPassRenderBlock >(pass->getName());
@@ -482,17 +496,22 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 						tb->store = output.store;
 						renderContext->draw(tb);
 
+						currentTarget = nullptr;
 						currentOutput = output;
 					}
-				}
 			}
 			else if (currentOutput.resourceId != ~0U)
 			{
 				if (renderContext->havePendingComputes())
 					renderContext->mergeComputeIntoRender();
+
 				renderContext->draw< EndPassRenderBlock >();
 				renderContext->mergeDrawIntoRender();
 
+				if (currentTarget && currentTarget->doubleBuffered)
+					currentTarget->targetSet->swap();
+
+				currentTarget = nullptr;
 				currentOutput = RenderPass::Output();
 			}
 
@@ -507,6 +526,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 
 			// Build this pass.
 			T_PROFILER_BEGIN(L"RenderGraph build \"" + pass->getName() + L"\"");
+			m_buildingPasses = true;
 			for (const auto& build : pass->getBuilds())
 			{
 				build(*this, renderContext);
@@ -514,6 +534,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				// Merge all pending draws after each build step.
 				renderContext->mergePriorityIntoDraw(RenderPriority::All);
 			}
+			m_buildingPasses = false;
 			T_PROFILER_END();
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
@@ -537,17 +558,8 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				auto& target = it->second;
 				if (--target.inputRefCount <= 0)
 				{
-					if (!target.external)
-					{
-						if (target.writeTargetSet != target.readTargetSet)
-						{
-							m_targetSetPool->release(target.writeTargetSet);
-							m_targetSetPool->release(target.readTargetSet);
-						}
-						else
-							m_targetSetPool->release(target.writeTargetSet);
-					}
-					target.writeTargetSet = nullptr;
+					if (!target.external && target.persistentHandle == 0)
+						m_targetSetPool->release(target.targetSet);
 				}
 			}
 		}
@@ -558,6 +570,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		renderContext->mergeComputeIntoRender();
 		renderContext->draw< EndPassRenderBlock >();
 		renderContext->mergeDrawIntoRender();
+
+		if (currentTarget && currentTarget->doubleBuffered)
+			currentTarget->targetSet->swap();
 	}
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
@@ -604,16 +619,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	{
 		auto& target = it.second;
 		if (target.persistentHandle != 0)
-		{
-			if (target.readTargetSet != target.writeTargetSet)
-			{
-				m_targetSetPool->release(target.writeTargetSet);
-				m_targetSetPool->release(target.readTargetSet);
-			}
-			else
-				m_targetSetPool->release(target.readTargetSet);
-		}
+			m_targetSetPool->release(target.targetSet);
 		target.realized = { 0, 0 };
+		target.targetSet = nullptr;
 	}
 
 	for (auto& it : m_buffers)
@@ -699,50 +707,23 @@ bool RenderGraph::acquire(TargetResource& inoutTarget)
 		inoutTarget.sharedDepthStencilTargetSetId != 0)
 	{
 		const auto& t = m_targets[inoutTarget.sharedDepthStencilTargetSetId];
-		sharedDepthTargetSet = t.writeTargetSet;
+		sharedDepthTargetSet = t.targetSet->getWriteTargetSet();
 	}
 
 	const bool sharedPrimaryDepthStencilTargetSet = (inoutTarget.sharedDepthStencilTargetSetId == 0);
 
-	if (inoutTarget.persistentHandle != 0 && inoutTarget.doubleBuffered)
-	{
-		inoutTarget.readTargetSet = m_targetSetPool->acquire(
-			inoutTarget.name,
-			inoutTarget.targetSetDesc,
-			sharedDepthTargetSet,
-			sharedPrimaryDepthStencilTargetSet,
-			inoutTarget.realized.width,
-			inoutTarget.realized.height,
-			m_multiSample,
-			{ 0, inoutTarget.persistentHandle });
-		inoutTarget.writeTargetSet = m_targetSetPool->acquire(
-			inoutTarget.name,
-			inoutTarget.targetSetDesc,
-			sharedDepthTargetSet,
-			sharedPrimaryDepthStencilTargetSet,
-			inoutTarget.realized.width,
-			inoutTarget.realized.height,
-			m_multiSample,
-			{ 1, inoutTarget.persistentHandle });
+	inoutTarget.targetSet = m_targetSetPool->acquire(
+		inoutTarget.name,
+		inoutTarget.targetSetDesc,
+		sharedDepthTargetSet,
+		sharedPrimaryDepthStencilTargetSet,
+		inoutTarget.realized.width,
+		inoutTarget.realized.height,
+		m_multiSample,
+		inoutTarget.doubleBuffered,
+		inoutTarget.persistentHandle);
 
-		if (inoutTarget.writeCounter & 1)
-			swap(inoutTarget.readTargetSet, inoutTarget.writeTargetSet);
-	}
-	else
-	{
-		inoutTarget.readTargetSet =
-			inoutTarget.writeTargetSet = m_targetSetPool->acquire(
-				inoutTarget.name,
-				inoutTarget.targetSetDesc,
-				sharedDepthTargetSet,
-				sharedPrimaryDepthStencilTargetSet,
-				inoutTarget.realized.width,
-				inoutTarget.realized.height,
-				m_multiSample,
-				{ 0, inoutTarget.persistentHandle });
-	}
-
-	if (!inoutTarget.readTargetSet || !inoutTarget.writeTargetSet)
+	if (!inoutTarget.targetSet)
 		return false;
 
 	return true;

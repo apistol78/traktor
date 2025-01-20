@@ -236,6 +236,9 @@ public:
 	/*! Write pop debug marker to command buffer. */
 	virtual void popMarker() = 0;
 
+	/*! */
+	virtual void writeMarker(const std::wstring& marker) = 0;
+
 	/*! Get render view statistics. */
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const = 0;
 

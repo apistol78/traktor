@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,16 +8,16 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Containers/AlignedVector.h"
 #include "Render/Frame/RenderGraphTypes.h"
 
 namespace traktor::render
 {
 
 class IRenderSystem;
-class IRenderTargetSet;
+class RenderGraphTargetSet;
 
 /*!
  * \ingroup Render
@@ -27,8 +27,6 @@ class RenderGraphTargetSetPool : public Object
 	T_RTTI_CLASS;
 
 public:
-	typedef struct { uint32_t index; uint32_t handle; } persistentKey_t;
-
 	explicit RenderGraphTargetSetPool(IRenderSystem* renderSystem);
 
 	void destroy();
@@ -43,7 +41,7 @@ public:
 	 * \param referenceHeight Reference height of target required.
 	 * \param persistentHandle Persistent handle; used to track persistent targets in pool, 0 means not persistent target.
 	 */
-	IRenderTargetSet* acquire(
+	RenderGraphTargetSet* acquire(
 		const wchar_t* name,
 		const RenderGraphTargetSetDesc& targetSetDesc,
 		IRenderTargetSet* sharedDepthStencilTargetSet,
@@ -51,11 +49,11 @@ public:
 		int32_t referenceWidth,
 		int32_t referenceHeight,
 		uint32_t multiSample,
-		persistentKey_t persistentHandle
-	);
+		bool doubleBuffered,
+		uint32_t persistentHandle);
 
 	/*! */
-	void release(Ref< IRenderTargetSet >& targetSet);
+	void release(Ref< RenderGraphTargetSet >& targetSet);
 
 	/*! */
 	void cleanup();
@@ -63,7 +61,7 @@ public:
 private:
 	struct Target
 	{
-		Ref< IRenderTargetSet > rts;
+		Ref< RenderGraphTargetSet > rts;
 		int32_t unused;
 	};
 
@@ -72,11 +70,11 @@ private:
 		// Pool identification.
 		RenderTargetSetCreateDesc rtscd;
 		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
-		persistentKey_t persistentHandle;
+		uint32_t persistentHandle;
 
 		// Pool targets.
 		AlignedVector< Target > free;
-		RefArray< IRenderTargetSet > acquired;
+		RefArray< RenderGraphTargetSet > acquired;
 	};
 
 	Ref< IRenderSystem > m_renderSystem;

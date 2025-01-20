@@ -1,36 +1,34 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
+#include "Render/Frame/RenderGraphTargetSetPool.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Frame/RenderGraphTargetSet.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
-#include "Render/Frame/RenderGraphTargetSetPool.h"
+
+#include <cstring>
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 const int32_t c_maxUnusuedFrames = 8;
 
-bool operator != (const RenderGraphTargetSetPool::persistentKey_t& a, const RenderGraphTargetSetPool::persistentKey_t& b)
-{
-	return a.index != b.index || a.handle != b.handle;
 }
-
-	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraphTargetSetPool", RenderGraphTargetSetPool, Object)
 
 RenderGraphTargetSetPool::RenderGraphTargetSetPool(IRenderSystem* renderSystem)
-:	m_renderSystem(renderSystem)
+	: m_renderSystem(renderSystem)
 {
 }
 
@@ -46,7 +44,7 @@ void RenderGraphTargetSetPool::destroy()
 	m_pool.clear();
 }
 
-IRenderTargetSet* RenderGraphTargetSetPool::acquire(
+RenderGraphTargetSet* RenderGraphTargetSetPool::acquire(
 	const wchar_t* name,
 	const RenderGraphTargetSetDesc& targetSetDesc,
 	IRenderTargetSet* sharedDepthStencilTargetSet,
@@ -54,8 +52,8 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	int32_t referenceWidth,
 	int32_t referenceHeight,
 	uint32_t multiSample,
-	persistentKey_t persistentHandle
-)
+	bool doubleBuffered,
+	uint32_t persistentHandle)
 {
 	// Create descriptor for given reference size.
 	RenderTargetSetCreateDesc rtscd;
@@ -67,7 +65,7 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	rtscd.usingPrimaryDepthStencil = sharedPrimaryDepthStencilTargetSet;
 	rtscd.usingDepthStencilAsTexture = targetSetDesc.usingDepthStencilAsTexture;
 	rtscd.usingDepthStencilAsStorage = false;
-	rtscd.ignoreStencil = targetSetDesc.ignoreStencil || targetSetDesc.usingDepthStencilAsTexture;	// Cannot have stencil on read-back depth targets.
+	rtscd.ignoreStencil = targetSetDesc.ignoreStencil || targetSetDesc.usingDepthStencilAsTexture; // Cannot have stencil on read-back depth targets.
 	rtscd.generateMips = targetSetDesc.generateMips;
 
 	if (rtscd.usingPrimaryDepthStencil)
@@ -81,42 +79,36 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 
 	// Find pool matching target description.
 	auto it = std::find_if(
-        m_pool.begin(),
-        m_pool.end(),
-        [&](const RenderGraphTargetSetPool::Pool& p)
-        {
-            if (p.sharedDepthStencilTargetSet != sharedDepthStencilTargetSet)
-                return false;
+		m_pool.begin(),
+		m_pool.end(),
+		[&](const RenderGraphTargetSetPool::Pool& p) {
+		if (p.sharedDepthStencilTargetSet != sharedDepthStencilTargetSet)
+			return false;
 
-			if (p.persistentHandle != persistentHandle)
+		if (p.persistentHandle != persistentHandle)
+			return false;
+
+		if (
+			p.rtscd.count != rtscd.count ||
+			p.rtscd.width != rtscd.width ||
+			p.rtscd.height != rtscd.height ||
+			p.rtscd.multiSample != rtscd.multiSample ||
+			p.rtscd.createDepthStencil != rtscd.createDepthStencil ||
+			p.rtscd.usingDepthStencilAsTexture != rtscd.usingDepthStencilAsTexture ||
+			p.rtscd.usingDepthStencilAsStorage != rtscd.usingDepthStencilAsStorage ||
+			p.rtscd.usingPrimaryDepthStencil != rtscd.usingPrimaryDepthStencil ||
+			p.rtscd.ignoreStencil != rtscd.ignoreStencil ||
+			p.rtscd.generateMips != rtscd.generateMips)
+			return false;
+
+		for (int32_t i = 0; i < p.rtscd.count; ++i)
+			if (
+				p.rtscd.targets[i].format != rtscd.targets[i].format ||
+				p.rtscd.targets[i].sRGB != rtscd.targets[i].sRGB)
 				return false;
 
-            if (
-				p.rtscd.count != rtscd.count ||
-				p.rtscd.width != rtscd.width ||
-				p.rtscd.height != rtscd.height ||
-				p.rtscd.multiSample != rtscd.multiSample ||
-				p.rtscd.createDepthStencil != rtscd.createDepthStencil ||
-				p.rtscd.usingDepthStencilAsTexture != rtscd.usingDepthStencilAsTexture ||
-				p.rtscd.usingDepthStencilAsStorage != rtscd.usingDepthStencilAsStorage ||
-				p.rtscd.usingPrimaryDepthStencil != rtscd.usingPrimaryDepthStencil ||
-				p.rtscd.ignoreStencil != rtscd.ignoreStencil ||
-				p.rtscd.generateMips != rtscd.generateMips
-            )
-                return false;
-
- 			for (int32_t i = 0; i < p.rtscd.count; ++i)
-			{
-				if (
-					p.rtscd.targets[i].format != rtscd.targets[i].format ||
-					p.rtscd.targets[i].sRGB != rtscd.targets[i].sRGB
-				)
-					return false;
-			}
-
-            return true;
-        }
-    );
+		return true;
+	});
 
 	// Get or create pool.
 	Pool* pool = nullptr;
@@ -126,19 +118,16 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	{
 		pool = &m_pool.push_back();
 		pool->rtscd = rtscd;
-        pool->sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
+		pool->sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 		pool->persistentHandle = persistentHandle;
 	}
 
 	// Acquire free target, if no one left we need to create a new target.
 	if (!pool->free.empty())
 	{
-		Target target = pool->free.back();
-
+		const Target target = pool->free.back();
 		pool->free.pop_back();
 		pool->acquired.push_back(target.rts);
-
-		target.rts->setDebugName(name);
 		return target.rts;
 	}
 	else
@@ -151,10 +140,18 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 			T_FATAL_ASSERT(sharedHeight == rtscd.height);
 		}
 
-		Ref< IRenderTargetSet > rts = m_renderSystem->createRenderTargetSet(rtscd, sharedDepthStencilTargetSet, name);
-		if (rts)
+		Ref< IRenderTargetSet > readTargetSet = m_renderSystem->createRenderTargetSet(rtscd, sharedDepthStencilTargetSet, name);
+
+		Ref< IRenderTargetSet > writeTargetSet;
+		if (!doubleBuffered)
+			writeTargetSet = readTargetSet;
+		else
+			writeTargetSet = m_renderSystem->createRenderTargetSet(rtscd, sharedDepthStencilTargetSet, name);
+
+		Ref< RenderGraphTargetSet > rts;
+		if (readTargetSet && writeTargetSet)
 		{
-			rts->setDebugName(name);
+			rts = new RenderGraphTargetSet(readTargetSet, writeTargetSet);
 			pool->acquired.push_back(rts);
 		}
 		else
@@ -164,12 +161,12 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	}
 }
 
-void RenderGraphTargetSetPool::release(Ref< IRenderTargetSet >& targetSet)
+void RenderGraphTargetSetPool::release(Ref< RenderGraphTargetSet >& targetSet)
 {
-	T_ANONYMOUS_VAR(Ref< IRenderTargetSet >)(targetSet);
+	T_ANONYMOUS_VAR(Ref< RenderGraphTargetSet >)(targetSet);
 	for (auto& pool : m_pool)
 	{
-		auto it = std::remove_if(pool.acquired.begin(), pool.acquired.end(), [&](const IRenderTargetSet* rts) {
+		auto it = std::remove_if(pool.acquired.begin(), pool.acquired.end(), [&](const RenderGraphTargetSet* rts) {
 			return rts == targetSet;
 		});
 		if (it != pool.acquired.end())
@@ -179,7 +176,6 @@ void RenderGraphTargetSetPool::release(Ref< IRenderTargetSet >& targetSet)
 			break;
 		}
 	}
-	targetSet = nullptr;
 }
 
 void RenderGraphTargetSetPool::cleanup()

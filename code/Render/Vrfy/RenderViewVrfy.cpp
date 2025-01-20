@@ -539,6 +539,12 @@ void RenderViewVrfy::popMarker()
 	m_renderView->popMarker();
 }
 
+void RenderViewVrfy::writeMarker(const std::wstring& marker)
+{
+	T_CAPTURE_TRACE(L"writeMarker");
+	m_renderView->writeMarker(marker);
+}
+
 void RenderViewVrfy::getStatistics(RenderViewStatistics& outStatistics) const
 {
 	m_renderView->getStatistics(outStatistics);

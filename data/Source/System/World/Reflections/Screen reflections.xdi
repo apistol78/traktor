@@ -5,8 +5,8 @@
 			<id>{A24C08E3-CDBB-F540-A23E-D2DDEE8715EB}</id>
 			<comment/>
 			<position>
-				<first>1595</first>
-				<second>434</second>
+				<first>1670</first>
+				<second>432</second>
 			</position>
 		</item>
 		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
@@ -22,8 +22,8 @@
 			<id>{F632392A-1141-0348-B739-2B4F40EBD4C7}</id>
 			<comment/>
 			<position>
-				<first>1283</first>
-				<second>403</second>
+				<first>1358</first>
+				<second>401</second>
 			</position>
 			<name>World_RayTracingEnable</name>
 		</item>
@@ -106,7 +106,7 @@
 				<first>1094</first>
 				<second>331</second>
 			</position>
-			<name>RT modulate</name>
+			<name>Overlay RT reflections</name>
 			<clear>
 				<mask>
 					<Color>true</Color>

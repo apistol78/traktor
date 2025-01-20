@@ -119,6 +119,8 @@ public:
 
 	virtual void popMarker() override final;
 
+	virtual void writeMarker(const std::wstring& marker) override final;
+
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const override final;
 
 private:

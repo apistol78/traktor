@@ -213,7 +213,7 @@ public:
 	uint32_t load = 0;
 	uint32_t store = 0;
 
-	virtual void render(IRenderView* renderView) const override final;
+	virtual void render(IRenderView* renderView) const override;
 };
 
 /*! End pass render block.
@@ -222,7 +222,7 @@ public:
 class T_DLLCLASS EndPassRenderBlock : public RenderBlock
 {
 public:
-	virtual void render(IRenderView* renderView) const override final;
+	virtual void render(IRenderView* renderView) const override;
 };
 
 /*! Present backbuffer.

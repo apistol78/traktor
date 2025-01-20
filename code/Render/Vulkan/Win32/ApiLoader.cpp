@@ -143,6 +143,7 @@ T_DEFINE_VK(vkCreateDebugUtilsMessengerEXT);
 T_DEFINE_VK(vkSetDebugUtilsObjectNameEXT);
 T_DEFINE_VK(vkCmdBeginDebugUtilsLabelEXT);
 T_DEFINE_VK(vkCmdEndDebugUtilsLabelEXT);
+T_DEFINE_VK(vkCmdInsertDebugUtilsLabelEXT);
 T_DEFINE_VK(vkGetBufferMemoryRequirements2KHR);
 T_DEFINE_VK(vkGetImageMemoryRequirements2KHR);
 T_DEFINE_VK(vkGetBufferDeviceAddressKHR);
@@ -295,6 +296,7 @@ bool initializeVulkanExtensions(VkInstance instance)
 	T_RESOLVE_VK_EXT(vkSetDebugUtilsObjectNameEXT);
 	T_RESOLVE_VK_EXT(vkCmdBeginDebugUtilsLabelEXT);
 	T_RESOLVE_VK_EXT(vkCmdEndDebugUtilsLabelEXT);
+	T_RESOLVE_VK_EXT(vkCmdInsertDebugUtilsLabelEXT);
 	T_RESOLVE_VK_EXT(vkGetBufferMemoryRequirements2KHR);
 	T_RESOLVE_VK_EXT(vkGetImageMemoryRequirements2KHR);
 	T_RESOLVE_VK_EXT(vkGetBufferDeviceAddressKHR);

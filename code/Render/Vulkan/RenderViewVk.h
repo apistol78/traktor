@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,12 +8,15 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
+#include "Core/RefArray.h"
+#include "Core/System.h"
+#include "Render/IRenderView.h"
+#include "Render/Vulkan/BufferViewVk.h"
+#include "Render/Vulkan/Private/ApiHeader.h"
+
 #include <list>
 #include <tuple>
-#include "Core/System.h"
-#include "Core/Containers/AlignedVector.h"
-#include "Render/IRenderView.h"
-#include "Render/Vulkan/Private/ApiHeader.h"
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/Window.h"
 #elif defined(__LINUX__) || defined(__RPI__)
@@ -25,7 +28,6 @@
 namespace traktor::render
 {
 
-class BufferViewVk;
 class CommandBuffer;
 class Context;
 class ProgramVk;
@@ -38,9 +40,9 @@ class VertexLayoutVk;
  * \ingroup Render
  */
 class RenderViewVk
-:	public IRenderView
+	: public IRenderView
 #if defined(_WIN32)
-,	public Window::IListener
+	, public Window::IListener
 #endif
 {
 	T_RTTI_CLASS;
@@ -48,8 +50,7 @@ class RenderViewVk
 public:
 	explicit RenderViewVk(
 		Context* context,
-		VkInstance instance
-	);
+		VkInstance instance);
 
 	virtual ~RenderViewVk();
 
@@ -86,7 +87,7 @@ public:
 	virtual bool setGamma(float gamma) override final;
 
 	virtual void setViewport(const Viewport& viewport) override final;
-    
+
 	virtual void setScissor(const Rectangle& scissor) override final;
 
 	virtual SystemWindow getSystemWindow() override final;
@@ -132,6 +133,8 @@ public:
 	virtual void pushMarker(const std::wstring& marker) override final;
 
 	virtual void popMarker() override final;
+
+	virtual void writeMarker(const std::wstring& marker) override final;
 
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const override final;
 
@@ -189,7 +192,7 @@ private:
 
 	// Render pass cache.
 	Ref< RenderPassCache > m_renderPassCache;
-	
+
 	// Current pass's target.
 	Ref< RenderTargetSetVk > m_targetSet;
 	int32_t m_targetColorIndex = 0;
