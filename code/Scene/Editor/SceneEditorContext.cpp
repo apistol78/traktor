@@ -325,7 +325,10 @@ void SceneEditorContext::processAutoRedraw()
 	if (isPlaying())
 		raiseRedraw(nullptr);
 	else if (m_redrawUntilStop-- > 0)
-		raiseRedraw(nullptr);
+	{
+		if (!raiseRedraw(nullptr))
+			m_redrawUntilStop = c_autoRedrawFrames;
+	}
 }
 
 void SceneEditorContext::setDrawGuide(const std::wstring& guideId, bool shouldDraw)
@@ -868,10 +871,11 @@ void SceneEditorContext::raiseModifierChanged()
 	raiseEvent(&modifierChangedEvent);
 }
 
-void SceneEditorContext::raiseRedraw(ISceneRenderControl* renderControl)
+bool SceneEditorContext::raiseRedraw(ISceneRenderControl* renderControl)
 {
 	RedrawEvent redrawEvent(this, renderControl);
 	raiseEvent(&redrawEvent);
+	return redrawEvent.consumed();
 }
 
 void SceneEditorContext::raiseMeasurement(int32_t pass, int32_t level, const std::wstring& name, double start, double duration)

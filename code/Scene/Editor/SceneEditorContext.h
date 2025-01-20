@@ -310,7 +310,7 @@ public:
 
 	void raiseModifierChanged();
 
-	void raiseRedraw(ISceneRenderControl* renderControl);
+	bool raiseRedraw(ISceneRenderControl* renderControl);
 
 	void raiseMeasurement(int32_t pass, int32_t level, const std::wstring& name, double start, double duration);
 

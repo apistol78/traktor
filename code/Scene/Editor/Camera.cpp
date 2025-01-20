@@ -6,20 +6,24 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Math/Const.h"
 #include "Scene/Editor/Camera.h"
+
+#include "Core/Math/Const.h"
 
 namespace traktor::scene
 {
 
 Camera::Camera()
-:	m_enable(false)
+	: m_enable(false)
 {
 	const Quaternion qx = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), deg2rad(45.0f));
 	const Quaternion qy = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), deg2rad(45.0f));
 
 	m_position = Vector4(-4.0f, 4.0f, -4.0f, 1.0f);
 	m_orientation = qx * qy;
+
+	m_filteredPosition = m_position;
+	m_filteredOrientation = m_orientation;
 }
 
 void Camera::setEnable(bool enable)
@@ -35,6 +39,7 @@ bool Camera::isEnable() const
 void Camera::place(const Vector4& position)
 {
 	m_position = position;
+	m_filteredPosition = position;
 }
 
 void Camera::move(const Vector4& direction)
@@ -51,9 +56,23 @@ void Camera::rotate(float dy, float dx)
 	m_orientation = m_orientation.normalized();
 }
 
+bool Camera::update(float /*deltaTime*/)
+{
+	const Scalar k = 0.15_simd;
+
+	m_filteredPosition = lerp(m_filteredPosition, m_position, k);
+	m_filteredOrientation = lerp(m_filteredOrientation, m_orientation, k);
+
+	// Check if we are close enough, we are given some slack due to auto update will redraw a couple of more frames.
+	if ((m_filteredPosition - m_position).length() < 0.01_simd && (m_filteredOrientation * m_orientation.inverse()).toEulerAngles().length() < 0.01_simd)
+		return true;
+
+	return false;
+}
+
 Transform Camera::getWorld() const
 {
-	return Transform(m_position) * Transform(m_orientation);
+	return Transform(m_filteredPosition) * Transform(m_filteredOrientation);
 }
 
 Transform Camera::getView() const

@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Scene/Editor/ScenePreviewControl.h"
+
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -16,27 +18,30 @@
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/TypeBrowseFilter.h"
-#include "I18N/Text.h"
 #include "I18N/Format.h"
+#include "I18N/Text.h"
 #include "Physics/PhysicsManager.h"
-#include "Scene/Scene.h"
+#include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/IEntityEditor.h"
-#include "Scene/Editor/IWorldComponentEditor.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/ISceneEditorPlugin.h"
-#include "Scene/Editor/ScenePreviewControl.h"
-#include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/Events/ModifierChangedEvent.h"
 #include "Scene/Editor/Events/RedrawEvent.h"
-#include "Scene/Editor/Modifiers/TranslateModifier.h"
+#include "Scene/Editor/IEntityEditor.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/Modifiers/RotateModifier.h"
 #include "Scene/Editor/Modifiers/ScaleModifier.h"
+#include "Scene/Editor/Modifiers/TranslateModifier.h"
 #include "Scene/Editor/RenderControls/DefaultRenderControl.h"
+#include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Scene.h"
 #include "Ui/Application.h"
 #include "Ui/Command.h"
 #include "Ui/NumericEditValidator.h"
+#include "Ui/QuadSplitter.h"
 #include "Ui/Slider.h"
+#include "Ui/Splitter.h"
+#include "Ui/StatusBar/StatusBar.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
@@ -44,9 +49,6 @@
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/ToolBar/ToolBarDropDown.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
-#include "Ui/StatusBar/StatusBar.h"
-#include "Ui/Splitter.h"
-#include "Ui/QuadSplitter.h"
 
 namespace traktor::scene
 {
@@ -54,9 +56,9 @@ namespace traktor::scene
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ScenePreviewControl", ScenePreviewControl, ui::Widget)
 
 ScenePreviewControl::ScenePreviewControl()
-:	m_splitCount(StSingle)
-,	m_lastTime(0.0f)
-,	m_lastPhysicsTime(0.0f)
+	: m_splitCount(StSingle)
+	, m_lastTime(0.0f)
+	, m_lastPhysicsTime(0.0f)
 {
 }
 
@@ -147,7 +149,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	updateEditState();
 
 	// Create idle event handler for updating preview.
-	m_idleEventHandler =  ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &ScenePreviewControl::eventIdle);
+	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &ScenePreviewControl::eventIdle);
 
 	m_timer.reset();
 	return true;
@@ -170,10 +172,8 @@ void ScenePreviewControl::destroy()
 
 	// Destroy render controls.
 	for (auto renderControl : m_renderControls)
-	{
 		if (renderControl)
 			renderControl->destroy();
-	}
 	m_renderControls.resize(0);
 
 	// Destroy widgets.
@@ -251,7 +251,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 			m_context->setPlaying(true);
 			m_context->setPhysicsEnable(true);
 		}
-		else 
+		else
 		{
 			m_context->setPlaying(false);
 			m_context->setPhysicsEnable(false);
@@ -365,11 +365,10 @@ bool ScenePreviewControl::updateRenderControls()
 	{
 		Ref< DefaultRenderControl > renderControl = new DefaultRenderControl();
 		if (!renderControl->create(
-			this,
-			m_context,
-			0,
-			0
-		))
+				this,
+				m_context,
+				0,
+				0))
 			return false;
 
 		m_renderControls.resize(1);
@@ -385,11 +384,10 @@ bool ScenePreviewControl::updateRenderControls()
 		{
 			Ref< DefaultRenderControl > renderControl = new DefaultRenderControl();
 			if (!renderControl->create(
-				doubleSplitter,
-				m_context,
-				i,
-				1 + i
-			))
+					doubleSplitter,
+					m_context,
+					i,
+					1 + i))
 				return false;
 
 			m_renderControls[i] = renderControl;
@@ -407,11 +405,10 @@ bool ScenePreviewControl::updateRenderControls()
 		{
 			Ref< DefaultRenderControl > renderControl = new DefaultRenderControl();
 			if (!renderControl->create(
-				quadSplitter,
-				m_context,
-				i,
-				3 + i
-			))
+					quadSplitter,
+					m_context,
+					i,
+					3 + i))
 				return false;
 
 			m_renderControls[i] = renderControl;
@@ -472,6 +469,11 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 		const double scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0;
 		const double scaledTime = m_context->getTime();
 
+		// Update cameras.
+		bool cameraStable = true;
+		for (int32_t i = 0; i < 4; ++i)
+			cameraStable &= m_context->getCamera(i)->update(deltaTime);
+
 		// Update scene controller editor.
 		Ref< IWorldComponentEditor > controllerEditor = m_context->getControllerEditor();
 		if (controllerEditor)
@@ -515,10 +517,8 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 		if (event->getRenderControl() != nullptr)
 			event->getRenderControl()->update();
 		else
-		{
 			for (auto renderControl : m_renderControls)
 				renderControl->update();
-		}
 
 		// Update modifiers as selected entity might have moved.
 		if (m_lastTime != scaledTime)
@@ -534,7 +534,13 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 
 		// Update context time.
 		m_context->setTime(scaledTime + scaledDeltaTime);
+
+		// Consume event if camera stable, allow to exit auto redraw.
+		if (cameraStable)
+			event->consume();
 	}
+	else
+		event->consume();
 }
 
 void ScenePreviewControl::eventIdle(ui::IdleEvent* event)

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,6 +41,8 @@ public:
 
 	void rotate(float dy, float dx);
 
+	bool update(float deltaTime);
+
 	Transform getWorld() const;
 
 	Transform getView() const;
@@ -55,8 +57,12 @@ public:
 
 private:
 	bool m_enable;
+
 	Vector4 m_position;
 	Quaternion m_orientation;
+
+	Vector4 m_filteredPosition;
+	Quaternion m_filteredOrientation;
 };
 
 }
