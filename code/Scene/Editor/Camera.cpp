@@ -56,9 +56,9 @@ void Camera::rotate(float dy, float dx)
 	m_orientation = m_orientation.normalized();
 }
 
-bool Camera::update(float /*deltaTime*/)
+bool Camera::update(float deltaTime)
 {
-	const Scalar k = 0.15_simd;
+	const Scalar k = clamp(Scalar(deltaTime) * 6.0_simd, 0.0_simd, 1.0_simd);
 
 	m_filteredPosition = lerp(m_filteredPosition, m_position, k);
 	m_filteredOrientation = lerp(m_filteredOrientation, m_orientation, k);
