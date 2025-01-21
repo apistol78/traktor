@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Transform.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -47,20 +47,18 @@ public:
 
 	Transform getView() const;
 
-	void setPosition(const Vector4& position) { m_position = position; }
+	void setPosition(const Vector4& position);
 
 	const Vector4& getPosition() const { return m_position; }
 
-	void setOrientation(const Quaternion& orientation) { m_orientation = orientation; }
+	void setOrientation(const Quaternion& orientation);
 
 	const Quaternion& getOrientation() const { return m_orientation; }
 
 private:
 	bool m_enable;
-
 	Vector4 m_position;
 	Quaternion m_orientation;
-
 	Vector4 m_filteredPosition;
 	Quaternion m_filteredOrientation;
 };

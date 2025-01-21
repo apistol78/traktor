@@ -58,10 +58,10 @@ void Camera::rotate(float dy, float dx)
 
 bool Camera::update(float deltaTime)
 {
-	const Scalar k = clamp(Scalar(deltaTime) * 6.0_simd, 0.0_simd, 1.0_simd);
+	const Scalar k = clamp(Scalar(deltaTime) * 8.0_simd, 0.0_simd, 1.0_simd);
 
 	m_filteredPosition = lerp(m_filteredPosition, m_position, k);
-	m_filteredOrientation = lerp(m_filteredOrientation, m_orientation, k);
+	m_filteredOrientation = slerp(m_filteredOrientation, m_orientation, k);
 
 	// Check if we are close enough, we are given some slack due to auto update will redraw a couple of more frames.
 	if ((m_filteredPosition - m_position).length() < 0.01_simd && (m_filteredOrientation * m_orientation.inverse()).toEulerAngles().length() < 0.01_simd)
@@ -78,6 +78,16 @@ Transform Camera::getWorld() const
 Transform Camera::getView() const
 {
 	return getWorld().inverse();
+}
+
+void Camera::setPosition(const Vector4& position)
+{
+	m_filteredPosition = m_position = position;
+}
+
+void Camera::setOrientation(const Quaternion& orientation)
+{
+	m_filteredOrientation = m_orientation = orientation;
 }
 
 }
