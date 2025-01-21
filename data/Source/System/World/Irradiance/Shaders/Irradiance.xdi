@@ -521,7 +521,6 @@ for (int i = 0; i < N; ++i)
 vec4 o = acc / N;
 
 $Output = vec4(o.xyz, pow(o.w, 0.3f));
-
 			]]>
 			</script>
 		</item>
@@ -805,10 +804,10 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{851C16AE-BD3C-3A49-8109-E8E4DCC9FC9C}</id>
 			<comment/>
 			<position>
-				<first>3853</first>
-				<second>-1096</second>
+				<first>3495</first>
+				<second>-1098</second>
 			</position>
-			<value>0.1</value>
+			<value>0.2</value>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{DAFA60CA-31A6-C147-BCEC-EB38063B35A7}</id>
@@ -864,6 +863,66 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{39ED5BF9-CB6B-4F81-8C0E-70E7CD342490}</id>
+			<comment/>
+			<position>
+				<first>3473</first>
+				<second>-992</second>
+			</position>
+			<name>IsClipped</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{58D1DC6A-4E6D-DC47-AAB3-553B015151B3}</id>
+					<name>Input</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{469DAD96-753B-4B4C-98D6-AEBF1F00AEA9}</id>
+					<name>Output</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+const vec2 uv = $Input.xy;
+
+if (uv.x < 0.0f || uv.x > 1.0f)
+	$Output = 1.0f;
+else if (uv.y < 0.0f || uv.y > 1.0f)
+	$Output = 1.0f;
+else
+	$Output = 0.0f;
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
+			<id>{D2EE3EB6-1435-4033-A154-A38906C7574D}</id>
+			<comment/>
+			<position>
+				<first>3700</first>
+				<second>-1041</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{22C80F31-39A0-44D8-A084-1057EA35B789}</id>
+			<comment/>
+			<position>
+				<first>3472</first>
+				<second>-1040</second>
+			</position>
+			<value>1</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1349,16 +1408,6 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[48]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[47]"/>
-				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[53]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
@@ -1425,6 +1474,56 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<destination>
 				<node ref="/object/nodes/item[45]"/>
 				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[54]"/>
+				<id>{469DAD96-753B-4B4C-98D6-AEBF1F00AEA9}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[55]"/>
+				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[54]"/>
+				<id>{58D1DC6A-4E6D-DC47-AAB3-553B015151B3}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[48]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[55]"/>
+				<id>{8760B263-C70C-46BA-9E97-A3D6B08941E9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[56]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[55]"/>
+				<id>{7ACEE4C2-A92D-4E50-BFAE-C1D744BEE5E0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[55]"/>
+				<id>{0D78442F-AA88-4B95-A497-E86A86E07FB8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
 			</destination>
 		</item>
 	</edges>

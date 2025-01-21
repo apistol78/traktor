@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2024 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,9 +22,17 @@ class ScreenRenderer;
 
 }
 
+namespace traktor::resource
+{
+
+class IResourceManager;
+
+}
+
 namespace traktor::world
 {
 
+struct GatherView;
 struct WorldCreateDesc;
 
 class WorldEntityRenderers;
@@ -46,8 +54,7 @@ public:
 		const GatherView& gatheredView,
 		render::RenderGraph& renderGraph,
 		render::handle_t gbufferTargetSetId,
-		render::handle_t outputTargetSetId
-	) const;
+		render::handle_t outputTargetSetId) const;
 
 private:
 	Ref< WorldEntityRenderers > m_entityRenderers;

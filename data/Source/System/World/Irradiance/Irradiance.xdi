@@ -5,16 +5,16 @@
 			<id>{759DE9C5-E63A-5143-9D1E-42AFC75E5224}</id>
 			<comment/>
 			<position>
-				<first>1537</first>
-				<second>430</second>
+				<first>1422</first>
+				<second>432</second>
 			</position>
 		</item>
 		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{B3F5BEB7-F83A-904D-9DF2-DF093C895543}</id>
 			<comment/>
 			<position>
-				<first>835</first>
-				<second>355</second>
+				<first>666</first>
+				<second>376</second>
 			</position>
 			<name>Irradiance blur X</name>
 			<clear>
@@ -52,7 +52,7 @@
 			<id>{9329FA91-9567-9F4F-B7EB-C6AABA94E853}</id>
 			<comment/>
 			<position>
-				<first>1320</first>
+				<first>1142</first>
 				<second>377</second>
 			</position>
 			<name>Irradiance blur Y</name>
@@ -100,8 +100,8 @@
 			<id>{3B08D7B7-89D6-334E-BDD9-8DB84A2CDE9C}</id>
 			<comment/>
 			<position>
-				<first>421</first>
-				<second>234</second>
+				<first>422</first>
+				<second>293</second>
 			</position>
 			<name>Irradiance</name>
 			<clear>
@@ -137,8 +137,8 @@
 			<id>{AF969FC2-596A-984F-B4B1-475F930AF40B}</id>
 			<comment/>
 			<position>
-				<first>417</first>
-				<second>367</second>
+				<first>418</first>
+				<second>426</second>
 			</position>
 			<targetSetId>Irradiance0</targetSetId>
 			<persistent>true</persistent>
@@ -162,8 +162,8 @@
 			<id>{508B945F-08BF-8747-8B91-7C8EC004DAF9}</id>
 			<comment/>
 			<position>
-				<first>1092</first>
-				<second>414</second>
+				<first>923</first>
+				<second>375</second>
 			</position>
 			<targetSetId>Temporary</targetSetId>
 			<persistent>false</persistent>
@@ -185,16 +185,6 @@
 		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[3]"/>
@@ -253,6 +243,16 @@
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
 			</destination>
 		</item>
 	</edges>
