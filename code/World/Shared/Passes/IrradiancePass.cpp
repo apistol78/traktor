@@ -63,8 +63,8 @@ render::handle_t IrradiancePass::setup(
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
-	render::handle_t outputTargetSetId
-) const
+	render::handle_t velocityTargetSetId,
+	render::handle_t outputTargetSetId) const
 {
 	T_PROFILER_SCOPE(L"IrradiancePass::setup");
 	render::ImageGraphView view;
@@ -95,9 +95,12 @@ render::handle_t IrradiancePass::setup(
 	igctx.setTechniqueFlag(s_handleIrradianceEnable, irradianceEnable);
 	igctx.setTechniqueFlag(s_handleIrradianceSingle, irradianceSingle);
 	igctx.setTechniqueFlag(s_handleRayTracingEnable, rayTracingEnable);
+	igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance");
+
 	rp->addInput(gbufferTargetSetId);
+	rp->addInput(velocityTargetSetId);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
@@ -107,8 +110,7 @@ render::handle_t IrradiancePass::setup(
 	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();
 	const Vector2 jrp = needJitter ? jitter(frameCount - 1) / worldRenderView.getViewSize() : Vector2::zero();
 
-	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
-	{
+	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 
 		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
@@ -147,8 +149,7 @@ render::handle_t IrradiancePass::setup(
 		rp,
 		igctx,
 		view,
-		setParameters
-	);
+		setParameters);
 
 	renderGraph.addPass(rp);
 	return irradianceTargetSetId;

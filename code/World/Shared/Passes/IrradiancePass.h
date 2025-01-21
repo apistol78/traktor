@@ -56,8 +56,8 @@ public:
 		uint32_t frameCount,
 		render::RenderGraph& renderGraph,
 		render::handle_t gbufferTargetSetId,
-		render::handle_t outputTargetSetId
-	) const;
+		render::handle_t velocityTargetSetId,
+		render::handle_t outputTargetSetId) const;
 
 private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
