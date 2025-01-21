@@ -230,6 +230,12 @@ void WorldRendererDeferred::setupVisualPass(
 	// Get volumetric fog volume.
 	const FogComponent* fog = m_gatheredView.fog;
 
+	// Calculate jitter vectors.
+	const uint32_t count = m_state[worldRenderView.getIndex()].count;
+	const bool needJitter = m_postProcessPass->needCameraJitter();
+	const Vector2 jrc = needJitter ? jitter(count) / worldRenderView.getViewSize() : Vector2::zero();
+	const Vector2 jrp = needJitter ? jitter(count - 1) / worldRenderView.getViewSize() : Vector2::zero();
+
 	// Resolve GBuffer to visual target.
 	{
 		// Add visual render pass.
@@ -281,6 +287,7 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->beginParameters(renderContext);
 			sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 			sharedParams->setFloatParameter(s_handleRandom, s_random.nextFloat());
+			sharedParams->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
 			sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
 			sharedParams->setVectorParameter(s_handleSlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
 			sharedParams->setMatrixParameter(s_handleProjection, projection);

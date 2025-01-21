@@ -138,6 +138,10 @@
 					<id>{D05A18C4-5FA4-6746-A960-86CBB0908A76}</id>
 					<name>MaxDistance</name>
 				</item>
+				<item>
+					<id>{9CD67729-71E5-C046-9182-1BE689D95889}</id>
+					<name>Normal</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -148,8 +152,7 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-const int N = 8;
-const float near = mix(0.2f, 1.0f, clamp($Distance / 100.0f, 0.0f, 1.0f));
+const int N = 4;
 
 vec3 u, v;
 OrthogonalFrame($Direction.xyz, u, v);
@@ -162,9 +165,9 @@ int nshadowed = 0;
 
 for (int i = 0; i < N; ++i)
 {
-	const vec2 r = (Hammersley(i, N) * 1.0f - 0.5f) * 0.1f;
+	const vec2 r = (Hammersley(i, N) * 1.0f - 0.5f) * 0.05f;
 
-	const vec3 rayOrigin = $Origin.xyz;
+	const vec3 rayOrigin = $Origin.xyz + $Normal.xyz * 0.05f;
 	const vec3 rayDir = normalize($Direction.xyz + u * r.x + v * r.y);
 	
 	rayQueryEXT rayQuery;
@@ -174,7 +177,7 @@ for (int i = 0; i < N; ++i)
 		gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,
 		0xff,
 		rayOrigin,
-		near,
+		0.0f,
 		rayDir,
 		$MaxDistance
 	);
@@ -188,6 +191,7 @@ for (int i = 0; i < N; ++i)
 }
 
 $Output = 1.0f - float(nshadowed) / N;
+
 			]]>
 			</script>
 		</item>
@@ -286,6 +290,45 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 				<second>1217</second>
 			</position>
 			<value>100</value>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{63C77FD8-B0ED-6A4C-9A08-AA38C43FCBA1}</id>
+			<comment/>
+			<position>
+				<first>1740</first>
+				<second>502</second>
+			</position>
+			<name>ViewNormal</name>
+			<optional>false</optional>
+		</item>
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{4FFF5BA2-4C42-3142-B65B-892EBC35623F}</id>
+			<comment/>
+			<position>
+				<first>2225</first>
+				<second>530</second>
+			</position>
+		</item>
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+			<id>{0DF6ABEE-6958-7D4C-8C23-95E064B8BF72}</id>
+			<comment/>
+			<position>
+				<first>1995</first>
+				<second>574</second>
+			</position>
+			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
+			<parameterName>World_ViewInverse</parameterName>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{8192CB5E-9784-F44B-A26D-983344015FD8}</id>
+			<comment/>
+			<position>
+				<first>2029</first>
+				<second>522</second>
+			</position>
+			<swizzle>xyz0</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -467,6 +510,46 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
 				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{71A0310C-3928-44C3-8D4F-7D9AFF9EAE70}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{9CD67729-71E5-C046-9182-1BE689D95889}</id>
 			</destination>
 		</item>
 	</edges>
