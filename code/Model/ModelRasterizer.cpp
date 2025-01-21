@@ -6,16 +6,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <functional>
+#include "Model/ModelRasterizer.h"
+
 #include "Core/Math/Triangle.h"
 #include "Drawing/Image.h"
 #include "Model/Model.h"
-#include "Model/ModelRasterizer.h"
+
+#include <functional>
 
 namespace traktor::model
 {
-	namespace
-	{
+namespace
+{
 
 const Vector4 c_sunDirection = Vector4(0.0f, -0.5f, 1.0f).normalized();
 
@@ -25,17 +27,16 @@ int32_t wrap(int32_t v, int32_t l)
 	return (c < 0) ? c + l : c;
 }
 
-Color4f lighting(const Vector4& p, const Vector4& n, const Color4f& materialColor, const Scalar& specularTerm)
+Color4f lighting(const Vector4& p, const Vector4& n, const Color4f& materialColor, const Scalar& metalness, const Scalar& specularTerm)
 {
 	const Vector4 viewDirection = p.xyz0().normalized();
 	const Vector4 halfWay = (c_sunDirection + viewDirection).normalized();
 	const Scalar diffuse = clamp(dot3(c_sunDirection, -n), 0.4_simd, 1.0_simd) + 0.1_simd;
-	const Scalar specular = power(clamp(dot3(halfWay, -n), 0.0_simd, 1.0_simd), 2.0_simd) * specularTerm;
-	return materialColor * diffuse + Color4f(1.0f, 1.0f, 1.0f, 0.0f) * specular;
+	const Scalar specular = power(abs(dot3(halfWay, -n)), 8.0_simd);
+	return materialColor * diffuse * (1.0_simd - metalness) + lerp(Color4f(1.0f, 1.0f, 1.0f, 0.0f) * specularTerm, materialColor, metalness) * specular;
 }
 
-	}
-
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelRasterizer", ModelRasterizer, Object)
 
@@ -62,8 +63,8 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 	AlignedVector< Vector4 > positionsClip(positions.size());
 	AlignedVector< Vector4 > normalsView(normals.size());
 
-	(projection * modelView)	.transform(positions.c_ptr(), positionsClip.ptr(), positions.size());
-	modelView					.transform(normals.c_ptr(), normalsView.ptr(), normals.size());
+	(projection * modelView).transform(positions.c_ptr(), positionsClip.ptr(), positions.size());
+	modelView.transform(normals.c_ptr(), normalsView.ptr(), normals.size());
 
 	Vector4 cp[3];
 	Vector4 nm[3];
@@ -95,13 +96,12 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 			nm[i] = normal.normalized();
 			sp[i] = Vector2(
 				cp[i].x() * hw + hw,
-				hh - (cp[i].y() * hh)
-			);
+				hh - (cp[i].y() * hh));
 
 			if (vertex.getTexCoord(0) != model::c_InvalidIndex)
 				uv[i] = texCoords[vertex.getTexCoord(0)];
 			else
-				uv[i].set(0.0f, 0.0f);			
+				uv[i].set(0.0f, 0.0f);
 		}
 
 		// Discard too large triangles, to prevent broken meshes to halt editor.
@@ -111,6 +111,7 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 			continue;
 
 		const auto& polygonMaterial = materials[polygon.getMaterial()];
+		const Scalar metalness = Scalar(polygonMaterial.getMetalness());
 		const Scalar specularTerm = Scalar(polygonMaterial.getSpecularTerm());
 
 		const drawing::Image* texture = polygonMaterial.getDiffuseMap().image;
@@ -143,7 +144,7 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 						color = color.linear();
 
 					const Vector4 n = (nm[0] * salpha + nm[1] * sbeta + nm[2] * sgamma).normalized();
-					const Color4f d = lighting(p, n, color, specularTerm);
+					const Color4f d = lighting(p, n, color, metalness, specularTerm);
 
 					outImage->setPixelUnsafe(x, y, d.sRGB().rgb1());
 					zbuffer[offset] = p.z();
@@ -167,7 +168,7 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 					const Color4f color = polygonMaterial.getColor().linear();
 
 					const Vector4 n = (nm[0] * salpha + nm[1] * sbeta + nm[2] * sgamma).normalized();
-					const Color4f d = lighting(p, n, color, specularTerm);
+					const Color4f d = lighting(p, n, color, metalness, specularTerm);
 
 					outImage->setPixelUnsafe(x, y, d.sRGB().rgb1());
 					zbuffer[offset] = p.z();
