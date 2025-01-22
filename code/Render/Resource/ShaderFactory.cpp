@@ -130,7 +130,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 			if (programResource->requireRayTracing() && !m_renderSystem->supportRayTracing())
 				continue;
 
-			jobs.push_back(JobManager::getInstance().add([resourceCombination, programResource, programName, resourceManager, &shaderId, &technique, &textureLinks, &lock, &succeeded, this]() {
+			jobs.push_back(JobManager::getInstance().add([&resourceCombination, programResource, programName, resourceManager, &shaderId, &technique, &textureLinks, &lock, &succeeded, this]() {
 				Shader::Combination combination;
 				combination.mask = resourceCombination.mask;
 				combination.value = resourceCombination.value;
@@ -143,10 +143,13 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 				}
 
 				// Set implicit texture uniforms.
-				textureLinks.push_back([resourceCombination, resourceManager, &shaderId, program = combination.program]() {
-					TextureReaderAdapter textureReader(resourceManager, shaderId);
-					return TextureLinker(textureReader).link(resourceCombination, program);
-				});
+				{
+					T_ANONYMOUS_VAR(Acquire< Semaphore >)(lock);
+					textureLinks.push_back([&resourceCombination, resourceManager, &shaderId, program = combination.program]() {
+						TextureReaderAdapter textureReader(resourceManager, shaderId);
+						return TextureLinker(textureReader).link(resourceCombination, program);
+					});
+				}
 
 				// Set uniform default values.
 				for (const auto& ius : resourceCombination.initializeUniformScalar)
