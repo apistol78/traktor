@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,13 +8,14 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Guid.h"
-#include "Core/Object.h"
-#include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Transform.h"
+#include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "World/WorldTypes.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,7 +34,7 @@ class World;
 /*! World entity class.
  * \ingroup World
  */
-class T_DLLCLASS Entity : public Object
+class T_DLLCLASS Entity final : public Object
 {
 	T_RTTI_CLASS;
 
@@ -47,8 +48,7 @@ public:
 		const std::wstring_view& name,
 		const Transform& transform,
 		const EntityState& state = EntityState(),
-		const RefArray< IEntityComponent >& components = RefArray< IEntityComponent >()
-	);
+		const RefArray< IEntityComponent >& components = RefArray< IEntityComponent >());
 
 	/*! Destroy entity resources.
 	 *
@@ -60,7 +60,7 @@ public:
 	 * a single entity so care must be taken when
 	 * performing the destruction.
 	 */
-	virtual void destroy();
+	void destroy();
 
 	/*! Set world by which entity is part of. */
 	void setWorld(World* world);
@@ -102,26 +102,26 @@ public:
 	 *
 	 * \param transform Entity transform.
 	 */
-	virtual void setTransform(const Transform& transform);
+	void setTransform(const Transform& transform);
 
 	/*! Get entity transform.
 	 *
 	 * \return Entity transform.
 	 */
-	virtual Transform getTransform() const;
+	Transform getTransform() const;
 
 	/*! Get entity bounding box.
 	 * Return entity bounding box in entity space.
 	 *
 	 * \return Entity bounding box.
 	 */
-	virtual Aabb3 getBoundingBox() const;
+	Aabb3 getBoundingBox() const;
 
 	/*! Update entity.
 	 *
 	 * \param update Update parameters.
 	 */
-	virtual void update(const UpdateParams& update);
+	void update(const UpdateParams& update);
 
 	/*! Set component in entity.
 	 *
