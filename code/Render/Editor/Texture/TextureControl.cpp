@@ -6,8 +6,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Texture/TextureControl.h"
+
 #include "Core/Math/Const.h"
-#include "Drawing/Image.h"
 #include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Filters/EncodeRGBM.h"
 #include "Drawing/Filters/GammaFilter.h"
@@ -19,7 +20,7 @@
 #include "Drawing/Filters/SphereMapFilter.h"
 #include "Drawing/Filters/SwizzleFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
-#include "Render/Editor/Texture/TextureControl.h"
+#include "Drawing/Image.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -27,18 +28,17 @@
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
-ui::Size operator * (const ui::Size& sz, float scale)
+ui::Size operator*(const ui::Size& sz, float scale)
 {
 	return ui::Size(
 		(int32_t)(sz.cx * scale),
-		(int32_t)(sz.cy * scale)
-	);
+		(int32_t)(sz.cy * scale));
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureControl", TextureControl, ui::Widget)
 
@@ -176,15 +176,12 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 					output.m_inverseNormalMapX ? -1.0f : 1.0f,
 					output.m_inverseNormalMapY ? -1.0f : 1.0f,
 					1.0f,
-					1.0f
-				),
+					1.0f),
 				Color4f(
 					output.m_inverseNormalMapX ? 1.0f : 0.0f,
 					output.m_inverseNormalMapY ? 1.0f : 0.0f,
 					0.0f,
-					0.0f
-				)
-			);
+					0.0f));
 			m_imageOutput->apply(&transformFilter);
 		}
 		if (output.m_normalMap && abs(output.m_scaleNormalMap) > FUZZY_EPSILON)
@@ -251,8 +248,7 @@ bool TextureControl::getPixel(const ui::Point& position, Color4f& outColor) cons
 	const ui::Size clientSize = getInnerRect().getSize();
 	const ui::Size imageSize = m_bitmapSource->getSize(this);
 
-	const ui::Point center =
-	{
+	const ui::Point center = {
 		(clientSize.cx - imageSize.cx) / 2,
 		(clientSize.cy - imageSize.cy) / 2
 	};
@@ -269,6 +265,9 @@ void TextureControl::eventMouseDown(ui::MouseButtonDownEvent* event)
 {
 	if (event->getButton() != ui::MbtLeft)
 		return;
+
+	if (!hasFocus())
+		setFocus();
 
 	m_moveOrigin = event->getPosition();
 	m_moveOriginOffset = m_offset;
@@ -315,8 +314,7 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 		const ui::Size clientSize = getInnerRect().getSize();
 		const ui::Size imageSize = m_bitmapSource->getSize(this);
 
-		const ui::Point center =
-		{
+		const ui::Point center = {
 			(clientSize.cx - imageSize.cx) / 2,
 			(clientSize.cy - imageSize.cy) / 2
 		};
@@ -329,8 +327,7 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 			m_bitmapSource->getSize(this),
 			m_bitmapSource,
 			ui::BlendMode::Opaque,
-			ui::Filter::Nearest
-		);
+			ui::Filter::Nearest);
 
 		canvas.setClipRect(ui::Rect(clientSize.cx / 2, 0, clientSize.cx, clientSize.cy));
 		canvas.drawBitmap(
@@ -340,8 +337,7 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 			m_bitmapOutput->getSize(this),
 			m_bitmapOutput,
 			ui::BlendMode::Opaque,
-			ui::Filter::Nearest
-		);
+			ui::Filter::Nearest);
 
 		canvas.resetClipRect();
 	}
