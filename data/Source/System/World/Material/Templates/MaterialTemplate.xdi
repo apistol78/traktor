@@ -364,8 +364,8 @@ Tag_DecalResponse
 			]]>
 			</comment>
 			<position>
-				<first>633</first>
-				<second>340</second>
+				<first>692</first>
+				<second>152</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -391,6 +391,11 @@ Tag_DecalResponse
 				<item>
 					<id>{D7F0FE21-607C-48DB-98F1-BEA2607C6733}</id>
 					<name>Decal response</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{69D2DC0A-88A3-6B47-BFD0-2417B8C08B41}</id>
+					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -651,6 +656,16 @@ Tag_DecalResponse
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{E62A8A7F-3A89-DE45-B4BF-F874F1971FDC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{69D2DC0A-88A3-6B47-BFD0-2417B8C08B41}</id>
 			</destination>
 		</item>
 	</edges>

@@ -17,6 +17,7 @@
 				<item>Alpha</item>
 				<item>Decal response</item>
 				<item>World position offset</item>
+				<item>Emissive</item>
 			</names>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
@@ -100,6 +101,15 @@
 				<second>266</second>
 			</position>
 			<name>World position offset</name>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{48CAC832-6EB6-CF48-AB6A-DE7EB3382F86}</id>
+			<comment/>
+			<position>
+				<first>787</first>
+				<second>301</second>
+			</position>
+			<name>Emissive</name>
 		</item>
 	</nodes>
 	<edges>
@@ -190,6 +200,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{D596E4E4-1A78-4D80-C56B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>

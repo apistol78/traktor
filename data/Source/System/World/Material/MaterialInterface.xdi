@@ -45,6 +45,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{69D2DC0A-88A3-6B47-BFD0-2417B8C08B41}</id>
+					<name>Emissive</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{5E226B83-0061-4026-B5B7-ED42DBF63446}</id>
 					<name>Inherit</name>
 					<optional>true</optional>

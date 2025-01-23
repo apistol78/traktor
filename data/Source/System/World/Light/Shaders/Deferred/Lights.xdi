@@ -31,6 +31,10 @@
 					<name>Depth</name>
 				</item>
 				<item>
+					<id>{8AFE5F6A-4B20-3948-AB96-F7AC0685A972}</id>
+					<name>Emissive</name>
+				</item>
+				<item>
 					<id>{E25BC49C-C55C-41F2-96B8-15E4C572AF23}</id>
 					<name>Metalness</name>
 				</item>
@@ -56,8 +60,8 @@
 			<id>{41E87F6F-D99A-B34D-9B53-3940EDA30A76}</id>
 			<comment/>
 			<position>
-				<first>6589</first>
-				<second>125</second>
+				<first>7012</first>
+				<second>289</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -530,7 +534,7 @@
 			<id>{AFECB62A-7E2B-7140-A585-5E53587DC089}</id>
 			<comment/>
 			<position>
-				<first>-1137</first>
+				<first>-1144</first>
 				<second>-918</second>
 			</position>
 			<name>L_ViewPosition</name>
@@ -539,7 +543,7 @@
 			<id>{991302F9-096A-DF4B-92B1-2704A236DC2A}</id>
 			<comment/>
 			<position>
-				<first>-1137</first>
+				<first>-1144</first>
 				<second>-962</second>
 			</position>
 			<name>L_ViewNormal</name>
@@ -548,7 +552,7 @@
 			<id>{A003C2B1-7DAD-6B46-8117-CC8EA9BD729A}</id>
 			<comment/>
 			<position>
-				<first>-1137</first>
+				<first>-1144</first>
 				<second>-1050</second>
 			</position>
 			<name>L_Roughness</name>
@@ -639,7 +643,7 @@
 			<id>{E979C720-90A9-0C42-AD6D-7F47067BD77E}</id>
 			<comment/>
 			<position>
-				<first>-1137</first>
+				<first>-1144</first>
 				<second>-1182</second>
 			</position>
 			<name>L_Albedo</name>
@@ -648,7 +652,7 @@
 			<id>{AAA90027-70FF-0244-969E-9CC3D2B15529}</id>
 			<comment/>
 			<position>
-				<first>-1137</first>
+				<first>-1144</first>
 				<second>-1094</second>
 			</position>
 			<name>L_Metalness</name>
@@ -738,7 +742,7 @@
 			<id>{CFDA7657-EFD5-AB4F-B3AC-8994C073718B}</id>
 			<comment/>
 			<position>
-				<first>-1137</first>
+				<first>-1144</first>
 				<second>-1006</second>
 			</position>
 			<name>L_SpecularG</name>
@@ -828,8 +832,8 @@
 			<id>{51ABC7C2-89D0-2C44-B879-26B3CB8DBF96}</id>
 			<comment/>
 			<position>
-				<first>5625</first>
-				<second>128</second>
+				<first>5612</first>
+				<second>125</second>
 			</position>
 			<name>L_Occlusion</name>
 		</item>
@@ -1466,8 +1470,8 @@ Check max shadow distance
 			<id>{97EEDDED-5F2A-7F4A-BD92-4AFFDD0DA48F}</id>
 			<comment/>
 			<position>
-				<first>6072</first>
-				<second>149</second>
+				<first>6495</first>
+				<second>313</second>
 			</position>
 			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
 			<inputPins>
@@ -1493,8 +1497,8 @@ Check max shadow distance
 			<id>{49D85CEA-D8A4-F249-A015-3175C4C314FD}</id>
 			<comment/>
 			<position>
-				<first>5853</first>
-				<second>225</second>
+				<first>6276</first>
+				<second>389</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -1502,8 +1506,8 @@ Check max shadow distance
 			<id>{D7B6A146-B2DD-7848-AC6F-2632E1E61A84}</id>
 			<comment/>
 			<position>
-				<first>5602</first>
-				<second>179</second>
+				<first>5584</first>
+				<second>184</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
@@ -2288,8 +2292,8 @@ $Output = vec4(Lout.xyz, 0.0f);
 			<id>{FDF46E6B-7D21-5C46-8976-5D5332D72610}</id>
 			<comment/>
 			<position>
-				<first>5831</first>
-				<second>128</second>
+				<first>5818</first>
+				<second>125</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
@@ -2408,8 +2412,8 @@ $Output = vec4(r, 0.0f);
 			<id>{BE98BDC5-0C97-7B4E-9D93-4C0C48AC3C6B}</id>
 			<comment/>
 			<position>
-				<first>6381</first>
-				<second>188</second>
+				<first>6804</first>
+				<second>352</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -2698,8 +2702,8 @@ $Output = vec4(r, 0.0f);
 			<id>{57C4ABED-9310-EB45-8503-8FEB9593243A}</id>
 			<comment/>
 			<position>
-				<first>5360</first>
-				<second>175</second>
+				<first>5342</first>
+				<second>180</second>
 			</position>
 			<name>L_Light_Analytical</name>
 		</item>
@@ -2716,8 +2720,8 @@ $Output = vec4(r, 0.0f);
 			<id>{50B7F27F-66AF-8A4A-BE15-2743D702882E}</id>
 			<comment/>
 			<position>
-				<first>5377</first>
-				<second>244</second>
+				<first>5359</first>
+				<second>249</second>
 			</position>
 			<name>L_Light_IB</name>
 		</item>
@@ -3057,6 +3061,49 @@ $Output = vec4(
 			<parameterName/>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{DF2AC9F9-58DF-8247-A3A7-6C83AE1944D7}</id>
+			<comment/>
+			<position>
+				<first>-1144</first>
+				<second>-1138</second>
+			</position>
+			<name>L_Emissive</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{955C5CAE-A419-7B4B-98D6-25A54E73862E}</id>
+			<comment/>
+			<position>
+				<first>5623</first>
+				<second>374</second>
+			</position>
+			<name>L_Emissive</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{D91FC228-6DA3-3447-B2E2-6723726312E8}</id>
+			<comment/>
+			<position>
+				<first>5621</first>
+				<second>437</second>
+			</position>
+			<name>L_Albedo</name>
+		</item>
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{EBF6D410-96F3-D442-9E34-EBF56891AE37}</id>
+			<comment/>
+			<position>
+				<first>5816</first>
+				<second>381</second>
+			</position>
+		</item>
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{E3D03E1F-3854-4A40-9F31-F62FEF3EC570}</id>
+			<comment/>
+			<position>
+				<first>6120</first>
+				<second>257</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -5142,16 +5189,6 @@ $Output = vec4(
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[183]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[131]"/>
-				<id>{AFF255D0-F99A-7B4E-BB42-5C8D3D7B7336}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[216]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -5520,6 +5557,66 @@ $Output = vec4(
 				<id>{81F8E9FF-0ECE-A047-B4CC-4444E668A694}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{8AFE5F6A-4B20-3948-AB96-F7AC0685A972}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[244]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[246]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[247]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[245]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[247]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[183]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[248]"/>
+				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[248]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[131]"/>
+				<id>{AFF255D0-F99A-7B4E-BB42-5C8D3D7B7336}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[247]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[248]"/>
+				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -5566,8 +5663,8 @@ $Output = vec4(
 				<second>-49</second>
 			</position>
 			<size>
-				<first>1538</first>
-				<second>443</second>
+				<first>1952</first>
+				<second>637</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">

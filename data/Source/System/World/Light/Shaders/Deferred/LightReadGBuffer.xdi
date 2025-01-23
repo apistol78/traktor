@@ -5,7 +5,7 @@
 			<id>{C1A5D7C6-4EF4-284A-A094-1327ECBED212}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
+				<first>-89</first>
 				<second>847</second>
 			</position>
 			<fragmentGuid>{ED628E05-EA7F-B24F-9E38-97F53A90CCDA}</fragmentGuid>
@@ -27,7 +27,7 @@
 			<id>{9B7F2F9B-720A-964A-99AA-C33238BCC68F}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
+				<first>-89</first>
 				<second>928</second>
 			</position>
 			<fragmentGuid>{B8A2B203-34E6-3543-8502-522D0F16791C}</fragmentGuid>
@@ -49,7 +49,7 @@
 			<id>{4347F93E-B4CD-2749-9FEC-2AEB9C237ADC}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
+				<first>-89</first>
 				<second>1009</second>
 			</position>
 			<fragmentGuid>{FDCA9563-2389-4B43-A8E5-5262EC02EC1F}</fragmentGuid>
@@ -152,7 +152,7 @@
 			<id>{17931F9B-C0AB-AB4B-B2D4-49280C198DE1}</id>
 			<comment/>
 			<position>
-				<first>225</first>
+				<first>189</first>
 				<second>890</second>
 			</position>
 			<name>Depth</name>
@@ -161,7 +161,7 @@
 			<id>{390927E0-37D2-4370-AC2E-667ACCFD1856}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
+				<first>-89</first>
 				<second>1090</second>
 			</position>
 			<fragmentGuid>{42F70BA2-042F-F74D-9FEB-2A8DA946AF95}</fragmentGuid>
@@ -183,7 +183,7 @@
 			<id>{E25BC49C-C55C-41F2-96B8-15E4C572AF23}</id>
 			<comment/>
 			<position>
-				<first>225</first>
+				<first>189</first>
 				<second>1124</second>
 			</position>
 			<name>Metalness</name>
@@ -192,7 +192,7 @@
 			<id>{9057D628-8B47-4B77-A7D9-6622A5ECF7DD}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
+				<first>-89</first>
 				<second>766</second>
 			</position>
 			<fragmentGuid>{197F1BBB-E153-A846-90E9-23789D16EE15}</fragmentGuid>
@@ -223,7 +223,7 @@
 			<id>{37228771-975E-B547-84AB-8C8FF2E61027}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
+				<first>-89</first>
 				<second>1171</second>
 			</position>
 			<fragmentGuid>{F5F800CD-4CF7-524E-AC4F-2AF7591871E0}</fragmentGuid>
@@ -245,7 +245,7 @@
 			<id>{421BCBCE-2DFA-664E-BE65-0E4297B45DD2}</id>
 			<comment/>
 			<position>
-				<first>225</first>
+				<first>189</first>
 				<second>1202</second>
 			</position>
 			<name>Specular</name>
@@ -262,8 +262,8 @@
 			<id>{F837005E-32E6-0F44-AC0C-13E3CD59E268}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
-				<second>1333</second>
+				<first>-89</first>
+				<second>1414</second>
 			</position>
 			<fragmentGuid>{8738ADC8-D071-CF46-84E2-917B4AAE00DA}</fragmentGuid>
 			<inputPins>
@@ -292,8 +292,8 @@
 			<id>{8ABC79E7-2C7B-B040-ABC0-D66CF0052BBB}</id>
 			<comment/>
 			<position>
-				<first>188</first>
-				<second>1321</second>
+				<first>189</first>
+				<second>1410</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
@@ -302,7 +302,7 @@
 			<comment/>
 			<position>
 				<first>189</first>
-				<second>1372</second>
+				<second>1461</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -310,8 +310,8 @@
 			<id>{DAEC4CE7-26EF-E149-BD4B-B3FC379EDB1E}</id>
 			<comment/>
 			<position>
-				<first>592</first>
-				<second>1270</second>
+				<first>594</first>
+				<second>1359</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -320,8 +320,8 @@
 			<id>{EBD94596-7BF8-FF43-87EE-2AF1023EA2EE}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
-				<second>1414</second>
+				<first>-89</first>
+				<second>1495</second>
 			</position>
 			<fragmentGuid>{4911FA1E-20CF-FB41-A808-7D057E37D82C}</fragmentGuid>
 			<inputPins>
@@ -342,8 +342,8 @@
 			<id>{6F7447C7-521F-6740-91A0-EDE3DDA90F89}</id>
 			<comment/>
 			<position>
-				<first>187</first>
-				<second>1448</second>
+				<first>189</first>
+				<second>1537</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -359,8 +359,8 @@
 			<id>{CEB6862C-BF28-BF44-A88C-6E318FAF7779}</id>
 			<comment/>
 			<position>
-				<first>813</first>
-				<second>1277</second>
+				<first>815</first>
+				<second>1366</second>
 			</position>
 			<name>DecalK</name>
 		</item>
@@ -394,8 +394,8 @@
 			<id>{F8979C9D-40F9-E645-A58A-467836B07C0D}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
-				<second>1495</second>
+				<first>-89</first>
+				<second>1576</second>
 			</position>
 			<fragmentGuid>{46EDEFDA-FE69-7B40-86E9-F0F8D45FAFAB}</fragmentGuid>
 			<inputPins>
@@ -469,7 +469,7 @@
 			<id>{914F6A6F-8E2D-6D4B-824F-D8EBEA8B7E54}</id>
 			<comment/>
 			<position>
-				<first>226</first>
+				<first>189</first>
 				<second>843</second>
 			</position>
 			<name>Depth</name>
@@ -496,8 +496,8 @@
 			<id>{0FF942B7-0546-48D3-9A4B-5ACB97B00E94}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
-				<second>1252</second>
+				<first>-89</first>
+				<second>1333</second>
 			</position>
 			<fragmentGuid>{4B6551E6-E8F8-4E55-A3F5-8E6BCEFE6945}</fragmentGuid>
 			<inputPins>
@@ -518,8 +518,8 @@
 			<id>{2C5D7CD6-AEF8-4F6A-AA29-61777C8D90FD}</id>
 			<comment/>
 			<position>
-				<first>367</first>
-				<second>1276</second>
+				<first>369</first>
+				<second>1365</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
@@ -565,6 +565,37 @@
 				<second>690</second>
 			</position>
 			<swizzle>zw</swizzle>
+		</item>
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
+			<id>{2202BE06-7E97-6F4E-87C5-1F5DFB206B0A}</id>
+			<comment/>
+			<position>
+				<first>-89</first>
+				<second>1252</second>
+			</position>
+			<fragmentGuid>{06EA091F-4965-0A4A-8192-D79DA9443781}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{CED65DEA-866F-5747-AE16-D7A6BB3E9920}</id>
+					<name>UV</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{0F8B2120-6738-5442-97A2-36687BF0481C}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{8AFE5F6A-4B20-3948-AB96-F7AC0685A972}</id>
+			<comment/>
+			<position>
+				<first>189</first>
+				<second>1284</second>
+			</position>
+			<name>Emissive</name>
 		</item>
 	</nodes>
 	<edges>
@@ -1096,6 +1127,26 @@
 			<destination>
 				<node ref="/object/nodes/item[37]"/>
 				<id>{4067F6C8-9404-45CA-9359-D9E2456F7431}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{CED65DEA-866F-5747-AE16-D7A6BB3E9920}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{0F8B2120-6738-5442-97A2-36687BF0481C}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 	</edges>

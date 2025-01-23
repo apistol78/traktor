@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Model/Formats/Fbx/MaterialConverter.h"
+
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -13,14 +15,13 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Drawing/Image.h"
 #include "Model/Model.h"
-#include "Model/Formats/Fbx/MaterialConverter.h"
 
 namespace traktor::model
 {
-	namespace
-	{
+namespace
+{
 
-//void scanCustomProperties(const FbxObject* node, Material& outMaterial)
+// void scanCustomProperties(const FbxObject* node, Material& outMaterial)
 //{
 //	FbxProperty prop = node->GetFirstProperty();
 //	while (prop.IsValid())
@@ -70,7 +71,7 @@ namespace traktor::model
 //		}
 //		prop = node->GetNextProperty(prop);
 //	}
-//}
+// }
 
 std::wstring getTextureName(const ufbx_texture* texture)
 {
@@ -99,7 +100,7 @@ Ref< drawing::Image > getEmbeddedTexture(const ufbx_texture* texture)
 		return nullptr;
 }
 
-	}
+}
 
 bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterialMap, ufbx_node* meshNode)
 {
@@ -126,14 +127,11 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		mm.setName(name);
 
 		if (material->pbr.base_color.has_value)
-		{
 			mm.setColor(Color4f(
 				material->pbr.base_color.value_vec3.x,
 				material->pbr.base_color.value_vec3.y,
 				material->pbr.base_color.value_vec3.z,
-				1.0f
-			));
-		}
+				1.0f));
 
 		if (material->pbr.base_factor.has_value)
 			mm.setDiffuseTerm(material->pbr.base_factor.value_real);
@@ -147,7 +145,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		if (material->pbr.specular_factor.has_value)
 		{
 			const float sf = material->pbr.specular_factor.value_real;
-			specularTerm *= clamp(sf, 0.0f, 1.0f);			
+			specularTerm *= clamp(sf, 0.0f, 1.0f);
 		}
 		if (material->pbr.specular_ior.has_value)
 		{
@@ -164,6 +162,9 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 			mm.setMetalness(material->pbr.metalness.value_real);
 		else if (material->fbx.reflection_factor.has_value)
 			mm.setMetalness(material->fbx.reflection_factor.value_real);
+
+		if (material->pbr.emission_factor.has_value)
+			mm.setEmissive(material->pbr.emission_factor.value_real);
 
 		if (material->pbr.opacity.has_value)
 		{
@@ -183,8 +184,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 				channel,
 				true,
 				Guid(),
-				diffuseImage
-			));
+				diffuseImage));
 		}
 
 		if (material->pbr.specular_color.texture)
@@ -196,8 +196,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 				channel,
 				false,
 				Guid(),
-				specularImage
-			));
+				specularImage));
 		}
 
 		if (material->pbr.roughness.texture)
@@ -209,8 +208,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 				channel,
 				false,
 				Guid(),
-				roughnessImage
-			));
+				roughnessImage));
 			mm.setRoughness(1.0f);
 		}
 
@@ -223,8 +221,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 				channel,
 				false,
 				Guid(),
-				metalnessImage
-			));
+				metalnessImage));
 			mm.setMetalness(1.0f);
 		}
 
@@ -237,8 +234,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 				channel,
 				false,
 				Guid(),
-				normalImage
-			));
+				normalImage));
 		}
 
 		if (material->pbr.opacity.texture)
@@ -250,8 +246,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 				channel,
 				false,
 				Guid(),
-				transparencyImage
-			));
+				transparencyImage));
 			mm.setBlendOperator(Material::BoAlpha);
 		}
 
@@ -264,13 +259,12 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 				channel,
 				false,
 				Guid(),
-				emissiveImage
-			));
+				emissiveImage));
 		}
 
 		// Get custom properties on material.
-		//scanCustomProperties(meshNode, mm);
-		//scanCustomProperties(material, mm);
+		// scanCustomProperties(meshNode, mm);
+		// scanCustomProperties(material, mm);
 
 		outMaterialMap[i] = outModel.addUniqueMaterial(mm);
 	}

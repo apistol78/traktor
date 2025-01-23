@@ -59,7 +59,7 @@
 			<id>{1D3D4A99-643E-234C-BBB3-F1F72EDF15DB}</id>
 			<comment/>
 			<position>
-				<first>-1925</first>
+				<first>-1923</first>
 				<second>578</second>
 			</position>
 			<name>V_Discard</name>
@@ -179,8 +179,8 @@ World_ForwardColor
 			<id>{DCB390A4-43B6-E347-95D4-26DB333EDC8D}</id>
 			<comment/>
 			<position>
-				<first>-1925</first>
-				<second>738</second>
+				<first>-1923</first>
+				<second>778</second>
 			</position>
 			<name>V_Specular</name>
 		</item>
@@ -315,8 +315,8 @@ World_SimpleColor
 			<id>{2053B95F-C7B5-9B48-88FB-CD91B35D73A2}</id>
 			<comment/>
 			<position>
-				<first>-1925</first>
-				<second>658</second>
+				<first>-1923</first>
+				<second>698</second>
 			</position>
 			<name>V_Metalness</name>
 		</item>
@@ -342,8 +342,8 @@ World_SimpleColor
 			<id>{D9EEE7CE-271E-514A-997E-E8E87BCBB209}</id>
 			<comment/>
 			<position>
-				<first>-1925</first>
-				<second>698</second>
+				<first>-1923</first>
+				<second>738</second>
 			</position>
 			<name>V_Roughness</name>
 		</item>
@@ -360,7 +360,7 @@ World_SimpleColor
 			<id>{F1550B86-789C-0D43-80AE-52D39CF27234}</id>
 			<comment/>
 			<position>
-				<first>-1925</first>
+				<first>-1923</first>
 				<second>378</second>
 			</position>
 			<name>V_SurfaceColor</name>
@@ -451,8 +451,8 @@ Opaque
 			]]>
 			</comment>
 			<position>
-				<first>-1925</first>
-				<second>618</second>
+				<first>-1923</first>
+				<second>658</second>
 			</position>
 			<name>E_Opaque</name>
 		</item>
@@ -789,7 +789,7 @@ Opaque
 			<id>{D2088F77-9A70-4C68-97D8-179F0EE05405}</id>
 			<comment/>
 			<position>
-				<first>-1957</first>
+				<first>-1955</first>
 				<second>418</second>
 			</position>
 			<name>V_ViewNormalDetail</name>
@@ -940,7 +940,7 @@ Opaque
 			<id>{687F94B1-8EFC-DF4E-9BEE-6DFD8124EBCB}</id>
 			<comment/>
 			<position>
-				<first>-1925</first>
+				<first>-1923</first>
 				<second>498</second>
 			</position>
 			<name>V_ViewPosition</name>
@@ -1020,6 +1020,11 @@ World_DeferredGBufferWrite
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{2616F757-8AF9-F64F-BBB5-E4E8D8C42C37}</id>
+					<name>Emissive</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{4F904B51-75A9-4D19-96EC-534FABB8BA69}</id>
 					<name>Enable</name>
 					<optional>true</optional>
@@ -1046,7 +1051,7 @@ World_DeferredGBufferWrite
 			<id>{37DBD815-2118-FD44-B51A-9FD5C110F635}</id>
 			<comment/>
 			<position>
-				<first>-1989</first>
+				<first>-1987</first>
 				<second>458</second>
 			</position>
 			<name>V_ViewNormalGeometry</name>
@@ -1174,7 +1179,7 @@ World_DeferredGBufferWrite
 			<id>{236AD9C6-45CE-4F37-8EB3-8DBCC303AE35}</id>
 			<comment/>
 			<position>
-				<first>-1941</first>
+				<first>-1939</first>
 				<second>538</second>
 			</position>
 			<name>V_DecalResponse</name>
@@ -1204,6 +1209,15 @@ World_DeferredGBufferWrite
 				<second>1121</second>
 			</position>
 			<value>0</value>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{84A600DF-C423-8246-972C-B1C778842532}</id>
+			<comment/>
+			<position>
+				<first>-1923</first>
+				<second>618</second>
+			</position>
+			<name>V_Emissive</name>
 		</item>
 	</nodes>
 	<edges>
@@ -2017,6 +2031,16 @@ World_DeferredGBufferWrite
 				<id>{D2DE1271-56BA-EC4B-8888-11763D0E783F}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[87]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[69]"/>
+				<id>{2616F757-8AF9-F64F-BBB5-E4E8D8C42C37}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -2027,8 +2051,8 @@ World_DeferredGBufferWrite
 				<second>295</second>
 			</position>
 			<size>
-				<first>634</first>
-				<second>530</second>
+				<first>649</first>
+				<second>579</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">

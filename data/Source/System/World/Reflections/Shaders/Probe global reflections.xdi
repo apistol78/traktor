@@ -232,6 +232,11 @@
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
+				<item>
+					<id>{81F8E9FF-0ECE-A047-B4CC-4444E668A694}</id>
+					<name>Jitter</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -241,6 +246,10 @@
 				<item>
 					<id>{17931F9B-C0AB-AB4B-B2D4-49280C198DE1}</id>
 					<name>Depth</name>
+				</item>
+				<item>
+					<id>{8AFE5F6A-4B20-3948-AB96-F7AC0685A972}</id>
+					<name>Emissive</name>
 				</item>
 				<item>
 					<id>{E25BC49C-C55C-41F2-96B8-15E4C572AF23}</id>
