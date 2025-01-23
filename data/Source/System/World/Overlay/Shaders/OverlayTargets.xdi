@@ -2498,15 +2498,6 @@ $Output = m ? 1.0f : 0.0f;
 				<second>-688</second>
 			</position>
 		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{073D1F5A-F2D9-F749-8574-26FC6226E0A2}</id>
-			<comment/>
-			<position>
-				<first>2107</first>
-				<second>-228</second>
-			</position>
-			<swizzle>w</swizzle>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -3361,6 +3352,16 @@ $Output = m ? 1.0f : 0.0f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[41]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
+				<id>{30CE9745-14D3-4AA1-A4A2-ED7F9F952934}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[101]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -3707,26 +3708,6 @@ $Output = m ? 1.0f : 0.0f;
 			<destination>
 				<node ref="/object/nodes/item[130]"/>
 				<id>{3A2017B2-85D1-244B-91F8-7F36F652C21D}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[41]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[134]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[134]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[51]"/>
-				<id>{30CE9745-14D3-4AA1-A4A2-ED7F9F952934}</id>
 			</destination>
 		</item>
 	</edges>
