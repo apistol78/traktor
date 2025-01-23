@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include "Core/Object.h"
-#include "Core/Math/Vector4.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Vector4.h"
+#include "Core/Object.h"
 #include "Render/SH/SHCoeffs.h"
 
 // import/export mechanism.
@@ -45,16 +45,16 @@ public:
 
 	void generateSamplePoints(uint32_t count);
 
-	void generateCoefficients(SHFunction* function, bool parallell, SHCoeffs& outResult);
+	void generateCoefficients(const SHFunction* function, bool parallell, SHCoeffs& outResult) const;
 
-	// SHMatrix generateTransferMatrix(SHFunction* function) const;
+	// SHMatrix generateTransferMatrix(const SHFunction* function) const;
 
 private:
 	uint32_t m_bandCount;
 	uint32_t m_coefficientCount;
 	AlignedVector< Sample > m_samplePoints;
 
-	void generateCoefficientsJob(SHFunction* function, uint32_t start, uint32_t end, SHCoeffs* outResult);
+	void generateCoefficientsJob(const SHFunction* function, uint32_t start, uint32_t end, SHCoeffs* outResult) const;
 };
 
 }

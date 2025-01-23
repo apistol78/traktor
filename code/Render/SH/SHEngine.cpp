@@ -1,77 +1,67 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cmath>
+#include "Render/SH/SHEngine.h"
+
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Thread/JobManager.h"
-#include "Render/SH/SHEngine.h"
 #include "Render/SH/SHFunction.h"
 #include "Render/SH/SHMatrix.h"
 
+#include <cmath>
+
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 #include "Render/SH/SH.inl"
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SHEngine", SHEngine, Object)
 
 SHEngine::SHEngine(uint32_t bandCount)
-:	m_bandCount(bandCount)
-,	m_coefficientCount(bandCount * bandCount)
+	: m_bandCount(bandCount)
+	, m_coefficientCount(bandCount * bandCount)
 {
 }
 
 void SHEngine::generateSamplePoints(uint32_t count)
 {
-	RandomGeometry rg;
-
-	const uint32_t sqrtCount = (uint32_t)std::sqrt((double)count);
-	count = sqrtCount * sqrtCount;
-
 	m_samplePoints.resize(count);
-	for (uint32_t i = 0; i < sqrtCount; ++i)
+	for (uint32_t i = 0; i < count; ++i)
 	{
-		for (uint32_t j = 0; j < sqrtCount; ++j)
+		const Vector2 uv = Quasirandom::hammersley(i, count);
+		const Vector4 direction = Quasirandom::uniformSphere(uv);
+
+		m_samplePoints[i].direction = Polar::fromUnitCartesian(direction);
+		m_samplePoints[i].coefficients.resize(m_coefficientCount);
+
+		for (int32_t l = 0; l < (int32_t)m_bandCount; ++l)
 		{
-			const uint32_t o = i + j * sqrtCount;
-
-			const Vector2 uv = Quasirandom::hammersley(o, count);
-
-			const float phi = 2.0f * std::acos(std::sqrt(1.0f - uv.x));
-			const float theta = 2.0f * PI * uv.y;
-
-			m_samplePoints[o].direction = Polar(phi, theta);
-			m_samplePoints[o].coefficients.resize(m_coefficientCount);
-
-			for (int32_t l = 0; l < (int32_t)m_bandCount; ++l)
+			for (int32_t m = -l; m <= l; ++m)
 			{
-				for (int32_t m = -l; m <= l; ++m)
-				{
-					const int32_t index = l * (l + 1) + m;
-					const float shc = (float)SH(l, m, phi, theta);
-					m_samplePoints[o].coefficients[index] = Vector4(shc, shc, shc, 0.0f);
-				}
+				const int32_t index = l * (l + 1) + m;
+				const float shc = (float)SH(l, m, m_samplePoints[i].direction.phi, m_samplePoints[i].direction.theta);
+				m_samplePoints[i].coefficients[index] = Vector4(shc, shc, shc, 0.0f);
 			}
 		}
 	}
 }
 
-void SHEngine::generateCoefficients(SHFunction* function, bool parallell, SHCoeffs& outResult)
+void SHEngine::generateCoefficients(const SHFunction* function, bool parallell, SHCoeffs& outResult) const
 {
-	const float weight = 4.0 * PI;
+	const float weight = 4.0f * PI;
 	const uint32_t nsp = (uint32_t)m_samplePoints.size();
 
 	if (parallell)
@@ -85,10 +75,18 @@ void SHEngine::generateCoefficients(SHFunction* function, bool parallell, SHCoef
 		intermediate[3].resize(m_bandCount);
 
 		Job::task_t jobs[4];
-		jobs[0] = [&](){ generateCoefficientsJob(function, 0 * sc, 1 * sc, &intermediate[0]); };
-		jobs[1] = [&](){ generateCoefficientsJob(function, 1 * sc, 2 * sc, &intermediate[1]); };
-		jobs[2] = [&](){ generateCoefficientsJob(function, 2 * sc, 3 * sc, &intermediate[2]); };
-		jobs[3] = [&](){ generateCoefficientsJob(function, 3 * sc,    nsp, &intermediate[3]); };
+		jobs[0] = [&]() {
+			generateCoefficientsJob(function, 0 * sc, 1 * sc, &intermediate[0]);
+		};
+		jobs[1] = [&]() {
+			generateCoefficientsJob(function, 1 * sc, 2 * sc, &intermediate[1]);
+		};
+		jobs[2] = [&]() {
+			generateCoefficientsJob(function, 2 * sc, 3 * sc, &intermediate[2]);
+		};
+		jobs[3] = [&]() {
+			generateCoefficientsJob(function, 3 * sc, nsp, &intermediate[3]);
+		};
 		JobManager::getInstance().fork(jobs, sizeof_array(jobs));
 
 		outResult.resize(m_bandCount);
@@ -106,7 +104,7 @@ void SHEngine::generateCoefficients(SHFunction* function, bool parallell, SHCoef
 		outResult[i] *= factor;
 }
 
-// SHMatrix SHEngine::generateTransferMatrix(SHFunction* function) const
+// SHMatrix SHEngine::generateTransferMatrix(const SHFunction* function) const
 // {
 // 	const double weight = 4.0 * PI;
 
@@ -127,7 +125,7 @@ void SHEngine::generateCoefficients(SHFunction* function, bool parallell, SHCoef
 // 	return out;
 // }
 
-void SHEngine::generateCoefficientsJob(SHFunction* function, uint32_t start, uint32_t end, SHCoeffs* outResult)
+void SHEngine::generateCoefficientsJob(const SHFunction* function, uint32_t start, uint32_t end, SHCoeffs* outResult) const
 {
 	for (uint32_t i = start; i < end; ++i)
 	{

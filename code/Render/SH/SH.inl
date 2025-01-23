@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,7 +12,7 @@ double P(int l, int m, double x)
 	double pmm = 1.0;
 	if (m > 0)
 	{
-		double somx2 = sqrtf((1.0 - x) * (1.0 + x));
+		double somx2 = std::sqrt((1.0 - x) * (1.0 + x));
 		double fact = 1.0;
 		for (int i = 1; i <= m; ++i)
 		{
@@ -46,26 +46,26 @@ int factorial(int n)
 
 double K(int l, int m)
 {
-	double temp = ((2.0 * l + 1.0) * factorial(l - m)) / (4.0 * PI * factorial(l + m));
-	return sqrtf(temp);
+	const double temp = ((2.0 * l + 1.0) * factorial(l - m)) / (4.0 * PI * factorial(l + m));
+	return std::sqrt(temp);
 }
 
 double SH(int l, int m, double phi, double theta)
 {
-	const double sqrt2 = sqrtf(2.0);
+	const double sqrt2 = std::sqrt(2.0);
 	if (m == 0)
-		return K(l, 0) * P(l, m, cosf(phi));
+		return K(l, 0) * P(l, m, std::cos(phi));
 	else if (m > 0)
-		return sqrt2 * K(l, m) * cosf(m * theta) * P(l, m, cosf(phi));
+		return sqrt2 * K(l, m) * std::cos(m * theta) * P(l, m, std::cos(phi));
 	else
-		return sqrt2 * K(l, -m) * sinf(-m * theta) * P(l, -m, cosf(phi));
+		return sqrt2 * K(l, -m) * std::sin(-m * theta) * P(l, -m, std::cos(phi));
 }
 
 void shEvaluate3(const float fX, const float fY, const float fZ, float* __restrict pSH)
 {
-	float fTmpA = -0.48860251190292f;
-	float fTmpB = -1.092548430592079f * fY;
-	float fTmpC = 0.5462742152960395f;
+	const float fTmpA = -0.48860251190292f;
+	const float fTmpB = -1.092548430592079f * fY;
+	const float fTmpC = 0.5462742152960395f;
 
 	pSH[0] = 0.2820947917738781f;
 	pSH[2] = 0.4886025119029199f * fY;

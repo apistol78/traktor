@@ -1,14 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <functional>
-#include <embree4/rtcore.h>
-#include <embree4/rtcore_ray.h>
+#include "Shape/Editor/Bake/Embree/RayTracerEmbree.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Matrix44.h"
@@ -23,11 +22,14 @@
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/GBuffer.h"
 #include "Shape/Editor/Bake/IProbe.h"
-#include "Shape/Editor/Bake/Embree/RayTracerEmbree.h"
+
+#include <embree4/rtcore.h>
+#include <embree4/rtcore_ray.h>
+#include <functional>
 
 #define USE_LAMBERTIAN_DIRECTION
 
-#if defined (_MSC_VER)
+#if defined(_MSC_VER)
 #	define T_ALIGN64 __declspec(align(64))
 #elif defined(__GNUC__) || defined(__ANDROID__)
 #	define T_ALIGN64 __attribute__((aligned(64)))
@@ -35,18 +37,19 @@
 
 namespace traktor::shape
 {
-	namespace
-	{
+namespace
+{
 
 const Scalar p(1.0f / (2.0f * PI));
+const Scalar c_emissiveBoost(2.0f);
 const float c_epsilonOffset = 0.00001f;
 const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
 class WrappedSHFunction : public render::SHFunction
 {
 public:
-	explicit WrappedSHFunction(const std::function< Vector4 (const Vector4&) >& fn)
-	:	m_fn(fn)
+	explicit WrappedSHFunction(const std::function< Vector4(const Vector4&) >& fn)
+		: m_fn(fn)
 	{
 	}
 
@@ -56,7 +59,7 @@ public:
 	}
 
 private:
-	std::function< Vector4 (const Vector4&) > m_fn;
+	std::function< Vector4(const Vector4&) > m_fn;
 };
 
 Scalar attenuation(const Scalar& distance)
@@ -156,7 +159,7 @@ float wrap(float n)
 	return n - std::floor(n);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.RayTracerEmbree", 0, RayTracerEmbree, IRayTracer)
 
@@ -215,7 +218,7 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 	// Allocate buffers with positions and texCoords.
 	float* positions = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float), 16, T_FILE_LINE);
 	float* normals = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float), 16, T_FILE_LINE);
-	float* texCoords = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float), 16, T_FILE_LINE);	// Allocating tuples of 3 instead of two; seems embree read outside of range.
+	float* texCoords = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float), 16, T_FILE_LINE); // Allocating tuples of 3 instead of two; seems embree read outside of range.
 
 	m_buffers.push_back(positions);
 	m_buffers.push_back(normals);
@@ -266,14 +269,14 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 	// Add filter functions if model contain alpha-test material.
 	for (const auto& material : model->getMaterials())
 	{
-		//if (
+		// if (
 		//	material.getBlendOperator() == model::Material::BoAlphaTest &&
 		//	material.getDiffuseMap().image != nullptr
 		//)
 		//{
 		//	rtcSetGeometryOccludedFilterFunction(mesh, alphaTestFilter);
 		//	rtcSetGeometryIntersectFilterFunction(mesh, alphaTestFilter);
-		//}
+		// }
 
 		if (material.getBlendOperator() != model::Material::BoDecal)
 			rtcSetGeometryOccludedFilterFunction(mesh, shadowOccluded);
@@ -310,8 +313,7 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position, con
 	static thread_local RandomGeometry random;
 	static const float ProbeSize = 4.0f;
 
-	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
-
+	WrappedSHFunction shFunction([&](const Vector4& unit) -> Vector4 {
 		// Jitter origin within probe volume.
 		const Vector4 jitteredPosition = position + size * random.nextUnit() * 0.5_simd;
 
@@ -364,7 +366,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 			const auto& originPolygon = polygons[e.polygon];
 			const auto& originMaterial = materials[originPolygon.getMaterial()];
 
-			const Color4f emittance = originMaterial.getColor().linear() * Scalar(100.0f * originMaterial.getEmissive());
+			const Color4f emittance = originMaterial.getColor().linear() * c_emissiveBoost * Scalar(originMaterial.getEmissive());
 
 			// Trace IBL and indirect illumination.
 			const Color4f incoming = tracePath0(e.position, e.normal, random, 0);
@@ -410,7 +412,7 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 	rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, normal, 3);
 
 	// Get position and normal of hit.
-	const Vector4 hitPosition = position + direction * Scalar(rh.ray.tfar - 0.001f); 
+	const Vector4 hitPosition = position + direction * Scalar(rh.ray.tfar - 0.001f);
 	const Vector4 hitNormal = Vector4::loadAligned(normal).xyz0().normalized();
 
 	// Get material as hit.
@@ -428,12 +430,11 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 		image->getPixel(
 			(int32_t)(wrap(texCoord[0]) * image->getWidth()),
 			(int32_t)(wrap(texCoord[1]) * image->getHeight()),
-			hitMaterialColor
-		);
+			hitMaterialColor);
 	}
 
 	// Calculate lighting at hit.
-	const Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
+	const Color4f emittance = hitMaterialColor * c_emissiveBoost * Scalar(hitMaterial.getEmissive());
 	const Color4f BRDF = hitMaterialColor / Scalar(PI);
 	const Scalar cosPhi = 1.0_simd; // clamp(-dot3(hitNormal, direction), 0.0_simd, 1.0_simd);
 	const Scalar probability = 1.0_simd / Scalar(PI);
@@ -443,13 +444,10 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 		hitPosition,
 		hitNormal,
 		Light::LmIndirect | Light::LmDirect,
-		true
-	);
+		true);
 
 	if (hitMaterial.getBlendOperator() != model::Material::BoDecal)
-	{
 		return traceRay(hitPosition + direction * 0.1_simd, direction);
-	}
 
 	const Color4f output =
 		emittance +
@@ -462,8 +460,7 @@ Color4f RayTracerEmbree::tracePath0(
 	const Vector4& origin,
 	const Vector4& normal,
 	RandomGeometry& random,
-	uint32_t extraLightMask
-) const
+	uint32_t extraLightMask) const
 {
 	constexpr int SampleBatch = 16;
 	float T_MATH_ALIGN16 normalTmp[4];
@@ -527,11 +524,10 @@ Color4f RayTracerEmbree::tracePath0(
 				image->getPixel(
 					(int32_t)(wrap(texCoord[0]) * image->getWidth()),
 					(int32_t)(wrap(texCoord[1]) * image->getHeight()),
-					hitMaterialColor
-				);
+					hitMaterialColor);
 				hitMaterialColor = hitMaterialColor.linear();
 			}
-			const Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
+			const Color4f emittance = hitMaterialColor * c_emissiveBoost * Scalar(hitMaterial.getEmissive());
 			const Color4f BRDF = hitMaterialColor; // / Scalar(PI);
 
 			const Vector2 uv(random.nextFloat(), random.nextFloat());
@@ -552,13 +548,12 @@ Color4f RayTracerEmbree::tracePath0(
 				hitOrigin,
 				hitNormal,
 				Light::LmIndirect | extraLightMask,
-				true
-			);
+				true);
 
 			const Color4f output =
 				emittance / hitDistance +
 				direct * hitMaterialColor;
-				(incoming * BRDF * cosPhi / probability);
+			(incoming * BRDF * cosPhi / probability);
 			color += output;
 		}
 	}
@@ -577,8 +572,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 	float maxDistance,
 	RandomGeometry& random,
 	uint32_t extraLightMask,
-	int32_t depth
-) const
+	int32_t depth) const
 {
 	float T_MATH_ALIGN16 normalTmp[4];
 
@@ -623,11 +617,10 @@ Color4f RayTracerEmbree::traceSinglePath(
 		image->getPixel(
 			(int32_t)(wrap(texCoord[0]) * image->getWidth()),
 			(int32_t)(wrap(texCoord[1]) * image->getHeight()),
-			hitMaterialColor
-		);
+			hitMaterialColor);
 		hitMaterialColor = hitMaterialColor.linear();
 	}
-	const Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
+	const Color4f emittance = hitMaterialColor * c_emissiveBoost * Scalar(hitMaterial.getEmissive());
 	const Color4f BRDF = hitMaterialColor; // / Scalar(PI);
 
 	const Vector2 uv(random.nextFloat(), random.nextFloat());
@@ -640,7 +633,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 	const Scalar probability = 0.78532_simd; // 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 #endif
 
-	//const Scalar cosPhi = dot3(newDirection, hitNormal);
+	// const Scalar cosPhi = dot3(newDirection, hitNormal);
 	const Scalar cosPhi = dot3(-direction, hitNormal);
 	const Color4f incoming = traceSinglePath(hitOrigin, newDirection, maxDistance - hitDistance, random, extraLightMask, depth + 1);
 	const Color4f direct = sampleAnalyticalLights(
@@ -648,23 +641,21 @@ Color4f RayTracerEmbree::traceSinglePath(
 		hitOrigin,
 		hitNormal,
 		Light::LmIndirect | extraLightMask,
-		true
-	);
+		true);
 
 	const Color4f output = emittance / hitDistance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor; // * cosPhi;
 	return output;
 
-	//const Color4f incoming = direct + traceSinglePath(hitOrigin, newDirection, maxDistance - hitDistance, random, extraLightMask, depth + 1);
-	//const Color4f color = incoming * dot3(hitNormal, -direction) * hitMaterialColor;
-	//return color;
+	// const Color4f incoming = direct + traceSinglePath(hitOrigin, newDirection, maxDistance - hitDistance, random, extraLightMask, depth + 1);
+	// const Color4f color = incoming * dot3(hitNormal, -direction) * hitMaterialColor;
+	// return color;
 }
 
 Scalar RayTracerEmbree::traceOcclusion(
 	const Vector4& origin,
 	const Vector4& normal,
 	float maxDistance,
-	RandomGeometry& random
-) const
+	RandomGeometry& random) const
 {
 	const int32_t sampleCount = alignUp(m_configuration->getShadowSampleCount(), 16);
 	RTCRay16 T_ALIGN64 rv;
@@ -688,10 +679,8 @@ Scalar RayTracerEmbree::traceOcclusion(
 
 		// Count number of occluded rays.
 		for (int32_t j = 0; j < 16; ++j)
-		{
 			if (rv.tfar[j] > rv.tnear[j])
 				unoccluded++;
-		}
 	}
 
 	return Scalar(float(unoccluded) / sampleCount);
@@ -702,8 +691,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 	const Vector4& origin,
 	const Vector4& normal,
 	uint8_t mask,
-	bool bounce
- ) const
+	bool bounce) const
 {
 	const uint32_t shadowSampleCount = !bounce ? (uint32_t)m_shadowSampleOffsets.size() : (m_shadowSampleOffsets.size() > 0 ? 1 : 0);
 	const float shadowRadius = !bounce ? m_configuration->getPointLightShadowRadius() : 0.0f;
@@ -739,7 +727,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 						Vector4 lumelPosition = origin;
 						lumelPosition += u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius);
 
-						lumelPosition.storeAligned(&r.org_x); 
+						lumelPosition.storeAligned(&r.org_x);
 						traceDirection.storeAligned(&r.dir_x);
 
 						r.tnear = c_epsilonOffset;
@@ -748,7 +736,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 						r.mask = -1;
 						r.id = 0;
 						r.flags = 0;
-		
+
 						RTCOccludedArguments oargs;
 						rtcInitOccludedArguments(&oargs);
 						oargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
@@ -794,7 +782,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 						Vector4 traceDirection = (light.position - origin).xyz0().normalized();
 						traceDirection = (light.position + u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius) - origin).xyz0().normalized();
 
-						lumelPosition.storeAligned(&r.org_x); 
+						lumelPosition.storeAligned(&r.org_x);
 						traceDirection.storeAligned(&r.dir_x);
 
 						r.tnear = c_epsilonOffset;
@@ -803,7 +791,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 						r.mask = -1;
 						r.id = 0;
 						r.flags = 0;
-		
+
 						RTCOccludedArguments oargs;
 						rtcInitOccludedArguments(&oargs);
 						oargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
@@ -854,7 +842,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 						Vector4 traceDirection = (light.position - origin).xyz0().normalized();
 						traceDirection = (light.position + u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius) - origin).xyz0().normalized();
 
-						lumelPosition.storeAligned(&r.org_x); 
+						lumelPosition.storeAligned(&r.org_x);
 						traceDirection.storeAligned(&r.dir_x);
 
 						r.tnear = c_epsilonOffset;
@@ -863,7 +851,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 						r.mask = -1;
 						r.id = 0;
 						r.flags = 0;
-		
+
 						RTCOccludedArguments oargs;
 						rtcInitOccludedArguments(&oargs);
 						oargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
@@ -919,10 +907,9 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 			rtcInterpolate0(geometry, primID, u, v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
 			if (image->getPixel(
-				(int32_t)(wrap(texCoord[0]) * image->getWidth()),
-				(int32_t)(wrap(texCoord[1]) * image->getHeight()),
-				color
-			))
+					(int32_t)(wrap(texCoord[0]) * image->getWidth()),
+					(int32_t)(wrap(texCoord[1]) * image->getHeight()),
+					color))
 			{
 				if (color.getAlpha() <= 0.5_simd)
 					args->valid[i] = 0;
