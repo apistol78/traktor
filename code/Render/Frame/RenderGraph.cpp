@@ -213,21 +213,25 @@ handle_t RenderGraph::addDependency()
 IRenderTargetSet* RenderGraph::getTargetSet(handle_t resource) const
 {
 	T_FATAL_ASSERT(m_buildingPasses);
-	auto it = m_targets.find(resource);
-	return (it != m_targets.end()) ? it->second.targetSet->getReadTargetSet() : nullptr;
+
+	const auto it = m_targets.find(resource);
+	if (it == m_targets.end() || it->second.targetSet == nullptr)
+		return nullptr;
+
+	return it->second.targetSet->getReadTargetSet();
 }
 
 Buffer* RenderGraph::getBuffer(handle_t resource) const
 {
 	T_FATAL_ASSERT(m_buildingPasses);
-	auto it = m_buffers.find(resource);
+	const auto it = m_buffers.find(resource);
 	return (it != m_buffers.end()) ? it->second.buffer : nullptr;
 }
 
 ITexture* RenderGraph::getTexture(handle_t resource) const
 {
 	T_FATAL_ASSERT(m_buildingPasses);
-	auto it = m_textures.find(resource);
+	const auto it = m_textures.find(resource);
 	return (it != m_textures.end()) ? it->second.texture : nullptr;
 }
 
