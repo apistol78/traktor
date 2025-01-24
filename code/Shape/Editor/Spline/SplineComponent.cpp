@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
+#include "Shape/Editor/Spline/SplineComponent.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Thread/Job.h"
@@ -21,28 +22,30 @@
 #include "Physics/PhysicsManager.h"
 #include "Physics/StaticBodyDesc.h"
 #include "Render/Buffer.h"
+#include "Render/Context/RenderContext.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
 #include "Render/VertexElement.h"
-#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Shape/Editor/Spline/ControlPointComponent.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
-#include "Shape/Editor/Spline/SplineComponent.h"
 #include "Shape/Editor/Spline/SplineComponentData.h"
 #include "Shape/Editor/Spline/SplineLayerComponent.h"
+#include "World/Entity.h"
+#include "World/Entity/GroupComponent.h"
 #include "World/IWorldRenderPass.h"
 #include "World/World.h"
 #include "World/WorldBuildContext.h"
-#include "World/Entity.h"
-#include "World/Entity/GroupComponent.h"
+
+#include <limits>
 
 namespace traktor::shape
 {
-	namespace
-	{
+namespace
+{
 
 #pragma pack(1)
+
 struct Vertex
 {
 	float position[3];
@@ -51,9 +54,10 @@ struct Vertex
 	float binormal[4];
 	float texCoord[2];
 };
+
 #pragma pack()
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineComponent", SplineComponent, world::IEntityComponent)
 
@@ -62,14 +66,13 @@ SplineComponent::SplineComponent(
 	render::IRenderSystem* renderSystem,
 	physics::PhysicsManager* physicsManager,
 	const resource::Proxy< render::Shader >& defaultShader,
-	const SplineComponentData* data
-)
-:	m_resourceManager(resourceManager)
-,	m_renderSystem(renderSystem)
-,	m_physicsManager(physicsManager)
-,	m_defaultShader(defaultShader)
-,	m_data(data)
-,	m_dirty(true)
+	const SplineComponentData* data)
+	: m_resourceManager(resourceManager)
+	, m_renderSystem(renderSystem)
+	, m_physicsManager(physicsManager)
+	, m_defaultShader(defaultShader)
+	, m_data(data)
+	, m_dirty(true)
 {
 }
 
@@ -152,15 +155,12 @@ void SplineComponent::update(const world::UpdateParams& update)
 					{
 						T_FATAL_ASSERT(polygon.getVertexCount() == 3);
 						triangles.push_back(
-							{
-								{
-									polygon.getVertex(0),
-									polygon.getVertex(1),
-									polygon.getVertex(2),
-								},
-								0
-							}
-						);
+							{ {
+								  polygon.getVertex(0),
+								  polygon.getVertex(1),
+								  polygon.getVertex(2),
+							  },
+								0 });
 					}
 
 					AlignedVector< physics::Mesh::Material > materials;
@@ -181,8 +181,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 						m_resourceManager,
 						bodyDesc,
 						mesh,
-						T_FILE_LINE_W
-					);
+						T_FILE_LINE_W);
 					if (m_body)
 						m_body->setEnable(true);
 				}
@@ -211,8 +210,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 							m_vertexBuffer = m_renderSystem->createBuffer(
 								render::BuVertex,
 								(nvertices + 4 * 128) * sizeof(Vertex),
-								false
-							);
+								false);
 						}
 
 						Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
@@ -274,8 +272,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 							batch.primitives = render::Primitives::setIndexed(
 								render::PrimitiveType::Triangles,
 								offset,
-								count
-							);
+								count);
 
 							offset += count * 3;
 						}
@@ -317,8 +314,9 @@ void SplineComponent::update(const world::UpdateParams& update)
 										else
 											albedo.storeUnaligned(vptr->albedo);
 
-										vptr->texCoord[0] =
-										vptr->texCoord[1] = 0.0f;
+										vptr->albedo[3] = material.getEmissive();
+
+										vptr->texCoord[0] = vptr->texCoord[1] = 0.0f;
 										vptr->albedoMap = -1;
 
 										++vptr;
@@ -332,8 +330,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 							primitives.push_back(render::Primitives::setIndexed(
 								render::PrimitiveType::Triangles,
 								0,
-								nindices / 3
-							));
+								nindices / 3));
 
 							Ref< render::IAccelerationStructure > blas = m_renderSystem->createAccelerationStructure(m_vertexBuffer, m_vertexLayout, m_indexBuffer, render::IndexType::UInt32, primitives);
 							if (blas != nullptr)
@@ -399,29 +396,27 @@ void SplineComponent::update(const world::UpdateParams& update)
 		}
 
 		m_updateJobModel = nullptr;
-		m_updateJob = JobManager::getInstance().add([controlPoints, this]()
+		m_updateJob = JobManager::getInstance().add([controlPoints, this]() {
+			for (auto component : m_owner->getComponents())
 			{
-				for (auto component : m_owner->getComponents())
+				if (const auto layer = dynamic_type_cast< const SplineLayerComponent* >(component))
 				{
-					if (const auto layer = dynamic_type_cast< const SplineLayerComponent* >(component))
-					{
-						Ref< model::Model > layerModel = layer->createModel(m_path, m_data->isClosed(), true);
-						if (!layerModel)
-							continue;
+					Ref< model::Model > layerModel = layer->createModel(m_path, m_data->isClosed(), true);
+					if (!layerModel)
+						continue;
 
-						if (m_updateJobModel)
-							m_updateJobModel->apply(model::MergeModel(*layerModel, Transform::identity(), 0.01f));
-						else
-							m_updateJobModel = layerModel;
-					}
-				}
-				if (m_updateJobModel)
-				{
-					m_updateJobModel->apply(model::CalculateNormals(false));
-					m_updateJobModel->apply(model::CalculateTangents(false));
+					if (m_updateJobModel)
+						m_updateJobModel->apply(model::MergeModel(*layerModel, Transform::identity(), 0.01f));
+					else
+						m_updateJobModel = layerModel;
 				}
 			}
-		);
+			if (m_updateJobModel)
+			{
+				m_updateJobModel->apply(model::CalculateNormals(false));
+				m_updateJobModel->apply(model::CalculateTangents(false));
+			}
+		});
 
 		m_dirty = false;
 	}
@@ -430,8 +425,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 void SplineComponent::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
+	const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_indexBuffer || !m_vertexBuffer)
 		return;
@@ -456,15 +450,13 @@ void SplineComponent::build(
 		renderBlock->programParams->beginParameters(renderContext);
 
 		worldRenderPass.setProgramParameters(
-			renderBlock->programParams
-		);
+			renderBlock->programParams);
 
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
 			sp.priority,
-			renderBlock
-		);
+			renderBlock);
 	}
 }
 

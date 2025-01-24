@@ -6,16 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
-#include <cstring>
-#include <limits>
+#include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
 #include "Core/Misc/String.h"
 #include "Editor/IPipelineDepends.h"
 #include "Mesh/Editor/IndexRange.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
-#include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshResource.h"
 #include "Model/Model.h"
@@ -29,14 +27,18 @@
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "World/WorldTypes.h"
 
+#include <algorithm>
+#include <cstring>
+#include <limits>
+
 namespace traktor::mesh
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_shaderUpdateSkin(L"{E520B46A-24BC-764C-A3E2-819DB57B7515}");
 
-	}
+}
 
 Ref< MeshResource > SkinnedMeshConverter::createResource() const
 {
@@ -60,8 +62,7 @@ bool SkinnedMeshConverter::convert(
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const AlignedVector< render::VertexElement >& vertexElements,
 	MeshResource* meshResource,
-	IStream* meshResourceStream
-) const
+	IStream* meshResourceStream) const
 {
 	// Create render mesh.
 	const uint32_t vertexSize = render::getVertexSize(vertexElements);
@@ -79,17 +80,14 @@ bool SkinnedMeshConverter::convert(
 		vertexBufferSize,
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize,
-		{
-			{ SkinnedMesh::c_fccSkinPosition, auxBufferSize },
-			{ IMesh::c_fccRayTracingVertexAttributes, rtVertexAttributesSize }
-		}
-	);
+		{ { SkinnedMesh::c_fccSkinPosition, auxBufferSize },
+			{ IMesh::c_fccRayTracingVertexAttributes, rtVertexAttributesSize } });
 
 	// Create vertex and aux buffers.
 	uint8_t* vertex = nullptr;
 	if (vertexBufferSize > 0)
 	{
-		vertex = static_cast<uint8_t*>(mesh->getVertexBuffer()->lock());
+		vertex = static_cast< uint8_t* >(mesh->getVertexBuffer()->lock());
 		std::memset(vertex, 0, vertexBufferSize);
 	}
 
@@ -147,18 +145,14 @@ bool SkinnedMeshConverter::convert(
 			}
 
 			for (uint32_t i = jointCount; i < 4; ++i)
-			{
 				blendIndices[i] =
-				blendWeights[i] = 0.0f;
-			}
+					blendWeights[i] = 0.0f;
 		}
 		else
 		{
 			for (uint32_t i = jointCount; i < 4; ++i)
-			{
 				blendIndices[i] =
-				blendWeights[i] = 0.0f;
-			}
+					blendWeights[i] = 0.0f;
 		}
 
 		// Write aux data.
@@ -167,12 +161,18 @@ bool SkinnedMeshConverter::convert(
 			const Vector4 normal = (v.getNormal() != model::c_InvalidIndex) ? model->getNormal(v.getNormal()) : Vector4::zero();
 			const Vector4 tangent = (v.getTangent() != model::c_InvalidIndex) ? model->getNormal(v.getTangent()) : Vector4::zero();
 			const Vector4 binormal = (v.getBinormal() != model::c_InvalidIndex) ? model->getNormal(v.getBinormal()) : Vector4::zero();
-			position.storeUnaligned(aux); aux += 4;
-			normal.storeUnaligned(aux); aux += 4;
-			tangent.storeUnaligned(aux); aux += 4;
-			binormal.storeUnaligned(aux); aux += 4;
-			std::memcpy(aux, blendIndices, 4 * sizeof(float)); aux += 4;
-			std::memcpy(aux, blendWeights, 4 * sizeof(float)); aux += 4;
+			position.storeUnaligned(aux);
+			aux += 4;
+			normal.storeUnaligned(aux);
+			aux += 4;
+			tangent.storeUnaligned(aux);
+			aux += 4;
+			binormal.storeUnaligned(aux);
+			aux += 4;
+			std::memcpy(aux, blendIndices, 4 * sizeof(float));
+			aux += 4;
+			std::memcpy(aux, blendWeights, 4 * sizeof(float));
+			aux += 4;
 		}
 	}
 
@@ -241,8 +241,7 @@ bool SkinnedMeshConverter::convert(
 			{
 				if (
 					meshParts[k].primitives.offset == j->offsetFirst &&
-					meshParts[k].primitives.count == (j->offsetLast - j->offsetFirst) / 3
-				)
+					meshParts[k].primitives.count == (j->offsetLast - j->offsetFirst) / 3)
 				{
 					part.meshPart = k;
 					break;
@@ -255,8 +254,7 @@ bool SkinnedMeshConverter::convert(
 				meshPart.primitives = render::Primitives::setIndexed(
 					render::PrimitiveType::Triangles,
 					j->offsetFirst,
-					(j->offsetLast - j->offsetFirst) / 3
-				);
+					(j->offsetLast - j->offsetFirst) / 3);
 				meshParts.push_back(meshPart);
 			}
 
@@ -271,8 +269,7 @@ bool SkinnedMeshConverter::convert(
 		meshPart.primitives = render::Primitives::setIndexed(
 			render::PrimitiveType::Triangles,
 			0,
-			model->getPolygons().size()
-		);
+			model->getPolygons().size());
 		meshParts.push_back(meshPart);
 
 		world::RTVertexAttributes* vptr = (world::RTVertexAttributes*)mesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
@@ -308,8 +305,9 @@ bool SkinnedMeshConverter::convert(
 					else
 						albedo.storeUnaligned(vptr->albedo);
 
-					vptr->texCoord[0] =
-					vptr->texCoord[1] = 0.0f;
+					vptr->albedo[3] = material.getEmissive();
+
+					vptr->texCoord[0] = vptr->texCoord[1] = 0.0f;
 					vptr->albedoMap = -1;
 
 					++vptr;

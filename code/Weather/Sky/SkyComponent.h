@@ -70,8 +70,7 @@ public:
 		const SkyComponentData& data,
 		const world::IrradianceGrid* irradianceGrid,
 		const resource::Proxy< render::Shader >& shader,
-		const resource::Proxy< render::ITexture >& texture
-	);
+		const resource::Proxy< render::ITexture >& texture);
 
 	virtual ~SkyComponent();
 
@@ -91,14 +90,12 @@ public:
 
 	void setup(
 		const world::WorldSetupContext& context,
-		const world::WorldRenderView& worldRenderView
-	);
+		const world::WorldRenderView& worldRenderView);
 
 	void build(
 		render::RenderContext* renderContext,
 		const world::WorldRenderView& worldRenderView,
-		const world::IWorldRenderPass& worldRenderPass
-	);
+		const world::IWorldRenderPass& worldRenderPass);
 
 private:
 	const SkyComponentData m_data;
@@ -114,6 +111,7 @@ private:
 	resource::Proxy< render::ITexture > m_texture;
 	Ref< render::ITexture > m_cloudTextures[2];
 	Ref< render::ITexture > m_cloudDomeTexture[2];
+	world::World* m_world = nullptr;
 	world::Entity* m_owner = nullptr;
 	Transform m_transform;
 	int32_t m_count = 0;

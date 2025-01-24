@@ -6,15 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
-#include <limits>
+#include "Mesh/Editor/Instance/InstanceMeshConverter.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
 #include "Core/Misc/String.h"
 #include "Editor/IPipelineDepends.h"
 #include "Mesh/Editor/IndexRange.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
-#include "Mesh/Editor/Instance/InstanceMeshConverter.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshResource.h"
 #include "Model/Model.h"
@@ -28,14 +27,17 @@
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "World/WorldTypes.h"
 
+#include <cstring>
+#include <limits>
+
 namespace traktor::mesh
 {
-	namespace
-	{
+namespace
+{
 
 const Guid c_shaderInstanceMeshDraw(L"{A8FDE33C-D75B-4D4E-848F-7D7CF97F11D0}");
 
-	}
+}
 
 Ref< MeshResource > InstanceMeshConverter::createResource() const
 {
@@ -59,8 +61,7 @@ bool InstanceMeshConverter::convert(
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const AlignedVector< render::VertexElement >& vertexElements,
 	MeshResource* meshResource,
-	IStream* meshResourceStream
-) const
+	IStream* meshResourceStream) const
 {
 	// Create render mesh.
 	const uint32_t vertexSize = render::getVertexSize(vertexElements);
@@ -79,10 +80,7 @@ bool InstanceMeshConverter::convert(
 		vertexBufferSize,
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize,
-		{
-			{ IMesh::c_fccRayTracingVertexAttributes, rtVertexAttributesSize }
-		}
-	);
+		{ { IMesh::c_fccRayTracingVertexAttributes, rtVertexAttributesSize } });
 
 	// Create vertex buffer.
 	uint8_t* vertex = (uint8_t*)renderMesh->getVertexBuffer()->lock();
@@ -171,8 +169,7 @@ bool InstanceMeshConverter::convert(
 			{
 				if (
 					meshParts[k].primitives.offset == range.offsetFirst &&
-					meshParts[k].primitives.count == (range.offsetLast - range.offsetFirst) / 3
-				)
+					meshParts[k].primitives.count == (range.offsetLast - range.offsetFirst) / 3)
 				{
 					part.meshPart = k;
 					break;
@@ -186,8 +183,7 @@ bool InstanceMeshConverter::convert(
 				meshPart.primitives = render::Primitives::setIndexed(
 					render::PrimitiveType::Triangles,
 					range.offsetFirst,
-					(range.offsetLast - range.offsetFirst) / 3
-				);
+					(range.offsetLast - range.offsetFirst) / 3);
 				meshParts.push_back(meshPart);
 			}
 
@@ -202,8 +198,7 @@ bool InstanceMeshConverter::convert(
 		meshPart.primitives = render::Primitives::setIndexed(
 			render::PrimitiveType::Triangles,
 			0,
-			model->getPolygons().size()
-		);
+			model->getPolygons().size());
 		meshParts.push_back(meshPart);
 
 		world::RTVertexAttributes* vptr = (world::RTVertexAttributes*)renderMesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
@@ -239,8 +234,9 @@ bool InstanceMeshConverter::convert(
 					else
 						albedo.storeUnaligned(vptr->albedo);
 
-					vptr->texCoord[0] =
-					vptr->texCoord[1] = 0.0f;
+					vptr->albedo[3] = material.getEmissive();
+
+					vptr->texCoord[0] = vptr->texCoord[1] = 0.0f;
 					vptr->albedoMap = -1;
 
 					++vptr;

@@ -432,16 +432,16 @@
 const int lightIndex = int($Random * $LightCount) % int($LightCount);
 const $typeof(Lights) light = $Lights[lightIndex];
 
-const float Far = 20.0f;
-const int N = 4;
+const float Far = 100.0f;
+const int N = 64;
 const mat3 R = Rotate($Direction.xyz, $Random);
 
 vec4 acc = vec4(0.0f);
 for (int i = 0; i < N; ++i)
 {
-	const vec2 r = Hammersley(i, N);
-	const vec3 rayOrigin = $Origin.xyz;
-	const vec3 rayDir = R * normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.2f);
+	const vec2 r = Rotate2D(Hammersley(i, N) * 2 - 1, $Random) * 0.5 + 0.5;
+	const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.01f;
+	const vec3 rayDir = R * normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.05f);
 	
 	rayQueryEXT rayQuery;
 	rayQueryInitializeEXT(
@@ -460,59 +460,68 @@ for (int i = 0; i < N; ++i)
 	{
 		const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
 		const vec3 hit = rayOrigin + rayDir * t;
+		const HWRT_Material m = HWRT_GetMaterial(rayQuery);
 
-		vec3 lightPosition = vec3(0.0f);
-		vec3 lightDirection = vec3(0.0f);
-		float lightDistance = 100.0f;
-		float lightAttenuation = 0.0f;
+		// Add emissive.
+		acc += vec4(
+			m.albedo.xyz * m.albedo.w,
+			clamp(m.albedo.w, 0.0f, 1.0f)
+		);
 
-		if (int(light.Type) == 1)	// Directional
+		if ($LightCount > 0)
 		{
-			lightDirection = ($ViewInverse * light.Direction).xyz;
-			lightAttenuation = 2.0f;
-		}
-		else if (int(light.Type) == 2)	// Point
-		{
-			lightPosition = ($ViewInverse * vec4(light.Position.xyz, 1.0f)).xyz;
-			lightDirection = lightPosition - hit;
-			lightDistance = length(lightDirection);
-			lightDirection /= lightDistance;
-			lightAttenuation = clamp(1.0f / (lightDistance * lightDistance), 0.0f, 1.0f);
-		}
-
-		// Attenuate with distance of first ray.
-		const float nt = t / Far;
-		lightAttenuation *= clamp(1.0f / (nt * nt), 0.0f, 1.0f);
-
-		if (lightAttenuation > 0.0f)
-		{
-			// Cast shadow ray.
-			bool shadowed = false;
+			vec3 lightPosition = vec3(0.0f);
+			vec3 lightDirection = vec3(0.0f);
+			float lightDistance = 100.0f;
+			float lightAttenuation = 0.0f;
+	
+			if (int(light.Type) == 1)	// Directional
 			{
-				rayQueryEXT rayQueryShadow;
-				rayQueryInitializeEXT(
-					rayQueryShadow,
-					$AS,
-					gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,
-					0xff,
-					hit,
-					0.1f,
-					lightDirection,
-					lightDistance - 0.1f
-				);
-				while(rayQueryProceedEXT(rayQueryShadow));
-				if (rayQueryGetIntersectionTypeEXT(rayQueryShadow, true) != gl_RayQueryCommittedIntersectionNoneEXT)
-					shadowed = true;
+				lightDirection = ($ViewInverse * light.Direction).xyz;
+				lightAttenuation = 1.0f;
+			}
+			else if (int(light.Type) == 2)	// Point
+			{
+				lightPosition = ($ViewInverse * vec4(light.Position.xyz, 1.0f)).xyz;
+				lightDirection = lightPosition - hit;
+				lightDistance = length(lightDirection);
+				lightDirection /= lightDistance;
+				lightAttenuation = clamp(1.0f / (lightDistance * lightDistance), 0.0f, 1.0f);
 			}
 	
-			if (!shadowed)
+			// Attenuate with distance of first ray.
+			const float nt = t / Far;
+			lightAttenuation *= clamp(1.0f / (nt * nt), 0.0f, 1.0f);
+	
+			if (lightAttenuation > 0.0f)
 			{
-				const HWRT_Material m = HWRT_GetMaterial(rayQuery);
-				const float phi = clamp(dot(lightDirection, m.normal.xyz), 0.0f, 1.0f);
-				acc += vec4(
-					(m.albedo * phi * light.Color).xyz * lightAttenuation,
-					1.0f
-				);
+				// Cast shadow ray.
+				bool shadowed = false;
+				{
+					rayQueryEXT rayQueryShadow;
+					rayQueryInitializeEXT(
+						rayQueryShadow,
+						$AS,
+						gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,
+						0xff,
+						hit + m.normal.xyz * 0.1f,
+						0.05f,
+						lightDirection,
+						lightDistance - 0.1f
+					);
+					while(rayQueryProceedEXT(rayQueryShadow));
+					if (rayQueryGetIntersectionTypeEXT(rayQueryShadow, true) != gl_RayQueryCommittedIntersectionNoneEXT)
+						shadowed = true;
+				}
+		
+				if (!shadowed)
+				{
+					const float phi = clamp(dot(lightDirection, m.normal.xyz), 0.0f, 1.0f);
+					acc += vec4(
+						(m.albedo * phi * light.Color).xyz * PI * lightAttenuation,
+						1.0f
+					);
+				}
 			}
 		}
 	}
@@ -521,6 +530,7 @@ for (int i = 0; i < N; ++i)
 vec4 o = acc / N;
 
 $Output = vec4(o.xyz, pow(o.w, 0.3f));
+
 			]]>
 			</script>
 		</item>

@@ -151,7 +151,10 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 	const HWRT_Material material = HWRT_GetMaterial(rayQuery);
 	const vec3 lightDirection = vec3(0.0f, 1.0f, 0.0f);
 	const float phi = clamp(dot(lightDirection, material.normal.xyz), 0.0f, 1.0f);
-	$Output = vec4(phi * 0.5f + 0.5f) * material.albedo;
+
+	$Output =
+		vec4(phi * 0.5f + 0.5f) * material.albedo +
+		material.albedo * material.albedo.w;
 }
 
 // Convert output from linear to sRGB.
@@ -161,6 +164,7 @@ $Output = vec4(
 	pow($Output.z, 1.0f / 2.2f),
 	1.0f
 );
+
 			]]>
 			</script>
 		</item>

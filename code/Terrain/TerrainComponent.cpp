@@ -6,19 +6,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
-#include <limits>
+#include "Terrain/TerrainComponent.h"
+
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Heightfield/Heightfield.h"
 #include "Render/Buffer.h"
+#include "Render/Context/RenderContext.h"
 #include "Render/IRenderSystem.h"
 #include "Render/VertexElement.h"
-#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Terrain/Terrain.h"
-#include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainSurfaceCache.h"
 #include "World/IWorldRenderPass.h"
 #include "World/World.h"
@@ -27,10 +26,13 @@
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
 
+#include <algorithm>
+#include <limits>
+
 namespace traktor::terrain
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_shaderCull(L"{8BA73DD8-0FD9-4C15-A772-EACC14014AEC}");
 
@@ -93,13 +95,13 @@ Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, co
 	return renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainComponent", TerrainComponent, world::IEntityComponent)
 
 TerrainComponent::TerrainComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
-:	m_resourceManager(resourceManager)
-,	m_renderSystem(renderSystem)
+	: m_resourceManager(resourceManager)
+	, m_renderSystem(renderSystem)
 {
 }
 
@@ -135,8 +137,7 @@ void TerrainComponent::setup(
 	const world::WorldSetupContext& context,
 	const world::WorldRenderView& worldRenderView,
 	float detailDistance,
-	uint32_t cacheSize
-)
+	uint32_t cacheSize)
 {
 	const int32_t viewIndex = worldRenderView.getIndex();
 	const bool snapshot = worldRenderView.getSnapshot();
@@ -178,8 +179,7 @@ void TerrainComponent::setup(
 
 			const Aabb3 patchAabb(
 				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(-patchDeltaHalf.x(), patch.minHeight, -patchDeltaHalf.z(), 0.0f),
-				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4( patchDeltaHalf.x(), patch.maxHeight,  patchDeltaHalf.z(), 0.0f)
-			);
+				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(patchDeltaHalf.x(), patch.maxHeight, patchDeltaHalf.z(), 0.0f));
 
 			if (worldCullFrustum.inside(patchAabb) != Frustum::Result::Outside)
 			{
@@ -192,14 +192,12 @@ void TerrainComponent::setup(
 				// Calculate screen error for each lod.
 				for (int i = 0; i < LodCount; ++i)
 				{
-					const Vector4 Pworld[2] =
-					{
+					const Vector4 Pworld[2] = {
 						patchCenterWorld_x0zw + eyePosition_0y00,
 						patchCenterWorld_x0zw + eyePosition_0y00 + Vector4(0.0f, patch.error[i], 0.0f, 0.0f)
 					};
 
-					Vector4 Pview[2] =
-					{
+					Vector4 Pview[2] = {
 						worldRenderView.getView() * Pworld[0],
 						worldRenderView.getView() * Pworld[1]
 					};
@@ -209,8 +207,7 @@ void TerrainComponent::setup(
 					if (Pview[1].z() < viewCullFrustum.getNearZ())
 						Pview[1].set(2, viewCullFrustum.getNearZ());
 
-					Vector4 Pclip[] =
-					{
+					Vector4 Pclip[] = {
 						worldRenderView.getProjection() * Pview[0].xyz1(),
 						worldRenderView.getProjection() * Pview[1].xyz1()
 					};
@@ -237,14 +234,12 @@ void TerrainComponent::setup(
 					std::numeric_limits< float >::max(),
 					std::numeric_limits< float >::max(),
 					std::numeric_limits< float >::max(),
-					std::numeric_limits< float >::max()
-				);
+					std::numeric_limits< float >::max());
 				Vector4 mx(
 					-std::numeric_limits< float >::max(),
 					-std::numeric_limits< float >::max(),
 					-std::numeric_limits< float >::max(),
-					-std::numeric_limits< float >::max()
-				);
+					-std::numeric_limits< float >::max());
 
 				bool clipped = false;
 				for (int32_t i = 0; i < sizeof_array(extents); ++i)
@@ -336,20 +331,17 @@ void TerrainComponent::setup(
 
 		// Update surface cache.
 		if (!snapshot)
-		{
 			m_view[viewIndex].surfaceCache->setupPatch(
-		 		context.getRenderGraph(),
-		 		m_terrain,
-		 		-worldExtent * 0.5_simd,
-		 		worldExtent,
-		 		patchOrigin,
-		 		patchExtent,
-		 		viewPatch.lastSurfaceLod,
-		 		visiblePatch.patchId,
-		 		// Out
-		 		viewPatch.surfaceOffset
-			 );
-		}
+				context.getRenderGraph(),
+				m_terrain,
+				-worldExtent * 0.5_simd,
+				worldExtent,
+				patchOrigin,
+				patchExtent,
+				viewPatch.lastSurfaceLod,
+				visiblePatch.patchId,
+				// Out
+				viewPatch.surfaceOffset);
 
 		// Queue patch instance.
 		m_view[viewIndex].patchLodInstances[patchLod].push_back(&visiblePatch);
@@ -357,14 +349,11 @@ void TerrainComponent::setup(
 
 	// Update base color texture.
 	if (!snapshot)
-	{
 		m_view[viewIndex].surfaceCache->setupBaseColor(
 			context.getRenderGraph(),
 			m_terrain,
 			-worldExtent * 0.5_simd,
-			worldExtent
-		);
-	}
+			worldExtent);
 }
 
 void TerrainComponent::build(
@@ -372,8 +361,7 @@ void TerrainComponent::build(
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	float detailDistance,
-	uint32_t cacheSize
-)
+	uint32_t cacheSize)
 {
 	const int32_t viewIndex = worldRenderView.getIndex();
 	const bool snapshot = worldRenderView.getSnapshot();
@@ -434,8 +422,7 @@ void TerrainComponent::build(
 					patchOrigin.x() / worldExtent.x() + 0.5f,
 					patchOrigin.z() / worldExtent.z() + 0.5f,
 					patchExtent.x() / worldExtent.x(),
-					patchExtent.z() / worldExtent.z()
-				);
+					patchExtent.z() / worldExtent.z());
 				snapshotOffset.storeUnaligned(data->surfaceOffset);
 			}
 
@@ -548,17 +535,17 @@ void TerrainComponent::destroy()
 	safeDestroy(m_drawBuffer);
 	safeDestroy(m_dataBuffer);
 
-	//for (auto vb : m_rtVertexBuffers)
+	// for (auto vb : m_rtVertexBuffers)
 	//	vb->destroy();
-	//for (auto va : m_rtPerVertexAttributes)
+	// for (auto va : m_rtPerVertexAttributes)
 	//	va->destroy();
-	//for (auto as : m_rtAS)
+	// for (auto as : m_rtAS)
 	//	as->destroy();
 
-	//m_rtVertexBuffers.clear();
-	//m_rtPerVertexAttributes.clear();
-	//m_rtAS.clear();
-	
+	// m_rtVertexBuffers.clear();
+	// m_rtPerVertexAttributes.clear();
+	// m_rtAS.clear();
+
 	safeDestroy(m_rtwInstance);
 }
 
@@ -602,8 +589,7 @@ bool TerrainComponent::validate(int32_t viewIndex, uint32_t cacheSize)
 {
 	if (
 		m_terrain.changed() ||
-		m_heightfield.changed()
-	)
+		m_heightfield.changed())
 	{
 		m_heightfield.consume();
 		m_terrain.consume();
@@ -665,10 +651,8 @@ void TerrainComponent::updatePatches(const uint32_t* region, bool updateErrors, 
 			if (flushPatchCache)
 			{
 				for (int32_t i = 0; i < sizeof_array(m_view); ++i)
-				{
 					if (m_view[i].surfaceCache)
 						m_view[i].surfaceCache->flush(patchId);
-				}
 			}
 		}
 	}
@@ -707,13 +691,12 @@ bool TerrainComponent::createPatches()
 	m_vertexBuffer = m_renderSystem->createBuffer(
 		render::BuVertex,
 		patchVertexCount * vertexSize,
-		false
-	);
+		false);
 	if (!m_vertexBuffer)
 		return false;
 
 	float* vertex = static_cast< float* >(m_vertexBuffer->lock());
-	T_ASSERT_M (vertex, L"Unable to lock vertex buffer");
+	T_ASSERT_M(vertex, L"Unable to lock vertex buffer");
 
 	for (uint32_t z = 0; z < patchDim; ++z)
 	{
@@ -734,14 +717,10 @@ bool TerrainComponent::createPatches()
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
 			m_patches.push_back(
-				{ 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f } }
-			);
+				{ 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f } });
 			for (int32_t i = 0; i < sizeof_array(m_view); ++i)
-			{
 				m_view[i].viewPatches.push_back(
-					{ c_patchLodSteps, c_surfaceLodSteps, Vector4::zero() }
-				);
-			}
+					{ c_patchLodSteps, c_surfaceLodSteps, Vector4::zero() });
 		}
 	}
 
@@ -840,7 +819,7 @@ bool TerrainComponent::createPatches()
 				{
 					m_indices.push_back(x + offset);
 					m_indices.push_back(lodSkip + x + offset);
-					m_indices.push_back(lodSkip* patchDim + x + offset);
+					m_indices.push_back(lodSkip * patchDim + x + offset);
 
 					m_indices.push_back(lodSkip + x + offset);
 					m_indices.push_back(lodSkip * patchDim + lodSkip + x + offset);
@@ -855,20 +834,18 @@ bool TerrainComponent::createPatches()
 		m_primitives[lod] = render::Primitives::setIndexed(
 			render::PrimitiveType::Triangles,
 			(uint32_t)indexOffset,
-			(uint32_t)(indexEndOffset - indexOffset) / 3
-		);
+			(uint32_t)(indexEndOffset - indexOffset) / 3);
 	}
 
 	m_indexBuffer = m_renderSystem->createBuffer(
 		render::BuIndex,
 		(uint32_t)m_indices.size() * sizeof(uint32_t),
-		false
-	);
+		false);
 	if (!m_indexBuffer)
 		return false;
 
 	uint32_t* index = static_cast< uint32_t* >(m_indexBuffer->lock());
-	T_ASSERT_M (index, L"Unable to lock index buffer");
+	T_ASSERT_M(index, L"Unable to lock index buffer");
 
 	for (uint32_t i = 0; i < uint32_t(m_indices.size()); ++i)
 		index[i] = m_indices[i];
@@ -880,24 +857,21 @@ bool TerrainComponent::createPatches()
 	m_drawBuffer = m_renderSystem->createBuffer(
 		render::BuStructured | render::BuIndirect,
 		alignedPatchCount * sizeof(render::IndexedIndirectDraw),
-		true
-	);
+		true);
 	if (!m_drawBuffer)
 		return false;
 
 	m_culledDrawBuffer = m_renderSystem->createBuffer(
 		render::BuStructured | render::BuIndirect,
 		alignedPatchCount * sizeof(render::IndexedIndirectDraw),
-		false
-	);
+		false);
 	if (!m_culledDrawBuffer)
 		return false;
 
 	m_dataBuffer = m_renderSystem->createBuffer(
 		render::BuStructured,
 		alignedPatchCount * sizeof(DrawData),
-		true
-	);
+		true);
 	if (!m_dataBuffer)
 		return false;
 
@@ -930,11 +904,11 @@ bool TerrainComponent::createRayTracingPatches()
 	const Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
 	Vector4 patchTopLeft = (-worldExtent * 0.5_simd).xyz1();
 
-	//for (auto& part : m_rtParts)
+	// for (auto& part : m_rtParts)
 	//{
 	//	safeDestroy(part.perVertexData);
 	//	safeDestroy(part.blas);
-	//}
+	// }
 
 	safeDestroy(m_rtwInstance);
 
@@ -951,15 +925,13 @@ bool TerrainComponent::createRayTracingPatches()
 
 			const Aabb3 patchAabb(
 				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(-patchDeltaHalf.x(), 0.0f, -patchDeltaHalf.z(), 0.0f),
-				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4( patchDeltaHalf.x(), 0.0f,  patchDeltaHalf.z(), 0.0f)
-			);
+				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(patchDeltaHalf.x(), 0.0f, patchDeltaHalf.z(), 0.0f));
 
 			// Create vertex buffer.
 			m_rtVertexBuffers[patchId] = m_renderSystem->createBuffer(
 				render::BuVertex,
 				patchVertexCount * vertexSize,
-				false
-			);
+				false);
 			if (!m_rtVertexBuffers[patchId])
 				return false;
 
@@ -968,7 +940,7 @@ bool TerrainComponent::createRayTracingPatches()
 			const Scalar elevationOffset = -1.0_simd;
 
 			float* vertex = static_cast< float* >(m_rtVertexBuffers[patchId]->lock());
-			T_ASSERT_M (vertex, L"Unable to lock vertex buffer");
+			T_ASSERT_M(vertex, L"Unable to lock vertex buffer");
 			for (uint32_t z = 0; z < patchDim; ++z)
 			{
 				for (uint32_t x = 0; x < patchDim; ++x)
@@ -998,13 +970,12 @@ bool TerrainComponent::createRayTracingPatches()
 			Ref< render::Buffer > perVertexData = m_renderSystem->createBuffer(
 				render::BuStructured,
 				vertexAttribCount * sizeof(world::RTVertexAttributes),
-				false
-			);
+				false);
 			if (!perVertexData)
 				return false;
 
 			world::RTVertexAttributes* va = static_cast< world::RTVertexAttributes* >(perVertexData->lock());
-			T_ASSERT_M (va, L"Unable to lock vertex attribute buffer");
+			T_ASSERT_M(va, L"Unable to lock vertex attribute buffer");
 			for (uint32_t i = 0; i < vertexAttribCount; ++i)
 			{
 				const uint32_t index = m_indices[m_primitives[1].offset + i];
@@ -1023,11 +994,10 @@ bool TerrainComponent::createRayTracingPatches()
 
 				const Vector4 normal = m_heightfield->normalAt(gridX, gridZ);
 
-				Vector4(0.2f, 0.4f, 0.1f, 1.0f).storeUnaligned(va->albedo);
+				Vector4(0.2f, 0.4f, 0.1f, 0.0f).storeUnaligned(va->albedo);
 				normal.storeUnaligned(va->normal);
 
-				va->texCoord[0] =
-				va->texCoord[1] = 0.0f;
+				va->texCoord[0] = va->texCoord[1] = 0.0f;
 				va->albedoMap = -1;
 
 				va++;

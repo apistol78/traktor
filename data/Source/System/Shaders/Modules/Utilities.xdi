@@ -81,6 +81,16 @@ mat3 Rotate(vec3 axis, float angle)
 	);
 }
 
+vec2 Rotate2D(vec2 v, float angle)
+{
+	const float c = cos(angle);
+	const float s = sin(angle);
+	return vec2(
+		v.x * c - v.y * s,
+		v.x * s + v.y * c
+	);
+}
+
 vec3 Sphere(vec2 rnd)
 {
 	const float z = 2.0f * rnd.x - 1.0f;

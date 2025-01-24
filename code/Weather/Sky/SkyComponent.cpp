@@ -6,31 +6,33 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
+#include "Weather/Sky/SkyComponent.h"
+
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Buffer.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/ITexture.h"
 #include "Render/VertexElement.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
-#include "Weather/Sky/SkyComponent.h"
 #include "World/Entity.h"
+#include "World/Entity/IrradianceGridComponent.h"
+#include "World/Entity/LightComponent.h"
 #include "World/IWorldRenderPass.h"
 #include "World/World.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
-#include "World/Entity/IrradianceGridComponent.h"
-#include "World/Entity/LightComponent.h"
+
+#include <limits>
 
 namespace traktor::weather
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_shaderClouds2D(Guid(L"{9F52BE0A-0C1A-4928-91D9-9D32296CB8F3}"));
 const resource::Id< render::Shader > c_shaderClouds3D(Guid(L"{EF88CE37-0917-4402-B2D1-6E3F2D3CCCCF}"));
@@ -65,7 +67,7 @@ const int32_t c_vertexCount = (c_longitudes + 1) * c_latitudes;
 const int32_t c_triangleCount = ((c_latitudes - 1) * ((c_longitudes + 1) * 2));
 const int32_t c_indexCount = c_triangleCount * 3;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.SkyComponent", SkyComponent, world::IEntityComponent)
 
@@ -73,13 +75,12 @@ SkyComponent::SkyComponent(
 	const SkyComponentData& data,
 	const world::IrradianceGrid* irradianceGrid,
 	const resource::Proxy< render::Shader >& shader,
-	const resource::Proxy< render::ITexture >& texture
-)
-:	m_data(data)
-,	m_irradianceGrid(irradianceGrid)
-,	m_shader(shader)
-,	m_texture(texture)
-,	m_transform(Transform::identity())
+	const resource::Proxy< render::ITexture >& texture)
+	: m_data(data)
+	, m_irradianceGrid(irradianceGrid)
+	, m_shader(shader)
+	, m_texture(texture)
+	, m_transform(Transform::identity())
 {
 }
 
@@ -92,8 +93,7 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 	m_vertexBuffer = renderSystem->createBuffer(
 		render::BuVertex,
 		c_vertexCount * sizeof(float) * 2,
-		false
-	);
+		false);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -117,8 +117,7 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 	m_indexBuffer = renderSystem->createBuffer(
 		render::BuIndex,
 		c_indexCount * sizeof(uint16_t),
-		false
-	);
+		false);
 	if (!m_indexBuffer)
 		return false;
 
@@ -145,8 +144,7 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 	m_primitives = render::Primitives::setIndexed(
 		render::PrimitiveType::Triangles,
 		0,
-		c_triangleCount
-	);
+		c_triangleCount);
 
 	if (m_data.m_clouds)
 	{
@@ -207,6 +205,7 @@ void SkyComponent::destroy()
 	m_texture.clear();
 	m_shaderClouds2D.clear();
 	m_shaderClouds3D.clear();
+	setWorld(nullptr);
 }
 
 void SkyComponent::setOwner(world::Entity* owner)
@@ -216,9 +215,16 @@ void SkyComponent::setOwner(world::Entity* owner)
 
 void SkyComponent::setWorld(world::World* world)
 {
-	if (world != nullptr)
+	if (m_world != nullptr)
 	{
-		world::IrradianceGridComponent* irradianceGridComponent = world->getComponent< world::IrradianceGridComponent >();
+		world::IrradianceGridComponent* irradianceGridComponent = m_world->getComponent< world::IrradianceGridComponent >();
+		if (irradianceGridComponent)
+			irradianceGridComponent->setIrradianceGrid(nullptr);
+	}
+
+	if ((m_world = world) != nullptr)
+	{
+		world::IrradianceGridComponent* irradianceGridComponent = m_world->getComponent< world::IrradianceGridComponent >();
 		if (irradianceGridComponent)
 			irradianceGridComponent->setIrradianceGrid(m_irradianceGrid);
 	}
@@ -241,8 +247,7 @@ void SkyComponent::update(const world::UpdateParams& update)
 
 void SkyComponent::setup(
 	const world::WorldSetupContext& context,
-	const world::WorldRenderView& worldRenderView
-)
+	const world::WorldRenderView& worldRenderView)
 {
 	render::RenderGraph& renderGraph = context.getRenderGraph();
 
@@ -301,8 +306,7 @@ void SkyComponent::setup(
 		// Generate dome projected cloud layer.
 		if (
 			worldRenderView.getSnapshot() ||
-			(worldRenderView.getIndex() == 0 && cloudFrame != m_cloudFrame)
-		)
+			(worldRenderView.getIndex() == 0 && cloudFrame != m_cloudFrame))
 		{
 			render::ITexture* input = m_cloudDomeTexture[m_count & 1];
 			render::ITexture* output = m_cloudDomeTexture[(m_count + 1) & 1];
@@ -356,8 +360,7 @@ void SkyComponent::setup(
 void SkyComponent::build(
 	render::RenderContext* renderContext,
 	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
+	const world::IWorldRenderPass& worldRenderPass)
 {
 	auto perm = worldRenderPass.getPermutation(m_shader);
 	m_shader->setCombination(c_handleWeather_CloudsEnable, m_data.m_clouds, perm);

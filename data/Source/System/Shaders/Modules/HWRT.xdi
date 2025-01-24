@@ -9,9 +9,9 @@ const float HWRT_DefaultFar = 100.0f;
 // Material properties.
 struct HWRT_Material
 {
-	highp vec4 normal;
-	highp vec4 albedo;
-	highp vec4 texCoord;
+	vec4 normal;
+	vec4 albedo;
+	vec4 texCoord;
 	ivec4 albedoMap;
 };
 

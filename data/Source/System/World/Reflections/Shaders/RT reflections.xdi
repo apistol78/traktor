@@ -248,8 +248,8 @@ $Output = ($Roughness < 0.6f && $Specular > 0.1f) ? 1.0f : 0.0f;
 const int lightIndex = int($Random * $LightCount) % int($LightCount);
 const $typeof(Lights) light = $Lights[lightIndex];
 
-const int N = 4;
-const float Far = 200.0f;
+const int N = 64;
+const float Far = 100.0f;
 
 vec3 u, v;
 OrthogonalFrame($Direction.xyz, u, v);
@@ -259,7 +259,6 @@ u = R * u;
 v = R * v;
 
 vec4 acc = vec4(0.0f);
-
 for (int i = 0; i < N; ++i)
 {
 	const vec2 r = (Hammersley(i, N) * 2.0f - 1.0f) * $Roughness * $Roughness;
@@ -282,6 +281,7 @@ for (int i = 0; i < N; ++i)
 
 	if (rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT)
 	{
+		const HWRT_Material m = HWRT_GetMaterial(rayQuery);
 		const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
 		const vec3 hit = rayOrigin + rayDir * t;
 
@@ -293,7 +293,7 @@ for (int i = 0; i < N; ++i)
 		if (int(light.Type) == 1)	// Directional
 		{
 			lightDirection = ($ViewInverse * light.Direction).xyz;
-			lightAttenuation = 2.0f;
+			lightAttenuation = 1.0f;
 		}
 		else if (int(light.Type) == 2)	// Point
 		{
@@ -306,17 +306,20 @@ for (int i = 0; i < N; ++i)
 
 		// Attenuate with distance of first ray.
 		const float nt = t / Far;
-		lightAttenuation *= clamp(1.0f / (nt * nt), 0.0f, 1.0f);
+		const float at = clamp(1.0f / (nt * nt), 0.0f, 1.0f);
 
+		lightAttenuation *= at;
 		if (lightAttenuation > 0.0f)
 		{
-			const HWRT_Material m = HWRT_GetMaterial(rayQuery);
 			const float phi = clamp(dot(lightDirection, m.normal.xyz), 0.5f, 1.0f);
 			acc += vec4(
-				(m.albedo * phi * light.Color).xyz * lightAttenuation,
+				(m.albedo * phi * light.Color).xyz * PI * lightAttenuation,
 				1.0f
 			);
 		}
+
+		// Add emissive.
+		acc += vec4(m.albedo.xyz * m.albedo.w * at, m.albedo.w * at);
 	}
 }
 
@@ -864,7 +867,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 				<first>2294</first>
 				<second>-661</second>
 			</position>
-			<value>0.1</value>
+			<value>0.3</value>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{53CBDD75-FB08-494C-AF9C-3E691AE0A8A7}</id>
@@ -1000,14 +1003,6 @@ else
 				<second>-859</second>
 			</position>
 			<name>L_Reflection0</name>
-		</item>
-		<item type="traktor.render.Neg" version="traktor.render.Node:1">
-			<id>{B4A40974-F65D-CE4E-9685-86EA626B21BB}</id>
-			<comment/>
-			<position>
-				<first>516</first>
-				<second>-770</second>
-			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -1159,36 +1154,6 @@ else
 			<destination>
 				<node ref="/object/nodes/item[24]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{15053FB1-8C13-4C18-8958-193FEDDCFB11}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[24]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{24E97134-2FDB-4E95-B7D6-EF81F3E17837}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[21]"/>
-				<id>{8591EE56-8A3E-41CF-8E98-8F8DB26AABDC}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{0AAE2EAE-B01B-425A-A8C3-539576B45ECC}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1649,6 +1614,36 @@ else
 			<destination>
 				<node ref="/object/nodes/item[49]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{8591EE56-8A3E-41CF-8E98-8F8DB26AABDC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{0AAE2EAE-B01B-425A-A8C3-539576B45ECC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{24E97134-2FDB-4E95-B7D6-EF81F3E17837}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{15053FB1-8C13-4C18-8958-193FEDDCFB11}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>
