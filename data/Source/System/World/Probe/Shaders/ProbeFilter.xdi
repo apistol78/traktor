@@ -349,7 +349,9 @@
 				<Z>1</Z>
 			</localSize>
 			<useRayTracing>false</useRayTracing>
-			<include/>
+			<include>
+				<item>{1C13688E-63BC-3141-ACB1-58EEE72EEF2F}</item>
+			</include>
 			<inputPins>
 				<item>
 					<id>{F5281BE6-FB8B-EB41-85DB-E46035956B65}</id>
@@ -369,21 +371,14 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-uint bits = uint($I);
-bits = (bits << 16u) | (bits >> 16u);
-bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
-bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
-bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
-bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
-
-float v = float(bits) * 2.3283064365386963e-10; // / 0x100000000
-
+const vec2 h = Hammersley(uint($I), uint($N));
 $Output = vec4(
-	float($I) / float($N),
-	v,
-	0,
-	0
+	h.x,
+	h.y,
+	0.0f,
+	0.0f
 );
+
 			]]>
 			</script>
 		</item>
@@ -456,7 +451,9 @@ $Output = vec4(
 				<Z>1</Z>
 			</localSize>
 			<useRayTracing>false</useRayTracing>
-			<include/>
+			<include>
+				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
+			</include>
 			<inputPins>
 				<item>
 					<id>{52FE773F-EF3A-1A49-9C53-C2DBE6E2C545}</id>
@@ -480,13 +477,12 @@ $Output = vec4(
 			</outputPins>
 			<script>
 			<![CDATA[
-const float PI = 3.14159265359f;
 
-float a = $Roughness * $Roughness;
+const float a = $Roughness * $Roughness;
 	
-float phi = 2.0f * PI * $Xi.x;
-float cosTheta = sqrt((1.0f - $Xi.y) / (1.0f + (a * a - 1.0f) * $Xi.y));
-float sinTheta = sqrt(1.0f - cosTheta * cosTheta);
+const float phi = 2.0f * PI * $Xi.x;
+const float cosTheta = sqrt((1.0f - $Xi.y) / (1.0f + (a * a - 1.0f) * $Xi.y));
+const float sinTheta = sqrt(1.0f - cosTheta * cosTheta);
 
 // from spherical coordinates to cartesian coordinates
 vec3 H;
@@ -494,13 +490,12 @@ H.x = cos(phi) * sinTheta;
 H.y = sin(phi) * sinTheta;
 H.z = cosTheta;
 	
-// from tangent-space vector to world-space sample vector
-vec3 up        = abs($N.z) < 0.999 ? vec3(0.0, 0.0, 1.0) : vec3(1.0, 0.0, 0.0);
-vec3 tangent   = normalize(cross(up, $N));
-vec3 bitangent = cross($N, tangent);
-	
-vec3 sampleVec = tangent * H.x + bitangent * H.y + $N * H.z;
-$Output = vec4(normalize(sampleVec), 0);
+vec3 u, v;
+OrthogonalFrame($N, u, v);
+
+const vec3 sampleVec = u * H.x + v * H.y + $N * H.z;
+$Output = vec4(normalize(sampleVec), 0.0f);
+
 			]]>
 			</script>
 		</item>
