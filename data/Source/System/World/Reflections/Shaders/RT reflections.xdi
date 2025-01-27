@@ -259,6 +259,9 @@ u = R * u;
 v = R * v;
 
 vec4 acc = vec4(0.0f);
+HWRT_Material m;
+float t;
+
 for (int i = 0; i < N; ++i)
 {
 	const vec2 r = (Hammersley(i, N) * 2.0f - 1.0f) * $Roughness * $Roughness;
@@ -266,23 +269,8 @@ for (int i = 0; i < N; ++i)
 	const vec3 rayOrigin = $Origin.xyz;
 	const vec3 rayDir = normalize($Direction.xyz + u * r.x + v * r.y);
 	
-	rayQueryEXT rayQuery;
-	rayQueryInitializeEXT(
-		rayQuery,
-		$AS,
-		gl_RayFlagsOpaqueEXT,
-		0xff,
-		rayOrigin,
-		0.01f,
-		rayDir,
-		200.0f
-	);
-	while(rayQueryProceedEXT(rayQuery));
-
-	if (rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT)
+	if (HWRT_Trace($AS, rayOrigin, rayDir, m, t))
 	{
-		const HWRT_Material m = HWRT_GetMaterial(rayQuery);
-		const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
 		const vec3 hit = rayOrigin + rayDir * t;
 
 		vec3 lightPosition = vec3(0.0f);
@@ -311,9 +299,16 @@ for (int i = 0; i < N; ++i)
 		lightAttenuation *= at;
 		if (lightAttenuation > 0.0f)
 		{
-			const float phi = clamp(dot(lightDirection, m.normal.xyz), 0.5f, 1.0f);
+			// Cast shadow ray.
+			const bool shadowed = HWRT_TraceShadow(
+				$AS,
+				hit + m.normal.xyz * 0.1f,
+				lightDirection,
+				lightDistance - 0.1f
+			);
+			const float phi = clamp(dot(lightDirection, m.normal.xyz), 0.25f, 1.0f);
 			acc += vec4(
-				(m.albedo * phi * light.Color).xyz * PI * lightAttenuation,
+				(m.albedo * phi * light.Color).xyz * PI * lightAttenuation * (shadowed ? 0.25f : 1.0f),
 				1.0f
 			);
 		}

@@ -71,6 +71,47 @@ HWRT_Material HWRT_GetMaterial(rayQueryEXT query)
 	return material;
 }
 
+bool HWRT_Trace(accelerationStructureEXT AS, vec3 origin, vec3 direction, out HWRT_Material material, out float distance)
+{
+	rayQueryEXT rayQuery;
+	rayQueryInitializeEXT(
+		rayQuery,
+		AS,
+		gl_RayFlagsOpaqueEXT,
+		0xff,
+		origin,
+		0.01f,
+		direction,
+		50.0f
+	);
+	while(rayQueryProceedEXT(rayQuery));
+
+	if (rayQueryGetIntersectionTypeEXT(rayQuery, true) == gl_RayQueryCommittedIntersectionNoneEXT)
+		return false;
+
+	material = HWRT_GetMaterial(rayQuery);
+	distance = rayQueryGetIntersectionTEXT(rayQuery, true);
+	return true;
+}
+
+bool HWRT_TraceShadow(accelerationStructureEXT AS, vec3 origin, vec3 direction, float maxDistance)
+{
+	rayQueryEXT rayQueryShadow;
+	rayQueryInitializeEXT(
+		rayQueryShadow,
+		AS,
+		gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,
+		0xff,
+		origin,
+		0.05f,
+		direction,
+		maxDistance
+	);
+	while(rayQueryProceedEXT(rayQueryShadow));
+	return (rayQueryGetIntersectionTypeEXT(rayQueryShadow, true) != gl_RayQueryCommittedIntersectionNoneEXT);
+}
+
+
 	]]>
 	</text>
 </object>

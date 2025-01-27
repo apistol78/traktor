@@ -166,28 +166,16 @@ int nshadowed = 0;
 for (int i = 0; i < N; ++i)
 {
 	const vec2 r = (Hammersley(i, N) * 1.0f - 0.5f) * 0.05f;
-
 	const vec3 rayOrigin = $Origin.xyz + $Normal.xyz * 0.05f;
 	const vec3 rayDir = normalize($Direction.xyz + u * r.x + v * r.y);
-	
-	rayQueryEXT rayQuery;
-	rayQueryInitializeEXT(
-		rayQuery,
+	const bool shadowed = HWRT_TraceShadow(
 		$AS,
-		gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,
-		0xff,
 		rayOrigin,
-		0.0f,
 		rayDir,
 		$MaxDistance
 	);
-	
-	while(rayQueryProceedEXT(rayQuery));
-	
-	if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
-	{
+	if(shadowed)
 		nshadowed++;
-	}
 }
 
 $Output = 1.0f - float(nshadowed) / N;

@@ -432,41 +432,40 @@
 const int lightIndex = int($Random * $LightCount) % int($LightCount);
 const $typeof(Lights) light = $Lights[lightIndex];
 
-const float Far = 100.0f;
-const int N = 64;
-const mat3 R = Rotate($Direction.xyz, $Random);
+const float Far = 50.0f;
+const int N = 32;
+const mat3 R = Rotate($Direction.xyz, $Random.x);
+const vec2 j = vec2($Random.zw * 0.1f);
+
+vec3 u, v;
+OrthogonalFrame($Direction.xyz, u, v);
+const mat3 DR = mat3(
+	u,
+	v,
+	$Direction.xyz
+);
 
 vec4 acc = vec4(0.0f);
+HWRT_Material m;
+float t;
+
 for (int i = 0; i < N; ++i)
 {
-	const vec2 r = Rotate2D(Hammersley(i, N) * 2 - 1, $Random) * 0.5 + 0.5;
+	const vec2 r = Rotate2D((Hammersley(i, N) + j) * 2.0f - 1.0f, $Random.y) * 0.5 + 0.5;
+	
 	const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.01f;
-	const vec3 rayDir = R * normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.05f);
-	
-	rayQueryEXT rayQuery;
-	rayQueryInitializeEXT(
-		rayQuery,
-		$AS,
-		gl_RayFlagsOpaqueEXT,
-		0xff,
-		rayOrigin,
-		0.01f,
-		rayDir,
-		Far
-	);
-	while(rayQueryProceedEXT(rayQuery));
-	
-	if (rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT)
-	{
-		const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
-		const vec3 hit = rayOrigin + rayDir * t;
-		const HWRT_Material m = HWRT_GetMaterial(rayQuery);
 
-		// Add emissive.
-		acc += vec4(
-			m.albedo.xyz * m.albedo.w,
-			clamp(m.albedo.w, 0.0f, 1.0f)
-		);
+#if 1
+	const vec3 rayDir = R * normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.02f);
+	const float probability = 1.0f;
+#else
+	const vec3 rayDir = R * DR * normalize(LambertianDirection(r) + $Direction.xyz * 0.02f);
+	const float probability = 0.78532f;
+#endif
+
+	if (HWRT_Trace($AS, rayOrigin, rayDir, m, t))
+	{
+		const vec3 hit = rayOrigin + rayDir * t;
 
 		if ($LightCount > 0)
 		{
@@ -496,34 +495,28 @@ for (int i = 0; i < N; ++i)
 			if (lightAttenuation > 0.0f)
 			{
 				// Cast shadow ray.
-				bool shadowed = false;
-				{
-					rayQueryEXT rayQueryShadow;
-					rayQueryInitializeEXT(
-						rayQueryShadow,
-						$AS,
-						gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,
-						0xff,
-						hit + m.normal.xyz * 0.1f,
-						0.05f,
-						lightDirection,
-						lightDistance - 0.1f
-					);
-					while(rayQueryProceedEXT(rayQueryShadow));
-					if (rayQueryGetIntersectionTypeEXT(rayQueryShadow, true) != gl_RayQueryCommittedIntersectionNoneEXT)
-						shadowed = true;
-				}
-		
+				const bool shadowed = HWRT_TraceShadow(
+					$AS,
+					hit + m.normal.xyz * 0.1f,
+					lightDirection,
+					lightDistance - 0.1f
+				);
 				if (!shadowed)
 				{
 					const float phi = clamp(dot(lightDirection, m.normal.xyz), 0.0f, 1.0f);
 					acc += vec4(
-						(m.albedo * phi * light.Color).xyz * PI * lightAttenuation,
+						(m.albedo * phi * light.Color).xyz * PI * lightAttenuation / probability,
 						1.0f
 					);
 				}
 			}
 		}
+
+		// Add emissive.
+		acc += vec4(
+			m.albedo.xyz * m.albedo.w / probability,
+			clamp(m.albedo.w, 0.0f, 1.0f)
+		);
 	}
 }
 
@@ -589,14 +582,29 @@ $Output = vec4(o.xyz, pow(o.w, 0.3f));
 				<item>
 					<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
 					<name>Output</name>
-					<type>Scalar</type>
+					<type>Vector</type>
 				</item>
 			</outputPins>
 			<script>
 			<![CDATA[
 uvec2 seed = uvec2(gl_FragCoord.xy);
+uvec2 seed1 = seed;
+uvec2 seed2 = seed;
+uvec2 seed3 = seed;
+
 seed += uvec2($Time * 1543, $Time * 543);
-$Output = BlueNoise(seed) * 2.0f * 3.142f;
+seed1 += uvec2($Time * 2345, $Time * 234);
+seed2 += uvec2($Time * 6542, $Time * 876);
+seed3 += uvec2($Time * 3287, $Time * 349);
+
+$Output = vec4(
+	BlueNoise(seed) * 2.0f * 3.142f,
+	BlueNoise(seed1) * 2.0f * 3.142f,
+	BlueNoise(seed2),
+	BlueNoise(seed3)
+);
+
+
 			]]>
 			</script>
 		</item>
@@ -817,7 +825,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 				<first>3495</first>
 				<second>-1098</second>
 			</position>
-			<value>0.2</value>
+			<value>0.1</value>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{DAFA60CA-31A6-C147-BCEC-EB38063B35A7}</id>

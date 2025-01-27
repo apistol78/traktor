@@ -109,6 +109,18 @@ vec3 Hemi(vec3 direction, vec2 rnd)
 	return ot;
 }
 
+vec3 LambertianDirection(vec2 uv)
+{
+	// Calculate random direction, with Gaussian probability distribution.
+	const float sin2_theta = uv.x;
+	const float cos2_theta = 1.0f - sin2_theta;
+	const float sin_theta = sqrt(sin2_theta);
+	const float cos_theta = sqrt(cos2_theta);
+	const float orientation = uv.y * TWO_PI;
+	return vec3(sin_theta * cos(orientation), sin_theta * sin(orientation), cos_theta);
+}
+
+
 	]]>
 	</text>
 </object>
