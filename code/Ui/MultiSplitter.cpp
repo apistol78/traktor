@@ -6,21 +6,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/MultiSplitter.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/StyleSheet.h"
-#include "Ui/MultiSplitter.h"
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 const Unit c_splitterSize = 2_ut;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MultiSplitter", MultiSplitter, Widget)
 
@@ -66,7 +67,7 @@ void MultiSplitter::update(const Rect* rc, bool immediate)
 	for (uint32_t i = 0; i < m_splitters.size(); ++i)
 		positions.push_back((int32_t)(m_splitters[i] * dim));
 	positions.push_back(dim);
-	
+
 	int32_t index = 0;
 	for (auto child = getFirstChild(); child != nullptr; child = child->getNextSibling())
 	{
@@ -127,16 +128,34 @@ void MultiSplitter::eventChild(ChildEvent* event)
 void MultiSplitter::eventMouseMove(MouseMoveEvent* event)
 {
 	if (!hasCapture())
-		return;
+	{
+		const Size size = getInnerRect().getSize();
+		const int32_t dim = m_vertical ? size.cx : size.cy;
+		const int32_t ss = pixel(c_splitterSize);
 
-	T_ASSERT(m_moveSplitter >= 0);
+		resetCursor();
 
-	const Size size = getInnerRect().getSize();
-	const int32_t dim = m_vertical ? size.cx : size.cy;
-	const int32_t position = clamp(event->getPosition().x, m_moveSplitterMin, m_moveSplitterMax);
+		for (uint32_t i = 0; i < m_splitters.size(); ++i)
+		{
+			const int32_t position = (int32_t)(m_splitters[i] * dim);
+			if (event->getPosition().x >= position - ss && event->getPosition().x <= position + ss)
+			{
+				setCursor(m_vertical ? Cursor::SizeWE : Cursor::SizeNS);
+				break;
+			}
+		}
+	}
+	else
+	{
+		T_ASSERT(m_moveSplitter >= 0);
 
-	m_splitters[m_moveSplitter] = (float)position / dim;
-	update();
+		const Size size = getInnerRect().getSize();
+		const int32_t dim = m_vertical ? size.cx : size.cy;
+		const int32_t position = clamp(event->getPosition().x, m_moveSplitterMin, m_moveSplitterMax);
+
+		m_splitters[m_moveSplitter] = (float)position / dim;
+		update();
+	}
 }
 
 void MultiSplitter::eventButtonDown(MouseButtonDownEvent* event)
