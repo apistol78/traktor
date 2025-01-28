@@ -35,6 +35,13 @@ namespace
 
 const resource::Id< render::ImageGraph > c_irradiance(L"{14A0E977-7C13-9B43-A26E-F1D21117AEC6}");
 
+struct Reservoir
+{
+	float sample[4];
+	float weight;
+	float pad[3];
+};
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.IrradiancePass", IrradiancePass, Object)
@@ -89,6 +96,17 @@ render::handle_t IrradiancePass::setup(
 	};
 	const auto irradianceTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance", irradianceTargetDesc, ~0U, outputTargetSetId);
 
+	// Add reservoir buffers.
+	const render::RenderGraphBufferDesc reservoirBufferDesc = {
+		.elementSize = sizeof(Reservoir),
+		.elementCount = 0,
+		.referenceWidthMul = 1,
+		.referenceWidthDenom = 1,
+		.referenceHeightMul = 1,
+		.referenceHeightDenom = 1
+	};
+	const auto reservoirBufferId = renderGraph.addPersistentBuffer(L"Reservoir", render::getParameterHandle(L"World_Reservoir_0"), reservoirBufferDesc);
+
 	// Add ambient occlusion render pass.
 	view.viewFrustum = worldRenderView.getViewFrustum();
 	view.view = worldRenderView.getView();
@@ -104,6 +122,7 @@ render::handle_t IrradiancePass::setup(
 	rp->addInput(gbufferTargetSetId);
 	rp->addInput(velocityTargetSetId);
 	rp->addInput(halfResDepthTextureId);
+	rp->addInput(reservoirBufferId);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
@@ -116,6 +135,7 @@ render::handle_t IrradiancePass::setup(
 	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 		const auto halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
+		const auto reservoirBuffer = renderGraph.getBuffer(reservoirBufferId);
 
 		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
@@ -143,6 +163,9 @@ render::handle_t IrradiancePass::setup(
 		}
 		else
 			params->setFloatParameter(s_handleLightCount, 0.0f);
+
+		if (reservoirBuffer != nullptr)
+			params->setBufferViewParameter(s_handleReservoir, reservoirBuffer->getBufferView());
 
 		if (gatheredView.rtWorldTopLevel != nullptr)
 			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);

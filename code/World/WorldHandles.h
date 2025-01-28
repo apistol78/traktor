@@ -84,6 +84,7 @@ extern const render::Handle T_DLLCLASS s_handleDBufferNormalMap;
 extern const render::Handle T_DLLCLASS s_handleHiZTexture;
 extern const render::Handle T_DLLCLASS s_handleTLAS;
 extern const render::Handle T_DLLCLASS s_handleHalfResDepthMap;
+extern const render::Handle T_DLLCLASS s_handleReservoir;
 
 // Culling.
 extern const render::Handle T_DLLCLASS s_handleTargetSize;
