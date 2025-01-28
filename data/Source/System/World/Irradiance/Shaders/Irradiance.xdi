@@ -433,7 +433,7 @@ const int lightIndex = int($Random * $LightCount) % int($LightCount);
 const $typeof(Lights) light = $Lights[lightIndex];
 
 const float Far = 50.0f;
-const int N = 32;
+const int N = 8;
 const mat3 R = Rotate($Direction.xyz, $Random.x);
 const vec2 j = vec2($Random.zw * 0.1f);
 
@@ -603,8 +603,6 @@ $Output = vec4(
 	BlueNoise(seed2),
 	BlueNoise(seed3)
 );
-
-
 			]]>
 			</script>
 		</item>

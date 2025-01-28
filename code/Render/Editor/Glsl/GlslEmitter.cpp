@@ -6,32 +6,49 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
-#include <iomanip>
+#include "Render/Editor/Glsl/GlslEmitter.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/Murmur3.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Render/VertexElement.h"
-#include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Glsl/GlslAccelerationStructure.h"
 #include "Render/Editor/Glsl/GlslContext.h"
-#include "Render/Editor/Glsl/GlslEmitter.h"
 #include "Render/Editor/Glsl/GlslImage.h"
 #include "Render/Editor/Glsl/GlslSampler.h"
 #include "Render/Editor/Glsl/GlslStorageBuffer.h"
 #include "Render/Editor/Glsl/GlslTexture.h"
 #include "Render/Editor/Glsl/GlslUniformBuffer.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/Script.h"
+#include "Render/VertexElement.h"
+
+#include <cstring>
+#include <iomanip>
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 const wchar_t* c_uniformBufferNames[] = { L"UbOnce", L"UbFrame", L"UbDraw" };
+
+bool compareSamplerState(const SamplerState& lh, const SamplerState& rh, bool needW)
+{
+	return
+		lh.minFilter == rh.minFilter &&
+		(rh.ignoreMips || lh.mipFilter == rh.mipFilter) &&
+		lh.magFilter == rh.magFilter &&
+		lh.addressU == rh.addressU &&
+		lh.addressV == rh.addressV &&
+		(!needW || lh.addressW == rh.addressW) &&
+		lh.compare == rh.compare &&
+		abs(lh.mipBias - rh.mipBias) <= FUZZY_EPSILON &&
+		lh.ignoreMips == rh.ignoreMips &&
+		lh.useAnisotropic == rh.useAnisotropic;
+}
 
 uint8_t getBindStage(const GlslContext& cx)
 {
@@ -172,9 +189,9 @@ bool emitArcusCos(GlslContext& cx, ArcusCos* node)
 		cx.pushError(L"Theta not connected or incorrect type.");
 		return false;
 	}
-	
+
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
-	
+
 	comment(f, node);
 	assign(f, out) << L"acos(" << theta->getName() << L");" << Endl;
 
@@ -228,7 +245,7 @@ bool emitColor(GlslContext& cx, Color* node)
 	Color4f value = node->getColor();
 	if (!node->getLinear())
 		value = value.linear();
-	
+
 	comment(f, node);
 	assign(f, out) << L"vec4(" << formatFloat(value.getRed()) << L", " << formatFloat(value.getGreen()) << L", " << formatFloat(value.getBlue()) << L", " << formatFloat(value.getAlpha()) << L");" << Endl;
 
@@ -290,9 +307,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 					GlslResource::Set::Default,
 					GlslResource::BsCompute,
 					glsl_from_parameter_type(storageUniformNode->getParameterType()),
-					false
-				)
-			);
+					false));
 		}
 
 		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -317,8 +332,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			storageUniformNode->getParameterName(),
 			storageUniformNode->getParameterType(),
 			1,
-			UpdateFrequency::Draw
-		);
+			UpdateFrequency::Draw);
 	}
 	else if (const Struct* storageStructNode = dynamic_type_cast< const Struct* >(storage))
 	{
@@ -342,22 +356,20 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 				storageStructNode->getParameterName(),
 				GlslResource::Set::Default,
 				getBindStage(cx),
-				false
-			);
+				false);
 			for (const auto& element : storageStructNode->getElements())
 				storageBuffer->add(element.name, element.type, element.length);
 			cx.getLayout().add(storageBuffer);
 
 			auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-			f << storageStructNode->getParameterName() << L".data[" << offset->cast(GlslType::Integer) << L"]." << /*node->getName()*/L"fieldName" << L" = " << in->cast(GlslType::Float4) << L";" << Endl;
+			f << storageStructNode->getParameterName() << L".data[" << offset->cast(GlslType::Integer) << L"]." << /*node->getName()*/ L"fieldName" << L" = " << in->cast(GlslType::Float4) << L";" << Endl;
 
 			// Define parameter in context.
 			cx.addParameter(
 				storageStructNode->getParameterName(),
 				ParameterType::StructBuffer,
 				1,
-				UpdateFrequency::Draw
-			);
+				UpdateFrequency::Draw);
 		}
 	}
 	else
@@ -664,7 +676,7 @@ bool emitDiv(GlslContext& cx, Div* node)
 	}
 
 	GlslType type = glsl_promote_to_float(glsl_precedence(in1->getType(), in2->getType()));
-	
+
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -816,8 +828,7 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 
 	Ref< GlslVariable > out = cx.getShader().createTemporaryVariable(
 		node->findOutputPin(L"Output"),
-		glsl_from_parameter_type(node->getParameterType())
-	);
+		glsl_from_parameter_type(node->getParameterType()));
 
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
@@ -854,8 +865,7 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 		node->getParameterName(),
 		node->getParameterType(),
 		node->getLength(),
-		node->getFrequency()
-	);
+		node->getFrequency());
 	return true;
 }
 
@@ -967,8 +977,7 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 	cx.getFragmentShader().createOuterVariable(
 		node->findOutputPin(L"Output"),
 		interpolatorMask,
-		glsl_promote_to_float(in->getType())
-	);
+		glsl_promote_to_float(in->getType()));
 
 	if (declare)
 	{
@@ -1075,8 +1084,7 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 
 	// Create void output variables; change type later when we know
 	// the type of the input branches.
-	Ref< GlslVariable > out[] =
-	{
+	Ref< GlslVariable > out[] = {
 		cx.getInputNode(node, L"Input0") != nullptr ? cx.emitOutput(node, L"Output0", GlslType::Void) : nullptr,
 		cx.getInputNode(node, L"Input1") != nullptr ? cx.emitOutput(node, L"Output1", GlslType::Void) : nullptr,
 		cx.getInputNode(node, L"Input2") != nullptr ? cx.emitOutput(node, L"Output2", GlslType::Void) : nullptr,
@@ -1122,8 +1130,7 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 	cx.getShader().pushScope();
 
 	{
-		Ref< GlslVariable > input[] =
-		{
+		Ref< GlslVariable > input[] = {
 			cx.emitInput(node, L"Input0"),
 			cx.emitInput(node, L"Input1"),
 			cx.emitInput(node, L"Input2"),
@@ -1167,20 +1174,17 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 
 	// As we now know the type of output variable we can safely
 	// initialize it.
-	Ref< GlslVariable > initial[] =
-	{
+	Ref< GlslVariable > initial[] = {
 		out[0] != nullptr ? cx.emitInput(node, L"Initial0") : nullptr,
 		out[1] != nullptr ? cx.emitInput(node, L"Initial1") : nullptr,
 		out[2] != nullptr ? cx.emitInput(node, L"Initial2") : nullptr,
 		out[3] != nullptr ? cx.emitInput(node, L"Initial3") : nullptr
 	};
 	for (int32_t i = 0; i < 4; ++i)
-	{
 		if (out[i] && initial[i])
 			assignMutable(f, out[i]) << initial[i]->cast(out[i]->getType()) << L";" << Endl;
 		else if (out[i])
 			assignMutable(f, out[i]) << expandScalar(0.0f, out[i]->getType()) << L";" << Endl;
-	}
 
 	// Write outer for-loop statement.
 	StringOutputStream ss;
@@ -1383,7 +1387,7 @@ bool emitLog(GlslContext& cx, Log* node)
 		break;
 
 	case Log::LbTen:
-		T_ASSERT_M (0, L"Log::LbTen not available in GLSL");
+		T_ASSERT_M(0, L"Log::LbTen not available in GLSL");
 		break;
 
 	case Log::LbNatural:
@@ -1408,9 +1412,9 @@ bool emitMatrixIn(GlslContext& cx, MatrixIn* node)
 	comment(f, node);
 	f << L"mat4 " << out->getName() << L" = mat4(" << Endl;
 	f << IncreaseIndent;
-	f << (xaxis     ? xaxis->cast(GlslType::Float4)     : L"vec4(1.0, 0.0, 0.0, 0.0)") << L"," << Endl;
-	f << (yaxis     ? yaxis->cast(GlslType::Float4)     : L"vec4(0.0, 1.0, 0.0, 0.0)") << L"," << Endl;
-	f << (zaxis     ? zaxis->cast(GlslType::Float4)     : L"vec4(0.0, 0.0, 1.0, 0.0)") << L"," << Endl;
+	f << (xaxis ? xaxis->cast(GlslType::Float4) : L"vec4(1.0, 0.0, 0.0, 0.0)") << L"," << Endl;
+	f << (yaxis ? yaxis->cast(GlslType::Float4) : L"vec4(0.0, 1.0, 0.0, 0.0)") << L"," << Endl;
+	f << (zaxis ? zaxis->cast(GlslType::Float4) : L"vec4(0.0, 0.0, 1.0, 0.0)") << L"," << Endl;
 	f << (translate ? translate->cast(GlslType::Float4) : L"vec4(0.0, 0.0, 0.0, 1.0)") << Endl;
 	f << DecreaseIndent;
 	f << L");" << Endl;
@@ -1487,8 +1491,7 @@ bool emitMixIn(GlslContext& cx, MixIn* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-	Ref< GlslVariable > in[4] =
-	{
+	Ref< GlslVariable > in[4] = {
 		cx.emitInput(node, L"X"),
 		cx.emitInput(node, L"Y"),
 		cx.emitInput(node, L"Z"),
@@ -2026,28 +2029,14 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	std::wstring samplerName;
 
 	// Check if we already have a suitable sampler in the layout.
-	for (auto resource : cx.getLayout().get())
+	for (auto sampler : cx.getLayout().get< GlslSampler >())
 	{
-		if (auto sampler = dynamic_type_cast< GlslSampler* >(resource))
+		const auto& rh = sampler->getState();
+		if (compareSamplerState(rh, samplerState, texture->getType() == GlslType::Texture2D))
 		{
-			const auto& rh = sampler->getState();
-			if (
-				rh.minFilter == samplerState.minFilter &&
-				(samplerState.ignoreMips || rh.mipFilter == samplerState.mipFilter) &&
-				rh.magFilter == samplerState.magFilter &&
-				rh.addressU == samplerState.addressU &&
-				rh.addressV == samplerState.addressV &&
-				(texture->getType() == GlslType::Texture2D) || (rh.addressW == samplerState.addressW) &&
-				rh.compare == samplerState.compare &&
-				abs(rh.mipBias - samplerState.mipBias) <= FUZZY_EPSILON &&
-				rh.ignoreMips == samplerState.ignoreMips &&
-				rh.useAnisotropic == samplerState.useAnisotropic
-			)
-			{
-				samplerName = sampler->getName();
-				sampler->addStage(getBindStage(cx));
-				break;
-			}
+			samplerName = sampler->getName();
+			sampler->addStage(getBindStage(cx));
+			break;
 		}
 	}
 
@@ -2060,9 +2049,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				samplerName,
 				GlslResource::Set::Default,
 				getBindStage(cx),
-				samplerState
-			)
-		);
+				samplerState));
 	}
 
 	comment(f, node);
@@ -2115,8 +2102,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				}
 			}
 		}
-		else	// Compare
-		{
+		else // Compare
 			if (!mip && !samplerState.ignoreMips)
 			{
 				switch (texture->getType())
@@ -2146,18 +2132,17 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 					break;
 
 				case GlslType::Texture3D:
-					assign(f, out) << L"textureLod(sampler3DShadow(__bindlessTextures3D__[" << textureName << L"], " << samplerName << L"), " <<  texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+					assign(f, out) << L"textureLod(sampler3DShadow(__bindlessTextures3D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 					break;
 
 				case GlslType::TextureCube:
-					assign(f, out) << L"textureLod(samplerCubeShadow(__bindlessTexturesCube__[" << textureName << L"], " << samplerName << L"), " <<  texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+					assign(f, out) << L"textureLod(samplerCubeShadow(__bindlessTexturesCube__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 					break;
 
 				default:
 					return false;
 				}
 			}
-		}
 	}
 
 	if (cx.inVertex())
@@ -2170,8 +2155,8 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 		case GlslType::Texture3D:
 		case GlslType::TextureCube:
-        default:
-            return false;
+		default:
+			return false;
 		}
 	}
 
@@ -2197,7 +2182,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				return false;
 			}
 		}
-		else	// Compare
+		else // Compare
 		{
 			switch (texture->getType())
 			{
@@ -2309,8 +2294,7 @@ bool emitScript(GlslContext& cx, Script* node)
 		outs[i] = cx.emitOutput(
 			node,
 			outputPin->getName(),
-			glsl_from_parameter_type(outputPin->getType())
-		);
+			glsl_from_parameter_type(outputPin->getType()));
 		f << glsl_type_name(outs[i]->getType()) << L" " << outs[i]->getName() << L";" << Endl;
 	}
 
@@ -2328,16 +2312,13 @@ bool emitScript(GlslContext& cx, Script* node)
 			std::wstring samplerName;
 
 			// Check if we already have a suitable sampler in the layout.
-			for (auto resource : cx.getLayout().get())
+			for (auto sampler : cx.getLayout().get< GlslSampler >())
 			{
-				if (auto sampler = dynamic_type_cast< GlslSampler* >(resource))
+				if (compareSamplerState(sampler->getState(), samplerState, true))
 				{
-					if (std::memcmp(&sampler->getState(), &samplerState, sizeof(SamplerState)) == 0)
-					{
-						samplerName = sampler->getName();
-						sampler->addStage(getBindStage(cx));
-						break;
-					}
+					samplerName = sampler->getName();
+					sampler->addStage(getBindStage(cx));
+					break;
 				}
 			}
 
@@ -2350,9 +2331,7 @@ bool emitScript(GlslContext& cx, Script* node)
 						samplerName,
 						GlslResource::Set::Default,
 						getBindStage(cx),
-						samplerState
-					)
-				);
+						samplerState));
 			}
 
 			ins[i] = new GlslVariable(nullptr, samplerName, GlslType::Void);
@@ -2379,8 +2358,7 @@ bool emitScript(GlslContext& cx, Script* node)
 					indexedUniform->getParameterName(),
 					indexedUniform->getParameterType(),
 					indexedUniform->getLength(),
-					indexedUniform->getFrequency()
-				);
+					indexedUniform->getFrequency());
 
 				ins[i] = new GlslVariable(nullptr, indexedUniform->getParameterName(), parameterType);
 			}
@@ -2537,8 +2515,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 	Ref< GlslVariable > out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		node->getParameterName() + L".data",
-		GlslType::StructBuffer
-	);
+		GlslType::StructBuffer);
 
 	const auto existing = cx.getLayout().getByName(node->getParameterName());
 	if (existing != nullptr)
@@ -2562,8 +2539,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 			node->getParameterName(),
 			GlslResource::Set::Default,
 			getBindStage(cx),
-			false
-		);
+			false);
 		for (const auto& element : node->getElements())
 			storageBuffer->add(element.name, element.type, element.length);
 		cx.getLayout().add(storageBuffer);
@@ -2574,8 +2550,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 		node->getParameterName(),
 		ParameterType::StructBuffer,
 		1,
-		UpdateFrequency::Draw
-	);
+		UpdateFrequency::Draw);
 
 	return true;
 }
@@ -2694,10 +2669,8 @@ bool emitSwizzle(GlslContext& cx, Swizzle* node)
 
 	bool containConstant = false;
 	for (size_t i = 0; i < map.length() && !containConstant; ++i)
-	{
 		if (map[i] == L'0' || map[i] == L'1')
 			containConstant = true;
-	}
 
 	StringOutputStream ss;
 	if (containConstant || (map.length() > 1 && in->getType() == GlslType::Float))
@@ -2836,7 +2809,7 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 		for (int32_t i = 0; i < width; ++i)
 		{
 			auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
-	
+
 			const InputPin* defaultInput = node->getInputPin(1 + i);
 			if (!defaultInput)
 			{
@@ -3040,8 +3013,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 	Ref< GlslVariable > out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		node->getParameterName(),
-		glsl_from_parameter_type(node->getParameterType())
-	);
+		glsl_from_parameter_type(node->getParameterType()));
 	if (!out)
 		return false;
 
@@ -3081,9 +3053,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 					GlslResource::Set::Default,
 					getBindStage(cx),
 					out->getType(),
-					false
-				)
-			);
+					false));
 		}
 
 		// Texture parameter; since resource index is passed to shader we define an integer uniform.
@@ -3119,9 +3089,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 					GlslResource::Set::Default,
 					getBindStage(cx),
 					out->getType(),
-					false
-				)
-			);
+					false));
 		}
 
 		// Image parameter; since resource index is passed to shader we define an integer uniform.
@@ -3153,9 +3121,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 				new GlslAccelerationStructure(
 					node->getParameterName(),
 					GlslResource::Set::Default,
-					getBindStage(cx)
-				)
-			);
+					getBindStage(cx)));
 		}
 	}
 
@@ -3164,8 +3130,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 		node->getParameterName(),
 		node->getParameterType(),
 		1,
-		node->getFrequency()
-	);
+		node->getFrequency());
 
 	return true;
 }
@@ -3180,10 +3145,8 @@ bool emitVector(GlslContext& cx, Vector* node)
 
 	bool integer = true;
 	for (int32_t i = 0; i < 4; ++i)
-	{
 		if ((e[i] - std::floor(e[i])) >= FUZZY_EPSILON)
 			integer = false;
-	}
 
 	if (integer)
 	{
@@ -3220,8 +3183,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 		{
 			out = cx.getShader().createTemporaryVariable(
 				node->findOutputPin(L"Output"),
-				GlslType::Float4
-			);
+				GlslType::Float4);
 			auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 			switch (type)
 			{
@@ -3248,8 +3210,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 		{
 			out = cx.getShader().createTemporaryVariable(
 				node->findOutputPin(L"Output"),
-				GlslType::Float4
-			);
+				GlslType::Float4);
 			auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 			switch (type)
 			{
@@ -3277,8 +3238,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 			out = cx.getShader().createVariable(
 				node->findOutputPin(L"Output"),
 				attributeName,
-				type
-			);
+				type);
 		}
 
 		cx.getShader().addInputVariable(node->getName(), out);
@@ -3288,8 +3248,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 		out = cx.getShader().createVariable(
 			node->findOutputPin(L"Output"),
 			out->getName(),
-			out->getType()
-		);
+			out->getType());
 	}
 
 	return true;
@@ -3337,7 +3296,7 @@ bool emitVertexOutput(GlslContext& cx, VertexOutput* node)
 	return true;
 }
 
-	}
+}
 
 struct Emitter
 {
@@ -3354,7 +3313,7 @@ struct EmitterCast : public Emitter
 	function_t m_function;
 
 	explicit EmitterCast(function_t function)
-	:	m_function(function)
+		: m_function(function)
 	{
 	}
 
@@ -3445,7 +3404,7 @@ GlslEmitter::~GlslEmitter()
 		delete emitter.second;
 }
 
-#pragma optimize( "", off )
+#pragma optimize("", off)
 
 bool GlslEmitter::emit(GlslContext& c, Node* node)
 {
@@ -3461,6 +3420,6 @@ bool GlslEmitter::emit(GlslContext& c, Node* node)
 	return result;
 }
 
-#pragma optimize ( "", on )
+#pragma optimize("", on)
 
 }

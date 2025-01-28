@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Render/Types.h"
 #include "Render/Editor/Glsl/GlslResource.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,7 +21,7 @@
 
 namespace traktor::render
 {
-	
+
 class T_DLLCLASS GlslSampler : public GlslResource
 {
 	T_RTTI_CLASS;
@@ -33,11 +33,13 @@ public:
 
 	const std::wstring& getTextureName() const { return m_textureName; }
 
+	virtual int32_t getClassOrdinal() const override final { return 0; }
+
 	virtual int32_t getOrdinal() const override final;
 
 private:
 	SamplerState m_state;
-	std::wstring m_textureName;	//!< Bound texture with sampler, only used in OpenGL since samplers and textures are bound.
+	std::wstring m_textureName; //!< Bound texture with sampler, only used in OpenGL since samplers and textures are bound.
 };
 
 }

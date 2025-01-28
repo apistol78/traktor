@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,13 +31,13 @@ void GlslLayout::add(GlslResource* resource)
 {
 	m_dynamicResources.push_back(resource);
 	m_dynamicResources.sort([](const GlslResource* r0, const GlslResource* r1) -> bool {
-		const wchar_t* tn0 = type_name(r0);
-		const wchar_t* tn1 = type_name(r1);
-		const int32_t c = wcscmp(tn0, tn1);
-		if (c < 0)
+		// First group by class ordinal so each resource type is clustered.
+		if (r0->getClassOrdinal() > r1->getClassOrdinal())
 			return false;
-		else if (c > 0)
+		else if (r0->getClassOrdinal() < r1->getClassOrdinal())
 			return true;
+
+		// Then sort on resource ordinal within each group.
 		if (r0->getOrdinal() >= r1->getOrdinal())
 			return false;
 		else
@@ -86,10 +86,8 @@ RefArray< GlslResource > GlslLayout::getBySet(GlslResource::Set set)
 {
 	RefArray< GlslResource > setResources;
 	for (auto resource : m_resources)
-	{
 		if (resource->getSet() == set)
 			setResources.push_back(resource);
-	}
 	return setResources;
 }
 
@@ -97,10 +95,8 @@ RefArray< GlslResource > GlslLayout::getByStage(uint8_t stageMask) const
 {
 	RefArray< GlslResource > stageResources;
 	for (auto resource : m_resources)
-	{
 		if ((resource->getStages() & stageMask) != 0)
 			stageResources.push_back(resource);
-	}
 	return stageResources;
 }
 
@@ -108,10 +104,8 @@ uint32_t GlslLayout::count(const TypeInfo& resourceType, uint8_t stageMask) cons
 {
 	uint32_t c = 0;
 	for (auto resource : m_resources)
-	{
 		if ((resource->getStages() & stageMask) != 0 && is_type_a(resourceType, type_of(resource)))
 			++c;
-	}
 	return c;
 }
 

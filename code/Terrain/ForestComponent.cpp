@@ -161,7 +161,7 @@ void ForestComponent::build(
 	extraParameters->beginParameters(renderContext);
 	extraParameters->setTextureParameter(s_handleTerrain_Normals, terrain->getNormalMap());
 	extraParameters->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
-	extraParameters->setTextureParameter(s_handleTerrain_Surface, terrainComponent->getSurfaceCache(worldRenderView.getIndex())->getBaseTexture());
+	extraParameters->setTextureParameter(s_handleTerrain_Surface, terrainComponent->getSurfaceCache()->getBaseTexture());
 	extraParameters->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
 	extraParameters->setVectorParameter(s_handleForest_Eye, eye);
 	extraParameters->endParameters(renderContext);

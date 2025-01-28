@@ -116,7 +116,7 @@ public:
 
 	const resource::Proxy< Terrain >& getTerrain() const { return m_terrain; }
 
-	TerrainSurfaceCache* getSurfaceCache(int32_t viewIndex) const { return m_view[viewIndex].surfaceCache; }
+	TerrainSurfaceCache* getSurfaceCache() const { return m_surfaceCache; }
 
 	const AlignedVector< Patch >& getPatches() const { return m_patches; }
 
@@ -157,7 +157,6 @@ private:
 
 	struct View
 	{
-		Ref< TerrainSurfaceCache > surfaceCache;
 		AlignedVector< ViewPatch > viewPatches;
 		AlignedVector< CullPatch > visiblePatches;
 		AlignedVector< const CullPatch* > patchLodInstances[LodCount];
@@ -173,6 +172,7 @@ private:
 	AlignedVector< Patch > m_patches;
 	uint32_t m_patchCount = 0;
 	uint32_t m_cacheSize = 0;
+	Ref< TerrainSurfaceCache > m_surfaceCache;
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_indexBuffer;
 	Ref< render::Buffer > m_vertexBuffer;
@@ -197,7 +197,7 @@ private:
 
 	bool validate(int32_t viewIndex, uint32_t cacheSize);
 
-	void updatePatches(const uint32_t* region, bool updateErrors, bool flushPatchCache);
+	void updatePatches(const uint32_t* region, bool updateErrors);
 
 	void updateRayTracingPatches();
 

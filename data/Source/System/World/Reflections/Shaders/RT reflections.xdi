@@ -5,7 +5,7 @@
 			<id>{E2ADF1B8-268B-CC40-9E1E-C44D579723C9}</id>
 			<comment/>
 			<position>
-				<first>1216</first>
+				<first>1179</first>
 				<second>-1293</second>
 			</position>
 			<name>L_Roughness</name>
@@ -123,7 +123,7 @@
 			<id>{E06E5135-8931-6048-AF43-D93860225F1F}</id>
 			<comment/>
 			<position>
-				<first>1216</first>
+				<first>1179</first>
 				<second>-1207</second>
 			</position>
 			<name>L_Specular</name>
@@ -248,8 +248,8 @@ $Output = ($Roughness < 0.6f && $Specular > 0.1f) ? 1.0f : 0.0f;
 const int lightIndex = int($Random * $LightCount) % int($LightCount);
 const $typeof(Lights) light = $Lights[lightIndex];
 
-const int N = 64;
-const float Far = 100.0f;
+const int N = 8;
+const float Far = 50.0f;
 
 vec3 u, v;
 OrthogonalFrame($Direction.xyz, u, v);
@@ -397,7 +397,7 @@ $Output = vec4(acc.xyz / N, acc.w / N);
 			<id>{E7E30B72-0E2C-504C-82A8-1E34010BD877}</id>
 			<comment/>
 			<position>
-				<first>924</first>
+				<first>933</first>
 				<second>-86</second>
 			</position>
 			<swizzle>xyz0</swizzle>
@@ -406,7 +406,7 @@ $Output = vec4(acc.xyz / N, acc.w / N);
 			<id>{A6D92F0F-5C75-CE4E-A50B-120F9CF4380F}</id>
 			<comment/>
 			<position>
-				<first>571</first>
+				<first>604</first>
 				<second>-281</second>
 			</position>
 			<swizzle>xyz1</swizzle>
@@ -433,7 +433,7 @@ $Output = vec4(acc.xyz / N, acc.w / N);
 			<id>{863AA911-6A60-E74E-BB6C-8DD8390D8947}</id>
 			<comment/>
 			<position>
-				<first>427</first>
+				<first>510</first>
 				<second>-43</second>
 			</position>
 		</item>
@@ -450,7 +450,7 @@ $Output = vec4(acc.xyz / N, acc.w / N);
 			<id>{E2339071-13AD-A84D-8AAA-119824FA2B88}</id>
 			<comment/>
 			<position>
-				<first>675</first>
+				<first>725</first>
 				<second>-89</second>
 			</position>
 		</item>
@@ -458,7 +458,7 @@ $Output = vec4(acc.xyz / N, acc.w / N);
 			<id>{D0F80284-FE2B-F848-B2D6-D75221015981}</id>
 			<comment/>
 			<position>
-				<first>416</first>
+				<first>520</first>
 				<second>-107</second>
 			</position>
 			<swizzle>xyz</swizzle>
@@ -467,7 +467,7 @@ $Output = vec4(acc.xyz / N, acc.w / N);
 			<id>{7988199D-14B3-CC43-903C-887ECA1C5325}</id>
 			<comment/>
 			<position>
-				<first>1137</first>
+				<first>1203</first>
 				<second>53</second>
 			</position>
 			<name>RandomAngle</name>
@@ -507,7 +507,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{FDA3F035-EDA7-504B-BEF4-35D83D148C5B}</id>
 			<comment/>
 			<position>
-				<first>676</first>
+				<first>751</first>
 				<second>56</second>
 			</position>
 			<declaration>{85AE3209-AEBC-1143-B9AA-15E7E29380B0}</declaration>
@@ -519,7 +519,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{6F7BCCC1-5AC7-604A-B013-CE07E5DA68CE}</id>
 			<comment/>
 			<position>
-				<first>909</first>
+				<first>933</first>
 				<second>66</second>
 			</position>
 			<swizzle>x</swizzle>
@@ -528,7 +528,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{3804218D-AAFA-B243-98A7-D1322FA0F4B9}</id>
 			<comment/>
 			<position>
-				<first>1098</first>
+				<first>1213</first>
 				<second>172</second>
 			</position>
 			<name>L_Roughness</name>
@@ -537,7 +537,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{C40533A0-11D5-6844-94F9-05837B35ECE4}</id>
 			<comment/>
 			<position>
-				<first>488</first>
+				<first>510</first>
 				<second>164</second>
 			</position>
 		</item>
@@ -562,7 +562,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{7BBFFC33-69FB-4B4C-AB62-737CF95FD70B}</id>
 			<comment/>
 			<position>
-				<first>1093</first>
+				<first>1203</first>
 				<second>241</second>
 			</position>
 			<min>0</min>
@@ -601,7 +601,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{4828452D-324C-0948-AF63-5FB5A4359472}</id>
 			<comment/>
 			<position>
-				<first>916</first>
+				<first>908</first>
 				<second>-1415</second>
 			</position>
 			<fragmentGuid>{B8A2B203-34E6-3543-8502-522D0F16791C}</fragmentGuid>
@@ -631,7 +631,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{26DF9955-5B45-7946-88C8-E3F3375EA9AA}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
+				<first>1179</first>
 				<second>-1510</second>
 			</position>
 			<swizzle>xyz</swizzle>
@@ -649,7 +649,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{501E24E8-F230-8B4F-A667-94AA7E50DA51}</id>
 			<comment/>
 			<position>
-				<first>951</first>
+				<first>908</first>
 				<second>-1510</second>
 			</position>
 			<fragmentGuid>{9242C87C-F61C-0F4D-9EDC-DC1BD46DB468}</fragmentGuid>
@@ -700,7 +700,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{934D658E-01BB-1D4A-9C48-A2F019D4D0D7}</id>
 			<comment/>
 			<position>
-				<first>1068</first>
+				<first>1197</first>
 				<second>461</second>
 			</position>
 			<declaration>{23B778E5-02E9-3A41-A252-D491C301D479}</declaration>
@@ -712,7 +712,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{47C0506B-ECB7-3C4B-BF40-082D76BE2168}</id>
 			<comment/>
 			<position>
-				<first>1006</first>
+				<first>1127</first>
 				<second>376</second>
 			</position>
 			<parameterName>World_LightSBuffer</parameterName>
@@ -773,7 +773,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{72188EED-61A7-7C4C-A1F5-CBFDB9801E38}</id>
 			<comment/>
 			<position>
-				<first>1079</first>
+				<first>1181</first>
 				<second>541</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
@@ -833,7 +833,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{C83EEA8E-424A-B14D-9889-B8095AD51A30}</id>
 			<comment/>
 			<position>
-				<first>2245</first>
+				<first>2284</first>
 				<second>-772</second>
 			</position>
 			<name>L_ReflectionN</name>
@@ -842,7 +842,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{6AA1180D-8328-5949-9EA4-9BBC0DBA11B4}</id>
 			<comment/>
 			<position>
-				<first>2247</first>
+				<first>2284</first>
 				<second>-730</second>
 			</position>
 			<name>L_Reflection0</name>
@@ -851,8 +851,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{25D42650-8529-FB45-A23D-90F3DDEB5027}</id>
 			<comment/>
 			<position>
-				<first>2521</first>
-				<second>-745</second>
+				<first>2569</first>
+				<second>-744</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
@@ -862,13 +862,13 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 				<first>2294</first>
 				<second>-661</second>
 			</position>
-			<value>0.3</value>
+			<value>0.1</value>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{53CBDD75-FB08-494C-AF9C-3E691AE0A8A7}</id>
 			<comment/>
 			<position>
-				<first>1021</first>
+				<first>1057</first>
 				<second>-630</second>
 			</position>
 			<declaration>{B98DFF6C-6228-B945-B698-6CB2673E1A87}</declaration>
@@ -880,7 +880,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{A2309170-E199-1941-96A2-41058BE61ACE}</id>
 			<comment/>
 			<position>
-				<first>1302</first>
+				<first>1312</first>
 				<second>-625</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
@@ -898,7 +898,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{9314A549-BF78-844A-93C7-958B4157A604}</id>
 			<comment/>
 			<position>
-				<first>1557</first>
+				<first>1644</first>
 				<second>-574</second>
 			</position>
 		</item>
@@ -906,7 +906,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{B27D8DD1-B4A9-B448-962B-4ECCA8D8C3D6}</id>
 			<comment/>
 			<position>
-				<first>1299</first>
+				<first>1316</first>
 				<second>-498</second>
 			</position>
 			<value>-0.5, 0.5, 0, 0</value>
@@ -943,7 +943,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{4161F9B4-05EC-BB47-AB03-62A75C4EFA58}</id>
 			<comment/>
 			<position>
-				<first>1322</first>
+				<first>1360</first>
 				<second>-785</second>
 			</position>
 			<name>IsClipped</name>
@@ -994,7 +994,7 @@ else
 			<id>{6D46CE95-B67F-D143-9AD4-6D820425E3F0}</id>
 			<comment/>
 			<position>
-				<first>1331</first>
+				<first>1370</first>
 				<second>-859</second>
 			</position>
 			<name>L_Reflection0</name>

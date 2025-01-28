@@ -39,7 +39,6 @@ const resource::Id< render::Shader > c_shaderCull(L"{8BA73DD8-0FD9-4C15-A772-EAC
 const render::Handle c_handleTerrain_VisualizeLods(L"Terrain_VisualizeLods");
 const render::Handle c_handleTerrain_VisualizeMap(L"Terrain_VisualizeMap");
 const render::Handle c_handleTerrain_SurfaceAlbedo(L"Terrain_SurfaceAlbedo");
-const render::Handle c_handleTerrain_SurfaceNormals(L"Terrain_SurfaceNormals");
 const render::Handle c_handleTerrain_SurfaceOffset(L"Terrain_SurfaceOffset");
 const render::Handle c_handleTerrain_Heightfield(L"Terrain_Heightfield");
 const render::Handle c_handleTerrain_ColorMap(L"Terrain_ColorMap");
@@ -272,12 +271,8 @@ void TerrainComponent::setup(
 			else
 			{
 				ViewPatch& viewPatch = m_view[viewIndex].viewPatches[patchId];
-
 				viewPatch.lastPatchLod = c_patchLodSteps;
 				viewPatch.lastSurfaceLod = c_surfaceLodSteps;
-
-				if (!snapshot)
-					m_view[viewIndex].surfaceCache->flush(patchId);
 			}
 
 			patchOrigin += patchDeltaX;
@@ -329,27 +324,13 @@ void TerrainComponent::setup(
 		viewPatch.lastSurfaceLod = surfaceLod;
 		viewPatch.surfaceOffset = Vector4::zero();
 
-		// Update surface cache.
-		if (!snapshot)
-			m_view[viewIndex].surfaceCache->setupPatch(
-				context.getRenderGraph(),
-				m_terrain,
-				-worldExtent * 0.5_simd,
-				worldExtent,
-				patchOrigin,
-				patchExtent,
-				viewPatch.lastSurfaceLod,
-				visiblePatch.patchId,
-				// Out
-				viewPatch.surfaceOffset);
-
 		// Queue patch instance.
 		m_view[viewIndex].patchLodInstances[patchLod].push_back(&visiblePatch);
 	}
 
 	// Update base color texture.
 	if (!snapshot)
-		m_view[viewIndex].surfaceCache->setupBaseColor(
+		m_surfaceCache->setupBaseColor(
 			context.getRenderGraph(),
 			m_terrain,
 			-worldExtent * 0.5_simd,
@@ -480,20 +461,12 @@ void TerrainComponent::build(
 		else
 			rb->drawBuffer = m_drawBuffer->getBufferView();
 
-		rb->drawCount = m_view[viewIndex].visiblePatches.size();
+		rb->drawCount = (uint32_t)m_view[viewIndex].visiblePatches.size();
 
 		rb->programParams->beginParameters(renderContext);
 
 		rb->programParams->setTextureParameter(c_handleTerrain_Heightfield, m_terrain->getHeightMap());
-		if (!snapshot)
-		{
-			rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_view[viewIndex].surfaceCache->getVirtualAlbedo());
-			rb->programParams->setTextureParameter(c_handleTerrain_SurfaceNormals, m_view[viewIndex].surfaceCache->getVirtualNormals());
-		}
-		else
-		{
-			rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_view[viewIndex].surfaceCache->getBaseTexture());
-		}
+		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_surfaceCache->getBaseTexture());
 		rb->programParams->setTextureParameter(c_handleTerrain_ColorMap, m_terrain->getColorMap() ? m_terrain->getColorMap().getResource() : m_defaultColorMap.ptr());
 		rb->programParams->setTextureParameter(c_handleTerrain_Normals, m_terrain->getNormalMap());
 		rb->programParams->setTextureParameter(c_handleTerrain_SplatMap, m_terrain->getSplatMap());
@@ -587,9 +560,24 @@ void TerrainComponent::update(const world::UpdateParams& update)
 
 bool TerrainComponent::validate(int32_t viewIndex, uint32_t cacheSize)
 {
+	const bool cacheSizeChange = (m_surfaceCache == nullptr) || (cacheSize != m_cacheSize);
+
+	if (cacheSizeChange)
+	{
+		safeDestroy(m_surfaceCache);
+		m_surfaceCache = new TerrainSurfaceCache();
+		if (!m_surfaceCache->create(m_resourceManager, m_renderSystem, cacheSize))
+		{
+			m_surfaceCache = nullptr;
+			return false;
+		}
+		m_cacheSize = cacheSize;
+	}
+
 	if (
 		m_terrain.changed() ||
-		m_heightfield.changed())
+		m_heightfield.changed() ||
+		cacheSizeChange)
 	{
 		m_heightfield.consume();
 		m_terrain.consume();
@@ -600,27 +588,10 @@ bool TerrainComponent::validate(int32_t viewIndex, uint32_t cacheSize)
 			return false;
 	}
 
-	if (cacheSize != m_cacheSize)
-	{
-		for (uint32_t i = 0; i < sizeof_array(m_view); ++i)
-			safeDestroy(m_view[i].surfaceCache);
-		m_cacheSize = cacheSize;
-	}
-
-	if (!m_view[viewIndex].surfaceCache)
-	{
-		m_view[viewIndex].surfaceCache = new TerrainSurfaceCache();
-		if (!m_view[viewIndex].surfaceCache->create(m_resourceManager, m_renderSystem, cacheSize))
-		{
-			m_view[viewIndex].surfaceCache = nullptr;
-			return false;
-		}
-	}
-
 	return true;
 }
 
-void TerrainComponent::updatePatches(const uint32_t* region, bool updateErrors, bool flushPatchCache)
+void TerrainComponent::updatePatches(const uint32_t* region, bool updateErrors)
 {
 	const uint32_t patchDim = m_terrain->getPatchDim();
 	const uint32_t heightfieldSize = m_heightfield->getSize();
@@ -646,13 +617,6 @@ void TerrainComponent::updatePatches(const uint32_t* region, bool updateErrors, 
 				patch.error[1] = patchData.error[0];
 				patch.error[2] = patchData.error[1];
 				patch.error[3] = patchData.error[2];
-			}
-
-			if (flushPatchCache)
-			{
-				for (int32_t i = 0; i < sizeof_array(m_view); ++i)
-					if (m_view[i].surfaceCache)
-						m_view[i].surfaceCache->flush(patchId);
 			}
 		}
 	}
@@ -724,7 +688,7 @@ bool TerrainComponent::createPatches()
 		}
 	}
 
-	updatePatches(nullptr, true, true);
+	updatePatches(nullptr, true);
 
 	m_indices.resize(0);
 	for (uint32_t lod = 0; lod < LodCount; ++lod)
@@ -935,7 +899,7 @@ bool TerrainComponent::createRayTracingPatches()
 			if (!m_rtVertexBuffers[patchId])
 				return false;
 
-			// Shrink to RT terrain a bit to reduce self intersection due
+			// Shrink the RT terrain a bit to reduce self intersection due
 			// to mismatch between GBuffer and RT geometry.
 			const Scalar elevationOffset = -1.0_simd;
 
@@ -997,8 +961,9 @@ bool TerrainComponent::createRayTracingPatches()
 				Vector4(0.2f, 0.4f, 0.1f, 0.0f).storeUnaligned(va->albedo);
 				normal.storeUnaligned(va->normal);
 
-				va->texCoord[0] = va->texCoord[1] = 0.0f;
-				va->albedoMap = -1;
+				va->texCoord[0] = gridX / m_heightfield->getSize();
+				va->texCoord[1] = gridZ / m_heightfield->getSize();
+				va->albedoMap = (m_surfaceCache != nullptr && m_surfaceCache->getBaseTexture() != nullptr) ? m_surfaceCache->getBaseTexture()->getBindlessIndex() : -1;
 
 				va++;
 			}

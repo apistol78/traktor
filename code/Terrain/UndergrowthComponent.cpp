@@ -279,7 +279,7 @@ void UndergrowthComponent::build(
 	worldRenderPass.setProgramParameters(renderBlock->programParams);
 	renderBlock->programParams->setTextureParameter(s_handleTerrain_Normals, terrain->getNormalMap());
 	renderBlock->programParams->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
-	renderBlock->programParams->setTextureParameter(s_handleTerrain_SurfaceAlbedo, terrainComponent->getSurfaceCache(worldRenderView.getIndex())->getBaseTexture());
+	renderBlock->programParams->setTextureParameter(s_handleTerrain_SurfaceAlbedo, terrainComponent->getSurfaceCache()->getBaseTexture());
 	renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
 	renderBlock->programParams->setVectorParameter(s_handleUndergrowth_Eye, eye);
 	renderBlock->programParams->setFloatParameter(s_handleUndergrowth_MaxDistance, m_layerData.m_spreadDistance + m_clusterSize);

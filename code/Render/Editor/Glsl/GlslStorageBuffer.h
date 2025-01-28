@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Render/Types.h"
 #include "Render/Editor/Glsl/GlslResource.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,7 +21,7 @@
 
 namespace traktor::render
 {
-	
+
 class T_DLLCLASS GlslStorageBuffer : public GlslResource
 {
 	T_RTTI_CLASS;
@@ -41,6 +41,8 @@ public:
 	const AlignedVector< Element >& get() const { return m_elements; }
 
 	bool isIndexed() const { return m_indexed; }
+
+	virtual int32_t getClassOrdinal() const override final { return 3; }
 
 	virtual int32_t getOrdinal() const override final;
 
