@@ -35,6 +35,13 @@ namespace
 
 const resource::Id< render::ImageGraph > c_irradiance(L"{14A0E977-7C13-9B43-A26E-F1D21117AEC6}");
 
+struct Reservoir
+{
+	float sample[4];
+	float weight;
+	float pad[3];
+};
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.IrradiancePass", IrradiancePass, Object)
@@ -77,14 +84,27 @@ render::handle_t IrradiancePass::setup(
 	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr);
 
 	// Add irradiance target set.
-	render::RenderGraphTargetSetDesc rgtd;
-	rgtd.count = 1;
-	rgtd.createDepthStencil = false;
-	rgtd.referenceWidthDenom = 1;
-	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR11G11B10F; // Irradiance (RGB)
+	const render::RenderGraphTargetSetDesc irradianceTargetDesc = {
+		.count = 1,
+		.referenceWidthDenom = 1,
+		.referenceHeightDenom = 1,
+		.createDepthStencil = false,
+		.targets = { {
+			.colorFormat = render::TfR11G11B10F // Irradiance (RGB)
+		} }
+	};
+	const auto irradianceTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance", irradianceTargetDesc, ~0U, outputTargetSetId);
 
-	auto irradianceTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance", rgtd, ~0U, outputTargetSetId);
+	// Add reservoir buffers.
+	const render::RenderGraphBufferDesc reservoirBufferDesc = {
+		.elementSize = sizeof(Reservoir),
+		.elementCount = 0,
+		.referenceWidthMul = 1,
+		.referenceWidthDenom = 1,
+		.referenceHeightMul = 1,
+		.referenceHeightDenom = 1
+	};
+	const auto reservoirBufferId = renderGraph.addPersistentBuffer(L"Reservoir", render::getParameterHandle(L"World_Reservoir_0"), reservoirBufferDesc);
 
 	// Add ambient occlusion render pass.
 	view.viewFrustum = worldRenderView.getViewFrustum();
@@ -98,9 +118,9 @@ render::handle_t IrradiancePass::setup(
 	igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance");
-
 	rp->addInput(gbufferTargetSetId);
 	rp->addInput(velocityTargetSetId);
+	rp->addInput(reservoirBufferId);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
@@ -112,6 +132,7 @@ render::handle_t IrradiancePass::setup(
 
 	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+		const auto reservoirBuffer = renderGraph.getBuffer(reservoirBufferId);
 
 		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
@@ -138,6 +159,9 @@ render::handle_t IrradiancePass::setup(
 		}
 		else
 			params->setFloatParameter(s_handleLightCount, 0.0f);
+
+		if (reservoirBuffer != nullptr)
+			params->setBufferViewParameter(s_handleReservoir, reservoirBuffer->getBufferView());
 
 		if (gatheredView.rtWorldTopLevel != nullptr)
 			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);

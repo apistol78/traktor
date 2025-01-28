@@ -159,25 +159,25 @@ handle_t RenderGraph::addExplicitBuffer(const wchar_t* const name, Buffer* buffe
 	return resourceId;
 }
 
-handle_t RenderGraph::addTransientBuffer(const wchar_t* const name, uint32_t bufferSize)
+handle_t RenderGraph::addTransientBuffer(const wchar_t* const name, const RenderGraphBufferDesc& bufferDesc)
 {
 	const handle_t resourceId = m_nextResourceId++;
 
 	auto& br = m_buffers[resourceId];
 	br.name = name;
-	br.bufferSize = bufferSize;
+	br.bufferDesc = bufferDesc;
 
 	return resourceId;
 }
 
-handle_t RenderGraph::addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, uint32_t bufferSize)
+handle_t RenderGraph::addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, const RenderGraphBufferDesc& bufferDesc)
 {
 	const handle_t resourceId = m_nextResourceId++;
 
 	auto& br = m_buffers[resourceId];
 	br.name = name;
 	br.persistentHandle = persistentHandle;
-	br.bufferSize = bufferSize;
+	br.bufferDesc = bufferDesc;
 
 	return resourceId;
 }
@@ -376,7 +376,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		auto& sbuffer = it.second;
 		if (sbuffer.buffer == nullptr)
 		{
-			sbuffer.buffer = m_bufferPool->acquire(sbuffer.bufferSize, sbuffer.persistentHandle);
+			sbuffer.buffer = m_bufferPool->acquire(sbuffer.bufferDesc, width, height, sbuffer.persistentHandle);
 			if (!sbuffer.buffer)
 				return false;
 		}

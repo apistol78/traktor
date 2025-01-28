@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
+#include "Render/Frame/RenderGraphTypes.h"
 
 namespace traktor::render
 {
@@ -30,7 +31,7 @@ public:
 
 	void destroy();
 
-	Ref< Buffer > acquire(uint32_t bufferSize, uint32_t persistentHandle);
+	Ref< Buffer > acquire(const RenderGraphBufferDesc& bufferDesc, int32_t referenceWidth, int32_t referenceHeight, uint32_t persistentHandle);
 
 	void release(Ref< Buffer >& buffer);
 

@@ -65,19 +65,24 @@ void ImageGraph::addPasses(
 	sbufferIds.resize(permutation->sbuffers.size());
 	for (int32_t i = 0; i < (int32_t)permutation->sbuffers.size(); ++i)
 	{
+		const render::RenderGraphBufferDesc bufferDesc = {
+			.elementSize = 1,
+			.elementCount = (int32_t)permutation->sbuffers[i]->getBufferSize()
+		};
+
 		if (permutation->sbuffers[i]->getPersistentHandle() != 0)
 		{
 			sbufferIds[i] = renderGraph.addPersistentBuffer(
 				permutation->sbuffers[i]->getName().c_str(),
 				permutation->sbuffers[i]->getPersistentHandle(),
-				permutation->sbuffers[i]->getBufferSize()
+				bufferDesc
 			);
 		}
 		else
 		{
 			sbufferIds[i] = renderGraph.addTransientBuffer(
 				permutation->sbuffers[i]->getName().c_str(),
-				permutation->sbuffers[i]->getBufferSize()
+				bufferDesc
 			);
 		}
 		context.associateSBuffer(
