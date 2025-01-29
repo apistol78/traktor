@@ -1049,31 +1049,28 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		else
 			return false;
 	}
-	else
+	else if (command == L"Editor.Undo")
 	{
-		if (command == L"Editor.Undo")
+		if (m_document->undo())
 		{
-			if (m_document->undo())
-			{
-				m_shaderGraph = m_document->getObject< ShaderGraph >(0);
-				T_ASSERT(m_shaderGraph);
+			m_shaderGraph = m_document->getObject< ShaderGraph >(0);
+			T_ASSERT(m_shaderGraph);
 
-				createEditorGraph();
-			}
+			createEditorGraph();
 		}
-		else if (command == L"Editor.Redo")
-		{
-			if (m_document->redo())
-			{
-				m_shaderGraph = m_document->getObject< ShaderGraph >(0);
-				T_ASSERT(m_shaderGraph);
-
-				createEditorGraph();
-			}
-		}
-		else
-			return false;
 	}
+	else if (command == L"Editor.Redo")
+	{
+		if (m_document->redo())
+		{
+			m_shaderGraph = m_document->getObject< ShaderGraph >(0);
+			T_ASSERT(m_shaderGraph);
+
+			createEditorGraph();
+		}
+	}
+	else
+		return false;
 
 	m_editorGraph->update();
 	return true;
@@ -2003,6 +2000,7 @@ void ShaderGraphEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 		});
 
 	m_script->setScript(text);
+	m_propertiesView->setPropertyObject(m_script);
 }
 
 void ShaderGraphEditorPage::eventPropertiesChanging(ui::ContentChangingEvent* event)
