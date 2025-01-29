@@ -276,8 +276,8 @@
 			<id>{B796F7A8-BA7D-154E-9C6D-5780AD5017B2}</id>
 			<comment/>
 			<position>
-				<first>3162</first>
-				<second>134</second>
+				<first>3136</first>
+				<second>-63</second>
 			</position>
 			<name>L_RTGI</name>
 		</item>
@@ -389,6 +389,7 @@
 				<item>{1C13688E-63BC-3141-ACB1-58EEE72EEF2F}</item>
 				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
 				<item>{4370C471-3C5D-914B-A3AC-866BE15AD328}</item>
+				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -419,6 +420,14 @@
 					<id>{0EC1A5F0-0E8F-B540-9491-D474BC938432}</id>
 					<name>ViewInverse</name>
 				</item>
+				<item>
+					<id>{E66AE2D9-0A70-7247-91DE-D70F2717EA0A}</id>
+					<name>Reservoir</name>
+				</item>
+				<item>
+					<id>{E04466C4-26FE-EA4F-A832-E1C1913826B3}</id>
+					<name>TargetSize</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -429,43 +438,48 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-const int lightIndex = int($Random * $LightCount) % int($LightCount);
-const $typeof(Lights) light = $Lights[lightIndex];
+// Calculate index into reservoir.
+ivec2 fc = ivec2(gl_FragCoord.xy);
+const int index = fc.y * int($TargetSize.x) + fc.x;
+
+$typeof(Reservoir) reservoir; // = $Reservoir[index];
+reservoir.Sample = vec4(0.0f);
+reservoir.TotalWeight.x = 0.0f;
+
+
+int rndState = int($Random.w * 534234);
+
+
+// Pick light.
+
+
+
+
 
 const float Far = 50.0f;
-const int N = 8;
+const int N = 1;
 const mat3 R = Rotate($Direction.xyz, $Random.x);
 const vec2 j = vec2($Random.zw * 0.1f);
 
-vec3 u, v;
-OrthogonalFrame($Direction.xyz, u, v);
-const mat3 DR = mat3(
-	u,
-	v,
-	$Direction.xyz
-);
-
-vec4 acc = vec4(0.0f);
 HWRT_Material m;
 float t;
 
 for (int i = 0; i < N; ++i)
 {
+	const float rnd = Hash(rndState++);
+
+	const int lightIndex = int(rnd * $LightCount) % int($LightCount);
+	const $typeof(Lights) light = $Lights[lightIndex];
+
 	const vec2 r = Rotate2D((Hammersley(i, N) + j) * 2.0f - 1.0f, $Random.y) * 0.5 + 0.5;
 	
 	const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.01f;
-
-#if 1
 	const vec3 rayDir = R * normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.02f);
-	const float probability = 1.0f;
-#else
-	const vec3 rayDir = R * DR * normalize(LambertianDirection(r) + $Direction.xyz * 0.02f);
-	const float probability = 0.78532f;
-#endif
 
 	if (HWRT_Trace($AS, rayOrigin, rayDir, m, t))
 	{
 		const vec3 hit = rayOrigin + rayDir * t;
+		vec4 acc = vec4(0.0f);
 
 		if ($LightCount > 0)
 		{
@@ -505,8 +519,8 @@ for (int i = 0; i < N; ++i)
 				{
 					const float phi = clamp(dot(lightDirection, m.normal.xyz), 0.0f, 1.0f);
 					acc += vec4(
-						(m.albedo * phi * light.Color).xyz * PI * lightAttenuation / probability,
-						1.0f
+						(m.albedo * phi * light.Color).xyz * PI * lightAttenuation,
+						clamp((1.0f - nt) * phi, 0.0f, 1.0f)
 					);
 				}
 			}
@@ -514,15 +528,24 @@ for (int i = 0; i < N; ++i)
 
 		// Add emissive.
 		acc += vec4(
-			m.albedo.xyz * m.albedo.w / probability,
+			m.albedo.xyz * m.albedo.w,
 			clamp(m.albedo.w, 0.0f, 1.0f)
 		);
+		
+		// Add to reservoir.
+		float rnd = Hash(uint($Random.w * 65431.0f) + i);
+		reservoir.TotalWeight.x += acc.w;
+		if (rnd < acc.w / reservoir.TotalWeight.x)
+		{
+			reservoir.Sample = acc;
+		}
 	}
 }
 
-vec4 o = acc / N;
+$Reservoir[index] = reservoir;
 
-$Output = vec4(o.xyz, pow(o.w, 0.3f));
+$Output = vec4(reservoir.Sample.xyz, 1.0f);
+
 			]]>
 			</script>
 		</item>
@@ -939,83 +962,12 @@ else
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
-			<id>{2AB0ADFF-7723-674B-A1AA-A7FDB372A5D2}</id>
-			<comment/>
-			<position>
-				<first>2915</first>
-				<second>179</second>
-			</position>
-			<name>ReSTIR</name>
-			<technique/>
-			<domain>Undefined</domain>
-			<localSize>
-				<X>1</X>
-				<Y>1</Y>
-				<Z>1</Z>
-			</localSize>
-			<useRayTracing>false</useRayTracing>
-			<include/>
-			<inputPins>
-				<item>
-					<id>{4386F539-386C-AB4B-BAF6-F601575AC777}</id>
-					<name>Reservoir</name>
-				</item>
-				<item>
-					<id>{E914131F-602A-6C4C-AF56-10D116E52246}</id>
-					<name>Sample</name>
-				</item>
-				<item>
-					<id>{B7F0E3EA-518F-2E47-890C-BA63071E7A44}</id>
-					<name>TargetSize</name>
-				</item>
-				<item>
-					<id>{5872481B-8203-9540-9D94-8784EF651D7A}</id>
-					<name>Random</name>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{BEFA4E8B-F224-BE42-9C7B-3EDF585B939A}</id>
-					<name>Output</name>
-					<type>Vector</type>
-				</item>
-			</outputPins>
-			<script>
-			<![CDATA[
-
-ivec2 fc = ivec2(gl_FragCoord.xy);
-const int index = fc.y * int($TargetSize.x) + fc.x;
-
-
-const float rnd = $Random.z;
-const float w = length($Sample.xyz);
-
-
-$typeof(Reservoir) r = $Reservoir[index];
-
-
-r.Weight.x += w;
-if (rnd < w / r.Weight.x)
-{
-	r.Sample = $Sample;
-}
-
-
-$Reservoir[index] = r;
-
-$Output = r.Sample;
-
-
-			]]>
-			</script>
-		</item>
 		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
 			<id>{E9D3E62D-D0DC-374D-B70E-8D3379160D63}</id>
 			<comment/>
 			<position>
-				<first>2530</first>
-				<second>172</second>
+				<first>2503</first>
+				<second>170</second>
 			</position>
 			<parameterName>World_Reservoir</parameterName>
 			<elements>
@@ -1025,7 +977,7 @@ $Output = r.Sample;
 					<length>0</length>
 				</item>
 				<item>
-					<name>Weight</name>
+					<name>TotalWeight</name>
 					<type>DtFloat4</type>
 					<length>0</length>
 				</item>
@@ -1623,46 +1575,6 @@ $Output = r.Sample;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{BEFA4E8B-F224-BE42-9C7B-3EDF585B939A}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[58]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{4386F539-386C-AB4B-BAF6-F601575AC777}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[29]"/>
-				<id>{A026543F-9CEC-6D4D-90CB-AE68CF56A052}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{E914131F-602A-6C4C-AF56-10D116E52246}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[59]"/>
-				<id>{853B6F75-1464-40E7-BEDC-2716C763046E}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{B7F0E3EA-518F-2E47-890C-BA63071E7A44}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[36]"/>
 				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
 			</source>
@@ -1673,12 +1585,32 @@ $Output = r.Sample;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[33]"/>
-				<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
+				<node ref="/object/nodes/item[57]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{5872481B-8203-9540-9D94-8784EF651D7A}</id>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{E66AE2D9-0A70-7247-91DE-D70F2717EA0A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[58]"/>
+				<id>{853B6F75-1464-40E7-BEDC-2716C763046E}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{E04466C4-26FE-EA4F-A832-E1C1913826B3}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{A026543F-9CEC-6D4D-90CB-AE68CF56A052}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 	</edges>
