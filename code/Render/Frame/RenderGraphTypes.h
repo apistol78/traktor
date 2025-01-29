@@ -55,4 +55,16 @@ struct RenderGraphTextureDesc
 	TextureFormat format = TfInvalid;
 };
 
+/*!
+ */
+struct RenderGraphBufferDesc
+{
+	int32_t elementSize;				//!< Size in bytes of each element in buffer.
+	int32_t elementCount;				//!< Number of elements in buffer.
+	int32_t referenceWidthMul = 1;		//!< If set used to calculate number of elements based on size of output render target.
+	int32_t referenceWidthDenom = 0;
+	int32_t referenceHeightMul = 1;
+	int32_t referenceHeightDenom = 0;
+};
+
 }

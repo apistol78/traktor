@@ -77,14 +77,16 @@ render::handle_t IrradiancePass::setup(
 	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr);
 
 	// Add irradiance target set.
-	render::RenderGraphTargetSetDesc rgtd;
-	rgtd.count = 1;
-	rgtd.createDepthStencil = false;
-	rgtd.referenceWidthDenom = 1;
-	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR11G11B10F; // Irradiance (RGB)
-
-	auto irradianceTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance", rgtd, ~0U, outputTargetSetId);
+	const render::RenderGraphTargetSetDesc irradianceTargetDesc = {
+		.count = 1,
+		.referenceWidthDenom = 1,
+		.referenceHeightDenom = 1,
+		.createDepthStencil = false,
+		.targets = { {
+			.colorFormat = render::TfR11G11B10F // Irradiance (RGB)
+		} }
+	};
+	const auto irradianceTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance", irradianceTargetDesc, ~0U, outputTargetSetId);
 
 	// Add ambient occlusion render pass.
 	view.viewFrustum = worldRenderView.getViewFrustum();
@@ -98,7 +100,6 @@ render::handle_t IrradiancePass::setup(
 	igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance");
-
 	rp->addInput(gbufferTargetSetId);
 	rp->addInput(velocityTargetSetId);
 

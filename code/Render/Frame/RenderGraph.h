@@ -83,8 +83,8 @@ public:
 	{
 		const wchar_t* name = nullptr;
 		handle_t persistentHandle = 0;
+		RenderGraphBufferDesc bufferDesc;
 		Ref< Buffer > buffer;
-		uint32_t bufferSize;
 	};
 
 	struct TextureResource
@@ -165,19 +165,19 @@ public:
 	/*! Add transient buffer resource.
 	 *
 	 * \param name Name of buffer, used for debugging only.
-	 * \param bufferSize Size of buffer in bytes.
+	 * \param bufferDesc Buffer description.
 	 * \return Opaque resource handle.
 	 */
-	handle_t addTransientBuffer(const wchar_t* const name, uint32_t bufferSize);
+	handle_t addTransientBuffer(const wchar_t* const name, const RenderGraphBufferDesc& bufferDesc);
 
 	/*! Add persistent buffer resource.
 	 *
 	 * \param name Name of buffer, used for debugging only.
 	 * \param persistentHandle Unique handle to track persistent buffer.
-	 * \param bufferSize Size of buffer in bytes.
+	 * \param bufferDesc Buffer description.
 	 * \return Opaque resource handle.
 	 */
-	handle_t addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, uint32_t bufferSize);
+	handle_t addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, const RenderGraphBufferDesc& bufferDesc);
 
 	/*! Add a transient texture.
 	 *

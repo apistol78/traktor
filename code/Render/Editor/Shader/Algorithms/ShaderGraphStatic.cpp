@@ -612,6 +612,9 @@ Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
 	T_IMMUTABLE_CHECK(m_shaderGraph);
 
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+	if (shaderGraph == nullptr)
+		return nullptr;
+
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	RefArray< Swizzle > swizzleNodes = shaderGraph->findNodesOf< Swizzle >();

@@ -6,10 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
+#include "Render/Frame/RenderGraphBufferPool.h"
+
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
-#include "Render/Frame/RenderGraphBufferPool.h"
+
+#include <cstring>
 
 namespace traktor::render
 {
@@ -17,7 +19,7 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraphBufferPool", RenderGraphBufferPool, Object)
 
 RenderGraphBufferPool::RenderGraphBufferPool(IRenderSystem* renderSystem)
-:	m_renderSystem(renderSystem)
+	: m_renderSystem(renderSystem)
 {
 }
 
@@ -26,22 +28,31 @@ void RenderGraphBufferPool::destroy()
 	m_renderSystem = nullptr;
 }
 
-Ref< Buffer > RenderGraphBufferPool::acquire(uint32_t bufferSize, uint32_t persistentHandle)
+Ref< Buffer > RenderGraphBufferPool::acquire(const RenderGraphBufferDesc& bufferDesc, int32_t referenceWidth, int32_t referenceHeight, uint32_t persistentHandle)
 {
+	// Calculate required size of buffer.
+	int32_t width = 0, height = 0;
+	if (bufferDesc.referenceWidthDenom > 0)
+		width = (referenceWidth * bufferDesc.referenceWidthMul + bufferDesc.referenceWidthDenom - 1) / bufferDesc.referenceWidthDenom;
+	if (bufferDesc.referenceHeightDenom > 0)
+		height = (referenceHeight * bufferDesc.referenceHeightMul + bufferDesc.referenceHeightDenom - 1) / bufferDesc.referenceHeightDenom;
+
+	const uint32_t elementCount = bufferDesc.elementCount + (width * height);
+	const uint32_t bufferSize = elementCount * bufferDesc.elementSize;
+
+	// Find suitable pool.
 	auto it = std::find_if(
 		m_pool.begin(),
 		m_pool.end(),
-		[&](const RenderGraphBufferPool::Pool& p)
-		{
-			if (p.persistentHandle != persistentHandle)
-				return false;
+		[&](const RenderGraphBufferPool::Pool& p) {
+		if (p.persistentHandle != persistentHandle)
+			return false;
 
-			if (p.bufferSize != bufferSize)
-				return false;
+		if (p.bufferSize != bufferSize)
+			return false;
 
-			return true;
-		}
-	);
+		return true;
+	});
 
 	// Get or create pool.
 	Pool* pool = nullptr;
@@ -69,8 +80,7 @@ Ref< Buffer > RenderGraphBufferPool::acquire(uint32_t bufferSize, uint32_t persi
 		Ref< Buffer > buffer = m_renderSystem->createBuffer(
 			render::BuStructured,
 			bufferSize,
-			false
-		);
+			false);
 		if (buffer)
 		{
 			void* ptr = buffer->lock();

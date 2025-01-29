@@ -32,6 +32,8 @@ uint32_t rotateLeft(uint32_t value, uint32_t count)
 uint32_t calculateLocalNodeHash(const Node* node, bool includeTextures, bool includeTechniqueNames)
 {
 	Ref< Node > nodeCopy = DeepClone(node).create< Node >();
+	if (nodeCopy == nullptr)
+		return 0;
 	
 	nodeCopy->setId(Guid::null);
 	nodeCopy->setPosition(std::make_pair(0, 0));
