@@ -262,6 +262,8 @@ vec4 acc = vec4(0.0f);
 HWRT_Material m;
 float t;
 
+const float pdf = 1.0f / max($LightCount, 1);
+
 for (int i = 0; i < N; ++i)
 {
 	const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
@@ -312,7 +314,7 @@ for (int i = 0; i < N; ++i)
 			);
 			const float phi = clamp(dot(lightDirection, m.normal.xyz), 0.25f, 1.0f);
 			acc += vec4(
-				(m.albedo * phi * light.Color).xyz * PI * lightAttenuation * (shadowed ? 0.25f : 1.0f),
+				(m.albedo * phi * light.Color).xyz * PI * lightAttenuation * (shadowed ? 0.25f : 1.0f) / pdf,
 				1.0f
 			);
 		}
@@ -1000,7 +1002,6 @@ else
 uvec2 seed = uvec2(gl_FragCoord.xy);
 seed += uvec2($Time * 1543, $Time * 543);
 $Output = BlueNoise(seed);
-
 			]]>
 			</script>
 		</item>

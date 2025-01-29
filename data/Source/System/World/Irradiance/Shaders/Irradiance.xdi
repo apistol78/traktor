@@ -440,6 +440,8 @@ vec4 acc = vec4(0.0f);
 HWRT_Material m;
 float t;
 
+const float pdf = 1.0f / max($LightCount, 1);
+
 for (int i = 0; i < N; ++i)
 {
 	const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
@@ -450,7 +452,6 @@ for (int i = 0; i < N; ++i)
 	
 	const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.01f;
 	const vec3 rayDir = R * normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.02f);
-	const float probability = 1.0f;
 
 	if (HWRT_Trace($AS, rayOrigin, rayDir, m, t))
 	{
@@ -494,7 +495,7 @@ for (int i = 0; i < N; ++i)
 				{
 					const float phi = clamp(dot(lightDirection, m.normal.xyz), 0.0f, 1.0f);
 					acc += vec4(
-						(m.albedo * phi * light.Color).xyz * PI * lightAttenuation / probability,
+						(m.albedo * phi * light.Color).xyz * PI * lightAttenuation / pdf,
 						1.0f
 					);
 				}
@@ -503,7 +504,7 @@ for (int i = 0; i < N; ++i)
 
 		// Add emissive.
 		acc += vec4(
-			m.albedo.xyz * m.albedo.w / probability,
+			m.albedo.xyz * m.albedo.w,
 			clamp(m.albedo.w, 0.0f, 1.0f)
 		);
 	}
