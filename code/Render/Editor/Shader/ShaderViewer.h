@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,20 +10,24 @@
 
 #include "Ui/Container.h"
 
+#include <map>
+
 namespace traktor
 {
 
 class Job;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class CheckBox;
 class DropDown;
@@ -31,10 +35,10 @@ class SyntaxRichEdit;
 class Tab;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IProgramCompiler;
 class ShaderGraph;
@@ -98,6 +102,4 @@ private:
 	void jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgramCompiler > compiler);
 };
 
-	}
 }
-

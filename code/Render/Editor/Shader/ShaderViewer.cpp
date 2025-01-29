@@ -1,13 +1,15 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Io/FileSystem.h"
+#include "Render/Editor/Shader/ShaderViewer.h"
+
 #include "Core/Io/FileOutputStream.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
@@ -23,46 +25,43 @@
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Render/Editor/IProgramCompiler.h"
-#include "Render/Editor/Shader/FragmentLinker.h"
-#include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderModule.h"
-#include "Render/Editor/Shader/ShaderViewer.h"
-#include "Render/Editor/Shader/UniformDeclaration.h"
-#include "Render/Editor/Shader/UniformLinker.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphTechniques.h"
+#include "Render/Editor/Shader/FragmentLinker.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderModule.h"
+#include "Render/Editor/Shader/UniformDeclaration.h"
+#include "Render/Editor/Shader/UniformLinker.h"
 #include "Ui/Application.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Clipboard.h"
+#include "Ui/DropDown.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Static.h"
 #include "Ui/StyleBitmap.h"
-#include "Ui/Tab.h"
-#include "Ui/TabPage.h"
-#include "Ui/TableLayout.h"
-#include "Ui/DropDown.h"
 #include "Ui/SyntaxRichEdit/SyntaxLanguageGlsl.h"
 #include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
+#include "Ui/Tab.h"
+#include "Ui/TableLayout.h"
+#include "Ui/TabPage.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
-		namespace
-		{
+namespace
+{
 
 class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
 {
 public:
-	FragmentReaderAdapter(db::Database* db)
-	:	m_db(db)
+	explicit FragmentReaderAdapter(db::Database* db)
+		: m_db(db)
 	{
 	}
 
@@ -75,12 +74,40 @@ private:
 	Ref< db::Database > m_db;
 };
 
-		}
+class ModuleAccess : public IProgramCompiler::IModuleAccess
+{
+public:
+	explicit ModuleAccess(db::Database* db)
+		: m_db(db)
+	{
+	}
+
+	virtual std::wstring getText(const Guid& id) const
+	{
+		Ref< const ShaderModule > shaderModule = m_db->getObjectReadOnly< ShaderModule >(id);
+		if (shaderModule)
+			return shaderModule->escape([](const Guid& id) -> std::wstring {
+				return id.format();
+			});
+		else
+			return L"";
+	}
+
+	virtual SmallMap< std::wstring, SamplerState > getSamplers(const Guid& id) const
+	{
+		return SmallMap< std::wstring, SamplerState >();
+	}
+
+private:
+	Ref< db::Database > m_db;
+};
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderViewer", ShaderViewer, ui::Container)
 
 ShaderViewer::ShaderViewer(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -190,8 +217,7 @@ bool ShaderViewer::create(ui::Widget* parent)
 
 	for (int32_t i = 0; i < sizeof_array(m_shaderEditors); ++i)
 	{
-		const wchar_t* names[] =
-		{
+		const wchar_t* names[] = {
 			L"SHADERGRAPH_VIEWER_VERTEX",
 			L"SHADERGRAPH_VIEWER_PIXEL",
 			L"SHADERGRAPH_VIEWER_COMPUTE"
@@ -250,7 +276,7 @@ void ShaderViewer::updateTechniques()
 	for (auto it : m_techniques)
 		m_dropTechniques->add(it.first);
 
-	// Select previous technique. 
+	// Select previous technique.
 	if (m_dropTechniques->select(currentTechnique))
 		return;
 
@@ -271,10 +297,8 @@ void ShaderViewer::updateCombinations()
 	const std::wstring techniqueName = m_dropTechniques->getSelectedItem();
 	const auto it = m_techniques.find(techniqueName);
 	if (it != m_techniques.end())
-	{
 		for (const auto& parameter : it->second.parameters)
 			m_dropCombinations->add(parameter);
-	}
 
 	update();
 }
@@ -374,7 +398,7 @@ void ShaderViewer::eventTimer(ui::TimerEvent* event)
 			return;
 
 		Ref< ShaderGraph > shaderGraph = m_pendingShaderGraph;
-		m_reflectJob = JobManager::getInstance().add([=, this](){
+		m_reflectJob = JobManager::getInstance().add([=, this]() {
 			jobReflect(shaderGraph, compiler);
 		});
 
@@ -413,8 +437,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 		return;
 
 	// Link uniform declarations.
-	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t
-	{
+	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t {
 		Ref< db::Instance > declarationInstance = m_editor->getSourceDatabase()->getInstance(declarationId);
 		if (declarationInstance != nullptr)
 			return { declarationInstance->getName(), declarationInstance->getObject< UniformDeclaration >() };
@@ -531,8 +554,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 					Ref< Uniform > textureUniform = new Uniform(
 						getParameterNameFromTextureReferenceIndex(textureIndex),
 						textureNode->getParameterType(),
-						UpdateFrequency::Once
-					);
+						UpdateFrequency::Once);
 
 					const OutputPin* textureUniformOutput = textureUniform->getOutputPin(0);
 					T_ASSERT(textureUniformOutput);
@@ -544,19 +566,11 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 					programGraph->rewire(textureNodeOutput, textureUniformOutput);
 				}
 
-				auto resolveModule = [&](const Guid& moduleId) -> std::wstring {
-					Ref< const ShaderModule > shaderModule = m_editor->getSourceDatabase()->getObjectReadOnly< ShaderModule >(moduleId);
-					if (shaderModule)
-						return shaderModule->escape([](const Guid& id) -> std::wstring {
-							return id.format();
-						});
-					else
-						return L"";
-				};
+				const ModuleAccess moduleAccess(m_editor->getSourceDatabase());
 
 				// Finally ready to compile program graph.
 				IProgramCompiler::Output output;
-				if (compiler->generate(programGraph, settings, techniqueName, resolveModule, output))
+				if (compiler->generate(programGraph, settings, techniqueName, moduleAccess, output))
 				{
 					ci.shaders[0] = output.vertex;
 					ci.shaders[1] = output.pixel;
@@ -565,7 +579,8 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 				else
 				{
 					ci.shaders[0] = L"Failed to generate vertex shader!";
-					ci.shaders[1] = L"Failed to generate pixel shader!";;
+					ci.shaders[1] = L"Failed to generate pixel shader!";
+					;
 					ci.shaders[2] = L"Failed to generate compute shader!";
 				}
 			}
@@ -573,5 +588,4 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	}
 }
 
-	}
 }

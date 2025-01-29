@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,17 +37,15 @@ public:
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
 		const std::wstring& name,
-		const resolveModule_fn& resolveModule,
-		std::list< Error >& outErrors
-	) const override final;
+		const IModuleAccess& moduleAccess,
+		std::list< Error >& outErrors) const override final;
 
 	virtual bool generate(
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
 		const std::wstring& name,
-		const resolveModule_fn& resolveModule,
-		Output& output
-	) const override final;
+		const IModuleAccess& moduleAccess,
+		Output& output) const override final;
 };
 
 }

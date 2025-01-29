@@ -1,19 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
-#include <map>
-#include <sstream>
-
-#include <glslang/Public/ShaderLang.h>
-#include <SPIRV/GlslangToSpv.h>
-#include <spirv-tools/libspirv.hpp>
-#include <spirv-tools/optimizer.hpp>
+#include "Render/Vulkan/Editor/ProgramCompilerVk.h"
 
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
@@ -37,12 +30,19 @@
 #include "Render/Editor/Shader/ShaderModule.h"
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
-#include "Render/Vulkan/Editor/ProgramCompilerVk.h"
+
+#include <cstring>
+#include <glslang/Public/ShaderLang.h>
+#include <map>
+#include <spirv-tools/libspirv.hpp>
+#include <spirv-tools/optimizer.hpp>
+#include <SPIRV/GlslangToSpv.h>
+#include <sstream>
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 const glslang::EShTargetClientVersion c_clientVersion = glslang::EShTargetVulkan_1_2;
 const glslang::EShTargetLanguageVersion c_targetSPV = glslang::EShTargetSpv_1_5;
@@ -137,14 +137,14 @@ TBuiltInResource getDefaultBuiltInResource()
 	bir.maxSamples = 4;
 
 	bir.maxMeshOutputVerticesNV = 0;
-    bir.maxMeshOutputPrimitivesNV = 0;
-    bir.maxMeshWorkGroupSizeX_NV = 0;
-    bir.maxMeshWorkGroupSizeY_NV = 0;
-    bir.maxMeshWorkGroupSizeZ_NV = 0;
-    bir.maxTaskWorkGroupSizeX_NV = 0;
-    bir.maxTaskWorkGroupSizeY_NV = 0;
-    bir.maxTaskWorkGroupSizeZ_NV = 0;
-    bir.maxMeshViewCountNV = 0;
+	bir.maxMeshOutputPrimitivesNV = 0;
+	bir.maxMeshWorkGroupSizeX_NV = 0;
+	bir.maxMeshWorkGroupSizeY_NV = 0;
+	bir.maxMeshWorkGroupSizeZ_NV = 0;
+	bir.maxTaskWorkGroupSizeX_NV = 0;
+	bir.maxTaskWorkGroupSizeY_NV = 0;
+	bir.maxTaskWorkGroupSizeZ_NV = 0;
+	bir.maxMeshViewCountNV = 0;
 	bir.maxDualSourceDrawBuffersEXT = 0;
 
 	bir.limits.nonInductiveForLoops = 1;
@@ -190,7 +190,7 @@ void performOptimization(bool convertRelaxedToHalf, AlignedVector< uint32_t >& s
 
 		case SPV_MSG_INFO:
 		case SPV_MSG_DEBUG:
-				log::info << L"SPIRV optimization info: ";
+			log::info << L"SPIRV optimization info: ";
 			if (source)
 				log::info << mbstows(source) << L":";
 			log::info << position.line << L":" << position.column << L":" << position.index << L":";
@@ -210,7 +210,7 @@ void performOptimization(bool convertRelaxedToHalf, AlignedVector< uint32_t >& s
 		optimizer.RegisterPass(spvtools::CreateConvertRelaxedToHalfPass());
 
 	spvtools::OptimizerOptions spvOptOptions;
-	spvOptOptions.set_run_validator(false);		// Validator seems to crash so we disable it for now.
+	spvOptOptions.set_run_validator(false); // Validator seems to crash so we disable it for now.
 
 	std::vector< uint32_t > opted;
 	if (optimizer.Run(spirv.c_ptr(), spirv.size(), &opted, spvOptOptions))
@@ -223,9 +223,10 @@ bool performValidation(const AlignedVector< uint32_t >& spirv)
 {
 	spvtools::SpirvTools st(c_targetENV);
 	st.SetMessageConsumer([](
-		spv_message_level_t /* level */, const char* /* source */,
-		const spv_position_t& /* position */, const char* message
-	){
+							  spv_message_level_t /* level */,
+							  const char* /* source */,
+							  const spv_position_t& /* position */,
+							  const char* message) {
 		log::error << Endl << mbstows(message) << Endl;
 	});
 	return st.Validate(spirv.c_ptr(), (size_t)spirv.size());
@@ -249,7 +250,7 @@ const std::wstring& lookupCompareFunctionName(CompareFunction compareFunction)
 	return names[(int32_t)compareFunction];
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerVk", 0, ProgramCompilerVk, IProgramCompiler)
 
@@ -274,17 +275,16 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	const resolveModule_fn& resolveModule,
-	std::list< Error >& outErrors
-) const
+	const IModuleAccess& moduleAccess,
+	std::list< Error >& outErrors) const
 {
 	RefArray< VertexOutput > vertexOutputs;
 	RefArray< PixelOutput > pixelOutputs;
 	RefArray< ComputeOutput > computeOutputs;
 	RefArray< Script > scriptOutputs[5];
-	
+
 	// Gather all output nodes from shader graph, type and number
-	// of output nodes determine type of shader program (vertex-, 
+	// of output nodes determine type of shader program (vertex-,
 	// pixel- or compute shader).
 	for (auto node : shaderGraph->getNodes())
 	{
@@ -305,11 +305,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		}
 	}
 
-	auto resolveModuleText = [&](const Guid& moduleId) -> std::wstring {
-		return resolveModule(moduleId);
-	};
-
-	GlslContext cx(shaderGraph, settings);
+	GlslContext cx(shaderGraph, settings, moduleAccess);
 
 	glslang::TProgram* program = new glslang::TProgram();
 	glslang::TShader* vertexShader = nullptr;
@@ -336,8 +332,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		const GlslRequirements fragmentRequirements = cx.requirements();
 
 		const auto& layout = cx.getLayout();
-		const std::string vertexShaderText = wstombs(cx.getVertexShader().getGeneratedShader(settings, layout, vertexRequirements, resolveModuleText));
-		const std::string fragmentShaderText = wstombs(cx.getFragmentShader().getGeneratedShader(settings, layout, fragmentRequirements, resolveModuleText));
+		const std::string vertexShaderText = wstombs(cx.getVertexShader().getGeneratedShader(settings, layout, vertexRequirements));
+		const std::string fragmentShaderText = wstombs(cx.getFragmentShader().getGeneratedShader(settings, layout, fragmentRequirements));
 
 		// Vertex shader.
 		const char* vst = vertexShaderText.c_str();
@@ -353,12 +349,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		if (vertexShader->getInfoLog())
 		{
 			if (!vertexResult)
-			{
-				outErrors.push_back({
-					trim(mbstows(vertexShader->getInfoLog())),
-					mbstows(vertexShaderText)
-				});
-			}
+				outErrors.push_back({ trim(mbstows(vertexShader->getInfoLog())),
+					mbstows(vertexShaderText) });
 		}
 		if (!vertexResult)
 			return nullptr;
@@ -377,12 +369,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		if (fragmentShader->getInfoLog())
 		{
 			if (!fragmentResult)
-			{
-				outErrors.push_back({
-					trim(mbstows(fragmentShader->getInfoLog())),
-					mbstows(fragmentShaderText)
-				});
-			}
+				outErrors.push_back({ trim(mbstows(fragmentShader->getInfoLog())),
+					mbstows(fragmentShaderText) });
 		}
 		if (!fragmentResult)
 			return nullptr;
@@ -411,7 +399,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		const GlslRequirements computeRequirements = cx.requirements();
 
 		const auto& layout = cx.getLayout();
-		const char* computeShaderText = strdup(wstombs(cx.getComputeShader().getGeneratedShader(settings, layout, computeRequirements, resolveModuleText)).c_str());
+		const char* computeShaderText = strdup(wstombs(cx.getComputeShader().getGeneratedShader(settings, layout, computeRequirements)).c_str());
 
 		// Compute shader.
 		computeShader = new glslang::TShader(EShLangCompute);
@@ -421,17 +409,13 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		computeShader->setEntryPoint("main");
 		computeShader->setSourceEntryPoint("main");
 		computeShader->setDebugInfo(true);
-		
+
 		const bool computeResult = computeShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings | EShMsgDebugInfo));
 		if (computeShader->getInfoLog())
 		{
 			if (!computeResult)
-			{
-				outErrors.push_back({
-					trim(mbstows(computeShader->getInfoLog())),
-					mbstows(computeShaderText)
-				});
-			}
+				outErrors.push_back({ trim(mbstows(computeShader->getInfoLog())),
+					mbstows(computeShaderText) });
 		}
 		if (!computeResult)
 			return nullptr;
@@ -513,7 +497,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		glslang::GlslangToSpv(*csi, cs, &options);
 
 		programResource->m_computeShader = AlignedVector< uint32_t >(cs.begin(), cs.end());
-		
+
 		if (optimize > 0)
 			performOptimization(convertRelaxedToHalf, programResource->m_computeShader);
 
@@ -535,40 +519,35 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		uint32_t ubufferLength = 0;
 		int32_t resourceIndex = -1;
 	};
+
 	std::map< std::wstring, ParameterMapping > parameterMapping;
 
 	for (auto resource : cx.getLayout().getBySet(GlslResource::Set::Default))
 	{
 		if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 		{
-			programResource->m_samplers.push_back({
-				sampler->getBinding(),
+			programResource->m_samplers.push_back({ sampler->getBinding(),
 				sampler->getStages(),
-				sampler->getState()
-			});
+				sampler->getState() });
 		}
 		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
 		{
-			programResource->m_textures.push_back({
-				texture->getName(),
+			programResource->m_textures.push_back({ texture->getName(),
 				texture->getBinding(),
-				texture->getStages()
-			});
+				texture->getStages() });
 
 			auto& pm = parameterMapping[texture->getName()];
 			pm.resourceIndex = (int32_t)programResource->m_textures.size() - 1;
 		}
-		 else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
-		 {
-			programResource->m_images.push_back({
-				image->getName(),
+		else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
+		{
+			programResource->m_images.push_back({ image->getName(),
 				image->getBinding(),
-				image->getStages()
-			});
+				image->getStages() });
 
-		 	auto& pm = parameterMapping[image->getName()];
-		 	pm.resourceIndex = (int32_t)programResource->m_images.size() - 1;
-		 }
+			auto& pm = parameterMapping[image->getName()];
+			pm.resourceIndex = (int32_t)programResource->m_images.size() - 1;
+		}
 		else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
 		{
 			// Runtime CPU buffer index; remap from UB binding locations.
@@ -593,22 +572,18 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		}
 		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
 		{
-			programResource->m_sbuffers.push_back({
-				storageBuffer->getName(),
+			programResource->m_sbuffers.push_back({ storageBuffer->getName(),
 				storageBuffer->getBinding(),
-				storageBuffer->getStages()
-			});
+				storageBuffer->getStages() });
 
 			auto& pm = parameterMapping[storageBuffer->getName()];
 			pm.resourceIndex = (int32_t)programResource->m_sbuffers.size() - 1;
 		}
 		else if (const auto accelerationStructure = dynamic_type_cast< const GlslAccelerationStructure* >(resource))
 		{
-			programResource->m_accelerationStructures.push_back({
-				accelerationStructure->getName(),
+			programResource->m_accelerationStructures.push_back({ accelerationStructure->getName(),
 				accelerationStructure->getBinding(),
-				accelerationStructure->getStages()
-			});
+				accelerationStructure->getStages() });
 
 			auto& pm = parameterMapping[accelerationStructure->getName()];
 			pm.resourceIndex = (int32_t)programResource->m_accelerationStructures.size() - 1;
@@ -617,7 +592,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 	for (auto p : cx.getParameters())
 	{
-		if (p.type <= ParameterType::Matrix)	// Uniform parameter
+		if (p.type <= ParameterType::Matrix) // Uniform parameter
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())
@@ -625,14 +600,12 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 			const auto& pm = it->second;
 
-			programResource->m_parameters.push_back({
-				p.name,
+			programResource->m_parameters.push_back({ p.name,
 				pm.ubuffer,
 				pm.ubufferOffset,
-				pm.ubufferLength
-			});
+				pm.ubufferLength });
 		}
-		else if (p.type >= ParameterType::Texture2D && p.type <= ParameterType::TextureCube)	// Texture parameter
+		else if (p.type >= ParameterType::Texture2D && p.type <= ParameterType::TextureCube) // Texture parameter
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())
@@ -641,16 +614,14 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			const auto& pm = it->second;
 			T_FATAL_ASSERT(pm.resourceIndex >= 0);
 
-			programResource->m_parameters.push_back({
-				p.name,
+			programResource->m_parameters.push_back({ p.name,
 				pm.ubuffer,
 				pm.ubufferOffset,
 				pm.ubufferLength,
 				pm.resourceIndex,
 				-1,
 				-1,
-				-1
-			});
+				-1 });
 		}
 		else if (p.type == ParameterType::StructBuffer)
 		{
@@ -661,16 +632,14 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			const auto& pm = it->second;
 			T_FATAL_ASSERT(pm.resourceIndex >= 0);
 
-			programResource->m_parameters.push_back({
-				p.name,
+			programResource->m_parameters.push_back({ p.name,
 				pm.ubuffer,
 				pm.ubufferOffset,
 				pm.ubufferLength,
 				-1,
 				-1,
 				pm.resourceIndex,
-				-1
-			});
+				-1 });
 		}
 		else if (p.type >= ParameterType::Image2D && p.type <= ParameterType::ImageCube)
 		{
@@ -681,16 +650,14 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			const auto& pm = it->second;
 			T_FATAL_ASSERT(pm.resourceIndex >= 0);
 
-			programResource->m_parameters.push_back({
-				p.name,
+			programResource->m_parameters.push_back({ p.name,
 				pm.ubuffer,
 				pm.ubufferOffset,
 				pm.ubufferLength,
 				-1,
 				pm.resourceIndex,
 				-1,
-				-1
-			});
+				-1 });
 		}
 		else if (p.type == ParameterType::AccelerationStructure)
 		{
@@ -701,16 +668,14 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			const auto& pm = it->second;
 			T_FATAL_ASSERT(pm.resourceIndex >= 0);
 
-			programResource->m_parameters.push_back({
-				p.name,
+			programResource->m_parameters.push_back({ p.name,
 				pm.ubuffer,
 				pm.ubufferOffset,
 				pm.ubufferLength,
 				-1,
 				-1,
 				-1,
-				pm.resourceIndex
-			});
+				pm.resourceIndex });
 		}
 	}
 
@@ -825,14 +790,9 @@ bool ProgramCompilerVk::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	const resolveModule_fn& resolveModule,
-	Output& output
-) const
+	const IModuleAccess& moduleAccess,
+	Output& output) const
 {
-	auto resolveModuleText = [&](const Guid& moduleId) -> std::wstring {
-		return resolveModule(moduleId);
-	};
-
 	RefArray< VertexOutput > vertexOutputs;
 	RefArray< PixelOutput > pixelOutputs;
 	RefArray< ComputeOutput > computeOutputs;
@@ -857,7 +817,7 @@ bool ProgramCompilerVk::generate(
 		}
 	}
 
-	GlslContext cx(shaderGraph, settings);
+	GlslContext cx(shaderGraph, settings, moduleAccess);
 
 	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 	{
@@ -920,9 +880,7 @@ bool ProgramCompilerVk::generate(
 			ss << L"//   .name = \"" << uniformBuffer->getName() << L"\"" << Endl;
 			ss << L"//   .uniforms = {" << Endl;
 			for (auto uniform : uniformBuffer->get())
-			{
 				ss << L"//      " << int32_t(uniform.type) << L" \"" << uniform.name << L"\" " << uniform.length << Endl;
-			}
 			ss << L"//   }" << Endl;
 		}
 		else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
@@ -937,9 +895,7 @@ bool ProgramCompilerVk::generate(
 			ss << L"//   .name = \"" << storageBuffer->getName() << L"\"" << Endl;
 			ss << L"//   .elements = {" << Endl;
 			for (auto element : storageBuffer->get())
-			{
 				ss << L"//      " << int32_t(element.type) << L" \"" << element.name << Endl;
-			}
 			ss << L"//   }" << Endl;
 		}
 		else if (const auto accelerationStructure = dynamic_type_cast< const GlslAccelerationStructure* >(resource))
@@ -964,7 +920,7 @@ bool ProgramCompilerVk::generate(
 	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 	{
 		StringOutputStream vss;
-		vss << cx.getVertexShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
+		vss << cx.getVertexShader().getGeneratedShader(settings, layout, requirements);
 		vss << Endl;
 		vss << ss.str();
 		vss << Endl;
@@ -975,7 +931,7 @@ bool ProgramCompilerVk::generate(
 	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 	{
 		StringOutputStream fss;
-		fss << cx.getFragmentShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
+		fss << cx.getFragmentShader().getGeneratedShader(settings, layout, requirements);
 		fss << Endl;
 		fss << ss.str();
 		fss << Endl;
@@ -986,7 +942,7 @@ bool ProgramCompilerVk::generate(
 	if (computeOutputs.size() >= 1 || scriptOutputs[Script::Compute].size() >= 1)
 	{
 		StringOutputStream css;
-		css << cx.getComputeShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
+		css << cx.getComputeShader().getGeneratedShader(settings, layout, requirements);
 		css << Endl;
 		css << ss.str();
 		css << Endl;

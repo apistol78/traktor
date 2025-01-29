@@ -37,8 +37,7 @@ const wchar_t* c_uniformBufferNames[] = { L"UbOnce", L"UbFrame", L"UbDraw" };
 
 bool compareSamplerState(const SamplerState& lh, const SamplerState& rh, bool needW)
 {
-	return
-		lh.minFilter == rh.minFilter &&
+	return lh.minFilter == rh.minFilter &&
 		(rh.ignoreMips || lh.mipFilter == rh.mipFilter) &&
 		lh.magFilter == rh.magFilter &&
 		lh.addressU == rh.addressU &&
@@ -2279,7 +2278,7 @@ bool emitScript(GlslContext& cx, Script* node)
 
 	// Register modules.
 	for (const auto& moduleId : node->getIncludes())
-		cx.getShader().addModule(moduleId);
+		cx.registerModule(moduleId);
 
 	// Emit input and outputs.
 	const int32_t inputPinCount = node->getInputPinCount();

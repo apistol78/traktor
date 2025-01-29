@@ -10,8 +10,9 @@
 
 #include "Core/Containers/SmallMap.h"
 #include "Render/Editor/Glsl/GlslEmitter.h"
-#include "Render/Editor/Glsl/GlslShader.h"
 #include "Render/Editor/Glsl/GlslLayout.h"
+#include "Render/Editor/Glsl/GlslShader.h"
+#include "Render/Editor/IProgramCompiler.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -51,7 +52,7 @@ public:
 		UpdateFrequency frequency;
 	};
 
-	explicit GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings);
+	explicit GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings, const IProgramCompiler::IModuleAccess& moduleAccess);
 
 	Node* getInputNode(const InputPin* inputPin);
 
@@ -124,7 +125,6 @@ public:
 
 	/*! \} */
 
-
 	/*! \name Layout of resources */
 	/*! \{ */
 
@@ -132,16 +132,14 @@ public:
 
 	/*! \} */
 
-
 	/*! \name Render state */
 	/*! \{ */
 
 	void setRenderState(const RenderState& renderState);
 
-	const RenderState& getRenderState() const { return m_renderState;  }
+	const RenderState& getRenderState() const { return m_renderState; }
 
 	/*! \} */
-
 
 	/*! \name Generated shaders */
 	/*! \{ */
@@ -153,6 +151,13 @@ public:
 	GlslShader& getComputeShader() { return m_computeShader; }
 
 	GlslEmitter& getEmitter() { return m_emitter; }
+
+	/*! \} */
+
+	/*! \name Modules */
+	/*! \{ */
+
+	void registerModule(const Guid& moduleId);
 
 	/*! \} */
 
@@ -174,8 +179,8 @@ private:
 		Scope() = default;
 
 		explicit Scope(const InputPin* inputPin_, const OutputPin* outputPin_)
-		:	inputPin(inputPin_)
-		,	outputPin(outputPin_)
+			: inputPin(inputPin_)
+			, outputPin(outputPin_)
 		{
 		}
 	};
@@ -188,6 +193,7 @@ private:
 
 	Ref< const ShaderGraph > m_shaderGraph;
 	Ref< const PropertyGroup > m_settings;
+	const IProgramCompiler::IModuleAccess& m_moduleAccess;
 	GlslShader m_vertexShader;
 	GlslShader m_fragmentShader;
 	GlslShader m_computeShader;

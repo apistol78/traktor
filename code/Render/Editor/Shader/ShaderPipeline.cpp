@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/ShaderPipeline.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -35,25 +37,24 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Editor/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
+#include "Editor/PipelineDependency.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/IProgramCompiler.h"
-#include "Render/Editor/Shader/External.h"
-#include "Render/Editor/Shader/FragmentLinker.h"
-#include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/Script.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderModule.h"
-#include "Render/Editor/Shader/ShaderPipeline.h"
-#include "Render/Editor/Shader/UniformDeclaration.h"
-#include "Render/Editor/Shader/UniformLinker.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
+#include "Render/Editor/Shader/External.h"
+#include "Render/Editor/Shader/FragmentLinker.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/Script.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderModule.h"
+#include "Render/Editor/Shader/UniformDeclaration.h"
+#include "Render/Editor/Shader/UniformLinker.h"
 #include "Render/Resource/ProgramResource.h"
 #include "Render/Resource/ShaderResource.h"
 #include "Xml/XmlDeserializer.h"
@@ -61,14 +62,14 @@
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
 {
 public:
 	explicit FragmentReaderAdapter(editor::IPipelineCommon* pipeline)
-	:	m_pipeline(pipeline)
+		: m_pipeline(pipeline)
 	{
 	}
 
@@ -88,6 +89,78 @@ private:
 	Ref< editor::IPipelineCommon > m_pipeline;
 };
 
+class ModuleAccess : public IProgramCompiler::IModuleAccess
+{
+public:
+	explicit ModuleAccess(editor::IPipelineCommon* pipelineCommon)
+		: m_pipelineCommon(pipelineCommon)
+	{
+	}
+
+	virtual std::wstring getText(const Guid& id) const
+	{
+		std::set< Guid > visited;
+		return getTextImpl(id, visited);
+	}
+
+	virtual SmallMap< std::wstring, SamplerState > getSamplers(const Guid& id) const
+	{
+		std::set< Guid > visited;
+		return getSamplersImpl(id, visited);
+	}
+
+private:
+	editor::IPipelineCommon* m_pipelineCommon;
+	Preprocessor m_preprocessor;
+
+	std::wstring getTextImpl(const Guid& id, std::set< Guid >& inoutVisited) const
+	{
+		if (!inoutVisited.insert(id).second)
+			return L"";
+
+		Ref< const ShaderModule > shaderModule = m_pipelineCommon->getObjectReadOnly< ShaderModule >(id);
+		if (!shaderModule)
+			return L"";
+
+		const std::wstring unprocessedText = shaderModule->escape([&](const Guid& g) -> std::wstring {
+			return g.format();
+		});
+
+		// Execute preprocessor on shader module.
+		std::wstring text;
+		std::set< std::wstring > usings;
+		if (!m_preprocessor.evaluate(unprocessedText, text, usings))
+		{
+			log::error << L"Shader pipeline failed; unable to preprocess module " << id.format() << L"." << Endl;
+			return L"";
+		}
+
+		// Append all usings.
+		StringOutputStream ss;
+		for (const auto& u : usings)
+			ss << getTextImpl(Guid(u), inoutVisited);
+
+		// Append module text.
+		ss << text;
+		return ss.str();
+	}
+
+	SmallMap< std::wstring, SamplerState > getSamplersImpl(const Guid& id, std::set< Guid >& inoutVisited) const
+	{
+		SmallMap< std::wstring, SamplerState > samplers;
+
+		if (!inoutVisited.insert(id).second)
+			return samplers;
+
+		Ref< const ShaderModule > shaderModule = m_pipelineCommon->getObjectReadOnly< ShaderModule >(id);
+		if (!shaderModule)
+			return samplers;
+
+		samplers.insert(shaderModule->getSamplers().begin(), shaderModule->getSamplers().end());
+		return samplers;
+	}
+};
+
 uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 {
 	RefArray< render::PixelOutput > nodes = shaderGraph->findNodesOf< render::PixelOutput >();
@@ -96,12 +169,10 @@ uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 
 	uint32_t priority = 0;
 	for (auto node : nodes)
-	{
 		if (node->getPriority() != 0)
 			priority |= node->getPriority();
 		else if (node->getRenderState().blendEnable)
 			priority |= RenderPriority::AlphaBlend;
-	}
 
 	if (priority == 0)
 		priority = RenderPriority::Opaque;
@@ -109,41 +180,9 @@ uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 	return priority;
 }
 
-std::wstring resolveShaderModule(editor::IPipelineCommon* pipelineCommon, const Preprocessor& preprocessor, const Guid& id, std::set< Guid >& inoutVisited)
-{
-	if (!inoutVisited.insert(id).second)
-		return L"";
-
-	Ref< const ShaderModule> shaderModule = pipelineCommon->getObjectReadOnly< ShaderModule >(id);
-	if (!shaderModule)
-		return L"";
-
-	const std::wstring unprocessedText = shaderModule->escape([&](const Guid& g) -> std::wstring {
-		return g.format();
-	});
-
-	// Execute preprocessor on shader module.
-	std::wstring text;
-	std::set< std::wstring > usings;
-	if (!preprocessor.evaluate(unprocessedText, text, usings))
-	{
-		log::error << L"Shader pipeline failed; unable to preprocess module " << id.format() << L"." << Endl;
-		return L"";
-	}
-
-	// Append all usings.
-	StringOutputStream ss;
-	for (const auto& u : usings)
-		ss << resolveShaderModule(pipelineCommon, preprocessor, Guid(u), inoutVisited);
-	
-	// Append module text.
-	ss << text;
-	return ss.str();
 }
 
-	}
-
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 121, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 122, ShaderPipeline, editor::IPipeline)
 
 bool ShaderPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -160,8 +199,7 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings, db::Datab
 	db::recursiveFindChildInstances(
 		database->getRootGroup(),
 		db::FindInstanceByType(type_of< UniformDeclaration >()),
-		uniformDeclarationInstances
-	);
+		uniformDeclarationInstances);
 	for (auto uniformDeclarationInstance : uniformDeclarationInstances)
 	{
 		const std::wstring name = uniformDeclarationInstance->getName();
@@ -210,8 +248,7 @@ bool ShaderPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	Ref< const ShaderGraph > shaderGraph = mandatory_non_null_type_cast< const ShaderGraph* >(sourceAsset);
 	Ref< IProgramCompiler > programCompiler = getProgramCompiler();
@@ -286,8 +323,7 @@ bool ShaderPipeline::buildOutput(
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
-	uint32_t reason
-) const
+	uint32_t reason) const
 {
 	Ref< const ShaderGraph > shaderGraph = mandatory_non_null_type_cast< const ShaderGraph* >(sourceAsset);
 
@@ -325,8 +361,7 @@ bool ShaderPipeline::buildOutput(
 
 	// Link uniform declarations.
 	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline link uniform declarations");
-	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t
-	{
+	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t {
 		Ref< db::Instance > declarationInstance = pipelineBuilder->getSourceDatabase()->getInstance(declarationId);
 		if (declarationInstance != nullptr)
 			return { declarationInstance->getName(), declarationInstance->getObject< UniformDeclaration >() };
@@ -411,10 +446,8 @@ bool ShaderPipeline::buildOutput(
 		{
 			WildCompare wc(includeOnlyTechnique);
 			for (const auto& techniqueName : techniqueNames)
-			{
 				if (wc.match(techniqueName))
 					keepTechniqueNames.insert(techniqueName);
-			}
 		}
 		techniqueNames = keepTechniqueNames;
 	}
@@ -428,6 +461,7 @@ bool ShaderPipeline::buildOutput(
 		Ref< const ShaderGraph > combinationGraph;
 		Ref< const ShaderGraph > programGraph;
 	};
+
 	std::list< Error > errors;
 	Semaphore errorsLock;
 
@@ -468,7 +502,7 @@ bool ShaderPipeline::buildOutput(
 		shaderResourceTechnique.combinations.resize(combinationCount);
 		for (uint32_t combination = 0; combination < combinationCount; ++combination)
 		{
-			jobs.push_back([&, combination](){
+			jobs.push_back([&, combination]() {
 				const auto& parameterBits = shaderResource->getParameterBits();
 
 				// Remap parameter mask and value for this combination as shader consist of multiple techniques.
@@ -631,8 +665,7 @@ bool ShaderPipeline::buildOutput(
 					Ref< Uniform > textureUniform = new Uniform(
 						getParameterNameFromTextureReferenceIndex(textureIndex),
 						textureNode->getParameterType(),
-						UpdateFrequency::Once
-					);
+						UpdateFrequency::Once);
 
 					const OutputPin* textureUniformOutput = textureUniform->getOutputPin(0);
 					T_ASSERT(textureUniformOutput);
@@ -645,11 +678,7 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Compile shader program.
-				Preprocessor preprocessor;
-				auto includeResolver = [&](const Guid& id) -> std::wstring {
-					std::set< Guid > visited;
-					return resolveShaderModule(pipelineBuilder, preprocessor, id, visited);
-				};
+				ModuleAccess moduleAcccess(pipelineBuilder);
 
 				// Calculate hash of the entire shader graph including modules so we can
 				// memorize shader compilation.
@@ -667,29 +696,27 @@ bool ShaderPipeline::buildOutput(
 				Ref< ProgramResource > programResource = pipelineBuilder->getDataAccessCache()->read< ProgramResource >(
 					Key(0x00000000, 0x00000000, dependency->pipelineHash, hash),
 					[&]() {
-						pipelineBuilder->getProfiler()->begin(type_of(programCompiler));
+					pipelineBuilder->getProfiler()->begin(type_of(programCompiler));
 
-						std::list< IProgramCompiler::Error > jobErrors;
-						Ref< ProgramResource > programResource = programCompiler->compile(
-							programGraph,
-							m_compilerSettings,
-							path,
-							includeResolver,
-							jobErrors
-						);
+					std::list< IProgramCompiler::Error > jobErrors;
+					Ref< ProgramResource > programResource = programCompiler->compile(
+						programGraph,
+						m_compilerSettings,
+						path,
+						moduleAcccess,
+						jobErrors);
 
-						// Merge errors into output list.
-						if (!jobErrors.empty())
-						{
-							T_ANONYMOUS_VAR(Acquire< Semaphore >)(errorsLock);
-							for (const auto& jobError : jobErrors)
-								errors.push_back({ jobError, techniqueName, combination, resolvedGraph, combinationGraph, programGraph });
-						}
-
-						pipelineBuilder->getProfiler()->end();
-						return programResource;
+					// Merge errors into output list.
+					if (!jobErrors.empty())
+					{
+						T_ANONYMOUS_VAR(Acquire< Semaphore >)(errorsLock);
+						for (const auto& jobError : jobErrors)
+							errors.push_back({ jobError, techniqueName, combination, resolvedGraph, combinationGraph, programGraph });
 					}
-				);
+
+					pipelineBuilder->getProfiler()->end();
+					return programResource;
+					});
 				if (!programResource)
 				{
 					log::error << L"ShaderPipeline failed; unable to compile shader \"" << path << L"\"." << Endl;
@@ -729,8 +756,7 @@ bool ShaderPipeline::buildOutput(
 	// Create output instance.
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
 		outputPath,
-		outputGuid
-	);
+		outputGuid);
 	if (!outputInstance)
 	{
 		log::error << L"ShaderPipeline failed; unable to create output instance." << Endl;
@@ -753,8 +779,7 @@ Ref< ISerializable > ShaderPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const Object* buildParams
-) const
+	const Object* buildParams) const
 {
 	T_FATAL_ERROR;
 	return nullptr;

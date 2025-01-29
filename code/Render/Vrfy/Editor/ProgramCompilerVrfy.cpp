@@ -1,15 +1,16 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Vrfy/ProgramResourceVrfy.h"
 #include "Render/Vrfy/Editor/ProgramCompilerVrfy.h"
+
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Vrfy/ProgramResourceVrfy.h"
 
 namespace traktor::render
 {
@@ -31,12 +32,11 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	const resolveModule_fn& resolveModule,
-	std::list< Error >& outErrors
-) const
+	const IModuleAccess& moduleAccess,
+	std::list< Error >& outErrors) const
 {
 	// Compile program using wrapped compiler.
-	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, settings, name, resolveModule, outErrors);
+	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, settings, name, moduleAccess, outErrors);
 	if (!resource)
 		return nullptr;
 
@@ -47,21 +47,13 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 
 	// Record all uniforms used in shader.
 	for (auto uniform : shaderGraph->findNodesOf< Uniform >())
-	{
-		resourceVrfy->m_uniforms.push_back({
-			uniform->getParameterName(),
+		resourceVrfy->m_uniforms.push_back({ uniform->getParameterName(),
 			uniform->getParameterType(),
-			0
-		});
-	}
+			0 });
 	for (auto indexedUniform : shaderGraph->findNodesOf< IndexedUniform >())
-	{
-		resourceVrfy->m_uniforms.push_back({
-			indexedUniform->getParameterName(),
+		resourceVrfy->m_uniforms.push_back({ indexedUniform->getParameterName(),
 			indexedUniform->getParameterType(),
-			indexedUniform->getLength()
-		});
-	}
+			indexedUniform->getLength() });
 
 	// Keep copy of readable shader in capture.
 	Output output;
@@ -69,9 +61,8 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 		shaderGraph,
 		settings,
 		name,
-		resolveModule,
-		output
-	);
+		moduleAccess,
+		output);
 	resourceVrfy->m_vertexShader = output.vertex;
 	resourceVrfy->m_pixelShader = output.pixel;
 	resourceVrfy->m_computeShader = output.compute;
@@ -83,12 +74,11 @@ bool ProgramCompilerVrfy::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	const resolveModule_fn& resolveModule,
-	Output& output
-) const
+	const IModuleAccess& moduleAccess,
+	Output& output) const
 {
 	// Just let the wrapped compiler generate source.
-	return m_compiler->generate(shaderGraph, settings, name, resolveModule, output);
+	return m_compiler->generate(shaderGraph, settings, name, moduleAccess, output);
 }
 
 }

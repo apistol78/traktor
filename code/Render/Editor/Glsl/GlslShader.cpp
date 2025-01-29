@@ -6,25 +6,26 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Glsl/GlslShader.h"
+
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Glsl/GlslAccelerationStructure.h"
 #include "Render/Editor/Glsl/GlslImage.h"
 #include "Render/Editor/Glsl/GlslLayout.h"
 #include "Render/Editor/Glsl/GlslSampler.h"
-#include "Render/Editor/Glsl/GlslShader.h"
 #include "Render/Editor/Glsl/GlslStorageBuffer.h"
 #include "Render/Editor/Glsl/GlslTexture.h"
 #include "Render/Editor/Glsl/GlslUniformBuffer.h"
+#include "Render/Editor/OutputPin.h"
 
 namespace traktor::render
 {
 
 GlslShader::GlslShader(ShaderType shaderType)
-:	m_shaderType(shaderType)
-,	m_temporaryVariableAlloc(0, 65535)
+	: m_shaderType(shaderType)
+	, m_temporaryVariableAlloc(0, 65535)
 {
 	pushScope();
 	pushOutputStream(BtInput, T_FILE_LINE_W);
@@ -69,7 +70,7 @@ GlslVariable* GlslShader::createVariable(const OutputPin* outputPin, const std::
 	for (uint32_t i = m_variableScopes.back(); i < m_variables.size(); ++i)
 	{
 		const auto& v = m_variables[i];
-		T_FATAL_ASSERT (v.outputPin != outputPin);
+		T_FATAL_ASSERT(v.outputPin != outputPin);
 	}
 #endif
 
@@ -92,15 +93,11 @@ GlslVariable* GlslShader::createOuterVariable(const OutputPin* outputPin, const 
 GlslVariable* GlslShader::getVariable(const OutputPin* outputPin)
 {
 	for (auto it = m_variables.rbegin(); it != m_variables.rend(); ++it)
-	{
 		if (it->outputPin == outputPin)
 			return it->variable;
-	}
 	for (auto it = m_outerVariables.begin(); it != m_outerVariables.end(); ++it)
-	{
 		if (it->outputPin == outputPin)
 			return it->variable;
-	}
 	return nullptr;
 }
 
@@ -148,17 +145,16 @@ const StringOutputStream& GlslShader::getOutputStream(BlockType blockType) const
 	return *(m_outputStreams[int(blockType)].back().outputStream);
 }
 
-void GlslShader::addModule(const Guid& moduleId)
+void GlslShader::addModule(const Guid& moduleId, const std::wstring& moduleText)
 {
-	m_moduleIds.insert(moduleId);
+	if (m_modules.insert(moduleId))
+		m_moduleText.push_back(moduleText);
 }
 
 std::wstring GlslShader::getGeneratedShader(
 	const PropertyGroup* settings,
 	const GlslLayout& layout,
-	const GlslRequirements& requirements,
-	const std::function< std::wstring(const Guid&) >& resolveModule
-) const
+	const GlslRequirements& requirements) const
 {
 	StringOutputStream ss;
 
@@ -208,7 +204,7 @@ std::wstring GlslShader::getGeneratedShader(
 		else if (m_shaderType == StFragment)
 			precisionHint = requirements.fragmentPrecisionHint;
 	}
-	
+
 	switch (precisionHint)
 	{
 	case PrecisionHint::Low:
@@ -342,36 +338,36 @@ std::wstring GlslShader::getGeneratedShader(
 		ss << Endl;
 	}
 
-	 if (layout.count< GlslImage >(stageMask) > 0)
+	if (layout.count< GlslImage >(stageMask) > 0)
 	{
 		ss << L"// Images" << Endl;
-		 for (auto resource : layout.getByStage(stageMask))
-		 {
-			 if (resource->getBinding() < 0)
-				 continue;
+		for (auto resource : layout.getByStage(stageMask))
+		{
+			if (resource->getBinding() < 0)
+				continue;
 
-		 	if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
-		 	{
-		 		switch (image->getUniformType())
-		 		{
-		 		case GlslType::Image2D:
-		 			ss << L"layout (binding = " << image->getBinding() << L", set = " << (int32_t)image->getSet() << L", rgba32f) uniform image2D " << image->getName() << (image->isIndexed() ? L"[];" : L";") << Endl;
-		 			break;
+			if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
+			{
+				switch (image->getUniformType())
+				{
+				case GlslType::Image2D:
+					ss << L"layout (binding = " << image->getBinding() << L", set = " << (int32_t)image->getSet() << L", rgba32f) uniform image2D " << image->getName() << (image->isIndexed() ? L"[];" : L";") << Endl;
+					break;
 
-		 		case GlslType::Image3D:
-		 			ss << L"layout (binding = " << image->getBinding() << L", set = " << (int32_t)image->getSet() << L", rgba32f) uniform image3D " << image->getName() << (image->isIndexed() ? L"[];" : L";") << Endl;
-		 			break;
+				case GlslType::Image3D:
+					ss << L"layout (binding = " << image->getBinding() << L", set = " << (int32_t)image->getSet() << L", rgba32f) uniform image3D " << image->getName() << (image->isIndexed() ? L"[];" : L";") << Endl;
+					break;
 
-		 		case GlslType::ImageCube:
-		 			ss << L"layout (binding = " << image->getBinding() << L", set = " << (int32_t)image->getSet() << L", rgba32f) uniform imageCube " << image->getName() << (image->isIndexed() ? L"[];" : L";") << Endl;
-		 			break;
+				case GlslType::ImageCube:
+					ss << L"layout (binding = " << image->getBinding() << L", set = " << (int32_t)image->getSet() << L", rgba32f) uniform imageCube " << image->getName() << (image->isIndexed() ? L"[];" : L";") << Endl;
+					break;
 
-		 		default:
-		 			break;
-		 		}
-		 	}
-		 }
-		 ss << Endl;
+				default:
+					break;
+				}
+			}
+		}
+		ss << Endl;
 	}
 
 	if (layout.count< GlslStorageBuffer >(stageMask) > 0)
@@ -426,7 +422,7 @@ std::wstring GlslShader::getGeneratedShader(
 			if (resource->getBinding() < 0)
 				continue;
 
-			if (const auto accelerationStructure = dynamic_type_cast<const GlslAccelerationStructure*>(resource))
+			if (const auto accelerationStructure = dynamic_type_cast< const GlslAccelerationStructure* >(resource))
 				ss << L"layout (binding = " << accelerationStructure->getBinding() << L", set = " << (int32_t)accelerationStructure->getSet() << L") uniform accelerationStructureEXT " << accelerationStructure->getName() << L";" << Endl;
 		}
 		ss << Endl;
@@ -448,12 +444,11 @@ std::wstring GlslShader::getGeneratedShader(
 		ss << Endl;
 	}
 
-	if (!m_moduleIds.empty())
+	if (!m_moduleText.empty())
 	{
 		ss << L"// Modules" << Endl;
-		for (const auto& moduleId : m_moduleIds)
+		for (const auto& moduleText : m_moduleText)
 		{
-			const std::wstring moduleText = resolveModule(moduleId);
 			if (!moduleText.empty())
 			{
 				ss << moduleText << Endl;

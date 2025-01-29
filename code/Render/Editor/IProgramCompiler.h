@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,11 +8,13 @@
  */
 #pragma once
 
-#include <functional>
-#include <list>
-#include <string>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Render/Types.h"
+
+#include <list>
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -58,7 +60,12 @@ public:
 		std::wstring compute;
 	};
 
-	typedef std::function< std::wstring (const Guid& id) > resolveModule_fn;
+	struct IModuleAccess
+	{
+		virtual std::wstring getText(const Guid& id) const = 0;
+
+		virtual SmallMap< std::wstring, SamplerState > getSamplers(const Guid& id) const = 0;
+	};
 
 	/*!
 	 */
@@ -81,9 +88,8 @@ public:
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
 		const std::wstring& name,
-		const resolveModule_fn& resolveModule,
-		std::list< Error >& outErrors
-	) const = 0;
+		const IModuleAccess& moduleAccess,
+		std::list< Error >& outErrors) const = 0;
 
 	/*! Generate render specific shader if possible.
 	 *
@@ -100,9 +106,8 @@ public:
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
 		const std::wstring& name,
-		const resolveModule_fn& resolveModule,
-		Output& output
-	) const = 0;
+		const IModuleAccess& moduleAccess,
+		Output& output) const = 0;
 };
 
 }

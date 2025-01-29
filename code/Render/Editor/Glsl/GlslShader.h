@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,15 +8,15 @@
  */
 #pragma once
 
-#include <functional>
-#include <list>
-#include <string>
 #include "Core/Containers/IdAllocator.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Io/StringOutputStream.h"
-#include "Render/Types.h"
 #include "Render/Editor/Glsl/GlslType.h"
 #include "Render/Editor/Glsl/GlslVariable.h"
+#include "Render/Types.h"
+
+#include <list>
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -94,14 +94,12 @@ public:
 
 	/*! \} */
 
-	void addModule(const Guid& moduleId);
+	void addModule(const Guid& moduleId, const std::wstring& moduleText);
 
 	std::wstring getGeneratedShader(
 		const PropertyGroup* settings,
 		const GlslLayout& layout,
-		const GlslRequirements& requirements,
-		const std::function< std::wstring(const Guid&) >& resolveModule
-	) const;
+		const GlslRequirements& requirements) const;
 
 private:
 	struct OutputPinVariable
@@ -124,7 +122,9 @@ private:
 	AlignedVector< OutputPinVariable > m_outerVariables;
 	IdAllocator m_temporaryVariableAlloc;
 	AlignedVector< OutputStreamTuple > m_outputStreams[BtLast];
-	SmallSet< Guid > m_moduleIds;
+
+	SmallSet< Guid > m_modules;
+	AlignedVector< std::wstring > m_moduleText;
 };
 
 }

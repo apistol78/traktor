@@ -1,31 +1,32 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Glsl/GlslContext.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/Murmur3.h"
 #include "Core/Misc/String.h"
-#include "Render/Editor/GraphTraverse.h"
-#include "Render/Editor/InputPin.h"
-#include "Render/Editor/Node.h"
-#include "Render/Editor/OutputPin.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Glsl/GlslContext.h"
 #include "Render/Editor/Glsl/GlslImage.h"
 #include "Render/Editor/Glsl/GlslSampler.h"
 #include "Render/Editor/Glsl/GlslShader.h"
 #include "Render/Editor/Glsl/GlslStorageBuffer.h"
 #include "Render/Editor/Glsl/GlslTexture.h"
 #include "Render/Editor/Glsl/GlslUniformBuffer.h"
+#include "Render/Editor/GraphTraverse.h"
+#include "Render/Editor/InputPin.h"
+#include "Render/Editor/Node.h"
+#include "Render/Editor/OutputPin.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 const SamplerState c_samplerPointState = {
 	.minFilter = Filter::Point,
@@ -60,29 +61,39 @@ std::wstring getClassNameOnly(const Object* o)
 	return qn.substr(p + 1);
 }
 
-	}
-
-GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings)
-:	m_shaderGraph(shaderGraph)
-,	m_settings(settings)
-,	m_vertexShader(GlslShader::StVertex)
-,	m_fragmentShader(GlslShader::StFragment)
-,	m_computeShader(GlslShader::StCompute)
-,	m_currentShader(nullptr)
+uint8_t getBindStage(const GlslContext& cx)
 {
-	m_layout.addStatic(new GlslTexture(L"__bindlessTextures2D__",   GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::Texture2D, true), /* binding */ 0);
-	m_layout.addStatic(new GlslTexture(L"__bindlessTextures3D__",   GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::Texture3D, true), /* binding */ 0);
-	m_layout.addStatic(new GlslTexture(L"__bindlessTexturesCube__", GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::TextureCube, true), /* binding */ 0);
-	m_layout.addStatic(new GlslImage(L"__bindlessImages2D__",   GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::Image2D, true), /* binding */ 1);
-	m_layout.addStatic(new GlslImage(L"__bindlessImages3D__",   GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::Image3D, true), /* binding */ 1);
-	m_layout.addStatic(new GlslImage(L"__bindlessImagesCube__", GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::ImageCube, true), /* binding */ 1);
-	//#note Binding 2 is bindless buffers, which is only accessible from shader modules.
-	m_layout.addStatic(new GlslUniformBuffer(L"UbOnce",  GlslResource::Set::Default , 0), /* binding */ 3);
-	m_layout.addStatic(new GlslUniformBuffer(L"UbFrame", GlslResource::Set::Default, 0), /* binding */ 4);
-	m_layout.addStatic(new GlslUniformBuffer(L"UbDraw",  GlslResource::Set::Default, 0), /* binding */ 5);
-	m_layout.addStatic(new GlslSampler(L"__samplerPoint__", GlslResource::Set::Default, GlslResource::BsAll, c_samplerPointState), /* binding */ 6);
-	m_layout.addStatic(new GlslSampler(L"__samplerLinear__", GlslResource::Set::Default, GlslResource::BsAll, c_samplerLinearState), /* binding */ 7);
+	if (cx.inVertex())
+		return GlslResource::BsVertex;
+	else if (cx.inFragment())
+		return GlslResource::BsFragment;
+	else if (cx.inCompute())
+		return GlslResource::BsCompute;
+	else
+		return GlslResource::BsVertex | GlslResource::BsFragment | GlslResource::BsCompute;
+}
 
+}
+
+GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings, const IProgramCompiler::IModuleAccess& moduleAccess)
+	: m_shaderGraph(shaderGraph)
+	, m_settings(settings)
+	, m_moduleAccess(moduleAccess)
+	, m_vertexShader(GlslShader::StVertex)
+	, m_fragmentShader(GlslShader::StFragment)
+	, m_computeShader(GlslShader::StCompute)
+	, m_currentShader(nullptr)
+{
+	m_layout.addStatic(new GlslTexture(L"__bindlessTextures2D__", GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::Texture2D, true), /* binding */ 0);
+	m_layout.addStatic(new GlslTexture(L"__bindlessTextures3D__", GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::Texture3D, true), /* binding */ 0);
+	m_layout.addStatic(new GlslTexture(L"__bindlessTexturesCube__", GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::TextureCube, true), /* binding */ 0);
+	m_layout.addStatic(new GlslImage(L"__bindlessImages2D__", GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::Image2D, true), /* binding */ 1);
+	m_layout.addStatic(new GlslImage(L"__bindlessImages3D__", GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::Image3D, true), /* binding */ 1);
+	m_layout.addStatic(new GlslImage(L"__bindlessImagesCube__", GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::ImageCube, true), /* binding */ 1);
+	// #note Binding 2 is bindless buffers, which is only accessible from shader modules.
+	m_layout.addStatic(new GlslUniformBuffer(L"UbOnce", GlslResource::Set::Default, 0), /* binding */ 3);
+	m_layout.addStatic(new GlslUniformBuffer(L"UbFrame", GlslResource::Set::Default, 0), /* binding */ 4);
+	m_layout.addStatic(new GlslUniformBuffer(L"UbDraw", GlslResource::Set::Default, 0), /* binding */ 5);
 }
 
 Node* GlslContext::getInputNode(const InputPin* inputPin)
@@ -155,8 +166,7 @@ GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 
 	m_emitScope.push_back(Scope(
 		inputPin,
-		sourcePin
-	));
+		sourcePin));
 
 	const bool result = m_emitter.emit(*this, node);
 	if (result)
@@ -298,22 +308,18 @@ bool GlslContext::addParameter(const std::wstring& name, ParameterType type, int
 {
 	if (haveParameter(name))
 		return false;
-	m_parameters.push_back({
-		name,
+	m_parameters.push_back({ name,
 		type,
 		length,
-		frequency
-	});
+		frequency });
 	return true;
 }
 
 bool GlslContext::haveParameter(const std::wstring& name) const
 {
 	for (const auto& parameter : m_parameters)
-	{
 		if (parameter.name == name)
 			return true;
-	}
 	return false;
 }
 
@@ -325,6 +331,23 @@ GlslLayout& GlslContext::getLayout()
 void GlslContext::setRenderState(const RenderState& renderState)
 {
 	m_renderState = renderState;
+}
+
+void GlslContext::registerModule(const Guid& moduleId)
+{
+	const std::wstring text = m_moduleAccess.getText(moduleId);
+	getShader().addModule(moduleId, text);
+
+	for (const auto it : m_moduleAccess.getSamplers(moduleId))
+		if (getLayout().getByName(it.first) == nullptr)
+			getLayout().add(
+				new GlslSampler(
+					it.first,
+					GlslResource::Set::Default,
+					getBindStage(*this),
+					it.second));
+		else
+			log::warning << L"Sampler defined in module \"" << it.first << L"\" already exist in layout." << Endl;
 }
 
 void GlslContext::pushError(const std::wstring& errorMessage)
