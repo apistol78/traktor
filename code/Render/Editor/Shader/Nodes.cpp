@@ -171,10 +171,11 @@ private:
 	int32_t m_version;
 };
 
+template < int Version >
 class MemberSamplerState : public MemberComplex
 {
 public:
-	MemberSamplerState(SamplerState& ref)
+	explicit MemberSamplerState(SamplerState& ref)
 		: MemberComplex(L"", false)
 		, m_ref(ref)
 	{
@@ -182,40 +183,80 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		const MemberEnum< Filter >::Key kFilter[] = {
-			{ L"FtPoint", Filter::Point },
-			{ L"FtLinear", Filter::Linear },
-			{ 0 }
-		};
+		if constexpr (Version >= 1)
+		{
+			const MemberEnum< Filter >::Key kFilter[] = {
+				{ L"Point", Filter::Point },
+				{ L"Linear", Filter::Linear },
+				{ 0 }
+			};
 
-		const MemberEnum< Address >::Key kAddress[] = {
-			{ L"AdWrap", Address::Wrap },
-			{ L"AdMirror", Address::Mirror },
-			{ L"AdClamp", Address::Clamp },
-			{ L"AdBorder", Address::Border },
-			{ 0 }
-		};
+			const MemberEnum< Address >::Key kAddress[] = {
+				{ L"Wrap", Address::Wrap },
+				{ L"Mirror", Address::Mirror },
+				{ L"Clamp", Address::Clamp },
+				{ L"Border", Address::Border },
+				{ 0 }
+			};
 
-		const MemberEnum< CompareFunction >::Key kCompareFunctions[] = {
-			{ L"CfAlways", CompareFunction::Always },
-			{ L"CfNever", CompareFunction::Never },
-			{ L"CfLess", CompareFunction::Less },
-			{ L"CfLessEqual", CompareFunction::LessEqual },
-			{ L"CfGreater", CompareFunction::Greater },
-			{ L"CfGreaterEqual", CompareFunction::GreaterEqual },
-			{ L"CfEqual", CompareFunction::Equal },
-			{ L"CfNotEqual", CompareFunction::NotEqual },
-			{ L"CfNone", CompareFunction::None },
-			{ 0 }
-		};
+			const MemberEnum< CompareFunction >::Key kCompareFunctions[] = {
+				{ L"Always", CompareFunction::Always },
+				{ L"Never", CompareFunction::Never },
+				{ L"Less", CompareFunction::Less },
+				{ L"LessEqual", CompareFunction::LessEqual },
+				{ L"Greater", CompareFunction::Greater },
+				{ L"GreaterEqual", CompareFunction::GreaterEqual },
+				{ L"Equal", CompareFunction::Equal },
+				{ L"NotEqual", CompareFunction::NotEqual },
+				{ L"None", CompareFunction::None },
+				{ 0 }
+			};
 
-		s >> MemberEnum< Filter >(L"minFilter", m_ref.minFilter, kFilter);
-		s >> MemberEnum< Filter >(L"mipFilter", m_ref.mipFilter, kFilter);
-		s >> MemberEnum< Filter >(L"magFilter", m_ref.magFilter, kFilter);
-		s >> MemberEnum< Address >(L"addressU", m_ref.addressU, kAddress);
-		s >> MemberEnum< Address >(L"addressV", m_ref.addressV, kAddress);
-		s >> MemberEnum< Address >(L"addressW", m_ref.addressW, kAddress);
-		s >> MemberEnum< CompareFunction >(L"compare", m_ref.compare, kCompareFunctions);
+			s >> MemberEnum< Filter >(L"minFilter", m_ref.minFilter, kFilter);
+			s >> MemberEnum< Filter >(L"mipFilter", m_ref.mipFilter, kFilter);
+			s >> MemberEnum< Filter >(L"magFilter", m_ref.magFilter, kFilter);
+			s >> MemberEnum< Address >(L"addressU", m_ref.addressU, kAddress);
+			s >> MemberEnum< Address >(L"addressV", m_ref.addressV, kAddress);
+			s >> MemberEnum< Address >(L"addressW", m_ref.addressW, kAddress);
+			s >> MemberEnum< CompareFunction >(L"compare", m_ref.compare, kCompareFunctions);
+		}
+		else
+		{
+			const MemberEnum< Filter >::Key kFilter[] = {
+				{ L"FtPoint", Filter::Point },
+				{ L"FtLinear", Filter::Linear },
+				{ 0 }
+			};
+
+			const MemberEnum< Address >::Key kAddress[] = {
+				{ L"AdWrap", Address::Wrap },
+				{ L"AdMirror", Address::Mirror },
+				{ L"AdClamp", Address::Clamp },
+				{ L"AdBorder", Address::Border },
+				{ 0 }
+			};
+
+			const MemberEnum< CompareFunction >::Key kCompareFunctions[] = {
+				{ L"CfAlways", CompareFunction::Always },
+				{ L"CfNever", CompareFunction::Never },
+				{ L"CfLess", CompareFunction::Less },
+				{ L"CfLessEqual", CompareFunction::LessEqual },
+				{ L"CfGreater", CompareFunction::Greater },
+				{ L"CfGreaterEqual", CompareFunction::GreaterEqual },
+				{ L"CfEqual", CompareFunction::Equal },
+				{ L"CfNotEqual", CompareFunction::NotEqual },
+				{ L"CfNone", CompareFunction::None },
+				{ 0 }
+			};
+
+			s >> MemberEnum< Filter >(L"minFilter", m_ref.minFilter, kFilter);
+			s >> MemberEnum< Filter >(L"mipFilter", m_ref.mipFilter, kFilter);
+			s >> MemberEnum< Filter >(L"magFilter", m_ref.magFilter, kFilter);
+			s >> MemberEnum< Address >(L"addressU", m_ref.addressU, kAddress);
+			s >> MemberEnum< Address >(L"addressV", m_ref.addressV, kAddress);
+			s >> MemberEnum< Address >(L"addressW", m_ref.addressW, kAddress);
+			s >> MemberEnum< CompareFunction >(L"compare", m_ref.compare, kCompareFunctions);
+		}
 		s >> Member< float >(L"mipBias", m_ref.mipBias);
 		s >> Member< bool >(L"ignoreMips", m_ref.ignoreMips);
 		s >> Member< bool >(L"useAnisotropic", m_ref.useAnisotropic);
@@ -2274,7 +2315,7 @@ Round::Round()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 5, Sampler, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 6, Sampler, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Sampler_i[] = {
 	{ L"Texture", L"{32EB5230-1F0D-40B8-93F6-9C8E5469454E}", false },
@@ -2313,8 +2354,10 @@ void Sampler::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
 
-	if (s.getVersion() >= 5)
-		s >> MemberSamplerState(m_state);
+	if (s.getVersion() >= 6)
+		s >> MemberSamplerState< 1 >(m_state);
+	else if (s.getVersion() >= 5)
+		s >> MemberSamplerState< 0 >(m_state);
 	else
 	{
 		const MemberEnum< Filter >::Key kFilter[] = {
@@ -2896,7 +2939,7 @@ void Texture::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureState", 0, TextureState, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureState", 1, TextureState, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_TextureState_o[] = {
 	{ L"Output", L"{82C966B2-7B19-48B2-8FE0-B85FF4E3C504}" },
@@ -2921,7 +2964,10 @@ const SamplerState& TextureState::getSamplerState() const
 void TextureState::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
-	s >> MemberSamplerState(m_samplerState);
+	if (s.getVersion< TextureState >() >= 1)
+		s >> MemberSamplerState< 1 >(m_samplerState);
+	else
+		s >> MemberSamplerState< 0 >(m_samplerState);
 }
 
 /*---------------------------------------------------------------------------*/
