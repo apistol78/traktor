@@ -285,8 +285,8 @@
 			<id>{D0289247-D242-0C45-90FF-321E67AAC3B4}</id>
 			<comment/>
 			<position>
-				<first>2027</first>
-				<second>-124</second>
+				<first>2138</first>
+				<second>-125</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -294,8 +294,8 @@
 			<id>{9CA992C7-BE2D-7841-99AA-21A85026D571}</id>
 			<comment/>
 			<position>
-				<first>1939</first>
-				<second>-267</second>
+				<first>2138</first>
+				<second>-265</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -303,8 +303,8 @@
 			<id>{5C6889FF-D561-0542-9E6F-E9BA12950D80}</id>
 			<comment/>
 			<position>
-				<first>2250</first>
-				<second>-260</second>
+				<first>2322</first>
+				<second>-264</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -312,8 +312,8 @@
 			<id>{91657325-9076-CA44-BE9A-40F9CA6278A1}</id>
 			<comment/>
 			<position>
-				<first>2267</first>
-				<second>-153</second>
+				<first>2322</first>
+				<second>-157</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -321,8 +321,8 @@
 			<id>{E854EA87-C493-8540-BDCF-B76ECC4C4394}</id>
 			<comment/>
 			<position>
-				<first>1971</first>
-				<second>-31</second>
+				<first>2106</first>
+				<second>-69</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName>World_ViewInverse</parameterName>
@@ -341,8 +341,8 @@
 			<id>{B8F55829-D99C-4B4F-AB37-7E235A7ADF2D}</id>
 			<comment/>
 			<position>
-				<first>2169</first>
-				<second>-218</second>
+				<first>2290</first>
+				<second>-214</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName>World_ViewInverse</parameterName>
@@ -389,6 +389,7 @@
 				<item>{1C13688E-63BC-3141-ACB1-58EEE72EEF2F}</item>
 				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
 				<item>{4370C471-3C5D-914B-A3AC-866BE15AD328}</item>
+				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -429,21 +430,11 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-const int lightIndex = int($Random * $LightCount) % int($LightCount);
-const $typeof(Lights) light = $Lights[lightIndex];
+int rndState = int($Random * 54312.0f);
 
 const float Far = 50.0f;
 const int N = 8;
-const mat3 R = Rotate($Direction.xyz, $Random.x);
-const vec2 j = vec2($Random.zw * 0.1f);
-
-vec3 u, v;
-OrthogonalFrame($Direction.xyz, u, v);
-const mat3 DR = mat3(
-	u,
-	v,
-	$Direction.xyz
-);
+const mat3 R = Rotate($Direction.xyz, Hash(rndState++));
 
 vec4 acc = vec4(0.0f);
 HWRT_Material m;
@@ -451,17 +442,15 @@ float t;
 
 for (int i = 0; i < N; ++i)
 {
-	const vec2 r = Rotate2D((Hammersley(i, N) + j) * 2.0f - 1.0f, $Random.y) * 0.5 + 0.5;
+	const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
+	const $typeof(Lights) light = $Lights[lightIndex];
+
+	const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.25f;
+	const vec2 r = Rotate2D((Hammersley(i, N) + jitter) * 2.0f - 1.0f, Hash(rndState++)) * 0.5 + 0.5;
 	
 	const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.01f;
-
-#if 1
 	const vec3 rayDir = R * normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.02f);
 	const float probability = 1.0f;
-#else
-	const vec3 rayDir = R * DR * normalize(LambertianDirection(r) + $Direction.xyz * 0.02f);
-	const float probability = 0.78532f;
-#endif
 
 	if (HWRT_Trace($AS, rayOrigin, rayDir, m, t))
 	{
@@ -523,6 +512,7 @@ for (int i = 0; i < N; ++i)
 vec4 o = acc / N;
 
 $Output = vec4(o.xyz, pow(o.w, 0.3f));
+
 			]]>
 			</script>
 		</item>
@@ -559,7 +549,7 @@ $Output = vec4(o.xyz, pow(o.w, 0.3f));
 				<first>2544</first>
 				<second>-93</second>
 			</position>
-			<name>RandomAngle</name>
+			<name>Random</name>
 			<technique/>
 			<domain>Undefined</domain>
 			<localSize>
@@ -581,27 +571,14 @@ $Output = vec4(o.xyz, pow(o.w, 0.3f));
 				<item>
 					<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
 					<name>Output</name>
-					<type>Vector</type>
+					<type>Scalar</type>
 				</item>
 			</outputPins>
 			<script>
 			<![CDATA[
 uvec2 seed = uvec2(gl_FragCoord.xy);
-uvec2 seed1 = seed;
-uvec2 seed2 = seed;
-uvec2 seed3 = seed;
-
 seed += uvec2($Time * 1543, $Time * 543);
-seed1 += uvec2($Time * 2345, $Time * 234);
-seed2 += uvec2($Time * 6542, $Time * 876);
-seed3 += uvec2($Time * 3287, $Time * 349);
-
-$Output = vec4(
-	BlueNoise(seed) * 2.0f * 3.142f,
-	BlueNoise(seed1) * 2.0f * 3.142f,
-	BlueNoise(seed2),
-	BlueNoise(seed3)
-);
+$Output = BlueNoise(seed);
 			]]>
 			</script>
 		</item>
@@ -609,8 +586,8 @@ $Output = vec4(
 			<id>{2A17AB55-0AB8-2D47-BEB1-5201C4897947}</id>
 			<comment/>
 			<position>
-				<first>2082</first>
-				<second>48</second>
+				<first>2138</first>
+				<second>20</second>
 			</position>
 			<declaration>{85AE3209-AEBC-1143-B9AA-15E7E29380B0}</declaration>
 			<parameterName/>
@@ -621,8 +598,8 @@ $Output = vec4(
 			<id>{601D9F09-0622-3043-BB65-3E37E0D3556B}</id>
 			<comment/>
 			<position>
-				<first>2310</first>
-				<second>-49</second>
+				<first>2322</first>
+				<second>-57</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
