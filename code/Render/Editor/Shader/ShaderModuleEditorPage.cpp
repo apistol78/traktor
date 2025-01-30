@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/ShaderModuleEditorPage.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/StringReader.h"
@@ -24,30 +26,30 @@
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
+#include "Editor/PropertiesView.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Format.h"
 #include "I18N/Text.h"
 #include "Render/Editor/Shader/ShaderModule.h"
-#include "Render/Editor/Shader/ShaderModuleEditorPage.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/Panel.h"
+#include "Ui/Splitter.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
+#include "Ui/SyntaxRichEdit/SyntaxLanguageGlsl.h"
+#include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
 #include "Ui/Tab.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TabPage.h"
-#include "Ui/Splitter.h"
-#include "Ui/Panel.h"
-#include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
-#include "Ui/SyntaxRichEdit/SyntaxLanguageGlsl.h"
 
 namespace traktor::render
 {
-		namespace
-		{
+namespace
+{
 
 struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacter >
 {
@@ -55,10 +57,10 @@ struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacte
 	Guid id;
 	std::wstring path;
 
-	DependencyCharacter(editor::IEditor* editor_, const Guid& id_, const std::wstring& path_)
-	:	editor(editor_)
-	,	id(id_)
-	,	path(path_)
+	explicit DependencyCharacter(editor::IEditor* editor_, const Guid& id_, const std::wstring& path_)
+		: editor(editor_)
+		, id(id_)
+		, path(path_)
 	{
 	}
 
@@ -91,14 +93,14 @@ struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacte
 	}
 };
 
-		}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ShaderModuleEditorPage", ShaderModuleEditorPage, editor::IEditorPage)
 
 ShaderModuleEditorPage::ShaderModuleEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
-:	m_editor(editor)
-,	m_site(site)
-,	m_document(document)
+	: m_editor(editor)
+	, m_site(site)
+	, m_document(document)
 {
 }
 
@@ -108,11 +110,15 @@ bool ShaderModuleEditorPage::create(ui::Container* parent)
 	if (!m_module)
 		return false;
 
+	// Create properties view.
+	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &ShaderModuleEditorPage::eventPropertiesChanging);
+	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
+
 	m_edit = new ui::SyntaxRichEdit();
 	if (!m_edit->create(parent, L"", ui::WsDoubleBuffer | ui::SyntaxRichEdit::WsNoClipboard))
 		return false;
 	m_edit->setLanguage(new ui::SyntaxLanguageGlsl());
-	m_edit->addImage(new ui::StyleBitmap(L"Script.Breakpoint"), 1);
 	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ShaderModuleEditorPage::eventScriptChange);
 	m_edit->addEventHandler< ui::MouseButtonUpEvent >(this, &ShaderModuleEditorPage::eventScriptButtonUp);
 
@@ -123,7 +129,7 @@ bool ShaderModuleEditorPage::create(ui::Container* parent)
 	if (m_module)
 	{
 		// Escape text and set into editor, embedded dependencies are wrapped as "special characters".
-		m_edit->setText(m_module->escape([&] (const Guid& g) -> std::wstring {
+		m_edit->setText(m_module->escape([&](const Guid& g) -> std::wstring {
 			const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
 			if (instance)
 			{
@@ -138,11 +144,19 @@ bool ShaderModuleEditorPage::create(ui::Container* parent)
 	m_editMenu = new ui::Menu();
 	m_editMenu->add(new ui::MenuItem(ui::Command(L"Script.Editor.AddUsingStatement"), i18n::Text(L"SCRIPT_EDITOR_ADD_USING")));
 
+	m_propertiesView->setPropertyObject(m_module);
 	return true;
 }
 
 void ShaderModuleEditorPage::destroy()
 {
+	if (m_propertiesView)
+		m_site->destroyAdditionalPanel(m_propertiesView);
+
+	safeDestroy(m_edit);
+	safeDestroy(m_propertiesView);
+
+	m_site = nullptr;
 }
 
 bool ShaderModuleEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -162,14 +176,14 @@ bool ShaderModuleEditorPage::handleCommand(const ui::Command& command)
 			return false;
 
 		const std::wstring selectedText = m_edit->getSelectedText(
-			[&] (wchar_t ch) -> std::wstring {
+			[&](wchar_t ch) -> std::wstring {
 				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
 			},
-			[&] (const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+			[&](const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
 				const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
 				return L"\\" + dc->id.format();
-			}
-		);		clipboard->setText(selectedText);
+			});
+		clipboard->setText(selectedText);
 	}
 	else if (command == L"Editor.Cut")
 	{
@@ -181,14 +195,13 @@ bool ShaderModuleEditorPage::handleCommand(const ui::Command& command)
 			return false;
 
 		const std::wstring selectedText = m_edit->getSelectedText(
-			[&] (wchar_t ch) -> std::wstring {
+			[&](wchar_t ch) -> std::wstring {
 				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
 			},
-			[&] (const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+			[&](const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
 				const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
 				return L"\\" + dc->id.format();
-			}
-		);
+			});
 		clipboard->setText(selectedText);
 
 		m_edit->deleteSelection();
@@ -205,7 +218,7 @@ bool ShaderModuleEditorPage::handleCommand(const ui::Command& command)
 		m_edit->deleteSelection();
 
 		ShaderModule pasteModule(clipboard->getText());
-		m_edit->insert(pasteModule.escape([&] (const Guid& g) -> std::wstring {
+		m_edit->insert(pasteModule.escape([&](const Guid& g) -> std::wstring {
 			const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
 			if (instance)
 			{
@@ -221,13 +234,12 @@ bool ShaderModuleEditorPage::handleCommand(const ui::Command& command)
 		Ref< const PropertyInteger > meta;
 		if (
 			m_module &&
-			m_document->undo(new PropertyInteger(m_edit->getCaretOffset()), meta)
-		)
+			m_document->undo(new PropertyInteger(m_edit->getCaretOffset()), meta))
 		{
 			m_module = m_document->getObject< ShaderModule >(0);
 
 			// Escape text and set into editor, embedded dependencies are wrapped as "special characters".
-			m_edit->setText(m_module->escape([&] (const Guid& g) -> std::wstring {
+			m_edit->setText(m_module->escape([&](const Guid& g) -> std::wstring {
 				const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
 				if (instance)
 				{
@@ -238,6 +250,8 @@ bool ShaderModuleEditorPage::handleCommand(const ui::Command& command)
 					return L"\"\"";
 			}));
 			m_edit->placeCaret(*meta, true);
+
+			m_propertiesView->setPropertyObject(m_module);
 		}
 	}
 	else if (command == L"Editor.Redo")
@@ -245,13 +259,12 @@ bool ShaderModuleEditorPage::handleCommand(const ui::Command& command)
 		Ref< const PropertyInteger > meta;
 		if (
 			m_module &&
-			m_document->redo(meta)
-		)
+			m_document->redo(meta))
 		{
 			m_module = m_document->getObject< ShaderModule >(0);
 
 			// Escape text and set into editor, embedded dependencies are wrapped as "special characters".
-			m_edit->setText(m_module->escape([&] (const Guid& g) -> std::wstring {
+			m_edit->setText(m_module->escape([&](const Guid& g) -> std::wstring {
 				const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
 				if (instance)
 				{
@@ -262,6 +275,8 @@ bool ShaderModuleEditorPage::handleCommand(const ui::Command& command)
 					return L"\"\"";
 			}));
 			m_edit->placeCaret(*meta, true);
+
+			m_propertiesView->setPropertyObject(m_module);
 		}
 	}
 	else if (command == L"Editor.Find")
@@ -310,6 +325,11 @@ void ShaderModuleEditorPage::handleDatabaseEvent(db::Database* database, const G
 {
 }
 
+void ShaderModuleEditorPage::eventPropertiesChanging(ui::ContentChangingEvent* event)
+{
+	m_document->push();
+}
+
 void ShaderModuleEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 {
 	if (!m_module)
@@ -321,10 +341,9 @@ void ShaderModuleEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 			return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
 		},
 		[&](const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
-			const DependencyCharacter* dc = static_cast<const DependencyCharacter*>(sc);
+			const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
 			return L"\\" + dc->id.format();
-		}
-	);
+		});
 
 	// Update module with text.
 	m_module->setTextDirect(text);

@@ -93,6 +93,8 @@ public:
 
 	GlslShader& getShader() { return *m_currentShader; }
 
+	uint32_t getBindStage() const;
+
 	/*! \} */
 
 	const PropertyGroup* getSettings() const;

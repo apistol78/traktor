@@ -61,18 +61,6 @@ std::wstring getClassNameOnly(const Object* o)
 	return qn.substr(p + 1);
 }
 
-uint8_t getBindStage(const GlslContext& cx)
-{
-	if (cx.inVertex())
-		return GlslResource::BsVertex;
-	else if (cx.inFragment())
-		return GlslResource::BsFragment;
-	else if (cx.inCompute())
-		return GlslResource::BsCompute;
-	else
-		return GlslResource::BsVertex | GlslResource::BsFragment | GlslResource::BsCompute;
-}
-
 }
 
 GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings, const IProgramCompiler::IModuleAccess& moduleAccess)
@@ -266,6 +254,18 @@ bool GlslContext::inCompute() const
 	return bool(m_currentShader == &m_computeShader);
 }
 
+uint32_t GlslContext::getBindStage() const
+{
+	if (inVertex())
+		return GlslResource::BsVertex;
+	else if (inFragment())
+		return GlslResource::BsFragment;
+	else if (inCompute())
+		return GlslResource::BsCompute;
+	else
+		return GlslResource::BsVertex | GlslResource::BsFragment | GlslResource::BsCompute;
+}
+
 const PropertyGroup* GlslContext::getSettings() const
 {
 	return m_settings;
@@ -344,7 +344,7 @@ void GlslContext::registerModule(const Guid& moduleId)
 				new GlslSampler(
 					it.first,
 					GlslResource::Set::Default,
-					getBindStage(*this),
+					getBindStage(),
 					it.second));
 		else
 			log::warning << L"Sampler defined in module \"" << it.first << L"\" already exist in layout." << Endl;

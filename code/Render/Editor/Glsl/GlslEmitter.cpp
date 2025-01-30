@@ -49,18 +49,6 @@ bool compareSamplerState(const SamplerState& lh, const SamplerState& rh, bool ne
 		lh.useAnisotropic == rh.useAnisotropic;
 }
 
-uint8_t getBindStage(const GlslContext& cx)
-{
-	if (cx.inVertex())
-		return GlslResource::BsVertex;
-	else if (cx.inFragment())
-		return GlslResource::BsFragment;
-	else if (cx.inCompute())
-		return GlslResource::BsCompute;
-	else
-		return GlslResource::BsVertex | GlslResource::BsFragment | GlslResource::BsCompute;
-}
-
 std::wstring formatFloat(float v)
 {
 	std::wstring s = toString(v);
@@ -319,7 +307,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 
 		// Image parameter; since resource index is passed to shader we define an integer uniform.
 		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw"); // c_uniformBufferNames[(int32_t)node->getFrequency()]);
-		ub->addStage(getBindStage(cx));
+		ub->addStage(cx.getBindStage());
 		if (!ub->add(storageUniformNode->getParameterName(), GlslType::Integer, 1))
 		{
 			cx.pushError(L"Failed to register uniform.");
@@ -346,7 +334,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 				return false;
 			}
 
-			existingBuffer->addStage(getBindStage(cx));
+			existingBuffer->addStage(cx.getBindStage());
 		}
 		else
 		{
@@ -354,7 +342,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(
 				storageStructNode->getParameterName(),
 				GlslResource::Set::Default,
-				getBindStage(cx),
+				cx.getBindStage(),
 				false);
 			for (const auto& element : storageStructNode->getElements())
 				storageBuffer->add(element.name, element.type, element.length);
@@ -853,7 +841,7 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 	if (out->getType() < GlslType::Texture2D)
 	{
 		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(c_uniformBufferNames[(int32_t)node->getFrequency()]);
-		ub->addStage(getBindStage(cx));
+		ub->addStage(cx.getBindStage());
 		ub->add(node->getParameterName(), out->getType(), node->getLength());
 	}
 	else
@@ -2034,7 +2022,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		if (compareSamplerState(rh, samplerState, texture->getType() == GlslType::Texture2D))
 		{
 			samplerName = sampler->getName();
-			sampler->addStage(getBindStage(cx));
+			sampler->addStage(cx.getBindStage());
 			break;
 		}
 	}
@@ -2047,7 +2035,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 			new GlslSampler(
 				samplerName,
 				GlslResource::Set::Default,
-				getBindStage(cx),
+				cx.getBindStage(),
 				samplerState));
 	}
 
@@ -2316,7 +2304,7 @@ bool emitScript(GlslContext& cx, Script* node)
 				if (compareSamplerState(sampler->getState(), samplerState, true))
 				{
 					samplerName = sampler->getName();
-					sampler->addStage(getBindStage(cx));
+					sampler->addStage(cx.getBindStage());
 					break;
 				}
 			}
@@ -2329,7 +2317,7 @@ bool emitScript(GlslContext& cx, Script* node)
 					new GlslSampler(
 						samplerName,
 						GlslResource::Set::Default,
-						getBindStage(cx),
+						cx.getBindStage(),
 						samplerState));
 			}
 
@@ -2346,7 +2334,7 @@ bool emitScript(GlslContext& cx, Script* node)
 				if (parameterType < GlslType::Texture2D)
 				{
 					auto ub = cx.getLayout().getByName< GlslUniformBuffer >(c_uniformBufferNames[(int32_t)indexedUniform->getFrequency()]);
-					ub->addStage(getBindStage(cx));
+					ub->addStage(cx.getBindStage());
 					ub->add(indexedUniform->getParameterName(), parameterType, indexedUniform->getLength());
 				}
 				else
@@ -2522,7 +2510,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 		if (auto existingStorageBuffer = dynamic_type_cast< GlslStorageBuffer* >(existing))
 		{
 			// Storage buffer already exist; \tbd ensure elements match.
-			existingStorageBuffer->addStage(getBindStage(cx));
+			existingStorageBuffer->addStage(cx.getBindStage());
 			return true;
 		}
 		else
@@ -2537,7 +2525,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 		Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(
 			node->getParameterName(),
 			GlslResource::Set::Default,
-			getBindStage(cx),
+			cx.getBindStage(),
 			false);
 		for (const auto& element : node->getElements())
 			storageBuffer->add(element.name, element.type, element.length);
@@ -3021,7 +3009,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 	{
 		// Scalar parameter, add to uniform buffer.
 		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(c_uniformBufferNames[(int32_t)node->getFrequency()]);
-		ub->addStage(getBindStage(cx));
+		ub->addStage(cx.getBindStage());
 		if (!ub->add(node->getParameterName(), out->getType(), 1))
 			return false;
 	}
@@ -3035,7 +3023,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 				// Texture already exist; ensure type match.
 				if (existingTexture->getUniformType() != out->getType())
 					return false;
-				existingTexture->addStage(getBindStage(cx));
+				existingTexture->addStage(cx.getBindStage());
 			}
 			else
 			{
@@ -3050,14 +3038,14 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 				new GlslTexture(
 					node->getParameterName(),
 					GlslResource::Set::Default,
-					getBindStage(cx),
+					cx.getBindStage(),
 					out->getType(),
 					false));
 		}
 
 		// Texture parameter; since resource index is passed to shader we define an integer uniform.
 		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw"); // c_uniformBufferNames[(int32_t)node->getFrequency()]);
-		ub->addStage(getBindStage(cx));
+		ub->addStage(cx.getBindStage());
 		if (!ub->add(node->getParameterName(), GlslType::Integer, 1))
 			return false;
 	}
@@ -3071,7 +3059,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 				// Image already exist; ensure type match.
 				if (existingImage->getUniformType() != out->getType())
 					return false;
-				existingImage->addStage(getBindStage(cx));
+				existingImage->addStage(cx.getBindStage());
 			}
 			else
 			{
@@ -3086,14 +3074,14 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 				new GlslImage(
 					node->getParameterName(),
 					GlslResource::Set::Default,
-					getBindStage(cx),
+					cx.getBindStage(),
 					out->getType(),
 					false));
 		}
 
 		// Image parameter; since resource index is passed to shader we define an integer uniform.
 		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw"); // c_uniformBufferNames[(int32_t)node->getFrequency()]);
-		ub->addStage(getBindStage(cx));
+		ub->addStage(cx.getBindStage());
 		if (!ub->add(node->getParameterName(), GlslType::Integer, 1))
 			return false;
 	}
@@ -3105,7 +3093,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 			if (auto existingAS = dynamic_type_cast< GlslAccelerationStructure* >(existing))
 			{
 				// Acceleration structure already exist.
-				existingAS->addStage(getBindStage(cx));
+				existingAS->addStage(cx.getBindStage());
 			}
 			else
 			{
@@ -3120,7 +3108,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 				new GlslAccelerationStructure(
 					node->getParameterName(),
 					GlslResource::Set::Default,
-					getBindStage(cx)));
+					cx.getBindStage()));
 		}
 	}
 

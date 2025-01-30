@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,8 +9,8 @@
 #pragma once
 
 #include "Editor/IEditorPage.h"
-#include "Ui/SyntaxRichEdit/SyntaxTypes.h"
 #include "Ui/Events/AllEvents.h"
+#include "Ui/SyntaxRichEdit/SyntaxTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,6 +26,7 @@ namespace traktor::editor
 class IDocument;
 class IEditor;
 class IEditorPageSite;
+class PropertiesView;
 
 }
 
@@ -65,8 +66,11 @@ private:
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 	Ref< ShaderModule > m_module;
+	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::SyntaxRichEdit > m_edit;
 	Ref< ui::Menu > m_editMenu;
+
+	void eventPropertiesChanging(ui::ContentChangingEvent* event);
 
 	void eventScriptChange(ui::ContentChangeEvent* event);
 
