@@ -435,30 +435,32 @@ int rndState = int($Random * 54312.0f);
 const float Far = 50.0f;
 const int N = 8;
 const mat3 R = Rotate($Direction.xyz, Hash(rndState++));
+const float pdf = 1.0f / max($LightCount, 1);
 
 vec4 acc = vec4(0.0f);
 HWRT_Material m;
 float t;
 
-const float pdf = 1.0f / max($LightCount, 1);
-
+[[branch]]
 for (int i = 0; i < N; ++i)
 {
-	const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
-	const $typeof(Lights) light = $Lights[lightIndex];
-
 	const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.25f;
 	const vec2 r = Rotate2D((Hammersley(i, N) + jitter) * 2.0f - 1.0f, Hash(rndState++)) * 0.5 + 0.5;
 	
 	const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.01f;
 	const vec3 rayDir = R * normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.02f);
 
+	[[branch]]
 	if (HWRT_Trace($AS, rayOrigin, rayDir, m, t))
 	{
 		const vec3 hit = rayOrigin + rayDir * t;
 
+		[[branch]]
 		if ($LightCount > 0)
 		{
+			const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
+			const $typeof(Lights) light = $Lights[lightIndex];
+
 			vec3 lightPosition = vec3(0.0f);
 			vec3 lightDirection = vec3(0.0f);
 			float lightDistance = 100.0f;
@@ -478,7 +480,7 @@ for (int i = 0; i < N; ++i)
 				lightAttenuation = clamp(1.0f / (lightDistance * lightDistance), 0.0f, 1.0f);
 			}
 	
-			// Attenuate with distance of first ray.
+			// Attenuate with distance of ray.
 			const float nt = t / Far;
 			lightAttenuation *= clamp(1.0f / (nt * nt), 0.0f, 1.0f);
 	
@@ -755,20 +757,20 @@ $Output = BlueNoise(seed);
 				<second>-1578</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{11EE68DA-28FA-3840-83B4-AF7FE5CCB47A}</id>
 			<comment/>
 			<position>
 				<first>2442</first>
 				<second>-1331</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Wrap</addressU>
+			<addressV>Wrap</addressV>
+			<addressW>Wrap</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -827,20 +829,20 @@ $Output = BlueNoise(seed);
 				<second>-1414</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{CE970FFD-A85B-9F49-BF71-0962CA533862}</id>
 			<comment/>
 			<position>
 				<first>3859</first>
 				<second>-1465</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
