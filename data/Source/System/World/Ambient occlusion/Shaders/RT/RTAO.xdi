@@ -306,11 +306,10 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-const int N = 8;
-const float near = 0.05f; //mix(0.01f, 1.0f, clamp($Distance / 10.0f, 0.0f, 1.0f));
+const int N = 4;
 const float far = 20.0f;
 const float W = 6.0f;
-const float C = 0.8f;
+const float C = 0.5f;
 
 float occlusions = 0.0f;
 
@@ -324,32 +323,15 @@ v = QuaternionRotate(Q, vec4(v, 0.0f)).xyz;
 for (int i = 0; i < N; ++i)
 {
 	const vec2 r = Hammersley(i, N) * W - W / 2.0f;
-
 	const vec3 rayOrigin = $Origin.xyz;
 	const vec3 rayDir = normalize($Direction.xyz + u * r.x + v * r.y);
-	
-	rayQueryEXT rayQuery;
-	rayQueryInitializeEXT(
-		rayQuery,
-		$AS,
-		gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,
-		0xff,
-		rayOrigin,
-		near,
-		rayDir,
-		far
-	);
-	while(rayQueryProceedEXT(rayQuery));
-	
-	if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT )
-	{
-		const float t = rayQueryGetIntersectionTEXT(rayQuery, true);
-		occlusions += 1.0f; // - (t - near) / (far - near);
-	}
+	if (HWRT_TraceShadow($AS, rayOrigin, rayDir, far))
+		occlusions += 1.0f;
 }
 
 const float f = 1.0f - occlusions / float(N);
 $Output = f * C + (1.0f - C);
+
 			]]>
 			</script>
 		</item>
