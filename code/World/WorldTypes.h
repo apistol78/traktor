@@ -130,9 +130,9 @@ struct RTVertexAttributes
 {
 	float normal[4];
 	float albedo[4];
-	float texCoord[4];
+	float texCoord[2];
 	int32_t albedoMap;
-	int32_t pad[3];
+	int32_t pad;
 };
 
 /*! */

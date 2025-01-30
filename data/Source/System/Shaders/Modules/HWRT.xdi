@@ -11,8 +11,9 @@ struct HWRT_Material
 {
 	vec4 normal;
 	vec4 albedo;
-	vec4 texCoord;
-	ivec4 albedoMap;
+	vec2 texCoord;
+	int albedoMap;
+	int pad;
 };
 
 layout (std430, binding = 2, set = 3) readonly buffer __bindlessBufferMaterials__Buffer
@@ -32,7 +33,7 @@ void HWRT_ResolveAlbedo(inout HWRT_Material m)
 {
 	if (m.albedoMap.x >= 0)
 	{
-		m.albedo = texture(sampler2D(__bindlessTextures2D__[m.albedoMap.x], __samplerLinear__), m.texCoord.xy);
+		m.albedo = texture(sampler2D(__bindlessTextures2D__[m.albedoMap], __samplerLinear__), m.texCoord.xy);
 	}
 }
 
@@ -125,6 +126,7 @@ bool HWRT_TraceShadow(accelerationStructureEXT AS, vec3 origin, vec3 direction, 
 	while(rayQueryProceedEXT(rayQueryShadow));
 	return (rayQueryGetIntersectionTypeEXT(rayQueryShadow, true) != gl_RayQueryCommittedIntersectionNoneEXT);
 }
+
 	]]>
 	</text>
 	<samplers>
