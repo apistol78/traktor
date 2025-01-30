@@ -145,6 +145,10 @@ bool ShaderModuleEditorPage::create(ui::Container* parent)
 	m_editMenu->add(new ui::MenuItem(ui::Command(L"Script.Editor.AddUsingStatement"), i18n::Text(L"SCRIPT_EDITOR_ADD_USING")));
 
 	m_propertiesView->setPropertyObject(m_module);
+
+	parent->addEventHandler< ui::TimerEvent >(this, &ShaderModuleEditorPage::eventTimer);
+	parent->startTimer(100);
+
 	return true;
 }
 
@@ -194,6 +198,8 @@ bool ShaderModuleEditorPage::handleCommand(const ui::Command& command)
 		if (!m_edit->hasFocus())
 			return false;
 
+		m_document->push(new PropertyInteger(m_edit->getCaretOffset()));
+
 		const std::wstring selectedText = m_edit->getSelectedText(
 			[&](wchar_t ch) -> std::wstring {
 				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
@@ -214,6 +220,8 @@ bool ShaderModuleEditorPage::handleCommand(const ui::Command& command)
 
 		if (!m_edit->hasFocus())
 			return false;
+
+		m_document->push(new PropertyInteger(m_edit->getCaretOffset()));
 
 		m_edit->deleteSelection();
 
@@ -327,26 +335,12 @@ void ShaderModuleEditorPage::handleDatabaseEvent(db::Database* database, const G
 
 void ShaderModuleEditorPage::eventPropertiesChanging(ui::ContentChangingEvent* event)
 {
-	m_document->push();
+	m_document->push(new PropertyInteger(m_edit->getCaretOffset()));
 }
 
 void ShaderModuleEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 {
-	if (!m_module)
-		return;
-
-	// Transform editor text into "escaped" text.
-	std::wstring text = m_edit->getText(
-		[&](wchar_t ch) -> std::wstring {
-			return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
-		},
-		[&](const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
-			const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
-			return L"\\" + dc->id.format();
-		});
-
-	// Update module with text.
-	m_module->setTextDirect(text);
+	m_compileCountDown = 3;
 }
 
 void ShaderModuleEditorPage::eventScriptButtonUp(ui::MouseButtonUpEvent* event)
@@ -365,6 +359,8 @@ void ShaderModuleEditorPage::eventScriptButtonUp(ui::MouseButtonUpEvent* event)
 			Ref< db::Instance > instance = m_editor->browseInstance(type_of< ShaderModule >());
 			if (instance)
 			{
+				m_document->push(new PropertyInteger(m_edit->getCaretOffset()));
+
 				int32_t offset = m_edit->getCaretOffset();
 				int32_t line = m_edit->getLineFromOffset(offset);
 
@@ -378,6 +374,30 @@ void ShaderModuleEditorPage::eventScriptButtonUp(ui::MouseButtonUpEvent* event)
 	}
 
 	event->consume();
+}
+
+void ShaderModuleEditorPage::eventTimer(ui::TimerEvent* event)
+{
+	if (--m_compileCountDown == 0)
+	{
+		if (!m_module)
+			return;
+
+		m_document->push(new PropertyInteger(m_edit->getCaretOffset()));
+
+		// Transform editor text into "escaped" text.
+		std::wstring text = m_edit->getText(
+			[&](wchar_t ch) -> std::wstring {
+				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
+			},
+			[&](const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+				const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
+				return L"\\" + dc->id.format();
+			});
+
+		// Update module with text.
+		m_module->setTextDirect(text);
+	}
 }
 
 }

@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Script/Editor/ScriptEditorPage.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/StringReader.h"
@@ -29,38 +31,37 @@
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Format.h"
 #include "I18N/Text.h"
-#include "Script/IScriptCompiler.h"
-#include "Script/IScriptProfiler.h"
-#include "Script/StackFrame.h"
 #include "Script/Editor/IScriptOutline.h"
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptClassesView.h"
 #include "Script/Editor/ScriptDebuggerView.h"
-#include "Script/Editor/ScriptEditorPage.h"
+#include "Script/IScriptCompiler.h"
+#include "Script/IScriptProfiler.h"
+#include "Script/StackFrame.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
-#include "Ui/Menu.h"
-#include "Ui/MenuItem.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/StyleSheet.h"
-#include "Ui/Tab.h"
-#include "Ui/TableLayout.h"
-#include "Ui/TabPage.h"
-#include "Ui/Splitter.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridView.h"
+#include "Ui/Menu.h"
+#include "Ui/MenuItem.h"
 #include "Ui/Panel.h"
-#include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
-#include "Ui/SyntaxRichEdit/SyntaxLanguageLua.h"
+#include "Ui/Splitter.h"
 #include "Ui/StatusBar/StatusBar.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
+#include "Ui/SyntaxRichEdit/SyntaxLanguageLua.h"
+#include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
+#include "Ui/Tab.h"
+#include "Ui/TableLayout.h"
+#include "Ui/TabPage.h"
 
 namespace traktor::script
 {
-	namespace
-	{
+namespace
+{
 
 struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacter >
 {
@@ -69,9 +70,9 @@ struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacte
 	std::wstring path;
 
 	explicit DependencyCharacter(editor::IEditor* editor_, const Guid& id_, const std::wstring& path_)
-	:	editor(editor_)
-	,	id(id_)
-	,	path(path_)
+		: editor(editor_)
+		, id(id_)
+		, path(path_)
 	{
 	}
 
@@ -104,17 +105,17 @@ struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacte
 	}
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptEditorPage", ScriptEditorPage, editor::IEditorPage)
 
 ScriptEditorPage::ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
-:	m_editor(editor)
-,	m_site(site)
-,	m_document(document)
-,	m_compileCountDown(0)
-,	m_debugBreadcrumbAttribute(0)
-,	m_debugCurrentAttribute(0)
+	: m_editor(editor)
+	, m_site(site)
+	, m_document(document)
+	, m_compileCountDown(0)
+	, m_debugBreadcrumbAttribute(0)
+	, m_debugCurrentAttribute(0)
 {
 	m_bitmapFunction = new ui::StyleBitmap(L"Script.DefineGlobalFunction");
 	m_bitmapFunctionLocal = new ui::StyleBitmap(L"Script.DefineLocalFunction");
@@ -142,7 +143,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		return false;
 
 	m_outlineGrid = new ui::GridView();
-	if (!m_outlineGrid->create(tabOutline, ui::GridView::WsColumnHeader |ui::WsDoubleBuffer))
+	if (!m_outlineGrid->create(tabOutline, ui::GridView::WsColumnHeader | ui::WsDoubleBuffer))
 		return false;
 	m_outlineGrid->addColumn(new ui::GridColumn(L"", 30_ut));
 	m_outlineGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), 165_ut));
@@ -183,7 +184,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	if (m_script)
 	{
 		// Escape text and set into editor, embedded dependencies are wrapped as "special characters".
-		m_edit->setText(m_script->escape([&] (const Guid& g) -> std::wstring {
+		m_edit->setText(m_script->escape([&](const Guid& g) -> std::wstring {
 			const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
 			if (instance)
 			{
@@ -231,7 +232,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		if (scriptOutlineType)
 		{
 			m_scriptOutline = dynamic_type_cast< IScriptOutline* >(scriptOutlineType->createInstance());
-			T_ASSERT( m_scriptOutline);
+			T_ASSERT(m_scriptOutline);
 		}
 	}
 
@@ -281,7 +282,7 @@ void ScriptEditorPage::destroy()
 	// Destroy panels.
 	if (m_containerExplorer)
 		m_site->destroyAdditionalPanel(m_containerExplorer);
-	
+
 	safeDestroy(m_containerExplorer);
 	m_site = nullptr;
 }
@@ -310,14 +311,13 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 			return false;
 
 		const std::wstring selectedText = m_edit->getSelectedText(
-			[&] (wchar_t ch) -> std::wstring {
+			[&](wchar_t ch) -> std::wstring {
 				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
 			},
-			[&] (const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+			[&](const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
 				const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
 				return L"\\" + dc->id.format();
-			}
-		);
+			});
 		clipboard->setText(selectedText);
 	}
 	else if (command == L"Editor.Cut")
@@ -330,14 +330,13 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 			return false;
 
 		const std::wstring selectedText = m_edit->getSelectedText(
-			[&] (wchar_t ch) -> std::wstring {
+			[&](wchar_t ch) -> std::wstring {
 				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
 			},
-			[&] (const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+			[&](const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
 				const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
 				return L"\\" + dc->id.format();
-			}
-		);
+			});
 		clipboard->setText(selectedText);
 
 		m_edit->deleteSelection();
@@ -354,7 +353,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 		m_edit->deleteSelection();
 
 		Script pasteScript(clipboard->getText());
-		m_edit->insert(pasteScript.escape([&] (const Guid& g) -> std::wstring {
+		m_edit->insert(pasteScript.escape([&](const Guid& g) -> std::wstring {
 			const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
 			if (instance)
 			{
@@ -370,13 +369,12 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 		Ref< const PropertyInteger > meta;
 		if (
 			m_script &&
-			m_document->undo(new PropertyInteger(m_edit->getCaretOffset()), meta)
-		)
+			m_document->undo(new PropertyInteger(m_edit->getCaretOffset()), meta))
 		{
 			m_script = m_document->getObject< Script >(0);
 
 			// Escape text and set into editor, embedded dependencies are wrapped as "special characters".
-			m_edit->setText(m_script->escape([&] (const Guid& g) -> std::wstring {
+			m_edit->setText(m_script->escape([&](const Guid& g) -> std::wstring {
 				const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
 				if (instance)
 				{
@@ -396,13 +394,12 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 		Ref< const PropertyInteger > meta;
 		if (
 			m_script &&
-			m_document->redo(meta)
-		)
+			m_document->redo(meta))
 		{
 			m_script = m_document->getObject< Script >(0);
 
 			// Escape text and set into editor, embedded dependencies are wrapped as "special characters".
-			m_edit->setText(m_script->escape([&] (const Guid& g) -> std::wstring {
+			m_edit->setText(m_script->escape([&](const Guid& g) -> std::wstring {
 				const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
 				if (instance)
 				{
@@ -489,16 +486,14 @@ void ScriptEditorPage::debugeeStateChange(IScriptDebugger* scriptDebugger)
 		Ref< StackFrame > sf;
 		for (uint32_t depth = 0; scriptDebugger->captureStackFrame(depth, sf); ++depth)
 		{
-			T_FATAL_ASSERT (sf);
+			T_FATAL_ASSERT(sf);
 			if (sf->getScriptId() == instanceGuid)
 			{
 				// Set breadcrumb trail of execution.
 				AlignedVector< uint32_t > breadcrumbs;
 				if (scriptDebugger->captureBreadcrumbs(breadcrumbs))
-				{
 					for (auto line : breadcrumbs)
 						m_edit->setBackgroundAttribute(line, m_debugBreadcrumbAttribute);
-				}
 
 				// Highlight current, breaked, line.
 				const int32_t line = (int32_t)sf->getLine();
@@ -599,20 +594,6 @@ void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 	if (!m_script)
 		return;
 
-	// Transform editor text into "escaped" text.
-	const std::wstring text = m_edit->getText(
-		[&] (wchar_t ch) -> std::wstring {
-			return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
-		},
-		[&] (const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
-			const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
-			return L"\\" + dc->id.format();
-		}
-	);
-
-	// Update script with text.
-	m_script->setTextDirect(text);
-
 	m_compileCountDown = 3;
 	m_compileStatus->setText(0, i18n::Text(L"SCRIPT_EDITOR_STATUS_READY"));
 	m_compileStatus->setAlert(false);
@@ -672,14 +653,24 @@ void ScriptEditorPage::eventScriptButtonUp(ui::MouseButtonUpEvent* event)
 
 void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 {
-	T_FATAL_ASSERT (m_script);
+	T_FATAL_ASSERT(m_script);
 
 	if (--m_compileCountDown == 0)
 	{
-		// This is triggered by script change; push for undo here
-		// as we don't want to keep pushing for all input.
-		if (m_document)
-			m_document->push(new PropertyInteger(m_edit->getCaretOffset()));
+		m_document->push(new PropertyInteger(m_edit->getCaretOffset()));
+
+		// Transform editor text into "escaped" text.
+		const std::wstring text = m_edit->getText(
+			[&](wchar_t ch) -> std::wstring {
+				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
+			},
+			[&](const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+				const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
+				return L"\\" + dc->id.format();
+			});
+
+		// Update script with text.
+		m_script->setTextDirect(text);
 
 		if (m_scriptCompiler)
 		{

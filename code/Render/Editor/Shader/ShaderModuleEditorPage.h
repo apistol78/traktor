@@ -69,12 +69,15 @@ private:
 	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::SyntaxRichEdit > m_edit;
 	Ref< ui::Menu > m_editMenu;
+	int32_t m_compileCountDown = -1;
 
 	void eventPropertiesChanging(ui::ContentChangingEvent* event);
 
 	void eventScriptChange(ui::ContentChangeEvent* event);
 
 	void eventScriptButtonUp(ui::MouseButtonUpEvent* event);
+
+	void eventTimer(ui::TimerEvent* event);
 };
 
 }
