@@ -53,7 +53,7 @@ std::wstring formatFloat(float v)
 {
 	std::wstring s = toString(v);
 	if (s.find(L'.') == s.npos)
-		s += L".0";
+		s += L".0f";
 	return s;
 }
 

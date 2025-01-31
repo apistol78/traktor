@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -111,7 +111,7 @@ void GlslShader::popScope()
 	// Free all indices used for temporary variables within scope to be popped.
 	for (size_t i = m_variableScopes.back(); i < m_variables.size(); ++i)
 	{
-		int32_t index = m_variables[i].index;
+		const int32_t index = m_variables[i].index;
 		if (index >= 0)
 			m_temporaryVariableAlloc.free(index);
 	}

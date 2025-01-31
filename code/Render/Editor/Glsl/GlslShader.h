@@ -15,9 +15,6 @@
 #include "Render/Editor/Glsl/GlslVariable.h"
 #include "Render/Types.h"
 
-#include <list>
-#include <string>
-
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EDITOR_EXPORT)
@@ -122,7 +119,6 @@ private:
 	AlignedVector< OutputPinVariable > m_outerVariables;
 	IdAllocator m_temporaryVariableAlloc;
 	AlignedVector< OutputStreamTuple > m_outputStreams[BtLast];
-
 	SmallSet< Guid > m_modules;
 	AlignedVector< std::wstring > m_moduleText;
 };
