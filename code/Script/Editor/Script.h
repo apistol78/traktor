@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,10 @@
  */
 #pragma once
 
-#include <functional>
 #include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
+
+#include <functional>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,7 +38,9 @@ public:
 
 	void setTextDirect(const std::wstring& text);
 
-	std::wstring escape(std::function< std::wstring (const Guid& g) > fn) const;
+	const std::wstring& getTextDirect() const { return m_text; }
+
+	std::wstring escape(std::function< std::wstring(const Guid& g) > fn) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cwctype>
+#include "Ui/RichEdit/RichEdit.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/String.h"
@@ -14,17 +15,18 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
-#include "Ui/StyleSheet.h"
-#include "Ui/ScrollBar.h"
 #include "Ui/RichEdit/CaretEvent.h"
-#include "Ui/RichEdit/RichEdit.h"
 #include "Ui/RichEdit/SearchControl.h"
 #include "Ui/RichEdit/SearchEvent.h"
+#include "Ui/ScrollBar.h"
+#include "Ui/StyleSheet.h"
+
+#include <cwctype>
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 const int32_t c_lineMarginMin = 40;
 const Unit c_iconSize = 16_ut;
@@ -41,12 +43,12 @@ bool isWordSeparator(wchar_t ch)
 	return !(std::iswalnum(ch) || ch == L'_');
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.RichEdit", RichEdit, Widget)
 
 RichEdit::RichEdit()
-:	m_lineMargin(c_lineMarginMin)
+	: m_lineMargin(c_lineMarginMin)
 {
 }
 
@@ -115,7 +117,7 @@ void RichEdit::setText(const std::wstring& text)
 		while (i < text.length())
 		{
 			const size_t j = text.find(L'\n', i);
-			
+
 			std::wstring ln = (j != text.npos) ? text.substr(i, j - i) : text.substr(i);
 			while (ln.back() == L'\n' || ln.back() == L'\r')
 				ln.pop_back();
@@ -127,10 +129,9 @@ void RichEdit::setText(const std::wstring& text)
 			for (auto ch : ln)
 				m_text.push_back(Character(ch));
 
-			m_text.push_back(Character(L'\n'));
-
 			if (j != text.npos)
 			{
+				m_text.push_back(Character(L'\n'));
 				i = j + 1;
 				if (i < text.length() && text[i] == L'\r')
 					++i;
@@ -139,16 +140,9 @@ void RichEdit::setText(const std::wstring& text)
 				break;
 		}
 	}
-	else
-	{
-		Line& line = m_lines.push_back();
-		line.start = 0;
-		line.stop = 0;
-		m_text.push_back(Character(L'\n'));
-	}
 
 	m_selectionStart =
-	m_selectionStop = -1;
+		m_selectionStop = -1;
 
 	const int32_t lastOffset = int32_t(m_text.size());
 	if (m_caret >= lastOffset)
@@ -179,7 +173,7 @@ std::wstring RichEdit::getText() const
 		return L"";
 }
 
-std::wstring RichEdit::getText(std::function< std::wstring (wchar_t) > cfn, std::function< std::wstring (const ISpecialCharacter*) > scfn) const
+std::wstring RichEdit::getText(std::function< std::wstring(wchar_t) > cfn, std::function< std::wstring(const ISpecialCharacter*) > scfn) const
 {
 	StringOutputStream ss;
 	for (size_t i = 0; i < m_text.size(); ++i)
@@ -362,7 +356,7 @@ void RichEdit::deleteSelection()
 		deleteCharacters();
 
 	m_selectionStart =
-	m_selectionStop = -1;
+		m_selectionStop = -1;
 
 	contentModified();
 	updateCharacterWidths();
@@ -417,10 +411,8 @@ int32_t RichEdit::getOffsetFromPosition(const Point& position)
 	if (linePosition < lineWidth)
 	{
 		for (int32_t i = int32_t(stops.size()) - 1; i >= 0; --i)
-		{
 			if (linePosition >= stops[i])
 				return ln.start + i;
-		}
 	}
 
 	return ln.stop;
@@ -443,10 +435,8 @@ int32_t RichEdit::getLineFromPosition(int32_t position)
 int32_t RichEdit::getLineFromOffset(int32_t offset) const
 {
 	for (int32_t i = 0; i < int32_t(m_lines.size()) - 1; ++i)
-	{
 		if (offset >= m_lines[i].start && offset <= m_lines[i].stop)
 			return i;
-	}
 	return int32_t(m_lines.size()) - 1;
 }
 
@@ -538,7 +528,7 @@ std::wstring RichEdit::getSelectedText() const
 	return std::wstring(text.begin(), text.end());
 }
 
-std::wstring RichEdit::getSelectedText(std::function< std::wstring (wchar_t) > cfn, std::function< std::wstring (const ISpecialCharacter*) > scfn) const
+std::wstring RichEdit::getSelectedText(std::function< std::wstring(wchar_t) > cfn, std::function< std::wstring(const ISpecialCharacter*) > scfn) const
 {
 	if (m_selectionStart < 0 || m_text.empty())
 		return L"";
@@ -798,7 +788,7 @@ void RichEdit::deleteCharacters()
 		stop = m_selectionStop - 1;
 	}
 
-	T_FATAL_ASSERT (start <= stop);
+	T_FATAL_ASSERT(start <= stop);
 
 	if (start >= m_text.size() - 1)
 		return;
@@ -808,7 +798,7 @@ void RichEdit::deleteCharacters()
 
 	for (int32_t i = stop; i >= start; --i)
 	{
-		for (uint32_t j = 0; j < m_lines.size(); )
+		for (uint32_t j = 0; j < m_lines.size();)
 		{
 			Line& ln = m_lines[j];
 			if (i >= ln.start && i <= ln.stop)
@@ -956,7 +946,7 @@ void RichEdit::deleteAt(int32_t offset)
 	auto it = m_text.begin() + offset;
 	m_text.erase(it);
 
-	for (uint32_t i = 0; i < m_lines.size(); )
+	for (uint32_t i = 0; i < m_lines.size();)
 	{
 		Line& ln = m_lines[i];
 		if (offset >= ln.start && offset <= ln.stop)
@@ -1069,7 +1059,7 @@ void RichEdit::scrollToCaret()
 		int32_t x = 0;
 		for (int32_t i = lineOffset; i < m_caret; ++i)
 			x += m_text[i].width;
-		
+
 		const int32_t left = m_scrollBarH->getPosition() * c_scrollHSteps;
 		if (x < left)
 		{
@@ -1091,11 +1081,10 @@ void RichEdit::santiyCheck()
 	int32_t last = 0;
 	for (uint32_t i = 0; i < m_lines.size(); ++i)
 	{
-		T_FATAL_ASSERT (m_lines[i].start == last);
-		T_FATAL_ASSERT (m_lines[i].start <= m_lines[i].stop);
-		last = m_lines[i].stop + 1;
+		T_FATAL_ASSERT(m_lines[i].start == last);
+		T_FATAL_ASSERT(m_lines[i].start <= m_lines[i].stop);
+		last = std::min< int32_t >(m_lines[i].stop + 1, (int32_t)m_text.size());
 	}
-	T_FATAL_ASSERT (last == m_text.size());
 }
 
 void RichEdit::updateFindPreview() const
@@ -1108,8 +1097,7 @@ void RichEdit::updateFindPreview() const
 	const bool wildcard = m_searchControl->wildcard();
 
 	m_searchControl->setAnyMatchingHint(
-		findFirstLine(0, needle, caseSensitive, wholeWord, wildcard, result)
-	);
+		findFirstLine(0, needle, caseSensitive, wholeWord, wildcard, result));
 }
 
 bool RichEdit::findFirstLine(int32_t currentLine, const std::wstring& needle, bool caseSensitive, bool wholeWord, bool wildcard, FindResult& outResult) const
@@ -1158,8 +1146,7 @@ bool RichEdit::findNextLine(int32_t currentLine, const std::wstring& needle, boo
 		caseSensitive,
 		wholeWord,
 		wildcard,
-		outResult
-	);
+		outResult);
 }
 
 void RichEdit::eventKeyDown(KeyDownEvent* event)
@@ -1180,7 +1167,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 		break;
 
 	case VkUp:
-		if (!ctrl && !alt)	// Move caret up.
+		if (!ctrl && !alt) // Move caret up.
 		{
 			for (uint32_t i = 1; i < m_lines.size(); ++i)
 			{
@@ -1194,7 +1181,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 			}
 			caretMovement = true;
 		}
-		else if (ctrl && !alt)	// Scroll up.
+		else if (ctrl && !alt) // Scroll up.
 		{
 			if (m_scrollBarV->isVisible(false))
 			{
@@ -1205,7 +1192,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 				manualScrolled = true;
 			}
 		}
-		else if (!ctrl && alt)	// Move line up.
+		else if (!ctrl && alt) // Move line up.
 		{
 			for (uint32_t i = 1; i < m_lines.size(); ++i)
 			{
@@ -1242,7 +1229,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 		break;
 
 	case VkDown:
-		if (!ctrl && !alt)	// Move caret down.
+		if (!ctrl && !alt) // Move caret down.
 		{
 			for (uint32_t i = 0; i < m_lines.size() - 1; ++i)
 			{
@@ -1256,7 +1243,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 			}
 			caretMovement = true;
 		}
-		else if (ctrl && !alt)	// Scroll down.
+		else if (ctrl && !alt) // Scroll down.
 		{
 			if (m_scrollBarV->isVisible(false))
 			{
@@ -1267,7 +1254,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 				manualScrolled = true;
 			}
 		}
-		else if (!ctrl && alt)	// Move line down.
+		else if (!ctrl && alt) // Move line down.
 		{
 			if (!m_lines.empty())
 			{
@@ -1307,12 +1294,12 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 		break;
 
 	case VkLeft:
-		if (!ctrl && !alt)	// Move caret left.
+		if (!ctrl && !alt) // Move caret left.
 		{
 			if (m_caret > 0)
 				--m_caret;
 		}
-		else if (ctrl && !alt)	// Move caret left to next word.
+		else if (ctrl && !alt) // Move caret left to next word.
 		{
 			if (m_caret > 0)
 				--m_caret;
@@ -1328,12 +1315,12 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 		break;
 
 	case VkRight:
-		if (!ctrl && !alt)	// Move caret right.
+		if (!ctrl && !alt) // Move caret right.
 		{
 			if (m_caret < int32_t(m_text.size()) - 1)
 				++m_caret;
 		}
-		else if (ctrl && !alt)	// Move caret right to previous word.
+		else if (ctrl && !alt) // Move caret right to previous word.
 		{
 			while (m_caret < int32_t(m_text.size()) - 1)
 			{
@@ -1488,7 +1475,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 	else if (caretMovement)
 	{
 		m_selectionStart =
-		m_selectionStop = -1;
+			m_selectionStop = -1;
 
 		CaretEvent caretEvent(this);
 		raiseEvent(&caretEvent);
@@ -1516,7 +1503,7 @@ void RichEdit::eventKey(KeyEvent* event)
 
 	const wchar_t ch = event->getCharacter();
 	const wchar_t uch = std::toupper(ch);
-	
+
 	if (ctrl && uch == L'C' && m_clipboard)
 		copy();
 	else if (ctrl && uch == L'V' && m_clipboard)
@@ -1731,15 +1718,12 @@ void RichEdit::eventPaint(PaintEvent* event)
 			canvas.drawText(lineRc, toString(i + 1), AnLeft, AnTop);
 
 			if (m_lines[i].image >= 0)
-			{
 				canvas.drawBitmap(
 					Point(iconsRc.left, iconsRc.top + (iconsRc.getHeight() - m_imageHeight) / 2),
 					Point(m_lines[i].image * m_imageWidth, 0),
 					Size(m_imageWidth, m_imageHeight),
 					m_image,
-					BlendMode::Alpha
-				);
-			}
+					BlendMode::Alpha);
 
 			iconsRc = iconsRc.offset(0, lineHeight);
 			lineRc = lineRc.offset(0, lineHeight);
@@ -1754,8 +1738,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 			innerRc.left + m_lineMargin,
 			innerRc.top,
 			innerRc.right,
-			innerRc.bottom
-		));
+			innerRc.bottom));
 
 		Rect lineRc(innerRc.left, innerRc.top, innerRc.right, innerRc.top + lineHeight);
 		const uint32_t lineOffsetEnd = std::min(lineOffset + pageLines, lineCount);
@@ -1865,8 +1848,7 @@ void RichEdit::eventSize(SizeEvent* event)
 	const ui::Size searchControlSize = m_searchControl->getPreferredSize(inner.getSize());
 	m_searchControl->setRect(ui::Rect(
 		ui::Point(getEditRect().getWidth() - searchControlSize.cx, 0),
-		searchControlSize
-	));
+		searchControlSize));
 
 	for (auto& ch : m_text)
 		ch.width = 0;

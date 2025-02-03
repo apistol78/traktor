@@ -6,21 +6,23 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <sstream>
+#include "Xml/XmlPullParser.h"
+
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Xml/XmlPullParser.h"
+
+#include <sstream>
 
 #define XML_STATIC
 #include "expat.h"
 
 namespace traktor::xml
 {
-	namespace
-	{
+namespace
+{
 
 const Utf8Encoding c_utf8enc;
 
@@ -35,7 +37,7 @@ std::wstring xmltows(const XML_Char* xmlstr)
 	return mbstows((const char*)xmlstr);
 }
 
-	}
+}
 
 class XmlPullParserImpl
 {
@@ -49,13 +51,14 @@ public:
 private:
 	Ref< IStream > m_stream;
 	std::wstring m_name;
-	XML_Parser m_parser;
+	XML_Parser m_parser = 0;
 	uint8_t m_buf[4096];
-	bool m_done;
+	bool m_done = false;
 	AlignedVector< wchar_t > m_cdata;
+	int32_t m_cdataMode = 0;
 	XmlPullParser::Event m_eventQueue[1024];
-	uint32_t m_eventQueueHead;
-	uint32_t m_eventQueueTail;
+	uint32_t m_eventQueueHead = 0;
+	uint32_t m_eventQueueTail = 0;
 
 	bool parse();
 
@@ -71,23 +74,24 @@ private:
 
 	static void XMLCALL characterData(void* userData, const XML_Char* s, int len);
 
+	static void XMLCALL startCdataSectionData(void* userData);
+
+	static void XMLCALL endCdataSectionData(void* userData);
+
 	static int XMLCALL unknownEncoding(void* userData, const XML_Char* name, XML_Encoding* info);
 };
 
 XmlPullParserImpl::XmlPullParserImpl(IStream* stream, const std::wstring& name)
-:	m_stream(stream)
-,	m_name(name)
-,	m_parser(0)
-,	m_done(false)
-,	m_eventQueueHead(0)
-,	m_eventQueueTail(0)
+	: m_stream(stream)
+	, m_name(name)
 {
 	m_parser = XML_ParserCreate(nullptr);
-	T_ASSERT_M (m_parser, L"Unable to create XML parser");
+	T_ASSERT_M(m_parser, L"Unable to create XML parser");
 
 	XML_SetUserData(m_parser, this);
 	XML_SetElementHandler(m_parser, startElement, endElement);
 	XML_SetCharacterDataHandler(m_parser, characterData);
+	XML_SetCdataSectionHandler(m_parser, startCdataSectionData, endCdataSectionData);
 	XML_SetUnknownEncodingHandler(m_parser, unknownEncoding, nullptr);
 
 	m_eventQueue[0].type = XmlPullParser::EventType::StartDocument;
@@ -103,10 +107,8 @@ XmlPullParserImpl::~XmlPullParserImpl()
 bool XmlPullParserImpl::get(XmlPullParser::Event& outEvent)
 {
 	while (m_eventQueueHead == m_eventQueueTail)
-	{
 		if (!parse())
 			return false;
-	}
 	outEvent = m_eventQueue[m_eventQueueHead];
 	m_eventQueueHead = (m_eventQueueHead + 1) % sizeof_array(m_eventQueue);
 	return true;
@@ -180,21 +182,12 @@ void XmlPullParserImpl::pushCharacterData()
 	const wchar_t* ss = &m_cdata[0];
 	const wchar_t* es = &m_cdata[len - 1];
 
-	while ((*ss == ' ' || *ss == '\t' || *ss == 9 || *ss == 10) && ss < es)
-		++ss;
-
-	while ((*es == ' ' || *es == '\t' || *es == 9 || *es == 10) && ss < es)
-		--es;
-
-	if (ss <= es)
+	XmlPullParser::Event* evt = allocEvent();
+	if (evt)
 	{
-		XmlPullParser::Event* evt = allocEvent();
-		if (evt)
-		{
-			evt->type = XmlPullParser::EventType::Text;
-			evt->value = std::wstring(ss, es + 1);
-			pushEvent();
-		}
+		evt->type = XmlPullParser::EventType::Text;
+		evt->value = std::wstring(ss, es + 1);
+		pushEvent();
 	}
 
 	m_cdata.resize(0);
@@ -242,8 +235,22 @@ void XMLCALL XmlPullParserImpl::characterData(void* userData, const XML_Char* s,
 	T_ASSERT(pp);
 	T_ASSERT(len > 0);
 
-	std::wstring ws = xmltows(s, &s[len]);
-	pp->m_cdata.insert(pp->m_cdata.end(), ws.c_str(), ws.c_str() + len);
+	const std::wstring ws = xmltows(s, &s[len]);
+	const wchar_t* ss = &ws[0];
+	const wchar_t* es = &ws[len];
+	pp->m_cdata.insert(pp->m_cdata.end(), ss, es);
+}
+
+void XMLCALL XmlPullParserImpl::startCdataSectionData(void* userData)
+{
+	XmlPullParserImpl* pp = reinterpret_cast< XmlPullParserImpl* >(userData);
+	pp->m_cdataMode++;
+}
+
+void XMLCALL XmlPullParserImpl::endCdataSectionData(void* userData)
+{
+	XmlPullParserImpl* pp = reinterpret_cast< XmlPullParserImpl* >(userData);
+	pp->m_cdataMode--;
 }
 
 int XMLCALL XmlPullParserImpl::unknownEncoding(void* userData, const XML_Char* name, XML_Encoding* info)
@@ -267,8 +274,8 @@ int XMLCALL XmlPullParserImpl::unknownEncoding(void* userData, const XML_Char* n
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.XmlPullParser", XmlPullParser, Object)
 
 XmlPullParser::XmlPullParser(IStream* stream, const std::wstring& name)
-:	m_impl(new XmlPullParserImpl(stream, name))
-,	m_pushed(0)
+	: m_impl(new XmlPullParserImpl(stream, name))
+	, m_pushed(0)
 {
 }
 
@@ -293,7 +300,8 @@ XmlPullParser::EventType XmlPullParser::next()
 
 	if (!m_impl->get(m_event))
 	{
-		delete m_impl; m_impl = nullptr;
+		delete m_impl;
+		m_impl = nullptr;
 		return EventType::Invalid;
 	}
 
