@@ -304,11 +304,10 @@
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
 const int N = 4;
 const float far = 20.0f;
-const float W = 6.0f;
+const float W = 16.0f;
 const float C = 0.5f;
 
 float occlusions = 0.0f;
@@ -330,10 +329,8 @@ for (int i = 0; i < N; ++i)
 }
 
 const float f = 1.0f - occlusions / float(N);
-$Output = f * C + (1.0f - C);
-
-			]]>
-			</script>
+$Output = f * f * C + (1.0f - C);
+	]]></script>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{ED13FDFA-8B70-7A49-8EDC-CFE9EF944F02}</id>
@@ -406,13 +403,13 @@ $Output = f * C + (1.0f - C);
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 uvec2 seed = uvec2(gl_FragCoord.xy);
 seed += uvec2($Time * 1543, $Time * 543);
 $Output = BlueNoise(seed) * 2.0f * 3.142f;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{8C79F6A3-6F52-0E4D-92E9-47456882BA0E}</id>
