@@ -872,10 +872,10 @@ bool emitInstance(GlslContext& cx, Instance* node)
 	{
 		int32_t interpolatorId;
 		int32_t interpolatorOffset;
-		bool declare = cx.allocateInterpolator(1, interpolatorId, interpolatorOffset);
+		const bool declare = cx.allocateInterpolator(1, interpolatorId, interpolatorOffset);
 
-		std::wstring interpolatorName = L"Attr" + toString(interpolatorId);
-		std::wstring interpolatorMask = interpolatorName + L"." + std::wstring(L"xyzw").substr(interpolatorOffset, 1);
+		const std::wstring interpolatorName = L"Attr" + toString(interpolatorId);
+		const std::wstring interpolatorMask = interpolatorName + L"." + std::wstring(L"xyzw").substr(interpolatorOffset, 1);
 
 		auto& fv = cx.getVertexShader().getOutputStream(GlslShader::BtBody);
 		comment(fv, node) << interpolatorMask << L" = float(gl_InstanceIndex);" << Endl;
@@ -1274,7 +1274,7 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 
 	cx.getShader().popScope();
 
-	std::wstring inner = fs.str();
+	const std::wstring inner = fs.str();
 	cx.getShader().popOutputStream(GlslShader::BtBody);
 
 	// As we now know the type of output variable we can safely
@@ -1447,7 +1447,7 @@ bool emitMax(GlslContext& cx, Max* node)
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = glsl_precedence(in1->getType(), in2->getType());
+	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -1465,7 +1465,7 @@ bool emitMin(GlslContext& cx, Min* node)
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = glsl_precedence(in1->getType(), in2->getType());
+	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -1567,7 +1567,7 @@ bool emitMixOut(GlslContext& cx, MixOut* node)
 	case GlslType::Integer:
 	case GlslType::Float:
 		{
-			GlslType outputType = (in->getType() == GlslType::Integer) ? GlslType::Integer : GlslType::Float;
+			const GlslType outputType = (in->getType() == GlslType::Integer) ? GlslType::Integer : GlslType::Float;
 			Ref< GlslVariable > x = cx.emitOutput(node, L"X", outputType);
 			assign(f, x) << in->getName() << L";" << Endl;
 		}
@@ -1576,7 +1576,7 @@ bool emitMixOut(GlslContext& cx, MixOut* node)
 	case GlslType::Integer2:
 	case GlslType::Float2:
 		{
-			GlslType outputType = (in->getType() == GlslType::Integer2) ? GlslType::Integer : GlslType::Float;
+			const GlslType outputType = (in->getType() == GlslType::Integer2) ? GlslType::Integer : GlslType::Float;
 			Ref< GlslVariable > x = cx.emitOutput(node, L"X", outputType);
 			Ref< GlslVariable > y = cx.emitOutput(node, L"Y", outputType);
 			assign(f, x) << in->getName() << L".x;" << Endl;
@@ -1587,7 +1587,7 @@ bool emitMixOut(GlslContext& cx, MixOut* node)
 	case GlslType::Integer3:
 	case GlslType::Float3:
 		{
-			GlslType outputType = (in->getType() == GlslType::Integer3) ? GlslType::Integer : GlslType::Float;
+			const GlslType outputType = (in->getType() == GlslType::Integer3) ? GlslType::Integer : GlslType::Float;
 			Ref< GlslVariable > x = cx.emitOutput(node, L"X", outputType);
 			Ref< GlslVariable > y = cx.emitOutput(node, L"Y", outputType);
 			Ref< GlslVariable > z = cx.emitOutput(node, L"Z", outputType);
@@ -1600,7 +1600,7 @@ bool emitMixOut(GlslContext& cx, MixOut* node)
 	case GlslType::Integer4:
 	case GlslType::Float4:
 		{
-			GlslType outputType = (in->getType() == GlslType::Integer4) ? GlslType::Integer : GlslType::Float;
+			const GlslType outputType = (in->getType() == GlslType::Integer4) ? GlslType::Integer : GlslType::Float;
 			Ref< GlslVariable > x = cx.emitOutput(node, L"X", outputType);
 			Ref< GlslVariable > y = cx.emitOutput(node, L"Y", outputType);
 			Ref< GlslVariable > z = cx.emitOutput(node, L"Z", outputType);
@@ -1628,7 +1628,7 @@ bool emitMul(GlslContext& cx, Mul* node)
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = glsl_precedence(in1->getType(), in2->getType());
+	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -1647,7 +1647,7 @@ bool emitMulAdd(GlslContext& cx, MulAdd* node)
 	if (!in1 || !in2 || !in3)
 		return false;
 
-	GlslType type = glsl_precedence(glsl_precedence(in1->getType(), in2->getType()), in3->getType());
+	const GlslType type = glsl_precedence(glsl_precedence(in1->getType(), in2->getType()), in3->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -1799,7 +1799,7 @@ bool emitPow(GlslContext& cx, Pow* node)
 	if (!exponent || !in)
 		return false;
 
-	GlslType type = glsl_precedence(exponent->getType(), in->getType());
+	const GlslType type = glsl_precedence(exponent->getType(), in->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -1817,7 +1817,7 @@ bool emitReadStruct(GlslContext& cx, ReadStruct* node)
 		return false;
 
 	const Struct* sn = mandatory_non_null_type_cast< const Struct* >(strct->getNode());
-	DataType type = sn->getElementType(node->getName());
+	const DataType type = sn->getElementType(node->getName());
 
 	Ref< GlslVariable > index = cx.emitInput(node, L"Index");
 	if (!index)
@@ -2603,7 +2603,7 @@ bool emitSum(GlslContext& cx, Sum* node)
 
 	cx.getShader().popScope();
 
-	std::wstring inner = fs.str();
+	const std::wstring inner = fs.str();
 	cx.getShader().popOutputStream(GlslShader::BtBody);
 
 	// As we now know the type of output variable we can safely
