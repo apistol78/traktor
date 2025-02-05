@@ -1,30 +1,32 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Mesh/Editor/VertexShaderGenerator.h"
+
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Editor/IPipelineDepends.h"
-#include "Mesh/Editor/VertexShaderGenerator.h"
 #include "Model/Model.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 
 namespace traktor::mesh
 {
-	namespace
-	{
+namespace
+{
 
 const Guid c_meshShaderTemplate(L"{E657266C-4925-1A40-9225-0776ACC3B0E8}");
 const Guid c_meshVertexInterface(L"{4015ACBD-D998-6243-B379-21BB383B864E}");
@@ -41,7 +43,7 @@ class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
 {
 public:
 	FragmentReaderAdapter(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve)
-	:	m_resolve(resolve)
+		: m_resolve(resolve)
 	{
 	}
 
@@ -54,12 +56,12 @@ private:
 	std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) > m_resolve;
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.VertexShaderGenerator", VertexShaderGenerator, Object)
 
 VertexShaderGenerator::VertexShaderGenerator(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve)
-:	m_resolve(resolve)
+	: m_resolve(resolve)
 {
 }
 
@@ -67,8 +69,7 @@ Ref< render::ShaderGraph > VertexShaderGenerator::generateMesh(
 	const model::Model& model,
 	const model::Material& material,
 	const render::ShaderGraph* meshSurfaceShaderGraph,
-	const Guid& vertexShaderGuid
-) const
+	const Guid& vertexShaderGuid) const
 {
 	// Create a mutable material mesh shader.
 	Ref< render::ShaderGraph > meshShaderGraph = DeepClone(m_resolve(c_meshShaderTemplate)).create< render::ShaderGraph >();
@@ -101,7 +102,7 @@ Ref< render::ShaderGraph > VertexShaderGenerator::generateMesh(
 		// Determine texture channel fragments.
 		for (auto node : meshShaderGraph->getNodes())
 		{
-			const std::wstring comment = node->getComment();
+			const std::wstring comment = trim(node->getComment());
 			if (comment == L"Tag_LightmapTexCoord")
 			{
 				render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);

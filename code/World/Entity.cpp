@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "World/Entity.h"
+
 #include "World/IEntityComponent.h"
 
 namespace traktor::world
@@ -19,18 +20,18 @@ Entity::Entity(
 	const std::wstring_view& name,
 	const Transform& transform,
 	const EntityState& state,
-	const RefArray< IEntityComponent >& components
-)
-:	m_id(id)
-,	m_name(name)
-,	m_transform(transform)
-,	m_state(state)
-,	m_components(components)
+	const RefArray< IEntityComponent >& components)
+	: m_id(id)
+	, m_name(name)
+	, m_transform(transform)
+	, m_state(state)
+	, m_components(components)
 {
 	for (auto component : m_components)
 	{
 		m_updating = component;
 		component->setOwner(this);
+		component->setState(m_state, EntityState::All);
 		component->setTransform(m_transform);
 	}
 	m_updating = nullptr;
@@ -63,10 +64,8 @@ EntityState Entity::setState(const EntityState& state, const EntityState& mask)
 		m_state.locked = state.locked;
 
 	for (auto component : m_components)
-	{
 		if (component != m_updating)
 			component->setState(m_state, mask);
-	}
 
 	return current;
 }
@@ -75,10 +74,8 @@ void Entity::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 	for (auto component : m_components)
-	{
 		if (component != m_updating)
 			component->setTransform(transform);
-	}
 }
 
 Transform Entity::getTransform() const
@@ -107,9 +104,10 @@ void Entity::update(const UpdateParams& update)
 
 void Entity::setComponent(IEntityComponent* component)
 {
-	T_FATAL_ASSERT (component);
+	T_FATAL_ASSERT(component);
 
 	component->setOwner(this);
+	component->setState(m_state, EntityState::All);
 	component->setTransform(m_transform);
 
 	// Replace existing component of same type.
@@ -129,10 +127,8 @@ void Entity::setComponent(IEntityComponent* component)
 IEntityComponent* Entity::getComponent(const TypeInfo& componentType) const
 {
 	for (auto component : m_components)
-	{
 		if (is_type_of(componentType, type_of(component)))
 			return component;
-	}
 	return nullptr;
 }
 

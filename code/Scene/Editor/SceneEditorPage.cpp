@@ -1150,8 +1150,6 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributeGroup"));
 	if (entityAdapter->isPrefab())
 		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributePrefab"));
-	if (entityAdapter->isDynamic())
-		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributeDynamic"));
 	if (entityAdapter->isExternal())
 		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributeExternal"));
 
@@ -1223,8 +1221,6 @@ void SceneEditorPage::updateInstanceGridRow(ui::GridRow* row)
 		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributeGroup"));
 	if (entityAdapter->isPrefab())
 		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributePrefab"));
-	if (entityAdapter->isDynamic())
-		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributeDynamic"));
 	if (entityAdapter->isExternal())
 		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributeExternal"));
 
@@ -1612,7 +1608,8 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 		T_ASSERT(entityAdapter);
 
-		if (entityAdapter->isDynamic(false))
+		const bool wasDynamic = entityAdapter->isDynamic(false);
+		if (wasDynamic)
 		{
 			item->setImage(m_imageStatic);
 			entityAdapter->setDynamic(false);
@@ -1622,6 +1619,7 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 			item->setImage(m_imageDynamic);
 			entityAdapter->setDynamic(true);
 		}
+		T_ASSERT(wasDynamic != entityAdapter->isDynamic(false));
 
 		updateInstanceGrid();
 	}
@@ -1633,7 +1631,8 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 		T_ASSERT(entityAdapter);
 
-		if (entityAdapter->isVisible(false))
+		const bool wasVisible = entityAdapter->isVisible(false);
+		if (wasVisible)
 		{
 			item->setImage(m_imageHidden);
 			entityAdapter->setVisible(false);
@@ -1643,6 +1642,7 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 			item->setImage(m_imageVisible);
 			entityAdapter->setVisible(true);
 		}
+		T_ASSERT(wasVisible != entityAdapter->isVisible(false));
 
 		m_instanceGrid->update();
 		m_context->enqueueRedraw(nullptr);

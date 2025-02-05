@@ -12,11 +12,7 @@
 		</item>
 		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{828A4495-8B2E-5740-9232-8A380BC8FCA7}</id>
-			<comment>
-			<![CDATA[
-Tag_DiffuseMap
-			]]>
-			</comment>
+			<comment><![CDATA[Tag_DiffuseMap]]></comment>
 			<position>
 				<first>628</first>
 				<second>149</second>
@@ -24,20 +20,20 @@ Tag_DiffuseMap
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>Texture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{094F4DB0-E74C-CA41-A06C-5CD0C094304C}</id>
 			<comment/>
 			<position>
 				<first>782</first>
 				<second>168</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Wrap</addressU>
+			<addressV>Wrap</addressV>
+			<addressW>Wrap</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -52,11 +48,7 @@ Tag_DiffuseMap
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{F52B2FE5-339F-2444-B18D-F712CC49918B}</id>
-			<comment>
-			<![CDATA[
-Tag_DiffuseColor
-			]]>
-			</comment>
+			<comment><![CDATA[Tag_DiffuseColor]]></comment>
 			<position>
 				<first>791</first>
 				<second>297</second>
@@ -72,7 +64,7 @@ Tag_DiffuseColor
 				<second>257</second>
 			</position>
 			<name>T_Attributes</name>
-			<optional>true</optional>
+			<optional>false</optional>
 		</item>
 		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
 			<id>{64AB4F0E-41E1-DD41-ABF6-90D8520EF029}</id>

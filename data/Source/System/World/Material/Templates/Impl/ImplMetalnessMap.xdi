@@ -3,11 +3,7 @@
 	<nodes>
 		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{D0BD95AB-4501-0E42-BAA6-CF93AC0535D3}</id>
-			<comment>
-			<![CDATA[
-Tag_MetalnessMap
-			]]>
-			</comment>
+			<comment><![CDATA[Tag_MetalnessMap]]></comment>
 			<position>
 				<first>196</first>
 				<second>94</second>
@@ -15,20 +11,20 @@ Tag_MetalnessMap
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>Texture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{2095AE10-D608-9548-9860-8D508BCB51D0}</id>
 			<comment/>
 			<position>
 				<first>425</first>
 				<second>120</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Wrap</addressU>
+			<addressV>Wrap</addressV>
+			<addressW>Wrap</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -53,11 +49,7 @@ Tag_MetalnessMap
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{4EB8F9A5-F3CE-E742-940C-1A018ECB0FFB}</id>
-			<comment>
-			<![CDATA[
-Tag_Metalness
-			]]>
-			</comment>
+			<comment><![CDATA[Tag_Metalness]]></comment>
 			<position>
 				<first>628</first>
 				<second>55</second>

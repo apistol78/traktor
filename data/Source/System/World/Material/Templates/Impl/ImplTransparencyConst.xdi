@@ -12,11 +12,7 @@
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{8754C104-D6D0-EA4D-B7B8-F6BA9AFEB865}</id>
-			<comment>
-			<![CDATA[
-Tag_Transparency
-			]]>
-			</comment>
+			<comment><![CDATA[Tag_Transparency]]></comment>
 			<position>
 				<first>746</first>
 				<second>417</second>

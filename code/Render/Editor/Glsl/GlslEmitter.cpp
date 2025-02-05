@@ -122,7 +122,7 @@ OutputStream& comment(OutputStream& f, const Node* node)
 {
 	const std::wstring& comment = node->getComment();
 	if (!comment.empty())
-		f << L"// " << comment << Endl;
+		f << L"/* " << trim(comment) << L" */" << Endl;
 	return f;
 }
 

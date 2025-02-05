@@ -380,6 +380,9 @@ void EntityAdapter::setVisible(bool visible)
 
 	if (m_entity)
 		m_entity->setVisible(visible);
+
+	for (auto child : m_children)
+		child->setVisible(visible);
 }
 
 bool EntityAdapter::isVisible(bool includingParents) const
@@ -402,6 +405,9 @@ void EntityAdapter::setLocked(bool locked)
 
 	if (m_entity)
 		m_entity->setLocked(locked);
+
+	for (auto child : m_children)
+		child->setLocked(locked);
 
 	if (locked)
 		m_selected = false;
@@ -427,6 +433,9 @@ void EntityAdapter::setDynamic(bool dynamic)
 
 	if (m_entity)
 		m_entity->setDynamic(dynamic);
+
+	for (auto child : m_children)
+		child->setDynamic(dynamic);
 }
 
 bool EntityAdapter::isDynamic(bool includingParents) const

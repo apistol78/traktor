@@ -22,11 +22,7 @@
 		</item>
 		<item type="traktor.render.BundleUnite" version="traktor.render.Node:1">
 			<id>{455E9F6C-AAA6-524B-89C8-754D8C29F0E7}</id>
-			<comment>
-			<![CDATA[
-Append selected texcoord channel.
-			]]>
-			</comment>
+			<comment><![CDATA[Append selected texcoord channel.]]></comment>
 			<position>
 				<first>784</first>
 				<second>453</second>

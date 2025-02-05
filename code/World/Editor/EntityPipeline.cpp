@@ -158,6 +158,10 @@ Ref< ISerializable > EntityPipeline::buildProduct(
 		Ref< EntityData > mutableEntityData = DeepClone(entityData).create< EntityData >();
 		RefArray< IEntityComponentData > components = mutableEntityData->getComponents();
 
+		log::info << mutableEntityData->getName() << Endl;
+		log::info << L"\t.visible " << (mutableEntityData->getState().visible ? L"YES" : L"NO") << Endl;
+		log::info << L"\t.dynamic " << (mutableEntityData->getState().dynamic ? L"YES" : L"NO") << Endl;
+
 		// Sort components by ordinal to ensure they are built in predictable order.
 		components.sort([](IEntityComponentData* lh, IEntityComponentData* rh)
 			{

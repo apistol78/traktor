@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,6 +30,8 @@ namespace traktor::world
 
 class EntityData;
 
+struct EntityState;
+
 /*! Component data interface.
  * \ingroup World
  */
@@ -49,8 +51,7 @@ public:
 	 */
 	virtual int32_t getOrdinal() const = 0;
 
-	/*! Set the transform of the component data.
-	 */
+	/*! Set the transform of the component data. */
 	virtual void setTransform(const EntityData* owner, const Transform& transform) = 0;
 };
 

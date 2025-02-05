@@ -9,7 +9,7 @@
 				<second>-183</second>
 			</position>
 			<name>T_Attributes</name>
-			<optional>true</optional>
+			<optional>false</optional>
 		</item>
 		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
 			<id>{14809A3D-A340-2C43-9604-B2F29D4FE3F2}</id>

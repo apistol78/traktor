@@ -3,11 +3,7 @@
 	<nodes>
 		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{4F0570C5-66EC-CA44-8198-9A58D7EBACBD}</id>
-			<comment>
-			<![CDATA[
-Tag_EmissiveMap
-			]]>
-			</comment>
+			<comment><![CDATA[Tag_EmissiveMap]]></comment>
 			<position>
 				<first>372</first>
 				<second>140</second>
@@ -15,20 +11,20 @@ Tag_EmissiveMap
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>Texture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{53D8A1AF-0B41-BD40-88EC-A6F6FB345461}</id>
 			<comment/>
 			<position>
 				<first>525</first>
 				<second>158</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Wrap</addressU>
+			<addressV>Wrap</addressV>
+			<addressW>Wrap</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>

@@ -1,13 +1,14 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "World/Entity.h"
 #include "World/Entity/GroupComponent.h"
+
+#include "World/Entity.h"
 
 namespace traktor::world
 {
@@ -27,12 +28,6 @@ void GroupComponent::setOwner(Entity* owner)
 
 void GroupComponent::update(const UpdateParams& update)
 {
-}
-
-void GroupComponent::setState(const EntityState& state, const EntityState& mask)
-{
-	for (auto entity : m_entities)
-		entity->setState(state, mask);
 }
 
 void GroupComponent::setTransform(const Transform& transform)
@@ -69,13 +64,13 @@ Aabb3 GroupComponent::getBoundingBox() const
 
 void GroupComponent::addEntity(Entity* entity)
 {
-	T_ASSERT_M (entity, L"Null entity");
+	T_ASSERT_M(entity, L"Null entity");
 	m_entities.push_back(entity);
 }
 
 void GroupComponent::removeEntity(Entity* entity)
 {
-	T_ASSERT_M (entity, L"Null entity");
+	T_ASSERT_M(entity, L"Null entity");
 	m_entities.remove(entity);
 }
 
@@ -106,10 +101,8 @@ RefArray< Entity > GroupComponent::getEntities(const std::wstring& name) const
 {
 	RefArray< Entity > entities;
 	for (auto entity : m_entities)
-	{
 		if (entity->getName() == name)
 			entities.push_back(entity);
-	}
 	return entities;
 }
 

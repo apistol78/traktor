@@ -49,11 +49,7 @@
 		</item>
 		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{000FD1AB-7DE6-0B44-A8E8-E7A1F300D7CF}</id>
-			<comment>
-			<![CDATA[
-Tag_NormalMap
-			]]>
-			</comment>
+			<comment><![CDATA[Tag_NormalMap]]></comment>
 			<position>
 				<first>639</first>
 				<second>-136</second>
@@ -69,7 +65,7 @@ Tag_NormalMap
 				<second>19</second>
 			</position>
 			<name>T_Attributes</name>
-			<optional>true</optional>
+			<optional>false</optional>
 		</item>
 		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
 			<id>{5D7D7688-B287-9C42-8933-42359E5A5C66}</id>

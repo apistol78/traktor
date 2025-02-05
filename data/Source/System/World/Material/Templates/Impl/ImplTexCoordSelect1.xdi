@@ -3,11 +3,7 @@
 	<nodes>
 		<item type="traktor.render.BundleUnite" version="traktor.render.Node:1">
 			<id>{962DC9B3-27F9-714B-AF4B-A639E3A0AB5C}</id>
-			<comment>
-			<![CDATA[
-Append selected texcoord channel.
-			]]>
-			</comment>
+			<comment><![CDATA[Append selected texcoord channel.]]></comment>
 			<position>
 				<first>680</first>
 				<second>31</second>

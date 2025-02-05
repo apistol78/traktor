@@ -1,16 +1,17 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Entity/GroupComponentData.h"
+
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "World/EntityData.h"
-#include "World/Entity/GroupComponentData.h"
 
 namespace traktor::world
 {
@@ -18,7 +19,7 @@ namespace traktor::world
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.GroupComponentData", 0, GroupComponentData, IEntityComponentData)
 
 GroupComponentData::GroupComponentData(const RefArray< EntityData >& entityData)
-:	m_entityData(entityData)
+	: m_entityData(entityData)
 {
 }
 
@@ -86,7 +87,7 @@ void GroupComponentData::setTransform(const EntityData* owner, const Transform& 
 
 void GroupComponentData::serialize(ISerializer& s)
 {
-    s >> MemberRefArray< EntityData >(L"entityData", m_entityData, AttributePrivate());
+	s >> MemberRefArray< EntityData >(L"entityData", m_entityData, AttributePrivate());
 }
 
 }

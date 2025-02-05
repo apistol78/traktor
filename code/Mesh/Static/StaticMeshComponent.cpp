@@ -65,7 +65,7 @@ void StaticMeshComponent::setWorld(world::World* world)
 
 void StaticMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask)
 {
-	const bool visible = (state.visible && mask.visible);
+	const bool visible = (m_world != nullptr) && (state.visible && mask.visible);
 	if (visible)
 	{
 		if (!m_rtwInstance)

@@ -12,11 +12,7 @@
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{625E45BF-C149-5A44-B17E-5BF4729BB68F}</id>
-			<comment>
-			<![CDATA[
-Tag_Emissive
-			]]>
-			</comment>
+			<comment><![CDATA[Tag_Emissive]]></comment>
 			<position>
 				<first>553</first>
 				<second>357</second>

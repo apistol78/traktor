@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,11 @@
  */
 #pragma once
 
-#include <functional>
+#include "Core/Guid.h"
 #include "Core/Object.h"
+#include "Core/Ref.h"
+
+#include <functional>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -56,13 +59,11 @@ public:
 	Ref< render::ShaderGraph > generateSurface(
 		const model::Material& material,
 		bool vertexColor,
-		bool decalResponse
-	) const;
+		bool decalResponse) const;
 
 	Ref< render::ShaderGraph > combineSurface(
 		const render::ShaderGraph* customSurfaceShaderGraph,
-		const render::ShaderGraph* materialSurfaceShaderGraph
-	) const;
+		const render::ShaderGraph* materialSurfaceShaderGraph) const;
 
 	static void addDependencies(editor::IPipelineDepends* pipelineDepends);
 

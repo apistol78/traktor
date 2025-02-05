@@ -151,17 +151,25 @@ bool FormWin32::isMinimized() const
 
 void FormWin32::hideProgress()
 {
-	if (m_taskBarList)
+	if (m_taskBarList && m_taskBarVisible)
 		m_taskBarList->SetProgressState(m_hWnd, TBPF_NOPROGRESS);
+	m_taskBarVisible = false;
+	m_taskBarCurrent = -1;
+	m_taskBarTotal = -1;
 }
 
 void FormWin32::showProgress(int32_t current, int32_t total)
 {
 	if (m_taskBarList)
 	{
-		m_taskBarList->SetProgressState(m_hWnd, TBPF_NORMAL);
-		m_taskBarList->SetProgressValue(m_hWnd, current, total);
+		if (!m_taskBarVisible)
+			m_taskBarList->SetProgressState(m_hWnd, TBPF_NORMAL);
+		if (m_taskBarCurrent != current || m_taskBarTotal != total)
+			m_taskBarList->SetProgressValue(m_hWnd, current, total);
 	}
+	m_taskBarVisible = true;
+	m_taskBarCurrent = current;
+	m_taskBarTotal = total;
 }
 
 LRESULT FormWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)

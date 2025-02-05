@@ -1,12 +1,15 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Editor/Material/MaterialShaderGenerator.h"
+
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -14,17 +17,16 @@
 #include "Database/Database.h"
 #include "Editor/IPipelineDepends.h"
 #include "Model/Material.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
-#include "World/Editor/Material/MaterialShaderGenerator.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 const Guid c_materialTemplate(L"{CCDB27F2-644B-0742-857D-680E846B5BA3}");
 const Guid c_materialInterface(L"{139CACBD-2A79-5644-B9BC-B113F66D50EA}");
@@ -66,7 +68,7 @@ class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
 {
 public:
 	FragmentReaderAdapter(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve)
-	:	m_resolve(resolve)
+		: m_resolve(resolve)
 	{
 	}
 
@@ -92,20 +94,19 @@ void propagateAnisotropic(render::ShaderGraph* shaderGraph, render::Texture* tex
 	}
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.MaterialShaderGenerator", MaterialShaderGenerator, Object)
 
 MaterialShaderGenerator::MaterialShaderGenerator(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve)
-:	m_resolve(resolve)
+	: m_resolve(resolve)
 {
 }
 
 Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 	const model::Material& material,
 	bool vertexColor,
-	bool decalResponse
-) const
+	bool decalResponse) const
 {
 	// Create a mutable material surface shader.
 	Ref< render::ShaderGraph > meshSurfaceShaderGraph = DeepClone(m_resolve(c_materialTemplate)).create< render::ShaderGraph >();
@@ -131,12 +132,10 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 		if (fragmentGuid == c_tplDiffuseParams)
 		{
 			if (diffuseTexture.isNull())
-			{
 				if (!vertexColor)
 					externalNode->setFragmentGuid(c_implDiffuseConst);
 				else
 					externalNode->setFragmentGuid(c_implDiffuseVertex);
-			}
 			else
 				externalNode->setFragmentGuid(c_implDiffuseMap);
 			resolveNodes.push_back(externalNode);
@@ -161,13 +160,10 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 		{
 			if (material.getBlendOperator() == model::Material::BoDecal)
 				externalNode->setFragmentGuid(c_implTransparencyOpaque);
+			else if (transparencyTexture.isNull())
+				externalNode->setFragmentGuid(c_implTransparencyConst);
 			else
-			{
-				if (transparencyTexture.isNull())
-					externalNode->setFragmentGuid(c_implTransparencyConst);
-				else
-					externalNode->setFragmentGuid(c_implTransparencyMap);
-			}
+				externalNode->setFragmentGuid(c_implTransparencyMap);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (fragmentGuid == c_tplRoughnessParams)
@@ -199,7 +195,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 	// Determine texture channel fragments.
 	for (auto node : meshSurfaceShaderGraph->getNodes())
 	{
-		const std::wstring comment = node->getComment();
+		const std::wstring comment = trim(node->getComment());
 		if (comment == L"Tag_DiffuseTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
@@ -253,7 +249,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 	// Patch constant values, such as colors, from materials into shader.
 	for (auto node : meshSurfaceShaderGraph->getNodes())
 	{
-		const std::wstring comment = node->getComment();
+		const std::wstring comment = trim(node->getComment());
 		if (comment == L"Tag_DiffuseColor")
 		{
 			render::Color* colorNode = mandatory_non_null_type_cast< render::Color* >(node);
@@ -343,7 +339,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 		{
 			render::Scalar* decalResponseNode = mandatory_non_null_type_cast< render::Scalar* >(node);
 			decalResponseNode->setComment(L"");
-			decalResponseNode->set(decalResponse ? 1.0f : 0.0f);			
+			decalResponseNode->set(decalResponse ? 1.0f : 0.0f);
 		}
 	}
 
@@ -354,10 +350,9 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 	return meshSurfaceShaderGraph;
 }
 
-Ref< render::ShaderGraph >  MaterialShaderGenerator::combineSurface(
+Ref< render::ShaderGraph > MaterialShaderGenerator::combineSurface(
 	const render::ShaderGraph* customSurfaceShaderGraph,
-	const render::ShaderGraph* materialSurfaceShaderGraph
-) const
+	const render::ShaderGraph* materialSurfaceShaderGraph) const
 {
 	// Resolve custom surface shader; merge in the generated material surface shader.
 

@@ -6,22 +6,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cmath>
 #include "Animation/AnimatedMeshComponent.h"
+
+#include "Animation/IPoseController.h"
+#include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonComponent.h"
 #include "Animation/SkeletonUtils.h"
-#include "Animation/IPoseController.h"
-#include "Animation/Joint.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/JobManager.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Render/Buffer.h"
+#include "Render/Context/RenderBlock.h"
+#include "Render/Context/RenderContext.h"
 #include "Render/IAccelerationStructure.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/Context/RenderBlock.h"
-#include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
@@ -29,26 +29,27 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
+#include <cmath>
+
 namespace traktor::animation
 {
-	namespace
-	{
+namespace
+{
 
 const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 const render::Handle s_handleWorld_ShadowWrite(L"World_ShadowWrite");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponent", AnimatedMeshComponent, mesh::MeshComponent)
 
 AnimatedMeshComponent::AnimatedMeshComponent(
 	const Transform& transform,
 	const resource::Proxy< mesh::SkinnedMesh >& mesh,
-	render::IRenderSystem* renderSystem
-)
-:	mesh::MeshComponent()
-,	m_mesh(mesh)
-,	m_index(0)
+	render::IRenderSystem* renderSystem)
+	: mesh::MeshComponent()
+	, m_mesh(mesh)
+	, m_index(0)
 {
 	const uint32_t skinJointCount = m_mesh->getJointCount();
 
@@ -130,7 +131,7 @@ void AnimatedMeshComponent::setWorld(world::World* world)
 
 void AnimatedMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask)
 {
-	const bool visible = (state.visible && mask.visible);
+	const bool visible = (m_world != nullptr) && (state.visible && mask.visible);
 	if (visible)
 	{
 		if (!m_rtwInstance)
@@ -212,13 +213,10 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 	float distance = 0.0f;
 
 	if (firstInFrame || supportTechnique)
-	{
 		isVisible = worldRenderView.isBoxVisible(
 			m_mesh->getBoundingBox(),
 			worldTransform,
-			distance
-		);
-	}
+			distance);
 
 	if (firstInFrame)
 	{
@@ -260,7 +258,6 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 	}
 
 	if (supportTechnique && isVisible)
-	{
 		m_mesh->build(
 			context.getRenderContext(),
 			worldRenderPass,
@@ -269,9 +266,7 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 			m_lastIsVisible ? m_skinBuffer[1] : m_skinBuffer[0],
 			m_skinBuffer[0],
 			distance,
-			getParameterCallback()
-		);
-	}
+			getParameterCallback());
 
 	if (firstInFrame)
 		m_lastIsVisible = isVisible;

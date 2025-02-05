@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,7 +21,7 @@ namespace traktor::ui
 class FormWin32 : public WidgetWin32Impl< IForm >
 {
 public:
-	FormWin32(EventSubject* owner);
+	explicit FormWin32(EventSubject* owner);
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
 
@@ -47,6 +47,9 @@ public:
 
 private:
 	ComRef< ITaskbarList3 > m_taskBarList;
+	bool m_taskBarVisible = false;
+	int32_t m_taskBarCurrent = -1;
+	int32_t m_taskBarTotal = -1;
 
 	LRESULT eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 
