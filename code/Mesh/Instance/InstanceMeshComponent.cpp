@@ -6,9 +6,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Mesh/Instance/InstanceMeshComponent.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Mesh/Instance/InstanceMesh.h"
-#include "Mesh/Instance/InstanceMeshComponent.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/World.h"
@@ -21,7 +22,7 @@ namespace traktor::mesh
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshComponent", InstanceMeshComponent, MeshComponent)
 
 InstanceMeshComponent::InstanceMeshComponent(const resource::Proxy< InstanceMesh >& mesh)
-:	m_mesh(mesh)
+	: m_mesh(mesh)
 {
 	m_mesh.consume();
 }
@@ -65,7 +66,7 @@ void InstanceMeshComponent::setWorld(world::World* world)
 	m_world = world;
 }
 
-void InstanceMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask)
+void InstanceMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren)
 {
 	const bool visible = (m_world != nullptr) && (state.visible && mask.visible);
 	if (visible)
@@ -111,8 +112,7 @@ Aabb3 InstanceMeshComponent::getBoundingBox() const
 void InstanceMeshComponent::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
+	const world::IWorldRenderPass& worldRenderPass)
 {
 	// Not used since we're getting called by the culling component when we should build.
 }
@@ -124,8 +124,7 @@ void InstanceMeshComponent::cullableBuild(
 	render::Buffer* instanceBuffer,
 	render::Buffer* visibilityBuffer,
 	uint32_t start,
-	uint32_t count
-)
+	uint32_t count)
 {
 	// Draw mesh instances; this method is called for the "first" InstanceMeshComponent using the same ordinal number
 	// assuming all other components reference the same mesh.
@@ -137,8 +136,7 @@ void InstanceMeshComponent::cullableBuild(
 			instanceBuffer,
 			visibilityBuffer,
 			start,
-			count
-		);
+			count);
 }
 
 }

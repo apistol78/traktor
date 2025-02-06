@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,14 +8,15 @@
  */
 #pragma once
 
-#include <atomic>
 #include "Animation/Pose.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Job.h"
+#include "Mesh/MeshComponent.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "Mesh/MeshComponent.h"
 #include "World/Entity/RTWorldComponent.h"
+
+#include <atomic>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -57,8 +58,7 @@ public:
 	explicit AnimatedMeshComponent(
 		const Transform& transform,
 		const resource::Proxy< mesh::SkinnedMesh >& mesh,
-		render::IRenderSystem* renderSystem
-	);
+		render::IRenderSystem* renderSystem);
 
 	virtual void destroy() override final;
 
@@ -66,7 +66,7 @@ public:
 
 	virtual void setWorld(world::World* world) override final;
 
-	virtual void setState(const world::EntityState& state, const world::EntityState& mask) override final;
+	virtual void setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 

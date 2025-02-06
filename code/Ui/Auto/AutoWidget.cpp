@@ -1,27 +1,29 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
-#include "Ui/Application.h"
-#include "Ui/StyleSheet.h"
-#include "Ui/ScrollBar.h"
 #include "Ui/Auto/AutoWidget.h"
+
+#include "Ui/Application.h"
 #include "Ui/Auto/AutoWidgetCell.h"
+#include "Ui/ScrollBar.h"
+#include "Ui/StyleSheet.h"
+
+#include <limits>
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 const int32_t c_scrollBarDenom = 1;
 const int32_t c_scrollBarWheelSpeed = 24;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.AutoWidget", AutoWidget, Widget)
 
@@ -278,8 +280,7 @@ void AutoWidget::updateLayout()
 	// Check if scroll offset has changed.
 	Size scrollOffset(
 		-m_scrollBarH->getPosition() * c_scrollBarDenom,
-		-m_scrollBarV->getPosition() * c_scrollBarDenom
-	);
+		-m_scrollBarV->getPosition() * c_scrollBarDenom);
 	if (scrollOffset != m_scrollOffset)
 	{
 		m_scrollOffset = scrollOffset;
@@ -355,12 +356,10 @@ void AutoWidget::placeScrollBars()
 
 	m_scrollBarH->setRect(Rect(
 		Point(0, innerRect.top + innerRect.getHeight() - height),
-		Size(widthH, height)
-	));
+		Size(widthH, height)));
 	m_scrollBarV->setRect(Rect(
 		Point(innerRect.getWidth() - width, innerRect.top),
-		Size(width, heightV)
-	));
+		Size(width, heightV)));
 }
 
 void AutoWidget::eventButtonDown(MouseButtonDownEvent* event)
@@ -510,8 +509,7 @@ void AutoWidget::eventSize(SizeEvent* event)
 
 void AutoWidget::eventTimer(TimerEvent* event)
 {
-	for (auto i = m_intervals.begin(); i != m_intervals.end(); )
-	{
+	for (auto i = m_intervals.begin(); i != m_intervals.end();)
 		if ((i->duration -= 100) <= 0)
 		{
 			i->cell->interval();
@@ -519,7 +517,6 @@ void AutoWidget::eventTimer(TimerEvent* event)
 		}
 		else
 			++i;
-	}
 
 	if (!isVisible(false))
 		return;

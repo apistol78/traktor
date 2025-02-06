@@ -75,25 +75,25 @@ public:
 	const std::wstring& getName() const { return m_name; }
 
 	/*! Set entity state. */
-	EntityState setState(const EntityState& state, const EntityState& mask);
+	EntityState setState(const EntityState& state, const EntityState& mask, bool includeChildren);
 
 	/*! Get entity state. */
 	const EntityState& getState() const { return m_state; }
 
 	/*! Set entity visible state. */
-	void setVisible(bool visible) { setState(visible ? EntityState::All : EntityState::None, EntityState::Visible); }
+	void setVisible(bool visible) { setState(visible ? EntityState::All : EntityState::None, EntityState::Visible, false); }
 
 	/*! Check if entity is visible. */
 	bool isVisible() const { return m_state.visible; }
 
 	/*! Set entity dynamic state. */
-	void setDynamic(bool dynamic) { setState(dynamic ? EntityState::All : EntityState::None, EntityState::Dynamic); }
+	void setDynamic(bool dynamic) { setState(dynamic ? EntityState::All : EntityState::None, EntityState::Dynamic, false); }
 
 	/*! Check if entity is dynamic. */
 	bool isDynamic() const { return m_state.dynamic; }
 
 	/*! Set entity locked state. */
-	void setLocked(bool locked) { setState(locked ? EntityState::All : EntityState::None, EntityState::Locked); }
+	void setLocked(bool locked) { setState(locked ? EntityState::All : EntityState::None, EntityState::Locked, false); }
 
 	/*! Check if entity is locked. */
 	bool isLocked() const { return m_state.locked; }

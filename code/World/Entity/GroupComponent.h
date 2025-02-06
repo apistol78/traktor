@@ -8,9 +8,10 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/RefArray.h"
 #include "World/IEntityComponent.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,11 +38,13 @@ public:
 
 	virtual void setOwner(Entity* owner) override final;
 
-	virtual void update(const UpdateParams& update) override final;
+	virtual void setState(const EntityState& state, const EntityState& mask, bool includeChildren);
 
 	virtual void setTransform(const Transform& transform) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
+
+	virtual void update(const UpdateParams& update) override final;
 
 	void addEntity(Entity* entity);
 

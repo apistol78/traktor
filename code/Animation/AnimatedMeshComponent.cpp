@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -129,7 +129,7 @@ void AnimatedMeshComponent::setWorld(world::World* world)
 	m_world = world;
 }
 
-void AnimatedMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask)
+void AnimatedMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren)
 {
 	const bool visible = (m_world != nullptr) && (state.visible && mask.visible);
 	if (visible)

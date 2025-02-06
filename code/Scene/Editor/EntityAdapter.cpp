@@ -6,21 +6,23 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
+#include "Scene/Editor/EntityAdapter.h"
+
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepHash.h"
-#include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IComponentEditor.h"
 #include "Scene/Editor/IComponentEditorFactory.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "World/Entity.h"
+#include "World/Entity/ExternalEntityData.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"
 #include "World/World.h"
-#include "World/Entity/ExternalEntityData.h"
+
+#include <algorithm>
 
 namespace traktor::scene
 {
@@ -28,23 +30,22 @@ namespace traktor::scene
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapter", EntityAdapter, Object)
 
 EntityAdapter::EntityAdapter(SceneEditorContext* context)
-:	m_context(context)
-,	m_entityDataType(nullptr)
-,	m_parent(nullptr)
-,	m_selected(false)
-,	m_expanded(false)
+	: m_context(context)
+	, m_entityDataType(nullptr)
+	, m_parent(nullptr)
+	, m_selected(false)
+	, m_expanded(false)
 {
 }
 
 void EntityAdapter::prepare(
 	world::EntityData* entityData,
-	world::Entity* entity
-)
+	world::Entity* entity)
 {
 	m_entityData = entityData;
-	
+
 	if ((m_entity = entity) != nullptr)
-		m_entity->setState(m_entityData->getState(), world::EntityState::All);
+		m_entity->setState(m_entityData->getState(), world::EntityState::All, false);
 
 	// If entity data type is different then ensure we re-create editors.
 	if (m_entityDataType != &type_of(m_entityData))
@@ -58,10 +59,10 @@ void EntityAdapter::prepare(
 	if (!m_entityEditor)
 	{
 		const IEntityEditorFactory* factory = m_context->findEntityEditorFactory(type_of(entityData));
-		T_FATAL_ASSERT (factory);
+		T_FATAL_ASSERT(factory);
 
 		m_entityEditor = factory->createEntityEditor(m_context, this);
-		T_FATAL_ASSERT (m_entityEditor != nullptr);
+		T_FATAL_ASSERT(m_entityEditor != nullptr);
 	}
 
 	// Create component editors.
@@ -69,10 +70,10 @@ void EntityAdapter::prepare(
 	for (auto componentData : entityData->getComponents())
 	{
 		const IComponentEditorFactory* factory = m_context->findComponentEditorFactory(type_of(componentData));
-		T_FATAL_ASSERT (factory);
+		T_FATAL_ASSERT(factory);
 
 		Ref< IComponentEditor > componentEditor = factory->createComponentEditor(m_context, this, componentData);
-		T_FATAL_ASSERT (componentEditor);
+		T_FATAL_ASSERT(componentEditor);
 
 		m_componentEditors.push_back(componentEditor);
 	}
@@ -162,10 +163,8 @@ void EntityAdapter::setTransform0(const Transform& transform)
 
 	// Notify all ancestor component editors about the modified transform.
 	for (EntityAdapter* adapter = this; adapter != nullptr; adapter = adapter->getParent())
-	{
 		for (auto componentEditor : adapter->m_componentEditors)
 			componentEditor->transformModified(adapter, this);
-	}
 }
 
 Transform EntityAdapter::getTransform0() const
@@ -182,10 +181,8 @@ void EntityAdapter::setTransform(const Transform& transform)
 
 	// Notify all ancestor component editors about the modified transform.
 	for (EntityAdapter* adapter = this; adapter != nullptr; adapter = adapter->getParent())
-	{
 		for (auto componentEditor : adapter->m_componentEditors)
 			componentEditor->transformModified(adapter, this);
-	}
 }
 
 Transform EntityAdapter::getTransform() const
@@ -201,10 +198,8 @@ Aabb3 EntityAdapter::getBoundingBox() const
 bool EntityAdapter::isExternal() const
 {
 	for (const EntityAdapter* entityAdapter = this; entityAdapter; entityAdapter = entityAdapter->m_parent)
-	{
 		if (is_a< world::ExternalEntityData >(entityAdapter->getEntityData()))
 			return true;
-	}
 	return false;
 }
 
@@ -232,10 +227,8 @@ bool EntityAdapter::isPrivate() const
 {
 	EntityAdapter* entity = m_parent;
 	for (; entity; entity = entity->m_parent)
-	{
 		if (entity->isChildrenPrivate())
 			return true;
-	}
 	return false;
 }
 
@@ -253,10 +246,8 @@ EntityAdapter* EntityAdapter::getParentGroup()
 {
 	EntityAdapter* entity = this;
 	for (; entity; entity = entity->m_parent)
-	{
 		if (entity->isGroup())
 			break;
-	}
 	return entity;
 }
 
@@ -264,10 +255,8 @@ EntityAdapter* EntityAdapter::getParentContainerGroup()
 {
 	EntityAdapter* entity = m_parent;
 	for (; entity; entity = entity->m_parent)
-	{
 		if (entity->isGroup())
 			break;
-	}
 	return entity;
 }
 
@@ -314,8 +303,8 @@ EntityAdapter* EntityAdapter::findChildAdapterFromEntity(const world::Entity* en
 
 void EntityAdapter::link(EntityAdapter* linkAfter, EntityAdapter* child)
 {
-	T_FATAL_ASSERT_M (child->m_parent == nullptr, L"Child already linked to another parent");
-	T_FATAL_ASSERT_M (std::find(m_children.begin(), m_children.end(), child) == m_children.end(), L"Child already added");
+	T_FATAL_ASSERT_M(child->m_parent == nullptr, L"Child already linked to another parent");
+	T_FATAL_ASSERT_M(std::find(m_children.begin(), m_children.end(), child) == m_children.end(), L"Child already added");
 	child->m_parent = this;
 
 	auto it = std::find(m_children.begin(), m_children.end(), linkAfter);
@@ -329,8 +318,8 @@ void EntityAdapter::link(EntityAdapter* linkAfter, EntityAdapter* child)
 
 void EntityAdapter::unlinkChild(EntityAdapter* child)
 {
-	T_FATAL_ASSERT (child);
-	T_FATAL_ASSERT_M (child->m_parent == this, L"Entity adapter not child if this");
+	T_FATAL_ASSERT(child);
+	T_FATAL_ASSERT_M(child->m_parent == this, L"Entity adapter not child if this");
 
 	auto it = std::find(m_children.begin(), m_children.end(), child);
 	T_ASSERT(it != m_children.end());
@@ -351,7 +340,7 @@ void EntityAdapter::unlinkFromParent()
 {
 	if (m_parent)
 		m_parent->unlinkChild(this);
-	T_FATAL_ASSERT (m_parent == nullptr);
+	T_FATAL_ASSERT(m_parent == nullptr);
 }
 
 IEntityEditor* EntityAdapter::getEntityEditor() const
@@ -379,7 +368,10 @@ void EntityAdapter::setVisible(bool visible)
 	m_entityData->setState(visible ? world::EntityState::All : world::EntityState::None, world::EntityState::Visible);
 
 	if (m_entity)
-		m_entity->setVisible(visible);
+	{
+		const bool includeChildren = isExternal();
+		m_entity->setState(visible ? world::EntityState::All : world::EntityState::None, world::EntityState::Visible, includeChildren);
+	}
 
 	for (auto child : m_children)
 		child->setVisible(visible);
@@ -455,10 +447,8 @@ bool EntityAdapter::isDynamic(bool includingParents) const
 bool EntityAdapter::isPrefab() const
 {
 	for (auto component : m_entityData->getComponents())
-	{
 		if (std::wstring(type_name(component)) == L"traktor.shape.PrefabComponentData")
 			return true;
-	}
 
 	if (m_parent != nullptr)
 		return m_parent->isPrefab();

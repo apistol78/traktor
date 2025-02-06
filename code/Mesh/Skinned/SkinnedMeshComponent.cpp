@@ -6,9 +6,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Mesh/Skinned/SkinnedMeshComponent.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
-#include "Mesh/Skinned/SkinnedMeshComponent.h"
 #include "Render/Buffer.h"
 #include "Render/IAccelerationStructure.h"
 #include "World/IWorldRenderPass.h"
@@ -18,17 +19,17 @@
 
 namespace traktor::mesh
 {
-	namespace
-	{
+namespace
+{
 
 const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshComponent", SkinnedMeshComponent, MeshComponent)
 
 SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, render::IRenderSystem* renderSystem)
-:	m_mesh(mesh)
+	: m_mesh(mesh)
 {
 	// Create buffer to contain the joint matrix palette.
 	const auto& jointMap = m_mesh->getJointMap();
@@ -70,7 +71,7 @@ void SkinnedMeshComponent::setWorld(world::World* world)
 	m_world = world;
 }
 
-void SkinnedMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask)
+void SkinnedMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren)
 {
 	const bool visible = (state.visible && mask.visible);
 	if (visible)
@@ -132,10 +133,9 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 
 	float distance = 0.0f;
 	if (!worldRenderView.isBoxVisible(
-		m_mesh->getBoundingBox(),
-		worldTransform,
-		distance
-	))
+			m_mesh->getBoundingBox(),
+			worldTransform,
+			distance))
 		return;
 
 	m_mesh->build(
@@ -146,8 +146,7 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 		m_skinBuffer[1],
 		m_skinBuffer[0],
 		distance,
-		m_parameterCallback
-	);
+		m_parameterCallback);
 }
 
 void SkinnedMeshComponent::setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms_)

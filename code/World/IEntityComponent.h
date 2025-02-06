@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Math/Aabb3.h"
+#include "Core/Object.h"
 #include "World/WorldTypes.h"
 
 // import/export mechanism.
@@ -49,7 +49,7 @@ public:
 	/*! Called when entity's state is modified.
 	 * \param state Entity state.
 	 */
-	virtual void setState(const EntityState& state, const EntityState& mask) {}
+	virtual void setState(const EntityState& state, const EntityState& mask, bool includeChildren) {}
 
 	/*! Called when entity's transform is modified.
 	 * \param transform New transform.

@@ -41,7 +41,7 @@ public:
 
 	virtual void setWorld(world::World* world) override final;
 
-	virtual void setState(const world::EntityState& state, const world::EntityState& mask) override final;
+	virtual void setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
@@ -53,7 +53,7 @@ private:
 	resource::Proxy< StaticMesh > m_mesh;
 	world::World* m_world = nullptr;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
-	Transform m_lastTransform;		//!< Last rendered transform.
+	Transform m_lastTransform; //!< Last rendered transform.
 };
 
 }

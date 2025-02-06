@@ -31,7 +31,7 @@ Entity::Entity(
 	{
 		m_updating = component;
 		component->setOwner(this);
-		component->setState(m_state, EntityState::All);
+		component->setState(m_state, EntityState::All, false);
 		component->setTransform(m_transform);
 	}
 	m_updating = nullptr;
@@ -52,7 +52,7 @@ void Entity::setWorld(World* world)
 		component->setWorld(world);
 }
 
-EntityState Entity::setState(const EntityState& state, const EntityState& mask)
+EntityState Entity::setState(const EntityState& state, const EntityState& mask, bool includeChildren)
 {
 	const EntityState current = m_state;
 
@@ -65,7 +65,7 @@ EntityState Entity::setState(const EntityState& state, const EntityState& mask)
 
 	for (auto component : m_components)
 		if (component != m_updating)
-			component->setState(m_state, mask);
+			component->setState(m_state, mask, includeChildren);
 
 	return current;
 }
@@ -107,7 +107,7 @@ void Entity::setComponent(IEntityComponent* component)
 	T_FATAL_ASSERT(component);
 
 	component->setOwner(this);
-	component->setState(m_state, EntityState::All);
+	component->setState(m_state, EntityState::All, false);
 	component->setTransform(m_transform);
 
 	// Replace existing component of same type.

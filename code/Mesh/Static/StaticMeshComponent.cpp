@@ -6,9 +6,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Mesh/Static/StaticMeshComponent.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Mesh/Static/StaticMesh.h"
-#include "Mesh/Static/StaticMeshComponent.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/World.h"
@@ -17,18 +18,18 @@
 
 namespace traktor::mesh
 {
-	namespace
-	{
+namespace
+{
 
 static const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMeshComponent", StaticMeshComponent, MeshComponent)
 
 StaticMeshComponent::StaticMeshComponent(const resource::Proxy< StaticMesh >& mesh)
-:	m_mesh(mesh)
-,	m_lastTransform(Transform::identity())
+	: m_mesh(mesh)
+	, m_lastTransform(Transform::identity())
 {
 }
 
@@ -63,7 +64,7 @@ void StaticMeshComponent::setWorld(world::World* world)
 	m_world = world;
 }
 
-void StaticMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask)
+void StaticMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren)
 {
 	const bool visible = (m_world != nullptr) && (state.visible && mask.visible);
 	if (visible)
@@ -114,10 +115,9 @@ void StaticMeshComponent::build(const world::WorldBuildContext& context, const w
 
 	float distance = 0.0f;
 	if (!worldRenderView.isBoxVisible(
-		m_mesh->getBoundingBox(),
-		worldTransform,
-		distance
-	))
+			m_mesh->getBoundingBox(),
+			worldTransform,
+			distance))
 		return;
 
 	m_mesh->build(
@@ -127,8 +127,7 @@ void StaticMeshComponent::build(const world::WorldBuildContext& context, const w
 		m_lastTransform,
 		worldTransform,
 		distance,
-		m_parameterCallback
-	);
+		m_parameterCallback);
 
 	// Save last rendered transform so we can properly write velocities next frame.
 	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)

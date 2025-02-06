@@ -26,6 +26,13 @@ void GroupComponent::setOwner(Entity* owner)
 		m_transform = m_owner->getTransform();
 }
 
+void GroupComponent::setState(const EntityState& state, const EntityState& mask, bool includeChildren)
+{
+	if (includeChildren)
+		for (auto entity : m_entities)
+			entity->setState(state, mask, true);
+}
+
 void GroupComponent::update(const UpdateParams& update)
 {
 }
