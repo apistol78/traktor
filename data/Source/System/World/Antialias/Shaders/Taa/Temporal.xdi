@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderModule">
-	<text>
-	<![CDATA[
-#using \{935D9DEF-A5F9-4D4B-85BE-9F2E059662BB}
+<object type="traktor.render.ShaderModule" version="1">
+	<text><![CDATA[#using \{935D9DEF-A5F9-4D4B-85BE-9F2E059662BB}
 
 #define TAPS 16
 
@@ -13,18 +11,28 @@ bool Clipped(vec2 uv)
 
 vec4 ColorClamp(in texture2D currentFrame, in sampler currentSampler, vec4 currentColor, vec4 historyColor, vec2 uv)
 {
-	const vec4 n0 = textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2(-1, 0));
-	const vec4 n1 = textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2( 1, 0));
-	const vec4 n2 = textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2(0, -1));
-	const vec4 n3 = textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2(0,  1));
+	const vec4 n[] =
+	{
+		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2(-1, 0)),
+		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2( 1, 0)),
+		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2(0, -1)),
+		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2(0,  1)),
+		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2(-1,  1)),
+		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2( 1,  1)),
+		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2(-1, -1)),
+		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2( 1, -1))
+	};
 
-	const vec4 bmn = min(currentColor, min(n0, min(n1, min(n2, n3))));
-	const vec4 bmx = max(currentColor, max(n0, max(n1, max(n2, n3))));
+	vec4 bmn = currentColor;
+	vec4 bmx = currentColor;
 
-	const vec4 Emn = vec4(0.01f.xxx, 0.0f);
-	const vec4 Emx = vec4(0.001f.xxx, 0.0f);
+	for (int i = 0; i < 8; ++i)
+	{
+		bmn = min(bmn, n[i]);
+		bmx = max(bmx, n[i]);
+	}
 
-	return clamp(historyColor, bmn - Emn, bmx + Emx);
+	return clamp(historyColor, bmn, bmx);
 }
 
 vec4 TemporalAntiAlias(
@@ -32,8 +40,6 @@ vec4 TemporalAntiAlias(
 	in texture2D previousFrame,
 	in texture2D velocity,
 	in texture2D depth,
-	in sampler pointSampler,
-	in sampler linearSampler,
 	vec4 jitter,
 	vec2 uv
 )
@@ -41,25 +47,25 @@ vec4 TemporalAntiAlias(
 	const float f = 1.0f / TAPS;
 
 	// Get velocity of current pixel, in NDC space.
-	const vec2 v = texture(sampler2D(velocity, pointSampler), uv).xy;
+	const vec2 v = texture(sampler2D(velocity, __pointSampler__), uv).xy;
 
 	// Convert velocity to UV space.
 	const vec2 Vuv = v * vec2(-0.5f, 0.5f);
 
 	// Sample current colour.
-	const vec4 cc = texture(sampler2D(currentFrame, linearSampler), uv);
+	const vec4 cc = texture(sampler2D(currentFrame, __pointSampler__), uv);
 
 	// Blend with previous colour.
 	if (!Clipped(uv - Vuv))
 	{
 		// Get velocity of previous pixel, in NDC space.
-		const vec2 pv = texture(sampler2D(velocity, pointSampler), uv - Vuv).xy;
+		const vec2 pv = texture(sampler2D(velocity, __linearSampler__), uv - Vuv).xy;
 		
 		// Sample previous colour,
-		const vec4 cp = CatmullRomFilterSample(previousFrame, linearSampler, uv - Vuv); // + jitter.xy);
+		const vec4 cp = CatmullRomFilterSample(previousFrame, __linearSampler__, uv - Vuv); // + jitter.xy);
 
 		// Clamp previous colour to current color neighbourhood.
-		vec4 ccp = ColorClamp(currentFrame, linearSampler, cc, cp, uv);
+		vec4 ccp = ColorClamp(currentFrame, __pointSampler__, cc, cp, uv);
 
 		// Compare velocities; if wastly different then don't merge samples.
 		const float fr = clamp(length(pv - v) * 40.0f, 0.0f, 1.0f);
@@ -71,6 +77,38 @@ vec4 TemporalAntiAlias(
 	return cc;
 }
 
-	]]>
-	</text>
+	
+	]]></text>
+	<samplers>
+		<item>
+			<first>__linearSampler__</first>
+			<second>
+				<minFilter>Linear</minFilter>
+				<mipFilter>Linear</mipFilter>
+				<magFilter>Linear</magFilter>
+				<addressU>Clamp</addressU>
+				<addressV>Clamp</addressV>
+				<addressW>Clamp</addressW>
+				<compare>None</compare>
+				<mipBias>0</mipBias>
+				<ignoreMips>true</ignoreMips>
+				<useAnisotropic>false</useAnisotropic>
+			</second>
+		</item>
+		<item>
+			<first>__pointSampler__</first>
+			<second>
+				<minFilter>Point</minFilter>
+				<mipFilter>Point</mipFilter>
+				<magFilter>Point</magFilter>
+				<addressU>Clamp</addressU>
+				<addressV>Clamp</addressV>
+				<addressW>Clamp</addressW>
+				<compare>None</compare>
+				<mipBias>0</mipBias>
+				<ignoreMips>true</ignoreMips>
+				<useAnisotropic>false</useAnisotropic>
+			</second>
+		</item>
+	</samplers>
 </object>
