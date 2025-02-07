@@ -83,24 +83,24 @@
 				<second>574</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{CDE430B6-1326-974C-A365-2B434A3C80D3}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Sample shadow
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>1206</first>
 				<second>570</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -195,24 +195,24 @@ Sample shadow
 				</item>
 			</outputPins>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{794B196F-0FD4-194C-BAA1-DD17BC68668A}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Shadow; adjusted for msaa.
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>1202</first>
 				<second>709</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -237,7 +237,7 @@ Shadow; adjusted for msaa.
 				<second>365</second>
 			</position>
 			<min>0</min>
-			<max>1</max>
+			<max>0.25</max>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{290C431D-A22A-504C-B6F7-795BEF78151B}</id>
@@ -463,20 +463,20 @@ Shadow; adjusted for msaa.
 			<type>Texture2D</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.TextureState" version="traktor.render.Node:1">
+		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
 			<id>{B5AD3F8B-59E4-5649-9564-D6367994D58A}</id>
 			<comment/>
 			<position>
 				<first>788</first>
 				<second>690</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
