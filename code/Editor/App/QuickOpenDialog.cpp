@@ -1,51 +1,50 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Editor/App/QuickOpenDialog.h"
+
 #include "Core/Log/Log.h"
+#include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
 #include "Editor/IEditor.h"
-#include "Editor/App/QuickOpenDialog.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/Edit.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/TableLayout.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridView.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/TableLayout.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.QuickOpenDialog", QuickOpenDialog, ui::Dialog)
 
 QuickOpenDialog::QuickOpenDialog(IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
 bool QuickOpenDialog::create(ui::Widget* parent)
 {
 	if (!ui::Dialog::create(
-		parent,
-		i18n::Text(L"EDITOR_QUICK_OPEN_TITLE"),
-		600_ut,
-		250_ut,
-		ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
-		new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)
-	))
+			parent,
+			i18n::Text(L"EDITOR_QUICK_OPEN_TITLE"),
+			600_ut,
+			250_ut,
+			ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
+			new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
@@ -64,8 +63,7 @@ bool QuickOpenDialog::create(ui::Widget* parent)
 	db::recursiveFindChildInstances(
 		m_editor->getSourceDatabase()->getRootGroup(),
 		db::FindInstanceAll(),
-		m_instances
-	);
+		m_instances);
 
 	update();
 	return true;
@@ -86,20 +84,49 @@ db::Instance* QuickOpenDialog::showDialog()
 
 void QuickOpenDialog::updateSuggestions(const std::wstring& filter)
 {
+	struct Match
+	{
+		int32_t count;
+		std::wstring name;
+		Ref< ui::GridRow > row;
+	};
+
 	m_gridSuggestions->removeAllRows();
+
+	AlignedVector< std::wstring > filterWords;
+	Split< std::wstring >::any(toLower(filter), L", ", filterWords);
+
+	AlignedVector< Match > matches;
 
 	for (auto instance : m_instances)
 	{
-		const std::wstring instanceName = instance->getName();
-		if (startsWith(toLower(instanceName), toLower(filter)))
+		const std::wstring instanceName = toLower(instance->getName());
+
+		int32_t matchCount = 0;
+		for (const auto& filterWord : filterWords)
+			if (instanceName.find(filterWord) != std::wstring::npos)
+				++matchCount;
+
+		if (matchCount > 0)
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(instanceName);
+			row->add(instance->getName());
 			row->add(instance->getPath());
 			row->setData(L"INSTANCE", instance);
-			m_gridSuggestions->addRow(row);
+			matches.push_back({ matchCount, instanceName, row });
 		}
 	}
+
+	std::sort(matches.begin(), matches.end(), [](const Match& lh, const Match& rh) {
+		if (lh.count > rh.count)
+			return true;
+		if (lh.count < rh.count)
+			return false;
+		return lh.name < rh.name;
+	});
+
+	for (const auto& match : matches)
+		m_gridSuggestions->addRow(match.row);
 
 	if (!filter.empty())
 	{
@@ -185,5 +212,4 @@ void QuickOpenDialog::eventSuggestionSelect(ui::SelectionChangeEvent* event)
 		endModal(ui::DialogResult::Ok);
 }
 
-	}
 }
