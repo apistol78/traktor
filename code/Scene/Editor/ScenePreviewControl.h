@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -72,7 +72,6 @@ private:
 	Ref< ui::ToolBarButton > m_toolTogglePick;
 	Ref< ui::ToolBarButton > m_toolToggleTranslate;
 	Ref< ui::ToolBarButton > m_toolToggleRotate;
-	Ref< ui::ToolBarButton > m_toolToggleScale;
 	Ref< ui::ToolBarButton > m_toolToggleSnap;
 	Ref< ui::ToolBarDropDown > m_toolSnapSpacing;
 	int32_t m_splitCount;
@@ -80,7 +79,6 @@ private:
 	RefArray< ISceneRenderControl > m_renderControls;
 	Ref< IModifier > m_modifierTranslate;
 	Ref< IModifier > m_modifierRotate;
-	Ref< IModifier > m_modifierScale;
 	Ref< SceneEditorContext > m_context;
 	Timer m_timer;
 	double m_lastTime;
