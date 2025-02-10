@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,6 +34,7 @@ class T_DLLCLASS IEntityComponent : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! Destroy the component. */
 	virtual void destroy() = 0;
 
 	/*! Set owner entity of component.
@@ -48,6 +49,8 @@ public:
 
 	/*! Called when entity's state is modified.
 	 * \param state Entity state.
+	 * \param mask Mask of which states is being modified.
+	 * \param includeChildren If modification should continue with children, any component which holds other entities should recurse with modified state.
 	 */
 	virtual void setState(const EntityState& state, const EntityState& mask, bool includeChildren) {}
 

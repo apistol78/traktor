@@ -481,26 +481,20 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 			if (scaledTime - m_lastPhysicsTime > c_updateDeltaTime * 10.0)
 				m_lastPhysicsTime = scaledTime - c_updateDeltaTime * 10.0;
 
-			while (m_lastPhysicsTime < scaledTime)
+			for (; m_lastPhysicsTime < scaledTime; m_lastPhysicsTime += c_updateDeltaTime)
 			{
-				world::UpdateParams update;
-				update.totalTime = m_lastPhysicsTime;
-				update.alternateTime = m_lastPhysicsTime;
-				update.deltaTime = c_updateDeltaTime;
-				scene->update(update);
+				scene->update({ .totalTime = m_lastPhysicsTime,
+					.alternateTime = m_lastPhysicsTime,
+					.deltaTime = c_updateDeltaTime });
 
 				m_context->getPhysicsManager()->update(c_updateDeltaTime, false);
-
-				m_lastPhysicsTime += c_updateDeltaTime;
 			}
 		}
 		else if (scene)
 		{
-			world::UpdateParams update;
-			update.totalTime = scaledTime;
-			update.alternateTime = scaledTime;
-			update.deltaTime = scaledDeltaTime;
-			scene->update(update);
+			scene->update({ .totalTime = scaledTime,
+				.alternateTime = scaledTime,
+				.deltaTime = scaledDeltaTime });
 		}
 
 		// Issue updates on render controls.

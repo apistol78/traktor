@@ -51,7 +51,11 @@ public:
 	 */
 	virtual int32_t getOrdinal() const = 0;
 
-	/*! Set the transform of the component data. */
+	/*! Set the transform of the component data.
+	 *
+	 * \param owner Entity data owner of this component.
+	 * \param transform New transform of entity.
+	 */
 	virtual void setTransform(const EntityData* owner, const Transform& transform) = 0;
 };
 
