@@ -9,8 +9,8 @@
 #include "Core/Class/Boxes/BoxedStdVector.h"
 #include "Core/Debug/CallStack.h"
 #include "Core/Io/BufferedStream.h"
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/FileOutputStream.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
@@ -127,7 +127,7 @@ int32_t executeRun(const std::wstring& text, const Path& fileName, const Command
 
 	// Setup globals in script context.
 	scriptContext->setGlobal("environment", Any::fromObject(OS::getInstance().getEnvironment()));
-	scriptContext->setGlobal("run", Any::fromObject(new Run(g_scriptCompiler, g_scriptManager, scriptContext)));
+	scriptContext->setGlobal("run", Any::fromObject(new Run(g_scriptCompiler, g_scriptManager, scriptContext, cmdLine)));
 	scriptContext->setGlobal("fileSystem", Any::fromObject(&FileSystem::getInstance()));
 	scriptContext->setGlobal("os", Any::fromObject(&OS::getInstance()));
 	scriptContext->setGlobal("stdout", Any::fromObject(new StdOutput(stdout)));
@@ -208,7 +208,7 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 
 	// Setup globals in script context.
 	scriptContext->setGlobal("environment", Any::fromObject(OS::getInstance().getEnvironment()));
-	scriptContext->setGlobal("run", Any::fromObject(new Run(g_scriptCompiler, g_scriptManager, scriptContext)));
+	scriptContext->setGlobal("run", Any::fromObject(new Run(g_scriptCompiler, g_scriptManager, scriptContext, cmdLine)));
 	scriptContext->setGlobal("fileSystem", Any::fromObject(&FileSystem::getInstance()));
 	scriptContext->setGlobal("os", Any::fromObject(&OS::getInstance()));
 	scriptContext->setGlobal("stdout", Any::fromObject(new StdOutput(stdout)));
@@ -255,12 +255,11 @@ int main(int argc, const char** argv)
 		PVOID eh = nullptr;
 		T_ANONYMOUS_VAR(EnterLeave)(
 			[&]() {
-				eh = AddVectoredExceptionHandler(1, exceptionVectoredHandler);
+			eh = AddVectoredExceptionHandler(1, exceptionVectoredHandler);
 			},
 			[&]() {
-				RemoveVectoredExceptionHandler(eh);
-			}
-		);
+			RemoveVectoredExceptionHandler(eh);
+		});
 		SetErrorMode(SEM_NOGPFAULTERRORBOX);
 #endif
 
@@ -328,7 +327,7 @@ int main(int argc, const char** argv)
 		net::Network::finalize();
 		safeDestroy(g_scriptManager);
 	}
-	catch(...)
+	catch (...)
 	{
 		log::error << L"Unhandled exception occurred." << Endl;
 	}

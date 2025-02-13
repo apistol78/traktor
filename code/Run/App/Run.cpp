@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Run/App/Run.h"
+
 #include "Compress/ClassFactory.h"
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/BoxedClassFactory.h"
@@ -14,8 +16,8 @@
 #include "Core/Class/CoreClassFactory2.h"
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Io/BufferedStream.h"
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/FileOutputStream.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
@@ -35,10 +37,8 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Drawing/DrawingClassFactory.h"
-#include "Json/JsonClassFactory.h"
 #include "Net/NetClassFactory.h"
 #include "Run/App/ProduceOutput.h"
-#include "Run/App/Run.h"
 #include "Run/App/StdOutput.h"
 #include "Run/App/StreamInput.h"
 #include "Run/App/StreamOutput.h"
@@ -51,10 +51,12 @@
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
+#include "Json/JsonClassFactory.h"
+
 namespace traktor::run
 {
-	namespace
-	{
+namespace
+{
 
 void IOutput_printLn_0(IOutput* self)
 {
@@ -120,19 +122,20 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 		return nullptr;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.run.Run", Run, Object)
 
 Run::Run(
 	script::IScriptCompiler* scriptCompiler,
 	script::IScriptManager* scriptManager,
-	script::IScriptContext* scriptContext
-)
-:	m_scriptCompiler(scriptCompiler)
-,	m_scriptManager(scriptManager)
-,	m_scriptContext(scriptContext)
-,	m_exitCode(0)
+	script::IScriptContext* scriptContext,
+	const CommandLine& commandLine)
+	: m_scriptCompiler(scriptCompiler)
+	, m_scriptManager(scriptManager)
+	, m_scriptContext(scriptContext)
+	, m_commandLine(commandLine)
+	, m_exitCode(0)
 {
 	m_cwd.push_back(L"");
 }
@@ -176,17 +179,14 @@ int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutput
 		command,
 		workingDirectory,
 		env,
-		OS::EfMute | OS::EfRedirectStdIO | (elevated ? OS::EfElevated : 0)
-	);
+		OS::EfMute | OS::EfRedirectStdIO | (elevated ? OS::EfElevated : 0));
 	if (!process)
 		return -1;
 
 	PipeReader stdOutReader(
-		process->getPipeStream(IProcess::SpStdOut)
-	);
+		process->getPipeStream(IProcess::SpStdOut));
 	PipeReader stdErrReader(
-		process->getPipeStream(IProcess::SpStdErr)
-	);
+		process->getPipeStream(IProcess::SpStdErr));
 
 	Ref< FileOutputStream > fileOutput;
 	bool nullOutput = false;
@@ -262,6 +262,11 @@ const std::wstring& Run::stdErr() const
 	return m_stdErr;
 }
 
+const CommandLine& Run::commandLine() const
+{
+	return m_commandLine;
+}
+
 int32_t Run::exitCode() const
 {
 	return m_exitCode;
@@ -279,10 +284,8 @@ bool Run::rm(const std::wstring& path)
 
 	RefArray< File > sourceFiles = FileSystem::getInstance().find(sourcePath);
 	for (auto sourceFile : sourceFiles)
-	{
 		if (!FileSystem::getInstance().remove(sourceFile->getPath()))
 			return false;
-	}
 
 	return true;
 }
@@ -480,8 +483,7 @@ bool Run::loadScript(const std::wstring& fileName)
 	Ref< script::IScriptBlob > blob = m_scriptCompiler->compile(
 		fileName,
 		ss.str(),
-		nullptr
-	);
+		nullptr);
 	if (!blob)
 		return false;
 
@@ -627,6 +629,7 @@ void Run::registerRuntimeClasses(IRuntimeClassRegistrar* runtimeRegistrar)
 	classRun->addProperty("cwd", &Run::cwd);
 	classRun->addProperty("stdOut", &Run::stdOut);
 	classRun->addProperty("stdErr", &Run::stdErr);
+	classRun->addProperty("commandLine", &Run::commandLine);
 	classRun->addProperty("exitCode", &Run::exitCode);
 	classRun->addMethod("cd", &Run::cd);
 	classRun->addMethod("pushd", &Run::pushd);

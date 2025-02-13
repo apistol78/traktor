@@ -1,0 +1,493 @@
+--[[
+ TRAKTOR
+ Copyright (c) 2025 Anders Pistol.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at https://mozilla.org/MPL/2.0/.
+]]
+
+-- Packages
+PACKAGES =
+{
+	-- Antigrain
+	{
+		type = "GIT",
+		url = "https://github.com/ghaerr/agg-2.6.git",
+		license = "BSD"
+	},
+
+	-- ASTC encoder
+	{
+		type = "GIT",
+		url = "https://github.com/ARM-software/astc-encoder.git",
+		patch = function()
+			generate_configuration(
+				"Source/astcenccli_version.h.in",
+				"Source/astcenccli_version.h",
+				{
+					["@astcencoder_VERSION@"] = "4.0.0",
+					["@astcencoder_YEAR@"] = "2022"
+				}
+			)
+		end,
+		license = "Apache 2.0"
+	},
+
+	-- Bullet
+	{
+		type = "GIT",
+		url = "https://github.com/bulletphysics/bullet3.git",
+		license = "ZLIB"
+	},
+
+	-- Intel Embree
+	{
+		type = "GET",
+		name = "embree-linux",
+		os = "linux",
+		url = "https://github.com/RenderKit/embree/releases/download/v4.3.3/embree-4.3.3.x86_64.linux.tar.gz",
+		patch = function()
+			run:execute(TAR .. " -xzf embree-4.3.3.x86_64.linux.tar.gz")
+		end,
+		license = "Apache 2.0"
+	},
+	{
+		type = "GET",
+		name = "embree-windows",
+		os = "windows",
+		url = "https://github.com/RenderKit/embree/releases/download/v4.3.3/embree-4.3.3.x64.windows.zip",
+		patch = function()
+			run:execute(UNZIP .. " -qq embree-4.3.3.x64.windows.zip")
+		end,
+		license = "Apache 2.0"
+	},
+	{
+		type = "GET",
+		name = "embree-macOS",
+		os = "macos",
+		url = "https://github.com/RenderKit/embree/releases/download/v4.3.3/embree-4.3.3.x86_64.macosx.zip",
+		patch = function()
+			run:execute(UNZIP .. " -qq embree-4.3.3.x86_64.macosx.zip")
+		end,
+		license = "Apache 2.0"
+	},
+
+	-- FLAC
+	{
+		type = "GIT",
+		url = "https://github.com/xiph/flac.git",
+		license = "BSD"
+	},
+
+	-- Expat
+	{
+		type = "GIT",
+		url = "https://github.com/libexpat/libexpat.git",
+		license = "MIT"
+	},
+
+	-- OGG
+	{
+		type = "GIT",
+		url = "https://github.com/xiph/ogg.git",
+		license = "BSD"
+	},
+
+	-- Theora
+	{
+		type = "GIT",
+		url = "https://github.com/xiph/theora.git",
+		license = "BSD"
+	},	
+
+	-- Vorbis
+	{
+		type = "GIT",
+		url = "https://github.com/xiph/vorbis.git",
+		license = "BSD"
+	},
+
+	-- PNG
+	{
+		type = "GIT",
+		url = "https://github.com/glennrp/libpng.git",
+		license = "PNG"
+	},
+
+	-- LUA
+	{
+		type = "GET",
+		name = "lua",
+		url = "https://lua.org/ftp/lua-5.4.6.tar.gz",
+		patch = function()
+			run:execute(TAR .. " -xzf lua-5.4.6.tar.gz")
+		end,
+		license = "MIT"
+	},
+
+	-- MikkTSpace
+	{
+		type = "GIT",
+		url = "https://github.com/mmikk/MikkTSpace.git",
+		license = "PD"
+	},
+
+	-- SQLite
+	{
+		type = "GET",
+		name = "sqlite",
+		url = "https://www.sqlite.org/2022/sqlite-amalgamation-3390200.zip",
+		patch = function()
+			run:execute(UNZIP .. " -qq sqlite-amalgamation-3390200.zip")
+		end,
+		license = "PD"
+	},
+
+	-- XAtlas
+	{
+		type = "GIT",
+		url = "https://github.com/jpcy/xatlas.git",
+		license = "MIT"
+	},
+
+	-- Zlib
+	{
+		type = "GIT",
+		os = "linux",
+		url = "https://github.com/madler/zlib.git",
+		patch = function()
+			run:execute("sh ./configure")
+		end,
+		license = "ZLIB"
+	},
+	{
+		type = "GIT",
+		os = "windows",
+		url = "https://github.com/madler/zlib.git",
+		license = "ZLIB"
+	},
+
+	-- JPEG
+	{
+		type = "GET",
+		os = "linux",
+		name = "jpeg",
+		url = "http://www.ijg.org/files/jpegsrc.v9e.tar.gz",
+		patch = function()
+			run:execute(TAR .. " -xzf jpegsrc.v9e.tar.gz")
+			run:pushd("jpeg-9e")
+			run:execute("sh ./configure")
+			run:popd()
+		end,
+		license = "JPEG"
+	},
+	{
+		type = "GET",
+		os = "windows",
+		name = "jpeg",
+		url = "http://www.ijg.org/files/jpegsrc.v9e.tar.gz",
+		patch = function()
+			run:execute(TAR .. " -xzf jpegsrc.v9e.tar.gz")
+			run:pushd("jpeg-9e")
+			run:copy("jconfig.vc", "jconfig.h")
+			run:popd()
+		end,
+		license = "JPEG"
+	},
+
+	-- FreeType
+	{
+		type = "GIT",
+		url = "https://gitlab.freedesktop.org/freetype/freetype.git",
+		patch = function()
+			run:mkdir("build")
+			run:pushd("build")
+			run:execute("env --default-signal cmake -DCMAKE_BUILD_TYPE=Release -D FT_DISABLE_HARFBUZZ=TRUE ..")
+			run:popd()
+		end,
+		license = "FreeType"
+	},
+
+	-- Squish
+	{
+		type = "GIT",
+		url = "https://github.com/Cavewhere/squish.git",
+		license = "MIT"
+	},
+
+	-- LZF
+	{
+		type = "GET",
+		name = "liblzf",
+		url = "http://dist.schmorp.de/liblzf/liblzf-3.6.tar.gz",
+		patch = function()
+			run:execute(TAR .. " -xzf liblzf-3.6.tar.gz")
+		end,
+		license = "LZF"
+	},
+
+	-- STB
+	{
+		type = "GIT",
+		url = "https://github.com/nothings/stb.git",
+		license = "MIT,PD"
+	},
+
+	-- TinyEXR
+	{
+		type = "GIT",
+		url = "https://github.com/syoyo/tinyexr.git",
+		license = "BSD"
+	},
+
+	-- RapidJSON
+	{
+		type = "GIT",
+		url = "https://github.com/Tencent/rapidjson.git",
+		license = "MIT"
+	},
+
+	-- RG ETC1
+	{
+		type = "GIT",
+		url = "https://github.com/richgel999/rg-etc1.git",
+		license = "ZLIB"
+	},
+
+	-- Recast
+	{
+		type = "GIT",
+		url = "https://github.com/recastnavigation/recastnavigation.git",
+		license = "ZLIB"
+	},
+
+	-- P4 API
+	{
+		type = "GET",
+		name = "p4api-linux",
+		os = "linux",
+		url = "https://www.perforce.com/downloads/perforce/r22.1/bin.linux26x86_64/p4api.tgz",
+		patch = function()
+			write_file(
+				"install.sh",
+				{
+					"#/bin/sh",
+					TAR .. " -xzf p4api.tgz",
+					"mv p4api-* p4api"
+				}
+			)
+			run:execute("sh ./install.sh")			
+		end
+	},
+
+	-- Vulkan SDK
+	{
+		type = "GET",
+		name = "vulkan-linux",
+		os = "linux",
+		url = "https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.xz",
+		patch = function()
+			write_file(
+				"install.sh",
+				{
+					"#/bin/sh",
+					TAR .. " -xf vulkan-sdk.tar.xz",
+					"mv $(ls -d */) latest"
+				}
+			)
+			run:execute("sh ./install.sh")
+		end
+	},
+	{
+		type = "GET",
+		name = "vulkan-windows",
+		os = "windows",
+		url = "https://sdk.lunarg.com/sdk/download/latest/windows/vulkan-sdk.exe",
+		patch = function()
+			local p = run.cwd .. "/vulkan-sdk"
+			run:execute(
+				"vulkan-sdk.exe --root " .. p .. " --accept-licenses --default-answer --confirm-command install com.lunarg.vulkan.vma com.lunarg.vulkan.debug copy_only=1",
+				nil,
+				nil,
+				true
+			)
+		end
+	},
+
+	-- SPIRV tools
+	{
+		type = "GET",
+		name = "spirv-tools",
+		os = "linux",		
+		url = "https://storage.googleapis.com/spirv-tools/badges/build_link_linux_gcc_release.html",
+		patch = function()
+			run:execute(UNZIP .. " -qq install.zip")
+		end,
+	},
+	{
+		type = "GET",
+		name = "spirv-tools",
+		os = "windows",
+		-- url = "https://storage.googleapis.com/spirv-tools/badges/build_link_windows_vs2019_release.html"
+		url = "https://storage.googleapis.com/spirv-tools/artifacts/prod/graphics_shader_compiler/spirv-tools/windows-msvc-2019-release/continuous/515/20240924-081643/install.zip",
+		patch = function()
+			run:execute(UNZIP .. " -qq install.zip")
+		end,
+	},
+
+	-- Vulkan Memory Allocator
+	{
+		type = "GIT",
+		url = "https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git",
+		license = "MIT"
+	},
+
+	--[[
+	-- Steamworks SDK
+	{
+		type = "GET",
+		name = "steamworks",
+		url = "https://partner.steamgames.com/downloads/steamworks_sdk.zip",
+		patch = function()
+			run:execute(UNZIP .. "steamworks_sdk.zip")
+		end
+	},
+	]]
+
+	-- Android SDK
+	{
+		type = "GET",
+		name = "android-sdk-linux",
+		os = "linux",
+		url = "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip",
+		patch = function()
+			run:execute(UNZIP .. " -qq commandlinetools-linux-11076708_latest.zip")
+			run:execute("./cmdline-tools/bin/sdkmanager --sdk_root=. --update")
+			write_file(
+				"install.sh",
+				{
+					"#/bin/sh",
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. platform-tools",
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle"
+				}
+			)
+			run:execute("sh ./install.sh")
+		end
+	},
+	{
+		type = "GET",
+		name = "android-sdk-windows",
+		os = "windows",
+		url = "https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip",
+		patch = function()
+			run:execute(UNZIP .. " -qq commandlinetools-win-11076708_latest.zip")
+			run:execute("./cmdline-tools/bin/sdkmanager --sdk_root=. --update")
+			write_file(
+				"install.bat",
+				{
+					"./cmdline-tools/bin/sdkmanager --sdk_root=. platform-tools",
+					"./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle"
+				}
+			)
+			run:execute("./install.bat")
+		end
+	},
+
+	-- Lemon
+	{
+		type = "GIT",
+		url = "https://github.com/compiler-dept/lemon.git",
+		license = "SQLITE"
+	},
+
+	-- vswhere
+	{
+		type = "GET",
+		name = "vswhere-windows",
+		os = "windows",
+		url = "https://github.com/microsoft/vswhere/releases/download/3.0.3/vswhere.exe"
+	},
+
+	-- WIX
+	{
+		type = "GET",
+		name = "wix-windows",
+		os = "windows",
+		url = "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip",
+		patch = function()
+			run:execute(UNZIP .. " -qq wix311-binaries.zip")
+		end
+	},
+
+	-- RenderDoc
+	{
+		type = "GET",
+		name = "renderdoc",
+		os = "linux",
+		url = "https://renderdoc.org/stable/1.36/renderdoc_1.36.tar.gz",
+		patch = function()
+			run:execute(TAR .. " -xf renderdoc_1.36.tar.gz")
+		end
+	},
+	{
+		type = "GET",
+		name = "renderdoc",
+		os = "windows",
+		url = "https://renderdoc.org/stable/1.36/RenderDoc_1.36_64.zip",
+		patch = function()
+			run:execute(UNZIP .. " -qq RenderDoc_1.36_64.zip")
+		end
+	},
+
+	-- Doxygen
+	{
+		type = "GET",
+		name = "doxygen",
+		os = "windows",
+		url = "https://www.doxygen.nl/files/doxygen-1.9.6.windows.x64.bin.zip",
+		patch = function()
+			run:execute(UNZIP .. " -qq doxygen-1.9.6.windows.x64.bin.zip")
+		end
+	},
+
+	-- bc6h_enc
+	{
+		type = "GIT",
+		url = "https://github.com/0xc0de/bc6h_enc.git",
+		license = "MIT"
+	},
+
+	-- minimp3
+	{
+		type = "GIT",
+		name = "minimp3",
+		url = "https://github.com/lieff/minimp3.git",
+		license = "CC0"
+	},
+
+	-- mimalloc
+	{
+		type = "GIT",
+		name = "mimalloc",
+		hash = "095abc9e3d71ced049d7b6a400cb3866cc2d5999",
+		url = "https://github.com/microsoft/mimalloc.git",
+		license = "MIT"
+	},
+
+	-- ufbx
+	{
+		type = "GIT",
+		name = "ufbx",
+		url = "https://github.com/ufbx/ufbx.git",
+		license = "MIT"
+	},
+
+	-- jolt
+	{
+		type = "GIT",
+		name = "jolt",
+		url = "https://github.com/jrouwe/JoltPhysics.git",
+		license = "MIT"
+	},
+}

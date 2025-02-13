@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,11 @@
  */
 #pragma once
 
-#include <list>
-#include "Core/Object.h"
 #include "Core/Class/Any.h"
+#include "Core/Misc/CommandLine.h"
+#include "Core/Object.h"
+
+#include <list>
 
 namespace traktor
 {
@@ -32,7 +34,7 @@ class IScriptManager;
 namespace traktor::run
 {
 
-/*! Simplified interface for common scriptable actions.
+/*! Simplified interface for common script actions.
  * \ingroup Run
  */
 class Run : public Object
@@ -43,8 +45,8 @@ public:
 	explicit Run(
 		script::IScriptCompiler* scriptCompiler,
 		script::IScriptManager* scriptManager,
-		script::IScriptContext* scriptContext
-	);
+		script::IScriptContext* scriptContext,
+		const CommandLine& commandLine);
 
 	void cd(const std::wstring& path);
 
@@ -61,6 +63,8 @@ public:
 	const std::wstring& stdOut() const;
 
 	const std::wstring& stdErr() const;
+
+	const CommandLine& commandLine() const;
 
 	int32_t exitCode() const;
 
@@ -96,6 +100,7 @@ private:
 	Ref< script::IScriptCompiler > m_scriptCompiler;
 	Ref< script::IScriptManager > m_scriptManager;
 	Ref< script::IScriptContext > m_scriptContext;
+	CommandLine m_commandLine;
 	std::list< std::wstring > m_cwd;
 	std::wstring m_stdOut;
 	std::wstring m_stdErr;
