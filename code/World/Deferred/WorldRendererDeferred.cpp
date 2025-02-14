@@ -36,6 +36,7 @@
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
 #include "World/Shared/Passes/ContactShadowsPass.h"
 #include "World/Shared/Passes/DBufferPass.h"
+#include "World/Shared/Passes/DownScalePass.h"
 #include "World/Shared/Passes/GBufferPass.h"
 #include "World/Shared/Passes/HiZPass.h"
 #include "World/Shared/Passes/IrradiancePass.h"
@@ -169,14 +170,15 @@ void WorldRendererDeferred::setup(
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
-	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, s_techniqueDeferredGBufferWrite, renderGraph, hizTextureId, outputTargetSetId);
-	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	const auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, s_techniqueDeferredGBufferWrite, renderGraph, hizTextureId, outputTargetSetId);
+	const auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	const auto halfResDepthTextureId = m_downScalePass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId, hizTextureId);
-	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto irradianceTargetSetId = m_irradiancePass->setup(worldRenderView, m_gatheredView, lightSBuffer, needJitter, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, outputTargetSetId);
-	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto contactShadowsTargetSetId = m_contactShadowsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, outputTargetSetId);
+	const auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	const auto irradianceTargetSetId = m_irradiancePass->setup(worldRenderView, m_gatheredView, lightSBuffer, needJitter, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, outputTargetSetId);
+	const auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	const auto contactShadowsTargetSetId = m_contactShadowsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	const auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, outputTargetSetId);
 
 	setupVisualPass(
 		worldRenderView,

@@ -73,6 +73,7 @@ const render::Handle s_handleDBufferMiscMap(L"World_DBufferMiscMap");
 const render::Handle s_handleDBufferNormalMap(L"World_DBufferNormalMap");
 const render::Handle s_handleHiZTexture(L"World_HiZTexture");
 const render::Handle s_handleTLAS(L"World_TLAS");
+const render::Handle s_handleHalfResDepthMap(L"World_HalfResDepthMap");
 
 // Culling.
 const render::Handle s_handleTargetSize(L"World_TargetSize");

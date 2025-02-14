@@ -32,6 +32,7 @@
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
 #include "World/Shared/Passes/ContactShadowsPass.h"
 #include "World/Shared/Passes/DBufferPass.h"
+#include "World/Shared/Passes/DownScalePass.h"
 #include "World/Shared/Passes/GBufferPass.h"
 #include "World/Shared/Passes/HiZPass.h"
 #include "World/Shared/Passes/IrradiancePass.h"
@@ -155,6 +156,10 @@ bool WorldRendererShared::create(
 	m_gbufferPass = new GBufferPass(m_settings, m_entityRenderers);
 	m_dbufferPass = new DBufferPass(m_settings, m_entityRenderers);
 
+	m_downScalePass = new DownScalePass();
+	if (!m_downScalePass->create(resourceManager))
+		return false;
+
 	m_hiZPass = new HiZPass();
 	if (!m_hiZPass->create(resourceManager))
 		return false;
@@ -202,6 +207,7 @@ void WorldRendererShared::destroy()
 	m_irradiancePass = nullptr;
 	m_velocityPass = nullptr;
 	m_hiZPass = nullptr;
+	m_downScalePass = nullptr;
 	m_dbufferPass = nullptr;
 	m_gbufferPass = nullptr;
 

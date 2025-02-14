@@ -64,6 +64,7 @@ render::handle_t IrradiancePass::setup(
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t velocityTargetSetId,
+	render::handle_t halfResDepthTextureId,
 	render::handle_t outputTargetSetId) const
 {
 	T_PROFILER_SCOPE(L"IrradiancePass::setup");
@@ -102,6 +103,7 @@ render::handle_t IrradiancePass::setup(
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance");
 	rp->addInput(gbufferTargetSetId);
 	rp->addInput(velocityTargetSetId);
+	rp->addInput(halfResDepthTextureId);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
@@ -113,6 +115,7 @@ render::handle_t IrradiancePass::setup(
 
 	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+		const auto halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
 
 		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
@@ -122,6 +125,7 @@ render::handle_t IrradiancePass::setup(
 		params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 		params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 		params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
+		params->setTextureParameter(s_handleHalfResDepthMap, halfResDepthTexture);
 
 		if (gatheredView.irradianceGrid)
 		{

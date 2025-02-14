@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{64E8B34A-7602-9943-9B0A-242FBFD2C6B4}</id>
+			<comment/>
+			<position>
+				<first>273</first>
+				<second>482</second>
+			</position>
+			<name>Output</name>
+			<technique>Default</technique>
+			<domain>Compute</domain>
+			<localSize>
+				<X>8</X>
+				<Y>8</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{D69B3EDE-00AB-2540-B217-394E11A1B0E1}</id>
+					<name>Input</name>
+				</item>
+				<item>
+					<id>{2D2D3531-DD81-1F47-90F9-DDE0C69AEF69}</id>
+					<name>Output</name>
+				</item>
+				<item>
+					<id>{98C61F79-5BF1-9D49-92B7-77AEEA0EDFAF}</id>
+					<name>WorkSize</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script><![CDATA[// Use minimum operator when down sampling depth.
+
+const ivec2 sz = imageSize($Output);
+const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
+
+if (pt.x < sz.x && pt.y < sz.y)
+{
+	const ivec2 o = ivec2(1, 0);
+	const ivec2 p = pt * 2;
+
+	const vec4 z1 = imageLoad($Input, p + o.yy);
+	const vec4 z2 = imageLoad($Input, p + o.xy);
+	const vec4 z3 = imageLoad($Input, p + o.yx);
+	const vec4 z4 = imageLoad($Input, p + o.xx);
+
+	const float mxz = min(min(z1.x, z2.x), min(z3.x, z4.x));
+	const vec3 avgn = normalize(z1.yzw + z2.yzw + z3.yzw + z4.yzw);
+
+	imageStore($Output, pt, vec4(mxz, avgn));
+}
+	]]></script>
+		</item>
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+			<id>{4FFD4526-1B14-6F41-8124-A7BB1F39ACC1}</id>
+			<comment/>
+			<position>
+				<first>-51</first>
+				<second>486</second>
+			</position>
+			<declaration>{114CFDB2-5FF3-CE47-A992-7FD6216E55A2}</declaration>
+			<parameterName/>
+			<type>Image2D</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+			<id>{CA974F63-2833-3747-A6D6-FB40E4818040}</id>
+			<comment/>
+			<position>
+				<first>-67</first>
+				<second>535</second>
+			</position>
+			<declaration>{CA4C7C91-2182-6742-9B0A-9DCDA02DD5DE}</declaration>
+			<parameterName/>
+			<type>Image2D</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+			<id>{BF758B9B-0D48-7548-A40F-6D0F96BE2E27}</id>
+			<comment/>
+			<position>
+				<first>-67</first>
+				<second>592</second>
+			</position>
+			<declaration>{CF08085B-FDC6-4E44-9F33-995AB0ADC632}</declaration>
+			<parameterName/>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{D69B3EDE-00AB-2540-B217-394E11A1B0E1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{2D2D3531-DD81-1F47-90F9-DDE0C69AEF69}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{98C61F79-5BF1-9D49-92B7-77AEEA0EDFAF}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>
