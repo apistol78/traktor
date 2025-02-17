@@ -1,33 +1,34 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2024 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Shared/Passes/AmbientOcclusionPass.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Timer/Profiler.h"
-#include "Render/IRenderTargetSet.h"
-#include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
+#include "Render/IRenderTargetSet.h"
+#include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "World/IEntityRenderer.h"
 #include "World/IWorldRenderer.h"
+#include "World/Shared/WorldRenderPassShared.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
-#include "World/Shared/WorldRenderPassShared.h"
-#include "World/Shared/Passes/AmbientOcclusionPass.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{416745F9-93C7-8D45-AE28-F2823DEE636A}");
 const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}");
@@ -52,7 +53,7 @@ resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
 	}
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.AmbientOcclusionPass", AmbientOcclusionPass, Object)
 
@@ -79,13 +80,13 @@ bool AmbientOcclusionPass::create(resource::IResourceManager* resourceManager, r
 
 render::handle_t AmbientOcclusionPass::setup(
 	const WorldRenderView& worldRenderView,
-    const GatherView& gatheredView,
+	const GatherView& gatheredView,
 	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
-	render::handle_t outputTargetSetId
-) const
+	render::handle_t halfResDepthTextureId,
+	render::handle_t outputTargetSetId) const
 {
 	T_PROFILER_SCOPE(L"AmbientOcclusionPass::setup");
 	render::ImageGraphView view;
@@ -101,7 +102,7 @@ render::handle_t AmbientOcclusionPass::setup(
 	rgtd.createDepthStencil = false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
+	rgtd.targets[0].colorFormat = render::TfR8; // Ambient occlusion (R)
 	auto ambientOcclusionTargetSetId = renderGraph.addTransientTargetSet(L"Ambient occlusion", rgtd, ~0U, outputTargetSetId);
 
 	// Add ambient occlusion render pass.
@@ -114,6 +115,7 @@ render::handle_t AmbientOcclusionPass::setup(
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
 	rp->addInput(gbufferTargetSetId);
+	rp->addInput(halfResDepthTextureId);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
@@ -123,17 +125,20 @@ render::handle_t AmbientOcclusionPass::setup(
 	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();
 	const Vector2 jrp = needJitter ? jitter(frameCount - 1) / worldRenderView.getViewSize() : Vector2::zero();
 
-	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
-	{
+	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+		const auto halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
+
 		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y));	// Texture space.
+		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
 		params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 		params->setMatrixParameter(s_handleView, worldRenderView.getView());
 		params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 		params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 		params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 		params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
+		params->setTextureParameter(s_handleHalfResDepthMap, halfResDepthTexture);
+
 		if (gatheredView.rtWorldTopLevel != nullptr)
 			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
 	};
@@ -144,8 +149,7 @@ render::handle_t AmbientOcclusionPass::setup(
 		rp,
 		igctx,
 		view,
-		setParameters
-	);
+		setParameters);
 
 	renderGraph.addPass(rp);
 	return ambientOcclusionTargetSetId;

@@ -22,9 +22,17 @@ class ScreenRenderer;
 
 }
 
+namespace traktor::resource
+{
+
+class IResourceManager;
+
+}
+
 namespace traktor::world
 {
 
+struct GatherView;
 struct WorldCreateDesc;
 
 class WorldRenderView;
@@ -45,8 +53,8 @@ public:
 		uint32_t frameCount,
 		render::RenderGraph& renderGraph,
 		render::handle_t gbufferTargetSetId,
-		render::handle_t outputTargetSetId
-	) const;
+		render::handle_t halfResDepthTextureId,
+		render::handle_t outputTargetSetId) const;
 
 private:
 	Ref< render::ScreenRenderer > m_screenRenderer;

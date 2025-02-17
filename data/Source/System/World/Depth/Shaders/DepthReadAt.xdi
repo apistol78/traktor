@@ -5,8 +5,8 @@
 			<id>{65D75CE0-358E-3B4B-9620-C21C0710FCDC}</id>
 			<comment/>
 			<position>
-				<first>536</first>
-				<second>143</second>
+				<first>600</first>
+				<second>122</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -19,20 +19,20 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{30417C2A-70CE-BF4A-BCEC-6B72B3BBA716}</id>
 			<comment/>
 			<position>
 				<first>172</first>
 				<second>136</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
