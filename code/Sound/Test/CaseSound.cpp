@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Sound/Test/CaseSound.h"
+
 #include "Core/Thread/Signal.h"
 #include "Core/Timer/Timer.h"
 #include "Sound/AudioChannel.h"
@@ -13,16 +15,11 @@
 #include "Sound/IAudioBuffer.h"
 #include "Sound/IAudioDriver.h"
 #include "Sound/Sound.h"
-#include "Sound/Test/CaseSound.h"
 
-namespace traktor
+namespace traktor::sound::test
 {
-	namespace sound
-	{
-		namespace test
-		{
-			namespace
-			{
+namespace
+{
 
 class TestAudioDriver : public RefCountImpl< sound::IAudioDriver >
 {
@@ -31,10 +28,10 @@ public:
 	Signal& m_signal;
 	double m_signalAt;
 
-	TestAudioDriver(Timer& timer, Signal& signal)
-	:	m_timer(timer)
-	,	m_signal(signal)
-	,	m_signalAt(0.0)
+	explicit TestAudioDriver(Timer& timer, Signal& signal)
+		: m_timer(timer)
+		, m_signal(signal)
+		, m_signalAt(0.0)
 	{
 	}
 
@@ -91,7 +88,7 @@ public:
 	}
 };
 
-			}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.test.CaseSound", 0, CaseSound, traktor::test::Case)
 
@@ -122,12 +119,10 @@ void CaseSound::run()
 
 	signal.wait();
 
-	double latency = audioDriver.m_signalAt * 1000;
-	CASE_ASSERT (latency < 10);
+	const double latency = audioDriver.m_signalAt * 1000;
+	CASE_ASSERT(latency < 10);
 
 	audioSystem.destroy();
 }
 
-		}
-	}
 }
