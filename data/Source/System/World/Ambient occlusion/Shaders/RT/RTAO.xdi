@@ -5,8 +5,8 @@
 			<id>{DCFF0C15-E629-0D48-969C-CA91AE4E984E}</id>
 			<comment/>
 			<position>
-				<first>3768</first>
-				<second>-600</second>
+				<first>2953</first>
+				<second>-1220</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -52,8 +52,8 @@
 			<id>{EAC4C422-7984-3E4A-B5E9-F4CA679C464E}</id>
 			<comment/>
 			<position>
-				<first>927</first>
-				<second>-870</second>
+				<first>990</first>
+				<second>-1232</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -72,16 +72,16 @@
 			<id>{1DA9D756-11E5-894C-BD65-3A906A79F42F}</id>
 			<comment/>
 			<position>
-				<first>1141</first>
-				<second>-826</second>
+				<first>1204</first>
+				<second>-1188</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{F1341CF9-015E-A644-B047-AE94392FD17F}</id>
 			<comment/>
 			<position>
-				<first>3466</first>
-				<second>-514</second>
+				<first>2651</first>
+				<second>-1134</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -89,8 +89,8 @@
 			<id>{02DF5238-268B-C949-9467-AEEBACCFF7FB}</id>
 			<comment/>
 			<position>
-				<first>2833</first>
-				<second>-150</second>
+				<first>2827</first>
+				<second>-461</second>
 			</position>
 			<name>L_RTOcclusion</name>
 		</item>
@@ -98,8 +98,8 @@
 			<id>{EECCA0DA-4BBD-0D4D-9749-331EDBB687C7}</id>
 			<comment/>
 			<position>
-				<first>1966</first>
-				<second>-279</second>
+				<first>2030</first>
+				<second>-581</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -107,8 +107,8 @@
 			<id>{B34B2B48-4C42-8447-9989-04360E250053}</id>
 			<comment/>
 			<position>
-				<first>1995</first>
-				<second>-118</second>
+				<first>2032</first>
+				<second>-399</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -116,8 +116,8 @@
 			<id>{54F953DA-C316-324C-818D-D1E7E064C225}</id>
 			<comment/>
 			<position>
-				<first>1929</first>
-				<second>-54</second>
+				<first>2001</first>
+				<second>-352</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName>World_ViewInverse</parameterName>
@@ -128,8 +128,8 @@
 			<id>{97E5DC6F-199E-0746-9F49-369CDB1EC11F}</id>
 			<comment/>
 			<position>
-				<first>1788</first>
-				<second>-132</second>
+				<first>1782</first>
+				<second>-443</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -137,16 +137,16 @@
 			<id>{2520CF27-6733-4949-8D6E-DAA9A36B5E31}</id>
 			<comment/>
 			<position>
-				<first>2215</first>
-				<second>-104</second>
+				<first>2209</first>
+				<second>-405</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A7D49055-7F6D-F846-B063-EBD11AD72A3D}</id>
 			<comment/>
 			<position>
-				<first>1885</first>
-				<second>-237</second>
+				<first>1998</first>
+				<second>-539</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName>World_ViewInverse</parameterName>
@@ -157,16 +157,16 @@
 			<id>{56ADE552-DC98-2F49-882A-89BF0E0CF61B}</id>
 			<comment/>
 			<position>
-				<first>2188</first>
-				<second>-272</second>
+				<first>2209</first>
+				<second>-583</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{05BF3599-71C5-4A41-B697-BDB2B9EBB9D5}</id>
 			<comment/>
 			<position>
-				<first>1616</first>
-				<second>-231</second>
+				<first>1610</first>
+				<second>-542</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -174,8 +174,8 @@
 			<id>{6DFA3170-089A-4B42-A6CF-391DCA3171A0}</id>
 			<comment/>
 			<position>
-				<first>2305</first>
-				<second>-381</second>
+				<first>2267</first>
+				<second>-692</second>
 			</position>
 			<declaration>{41DB2032-2B2B-7945-8B6B-947CEC7818A4}</declaration>
 			<parameterName>World_TLAS</parameterName>
@@ -186,8 +186,8 @@
 			<id>{EAC774D6-AC45-ED49-8CDF-6D31CD814190}</id>
 			<comment/>
 			<position>
-				<first>2547</first>
-				<second>-207</second>
+				<first>2541</first>
+				<second>-518</second>
 			</position>
 			<name>Raytracing</name>
 			<technique/>
@@ -237,7 +237,7 @@
 const int N = 8;
 const float far = 20.0f;
 const float W = 8.0f;
-const float C = 0.75f;
+const float C = 0.8f;
 
 float occlusions = 0.0f;
 
@@ -257,7 +257,7 @@ for (int i = 0; i < N; ++i)
 		occlusions += 1.0f;
 }
 
-const float f = 1.0f - occlusions / float(N);
+const float f = 1.0f - pow(occlusions / float(N), 2.0f);
 $Output = f * f * C + (1.0f - C);
 	]]></script>
 		</item>
@@ -265,8 +265,8 @@ $Output = f * f * C + (1.0f - C);
 			<id>{ED13FDFA-8B70-7A49-8EDC-CFE9EF944F02}</id>
 			<comment/>
 			<position>
-				<first>3226</first>
-				<second>-502</second>
+				<first>2411</first>
+				<second>-1122</second>
 			</position>
 			<name>L_RTOcclusion</name>
 		</item>
@@ -274,8 +274,8 @@ $Output = f * f * C + (1.0f - C);
 			<id>{1D06EFCB-51A9-3C42-8E31-15D8D88FF5ED}</id>
 			<comment/>
 			<position>
-				<first>2019</first>
-				<second>117</second>
+				<first>2028</first>
+				<second>-262</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -283,8 +283,8 @@ $Output = f * f * C + (1.0f - C);
 			<id>{43D8E6EA-692D-5D4E-89CC-34E306BAFD20}</id>
 			<comment/>
 			<position>
-				<first>1801</first>
-				<second>95</second>
+				<first>1810</first>
+				<second>-284</second>
 			</position>
 			<declaration>{85AE3209-AEBC-1143-B9AA-15E7E29380B0}</declaration>
 			<parameterName/>
@@ -295,8 +295,8 @@ $Output = f * f * C + (1.0f - C);
 			<id>{B44E3B66-1A22-7D44-A4D2-D1D7C1BDC648}</id>
 			<comment/>
 			<position>
-				<first>2220</first>
-				<second>-176</second>
+				<first>2267</first>
+				<second>-475</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -304,8 +304,8 @@ $Output = f * f * C + (1.0f - C);
 			<id>{E13CCA59-0E2B-7B41-AA40-6C77520945BD}</id>
 			<comment/>
 			<position>
-				<first>2225</first>
-				<second>84</second>
+				<first>2257</first>
+				<second>-297</second>
 			</position>
 			<name>RandomAngle</name>
 			<technique/>
@@ -344,8 +344,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{B39D1E0D-8648-5547-A438-F44534543CD7}</id>
 			<comment/>
 			<position>
-				<first>1459</first>
-				<second>-732</second>
+				<first>1522</first>
+				<second>-1094</second>
 			</position>
 			<minFilter>Point</minFilter>
 			<mipFilter>Point</mipFilter>
@@ -362,8 +362,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{6A973837-27EB-8A44-B884-18A0C2950912}</id>
 			<comment/>
 			<position>
-				<first>1703</first>
-				<second>-697</second>
+				<first>1766</first>
+				<second>-1059</second>
 			</position>
 			<swizzle>yzw</swizzle>
 		</item>
@@ -371,8 +371,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{3DC8CBFB-43DC-0B41-891A-8789770D58D2}</id>
 			<comment/>
 			<position>
-				<first>1440</first>
-				<second>-834</second>
+				<first>1503</first>
+				<second>-1196</second>
 			</position>
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
@@ -398,8 +398,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{45839801-21C7-7140-B24C-E6BEF49A0A91}</id>
 			<comment/>
 			<position>
-				<first>1171</first>
-				<second>-924</second>
+				<first>1234</first>
+				<second>-1286</second>
 			</position>
 			<declaration>{842F6FEA-642D-4045-9A91-BEB4464D6206}</declaration>
 			<parameterName/>
@@ -410,8 +410,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{FA41545E-DB83-044C-AB5A-953F37C9EE1B}</id>
 			<comment/>
 			<position>
-				<first>1454</first>
-				<second>-929</second>
+				<first>1517</first>
+				<second>-1291</second>
 			</position>
 			<fragmentGuid>{18AC659A-8AB8-5C45-8FBF-BC2B344BFE87}</fragmentGuid>
 			<inputPins>
@@ -437,8 +437,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{5ECF8EF8-5F62-344E-98B3-C9A767A1F58A}</id>
 			<comment/>
 			<position>
-				<first>1733</first>
-				<second>-805</second>
+				<first>1796</first>
+				<second>-1167</second>
 			</position>
 			<name>L_ViewDepth</name>
 		</item>
@@ -446,8 +446,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{419A5E8C-2521-4043-9117-1E1A315C7E34}</id>
 			<comment/>
 			<position>
-				<first>1714</first>
-				<second>-906</second>
+				<first>1777</first>
+				<second>-1268</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -455,8 +455,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{5DC286AB-C3DB-6249-B0D8-FE3B72B7A287}</id>
 			<comment/>
 			<position>
-				<first>1908</first>
-				<second>-689</second>
+				<first>1971</first>
+				<second>-1051</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -464,8 +464,8 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<id>{A7C22E6E-1D89-7F4F-B7FC-9C3EBBB1AF2B}</id>
 			<comment/>
 			<position>
-				<first>1926</first>
-				<second>-893</second>
+				<first>1989</first>
+				<second>-1255</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -762,5 +762,42 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			</destination>
 		</item>
 	</edges>
-	<groups/>
+	<groups>
+		<item type="traktor.render.Group">
+			<title>Input</title>
+			<comment/>
+			<position>
+				<first>953</first>
+				<second>-1455</second>
+			</position>
+			<size>
+				<first>1240</first>
+				<second>562</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Output</title>
+			<comment/>
+			<position>
+				<first>2264</first>
+				<second>-1379</second>
+			</position>
+			<size>
+				<first>994</first>
+				<second>481</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>RTAO</title>
+			<comment/>
+			<position>
+				<first>1497</first>
+				<second>-814</second>
+			</position>
+			<size>
+				<first>1561</first>
+				<second>747</second>
+			</size>
+		</item>
+	</groups>
 </object>

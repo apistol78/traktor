@@ -5,7 +5,7 @@
 			<id>{777B613C-19C5-0146-808C-FD1924B77DF4}</id>
 			<comment/>
 			<position>
-				<first>265</first>
+				<first>271</first>
 				<second>399</second>
 			</position>
 			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
@@ -13,20 +13,20 @@
 			<type>Texture2D</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{219360A2-8780-2246-BD45-2658C9AEF59C}</id>
 			<comment/>
 			<position>
 				<first>502</first>
 				<second>422</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -35,8 +35,8 @@
 			<id>{F7A15469-6147-1347-A154-8D105B3FB3C5}</id>
 			<comment/>
 			<position>
-				<first>240</first>
-				<second>484</second>
+				<first>277</first>
+				<second>458</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -55,8 +55,8 @@
 			<id>{B8246A10-C4CA-4841-864A-56F7A1F7206E}</id>
 			<comment/>
 			<position>
-				<first>2295</first>
-				<second>350</second>
+				<first>2248</first>
+				<second>339</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -131,8 +131,8 @@
 			<id>{E4D9ECEE-9D98-4C42-ABD6-03206C05DAD5}</id>
 			<comment/>
 			<position>
-				<first>857</first>
-				<second>504</second>
+				<first>883</first>
+				<second>317</second>
 			</position>
 			<fragmentGuid>{6BCFD0DF-374A-8749-8FEA-01768C1748FD}</fragmentGuid>
 			<inputPins>
@@ -158,21 +158,13 @@
 			<id>{6359961F-0D8D-E84C-8FAB-A35139B3BD91}</id>
 			<comment/>
 			<position>
-				<first>619</first>
-				<second>579</second>
+				<first>638</first>
+				<second>286</second>
 			</position>
 			<declaration>{D459FCDF-8FF8-CB47-B735-0F78C604928E}</declaration>
 			<parameterName/>
 			<type>Texture3D</type>
 			<frequency>Once</frequency>
-		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
-			<id>{56F22CE1-1F5A-2145-890A-4D6B9154F01D}</id>
-			<comment/>
-			<position>
-				<first>1138</first>
-				<second>379</second>
-			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{ED3CB4E2-7173-2C49-90A7-256A831CDFCF}</id>
@@ -187,8 +179,8 @@
 			<id>{92BC12FD-6AAE-E743-A917-E8537B21D70D}</id>
 			<comment/>
 			<position>
-				<first>1438</first>
-				<second>405</second>
+				<first>1226</first>
+				<second>420</second>
 			</position>
 			<parameterName>World_ColorGradingEnable</parameterName>
 		</item>
@@ -256,47 +248,17 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{F9FF9BED-2CEE-4116-A6D3-3E03D2C3B91C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{352EC3DB-B30A-4686-ADF4-4812E6550789}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{9FFC9877-C807-E344-96A3-A4601B0CB72D}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{AD09EB97-E7F6-45B5-8FCC-4FA391F0738A}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{B4FEA355-7A63-498C-966D-42F58570CB20}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[10]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[10]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
@@ -306,17 +268,7 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{DF6B63C8-1558-4EDE-8619-C3C0D1BB38BA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
 			</source>
 			<destination>
@@ -330,8 +282,18 @@
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{9FFC9877-C807-E344-96A3-A4601B0CB72D}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
 			</destination>
 		</item>
 	</edges>

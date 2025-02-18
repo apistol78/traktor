@@ -5,28 +5,28 @@
 			<id>{4788F4B4-9A36-B944-974F-CFBC98E7AC4F}</id>
 			<comment/>
 			<position>
-				<first>-243</first>
-				<second>-682</second>
+				<first>-261</first>
+				<second>-512</second>
 			</position>
 			<declaration>{90B406A4-EDD8-7540-88A4-5BFF81175876}</declaration>
 			<parameterName/>
 			<type>TextureCube</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{D0C9E36A-0D51-AE40-91E4-6DAE6A84F8B4}</id>
 			<comment/>
 			<position>
-				<first>14</first>
-				<second>-675</second>
+				<first>-4</first>
+				<second>-505</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Wrap</addressU>
+			<addressV>Wrap</addressV>
+			<addressW>Wrap</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -35,8 +35,8 @@
 			<id>{563711FC-4CBE-D842-8C2C-91C25DD6891A}</id>
 			<comment/>
 			<position>
-				<first>1334</first>
-				<second>-1000</second>
+				<first>1316</first>
+				<second>-830</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -82,8 +82,8 @@
 			<id>{CCA3BBF6-51D2-BB4B-AE3B-1FF6F4F599BA}</id>
 			<comment/>
 			<position>
-				<first>-139</first>
-				<second>-1733</second>
+				<first>-297</first>
+				<second>-1740</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -102,8 +102,8 @@
 			<id>{AD4EC002-38BC-4852-9A42-7C6CD004E7A1}</id>
 			<comment/>
 			<position>
-				<first>-201</first>
-				<second>-599</second>
+				<first>-219</first>
+				<second>-429</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -111,8 +111,8 @@
 			<id>{D21A6ED5-7C91-43E1-B140-C923E4FED61B}</id>
 			<comment/>
 			<position>
-				<first>42</first>
-				<second>-2119</second>
+				<first>-116</first>
+				<second>-2126</second>
 			</position>
 			<declaration>{1B3246F4-D2BA-D244-926F-E143B6A841CD}</declaration>
 			<parameterName/>
@@ -124,16 +124,16 @@
 			<id>{54A78EAA-8976-4B86-BC60-92F4771D6C1A}</id>
 			<comment/>
 			<position>
-				<first>447</first>
-				<second>-2057</second>
+				<first>289</first>
+				<second>-2064</second>
 			</position>
 		</item>
 		<item type="traktor.render.IndexedUniform" version="4,traktor.render.Node:1">
 			<id>{7F06A51A-3804-44CE-BE9F-7B897C13DA7D}</id>
 			<comment/>
 			<position>
-				<first>40</first>
-				<second>-2032</second>
+				<first>-118</first>
+				<second>-2039</second>
 			</position>
 			<declaration>{1B3246F4-D2BA-D244-926F-E143B6A841CD}</declaration>
 			<parameterName/>
@@ -145,8 +145,8 @@
 			<id>{A04034F9-4A5F-4609-8671-A71C5E482B3A}</id>
 			<comment/>
 			<position>
-				<first>-143</first>
-				<second>-2105</second>
+				<first>-301</first>
+				<second>-2136</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -154,8 +154,8 @@
 			<id>{A198B8D0-7DE1-412C-BF5C-F9451CBE7840}</id>
 			<comment/>
 			<position>
-				<first>-143</first>
-				<second>-2028</second>
+				<first>-301</first>
+				<second>-2059</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -163,8 +163,8 @@
 			<id>{EE01FA95-7F2E-4D87-9471-BE145C41CF75}</id>
 			<comment/>
 			<position>
-				<first>42</first>
-				<second>-1947</second>
+				<first>-116</first>
+				<second>-1954</second>
 			</position>
 			<declaration>{1B3246F4-D2BA-D244-926F-E143B6A841CD}</declaration>
 			<parameterName/>
@@ -176,8 +176,8 @@
 			<id>{134B470F-2386-4A31-A651-C1DD322F47E1}</id>
 			<comment/>
 			<position>
-				<first>42</first>
-				<second>-1861</second>
+				<first>-116</first>
+				<second>-1868</second>
 			</position>
 			<declaration>{1B3246F4-D2BA-D244-926F-E143B6A841CD}</declaration>
 			<parameterName/>
@@ -189,8 +189,8 @@
 			<id>{15E40DFB-49EB-4407-9232-00C0271E2696}</id>
 			<comment/>
 			<position>
-				<first>-143</first>
-				<second>-1929</second>
+				<first>-301</first>
+				<second>-1936</second>
 			</position>
 			<value>2</value>
 		</item>
@@ -198,8 +198,8 @@
 			<id>{57C672F6-A88E-41B0-BDE0-86DCDC9580DA}</id>
 			<comment/>
 			<position>
-				<first>-143</first>
-				<second>-1852</second>
+				<first>-301</first>
+				<second>-1859</second>
 			</position>
 			<value>3</value>
 		</item>
@@ -207,16 +207,16 @@
 			<id>{95756285-540E-44AA-B105-656CBBD658C2}</id>
 			<comment/>
 			<position>
-				<first>450</first>
-				<second>-1945</second>
+				<first>292</first>
+				<second>-1952</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{51810EFB-3A87-4665-BC09-C0A5695848BA}</id>
 			<comment/>
 			<position>
-				<first>209</first>
-				<second>-1738</second>
+				<first>51</first>
+				<second>-1745</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -224,16 +224,16 @@
 			<id>{C9A4E8D6-05A5-4E5C-81F8-0D77B1992252}</id>
 			<comment/>
 			<position>
-				<first>786</first>
-				<second>-1936</second>
+				<first>628</first>
+				<second>-1943</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{D4A9A9DC-B9D3-48F5-AF97-23FE15334118}</id>
 			<comment/>
 			<position>
-				<first>209</first>
-				<second>-1697</second>
+				<first>51</first>
+				<second>-1704</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -241,16 +241,16 @@
 			<id>{C223C030-17C2-4D49-ADAB-1304B27266F9}</id>
 			<comment/>
 			<position>
-				<first>553</first>
-				<second>-700</second>
+				<first>535</first>
+				<second>-530</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{C43F71B7-31BA-2440-8B32-0162A0C0593A}</id>
 			<comment/>
 			<position>
-				<first>1514</first>
-				<second>-1900</second>
+				<first>1356</first>
+				<second>-1907</second>
 			</position>
 			<name>L_Normal</name>
 		</item>
@@ -258,16 +258,16 @@
 			<id>{6E7CE553-39C3-1D49-813B-F653E3F3FAC5}</id>
 			<comment/>
 			<position>
-				<first>1302</first>
-				<second>-1947</second>
+				<first>1144</first>
+				<second>-1954</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{247A8CB7-63C4-7540-9CA8-8648FFDE2A65}</id>
 			<comment/>
 			<position>
-				<first>798</first>
-				<second>-1030</second>
+				<first>780</first>
+				<second>-860</second>
 			</position>
 			<name>L_N</name>
 		</item>
@@ -275,16 +275,16 @@
 			<id>{A18B4E52-1F8A-DC40-832E-F75DBD20384B}</id>
 			<comment/>
 			<position>
-				<first>78</first>
-				<second>-1716</second>
+				<first>-80</first>
+				<second>-1723</second>
 			</position>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{4E133128-C003-3343-9C3A-1A06B95FDF85}</id>
 			<comment/>
 			<position>
-				<first>276</first>
-				<second>-925</second>
+				<first>258</first>
+				<second>-755</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>
@@ -293,16 +293,16 @@
 			<id>{A9D181A4-117C-F140-A02A-C2CE7ACD488B}</id>
 			<comment/>
 			<position>
-				<first>536</first>
-				<second>-1039</second>
+				<first>518</first>
+				<second>-869</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{5C3F2078-38F7-3440-9C8B-4CE9E524F435}</id>
 			<comment/>
 			<position>
-				<first>324</first>
-				<second>-1064</second>
+				<first>306</first>
+				<second>-894</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -310,8 +310,8 @@
 			<id>{F16FBA6C-8E77-3340-B19B-F9FB9D47E17B}</id>
 			<comment/>
 			<position>
-				<first>81</first>
-				<second>-969</second>
+				<first>63</first>
+				<second>-799</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -319,8 +319,8 @@
 			<id>{2B64EE68-852D-2E47-846B-A410279AC835}</id>
 			<comment/>
 			<position>
-				<first>309</first>
-				<second>-662</second>
+				<first>291</first>
+				<second>-492</second>
 			</position>
 			<min>0</min>
 			<max>200</max>
@@ -329,16 +329,16 @@
 			<id>{34FCB38F-0389-4E4C-BECB-B77C8FD7D366}</id>
 			<comment/>
 			<position>
-				<first>986</first>
-				<second>-955</second>
+				<first>968</first>
+				<second>-785</second>
 			</position>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{74BFAEEC-093B-9442-B674-B26145AE7B66}</id>
 			<comment/>
 			<position>
-				<first>-362</first>
-				<second>-1369</second>
+				<first>-370</first>
+				<second>-1292</second>
 			</position>
 			<name>Hammersley</name>
 			<technique/>
@@ -369,8 +369,8 @@
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const vec2 h = Hammersley(uint($I), uint($N));
 $Output = vec4(
 	h.x,
@@ -379,8 +379,8 @@ $Output = vec4(
 	0.0f
 );
 
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{11BB94C1-07C5-AD4D-9595-7B2D113553E8}</id>
@@ -404,8 +404,8 @@ $Output = vec4(
 			<id>{83847241-26F8-F04D-ABF7-252B8EDBA6FD}</id>
 			<comment/>
 			<position>
-				<first>66</first>
-				<second>-1010</second>
+				<first>48</first>
+				<second>-840</second>
 			</position>
 			<name>L_SampleCount</name>
 		</item>
@@ -413,16 +413,16 @@ $Output = vec4(
 			<id>{AC9B5B80-4A8B-D945-9662-346D963A265B}</id>
 			<comment/>
 			<position>
-				<first>288</first>
-				<second>-1012</second>
+				<first>270</first>
+				<second>-842</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{C2B5F92C-EC62-0D49-BABE-4E538484BBFF}</id>
 			<comment/>
 			<position>
-				<first>-625</first>
-				<second>-1317</second>
+				<first>-633</first>
+				<second>-1240</second>
 			</position>
 			<name>L_SampleCount</name>
 		</item>
@@ -430,8 +430,8 @@ $Output = vec4(
 			<id>{316570D8-F0A0-B240-9AC2-68051FB7E0B7}</id>
 			<comment/>
 			<position>
-				<first>-609</first>
-				<second>-1370</second>
+				<first>-623</first>
+				<second>-1305</second>
 			</position>
 			<name>L_N</name>
 		</item>
@@ -439,8 +439,8 @@ $Output = vec4(
 			<id>{9F5C44E5-F20A-1048-A1D7-DF1CE8361B80}</id>
 			<comment/>
 			<position>
-				<first>-92</first>
-				<second>-1338</second>
+				<first>-100</first>
+				<second>-1261</second>
 			</position>
 			<name>ImportanceSampleGGX</name>
 			<technique/>
@@ -475,8 +475,8 @@ $Output = vec4(
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 
 const float a = $Roughness * $Roughness;
 	
@@ -496,15 +496,15 @@ OrthogonalFrame($N, u, v);
 const vec3 sampleVec = u * H.x + v * H.y + $N * H.z;
 $Output = vec4(normalize(sampleVec), 0.0f);
 
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{1E65A182-EE59-0D4C-9052-0994EAC9123F}</id>
 			<comment/>
 			<position>
-				<first>-352</first>
-				<second>-1283</second>
+				<first>-360</first>
+				<second>-1206</second>
 			</position>
 			<name>L_Normal</name>
 		</item>
@@ -512,8 +512,8 @@ $Output = vec4(normalize(sampleVec), 0.0f);
 			<id>{A0043244-66C5-BB47-87A6-6771E27A124B}</id>
 			<comment/>
 			<position>
-				<first>-400</first>
-				<second>-1237</second>
+				<first>-408</first>
+				<second>-1160</second>
 			</position>
 			<declaration>{644CE221-A8B4-7340-9648-3F021DD4119B}</declaration>
 			<parameterName/>
@@ -522,39 +522,39 @@ $Output = vec4(normalize(sampleVec), 0.0f);
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{4A7D80EE-54C1-C847-9091-3ABE1C016E9E}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 H
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
-				<first>285</first>
-				<second>-1350</second>
+				<first>277</first>
+				<second>-1273</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Dot" version="traktor.render.Node:1">
 			<id>{114ED59F-0497-FD42-949C-E2A0738DB592}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 dot(V, H)
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
-				<first>581</first>
-				<second>-1423</second>
+				<first>573</first>
+				<second>-1346</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{0D5F8A6E-8904-EB46-9D78-9B2134F6FA56}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 V
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
-				<first>379</first>
-				<second>-1457</second>
+				<first>371</first>
+				<second>-1380</second>
 			</position>
 			<name>L_Normal</name>
 		</item>
@@ -562,16 +562,16 @@ V
 			<id>{F7666B87-D7AE-9248-83C0-A6F961ACAD2D}</id>
 			<comment/>
 			<position>
-				<first>823</first>
-				<second>-1466</second>
+				<first>815</first>
+				<second>-1389</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{F751B5A7-403B-A14D-8B57-ED7BC642CE20}</id>
 			<comment/>
 			<position>
-				<first>588</first>
-				<second>-1496</second>
+				<first>580</first>
+				<second>-1419</second>
 			</position>
 			<value>2</value>
 		</item>
@@ -579,28 +579,28 @@ V
 			<id>{226DC58E-599A-6F4A-9183-F67543BD4E41}</id>
 			<comment/>
 			<position>
-				<first>1099</first>
-				<second>-1385</second>
+				<first>1091</first>
+				<second>-1308</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{9F39D0EC-A7DE-374F-95C4-30DE70131294}</id>
 			<comment/>
 			<position>
-				<first>1357</first>
-				<second>-1359</second>
+				<first>1349</first>
+				<second>-1282</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{461E4EEE-A481-0348-B464-0272FB0C5B92}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 V
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
-				<first>1135</first>
-				<second>-1282</second>
+				<first>1127</first>
+				<second>-1205</second>
 			</position>
 			<name>L_Normal</name>
 		</item>
@@ -608,8 +608,8 @@ V
 			<id>{83C101E1-B544-284F-9CFB-B069CC3DB5DF}</id>
 			<comment/>
 			<position>
-				<first>1630</first>
-				<second>-1357</second>
+				<first>1622</first>
+				<second>-1280</second>
 			</position>
 			<name>L_L</name>
 		</item>
@@ -617,8 +617,8 @@ V
 			<id>{02E9CBDC-4E1F-A941-8700-A737924219C6}</id>
 			<comment/>
 			<position>
-				<first>-211</first>
-				<second>-642</second>
+				<first>-229</first>
+				<second>-472</second>
 			</position>
 			<name>L_L</name>
 		</item>
@@ -626,8 +626,8 @@ V
 			<id>{C4494C99-198B-4B4A-B22B-A506EABE47F3}</id>
 			<comment/>
 			<position>
-				<first>324</first>
-				<second>-879</second>
+				<first>306</first>
+				<second>-709</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -635,37 +635,37 @@ V
 			<id>{7A63026C-DA96-5D4F-B4E9-C8307C992359}</id>
 			<comment/>
 			<position>
-				<first>553</first>
-				<second>-516</second>
+				<first>535</first>
+				<second>-346</second>
 			</position>
 		</item>
 		<item type="traktor.render.Dot" version="traktor.render.Node:1">
 			<id>{AEA5CD3F-B83E-2849-B00C-33E26ACCD71C}</id>
 			<comment/>
 			<position>
-				<first>35</first>
-				<second>-482</second>
+				<first>17</first>
+				<second>-312</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{F0C427DF-42E6-F247-8D0F-B7FEB334BF0A}</id>
 			<comment/>
 			<position>
-				<first>-201</first>
-				<second>-436</second>
+				<first>-219</first>
+				<second>-266</second>
 			</position>
 			<name>L_L</name>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{3006E3FA-5A66-C444-82CB-C6BC9CE59A07}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 V
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
-				<first>-201</first>
-				<second>-479</second>
+				<first>-219</first>
+				<second>-309</second>
 			</position>
 			<name>L_Normal</name>
 		</item>
@@ -673,29 +673,29 @@ V
 			<id>{6CB5CA30-45E2-2443-B194-CE666B34AD48}</id>
 			<comment/>
 			<position>
-				<first>299</first>
-				<second>-457</second>
+				<first>281</first>
+				<second>-287</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{4944728D-55EE-B74C-8A14-FAF5FCBF4DDA}</id>
 			<comment/>
 			<position>
-				<first>57</first>
-				<second>-369</second>
+				<first>39</first>
+				<second>-199</second>
 			</position>
 			<value>0</value>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{12067469-DD02-664B-8910-AD3CE46EF19F}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 	
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
-				<first>1048</first>
-				<second>-1955</second>
+				<first>890</first>
+				<second>-1962</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -767,8 +767,8 @@ V
 			<id>{2E8C2BE0-7957-42C6-98F7-B38D41B3CEE0}</id>
 			<comment/>
 			<position>
-				<first>766</first>
-				<second>-786</second>
+				<first>748</first>
+				<second>-616</second>
 			</position>
 			<name>L_SampleCount</name>
 		</item>
@@ -776,16 +776,16 @@ V
 			<id>{3F684CFF-1687-48DA-B131-6538BEA4DC53}</id>
 			<comment/>
 			<position>
-				<first>818</first>
-				<second>-579</second>
+				<first>800</first>
+				<second>-409</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{D3D66F2A-048B-45AC-838A-905E0A826A29}</id>
 			<comment/>
 			<position>
-				<first>990</first>
-				<second>-841</second>
+				<first>972</first>
+				<second>-671</second>
 			</position>
 		</item>
 	</nodes>
@@ -1491,5 +1491,54 @@ V
 			</destination>
 		</item>
 	</edges>
-	<groups/>
+	<groups>
+		<item type="traktor.render.Group">
+			<title>Sample count from roughness</title>
+			<comment/>
+			<position>
+				<first>-259</first>
+				<second>-2719</second>
+			</position>
+			<size>
+				<first>200</first>
+				<second>200</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Calculate normal</title>
+			<comment/>
+			<position>
+				<first>-616</first>
+				<second>-2279</second>
+			</position>
+			<size>
+				<first>200</first>
+				<second>200</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Calculate sample direction</title>
+			<comment/>
+			<position>
+				<first>-714</first>
+				<second>-1528</second>
+			</position>
+			<size>
+				<first>2551</first>
+				<second>465</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Sample and output</title>
+			<comment/>
+			<position>
+				<first>-395</first>
+				<second>-994</second>
+			</position>
+			<size>
+				<first>200</first>
+				<second>200</second>
+			</size>
+		</item>
+	</groups>
 </object>

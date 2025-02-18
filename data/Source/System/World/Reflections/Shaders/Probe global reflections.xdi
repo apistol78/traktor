@@ -5,16 +5,16 @@
 			<id>{D302529C-8DD9-8D4D-BC63-ED25DB1445A2}</id>
 			<comment/>
 			<position>
-				<first>2198</first>
-				<second>295</second>
+				<first>2287</first>
+				<second>245</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{8B881595-35AC-A441-BA17-00470944D877}</id>
 			<comment/>
 			<position>
-				<first>2033</first>
-				<second>287</second>
+				<first>2122</first>
+				<second>237</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -22,8 +22,8 @@
 			<id>{A1C1678C-F73C-154B-B6C8-6BFEB734B506}</id>
 			<comment/>
 			<position>
-				<first>2449</first>
-				<second>414</second>
+				<first>2538</first>
+				<second>364</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -31,8 +31,8 @@
 			<id>{B64009C1-B894-9B4F-9595-1C62DDE06E12}</id>
 			<comment/>
 			<position>
-				<first>1599</first>
-				<second>309</second>
+				<first>1688</first>
+				<second>259</second>
 			</position>
 			<name>L_EyeDirection</name>
 		</item>
@@ -40,8 +40,8 @@
 			<id>{CFC4D10E-8115-9A43-94BE-D8EB7171D09A}</id>
 			<comment/>
 			<position>
-				<first>1585</first>
-				<second>246</second>
+				<first>1674</first>
+				<second>196</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -49,8 +49,8 @@
 			<id>{48A610BD-A630-D547-8C8F-D7A2ECEE442F}</id>
 			<comment/>
 			<position>
-				<first>2139</first>
-				<second>383</second>
+				<first>2228</first>
+				<second>333</second>
 			</position>
 			<declaration>{02618F85-C0E7-4649-BA22-A1B61C43102E}</declaration>
 			<parameterName/>
@@ -61,24 +61,24 @@
 			<id>{9A619801-EB18-064D-9021-551243C57CED}</id>
 			<comment/>
 			<position>
-				<first>1818</first>
-				<second>251</second>
+				<first>1907</first>
+				<second>201</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{678D4F4C-ABCA-2D40-95AA-215D12CD98B5}</id>
 			<comment/>
 			<position>
-				<first>2400</first>
-				<second>322</second>
+				<first>2489</first>
+				<second>272</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{1603A654-96D9-7D42-87B4-45DA0D2AF0CC}</id>
 			<comment/>
 			<position>
-				<first>2697</first>
-				<second>355</second>
+				<first>2786</first>
+				<second>305</second>
 			</position>
 			<fragmentGuid>{2231E81B-359A-3149-B2EB-26BE4588529B}</fragmentGuid>
 			<inputPins>
@@ -104,8 +104,8 @@
 			<id>{4A956BD0-D4DE-5449-977F-81FC01E8445A}</id>
 			<comment/>
 			<position>
-				<first>3775</first>
-				<second>313</second>
+				<first>3864</first>
+				<second>263</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -151,8 +151,8 @@
 			<id>{FA23FE50-D29E-6349-823B-D27FC0D82447}</id>
 			<comment/>
 			<position>
-				<first>2675</first>
-				<second>697</second>
+				<first>3086</first>
+				<second>-209</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -160,8 +160,8 @@
 			<id>{0AE1E319-0F73-5448-9389-A0129A1033C0}</id>
 			<comment/>
 			<position>
-				<first>1786</first>
-				<second>606</second>
+				<first>2211</first>
+				<second>-320</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -180,16 +180,16 @@
 			<id>{32E8F842-01FA-5544-A89B-084987BB296A}</id>
 			<comment/>
 			<position>
-				<first>1995</first>
-				<second>622</second>
+				<first>2406</first>
+				<second>-284</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{DB48BFD2-B321-804D-B48E-A7B2B7C1F5B3}</id>
 			<comment/>
 			<position>
-				<first>2442</first>
-				<second>588</second>
+				<first>2853</first>
+				<second>-318</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -197,8 +197,8 @@
 			<id>{788E2759-0DE2-F044-A689-1261F28683AB}</id>
 			<comment/>
 			<position>
-				<first>2812</first>
-				<second>786</second>
+				<first>3223</first>
+				<second>-120</second>
 			</position>
 			<name>L_EyeDirection</name>
 		</item>
@@ -206,24 +206,24 @@
 			<id>{1A70DCA6-11DB-2D47-AE1E-5CA97FED2136}</id>
 			<comment/>
 			<position>
-				<first>2417</first>
-				<second>789</second>
+				<first>2828</first>
+				<second>-117</second>
 			</position>
 		</item>
 		<item type="traktor.render.Neg" version="traktor.render.Node:1">
 			<id>{53BC6328-EBD9-B244-9E5E-957B417EDD03}</id>
 			<comment/>
 			<position>
-				<first>2419</first>
-				<second>704</second>
+				<first>2830</first>
+				<second>-202</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{54C17EA2-4AED-B048-9778-907067DC6652}</id>
 			<comment/>
 			<position>
-				<first>2107</first>
-				<second>628</second>
+				<first>2518</first>
+				<second>-278</second>
 			</position>
 			<fragmentGuid>{8FEDE215-7BFC-A248-97FE-BA4D10C043BE}</fragmentGuid>
 			<inputPins>
@@ -277,8 +277,8 @@
 			<id>{CE20DB7C-A52D-EA43-BB90-99B4EC70927E}</id>
 			<comment/>
 			<position>
-				<first>3542</first>
-				<second>377</second>
+				<first>3631</first>
+				<second>327</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -286,8 +286,8 @@
 			<id>{504AA6BB-5C48-8B41-98D0-59BE26346C97}</id>
 			<comment/>
 			<position>
-				<first>2441</first>
-				<second>628</second>
+				<first>2852</first>
+				<second>-278</second>
 			</position>
 			<name>L_Specular</name>
 		</item>
@@ -295,8 +295,8 @@
 			<id>{2FCFC2CF-DDFC-4049-BED4-39E1092AFF3E}</id>
 			<comment/>
 			<position>
-				<first>3255</first>
-				<second>350</second>
+				<first>3344</first>
+				<second>300</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoGreaterEqual</operator>
@@ -305,8 +305,8 @@
 			<id>{9B95E69A-C854-8940-9E9E-8110D8112B3E}</id>
 			<comment/>
 			<position>
-				<first>2989</first>
-				<second>368</second>
+				<first>3078</first>
+				<second>318</second>
 			</position>
 			<value>0.01</value>
 		</item>
@@ -314,8 +314,8 @@
 			<id>{5A20F9A3-B8DC-E54A-8D76-1DA8B497CD50}</id>
 			<comment/>
 			<position>
-				<first>2995</first>
-				<second>320</second>
+				<first>3084</first>
+				<second>270</second>
 			</position>
 			<name>L_Specular</name>
 		</item>
@@ -323,8 +323,8 @@
 			<id>{2CFCFC02-044C-1F41-84FD-3625DA532207}</id>
 			<comment/>
 			<position>
-				<first>2973</first>
-				<second>462</second>
+				<first>3062</first>
+				<second>412</second>
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
@@ -332,8 +332,8 @@
 			<id>{C3860C23-4D07-4F67-84DA-AB045C81FF69}</id>
 			<comment/>
 			<position>
-				<first>2598</first>
-				<second>789</second>
+				<first>3009</first>
+				<second>-117</second>
 			</position>
 		</item>
 	</nodes>
@@ -569,5 +569,30 @@
 			</destination>
 		</item>
 	</edges>
-	<groups/>
+	<groups>
+		<item type="traktor.render.Group">
+			<title>Input</title>
+			<comment/>
+			<position>
+				<first>1982</first>
+				<second>-453</second>
+			</position>
+			<size>
+				<first>200</first>
+				<second>200</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Sample probe and output</title>
+			<comment/>
+			<position>
+				<first>1624</first>
+				<second>48</second>
+			</position>
+			<size>
+				<first>2425</first>
+				<second>459</second>
+			</size>
+		</item>
+	</groups>
 </object>

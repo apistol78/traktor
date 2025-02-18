@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderModule" version="1">
-	<text>
-	<![CDATA[
+	<text><![CDATA[
+	
 // Default configuration of rays.
 const float HWRT_DefaultNear = 0.5f;
 const float HWRT_DefaultFar = 100.0f;
@@ -127,8 +127,8 @@ bool HWRT_TraceShadow(accelerationStructureEXT AS, vec3 origin, vec3 direction, 
 	return (rayQueryGetIntersectionTypeEXT(rayQueryShadow, true) != gl_RayQueryCommittedIntersectionNoneEXT);
 }
 
-	]]>
-	</text>
+	
+	]]></text>
 	<samplers>
 		<item>
 			<first>__samplerLinear__</first>
