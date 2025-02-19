@@ -230,6 +230,16 @@ void SkyComponent::setWorld(world::World* world)
 	}
 }
 
+void SkyComponent::setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren)
+{
+	if (m_world == nullptr || !mask.visible)
+		return;
+
+	world::IrradianceGridComponent* irradianceGridComponent = m_world->getComponent< world::IrradianceGridComponent >();
+	if (irradianceGridComponent)
+		irradianceGridComponent->setIrradianceGrid(state.visible ? m_irradianceGrid : nullptr);
+}
+
 void SkyComponent::setTransform(const Transform& transform)
 {
 	m_transform = transform;
