@@ -350,7 +350,7 @@
 				<first>662</first>
 				<second>455</second>
 			</position>
-			<name>Downsample 0</name>
+			<name>Post downsample 0</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -386,7 +386,7 @@
 				<first>664</first>
 				<second>578</second>
 			</position>
-			<name>Downsample N</name>
+			<name>Post downsample 1-2</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -422,7 +422,7 @@
 				<first>660</first>
 				<second>715</second>
 			</position>
-			<name>Downsample N</name>
+			<name>Post downsample 2-3</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -458,7 +458,7 @@
 				<first>667</first>
 				<second>859</second>
 			</position>
-			<name>Downsample N</name>
+			<name>Post downsample 3-4</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -494,7 +494,7 @@
 				<first>1117</first>
 				<second>480</second>
 			</position>
-			<name>Blur X</name>
+			<name>Post blur X 0</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -533,7 +533,7 @@
 				<first>1120</first>
 				<second>629</second>
 			</position>
-			<name>Blur X</name>
+			<name>Post blur X 1</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -572,7 +572,7 @@
 				<first>1120</first>
 				<second>773</second>
 			</position>
-			<name>Blur X</name>
+			<name>Post blur X 2</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -611,7 +611,7 @@
 				<first>1117</first>
 				<second>926</second>
 			</position>
-			<name>Blur X</name>
+			<name>Post blur X 3</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -650,7 +650,7 @@
 				<first>1567</first>
 				<second>486</second>
 			</position>
-			<name>Blur Y</name>
+			<name>Post blur Y 0</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -689,7 +689,7 @@
 				<first>1562</first>
 				<second>626</second>
 			</position>
-			<name>Blur Y</name>
+			<name>Post blur Y 1</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -728,7 +728,7 @@
 				<first>1568</first>
 				<second>770</second>
 			</position>
-			<name>Blur Y</name>
+			<name>Post blur Y 2</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -767,7 +767,7 @@
 				<first>1562</first>
 				<second>918</second>
 			</position>
-			<name>Blur Y</name>
+			<name>Post blur Y 3</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -806,7 +806,7 @@
 				<first>2096</first>
 				<second>670</second>
 			</position>
-			<name>Merge</name>
+			<name>Post merge</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -845,7 +845,7 @@
 				<first>2957</first>
 				<second>574</second>
 			</position>
-			<name>Final</name>
+			<name>Post final</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -883,16 +883,6 @@
 		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[28]"/>
-				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item"/>
@@ -995,26 +985,6 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[6]"/>
 				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
 			</source>
@@ -1075,31 +1045,31 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[7]"/>
 				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[24]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[25]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[26]"/>
 				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
@@ -1115,12 +1085,32 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[25]"/>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[25]"/>
 				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
 				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1181,6 +1171,16 @@
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
