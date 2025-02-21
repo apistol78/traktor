@@ -78,7 +78,7 @@ private:
 	std::wstring m_modelCachePath;
 	Ref< db::Instance > m_instance;
 	Ref< MeshAsset > m_asset;
-	Ref< model::Model > m_model;
+	Ref< const model::Model > m_model;
 	Ref< ui::Edit > m_editFileName;
 	Ref< ui::Edit > m_editImportFilter;
 	Ref< ui::Container > m_containerMaterials;
@@ -116,8 +116,6 @@ private:
 	void extractMaterialTexture();
 
 	void eventMeshTypeChange(ui::SelectionChangeEvent* event);
-
-	//void eventLodStepsChange(ui::ContentChangeEvent* event);
 
 	void eventPreviewAngleChange(ui::ContentChangeEvent* event);
 

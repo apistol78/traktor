@@ -403,14 +403,14 @@ for (int i = 0; i < N; ++i)
 	const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.25f;
 	const vec2 r = Rotate2D((Hammersley(i, N) + jitter) * 2.0f - 1.0f, Hash(rndState++)) * 0.5 + 0.5;
 	
-	const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.25f;
+	const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.025f;
 	const vec3 rayDir = R * normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.2f);
 
 	[[branch]]
 	if (HWRT_Trace($AS, rayOrigin, rayDir, m, t))
 	{
 		const vec3 hit = rayOrigin + rayDir * t;
-		const float phi0 = -dot(m.normal.xyz, rayDir);
+		const float phi0 = clamp(-dot(m.normal.xyz, rayDir), 0.0f, 1.0f);
 
 		[[branch]]
 		if ($LightCount > 0)
@@ -462,10 +462,12 @@ for (int i = 0; i < N; ++i)
 		}
 
 		// Add emissive.
+/*
 		acc += vec4(
 			m.albedo.xyz * m.albedo.w * phi0 / pdf0,
 			clamp(m.albedo.w, 0.0f, 1.0f)
 		);
+*/
 	}
 }
 

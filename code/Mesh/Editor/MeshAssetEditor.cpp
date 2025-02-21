@@ -309,7 +309,7 @@ void MeshAssetEditor::updateModel()
 {
 	const Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath, m_asset->getFileName());
 	const std::wstring importFilter = m_asset->getImportFilter();
-	m_model = model::ModelCache::getInstance().getMutable(m_modelCachePath, assetPath, importFilter);
+	m_model = model::ModelCache::getInstance().get(m_modelCachePath, assetPath, importFilter);
 }
 
 void MeshAssetEditor::updateFile()
@@ -480,12 +480,14 @@ void MeshAssetEditor::createMaterialShader()
 	std::wstring outputName = materialName;
 
 	// Find model material to associate shader with.
-	auto materials = m_model->getMaterials();
-	auto it = std::find_if(materials.begin(), materials.end(), [&](const model::Material& material) {
+	const AlignedVector< model::Material >& materials = m_model->getMaterials();
+	const auto it = std::find_if(materials.begin(), materials.end(), [&](const model::Material& material) {
 		return material.getName() == materialName;
 	});
 	if (it == materials.end())
 		return;
+
+	model::Material material = *it;
 
 	// Query user about material name; default model's material name.
 	ui::InputDialog::Field materialNameField(
@@ -517,26 +519,18 @@ void MeshAssetEditor::createMaterialShader()
 		return;
 	}
 
-	//// Use material template if specified.
-	// Guid materialTemplate;
-	// const auto& materialTemplates = m_asset->getMaterialTemplates();
-	// auto it2 = materialTemplates.find(materialName);
-	// if (it2 != materialTemplates.end())
-	//	materialTemplate = it2->second;
-
-	// Set textures specified in MeshAsset into material maps.
+	// Set textures specified in MeshAsset into material.
 	const auto& materialTextures = m_asset->getMaterialTextures();
-	for (auto& m : materials)
 	{
 		model::Material::Map maps[] = {
-			m.getDiffuseMap(),
-			m.getSpecularMap(),
-			m.getRoughnessMap(),
-			m.getMetalnessMap(),
-			m.getTransparencyMap(),
-			m.getEmissiveMap(),
-			m.getReflectiveMap(),
-			m.getNormalMap()
+			material.getDiffuseMap(),
+			material.getSpecularMap(),
+			material.getRoughnessMap(),
+			material.getMetalnessMap(),
+			material.getTransparencyMap(),
+			material.getEmissiveMap(),
+			material.getReflectiveMap(),
+			material.getNormalMap()
 		};
 
 		for (auto& map : maps)
@@ -546,22 +540,21 @@ void MeshAssetEditor::createMaterialShader()
 				map.texture = it->second;
 		}
 
-		m.setDiffuseMap(maps[0]);
-		m.setSpecularMap(maps[1]);
-		m.setRoughnessMap(maps[2]);
-		m.setMetalnessMap(maps[3]);
-		m.setTransparencyMap(maps[4]);
-		m.setEmissiveMap(maps[5]);
-		m.setReflectiveMap(maps[6]);
-		m.setNormalMap(maps[7]);
+		material.setDiffuseMap(maps[0]);
+		material.setSpecularMap(maps[1]);
+		material.setRoughnessMap(maps[2]);
+		material.setMetalnessMap(maps[3]);
+		material.setTransparencyMap(maps[4]);
+		material.setEmissiveMap(maps[5]);
+		material.setReflectiveMap(maps[6]);
+		material.setNormalMap(maps[7]);
 	}
-	m_model->setMaterials(materials);
 
 	// Generate shader.
 	Ref< render::ShaderGraph > materialShader = world::MaterialShaderGenerator(
 		[&](const Guid& fragmentId) {
 		return m_editor->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(fragmentId);
-	}).generateSurface(*it, haveVertexColors(*m_model), m_asset->getDecalResponse());
+	}).generateSurface(material, haveVertexColors(*m_model), m_asset->getDecalResponse());
 	if (materialShader)
 	{
 		materialShader = render::ShaderGraphOptimizer(materialShader).removeUnusedBranches(true);

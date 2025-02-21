@@ -6,23 +6,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <functional>
-#include "ufbx.h"
+#include "Model/Formats/Fbx/ModelFormatFbx.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
-#include "Model/Model.h"
 #include "Model/Formats/Fbx/Conversion.h"
 #include "Model/Formats/Fbx/MeshConverter.h"
-#include "Model/Formats/Fbx/ModelFormatFbx.h"
 #include "Model/Formats/Fbx/SkeletonConverter.h"
+#include "Model/Model.h"
 #include "Model/Operations/CleanDuplicates.h"
+#include "ufbx.h"
+
+#include <functional>
 
 namespace traktor::model
 {
-	namespace
-	{
+namespace
+{
 
 bool include(ufbx_node* node, const std::wstring& filter)
 {
@@ -60,7 +62,7 @@ bool include(ufbx_node* node, const std::wstring& filter)
 	return false;
 }
 
-ufbx_node* search(ufbx_node* node, const std::wstring& filter, const std::function< bool (ufbx_node* node) >& predicate)
+ufbx_node* search(ufbx_node* node, const std::wstring& filter, const std::function< bool(ufbx_node* node) >& predicate)
 {
 	if (!include(node, filter))
 		return nullptr;
@@ -82,7 +84,7 @@ ufbx_node* search(ufbx_node* node, const std::wstring& filter, const std::functi
 	return nullptr;
 }
 
-bool traverse(ufbx_node* node, const std::wstring& filter, const std::function< bool (ufbx_node* node, int32_t) >& visitor, int32_t depth = 0)
+bool traverse(ufbx_node* node, const std::wstring& filter, const std::function< bool(ufbx_node* node, int32_t) >& visitor, int32_t depth = 0)
 {
 	if (!include(node, filter))
 		return true;
@@ -103,7 +105,7 @@ bool traverse(ufbx_node* node, const std::wstring& filter, const std::function< 
 	return true;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatFbx", 0, ModelFormatFbx, ModelFormat)
 
@@ -130,8 +132,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 	traverse(scene->root_node, L"", [](ufbx_node* node, int32_t depth) {
 		for (int32_t i = 0; i < depth; ++i)
 			log::info << L" ";
-		log::info << mbstows(node->name.data) << L" " << (node->bind_pose != nullptr ? L"Y" : L"N"
-		) << Endl;
+		log::info << mbstows(node->name.data) << L" " << (node->bind_pose != nullptr ? L"Y" : L"N") << Endl;
 		return true;
 	});
 #endif
