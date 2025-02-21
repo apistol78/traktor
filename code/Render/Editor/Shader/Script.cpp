@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
+#include "Render/Editor/Shader/Script.h"
+
 #include "Core/Meta/Traits.h"
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributePrivate.h"
@@ -19,13 +20,14 @@
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Render/Editor/InputPin.h"
-#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderModule.h"
+
+#include <algorithm>
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 class MemberInputPin : public MemberComplex
 {
@@ -33,9 +35,9 @@ public:
 	typedef InputPin value_type;
 
 	MemberInputPin(const wchar_t* const name, Node* node, value_type& pin)
-	:	MemberComplex(name, true)
-	,	m_node(node)
-	,	m_pin(pin)
+		: MemberComplex(name, true)
+		, m_node(node)
+		, m_pin(pin)
 	{
 	}
 
@@ -51,7 +53,7 @@ public:
 
 			s >> Member< std::wstring >(L"name", name);
 		}
-		else	// Direction::Read
+		else // Direction::Read
 		{
 			Guid id;
 			std::wstring name = L"";
@@ -66,8 +68,7 @@ public:
 				ParameterType type;
 				std::wstring samplerId = L"";
 
-				const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
-				{
+				const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] = {
 					{ L"PtScalar", ParameterType::Scalar },
 					{ L"PtVector", ParameterType::Vector },
 					{ L"PtMatrix", ParameterType::Matrix },
@@ -89,8 +90,7 @@ public:
 				m_node,
 				id,
 				name,
-				false
-			);
+				false);
 		}
 	}
 
@@ -110,16 +110,15 @@ public:
 	typedef TypedOutputPin value_type;
 
 	MemberTypedOutputPin(const wchar_t* const name, Node* node, value_type& pin)
-	:	MemberComplex(name, true)
-	,	m_node(node)
-	,	m_pin(pin)
+		: MemberComplex(name, true)
+		, m_node(node)
+		, m_pin(pin)
 	{
 	}
 
 	virtual void serialize(ISerializer& s) const override final
 	{
-		const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
-		{
+		const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] = {
 			{ L"Scalar", ParameterType::Scalar },
 			{ L"Vector", ParameterType::Vector },
 			{ L"Matrix", ParameterType::Matrix },
@@ -143,7 +142,7 @@ public:
 			s >> Member< std::wstring >(L"name", name);
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
 		}
-		else	// Direction::Read
+		else // Direction::Read
 		{
 			Guid id;
 			std::wstring name;
@@ -157,8 +156,7 @@ public:
 				m_node,
 				id,
 				name,
-				type
-			);
+				type);
 		}
 	}
 
@@ -179,11 +177,11 @@ public:
 	typedef typename PinMember::value_type pin_type;
 	typedef StaticVector< pin_type, 64 > value_type;
 
-	MemberPinArray(const wchar_t* const name, Node* node, value_type& pins)
-	:	MemberArray(name, nullptr)
-	,	m_node(node)
-	,	m_pins(pins)
-	,	m_index(0)
+	explicit MemberPinArray(const wchar_t* const name, Node* node, value_type& pins)
+		: MemberArray(name, nullptr)
+		, m_node(node)
+		, m_pins(pins)
+		, m_index(0)
 	{
 	}
 
@@ -197,17 +195,21 @@ public:
 		return m_pins.size();
 	}
 
-	virtual void read(ISerializer& s) const override final
+	virtual void read(ISerializer& s, size_t count) const override final
 	{
-		if (m_index >= m_pins.size())
-			m_pins.push_back(PinMember::createNew(m_node));
-		s >> PinMember(L"item", m_node, m_pins[m_index++]);
+		for (size_t i = 0; i < count; ++i)
+		{
+			if (m_index >= m_pins.size())
+				m_pins.push_back(PinMember::createNew(m_node));
+			s >> PinMember(L"item", m_node, m_pins[m_index++]);
+		}
 	}
 
-	virtual void write(ISerializer& s) const override final
+	virtual void write(ISerializer& s, size_t count) const override final
 	{
-		if (s.ensure(m_index < m_pins.size()))
-			s >> PinMember(L"item", m_node, m_pins[m_index++]);
+		for (size_t i = 0; i < count; ++i)
+			if (s.ensure(m_index < m_pins.size()))
+				s >> PinMember(L"item", m_node, m_pins[m_index++]);
 	}
 
 	virtual bool insert() const override final
@@ -222,7 +224,7 @@ private:
 	mutable size_t m_index;
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 8, Script, Node)
 
@@ -372,8 +374,7 @@ void Script::serialize(ISerializer& s)
 
 	if (s.getVersion< Script >() >= 7)
 	{
-		const MemberEnum< Domain >::Key c_Domain_Keys[] =
-		{
+		const MemberEnum< Domain >::Key c_Domain_Keys[] = {
 			{ L"Undefined", Domain::Undefined },
 			{ L"Vertex", Domain::Vertex },
 			{ L"Pixel", Domain::Pixel },

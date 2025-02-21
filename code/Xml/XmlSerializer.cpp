@@ -345,10 +345,7 @@ void XmlSerializer::operator>>(const MemberArray& m)
 		m_xml << m_indent << L"<" << m.getName() << L">" << Endl;
 
 		enterElement(m.getName());
-
-		for (size_t i = 0, size = m.size(); i < size; ++i)
-			m.write(*this);
-
+		m.write(*this, m.size());
 		leaveElement();
 
 		m_xml << m_indent << L"</" << m.getName() << L">" << Endl;

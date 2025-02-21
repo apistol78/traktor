@@ -23,16 +23,16 @@ public:
 	typedef SmallSet< ValueType > value_type;
 
 	explicit MemberSmallSet(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name, nullptr)
-	,	m_ref(ref)
-	,	m_iter(m_ref.begin())
+		: MemberArray(name, nullptr)
+		, m_ref(ref)
+		, m_iter(m_ref.begin())
 	{
 	}
 
 	explicit MemberSmallSet(const wchar_t* const name, value_type& ref, const Attribute& attributes)
-	:	MemberArray(name, &attributes)
-	,	m_ref(ref)
-	,	m_iter(m_ref.begin())
+		: MemberArray(name, &attributes)
+		, m_ref(ref)
+		, m_iter(m_ref.begin())
 	{
 	}
 
@@ -46,17 +46,23 @@ public:
 		return m_ref.size();
 	}
 
-	virtual void read(ISerializer& s) const override final
+	virtual void read(ISerializer& s, size_t count) const override final
 	{
 		ValueType item;
-		s >> ValueMember(L"item", item);
-		m_ref.insert(item);
+		for (size_t i = 0; i < count; ++i)
+		{
+			s >> ValueMember(L"item", item);
+			m_ref.insert(item);
+		}
 	}
 
-	virtual void write(ISerializer& s) const override final
+	virtual void write(ISerializer& s, size_t count) const override final
 	{
-		ValueType v = *m_iter++;
-		s >> ValueMember(L"item", v);
+		for (size_t i = 0; i < count; ++i)
+		{
+			ValueType v = *m_iter++;
+			s >> ValueMember(L"item", v);
+		}
 	}
 
 	virtual bool insert() const override final
@@ -71,4 +77,3 @@ private:
 };
 
 }
-

@@ -27,16 +27,16 @@ public:
 	typedef AlignedVector< ValueType > value_type;
 
 	explicit MemberAlignedVector(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name, nullptr)
-	,	m_ref(ref)
-	,	m_index(0)
+		: MemberArray(name, nullptr)
+		, m_ref(ref)
+		, m_index(0)
 	{
 	}
 
 	explicit MemberAlignedVector(const wchar_t* const name, value_type& ref, const Attribute& attributes)
-	:	MemberArray(name, &attributes)
-	,	m_ref(ref)
-	,	m_index(0)
+		: MemberArray(name, &attributes)
+		, m_ref(ref)
+		, m_index(0)
 	{
 	}
 
@@ -51,21 +51,23 @@ public:
 		return m_ref.size();
 	}
 
-	virtual void read(ISerializer& s) const override final
+	virtual void read(ISerializer& s, size_t count) const override final
 	{
-		if (m_index < m_ref.size())
-			s >> ValueMember(L"item", m_ref[m_index]);
-		else
+		for (size_t i = 0; i < count; ++i)
 		{
-			ValueType& item = m_ref.push_back();
-			s >> ValueMember(L"item", item);
+			if (m_index < m_ref.size())
+				s >> ValueMember(L"item", m_ref[m_index]);
+			else
+				s >> ValueMember(L"item", m_ref.push_back());
+
+			++m_index;
 		}
-		++m_index;
 	}
 
-	virtual void write(ISerializer& s) const override final
+	virtual void write(ISerializer& s, size_t count) const override final
 	{
-		s >> ValueMember(L"item", m_ref[m_index++]);
+		for (size_t i = 0; i < count; ++i)
+			s >> ValueMember(L"item", m_ref[m_index++]);
 	}
 
 	virtual bool insert() const override final
@@ -82,4 +84,3 @@ private:
 //@}
 
 }
-

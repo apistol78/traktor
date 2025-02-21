@@ -21,18 +21,18 @@ class MemberStaticArray : public MemberArray
 {
 public:
 	explicit MemberStaticArray(const wchar_t* const name, ValueType* arr, const wchar_t** elementNames = nullptr)
-	:	MemberArray(name, nullptr)
-	,	m_arr(arr)
-	,	m_elementNames(elementNames)
-	,	m_index(0)
+		: MemberArray(name, nullptr)
+		, m_arr(arr)
+		, m_elementNames(elementNames)
+		, m_index(0)
 	{
 	}
 
 	explicit MemberStaticArray(const wchar_t* const name, ValueType* arr, const Attribute& attributes, const wchar_t** elementNames = nullptr)
-	:	MemberArray(name, &attributes)
-	,	m_arr(arr)
-	,	m_elementNames(elementNames)
-	,	m_index(0)
+		: MemberArray(name, &attributes)
+		, m_arr(arr)
+		, m_elementNames(elementNames)
+		, m_index(0)
 	{
 	}
 
@@ -45,22 +45,26 @@ public:
 		return ArraySize;
 	}
 
-	virtual void read(ISerializer& s) const override final
+	virtual void read(ISerializer& s, size_t count) const override final
 	{
-		s >> ValueMember(
-			m_elementNames ? m_elementNames[m_index] : L"item",
-			m_arr[m_index]
-		);
-		++m_index;
+		for (size_t i = 0; i < count; ++i)
+		{
+			s >> ValueMember(
+					 m_elementNames ? m_elementNames[m_index] : L"item",
+					 m_arr[m_index]);
+			++m_index;
+		}
 	}
 
-	virtual void write(ISerializer& s) const override final
+	virtual void write(ISerializer& s, size_t count) const override final
 	{
-		s >> ValueMember(
-			m_elementNames ? m_elementNames[m_index] : L"item",
-			m_arr[m_index]
-		);
-		++m_index;
+		for (size_t i = 0; i < count; ++i)
+		{
+			s >> ValueMember(
+					 m_elementNames ? m_elementNames[m_index] : L"item",
+					 m_arr[m_index]);
+			++m_index;
+		}
 	}
 
 	virtual bool insert() const override final
@@ -75,4 +79,3 @@ private:
 };
 
 }
-

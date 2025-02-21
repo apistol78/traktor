@@ -6,34 +6,36 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
-#include <cstdlib>
-#include <cstring>
-#include <limits>
-#include <sstream>
+#include "Core/Serialization/BinarySerializer.h"
+
 #include "Core/Guid.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Path.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
-#include "Core/Math/Color4ub.h"
 #include "Core/Math/Color4f.h"
+#include "Core/Math/Color4ub.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/TString.h"
-#include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberEnum.h"
 
+#include <algorithm>
+#include <cstdlib>
+#include <cstring>
+#include <limits>
+#include <sstream>
+
 namespace traktor
 {
-	namespace
-	{
+namespace
+{
 
 #if defined(T_LITTLE_ENDIAN)
 
@@ -89,7 +91,7 @@ struct ReadPrimitive
 };
 
 template < typename T >
-struct ReadPrimitive < T, 1 >
+struct ReadPrimitive< T, 1 >
 {
 	static bool read(IStream* stream, T& t)
 	{
@@ -125,10 +127,8 @@ template < typename T >
 bool read_primitives(const Ref< IStream >& stream, T* value, int count)
 {
 	for (int i = 0; i < count; ++i)
-	{
 		if (!read_primitive< T >(stream, value[i]))
 			return false;
-	}
 	return true;
 }
 
@@ -136,10 +136,8 @@ template < typename T >
 bool write_primitives(const Ref< IStream >& stream, const T* value, int count)
 {
 	for (int i = 0; i < count; ++i)
-	{
 		if (!write_primitive< T >(stream, value[i]))
 			return false;
-	}
 	return true;
 }
 
@@ -184,7 +182,7 @@ bool write_block(const Ref< IStream >& stream, const void* block, int count, int
 
 #endif
 
-template < >
+template <>
 bool read_primitive(const Ref< IStream >& stream, bool& value)
 {
 	uint8_t tmp;
@@ -195,7 +193,7 @@ bool read_primitive(const Ref< IStream >& stream, bool& value)
 	return true;
 }
 
-template < >
+template <>
 bool write_primitive(const Ref< IStream >& stream, bool v)
 {
 	uint8_t tmp = v ? 0xff : 0x00;
@@ -211,7 +209,7 @@ bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::wstring& out
 		outString.clear();
 		outString.reserve(u8len);
 
-		AutoArrayPtr< uint8_t > buf(new uint8_t [u8len * sizeof(uint8_t)]);
+		AutoArrayPtr< uint8_t > buf(new uint8_t[u8len * sizeof(uint8_t)]);
 		if (!buf.ptr())
 			return false;
 
@@ -220,7 +218,7 @@ bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::wstring& out
 			return false;
 
 		const Utf8Encoding utf8enc;
-		for (uint32_t i = 0; i < u8len; )
+		for (uint32_t i = 0; i < u8len;)
 		{
 			wchar_t ch;
 			int n = utf8enc.translate(u8str + i, u8len - i, ch);
@@ -238,7 +236,7 @@ bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::wstring& out
 
 bool read_string(const Ref< IStream >& stream, std::wstring& outString)
 {
-    uint32_t u8len = 0;
+	uint32_t u8len = 0;
 
 	if (!read_primitive< uint32_t >(stream, u8len))
 		return false;
@@ -264,7 +262,7 @@ bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 
 		const Utf8Encoding utf8enc;
 		u8len = utf8enc.translate(str.c_str(), length, u8str);
-		T_FATAL_ASSERT (u8len <= length * 6);
+		T_FATAL_ASSERT(u8len <= length * 6);
 
 		if (!write_primitive< uint32_t >(stream, u8len))
 			return false;
@@ -326,7 +324,7 @@ bool write_string(const Ref< IStream >& stream, const std::string& str)
 	}
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.BinarySerializer", BinarySerializer, Serializer);
 
@@ -334,13 +332,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.BinarySerializer", BinarySerializer, Serializer
 /*lint -e514*/
 
 #define T_CHECK_STATUS \
-	if (failed()) return;
+	if (failed()) \
+		return;
 
 BinarySerializer::BinarySerializer(IStream* stream)
-:	m_stream(stream)
-,	m_direction(m_stream->canRead() ? Direction::Read : Direction::Write)
-,	m_nextCacheId(1)
-,	m_nextTypeCacheId(0)
+	: m_stream(stream)
+	, m_direction(m_stream->canRead() ? Direction::Read : Direction::Write)
+	, m_nextCacheId(1)
+	, m_nextTypeCacheId(0)
 {
 }
 
@@ -349,7 +348,7 @@ Serializer::Direction BinarySerializer::getDirection() const
 	return m_direction;
 }
 
-void BinarySerializer::operator >> (const Member< bool >& m)
+void BinarySerializer::operator>>(const Member< bool >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -358,7 +357,7 @@ void BinarySerializer::operator >> (const Member< bool >& m)
 		write_primitive< bool >(m_stream, m);
 }
 
-void BinarySerializer::operator >> (const Member< int8_t >& m)
+void BinarySerializer::operator>>(const Member< int8_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -367,7 +366,7 @@ void BinarySerializer::operator >> (const Member< int8_t >& m)
 		write_primitive< int8_t >(m_stream, m);
 }
 
-void BinarySerializer::operator >> (const Member< uint8_t >& m)
+void BinarySerializer::operator>>(const Member< uint8_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -376,7 +375,7 @@ void BinarySerializer::operator >> (const Member< uint8_t >& m)
 		write_primitive< uint8_t >(m_stream, m);
 }
 
-void BinarySerializer::operator >> (const Member< int16_t >& m)
+void BinarySerializer::operator>>(const Member< int16_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -385,7 +384,7 @@ void BinarySerializer::operator >> (const Member< int16_t >& m)
 		write_primitive< int16_t >(m_stream, m);
 }
 
-void BinarySerializer::operator >> (const Member< uint16_t >& m)
+void BinarySerializer::operator>>(const Member< uint16_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -394,7 +393,7 @@ void BinarySerializer::operator >> (const Member< uint16_t >& m)
 		write_primitive< uint16_t >(m_stream, m);
 }
 
-void BinarySerializer::operator >> (const Member< int32_t >& m)
+void BinarySerializer::operator>>(const Member< int32_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -403,7 +402,7 @@ void BinarySerializer::operator >> (const Member< int32_t >& m)
 		write_primitive< int32_t >(m_stream, m);
 }
 
-void BinarySerializer::operator >> (const Member< uint32_t >& m)
+void BinarySerializer::operator>>(const Member< uint32_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -412,7 +411,7 @@ void BinarySerializer::operator >> (const Member< uint32_t >& m)
 		write_primitive< uint32_t >(m_stream, m);
 }
 
-void BinarySerializer::operator >> (const Member< int64_t >& m)
+void BinarySerializer::operator>>(const Member< int64_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -421,7 +420,7 @@ void BinarySerializer::operator >> (const Member< int64_t >& m)
 		write_primitive< int64_t >(m_stream, m);
 }
 
-void BinarySerializer::operator >> (const Member< uint64_t >& m)
+void BinarySerializer::operator>>(const Member< uint64_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -430,7 +429,7 @@ void BinarySerializer::operator >> (const Member< uint64_t >& m)
 		write_primitive< uint64_t >(m_stream, m);
 }
 
-void BinarySerializer::operator >> (const Member< float >& m)
+void BinarySerializer::operator>>(const Member< float >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -439,7 +438,7 @@ void BinarySerializer::operator >> (const Member< float >& m)
 		write_primitive< float >(m_stream, m);
 }
 
-void BinarySerializer::operator >> (const Member< double >& m)
+void BinarySerializer::operator>>(const Member< double >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -448,7 +447,7 @@ void BinarySerializer::operator >> (const Member< double >& m)
 		write_primitive< double >(m_stream, m);
 }
 
-void BinarySerializer::operator >> (const Member< std::string >& m)
+void BinarySerializer::operator>>(const Member< std::string >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -457,7 +456,7 @@ void BinarySerializer::operator >> (const Member< std::string >& m)
 		write_string(m_stream, m);
 }
 
-void BinarySerializer::operator >> (const Member< std::wstring >& m)
+void BinarySerializer::operator>>(const Member< std::wstring >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -466,7 +465,7 @@ void BinarySerializer::operator >> (const Member< std::wstring >& m)
 		write_string(m_stream, m);
 }
 
-void BinarySerializer::operator >> (const Member< Guid >& m)
+void BinarySerializer::operator>>(const Member< Guid >& m)
 {
 	T_CHECK_STATUS;
 
@@ -498,7 +497,7 @@ void BinarySerializer::operator >> (const Member< Guid >& m)
 	}
 }
 
-void BinarySerializer::operator >> (const Member< Path >& m)
+void BinarySerializer::operator>>(const Member< Path >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -514,7 +513,7 @@ void BinarySerializer::operator >> (const Member< Path >& m)
 	}
 }
 
-void BinarySerializer::operator >> (const Member< Color4ub >& m)
+void BinarySerializer::operator>>(const Member< Color4ub >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -533,7 +532,7 @@ void BinarySerializer::operator >> (const Member< Color4ub >& m)
 	}
 }
 
-void BinarySerializer::operator >> (const Member< Color4f >& m)
+void BinarySerializer::operator>>(const Member< Color4f >& m)
 {
 	T_CHECK_STATUS;
 
@@ -550,7 +549,7 @@ void BinarySerializer::operator >> (const Member< Color4f >& m)
 	}
 }
 
-void BinarySerializer::operator >> (const Member< Scalar >& m)
+void BinarySerializer::operator>>(const Member< Scalar >& m)
 {
 	T_CHECK_STATUS;
 
@@ -565,7 +564,7 @@ void BinarySerializer::operator >> (const Member< Scalar >& m)
 		write_primitive< float >(m_stream, float(v));
 }
 
-void BinarySerializer::operator >> (const Member< Vector2 >& m)
+void BinarySerializer::operator>>(const Member< Vector2 >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -580,7 +579,7 @@ void BinarySerializer::operator >> (const Member< Vector2 >& m)
 	}
 }
 
-void BinarySerializer::operator >> (const Member< Vector4 >& m)
+void BinarySerializer::operator>>(const Member< Vector4 >& m)
 {
 	T_CHECK_STATUS;
 
@@ -597,7 +596,7 @@ void BinarySerializer::operator >> (const Member< Vector4 >& m)
 	}
 }
 
-void BinarySerializer::operator >> (const Member< Matrix33 >& m)
+void BinarySerializer::operator>>(const Member< Matrix33 >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -606,7 +605,7 @@ void BinarySerializer::operator >> (const Member< Matrix33 >& m)
 		write_primitives< float >(m_stream, m->m, 3 * 3);
 }
 
-void BinarySerializer::operator >> (const Member< Matrix44 >& m)
+void BinarySerializer::operator>>(const Member< Matrix44 >& m)
 {
 	T_CHECK_STATUS;
 
@@ -623,7 +622,7 @@ void BinarySerializer::operator >> (const Member< Matrix44 >& m)
 	}
 }
 
-void BinarySerializer::operator >> (const Member< Quaternion >& m)
+void BinarySerializer::operator>>(const Member< Quaternion >& m)
 {
 	T_CHECK_STATUS;
 
@@ -640,7 +639,7 @@ void BinarySerializer::operator >> (const Member< Quaternion >& m)
 	}
 }
 
-void BinarySerializer::operator >> (const Member< ISerializable* >& m)
+void BinarySerializer::operator>>(const Member< ISerializable* >& m)
 {
 	T_CHECK_STATUS;
 
@@ -817,10 +816,8 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 
 				uint16_t baseVersionCount = 0;
 				for (const TypeInfo* ti = type.getSuper(); ti != 0; ti = ti->getSuper())
-				{
 					if (ti->getVersion() > 0)
 						++baseVersionCount;
-				}
 
 				if (!write_primitive< uint16_t >(m_stream, baseVersionCount))
 					return;
@@ -857,7 +854,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 	}
 }
 
-void BinarySerializer::operator >> (const Member< void* >& m)
+void BinarySerializer::operator>>(const Member< void* >& m)
 {
 	T_CHECK_STATUS;
 
@@ -886,46 +883,37 @@ void BinarySerializer::operator >> (const Member< void* >& m)
 	}
 }
 
-void BinarySerializer::operator >> (const MemberArray& m)
+void BinarySerializer::operator>>(const MemberArray& m)
 {
 	T_CHECK_STATUS;
 
 	if (m_direction == Direction::Read)
 	{
 		uint32_t size;
-
 		if (!ensure(read_primitive< uint32_t >(m_stream, size)))
 			return;
 
 		m.reserve(size, size);
-		for (uint32_t i = 0; i < size; ++i)
-		{
-			T_CHECK_STATUS;
-			m.read(*this);
-		}
+		m.read(*this, size);
 	}
 	else
 	{
-		uint32_t size = uint32_t(m.size());
-
+		const uint32_t size = uint32_t(m.size());
 		if (!ensure(write_primitive< uint32_t >(m_stream, size)))
 			return;
 
-		for (uint32_t i = 0; i < size; ++i)
-		{
-			T_CHECK_STATUS;
-			m.write(*this);
-		}
+		T_CHECK_STATUS;
+		m.write(*this, size);
 	}
 }
 
-void BinarySerializer::operator >> (const MemberComplex& m)
+void BinarySerializer::operator>>(const MemberComplex& m)
 {
 	T_CHECK_STATUS;
 	m.serialize(*this);
 }
 
-void BinarySerializer::operator >> (const MemberEnumBase& m)
+void BinarySerializer::operator>>(const MemberEnumBase& m)
 {
 	T_CHECK_STATUS;
 	m.serialize(*this);

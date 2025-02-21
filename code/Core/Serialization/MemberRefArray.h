@@ -26,19 +26,19 @@ public:
 	typedef RefArray< Class > value_type;
 
 	explicit MemberRefArray(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name, nullptr)
-	,	m_attribute(type_of< Class >())
-	,	m_ref(ref)
-	,	m_index(0)
+		: MemberArray(name, nullptr)
+		, m_attribute(type_of< Class >())
+		, m_ref(ref)
+		, m_index(0)
 	{
 		setAttributes(&m_attribute);
 	}
 
 	explicit MemberRefArray(const wchar_t* const name, value_type& ref, const Attribute& attributes)
-	:	MemberArray(name, nullptr)
-	,	m_attribute(type_of< Class >())
-	,	m_ref(ref)
-	,	m_index(0)
+		: MemberArray(name, nullptr)
+		, m_attribute(type_of< Class >())
+		, m_ref(ref)
+		, m_index(0)
 	{
 		setAttributes(&(m_attribute | attributes));
 	}
@@ -54,15 +54,17 @@ public:
 		return m_ref.size();
 	}
 
-	virtual void read(ISerializer& s) const override final
+	virtual void read(ISerializer& s, size_t count) const override final
 	{
-		m_ref.resize(m_index + 1);
-		s >> MemberInplaceRef< Class >(L"item", m_ref[m_index++]);
+		m_ref.resize(m_index + count);
+		for (size_t i = 0; i < count; ++i)
+			s >> MemberInplaceRef< Class >(L"item", m_ref[m_index++]);
 	}
 
-	virtual void write(ISerializer& s) const override final
+	virtual void write(ISerializer& s, size_t count) const override final
 	{
-		s >> MemberInplaceRef< Class >(L"item", m_ref[m_index++]);
+		for (size_t i = 0; i < count; ++i)
+			s >> MemberInplaceRef< Class >(L"item", m_ref[m_index++]);
 	}
 
 	virtual bool insert() const override final
@@ -77,4 +79,3 @@ private:
 };
 
 }
-

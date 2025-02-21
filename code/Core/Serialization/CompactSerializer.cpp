@@ -6,12 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Serialization/CompactSerializer.h"
+
 #include "Core/Guid.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Path.h"
 #include "Core/Io/Utf8Encoding.h"
-#include "Core/Math/Color4ub.h"
 #include "Core/Math/Color4f.h"
+#include "Core/Math/Color4ub.h"
 #include "Core/Math/Half.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Matrix44.h"
@@ -21,7 +23,6 @@
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributePrecision.h"
 #include "Core/Serialization/AttributeRange.h"
-#include "Core/Serialization/CompactSerializer.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberEnum.h"
@@ -29,8 +30,8 @@
 
 namespace traktor
 {
-	namespace
-	{
+namespace
+{
 
 bool read_bool(BitReader& r, bool& value)
 {
@@ -278,13 +279,11 @@ bool read_string(BitReader& r, std::wstring& outString)
 		wchar_t* wptr = wstr;
 
 		for (uint16_t i = 0; i < u8len; ++i)
-		{
 			if (!read_uint8(r, u8str[i]))
 				return false;
-		}
 
 		Utf8Encoding utf8enc;
-		for (uint16_t i = 0; i < u8len; )
+		for (uint16_t i = 0; i < u8len;)
 		{
 			int n = utf8enc.translate(u8str + i, u8len - i, *wptr++);
 			if (n <= 0)
@@ -317,10 +316,8 @@ bool write_string(BitWriter& w, const std::wstring& str)
 			return false;
 
 		for (uint16_t i = 0; i < u8len; ++i)
-		{
 			if (!write_uint8(w, u8str[i]))
 				return false;
-		}
 
 		return true;
 	}
@@ -356,19 +353,20 @@ const AttributeType* findAttribute(const MemberType& m)
 	return attributes ? attributes->find< AttributeType >() : 0;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.CompactSerializer", CompactSerializer, Serializer);
 
 #define T_CHECK_STATUS \
-	if (failed()) return;
+	if (failed()) \
+		return;
 
 CompactSerializer::CompactSerializer(IStream* stream, const TypeInfo** types, uint32_t ntypes)
-:	m_types(types)
-,	m_ntypes(ntypes)
-,	m_direction(stream->canRead() ? Direction::Read : Direction::Write)
-,	m_reader(stream)
-,	m_writer(stream)
+	: m_types(types)
+	, m_ntypes(ntypes)
+	, m_direction(stream->canRead() ? Direction::Read : Direction::Write)
+	, m_reader(stream)
+	, m_writer(stream)
 {
 }
 
@@ -383,7 +381,7 @@ Serializer::Direction CompactSerializer::getDirection() const
 	return m_direction;
 }
 
-void CompactSerializer::operator >> (const Member< bool >& m)
+void CompactSerializer::operator>>(const Member< bool >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -392,7 +390,7 @@ void CompactSerializer::operator >> (const Member< bool >& m)
 		write_bool(m_writer, m);
 }
 
-void CompactSerializer::operator >> (const Member< int8_t >& m)
+void CompactSerializer::operator>>(const Member< int8_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -401,7 +399,7 @@ void CompactSerializer::operator >> (const Member< int8_t >& m)
 		write_int8(m_writer, m);
 }
 
-void CompactSerializer::operator >> (const Member< uint8_t >& m)
+void CompactSerializer::operator>>(const Member< uint8_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -410,7 +408,7 @@ void CompactSerializer::operator >> (const Member< uint8_t >& m)
 		write_uint8(m_writer, m);
 }
 
-void CompactSerializer::operator >> (const Member< int16_t >& m)
+void CompactSerializer::operator>>(const Member< int16_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -419,7 +417,7 @@ void CompactSerializer::operator >> (const Member< int16_t >& m)
 		write_int16(m_writer, m);
 }
 
-void CompactSerializer::operator >> (const Member< uint16_t >& m)
+void CompactSerializer::operator>>(const Member< uint16_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -428,7 +426,7 @@ void CompactSerializer::operator >> (const Member< uint16_t >& m)
 		write_uint16(m_writer, m);
 }
 
-void CompactSerializer::operator >> (const Member< int32_t >& m)
+void CompactSerializer::operator>>(const Member< int32_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -437,7 +435,7 @@ void CompactSerializer::operator >> (const Member< int32_t >& m)
 		write_int32(m_writer, m);
 }
 
-void CompactSerializer::operator >> (const Member< uint32_t >& m)
+void CompactSerializer::operator>>(const Member< uint32_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -446,7 +444,7 @@ void CompactSerializer::operator >> (const Member< uint32_t >& m)
 		write_uint32(m_writer, m);
 }
 
-void CompactSerializer::operator >> (const Member< int64_t >& m)
+void CompactSerializer::operator>>(const Member< int64_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -455,7 +453,7 @@ void CompactSerializer::operator >> (const Member< int64_t >& m)
 		write_int64(m_writer, m);
 }
 
-void CompactSerializer::operator >> (const Member< uint64_t >& m)
+void CompactSerializer::operator>>(const Member< uint64_t >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -464,7 +462,7 @@ void CompactSerializer::operator >> (const Member< uint64_t >& m)
 		write_uint64(m_writer, m);
 }
 
-void CompactSerializer::operator >> (const Member< float >& m)
+void CompactSerializer::operator>>(const Member< float >& m)
 {
 	T_CHECK_STATUS;
 
@@ -495,7 +493,7 @@ void CompactSerializer::operator >> (const Member< float >& m)
 	}
 }
 
-void CompactSerializer::operator >> (const Member< double >& m)
+void CompactSerializer::operator>>(const Member< double >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -504,7 +502,7 @@ void CompactSerializer::operator >> (const Member< double >& m)
 		write_double(m_writer, m);
 }
 
-void CompactSerializer::operator >> (const Member< std::string >& m)
+void CompactSerializer::operator>>(const Member< std::string >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -513,7 +511,7 @@ void CompactSerializer::operator >> (const Member< std::string >& m)
 		write_string(m_writer, m);
 }
 
-void CompactSerializer::operator >> (const Member< std::wstring >& m)
+void CompactSerializer::operator>>(const Member< std::wstring >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -522,7 +520,7 @@ void CompactSerializer::operator >> (const Member< std::wstring >& m)
 		write_string(m_writer, m);
 }
 
-void CompactSerializer::operator >> (const Member< Guid >& m)
+void CompactSerializer::operator>>(const Member< Guid >& m)
 {
 	T_CHECK_STATUS;
 
@@ -558,7 +556,7 @@ void CompactSerializer::operator >> (const Member< Guid >& m)
 	}
 }
 
-void CompactSerializer::operator >> (const Member< Path >& m)
+void CompactSerializer::operator>>(const Member< Path >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -574,7 +572,7 @@ void CompactSerializer::operator >> (const Member< Path >& m)
 	}
 }
 
-void CompactSerializer::operator >> (const Member< Color4ub >& m)
+void CompactSerializer::operator>>(const Member< Color4ub >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -593,7 +591,7 @@ void CompactSerializer::operator >> (const Member< Color4ub >& m)
 	}
 }
 
-void CompactSerializer::operator >> (const Member< Color4f >& m)
+void CompactSerializer::operator>>(const Member< Color4f >& m)
 {
 	T_CHECK_STATUS;
 
@@ -612,7 +610,7 @@ void CompactSerializer::operator >> (const Member< Color4f >& m)
 	}
 }
 
-void CompactSerializer::operator >> (const Member< Scalar >& m)
+void CompactSerializer::operator>>(const Member< Scalar >& m)
 {
 	T_CHECK_STATUS;
 
@@ -627,7 +625,7 @@ void CompactSerializer::operator >> (const Member< Scalar >& m)
 		write_float(m_writer, float(v));
 }
 
-void CompactSerializer::operator >> (const Member< Vector2 >& m)
+void CompactSerializer::operator>>(const Member< Vector2 >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
@@ -642,7 +640,7 @@ void CompactSerializer::operator >> (const Member< Vector2 >& m)
 	}
 }
 
-void CompactSerializer::operator >> (const Member< Vector4 >& m)
+void CompactSerializer::operator>>(const Member< Vector4 >& m)
 {
 	T_CHECK_STATUS;
 
@@ -721,22 +719,18 @@ void CompactSerializer::operator >> (const Member< Vector4 >& m)
 	}
 }
 
-void CompactSerializer::operator >> (const Member< Matrix33 >& m)
+void CompactSerializer::operator>>(const Member< Matrix33 >& m)
 {
 	T_CHECK_STATUS;
 	if (m_direction == Direction::Read)
-	{
 		for (uint32_t i = 0; i < 3 * 3; ++i)
 			read_float(m_reader, m->m[i]);
-	}
 	else
-	{
 		for (uint32_t i = 0; i < 3 * 3; ++i)
 			write_float(m_writer, m->m[i]);
-	}
 }
 
-void CompactSerializer::operator >> (const Member< Matrix44 >& m)
+void CompactSerializer::operator>>(const Member< Matrix44 >& m)
 {
 	T_CHECK_STATUS;
 
@@ -755,7 +749,7 @@ void CompactSerializer::operator >> (const Member< Matrix44 >& m)
 	}
 }
 
-void CompactSerializer::operator >> (const Member< Quaternion >& m)
+void CompactSerializer::operator>>(const Member< Quaternion >& m)
 {
 	T_CHECK_STATUS;
 
@@ -774,7 +768,7 @@ void CompactSerializer::operator >> (const Member< Quaternion >& m)
 	}
 }
 
-void CompactSerializer::operator >> (const Member< ISerializable* >& m)
+void CompactSerializer::operator>>(const Member< ISerializable* >& m)
 {
 	T_CHECK_STATUS;
 
@@ -786,8 +780,7 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 		// Index into type table.
 		if (
 			typeId != 0x00 &&
-			typeId != 0x1f
-		)
+			typeId != 0x1f)
 		{
 			if (uint32_t(typeId - 1) >= m_ntypes)
 				return;
@@ -854,7 +847,7 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 	}
 }
 
-void CompactSerializer::operator >> (const Member< void* >& m)
+void CompactSerializer::operator>>(const Member< void* >& m)
 {
 	T_CHECK_STATUS;
 
@@ -891,7 +884,7 @@ void CompactSerializer::operator >> (const Member< void* >& m)
 	}
 }
 
-void CompactSerializer::operator >> (const MemberArray& m)
+void CompactSerializer::operator>>(const MemberArray& m)
 {
 	T_CHECK_STATUS;
 
@@ -902,30 +895,28 @@ void CompactSerializer::operator >> (const MemberArray& m)
 			return;
 
 		m.reserve(size, size);
-		for (uint32_t i = 0; i < size; ++i)
-			m.read(*this);
+		m.read(*this, size);
 	}
 	else
 	{
-		uint32_t size = uint32_t(m.size());
+		const uint32_t size = uint32_t(m.size());
 		if (!ensure(write_uint32(m_writer, size)))
 			return;
 
-		for (uint32_t i = 0; i < size; ++i)
-			m.write(*this);
+		m.write(*this, size);
 	}
 }
 
-void CompactSerializer::operator >> (const MemberComplex& m)
+void CompactSerializer::operator>>(const MemberComplex& m)
 {
 	T_CHECK_STATUS;
 	m.serialize(*this);
 }
 
-void CompactSerializer::operator >> (const MemberEnumBase& m)
+void CompactSerializer::operator>>(const MemberEnumBase& m)
 {
 	T_CHECK_STATUS;
-	this->operator >> (*(MemberComplex*)(&m));
+	this->operator>>(*(MemberComplex*)(&m));
 }
 
 }

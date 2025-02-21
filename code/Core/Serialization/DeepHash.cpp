@@ -6,8 +6,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Guid.h"
+#include "Core/Serialization/DeepHash.h"
+
 #include "Core/Containers/SmallMap.h"
+#include "Core/Guid.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Path.h"
 #include "Core/Math/Color4f.h"
@@ -18,16 +20,15 @@
 #include "Core/Math/Vector2.h"
 #include "Core/Misc/Murmur3.h"
 #include "Core/Serialization/AttributeNoHash.h"
-#include "Core/Serialization/DeepHash.h"
-#include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberEnum.h"
+#include "Core/Serialization/Serializer.h"
 
 namespace traktor
 {
-	namespace
-	{
+namespace
+{
 
 template < typename AttributeType, typename MemberType >
 const AttributeType* findAttribute(const MemberType& m)
@@ -40,8 +41,8 @@ class HashSerializer : public Serializer
 {
 public:
 	HashSerializer(Murmur3& hasher)
-	:	m_hasher(hasher)
-	,	m_writtenCount(0)
+		: m_hasher(hasher)
+		, m_writtenCount(0)
 	{
 	}
 
@@ -50,73 +51,73 @@ public:
 		return Direction::Write;
 	}
 
-	virtual void operator >> (const Member< bool >& m) override final
+	virtual void operator>>(const Member< bool >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 			m_hasher.feed< uint8_t >(m ? 0xff : 0x00);
 	}
 
-	virtual void operator >> (const Member< int8_t >& m) override final
+	virtual void operator>>(const Member< int8_t >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 			m_hasher.feed< int8_t >(m);
 	}
 
-	virtual void operator >> (const Member< uint8_t >& m) override final
+	virtual void operator>>(const Member< uint8_t >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 			m_hasher.feed< uint8_t >(m);
 	}
 
-	virtual void operator >> (const Member< int16_t >& m) override final
+	virtual void operator>>(const Member< int16_t >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 			m_hasher.feed< int64_t >(m);
 	}
 
-	virtual void operator >> (const Member< uint16_t >& m) override final
+	virtual void operator>>(const Member< uint16_t >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 			m_hasher.feed< uint16_t >(m);
 	}
 
-	virtual void operator >> (const Member< int32_t >& m) override final
+	virtual void operator>>(const Member< int32_t >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 			m_hasher.feed< int32_t >(m);
 	}
 
-	virtual void operator >> (const Member< uint32_t >& m) override final
+	virtual void operator>>(const Member< uint32_t >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 			m_hasher.feed< uint32_t >(m);
 	}
 
-	virtual void operator >> (const Member< int64_t >& m) override final
+	virtual void operator>>(const Member< int64_t >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 			m_hasher.feed< int64_t >(m);
 	}
 
-	virtual void operator >> (const Member< uint64_t >& m) override final
+	virtual void operator>>(const Member< uint64_t >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 			m_hasher.feed< uint64_t >(m);
 	}
 
-	virtual void operator >> (const Member< float >& m) override final
+	virtual void operator>>(const Member< float >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 			m_hasher.feed< float >(m);
 	}
 
-	virtual void operator >> (const Member< double >& m) override final
+	virtual void operator>>(const Member< double >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 			m_hasher.feed< double >(m);
 	}
 
-	virtual void operator >> (const Member< std::string >& m) override final
+	virtual void operator>>(const Member< std::string >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
@@ -125,7 +126,7 @@ public:
 		}
 	}
 
-	virtual void operator >> (const Member< std::wstring >& m) override final
+	virtual void operator>>(const Member< std::wstring >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
@@ -134,7 +135,7 @@ public:
 		}
 	}
 
-	virtual void operator >> (const Member< Guid >& m) override final
+	virtual void operator>>(const Member< Guid >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
@@ -143,7 +144,7 @@ public:
 		}
 	}
 
-	virtual void operator >> (const Member< Path >& m) override final
+	virtual void operator>>(const Member< Path >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
@@ -152,7 +153,7 @@ public:
 		}
 	}
 
-	virtual void operator >> (const Member< Color4ub >& m) override final
+	virtual void operator>>(const Member< Color4ub >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
@@ -163,7 +164,7 @@ public:
 		}
 	}
 
-	virtual void operator >> (const Member< Color4f >& m) override final
+	virtual void operator>>(const Member< Color4f >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
@@ -173,7 +174,7 @@ public:
 		}
 	}
 
-	virtual void operator >> (const Member< Scalar >& m) override final
+	virtual void operator>>(const Member< Scalar >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
@@ -182,7 +183,7 @@ public:
 		}
 	}
 
-	virtual void operator >> (const Member< Vector2 >& m) override final
+	virtual void operator>>(const Member< Vector2 >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
@@ -191,7 +192,7 @@ public:
 		}
 	}
 
-	virtual void operator >> (const Member< Vector4 >& m) override final
+	virtual void operator>>(const Member< Vector4 >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
@@ -201,16 +202,14 @@ public:
 		}
 	}
 
-	virtual void operator >> (const Member< Matrix33 >& m) override final
+	virtual void operator>>(const Member< Matrix33 >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
-		{
 			for (int i = 0; i < 3 * 3; ++i)
 				m_hasher.feed< float >(m->m[i]);
-		}
 	}
 
-	virtual void operator >> (const Member< Matrix44 >& m) override final
+	virtual void operator>>(const Member< Matrix44 >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
@@ -220,7 +219,7 @@ public:
 		}
 	}
 
-	virtual void operator >> (const Member< Quaternion >& m) override final
+	virtual void operator>>(const Member< Quaternion >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
@@ -230,7 +229,7 @@ public:
 		}
 	}
 
-	virtual void operator >> (const Member< ISerializable* >& m) override final
+	virtual void operator>>(const Member< ISerializable* >& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
@@ -259,28 +258,27 @@ public:
 		}
 	}
 
-	virtual void operator >> (const Member< void* >& m) override final
+	virtual void operator>>(const Member< void* >& m) override final
 	{
 		m_hasher.feedBuffer(m.getBlob(), m.getBlobSize());
 	}
 
-	virtual void operator >> (const MemberArray& m) override final
+	virtual void operator>>(const MemberArray& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 		{
 			const size_t size = m.size();
-			for (size_t i = 0; i < size; ++i)
-				m.write(*this);
+			m.write(*this, size);
 		}
 	}
 
-	virtual void operator >> (const MemberComplex& m) override final
+	virtual void operator>>(const MemberComplex& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 			m.serialize(*this);
 	}
 
-	virtual void operator >> (const MemberEnumBase& m) override final
+	virtual void operator>>(const MemberEnumBase& m) override final
 	{
 		if (findAttribute< AttributeNoHash >(m) == nullptr)
 			m.serialize(*this);
@@ -292,12 +290,12 @@ private:
 	uint32_t m_writtenCount;
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.DeepHash", DeepHash, Object)
 
 DeepHash::DeepHash(const ISerializable* object)
-:	m_hash(0)
+	: m_hash(0)
 {
 	if (object)
 	{
@@ -314,44 +312,44 @@ uint32_t DeepHash::get() const
 	return m_hash;
 }
 
-bool DeepHash::operator == (const DeepHash& hash) const
+bool DeepHash::operator==(const DeepHash& hash) const
 {
 	return m_hash == hash.m_hash;
 }
 
-bool DeepHash::operator != (const DeepHash& hash) const
+bool DeepHash::operator!=(const DeepHash& hash) const
 {
 	return m_hash != hash.m_hash;
 }
 
-bool DeepHash::operator == (const DeepHash* hash) const
+bool DeepHash::operator==(const DeepHash* hash) const
 {
 	return m_hash == hash->m_hash;
 }
 
-bool DeepHash::operator != (const DeepHash* hash) const
+bool DeepHash::operator!=(const DeepHash* hash) const
 {
 	return m_hash != hash->m_hash;
 }
 
-bool DeepHash::operator == (const ISerializable* object) const
+bool DeepHash::operator==(const ISerializable* object) const
 {
 	DeepHash hash(object);
 	return m_hash == hash.m_hash;
 }
 
-bool DeepHash::operator != (const ISerializable* object) const
+bool DeepHash::operator!=(const ISerializable* object) const
 {
 	DeepHash hash(object);
 	return m_hash != hash.m_hash;
 }
 
-bool DeepHash::operator == (uint32_t hash) const
+bool DeepHash::operator==(uint32_t hash) const
 {
 	return m_hash == hash;
 }
 
-bool DeepHash::operator != (uint32_t hash) const
+bool DeepHash::operator!=(uint32_t hash) const
 {
 	return m_hash != hash;
 }

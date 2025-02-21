@@ -8,8 +8,9 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Config.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -61,10 +62,10 @@ public:
 	virtual size_t size() const = 0;
 
 	/*! Read next element from serializer. */
-	virtual void read(ISerializer& s) const = 0;
+	virtual void read(ISerializer& s, size_t count) const = 0;
 
 	/*! Write next element to serializer. */
-	virtual void write(ISerializer& s) const = 0;
+	virtual void write(ISerializer& s, size_t count) const = 0;
 
 	/*! Insert default element, used by property list to add new elements. */
 	virtual bool insert() const = 0;
@@ -79,4 +80,3 @@ private:
 };
 
 }
-

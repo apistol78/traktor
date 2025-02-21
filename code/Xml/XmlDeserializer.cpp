@@ -406,7 +406,7 @@ void XmlDeserializer::operator>>(const MemberArray& m)
 
 		m_xpp.push();
 
-		m.read(*this);
+		m.read(*this, 1);
 	}
 
 	m_stack[--m_stackPointer].dups.reset();

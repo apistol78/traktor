@@ -6,8 +6,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Misc/Save.h"
 #include "Core/Reflection/ReflectionInspectSerializer.h"
+
+#include "Core/Misc/Save.h"
 #include "Core/Reflection/RfmArray.h"
 #include "Core/Reflection/RfmEnum.h"
 #include "Core/Reflection/RfmObject.h"
@@ -21,7 +22,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ReflectionInspectSerializer", ReflectionInspectSerializer, Serializer)
 
 ReflectionInspectSerializer::ReflectionInspectSerializer(RfmCompound* compound)
-:	m_compoundMember(compound)
+	: m_compoundMember(compound)
 {
 }
 
@@ -30,142 +31,141 @@ Serializer::Direction ReflectionInspectSerializer::getDirection() const
 	return Direction::Write;
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< bool >& m)
+void ReflectionInspectSerializer::operator>>(const Member< bool >& m)
 {
 	addMember(new RfmPrimitiveBoolean(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< int8_t >& m)
+void ReflectionInspectSerializer::operator>>(const Member< int8_t >& m)
 {
 	addMember(new RfmPrimitiveInt8(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< uint8_t >& m)
+void ReflectionInspectSerializer::operator>>(const Member< uint8_t >& m)
 {
 	addMember(new RfmPrimitiveUInt8(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< int16_t >& m)
+void ReflectionInspectSerializer::operator>>(const Member< int16_t >& m)
 {
 	addMember(new RfmPrimitiveInt16(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< uint16_t >& m)
+void ReflectionInspectSerializer::operator>>(const Member< uint16_t >& m)
 {
 	addMember(new RfmPrimitiveUInt16(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< int32_t >& m)
+void ReflectionInspectSerializer::operator>>(const Member< int32_t >& m)
 {
 	addMember(new RfmPrimitiveInt32(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< uint32_t >& m)
+void ReflectionInspectSerializer::operator>>(const Member< uint32_t >& m)
 {
 	addMember(new RfmPrimitiveUInt32(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< int64_t >& m)
+void ReflectionInspectSerializer::operator>>(const Member< int64_t >& m)
 {
 	addMember(new RfmPrimitiveInt64(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< uint64_t >& m)
+void ReflectionInspectSerializer::operator>>(const Member< uint64_t >& m)
 {
 	addMember(new RfmPrimitiveUInt64(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< float >& m)
+void ReflectionInspectSerializer::operator>>(const Member< float >& m)
 {
 	addMember(new RfmPrimitiveFloat(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< double >& m)
+void ReflectionInspectSerializer::operator>>(const Member< double >& m)
 {
 	addMember(new RfmPrimitiveDouble(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< std::string >& m)
+void ReflectionInspectSerializer::operator>>(const Member< std::string >& m)
 {
 	addMember(new RfmPrimitiveString(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< std::wstring >& m)
+void ReflectionInspectSerializer::operator>>(const Member< std::wstring >& m)
 {
 	addMember(new RfmPrimitiveWideString(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< Guid >& m)
+void ReflectionInspectSerializer::operator>>(const Member< Guid >& m)
 {
 	addMember(new RfmPrimitiveGuid(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< Path >& m)
+void ReflectionInspectSerializer::operator>>(const Member< Path >& m)
 {
 	addMember(new RfmPrimitivePath(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< Color4ub >& m)
+void ReflectionInspectSerializer::operator>>(const Member< Color4ub >& m)
 {
 	addMember(new RfmPrimitiveColor4ub(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< Color4f >& m)
+void ReflectionInspectSerializer::operator>>(const Member< Color4f >& m)
 {
 	addMember(new RfmPrimitiveColor4f(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< Scalar >& m)
+void ReflectionInspectSerializer::operator>>(const Member< Scalar >& m)
 {
 	addMember(new RfmPrimitiveScalar(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< Vector2 >& m)
+void ReflectionInspectSerializer::operator>>(const Member< Vector2 >& m)
 {
 	addMember(new RfmPrimitiveVector2(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< Vector4 >& m)
+void ReflectionInspectSerializer::operator>>(const Member< Vector4 >& m)
 {
 	addMember(new RfmPrimitiveVector4(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< Matrix33 >& m)
+void ReflectionInspectSerializer::operator>>(const Member< Matrix33 >& m)
 {
 	addMember(new RfmPrimitiveMatrix33(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< Matrix44 >& m)
+void ReflectionInspectSerializer::operator>>(const Member< Matrix44 >& m)
 {
 	addMember(new RfmPrimitiveMatrix44(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< Quaternion >& m)
+void ReflectionInspectSerializer::operator>>(const Member< Quaternion >& m)
 {
 	addMember(new RfmPrimitiveQuaternion(m.getName(), m, m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< ISerializable* >& m)
+void ReflectionInspectSerializer::operator>>(const Member< ISerializable* >& m)
 {
 	addMember(new RfmObject(m.getName(), m.getValue(), m.getAttributes()));
 }
 
-void ReflectionInspectSerializer::operator >> (const Member< void* >& m)
+void ReflectionInspectSerializer::operator>>(const Member< void* >& m)
 {
 }
 
-void ReflectionInspectSerializer::operator >> (const MemberArray& m)
+void ReflectionInspectSerializer::operator>>(const MemberArray& m)
 {
 	Ref< RfmArray > arrayMember = new RfmArray(m.getName(), m.getAttributes());
 	{
 		T_ANONYMOUS_VAR(Save< Ref< RfmCompound > >)(m_compoundMember, arrayMember);
-		for (size_t i = 0; i < m.size(); ++i)
-			m.write(*this);
+		m.write(*this, m.size());
 	}
 	addMember(arrayMember);
 }
 
-void ReflectionInspectSerializer::operator >> (const MemberComplex& m)
+void ReflectionInspectSerializer::operator>>(const MemberComplex& m)
 {
 	Ref< RfmCompound > currentCompoundMember = m_compoundMember;
 	Ref< RfmCompound > compoundMember;
@@ -185,7 +185,7 @@ void ReflectionInspectSerializer::operator >> (const MemberComplex& m)
 	}
 }
 
-void ReflectionInspectSerializer::operator >> (const MemberEnumBase& m)
+void ReflectionInspectSerializer::operator>>(const MemberEnumBase& m)
 {
 	addMember(new RfmEnum(m.getName(), m.get()));
 }

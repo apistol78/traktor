@@ -167,17 +167,21 @@ public:
 		return m_pins.size();
 	}
 
-	virtual void read(ISerializer& s) const
+	virtual void read(ISerializer& s, size_t count) const
 	{
-		if (m_index >= m_pins.size())
-			m_pins.push_back(nullptr);
-		s >> PinMember(L"item", m_node, m_pins[m_index++]);
+		for (size_t i = 0; i < count; ++i)
+		{
+			if (m_index >= m_pins.size())
+				m_pins.push_back(nullptr);
+			s >> PinMember(L"item", m_node, m_pins[m_index++]);
+		}
 	}
 
-	virtual void write(ISerializer& s) const
+	virtual void write(ISerializer& s, size_t count) const
 	{
-		if (s.ensure(m_index < m_pins.size()))
-			s >> PinMember(L"item", m_node, m_pins[m_index++]);
+		for (size_t i = 0; i < count; ++i)
+			if (s.ensure(m_index < m_pins.size()))
+				s >> PinMember(L"item", m_node, m_pins[m_index++]);
 	}
 
 	virtual bool insert() const
