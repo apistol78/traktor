@@ -53,15 +53,29 @@ public:
 
 	virtual void read(ISerializer& s, size_t count) const override final
 	{
-		for (size_t i = 0; i < count; ++i)
-		{
-			if (m_index < m_ref.size())
-				s >> ValueMember(L"item", m_ref[m_index]);
-			else
-				s >> ValueMember(L"item", m_ref.push_back());
+		const size_t from = m_index;
+		const size_t to = m_index + count;
 
-			++m_index;
+		if (to < m_ref.size())
+		{
+			for (size_t i = from; i < to; ++i)
+				s >> ValueMember(L"item", m_ref[i]);
 		}
+		else if (m_ref.size() == 0)
+		{
+			for (size_t i = from; i < to; ++i)
+				s >> ValueMember(L"item", m_ref.push_back());
+		}
+		else
+		{
+			for (size_t i = from; i < to; ++i)
+				if (i < m_ref.size())
+					s >> ValueMember(L"item", m_ref[i]);
+				else
+					s >> ValueMember(L"item", m_ref.push_back());
+		}
+
+		m_index = to;
 	}
 
 	virtual void write(ISerializer& s, size_t count) const override final
