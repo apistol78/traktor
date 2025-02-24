@@ -79,8 +79,7 @@ public:
 		const Transform& lastWorldTransform,
 		const Transform& worldTransform,
 		float distance,
-		const IMeshParameterCallback* parameterCallback
-	);
+		const IMeshParameterCallback* parameterCallback);
 
 	const render::IAccelerationStructure* getAccelerationStructure() const { return m_rtAccelerationStructure; }
 
@@ -95,9 +94,10 @@ private:
 	// Rasterization
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_renderMesh;
-	
+
 	// Ray tracing
 	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
+	AlignedVector< resource::Proxy< render::ITexture > > m_albedoTextures;
 
 #if defined(_DEBUG)
 	std::string m_name;

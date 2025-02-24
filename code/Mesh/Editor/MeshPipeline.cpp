@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <list>
+#include "Mesh/Editor/MeshPipeline.h"
+
 #include "Compress/Lzf/DeflateStreamLzf.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -16,25 +17,24 @@
 #include "Core/Misc/WildCompare.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
-#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Thread/Acquire.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
-#include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
-#include "Mesh/MeshResource.h"
-#include "Mesh/Editor/MeshAsset.h"
-#include "Mesh/Editor/MeshPipeline.h"
-#include "Mesh/Editor/VertexShaderGenerator.h"
 #include "Mesh/Editor/Instance/InstanceMeshConverter.h"
+#include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
+#include "Mesh/Editor/VertexShaderGenerator.h"
+#include "Mesh/MeshResource.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/Operations/CalculateNormals.h"
@@ -43,29 +43,31 @@
 #include "Model/Operations/Reduce.h"
 #include "Model/Operations/Transform.h"
 #include "Render/Editor/IProgramCompiler.h"
-#include "Render/Editor/Shader/External.h"
-#include "Render/Editor/Shader/FragmentLinker.h"
-#include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
+#include "Render/Editor/Shader/External.h"
+#include "Render/Editor/Shader/FragmentLinker.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "Render/Editor/Texture/TextureSet.h"
 #include "World/Editor/Material/MaterialShaderGenerator.h"
 
+#include <list>
+
 namespace traktor::mesh
 {
-	namespace
-	{
+namespace
+{
 
 class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
 {
 public:
 	explicit FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
-	:	m_pipelineBuilder(pipelineBuilder)
+		: m_pipelineBuilder(pipelineBuilder)
 	{
 	}
 
@@ -90,10 +92,8 @@ private:
 bool haveVertexColors(const model::Model& model)
 {
 	for (uint32_t i = 0; i < model.getVertexCount(); ++i)
-	{
 		if (model.getVertex(i).getColor() != model::c_InvalidIndex)
 			return true;
-	}
 	return false;
 }
 
@@ -131,10 +131,9 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 	output->m_assumeLinearGamma = true;
 
 	if (!pipelineBuilder->buildAdHocOutput(
-		output,
-		outputGuid,
-		map.image
-	))
+			output,
+			outputGuid,
+			map.image))
 	{
 		pipelineBuilder->getProfiler()->end();
 		return false;
@@ -146,15 +145,15 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 	return true;
 }
 
-	}
+}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 50, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 53, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
-:	m_promoteHalf(false)
-,	m_enableCustomShaders(true)
-,	m_enableCustomTemplates(true)
-,	m_editor(false)
+	: m_promoteHalf(false)
+	, m_enableCustomShaders(true)
+	, m_enableCustomTemplates(true)
+	, m_editor(false)
 {
 }
 
@@ -197,8 +196,7 @@ bool MeshPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	Ref< const MeshAsset > asset = checked_type_cast< const MeshAsset* >(sourceAsset);
 	T_ASSERT(asset);
@@ -224,10 +222,8 @@ bool MeshPipeline::buildDependencies(
 
 	// Add dependencies to "fixed" material shaders.
 	if (m_enableCustomShaders)
-	{
 		for (const auto& it : asset->getMaterialShaders())
 			pipelineDepends->addDependency(it.second, editor::PdfUse);
-	}
 
 	// Add dependencies to material textures.
 	for (const auto& it : asset->getMaterialTextures())
@@ -253,7 +249,7 @@ bool MeshPipeline::buildOutput(
 	uint32_t /*reason*/
 ) const
 {
-	SmallMap< std::wstring, model::Material > materials;
+	// SmallMap< std::wstring, model::Material > materials;
 	Ref< model::Model > model;
 
 	Ref< render::IProgramCompiler > programCompiler = getProgramCompiler();
@@ -300,8 +296,7 @@ bool MeshPipeline::buildOutput(
 	// Scale model according to scale factor in asset.
 	operations.push_back(new model::Transform(
 		translate(asset->getOffset()) *
-		scale(asset->getScaleFactor(), asset->getScaleFactor(), asset->getScaleFactor())
-	));
+		scale(asset->getScaleFactor(), asset->getScaleFactor(), asset->getScaleFactor())));
 
 	// Recalculate normals regardless if already exist in model.
 	if (asset->getRenormalize())
@@ -360,7 +355,7 @@ bool MeshPipeline::buildOutput(
 		model->apply(model::Transform(translate(Vector4(0.0f, -boundingBox.mn.y(), 0.0f))));
 	}
 
-	const AlignedVector< model::Material >& modelMaterials = model->getMaterials();
+	AlignedVector< model::Material >& modelMaterials = model->getMaterials();
 	if (model->getMaterials().empty())
 	{
 		log::error << L"Mesh pipeline failed; no materials in source model(s)." << Endl;
@@ -368,15 +363,9 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Merge materials, set textures specified in MeshAsset into material maps.
-	for (const auto& modelMaterial : modelMaterials)
+	for (model::Material& m : modelMaterials)
 	{
-		const auto& name = modelMaterial.getName();
-
-		auto& m = materials[name];
-		m = modelMaterial;
-
-		model::Material::Map maps[] =
-		{
+		model::Material::Map maps[] = {
 			m.getDiffuseMap(),
 			m.getSpecularMap(),
 			m.getRoughnessMap(),
@@ -386,7 +375,7 @@ bool MeshPipeline::buildOutput(
 			m.getReflectiveMap(),
 			m.getNormalMap()
 		};
-			
+
 		for (auto& map : maps)
 		{
 			auto it = materialTextures.find(map.name);
@@ -408,9 +397,8 @@ bool MeshPipeline::buildOutput(
 	const uint32_t polygonCount = model->getPolygonCount();
 
 	// Build embedded textures and assign generated id;s to materials.
-	for (auto& materialPair : materials)
+	for (auto& m : modelMaterials)
 	{
-		model::Material& m = materialPair.second;
 		buildEmbeddedTexture(pipelineBuilder, m.getDiffuseMap(), false);
 		buildEmbeddedTexture(pipelineBuilder, m.getSpecularMap(), false);
 		buildEmbeddedTexture(pipelineBuilder, m.getRoughnessMap(), false);
@@ -425,8 +413,8 @@ bool MeshPipeline::buildOutput(
 	AlignedVector< render::VertexElement > vertexElements;
 	uint32_t vertexElementOffset = 0;
 
-	std::map< uint32_t, Ref< render::ShaderGraph > > materialTechniqueShaderGraphs;		//< Collection of all material technique fragments; later merged into single shader.
-	std::map< std::wstring, std::list< MeshMaterialTechnique > > materialTechniqueMap;	//< Map from model material to technique fragments. ["Model material":["Default":hash0, "Depth":hash1, ...]]
+	std::map< uint32_t, Ref< render::ShaderGraph > > materialTechniqueShaderGraphs;	   //< Collection of all material technique fragments; later merged into single shader.
+	std::map< std::wstring, std::list< MeshMaterialTechnique > > materialTechniqueMap; //< Map from model material to technique fragments. ["Model material":["Default":hash0, "Depth":hash1, ...]]
 
 	const Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
 	T_ASSERT(vertexShaderGuid.isValid());
@@ -434,7 +422,9 @@ bool MeshPipeline::buildOutput(
 	const Guid materialGuid = vertexShaderGuid.permutation(outputGuid);
 	T_ASSERT(materialGuid.isValid());
 
-	const auto fragmentReader = [&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); };
+	const auto fragmentReader = [&](const Guid& fragmentId) {
+		return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId);
+	};
 
 	VertexShaderGenerator vertexGenerator(fragmentReader);
 	world::MaterialShaderGenerator materialGenerator(fragmentReader);
@@ -442,40 +432,40 @@ bool MeshPipeline::buildOutput(
 	const int32_t jointCount = model->getJointCount();
 	const bool haveVertexColor = haveVertexColors(*model);
 
-	for (const auto& materialPair : materials)
+	for (const auto& m : modelMaterials)
 	{
+		const std::wstring& materialName = m.getName();
+
 		Ref< const render::ShaderGraph > materialShaderGraph;
 		Guid materialShaderGraphId;
 
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateSurface");
 		Ref< const render::ShaderGraph > meshSurfaceShaderGraph = materialGenerator.generateSurface(
-			materialPair.second,
+			m,
 			haveVertexColor,
-			asset->getDecalResponse()
-		);
+			asset->getDecalResponse());
 		pipelineBuilder->getProfiler()->end();
 		if (!meshSurfaceShaderGraph)
 		{
-			log::error << L"Mesh pipeline failed; unable to generate material surface shader \"" << materialPair.first << L"\"." << Endl;
+			log::error << L"Mesh pipeline failed; unable to generate material surface shader \"" << materialName << L"\"." << Endl;
 			return false;
 		}
 
-		auto it = materialShaders.find(materialPair.first);
+		auto it = materialShaders.find(materialName);
 		if (
 			m_enableCustomShaders &&
-			it != materialShaders.end()
-		)
+			it != materialShaders.end())
 		{
 			if (it->second.isNull())
 			{
-				log::info << L"Material \"" << materialPair.first << L"\" disabled; skipped." << Endl;
+				log::info << L"Material \"" << materialName << L"\" disabled; skipped." << Endl;
 				continue;
 			}
 
 			Ref< const render::ShaderGraph > customMeshSurfaceShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
 			if (!customMeshSurfaceShaderGraph)
 			{
-				log::error << L"Mesh pipeline failed; unable to read material surface shader \"" << materialPair.first << L"\"." << Endl;
+				log::error << L"Mesh pipeline failed; unable to read material surface shader \"" << materialName << L"\"." << Endl;
 				return false;
 			}
 
@@ -488,21 +478,20 @@ bool MeshPipeline::buildOutput(
 			pipelineBuilder->getProfiler()->end();
 			if (!customMeshSurfaceShaderGraph)
 			{
-				log::error << L"Mesh pipeline failed; unable to combine material surface shaders \"" << materialPair.first << L"\"." << Endl;
+				log::error << L"Mesh pipeline failed; unable to combine material surface shaders \"" << materialName << L"\"." << Endl;
 				return false;
 			}
 
 			pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateMesh");
 			materialShaderGraph = vertexGenerator.generateMesh(
 				*model,
-				materialPair.second,
+				m,
 				customMeshSurfaceShaderGraph,
-				vertexShaderGuid
-			);
+				vertexShaderGuid);
 			pipelineBuilder->getProfiler()->end();
 			if (!materialShaderGraph)
 			{
-				log::error << L"Mesh pipeline failed; unable to generate material mesh shader \"" << materialPair.first << L"\"." << Endl;
+				log::error << L"Mesh pipeline failed; unable to generate material mesh shader \"" << materialName << L"\"." << Endl;
 				return false;
 			}
 
@@ -513,14 +502,13 @@ bool MeshPipeline::buildOutput(
 			pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateMesh");
 			materialShaderGraph = vertexGenerator.generateMesh(
 				*model,
-				materialPair.second,
+				m,
 				meshSurfaceShaderGraph,
-				vertexShaderGuid
-			);
+				vertexShaderGuid);
 			pipelineBuilder->getProfiler()->end();
 			if (!materialShaderGraph)
 			{
-				log::error << L"Mesh pipeline failed; unable to generate material mesh shader \"" << materialPair.first << L"\"." << Endl;
+				log::error << L"Mesh pipeline failed; unable to generate material mesh shader \"" << materialName << L"\"." << Endl;
 				return false;
 			}
 		}
@@ -542,7 +530,7 @@ bool MeshPipeline::buildOutput(
 		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to link shader fragments, material shader \"" << materialPair.first << L"\"." << Endl;
+			log::error << L"MeshPipeline failed; unable to link shader fragments, material shader \"" << materialName << L"\"." << Endl;
 			return false;
 		}
 
@@ -562,7 +550,7 @@ bool MeshPipeline::buildOutput(
 		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to freeze connected conditionals, material shader \"" << materialPair.first << L"\"." << Endl;
+			log::error << L"MeshPipeline failed; unable to freeze connected conditionals, material shader \"" << materialName << L"\"." << Endl;
 			return false;
 		}
 
@@ -593,7 +581,7 @@ bool MeshPipeline::buildOutput(
 		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to freeze types, material shader \"" << materialPair.first << L"\"." << Endl;
+			log::error << L"MeshPipeline failed; unable to freeze types, material shader \"" << materialName << L"\"." << Endl;
 			return false;
 		}
 
@@ -603,7 +591,7 @@ bool MeshPipeline::buildOutput(
 		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to cleanup shader, material shader \"" << materialPair.first << L"\"." << Endl;
+			log::error << L"MeshPipeline failed; unable to cleanup shader, material shader \"" << materialName << L"\"." << Endl;
 			return false;
 		}
 
@@ -614,14 +602,13 @@ bool MeshPipeline::buildOutput(
 			{
 				if (
 					indexedUniform->getParameterName() == L"Mesh_Joints" ||
-					indexedUniform->getParameterName() == L"Mesh_LastJoints"
-				)
+					indexedUniform->getParameterName() == L"Mesh_LastJoints")
 				{
 					// Quantize joint count to reduce number of vertex shader permutations as it
 					// will cost more than excessive parameters.
 					const int32_t uniformJointCount = alignUp(jointCount, 4);
 					if (uniformJointCount * 2 != indexedUniform->getLength())
-						indexedUniform->setLength(uniformJointCount * 2);		// Each bone is represented of a quaternion and a vector thus multiply by 2.
+						indexedUniform->setLength(uniformJointCount * 2); // Each bone is represented of a quaternion and a vector thus multiply by 2.
 				}
 			}
 		}
@@ -630,7 +617,7 @@ bool MeshPipeline::buildOutput(
 		render::ShaderGraphTechniques techniques(materialShaderGraph, materialShaderGraphId);
 		if (!techniques.valid())
 		{
-			log::error << L"MeshPipeline failed; unable to generate techniques, material \"" << materialPair.first << L"\"." << Endl;
+			log::error << L"MeshPipeline failed; unable to generate techniques, material \"" << materialName << L"\"." << Endl;
 			return false;
 		}
 
@@ -642,16 +629,14 @@ bool MeshPipeline::buildOutput(
 			{
 				WildCompare wc(includeOnlyTechniques);
 				for (const auto& materialTechniqueName : materialTechniqueNames)
-				{
 					if (wc.match(materialTechniqueName))
 						keepTechniqueNames.insert(materialTechniqueName);
-				}
 			}
 			materialTechniqueNames = keepTechniqueNames;
 		}
 
 		// Generate graph for each technique.
-		log::info << L"Mesh material \"" << materialPair.first << L"\" techniques:" << Endl;
+		log::info << L"Mesh material \"" << materialName << L"\" techniques:" << Endl;
 		for (const auto& materialTechniqueName : materialTechniqueNames)
 		{
 			Ref< render::ShaderGraph > materialTechniqueShaderGraph = DeepClone(techniques.generate(materialTechniqueName)).create< render::ShaderGraph >();
@@ -673,7 +658,7 @@ bool MeshPipeline::buildOutput(
 			mt.worldTechnique = materialTechniqueName;
 			mt.shaderTechnique = shaderTechniqueName;
 			mt.hash = hash;
-			materialTechniqueMap[materialPair.first].push_back(mt);
+			materialTechniqueMap[materialName].push_back(mt);
 
 			log::info << L"\t\"" << materialTechniqueName << L"\"\t\t(" << shaderTechniqueName << L")" << Endl;
 		}
@@ -696,8 +681,7 @@ bool MeshPipeline::buildOutput(
 			{
 				if (
 					vertexInputNode->getDataUsage() == vertexElement.getDataUsage() &&
-					vertexInputNode->getIndex() == vertexElement.getIndex()
-				)
+					vertexInputNode->getIndex() == vertexElement.getIndex())
 				{
 					if (elementDataType != vertexElement.getDataType())
 						log::warning << L"Identical vertex input usage but different types (" << render::getDataTypeName(elementDataType) << L" and " << render::getDataTypeName(vertexElement.getDataType()) << L")" << Endl;
@@ -711,8 +695,7 @@ bool MeshPipeline::buildOutput(
 					vertexInputNode->getDataUsage(),
 					elementDataType,
 					0,
-					vertexInputNode->getIndex()
-				);
+					vertexInputNode->getIndex());
 				vertexElements.push_back(element);
 			}
 		}
@@ -734,8 +717,7 @@ bool MeshPipeline::buildOutput(
 			vertexElement.getDataUsage(),
 			vertexElement.getDataType(),
 			vertexElementOffset,
-			vertexElement.getIndex()
-		);
+			vertexElement.getIndex());
 		vertexElementOffset += vertexElement.getSize();
 	}
 	log::info << L"Mesh using " << vertexElements.size() << L" vertex elements." << Endl;
@@ -754,10 +736,9 @@ bool MeshPipeline::buildOutput(
 	// Build material shader.
 	const std::wstring materialPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/Shader";
 	if (!pipelineBuilder->buildAdHocOutput(
-		materialShaderGraph,
-		materialPath,
-		materialGuid
-	))
+			materialShaderGraph,
+			materialPath,
+			materialGuid))
 	{
 		log::error << L"Mesh pipeline failed; unable to build material shader." << Endl;
 		return false;
@@ -776,8 +757,7 @@ bool MeshPipeline::buildOutput(
 	// Create output instance.
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
 		outputPath,
-		outputGuid
-	);
+		outputGuid);
 	if (!outputInstance)
 	{
 		log::error << L"Mesh pipeline failed; unable to create output instance." << Endl;
@@ -793,7 +773,7 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
-	if (/* compressed */true)
+	if (/* compressed */ true)
 	{
 		stream = new compress::DeflateStreamLzf(stream);
 		resource->setCompressed(true);
@@ -801,14 +781,13 @@ bool MeshPipeline::buildOutput(
 
 	// Convert mesh asset.
 	if (!converter->convert(
-		asset,
-		model,
-		materialGuid,
-		materialTechniqueMap,
-		vertexElements,
-		resource,
-		stream
-	))
+			asset,
+			model,
+			materialGuid,
+			materialTechniqueMap,
+			vertexElements,
+			resource,
+			stream))
 	{
 		log::error << L"Mesh pipeline failed; unable to convert mesh." << Endl;
 		return false;
@@ -831,8 +810,7 @@ Ref< ISerializable > MeshPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const Object* buildParams
-) const
+	const Object* buildParams) const
 {
 	T_FATAL_ERROR;
 	return nullptr;

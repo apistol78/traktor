@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Core/Guid.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Guid.h"
 #include "Mesh/MeshResource.h"
 #include "Resource/Id.h"
 
@@ -24,6 +24,7 @@
 namespace traktor::render
 {
 
+class ITexture;
 class Shader;
 
 }
@@ -41,8 +42,8 @@ class T_DLLCLASS StaticMeshResource : public MeshResource
 public:
 	struct T_DLLCLASS Part
 	{
-		std::wstring shaderTechnique;
-		uint32_t meshPart;
+		std::wstring shaderTechnique; //!< Shader technique when rendering this part.
+		uint32_t meshPart;			  //!< Index into render mesh parts.
 
 		void serialize(ISerializer& s);
 	};
@@ -54,8 +55,7 @@ public:
 		IStream* dataStream,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		render::MeshFactory* meshFactory
-	) const override final;
+		render::MeshFactory* meshFactory) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -65,6 +65,7 @@ private:
 
 	bool m_haveRenderMesh;
 	resource::Id< render::Shader > m_shader;
+	AlignedVector< resource::Id< render::ITexture > > m_albedoTextures;
 	SmallMap< std::wstring, parts_t > m_parts;
 };
 

@@ -1,7 +1,7 @@
-
+#pragma optimize("", off)
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -205,13 +205,14 @@ bool StaticMeshConverter::convert(
 	}
 
 	// Add ray tracing part.
+	AlignedVector< resource::Id< render::ITexture > > rtAlbedoTextures;
 	{
 		render::Mesh::Part meshPart;
 		meshPart.name = L"__RT__";
 		meshPart.primitives = render::Primitives::setIndexed(
 			render::PrimitiveType::Triangles,
 			0,
-			model->getPolygons().size());
+			(uint32_t)model->getPolygons().size());
 		meshParts.push_back(meshPart);
 
 		world::RTVertexAttributes* vptr = (world::RTVertexAttributes*)renderMesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
@@ -223,6 +224,20 @@ bool StaticMeshConverter::convert(
 				continue;
 
 			const auto& material = model->getMaterial(materialId);
+
+			int32_t albedoMapId = -1;
+			if (material.getDiffuseMap().texture.isNotNull())
+			{
+				const auto it = std::find(rtAlbedoTextures.begin(), rtAlbedoTextures.end(), resource::Id< render::ITexture >(material.getDiffuseMap().texture));
+				if (it != rtAlbedoTextures.end())
+					albedoMapId = (int32_t)std::distance(rtAlbedoTextures.begin(), it);
+				else
+				{
+					albedoMapId = (int32_t)rtAlbedoTextures.size();
+					rtAlbedoTextures.push_back(resource::Id< render::ITexture >(material.getDiffuseMap().texture));
+				}
+			}
+
 			for (const auto& polygon : model->getPolygonsByMaterial(materialId))
 			{
 				Vector4 albedo = material.getColor();
@@ -250,7 +265,14 @@ bool StaticMeshConverter::convert(
 					vptr->albedo[3] = material.getEmissive();
 
 					vptr->texCoord[0] = vptr->texCoord[1] = 0.0f;
-					vptr->albedoMap = -1;
+					if (vertex.getTexCoord(0) != model::c_InvalidIndex)
+					{
+						const Vector2 texCoord = model->getTexCoord(vertex.getTexCoord(0));
+						vptr->texCoord[0] = texCoord.x;
+						vptr->texCoord[1] = texCoord.y;
+					}
+
+					vptr->albedoMap = albedoMapId;
 
 					++vptr;
 				}
@@ -268,6 +290,7 @@ bool StaticMeshConverter::convert(
 
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_haveRenderMesh = true;
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
+	checked_type_cast< StaticMeshResource* >(meshResource)->m_albedoTextures = rtAlbedoTextures;
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_parts = parts;
 	return true;
 }

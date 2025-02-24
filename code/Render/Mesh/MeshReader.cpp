@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Mesh/MeshReader.h"
+
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
@@ -14,7 +16,6 @@
 #include "Render/IRenderSystem.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshFactory.h"
-#include "Render/Mesh/MeshReader.h"
 
 namespace traktor::render
 {
@@ -22,11 +23,11 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.MeshReader", MeshReader, Object)
 
 MeshReader::MeshReader(const MeshFactory* meshFactory)
-:	m_meshFactory(meshFactory)
+	: m_meshFactory(meshFactory)
 {
 }
 
-Ref< Mesh > MeshReader::read(IStream* stream) const
+Ref< Mesh > MeshReader::read(IStream* stream, const AlignedVector< AuxPatch >& patches) const
 {
 	Reader reader(stream);
 
@@ -52,8 +53,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 			(DataUsage)usage,
 			(DataType)type,
 			offset,
-			index
-		));
+			index));
 	}
 
 	// Read vertex buffer size.
@@ -87,8 +87,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 		vertexBufferSize,
 		(IndexType)indexType,
 		indexBufferSize,
-		auxBufferSizes
-	);
+		auxBufferSizes);
 	if (!mesh)
 		return nullptr;
 
@@ -112,10 +111,33 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 
 	for (auto aux : auxBufferSizes)
 	{
+		const AuxPatch* patch = nullptr;
+		for (const auto& p : patches)
+		{
+			if (p.id == aux.first)
+			{
+				patch = &p;
+				break;
+			}
+		}
+
 		uint8_t* ptr = static_cast< uint8_t* >(mesh->getAuxBuffer(aux.first)->lock());
 		if (!ptr)
 			return nullptr;
-		reader.read(ptr, aux.second);
+
+		if (patch)
+		{
+			uint8_t buf[128];
+			for (uint32_t i = 0; i < aux.second; i += patch->elementSize)
+			{
+				reader.read(buf, patch->elementSize);
+				patch->fn(buf);
+				std::memcpy(&ptr[i], buf, patch->elementSize);
+			}
+		}
+		else
+			reader.read(ptr, aux.second);
+
 		mesh->getAuxBuffer(aux.first)->unlock();
 	}
 
@@ -129,7 +151,8 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 	for (uint32_t i = 0; i < partCount; ++i)
 	{
 		reader >> parts[i].name;
-		reader >> primitiveType; parts[i].primitives.type = PrimitiveType(primitiveType);
+		reader >> primitiveType;
+		parts[i].primitives.type = PrimitiveType(primitiveType);
 		reader >> parts[i].primitives.offset;
 		reader >> parts[i].primitives.count;
 		reader >> parts[i].primitives.indexed;
