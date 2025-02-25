@@ -1,4 +1,3 @@
-#pragma optimize("", off)
 /*
  * TRAKTOR
  * Copyright (c) 2022-2025 Anders Pistol.
@@ -205,7 +204,7 @@ bool StaticMeshConverter::convert(
 	}
 
 	// Add ray tracing part.
-	AlignedVector< resource::Id< render::ITexture > > rtAlbedoTextures;
+	AlignedVector< resource::Id< render::ITexture > > albedoTextures;
 	{
 		render::Mesh::Part meshPart;
 		meshPart.name = L"__RT__";
@@ -225,16 +224,17 @@ bool StaticMeshConverter::convert(
 
 			const auto& material = model->getMaterial(materialId);
 
+			// Look up index of albedo map, if map doesn't exist add a new reference.
 			int32_t albedoMapId = -1;
 			if (material.getDiffuseMap().texture.isNotNull())
 			{
-				const auto it = std::find(rtAlbedoTextures.begin(), rtAlbedoTextures.end(), resource::Id< render::ITexture >(material.getDiffuseMap().texture));
-				if (it != rtAlbedoTextures.end())
-					albedoMapId = (int32_t)std::distance(rtAlbedoTextures.begin(), it);
+				const auto it = std::find(albedoTextures.begin(), albedoTextures.end(), resource::Id< render::ITexture >(material.getDiffuseMap().texture));
+				if (it != albedoTextures.end())
+					albedoMapId = (int32_t)std::distance(albedoTextures.begin(), it);
 				else
 				{
-					albedoMapId = (int32_t)rtAlbedoTextures.size();
-					rtAlbedoTextures.push_back(resource::Id< render::ITexture >(material.getDiffuseMap().texture));
+					albedoMapId = (int32_t)albedoTextures.size();
+					albedoTextures.push_back(resource::Id< render::ITexture >(material.getDiffuseMap().texture));
 				}
 			}
 
@@ -290,7 +290,7 @@ bool StaticMeshConverter::convert(
 
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_haveRenderMesh = true;
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
-	checked_type_cast< StaticMeshResource* >(meshResource)->m_albedoTextures = rtAlbedoTextures;
+	checked_type_cast< StaticMeshResource* >(meshResource)->m_albedoTextures = albedoTextures;
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_parts = parts;
 	return true;
 }
