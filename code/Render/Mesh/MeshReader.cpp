@@ -17,6 +17,8 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshFactory.h"
 
+#include <cstring>
+
 namespace traktor::render
 {
 
