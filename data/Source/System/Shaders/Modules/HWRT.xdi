@@ -33,7 +33,7 @@ void HWRT_ResolveAlbedo(inout HWRT_Material m)
 {
 	if (m.albedoMap.x >= 0)
 	{
-		m.albedo = texture(sampler2D(__bindlessTextures2D__[m.albedoMap], __samplerLinear__), m.texCoord.xy);
+		m.albedo = textureLod(sampler2D(__bindlessTextures2D__[m.albedoMap], __samplerLinear__), m.texCoord.xy, 0.0f);
 	}
 }
 
@@ -56,11 +56,6 @@ HWRT_Material HWRT_GetMaterial(rayQueryEXT query)
 			HWRT_Material m1 = __bindlessBufferMaterials__[id].perVertex[triangle * 3 + 1];
 			HWRT_Material m2 = __bindlessBufferMaterials__[id].perVertex[triangle * 3 + 2];
 
-			// Read albedo map.
-			HWRT_ResolveAlbedo(m0);
-			HWRT_ResolveAlbedo(m1);
-			HWRT_ResolveAlbedo(m2);
-
 			// Blend material using barycentrics from intersection.
 			material.normal = normalize(blend3(
 				m0.normal, 1.0f - (bary.x + bary.y),
@@ -72,6 +67,13 @@ HWRT_Material HWRT_GetMaterial(rayQueryEXT query)
 				m1.albedo, bary.x,
 				m2.albedo, bary.y
 			);
+
+			// Read albedo map.
+			if (m0.albedoMap >= 0)
+			{
+				const vec2 uv = m0.texCoord.xy * (1.0f - (bary.x + bary.y)) + m1.texCoord.xy * bary.x + m2.texCoord.xy * bary.y;
+				material.albedo = textureLod(sampler2D(__bindlessTextures2D__[m0.albedoMap], __samplerLinear__), uv, 4.0f);
+			}
 
 			// Transform normal into world space.
 			const mat4x3 o2w = rayQueryGetIntersectionObjectToWorldEXT(query, true);
@@ -141,7 +143,7 @@ bool HWRT_TraceShadow(accelerationStructureEXT AS, vec3 origin, vec3 direction, 
 				<addressW>Wrap</addressW>
 				<compare>None</compare>
 				<mipBias>0</mipBias>
-				<ignoreMips>false</ignoreMips>
+				<ignoreMips>true</ignoreMips>
 				<useAnisotropic>false</useAnisotropic>
 			</second>
 		</item>
