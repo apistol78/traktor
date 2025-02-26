@@ -163,6 +163,14 @@ T_MATH_INLINE Color4f Color4f::aaaa() const
 
 T_MATH_INLINE Color4ub Color4f::toColor4ub() const
 {
+#if defined(T_MATH_USE_SSE2)
+	__m128 v = m_data.m_data;
+	__m128 sv = _mm_mul_ps(v, _mm_set1_ps(255.0f));
+	__m128i iv = _mm_cvtps_epi32(sv);
+	__m128i piv = _mm_packus_epi32(iv, iv);
+	piv = _mm_packus_epi16(piv, piv);
+	return Color4ub((uint32_t)_mm_cvtsi128_si32(piv));
+#else
 	float T_MATH_ALIGN16 tmp[4];
 	(*this * Scalar(255.0f)).storeAligned(tmp);
 	return Color4ub(
@@ -171,6 +179,7 @@ T_MATH_INLINE Color4ub Color4f::toColor4ub() const
 		uint8_t(clamp< int32_t >(int32_t(tmp[2]), 0, 255)),
 		uint8_t(clamp< int32_t >(int32_t(tmp[3]), 0, 255))
 	);
+#endif
 }
 
 T_MATH_INLINE Color4f Color4f::loadAligned(const float* in)
