@@ -8,12 +8,13 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Guid.h"
-#include "Core/RefArray.h"
 #include "Core/Math/Transform.h"
+#include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 #include "World/WorldTypes.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -42,28 +43,46 @@ class T_DLLCLASS EntityData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	/*! Set unique id of entity data. */
+	/*! Set unique ID of entity data.
+	 * \param id New unique ID.
+	 */
 	void setId(const Guid& id);
 
-	/*! Get unique id of entity data. */
+	/*! Get unique ID of entity data.
+	 * \return Unique ID of entity data.
+	 */
 	const Guid& getId() const;
 
-	/*! Set name of entity data. */
+	/*! Set name of entity data.
+	 * \param name New name of entity data.
+	 */
 	void setName(const std::wstring& name);
 
-	/*! Get name of entity data. */
+	/*! Get name of entity data.
+	 * \return Name of entity data.
+	 */
 	const std::wstring& getName() const;
 
-	/*! Set entity initial state. */
+	/*! Set entity initial state.
+	 * \param state New state.
+	 * \param mask Mask which part of state should be set.
+	 * \return Entity data result state.
+	 */
 	EntityState setState(const EntityState& state, const EntityState& mask);
 
-	/*! Get entity initial state. */
+	/*! Get entity initial state.
+	 * \return Entity data current state.
+	 */
 	const EntityState& getState() const;
 
-	/*! Set transform of entity data. */
+	/*! Set transform of entity data.
+	 * \param transform New transform of entity data.
+	 */
 	virtual void setTransform(const Transform& transform);
 
-	/*! Get transform of entity data. */
+	/*! Get transform of entity data.
+	 * \return Current entity data transform.
+	 */
 	virtual const Transform& getTransform() const;
 
 	/*! Set component.
