@@ -4,7 +4,7 @@
 	
 // Default configuration of rays.
 const float HWRT_DefaultNear = 0.5f;
-const float HWRT_DefaultFar = 100.0f;
+const float HWRT_DefaultFar = 150.0f;
 
 // Material properties.
 struct HWRT_Material
