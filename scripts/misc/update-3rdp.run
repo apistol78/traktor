@@ -104,6 +104,14 @@ function update(pkg)
 	stdout:printLn("===============================================================================")
 	stdout:printLn("")
 
+	-- Execute custom check first to see if we need to install this package.
+	if pkg.check ~= nil then
+		if pkg.check() == false then
+			stdout:printLn("Package \"" .. pkg.url .. "\" skipped; not required.")
+			return true
+		end
+	end
+
 	if pkg.type == "GIT" and gitEnable then
 
 		local name = pkg.url:match(".+/(.*).git")

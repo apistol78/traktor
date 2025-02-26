@@ -304,6 +304,10 @@ PACKAGES =
 		name = "vulkan-windows",
 		os = "windows",
 		url = "https://sdk.lunarg.com/sdk/download/latest/windows/vulkan-sdk.exe",
+		check = function()
+			-- If VULKAN_SDK already exist in the system then we assume there are already a SDK installed.
+			return (run:resolve("$(VULKAN_SDK)") == "")
+		end,
 		patch = function()
 			local p = run.cwd .. "/vulkan-sdk"
 			run:execute(

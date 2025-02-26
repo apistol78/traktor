@@ -43,7 +43,7 @@ set UFBX_SDK=%TRAKTOR_HOME%\3rdp\ufbx
 set JOLT_SDK=%TRAKTOR_HOME%\3rdp\JoltPhysics
 
 :: Vulkan SDK
-set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan-windows\vulkan-sdk
+if "%VULKAN_SDK%"=="" set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan-windows\vulkan-sdk
 
 :: SPIRV tools
 set SPIRVTOOLS_SDK=%TRAKTOR_HOME%\3rdp\spirv-tools\install
