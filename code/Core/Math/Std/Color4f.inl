@@ -6,29 +6,30 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cmath>
 #include "Core/Math/Color4f.h"
+
+#include <cmath>
 
 namespace traktor
 {
 
 T_MATH_INLINE Color4f::Color4f(const Color4f& src)
-:	m_data(src.m_data)
+	: m_data(src.m_data)
 {
 }
 
 T_MATH_INLINE Color4f::Color4f(float red, float green, float blue, float alpha)
-:	m_data(red, green, blue, alpha)
+	: m_data(red, green, blue, alpha)
 {
 }
 
 T_MATH_INLINE Color4f::Color4f(const float* data)
-:	m_data(data)
+	: m_data(data)
 {
 }
 
 T_MATH_INLINE Color4f::Color4f(const Vector4& data)
-:	m_data(data)
+	: m_data(data)
 {
 }
 
@@ -117,8 +118,7 @@ T_MATH_INLINE Color4f Color4f::sRGB() const
 		std::pow(getRed(), 2.2f),
 		std::pow(getGreen(), 2.2f),
 		std::pow(getBlue(), 2.2f),
-		getAlpha()
-	);
+		getAlpha());
 }
 
 T_MATH_INLINE Color4f Color4f::linear() const
@@ -127,8 +127,7 @@ T_MATH_INLINE Color4f Color4f::linear() const
 		std::pow(getRed(), 1.0f / 2.2f),
 		std::pow(getGreen(), 1.0f / 2.2f),
 		std::pow(getBlue(), 1.0f / 2.2f),
-		getAlpha()
-	);
+		getAlpha());
 }
 
 T_MATH_INLINE Color4f Color4f::saturated() const
@@ -164,7 +163,7 @@ T_MATH_INLINE Color4f Color4f::aaaa() const
 T_MATH_INLINE Color4ub Color4f::toColor4ub() const
 {
 #if defined(T_MATH_USE_SSE2)
-	__m128 v = m_data.m_data;
+	__m128 v = m_data.shuffle< 2, 1, 0, 3 >().m_data;
 	__m128 sv = _mm_mul_ps(v, _mm_set1_ps(255.0f));
 	__m128i iv = _mm_cvtps_epi32(sv);
 	__m128i piv = _mm_packus_epi32(iv, iv);
@@ -177,8 +176,7 @@ T_MATH_INLINE Color4ub Color4f::toColor4ub() const
 		uint8_t(clamp< int32_t >(int32_t(tmp[0]), 0, 255)),
 		uint8_t(clamp< int32_t >(int32_t(tmp[1]), 0, 255)),
 		uint8_t(clamp< int32_t >(int32_t(tmp[2]), 0, 255)),
-		uint8_t(clamp< int32_t >(int32_t(tmp[3]), 0, 255))
-	);
+		uint8_t(clamp< int32_t >(int32_t(tmp[3]), 0, 255)));
 #endif
 }
 
@@ -200,8 +198,7 @@ T_MATH_INLINE Color4f Color4f::fromColor4ub(const Color4ub& in)
 		float(in.r) / 255.0f,
 		float(in.g) / 255.0f,
 		float(in.b) / 255.0f,
-		float(in.a) / 255.0f
-	);
+		float(in.a) / 255.0f);
 }
 
 T_MATH_INLINE void Color4f::storeAligned(float* out) const
@@ -216,89 +213,89 @@ T_MATH_INLINE void Color4f::storeUnaligned(float* out) const
 	m_data.storeUnaligned(out);
 }
 
-T_MATH_INLINE Color4f& Color4f::operator = (const Color4f& src)
+T_MATH_INLINE Color4f& Color4f::operator=(const Color4f& src)
 {
 	m_data = src.m_data;
 	return *this;
 }
 
-T_MATH_INLINE Color4f Color4f::operator + (const Color4f& r) const
+T_MATH_INLINE Color4f Color4f::operator+(const Color4f& r) const
 {
 	return Color4f(m_data + r.m_data);
 }
 
-T_MATH_INLINE Color4f Color4f::operator - (const Color4f& r) const
+T_MATH_INLINE Color4f Color4f::operator-(const Color4f& r) const
 {
 	return Color4f(m_data - r.m_data);
 }
 
-T_MATH_INLINE Color4f Color4f::operator * (const Color4f& r) const
+T_MATH_INLINE Color4f Color4f::operator*(const Color4f& r) const
 {
 	return Color4f(m_data * r.m_data);
 }
 
-T_MATH_INLINE Color4f Color4f::operator * (const Scalar& r) const
+T_MATH_INLINE Color4f Color4f::operator*(const Scalar& r) const
 {
 	return Color4f(m_data * r);
 }
 
-T_MATH_INLINE Color4f Color4f::operator / (const Color4f& r) const
+T_MATH_INLINE Color4f Color4f::operator/(const Color4f& r) const
 {
 	return Color4f(m_data / r.m_data);
 }
 
-T_MATH_INLINE Color4f Color4f::operator / (const Scalar& r) const
+T_MATH_INLINE Color4f Color4f::operator/(const Scalar& r) const
 {
 	return Color4f(m_data / r);
 }
 
-T_MATH_INLINE Color4f& Color4f::operator += (const Color4f& r)
+T_MATH_INLINE Color4f& Color4f::operator+=(const Color4f& r)
 {
 	m_data += r.m_data;
 	return *this;
 }
 
-T_MATH_INLINE Color4f& Color4f::operator -= (const Color4f& r)
+T_MATH_INLINE Color4f& Color4f::operator-=(const Color4f& r)
 {
 	m_data -= r.m_data;
 	return *this;
 }
 
-T_MATH_INLINE Color4f& Color4f::operator *= (const Color4f& r)
+T_MATH_INLINE Color4f& Color4f::operator*=(const Color4f& r)
 {
 	m_data *= r.m_data;
 	return *this;
 }
 
-T_MATH_INLINE Color4f& Color4f::operator *= (const Scalar& r)
+T_MATH_INLINE Color4f& Color4f::operator*=(const Scalar& r)
 {
 	m_data *= r;
 	return *this;
 }
 
-T_MATH_INLINE Color4f& Color4f::operator /= (const Color4f& r)
+T_MATH_INLINE Color4f& Color4f::operator/=(const Color4f& r)
 {
 	m_data /= r.m_data;
 	return *this;
 }
 
-T_MATH_INLINE Color4f& Color4f::operator /= (const Scalar& r)
+T_MATH_INLINE Color4f& Color4f::operator/=(const Scalar& r)
 {
 	m_data /= r;
 	return *this;
 }
 
-T_MATH_INLINE bool Color4f::operator == (const Color4f& r) const
+T_MATH_INLINE bool Color4f::operator==(const Color4f& r) const
 {
 	return bool(m_data == r.m_data);
 }
 
-T_MATH_INLINE bool Color4f::operator != (const Color4f& r) const
+T_MATH_INLINE bool Color4f::operator!=(const Color4f& r) const
 {
 	return bool(m_data != r.m_data);
 }
 
-T_MATH_INLINE Color4f::operator const Vector4& () const
+T_MATH_INLINE Color4f::operator const Vector4&() const
 {
 	return m_data;
 }
