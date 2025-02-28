@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,13 +31,15 @@ class T_DLLCLASS PropertyFloat : public IPropertyValue
 public:
 	typedef float value_type_t;
 
-	PropertyFloat(value_type_t value = value_type_t());
+	PropertyFloat() = default;
+
+	explicit PropertyFloat(value_type_t value);
 
 	static value_type_t get(const IPropertyValue* value);
 
 	virtual void serialize(ISerializer& s) override final;
 
-	operator value_type_t () const { return m_value; }
+	operator value_type_t() const { return m_value; }
 
 protected:
 	virtual Ref< IPropertyValue > join(const IPropertyValue* right) const override final;
@@ -51,7 +53,7 @@ private:
 /*!
  * \ingroup Core
  */
-template< >
+template <>
 struct PropertyTrait< float >
 {
 	typedef PropertyFloat property_type_t;
@@ -60,4 +62,3 @@ struct PropertyTrait< float >
 };
 
 }
-

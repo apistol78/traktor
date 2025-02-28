@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,9 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Settings/IPropertyValue.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -32,13 +33,15 @@ class T_DLLCLASS PropertyString : public IPropertyValue
 public:
 	typedef std::wstring value_type_t;
 
-	PropertyString(value_type_t value = L"");
+	PropertyString() = default;
+
+	explicit PropertyString(value_type_t value);
 
 	static value_type_t get(const IPropertyValue* value);
 
 	virtual void serialize(ISerializer& s) override final;
 
-	operator const value_type_t& () const { return m_value; }
+	operator const value_type_t&() const { return m_value; }
 
 protected:
 	virtual Ref< IPropertyValue > join(const IPropertyValue* right) const override final;
@@ -52,7 +55,7 @@ private:
 /*!
  * \ingroup Core
  */
-template< >
+template <>
 struct PropertyTrait< std::wstring >
 {
 	typedef PropertyString property_type_t;
@@ -61,4 +64,3 @@ struct PropertyTrait< std::wstring >
 };
 
 }
-

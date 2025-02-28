@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,8 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Settings/IPropertyValue.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -32,7 +34,9 @@ class T_DLLCLASS PropertyStringArray : public IPropertyValue
 public:
 	typedef AlignedVector< std::wstring > value_type_t;
 
-	PropertyStringArray(const value_type_t& value = value_type_t());
+	PropertyStringArray() = default;
+
+	explicit PropertyStringArray(const value_type_t& value);
 
 	static value_type_t get(const IPropertyValue* value);
 
@@ -50,7 +54,7 @@ private:
 /*!
  * \ingroup Core
  */
-template< >
+template <>
 struct PropertyTrait< AlignedVector< std::wstring > >
 {
 	typedef PropertyStringArray property_type_t;
@@ -59,4 +63,3 @@ struct PropertyTrait< AlignedVector< std::wstring > >
 };
 
 }
-

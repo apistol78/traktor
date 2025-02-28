@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,8 +21,7 @@ namespace traktor
  */
 template <
 	typename Key,
-	typename Value
->
+	typename Value >
 struct HermiteAccessor
 {
 	static inline float time(const Key* keys, size_t nkeys, const Key& key)
@@ -40,8 +39,7 @@ struct HermiteAccessor
 		const Value& v0, float w0,
 		const Value& v1, float w1,
 		const Value& v2, float w2,
-		const Value& v3, float w3
-	)
+		const Value& v3, float w3)
 	{
 		return Value(v0 * w0 + v1 * w1 + v2 * w2 + v3 * w3);
 	}
@@ -54,16 +52,15 @@ template <
 	typename Key,
 	typename Value,
 	typename Accessor = HermiteAccessor< Key, Value >,
-	typename TimeControl = ClampTime
->
+	typename TimeControl = ClampTime >
 class Hermite : public ISpline< Value >
 {
 public:
-	Hermite(const Key* keys, size_t nkeys, float Tend = -1.0f, float stiffness = 0.5f)
-	:	m_keys(keys)
-	,	m_nkeys(nkeys)
-	,	m_Tend(Tend)
-	,	m_stiffness(stiffness)
+	explicit Hermite(const Key* keys, size_t nkeys, float Tend = -1.0f, float stiffness = 0.5f)
+		: m_keys(keys)
+		, m_nkeys(nkeys)
+		, m_Tend(Tend)
+		, m_stiffness(stiffness)
 	{
 	}
 
@@ -135,11 +132,14 @@ public:
 
 		return Accessor::combine(
 			t,
-			v0, h1 - h4,
-			v1, h2 + h3,
-			vp, -h3,
-			vn, h4
-		);
+			v0,
+			h1 - h4,
+			v1,
+			h2 + h3,
+			vp,
+			-h3,
+			vn,
+			h4);
 	}
 
 private:
@@ -150,4 +150,3 @@ private:
 };
 
 }
-

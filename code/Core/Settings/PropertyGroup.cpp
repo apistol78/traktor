@@ -1,28 +1,25 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Settings/PropertyGroup.h"
+
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberSmallMap.h"
-#include "Core/Settings/PropertyGroup.h"
 
 namespace traktor
 {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.PropertyGroup", 0, PropertyGroup, IPropertyValue)
 
-PropertyGroup::PropertyGroup()
-{
-}
-
 PropertyGroup::PropertyGroup(const SmallMap< std::wstring, Ref< IPropertyValue > >& value)
-:	m_value(value)
+	: m_value(value)
 {
 }
 
@@ -33,7 +30,7 @@ PropertyGroup::value_type_t PropertyGroup::get(const IPropertyValue* value)
 
 void PropertyGroup::setProperty(const std::wstring& propertyName, IPropertyValue* value)
 {
-	size_t pos = propertyName.find(L'/');
+	const size_t pos = propertyName.find(L'/');
 	if (pos == propertyName.npos)
 	{
 		if (value)
@@ -43,7 +40,7 @@ void PropertyGroup::setProperty(const std::wstring& propertyName, IPropertyValue
 	}
 	else
 	{
-		std::wstring groupName = propertyName.substr(0, pos);
+		const std::wstring groupName = propertyName.substr(0, pos);
 		Ref< PropertyGroup > group;
 
 		auto it = m_value.find(groupName);
@@ -65,7 +62,7 @@ void PropertyGroup::setProperty(const std::wstring& propertyName, IPropertyValue
 
 IPropertyValue* PropertyGroup::getProperty(const std::wstring& propertyName)
 {
-	size_t pos = propertyName.find(L'/');
+	const size_t pos = propertyName.find(L'/');
 	if (pos == propertyName.npos)
 	{
 		auto it = m_value.find(propertyName);
@@ -73,7 +70,7 @@ IPropertyValue* PropertyGroup::getProperty(const std::wstring& propertyName)
 	}
 	else
 	{
-		std::wstring groupName = propertyName.substr(0, pos);
+		const std::wstring groupName = propertyName.substr(0, pos);
 
 		auto it = m_value.find(groupName);
 		if (it == m_value.end())
@@ -89,7 +86,7 @@ IPropertyValue* PropertyGroup::getProperty(const std::wstring& propertyName)
 
 const IPropertyValue* PropertyGroup::getProperty(const std::wstring& propertyName) const
 {
-	size_t pos = propertyName.find(L'/');
+	const size_t pos = propertyName.find(L'/');
 	if (pos == propertyName.npos)
 	{
 		auto it = m_value.find(propertyName);
@@ -97,7 +94,7 @@ const IPropertyValue* PropertyGroup::getProperty(const std::wstring& propertyNam
 	}
 	else
 	{
-		std::wstring groupName = propertyName.substr(0, pos);
+		const std::wstring groupName = propertyName.substr(0, pos);
 
 		auto it = m_value.find(groupName);
 		if (it == m_value.end())
@@ -201,11 +198,10 @@ Ref< PropertyGroup > PropertyGroup::difference(const PropertyGroup* rightGroup) 
 void PropertyGroup::serialize(ISerializer& s)
 {
 	s >> MemberSmallMap<
-		std::wstring,
-		Ref< IPropertyValue >,
-		Member< std::wstring >,
-		MemberRef< IPropertyValue >
-	>(L"value", m_value);
+			 std::wstring,
+			 Ref< IPropertyValue >,
+			 Member< std::wstring >,
+			 MemberRef< IPropertyValue > >(L"value", m_value);
 }
 
 Ref< IPropertyValue > PropertyGroup::join(const IPropertyValue* right) const
@@ -225,8 +221,7 @@ Ref< IPropertyValue > PropertyGroup::clone() const
 			continue;
 		value.insert(std::make_pair(
 			i->first,
-			i->second->clone()
-		));
+			i->second->clone()));
 	}
 	return new PropertyGroup(value);
 }

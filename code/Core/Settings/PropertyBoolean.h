@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,13 +31,15 @@ class T_DLLCLASS PropertyBoolean : public IPropertyValue
 public:
 	typedef bool value_type_t;
 
-	PropertyBoolean(value_type_t value = false);
+	PropertyBoolean() = default;
+
+	explicit PropertyBoolean(value_type_t value);
 
 	static value_type_t get(const IPropertyValue* value);
 
 	virtual void serialize(ISerializer& s) override final;
 
-	operator value_type_t () const { return m_value; }
+	operator value_type_t() const { return m_value; }
 
 protected:
 	virtual Ref< IPropertyValue > join(const IPropertyValue* right) const override final;
@@ -51,7 +53,7 @@ private:
 /*!
  * \ingroup Core
  */
-template< >
+template <>
 struct PropertyTrait< bool >
 {
 	typedef PropertyBoolean property_type_t;
@@ -60,4 +62,3 @@ struct PropertyTrait< bool >
 };
 
 }
-

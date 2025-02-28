@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,7 +32,9 @@ class T_DLLCLASS PropertyColor : public IPropertyValue
 public:
 	typedef Color4ub value_type_t;
 
-	PropertyColor(const value_type_t& value = value_type_t());
+	PropertyColor() = default;
+
+	explicit PropertyColor(const value_type_t& value);
 
 	static value_type_t get(const IPropertyValue* value);
 
@@ -50,7 +52,7 @@ private:
 /*!
  * \ingroup Core
  */
-template< >
+template <>
 struct PropertyTrait< Color4ub >
 {
 	typedef PropertyColor property_type_t;
@@ -59,4 +61,3 @@ struct PropertyTrait< Color4ub >
 };
 
 }
-

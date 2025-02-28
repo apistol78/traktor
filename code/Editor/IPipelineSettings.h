@@ -8,9 +8,10 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Object.h"
 #include "Core/Settings/IPropertyValue.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +30,7 @@ class T_DLLCLASS IPipelineSettings : public Object
 
 public:
 	/*! Get property from settings.
-	 * 
+	 *
 	 * \param propertyName Name of property.
 	 * \param includeInHash If property value should be part of build hash, only properties which affect output result should be part of hash.
 	 * \param defaultValue Default value as a property value, necessary to keep hash integrity in case no property was found.
@@ -62,7 +63,7 @@ public:
 	template < typename ValueType >
 	typename PropertyTrait< ValueType >::return_type_t getPropertyIncludeHash(const std::wstring& propertyName) const
 	{
-		const typename PropertyTrait< ValueType >::property_type_t hashableDefaultValue;
+		const typename PropertyTrait< ValueType >::property_type_t hashableDefaultValue = typename PropertyTrait< ValueType >::property_type_t();
 		Ref< const IPropertyValue > value = getProperty(propertyName, true, &hashableDefaultValue);
 		return PropertyTrait< ValueType >::property_type_t::get(value);
 	}

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,7 +31,7 @@ class T_DLLCLASS PropertyObject : public IPropertyValue
 public:
 	typedef Ref< ISerializable > value_type_t;
 
-	PropertyObject();
+	PropertyObject() = default;
 
 	explicit PropertyObject(value_type_t value);
 
@@ -51,7 +51,7 @@ private:
 /*!
  * \ingroup Core
  */
-template< >
+template <>
 struct PropertyTrait< ISerializable >
 {
 	typedef PropertyObject property_type_t;
@@ -62,7 +62,7 @@ struct PropertyTrait< ISerializable >
 /*!
  * \ingroup Core
  */
-template< >
+template <>
 struct PropertyTrait< Ref< ISerializable > >
 {
 	typedef PropertyObject property_type_t;
@@ -71,4 +71,3 @@ struct PropertyTrait< Ref< ISerializable > >
 };
 
 }
-

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,10 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Containers/SmallMap.h"
 #include "Core/Settings/IPropertyValue.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,7 +40,7 @@ public:
 
 	typedef Ref< PropertyGroup > value_type_t;
 
-	PropertyGroup();
+	PropertyGroup() = default;
 
 	explicit PropertyGroup(const SmallMap< std::wstring, Ref< IPropertyValue > >& value);
 
@@ -100,7 +101,7 @@ private:
 /*!
  * \ingroup Core
  */
-template< >
+template <>
 struct PropertyTrait< PropertyGroup >
 {
 	typedef PropertyGroup property_type_t;
@@ -111,7 +112,7 @@ struct PropertyTrait< PropertyGroup >
 /*!
  * \ingroup Core
  */
-template< >
+template <>
 struct PropertyTrait< Ref< PropertyGroup > >
 {
 	typedef PropertyGroup property_type_t;

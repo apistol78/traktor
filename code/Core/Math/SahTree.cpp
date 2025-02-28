@@ -1,19 +1,20 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Math/SahTree.h"
+
 #include <limits>
 #include <stack>
-#include "Core/Math/SahTree.h"
 
 namespace traktor
 {
-	namespace
-	{
+namespace
+{
 
 const int32_t c_maxDepth = 20;
 const int32_t c_indicesCountThreshold = 10;
@@ -25,19 +26,19 @@ struct SplitCandidate
 	int32_t countRight;
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.SahTree", SahTree, Object)
 
 SahTree::SahTree()
-:	m_root(nullptr)
+	: m_root(nullptr)
 {
 }
 
 SahTree::~SahTree()
 {
-	for (AlignedVector< Node* >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
-		Alloc::freeAlign(*i);
+	for (Node* node : m_nodes)
+		Alloc::freeAlign(node);
 }
 
 void SahTree::build(const AlignedVector< Winding3 >& polygons)
@@ -54,9 +55,8 @@ void SahTree::build(const AlignedVector< Winding3 >& polygons)
 
 	for (uint32_t i = 0; i < polygons.size(); ++i)
 	{
-		const Winding3::points_t& points = polygons[i].get();
-		for (Winding3::points_t::const_iterator j = points.begin(); j != points.end(); ++j)
-			m_root->aabb.contain(*j);
+		for (const Vector4& point : polygons[i].get())
+			m_root->aabb.contain(point);
 
 		m_root->indices.push_back(int32_t(i));
 
@@ -71,9 +71,9 @@ void SahTree::build(const AlignedVector< Winding3 >& polygons)
 
 bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, int32_t ignore, QueryResult& outResult, QueryCache& inoutCache) const
 {
-	#define IS_LEAF(node) ((node)->leftChild == 0)
+#define IS_LEAF(node) ((node)->leftChild == 0)
 
-	const Scalar F(1e-3f);
+	const Scalar F = 1e-3_simd;
 	bool result = false;
 	Scalar nearT, farT;
 	Scalar T;
@@ -82,11 +82,11 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 	outResult.index = -1;
 	outResult.distance = Scalar(maxDistance > FUZZY_EPSILON ? maxDistance : std::numeric_limits< float >::max());
 
-	if (!m_root->aabb.intersectRay(origin, direction, nearT, farT) || farT < 0.0f)
+	if (!m_root->aabb.intersectRay(origin, direction, nearT, farT) || farT < 0.0_simd)
 		return false;
 
-	if (nearT < 0.0f)
-		nearT = Scalar(0.0f);
+	if (nearT < 0.0_simd)
+		nearT = 0.0_simd;
 
 	BitVector& tags = inoutCache.tags;
 	tags.assign((uint32_t)m_polygons.size(), false);
@@ -115,12 +115,11 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 					continue;
 
 				const Plane& plane = m_planes[index];
-				if (plane.intersectRay(origin, direction, T, p) && T > 0.0f && T <= outResult.distance)
+				if (plane.intersectRay(origin, direction, T, p) && T > 0.0_simd && T <= outResult.distance)
 				{
 					const Vector2 pnt(
 						dot3(m_projectedU[index], p),
-						dot3(m_projectedV[index], p)
-					);
+						dot3(m_projectedV[index], p));
 					if (m_projected[index].inside(pnt))
 					{
 						outResult.index = index;
@@ -151,16 +150,13 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 				else
 					stack.push_back(QueryStack(N->leftChild, nearT, farT));
 			}
-			else
+			else if (T >= nearT && T <= farT)
 			{
-				if (T >= nearT  && T <= farT)
-				{
-					stack.push_back(QueryStack(N->rightChild, nearT, T));
-					stack.push_back(QueryStack(N->leftChild, T, farT));
-				}
-				else
-					stack.push_back(QueryStack(N->rightChild, nearT, farT));
+				stack.push_back(QueryStack(N->rightChild, nearT, T));
+				stack.push_back(QueryStack(N->leftChild, T, farT));
 			}
+			else
+				stack.push_back(QueryStack(N->rightChild, nearT, farT));
 		}
 	}
 
@@ -169,19 +165,19 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 
 bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, int32_t ignore, QueryCache& inoutCache) const
 {
-	#define IS_LEAF(node) ((node)->leftChild == 0)
+#define IS_LEAF(node) ((node)->leftChild == 0)
 
-	const Scalar F(1e-3f);
+	const Scalar F = 1e-3_simd;
 	const Scalar md(maxDistance);
 	Scalar nearT, farT;
 	Scalar T;
 	Vector4 p;
 
-	if (!m_root->aabb.intersectRay(origin, direction, nearT, farT) || farT < 0.0f)
+	if (!m_root->aabb.intersectRay(origin, direction, nearT, farT) || farT < 0.0_simd)
 		return false;
 
-	if (nearT < 0.0f)
-		nearT = Scalar(0.0f);
+	if (nearT < 0.0_simd)
+		nearT = 0.0_simd;
 
 	BitVector& tags = inoutCache.tags;
 	tags.assign((uint32_t)m_polygons.size(), false);
@@ -210,12 +206,11 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 					continue;
 
 				const Plane& plane = m_planes[index];
-				if (plane.intersectRay(origin, direction, T, p) && T > 0.0f && T < md)
+				if (plane.intersectRay(origin, direction, T, p) && T > 0.0_simd && T < md)
 				{
 					const Vector2 pnt(
 						dot3(m_projectedU[index], p),
-						dot3(m_projectedV[index], p)
-					);
+						dot3(m_projectedV[index], p));
 					if (m_projected[index].inside(pnt))
 						return true;
 				}
@@ -240,16 +235,13 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 				else
 					stack.push_back(QueryStack(N->leftChild, nearT, farT));
 			}
-			else
+			else if (T >= nearT && T <= farT)
 			{
-				if (T >= nearT  && T <= farT)
-				{
-					stack.push_back(QueryStack(N->rightChild, nearT, T));
-					stack.push_back(QueryStack(N->leftChild, T, farT));
-				}
-				else
-					stack.push_back(QueryStack(N->rightChild, nearT, farT));
+				stack.push_back(QueryStack(N->rightChild, nearT, T));
+				stack.push_back(QueryStack(N->leftChild, T, farT));
 			}
+			else
+				stack.push_back(QueryStack(N->rightChild, nearT, farT));
 		}
 	}
 
@@ -260,8 +252,7 @@ bool SahTree::checkPoint(int32_t index, const Vector4& position) const
 {
 	const Vector2 pnt(
 		dot3(m_projectedU[index], position),
-		dot3(m_projectedV[index], position)
-	);
+		dot3(m_projectedV[index], position));
 	return m_projected[index].inside(pnt);
 }
 
@@ -285,16 +276,14 @@ void SahTree::buildNode(Node* node, int32_t depth)
 
 		std::pair< float, float > range(
 			std::numeric_limits< float >::max(),
-			-std::numeric_limits< float >::max()
-		);
+			-std::numeric_limits< float >::max());
 		for (size_t j = 0; j < points.size(); ++j)
 		{
 			float e = points[j][node->axis];
 
 			if (
 				e >= node->aabb.mn[node->axis] + FUZZY_EPSILON &&
-				e <= node->aabb.mx[node->axis] - FUZZY_EPSILON
-			)
+				e <= node->aabb.mx[node->axis] - FUZZY_EPSILON)
 			{
 				SplitCandidate candidate = { e, 0, 0 };
 				splitCandidates.push_back(candidate);

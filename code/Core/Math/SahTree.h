@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,13 +8,13 @@
  */
 #pragma once
 
-#include "Core/Ref.h"
-#include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/BitVector.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Winding2.h"
 #include "Core/Math/Winding3.h"
+#include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -43,35 +43,24 @@ class T_DLLCLASS SahTree : public Object
 public:
 	struct QueryResult
 	{
-		int32_t index;
-		Scalar distance;
+		int32_t index = -1;
+		Scalar distance = 0.0_simd;
 		Vector4 position;
 		Vector4 normal;
-
-		QueryResult()
-		:	index(-1)
-		,	distance(0.0f)
-		{
-		}
 	};
 
 	struct QueryStack
 	{
-		Node* node;
-		Scalar nearT;
-		Scalar farT;
+		Node* node = nullptr;
+		Scalar nearT = 0.0_simd;
+		Scalar farT = 1e9_simd;
 
-		QueryStack()
-		:	node(0)
-		,	nearT(0.0f)
-		,	farT(1e9f)
-		{
-		}
+		QueryStack() = default;
 
-		QueryStack(Node* _node, float _nearT, float _farT)
-		:	node(_node)
-		,	nearT(_nearT)
-		,	farT(_farT)
+		explicit QueryStack(Node* _node, float _nearT, float _farT)
+			: node(_node)
+			, nearT(_nearT)
+			, farT(_farT)
 		{
 		}
 	};
@@ -112,7 +101,8 @@ public:
 	 * \param outResult Intersection result.
 	 * \return True if any intersection found.
 	 */
-	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, int32_t ignore, QueryResult& outResult, QueryCache& inoutCache) const {
+	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, int32_t ignore, QueryResult& outResult, QueryCache& inoutCache) const
+	{
 		return queryClosestIntersection(origin, direction, 0.0f, -1, outResult, inoutCache);
 	}
 
@@ -123,7 +113,8 @@ public:
 	 * \param outResult Intersection result.
 	 * \return True if any intersection found.
 	 */
-	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult, QueryCache& inoutCache) const {
+	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult, QueryCache& inoutCache) const
+	{
 		return queryClosestIntersection(origin, direction, -1, outResult, inoutCache);
 	}
 
@@ -144,7 +135,8 @@ public:
 	 * \param maxDistance Intersection must occur prior to this distance from origin, 0 distance is infinite.
 	 * \return True if any intersection found.
 	 */
-	bool queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, QueryCache& inoutCache) const {
+	bool queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, QueryCache& inoutCache) const
+	{
 		return queryAnyIntersection(origin, direction, maxDistance, -1, inoutCache);
 	}
 
@@ -167,18 +159,10 @@ private:
 	{
 		Aabb3 aabb;
 		AlignedVector< int32_t > indices;
-		int32_t axis;
-		Scalar split;
-		Node* leftChild;
-		Node* rightChild;
-
-		Node()
-		:	axis(0)
-		,	split(0.0f)
-		,	leftChild(0)
-		,	rightChild(0)
-		{
-		}
+		int32_t axis = 0;
+		Scalar split = 0.0_simd;
+		Node* leftChild = nullptr;
+		Node* rightChild = nullptr;
 	};
 
 	Node* m_root;
@@ -195,4 +179,3 @@ private:
 };
 
 }
-

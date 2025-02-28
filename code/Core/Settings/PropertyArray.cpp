@@ -1,25 +1,22 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Serialization/MemberRefArray.h"
 #include "Core/Settings/PropertyArray.h"
+
+#include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
 {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.PropertyArray", 0, PropertyArray, IPropertyValue)
 
-PropertyArray::PropertyArray()
-{
-}
-
 PropertyArray::PropertyArray(const RefArray< IPropertyValue >& values)
-:	m_values(values)
+	: m_values(values)
 {
 }
 
@@ -76,13 +73,11 @@ Ref< IPropertyValue > PropertyArray::join(const IPropertyValue* right) const
 		joinedArray->m_values.insert(
 			joinedArray->m_values.end(),
 			leftValues.begin(),
-			leftValues.end()
-		);
+			leftValues.end());
 		joinedArray->m_values.insert(
 			joinedArray->m_values.end(),
 			rightValues.begin(),
-			rightValues.end()
-		);
+			rightValues.end());
 
 		return joinedArray;
 	}
@@ -96,10 +91,8 @@ Ref< IPropertyValue > PropertyArray::clone() const
 {
 	Ref< PropertyArray > cloneArray = new PropertyArray();
 	for (auto value : m_values)
-	{
 		if (value)
 			cloneArray->addProperty(value->clone());
-	}
 	return cloneArray;
 }
 
