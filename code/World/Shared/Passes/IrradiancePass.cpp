@@ -37,11 +37,10 @@ const resource::Id< render::ImageGraph > c_irradiance(L"{14A0E977-7C13-9B43-A26E
 
 struct Reservoir
 {
-	float sample[3];
-	float weight;
-
-	float weightSum;
-	float pad[3];
+	uint32_t lightIndex;
+	float W_light;
+	float W_sum;
+	float M;
 };
 
 }

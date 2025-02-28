@@ -289,8 +289,8 @@
 			<id>{C5FBAB8B-ED64-774E-9410-20EF0C61334D}</id>
 			<comment/>
 			<position>
-				<first>2500</first>
-				<second>-176</second>
+				<first>2507</first>
+				<second>-171</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
@@ -309,7 +309,7 @@
 			<id>{043A893F-B18C-9B47-AA01-180743DC6A6F}</id>
 			<comment/>
 			<position>
-				<first>2553</first>
+				<first>2565</first>
 				<second>-347</second>
 			</position>
 			<declaration>{41DB2032-2B2B-7945-8B6B-947CEC7818A4}</declaration>
@@ -321,7 +321,7 @@
 			<id>{BE703C7F-BF85-B948-AC37-FFC33DD500AC}</id>
 			<comment/>
 			<position>
-				<first>2495</first>
+				<first>2507</first>
 				<second>-253</second>
 			</position>
 		</item>
@@ -376,6 +376,14 @@
 					<id>{0EC1A5F0-0E8F-B540-9491-D474BC938432}</id>
 					<name>ViewInverse</name>
 				</item>
+				<item>
+					<id>{81F09150-4CBC-454E-BCAF-80E70D3C84D4}</id>
+					<name>Reservoir</name>
+				</item>
+				<item>
+					<id>{C7E7E2A3-7D04-6A42-A4CF-2669F3BCE9A4}</id>
+					<name>Index</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -385,8 +393,8 @@
 				</item>
 			</outputPins>
 			<script><![CDATA[
-// Include all lights or randomly select one per pixel.
-#define IRR_ALL_LIGHTS 1
+const uint index = uint($Index);
+$typeof(Reservoir) reservoir = $Reservoir[index];
 
 int rndState = int($Random * 54312.0f);
 
@@ -415,58 +423,90 @@ for (int i = 0; i < N; ++i)
 		const vec3 hit = rayOrigin + rayDir * t;
 		const float phi0 = clamp(-dot(m.normal.xyz, rayDir), 0.0f, 1.0f);
 
-#if IRR_ALL_LIGHTS
 		if ($LightCount > 0)
 		{
-			const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
-#else
-		for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
-		{
-#endif
-			const $typeof(Lights) light = $Lights[lightIndex];
 
-			vec3 lightPosition = vec3(0.0f);
-			vec3 lightDirection = vec3(0.0f);
-			float lightDistance = 100.0f;
-			float lightAttenuation = 0.0f;
-	
-			if (int(light.Type) == 1)	// Directional
-			{
-				lightDirection = ($ViewInverse * light.Direction).xyz;
-				lightAttenuation = 1.0f;
-			}
-			else if (int(light.Type) == 2)	// Point
-			{
-				lightPosition = ($ViewInverse * vec4(light.Position.xyz, 1.0f)).xyz;
-				lightDirection = lightPosition - hit;
-				lightDistance = length(lightDirection);
-				lightDirection /= lightDistance;
 
-				const float f = clamp(1.0f - lightDistance / light.RangeRadius.y, 0.0f, 1.0f);
-				lightAttenuation = f * f;
-			}
-	
-			// Attenuate with distance of ray.
-			const float nt = t / Far;
-			lightAttenuation *= clamp(1.0f / (nt * nt), 0.0f, 1.0f);
-	
-			[[branch]]
-			if (lightAttenuation > 0.0f)
+			// Process reservoir importance sampling of light.
 			{
-				// Cast shadow ray.
-				const bool shadowed = HWRT_TraceShadow(
-					$AS,
-					hit + m.normal.xyz * 0.1f,
-					lightDirection,
-					lightDistance - 0.1f
-				);
-				if (!shadowed)
+				const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
+				const $typeof(Lights) light = $Lights[lightIndex];
+	
+				float lightAttenuation = 0.0f;
+				if (int(light.Type) == 1)	// Directional
 				{
-					const float phi = phi0 * clamp(dot(lightDirection, m.normal.xyz), 0.0f, 1.0f);
-					acc += vec4(
-						(m.albedo * phi * light.Color).xyz * PI * lightAttenuation / (pdf * pdf0),
-						1.0f
+					lightAttenuation = 1.0f;
+				}
+				else if (int(light.Type) == 2)	// Point
+				{
+					vec3 lightPosition = ($ViewInverse * vec4(light.Position.xyz, 1.0f)).xyz;
+					vec3 lightDirection = lightPosition - hit;
+					float lightDistance = length(lightDirection);
+	
+					const float f = clamp(1.0f - lightDistance / light.RangeRadius.y, 0.0f, 1.0f);
+					lightAttenuation = f * f;
+				}
+	
+				float p_hat = 1.0f - lightAttenuation;
+				float w = p_hat / pdf;
+				float c = 1.0f;
+	
+				reservoir.W_sum += w;
+				reservoir.M += c;
+	
+				if (Hash(rndState++) < w / reservoir.W_sum)
+					reservoir.lightIndex = lightIndex;
+			}
+
+
+			// Evaluate light.
+			{
+				const int lightIndex = int(reservoir.lightIndex);
+				const $typeof(Lights) light = $Lights[lightIndex];
+
+				vec3 lightPosition = vec3(0.0f);
+				vec3 lightDirection = vec3(0.0f);
+				float lightDistance = 100.0f;
+				float lightAttenuation = 0.0f;
+		
+				if (int(light.Type) == 1)	// Directional
+				{
+					lightDirection = ($ViewInverse * light.Direction).xyz;
+					lightAttenuation = 1.0f;
+				}
+				else if (int(light.Type) == 2)	// Point
+				{
+					lightPosition = ($ViewInverse * vec4(light.Position.xyz, 1.0f)).xyz;
+					lightDirection = lightPosition - hit;
+					lightDistance = length(lightDirection);
+					lightDirection /= lightDistance;
+	
+					const float f = clamp(1.0f - lightDistance / light.RangeRadius.y, 0.0f, 1.0f);
+					lightAttenuation = f * f;
+				}
+		
+				// Attenuate with distance of ray.
+				const float nt = t / Far;
+				lightAttenuation *= clamp(1.0f / (nt * nt), 0.0f, 1.0f);
+		
+				[[branch]]
+				if (lightAttenuation > 0.0f)
+				{
+					// Cast shadow ray.
+					const bool shadowed = HWRT_TraceShadow(
+						$AS,
+						hit + m.normal.xyz * 0.1f,
+						lightDirection,
+						lightDistance - 0.1f
 					);
+					if (!shadowed)
+					{
+						const float phi = phi0 * clamp(dot(lightDirection, m.normal.xyz), 0.0f, 1.0f);
+						acc += vec4(
+							(m.albedo * phi * light.Color).xyz * PI * lightAttenuation / (pdf * pdf0),
+							1.0f
+						);
+					}
 				}
 			}
 		}
@@ -479,8 +519,9 @@ for (int i = 0; i < N; ++i)
 	}
 }
 
-vec4 o = acc / N;
+$Reservoir[index] = reservoir;
 
+vec4 o = acc / N;
 $Output = vec4(o.xyz, pow(o.w, 0.1f));
 ]]></script>
 		</item>
@@ -514,8 +555,8 @@ $Output = vec4(o.xyz, pow(o.w, 0.1f));
 			<id>{F807D0E1-4723-424C-8519-FB647707C1BE}</id>
 			<comment/>
 			<position>
-				<first>2544</first>
-				<second>-93</second>
+				<first>2555</first>
+				<second>-89</second>
 			</position>
 			<name>Random</name>
 			<technique/>
@@ -584,8 +625,8 @@ $Output = BlueNoise(seed);
 			<id>{2EFC991A-99A9-1B44-99A8-D4BE3A75CCED}</id>
 			<comment/>
 			<position>
-				<first>2536</first>
-				<second>27</second>
+				<first>2549</first>
+				<second>21</second>
 			</position>
 			<declaration>{23B778E5-02E9-3A41-A252-D491C301D479}</declaration>
 			<parameterName/>
@@ -596,8 +637,8 @@ $Output = BlueNoise(seed);
 			<id>{17D820BE-1FA0-8F4F-8389-F0DD3A44FDB4}</id>
 			<comment/>
 			<position>
-				<first>2469</first>
-				<second>-13</second>
+				<first>2479</first>
+				<second>-23</second>
 			</position>
 			<parameterName>World_LightSBuffer</parameterName>
 			<elements>
@@ -657,8 +698,8 @@ $Output = BlueNoise(seed);
 			<id>{A973521D-575A-EC4B-A5C7-1B2048BCC7BA}</id>
 			<comment/>
 			<position>
-				<first>2523</first>
-				<second>69</second>
+				<first>2533</first>
+				<second>65</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName>World_ViewInverse</parameterName>
@@ -1152,6 +1193,88 @@ else
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
+		</item>
+		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+			<id>{A41FE69F-D300-E84C-916B-32A0C658387B}</id>
+			<comment/>
+			<position>
+				<first>2495</first>
+				<second>109</second>
+			</position>
+			<parameterName>World_Reservoir</parameterName>
+			<elements>
+				<item>
+					<name>lightIndex</name>
+					<type>DtInteger1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>W_light</name>
+					<type>DtFloat1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>W_sum</name>
+					<type>DtFloat1</type>
+					<length>0</length>
+				</item>
+				<item>
+					<name>M</name>
+					<type>DtFloat1</type>
+					<length>0</length>
+				</item>
+			</elements>
+		</item>
+		<item type="traktor.render.FragmentPosition" version="traktor.render.Node:1">
+			<id>{6F64D446-9A81-1941-B4FC-037421D2B60D}</id>
+			<comment/>
+			<position>
+				<first>2161</first>
+				<second>232</second>
+			</position>
+		</item>
+		<item type="traktor.render.TargetSize" version="traktor.render.Node:1">
+			<id>{0CEC074E-0C5F-7346-B4D6-7E8D90CCDFFA}</id>
+			<comment/>
+			<position>
+				<first>2209</first>
+				<second>196</second>
+			</position>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{279C5958-397E-4E44-90E0-C79BDBDD7955}</id>
+			<comment/>
+			<position>
+				<first>2360</first>
+				<second>240</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{1367B8A5-60E5-FD4E-9431-EE95008FFE2F}</id>
+			<comment/>
+			<position>
+				<first>2360</first>
+				<second>208</second>
+			</position>
+			<swizzle>y</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{E0C495A0-3EDD-6846-825C-C601F2906A60}</id>
+			<comment/>
+			<position>
+				<first>2360</first>
+				<second>176</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{7A031942-CF9C-D64B-90E1-8B62FD79A6E2}</id>
+			<comment/>
+			<position>
+				<first>2539</first>
+				<second>171</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -1975,6 +2098,86 @@ else
 				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[80]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[27]"/>
+				<id>{81F09150-4CBC-454E-BCAF-80E70D3C84D4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[81]"/>
+				<id>{C9223159-9DF2-46A9-B0F2-D0D7D5BEE6F7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[83]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[81]"/>
+				<id>{C9223159-9DF2-46A9-B0F2-D0D7D5BEE6F7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[84]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[82]"/>
+				<id>{853B6F75-1464-40E7-BEDC-2716C763046E}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[85]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[84]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{F95D9BA4-88CC-4001-9948-B8173FDDE6F0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[85]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{4067F6C8-9404-45CA-9359-D9E2456F7431}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[83]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{567A2DC4-F113-4DE2-917A-791917DA5DA5}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{29BA4386-B838-4550-93DF-F53D8B812C88}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[27]"/>
+				<id>{C7E7E2A3-7D04-6A42-A4CF-2669F3BCE9A4}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -1985,8 +2188,8 @@ else
 				<second>-462</second>
 			</position>
 			<size>
-				<first>1548</first>
-				<second>690</second>
+				<first>1568</first>
+				<second>880</second>
 			</size>
 		</item>
 	</groups>
