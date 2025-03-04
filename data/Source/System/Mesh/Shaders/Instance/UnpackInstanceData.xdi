@@ -55,67 +55,31 @@
 			</position>
 			<name>RotationLast</name>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{BD8029D8-D20D-AE40-9895-EA83610D8339}</id>
 			<comment/>
 			<position>
 				<first>425</first>
 				<second>759</second>
 			</position>
+			<structDeclaration>{41FBD00D-14D7-A942-9F00-69922B6A1908}</structDeclaration>
 			<parameterName>InstanceWorld</parameterName>
-			<elements>
-				<item>
-					<name>rotation</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>translation</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>boundingBoxMin</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>boundingBoxMax</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{5193F279-0901-F345-97E6-238E9D406009}</id>
 			<comment/>
 			<position>
 				<first>409</first>
 				<second>832</second>
 			</position>
+			<structDeclaration>{9A3A78AE-C527-9748-8CE7-F8185442C270}</structDeclaration>
 			<parameterName>InstanceWorldLast</parameterName>
-			<elements>
-				<item>
-					<name>rotation</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>translation</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>boundingBoxMin</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>boundingBoxMax</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
 			<id>{A7010216-CD61-7C4F-9DAA-3E2A9D4DDC9B}</id>
@@ -202,11 +166,11 @@
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 $Output = gl_DrawID;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{1B6A44DE-272D-E946-8D87-4A519ECE2206}</id>

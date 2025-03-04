@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.StructDeclaration">
+	<elements>
+		<item>
+			<name>Position</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>Normal</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>Tangent</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>Binormal</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>BlendIndices</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>BlendWeights</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+	</elements>
+</object>

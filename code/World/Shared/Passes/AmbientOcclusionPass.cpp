@@ -95,6 +95,10 @@ render::handle_t AmbientOcclusionPass::setup(
 		return 0;
 
 	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr);
+	const Matrix44& projection = worldRenderView.getProjection();
+	const Scalar p11 = projection.get(0, 0);
+	const Scalar p22 = projection.get(1, 1);
+	const Vector4 magicCoeffs(1.0f / p11, 1.0f / p22, 0.0f, 0.0f);
 
 	// Add ambient occlusion target set.
 	render::RenderGraphTargetSetDesc rgtd;
@@ -131,6 +135,7 @@ render::handle_t AmbientOcclusionPass::setup(
 
 		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
+		params->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
 		params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 		params->setMatrixParameter(s_handleView, worldRenderView.getView());
 		params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());

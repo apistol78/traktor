@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.StructDeclaration">
+	<elements>
+		<item>
+			<name>patchOrigin</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>surfaceOffset</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>patchBoundingBoxMn</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>patchBoundingBoxMx</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+	</elements>
+</object>

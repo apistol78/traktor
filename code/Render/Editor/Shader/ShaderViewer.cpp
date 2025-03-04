@@ -440,7 +440,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t {
 		Ref< db::Instance > declarationInstance = m_editor->getSourceDatabase()->getInstance(declarationId);
 		if (declarationInstance != nullptr)
-			return { declarationInstance->getName(), declarationInstance->getObject< UniformDeclaration >() };
+			return { declarationInstance->getName(), declarationInstance->getObject() };
 		else
 			return { L"", nullptr };
 	};

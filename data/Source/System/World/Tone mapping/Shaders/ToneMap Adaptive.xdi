@@ -75,20 +75,20 @@
 				</item>
 			</outputPins>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{4997F9D3-60D1-3F41-8294-E64EA7129F70}</id>
 			<comment/>
 			<position>
 				<first>306</first>
 				<second>478</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -196,11 +196,11 @@
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{B6294FB0-E15A-DF41-AE46-19D0AF219666}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 W
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>1078</first>
 				<second>379</second>
@@ -228,13 +228,14 @@ W
 			</position>
 			<name>value</name>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
 			<id>{236107C4-F249-8441-B9FF-F4E6C246E398}</id>
 			<comment/>
 			<position>
 				<first>-398</first>
 				<second>351</second>
 			</position>
+			<structDeclaration>{98974FE3-F628-844A-9C83-9418695E2555}</structDeclaration>
 			<parameterName>CurrentIllum</parameterName>
 			<elements>
 				<item>
@@ -308,8 +309,8 @@ W
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 vec3 x = max($Input.xyz, vec3(0.0f));
 float a = 3.75f;
 float b = 0.05f;
@@ -321,8 +322,8 @@ $Output = vec4(
 	1.0f
 );
 
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{EC603850-EDC3-CD4D-AFF6-8E85EA92F9F6}</id>

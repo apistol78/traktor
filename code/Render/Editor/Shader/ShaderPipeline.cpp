@@ -364,7 +364,7 @@ bool ShaderPipeline::buildOutput(
 	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t {
 		Ref< db::Instance > declarationInstance = pipelineBuilder->getSourceDatabase()->getInstance(declarationId);
 		if (declarationInstance != nullptr)
-			return { declarationInstance->getName(), declarationInstance->getObject< UniformDeclaration >() };
+			return { declarationInstance->getName(), declarationInstance->getObject() };
 		else
 			return { L"", nullptr };
 	};
@@ -376,7 +376,7 @@ bool ShaderPipeline::buildOutput(
 	pipelineBuilder->getProfiler()->end();
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to link uniform declarations." << Endl;
+		log::error << L"ShaderPipeline failed; unable to link uniform/struct declarations." << Endl;
 		return false;
 	}
 

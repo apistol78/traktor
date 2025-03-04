@@ -8,14 +8,14 @@
  */
 #pragma once
 
-//#include <functional>
-#include "Core/Object.h"
+// #include <functional>
 #include "Core/Containers/SmallMap.h"
 #include "Core/Containers/StaticMap.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
-#include "Render/Shader.h"
+#include "Core/Object.h"
 #include "Render/Image2/ImageGraphTypes.h"
+#include "Render/Shader.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -64,7 +64,9 @@ class T_DLLCLASS ImageGraphContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	void associateTexture(img_handle_t textureId, ITexture* texture);
+	void associateExplicitTexture(img_handle_t textureId, ITexture* texture);
+
+	void associateTexture(img_handle_t textureId, handle_t rgTextureId);
 
 	void associateTextureTargetSet(img_handle_t textureId, handle_t targetSetId, int32_t colorIndex);
 
@@ -89,9 +91,10 @@ public:
 private:
 	struct TextureTargetSet
 	{
-		handle_t targetSetId;
-		int32_t colorIndex;
-		ITexture* texture;
+		handle_t targetSetId = 0;
+		int32_t colorIndex = -1;
+		handle_t textureId = 0;
+		ITexture* texture = nullptr;
 	};
 
 	SmallMap< img_handle_t, TextureTargetSet > m_textureTargetSet;

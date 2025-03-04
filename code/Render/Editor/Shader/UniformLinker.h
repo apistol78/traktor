@@ -8,11 +8,12 @@
  */
 #pragma once
 
-#include <functional>
-#include <string>
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
+
+#include <functional>
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,15 +27,14 @@ namespace traktor::render
 {
 
 class ShaderGraph;
-class UniformDeclaration;
 
 class T_DLLCLASS UniformLinker : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	typedef std::pair< std::wstring, Ref< const UniformDeclaration > > named_decl_t;
-	typedef std::function< named_decl_t (const Guid&) > fn_reader_t;
+	typedef std::pair< std::wstring, Ref< const Object > > named_decl_t;
+	typedef std::function< named_decl_t(const Guid&) > fn_reader_t;
 
 	explicit UniformLinker(const fn_reader_t& declarationReader);
 

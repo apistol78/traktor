@@ -75,6 +75,9 @@ const render::Handle s_handleHiZTexture(L"World_HiZTexture");
 const render::Handle s_handleTLAS(L"World_TLAS");
 const render::Handle s_handleHalfResDepthMap(L"World_HalfResDepthMap");
 const render::Handle s_handleReservoir(L"World_Reservoir");
+const render::Handle s_handleReservoirOutput(L"World_ReservoirOutput");
+const render::Handle s_handleReservoirSize(L"World_ReservoirSize");
+const render::Handle s_handleVelocityMap(L"World_VelocityMap");
 
 // Culling.
 const render::Handle s_handleTargetSize(L"World_TargetSize");

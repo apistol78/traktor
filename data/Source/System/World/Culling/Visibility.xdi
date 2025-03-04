@@ -75,8 +75,8 @@
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const vec3 center = ($Bbmn + $Bbmx).xyz / 2.0f;
 const float radius = length(($Bbmx - $Bbmn).xyz / 2.0f);
 
@@ -106,8 +106,8 @@ bool inside0, inside1;
 }
 
 $Output = (inside0 && inside1) ? 1.0f : 0.0f;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{861D7610-0664-6C4B-A21F-0D64852C2041}</id>
@@ -141,21 +141,22 @@ $Output = (inside0 && inside1) ? 1.0f : 0.0f;
 				</item>
 			</inputPins>
 			<outputPins/>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const int index = int($Index);
 
 $Buffer[index].visible = $Input;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
 			<id>{32AF829B-BE26-9242-99ED-1189D698205D}</id>
 			<comment/>
 			<position>
 				<first>1382</first>
 				<second>493</second>
 			</position>
+			<structDeclaration>{7D2EEA26-F234-3C48-BC5F-0192B3033DCC}</structDeclaration>
 			<parameterName>World_Visibility</parameterName>
 			<elements>
 				<item>
@@ -195,13 +196,14 @@ $Buffer[index].visible = $Input;
 				<second>676</second>
 			</position>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
 			<id>{FAD1FE60-D90C-8A4F-BEFD-145108FE5466}</id>
 			<comment/>
 			<position>
 				<first>-282</first>
 				<second>577</second>
 			</position>
+			<structDeclaration>{41FBD00D-14D7-A942-9F00-69922B6A1908}</structDeclaration>
 			<parameterName>InstanceWorld</parameterName>
 			<elements>
 				<item>
@@ -292,8 +294,8 @@ $Buffer[index].visible = $Input;
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 mat4 viewProjection = $ViewProjection;
 
 vec3 bboxMin = $Bbmn.xyz;
@@ -349,8 +351,8 @@ if (minZ <= maxDepth)
 	$Output = 1.0f;
 else
 	$Output = 0.0f;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{099F295D-79C3-9847-A2B5-E3BE5904F79D}</id>
@@ -364,20 +366,20 @@ else
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.TextureState" version="traktor.render.Node:1">
+		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
 			<id>{68311C48-A517-3146-87E8-D82A66146355}</id>
 			<comment/>
 			<position>
 				<first>431</first>
 				<second>821</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>

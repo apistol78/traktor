@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule" version="1">
+	<text><![CDATA[
+vec4 HWRT_Light_Irradiance(accelerationStructureEXT AS, const mat4 viewInverse, const World_Light_Type light, const vec3 position, const vec3 normal)
+{
+	vec3 lightPosition = vec3(0.0f);
+	vec3 lightDirection = vec3(0.0f);
+	float lightDistance = 100.0f;
+	float lightAttenuation = 0.0f;
+	
+	if (int(light.Type) == 1)	// Directional
+	{
+		lightDirection = (viewInverse * light.Direction).xyz;
+		lightAttenuation = 1.0f;
+	}
+	else if (int(light.Type) == 2)	// Point
+	{
+		lightPosition = (viewInverse * vec4(light.Position.xyz, 1.0f)).xyz;
+		lightDirection = lightPosition - position;
+		lightDistance = length(lightDirection);
+		lightDirection /= lightDistance;
+	
+		const float f = clamp(1.0f - lightDistance / light.RangeRadius.y, 0.0f, 1.0f);
+		lightAttenuation = f * f;
+	}
+
+	[[branch]]
+	if (lightAttenuation > 0.0f)
+	{
+		const bool shadowed = HWRT_TraceShadow(
+			AS,
+			position + normal * 0.1f,
+			lightDirection,
+			lightDistance - 0.1f
+		);
+		if (!shadowed)
+		{
+			const float phi = clamp(dot(lightDirection, normal), 0.0f, 1.0f);
+			return vec4(
+				(phi * light.Color).xyz * lightAttenuation,
+				1.0f
+			);
+		}
+	}
+
+	return vec4(0.0f);
+}
+]]></text>
+	<samplers/>
+</object>

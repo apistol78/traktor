@@ -859,21 +859,18 @@
 			</position>
 			<name>L_RadiusFallOff</name>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{A041B17B-6316-9749-B78D-DE893224DB63}</id>
 			<comment/>
 			<position>
 				<first>-458</first>
 				<second>-317</second>
 			</position>
+			<structDeclaration>{F1783FA0-68A0-E142-9430-656CC70FECBA}</structDeclaration>
 			<parameterName>World_LightIndexSBuffer</parameterName>
-			<elements>
-				<item>
-					<name>LightIndex</name>
-					<type>DtInteger4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
 			<id>{D5987EDD-7E6E-6045-AEE1-160034110BEF}</id>
@@ -935,8 +932,8 @@
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const vec4 sp = $SlicePositions;
 const float vz = $Input.z;
 
@@ -948,8 +945,8 @@ else if (vz >= sp.x)
 	$Output = 1;
 else
 	$Output = 0;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{1F0AF798-FE76-E74D-A9F4-C23B3AAD7509}</id>
@@ -1091,11 +1088,11 @@ else
 		</item>
 		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
 			<id>{3DF827C2-E2A5-BD4D-9B21-40352670F2B4}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Check max shadow distance
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>1391</first>
 				<second>973</second>
@@ -1171,66 +1168,18 @@ Check max shadow distance
 				<item>AtlasTransform</item>
 			</names>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{3F81EE00-FED6-5C4C-955F-090BB8F6ED7E}</id>
 			<comment/>
 			<position>
 				<first>788</first>
 				<second>-1339</second>
 			</position>
+			<structDeclaration>{86E147CA-B18B-544E-A278-64ABC36DBA11}</structDeclaration>
 			<parameterName>World_LightSBuffer</parameterName>
-			<elements>
-				<item>
-					<name>Type</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>RangeRadius</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Position</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Direction</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Color</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight0</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight1</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight2</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight3</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>AtlasTransform</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{C54429BA-C227-3E4A-8359-A841E61C8DAF}</id>
@@ -1351,8 +1300,8 @@ Check max shadow distance
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const vec3 N = $N.xyz;
 const vec3 V = $V.xyz;
 const vec3 L = $L.xyz;
@@ -1371,8 +1320,8 @@ const vec3 Lout = CalculateLighting(
 );
 
 $Output = vec4(Lout.xyz, 0.0f);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{0F6EE36F-7E4B-7A42-9E21-32292422BD95}</id>
@@ -1430,8 +1379,8 @@ $Output = vec4(Lout.xyz, 0.0f);
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const vec3 N = $N.xyz;
 const vec3 V = $V.xyz;
 const vec3 L = $L.xyz;
@@ -1450,8 +1399,8 @@ const vec3 Lout = CalculateLighting(
 );
 
 $Output = vec4(Lout.xyz, 0.0f);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{0565A134-1F9E-6A4F-8455-0BA45F8458D6}</id>
@@ -1563,8 +1512,8 @@ $Output = vec4(Lout.xyz, 0.0f);
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const vec3 N = $N.xyz;
 const vec3 V = $V.xyz;
 const vec3 L = $L.xyz;
@@ -1583,8 +1532,8 @@ const vec3 Lout = CalculateLighting(
 );
 
 $Output = vec4(Lout.xyz, 0.0f);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{61E2B852-2244-CB43-B1D6-E62E3E5D80A2}</id>
@@ -1812,8 +1761,8 @@ $Output = vec4(Lout.xyz, 0.0f);
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const vec3 N = $N.xyz;
 const vec3 V = $V.xyz;
 const vec3 albedo = $Albedo.xyz;
@@ -1830,8 +1779,8 @@ const vec3 r = CalculateReflection(
 
 $Output = vec4(r, 0.0f);
 
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{291FB489-ED9A-364C-BDCB-036EC9634743}</id>
@@ -1851,11 +1800,11 @@ $Output = vec4(r, 0.0f);
 		</item>
 		<item type="traktor.render.Neg" version="traktor.render.Node:1">
 			<id>{233B6582-EA04-A649-BF8E-4B8BDF933505}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Eye direction
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>-496</first>
 				<second>-575</second>

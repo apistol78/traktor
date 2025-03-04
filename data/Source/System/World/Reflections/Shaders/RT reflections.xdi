@@ -195,6 +195,7 @@
 				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
 				<item>{4370C471-3C5D-914B-A3AC-866BE15AD328}</item>
 				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
+				<item>{6ED30419-6A30-3D41-9583-D6E71FFE0064}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -258,7 +259,7 @@ vec4 acc = vec4(0.0f);
 HWRT_Material m;
 float t;
 
-const float pdf = 0.5f / max($LightCount, 1);
+const float pdf = 1.0f / max($LightCount, 1);
 
 for (int i = 0; i < N; ++i)
 {
@@ -272,53 +273,17 @@ for (int i = 0; i < N; ++i)
 	{
 		const vec3 hit = rayOrigin + rayDir * t;
 
+		const float nt = t / HWRT_DefaultFar;
+		const float at0 = clamp(1.0f / (nt * nt), 0.0f, 1.0f);
+
+		// Add direct lights.
 		const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
 		const $typeof(Lights) light = $Lights[lightIndex];
-
-		vec3 lightPosition = vec3(0.0f);
-		vec3 lightDirection = vec3(0.0f);
-		float lightDistance = 100.0f;
-		float lightAttenuation = 0.0f;
-
-		if (int(light.Type) == 1)	// Directional
-		{
-			lightDirection = ($ViewInverse * light.Direction).xyz;
-			lightAttenuation = 1.0f;
-		}
-		else if (int(light.Type) == 2)	// Point
-		{
-			lightPosition = ($ViewInverse * vec4(light.Position.xyz, 1.0f)).xyz;
-			lightDirection = lightPosition - hit;
-			lightDistance = length(lightDirection);
-			lightDirection /= lightDistance;
-
-			const float f = clamp(1.0f - lightDistance / light.RangeRadius.y, 0.0f, 1.0f);
-			lightAttenuation = f * f;
-		}
-
-		// Attenuate with distance of first ray.
-		const float nt = t / HWRT_DefaultFar;
-		const float at = clamp(1.0f / (nt * nt), 0.0f, 1.0f);
-
-		lightAttenuation *= at;
-		if (lightAttenuation > 0.0f)
-		{
-			// Cast shadow ray.
-			const bool shadowed = HWRT_TraceShadow(
-				$AS,
-				hit + m.normal.xyz * 0.1f,
-				lightDirection,
-				lightDistance - 0.1f
-			);
-			const float phi = clamp(dot(lightDirection, m.normal.xyz), 0.25f, 1.0f);
-			acc += vec4(
-				(m.albedo * phi * light.Color).xyz * PI * lightAttenuation * (shadowed ? 0.25f : 1.0f) / pdf,
-				1.0f
-			);
-		}
+		const vec4 irr = HWRT_Light_Irradiance($AS, $ViewInverse, light, hit, m.normal.xyz);
+		acc += vec4((m.albedo * irr * at0 / pdf).xyz, at0);
 
 		// Add emissive.
-		acc += vec4(m.albedo.xyz * m.albedo.w * at, m.albedo.w * at);
+		acc += vec4(m.albedo.xyz * m.albedo.w * at0, m.albedo.w * at0);
 	}
 }
 
@@ -671,66 +636,19 @@ $Output = vec4(acc.xyz / N, acc.w / N);
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="5,traktor.render.Node:1">
 			<id>{47C0506B-ECB7-3C4B-BF40-082D76BE2168}</id>
 			<comment/>
 			<position>
 				<first>354</first>
 				<second>-221</second>
 			</position>
+			<structDeclaration>{86E147CA-B18B-544E-A278-64ABC36DBA11}</structDeclaration>
 			<parameterName>World_LightSBuffer</parameterName>
-			<elements>
-				<item>
-					<name>Type</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>RangeRadius</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Position</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Direction</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Color</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight0</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight1</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight2</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight3</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>AtlasTransform</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<declType/>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{72188EED-61A7-7C4C-A1F5-CBFDB9801E38}</id>

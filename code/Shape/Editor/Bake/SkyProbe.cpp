@@ -37,21 +37,6 @@ private:
 	std::function< Vector4(const Vector4&) > m_fn;
 };
 
-Vector4 lambertianDirection(const Vector2& uv, const Vector4& direction)
-{
-	// Calculate random direction, with Gaussian probability distribution.
-	const float sin2_theta = uv.x;
-	const float cos2_theta = 1.0f - sin2_theta;
-	const float sin_theta = std::sqrt(sin2_theta);
-	const float cos_theta = std::sqrt(cos2_theta);
-	const float orientation = uv.y * TWO_PI;
-	const Vector4 dir(sin_theta * std::cos(orientation), sin_theta * std::sin(orientation), cos_theta, 0.0f);
-
-	Vector4 u, v;
-	orthogonalFrame(direction, u, v);
-	return (Matrix44(u, v, direction, Vector4::zero()) * dir).xyz0().normalized();
-}
-
 }
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SkyProbe", 0, SkyProbe, IProbe)
@@ -73,7 +58,7 @@ SkyProbe::SkyProbe(const Color4f& skyOverHorizon, const Color4f& skyUnderHorizon
 			// const Vector4 direction = Quasirandom::uniformHemiSphere(uv, rd);
 			// const Scalar probability = 1.0_simd;
 
-			const Vector4 direction = lambertianDirection(uv, rd);
+			const Vector4 direction = Quasirandom::lambertian(uv, rd);
 			const Scalar probability = 0.78532_simd;
 
 			Vector4 col = Vector4(skyOverHorizon.linear()) - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;

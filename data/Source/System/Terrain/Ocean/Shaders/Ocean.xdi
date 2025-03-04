@@ -323,20 +323,20 @@
 			<external>{AAEBB86D-4227-1847-A147-A07C2A5D10B9}</external>
 			<type>Texture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{EADE38D6-6809-B14B-B79A-DFF9733CBBAE}</id>
 			<comment/>
 			<position>
 				<first>4859</first>
 				<second>1289</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Wrap</addressU>
+			<addressV>Wrap</addressV>
+			<addressW>Wrap</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -443,20 +443,20 @@
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{87833C0B-3553-4C4D-8BA3-C79F874B2040}</id>
 			<comment/>
 			<position>
 				<first>6918</first>
 				<second>1546</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -1062,11 +1062,11 @@
 		</item>
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
 			<id>{FB6A3AC8-4A75-2240-8292-A340C4DFA6BF}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Calculate analytical lighting
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>5680</first>
 				<second>887</second>
@@ -1074,11 +1074,11 @@ Calculate analytical lighting
 		</item>
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
 			<id>{FD80DC93-A203-A44A-9B3E-D1ED552B99D9}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Calculate depth fade factor
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>4035</first>
 				<second>801</second>
@@ -1086,11 +1086,11 @@ Calculate depth fade factor
 		</item>
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
 			<id>{F75796C7-8120-FD4B-BB6B-BC3A9C5CAF3E}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Read current fragment
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>6627</first>
 				<second>1481</second>
@@ -1164,8 +1164,8 @@ Read current fragment
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const vec3 scatter = ComputeOceanScattering(
 	$HeightDisplacement.x * 200.0f,
 	$ViewDirection.xyz,
@@ -1177,8 +1177,8 @@ const vec3 scatter = ComputeOceanScattering(
 	$SpecularCoeff.xyz
 );
 $Output = vec4(scatter, 0.0f);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{EF1373CD-97CC-864A-BA3D-0D2760A081A6}</id>
@@ -1189,66 +1189,18 @@ $Output = vec4(scatter, 0.0f);
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{0007AFF3-5BCD-DC4B-B85E-12295A37349A}</id>
 			<comment/>
 			<position>
 				<first>4751</first>
 				<second>234</second>
 			</position>
+			<structDeclaration>{86E147CA-B18B-544E-A278-64ABC36DBA11}</structDeclaration>
 			<parameterName>World_LightSBuffer</parameterName>
-			<elements>
-				<item>
-					<name>Type</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>RangeRadius</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Position</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Direction</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Color</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight0</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight1</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight2</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight3</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>AtlasTransform</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
 			<id>{16233F5C-A5F8-084B-AE01-34B851DD1ACC}</id>
@@ -1599,11 +1551,11 @@ $Output = vec4(scatter, 0.0f);
 		</item>
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
 			<id>{94485059-9208-1D49-B31B-3325A3A4D10E}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Dummy
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>261</first>
 				<second>1771</second>
@@ -1840,11 +1792,11 @@ Dummy
 		</item>
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
 			<id>{08ADF106-97B4-4A4B-B494-44BB10CBCB34}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Read sun direction
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>5223</first>
 				<second>93</second>
@@ -1900,13 +1852,13 @@ Read sun direction
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 vec3 r = refract($Incident.xyz, $Normal.xyz, 1.2f);
 
 $Output = vec4(r * -0.05f, 0.0f);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{69E7DEA1-4A45-7D42-A199-ECF571A8104B}</id>
@@ -3719,11 +3671,11 @@ $Output = vec4(r * -0.05f, 0.0f);
 		</item>
 		<item type="traktor.render.Group">
 			<title>Sample irradiance grid</title>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Sample irradiance grid
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>-529</first>
 				<second>4501</second>

@@ -6,38 +6,21 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cmath>
-#include <functional>
+#include "Core/Test/CaseMath.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Line2.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/RandomGeometry.h"
-#include "Core/Test/CaseMath.h"
 #include "Core/Test/MathCompare.h"
+
+#include <cmath>
+#include <functional>
 
 namespace traktor::test
 {
-	namespace
-	{
-
-Vector4 lambertianDirection(const Vector2& uv, const Vector4& direction)
-{
-	// Calculate random direction, with Gaussian probability distribution.
-	const float sin2_theta = uv.x;
-	const float cos2_theta = 1.0f - sin2_theta;
-	const float sin_theta = std::sqrt(sin2_theta);
-	const float cos_theta = std::sqrt(cos2_theta);
-	const float orientation = uv.y * TWO_PI;
-	const Vector4 dir(sin_theta * std::cos(orientation), sin_theta * std::sin(orientation), cos_theta, 0.0f);
-
-	Vector4 u, v;
-	orthogonalFrame(direction, u, v);
-	return (Matrix44(u, v, direction, Vector4::zero()) * dir).xyz0().normalized();
-}
-
-	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseMath", 0, CaseMath, Case)
 
@@ -122,9 +105,9 @@ void CaseMath::run()
 	CASE_ASSERT_EQUAL(rotateY(PI), Quaternion::fromEulerAngles(PI, 0.0f, 0.0f).toMatrix44());
 	CASE_ASSERT_EQUAL(rotateZ(PI), Quaternion::fromEulerAngles(0.0f, 0.0f, PI).toMatrix44());
 
-	//CASE_ASSERT_EQUAL(rotateX(PI), Quaternion(rotateX(PI)).toMatrix44());
-	//CASE_ASSERT_EQUAL(rotateY(PI), Quaternion(rotateY(PI)).toMatrix44());
-	//CASE_ASSERT_EQUAL(rotateZ(PI), Quaternion(rotateZ(PI)).toMatrix44());
+	// CASE_ASSERT_EQUAL(rotateX(PI), Quaternion(rotateX(PI)).toMatrix44());
+	// CASE_ASSERT_EQUAL(rotateY(PI), Quaternion(rotateY(PI)).toMatrix44());
+	// CASE_ASSERT_EQUAL(rotateZ(PI), Quaternion(rotateZ(PI)).toMatrix44());
 
 	{
 		Quaternion Q(Vector4(1.0f, 0.0f, 0.0f), Vector4(0.0f, 1.0f, 0.0f));
@@ -157,7 +140,7 @@ void CaseMath::run()
 	Vector4 pp1 = B * (A * p);
 	Vector4 pp2 = AB * p;
 	Vector4 pp3 = B * A * p;
-	Vector4 pp4 = A * B * p;	// Incorrect order of matrices.
+	Vector4 pp4 = A * B * p; // Incorrect order of matrices.
 
 	// Expected result.
 	Vector4 r(0.0f, 3.0f, 0.0f, 1.0f);
@@ -184,7 +167,7 @@ void CaseMath::run()
 	{
 		Frustum viewFrustum;
 		viewFrustum.buildPerspective(deg2rad(80.0f), 1.0f, 1.0f, 100.0f);
-		//viewFrustum.buildOrtho(10.0f, 10.0f, 1.0f, 100.0f);
+		// viewFrustum.buildOrtho(10.0f, 10.0f, 1.0f, 100.0f);
 
 		const float dx = 1.0f; // / 16.0f;
 		const float dy = 1.0f; // / 16.0f;
@@ -201,18 +184,17 @@ void CaseMath::run()
 			{
 				float fx = float(x) * dx;
 
-				Vector4 corners[] =
-				{
+				Vector4 corners[] = {
 					// Near
-					viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy),				// l t
-					viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy),		// r t
-					viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy + dy),	// r b
-					viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy + dy),		// l b
-					// Far
-					viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy),				// l t
-					viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy),		// r t
-					viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy + dy),	// r b
-					viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy + dy)			// l b
+					viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy),			  // l t
+					viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy),	  // r t
+					viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy + dy), // r b
+					viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy + dy),	  // l b
+																						  // Far
+					viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy),			  // l t
+					viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy),	  // r t
+					viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy + dy), // r b
+					viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy + dy)		  // l b
 				};
 
 				Frustum tileFrustum;
@@ -257,77 +239,77 @@ void CaseMath::run()
 	for (int32_t i = 0; i < 10000; ++i)
 	{
 		Vector2 uv = Quasirandom::hammersley(i, 10000);
-		Vector4 dir1 = lambertianDirection(uv, Vector4(0.0f, 0.0f, 1.0f));
+		Vector4 dir1 = Quasirandom::lambertian(uv, Vector4(0.0f, 0.0f, 1.0f));
 		Vector4 dir2 = Quasirandom::uniformHemiSphere(uv, Vector4(0.0f, 0.0f, 1.0f));
 
 		CASE_ASSERT(dir1.z() >= 0.0f);
-		phi1 += acos(dot3(dir1, Vector4(0.0f, 0.0f, 1.0f)));
+		phi1 += dot3(dir1, Vector4(0.0f, 0.0f, 1.0f));
 
 		CASE_ASSERT(dir2.z() >= 0.0f);
-		phi2 += acos(dot3(dir2, Vector4(0.0f, 0.0f, 1.0f)));
+		phi2 += dot3(dir2, Vector4(0.0f, 0.0f, 1.0f));
 	}
 	log::info << phi1 / 10000.0 << L" (" << (2.0f / PI) << L")" << Endl;
-	log::info << phi2 / 10000.0 << L" (" << (1.0f) << L")" << Endl;
+	log::info << phi2 / 10000.0 << L" (" << (0.5f) << L")" << Endl;
 
-/*
-	RandomGeometry rnd;
-	for (int32_t i = 0; i < 1000; ++i)
-	{
-		Vector4 direction = rnd.nextUnit();
-		for (int32_t j = 0; j < 1000; ++j)
+	/*
+		RandomGeometry rnd;
+		for (int32_t i = 0; i < 1000; ++i)
 		{
-			Vector2 uv = Quasirandom::hammersley(j, 1000);
-			Vector4 rdir = Quasirandom::uniformHemiSphere(uv, direction);
+			Vector4 direction = rnd.nextUnit();
+			for (int32_t j = 0; j < 1000; ++j)
+			{
+				Vector2 uv = Quasirandom::hammersley(j, 1000);
+				Vector4 rdir = Quasirandom::uniformHemiSphere(uv, direction);
 
-			float ln = rdir.length();
-			CASE_ASSERT(ln >= 0.0f);
-			CASE_ASSERT(ln <= 1.0f + FUZZY_EPSILON);
+				float ln = rdir.length();
+				CASE_ASSERT(ln >= 0.0f);
+				CASE_ASSERT(ln <= 1.0f + FUZZY_EPSILON);
 
-			float phi = dot3(rdir, direction);
-			CASE_ASSERT_COMPARE(phi, 0.0f, std::greater_equal< float >());
-			CASE_ASSERT_COMPARE(phi, 1.0f, std::less_equal< float >());
+				float phi = dot3(rdir, direction);
+				CASE_ASSERT_COMPARE(phi, 0.0f, std::greater_equal< float >());
+				CASE_ASSERT_COMPARE(phi, 1.0f, std::less_equal< float >());
+			}
+			for (int32_t j = 0; j < 1000; ++j)
+			{
+				Vector2 uv = Quasirandom::hammersley(j, 1000);
+				Vector4 rdir = Quasirandom::uniformCone(uv, direction, deg2rad(15.0f));
+
+				float ln = rdir.length();
+				CASE_ASSERT(ln >= 0.0f);
+				CASE_ASSERT(ln <= 1.0f + FUZZY_EPSILON);
+
+				float phi = dot3(rdir, direction);
+				CASE_ASSERT_COMPARE(phi, 0.0f, std::greater_equal< float >());
+				CASE_ASSERT_COMPARE(phi, 1.0f + FUZZY_EPSILON, std::less_equal< float >());
+			}
+			for (int32_t j = 0; j < 1000; ++j)
+			{
+				Vector2 uv = Quasirandom::hammersley(j, 1000);
+				Vector4 rdir = Quasirandom::uniformCone(uv, direction, deg2rad(25.0f));
+
+				float ln = rdir.length();
+				CASE_ASSERT(ln >= 0.0f);
+				CASE_ASSERT(ln <= 1.0f + FUZZY_EPSILON);
+
+				float phi = dot3(rdir, direction);
+				CASE_ASSERT_COMPARE(phi, 0.0f, std::greater_equal< float >());
+				CASE_ASSERT_COMPARE(phi, 1.0f + FUZZY_EPSILON, std::less_equal< float >());
+			}
+			for (int32_t j = 0; j < 1000; ++j)
+			{
+				Vector2 uv = Quasirandom::hammersley(j, 1000);
+				Vector4 rdir = Quasirandom::uniformCone(uv, direction, deg2rad(45.0f));
+
+				float ln = rdir.length();
+				CASE_ASSERT(ln >= 0.0f);
+				CASE_ASSERT(ln <= 1.0f + FUZZY_EPSILON);
+
+				float phi = dot3(rdir, direction);
+				CASE_ASSERT_COMPARE(phi, 0.0f, std::greater_equal< float >());
+				CASE_ASSERT_COMPARE(phi, 1.0f + FUZZY_EPSILON, std::less_equal< float >());
+			}
 		}
-		for (int32_t j = 0; j < 1000; ++j)
-		{
-			Vector2 uv = Quasirandom::hammersley(j, 1000);
-			Vector4 rdir = Quasirandom::uniformCone(uv, direction, deg2rad(15.0f));
-			
-			float ln = rdir.length();
-			CASE_ASSERT(ln >= 0.0f);
-			CASE_ASSERT(ln <= 1.0f + FUZZY_EPSILON);
-			
-			float phi = dot3(rdir, direction);
-			CASE_ASSERT_COMPARE(phi, 0.0f, std::greater_equal< float >());
-			CASE_ASSERT_COMPARE(phi, 1.0f + FUZZY_EPSILON, std::less_equal< float >());
-		}
-		for (int32_t j = 0; j < 1000; ++j)
-		{
-			Vector2 uv = Quasirandom::hammersley(j, 1000);
-			Vector4 rdir = Quasirandom::uniformCone(uv, direction, deg2rad(25.0f));
-			
-			float ln = rdir.length();
-			CASE_ASSERT(ln >= 0.0f);
-			CASE_ASSERT(ln <= 1.0f + FUZZY_EPSILON);
-			
-			float phi = dot3(rdir, direction);
-			CASE_ASSERT_COMPARE(phi, 0.0f, std::greater_equal< float >());
-			CASE_ASSERT_COMPARE(phi, 1.0f + FUZZY_EPSILON, std::less_equal< float >());
-		}
-		for (int32_t j = 0; j < 1000; ++j)
-		{
-			Vector2 uv = Quasirandom::hammersley(j, 1000);
-			Vector4 rdir = Quasirandom::uniformCone(uv, direction, deg2rad(45.0f));
-			
-			float ln = rdir.length();
-			CASE_ASSERT(ln >= 0.0f);
-			CASE_ASSERT(ln <= 1.0f + FUZZY_EPSILON);
-			
-			float phi = dot3(rdir, direction);
-			CASE_ASSERT_COMPARE(phi, 0.0f, std::greater_equal< float >());
-			CASE_ASSERT_COMPARE(phi, 1.0f + FUZZY_EPSILON, std::less_equal< float >());
-		}
-	}
-*/
+	*/
 }
 
 }

@@ -47,47 +47,31 @@
 			</position>
 			<name>LastTranslation</name>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{BD50284C-54C1-A840-846E-199CF3E36D17}</id>
 			<comment/>
 			<position>
 				<first>169</first>
 				<second>146</second>
 			</position>
+			<structDeclaration>{668AFB98-689E-724B-A31E-59F88E3D8EF9}</structDeclaration>
 			<parameterName>Mesh_Joints</parameterName>
-			<elements>
-				<item>
-					<name>Translation</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Rotation</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{573429A0-2EE8-1C47-AF99-A1EC6088A136}</id>
 			<comment/>
 			<position>
 				<first>140</first>
 				<second>380</second>
 			</position>
+			<structDeclaration>{1E219DE6-F839-E14E-BB52-6F5216E4FED1}</structDeclaration>
 			<parameterName>Mesh_LastJoints</parameterName>
-			<elements>
-				<item>
-					<name>Translation</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Rotation</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
 			<id>{79D00F03-3CE5-244A-BD65-1996558E640E}</id>

@@ -1,47 +1,46 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/IRenderTargetSet.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
+
+#include "Render/Frame/RenderGraph.h"
+#include "Render/IRenderTargetSet.h"
 
 namespace traktor::render
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraphContext", ImageGraphContext, Object)
 
-void ImageGraphContext::associateTexture(img_handle_t textureId, ITexture* texture)
+void ImageGraphContext::associateExplicitTexture(img_handle_t textureId, ITexture* texture)
 {
-	auto& txts = m_textureTargetSet[textureId];
-	txts.targetSetId = 0;
-	txts.colorIndex = -1;
-	txts.texture = texture;
+	m_textureTargetSet[textureId] = { .texture = texture };
+}
+
+void ImageGraphContext::associateTexture(img_handle_t textureId, handle_t rgTextureId)
+{
+	m_textureTargetSet[textureId] = { .textureId = rgTextureId };
 }
 
 void ImageGraphContext::associateTextureTargetSet(img_handle_t textureId, handle_t targetSetId, int32_t colorIndex)
 {
-	auto& txts = m_textureTargetSet[textureId];
-	txts.targetSetId = targetSetId;
-	txts.colorIndex = colorIndex;
-	txts.texture = nullptr;
+	m_textureTargetSet[textureId] = { .targetSetId = targetSetId,
+		.colorIndex = colorIndex };
 }
 
 void ImageGraphContext::associateTextureTargetSetDepth(img_handle_t textureId, handle_t targetSetId)
 {
-	auto& txts = m_textureTargetSet[textureId];
-	txts.targetSetId = targetSetId;
-	txts.colorIndex = -1;
-	txts.texture = nullptr;
+	m_textureTargetSet[textureId] = { .targetSetId = targetSetId,
+		.colorIndex = -1 };
 }
 
 handle_t ImageGraphContext::findTextureTargetSetId(img_handle_t textureId) const
 {
-	auto it = m_textureTargetSet.find(textureId);
+	const auto it = m_textureTargetSet.find(textureId);
 	if (it != m_textureTargetSet.end())
 		return it->second.targetSetId;
 	else
@@ -50,21 +49,29 @@ handle_t ImageGraphContext::findTextureTargetSetId(img_handle_t textureId) const
 
 ITexture* ImageGraphContext::findTexture(const RenderGraph& renderGraph, img_handle_t textureId) const
 {
-	auto it = m_textureTargetSet.find(textureId);
+	const auto it = m_textureTargetSet.find(textureId);
 	if (it == m_textureTargetSet.end())
 		return nullptr;
 
 	if (it->second.texture)
 		return it->second.texture;
 
-	auto targetSet = renderGraph.getTargetSet(it->second.targetSetId);
-	if (!targetSet)
-		return nullptr;
+	if (it->second.targetSetId != 0)
+	{
+		auto targetSet = renderGraph.getTargetSet(it->second.targetSetId);
+		if (!targetSet)
+			return nullptr;
 
-	if (it->second.colorIndex >= 0)
-		return targetSet->getColorTexture(it->second.colorIndex);
-	else
-		return targetSet->getDepthTexture();
+		if (it->second.colorIndex >= 0)
+			return targetSet->getColorTexture(it->second.colorIndex);
+		else
+			return targetSet->getDepthTexture();
+	}
+
+	if (it->second.textureId != 0)
+		return renderGraph.getTexture(it->second.textureId);
+
+	return nullptr;
 }
 
 void ImageGraphContext::associateSBuffer(img_handle_t sbufferId, handle_t frameSbufferId)
@@ -105,5 +112,4 @@ void ImageGraphContext::applyTechniqueFlags(const Shader* shader, Shader::Permut
 	for (auto it : m_techniqueFlags)
 		shader->setCombination(it.first, it.second, inoutPermutation);
 }
-
 }

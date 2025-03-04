@@ -74,13 +74,14 @@
 			</position>
 			<name>shRGB_8</name>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
 			<id>{1072694C-AB6C-F344-9451-4029E4D4848C}</id>
 			<comment/>
 			<position>
 				<first>377</first>
 				<second>343</second>
 			</position>
+			<structDeclaration>{31C81376-AA2B-9041-95F2-9B3DB43AC9D9}</structDeclaration>
 			<parameterName>World_IrradianceGridSBuffer</parameterName>
 			<elements>
 				<item>

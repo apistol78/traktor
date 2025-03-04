@@ -1,36 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{169D7368-70D8-4827-9B33-96B03E76BE72}</id>
 			<comment/>
 			<position>
 				<first>108</first>
 				<second>153</second>
 			</position>
+			<structDeclaration>{E1FC9761-BC90-CF43-937D-D681004CCCDF}</structDeclaration>
 			<parameterName>Spray_Points</parameterName>
-			<elements>
-				<item>
-					<name>position</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>velocity</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>oaia</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>msra</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{2833BE6B-8529-4D27-80F2-D30971E6C437}</id>
@@ -78,8 +60,8 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 int alive = $Head[0].alive;
 uint seed = uint($Seed) + $Index.x;
 
@@ -152,8 +134,8 @@ if ($Index.x < alive)
 
 	$Points[i].oaia.w += $DeltaTime;
 }
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{C260B0AE-EF94-47D2-985B-6EDD3607DE58}</id>

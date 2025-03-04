@@ -508,46 +508,18 @@
 				<second>618</second>
 			</position>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{4EDC5AB7-5FE6-8649-97D4-CF4B61DB8D13}</id>
 			<comment/>
 			<position>
 				<first>-1323</first>
 				<second>475</second>
 			</position>
+			<structDeclaration>{E09C7A31-4153-6047-B439-BA234B763458}</structDeclaration>
 			<parameterName>Mesh_SkinBuffer</parameterName>
-			<elements>
-				<item>
-					<name>Position</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Normal</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Tangent</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Binormal</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>BlendIndices</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>BlendWeights</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
 			<id>{CEC40B99-A729-7041-89CB-8DC8719B6238}</id>
@@ -590,11 +562,11 @@
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 $Output = gl_VertexIndex;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
 			<id>{9294E60D-A0B8-384F-9BD1-648CFDA4ED51}</id>
@@ -612,46 +584,18 @@ $Output = gl_VertexIndex;
 				<item>BlendWeights</item>
 			</names>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{D832F3C3-6D43-124F-95F4-085BD33C7CC7}</id>
 			<comment/>
 			<position>
 				<first>-1329</first>
 				<second>714</second>
 			</position>
+			<structDeclaration>{36E73E22-F5C7-EB46-ACA9-D859A20475A8}</structDeclaration>
 			<parameterName>Mesh_SkinBufferLast</parameterName>
-			<elements>
-				<item>
-					<name>Position</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Normal</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Tangent</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Binormal</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>BlendIndices</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>BlendWeights</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{E3D5D598-8F5E-46B4-A855-B006BCBE90E3}</id>

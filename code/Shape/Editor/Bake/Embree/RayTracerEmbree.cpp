@@ -74,21 +74,6 @@ Scalar attenuation(const Scalar& distance, const Scalar& range)
 	return k0 * k1;
 }
 
-Vector4 lambertianDirection(const Vector2& uv, const Vector4& direction)
-{
-	// Calculate random direction, with Gaussian probability distribution.
-	const float sin2_theta = uv.x;
-	const float cos2_theta = 1.0f - sin2_theta;
-	const float sin_theta = std::sqrt(sin2_theta);
-	const float cos_theta = std::sqrt(cos2_theta);
-	const float orientation = uv.y * TWO_PI;
-	const Vector4 dir(sin_theta * std::cos(orientation), sin_theta * std::sin(orientation), cos_theta, 0.0f);
-
-	Vector4 u, v;
-	orthogonalFrame(direction, u, v);
-	return (Matrix44(u, v, direction, Vector4::zero()) * dir).xyz0().normalized();
-}
-
 void constructRay(const Vector4& position, const Vector4& direction, float far, RTCRay& outRay)
 {
 	position.storeAligned(&outRay.org_x);
@@ -536,7 +521,7 @@ Color4f RayTracerEmbree::tracePath0(
 			const Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
 			const Scalar probability = 1.0_simd;
 #else
-			const Vector4 newDirection = lambertianDirection(uv, hitNormal);
+			const Vector4 newDirection = Quasirandom::lambertian(uv, hitNormal);
 			const Scalar probability = 0.78532_simd; // 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 #endif
 
@@ -629,7 +614,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 	const Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
 	const Scalar probability = 1.0_simd;
 #else
-	const Vector4 newDirection = lambertianDirection(uv, hitNormal);
+	const Vector4 newDirection = Quasirandom::lambertian(uv, hitNormal);
 	const Scalar probability = 0.78532_simd; // 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 #endif
 

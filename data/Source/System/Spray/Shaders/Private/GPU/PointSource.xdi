@@ -1,36 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{8C067DA6-D75C-9C46-BBD4-975892FBD553}</id>
 			<comment/>
 			<position>
 				<first>550</first>
 				<second>-393</second>
 			</position>
+			<structDeclaration>{E1FC9761-BC90-CF43-937D-D681004CCCDF}</structDeclaration>
 			<parameterName>Spray_Points</parameterName>
-			<elements>
-				<item>
-					<name>position</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>velocity</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>oaia</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>msra</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{735660C5-9E5E-C24F-A8EB-B3BA22C0859B}</id>
@@ -106,8 +88,8 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const uint NR = 64;
 
 int capacity = $Head[0].capacity;
@@ -143,8 +125,8 @@ for (int i = 0; i < emitCount; ++i)
 }
 
 $Head[0].alive = alive;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{DDEADB97-3898-7745-8E38-A44DDA118424}</id>

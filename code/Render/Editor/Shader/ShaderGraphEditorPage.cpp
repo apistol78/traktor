@@ -1291,7 +1291,7 @@ void ShaderGraphEditorPage::updateGraph()
 	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t {
 		Ref< db::Instance > declarationInstance = m_editor->getSourceDatabase()->getInstance(declarationId);
 		if (declarationInstance != nullptr)
-			return { declarationInstance->getName(), declarationInstance->getObject< UniformDeclaration >() };
+			return { declarationInstance->getName(), declarationInstance->getObject() };
 		else
 			return { L"", nullptr };
 	};
@@ -1308,7 +1308,7 @@ void ShaderGraphEditorPage::updateGraph()
 	// Extract techniques.
 	{
 		m_toolTechniques->removeAll();
-		for (const auto& technique : ShaderGraphTechniques(m_shaderGraph, Guid()).getNames())
+		for (const std::wstring& technique : ShaderGraphTechniques(m_shaderGraph, Guid()).getNames())
 			m_toolTechniques->add(technique);
 	}
 
@@ -1380,41 +1380,39 @@ void ShaderGraphEditorPage::updateGraph()
 				m_uniformsGrid->addRow(row);
 			}
 		}
-		if (resolvedShaderGraph)
-		{
-			// Add non-local uniforms to grid as well, color coded.
-			for (auto node : resolvedShaderGraph->getNodes())
-			{
-				Node* originalNode = nullptr;
-				for (auto it : m_shaderGraph->getNodes())
-				{
-					if (it->getId() == node->getId())
-					{
-						originalNode = it;
-						break;
-					}
-				}
-				if (originalNode)
-					continue;
 
-				if (Uniform* uniformNode = dynamic_type_cast< Uniform* >(node))
+		// Add non-local uniforms to grid as well, color coded.
+		for (auto node : resolvedShaderGraph->getNodes())
+		{
+			Node* originalNode = nullptr;
+			for (auto it : m_shaderGraph->getNodes())
+			{
+				if (it->getId() == node->getId())
 				{
-					Ref< ui::GridRow > row = new ui::GridRow();
-					row->add(uniformNode->getParameterName());
-					row->add(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]);
-					row->add(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]);
-					row->setBackground(Color4ub(90, 60, 40, 255));
-					m_uniformsGrid->addRow(row);
+					originalNode = it;
+					break;
 				}
-				else if (IndexedUniform* indexedUniformNode = dynamic_type_cast< IndexedUniform* >(node))
-				{
-					Ref< ui::GridRow > row = new ui::GridRow();
-					row->add(indexedUniformNode->getParameterName());
-					row->add(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]);
-					row->add(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]);
-					row->setBackground(Color4ub(90, 60, 40, 255));
-					m_uniformsGrid->addRow(row);
-				}
+			}
+			if (originalNode)
+				continue;
+
+			if (Uniform* uniformNode = dynamic_type_cast< Uniform* >(node))
+			{
+				Ref< ui::GridRow > row = new ui::GridRow();
+				row->add(uniformNode->getParameterName());
+				row->add(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]);
+				row->add(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]);
+				row->setBackground(Color4ub(90, 60, 40, 255));
+				m_uniformsGrid->addRow(row);
+			}
+			else if (IndexedUniform* indexedUniformNode = dynamic_type_cast< IndexedUniform* >(node))
+			{
+				Ref< ui::GridRow > row = new ui::GridRow();
+				row->add(indexedUniformNode->getParameterName());
+				row->add(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]);
+				row->add(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]);
+				row->setBackground(Color4ub(90, 60, 40, 255));
+				m_uniformsGrid->addRow(row);
 			}
 		}
 	}
@@ -1467,9 +1465,9 @@ void ShaderGraphEditorPage::updateGraph()
 	// Validate shader graph.
 	AlignedVector< const Node* > errorNodes;
 	bool validationResult = false;
-	if (m_shaderGraph)
+	if (resolvedShaderGraph)
 	{
-		const ShaderGraphValidator validator(m_shaderGraph);
+		const ShaderGraphValidator validator(resolvedShaderGraph);
 		validationResult = validator.validate(graphType, &errorNodes);
 		if (!validationResult)
 			log::debug << L"Validation of resolve shader graph failed." << Endl;

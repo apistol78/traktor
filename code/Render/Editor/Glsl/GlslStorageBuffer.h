@@ -34,11 +34,9 @@ public:
 		int32_t length;
 	};
 
-	explicit GlslStorageBuffer(const std::wstring& name, Set set, uint8_t stages, bool indexed);
+	explicit GlslStorageBuffer(const std::wstring& name, const std::wstring& structTypeNam, Set set, uint8_t stages, bool indexed);
 
-	bool add(const std::wstring& elementName, DataType elementType, int32_t elementLength);
-
-	const AlignedVector< Element >& get() const { return m_elements; }
+	const std::wstring& getStructTypeName() const { return m_structTypeName; }
 
 	bool isIndexed() const { return m_indexed; }
 
@@ -47,7 +45,8 @@ public:
 	virtual int32_t getOrdinal() const override final;
 
 private:
-	AlignedVector< Element > m_elements;
+	// AlignedVector< Element > m_elements;
+	std::wstring m_structTypeName;
 	bool m_indexed;
 };
 

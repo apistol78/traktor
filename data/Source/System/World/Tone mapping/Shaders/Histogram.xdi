@@ -10,13 +10,14 @@
 			</position>
 			<scope>Global</scope>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
 			<id>{7C94779C-0FB6-4312-AA26-7F4FD5A3392D}</id>
 			<comment/>
 			<position>
 				<first>978</first>
 				<second>346</second>
 			</position>
+			<structDeclaration>{C9C589C8-B02C-8147-8E3B-832835BFB56D}</structDeclaration>
 			<parameterName>Output</parameterName>
 			<elements>
 				<item>
@@ -38,20 +39,20 @@
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{F66C5F7C-4BFF-4AA4-93A6-403D2CD59077}</id>
 			<comment/>
 			<position>
 				<first>-123</first>
 				<second>352</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
+			<addressU>Wrap</addressU>
+			<addressV>Wrap</addressV>
+			<addressW>Wrap</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -104,11 +105,11 @@
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{13F12F46-5F60-4EC5-9665-AEDE0336FEC6}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Max intensity
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>150</first>
 				<second>465</second>
@@ -178,11 +179,11 @@ Max intensity
 				</item>
 			</inputPins>
 			<outputPins/>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 atomicAdd($Buffer[$Index].B, 1);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 	</nodes>
 	<edges>

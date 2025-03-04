@@ -20,6 +20,7 @@ class ImageGraph;
 class IRenderSystem;
 class RenderGraph;
 class ScreenRenderer;
+class Shader;
 
 }
 
@@ -62,7 +63,9 @@ public:
 
 private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	resource::Proxy< render::ImageGraph > m_irradiance;
+	resource::Proxy< render::Shader > m_reservoirFilterShader;
+	resource::Proxy< render::Shader > m_irradianceComputeShader;
+	resource::Proxy< render::ImageGraph > m_irradianceDenoise;
 };
 
 }

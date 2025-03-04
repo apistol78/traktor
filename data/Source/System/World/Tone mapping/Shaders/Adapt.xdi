@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{C22838E6-D4D4-CD4A-87E7-3AE7C65E1DAE}</id>
 			<comment/>
 			<position>
 				<first>370</first>
 				<second>-607</second>
 			</position>
+			<structDeclaration>{98974FE3-F628-844A-9C83-9418695E2555}</structDeclaration>
 			<parameterName>CurrentIllum</parameterName>
-			<elements>
-				<item>
-					<name>value</name>
-					<type>DtFloat1</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{1EE7F2FC-7358-654E-9DF8-1A7634AA03D4}</id>
@@ -45,8 +42,8 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const float AdapationRate = 0.03f;
 
 const float MinIllum = 0.2f;
@@ -54,24 +51,21 @@ const float MaxIllum = 0.8f;
 
 const float last = $Buffer[0].value.x;
 $Buffer[0].value.x = clamp($Current * AdapationRate + last * (1.0f - AdapationRate), MinIllum, MaxIllum);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{0CB85F82-C86E-4A1C-922D-095F50C2FD3D}</id>
 			<comment/>
 			<position>
 				<first>250</first>
 				<second>-531</second>
 			</position>
+			<structDeclaration>{DAB7EA9D-8C62-0441-B03B-11EFA591E219}</structDeclaration>
 			<parameterName>Histogram</parameterName>
-			<elements>
-				<item>
-					<name>B</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{504BABBC-FF21-4433-9586-EE33E832E238}</id>
@@ -107,8 +101,8 @@ $Buffer[0].value.x = clamp($Current * AdapationRate + last * (1.0f - AdapationRa
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 float average = 0.0f;
 
 for (int i = 0; i < 64; ++i)
@@ -120,8 +114,8 @@ for (int i = 0; i < 64; ++i)
 average /= ($TargetSize.x * $TargetSize.y);
 
 $Output = average;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{14F9CB16-07E2-4288-B46E-43FD280D844D}</id>

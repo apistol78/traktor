@@ -95,8 +95,8 @@
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const vec3 center = ($Bbmn + $Bbmx).xyz / 2.0f;
 const float radius = max(length($Bbmx), length($Bbmn));
 
@@ -128,23 +128,23 @@ if (ProjectSphere(viewCenter.xyz, radius, znear, P00, P11, aabb))
 }
 
 $Output = visible ? 1.0f : 0.0f;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
-		<item type="traktor.render.TextureState" version="traktor.render.Node:1">
+		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
 			<id>{0D8D0651-6390-42B7-B095-5E135EFF0A08}</id>
 			<comment/>
 			<position>
 				<first>312</first>
 				<second>467</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -161,77 +161,31 @@ $Output = visible ? 1.0f : 0.0f;
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{0B4842AF-8301-42BA-8A59-8F749002877B}</id>
 			<comment/>
 			<position>
 				<first>459</first>
 				<second>136</second>
 			</position>
+			<structDeclaration>{7FAA3C12-B3AF-8445-883F-79AD1761FCF5}</structDeclaration>
 			<parameterName>Terrain_DrawBuffer</parameterName>
-			<elements>
-				<item>
-					<name>indexCount</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>instanceCount</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>firstIndex</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>vertexOffset</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>firstInstance</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{B210749B-2773-47CC-A54F-0C4C950DB6CF}</id>
 			<comment/>
 			<position>
 				<first>424</first>
 				<second>174</second>
 			</position>
+			<structDeclaration>{F6684C2A-1921-2B47-B279-0B5055DF5D7F}</structDeclaration>
 			<parameterName>Terrain_CulledDrawBuffer</parameterName>
-			<elements>
-				<item>
-					<name>indexCount</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>instanceCount</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>firstIndex</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>vertexOffset</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>firstInstance</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{6DE9EB4E-1DF3-4579-B9D1-FB65908F81A0}</id>
@@ -269,8 +223,8 @@ $Output = visible ? 1.0f : 0.0f;
 				</item>
 			</inputPins>
 			<outputPins/>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const int index = int($Index);
 const bool visible = bool($Visible > 0.5f);
 
@@ -279,8 +233,8 @@ $CulledDrawBuffer[index].instanceCount = visible ? $DrawBuffer[index].instanceCo
 $CulledDrawBuffer[index].firstIndex = $DrawBuffer[index].firstIndex;
 $CulledDrawBuffer[index].vertexOffset = $DrawBuffer[index].vertexOffset;
 $CulledDrawBuffer[index].firstInstance = $DrawBuffer[index].firstInstance;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.DispatchIndex" version="1,traktor.render.Node:1">
 			<id>{C43244FA-782F-46B2-9AA7-D7987F946F96}</id>
@@ -291,36 +245,18 @@ $CulledDrawBuffer[index].firstInstance = $DrawBuffer[index].firstInstance;
 			</position>
 			<scope>Global</scope>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{1C9830DB-621E-714F-810F-84964217FFBB}</id>
 			<comment/>
 			<position>
 				<first>-165</first>
 				<second>254</second>
 			</position>
+			<structDeclaration>{7B346035-6DA5-D441-B6D3-B0F5BA883F75}</structDeclaration>
 			<parameterName>Terrain_PatchData</parameterName>
-			<elements>
-				<item>
-					<name>patchOrigin</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>surfaceOffset</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>patchBoundingBoxMn</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>patchBoundingBoxMx</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
 			<id>{222E9977-DDCA-B44B-A43A-9E76BB7E0068}</id>
@@ -386,8 +322,8 @@ $CulledDrawBuffer[index].firstInstance = $DrawBuffer[index].firstInstance;
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 mat4 viewProjection = $ViewProjection;
 
 vec3 bboxMin = $Bbmn.xyz;
@@ -443,8 +379,8 @@ if (minZ <= maxDepth)
 	$Output = 1.0f;
 else
 	$Output = 0.0f;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{991B3EA1-1899-A14C-B01F-33E280761FF8}</id>
@@ -458,20 +394,20 @@ else
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.TextureState" version="traktor.render.Node:1">
+		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
 			<id>{3C9F2632-EDC2-0444-A7AE-870D8FA272D6}</id>
 			<comment/>
 			<position>
 				<first>318</first>
 				<second>671</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>

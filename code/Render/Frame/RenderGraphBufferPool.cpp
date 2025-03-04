@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include "Render/Frame/RenderGraphBufferPool.h"
 
+#include "Core/Log/Log.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 
@@ -52,7 +53,7 @@ Ref< Buffer > RenderGraphBufferPool::acquire(const RenderGraphBufferDesc& buffer
 			return false;
 
 		return true;
-	});
+		});
 
 	// Get or create pool.
 	Pool* pool = nullptr;
@@ -91,6 +92,8 @@ Ref< Buffer > RenderGraphBufferPool::acquire(const RenderGraphBufferDesc& buffer
 
 			pool->acquired.push_back(buffer);
 		}
+
+		T_DEBUG(L"Allocated RG buffer");
 		return buffer;
 	}
 }

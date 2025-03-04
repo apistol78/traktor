@@ -321,44 +321,6 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			1,
 			UpdateFrequency::Draw);
 	}
-	else if (const Struct* storageStructNode = dynamic_type_cast< const Struct* >(storage))
-	{
-		// Check if storage buffer needs to be defined.
-		auto existing = cx.getLayout().getByName(storageStructNode->getParameterName());
-		if (existing != nullptr)
-		{
-			auto existingBuffer = dynamic_type_cast< GlslStorageBuffer* >(existing);
-			if (!existingBuffer)
-			{
-				cx.pushError(L"Buffer do not exist.");
-				return false;
-			}
-
-			existingBuffer->addStage(cx.getBindStage());
-		}
-		else
-		{
-			// Storage buffer do not exist; add new storage buffer resource.
-			Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(
-				storageStructNode->getParameterName(),
-				GlslResource::Set::Default,
-				cx.getBindStage(),
-				false);
-			for (const auto& element : storageStructNode->getElements())
-				storageBuffer->add(element.name, element.type, element.length);
-			cx.getLayout().add(storageBuffer);
-
-			auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-			f << storageStructNode->getParameterName() << L".data[" << offset->cast(GlslType::Integer) << L"]." << /*node->getName()*/ L"fieldName" << L" = " << in->cast(GlslType::Float4) << L";" << Endl;
-
-			// Define parameter in context.
-			cx.addParameter(
-				storageStructNode->getParameterName(),
-				ParameterType::StructBuffer,
-				1,
-				UpdateFrequency::Draw);
-		}
-	}
 	else
 	{
 		cx.pushError(L"Unsupported storage type.");
@@ -2406,12 +2368,8 @@ bool emitScript(GlslContext& cx, Script* node)
 
 		case GlslType::StructBuffer:
 			{
-				std::wstring tn = ins[i]->getName();
-				T_ASSERT(tn.length() > 5);
-				tn = tn.substr(0, tn.length() - 5) + L"_Type";
-
 				reps.push_back({ variableName, ins[i]->getName() });
-				reps.push_back({ typeOfName, tn });
+				reps.push_back({ typeOfName, ins[i]->getTypeName() });
 			}
 			break;
 
@@ -2499,10 +2457,14 @@ bool emitStep(GlslContext& cx, Step* node)
 
 bool emitStruct(GlslContext& cx, Struct* node)
 {
-	Ref< GlslVariable > out = cx.getShader().createVariable(
+	Ref< GlslVariable > out = cx.getShader().createStructVariable(
 		node->findOutputPin(L"Output"),
 		node->getParameterName() + L".data",
-		GlslType::StructBuffer);
+		node->getStructTypeName());
+
+	// Add structure definition.
+	const std::wstring& structTypeName = node->getStructTypeName();
+	cx.getShader().addStructure(structTypeName, node->getStructDeclaration());
 
 	const auto existing = cx.getLayout().getByName(node->getParameterName());
 	if (existing != nullptr)
@@ -2524,11 +2486,10 @@ bool emitStruct(GlslContext& cx, Struct* node)
 		// Storage buffer do not exist; add new storage buffer resource.
 		Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(
 			node->getParameterName(),
+			structTypeName,
 			GlslResource::Set::Default,
 			cx.getBindStage(),
 			false);
-		for (const auto& element : node->getElements())
-			storageBuffer->add(element.name, element.type, element.length);
 		cx.getLayout().add(storageBuffer);
 	}
 

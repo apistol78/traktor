@@ -22,6 +22,7 @@
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
+#include "Render/Editor/Shader/StructDeclaration.h"
 #include "Render/Editor/Shader/UniformDeclaration.h"
 #include "Render/ITexture.h"
 
@@ -2521,7 +2522,7 @@ Step::Step()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Struct", 1, Struct, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Struct", 5, Struct, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_Struct_o[] = {
 	{ L"Output", L"{ACC77B35-91B5-4405-ABC8-D0DA24D68178}" },
@@ -2538,17 +2539,27 @@ const std::wstring& Struct::getParameterName() const
 	return m_parameterName;
 }
 
-const AlignedVector< Struct::NamedElement >& Struct::getElements() const
+const std::wstring& Struct::getStructTypeName() const
 {
-	return m_elements;
+	return m_declType;
+}
+
+const StructDeclaration& Struct::getStructDeclaration() const
+{
+	return m_decl;
+}
+
+const AlignedVector< StructDeclaration::NamedElement >& Struct::getElements() const
+{
+	return m_decl.getElements();
 }
 
 DataType Struct::getElementType(const std::wstring& name) const
 {
-	auto it = std::find_if(m_elements.begin(), m_elements.end(), [&](const NamedElement& elm) {
+	auto it = std::find_if(m_decl.getElements().begin(), m_decl.getElements().end(), [&](const StructDeclaration::NamedElement& elm) {
 		return elm.name == name;
 	});
-	return it != m_elements.end() ? it->type : DtFloat1;
+	return it != m_decl.getElements().end() ? it->type : DtFloat1;
 }
 
 std::wstring Struct::getInformation() const
@@ -2558,39 +2569,60 @@ std::wstring Struct::getInformation() const
 
 void Struct::serialize(ISerializer& s)
 {
-	ImmutableNode::serialize(s);
+	struct DummyNamedElement
+	{
+		std::wstring name;
+		DataType type = DtFloat1;
+		int32_t length = 0;
 
-	s >> Member< std::wstring >(L"parameterName", m_parameterName);
-	s >> MemberAlignedVector< NamedElement, MemberComposite< NamedElement > >(L"elements", m_elements);
-}
+		void serialize(ISerializer& s)
+		{
+			const MemberEnum< DataType >::Key kDataType[] = {
+				{ L"DtFloat1", DtFloat1 },
+				{ L"DtFloat2", DtFloat2 },
+				{ L"DtFloat3", DtFloat3 },
+				{ L"DtFloat4", DtFloat4 },
+				{ L"DtByte4", DtByte4 },
+				{ L"DtByte4N", DtByte4N },
+				{ L"DtShort2", DtShort2 },
+				{ L"DtShort4", DtShort4 },
+				{ L"DtShort2N", DtShort2N },
+				{ L"DtShort4N", DtShort4N },
+				{ L"DtHalf2", DtHalf2 },
+				{ L"DtHalf4", DtHalf4 },
+				{ L"DtInteger1", DtInteger1 },
+				{ L"DtInteger2", DtInteger2 },
+				{ L"DtInteger3", DtInteger3 },
+				{ L"DtInteger4", DtInteger4 },
+				{ 0 }
+			};
 
-void Struct::NamedElement::serialize(ISerializer& s)
-{
-	const MemberEnum< DataType >::Key kDataType[] = {
-		{ L"DtFloat1", DtFloat1 },
-		{ L"DtFloat2", DtFloat2 },
-		{ L"DtFloat3", DtFloat3 },
-		{ L"DtFloat4", DtFloat4 },
-		{ L"DtByte4", DtByte4 },
-		{ L"DtByte4N", DtByte4N },
-		{ L"DtShort2", DtShort2 },
-		{ L"DtShort4", DtShort4 },
-		{ L"DtShort2N", DtShort2N },
-		{ L"DtShort4N", DtShort4N },
-		{ L"DtHalf2", DtHalf2 },
-		{ L"DtHalf4", DtHalf4 },
-		{ L"DtInteger1", DtInteger1 },
-		{ L"DtInteger2", DtInteger2 },
-		{ L"DtInteger3", DtInteger3 },
-		{ L"DtInteger4", DtInteger4 },
-		{ 0 }
+			s >> Member< std::wstring >(L"name", name);
+			s >> MemberEnum< DataType >(L"type", type, kDataType);
+
+			if (s.getVersion< Struct >() >= 1)
+				s >> Member< int32_t >(L"length", length, AttributeRange(0));
+		}
 	};
 
-	s >> Member< std::wstring >(L"name", name);
-	s >> MemberEnum< DataType >(L"type", type, kDataType);
+	ImmutableNode::serialize(s);
 
-	if (s.getVersion< Struct >() >= 1)
-		s >> Member< int32_t >(L"length", length, AttributeRange(0));
+	if (s.getVersion< Struct >() >= 2)
+		s >> Member< Guid >(L"structDeclaration", m_structDeclaration, AttributeType(type_of< StructDeclaration >()));
+
+	s >> Member< std::wstring >(L"parameterName", m_parameterName, AttributePrivate());
+
+	if (s.getVersion< Struct >() < 3)
+	{
+		AlignedVector< DummyNamedElement > elements;
+		s >> MemberAlignedVector< DummyNamedElement, MemberComposite< DummyNamedElement > >(L"elements", elements, AttributePrivate());
+	}
+
+	if (s.getVersion< Struct >() >= 5)
+		s >> Member< std::wstring >(L"declType", m_declType, AttributePrivate());
+
+	if (s.getVersion< Struct >() >= 4)
+		s >> MemberComposite< StructDeclaration >(L"decl", m_decl, AttributePrivate());
 }
 
 /*---------------------------------------------------------------------------*/

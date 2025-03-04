@@ -19,57 +19,25 @@
 			</position>
 			<scope>Global</scope>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="3,traktor.render.Node:1">
 			<id>{9772F569-3912-1B46-AB4B-157B8CC99284}</id>
 			<comment/>
 			<position>
 				<first>49</first>
 				<second>273</second>
 			</position>
+			<structDeclaration>{7D2EEA26-F234-3C48-BC5F-0192B3033DCC}</structDeclaration>
 			<parameterName>World_Visibility</parameterName>
-			<elements>
-				<item>
-					<name>visible</name>
-					<type>DtFloat1</type>
-					<length>0</length>
-				</item>
-			</elements>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="3,traktor.render.Node:1">
 			<id>{B6ABD193-2075-0442-A1B6-92D4C05F99CB}</id>
 			<comment/>
 			<position>
 				<first>33</first>
 				<second>226</second>
 			</position>
+			<structDeclaration>{A0079BE5-1B8B-8441-99A1-4F43D58D73C6}</structDeclaration>
 			<parameterName>InstanceMesh_Draw</parameterName>
-			<elements>
-				<item>
-					<name>indexCount</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>instanceCount</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>firstIndex</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>vertexOffset</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>firstInstance</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-			</elements>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{EF3C22BB-6DAD-ED47-B381-BF0850063421}</id>
@@ -115,8 +83,8 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const int index = int($Index);
 const int offset = int($InstanceOffset);
 
@@ -127,8 +95,8 @@ $DrawBuffer[index].instanceCount = visible ? 1 : 0;
 $DrawBuffer[index].firstIndex = int($PrimFirstIndex);
 $DrawBuffer[index].vertexOffset = 0;
 $DrawBuffer[index].firstInstance = 0;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{3491574B-839F-B74B-8747-0C4A10BECB57}</id>

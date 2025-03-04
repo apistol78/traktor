@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.StructDeclaration">
+	<elements>
+		<item>
+			<name>direction</name>
+			<type>Float3</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>W_sum</name>
+			<type>Float1</type>
+			<length>0</length>
+		</item>
+	</elements>
+</object>

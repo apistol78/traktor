@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,11 +31,20 @@ public:
 
 	void destroy();
 
-	Ref< ITexture > acquire(const RenderGraphTextureDesc& textureDesc, uint32_t persistentHandle);
+	Ref< ITexture > acquire(const RenderGraphTextureDesc& textureDesc, int32_t referenceWidth, int32_t referenceHeight, uint32_t persistentHandle);
 
 	void release(Ref< ITexture >& texture);
 
+	/*! */
+	void cleanup();
+
 private:
+	struct Texture
+	{
+		Ref< ITexture > texture;
+		int32_t unused;
+	};
+
 	struct Pool
 	{
 		// Pool identification.
@@ -43,7 +52,7 @@ private:
 		uint32_t persistentHandle;
 
 		// Pool buffers.
-		RefArray< ITexture > free;
+		AlignedVector< Texture > free;
 		RefArray< ITexture > acquired;
 	};
 

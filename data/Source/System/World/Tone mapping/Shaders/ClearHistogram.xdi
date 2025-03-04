@@ -10,21 +10,18 @@
 			</position>
 			<scope>Global</scope>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{23A209F0-CBDF-45DD-95B6-A8FB3B1F9DFF}</id>
 			<comment/>
 			<position>
 				<first>831</first>
 				<second>231</second>
 			</position>
+			<structDeclaration>{C9C589C8-B02C-8147-8E3B-832835BFB56D}</structDeclaration>
 			<parameterName>Output</parameterName>
-			<elements>
-				<item>
-					<name>B</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{ED1042C7-0B7C-4274-A847-BF78B47AC778}</id>
@@ -54,11 +51,11 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 $Buffer[$Index.x].B = 0;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 	</nodes>
 	<edges>

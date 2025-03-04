@@ -196,13 +196,14 @@
 			</position>
 			<value>32</value>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
 			<id>{692B2ECD-F11F-CD41-B4C2-E30283B24D43}</id>
 			<comment/>
 			<position>
 				<first>-726</first>
 				<second>740</second>
 			</position>
+			<structDeclaration>{25D5F596-C1BA-5946-9EB7-F95F5779C5DB}</structDeclaration>
 			<parameterName>World_TileSBuffer</parameterName>
 			<elements>
 				<item>

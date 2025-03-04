@@ -43,8 +43,7 @@ public:
 	virtual bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		const WorldCreateDesc& desc
-	) override final;
+		const WorldCreateDesc& desc) override final;
 
 	virtual void destroy() override final;
 
@@ -53,8 +52,7 @@ public:
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
-		const std::function< bool(const EntityState& state) >& filter
-	) override final;
+		const std::function< bool(const EntityState& state) >& filter) override final;
 
 private:
 	resource::Proxy< render::Shader > m_lightShader;
@@ -72,8 +70,7 @@ private:
 		render::handle_t contactShadowsTargetSetId,
 		render::handle_t reflectionsTargetSetId,
 		render::handle_t shadowMapAtlasTargetSetId,
-		render::handle_t outputHiZTextureId
-	) const;
+		render::handle_t outputHiZTextureId) const;
 };
 
 }

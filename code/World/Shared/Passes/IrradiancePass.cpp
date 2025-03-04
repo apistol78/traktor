@@ -9,6 +9,7 @@
 #include "World/Shared/Passes/IrradiancePass.h"
 
 #include "Core/Log/Log.h"
+#include "Core/Math/Random.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
@@ -33,15 +34,23 @@ namespace traktor::world
 namespace
 {
 
-const resource::Id< render::ImageGraph > c_irradiance(L"{14A0E977-7C13-9B43-A26E-F1D21117AEC6}");
-
 struct Reservoir
 {
-	uint32_t lightIndex;
-	float W_light;
+	float direction[3];
 	float W_sum;
-	float M;
 };
+
+const resource::Id< render::Shader > c_irradianceComputeShader(L"{7C871925-C1A9-5B47-A361-114BC8FB5A98}");
+const resource::Id< render::ImageGraph > c_irradianceDenoise(L"{14A0E977-7C13-9B43-A26E-F1D21117AEC6}");
+
+const render::Handle s_handleIrradianceOutput(L"World_IrradianceOutput");
+
+const render::Handle s_persistentReservoirBuffers[] = {
+	render::Handle(L"World_Reservoir_Even"),
+	render::Handle(L"World_Reservoir_Odd")
+};
+
+static Random s_random;
 
 }
 
@@ -49,9 +58,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.IrradiancePass", IrradiancePass, Object)
 
 bool IrradiancePass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
-	if (!resourceManager->bind(c_irradiance, m_irradiance))
+	if (!resourceManager->bind(c_irradianceComputeShader, m_irradianceComputeShader))
 	{
-		log::error << L"Unable to create irradiance process." << Endl;
+		log::error << L"Unable to create irradiance compute shader." << Endl;
+		return false;
+	}
+	if (!resourceManager->bind(c_irradianceDenoise, m_irradianceDenoise))
+	{
+		log::error << L"Unable to create irradiance denoiser process." << Endl;
 		return false;
 	}
 
@@ -70,83 +84,66 @@ render::handle_t IrradiancePass::setup(
 	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
-	render::handle_t gbufferTargetSetId,
+	render::handle_t /*gbufferTargetSetId*/,
 	render::handle_t velocityTargetSetId,
 	render::handle_t halfResDepthTextureId,
 	render::handle_t outputTargetSetId) const
 {
 	T_PROFILER_SCOPE(L"IrradiancePass::setup");
-	render::ImageGraphView view;
 
-	if (m_irradiance == nullptr || gbufferTargetSetId == 0)
+	if (m_irradianceComputeShader == nullptr || m_irradianceDenoise == nullptr /* || gbufferTargetSetId == 0*/)
 		return 0;
 
 	const bool irradianceEnable = (bool)(gatheredView.irradianceGrid != nullptr);
 	const bool irradianceSingle = (bool)(gatheredView.irradianceGrid != nullptr && gatheredView.irradianceGrid->isSingle());
 	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr);
 
-	// Add irradiance target set.
-	const render::RenderGraphTargetSetDesc irradianceTargetDesc = {
+	// Add reservoir buffers.
+	const render::RenderGraphBufferDesc reservoirBufferDesc = {
+		.elementSize = sizeof(Reservoir),
+		.elementCount = 0,
+		.referenceWidthDenom = 2,
+		.referenceHeightDenom = 2
+	};
+	const DoubleBufferedTarget reservoirBufferId = {
+		renderGraph.addPersistentBuffer(L"Reservoir", s_persistentReservoirBuffers[frameCount % 2], reservoirBufferDesc),
+		renderGraph.addPersistentBuffer(L"Reservoir", s_persistentReservoirBuffers[(frameCount + 1) % 2], reservoirBufferDesc)
+	};
+
+	// Add compute output irradiance texture.
+	const render::RenderGraphTextureDesc irradianceTextureDesc = {
+		.referenceWidthDenom = 2,
+		.referenceHeightDenom = 2,
+		.mipCount = 1,
+		.format = render::TfR11G11B10F // Irradiance (RGB)
+	};
+	const auto irradianceTextureId = renderGraph.addTransientTexture(L"Irradiance", irradianceTextureDesc);
+
+	// Add final, denoised, irradiance target.
+	const render::RenderGraphTargetSetDesc irradianceFinalTargetDesc = {
 		.count = 1,
-		.referenceWidthDenom = 1,
-		.referenceHeightDenom = 1,
+		.referenceWidthDenom = 2,
+		.referenceHeightDenom = 2,
 		.createDepthStencil = false,
 		.targets = { {
 			.colorFormat = render::TfR11G11B10F // Irradiance (RGB)
 		} }
 	};
-	const auto irradianceTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance", irradianceTargetDesc, ~0U, outputTargetSetId);
+	const auto irradianceFinalTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance final", irradianceFinalTargetDesc, ~0U, outputTargetSetId);
 
-	// Add reservoir buffers.
-	const render::RenderGraphBufferDesc reservoirBufferDesc = {
-		.elementSize = sizeof(Reservoir),
-		.elementCount = 0,
-		.referenceWidthMul = 1,
-		.referenceWidthDenom = 1,
-		.referenceHeightMul = 1,
-		.referenceHeightDenom = 1
-	};
-	const auto reservoirBufferId = renderGraph.addPersistentBuffer(L"Reservoir", render::getParameterHandle(L"World_Reservoir_0"), reservoirBufferDesc);
-
-	// Add ambient occlusion render pass.
-	view.viewFrustum = worldRenderView.getViewFrustum();
-	view.view = worldRenderView.getView();
-	view.projection = worldRenderView.getProjection();
-
-	render::ImageGraphContext igctx;
-	igctx.setTechniqueFlag(s_handleIrradianceEnable, irradianceEnable);
-	igctx.setTechniqueFlag(s_handleIrradianceSingle, irradianceSingle);
-	igctx.setTechniqueFlag(s_handleRayTracingEnable, rayTracingEnable);
-	igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
-
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance");
-	rp->addInput(gbufferTargetSetId);
-	rp->addInput(velocityTargetSetId);
-	rp->addInput(halfResDepthTextureId);
-	rp->addInput(reservoirBufferId);
-
-	render::Clear clear;
-	clear.mask = render::CfColor;
-	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-	rp->setOutput(irradianceTargetSetId, clear, render::TfNone, render::TfColor);
-
+	// Shared shader parameters for all passes.
 	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();
 	const Vector2 jrp = needJitter ? jitter(frameCount - 1) / worldRenderView.getViewSize() : Vector2::zero();
-
 	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
-		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 		const auto halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
-		const auto reservoirBuffer = renderGraph.getBuffer(reservoirBufferId);
 
 		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
 		params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 		params->setMatrixParameter(s_handleView, worldRenderView.getView());
 		params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
-		params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
-		params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
-		params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
 		params->setTextureParameter(s_handleHalfResDepthMap, halfResDepthTexture);
+		params->setFloatParameter(s_handleRandom, s_random.nextFloat());
 
 		if (gatheredView.irradianceGrid)
 		{
@@ -165,23 +162,85 @@ render::handle_t IrradiancePass::setup(
 		else
 			params->setFloatParameter(s_handleLightCount, 0.0f);
 
-		if (reservoirBuffer != nullptr)
-			params->setBufferViewParameter(s_handleReservoir, reservoirBuffer->getBufferView());
-
 		if (gatheredView.rtWorldTopLevel != nullptr)
 			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
 	};
 
-	m_irradiance->addPasses(
-		m_screenRenderer,
-		renderGraph,
-		rp,
-		igctx,
-		view,
-		setParameters);
+	// Add irradiance compute pass.
+	{
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance compute");
+		rp->addInput(velocityTargetSetId);
+		rp->addInput(halfResDepthTextureId);
+		rp->addInput(reservoirBufferId.previous);
+		rp->addInput(reservoirBufferId.current);
+		rp->setOutput(irradianceTextureId);
+		rp->addBuild(
+			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+			render::ITexture* velocityTexture = renderGraph.getTargetSet(velocityTargetSetId)->getColorTexture(0);
+			render::ITexture* halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
+			render::ITexture* irradianceTexture = renderGraph.getTexture(irradianceTextureId);
+			render::Buffer* reservoirBuffer = renderGraph.getBuffer(reservoirBufferId.previous);
+			render::Buffer* reservoirOutputBuffer = renderGraph.getBuffer(reservoirBufferId.current);
 
-	renderGraph.addPass(rp);
-	return irradianceTargetSetId;
+			const render::ITexture::Size outputSize = irradianceTexture->getSize();
+
+			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Irradiance compute");
+			renderBlock->program = m_irradianceComputeShader->getProgram().program;
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->workSize[0] = outputSize.x;
+			renderBlock->workSize[1] = outputSize.y;
+			renderBlock->workSize[2] = 1;
+			renderBlock->programParams->beginParameters(renderContext);
+			renderBlock->programParams->setVectorParameter(s_handleReservoirSize, Vector4(outputSize.x, outputSize.y, 0.0f, 0.0f));
+			renderBlock->programParams->setTextureParameter(s_handleVelocityMap, velocityTexture);
+			renderBlock->programParams->setBufferViewParameter(s_handleReservoir, reservoirBuffer->getBufferView());
+			renderBlock->programParams->setBufferViewParameter(s_handleReservoirOutput, reservoirOutputBuffer->getBufferView());
+			renderBlock->programParams->setImageViewParameter(s_handleIrradianceOutput, irradianceTexture, 0);
+			setParameters(renderGraph, renderBlock->programParams);
+			renderBlock->programParams->endParameters(renderContext);
+
+			renderContext->compute(renderBlock);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, irradianceTexture, 0);
+		});
+		renderGraph.addPass(rp);
+	}
+
+	// Add denoiser render pass.
+	{
+		render::ImageGraphView view;
+		view.viewFrustum = worldRenderView.getViewFrustum();
+		view.view = worldRenderView.getView();
+		view.projection = worldRenderView.getProjection();
+
+		render::ImageGraphContext igctx;
+		igctx.setTechniqueFlag(s_handleIrradianceEnable, irradianceEnable);
+		igctx.setTechniqueFlag(s_handleIrradianceSingle, irradianceSingle);
+		igctx.setTechniqueFlag(s_handleRayTracingEnable, rayTracingEnable);
+		igctx.associateTexture(s_handleInputColor, irradianceTextureId);
+		igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
+
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance denoiser");
+		rp->addInput(velocityTargetSetId);
+		rp->addInput(halfResDepthTextureId);
+		rp->addInput(irradianceTextureId);
+
+		render::Clear clear;
+		clear.mask = render::CfColor;
+		clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+		rp->setOutput(irradianceFinalTargetSetId, clear, render::TfNone, render::TfColor);
+
+		m_irradianceDenoise->addPasses(
+			m_screenRenderer,
+			renderGraph,
+			rp,
+			igctx,
+			view,
+			setParameters);
+
+		renderGraph.addPass(rp);
+	}
+
+	return irradianceFinalTargetSetId;
 }
 
 }

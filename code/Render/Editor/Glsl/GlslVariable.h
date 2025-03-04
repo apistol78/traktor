@@ -8,9 +8,10 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Object.h"
 #include "Render/Editor/Glsl/GlslType.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -35,9 +36,13 @@ public:
 
 	explicit GlslVariable(const Node* node, const std::wstring& name, GlslType type);
 
+	explicit GlslVariable(const Node* node, const std::wstring& name, const std::wstring& typeName, GlslType type);
+
 	const Node* getNode() const { return m_node; }
 
 	const std::wstring& getName() const { return m_name; }
+
+	const std::wstring& getTypeName() const { return m_typeName; }
 
 	void setType(GlslType type) { m_type = type; }
 
@@ -45,11 +50,12 @@ public:
 
 	std::wstring cast(GlslType to) const;
 
-	GlslVariable& operator = (const GlslVariable& other);
+	GlslVariable& operator=(const GlslVariable& other);
 
 private:
 	const Node* m_node = nullptr;
 	std::wstring m_name;
+	std::wstring m_typeName;
 	GlslType m_type = GlslType::Void;
 };
 

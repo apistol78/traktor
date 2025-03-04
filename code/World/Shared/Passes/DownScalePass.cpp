@@ -56,38 +56,35 @@ render::handle_t DownScalePass::setup(
 {
 	T_PROFILER_SCOPE(L"DownScalePass::setup");
 
-	const Vector2 viewSize = worldRenderView.getViewSize();
-	const int32_t viewWidth = (int32_t)viewSize.x;
-	const int32_t viewHeight = (int32_t)viewSize.y;
-	const int32_t downWidth = viewWidth / 2;
-	const int32_t downHeight = viewHeight / 2;
-
-	render::RenderGraphTextureDesc rgtxd;
-	rgtxd.width = downWidth;
-	rgtxd.height = downHeight;
-	rgtxd.mipCount = 1;
-	rgtxd.format = render::TfR16G16B16A16F;
+	const render::RenderGraphTextureDesc rgtxd = {
+		.referenceWidthDenom = 2,
+		.referenceHeightDenom = 2,
+		.mipCount = 1,
+		.format = render::TfR16G16B16A16F
+	};
 	const render::handle_t downScaleTextureId = renderGraph.addTransientTexture(L"DownScale", rgtxd);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"DownScale");
 	rp->addInput(gbufferTargetSetId);
 	rp->setOutput(downScaleTextureId);
-
 	rp->addBuild(
 		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-		const auto outputTexture = renderGraph.getTexture(downScaleTextureId);
-		const auto inputTexture = renderGraph.getTargetSet(gbufferTargetSetId)->getColorTexture(0);
+		render::ITexture* inputTexture = renderGraph.getTargetSet(gbufferTargetSetId)->getColorTexture(0);
+		render::ITexture* outputTexture = renderGraph.getTexture(downScaleTextureId);
+
+		const render::ITexture::Size inputSize = inputTexture->getSize();
+		const render::ITexture::Size outputSize = outputTexture->getSize();
 
 		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"DownScale");
 
 		renderBlock->program = m_downScaleShader->getProgram().program;
-		renderBlock->workSize[0] = downWidth;
-		renderBlock->workSize[1] = downHeight;
+		renderBlock->workSize[0] = outputSize.x;
+		renderBlock->workSize[1] = outputSize.y;
 		renderBlock->workSize[2] = 1;
 
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->programParams->beginParameters(renderContext);
-		renderBlock->programParams->setVectorParameter(s_handleDownScaleWorkSize, Vector4(downWidth, downHeight, viewWidth, viewHeight));
+		renderBlock->programParams->setVectorParameter(s_handleDownScaleWorkSize, Vector4(outputSize.x, outputSize.y, inputSize.x, inputSize.y));
 		renderBlock->programParams->setImageViewParameter(s_handleDownScaleOutput, outputTexture, 0);
 		renderBlock->programParams->setImageViewParameter(s_handleDownScaleInput, inputTexture, 0);
 		renderBlock->programParams->endParameters(renderContext);
@@ -95,8 +92,8 @@ render::handle_t DownScalePass::setup(
 		renderContext->compute(renderBlock);
 		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, outputTexture, 0);
 	});
-
 	renderGraph.addPass(rp);
+
 	return downScaleTextureId;
 }
 

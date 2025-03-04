@@ -57,13 +57,14 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
 			<id>{CDC614C9-95C9-0848-8D2C-22338B0D1B8B}</id>
 			<comment/>
 			<position>
 				<first>1075</first>
 				<second>-453</second>
 			</position>
+			<structDeclaration>{8B275B18-728E-B74F-B29E-EE018413590B}</structDeclaration>
 			<parameterName>Spark_LineData</parameterName>
 			<elements>
 				<item>

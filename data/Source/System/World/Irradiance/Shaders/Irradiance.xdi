@@ -399,9 +399,9 @@ $typeof(Reservoir) reservoir = $Reservoir[index];
 int rndState = int($Random * 54312.0f);
 
 const float Far = 100.0f;
-const int N = 32;
+const int N = 64;
 const mat3 R = Rotate($Direction.xyz, Hash(rndState++));
-const float pdf0 = 0.8f;
+const float pdf0 = 1.0f;
 const float pdf = 1.0f / max($LightCount, 1);
 
 vec4 acc = vec4(0.0f);
@@ -411,11 +411,19 @@ float t;
 [[branch]]
 for (int i = 0; i < N; ++i)
 {
+	const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.2f;
+
+	// Calculate trace direction.
 	const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.25f;
 	const vec2 r = Rotate2D((Hammersley(i, N) + jitter) * 2.0f - 1.0f, Hash(rndState++)) * 0.5 + 0.5;
-	
-	const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.2f;
-	const vec3 rayDir = R * normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.2f);
+
+	vec3 rayDir = R * normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.2f);
+
+	const float a = Hash(rndState++);
+	rayDir = normalize(rayDir + reservoir.direction * reservoir.W_sum);
+
+	float w = 0.0f;
+	vec4 Nacc = vec4(0.0f);
 
 	[[branch]]
 	if (HWRT_Trace($AS, rayOrigin, rayDir, m, t))
@@ -425,43 +433,9 @@ for (int i = 0; i < N; ++i)
 
 		if ($LightCount > 0)
 		{
-
-
-			// Process reservoir importance sampling of light.
-			{
-				const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
-				const $typeof(Lights) light = $Lights[lightIndex];
-	
-				float lightAttenuation = 0.0f;
-				if (int(light.Type) == 1)	// Directional
-				{
-					lightAttenuation = 1.0f;
-				}
-				else if (int(light.Type) == 2)	// Point
-				{
-					vec3 lightPosition = ($ViewInverse * vec4(light.Position.xyz, 1.0f)).xyz;
-					vec3 lightDirection = lightPosition - hit;
-					float lightDistance = length(lightDirection);
-	
-					const float f = clamp(1.0f - lightDistance / light.RangeRadius.y, 0.0f, 1.0f);
-					lightAttenuation = f * f;
-				}
-	
-				float p_hat = 1.0f - lightAttenuation;
-				float w = p_hat / pdf;
-				float c = 1.0f;
-	
-				reservoir.W_sum += w;
-				reservoir.M += c;
-	
-				if (Hash(rndState++) < w / reservoir.W_sum)
-					reservoir.lightIndex = lightIndex;
-			}
-
-
 			// Evaluate light.
 			{
-				const int lightIndex = int(reservoir.lightIndex);
+				const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
 				const $typeof(Lights) light = $Lights[lightIndex];
 
 				vec3 lightPosition = vec3(0.0f);
@@ -502,21 +476,36 @@ for (int i = 0; i < N; ++i)
 					if (!shadowed)
 					{
 						const float phi = phi0 * clamp(dot(lightDirection, m.normal.xyz), 0.0f, 1.0f);
-						acc += vec4(
+						const vec4 lr = vec4(
 							(m.albedo * phi * light.Color).xyz * PI * lightAttenuation / (pdf * pdf0),
 							1.0f
 						);
+						Nacc += lr;
 					}
 				}
 			}
 		}
 
 		// Add emissive.
-		acc += vec4(
+		Nacc += vec4(
 			m.albedo.xyz * m.albedo.w * phi0 / pdf0,
 			clamp(m.albedo.w, 0.0f, 1.0f)
 		);
 	}
+
+	acc += Nacc * reservoir.W_sum;
+
+	w = length(Nacc.xyz);
+	w = w / (w + 0.1f);
+
+	reservoir.W_sum *= 0.75f;
+
+	if (w > reservoir.W_sum)
+	{
+		reservoir.direction = rayDir;
+		reservoir.W_sum = w;
+	}
+
 }
 
 $Reservoir[index] = reservoir;
@@ -633,66 +622,18 @@ $Output = BlueNoise(seed);
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{17D820BE-1FA0-8F4F-8389-F0DD3A44FDB4}</id>
 			<comment/>
 			<position>
 				<first>2479</first>
 				<second>-23</second>
 			</position>
+			<structDeclaration>{86E147CA-B18B-544E-A278-64ABC36DBA11}</structDeclaration>
 			<parameterName>World_LightSBuffer</parameterName>
-			<elements>
-				<item>
-					<name>Type</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>RangeRadius</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Position</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Direction</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Color</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight0</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight1</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight2</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight3</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>AtlasTransform</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{A973521D-575A-EC4B-A5C7-1B2048BCC7BA}</id>
@@ -1194,36 +1135,18 @@ else
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{A41FE69F-D300-E84C-916B-32A0C658387B}</id>
 			<comment/>
 			<position>
 				<first>2495</first>
 				<second>109</second>
 			</position>
+			<structDeclaration>{947063CB-17CE-EC46-84D1-FF6F913CAE96}</structDeclaration>
 			<parameterName>World_Reservoir</parameterName>
-			<elements>
-				<item>
-					<name>lightIndex</name>
-					<type>DtInteger1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>W_light</name>
-					<type>DtFloat1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>W_sum</name>
-					<type>DtFloat1</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>M</name>
-					<type>DtFloat1</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.FragmentPosition" version="traktor.render.Node:1">
 			<id>{6F64D446-9A81-1941-B4FC-037421D2B60D}</id>

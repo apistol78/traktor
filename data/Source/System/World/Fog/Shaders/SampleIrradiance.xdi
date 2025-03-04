@@ -304,66 +304,18 @@
 			</position>
 			<name>L_LightPosition</name>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{AECDF040-E464-A54B-8A5E-DD333DB1A59C}</id>
 			<comment/>
 			<position>
 				<first>119</first>
 				<second>-288</second>
 			</position>
+			<structDeclaration>{86E147CA-B18B-544E-A278-64ABC36DBA11}</structDeclaration>
 			<parameterName>World_LightSBuffer</parameterName>
-			<elements>
-				<item>
-					<name>Type</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>RangeRadius</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Position</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Direction</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Color</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight0</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight1</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight2</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>ViewToLight3</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>AtlasTransform</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9680DCDE-4319-7D4A-86E5-2745B6A123C5}</id>
@@ -794,21 +746,18 @@
 			</position>
 			<name>L_RadiusFallOff</name>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{6ABCCE9F-BDDC-1746-A211-212A27B1818D}</id>
 			<comment/>
 			<position>
 				<first>-1008</first>
 				<second>-395</second>
 			</position>
+			<structDeclaration>{F1783FA0-68A0-E142-9430-656CC70FECBA}</structDeclaration>
 			<parameterName>World_LightIndexSBuffer</parameterName>
-			<elements>
-				<item>
-					<name>LightIndex</name>
-					<type>DtInteger4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
 			<id>{76E18060-97D0-324F-B93C-E039216A5A3E}</id>
@@ -862,8 +811,8 @@
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const vec4 sp = $SlicePositions;
 const float vz = $Input.z;
 
@@ -875,8 +824,8 @@ else if (vz >= sp.x)
 	$Output = 1;
 else
 	$Output = 0;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{4010C3DA-E712-C244-A91D-6D9409CF48A0}</id>
@@ -994,11 +943,11 @@ else
 		</item>
 		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
 			<id>{0EA2BFE4-EB9D-B343-AFC4-6D52479B0292}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Check max shadow distance
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>769</first>
 				<second>765</second>

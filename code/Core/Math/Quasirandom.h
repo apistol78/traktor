@@ -22,15 +22,18 @@ class Random;
 class T_DLLCLASS Quasirandom
 {
 public:
-    static Vector2 hammersley(uint32_t i, uint32_t numSamples);
+	static Vector2 hammersley(uint32_t i, uint32_t numSamples);
 
-    static Vector2 hammersley(uint32_t i, uint32_t numSamples, Random& rnd);
+	static Vector2 hammersley(uint32_t i, uint32_t numSamples, Random& rnd);
 
-    static Vector4 uniformSphere(const Vector2& uv);
+	static Vector4 uniformSphere(const Vector2& uv);
 
-    static Vector4 uniformHemiSphere(const Vector2& uv, const Vector4& direction);
+	static Vector4 uniformHemiSphere(const Vector2& uv, const Vector4& direction);
 
-    static Vector4 uniformCone(const Vector2& uv, const Vector4& direction, float radius);
+	static Vector4 uniformCone(const Vector2& uv, const Vector4& direction, float radius);
+
+	/*! Random direction, with Gaussian probability distribution. */
+	static Vector4 lambertian(const Vector2& uv, const Vector4& direction);
 };
 
 }

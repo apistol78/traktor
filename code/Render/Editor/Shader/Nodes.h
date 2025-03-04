@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,6 +13,7 @@
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Editor/ImmutableNode.h"
+#include "Render/Editor/Shader/StructDeclaration.h"
 #include "Render/Types.h"
 
 #include <string>
@@ -1023,20 +1024,15 @@ class T_DLLCLASS Struct : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	struct NamedElement
-	{
-		std::wstring name;
-		DataType type = DtFloat1;
-		int32_t length = 0;
-
-		void serialize(ISerializer& s);
-	};
-
 	Struct();
 
 	const std::wstring& getParameterName() const;
 
-	const AlignedVector< NamedElement >& getElements() const;
+	const std::wstring& getStructTypeName() const;
+
+	const StructDeclaration& getStructDeclaration() const;
+
+	const AlignedVector< StructDeclaration::NamedElement >& getElements() const;
 
 	DataType getElementType(const std::wstring& name) const;
 
@@ -1045,8 +1041,16 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	friend class ListUniformsTool;
+	friend class UniformLinker;
+
+	Guid m_structDeclaration;
 	std::wstring m_parameterName;
-	AlignedVector< NamedElement > m_elements;
+
+	//!{
+	std::wstring m_declType;
+	StructDeclaration m_decl;
+	//!}
 };
 
 /*! Subtract. */

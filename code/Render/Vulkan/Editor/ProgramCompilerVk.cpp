@@ -893,10 +893,6 @@ bool ProgramCompilerVk::generate(
 		{
 			ss << L"// [binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L"] = storage buffer" << Endl;
 			ss << L"//   .name = \"" << storageBuffer->getName() << L"\"" << Endl;
-			ss << L"//   .elements = {" << Endl;
-			for (auto element : storageBuffer->get())
-				ss << L"//      " << int32_t(element.type) << L" \"" << element.name << Endl;
-			ss << L"//   }" << Endl;
 		}
 		else if (const auto accelerationStructure = dynamic_type_cast< const GlslAccelerationStructure* >(resource))
 		{

@@ -1,36 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
 			<id>{6B64B451-AE7F-A944-B65A-46884FB3F875}</id>
 			<comment/>
 			<position>
 				<first>107</first>
 				<second>151</second>
 			</position>
+			<structDeclaration>{E1FC9761-BC90-CF43-937D-D681004CCCDF}</structDeclaration>
 			<parameterName>Spray_Points</parameterName>
-			<elements>
-				<item>
-					<name>position</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>velocity</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>oaia</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>msra</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{78C52B18-3CB8-4049-9FE1-1024BA685487}</id>
@@ -60,8 +42,8 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 int alive = $Head[0].alive;
 
 // Delete old points.
@@ -83,8 +65,8 @@ $Head[0].compute_x = (alive + 15) / 16;
 $Head[0].compute_y = 1;
 $Head[0].compute_z = 1;
 $Head[0].alive = alive;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{F9F95089-E45F-D448-A1C0-6705B962DAD8}</id>

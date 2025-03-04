@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.StructDeclaration">
+	<elements>
+		<item>
+			<name>rotation</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>translation</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>boundingBoxMin</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>boundingBoxMax</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+	</elements>
+</object>

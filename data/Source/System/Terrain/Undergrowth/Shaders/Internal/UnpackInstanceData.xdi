@@ -79,13 +79,14 @@
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
 			<id>{7EAD4B2B-38EE-0E46-8860-115A421F3F33}</id>
 			<comment/>
 			<position>
 				<first>294</first>
 				<second>201</second>
 			</position>
+			<structDeclaration>{A77F8518-DAD1-6340-9074-68C409C5CEA7}</structDeclaration>
 			<parameterName>Undergrowth_Plants</parameterName>
 			<elements>
 				<item>
@@ -112,13 +113,14 @@
 				<item>B</item>
 			</names>
 		</item>
-		<item type="traktor.render.Struct" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
 			<id>{06243977-BC43-E949-8649-37978D186BB0}</id>
 			<comment/>
 			<position>
 				<first>101</first>
 				<second>283</second>
 			</position>
+			<structDeclaration>{2118DECD-641F-A54E-B571-1C14A60E88EA}</structDeclaration>
 			<parameterName>Undergrowth_Order</parameterName>
 			<elements>
 				<item>

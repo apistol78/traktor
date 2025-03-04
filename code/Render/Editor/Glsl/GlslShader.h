@@ -13,6 +13,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Render/Editor/Glsl/GlslType.h"
 #include "Render/Editor/Glsl/GlslVariable.h"
+#include "Render/Editor/Shader/StructDeclaration.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -70,6 +71,8 @@ public:
 
 	GlslVariable* createVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type);
 
+	GlslVariable* createStructVariable(const OutputPin* outputPin, const std::wstring& variableName, const std::wstring& structTypeName);
+
 	GlslVariable* createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type);
 
 	GlslVariable* getVariable(const OutputPin* outputPin);
@@ -92,6 +95,8 @@ public:
 	/*! \} */
 
 	void addModule(const Guid& moduleId, const std::wstring& moduleText);
+
+	void addStructure(const std::wstring& typeName, const StructDeclaration& decl);
 
 	std::wstring getGeneratedShader(
 		const PropertyGroup* settings,
@@ -121,6 +126,7 @@ private:
 	AlignedVector< OutputStreamTuple > m_outputStreams[BtLast];
 	SmallSet< Guid > m_modules;
 	AlignedVector< std::wstring > m_moduleText;
+	SmallMap< std::wstring, StructDeclaration > m_structs;
 };
 
 }

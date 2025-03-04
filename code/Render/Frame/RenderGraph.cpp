@@ -387,7 +387,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		auto& texture = it.second;
 		if (texture.texture == nullptr)
 		{
-			texture.texture = m_texturePool->acquire(texture.textureDesc, texture.persistentHandle);
+			texture.texture = m_texturePool->acquire(texture.textureDesc, width, height, texture.persistentHandle);
 			if (!texture.texture)
 				return false;
 		}
@@ -642,8 +642,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			m_texturePool->release(texture.texture);
 	}
 
-	// Cleanup pool data structure.
+	// Cleanup pool data structures.
 	m_targetSetPool->cleanup();
+	m_texturePool->cleanup();
 
 	// Remove all data; keeps memory allocated for arrays
 	// since it's very likely this will be identically

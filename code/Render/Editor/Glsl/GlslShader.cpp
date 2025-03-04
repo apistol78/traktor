@@ -81,6 +81,23 @@ GlslVariable* GlslShader::createVariable(const OutputPin* outputPin, const std::
 	return v.variable;
 }
 
+GlslVariable* GlslShader::createStructVariable(const OutputPin* outputPin, const std::wstring& variableName, const std::wstring& structTypeName)
+{
+#if defined(_DEBUG)
+	for (uint32_t i = m_variableScopes.back(); i < m_variables.size(); ++i)
+	{
+		const auto& v = m_variables[i];
+		T_FATAL_ASSERT(v.outputPin != outputPin);
+	}
+#endif
+
+	auto& v = m_variables.push_back();
+	v.outputPin = outputPin;
+	v.variable = new GlslVariable(outputPin->getNode(), variableName, structTypeName, GlslType::StructBuffer);
+	v.index = -1;
+	return v.variable;
+}
+
 GlslVariable* GlslShader::createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type)
 {
 	auto& v = m_outerVariables.push_back();
@@ -149,6 +166,11 @@ void GlslShader::addModule(const Guid& moduleId, const std::wstring& moduleText)
 {
 	if (m_modules.insert(moduleId))
 		m_moduleText.push_back(moduleText);
+}
+
+void GlslShader::addStructure(const std::wstring& typeName, const StructDeclaration& decl)
+{
+	m_structs[typeName] = decl;
 }
 
 std::wstring GlslShader::getGeneratedShader(
@@ -241,6 +263,30 @@ std::wstring GlslShader::getGeneratedShader(
 		stageMask = GlslResource::BsFragment;
 	else if (m_shaderType == StCompute)
 		stageMask = GlslResource::BsCompute;
+
+	if (!m_structs.empty())
+	{
+		ss << L"// Structures" << Endl;
+		for (auto it : m_structs)
+		{
+			ss << L"struct " << it.first << Endl;
+			ss << L"{" << Endl;
+			ss << IncreaseIndent;
+			for (auto element : it.second.getElements())
+			{
+				// Force high precision on SSBO since they share signature.
+				if (element.type >= DtFloat1 && element.type <= DtFloat4)
+					ss << L"highp ";
+				if (element.length <= 0)
+					ss << glsl_storage_type(element.type) << L" " << element.name << L";" << Endl;
+				else
+					ss << glsl_storage_type(element.type) << L" " << element.name << L"[" << element.length << L"];" << Endl;
+			}
+			ss << DecreaseIndent;
+			ss << L"};" << Endl;
+			ss << Endl;
+		}
+	}
 
 	if (requirements.useTargetSize)
 	{
@@ -380,29 +426,13 @@ std::wstring GlslShader::getGeneratedShader(
 
 			if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
 			{
-				ss << L"struct " << storageBuffer->getName() << L"_Type" << Endl;
-				ss << L"{" << Endl;
-				ss << IncreaseIndent;
-				for (auto element : storageBuffer->get())
-				{
-					// Force high precision on SSBO since they share signature.
-					if (element.type >= DtFloat1 && element.type <= DtFloat4)
-						ss << L"highp ";
-					if (element.length <= 0)
-						ss << glsl_storage_type(element.type) << L" " << element.name << L";" << Endl;
-					else
-						ss << glsl_storage_type(element.type) << L" " << element.name << L"[" << element.length << L"];" << Endl;
-				}
-				ss << DecreaseIndent;
-				ss << L"};" << Endl;
-				ss << Endl;
-				//if (m_shaderType != StCompute)
-				//	ss << L"layout (std430, binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L") readonly buffer " << storageBuffer->getName() << L"_Buffer" << Endl;
-				//else
+				if (m_shaderType != StCompute)
+					ss << L"layout (std430, binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L") readonly buffer " << storageBuffer->getName() << L"_Buffer" << Endl;
+				else
 					ss << L"layout (std430, binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L") buffer " << storageBuffer->getName() << L"_Buffer" << Endl;
 				ss << L"{" << Endl;
 				ss << IncreaseIndent;
-				ss << storageBuffer->getName() << L"_Type data[];" << Endl;
+				ss << storageBuffer->getStructTypeName() << L" data[];" << Endl;
 				ss << DecreaseIndent;
 				ss << L"}" << Endl;
 				if (storageBuffer->isIndexed())
