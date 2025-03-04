@@ -279,8 +279,8 @@ for (int i = 0; i < N; ++i)
 		// Add direct lights.
 		const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
 		const $typeof(Lights) light = $Lights[lightIndex];
-		const vec4 irr = HWRT_Light_Irradiance($AS, $ViewInverse, light, hit, m.normal.xyz);
-		acc += vec4((m.albedo * irr * at0 / pdf).xyz, at0);
+		const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit, m.normal.xyz);
+		acc += vec4((m.albedo * incident * at0 / pdf).xyz, at0);
 
 		// Add emissive.
 		acc += vec4(m.albedo.xyz * m.albedo.w * at0, m.albedo.w * at0);

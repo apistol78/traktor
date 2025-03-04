@@ -202,8 +202,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			{
 				const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
 				const $typeof(Lights) light = $Lights[lightIndex];
-				const vec4 irr = HWRT_Light_Irradiance($AS, $ViewInverse, light, hit, m.normal.xyz);
-				Nacc += m.albedo * irr * at0 * phi0 * PI / pdf;
+				const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit, m.normal.xyz);
+				Nacc += m.albedo * incident * at0 * phi0 * PI / pdf;
 			}
 	
 			// Add emissive.
@@ -229,7 +229,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 #endif
 	
 	vec4 outpt = acc / N;
-	outpt = vec4(outpt.xyz, pow(outpt.w, 0.1f));
+	outpt = vec4(outpt.xyz, 1.0f);
 	
 //	outpt = vec4(reservoir.direction * 0.5f + 0.5f, 1.0f);
 	//outpt = vec4(reservoir.W_sum.xxx, 1.0f);
