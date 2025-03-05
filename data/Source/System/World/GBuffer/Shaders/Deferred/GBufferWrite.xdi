@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>-155</first>
-				<second>107</second>
+				<second>31</second>
 			</position>
 			<name>ViewPosition</name>
 			<optional>false</optional>
@@ -15,8 +15,8 @@
 			<id>{30E85928-7B55-E740-9734-68440CE06674}</id>
 			<comment/>
 			<position>
-				<first>109</first>
-				<second>145</second>
+				<first>-148</first>
+				<second>110</second>
 			</position>
 			<name>ViewNormal</name>
 			<optional>false</optional>
@@ -36,7 +36,7 @@
 			<comment/>
 			<position>
 				<first>112</first>
-				<second>76</second>
+				<second>0</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -45,7 +45,7 @@
 			<comment/>
 			<position>
 				<first>248</first>
-				<second>76</second>
+				<second>0</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
@@ -53,7 +53,7 @@
 			<comment/>
 			<position>
 				<first>387</first>
-				<second>109</second>
+				<second>33</second>
 			</position>
 			<fragmentGuid>{DE7C9D55-4AB8-4749-85C4-43A6E40B9596}</fragmentGuid>
 			<inputPins>
@@ -146,11 +146,11 @@
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{E00555C0-78D1-7041-99AD-C032D560FDEC}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Roughness
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>374</first>
 				<second>602</second>
@@ -169,11 +169,11 @@ Roughness
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{BB1CF911-4BA8-5C49-A139-809DD1A678F9}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Metalness
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>374</first>
 				<second>663</second>
@@ -195,7 +195,7 @@ Metalness
 			<comment/>
 			<position>
 				<first>-123</first>
-				<second>-77</second>
+				<second>-153</second>
 			</position>
 			<name>Discard</name>
 			<optional>true</optional>
@@ -205,7 +205,7 @@ Metalness
 			<comment/>
 			<position>
 				<first>155</first>
-				<second>23</second>
+				<second>-53</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -214,17 +214,17 @@ Metalness
 			<comment/>
 			<position>
 				<first>365</first>
-				<second>-9</second>
+				<second>-85</second>
 			</position>
 			<operator>CoLess</operator>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{0EF96363-9F6F-9E4F-876E-15937FC05263}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Specular
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>374</first>
 				<second>724</second>
@@ -256,7 +256,7 @@ Specular
 			<comment/>
 			<position>
 				<first>608</first>
-				<second>105</second>
+				<second>29</second>
 			</position>
 			<swizzle>0xyz</swizzle>
 		</item>
@@ -265,7 +265,7 @@ Specular
 			<comment/>
 			<position>
 				<first>611</first>
-				<second>66</second>
+				<second>-10</second>
 			</position>
 			<swizzle>x000</swizzle>
 		</item>
@@ -274,16 +274,16 @@ Specular
 			<comment/>
 			<position>
 				<first>821</first>
-				<second>60</second>
+				<second>-16</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{299F615B-FBD8-9847-9CA0-D903C7F3F099}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Decal response
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>374</first>
 				<second>785</second>
@@ -295,7 +295,7 @@ Decal response
 			<comment/>
 			<position>
 				<first>141</first>
-				<second>-93</second>
+				<second>-169</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
@@ -303,7 +303,7 @@ Decal response
 			<comment/>
 			<position>
 				<first>-75</first>
-				<second>-32</second>
+				<second>-108</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -351,18 +351,47 @@ Decal response
 			</position>
 			<value>16</value>
 		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{32E22C20-D936-CF40-B24E-D56CE7FDD584}</id>
+			<comment/>
+			<position>
+				<first>113</first>
+				<second>106</second>
+			</position>
+			<name>Validate Normal</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{0145B838-48DC-6141-91A8-03B99D7A48B8}</id>
+					<name>Input</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{54517049-1CE5-AE4D-AD01-1D1AC4FEA270}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[
+const float ln = length($Input.xyz);
+if (ln > 1e-4f)
+	$Output = vec4($Input.xyz, 0.0f);
+else
+	$Output = vec4(0.0f, 0.0f, 1.0f, 0.0f);
+
+]]></script>
+		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{3FC8275C-094C-DD40-B5F6-B690D4CFBBB3}</id>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item"/>
@@ -663,6 +692,26 @@ Decal response
 				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{0145B838-48DC-6141-91A8-03B99D7A48B8}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{54517049-1CE5-AE4D-AD01-1D1AC4FEA270}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{3FC8275C-094C-DD40-B5F6-B690D4CFBBB3}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -670,11 +719,11 @@ Decal response
 			<comment/>
 			<position>
 				<first>-207</first>
-				<second>-167</second>
+				<second>-243</second>
 			</position>
 			<size>
 				<first>1212</first>
-				<second>400</second>
+				<second>475</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
