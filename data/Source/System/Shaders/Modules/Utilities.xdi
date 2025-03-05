@@ -111,6 +111,7 @@ vec3 Hemi(vec3 direction, vec2 rnd)
 
 vec3 LambertianDirection(vec3 direction, vec2 uv)
 {
+#if 1
 	const float sin2_theta = uv.x;
 	const float cos2_theta = 1.0f - sin2_theta;
 	const float sin_theta = sqrt(sin2_theta);
@@ -127,6 +128,12 @@ vec3 LambertianDirection(vec3 direction, vec2 uv)
 		direction
 	);
 	return normalize(Mrot * ldir);
+#else
+   float theta = 6.283185f * uv.x;
+   uv.y = 2.0f * uv.y - 1.0f;
+   vec3 spherePoint = vec3(sqrt(1.0f - uv.y * uv.y) * vec2(cos(theta), sin(theta)), uv.y);
+   return normalize(direction + spherePoint);
+#endif
 }
 
 

@@ -242,9 +242,7 @@
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script><![CDATA[
-			
-int rndState = int($Random * 54312.0f);
+			<script><![CDATA[int rndState = int($Random * 54312.0f);
 
 const int N = 8;
 
@@ -260,6 +258,8 @@ HWRT_Material m;
 float t;
 
 const float pdf = 1.0f / max($LightCount, 1);
+
+float nhit = 0.0f;
 
 for (int i = 0; i < N; ++i)
 {
@@ -284,12 +284,13 @@ for (int i = 0; i < N; ++i)
 
 		// Add emissive.
 		acc += vec4(m.albedo.xyz * m.albedo.w * at0, m.albedo.w * at0);
+
+		nhit++;
 	}
 }
 
-$Output = vec4(acc.xyz / N, acc.w / N);
-			
-			]]></script>
+$Output = vec4(acc.xyz / N, nhit / N);
+]]></script>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{D7BA6B77-E4DA-D749-8C5F-1959A986642F}</id>

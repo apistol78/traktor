@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderModule" version="1">
 	<text><![CDATA[
-vec4 HWRT_Light_CalculateIncidentLight(accelerationStructureEXT AS, const mat4 viewInverse, const World_Light_Type light, const vec3 position, const vec3 normal)
+/*! Calculate incident light radiance at a given position. */
+vec4 HWRT_Light_CalculateIncidentLight(
+	accelerationStructureEXT AS,
+	const mat4 viewInverse,
+	const World_Light_Type light,
+	const vec3 position,
+	const vec3 normal
+)
 {
 	vec3 lightPosition = vec3(0.0f);
 	vec3 lightDirection = vec3(0.0f);

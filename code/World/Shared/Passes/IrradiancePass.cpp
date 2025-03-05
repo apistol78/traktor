@@ -84,7 +84,6 @@ render::handle_t IrradiancePass::setup(
 	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
-	render::handle_t /*gbufferTargetSetId*/,
 	render::handle_t velocityTargetSetId,
 	render::handle_t halfResDepthTextureId,
 	render::handle_t outputTargetSetId) const
@@ -115,7 +114,7 @@ render::handle_t IrradiancePass::setup(
 		.referenceWidthDenom = 2,
 		.referenceHeightDenom = 2,
 		.mipCount = 1,
-		.format = render::TfR11G11B10F // Irradiance (RGB)
+		.format = render::TfR16G16B16A16F // Irradiance (RGB)
 	};
 	const auto irradianceTextureId = renderGraph.addTransientTexture(L"Irradiance", irradianceTextureDesc);
 
@@ -126,7 +125,7 @@ render::handle_t IrradiancePass::setup(
 		.referenceHeightDenom = 2,
 		.createDepthStencil = false,
 		.targets = { {
-			.colorFormat = render::TfR11G11B10F // Irradiance (RGB)
+			.colorFormat = render::TfR16G16B16A16F // Irradiance (RGB)
 		} }
 	};
 	const auto irradianceFinalTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance final", irradianceFinalTargetDesc, ~0U, outputTargetSetId);
@@ -184,8 +183,11 @@ render::handle_t IrradiancePass::setup(
 
 			const render::ITexture::Size outputSize = irradianceTexture->getSize();
 
+			render::Shader::Permutation perm;
+			m_irradianceComputeShader->setCombination(s_handleIrradianceEnable, irradianceEnable, perm);
+
 			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Irradiance compute");
-			renderBlock->program = m_irradianceComputeShader->getProgram().program;
+			renderBlock->program = m_irradianceComputeShader->getProgram(perm).program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->workSize[0] = outputSize.x;
 			renderBlock->workSize[1] = outputSize.y;
