@@ -57,11 +57,11 @@
 				<second>-878</second>
 			</position>
 			<name>Raytracing</name>
-			<technique>Default</technique>
+			<technique>Irradiance_RT</technique>
 			<domain>Compute</domain>
 			<localSize>
-				<X>1</X>
-				<Y>1</Y>
+				<X>8</X>
+				<Y>8</Y>
 				<Z>1</Z>
 			</localSize>
 			<useRayTracing>true</useRayTracing>
@@ -862,8 +862,8 @@ $TexCoord = vec4(vec2(pt) / sz, 0.0f, 0.0f);
 			<id>{24163C3B-AEF9-CC43-9AEB-E39122AE7235}</id>
 			<comment/>
 			<position>
-				<first>-1695</first>
-				<second>-1573</second>
+				<first>-1677</first>
+				<second>-1583</second>
 			</position>
 			<parameterName>World_IrradianceSingle</parameterName>
 		</item>
@@ -893,6 +893,61 @@ $TexCoord = vec4(vec2(pt) / sz, 0.0f, 0.0f);
 				<second>-1492</second>
 			</position>
 			<swizzle>xyz1</swizzle>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{B46D8DBA-7927-4F74-B9A5-D85117428DF8}</id>
+			<comment/>
+			<position>
+				<first>-1630</first>
+				<second>-257</second>
+			</position>
+			<name>Pass</name>
+			<technique>Irradiance</technique>
+			<domain>Compute</domain>
+			<localSize>
+				<X>8</X>
+				<Y>8</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{EADA77CC-17C7-41D7-B0E1-8D59463CCDD6}</id>
+					<name>Output</name>
+				</item>
+				<item>
+					<id>{8BDC6BB6-2505-4B86-8453-EA8145B953CD}</id>
+					<name>Sky</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script><![CDATA[
+const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
+imageStore($Output, pt, $Sky);
+
+]]></script>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{62BCF65D-1878-41FF-A232-221EE0CA6CDD}</id>
+			<comment/>
+			<position>
+				<first>-1993</first>
+				<second>-214</second>
+			</position>
+			<name>L_Sky</name>
+		</item>
+		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+			<id>{63C938E3-78AA-48DF-85C5-90463FE95A4A}</id>
+			<comment/>
+			<position>
+				<first>-2050</first>
+				<second>-256</second>
+			</position>
+			<declaration>{11EF2BEA-52A2-7F4E-91C0-DCED034FE9A3}</declaration>
+			<parameterName/>
+			<type>Scalar</type>
+			<frequency>Once</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -1398,12 +1453,32 @@ $TexCoord = vec4(vec2(pt) / sz, 0.0f, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[50]"/>
-				<id>{08532144-809B-4726-A819-F8E3F9CF7515}</id>
+				<node ref="/object/nodes/item[51]"/>
+				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[40]"/>
 				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[56]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[55]"/>
+				<id>{8BDC6BB6-2505-4B86-8453-EA8145B953CD}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[57]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[55]"/>
+				<id>{EADA77CC-17C7-41D7-B0E1-8D59463CCDD6}</id>
 			</destination>
 		</item>
 	</edges>
