@@ -184,7 +184,7 @@ void PostProcessPass::setup(
 	igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 	igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 	igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
-	igctx.associateTexture(s_handleInputColorGrading, m_colorGrading);
+	igctx.associateExplicitTexture(s_handleInputColorGrading, m_colorGrading);
 	igctx.setTechniqueFlag(s_handleColorGradingEnable, (bool)(m_colorGrading != nullptr));
 
 	// Expose gamma, exposure and jitter.

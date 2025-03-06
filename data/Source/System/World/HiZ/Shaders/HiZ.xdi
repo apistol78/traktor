@@ -33,29 +33,24 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<script>
-			<![CDATA[
-ivec2 sz = imageSize($Output);
-ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
+			<script><![CDATA[	
+const ivec2 sz = imageSize($Output);
+const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
 
 if (pt.x < sz.x && pt.y < sz.y)
 {
-//	if (pt.x < $WorkSize.x && pt.y < $WorkSize.y)
-	{
-		ivec2 o = ivec2(1, 0);
-		ivec2 p = pt * 2;
-	
-		float z1 = imageLoad($Input, p + o.yy).x;
-		float z2 = imageLoad($Input, p + o.xy).x;
-		float z3 = imageLoad($Input, p + o.yx).x;
-		float z4 = imageLoad($Input, p + o.xx).x;
-	
-		float mxz = max(max(z1, z2), max(z3, z4));
-		imageStore($Output, pt, vec4(mxz));
-	}
+	const ivec2 o = ivec2(1, 0);
+	const ivec2 p = pt * 2;
+
+	const float z1 = imageLoad($Input, p + o.yy).x;
+	const float z2 = imageLoad($Input, p + o.xy).x;
+	const float z3 = imageLoad($Input, p + o.yx).x;
+	const float z4 = imageLoad($Input, p + o.xx).x;
+
+	const float mxz = max(max(z1, z2), max(z3, z4));
+	imageStore($Output, pt, vec4(mxz));
 }
-			]]>
-			</script>
+						]]></script>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
 			<id>{CBB170DD-96E3-CF46-948E-47E5006E153F}</id>

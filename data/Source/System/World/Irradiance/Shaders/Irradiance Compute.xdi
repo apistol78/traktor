@@ -57,7 +57,7 @@
 				<second>-878</second>
 			</position>
 			<name>Raytracing</name>
-			<technique>Irradiance_RT</technique>
+			<technique>World_ComputeIrradiance_RT</technique>
 			<domain>Compute</domain>
 			<localSize>
 				<X>8</X>
@@ -898,11 +898,11 @@ $TexCoord = vec4(vec2(pt) / sz, 0.0f, 0.0f);
 			<id>{B46D8DBA-7927-4F74-B9A5-D85117428DF8}</id>
 			<comment/>
 			<position>
-				<first>-1630</first>
-				<second>-257</second>
+				<first>-1647</first>
+				<second>-268</second>
 			</position>
 			<name>Pass</name>
-			<technique>Irradiance</technique>
+			<technique>World_ComputeIrradiance</technique>
 			<domain>Compute</domain>
 			<localSize>
 				<X>8</X>

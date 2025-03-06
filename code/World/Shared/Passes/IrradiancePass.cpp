@@ -43,8 +43,8 @@ struct Reservoir
 const resource::Id< render::Shader > c_irradianceComputeShader(L"{7C871925-C1A9-5B47-A361-114BC8FB5A98}");
 const resource::Id< render::ImageGraph > c_irradianceDenoise(L"{14A0E977-7C13-9B43-A26E-F1D21117AEC6}");
 
-const render::Handle s_handleTechniqueIrradiance(L"Irradiance");
-const render::Handle s_handleTechniqueIrradiance_RT(L"Irradiance_RT");
+const render::Handle s_handleTechniqueIrradiance(L"World_ComputeIrradiance");
+const render::Handle s_handleTechniqueIrradiance_RT(L"World_ComputeIrradiance_RT");
 const render::Handle s_handleIrradianceOutput(L"World_IrradianceOutput");
 
 const render::Handle s_persistentReservoirBuffers[] = {

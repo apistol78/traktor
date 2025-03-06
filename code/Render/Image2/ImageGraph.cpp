@@ -93,7 +93,7 @@ void ImageGraph::addPasses(
 
 	for (int32_t i = 0; i < (int32_t)permutation->textures.size(); ++i)
 	{
-		context.associateTexture(
+		context.associateExplicitTexture(
 			permutation->textures[i]->getTextureId(),
 			permutation->textures[i]->getTexture()
 		);
