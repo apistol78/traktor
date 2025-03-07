@@ -6,16 +6,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
+#include "Ui/Splitter.h"
+
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/StyleSheet.h"
-#include "Ui/Splitter.h"
+
+#include <algorithm>
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 Widget* findVisibleSibling(Widget* widget)
 {
@@ -24,19 +26,19 @@ Widget* findVisibleSibling(Widget* widget)
 	return widget;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Splitter", Splitter, Widget)
 
 const Unit c_splitterSize = 2_ut;
 
 Splitter::Splitter()
-:	m_vertical(true)
-,	m_position(0_ut)
-,	m_negative(false)
-,	m_relative(false)
-,	m_border(0_ut)
-,	m_drag(false)
+	: m_vertical(true)
+	, m_position(0_ut)
+	, m_negative(false)
+	, m_relative(false)
+	, m_border(0_ut)
+	, m_drag(false)
 {
 }
 
@@ -303,21 +305,17 @@ void Splitter::eventMouseMove(MouseMoveEvent* event)
 		setAbsolutePosition(pos);
 		update();
 	}
+	else if (
+		pos >= position - pixel(c_splitterSize) / 2 &&
+		pos <= position + pixel(c_splitterSize) / 2)
+	{
+		setCursor(m_vertical ? Cursor::SizeWE : Cursor::SizeNS);
+		setCapture();
+	}
 	else
 	{
-		if (
-			pos >= position - pixel(c_splitterSize) / 2 &&
-			pos <= position + pixel(c_splitterSize) / 2
-		)
-		{
-			setCursor(m_vertical ? Cursor::SizeWE : Cursor::SizeNS);
-			setCapture();
-		}
-		else
-		{
-			resetCursor();
-			releaseCapture();
-		}
+		resetCursor();
+		releaseCapture();
 	}
 }
 
@@ -329,8 +327,7 @@ void Splitter::eventButtonDown(MouseButtonDownEvent* event)
 
 	if (
 		pos >= position - pixel(c_splitterSize) / 2 &&
-		pos <= position + pixel(c_splitterSize) / 2
-	)
+		pos <= position + pixel(c_splitterSize) / 2)
 	{
 		setCursor(m_vertical ? Cursor::SizeWE : Cursor::SizeNS);
 		setCapture();
@@ -352,6 +349,9 @@ void Splitter::eventButtonUp(MouseButtonUpEvent* event)
 
 void Splitter::eventSize(SizeEvent* event)
 {
+	// Feedback position to ensure position is still valid after resize.
+	const int32_t position = getAbsolutePosition();
+	setAbsolutePosition(position);
 	update();
 }
 
