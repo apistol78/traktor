@@ -12,9 +12,12 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributePrivate.h"
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberSmallMap.h"
+#include "Render/Editor/Shader/StructDeclaration.h"
 
 namespace traktor::render
 {
@@ -77,10 +80,16 @@ private:
 
 }
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ShaderModule", 1, ShaderModule, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ShaderModule", 2, ShaderModule, ISerializable)
 
 ShaderModule::ShaderModule(const std::wstring& text)
 	: m_text(text)
+{
+}
+
+ShaderModule::ShaderModule(const std::wstring& text, const SmallMap< std::wstring, SamplerState >& samplers)
+	: m_text(text)
+	, m_samplers(samplers)
 {
 }
 
@@ -130,6 +139,9 @@ void ShaderModule::serialize(ISerializer& s)
 
 	if (s.getVersion< ShaderModule >() >= 1)
 		s >> MemberSmallMap< std::wstring, SamplerState, Member< std::wstring >, MemberSamplerState >(L"samplers", m_samplers);
+
+	if (s.getVersion< ShaderModule >() >= 2)
+		s >> MemberAlignedVector< Guid >(L"structDeclarations", m_structDeclarations, AttributeType(type_of< StructDeclaration >()));
 }
 
 }

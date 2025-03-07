@@ -36,17 +36,24 @@ public:
 
 	explicit ShaderModule(const std::wstring& text);
 
+	explicit ShaderModule(const std::wstring& text, const SmallMap< std::wstring, SamplerState >& samplers);
+
 	void setTextDirect(const std::wstring& text);
+
+	const std::wstring& getTextDirect() const { return m_text; }
 
 	std::wstring escape(std::function< std::wstring(const Guid& g) > fn) const;
 
 	const SmallMap< std::wstring, SamplerState >& getSamplers() const { return m_samplers; }
+
+	const AlignedVector< Guid >& getStructDeclarations() const { return m_structDeclarations; }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_text;
 	SmallMap< std::wstring, SamplerState > m_samplers;
+	AlignedVector< Guid > m_structDeclarations;
 };
 
 }

@@ -22,6 +22,7 @@
 #include "Render/Editor/Node.h"
 #include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderModule.h"
 
 namespace traktor::render
 {
@@ -63,13 +64,12 @@ std::wstring getClassNameOnly(const Object* o)
 
 }
 
-GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings, const IProgramCompiler::IModuleAccess& moduleAccess)
+GlslContext::GlslContext(const ShaderGraph* shaderGraph, const ShaderModule* shaderModule, const PropertyGroup* settings)
 	: m_shaderGraph(shaderGraph)
 	, m_settings(settings)
-	, m_moduleAccess(moduleAccess)
-	, m_vertexShader(GlslShader::StVertex)
-	, m_fragmentShader(GlslShader::StFragment)
-	, m_computeShader(GlslShader::StCompute)
+	, m_vertexShader(GlslShader::StVertex, shaderModule)
+	, m_fragmentShader(GlslShader::StFragment, shaderModule)
+	, m_computeShader(GlslShader::StCompute, shaderModule)
 	, m_currentShader(nullptr)
 {
 	m_layout.addStatic(new GlslTexture(L"__bindlessTextures2D__", GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::Texture2D, true), /* binding */ 0);
@@ -82,6 +82,18 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 	m_layout.addStatic(new GlslUniformBuffer(L"UbOnce", GlslResource::Set::Default, 0), /* binding */ 3);
 	m_layout.addStatic(new GlslUniformBuffer(L"UbFrame", GlslResource::Set::Default, 0), /* binding */ 4);
 	m_layout.addStatic(new GlslUniformBuffer(L"UbDraw", GlslResource::Set::Default, 0), /* binding */ 5);
+
+	// Add samplers from module.
+	for (const auto it : shaderModule->getSamplers())
+		if (getLayout().getByName(it.first) == nullptr)
+			getLayout().add(
+				new GlslSampler(
+					it.first,
+					GlslResource::Set::Default,
+					getBindStage(),
+					it.second));
+		else
+			log::warning << L"Sampler \"" << it.first << L"\" defined in module already exist in layout." << Endl;
 }
 
 Node* GlslContext::getInputNode(const InputPin* inputPin)
@@ -328,26 +340,16 @@ GlslLayout& GlslContext::getLayout()
 	return m_layout;
 }
 
+void GlslContext::addStructure(const std::wstring& typeName, const StructDeclaration& decl)
+{
+	m_vertexShader.addStructure(typeName, decl);
+	m_fragmentShader.addStructure(typeName, decl);
+	m_computeShader.addStructure(typeName, decl);
+}
+
 void GlslContext::setRenderState(const RenderState& renderState)
 {
 	m_renderState = renderState;
-}
-
-void GlslContext::registerModule(const Guid& moduleId)
-{
-	const std::wstring text = m_moduleAccess.getText(moduleId);
-	getShader().addModule(moduleId, text);
-
-	for (const auto it : m_moduleAccess.getSamplers(moduleId))
-		if (getLayout().getByName(it.first) == nullptr)
-			getLayout().add(
-				new GlslSampler(
-					it.first,
-					GlslResource::Set::Default,
-					getBindStage(),
-					it.second));
-		else
-			log::warning << L"Sampler defined in module \"" << it.first << L"\" already exist in layout." << Endl;
 }
 
 void GlslContext::pushError(const std::wstring& errorMessage)

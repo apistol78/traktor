@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -53,6 +53,7 @@
 #include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderModule.h"
+#include "Render/Editor/Shader/ShaderModuleResolve.h"
 #include "Render/Editor/Shader/UniformDeclaration.h"
 #include "Render/Editor/Shader/UniformLinker.h"
 #include "Render/Resource/ProgramResource.h"
@@ -87,78 +88,6 @@ public:
 
 private:
 	Ref< editor::IPipelineCommon > m_pipeline;
-};
-
-class ModuleAccess : public IProgramCompiler::IModuleAccess
-{
-public:
-	explicit ModuleAccess(editor::IPipelineCommon* pipelineCommon)
-		: m_pipelineCommon(pipelineCommon)
-	{
-	}
-
-	virtual std::wstring getText(const Guid& id) const
-	{
-		std::set< Guid > visited;
-		return getTextImpl(id, visited);
-	}
-
-	virtual SmallMap< std::wstring, SamplerState > getSamplers(const Guid& id) const
-	{
-		std::set< Guid > visited;
-		return getSamplersImpl(id, visited);
-	}
-
-private:
-	editor::IPipelineCommon* m_pipelineCommon;
-	Preprocessor m_preprocessor;
-
-	std::wstring getTextImpl(const Guid& id, std::set< Guid >& inoutVisited) const
-	{
-		if (!inoutVisited.insert(id).second)
-			return L"";
-
-		Ref< const ShaderModule > shaderModule = m_pipelineCommon->getObjectReadOnly< ShaderModule >(id);
-		if (!shaderModule)
-			return L"";
-
-		const std::wstring unprocessedText = shaderModule->escape([&](const Guid& g) -> std::wstring {
-			return g.format();
-		});
-
-		// Execute preprocessor on shader module.
-		std::wstring text;
-		std::set< std::wstring > usings;
-		if (!m_preprocessor.evaluate(unprocessedText, text, usings))
-		{
-			log::error << L"Shader pipeline failed; unable to preprocess module " << id.format() << L"." << Endl;
-			return L"";
-		}
-
-		// Append all usings.
-		StringOutputStream ss;
-		for (const auto& u : usings)
-			ss << getTextImpl(Guid(u), inoutVisited);
-
-		// Append module text.
-		ss << text;
-		return ss.str();
-	}
-
-	SmallMap< std::wstring, SamplerState > getSamplersImpl(const Guid& id, std::set< Guid >& inoutVisited) const
-	{
-		SmallMap< std::wstring, SamplerState > samplers;
-
-		if (!inoutVisited.insert(id).second)
-			return samplers;
-
-		Ref< const ShaderModule > shaderModule = m_pipelineCommon->getObjectReadOnly< ShaderModule >(id);
-		if (!shaderModule)
-			return samplers;
-
-		samplers.insert(shaderModule->getSamplers().begin(), shaderModule->getSamplers().end());
-		return samplers;
-	}
 };
 
 uint32_t getPriority(const render::ShaderGraph* shaderGraph)
@@ -677,21 +606,20 @@ bool ShaderPipeline::buildOutput(
 					programGraph->rewire(textureNodeOutput, textureUniformOutput);
 				}
 
-				// Compile shader program.
-				ModuleAccess moduleAcccess(pipelineBuilder);
+				// Resolve shader modules.
+				Ref< ShaderModule > module = ShaderModuleResolve([&](const Guid& id) -> Ref< const Object > {
+					return pipelineBuilder->getObjectReadOnly(id);
+				}).resolve(programGraph);
+				if (!module)
+				{
+					log::error << L"ShaderPipeline failed; unable to resolve modules." << Endl;
+					status = false;
+					return;
+				}
 
 				// Calculate hash of the entire shader graph including modules so we can
 				// memorize shader compilation.
-				uint32_t hash = ShaderGraphHash(false, false).calculate(programGraph);
-				for (auto scriptNode : programGraph->findNodesOf< Script >())
-				{
-					for (const auto& scriptInclude : scriptNode->getIncludes())
-					{
-						Ref< const ShaderModule > module = pipelineBuilder->getObjectReadOnly< ShaderModule >(scriptInclude);
-						if (module)
-							hash += pipelineBuilder->calculateInclusiveHash(module);
-					}
-				}
+				const uint32_t hash = ShaderGraphHash(false, false).calculate(programGraph) + pipelineBuilder->calculateInclusiveHash(module);
 
 				Ref< ProgramResource > programResource = pipelineBuilder->getDataAccessCache()->read< ProgramResource >(
 					Key(0x00000000, 0x00000000, dependency->pipelineHash, hash),
@@ -701,9 +629,9 @@ bool ShaderPipeline::buildOutput(
 					std::list< IProgramCompiler::Error > jobErrors;
 					Ref< ProgramResource > programResource = programCompiler->compile(
 						programGraph,
+						module,
 						m_compilerSettings,
 						path,
-						moduleAcccess,
 						jobErrors);
 
 					// Merge errors into output list.

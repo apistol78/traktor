@@ -12,8 +12,9 @@
 #include "Render/Editor/Glsl/GlslEmitter.h"
 #include "Render/Editor/Glsl/GlslLayout.h"
 #include "Render/Editor/Glsl/GlslShader.h"
-#include "Render/Editor/IProgramCompiler.h"
 #include "Render/Editor/Shader/StructDeclaration.h"
+
+#include <list>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,6 +35,7 @@ namespace traktor::render
 {
 
 class ShaderGraph;
+class ShaderModule;
 class InputPin;
 class OutputPin;
 class GlslUniforms;
@@ -53,7 +55,7 @@ public:
 		UpdateFrequency frequency;
 	};
 
-	explicit GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings, const IProgramCompiler::IModuleAccess& moduleAccess);
+	explicit GlslContext(const ShaderGraph* shaderGraph, const ShaderModule* shaderModule, const PropertyGroup* settings);
 
 	Node* getInputNode(const InputPin* inputPin);
 
@@ -133,6 +135,8 @@ public:
 
 	GlslLayout& getLayout();
 
+	void addStructure(const std::wstring& typeName, const StructDeclaration& decl);
+
 	/*! \} */
 
 	/*! \name Render state */
@@ -154,13 +158,6 @@ public:
 	GlslShader& getComputeShader() { return m_computeShader; }
 
 	GlslEmitter& getEmitter() { return m_emitter; }
-
-	/*! \} */
-
-	/*! \name Modules */
-	/*! \{ */
-
-	void registerModule(const Guid& moduleId);
 
 	/*! \} */
 
@@ -196,7 +193,6 @@ private:
 
 	Ref< const ShaderGraph > m_shaderGraph;
 	Ref< const PropertyGroup > m_settings;
-	const IProgramCompiler::IModuleAccess& m_moduleAccess;
 	GlslShader m_vertexShader;
 	GlslShader m_fragmentShader;
 	GlslShader m_computeShader;

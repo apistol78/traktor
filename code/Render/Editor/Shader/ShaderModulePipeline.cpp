@@ -1,18 +1,19 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/ShaderModulePipeline.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/Preprocessor.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineDepends.h"
 #include "Render/Editor/Shader/ShaderModule.h"
-#include "Render/Editor/Shader/ShaderModulePipeline.h"
 
 namespace traktor::render
 {
@@ -48,8 +49,7 @@ bool ShaderModulePipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	const ShaderModule* shaderModule = mandatory_non_null_type_cast< const ShaderModule* >(sourceAsset);
 
@@ -67,8 +67,11 @@ bool ShaderModulePipeline::buildDependencies(
 		return false;
 	}
 
-	for (const auto& u : usings)
+	for (const std::wstring& u : usings)
 		pipelineDepends->addDependency(Guid(u), editor::PdfUse);
+
+	for (const Guid& sd : shaderModule->getStructDeclarations())
+		pipelineDepends->addDependency(sd, editor::PdfUse);
 
 	return true;
 }
@@ -82,8 +85,7 @@ bool ShaderModulePipeline::buildOutput(
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
-	uint32_t reason
-) const
+	uint32_t reason) const
 {
 	return false;
 }
@@ -92,8 +94,7 @@ Ref< ISerializable > ShaderModulePipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const Object* buildParams
-) const
+	const Object* buildParams) const
 {
 	return nullptr;
 }

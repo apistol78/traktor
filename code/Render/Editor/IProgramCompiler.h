@@ -37,6 +37,7 @@ namespace traktor::render
 
 class IProgramHints;
 class ProgramResource;
+class ShaderModule;
 class ShaderGraph;
 
 /*! Program compiler interface.
@@ -60,13 +61,6 @@ public:
 		std::wstring compute;
 	};
 
-	struct IModuleAccess
-	{
-		virtual std::wstring getText(const Guid& id) const = 0;
-
-		virtual SmallMap< std::wstring, SamplerState > getSamplers(const Guid& id) const = 0;
-	};
-
 	/*!
 	 */
 	virtual bool create(IProgramCompiler* embedded) = 0;
@@ -80,15 +74,16 @@ public:
 	/*! Compile program.
 	 *
 	 * \param shaderGraph Program shader graph.
+	 * \param shaderModule Program shader module.
 	 * \param settings Compiler settings.
 	 * \param name Program name, useful for debugging.
 	 * \return Compiled program resource.
 	 */
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
+		const ShaderModule* shaderModule,
 		const PropertyGroup* settings,
 		const std::wstring& name,
-		const IModuleAccess& moduleAccess,
 		std::list< Error >& outErrors) const = 0;
 
 	/*! Generate render specific shader if possible.
@@ -97,6 +92,7 @@ public:
 	 * from within the editor.
 	 *
 	 * \param shaderGraph Program shader graph.
+	 * \param shaderModule Program shader module.
 	 * \param settings Compiler settings.
 	 * \param name Program name, useful for debugging.
 	 * \param output Shader outputs.
@@ -104,9 +100,9 @@ public:
 	 */
 	virtual bool generate(
 		const ShaderGraph* shaderGraph,
+		const ShaderModule* shaderModule,
 		const PropertyGroup* settings,
 		const std::wstring& name,
-		const IModuleAccess& moduleAccess,
 		Output& output) const = 0;
 };
 

@@ -19,12 +19,14 @@
 #include "Render/Editor/Glsl/GlslTexture.h"
 #include "Render/Editor/Glsl/GlslUniformBuffer.h"
 #include "Render/Editor/OutputPin.h"
+#include "Render/Editor/Shader/ShaderModule.h"
 
 namespace traktor::render
 {
 
-GlslShader::GlslShader(ShaderType shaderType)
+GlslShader::GlslShader(ShaderType shaderType, const ShaderModule* shaderModule)
 	: m_shaderType(shaderType)
+	, m_shaderModule(shaderModule)
 	, m_temporaryVariableAlloc(0, 65535)
 {
 	pushScope();
@@ -160,12 +162,6 @@ const StringOutputStream& GlslShader::getOutputStream(BlockType blockType) const
 {
 	T_ASSERT(!m_outputStreams[int(blockType)].empty());
 	return *(m_outputStreams[int(blockType)].back().outputStream);
-}
-
-void GlslShader::addModule(const Guid& moduleId, const std::wstring& moduleText)
-{
-	if (m_modules.insert(moduleId))
-		m_moduleText.push_back(moduleText);
 }
 
 void GlslShader::addStructure(const std::wstring& typeName, const StructDeclaration& decl)
@@ -474,17 +470,10 @@ std::wstring GlslShader::getGeneratedShader(
 		ss << Endl;
 	}
 
-	if (!m_moduleText.empty())
+	if (m_shaderModule)
 	{
 		ss << L"// Modules" << Endl;
-		for (const auto& moduleText : m_moduleText)
-		{
-			if (!moduleText.empty())
-			{
-				ss << moduleText << Endl;
-				ss << Endl;
-			}
-		}
+		ss << m_shaderModule->getTextDirect() << Endl;
 	}
 
 	if (m_shaderType == StCompute)

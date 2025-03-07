@@ -35,16 +35,16 @@ public:
 
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
+		const ShaderModule* shaderModule,
 		const PropertyGroup* settings,
 		const std::wstring& name,
-		const IModuleAccess& moduleAccess,
 		std::list< Error >& outErrors) const override final;
 
 	virtual bool generate(
 		const ShaderGraph* shaderGraph,
+		const ShaderModule* shaderModule,
 		const PropertyGroup* settings,
 		const std::wstring& name,
-		const IModuleAccess& moduleAccess,
 		Output& output) const override final;
 
 private:

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -2226,10 +2226,6 @@ bool emitScript(GlslContext& cx, Script* node)
 	if (script.empty())
 		return false;
 
-	// Register modules.
-	for (const auto& moduleId : node->getIncludes())
-		cx.registerModule(moduleId);
-
 	// Emit input and outputs.
 	const int32_t inputPinCount = node->getInputPinCount();
 	const int32_t outputPinCount = node->getOutputPinCount();
@@ -2464,7 +2460,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 
 	// Add structure definition.
 	const std::wstring& structTypeName = node->getStructTypeName();
-	cx.getShader().addStructure(structTypeName, node->getStructDeclaration());
+	cx.addStructure(structTypeName, node->getStructDeclaration());
 
 	const auto existing = cx.getLayout().getByName(node->getParameterName());
 	if (existing != nullptr)

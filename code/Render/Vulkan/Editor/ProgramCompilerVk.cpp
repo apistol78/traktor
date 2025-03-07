@@ -273,9 +273,9 @@ const wchar_t* ProgramCompilerVk::getRendererSignature() const
 
 Ref< ProgramResource > ProgramCompilerVk::compile(
 	const ShaderGraph* shaderGraph,
+	const ShaderModule* shaderModule,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	const IModuleAccess& moduleAccess,
 	std::list< Error >& outErrors) const
 {
 	RefArray< VertexOutput > vertexOutputs;
@@ -305,7 +305,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		}
 	}
 
-	GlslContext cx(shaderGraph, settings, moduleAccess);
+	GlslContext cx(shaderGraph, shaderModule, settings);
 
 	glslang::TProgram* program = new glslang::TProgram();
 	glslang::TShader* vertexShader = nullptr;
@@ -788,9 +788,9 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 bool ProgramCompilerVk::generate(
 	const ShaderGraph* shaderGraph,
+	const ShaderModule* shaderModule,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	const IModuleAccess& moduleAccess,
 	Output& output) const
 {
 	RefArray< VertexOutput > vertexOutputs;
@@ -817,7 +817,7 @@ bool ProgramCompilerVk::generate(
 		}
 	}
 
-	GlslContext cx(shaderGraph, settings, moduleAccess);
+	GlslContext cx(shaderGraph, shaderModule, settings);
 
 	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 	{

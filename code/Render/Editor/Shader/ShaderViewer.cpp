@@ -33,6 +33,7 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderModule.h"
+#include "Render/Editor/Shader/ShaderModuleResolve.h"
 #include "Render/Editor/Shader/UniformDeclaration.h"
 #include "Render/Editor/Shader/UniformLinker.h"
 #include "Ui/Application.h"
@@ -68,34 +69,6 @@ public:
 	virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) const
 	{
 		return m_db->getObjectReadOnly< ShaderGraph >(fragmentGuid);
-	}
-
-private:
-	Ref< db::Database > m_db;
-};
-
-class ModuleAccess : public IProgramCompiler::IModuleAccess
-{
-public:
-	explicit ModuleAccess(db::Database* db)
-		: m_db(db)
-	{
-	}
-
-	virtual std::wstring getText(const Guid& id) const
-	{
-		Ref< const ShaderModule > shaderModule = m_db->getObjectReadOnly< ShaderModule >(id);
-		if (shaderModule)
-			return shaderModule->escape([](const Guid& id) -> std::wstring {
-				return id.format();
-			});
-		else
-			return L"";
-	}
-
-	virtual SmallMap< std::wstring, SamplerState > getSamplers(const Guid& id) const
-	{
-		return SmallMap< std::wstring, SamplerState >();
 	}
 
 private:
@@ -566,11 +539,16 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 					programGraph->rewire(textureNodeOutput, textureUniformOutput);
 				}
 
-				const ModuleAccess moduleAccess(m_editor->getSourceDatabase());
+				// Resolve shader modules.
+				Ref< ShaderModule > module = ShaderModuleResolve([&](const Guid& id) -> Ref< const Object > {
+					return m_editor->getSourceDatabase()->getObjectReadOnly(id);
+				}).resolve(programGraph);
+				if (!module)
+					continue;
 
 				// Finally ready to compile program graph.
 				IProgramCompiler::Output output;
-				if (compiler->generate(programGraph, settings, techniqueName, moduleAccess, output))
+				if (compiler->generate(programGraph, module, settings, techniqueName, output))
 				{
 					ci.shaders[0] = output.vertex;
 					ci.shaders[1] = output.pixel;

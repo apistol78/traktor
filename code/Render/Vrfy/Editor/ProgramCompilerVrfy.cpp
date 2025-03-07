@@ -30,13 +30,13 @@ const wchar_t* ProgramCompilerVrfy::getRendererSignature() const
 
 Ref< ProgramResource > ProgramCompilerVrfy::compile(
 	const ShaderGraph* shaderGraph,
+	const ShaderModule* shaderModule,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	const IModuleAccess& moduleAccess,
 	std::list< Error >& outErrors) const
 {
 	// Compile program using wrapped compiler.
-	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, settings, name, moduleAccess, outErrors);
+	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, shaderModule, settings, name, outErrors);
 	if (!resource)
 		return nullptr;
 
@@ -59,9 +59,9 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 	Output output;
 	m_compiler->generate(
 		shaderGraph,
+		shaderModule,
 		settings,
 		name,
-		moduleAccess,
 		output);
 	resourceVrfy->m_vertexShader = output.vertex;
 	resourceVrfy->m_pixelShader = output.pixel;
@@ -72,13 +72,13 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 
 bool ProgramCompilerVrfy::generate(
 	const ShaderGraph* shaderGraph,
+	const ShaderModule* shaderModule,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	const IModuleAccess& moduleAccess,
 	Output& output) const
 {
 	// Just let the wrapped compiler generate source.
-	return m_compiler->generate(shaderGraph, settings, name, moduleAccess, output);
+	return m_compiler->generate(shaderGraph, shaderModule, settings, name, output);
 }
 
 }

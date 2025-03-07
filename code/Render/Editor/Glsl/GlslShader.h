@@ -36,6 +36,7 @@ namespace traktor::render
 
 class GlslLayout;
 class OutputPin;
+class ShaderModule;
 
 /*!
  * \ingroup Render
@@ -59,7 +60,7 @@ public:
 		BtLast
 	};
 
-	explicit GlslShader(ShaderType shaderType);
+	explicit GlslShader(ShaderType shaderType, const ShaderModule* shaderModule);
 
 	virtual ~GlslShader();
 
@@ -94,8 +95,6 @@ public:
 
 	/*! \} */
 
-	void addModule(const Guid& moduleId, const std::wstring& moduleText);
-
 	void addStructure(const std::wstring& typeName, const StructDeclaration& decl);
 
 	std::wstring getGeneratedShader(
@@ -118,14 +117,13 @@ private:
 	};
 
 	ShaderType m_shaderType;
+	Ref< const ShaderModule > m_shaderModule;
 	SmallMap< std::wstring, Ref< GlslVariable > > m_inputVariables;
 	AlignedVector< OutputPinVariable > m_variables;
 	AlignedVector< uint32_t > m_variableScopes;
 	AlignedVector< OutputPinVariable > m_outerVariables;
 	IdAllocator m_temporaryVariableAlloc;
 	AlignedVector< OutputStreamTuple > m_outputStreams[BtLast];
-	SmallSet< Guid > m_modules;
-	AlignedVector< std::wstring > m_moduleText;
 	SmallMap< std::wstring, StructDeclaration > m_structs;
 };
 
