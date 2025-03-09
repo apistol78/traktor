@@ -76,9 +76,9 @@ public:
 
 	ITexture* findTexture(const RenderGraph& renderGraph, img_handle_t textureId) const;
 
-	void associateSBuffer(img_handle_t sbufferId, handle_t frameSbufferId);
+	void associateSBuffer(img_handle_t sbufferId, RGBuffer frameSbufferId);
 
-	handle_t findSBufferId(img_handle_t sbufferId) const;
+	RGBuffer findSBufferId(img_handle_t sbufferId) const;
 
 	Buffer* findSBuffer(const RenderGraph& renderGraph, img_handle_t sbufferId) const;
 
@@ -98,7 +98,7 @@ private:
 	};
 
 	SmallMap< img_handle_t, TextureTargetSet > m_textureTargetSet;
-	SmallMap< img_handle_t, handle_t > m_sbufferHandles;
+	SmallMap< img_handle_t, RGBuffer > m_sbufferHandles;
 	StaticMap< handle_t, bool, 16 > m_techniqueFlags;
 };
 

@@ -129,8 +129,8 @@ struct DoubleBufferedTarget
  */
 struct DoubleBufferedBuffer
 {
-	render::handle_t previous;
-	render::handle_t current;
+	render::RGBuffer previous;
+	render::RGBuffer current;
 };
 
 /*! */

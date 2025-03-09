@@ -15,4 +15,6 @@ const RGTargetSet RGTargetSet::Invalid(~0U);
 
 const RGTargetSet RGTargetSet::Output(0);
 
+const RGBuffer RGBuffer::Invalid(~0U);
+
 }

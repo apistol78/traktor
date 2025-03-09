@@ -148,9 +148,9 @@ RGTargetSet RenderGraph::addPersistentTargetSet(
 	return resourceId;
 }
 
-handle_t RenderGraph::addExplicitBuffer(const wchar_t* const name, Buffer* buffer)
+RGBuffer RenderGraph::addExplicitBuffer(const wchar_t* const name, Buffer* buffer)
 {
-	const handle_t resourceId = m_nextResourceId++;
+	const RGBuffer resourceId(m_nextResourceId++);
 
 	auto& br = m_buffers[resourceId];
 	br.name = name;
@@ -159,9 +159,9 @@ handle_t RenderGraph::addExplicitBuffer(const wchar_t* const name, Buffer* buffe
 	return resourceId;
 }
 
-handle_t RenderGraph::addTransientBuffer(const wchar_t* const name, const RenderGraphBufferDesc& bufferDesc)
+RGBuffer RenderGraph::addTransientBuffer(const wchar_t* const name, const RenderGraphBufferDesc& bufferDesc)
 {
-	const handle_t resourceId = m_nextResourceId++;
+	const RGBuffer resourceId(m_nextResourceId++);
 
 	auto& br = m_buffers[resourceId];
 	br.name = name;
@@ -170,9 +170,9 @@ handle_t RenderGraph::addTransientBuffer(const wchar_t* const name, const Render
 	return resourceId;
 }
 
-handle_t RenderGraph::addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, const RenderGraphBufferDesc& bufferDesc)
+RGBuffer RenderGraph::addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, const RenderGraphBufferDesc& bufferDesc)
 {
-	const handle_t resourceId = m_nextResourceId++;
+	const RGBuffer resourceId(m_nextResourceId++);
 
 	auto& br = m_buffers[resourceId];
 	br.name = name;
@@ -221,7 +221,7 @@ IRenderTargetSet* RenderGraph::getTargetSet(RGTargetSet resource) const
 	return it->second.targetSet->getReadTargetSet();
 }
 
-Buffer* RenderGraph::getBuffer(handle_t resource) const
+Buffer* RenderGraph::getBuffer(RGBuffer resource) const
 {
 	T_FATAL_ASSERT(m_buildingPasses);
 	const auto it = m_buffers.find(resource);

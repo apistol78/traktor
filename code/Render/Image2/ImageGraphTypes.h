@@ -17,7 +17,7 @@ namespace traktor::render
 
 typedef handle_t img_handle_t;
 typedef StaticVector< RGTargetSet, 32 > targetSetVector_t;
-typedef StaticVector< handle_t, 32 > bufferVector_t;
+typedef StaticVector< RGBuffer, 32 > bufferVector_t;
 
 enum class BlurType
 {

@@ -74,18 +74,18 @@ ITexture* ImageGraphContext::findTexture(const RenderGraph& renderGraph, img_han
 	return nullptr;
 }
 
-void ImageGraphContext::associateSBuffer(img_handle_t sbufferId, handle_t frameSbufferId)
+void ImageGraphContext::associateSBuffer(img_handle_t sbufferId, RGBuffer frameSbufferId)
 {
 	m_sbufferHandles[sbufferId] = frameSbufferId;
 }
 
-handle_t ImageGraphContext::findSBufferId(img_handle_t sbufferId) const
+RGBuffer ImageGraphContext::findSBufferId(img_handle_t sbufferId) const
 {
 	auto it = m_sbufferHandles.find(sbufferId);
 	if (it != m_sbufferHandles.end())
 		return it->second;
 	else
-		return 0;
+		return RGBuffer::Invalid;
 }
 
 Buffer* ImageGraphContext::findSBuffer(const RenderGraph& renderGraph, img_handle_t sbufferId) const

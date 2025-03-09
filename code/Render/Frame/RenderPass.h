@@ -86,6 +86,12 @@ public:
 	 */
 	void addInput(RGTargetSet targetSet);
 
+	/*! Add buffer input to render pass.
+	 *
+	 * \param buffer Handle to buffer.
+	 */
+	void addInput(RGBuffer buffer);
+
 	/*! Add weak input to render pass.
 	 *
 	 * A weak input doesn't resolve into a dependency between
@@ -112,9 +118,11 @@ public:
 	 */
 	void setOutput(handle_t resourceId);
 
-	void setOutput(RGTargetSet resourceId, uint32_t load, uint32_t store);
+	void setOutput(RGTargetSet targetId, uint32_t load, uint32_t store);
 
-	void setOutput(RGTargetSet resourceId, const Clear& clear, uint32_t load, uint32_t store);
+	void setOutput(RGTargetSet targetId, const Clear& clear, uint32_t load, uint32_t store);
+
+	void setOutput(RGBuffer bufferId);
 
 	bool haveOutput() const { return m_output.resourceId != ~0; }
 

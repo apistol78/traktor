@@ -47,6 +47,16 @@ void RenderPass::addInput(RGTargetSet targetSet)
 	input.resourceId = targetSet.get();
 }
 
+void RenderPass::addInput(RGBuffer buffer)
+{
+	// Just ignore invalid buffer id; convenient when setting up passes to be able to add null inputs.
+	if (buffer == RGBuffer::Invalid)
+		return;
+
+	auto& input = m_inputs.push_back();
+	input.resourceId = buffer.get();
+}
+
 void RenderPass::addWeakInput(handle_t resourceId)
 {
 	// #todo Currently we can get away with not doing anything but
@@ -61,20 +71,28 @@ void RenderPass::setOutput(handle_t resourceId)
 	m_output.store = 0;
 }
 
-void RenderPass::setOutput(RGTargetSet resourceId, uint32_t load, uint32_t store)
+void RenderPass::setOutput(RGTargetSet targetId, uint32_t load, uint32_t store)
 {
-	m_output.resourceId = resourceId.get();
+	m_output.resourceId = targetId.get();
 	m_output.clear.mask = 0;
 	m_output.load = load;
 	m_output.store = store;
 }
 
-void RenderPass::setOutput(RGTargetSet resourceId, const Clear& clear, uint32_t load, uint32_t store)
+void RenderPass::setOutput(RGTargetSet targetId, const Clear& clear, uint32_t load, uint32_t store)
 {
-	m_output.resourceId = resourceId.get();
+	m_output.resourceId = targetId.get();
 	m_output.clear = clear;
 	m_output.load = load;
 	m_output.store = store;
+}
+
+void RenderPass::setOutput(RGBuffer bufferId)
+{
+	m_output.resourceId = bufferId.get();
+	m_output.clear.mask = 0;
+	m_output.load = 0;
+	m_output.store = 0;
 }
 
 void RenderPass::addBuild(const fn_build_t& build)

@@ -29,8 +29,8 @@ void ImagePassStep::addInputs(const ImageGraphContext& context, RenderPass& pass
 	}
 	for (const auto& source : m_sbufferSources)
 	{
-		const handle_t sbufferId = context.findSBufferId(source.id);
-		if (sbufferId != 0)
+		const RGBuffer sbufferId = context.findSBufferId(source.id);
+		if (sbufferId != RGBuffer::Invalid)
 			pass.addInput(sbufferId);
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -160,7 +160,7 @@ public:
 	 * \param buffer Buffer resource.
 	 * \return Opaque resource handle.
 	 */
-	handle_t addExplicitBuffer(const wchar_t* const name, Buffer* buffer);
+	RGBuffer addExplicitBuffer(const wchar_t* const name, Buffer* buffer);
 
 	/*! Add transient buffer resource.
 	 *
@@ -168,7 +168,7 @@ public:
 	 * \param bufferDesc Buffer description.
 	 * \return Opaque resource handle.
 	 */
-	handle_t addTransientBuffer(const wchar_t* const name, const RenderGraphBufferDesc& bufferDesc);
+	RGBuffer addTransientBuffer(const wchar_t* const name, const RenderGraphBufferDesc& bufferDesc);
 
 	/*! Add persistent buffer resource.
 	 *
@@ -177,7 +177,7 @@ public:
 	 * \param bufferDesc Buffer description.
 	 * \return Opaque resource handle.
 	 */
-	handle_t addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, const RenderGraphBufferDesc& bufferDesc);
+	RGBuffer addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, const RenderGraphBufferDesc& bufferDesc);
 
 	/*! Add a transient texture.
 	 *
@@ -211,7 +211,7 @@ public:
 	 * \param resource Opaque resource handle.
 	 * \return Buffer
 	 */
-	Buffer* getBuffer(handle_t resource) const;
+	Buffer* getBuffer(RGBuffer resource) const;
 
 	/*!
 	 */
@@ -243,7 +243,7 @@ public:
 	const SmallMap< RGTargetSet, TargetResource >& getTargets() const { return m_targets; }
 
 	/*! */
-	const SmallMap< handle_t, BufferResource >& getBuffers() const { return m_buffers; }
+	const SmallMap< RGBuffer, BufferResource >& getBuffers() const { return m_buffers; }
 
 	/*! */
 	const SmallMap< handle_t, TextureResource >& getTextures() const { return m_textures; }
@@ -256,7 +256,7 @@ private:
 	Ref< RenderGraphBufferPool > m_bufferPool;
 	Ref< RenderGraphTexturePool > m_texturePool;
 	SmallMap< RGTargetSet, TargetResource > m_targets;
-	SmallMap< handle_t, BufferResource > m_buffers;
+	SmallMap< RGBuffer, BufferResource > m_buffers;
 	SmallMap< handle_t, TextureResource > m_textures;
 	RefArray< const RenderPass > m_passes;
 	StaticVector< uint32_t, 32 > m_order[32];

@@ -82,6 +82,8 @@ struct RenderGraphBufferDesc
 	int32_t referenceHeightDenom = 0;
 };
 
+/*!
+ */
 class T_DLLCLASS RGHandle
 {
 public:
@@ -98,6 +100,8 @@ protected:
 	}
 };
 
+/*!
+ */
 class T_DLLCLASS RGTargetSet : public RGHandle
 {
 public:
@@ -119,6 +123,29 @@ public:
 	bool operator==(const RGTargetSet& rh) const { return m_data == rh.m_data; }
 
 	bool operator!=(const RGTargetSet& rh) const { return m_data != rh.m_data; }
+};
+
+/*!
+ */
+class T_DLLCLASS RGBuffer : public RGHandle
+{
+public:
+	const static RGBuffer Invalid;
+
+	RGBuffer() = default;
+
+	explicit RGBuffer(handle_t data)
+		: RGHandle(data)
+	{
+	}
+
+	bool operator<(const RGBuffer& rh) const { return m_data < rh.m_data; }
+
+	bool operator>(const RGBuffer& rh) const { return m_data > rh.m_data; }
+
+	bool operator==(const RGBuffer& rh) const { return m_data == rh.m_data; }
+
+	bool operator!=(const RGBuffer& rh) const { return m_data != rh.m_data; }
 };
 
 }
