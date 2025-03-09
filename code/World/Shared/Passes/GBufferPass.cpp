@@ -36,7 +36,7 @@ render::RGTargetSet GBufferPass::setup(
 	const GatherView& gatheredView,
 	render::handle_t gbufferWriteTechnique,
 	render::RenderGraph& renderGraph,
-	render::handle_t hiZTextureId,
+	render::RGTexture hiZTextureId,
 	render::RGTargetSet outputTargetSetId) const
 {
 	T_PROFILER_SCOPE(L"GBufferPass::setup");
@@ -81,7 +81,7 @@ render::RGTargetSet GBufferPass::setup(
 		sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
 		sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 
-		if (hiZTextureId != 0)
+		if (hiZTextureId != render::RGTexture::Invalid)
 		{
 			auto hiZTexture = renderGraph.getTexture(hiZTextureId);
 			sharedParams->setTextureParameter(s_handleHiZTexture, hiZTexture);

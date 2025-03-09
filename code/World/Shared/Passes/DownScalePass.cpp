@@ -49,7 +49,7 @@ bool DownScalePass::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-render::handle_t DownScalePass::setup(
+render::RGTexture DownScalePass::setup(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
 	render::RGTargetSet gbufferTargetSetId) const
@@ -62,7 +62,7 @@ render::handle_t DownScalePass::setup(
 		.mipCount = 1,
 		.format = render::TfR16G16B16A16F
 	};
-	const render::handle_t downScaleTextureId = renderGraph.addTransientTexture(L"DownScale", rgtxd);
+	const render::RGTexture downScaleTextureId = renderGraph.addTransientTexture(L"DownScale", rgtxd);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"DownScale");
 	rp->addInput(gbufferTargetSetId);

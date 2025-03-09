@@ -53,7 +53,7 @@ public:
 		uint32_t frameCount,
 		render::RenderGraph& renderGraph,
 		render::RGTargetSet gbufferTargetSetId,
-		render::handle_t halfResDepthTextureId,
+		render::RGTexture halfResDepthTextureId,
 		render::RGTargetSet outputTargetSetId) const;
 
 private:

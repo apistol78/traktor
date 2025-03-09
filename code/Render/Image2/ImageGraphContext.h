@@ -66,7 +66,7 @@ class T_DLLCLASS ImageGraphContext : public Object
 public:
 	void associateExplicitTexture(img_handle_t textureId, ITexture* texture);
 
-	void associateTexture(img_handle_t textureId, handle_t rgTextureId);
+	void associateTexture(img_handle_t textureId, RGTexture rgTextureId);
 
 	void associateTextureTargetSet(img_handle_t textureId, RGTargetSet targetSetId, int32_t colorIndex);
 
@@ -93,7 +93,7 @@ private:
 	{
 		RGTargetSet targetSetId = RGTargetSet::Invalid;
 		int32_t colorIndex = -1;
-		handle_t textureId = 0;
+		RGTexture textureId = RGTexture::Invalid;
 		ITexture* texture = nullptr;
 	};
 

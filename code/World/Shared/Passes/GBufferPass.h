@@ -41,7 +41,7 @@ public:
 		const GatherView& gatheredView,
 		render::handle_t gbufferWriteTechnique,
 		render::RenderGraph& renderGraph,
-		render::handle_t hiZTextureId,
+		render::RGTexture hiZTextureId,
 		render::RGTargetSet outputTargetSetId) const;
 
 private:

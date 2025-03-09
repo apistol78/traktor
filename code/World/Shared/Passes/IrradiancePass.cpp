@@ -87,7 +87,7 @@ render::RGTargetSet IrradiancePass::setup(
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
 	render::RGTargetSet velocityTargetSetId,
-	render::handle_t halfResDepthTextureId,
+	render::RGTexture halfResDepthTextureId,
 	render::RGTargetSet outputTargetSetId) const
 {
 	T_PROFILER_SCOPE(L"IrradiancePass::setup");

@@ -56,7 +56,7 @@ bool HiZPass::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-render::handle_t HiZPass::addTexture(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const
+render::RGTexture HiZPass::addTexture(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const
 {
 	const Vector2 viewSize = worldRenderView.getViewSize();
 	const int32_t viewWidth = (int32_t)viewSize.x;
@@ -77,7 +77,7 @@ void HiZPass::setup(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
 	render::RGTargetSet gbufferTargetSetId,
-	render::handle_t outputHiZTextureId) const
+	render::RGTexture outputHiZTextureId) const
 {
 	T_PROFILER_SCOPE(L"HiZPass::setup");
 

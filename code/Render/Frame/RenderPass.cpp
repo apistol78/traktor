@@ -57,7 +57,17 @@ void RenderPass::addInput(RGBuffer buffer)
 	input.resourceId = buffer.get();
 }
 
-void RenderPass::addWeakInput(handle_t resourceId)
+void RenderPass::addInput(RGTexture texture)
+{
+	// Just ignore invalid texture id; convenient when setting up passes to be able to add null inputs.
+	if (texture == RGTexture::Invalid)
+		return;
+
+	auto& input = m_inputs.push_back();
+	input.resourceId = texture.get();
+}
+
+void RenderPass::addWeakInput(RGTexture texture)
 {
 	// #todo Currently we can get away with not doing anything but
 	// we need to revisit this to ensure resource life time.
@@ -71,25 +81,33 @@ void RenderPass::setOutput(handle_t resourceId)
 	m_output.store = 0;
 }
 
-void RenderPass::setOutput(RGTargetSet targetId, uint32_t load, uint32_t store)
+void RenderPass::setOutput(RGTargetSet targetSet, uint32_t load, uint32_t store)
 {
-	m_output.resourceId = targetId.get();
+	m_output.resourceId = targetSet.get();
 	m_output.clear.mask = 0;
 	m_output.load = load;
 	m_output.store = store;
 }
 
-void RenderPass::setOutput(RGTargetSet targetId, const Clear& clear, uint32_t load, uint32_t store)
+void RenderPass::setOutput(RGTargetSet targetSet, const Clear& clear, uint32_t load, uint32_t store)
 {
-	m_output.resourceId = targetId.get();
+	m_output.resourceId = targetSet.get();
 	m_output.clear = clear;
 	m_output.load = load;
 	m_output.store = store;
 }
 
-void RenderPass::setOutput(RGBuffer bufferId)
+void RenderPass::setOutput(RGBuffer buffer)
 {
-	m_output.resourceId = bufferId.get();
+	m_output.resourceId = buffer.get();
+	m_output.clear.mask = 0;
+	m_output.load = 0;
+	m_output.store = 0;
+}
+
+void RenderPass::setOutput(RGTexture texture)
+{
+	m_output.resourceId = texture.get();
 	m_output.clear.mask = 0;
 	m_output.load = 0;
 	m_output.store = 0;

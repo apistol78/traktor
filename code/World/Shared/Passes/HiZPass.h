@@ -42,13 +42,13 @@ class HiZPass : public Object
 public:
 	bool create(resource::IResourceManager* resourceManager);
 
-	render::handle_t addTexture(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const;
+	render::RGTexture addTexture(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const;
 
 	void setup(
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
 		render::RGTargetSet gbufferTargetSetId,
-		render::handle_t outputHiZTextureId) const;
+		render::RGTexture outputHiZTextureId) const;
 
 private:
 	resource::Proxy< render::Shader > m_hiZBuildShader;

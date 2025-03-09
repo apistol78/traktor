@@ -21,7 +21,7 @@ void ImageGraphContext::associateExplicitTexture(img_handle_t textureId, ITextur
 	m_textureTargetSet[textureId] = { .texture = texture };
 }
 
-void ImageGraphContext::associateTexture(img_handle_t textureId, handle_t rgTextureId)
+void ImageGraphContext::associateTexture(img_handle_t textureId, RGTexture rgTextureId)
 {
 	m_textureTargetSet[textureId] = { .textureId = rgTextureId };
 }
@@ -68,7 +68,7 @@ ITexture* ImageGraphContext::findTexture(const RenderGraph& renderGraph, img_han
 			return targetSet->getDepthTexture();
 	}
 
-	if (it->second.textureId != 0)
+	if (it->second.textureId != RGTexture::Invalid)
 		return renderGraph.getTexture(it->second.textureId);
 
 	return nullptr;

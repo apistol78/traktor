@@ -157,7 +157,7 @@ void WorldRendererDeferred::setup(
 	const render::RGTargetSet visualCopyTargetSetId = renderGraph.addTransientTargetSet(L"Visual Copy", rgtsd, render::RGTargetSet::Invalid, outputTargetSetId);
 
 	// Add Hi-Z texture.
-	const render::handle_t hizTextureId = m_hiZPass->addTexture(worldRenderView, renderGraph);
+	const render::RGTexture hizTextureId = m_hiZPass->addTexture(worldRenderView, renderGraph);
 
 	render::RGTargetSet shadowMapAtlasTargetSetId;
 	setupLightPass(
@@ -211,7 +211,7 @@ void WorldRendererDeferred::setupVisualPass(
 	render::RGTargetSet contactShadowsTargetSetId,
 	render::RGTargetSet reflectionsTargetSetId,
 	render::RGTargetSet shadowMapAtlasTargetSetId,
-	render::handle_t outputHiZTextureId) const
+	render::RGTexture outputHiZTextureId) const
 {
 	T_PROFILER_SCOPE(L"World setup visual");
 

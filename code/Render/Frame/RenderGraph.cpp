@@ -182,9 +182,9 @@ RGBuffer RenderGraph::addPersistentBuffer(const wchar_t* const name, handle_t pe
 	return resourceId;
 }
 
-handle_t RenderGraph::addTransientTexture(const wchar_t* const name, const RenderGraphTextureDesc& textureDesc)
+RGTexture RenderGraph::addTransientTexture(const wchar_t* const name, const RenderGraphTextureDesc& textureDesc)
 {
-	const handle_t resourceId = m_nextResourceId++;
+	const RGTexture resourceId(m_nextResourceId++);
 
 	auto& tr = m_textures[resourceId];
 	tr.name = name;
@@ -193,9 +193,9 @@ handle_t RenderGraph::addTransientTexture(const wchar_t* const name, const Rende
 	return resourceId;
 }
 
-handle_t RenderGraph::addPersistentTexture(const wchar_t* const name, handle_t persistentHandle, const RenderGraphTextureDesc& textureDesc)
+RGTexture RenderGraph::addPersistentTexture(const wchar_t* const name, handle_t persistentHandle, const RenderGraphTextureDesc& textureDesc)
 {
-	const handle_t resourceId = m_nextResourceId++;
+	const RGTexture resourceId(m_nextResourceId++);
 
 	auto& tr = m_textures[resourceId];
 	tr.name = name;
@@ -228,7 +228,7 @@ Buffer* RenderGraph::getBuffer(RGBuffer resource) const
 	return (it != m_buffers.end()) ? it->second.buffer : nullptr;
 }
 
-ITexture* RenderGraph::getTexture(handle_t resource) const
+ITexture* RenderGraph::getTexture(RGTexture resource) const
 {
 	T_FATAL_ASSERT(m_buildingPasses);
 	const auto it = m_textures.find(resource);

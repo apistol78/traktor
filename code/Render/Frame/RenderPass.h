@@ -92,6 +92,12 @@ public:
 	 */
 	void addInput(RGBuffer buffer);
 
+	/*! Add texture input to render pass.
+	 *
+	 * \param texture Handle to texture.
+	 */
+	void addInput(RGTexture texture);
+
 	/*! Add weak input to render pass.
 	 *
 	 * A weak input doesn't resolve into a dependency between
@@ -100,7 +106,7 @@ public:
 	 *
 	 * \param resourceId ID of input resource.
 	 */
-	void addWeakInput(handle_t resourceId);
+	void addWeakInput(RGTexture texture);
 
 	const StaticVector< Input, 16 >& getInputs() const { return m_inputs; }
 
@@ -118,11 +124,13 @@ public:
 	 */
 	void setOutput(handle_t resourceId);
 
-	void setOutput(RGTargetSet targetId, uint32_t load, uint32_t store);
+	void setOutput(RGTargetSet targetSet, uint32_t load, uint32_t store);
 
-	void setOutput(RGTargetSet targetId, const Clear& clear, uint32_t load, uint32_t store);
+	void setOutput(RGTargetSet targetSet, const Clear& clear, uint32_t load, uint32_t store);
 
-	void setOutput(RGBuffer bufferId);
+	void setOutput(RGBuffer buffer);
+
+	void setOutput(RGTexture texture);
 
 	bool haveOutput() const { return m_output.resourceId != ~0; }
 

@@ -26,12 +26,12 @@ const render::Handle c_handleDebugAlpha(L"Scene_DebugAlpha");
 const render::Handle c_handleDebugMip(L"Scene_DebugMip");
 const render::Handle c_handleDebugTexture(L"Scene_DebugTexture");
 
-render::handle_t findTextureByName(const render::RenderGraph& renderGraph, const wchar_t* name)
+render::RGTexture findTextureByName(const render::RenderGraph& renderGraph, const wchar_t* name)
 {
 	for (const auto& tm : renderGraph.getTextures())
 		if (wcscmp(tm.second.name, name) == 0)
 			return tm.first;
-	return 0;
+	return render::RGTexture::Invalid;
 }
 
 }
@@ -51,8 +51,8 @@ bool HiZOverlay::create(resource::IResourceManager* resourceManager)
 
 void HiZOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
-	const render::handle_t hiZId = findTextureByName(renderGraph, L"HiZ");
-	if (!hiZId)
+	const render::RGTexture hiZId = findTextureByName(renderGraph, L"HiZ");
+	if (hiZId == render::RGTexture::Invalid)
 	{
 		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;

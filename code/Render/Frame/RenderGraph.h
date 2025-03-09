@@ -189,11 +189,11 @@ public:
 	 * \param textureDesc Description of transient texture.
 	 * \return Opaque resource handle.
 	 */
-	handle_t addTransientTexture(const wchar_t* const name, const RenderGraphTextureDesc& textureDesc);
+	RGTexture addTransientTexture(const wchar_t* const name, const RenderGraphTextureDesc& textureDesc);
 
 	/*!
 	 */
-	handle_t addPersistentTexture(const wchar_t* const name, handle_t persistentHandle, const RenderGraphTextureDesc& textureDesc);
+	RGTexture addPersistentTexture(const wchar_t* const name, handle_t persistentHandle, const RenderGraphTextureDesc& textureDesc);
 
 	/*!
 	 */
@@ -215,7 +215,7 @@ public:
 
 	/*!
 	 */
-	ITexture* getTexture(handle_t resource) const;
+	ITexture* getTexture(RGTexture resource) const;
 
 	/*! Add render pass to graph.
 	 *
@@ -246,7 +246,7 @@ public:
 	const SmallMap< RGBuffer, BufferResource >& getBuffers() const { return m_buffers; }
 
 	/*! */
-	const SmallMap< handle_t, TextureResource >& getTextures() const { return m_textures; }
+	const SmallMap< RGTexture, TextureResource >& getTextures() const { return m_textures; }
 
 	/*! */
 	const RefArray< const RenderPass >& getPasses() const { return m_passes; }
@@ -257,7 +257,7 @@ private:
 	Ref< RenderGraphTexturePool > m_texturePool;
 	SmallMap< RGTargetSet, TargetResource > m_targets;
 	SmallMap< RGBuffer, BufferResource > m_buffers;
-	SmallMap< handle_t, TextureResource > m_textures;
+	SmallMap< RGTexture, TextureResource > m_textures;
 	RefArray< const RenderPass > m_passes;
 	StaticVector< uint32_t, 32 > m_order[32];
 	StaticSet< RGTargetSet, 32 > m_sharedDepthTargets;

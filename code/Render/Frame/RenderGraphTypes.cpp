@@ -17,4 +17,6 @@ const RGTargetSet RGTargetSet::Output(0);
 
 const RGBuffer RGBuffer::Invalid(~0U);
 
+const RGTexture RGTexture::Invalid(~0U);
+
 }

@@ -42,7 +42,7 @@ class DownScalePass : public Object
 public:
 	bool create(resource::IResourceManager* resourceManager);
 
-	render::handle_t setup(
+	render::RGTexture setup(
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
 		render::RGTargetSet gbufferTargetSetId) const;
