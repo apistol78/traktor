@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <ctime>
+#include "Spray/Editor/EffectPreviewControl.h"
+
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyColor.h"
@@ -17,15 +18,23 @@
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Mesh/MeshComponentRenderer.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Scene.h"
 #include "Sound/AudioSystem.h"
 #include "Sound/Player/SoundPlayer.h"
+#include "Spray/Editor/BoxSourceRenderer.h"
+#include "Spray/Editor/ConeSourceRenderer.h"
+#include "Spray/Editor/DiscSourceRenderer.h"
+#include "Spray/Editor/LineSourceRenderer.h"
+#include "Spray/Editor/PointSetSourceRenderer.h"
+#include "Spray/Editor/PointSourceRenderer.h"
+#include "Spray/Editor/QuadSourceRenderer.h"
+#include "Spray/Editor/SphereSourceRenderer.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectComponent.h"
 #include "Spray/EffectData.h"
@@ -37,41 +46,34 @@
 #include "Spray/Emitter.h"
 #include "Spray/EmitterData.h"
 #include "Spray/EmitterInstanceCPU.h"
-#include "Spray/Editor/BoxSourceRenderer.h"
-#include "Spray/Editor/ConeSourceRenderer.h"
-#include "Spray/Editor/DiscSourceRenderer.h"
-#include "Spray/Editor/EffectPreviewControl.h"
-#include "Spray/Editor/LineSourceRenderer.h"
-#include "Spray/Editor/PointSourceRenderer.h"
-#include "Spray/Editor/PointSetSourceRenderer.h"
-#include "Spray/Editor/QuadSourceRenderer.h"
-#include "Spray/Editor/SphereSourceRenderer.h"
 #include "Spray/Sources/BoxSourceData.h"
 #include "Spray/Sources/ConeSourceData.h"
 #include "Spray/Sources/DiscSourceData.h"
 #include "Spray/Sources/LineSourceData.h"
-#include "Spray/Sources/PointSourceData.h"
 #include "Spray/Sources/PointSetSourceData.h"
+#include "Spray/Sources/PointSourceData.h"
 #include "Spray/Sources/QuadSourceData.h"
 #include "Spray/Sources/SphereSourceData.h"
-#include "Ui/Itf/IWidget.h"
 #include "Ui/Application.h"
+#include "Ui/Itf/IWidget.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
 #include "World/Entity.h"
+#include "World/Entity/GroupComponent.h"
+#include "World/Entity/ProbeRenderer.h"
 #include "World/IWorldRenderer.h"
 #include "World/World.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/GroupComponent.h"
-#include "World/Entity/ProbeRenderer.h"
+
+#include <ctime>
 
 namespace traktor::spray
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< scene::Scene > c_previewScene(L"{84ADD065-E963-9D4D-A28D-FF44BD616B0F}");
 
@@ -81,22 +83,22 @@ const float c_deltaMoveScale = 0.025f;
 const float c_deltaScaleHead = 0.015f;
 const float c_deltaScalePitch = 0.005f;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectPreviewControl", EffectPreviewControl, ui::Widget)
 
 EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
-:	m_editor(editor)
-,	m_randomSeed(c_initialRandomSeed)
-,	m_effectPosition(0.0f, -2.0f, 7.0f, 1.0f)
-,	m_angleHead(0.0f)
-,	m_anglePitch(0.0f)
-,	m_timeScale(1.0f)
-,	m_extraVelocity(0.0f)
-,	m_lastDeltaTime(1.0 / c_updateInterval)
-,	m_guideVisible(true)
-,	m_gridVisible(false)
-,	m_velocityVisible(false)
+	: m_editor(editor)
+	, m_randomSeed(c_initialRandomSeed)
+	, m_effectPosition(0.0f, -2.0f, 7.0f, 1.0f)
+	, m_angleHead(0.0f)
+	, m_anglePitch(0.0f)
+	, m_timeScale(1.0f)
+	, m_extraVelocity(0.0f)
+	, m_lastDeltaTime(1.0 / c_updateInterval)
+	, m_guideVisible(true)
+	, m_gridVisible(false)
+	, m_velocityVisible(false)
 {
 	m_sourceRenderers[&type_of< BoxSourceData >()] = new BoxSourceRenderer();
 	m_sourceRenderers[&type_of< ConeSourceData >()] = new ConeSourceRenderer();
@@ -113,8 +115,7 @@ bool EffectPreviewControl::create(
 	int style,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	sound::AudioSystem* audioSystem
-)
+	sound::AudioSystem* audioSystem)
 {
 	if (!Widget::create(parent, style | ui::WsFocus | ui::WsNoCanvas))
 		return false;
@@ -283,7 +284,7 @@ void EffectPreviewControl::syncEffect()
 		if (effectInstance)
 			currentTime = effectInstance->getTime();
 	}
-	
+
 	Context context;
 	context.deltaTime = 0.0f;
 	context.extraVelocity = m_extraVelocity;
@@ -308,8 +309,7 @@ void EffectPreviewControl::syncEffect()
 	m_effectEntity->setComponent(new EffectComponent(
 		effectComponent->getEffect(),
 		effectInstance,
-		context
-	));
+		context));
 
 	update();
 }
@@ -342,8 +342,7 @@ void EffectPreviewControl::updateWorldRenderer()
 	entityRenderers->add(new world::ProbeRenderer(
 		m_resourceManager,
 		m_renderSystem,
-		*worldRendererType
-	));
+		*worldRendererType));
 
 	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(worldRendererType->createInstance());
 	if (!worldRenderer)
@@ -361,10 +360,9 @@ void EffectPreviewControl::updateWorldRenderer()
 	wcd.multiSample = 0;
 
 	if (!worldRenderer->create(
-		m_resourceManager,
-		m_renderSystem,
-		wcd
-	))
+			m_resourceManager,
+			m_renderSystem,
+			wcd))
 		return;
 
 	m_worldRenderer = worldRenderer;
@@ -399,7 +397,7 @@ void EffectPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 		{
 			// Move X/Y direction.
 			const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-			const float dy =  float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
+			const float dy = float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
 			m_effectPosition += Vector4(dx, dy, 0.0f, 0.0f);
 		}
 	}
@@ -435,11 +433,9 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Render view events; reset view if it has become lost.
 	bool lost = false;
-	for (render::RenderEvent re = {}; m_renderView->nextEvent(re); )
-	{
+	for (render::RenderEvent re = {}; m_renderView->nextEvent(re);)
 		if (re.type == render::RenderEventType::Lost)
 			lost = true;
-	}
 
 	const ui::Size sz = getInnerRect().getSize();
 	if (lost || sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
@@ -482,18 +478,17 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		float(sz.cx) / sz.cy,
 		deg2rad(70.0f), // m_fieldOfView),
 		worldRenderSettings->viewNearZ,
-		worldRenderSettings->viewFarZ
-	);
+		worldRenderSettings->viewFarZ);
 	m_worldRenderView.setTimes(time, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0, nullptr);
+	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, render::RGTargetSet::Output, nullptr);
 
 	// Remove effect entity from world.
 	m_sceneInstance->getWorld()->removeEntity(m_effectEntity);
 
 	// Draw debug wires.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
-	rp->setOutput(0, render::TfAll, render::TfAll);
+	rp->setOutput(render::RGTargetSet::Output, render::TfAll, render::TfAll);
 	rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
 		m_primitiveRenderer->begin(0, m_worldRenderView.getProjection());
 		m_primitiveRenderer->pushView(view);
@@ -506,17 +501,15 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 					Vector4(float(x), 0.0f, -10.0f, 1.0f),
 					Vector4(float(x), 0.0f, 10.0f, 1.0f),
 					(x == 0) ? 2.0f : 0.0f,
-					m_colorGrid
-				);
+					m_colorGrid);
 				m_primitiveRenderer->drawLine(
 					Vector4(-10.0f, 0.0f, float(x), 1.0f),
 					Vector4(10.0f, 0.0f, float(x), 1.0f),
 					(x == 0) ? 2.0f : 0.0f,
-					m_colorGrid
-				);
+					m_colorGrid);
 			}
 		}
-		
+
 		if (m_effectEntity && m_guideVisible)
 		{
 			const Transform transform = m_effectEntity->getTransform();
@@ -572,7 +565,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		rb->lambda = [&](render::IRenderView* renderView) {
 			m_primitiveRenderer->render(m_renderView, 0);
 		};
-		renderContext->draw(rb);		
+		renderContext->draw(rb);
 	});
 	m_renderGraph->addPass(rp);
 
@@ -594,7 +587,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Need to clear all entities from our root group since when our root entity
 	// goes out of scope it's automatically destroyed.
-	//rootGroup->removeAllEntities();
+	// rootGroup->removeAllEntities();
 
 	event->consume();
 }

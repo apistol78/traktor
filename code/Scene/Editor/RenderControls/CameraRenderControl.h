@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include "Core/RefArray.h"
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Matrix44.h"
+#include "Core/RefArray.h"
 #include "Core/Timer/Timer.h"
 #include "Scene/Editor/ISceneRenderControl.h"
 #include "Scene/Editor/RenderControlModel.h"
@@ -48,6 +48,7 @@ class Entity;
 namespace traktor::scene
 {
 
+class EntityAdapter;
 class SceneEditorContext;
 
 class CameraRenderControl : public ISceneRenderControl

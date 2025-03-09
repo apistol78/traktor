@@ -1,27 +1,28 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Editor/Overlays/TilesOverlay.h"
+
 #include "Render/Buffer.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
-#include "World/WorldRenderView.h"
-#include "World/Editor/Overlays/TilesOverlay.h"
-#include "World/Shared/WorldRendererShared.h"
 #include "World/Shared/Passes/LightClusterPass.h"
+#include "World/Shared/WorldRendererShared.h"
+#include "World/WorldRenderView.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_debugShader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
 const render::Handle c_handleDebugTechnique(L"Tiles");
@@ -31,17 +32,15 @@ const render::Handle c_handleDebugMagicCoeffs(L"Scene_DebugMagicCoeffs");
 const render::Handle c_handleDebugTileBuffer(L"World_TileSBuffer");
 const render::Handle c_handleDebugViewDistance(L"World_ViewDistance");
 
-render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
+render::RGTargetSet findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
 {
 	for (const auto& tm : renderGraph.getTargets())
-	{
 		if (wcscmp(tm.second.name, name) == 0)
 			return tm.first;
-	}
-	return 0;
+	return render::RGTargetSet::Invalid;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.TilesOverlay", 0, TilesOverlay, BaseOverlay)
 
@@ -58,15 +57,15 @@ bool TilesOverlay::create(resource::IResourceManager* resourceManager)
 
 void TilesOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
-	WorldRendererShared* worldRendererShared = dynamic_type_cast<WorldRendererShared* >(worldRenderer);
+	WorldRendererShared* worldRendererShared = dynamic_type_cast< WorldRendererShared* >(worldRenderer);
 	if (!worldRendererShared)
 	{
 		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
 	}
 
-	render::handle_t gbufferId = findTargetByName(renderGraph, L"GBuffer");
-	if (!gbufferId)
+	const render::RGTargetSet gbufferId = findTargetByName(renderGraph, L"GBuffer");
+	if (gbufferId == render::RGTargetSet::Invalid)
 	{
 		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
@@ -84,7 +83,7 @@ void TilesOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRendere
 	const float viewSliceBias = ClusterDimZ * std::log(viewNearZ) / std::log(viewFarZ / viewNearZ) - 0.001f;
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Tiles overlay");
-	rp->setOutput(0, render::TfColor, render::TfColor);
+	rp->setOutput(render::RGTargetSet::Output, render::TfColor, render::TfColor);
 	rp->addInput(gbufferId);
 	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto gbufferTargetSet = renderGraph.getTargetSet(gbufferId);

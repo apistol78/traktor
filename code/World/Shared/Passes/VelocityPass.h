@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Render/Types.h"
+#include "Render/Frame/RenderGraphTypes.h"
 #include "Resource/Proxy.h"
 
 namespace traktor::render
@@ -49,12 +49,12 @@ public:
 
 	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc);
 
-	render::handle_t setup(
+	render::RGTargetSet setup(
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
 		render::RenderGraph& renderGraph,
-		render::handle_t gbufferTargetSetId,
-		render::handle_t outputTargetSetId) const;
+		render::RGTargetSet gbufferTargetSetId,
+		render::RGTargetSet outputTargetSetId) const;
 
 private:
 	Ref< WorldEntityRenderers > m_entityRenderers;

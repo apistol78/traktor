@@ -1,37 +1,40 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Spark/Acc/AccGlyph.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Buffer.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
+#include "Render/Frame/RenderPass.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/Shader.h"
 #include "Render/VertexElement.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
-#include "Render/Frame/RenderPass.h"
 #include "Resource/IResourceManager.h"
-#include "Spark/Acc/AccGlyph.h"
 
 namespace traktor::spark
 {
-	namespace
-	{
+namespace
+{
 
 #pragma pack(1)
+
 struct Vertex
 {
 	float pos[2];
 	float texCoord[2];
 	float texOffsetAndScale[4];
 };
+
 #pragma pack()
 
 const resource::Id< render::Shader > c_idShaderGlyphMask(Guid(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}"));
@@ -41,13 +44,11 @@ const struct TemplateVertex
 {
 	Vector4 pos;
 	Vector2 texCoord;
-}
-c_glyphTemplate[4] =
-{
+} c_glyphTemplate[4] = {
 	{ Vector4(-0.1f, -0.1f, 1.0f, 0.0f), Vector2(-0.1f, -0.1f) },
-	{ Vector4( 1.1f, -0.1f, 1.0f, 0.0f), Vector2( 1.1f, -0.1f) },
-	{ Vector4( 1.1f,  1.1f, 1.0f, 0.0f), Vector2( 1.1f,  1.1f) },
-	{ Vector4(-0.1f,  1.1f, 1.0f, 0.0f), Vector2(-0.1f,  1.1f) }
+	{ Vector4(1.1f, -0.1f, 1.0f, 0.0f), Vector2(1.1f, -0.1f) },
+	{ Vector4(1.1f, 1.1f, 1.0f, 0.0f), Vector2(1.1f, 1.1f) },
+	{ Vector4(-0.1f, 1.1f, 1.0f, 0.0f), Vector2(-0.1f, 1.1f) }
 };
 
 const render::Handle s_handleTechniqueDefault(L"Default");
@@ -59,14 +60,13 @@ const render::Handle s_handleTexture(L"Spark_Texture");
 const render::Handle s_handleColor(L"Spark_Color");
 const render::Handle s_handleFilterColor(L"Spark_FilterColor");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.AccGlyph", AccGlyph, Object)
 
 bool AccGlyph::create(
 	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem
-)
+	render::IRenderSystem* renderSystem)
 {
 	if (!resourceManager->bind(c_idShaderGlyphMask, m_shaderGlyph))
 		return false;
@@ -81,8 +81,7 @@ bool AccGlyph::create(
 	m_vertexBuffer = renderSystem->createBuffer(
 		render::BuVertex,
 		c_glyphCount * sizeof_array(c_glyphTemplate) * sizeof(Vertex),
-		true
-	);
+		true);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -124,17 +123,16 @@ void AccGlyph::beginFrame()
 
 void AccGlyph::endFrame()
 {
-	T_FATAL_ASSERT (m_count == 0);
+	T_FATAL_ASSERT(m_count == 0);
 	m_vertexBuffer->unlock();
 }
 
 void AccGlyph::add(
 	const Aabb2& bounds,
 	const Matrix33& transform,
-	const Vector4& textureOffset
-)
+	const Vector4& textureOffset)
 {
-	T_FATAL_ASSERT (m_vertex != nullptr);
+	T_FATAL_ASSERT(m_vertex != nullptr);
 
 	if (m_count + m_offset >= c_glyphCount)
 	{
@@ -146,18 +144,40 @@ void AccGlyph::add(
 	float dby = bounds.mx.y - bounds.mn.y;
 
 	Matrix44 m1(
-		transform.e11, transform.e12, transform.e13, 0.0f,
-		transform.e21, transform.e22, transform.e23, 0.0f,
-		transform.e31, transform.e32, transform.e33, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
+		transform.e11,
+		transform.e12,
+		transform.e13,
+		0.0f,
+		transform.e21,
+		transform.e22,
+		transform.e23,
+		0.0f,
+		transform.e31,
+		transform.e32,
+		transform.e33,
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		1.0f);
 
 	Matrix44 m2(
-		dbx, 0.0f, bounds.mn.x, 0.0f,
-		0.0f, dby, bounds.mn.y, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
+		dbx,
+		0.0f,
+		bounds.mn.x,
+		0.0f,
+		0.0f,
+		dby,
+		bounds.mn.y,
+		0.0f,
+		0.0f,
+		0.0f,
+		1.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		1.0f);
 
 	Matrix44 m = m1 * m2;
 
@@ -186,14 +206,13 @@ void AccGlyph::add(
 
 void AccGlyph::render(
 	render::RenderPass* renderPass,
-	render::handle_t glyphCacheTargetSetId,
+	render::RGTargetSet glyphCacheTargetSetId,
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
 	uint8_t maskReference,
 	uint8_t glyphFilter,
 	const Color4f& glyphColor,
-	const Color4f& glyphFilterColor
-)
+	const Color4f& glyphFilterColor)
 {
 	if (!m_count)
 		return;
@@ -211,7 +230,6 @@ void AccGlyph::render(
 	uint32_t count = m_count;
 
 	renderPass->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-
 		auto glyphCacheTargetSet = renderGraph.getTargetSet(glyphCacheTargetSetId);
 
 		render::IndexedRenderBlock* renderBlock = renderContext->allocNamed< render::IndexedRenderBlock >(L"Flash AccGlyph");
@@ -238,7 +256,6 @@ void AccGlyph::render(
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(renderBlock);
-
 	});
 
 	m_offset += m_count;

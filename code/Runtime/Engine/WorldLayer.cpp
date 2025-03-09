@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Runtime/Engine/WorldLayer.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -18,31 +20,30 @@
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Resource/IResourceManager.h"
+#include "Runtime/Engine/Stage.h"
 #include "Runtime/IAudioServer.h"
 #include "Runtime/IEnvironment.h"
 #include "Runtime/UpdateInfo.h"
-#include "Runtime/Engine/Stage.h"
-#include "Runtime/Engine/WorldLayer.h"
 #include "Scene/Scene.h"
-#include "World/IWorldRenderer.h"
-#include "World/World.h"
-#include "World/WorldRenderSettings.h"
 #include "World/Entity.h"
-#include "World/EntityBuilder.h"
-#include "World/EntityData.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/PersistentIdComponent.h"
+#include "World/EntityBuilder.h"
+#include "World/EntityData.h"
+#include "World/IWorldRenderer.h"
+#include "World/World.h"
+#include "World/WorldRenderSettings.h"
 
 namespace traktor::runtime
 {
-	namespace
-	{
+namespace
+{
 
 const Color4f c_clearColor(0.0f, 0.0f, 0.0f, 0.0f);
 render::Handle s_handleFeedback(L"Feedback");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.WorldLayer", WorldLayer, Layer)
 
@@ -51,11 +52,10 @@ WorldLayer::WorldLayer(
 	const std::wstring& name,
 	bool permitTransition,
 	IEnvironment* environment,
-	const resource::Proxy< scene::Scene >& scene
-)
-:	Layer(stage, name, permitTransition)
-,	m_environment(environment)
-,	m_scene(scene)
+	const resource::Proxy< scene::Scene >& scene)
+	: Layer(stage, name, permitTransition)
+	, m_environment(environment)
+	, m_scene(scene)
 {
 	// Get initial field of view.
 	m_fieldOfView = m_environment->getSettings()->getProperty< float >(L"World.FieldOfView", 70.0f);
@@ -128,8 +128,7 @@ void WorldLayer::preUpdate(const UpdateInfo& info)
 		m_environment->getRender()->getAspectRatio(),
 		deg2rad(m_fieldOfView),
 		m_scene->getWorldRenderSettings()->viewNearZ,
-		m_scene->getWorldRenderSettings()->viewFarZ
-	);
+		m_scene->getWorldRenderSettings()->viewFarZ);
 
 	// Set projection from camera component.
 	if (m_cameraEntity)
@@ -138,25 +137,19 @@ void WorldLayer::preUpdate(const UpdateInfo& info)
 		if (camera)
 		{
 			if (camera->getProjection() == world::Projection::Orthographic)
-			{
 				m_worldRenderView.setOrthogonal(
 					camera->getWidth(),
 					camera->getHeight(),
 					m_scene->getWorldRenderSettings()->viewNearZ,
-					m_scene->getWorldRenderSettings()->viewFarZ
-				);
-			}
+					m_scene->getWorldRenderSettings()->viewFarZ);
 			else // Projection::Perspective
-			{
 				m_worldRenderView.setPerspective(
 					float(width),
 					float(height),
 					m_environment->getRender()->getAspectRatio(),
 					camera->getFieldOfView(),
 					m_scene->getWorldRenderSettings()->viewNearZ,
-					m_scene->getWorldRenderSettings()->viewFarZ
-				);
-			}
+					m_scene->getWorldRenderSettings()->viewFarZ);
 		}
 	}
 }
@@ -209,15 +202,13 @@ void WorldLayer::preSetup(const UpdateInfo& info)
 		const float cameraInterval = info.getInterval();
 		m_worldRenderView.setView(
 			m_worldRenderView.getView(),
-			(m_cameraTransform.get(cameraInterval) * m_cameraOffset).inverse().toMatrix44()
-		);
+			(m_cameraTransform.get(cameraInterval) * m_cameraOffset).inverse().toMatrix44());
 	}
 
 	m_worldRenderView.setTimes(
 		info.getStateTime(),
 		info.getFrameDeltaTime(),
-		info.getInterval()
-	);
+		info.getInterval());
 }
 
 void WorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
@@ -231,9 +222,8 @@ void WorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 		m_scene->getWorld(),
 		m_worldRenderView,
 		renderGraph,
-		0,
-		nullptr
-	);		
+		render::RGTargetSet::Output,
+		nullptr);
 }
 
 void WorldLayer::preReconfigured()
@@ -289,10 +279,8 @@ void WorldLayer::hotReload()
 	if (m_scene)
 	{
 		for (auto entity : m_scene->getWorld()->getEntities())
-		{
 			if (auto persistentIdComponent = entity->getComponent< world::PersistentIdComponent >())
 				m_entityTransforms[persistentIdComponent->getId()] = entity->getTransform();
-		}
 	}
 }
 
@@ -319,8 +307,7 @@ Ref< world::Entity > WorldLayer::createEntity(const Guid& entityDataId) const
 
 	const world::EntityBuilder entityBuilder(
 		m_environment->getWorld()->getEntityFactory(),
-		m_scene->getWorld()
-	);
+		m_scene->getWorld());
 	return entityBuilder.create(entityData);
 }
 

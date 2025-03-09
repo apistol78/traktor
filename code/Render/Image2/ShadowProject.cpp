@@ -1,29 +1,29 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/IRenderTargetSet.h"
-#include "Render/ScreenRenderer.h"
-#include "Render/Shader.h"
+#include "Render/Image2/ShadowProject.h"
+
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
-#include "Render/Image2/ShadowProject.h"
+#include "Render/IRenderTargetSet.h"
+#include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
 
 namespace traktor::render
 {
-	namespace
-	{
-
-const float c_sliceBias = 0.0001f;	//!< Extra slice dimension bias; slight overlap over slices.
-
-const Vector4 c_poissonTaps[] =
+namespace
 {
+
+const float c_sliceBias = 0.0001f; //!< Extra slice dimension bias; slight overlap over slices.
+
+const Vector4 c_poissonTaps[] = {
 	Vector4(-0.326212f, -0.40581f, 0.519456f, 0.767022f),
 	Vector4(-0.840144f, -0.07358f, 0.185461f, -0.893124f),
 	Vector4(-0.695914f, 0.457137f, 0.507431f, 0.064425f),
@@ -42,18 +42,17 @@ const static Handle s_handleViewEdgeBottomLeft(L"ViewEdgeBottomLeft");
 const static Handle s_handleViewEdgeBottomRight(L"ViewEdgeBottomRight");
 const static Handle s_handleShadowMapPoissonTaps(L"ShadowMapPoissonTaps");
 const static Handle s_handleViewToLight(L"ViewToLight");
-const static Handle s_handleShadowMap(L"InputShadowMap");	// \tbd Check name convention...
+const static Handle s_handleShadowMap(L"InputShadowMap"); // \tbd Check name convention...
 const static Handle s_handleShadowMapDiscRotation(L"ShadowMapDiscRotation");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShadowProject", ShadowProject, ImagePassStep)
 
 void ShadowProject::addRenderPassInputs(
 	const ImageGraph* graph,
 	const ImageGraphContext& context,
-	RenderPass& pass
-) const
+	RenderPass& pass) const
 {
 	addInputs(context, pass);
 }
@@ -63,13 +62,12 @@ void ShadowProject::build(
 	const ImageGraphContext& context,
 	const ImageGraphView& view,
 	const targetSetVector_t& targetSetIds,
-	const targetSetVector_t& sbufferIds,
+	const bufferVector_t& sbufferIds,
 	const PassOutput& output,
 	const RenderGraph& renderGraph,
 	const ProgramParameters* sharedParams,
 	RenderContext* renderContext,
-	ScreenRenderer* screenRenderer
-) const
+	ScreenRenderer* screenRenderer) const
 {
 	auto shadowMap = context.findTexture(renderGraph, s_handleShadowMap);
 	if (!shadowMap)
@@ -83,8 +81,7 @@ void ShadowProject::build(
 		1.0f / (float)shadowMap->getSize().x,
 		shadowMapBias / 1.0f,
 		shadowFadeZ,
-		shadowFadeRate
-	);
+		shadowFadeRate);
 
 	const Scalar viewEdgeNorm = view.viewFrustum.getFarZ() / Scalar(view.shadowFarZ);
 	const Vector4 viewEdgeTopLeft = view.viewFrustum.corners[4] / viewEdgeNorm;
@@ -98,7 +95,7 @@ void ShadowProject::build(
 	// Setup parameters for the shader.
 	auto pp = renderContext->alloc< ProgramParameters >();
 	pp->beginParameters(renderContext);
-	pp->attachParameters(sharedParams);	
+	pp->attachParameters(sharedParams);
 
 	pp->setVectorParameter(s_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
 	pp->setVectorParameter(s_handleShadowMapUvTransform, view.shadowMapUvTransform);

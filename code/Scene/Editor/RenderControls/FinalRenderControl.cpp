@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Scene/Editor/RenderControls/FinalRenderControl.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -17,38 +19,37 @@
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
-#include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
-#include "Scene/Editor/RenderControls/FinalRenderControl.h"
+#include "Scene/Scene.h"
 #include "Ui/Application.h"
+#include "Ui/AspectLayout.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/Widget.h"
-#include "Ui/AspectLayout.h"
 #include "Ui/Itf/IWidget.h"
+#include "Ui/Widget.h"
+#include "World/Editor/IDebugOverlay.h"
 #include "World/Entity.h"
+#include "World/Entity/GroupComponent.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
-#include "World/Editor/IDebugOverlay.h"
-#include "World/Entity/GroupComponent.h"
 
 namespace traktor::scene
 {
-	namespace
-	{
+namespace
+{
 
 const float c_defaultFieldOfView = 80.0f;
 const float c_defaultMouseWheelRate = 10.0f;
@@ -61,22 +62,22 @@ const float c_cameraRotateDeltaScale = 0.01f;
 const float c_deltaAdjust = 0.05f;
 const float c_deltaAdjustSmall = 0.01f;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.FinalRenderControl", FinalRenderControl, ISceneRenderControl)
 
 FinalRenderControl::FinalRenderControl()
-:	m_imageProcessQuality(world::Quality::Disabled)
-,	m_shadowQuality(world::Quality::Disabled)
-,	m_reflectionsQuality(world::Quality::Disabled)
-,	m_motionBlurQuality(world::Quality::Disabled)
-,	m_ambientOcclusionQuality(world::Quality::Disabled)
-,	m_antiAliasQuality(world::Quality::Disabled)
-,	m_fieldOfView(c_defaultFieldOfView)
-,	m_mouseWheelRate(c_defaultMouseWheelRate)
-,	m_multiSample(c_defaultMultiSample)
-,	m_invertPanY(false)
-,	m_dirtySize(0, 0)
+	: m_imageProcessQuality(world::Quality::Disabled)
+	, m_shadowQuality(world::Quality::Disabled)
+	, m_reflectionsQuality(world::Quality::Disabled)
+	, m_motionBlurQuality(world::Quality::Disabled)
+	, m_ambientOcclusionQuality(world::Quality::Disabled)
+	, m_antiAliasQuality(world::Quality::Disabled)
+	, m_fieldOfView(c_defaultFieldOfView)
+	, m_mouseWheelRate(c_defaultMouseWheelRate)
+	, m_multiSample(c_defaultMultiSample)
+	, m_invertPanY(false)
+	, m_dirtySize(0, 0)
 {
 }
 
@@ -124,9 +125,8 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	{
 		resource::Id< scene::Scene > sceneId(m_context->getDocument()->getInstance(0)->getGuid());
 		if (!m_context->getResourceManager()->bind(
-			sceneId,
-			m_sceneInstance
-		))
+				sceneId,
+				m_sceneInstance))
 		{
 			destroy();
 			return false;
@@ -352,10 +352,9 @@ void FinalRenderControl::updateWorldRenderer()
 	wcd.multiSample = m_multiSample;
 
 	if (!worldRenderer->create(
-		m_context->getResourceManager(),
-		m_context->getRenderSystem(),
-		wcd
-	))
+			m_context->getResourceManager(),
+			m_context->getRenderSystem(),
+			wcd))
 		return;
 
 	m_worldRenderer = worldRenderer;
@@ -466,11 +465,9 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Render view events; reset view if it has become lost.
 	bool lost = false;
-	for (render::RenderEvent re = {}; m_renderView->nextEvent(re); )
-	{
+	for (render::RenderEvent re = {}; m_renderView->nextEvent(re);)
 		if (re.type == render::RenderEventType::Lost)
 			lost = true;
-	}
 
 	// Check if size has changed since last render; need to reset renderer if so.
 	const ui::Size sz = m_renderWidget->getInnerRect().getSize();
@@ -489,7 +486,8 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 			return;
 	}
 
-	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
+	float colorClear[4];
+	m_colorClear.getRGBA32F(colorClear);
 	const double scaledTime = m_context->getTime();
 	const float deltaTime = (float)m_timer.getDeltaTime();
 	const float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
@@ -512,15 +510,13 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 		float(sz.cx) / sz.cy,
 		deg2rad(m_fieldOfView),
 		worldRenderSettings->viewNearZ,
-		worldRenderSettings->viewFarZ
-	);
+		worldRenderSettings->viewFarZ);
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0, nullptr);
+	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, render::RGTargetSet::Output, nullptr);
 
 	// Draw debug overlay, content of any target from render graph as an overlay.
 	if (m_overlay)
-	{
 		m_overlay->setup(
 			*m_renderGraph,
 			m_screenRenderer,
@@ -528,9 +524,7 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 			m_worldRenderer,
 			m_worldRenderView,
 			m_overlayAlpha,
-			m_overlayMip
-		);
-	}
+			m_overlayMip);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate())

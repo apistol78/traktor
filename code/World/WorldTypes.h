@@ -11,7 +11,7 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
-#include "Render/Types.h"
+#include "Render/Frame/RenderGraphTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -120,6 +120,14 @@ struct GatherView
 /*!
  */
 struct DoubleBufferedTarget
+{
+	render::RGTargetSet previous;
+	render::RGTargetSet current;
+};
+
+/*!
+ */
+struct DoubleBufferedBuffer
 {
 	render::handle_t previous;
 	render::handle_t current;

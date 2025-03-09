@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Render/Frame/RenderGraphTypes.h"
 #include "Render/Types.h"
 #include "World/WorldRenderSettings.h"
 
@@ -35,16 +36,14 @@ class DBufferPass : public Object
 public:
 	explicit DBufferPass(
 		const WorldRenderSettings& settings,
-		WorldEntityRenderers* entityRenderers
-	);
+		WorldEntityRenderers* entityRenderers);
 
-	render::handle_t setup(
+	render::RGTargetSet setup(
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
 		render::RenderGraph& renderGraph,
-		render::handle_t gbufferTargetSetId,
-		render::handle_t outputTargetSetId
-	) const;
+		render::RGTargetSet gbufferTargetSetId,
+		render::RGTargetSet outputTargetSetId) const;
 
 private:
 	WorldRenderSettings m_settings;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,7 +36,7 @@ struct ImageGraphView;
 
 /*! Image pass step.
  * \ingroup Render
- * 
+ *
  * Each pass can have a sequence of operations
  * to implement it's functionality.
  */
@@ -49,8 +49,7 @@ public:
 	virtual void addRenderPassInputs(
 		const ImageGraph* graph,
 		const ImageGraphContext& context,
-		RenderPass& pass
-	) const = 0;
+		RenderPass& pass) const = 0;
 
 	/*! */
 	virtual void build(
@@ -58,13 +57,12 @@ public:
 		const ImageGraphContext& context,
 		const ImageGraphView& view,
 		const targetSetVector_t& targetSetIds,
-		const targetSetVector_t& sbufferIds,
+		const bufferVector_t& sbufferIds,
 		const PassOutput& output,
 		const RenderGraph& renderGraph,
 		const ProgramParameters* sharedParams,
 		RenderContext* renderContext,
-		ScreenRenderer* screenRenderer
-	) const = 0;
+		ScreenRenderer* screenRenderer) const = 0;
 
 protected:
 	friend class ImagePassStepData;

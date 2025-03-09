@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -51,7 +51,7 @@ public:
 		const World* world,
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
+		render::RGTargetSet outputTargetSetId,
 		const std::function< bool(const EntityState& state) >& filter) override final;
 
 private:
@@ -61,15 +61,15 @@ private:
 	void setupVisualPass(
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
-		render::handle_t visualWriteTargetSetId,
-		render::handle_t visualCopyTargetSetId,
-		render::handle_t gbufferTargetSetId,
-		render::handle_t dbufferTargetSetId,
-		render::handle_t irradianceTargetSetId,
-		render::handle_t ambientOcclusionTargetSetId,
-		render::handle_t contactShadowsTargetSetId,
-		render::handle_t reflectionsTargetSetId,
-		render::handle_t shadowMapAtlasTargetSetId,
+		render::RGTargetSet visualWriteTargetSetId,
+		render::RGTargetSet visualCopyTargetSetId,
+		render::RGTargetSet gbufferTargetSetId,
+		render::RGTargetSet dbufferTargetSetId,
+		render::RGTargetSet irradianceTargetSetId,
+		render::RGTargetSet ambientOcclusionTargetSetId,
+		render::RGTargetSet contactShadowsTargetSetId,
+		render::RGTargetSet reflectionsTargetSetId,
+		render::RGTargetSet shadowMapAtlasTargetSetId,
 		render::handle_t outputHiZTextureId) const;
 };
 

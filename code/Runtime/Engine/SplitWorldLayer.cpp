@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Runtime/Engine/SplitWorldLayer.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -15,39 +17,38 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
+#include "Runtime/Engine/Stage.h"
 #include "Runtime/IAudioServer.h"
 #include "Runtime/IEnvironment.h"
 #include "Runtime/UpdateInfo.h"
-#include "Runtime/Engine/Stage.h"
-#include "Runtime/Engine/SplitWorldLayer.h"
 #include "Scene/Scene.h"
 #include "Sound/Filters/SurroundEnvironment.h"
-#include "World/IWorldRenderer.h"
-#include "World/WorldRenderSettings.h"
 #include "World/Entity.h"
-#include "World/EntityBuilder.h"
-#include "World/EntityData.h"
-#include "World/World.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/PersistentIdComponent.h"
+#include "World/EntityBuilder.h"
+#include "World/EntityData.h"
+#include "World/IWorldRenderer.h"
+#include "World/World.h"
+#include "World/WorldRenderSettings.h"
 
 namespace traktor::runtime
 {
-	namespace
-	{
+namespace
+{
 
 const render::Handle s_handleFeedback(L"Feedback");
 const render::Handle s_handleSplitLeft(L"SplitLeft");
 const render::Handle s_handleSplitRight(L"SplitRight");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.SplitWorldLayer", SplitWorldLayer, Layer)
 
@@ -57,12 +58,11 @@ SplitWorldLayer::SplitWorldLayer(
 	bool permitTransition,
 	IEnvironment* environment,
 	const resource::Proxy< scene::Scene >& scene,
-	const resource::Proxy< render::Shader >& shader
-)
-:	Layer(stage, name, permitTransition)
-,	m_environment(environment)
-,	m_scene(scene)
-,	m_shader(shader)
+	const resource::Proxy< render::Shader >& shader)
+	: Layer(stage, name, permitTransition)
+	, m_environment(environment)
+	, m_scene(scene)
+	, m_shader(shader)
 {
 	// Get initial field of view.
 	m_fieldOfView = m_environment->getSettings()->getProperty< float >(L"World.FieldOfView", 70.0f);
@@ -137,16 +137,13 @@ void SplitWorldLayer::preUpdate(const UpdateInfo& info)
 
 	// Update world view.
 	for (int32_t i = 0; i < 2; ++i)
-	{
 		m_worldRenderViews[i].setPerspective(
 			float(width) / 2.0f,
 			float(height),
 			m_environment->getRender()->getAspectRatio() / 2.0f,
 			deg2rad(m_fieldOfView),
 			m_scene->getWorldRenderSettings()->viewNearZ,
-			m_scene->getWorldRenderSettings()->viewFarZ
-		);
-	}
+			m_scene->getWorldRenderSettings()->viewFarZ);
 
 	// Set projection from camera component.
 	for (int32_t i = 0; i < 2; ++i)
@@ -157,25 +154,19 @@ void SplitWorldLayer::preUpdate(const UpdateInfo& info)
 			if (camera)
 			{
 				if (camera->getProjection() == world::Projection::Orthographic)
-				{
 					m_worldRenderViews[i].setOrthogonal(
 						camera->getWidth(),
 						camera->getHeight(),
 						m_scene->getWorldRenderSettings()->viewNearZ,
-						m_scene->getWorldRenderSettings()->viewFarZ
-					);
-				}
+						m_scene->getWorldRenderSettings()->viewFarZ);
 				else // Projection::Perspective
-				{
 					m_worldRenderViews[i].setPerspective(
 						float(width) / 2.0f,
 						float(height),
 						m_environment->getRender()->getAspectRatio() / 2.0f,
 						camera->getFieldOfView(),
 						m_scene->getWorldRenderSettings()->viewNearZ,
-						m_scene->getWorldRenderSettings()->viewFarZ
-					);
-				}
+						m_scene->getWorldRenderSettings()->viewFarZ);
 			}
 		}
 	}
@@ -228,24 +219,16 @@ void SplitWorldLayer::preSetup(const UpdateInfo& info)
 	// Grab interpolated camera transform.
 	const float cameraInterval = info.getInterval();
 	for (int32_t i = 0; i < 2; ++i)
-	{
 		if (m_cameraEntities[i])
-		{
 			m_worldRenderViews[i].setView(
 				m_worldRenderViews[i].getView(),
-				(m_cameraTransforms[i].get(cameraInterval) * m_cameraOffsets[i]).inverse().toMatrix44()
-			);
-		}
-	}
+				(m_cameraTransforms[i].get(cameraInterval) * m_cameraOffsets[i]).inverse().toMatrix44());
 
 	for (int32_t i = 0; i < 2; ++i)
-	{
 		m_worldRenderViews[i].setTimes(
 			info.getStateTime(),
 			info.getFrameDeltaTime(),
-			info.getInterval()
-		);
-	}
+			info.getInterval());
 }
 
 void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
@@ -279,30 +262,26 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 
 	auto leftTargetSetId = renderGraph.addTransientTargetSet(
 		L"Split Left",
-		rgtsd
-	);
+		rgtsd);
 	auto rightTargetSetId = renderGraph.addTransientTargetSet(
 		L"Split Right",
-		rgtsd
-	);
+		rgtsd);
 
 	m_worldRenderer->setup(
 		m_scene->getWorld(),
 		m_worldRenderViews[0],
 		renderGraph,
 		leftTargetSetId,
-		nullptr
-	);
+		nullptr);
 	m_worldRenderer->setup(
 		m_scene->getWorld(),
 		m_worldRenderViews[1],
 		renderGraph,
 		rightTargetSetId,
-		nullptr
-	);
+		nullptr);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Split");
-	rp->setOutput(0, render::TfNone, render::TfColor);
+	rp->setOutput(render::RGTargetSet::Output, render::TfNone, render::TfColor);
 	rp->addInput(leftTargetSetId);
 	rp->addInput(rightTargetSetId);
 	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
@@ -373,10 +352,8 @@ void SplitWorldLayer::hotReload()
 	if (m_scene)
 	{
 		for (auto entity : m_scene->getWorld()->getEntities())
-		{
 			if (auto persistentIdComponent = entity->getComponent< world::PersistentIdComponent >())
 				m_entityTransforms[persistentIdComponent->getId()] = entity->getTransform();
-		}
 	}
 }
 
@@ -403,8 +380,7 @@ Ref< world::Entity > SplitWorldLayer::createEntity(const Guid& entityDataId) con
 
 	const world::EntityBuilder entityBuilder(
 		m_environment->getWorld()->getEntityFactory(),
-		m_scene->getWorld()
-	);
+		m_scene->getWorld());
 	return entityBuilder.create(entityData);
 }
 

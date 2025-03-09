@@ -78,21 +78,21 @@ bool AmbientOcclusionPass::create(resource::IResourceManager* resourceManager, r
 	return true;
 }
 
-render::handle_t AmbientOcclusionPass::setup(
+render::RGTargetSet AmbientOcclusionPass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
 	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
-	render::handle_t gbufferTargetSetId,
+	render::RGTargetSet gbufferTargetSetId,
 	render::handle_t halfResDepthTextureId,
-	render::handle_t outputTargetSetId) const
+	render::RGTargetSet outputTargetSetId) const
 {
 	T_PROFILER_SCOPE(L"AmbientOcclusionPass::setup");
 	render::ImageGraphView view;
 
-	if (m_ambientOcclusion == nullptr || gbufferTargetSetId == 0)
-		return 0;
+	if (m_ambientOcclusion == nullptr || gbufferTargetSetId == render::RGTargetSet::Invalid)
+		return render::RGTargetSet::Invalid;
 
 	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr);
 	const Matrix44& projection = worldRenderView.getProjection();
@@ -107,7 +107,7 @@ render::handle_t AmbientOcclusionPass::setup(
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR8; // Ambient occlusion (R)
-	auto ambientOcclusionTargetSetId = renderGraph.addTransientTargetSet(L"Ambient occlusion", rgtd, ~0U, outputTargetSetId);
+	auto ambientOcclusionTargetSetId = renderGraph.addTransientTargetSet(L"Ambient occlusion", rgtd, render::RGTargetSet::Invalid, outputTargetSetId);
 
 	// Add ambient occlusion render pass.
 	view.viewFrustum = worldRenderView.getViewFrustum();

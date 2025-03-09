@@ -6,23 +6,24 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/ScreenRenderer.h"
-#include "Render/Shader.h"
+#include "World/Editor/Overlays/BaseOverlay.h"
+
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
+#include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
-#include "World/Editor/Overlays/BaseOverlay.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_debugShader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
 const render::Handle c_handleDebugTechnique(L"Invalid");
 const render::Handle c_handleDebugAlpha(L"Scene_DebugAlpha");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.BaseOverlay", BaseOverlay, IDebugOverlay)
 
@@ -37,7 +38,7 @@ bool BaseOverlay::create(resource::IResourceManager* resourceManager)
 void BaseOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Invalid overlay");
-	rp->setOutput(0, render::TfColor, render::TfColor);
+	rp->setOutput(render::RGTargetSet::Output, render::TfColor, render::TfColor);
 	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		const render::Shader::Permutation perm(c_handleDebugTechnique);
 

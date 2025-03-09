@@ -1,23 +1,24 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Editor/Overlays/HiZOverlay.h"
+
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
-#include "World/Editor/Overlays/HiZOverlay.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_debugShader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
 const render::Handle c_handleDebugTechnique(L"HiZ");
@@ -28,14 +29,12 @@ const render::Handle c_handleDebugTexture(L"Scene_DebugTexture");
 render::handle_t findTextureByName(const render::RenderGraph& renderGraph, const wchar_t* name)
 {
 	for (const auto& tm : renderGraph.getTextures())
-	{
 		if (wcscmp(tm.second.name, name) == 0)
 			return tm.first;
-	}
 	return 0;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.HiZOverlay", 0, HiZOverlay, BaseOverlay)
 
@@ -60,7 +59,7 @@ void HiZOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer*
 	}
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Hi-Z overlay");
-	rp->setOutput(0, render::TfColor, render::TfColor);
+	rp->setOutput(render::RGTargetSet::Output, render::TfColor, render::TfColor);
 	rp->addInput(hiZId);
 	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto hiZ = renderGraph.getTexture(hiZId);

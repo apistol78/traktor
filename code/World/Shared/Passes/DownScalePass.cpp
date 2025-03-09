@@ -52,7 +52,7 @@ bool DownScalePass::create(resource::IResourceManager* resourceManager)
 render::handle_t DownScalePass::setup(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
-	render::handle_t gbufferTargetSetId) const
+	render::RGTargetSet gbufferTargetSetId) const
 {
 	T_PROFILER_SCOPE(L"DownScalePass::setup");
 

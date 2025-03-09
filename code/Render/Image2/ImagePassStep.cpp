@@ -6,12 +6,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Image2/ImagePassStep.h"
+
 #include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
-#include "Render/Image2/ImagePassStep.h"
 
 namespace traktor::render
 {
@@ -22,13 +23,13 @@ void ImagePassStep::addInputs(const ImageGraphContext& context, RenderPass& pass
 {
 	for (const auto& source : m_textureSources)
 	{
-		auto targetSetId = context.findTextureTargetSetId(source.id);
-		if (targetSetId != 0)
+		const RGTargetSet targetSetId = context.findTextureTargetSetId(source.id);
+		if (targetSetId != RGTargetSet::Invalid)
 			pass.addInput(targetSetId);
 	}
 	for (const auto& source : m_sbufferSources)
 	{
-		auto sbufferId = context.findSBufferId(source.id);
+		const handle_t sbufferId = context.findSBufferId(source.id);
 		if (sbufferId != 0)
 			pass.addInput(sbufferId);
 	}

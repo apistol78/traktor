@@ -26,25 +26,25 @@ void ImageGraphContext::associateTexture(img_handle_t textureId, handle_t rgText
 	m_textureTargetSet[textureId] = { .textureId = rgTextureId };
 }
 
-void ImageGraphContext::associateTextureTargetSet(img_handle_t textureId, handle_t targetSetId, int32_t colorIndex)
+void ImageGraphContext::associateTextureTargetSet(img_handle_t textureId, RGTargetSet targetSetId, int32_t colorIndex)
 {
 	m_textureTargetSet[textureId] = { .targetSetId = targetSetId,
 		.colorIndex = colorIndex };
 }
 
-void ImageGraphContext::associateTextureTargetSetDepth(img_handle_t textureId, handle_t targetSetId)
+void ImageGraphContext::associateTextureTargetSetDepth(img_handle_t textureId, RGTargetSet targetSetId)
 {
 	m_textureTargetSet[textureId] = { .targetSetId = targetSetId,
 		.colorIndex = -1 };
 }
 
-handle_t ImageGraphContext::findTextureTargetSetId(img_handle_t textureId) const
+RGTargetSet ImageGraphContext::findTextureTargetSetId(img_handle_t textureId) const
 {
 	const auto it = m_textureTargetSet.find(textureId);
 	if (it != m_textureTargetSet.end())
 		return it->second.targetSetId;
 	else
-		return 0;
+		return RGTargetSet::Invalid;
 }
 
 ITexture* ImageGraphContext::findTexture(const RenderGraph& renderGraph, img_handle_t textureId) const
@@ -56,7 +56,7 @@ ITexture* ImageGraphContext::findTexture(const RenderGraph& renderGraph, img_han
 	if (it->second.texture)
 		return it->second.texture;
 
-	if (it->second.targetSetId != 0)
+	if (it->second.targetSetId != RGTargetSet::Invalid)
 	{
 		auto targetSet = renderGraph.getTargetSet(it->second.targetSetId);
 		if (!targetSet)

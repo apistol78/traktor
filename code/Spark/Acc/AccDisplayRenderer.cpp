@@ -6,39 +6,41 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
-#include <cstring>
+#include "Spark/Acc/AccDisplayRenderer.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
+#include "Spark/Acc/AccGlyph.h"
+#include "Spark/Acc/AccGradientCache.h"
+#include "Spark/Acc/AccQuad.h"
+#include "Spark/Acc/AccShape.h"
+#include "Spark/Acc/AccShapeResources.h"
+#include "Spark/Acc/AccShapeVertexPool.h"
+#include "Spark/Acc/AccTextureCache.h"
 #include "Spark/Bitmap.h"
 #include "Spark/Canvas.h"
 #include "Spark/Dictionary.h"
 #include "Spark/EditInstance.h"
 #include "Spark/Font.h"
+#include "Spark/Frame.h"
 #include "Spark/Movie.h"
+#include "Spark/Shape.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
-#include "Spark/Frame.h"
-#include "Spark/Shape.h"
-#include "Spark/Acc/AccDisplayRenderer.h"
-#include "Spark/Acc/AccGradientCache.h"
-#include "Spark/Acc/AccGlyph.h"
-#include "Spark/Acc/AccTextureCache.h"
-#include "Spark/Acc/AccShape.h"
-#include "Spark/Acc/AccShapeResources.h"
-#include "Spark/Acc/AccShapeVertexPool.h"
-#include "Spark/Acc/AccQuad.h"
+
+#include <algorithm>
+#include <cstring>
 
 namespace traktor::spark
 {
-	namespace
-	{
+namespace
+{
 
 const uint32_t c_maxCacheSize = 32;
 const uint32_t c_maxUnusedCount = 10;
@@ -71,23 +73,23 @@ bool colorsEqual(const Color4f& a, const Color4f& b)
 	return Vector4(a - b).absolute().max() <= 2 / 255.0f;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.AccDisplayRenderer", AccDisplayRenderer, IDisplayRenderer)
 
 AccDisplayRenderer::AccDisplayRenderer()
-:	m_nextIndex(0)
-,	m_frameBounds(0.0f, 0.0f, 0.0f, 0.0f)
-,	m_frameTransform(0.0f, 0.0f, 1.0f, 1.0f)
-,	m_viewSize(0.0f, 0.0f, 0.0f, 0.0f)
-,	m_clearBackground(false)
-,	m_maskWrite(false)
-,	m_maskIncrement(false)
-,	m_maskReference(0)
-,	m_glyphFilter(0)
-,	m_glyphColor(0.0f, 0.0f, 0.0f, 0.0f)
-,	m_glyphFilterColor(0.0f, 0.0f, 0.0f, 0.0f)
-,	m_firstFrame(true)
+	: m_nextIndex(0)
+	, m_frameBounds(0.0f, 0.0f, 0.0f, 0.0f)
+	, m_frameTransform(0.0f, 0.0f, 1.0f, 1.0f)
+	, m_viewSize(0.0f, 0.0f, 0.0f, 0.0f)
+	, m_clearBackground(false)
+	, m_maskWrite(false)
+	, m_maskIncrement(false)
+	, m_maskReference(0)
+	, m_glyphFilter(0)
+	, m_glyphColor(0.0f, 0.0f, 0.0f, 0.0f)
+	, m_glyphFilterColor(0.0f, 0.0f, 0.0f, 0.0f)
+	, m_firstFrame(true)
 {
 }
 
@@ -104,8 +106,7 @@ bool AccDisplayRenderer::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	uint32_t frameCount,
-	bool clearBackground
-)
+	bool clearBackground)
 {
 	m_resourceManager = resourceManager;
 	m_renderSystem = renderSystem;
@@ -126,7 +127,7 @@ bool AccDisplayRenderer::create(
 	fillVertexElements[2] = render::VertexElement(render::DataUsage::Custom, render::DtFloat2, offsetof(AccShape::FillVertex, texCoord), 1);
 	fillVertexElements[3] = render::VertexElement(render::DataUsage::Custom, render::DtFloat4, offsetof(AccShape::FillVertex, texRect), 2);
 	fillVertexElements[4] = render::VertexElement(render::DataUsage::Color, render::DtByte4N, offsetof(AccShape::FillVertex, color), 0);
-	T_FATAL_ASSERT (render::getVertexSize(fillVertexElements) == sizeof(AccShape::FillVertex));
+	T_FATAL_ASSERT(render::getVertexSize(fillVertexElements) == sizeof(AccShape::FillVertex));
 
 	m_fillVertexPool = new AccShapeVertexPool(renderSystem);
 	if (!m_fillVertexPool->create(fillVertexElements))
@@ -139,7 +140,7 @@ bool AccDisplayRenderer::create(
 	lineVertexElements[0] = render::VertexElement(render::DataUsage::Position, render::DtFloat2, offsetof(AccShape::LineVertex, pos));
 	lineVertexElements[1] = render::VertexElement(render::DataUsage::Custom, render::DtInteger1, offsetof(AccShape::LineVertex, lineOffset), 0);
 	lineVertexElements[2] = render::VertexElement(render::DataUsage::Custom, render::DtInteger1, offsetof(AccShape::LineVertex, lineCount), 1);
-	T_FATAL_ASSERT (render::getVertexSize(lineVertexElements) == sizeof(AccShape::LineVertex));
+	T_FATAL_ASSERT(render::getVertexSize(lineVertexElements) == sizeof(AccShape::LineVertex));
 
 	m_lineVertexPool = new AccShapeVertexPool(renderSystem);
 	if (!m_lineVertexPool->create(lineVertexElements))
@@ -156,17 +157,12 @@ bool AccDisplayRenderer::create(
 	}
 
 	// Create glyph cache target.
-	const render::RenderTargetSetCreateDesc rtscd =
-	{
+	const render::RenderTargetSetCreateDesc rtscd = {
 		.count = 1,
 		.width = c_cacheGlyphDimX,
 		.height = c_cacheGlyphDimY,
-		.targets =
-		{
-			{
-				.format = render::TfR8
-			}
-		}
+		.targets = {
+			{ .format = render::TfR8 } }
 	};
 	m_glyphTargetSet = renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
 
@@ -213,23 +209,21 @@ void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 
 	if (m_clearBackground)
 	{
-		const render::Clear cl =
-		{
+		const render::Clear cl = {
 			.mask = render::CfColor | render::CfDepth | render::CfStencil,
 			.colors = { Color4f(1.0f, 1.0f, 1.0f, 0.0) },
 			.depth = 1.0f,
 			.stencil = 0
 		};
-		m_renderPassOutput->setOutput(0, cl, render::TfNone, render::TfColor | render::TfDepth);
+		m_renderPassOutput->setOutput(render::RGTargetSet::Output, cl, render::TfNone, render::TfColor | render::TfDepth);
 	}
 	else
 	{
-		const render::Clear cl =
-		{
+		const render::Clear cl = {
 			.mask = render::CfStencil,
 			.stencil = 0
 		};
-		m_renderPassOutput->setOutput(0, cl, render::TfColor | render::TfDepth, render::TfColor | render::TfDepth);
+		m_renderPassOutput->setOutput(render::RGTargetSet::Output, cl, render::TfColor | render::TfDepth, render::TfColor | render::TfDepth);
 	}
 
 	m_renderPassGlyph = new render::RenderPass(L"Spark glyphs");
@@ -237,8 +231,7 @@ void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 		m_renderPassGlyph->setOutput(m_glyphsTargetSetId, render::TfColor, render::TfColor);
 	else
 	{
-		const render::Clear cl =
-		{
+		const render::Clear cl = {
 			.mask = render::CfColor,
 			.colors = { Color4f(0.5f, 0.5f, 0.5f, 1.0) }
 		};
@@ -298,8 +291,7 @@ void AccDisplayRenderer::begin(
 	const Vector4& frameTransform,
 	float viewWidth,
 	float viewHeight,
-	const Aabb2& dirtyRegion
-)
+	const Aabb2& dirtyRegion)
 {
 	m_frameBounds.set(frameBounds.mn.x, frameBounds.mn.y, frameBounds.mx.x, frameBounds.mx.y);
 	m_frameTransform = frameTransform;
@@ -379,7 +371,7 @@ void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix3
 	Ref< AccShape > accShape;
 
 	// Check if shape is within frame bounds.
-	//if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
+	// if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
 	//	return;
 
 	// Get accelerated shape.
@@ -389,11 +381,10 @@ void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix3
 	{
 		accShape = new AccShape(m_renderSystem, m_shapeResources, m_fillVertexPool, m_lineVertexPool);
 		if (!accShape->createFromShape(
-			m_gradientCache,
-			m_textureCache,
-			dictionary,
-			shape
-		))
+				m_gradientCache,
+				m_textureCache,
+				dictionary,
+				shape))
 			return;
 
 		m_shapeCache[tag].unusedCount = 0;
@@ -418,8 +409,7 @@ void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix3
 		m_maskWrite,
 		m_maskIncrement,
 		m_maskReference,
-		blendMode
-	);
+		blendMode);
 }
 
 void AccDisplayRenderer::renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const MorphShape& shape, const ColorTransform& cxform)
@@ -437,8 +427,7 @@ void AccDisplayRenderer::renderGlyph(
 	const Color4f& color,
 	const ColorTransform& cxform,
 	uint8_t filter,
-	const Color4f& filterColor
-)
+	const Color4f& filterColor)
 {
 	// Only support embedded fonts.
 	if (!glyph)
@@ -468,11 +457,10 @@ void AccDisplayRenderer::renderGlyph(
 	{
 		Ref< AccShape > accShape = new AccShape(m_renderSystem, m_shapeResources, m_fillVertexPool, m_lineVertexPool);
 		if (!accShape->createFromGlyph(
-			m_gradientCache,
-			m_textureCache,
-			dictionary,
-			*glyph
-		))
+				m_gradientCache,
+				m_textureCache,
+				dictionary,
+				*glyph))
 			return;
 
 		m_glyphCache[tag].shape = accShape;
@@ -499,10 +487,8 @@ void AccDisplayRenderer::renderGlyph(
 			m_nextIndex = 0;
 
 		for (auto& cache : m_glyphCache)
-		{
 			if (cache.second.index == index)
 				cache.second.index = -1;
-		}
 
 		const int32_t column = index & (c_cacheGlyphCountX - 1);
 		const int32_t row = index / c_cacheGlyphCountX;
@@ -512,14 +498,8 @@ void AccDisplayRenderer::renderGlyph(
 			float(column) / c_cacheGlyphCountX,
 			float(row) / c_cacheGlyphCountY,
 			1.0f / c_cacheGlyphCountX,
-			1.0f / c_cacheGlyphCountY
-		);
-		const Vector4 viewOffsetWithMargin = viewOffset + Vector4(
-			cachePixelDx * c_cacheGlyphMargin,
-			cachePixelDy * c_cacheGlyphMargin,
-			-cachePixelDx * c_cacheGlyphMargin * 2.0f,
-			-cachePixelDy * c_cacheGlyphMargin * 2.0f
-		);
+			1.0f / c_cacheGlyphCountY);
+		const Vector4 viewOffsetWithMargin = viewOffset + Vector4(cachePixelDx * c_cacheGlyphMargin, cachePixelDy * c_cacheGlyphMargin, -cachePixelDx * c_cacheGlyphMargin * 2.0f, -cachePixelDy * c_cacheGlyphMargin * 2.0f);
 
 		// Clear previous glyph by drawing a solid quad at it's place.
 		m_quad->render(
@@ -533,8 +513,7 @@ void AccDisplayRenderer::renderGlyph(
 			Vector4::zero(),
 			false,
 			false,
-			0
-		);
+			0);
 
 		accShape->render(
 			m_renderPassGlyph,
@@ -546,8 +525,7 @@ void AccDisplayRenderer::renderGlyph(
 			false,
 			false,
 			false,
-			SbmDefault
-		);
+			SbmDefault);
 
 		it1->second.index = index;
 	}
@@ -562,9 +540,7 @@ void AccDisplayRenderer::renderGlyph(
 			float(column) / c_cacheGlyphCountX,
 			float(row) / c_cacheGlyphCountY,
 			1.0f / c_cacheGlyphCountX,
-			1.0f / c_cacheGlyphCountY
-		)
-	);
+			1.0f / c_cacheGlyphCountY));
 }
 
 void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform)
@@ -583,8 +559,7 @@ void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& boun
 		Vector4::zero(),
 		m_maskWrite,
 		m_maskIncrement,
-		m_maskReference
-	);
+		m_maskReference);
 }
 
 void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& canvas, const ColorTransform& cxform, uint8_t blendMode)
@@ -603,10 +578,9 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& c
 
 		accShape = new AccShape(m_renderSystem, m_shapeResources, m_fillVertexPool, m_lineVertexPool);
 		if (!accShape->createFromCanvas(
-			m_gradientCache,
-			m_textureCache,
-			canvas
-		))
+				m_gradientCache,
+				m_textureCache,
+				canvas))
 			return;
 
 		m_shapeCache[tag].unusedCount = 0;
@@ -634,8 +608,7 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& c
 		m_maskWrite,
 		m_maskIncrement,
 		m_maskReference,
-		blendMode
-	);
+		blendMode);
 }
 
 void AccDisplayRenderer::end()
@@ -648,7 +621,7 @@ void AccDisplayRenderer::end()
 	if (m_shapeCache.size() >= c_maxCacheSize)
 	{
 		// Nuke cached shapes which hasn't been used for X number of frames.
-		for (auto i = m_shapeCache.begin(); i != m_shapeCache.end(); )
+		for (auto i = m_shapeCache.begin(); i != m_shapeCache.end();)
 		{
 			if (i->second.unusedCount++ >= c_maxUnusedCount)
 			{
@@ -680,8 +653,7 @@ void AccDisplayRenderer::renderEnqueuedGlyphs()
 		m_maskReference,
 		m_glyphFilter,
 		m_glyphColor,
-		m_glyphFilterColor
-	);
+		m_glyphFilterColor);
 }
 
 }

@@ -6,10 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
+#include "Scene/Editor/RenderControls/CameraRenderControl.h"
+
 #include "Core/Log/Log.h"
-#include "Core/Math/Vector2.h"
 #include "Core/Math/Format.h"
+#include "Core/Math/Vector2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepHash.h"
@@ -21,59 +22,60 @@
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
-#include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/IModifier.h"
-#include "Scene/Editor/IWorldComponentEditor.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IEntityEditor.h"
+#include "Scene/Editor/IModifier.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
-#include "Scene/Editor/RenderControls/CameraRenderControl.h"
+#include "Scene/Scene.h"
+#include "Ui/AspectLayout.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/Widget.h"
-#include "Ui/AspectLayout.h"
 #include "Ui/Itf/IWidget.h"
+#include "Ui/Widget.h"
 #include "World/Entity.h"
+#include "World/Entity/CameraComponent.h"
+#include "World/Entity/GroupComponent.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/CameraComponent.h"
-#include "World/Entity/GroupComponent.h"
+
+#include <limits>
 
 namespace traktor::scene
 {
-	namespace
-	{
+namespace
+{
 
 const int32_t c_defaultMultiSample = 0;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CameraRenderControl", CameraRenderControl, ISceneRenderControl)
 
 CameraRenderControl::CameraRenderControl()
-:	m_imageProcessQuality(world::Quality::Disabled)
-,	m_shadowQuality(world::Quality::Disabled)
-,	m_reflectionsQuality(world::Quality::Disabled)
-,	m_motionBlurQuality(world::Quality::Disabled)
-,	m_ambientOcclusionQuality(world::Quality::Disabled)
-,	m_antiAliasQuality(world::Quality::Disabled)
-,	m_gridEnable(true)
-,	m_guideEnable(true)
-,	m_multiSample(c_defaultMultiSample)
-,	m_invertPanY(false)
-,	m_dirtySize(0, 0)
+	: m_imageProcessQuality(world::Quality::Disabled)
+	, m_shadowQuality(world::Quality::Disabled)
+	, m_reflectionsQuality(world::Quality::Disabled)
+	, m_motionBlurQuality(world::Quality::Disabled)
+	, m_ambientOcclusionQuality(world::Quality::Disabled)
+	, m_antiAliasQuality(world::Quality::Disabled)
+	, m_gridEnable(true)
+	, m_guideEnable(true)
+	, m_multiSample(c_defaultMultiSample)
+	, m_invertPanY(false)
+	, m_dirtySize(0, 0)
 {
 }
 
@@ -119,15 +121,14 @@ bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
-		m_context->getResourceManager(),
-		m_context->getRenderSystem(),
-		1
-	))
+			m_context->getResourceManager(),
+			m_context->getRenderSystem(),
+			1))
 	{
 		destroy();
 		return false;
 	}
-	
+
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &CameraRenderControl::eventPaint);
 
 	updateSettings();
@@ -276,10 +277,9 @@ void CameraRenderControl::updateWorldRenderer()
 	wcd.multiSample = m_multiSample;
 
 	if (!worldRenderer->create(
-		m_context->getResourceManager(),
-		m_context->getRenderSystem(),
-		wcd
-	))
+			m_context->getResourceManager(),
+			m_context->getRenderSystem(),
+			wcd))
 		return;
 
 	m_worldRenderer = worldRenderer;
@@ -317,11 +317,9 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Render view events; reset view if it has become lost.
 	bool lost = false;
-	for (render::RenderEvent re = {}; m_renderView->nextEvent(re); )
-	{
+	for (render::RenderEvent re = {}; m_renderView->nextEvent(re);)
 		if (re.type == render::RenderEventType::Lost)
 			lost = true;
-	}
 
 	// Check if size has changed since last render; need to reset renderer if so.
 	const ui::Size sz = m_renderWidget->getInnerRect().getSize();
@@ -343,45 +341,40 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 			return;
 	}
 
-	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
+	float colorClear[4];
+	m_colorClear.getRGBA32F(colorClear);
 	const double deltaTime = m_timer.getDeltaTime();
 	const double scaledTime = m_context->getTime();
 	const Matrix44 projection = m_worldRenderView.getProjection();
 	const Matrix44 view = cameraEntity->getTransform().inverse().toMatrix44();
 
 	// Build a root entity by gathering entities from containers.
-	//Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
-	//Ref< world::Entity > rootEntity = new world::Entity();
-	//rootEntity->setComponent(rootGroup);
+	// Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
+	// Ref< world::Entity > rootEntity = new world::Entity();
+	// rootEntity->setComponent(rootGroup);
 
-	//m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
-	//rootGroup->addEntity(sceneInstance->getRootEntity());
+	// m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
+	// rootGroup->addEntity(sceneInstance->getRootEntity());
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
 	if (cameraComponent->getProjection() == world::Projection::Orthographic)
-	{
 		m_worldRenderView.setOrthogonal(
 			cameraComponent->getWidth(),
 			cameraComponent->getHeight(),
 			worldRenderSettings->viewNearZ,
-			worldRenderSettings->viewFarZ
-		);
-	}
+			worldRenderSettings->viewFarZ);
 	else // Projection::Perspective
-	{
 		m_worldRenderView.setPerspective(
 			float(sz.cx),
 			float(sz.cy),
 			float(sz.cx) / sz.cy,
 			cameraComponent->getFieldOfView(),
 			worldRenderSettings->viewNearZ,
-			worldRenderSettings->viewFarZ
-		);
-	}
+			worldRenderSettings->viewFarZ);
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-	m_worldRenderer->setup(sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0, nullptr);
+	m_worldRenderer->setup(sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, render::RGTargetSet::Output, nullptr);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate())
@@ -401,7 +394,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Need to clear all entities from our root group since when our root entity
 	// goes out of scope it's automatically destroyed.
-	//rootGroup->removeAllEntities();
+	// rootGroup->removeAllEntities();
 
 	event->consume();
 }

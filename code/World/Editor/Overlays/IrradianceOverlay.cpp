@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,12 +33,12 @@ render::handle_t findTextureByName(const render::RenderGraph& renderGraph, const
 	return 0;
 }
 
-render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
+render::RGTargetSet findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
 {
 	for (const auto& tm : renderGraph.getTargets())
 		if (wcscmp(tm.second.name, name) == 0)
 			return tm.first;
-	return 0;
+	return render::RGTargetSet::Invalid;
 }
 
 }
@@ -58,7 +58,7 @@ bool IrradianceOverlay::create(resource::IResourceManager* resourceManager)
 
 void IrradianceOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
-	render::handle_t irradianceId = findTextureByName(renderGraph, L"Irradiance");
+	const render::handle_t irradianceId = findTextureByName(renderGraph, L"Irradiance");
 	if (!irradianceId)
 	{
 		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
@@ -66,7 +66,7 @@ void IrradianceOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRe
 	}
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance overlay");
-	rp->setOutput(0, render::TfColor, render::TfColor);
+	rp->setOutput(render::RGTargetSet::Output, render::TfColor, render::TfColor);
 	rp->addInput(irradianceId);
 	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto irradianceTexture = renderGraph.getTexture(irradianceId);

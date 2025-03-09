@@ -6,16 +6,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Runtime/Engine/DebugLayer.h"
+
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/PrimitiveRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
+#include "Render/PrimitiveRenderer.h"
+#include "Runtime/Engine/Stage.h"
+#include "Runtime/Engine/WorldLayer.h"
 #include "Runtime/IEnvironment.h"
 #include "Runtime/IRenderServer.h"
 #include "Runtime/IResourceServer.h"
-#include "Runtime/Engine/DebugLayer.h"
-#include "Runtime/Engine/Stage.h"
-#include "Runtime/Engine/WorldLayer.h"
 
 namespace traktor::runtime
 {
@@ -24,16 +25,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.DebugLayer", DebugLayer, Layer)
 
 DebugLayer::DebugLayer(
 	Stage* stage,
-	IEnvironment* environment
-)
-:	Layer(stage, L"debug", false)
+	IEnvironment* environment)
+	: Layer(stage, L"debug", false)
 {
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	m_primitiveRenderer->create(
 		environment->getResource()->getResourceManager(),
 		environment->getRender()->getRenderSystem(),
-		16
-	);
+		16);
 }
 
 void DebugLayer::destroy()
@@ -80,38 +79,29 @@ void DebugLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 	m_primitiveRenderer->pushDepthState(false, false, false);
 
 	for (const auto& point : m_points)
-	{
 		m_primitiveRenderer->drawSolidPoint(
-			point.position.xyz1(), 
+			point.position.xyz1(),
 			point.size,
-			point.color.toColor4ub()
-		);
-	}
+			point.color.toColor4ub());
 
 	for (const auto& line : m_lines)
-	{
 		m_primitiveRenderer->drawLine(
-			line.from.xyz1(), 
-			line.to.xyz1(), 
+			line.from.xyz1(),
+			line.to.xyz1(),
 			line.width,
-			line.color.toColor4ub()
-		);
-	}
+			line.color.toColor4ub());
 
 	for (const auto& frame : m_frames)
-	{
 		m_primitiveRenderer->drawWireFrame(
 			frame.frame,
-			frame.length
-		);
-	}
+			frame.length);
 
 	m_primitiveRenderer->popDepthState();
 	m_primitiveRenderer->popView();
 	m_primitiveRenderer->end(m_count);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug");
-	rp->setOutput(0, render::TfAll, render::TfAll);
+	rp->setOutput(render::RGTargetSet::Output, render::TfAll, render::TfAll);
 	rp->addBuild([=, count = m_count](const render::RenderGraph&, render::RenderContext* renderContext) {
 		auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Debug wire");
 		rb->lambda = [=](render::IRenderView* renderView) {

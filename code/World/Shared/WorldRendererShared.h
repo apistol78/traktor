@@ -127,8 +127,8 @@ protected:
 	void setupLightPass(
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
-		render::handle_t& outShadowMapAtlasTargetSetId);
+		render::RGTargetSet outputTargetSetId,
+		render::RGTargetSet& outShadowMapAtlasTargetSetId);
 };
 
 }

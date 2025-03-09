@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
+#include "Scene/Editor/RenderControls/OrthogonalRenderControl.h"
+
 #include "Core/Math/Log2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepHash.h"
@@ -17,36 +18,37 @@
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
-#include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/CameraMesh.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/IModifier.h"
-#include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
-#include "Scene/Editor/RenderControls/OrthogonalRenderControl.h"
+#include "Scene/Scene.h"
 #include "Ui/Command.h"
-#include "Ui/Widget.h"
 #include "Ui/Itf/IWidget.h"
+#include "Ui/Widget.h"
 #include "World/Entity.h"
+#include "World/Entity/GroupComponent.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/GroupComponent.h"
+
+#include <limits>
 
 namespace traktor::scene
 {
-	namespace
-	{
+namespace
+{
 
 const int32_t c_defaultMultiSample = 0;
 const float c_cameraTranslateDeltaScale = 0.025f;
@@ -72,29 +74,28 @@ Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 		2.0f * float(pnt.x - rc.left) / rc.getWidth() - 1.0f,
 		1.0f - 2.0f * float(pnt.y - rc.top) / rc.getHeight(),
 		0.0f,
-		1.0f
-	);
+		1.0f);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRenderControl, ISceneRenderControl)
 
 OrthogonalRenderControl::OrthogonalRenderControl()
-:	m_worldRendererType(nullptr)
-,	m_shadowQuality(world::Quality::Disabled)
-,	m_reflectionsQuality(world::Quality::Disabled)
-,	m_motionBlurQuality(world::Quality::Disabled)
-,	m_ambientOcclusionQuality(world::Quality::Disabled)
-,	m_antiAliasQuality(world::Quality::Disabled)
-,	m_gridEnable(true)
-,	m_guideEnable(true)
-,	m_multiSample(0)
-,	m_viewPlane(PositiveX)
-,	m_viewFarZ(0.0f)
-,	m_magnification(10.0f)
-,	m_dirtySize(0, 0)
-,	m_worldIndex(0)
+	: m_worldRendererType(nullptr)
+	, m_shadowQuality(world::Quality::Disabled)
+	, m_reflectionsQuality(world::Quality::Disabled)
+	, m_motionBlurQuality(world::Quality::Disabled)
+	, m_ambientOcclusionQuality(world::Quality::Disabled)
+	, m_antiAliasQuality(world::Quality::Disabled)
+	, m_gridEnable(true)
+	, m_guideEnable(true)
+	, m_multiSample(0)
+	, m_viewPlane(PositiveX)
+	, m_viewFarZ(0.0f)
+	, m_magnification(10.0f)
+	, m_dirtySize(0, 0)
+	, m_worldIndex(0)
 {
 }
 
@@ -135,15 +136,14 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
-		m_context->getResourceManager(),
-		m_context->getRenderSystem(),
-		1
-	))
+			m_context->getResourceManager(),
+			m_context->getRenderSystem(),
+			1))
 	{
 		destroy();
 		return false;
 	}
-	
+
 	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &OrthogonalRenderControl::eventButtonDown);
 	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &OrthogonalRenderControl::eventButtonUp);
 	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &OrthogonalRenderControl::eventDoubleClick);
@@ -271,7 +271,7 @@ bool OrthogonalRenderControl::calculateRay(const ui::Point& position, Vector4& o
 	const Matrix44 view = getViewTransform();
 	const Matrix44 viewInverse = view.inverse();
 
-	const Scalar fx( float(position.x * 2.0f) / innerRect.getWidth() - 1.0f);
+	const Scalar fx(float(position.x * 2.0f) / innerRect.getWidth() - 1.0f);
 	const Scalar fy(-float(position.y * 2.0f) / innerRect.getHeight() + 1.0f);
 
 	const Vector4 clipPosition(fx, fy, 0.0f, 1.0f);
@@ -293,8 +293,7 @@ bool OrthogonalRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& outW
 	const Scalar nz = -1e6_simd;
 	const Scalar fz = 1e6_simd;
 
-	const Vector4 corners[8] =
-	{
+	const Vector4 corners[8] = {
 		origin[0] + direction[0] * nz,
 		origin[1] + direction[1] * nz,
 		origin[2] + direction[2] * nz,
@@ -305,8 +304,7 @@ bool OrthogonalRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& outW
 		origin[3] + direction[3] * fz,
 	};
 
-	const Plane planes[6] =
-	{
+	const Plane planes[6] = {
 		Plane(corners[1], corners[6], corners[5]),
 		Plane(corners[3], corners[4], corners[7]),
 		Plane(corners[2], corners[7], corners[6]),
@@ -357,7 +355,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT(settings);
 
-	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast<world::IWorldRenderer*>(m_worldRendererType->createInstance());
+	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldRendererType->createInstance());
 	if (!worldRenderer)
 		return;
 
@@ -377,10 +375,9 @@ void OrthogonalRenderControl::updateWorldRenderer()
 		wcd.quality.antiAlias = world::Quality::High;
 
 	if (!worldRenderer->create(
-		m_context->getResourceManager(),
-		m_context->getRenderSystem(),
-		wcd
-	))
+			m_context->getResourceManager(),
+			m_context->getRenderSystem(),
+			wcd))
 		return;
 
 	m_viewFarZ = worldRenderSettings->viewFarZ;
@@ -412,8 +409,7 @@ Matrix44 OrthogonalRenderControl::getProjectionTransform() const
 			m_magnification,
 			m_magnification / ratio,
 			worldRenderSettings->viewNearZ,
-			worldRenderSettings->viewFarZ
-		);
+			worldRenderSettings->viewFarZ);
 		return worldRenderView.getProjection();
 	}
 	else
@@ -491,11 +487,9 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Render view events; reset view if it has become lost.
 	bool lost = false;
-	for (render::RenderEvent re = {}; m_renderView->nextEvent(re); )
-	{
+	for (render::RenderEvent re = {}; m_renderView->nextEvent(re);)
 		if (re.type == render::RenderEventType::Lost)
 			lost = true;
-	}
 
 	// Check if size has changed since last render; need to reset renderer if so.
 	const ui::Size sz = m_renderWidget->getInnerRect().getSize();
@@ -506,7 +500,8 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		m_dirtySize = sz;
 	}
 
-	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
+	float colorClear[4];
+	m_colorClear.getRGBA32F(colorClear);
 	const double deltaTime = m_timer.getDeltaTime();
 	const double scaledTime = m_context->getTime();
 	const float ratio = float(m_dirtySize.cx) / m_dirtySize.cy;
@@ -522,17 +517,15 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		width,
 		height,
 		worldRenderSettings->viewNearZ,
-		worldRenderSettings->viewFarZ
-	);
+		worldRenderSettings->viewFarZ);
 	worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	worldRenderView.setView(view, view);
-	m_worldRenderer->setup(sceneInstance->getWorld(), worldRenderView, *m_renderGraph, 0, nullptr);
+	m_worldRenderer->setup(sceneInstance->getWorld(), worldRenderView, *m_renderGraph, render::RGTargetSet::Output, nullptr);
 
 	// Draw debug wires.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug");
-	rp->setOutput(0, render::TfAll, render::TfAll);
+	rp->setOutput(render::RGTargetSet::Output, render::TfAll, render::TfAll);
 	rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
-
 		// Draw wire guides.
 		m_primitiveRenderer->begin(0, worldRenderView.getProjection());
 		m_primitiveRenderer->setClipDistance(worldRenderView.getViewFrustum().getNearZ());
@@ -556,12 +549,10 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 
 			float step = float(
 				nearestLog2(int32_t(
-					std::max(
-						(rx - lx) / 10.0f,
-						(by - ty) / 10.0f
-					)
-				) - 1)
-			);
+								std::max(
+									(rx - lx) / 10.0f,
+									(by - ty) / 10.0f)) -
+					1));
 
 			if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
 			{
@@ -583,8 +574,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 					Vector4(fx, vtl.y, 0.0f, 1.0f),
 					Vector4(fx, vbr.y, 0.0f, 1.0f),
 					(abs(x) < 0.01f) ? 2.0f : 0.0f,
-					m_colorGrid
-				);
+					m_colorGrid);
 			}
 
 			for (float y = ty; y <= by; y += step)
@@ -594,8 +584,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 					Vector4(vtl.x, fy, 1.0f),
 					Vector4(vbr.x, fy, 1.0f),
 					(abs(y) < 0.01f) ? 2.0f : 0.0f,
-					m_colorGrid
-				);
+					m_colorGrid);
 			}
 
 			m_primitiveRenderer->popDepthState();
@@ -618,8 +607,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 				Vector4::origo(),
 				Vector4(0.1f, 0.1f, 0.1f, 0.0f),
 				1.0f,
-				m_colorCamera
-			);
+				m_colorCamera);
 
 			for (int32_t j = 0; j < sizeof_array(c_cameraMeshIndices); j += 2)
 			{
@@ -632,8 +620,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->drawLine(
 					Vector4(v1[0], v1[1], v1[2], 1.0f),
 					Vector4(v2[0], v2[1], v2[2], 1.0f),
-					m_colorCamera
-				);
+					m_colorCamera);
 			}
 
 			m_primitiveRenderer->popDepthState();
@@ -673,15 +660,13 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 				projectUnit(innerRect, m_selectionRectangle.getTopRight()),
 				projectUnit(innerRect, m_selectionRectangle.getBottomRight()),
 				projectUnit(innerRect, m_selectionRectangle.getBottomLeft()),
-				Color4ub(0, 64, 128, 128)
-			);
+				Color4ub(0, 64, 128, 128));
 			m_primitiveRenderer->drawWireQuad(
 				projectUnit(innerRect, m_selectionRectangle.getTopLeft()),
 				projectUnit(innerRect, m_selectionRectangle.getTopRight()),
 				projectUnit(innerRect, m_selectionRectangle.getBottomRight()),
 				projectUnit(innerRect, m_selectionRectangle.getBottomLeft()),
-				Color4ub(120, 190, 250, 255)
-			);
+				Color4ub(120, 190, 250, 255));
 
 			m_primitiveRenderer->popDepthState();
 			m_primitiveRenderer->popView();

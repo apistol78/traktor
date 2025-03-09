@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2024 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -58,12 +58,12 @@ bool VelocityPass::create(resource::IResourceManager* resourceManager, render::I
 	return true;
 }
 
-render::handle_t VelocityPass::setup(
+render::RGTargetSet VelocityPass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
 	render::RenderGraph& renderGraph,
-	render::handle_t gbufferTargetSetId,
-	render::handle_t outputTargetSetId) const
+	render::RGTargetSet gbufferTargetSetId,
+	render::RGTargetSet outputTargetSetId) const
 {
 	T_PROFILER_SCOPE(L"VelocityPass::setup");
 
@@ -76,7 +76,7 @@ render::handle_t VelocityPass::setup(
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR16G16F;
-	const render::handle_t velocityTargetSetId = renderGraph.addTransientTargetSet(L"Velocity", rgtd, outputTargetSetId, outputTargetSetId);
+	const render::RGTargetSet velocityTargetSetId = renderGraph.addTransientTargetSet(L"Velocity", rgtd, outputTargetSetId, outputTargetSetId);
 
 	// Add Velocity render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity");

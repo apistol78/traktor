@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,12 +8,14 @@
  */
 #pragma once
 
-#include <functional>
+#include "Core/Math/Const.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Math/Const.h"
+#include "Render/Frame/RenderGraphTypes.h"
 #include "Render/Types.h"
 #include "World/WorldTypes.h"
+
+#include <functional>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -94,8 +96,7 @@ public:
 	virtual bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		const WorldCreateDesc& desc
-	) = 0;
+		const WorldCreateDesc& desc) = 0;
 
 	/*! Destroy world renderer. */
 	virtual void destroy() = 0;
@@ -115,9 +116,8 @@ public:
 		const World* world,
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
-		const std::function< bool(const EntityState& state) >& filter
-	) = 0;
+		render::RGTargetSet outputTargetSetId,
+		const std::function< bool(const EntityState& state) >& filter) = 0;
 
 	//@}
 };

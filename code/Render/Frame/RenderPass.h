@@ -8,12 +8,14 @@
  */
 #pragma once
 
-#include <functional>
-#include "Core/Object.h"
-#include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/StaticVector.h"
+#include "Core/Object.h"
+#include "Core/RefArray.h"
+#include "Render/Frame/RenderGraphTypes.h"
 #include "Render/Types.h"
+
+#include <functional>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -41,24 +43,24 @@ public:
 
 	struct Input
 	{
-		handle_t resourceId = 0;	//!< Resource name.
+		handle_t resourceId = 0; //!< Resource name.
 	};
 
 	struct Output
 	{
-		handle_t resourceId = ~0;	//!< Resource name.
-		Clear clear;				//!< Target clear value and mask (only applicable to render target resources).
+		handle_t resourceId = ~0; //!< Resource name.
+		Clear clear;			  //!< Target clear value and mask (only applicable to render target resources).
 		uint32_t load = 0;
 		uint32_t store = 0;
 
 		// !note! We're not comparing clear value for now since it depends on the load and store.
-		bool operator == (const Output& rh) const
+		bool operator==(const Output& rh) const
 		{
 			return resourceId == rh.resourceId && load == rh.load && store == rh.store;
 		}
 
 		// !note! We're not comparing clear value for now since it depends on the load and store.
-		bool operator != (const Output& rh) const
+		bool operator!=(const Output& rh) const
 		{
 			return !(*this == rh);
 		}
@@ -73,17 +75,23 @@ public:
 	//! \{
 
 	/*! Add input to render pass.
-	 * 
+	 *
 	 * \param resourceId ID of input resource.
 	 */
 	void addInput(handle_t resourceId);
 
+	/*! Add target set input to render pass.
+	 *
+	 * \param targetSet Handle to target set.
+	 */
+	void addInput(RGTargetSet targetSet);
+
 	/*! Add weak input to render pass.
-	 * 
+	 *
 	 * A weak input doesn't resolve into a dependency between
 	 * passes but only register the pass as it will use the
 	 * resource during build.
-	 * 
+	 *
 	 * \param resourceId ID of input resource.
 	 */
 	void addWeakInput(handle_t resourceId);
@@ -95,7 +103,7 @@ public:
 	//! \{
 
 	/*! Set output resource of render pass.
-	 * 
+	 *
 	 * Resource ID 0 means the primary framebuffer and
 	 * an ID of ~0 means the render pass doesn't have an
 	 * output resource associated.
@@ -104,9 +112,9 @@ public:
 	 */
 	void setOutput(handle_t resourceId);
 
-	void setOutput(handle_t resourceId, uint32_t load, uint32_t store);
+	void setOutput(RGTargetSet resourceId, uint32_t load, uint32_t store);
 
-	void setOutput(handle_t resourceId, const Clear& clear, uint32_t load, uint32_t store);
+	void setOutput(RGTargetSet resourceId, const Clear& clear, uint32_t load, uint32_t store);
 
 	bool haveOutput() const { return m_output.resourceId != ~0; }
 
@@ -122,15 +130,15 @@ public:
 
 	//! \}
 
-	void* operator new (size_t size);
+	void* operator new(size_t size);
 
-	void operator delete (void* ptr);
+	void operator delete(void* ptr);
 
 protected:
 	std::wstring m_name;
 	StaticVector< Input, 16 > m_inputs;
 	Output m_output;
-    AlignedVector< fn_build_t > m_builds;
+	AlignedVector< fn_build_t > m_builds;
 };
 
 }

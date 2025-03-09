@@ -80,23 +80,23 @@ bool ReflectionsPass::create(resource::IResourceManager* resourceManager, render
 	return true;
 }
 
-render::handle_t ReflectionsPass::setup(
+render::RGTargetSet ReflectionsPass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
 	const render::Buffer* lightSBuffer,
 	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
-	render::handle_t gbufferTargetSetId,
-	render::handle_t dbufferTargetSetId,
-	render::handle_t visualReadTargetSetId,
-	render::handle_t velocityTargetSetId,
-	render::handle_t outputTargetSetId) const
+	render::RGTargetSet gbufferTargetSetId,
+	render::RGTargetSet dbufferTargetSetId,
+	render::RGTargetSet visualReadTargetSetId,
+	render::RGTargetSet velocityTargetSetId,
+	render::RGTargetSet outputTargetSetId) const
 {
 	T_PROFILER_SCOPE(L"ReflectionsPass::setup");
 
 	if (m_reflectionsQuality == Quality::Disabled)
-		return 0;
+		return render::RGTargetSet::Invalid;
 
 	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr && m_reflectionsQuality == Quality::Ultra);
 
@@ -135,7 +135,7 @@ render::handle_t ReflectionsPass::setup(
 		break;
 	}
 
-	auto reflectionsTargetSetId = renderGraph.addTransientTargetSet(L"Reflections", rgtd, ~0U, outputTargetSetId);
+	auto reflectionsTargetSetId = renderGraph.addTransientTargetSet(L"Reflections", rgtd, render::RGTargetSet::Invalid, outputTargetSetId);
 
 	const Matrix44& projection = worldRenderView.getProjection();
 	const Scalar p11 = projection.get(0, 0);

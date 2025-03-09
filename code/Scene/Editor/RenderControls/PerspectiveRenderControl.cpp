@@ -6,10 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
+#include "Scene/Editor/RenderControls/PerspectiveRenderControl.h"
+
 #include "Core/Log/Log.h"
-#include "Core/Math/Vector2.h"
 #include "Core/Math/Format.h"
+#include "Core/Math/Vector2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepHash.h"
@@ -21,46 +22,47 @@
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
-#include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/IModifier.h"
-#include "Scene/Editor/IWorldComponentEditor.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IEntityEditor.h"
+#include "Scene/Editor/IModifier.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
-#include "Scene/Editor/RenderControls/PerspectiveRenderControl.h"
+#include "Scene/Scene.h"
 #include "Ui/Application.h"
+#include "Ui/AspectLayout.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/Widget.h"
-#include "Ui/AspectLayout.h"
 #include "Ui/Itf/IWidget.h"
+#include "Ui/Widget.h"
+#include "World/Editor/IDebugOverlay.h"
 #include "World/Entity.h"
+#include "World/Entity/GroupComponent.h"
+#include "World/Entity/ProbeComponent.h"
 #include "World/IWorldRenderer.h"
 #include "World/World.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
-#include "World/Editor/IDebugOverlay.h"
-#include "World/Entity/GroupComponent.h"
-#include "World/Entity/ProbeComponent.h"
+
+#include <limits>
 
 namespace traktor::scene
 {
-	namespace
-	{
+namespace
+{
 
 const float c_defaultFieldOfView = 80.0f;
 const float c_defaultMouseWheelRate = 10.0f;
@@ -79,18 +81,17 @@ Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 		2.0f * float(pnt.x - rc.left) / rc.getWidth() - 1.0f,
 		1.0f - 2.0f * float(pnt.y - rc.top) / rc.getHeight(),
 		0.0f,
-		1.0f
-	);
+		1.0f);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ISceneRenderControl)
 
 PerspectiveRenderControl::PerspectiveRenderControl()
-:	m_fieldOfView(c_defaultFieldOfView)
-,	m_mouseWheelRate(c_defaultMouseWheelRate)
-,	m_multiSample(c_defaultMultiSample)
+	: m_fieldOfView(c_defaultFieldOfView)
+	, m_mouseWheelRate(c_defaultMouseWheelRate)
+	, m_multiSample(c_defaultMultiSample)
 {
 }
 
@@ -139,16 +140,14 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 		m_context->getRenderSystem(),
 		m_multiSample,
 		[=, this](int32_t pass, int32_t level, const std::wstring& name, double start, double duration) {
-			m_context->raiseMeasurement(pass, level, name, start, duration);
-		}
-	);
+		m_context->raiseMeasurement(pass, level, name, start, duration);
+		});
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
-		m_context->getResourceManager(),
-		m_context->getRenderSystem(),
-		1
-	))
+			m_context->getResourceManager(),
+			m_context->getRenderSystem(),
+			1))
 	{
 		destroy();
 		return false;
@@ -160,7 +159,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 		destroy();
 		return false;
 	}
-	
+
 	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &PerspectiveRenderControl::eventButtonDown);
 	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &PerspectiveRenderControl::eventButtonUp);
 	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &PerspectiveRenderControl::eventDoubleClick);
@@ -325,8 +324,7 @@ bool PerspectiveRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& out
 	const Scalar nz = viewFrustum.getNearZ();
 	const Scalar fz = viewFrustum.getFarZ();
 
-	const Vector4 corners[8] =
-	{
+	const Vector4 corners[8] = {
 		origin[0] + direction[0] * nz,
 		origin[0] + direction[1] * nz,
 		origin[0] + direction[2] * nz,
@@ -337,8 +335,7 @@ bool PerspectiveRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& out
 		origin[0] + direction[3] * fz,
 	};
 
-	const Plane planes[6] =
-	{
+	const Plane planes[6] = {
 		Plane(corners[1], corners[6], corners[5]),
 		Plane(corners[3], corners[4], corners[7]),
 		Plane(corners[2], corners[7], corners[6]),
@@ -427,10 +424,9 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	wcd.multiSample = m_multiSample;
 
 	if (!worldRenderer->create(
-		m_context->getResourceManager(),
-		m_context->getRenderSystem(),
-		wcd
-	))
+			m_context->getResourceManager(),
+			m_context->getRenderSystem(),
+			wcd))
 		return;
 
 	m_worldRenderer = worldRenderer;
@@ -545,11 +541,9 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Render view events; reset view if it has become lost.
 	bool lost = false;
-	for (render::RenderEvent re = {}; m_renderView->nextEvent(re); )
-	{
+	for (render::RenderEvent re = {}; m_renderView->nextEvent(re);)
 		if (re.type == render::RenderEventType::Lost)
 			lost = true;
-	}
 
 	// Check if size has changed since last render; need to reset renderer if so.
 	const ui::Size sz = m_renderWidget->getInnerRect().getSize();
@@ -568,7 +562,8 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			return;
 	}
 
-	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
+	float colorClear[4];
+	m_colorClear.getRGBA32F(colorClear);
 	const double deltaTime = m_timer.getDeltaTime();
 	const double scaledTime = m_context->getTime();
 	const Matrix44 projection = getProjectionTransform();
@@ -582,15 +577,13 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		float(sz.cx) / sz.cy,
 		deg2rad(m_fieldOfView),
 		worldRenderSettings->viewNearZ,
-		worldRenderSettings->viewFarZ
-	);
+		worldRenderSettings->viewFarZ);
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-	m_worldRenderer->setup(sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0, nullptr);
+	m_worldRenderer->setup(sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, render::RGTargetSet::Output, nullptr);
 
 	// Draw debug overlay, content of any target from render graph as an overlay.
 	if (m_overlay)
-	{
 		m_overlay->setup(
 			*m_renderGraph,
 			m_screenRenderer,
@@ -598,16 +591,13 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			m_worldRenderer,
 			m_worldRenderView,
 			m_overlayAlpha,
-			m_overlayMip
-		);
-	}
+			m_overlayMip);
 
 	// Draw debug wires.
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
-		rp->setOutput(0, render::TfAll, render::TfAll);
+		rp->setOutput(render::RGTargetSet::Output, render::TfAll, render::TfAll);
 		rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
-
 			// Render wire guides.
 			m_primitiveRenderer->begin(0, projection);
 			m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());
@@ -627,14 +617,12 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 						Vector4(fx + vx, 0.0f, -20.0f + vz, 1.0f),
 						Vector4(fx + vx, 0.0f, 20.0f + vz, 1.0f),
 						(int(fx + vx) == 0) ? 2.0f : 0.0f,
-						m_colorGrid
-					);
+						m_colorGrid);
 					m_primitiveRenderer->drawLine(
 						Vector4(-20.0f + vx, 0.0f, fx + vz, 1.0f),
 						Vector4(20.0f + vx, 0.0f, fx + vz, 1.0f),
 						(int(fx + vz) == 0) ? 2.0f : 0.0f,
-						m_colorGrid
-					);
+						m_colorGrid);
 				}
 
 				// Draw frame.
@@ -649,8 +637,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->pushWorld(Matrix44::identity());
 				m_primitiveRenderer->pushView(
 					translate(w / 2.0f - (c_frameSize + c_margin), h / 2.0f - (c_frameSize + c_margin), 0.0f) *
-					scale(c_frameSize, c_frameSize, c_frameSize)
-				);
+					scale(c_frameSize, c_frameSize, c_frameSize));
 
 				m_primitiveRenderer->pushDepthState(false, true, false);
 				m_primitiveRenderer->drawSolidQuad(
@@ -658,8 +645,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 					Vector4(1.0f, 1.0f, 1.0f, 1.0f),
 					Vector4(1.0f, -1.0f, 1.0f, 1.0f),
 					Vector4(-1.0f, -1.0f, 1.0f, 1.0f),
-					Color4ub(0, 0, 0, 32)
-				);
+					Color4ub(0, 0, 0, 32));
 				m_primitiveRenderer->popDepthState();
 
 				m_primitiveRenderer->pushDepthState(true, true, false);
@@ -667,37 +653,31 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->drawLine(
 					Vector4::origo(),
 					Vector4::origo() + view.axisX() * Scalar(1.0f - c_arrowLength),
-					Color4ub(255, 0, 0, 255)
-				);
+					Color4ub(255, 0, 0, 255));
 				m_primitiveRenderer->drawLine(
 					Vector4::origo(),
 					Vector4::origo() + view.axisY() * Scalar(1.0f - c_arrowLength),
-					Color4ub(0, 255, 0, 255)
-				);
+					Color4ub(0, 255, 0, 255));
 				m_primitiveRenderer->drawLine(
 					Vector4::origo(),
 					Vector4::origo() + view.axisZ() * Scalar(1.0f - c_arrowLength),
-					Color4ub(0, 0, 255, 255)
-				);
+					Color4ub(0, 0, 255, 255));
 
 				m_primitiveRenderer->drawArrowHead(
 					Vector4::origo() + view.axisX() * Scalar(1.0f - c_arrowLength),
 					Vector4::origo() + view.axisX(),
 					0.8f,
-					Color4ub(255, 0, 0, 255)
-				);
+					Color4ub(255, 0, 0, 255));
 				m_primitiveRenderer->drawArrowHead(
 					Vector4::origo() + view.axisY() * Scalar(1.0f - c_arrowLength),
 					Vector4::origo() + view.axisY(),
 					0.8f,
-					Color4ub(0, 255, 0, 255)
-				);
+					Color4ub(0, 255, 0, 255));
 				m_primitiveRenderer->drawArrowHead(
 					Vector4::origo() + view.axisZ() * Scalar(1.0f - c_arrowLength),
 					Vector4::origo() + view.axisZ(),
 					0.8f,
-					Color4ub(0, 0, 255, 255)
-				);
+					Color4ub(0, 0, 255, 255));
 
 				m_primitiveRenderer->popWorld();
 				m_primitiveRenderer->popView();
@@ -737,15 +717,13 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 					projectUnit(innerRect, m_selectionRectangle.getTopRight()),
 					projectUnit(innerRect, m_selectionRectangle.getBottomRight()),
 					projectUnit(innerRect, m_selectionRectangle.getBottomLeft()),
-					Color4ub(0, 64, 128, 128)
-				);
+					Color4ub(0, 64, 128, 128));
 				m_primitiveRenderer->drawWireQuad(
 					projectUnit(innerRect, m_selectionRectangle.getTopLeft()),
 					projectUnit(innerRect, m_selectionRectangle.getTopRight()),
 					projectUnit(innerRect, m_selectionRectangle.getBottomRight()),
 					projectUnit(innerRect, m_selectionRectangle.getBottomLeft()),
-					Color4ub(120, 190, 250, 255)
-				);
+					Color4ub(120, 190, 250, 255));
 
 				m_primitiveRenderer->popDepthState();
 				m_primitiveRenderer->popView();

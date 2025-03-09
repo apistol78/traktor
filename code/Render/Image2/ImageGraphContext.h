@@ -68,11 +68,11 @@ public:
 
 	void associateTexture(img_handle_t textureId, handle_t rgTextureId);
 
-	void associateTextureTargetSet(img_handle_t textureId, handle_t targetSetId, int32_t colorIndex);
+	void associateTextureTargetSet(img_handle_t textureId, RGTargetSet targetSetId, int32_t colorIndex);
 
-	void associateTextureTargetSetDepth(img_handle_t textureId, handle_t targetSetId);
+	void associateTextureTargetSetDepth(img_handle_t textureId, RGTargetSet targetSetId);
 
-	handle_t findTextureTargetSetId(img_handle_t textureId) const;
+	RGTargetSet findTextureTargetSetId(img_handle_t textureId) const;
 
 	ITexture* findTexture(const RenderGraph& renderGraph, img_handle_t textureId) const;
 
@@ -91,7 +91,7 @@ public:
 private:
 	struct TextureTargetSet
 	{
-		handle_t targetSetId = 0;
+		RGTargetSet targetSetId = RGTargetSet::Invalid;
 		int32_t colorIndex = -1;
 		handle_t textureId = 0;
 		ITexture* texture = nullptr;

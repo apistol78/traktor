@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,10 @@
  */
 #pragma once
 
-#include "Core/Object.h"
+#include "Core/Math/Aabb2.h"
 #include "Core/Math/Matrix33.h"
+#include "Core/Object.h"
+#include "Render/Frame/RenderGraphTypes.h"
 #include "Resource/Proxy.h"
 
 namespace traktor::resource
@@ -41,8 +43,7 @@ class AccGlyph : public Object
 public:
 	bool create(
 		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem
-	);
+		render::IRenderSystem* renderSystem);
 
 	void destroy();
 
@@ -53,19 +54,17 @@ public:
 	void add(
 		const Aabb2& bounds,
 		const Matrix33& transform,
-		const Vector4& textureOffset
-	);
+		const Vector4& textureOffset);
 
 	void render(
 		render::RenderPass* renderPass,
-		render::handle_t glyphCacheTargetSetId,
+		render::RGTargetSet glyphCacheTargetSetId,
 		const Vector4& frameSize,
 		const Vector4& frameTransform,
 		uint8_t maskReference,
 		uint8_t glyphFilter,
 		const Color4f& glyphColor,
-		const Color4f& glyphFilterColor
-	);
+		const Color4f& glyphFilterColor);
 
 private:
 	resource::Proxy< render::Shader > m_shaderGlyph;

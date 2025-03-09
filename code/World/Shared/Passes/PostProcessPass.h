@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2024 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Render/Types.h"
+#include "Render/Frame/RenderGraphTypes.h"
 #include "Resource/Proxy.h"
 #include "World/WorldRenderSettings.h"
 
@@ -20,6 +20,13 @@ class ImageGraph;
 class IRenderSystem;
 class RenderGraph;
 class ScreenRenderer;
+
+}
+
+namespace traktor::resource
+{
+
+class IResourceManager;
 
 }
 
@@ -46,11 +53,10 @@ public:
 		const GatherView& gatheredView,
 		uint32_t frameCount,
 		render::RenderGraph& renderGraph,
-		render::handle_t gbufferTargetSetId,
-		render::handle_t velocityTargetSetId,
+		render::RGTargetSet gbufferTargetSetId,
+		render::RGTargetSet velocityTargetSetId,
 		const DoubleBufferedTarget& visualTargetSetId,
-		render::handle_t outputTargetSetId
-	) const;
+		render::RGTargetSet outputTargetSetId) const;
 
 	bool needCameraJitter() const { return m_needCameraJitter; }
 

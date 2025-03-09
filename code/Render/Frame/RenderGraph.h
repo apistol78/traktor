@@ -71,8 +71,8 @@ public:
 		bool doubleBuffered = false;
 		RenderGraphTargetSetDesc targetSetDesc;
 		Ref< RenderGraphTargetSet > targetSet;
-		handle_t sharedDepthStencilTargetSetId = ~0U;
-		handle_t sizeReferenceTargetSetId = 0;
+		RGTargetSet sharedDepthStencilTargetSetId = RGTargetSet::Invalid;
+		RGTargetSet sizeReferenceTargetSetId = RGTargetSet::Output;
 		TargetSize realized = { 0, 0 };
 		int32_t inputRefCount = 0;
 		int32_t outputRefCount = 0;
@@ -113,7 +113,7 @@ public:
 	 * \param targetSet Render target set.
 	 * \return Opaque resource handle.
 	 */
-	handle_t addExplicitTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet);
+	RGTargetSet addExplicitTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet);
 
 	/*! Add transient target set resource.
 	 *
@@ -123,11 +123,11 @@ public:
 	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
 	 * \return Opaque resource handle.
 	 */
-	handle_t addTransientTargetSet(
+	RGTargetSet addTransientTargetSet(
 		const wchar_t* const name,
 		const RenderGraphTargetSetDesc& targetSetDesc,
-		handle_t sharedDepthStencilTargetSetId = ~0U,
-		handle_t sizeReferenceTargetSetId = 0);
+		RGTargetSet sharedDepthStencilTargetSetId = RGTargetSet::Invalid,
+		RGTargetSet sizeReferenceTargetSetId = RGTargetSet::Output);
 
 	/*! Add persistent target set resource.
 	 *
@@ -146,13 +146,13 @@ public:
 	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
 	 * \return Opaque resource handle.
 	 */
-	handle_t addPersistentTargetSet(
+	RGTargetSet addPersistentTargetSet(
 		const wchar_t* const name,
 		handle_t persistentHandle,
 		bool doubleBuffered,
 		const RenderGraphTargetSetDesc& targetSetDesc,
-		handle_t sharedDepthStencilTargetSetId = ~0U,
-		handle_t sizeReferenceTargetSetId = 0);
+		RGTargetSet sharedDepthStencilTargetSetId = RGTargetSet::Invalid,
+		RGTargetSet sizeReferenceTargetSetId = RGTargetSet::Output);
 
 	/*! Add explicit buffer resource.
 	 *
@@ -204,7 +204,7 @@ public:
 	 * \param resource Opaque resource handle.
 	 * \return Render target set.
 	 */
-	IRenderTargetSet* getTargetSet(handle_t resource) const;
+	IRenderTargetSet* getTargetSet(RGTargetSet resource) const;
 
 	/*! Get buffer from resource handle.
 	 *
@@ -240,7 +240,7 @@ public:
 	bool build(RenderContext* renderContext, int32_t width, int32_t height);
 
 	/*! */
-	const SmallMap< handle_t, TargetResource >& getTargets() const { return m_targets; }
+	const SmallMap< RGTargetSet, TargetResource >& getTargets() const { return m_targets; }
 
 	/*! */
 	const SmallMap< handle_t, BufferResource >& getBuffers() const { return m_buffers; }
@@ -255,19 +255,19 @@ private:
 	Ref< RenderGraphTargetSetPool > m_targetSetPool;
 	Ref< RenderGraphBufferPool > m_bufferPool;
 	Ref< RenderGraphTexturePool > m_texturePool;
-	SmallMap< handle_t, TargetResource > m_targets;
+	SmallMap< RGTargetSet, TargetResource > m_targets;
 	SmallMap< handle_t, BufferResource > m_buffers;
 	SmallMap< handle_t, TextureResource > m_textures;
 	RefArray< const RenderPass > m_passes;
 	StaticVector< uint32_t, 32 > m_order[32];
-	StaticSet< handle_t, 32 > m_sharedDepthTargets;
+	StaticSet< RGTargetSet, 32 > m_sharedDepthTargets;
 	uint32_t m_counter;
 	uint32_t m_multiSample;
 	handle_t m_nextResourceId;
 	fn_profiler_t m_profiler;
 	bool m_buildingPasses = false;
 
-	bool realizeTargetDimensions(int32_t width, int32_t height, int32_t targetId);
+	bool realizeTargetDimensions(int32_t width, int32_t height, RGTargetSet targetId);
 
 	bool acquire(TargetResource& inoutTarget);
 

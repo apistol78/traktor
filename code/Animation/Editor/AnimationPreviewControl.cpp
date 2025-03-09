@@ -6,13 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Animation/Editor/AnimationPreviewControl.h"
+
 #include "Animation/AnimatedMeshComponent.h"
 #include "Animation/AnimationResourceFactory.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonComponent.h"
 #include "Animation/SkeletonUtils.h"
-#include "Animation/Editor/AnimationPreviewControl.h"
 #include "Core/Math/Plane.h"
 #include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -25,12 +26,12 @@
 #include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshResourceFactory.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
-#include "Render/IRenderSystem.h"
-#include "Render/IRenderView.h"
-#include "Render/PrimitiveRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraphFactory.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
+#include "Render/PrimitiveRenderer.h"
 #include "Render/Resource/AliasTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
@@ -39,14 +40,10 @@
 #include "Scene/SceneFactory.h"
 #include "Ui/Application.h"
 #include "Ui/Itf/IWidget.h"
-#include "Weather/WeatherFactory.h"
 #include "Weather/Sky/SkyRenderer.h"
+#include "Weather/WeatherFactory.h"
+#include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Entity.h"
-#include "World/EntityFactory.h"
-#include "World/World.h"
-#include "World/WorldEntityRenderers.h"
-#include "World/WorldRenderSettings.h"
-#include "World/WorldResourceFactory.h"
 #include "World/Entity/CullingRenderer.h"
 #include "World/Entity/FogRenderer.h"
 #include "World/Entity/GroupComponent.h"
@@ -54,12 +51,16 @@
 #include "World/Entity/ProbeRenderer.h"
 #include "World/Entity/RTWorldRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
-#include "World/Deferred/WorldRendererDeferred.h"
+#include "World/EntityFactory.h"
+#include "World/World.h"
+#include "World/WorldEntityRenderers.h"
+#include "World/WorldRenderSettings.h"
+#include "World/WorldResourceFactory.h"
 
 namespace traktor::animation
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< scene::Scene > c_previewScene(L"{84ADD065-E963-9D4D-A28D-FF44BD616B0F}");
 
@@ -72,15 +73,15 @@ world::IEntityFactory* initializeFactory(world::IEntityFactory* entityFactory, c
 	return entityFactory->initialize(objectStore) ? entityFactory : nullptr;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationPreviewControl", AnimationPreviewControl, ui::Widget)
 
 AnimationPreviewControl::AnimationPreviewControl(editor::IEditor* editor)
-:	m_editor(editor)
-,	m_position(0.0f, -2.0f, 7.0f, 1.0f)
-,	m_angleHead(0.0f)
-,	m_anglePitch(0.0f)
+	: m_editor(editor)
+	, m_position(0.0f, -2.0f, 7.0f, 1.0f)
+	, m_angleHead(0.0f)
+	, m_anglePitch(0.0f)
 {
 }
 
@@ -117,7 +118,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	m_resourceManager->addFactory(new render::ImageGraphFactory(m_renderSystem));
 	m_resourceManager->addFactory(new scene::SceneFactory(m_renderSystem, entityFactory));
 	m_resourceManager->addFactory(new world::WorldResourceFactory(m_renderSystem, nullptr));
-	
+
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
@@ -233,14 +234,12 @@ void AnimationPreviewControl::updatePreview()
 	Ref< SkeletonComponent > skeletonComponent = new SkeletonComponent(
 		Transform::identity(),
 		m_skeleton,
-		m_poseController
-	);
+		m_poseController);
 
 	Ref< AnimatedMeshComponent > meshComponent = new AnimatedMeshComponent(
 		Transform::identity(),
 		m_mesh,
-		m_renderSystem
-	);
+		m_renderSystem);
 
 	m_entity = new world::Entity();
 	m_entity->setComponent(skeletonComponent);
@@ -259,8 +258,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 	worldEntityRenderers->add(new world::ProbeRenderer(
 		m_resourceManager,
 		m_renderSystem,
-		type_of< world::WorldRendererDeferred >()
-	));
+		type_of< world::WorldRendererDeferred >()));
 	worldEntityRenderers->add(new world::RTWorldRenderer());
 
 	world::WorldCreateDesc wcd;
@@ -269,10 +267,9 @@ void AnimationPreviewControl::updateWorldRenderer()
 
 	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererDeferred();
 	if (!worldRenderer->create(
-		m_resourceManager,
-		m_renderSystem,
-		wcd
-	))
+			m_resourceManager,
+			m_renderSystem,
+			wcd))
 		return;
 
 	m_worldRenderer = worldRenderer;
@@ -307,7 +304,7 @@ void AnimationPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 		{
 			// Move X/Y direction.
 			const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-			const float dy =  float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
+			const float dy = float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
 			m_position += Vector4(dx, dy, 0.0f, 0.0f);
 		}
 	}
@@ -353,11 +350,9 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Render view events; reset view if it has become lost.
 	bool lost = false;
-	for (render::RenderEvent re = {}; m_renderView->nextEvent(re); )
-	{
+	for (render::RenderEvent re = {}; m_renderView->nextEvent(re);)
 		if (re.type == render::RenderEventType::Lost)
 			lost = true;
-	}
 
 	const ui::Size sz = getInnerRect().getSize();
 	if (lost || sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
@@ -382,14 +377,12 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		65.0f * PI / 180.0f,
 		aspect,
 		0.1f,
-		1000.0f
-	);
+		1000.0f);
 
 	const Matrix44 viewInverse = viewTransform.inverse();
 	const Plane cameraPlane(
 		viewInverse.axisZ(),
-		viewInverse.translation()
-	);
+		viewInverse.translation());
 
 	// Temporarily add mesh entity to world.
 	if (m_entity)
@@ -410,11 +403,10 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		float(sz.cx) / sz.cy,
 		deg2rad(70.0f),
 		worldRenderSettings->viewNearZ,
-		worldRenderSettings->viewFarZ
-	);
+		worldRenderSettings->viewFarZ);
 	m_worldRenderView.setTimes(time, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), viewTransform);
-	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0, nullptr);
+	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, render::RGTargetSet::Output, nullptr);
 
 	// Remove mesh entity from world.
 	if (m_entity)
@@ -422,7 +414,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Draw debug wires.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
-	rp->setOutput(0, render::TfAll, render::TfAll);
+	rp->setOutput(render::RGTargetSet::Output, render::TfAll, render::TfAll);
 	rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
 		m_primitiveRenderer->begin(0, projectionTransform);
 		m_primitiveRenderer->pushView(viewTransform);
@@ -433,14 +425,12 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 				Vector4(float(x), 0.0f, -10.0f, 1.0f),
 				Vector4(float(x), 0.0f, 10.0f, 1.0f),
 				(x == 0) ? 1.0f : 0.0f,
-				m_colorGrid
-			);
+				m_colorGrid);
 			m_primitiveRenderer->drawLine(
 				Vector4(-10.0f, 0.0f, float(x), 1.0f),
 				Vector4(10.0f, 0.0f, float(x), 1.0f),
 				(x == 0) ? 1.0f : 0.0f,
-				m_colorGrid
-			);
+				m_colorGrid);
 		}
 
 		m_primitiveRenderer->end(0);

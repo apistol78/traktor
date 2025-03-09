@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Runtime/Engine/Stage.h"
+
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeDispatch.h"
 #include "Core/Log/Log.h"
@@ -13,29 +15,28 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
 #include "Core/Timer/Profiler.h"
-#include "Render/ScreenRenderer.h"
-#include "Render/Shader.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Frame/RenderPass.h"
+#include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
+#include "Runtime/Engine/Layer.h"
+#include "Runtime/Engine/StageLoader.h"
+#include "Runtime/Engine/StageState.h"
 #include "Runtime/IEnvironment.h"
 #include "Runtime/IStateManager.h"
 #include "Runtime/UpdateControl.h"
 #include "Runtime/UpdateInfo.h"
-#include "Runtime/Engine/Layer.h"
-#include "Runtime/Engine/Stage.h"
-#include "Runtime/Engine/StageLoader.h"
-#include "Runtime/Engine/StageState.h"
 
 namespace traktor::runtime
 {
-	namespace
-	{
+namespace
+{
 
 const render::Handle c_handleFade(L"Fade");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.Stage", Stage, Object)
 
@@ -47,19 +48,18 @@ Stage::Stage(
 	bool fadeOutUpdate,
 	float fadeRate,
 	const SmallMap< std::wstring, Guid >& transitions,
-	const Object* params
-)
-:	m_name(name)
-,	m_environment(environment)
-,	m_class(clazz)
-,	m_shaderFade(shaderFade)
-,	m_fadeOutUpdate(fadeOutUpdate)
-,	m_fadeRate(fadeRate)
-,	m_transitions(transitions)
-,	m_params(params)
-,	m_initialized(false)
-,	m_running(true)
-,	m_fade(1.0f)
+	const Object* params)
+	: m_name(name)
+	, m_environment(environment)
+	, m_class(clazz)
+	, m_shaderFade(shaderFade)
+	, m_fadeOutUpdate(fadeOutUpdate)
+	, m_fadeRate(fadeRate)
+	, m_transitions(transitions)
+	, m_params(params)
+	, m_initialized(false)
+	, m_running(true)
+	, m_fade(1.0f)
 {
 	m_screenRenderer = new render::ScreenRenderer();
 	m_screenRenderer->create(m_environment->getRender()->getRenderSystem());
@@ -79,8 +79,7 @@ void Stage::destroy()
 		const IRuntimeDispatch* methodFinalize = findRuntimeClassMethod(m_class, "finalize");
 		if (m_initialized && methodFinalize != nullptr)
 		{
-			const Any argv[] =
-			{
+			const Any argv[] = {
 				Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
 			};
 			methodFinalize->invoke(m_object, sizeof_array(argv), argv);
@@ -121,10 +120,8 @@ void Stage::removeAllLayers()
 Layer* Stage::getLayer(const std::wstring& name) const
 {
 	for (auto layer : m_layers)
-	{
 		if (layer->getName() == name)
 			return layer;
-	}
 	return nullptr;
 }
 
@@ -236,8 +233,7 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 			T_PROFILER_SCOPE(L"Script update");
 			if (m_object)
 			{
-				const Any argv[] =
-				{
+				const Any argv[] = {
 					Any::fromObject(const_cast< UpdateInfo* >(&info))
 				};
 
@@ -266,8 +262,7 @@ bool Stage::postUpdate(IStateManager* stateManager, const UpdateInfo& info)
 		T_PROFILER_SCOPE(L"Script post update");
 		if (m_object)
 		{
-			const Any argv[] =
-			{
+			const Any argv[] = {
 				Any::fromObject(const_cast< UpdateInfo* >(&info))
 			};
 
@@ -296,8 +291,7 @@ bool Stage::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 		T_PROFILER_SCOPE(L"Script setup");
 		if (m_object)
 		{
-			const Any argv[] =
-			{
+			const Any argv[] = {
 				Any::fromObject(const_cast< UpdateInfo* >(&info))
 			};
 
@@ -310,10 +304,10 @@ bool Stage::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 	for (auto layer : m_layers)
 		layer->setup(info, renderGraph);
 
-	 if (m_shaderFade && m_fade > FUZZY_EPSILON)
-	 {
+	if (m_shaderFade && m_fade > FUZZY_EPSILON)
+	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Fade");
-		rp->setOutput(0, render::TfAll, render::TfAll);
+		rp->setOutput(render::RGTargetSet::Output, render::TfAll, render::TfAll);
 		rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
 			auto programParams = renderContext->alloc< render::ProgramParameters >();
 			programParams->beginParameters(renderContext);
@@ -322,7 +316,7 @@ bool Stage::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 			m_screenRenderer->draw(renderContext, m_shaderFade, programParams);
 		});
 		renderGraph.addPass(rp);
-	 }
+	}
 
 	return true;
 }
@@ -410,8 +404,7 @@ bool Stage::validateScriptContext()
 		if (m_class)
 		{
 			// Call script constructor.
-			const Any argv[] =
-			{
+			const Any argv[] = {
 				Any::fromObject(const_cast< Object* >(m_params.c_ptr())),
 				Any::fromObject(m_environment)
 			};

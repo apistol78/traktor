@@ -79,21 +79,21 @@ bool IrradiancePass::create(resource::IResourceManager* resourceManager, render:
 	return true;
 }
 
-render::handle_t IrradiancePass::setup(
+render::RGTargetSet IrradiancePass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
 	const render::Buffer* lightSBuffer,
 	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
-	render::handle_t velocityTargetSetId,
+	render::RGTargetSet velocityTargetSetId,
 	render::handle_t halfResDepthTextureId,
-	render::handle_t outputTargetSetId) const
+	render::RGTargetSet outputTargetSetId) const
 {
 	T_PROFILER_SCOPE(L"IrradiancePass::setup");
 
 	if (m_irradianceComputeShader == nullptr || m_irradianceDenoise == nullptr /* || gbufferTargetSetId == 0*/)
-		return 0;
+		return render::RGTargetSet::Invalid;
 
 	const bool irradianceEnable = (bool)(gatheredView.irradianceGrid != nullptr);
 	const bool irradianceSingle = (bool)(gatheredView.irradianceGrid != nullptr && gatheredView.irradianceGrid->isSingle());
@@ -106,7 +106,7 @@ render::handle_t IrradiancePass::setup(
 		.referenceWidthDenom = 2,
 		.referenceHeightDenom = 2
 	};
-	const DoubleBufferedTarget reservoirBufferId = {
+	const DoubleBufferedBuffer reservoirBufferId = {
 		renderGraph.addPersistentBuffer(L"Reservoir", s_persistentReservoirBuffers[frameCount % 2], reservoirBufferDesc),
 		renderGraph.addPersistentBuffer(L"Reservoir", s_persistentReservoirBuffers[(frameCount + 1) % 2], reservoirBufferDesc)
 	};
@@ -130,7 +130,7 @@ render::handle_t IrradiancePass::setup(
 			.colorFormat = render::TfR16G16B16A16F // Irradiance (RGB)
 		} }
 	};
-	const auto irradianceFinalTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance final", irradianceFinalTargetDesc, ~0U, outputTargetSetId);
+	const auto irradianceFinalTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance final", irradianceFinalTargetDesc, render::RGTargetSet::Invalid, outputTargetSetId);
 
 	// Shared shader parameters for all passes.
 	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();

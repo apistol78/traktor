@@ -306,8 +306,8 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 void WorldRendererShared::setupLightPass(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
-	render::handle_t outputTargetSetId,
-	render::handle_t& outShadowMapAtlasTargetSetId)
+	render::RGTargetSet outputTargetSetId,
+	render::RGTargetSet& outShadowMapAtlasTargetSetId)
 {
 	T_PROFILER_SCOPE(L"WorldRendererShared setupLightPass");
 

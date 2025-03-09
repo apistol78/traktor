@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "UiKit/Editor/PreviewControl.h"
+
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeDispatch.h"
 #include "Core/Log/Log.h"
@@ -15,11 +17,13 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
-#include "Render/IRenderSystem.h"
-#include "Render/IRenderView.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Resource/ResourceManager.h"
+#include "Spark/Acc/AccDisplayRenderer.h"
+#include "Spark/Debug/WireDisplayRenderer.h"
 #include "Spark/DefaultCharacterFactory.h"
 #include "Spark/Frame.h"
 #include "Spark/Key.h"
@@ -28,25 +32,20 @@
 #include "Spark/MovieRenderer.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
-#include "Spark/Acc/AccDisplayRenderer.h"
-#include "Spark/Debug/WireDisplayRenderer.h"
 #include "Ui/Application.h"
 #include "Ui/Itf/IWidget.h"
-#include "UiKit/Editor/PreviewControl.h"
 #include "UiKit/Editor/Scaffolding.h"
 
 namespace traktor::uikit
 {
-	namespace
-	{
+namespace
+{
 
 const struct
 {
 	ui::VirtualKey vk;
 	int32_t ak;
-}
-c_askeys[] =
-{
+} c_askeys[] = {
 	{ ui::VkBackSpace, spark::Key::AkBackspace },
 	{ ui::VkControl, spark::Key::AkControl },
 	{ ui::VkDelete, spark::Key::AkDeleteKey },
@@ -69,22 +68,20 @@ c_askeys[] =
 int32_t translateVirtualKey(ui::VirtualKey vk)
 {
 	for (int i = 0; i < sizeof_array(c_askeys); ++i)
-	{
 		if (vk == c_askeys[i].vk)
 			return c_askeys[i].ak;
-	}
 	return 0;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.uikit.PreviewControl", PreviewControl, ui::Widget)
 
 PreviewControl::PreviewControl(editor::IEditor* editor, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
-:	m_editor(editor)
-,	m_resourceManager(resourceManager)
-,	m_renderSystem(renderSystem)
-,	m_debugWires(false)
+	: m_editor(editor)
+	, m_resourceManager(resourceManager)
+	, m_renderSystem(renderSystem)
+	, m_debugWires(false)
 {
 }
 
@@ -116,25 +113,22 @@ bool PreviewControl::create(ui::Widget* parent)
 	movieClip->addFrame(frame);
 	m_movie = new spark::Movie(
 		Aabb2(Vector2(0.0f, 0.0f), Vector2(1280.0f * 20.0f, 720.0f * 20.0f)),
-		movieClip
-	);
+		movieClip);
 
 	// Create flash display renderer.
 	m_displayRenderer = new spark::AccDisplayRenderer();
 	if (!m_displayRenderer->create(
-		m_resourceManager,
-		m_renderSystem,
-		1,
-		true
-	))
+			m_resourceManager,
+			m_renderSystem,
+			1,
+			true))
 		return false;
 
 	m_displayRendererWire = new spark::WireDisplayRenderer();
 	if (!m_displayRendererWire->create(
-		m_resourceManager,
-		m_renderSystem,
-		1
-	))
+			m_resourceManager,
+			m_renderSystem,
+			1))
 	{
 		log::error << L"Unable to create wire renderer." << Endl;
 		return false;
@@ -148,12 +142,12 @@ bool PreviewControl::create(ui::Widget* parent)
 	m_moviePlayer = new spark::MoviePlayer(
 		new spark::DefaultCharacterFactory(),
 		nullptr,
-		nullptr
-	);
+		nullptr);
 	if (!m_moviePlayer->create(m_movie, 1280, 720, nullptr))
 		return false;
 
-	while (!m_moviePlayer->progress(1.0f / 60.0f, nullptr));
+	while (!m_moviePlayer->progress(1.0f / 60.0f, nullptr))
+		;
 
 	// Add widget event handler.
 	addEventHandler< ui::SizeEvent >(this, &PreviewControl::eventSize);
@@ -168,7 +162,7 @@ bool PreviewControl::create(ui::Widget* parent)
 
 	// Register our idle event handler.
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &PreviewControl::eventIdle);
-	
+
 	m_timer.reset();
 	return true;
 }
@@ -235,10 +229,8 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 	// Render view events; reset view if it has become lost.
 	render::RenderEvent re;
 	while (m_renderView->nextEvent(re))
-	{
 		if (re.type == render::RenderEventType::Lost)
 			m_renderView->reset(sz.cx, sz.cy);
-	}
 
 	// Initialize scaffolding.
 	if (m_scaffoldingClass.changed())
@@ -255,8 +247,7 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 			}
 
 			// Construct new scaffolding.
-			const Any argv[] =
-			{
+			const Any argv[] = {
 				Any::fromObject(m_editor->getSourceDatabase()),
 				Any::fromObject(m_resourceManager),
 				Any::fromObject(m_moviePlayer->getMovieInstance()),
@@ -287,7 +278,7 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 	if (m_debugWires)
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
-		rp->setOutput(0, render::TfAll, render::TfAll);
+		rp->setOutput(render::RGTargetSet::Output, render::TfAll, render::TfAll);
 		rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
 			m_displayRendererWire->begin(0);
 			m_moviePlayer->render(m_movieRendererWire);
@@ -368,8 +359,7 @@ void PreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 		m_moviePlayer->postMouseDown(
 			(int32_t)(mousePosition.x / scale),
 			(int32_t)(mousePosition.y / scale),
-			event->getButton()
-		);
+			event->getButton());
 	}
 	setCapture();
 	setFocus();
@@ -384,8 +374,7 @@ void PreviewControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 		m_moviePlayer->postMouseUp(
 			(int32_t)(mousePosition.x / scale),
 			(int32_t)(mousePosition.y / scale),
-			event->getButton()
-		);
+			event->getButton());
 	}
 	releaseCapture();
 }
@@ -399,8 +388,7 @@ void PreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 		m_moviePlayer->postMouseMove(
 			(int32_t)(mousePosition.x / scale),
 			(int32_t)(mousePosition.y / scale),
-			event->getButton()
-		);
+			event->getButton());
 	}
 }
 
@@ -413,8 +401,7 @@ void PreviewControl::eventMouseWheel(ui::MouseWheelEvent* event)
 		m_moviePlayer->postMouseWheel(
 			(int32_t)(mousePosition.x / scale),
 			(int32_t)(mousePosition.y / scale),
-			event->getRotation()
-		);
+			event->getRotation());
 	}
 }
 

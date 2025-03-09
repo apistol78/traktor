@@ -1,23 +1,24 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Image2/ImageGraph.h"
+
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/ITexture.h"
-#include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
-#include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
 #include "Render/Image2/ImagePass.h"
 #include "Render/Image2/ImagePassStep.h"
 #include "Render/Image2/ImageStructBuffer.h"
 #include "Render/Image2/ImageTargetSet.h"
 #include "Render/Image2/ImageTexture.h"
+#include "Render/ITexture.h"
+#include "Render/ScreenRenderer.h"
 
 namespace traktor::render
 {
@@ -25,7 +26,7 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraph", ImageGraph, Object)
 
 ImageGraph::ImageGraph(const std::wstring& name)
-:	m_name(name)
+	: m_name(name)
 {
 }
 
@@ -35,10 +36,9 @@ void ImageGraph::addPasses(
 	RenderPass* pass,
 	const ImageGraphContext& cx,
 	const ImageGraphView& view,
-	const std::function< void(const RenderGraph& renderGraph, ProgramParameters*) >& parametersFn
-) const
+	const std::function< void(const RenderGraph& renderGraph, ProgramParameters*) >& parametersFn) const
 {
-	targetSetVector_t sbufferIds;
+	bufferVector_t sbufferIds;
 	targetSetVector_t targetSetIds;
 
 	// Find permutation.
@@ -71,64 +71,45 @@ void ImageGraph::addPasses(
 		};
 
 		if (permutation->sbuffers[i]->getPersistentHandle() != 0)
-		{
 			sbufferIds[i] = renderGraph.addPersistentBuffer(
 				permutation->sbuffers[i]->getName().c_str(),
 				permutation->sbuffers[i]->getPersistentHandle(),
-				bufferDesc
-			);
-		}
+				bufferDesc);
 		else
-		{
 			sbufferIds[i] = renderGraph.addTransientBuffer(
 				permutation->sbuffers[i]->getName().c_str(),
-				bufferDesc
-			);
-		}
+				bufferDesc);
 		context.associateSBuffer(
 			permutation->sbuffers[i]->getId(),
-			sbufferIds[i]
-		);
+			sbufferIds[i]);
 	}
 
 	for (int32_t i = 0; i < (int32_t)permutation->textures.size(); ++i)
-	{
 		context.associateExplicitTexture(
 			permutation->textures[i]->getTextureId(),
-			permutation->textures[i]->getTexture()
-		);
-	}
+			permutation->textures[i]->getTexture());
 
 	targetSetIds.resize(permutation->targetSets.size());
 	for (int32_t i = 0; i < (int32_t)permutation->targetSets.size(); ++i)
 	{
 		if (permutation->targetSets[i]->getPersistentHandle() != 0)
-		{
 			targetSetIds[i] = renderGraph.addPersistentTargetSet(
 				permutation->targetSets[i]->getName().c_str(),
 				permutation->targetSets[i]->getPersistentHandle(),
 				true,
-				permutation->targetSets[i]->getTargetSetDesc()
-			);
-		}
+				permutation->targetSets[i]->getTargetSetDesc());
 		else
-		{
 			targetSetIds[i] = renderGraph.addTransientTargetSet(
 				permutation->targetSets[i]->getName().c_str(),
-				permutation->targetSets[i]->getTargetSetDesc()
-			);
-		}
+				permutation->targetSets[i]->getTargetSetDesc());
 
 		// Associate each target in the set.
 		const auto& desc = permutation->targetSets[i]->getTargetSetDesc();
 		for (int32_t j = 0; j < desc.count; ++j)
-		{
 			context.associateTextureTargetSet(
 				permutation->targetSets[i]->getTextureId(j),
 				targetSetIds[i],
-				j
-			);
-		}
+				j);
 	}
 
 	// Add all steps to render graph,
@@ -149,31 +130,27 @@ void ImageGraph::addPasses(
 		step->addRenderPassInputs(this, context, *pass);
 
 	pass->addBuild(
-		[=, this](const RenderGraph& renderGraph, RenderContext* renderContext)
-		{
-			auto sharedParams = renderContext->alloc< ProgramParameters >();
-			sharedParams->beginParameters(renderContext);
-			if (parametersFn)
-				parametersFn(renderGraph, sharedParams);
-			sharedParams->endParameters(renderContext);
+		[=, this](const RenderGraph& renderGraph, RenderContext* renderContext) {
+		auto sharedParams = renderContext->alloc< ProgramParameters >();
+		sharedParams->beginParameters(renderContext);
+		if (parametersFn)
+			parametersFn(renderGraph, sharedParams);
+		sharedParams->endParameters(renderContext);
 
-			for (auto step : permutation->steps)
-				step->build(
-					this,
-					context,
-					view,
-					targetSetIds,
-					sbufferIds,
-					{ -1, -1 },
-					renderGraph,
-					sharedParams,
-					renderContext,
-					screenRenderer
-				);
-		}
-	);
+		for (auto step : permutation->steps)
+			step->build(
+				this,
+				context,
+				view,
+				targetSetIds,
+				sbufferIds,
+				{ -1, -1 },
+				renderGraph,
+				sharedParams,
+				renderContext,
+				screenRenderer);
+	});
 }
-
 
 void ImageGraph::setPermutation(handle_t handle, bool param, uint32_t& inoutPermutationValue) const
 {

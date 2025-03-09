@@ -1,25 +1,26 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Image2/DirectionalBlur.h"
+
 #include "Core/Math/Random.h"
-#include "Render/IRenderTargetSet.h"
-#include "Render/ScreenRenderer.h"
-#include "Render/Shader.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
-#include "Render/Image2/DirectionalBlur.h"
+#include "Render/IRenderTargetSet.h"
+#include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 const static Handle s_handleViewFar(L"ViewFar");
 const static Handle s_handleViewEdgeTopLeft(L"ViewEdgeTopLeft");
@@ -36,15 +37,14 @@ const static Handle s_handleViewInverse(L"ViewInverse");
 
 Random s_random;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DirectionalBlur", DirectionalBlur, ImagePassStep)
 
 void DirectionalBlur::addRenderPassInputs(
 	const ImageGraph* graph,
 	const ImageGraphContext& context,
-	RenderPass& pass
-) const
+	RenderPass& pass) const
 {
 	addInputs(context, pass);
 }
@@ -54,13 +54,12 @@ void DirectionalBlur::build(
 	const ImageGraphContext& context,
 	const ImageGraphView& view,
 	const targetSetVector_t& targetSetIds,
-	const targetSetVector_t& sbufferIds,
+	const bufferVector_t& sbufferIds,
 	const PassOutput& output,
 	const RenderGraph& renderGraph,
 	const ProgramParameters* sharedParams,
 	RenderContext* renderContext,
-	ScreenRenderer* screenRenderer
-) const
+	ScreenRenderer* screenRenderer) const
 {
 	const Scalar p11 = view.projection.get(0, 0);
 	const Scalar p22 = view.projection.get(1, 1);

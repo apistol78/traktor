@@ -104,7 +104,7 @@ void WorldRendererDeferred::setup(
 	const World* world,
 	const WorldRenderView& immutableWorldRenderView,
 	render::RenderGraph& renderGraph,
-	render::handle_t outputTargetSetId,
+	render::RGTargetSet outputTargetSetId,
 	const std::function< bool(const EntityState& state) >& filter)
 {
 	WorldRenderView worldRenderView = immutableWorldRenderView;
@@ -154,12 +154,12 @@ void WorldRendererDeferred::setup(
 	rgtsd.referenceWidthDenom = 1;
 	rgtsd.referenceHeightDenom = 1;
 	rgtsd.targets[0].colorFormat = render::TfR16G16B16A16F;
-	const render::handle_t visualCopyTargetSetId = renderGraph.addTransientTargetSet(L"Visual Copy", rgtsd, ~0U, outputTargetSetId);
+	const render::RGTargetSet visualCopyTargetSetId = renderGraph.addTransientTargetSet(L"Visual Copy", rgtsd, render::RGTargetSet::Invalid, outputTargetSetId);
 
 	// Add Hi-Z texture.
 	const render::handle_t hizTextureId = m_hiZPass->addTexture(worldRenderView, renderGraph);
 
-	render::handle_t shadowMapAtlasTargetSetId = 0;
+	render::RGTargetSet shadowMapAtlasTargetSetId;
 	setupLightPass(
 		worldRenderView,
 		renderGraph,
@@ -202,15 +202,15 @@ void WorldRendererDeferred::setup(
 void WorldRendererDeferred::setupVisualPass(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
-	render::handle_t visualWriteTargetSetId,
-	render::handle_t visualCopyTargetSetId,
-	render::handle_t gbufferTargetSetId,
-	render::handle_t dbufferTargetSetId,
-	render::handle_t irradianceTargetSetId,
-	render::handle_t ambientOcclusionTargetSetId,
-	render::handle_t contactShadowsTargetSetId,
-	render::handle_t reflectionsTargetSetId,
-	render::handle_t shadowMapAtlasTargetSetId,
+	render::RGTargetSet visualWriteTargetSetId,
+	render::RGTargetSet visualCopyTargetSetId,
+	render::RGTargetSet gbufferTargetSetId,
+	render::RGTargetSet dbufferTargetSetId,
+	render::RGTargetSet irradianceTargetSetId,
+	render::RGTargetSet ambientOcclusionTargetSetId,
+	render::RGTargetSet contactShadowsTargetSetId,
+	render::RGTargetSet reflectionsTargetSetId,
+	render::RGTargetSet shadowMapAtlasTargetSetId,
 	render::handle_t outputHiZTextureId) const
 {
 	T_PROFILER_SCOPE(L"World setup visual");

@@ -1,24 +1,25 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Editor/Overlays/GBufferDepthOverlay.h"
+
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "World/WorldRenderView.h"
-#include "World/Editor/Overlays/GBufferDepthOverlay.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_debugShader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
 const render::Handle c_handleDebugTechnique(L"ViewDepth");
@@ -26,17 +27,15 @@ const render::Handle c_handleDebugAlpha(L"Scene_DebugAlpha");
 const render::Handle c_handleDebugTexture(L"Scene_DebugTexture");
 const render::Handle c_handleViewDistance(L"Scene_ViewDistance");
 
-render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
+render::RGTargetSet findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
 {
 	for (const auto& tm : renderGraph.getTargets())
-	{
 		if (wcscmp(tm.second.name, name) == 0)
 			return tm.first;
-	}
-	return 0;
+	return render::RGTargetSet::Invalid;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.GBufferDepthOverlay", 0, GBufferDepthOverlay, BaseOverlay)
 
@@ -53,8 +52,8 @@ bool GBufferDepthOverlay::create(resource::IResourceManager* resourceManager)
 
 void GBufferDepthOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
-	render::handle_t gbufferId = findTargetByName(renderGraph, L"GBuffer");
-	if (!gbufferId)
+	const render::RGTargetSet gbufferId = findTargetByName(renderGraph, L"GBuffer");
+	if (gbufferId == render::RGTargetSet::Invalid)
 	{
 		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
@@ -64,7 +63,7 @@ void GBufferDepthOverlay::setup(render::RenderGraph& renderGraph, render::Screen
 	const float farZ = worldRenderView.getViewFrustum().getFarZ();
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer depth overlay");
-	rp->setOutput(0, render::TfColor, render::TfColor);
+	rp->setOutput(render::RGTargetSet::Output, render::TfColor, render::TfColor);
 	rp->addInput(gbufferId);
 	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto gbufferTargetSet = renderGraph.getTargetSet(gbufferId);

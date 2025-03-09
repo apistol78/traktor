@@ -33,12 +33,12 @@ render::handle_t findTextureByName(const render::RenderGraph& renderGraph, const
 	return 0;
 }
 
-render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
+render::RGTargetSet findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
 {
 	for (const auto& tm : renderGraph.getTargets())
 		if (wcscmp(tm.second.name, name) == 0)
 			return tm.first;
-	return 0;
+	return render::RGTargetSet::Invalid;
 }
 
 }
@@ -58,15 +58,15 @@ bool IrradianceFilteredOverlay::create(resource::IResourceManager* resourceManag
 
 void IrradianceFilteredOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
-	render::handle_t irradianceId = findTargetByName(renderGraph, L"Irradiance final");
-	if (!irradianceId)
+	const render::RGTargetSet irradianceId = findTargetByName(renderGraph, L"Irradiance final");
+	if (irradianceId == render::RGTargetSet::Invalid)
 	{
 		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
 	}
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance overlay");
-	rp->setOutput(0, render::TfColor, render::TfColor);
+	rp->setOutput(render::RGTargetSet::Output, render::TfColor, render::TfColor);
 	rp->addInput(irradianceId);
 	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto irradianceTargetSet = renderGraph.getTargetSet(irradianceId);

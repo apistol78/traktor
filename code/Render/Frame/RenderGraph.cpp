@@ -85,16 +85,16 @@ void RenderGraph::destroy()
 	safeDestroy(m_texturePool);
 }
 
-handle_t RenderGraph::addExplicitTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet)
+RGTargetSet RenderGraph::addExplicitTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet)
 {
-	const handle_t resourceId = m_nextResourceId++;
+	const RGTargetSet resourceId(m_nextResourceId++);
 
 	auto& tr = m_targets[resourceId];
 	tr.name = name;
 	tr.persistentHandle = 0;
 	tr.doubleBuffered = false;
 	tr.targetSet = new RenderGraphTargetSet(targetSet, targetSet);
-	tr.sizeReferenceTargetSetId = 0;
+	tr.sizeReferenceTargetSetId = RGTargetSet::Invalid;
 	tr.inputRefCount = 0;
 	tr.outputRefCount = 0;
 	tr.external = true;
@@ -102,13 +102,13 @@ handle_t RenderGraph::addExplicitTargetSet(const wchar_t* const name, IRenderTar
 	return resourceId;
 }
 
-handle_t RenderGraph::addTransientTargetSet(
+RGTargetSet RenderGraph::addTransientTargetSet(
 	const wchar_t* const name,
 	const RenderGraphTargetSetDesc& targetSetDesc,
-	handle_t sharedDepthStencilTargetSetId,
-	handle_t sizeReferenceTargetSetId)
+	RGTargetSet sharedDepthStencilTargetSetId,
+	RGTargetSet sizeReferenceTargetSetId)
 {
-	const handle_t resourceId = m_nextResourceId++;
+	const RGTargetSet resourceId(m_nextResourceId++);
 
 	auto& tr = m_targets[resourceId];
 	tr.name = name;
@@ -124,15 +124,15 @@ handle_t RenderGraph::addTransientTargetSet(
 	return resourceId;
 }
 
-handle_t RenderGraph::addPersistentTargetSet(
+RGTargetSet RenderGraph::addPersistentTargetSet(
 	const wchar_t* const name,
 	handle_t persistentHandle,
 	bool doubleBuffered,
 	const RenderGraphTargetSetDesc& targetSetDesc,
-	handle_t sharedDepthStencilTargetSetId,
-	handle_t sizeReferenceTargetSetId)
+	RGTargetSet sharedDepthStencilTargetSetId,
+	RGTargetSet sizeReferenceTargetSetId)
 {
-	const handle_t resourceId = m_nextResourceId++;
+	const RGTargetSet resourceId(m_nextResourceId++);
 
 	auto& tr = m_targets[resourceId];
 	tr.name = name;
@@ -210,7 +210,7 @@ handle_t RenderGraph::addDependency()
 	return m_nextResourceId++;
 }
 
-IRenderTargetSet* RenderGraph::getTargetSet(handle_t resource) const
+IRenderTargetSet* RenderGraph::getTargetSet(RGTargetSet resource) const
 {
 	T_FATAL_ASSERT(m_buildingPasses);
 
@@ -255,7 +255,7 @@ bool RenderGraph::validate()
 			roots.push_back(i);
 		else if (output.resourceId != ~0 && output.resourceId != 0)
 		{
-			auto it = m_targets.find(output.resourceId);
+			auto it = m_targets.find(RGTargetSet(output.resourceId));
 			if (it->second.external)
 				roots.push_back(i);
 		}
@@ -303,8 +303,8 @@ bool RenderGraph::validate()
 	// Gather targets which are used as shared depth.
 	for (auto& it : m_targets)
 		if (
-			it.second.sharedDepthStencilTargetSetId != ~0U &&
-			it.second.sharedDepthStencilTargetSetId != 0)
+			it.second.sharedDepthStencilTargetSetId != RGTargetSet::Invalid &&
+			it.second.sharedDepthStencilTargetSetId != RGTargetSet::Output)
 			m_sharedDepthTargets.insert(it.second.sharedDepthStencilTargetSetId);
 
 	// Count input and output reference counts of all targets.
@@ -317,13 +317,13 @@ bool RenderGraph::validate()
 			const auto& output = pass->getOutput();
 			if (output.resourceId != ~0)
 			{
-				auto it = m_targets.find(output.resourceId);
+				auto it = m_targets.find(RGTargetSet(output.resourceId));
 				if (it != m_targets.end())
 					it->second.outputRefCount++;
 			}
 			for (const auto& input : pass->getInputs())
 			{
-				auto it = m_targets.find(input.resourceId);
+				auto it = m_targets.find(RGTargetSet(input.resourceId));
 				if (it != m_targets.end())
 					it->second.inputRefCount++;
 			}
@@ -450,7 +450,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 						}
 
 						// Begin pass if resource is a target.
-						auto it = m_targets.find(output.resourceId);
+						auto it = m_targets.find(RGTargetSet(output.resourceId));
 						if (it != m_targets.end())
 						{
 							TargetResource& target = it->second;
@@ -555,7 +555,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				if (input.resourceId == 0)
 					continue;
 
-				auto it = m_targets.find(input.resourceId);
+				auto it = m_targets.find(RGTargetSet(input.resourceId));
 				if (it == m_targets.end())
 					continue;
 
@@ -655,7 +655,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	return true;
 }
 
-bool RenderGraph::realizeTargetDimensions(int32_t width, int32_t height, int32_t targetId)
+bool RenderGraph::realizeTargetDimensions(int32_t width, int32_t height, RGTargetSet targetId)
 {
 	TargetResource& target = m_targets[targetId];
 	if (target.realized.width != 0 && target.realized.height != 0)
@@ -668,7 +668,7 @@ bool RenderGraph::realizeTargetDimensions(int32_t width, int32_t height, int32_t
 		height = targetSetDesc.height;
 	}
 
-	if (target.sizeReferenceTargetSetId != 0)
+	if (target.sizeReferenceTargetSetId != RGTargetSet::Output)
 	{
 		if (!realizeTargetDimensions(width, height, target.sizeReferenceTargetSetId))
 			return false;
@@ -679,8 +679,8 @@ bool RenderGraph::realizeTargetDimensions(int32_t width, int32_t height, int32_t
 	}
 
 	if (
-		target.sharedDepthStencilTargetSetId != 0 &&
-		target.sharedDepthStencilTargetSetId != ~0U)
+		target.sharedDepthStencilTargetSetId != RGTargetSet::Output &&
+		target.sharedDepthStencilTargetSetId != RGTargetSet::Invalid)
 	{
 		if (!realizeTargetDimensions(width, height, target.sharedDepthStencilTargetSetId))
 			return false;
@@ -708,14 +708,14 @@ bool RenderGraph::acquire(TargetResource& inoutTarget)
 {
 	Ref< IRenderTargetSet > sharedDepthTargetSet;
 	if (
-		inoutTarget.sharedDepthStencilTargetSetId != ~0U &&
-		inoutTarget.sharedDepthStencilTargetSetId != 0)
+		inoutTarget.sharedDepthStencilTargetSetId != RGTargetSet::Output &&
+		inoutTarget.sharedDepthStencilTargetSetId != RGTargetSet::Invalid)
 	{
 		const auto& t = m_targets[inoutTarget.sharedDepthStencilTargetSetId];
 		sharedDepthTargetSet = t.targetSet->getWriteTargetSet();
 	}
 
-	const bool sharedPrimaryDepthStencilTargetSet = (inoutTarget.sharedDepthStencilTargetSetId == 0);
+	const bool sharedPrimaryDepthStencilTargetSet = (inoutTarget.sharedDepthStencilTargetSetId == RGTargetSet::Output);
 
 	inoutTarget.targetSet = m_targetSetPool->acquire(
 		inoutTarget.name,

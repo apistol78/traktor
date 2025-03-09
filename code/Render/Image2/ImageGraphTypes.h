@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,13 +9,15 @@
 #pragma once
 
 #include "Core/Containers/StaticVector.h"
+#include "Render/Frame/RenderGraphTypes.h"
 #include "Render/Types.h"
 
 namespace traktor::render
 {
 
 typedef handle_t img_handle_t;
-typedef StaticVector< handle_t, 32 > targetSetVector_t;
+typedef StaticVector< RGTargetSet, 32 > targetSetVector_t;
+typedef StaticVector< handle_t, 32 > bufferVector_t;
 
 enum class BlurType
 {
@@ -30,9 +32,9 @@ enum class BlurType
 
 enum class WorkSize
 {
-	Manual,	 //!< Manual size.
-	Output,	 //!< Size of output.
-	SizeOf   //!< Size of reference input.
+	Manual, //!< Manual size.
+	Output, //!< Size of output.
+	SizeOf	//!< Size of reference input.
 };
 
 struct PassOutput
@@ -43,8 +45,8 @@ struct PassOutput
 	PassOutput() = default;
 
 	PassOutput(int32_t targetSet_, int32_t sbuffer_)
-	:   targetSet(targetSet_)
-	,   sbuffer(sbuffer_)
+		: targetSet(targetSet_)
+		, sbuffer(sbuffer_)
 	{
 		T_ASSERT(!(targetSet >= 0 && sbuffer >= 0));
 	}

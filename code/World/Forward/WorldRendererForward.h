@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -47,28 +47,25 @@ public:
 	virtual bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		const WorldCreateDesc& desc
-	) override final;
+		const WorldCreateDesc& desc) override final;
 
 	virtual void setup(
 		const World* world,
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
-		const std::function< bool(const EntityState& state) >& filter
-	) override final;
+		render::RGTargetSet outputTargetSetId,
+		const std::function< bool(const EntityState& state) >& filter) override final;
 
 private:
 	void setupVisualPass(
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
-		render::handle_t visualWriteTargetSetId,
-		render::handle_t visualReadTargetSetId,
-		render::handle_t gbufferTargetSetId,
-		render::handle_t ambientOcclusionTargetSetId,
-		render::handle_t reflectionsTargetSetId,
-		render::handle_t shadowMapAtlasTargetSetId
-	);
+		render::RGTargetSet visualWriteTargetSetId,
+		render::RGTargetSet visualReadTargetSetId,
+		render::RGTargetSet gbufferTargetSetId,
+		render::RGTargetSet ambientOcclusionTargetSetId,
+		render::RGTargetSet reflectionsTargetSetId,
+		render::RGTargetSet shadowMapAtlasTargetSetId);
 };
 
 }

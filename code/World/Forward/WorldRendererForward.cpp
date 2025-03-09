@@ -82,7 +82,7 @@ void WorldRendererForward::setup(
 	const World* world,
 	const WorldRenderView& immutableWorldRenderView,
 	render::RenderGraph& renderGraph,
-	render::handle_t outputTargetSetId,
+	render::RGTargetSet outputTargetSetId,
 	const std::function< bool(const EntityState& state) >& filter)
 {
 	WorldRenderView worldRenderView = immutableWorldRenderView;
@@ -147,7 +147,7 @@ void WorldRendererForward::setup(
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, 0, outputTargetSetId);
 	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, outputTargetSetId);
 
-	render::handle_t shadowMapAtlasTargetSetId = 0;
+	render::RGTargetSet shadowMapAtlasTargetSetId;
 	setupLightPass(
 		worldRenderView,
 		renderGraph,
@@ -172,12 +172,12 @@ void WorldRendererForward::setup(
 void WorldRendererForward::setupVisualPass(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
-	render::handle_t visualWriteTargetSetId,
-	render::handle_t visualReadTargetSetId,
-	render::handle_t gbufferTargetSetId,
-	render::handle_t ambientOcclusionTargetSetId,
-	render::handle_t reflectionsTargetSetId,
-	render::handle_t shadowMapAtlasTargetSetId)
+	render::RGTargetSet visualWriteTargetSetId,
+	render::RGTargetSet visualReadTargetSetId,
+	render::RGTargetSet gbufferTargetSetId,
+	render::RGTargetSet ambientOcclusionTargetSetId,
+	render::RGTargetSet reflectionsTargetSetId,
+	render::RGTargetSet shadowMapAtlasTargetSetId)
 {
 	T_PROFILER_SCOPE(L"WorldRendererForward setupVisualPass");
 
@@ -202,9 +202,9 @@ void WorldRendererForward::setupVisualPass(
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 	rp->addInput(gbufferTargetSetId);
 
-	if (ambientOcclusionTargetSetId != 0)
+	if (ambientOcclusionTargetSetId != render::RGTargetSet::Invalid)
 		rp->addInput(ambientOcclusionTargetSetId);
-	if (reflectionsTargetSetId != 0)
+	if (reflectionsTargetSetId != render::RGTargetSet::Invalid)
 		rp->addInput(reflectionsTargetSetId);
 	if (shadowsEnable)
 		rp->addInput(shadowMapAtlasTargetSetId);

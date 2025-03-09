@@ -76,7 +76,7 @@ render::handle_t HiZPass::addTexture(const WorldRenderView& worldRenderView, ren
 void HiZPass::setup(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
-	render::handle_t gbufferTargetSetId,
+	render::RGTargetSet gbufferTargetSetId,
 	render::handle_t outputHiZTextureId) const
 {
 	T_PROFILER_SCOPE(L"HiZPass::setup");

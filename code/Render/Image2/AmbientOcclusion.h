@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,21 +37,19 @@ public:
 	virtual void addRenderPassInputs(
 		const ImageGraph* graph,
 		const ImageGraphContext& context,
-		RenderPass& pass
-	) const override final;
+		RenderPass& pass) const override final;
 
 	virtual void build(
 		const ImageGraph* graph,
 		const ImageGraphContext& context,
 		const ImageGraphView& view,
 		const targetSetVector_t& targetSetIds,
-		const targetSetVector_t& sbufferIds,
+		const bufferVector_t& sbufferIds,
 		const PassOutput& output,
 		const RenderGraph& renderGraph,
 		const ProgramParameters* sharedParams,
 		RenderContext* renderContext,
-		ScreenRenderer* screenRenderer
-	) const override final;
+		ScreenRenderer* screenRenderer) const override final;
 
 private:
 	friend class AmbientOcclusionData;

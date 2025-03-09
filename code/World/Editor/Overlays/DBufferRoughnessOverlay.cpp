@@ -1,42 +1,41 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Editor/Overlays/DBufferRoughnessOverlay.h"
+
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "World/Deferred/WorldRendererDeferred.h"
-#include "World/Editor/Overlays/DBufferRoughnessOverlay.h"
 #include "World/Forward/WorldRendererForward.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_debugShader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
 const render::Handle c_handleDebugTechnique(L"DBufferRoughness");
 const render::Handle c_handleDebugAlpha(L"Scene_DebugAlpha");
 const render::Handle c_handleDebugTexture(L"Scene_DebugTexture");
 
-render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
+render::RGTargetSet findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
 {
 	for (const auto& tm : renderGraph.getTargets())
-	{
 		if (wcscmp(tm.second.name, name) == 0)
 			return tm.first;
-	}
-	return 0;
+	return render::RGTargetSet::Invalid;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.DBufferRoughnessOverlay", 0, DBufferRoughnessOverlay, BaseOverlay)
 
@@ -53,15 +52,15 @@ bool DBufferRoughnessOverlay::create(resource::IResourceManager* resourceManager
 
 void DBufferRoughnessOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, World* world, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
-	render::handle_t dbufferId = findTargetByName(renderGraph, L"DBuffer");
-	if (!dbufferId)
+	const render::RGTargetSet dbufferId = findTargetByName(renderGraph, L"DBuffer");
+	if (dbufferId == render::RGTargetSet::Invalid)
 	{
 		BaseOverlay::setup(renderGraph, screenRenderer, world, worldRenderer, worldRenderView, alpha, mip);
 		return;
 	}
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer roughness overlay");
-	rp->setOutput(0, render::TfColor, render::TfColor);
+	rp->setOutput(render::RGTargetSet::Output, render::TfColor, render::TfColor);
 	rp->addInput(dbufferId);
 	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto dbufferTargetSet = renderGraph.getTargetSet(dbufferId);

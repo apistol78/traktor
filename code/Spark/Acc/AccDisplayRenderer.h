@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
-#include "Render/Types.h"
+#include "Core/RefArray.h"
+#include "Render/Frame/RenderGraphTypes.h"
 #include "Spark/IDisplayRenderer.h"
 
 // import/export mechanism.
@@ -68,8 +68,7 @@ public:
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		uint32_t frameCount,
-		bool clearBackground
-	);
+		bool clearBackground);
 
 	void destroy();
 
@@ -93,8 +92,7 @@ public:
 		const Vector4& frameTransform,
 		float viewWidth,
 		float viewHeight,
-		const Aabb2& dirtyRegion
-	) override final;
+		const Aabb2& dirtyRegion) override final;
 
 	virtual void beginSprite(const SpriteInstance& sprite, const Matrix33& transform) override final;
 
@@ -123,8 +121,7 @@ public:
 		const Color4f& color,
 		const ColorTransform& cxform,
 		uint8_t filter,
-		const Color4f& filterColor
-	) override final;
+		const Color4f& filterColor) override final;
 
 	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform) override final;
 
@@ -163,12 +160,12 @@ private:
 	Ref< AccQuad > m_quad;
 	SmallMap< int32_t, ShapeCache > m_shapeCache;
 	SmallMap< int32_t, GlyphCache > m_glyphCache;
-	render::handle_t m_glyphsTargetSetId;
+	render::RGTargetSet m_glyphsTargetSetId;
 	int32_t m_nextIndex;
-	Vector4 m_frameBounds;			//!< [left, top, right, bottom] in twips.
-	Vector4 m_frameTransform;		//!< [offset x, offset y, scale x, scale y] in normalized values.
-	Vector4 m_viewSize;				//!< [width, height, 1/width, 1/height] in pixels.
-	Aabb2 m_frameBoundsVisible;		//!< Part of frame visible on screen, in twips and in "frame" space.
+	Vector4 m_frameBounds;		//!< [left, top, right, bottom] in twips.
+	Vector4 m_frameTransform;	//!< [offset x, offset y, scale x, scale y] in normalized values.
+	Vector4 m_viewSize;			//!< [width, height, 1/width, 1/height] in pixels.
+	Aabb2 m_frameBoundsVisible; //!< Part of frame visible on screen, in twips and in "frame" space.
 	Aabb2 m_dirtyRegion;
 	bool m_clearBackground;
 	bool m_maskWrite;

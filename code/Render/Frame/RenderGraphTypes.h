@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,14 @@
 #pragma once
 
 #include "Render/Types.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RENDER_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor::render
 {
@@ -72,6 +80,45 @@ struct RenderGraphBufferDesc
 	int32_t referenceWidthDenom = 0;
 	int32_t referenceHeightMul = 1;
 	int32_t referenceHeightDenom = 0;
+};
+
+class T_DLLCLASS RGHandle
+{
+public:
+	handle_t get() const { return m_data; }
+
+protected:
+	handle_t m_data = ~0U;
+
+	RGHandle() = default;
+
+	explicit RGHandle(handle_t data)
+		: m_data(data)
+	{
+	}
+};
+
+class T_DLLCLASS RGTargetSet : public RGHandle
+{
+public:
+	const static RGTargetSet Invalid;
+
+	const static RGTargetSet Output;
+
+	RGTargetSet() = default;
+
+	explicit RGTargetSet(handle_t data)
+		: RGHandle(data)
+	{
+	}
+
+	bool operator<(const RGTargetSet& rh) const { return m_data < rh.m_data; }
+
+	bool operator>(const RGTargetSet& rh) const { return m_data > rh.m_data; }
+
+	bool operator==(const RGTargetSet& rh) const { return m_data == rh.m_data; }
+
+	bool operator!=(const RGTargetSet& rh) const { return m_data != rh.m_data; }
 };
 
 }

@@ -1,33 +1,34 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2024 Anders Pistol.
+ * Copyright (c) 2023-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Shared/Passes/PostProcessPass.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Timer/Profiler.h"
-#include "Render/ITexture.h"
-#include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
+#include "Render/ITexture.h"
+#include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "World/IEntityRenderer.h"
 #include "World/IWorldRenderer.h"
+#include "World/Shared/WorldRenderPassShared.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
-#include "World/Shared/WorldRenderPassShared.h"
-#include "World/Shared/Passes/PostProcessPass.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
 const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{BE19DE90-E010-A74D-AA3B-87FAC2A56946}");
@@ -68,12 +69,12 @@ resource::Id< render::ImageGraph > getAntiAliasId(Quality quality)
 	}
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcessPass", PostProcessPass, Object)
 
 PostProcessPass::PostProcessPass(const WorldRenderSettings& settings)
-:   m_settings(settings)
+	: m_settings(settings)
 {
 }
 
@@ -158,18 +159,16 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 
 void PostProcessPass::setup(
 	const WorldRenderView& worldRenderView,
-    const GatherView& gatheredView,
+	const GatherView& gatheredView,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
-	render::handle_t gbufferTargetSetId,
-	render::handle_t velocityTargetSetId,
+	render::RGTargetSet gbufferTargetSetId,
+	render::RGTargetSet velocityTargetSetId,
 	const DoubleBufferedTarget& visualTargetSetId,
-	render::handle_t outputTargetSetId
-) const
+	render::RGTargetSet outputTargetSetId) const
 {
 	T_PROFILER_SCOPE(L"PostProcessPass::setup");
-	const render::ImageGraphView view =
-	{
+	const render::ImageGraphView view = {
 		.viewFrustum = worldRenderView.getViewFrustum(),
 		.view = worldRenderView.getView(),
 		.viewToLight = Matrix44::identity(),
@@ -191,13 +190,12 @@ void PostProcessPass::setup(
 	const float time = (float)worldRenderView.getTime();
 	const Vector2 rc = jitter(frameCount) / worldRenderView.getViewSize();
 	const Vector2 rp = jitter(frameCount - 1) / worldRenderView.getViewSize();
-	auto setParameters = [=, this](const render::RenderGraph& renderGraph, render::ProgramParameters* params)
-	{
+	auto setParameters = [=, this](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		params->setFloatParameter(s_handleTime, time);
 		params->setFloatParameter(s_handleGamma, m_gamma);
 		params->setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
 		params->setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
-		params->setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));	// Texture space.
+		params->setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y)); // Texture space.
 		if (gatheredView.rtWorldTopLevel != nullptr)
 			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
 	};
@@ -214,7 +212,7 @@ void PostProcessPass::setup(
 	if (m_gammaCorrection)
 		processes.push_back(m_gammaCorrection);
 
-	render::handle_t intermediateTargetSetId = 0;
+	render::RGTargetSet intermediateTargetSetId;
 	for (size_t i = 0; i < processes.size(); ++i)
 	{
 		auto process = processes[i];
@@ -230,7 +228,7 @@ void PostProcessPass::setup(
 			rgtd.referenceWidthDenom = 1;
 			rgtd.referenceHeightDenom = 1;
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, ~0U, outputTargetSetId);
+			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, render::RGTargetSet::Invalid, outputTargetSetId);
 
 			rp->setOutput(intermediateTargetSetId, render::TfColor, render::TfColor);
 		}
@@ -248,8 +246,7 @@ void PostProcessPass::setup(
 			rp,
 			igctx,
 			view,
-			setParameters
-		);
+			setParameters);
 
 		if (next)
 			igctx.associateTextureTargetSet(s_handleInputColor, intermediateTargetSetId, 0);

@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Render/Types.h"
+#include "Render/Frame/RenderGraphTypes.h"
 #include "Resource/Proxy.h"
 
 namespace traktor::render
@@ -45,7 +45,7 @@ public:
 	render::handle_t setup(
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
-		render::handle_t gbufferTargetSetId) const;
+		render::RGTargetSet gbufferTargetSetId) const;
 
 private:
 	resource::Proxy< render::Shader > m_downScaleShader;
