@@ -236,8 +236,8 @@
 			<script><![CDATA[
 const int N = 8;
 const float far = 20.0f;
-const float W = 8.0f;
-const float C = 0.8f;
+const float W = 12.0f;
+const float C = 0.4f;
 
 float occlusions = 0.0f;
 

@@ -60,8 +60,8 @@
 			<technique>World_ComputeIrradiance_RT</technique>
 			<domain>Compute</domain>
 			<localSize>
-				<X>8</X>
-				<Y>8</Y>
+				<X>16</X>
+				<Y>16</Y>
 				<Z>1</Z>
 			</localSize>
 			<useRayTracing>true</useRayTracing>
@@ -130,9 +130,11 @@
 			<script><![CDATA[
 #define USE_IS 1
 #define USE_RESERVOIR 0
-#define USE_ALL_LIGHTS 1
+#define USE_ALL_LIGHTS 0
+#define USE_SECOND_BOUNCE 1
 
 const int N = 16;
+const int N2 = 4;
 
 const ivec2 sz = imageSize($Output);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
@@ -156,6 +158,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 	
 	vec4 acc = vec4(0.0f);
 	HWRT_Material m;
+	HWRT_Material m2;
 	float t;
 
 	float nhit = 0.0f;
@@ -168,7 +171,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 	
 		// Calculate trace direction.
 		const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.25f;
-		const vec2 r = Rotate2D((Hammersley(i, N) + jitter) * 2.0f - 1.0f, Hash(rndState++)) * 0.5 + 0.5;
+		const vec2 r = Rotate2D((Hammersley(i, N) + jitter) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
 	
 #if USE_IS
 		vec3 rayDir = R * LambertianDirection($Direction.xyz, r);
@@ -243,6 +246,41 @@ if (pt.x < sz.x && pt.y < sz.y)
 				m.albedo.xyz * m.albedo.w * attenuate * phi,
 				m.albedo.w
 			);
+
+#if USE_SECOND_BOUNCE
+			// Second bounce.
+			const float attenuate2 = 1.0f;
+			vec4 Sacc = vec4(0.0f);
+			for (int j = 0; j < N2; ++j)
+			{
+				const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.25f;
+				const vec2 r = Rotate2D((Hammersley(i, N) + jitter) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
+				const vec3 secondRayDir = R * LambertianDirection(m.normal.xyz, r);
+				if (HWRT_Trace($AS, hit, secondRayDir, m2, t))
+				{
+					const vec3 hit2 = hit + secondRayDir * t;
+					const float pdfRandomLight = 1.0f;
+					if ($LightCount > 0)
+					{
+						const float pdfRandomLight = 1.0f / max($LightCount, 1);
+						const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
+						const $typeof(Lights) light = $Lights[lightIndex];
+						const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit2, m2.normal.xyz);
+						Sacc += vec4(
+							(m2.albedo * incident * attenuate2 * phi * PI / pdfRandomLight).xyz,
+							1.0f
+						);
+					}
+
+					// Add emissive.
+					Sacc += vec4(
+						m2.albedo.xyz * m2.albedo.w * attenuate2 * phi,
+						m2.albedo.w
+					);
+				}
+			}
+			Nacc += m.albedo * Sacc / float(N2);
+#endif
 
 			nhit++;
 		}
@@ -589,7 +627,7 @@ $Output = BlueNoise(seed);
 			</outputPins>
 			<script><![CDATA[const ivec2 sz = imageSize($Target);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
-$TexCoord = vec4(vec2(pt) / sz, 0.0f, 0.0f);
+$TexCoord = vec4(vec2(pt + 0.5f) / sz, 0.0f, 0.0f);
 
 ]]></script>
 		</item>
@@ -664,7 +702,7 @@ $TexCoord = vec4(vec2(pt) / sz, 0.0f, 0.0f);
 			<addressW>Clamp</addressW>
 			<compare>None</compare>
 			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">

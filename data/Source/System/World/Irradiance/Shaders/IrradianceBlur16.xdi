@@ -455,8 +455,8 @@ Shadow; adjusted for msaa.
 			<id>{F89121DB-5B4D-0749-9A18-495378B842FB}</id>
 			<comment/>
 			<position>
-				<first>473</first>
-				<second>-234</second>
+				<first>476</first>
+				<second>-400</second>
 			</position>
 			<fragmentGuid>{ED628E05-EA7F-B24F-9E38-97F53A90CCDA}</fragmentGuid>
 			<inputPins>
@@ -477,8 +477,8 @@ Shadow; adjusted for msaa.
 			<id>{228B2BE5-CAAC-A54E-BF19-E42E9CA0F277}</id>
 			<comment/>
 			<position>
-				<first>471</first>
-				<second>-146</second>
+				<first>482</first>
+				<second>-191</second>
 			</position>
 			<fragmentGuid>{ED628E05-EA7F-B24F-9E38-97F53A90CCDA}</fragmentGuid>
 			<inputPins>
@@ -538,10 +538,10 @@ Shadow; adjusted for msaa.
 				</item>
 			</outputPins>
 			<script><![CDATA[
-const float phi = clamp(dot($NormalA.xyz, $NormalB.xyz), 0.0f, 1.0f);
-const float dpt = 1.0f - clamp(abs($DepthA - $DepthB) * 0.2f, 0.0f, 1.0f);
+const float phi = clamp(dot($NormalA.xyz, $NormalB.xyz) * 1000.0f, 0.0f, 1.0f);
+const float dpt = 1.0f - clamp(abs($DepthA - $DepthB) * 0.1f, 0.0f, 1.0f);
 
-$Output = 1.0f - pow(max(phi, dpt), 2.0f);
+$Output = 1.0f - pow(min(phi, dpt), 8.0f);
 
 ]]></script>
 		</item>
@@ -571,6 +571,50 @@ $Output = 1.0f - pow(max(phi, dpt), 2.0f);
 				<second>125</second>
 			</position>
 			<swizzle>yzw</swizzle>
+		</item>
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
+			<id>{3E89338D-A70C-A244-B8B0-FDAB9BA0730B}</id>
+			<comment/>
+			<position>
+				<first>476</first>
+				<second>-325</second>
+			</position>
+			<fragmentGuid>{B8A2B203-34E6-3543-8502-522D0F16791C}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{39749CD5-03F0-D045-99EC-E01C2D775486}</id>
+					<name>UV</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{B350D788-DF12-6A40-922B-5737E4CB7880}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+		</item>
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
+			<id>{B4045E1B-797C-C54E-9AC5-96E5B0C3958C}</id>
+			<comment/>
+			<position>
+				<first>474</first>
+				<second>-128</second>
+			</position>
+			<fragmentGuid>{B8A2B203-34E6-3543-8502-522D0F16791C}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{39749CD5-03F0-D045-99EC-E01C2D775486}</id>
+					<name>UV</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{B350D788-DF12-6A40-922B-5737E4CB7880}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
 		</item>
 	</nodes>
 	<edges>
@@ -936,16 +980,6 @@ $Output = 1.0f - pow(max(phi, dpt), 2.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[35]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[39]"/>
-				<id>{304A7FF9-58DF-F340-BDF0-09A87664D2ED}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[34]"/>
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
@@ -956,16 +990,6 @@ $Output = 1.0f - pow(max(phi, dpt), 2.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[40]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[39]"/>
-				<id>{CA929139-EC9F-644A-B72D-E38AC02F2AC0}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[36]"/>
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
@@ -982,26 +1006,6 @@ $Output = 1.0f - pow(max(phi, dpt), 2.0f);
 			<destination>
 				<node ref="/object/nodes/item[42]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[41]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[39]"/>
-				<id>{3136C63C-502C-C34F-B104-E30833C01465}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[42]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[39]"/>
-				<id>{A10CDEB3-4683-9C41-9CDA-E43C5EE1A365}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1012,6 +1016,66 @@ $Output = 1.0f - pow(max(phi, dpt), 2.0f);
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[43]"/>
+				<id>{39749CD5-03F0-D045-99EC-E01C2D775486}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[43]"/>
+				<id>{B350D788-DF12-6A40-922B-5737E4CB7880}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[39]"/>
+				<id>{CA929139-EC9F-644A-B72D-E38AC02F2AC0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[37]"/>
+				<id>{68FEE0D6-C712-9F4A-8713-0869C8607AA1}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[39]"/>
+				<id>{304A7FF9-58DF-F340-BDF0-09A87664D2ED}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[44]"/>
+				<id>{39749CD5-03F0-D045-99EC-E01C2D775486}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<id>{68FEE0D6-C712-9F4A-8713-0869C8607AA1}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[39]"/>
+				<id>{3136C63C-502C-C34F-B104-E30833C01465}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[44]"/>
+				<id>{B350D788-DF12-6A40-922B-5737E4CB7880}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[39]"/>
+				<id>{A10CDEB3-4683-9C41-9CDA-E43C5EE1A365}</id>
 			</destination>
 		</item>
 	</edges>
