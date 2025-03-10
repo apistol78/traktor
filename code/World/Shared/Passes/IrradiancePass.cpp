@@ -86,6 +86,7 @@ render::RGTargetSet IrradiancePass::setup(
 	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
+	render::RGTargetSet gbufferTargetSetId,
 	render::RGTargetSet velocityTargetSetId,
 	render::RGTexture halfResDepthTextureId,
 	render::RGTargetSet outputTargetSetId) const
@@ -120,11 +121,11 @@ render::RGTargetSet IrradiancePass::setup(
 	};
 	const auto irradianceTextureId = renderGraph.addTransientTexture(L"Irradiance", irradianceTextureDesc);
 
-	// Add final, denoised, irradiance target.
+	// Add final, upsampled and denoised, irradiance target.
 	const render::RenderGraphTargetSetDesc irradianceFinalTargetDesc = {
 		.count = 1,
-		.referenceWidthDenom = 2,
-		.referenceHeightDenom = 2,
+		.referenceWidthDenom = 1,
+		.referenceHeightDenom = 1,
 		.createDepthStencil = false,
 		.targets = { {
 			.colorFormat = render::TfR16G16B16A16F // Irradiance (RGB)
@@ -136,6 +137,7 @@ render::RGTargetSet IrradiancePass::setup(
 	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();
 	const Vector2 jrp = needJitter ? jitter(frameCount - 1) / worldRenderView.getViewSize() : Vector2::zero();
 	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
+		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 		const auto halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
 
 		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
@@ -143,6 +145,9 @@ render::RGTargetSet IrradiancePass::setup(
 		params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 		params->setMatrixParameter(s_handleView, worldRenderView.getView());
 		params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
+		params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
+		params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
+		params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
 		params->setTextureParameter(s_handleHalfResDepthMap, halfResDepthTexture);
 		params->setFloatParameter(s_handleRandom, s_random.nextFloat());
 
@@ -206,7 +211,7 @@ render::RGTargetSet IrradiancePass::setup(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);
-			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, irradianceTexture, 0);
+			// renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, irradianceTexture, 0);
 		});
 		renderGraph.addPass(rp);
 	}
@@ -226,6 +231,7 @@ render::RGTargetSet IrradiancePass::setup(
 		igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
 
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance denoiser");
+		rp->addInput(gbufferTargetSetId);
 		rp->addInput(velocityTargetSetId);
 		rp->addInput(halfResDepthTextureId);
 		rp->addInput(irradianceTextureId);

@@ -56,6 +56,7 @@ public:
 		bool needJitter,
 		uint32_t frameCount,
 		render::RenderGraph& renderGraph,
+		render::RGTargetSet gbufferTargetSetId,
 		render::RGTargetSet velocityTargetSetId,
 		render::RGTexture halfResDepthTextureId,
 		render::RGTargetSet outputTargetSetId) const;
