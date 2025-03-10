@@ -197,7 +197,7 @@ public:
 
 	/*!
 	 */
-	handle_t addDependency();
+	RGDependency addDependency();
 
 	/*! Get target set from resource handle.
 	 *
@@ -259,8 +259,8 @@ private:
 	SmallMap< RGBuffer, BufferResource > m_buffers;
 	SmallMap< RGTexture, TextureResource > m_textures;
 	RefArray< const RenderPass > m_passes;
-	StaticVector< uint32_t, 32 > m_order[32];
-	StaticSet< RGTargetSet, 32 > m_sharedDepthTargets;
+	StaticVector< uint32_t, 64 > m_order[32];
+	StaticSet< RGTargetSet, 64 > m_sharedDepthTargets;
 	uint32_t m_counter;
 	uint32_t m_multiSample;
 	handle_t m_nextResourceId;

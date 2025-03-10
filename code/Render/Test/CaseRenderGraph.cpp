@@ -6,8 +6,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Frame/RenderGraph.h"
 #include "Render/Test/CaseRenderGraph.h"
+
+#include "Render/Frame/RenderGraph.h"
 
 namespace traktor::render::test
 {
@@ -23,19 +24,19 @@ void CaseRenderGraph::run()
 	desc.width = 64;
 	desc.height = 64;
 	desc.targets[0].colorFormat = TfR8G8B8A8;
-	auto target = rg->addTransientTargetSet(L"Target", desc);
+	const RGTargetSet target = rg->addTransientTargetSet(L"Target", desc);
 
 	{
 		Ref< RenderPass > rp = new RenderPass();
 		rp->addInput(target);
-		rp->setOutput(target);
+		rp->setOutput(target, render::TfAll, render::TfAll);
 		rg->addPass(rp);
 	}
 
 	{
 		Ref< RenderPass > rp = new RenderPass();
 		rp->addInput(target);
-		rp->setOutput(0);
+		rp->setOutput(RGTargetSet::Output, render::TfAll, render::TfAll);
 		rg->addPass(rp);
 	}
 

@@ -171,4 +171,27 @@ public:
 	bool operator!=(const RGTexture& rh) const { return m_data != rh.m_data; }
 };
 
+/*!
+ */
+class T_DLLCLASS RGDependency : public RGHandle
+{
+public:
+	const static RGDependency Invalid;
+
+	RGDependency() = default;
+
+	explicit RGDependency(handle_t data)
+		: RGHandle(data)
+	{
+	}
+
+	bool operator<(const RGDependency& rh) const { return m_data < rh.m_data; }
+
+	bool operator>(const RGDependency& rh) const { return m_data > rh.m_data; }
+
+	bool operator==(const RGDependency& rh) const { return m_data == rh.m_data; }
+
+	bool operator!=(const RGDependency& rh) const { return m_data != rh.m_data; }
+};
+
 }

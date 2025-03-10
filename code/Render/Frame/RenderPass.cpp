@@ -39,7 +39,7 @@ void RenderPass::addInput(handle_t resourceId)
 
 void RenderPass::addInput(RGTargetSet targetSet)
 {
-	// Just ignore invalid target set id; convenient when setting up passes to be able to add null inputs.
+	// Just ignore invalid target set; convenient when setting up passes to be able to add null inputs.
 	if (targetSet == RGTargetSet::Invalid || targetSet == RGTargetSet::Output)
 		return;
 
@@ -49,7 +49,7 @@ void RenderPass::addInput(RGTargetSet targetSet)
 
 void RenderPass::addInput(RGBuffer buffer)
 {
-	// Just ignore invalid buffer id; convenient when setting up passes to be able to add null inputs.
+	// Just ignore invalid buffer; convenient when setting up passes to be able to add null inputs.
 	if (buffer == RGBuffer::Invalid)
 		return;
 
@@ -59,7 +59,7 @@ void RenderPass::addInput(RGBuffer buffer)
 
 void RenderPass::addInput(RGTexture texture)
 {
-	// Just ignore invalid texture id; convenient when setting up passes to be able to add null inputs.
+	// Just ignore invalid texture; convenient when setting up passes to be able to add null inputs.
 	if (texture == RGTexture::Invalid)
 		return;
 
@@ -67,18 +67,20 @@ void RenderPass::addInput(RGTexture texture)
 	input.resourceId = texture.get();
 }
 
+void RenderPass::addInput(RGDependency dependency)
+{
+	// Just ignore invalid dependency; convenient when setting up passes to be able to add null inputs.
+	if (dependency == RGDependency::Invalid)
+		return;
+
+	auto& input = m_inputs.push_back();
+	input.resourceId = dependency.get();
+}
+
 void RenderPass::addWeakInput(RGTexture texture)
 {
 	// #todo Currently we can get away with not doing anything but
 	// we need to revisit this to ensure resource life time.
-}
-
-void RenderPass::setOutput(handle_t resourceId)
-{
-	m_output.resourceId = resourceId;
-	m_output.clear.mask = 0;
-	m_output.load = 0;
-	m_output.store = 0;
 }
 
 void RenderPass::setOutput(RGTargetSet targetSet, uint32_t load, uint32_t store)
@@ -108,6 +110,14 @@ void RenderPass::setOutput(RGBuffer buffer)
 void RenderPass::setOutput(RGTexture texture)
 {
 	m_output.resourceId = texture.get();
+	m_output.clear.mask = 0;
+	m_output.load = 0;
+	m_output.store = 0;
+}
+
+void RenderPass::setOutput(RGDependency dependency)
+{
+	m_output.resourceId = dependency.get();
 	m_output.clear.mask = 0;
 	m_output.load = 0;
 	m_output.store = 0;

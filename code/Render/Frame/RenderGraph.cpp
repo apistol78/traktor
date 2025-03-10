@@ -205,9 +205,9 @@ RGTexture RenderGraph::addPersistentTexture(const wchar_t* const name, handle_t 
 	return resourceId;
 }
 
-handle_t RenderGraph::addDependency()
+RGDependency RenderGraph::addDependency()
 {
-	return m_nextResourceId++;
+	return RGDependency(m_nextResourceId++);
 }
 
 IRenderTargetSet* RenderGraph::getTargetSet(RGTargetSet resource) const

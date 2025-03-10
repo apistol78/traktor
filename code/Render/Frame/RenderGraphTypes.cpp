@@ -19,4 +19,6 @@ const RGBuffer RGBuffer::Invalid(~0U);
 
 const RGTexture RGTexture::Invalid(~0U);
 
+const RGDependency RGDependency::Invalid(~0U);
+
 }

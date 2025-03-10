@@ -6,22 +6,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
+#include "Terrain/OceanComponent.h"
+
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Heightfield/Heightfield.h"
 #include "Render/Buffer.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/VertexElement.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
-#include "Terrain/OceanComponent.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponent.h"
 #include "World/Entity.h"
@@ -30,10 +30,12 @@
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
 
+#include <limits>
+
 namespace traktor::terrain
 {
-	namespace
-	{
+namespace
+{
 
 // Spectrum parameters
 const render::Handle s_handleOcean_SpectrumScale(L"Ocean_SpectrumScale");
@@ -65,10 +67,12 @@ const render::Handle s_handleOcean_Tile(L"Ocean_Tile");
 const render::Handle s_handleWorld_Time(L"World_Time");
 
 #pragma pack(1)
+
 struct OceanVertex
 {
 	float pos[2];
 };
+
 #pragma pack()
 
 const uint32_t c_gridSize = 32;
@@ -89,7 +93,7 @@ void setSpectrumParameters(const OceanComponentData::Spectrum& spectrum, render:
 	params->setFloatParameter(s_handleOcean_SpectrumShortWavesFade, spectrum.shortWavesFade);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanComponent", OceanComponent, world::IEntityComponent)
 
@@ -150,8 +154,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 		const uint32_t base = iz * c_gridSize;
 		for (uint32_t ix = 0; ix < c_gridSize - 1; ++ix)
 		{
-			const uint32_t quad[] =
-			{
+			const uint32_t quad[] = {
 				base + ix,
 				base + ix + 1,
 				base + ix + 1 + c_gridSize,
@@ -173,8 +176,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 	m_primitives = render::Primitives::setIndexed(
 		render::PrimitiveType::Triangles,
 		0,
-		c_gridCells * 2
-	);
+		c_gridCells * 2);
 
 	if (!resourceManager->bind(data.m_shaderWave, m_shaderWave))
 		return false;
@@ -223,8 +225,7 @@ void OceanComponent::update(const world::UpdateParams& update)
 
 void OceanComponent::setup(
 	const world::WorldSetupContext& context,
-	const world::WorldRenderView& worldRenderView
-)
+	const world::WorldRenderView& worldRenderView)
 {
 	// Re-generate spectrum if shader has been modified.
 	if (m_shaderWave.changed())
@@ -298,7 +299,7 @@ void OceanComponent::setup(
 		std::swap(m_evolvedSpectrumTextures[1], m_evolvedSpectrumTextures[3]);
 	}
 
-	render::handle_t dependency = context.getRenderGraph().addDependency();
+	render::RGDependency dependency = context.getRenderGraph().addDependency();
 
 	// Evolve spectrum over time.
 	{
@@ -332,8 +333,8 @@ void OceanComponent::setup(
 	// Compute inverse FFT of spectrums to get time domain heights.
 	for (int32_t i = 0; i < 2; ++i)
 	{
-		render::handle_t d1 = context.getRenderGraph().addDependency();
-		render::handle_t d2 = context.getRenderGraph().addDependency();
+		const render::RGDependency d1 = context.getRenderGraph().addDependency();
+		const render::RGDependency d2 = context.getRenderGraph().addDependency();
 
 		{
 			Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute inverse FFT X");
@@ -394,7 +395,7 @@ void OceanComponent::setup(
 		dependency = d2;
 	}
 
-	render::handle_t computeDependency = context.getRenderGraph().addDependency();
+	const render::RGDependency computeDependency = context.getRenderGraph().addDependency();
 
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute generate");
@@ -425,14 +426,13 @@ void OceanComponent::setup(
 		context.getRenderGraph().addPass(rp);
 	}
 
-	context.getVisualAttachments().push_back(computeDependency);
+	context.getVisualAttachments().push_back(computeDependency.get());
 }
 
 void OceanComponent::build(
 	render::RenderContext* renderContext,
 	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
+	const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_owner)
 		return;
@@ -449,8 +449,8 @@ void OceanComponent::build(
 	}
 
 	const Transform transform = m_owner->getTransform() * Transform(Vector4(0.0f, m_elevation, 0.0f, 0.0f));
-	//const Vector4 lastEye = worldRenderView.getLastView().inverse().translation().xyz1();
-	//const Vector4 eye = worldRenderView.getView().inverse().translation().xyz1();
+	// const Vector4 lastEye = worldRenderView.getLastView().inverse().translation().xyz1();
+	// const Vector4 eye = worldRenderView.getView().inverse().translation().xyz1();
 
 	// Render ocean geometry.
 	auto perm = worldRenderPass.getPermutation(m_shader);
@@ -465,7 +465,7 @@ void OceanComponent::build(
 		{
 			Aabb3 boundingBox;
 			boundingBox.mn = Vector4(-100.0f + ix * 200.0f, -10.0f, -100.0f + iz * 200.0f);
-			boundingBox.mx = Vector4( 100.0f + ix * 200.0f,  10.0f,  100.0f + iz * 200.0f);
+			boundingBox.mx = Vector4(100.0f + ix * 200.0f, 10.0f, 100.0f + iz * 200.0f);
 
 			float distance;
 			if (!worldRenderView.isBoxVisible(boundingBox, transform, distance))
@@ -483,8 +483,8 @@ void OceanComponent::build(
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->programParams->beginParameters(renderContext);
 			renderBlock->programParams->setFloatParameter(s_handleOcean_Opacity, m_opacity);
-			//renderBlock->programParams->setVectorParameter(s_handleOcean_Eye, eye);
-			//renderBlock->programParams->setVectorParameter(s_handleOcean_LastEye, lastEye);
+			// renderBlock->programParams->setVectorParameter(s_handleOcean_Eye, eye);
+			// renderBlock->programParams->setVectorParameter(s_handleOcean_LastEye, lastEye);
 			renderBlock->programParams->setVectorParameter(s_handleOcean_ShallowTint, m_shallowTint.linear());
 			renderBlock->programParams->setVectorParameter(s_handleOcean_DeepColor, m_deepColor.linear());
 			renderBlock->programParams->setVectorParameter(s_handleOcean_Tile, Vector4(ix, 0.0f, iz, 0.0f));
@@ -518,8 +518,7 @@ void OceanComponent::build(
 			worldRenderPass.setProgramParameters(
 				renderBlock->programParams,
 				transform,
-				transform
-			);
+				transform);
 
 			renderBlock->programParams->endParameters(renderContext);
 

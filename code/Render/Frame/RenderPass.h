@@ -98,6 +98,12 @@ public:
 	 */
 	void addInput(RGTexture texture);
 
+	/*! Add dependency input to render pass.
+	 *
+	 * \param dependency Handle to dependency.
+	 */
+	void addInput(RGDependency dependency);
+
 	/*! Add weak input to render pass.
 	 *
 	 * A weak input doesn't resolve into a dependency between
@@ -114,16 +120,6 @@ public:
 
 	//! \{
 
-	/*! Set output resource of render pass.
-	 *
-	 * Resource ID 0 means the primary framebuffer and
-	 * an ID of ~0 means the render pass doesn't have an
-	 * output resource associated.
-	 *
-	 * \param resourceId ID of output resource.
-	 */
-	void setOutput(handle_t resourceId);
-
 	void setOutput(RGTargetSet targetSet, uint32_t load, uint32_t store);
 
 	void setOutput(RGTargetSet targetSet, const Clear& clear, uint32_t load, uint32_t store);
@@ -131,6 +127,8 @@ public:
 	void setOutput(RGBuffer buffer);
 
 	void setOutput(RGTexture texture);
+
+	void setOutput(RGDependency dependency);
 
 	bool haveOutput() const { return m_output.resourceId != ~0; }
 
