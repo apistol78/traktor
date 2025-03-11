@@ -103,8 +103,11 @@ int32_t GridItem::getHeight()
 
 	if (m_font)
 	{
+		const float ratio = float(m_font->getSize().get()) / 8.0f;
+		const Unit pad = Unit(int32_t(12.0f * ratio));
+
 		const int32_t lines = std::max< int32_t >(1, (int32_t)std::count(m_text.begin(), m_text.end(), L'\n'));
-		height = std::max(height, lines * pixel(m_font->getSize() + 10_ut));
+		height = std::max(height, lines * pixel(m_font->getSize() + pad));
 	}
 	else
 		height = std::max(height, getFontMetric().getHeight() + pixel(6_ut));
