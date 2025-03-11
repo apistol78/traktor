@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -60,11 +60,13 @@ class T_DLLCLASS SkinnedMesh : public IMesh
 
 public:
 #pragma pack(1)
+
 	struct JointData
 	{
 		float translation[4];
 		float rotation[4];
 	};
+
 #pragma pack()
 
 	static const FourCC c_fccSkinPosition;
@@ -78,14 +80,12 @@ public:
 	void buildSkin(
 		render::RenderContext* renderContext,
 		render::Buffer* jointTransforms,
-		render::Buffer* skinBuffer
-	) const;
+		render::Buffer* skinBuffer) const;
 
 	void buildAccelerationStructure(
 		render::RenderContext* renderContext,
 		render::Buffer* skinBuffer,
-		render::IAccelerationStructure* accelerationStructure
-	) const;
+		render::IAccelerationStructure* accelerationStructure) const;
 
 	void build(
 		render::RenderContext* renderContext,
@@ -95,8 +95,7 @@ public:
 		render::Buffer* lastSkinBuffer,
 		render::Buffer* skinBuffer,
 		float distance,
-		const IMeshParameterCallback* parameterCallback
-	) const;
+		const IMeshParameterCallback* parameterCallback) const;
 
 	int32_t getJointCount() const;
 
@@ -120,7 +119,7 @@ private:
 		render::handle_t shaderTechnique;
 		uint32_t meshPart;
 	};
-	
+
 	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
 	SmallMap< std::wstring, int32_t > m_jointMap;
 	int32_t m_jointCount = 0;
@@ -132,6 +131,7 @@ private:
 
 	// Ray tracing.
 	Ref< const render::IVertexLayout > m_rtVertexLayout;
+	AlignedVector< resource::Proxy< render::ITexture > > m_albedoTextures;
 
 #if defined(_DEBUG)
 	std::string m_name;

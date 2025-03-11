@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -263,6 +263,7 @@ bool SkinnedMeshConverter::convert(
 	}
 
 	// Add ray tracing part.
+	AlignedVector< resource::Id< render::ITexture > > albedoTextures;
 	{
 		render::Mesh::Part meshPart;
 		meshPart.name = L"__RT__";
@@ -281,6 +282,21 @@ bool SkinnedMeshConverter::convert(
 				continue;
 
 			const auto& material = model->getMaterial(materialId);
+
+			// Look up index of albedo map, if map doesn't exist add a new reference.
+			int32_t albedoMapId = -1;
+			if (material.getDiffuseMap().texture.isNotNull())
+			{
+				const auto it = std::find(albedoTextures.begin(), albedoTextures.end(), resource::Id< render::ITexture >(material.getDiffuseMap().texture));
+				if (it != albedoTextures.end())
+					albedoMapId = (int32_t)std::distance(albedoTextures.begin(), it);
+				else
+				{
+					albedoMapId = (int32_t)albedoTextures.size();
+					albedoTextures.push_back(resource::Id< render::ITexture >(material.getDiffuseMap().texture));
+				}
+			}
+
 			for (const auto& polygon : model->getPolygonsByMaterial(materialId))
 			{
 				Vector4 albedo = material.getColor();
@@ -308,7 +324,14 @@ bool SkinnedMeshConverter::convert(
 					vptr->albedo[3] = material.getEmissive();
 
 					vptr->texCoord[0] = vptr->texCoord[1] = 0.0f;
-					vptr->albedoMap = -1;
+					if (vertex.getTexCoord(0) != model::c_InvalidIndex)
+					{
+						const Vector2 texCoord = model->getTexCoord(vertex.getTexCoord(0));
+						vptr->texCoord[0] = texCoord.x;
+						vptr->texCoord[1] = texCoord.y;
+					}
+
+					vptr->albedoMap = albedoMapId;
 
 					++vptr;
 				}
@@ -325,6 +348,7 @@ bool SkinnedMeshConverter::convert(
 		return false;
 
 	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
+	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_albedoTextures = albedoTextures;
 	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_parts = parts;
 	for (uint32_t i = 0; i < model->getJointCount(); ++i)
 		checked_type_cast< SkinnedMeshResource* >(meshResource)->m_jointMap[model->getJoint(i).getName()] = i;
