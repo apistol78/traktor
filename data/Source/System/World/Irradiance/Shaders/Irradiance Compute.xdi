@@ -249,7 +249,6 @@ if (pt.x < sz.x && pt.y < sz.y)
 
 #if USE_SECOND_BOUNCE
 			// Second bounce.
-			const float attenuate2 = 1.0f;
 			vec4 Sacc = vec4(0.0f);
 			for (int j = 0; j < N2; ++j)
 			{
@@ -258,14 +257,19 @@ if (pt.x < sz.x && pt.y < sz.y)
 				const vec3 secondRayDir = R * LambertianDirection(m.normal.xyz, r);
 				if (HWRT_Trace($AS, hit, secondRayDir, m2, t))
 				{
-					const vec3 hit2 = hit + secondRayDir * t;
-					const float pdfRandomLight = 1.0f;
+					// Attenuate from hit point back to origin.
+					const float nt = t / HWRT_DefaultFar;
+					const float attenuate2 = clamp(1.0f / (nt * nt), 0.0f, 1.0f);
+
 					if ($LightCount > 0)
 					{
 						const float pdfRandomLight = 1.0f / max($LightCount, 1);
 						const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
 						const $typeof(Lights) light = $Lights[lightIndex];
+
+						const vec3 hit2 = hit + secondRayDir * t;
 						const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit2, m2.normal.xyz);
+
 						Sacc += vec4(
 							(m2.albedo * incident * attenuate2 * phi * PI / pdfRandomLight).xyz,
 							1.0f
