@@ -167,7 +167,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 	[[branch]]
 	for (int i = 0; i < N; ++i)
 	{
-		const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.15f;
+		const vec3 rayOrigin = $Origin.xyz;
 	
 		// Calculate trace direction.
 		const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.25f;
