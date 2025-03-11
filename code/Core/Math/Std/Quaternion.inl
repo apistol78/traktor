@@ -338,9 +338,6 @@ T_MATH_INLINE Quaternion lerp(const Quaternion& a, const Quaternion& b, float c)
 
 T_MATH_INLINE Quaternion slerp(const Quaternion& a, const Quaternion& b, float c)
 {
-	Scalar scale1;
-	Scalar scale2;
-
 	const Quaternion A = a.normalized();
 	Quaternion B = b.normalized();
 
@@ -351,7 +348,7 @@ T_MATH_INLINE Quaternion slerp(const Quaternion& a, const Quaternion& b, float c
 		B.e = -B.e;
 	}
 
-	if (phi > 0.95_simd)
+	if (phi > 0.99_simd)
 		return Quaternion(lerp(A.e, B.e, Scalar(c))).normalized();
 
 	const float theta_0 = acosf(phi);
