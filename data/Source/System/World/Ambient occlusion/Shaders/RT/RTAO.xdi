@@ -237,7 +237,7 @@
 const int N = 8;
 const float far = 20.0f;
 const float W = 12.0f;
-const float C = 0.4f;
+const float C = 0.6f;
 
 float occlusions = 0.0f;
 
@@ -253,7 +253,7 @@ for (int i = 0; i < N; ++i)
 	const vec2 r = Hammersley(i, N) * W - W / 2.0f;
 	const vec3 rayOrigin = $Origin.xyz;
 	const vec3 rayDir = normalize($Direction.xyz + u * r.x + v * r.y);
-	if (HWRT_TraceShadow($AS, rayOrigin + rayDir, rayDir, far))
+	if (HWRT_TraceShadow($AS, rayOrigin, rayDir, far))
 		occlusions += 1.0f;
 }
 

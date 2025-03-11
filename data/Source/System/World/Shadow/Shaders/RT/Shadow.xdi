@@ -150,8 +150,8 @@
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const int N = 4;
 
 vec3 u, v;
@@ -166,7 +166,7 @@ int nshadowed = 0;
 for (int i = 0; i < N; ++i)
 {
 	const vec2 r = (Hammersley(i, N) * 1.0f - 0.5f) * 0.05f;
-	const vec3 rayOrigin = $Origin.xyz + $Normal.xyz * 0.05f;
+	const vec3 rayOrigin = $Origin.xyz;
 	const vec3 rayDir = normalize($Direction.xyz + u * r.x + v * r.y);
 	const bool shadowed = HWRT_TraceShadow(
 		$AS,
@@ -180,8 +180,8 @@ for (int i = 0; i < N; ++i)
 
 $Output = 1.0f - float(nshadowed) / N;
 
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D8EC541E-FBF8-1D43-8A57-76299D502A4F}</id>
@@ -244,13 +244,13 @@ $Output = 1.0f - float(nshadowed) / N;
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 uvec2 seed = uvec2(gl_FragCoord.xy);
 seed += uvec2($Time * 1543, $Time * 543);
 $Output = BlueNoise(seed) * 2.0f * 3.142f;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{44AE64A5-E05F-C047-A013-D291FB572E52}</id>
