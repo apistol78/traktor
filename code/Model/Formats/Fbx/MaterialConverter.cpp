@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,58 +20,6 @@ namespace traktor::model
 {
 namespace
 {
-
-// void scanCustomProperties(const FbxObject* node, Material& outMaterial)
-//{
-//	FbxProperty prop = node->GetFirstProperty();
-//	while (prop.IsValid())
-//	{
-//		//const int userTag = prop.GetUserTag();
-//		std::wstring propName = mbstows(prop.GetNameAsCStr());
-//		if (startsWith(propName, L"Traktor_"))
-//		{
-//			propName = propName.substr(8);
-//			if (propName == L"DoubleSided")
-//			{
-//				FbxPropertyT< FbxBool > propState = prop;
-//				if (propState.IsValid())
-//					outMaterial.setDoubleSided(propState.Get());
-//			}
-//			else if (propName == L"BlendMode")
-//			{
-//				FbxPropertyT< FbxInt32 > propMode = prop;
-//				if (propMode.IsValid())
-//					outMaterial.setBlendOperator((Material::BlendOperator)propMode.Get());
-//			}
-//			else if (propName == L"Transparency")
-//			{
-//				FbxPropertyT< FbxFloat > propTransparency = prop;
-//				if (propTransparency.IsValid())
-//					outMaterial.setTransparency(propTransparency.Get());
-//			}
-//			else if (propName == L"Emissive")
-//				outMaterial.setEmissive(1.0f);
-//			else
-//			{
-//				FbxPropertyT< FbxBool > propState = prop;
-//				if (propState.IsValid())
-//					outMaterial.setProperty< PropertyBoolean >(propName, propState.Get());
-//			}
-//
-//			propName = replaceAll(propName, L"Traktor_", L"");
-//			FbxPropertyT< FbxBool > propState = prop;
-//			if (propState.IsValid())
-//			{
-//				bool propValue = propState.Get();
-//				if (propName != L"DoubleSided")
-//					outMaterial.setProperty< PropertyBoolean >(propName, propValue);
-//				else
-//					outMaterial.setDoubleSided(propValue);
-//			}
-//		}
-//		prop = node->GetNextProperty(prop);
-//	}
-// }
 
 std::wstring getTextureName(const ufbx_texture* texture)
 {
@@ -243,6 +191,18 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 			Ref< drawing::Image > transparencyImage = getEmbeddedTexture(material->pbr.opacity.texture);
 			mm.setTransparencyMap(Material::Map(
 				getTextureName(material->pbr.opacity.texture),
+				channel,
+				false,
+				Guid(),
+				transparencyImage));
+			mm.setBlendOperator(Material::BoAlpha);
+		}
+		else if (material->pbr.transmission_factor.texture)
+		{
+			const uint32_t channel = outModel.getTexCoordChannel(mbstows(material->pbr.transmission_factor.texture->uv_set.data));
+			Ref< drawing::Image > transparencyImage = getEmbeddedTexture(material->pbr.transmission_factor.texture);
+			mm.setTransparencyMap(Material::Map(
+				getTextureName(material->pbr.transmission_factor.texture),
 				channel,
 				false,
 				Guid(),
