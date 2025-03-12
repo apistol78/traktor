@@ -147,7 +147,7 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 54, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 58, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 	: m_promoteHalf(false)
@@ -362,35 +362,73 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
+	// Ensure materials doesn't contain texture references for materials with custom shaders.
+	for (model::Material& m : modelMaterials)
+	{
+		const bool materialHaveCustomShader = (bool)(materialShaders.find(m.getName()) != materialShaders.end());
+		if (materialHaveCustomShader)
+		{
+			model::Material::Map maps[] = {
+				m.getDiffuseMap(),
+				m.getSpecularMap(),
+				m.getRoughnessMap(),
+				m.getMetalnessMap(),
+				m.getTransparencyMap(),
+				m.getEmissiveMap(),
+				m.getReflectiveMap(),
+				m.getNormalMap()
+			};
+
+			for (auto& map : maps)
+			{
+				map.texture = Guid::null;
+				map.image = nullptr;
+			}
+
+			m.setDiffuseMap(maps[0]);
+			m.setSpecularMap(maps[1]);
+			m.setRoughnessMap(maps[2]);
+			m.setMetalnessMap(maps[3]);
+			m.setTransparencyMap(maps[4]);
+			m.setEmissiveMap(maps[5]);
+			m.setReflectiveMap(maps[6]);
+			m.setNormalMap(maps[7]);
+		}
+	}
+
 	// Merge materials, set textures specified in MeshAsset into material maps.
 	for (model::Material& m : modelMaterials)
 	{
-		model::Material::Map maps[] = {
-			m.getDiffuseMap(),
-			m.getSpecularMap(),
-			m.getRoughnessMap(),
-			m.getMetalnessMap(),
-			m.getTransparencyMap(),
-			m.getEmissiveMap(),
-			m.getReflectiveMap(),
-			m.getNormalMap()
-		};
-
-		for (auto& map : maps)
+		const bool materialHaveCustomShader = (bool)(materialShaders.find(m.getName()) != materialShaders.end());
+		if (!materialHaveCustomShader)
 		{
-			auto it = materialTextures.find(map.name);
-			if (it != materialTextures.end())
-				map.texture = it->second;
-		}
+			model::Material::Map maps[] = {
+				m.getDiffuseMap(),
+				m.getSpecularMap(),
+				m.getRoughnessMap(),
+				m.getMetalnessMap(),
+				m.getTransparencyMap(),
+				m.getEmissiveMap(),
+				m.getReflectiveMap(),
+				m.getNormalMap()
+			};
 
-		m.setDiffuseMap(maps[0]);
-		m.setSpecularMap(maps[1]);
-		m.setRoughnessMap(maps[2]);
-		m.setMetalnessMap(maps[3]);
-		m.setTransparencyMap(maps[4]);
-		m.setEmissiveMap(maps[5]);
-		m.setReflectiveMap(maps[6]);
-		m.setNormalMap(maps[7]);
+			for (auto& map : maps)
+			{
+				auto it = materialTextures.find(map.name);
+				if (it != materialTextures.end())
+					map.texture = it->second;
+			}
+
+			m.setDiffuseMap(maps[0]);
+			m.setSpecularMap(maps[1]);
+			m.setRoughnessMap(maps[2]);
+			m.setMetalnessMap(maps[3]);
+			m.setTransparencyMap(maps[4]);
+			m.setEmissiveMap(maps[5]);
+			m.setReflectiveMap(maps[6]);
+			m.setNormalMap(maps[7]);
+		}
 	}
 
 	const Aabb3 boundingBox = model->getBoundingBox();
@@ -399,14 +437,18 @@ bool MeshPipeline::buildOutput(
 	// Build embedded textures and assign generated id;s to materials.
 	for (auto& m : modelMaterials)
 	{
-		buildEmbeddedTexture(pipelineBuilder, m.getDiffuseMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, m.getSpecularMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, m.getRoughnessMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, m.getMetalnessMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, m.getTransparencyMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, m.getEmissiveMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, m.getReflectiveMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, m.getNormalMap(), true);
+		const bool materialHaveCustomShader = (bool)(materialShaders.find(m.getName()) != materialShaders.end());
+		if (!materialHaveCustomShader)
+		{
+			buildEmbeddedTexture(pipelineBuilder, m.getDiffuseMap(), false);
+			buildEmbeddedTexture(pipelineBuilder, m.getSpecularMap(), false);
+			buildEmbeddedTexture(pipelineBuilder, m.getRoughnessMap(), false);
+			buildEmbeddedTexture(pipelineBuilder, m.getMetalnessMap(), false);
+			buildEmbeddedTexture(pipelineBuilder, m.getTransparencyMap(), false);
+			buildEmbeddedTexture(pipelineBuilder, m.getEmissiveMap(), false);
+			buildEmbeddedTexture(pipelineBuilder, m.getReflectiveMap(), false);
+			buildEmbeddedTexture(pipelineBuilder, m.getNormalMap(), true);
+		}
 	}
 
 	// Build materials.

@@ -47,6 +47,14 @@ class Model;
 namespace traktor::mesh
 {
 
+/*! Mesh vertex shader generator.
+ * \ingroup Mesh
+ *
+ * The VS generator takes an ID to a vertex processing fragment for the
+ * desired mesh type (static, skinned, instances etc) and also
+ * the generated surface shader graph and merges
+ * those into a final shader for the mesh.
+ */
 class T_DLLCLASS VertexShaderGenerator : public Object
 {
 	T_RTTI_CLASS;

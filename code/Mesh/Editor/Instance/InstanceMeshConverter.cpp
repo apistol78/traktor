@@ -152,7 +152,7 @@ bool InstanceMeshConverter::convert(
 
 	// Build parts.
 	AlignedVector< render::Mesh::Part > meshParts;
-	std::map< std::wstring, InstanceMeshResource::parts_t > parts;
+	SmallMap< std::wstring, InstanceMeshResource::parts_t > parts;
 
 	for (const auto& techniqueRange : techniqueRanges)
 	{
@@ -192,13 +192,14 @@ bool InstanceMeshConverter::convert(
 	}
 
 	// Add ray tracing part.
+	AlignedVector< resource::Id< render::ITexture > > albedoTextures;
 	{
 		render::Mesh::Part meshPart;
 		meshPart.name = L"__RT__";
 		meshPart.primitives = render::Primitives::setIndexed(
 			render::PrimitiveType::Triangles,
 			0,
-			model->getPolygons().size());
+			(uint32_t)model->getPolygons().size());
 		meshParts.push_back(meshPart);
 
 		world::RTVertexAttributes* vptr = (world::RTVertexAttributes*)renderMesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
@@ -210,6 +211,21 @@ bool InstanceMeshConverter::convert(
 				continue;
 
 			const auto& material = model->getMaterial(materialId);
+
+			// Look up index of albedo map, if map doesn't exist add a new reference.
+			int32_t albedoMapId = -1;
+			if (material.getDiffuseMap().texture.isNotNull())
+			{
+				const auto it = std::find(albedoTextures.begin(), albedoTextures.end(), resource::Id< render::ITexture >(material.getDiffuseMap().texture));
+				if (it != albedoTextures.end())
+					albedoMapId = (int32_t)std::distance(albedoTextures.begin(), it);
+				else
+				{
+					albedoMapId = (int32_t)albedoTextures.size();
+					albedoTextures.push_back(resource::Id< render::ITexture >(material.getDiffuseMap().texture));
+				}
+			}
+
 			for (const auto& polygon : model->getPolygonsByMaterial(materialId))
 			{
 				Vector4 albedo = material.getColor();
@@ -237,7 +253,14 @@ bool InstanceMeshConverter::convert(
 					vptr->albedo[3] = material.getEmissive();
 
 					vptr->texCoord[0] = vptr->texCoord[1] = 0.0f;
-					vptr->albedoMap = -1;
+					if (vertex.getTexCoord(0) != model::c_InvalidIndex)
+					{
+						const Vector2 texCoord = model->getTexCoord(vertex.getTexCoord(0));
+						vptr->texCoord[0] = texCoord.x;
+						vptr->texCoord[1] = texCoord.y;
+					}
+
+					vptr->albedoMap = albedoMapId;
 
 					++vptr;
 				}
@@ -255,6 +278,7 @@ bool InstanceMeshConverter::convert(
 
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_haveRenderMesh = true;
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
+	checked_type_cast< InstanceMeshResource* >(meshResource)->m_albedoTextures = albedoTextures;
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_parts = parts;
 
 	return true;

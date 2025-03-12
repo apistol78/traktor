@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,12 +8,12 @@
  */
 #pragma once
 
-#include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Containers/SmallSet.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Vector4.h"
+#include "Core/RefArray.h"
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
@@ -32,6 +32,7 @@ namespace traktor::render
 class Buffer;
 class IAccelerationStructure;
 class IRenderSystem;
+class ITexture;
 class ProgramParameters;
 class Mesh;
 class Shader;
@@ -70,8 +71,7 @@ public:
 
 	explicit InstanceMesh(
 		render::IRenderSystem* renderSystem,
-		const resource::Proxy< render::Shader >& shaderDraw
-	);
+		const resource::Proxy< render::Shader >& shaderDraw);
 
 	const Aabb3& getBoundingBox() const;
 
@@ -86,8 +86,7 @@ public:
 		render::Buffer* instanceBuffer,
 		render::Buffer* visibilityBuffer,
 		uint32_t start,
-		uint32_t count
-	);
+		uint32_t count);
 
 	const render::IAccelerationStructure* getAccelerationStructure() const { return m_rtAccelerationStructure; }
 
@@ -104,9 +103,10 @@ private:
 
 	// Ray tracing
 	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
+	AlignedVector< resource::Proxy< render::ITexture > > m_albedoTextures;
 
-	//#todo All instances are bookkeep;ed in InstanceMesh which should be a resource.
-	Ref< render::IRenderSystem > m_renderSystem;	
+	// #todo All instances are bookkeep;ed in InstanceMesh which should be a resource.
+	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< render::Shader > m_shaderDraw;
 	RefArray< render::Buffer > m_drawBuffers;
 	uint32_t m_allocatedCount = 0;
