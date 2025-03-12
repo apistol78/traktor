@@ -65,7 +65,7 @@
 				<second>644</second>
 			</position>
 			<from>0</from>
-			<to>15</to>
+			<to>31</to>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{20077FA6-EBC9-2348-A147-54EBCBE091FC}</id>
@@ -141,7 +141,7 @@ Sample shadow
 				<first>2558</first>
 				<second>604</second>
 			</position>
-			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
+			<declaration>{EE12E40F-A288-E148-8E32-CAD553F94B2F}</declaration>
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>Vector</type>
 			<frequency>Once</frequency>

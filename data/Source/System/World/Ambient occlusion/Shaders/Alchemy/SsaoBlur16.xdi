@@ -141,7 +141,7 @@ Sample shadow
 				<first>-219</first>
 				<second>956</second>
 			</position>
-			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
+			<declaration>{EE12E40F-A288-E148-8E32-CAD553F94B2F}</declaration>
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>Vector</type>
 			<frequency>Once</frequency>

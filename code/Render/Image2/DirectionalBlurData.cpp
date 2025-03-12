@@ -1,36 +1,38 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Image2/DirectionalBlurData.h"
+
 #include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "Render/Shader.h"
 #include "Render/Image2/DirectionalBlur.h"
-#include "Render/Image2/DirectionalBlurData.h"
+#include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 
 namespace traktor::render
 {
-	namespace
-	{
-		
+namespace
+{
+
 Random s_random;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DirectionalBlurData", 0, DirectionalBlurData, ImagePassStepData)
 
 DirectionalBlurData::DirectionalBlurData()
-:   m_blurType(BlurType::Gaussian)
-,   m_direction(1.0f, 0.0f)
-,   m_taps(15)
+	: m_blurType(BlurType::Gaussian)
+	, m_direction(1.0f, 0.0f)
+	, m_taps(15)
 {
 }
 
@@ -75,11 +77,10 @@ Ref< const ImagePassStep > DirectionalBlurData::createInstance(resource::IResour
 			totalWeight += weight;
 
 			instance->m_gaussianOffsetWeights[i].set(
-				i - (m_taps - 1.0f)/ 2.0f,
+				i - (m_taps - 1.0f) / 2.0f,
 				weight,
 				0.0f,
-				0.0f
-			);
+				0.0f);
 		}
 	}
 	else if (m_blurType == BlurType::Sine)
@@ -98,21 +99,17 @@ Ref< const ImagePassStep > DirectionalBlurData::createInstance(resource::IResour
 				i - (m_taps - 1.0f) / 2.0f,
 				weight,
 				0.0f,
-				0.0f
-			);
+				0.0f);
 		}
 	}
 	else if (m_blurType == BlurType::Box)
 	{
 		for (int32_t i = 0; i < m_taps; ++i)
-		{
 			instance->m_gaussianOffsetWeights[i].set(
 				i - (m_taps - 1.0f) / 2.0f,
 				1.0f,
 				0.0f,
-				0.0f
-			);
-		}
+				0.0f);
 		totalWeight = float(m_taps);
 	}
 	else if (m_blurType == BlurType::Box2D)
@@ -125,13 +122,12 @@ Ref< const ImagePassStep > DirectionalBlurData::createInstance(resource::IResour
 				x,
 				y,
 				0.0f,
-				0.0f
-			);
+				0.0f);
 		}
 	}
 	else if (m_blurType == BlurType::Circle2D)
 	{
-		for (int32_t i = 0; i < m_taps; )
+		for (int32_t i = 0; i < m_taps;)
 		{
 			const float x = s_random.nextFloat() * 2.0f - 1.0f;
 			const float y = s_random.nextFloat() * 2.0f - 1.0f;
@@ -141,8 +137,7 @@ Ref< const ImagePassStep > DirectionalBlurData::createInstance(resource::IResour
 					x,
 					y,
 					0.0f,
-					0.0f
-				);
+					0.0f);
 				++i;
 			}
 		}
@@ -159,10 +154,9 @@ Ref< const ImagePassStep > DirectionalBlurData::createInstance(resource::IResour
 		m_direction.x,
 		m_direction.y,
 		0.0f,
-		0.0f
-	);
+		0.0f);
 
-	return instance; 
+	return instance;
 }
 
 void DirectionalBlurData::serialize(ISerializer& s)
@@ -171,7 +165,7 @@ void DirectionalBlurData::serialize(ISerializer& s)
 
 	s >> MemberEnumByValue< BlurType >(L"blurType", m_blurType);
 	s >> Member< Vector2 >(L"direction", m_direction);
-	s >> Member< int32_t >(L"taps", m_taps);
+	s >> Member< int32_t >(L"taps", m_taps, AttributeRange(0, 32));
 }
 
 }
