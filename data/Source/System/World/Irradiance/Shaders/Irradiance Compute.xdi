@@ -130,11 +130,13 @@
 			<script><![CDATA[
 #define USE_IS 1
 #define USE_RESERVOIR 0
-#define USE_ALL_LIGHTS 0
+#define USE_ALL_LIGHTS 1
 #define USE_SECOND_BOUNCE 1
 
-const int N = 16;
+const int N = 24;
 const int N2 = 4;
+
+const float far = 70.0f;
 
 const ivec2 sz = imageSize($Output);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
@@ -191,7 +193,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 		vec4 Nacc = vec4(0.0f);
 	
 		[[branch]]
-		if (HWRT_Trace($AS, rayOrigin, rayDir, m, t))
+		if (HWRT_Trace($AS, rayOrigin, rayDir, far, m, t))
 		{
 			const vec3 hit = rayOrigin + rayDir * t;
 	
@@ -255,7 +257,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 				const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.25f;
 				const vec2 r = Rotate2D((Hammersley(i, N) + jitter) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
 				const vec3 secondRayDir = R * LambertianDirection(m.normal.xyz, r);
-				if (HWRT_Trace($AS, hit, secondRayDir, m2, t))
+				if (HWRT_Trace($AS, hit, secondRayDir, far, m2, t))
 				{
 					// Attenuate from hit point back to origin.
 					const float nt = t / HWRT_DefaultFar;

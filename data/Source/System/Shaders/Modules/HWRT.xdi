@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderModule" version="1">
+<object type="traktor.render.ShaderModule" version="2">
 	<text><![CDATA[
 	
 // Default configuration of rays.
-const float HWRT_DefaultNear = 0.5f;
-const float HWRT_DefaultFar = 150.0f;
+const float HWRT_DefaultNear = 0.05f;
+const float HWRT_DefaultFar = 120.0f;
 
 // Material properties.
 struct HWRT_Material
@@ -89,7 +89,7 @@ HWRT_Material HWRT_GetMaterial(rayQueryEXT query)
 	return material;
 }
 
-bool HWRT_Trace(accelerationStructureEXT AS, vec3 origin, vec3 direction, out HWRT_Material material, out float distance)
+bool HWRT_Trace(accelerationStructureEXT AS, vec3 origin, vec3 direction, float maxDistance, out HWRT_Material material, out float distance)
 {
 	rayQueryEXT rayQuery;
 	rayQueryInitializeEXT(
@@ -98,9 +98,9 @@ bool HWRT_Trace(accelerationStructureEXT AS, vec3 origin, vec3 direction, out HW
 		gl_RayFlagsOpaqueEXT,
 		0xff,
 		origin,
-		0.01f,
+		HWRT_DefaultNear,
 		direction,
-		50.0f
+		maxDistance
 	);
 	while(rayQueryProceedEXT(rayQuery));
 
@@ -112,6 +112,11 @@ bool HWRT_Trace(accelerationStructureEXT AS, vec3 origin, vec3 direction, out HW
 	return true;
 }
 
+bool HWRT_Trace(accelerationStructureEXT AS, vec3 origin, vec3 direction, out HWRT_Material material, out float distance)
+{
+	return HWRT_Trace(AS, origin, direction, HWRT_DefaultFar, material, distance);
+}
+
 bool HWRT_TraceShadow(accelerationStructureEXT AS, vec3 origin, vec3 direction, float maxDistance)
 {
 	rayQueryEXT rayQueryShadow;
@@ -121,7 +126,7 @@ bool HWRT_TraceShadow(accelerationStructureEXT AS, vec3 origin, vec3 direction, 
 		gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT,
 		0xff,
 		origin,
-		0.05f,
+		HWRT_DefaultNear,
 		direction,
 		maxDistance
 	);
@@ -148,4 +153,5 @@ bool HWRT_TraceShadow(accelerationStructureEXT AS, vec3 origin, vec3 direction, 
 			</second>
 		</item>
 	</samplers>
+	<structDeclarations/>
 </object>
