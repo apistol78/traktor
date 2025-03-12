@@ -52,6 +52,7 @@
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphPreview.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "Render/Editor/Texture/TextureSet.h"
 #include "World/Editor/Material/MaterialShaderGenerator.h"
@@ -147,7 +148,7 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 58, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 59, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 	: m_promoteHalf(false)
@@ -365,8 +366,8 @@ bool MeshPipeline::buildOutput(
 	// Ensure materials doesn't contain texture references for materials with custom shaders.
 	for (model::Material& m : modelMaterials)
 	{
-		const bool materialHaveCustomShader = (bool)(materialShaders.find(m.getName()) != materialShaders.end());
-		if (materialHaveCustomShader)
+		const auto it = materialShaders.find(m.getName());
+		if (it != materialShaders.end())
 		{
 			model::Material::Map maps[] = {
 				m.getDiffuseMap(),
@@ -383,6 +384,18 @@ bool MeshPipeline::buildOutput(
 			{
 				map.texture = Guid::null;
 				map.image = nullptr;
+			}
+
+			// Try to generate a preview texture from custom material shader; can be used as albedo in RT.
+			Ref< const render::ShaderGraph > materialShaderGraph = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(it->second);
+			if (materialShaderGraph)
+			{
+				Ref< drawing::Image > image = render::ShaderGraphPreview(m_assetPath, pipelineBuilder->getSourceDatabase()).generate(materialShaderGraph, 128, 128);
+				if (image)
+				{
+					maps[0].image = image;
+					buildEmbeddedTexture(pipelineBuilder, maps[0], false);
+				}
 			}
 
 			m.setDiffuseMap(maps[0]);
