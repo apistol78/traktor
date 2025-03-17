@@ -2,6 +2,10 @@
 <object type="traktor.i18n.Dictionary">
 	<map>
 		<item>
+			<first>CPP_STRUCT_WIZARDTOOL_DESCRIPTION</first>
+			<second>Generate C++ struct</second>
+		</item>
+		<item>
 			<first>IMPORT_TEXTURE_DESCRIPTION</first>
 			<second>Texture...</second>
 		</item>
