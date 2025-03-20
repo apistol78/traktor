@@ -34,11 +34,22 @@ namespace traktor::world
 namespace
 {
 
-struct Reservoir
+#pragma pack(1)
+
+struct World_Reservoir_Type
 {
-	float direction[3];
+	float position[3];
+	uint8_t __pad__normal[4]; // 12
+	float normal[3];
+	uint8_t __pad__radiance[4]; // 28
+	float radiance[3];
+	float W;
 	float W_sum;
+	float M;
+	uint8_t __pad__[8]; // 56
 };
+
+#pragma pack()
 
 const resource::Id< render::Shader > c_irradianceComputeShader(L"{7C871925-C1A9-5B47-A361-114BC8FB5A98}");
 const resource::Id< render::ImageGraph > c_irradianceDenoise(L"{14A0E977-7C13-9B43-A26E-F1D21117AEC6}");
@@ -102,7 +113,7 @@ render::RGTargetSet IrradiancePass::setup(
 
 	// Add reservoir buffers.
 	const render::RenderGraphBufferDesc reservoirBufferDesc = {
-		.elementSize = sizeof(Reservoir),
+		.elementSize = sizeof(World_Reservoir_Type),
 		.elementCount = 0,
 		.referenceWidthDenom = 2,
 		.referenceHeightDenom = 2

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule" version="2">
+	<text><![CDATA[
+
+void Reservoir_Empty(out World_Reservoir_Type r)
+{
+	r.position = vec3(0.0f);
+	r.normal = vec3(0.0f);
+	r.radiance = vec3(0.0f);
+	r.W_sum = 0.0f;
+	r.M = 0.0f;
+}
+
+bool Reservoir_IsEmpty(World_Reservoir_Type r)
+{
+	return r.W_sum <= 0.0f;
+}
+
+void Reservoir_Update(
+	inout World_Reservoir_Type reservoir,
+	float w,
+	vec3 position,
+	vec3 normal,
+	vec3 radiance,
+	float rnd01
+)
+{
+	reservoir.W_sum += w;
+	reservoir.M += 1.0f;
+	
+	if (rnd01 < w / reservoir.W_sum)
+	{
+		reservoir.position = position;
+		reservoir.normal = normal;
+		reservoir.radiance = radiance;
+	}
+}
+
+float Reservoir_CalculateProbability(vec3 radiance)
+{
+	return dot(radiance, vec3(0.21f, 0.72f, 0.07f));
+}
+
+]]></text>
+	<samplers/>
+	<structDeclarations>
+		<item>{947063CB-17CE-EC46-84D1-FF6F913CAE96}</item>
+	</structDeclarations>
+</object>

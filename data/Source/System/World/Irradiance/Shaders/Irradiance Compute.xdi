@@ -71,6 +71,7 @@
 				<item>{4370C471-3C5D-914B-A3AC-866BE15AD328}</item>
 				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
 				<item>{6ED30419-6A30-3D41-9583-D6E71FFE0064}</item>
+				<item>{D2199F29-20FD-BB44-9484-F57840FF0332}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -129,14 +130,17 @@
 			<outputPins/>
 			<script><![CDATA[
 #define USE_IS 1
-#define USE_RESERVOIR 0
+#define USE_RESERVOIR 1
 #define USE_ALL_LIGHTS 1
 #define USE_SECOND_BOUNCE 1
 
-const int N = 24;
-const int N2 = 4;
+const int N = 4;
+const int Ndisclose = 32;
+const int Nspatial = 8;
+const int K = 30;
+const float NormalThreshold = 0.75f;
 
-const float far = 70.0f;
+const float far = 90.0f;
 
 const ivec2 sz = imageSize($Output);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
@@ -146,184 +150,179 @@ const ivec2 vdt = ivec2($Velocity.xy * sz);
 const ivec2 vpt = pt - vdt;
 
 int lastIndex = -1;
-if (vpt.x >= 1 && vpt.y >= 1 && vpt.x < sz.x - 1 && vpt.y < sz.y - 1)
+if (vpt.x >= 0 && vpt.y >= 0 && vpt.x < sz.x && vpt.y < sz.y)
 	lastIndex = vpt.x + vpt.y * sz.x;
+
+int rndState = int($Random * 54312.0f);
 
 if (pt.x < sz.x && pt.y < sz.y)
 {
-#if USE_RESERVOIR
-	$typeof(Reservoir) reservoir = $Reservoir[lastIndex];
-#endif	
+	$typeof(Reservoir) reservoir;
+	Reservoir_Empty(reservoir);
 
-	int rndState = int($Random * 54312.0f);
-	const mat3 R = Rotate($Direction.xyz, Hash(rndState++));
-	
-	vec4 acc = vec4(0.0f);
-	HWRT_Material m;
-	HWRT_Material m2;
-	float t;
+	bool temporalValid = (lastIndex >= 0);
 
-	float nhit = 0.0f;
-	float nmiss = 0.0f;
-	
-	[[branch]]
-	for (int i = 0; i < N; ++i)
+	// 1. Temporal filtering.
+	if (true && lastIndex >= 0)
 	{
+		$typeof(Reservoir) lastR = $Reservoir[lastIndex];
+
+		temporalValid =
+			!Reservoir_IsEmpty(lastR) &&
+			dot(lastR.normal, $Direction.xyz) >= NormalThreshold;
+
+		if (temporalValid)
+		{
+			const float nf = clamp(dot(lastR.normal, $Direction.xyz), 0.0f, 1.0f);
+
+			const float P_hat = Reservoir_CalculateProbability(lastR.radiance);
+
+			const float m = min(
+				lastR.M,
+				K
+			);
+
+			const float w =
+				(P_hat > 0.0f) ?
+				(1.0f / P_hat) * (lastR.W_sum / lastR.M) :
+				0.0f;
+
+			const vec3 v = lastR.radiance * w;
+			const float p = 1.0f;
+			
+			reservoir.W_sum = (Reservoir_CalculateProbability(v) / p) * m;
+			reservoir.M = m;
+			reservoir.position = lastR.position;
+			reservoir.normal = lastR.normal;
+			reservoir.radiance = v;
+		}
+	}
+
+	// 2. Spatial filtering.
+	if (false)
+	{
+		for (int i = 0; i < Nspatial; ++i)
+		{
+			const vec2 offset = 2.0f * vec2(
+				Hash(rndState++),
+				Hash(rndState++)
+			) - 1.0f;
+
+			const ivec2 spt = vpt - ivec2(offset * sz * 0.005f);
+			
+			if (spt.x >= 0 && spt.y >= 0 && spt.x < sz.x && spt.y < sz.y)
+			{
+				const int spatIndex = spt.x + spt.y * sz.x;
+				$typeof(Reservoir) spatR = $Reservoir[spatIndex];
+
+				const bool valid =
+					!Reservoir_IsEmpty(spatR) &&
+					dot(spatR.normal, $Direction.xyz) >= NormalThreshold;
+		
+				if (valid)
+				{
+					const float P_hat = Reservoir_CalculateProbability(spatR.radiance);
+
+					const float m = min(spatR.M, K);
+					const float w =
+						P_hat > 0.0f ?
+						(1.0f / P_hat) * (spatR.W_sum / spatR.M) :
+						0.0f;
+		
+					const vec3 v = spatR.radiance * w;
+
+					const float P_hat2 = Reservoir_CalculateProbability(v);
+					
+					reservoir.W_sum += P_hat2 * m;
+					reservoir.M += m;
+
+					if (Hash(rndState++) < w / reservoir.W_sum)
+					{
+						reservoir.position = spatR.position;
+						reservoir.normal = spatR.normal;
+						reservoir.radiance = v;
+					}
+				}
+			}
+		}
+	}
+
+	// 3. Sample generation.
+	const mat3 R = Rotate($Direction.xyz, Hash(rndState++));
+	const int sampleN = temporalValid ? N : Ndisclose;
+	for (int i = 0; i < sampleN; ++i)
+	{
+		const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
 		const vec3 rayOrigin = $Origin.xyz;
-	
-		// Calculate trace direction.
-		const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.25f;
-		const vec2 r = Rotate2D((Hammersley(i, N) + jitter) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
-	
-#if USE_IS
-		vec3 rayDir = R * LambertianDirection($Direction.xyz, r);
-#else
-		vec3 rayDir = R * Hemi($Direction.xyz, r);
-#endif
-	
-#if USE_RESERVOIR
-		vec3 rayDirBias = normalize(mix(
-			rayDir,
-			reservoir.direction,
-			0.95f * clamp(reservoir.W_sum, 0.0f, 1.0f)
-		));
-		rayDir = rayDirBias;
-#endif
-	
-		vec4 Nacc = vec4(0.0f);
-	
-		[[branch]]
+		const vec3 rayDir = R * LambertianDirection($Direction.xyz, r);
+
+		HWRT_Material m;
+		float t;
+
 		if (HWRT_Trace($AS, rayOrigin, rayDir, far, m, t))
 		{
 			const vec3 hit = rayOrigin + rayDir * t;
-	
-#if USE_IS
-			// Since we're using cosine weighted distribution of rays
-			// we don't need to divide by phi.
-			const float phi = 0.5f;
-#else
-			const float phi = clamp(dot($Direction.xyz, rayDir), 0.0f, 1.0f);
-#endif
-	
-			// Attenuate from hit point back to origin.
-			const float nt = t / HWRT_DefaultFar;
+			const float nt = t / far;
 			const float attenuate = clamp(1.0f / (nt * nt), 0.0f, 1.0f);
 
-			// Evaluate light.
-#if USE_ALL_LIGHTS
-			const bool evaluateAllLights = true;
-#else
-			const bool evaluateAllLights = false;
-#endif
-			if (evaluateAllLights)
+			vec3 Nacc = vec3(0.0f);
+			for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 			{
-				const float pdfRandomLight = 1.0f;
-				for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
-				{
-					const $typeof(Lights) light = $Lights[lightIndex];
-					const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit, m.normal.xyz);
-					Nacc += vec4(
-						(m.albedo * incident * attenuate * phi * PI / pdfRandomLight).xyz,
-						1.0f
-					);
-				}
-			}
-			else
-			{
-				if ($LightCount > 0)
-				{
-					const float pdfRandomLight = 1.0f / max($LightCount, 1);
-					const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
-					const $typeof(Lights) light = $Lights[lightIndex];
-					const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit, m.normal.xyz);
-					Nacc += vec4(
-						(m.albedo * incident * attenuate * phi * PI / pdfRandomLight).xyz,
-						1.0f
-					);
-				}
+				const float phi = 0.5f;
+				const $typeof(Lights) light = $Lights[lightIndex];
+				const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit, m.normal.xyz);
+				Nacc += (m.albedo * incident * attenuate * phi * PI).xyz;
 			}
 
-			// Add emissive.
-			Nacc += vec4(
-				m.albedo.xyz * m.albedo.w * attenuate * phi,
-				m.albedo.w
+			const float ntE = t / 20.0f;
+			const float attenuateE = clamp(1.0f / (ntE * ntE), 0.0f, 1.0f);
+			Nacc += m.albedo.xyz * m.albedo.w * attenuateE;
+
+			const float p = 1.0f;
+			const float w = Reservoir_CalculateProbability(Nacc.xyz) / p;
+			Reservoir_Update(
+				reservoir,
+				w,
+				hit,
+				$Direction.xyz,
+				Nacc,
+				Hash(rndState++)
 			);
-
-#if USE_SECOND_BOUNCE
-			// Second bounce.
-			vec4 Sacc = vec4(0.0f);
-			for (int j = 0; j < N2; ++j)
-			{
-				const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.25f;
-				const vec2 r = Rotate2D((Hammersley(i, N) + jitter) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
-				const vec3 secondRayDir = R * LambertianDirection(m.normal.xyz, r);
-				if (HWRT_Trace($AS, hit, secondRayDir, far, m2, t))
-				{
-					// Attenuate from hit point back to origin.
-					const float nt = t / HWRT_DefaultFar;
-					const float attenuate2 = clamp(1.0f / (nt * nt), 0.0f, 1.0f);
-
-					if ($LightCount > 0)
-					{
-						const float pdfRandomLight = 1.0f / max($LightCount, 1);
-						const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
-						const $typeof(Lights) light = $Lights[lightIndex];
-
-						const vec3 hit2 = hit + secondRayDir * t;
-						const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit2, m2.normal.xyz);
-
-						Sacc += vec4(
-							(m2.albedo * incident * attenuate2 * phi * PI / pdfRandomLight).xyz,
-							1.0f
-						);
-					}
-
-					// Add emissive.
-					Sacc += vec4(
-						m2.albedo.xyz * m2.albedo.w * attenuate2 * phi,
-						m2.albedo.w
-					);
-				}
-			}
-			Nacc += m.albedo * Sacc / float(N2);
-#endif
-
-			nhit++;
 		}
-		else
-			nmiss++;
-	
-#if USE_RESERVOIR
-		const float w = clamp(length(Nacc.xyz) * 0.01f, 0.0f, 1.0f);
-		reservoir.W_sum += w;
-		if (Hash(rndState++) < w / reservoir.W_sum)
-			reservoir.direction = rayDir;
-#endif
-	
-		acc += Nacc;
+		else if (true)
+		{
+			const vec3 sky = vec3($Sky.xyz);
+
+			const float p = 1.0f;
+			const float w = Reservoir_CalculateProbability(sky) / p;
+			Reservoir_Update(
+				reservoir,
+				w,
+				$Origin.xyz + $Direction.xyz * far,
+				$Direction.xyz,
+				sky,
+				Hash(rndState++)
+			);
+		}
+	}
+
+	$ReservoirOutput[index] = reservoir;
+
+	// 3. Calculate lighting.
+	vec4 acc = vec4(0.0f.xxx, 1.0f);
+	if (!Reservoir_IsEmpty(reservoir))
+	{
+		const float P_hat = Reservoir_CalculateProbability(reservoir.radiance);
+		const float w = 
+			(P_hat > 0.0f) ?
+			(1.0f / P_hat) * (reservoir.W_sum / reservoir.M) :
+			0.0f;
+
+		const vec3 v = reservoir.radiance * w;
+		acc += vec4(v, 1.0f);
 	}
 	
-	// Save reservoir in output buffer.
-#if USE_RESERVOIR
-	$ReservoirOutput[index] = reservoir;
-#endif
-	
-	vec4 outpt = acc / N;
-
-	float a = nhit / (nhit + nmiss);
-	outpt = mix($Sky, outpt, a);
-
-#if USE_RESERVOIR
-//	outpt = vec4(reservoir.direction * 0.5f + 0.5f, 1.0f);
-	//outpt = vec4(reservoir.W_sum.xxx, 1.0f);
-	//outpt = vec4((reservoir.W_sum > 0.95f ? 1.0f : 0.0f).xxx, 1.0f);
-	//if (reservoir.W_sum <= 0.0f)
-	//	outpt = vec4(0.0f.xxx, 1.0f);
-#endif
-
-	//outpt = vec4(a.xxx, 1.0f);
-
-	imageStore($Output, pt, outpt);
+	imageStore($Output, pt, acc);
 }
 
 ]]></script>
@@ -700,9 +699,9 @@ $TexCoord = vec4(vec2(pt + 0.5f) / sz, 0.0f, 0.0f);
 				<first>-2124</first>
 				<second>-2152</second>
 			</position>
-			<minFilter>Linear</minFilter>
-			<mipFilter>Linear</mipFilter>
-			<magFilter>Linear</magFilter>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
 			<addressU>Clamp</addressU>
 			<addressV>Clamp</addressV>
 			<addressW>Clamp</addressW>

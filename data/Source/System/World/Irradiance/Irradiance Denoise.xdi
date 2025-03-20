@@ -177,45 +177,6 @@
 			</targets>
 		</item>
 		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
-			<id>{B3F5BEB7-F83A-904D-9DF2-DF093C895543}</id>
-			<comment/>
-			<position>
-				<first>676</first>
-				<second>389</second>
-			</position>
-			<name>Irradiance blur X</name>
-			<clear>
-				<mask>
-					<Color>true</Color>
-					<Depth>false</Depth>
-					<Stencil>false</Stencil>
-				</mask>
-				<colors>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-				</colors>
-				<depth>1</depth>
-				<stencil>0</stencil>
-			</clear>
-			<steps>
-				<item type="traktor.render.ImgStepDirectionalBlur" version="1,traktor.render.IImgStep:2">
-					<blurType>Gaussian</blurType>
-					<direction>3, 0</direction>
-					<taps>32</taps>
-					<shader>{B122496C-B9E3-C649-9B03-A2E5F842D6E8}</shader>
-					<parameters>
-						<item>Source</item>
-					</parameters>
-				</item>
-			</steps>
-		</item>
-		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{9329FA91-9567-9F4F-B7EB-C6AABA94E853}</id>
 			<comment/>
 			<position>
@@ -245,7 +206,46 @@
 			<steps>
 				<item type="traktor.render.ImgStepDirectionalBlur" version="1,traktor.render.IImgStep:2">
 					<blurType>Gaussian</blurType>
-					<direction>0, 3</direction>
+					<direction>0, 2</direction>
+					<taps>32</taps>
+					<shader>{B122496C-B9E3-C649-9B03-A2E5F842D6E8}</shader>
+					<parameters>
+						<item>Source</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
+			<id>{B3F5BEB7-F83A-904D-9DF2-DF093C895543}</id>
+			<comment/>
+			<position>
+				<first>676</first>
+				<second>389</second>
+			</position>
+			<name>Irradiance blur X</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
+			<steps>
+				<item type="traktor.render.ImgStepDirectionalBlur" version="1,traktor.render.IImgStep:2">
+					<blurType>Gaussian</blurType>
+					<direction>2, 0</direction>
 					<taps>32</taps>
 					<shader>{B122496C-B9E3-C649-9B03-A2E5F842D6E8}</shader>
 					<parameters>
@@ -318,7 +318,7 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
 			</source>
 			<destination>
@@ -332,13 +332,13 @@
 				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
 			</source>
 			<destination>
@@ -352,7 +352,7 @@
 				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
 			</destination>
 		</item>
