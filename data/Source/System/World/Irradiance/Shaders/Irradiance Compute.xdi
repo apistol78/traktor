@@ -150,7 +150,7 @@ const ivec2 vdt = ivec2($Velocity.xy * sz);
 const ivec2 vpt = pt - vdt;
 
 int lastIndex = -1;
-if (vpt.x >= 0 && vpt.y >= 0 && vpt.x < sz.x && vpt.y < sz.y)
+if (vpt.x >= 0 && vpt.y >= 0 && vpt.x < sz.x - 1 && vpt.y < sz.y - 1)
 	lastIndex = vpt.x + vpt.y * sz.x;
 
 int rndState = int($Random * 54312.0f);
@@ -275,12 +275,13 @@ if (pt.x < sz.x && pt.y < sz.y)
 #if USE_SECOND_BOUNCE
 			vec3 Sacc = vec3(0.0f);
 			HWRT_Material m2;
+			float t2;
 
 			const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
 			const vec3 secondRayDir = LambertianDirection(m.normal.xyz, r);
-			if (HWRT_Trace($AS, hit, secondRayDir, far, m2, t))
+			if (HWRT_Trace($AS, hit, secondRayDir, far, m2, t2))
 			{
-				const float nt = t / far;
+				const float nt = (t + t2) / far;
 				const float attenuate2 = clamp(1.0f / (nt * nt), 0.0f, 1.0f);
 
 				if ($LightCount > 0)
