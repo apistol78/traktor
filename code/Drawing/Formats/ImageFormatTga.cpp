@@ -7,36 +7,39 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Drawing/Formats/ImageFormatTga.h"
+
+#include "Core/Io/Reader.h"
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Io/Reader.h"
 
 namespace traktor::drawing
 {
-	namespace
-	{
+namespace
+{
 
 #pragma pack(1)
+
 struct TGAHEADER
 {
-	uint8_t identsize;          // size of ID field that follows 18 byte header (0 usually)
-	uint8_t colourmaptype;      // type of colour map 0=none, 1=has palette
-	uint8_t imagetype;          // type of image 0=none, 1=indexed, 2=rgb, 3=grey, +8=rle packed
-	uint16_t colourmapstart;    // first colour map entry in palette
-	uint16_t colourmaplength;   // number of colours in palette
-	uint8_t colourmapbits;      // number of bits per palette entry 15, 16, 24, 32
-	uint16_t xstart;            // image x origin
-	uint16_t ystart;            // image y origin
-	uint16_t width;             // image width in pixels
-	uint16_t height;            // image height in pixels
-	uint8_t bits;				// image bits per pixel 8,16,24,32
-	uint8_t descriptor;			// image descriptor bits (vh flip bits)
+	uint8_t identsize;		  // size of ID field that follows 18 byte header (0 usually)
+	uint8_t colourmaptype;	  // type of colour map 0=none, 1=has palette
+	uint8_t imagetype;		  // type of image 0=none, 1=indexed, 2=rgb, 3=grey, +8=rle packed
+	uint16_t colourmapstart;  // first colour map entry in palette
+	uint16_t colourmaplength; // number of colours in palette
+	uint8_t colourmapbits;	  // number of bits per palette entry 15, 16, 24, 32
+	uint16_t xstart;		  // image x origin
+	uint16_t ystart;		  // image y origin
+	uint16_t width;			  // image width in pixels
+	uint16_t height;		  // image height in pixels
+	uint8_t bits;			  // image bits per pixel 8,16,24,32
+	uint8_t descriptor;		  // image descriptor bits (vh flip bits)
 };
+
 #pragma pack()
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatTga", ImageFormatTga, IImageFormat)
 
@@ -102,17 +105,26 @@ Ref< Image > ImageFormatTga::read(IStream* stream)
 				ve = false;
 			if (hz || ve)
 			{
-				MirrorFilter mirrorFilter(hz, ve);
+				const MirrorFilter mirrorFilter(hz, ve);
 				image->apply(&mirrorFilter);
 			}
 		}
 	}
 
+	stream->seek(IStream::SeekEnd, -26);
+	uint16_t gammaNumerator, gammaDenom;
+	reader >> gammaNumerator;
+	reader >> gammaDenom;
+
 	Ref< ImageInfo > imageInfo = new ImageInfo();
 	imageInfo->setAuthor(L"Unknown");
 	imageInfo->setCopyright(L"Unknown");
 	imageInfo->setFormat(L"TGA");
-	imageInfo->setGamma(2.2f);
+	imageInfo->setGamma(1.0f);
+
+	if (gammaDenom != 0)
+		imageInfo->setGamma(clamp(float(gammaNumerator) / gammaDenom, 1.0f, 3.0f));
+
 	image->setImageInfo(imageInfo);
 
 	return image;
@@ -164,8 +176,7 @@ bool ImageFormatTga::write(IStream* stream, const Image* image)
 
 	stream->write(
 		clone->getData(),
-		clone->getWidth() * clone->getHeight() * clone->getPixelFormat().getByteSize()
-	);
+		clone->getWidth() * clone->getHeight() * clone->getPixelFormat().getByteSize());
 
 	return true;
 }
