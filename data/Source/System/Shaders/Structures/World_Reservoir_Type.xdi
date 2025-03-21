@@ -2,28 +2,18 @@
 <object type="traktor.render.StructDeclaration">
 	<elements>
 		<item>
-			<name>position</name>
-			<type>Float3</type>
-			<length>0</length>
-		</item>
-		<item>
 			<name>normal</name>
 			<type>Float3</type>
 			<length>0</length>
 		</item>
 		<item>
-			<name>radiance</name>
-			<type>Float3</type>
-			<length>0</length>
-		</item>
-		<item>
-			<name>W</name>
-			<type>Float1</type>
-			<length>0</length>
-		</item>
-		<item>
 			<name>W_sum</name>
 			<type>Float1</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>radiance</name>
+			<type>Float3</type>
 			<length>0</length>
 		</item>
 		<item>

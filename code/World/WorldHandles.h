@@ -86,7 +86,6 @@ extern const render::Handle T_DLLCLASS s_handleTLAS;
 extern const render::Handle T_DLLCLASS s_handleHalfResDepthMap;
 extern const render::Handle T_DLLCLASS s_handleReservoir;
 extern const render::Handle T_DLLCLASS s_handleReservoirOutput;
-extern const render::Handle T_DLLCLASS s_handleReservoirSize;
 extern const render::Handle T_DLLCLASS s_handleVelocityMap;
 
 // Culling.

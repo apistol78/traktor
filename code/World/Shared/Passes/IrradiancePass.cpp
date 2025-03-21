@@ -38,15 +38,10 @@ namespace
 
 struct World_Reservoir_Type
 {
-	float position[3];
-	uint8_t __pad__normal[4]; // 12
 	float normal[3];
-	uint8_t __pad__radiance[4]; // 28
-	float radiance[3];
-	float W;
 	float W_sum;
+	float radiance[3];
 	float M;
-	uint8_t __pad__[8]; // 56
 };
 
 #pragma pack()
@@ -107,6 +102,7 @@ render::RGTargetSet IrradiancePass::setup(
 	if (m_irradianceComputeShader == nullptr || m_irradianceDenoise == nullptr /* || gbufferTargetSetId == 0*/)
 		return render::RGTargetSet::Invalid;
 
+	const bool halfResolution = false;
 	const bool irradianceEnable = (bool)(gatheredView.irradianceGrid != nullptr);
 	const bool irradianceSingle = (bool)(gatheredView.irradianceGrid != nullptr && gatheredView.irradianceGrid->isSingle());
 	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr);
@@ -115,8 +111,8 @@ render::RGTargetSet IrradiancePass::setup(
 	const render::RenderGraphBufferDesc reservoirBufferDesc = {
 		.elementSize = sizeof(World_Reservoir_Type),
 		.elementCount = 0,
-		.referenceWidthDenom = 2,
-		.referenceHeightDenom = 2
+		.referenceWidthDenom = halfResolution ? 2 : 1,
+		.referenceHeightDenom = halfResolution ? 2 : 1
 	};
 	const DoubleBufferedBuffer reservoirBufferId = {
 		renderGraph.addPersistentBuffer(L"Reservoir", s_persistentReservoirBuffers[frameCount % 2], reservoirBufferDesc),
@@ -125,21 +121,21 @@ render::RGTargetSet IrradiancePass::setup(
 
 	// Add compute output irradiance texture.
 	const render::RenderGraphTextureDesc irradianceTextureDesc = {
-		.referenceWidthDenom = 2,
-		.referenceHeightDenom = 2,
+		.referenceWidthDenom = halfResolution ? 2 : 1,
+		.referenceHeightDenom = halfResolution ? 2 : 1,
 		.mipCount = 1,
-		.format = render::TfR16G16B16A16F // Irradiance (RGB)
+		.format = render::TfR11G11B10F // Irradiance (RGB)
 	};
 	const auto irradianceTextureId = renderGraph.addTransientTexture(L"Irradiance", irradianceTextureDesc);
 
-	// Add final, upsampled and denoised, irradiance target.
+	// Add final, up-sampled and denoised, irradiance target.
 	const render::RenderGraphTargetSetDesc irradianceFinalTargetDesc = {
 		.count = 1,
 		.referenceWidthDenom = 1,
 		.referenceHeightDenom = 1,
 		.createDepthStencil = false,
 		.targets = { {
-			.colorFormat = render::TfR16G16B16A16F // Irradiance (RGB)
+			.colorFormat = render::TfR11G11B10F // Irradiance (RGB)
 		} }
 	};
 	const auto irradianceFinalTargetSetId = renderGraph.addTransientTargetSet(L"Irradiance final", irradianceFinalTargetDesc, render::RGTargetSet::Invalid, outputTargetSetId);
@@ -159,7 +155,7 @@ render::RGTargetSet IrradiancePass::setup(
 		params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
 		params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
 		params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
-		params->setTextureParameter(s_handleHalfResDepthMap, halfResDepthTexture);
+		params->setTextureParameter(s_handleHalfResDepthMap, halfResolution ? halfResDepthTexture : gbufferTargetSet->getColorTexture(0));
 		params->setFloatParameter(s_handleRandom, s_random.nextFloat());
 
 		if (gatheredView.irradianceGrid)
@@ -186,6 +182,7 @@ render::RGTargetSet IrradiancePass::setup(
 	// Add irradiance compute pass.
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance compute");
+		rp->addInput(gbufferTargetSetId);
 		rp->addInput(velocityTargetSetId);
 		rp->addInput(halfResDepthTextureId);
 		rp->addInput(reservoirBufferId.previous);
@@ -194,7 +191,6 @@ render::RGTargetSet IrradiancePass::setup(
 		rp->addBuild(
 			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 			render::ITexture* velocityTexture = renderGraph.getTargetSet(velocityTargetSetId)->getColorTexture(0);
-			render::ITexture* halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
 			render::ITexture* irradianceTexture = renderGraph.getTexture(irradianceTextureId);
 			render::Buffer* reservoirBuffer = renderGraph.getBuffer(reservoirBufferId.previous);
 			render::Buffer* reservoirOutputBuffer = renderGraph.getBuffer(reservoirBufferId.current);
@@ -213,7 +209,6 @@ render::RGTargetSet IrradiancePass::setup(
 			renderBlock->workSize[1] = outputSize.y;
 			renderBlock->workSize[2] = 1;
 			renderBlock->programParams->beginParameters(renderContext);
-			renderBlock->programParams->setVectorParameter(s_handleReservoirSize, Vector4(outputSize.x, outputSize.y, 0.0f, 0.0f));
 			renderBlock->programParams->setTextureParameter(s_handleVelocityMap, velocityTexture);
 			renderBlock->programParams->setBufferViewParameter(s_handleReservoir, reservoirBuffer->getBufferView());
 			renderBlock->programParams->setBufferViewParameter(s_handleReservoirOutput, reservoirOutputBuffer->getBufferView());

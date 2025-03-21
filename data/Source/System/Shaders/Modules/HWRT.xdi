@@ -62,17 +62,21 @@ HWRT_Material HWRT_GetMaterial(rayQueryEXT query)
 				m1.normal, bary.x,
 				m2.normal, bary.y
 			));
-			material.albedo = blend3(
-				m0.albedo, 1.0f - (bary.x + bary.y),
-				m1.albedo, bary.x,
-				m2.albedo, bary.y
-			);
 
 			// Read albedo map.
+			[[branch]]
 			if (m0.albedoMap >= 0)
 			{
 				const vec2 uv = m0.texCoord.xy * (1.0f - (bary.x + bary.y)) + m1.texCoord.xy * bary.x + m2.texCoord.xy * bary.y;
 				material.albedo = textureLod(sampler2D(__bindlessTextures2D__[m0.albedoMap], __samplerLinear__), uv, 4.0f);
+			}
+			else
+			{
+				material.albedo = blend3(
+					m0.albedo, 1.0f - (bary.x + bary.y),
+					m1.albedo, bary.x,
+					m2.albedo, bary.y
+				);
 			}
 
 			// Transform normal into world space.
