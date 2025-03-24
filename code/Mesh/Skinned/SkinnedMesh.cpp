@@ -6,26 +6,27 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
+
+#include "Mesh/IMeshParameterCallback.h"
 #include "Render/Buffer.h"
+#include "Render/Context/RenderContext.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
 
 namespace traktor::mesh
 {
-	namespace
-	{
+namespace
+{
 
 const render::Handle s_handleSkinBuffer(L"Mesh_SkinBuffer");
 const render::Handle s_handleSkinBufferLast(L"Mesh_SkinBufferLast");
 const render::Handle s_handleSkinBufferOutput(L"Mesh_SkinBufferOutput");
 const render::Handle s_handleJoints(L"Mesh_Joints");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMesh", SkinnedMesh, IMesh)
 
@@ -44,8 +45,7 @@ bool SkinnedMesh::supportTechnique(render::handle_t technique) const
 void SkinnedMesh::buildSkin(
 	render::RenderContext* renderContext,
 	render::Buffer* jointTransforms,
-	render::Buffer* skinBuffer
-) const
+	render::Buffer* skinBuffer) const
 {
 	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferSize() / (6 * 4 * sizeof(float));
 
@@ -68,16 +68,14 @@ void SkinnedMesh::buildSkin(
 void SkinnedMesh::buildAccelerationStructure(
 	render::RenderContext* renderContext,
 	render::Buffer* skinBuffer,
-	render::IAccelerationStructure* accelerationStructure
-) const
+	render::IAccelerationStructure* accelerationStructure) const
 {
 	// Wait for data to be ready for building AS.
 	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::AccelerationStructureUpdate, nullptr, 0);
 
 	// Rebuild acceleration structure.
-	auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"AnimatedMeshComponent update AS");
-	rb->lambda = [=, this](render::IRenderView* renderView)
-	{
+	auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"SkinnedMesh update AS");
+	rb->lambda = [=, this](render::IRenderView* renderView) {
 		const auto& part = m_mesh->getParts().back();
 		T_FATAL_ASSERT(part.name == L"__RT__");
 
@@ -90,8 +88,7 @@ void SkinnedMesh::buildAccelerationStructure(
 			m_rtVertexLayout,
 			m_mesh->getIndexBuffer()->getBufferView(),
 			m_mesh->getIndexType(),
-			primitives
-		);
+			primitives);
 	};
 	renderContext->compute(rb);
 }
@@ -104,8 +101,7 @@ void SkinnedMesh::build(
 	render::Buffer* lastSkinBuffer,
 	render::Buffer* skinBuffer,
 	float distance,
-	const IMeshParameterCallback* parameterCallback
-) const
+	const IMeshParameterCallback* parameterCallback) const
 {
 	auto it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT(it != m_parts.end());
@@ -117,8 +113,7 @@ void SkinnedMesh::build(
 	worldRenderPass.setProgramParameters(
 		programParams,
 		lastWorldTransform,
-		worldTransform
-	);
+		worldTransform);
 
 	if (parameterCallback)
 		parameterCallback->setParameters(programParams);
@@ -150,8 +145,7 @@ void SkinnedMesh::build(
 
 		renderContext->draw(
 			sp.priority,
-			renderBlock
-		);
+			renderBlock);
 	}
 }
 
@@ -207,8 +201,7 @@ Ref< render::IAccelerationStructure > SkinnedMesh::createAccelerationStructure(r
 		m_rtVertexLayout,
 		m_mesh->getIndexBuffer(),
 		m_mesh->getIndexType(),
-		primitives
-	);
+		primitives);
 }
 
 const render::Buffer* SkinnedMesh::getRTVertexAttributes() const

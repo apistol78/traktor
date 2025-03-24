@@ -244,7 +244,7 @@
 			</outputPins>
 			<script><![CDATA[int rndState = int($Random * 54312.0f);
 
-const int N = 8;
+const int N = 2;
 
 vec3 u, v;
 OrthogonalFrame($Direction.xyz, u, v);
