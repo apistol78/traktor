@@ -540,8 +540,12 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 				}
 
 				// Resolve shader modules.
-				Ref< ShaderModule > module = ShaderModuleResolve([&](const Guid& id) -> Ref< const Object > {
-					return m_editor->getSourceDatabase()->getObjectReadOnly(id);
+				Ref< ShaderModule > module = ShaderModuleResolve([&](const Guid& id) -> ShaderModuleResolve::named_decl_t {
+					Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(id);
+					if (instance != nullptr)
+						return { instance->getName(), instance->getObject() };
+					else
+						return {};
 				}).resolve(programGraph);
 				if (!module)
 					continue;

@@ -70,14 +70,14 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 	if (true /*m_haveRenderMesh*/)
 	{
 		auto fn = [&](void* ptr) {
-			world::RTVertexAttributes* attr = (world::RTVertexAttributes*)ptr;
+			world::HWRT_Material* attr = (world::HWRT_Material*)ptr;
 			if (attr->albedoMap >= 0 && attr->albedoMap < skinnedMesh->m_albedoTextures.size() && skinnedMesh->m_albedoTextures[attr->albedoMap] != nullptr)
 				attr->albedoMap = skinnedMesh->m_albedoTextures[attr->albedoMap]->getBindlessIndex();
 			else
 				attr->albedoMap = -1;
 		};
 
-		renderMesh = render::MeshReader(meshFactory).read(dataStream, { { .id = IMesh::c_fccRayTracingVertexAttributes, .elementSize = sizeof(world::RTVertexAttributes), .fn = fn } });
+		renderMesh = render::MeshReader(meshFactory).read(dataStream, { { .id = IMesh::c_fccRayTracingVertexAttributes, .elementSize = sizeof(world::HWRT_Material), .fn = fn } });
 		if (!renderMesh)
 		{
 			log::error << L"Skinned mesh create failed; unable to read render mesh." << Endl;

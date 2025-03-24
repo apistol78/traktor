@@ -31,7 +31,7 @@ void pushUnique(AlignedVector< T >& inoutArr, const T& value)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderModuleResolve", ShaderModuleResolve, Object)
 
-ShaderModuleResolve::ShaderModuleResolve(const fn_readObject_t& readObject)
+ShaderModuleResolve::ShaderModuleResolve(const fn_reader_t& readObject)
 	: m_readObject(readObject)
 {
 }
@@ -46,10 +46,11 @@ Ref< ShaderModule > ShaderModuleResolve::resolve(const ShaderGraph* shaderGraph)
 
 	StringOutputStream text;
 	SmallMap< std::wstring, SamplerState > samplers;
+	SmallMap< std::wstring, StructDeclaration > structs;
 
 	for (const Guid& id : ids)
 	{
-		Ref< const ShaderModule > shaderModule = dynamic_type_cast< const ShaderModule* >(m_readObject(id));
+		Ref< const ShaderModule > shaderModule = dynamic_type_cast< const ShaderModule* >(m_readObject(id).second);
 		if (!shaderModule)
 			return nullptr;
 
@@ -64,9 +65,20 @@ Ref< ShaderModule > ShaderModuleResolve::resolve(const ShaderGraph* shaderGraph)
 
 		text << processedText << Endl;
 		samplers.insert(shaderModule->getSamplers().begin(), shaderModule->getSamplers().end());
+
+		for (const Guid& structId : shaderModule->getStructDeclarations())
+		{
+			const named_decl_t n = m_readObject(structId);
+
+			Ref< const StructDeclaration > structDecl = dynamic_type_cast< const StructDeclaration* >(n.second);
+			if (!structDecl)
+				return nullptr;
+
+			structs.insert(n.first, *structDecl);
+		}
 	}
 
-	return new ShaderModule(text.str(), samplers);
+	return new ShaderModule(text.str(), samplers, structs);
 }
 
 bool ShaderModuleResolve::collectModulesInDependencyOrder(const Guid& id, AlignedVector< Guid >& inoutIds) const
@@ -78,7 +90,7 @@ bool ShaderModuleResolve::collectModulesInDependencyOrder(const Guid& id, Aligne
 	if (it != inoutIds.end())
 		return true;
 
-	Ref< const ShaderModule > shaderModule = dynamic_type_cast< const ShaderModule* >(m_readObject(id));
+	Ref< const ShaderModule > shaderModule = dynamic_type_cast< const ShaderModule* >(m_readObject(id).second);
 	if (!shaderModule)
 		return false;
 

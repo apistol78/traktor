@@ -73,7 +73,7 @@ bool SkinnedMeshConverter::convert(
 	const uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
 	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
 	const uint32_t auxBufferSize = (uint32_t)(model->getVertices().size() * (6 * 4 * sizeof(float)));
-	const uint32_t rtVertexAttributesSize = (uint32_t)(model->getPolygons().size() * 3 * sizeof(world::RTVertexAttributes));
+	const uint32_t rtVertexAttributesSize = (uint32_t)(model->getPolygons().size() * 3 * sizeof(world::HWRT_Material));
 
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
@@ -273,7 +273,7 @@ bool SkinnedMeshConverter::convert(
 			model->getPolygons().size());
 		meshParts.push_back(meshPart);
 
-		world::RTVertexAttributes* vptr = (world::RTVertexAttributes*)mesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
+		world::HWRT_Material* vptr = (world::HWRT_Material*)mesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
 
 		for (const auto& mt : materialTechniqueMap)
 		{
@@ -314,14 +314,14 @@ bool SkinnedMeshConverter::convert(
 				{
 					const auto& vertex = model->getVertex(polygon.getVertex(j));
 
-					model->getNormal(vertex.getNormal()).storeUnaligned(vptr->normal);
+					model->getNormal(vertex.getNormal()).storeUnaligned3(vptr->normal);
 
 					if (vertex.getColor() != model::c_InvalidIndex)
-						model->getColor(vertex.getColor()).storeUnaligned(vptr->albedo);
+						model->getColor(vertex.getColor()).storeUnaligned3(vptr->albedo);
 					else
-						albedo.storeUnaligned(vptr->albedo);
+						albedo.storeUnaligned3(vptr->albedo);
 
-					vptr->albedo[3] = material.getEmissive();
+					vptr->emissive = material.getEmissive();
 
 					vptr->texCoord[0] = vptr->texCoord[1] = 0.0f;
 					if (vertex.getTexCoord(0) != model::c_InvalidIndex)

@@ -62,14 +62,14 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 	if (m_haveRenderMesh)
 	{
 		auto fn = [&](void* ptr) {
-			world::RTVertexAttributes* attr = (world::RTVertexAttributes*)ptr;
+			world::HWRT_Material* attr = (world::HWRT_Material*)ptr;
 			if (attr->albedoMap >= 0 && attr->albedoMap < instanceMesh->m_albedoTextures.size() && instanceMesh->m_albedoTextures[attr->albedoMap] != nullptr)
 				attr->albedoMap = instanceMesh->m_albedoTextures[attr->albedoMap]->getBindlessIndex();
 			else
 				attr->albedoMap = -1;
 		};
 
-		renderMesh = render::MeshReader(meshFactory).read(dataStream, { { .id = IMesh::c_fccRayTracingVertexAttributes, .elementSize = sizeof(world::RTVertexAttributes), .fn = fn } });
+		renderMesh = render::MeshReader(meshFactory).read(dataStream, { { .id = IMesh::c_fccRayTracingVertexAttributes, .elementSize = sizeof(world::HWRT_Material), .fn = fn } });
 		if (!renderMesh)
 		{
 			log::error << L"Instance mesh create failed; unable to read mesh." << Endl;

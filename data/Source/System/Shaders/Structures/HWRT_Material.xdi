@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.StructDeclaration">
+	<elements>
+		<item>
+			<name>albedo</name>
+			<type>Float3</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>emissive</name>
+			<type>Float1</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>normal</name>
+			<type>Float3</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>albedoMap</name>
+			<type>Integer1</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>texCoord</name>
+			<type>Float2</type>
+			<length>0</length>
+		</item>
+	</elements>
+</object>

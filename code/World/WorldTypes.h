@@ -134,14 +134,19 @@ struct DoubleBufferedBuffer
 };
 
 /*! */
-struct RTVertexAttributes
+#pragma pack(1)
+
+struct HWRT_Material
 {
-	float normal[4];
-	float albedo[4];
-	float texCoord[2];
+	float albedo[3];
+	float emissive;
+	float normal[3];
 	int32_t albedoMap;
-	int32_t pad;
+	float texCoord[2];
+	uint8_t __pad__[8]; // 40
 };
+
+#pragma pack()
 
 /*! */
 Vector2 jitter(int32_t count);

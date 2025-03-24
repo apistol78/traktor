@@ -87,9 +87,10 @@ ShaderModule::ShaderModule(const std::wstring& text)
 {
 }
 
-ShaderModule::ShaderModule(const std::wstring& text, const SmallMap< std::wstring, SamplerState >& samplers)
+ShaderModule::ShaderModule(const std::wstring& text, const SmallMap< std::wstring, SamplerState >& samplers, const SmallMap< std::wstring, StructDeclaration >& resolvedStructs)
 	: m_text(text)
 	, m_samplers(samplers)
+	, m_resolvedStructs(resolvedStructs)
 {
 }
 

@@ -11,6 +11,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Render/Editor/Shader/StructDeclaration.h"
 #include "Render/Types.h"
 
 #include <functional>
@@ -36,7 +37,7 @@ public:
 
 	explicit ShaderModule(const std::wstring& text);
 
-	explicit ShaderModule(const std::wstring& text, const SmallMap< std::wstring, SamplerState >& samplers);
+	explicit ShaderModule(const std::wstring& text, const SmallMap< std::wstring, SamplerState >& samplers, const SmallMap< std::wstring, StructDeclaration >& resolvedStructs);
 
 	void setTextDirect(const std::wstring& text);
 
@@ -48,12 +49,18 @@ public:
 
 	const AlignedVector< Guid >& getStructDeclarations() const { return m_structDeclarations; }
 
+	const SmallMap< std::wstring, StructDeclaration >& getResolvedStructDeclarations() const { return m_resolvedStructs; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_text;
 	SmallMap< std::wstring, SamplerState > m_samplers;
 	AlignedVector< Guid > m_structDeclarations;
+
+	//!{
+	SmallMap< std::wstring, StructDeclaration > m_resolvedStructs;
+	//!}
 };
 
 }

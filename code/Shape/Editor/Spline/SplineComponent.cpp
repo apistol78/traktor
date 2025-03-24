@@ -283,8 +283,8 @@ void SplineComponent::update(const world::UpdateParams& update)
 						{
 							safeDestroy(m_rtwInstance);
 
-							Ref< render::Buffer > vertexAttributes = m_renderSystem->createBuffer(render::BuStructured, m_updateJobModel->getPolygonCount() * 3 * sizeof(world::RTVertexAttributes), false);
-							world::RTVertexAttributes* vptr = (world::RTVertexAttributes*)vertexAttributes->lock();
+							Ref< render::Buffer > vertexAttributes = m_renderSystem->createBuffer(render::BuStructured, m_updateJobModel->getPolygonCount() * 3 * sizeof(world::HWRT_Material), false);
+							world::HWRT_Material* vptr = (world::HWRT_Material*)vertexAttributes->lock();
 
 							for (uint32_t i = 0; i < m_updateJobModel->getMaterialCount(); ++i)
 							{
@@ -307,14 +307,14 @@ void SplineComponent::update(const world::UpdateParams& update)
 									{
 										const auto& vertex = m_updateJobModel->getVertex(polygon.getVertex(j));
 
-										m_updateJobModel->getNormal(vertex.getNormal()).storeUnaligned(vptr->normal);
+										m_updateJobModel->getNormal(vertex.getNormal()).storeUnaligned3(vptr->normal);
 
 										if (vertex.getColor() != model::c_InvalidIndex)
-											m_updateJobModel->getColor(vertex.getColor()).storeUnaligned(vptr->albedo);
+											m_updateJobModel->getColor(vertex.getColor()).storeUnaligned3(vptr->albedo);
 										else
-											albedo.storeUnaligned(vptr->albedo);
+											albedo.storeUnaligned3(vptr->albedo);
 
-										vptr->albedo[3] = material.getEmissive();
+										vptr->emissive = material.getEmissive();
 
 										vptr->texCoord[0] = vptr->texCoord[1] = 0.0f;
 										vptr->albedoMap = -1;

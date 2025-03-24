@@ -185,6 +185,14 @@ T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 	out[3] = vec_extract(m_data, 3);
 }
 
+T_MATH_INLINE void Vector4::storeUnaligned3(float* out) const
+{
+	T_ASSERT(out);
+	out[0] = vec_extract(m_data, 0);
+	out[1] = vec_extract(m_data, 1);
+	out[2] = vec_extract(m_data, 2);
+}
+
 T_MATH_INLINE void Vector4::storeIntegersAligned(int32_t* out) const
 {
 	T_ASSERT(out);

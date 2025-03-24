@@ -126,7 +126,7 @@
 			<outputPins/>
 			<script><![CDATA[
 #define USE_RESERVOIR 1
-#define USE_SECOND_BOUNCE 1
+#define USE_SECOND_BOUNCE 11
 
 const int N = 2;
 const int Ndisclose = 32;
@@ -254,15 +254,14 @@ if (pt.x < sz.x && pt.y < sz.y)
 			{
 				const $typeof(Lights) light = $Lights[lightIndex];
 				const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit, m.normal.xyz);
-				Nacc += (m.albedo * incident * attenuate * phi * PI).xyz;
+				Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
 			}
 
 			const float ntE = t / 20.0f;
 			const float attenuateE = clamp(1.0f / (ntE * ntE), 0.0f, 1.0f);
-			Nacc += m.albedo.xyz * m.albedo.w * attenuateE;
+			Nacc += m.albedo * m.emissive * attenuateE;
 
 #if USE_SECOND_BOUNCE
-			if ((rndState++ & 1) == 0)
 			{
 				vec3 Sacc = vec3(0.0f);
 				HWRT_Material m2;
@@ -285,13 +284,13 @@ if (pt.x < sz.x && pt.y < sz.y)
 						const vec3 hit2 = hit + secondRayDir * t;
 						const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit2, m2.normal.xyz);
 	
-						Sacc += (m2.albedo * incident * attenuate2 * phi * PI / pdfRandomLight).xyz;
+						Sacc += (m2.albedo * incident.xyz * attenuate2 * phi * PI / pdfRandomLight).xyz;
 					}
 	
-					Sacc += vec3(m2.albedo.xyz * m2.albedo.w * attenuate2 * phi);
+					Sacc += vec3(m2.albedo * m2.emissive * attenuate2 * phi);
 				}
 	
-				Nacc += m.albedo.xyz * Sacc;
+				Nacc += m.albedo * Sacc;
 			}
 #endif
 

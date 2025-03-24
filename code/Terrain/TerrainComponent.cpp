@@ -933,12 +933,12 @@ bool TerrainComponent::createRayTracingPatches()
 
 			Ref< render::Buffer > perVertexData = m_renderSystem->createBuffer(
 				render::BuStructured,
-				vertexAttribCount * sizeof(world::RTVertexAttributes),
+				vertexAttribCount * sizeof(world::HWRT_Material),
 				false);
 			if (!perVertexData)
 				return false;
 
-			world::RTVertexAttributes* va = static_cast< world::RTVertexAttributes* >(perVertexData->lock());
+			world::HWRT_Material* va = static_cast< world::HWRT_Material* >(perVertexData->lock());
 			T_ASSERT_M(va, L"Unable to lock vertex attribute buffer");
 			for (uint32_t i = 0; i < vertexAttribCount; ++i)
 			{
@@ -958,8 +958,10 @@ bool TerrainComponent::createRayTracingPatches()
 
 				const Vector4 normal = m_heightfield->normalAt(gridX, gridZ);
 
-				Vector4(0.2f, 0.4f, 0.1f, 0.0f).storeUnaligned(va->albedo);
-				normal.storeUnaligned(va->normal);
+				Vector4(0.2f, 0.4f, 0.1f, 0.0f).storeUnaligned3(va->albedo);
+				normal.storeUnaligned3(va->normal);
+
+				va->emissive = 0.0f;
 
 				va->texCoord[0] = gridX / m_heightfield->getSize();
 				va->texCoord[1] = gridZ / m_heightfield->getSize();

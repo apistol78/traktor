@@ -35,14 +35,15 @@ class T_DLLCLASS ShaderModuleResolve : public Object
 	T_RTTI_CLASS;
 
 public:
-	typedef std::function< Ref< const Object >(const Guid&) > fn_readObject_t;
+	typedef std::pair< std::wstring, Ref< const Object > > named_decl_t;
+	typedef std::function< named_decl_t(const Guid&) > fn_reader_t;
 
-	explicit ShaderModuleResolve(const fn_readObject_t& readObject);
+	explicit ShaderModuleResolve(const fn_reader_t& readObject);
 
 	Ref< ShaderModule > resolve(const ShaderGraph* shaderGraph) const;
 
 private:
-	fn_readObject_t m_readObject;
+	fn_reader_t m_readObject;
 	Preprocessor m_preprocessor;
 
 	bool collectModulesInDependencyOrder(const Guid& id, AlignedVector< Guid >& outIds) const;

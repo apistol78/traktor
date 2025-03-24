@@ -280,10 +280,10 @@ for (int i = 0; i < N; ++i)
 		const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
 		const $typeof(Lights) light = $Lights[lightIndex];
 		const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit, m.normal.xyz);
-		acc += vec4((m.albedo * incident * at0 / pdf).xyz, at0);
+		acc += vec4(m.albedo * incident.xyz * at0 / pdf, at0);
 
 		// Add emissive.
-		acc += vec4(m.albedo.xyz * m.albedo.w * at0, m.albedo.w * at0);
+		acc += vec4(m.albedo * m.emissive * at0, m.emissive * at0);
 
 		nhit++;
 	}

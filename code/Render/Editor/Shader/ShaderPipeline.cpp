@@ -607,8 +607,12 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Resolve shader modules.
-				Ref< ShaderModule > module = ShaderModuleResolve([&](const Guid& id) -> Ref< const Object > {
-					return pipelineBuilder->getObjectReadOnly(id);
+				Ref< ShaderModule > module = ShaderModuleResolve([&](const Guid& id) -> ShaderModuleResolve::named_decl_t {
+					Ref< db::Instance > instance = pipelineBuilder->getSourceDatabase()->getInstance(id);
+					if (instance != nullptr)
+						return { instance->getName(), instance->getObject() };
+					else
+						return {};
 				}).resolve(programGraph);
 				if (!module)
 				{

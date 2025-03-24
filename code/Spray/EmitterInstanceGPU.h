@@ -44,14 +44,19 @@ class GPUBufferPool;
 
 // Buffer containing information about particle system instance.
 // Suitable for indirect draw thus IndexedIndirectDraw must be at top.
+#pragma pack(1)
+
 struct Head
 {
 	render::IndexedIndirectDraw indirectDraw;
 	render::IndirectCompute indirectCompute;
 	int32_t capacity;
 	int32_t alive;
+	uint8_t __pad__modifiers[8]; // 40
 	Vector4 modifiers[16];
 };
+
+#pragma pack()
 
 /*! Emitter instance.
  * \ingroup Spray
@@ -74,8 +79,7 @@ public:
 		PointRenderer* pointRenderer,
 		MeshRenderer* meshRenderer,
 		TrailRenderer* trailRenderer,
-		const Transform& transform
-	) override final;
+		const Transform& transform) override final;
 
 	virtual void synchronize() const override final;
 

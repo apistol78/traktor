@@ -40,7 +40,11 @@ public:
 #else
 	union
 	{
-		struct { float _x, _y, _z, _w; };
+		struct
+		{
+			float _x, _y, _z, _w;
+		};
+
 		float _e[4];
 	};
 #endif
@@ -93,7 +97,8 @@ public:
 		return Vector4(_mm_shuffle_ps(m_data, m_data, mask));
 #elif defined(T_MATH_USE_ALTIVEC)
 		const static uint32_t c_xyzw[] = { 0x00010203, 0x04050607, 0x08090a0b, 0x0c0d0e0f };
-		Vector4 tmp; tmp.m_data = vec_perm(m_data, m_data, ((vec_uchar16)(vec_uint4){ c_xyzw[iX], c_xyzw[iY], c_xyzw[iZ], c_xyzw[iW] }));
+		Vector4 tmp;
+		tmp.m_data = vec_perm(m_data, m_data, ((vec_uchar16)(vec_uint4){ c_xyzw[iX], c_xyzw[iY], c_xyzw[iZ], c_xyzw[iW] }));
 		return tmp;
 #else
 		float T_MATH_ALIGN16 _e[4];
@@ -120,6 +125,8 @@ public:
 
 	T_MATH_INLINE void storeUnaligned(float* out) const;
 
+	T_MATH_INLINE void storeUnaligned3(float* out) const;
+
 	T_MATH_INLINE void storeIntegersAligned(int32_t* out) const;
 
 	T_MATH_INLINE Scalar get(int index) const;
@@ -132,55 +139,55 @@ public:
 
 	T_MATH_INLINE Vector4 floor() const;
 
-	T_MATH_INLINE Vector4& operator = (const Vector4& v);
+	T_MATH_INLINE Vector4& operator=(const Vector4& v);
 
-	T_MATH_INLINE Vector4 operator - () const;
+	T_MATH_INLINE Vector4 operator-() const;
 
-	T_MATH_INLINE Vector4& operator += (const Scalar& v);
+	T_MATH_INLINE Vector4& operator+=(const Scalar& v);
 
-	T_MATH_INLINE Vector4& operator += (const Vector4& v);
+	T_MATH_INLINE Vector4& operator+=(const Vector4& v);
 
-	T_MATH_INLINE Vector4& operator -= (const Scalar& v);
+	T_MATH_INLINE Vector4& operator-=(const Scalar& v);
 
-	T_MATH_INLINE Vector4& operator -= (const Vector4& v);
+	T_MATH_INLINE Vector4& operator-=(const Vector4& v);
 
-	T_MATH_INLINE Vector4& operator *= (const Scalar& v);
+	T_MATH_INLINE Vector4& operator*=(const Scalar& v);
 
-	T_MATH_INLINE Vector4& operator *= (const Vector4& v);
+	T_MATH_INLINE Vector4& operator*=(const Vector4& v);
 
-	T_MATH_INLINE Vector4& operator /= (const Scalar& v);
+	T_MATH_INLINE Vector4& operator/=(const Scalar& v);
 
-	T_MATH_INLINE Vector4& operator /= (const Vector4& v);
+	T_MATH_INLINE Vector4& operator/=(const Vector4& v);
 
-	T_MATH_INLINE bool operator == (const Vector4& v) const;
+	T_MATH_INLINE bool operator==(const Vector4& v) const;
 
-	T_MATH_INLINE bool operator != (const Vector4& v) const;
+	T_MATH_INLINE bool operator!=(const Vector4& v) const;
 
-	T_MATH_INLINE Scalar operator [] (int index) const;
+	T_MATH_INLINE Scalar operator[](int index) const;
 
-	friend T_MATH_INLINE T_DLLCLASS Vector4 operator + (const Vector4& l, const Scalar& r);
+	friend T_MATH_INLINE T_DLLCLASS Vector4 operator+(const Vector4& l, const Scalar& r);
 
-	friend T_MATH_INLINE T_DLLCLASS Vector4 operator + (const Scalar& l, const Vector4& r);
+	friend T_MATH_INLINE T_DLLCLASS Vector4 operator+(const Scalar& l, const Vector4& r);
 
-	friend T_MATH_INLINE T_DLLCLASS Vector4 operator + (const Vector4& l, const Vector4& r);
+	friend T_MATH_INLINE T_DLLCLASS Vector4 operator+(const Vector4& l, const Vector4& r);
 
-	friend T_MATH_INLINE T_DLLCLASS Vector4 operator - (const Vector4& l, const Scalar& r);
+	friend T_MATH_INLINE T_DLLCLASS Vector4 operator-(const Vector4& l, const Scalar& r);
 
-	friend T_MATH_INLINE T_DLLCLASS Vector4 operator - (const Scalar& l, const Vector4& r);
+	friend T_MATH_INLINE T_DLLCLASS Vector4 operator-(const Scalar& l, const Vector4& r);
 
-	friend T_MATH_INLINE T_DLLCLASS Vector4 operator - (const Vector4& l, const Vector4& r);
+	friend T_MATH_INLINE T_DLLCLASS Vector4 operator-(const Vector4& l, const Vector4& r);
 
-	friend T_MATH_INLINE T_DLLCLASS Vector4 operator * (const Vector4& l, const Scalar& r);
+	friend T_MATH_INLINE T_DLLCLASS Vector4 operator*(const Vector4& l, const Scalar& r);
 
-	friend T_MATH_INLINE T_DLLCLASS Vector4 operator * (const Scalar& l, const Vector4& r);
+	friend T_MATH_INLINE T_DLLCLASS Vector4 operator*(const Scalar& l, const Vector4& r);
 
-	friend T_MATH_INLINE T_DLLCLASS Vector4 operator * (const Vector4& l, const Vector4& r);
+	friend T_MATH_INLINE T_DLLCLASS Vector4 operator*(const Vector4& l, const Vector4& r);
 
-	friend T_MATH_INLINE T_DLLCLASS Vector4 operator / (const Vector4& l, const Scalar& r);
+	friend T_MATH_INLINE T_DLLCLASS Vector4 operator/(const Vector4& l, const Scalar& r);
 
-	friend T_MATH_INLINE T_DLLCLASS Vector4 operator / (const Scalar& l, const Vector4& r);
+	friend T_MATH_INLINE T_DLLCLASS Vector4 operator/(const Scalar& l, const Vector4& r);
 
-	friend T_MATH_INLINE T_DLLCLASS Vector4 operator / (const Vector4& l, const Vector4& r);
+	friend T_MATH_INLINE T_DLLCLASS Vector4 operator/(const Vector4& l, const Vector4& r);
 };
 
 T_MATH_INLINE T_DLLCLASS Scalar horizontalAdd3(const Vector4& v);
@@ -230,4 +237,3 @@ T_MATH_INLINE T_DLLCLASS bool compareFuzzyEqual(const Vector4& l, const Vector4&
 #		include "Core/Math/Std/Vector4.inl"
 #	endif
 #endif
-

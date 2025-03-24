@@ -232,6 +232,14 @@ T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 	vst1q_f32((float32_t*)out, m_data);
 }
 
+T_MATH_INLINE void Vector4::storeUnaligned3(float* out) const
+{
+	T_ASSERT(out);
+	out[0] = x();
+	out[1] = y();
+	out[2] = z();
+}
+
 T_MATH_INLINE void Vector4::storeIntegersAligned(int32_t* out) const
 {
 	T_ASSERT(out);

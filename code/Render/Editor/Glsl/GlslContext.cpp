@@ -94,6 +94,10 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const ShaderModule* sha
 					it.second));
 		else
 			log::warning << L"Sampler \"" << it.first << L"\" defined in module already exist in layout." << Endl;
+
+	// Add structs from module.
+	for (const auto it : shaderModule->getResolvedStructDeclarations())
+		addStructure(it.first, it.second);
 }
 
 Node* GlslContext::getInputNode(const InputPin* inputPin)

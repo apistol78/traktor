@@ -102,7 +102,7 @@ render::RGTargetSet IrradiancePass::setup(
 	if (m_irradianceComputeShader == nullptr || m_irradianceDenoise == nullptr /* || gbufferTargetSetId == 0*/)
 		return render::RGTargetSet::Invalid;
 
-	const bool halfResolution = false;
+	const bool halfResolution = true;
 	const bool irradianceEnable = (bool)(gatheredView.irradianceGrid != nullptr);
 	const bool irradianceSingle = (bool)(gatheredView.irradianceGrid != nullptr && gatheredView.irradianceGrid->isSingle());
 	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr);
@@ -182,9 +182,9 @@ render::RGTargetSet IrradiancePass::setup(
 	// Add irradiance compute pass.
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance compute");
+		rp->addInput(halfResDepthTextureId);
 		rp->addInput(gbufferTargetSetId);
 		rp->addInput(velocityTargetSetId);
-		rp->addInput(halfResDepthTextureId);
 		rp->addInput(reservoirBufferId.previous);
 		rp->addInput(reservoirBufferId.current);
 		rp->setOutput(irradianceTextureId);

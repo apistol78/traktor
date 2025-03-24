@@ -122,8 +122,8 @@
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const float Near = 0.1f;
 const float Far = 1000.0f;
 
@@ -150,11 +150,11 @@ if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedInterse
 {
 	const HWRT_Material material = HWRT_GetMaterial(rayQuery);
 	const vec3 lightDirection = vec3(0.0f, 1.0f, 0.0f);
-	const float phi = clamp(dot(lightDirection, material.normal.xyz), 0.0f, 1.0f);
+	const float phi = clamp(dot(lightDirection, material.normal), 0.0f, 1.0f);
 
-	$Output =
-		vec4(phi * 0.5f + 0.5f) * material.albedo +
-		material.albedo * material.albedo.w;
+	$Output = vec4(
+		vec3(phi * 0.5f + 0.5f) * material.albedo + material.albedo * material.emissive,
+		1.0f);
 }
 
 // Convert output from linear to sRGB.
@@ -165,8 +165,8 @@ $Output = vec4(
 	1.0f
 );
 
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Vector" version="traktor.render.Node:1">
 			<id>{D8B48EA4-0206-8248-8C82-249C1218BDE3}</id>
