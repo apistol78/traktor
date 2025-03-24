@@ -3,7 +3,7 @@
 	<text><![CDATA[
 	
 // Default configuration of rays.
-const float HWRT_DefaultNear = 0.05f;
+const float HWRT_DefaultNear = 0.01f;
 const float HWRT_DefaultFar = 120.0f;
 
 layout (std430, binding = 2, set = 3) readonly buffer __bindlessBufferMaterials__Buffer

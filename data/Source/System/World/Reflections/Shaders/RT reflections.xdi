@@ -244,7 +244,7 @@
 			</outputPins>
 			<script><![CDATA[int rndState = int($Random * 54312.0f);
 
-const int N = 2;
+const int N = 16;
 
 vec3 u, v;
 OrthogonalFrame($Direction.xyz, u, v);
@@ -273,7 +273,7 @@ for (int i = 0; i < N; ++i)
 	{
 		const vec3 hit = rayOrigin + rayDir * t;
 
-		const float nt = t / HWRT_DefaultFar;
+		const float nt = LightAttenuation(t, HWRT_DefaultFar);
 		const float at0 = clamp(1.0f / (nt * nt), 0.0f, 1.0f);
 
 		// Add direct lights.

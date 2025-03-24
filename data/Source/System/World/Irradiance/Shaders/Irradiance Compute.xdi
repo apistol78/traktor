@@ -122,17 +122,22 @@
 					<id>{11A671BC-0D20-4F46-B8FD-5B5673DFEC44}</id>
 					<name>Sky</name>
 				</item>
+				<item>
+					<id>{E204E2D0-3918-4A42-A83B-035B9F452AD4}</id>
+					<name>Depth</name>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
 #define USE_RESERVOIR 1
-#define USE_SECOND_BOUNCE 11
+#define USE_SECOND_BOUNCE 1
 
 const int N = 2;
 const int Ndisclose = 32;
 const int Nspatial = 8;
-const int K = 32;
+const int K = 20;
 const float NormalThreshold = 0.95f;
+const float DepthThreshold = 20.0f;
 const float Far = 90.0f;
 const float FarSecond = 40.0f;
 
@@ -160,7 +165,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 
 		temporalValid =
 			!Reservoir_IsEmpty(lastR) &&
-			dot(lastR.normal, $Direction.xyz) >= NormalThreshold;
+			dot(lastR.normal, $Direction.xyz) >= NormalThreshold &&
+			abs(lastR.depth - $Depth) < DepthThreshold;
 
 		if (temporalValid)
 		{
@@ -177,7 +183,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			
 			reservoir.W_sum = (Reservoir_CalculateProbability(v) / p) * m;
 			reservoir.M = m;
-			reservoir.normal = lastR.normal;
+			reservoir.normal = $Direction.xyz;
+			reservoir.depth = $Depth;
 			reservoir.radiance = v;
 		}
 	}
@@ -223,6 +230,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 					if (Hash(rndState++) < w / reservoir.W_sum)
 					{
 						reservoir.normal = spatR.normal;
+						reservoir.depth = $Depth;
 						reservoir.radiance = v;
 					}
 				}
@@ -233,87 +241,81 @@ if (pt.x < sz.x && pt.y < sz.y)
 	// 3. Sample generation.
 	const mat3 R = Rotate($Direction.xyz, Hash(rndState++));
 	const int sampleN = temporalValid ? N : Ndisclose;
-	for (int i = 0; i < sampleN; ++i)
+
+	for (int I = 0; I < sampleN; I += N)
 	{
-		const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
-		const vec3 rayOrigin = $Origin.xyz;
-		const vec3 rayDir = R * LambertianDirection($Direction.xyz, r);
-		const float phi = 0.5f;
-
-		HWRT_Material m;
-		float t;
-
-		if (HWRT_Trace($AS, rayOrigin, rayDir, Far, m, t))
+		vec3 Nacc = vec3(0.0f);
+		for (int i = 0; i < N; ++i)
 		{
-			const vec3 hit = rayOrigin + rayDir * t;
-			const float nt = t / Far;
-			const float attenuate = clamp(1.0f / (nt * nt), 0.0f, 1.0f);
-
-			vec3 Nacc = vec3(0.0f);
-			for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
-			{
-				const $typeof(Lights) light = $Lights[lightIndex];
-				const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit, m.normal.xyz);
-				Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
-			}
-
-			const float ntE = t / 20.0f;
-			const float attenuateE = clamp(1.0f / (ntE * ntE), 0.0f, 1.0f);
-			Nacc += m.albedo * m.emissive * attenuateE;
-
-#if USE_SECOND_BOUNCE
-			{
-				vec3 Sacc = vec3(0.0f);
-				HWRT_Material m2;
-				float t2;
+			const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
+			const vec3 rayOrigin = $Origin.xyz;
+			const vec3 rayDir = R * LambertianDirection($Direction.xyz, r);
+			const float phi = 0.5f;
 	
-				const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
-				const vec3 secondRayDir = LambertianDirection(m.normal.xyz, r);
-
-				if (HWRT_Trace($AS, hit, secondRayDir, FarSecond, m2, t2))
+			HWRT_Material m;
+			float t;
+	
+			if (HWRT_Trace($AS, rayOrigin, rayDir, Far, m, t))
+			{
+				const vec3 hit = rayOrigin + rayDir * t;
+				const float attenuate = LightAttenuation(t);
+				
+				for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 				{
-					const float nt2 = nt * t2 / FarSecond;
-					const float attenuate2 = clamp(1.0f / (nt2 * nt2), 0.0f, 1.0f);
-	
-					if ($LightCount > 0)
-					{
-						const float pdfRandomLight = 1.0f / max($LightCount, 1);
-						const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
-						const $typeof(Lights) light = $Lights[lightIndex];
-	
-						const vec3 hit2 = hit + secondRayDir * t;
-						const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit2, m2.normal.xyz);
-	
-						Sacc += (m2.albedo * incident.xyz * attenuate2 * phi * PI / pdfRandomLight).xyz;
-					}
-	
-					Sacc += vec3(m2.albedo * m2.emissive * attenuate2 * phi);
+					const $typeof(Lights) light = $Lights[lightIndex];
+					const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit, m.normal.xyz);
+					Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
 				}
 	
-				Nacc += m.albedo * Sacc;
-			}
-#endif
+				Nacc += m.albedo * m.emissive * attenuate * phi * PI;
+	
+#if USE_SECOND_BOUNCE
+				{
+					vec3 Sacc = vec3(0.0f);
+					HWRT_Material m2;
+					float t2;
+		
+					const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
+					const vec3 secondRayDir = LambertianDirection(m.normal.xyz, r);
+	
+					if (HWRT_Trace($AS, hit, secondRayDir, FarSecond, m2, t2))
+					{
+						const float attenuate2 = LightAttenuation(t2);
 
-			const float w = Reservoir_CalculateProbability(Nacc.xyz);
-			Reservoir_Update(
-				reservoir,
-				w,
-				$Direction.xyz,
-				Nacc,
-				Hash(rndState++)
-			);
+						if ($LightCount > 0)
+						{
+							const float pdfRandomLight = 1.0f / max($LightCount, 1);
+							const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
+							const $typeof(Lights) light = $Lights[lightIndex];
+		
+							const vec3 hit2 = hit + secondRayDir * t;
+							const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit2, m2.normal.xyz);
+		
+							Sacc += (m2.albedo * incident.xyz * attenuate2 * phi * PI / pdfRandomLight).xyz;
+						}
+		
+						Sacc += vec3(m2.albedo * m2.emissive * attenuate2 * phi);
+					}
+		
+					Nacc += m.albedo * Sacc;
+				}
+#endif
+			}
+			else
+			{
+				Nacc += $Sky.xyz;
+			}
 		}
-		else
-		{
-			const float w = Reservoir_CalculateProbability($Sky.xyz);
-			Reservoir_Update(
-				reservoir,
-				w,
-				$Direction.xyz,
-				$Sky.xyz,
-				Hash(rndState++)
-			);
-		}
+	
+		const float w = Reservoir_CalculateProbability(Nacc.xyz / N);
+		Reservoir_Update(
+			reservoir,
+			w,
+			$Direction.xyz,
+			$Depth,
+			Nacc / N,
+			Hash(rndState++)
+		);
 	}
 
 	// 3. Calculate lighting.
@@ -345,7 +347,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{05884AA1-E171-B340-BB0B-43C620C4A44B}</id>
 			<comment/>
 			<position>
-				<first>-1987</first>
+				<first>-1984</first>
 				<second>-1037</second>
 			</position>
 			<declaration>{41DB2032-2B2B-7945-8B6B-947CEC7818A4}</declaration>
@@ -357,8 +359,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{81CB637D-9323-C440-BD0D-C85298C4B08A}</id>
 			<comment/>
 			<position>
-				<first>-2045</first>
-				<second>-995</second>
+				<first>-2042</first>
+				<second>-996</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -395,8 +397,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{7FA71DD2-2214-2D40-B818-AAFDE8461BC9}</id>
 			<comment/>
 			<position>
-				<first>-2045</first>
-				<second>-915</second>
+				<first>-2042</first>
+				<second>-917</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -433,8 +435,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{A9FA4598-AB06-634C-B4C8-5BB277012B11}</id>
 			<comment/>
 			<position>
-				<first>-1997</first>
-				<second>-835</second>
+				<first>-1994</first>
+				<second>-838</second>
 			</position>
 			<name>Random</name>
 			<technique/>
@@ -491,8 +493,8 @@ $Output = BlueNoise(seed);
 			<id>{FB164AFB-084A-F84D-9461-8F435024456E}</id>
 			<comment/>
 			<position>
-				<first>-2073</first>
-				<second>-771</second>
+				<first>-2070</first>
+				<second>-775</second>
 			</position>
 			<structDeclaration>{86E147CA-B18B-544E-A278-64ABC36DBA11}</structDeclaration>
 			<parameterName>World_LightSBuffer</parameterName>
@@ -505,8 +507,8 @@ $Output = BlueNoise(seed);
 			<id>{4A5BC0F6-9CEF-754E-BD40-8241EF3AAA9C}</id>
 			<comment/>
 			<position>
-				<first>-2003</first>
-				<second>-729</second>
+				<first>-2000</first>
+				<second>-734</second>
 			</position>
 			<declaration>{23B778E5-02E9-3A41-A252-D491C301D479}</declaration>
 			<parameterName/>
@@ -517,8 +519,8 @@ $Output = BlueNoise(seed);
 			<id>{5E355545-0A07-A14C-84B8-716AC9DA7177}</id>
 			<comment/>
 			<position>
-				<first>-2019</first>
-				<second>-687</second>
+				<first>-2016</first>
+				<second>-693</second>
 			</position>
 			<declaration>{492F3A11-D8B0-D044-ABF3-28ECB13C1D88}</declaration>
 			<parameterName>World_ViewInverse</parameterName>
@@ -529,8 +531,8 @@ $Output = BlueNoise(seed);
 			<id>{2EB57BBD-1E8B-1F46-B6C4-F11A20FACC73}</id>
 			<comment/>
 			<position>
-				<first>-2057</first>
-				<second>-645</second>
+				<first>-2054</first>
+				<second>-652</second>
 			</position>
 			<structDeclaration>{947063CB-17CE-EC46-84D1-FF6F913CAE96}</structDeclaration>
 			<parameterName>World_Reservoir</parameterName>
@@ -543,8 +545,8 @@ $Output = BlueNoise(seed);
 			<id>{1602B5C5-35B7-2749-8F44-7862922F4373}</id>
 			<comment/>
 			<position>
-				<first>-1660</first>
-				<second>-2267</second>
+				<first>-1665</first>
+				<second>-2289</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -552,8 +554,8 @@ $Output = BlueNoise(seed);
 			<id>{0284F560-D0B6-164C-88A4-DF98612D8559}</id>
 			<comment/>
 			<position>
-				<first>-1876</first>
-				<second>-2240</second>
+				<first>-1874</first>
+				<second>-2249</second>
 			</position>
 			<swizzle>yzw</swizzle>
 		</item>
@@ -588,7 +590,7 @@ $Output = BlueNoise(seed);
 			<id>{03E01579-FD74-5E43-906E-78BC0A318CC2}</id>
 			<comment/>
 			<position>
-				<first>-1660</first>
+				<first>-1665</first>
 				<second>-2367</second>
 			</position>
 			<name>L_ViewPosition</name>
@@ -663,8 +665,8 @@ $TexCoord = vec4(vec2(pt + 0.5f) / sz, 0.0f, 0.0f);
 			<id>{06AA43D5-388F-EB4D-8077-A466F048619D}</id>
 			<comment/>
 			<position>
-				<first>-2089</first>
-				<second>-603</second>
+				<first>-2086</first>
+				<second>-611</second>
 			</position>
 			<structDeclaration>{947063CB-17CE-EC46-84D1-FF6F913CAE96}</structDeclaration>
 			<parameterName>World_ReservoirOutput</parameterName>
@@ -677,8 +679,8 @@ $TexCoord = vec4(vec2(pt + 0.5f) / sz, 0.0f, 0.0f);
 			<id>{92C6559F-663C-304D-B868-684D12EC349A}</id>
 			<comment/>
 			<position>
-				<first>-2035</first>
-				<second>-561</second>
+				<first>-2032</first>
+				<second>-570</second>
 			</position>
 			<declaration>{11EF2BEA-52A2-7F4E-91C0-DCED034FE9A3}</declaration>
 			<parameterName/>
@@ -724,7 +726,7 @@ $TexCoord = vec4(vec2(pt + 0.5f) / sz, 0.0f, 0.0f);
 			<id>{3FB766B4-DCFA-2240-93AE-D2C072271A60}</id>
 			<comment/>
 			<position>
-				<first>-1660</first>
+				<first>-1665</first>
 				<second>-2133</second>
 			</position>
 			<name>L_Velocity</name>
@@ -745,8 +747,8 @@ $TexCoord = vec4(vec2(pt + 0.5f) / sz, 0.0f, 0.0f);
 			<id>{CAB31635-5AD6-5A46-B373-4BF451A31AE0}</id>
 			<comment/>
 			<position>
-				<first>-1987</first>
-				<second>-519</second>
+				<first>-1984</first>
+				<second>-529</second>
 			</position>
 			<name>L_Velocity</name>
 		</item>
@@ -925,8 +927,8 @@ $TexCoord = vec4(vec2(pt + 0.5f) / sz, 0.0f, 0.0f);
 			<id>{67436684-6E86-4C4B-8CD2-937BABB30A51}</id>
 			<comment/>
 			<position>
-				<first>-1987</first>
-				<second>-477</second>
+				<first>-1984</first>
+				<second>-488</second>
 			</position>
 			<name>L_Sky</name>
 		</item>
@@ -1022,6 +1024,33 @@ imageStore($Output, pt, $Sky);
 				<first>-1914</first>
 				<second>-2653</second>
 			</position>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{970E4C79-5B01-0B43-B680-451DB1AB8B8E}</id>
+			<comment/>
+			<position>
+				<first>-1665</first>
+				<second>-2211</second>
+			</position>
+			<name>L_Depth</name>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{5FF44CCA-F3C1-1B45-BAD1-640BC6258605}</id>
+			<comment/>
+			<position>
+				<first>-1874</first>
+				<second>-2201</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{4A5CADDA-27DB-9D4D-81F9-1759B8BF7FBC}</id>
+			<comment/>
+			<position>
+				<first>-1984</first>
+				<second>-447</second>
+			</position>
+			<name>L_Depth</name>
 		</item>
 	</nodes>
 	<edges>
@@ -1573,6 +1602,36 @@ imageStore($Output, pt, $Sky);
 			<destination>
 				<node ref="/object/nodes/item[28]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[61]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[61]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[60]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[62]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{E204E2D0-3918-4A42-A83B-035B9F452AD4}</id>
 			</destination>
 		</item>
 	</edges>

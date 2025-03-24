@@ -8,6 +8,7 @@ void Reservoir_Empty(out World_Reservoir_Type r)
 	r.radiance = vec3(0.0f);
 	r.W_sum = 0.0f;
 	r.M = 0.0f;
+	r.depth = 0.0f;
 }
 
 bool Reservoir_IsEmpty(World_Reservoir_Type r)
@@ -19,6 +20,7 @@ void Reservoir_Update(
 	inout World_Reservoir_Type reservoir,
 	float w,
 	vec3 normal,
+	float depth,
 	vec3 radiance,
 	float rnd01
 )
@@ -29,6 +31,7 @@ void Reservoir_Update(
 	if (rnd01 < w / reservoir.W_sum)
 	{
 		reservoir.normal = normal;
+		reservoir.depth = depth;
 		reservoir.radiance = radiance;
 	}
 }

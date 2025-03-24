@@ -42,6 +42,8 @@ struct World_Reservoir_Type
 	float W_sum;
 	float radiance[3];
 	float M;
+	float depth;
+	uint8_t __pad__[12]; // 36
 };
 
 #pragma pack()

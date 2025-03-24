@@ -21,5 +21,10 @@
 			<type>Float1</type>
 			<length>0</length>
 		</item>
+		<item>
+			<name>depth</name>
+			<type>Float1</type>
+			<length>0</length>
+		</item>
 	</elements>
 </object>
