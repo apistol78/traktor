@@ -39,7 +39,7 @@ class ProbeComponent;
 
 static constexpr int32_t MaxSliceCount = 4;
 static constexpr int32_t MaxLightShadowCount = 2;
-static constexpr int32_t MaxLightsPerCluster = 8;
+static constexpr int32_t MaxLightsPerCluster = 16;
 static constexpr int32_t ClusterDimXY = 16;
 static constexpr int32_t ClusterDimZ = 32;
 

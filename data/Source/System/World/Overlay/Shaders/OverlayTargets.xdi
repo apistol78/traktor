@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{4E75EB51-38F2-2A4B-A72E-055806AAD6D7}</id>
 			<comment/>
 			<position>
 				<first>556</first>
 				<second>210</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -544,20 +544,20 @@
 			<external>{A491F0C6-4056-054C-A7B9-53E0B343A95F}</external>
 			<type>Texture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{77DC6D6F-1D8E-E94C-A31F-C0AA2605A443}</id>
 			<comment/>
 			<position>
 				<first>358</first>
 				<second>729</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -661,20 +661,20 @@
 			</position>
 			<swizzle>x0</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{7377F026-D2B5-A546-8349-C6567367093D}</id>
 			<comment/>
 			<position>
 				<first>325</first>
 				<second>1239</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -837,20 +837,20 @@
 			<external>{A491F0C6-4056-054C-A7B9-53E0B343A95F}</external>
 			<type>Texture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{45FC6DBE-B4B3-194E-928E-8B8600135093}</id>
 			<comment/>
 			<position>
 				<first>2113</first>
 				<second>473</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Wrap</addressU>
+			<addressV>Wrap</addressV>
+			<addressW>Wrap</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -1407,22 +1407,22 @@
 				<first>3035</first>
 				<second>2652</second>
 			</position>
-			<value>5</value>
+			<value>16</value>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{A6643356-276A-9547-B61E-A9C938D6ECC0}</id>
 			<comment/>
 			<position>
 				<first>3654</first>
 				<second>2441</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -1601,8 +1601,8 @@
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const vec4 sp = $SlicePositions;
 const float vz = $Input.z;
 
@@ -1614,8 +1614,8 @@ else if (vz >= sp.x)
 	$Output = 1;
 else
 	$Output = 0;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{8068FA17-483E-4040-9F93-0667AB67B99A}</id>
@@ -1653,20 +1653,20 @@ else
 			</position>
 			<swizzle>x0</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{332E2A29-FCBC-1747-AFD9-38FD47A44246}</id>
 			<comment/>
 			<position>
 				<first>847</first>
 				<second>2638</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -1701,15 +1701,15 @@ else
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const float v = $Input;
 if (v >= 0.0f && v <= 1.0f)
 	$Output = vec4(v, v, v, 1.0f);
 else
 	$Output = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{E211D884-E7DC-3C46-9092-6F222ACDF538}</id>
@@ -1741,15 +1741,15 @@ else
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const float v = $Input;
 if (v >= 0.0f && v <= 1.0f)
 	$Output = vec4(v, v, v, 1.0f);
 else
 	$Output = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{17CFCA98-0EE5-6144-8C68-3BA1B5FDE518}</id>
@@ -1781,15 +1781,15 @@ else
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const float v = $Input;
 if (v >= 0.0f && v <= 1.0f)
 	$Output = vec4(v, v, v, 1.0f);
 else
 	$Output = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{44C8ED1E-D756-4F24-AB8E-69C7437851C3}</id>
@@ -1821,15 +1821,15 @@ else
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const float v = $Input;
 if (v >= 0.0f && v <= 1.0f)
 	$Output = vec4(v, v, v, 1.0f);
 else
 	$Output = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{09169F93-F8AA-4EDA-BD39-1453D185D863}</id>
@@ -1948,15 +1948,15 @@ else
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const float v = $Input;
 if (v >= 0.0f && v <= 1.0f)
 	$Output = vec4(v, v, v, 1.0f);
 else
 	$Output = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{BD8596C5-A03F-E44C-B199-407C88DA2A8F}</id>
@@ -2095,15 +2095,15 @@ else
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 const float v = $Input;
 if (v >= 0.0f && v <= 1.0f)
 	$Output = vec4(v, v, v, 1.0f);
 else
 	$Output = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{DD479433-177E-0343-9040-3A4A0BCA4931}</id>
@@ -2215,20 +2215,20 @@ else
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{3CB151FB-3078-E744-8F90-0DD2F0C1730E}</id>
 			<comment/>
 			<position>
 				<first>-461</first>
 				<second>4009</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -2313,15 +2313,15 @@ else
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 vec2 osz = vec2($TargetSize.xy) / 2.0f;
 vec2 hsz = textureSize($Texture, 0);
 vec2 s = osz / hsz;
 vec2 p = $TexCoord.xy * s;
 $Output = vec4(p, 0.0f, 0.0f);
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.TargetSize" version="traktor.render.Node:1">
 			<id>{A5B004FC-A637-A949-9958-F404AB11CDFC}</id>
@@ -2465,13 +2465,13 @@ $Output = vec4(p, 0.0f, 0.0f);
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 ivec2 uv = ivec2($Input.xy / 8);
 bool m = ((uv.x & 1) ^ (uv.y & 1)) == 0;
 $Output = m ? 1.0f : 0.0f;
-			]]>
-			</script>
+			
+			]]></script>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{A34E6281-B3F2-9B4F-AAB8-16432C3CDF8F}</id>

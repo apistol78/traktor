@@ -36,7 +36,7 @@ class LightClusterPass : public Object
     T_RTTI_CLASS;
 
 public:
-	const static int32_t c_maxLightCount = 16;
+	const static int32_t c_maxLightCount = 4096;
 
 #pragma pack(1)
 	struct LightIndexShaderData
