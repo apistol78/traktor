@@ -7,7 +7,7 @@
 
 Traktor is an open-source 3d game engine written in C++, it has powered several successful commercial titles across various platforms including Steam, PSN, iOS, and the Mac Store.
 
-![image info](resources/documentation/images/screenshot%20-%20editor%20-%2005.png)
+![image info](resources/documentation/images/screenshot%20-%20editor%20-%2006.png)
 
 [YouTube - Editing a level](https://youtu.be/eoL9xyd9PKg)
 
@@ -51,14 +51,17 @@ See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binar
 - Advanced frame graph based renderer using Vulkan.
 - GPU based occlusion culling.
 - Graph based shader editor with possibility to inline shader code when necessary for all exposed stages (vertex, fragment and compute).
+- Side by side instant shader recompile and reloading for quick iterations.
 - Tile based deferred and forward+ rendering paths.
 - GPU skin cache for skinned meshes.
-- Hardware ray tracing support, with RTAO, RT reflections and RT shadows implementations.
+- Hardware ray tracing support, with RTGI, RTAO, RT reflections and RT shadows implementations.
+- ReSTIR based global illumination.
 - Easy to use graph based image processing system for fullscreen effects.
+- Multithreaded and API agnostic.
 
 ## Scripting
 - LUA as primary scripting language.
-- Integrated debugger and profiler.
+- Integrated script debugger and profiler.
 
 ## Sound
 - Full high definition pipeline supporting any number of channels (2.0, 2.1, 5.1, 7.1 etc).
