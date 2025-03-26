@@ -112,7 +112,17 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 			mm.setMetalness(material->fbx.reflection_factor.value_real);
 
 		if (material->pbr.emission_factor.has_value)
-			mm.setEmissive(material->pbr.emission_factor.value_real);
+		{
+			float emissive = material->pbr.emission_factor.value_real;
+			if (material->pbr.emission_color.has_value)
+			{
+				emissive *= std::max({
+					material->pbr.emission_color.value_vec3.x,
+					material->pbr.emission_color.value_vec3.y,
+					material->pbr.emission_color.value_vec3.z});
+			}
+			mm.setEmissive(emissive);
+		}
 
 		if (material->pbr.opacity.has_value)
 		{
