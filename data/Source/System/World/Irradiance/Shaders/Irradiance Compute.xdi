@@ -137,7 +137,7 @@ const int Ndisclose = 32;
 const int Nspatial = 8;
 const int K = 20;
 const float NormalThreshold = 0.95f;
-const float DepthThreshold = 20.0f;
+const float DepthThreshold = 10.0f;
 const float Far = 90.0f;
 const float FarSecond = 40.0f;
 
@@ -331,11 +331,12 @@ if (pt.x < sz.x && pt.y < sz.y)
 		acc += vec4(reservoir.radiance * w, 1.0f);
 	}
 	
-/*
+
+#if 0
 	acc = temporalValid ? 
 		vec4(0.0f, 1.0f, 0.0f, 1.0f) :
 		vec4(1.0f, 0.0f, 0.0f, 1.0f);
-*/
+#endif
 
 	imageStore($Output, pt, acc);
 	$ReservoirOutput[index] = reservoir;
@@ -703,9 +704,9 @@ $TexCoord = vec4(vec2(pt + 0.5f) / sz, 0.0f, 0.0f);
 				<first>-2124</first>
 				<second>-2152</second>
 			</position>
-			<minFilter>Point</minFilter>
-			<mipFilter>Point</mipFilter>
-			<magFilter>Point</magFilter>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
 			<addressU>Clamp</addressU>
 			<addressV>Clamp</addressV>
 			<addressW>Clamp</addressW>
