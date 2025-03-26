@@ -1,37 +1,39 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
-#include "Animation/SkeletonUtils.h"
+#include "Animation/Animation/SimpleAnimationController.h"
+
 #include "Animation/Animation/Animation.h"
 #include "Animation/Animation/ITransformTime.h"
-#include "Animation/Animation/SimpleAnimationController.h"
+#include "Animation/Animation/StateContext.h"
+#include "Animation/SkeletonUtils.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
 
+#include <limits>
+
 namespace traktor::animation
 {
-	namespace
-	{
+namespace
+{
 
 Random s_random;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SimpleAnimationController", SimpleAnimationController, IPoseController)
 
 SimpleAnimationController::SimpleAnimationController(
 	const resource::Proxy< Animation >& animation,
-	ITransformTime* transformTime
-)
-:	m_animation(animation)
-,	m_transformTime(transformTime)
-,	m_lastTime(std::numeric_limits< float >::max())
+	ITransformTime* transformTime)
+	: m_animation(animation)
+	, m_transformTime(transformTime)
+	, m_lastTime(std::numeric_limits< float >::max())
 {
 	m_timeOffset = s_random.nextFloat() * m_animation->getLastKeyPose().at;
 }
@@ -50,8 +52,7 @@ bool SimpleAnimationController::evaluate(
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& jointTransforms,
-	AlignedVector< Transform >& outPoseTransforms
-)
+	AlignedVector< Transform >& outPoseTransforms)
 {
 	if (!m_animation)
 		return false;
@@ -66,8 +67,7 @@ bool SimpleAnimationController::evaluate(
 	calculatePoseTransforms(
 		skeleton,
 		&m_evaluationPose,
-		outPoseTransforms
-	);
+		outPoseTransforms);
 
 	const bool wrapped = (bool)(poseTime < m_lastTime + FUZZY_EPSILON);
 	m_lastTime = poseTime;
