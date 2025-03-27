@@ -144,7 +144,7 @@ const float FarSecond = 40.0f;
 const ivec2 sz = imageSize($Output);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
 const int index = pt.x + pt.y * sz.x;
-const ivec2 uvpt = pt - ivec2($Velocity.xy * sz);
+const ivec2 uvpt = pt - ivec2($Velocity.xy * sz + 0.5f);
 const ivec2 cvpt = clamp(uvpt, ivec2(0), sz - 1);
 const int lastIndex = cvpt.x + cvpt.y * sz.x;
 const bool lastIndexOutside = (uvpt != cvpt);
@@ -1059,6 +1059,15 @@ imageStore($Output, pt, $Sky);
 			</position>
 			<name>L_Depth</name>
 		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{C476352F-E139-804E-BF81-9693BBF1CBE6}</id>
+			<comment/>
+			<position>
+				<first>-1913</first>
+				<second>-2717</second>
+			</position>
+			<name>L_TexCoord_NoJitter</name>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -1629,6 +1638,16 @@ imageStore($Output, pt, $Sky);
 			<destination>
 				<node ref="/object/nodes/item[22]"/>
 				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{799F1052-8951-5E4F-8416-5653C60F498C}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[63]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
