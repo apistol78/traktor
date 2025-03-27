@@ -159,8 +159,8 @@ Sample shadow
 			<id>{65B3835D-1D8E-C54A-BCC7-C4500CCD48EF}</id>
 			<comment/>
 			<position>
-				<first>-72</first>
-				<second>910</second>
+				<first>-291</first>
+				<second>849</second>
 			</position>
 			<declaration>{BFE86EE6-73AD-6245-923C-C3418358D143}</declaration>
 			<parameterName/>
@@ -380,8 +380,8 @@ Shadow; adjusted for msaa.
 			<id>{8F5C2946-B8AF-4646-B28C-BAFFCCD66AA8}</id>
 			<comment/>
 			<position>
-				<first>76</first>
-				<second>56</second>
+				<first>66</first>
+				<second>-69</second>
 			</position>
 			<declaration>{842F6FEA-642D-4045-9A91-BEB4464D6206}</declaration>
 			<parameterName/>
@@ -392,8 +392,8 @@ Shadow; adjusted for msaa.
 			<id>{0AFB656A-FA64-B843-8BC3-71E6CEF810CD}</id>
 			<comment/>
 			<position>
-				<first>140</first>
-				<second>120</second>
+				<first>130</first>
+				<second>-25</second>
 			</position>
 			<name>UV_Center</name>
 		</item>
@@ -401,8 +401,8 @@ Shadow; adjusted for msaa.
 			<id>{A4C88E1D-7D44-F14A-AC38-E47BB7D7F22A}</id>
 			<comment/>
 			<position>
-				<first>140</first>
-				<second>184</second>
+				<first>130</first>
+				<second>19</second>
 			</position>
 			<name>UV</name>
 		</item>
@@ -410,8 +410,8 @@ Shadow; adjusted for msaa.
 			<id>{4A09C2BB-1490-474A-BFC5-D00B026BF2A9}</id>
 			<comment/>
 			<position>
-				<first>470</first>
-				<second>-39</second>
+				<first>476</first>
+				<second>67</second>
 			</position>
 			<minFilter>Point</minFilter>
 			<mipFilter>Point</mipFilter>
@@ -428,8 +428,8 @@ Shadow; adjusted for msaa.
 			<id>{5AE6759D-5E8E-514B-ACB1-E592AEB3763B}</id>
 			<comment/>
 			<position>
-				<first>726</first>
-				<second>-74</second>
+				<first>718</first>
+				<second>58</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -437,8 +437,8 @@ Shadow; adjusted for msaa.
 			<id>{AF153F2F-42DF-8D44-AF47-F81D534E700C}</id>
 			<comment/>
 			<position>
-				<first>471</first>
-				<second>116</second>
+				<first>476</first>
+				<second>193</second>
 			</position>
 			<minFilter>Point</minFilter>
 			<mipFilter>Point</mipFilter>
@@ -455,7 +455,7 @@ Shadow; adjusted for msaa.
 			<id>{F89121DB-5B4D-0749-9A18-495378B842FB}</id>
 			<comment/>
 			<position>
-				<first>476</first>
+				<first>492</first>
 				<second>-400</second>
 			</position>
 			<fragmentGuid>{ED628E05-EA7F-B24F-9E38-97F53A90CCDA}</fragmentGuid>
@@ -477,7 +477,7 @@ Shadow; adjusted for msaa.
 			<id>{228B2BE5-CAAC-A54E-BF19-E42E9CA0F277}</id>
 			<comment/>
 			<position>
-				<first>482</first>
+				<first>492</first>
 				<second>-191</second>
 			</position>
 			<fragmentGuid>{ED628E05-EA7F-B24F-9E38-97F53A90CCDA}</fragmentGuid>
@@ -551,8 +551,8 @@ $Output = 1.0f - min(phi, dpt);
 			<id>{BE1CDD65-7364-D645-BAF1-04E8C0A8A293}</id>
 			<comment/>
 			<position>
-				<first>727</first>
-				<second>-29</second>
+				<first>719</first>
+				<second>102</second>
 			</position>
 			<swizzle>yzw</swizzle>
 		</item>
@@ -560,8 +560,8 @@ $Output = 1.0f - min(phi, dpt);
 			<id>{190D3EAE-C6C1-9142-8C8A-0514A537C4C8}</id>
 			<comment/>
 			<position>
-				<first>718</first>
-				<second>80</second>
+				<first>720</first>
+				<second>186</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -569,8 +569,8 @@ $Output = 1.0f - min(phi, dpt);
 			<id>{EC2A4E9D-891B-F348-B22B-2526931D7155}</id>
 			<comment/>
 			<position>
-				<first>719</first>
-				<second>125</second>
+				<first>721</first>
+				<second>230</second>
 			</position>
 			<swizzle>yzw</swizzle>
 		</item>
@@ -600,7 +600,7 @@ $Output = 1.0f - min(phi, dpt);
 			<id>{B4045E1B-797C-C54E-9AC5-96E5B0C3958C}</id>
 			<comment/>
 			<position>
-				<first>474</first>
+				<first>476</first>
 				<second>-128</second>
 			</position>
 			<fragmentGuid>{B8A2B203-34E6-3543-8502-522D0F16791C}</fragmentGuid>
@@ -617,6 +617,68 @@ $Output = 1.0f - min(phi, dpt);
 					<name>Output</name>
 				</item>
 			</outputPins>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{60F9A8E7-45DE-044A-A599-32D9FE31C700}</id>
+			<comment/>
+			<position>
+				<first>992</first>
+				<second>-86</second>
+			</position>
+			<name>Kernel Size</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{EA77CC40-48D1-7C4E-B10E-8FDCB92BE351}</id>
+					<name>Input</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{4F080E7E-80F5-D24E-A628-8569D46291F5}</id>
+					<name>Output</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[const float d = $Input;
+const float f = clamp(d / 100.0f, 0.0f, 1.0f);
+$Output = mix(4.0f, 2.0f, f);
+
+]]></script>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{F49D38AA-7595-5D44-A0CE-1C46497BF162}</id>
+			<comment/>
+			<position>
+				<first>1240</first>
+				<second>-106</second>
+			</position>
+			<name>KernelSize</name>
+		</item>
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{E06968D3-94DD-FC4D-801D-587EE6D280EE}</id>
+			<comment/>
+			<position>
+				<first>-97</first>
+				<second>853</second>
+			</position>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{06DFAE2D-65F7-DA45-B574-2571FB269004}</id>
+			<comment/>
+			<position>
+				<first>-289</first>
+				<second>905</second>
+			</position>
+			<name>KernelSize</name>
 		</item>
 	</nodes>
 	<edges>
@@ -668,16 +730,6 @@ $Output = 1.0f - min(phi, dpt);
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<id>{E457DE92-8BE5-4385-9AD3-3903238A8FD9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{3E538F69-C85C-44E2-9320-73F876288BAE}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1078,6 +1130,56 @@ $Output = 1.0f - min(phi, dpt);
 			<destination>
 				<node ref="/object/nodes/item[39]"/>
 				<id>{A10CDEB3-4683-9C41-9CDA-E43C5EE1A365}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[37]"/>
+				<id>{68FEE0D6-C712-9F4A-8713-0869C8607AA1}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{EA77CC40-48D1-7C4E-B10E-8FDCB92BE351}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{4F080E7E-80F5-D24E-A628-8569D46291F5}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[46]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[48]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{3E538F69-C85C-44E2-9320-73F876288BAE}</id>
 			</destination>
 		</item>
 	</edges>

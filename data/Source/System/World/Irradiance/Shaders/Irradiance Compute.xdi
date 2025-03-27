@@ -183,7 +183,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 			
 			reservoir.W_sum = (Reservoir_CalculateProbability(v) / p) * m;
 			reservoir.M = m;
-			reservoir.normal = $Direction.xyz;
+			reservoir.normal = lastR.normal; //$Direction.xyz;
 			reservoir.depth = $Depth;
 			reservoir.radiance = v;
 		}
@@ -239,83 +239,86 @@ if (pt.x < sz.x && pt.y < sz.y)
 	}
 
 	// 3. Sample generation.
-	const mat3 R = Rotate($Direction.xyz, Hash(rndState++));
-	const int sampleN = temporalValid ? N : Ndisclose;
-
-	for (int I = 0; I < sampleN; I += N)
+	if (true)
 	{
-		vec3 Nacc = vec3(0.0f);
-		for (int i = 0; i < N; ++i)
+		const mat3 R = Rotate($Direction.xyz, Hash(rndState++));
+		const int sampleN = temporalValid ? N : Ndisclose;
+	
+		for (int I = 0; I < sampleN; I += N)
 		{
-			const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
-			const vec3 rayOrigin = $Origin.xyz;
-			const vec3 rayDir = R * LambertianDirection($Direction.xyz, r);
-			const float phi = 0.5f;
-	
-			HWRT_Material m;
-			float t;
-	
-			if (HWRT_Trace($AS, rayOrigin, rayDir, Far, m, t))
+			vec3 Nacc = vec3(0.0f);
+			for (int i = 0; i < N; ++i)
 			{
-				const vec3 hit = rayOrigin + rayDir * t;
-				const float attenuate = LightAttenuation(t);
-				
-				for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
-				{
-					const $typeof(Lights) light = $Lights[lightIndex];
-					const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit, m.normal.xyz);
-					Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
-				}
-	
-				Nacc += m.albedo * m.emissive * attenuate * phi * PI;
-	
-#if USE_SECOND_BOUNCE
-				{
-					vec3 Sacc = vec3(0.0f);
-					HWRT_Material m2;
-					float t2;
+				const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
+				const vec3 rayOrigin = $Origin.xyz;
+				const vec3 rayDir = R * LambertianDirection($Direction.xyz, r);
+				const float phi = 0.5f;
 		
-					const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
-					const vec3 secondRayDir = LambertianDirection(m.normal.xyz, r);
-	
-					if (HWRT_Trace($AS, hit, secondRayDir, FarSecond, m2, t2))
+				HWRT_Material m;
+				float t;
+		
+				if (HWRT_Trace($AS, rayOrigin, rayDir, Far, m, t))
+				{
+					const vec3 hit = rayOrigin + rayDir * t;
+					const float attenuate = LightAttenuation(t);
+					
+					for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 					{
-						const float attenuate2 = LightAttenuation(t2);
-
-						for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
-						{
-							const float pdfRandomLight = 1.0f; // 1.0f / max($LightCount, 1);
-							//const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
-							const $typeof(Lights) light = $Lights[lightIndex];
-		
-							const vec3 hit2 = hit + secondRayDir * t;
-							const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit2, m2.normal.xyz);
-		
-							Sacc += (m2.albedo * incident.xyz * attenuate2 * phi * PI / pdfRandomLight).xyz;
-						}
-		
-						Sacc += vec3(m2.albedo * m2.emissive * attenuate2 * phi);
+						const $typeof(Lights) light = $Lights[lightIndex];
+						const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit, m.normal.xyz);
+						Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
 					}
 		
-					Nacc += m.albedo * Sacc;
-				}
-#endif
-			}
-			else
-			{
-				Nacc += $Sky.xyz;
-			}
-		}
+					Nacc += m.albedo * m.emissive * attenuate * phi * PI;
+		
+#if USE_SECOND_BOUNCE
+					{
+						vec3 Sacc = vec3(0.0f);
+						HWRT_Material m2;
+						float t2;
+			
+						const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
+						const vec3 secondRayDir = LambertianDirection(m.normal.xyz, r);
+		
+						if (HWRT_Trace($AS, hit, secondRayDir, FarSecond, m2, t2))
+						{
+							const float attenuate2 = LightAttenuation(t2);
 	
-		const float w = Reservoir_CalculateProbability(Nacc.xyz / N);
-		Reservoir_Update(
-			reservoir,
-			w,
-			$Direction.xyz,
-			$Depth,
-			Nacc / N,
-			Hash(rndState++)
-		);
+							for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
+							{
+								const float pdfRandomLight = 1.0f; // 1.0f / max($LightCount, 1);
+								//const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
+								const $typeof(Lights) light = $Lights[lightIndex];
+			
+								const vec3 hit2 = hit + secondRayDir * t;
+								const vec4 incident = HWRT_Light_CalculateIncidentLight($AS, $ViewInverse, light, hit2, m2.normal.xyz);
+			
+								Sacc += (m2.albedo * incident.xyz * attenuate2 * phi * PI / pdfRandomLight).xyz;
+							}
+			
+							Sacc += vec3(m2.albedo * m2.emissive * attenuate2 * phi);
+						}
+			
+						Nacc += m.albedo * Sacc;
+					}
+#endif
+				}
+				else
+				{
+					Nacc += $Sky.xyz;
+				}
+			}
+		
+			const float w = Reservoir_CalculateProbability(Nacc.xyz / N);
+			Reservoir_Update(
+				reservoir,
+				w,
+				$Direction.xyz,
+				$Depth,
+				Nacc / N,
+				Hash(rndState++)
+			);
+		}
 	}
 
 	// 3. Calculate lighting.
@@ -637,7 +640,10 @@ $Output = BlueNoise(seed);
 			</outputPins>
 			<script><![CDATA[const ivec2 sz = imageSize($Target);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
-$TexCoord = vec4(vec2(pt + 0.5f) / sz, 0.0f, 0.0f);
+$TexCoord = vec4(
+	vec2(pt + 0.5f) / sz,
+	vec2(pt) / sz
+);
 
 ]]></script>
 		</item>
@@ -1267,16 +1273,6 @@ imageStore($Output, pt, $Sky);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[22]"/>
-				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[25]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
@@ -1327,16 +1323,6 @@ imageStore($Output, pt, $Sky);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[32]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[33]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[31]"/>
 				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
 			</source>
@@ -1353,16 +1339,6 @@ imageStore($Output, pt, $Sky);
 			<destination>
 				<node ref="/object/nodes/item[32]"/>
 				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[37]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[32]"/>
-				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1633,6 +1609,36 @@ imageStore($Output, pt, $Sky);
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<id>{E204E2D0-3918-4A42-A83B-035B9F452AD4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[33]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[22]"/>
+				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[37]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
+				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
 			</destination>
 		</item>
 	</edges>

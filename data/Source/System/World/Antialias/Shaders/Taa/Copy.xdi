@@ -5,28 +5,28 @@
 			<id>{4788F4B4-9A36-B944-974F-CFBC98E7AC4F}</id>
 			<comment/>
 			<position>
-				<first>49</first>
-				<second>378</second>
+				<first>96</first>
+				<second>446</second>
 			</position>
 			<declaration>{4961F367-B0B8-A642-A469-E40234EAC9FC}</declaration>
 			<parameterName/>
 			<type>Texture2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{D0C9E36A-0D51-AE40-91E4-6DAE6A84F8B4}</id>
 			<comment/>
 			<position>
-				<first>280</first>
+				<first>290</first>
 				<second>453</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
+			<addressU>Wrap</addressU>
+			<addressV>Wrap</addressV>
+			<addressW>Wrap</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -35,8 +35,8 @@
 			<id>{563711FC-4CBE-D842-8C2C-91C25DD6891A}</id>
 			<comment/>
 			<position>
-				<first>525</first>
-				<second>437</second>
+				<first>604</first>
+				<second>533</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -82,8 +82,8 @@
 			<id>{CCA3BBF6-51D2-BB4B-AE3B-1FF6F4F599BA}</id>
 			<comment/>
 			<position>
-				<first>69</first>
-				<second>483</second>
+				<first>102</first>
+				<second>542</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -97,6 +97,85 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{C7BE6C7B-1034-B647-9BDF-58B92BC09691}</id>
+			<comment/>
+			<position>
+				<first>290</first>
+				<second>662</second>
+			</position>
+			<name>Sharpen</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{117B08AF-660D-5D47-B190-277514FA9EF9}</id>
+					<name>Texture</name>
+				</item>
+				<item>
+					<id>{46A36B11-1E04-2A45-81E0-85E3573F627F}</id>
+					<name>TexCoord</name>
+				</item>
+				<item>
+					<id>{1DD048B8-C0A5-C447-9EA8-11308D6DC967}</id>
+					<name>TexState</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{F4A28E2A-09B8-4E4D-BA8D-BC31B266C704}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[
+const ivec2 d = textureSize(sampler2D($Texture, $TexState), 0);
+
+const vec2 uv = $TexCoord.xy;
+const vec2 duv = 1.0f / d;
+
+vec4 v = vec4(0.0f);
+for (int iy = -1; iy <= 1; ++iy)
+{
+	for (int ix = -1; ix <= 1; ++ix)
+	{
+		const float m = (ix == 0 && iy == 0) ? 9.0f : -1.0f;
+		v += texture(sampler2D($Texture, $TexState), uv + duv * vec2(ix, iy)) * m;
+	}
+}
+
+const float s = 0.15f;
+v = mix(texture(sampler2D($Texture, $TexState), uv), v, s);
+
+$Output = vec4(v.xyz, 1.0f);
+
+]]></script>
+		</item>
+		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
+			<id>{67F2A45A-7E88-EE44-92E1-8C0B4938B1E2}</id>
+			<comment/>
+			<position>
+				<first>98</first>
+				<second>755</second>
+			</position>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 	</nodes>
 	<edges>
@@ -122,12 +201,42 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{46A36B11-1E04-2A45-81E0-85E3573F627F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{117B08AF-660D-5D47-B190-277514FA9EF9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{F4A28E2A-09B8-4E4D-BA8D-BC31B266C704}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{82C966B2-7B19-48B2-8FE0-B85FF4E3C504}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{1DD048B8-C0A5-C447-9EA8-11308D6DC967}</id>
 			</destination>
 		</item>
 	</edges>
