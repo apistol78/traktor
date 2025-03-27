@@ -197,28 +197,12 @@ PACKAGES =
 	},
 
 	-- FreeType
-	--[[
 	{
 		type = "GIT",
 		url = "https://gitlab.freedesktop.org/freetype/freetype.git",
 		patch = function()
 			run:mkdir("build")
 			run:pushd("build")
-			run:execute("env --default-signal cmake -DCMAKE_BUILD_TYPE=Release -D FT_DISABLE_HARFBUZZ=TRUE ..")
-			run:popd()
-		end,
-		license = "FreeType"
-	},
-	]]
-	{
-		type = "GET",
-		name = "freetype",
-		url = "https://download.savannah.gnu.org/releases/freetype/freetype-2.13.3.tar.gz",
-		patch = function()
-			run:execute(TAR .. " -xzf freetype-2.13.3.tar.gz")
-			run:pushd("freetype-2.13.3")
-			run:mkdir("build")
-			run:cd("build")
 			run:execute("env --default-signal cmake -DCMAKE_BUILD_TYPE=Release -D FT_DISABLE_HARFBUZZ=TRUE ..")
 			run:popd()
 		end,
