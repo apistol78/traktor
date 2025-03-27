@@ -30,6 +30,16 @@ vec4 HWRT_Light_CalculateIncidentLight(
 		lightDirection /= lightDistance;
 		lightAttenuation = LightAttenuation(lightDistance, light.RangeRadius.y);
 	}
+	else if (int(light.Type) == 3)	// Spot
+	{
+		lightPosition = (viewInverse * vec4(light.Position.xyz, 1.0f)).xyz;
+		lightDirection = lightPosition - position;
+		lightDistance = length(lightDirection);
+		lightDirection /= lightDistance;
+		const float k = dot((viewInverse * light.Direction).xyz, lightDirection);
+		const float r = (k - light.RangeRadius.z) / (light.RangeRadius.z - light.RangeRadius.w);
+		lightAttenuation = r * LightAttenuation(lightDistance, light.RangeRadius.y);
+	}
 
 	[[branch]]
 	if (lightAttenuation > 0.0f)
