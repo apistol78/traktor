@@ -8,6 +8,7 @@
  */
 #include "World/IrradianceGrid.h"
 
+#include "Core/Math/Float.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/SH/SHCoeffs.h"
