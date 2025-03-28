@@ -538,7 +538,7 @@ Shadow; adjusted for msaa.
 				</item>
 			</outputPins>
 			<script><![CDATA[
-const float df = mix(0.01f, 0.05f, abs($NormalA.z));
+const float df = mix(0.01f, 0.2f, abs($NormalA.z));
 
 const float phi = clamp(dot($NormalA.xyz, $NormalB.xyz) * 1.0f, 0.0f, 1.0f);
 const float dpt = 1.0f - clamp(abs($DepthA - $DepthB) * df, 0.0f, 1.0f);

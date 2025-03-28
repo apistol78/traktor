@@ -133,7 +133,7 @@
 #define USE_SECOND_BOUNCE 1
 
 const int N = 2;
-const int Ndisclose = 32;
+const int Ndisclose = 24;
 const int Nspatial = 8;
 const int K = 20;
 const float NormalThreshold = 0.95f;
@@ -144,7 +144,8 @@ const float FarSecond = 40.0f;
 const ivec2 sz = imageSize($Output);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
 const int index = pt.x + pt.y * sz.x;
-const ivec2 uvpt = pt - ivec2($Velocity.xy * sz + 0.5f);
+const vec2 hdv = sign($Velocity.xy) * 0.5f;
+const ivec2 uvpt = pt - ivec2($Velocity.xy * vec2(sz) + hdv);
 const ivec2 cvpt = clamp(uvpt, ivec2(0), sz - 1);
 const int lastIndex = cvpt.x + cvpt.y * sz.x;
 const bool lastIndexOutside = (uvpt != cvpt);
@@ -698,8 +699,8 @@ $TexCoord = vec4(
 			<id>{766B8B3D-F012-7041-B805-D59CE2D64887}</id>
 			<comment/>
 			<position>
-				<first>-2124</first>
-				<second>-2025</second>
+				<first>-1891</first>
+				<second>-2010</second>
 			</position>
 			<value>-0.5, 0.5, 0, 0</value>
 		</item>
@@ -725,16 +726,16 @@ $TexCoord = vec4(
 			<id>{8437370D-BEA0-0446-A757-D851CFD62110}</id>
 			<comment/>
 			<position>
-				<first>-1876</first>
-				<second>-2101</second>
+				<first>-1643</first>
+				<second>-2086</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{3FB766B4-DCFA-2240-93AE-D2C072271A60}</id>
 			<comment/>
 			<position>
-				<first>-1665</first>
-				<second>-2133</second>
+				<first>-1432</first>
+				<second>-2118</second>
 			</position>
 			<name>L_Velocity</name>
 		</item>
@@ -1622,16 +1623,6 @@ imageStore($Output, pt, $Sky);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[32]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[33]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[23]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -1658,6 +1649,16 @@ imageStore($Output, pt, $Sky);
 			<destination>
 				<node ref="/object/nodes/item[32]"/>
 				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[33]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 	</edges>
