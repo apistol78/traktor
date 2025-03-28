@@ -55,7 +55,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-			<precisionHint>High</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{A4D1B705-37F6-2642-B3D0-674E6799B739}</id>
@@ -244,7 +244,7 @@
 			</outputPins>
 			<script><![CDATA[int rndState = int($Random * 54312.0f);
 
-const int N = 16;
+const int N = int(1 + mix(15, 0, $Roughness));
 
 vec3 u, v;
 OrthogonalFrame($Direction.xyz, u, v);
