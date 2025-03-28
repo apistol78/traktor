@@ -60,8 +60,8 @@
 			<technique>World_ComputeIrradiance_RT</technique>
 			<domain>Compute</domain>
 			<localSize>
-				<X>8</X>
-				<Y>8</Y>
+				<X>16</X>
+				<Y>16</Y>
 				<Z>1</Z>
 			</localSize>
 			<useRayTracing>true</useRayTracing>
@@ -133,10 +133,10 @@
 #define USE_SECOND_BOUNCE 1
 
 const int N = 2;
-const int Ndisclose = 24;
+const int Ndisclose = 28;
 const int Nspatial = 8;
 const int K = 20;
-const float NormalThreshold = 0.95f;
+const float NormalThreshold = 0.9f;
 const float DepthThreshold = 10.0f;
 const float Far = 90.0f;
 const float FarSecond = 40.0f;
