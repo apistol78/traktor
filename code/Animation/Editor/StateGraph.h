@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,7 +14,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_ANIMATION_EXPORT)
+#if defined(T_ANIMATION_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -24,12 +24,38 @@ namespace traktor::animation
 {
 
 class StateNode;
-class Transition;
+class StateTransition;
+
+/*
+
+editor:
+
+StateGraph
+StateNode
+StateTransition
+
+-->
+
+StateGraphCompiler
+
+
+
+RtStateGraphData
+RtStateData
+RtStateTransitionData
+
+
+RtStateGraph
+RtState
+RtStateTransition
+
+
+*/
 
 /*! Animation state graph.
  * \ingroup Animation
  */
-class T_DLLCLASS AnimationGraph : public ISerializable
+class T_DLLCLASS StateGraph : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -40,11 +66,11 @@ public:
 
 	const RefArray< StateNode >& getStates() const;
 
-	void addTransition(Transition* transition);
+	void addTransition(StateTransition* transition);
 
-	void removeTransition(Transition* transition);
+	void removeTransition(StateTransition* transition);
 
-	const RefArray< Transition >& getTransitions() const;
+	const RefArray< StateTransition >& getTransitions() const;
 
 	void setRootState(StateNode* rootState);
 
@@ -54,7 +80,7 @@ public:
 
 private:
 	RefArray< StateNode > m_states;
-	RefArray< Transition > m_transitions;
+	RefArray< StateTransition > m_transitions;
 	Ref< StateNode > m_rootState;
 };
 

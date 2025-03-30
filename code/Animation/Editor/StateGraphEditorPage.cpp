@@ -1,18 +1,18 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Animation/Animation/Animation.h"
-#include "Animation/Animation/AnimationGraph.h"
-#include "Animation/Animation/AnimationGraphPoseController.h"
-#include "Animation/Animation/AnimationGraphPoseControllerData.h"
-#include "Animation/Animation/StateNode.h"
-#include "Animation/Animation/Transition.h"
-#include "Animation/Editor/AnimationGraphEditorPage.h"
+#include "Animation/Animation/StateGraphPoseController.h"
+#include "Animation/Animation/StateGraphPoseControllerData.h"
+#include "Animation/Editor/StateGraph.h"
+#include "Animation/Editor/StateNode.h"
+#include "Animation/Editor/StateTransition.h"
+#include "Animation/Editor/StateGraphEditorPage.h"
 #include "Animation/Editor/AnimationPreviewControl.h"
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -49,22 +49,22 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationGraphEditorPage", AnimationGraphEditorPage, editor::IEditorPage)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StateGraphEditorPage", StateGraphEditorPage, editor::IEditorPage)
 
-AnimationGraphEditorPage::AnimationGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
+StateGraphEditorPage::StateGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
 :	m_editor(editor)
 ,	m_site(site)
 ,	m_document(document)
 {
 }
 
-bool AnimationGraphEditorPage::create(ui::Container* parent)
+bool StateGraphEditorPage::create(ui::Container* parent)
 {
-	m_animationGraph = m_document->getObject< AnimationGraph >(0);
+	m_animationGraph = m_document->getObject< StateGraph >(0);
 	if (!m_animationGraph)
 		return false;
 
-	m_statePreviewController = new AnimationGraphPoseController(resource::Proxy< AnimationGraph >(m_animationGraph), nullptr);
+	m_statePreviewController = new StateGraphPoseController(resource::Proxy< StateGraph >(m_animationGraph), nullptr);
 
 	// Create state graph container.
 	Ref< ui::Container > container = new ui::Container();
@@ -75,35 +75,35 @@ bool AnimationGraphEditorPage::create(ui::Container* parent)
 	m_toolBarGraph->create(container);
 	for (int32_t i = 0; i < 6; ++i)
 		m_toolBarGraph->addImage(new ui::StyleBitmap(L"Animation.Alignment", i));
-	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_LEFT"), 0, ui::Command(L"AnimationGraph.Editor.AlignLeft")));
-	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_RIGHT"), 1, ui::Command(L"AnimationGraph.Editor.AlignRight")));
-	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_TOP"), 2, ui::Command(L"AnimationGraph.Editor.AlignTop")));
-	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_BOTTOM"), 3, ui::Command(L"AnimationGraph.Editor.AlignBottom")));
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_LEFT"), 0, ui::Command(L"StateGraph.Editor.AlignLeft")));
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_RIGHT"), 1, ui::Command(L"StateGraph.Editor.AlignRight")));
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_TOP"), 2, ui::Command(L"StateGraph.Editor.AlignTop")));
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_BOTTOM"), 3, ui::Command(L"StateGraph.Editor.AlignBottom")));
 	m_toolBarGraph->addItem(new ui::ToolBarSeparator());
-	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_VERTICALLY"), 4, ui::Command(L"AnimationGraph.Editor.EvenSpaceVertically")));
-	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_HORIZONTALLY"), 5, ui::Command(L"AnimationGraph.Editor.EventSpaceHorizontally")));
-	m_toolBarGraph->addEventHandler< ui::ToolBarButtonClickEvent >(this, &AnimationGraphEditorPage::eventToolBarGraphClick);
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_VERTICALLY"), 4, ui::Command(L"StateGraph.Editor.EvenSpaceVertically")));
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_HORIZONTALLY"), 5, ui::Command(L"StateGraph.Editor.EventSpaceHorizontally")));
+	m_toolBarGraph->addEventHandler< ui::ToolBarButtonClickEvent >(this, &StateGraphEditorPage::eventToolBarGraphClick);
 
 	// Create state graph editor control.
 	m_editorGraph = new ui::GraphControl();
 	m_editorGraph->create(container, ui::GraphControl::WsEdgeSelectable | ui::WsDoubleBuffer | ui::WsAccelerated);
 	m_editorGraph->setText(L"ANIMATION STATE");
-	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &AnimationGraphEditorPage::eventButtonDown);
-	m_editorGraph->addEventHandler< ui::SelectionChangeEvent >(this, &AnimationGraphEditorPage::eventSelect);
-	m_editorGraph->addEventHandler< ui::NodeMovedEvent >(this, &AnimationGraphEditorPage::eventNodeMoved);
-	m_editorGraph->addEventHandler< ui::EdgeConnectEvent >(this, &AnimationGraphEditorPage::eventEdgeConnect);
-	m_editorGraph->addEventHandler< ui::EdgeDisconnectEvent >(this, &AnimationGraphEditorPage::eventEdgeDisconnect);
+	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &StateGraphEditorPage::eventButtonDown);
+	m_editorGraph->addEventHandler< ui::SelectionChangeEvent >(this, &StateGraphEditorPage::eventSelect);
+	m_editorGraph->addEventHandler< ui::NodeMovedEvent >(this, &StateGraphEditorPage::eventNodeMoved);
+	m_editorGraph->addEventHandler< ui::EdgeConnectEvent >(this, &StateGraphEditorPage::eventEdgeConnect);
+	m_editorGraph->addEventHandler< ui::EdgeDisconnectEvent >(this, &StateGraphEditorPage::eventEdgeDisconnect);
 
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
-	m_menuPopup->add(new ui::MenuItem(ui::Command(L"AnimationGraph.Editor.Create"), i18n::Text(L"STATEGRAPH_CREATE_STATE")));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.Create"), i18n::Text(L"STATEGRAPH_CREATE_STATE")));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"STATEGRAPH_DELETE_STATE")));
 	m_menuPopup->add(new ui::MenuItem(L"-"));
-	m_menuPopup->add(new ui::MenuItem(ui::Command(L"AnimationGraph.Editor.SetRoot"), i18n::Text(L"STATEGRAPH_SET_ROOT")));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.SetRoot"), i18n::Text(L"STATEGRAPH_SET_ROOT")));
 
 	// Create properties view.
 	m_propertiesView = m_site->createPropertiesView(parent);
-	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &AnimationGraphEditorPage::eventPropertiesChanged);
+	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &StateGraphEditorPage::eventPropertiesChanged);
 	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
 
 	// Create preview panel.
@@ -113,9 +113,9 @@ bool AnimationGraphEditorPage::create(ui::Container* parent)
 
 	m_toolBarPreview = new ui::ToolBar();
 	m_toolBarPreview->create(m_containerPreview);
-	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Mesh...", ui::Command(L"AnimationGraph.Editor.BrowseMesh")));
-	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Skeleton...", ui::Command(L"AnimationGraph.Editor.BrowseSkeleton")));
-	m_toolBarPreview->addEventHandler< ui::ToolBarButtonClickEvent >(this, &AnimationGraphEditorPage::eventToolBarPreviewClick);
+	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Mesh...", ui::Command(L"StateGraph.Editor.BrowseMesh")));
+	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Skeleton...", ui::Command(L"StateGraph.Editor.BrowseSkeleton")));
+	m_toolBarPreview->addEventHandler< ui::ToolBarButtonClickEvent >(this, &StateGraphEditorPage::eventToolBarPreviewClick);
 
 	m_previewControl = new AnimationPreviewControl(m_editor);
 	m_previewControl->create(m_containerPreview);
@@ -141,7 +141,7 @@ bool AnimationGraphEditorPage::create(ui::Container* parent)
 	return true;
 }
 
-void AnimationGraphEditorPage::destroy()
+void StateGraphEditorPage::destroy()
 {
 	if (m_propertiesView)
 		m_site->destroyAdditionalPanel(m_propertiesView);
@@ -155,7 +155,7 @@ void AnimationGraphEditorPage::destroy()
 	m_site = nullptr;
 }
 
-bool AnimationGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
+bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	const TypeInfo* primaryType = instance->getPrimaryType();
 	T_ASSERT(primaryType);
@@ -187,7 +187,7 @@ bool AnimationGraphEditorPage::dropInstance(db::Instance* instance, const ui::Po
 	return true;
 }
 
-bool AnimationGraphEditorPage::handleCommand(const ui::Command& command)
+bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 {
 	if (m_propertiesView->handleCommand(command))
 		return true;
@@ -343,7 +343,7 @@ bool AnimationGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		if (m_document->undo())
 		{
-			Ref< AnimationGraph > stateGraph = m_document->getObject< AnimationGraph >(0);
+			Ref< StateGraph > stateGraph = m_document->getObject< StateGraph >(0);
 			T_ASSERT(stateGraph);
 
 			m_animationGraph = stateGraph;
@@ -365,7 +365,7 @@ bool AnimationGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		if (m_document->redo())
 		{
-			Ref< AnimationGraph > stateGraph = m_document->getObject< AnimationGraph >(0);
+			Ref< StateGraph > stateGraph = m_document->getObject< StateGraph >(0);
 			T_ASSERT(stateGraph);
 
 			m_animationGraph = stateGraph;
@@ -383,7 +383,7 @@ bool AnimationGraphEditorPage::handleCommand(const ui::Command& command)
 			updatePreviewConditions();
 		}
 	}
-	else if (command == L"AnimationGraph.Editor.SetRoot")
+	else if (command == L"StateGraph.Editor.SetRoot")
 	{
 		const RefArray< ui::Node > selectedNodes = m_editorGraph->getSelectedNodes();
 		if (selectedNodes.size() == 1)
@@ -400,37 +400,37 @@ bool AnimationGraphEditorPage::handleCommand(const ui::Command& command)
 				));
 		}
 	}
-	else if (command == L"AnimationGraph.Editor.AlignLeft")
+	else if (command == L"StateGraph.Editor.AlignLeft")
 	{
 		m_document->push();
 		m_editorGraph->alignNodes(ui::GraphControl::AnLeft);
 	}
-	else if (command == L"AnimationGraph.Editor.AlignRight")
+	else if (command == L"StateGraph.Editor.AlignRight")
 	{
 		m_document->push();
 		m_editorGraph->alignNodes(ui::GraphControl::AnRight);
 	}
-	else if (command == L"AnimationGraph.Editor.AlignTop")
+	else if (command == L"StateGraph.Editor.AlignTop")
 	{
 		m_document->push();
 		m_editorGraph->alignNodes(ui::GraphControl::AnTop);
 	}
-	else if (command == L"AnimationGraph.Editor.AlignBottom")
+	else if (command == L"StateGraph.Editor.AlignBottom")
 	{
 		m_document->push();
 		m_editorGraph->alignNodes(ui::GraphControl::AnBottom);
 	}
-	else if (command == L"AnimationGraph.Editor.EvenSpaceVertically")
+	else if (command == L"StateGraph.Editor.EvenSpaceVertically")
 	{
 		m_document->push();
 		m_editorGraph->evenSpace(ui::GraphControl::EsVertically);
 	}
-	else if (command == L"AnimationGraph.Editor.EventSpaceHorizontally")
+	else if (command == L"StateGraph.Editor.EventSpaceHorizontally")
 	{
 		m_document->push();
 		m_editorGraph->evenSpace(ui::GraphControl::EsHorizontally);
 	}
-	else if (command == L"AnimationGraph.Editor.BrowseMesh")
+	else if (command == L"StateGraph.Editor.BrowseMesh")
 	{
 		Ref< db::Instance > meshInstance = m_editor->browseInstance(type_of< mesh::MeshAsset >());
 		if (meshInstance)
@@ -438,7 +438,7 @@ bool AnimationGraphEditorPage::handleCommand(const ui::Command& command)
 			m_previewControl->setMesh(resource::Id< mesh::SkinnedMesh >(meshInstance->getGuid()));
 		}
 	}
-	else if (command == L"AnimationGraph.Editor.BrowseSkeleton")
+	else if (command == L"StateGraph.Editor.BrowseSkeleton")
 	{
 		Ref< db::Instance > skeletonInstance = m_editor->browseInstance(type_of< animation::SkeletonAsset >());
 		if (skeletonInstance)
@@ -453,18 +453,18 @@ bool AnimationGraphEditorPage::handleCommand(const ui::Command& command)
 	return true;
 }
 
-void AnimationGraphEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+void StateGraphEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 	m_previewControl->getResourceManager()->reload(eventId, false);
 }
 
-void AnimationGraphEditorPage::bindStateNodes()
+void StateGraphEditorPage::bindStateNodes()
 {
 	for (auto state : m_animationGraph->getStates())
 		state->bind(m_previewControl->getResourceManager());
 }
 
-void AnimationGraphEditorPage::createEditorNodes(const RefArray< StateNode >& states, const RefArray< Transition >& transitions)
+void StateGraphEditorPage::createEditorNodes(const RefArray< StateNode >& states, const RefArray< Transition >& transitions)
 {
 	std::map< const StateNode*, ui::Node* > nodeMap;
 
@@ -499,7 +499,7 @@ void AnimationGraphEditorPage::createEditorNodes(const RefArray< StateNode >& st
 	}
 }
 
-Ref< ui::Node > AnimationGraphEditorPage::createEditorNode(StateNode* state)
+Ref< ui::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 {
 	Ref< ui::INodeShape > shape = new ui::DefaultNodeShape(
 		m_animationGraph->getRootState() == state ? ui::DefaultNodeShape::StDefault : ui::DefaultNodeShape::StExternal
@@ -521,7 +521,7 @@ Ref< ui::Node > AnimationGraphEditorPage::createEditorNode(StateNode* state)
 	return node;
 }
 
-void AnimationGraphEditorPage::createState(const ui::Point& at)
+void StateGraphEditorPage::createState(const ui::Point& at)
 {
 	Ref< StateNode > state = new StateNode(i18n::Text(L"STATEGRAPH_UNNAMED"), resource::IdProxy< Animation >());
 	state->setPosition(std::pair< int, int >(at.x, at.y));
@@ -532,12 +532,12 @@ void AnimationGraphEditorPage::createState(const ui::Point& at)
 	updateGraph();
 }
 
-void AnimationGraphEditorPage::updateGraph()
+void StateGraphEditorPage::updateGraph()
 {
 	m_editorGraph->update();
 }
 
-void AnimationGraphEditorPage::updatePreviewConditions()
+void StateGraphEditorPage::updatePreviewConditions()
 {
 	std::map< std::wstring, bool > conditions;
 
@@ -571,25 +571,25 @@ void AnimationGraphEditorPage::updatePreviewConditions()
 	{
 		Ref< ui::CheckBox > cb = new ui::CheckBox();
 		cb->create(m_previewConditions, i->first, i->second);
-		cb->addEventHandler< ui::ButtonClickEvent >(this, &AnimationGraphEditorPage::eventPreviewConditionClick);
+		cb->addEventHandler< ui::ButtonClickEvent >(this, &StateGraphEditorPage::eventPreviewConditionClick);
 	}
 
 	m_containerPreview->update();
 }
 
-void AnimationGraphEditorPage::eventToolBarGraphClick(ui::ToolBarButtonClickEvent* event)
+void StateGraphEditorPage::eventToolBarGraphClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	handleCommand(command);
 }
 
-void AnimationGraphEditorPage::eventToolBarPreviewClick(ui::ToolBarButtonClickEvent* event)
+void StateGraphEditorPage::eventToolBarPreviewClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	handleCommand(command);
 }
 
-void AnimationGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
+void StateGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
 	if (event->getButton() != ui::MbtRight)
 		return;
@@ -600,13 +600,13 @@ void AnimationGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 	const ui::Command& command = selected->getCommand();
 
-	if (command == L"AnimationGraph.Editor.Create")
+	if (command == L"StateGraph.Editor.Create")
 		createState(event->getPosition() - m_editorGraph->getOffset());
 	else
 		handleCommand(command);
 }
 
-void AnimationGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
+void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 {
 	const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
 	const RefArray< ui::Edge > edges = m_editorGraph->getSelectedEdges();
@@ -616,13 +616,13 @@ void AnimationGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 		StateNode* state = nodes[0]->getData< StateNode >(L"STATE");
 		T_ASSERT(state);
 
-		Ref< AnimationGraph > stateGraph = new AnimationGraph();
+		Ref< StateGraph > stateGraph = new StateGraph();
 		stateGraph->addState(state);
 		stateGraph->addTransition(new Transition(state, state));
 		stateGraph->setRootState(state);
 
 		m_propertiesView->setPropertyObject(state);
-		m_previewControl->setPoseController(new AnimationGraphPoseController(resource::Proxy< AnimationGraph >(stateGraph), nullptr));
+		m_previewControl->setPoseController(new StateGraphPoseController(resource::Proxy< StateGraph >(stateGraph), nullptr));
 	}
 	else if (edges.size() == 1)
 	{
@@ -639,7 +639,7 @@ void AnimationGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 	}
 }
 
-void AnimationGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
+void StateGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 {
 	ui::Node* node = event->getNode();
 	T_ASSERT(node);
@@ -662,7 +662,7 @@ void AnimationGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 		m_propertiesView->setPropertyObject(state);
 }
 
-void AnimationGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
+void StateGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 {
 	ui::Edge* edge = event->getEdge();
 
@@ -687,7 +687,7 @@ void AnimationGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 	updateGraph();
 }
 
-void AnimationGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
+void StateGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 {
 	Ref< ui::Edge > edge = event->getEdge();
 
@@ -697,7 +697,7 @@ void AnimationGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* even
 	updateGraph();
 }
 
-void AnimationGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
+void StateGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 {
 	// Refresh editor nodes.
 	for (auto node : m_editorGraph->getNodes())
@@ -716,7 +716,7 @@ void AnimationGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* ev
 	updatePreviewConditions();
 }
 
-void AnimationGraphEditorPage::eventPreviewConditionClick(ui::ButtonClickEvent* event)
+void StateGraphEditorPage::eventPreviewConditionClick(ui::ButtonClickEvent* event)
 {
 	ui::CheckBox* cb = mandatory_non_null_type_cast< ui::CheckBox* >(event->getSender());
 	m_statePreviewController->setCondition(cb->getText(), cb->isChecked(), false);
