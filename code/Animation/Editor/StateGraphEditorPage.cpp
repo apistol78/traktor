@@ -16,7 +16,8 @@
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Animation/Editor/StateGraph.h"
 #include "Animation/Editor/StateGraphCompiler.h"
-#include "Animation/Editor/StateNode.h"
+#include "Animation/Editor/StateNodeAnimation.h"
+#include "Animation/Editor/StateNodeAny.h"
 #include "Animation/Editor/StateTransition.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Database/Instance.h"
@@ -97,7 +98,8 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 
 	// Build pop up menu.
 	m_menuPopup = new ui::Menu();
-	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.Create"), i18n::Text(L"STATEGRAPH_CREATE_STATE")));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.CreateStateAnimation"), i18n::Text(L"STATEGRAPH_CREATE_STATE_ANIMATION")));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.CreateStateAny"), i18n::Text(L"STATEGRAPH_CREATE_STATE_ANY")));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"STATEGRAPH_DELETE_STATE")));
 	m_menuPopup->add(new ui::MenuItem(L"-"));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.SetRoot"), i18n::Text(L"STATEGRAPH_SET_ROOT")));
@@ -161,7 +163,7 @@ bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 
 	if (is_type_of< Animation >(*primaryType))
 	{
-		Ref< StateNode > state = new StateNode(instance->getName(), resource::Id< Animation >(instance->getGuid()));
+		Ref< StateNodeAnimation > state = new StateNodeAnimation(instance->getName(), resource::Id< Animation >(instance->getGuid()));
 
 		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
 		state->setPosition(std::pair< int, int >(absolutePosition.x, absolutePosition.y));
@@ -494,15 +496,19 @@ Ref< ui::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 			ui::Unit(state->getPosition().second)),
 		shape);
 	node->setData(L"STATE", state);
-	node->createInputPin(L"Enter", Guid(), true, false);
+
+	// Do not create input pin on "any" node since it doesn't make sense.
+	if (!is_a< StateNodeAny >(state))
+		node->createInputPin(L"Enter", Guid(), true, false);
+
 	node->createOutputPin(L"Leave", Guid());
 
 	return node;
 }
 
-void StateGraphEditorPage::createState(const ui::Point& at)
+void StateGraphEditorPage::createState(const ui::Point& at, const TypeInfo& stateType)
 {
-	Ref< StateNode > state = new StateNode(i18n::Text(L"STATEGRAPH_UNNAMED"), resource::Id< Animation >());
+	Ref< StateNode > state = dynamic_type_cast< StateNode* >(stateType.createInstance());
 	state->setPosition(std::pair< int, int >(at.x, at.y));
 	m_stateGraph->addState(state);
 
@@ -593,8 +599,10 @@ void StateGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 	const ui::Command& command = selected->getCommand();
 
-	if (command == L"StateGraph.Editor.Create")
-		createState(event->getPosition() - m_editorGraph->getOffset());
+	if (command == L"StateGraph.Editor.CreateStateAnimation")
+		createState(event->getPosition() - m_editorGraph->getOffset(), type_of< StateNodeAnimation >());
+	else if (command == L"StateGraph.Editor.CreateStateAny")
+		createState(event->getPosition() - m_editorGraph->getOffset(), type_of< StateNodeAny >());
 	else
 		handleCommand(command);
 }

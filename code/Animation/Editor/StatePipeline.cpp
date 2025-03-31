@@ -10,7 +10,7 @@
 
 #include "Animation/Editor/StateGraph.h"
 #include "Animation/Editor/StateGraphCompiler.h"
-#include "Animation/Editor/StateNode.h"
+#include "Animation/Editor/StateNodeAnimation.h"
 #include "Editor/IPipelineDepends.h"
 
 namespace traktor::animation
@@ -22,7 +22,7 @@ TypeInfoSet StatePipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet<
 		StateGraph,
-		StateNode >();
+		StateNodeAnimation >();
 }
 
 bool StatePipeline::buildDependencies(
@@ -35,7 +35,7 @@ bool StatePipeline::buildDependencies(
 	if (auto stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
 		for (auto state : stateGraph->getStates())
 			pipelineDepends->addDependency(state);
-	else if (auto state = dynamic_type_cast< const StateNode* >(sourceAsset))
+	else if (auto state = dynamic_type_cast< const StateNodeAnimation* >(sourceAsset))
 		pipelineDepends->addDependency(state->getAnimation(), editor::PdfBuild | editor::PdfResource);
 
 	return true;

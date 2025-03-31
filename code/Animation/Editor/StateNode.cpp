@@ -8,22 +8,19 @@
  */
 #include "Animation/Editor/StateNode.h"
 
-#include "Animation/Animation/Animation.h"
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Resource/Member.h"
 
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StateNode", 0, StateNode, ISerializable)
+T_IMPLEMENT_RTTI_VERSION_CLASS(L"traktor.animation.StateNode", 0, StateNode, ISerializable)
 
-StateNode::StateNode(const std::wstring& name, const resource::Id< Animation >& animation)
+StateNode::StateNode(const std::wstring& name)
 	: m_name(name)
 	, m_position(0, 0)
-	, m_animation(animation)
 {
 }
 
@@ -46,7 +43,6 @@ void StateNode::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberStlPair< int, int >(L"position", m_position, AttributePrivate());
-	s >> resource::Member< Animation >(L"animation", m_animation);
 }
 
 }

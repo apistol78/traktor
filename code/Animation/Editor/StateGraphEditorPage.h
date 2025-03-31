@@ -98,7 +98,7 @@ private:
 
 	Ref< ui::Node > createEditorNode(StateNode* state);
 
-	void createState(const ui::Point& at);
+	void createState(const ui::Point& at, const TypeInfo& stateType);
 
 	void updateGraph();
 

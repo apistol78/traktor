@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,8 @@
  */
 #pragma once
 
-#include "Animation/Pose.h"
-#include "Core/Serialization/ISerializable.h"
-
-#include <string>
+#include "Animation/Editor/StateNode.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,29 +22,26 @@
 namespace traktor::animation
 {
 
-/*! Base state node.
+class Animation;
+
+/*! Animation state node.
  * \ingroup Animation
  */
-class T_DLLCLASS StateNode : public ISerializable
+class T_DLLCLASS StateNodeAnimation : public StateNode
 {
 	T_RTTI_CLASS;
 
 public:
-	StateNode() = default;
+	StateNodeAnimation() = default;
 
-	explicit StateNode(const std::wstring& name);
-
-	const std::wstring& getName() const;
-
-	void setPosition(const std::pair< int, int >& position);
-
-	const std::pair< int, int >& getPosition() const;
+	explicit StateNodeAnimation(const std::wstring& name, const resource::Id< Animation >& animation);
 
 	virtual void serialize(ISerializer& s) override;
 
+	const resource::Id< Animation >& getAnimation() const { return m_animation; }
+
 private:
-	std::wstring m_name;
-	std::pair< int, int > m_position = { 0, 0 };
+	resource::Id< Animation > m_animation;
 };
 
 }
