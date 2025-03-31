@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -21,12 +22,23 @@
 namespace traktor::animation
 {
 
+class RtStateData;
+
 /*!
  * \ingroup Animation
  */
 class T_DLLCLASS RtStateTransitionData : public ISerializable
 {
 	T_RTTI_CLASS;
+
+public:
+	virtual void serialize(ISerializer& s);
+
+private:
+	friend class StateGraphCompiler;
+
+	Ref< RtStateData > m_from;
+	Ref< RtStateData > m_to;
 };
 
 }

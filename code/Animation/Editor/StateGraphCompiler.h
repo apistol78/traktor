@@ -8,46 +8,32 @@
  */
 #pragma once
 
-#include "Animation/Animation/Animation.h"
-#include "Core/Serialization/ISerializable.h"
-#include "Resource/Member.h"
+#include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_ANIMATION_EXPORT)
+#if defined(T_ANIMATION_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::resource
-{
-
-class IResourceManager;
-
-}
-
 namespace traktor::animation
 {
 
-class RtState;
+class RtStateGraphData;
+class StateGraph;
 
 /*!
  * \ingroup Animation
  */
-class T_DLLCLASS RtStateData : public ISerializable
+class T_DLLCLASS StateGraphCompiler : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	Ref< RtState > createInstance(resource::IResourceManager* resourceManager) const;
-
-	virtual void serialize(ISerializer& s);
-
-private:
-	friend class StateGraphCompiler;
-
-	resource::Id< Animation > m_animation;
+	Ref< RtStateGraphData > compile(const StateGraph* stateGraph) const;
 };
 
 }

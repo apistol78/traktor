@@ -6,15 +6,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Animation/Animation/Animation.h"
-#include "Animation/Animation/StateGraphPoseController.h"
-#include "Animation/Animation/StateGraphPoseControllerData.h"
-#include "Animation/Editor/StateGraph.h"
-#include "Animation/Editor/StateNode.h"
-#include "Animation/Editor/StateTransition.h"
 #include "Animation/Editor/StateGraphEditorPage.h"
+
+#include "Animation/Animation/Animation.h"
+#include "Animation/Animation/AnimationGraphPoseController.h"
+#include "Animation/Animation/RtStateGraph.h"
+#include "Animation/Animation/RtStateGraphData.h"
 #include "Animation/Editor/AnimationPreviewControl.h"
 #include "Animation/Editor/SkeletonAsset.h"
+#include "Animation/Editor/StateGraph.h"
+#include "Animation/Editor/StateGraphCompiler.h"
+#include "Animation/Editor/StateNode.h"
+#include "Animation/Editor/StateTransition.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
@@ -25,26 +28,26 @@
 #include "Mesh/Editor/MeshAsset.h"
 #include "Resource/IResourceManager.h"
 #include "Ui/Application.h"
+#include "Ui/AspectLayout.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
+#include "Ui/Graph/DefaultNodeShape.h"
+#include "Ui/Graph/Edge.h"
+#include "Ui/Graph/EdgeConnectEvent.h"
+#include "Ui/Graph/EdgeDisconnectEvent.h"
+#include "Ui/Graph/GraphControl.h"
+#include "Ui/Graph/Node.h"
+#include "Ui/Graph/NodeMovedEvent.h"
+#include "Ui/Graph/Pin.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/Splitter.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/AspectLayout.h"
-#include "Ui/Splitter.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
-#include "Ui/Graph/GraphControl.h"
-#include "Ui/Graph/Node.h"
-#include "Ui/Graph/NodeMovedEvent.h"
-#include "Ui/Graph/Edge.h"
-#include "Ui/Graph/EdgeConnectEvent.h"
-#include "Ui/Graph/EdgeDisconnectEvent.h"
-#include "Ui/Graph/Pin.h"
-#include "Ui/Graph/DefaultNodeShape.h"
 
 namespace traktor::animation
 {
@@ -52,19 +55,17 @@ namespace traktor::animation
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StateGraphEditorPage", StateGraphEditorPage, editor::IEditorPage)
 
 StateGraphEditorPage::StateGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
-:	m_editor(editor)
-,	m_site(site)
-,	m_document(document)
+	: m_editor(editor)
+	, m_site(site)
+	, m_document(document)
 {
 }
 
 bool StateGraphEditorPage::create(ui::Container* parent)
 {
-	m_animationGraph = m_document->getObject< StateGraph >(0);
-	if (!m_animationGraph)
+	m_stateGraph = m_document->getObject< StateGraph >(0);
+	if (!m_stateGraph)
 		return false;
-
-	m_statePreviewController = new StateGraphPoseController(resource::Proxy< StateGraph >(m_animationGraph), nullptr);
 
 	// Create state graph container.
 	Ref< ui::Container > container = new ui::Container();
@@ -94,7 +95,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_editorGraph->addEventHandler< ui::EdgeConnectEvent >(this, &StateGraphEditorPage::eventEdgeConnect);
 	m_editorGraph->addEventHandler< ui::EdgeDisconnectEvent >(this, &StateGraphEditorPage::eventEdgeDisconnect);
 
-	// Build popup menu.
+	// Build pop up menu.
 	m_menuPopup = new ui::Menu();
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.Create"), i18n::Text(L"STATEGRAPH_CREATE_STATE")));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"STATEGRAPH_DELETE_STATE")));
@@ -119,7 +120,6 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 
 	m_previewControl = new AnimationPreviewControl(m_editor);
 	m_previewControl->create(m_containerPreview);
-	m_previewControl->setPoseController(m_statePreviewController);
 
 	m_previewConditions = new ui::Container();
 	m_previewConditions->create(m_containerPreview, ui::WsNone, new ui::TableLayout(L"50%,50%", L"*", 0_ut, 0_ut));
@@ -127,16 +127,15 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_site->createAdditionalPanel(m_containerPreview, 450_ut, false);
 
 	createEditorNodes(
-		m_animationGraph->getStates(),
-		m_animationGraph->getTransitions()
-	);
+		m_stateGraph->getStates(),
+		m_stateGraph->getTransitions());
 
 	parent->update();
 	m_editorGraph->center();
 
 	updateGraph();
+	updatePreview();
 	updatePreviewConditions();
-	bindStateNodes();
 
 	return true;
 }
@@ -162,15 +161,14 @@ bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 
 	if (is_type_of< Animation >(*primaryType))
 	{
-		Ref< StateNode > state = new StateNode(instance->getName(), resource::IdProxy< Animation >(instance->getGuid()));
+		Ref< StateNode > state = new StateNode(instance->getName(), resource::Id< Animation >(instance->getGuid()));
 
 		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
 		state->setPosition(std::pair< int, int >(absolutePosition.x, absolutePosition.y));
 
-		m_animationGraph->addState(state);
+		m_stateGraph->addState(state);
 
 		createEditorNode(state);
-		bindStateNodes();
 		updateGraph();
 	}
 	else if (is_type_of< mesh::MeshAsset >(*primaryType))
@@ -191,13 +189,13 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 {
 	if (m_propertiesView->handleCommand(command))
 		return true;
-	
+
 	if (command == L"Editor.SettingsChanged")
 	{
 		m_previewControl->updateSettings();
 		m_previewControl->update();
 	}
-	//if (command == L"Editor.Cut" || command == L"Editor.Copy")
+	// if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	//{
 	//	RefArray< ui::Node > selectedNodes;
 	//	if (m_editorGraph->getSelectedNodes(selectedNodes) > 0)
@@ -262,7 +260,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	//		}
 	//	}
 	//}
-	//else if (command == L"Editor.Paste")
+	// else if (command == L"Editor.Paste")
 	//{
 	//	Ref< ShaderGraphEditorClipboardData > data = dynamic_type_cast< ShaderGraphEditorClipboardData* >(
 	//		ui::Application::getInstance()->getClipboard()->getObject()
@@ -322,8 +320,8 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 
 		for (auto edge : edges)
 		{
-			Transition* transition = edge->getData< Transition >(L"TRANSITION");
-			m_animationGraph->removeTransition(transition);
+			StateTransition* transition = edge->getData< StateTransition >(L"TRANSITION");
+			m_stateGraph->removeTransition(transition);
 			m_editorGraph->removeEdge(edge);
 		}
 
@@ -331,11 +329,10 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 		for (auto node : nodes)
 		{
 			StateNode* state = node->getData< StateNode >(L"STATE");
-			m_animationGraph->removeState(state);
+			m_stateGraph->removeState(state);
 			m_editorGraph->removeNode(node);
 		}
 
-		bindStateNodes();
 		updateGraph();
 		updatePreviewConditions();
 	}
@@ -346,17 +343,15 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 			Ref< StateGraph > stateGraph = m_document->getObject< StateGraph >(0);
 			T_ASSERT(stateGraph);
 
-			m_animationGraph = stateGraph;
+			m_stateGraph = stateGraph;
 
 			m_editorGraph->removeAllEdges();
 			m_editorGraph->removeAllNodes();
 
 			createEditorNodes(
-				m_animationGraph->getStates(),
-				m_animationGraph->getTransitions()
-			);
+				m_stateGraph->getStates(),
+				m_stateGraph->getTransitions());
 
-			bindStateNodes();
 			updateGraph();
 			updatePreviewConditions();
 		}
@@ -368,17 +363,15 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 			Ref< StateGraph > stateGraph = m_document->getObject< StateGraph >(0);
 			T_ASSERT(stateGraph);
 
-			m_animationGraph = stateGraph;
+			m_stateGraph = stateGraph;
 
 			m_editorGraph->removeAllEdges();
 			m_editorGraph->removeAllNodes();
 
 			createEditorNodes(
-				m_animationGraph->getStates(),
-				m_animationGraph->getTransitions()
-			);
+				m_stateGraph->getStates(),
+				m_stateGraph->getTransitions());
 
-			bindStateNodes();
 			updateGraph();
 			updatePreviewConditions();
 		}
@@ -391,13 +384,12 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 			Ref< StateNode > state = selectedNodes.front()->getData< StateNode >(L"STATE");
 			T_ASSERT(state);
 
-			m_animationGraph->setRootState(state);
+			m_stateGraph->setRootState(state);
 
 			// Update color to show which node is root.
 			for (auto node : m_editorGraph->getNodes())
 				node->setShape(new ui::DefaultNodeShape(
-					node == selectedNodes.front() ? ui::DefaultNodeShape::StDefault : ui::DefaultNodeShape::StExternal
-				));
+					node == selectedNodes.front() ? ui::DefaultNodeShape::StDefault : ui::DefaultNodeShape::StExternal));
 		}
 	}
 	else if (command == L"StateGraph.Editor.AlignLeft")
@@ -434,17 +426,13 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		Ref< db::Instance > meshInstance = m_editor->browseInstance(type_of< mesh::MeshAsset >());
 		if (meshInstance)
-		{
 			m_previewControl->setMesh(resource::Id< mesh::SkinnedMesh >(meshInstance->getGuid()));
-		}
 	}
 	else if (command == L"StateGraph.Editor.BrowseSkeleton")
 	{
 		Ref< db::Instance > skeletonInstance = m_editor->browseInstance(type_of< animation::SkeletonAsset >());
 		if (skeletonInstance)
-		{
 			m_previewControl->setSkeleton(resource::Id< Skeleton >(skeletonInstance->getGuid()));
-		}
 	}
 	else
 		return false;
@@ -458,13 +446,7 @@ void StateGraphEditorPage::handleDatabaseEvent(db::Database* database, const Gui
 	m_previewControl->getResourceManager()->reload(eventId, false);
 }
 
-void StateGraphEditorPage::bindStateNodes()
-{
-	for (auto state : m_animationGraph->getStates())
-		state->bind(m_previewControl->getResourceManager());
-}
-
-void StateGraphEditorPage::createEditorNodes(const RefArray< StateNode >& states, const RefArray< Transition >& transitions)
+void StateGraphEditorPage::createEditorNodes(const RefArray< StateNode >& states, const RefArray< StateTransition >& transitions)
 {
 	std::map< const StateNode*, ui::Node* > nodeMap;
 
@@ -502,18 +484,15 @@ void StateGraphEditorPage::createEditorNodes(const RefArray< StateNode >& states
 Ref< ui::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 {
 	Ref< ui::INodeShape > shape = new ui::DefaultNodeShape(
-		m_animationGraph->getRootState() == state ? ui::DefaultNodeShape::StDefault : ui::DefaultNodeShape::StExternal
-	);
+		m_stateGraph->getRootState() == state ? ui::DefaultNodeShape::StDefault : ui::DefaultNodeShape::StExternal);
 
 	Ref< ui::Node > node = m_editorGraph->createNode(
 		state->getName(),
 		L"",
 		ui::UnitPoint(
 			ui::Unit(state->getPosition().first),
-			ui::Unit(state->getPosition().second)
-		),
-		shape
-	);
+			ui::Unit(state->getPosition().second)),
+		shape);
 	node->setData(L"STATE", state);
 	node->createInputPin(L"Enter", Guid(), true, false);
 	node->createOutputPin(L"Leave", Guid());
@@ -523,12 +502,11 @@ Ref< ui::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 
 void StateGraphEditorPage::createState(const ui::Point& at)
 {
-	Ref< StateNode > state = new StateNode(i18n::Text(L"STATEGRAPH_UNNAMED"), resource::IdProxy< Animation >());
+	Ref< StateNode > state = new StateNode(i18n::Text(L"STATEGRAPH_UNNAMED"), resource::Id< Animation >());
 	state->setPosition(std::pair< int, int >(at.x, at.y));
-	m_animationGraph->addState(state);
+	m_stateGraph->addState(state);
 
 	createEditorNode(state);
-	bindStateNodes();
 	updateGraph();
 }
 
@@ -537,12 +515,27 @@ void StateGraphEditorPage::updateGraph()
 	m_editorGraph->update();
 }
 
+void StateGraphEditorPage::updatePreview()
+{
+	m_previewControl->setSkeleton(m_stateGraph->getPreviewSkeleton());
+	m_previewControl->setMesh(m_stateGraph->getPreviewMesh());
+	m_previewControl->setPoseController(nullptr);
+
+	Ref< const RtStateGraphData > rtsgd = StateGraphCompiler().compile(m_stateGraph);
+	if (rtsgd)
+	{
+		Ref< RtStateGraph > rtsg = rtsgd->createInstance(m_previewControl->getResourceManager());
+		if (rtsg)
+			m_previewControl->setPoseController(new AnimationGraphPoseController(resource::Proxy< RtStateGraph >(rtsg), nullptr));
+	}
+}
+
 void StateGraphEditorPage::updatePreviewConditions()
 {
 	std::map< std::wstring, bool > conditions;
 
 	// Collect all condition variables.
-	for (auto transition : m_animationGraph->getTransitions())
+	for (auto transition : m_stateGraph->getTransitions())
 	{
 		std::wstring c = transition->getCondition();
 		if (!c.empty())
@@ -614,28 +607,28 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 	if (nodes.size() == 1)
 	{
 		StateNode* state = nodes[0]->getData< StateNode >(L"STATE");
-		T_ASSERT(state);
+		T_FATAL_ASSERT(state);
 
 		Ref< StateGraph > stateGraph = new StateGraph();
 		stateGraph->addState(state);
-		stateGraph->addTransition(new Transition(state, state));
+		stateGraph->addTransition(new StateTransition(state, state));
 		stateGraph->setRootState(state);
 
 		m_propertiesView->setPropertyObject(state);
-		m_previewControl->setPoseController(new StateGraphPoseController(resource::Proxy< StateGraph >(stateGraph), nullptr));
+		// m_previewControl->setPoseController(new StateGraphPoseController(resource::Proxy< StateGraph >(stateGraph), nullptr));
 	}
 	else if (edges.size() == 1)
 	{
-		Transition* transition = edges[0]->getData< Transition >(L"TRANSITION");
-		T_ASSERT(transition);
+		StateTransition* transition = edges[0]->getData< StateTransition >(L"TRANSITION");
+		T_FATAL_ASSERT(transition);
 
 		m_propertiesView->setPropertyObject(transition);
-		m_previewControl->setPoseController(m_statePreviewController);
+		// m_previewControl->setPoseController(m_statePreviewController);
 	}
 	else
 	{
 		m_propertiesView->setPropertyObject(nullptr);
-		m_previewControl->setPoseController(m_statePreviewController);
+		// m_previewControl->setPoseController(m_statePreviewController);
 	}
 }
 
@@ -650,12 +643,9 @@ void StateGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 
 	ui::UnitPoint position = node->getPosition();
 	if (position.x.get() != state->getPosition().first || position.y.get() != state->getPosition().second)
-	{
 		state->setPosition(std::pair< int, int >(
 			node->getPosition().x.get(),
-			node->getPosition().y.get()
-		));
-	}
+			node->getPosition().y.get()));
 
 	// Update properties.
 	if (node->isSelected())
@@ -678,23 +668,25 @@ void StateGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 	StateNode* enterState = enterPin->getNode()->getData< StateNode >(L"STATE");
 	T_ASSERT(enterState);
 
-	Ref< Transition > transition = new Transition(leaveState, enterState);
-	m_animationGraph->addTransition(transition);
+	Ref< StateTransition > transition = new StateTransition(leaveState, enterState);
+	m_stateGraph->addTransition(transition);
 
 	edge->setData(L"TRANSITION", transition);
 	m_editorGraph->addEdge(edge);
 
 	updateGraph();
+	updatePreview();
 }
 
 void StateGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 {
 	Ref< ui::Edge > edge = event->getEdge();
 
-	Transition* transition = checked_type_cast< Transition* >(edge->getData(L"TRANSITION"));
-	m_animationGraph->removeTransition(transition);
+	StateTransition* transition = mandatory_non_null_type_cast< StateTransition* >(edge->getData(L"TRANSITION"));
+	m_stateGraph->removeTransition(transition);
 
 	updateGraph();
+	updatePreview();
 }
 
 void StateGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
@@ -708,18 +700,17 @@ void StateGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 		const auto& position = state->getPosition();
 		node->setPosition(ui::UnitPoint(
 			ui::Unit(position.first),
-			ui::Unit(position.second)
-		));
+			ui::Unit(position.second)));
 	}
 
 	updateGraph();
+	updatePreview();
 	updatePreviewConditions();
 }
 
 void StateGraphEditorPage::eventPreviewConditionClick(ui::ButtonClickEvent* event)
 {
-	ui::CheckBox* cb = mandatory_non_null_type_cast< ui::CheckBox* >(event->getSender());
-	m_statePreviewController->setCondition(cb->getText(), cb->isChecked(), false);
+	// ui::CheckBox* cb = mandatory_non_null_type_cast< ui::CheckBox* >(event->getSender());
+	// m_statePreviewController->setCondition(cb->getText(), cb->isChecked(), false);
 }
-
 }

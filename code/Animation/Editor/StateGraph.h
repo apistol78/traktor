@@ -11,6 +11,7 @@
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,37 +21,19 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::mesh
+{
+
+class SkinnedMesh;
+
+}
+
 namespace traktor::animation
 {
 
 class StateNode;
 class StateTransition;
-
-/*
-
-editor:
-
-StateGraph
-StateNode
-StateTransition
-
--->
-
-StateGraphCompiler
-
-
-
-RtStateGraphData
-RtStateData
-RtStateTransitionData
-
-
-RtStateGraph
-RtState
-RtStateTransition
-
-
-*/
+class Skeleton;
 
 /*! Animation state graph.
  * \ingroup Animation
@@ -76,12 +59,18 @@ public:
 
 	Ref< StateNode > getRootState() const;
 
+	const resource::Id< Skeleton >& getPreviewSkeleton() const { return m_previewSkeleton; }
+
+	const resource::Id< mesh::SkinnedMesh >& getPreviewMesh() const { return m_previewMesh; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	RefArray< StateNode > m_states;
 	RefArray< StateTransition > m_transitions;
 	Ref< StateNode > m_rootState;
+	resource::Id< Skeleton > m_previewSkeleton;
+	resource::Id< mesh::SkinnedMesh > m_previewMesh;
 };
 
 }

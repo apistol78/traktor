@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,12 +8,13 @@
  */
 #pragma once
 
-#include <string>
-#include "Core/Containers/SmallMap.h"
+#include "Animation/Animation/StateContext.h"
 #include "Animation/IPoseController.h"
 #include "Animation/Pose.h"
-#include "Animation/Animation/StateContext.h"
+#include "Core/Containers/SmallMap.h"
 #include "Resource/Proxy.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,7 +27,7 @@
 namespace traktor::animation
 {
 
-class AnimationGraph;
+class RtStateGraph;
 class ITransformTime;
 class StateNode;
 class StateContext;
@@ -39,7 +40,7 @@ class T_DLLCLASS AnimationGraphPoseController : public IPoseController
 	T_RTTI_CLASS;
 
 public:
-	explicit AnimationGraphPoseController(const resource::Proxy< AnimationGraph >& stateGraph, ITransformTime* transformTime);
+	explicit AnimationGraphPoseController(const resource::Proxy< RtStateGraph >& stateGraph, ITransformTime* transformTime);
 
 	bool setState(const std::wstring& stateName);
 
@@ -63,11 +64,10 @@ public:
 		const Transform& worldTransform,
 		const Skeleton* skeleton,
 		const AlignedVector< Transform >& jointTransforms,
-		AlignedVector< Transform >& outPoseTransforms
-	) override final;
+		AlignedVector< Transform >& outPoseTransforms) override final;
 
 private:
-	resource::Proxy< AnimationGraph > m_animationGraph;
+	resource::Proxy< RtStateGraph > m_stateGraph;
 	Ref< ITransformTime > m_transformTime;
 	Ref< StateNode > m_currentState;
 	StateContext m_currentStateContext;

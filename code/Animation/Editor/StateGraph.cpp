@@ -6,12 +6,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Animation/Editor/StateGraph.h"
+
+#include "Animation/Editor/StateNode.h"
+#include "Animation/Editor/StateTransition.h"
+#include "Animation/Skeleton.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Animation/Editor/StateGraph.h"
-#include "Animation/Editor/StateNode.h"
-#include "Animation/Editor/StateTransition.h"
+#include "Mesh/Skinned/SkinnedMesh.h"
+#include "Resource/Member.h"
 
 namespace traktor::animation
 {
@@ -26,6 +30,10 @@ void StateGraph::addState(StateNode* state)
 void StateGraph::removeState(StateNode* state)
 {
 	m_states.remove(state);
+
+	// Unbind root state also if we're removing root.
+	if (m_rootState == state)
+		m_rootState = nullptr;
 }
 
 const RefArray< StateNode >& StateGraph::getStates() const
@@ -63,6 +71,8 @@ void StateGraph::serialize(ISerializer& s)
 	s >> MemberRefArray< StateNode >(L"states", m_states);
 	s >> MemberRefArray< StateTransition >(L"transitions", m_transitions);
 	s >> MemberRef< StateNode >(L"rootState", m_rootState);
+	s >> resource::Member< Skeleton >(L"previewSkeleton", m_previewSkeleton);
+	s >> resource::Member< mesh::SkinnedMesh >(L"previewMesh", m_previewMesh);
 }
 
 }

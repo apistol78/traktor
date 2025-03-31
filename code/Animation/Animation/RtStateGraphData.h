@@ -20,6 +20,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::resource
+{
+
+class IResourceManager;
+
+}
+
 namespace traktor::animation
 {
 
@@ -35,11 +42,16 @@ class T_DLLCLASS RtStateGraphData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-    Ref< RtStateGraph > createInstance() const;
+	Ref< RtStateGraph > createInstance(resource::IResourceManager* resourceManager) const;
+
+	virtual void serialize(ISerializer& s);
 
 private:
+	friend class StateGraphCompiler;
+
 	RefArray< RtStateData > m_states;
-    RefArray< RtStateTransitionData > m_transitions;
+	RefArray< RtStateTransitionData > m_transitions;
+	Ref< RtStateData > m_root;
 };
 
 }

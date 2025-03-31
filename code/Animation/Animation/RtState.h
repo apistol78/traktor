@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,12 +22,26 @@
 namespace traktor::animation
 {
 
+class Animation;
+class Pose;
+class StateContext;
+
 /*!
  * \ingroup Animation
  */
 class T_DLLCLASS RtState : public Object
 {
 	T_RTTI_CLASS;
+
+public:
+	bool prepare(StateContext& outContext) const;
+
+	void evaluate(const StateContext& context, Pose& outPose) const;
+
+private:
+	friend class RtStateData;
+
+	resource::Proxy< Animation > m_animation;
 };
 
 }

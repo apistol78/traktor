@@ -6,11 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Animation/Animation/AnimationGraphPoseControllerData.h"
-#include "Animation/Animation/SimpleAnimationControllerData.h"
-#include "Animation/Editor/StateGraph.h"
-#include "Animation/Editor/StateNode.h"
 #include "Animation/Editor/StatePipeline.h"
+
+#include "Animation/Editor/StateGraph.h"
+#include "Animation/Editor/StateGraphCompiler.h"
+#include "Animation/Editor/StateNode.h"
 #include "Editor/IPipelineDepends.h"
 
 namespace traktor::animation
@@ -21,11 +21,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePipeline", 0, StatePipel
 TypeInfoSet StatePipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet<
-		SimpleAnimationControllerData,
 		StateGraph,
-		StateNode,
-		AnimationGraphPoseControllerData
-	>();
+		StateNode >();
 }
 
 bool StatePipeline::buildDependencies(
@@ -33,22 +30,44 @@ bool StatePipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
-	if (auto simpleControllerData = dynamic_type_cast< const SimpleAnimationControllerData* >(sourceAsset))
-		pipelineDepends->addDependency(simpleControllerData->getAnimation(), editor::PdfBuild | editor::PdfResource);
-	else if (auto stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
-	{
+	if (auto stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
 		for (auto state : stateGraph->getStates())
 			pipelineDepends->addDependency(state);
-	}
 	else if (auto state = dynamic_type_cast< const StateNode* >(sourceAsset))
 		pipelineDepends->addDependency(state->getAnimation(), editor::PdfBuild | editor::PdfResource);
-	else if (auto controllerData = dynamic_type_cast< const AnimationGraphPoseControllerData* >(sourceAsset))
-		pipelineDepends->addDependency(controllerData->getStateGraph(), editor::PdfBuild);
 
 	return true;
+}
+
+bool StatePipeline::buildOutput(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::PipelineDependencySet* dependencySet,
+	const editor::PipelineDependency* dependency,
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
+	const Object* buildParams,
+	uint32_t reason) const
+{
+	if (auto stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
+	{
+		// Compile graph into an optimized runtime graph representation.
+		return StateGraphCompiler().compile(stateGraph);
+	}
+	else
+		return editor::DefaultPipeline::buildOutput(
+			pipelineBuilder,
+			dependencySet,
+			dependency,
+			sourceInstance,
+			sourceAsset,
+			outputPath,
+			outputGuid,
+			buildParams,
+			reason);
 }
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,12 @@
  */
 #pragma once
 
-#include <map>
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Editor/IEditorPage.h"
 #include "Ui/Point.h"
+
+#include <map>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -54,20 +56,19 @@ namespace traktor::animation
 {
 
 class AnimationPreviewControl;
-class AnimationGraph;
+class StateGraph;
 class StateNode;
-class AnimationGraphPoseController;
-class Transition;
+class StateTransition;
 
 /*!
  * \ingroup Animation
  */
-class T_DLLEXPORT AnimationGraphEditorPage : public editor::IEditorPage
+class T_DLLEXPORT StateGraphEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit AnimationGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
+	explicit StateGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
 	virtual bool create(ui::Container* parent) override final;
 
@@ -83,8 +84,7 @@ private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
-	Ref< AnimationGraph > m_animationGraph;
-	Ref< AnimationGraphPoseController > m_statePreviewController;
+	Ref< StateGraph > m_stateGraph;
 	Ref< ui::ToolBar > m_toolBarGraph;
 	Ref< ui::GraphControl > m_editorGraph;
 	Ref< ui::Menu > m_menuPopup;
@@ -94,15 +94,15 @@ private:
 	Ref< AnimationPreviewControl > m_previewControl;
 	Ref< ui::Container > m_previewConditions;
 
-	void bindStateNodes();
-
-	void createEditorNodes(const RefArray< StateNode >& states, const RefArray< Transition >& transitions);
+	void createEditorNodes(const RefArray< StateNode >& states, const RefArray< StateTransition >& transitions);
 
 	Ref< ui::Node > createEditorNode(StateNode* state);
 
 	void createState(const ui::Point& at);
 
 	void updateGraph();
+
+	void updatePreview();
 
 	void updatePreviewConditions();
 

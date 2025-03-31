@@ -8,14 +8,15 @@
  */
 #pragma once
 
-#include <string>
 #include "Animation/Pose.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Resource/IdProxy.h"
+#include "Resource/Id.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_ANIMATION_EXPORT)
+#if defined(T_ANIMATION_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT

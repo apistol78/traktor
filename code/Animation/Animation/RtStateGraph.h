@@ -8,10 +8,12 @@
  */
 #pragma once
 
-#include "Core/Object.h"
-#include "Core/RefArray.h"
+#include "Animation/Animation/StateContext.h"
+#include "Animation/Pose.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Transform.h"
+#include "Core/Object.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -42,17 +44,22 @@ public:
 		const Transform& worldTransform,
 		const Skeleton* skeleton,
 		const AlignedVector< Transform >& jointTransforms,
-		AlignedVector< Transform >& outPoseTransforms
-	);
+		AlignedVector< Transform >& outPoseTransforms);
 
 private:
+	friend class RtStateGraphData;
+
 	RefArray< RtState > m_states;
-    RefArray< RtStateTransition > m_transitions;
+	RefArray< RtStateTransition > m_transitions;
 	RtState* m_rootState = nullptr;
 	RtState* m_currentState = nullptr;
 	RtState* m_nextState = nullptr;
+	StateContext m_currentStateContext;
+	StateContext m_nextStateContext;
+	Pose m_evaluatePose;
 	float m_blendState = 0.0f;
 	float m_blendDuration = 0.0;
+	float m_timeFactor = 1.0f;
 };
 
 }

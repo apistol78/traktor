@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include "Core/Math/Range.h"
 #include "Animation/IPoseControllerData.h"
 #include "Resource/Id.h"
 
@@ -24,7 +23,7 @@ namespace traktor::animation
 {
 
 class ITransformTimeData;
-class AnimationGraph;
+class RtStateGraph;
 
 /*! Animation evaluation controller data.
  * \ingroup Animation
@@ -34,22 +33,22 @@ class T_DLLCLASS AnimationGraphPoseControllerData : public IPoseControllerData
 	T_RTTI_CLASS;
 
 public:
-	AnimationGraphPoseControllerData();
+	AnimationGraphPoseControllerData() = default;
+
+	explicit AnimationGraphPoseControllerData(const resource::Id< RtStateGraph >& stateGraph);
 
 	virtual Ref< IPoseController > createInstance(
 		resource::IResourceManager* resourceManager,
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,
-		const Transform& worldTransform
-	) const override final;
+		const Transform& worldTransform) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
-	inline const resource::Id< AnimationGraph >& getStateGraph() const { return m_animationGraph; }
+	inline const resource::Id< RtStateGraph >& getStateGraph() const { return m_stateGraph; }
 
 private:
-	resource::Id< AnimationGraph > m_animationGraph;
-	Range< float > m_randomTimeOffset;
+	resource::Id< RtStateGraph > m_stateGraph;
 	Ref< const ITransformTimeData > m_transformTime;
 };
 

@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/RefArray.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,12 +22,20 @@
 namespace traktor::animation
 {
 
+class RtState;
+
 /*!
  * \ingroup Animation
  */
 class T_DLLCLASS RtStateTransition : public Object
 {
 	T_RTTI_CLASS;
+
+public:
+
+private:
+	Ref< RtState > m_from;
+	Ref< RtState > m_to;
 };
 
 }
