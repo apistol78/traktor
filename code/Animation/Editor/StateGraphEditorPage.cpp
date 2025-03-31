@@ -489,7 +489,7 @@ Ref< ui::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 		m_stateGraph->getRootState() == state ? ui::DefaultNodeShape::StDefault : ui::DefaultNodeShape::StExternal);
 
 	Ref< ui::Node > node = m_editorGraph->createNode(
-		state->getName(),
+		!state->getName().empty() ? state->getName() : std::wstring(i18n::Text(L"STATEGRAPH_UNNAMED")),
 		L"",
 		ui::UnitPoint(
 			ui::Unit(state->getPosition().first),

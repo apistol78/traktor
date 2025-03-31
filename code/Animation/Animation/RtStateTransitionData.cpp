@@ -11,6 +11,9 @@
 #include "Animation/Animation/RtStateGraph.h"
 #include "Animation/Animation/RtStateTransition.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRef.h"
 
@@ -37,6 +40,13 @@ void RtStateTransitionData::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"to", m_to);
 	s >> MemberEnumByValue< Moment >(L"moment", m_moment);
 	s >> Member< float >(L"duration", m_duration);
+	s >> MemberAlignedVector< Condition, MemberComposite< Condition > >(L"conditions", m_conditions);
+}
+
+void RtStateTransitionData::Condition::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"name", name);
+	s >> Member< bool >(L"inverted", inverted);
 }
 
 }

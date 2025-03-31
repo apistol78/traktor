@@ -12,6 +12,8 @@
 #include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 
+#include <string>
+
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
@@ -42,10 +44,19 @@ public:
 private:
 	friend class StateGraphCompiler;
 
+	struct Condition
+	{
+		std::wstring name;
+		bool inverted = false;
+
+		void serialize(ISerializer& s);
+	};
+
 	int32_t m_from = -1;
 	int32_t m_to = -1;
 	Moment m_moment = Moment::End;
 	float m_duration = 0.0f;
+	AlignedVector< Condition > m_conditions;
 };
 
 }
