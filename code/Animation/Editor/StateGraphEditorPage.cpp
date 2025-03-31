@@ -18,6 +18,7 @@
 #include "Animation/Editor/StateGraphCompiler.h"
 #include "Animation/Editor/StateNodeAnimation.h"
 #include "Animation/Editor/StateNodeAny.h"
+#include "Animation/Editor/StateNodeController.h"
 #include "Animation/Editor/StateTransition.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Database/Instance.h"
@@ -100,6 +101,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_menuPopup = new ui::Menu();
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.CreateStateAnimation"), i18n::Text(L"STATEGRAPH_CREATE_STATE_ANIMATION")));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.CreateStateAny"), i18n::Text(L"STATEGRAPH_CREATE_STATE_ANY")));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.CreateStateController"), i18n::Text(L"STATEGRAPH_CREATE_STATE_CONTROLLER")));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"STATEGRAPH_DELETE_STATE")));
 	m_menuPopup->add(new ui::MenuItem(L"-"));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.SetRoot"), i18n::Text(L"STATEGRAPH_SET_ROOT")));
@@ -603,6 +605,8 @@ void StateGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 		createState(event->getPosition() - m_editorGraph->getOffset(), type_of< StateNodeAnimation >());
 	else if (command == L"StateGraph.Editor.CreateStateAny")
 		createState(event->getPosition() - m_editorGraph->getOffset(), type_of< StateNodeAny >());
+	else if (command == L"StateGraph.Editor.CreateStateController")
+		createState(event->getPosition() - m_editorGraph->getOffset(), type_of< StateNodeController >());
 	else
 		handleCommand(command);
 }

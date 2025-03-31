@@ -9,7 +9,9 @@
 #include "Animation/Animation/RtStateData.h"
 
 #include "Animation/Animation/RtState.h"
+#include "Animation/IPoseControllerData.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
@@ -21,15 +23,24 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RtStateData", 0, RtStateData,
 Ref< RtState > RtStateData::createInstance(resource::IResourceManager* resourceManager) const
 {
 	Ref< RtState > instance = new RtState();
-	if (resourceManager->bind(m_animation, instance->m_animation))
-		return instance;
-	else
-		return nullptr;
+	if (m_animation)
+	{
+		if (resourceManager->bind(m_animation, instance->m_animation))
+			return instance;
+	}
+	else if (m_poseController)
+	{
+		instance->m_poseController = m_poseController->createInstance(resourceManager, nullptr, nullptr, Transform::identity());
+		if (instance->m_poseController)
+			return instance;
+	}
+	return nullptr;
 }
 
 void RtStateData::serialize(ISerializer& s)
 {
 	s >> resource::Member< Animation >(L"animation", m_animation);
+	s >> MemberRef< const IPoseControllerData >(L"poseController", m_poseController);
 }
 
 }

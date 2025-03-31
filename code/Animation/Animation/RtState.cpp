@@ -10,6 +10,7 @@
 
 #include "Animation/Animation/Animation.h"
 #include "Animation/Animation/StateContext.h"
+#include "Animation/IPoseController.h"
 
 namespace traktor::animation
 {
@@ -18,17 +19,24 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RtState", RtState, Object)
 
 bool RtState::prepare(StateContext& outContext) const
 {
-	if (!m_animation)
+	if (m_animation)
+	{
+		const uint32_t poseCount = m_animation->getKeyPoseCount();
+		if (poseCount < 1)
+			return false;
+
+		const float duration = m_animation->getKeyPose(poseCount - 1).at;
+
+		outContext.setTime(0.0f);
+		outContext.setDuration(duration);
+	}
+	else if (m_poseController)
+	{
+		outContext.setTime(0.0f);
+		outContext.setDuration(0.0f);
+	}
+	else
 		return false;
-
-	const uint32_t poseCount = m_animation->getKeyPoseCount();
-	if (poseCount < 1)
-		return false;
-
-	const float duration = m_animation->getKeyPose(poseCount - 1).at;
-
-	outContext.setTime(0.0f);
-	outContext.setDuration(duration);
 
 	return true;
 }
@@ -37,6 +45,13 @@ void RtState::evaluate(const StateContext& context, Pose& outPose) const
 {
 	if (m_animation)
 		m_animation->getPose(context.getTime(), outPose);
+	if (m_poseController)
+	{
+		AlignedVector< Transform > poseTransforms;
+		m_poseController->evaluate(context.getTime(), 1.0f / 60.0f, Transform::identity(), nullptr, AlignedVector< Transform >(), poseTransforms);
+		for (int32_t i = 0; i < poseTransforms.size(); ++i)
+			outPose.setJointTransform(i, poseTransforms[i]);
+	}
 }
 
 }

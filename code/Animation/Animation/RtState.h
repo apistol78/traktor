@@ -23,6 +23,7 @@ namespace traktor::animation
 {
 
 class Animation;
+class IPoseController;
 class Pose;
 class StateContext;
 
@@ -42,6 +43,7 @@ private:
 	friend class RtStateData;
 
 	resource::Proxy< Animation > m_animation;
+	Ref< IPoseController > m_poseController;
 };
 
 }

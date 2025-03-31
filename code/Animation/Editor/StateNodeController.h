@@ -8,47 +8,39 @@
  */
 #pragma once
 
-#include "Animation/Animation/Animation.h"
-#include "Core/Serialization/ISerializable.h"
-#include "Resource/Member.h"
+#include "Animation/Editor/StateNode.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_ANIMATION_EXPORT)
+#if defined(T_ANIMATION_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::resource
-{
-
-class IResourceManager;
-
-}
-
 namespace traktor::animation
 {
 
 class IPoseControllerData;
-class RtState;
 
-/*!
+/*! Pose controller state node.
  * \ingroup Animation
  */
-class T_DLLCLASS RtStateData : public ISerializable
+class T_DLLCLASS StateNodeController : public StateNode
 {
 	T_RTTI_CLASS;
 
 public:
-	Ref< RtState > createInstance(resource::IResourceManager* resourceManager) const;
+	StateNodeController() = default;
 
-	virtual void serialize(ISerializer& s);
+	explicit StateNodeController(const std::wstring& name);
+
+	virtual void serialize(ISerializer& s) override;
+
+	const IPoseControllerData* getPoseController() const { return m_poseController; }
 
 private:
-	friend class StateGraphCompiler;
-
-	resource::Id< Animation > m_animation;
 	Ref< const IPoseControllerData > m_poseController;
 };
 

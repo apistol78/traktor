@@ -14,6 +14,7 @@
 #include "Animation/Editor/StateGraph.h"
 #include "Animation/Editor/StateNodeAnimation.h"
 #include "Animation/Editor/StateNodeAny.h"
+#include "Animation/Editor/StateNodeController.h"
 #include "Animation/Editor/StateTransition.h"
 #include "Core/Containers/SmallMap.h"
 
@@ -29,6 +30,7 @@ Ref< RtStateGraphData > StateGraphCompiler::compile(const StateGraph* stateGraph
 	Ref< RtStateGraphData > rtsg = new RtStateGraphData();
 
 	for (auto state : stateGraph->getStates())
+	{
 		if (const auto stateAnimation = dynamic_type_cast< const StateNodeAnimation* >(state))
 		{
 			Ref< RtStateData > rts = new RtStateData();
@@ -36,6 +38,14 @@ Ref< RtStateGraphData > StateGraphCompiler::compile(const StateGraph* stateGraph
 			rtsg->m_states.push_back(rts);
 			stateToIndex.insert(state, (int32_t)rtsg->m_states.size() - 1);
 		}
+		else if (const auto stateController = dynamic_type_cast< const StateNodeController* >(state))
+		{
+			Ref< RtStateData > rts = new RtStateData();
+			rts->m_poseController = stateController->getPoseController();
+			rtsg->m_states.push_back(rts);
+			stateToIndex.insert(state, (int32_t)rtsg->m_states.size() - 1);
+		}
+	}
 
 	rtsg->m_root = stateToIndex[stateGraph->getRootState()];
 
