@@ -23,7 +23,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StateGraphCompiler", StateGraphCompil
 
 Ref< RtStateGraphData > StateGraphCompiler::compile(const StateGraph* stateGraph) const
 {
-	SmallMap< const StateNode*, RtStateData* > stateToRts;
+	SmallMap< const StateNode*, int32_t > stateToIndex;
 
 	Ref< RtStateGraphData > rtsg = new RtStateGraphData();
 
@@ -32,20 +32,16 @@ Ref< RtStateGraphData > StateGraphCompiler::compile(const StateGraph* stateGraph
 		Ref< RtStateData > rts = new RtStateData();
 		rts->m_animation = state->getAnimation();
 		rtsg->m_states.push_back(rts);
-		stateToRts.insert(state, rts);
+		stateToIndex.insert(state, (int32_t)rtsg->m_states.size() - 1);
 	}
 
-	rtsg->m_root = stateToRts[stateGraph->getRootState()];
-	if (!rtsg->m_root)
-		return nullptr;
+	rtsg->m_root = stateToIndex[stateGraph->getRootState()];
 
 	for (auto transition : stateGraph->getTransitions())
 	{
 		Ref< RtStateTransitionData > rtt = new RtStateTransitionData();
-		rtt->m_from = stateToRts[transition->from()];
-		rtt->m_to = stateToRts[transition->to()];
-		if (!rtt->m_from || !rtt->m_to)
-			return nullptr;
+		rtt->m_from = stateToIndex[transition->from()];
+		rtt->m_to = stateToIndex[transition->to()];
 		rtsg->m_transitions.push_back(rtt);
 	}
 

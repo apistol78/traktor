@@ -17,62 +17,34 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationGraphPoseController", Animat
 
 AnimationGraphPoseController::AnimationGraphPoseController(const resource::Proxy< RtStateGraph >& stateGraph, ITransformTime* transformTime)
 	: m_stateGraph(stateGraph)
-	, m_transformTime(transformTime)
-	, m_blendState(0.0f)
-	, m_blendDuration(0.0f)
-	, m_timeFactor(1.0f)
 {
 }
 
 bool AnimationGraphPoseController::setState(const std::wstring& stateName)
 {
-	// if (!m_stateGraph)
-	//	return false;
-
-	// if (m_currentState && m_currentState->getName() == stateName)
-	//	return true;
-
-	// for (auto state : m_stateGraph->getStates())
-	//{
-	//	if (state->getName() == stateName)
-	//	{
-	//		m_currentState = state;
-	//		m_currentState->prepareContext(m_currentStateContext);
-	//		m_nextState = nullptr;
-	//		m_blendState = 0.0f;
-	//		m_blendDuration = 0.0f;
-	//		return true;
-	//	}
-	// }
-
 	return false;
 }
 
 void AnimationGraphPoseController::setCondition(const std::wstring& condition, bool enabled, bool reset)
 {
-	m_conditions[condition].first = enabled;
-	m_conditions[condition].second = reset;
 }
 
 void AnimationGraphPoseController::setTime(float time)
 {
-	T_FATAL_ASSERT(m_currentState);
-	m_currentStateContext.setTime(time);
 }
 
 float AnimationGraphPoseController::getTime() const
 {
-	return m_currentStateContext.getTime();
+	return 0.0f;
 }
 
 void AnimationGraphPoseController::setTimeFactor(float timeFactor)
 {
-	m_timeFactor = timeFactor;
 }
 
 float AnimationGraphPoseController::getTimeFactor() const
 {
-	return m_timeFactor;
+	return 1.0f;
 }
 
 void AnimationGraphPoseController::destroy()

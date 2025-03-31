@@ -10,6 +10,7 @@
 
 #include "Animation/Animation/RtStateData.h"
 #include "Animation/Animation/RtStateGraph.h"
+#include "Animation/Animation/RtStateTransition.h"
 #include "Animation/Animation/RtStateTransitionData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
@@ -31,9 +32,19 @@ Ref< RtStateGraph > RtStateGraphData::createInstance(resource::IResourceManager*
 		if (state)
 		{
 			instance->m_states.push_back(state);
-			if (stateData == m_root)
+			if (m_root >= 0 && stateData == m_states[m_root])
 				instance->m_rootState = state;
 		}
+		else
+			return nullptr;
+	}
+
+	// Create transition instances.
+	for (auto transitionData : m_transitions)
+	{
+		Ref< RtStateTransition > transition = transitionData->createInstance(instance);
+		if (transition)
+			instance->m_transitions.push_back(transition);
 		else
 			return nullptr;
 	}
@@ -45,7 +56,7 @@ void RtStateGraphData::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< RtStateData >(L"states", m_states);
 	s >> MemberRefArray< RtStateTransitionData >(L"transitions", m_transitions);
-	s >> MemberRef< RtStateData >(L"root", m_root);
+	s >> Member< int32_t >(L"root", m_root);
 }
 
 }

@@ -8,8 +8,10 @@
  */
 #include "Animation/Animation/RtStateTransitionData.h"
 
-#include "Animation/Animation/RtStateData.h"
+#include "Animation/Animation/RtStateGraph.h"
+#include "Animation/Animation/RtStateTransition.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRef.h"
 
 namespace traktor::animation
@@ -17,10 +19,24 @@ namespace traktor::animation
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RtStateTransitionData", 0, RtStateTransitionData, ISerializable)
 
+Ref< RtStateTransition > RtStateTransitionData::createInstance(RtStateGraph* stateGraph) const
+{
+	Ref< RtStateTransition > instance = new RtStateTransition();
+
+	instance->m_from = stateGraph->m_states[m_from];
+	instance->m_to = stateGraph->m_states[m_to];
+	instance->m_moment = m_moment;
+	instance->m_duration = m_duration;
+
+	return instance;
+}
+
 void RtStateTransitionData::serialize(ISerializer& s)
 {
-	s >> MemberRef< RtStateData >(L"from", m_from);
-	s >> MemberRef< RtStateData >(L"to", m_to);
+	s >> Member< int32_t >(L"from", m_from);
+	s >> Member< int32_t >(L"to", m_to);
+	s >> MemberEnumByValue< Moment >(L"moment", m_moment);
+	s >> Member< float >(L"duration", m_duration);
 }
 
 }

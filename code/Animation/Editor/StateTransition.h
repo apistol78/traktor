@@ -8,9 +8,11 @@
  */
 #pragma once
 
-#include <string>
+#include "Animation/Types.h"
 #include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,12 +35,6 @@ class T_DLLCLASS StateTransition : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	enum class Moment
-	{
-		Immediatly,
-		End
-	};
-
 	StateTransition() = default;
 
 	explicit StateTransition(StateNode* from, StateNode* to);

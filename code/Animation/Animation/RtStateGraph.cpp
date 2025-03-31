@@ -11,9 +11,16 @@
 #include "Animation/Animation/RtState.h"
 #include "Animation/Animation/RtStateTransition.h"
 #include "Animation/SkeletonUtils.h"
+#include "Core/Math/Random.h"
 
 namespace traktor::animation
 {
+namespace
+{
+
+Random s_random;
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RtStateGraph", RtStateGraph, Object)
 
@@ -125,122 +132,122 @@ bool RtStateGraph::evaluate(
 	}
 
 	// Execute transition to another state.
-	// if (!m_nextState)
-	//{
-	//	RtStateTransition* selectedTransition = nullptr;
+	if (!m_nextState)
+	{
+		RtStateTransition* selectedTransition = nullptr;
 
-	//	// First try all transitions with explicit condition.
-	//	for (auto transition : m_transitions)
-	//	{
-	//		if (transition->from() != m_currentState || transition->getCondition().empty())
-	//			continue;
+		// First try all transitions with explicit condition.
+		// for (auto transition : m_transitions)
+		//{
+		//	if (transition->from() != m_currentState || transition->getCondition().empty())
+		//		continue;
 
-	//		// Is transition permitted?
-	//		bool transitionPermitted = false;
-	//		switch (transition->getMoment())
-	//		{
-	//		case Transition::Moment::Immediatly:
-	//			transitionPermitted = true;
-	//			break;
+		//	// Is transition permitted?
+		//	bool transitionPermitted = false;
+		//	switch (transition->getMoment())
+		//	{
+		//	case Transition::Moment::Immediatly:
+		//		transitionPermitted = true;
+		//		break;
 
-	//		case Transition::Moment::End:
-	//			{
-	//				const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
-	//				if (timeLeft <= transition->getDuration())
-	//					transitionPermitted = true;
-	//			}
-	//			break;
-	//		}
-	//		if (!transitionPermitted)
-	//			continue;
+		//	case Transition::Moment::End:
+		//		{
+		//			const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
+		//			if (timeLeft <= transition->getDuration())
+		//				transitionPermitted = true;
+		//		}
+		//		break;
+		//	}
+		//	if (!transitionPermitted)
+		//		continue;
 
-	//		// Is condition satisfied?
-	//		bool value = false;
-	//		const std::wstring& condition = transition->getCondition();
-	//		if (condition[0] == L'!')
-	//		{
-	//			std::pair< bool, bool >& cv = m_conditions[condition.substr(1)];
-	//			value = !cv.first;
-	//			if (value && cv.second)
-	//			{
-	//				cv.first = !cv.first;
-	//				cv.second = false;
-	//			}
-	//		}
-	//		else
-	//		{
-	//			std::pair< bool, bool >& cv = m_conditions[condition];
-	//			value = cv.first;
-	//			if (value && cv.second)
-	//			{
-	//				cv.first = !cv.first;
-	//				cv.second = false;
-	//			}
-	//		}
-	//		if (!value)
-	//			continue;
+		//	// Is condition satisfied?
+		//	bool value = false;
+		//	const std::wstring& condition = transition->getCondition();
+		//	if (condition[0] == L'!')
+		//	{
+		//		std::pair< bool, bool >& cv = m_conditions[condition.substr(1)];
+		//		value = !cv.first;
+		//		if (value && cv.second)
+		//		{
+		//			cv.first = !cv.first;
+		//			cv.second = false;
+		//		}
+		//	}
+		//	else
+		//	{
+		//		std::pair< bool, bool >& cv = m_conditions[condition];
+		//		value = cv.first;
+		//		if (value && cv.second)
+		//		{
+		//			cv.first = !cv.first;
+		//			cv.second = false;
+		//		}
+		//	}
+		//	if (!value)
+		//		continue;
 
-	//		// Found valid transition.
-	//		selectedTransition = transition;
-	//		break;
-	//	}
+		//	// Found valid transition.
+		//	selectedTransition = transition;
+		//	break;
+		//}
 
-	//	// Still no transition state found, we try all transitions without explicit condition.
-	//	if (selectedTransition == nullptr)
-	//	{
-	//		RefArray< RtStateTransition > candidateTransitions;
-	//		for (auto transition : m_transitions)
-	//		{
-	//			if (transition->from() != m_currentState || !transition->getCondition().empty())
-	//				continue;
+		// Still no transition state found, we try all transitions without explicit condition.
+		if (selectedTransition == nullptr)
+		{
+			RefArray< RtStateTransition > candidateTransitions;
+			for (auto transition : m_transitions)
+			{
+				if (transition->getFrom() != m_currentState) // || !transition->getCondition().empty())
+					continue;
 
-	//			// Is transition permitted?
-	//			bool transitionPermitted = false;
-	//			switch (transition->getMoment())
-	//			{
-	//			case Transition::Moment::Immediatly:
-	//				transitionPermitted = true;
-	//				break;
+				// Is transition permitted?
+				bool transitionPermitted = false;
+				switch (transition->getMoment())
+				{
+				case Moment::Immediately:
+					transitionPermitted = true;
+					break;
 
-	//			case Transition::Moment::End:
-	//				{
-	//					const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
-	//					if (timeLeft <= transition->getDuration())
-	//						transitionPermitted = true;
-	//				}
-	//				break;
-	//			}
-	//			if (!transitionPermitted)
-	//				continue;
+				case Moment::End:
+					{
+						const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
+						if (timeLeft <= transition->getDuration())
+							transitionPermitted = true;
+					}
+					break;
+				}
+				if (!transitionPermitted)
+					continue;
 
-	//			candidateTransitions.push_back(transition);
-	//		}
+				candidateTransitions.push_back(transition);
+			}
 
-	//		// Randomly select one of the found, valid, transitions.
-	//		if (!candidateTransitions.empty())
-	//		{
-	//			const uint32_t i = s_random.next() % candidateTransitions.size();
-	//			selectedTransition = candidateTransitions[i];
-	//		}
-	//	}
+			// Randomly select one of the found, valid, transitions.
+			if (!candidateTransitions.empty())
+			{
+				const uint32_t i = s_random.next() % candidateTransitions.size();
+				selectedTransition = candidateTransitions[i];
+			}
+		}
 
-	//	// Yet no transition, repeat current state if we're at the end.
-	//	if (selectedTransition == nullptr)
-	//	{
-	//		const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
-	//		if (timeLeft <= 0.0f)
-	//			selectedTransition = new RtStateTransition(m_currentState, m_currentState);
-	//	}
+		// Still no transition, repeat current state if we're at the end.
+		if (selectedTransition == nullptr)
+		{
+			const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
+			if (timeLeft <= 0.0f)
+				selectedTransition = new RtStateTransition(m_currentState, m_currentState);
+		}
 
-	//	// Begin transition to found state.
-	//	if (selectedTransition != nullptr)
-	//	{
-	//		m_nextState = selectedTransition->to();
-	//		m_nextState->prepare(m_nextStateContext);
-	//		m_blendState = 0.0f;
-	//		m_blendDuration = selectedTransition->getDuration();
-	//	}
-	//}
+		// Begin transition to found state.
+		if (selectedTransition != nullptr)
+		{
+			m_nextState = selectedTransition->getTo();
+			m_nextState->prepare(m_nextStateContext);
+			m_blendState = 0.0f;
+			m_blendDuration = selectedTransition->getDuration();
+		}
+	}
 
 	return continous;
 }

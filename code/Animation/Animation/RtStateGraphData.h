@@ -51,7 +51,7 @@ private:
 
 	RefArray< RtStateData > m_states;
 	RefArray< RtStateTransitionData > m_transitions;
-	Ref< RtStateData > m_root;
+	int32_t m_root = -1;
 };
 
 }

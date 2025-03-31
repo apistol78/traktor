@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Animation/Types.h"
 #include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -23,6 +24,8 @@ namespace traktor::animation
 {
 
 class RtStateData;
+class RtStateGraph;
+class RtStateTransition;
 
 /*!
  * \ingroup Animation
@@ -32,13 +35,17 @@ class T_DLLCLASS RtStateTransitionData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	Ref< RtStateTransition > createInstance(RtStateGraph* stateGraph) const;
+
 	virtual void serialize(ISerializer& s);
 
 private:
 	friend class StateGraphCompiler;
 
-	Ref< RtStateData > m_from;
-	Ref< RtStateData > m_to;
+	int32_t m_from = -1;
+	int32_t m_to = -1;
+	Moment m_moment = Moment::End;
+	float m_duration = 0.0f;
 };
 
 }

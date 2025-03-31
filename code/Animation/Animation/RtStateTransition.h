@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Animation/Types.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
@@ -32,10 +33,25 @@ class T_DLLCLASS RtStateTransition : public Object
 	T_RTTI_CLASS;
 
 public:
+	RtStateTransition() = default;
+
+	explicit RtStateTransition(RtState* from, RtState* to);
+
+	RtState* getFrom() const { return m_from; }
+
+	RtState* getTo() const { return m_to; }
+
+	Moment getMoment() const { return m_moment; }
+
+	float getDuration() const { return m_duration; }
 
 private:
+	friend class RtStateTransitionData;
+
 	Ref< RtState > m_from;
 	Ref< RtState > m_to;
+	Moment m_moment = Moment::End;
+	float m_duration = 0.0f;
 };
 
 }

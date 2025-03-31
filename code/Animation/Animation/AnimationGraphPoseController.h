@@ -8,10 +8,7 @@
  */
 #pragma once
 
-#include "Animation/Animation/StateContext.h"
 #include "Animation/IPoseController.h"
-#include "Animation/Pose.h"
-#include "Core/Containers/SmallMap.h"
 #include "Resource/Proxy.h"
 
 #include <string>
@@ -29,8 +26,6 @@ namespace traktor::animation
 
 class RtStateGraph;
 class ITransformTime;
-class StateNode;
-class StateContext;
 
 /*! Animation pose evaluation controller.
  * \ingroup Animation
@@ -68,16 +63,6 @@ public:
 
 private:
 	resource::Proxy< RtStateGraph > m_stateGraph;
-	Ref< ITransformTime > m_transformTime;
-	Ref< StateNode > m_currentState;
-	StateContext m_currentStateContext;
-	Ref< StateNode > m_nextState;
-	StateContext m_nextStateContext;
-	Pose m_evaluatePose;
-	float m_blendState;
-	float m_blendDuration;
-	SmallMap< std::wstring, std::pair< bool, bool > > m_conditions;
-	float m_timeFactor;
 };
 
 }

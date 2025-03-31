@@ -48,6 +48,7 @@ public:
 
 private:
 	friend class RtStateGraphData;
+	friend class RtStateTransitionData;
 
 	RefArray< RtState > m_states;
 	RefArray< RtStateTransition > m_transitions;
