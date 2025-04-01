@@ -25,6 +25,8 @@ const TypeInfoSet StateGraphEditorPageFactory::getEditableTypes() const
 bool StateGraphEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
 	outDependencies.insert(Guid(L"{84ADD065-E963-9D4D-A28D-FF44BD616B0F}"));
+	outDependencies.insert(Guid(L"{{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}"));	// Primitive
+	outDependencies.insert(Guid(L"{30D10D11-475A-C646-9433-23533E43EDAC}"));	// World assets
 	return true;
 }
 

@@ -8,9 +8,13 @@
  */
 #include "Animation/Editor/StatePipeline.h"
 
+#include "Animation/Animation/RtStateGraphData.h"
 #include "Animation/Editor/StateGraph.h"
 #include "Animation/Editor/StateGraphCompiler.h"
 #include "Animation/Editor/StateNodeAnimation.h"
+#include "Core/Log/Log.h"
+#include "Database/Instance.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 
 namespace traktor::animation
@@ -33,8 +37,13 @@ bool StatePipeline::buildDependencies(
 	const Guid& outputGuid) const
 {
 	if (auto stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
+	{
 		for (auto state : stateGraph->getStates())
 			pipelineDepends->addDependency(state);
+
+		pipelineDepends->addDependency(stateGraph->getPreviewSkeleton(), editor::PdfBuild);
+		pipelineDepends->addDependency(stateGraph->getPreviewMesh(), editor::PdfBuild);
+	}
 	else if (auto state = dynamic_type_cast< const StateNodeAnimation* >(sourceAsset))
 		pipelineDepends->addDependency(state->getAnimation(), editor::PdfBuild | editor::PdfResource);
 
@@ -55,7 +64,26 @@ bool StatePipeline::buildOutput(
 	if (auto stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
 	{
 		// Compile graph into an optimized runtime graph representation.
-		return StateGraphCompiler().compile(stateGraph);
+		Ref< RtStateGraphData > rtg = StateGraphCompiler().compile(stateGraph);
+		if (!rtg)
+			return false;
+
+		Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
+		if (!outputInstance)
+		{
+			log::error << L"StatePipeline; Unable to create output instance." << Endl;
+			return false;
+		}
+
+		outputInstance->setObject(rtg);
+
+		if (!outputInstance->commit())
+		{
+			log::error << L"StatePipeline; Unable to commit output instance." << Endl;
+			return false;
+		}
+
+		return true;
 	}
 	else
 		return editor::DefaultPipeline::buildOutput(

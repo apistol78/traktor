@@ -11,6 +11,10 @@
 #include "Animation/Animation/Animation.h"
 #include "Animation/Animation/StateContext.h"
 #include "Animation/IPoseController.h"
+#include "Animation/Joint.h"
+#include "Animation/Skeleton.h"
+
+#include <limits>
 
 namespace traktor::animation
 {
@@ -33,7 +37,7 @@ bool RtState::prepare(StateContext& outContext) const
 	else if (m_poseController)
 	{
 		outContext.setTime(0.0f);
-		outContext.setDuration(0.0f);
+		outContext.setDuration(std::numeric_limits< float >::max());
 	}
 	else
 		return false;
@@ -41,16 +45,38 @@ bool RtState::prepare(StateContext& outContext) const
 	return true;
 }
 
-void RtState::evaluate(const StateContext& context, Pose& outPose) const
+void RtState::evaluate(
+	const StateContext& context,
+	float deltaTime,
+	const Transform& worldTransform,
+	const Skeleton* skeleton,
+	const AlignedVector< Transform >& jointTransforms,
+	Pose& outPose) const
 {
 	if (m_animation)
 		m_animation->getPose(context.getTime(), outPose);
 	if (m_poseController)
 	{
 		AlignedVector< Transform > poseTransforms;
-		m_poseController->evaluate(context.getTime(), 1.0f / 60.0f, Transform::identity(), nullptr, AlignedVector< Transform >(), poseTransforms);
-		for (int32_t i = 0; i < poseTransforms.size(); ++i)
-			outPose.setJointTransform(i, poseTransforms[i]);
+		m_poseController->evaluate(
+			context.getTime(),
+			deltaTime,
+			worldTransform,
+			skeleton,
+			jointTransforms,
+			poseTransforms);
+
+		// Convert absolute transforms into a Pose instance.
+		for (int32_t i = 0; i < skeleton->getJointCount(); ++i)
+		{
+			const Joint* joint = skeleton->getJoint(i);
+
+			Transform deltaTransform = poseTransforms[i];
+			if (joint->getParent() >= 0)
+				deltaTransform = poseTransforms[joint->getParent()].inverse() * poseTransforms[i];
+
+			outPose.setJointTransform(i, deltaTransform);
+		}
 	}
 }
 

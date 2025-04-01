@@ -11,6 +11,7 @@
 #include "Animation/Animation/RtState.h"
 #include "Animation/Animation/RtStateTransition.h"
 #include "Animation/SkeletonUtils.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
 
 namespace traktor::animation
@@ -66,6 +67,10 @@ bool RtStateGraph::evaluate(
 	// Evaluate current state.
 	m_currentState->evaluate(
 		m_currentStateContext,
+		deltaTime * m_timeFactor,
+		worldTransform,
+		skeleton,
+		jointTransforms,
 		m_evaluatePose);
 	m_currentStateContext.setTime(m_currentStateContext.getTime() + deltaTime * m_timeFactor);
 
@@ -87,6 +92,10 @@ bool RtStateGraph::evaluate(
 
 			m_nextState->evaluate(
 				m_nextStateContext,
+				deltaTime * m_timeFactor,
+				worldTransform,
+				skeleton,
+				jointTransforms,
 				nextPose);
 			m_nextStateContext.setTime(m_nextStateContext.getTime() + deltaTime * m_timeFactor);
 
@@ -134,6 +143,7 @@ bool RtStateGraph::evaluate(
 	// Execute transition to another state.
 	if (!m_nextState)
 	{
+		const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
 		RtStateTransition* selectedTransition = nullptr;
 
 		// First try all transitions with explicit condition.
@@ -152,7 +162,6 @@ bool RtStateGraph::evaluate(
 
 		//	case Transition::Moment::End:
 		//		{
-		//			const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
 		//			if (timeLeft <= transition->getDuration())
 		//				transitionPermitted = true;
 		//		}
@@ -211,7 +220,6 @@ bool RtStateGraph::evaluate(
 
 				case Moment::End:
 					{
-						const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
 						if (timeLeft <= transition->getDuration())
 							transitionPermitted = true;
 					}
@@ -224,7 +232,7 @@ bool RtStateGraph::evaluate(
 			}
 
 			// Randomly select one of the found, valid, transitions.
-			if (!candidateTransitions.empty())
+			if (!candidateTransitions.empty() && timeLeft <= FUZZY_EPSILON)
 			{
 				const uint32_t i = s_random.next() % candidateTransitions.size();
 				selectedTransition = candidateTransitions[i];
@@ -232,12 +240,8 @@ bool RtStateGraph::evaluate(
 		}
 
 		// Still no transition, repeat current state if we're at the end.
-		if (selectedTransition == nullptr)
-		{
-			const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
-			if (timeLeft <= 0.0f)
-				selectedTransition = new RtStateTransition(m_currentState, m_currentState);
-		}
+		if (selectedTransition == nullptr && timeLeft <= FUZZY_EPSILON)
+			selectedTransition = new RtStateTransition(m_currentState, m_currentState);
 
 		// Begin transition to found state.
 		if (selectedTransition != nullptr)

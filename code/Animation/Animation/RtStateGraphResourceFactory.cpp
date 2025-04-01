@@ -24,7 +24,7 @@ bool RtStateGraphResourceFactory::initialize(const ObjectStore& objectStore)
 
 const TypeInfoSet RtStateGraphResourceFactory::getResourceTypes() const
 {
-	return makeTypeInfoSet< RtStateGraph >();
+	return makeTypeInfoSet< RtStateGraphData >();
 }
 
 const TypeInfoSet RtStateGraphResourceFactory::getProductTypes(const TypeInfo& resourceType) const

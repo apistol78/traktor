@@ -9,6 +9,8 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Transform.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -26,6 +28,7 @@ class Animation;
 class IPoseController;
 class Pose;
 class StateContext;
+class Skeleton;
 
 /*!
  * \ingroup Animation
@@ -37,7 +40,13 @@ class T_DLLCLASS RtState : public Object
 public:
 	bool prepare(StateContext& outContext) const;
 
-	void evaluate(const StateContext& context, Pose& outPose) const;
+	void evaluate(
+		const StateContext& context,
+		float deltaTime,
+		const Transform& worldTransform,
+		const Skeleton* skeleton,
+		const AlignedVector< Transform >& jointTransforms,
+		Pose& outPose) const;
 
 private:
 	friend class RtStateData;

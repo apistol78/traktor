@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include "Animation/Editor/AnimationPreviewControl.h"
 
 #include "Animation/AnimatedMeshComponent.h"
+#include "Animation/Animation/RtStateGraphResourceFactory.h"
 #include "Animation/AnimationResourceFactory.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
@@ -111,6 +112,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	entityFactory->addFactory(initializeFactory(new mesh::MeshEntityFactory(), objectStore));
 
 	m_resourceManager->addFactory(new AnimationResourceFactory());
+	m_resourceManager->addFactory(new RtStateGraphResourceFactory());
 	m_resourceManager->addFactory(new mesh::MeshResourceFactory(m_renderSystem));
 	m_resourceManager->addFactory(new render::AliasTextureFactory());
 	m_resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
@@ -264,6 +266,16 @@ void AnimationPreviewControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
 	wcd.entityRenderers = worldEntityRenderers;
+
+	// Use same quality settings as scene editor.
+	// #fixme Quality settings should probably be a general editor configuration.
+	const PropertyGroup* settings = m_editor->getSettings();
+	wcd.quality.imageProcess = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.PostProcessQuality", 4);
+	wcd.quality.motionBlur = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.MotionBlurQuality", 4);
+	wcd.quality.shadows = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.ShadowQuality", 4);
+	wcd.quality.reflections = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.ReflectionsQuality", 4);
+	wcd.quality.ambientOcclusion = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.AmbientOcclusionQuality", 4);
+	wcd.quality.antiAlias = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.AntiAliasQuality", 4);
 
 	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererDeferred();
 	if (!worldRenderer->create(

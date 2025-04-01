@@ -1,17 +1,19 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Animation/AnimationEntityFactory.h"
+#include "Animation/Editor/AnimationEditorProfile.h"
+
 #include "Animation/AnimatedMeshComponentRenderer.h"
+#include "Animation/Animation/RtStateGraphResourceFactory.h"
+#include "Animation/AnimationEntityFactory.h"
 #include "Animation/AnimationResourceFactory.h"
 #include "Animation/Cloth/ClothRenderer.h"
 #include "Animation/Cloth/ClothResourceFactory.h"
-#include "Animation/Editor/AnimationEditorProfile.h"
 #include "Animation/Editor/AnimationComponentEditorFactory.h"
 #include "Animation/Editor/Cloth/ClothEntityEditorFactory.h"
 #include "Core/Serialization/ISerializable.h"
@@ -24,14 +26,12 @@ namespace traktor::animation
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationEditorProfile", 0, AnimationEditorProfile, scene::ISceneEditorProfile)
 
 void AnimationEditorProfile::getCommands(
-	std::list< ui::Command >& outCommands
-) const
+	std::list< ui::Command >& outCommands) const
 {
 }
 
 void AnimationEditorProfile::getGuideDrawIds(
-	std::set< std::wstring >& outIds
-) const
+	std::set< std::wstring >& outIds) const
 {
 	outIds.insert(L"Animation.Cloth");
 	outIds.insert(L"Animation.Path");
@@ -42,24 +42,22 @@ void AnimationEditorProfile::getGuideDrawIds(
 
 void AnimationEditorProfile::createEditorPlugins(
 	scene::SceneEditorContext* context,
-	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
-) const
+	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins) const
 {
 }
 
 void AnimationEditorProfile::createResourceFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const resource::IResourceFactory >& outResourceFactories
-) const
+	RefArray< const resource::IResourceFactory >& outResourceFactories) const
 {
 	outResourceFactories.push_back(new AnimationResourceFactory());
 	outResourceFactories.push_back(new ClothResourceFactory());
+	outResourceFactories.push_back(new RtStateGraphResourceFactory());
 }
 
 void AnimationEditorProfile::createEntityFactories(
 	scene::SceneEditorContext* context,
-	RefArray< world::IEntityFactory >& outEntityFactories
-) const
+	RefArray< world::IEntityFactory >& outEntityFactories) const
 {
 	outEntityFactories.push_back(new AnimationEntityFactory());
 }
@@ -69,8 +67,7 @@ void AnimationEditorProfile::createEntityRenderers(
 	render::IRenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
 	const TypeInfo& worldRendererType,
-	RefArray< world::IEntityRenderer >& outEntityRenderers
-) const
+	RefArray< world::IEntityRenderer >& outEntityRenderers) const
 {
 	outEntityRenderers.push_back(new AnimatedMeshComponentRenderer());
 	outEntityRenderers.push_back(new ClothRenderer());
@@ -84,24 +81,21 @@ void AnimationEditorProfile::createControllerEditorFactories(
 
 void AnimationEditorProfile::createEntityEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
-) const
+	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories) const
 {
 	outEntityEditorFactories.push_back(new ClothEntityEditorFactory());
 }
 
 void AnimationEditorProfile::createComponentEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
-) const
+	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories) const
 {
 	outComponentEditorFactories.push_back(new AnimationComponentEditorFactory());
 }
 
 Ref< world::EntityData > AnimationEditorProfile::createEntityData(
 	scene::SceneEditorContext* context,
-	db::Instance* instance
-) const
+	db::Instance* instance) const
 {
 	return nullptr;
 }
