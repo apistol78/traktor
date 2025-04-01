@@ -17,8 +17,9 @@ namespace traktor::animation
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StateNodeController", 0, StateNodeController, StateNode)
 
-StateNodeController::StateNodeController(const std::wstring& name)
+StateNodeController::StateNodeController(const std::wstring& name, const IPoseControllerData* poseController)
 	: StateNode(name)
+	, m_poseController(poseController)
 {
 }
 

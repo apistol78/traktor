@@ -34,7 +34,7 @@ class T_DLLCLASS StateNodeController : public StateNode
 public:
 	StateNodeController() = default;
 
-	explicit StateNodeController(const std::wstring& name);
+	explicit StateNodeController(const std::wstring& name, const IPoseControllerData* poseController);
 
 	virtual void serialize(ISerializer& s) override;
 

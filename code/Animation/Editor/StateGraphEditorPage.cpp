@@ -10,8 +10,10 @@
 
 #include "Animation/Animation/Animation.h"
 #include "Animation/Animation/AnimationGraphPoseController.h"
+#include "Animation/Animation/AnimationGraphPoseControllerData.h"
 #include "Animation/Animation/RtStateGraph.h"
 #include "Animation/Animation/RtStateGraphData.h"
+#include "Animation/Editor/AnimationAsset.h"
 #include "Animation/Editor/AnimationPreviewControl.h"
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Animation/Editor/StateGraph.h"
@@ -141,6 +143,8 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	updatePreview();
 	updatePreviewConditions();
 
+	m_propertiesView->setPropertyObject(m_stateGraph);
+
 	return true;
 }
 
@@ -160,16 +164,27 @@ void StateGraphEditorPage::destroy()
 
 bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
+	const ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
+
 	const TypeInfo* primaryType = instance->getPrimaryType();
 	T_ASSERT(primaryType);
 
-	if (is_type_of< Animation >(*primaryType))
+	if (is_type_of< AnimationAsset >(*primaryType))
 	{
 		Ref< StateNodeAnimation > state = new StateNodeAnimation(instance->getName(), resource::Id< Animation >(instance->getGuid()));
-
-		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
 		state->setPosition(std::pair< int, int >(absolutePosition.x, absolutePosition.y));
+		m_stateGraph->addState(state);
 
+		createEditorNode(state);
+		updateGraph();
+	}
+	else if (is_type_of< StateGraph >(*primaryType))
+	{
+		Ref< StateNodeController > state = new StateNodeController(
+			instance->getName(), 
+			new AnimationGraphPoseControllerData(resource::Id< RtStateGraph >(instance->getGuid()))
+		);
+		state->setPosition(std::pair< int, int >(absolutePosition.x, absolutePosition.y));
 		m_stateGraph->addState(state);
 
 		createEditorNode(state);
@@ -639,7 +654,7 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 	}
 	else
 	{
-		m_propertiesView->setPropertyObject(nullptr);
+		m_propertiesView->setPropertyObject(m_stateGraph);
 		// m_previewControl->setPoseController(m_statePreviewController);
 	}
 }
