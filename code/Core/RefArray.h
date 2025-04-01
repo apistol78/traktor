@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include <algorithm>
+#include <initializer_list>
 #include "Core/InplaceRef.h"
 #include "Core/Misc/Align.h"
 
@@ -294,7 +295,7 @@ public:
 		}
 	}
 
-	RefArray(RefArray&& ref) T_NOEXCEPT
+	RefArray(RefArray&& ref) noexcept
 	:	m_items(ref.m_items)
 	,	m_size(ref.m_size)
 	,	m_capacity(ref.m_capacity)
@@ -302,6 +303,21 @@ public:
 		ref.m_items = nullptr;
 		ref.m_size = 0;
 		ref.m_capacity = 0;
+	}
+
+	RefArray(const std::initializer_list< value_type >& iv) noexcept
+	{
+		m_items = new value_type [iv.size()];
+		m_size = iv.size();
+		m_capacity = iv.size();
+
+		size_t index = 0;
+		for (auto it = std::begin(iv); it != std::end(iv); ++it)
+		{
+			m_items[index] = *it;
+			T_SAFE_ADDREF(m_items[index]);
+			++index;
+		}
 	}
 
 	virtual ~RefArray()
