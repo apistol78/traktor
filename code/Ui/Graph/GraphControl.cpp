@@ -31,8 +31,8 @@
 
 namespace traktor::ui
 {
-namespace
-{
+	namespace
+	{
 
 enum Modes
 {
@@ -43,23 +43,6 @@ enum Modes
 	MdDrawEdge,
 	MdConnectEdge,
 	MdDrawSelectionRectangle
-};
-
-struct SortNodePred
-{
-	GraphControl::EvenSpace m_space;
-
-	SortNodePred(GraphControl::EvenSpace space)
-		: m_space(space)
-	{
-	}
-
-	bool operator()(const Node* n1, const Node* n2) const
-	{
-		const UnitPoint pt1 = n1->calculateRect().getTopLeft();
-		const UnitPoint pt2 = n2->calculateRect().getTopLeft();
-		return m_space == GraphControl::EsHorizontally ? pt1.x < pt2.x : pt1.y < pt2.y;
-	}
 };
 
 Point operator*(const Point& pt, float scale)
@@ -86,7 +69,7 @@ Rect operator/(const Rect& rc, float scale)
 	return rc * (1.0f / scale);
 }
 
-}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GraphControl", GraphControl, Widget)
 
@@ -151,11 +134,27 @@ Group* GraphControl::createGroup(const std::wstring& title, const UnitPoint& pos
 void GraphControl::removeGroup(Group* group)
 {
 	m_groups.remove(group);
+	
+	if (group->isSelected())
+	{
+		SelectEvent selectEvent(this, {}, {}, {});
+		raiseEvent(&selectEvent);
+	}
 }
 
 void GraphControl::removeAllGroups()
 {
+	bool anySelected = false;
+	for (auto group : m_groups)
+		anySelected |= group->isSelected();
+
 	m_groups.resize(0);
+
+	if (anySelected)
+	{
+		SelectEvent selectEvent(this, {}, {}, {});
+		raiseEvent(&selectEvent);
+	}
 }
 
 RefArray< Group >& GraphControl::getGroups()
@@ -186,16 +185,32 @@ void GraphControl::removeNode(Node* node)
 		return v.first == node || v.second == node;
 	});
 	m_dependencyHints.erase(it, m_dependencyHints.end());
+
+	if (node->isSelected())
+	{
+		SelectEvent selectEvent(this, {}, {}, {});
+		raiseEvent(&selectEvent);
+	}
 }
 
 void GraphControl::removeAllNodes()
 {
+	bool anySelected = false;
+	for (auto node : m_nodes)
+		anySelected |= node->isSelected();
+
 	for (auto node : m_nodes)
 		node->m_owner = nullptr;
 
 	m_nodes.resize(0);
 	m_edges.resize(0);
 	m_dependencyHints.resize(0);
+
+	if (anySelected)
+	{
+		SelectEvent selectEvent(this, {}, {}, {});
+		raiseEvent(&selectEvent);
+	}
 }
 
 RefArray< Node >& GraphControl::getNodes()
@@ -228,11 +243,27 @@ void GraphControl::addEdge(Edge* edge)
 void GraphControl::removeEdge(Edge* edge)
 {
 	m_edges.remove(edge);
+
+	if (edge->isSelected())
+	{
+		SelectEvent selectEvent(this, {}, {}, {});
+		raiseEvent(&selectEvent);
+	}
 }
 
 void GraphControl::removeAllEdges()
 {
+	bool anySelected = false;
+	for (auto edge : m_edges)
+		anySelected |= edge->isSelected();
+
 	m_edges.resize(0);
+
+	if (anySelected)
+	{
+		SelectEvent selectEvent(this, {}, {}, {});
+		raiseEvent(&selectEvent);
+	}
 }
 
 RefArray< Edge >& GraphControl::getEdges()
@@ -474,7 +505,11 @@ void GraphControl::evenSpace(EvenSpace space)
 	if (nodes.size() <= 1)
 		return;
 
-	nodes.sort(SortNodePred(space));
+	nodes.sort([&](const Node* n1, const Node* n2) {
+		const UnitPoint pt1 = n1->calculateRect().getTopLeft();
+		const UnitPoint pt2 = n2->calculateRect().getTopLeft();
+		return space == GraphControl::EsHorizontally ? pt1.x < pt2.x : pt1.y < pt2.y;
+	});
 
 	UnitRect bounds(
 		Unit(std::numeric_limits< int32_t >::max()),
@@ -486,7 +521,7 @@ void GraphControl::evenSpace(EvenSpace space)
 
 	for (auto node : nodes)
 	{
-		UnitRect rc = node->calculateRect();
+		const UnitRect rc = node->calculateRect();
 
 		bounds.left = std::min(bounds.left, rc.left);
 		bounds.right = std::max(bounds.right, rc.right);
