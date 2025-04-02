@@ -13,6 +13,7 @@
 #include "Animation/Animation/RtStateTransition.h"
 #include "Animation/Animation/RtStateTransitionData.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 
@@ -26,6 +27,7 @@ Ref< RtStateGraph > RtStateGraphData::createInstance(resource::IResourceManager*
 	Ref< RtStateGraph > instance = new RtStateGraph();
 
 	// Create state instances.
+	instance->m_states.reserve(m_states.size());
 	for (auto stateData : m_states)
 	{
 		Ref< RtState > state = stateData->createInstance(resourceManager);
@@ -39,7 +41,14 @@ Ref< RtStateGraph > RtStateGraphData::createInstance(resource::IResourceManager*
 			return nullptr;
 	}
 
+	// Initialize parameters.
+	instance->m_values.resize(m_parameters.size(), false);
+	instance->m_parameters.reserve(m_parameters.size());
+	for (int32_t i = 0; i < (int32_t)m_parameters.size(); ++i)
+		instance->m_parameters.insert(render::Handle(m_parameters[i].c_str()), i);
+
 	// Create transition instances.
+	instance->m_transitions.reserve(m_transitions.size());
 	for (auto transitionData : m_transitions)
 	{
 		Ref< RtStateTransition > transition = transitionData->createInstance(instance);
@@ -56,6 +65,7 @@ void RtStateGraphData::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< RtStateData >(L"states", m_states);
 	s >> MemberRefArray< RtStateTransitionData >(L"transitions", m_transitions);
+	s >> MemberAlignedVector< std::wstring >(L"parameters", m_parameters);
 	s >> Member< int32_t >(L"root", m_root);
 }
 

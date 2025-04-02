@@ -9,6 +9,7 @@
 #include "Animation/Editor/AnimationPreviewControl.h"
 
 #include "Animation/AnimatedMeshComponent.h"
+#include "Animation/Animation/AnimationGraphPoseController.h"
 #include "Animation/Animation/RtStateGraphResourceFactory.h"
 #include "Animation/AnimationResourceFactory.h"
 #include "Animation/Joint.h"
@@ -192,6 +193,13 @@ void AnimationPreviewControl::setPoseController(IPoseController* poseController)
 {
 	m_poseController = poseController;
 	updatePreview();
+}
+
+void AnimationPreviewControl::setParameterValue(const std::wstring& parameterName, bool value)
+{
+	AnimationGraphPoseController* poseController = dynamic_type_cast< AnimationGraphPoseController* >(m_poseController);
+	if (poseController)
+		poseController->setParameterValue(render::Handle(parameterName.c_str()), value);
 }
 
 void AnimationPreviewControl::setView(const View& view)

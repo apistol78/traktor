@@ -45,13 +45,24 @@ public:
 
 	float getDuration() const { return m_duration; }
 
+	bool haveConditions() const { return !m_conditions.empty(); }
+
+	bool conditionSatisfied(const bool* values) const;
+
 private:
 	friend class RtStateTransitionData;
+
+	struct Condition
+	{
+		int32_t parameter = -1;
+		bool inverted = false;
+	};
 
 	Ref< RtState > m_from;
 	Ref< RtState > m_to;
 	Moment m_moment = Moment::End;
 	float m_duration = 0.0f;
+	AlignedVector< Condition > m_conditions;
 };
 
 }

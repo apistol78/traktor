@@ -20,6 +20,21 @@
 
 namespace traktor::animation
 {
+namespace
+{
+
+template < typename ValueType >
+int32_t addUnique(AlignedVector< ValueType >& inoutArray, const ValueType& value)
+{
+	const auto it = std::find(inoutArray.begin(), inoutArray.end(), value);
+	if (it != inoutArray.end())
+		return (int32_t)std::distance(inoutArray.begin(), it);
+
+	inoutArray.push_back(value);
+	return (int32_t)inoutArray.size() - 1;
+}
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StateGraphCompiler", StateGraphCompiler, Object)
 
@@ -51,6 +66,22 @@ Ref< RtStateGraphData > StateGraphCompiler::compile(const StateGraph* stateGraph
 
 	for (auto transition : stateGraph->getTransitions())
 	{
+		AlignedVector< RtStateTransitionData::Condition > conditions;
+		const std::wstring& condition = transition->getCondition();
+		if (!condition.empty())
+		{
+			if (condition[0] == L'!')
+			{
+				const int32_t index = addUnique(rtsg->m_parameters, condition.substr(1));
+				conditions.push_back({ index, true });
+			}
+			else
+			{
+				const int32_t index = addUnique(rtsg->m_parameters, condition);
+				conditions.push_back({ index, false });
+			}
+		}
+
 		if (!is_a< StateNodeAny >(transition->from()))
 		{
 			Ref< RtStateTransitionData > rtt = new RtStateTransitionData();
@@ -58,6 +89,7 @@ Ref< RtStateGraphData > StateGraphCompiler::compile(const StateGraph* stateGraph
 			rtt->m_to = stateToIndex[transition->to()];
 			rtt->m_moment = transition->getMoment();
 			rtt->m_duration = transition->getDuration();
+			rtt->m_conditions = conditions;
 			rtsg->m_transitions.push_back(rtt);
 		}
 		else
@@ -72,6 +104,7 @@ Ref< RtStateGraphData > StateGraphCompiler::compile(const StateGraph* stateGraph
 					rtt->m_to = stateToIndex[transition->to()];
 					rtt->m_moment = transition->getMoment();
 					rtt->m_duration = transition->getDuration();
+					rtt->m_conditions = conditions;
 					rtsg->m_transitions.push_back(rtt);
 				}
 			}

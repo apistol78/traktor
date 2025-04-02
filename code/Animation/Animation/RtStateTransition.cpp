@@ -19,4 +19,12 @@ RtStateTransition::RtStateTransition(RtState* from, RtState* to)
 {
 }
 
+bool RtStateTransition::conditionSatisfied(const bool* values) const
+{
+	for (const Condition& condition : m_conditions)
+		if (values[condition.parameter] ^ condition.inverted)
+			return true;
+	return false;
+}
+
 }

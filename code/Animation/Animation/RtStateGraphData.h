@@ -8,9 +8,12 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -51,6 +54,7 @@ private:
 
 	RefArray< RtStateData > m_states;
 	RefArray< RtStateTransitionData > m_transitions;
+	AlignedVector< std::wstring > m_parameters;
 	int32_t m_root = -1;
 };
 

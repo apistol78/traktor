@@ -10,10 +10,11 @@
 
 #include "Animation/Animation/StateContext.h"
 #include "Animation/Pose.h"
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Transform.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -38,6 +39,10 @@ class T_DLLCLASS RtStateGraph : public Object
 	T_RTTI_CLASS;
 
 public:
+	bool setParameterValue(const render::Handle& handle, bool value);
+
+	bool getParameterValue(const render::Handle& handle) const;
+
 	bool evaluate(
 		float time,
 		float deltaTime,
@@ -52,6 +57,8 @@ private:
 
 	RefArray< RtState > m_states;
 	RefArray< RtStateTransition > m_transitions;
+	SmallMap< render::Handle, int32_t > m_parameters;
+	AlignedVector< bool > m_values;
 	RtState* m_rootState = nullptr;
 	RtState* m_currentState = nullptr;
 	RtState* m_nextState = nullptr;

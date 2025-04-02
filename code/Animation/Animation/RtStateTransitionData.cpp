@@ -31,6 +31,9 @@ Ref< RtStateTransition > RtStateTransitionData::createInstance(RtStateGraph* sta
 	instance->m_moment = m_moment;
 	instance->m_duration = m_duration;
 
+	for (const auto& condition : m_conditions)
+		instance->m_conditions.push_back({ condition.parameter, condition.inverted });
+
 	return instance;
 }
 
@@ -45,7 +48,7 @@ void RtStateTransitionData::serialize(ISerializer& s)
 
 void RtStateTransitionData::Condition::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"name", name);
+	s >> Member< int32_t >(L"parameter", parameter);
 	s >> Member< bool >(L"inverted", inverted);
 }
 

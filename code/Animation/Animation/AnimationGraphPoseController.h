@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Animation/IPoseController.h"
+#include "Render/Types.h"
 #include "Resource/Proxy.h"
 
 #include <string>
@@ -39,7 +40,7 @@ public:
 
 	bool setState(const std::wstring& stateName);
 
-	void setCondition(const std::wstring& condition, bool enabled, bool reset);
+	bool setParameterValue(const render::Handle& parameter, bool value);
 
 	void setTime(float time);
 

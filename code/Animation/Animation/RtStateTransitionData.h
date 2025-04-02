@@ -12,8 +12,6 @@
 #include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 
-#include <string>
-
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
@@ -46,7 +44,7 @@ private:
 
 	struct Condition
 	{
-		std::wstring name;
+		int32_t parameter = -1;
 		bool inverted = false;
 
 		void serialize(ISerializer& s);

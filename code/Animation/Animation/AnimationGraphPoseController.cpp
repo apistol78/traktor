@@ -25,8 +25,12 @@ bool AnimationGraphPoseController::setState(const std::wstring& stateName)
 	return false;
 }
 
-void AnimationGraphPoseController::setCondition(const std::wstring& condition, bool enabled, bool reset)
+bool AnimationGraphPoseController::setParameterValue(const render::Handle& parameter, bool value)
 {
+	if (m_stateGraph)
+		return m_stateGraph->setParameterValue(parameter, value);
+	else
+		return false;
 }
 
 void AnimationGraphPoseController::setTime(float time)
@@ -49,6 +53,7 @@ float AnimationGraphPoseController::getTimeFactor() const
 
 void AnimationGraphPoseController::destroy()
 {
+	m_stateGraph.clear();
 }
 
 void AnimationGraphPoseController::setTransform(const Transform& transform)

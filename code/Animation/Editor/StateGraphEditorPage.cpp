@@ -745,7 +745,7 @@ void StateGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 
 void StateGraphEditorPage::eventPreviewConditionClick(ui::ButtonClickEvent* event)
 {
-	// ui::CheckBox* cb = mandatory_non_null_type_cast< ui::CheckBox* >(event->getSender());
-	// m_statePreviewController->setCondition(cb->getText(), cb->isChecked(), false);
+	const ui::CheckBox* cb = mandatory_non_null_type_cast< ui::CheckBox* >(event->getSender());
+	m_previewControl->setParameterValue(cb->getText(), cb->isChecked());
 }
 }

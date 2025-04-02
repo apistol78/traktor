@@ -25,6 +25,27 @@ Random s_random;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RtStateGraph", RtStateGraph, Object)
 
+bool RtStateGraph::setParameterValue(const render::Handle& handle, bool value)
+{
+	const auto it = m_parameters.find(handle);
+	if (it != m_parameters.end())
+	{
+		m_values[it->second] = value;
+		return true;
+	}
+	else
+		return false;
+}
+
+bool RtStateGraph::getParameterValue(const render::Handle& handle) const
+{
+	const auto it = m_parameters.find(handle);
+	if (it != m_parameters.end())
+		return m_values[it->second];
+	else
+		return false;
+}
+
 bool RtStateGraph::evaluate(
 	float time,
 	float deltaTime,
@@ -147,59 +168,37 @@ bool RtStateGraph::evaluate(
 		RtStateTransition* selectedTransition = nullptr;
 
 		// First try all transitions with explicit condition.
-		// for (auto transition : m_transitions)
-		//{
-		//	if (transition->from() != m_currentState || transition->getCondition().empty())
-		//		continue;
+		for (auto transition : m_transitions)
+		{
+			if (transition->getFrom() != m_currentState || !transition->haveConditions())
+				continue;
 
-		//	// Is transition permitted?
-		//	bool transitionPermitted = false;
-		//	switch (transition->getMoment())
-		//	{
-		//	case Transition::Moment::Immediatly:
-		//		transitionPermitted = true;
-		//		break;
+			// Is transition permitted?
+			bool transitionPermitted = false;
+			switch (transition->getMoment())
+			{
+			case Moment::Immediately:
+				transitionPermitted = true;
+				break;
 
-		//	case Transition::Moment::End:
-		//		{
-		//			if (timeLeft <= transition->getDuration())
-		//				transitionPermitted = true;
-		//		}
-		//		break;
-		//	}
-		//	if (!transitionPermitted)
-		//		continue;
+			case Moment::End:
+				{
+					if (timeLeft <= transition->getDuration())
+						transitionPermitted = true;
+				}
+				break;
+			}
+			if (!transitionPermitted)
+				continue;
 
-		//	// Is condition satisfied?
-		//	bool value = false;
-		//	const std::wstring& condition = transition->getCondition();
-		//	if (condition[0] == L'!')
-		//	{
-		//		std::pair< bool, bool >& cv = m_conditions[condition.substr(1)];
-		//		value = !cv.first;
-		//		if (value && cv.second)
-		//		{
-		//			cv.first = !cv.first;
-		//			cv.second = false;
-		//		}
-		//	}
-		//	else
-		//	{
-		//		std::pair< bool, bool >& cv = m_conditions[condition];
-		//		value = cv.first;
-		//		if (value && cv.second)
-		//		{
-		//			cv.first = !cv.first;
-		//			cv.second = false;
-		//		}
-		//	}
-		//	if (!value)
-		//		continue;
+			// Is condition satisfied?
+			if (!transition->conditionSatisfied(m_values.c_ptr()))
+				continue;
 
-		//	// Found valid transition.
-		//	selectedTransition = transition;
-		//	break;
-		//}
+			// Found valid transition.
+			selectedTransition = transition;
+			break;
+		}
 
 		// Still no transition state found, we try all transitions without explicit condition.
 		if (selectedTransition == nullptr)
@@ -207,7 +206,7 @@ bool RtStateGraph::evaluate(
 			RefArray< RtStateTransition > candidateTransitions;
 			for (auto transition : m_transitions)
 			{
-				if (transition->getFrom() != m_currentState) // || !transition->getCondition().empty())
+				if (transition->getFrom() != m_currentState || transition->haveConditions())
 					continue;
 
 				// Is transition permitted?
@@ -235,8 +234,10 @@ bool RtStateGraph::evaluate(
 		}
 
 		// Still no transition, repeat current state if we're at the end.
+		/*
 		if (selectedTransition == nullptr && timeLeft <= FUZZY_EPSILON)
 			selectedTransition = new RtStateTransition(m_currentState, m_currentState);
+		*/
 
 		// Begin transition to found state.
 		if (selectedTransition != nullptr)

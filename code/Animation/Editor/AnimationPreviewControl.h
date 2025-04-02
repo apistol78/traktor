@@ -95,6 +95,8 @@ public:
 
 	void setPoseController(IPoseController* poseController);
 
+	void setParameterValue(const std::wstring& parameterName, bool value);
+
 	void setView(const View& view);
 
 	const View& getView() const { return m_view; }

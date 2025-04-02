@@ -7,19 +7,20 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Animation/AnimationClassFactory.h"
+
 #include "Animation/AnimatedMeshComponent.h"
-#include "Animation/JointBindingComponent.h"
-#include "Animation/SkeletonComponent.h"
 #include "Animation/Animation/AnimationGraphPoseController.h"
 #include "Animation/Animation/RetargetPoseController.h"
 #include "Animation/Boids/BoidsComponent.h"
 #include "Animation/Cloth/ClothComponent.h"
 #include "Animation/IK/IKComponent.h"
+#include "Animation/JointBindingComponent.h"
 #include "Animation/PathEntity/PathComponent.h"
 #include "Animation/PathEntity/PathComponentData.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
 #include "Animation/Rotator/RotatorComponent.h"
 #include "Animation/Rotator/WobbleComponent.h"
+#include "Animation/SkeletonComponent.h"
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedTransform.h"
@@ -32,16 +33,15 @@
 
 namespace traktor::animation
 {
-	namespace
-	{
+namespace
+{
 
 Transform SkeletonComponent_getJointTransform(SkeletonComponent* self, const std::wstring& jointName)
 {
 	Transform transform;
 	self->getJointTransform(
 		render::getParameterHandle(jointName),
-		transform
-	);
+		transform);
 	return transform;
 }
 
@@ -50,8 +50,7 @@ Transform SkeletonComponent_getPoseTransform(SkeletonComponent* self, const std:
 	Transform transform;
 	self->getPoseTransform(
 		render::getParameterHandle(jointName),
-		transform
-	);
+		transform);
 	return transform;
 }
 
@@ -60,8 +59,7 @@ bool SkeletonComponent_setPoseTransform(SkeletonComponent* self, const std::wstr
 	return self->setPoseTransform(
 		render::getParameterHandle(jointName),
 		transform,
-		inclusive
-	);
+		inclusive);
 }
 
 bool SkeletonComponent_concatenatePoseTransform(SkeletonComponent* self, const std::wstring& jointName, const Transform& transform, bool inclusive)
@@ -69,8 +67,7 @@ bool SkeletonComponent_concatenatePoseTransform(SkeletonComponent* self, const s
 	return self->concatenatePoseTransform(
 		render::getParameterHandle(jointName),
 		transform,
-		inclusive
-	);
+		inclusive);
 }
 
 Transform AnimatedMeshComponent_getSkinTransform(AnimatedMeshComponent* self, const std::wstring& jointName)
@@ -78,12 +75,11 @@ Transform AnimatedMeshComponent_getSkinTransform(AnimatedMeshComponent* self, co
 	Transform transform;
 	self->getSkinTransform(
 		render::getParameterHandle(jointName),
-		transform
-	);
+		transform);
 	return transform;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationClassFactory", 0, AnimationClassFactory, IRuntimeClassFactory)
 
@@ -122,7 +118,7 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classStatePoseController->addProperty("time", &AnimationGraphPoseController::setTime, &AnimationGraphPoseController::getTime);
 	classStatePoseController->addProperty("timeFactor", &AnimationGraphPoseController::setTimeFactor, &AnimationGraphPoseController::getTimeFactor);
 	classStatePoseController->addMethod("setState", &AnimationGraphPoseController::setState);
-	classStatePoseController->addMethod("setCondition", &AnimationGraphPoseController::setCondition);
+	// classStatePoseController->addMethod("setCondition", &AnimationGraphPoseController::setCondition);
 	registrar->registerClass(classStatePoseController);
 
 	auto classRetargetPoseController = new AutoRuntimeClass< RetargetPoseController >();
