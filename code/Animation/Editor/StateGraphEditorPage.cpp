@@ -122,10 +122,14 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_toolBarPreview->create(m_containerPreview);
 	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Mesh...", ui::Command(L"StateGraph.Editor.BrowseMesh")));
 	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Skeleton...", ui::Command(L"StateGraph.Editor.BrowseSkeleton")));
+	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Capture preview transform", ui::Command(L"StateGraph.Editor.CapturePreviewTransform")));
 	m_toolBarPreview->addEventHandler< ui::ToolBarButtonClickEvent >(this, &StateGraphEditorPage::eventToolBarPreviewClick);
 
 	m_previewControl = new AnimationPreviewControl(m_editor);
 	m_previewControl->create(m_containerPreview);
+	m_previewControl->setView({ .position = m_stateGraph->getPreviewPosition(),
+		.head = m_stateGraph->getPreviewAngles().x(),
+		.pitch = m_stateGraph->getPreviewAngles().y() });
 
 	m_previewConditions = new ui::Container();
 	m_previewConditions->create(m_containerPreview, ui::WsNone, new ui::TableLayout(L"50%,50%", L"*", 0_ut, 0_ut));
@@ -181,9 +185,8 @@ bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 	else if (is_type_of< StateGraph >(*primaryType))
 	{
 		Ref< StateNodeController > state = new StateNodeController(
-			instance->getName(), 
-			new AnimationGraphPoseControllerData(resource::Id< RtStateGraph >(instance->getGuid()))
-		);
+			instance->getName(),
+			new AnimationGraphPoseControllerData(resource::Id< RtStateGraph >(instance->getGuid())));
 		state->setPosition(std::pair< int, int >(absolutePosition.x, absolutePosition.y));
 		m_stateGraph->addState(state);
 
@@ -452,6 +455,12 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 		Ref< db::Instance > skeletonInstance = m_editor->browseInstance(type_of< animation::SkeletonAsset >());
 		if (skeletonInstance)
 			m_previewControl->setSkeleton(resource::Id< Skeleton >(skeletonInstance->getGuid()));
+	}
+	else if (command == L"StateGraph.Editor.CapturePreviewTransform")
+	{
+		const AnimationPreviewControl::View view = m_previewControl->getView();
+		m_stateGraph->setPreviewPosition(view.position);
+		m_stateGraph->setPreviewAngles(Vector4(view.head, view.pitch, 0.0f));
 	}
 	else
 		return false;

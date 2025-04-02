@@ -11,6 +11,7 @@
 #include "Animation/Editor/StateNode.h"
 #include "Animation/Editor/StateTransition.h"
 #include "Animation/Skeleton.h"
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -66,13 +67,25 @@ Ref< StateNode > StateGraph::getRootState() const
 	return m_rootState;
 }
 
+void StateGraph::setPreviewPosition(const Vector4& position)
+{
+	m_previewPosition = position;
+}
+
+void StateGraph::setPreviewAngles(const Vector4& angles)
+{
+	m_previewAngles = angles;
+}
+
 void StateGraph::serialize(ISerializer& s)
 {
-	s >> MemberRefArray< StateNode >(L"states", m_states);
-	s >> MemberRefArray< StateTransition >(L"transitions", m_transitions);
-	s >> MemberRef< StateNode >(L"rootState", m_rootState);
+	s >> MemberRefArray< StateNode >(L"states", m_states, AttributePrivate());
+	s >> MemberRefArray< StateTransition >(L"transitions", m_transitions, AttributePrivate());
+	s >> MemberRef< StateNode >(L"rootState", m_rootState, AttributePrivate());
 	s >> resource::Member< Skeleton >(L"previewSkeleton", m_previewSkeleton);
 	s >> resource::Member< mesh::SkinnedMesh >(L"previewMesh", m_previewMesh);
+	s >> Member< Vector4 >(L"previewPosition", m_previewPosition, AttributePrivate());
+	s >> Member< Vector4 >(L"previewAngles", m_previewAngles, AttributePrivate());
 }
 
 }

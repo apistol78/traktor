@@ -80,9 +80,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationPreviewControl", AnimationPr
 
 AnimationPreviewControl::AnimationPreviewControl(editor::IEditor* editor)
 	: m_editor(editor)
-	, m_position(0.0f, -2.0f, 7.0f, 1.0f)
-	, m_angleHead(0.0f)
-	, m_anglePitch(0.0f)
 {
 }
 
@@ -194,6 +191,12 @@ void AnimationPreviewControl::setSkeleton(const resource::Id< Skeleton >& skelet
 void AnimationPreviewControl::setPoseController(IPoseController* poseController)
 {
 	m_poseController = poseController;
+	updatePreview();
+}
+
+void AnimationPreviewControl::setView(const View& view)
+{
+	m_view = view;
 	updatePreview();
 }
 
@@ -310,20 +313,20 @@ void AnimationPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 			// Move X/Z direction.
 			const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
 			const float dz = -float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
-			m_position += Vector4(dx, 0.0f, dz, 0.0f);
+			m_view.position += Vector4(dx, 0.0f, dz, 0.0f);
 		}
 		else
 		{
 			// Move X/Y direction.
 			const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
 			const float dy = float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
-			m_position += Vector4(dx, dy, 0.0f, 0.0f);
+			m_view.position += Vector4(dx, dy, 0.0f, 0.0f);
 		}
 	}
 	else if (event->getButton() == ui::MbtRight)
 	{
-		m_angleHead += float(m_lastMousePosition.x - event->getPosition().x) * c_deltaScaleHead;
-		m_anglePitch += float(m_lastMousePosition.y - event->getPosition().y) * c_deltaScalePitch;
+		m_view.head += float(m_lastMousePosition.x - event->getPosition().x) * c_deltaScaleHead;
+		m_view.pitch += float(m_lastMousePosition.y - event->getPosition().y) * c_deltaScalePitch;
 	}
 
 	m_lastMousePosition = event->getPosition();
@@ -384,7 +387,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	const float aspect = float(sz.cx) / sz.cy;
 
-	const Matrix44 viewTransform = translate(m_position) * rotateX(m_anglePitch) * rotateY(m_angleHead);
+	const Matrix44 viewTransform = translate(m_view.position) * rotateX(m_view.pitch) * rotateY(m_view.head);
 	const Matrix44 projectionTransform = perspectiveLh(
 		65.0f * PI / 180.0f,
 		aspect,

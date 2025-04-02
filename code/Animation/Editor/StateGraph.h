@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Math/Vector4.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
@@ -63,6 +64,14 @@ public:
 
 	const resource::Id< mesh::SkinnedMesh >& getPreviewMesh() const { return m_previewMesh; }
 
+	void setPreviewPosition(const Vector4& position);
+
+	const Vector4& getPreviewPosition() const { return m_previewPosition; }
+
+	void setPreviewAngles(const Vector4& angles);
+
+	const Vector4& getPreviewAngles() const { return m_previewAngles; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -71,6 +80,8 @@ private:
 	Ref< StateNode > m_rootState;
 	resource::Id< Skeleton > m_previewSkeleton;
 	resource::Id< mesh::SkinnedMesh > m_previewMesh;
+	Vector4 m_previewPosition = Vector4(0.0f, -2.0f, 7.0f, 1.0f);
+	Vector4 m_previewAngles = Vector4::zero();
 };
 
 }

@@ -76,6 +76,13 @@ class AnimationPreviewControl : public ui::Widget
 	T_RTTI_CLASS;
 
 public:
+	struct View
+	{
+		Vector4 position = Vector4::origo();
+		float head = 0.0f;
+		float pitch = 0.0f;
+	};
+
 	explicit AnimationPreviewControl(editor::IEditor* editor);
 
 	bool create(ui::Widget* parent);
@@ -87,6 +94,10 @@ public:
 	void setSkeleton(const resource::Id< Skeleton >& skeleton);
 
 	void setPoseController(IPoseController* poseController);
+
+	void setView(const View& view);
+
+	const View& getView() const { return m_view; }
 
 	void updateSettings();
 
@@ -111,9 +122,7 @@ private:
 	Color4ub m_colorClear;
 	Color4ub m_colorGrid;
 	Timer m_timer;
-	Vector4 m_position = Vector4::origo();
-	float m_angleHead = 0.0f;
-	float m_anglePitch = 0.0f;
+	View m_view;
 	ui::Point m_lastMousePosition = ui::Point(0, 0);
 	ui::Size m_dirtySize = ui::Size(0, 0);
 
