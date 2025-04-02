@@ -144,7 +144,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_editorGraph->center();
 
 	updateGraph();
-	updatePreview();
+	updatePreview(nullptr);
 	updatePreviewConditions();
 
 	m_propertiesView->setPropertyObject(m_stateGraph);
@@ -547,13 +547,13 @@ void StateGraphEditorPage::updateGraph()
 	m_editorGraph->update();
 }
 
-void StateGraphEditorPage::updatePreview()
+void StateGraphEditorPage::updatePreview(const StateGraph* stateGraph)
 {
 	m_previewControl->setSkeleton(m_stateGraph->getPreviewSkeleton());
 	m_previewControl->setMesh(m_stateGraph->getPreviewMesh());
 	m_previewControl->setPoseController(nullptr);
 
-	Ref< const RtStateGraphData > rtsgd = StateGraphCompiler().compile(m_stateGraph);
+	Ref< const RtStateGraphData > rtsgd = StateGraphCompiler().compile(stateGraph ? stateGraph : m_stateGraph);
 	if (rtsgd)
 	{
 		Ref< RtStateGraph > rtsg = rtsgd->createInstance(m_previewControl->getResourceManager());
@@ -649,22 +649,21 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 		stateGraph->addState(state);
 		stateGraph->addTransition(new StateTransition(state, state));
 		stateGraph->setRootState(state);
-
+		updatePreview(stateGraph);
 		m_propertiesView->setPropertyObject(state);
-		// m_previewControl->setPoseController(new StateGraphPoseController(resource::Proxy< StateGraph >(stateGraph), nullptr));
 	}
 	else if (edges.size() == 1)
 	{
 		StateTransition* transition = edges[0]->getData< StateTransition >(L"TRANSITION");
 		T_FATAL_ASSERT(transition);
 
+		updatePreview(nullptr);
 		m_propertiesView->setPropertyObject(transition);
-		// m_previewControl->setPoseController(m_statePreviewController);
 	}
 	else
 	{
+		updatePreview(nullptr);
 		m_propertiesView->setPropertyObject(m_stateGraph);
-		// m_previewControl->setPoseController(m_statePreviewController);
 	}
 }
 
@@ -711,7 +710,7 @@ void StateGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 	m_editorGraph->addEdge(edge);
 
 	updateGraph();
-	updatePreview();
+	updatePreview(nullptr);
 }
 
 void StateGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
@@ -722,7 +721,7 @@ void StateGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 	m_stateGraph->removeTransition(transition);
 
 	updateGraph();
-	updatePreview();
+	updatePreview(nullptr);
 }
 
 void StateGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
@@ -740,7 +739,7 @@ void StateGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 	}
 
 	updateGraph();
-	updatePreview();
+	updatePreview(nullptr);
 	updatePreviewConditions();
 }
 

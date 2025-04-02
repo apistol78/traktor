@@ -102,7 +102,7 @@ private:
 
 	void updateGraph();
 
-	void updatePreview();
+	void updatePreview(const StateGraph* stateGraph);
 
 	void updatePreviewConditions();
 

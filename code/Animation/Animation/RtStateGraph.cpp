@@ -211,28 +211,23 @@ bool RtStateGraph::evaluate(
 					continue;
 
 				// Is transition permitted?
-				bool transitionPermitted = false;
 				switch (transition->getMoment())
 				{
 				case Moment::Immediately:
-					transitionPermitted = true;
+					candidateTransitions.push_back(transition);
 					break;
 
 				case Moment::End:
 					{
 						if (timeLeft <= transition->getDuration())
-							transitionPermitted = true;
+							candidateTransitions.push_back(transition);
 					}
 					break;
 				}
-				if (!transitionPermitted)
-					continue;
-
-				candidateTransitions.push_back(transition);
 			}
 
 			// Randomly select one of the found, valid, transitions.
-			if (!candidateTransitions.empty() && timeLeft <= FUZZY_EPSILON)
+			if (!candidateTransitions.empty())
 			{
 				const uint32_t i = s_random.next() % candidateTransitions.size();
 				selectedTransition = candidateTransitions[i];
