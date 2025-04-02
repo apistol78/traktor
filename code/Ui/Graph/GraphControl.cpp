@@ -31,8 +31,8 @@
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 enum Modes
 {
@@ -69,7 +69,7 @@ Rect operator/(const Rect& rc, float scale)
 	return rc * (1.0f / scale);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GraphControl", GraphControl, Widget)
 
@@ -134,7 +134,7 @@ Group* GraphControl::createGroup(const std::wstring& title, const UnitPoint& pos
 void GraphControl::removeGroup(Group* group)
 {
 	m_groups.remove(group);
-	
+
 	if (group->isSelected())
 	{
 		SelectEvent selectEvent(this, {}, {}, {});
@@ -354,7 +354,7 @@ Node* GraphControl::getNodeAt(const Point& p) const
 
 Edge* GraphControl::getEdgeAt(const Point& p) const
 {
-	const UnitPoint up = unit(p - m_offset);
+	const UnitPoint up = unit(p);
 	for (auto edge : m_edges)
 		if (edge->hit(this, up))
 			return edge;
@@ -363,7 +363,7 @@ Edge* GraphControl::getEdgeAt(const Point& p) const
 
 Pin* GraphControl::getPinAt(const Point& p) const
 {
-	const UnitPoint up = unit(p - m_offset);
+	const UnitPoint up = unit(p);
 	for (auto node : m_nodes)
 	{
 		Pin* pin = node->getPinAt(up);
@@ -1061,7 +1061,7 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 		event->consume();
 	}
 
-	const auto position = event->getPosition() / m_scale;
+	const Point position = event->getPosition() / m_scale - m_offset;
 
 	// Track "hot" pin.
 	auto hotPin = getPinAt(position);
