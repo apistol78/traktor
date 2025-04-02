@@ -257,6 +257,7 @@ void AnimationPreviewControl::updatePreview()
 	m_entity = new world::Entity();
 	m_entity->setComponent(skeletonComponent);
 	m_entity->setComponent(meshComponent);
+	m_entity->setState(world::EntityState::Dynamic, world::EntityState::Dynamic, true);
 }
 
 void AnimationPreviewControl::updateWorldRenderer()
@@ -282,7 +283,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 	// #fixme Quality settings should probably be a general editor configuration.
 	const PropertyGroup* settings = m_editor->getSettings();
 	wcd.quality.imageProcess = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.PostProcessQuality", 4);
-	wcd.quality.motionBlur = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.MotionBlurQuality", 4);
+	wcd.quality.motionBlur = world::Quality::Disabled;
 	wcd.quality.shadows = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.ShadowQuality", 4);
 	wcd.quality.reflections = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.ReflectionsQuality", 4);
 	wcd.quality.ambientOcclusion = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.AmbientOcclusionQuality", 4);
