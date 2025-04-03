@@ -41,6 +41,16 @@ float Reservoir_CalculateProbability(vec3 radiance)
 	return dot(radiance, vec3(0.21f, 0.72f, 0.07f));
 }
 
+vec3 Reservoir_GetRadiance(World_Reservoir_Type r)
+{
+	const float P_hat = Reservoir_CalculateProbability(r.radiance);
+	const float w = 
+		(P_hat > 0.0f) ?
+		(1.0f / P_hat) * (r.W_sum / r.M) :
+		0.0f;
+	return r.radiance * w;
+}
+
 ]]></text>
 	<samplers/>
 	<structDeclarations>

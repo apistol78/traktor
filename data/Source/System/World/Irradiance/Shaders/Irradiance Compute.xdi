@@ -129,17 +129,20 @@
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
-#define USE_RESERVOIR 1
 #define USE_SECOND_BOUNCE 1
+#define USE_TEMPORAL_FILTER 1
+#define USE_SPATIAL_FILTER 1
 
 const int N = 2;
-const int Ndisclose = 28;
-const int Nspatial = 8;
-const int K = 20;
+const int Ndisclose = 32;
+const int Nspatial = 16;
+const int K = 30;
 const float NormalThreshold = 0.9f;
 const float DepthThreshold = 10.0f;
 const float Far = 90.0f;
 const float FarSecond = 40.0f;
+const float SpatialFilterRadius = 0.015f;
+const float SpatialFilterCoeff = 0.75f;
 
 const ivec2 sz = imageSize($Output);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
@@ -160,7 +163,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 	bool temporalValid = !lastIndexOutside;
 
 	// 1. Temporal filtering.
-	if (true && !lastIndexOutside)
+#if USE_TEMPORAL_FILTER
+	if (!lastIndexOutside)
 	{
 		$typeof(Reservoir) lastR = $Reservoir[lastIndex];
 
@@ -189,9 +193,11 @@ if (pt.x < sz.x && pt.y < sz.y)
 			reservoir.radiance = v;
 		}
 	}
+#endif
 
 	// 2. Spatial filtering.
-	if (false)
+#if USE_SPATIAL_FILTER
+	if (!lastIndexOutside)
 	{
 		for (int i = 0; i < Nspatial; ++i)
 		{
@@ -200,7 +206,9 @@ if (pt.x < sz.x && pt.y < sz.y)
 				Hash(rndState++)
 			) - 1.0f;
 
-			const ivec2 spt = uvpt - ivec2(offset * sz * 0.005f);
+			const float ratio = float(sz.y) / sz.x;
+			const vec2 radius = vec2(SpatialFilterRadius, SpatialFilterRadius * ratio);
+			const ivec2 spt = uvpt - ivec2(offset * sz * radius);
 			
 			if (spt.x >= 0 && spt.y >= 0 && spt.x < sz.x && spt.y < sz.y)
 			{
@@ -209,35 +217,30 @@ if (pt.x < sz.x && pt.y < sz.y)
 
 				const bool valid =
 					!Reservoir_IsEmpty(spatR) &&
-					dot(spatR.normal, $Direction.xyz) >= NormalThreshold;
+					dot(spatR.normal, $Direction.xyz) >= NormalThreshold &&
+					abs(spatR.depth - $Depth) < DepthThreshold;
 		
 				if (valid)
 				{
-					const float P_hat = Reservoir_CalculateProbability(spatR.radiance);
+					const vec3 r1 = Reservoir_GetRadiance(reservoir);
+					const vec3 r2 = Reservoir_GetRadiance(spatR);
 
-					const float m = min(spatR.M, K);
-					const float w =
-						P_hat > 0.0f ?
-						(1.0f / P_hat) * (spatR.W_sum / spatR.M) :
-						0.0f;
-		
-					const vec3 v = spatR.radiance * w;
+					const vec3 r = mix(r1, r2, SpatialFilterCoeff);
 
-					const float P_hat2 = Reservoir_CalculateProbability(v);
-					
-					reservoir.W_sum += P_hat2 * m;
-					reservoir.M += m;
-
-					if (Hash(rndState++) < w / reservoir.W_sum)
-					{
-						reservoir.normal = spatR.normal;
-						reservoir.depth = $Depth;
-						reservoir.radiance = v;
-					}
+					const float w = Reservoir_CalculateProbability(r);
+					Reservoir_Update(
+						reservoir,
+						w,
+						$Direction.xyz,
+						$Depth,
+						r,
+						Hash(rndState++)
+					);
 				}
 			}
 		}
 	}
+#endif
 
 	// 3. Sample generation.
 	if (true)
@@ -325,16 +328,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 	// 3. Calculate lighting.
 	vec4 acc = vec4(0.0f.xxx, 1.0f);
 	if (!Reservoir_IsEmpty(reservoir))
-	{
-		const float P_hat = Reservoir_CalculateProbability(reservoir.radiance);
-		const float w = 
-			(P_hat > 0.0f) ?
-			(1.0f / P_hat) * (reservoir.W_sum / reservoir.M) :
-			0.0f;
-
-		acc += vec4(reservoir.radiance * w, 1.0f);
-	}
-	
+		acc += vec4(Reservoir_GetRadiance(reservoir), 1.0f);
 
 #if 0
 	acc = temporalValid ? 
