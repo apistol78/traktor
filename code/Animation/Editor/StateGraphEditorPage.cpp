@@ -505,6 +505,7 @@ void StateGraphEditorPage::createEditorNodes(const RefArray< StateNode >& states
 
 		Ref< ui::Edge > transitionEdge = new ui::Edge(fromPin, toPin);
 		transitionEdge->setData(L"TRANSITION", transition);
+		transitionEdge->setText(transition->getCondition());
 		m_editorGraph->addEdge(transitionEdge);
 	}
 }
