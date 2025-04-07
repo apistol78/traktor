@@ -1,31 +1,35 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/PreviewList/PreviewList.h"
+
+#include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Edit.h"
+#include "Ui/FloodLayout.h"
 #include "Ui/PreviewList/PreviewContentChangeEvent.h"
 #include "Ui/PreviewList/PreviewItem.h"
 #include "Ui/PreviewList/PreviewItemMouseButtonDownEvent.h"
 #include "Ui/PreviewList/PreviewItems.h"
-#include "Ui/PreviewList/PreviewList.h"
 #include "Ui/PreviewList/PreviewSelectionChangeEvent.h"
+#include "Ui/ToolForm.h"
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 const Unit c_marginX = 10_ut;
 const Unit c_marginY = 10_ut;
 const Unit c_itemWidth = 120_ut;
 const Unit c_itemHeight = 110_ut;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PreviewList", PreviewList, AutoWidget)
 
@@ -65,10 +69,8 @@ PreviewItem* PreviewList::getSelectedItem() const
 		return nullptr;
 
 	for (int32_t i = 0; i < m_items->count(); ++i)
-	{
 		if (m_items->get(i)->isSelected())
 			return m_items->get(i);
-	}
 
 	return nullptr;
 }
@@ -79,10 +81,8 @@ void PreviewList::getSelectedItems(RefArray< PreviewItem >& outItems) const
 		return;
 
 	for (int32_t i = 0; i < m_items->count(); ++i)
-	{
 		if (m_items->get(i)->isSelected())
 			outItems.push_back(m_items->get(i));
-	}
 }
 
 void PreviewList::beginEdit(PreviewItem* item)
@@ -126,8 +126,7 @@ void PreviewList::layoutCells(const Rect& rc)
 			pixel(c_marginX) + column * width,
 			pixel(c_marginY) + row * height,
 			pixel(c_marginX) + column * width + width,
-			pixel(c_marginY) + row * height + height
-		);
+			pixel(c_marginY) + row * height + height);
 
 		placeCell(m_items->get(i), rcItem.inflate(-pad, -pad));
 	}
@@ -145,8 +144,7 @@ void PreviewList::layoutCells(const Rect& rc)
 			pixel(c_marginX) + column * width,
 			pixel(c_marginY) + row * height,
 			pixel(c_marginX) + column * width + width,
-			pixel(c_marginY) + row * height + height
-		);
+			pixel(c_marginY) + row * height + height);
 
 		placeCell(m_items->get(i), rcItem.inflate(-pad, -pad));
 	}
@@ -172,7 +170,6 @@ void PreviewList::eventEditFocus(FocusEvent* event)
 		event->consume();
 	}
 }
-
 
 void PreviewList::eventEditKeyDownEvent(KeyDownEvent* event)
 {
@@ -207,10 +204,8 @@ void PreviewList::eventButtonDown(MouseButtonDownEvent* event)
 	{
 		// De-select all items first.
 		if (m_single || (event->getKeyState() & (KsShift | KsControl)) == 0)
-		{
 			for (int32_t i = 0; i < m_items->count(); ++i)
 				m_items->get(i)->setSelected(false);
-		}
 
 		// Get item from position.
 		AutoWidgetCell* cell = hitTest(position);
@@ -225,7 +220,10 @@ void PreviewList::eventButtonDown(MouseButtonDownEvent* event)
 			raiseEvent(&mouseDownEvent);
 
 			if (event->getButton() == MbtLeft && !mouseDownEvent.consumed())
+			{
 				m_dragMode = 1;
+				m_dragItem = item;
+			}
 		}
 		else
 		{
@@ -246,6 +244,8 @@ void PreviewList::eventButtonUp(MouseButtonUpEvent* event)
 		raiseEvent(&dragEvent);
 	}
 	m_dragMode = 0;
+	m_dragItem = nullptr;
+	safeDestroy(m_thumb);
 }
 
 void PreviewList::eventMouseMove(MouseMoveEvent* event)
@@ -259,10 +259,25 @@ void PreviewList::eventMouseMove(MouseMoveEvent* event)
 			raiseEvent(&dragEvent);
 
 			if (!(dragEvent.consumed() && dragEvent.cancelled()))
+			{
+				// Create thumb.
+				m_thumb = new ToolForm();
+				m_thumb->create(nullptr, L"", 64_ut, 64_ut, WsTop, new FloodLayout());
+				m_thumb->setLayerImage(m_dragItem->getImage());
+				m_thumb->update();
+				m_thumb->show();
+
 				m_dragMode = 2;
+			}
 			else
 				m_dragMode = 0;
 		}
+	}
+
+	if (m_thumb)
+	{
+		const Point screenPosition = clientToScreen(event->getPosition() + Size(4, 4));
+		m_thumb->setRect({ screenPosition, Size(64, 64) });
 	}
 }
 

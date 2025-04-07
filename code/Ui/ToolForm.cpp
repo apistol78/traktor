@@ -6,10 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/ToolForm.h"
+
 #include "Core/Log/Log.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
-#include "Ui/ToolForm.h"
 #include "Ui/Itf/IToolForm.h"
 
 namespace traktor::ui
@@ -35,11 +36,11 @@ bool ToolForm::create(Widget* parent, const std::wstring& text, Unit width, Unit
 	}
 
 	//// Ensure size are converted to display DPI.
-	//const int32_t w = toolForm->dpi96(width.get());
-	//const int32_t h = toolForm->dpi96(height.get());
-	//Rect rc = toolForm->getRect();
-	//rc.setSize(ui::Size(w, h));
-	//toolForm->setRect(rc);
+	// const int32_t w = toolForm->dpi96(width.get());
+	// const int32_t h = toolForm->dpi96(height.get());
+	// Rect rc = toolForm->getRect();
+	// rc.setSize(ui::Size(w, h));
+	// toolForm->setRect(rc);
 
 	m_widget = toolForm;
 	return Container::create(parent, style, refLayout);
@@ -57,9 +58,26 @@ void ToolForm::setIcon(IBitmap* icon)
 	static_cast< IToolForm* >(m_widget)->setIcon(icon->getSystemBitmap(this));
 }
 
-IBitmap* ToolForm::getIcon()
+IBitmap* ToolForm::getIcon() const
 {
 	return m_icon;
+}
+
+void ToolForm::setLayerImage(IBitmap* layerImage)
+{
+	T_ASSERT(m_widget);
+
+	if (layerImage && layerImage->getSystemBitmap(this))
+		static_cast< IToolForm* >(m_widget)->setLayerImage(layerImage->getSystemBitmap(this));
+	else
+		static_cast< IToolForm* >(m_widget)->setLayerImage(nullptr);
+
+	m_layerImage = layerImage;
+}
+
+IBitmap* ToolForm::getLayerImage() const
+{
+	return m_layerImage;
 }
 
 DialogResult ToolForm::showModal()

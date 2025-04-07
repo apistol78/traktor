@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,17 +22,27 @@ class ToolFormWin32 : public WidgetWin32Impl< IToolForm >
 public:
 	explicit ToolFormWin32(EventSubject* owner);
 
+	virtual void destroy() override final;
+
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
 
 	virtual void setIcon(ISystemBitmap* icon) override final;
+
+	virtual void setLayerImage(ISystemBitmap* layerImage) override final;
 
 	virtual DialogResult showModal() override final;
 
 	virtual void endModal(DialogResult result) override final;
 
+	virtual void setRect(const Rect& rect) override final;
+
 private:
-	bool m_modal;
-	DialogResult m_result;
+	bool m_modal = false;
+	DialogResult m_result = DialogResult::Ok;
+	HBITMAP m_hMaskBitmap = 0;
+	Size m_maskSize = { 0, 0 };
+
+	void updateLayerImage();
 
 	LRESULT eventNcButtonDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 

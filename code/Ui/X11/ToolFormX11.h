@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Ui/X11/WidgetX11Impl.h"
 #include "Ui/Itf/IToolForm.h"
+#include "Ui/X11/WidgetX11Impl.h"
 
 namespace traktor::ui
 {
@@ -24,6 +24,8 @@ public:
 	virtual void destroy() override final;
 
 	virtual void setIcon(ISystemBitmap* icon) override final;
+
+	virtual void setLayerImage(ISystemBitmap* layerImage) override final;
 
 	virtual DialogResult showModal() override final;
 

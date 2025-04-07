@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,6 +26,7 @@ namespace traktor::ui
 
 class Edit;
 class PreviewItems;
+class ToolForm;
 
 class T_DLLCLASS PreviewList : public ui::AutoWidget
 {
@@ -56,7 +57,9 @@ private:
 	bool m_single = true;
 	int32_t m_dragMode = 0;
 	Point m_dragOriginPosition;
+	Ref< PreviewItem > m_dragItem;
 	Ref< PreviewItem > m_editItem;
+	Ref< ToolForm > m_thumb;
 
 	virtual void layoutCells(const Rect& rc) override final;
 

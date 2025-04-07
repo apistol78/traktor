@@ -1,3 +1,5 @@
+#pragma optimize("", off)
+
 /*
  * TRAKTOR
  * Copyright (c) 2022-2025 Anders Pistol.
@@ -8,6 +10,7 @@
  */
 #include "Ui/Win32/ToolFormWin32.h"
 
+#include "Core/Log/Log.h"
 #include "Ui/Events/NcMouseButtonDownEvent.h"
 #include "Ui/Events/NcMouseButtonUpEvent.h"
 #include "Ui/Events/NcMouseMoveEvent.h"
@@ -24,9 +27,17 @@ const UINT WM_ENDMODAL = WM_USER + 2000;
 
 ToolFormWin32::ToolFormWin32(EventSubject* owner)
 	: WidgetWin32Impl< IToolForm >(owner)
-	, m_modal(false)
-	, m_result(DialogResult::Ok)
 {
+}
+
+void ToolFormWin32::destroy()
+{
+	if (m_hMaskBitmap)
+	{
+		DeleteObject(m_hMaskBitmap);
+		m_hMaskBitmap = 0;
+	}
+	WidgetWin32Impl< IToolForm >::destroy();
 }
 
 bool ToolFormWin32::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
@@ -41,8 +52,8 @@ bool ToolFormWin32::create(IWidget* parent, const std::wstring& text, int width,
 			parent ? (HWND)parent->getInternalHandle() : NULL,
 			_T("TraktorWin32Class"),
 			wstots(text).c_str(),
-			WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | nativeStyle,
-			WS_EX_NOACTIVATE | nativeStyleEx,
+			WS_POPUP, // WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | nativeStyle,
+			/*WS_EX_NOACTIVATE | */ nativeStyleEx,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
 			width,
@@ -72,6 +83,41 @@ void ToolFormWin32::setIcon(ISystemBitmap* icon)
 	m_hWnd.sendMessage(WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
 }
 
+void ToolFormWin32::setLayerImage(ISystemBitmap* layerImage)
+{
+	if (m_hMaskBitmap)
+	{
+		DeleteObject(m_hMaskBitmap);
+		m_hMaskBitmap = 0;
+	}
+
+	if (layerImage)
+	{
+		BitmapWin32* bm = static_cast< BitmapWin32* >(layerImage);
+		m_maskSize = bm->getSize();
+
+		HDC hDCScreen = GetDC(NULL);
+
+		BITMAPINFO bmi;
+		std::memset(&bmi, 0, sizeof(bmi));
+		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		bmi.bmiHeader.biWidth = m_maskSize.cx;
+		bmi.bmiHeader.biHeight = m_maskSize.cy;
+		bmi.bmiHeader.biPlanes = 1;
+		bmi.bmiHeader.biBitCount = 32;
+		bmi.bmiHeader.biCompression = BI_RGB;
+		bmi.bmiHeader.biSizeImage = m_maskSize.cx * m_maskSize.cy * 4;
+
+		LPVOID bits = nullptr;
+		m_hMaskBitmap = CreateDIBSection(hDCScreen, &bmi, DIB_RGB_COLORS, (void**)&bits, NULL, 0);
+		std::memcpy(bits, bm->getBitsPreMulAlpha(), m_maskSize.cx * m_maskSize.cy * 4);
+
+		ReleaseDC(NULL, hDCScreen);
+	}
+
+	updateLayerImage();
+}
+
 DialogResult ToolFormWin32::showModal()
 {
 	// Ensure tool form is visible.
@@ -99,6 +145,49 @@ void ToolFormWin32::endModal(DialogResult result)
 	T_ASSERT_M(m_modal, L"Not modal");
 	SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_HIDEWINDOW);
 	PostMessage(m_hWnd, WM_ENDMODAL, (WPARAM)result, 0);
+}
+
+void ToolFormWin32::setRect(const Rect& rect)
+{
+	WidgetWin32Impl< IToolForm >::setRect(rect);
+	updateLayerImage();
+}
+
+void ToolFormWin32::updateLayerImage()
+{
+	const long style = GetWindowLong(m_hWnd, GWL_EXSTYLE);
+	if (!m_hMaskBitmap)
+	{
+		SetWindowLong(m_hWnd, GWL_EXSTYLE, style & ~WS_EX_LAYERED);
+		return;
+	}
+	else
+		SetWindowLong(m_hWnd, GWL_EXSTYLE, style | WS_EX_LAYERED);
+
+	HDC hDCScreen = GetDC(NULL);
+	HDC hDC = GetDC(m_hWnd);
+
+	RECT rc;
+	GetWindowRect(m_hWnd, &rc);
+
+	POINT windowPosition = { rc.left, rc.top };
+	SIZE windowSize = { rc.right - rc.left, rc.bottom - rc.top };
+	POINT imagePosition = { 0, 0 };
+
+	HDC hMaskDC = CreateCompatibleDC(hDC);
+	HGDIOBJ oldbmp = SelectObject(hMaskDC, reinterpret_cast< HGDIOBJ >(m_hMaskBitmap));
+
+	BLENDFUNCTION blend = { 0 };
+	blend.BlendOp = AC_SRC_OVER;
+	blend.SourceConstantAlpha = 255;
+	blend.AlphaFormat = AC_SRC_ALPHA;
+	UpdateLayeredWindow(m_hWnd, hDCScreen, &windowPosition, &windowSize, hMaskDC, &imagePosition, NULL, &blend, ULW_ALPHA);
+
+	SelectObject(hMaskDC, oldbmp);
+	DeleteDC(hMaskDC);
+
+	ReleaseDC(NULL, hDCScreen);
+	ReleaseDC(m_hWnd, hDC);
 }
 
 LRESULT ToolFormWin32::eventNcButtonDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)

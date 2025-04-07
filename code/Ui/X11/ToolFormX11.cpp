@@ -1,27 +1,29 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <X11/Xatom.h>
+#include "Ui/X11/ToolFormX11.h"
+
 #include "Core/Timer/Timer.h"
+#include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Drawing/Filters/ScaleFilter.h"
-#include "Ui/ToolForm.h"
 #include "Ui/Itf/ISystemBitmap.h"
-#include "Ui/X11/ToolFormX11.h"
+#include "Ui/ToolForm.h"
+
+#include <X11/Xatom.h>
 
 namespace traktor::ui
 {
 
 ToolFormX11::ToolFormX11(Context* context, EventSubject* owner)
-:	WidgetX11Impl< IToolForm >(context, owner)
-,	m_result(DialogResult::Ok)
-,	m_modal(false)
+	: WidgetX11Impl< IToolForm >(context, owner)
+	, m_result(DialogResult::Ok)
+	, m_modal(false)
 {
 }
 
@@ -45,24 +47,23 @@ bool ToolFormX11::create(IWidget* parent, const std::wstring& text, int width, i
 		InputOutput,
 		CopyFromParent,
 		0,
-		nullptr
-	);
+		nullptr);
 
 	// Change style of window, no WM chrome.
 	if ((style & ToolForm::WsDefault) == 0)
 	{
-		Atom type = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE", False);
-		Atom value = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE_DOCK", False);
-		XChangeProperty(m_context->getDisplay(), window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
+		Atom type = XInternAtom(m_context->getDisplay(), "_NET_WM_WINDOW_TYPE", False);
+		Atom value = XInternAtom(m_context->getDisplay(), "_NET_WM_WINDOW_TYPE_DOCK", False);
+		XChangeProperty(m_context->getDisplay(), window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast< unsigned char* >(&value), 1);
 	}
 	// Else set as dialog type.
 	else
 	{
-	  	Atom type = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE", False);
-		Atom value = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE_DIALOG", False);
-		XChangeProperty(m_context->getDisplay(), window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
+		Atom type = XInternAtom(m_context->getDisplay(), "_NET_WM_WINDOW_TYPE", False);
+		Atom value = XInternAtom(m_context->getDisplay(), "_NET_WM_WINDOW_TYPE_DIALOG", False);
+		XChangeProperty(m_context->getDisplay(), window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast< unsigned char* >(&value), 1);
 	}
-	
+
 	// Notify WM about form title.
 	if ((style & WsCaption) != 0)
 	{
@@ -86,7 +87,7 @@ bool ToolFormX11::create(IWidget* parent, const std::wstring& text, int width, i
 
 void ToolFormX11::destroy()
 {
-	T_FATAL_ASSERT (m_modal == false);
+	T_FATAL_ASSERT(m_modal == false);
 	WidgetX11Impl< IToolForm >::destroy();
 }
 
@@ -107,8 +108,7 @@ void ToolFormX11::setIcon(ISystemBitmap* icon)
 			w,
 			h,
 			drawing::ScaleFilter::MnAverage,
-			drawing::ScaleFilter::MgLinear
-		);
+			drawing::ScaleFilter::MgLinear);
 
 		Ref< drawing::Image > img = ii->clone();
 		img->apply(&sf);
@@ -128,13 +128,17 @@ void ToolFormX11::setIcon(ISystemBitmap* icon)
 		m_context->getDisplay(),
 		m_data.window,
 		XInternAtom(m_context->getDisplay(), "_NET_WM_ICON", False),
-		XA_CARDINAL, 32,
+		XA_CARDINAL,
+		32,
 		PropModeReplace,
 		(unsigned char*)data.ptr(),
-		data.size()
-	);
+		data.size());
 
 	XFlush(m_context->getDisplay());
+}
+
+void ToolFormX11::setLayerImage(ISystemBitmap* layerImage)
+{
 }
 
 DialogResult ToolFormX11::showModal()
@@ -146,11 +150,9 @@ DialogResult ToolFormX11::showModal()
 
 	m_context->pushModal(&m_data);
 
-	for (m_modal = true; m_modal; )
-	{
+	for (m_modal = true; m_modal;)
 		if (!Application::getInstance()->process())
 			break;
-	}
 
 	setVisible(false);
 	setWmProperty("_NET_WM_STATE_MODAL", _NET_WM_STATE_REMOVE);
