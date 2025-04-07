@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Editor/App/DatabaseView.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Path.h"
 #include "Core/Io/StreamCopy.h"
@@ -27,37 +29,36 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
+#include "Editor/App/BrowseTypeDialog.h"
+#include "Editor/App/InstanceClipboardData.h"
+#include "Editor/App/NewInstanceDialog.h"
 #include "Editor/Asset.h"
 #include "Editor/Assets.h"
 #include "Editor/IBrowsePreview.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/IPipelineDepends.h"
-#include "Editor/PipelineDependencySet.h"
 #include "Editor/IWizardTool.h"
-#include "Editor/App/BrowseTypeDialog.h"
-#include "Editor/App/DatabaseView.h"
-#include "Editor/App/InstanceClipboardData.h"
-#include "Editor/App/NewInstanceDialog.h"
 #include "Editor/PipelineDependency.h"
+#include "Editor/PipelineDependencySet.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Edit.h"
+#include "Ui/HierarchicalState.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/StyleSheet.h"
-#include "Ui/TableLayout.h"
-#include "Ui/HierarchicalState.h"
-#include "Ui/Splitter.h"
 #include "Ui/PreviewList/PreviewContentChangeEvent.h"
 #include "Ui/PreviewList/PreviewItem.h"
 #include "Ui/PreviewList/PreviewItemMouseButtonDownEvent.h"
 #include "Ui/PreviewList/PreviewItems.h"
 #include "Ui/PreviewList/PreviewList.h"
+#include "Ui/Splitter.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
+#include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -77,8 +78,8 @@ namespace traktor::editor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView", DatabaseView, ui::Container)
 
-	namespace
-	{
+namespace
+{
 
 class DefaultFilter : public DatabaseView::Filter
 {
@@ -98,7 +99,7 @@ class TextFilter : public DatabaseView::Filter
 {
 public:
 	explicit TextFilter(const std::wstring& filter)
-	:	m_filter(filter)
+		: m_filter(filter)
 	{
 	}
 
@@ -120,7 +121,7 @@ class GuidFilter : public DatabaseView::Filter
 {
 public:
 	explicit GuidFilter(const Guid& filter)
-	:	m_filter(filter)
+		: m_filter(filter)
 	{
 	}
 
@@ -142,7 +143,7 @@ class TypeSetFilter : public DatabaseView::Filter
 {
 public:
 	explicit TypeSetFilter(const TypeInfoSet& typeSet)
-	:	m_typeSet(typeSet)
+		: m_typeSet(typeSet)
 	{
 	}
 
@@ -153,10 +154,8 @@ public:
 			return false;
 
 		for (auto type : m_typeSet)
-		{
 			if (is_type_of(*type, *instanceType))
 				return true;
-		}
 
 		return false;
 	}
@@ -174,7 +173,7 @@ class GuidSetFilter : public DatabaseView::Filter
 {
 public:
 	explicit GuidSetFilter(const std::set< Guid >& guidSet)
-	:	m_guidSet(guidSet)
+		: m_guidSet(guidSet)
 	{
 	}
 
@@ -196,15 +195,15 @@ class CollectInstanceTypes
 {
 public:
 	explicit CollectInstanceTypes(TypeInfoSet& outInstanceTypes)
-	:	m_outInstanceTypes(outInstanceTypes)
+		: m_outInstanceTypes(outInstanceTypes)
 	{
 	}
 
-	bool operator () (const db::Instance* instance) const
+	bool operator()(const db::Instance* instance) const
 	{
 		const TypeInfo* instanceType = instance->getPrimaryType();
 		if (instanceType)
-				m_outInstanceTypes.insert(instanceType);
+			m_outInstanceTypes.insert(instanceType);
 		return false;
 	}
 
@@ -295,10 +294,8 @@ bool removeGroup(db::Group* group)
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
 	for (auto childGroup : childGroups)
-	{
 		if (!removeGroup(childGroup))
 			return false;
-	}
 
 	// No more child groups; now remove all child instances.
 	RefArray< db::Instance > childInstances;
@@ -320,12 +317,12 @@ bool removeGroup(db::Group* group)
 	return true;
 }
 
-	}
+}
 
 DatabaseView::DatabaseView(IEditor* editor)
-:	m_editor(editor)
-,	m_filter(new DefaultFilter())
-,	m_filterCountDown(-1)
+	: m_editor(editor)
+	, m_filter(new DefaultFilter())
+	, m_filterCountDown(-1)
 {
 }
 
@@ -346,32 +343,28 @@ bool DatabaseView::create(ui::Widget* parent)
 		i18n::Text(L"DATABASE_FILTER"),
 		0,
 		ui::Command(L"Database.Filter"),
-		ui::ToolBarButton::BsDefaultToggle
-	);
+		ui::ToolBarButton::BsDefaultToggle);
 	m_toolSelection->addItem(m_toolFilterType);
 
 	m_toolFilterAssets = new ui::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER_ASSETS"),
 		1,
 		ui::Command(L"Database.FilterAssets"),
-		ui::ToolBarButton::BsDefaultToggle
-	);
+		ui::ToolBarButton::BsDefaultToggle);
 	m_toolSelection->addItem(m_toolFilterAssets);
 
 	m_toolFilterShow = new ui::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER_SHOW_FILTERED"),
 		2,
 		ui::Command(L"Database.ShowFiltered"),
-		ui::ToolBarButton::BsDefaultToggle
-	);
+		ui::ToolBarButton::BsDefaultToggle);
 	m_toolSelection->addItem(m_toolFilterShow);
 
 	m_toolFavoritesShow = new ui::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER_SHOW_FAVORITES"),
 		3,
 		ui::Command(L"Database.ShowFavorites"),
-		ui::ToolBarButton::BsDefaultToggle
-	);
+		ui::ToolBarButton::BsDefaultToggle);
 	m_toolSelection->addItem(m_toolFavoritesShow);
 
 	m_toolSelection->addItem(new ui::ToolBarSeparator());
@@ -387,8 +380,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_HIERARCHY"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_SPLIT"));
 	m_toolViewMode->select(
-		m_editor->getSettings()->getProperty< int32_t >(L"Editor.DatabaseView", 1)
-	);
+		m_editor->getSettings()->getProperty< int32_t >(L"Editor.DatabaseView", 1));
 	m_toolSelection->addItem(m_toolViewMode);
 
 	m_toolSelection->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DatabaseView::eventToolSelectionClicked);
@@ -507,7 +499,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	// Create browse preview generators.
 	for (auto typeInfo : type_of< IBrowsePreview >().findAllOf(false))
 	{
-		Ref< const IBrowsePreview > browsePreview = checked_type_cast< const IBrowsePreview*, false >(typeInfo->createInstance());
+		Ref< const IBrowsePreview > browsePreview = mandatory_non_null_type_cast< const IBrowsePreview* >(typeInfo->createInstance());
 		m_browsePreview.push_back(browsePreview);
 	}
 
@@ -579,9 +571,9 @@ void DatabaseView::updateView()
 		for (const auto& favoriteInstance : m_editor->getSettings()->getProperty< AlignedVector< std::wstring > >(L"Editor.FavoriteInstances"))
 			m_favoriteInstances.insert(Guid(favoriteInstance));
 
-		if (viewMode == 0)	// Hierarchy
+		if (viewMode == 0) // Hierarchy
 			buildTreeItemHierarchy(m_treeDatabase, 0, m_db->getRootGroup());
-		else if (viewMode == 1)	// Split
+		else if (viewMode == 1) // Split
 		{
 			m_listInstances->setVisible(true);
 			buildTreeItemSplit(m_treeDatabase, 0, m_db->getRootGroup());
@@ -638,8 +630,8 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 	Ref< db::Instance > instance;
 
 	const int32_t viewMode = m_toolViewMode->getSelected();
-	if (viewMode == 0)	// Hierarchy
-	{	
+	if (viewMode == 0) // Hierarchy
+	{
 		RefArray< ui::TreeViewItem > items = m_treeDatabase->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 		if (items.size() != 1)
 			return false;
@@ -648,7 +640,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		group = treeItem->getData< db::Group >(L"GROUP");
 		instance = treeItem->getData< db::Instance >(L"INSTANCE");
 	}
-	else if (viewMode == 1)	// Split
+	else if (viewMode == 1) // Split
 	{
 		RefArray< ui::TreeViewItem > items = m_treeDatabase->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 		if (items.size() != 1)
@@ -664,7 +656,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 	if (group && instance)
 	{
-		if (command == L"Editor.Database.Edit")	// Edit
+		if (command == L"Editor.Database.Edit") // Edit
 		{
 			Ref< Asset > editAsset = instance->getObject< Asset >();
 			if (editAsset)
@@ -674,7 +666,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				OS::getInstance().editFile(filePath.getPathName());
 			}
 		}
-		else if (command == L"Editor.Database.Explore")	// Explore
+		else if (command == L"Editor.Database.Explore") // Explore
 		{
 			Ref< Asset > exploreAsset = instance->getObject< Asset >();
 			if (exploreAsset)
@@ -684,7 +676,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				OS::getInstance().exploreFile(filePath.getPathName());
 			}
 		}
-		else if (command == L"Editor.Database.ReplaceInstance")	// Replace instance
+		else if (command == L"Editor.Database.ReplaceInstance") // Replace instance
 		{
 			const TypeInfoSet serializableTypeSet = makeTypeInfoSet< ISerializable >();
 			BrowseTypeDialog browseTypeDlg(m_editor->checkoutGlobalSettings());
@@ -712,7 +704,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			browseTypeDlg.destroy();
 		}
-		else if (command == L"Editor.Delete")	// Delete
+		else if (command == L"Editor.Delete") // Delete
 		{
 			if (ui::MessageBox::show(this, i18n::Text(L"DATABASE_DELETE_ARE_YOU_SURE"), i18n::Text(L"DATABASE_DELETE_INSTANCE"), ui::MbYesNo | ui::MbIconQuestion) != ui::DialogResult::Yes)
 				return false;
@@ -726,7 +718,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			updateView();
 		}
-		else if (command == L"Editor.Database.Clone")	// Clone
+		else if (command == L"Editor.Database.Clone") // Clone
 		{
 			Ref< ISerializable > object = instance->getObject< ISerializable >();
 			if (!object)
@@ -784,11 +776,11 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			updateView();
 		}
-		else if (command == L"Editor.Database.DefaultEditInstance")	// Default edit instance
+		else if (command == L"Editor.Database.DefaultEditInstance") // Default edit instance
 		{
 			m_editor->openDefaultEditor(instance);
 		}
-		else if (command == L"Editor.Copy")		// Copy instance
+		else if (command == L"Editor.Copy") // Copy instance
 		{
 			Ref< ISerializable > object = instance->getObject< ISerializable >();
 			if (!object)
@@ -809,7 +801,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			ui::Application::getInstance()->getClipboard()->setObject(instanceClipboardData);
 		}
-		else if (command == L"Editor.CopyAll")	// Copy instance, including all dependencies.
+		else if (command == L"Editor.CopyAll") // Copy instance, including all dependencies.
 		{
 			Ref< ISerializable > object = instance->getObject< ISerializable >();
 			if (!object)
@@ -863,27 +855,26 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 					instanceClipboardData->addInstance(
 						dependentInstance->getName(),
 						dependentObject,
-						dependentInstance->getGuid()
-					);
+						dependentInstance->getGuid());
 				}
 			}
 
 			ui::Application::getInstance()->getClipboard()->setObject(instanceClipboardData);
 		}
-		else if (command == L"Editor.CopyInstanceId")	// Copy instance ID.
+		else if (command == L"Editor.CopyInstanceId") // Copy instance ID.
 		{
 			const Guid id = instance->getGuid();
 			ui::Application::getInstance()->getClipboard()->setText(id.format());
 		}
-		else if (command == L"Editor.OpenInNewEditor")	// Open in new editor.
+		else if (command == L"Editor.OpenInNewEditor") // Open in new editor.
 		{
 			m_editor->openInNewEditor(instance);
 		}
-		else if (command == L"Editor.Database.FilterInstanceType")	// Filter on type.
+		else if (command == L"Editor.Database.FilterInstanceType") // Filter on type.
 		{
 			filterType(instance);
 		}
-		else if (command == L"Editor.Database.FilterInstanceDepends")	// Filter on dependencies
+		else if (command == L"Editor.Database.FilterInstanceDepends") // Filter on dependencies
 		{
 			filterDependencies(instance);
 		}
@@ -891,7 +882,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		{
 			listInstanceDependents(instance);
 		}
-		else if (command == L"Editor.Database.ToggleRoot")	// Toggle root flag.
+		else if (command == L"Editor.Database.ToggleRoot") // Toggle root flag.
 		{
 			const Guid instanceGuid = instance->getGuid();
 
@@ -911,7 +902,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			updateView();
 		}
-		else if (command == L"Editor.Database.ToggleFavorite")	// Toggle favorite flag.
+		else if (command == L"Editor.Database.ToggleFavorite") // Toggle favorite flag.
 		{
 			const Guid instanceGuid = instance->getGuid();
 
@@ -931,11 +922,11 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			updateView();
 		}
-		else if (command == L"Editor.Database.Build")	// Build asset
+		else if (command == L"Editor.Database.Build") // Build asset
 		{
 			m_editor->buildAsset(instance->getGuid(), false);
 		}
-		else if (command == L"Editor.Database.Rebuild")	// Rebuild asset
+		else if (command == L"Editor.Database.Rebuild") // Rebuild asset
 		{
 			m_editor->buildAsset(instance->getGuid(), true);
 		}
@@ -947,7 +938,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		}
 		else if (command == L"Editor.Rename")
 		{
-			if (viewMode == 0)	// Hierarchy
+			if (viewMode == 0) // Hierarchy
 			{
 				T_FATAL_ASSERT(treeItem != nullptr);
 				treeItem->edit();
@@ -964,7 +955,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 	}
 	else if (group)
 	{
-		if (command == L"Editor.Database.NewInstance")	// New instance...
+		if (command == L"Editor.Database.NewInstance") // New instance...
 		{
 			// Count number of individual type groups to determine initial folder selected.
 			std::map< std::wstring, int32_t > groupNames;
@@ -990,10 +981,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			std::vector< std::pair< std::wstring, int32_t > > tmp;
 			tmp.insert(tmp.begin(), groupNames.begin(), groupNames.end());
 
-			std::sort(tmp.begin(), tmp.end(), [](
-				const std::pair< std::wstring, int32_t >& lh,
-				const std::pair< std::wstring, int32_t >& rh
-			) {
+			std::sort(tmp.begin(), tmp.end(), [](const std::pair< std::wstring, int32_t >& lh, const std::pair< std::wstring, int32_t >& rh) {
 				return lh.second > rh.second;
 			});
 
@@ -1023,13 +1011,13 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			newInstanceDlg.destroy();
 		}
-		else if (command == L"Editor.Database.NewGroup")	// New group...
+		else if (command == L"Editor.Database.NewGroup") // New group...
 		{
 			Ref< db::Group > newGroup = group->createGroup(i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"));
 			if (newGroup)
 				updateView();
 		}
-		else if (command == L"Editor.Delete")	// Delete
+		else if (command == L"Editor.Delete") // Delete
 		{
 			if (ui::MessageBox::show(this, i18n::Text(L"DATABASE_DELETE_ARE_YOU_SURE"), i18n::Text(L"DATABASE_DELETE_GROUP"), ui::MbYesNo | ui::MbIconQuestion) != ui::DialogResult::Yes)
 				return false;
@@ -1039,11 +1027,10 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			updateView();
 		}
-		else if (command == L"Editor.Paste")	// Paste instance into group
+		else if (command == L"Editor.Paste") // Paste instance into group
 		{
 			Ref< InstanceClipboardData > instanceClipboardData = dynamic_type_cast< InstanceClipboardData* >(
-				ui::Application::getInstance()->getClipboard()->getObject()
-			);
+				ui::Application::getInstance()->getClipboard()->getObject());
 			if (!instanceClipboardData)
 				return false;
 
@@ -1179,7 +1166,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemHierarchy(ui::TreeView* treeV
 	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 1);
 	groupItem->setImage(0, 0, 1);
 	groupItem->setData(L"GROUP", group);
-	
+
 	// Highlight linked groups and ensure they cannot be renamed.
 	if ((group->getFlags() & db::GfLink) != 0)
 	{
@@ -1362,12 +1349,10 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 			if (previewTypes.find(instanceType) != previewTypes.end())
 			{
 				Ref< db::Instance > childInstanceRef = childInstance;
-				m_previewJobs.push_back(JobManager::getInstance().add([=, this]()
-				{
+				m_previewJobs.push_back(JobManager::getInstance().add([=, this]() {
 					item->setImage(browsePreview->generate(
 						m_editor,
-						childInstanceRef
-					));
+						childInstanceRef));
 					m_listInstances->requestUpdate();
 				}));
 				break;
@@ -1529,8 +1514,7 @@ void DatabaseView::handleInstanceButtonDown(ui::Event* event, const ui::Point& p
 
 		const ui::MenuItem* selected = menuInstance->showModal(
 			mandatory_non_null_type_cast< ui::Widget* >(event->getSender()),
-			position
-		);
+			position);
 		if (selected)
 			handleCommand(selected->getCommand());
 	}
@@ -1557,8 +1541,7 @@ void DatabaseView::handleInstanceButtonDown(ui::Event* event, const ui::Point& p
 		const bool showFavorites = m_toolFavoritesShow->isToggled();
 		const ui::MenuItem* selected = m_menuGroup[showFavorites ? 1 : 0]->showModal(
 			mandatory_non_null_type_cast< ui::Widget* >(event->getSender()),
-			position
-		);
+			position);
 		if (selected)
 			handleCommand(selected->getCommand());
 	}
@@ -1594,8 +1577,7 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 			db::recursiveFindChildInstances(
 				m_db->getRootGroup(),
 				db::FindInstanceByType(type_of< Assets >()),
-				assetsInstances
-			);
+				assetsInstances);
 
 			std::set< Guid > guidSet;
 			for (auto assetsInstance : assetsInstances)
@@ -1764,7 +1746,7 @@ void DatabaseView::eventInstanceDrag(ui::DragEvent* event)
 {
 	Ref< db::Instance > instance;
 
-	if (auto treeViewDrag = dynamic_type_cast<ui::TreeViewDragEvent*>(event))
+	if (auto treeViewDrag = dynamic_type_cast< ui::TreeViewDragEvent* >(event))
 		instance = treeViewDrag->getItem()->getData< db::Instance >(L"INSTANCE");
 	else
 		instance = m_listInstances->getSelectedItem()->getData< db::Instance >(L"INSTANCE");
@@ -1799,4 +1781,3 @@ void DatabaseView::eventInstancePreviewActivate(ui::MouseDoubleClickEvent* event
 }
 
 }
-

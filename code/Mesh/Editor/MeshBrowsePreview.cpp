@@ -1,26 +1,27 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Mesh/Editor/MeshBrowsePreview.h"
+
 #include "Database/Instance.h"
-#include "Drawing/Image.h"
-#include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/GaussianBlurFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetRasterizer.h"
-#include "Mesh/Editor/MeshBrowsePreview.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MeshBrowsePreview", 0, MeshBrowsePreview, editor::IBrowsePreview)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshBrowsePreview", 0, MeshBrowsePreview, editor::IBrowsePreview)
 
 TypeInfoSet MeshBrowsePreview::getPreviewTypes() const
 {
@@ -36,8 +37,7 @@ Ref< ui::IBitmap > MeshBrowsePreview::generate(editor::IEditor* editor, db::Inst
 	Ref< drawing::Image > meshThumb = new drawing::Image(
 		drawing::PixelFormat::getR8G8B8A8(),
 		128,
-		128
-	);
+		128);
 	meshThumb->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 	MeshAssetRasterizer().generate(editor, asset, meshThumb);
@@ -46,8 +46,7 @@ Ref< ui::IBitmap > MeshBrowsePreview::generate(editor::IEditor* editor, db::Inst
 		64,
 		64,
 		drawing::ScaleFilter::MnAverage,
-		drawing::ScaleFilter::MgLinear
-	);
+		drawing::ScaleFilter::MgLinear);
 	meshThumb->apply(&scaleFilter);
 
 	Ref< drawing::Image > shadow = meshThumb->clone();
@@ -69,7 +68,7 @@ Ref< ui::IBitmap > MeshBrowsePreview::generate(editor::IEditor* editor, db::Inst
 
 			Color4f color;
 			meshThumb->getPixelUnsafe(x, y, color);
-			
+
 			color.setAlpha(max(color.getAlpha(), alpha.getAlpha() * 0.5_simd * vignette));
 			meshThumb->setPixelUnsafe(x, y, color);
 		}
