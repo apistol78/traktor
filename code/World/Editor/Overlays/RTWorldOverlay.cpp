@@ -24,6 +24,7 @@ namespace
 {
 
 const resource::Id< render::Shader > c_debugShader(Guid(L"{385D649D-56CD-EF47-8D99-6105EA86E849}"));
+const render::Handle c_handleDebugAlpha(L"Scene_DebugAlpha");
 
 }
 
@@ -49,6 +50,7 @@ void RTWorldOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRende
 		return;
 	}
 
+	const Matrix44 projection = worldRenderView.getProjection();
 	const Matrix44 viewInverse = worldRenderView.getView().inverse();
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"RTWorld overlay");
@@ -56,6 +58,8 @@ void RTWorldOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRende
 	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto pp = renderContext->alloc< render::ProgramParameters >();
 		pp->beginParameters(renderContext);
+		pp->setFloatParameter(c_handleDebugAlpha, alpha);
+		pp->setMatrixParameter(s_handleViewProjection, projection);
 		pp->setMatrixParameter(s_handleViewInverse, viewInverse);
 		pp->setAccelerationStructureParameter(s_handleTLAS, rtw->getTopLevel());
 		pp->endParameters(renderContext);
