@@ -1,5 +1,3 @@
-#pragma optimize("", off)
-
 /*
  * TRAKTOR
  * Copyright (c) 2022-2025 Anders Pistol.
@@ -52,8 +50,8 @@ bool ToolFormWin32::create(IWidget* parent, const std::wstring& text, int width,
 			parent ? (HWND)parent->getInternalHandle() : NULL,
 			_T("TraktorWin32Class"),
 			wstots(text).c_str(),
-			WS_POPUP, // WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | nativeStyle,
-			/*WS_EX_NOACTIVATE | */ nativeStyleEx,
+			WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | nativeStyle,
+			WS_EX_NOACTIVATE | nativeStyleEx,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
 			width,
