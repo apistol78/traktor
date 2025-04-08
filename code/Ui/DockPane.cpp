@@ -1,25 +1,27 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/DockPane.h"
+
+#include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
-#include "Ui/DockPane.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/StyleSheet.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 const int c_splitterDim = 6;
 
@@ -36,19 +38,19 @@ int32_t calculateRealSplit(const Widget* widget, int32_t gripperDim, const Rect&
 	return realSplit;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.DockPane", DockPane, Object)
 
 DockPane::DockPane(Widget* owner, DockPane* parent)
-:	m_owner(owner)
-,	m_parent(parent)
+	: m_owner(owner)
+	, m_parent(parent)
 {
 	m_bitmapClose = new ui::StyleBitmap(L"UI.DockClose");
-	T_FATAL_ASSERT (m_bitmapClose);
+	T_FATAL_ASSERT(m_bitmapClose);
 
 	m_bitmapGripper = new ui::StyleBitmap(L"UI.DockGripper");
-	T_FATAL_ASSERT (m_bitmapGripper);
+	T_FATAL_ASSERT(m_bitmapGripper);
 
 	m_gripperDim = owner->getFont().getSize() + 9_ut;
 }
@@ -75,7 +77,7 @@ void DockPane::dock(Widget* widget)
 
 	m_widgets.push_back({ widget, 0, 0, 0, true });
 	m_child[0] =
-	m_child[1] = nullptr;
+		m_child[1] = nullptr;
 
 	synchronizeVisibility();
 }
@@ -97,13 +99,12 @@ void DockPane::dock(Widget* widget, Direction direction, Unit split)
 			direction == DrNorth || direction == DrSouth,
 			(direction == DrNorth || direction == DrWest) ? split : -split,
 			leftPane,
-			rightPane
-		);
+			rightPane);
 
 		if (direction == DrNorth || direction == DrWest)
 		{
 			leftPane->dock(widget);
-			
+
 			for (const auto& w : currentWidgets)
 				rightPane->dock(w.widget);
 
@@ -112,75 +113,72 @@ void DockPane::dock(Widget* widget, Direction direction, Unit split)
 		else
 		{
 			rightPane->dock(widget);
-			
+
 			for (const auto& w : currentWidgets)
 				leftPane->dock(w.widget);
 
 			leftPane->setDetachable(currentDetachable);
 		}
 	}
-	else
+	else if (m_child[0] && m_child[1])
 	{
-		if (m_child[0] && m_child[1])
+		Ref< DockPane > paneLeft = new DockPane(m_owner, this);
+		Ref< DockPane > paneRight = new DockPane(m_owner, this);
+
+		if (direction == DrNorth || direction == DrWest)
 		{
-			Ref< DockPane > paneLeft = new DockPane(m_owner, this);
-			Ref< DockPane > paneRight = new DockPane(m_owner, this);
+			paneLeft->dock(widget);
 
-			if (direction == DrNorth || direction == DrWest)
-			{
-				paneLeft->dock(widget);
+			paneRight->m_widgets = m_widgets;
+			paneRight->m_detachable = m_detachable;
+			paneRight->m_child[0] = m_child[0];
+			paneRight->m_child[1] = m_child[1];
+			paneRight->m_vertical = m_vertical;
+			paneRight->m_split = m_split;
 
-				paneRight->m_widgets = m_widgets;
-				paneRight->m_detachable = m_detachable;
-				paneRight->m_child[0] = m_child[0];
-				paneRight->m_child[1] = m_child[1];
-				paneRight->m_vertical = m_vertical;
-				paneRight->m_split = m_split;
+			if (paneRight->m_child[0])
+				paneRight->m_child[0]->m_parent = paneRight;
+			if (paneRight->m_child[1])
+				paneRight->m_child[1]->m_parent = paneRight;
 
-				if (paneRight->m_child[0])
-					paneRight->m_child[0]->m_parent = paneRight;
-				if (paneRight->m_child[1])
-					paneRight->m_child[1]->m_parent = paneRight;
-
-				m_child[0] = paneLeft;
-				m_child[1] = paneRight;
-				m_vertical = direction == DrNorth;
-				m_split = split;
-			}
-			else
-			{
-				paneLeft->m_widgets = m_widgets;
-				paneLeft->m_detachable = m_detachable;
-				paneLeft->m_child[0] = m_child[0];
-				paneLeft->m_child[1] = m_child[1];
-				paneLeft->m_vertical = m_vertical;
-				paneLeft->m_split = m_split;
-
-				if (paneLeft->m_child[0])
-					paneLeft->m_child[0]->m_parent = paneLeft;
-				if (paneLeft->m_child[1])
-					paneLeft->m_child[1]->m_parent = paneLeft;
-
-				paneRight->dock(widget);
-
-				m_child[0] = paneLeft;
-				m_child[1] = paneRight;
-				m_vertical = direction == DrSouth;
-				m_split = -split;
-			}
+			m_child[0] = paneLeft;
+			m_child[1] = paneRight;
+			m_vertical = direction == DrNorth;
+			m_split = split;
 		}
 		else
 		{
-			T_ASSERT(!m_child[0] && !m_child[1]);
-			dock(widget);
+			paneLeft->m_widgets = m_widgets;
+			paneLeft->m_detachable = m_detachable;
+			paneLeft->m_child[0] = m_child[0];
+			paneLeft->m_child[1] = m_child[1];
+			paneLeft->m_vertical = m_vertical;
+			paneLeft->m_split = m_split;
 
-			if (m_parent)
-			{
-				if (m_parent->m_split < 0_ut)
-					m_parent->m_split = Unit(-traktor::abs(split.get()));
-				else
-					m_parent->m_split = Unit(traktor::abs(split.get()));
-			}
+			if (paneLeft->m_child[0])
+				paneLeft->m_child[0]->m_parent = paneLeft;
+			if (paneLeft->m_child[1])
+				paneLeft->m_child[1]->m_parent = paneLeft;
+
+			paneRight->dock(widget);
+
+			m_child[0] = paneLeft;
+			m_child[1] = paneRight;
+			m_vertical = direction == DrSouth;
+			m_split = -split;
+		}
+	}
+	else
+	{
+		T_ASSERT(!m_child[0] && !m_child[1]);
+		dock(widget);
+
+		if (m_parent)
+		{
+			if (m_parent->m_split < 0_ut)
+				m_parent->m_split = Unit(-traktor::abs(split.get()));
+			else
+				m_parent->m_split = Unit(traktor::abs(split.get()));
 		}
 	}
 }
@@ -189,7 +187,9 @@ void DockPane::undock(Widget* widget)
 {
 	T_FATAL_ASSERT_M(widget != nullptr, L"Cannot un-dock null widget.");
 
-	auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](const WidgetInfo& w) { return w.widget == widget; });
+	auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](const WidgetInfo& w) {
+		return w.widget == widget;
+	});
 	if (it != m_widgets.end())
 	{
 		m_widgets.erase(it);
@@ -210,8 +210,7 @@ void DockPane::undock(Widget* widget)
 			m_child[0]->m_widgets.empty() &&
 			m_child[1]->m_widgets.empty() &&
 			m_child[0]->m_child[0] == nullptr &&
-			m_child[1]->m_child[0] == nullptr
-		)
+			m_child[1]->m_child[0] == nullptr)
 		{
 			T_ASSERT(m_child[0]->m_child[1] == nullptr);
 			T_ASSERT(m_child[1]->m_child[1] == nullptr);
@@ -222,8 +221,7 @@ void DockPane::undock(Widget* widget)
 		else if (
 			!m_child[1]->m_widgets.empty() &&
 			m_child[0]->m_widgets.empty() &&
-			m_child[0]->m_child[0] == nullptr
-		)
+			m_child[0]->m_child[0] == nullptr)
 		{
 			T_ASSERT(m_child[0]->m_child[1] == nullptr);
 
@@ -237,8 +235,7 @@ void DockPane::undock(Widget* widget)
 		else if (
 			!m_child[0]->m_widgets.empty() &&
 			m_child[1]->m_widgets.empty() &&
-			m_child[1]->m_child[0] == nullptr
-		)
+			m_child[1]->m_child[0] == nullptr)
 		{
 			T_ASSERT(m_child[1]->m_child[1] == nullptr);
 
@@ -314,7 +311,9 @@ void DockPane::showWidget(Widget* widget)
 	for (int32_t i = 0; i < (int32_t)m_widgets.size(); ++i)
 		m_widgets[i].tabDepth++;
 
-	const auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](const WidgetInfo& w) { return w.widget == widget; });
+	const auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](const WidgetInfo& w) {
+		return w.widget == widget;
+	});
 	T_FATAL_ASSERT_M(it != m_widgets.end(), L"Widget not docked in this pane.");
 	it->visible = true;
 	it->tabDepth = 0;
@@ -324,7 +323,9 @@ void DockPane::showWidget(Widget* widget)
 
 void DockPane::hideWidget(Widget* widget)
 {
-	const auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](const WidgetInfo& w) { return w.widget == widget; });
+	const auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](const WidgetInfo& w) {
+		return w.widget == widget;
+	});
 	T_FATAL_ASSERT_M(it != m_widgets.end(), L"Widget not docked in this pane.");
 	it->visible = false;
 	synchronizeVisibility();
@@ -332,14 +333,18 @@ void DockPane::hideWidget(Widget* widget)
 
 bool DockPane::isWidgetVisible(const Widget* widget) const
 {
-	const auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](const WidgetInfo& w) { return w.widget == widget; });
+	const auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [&](const WidgetInfo& w) {
+		return w.widget == widget;
+	});
 	T_FATAL_ASSERT_M(it != m_widgets.end(), L"Widget not docked in this pane.");
 	return it->visible;
 }
 
 DockPane* DockPane::findWidgetPane(const Widget* widget)
 {
-	if (std::find_if(m_widgets.begin(), m_widgets.end(), [&](const WidgetInfo& w) { return w.widget == widget; }) != m_widgets.end())
+	if (std::find_if(m_widgets.begin(), m_widgets.end(), [&](const WidgetInfo& w) {
+			return w.widget == widget;
+		}) != m_widgets.end())
 		return this;
 
 	for (uint32_t i = 0; i < 2; ++i)
@@ -513,10 +518,8 @@ bool DockPane::isVisible() const
 		return m_child[0]->isVisible() || m_child[1]->isVisible();
 
 	for (const auto& w : m_widgets)
-	{
 		if (w.visible)
 			return true;
-	}
 
 	return false;
 }
@@ -568,10 +571,8 @@ void DockPane::update(const Rect& rect, AlignedVector< WidgetRect >& outWidgetRe
 		if (m_detachable)
 			widgetRect.top += m_owner->pixel(m_gripperDim);
 		for (const auto& w : m_widgets)
-		{
 			if (w.visible)
 				outWidgetRects.push_back(WidgetRect(w.widget, widgetRect));
-		}
 	}
 	else
 	{
@@ -608,7 +609,7 @@ void DockPane::update(const Rect& rect, AlignedVector< WidgetRect >& outWidgetRe
 	}
 }
 
-void DockPane::draw(Canvas& canvas)
+void DockPane::draw(Canvas& canvas, const Point& mousePosition)
 {
 	if (!isVisible())
 		return;
@@ -667,9 +668,10 @@ void DockPane::draw(Canvas& canvas)
 				const Size titleExtent = fm.getExtent(title);
 
 				const Rect rcTab(
-					left, titleRect.top,
-					left + titleExtent.cx + m_owner->pixel(12_ut), titleRect.bottom
-				);
+					left,
+					titleRect.top,
+					left + titleExtent.cx + m_owner->pixel(12_ut),
+					titleRect.bottom);
 
 				const bool visible = w.widget->isVisible(false);
 				if (visible)
@@ -679,8 +681,9 @@ void DockPane::draw(Canvas& canvas)
 				}
 				else
 				{
+					const bool hover = rcTab.inside(mousePosition, false);
 					canvas.setForeground(ss->getColor(this, L"tab-color-inactive"));
-					canvas.setBackground(ss->getColor(this, L"tab-background-color"));
+					canvas.setBackground(ss->getColor(this, hover ? L"tab-background-color-hover" : L"tab-background-color"));
 				}
 				canvas.fillRect(rcTab);
 
@@ -725,28 +728,24 @@ void DockPane::draw(Canvas& canvas)
 				Point(0, 0),
 				Size(w, gh),
 				m_bitmapGripper,
-				BlendMode::Modulate
-			);
+				BlendMode::Modulate);
 			gx += gw;
 		}
 
 		// Draw close button.
 		if (!m_stackable)
-		{
 			canvas.drawBitmap(
 				Point(captionRect.right - closeWidth - m_owner->pixel(4_ut), captionRect.getCenter().y - m_bitmapClose->getSize(m_owner).cy / 2),
 				Point(0, 0),
 				m_bitmapClose->getSize(m_owner),
 				m_bitmapClose,
-				BlendMode::Alpha
-			);
-		}
+				BlendMode::Alpha);
 	}
 
 	if (m_child[0])
-		m_child[0]->draw(canvas);
+		m_child[0]->draw(canvas, mousePosition);
 	if (m_child[1])
-		m_child[1]->draw(canvas);
+		m_child[1]->draw(canvas, mousePosition);
 }
 
 }

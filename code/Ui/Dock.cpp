@@ -1,16 +1,18 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/Dock.h"
+
+#include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
-#include "Ui/Dock.h"
 #include "Ui/DockPane.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Form.h"
@@ -26,12 +28,12 @@
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 const int c_hintSize = 32 + 29 + 32;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Dock", Dock, Widget)
 
@@ -69,6 +71,7 @@ bool Dock::create(Widget* parent)
 	m_pane = new DockPane(this, (DockPane*)nullptr);
 
 	addEventHandler< SizeEvent >(this, &Dock::eventSize);
+	addEventHandler< MouseTrackEvent >(this, &Dock::eventMouseTrack);
 	addEventHandler< MouseButtonDownEvent >(this, &Dock::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &Dock::eventButtonUp);
 	addEventHandler< MouseMoveEvent >(this, &Dock::eventMouseMove);
@@ -129,6 +132,11 @@ void Dock::eventSize(SizeEvent* event)
 	update();
 }
 
+void Dock::eventMouseTrack(MouseTrackEvent* event)
+{
+	Widget::update(nullptr, false);
+}
+
 void Dock::eventButtonDown(MouseButtonDownEvent* event)
 {
 	const Point position = event->getPosition();
@@ -180,11 +188,10 @@ void Dock::eventMouseMove(MouseMoveEvent* event)
 		Ref< DockPane > pane = m_pane->getSplitterFromPosition(position);
 		if (
 			pane &&
-			pane->hitSplitter(position)
-		)
-		{
+			pane->hitSplitter(position))
 			cursor = pane->m_vertical ? Cursor::SizeNS : Cursor::SizeWE;
-		}
+
+		Widget::update(nullptr, false);
 	}
 	else
 	{
@@ -213,23 +220,22 @@ void Dock::eventDoubleClick(MouseDoubleClickEvent* event)
 
 	if (
 		pane->hitGripper(position) &&
-		!pane->hitGripperClose(position)
-	)
+		!pane->hitGripperClose(position))
 	{
-		//T_ASSERT(pane->m_detachable);
+		// T_ASSERT(pane->m_detachable);
 
 		////Ref< Widget > widget = pane->m_widget;
 
-		//pane->detach();
+		// pane->detach();
 
 		//// Determine size of form.
-		//const Size widgetSize = widget ? widget->getRect().getSize() : Size(0, 0);
-		//const Size preferredSize = widget ? widget->getPreferredSize(widgetSize) : Size(100, 100);
-		//const Size formSize(std::max(widgetSize.cx, preferredSize.cx), std::max(widgetSize.cy, preferredSize.cy));
+		// const Size widgetSize = widget ? widget->getRect().getSize() : Size(0, 0);
+		// const Size preferredSize = widget ? widget->getPreferredSize(widgetSize) : Size(100, 100);
+		// const Size formSize(std::max(widgetSize.cx, preferredSize.cx), std::max(widgetSize.cy, preferredSize.cy));
 
 		//// Create floating form.
-		//Ref< ToolForm > form = new ToolForm();
-		//form->create(
+		// Ref< ToolForm > form = new ToolForm();
+		// form->create(
 		//	this,
 		//	widget ? widget->getText() : L"",
 		//	Unit(formSize.cx),
@@ -239,23 +245,23 @@ void Dock::eventDoubleClick(MouseDoubleClickEvent* event)
 		//);
 
 		//// Use same icon as ancestor.
-		//Form* ancestor = dynamic_type_cast< Form* >(getAncestor());
-		//if (ancestor)
+		// Form* ancestor = dynamic_type_cast< Form* >(getAncestor());
+		// if (ancestor)
 		//	form->setIcon(ancestor->getIcon());
 
-		//form->addEventHandler< MoveEvent >(this, &Dock::eventFormMove);
-		//form->addEventHandler< NcMouseButtonDownEvent >(this, &Dock::eventFormNcButtonDown);
-		//form->addEventHandler< NcMouseButtonUpEvent >(this, &Dock::eventFormNcButtonUp);
+		// form->addEventHandler< MoveEvent >(this, &Dock::eventFormMove);
+		// form->addEventHandler< NcMouseButtonDownEvent >(this, &Dock::eventFormNcButtonDown);
+		// form->addEventHandler< NcMouseButtonUpEvent >(this, &Dock::eventFormNcButtonUp);
 
 		//// Re-parent widget into floating form.
-		//if (widget)
+		// if (widget)
 		//	widget->setParent(form);
 
-		//form->setData(L"WIDGET", widget);
-		//form->update();
-		//form->show();
+		// form->setData(L"WIDGET", widget);
+		// form->update();
+		// form->show();
 
-		//update();
+		// update();
 	}
 }
 
@@ -268,7 +274,8 @@ void Dock::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(innerRect);
 
-	m_pane->draw(canvas);
+	const Point position = getMousePosition();
+	m_pane->draw(canvas, position);
 
 	event->consume();
 }
@@ -295,8 +302,7 @@ void Dock::eventFormMove(MoveEvent* event)
 		const Point center = tl + Size((br.x - tl.x) / 2, (br.y - tl.y) / 2);
 		m_hint->setRect(Rect(
 			center - Size(c_hintSize / 2, c_hintSize / 2),
-			Size(c_hintSize, c_hintSize)
-		));
+			Size(c_hintSize, c_hintSize)));
 		m_hint->show();
 
 		m_hintDockPane = pane;
@@ -367,8 +373,7 @@ void Dock::eventFormNcButtonUp(NcMouseButtonUpEvent* event)
 		pane->dock(
 			widget,
 			direction,
-			unit(size)
-		);
+			unit(size));
 
 		update();
 	}
@@ -414,7 +419,7 @@ void Dock::eventHintButtonUp(MouseButtonUpEvent* event)
 		direction = DockPane::DrNorth;
 		size = widgetSize.cy;
 	}
-	else/* if (hintImage == m_hintBottom)*/
+	else /* if (hintImage == m_hintBottom)*/
 	{
 		direction = DockPane::DrSouth;
 		size = widgetSize.cy;
@@ -423,8 +428,7 @@ void Dock::eventHintButtonUp(MouseButtonUpEvent* event)
 	m_hintDockPane->dock(
 		widget,
 		direction,
-		unit(size)
-	);
+		unit(size));
 
 	update();
 }

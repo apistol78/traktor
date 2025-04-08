@@ -61,6 +61,8 @@ private:
 
 	void eventSize(SizeEvent* event);
 
+	void eventMouseTrack(MouseTrackEvent* event);
+
 	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventButtonUp(MouseButtonUpEvent* event);

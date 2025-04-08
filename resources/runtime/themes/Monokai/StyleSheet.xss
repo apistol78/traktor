@@ -182,6 +182,10 @@
 					<second>0</second>
 				</item>
 				<item>
+					<first>tab-background-color-hover</first>
+					<second>26</second>
+				</item>
+				<item>
 					<first>tab-color-active</first>
 					<second>22</second>
 				</item>
