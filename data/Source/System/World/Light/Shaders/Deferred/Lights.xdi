@@ -863,7 +863,7 @@
 			</position>
 			<name>LightIndex</name>
 		</item>
-		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="5,traktor.render.Node:1">
 			<id>{D496820C-CA50-9147-8BB5-0031B514E44E}</id>
 			<comment/>
 			<position>
@@ -872,6 +872,7 @@
 			</position>
 			<structDeclaration>{F1783FA0-68A0-E142-9430-656CC70FECBA}</structDeclaration>
 			<parameterName>World_LightIndexSBuffer</parameterName>
+			<declType/>
 			<decl>
 				<elements/>
 			</decl>
@@ -1612,7 +1613,7 @@ Eye direction
 				<item>AtlasTransform</item>
 			</names>
 		</item>
-		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="5,traktor.render.Node:1">
 			<id>{BC664F17-D6A3-3F46-944D-3080193E4BC4}</id>
 			<comment/>
 			<position>
@@ -1621,6 +1622,7 @@ Eye direction
 			</position>
 			<structDeclaration>{86E147CA-B18B-544E-A278-64ABC36DBA11}</structDeclaration>
 			<parameterName>World_LightSBuffer</parameterName>
+			<declType/>
 			<decl>
 				<elements/>
 			</decl>

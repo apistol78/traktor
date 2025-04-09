@@ -152,12 +152,12 @@
 			</outputPins>
 			<script><![CDATA[
 			
-const int N = 4;
+const int N = 8;
 
 vec3 u, v;
 OrthogonalFrame($Direction.xyz, u, v);
 
-mat3 R = Rotate($Direction.xyz, $Random);
+mat3 R = Rotate($Direction.xyz, $Random * 2.0f * 3.142f);
 u = R * u;
 v = R * v;
 
@@ -165,7 +165,7 @@ int nshadowed = 0;
 
 for (int i = 0; i < N; ++i)
 {
-	const vec2 r = (Hammersley(i, N) * 1.0f - 0.5f) * 0.05f;
+	const vec2 r = (Hammersley(i + int($Random * N), 2 * N) * 1.0f - 0.5f) * 0.05f;
 	const vec3 rayOrigin = $Origin.xyz;
 	const vec3 rayDir = normalize($Direction.xyz + u * r.x + v * r.y);
 	const bool shadowed = HWRT_TraceShadow(
@@ -219,7 +219,7 @@ $Output = 1.0f - float(nshadowed) / N;
 				<first>2256</first>
 				<second>1018</second>
 			</position>
-			<name>RandomAngle</name>
+			<name>Random</name>
 			<technique/>
 			<domain>Undefined</domain>
 			<localSize>
@@ -248,7 +248,7 @@ $Output = 1.0f - float(nshadowed) / N;
 			
 uvec2 seed = uvec2(gl_FragCoord.xy);
 seed += uvec2($Time * 1543, $Time * 543);
-$Output = BlueNoise(seed) * 2.0f * 3.142f;
+$Output = BlueNoise(seed);
 			
 			]]></script>
 		</item>
