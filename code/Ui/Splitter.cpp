@@ -350,8 +350,11 @@ void Splitter::eventButtonUp(MouseButtonUpEvent* event)
 void Splitter::eventSize(SizeEvent* event)
 {
 	// Feedback position to ensure position is still valid after resize.
-	const int32_t position = getAbsolutePosition();
-	setAbsolutePosition(position);
+	int32_t position = getAbsolutePosition();
+	const int32_t border = pixel(m_border);
+	if (position < border || position > (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight()) - border)
+		setAbsolutePosition(position);
+
 	update();
 }
 
