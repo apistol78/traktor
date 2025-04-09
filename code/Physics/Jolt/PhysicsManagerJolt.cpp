@@ -306,7 +306,58 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 	}
 
 	// Create collision shape.
-	if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
+	if (const SphereShapeDesc* sphereShape = dynamic_type_cast< const SphereShapeDesc* >(shapeDesc))
+	{
+		JPH::SphereShapeSettings shapeSettings(sphereShape->getRadius());
+		shapeSettings.SetEmbedded();
+
+		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+		JPH::ShapeRefC shape = shapeResult.Get();
+
+		JPH::BodyCreationSettings settings;
+
+		if (auto staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
+		{
+			settings = JPH::BodyCreationSettings(
+				shape,
+				JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
+				JPH::Quat::sIdentity(),
+				JPH::EMotionType::Static,
+				Layers::NON_MOVING);
+			settings.mFriction = staticDesc->getFriction();
+			settings.mRestitution = staticDesc->getRestitution();
+		}
+		else if (auto dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
+		{
+			settings = JPH::BodyCreationSettings(
+				shape,
+				JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
+				JPH::Quat::sIdentity(),
+				JPH::EMotionType::Dynamic,
+				Layers::MOVING);
+			settings.mLinearDamping = dynamicDesc->getLinearDamping();
+			settings.mAngularDamping = dynamicDesc->getAngularDamping();
+			settings.mFriction = dynamicDesc->getFriction();
+			settings.mRestitution = dynamicDesc->getRestitution();
+		}
+
+		body = bodyInterface.CreateBody(settings);
+		if (!body)
+			return nullptr;
+
+		Ref< BodyJolt > bj = new BodyJolt(
+			tag,
+			this,
+			m_physicsSystem.ptr(),
+			body,
+			0.0f,
+			Vector4::zero(),
+			mergedCollisionGroup,
+			mergedCollisionMask);
+		m_bodies.push_back(bj);
+		return bj;
+	}
+	else if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 	{
 		resource::Proxy< Mesh > mesh;
 		if (!resourceManager->bind(meshShape->getMesh(), mesh))
