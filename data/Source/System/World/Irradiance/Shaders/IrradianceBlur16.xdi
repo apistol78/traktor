@@ -650,7 +650,7 @@ $Output = 1.0f - min(phi, dpt);
 			</outputPins>
 			<script><![CDATA[const float d = $Input;
 const float f = clamp(d / 100.0f, 0.0f, 1.0f);
-$Output = mix(4.0f, 2.0f, f);
+$Output = mix(3.0f, 2.0f, f);
 
 ]]></script>
 		</item>

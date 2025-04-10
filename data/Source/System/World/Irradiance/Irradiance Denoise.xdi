@@ -49,8 +49,8 @@
 			<id>{F1E600BB-C593-F84C-B1AC-8EF8E1FEE4A7}</id>
 			<comment/>
 			<position>
-				<first>452</first>
-				<second>206</second>
+				<first>193</first>
+				<second>224</second>
 			</position>
 			<textureId>InputColor</textureId>
 		</item>
@@ -308,6 +308,16 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[8]"/>
 				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
@@ -318,8 +328,8 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[8]"/>

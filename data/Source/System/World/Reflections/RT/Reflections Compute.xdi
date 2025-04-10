@@ -133,13 +133,12 @@
 #define USE_SPATIAL_FILTER 0
 
 const int N = 2;
-const int Ndisclose = 4;
-const int Nspatial = 16;
-const int K = 4;
+const int Ndisclose = 16;
+const int Nspatial = 4;
+const int K = 30;
 const float NormalThreshold = 0.9f;
 const float DepthThreshold = 10.0f;
-const float Far = 90.0f;
-const float FarSecond = 40.0f;
+const float Far = 40.0f;
 const float SpatialFilterRadius = 0.005f;
 const float SpatialFilterCoeff = 0.75f;
 
@@ -262,10 +261,10 @@ if (pt.x < sz.x && pt.y < sz.y)
 				const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.25f;
 				const vec2 r = ((Hammersley(i, N) + jitter) * 2.0f - 1.0f) * roughness * roughness;
 				
-				const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.1f;
+				const vec3 rayOrigin = $Origin.xyz;
 				const vec3 rayDir = normalize($Direction.xyz + u * r.x + v * r.y);
 
-				const float phi = 1.0f;
+				const float phi = 0.5f;
 		
 				HWRT_Material m;
 				float t;
