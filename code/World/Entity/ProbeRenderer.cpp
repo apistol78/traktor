@@ -1,24 +1,27 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Entity/ProbeRenderer.h"
+
 #include "Core/Math/Float.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Buffer.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/VertexElement.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
+#include "World/Entity/ProbeComponent.h"
 #include "World/IWorldRenderer.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
@@ -27,13 +30,11 @@
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
-#include "World/Entity/ProbeComponent.h"
-#include "World/Entity/ProbeRenderer.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
 const int32_t c_faceSize = 1024;
@@ -45,10 +46,12 @@ const resource::Id< render::Shader > c_probeShader(Guid(L"{99BB18CB-A744-D845-9A
 const resource::Id< render::Shader > c_idFilterShader(Guid(L"{D9CC2267-0BDF-4A19-A970-856112821734}"));
 
 #pragma pack(1)
+
 struct Vertex
 {
 	float position[3];
 };
+
 #pragma pack()
 
 void getCorners(int32_t side, Vector4 corners[4])
@@ -99,28 +102,27 @@ void getCorners(int32_t side, Vector4 corners[4])
 	}
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeRenderer", ProbeRenderer, IEntityRenderer)
 
 ProbeRenderer::ProbeRenderer(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	const TypeInfo& worldRendererType
-)
-:	m_resourceManager(resourceManager)
-,	m_renderSystem(renderSystem)
-,	m_worldRendererType(worldRendererType)
+	const TypeInfo& worldRendererType)
+	: m_resourceManager(resourceManager)
+	, m_renderSystem(renderSystem)
+	, m_worldRendererType(worldRendererType)
 {
 	resourceManager->bind(c_idFilterShader, m_filterShader);
 
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat3, offsetof(Vertex, position), 0));
-	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(Vertex), L"Incorrect size of vertex");
+	T_ASSERT_M(render::getVertexSize(vertexElements) == sizeof(Vertex), L"Incorrect size of vertex");
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
 	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, (4 + 8) * sizeof(Vertex), false);
-	T_ASSERT_M (m_vertexBuffer, L"Unable to create vertex buffer");
+	T_ASSERT_M(m_vertexBuffer, L"Unable to create vertex buffer");
 
 	Vector4 extents[8];
 	Aabb3(Vector4(-1.0f, -1.0f, -1.0f, 1.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f)).getExtents(extents);
@@ -129,10 +131,18 @@ ProbeRenderer::ProbeRenderer(
 	T_ASSERT(vertex);
 
 	// Quad vertices.
-	vertex[0].position[0] = -1.0f; vertex[0].position[1] =  1.0f; vertex[0].position[2] = 0.0f;
-	vertex[1].position[0] =  1.0f; vertex[1].position[1] =  1.0f; vertex[1].position[2] = 0.0f;
-	vertex[2].position[0] =  1.0f; vertex[2].position[1] = -1.0f; vertex[2].position[2] = 0.0f;
-	vertex[3].position[0] = -1.0f; vertex[3].position[1] = -1.0f; vertex[3].position[2] = 0.0f;
+	vertex[0].position[0] = -1.0f;
+	vertex[0].position[1] = 1.0f;
+	vertex[0].position[2] = 0.0f;
+	vertex[1].position[0] = 1.0f;
+	vertex[1].position[1] = 1.0f;
+	vertex[1].position[2] = 0.0f;
+	vertex[2].position[0] = 1.0f;
+	vertex[2].position[1] = -1.0f;
+	vertex[2].position[2] = 0.0f;
+	vertex[3].position[0] = -1.0f;
+	vertex[3].position[1] = -1.0f;
+	vertex[3].position[2] = 0.0f;
 	vertex += 4;
 
 	// Unit cube vertices.
@@ -147,11 +157,11 @@ ProbeRenderer::ProbeRenderer(
 	m_vertexBuffer->unlock();
 
 	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, (2 * 3 + 6 * 2 * 3) * sizeof(uint16_t), false);
-	T_ASSERT_M (m_indexBuffer, L"Unable to create index buffer");
+	T_ASSERT_M(m_indexBuffer, L"Unable to create index buffer");
 
 	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
 	T_ASSERT(index);
-	
+
 	// Quad faces.
 	*index++ = 0;
 	*index++ = 3;
@@ -202,8 +212,7 @@ const TypeInfoSet ProbeRenderer::getRenderableTypes() const
 void ProbeRenderer::setup(
 	const WorldSetupContext& context,
 	const WorldRenderView& worldRenderView,
-	Object* renderable
-)
+	Object* renderable)
 {
 }
 
@@ -273,10 +282,9 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		wcd.gamma = 1.0f;
 
 		if (!m_worldRenderer->create(
-			m_resourceManager,
-			m_renderSystem,
-			wcd
-		))
+				m_resourceManager,
+				m_renderSystem,
+				wcd))
 		{
 			m_worldRenderer = nullptr;
 			return;
@@ -296,22 +304,22 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		Matrix44 view;
 		switch (face)
 		{
-		case 0:	// +X
+		case 0: // +X
 			view = rotateY(deg2rad(-90.0f));
 			break;
-		case 1:	// -X
-			view = rotateY(deg2rad( 90.0f));
+		case 1: // -X
+			view = rotateY(deg2rad(90.0f));
 			break;
-		case 2:	// +Y
-			view = rotateX(deg2rad( 90.0f));
+		case 2: // +Y
+			view = rotateX(deg2rad(90.0f));
 			break;
 		case 3: // -Y
 			view = rotateX(deg2rad(-90.0f));
 			break;
-		case 4:	// +Z
+		case 4: // +Z
 			view = Matrix44::identity();
 			break;
-		case 5:	// -Z
+		case 5: // -Z
 			view = rotateY(deg2rad(180.0f));
 			break;
 		}
@@ -328,8 +336,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 			1.0f,
 			deg2rad(90.0f),
 			0.01f,
-			10000.0f
-		);
+			10000.0f);
 		worldRenderView.setTimes(0.0f, 1.0f / 60.0f, 0.0f);
 		worldRenderView.setView(view, view);
 
@@ -353,39 +360,37 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 			worldRenderView,
 			renderGraph,
 			faceTargetSetId,
-			[](const EntityState& state) { return !state.dynamic; }
-		);
+			[](const EntityState& state) {
+			return state.visible && !state.dynamic;
+			});
 
 		// Copy intermediate target to cube map side.
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Probe transfer");
 		rp->addInput(faceTargetSetId);
 		rp->addBuild(
-			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-			{
-				auto faceTargetSet = renderGraph.getTargetSet(faceTargetSetId);
-				auto lrb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Probe transfer RT -> cube");
-				lrb->lambda = [=](render::IRenderView* renderView)
-				{
-					const auto sz = probeTexture->getSize();
+			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+			auto faceTargetSet = renderGraph.getTargetSet(faceTargetSetId);
+			auto lrb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Probe transfer RT -> cube");
+			lrb->lambda = [=](render::IRenderView* renderView) {
+				const auto sz = probeTexture->getSize();
 
-					render::Region sr = {};
-					sr.x = 0;
-					sr.y = 0;
-					sr.mip = 0;
-					sr.width = sz.x;
-					sr.height = sz.y;
+				render::Region sr = {};
+				sr.x = 0;
+				sr.y = 0;
+				sr.mip = 0;
+				sr.width = sz.x;
+				sr.height = sz.y;
 
-					render::Region dr = {};
-					dr.x = 0;
-					dr.y = 0;
-					dr.z = face;
-					dr.mip = 0;
+				render::Region dr = {};
+				dr.x = 0;
+				dr.y = 0;
+				dr.z = face;
+				dr.mip = 0;
 
-					renderView->copy(probeTexture, dr, faceTargetSet->getColorTexture(0), sr);
-				};
-				renderContext->draw(lrb);
-			}
-		);
+				renderView->copy(probeTexture, dr, faceTargetSet->getColorTexture(0), sr);
+			};
+			renderContext->draw(lrb);
+		});
 		renderGraph.addPass(rp);
 
 		++m_captureState;
@@ -416,53 +421,48 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		Ref< render::RenderPass > filterPass = new render::RenderPass(L"Probe filter");
 		filterPass->setOutput(filteredTargetSetId, render::TfNone, render::TfColor);
 		filterPass->addBuild(
-			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-			{
-				Vector4 corners[4];
-				getCorners(side, corners);
+			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+			Vector4 corners[4];
+			getCorners(side, corners);
 
-				auto pp = renderContext->alloc< render::ProgramParameters >();
-				pp->beginParameters(renderContext);
-				pp->setFloatParameter(s_handleProbeRoughness, roughness);
-				pp->setTextureParameter(s_handleProbeTexture, probeTexture);
-				pp->setVectorArrayParameter(s_handleProbeFilterCorners, corners, sizeof_array(corners));
-				pp->endParameters(renderContext);
+			auto pp = renderContext->alloc< render::ProgramParameters >();
+			pp->beginParameters(renderContext);
+			pp->setFloatParameter(s_handleProbeRoughness, roughness);
+			pp->setTextureParameter(s_handleProbeTexture, probeTexture);
+			pp->setVectorArrayParameter(s_handleProbeFilterCorners, corners, sizeof_array(corners));
+			pp->endParameters(renderContext);
 
-				m_screenRenderer->draw(renderContext, m_filterShader, pp);
-			}
-		);
+			m_screenRenderer->draw(renderContext, m_filterShader, pp);
+		});
 		renderGraph.addPass(filterPass);
 
 		// Write back filtered targets into cube map mip level.
 		Ref< render::RenderPass > copyPass = new render::RenderPass(L"Probe copy filtered");
 		copyPass->addInput(filteredTargetSetId);
 		copyPass->addBuild(
-			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-			{
-				auto filteredTargetSet = renderGraph.getTargetSet(filteredTargetSetId);
-				auto lrb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Probe transfer filtered -> cube");
-				lrb->lambda = [=](render::IRenderView* renderView)
-				{
-					const auto sz = probeTexture->getSize();
+			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+			auto filteredTargetSet = renderGraph.getTargetSet(filteredTargetSetId);
+			auto lrb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Probe transfer filtered -> cube");
+			lrb->lambda = [=](render::IRenderView* renderView) {
+				const auto sz = probeTexture->getSize();
 
-					render::Region sr = {};
-					sr.x = 0;
-					sr.y = 0;
-					sr.mip = 0;
-					sr.width = sz.x >> mip;
-					sr.height = sz.y >> mip;
+				render::Region sr = {};
+				sr.x = 0;
+				sr.y = 0;
+				sr.mip = 0;
+				sr.width = sz.x >> mip;
+				sr.height = sz.y >> mip;
 
-					render::Region dr = {};
-					dr.x = 0;
-					dr.y = 0;
-					dr.z = side;
-					dr.mip = mip;
+				render::Region dr = {};
+				dr.x = 0;
+				dr.y = 0;
+				dr.z = side;
+				dr.mip = mip;
 
-					renderView->copy(probeTexture, dr, filteredTargetSet->getColorTexture(0), sr);
-				};
-				renderContext->draw(lrb);
-			}
-		);
+				renderView->copy(probeTexture, dr, filteredTargetSet->getColorTexture(0), sr);
+			};
+			renderContext->draw(lrb);
+		});
 		renderGraph.addPass(copyPass);
 
 		if (++m_captureMip >= mipCount)
@@ -482,8 +482,7 @@ void ProbeRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
-	Object* renderable
-)
+	Object* renderable)
 {
 	auto probeComponent = static_cast< ProbeComponent* >(renderable);
 
@@ -515,8 +514,7 @@ void ProbeRenderer::build(
 void ProbeRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass
-)
+	const IWorldRenderPass& worldRenderPass)
 {
 }
 
