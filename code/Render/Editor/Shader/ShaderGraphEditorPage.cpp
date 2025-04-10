@@ -1482,14 +1482,19 @@ void ShaderGraphEditorPage::updateGraph()
 		Ref< INodeFacade > nodeFacade = editorNode->getData< INodeFacade >(L"FACADE");
 		T_ASSERT(nodeFacade);
 
-		const auto it = std::find_if(errorNodes.begin(), errorNodes.end(), [&](const Node* node) {
+		auto it = std::find_if(errorNodes.begin(), errorNodes.end(), [&](const Node* node) {
 			return node->getId() == shaderNode->getId();
 		});
 		if (it != errorNodes.end())
+		{
 			nodeFacade->setValidationIndicator(editorNode, false);
+			errorNodes.erase(it);
+		}
 		else
 			nodeFacade->setValidationIndicator(editorNode, true);
 	}
+	if (!errorNodes.empty())
+		log::warning << L"Validation errors in dependent fragments." << Endl;
 
 	// If validation succeeded then update generated shader as well.
 	m_shaderViewer->setEnable(graphType == ShaderGraphValidator::SgtProgram);
