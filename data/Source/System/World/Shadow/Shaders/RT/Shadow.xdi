@@ -151,13 +151,12 @@
 				</item>
 			</outputPins>
 			<script><![CDATA[
-			
 const int N = 8;
 
 vec3 u, v;
 OrthogonalFrame($Direction.xyz, u, v);
 
-mat3 R = Rotate($Direction.xyz, $Random * 2.0f * 3.142f);
+mat3 R = Rotate($Direction.xyz, $Random * TWO_PI);
 u = R * u;
 v = R * v;
 

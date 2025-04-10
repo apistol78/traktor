@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024-2025 Anders Pistol.
+ * Copyright (c) 2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -42,7 +42,7 @@ class WorldRenderView;
 
 /*!
  */
-class IrradiancePass : public Object
+class RTReflectionsPass : public Object
 {
 	T_RTTI_CLASS;
 
@@ -63,8 +63,8 @@ public:
 
 private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	resource::Proxy< render::Shader > m_irradianceComputeShader;
-	resource::Proxy< render::ImageGraph > m_irradianceDenoise;
+	resource::Proxy< render::Shader > m_reflectionsComputeShader;
+	resource::Proxy< render::ImageGraph > m_reflectionsDenoise;
 };
 
 }

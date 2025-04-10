@@ -105,5 +105,13 @@
 			<id>{7C871925-C1A9-5B47-A361-114BC8FB5A98}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
+		<item>
+			<id>{64878605-942D-6247-BA36-3D035727E2AE}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{22777807-DD5F-1D47-8266-84EAA1EF024F}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
 	</dependencies>
 </object>

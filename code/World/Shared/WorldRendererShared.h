@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -42,6 +42,7 @@ class Packer;
 class PostProcessPass;
 class ProbeComponent;
 class ReflectionsPass;
+class RTReflectionsPass;
 class VelocityPass;
 class WorldEntityRenderers;
 
@@ -107,6 +108,7 @@ protected:
 	Ref< AmbientOcclusionPass > m_ambientOcclusionPass;
 	Ref< ContactShadowsPass > m_contactShadowsPass;
 	Ref< ReflectionsPass > m_reflectionsPass;
+	Ref< RTReflectionsPass > m_rtReflectionsPass;
 	Ref< PostProcessPass > m_postProcessPass;
 	//@}
 
