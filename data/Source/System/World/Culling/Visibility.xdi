@@ -149,7 +149,7 @@ $Buffer[index].visible = $Input;
 			
 			]]></script>
 		</item>
-		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="5,traktor.render.Node:1">
 			<id>{32AF829B-BE26-9242-99ED-1189D698205D}</id>
 			<comment/>
 			<position>
@@ -158,13 +158,10 @@ $Buffer[index].visible = $Input;
 			</position>
 			<structDeclaration>{7D2EEA26-F234-3C48-BC5F-0192B3033DCC}</structDeclaration>
 			<parameterName>World_Visibility</parameterName>
-			<elements>
-				<item>
-					<name>visible</name>
-					<type>DtFloat1</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<declType/>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.IndexedUniform" version="4,traktor.render.Node:1">
 			<id>{91A8C6C3-38AF-0E49-9137-BEB73CB41DD4}</id>
@@ -196,7 +193,7 @@ $Buffer[index].visible = $Input;
 				<second>676</second>
 			</position>
 		</item>
-		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Struct" version="5,traktor.render.Node:1">
 			<id>{FAD1FE60-D90C-8A4F-BEFD-145108FE5466}</id>
 			<comment/>
 			<position>
@@ -205,28 +202,10 @@ $Buffer[index].visible = $Input;
 			</position>
 			<structDeclaration>{41FBD00D-14D7-A942-9F00-69922B6A1908}</structDeclaration>
 			<parameterName>InstanceWorld</parameterName>
-			<elements>
-				<item>
-					<name>rotation</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>translation</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>boundingBoxMin</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>boundingBoxMax</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<declType/>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
 			<id>{338684D8-D371-1B4B-8506-668A23A81765}</id>
@@ -403,7 +382,7 @@ else
 				<first>349</first>
 				<second>733</second>
 			</position>
-			<declaration>{98D90F6A-842F-DC4A-9014-922B7E0C652F}</declaration>
+			<declaration>{5FA54E3B-AD14-E148-B385-979BD586BD69}</declaration>
 			<parameterName/>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>

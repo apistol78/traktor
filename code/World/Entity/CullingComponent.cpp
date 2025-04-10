@@ -139,7 +139,7 @@ void CullingComponent::build(
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
 
 		renderBlock->programParams->setVectorParameter(s_handleTargetSize, Vector4(viewSize.x, viewSize.y, 0.0f, 0.0f));
-		renderBlock->programParams->setMatrixParameter(s_handleViewProjection, worldRenderView.getProjection() * worldRenderView.getView());
+		renderBlock->programParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection() * worldRenderView.getView());
 		renderBlock->programParams->setVectorArrayParameter(s_handleCullFrustum, cullFrustum, sizeof_array(cullFrustum));
 		renderBlock->programParams->setBufferViewParameter(s_handleInstanceWorld, m_instanceBuffer->getBufferView());
 		renderBlock->programParams->setBufferViewParameter(s_handleVisibility, visibilityBuffer->getBufferView());

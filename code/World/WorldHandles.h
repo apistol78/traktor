@@ -90,7 +90,6 @@ extern const render::Handle T_DLLCLASS s_handleVelocityMap;
 
 // Culling.
 extern const render::Handle T_DLLCLASS s_handleTargetSize;
-extern const render::Handle T_DLLCLASS s_handleViewProjection;
 extern const render::Handle T_DLLCLASS s_handleVisibility;
 extern const render::Handle T_DLLCLASS s_handleCullFrustum;
 

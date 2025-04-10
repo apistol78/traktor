@@ -80,7 +80,6 @@ const render::Handle s_handleVelocityMap(L"World_VelocityMap");
 
 // Culling.
 const render::Handle s_handleTargetSize(L"World_TargetSize");
-const render::Handle s_handleViewProjection(L"World_ViewProjection");
 const render::Handle s_handleVisibility(L"World_Visibility");
 const render::Handle s_handleCullFrustum(L"World_CullFrustum");
 
