@@ -244,6 +244,36 @@ std::wstring getUniqueInstanceName(const std::wstring& baseName, db::Group* grou
 	return L"";
 }
 
+bool referenceIdentifier(RfmCompound* reflection, const Guid& id)
+{
+	for (uint32_t i = 0; i < reflection->getMemberCount(); ++i)
+	{
+		ReflectionMember* member = reflection->getMember(i);
+		T_ASSERT(member);
+
+		if (auto idMember = dynamic_type_cast< RfmPrimitiveGuid* >(member))
+		{
+			if (idMember->get() == id)
+				return true;
+		}
+		else if (auto objectMember = dynamic_type_cast< RfmObject* >(member))
+		{
+			Ref< Reflection > objectReflection = Reflection::create(objectMember->get());
+			if (objectReflection)
+			{
+				if (referenceIdentifier(objectReflection, id))
+					return true;
+			}
+		}
+		else if (auto compoundMember = dynamic_type_cast< RfmCompound* >(member))
+		{
+			if (referenceIdentifier(compoundMember, id))
+				return true;
+		}
+	}
+	return false;
+}
+
 bool replaceIdentifiers(RfmCompound* reflection, const std::list< InstanceClipboardData::Instance >& instances)
 {
 	bool modified = false;
@@ -1414,39 +1444,29 @@ void DatabaseView::listInstanceDependents(db::Instance* instance)
 		return;
 
 	const Guid findInstanceGuid = instance->getGuid();
+	int32_t nsearch = 0, nfound = 0;
 
-	for (const auto& rootGuid : m_rootInstances)
-	{
-		Ref< db::Instance > rootInstance = m_db->getInstance(rootGuid);
-		if (!rootInstance)
-			continue;
+	db::recursiveFindChildInstance(m_db->getRootGroup(), [&](const db::Instance* childInstance) {
+		++nsearch;
 
-		PipelineDependencySet dependencySet;
-		Ref< IPipelineDepends > depends = m_editor->createPipelineDepends(&dependencySet, std::numeric_limits< uint32_t >::max());
-		if (!depends)
-			return;
+		Ref< const ISerializable > object = childInstance->getObject();
+		if (!object)
+			return false;
 
-		depends->addDependency(rootInstance->getObject());
-		depends->waitUntilFinished();
+		Ref< Reflection > refl = Reflection::create(object);
+		if (!refl)
+			return false;
 
-		for (uint32_t j = 0; j < dependencySet.size(); ++j)
+		if (referenceIdentifier(refl, findInstanceGuid))
 		{
-			const PipelineDependency* dependency = dependencySet.get(j);
-			T_ASSERT(dependency != nullptr);
-
-			if (dependency->sourceInstanceGuid == findInstanceGuid)
-			{
-				for (uint32_t k = 0; k < dependencySet.size(); ++k)
-				{
-					const PipelineDependency* parentDependency = dependencySet.get(k);
-					T_ASSERT(parentDependency != nullptr);
-
-					if (parentDependency->children.find(j) != parentDependency->children.end())
-						log::info << parentDependency->sourceInstanceGuid.format() << Endl;
-				}
-			}
+			log::info << childInstance->getGuid().format() << Endl;
+			++nfound;
 		}
-	}
+
+		return false;
+	});
+
+	log::info << L"Found " << nfound << L" in " << nsearch << L" scanned instances." << Endl;
 }
 
 void DatabaseView::handleInstanceButtonDown(ui::Event* event, const ui::Point& position)
