@@ -105,12 +105,11 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 
 void SolutionBuilderMsvcVCXDefinition::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT(s.getVersion() >= 1);
+
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"fileTypes", m_fileTypes);
-
-	if (s.getVersion< SolutionBuilderMsvcVCXDefinition >() >= 1)
-		s >> Member< bool >(L"resolvePaths", m_resolvePaths);
-
+	s >> Member< bool >(L"resolvePaths", m_resolvePaths);
 	s >> MemberStlVector< Option, MemberComposite< Option > >(L"options", m_options);
 }
 

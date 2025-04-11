@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -106,44 +106,29 @@ bool SolutionBuilderMsvcVCXProj::generate(
 
 void SolutionBuilderMsvcVCXProj::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT(s.getVersion() >= 6);
+	T_FATAL_ASSERT(s.getVersion() >= 9);
 
 	const wchar_t* itemNames[] = { L"staticLibrary", L"sharedLibrary", L"executable", L"executableConsole" };
 
 	s >> Member< std::wstring >(L"platform", m_platform);
 	s >> Member< std::wstring >(L"keyword", m_keyword);
-
-	if (s.getVersion() >= 8)
-		s >> Member< std::wstring >(L"windowsTargetPlatformVersion", m_windowsTargetPlatformVersion);
-
+	s >> Member< std::wstring >(L"windowsTargetPlatformVersion", m_windowsTargetPlatformVersion);
 	s >> MemberStaticArray< std::wstring, sizeof_array(m_targetPrefixes) >(L"targetPrefixes", m_targetPrefixes);
 	s >> MemberStaticArray< std::wstring, sizeof_array(m_targetExts) >(L"targetExts", m_targetExts);
-
-	if (s.getVersion() >= 9)
-		s >> Member< bool >(L"resolvePaths", m_resolvePaths);
-
-	if (s.getVersion() >= 4 && s.getVersion() < 7)
-		s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroups", m_propertyGroupsBeforeImports);
-	else if (s.getVersion() >= 7)
-		s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroupsBeforeImports", m_propertyGroupsBeforeImports);
-
+	s >> Member< bool >(L"resolvePaths", m_resolvePaths);
+	s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroupsBeforeImports", m_propertyGroupsBeforeImports);
 	s >> MemberRefArray< SolutionBuilderMsvcVCXImportCommon >(L"imports", m_imports);
-
-	if (s.getVersion() >= 7)
-		s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroupsAfterImports", m_propertyGroupsAfterImports);
-
+	s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroupsAfterImports", m_propertyGroupsAfterImports);
 	s >> MemberStaticArray<
 		std::map< std::wstring, std::wstring >,
 		4,
 		MemberStlMap< std::wstring, std::wstring >
 	>(L"configurationDefinitionsDebug", m_configurationDefinitionsDebug, itemNames);
-
 	s >> MemberStaticArray<
 		std::map< std::wstring, std::wstring >,
 		4,
 		MemberStlMap< std::wstring, std::wstring >
 	>(L"configurationDefinitionsRelease", m_configurationDefinitionsRelease, itemNames);
-
 	s >> MemberStaticArray<
 			RefArray< SolutionBuilderMsvcVCXDefinition >,
 			sizeof_array(m_buildDefinitionsDebug),
@@ -154,7 +139,6 @@ void SolutionBuilderMsvcVCXProj::serialize(ISerializer& s)
 			sizeof_array(m_buildDefinitionsRelease),
 			MemberRefArray< SolutionBuilderMsvcVCXDefinition >
 		>(L"buildDefinitionsRelease", m_buildDefinitionsRelease, itemNames);
-
 	s >> MemberRefArray< SolutionBuilderMsvcVCXBuildTool >(L"buildTools", m_buildTools);
 }
 
