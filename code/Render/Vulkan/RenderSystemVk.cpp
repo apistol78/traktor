@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +9,8 @@
 #if defined(__ANDROID__)
 #	include <android_native_app_glue.h>
 #endif
-#include <cstring>
+#include "Render/Vulkan/RenderSystemVk.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/AutoPtr.h"
@@ -21,15 +22,6 @@
 #include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferDynamicVk.h"
 #include "Render/Vulkan/BufferStaticVk.h"
-#include "Render/Vulkan/ProgramVk.h"
-#include "Render/Vulkan/ProgramResourceVk.h"
-#include "Render/Vulkan/RenderSystemVk.h"
-#include "Render/Vulkan/RenderTargetDepthVk.h"
-#include "Render/Vulkan/RenderTargetSetVk.h"
-#include "Render/Vulkan/RenderTargetVk.h"
-#include "Render/Vulkan/RenderViewVk.h"
-#include "Render/Vulkan/TextureVk.h"
-#include "Render/Vulkan/VertexLayoutVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
@@ -38,6 +30,16 @@
 #include "Render/Vulkan/Private/ShaderModuleCache.h"
 #include "Render/Vulkan/Private/Utilities.h"
 #include "Render/Vulkan/Private/VertexAttributes.h"
+#include "Render/Vulkan/ProgramResourceVk.h"
+#include "Render/Vulkan/ProgramVk.h"
+#include "Render/Vulkan/RenderTargetDepthVk.h"
+#include "Render/Vulkan/RenderTargetSetVk.h"
+#include "Render/Vulkan/RenderTargetVk.h"
+#include "Render/Vulkan/RenderViewVk.h"
+#include "Render/Vulkan/TextureVk.h"
+#include "Render/Vulkan/VertexLayoutVk.h"
+
+#include <cstring>
 
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/Window.h"
@@ -53,8 +55,8 @@
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 const char* c_validationLayerNames[] = { "VK_LAYER_KHRONOS_validation", nullptr };
 #if defined(_WIN32)
@@ -72,10 +74,9 @@ const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils", "VK_KHR_g
 #if defined(__ANDROID__) || defined(__RPI__)
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
 #else
-const char* c_deviceExtensions[] =
-{
+const char* c_deviceExtensions[] = {
 	"VK_KHR_swapchain",
-	"VK_KHR_storage_buffer_storage_class",	// Required by VK_KHR_16bit_storage, VK_KHR_8bit_storage and VK_KHR_shader_float16_int8.
+	"VK_KHR_storage_buffer_storage_class", // Required by VK_KHR_16bit_storage, VK_KHR_8bit_storage and VK_KHR_shader_float16_int8.
 	"VK_KHR_16bit_storage",
 	"VK_KHR_8bit_storage",
 	"VK_KHR_shader_non_semantic_info",
@@ -85,8 +86,7 @@ const char* c_deviceExtensions[] =
 	"VK_EXT_descriptor_indexing",
 	"VK_KHR_buffer_device_address",
 };
-const char* c_deviceExtensionsRayTracing[] =
-{
+const char* c_deviceExtensionsRayTracing[] = {
 	// Ray tracing
 	"VK_KHR_deferred_host_operations",
 	"VK_KHR_ray_tracing_pipeline",
@@ -99,10 +99,11 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 	VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 	VkDebugUtilsMessageTypeFlagsEXT messageType,
 	const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-	void* pUserData
-)
+	void* pUserData)
 {
-	if (pCallbackData && pCallbackData->pMessage)
+	// #note We're ignoring VUID-VkShaderModuleCreateInfo-pCode-08737 since it's been a known bug in Vulkan
+	// validation layer and are still causing issues.
+	if (pCallbackData && pCallbackData->pMessage && pCallbackData->messageIdNumber != 0xa5625282)
 	{
 		std::wstring message = mbstows(pCallbackData->pMessage);
 		std::wstring spec;
@@ -136,11 +137,11 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 
 bool isDeviceSuitable(VkPhysicalDevice device, VkPhysicalDeviceType deviceType)
 {
-    VkPhysicalDeviceProperties dp;
-    // VkPhysicalDeviceFeatures df;
-    
+	VkPhysicalDeviceProperties dp;
+	// VkPhysicalDeviceFeatures df;
+
 	vkGetPhysicalDeviceProperties(device, &dp);
-    // vkGetPhysicalDeviceFeatures(device, &df);
+	// vkGetPhysicalDeviceFeatures(device, &df);
 
 	if (dp.deviceType != deviceType)
 		return false;
@@ -148,7 +149,7 @@ bool isDeviceSuitable(VkPhysicalDevice device, VkPhysicalDeviceType deviceType)
 	return true;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVk", 0, RenderSystemVk, IRenderSystem)
 
@@ -188,25 +189,20 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		{
 			bool found = false;
 			for (uint32_t j = 0; c_validationLayerNames[j] != nullptr; ++j)
-			{
 				if (strcmp(layersAvailable[i].layerName, c_validationLayerNames[j]) == 0)
 					found = true;
-			}
 			if (found)
 				validationLayers.push_back(strdup(layersAvailable[i].layerName));
 		}
 		if (!validationLayers.empty())
-		{
 			for (auto validationLayer : validationLayers)
 				log::info << L"Using validation layer \"" << mbstows(validationLayer) << L"\"." << Endl;
-		}
 		else
 			log::warning << L"No validation layers found; validation disabled." << Endl;
 	}
 
 	// Create Vulkan instance.
-	const VkApplicationInfo applicationInfo =
-	{
+	const VkApplicationInfo applicationInfo = {
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 		.pNext = nullptr,
 		.pApplicationName = "Traktor",
@@ -215,8 +211,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.apiVersion = VK_MAKE_VERSION(1, 2, 0)
 	};
 
-	const VkInstanceCreateInfo instanceCreateInfo =
-	{
+	const VkInstanceCreateInfo instanceCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 		.pApplicationInfo = &applicationInfo,
 		.enabledLayerCount = (uint32_t)validationLayers.size(),
@@ -282,7 +277,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		vkGetPhysicalDeviceProperties(physicalDevices[i], &pdp);
 		if (isDeviceSuitable(physicalDevices[i], VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU))
 			m_physicalDevice = physicalDevices[i];
-	}		
+	}
 	if (!m_physicalDevice)
 	{
 		log::warning << L"Unable to find a suitable device; attempting to use first reported." << Endl;
@@ -335,14 +330,11 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	for (int32_t i = 0; i < sizeof_array(c_deviceExtensions); ++i)
 		deviceExtensions.push_back(c_deviceExtensions[i]);
 	if (desc.rayTracing)
-	{
 		for (int32_t i = 0; i < sizeof_array(c_deviceExtensionsRayTracing); ++i)
 			deviceExtensions.push_back(c_deviceExtensionsRayTracing[i]);
-	}
 
 	// Create logical device.
-    const VkPhysicalDeviceFeatures features =
-	{
+	const VkPhysicalDeviceFeatures features = {
 		.sampleRateShading = VK_TRUE,
 		.multiDrawIndirect = VK_TRUE,
 		.samplerAnisotropy = VK_TRUE,
@@ -352,8 +344,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	const void* headFeature = nullptr;
 
 #if !defined(__ANDROID__) && !defined(__RPI__)
-	const VkPhysicalDevice8BitStorageFeaturesKHR features8bitStorage =
-	{
+	const VkPhysicalDevice8BitStorageFeaturesKHR features8bitStorage = {
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR,
 		.pNext = nullptr,
 		.storageBuffer8BitAccess = VK_FALSE,
@@ -361,8 +352,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.storagePushConstant8 = VK_FALSE
 	};
 
-	const VkPhysicalDeviceFloat16Int8FeaturesKHR features16bitFloat =
-	{
+	const VkPhysicalDeviceFloat16Int8FeaturesKHR features16bitFloat = {
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR,
 		.pNext = (void*)&features8bitStorage,
 		.shaderFloat16 = VK_FALSE,
@@ -370,8 +360,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	};
 
 	// Bindless textures.
-	const VkPhysicalDeviceDescriptorIndexingFeatures featuresDescriptorIndexing =
-	{
+	const VkPhysicalDeviceDescriptorIndexingFeatures featuresDescriptorIndexing = {
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES,
 		.pNext = (void*)&features16bitFloat,
 		.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE,
@@ -382,8 +371,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.runtimeDescriptorArray = VK_TRUE
 	};
 
-	const VkPhysicalDeviceBufferDeviceAddressFeatures featuresBufferDeviceAddress
-	{
+	const VkPhysicalDeviceBufferDeviceAddressFeatures featuresBufferDeviceAddress{
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
 		.pNext = (void*)&featuresDescriptorIndexing,
 		.bufferDeviceAddress = VK_TRUE,
@@ -391,8 +379,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.bufferDeviceAddressMultiDevice = VK_FALSE
 	};
 
-	const VkPhysicalDeviceVulkan11Features featuresVulkan1_1 =
-	{
+	const VkPhysicalDeviceVulkan11Features featuresVulkan1_1 = {
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
 		.pNext = (void*)&featuresBufferDeviceAddress,
 		.storageBuffer16BitAccess = VK_TRUE,
@@ -413,8 +400,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	if (desc.rayTracing)
 	{
-		static const VkPhysicalDeviceAccelerationStructureFeaturesKHR featuresAccelerationStructure =
-		{
+		static const VkPhysicalDeviceAccelerationStructureFeaturesKHR featuresAccelerationStructure = {
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR,
 			.pNext = (void*)&featuresVulkan1_1,
 			.accelerationStructure = VK_TRUE,
@@ -424,7 +410,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 			.descriptorBindingAccelerationStructureUpdateAfterBind = VK_FALSE
 		};
 
-		//static const VkPhysicalDeviceRayTracingPipelineFeaturesKHR featuresRayTracingPipeline =
+		// static const VkPhysicalDeviceRayTracingPipelineFeaturesKHR featuresRayTracingPipeline =
 		//{
 		//	.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
 		//	.pNext = (void*)&featuresAccelerationStructure,
@@ -433,10 +419,9 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		//	.rayTracingPipelineShaderGroupHandleCaptureReplayMixed = VK_FALSE,
 		//	.rayTracingPipelineTraceRaysIndirect = VK_FALSE,
 		//	.rayTraversalPrimitiveCulling = VK_FALSE
-		//};
+		// };
 
-		static const VkPhysicalDeviceRayQueryFeaturesKHR featuresRayQuery =
-		{
+		static const VkPhysicalDeviceRayQueryFeaturesKHR featuresRayQuery = {
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR,
 			//.pNext = (void*)&featuresRayTracingPipeline,
 			.pNext = (void*)&featuresAccelerationStructure,
@@ -450,24 +435,17 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	const float queuePriorities[] = { 1.0f, 1.0f };
 
 	StaticVector< VkDeviceQueueCreateInfo, 2 > dqcis;
-	dqcis.push_back({
-		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+	dqcis.push_back({ .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 		.queueFamilyIndex = graphicsQueueIndex,
 		.queueCount = 1,
-		.pQueuePriorities = queuePriorities
-	});
+		.pQueuePriorities = queuePriorities });
 	if (computeQueueIndex != graphicsQueueIndex)
-	{
-		dqcis.push_back({
-			.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+		dqcis.push_back({ .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 			.queueFamilyIndex = computeQueueIndex,
 			.queueCount = 1,
-			.pQueuePriorities = queuePriorities
-		});
-	}
+			.pQueuePriorities = queuePriorities });
 
-    const VkDeviceCreateInfo deviceCreateInfo =
-	{
+	const VkDeviceCreateInfo deviceCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		.pNext = headFeature,
 		.flags = 0,
@@ -480,15 +458,14 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.pEnabledFeatures = &features
 	};
 
-    if ((result = vkCreateDevice(m_physicalDevice, &deviceCreateInfo, 0, &m_logicalDevice)) != VK_SUCCESS)
+	if ((result = vkCreateDevice(m_physicalDevice, &deviceCreateInfo, 0, &m_logicalDevice)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create logical device (" << getHumanResult(result) << L")." << Endl;
 		return false;
 	}
 
 	// Create memory allocator.
-	const VmaVulkanFunctions memoryAllocatorFunctions =
-	{
+	const VmaVulkanFunctions memoryAllocatorFunctions = {
 		.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
 		.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
 		.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties,
@@ -515,7 +492,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	VmaAllocatorCreateInfo aci = {};
 #if !defined(__RPI__) && !defined(__ANDROID__) && !defined(__IOS__)
 	// \note Disabled for now, not clear if we need it and until we do let's leave it disabled.
-	//if (memoryAllocatorFunctions.vkGetBufferMemoryRequirements2KHR != nullptr && memoryAllocatorFunctions.vkGetImageMemoryRequirements2KHR != nullptr)
+	// if (memoryAllocatorFunctions.vkGetBufferMemoryRequirements2KHR != nullptr && memoryAllocatorFunctions.vkGetImageMemoryRequirements2KHR != nullptr)
 	//	aci.vulkanApiVersion = VK_API_VERSION_1_2;
 
 	aci.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT | VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
@@ -538,8 +515,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		m_logicalDevice,
 		m_allocator,
 		graphicsQueueIndex,
-		computeQueueIndex
-	);
+		computeQueueIndex);
 	if (!m_context->create())
 	{
 		log::error << L"Failed to create Vulkan; failed to create context." << Endl;
@@ -693,8 +669,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 {
 	Ref< RenderViewVk > renderView = new RenderViewVk(
 		m_context,
-		m_instance
-	);
+		m_instance);
 	if (renderView->create(desc))
 		return renderView;
 	else
@@ -705,8 +680,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc
 {
 	Ref< RenderViewVk > renderView = new RenderViewVk(
 		m_context,
-		m_instance
-	);
+		m_instance);
 	if (renderView->create(desc))
 		return renderView;
 	else
@@ -861,7 +835,7 @@ void RenderSystemVk::getStatistics(RenderSystemStatistics& outStatistics) const
 
 void* RenderSystemVk::getInternalHandle() const
 {
-	return (*((void **)(m_instance)));
+	return (*((void**)(m_instance)));
 }
 
 }
