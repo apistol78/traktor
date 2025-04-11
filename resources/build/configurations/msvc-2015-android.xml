@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="SolutionBuilderMsvcSettings">
-  <slnVersion>12.00</slnVersion>
-  <vsVersion>14</vsVersion>
-	<project type="SolutionBuilderMsvcVCXProj" version="6">
+	<slnVersion>12.00</slnVersion>
+	<vsVersion>14</vsVersion>
+	<project type="SolutionBuilderMsvcVCXProj" version="9">
 		<platform>ARM</platform>
 		<keyword>Android</keyword>
+		<windowsTargetPlatformVersion/>
 		<targetPrefixes>
 			<item>lib</item>
 			<item>lib</item>
@@ -17,8 +18,9 @@
 			<item/>
 			<item/>
 		</targetExts>
-		<propertyGroups>
-      <item type="SolutionBuilderMsvcVCXPropertyGroup" version="1">
+		<resolvePaths>true</resolvePaths>
+		<propertyGroupsBeforeImports>
+			<item type="SolutionBuilderMsvcVCXPropertyGroup" version="1">
 				<label>Globals</label>
 				<condition/>
 				<values>
@@ -26,13 +28,13 @@
 						<first>ApplicationType</first>
 						<second>Android</second>
 					</item>
-          <item>
-            <first>ApplicationTypeRevision</first>
-            <second>2.0</second>
-          </item>
+					<item>
+						<first>ApplicationTypeRevision</first>
+						<second>2.0</second>
+					</item>
 				</values>
 			</item>
-		</propertyGroups>
+		</propertyGroupsBeforeImports>
 		<imports>
 			<item type="SolutionBuilderMsvcVCXImport">
 				<label/>
@@ -40,49 +42,51 @@
 				<condition/>
 			</item>
 		</imports>
+		<propertyGroupsAfterImports/>
 		<configurationDefinitionsDebug>
 			<staticLibrary>
-        <item>
-          <first>ConfigurationType</first>
-          <second>StaticLibrary</second>
-        </item>        
-        <item>
-          <first>UseDebugLibraries</first>
-          <second>true</second>
-        </item>
-        <item>
-          <first>PlatformToolset</first>
-          <second>Clang_3_8</second>
-        </item>
-      </staticLibrary>
+				<item>
+					<first>ConfigurationType</first>
+					<second>StaticLibrary</second>
+				</item>
+				<item>
+					<first>PlatformToolset</first>
+					<second>Clang_3_8</second>
+				</item>
+				<item>
+					<first>UseDebugLibraries</first>
+					<second>true</second>
+				</item>
+			</staticLibrary>
 			<sharedLibrary/>
 			<executable/>
 			<executableConsole/>
 		</configurationDefinitionsDebug>
 		<configurationDefinitionsRelease>
-      <staticLibrary>
-        <item>
-          <first>ConfigurationType</first>
-          <second>StaticLibrary</second>
-        </item>        
-        <item>
-          <first>UseDebugLibraries</first>
-          <second>false</second>
-        </item>
-        <item>
-          <first>PlatformToolset</first>
-          <second>Clang_3_8</second>
-        </item>
-      </staticLibrary>
+			<staticLibrary>
+				<item>
+					<first>ConfigurationType</first>
+					<second>StaticLibrary</second>
+				</item>
+				<item>
+					<first>PlatformToolset</first>
+					<second>Clang_3_8</second>
+				</item>
+				<item>
+					<first>UseDebugLibraries</first>
+					<second>false</second>
+				</item>
+			</staticLibrary>
 			<sharedLibrary/>
 			<executable/>
 			<executableConsole/>
 		</configurationDefinitionsRelease>
 		<buildDefinitionsDebug>
 			<staticLibrary>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -92,33 +96,34 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
 			</staticLibrary>
 			<sharedLibrary>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -128,31 +133,32 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -166,9 +172,10 @@
 				</item>
 			</sharedLibrary>
 			<executable>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -178,31 +185,32 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -216,9 +224,10 @@
 				</item>
 			</executable>
 			<executableConsole>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -228,31 +237,32 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);WIN32;_CONSOLE;UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -268,9 +278,10 @@
 		</buildDefinitionsDebug>
 		<buildDefinitionsRelease>
 			<staticLibrary>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -280,33 +291,34 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
 			</staticLibrary>
 			<sharedLibrary>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -316,31 +328,32 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -354,9 +367,10 @@
 				</item>
 			</sharedLibrary>
 			<executable>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -366,31 +380,32 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -404,9 +419,10 @@
 				</item>
 			</executable>
 			<executableConsole>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -416,31 +432,32 @@
 							<name>PreprocessorDefinitions</name>
 							<value>%(PROJECT_DEFINITIONS);_CONSOLE;UNICODE;_UNICODE;__ANDROID__;%(PreprocessorDefinitions)</value>
 						</item>
-            <item>
-              <name>StrictAliasing</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>EnableNeonCodegen</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>CppLanguageStandard</name>
-              <value>c++11</value>
-            </item>
-            <item>
-            	<name>AdditionalOptions</name>
-            	<value>-mno-unaligned-access %(AdditionalOptions)</value>
-            </item>
+						<item>
+							<name>StrictAliasing</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>EnableNeonCodegen</name>
+							<value>true</value>
+						</item>
+						<item>
+							<name>BufferSecurityCheck</name>
+							<value>false</value>
+						</item>
+						<item>
+							<name>CppLanguageStandard</name>
+							<value>c++11</value>
+						</item>
+						<item>
+							<name>AdditionalOptions</name>
+							<value>-mno-unaligned-access %(AdditionalOptions)</value>
+						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>

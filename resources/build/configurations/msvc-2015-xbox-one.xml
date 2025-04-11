@@ -2,9 +2,10 @@
 <object type="SolutionBuilderMsvcSettings">
 	<slnVersion>12.00</slnVersion>
 	<vsVersion>14</vsVersion>
-	<project type="SolutionBuilderMsvcVCXProj" version="7">
+	<project type="SolutionBuilderMsvcVCXProj" version="9">
 		<platform>Durango</platform>
 		<keyword>Win32Proj</keyword>
+		<windowsTargetPlatformVersion/>
 		<targetPrefixes>
 			<item/>
 			<item/>
@@ -17,6 +18,7 @@
 			<item>.exe</item>
 			<item>.exe</item>
 		</targetExts>
+		<resolvePaths>true</resolvePaths>
 		<propertyGroupsBeforeImports/>
 		<imports>
 			<item type="SolutionBuilderMsvcVCXImport">
@@ -62,7 +64,7 @@
 						<second>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</second>
 					</item>
 				</values>
-			</item>			
+			</item>
 		</propertyGroupsAfterImports>
 		<configurationDefinitionsDebug>
 			<staticLibrary>
@@ -182,9 +184,10 @@
 		</configurationDefinitionsRelease>
 		<buildDefinitionsDebug>
 			<staticLibrary>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -222,9 +225,10 @@
 				</item>
 			</staticLibrary>
 			<sharedLibrary>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -260,9 +264,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -300,9 +305,10 @@
 				</item>
 			</sharedLibrary>
 			<executable>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -338,9 +344,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -370,9 +377,10 @@
 				</item>
 			</executable>
 			<executableConsole>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -408,9 +416,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -442,9 +451,10 @@
 		</buildDefinitionsDebug>
 		<buildDefinitionsRelease>
 			<staticLibrary>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -482,9 +492,10 @@
 				</item>
 			</staticLibrary>
 			<sharedLibrary>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -520,9 +531,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -556,9 +568,10 @@
 				</item>
 			</sharedLibrary>
 			<executable>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -594,9 +607,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -626,9 +640,10 @@
 				</item>
 			</executable>
 			<executableConsole>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -664,9 +679,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>

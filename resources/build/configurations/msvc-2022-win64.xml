@@ -2,7 +2,7 @@
 <object type="SolutionBuilderMsvcSettings">
 	<slnVersion>12.00</slnVersion>
 	<vsVersion>17</vsVersion>
-	<project type="SolutionBuilderMsvcVCXProj" version="8">
+	<project type="SolutionBuilderMsvcVCXProj" version="9">
 		<platform>x64</platform>
 		<keyword>Win32Proj</keyword>
 		<windowsTargetPlatformVersion>10.0</windowsTargetPlatformVersion>
@@ -18,6 +18,7 @@
 			<item>.exe</item>
 			<item>.exe</item>
 		</targetExts>
+		<resolvePaths>true</resolvePaths>
 		<propertyGroupsBeforeImports/>
 		<imports>
 			<item type="SolutionBuilderMsvcVCXImport">
@@ -188,9 +189,10 @@
 		</configurationDefinitionsRelease>
 		<buildDefinitionsDebug>
 			<staticLibrary>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -238,9 +240,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ResourceCompile</name>
 					<fileTypes>rc</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -250,9 +253,10 @@
 				</item>
 			</staticLibrary>
 			<sharedLibrary>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -296,9 +300,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ResourceCompile</name>
 					<fileTypes>rc</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -306,9 +311,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -348,9 +354,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Manifest</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalManifestFiles</name>
@@ -360,9 +367,10 @@
 				</item>
 			</sharedLibrary>
 			<executable>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -406,9 +414,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ResourceCompile</name>
 					<fileTypes>rc</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -416,9 +425,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -454,9 +464,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Manifest</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalManifestFiles</name>
@@ -466,9 +477,10 @@
 				</item>
 			</executable>
 			<executableConsole>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -512,9 +524,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ResourceCompile</name>
 					<fileTypes>rc</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -522,9 +535,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -560,9 +574,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Manifest</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalManifestFiles</name>
@@ -574,9 +589,10 @@
 		</buildDefinitionsDebug>
 		<buildDefinitionsRelease>
 			<staticLibrary>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -644,9 +660,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ResourceCompile</name>
 					<fileTypes>rc</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -656,9 +673,10 @@
 				</item>
 			</staticLibrary>
 			<sharedLibrary>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -722,9 +740,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ResourceCompile</name>
 					<fileTypes>rc</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -732,9 +751,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -774,9 +794,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Manifest</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalManifestFiles</name>
@@ -786,9 +807,10 @@
 				</item>
 			</sharedLibrary>
 			<executable>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -852,9 +874,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ResourceCompile</name>
 					<fileTypes>rc</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -862,9 +885,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -900,9 +924,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Manifest</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalManifestFiles</name>
@@ -912,9 +937,10 @@
 				</item>
 			</executable>
 			<executableConsole>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ClCompile</name>
 					<fileTypes>c;cc;cpp</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -978,9 +1004,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>ResourceCompile</name>
 					<fileTypes>rc</fileTypes>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalIncludeDirectories</name>
@@ -988,9 +1015,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Link</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalDependencies</name>
@@ -1026,9 +1054,10 @@
 						</item>
 					</options>
 				</item>
-				<item type="SolutionBuilderMsvcVCXDefinition">
+				<item type="SolutionBuilderMsvcVCXDefinition" version="1">
 					<name>Manifest</name>
 					<fileTypes/>
+					<resolvePaths>true</resolvePaths>
 					<options>
 						<item>
 							<name>AdditionalManifestFiles</name>
@@ -1052,7 +1081,7 @@
 				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
-			</item>			
+			</item>
 			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>lua</fileType>
@@ -1132,10 +1161,10 @@
 				<name>None</name>
 				<fileType>dictionary</fileType>
 			</item>
-            <item type="SolutionBuilderMsvcVCXBuildTool">
-                <name>None</name>
-                <fileType>clang-format</fileType>
-            </item>
-        </buildTools>
+			<item type="SolutionBuilderMsvcVCXBuildTool">
+				<name>None</name>
+				<fileType>clang-format</fileType>
+			</item>
+		</buildTools>
 	</project>
 </object>
