@@ -185,7 +185,7 @@ render::RGTargetSet RTReflectionsPass::setup(
 
 			const render::ITexture::Size outputSize = reflectionsTexture->getSize();
 
-			//render::Shader::Permutation perm;
+			// render::Shader::Permutation perm;
 
 			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"RTReflections compute");
 			renderBlock->program = m_reflectionsComputeShader->getProgram(/*perm*/).program;
@@ -202,7 +202,7 @@ render::RGTargetSet RTReflectionsPass::setup(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);
-			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, reflectionsTexture, 0);
+			// renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, reflectionsTexture, 0);
 		});
 		renderGraph.addPass(rp);
 	}

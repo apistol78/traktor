@@ -132,13 +132,13 @@
 #define USE_TEMPORAL_FILTER 1
 #define USE_SPATIAL_FILTER 0
 
-const int N = 2;
+const int N = 4;
 const int Ndisclose = 16;
-const int Nspatial = 4;
-const int K = 30;
-const float NormalThreshold = 0.9f;
+const int Nspatial = 16;
+const int K = 8;
+const float NormalThreshold = 0.95f;
 const float DepthThreshold = 10.0f;
-const float Far = 40.0f;
+const float Far = 10.0f;
 const float SpatialFilterRadius = 0.005f;
 const float SpatialFilterCoeff = 0.75f;
 
@@ -186,7 +186,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 			
 			reservoir.W_sum = (Reservoir_CalculateProbability(v) / p) * m;
 			reservoir.M = m;
-			reservoir.normal = lastR.normal; //$Direction.xyz;
+			reservoir.normal = lastR.normal;
 			reservoir.depth = $Depth;
 			reservoir.radiance = v;
 		}
@@ -906,16 +906,6 @@ $TexCoord = vec4(
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{6AADDFA3-E292-B14B-95C7-220C9A9F6D18}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
@@ -1176,16 +1166,6 @@ $TexCoord = vec4(
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[35]"/>
-				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[18]"/>
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
@@ -1202,16 +1182,6 @@ $TexCoord = vec4(
 			<destination>
 				<node ref="/object/nodes/item[36]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1382,6 +1352,36 @@ $TexCoord = vec4(
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<id>{B713639B-0112-9E49-8EC8-0117278BB9D7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{6AADDFA3-E292-B14B-95C7-220C9A9F6D18}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 	</edges>
