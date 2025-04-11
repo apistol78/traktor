@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,11 +13,11 @@
 #include <vector>
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
+#include "SolutionBuilder/Configuration.h"
 
 namespace traktor::sb
 {
 
-class Configuration;
 class GeneratorContext;
 class Project;
 class ProjectItem;
@@ -56,20 +56,37 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 protected:
+	struct Product
+	{
+		std::map< std::wstring, std::wstring > configurationDefinitions;
+		RefArray< SolutionBuilderMsvcVCXDefinition > buildDefinitions;
+
+		void serialize(ISerializer& s);
+	};
+
+	struct Profile
+	{
+		Product staticLibrary;
+		Product sharedLibrary;
+		Product executable;
+		Product executableConsole;
+
+		const Product& getProduct(Configuration::TargetFormat targetFormat) const;
+
+		void serialize(ISerializer& s);
+	};
+
 	std::wstring m_platform;
 	std::wstring m_keyword;
 	std::wstring m_windowsTargetPlatformVersion;
-	std::wstring m_toolset;
 	std::wstring m_targetPrefixes[4];
 	std::wstring m_targetExts[4];
 	bool m_resolvePaths;
 	RefArray< SolutionBuilderMsvcVCXPropertyGroup > m_propertyGroupsBeforeImports;
 	RefArray< SolutionBuilderMsvcVCXImportCommon > m_imports;
 	RefArray< SolutionBuilderMsvcVCXPropertyGroup > m_propertyGroupsAfterImports;
-	std::map< std::wstring, std::wstring > m_configurationDefinitionsDebug[4];
-	std::map< std::wstring, std::wstring > m_configurationDefinitionsRelease[4];
-	RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsDebug[4];
-	RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsRelease[4];
+	Profile m_profileDebug;
+	Profile m_profileRelease;
 	RefArray< SolutionBuilderMsvcVCXBuildTool > m_buildTools;
 
 	bool generateProject(

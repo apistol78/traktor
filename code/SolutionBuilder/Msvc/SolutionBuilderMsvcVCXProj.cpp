@@ -16,6 +16,7 @@
 #include "Core/Misc/MD5.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -49,7 +50,7 @@ std::wstring systemPath(const Path& path)
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 9, SolutionBuilderMsvcVCXProj, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 10, SolutionBuilderMsvcVCXProj, ISerializable)
 
 SolutionBuilderMsvcVCXProj::SolutionBuilderMsvcVCXProj()
 :	m_resolvePaths(true)
@@ -119,27 +120,91 @@ void SolutionBuilderMsvcVCXProj::serialize(ISerializer& s)
 	s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroupsBeforeImports", m_propertyGroupsBeforeImports);
 	s >> MemberRefArray< SolutionBuilderMsvcVCXImportCommon >(L"imports", m_imports);
 	s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroupsAfterImports", m_propertyGroupsAfterImports);
-	s >> MemberStaticArray<
-		std::map< std::wstring, std::wstring >,
-		4,
-		MemberStlMap< std::wstring, std::wstring >
-	>(L"configurationDefinitionsDebug", m_configurationDefinitionsDebug, itemNames);
-	s >> MemberStaticArray<
-		std::map< std::wstring, std::wstring >,
-		4,
-		MemberStlMap< std::wstring, std::wstring >
-	>(L"configurationDefinitionsRelease", m_configurationDefinitionsRelease, itemNames);
-	s >> MemberStaticArray<
-			RefArray< SolutionBuilderMsvcVCXDefinition >,
-			sizeof_array(m_buildDefinitionsDebug),
-			MemberRefArray< SolutionBuilderMsvcVCXDefinition >
-		>(L"buildDefinitionsDebug", m_buildDefinitionsDebug, itemNames);
-	s >> MemberStaticArray<
-			RefArray< SolutionBuilderMsvcVCXDefinition >,
-			sizeof_array(m_buildDefinitionsRelease),
-			MemberRefArray< SolutionBuilderMsvcVCXDefinition >
-		>(L"buildDefinitionsRelease", m_buildDefinitionsRelease, itemNames);
+
+	if (s.getVersion< SolutionBuilderMsvcVCXProj >() >= 10)
+	{
+		s >> MemberComposite< Profile >(L"profileDebug", m_profileDebug);
+		s >> MemberComposite< Profile >(L"profileRelease", m_profileRelease);
+	}
+	else
+	{
+		std::map< std::wstring, std::wstring > m_configurationDefinitionsDebug[4];
+		std::map< std::wstring, std::wstring > m_configurationDefinitionsRelease[4];
+		RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsDebug[4];
+		RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsRelease[4];
+
+		s >> MemberStaticArray<
+			std::map< std::wstring, std::wstring >,
+			4,
+			MemberStlMap< std::wstring, std::wstring >
+		>(L"configurationDefinitionsDebug", m_configurationDefinitionsDebug, itemNames);
+		s >> MemberStaticArray<
+			std::map< std::wstring, std::wstring >,
+			4,
+			MemberStlMap< std::wstring, std::wstring >
+		>(L"configurationDefinitionsRelease", m_configurationDefinitionsRelease, itemNames);
+		s >> MemberStaticArray<
+				RefArray< SolutionBuilderMsvcVCXDefinition >,
+				sizeof_array(m_buildDefinitionsDebug),
+				MemberRefArray< SolutionBuilderMsvcVCXDefinition >
+			>(L"buildDefinitionsDebug", m_buildDefinitionsDebug, itemNames);
+		s >> MemberStaticArray<
+				RefArray< SolutionBuilderMsvcVCXDefinition >,
+				sizeof_array(m_buildDefinitionsRelease),
+				MemberRefArray< SolutionBuilderMsvcVCXDefinition >
+			>(L"buildDefinitionsRelease", m_buildDefinitionsRelease, itemNames);
+
+		m_profileDebug.staticLibrary.configurationDefinitions = m_configurationDefinitionsDebug[0];
+		m_profileDebug.staticLibrary.buildDefinitions = m_buildDefinitionsDebug[0];
+		m_profileDebug.sharedLibrary.configurationDefinitions = m_configurationDefinitionsDebug[1];
+		m_profileDebug.sharedLibrary.buildDefinitions = m_buildDefinitionsDebug[1];
+		m_profileDebug.executable.configurationDefinitions = m_configurationDefinitionsDebug[2];
+		m_profileDebug.executable.buildDefinitions = m_buildDefinitionsDebug[2];
+		m_profileDebug.executableConsole.configurationDefinitions = m_configurationDefinitionsDebug[3];
+		m_profileDebug.executableConsole.buildDefinitions = m_buildDefinitionsDebug[3];
+
+		m_profileRelease.staticLibrary.configurationDefinitions = m_configurationDefinitionsRelease[0];
+		m_profileRelease.staticLibrary.buildDefinitions = m_buildDefinitionsRelease[0];
+		m_profileRelease.sharedLibrary.configurationDefinitions = m_configurationDefinitionsRelease[1];
+		m_profileRelease.sharedLibrary.buildDefinitions = m_buildDefinitionsRelease[1];
+		m_profileRelease.executable.configurationDefinitions = m_configurationDefinitionsRelease[2];
+		m_profileRelease.executable.buildDefinitions = m_buildDefinitionsRelease[2];
+		m_profileRelease.executableConsole.configurationDefinitions = m_configurationDefinitionsRelease[3];
+		m_profileRelease.executableConsole.buildDefinitions = m_buildDefinitionsRelease[3];
+	}
+
 	s >> MemberRefArray< SolutionBuilderMsvcVCXBuildTool >(L"buildTools", m_buildTools);
+}
+
+void SolutionBuilderMsvcVCXProj::Product::serialize(ISerializer& s)
+{
+	s >> MemberStlMap< std::wstring, std::wstring >(L"configurationDefinitions", configurationDefinitions);
+	s >> MemberRefArray< SolutionBuilderMsvcVCXDefinition >(L"buildDefinitions", buildDefinitions);
+}
+
+const SolutionBuilderMsvcVCXProj::Product& SolutionBuilderMsvcVCXProj::Profile::getProduct(Configuration::TargetFormat targetFormat) const
+{
+	switch (targetFormat)
+	{
+	case Configuration::TfStaticLibrary:
+		return staticLibrary;
+	case Configuration::TfSharedLibrary:
+		return sharedLibrary;
+	case Configuration::TfExecutable:
+		return executable;
+	case Configuration::TfExecutableConsole:
+		return executableConsole;
+	}
+	T_FATAL_ASSERT(false);
+	return staticLibrary;
+}
+
+void SolutionBuilderMsvcVCXProj::Profile::serialize(ISerializer& s)
+{
+	s >> MemberComposite< Product >(L"staticLibrary", staticLibrary);
+	s >> MemberComposite< Product >(L"sharedLibrary", sharedLibrary);
+	s >> MemberComposite< Product >(L"executable", executable);
+	s >> MemberComposite< Product >(L"executableConsole", executableConsole);
 }
 
 bool SolutionBuilderMsvcVCXProj::generateProject(
@@ -238,13 +303,13 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 
 		if (configuration->getTargetProfile() == Configuration::TpDebug)
 		{
-			const auto& cd = m_configurationDefinitionsDebug[configuration->getTargetFormat()];
+			const auto& cd = m_profileDebug.getProduct(configuration->getTargetFormat()).configurationDefinitions;
 			for (auto i = cd.begin(); i != cd.end(); ++i)
 				os << L"<" << i->first << L">" << i->second << L"</" << i->first << L">" << Endl;
 		}
 		else
 		{
-			const auto& cd = m_configurationDefinitionsRelease[configuration->getTargetFormat()];
+			const auto& cd = m_profileRelease.getProduct(configuration->getTargetFormat()).configurationDefinitions;
 			for (auto i = cd.begin(); i != cd.end(); ++i)
 				os << L"<" << i->first << L">" << i->second << L"</" << i->first << L">" << Endl;
 		}
@@ -314,9 +379,9 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 		os << L"<ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">" << Endl;
 		os << IncreaseIndent;
 
-		const int32_t format = int32_t(configuration->getTargetFormat());
+		const Profile& profile = (configuration->getTargetProfile() == Configuration::TpDebug) ? m_profileDebug : m_profileRelease;
+		const auto& buildDefinitions = profile.getProduct(configuration->getTargetFormat()).buildDefinitions;
 
-		const auto& buildDefinitions = (configuration->getTargetProfile() == Configuration::TpDebug) ? m_buildDefinitionsDebug[format] : m_buildDefinitionsRelease[format];
 		for (auto buildDefinition : buildDefinitions)
 		{
 			buildDefinition->generate(
