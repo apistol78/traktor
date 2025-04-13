@@ -64,14 +64,17 @@ private:
 
 Scalar attenuation(const Scalar& distance)
 {
-	return clamp(1.0_simd / (distance * distance), 0.0_simd, 1.0_simd);
+	const Scalar a = 0.0_simd;
+	const Scalar b = 0.01_simd;
+	const Scalar c = 0.05_simd;
+	return clamp(1.0_simd / (a + b * distance + c * distance * distance), 0.0_simd, 1.0_simd);
 }
 
 Scalar attenuation(const Scalar& distance, const Scalar& range)
 {
-	const Scalar k0 = clamp(1.0_simd / (distance * distance), 0.0_simd, 1.0_simd);
-	const Scalar k1 = clamp(1.0_simd - (distance / range), 0.0_simd, 1.0_simd);
-	return k0 * k1;
+	const Scalar a = attenuation(distance);
+	const Scalar b = clamp(1.0_simd - power(distance / range, 4.0_simd), 0.0_simd, 1.0_simd);
+	return a * b;
 }
 
 void constructRay(const Vector4& position, const Vector4& direction, float far, RTCRay& outRay)
@@ -519,14 +522,12 @@ Color4f RayTracerEmbree::tracePath0(
 
 #if !defined(USE_LAMBERTIAN_DIRECTION)
 			const Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
-			const Scalar probability = 1.0_simd;
+			const Scalar cosPhi = clamp(dot3(-direction, hitNormal), 0.0_simd, 1.0_simd);
 #else
 			const Vector4 newDirection = Quasirandom::lambertian(uv, hitNormal);
-			const Scalar probability = 0.78532_simd; // 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
+			const Scalar cosPhi = 0.5_simd;
 #endif
 
-			// const Scalar cosPhi = dot3(newDirection, hitNormal);
-			const Scalar cosPhi = abs(dot3(-direction, hitNormal));
 			const Color4f incoming = traceSinglePath(hitOrigin, newDirection, m_configuration->getMaxPathDistance(), random, extraLightMask, 1);
 			const Color4f direct = sampleAnalyticalLights(
 				random,
@@ -538,7 +539,7 @@ Color4f RayTracerEmbree::tracePath0(
 			const Color4f output =
 				emittance / hitDistance +
 				direct * hitMaterialColor;
-			(incoming * BRDF * cosPhi / probability);
+			(incoming * BRDF * cosPhi);
 			color += output;
 		}
 	}
@@ -612,14 +613,12 @@ Color4f RayTracerEmbree::traceSinglePath(
 
 #if !defined(USE_LAMBERTIAN_DIRECTION)
 	const Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
-	const Scalar probability = 1.0_simd;
+	const Scalar cosPhi = clamp(dot3(-direction, hitNormal), 0.0_simd, 1.0_simd);
 #else
 	const Vector4 newDirection = Quasirandom::lambertian(uv, hitNormal);
-	const Scalar probability = 0.78532_simd; // 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
+	const Scalar cosPhi = 0.5_simd;
 #endif
 
-	// const Scalar cosPhi = dot3(newDirection, hitNormal);
-	const Scalar cosPhi = dot3(-direction, hitNormal);
 	const Color4f incoming = traceSinglePath(hitOrigin, newDirection, maxDistance - hitDistance, random, extraLightMask, depth + 1);
 	const Color4f direct = sampleAnalyticalLights(
 		random,
@@ -628,12 +627,8 @@ Color4f RayTracerEmbree::traceSinglePath(
 		Light::LmIndirect | extraLightMask,
 		true);
 
-	const Color4f output = emittance / hitDistance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor; // * cosPhi;
+	const Color4f output = emittance / hitDistance + (incoming + direct) * BRDF * cosPhi;
 	return output;
-
-	// const Color4f incoming = direct + traceSinglePath(hitOrigin, newDirection, maxDistance - hitDistance, random, extraLightMask, depth + 1);
-	// const Color4f color = incoming * dot3(hitNormal, -direction) * hitMaterialColor;
-	// return color;
 }
 
 Scalar RayTracerEmbree::traceOcclusion(
