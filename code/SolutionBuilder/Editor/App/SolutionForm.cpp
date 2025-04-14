@@ -6,45 +6,46 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/Editor/App/SolutionForm.h"
+
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
-#include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/System/OS.h"
 #include "Drawing/Formats/ImageFormatBmp.h"
-#include "Ui/Application.h"
-#include "Ui/CaptionBar.h"
-#include "Ui/Clipboard.h"
-#include "Ui/MessageBox.h"
-#include "Ui/FloodLayout.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/StyleSheet.h"
-#include "Ui/TableLayout.h"
-#include "Ui/FileDialog.h"
-#include "Ui/Splitter.h"
-#include "Ui/ToolBar/ToolBarButton.h"
-#include "Ui/ToolBar/ToolBarMenu.h"
-#include "Xml/XmlSerializer.h"
-#include "Xml/XmlDeserializer.h"
-#include "SolutionBuilder/Version.h"
 #include "SolutionBuilder/AggregationItem.h"
 #include "SolutionBuilder/Configuration.h"
-#include "SolutionBuilder/Project.h"
-#include "SolutionBuilder/ProjectDependency.h"
-#include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/ExternalDependency.h"
-#include "SolutionBuilder/Filter.h"
-#include "SolutionBuilder/File.h"
 #include "SolutionBuilder/Editor/App/AggregationItemPropertyPage.h"
 #include "SolutionBuilder/Editor/App/ConfigurationPropertyPage.h"
 #include "SolutionBuilder/Editor/App/MRU.h"
 #include "SolutionBuilder/Editor/App/ProjectPropertyPage.h"
-#include "SolutionBuilder/Editor/App/SolutionForm.h"
 #include "SolutionBuilder/Editor/App/SolutionPropertyPage.h"
+#include "SolutionBuilder/ExternalDependency.h"
+#include "SolutionBuilder/File.h"
+#include "SolutionBuilder/Filter.h"
+#include "SolutionBuilder/Project.h"
+#include "SolutionBuilder/ProjectDependency.h"
+#include "SolutionBuilder/Solution.h"
+#include "SolutionBuilder/Version.h"
+#include "Ui/Application.h"
+#include "Ui/CaptionBar.h"
+#include "Ui/Clipboard.h"
+#include "Ui/FileDialog.h"
+#include "Ui/FloodLayout.h"
+#include "Ui/MessageBox.h"
+#include "Ui/Splitter.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
+#include "Ui/TableLayout.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarMenu.h"
+#include "Xml/XmlDeserializer.h"
+#include "Xml/XmlSerializer.h"
 
 // Tools
 #include "SolutionBuilder/Editor/App/AddAggregatesTool.h"
@@ -56,37 +57,6 @@
 
 namespace traktor::sb
 {
-	namespace
-	{
-
-Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
-{
-	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, traktor::File::FmRead);
-	if (file)
-	{
-		Ref< ui::StyleSheet > styleSheet = xml::XmlDeserializer(file, pathName.getPathName()).readObject< ui::StyleSheet >();
-		if (!styleSheet)
-			return nullptr;
-
-		auto includes = styleSheet->getInclude();
-		for (const auto& include : includes)
-		{
-			Ref< ui::StyleSheet > includeStyleSheet = loadStyleSheet(include);
-			if (!includeStyleSheet)
-				return nullptr;
-
-			styleSheet = includeStyleSheet->merge(styleSheet);
-			if (!styleSheet)
-				return nullptr;
-		}
-
-		return styleSheet;
-	}
-	else
-		return nullptr;
-}
-
-	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionForm", SolutionForm, ui::Form)
 
@@ -97,7 +67,7 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 		styleSheetName = cmdLine.getOption(L"styleSheet").getString();
 
 	// Load default stylesheet.
-	Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
+	Ref< ui::StyleSheet > styleSheet = ui::StyleSheet::load(styleSheetName);
 	if (!styleSheet)
 	{
 		log::error << L"Unable to load stylesheet " << styleSheetName << Endl;
@@ -106,12 +76,11 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	ui::Application::getInstance()->setStyleSheet(styleSheet);
 
 	if (!ui::Form::create(
-		SB_TITLE,
-		1000_ut,
-		800_ut,
-		ui::WsResizable | ui::WsSystemBox | ui::WsMinimizeBox | ui::WsMaximizeBox | ui::WsNoCanvas,
-		new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)
-	))
+			SB_TITLE,
+			1000_ut,
+			800_ut,
+			ui::WsResizable | ui::WsSystemBox | ui::WsMinimizeBox | ui::WsMaximizeBox | ui::WsNoCanvas,
+			new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"SolutionBuilder.Icon"));
@@ -171,10 +140,9 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_treeSolution->create(
 		splitter,
 		ui::WsAccelerated |
-		ui::TreeView::WsAutoEdit |
-		ui::TreeView::WsTreeButtons |
-		ui::TreeView::WsTreeLines
-	);
+			ui::TreeView::WsAutoEdit |
+			ui::TreeView::WsTreeButtons |
+			ui::TreeView::WsTreeLines);
 	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Solution"));
 	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Project"));
 	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Folders", 0));
@@ -356,15 +324,11 @@ ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentIt
 	for (auto configuration : project->getConfigurations())
 		createTreeConfigurationItem(treeConfigurations, project, configuration);
 	for (auto item : project->getItems())
-	{
 		if (is_a< Filter >(item))
 			createTreeFilterItem(treeProject, project, static_cast< Filter* >(item));
-	}
 	for (auto item : project->getItems())
-	{
 		if (is_a< sb::File >(item))
 			createTreeFileItem(treeProject, project, static_cast< sb::File* >(item));
-	}
 
 	return treeProject;
 }
@@ -394,15 +358,11 @@ ui::TreeViewItem* SolutionForm::createTreeFilterItem(ui::TreeViewItem* parentIte
 	treeFilter->setData(L"FILTER", filter);
 
 	for (auto item : filter->getItems())
-	{
 		if (is_a< Filter >(item))
 			createTreeFilterItem(treeFilter, project, static_cast< Filter* >(item));
-	}
 	for (auto item : filter->getItems())
-	{
 		if (is_a< sb::File >(item))
 			createTreeFileItem(treeFilter, project, static_cast< sb::File* >(item));
-	}
 
 	return treeFilter;
 }
@@ -646,14 +606,13 @@ void SolutionForm::commandCopy(bool cut)
 	ISerializable* primary = selectedItem->getData< ISerializable >(L"PRIMARY");
 	if (!primary)
 		return;
-		
+
 	if (
 		is_a< Project >(primary) ||
 		is_a< Configuration >(primary) ||
 		is_a< Filter >(primary) ||
 		is_a< File >(primary) ||
-		is_a< AggregationItem >(primary)
-	)
+		is_a< AggregationItem >(primary))
 		ui::Application::getInstance()->getClipboard()->setObject(primary);
 }
 
@@ -966,7 +925,7 @@ void SolutionForm::eventTreeButtonDown(ui::TreeViewItemMouseButtonDownEvent* eve
 				solution->addProject(clonedProject);
 
 				createTreeProjectItem(solutionItem, clonedProject);
-				solutionItem->expand();	
+				solutionItem->expand();
 			}
 			else if (command == L"Project.Remove")
 			{
@@ -1126,10 +1085,9 @@ void SolutionForm::eventTreeButtonDown(ui::TreeViewItemMouseButtonDownEvent* eve
 					{
 						Path flattenPath;
 						if (FileSystem::getInstance().getRelativePath(
-							*i,
-							sourcePath,
-							flattenPath
-						))
+								*i,
+								sourcePath,
+								flattenPath))
 						{
 							Ref< sb::File > flattenFile = new sb::File();
 							flattenFile->setFileName(flattenPath.getPathName());

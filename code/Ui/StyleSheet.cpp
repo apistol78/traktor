@@ -1,24 +1,25 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/StyleSheet.h"
+
+#include "Core/Io/FileSystem.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberSmallMap.h"
-#include "Ui/StyleSheet.h"
 #include "Ui/Widget.h"
+#include "Xml/XmlDeserializer.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
-		namespace
-		{
+namespace
+{
 
 struct Group
 {
@@ -49,9 +50,9 @@ struct Value
 class MemberEntity : public MemberComplex
 {
 public:
-	MemberEntity(const wchar_t* const name, StyleSheet::Entity& ref)
-	:	MemberComplex(name, true)
-	,	m_ref(ref)
+	explicit MemberEntity(const wchar_t* const name, StyleSheet::Entity& ref)
+		: MemberComplex(name, true)
+		, m_ref(ref)
 	{
 	}
 
@@ -65,7 +66,7 @@ private:
 	StyleSheet::Entity& m_ref;
 };
 
-		}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.StyleSheet", 3, StyleSheet, ISerializable)
 
@@ -249,6 +250,33 @@ void StyleSheet::serialize(ISerializer& s)
 	s >> MemberSmallMap< std::wstring, std::wstring >(L"values", m_values);
 }
 
+Ref< StyleSheet > StyleSheet::load(const Path& pathName)
+{
+	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, File::FmRead);
+	if (file)
+	{
+		Ref< StyleSheet > styleSheet = xml::XmlDeserializer(file, pathName.getPathName()).readObject< StyleSheet >();
+		if (!styleSheet)
+			return nullptr;
+
+		auto includes = styleSheet->getInclude();
+		for (const auto& include : includes)
+		{
+			Ref< StyleSheet > includeStyleSheet = load(include);
+			if (!includeStyleSheet)
+				return nullptr;
+
+			styleSheet = includeStyleSheet->merge(styleSheet);
+			if (!styleSheet)
+				return nullptr;
+		}
+
+		return styleSheet;
+	}
+	else
+		return nullptr;
+}
+
 Ref< StyleSheet > StyleSheet::createDefault()
 {
 	Ref< StyleSheet > ss = new StyleSheet();
@@ -318,5 +346,4 @@ Ref< StyleSheet > StyleSheet::createDefault()
 	return ss;
 }
 
-	}
 }

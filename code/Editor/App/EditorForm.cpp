@@ -321,33 +321,6 @@ bool saveUserSettings(const Path& pathName, const PropertyGroup* properties)
 	return result;
 }
 
-Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
-{
-	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, File::FmRead);
-	if (file)
-	{
-		Ref< ui::StyleSheet > styleSheet = xml::XmlDeserializer(file, pathName.getPathName()).readObject< ui::StyleSheet >();
-		if (!styleSheet)
-			return nullptr;
-
-		auto includes = styleSheet->getInclude();
-		for (const auto& include : includes)
-		{
-			Ref< ui::StyleSheet > includeStyleSheet = loadStyleSheet(include);
-			if (!includeStyleSheet)
-				return nullptr;
-
-			styleSheet = includeStyleSheet->merge(styleSheet);
-			if (!styleSheet)
-				return nullptr;
-		}
-
-		return styleSheet;
-	}
-	else
-		return nullptr;
-}
-
 Ref< db::Database > openDatabase(const std::wstring& connectionString, bool create)
 {
 	Ref< db::Database > database = new db::Database();
@@ -1472,6 +1445,69 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 
 	Thread* thread = ThreadManager::getInstance().create([&]() {
 		threadOpenWorkspace(workspacePath, progressStep);
+
+		if (!m_sourceDatabase || !m_outputDatabase)
+			return;
+
+		m_workspacePath = workspacePath;
+
+		// Reload modules, more modules might be added in workspace.
+		loadModules();
+
+		// Update UI views.
+		m_dataBaseView->setDatabase(m_sourceDatabase);
+
+		// Create stream server.
+		m_streamServer = new net::StreamServer();
+		m_streamServer->create();
+
+		// Create remote database server.
+		m_dbConnectionManager = new db::ConnectionManager(m_streamServer);
+		m_dbConnectionManager->create();
+
+		// Open pipeline database.
+		m_pipelineDb = new PipelineDbFlat();
+		if (!m_pipelineDb->open(m_mergedSettings->getProperty< std::wstring >(L"Pipeline.Db")))
+		{
+			closeWorkspace();
+			return;
+		}
+
+		// Create pipeline cache.
+		safeDestroy(m_pipelineCache);
+		if (m_mergedSettings->getProperty< bool >(L"Pipeline.AvalancheCache", false))
+		{
+			m_pipelineCache = new editor::AvalanchePipelineCache();
+			if (!m_pipelineCache->create(m_mergedSettings))
+			{
+				traktor::log::warning << L"Unable to create pipeline avalanche cache." << Endl;
+				m_pipelineCache = nullptr;
+			}
+		}
+		else if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
+		{
+			m_pipelineCache = new editor::FilePipelineCache();
+			if (!m_pipelineCache->create(m_mergedSettings))
+			{
+				traktor::log::warning << L"Unable to create pipeline file cache." << Endl;
+				m_pipelineCache = nullptr;
+			}
+		}
+
+		// Create an in-memory cache if no pipeline cache was created.
+		if (!m_pipelineCache)
+		{
+			m_pipelineCache = new MemoryPipelineCache();
+			if (!m_pipelineCache->create(m_mergedSettings))
+			{
+				traktor::log::warning << L"Unable to create memory pipeline file cache; cache disabled." << Endl;
+				m_pipelineCache = nullptr;
+			}
+		}
+
+		// Expose servers as stock objects.
+		m_objectStore->set(m_streamServer);
+		m_objectStore->set(m_dbConnectionManager);
 	},
 		L"Open workspace thread");
 	if (!thread)
@@ -1494,67 +1530,6 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 		closeWorkspace();
 		return false;
 	}
-
-	m_workspacePath = workspacePath;
-
-	// Reload modules, more modules might be added in workspace.
-	loadModules();
-
-	// Update UI views.
-	m_dataBaseView->setDatabase(m_sourceDatabase);
-
-	// Create stream server.
-	m_streamServer = new net::StreamServer();
-	m_streamServer->create();
-
-	// Create remote database server.
-	m_dbConnectionManager = new db::ConnectionManager(m_streamServer);
-	m_dbConnectionManager->create();
-
-	// Open pipeline database.
-	m_pipelineDb = new PipelineDbFlat();
-	if (!m_pipelineDb->open(m_mergedSettings->getProperty< std::wstring >(L"Pipeline.Db")))
-	{
-		log::error << L"Unable to open pipeline database; failed to open workspace." << Endl;
-		closeWorkspace();
-		return false;
-	}
-
-	// Create pipeline cache.
-	safeDestroy(m_pipelineCache);
-	if (m_mergedSettings->getProperty< bool >(L"Pipeline.AvalancheCache", false))
-	{
-		m_pipelineCache = new editor::AvalanchePipelineCache();
-		if (!m_pipelineCache->create(m_mergedSettings))
-		{
-			traktor::log::warning << L"Unable to create pipeline avalanche cache." << Endl;
-			m_pipelineCache = nullptr;
-		}
-	}
-	else if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
-	{
-		m_pipelineCache = new editor::FilePipelineCache();
-		if (!m_pipelineCache->create(m_mergedSettings))
-		{
-			traktor::log::warning << L"Unable to create pipeline file cache." << Endl;
-			m_pipelineCache = nullptr;
-		}
-	}
-
-	// Create an in-memory cache if no pipeline cache was created.
-	if (!m_pipelineCache)
-	{
-		m_pipelineCache = new MemoryPipelineCache();
-		if (!m_pipelineCache->create(m_mergedSettings))
-		{
-			traktor::log::warning << L"Unable to create memory pipeline file cache; cache disabled." << Endl;
-			m_pipelineCache = nullptr;
-		}
-	}
-
-	// Expose servers as stock objects.
-	m_objectStore->set(m_streamServer);
-	m_objectStore->set(m_dbConnectionManager);
 
 	// Notify plugins about opened workspace.
 	for (auto editorPluginSite : m_editorPluginSites)
@@ -2113,7 +2088,7 @@ void EditorForm::updateStyleSheet(bool forceLoad)
 	if (!forceLoad && styleSheetFile != nullptr && !styleSheetFile->isArchive())
 		return;
 
-	Ref< const ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
+	Ref< const ui::StyleSheet > styleSheet = ui::StyleSheet::load(styleSheetName);
 	if (!styleSheet)
 	{
 		log::error << L"Unable to load stylesheet \"" << styleSheetName << L"\"." << Endl;

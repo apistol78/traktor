@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,11 @@
  */
 #pragma once
 
-#include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Io/Path.h"
 #include "Core/Math/Color4ub.h"
+#include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -103,6 +104,8 @@ public:
 	const AlignedVector< Entity >& getEntities() const { return m_entities; }
 
 	const SmallMap< std::wstring, std::wstring >& getValues() const { return m_values; }
+
+	static Ref< StyleSheet > load(const Path& pathName);
 
 	static Ref< StyleSheet > createDefault();
 

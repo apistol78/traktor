@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/Theme/App/ThemeForm.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
@@ -19,8 +21,14 @@
 #include "Ui/Bitmap.h"
 #include "Ui/CaptionBar.h"
 #include "Ui/Clipboard.h"
+#include "Ui/ColorPicker/ColorDialog.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridHeader.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridView.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
@@ -29,16 +37,9 @@
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Tab.h"
-#include "Ui/TabPage.h"
 #include "Ui/TableLayout.h"
-#include "Ui/ColorPicker/ColorDialog.h"
-#include "Ui/GridView/GridColumn.h"
-#include "Ui/GridView/GridHeader.h"
-#include "Ui/GridView/GridItem.h"
-#include "Ui/GridView/GridRow.h"
-#include "Ui/GridView/GridView.h"
+#include "Ui/TabPage.h"
 #include "Ui/Theme/App/PreviewWidgetFactory.h"
-#include "Ui/Theme/App/ThemeForm.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -53,15 +54,15 @@
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 template < typename ItemType >
 class Wrapper : public Object
 {
 public:
 	explicit Wrapper(ItemType* ptr)
-	:	m_ptr(ptr)
+		: m_ptr(ptr)
 	{
 	}
 
@@ -145,7 +146,7 @@ TreeViewItem* getEntity(TreeViewItem* item)
 	return nullptr;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ThemeForm", ThemeForm, Form)
 
@@ -163,12 +164,11 @@ bool ThemeForm::create(const CommandLine& cmdLine)
 	Application::getInstance()->setStyleSheet(styleSheet);
 
 	if (!Form::create(
-		L"Theme Editor",
-		1000_ut,
-		800_ut,
-		ui::WsResizable | ui::WsSystemBox | ui::WsMinimizeBox | ui::WsMaximizeBox | ui::WsNoCanvas,
-		new TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)
-	))
+			L"Theme Editor",
+			1000_ut,
+			800_ut,
+			ui::WsResizable | ui::WsSystemBox | ui::WsMinimizeBox | ui::WsMaximizeBox | ui::WsNoCanvas,
+			new TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"ThemeEditor.Icon"));
@@ -192,14 +192,14 @@ bool ThemeForm::create(const CommandLine& cmdLine)
 	m_menuBar->addImage(new ui::StyleBitmap(L"Editor.IconSmall"));
 	m_menuBar->addItem(new ui::ToolBarButton(L"Traktor", 0, ui::Command()));
 
-	//m_menuItemMRU = new MenuItem(L"Recent");
+	// m_menuItemMRU = new MenuItem(L"Recent");
 
 	Ref< ToolBarMenu > menuFile = new ToolBarMenu(L"File", L"");
 	menuFile->add(new MenuItem(Command(L"File.New"), L"New"));
 	menuFile->add(new MenuItem(Command(L"File.Open"), L"Open..."));
 	menuFile->add(new MenuItem(Command(L"File.Save"), L"Save"));
 	menuFile->add(new MenuItem(Command(L"File.SaveAs"), L"Save As..."));
-	//menuFile->add(m_menuItemMRU);
+	// menuFile->add(m_menuItemMRU);
 	menuFile->add(new MenuItem(L"-"));
 	menuFile->add(new MenuItem(Command(L"File.Exit"), L"Exit"));
 	m_menuBar->addItem(menuFile);
@@ -219,10 +219,9 @@ bool ThemeForm::create(const CommandLine& cmdLine)
 	m_treeTheme->create(
 		splitter2,
 		WsAccelerated |
-		TreeView::WsAutoEdit |
-		TreeView::WsTreeButtons |
-		TreeView::WsTreeLines
-	);
+			TreeView::WsAutoEdit |
+			TreeView::WsTreeButtons |
+			TreeView::WsTreeLines);
 	m_treeTheme->addEventHandler< SelectionChangeEvent >(this, &ThemeForm::eventTreeSelectionChange);
 	m_treeTheme->addEventHandler< TreeViewItemActivateEvent >(this, &ThemeForm::eventTreeActivateItem);
 	m_treeTheme->addEventHandler< TreeViewItemMouseButtonDownEvent >(this, &ThemeForm::eventTreeButtonDown);
@@ -366,7 +365,7 @@ void ThemeForm::updatePreview()
 	if (!selectedEntityItem)
 		return;
 
-	auto entity = static_cast< Wrapper< StyleSheet::Entity >* >( selectedEntityItem->getData(L"ENTITY") )->unwrap();
+	auto entity = static_cast< Wrapper< StyleSheet::Entity >* >(selectedEntityItem->getData(L"ENTITY"))->unwrap();
 
 	Ref< Container > container = new Container();
 	container->create(m_containerPreview, 0, new TableLayout(L"100%", L"100%,100%", 0_ut, 4_ut));
@@ -385,12 +384,10 @@ void ThemeForm::updatePreview()
 void ThemeForm::updateTitle()
 {
 	if (m_styleSheet)
-	{
 		if (checkModified())
 			setText(L"Theme Editor - " + m_styleSheetPath.getPathName() + L"*");
 		else
 			setText(L"Theme Editor - " + m_styleSheetPath.getPathName());
-	}
 	else
 		setText(L"Theme Editor");
 }
@@ -479,8 +476,7 @@ void ThemeForm::handleCommand(const Command& command)
 			// Copy element.
 			const Color4ub color = m_styleSheet->getColor(
 				selectedItem->getParent()->getText(),
-				selectedItem->getText()
-			);
+				selectedItem->getText());
 
 			Ref< PropertyGroup > props = new PropertyGroup();
 			props->setProperty< PropertyString >(L"element", selectedItem->getText());
@@ -510,13 +506,12 @@ void ThemeForm::handleCommand(const Command& command)
 			m_styleSheet->setColor(
 				selectedItem->getText(),
 				element,
-				color
-			);
+				color);
 
 			updateTree();
 			updatePreview();
 			updateTitle();
-		}	
+		}
 	}
 }
 
@@ -551,8 +546,7 @@ void ThemeForm::eventTreeActivateItem(TreeViewItemActivateEvent* event)
 
 	const Color4ub currentColor = m_styleSheet->getColor(
 		itemEntity->getText(),
-		itemElement->getText()
-	);
+		itemElement->getText());
 
 	ColorDialog colorDialog;
 	colorDialog.create(this, L"Set Element Color", Dialog::WsDefaultFixed | ColorDialog::WsAlpha, Color4f::fromColor4ub(currentColor));
@@ -569,8 +563,7 @@ void ThemeForm::eventTreeActivateItem(TreeViewItemActivateEvent* event)
 		m_styleSheet->setColor(
 			itemEntity->getText(),
 			itemElement->getText(),
-			colorDialog.getColor().toColor4ub()
-		);
+			colorDialog.getColor().toColor4ub());
 
 		updatePalette();
 		updatePreview();
@@ -630,8 +623,7 @@ void ThemeForm::eventTreeButtonDown(TreeViewItemMouseButtonDownEvent* event)
 				m_styleSheet->setColor(
 					selectedItem->getText(),
 					L"unnamed",
-					defaultColor
-				);
+					defaultColor);
 
 				Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
 				imageColor->clear(Color4f::fromColor4ub(defaultColor).rgb1());
@@ -672,7 +664,7 @@ void ThemeForm::eventTreeChange(TreeViewContentChangeEvent* event)
 
 	if (isEntity(modifiedItem)) // Entity
 	{
-		auto entity = static_cast< Wrapper< StyleSheet::Entity >* >( modifiedItem->getData(L"ENTITY") )->unwrap();
+		auto entity = static_cast< Wrapper< StyleSheet::Entity >* >(modifiedItem->getData(L"ENTITY"))->unwrap();
 		entity->typeName = modifiedItem->getText();
 		updatePreview();
 		event->consume();
@@ -682,7 +674,7 @@ void ThemeForm::eventTreeChange(TreeViewContentChangeEvent* event)
 		auto entityItem = getEntity(modifiedItem);
 		T_ASSERT(entityItem != nullptr);
 
-		auto entity = static_cast< Wrapper< StyleSheet::Entity >* >( entityItem->getData(L"ENTITY") )->unwrap();
+		auto entity = static_cast< Wrapper< StyleSheet::Entity >* >(entityItem->getData(L"ENTITY"))->unwrap();
 		T_ASSERT(entity != nullptr);
 
 		auto it = entity->colors.find(event->getOriginalText());
@@ -729,8 +721,7 @@ void ThemeForm::eventPaletteDoubleClick(MouseDoubleClickEvent* event)
 	m_styleSheet->setColor(
 		itemEntity->getText(),
 		itemElement->getText(),
-		color
-	);
+		color);
 
 	updatePalette();
 	updatePreview();
