@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Script/Editor/ScriptDebuggerView.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -18,46 +20,45 @@
 #include "Editor/IEditorPage.h"
 #include "I18N/Text.h"
 #include "Script/StackFrame.h"
-#include "Script/Variable.h"
 #include "Script/Value.h"
 #include "Script/ValueObject.h"
-#include "Script/Editor/ScriptDebuggerView.h"
+#include "Script/Variable.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
-#include "Ui/Menu.h"
-#include "Ui/MenuItem.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/TableLayout.h"
-#include "Ui/Splitter.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridRowStateChangeEvent.h"
 #include "Ui/GridView/GridView.h"
+#include "Ui/Menu.h"
+#include "Ui/MenuItem.h"
+#include "Ui/Splitter.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor::script
 {
-	namespace
-	{
+namespace
+{
 
 struct VariablePred
 {
-	bool operator () (const Variable* vl, const Variable* vr) const
+	bool operator()(const Variable* vl, const Variable* vr) const
 	{
 		return compareIgnoreCase(vl->getName(), vr->getName()) <= 0;
 	}
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerView", ScriptDebuggerView, ui::Container)
 
 ScriptDebuggerView::ScriptDebuggerView(editor::IEditor* editor, IScriptDebugger* scriptDebugger)
-:	m_editor(editor)
-,	m_scriptDebugger(scriptDebugger)
+	: m_editor(editor)
+	, m_scriptDebugger(scriptDebugger)
 {
 }
 
@@ -187,12 +188,12 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 	{
 		// Capture all stack frames.
 		m_stackFrames.resize(0);
-		for (uint32_t depth = 0; ; ++depth)
+		for (uint32_t depth = 0;; ++depth)
 		{
 			Ref< StackFrame > sf;
 			if (!scriptDebugger->captureStackFrame(depth, sf))
 				break;
-			T_FATAL_ASSERT (sf);
+			T_FATAL_ASSERT(sf);
 			m_stackFrames.push_back(sf);
 		}
 
@@ -204,13 +205,15 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 		int32_t depth = 0;
 		for (auto stackFrame : m_stackFrames)
 		{
-			Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(stackFrame->getScriptId());
+			const Guid scriptId(stackFrame->getFileName());
+
+			Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(scriptId);
 
 			Ref< ui::GridRow > row = new ui::GridRow(0);
 			row->add(stackFrame->getFunctionName());
 			row->add(toString(stackFrame->getLine() + 1));
 			row->add(scriptInstance ? scriptInstance->getName() : L"(Unknown script)");
-			row->setData(L"SCRIPT_ID", new PropertyString(stackFrame->getScriptId().format()));
+			row->setData(L"SCRIPT_ID", new PropertyString(scriptId.format()));
 			row->setData(L"SCRIPT_LINE", new PropertyInteger(stackFrame->getLine()));
 			row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));
 			m_callStackGrid->addRow(row);

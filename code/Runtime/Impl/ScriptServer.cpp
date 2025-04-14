@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Runtime/Impl/ScriptServer.h"
+
 #include "Core/Class/IRuntimeClassFactory.h"
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Log/Log.h"
@@ -19,11 +21,8 @@
 #include "Net/BidirectionalObjectTransport.h"
 #include "Resource/IResourceManager.h"
 #include "Runtime/IEnvironment.h"
-#include "Runtime/Impl/ScriptServer.h"
 #include "Script/IScriptContext.h"
 #include "Script/IScriptManager.h"
-#include "Script/ScriptFactory.h"
-#include "Script/StackFrame.h"
 #include "Script/Remote/ScriptDebuggerBreadcrumbs.h"
 #include "Script/Remote/ScriptDebuggerBreakpoint.h"
 #include "Script/Remote/ScriptDebuggerControl.h"
@@ -32,6 +31,8 @@
 #include "Script/Remote/ScriptDebuggerStateChange.h"
 #include "Script/Remote/ScriptDebuggerStatus.h"
 #include "Script/Remote/ScriptProfilerCallMeasured.h"
+#include "Script/ScriptFactory.h"
+#include "Script/StackFrame.h"
 
 namespace traktor::runtime
 {
@@ -39,7 +40,7 @@ namespace traktor::runtime
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ScriptServer", ScriptServer, IScriptServer)
 
 ScriptServer::ScriptServer()
-:	m_callSamplesIndex(0)
+	: m_callSamplesIndex(0)
 {
 }
 
@@ -49,8 +50,7 @@ bool ScriptServer::create(
 	bool debugger,
 	bool profiler,
 	input::InputSystem* inputSystem,
-	net::BidirectionalObjectTransport* transport
-)
+	net::BidirectionalObjectTransport* transport)
 {
 	const std::wstring scriptType = defaultSettings->getProperty< std::wstring >(L"Script.Type");
 
@@ -104,7 +104,10 @@ bool ScriptServer::create(
 	{
 		m_transport = transport;
 
-		m_scriptDebuggerThread = ThreadManager::getInstance().create([=, this](){ threadDebugger(); }, L"Script debugger/profiler thread");
+		m_scriptDebuggerThread = ThreadManager::getInstance().create([=, this]() {
+			threadDebugger();
+		},
+			L"Script debugger/profiler thread");
 		if (!m_scriptDebuggerThread)
 			return false;
 
@@ -190,13 +193,13 @@ void ScriptServer::threadDebugger()
 				{
 					if (breakpoint->shouldAdd())
 					{
-						m_scriptDebugger->setBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
-						log::debug << L"Breakpoint " << breakpoint->getScriptId().format() << L":" << breakpoint->getLineNumber() << L" added." << Endl;
+						m_scriptDebugger->setBreakpoint(breakpoint->getFileName(), breakpoint->getLineNumber());
+						log::debug << L"Breakpoint " << breakpoint->getFileName() << L":" << breakpoint->getLineNumber() << L" added." << Endl;
 					}
 					else
 					{
-						m_scriptDebugger->removeBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
-						log::debug << L"Breakpoint " << breakpoint->getScriptId().format() << L":" << breakpoint->getLineNumber() << L" removed." << Endl;
+						m_scriptDebugger->removeBreakpoint(breakpoint->getFileName(), breakpoint->getLineNumber());
+						log::debug << L"Breakpoint " << breakpoint->getFileName() << L":" << breakpoint->getLineNumber() << L" removed." << Endl;
 					}
 				}
 				else if (const script::ScriptDebuggerControl* control = dynamic_type_cast< script::ScriptDebuggerControl* >(object))

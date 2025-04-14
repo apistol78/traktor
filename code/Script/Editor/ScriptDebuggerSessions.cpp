@@ -1,15 +1,16 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Script/Editor/ScriptDebuggerSessions.h"
+
 #include "Core/Guid.h"
 #include "Script/IScriptDebugger.h"
 #include "Script/IScriptProfiler.h"
-#include "Script/Editor/ScriptDebuggerSessions.h"
 
 namespace traktor::script
 {
@@ -25,29 +26,25 @@ void ScriptDebuggerSessions::beginSession(IScriptDebugger* scriptDebugger, IScri
 
 	if (scriptDebugger)
 	{
-		for (std::map< int32_t, std::set< Guid > >::const_iterator i = m_breakpoints.begin(); i != m_breakpoints.end(); ++i)
-		{
-			for (std::set< Guid >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
-				scriptDebugger->setBreakpoint(*j, i->first);
-		}
+		for (std::map< int32_t, std::set< std::wstring > >::const_iterator i = m_breakpoints.begin(); i != m_breakpoints.end(); ++i)
+			for (const auto& fileName : i->second)
+				scriptDebugger->setBreakpoint(fileName, i->first);
 	}
 
-	for (std::list< IListener* >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-		(*i)->notifyBeginSession(scriptDebugger, scriptProfiler);
+	for (auto listener : m_listeners)
+		listener->notifyBeginSession(scriptDebugger, scriptProfiler);
 }
 
 void ScriptDebuggerSessions::endSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
-	for (std::list< IListener* >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-		(*i)->notifyEndSession(scriptDebugger, scriptProfiler);
+	for (auto listener : m_listeners)
+		listener->notifyEndSession(scriptDebugger, scriptProfiler);
 
 	if (scriptDebugger)
 	{
-		for (std::map< int32_t, std::set< Guid > >::const_iterator i = m_breakpoints.begin(); i != m_breakpoints.end(); ++i)
-		{
-			for (std::set< Guid >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
-				scriptDebugger->removeBreakpoint(*j, i->first);
-		}
+		for (std::map< int32_t, std::set< std::wstring > >::const_iterator i = m_breakpoints.begin(); i != m_breakpoints.end(); ++i)
+			for (const auto& fileName : i->second)
+				scriptDebugger->removeBreakpoint(fileName, i->first);
 	}
 
 	for (std::list< Session >::iterator i = m_sessions.begin(); i != m_sessions.end(); ++i)
@@ -60,46 +57,46 @@ void ScriptDebuggerSessions::endSession(IScriptDebugger* scriptDebugger, IScript
 	}
 }
 
-bool ScriptDebuggerSessions::setBreakpoint(const Guid& scriptId, int32_t lineNumber)
+bool ScriptDebuggerSessions::setBreakpoint(const std::wstring& fileName, int32_t lineNumber)
 {
-	m_breakpoints[lineNumber].insert(scriptId);
+	m_breakpoints[lineNumber].insert(fileName);
 
-	for (std::list< Session >::iterator i = m_sessions.begin(); i != m_sessions.end(); ++i)
-		i->debugger->setBreakpoint(scriptId, lineNumber);
+	for (const auto& session : m_sessions)
+		session.debugger->setBreakpoint(fileName, lineNumber);
 
-	for (std::list< IListener* >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-		(*i)->notifySetBreakpoint(scriptId, lineNumber);
+	for (auto listener : m_listeners)
+		listener->notifySetBreakpoint(fileName, lineNumber);
 
 	return true;
 }
 
-bool ScriptDebuggerSessions::removeBreakpoint(const Guid& scriptId, int32_t lineNumber)
+bool ScriptDebuggerSessions::removeBreakpoint(const std::wstring& fileName, int32_t lineNumber)
 {
-	m_breakpoints[lineNumber].erase(scriptId);
+	m_breakpoints[lineNumber].erase(fileName);
 
-	for (std::list< Session >::iterator i = m_sessions.begin(); i != m_sessions.end(); ++i)
-		i->debugger->removeBreakpoint(scriptId, lineNumber);
+	for (const auto& session : m_sessions)
+		session.debugger->removeBreakpoint(fileName, lineNumber);
 
-	for (std::list< IListener* >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-		(*i)->notifyRemoveBreakpoint(scriptId, lineNumber);
+	for (auto listener : m_listeners)
+		listener->notifyRemoveBreakpoint(fileName, lineNumber);
 
 	return true;
 }
 
-bool ScriptDebuggerSessions::removeAllBreakpoints(const Guid& scriptId)
+bool ScriptDebuggerSessions::removeAllBreakpoints(const std::wstring& fileName)
 {
-	for (std::map< int32_t, std::set< Guid > >::iterator i = m_breakpoints.begin(); i != m_breakpoints.end(); ++i)
+	for (std::map< int32_t, std::set< std::wstring > >::iterator i = m_breakpoints.begin(); i != m_breakpoints.end(); ++i)
 	{
 		int32_t lineNumber = i->first;
 
-		std::set< Guid >::iterator it = i->second.find(scriptId);
+		std::set< std::wstring >::iterator it = i->second.find(fileName);
 		if (it != i->second.end())
 		{
-			for (std::list< Session >::iterator k = m_sessions.begin(); k != m_sessions.end(); ++k)
-				k->debugger->removeBreakpoint(scriptId, lineNumber);
+			for (const auto& session : m_sessions)
+				session.debugger->removeBreakpoint(fileName, lineNumber);
 
-			for (std::list< IListener* >::iterator k = m_listeners.begin(); k != m_listeners.end(); ++k)
-				(*k)->notifyRemoveBreakpoint(scriptId, lineNumber);
+			for (auto listener : m_listeners)
+				listener->notifyRemoveBreakpoint(fileName, lineNumber);
 
 			i->second.erase(it);
 		}
@@ -107,11 +104,11 @@ bool ScriptDebuggerSessions::removeAllBreakpoints(const Guid& scriptId)
 	return true;
 }
 
-bool ScriptDebuggerSessions::haveBreakpoint(const Guid& scriptId, int32_t lineNumber) const
+bool ScriptDebuggerSessions::haveBreakpoint(const std::wstring& fileName, int32_t lineNumber) const
 {
-	std::map< int32_t, std::set< Guid > >::const_iterator i = m_breakpoints.find(lineNumber);
-	if (i != m_breakpoints.end())
-		return i->second.find(scriptId) != i->second.end();
+	const auto it = m_breakpoints.find(lineNumber);
+	if (it != m_breakpoints.end())
+		return it->second.find(fileName) != it->second.end();
 	else
 		return false;
 }
@@ -120,14 +117,12 @@ void ScriptDebuggerSessions::addListener(IListener* listener)
 {
 	T_ASSERT(listener);
 
-	for (std::list< Session >::iterator i = m_sessions.begin(); i != m_sessions.end(); ++i)
-		listener->notifyBeginSession(i->debugger, i->profiler);
+	for (const auto& session : m_sessions)
+		listener->notifyBeginSession(session.debugger, session.profiler);
 
-	for (std::map< int32_t, std::set< Guid > >::const_iterator i = m_breakpoints.begin(); i != m_breakpoints.end(); ++i)
-	{
-		for (std::set< Guid >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+	for (std::map< int32_t, std::set< std::wstring > >::const_iterator i = m_breakpoints.begin(); i != m_breakpoints.end(); ++i)
+		for (std::set< std::wstring >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
 			listener->notifySetBreakpoint(*j, i->first);
-	}
 
 	m_listeners.push_back(listener);
 }
@@ -138,7 +133,6 @@ void ScriptDebuggerSessions::removeListener(IListener* listener)
 	for (std::list< Session >::iterator i = m_sessions.begin(); i != m_sessions.end(); ++i)
 		listener->notifyEndSession(i->debugger, i->profiler);
 	m_listeners.remove(listener);
-
 }
 
 }

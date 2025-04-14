@@ -8,14 +8,15 @@
  */
 #pragma once
 
-#include <list>
 #include "Editor/IEditorPage.h"
-#include "Script/IErrorCallback.h"
-#include "Script/IScriptDebugger.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
 #include "Script/Editor/IScriptOutline.h"
-#include "Ui/SyntaxRichEdit/SyntaxTypes.h"
+#include "Script/IErrorCallback.h"
+#include "Script/IScriptDebugger.h"
 #include "Ui/Events/AllEvents.h"
+#include "Ui/SyntaxRichEdit/SyntaxTypes.h"
+
+#include <list>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -67,10 +68,10 @@ class ScriptBreakpointEvent;
 class ScriptClassesView;
 
 class T_DLLCLASS ScriptEditorPage
-:	public editor::IEditorPage
-,	public IErrorCallback
-,	public IScriptDebugger::IListener
-,	public IScriptDebuggerSessions::IListener
+	: public editor::IEditorPage
+	, public IErrorCallback
+	, public IScriptDebugger::IListener
+	, public IScriptDebuggerSessions::IListener
 {
 	T_RTTI_CLASS;
 
@@ -134,9 +135,9 @@ private:
 
 	virtual void notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) override final;
 
-	virtual void notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
+	virtual void notifySetBreakpoint(const std::wstring& fileName, int32_t lineNumber) override final;
 
-	virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
+	virtual void notifyRemoveBreakpoint(const std::wstring& fileName, int32_t lineNumber) override final;
 
 	/*! \} */
 

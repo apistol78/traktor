@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Script/Editor/ScriptEditorPlugin.h"
+
 #include "Core/Class/IRuntimeClassFactory.h"
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Misc/ObjectStore.h"
@@ -13,9 +15,8 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
-#include "Script/IScriptManager.h"
 #include "Script/Editor/ScriptDebuggerSessions.h"
-#include "Script/Editor/ScriptEditorPlugin.h"
+#include "Script/IScriptManager.h"
 
 namespace traktor::script
 {
@@ -111,11 +112,11 @@ void ScriptEditorPlugin::notifyEndSession(IScriptDebugger* scriptDebugger, IScri
 {
 }
 
-void ScriptEditorPlugin::notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber)
+void ScriptEditorPlugin::notifySetBreakpoint(const std::wstring& fileName, int32_t lineNumber)
 {
 }
 
-void ScriptEditorPlugin::notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber)
+void ScriptEditorPlugin::notifyRemoveBreakpoint(const std::wstring& fileName, int32_t lineNumber)
 {
 }
 

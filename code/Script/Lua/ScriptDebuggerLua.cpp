@@ -6,14 +6,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
-#include <map>
-#include "Core/Guid.h"
+#include "Script/Lua/ScriptDebuggerLua.h"
+
 #include "Core/Class/Boxed.h"
+#include "Core/Guid.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Core/Timer/Timer.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmEnum.h"
 #include "Core/Reflection/RfmObject.h"
@@ -21,30 +20,33 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Core/Timer/Timer.h"
+#include "Script/Lua/ScriptContextLua.h"
+#include "Script/Lua/ScriptManagerLua.h"
+#include "Script/Lua/ScriptUtilitiesLua.h"
+#include "Script/StackFrame.h"
 #include "Script/Value.h"
 #include "Script/ValueObject.h"
 #include "Script/Variable.h"
-#include "Script/StackFrame.h"
-#include "Script/Lua/ScriptContextLua.h"
-#include "Script/Lua/ScriptDebuggerLua.h"
-#include "Script/Lua/ScriptManagerLua.h"
-#include "Script/Lua/ScriptUtilitiesLua.h"
+
+#include <cstring>
+#include <map>
 
 namespace traktor::script
 {
-	namespace
-	{
+namespace
+{
 
 const int32_t c_tableKey_instance = -2;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerLua", ScriptDebuggerLua, IScriptDebugger)
 
 ScriptDebuggerLua::ScriptDebuggerLua(ScriptManagerLua* scriptManager, lua_State* luaState)
-:	m_scriptManager(scriptManager)
-,	m_luaState(luaState)
-,	m_state(State::Running)
+	: m_scriptManager(scriptManager)
+	, m_luaState(luaState)
+	, m_state(State::Running)
 {
 }
 
@@ -52,17 +54,17 @@ ScriptDebuggerLua::~ScriptDebuggerLua()
 {
 }
 
-bool ScriptDebuggerLua::setBreakpoint(const Guid& scriptId, int32_t lineNumber)
+bool ScriptDebuggerLua::setBreakpoint(const std::wstring& fileName, int32_t lineNumber)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_breakpoints[lineNumber].insert(scriptId);
+	m_breakpoints[lineNumber].insert(fileName);
 	return true;
 }
 
-bool ScriptDebuggerLua::removeBreakpoint(const Guid& scriptId, int32_t lineNumber)
+bool ScriptDebuggerLua::removeBreakpoint(const std::wstring& fileName, int32_t lineNumber)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_breakpoints[lineNumber].erase(scriptId);
+	m_breakpoints[lineNumber].erase(fileName);
 	return true;
 }
 
@@ -98,7 +100,7 @@ bool ScriptDebuggerLua::captureStackFrame(uint32_t depth, Ref< StackFrame >& out
 	lua_getinfo(currentContext->m_luaState, "Snlu", &ar);
 
 	outStackFrame = new StackFrame();
-	outStackFrame->setScriptId(Guid(mbstows(ar.source)));
+	outStackFrame->setFileName(mbstows(ar.source));
 	outStackFrame->setFunctionName(ar.name ? mbstows(ar.name) : L"(anonymous)");
 	outStackFrame->setLine(max(ar.currentline - 1, 0));
 
@@ -406,7 +408,6 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 	if (m_state == State::Running)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		Guid currentId;
 
 		// Any breakpoint defined with current line number?
 		auto it = m_breakpoints.find(currentLine);
@@ -414,67 +415,60 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		{
 			// Get executing script's identifier.
 			lua_getinfo(L, "S", ar);
-			if (currentId.create(mbstows(ar->source)))
-			{
-				// If script identifier also match then we're in the right script
-				// so we halt and trigger "breakpoint reached".
-				if (it->second.find(currentId) != it->second.end())
-				{
-					m_state = State::Halted;
-					m_lastId = currentId;
+			const std::wstring currentFile = mbstows(ar->source);
 
-					for (auto listener : m_listeners)
-						listener->debugeeStateChange(this);
-				}
+			// If script identifier also match then we're in the right script
+			// so we halt and trigger "breakpoint reached".
+			if (it->second.find(currentFile) != it->second.end())
+			{
+				m_state = State::Halted;
+				m_lastFile = currentFile;
+
+				for (auto listener : m_listeners)
+					listener->debugeeStateChange(this);
 			}
 		}
 	}
 	else if (m_state == State::Break)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		Guid currentId;
 
 		// Get executing script's identifier.
 		lua_getinfo(L, "S", ar);
-		if (currentId.create(mbstows(ar->source)))
-		{
-			m_state = State::Halted;
-			m_lastId = currentId;
-			for (auto listener : m_listeners)
-				listener->debugeeStateChange(this);
-		}
+		const std::wstring currentFile = mbstows(ar->source);
+
+		m_state = State::Halted;
+		m_lastFile = currentFile;
+		for (auto listener : m_listeners)
+			listener->debugeeStateChange(this);
 	}
 	else if (m_state == State::StepInto)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		Guid currentId;
 
 		// Get executing script's identifier.
 		lua_getinfo(L, "S", ar);
-		if (currentId.create(mbstows(ar->source)))
-		{
-			m_state = State::Halted;
-			m_lastId = currentId;
-			for (auto listener : m_listeners)
-				listener->debugeeStateChange(this);
-		}
+		const std::wstring currentFile = mbstows(ar->source);
+
+		m_state = State::Halted;
+		m_lastFile = currentFile;
+		for (auto listener : m_listeners)
+			listener->debugeeStateChange(this);
 	}
 	else if (m_state == State::StepOver)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		Guid currentId;
 
 		// Get executing script's identifier.
 		lua_getinfo(L, "S", ar);
-		if (currentId.create(mbstows(ar->source)))
+		const std::wstring currentFile = mbstows(ar->source);
+
+		if (currentFile == m_lastFile)
 		{
-			if (currentId == m_lastId)
-			{
-				m_state = State::Halted;
-				m_lastId = currentId;
-				for (auto listener : m_listeners)
-					listener->debugeeStateChange(this);
-			}
+			m_state = State::Halted;
+			m_lastFile = currentFile;
+			for (auto listener : m_listeners)
+				listener->debugeeStateChange(this);
 		}
 	}
 

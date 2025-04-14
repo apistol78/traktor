@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,9 @@
  */
 #pragma once
 
-#include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,9 +31,9 @@ class T_DLLCLASS StackFrame : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	void setScriptId(const Guid& scriptId);
+	void setFileName(const std::wstring& fileName);
 
-	const Guid& getScriptId() const;
+	const std::wstring& getFileName() const;
 
 	void setFunctionName(const std::wstring& functionName);
 
@@ -45,7 +46,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	Guid m_scriptId;
+	std::wstring m_fileName;
 	std::wstring m_functionName;
 	uint32_t m_line = 0;
 };

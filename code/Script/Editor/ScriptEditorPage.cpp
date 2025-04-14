@@ -257,7 +257,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		const Guid instanceGuid = m_document->getInstance(0)->getGuid();
 		for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
 		{
-			if (m_scriptDebuggerSessions->haveBreakpoint(instanceGuid, i))
+			if (m_scriptDebuggerSessions->haveBreakpoint(instanceGuid.format(), i))
 			{
 				m_edit->setLineData(i, new PropertyBoolean(true));
 				m_edit->setImage(i, 0);
@@ -487,7 +487,7 @@ void ScriptEditorPage::debugeeStateChange(IScriptDebugger* scriptDebugger)
 		for (uint32_t depth = 0; scriptDebugger->captureStackFrame(depth, sf); ++depth)
 		{
 			T_FATAL_ASSERT(sf);
-			if (sf->getScriptId() == instanceGuid)
+			if (Guid(sf->getFileName()) == instanceGuid)
 			{
 				// Set breadcrumb trail of execution.
 				AlignedVector< uint32_t > breadcrumbs;
@@ -514,24 +514,24 @@ void ScriptEditorPage::notifyEndSession(IScriptDebugger* scriptDebugger, IScript
 	scriptDebugger->removeListener(this);
 }
 
-void ScriptEditorPage::notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber)
+void ScriptEditorPage::notifySetBreakpoint(const std::wstring& fileName, int32_t lineNumber)
 {
 }
 
-void ScriptEditorPage::notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber)
+void ScriptEditorPage::notifyRemoveBreakpoint(const std::wstring& fileName, int32_t lineNumber)
 {
 }
 
 void ScriptEditorPage::updateBreakpoints()
 {
 	const Guid instanceGuid = m_document->getInstance(0)->getGuid();
-	m_scriptDebuggerSessions->removeAllBreakpoints(instanceGuid);
+	m_scriptDebuggerSessions->removeAllBreakpoints(instanceGuid.format());
 	for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
 	{
 		PropertyBoolean* p = dynamic_type_cast< PropertyBoolean* >(m_edit->getLineData(i));
 		if (p)
 		{
-			m_scriptDebuggerSessions->setBreakpoint(instanceGuid, i);
+			m_scriptDebuggerSessions->setBreakpoint(instanceGuid.format(), i);
 			m_edit->setImage(i, 0);
 		}
 		else

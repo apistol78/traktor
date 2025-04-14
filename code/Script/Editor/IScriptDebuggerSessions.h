@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,8 @@
 #pragma once
 
 #include "Core/Object.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -45,9 +47,9 @@ public:
 
 		virtual void notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) = 0;
 
-		virtual void notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
+		virtual void notifySetBreakpoint(const std::wstring& fileName, int32_t lineNumber) = 0;
 
-		virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
+		virtual void notifyRemoveBreakpoint(const std::wstring& fileName, int32_t lineNumber) = 0;
 	};
 
 	/*! Begin new debugging session.
@@ -66,34 +68,34 @@ public:
 
 	/*! Activate new breakpoint.
 	 *
-	 * \param scriptId Script identifier.
+	 * \param fileName Script file name.
 	 * \param lineNumber Line within script to associate with breakpoint.
 	 * \return True if breakpoint was set.
 	 */
-	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
+	virtual bool setBreakpoint(const std::wstring& fileName, int32_t lineNumber) = 0;
 
 	/*! Remove breakpoint.
 	 *
-	 * \param scriptId Script identifier.
+	 * \param fileName Script file name.
 	 * \param lineNumber Line within script to associate with breakpoint.
 	 * \return True if breakpoint was removed.
 	 */
-	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
+	virtual bool removeBreakpoint(const std::wstring& fileName, int32_t lineNumber) = 0;
 
 	/*! Remove all breakpoints from script.
 	 *
-	 * \param scriptId Script identifier.
+	 * \param fileName Script file name.
 	 * \return True if all breakpoints was removed.
 	 */
-	virtual bool removeAllBreakpoints(const Guid& scriptId) = 0;
+	virtual bool removeAllBreakpoints(const std::wstring& fileName) = 0;
 
 	/*! Check if breakpoint is set.
 	 *
-	 * \param scriptId Script identifier.
+	 * \param fileName Script file name.
 	 * \param lineNumber Line within script to check for breakpoint.
 	 * \return True if breakpoint is set.
 	 */
-	virtual bool haveBreakpoint(const Guid& scriptId, int32_t lineNumber) const = 0;
+	virtual bool haveBreakpoint(const std::wstring& fileName, int32_t lineNumber) const = 0;
 
 	/*! Add session listener.
 	 *

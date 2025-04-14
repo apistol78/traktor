@@ -6,12 +6,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Script/Editor/ScriptDebuggerDialog.h"
+
 #include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
-#include "Script/Editor/ScriptDebuggerDialog.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
@@ -25,7 +26,7 @@ namespace traktor::script
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerDialog", ScriptDebuggerDialog, ui::Dialog)
 
 ScriptDebuggerDialog::ScriptDebuggerDialog(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -40,13 +41,12 @@ void ScriptDebuggerDialog::destroy()
 bool ScriptDebuggerDialog::create(ui::Widget* parent)
 {
 	if (!ui::Dialog::create(
-		parent,
-		i18n::Text(L"SCRIPT_DEBUGGER_TOOL"),
-		1024_ut,
-		800_ut,
-		ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
-		new ui::FloodLayout()
-	))
+			parent,
+			i18n::Text(L"SCRIPT_DEBUGGER_TOOL"),
+			1024_ut,
+			800_ut,
+			ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
+			new ui::FloodLayout()))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Script.Icon.Debugger"));
@@ -96,11 +96,11 @@ void ScriptDebuggerDialog::notifyEndSession(IScriptDebugger* scriptDebugger, ISc
 	m_tabSessions->update();
 }
 
-void ScriptDebuggerDialog::notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber)
+void ScriptDebuggerDialog::notifySetBreakpoint(const std::wstring& fileName, int32_t lineNumber)
 {
 }
 
-void ScriptDebuggerDialog::notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber)
+void ScriptDebuggerDialog::notifyRemoveBreakpoint(const std::wstring& fileName, int32_t lineNumber)
 {
 }
 

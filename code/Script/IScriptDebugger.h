@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,8 @@
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 
+#include <string>
+
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCRIPT_EXPORT)
@@ -19,13 +21,6 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
-
-namespace traktor
-{
-
-class Guid;
-
-}
 
 namespace traktor::script
 {
@@ -48,9 +43,9 @@ public:
 		virtual void debugeeStateChange(IScriptDebugger* scriptDebugger) = 0;
 	};
 
-	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
+	virtual bool setBreakpoint(const std::wstring& fileName, int32_t lineNumber) = 0;
 
-	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
+	virtual bool removeBreakpoint(const std::wstring& fileName, int32_t lineNumber) = 0;
 
 	virtual bool captureStackFrame(uint32_t depth, Ref< StackFrame >& outStackFrame) = 0;
 

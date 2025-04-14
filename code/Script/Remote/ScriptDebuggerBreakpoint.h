@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,9 @@
  */
 #pragma once
 
-#include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -32,11 +33,11 @@ class T_DLLCLASS ScriptDebuggerBreakpoint : public ISerializable
 public:
 	ScriptDebuggerBreakpoint() = default;
 
-	explicit ScriptDebuggerBreakpoint(bool add, const Guid& scriptId, uint32_t lineNumber);
+	explicit ScriptDebuggerBreakpoint(bool add, const std::wstring& fileName, uint32_t lineNumber);
 
 	bool shouldAdd() const { return m_add; }
 
-	const Guid& getScriptId() const { return m_scriptId; }
+	const std::wstring& getFileName() const { return m_fileName; }
 
 	uint32_t getLineNumber() const { return m_lineNumber; }
 
@@ -44,7 +45,7 @@ public:
 
 private:
 	bool m_add = false;
-	Guid m_scriptId;
+	std::wstring m_fileName;
 	uint32_t m_lineNumber = 0;
 };
 

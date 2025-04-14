@@ -6,31 +6,32 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Script/Remote/RemoteScriptDebugger.h"
+
 #include "Core/Log/Log.h"
 #include "Net/BidirectionalObjectTransport.h"
-#include "Script/Remote/RemoteScriptDebugger.h"
 #include "Script/Remote/ScriptDebuggerBreadcrumbs.h"
 #include "Script/Remote/ScriptDebuggerBreakpoint.h"
 #include "Script/Remote/ScriptDebuggerControl.h"
 #include "Script/Remote/ScriptDebuggerLocals.h"
-#include "Script/Remote/ScriptDebuggerStateChange.h"
 #include "Script/Remote/ScriptDebuggerStackFrame.h"
+#include "Script/Remote/ScriptDebuggerStateChange.h"
 #include "Script/Remote/ScriptDebuggerStatus.h"
 
 namespace traktor::script
 {
-	namespace
-	{
+namespace
+{
 
 const int32_t c_timeout = 30000;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.RemoteScriptDebugger", RemoteScriptDebugger, script::IScriptDebugger)
 
 RemoteScriptDebugger::RemoteScriptDebugger(net::BidirectionalObjectTransport* transport)
-:	m_transport(transport)
-,	m_running(true)
+	: m_transport(transport)
+	, m_running(true)
 {
 }
 
@@ -45,9 +46,9 @@ void RemoteScriptDebugger::update()
 	}
 }
 
-bool RemoteScriptDebugger::setBreakpoint(const Guid& scriptId, int32_t lineNumber)
+bool RemoteScriptDebugger::setBreakpoint(const std::wstring& fileName, int32_t lineNumber)
 {
-	const ScriptDebuggerBreakpoint bp(true, scriptId, lineNumber);
+	const ScriptDebuggerBreakpoint bp(true, fileName, lineNumber);
 	if (!m_transport->send(&bp))
 	{
 		log::error << L"Target script debugger error; Unable to send while setting breakpoint." << Endl;
@@ -56,9 +57,9 @@ bool RemoteScriptDebugger::setBreakpoint(const Guid& scriptId, int32_t lineNumbe
 	return true;
 }
 
-bool RemoteScriptDebugger::removeBreakpoint(const Guid& scriptId, int32_t lineNumber)
+bool RemoteScriptDebugger::removeBreakpoint(const std::wstring& fileName, int32_t lineNumber)
 {
-	const ScriptDebuggerBreakpoint bp(false, scriptId, lineNumber);
+	const ScriptDebuggerBreakpoint bp(false, fileName, lineNumber);
 	if (!m_transport->send(&bp))
 	{
 		log::error << L"Target script debugger error; Unable to send while setting breakpoint." << Endl;
@@ -136,7 +137,7 @@ bool RemoteScriptDebugger::captureBreadcrumbs(AlignedVector< uint32_t >& outBrea
 		return false;
 	}
 
-	Ref< ScriptDebuggerBreadcrumbs> bc;
+	Ref< ScriptDebuggerBreadcrumbs > bc;
 	if (m_transport->recv< ScriptDebuggerBreadcrumbs >(c_timeout, bc) != net::BidirectionalObjectTransport::Result::Success)
 	{
 		log::error << L"Target script debugger error; No response while requesting breadcrumbs capture." << Endl;

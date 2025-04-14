@@ -31,8 +31,8 @@ namespace traktor::script
 class IScriptDebuggerSessions;
 
 class ScriptDebuggerDialog
-:	public ui::Dialog
-,	public IScriptDebuggerSessions::IListener
+	: public ui::Dialog
+	, public IScriptDebuggerSessions::IListener
 {
 	T_RTTI_CLASS;
 
@@ -55,9 +55,9 @@ private:
 
 	virtual void notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) override final;
 
-	virtual void notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
+	virtual void notifySetBreakpoint(const std::wstring& fileName, int32_t lineNumber) override final;
 
-	virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
+	virtual void notifyRemoveBreakpoint(const std::wstring& fileName, int32_t lineNumber) override final;
 
 	/*! \} */
 };

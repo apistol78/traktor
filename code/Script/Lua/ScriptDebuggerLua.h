@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,9 +34,9 @@ public:
 
 	virtual ~ScriptDebuggerLua();
 
-	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
+	virtual bool setBreakpoint(const std::wstring& fileName, int32_t lineNumber) override final;
 
-	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
+	virtual bool removeBreakpoint(const std::wstring& fileName, int32_t lineNumber) override final;
 
 	virtual bool captureStackFrame(uint32_t depth, Ref< StackFrame >& outStackFrame) override final;
 
@@ -75,10 +75,10 @@ private:
 	ScriptManagerLua* m_scriptManager;
 	lua_State* m_luaState;
 	Semaphore m_lock;
-	SmallMap< int32_t, SmallSet< Guid > > m_breakpoints;
+	SmallMap< int32_t, SmallSet< std::wstring > > m_breakpoints;
 	SmallSet< IListener* > m_listeners;
 	CircularVector< int32_t, 32 > m_breadcrumb;
-	Guid m_lastId;
+	std::wstring m_lastFile;
 	State m_state;
 
 	void analyzeState(lua_State* L, lua_Debug* ar);

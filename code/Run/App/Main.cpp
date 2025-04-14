@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,8 +26,13 @@
 #include "Run/App/Run.h"
 #include "Run/App/StdOutput.h"
 #include "Script/IScriptContext.h"
+#include "Script/IScriptDebugger.h"
 #include "Script/Lua/ScriptCompilerLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
+#include "Script/StackFrame.h"
+#include "Script/Value.h"
+#include "Script/ValueObject.h"
+#include "Script/Variable.h"
 
 #if defined(_WIN32)
 #	include <windows.h>
@@ -43,7 +48,8 @@ traktor::Ref< traktor::script::IScriptManager > g_scriptManager;
 
 #if defined(_WIN32)
 
-LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
+LONG WINAPI
+exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 {
 	bool ouputCallStack = true;
 
@@ -104,6 +110,35 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 
 namespace traktor::run
 {
+
+/*! Simple script debugger. */
+class ScriptDebuggerListener : public script::IScriptDebugger::IListener
+{
+public:
+	virtual void debugeeStateChange(script::IScriptDebugger* scriptDebugger)
+	{
+		if (!scriptDebugger->isRunning())
+		{
+			for (uint32_t depth = 0;; ++depth)
+			{
+				Ref< script::StackFrame > sf;
+				if (!scriptDebugger->captureStackFrame(depth, sf))
+					break;
+				T_FATAL_ASSERT(sf);
+				log::info << depth << L". " << sf->getFileName() << L" " << sf->getFunctionName() << L" (" << (sf->getLine() + 1) << L")" << Endl;
+
+				RefArray< script::Variable > locals;
+				scriptDebugger->captureLocals(depth, locals);
+				for (auto local : locals)
+					if (const script::Value* value = dynamic_type_cast< const script::Value* >(local->getValue()))
+						log::info << L"\t\"" << local->getName() << L"\" = " << value->getLiteral() << Endl;
+					else if (const script::ValueObject* value = dynamic_type_cast< const script::ValueObject* >(local->getValue()))
+						log::info << L"\t\"" << local->getName() << L"\" = " << value->getValueOf() << Endl;
+			}
+			scriptDebugger->actionContinue();
+		}
+	}
+};
 
 /*! Execute run script. */
 int32_t executeRun(const std::wstring& text, const Path& fileName, const CommandLine& cmdLine)
@@ -275,6 +310,7 @@ int main(int argc, const char** argv)
 			log::info << L"  Options:" << Endl;
 			log::info << L"    -as-run                   Run file as run" << Endl;
 			log::info << L"    -as-template              Run file as template" << Endl;
+			log::info << L"    -debug                    Attach debugger" << Endl;
 			log::info << Endl;
 			log::info << L"  For .run files:" << Endl;
 			log::info << L"    -e,-entry-point=function  Script entry point (default \"main\")" << Endl;
@@ -314,6 +350,12 @@ int main(int argc, const char** argv)
 
 		const bool explicitRun = cmdLine.hasOption(L"as-run");
 		const bool explicitTemplate = cmdLine.hasOption(L"as-template");
+
+		if (cmdLine.hasOption(L"debug"))
+		{
+			Ref< script::IScriptDebugger > scriptDebugger = g_scriptManager->createDebugger();
+			scriptDebugger->addListener(new run::ScriptDebuggerListener());
+		}
 
 		if ((explicitRun && !explicitTemplate) || compareIgnoreCase(fileName.getExtension(), L"run") == 0)
 			result = run::executeRun(text, fileName, cmdLine);

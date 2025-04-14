@@ -41,9 +41,9 @@ public:
 
 	void update();
 
-	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
+	virtual bool setBreakpoint(const std::wstring& fileName, int32_t lineNumber) override final;
 
-	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
+	virtual bool removeBreakpoint(const std::wstring& fileName, int32_t lineNumber) override final;
 
 	virtual bool captureStackFrame(uint32_t depth, Ref< script::StackFrame >& outStackFrame) override final;
 
