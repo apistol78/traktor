@@ -42,7 +42,8 @@ public:
 protected:
 	Ref< ResourceTracker > m_resourceTracker;
 	Ref< Buffer > m_buffer;
-	mutable BufferViewVrfy m_bufferView;
+	mutable BufferViewVrfy m_bufferViews[256];
+	mutable int32_t m_bufferViewIndex = 0;
 	bool m_locked = false;
 	uint8_t* m_device = nullptr;
 	uint8_t* m_shadow = nullptr;

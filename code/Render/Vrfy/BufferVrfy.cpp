@@ -31,12 +31,16 @@ BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_
 :	Buffer(bufferSize)
 ,	m_resourceTracker(resourceTracker)
 ,	m_buffer(buffer)
-,	m_bufferView(this)
 {
 	m_resourceTracker->add(this);
+
 	m_shadow = (uint8_t*)Alloc::acquireAlign(bufferSize + 2 * c_guardBytes, 16, T_FILE_LINE);
 	std::memset(m_shadow, 0, bufferSize + 2 * c_guardBytes);
+
 	getCallStack(8, m_callstack, 2);
+
+	for (int32_t i = 0; i < sizeof_array(m_bufferViews); ++i)
+		m_bufferViews[i] = BufferViewVrfy(this);
 }
 
 BufferVrfy::~BufferVrfy()
@@ -98,8 +102,10 @@ void BufferVrfy::unlock()
 const IBufferView* BufferVrfy::getBufferView() const
 {
 	T_CAPTURE_ASSERT(m_buffer, L"Buffer destroyed.");
-	m_bufferView.m_wrappedBufferView = m_buffer->getBufferView();
-	return &m_bufferView;
+	auto& bv = m_bufferViews[m_bufferViewIndex];
+	m_bufferViewIndex = (m_bufferViewIndex + 1) % sizeof_array(m_bufferViews);
+	bv.m_wrappedBufferView = m_buffer->getBufferView();
+	return &bv;
 }
 
 void BufferVrfy::verifyGuard() const
