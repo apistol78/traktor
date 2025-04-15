@@ -58,8 +58,8 @@
 			<id>{35FD7109-2D32-5D43-BD35-292EA5518520}</id>
 			<comment/>
 			<position>
-				<first>416</first>
-				<second>418</second>
+				<first>314</first>
+				<second>524</second>
 			</position>
 			<targetSetId>Irradiance0</targetSetId>
 			<persistent>true</persistent>
@@ -83,8 +83,8 @@
 			<id>{420371AF-FCD8-0C4A-979F-634E709BE786}</id>
 			<comment/>
 			<position>
-				<first>124</first>
-				<second>343</second>
+				<first>22</first>
+				<second>449</second>
 			</position>
 			<textureId>InputVelocity</textureId>
 		</item>
@@ -92,8 +92,8 @@
 			<id>{DDCE4B20-58CD-A74D-9737-583E04CED321}</id>
 			<comment/>
 			<position>
-				<first>393</first>
-				<second>266</second>
+				<first>291</first>
+				<second>372</second>
 			</position>
 			<name>Irradiance temporal</name>
 			<clear>

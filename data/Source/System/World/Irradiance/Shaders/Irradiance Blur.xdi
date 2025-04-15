@@ -91,7 +91,7 @@ Sample shadow
 			
 			]]></comment>
 			<position>
-				<first>1206</first>
+				<first>1018</first>
 				<second>570</second>
 			</position>
 			<minFilter>Linear</minFilter>
@@ -109,7 +109,7 @@ Sample shadow
 			<id>{7A50458F-2A1C-9944-B74D-2BD6432DB7D6}</id>
 			<comment/>
 			<position>
-				<first>997</first>
+				<first>809</first>
 				<second>568</second>
 			</position>
 			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
@@ -203,7 +203,7 @@ Shadow; adjusted for msaa.
 			
 			]]></comment>
 			<position>
-				<first>1202</first>
+				<first>1014</first>
 				<second>709</second>
 			</position>
 			<minFilter>Linear</minFilter>
@@ -221,7 +221,7 @@ Shadow; adjusted for msaa.
 			<id>{ABC56164-F285-2D41-ACE8-D43433ED52D4}</id>
 			<comment/>
 			<position>
-				<first>997</first>
+				<first>809</first>
 				<second>717</second>
 			</position>
 			<declaration>{82914F7F-36FD-C748-A98D-51F19E5EADA2}</declaration>
@@ -242,8 +242,8 @@ Shadow; adjusted for msaa.
 			<id>{BC7A87A7-7EBC-A54C-8CF9-6F9D3B5A1957}</id>
 			<comment/>
 			<position>
-				<first>1471</first>
-				<second>708</second>
+				<first>1474</first>
+				<second>729</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -251,8 +251,8 @@ Shadow; adjusted for msaa.
 			<id>{E4B24834-6965-6E41-9EDC-06A9B4812876}</id>
 			<comment/>
 			<position>
-				<first>1471</first>
-				<second>596</second>
+				<first>1474</first>
+				<second>676</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -314,7 +314,7 @@ Shadow; adjusted for msaa.
 			<id>{75223B96-581C-4F4C-A023-4101B1433655}</id>
 			<comment/>
 			<position>
-				<first>997</first>
+				<first>809</first>
 				<second>618</second>
 			</position>
 			<name>UV</name>
@@ -341,7 +341,7 @@ Shadow; adjusted for msaa.
 			<id>{472ECA07-85B9-8A4C-B85B-D81A317D3971}</id>
 			<comment/>
 			<position>
-				<first>997</first>
+				<first>809</first>
 				<second>766</second>
 			</position>
 			<name>UV_Center</name>
@@ -362,7 +362,7 @@ Shadow; adjusted for msaa.
 			<id>{B5AD3F8B-59E4-5649-9564-D6367994D58A}</id>
 			<comment/>
 			<position>
-				<first>788</first>
+				<first>600</first>
 				<second>690</second>
 			</position>
 			<minFilter>Linear</minFilter>
@@ -650,7 +650,7 @@ $Output = 1.0f - min(phi, dpt);
 			</outputPins>
 			<script><![CDATA[const float d = $Input;
 const float f = clamp(d / 100.0f, 0.0f, 1.0f);
-$Output = mix(3.0f, 2.0f, f);
+$Output = mix(3.0f, 1.0f, f);
 
 ]]></script>
 		</item>
@@ -679,6 +679,46 @@ $Output = mix(3.0f, 2.0f, f);
 				<second>905</second>
 			</position>
 			<name>KernelSize</name>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{BA76D43D-D512-2848-A60E-CAEDD3F25257}</id>
+			<comment/>
+			<position>
+				<first>1301</first>
+				<second>630</second>
+			</position>
+			<name>Clamp</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{725D37D7-7EB4-A847-8B0D-E8031A314966}</id>
+					<name>A</name>
+				</item>
+				<item>
+					<id>{0779A013-20D1-C34B-B2A0-EA7DC5D34293}</id>
+					<name>B</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{261B2E64-4A23-E944-B796-1FFAE99A2834}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[
+const float e = 0.2f;
+$Output = clamp($B, $A - e, $A + e);
+
+]]></script>
 		</item>
 	</nodes>
 	<edges>
@@ -780,16 +820,6 @@ $Output = mix(3.0f, 2.0f, f);
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{7ACEE4C2-A92D-4E50-BFAE-C1D744BEE5E0}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1180,6 +1210,36 @@ $Output = mix(3.0f, 2.0f, f);
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<id>{3E538F69-C85C-44E2-9320-73F876288BAE}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{725D37D7-7EB4-A847-8B0D-E8031A314966}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{0779A013-20D1-C34B-B2A0-EA7DC5D34293}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{261B2E64-4A23-E944-B796-1FFAE99A2834}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>

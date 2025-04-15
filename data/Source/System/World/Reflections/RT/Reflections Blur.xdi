@@ -538,9 +538,9 @@ Shadow; adjusted for msaa.
 				</item>
 			</outputPins>
 			<script><![CDATA[
-const float df = mix(0.01f, 0.1f, abs($NormalA.z));
+const float df = mix(0.01f, 0.2f, abs($NormalA.z));
 
-const float phi = clamp(dot($NormalA.xyz, $NormalB.xyz) * 2.0f, 0.0f, 1.0f);
+const float phi = clamp(dot($NormalA.xyz, $NormalB.xyz) * 1.0f, 0.0f, 1.0f);
 const float dpt = 1.0f - clamp(abs($DepthA - $DepthB) * df, 0.0f, 1.0f);
 
 $Output = 1.0f - min(phi, dpt);
@@ -648,8 +648,10 @@ $Output = 1.0f - min(phi, dpt);
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script><![CDATA[const float k = $Input;
-$Output = mix(0.1f, 3.0f, k);
+			<script><![CDATA[const float d = $Input;
+const float f = clamp(d / 100.0f, 0.0f, 1.0f);
+$Output = mix(3.0f, 1.0f, f);
+
 
 ]]></script>
 		</item>
@@ -700,6 +702,46 @@ $Output = mix(0.1f, 3.0f, k);
 					<name>Output</name>
 				</item>
 			</outputPins>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{2D14E7E2-1875-DF46-925E-AFF41A17D1EA}</id>
+			<comment/>
+			<position>
+				<first>1566</first>
+				<second>420</second>
+			</position>
+			<name>Clamp</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{725D37D7-7EB4-A847-8B0D-E8031A314966}</id>
+					<name>A</name>
+				</item>
+				<item>
+					<id>{0779A013-20D1-C34B-B2A0-EA7DC5D34293}</id>
+					<name>B</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{261B2E64-4A23-E944-B796-1FFAE99A2834}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[
+const float e = 0.2f;
+$Output = clamp($B, $A - e, $A + e);
+
+]]></script>
 		</item>
 	</nodes>
 	<edges>
@@ -801,16 +843,6 @@ $Output = mix(0.1f, 3.0f, k);
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{7ACEE4C2-A92D-4E50-BFAE-C1D744BEE5E0}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1211,6 +1243,36 @@ $Output = mix(0.1f, 3.0f, k);
 			<destination>
 				<node ref="/object/nodes/item[45]"/>
 				<id>{EA77CC40-48D1-7C4E-B10E-8FDCB92BE351}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{725D37D7-7EB4-A847-8B0D-E8031A314966}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{0779A013-20D1-C34B-B2A0-EA7DC5D34293}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{261B2E64-4A23-E944-B796-1FFAE99A2834}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>
