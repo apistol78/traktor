@@ -42,7 +42,6 @@ class Packer;
 class PostProcessPass;
 class ProbeComponent;
 class ReflectionsPass;
-class RTReflectionsPass;
 class VelocityPass;
 class WorldEntityRenderers;
 
@@ -108,7 +107,6 @@ protected:
 	Ref< AmbientOcclusionPass > m_ambientOcclusionPass;
 	Ref< ContactShadowsPass > m_contactShadowsPass;
 	Ref< ReflectionsPass > m_reflectionsPass;
-	Ref< RTReflectionsPass > m_rtReflectionsPass;
 	Ref< PostProcessPass > m_postProcessPass;
 	//@}
 

@@ -39,7 +39,6 @@
 #include "World/Shared/Passes/LightClusterPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
-#include "World/Shared/Passes/RTReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/SMProj/UniformShadowProjection.h"
@@ -185,10 +184,6 @@ bool WorldRendererShared::create(
 	if (!m_reflectionsPass->create(resourceManager, renderSystem, desc))
 		return false;
 
-	m_rtReflectionsPass = new RTReflectionsPass();
-	if (!m_rtReflectionsPass->create(resourceManager, renderSystem, desc))
-		return false;
-
 	m_postProcessPass = new PostProcessPass(m_settings);
 	if (!m_postProcessPass->create(resourceManager, renderSystem, desc))
 		return false;
@@ -207,7 +202,6 @@ void WorldRendererShared::destroy()
 
 	m_postProcessPass = nullptr;
 	m_reflectionsPass = nullptr;
-	m_rtReflectionsPass = nullptr;
 	m_contactShadowsPass = nullptr;
 	m_ambientOcclusionPass = nullptr;
 	m_irradiancePass = nullptr;
