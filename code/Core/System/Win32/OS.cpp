@@ -1,18 +1,16 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #define _WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <lmcons.h>
-#include <shlobj.h>
-#include <tchar.h>
-#include "Core/Io/IVolume.h"
+#include "Core/System/OS.h"
+
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/IVolume.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
@@ -21,25 +19,30 @@
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/System/Environment.h"
-#include "Core/System/OS.h"
 #include "Core/System/ResolveEnv.h"
-#include "Core/System/Win32/ProcessWin32.h"
 #include "Core/System/Win32/ProcessShellWin32.h"
+#include "Core/System/Win32/ProcessWin32.h"
 #include "Core/System/Win32/SharedMemoryWin32.h"
+
+#include <lmcons.h>
+#include <shlobj.h>
+#include <shlwapi.h>
+#include <tchar.h>
+#include <windows.h>
 
 namespace traktor
 {
-	namespace
-	{
+namespace
+{
 
-typedef HRESULT STDAPICALLTYPE IEISPROTECTEDMODEPROCESSPROC (BOOL* pbResult);
-typedef HRESULT STDAPICALLTYPE IEGETWRITEABLEFOLDERPATHPROC (REFGUID clsidFolderID, LPWSTR *lppwstrPath);
+typedef HRESULT STDAPICALLTYPE IEISPROTECTEDMODEPROCESSPROC(BOOL* pbResult);
+typedef HRESULT STDAPICALLTYPE IEGETWRITEABLEFOLDERPATHPROC(REFGUID clsidFolderID, LPWSTR* lppwstrPath);
 
 HINSTANCE s_hIeFrameLib = 0;
 IEISPROTECTEDMODEPROCESSPROC* s_IEIsProtectedModeProcess = 0;
 IEGETWRITEABLEFOLDERPATHPROC* s_IEGetWriteableFolderPath = 0;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
 
@@ -60,7 +63,7 @@ std::wstring OS::getName() const
 	OSVERSIONINFOEX osvi;
 	ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
 	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-	GetVersionEx((OSVERSIONINFO *) &osvi);
+	GetVersionEx((OSVERSIONINFO*)&osvi);
 
 	if (osvi.wProductType == VER_NT_WORKSTATION)
 	{
@@ -148,8 +151,7 @@ std::wstring OS::getUserHomePath() const
 		CSIDL_PERSONAL,
 		NULL,
 		SHGFP_TYPE_CURRENT,
-		szPath
-	);
+		szPath);
 	if (FAILED(hr))
 		return L"";
 
@@ -166,8 +168,7 @@ std::wstring OS::getUserApplicationDataPath() const
 		CSIDL_LOCAL_APPDATA,
 		NULL,
 		SHGFP_TYPE_CURRENT,
-		szPath
-	);
+		szPath);
 	if (FAILED(hr))
 		return L"";
 
@@ -190,8 +191,7 @@ std::wstring OS::getWritableFolderPath() const
 			LPWSTR pwstrPath = 0;
 			hr = (*s_IEGetWriteableFolderPath)(
 				FOLDERID_LocalAppDataLow,
-				&pwstrPath
-			);
+				&pwstrPath);
 			if (FAILED(hr))
 				return L"";
 
@@ -213,8 +213,7 @@ bool OS::openFile(const std::wstring& file) const
 		wstots(replaceAll(file, L"/", L"\\")).c_str(),
 		NULL,
 		NULL,
-		SW_SHOWDEFAULT
-	);
+		SW_SHOWDEFAULT);
 	return intptr_t(hInstance) > 32;
 }
 
@@ -226,8 +225,7 @@ bool OS::editFile(const std::wstring& file) const
 		wstots(replaceAll(file, L"/", L"\\")).c_str(),
 		NULL,
 		NULL,
-		SW_SHOWDEFAULT
-	);
+		SW_SHOWDEFAULT);
 	return intptr_t(hInstance) > 32;
 }
 
@@ -239,8 +237,7 @@ bool OS::exploreFile(const std::wstring& file) const
 		wstots(replaceAll(file, L"/", L"\\")).c_str(),
 		NULL,
 		NULL,
-		SW_SHOWDEFAULT
-	);
+		SW_SHOWDEFAULT);
 	return intptr_t(hInstance) > 32;
 }
 
@@ -265,12 +262,9 @@ Ref< Environment > OS::getEnvironment() const
 			TCHAR* val = sep + 1;
 
 			if (key < sep)
-			{
 				env->set(
 					tstows(tstring(key, sep)),
-					tstows(val)
-				);
-			}
+					tstows(val));
 
 			p = val + _tcslen(val) + 1;
 		}
@@ -294,8 +288,7 @@ Ref< IProcess > OS::execute(
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
 	const Environment* env,
-	uint32_t flags
-) const
+	uint32_t flags) const
 {
 	AutoArrayPtr< char > environment;
 	std::wstring executable;
@@ -343,9 +336,10 @@ Ref< IProcess > OS::execute(
 			size += (uint32_t)(i->first.length() + 1 + i->second.length() + 1);
 		size += 1;
 
-		environment.reset(new char [size]);
+		environment.reset(new char[size]);
 
-		char* p = environment.ptr(); *p = 0;
+		char* p = environment.ptr();
+		*p = 0;
 		for (auto i = e.begin(); i != e.end(); ++i)
 		{
 			strcpy(p, wstombs(i->first).c_str());
@@ -424,24 +418,21 @@ Ref< IProcess > OS::execute(
 				&hStdInRead,
 				&hStdInWrite,
 				&sa,
-				0
-			);
+				0);
 			SetHandleInformation(hStdInWrite, HANDLE_FLAG_INHERIT, 0);
 
 			CreatePipe(
 				&hStdOutRead,
 				&hStdOutWrite,
 				&sa,
-				0
-			);
+				0);
 			SetHandleInformation(hStdOutRead, HANDLE_FLAG_INHERIT, 0);
 
 			CreatePipe(
 				&hStdErrRead,
 				&hStdErrWrite,
 				&sa,
-				0
-			);
+				0);
 			SetHandleInformation(hStdErrRead, HANDLE_FLAG_INHERIT, 0);
 		}
 
@@ -476,8 +467,7 @@ Ref< IProcess > OS::execute(
 			environment.ptr(),
 			(cwd[0] != L'\0' ? cwd : NULL),
 			&si,
-			&pi
-		);
+			&pi);
 		if (result == FALSE)
 		{
 			T_DEBUG(L"Unable to create process, error = " << (int32_t)GetLastError());
@@ -494,8 +484,7 @@ Ref< IProcess > OS::execute(
 			pi.hThread,
 			hStdInWrite,
 			hStdOutRead,
-			hStdErrRead
-		);
+			hStdErrRead);
 	}
 }
 
@@ -560,13 +549,12 @@ bool OS::getRegistry(const std::wstring& key, const std::wstring& subKey, const 
 	DWORD dwType;
 
 	if (RegQueryValueExW(
-		hOpenedKey,
-		!valueName.empty() ? valueName.c_str() : NULL,
-		NULL,
-		&dwType,
-		data,
-		&dwDataSize
-	) != ERROR_SUCCESS)
+			hOpenedKey,
+			!valueName.empty() ? valueName.c_str() : NULL,
+			NULL,
+			&dwType,
+			data,
+			&dwDataSize) != ERROR_SUCCESS)
 	{
 		log::error << L"RegQueryValueExW failed" << Endl;
 		RegCloseKey(hOpenedKey);
@@ -618,6 +606,26 @@ bool OS::whereIs(const std::wstring& executable, Path& outPath) const
 	}
 
 	return false;
+}
+
+bool OS::getAssociatedExecutable(const std::wstring& extension, Path& outPath) const
+{
+	const std::wstring tmp = L"." + extension;
+	wchar_t path[MAX_PATH];
+	DWORD size = MAX_PATH;
+
+	const HRESULT hr = AssocQueryStringW(
+		ASSOCF_NONE,
+		ASSOCSTR_EXECUTABLE,
+		tmp.c_str(),
+		nullptr,
+		path,
+		&size);
+	if (FAILED(hr))
+		return false;
+
+	outPath = Path(path);
+	return true;
 }
 
 OS::OS()

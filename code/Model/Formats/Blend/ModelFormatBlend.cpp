@@ -6,8 +6,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Io/FileSystem.h"
+#include "Model/Formats/Blend/ModelFormatBlend.h"
+
 #include "Core/Io/FileOutputStream.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
@@ -19,16 +21,15 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Model/Model.h"
-#include "Model/Formats/Blend/ModelFormatBlend.h"
 
 namespace traktor::model
 {
-	namespace
-	{
+namespace
+{
 
 Semaphore g_lock;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatBlend", 0, ModelFormatBlend, ModelFormat)
 
@@ -91,11 +92,15 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 
 	// Execute export script through headless blender process.
 	Path blenderPath;
-	if (!OS::getInstance().whereIs(L"blender", blenderPath))
+	if (!OS::getInstance().getAssociatedExecutable(L"blend", blenderPath))
 	{
-		// No path found; try to run executable without path in case system knowns
-		// something we don't.
-		blenderPath = L"blender.exe";
+		// No file association registered; try find executable in environment.
+		if (!OS::getInstance().whereIs(L"blender", blenderPath))
+		{
+			// No path found; try to run executable without path in case system knowns
+			// something we don't.
+			blenderPath = L"blender.exe";
+		}
 	}
 
 	const Path filePathAbs = FileSystem::getInstance().getAbsolutePath(filePath);
@@ -105,8 +110,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 		commandLine,
 		scratchPath,
 		nullptr,
-		OS::EfMute
-	);
+		OS::EfMute);
 	if (!process)
 	{
 		log::error << L"Unable to spawn \"" << commandLine << L"\"." << Endl;
@@ -136,10 +140,8 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	for (uint32_t i = 0; i < model->getMaterialCount(); ++i)
 		materialsToRemove[i] = i;
 	for (const auto& polygon : model->getPolygons())
-	{
 		if (polygon.getMaterial() != model::c_InvalidIndex)
 			materialsToRemove[polygon.getMaterial()] = c_InvalidIndex;
-	}
 	auto it = std::remove(materialsToRemove.begin(), materialsToRemove.end(), c_InvalidIndex);
 	materialsToRemove.erase(it, materialsToRemove.end());
 	for (auto it = materialsToRemove.rbegin(); it != materialsToRemove.rend(); ++it)

@@ -244,6 +244,7 @@
 								<libraries>
 									<item>Winmm.lib</item>
 									<item>Dbghelp.lib</item>
+									<item>shlwapi.lib</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -283,6 +284,7 @@
 								<libraries>
 									<item>Winmm.lib</item>
 									<item>Dbghelp.lib</item>
+									<item>shlwapi.lib</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -322,6 +324,7 @@
 								<libraries>
 									<item>Winmm.lib</item>
 									<item>Dbghelp.lib</item>
+									<item>shlwapi.lib</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -357,6 +360,7 @@
 								<libraries>
 									<item>Winmm.lib</item>
 									<item>Dbghelp.lib</item>
+									<item>shlwapi.lib</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>

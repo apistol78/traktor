@@ -431,6 +431,11 @@ bool OS::whereIs(const std::wstring& executable, Path& outPath) const
 	return false;
 }
 
+bool OS::getAssociatedExecutable(const std::wstring& extension, Path& outPath) const
+{
+	return false;
+}
+
 OS::OS()
 :	m_handle(0)
 {

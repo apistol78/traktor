@@ -8,9 +8,9 @@
  */
 #pragma once
 
+#include "Core/Io/Path.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
-#include "Core/Io/Path.h"
 #include "Core/Singleton/ISingleton.h"
 
 // import/export mechanism.
@@ -32,8 +32,8 @@ class ISharedMemory;
  * \ingroup Core
  */
 class T_DLLCLASS OS
-:	public Object
-,	public ISingleton
+	: public Object
+	, public ISingleton
 {
 	T_RTTI_CLASS;
 
@@ -41,7 +41,7 @@ public:
 	enum ExecuteFlags : uint32_t
 	{
 		EfNone = 0,
-		EfRedirectStdIO = (1 << 0),	//<! Redirect standard I/O.
+		EfRedirectStdIO = (1 << 0), //<! Redirect standard I/O.
 		EfMute = (1 << 1),			//<! Mute I/O of child process, still get redirected.
 		EfDetach = (1 << 2),		//<! Detach process, not child of calling process.
 		EfElevated = (1 << 3)		//<! Run elevated process.
@@ -158,8 +158,7 @@ public:
 		const std::wstring& commandLine,
 		const Path& workingDirectory,
 		const Environment* env,
-		uint32_t flags
-	) const;
+		uint32_t flags) const;
 
 	/*! Create shared memory object.
 	 *
@@ -194,6 +193,10 @@ public:
 	 */
 	bool whereIs(const std::wstring& executable, Path& outPath) const;
 
+	/*! Query OS about executable associated with file extension.
+	 */
+	bool getAssociatedExecutable(const std::wstring& extension, Path& outPath) const;
+
 protected:
 	OS();
 
@@ -206,4 +209,3 @@ private:
 };
 
 }
-

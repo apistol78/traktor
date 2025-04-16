@@ -6,12 +6,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/CoreClassFactory1.h"
-#include "Core/Class/IRuntimeClassRegistrar.h"
+
+#include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes/BoxedColor4ub.h"
 #include "Core/Class/Boxes/BoxedPointer.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
+#include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Io/AnsiEncoding.h"
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
@@ -22,9 +23,9 @@
 #include "Core/Io/Reader.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Io/StringReader.h"
-#include "Core/Io/Utf8Encoding.h"
 #include "Core/Io/Utf16Encoding.h"
 #include "Core/Io/Utf32Encoding.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
@@ -45,12 +46,13 @@
 
 namespace traktor
 {
-	namespace
-	{
+namespace
+{
 
 float Reader_readFloat(Reader* self)
 {
-	float v; *self >> v;
+	float v;
+	*self >> v;
 	return v;
 }
 
@@ -234,6 +236,24 @@ Any OS_getRegistry(OS* self, const std::wstring& key, const std::wstring& subKey
 }
 #endif
 
+Any OS_whereIs(OS* self, const std::wstring& executable)
+{
+	Path path;
+	if (self->whereIs(executable, path))
+		return CastAny< Path >::set(path);
+	else
+		return Any();
+}
+
+Any OS_getAssociatedExecutable(OS* self, const std::wstring& extension)
+{
+	Path path;
+	if (self->getAssociatedExecutable(extension, path))
+		return CastAny< Path >::set(path);
+	else
+		return Any();
+}
+
 IPropertyValue* PropertyArray_getProperty(PropertyArray* self, uint32_t index)
 {
 	return self->getProperty(index);
@@ -311,7 +331,7 @@ std::wstring PropertyString_get(PropertyString* self)
 	return PropertyString::get(self);
 }
 
-		}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.CoreClassFactory1", 0, CoreClassFactory1, IRuntimeClassFactory)
 
@@ -573,6 +593,8 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 #if defined(_WIN32)
 	classOS->addMethod("getRegistry", &OS_getRegistry);
 #endif
+	classOS->addMethod("whereIs", &OS_whereIs);
+	classOS->addMethod("getAssociatedExecutable", &OS_getAssociatedExecutable);
 	registrar->registerClass(classOS);
 
 	auto classDeepClone = new AutoRuntimeClass< DeepClone >();

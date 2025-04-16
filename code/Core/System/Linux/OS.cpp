@@ -1,42 +1,43 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <fcntl.h>
-#include <limits.h>
-#include <spawn.h>
-#include <unistd.h>
-#include <sys/param.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <pwd.h>
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/System/Environment.h"
-#include "Core/System/ResolveEnv.h"
 #include "Core/System/Linux/ProcessLinux.h"
 #include "Core/System/Linux/SharedMemoryLinux.h"
+#include "Core/System/ResolveEnv.h"
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <fcntl.h>
+#include <limits.h>
+#include <pwd.h>
+#include <spawn.h>
+#include <sys/param.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 namespace traktor
 {
-	namespace
-	{
+namespace
+{
 
-void handle_sigchld(int sig) 
+void handle_sigchld(int sig)
 {
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
 
@@ -54,7 +55,7 @@ OS& OS::getInstance()
 
 std::wstring OS::getName() const
 {
-	return L"Linux";	
+	return L"Linux";
 }
 
 std::wstring OS::getIdentifier() const
@@ -150,10 +151,9 @@ bool OS::exploreFile(const std::wstring& file) const
 bool OS::setEnvironment(const std::wstring& name, const std::wstring& value) const
 {
 	return bool(setenv(
-		wstombs(name).c_str(),
-		wstombs(value).c_str(),
-		1
-	) == 0);
+					wstombs(name).c_str(),
+					wstombs(value).c_str(),
+					1) == 0);
 }
 
 Ref< Environment > OS::getEnvironment() const
@@ -191,8 +191,7 @@ Ref< IProcess > OS::execute(
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
 	const Environment* env,
-	uint32_t flags
-) const
+	uint32_t flags) const
 {
 	posix_spawn_file_actions_t* fileActions = nullptr;
 	posix_spawnattr_t* spawnAttrp = nullptr;
@@ -221,8 +220,8 @@ Ref< IProcess > OS::execute(
 	if (executable.empty())
 		return nullptr;
 
-	// Since Raspberry PI doesn't support changing working directory
-	// in posix spawn we need to launch through "env" shim.
+		// Since Raspberry PI doesn't support changing working directory
+		// in posix spawn we need to launch through "env" shim.
 #if defined(__RPI__)
 	if (!workingDirectory.empty())
 	{
@@ -251,10 +250,8 @@ Ref< IProcess > OS::execute(
 
 	// Convert environment variables.
 	if (env)
-	{
 		for (auto it : env->get())
 			envv.push_back(strdup(wstombs(it.first + L"=" + it.second).c_str()));
-	}
 
 	// Terminate argument and environment vectors.
 	envv.push_back(nullptr);
@@ -304,15 +301,11 @@ Ref< IProcess > OS::execute(
 
 	// Free arguments.
 	for (auto arg : argv)
-	{
 		if (arg)
 			free(arg);
-	}
 	for (auto env : envv)
-	{
 		if (env)
 			free(env);
-	}
 
 	// Cleanup in case of failure.
 	if (err != 0)
@@ -327,12 +320,11 @@ Ref< IProcess > OS::execute(
 	}
 
 	return new ProcessLinux(
-		pid, 
+		pid,
 		fileActions,
 		spawnAttrp,
 		childStdOut[0],
-		childStdErr[0]
-	);
+		childStdErr[0]);
 }
 
 Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const
@@ -371,6 +363,11 @@ bool OS::whereIs(const std::wstring& executable, Path& outPath) const
 	return false;
 }
 
+bool OS::getAssociatedExecutable(const std::wstring& extension, Path& outPath) const
+{
+	return false;
+}
+
 OS::OS()
 {
 	sigset_t sigmask;
@@ -379,10 +376,10 @@ OS::OS()
 	sigprocmask(SIG_BLOCK, &sigmask, nullptr);
 
 	struct sigaction sa;
-    sa.sa_flags = 0;
-    sa.sa_handler = handle_sigchld;
-    sigemptyset(&sa.sa_mask);
-    sigaction(SIGCHLD, &sa, nullptr);
+	sa.sa_flags = 0;
+	sa.sa_handler = handle_sigchld;
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGCHLD, &sa, nullptr);
 }
 
 OS::~OS()

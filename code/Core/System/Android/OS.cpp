@@ -1,18 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstdio>
-#include <cstring>
-#include <unistd.h>
-#include <sys/param.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <pwd.h>
+#include "Core/System/OS.h"
+
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
@@ -21,7 +16,14 @@
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/System/Environment.h"
-#include "Core/System/OS.h"
+
+#include <cstdio>
+#include <cstring>
+#include <pwd.h>
+#include <sys/param.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 namespace traktor
 {
@@ -42,7 +44,7 @@ OS& OS::getInstance()
 
 std::wstring OS::getName() const
 {
-	return L"Android";	
+	return L"Android";
 }
 
 std::wstring OS::getIdentifier() const
@@ -167,8 +169,7 @@ Ref< Environment > OS::getEnvironment() const
 			char* val = sep + 1;
 			env->set(
 				mbstows(std::string(*e, sep)),
-				mbstows(val)
-			);
+				mbstows(val));
 		}
 	}
 	return env;
@@ -190,8 +191,7 @@ Ref< IProcess > OS::execute(
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
 	const Environment* env,
-	uint32_t flags
-) const
+	uint32_t flags) const
 {
 	return nullptr;
 }
@@ -202,6 +202,33 @@ Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t s
 }
 
 bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
+{
+	return false;
+}
+
+bool OS::whereIs(const std::wstring& executable, Path& outPath) const
+{
+	std::wstring paths;
+
+	// Get system "PATH" environment variable.
+	if (!getEnvironment(L"PATH", paths))
+		return false;
+
+	// Try to locate binary in any of the paths specified in "PATH".
+	for (auto path : StringSplit< std::wstring >(paths, L";:,"))
+	{
+		Ref< File > file = FileSystem::getInstance().get(path + L"/" + executable);
+		if (file)
+		{
+			outPath = file->getPath();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool OS::getAssociatedExecutable(const std::wstring& extension, Path& outPath) const
 {
 	return false;
 }
