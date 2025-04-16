@@ -9,7 +9,8 @@ vec4 HWRT_Light_CalculateIncidentLight(
 	const mat4 viewInverse,
 	const World_Light_Type light,
 	const vec3 position,
-	const vec3 normal
+	const vec3 normal,
+	const bool traceShadow
 )
 {
 	vec3 lightPosition = vec3(0.0f);
@@ -44,7 +45,7 @@ vec4 HWRT_Light_CalculateIncidentLight(
 	[[branch]]
 	if (lightAttenuation > 0.0f)
 	{
-		const bool shadowed = HWRT_TraceShadow(
+		const bool shadowed = traceShadow && HWRT_TraceShadow(
 			AS,
 			position + normal * 0.1f,
 			lightDirection,

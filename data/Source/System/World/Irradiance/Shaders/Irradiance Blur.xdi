@@ -373,7 +373,7 @@ Shadow; adjusted for msaa.
 			<addressW>Clamp</addressW>
 			<compare>None</compare>
 			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
@@ -538,7 +538,7 @@ Shadow; adjusted for msaa.
 				</item>
 			</outputPins>
 			<script><![CDATA[
-const float df = mix(0.01f, 0.2f, abs($NormalA.z));
+const float df = 0.2f; // mix(0.01f, 0.2f, abs($NormalA.z));
 
 const float phi = clamp(dot($NormalA.xyz, $NormalB.xyz) * 1.0f, 0.0f, 1.0f);
 const float dpt = 1.0f - clamp(abs($DepthA - $DepthB) * df, 0.0f, 1.0f);
@@ -650,7 +650,7 @@ $Output = 1.0f - min(phi, dpt);
 			</outputPins>
 			<script><![CDATA[const float d = $Input;
 const float f = clamp(d / 100.0f, 0.0f, 1.0f);
-$Output = mix(3.0f, 1.0f, f);
+$Output = mix(3.0f, 2.0f, f);
 
 ]]></script>
 		</item>
@@ -715,8 +715,9 @@ $Output = mix(3.0f, 1.0f, f);
 				</item>
 			</outputPins>
 			<script><![CDATA[
-const float e = 0.2f;
-$Output = clamp($B, $A - e, $A + e);
+const float et = 0.4f;
+const float eb = 0.4f;
+$Output = clamp($A, $B - eb, $B + et);
 
 ]]></script>
 		</item>
@@ -890,16 +891,6 @@ $Output = clamp($B, $A - e, $A + e);
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{29BA4386-B838-4550-93DF-F53D8B812C88}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[24]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1214,22 +1205,12 @@ $Output = clamp($B, $A - e, $A + e);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{29BA4386-B838-4550-93DF-F53D8B812C88}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
-				<id>{725D37D7-7EB4-A847-8B0D-E8031A314966}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[49]"/>
-				<id>{0779A013-20D1-C34B-B2A0-EA7DC5D34293}</id>
+				<node ref="/object/nodes/item[24]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1240,6 +1221,26 @@ $Output = clamp($B, $A - e, $A + e);
 			<destination>
 				<node ref="/object/nodes/item[18]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{0779A013-20D1-C34B-B2A0-EA7DC5D34293}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{725D37D7-7EB4-A847-8B0D-E8031A314966}</id>
 			</destination>
 		</item>
 	</edges>
