@@ -5,7 +5,7 @@
 			<id>{80940A01-D5B5-EC42-82A1-AD3F73B5ACE2}</id>
 			<comment/>
 			<position>
-				<first>-339</first>
+				<first>-337</first>
 				<second>469</second>
 			</position>
 			<declaration>{4961F367-B0B8-A642-A469-E40234EAC9FC}</declaration>
@@ -17,8 +17,8 @@
 			<id>{68C46A53-7E9F-964C-AD99-93ACCAD568FA}</id>
 			<comment/>
 			<position>
-				<first>525</first>
-				<second>437</second>
+				<first>328</first>
+				<second>482</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -64,8 +64,8 @@
 			<id>{656414E5-7EB7-B14B-AB81-7B46130E9F59}</id>
 			<comment/>
 			<position>
-				<first>-908</first>
-				<second>943</second>
+				<first>-812</first>
+				<second>1021</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -93,8 +93,8 @@
 			<id>{98FC564C-C85B-8A47-8481-875BA49E55EB}</id>
 			<comment/>
 			<position>
-				<first>-341</first>
-				<second>614</second>
+				<first>-337</first>
+				<second>597</second>
 			</position>
 			<name>UV_Center</name>
 		</item>
@@ -105,7 +105,7 @@
 				<first>-46</first>
 				<second>560</second>
 			</position>
-			<name>Unnamed</name>
+			<name>Denoiser</name>
 			<technique/>
 			<domain>Undefined</domain>
 			<localSize>
@@ -145,27 +145,30 @@
 				</item>
 			</outputPins>
 			<script><![CDATA[
-const int N = 32;
-const float NormalRange = 0.6f;
-const float DepthRange = 3.0f;
+const int N = 16;
+const float NormalRange = 0.5f;
+const float DepthRange = 4.0f;
+
+const float offset = $Random;
+
+const vec2 sz = 1.0f / textureSize($Input, 0);
 
 const vec4 tmp = texture(sampler2D($Depth, $InputSampler), $UV);
 const float centerD = tmp.x;
 const vec3 centerN = vec3(tmp.yzw);
 
-vec4 acc = texture(sampler2D($Input, $InputSampler), $UV);
+vec3 acc = texture(sampler2D($Input, $InputSampler), $UV).xyz;
 float W = 1.0f;
 
-const float offset = $Random;
-
+[[unroll]]
 for (int i = 0; i < N; ++i)
 {
-	float f = float(i) / N;
-	float a = (f + offset) * 3.14f * 2.0f * 13;
-	float r = 0.08f * f;
+	const float f = float(i) / N;
+	const float a = (f + offset) * 3.14f * 2.0f * 13;
+	const vec2 r = f * sz * 16.0f;
 
-	float dx = cos(a) * r;
-	float dy = sin(a) * r;
+	const float dx = cos(a) * r.x;
+	const float dy = sin(a) * r.y;
 
 	const vec2 uv = $UV.xy + vec2(dx, dy);
 
@@ -177,13 +180,18 @@ for (int i = 0; i < N; ++i)
 	const float dd = clamp((DepthRange - abs(sampleD - centerD)) / DepthRange, 0.0f, 1.0f);
 	const float w = dn * dd;
 
-	acc += texture(sampler2D($Input, $InputSampler), uv) * w;
-	W += w;
+	[[branch]]
+	if (w > 0.01f)
+	{
+		const vec3 smple = texture(sampler2D($Input, $InputSampler), uv).xyz;
+		acc += smple * w;
+		W += w;
+	}
 }
 
 acc /= W;
 
-$Output = acc;
+$Output = vec4(acc, 1.0f);
 
 ]]></script>
 		</item>
@@ -192,11 +200,11 @@ $Output = acc;
 			<comment/>
 			<position>
 				<first>-335</first>
-				<second>538</second>
+				<second>533</second>
 			</position>
-			<minFilter>Linear</minFilter>
-			<mipFilter>Linear</mipFilter>
-			<magFilter>Linear</magFilter>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
 			<addressU>Clamp</addressU>
 			<addressV>Clamp</addressV>
 			<addressW>Clamp</addressW>
@@ -209,8 +217,8 @@ $Output = acc;
 			<id>{B831DDFB-D5FE-8B45-A887-FAB3D9A32B88}</id>
 			<comment/>
 			<position>
-				<first>-357</first>
-				<second>672</second>
+				<first>-353</first>
+				<second>661</second>
 			</position>
 			<declaration>{D888D241-397A-2148-8041-E576091FE763}</declaration>
 			<parameterName/>
@@ -221,8 +229,8 @@ $Output = acc;
 			<id>{D40A68D4-433B-EA45-A92B-8AB77105F0FC}</id>
 			<comment/>
 			<position>
-				<first>-800</first>
-				<second>806</second>
+				<first>-839</first>
+				<second>791</second>
 			</position>
 			<declaration>{C0A1721B-9DAA-9A4C-BD6D-90C8B517D6BE}</declaration>
 			<parameterName/>
@@ -242,8 +250,8 @@ $Output = acc;
 			<id>{B024E324-1875-0545-89A8-86DA2F0DA6A1}</id>
 			<comment/>
 			<position>
-				<first>-379</first>
-				<second>813</second>
+				<first>-347</first>
+				<second>725</second>
 			</position>
 			<name>Random</name>
 			<technique/>
