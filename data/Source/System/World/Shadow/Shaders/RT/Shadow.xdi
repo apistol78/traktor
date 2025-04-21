@@ -151,7 +151,7 @@
 				</item>
 			</outputPins>
 			<script><![CDATA[
-const int N = 8;
+const int N = 2;
 
 vec3 u, v;
 OrthogonalFrame($Direction.xyz, u, v);
@@ -164,7 +164,7 @@ int nshadowed = 0;
 
 for (int i = 0; i < N; ++i)
 {
-	const vec2 r = (Hammersley(i + int($Random * N), 2 * N) * 1.0f - 0.5f) * 0.05f;
+	const vec2 r = (Hammersley(i + int($Random * (32 - N)), 32) * 1.0f - 0.5f) * 0.04f;
 	const vec3 rayOrigin = $Origin.xyz;
 	const vec3 rayDir = normalize($Direction.xyz + u * r.x + v * r.y);
 	const bool shadowed = HWRT_TraceShadow(
