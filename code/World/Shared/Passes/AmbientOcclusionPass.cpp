@@ -115,7 +115,7 @@ render::RGTargetSet AmbientOcclusionPass::setup(
 	view.projection = worldRenderView.getProjection();
 
 	render::ImageGraphContext igctx;
-	igctx.setTechniqueFlag(s_handleRayTracingEnable, rayTracingEnable);
+	igctx.setTechniqueFlag(ShaderPermutation::RayTracingEnable, rayTracingEnable);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
 	rp->addInput(gbufferTargetSetId);
@@ -133,19 +133,19 @@ render::RGTargetSet AmbientOcclusionPass::setup(
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 		const auto halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
 
-		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
-		params->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
-		params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-		params->setMatrixParameter(s_handleView, worldRenderView.getView());
-		params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
-		params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
-		params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
-		params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
-		params->setTextureParameter(s_handleHalfResDepthMap, halfResDepthTexture);
+		params->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+		params->setVectorParameter(ShaderParameter::Jitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
+		params->setVectorParameter(ShaderParameter::MagicCoeffs, magicCoeffs);
+		params->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
+		params->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
+		params->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
+		params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
+		params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
+		params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
+		params->setTextureParameter(ShaderParameter::HalfResDepthMap, halfResDepthTexture);
 
 		if (gatheredView.rtWorldTopLevel != nullptr)
-			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
+			params->setAccelerationStructureParameter(ShaderParameter::TLAS, gatheredView.rtWorldTopLevel);
 	};
 
 	m_ambientOcclusion->addPasses(

@@ -22,117 +22,127 @@ namespace traktor::world
 {
 
 // Techniques
-extern const render::Handle T_DLLCLASS s_techniqueDeferredColor;
-extern const render::Handle T_DLLCLASS s_techniqueDeferredGBufferWrite;
-extern const render::Handle T_DLLCLASS s_techniqueForwardColor;
-extern const render::Handle T_DLLCLASS s_techniqueForwardGBufferWrite;
-extern const render::Handle T_DLLCLASS s_techniqueSimpleColor;
-extern const render::Handle T_DLLCLASS s_techniqueDBufferWrite;
-extern const render::Handle T_DLLCLASS s_techniqueReflectionWrite;
-extern const render::Handle T_DLLCLASS s_techniqueVelocityWrite;
-extern const render::Handle T_DLLCLASS s_techniqueShadow;
+struct T_DLLCLASS ShaderTechnique
+{
+	static const render::Handle Default;
+	static const render::Handle DeferredColor;
+	static const render::Handle DeferredGBufferWrite;
+	static const render::Handle ForwardColor;
+	static const render::Handle ForwardGBufferWrite;
+	static const render::Handle SimpleColor;
+	static const render::Handle DBufferWrite;
+	static const render::Handle ReflectionWrite;
+	static const render::Handle VelocityWrite;
+	static const render::Handle Shadow;
+};
 
 // Permutations
-extern const render::Handle T_DLLCLASS s_handleIrradianceEnable;
-extern const render::Handle T_DLLCLASS s_handleIrradianceSingle;
-extern const render::Handle T_DLLCLASS s_handleVolumetricFogEnable;
-extern const render::Handle T_DLLCLASS s_handleColorGradingEnable;
-extern const render::Handle T_DLLCLASS s_handleRayTracingEnable;
+struct T_DLLCLASS ShaderPermutation
+{
+	static const render::Handle IrradianceEnable;
+	static const render::Handle IrradianceSingle;
+	static const render::Handle VolumetricFogEnable;
+	static const render::Handle ColorGradingEnable;
+	static const render::Handle RayTracingEnable;
+
+	// Occlusion culling.
+	static const render::Handle CullingHiZ;
+};
 
 // Shader parameters.
-extern const render::Handle T_DLLCLASS s_handleDecalParamsA;
-extern const render::Handle T_DLLCLASS s_handleDecalParamsB;
-extern const render::Handle T_DLLCLASS s_handleExposure;
-extern const render::Handle T_DLLCLASS s_handleExtent;
-extern const render::Handle T_DLLCLASS s_handleFogColor;
-extern const render::Handle T_DLLCLASS s_handleFogDistanceAndDensity;
-extern const render::Handle T_DLLCLASS s_handleGamma;
-extern const render::Handle T_DLLCLASS s_handleGammaInverse;
-extern const render::Handle T_DLLCLASS s_handleLastWorld;
-extern const render::Handle T_DLLCLASS s_handleLastView;
-extern const render::Handle T_DLLCLASS s_handleLastWorldView;
-extern const render::Handle T_DLLCLASS s_handleLightIndexSBuffer;
-extern const render::Handle T_DLLCLASS s_handleLightMap;
-extern const render::Handle T_DLLCLASS s_handleLightSBuffer;
-extern const render::Handle T_DLLCLASS s_handleLightCount;
-extern const render::Handle T_DLLCLASS s_handleMagicCoeffs;
-extern const render::Handle T_DLLCLASS s_handleIrradianceMap;
-extern const render::Handle T_DLLCLASS s_handleOcclusionMap;
-extern const render::Handle T_DLLCLASS s_handleContactShadowsMap;
-extern const render::Handle T_DLLCLASS s_handleProjection;
-extern const render::Handle T_DLLCLASS s_handleReflectionMap;
-extern const render::Handle T_DLLCLASS s_handleVisualCopyMap;
-extern const render::Handle T_DLLCLASS s_handleShadowMapAtlas;
-extern const render::Handle T_DLLCLASS s_handleShadowBias;
-extern const render::Handle T_DLLCLASS s_handleTileSBuffer;
-extern const render::Handle T_DLLCLASS s_handleTime;
-extern const render::Handle T_DLLCLASS s_handleRandom;
-extern const render::Handle T_DLLCLASS s_handleViewDistance;
-extern const render::Handle T_DLLCLASS s_handleView;
-extern const render::Handle T_DLLCLASS s_handleViewInverse;
-extern const render::Handle T_DLLCLASS s_handleWorld;
-extern const render::Handle T_DLLCLASS s_handleWorldView;
-extern const render::Handle T_DLLCLASS s_handleWorldViewInv;
-extern const render::Handle T_DLLCLASS s_handleJitter;
-extern const render::Handle T_DLLCLASS s_handleSlicePositions;
-extern const render::Handle T_DLLCLASS s_handleGBufferA;
-extern const render::Handle T_DLLCLASS s_handleGBufferB;
-extern const render::Handle T_DLLCLASS s_handleGBufferC;
-extern const render::Handle T_DLLCLASS s_handleDBufferColorMap;
-extern const render::Handle T_DLLCLASS s_handleDBufferMiscMap;
-extern const render::Handle T_DLLCLASS s_handleDBufferNormalMap;
-extern const render::Handle T_DLLCLASS s_handleHiZTexture;
-extern const render::Handle T_DLLCLASS s_handleTLAS;
-extern const render::Handle T_DLLCLASS s_handleHalfResDepthMap;
-extern const render::Handle T_DLLCLASS s_handleReservoir;
-extern const render::Handle T_DLLCLASS s_handleReservoirOutput;
-extern const render::Handle T_DLLCLASS s_handleVelocityMap;
+struct T_DLLCLASS ShaderParameter
+{
+	static const render::Handle DecalParamsA;
+	static const render::Handle DecalParamsB;
+	static const render::Handle Exposure;
+	static const render::Handle Extent;
+	static const render::Handle FogColor;
+	static const render::Handle FogDistanceAndDensity;
+	static const render::Handle Gamma;
+	static const render::Handle GammaInverse;
+	static const render::Handle LastWorld;
+	static const render::Handle LastView;
+	static const render::Handle LastWorldView;
+	static const render::Handle LightIndexSBuffer;
+	static const render::Handle LightMap;
+	static const render::Handle LightSBuffer;
+	static const render::Handle LightCount;
+	static const render::Handle MagicCoeffs;
+	static const render::Handle IrradianceMap;
+	static const render::Handle OcclusionMap;
+	static const render::Handle ContactShadowsMap;
+	static const render::Handle Projection;
+	static const render::Handle ReflectionMap;
+	static const render::Handle VisualCopyMap;
+	static const render::Handle ShadowMapAtlas;
+	static const render::Handle ShadowBias;
+	static const render::Handle TileSBuffer;
+	static const render::Handle Time;
+	static const render::Handle Random;
+	static const render::Handle ViewDistance;
+	static const render::Handle View;
+	static const render::Handle ViewInverse;
+	static const render::Handle World;
+	static const render::Handle WorldView;
+	static const render::Handle WorldViewInv;
+	static const render::Handle Jitter;
+	static const render::Handle SlicePositions;
+	static const render::Handle GBufferA;
+	static const render::Handle GBufferB;
+	static const render::Handle GBufferC;
+	static const render::Handle DBufferColorMap;
+	static const render::Handle DBufferMiscMap;
+	static const render::Handle DBufferNormalMap;
+	static const render::Handle HiZTexture;
+	static const render::Handle TLAS;
+	static const render::Handle HalfResDepthMap;
+	static const render::Handle Reservoir;
+	static const render::Handle ReservoirOutput;
+	static const render::Handle VelocityMap;
 
-// Culling.
-extern const render::Handle T_DLLCLASS s_handleTargetSize;
-extern const render::Handle T_DLLCLASS s_handleVisibility;
-extern const render::Handle T_DLLCLASS s_handleCullFrustum;
+	// Culling.
+	static const render::Handle TargetSize;
+	static const render::Handle Visibility;
+	static const render::Handle CullFrustum;
 
-// Irradiance grid.
-extern const render::Handle T_DLLCLASS s_handleIrradianceGridBoundsMax;
-extern const render::Handle T_DLLCLASS s_handleIrradianceGridBoundsMin;
-extern const render::Handle T_DLLCLASS s_handleIrradianceGridSBuffer;
-extern const render::Handle T_DLLCLASS s_handleIrradianceGridSize;
+	// Irradiance grid.
+	static const render::Handle IrradianceGridBoundsMax;
+	static const render::Handle IrradianceGridBoundsMin;
+	static const render::Handle IrradianceGridSBuffer;
+	static const render::Handle IrradianceGridSize;
 
-// Reflection probe.
-extern const render::Handle T_DLLCLASS s_handleProbeDiffuse;
-extern const render::Handle T_DLLCLASS s_handleProbeIntensity;
-extern const render::Handle T_DLLCLASS s_handleProbeTexture;
-extern const render::Handle T_DLLCLASS s_handleProbeTextureMips;
-extern const render::Handle T_DLLCLASS s_handleProbeVolumeCenter;
-extern const render::Handle T_DLLCLASS s_handleProbeVolumeExtent;
-extern const render::Handle T_DLLCLASS s_handleProbeRoughness;
-extern const render::Handle T_DLLCLASS s_handleProbeFilterCorners;
+	// Reflection probe.
+	static const render::Handle ProbeDiffuse;
+	static const render::Handle ProbeIntensity;
+	static const render::Handle ProbeTexture;
+	static const render::Handle ProbeTextureMips;
+	static const render::Handle ProbeVolumeCenter;
+	static const render::Handle ProbeVolumeExtent;
+	static const render::Handle ProbeRoughness;
+	static const render::Handle ProbeFilterCorners;
 
-// Volumetric fog.
-extern const render::Handle T_DLLCLASS s_handleFogVolume;
-extern const render::Handle T_DLLCLASS s_handleFogVolumeTexture;
-extern const render::Handle T_DLLCLASS s_handleFogVolumeRange;
-extern const render::Handle T_DLLCLASS s_handleFogVolumeSliceCount;
-extern const render::Handle T_DLLCLASS s_handleFogVolumeSliceCurrent;
-extern const render::Handle T_DLLCLASS s_handleFogVolumeMediumColor;
-extern const render::Handle T_DLLCLASS s_handleFogVolumeMediumDensity;
+	// Volumetric fog.
+	static const render::Handle FogVolume;
+	static const render::Handle FogVolumeTexture;
+	static const render::Handle FogVolumeRange;
+	static const render::Handle FogVolumeSliceCount;
+	static const render::Handle FogVolumeSliceCurrent;
+	static const render::Handle FogVolumeMediumColor;
+	static const render::Handle FogVolumeMediumDensity;
 
-// Contact shadows.
-extern const render::Handle T_DLLCLASS s_handleContactLightDirection;
+	// Contact shadows.
+	static const render::Handle ContactLightDirection;
 
-// Occlusion culling.
-extern const render::Handle T_DLLCLASS s_handleCullingHiZ;
+	// ImageGraph inputs.
+	static const render::Handle InputColor;
+	static const render::Handle InputColorLast;
+	static const render::Handle InputDepth;
+	static const render::Handle InputNormal;
+	static const render::Handle InputVelocity;
+	static const render::Handle InputColorGrading;
 
-// ImageGraph inputs.
-extern const render::Handle T_DLLCLASS s_handleInputColor;
-extern const render::Handle T_DLLCLASS s_handleInputColorLast;
-extern const render::Handle T_DLLCLASS s_handleInputDepth;
-extern const render::Handle T_DLLCLASS s_handleInputNormal;
-extern const render::Handle T_DLLCLASS s_handleInputVelocity;
-extern const render::Handle T_DLLCLASS s_handleInputColorGrading;
-
-// Persistent targets.
-extern const render::Handle T_DLLCLASS s_handleTargetShadowMap[];
+	// Persistent targets.
+	static const render::Handle TargetShadowMap[];
+};
 
 }

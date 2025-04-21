@@ -59,9 +59,9 @@ void RTWorldOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRende
 		auto pp = renderContext->alloc< render::ProgramParameters >();
 		pp->beginParameters(renderContext);
 		pp->setFloatParameter(c_handleDebugAlpha, alpha);
-		pp->setMatrixParameter(s_handleProjection, projection);
-		pp->setMatrixParameter(s_handleViewInverse, viewInverse);
-		pp->setAccelerationStructureParameter(s_handleTLAS, rtw->getTopLevel());
+		pp->setMatrixParameter(ShaderParameter::Projection, projection);
+		pp->setMatrixParameter(ShaderParameter::ViewInverse, viewInverse);
+		pp->setAccelerationStructureParameter(ShaderParameter::TLAS, rtw->getTopLevel());
 		pp->endParameters(renderContext);
 
 		screenRenderer->draw(renderContext, m_shader, pp);

@@ -111,10 +111,10 @@ render::RGTargetSet ContactShadowsPass::setup(
 
 	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
-		params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
-		params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
-		params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
-		params->setVectorParameter(s_handleContactLightDirection, lightDirection);
+		params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
+		params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
+		params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
+		params->setVectorParameter(ShaderParameter::ContactLightDirection, lightDirection);
 	};
 
 	m_contactShadows->addPasses(

@@ -427,9 +427,9 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 
 			auto pp = renderContext->alloc< render::ProgramParameters >();
 			pp->beginParameters(renderContext);
-			pp->setFloatParameter(s_handleProbeRoughness, roughness);
-			pp->setTextureParameter(s_handleProbeTexture, probeTexture);
-			pp->setVectorArrayParameter(s_handleProbeFilterCorners, corners, sizeof_array(corners));
+			pp->setFloatParameter(ShaderParameter::ProbeRoughness, roughness);
+			pp->setTextureParameter(ShaderParameter::ProbeTexture, probeTexture);
+			pp->setVectorArrayParameter(ShaderParameter::ProbeFilterCorners, corners, sizeof_array(corners));
 			pp->endParameters(renderContext);
 
 			m_screenRenderer->draw(renderContext, m_filterShader, pp);

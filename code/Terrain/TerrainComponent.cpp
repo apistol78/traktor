@@ -418,7 +418,7 @@ void TerrainComponent::build(
 	}
 
 	// Cull draw buffer to HiZ target; only deferred renderer using HiZ culling.
-	if (!snapshot && worldRenderPass.getTechnique() == world::s_techniqueDeferredGBufferWrite)
+	if (!snapshot && worldRenderPass.getTechnique() == world::ShaderTechnique::DeferredGBufferWrite)
 	{
 		const Vector2 viewSize = worldRenderView.getViewSize();
 
@@ -456,7 +456,7 @@ void TerrainComponent::build(
 		rb->vertexLayout = m_vertexLayout;
 		rb->primitive = render::PrimitiveType::Triangles;
 
-		if (worldRenderPass.getTechnique() == world::s_techniqueDeferredGBufferWrite)
+		if (worldRenderPass.getTechnique() == world::ShaderTechnique::DeferredGBufferWrite)
 			rb->drawBuffer = m_culledDrawBuffer->getBufferView();
 		else
 			rb->drawBuffer = m_drawBuffer->getBufferView();

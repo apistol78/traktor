@@ -17,8 +17,8 @@
 #include "Resource/IResourceManager.h"
 #include "World/Shared/Passes/LightClusterPass.h"
 #include "World/Shared/WorldRendererShared.h"
-#include "World/WorldRenderView.h"
 #include "World/WorldHandles.h"
+#include "World/WorldRenderView.h"
 
 namespace traktor::world
 {
@@ -102,7 +102,7 @@ void TilesOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRendere
 		pp->setFloatParameter(c_handleDebugAlpha, alpha);
 		pp->setVectorParameter(c_handleDebugViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
 		pp->setVectorParameter(c_handleDebugMagicCoeffs, magicCoeffs);
-		pp->setMatrixParameter(s_handleProjection, projection);
+		pp->setMatrixParameter(ShaderParameter::Projection, projection);
 		pp->setTextureParameter(c_handleDebugTexture, gbufferTargetSet->getColorTexture(0));
 		pp->setBufferViewParameter(c_handleDebugTileBuffer, tileSBuffer->getBufferView());
 		pp->endParameters(renderContext);

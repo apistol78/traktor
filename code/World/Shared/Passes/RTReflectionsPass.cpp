@@ -145,26 +145,26 @@ render::RGTargetSet RTReflectionsPass::setup(
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 		const auto halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
 
-		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
-		params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-		params->setMatrixParameter(s_handleView, worldRenderView.getView());
-		params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
-		params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
-		params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
-		params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
-		params->setTextureParameter(s_handleHalfResDepthMap, halfResolution ? halfResDepthTexture : gbufferTargetSet->getColorTexture(0));
-		params->setFloatParameter(s_handleRandom, s_random.nextFloat());
+		params->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+		params->setVectorParameter(ShaderParameter::Jitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
+		params->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
+		params->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
+		params->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
+		params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
+		params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
+		params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
+		params->setTextureParameter(ShaderParameter::HalfResDepthMap, halfResolution ? halfResDepthTexture : gbufferTargetSet->getColorTexture(0));
+		params->setFloatParameter(ShaderParameter::Random, s_random.nextFloat());
 
 		if (lightSBuffer != nullptr)
 		{
-			params->setBufferViewParameter(s_handleLightSBuffer, lightSBuffer->getBufferView());
-			params->setFloatParameter(s_handleLightCount, (float)gatheredView.lights.size());
+			params->setBufferViewParameter(ShaderParameter::LightSBuffer, lightSBuffer->getBufferView());
+			params->setFloatParameter(ShaderParameter::LightCount, (float)gatheredView.lights.size());
 		}
 		else
-			params->setFloatParameter(s_handleLightCount, 0.0f);
+			params->setFloatParameter(ShaderParameter::LightCount, 0.0f);
 
-		params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
+		params->setAccelerationStructureParameter(ShaderParameter::TLAS, gatheredView.rtWorldTopLevel);
 	};
 
 	// Add reflections compute pass.
@@ -194,9 +194,9 @@ render::RGTargetSet RTReflectionsPass::setup(
 			renderBlock->workSize[1] = outputSize.y;
 			renderBlock->workSize[2] = 1;
 			renderBlock->programParams->beginParameters(renderContext);
-			renderBlock->programParams->setTextureParameter(s_handleVelocityMap, velocityTexture);
-			renderBlock->programParams->setBufferViewParameter(s_handleReservoir, reservoirBuffer->getBufferView());
-			renderBlock->programParams->setBufferViewParameter(s_handleReservoirOutput, reservoirOutputBuffer->getBufferView());
+			renderBlock->programParams->setTextureParameter(ShaderParameter::VelocityMap, velocityTexture);
+			renderBlock->programParams->setBufferViewParameter(ShaderParameter::Reservoir, reservoirBuffer->getBufferView());
+			renderBlock->programParams->setBufferViewParameter(ShaderParameter::ReservoirOutput, reservoirOutputBuffer->getBufferView());
 			renderBlock->programParams->setImageViewParameter(s_handleReflectionsOutput, reflectionsTexture, 0);
 			setParameters(renderGraph, renderBlock->programParams);
 			renderBlock->programParams->endParameters(renderContext);
@@ -215,8 +215,8 @@ render::RGTargetSet RTReflectionsPass::setup(
 		view.projection = worldRenderView.getProjection();
 
 		render::ImageGraphContext igctx;
-		igctx.associateTexture(s_handleInputColor, reflectionsTextureId);
-		igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
+		igctx.associateTexture(ShaderParameter::InputColor, reflectionsTextureId);
+		igctx.associateTextureTargetSet(ShaderParameter::InputVelocity, velocityTargetSetId, 0);
 
 		Ref< render::RenderPass > rp = new render::RenderPass(L"RTReflections denoiser");
 		rp->addInput(gbufferTargetSetId);

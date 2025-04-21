@@ -92,13 +92,13 @@ render::RGTargetSet VelocityPass::setup(
 		view.deltaTime = (float)worldRenderView.getDeltaTime();
 
 		render::ImageGraphContext igctx;
-		igctx.setTechniqueFlag(s_handleRayTracingEnable, rayTracingEnable);
+		igctx.setTechniqueFlag(ShaderPermutation::RayTracingEnable, rayTracingEnable);
 
 		auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
-			params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
-			params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
-			params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
+			params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
+			params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
+			params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
 		};
 
 		m_velocityPrime->addPasses(
@@ -118,14 +118,14 @@ render::RGTargetSet VelocityPass::setup(
 
 		auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 		sharedParams->beginParameters(renderContext);
-		sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-		sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-		sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
-		sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
+		sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+		sharedParams->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
+		sharedParams->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
+		sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
 		sharedParams->endParameters(renderContext);
 
 		const WorldRenderPassShared velocityPass(
-			s_techniqueVelocityWrite,
+			ShaderTechnique::VelocityWrite,
 			sharedParams,
 			worldRenderView,
 			IWorldRenderPass::None);

@@ -140,7 +140,7 @@ void WorldRendererForward::setup(
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
-	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, s_techniqueForwardGBufferWrite, renderGraph, render::RGTexture::Invalid, outputTargetSetId);
+	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::ForwardGBufferWrite, renderGraph, render::RGTexture::Invalid, outputTargetSetId);
 	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	// m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
@@ -238,37 +238,37 @@ void WorldRendererForward::setupVisualPass(
 
 		auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 		sharedParams->beginParameters(wc.getRenderContext());
-		sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-		sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
-		sharedParams->setVectorParameter(s_handleSlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
-		sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-		sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
-		sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
+		sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+		sharedParams->setVectorParameter(ShaderParameter::ViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
+		sharedParams->setVectorParameter(ShaderParameter::SlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
+		sharedParams->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
+		sharedParams->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
+		sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
 
 		if (m_gatheredView.irradianceGrid)
 		{
 			const auto size = m_gatheredView.irradianceGrid->getSize();
-			sharedParams->setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0] + 0.5f, (float)size[1] + 0.5f, (float)size[2] + 0.5f, 0.0f));
-			sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMin, m_gatheredView.irradianceGrid->getBoundingBox().mn);
-			sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, m_gatheredView.irradianceGrid->getBoundingBox().mx);
-			sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, m_gatheredView.irradianceGrid->getBuffer()->getBufferView());
+			sharedParams->setVectorParameter(ShaderParameter::IrradianceGridSize, Vector4((float)size[0] + 0.5f, (float)size[1] + 0.5f, (float)size[2] + 0.5f, 0.0f));
+			sharedParams->setVectorParameter(ShaderParameter::IrradianceGridBoundsMin, m_gatheredView.irradianceGrid->getBoundingBox().mn);
+			sharedParams->setVectorParameter(ShaderParameter::IrradianceGridBoundsMax, m_gatheredView.irradianceGrid->getBoundingBox().mx);
+			sharedParams->setBufferViewParameter(ShaderParameter::IrradianceGridSBuffer, m_gatheredView.irradianceGrid->getBuffer()->getBufferView());
 		}
 
-		sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
-		sharedParams->setBufferViewParameter(s_handleLightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
-		sharedParams->setBufferViewParameter(s_handleLightSBuffer, lightSBuffer->getBufferView());
+		sharedParams->setBufferViewParameter(ShaderParameter::TileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
+		sharedParams->setBufferViewParameter(ShaderParameter::LightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
+		sharedParams->setBufferViewParameter(ShaderParameter::LightSBuffer, lightSBuffer->getBufferView());
 
 		if (probe)
 		{
-			sharedParams->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
-			sharedParams->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
-			sharedParams->setTextureParameter(s_handleProbeTexture, probe->getTexture());
+			sharedParams->setFloatParameter(ShaderParameter::ProbeIntensity, probe->getIntensity());
+			sharedParams->setFloatParameter(ShaderParameter::ProbeTextureMips, (float)probe->getTexture()->getSize().mips);
+			sharedParams->setTextureParameter(ShaderParameter::ProbeTexture, probe->getTexture());
 		}
 		else
 		{
-			sharedParams->setFloatParameter(s_handleProbeIntensity, 0.0f);
-			sharedParams->setFloatParameter(s_handleProbeTextureMips, 0.0f);
-			sharedParams->setTextureParameter(s_handleProbeTexture, m_blackCubeTexture);
+			sharedParams->setFloatParameter(ShaderParameter::ProbeIntensity, 0.0f);
+			sharedParams->setFloatParameter(ShaderParameter::ProbeTextureMips, 0.0f);
+			sharedParams->setTextureParameter(ShaderParameter::ProbeTexture, m_blackCubeTexture);
 		}
 
 		if (fog)
@@ -280,52 +280,52 @@ void WorldRendererForward::setupVisualPass(
 				0.0f);
 
 			// Distance fog.
-			sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, 0.0f));
-			sharedParams->setVectorParameter(s_handleFogColor, fog->m_fogColor);
+			sharedParams->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, 0.0f));
+			sharedParams->setVectorParameter(ShaderParameter::FogColor, fog->m_fogColor);
 
 			// Volumetric fog.
-			sharedParams->setFloatParameter(s_handleFogVolumeSliceCount, (float)fog->getSliceCount());
-			sharedParams->setVectorParameter(s_handleFogVolumeRange, fogRange);
-			sharedParams->setTextureParameter(s_handleFogVolumeTexture, fog->getFogVolumeTexture());
+			sharedParams->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)fog->getSliceCount());
+			sharedParams->setVectorParameter(ShaderParameter::FogVolumeRange, fogRange);
+			sharedParams->setTextureParameter(ShaderParameter::FogVolumeTexture, fog->getFogVolumeTexture());
 		}
 		else
 		{
-			sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4::zero());
-			sharedParams->setVectorParameter(s_handleFogColor, Vector4::zero());
+			sharedParams->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4::zero());
+			sharedParams->setVectorParameter(ShaderParameter::FogColor, Vector4::zero());
 		}
 
 		if (shadowAtlasTargetSet != nullptr)
 		{
-			sharedParams->setFloatParameter(s_handleShadowBias, shadowSettings.bias);
-			sharedParams->setTextureParameter(s_handleShadowMapAtlas, shadowAtlasTargetSet->getDepthTexture());
+			sharedParams->setFloatParameter(ShaderParameter::ShadowBias, shadowSettings.bias);
+			sharedParams->setTextureParameter(ShaderParameter::ShadowMapAtlas, shadowAtlasTargetSet->getDepthTexture());
 		}
 		else
 		{
-			sharedParams->setFloatParameter(s_handleShadowBias, 0.0f);
-			sharedParams->setTextureParameter(s_handleShadowMapAtlas, m_whiteTexture);
+			sharedParams->setFloatParameter(ShaderParameter::ShadowBias, 0.0f);
+			sharedParams->setTextureParameter(ShaderParameter::ShadowMapAtlas, m_whiteTexture);
 		}
 
-		sharedParams->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
-		sharedParams->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
-		sharedParams->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
+		sharedParams->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
+		sharedParams->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
+		sharedParams->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
 
 		if (ambientOcclusionTargetSet != nullptr)
-			sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
+			sharedParams->setTextureParameter(ShaderParameter::OcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
 		else
-			sharedParams->setTextureParameter(s_handleOcclusionMap, m_whiteTexture);
+			sharedParams->setTextureParameter(ShaderParameter::OcclusionMap, m_whiteTexture);
 
 		if (reflectionsTargetSet != nullptr)
-			sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));
+			sharedParams->setTextureParameter(ShaderParameter::ReflectionMap, reflectionsTargetSet->getColorTexture(0));
 		else
-			sharedParams->setTextureParameter(s_handleReflectionMap, m_blackTexture);
+			sharedParams->setTextureParameter(ShaderParameter::ReflectionMap, m_blackTexture);
 
 		if (visualCopyTargetSet != nullptr)
-			sharedParams->setTextureParameter(s_handleVisualCopyMap, visualCopyTargetSet->getColorTexture(0));
+			sharedParams->setTextureParameter(ShaderParameter::VisualCopyMap, visualCopyTargetSet->getColorTexture(0));
 		else
-			sharedParams->setTextureParameter(s_handleVisualCopyMap, m_blackTexture);
+			sharedParams->setTextureParameter(ShaderParameter::VisualCopyMap, m_blackTexture);
 
 		if (m_gatheredView.rtWorldTopLevel != nullptr)
-			sharedParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredView.rtWorldTopLevel);
+			sharedParams->setAccelerationStructureParameter(ShaderParameter::TLAS, m_gatheredView.rtWorldTopLevel);
 
 		sharedParams->endParameters(wc.getRenderContext());
 
@@ -333,13 +333,13 @@ void WorldRendererForward::setupVisualPass(
 		const bool irradianceSingle = irradianceEnable && m_gatheredView.irradianceGrid->isSingle();
 
 		const WorldRenderPassShared defaultPass(
-			s_techniqueForwardColor,
+			ShaderTechnique::ForwardColor,
 			sharedParams,
 			worldRenderView,
 			IWorldRenderPass::Last,
-			{ { s_handleIrradianceEnable, irradianceEnable },
-				{ s_handleIrradianceSingle, irradianceSingle },
-				{ s_handleVolumetricFogEnable, (bool)(fog != nullptr && fog->m_volumetricFogEnable) } });
+			{ { ShaderPermutation::IrradianceEnable, irradianceEnable },
+				{ ShaderPermutation::IrradianceSingle, irradianceSingle },
+				{ ShaderPermutation::VolumetricFogEnable, (bool)(fog != nullptr && fog->m_volumetricFogEnable) } });
 
 		T_ASSERT(!wc.getRenderContext()->havePendingDraws());
 

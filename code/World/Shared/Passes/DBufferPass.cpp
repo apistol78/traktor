@@ -82,18 +82,18 @@ render::RGTargetSet DBufferPass::setup(
 
 		auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 		sharedParams->beginParameters(renderContext);
-		sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-		sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-		sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
-		sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
-		sharedParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-		sharedParams->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
-		sharedParams->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
-		sharedParams->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
+		sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+		sharedParams->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
+		sharedParams->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
+		sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
+		sharedParams->setVectorParameter(ShaderParameter::MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+		sharedParams->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
+		sharedParams->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
+		sharedParams->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
 		sharedParams->endParameters(renderContext);
 
 		const WorldRenderPassShared dbufferPass(
-			s_techniqueDBufferWrite,
+			ShaderTechnique::DBufferWrite,
 			sharedParams,
 			worldRenderView,
 			IWorldRenderPass::None,

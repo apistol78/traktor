@@ -402,7 +402,7 @@ void WorldRendererShared::setupLightPass(
 		rgtd.ignoreStencil = true;
 		outShadowMapAtlasTargetSetId = renderGraph.addPersistentTargetSet(
 			L"Shadow map atlas",
-			s_handleTargetShadowMap[worldRenderView.getIndex()],
+			ShaderParameter::TargetShadowMap[worldRenderView.getIndex()],
 			false,
 			rgtd);
 
@@ -505,14 +505,14 @@ void WorldRendererShared::setupLightPass(
 					// Render entities into shadow map.
 					auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 					sharedParams->beginParameters(renderContext);
-					sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-					sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
-					sharedParams->setMatrixParameter(s_handleView, shadowLightView);
-					sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
+					sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+					sharedParams->setMatrixParameter(ShaderParameter::Projection, shadowLightProjection);
+					sharedParams->setMatrixParameter(ShaderParameter::View, shadowLightView);
+					sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, shadowLightView.inverse());
 					sharedParams->endParameters(renderContext);
 
 					const WorldRenderPassShared shadowPass(
-						s_techniqueShadow,
+						ShaderTechnique::Shadow,
 						sharedParams,
 						shadowRenderView,
 						IWorldRenderPass::None);
@@ -641,14 +641,14 @@ void WorldRendererShared::setupLightPass(
 				// Render entities into shadow map.
 				auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 				sharedParams->beginParameters(renderContext);
-				sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-				sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
-				sharedParams->setMatrixParameter(s_handleView, shadowLightView);
-				sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
+				sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+				sharedParams->setMatrixParameter(ShaderParameter::Projection, shadowLightProjection);
+				sharedParams->setMatrixParameter(ShaderParameter::View, shadowLightView);
+				sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, shadowLightView.inverse());
 				sharedParams->endParameters(renderContext);
 
 				const WorldRenderPassShared shadowPass(
-					s_techniqueShadow,
+					ShaderTechnique::Shadow,
 					sharedParams,
 					shadowRenderView,
 					IWorldRenderPass::None);

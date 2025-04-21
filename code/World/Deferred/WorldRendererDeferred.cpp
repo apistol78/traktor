@@ -171,7 +171,7 @@ void WorldRendererDeferred::setup(
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
-	const auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, s_techniqueDeferredGBufferWrite, renderGraph, hizTextureId, outputTargetSetId);
+	const auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::DeferredGBufferWrite, renderGraph, hizTextureId, outputTargetSetId);
 	const auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	const auto halfResDepthTextureId = m_downScalePass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId, hizTextureId);
@@ -288,31 +288,31 @@ void WorldRendererDeferred::setupVisualPass(
 
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
-			sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-			sharedParams->setFloatParameter(s_handleRandom, s_random.nextFloat());
-			sharedParams->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
-			sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
-			sharedParams->setVectorParameter(s_handleSlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
-			sharedParams->setMatrixParameter(s_handleProjection, projection);
-			sharedParams->setMatrixParameter(s_handleView, view);
-			sharedParams->setMatrixParameter(s_handleViewInverse, view.inverse());
-			sharedParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+			sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+			sharedParams->setFloatParameter(ShaderParameter::Random, s_random.nextFloat());
+			sharedParams->setVectorParameter(ShaderParameter::Jitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
+			sharedParams->setVectorParameter(ShaderParameter::ViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
+			sharedParams->setVectorParameter(ShaderParameter::SlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
+			sharedParams->setMatrixParameter(ShaderParameter::Projection, projection);
+			sharedParams->setMatrixParameter(ShaderParameter::View, view);
+			sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, view.inverse());
+			sharedParams->setVectorParameter(ShaderParameter::MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 
-			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
-			sharedParams->setBufferViewParameter(s_handleLightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
-			sharedParams->setBufferViewParameter(s_handleLightSBuffer, lightSBuffer->getBufferView());
+			sharedParams->setBufferViewParameter(ShaderParameter::TileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
+			sharedParams->setBufferViewParameter(ShaderParameter::LightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
+			sharedParams->setBufferViewParameter(ShaderParameter::LightSBuffer, lightSBuffer->getBufferView());
 
 			if (probe)
 			{
-				sharedParams->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
-				sharedParams->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
-				sharedParams->setTextureParameter(s_handleProbeTexture, probe->getTexture());
+				sharedParams->setFloatParameter(ShaderParameter::ProbeIntensity, probe->getIntensity());
+				sharedParams->setFloatParameter(ShaderParameter::ProbeTextureMips, (float)probe->getTexture()->getSize().mips);
+				sharedParams->setTextureParameter(ShaderParameter::ProbeTexture, probe->getTexture());
 			}
 			else
 			{
-				sharedParams->setFloatParameter(s_handleProbeIntensity, 0.0f);
-				sharedParams->setFloatParameter(s_handleProbeTextureMips, 0.0f);
-				sharedParams->setTextureParameter(s_handleProbeTexture, m_blackCubeTexture);
+				sharedParams->setFloatParameter(ShaderParameter::ProbeIntensity, 0.0f);
+				sharedParams->setFloatParameter(ShaderParameter::ProbeTextureMips, 0.0f);
+				sharedParams->setTextureParameter(ShaderParameter::ProbeTexture, m_blackCubeTexture);
 			}
 
 			if (fog)
@@ -324,64 +324,64 @@ void WorldRendererDeferred::setupVisualPass(
 					0.0f);
 
 				// Distance fog.
-				sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, 0.0f));
-				sharedParams->setVectorParameter(s_handleFogColor, fog->m_fogColor);
+				sharedParams->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, 0.0f));
+				sharedParams->setVectorParameter(ShaderParameter::FogColor, fog->m_fogColor);
 
 				// Volumetric fog.
-				sharedParams->setFloatParameter(s_handleFogVolumeSliceCount, (float)fog->getSliceCount());
-				sharedParams->setVectorParameter(s_handleFogVolumeRange, fogRange);
-				sharedParams->setTextureParameter(s_handleFogVolumeTexture, fog->getFogVolumeTexture());
+				sharedParams->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)fog->getSliceCount());
+				sharedParams->setVectorParameter(ShaderParameter::FogVolumeRange, fogRange);
+				sharedParams->setTextureParameter(ShaderParameter::FogVolumeTexture, fog->getFogVolumeTexture());
 			}
 			else
 			{
-				sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4::zero());
-				sharedParams->setVectorParameter(s_handleFogColor, Vector4::zero());
+				sharedParams->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4::zero());
+				sharedParams->setVectorParameter(ShaderParameter::FogColor, Vector4::zero());
 			}
 
 			if (shadowAtlasTargetSet != nullptr)
 			{
-				sharedParams->setFloatParameter(s_handleShadowBias, shadowSettings.bias);
-				sharedParams->setTextureParameter(s_handleShadowMapAtlas, shadowAtlasTargetSet->getDepthTexture());
+				sharedParams->setFloatParameter(ShaderParameter::ShadowBias, shadowSettings.bias);
+				sharedParams->setTextureParameter(ShaderParameter::ShadowMapAtlas, shadowAtlasTargetSet->getDepthTexture());
 			}
 			else
 			{
-				sharedParams->setFloatParameter(s_handleShadowBias, 0.0f);
-				sharedParams->setTextureParameter(s_handleShadowMapAtlas, m_whiteTexture);
+				sharedParams->setFloatParameter(ShaderParameter::ShadowBias, 0.0f);
+				sharedParams->setTextureParameter(ShaderParameter::ShadowMapAtlas, m_whiteTexture);
 			}
 
-			sharedParams->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
-			sharedParams->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
-			sharedParams->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
+			sharedParams->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
+			sharedParams->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
+			sharedParams->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
 
 			if (dbufferTargetSet)
 			{
-				sharedParams->setTextureParameter(s_handleDBufferColorMap, dbufferTargetSet->getColorTexture(0));
-				sharedParams->setTextureParameter(s_handleDBufferMiscMap, dbufferTargetSet->getColorTexture(1));
-				sharedParams->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
+				sharedParams->setTextureParameter(ShaderParameter::DBufferColorMap, dbufferTargetSet->getColorTexture(0));
+				sharedParams->setTextureParameter(ShaderParameter::DBufferMiscMap, dbufferTargetSet->getColorTexture(1));
+				sharedParams->setTextureParameter(ShaderParameter::DBufferNormalMap, dbufferTargetSet->getColorTexture(2));
 			}
 
 			if (irradianceTargetSet != nullptr)
-				sharedParams->setTextureParameter(s_handleIrradianceMap, irradianceTargetSet->getColorTexture(0));
+				sharedParams->setTextureParameter(ShaderParameter::IrradianceMap, irradianceTargetSet->getColorTexture(0));
 			else
-				sharedParams->setTextureParameter(s_handleIrradianceMap, m_whiteTexture);
+				sharedParams->setTextureParameter(ShaderParameter::IrradianceMap, m_whiteTexture);
 
 			if (ambientOcclusionTargetSet != nullptr)
-				sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
+				sharedParams->setTextureParameter(ShaderParameter::OcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
 			else
-				sharedParams->setTextureParameter(s_handleOcclusionMap, m_whiteTexture);
+				sharedParams->setTextureParameter(ShaderParameter::OcclusionMap, m_whiteTexture);
 
 			// if (contactShadowsTargetSet != nullptr)
-			// 	sharedParams->setTextureParameter(s_handleContactShadowsMap, contactShadowsTargetSet->getColorTexture(0));
+			// 	sharedParams->setTextureParameter(ShaderParameter::ContactShadowsMap, contactShadowsTargetSet->getColorTexture(0));
 			// else
-			// 	sharedParams->setTextureParameter(s_handleContactShadowsMap, m_blackTexture);
+			// 	sharedParams->setTextureParameter(ShaderParameter::ContactShadowsMap, m_blackTexture);
 
 			if (reflectionsTargetSet != nullptr)
-				sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));
+				sharedParams->setTextureParameter(ShaderParameter::ReflectionMap, reflectionsTargetSet->getColorTexture(0));
 			else
-				sharedParams->setTextureParameter(s_handleReflectionMap, m_blackTexture);
+				sharedParams->setTextureParameter(ShaderParameter::ReflectionMap, m_blackTexture);
 
 			if (m_gatheredView.rtWorldTopLevel != nullptr)
-				sharedParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredView.rtWorldTopLevel);
+				sharedParams->setAccelerationStructureParameter(ShaderParameter::TLAS, m_gatheredView.rtWorldTopLevel);
 
 			sharedParams->endParameters(renderContext);
 
@@ -391,10 +391,10 @@ void WorldRendererDeferred::setupVisualPass(
 			// Analytical lights; resolve with gbuffer.
 			{
 				render::Shader::Permutation perm;
-				m_lightShader->setCombination(s_handleIrradianceEnable, irradianceEnable, perm);
-				m_lightShader->setCombination(s_handleIrradianceSingle, irradianceSingle, perm);
-				m_lightShader->setCombination(s_handleVolumetricFogEnable, (bool)(fog != nullptr && fog->m_volumetricFogEnable), perm);
-				m_lightShader->setCombination(s_handleRayTracingEnable, (bool)(m_gatheredView.rtWorldTopLevel != nullptr), perm);
+				m_lightShader->setCombination(ShaderPermutation::IrradianceEnable, irradianceEnable, perm);
+				m_lightShader->setCombination(ShaderPermutation::IrradianceSingle, irradianceSingle, perm);
+				m_lightShader->setCombination(ShaderPermutation::VolumetricFogEnable, (bool)(fog != nullptr && fog->m_volumetricFogEnable), perm);
+				m_lightShader->setCombination(ShaderPermutation::RayTracingEnable, (bool)(m_gatheredView.rtWorldTopLevel != nullptr), perm);
 				m_screenRenderer->draw(renderContext, m_lightShader, perm, sharedParams, L"GBuffer resolve");
 			}
 		});
@@ -468,38 +468,38 @@ void WorldRendererDeferred::setupVisualPass(
 
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
-			sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-			sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
-			sharedParams->setVectorParameter(s_handleSlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
-			sharedParams->setMatrixParameter(s_handleProjection, projection);
-			sharedParams->setMatrixParameter(s_handleView, view);
-			sharedParams->setMatrixParameter(s_handleViewInverse, view.inverse());
-			sharedParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+			sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+			sharedParams->setVectorParameter(ShaderParameter::ViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
+			sharedParams->setVectorParameter(ShaderParameter::SlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
+			sharedParams->setMatrixParameter(ShaderParameter::Projection, projection);
+			sharedParams->setMatrixParameter(ShaderParameter::View, view);
+			sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, view.inverse());
+			sharedParams->setVectorParameter(ShaderParameter::MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 
 			if (m_gatheredView.irradianceGrid)
 			{
 				const auto size = m_gatheredView.irradianceGrid->getSize();
-				sharedParams->setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0] + 0.5f, (float)size[1] + 0.5f, (float)size[2] + 0.5f, 0.0f));
-				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMin, m_gatheredView.irradianceGrid->getBoundingBox().mn);
-				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, m_gatheredView.irradianceGrid->getBoundingBox().mx);
-				sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, m_gatheredView.irradianceGrid->getBuffer()->getBufferView());
+				sharedParams->setVectorParameter(ShaderParameter::IrradianceGridSize, Vector4((float)size[0] + 0.5f, (float)size[1] + 0.5f, (float)size[2] + 0.5f, 0.0f));
+				sharedParams->setVectorParameter(ShaderParameter::IrradianceGridBoundsMin, m_gatheredView.irradianceGrid->getBoundingBox().mn);
+				sharedParams->setVectorParameter(ShaderParameter::IrradianceGridBoundsMax, m_gatheredView.irradianceGrid->getBoundingBox().mx);
+				sharedParams->setBufferViewParameter(ShaderParameter::IrradianceGridSBuffer, m_gatheredView.irradianceGrid->getBuffer()->getBufferView());
 			}
 
-			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
-			sharedParams->setBufferViewParameter(s_handleLightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
-			sharedParams->setBufferViewParameter(s_handleLightSBuffer, lightSBuffer->getBufferView());
+			sharedParams->setBufferViewParameter(ShaderParameter::TileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
+			sharedParams->setBufferViewParameter(ShaderParameter::LightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
+			sharedParams->setBufferViewParameter(ShaderParameter::LightSBuffer, lightSBuffer->getBufferView());
 
 			if (probe)
 			{
-				sharedParams->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
-				sharedParams->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
-				sharedParams->setTextureParameter(s_handleProbeTexture, probe->getTexture());
+				sharedParams->setFloatParameter(ShaderParameter::ProbeIntensity, probe->getIntensity());
+				sharedParams->setFloatParameter(ShaderParameter::ProbeTextureMips, (float)probe->getTexture()->getSize().mips);
+				sharedParams->setTextureParameter(ShaderParameter::ProbeTexture, probe->getTexture());
 			}
 			else
 			{
-				sharedParams->setFloatParameter(s_handleProbeIntensity, 0.0f);
-				sharedParams->setFloatParameter(s_handleProbeTextureMips, 0.0f);
-				sharedParams->setTextureParameter(s_handleProbeTexture, m_blackCubeTexture);
+				sharedParams->setFloatParameter(ShaderParameter::ProbeIntensity, 0.0f);
+				sharedParams->setFloatParameter(ShaderParameter::ProbeTextureMips, 0.0f);
+				sharedParams->setTextureParameter(ShaderParameter::ProbeTexture, m_blackCubeTexture);
 			}
 
 			if (fog)
@@ -511,64 +511,64 @@ void WorldRendererDeferred::setupVisualPass(
 					0.0f);
 
 				// Distance fog.
-				sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, 0.0f));
-				sharedParams->setVectorParameter(s_handleFogColor, fog->m_fogColor);
+				sharedParams->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, 0.0f));
+				sharedParams->setVectorParameter(ShaderParameter::FogColor, fog->m_fogColor);
 
 				// Volumetric fog.
-				sharedParams->setFloatParameter(s_handleFogVolumeSliceCount, (float)fog->getSliceCount());
-				sharedParams->setVectorParameter(s_handleFogVolumeRange, fogRange);
-				sharedParams->setTextureParameter(s_handleFogVolumeTexture, fog->getFogVolumeTexture());
+				sharedParams->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)fog->getSliceCount());
+				sharedParams->setVectorParameter(ShaderParameter::FogVolumeRange, fogRange);
+				sharedParams->setTextureParameter(ShaderParameter::FogVolumeTexture, fog->getFogVolumeTexture());
 			}
 			else
 			{
-				sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4::zero());
-				sharedParams->setVectorParameter(s_handleFogColor, Vector4::zero());
+				sharedParams->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4::zero());
+				sharedParams->setVectorParameter(ShaderParameter::FogColor, Vector4::zero());
 			}
 
 			if (shadowAtlasTargetSet != nullptr)
 			{
-				sharedParams->setFloatParameter(s_handleShadowBias, shadowSettings.bias);
-				sharedParams->setTextureParameter(s_handleShadowMapAtlas, shadowAtlasTargetSet->getDepthTexture());
+				sharedParams->setFloatParameter(ShaderParameter::ShadowBias, shadowSettings.bias);
+				sharedParams->setTextureParameter(ShaderParameter::ShadowMapAtlas, shadowAtlasTargetSet->getDepthTexture());
 			}
 			else
 			{
-				sharedParams->setFloatParameter(s_handleShadowBias, 0.0f);
-				sharedParams->setTextureParameter(s_handleShadowMapAtlas, m_whiteTexture);
+				sharedParams->setFloatParameter(ShaderParameter::ShadowBias, 0.0f);
+				sharedParams->setTextureParameter(ShaderParameter::ShadowMapAtlas, m_whiteTexture);
 			}
 
-			sharedParams->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
-			sharedParams->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
-			sharedParams->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
+			sharedParams->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
+			sharedParams->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
+			sharedParams->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
 
 			if (dbufferTargetSet)
 			{
-				sharedParams->setTextureParameter(s_handleDBufferColorMap, dbufferTargetSet->getColorTexture(0));
-				sharedParams->setTextureParameter(s_handleDBufferMiscMap, dbufferTargetSet->getColorTexture(1));
-				sharedParams->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
+				sharedParams->setTextureParameter(ShaderParameter::DBufferColorMap, dbufferTargetSet->getColorTexture(0));
+				sharedParams->setTextureParameter(ShaderParameter::DBufferMiscMap, dbufferTargetSet->getColorTexture(1));
+				sharedParams->setTextureParameter(ShaderParameter::DBufferNormalMap, dbufferTargetSet->getColorTexture(2));
 			}
 
 			if (ambientOcclusionTargetSet != nullptr)
-				sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
+				sharedParams->setTextureParameter(ShaderParameter::OcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
 			else
-				sharedParams->setTextureParameter(s_handleOcclusionMap, m_whiteTexture);
+				sharedParams->setTextureParameter(ShaderParameter::OcclusionMap, m_whiteTexture);
 
 			// if (contactShadowsTargetSet != nullptr)
-			// 	sharedParams->setTextureParameter(s_handleContactShadowsMap, contactShadowsTargetSet->getColorTexture(0));
+			// 	sharedParams->setTextureParameter(ShaderParameter::ContactShadowsMap, contactShadowsTargetSet->getColorTexture(0));
 			// else
-			// 	sharedParams->setTextureParameter(s_handleContactShadowsMap, m_blackTexture);
+			// 	sharedParams->setTextureParameter(ShaderParameter::ContactShadowsMap, m_blackTexture);
 
 			if (reflectionsTargetSet != nullptr)
-				sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));
+				sharedParams->setTextureParameter(ShaderParameter::ReflectionMap, reflectionsTargetSet->getColorTexture(0));
 			else
-				sharedParams->setTextureParameter(s_handleReflectionMap, m_blackTexture);
+				sharedParams->setTextureParameter(ShaderParameter::ReflectionMap, m_blackTexture);
 
 			if (visualCopyTargetSet != nullptr)
-				sharedParams->setTextureParameter(s_handleVisualCopyMap, visualCopyTargetSet->getColorTexture(0));
+				sharedParams->setTextureParameter(ShaderParameter::VisualCopyMap, visualCopyTargetSet->getColorTexture(0));
 			else
-				sharedParams->setTextureParameter(s_handleVisualCopyMap, m_blackTexture);
+				sharedParams->setTextureParameter(ShaderParameter::VisualCopyMap, m_blackTexture);
 
 			if (m_gatheredView.rtWorldTopLevel != nullptr)
-				sharedParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredView.rtWorldTopLevel);
+				sharedParams->setAccelerationStructureParameter(ShaderParameter::TLAS, m_gatheredView.rtWorldTopLevel);
 
 			sharedParams->endParameters(renderContext);
 
@@ -576,13 +576,13 @@ void WorldRendererDeferred::setupVisualPass(
 			const bool irradianceSingle = irradianceEnable && m_gatheredView.irradianceGrid->isSingle();
 
 			const WorldRenderPassShared deferredColorPass(
-				s_techniqueDeferredColor,
+				ShaderTechnique::DeferredColor,
 				sharedParams,
 				worldRenderView,
 				IWorldRenderPass::Last,
-				{ { s_handleIrradianceEnable, irradianceEnable },
-					{ s_handleIrradianceSingle, irradianceSingle },
-					{ s_handleVolumetricFogEnable, (bool)(fog != nullptr && fog->m_volumetricFogEnable) } });
+				{ { ShaderPermutation::IrradianceEnable, irradianceEnable },
+					{ ShaderPermutation::IrradianceSingle, irradianceSingle },
+					{ ShaderPermutation::VolumetricFogEnable, (bool)(fog != nullptr && fog->m_volumetricFogEnable) } });
 
 			for (const auto& r : m_gatheredView.renderables)
 				r.renderer->build(wc, worldRenderView, deferredColorPass, r.renderable);

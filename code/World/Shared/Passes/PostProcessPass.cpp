@@ -178,26 +178,26 @@ void PostProcessPass::setup(
 	};
 
 	render::ImageGraphContext igctx;
-	igctx.associateTextureTargetSet(s_handleInputColor, visualTargetSetId.current, 0);
-	igctx.associateTextureTargetSet(s_handleInputColorLast, visualTargetSetId.previous, 0);
-	igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
-	igctx.associateExplicitTexture(s_handleInputColorGrading, m_colorGrading);
-	igctx.setTechniqueFlag(s_handleColorGradingEnable, (bool)(m_colorGrading != nullptr));
+	igctx.associateTextureTargetSet(ShaderParameter::InputColor, visualTargetSetId.current, 0);
+	igctx.associateTextureTargetSet(ShaderParameter::InputColorLast, visualTargetSetId.previous, 0);
+	igctx.associateTextureTargetSet(ShaderParameter::InputDepth, gbufferTargetSetId, 0);
+	igctx.associateTextureTargetSet(ShaderParameter::InputNormal, gbufferTargetSetId, 1);
+	igctx.associateTextureTargetSet(ShaderParameter::InputVelocity, velocityTargetSetId, 0);
+	igctx.associateExplicitTexture(ShaderParameter::InputColorGrading, m_colorGrading);
+	igctx.setTechniqueFlag(ShaderPermutation::ColorGradingEnable, (bool)(m_colorGrading != nullptr));
 
 	// Expose gamma, exposure and jitter.
 	const float time = (float)worldRenderView.getTime();
 	const Vector2 rc = jitter(frameCount) / worldRenderView.getViewSize();
 	const Vector2 rp = jitter(frameCount - 1) / worldRenderView.getViewSize();
 	auto setParameters = [=, this](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
-		params->setFloatParameter(s_handleTime, time);
-		params->setFloatParameter(s_handleGamma, m_gamma);
-		params->setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
-		params->setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
-		params->setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y)); // Texture space.
+		params->setFloatParameter(ShaderParameter::Time, time);
+		params->setFloatParameter(ShaderParameter::Gamma, m_gamma);
+		params->setFloatParameter(ShaderParameter::GammaInverse, 1.0f / m_gamma);
+		params->setFloatParameter(ShaderParameter::Exposure, std::pow(2.0f, m_settings.exposure));
+		params->setVectorParameter(ShaderParameter::Jitter, Vector4(rp.x, -rp.y, rc.x, -rc.y)); // Texture space.
 		if (gatheredView.rtWorldTopLevel != nullptr)
-			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
+			params->setAccelerationStructureParameter(ShaderParameter::TLAS, gatheredView.rtWorldTopLevel);
 	};
 
 	StaticVector< render::ImageGraph*, 5 > processes;
@@ -249,7 +249,7 @@ void PostProcessPass::setup(
 			setParameters);
 
 		if (next)
-			igctx.associateTextureTargetSet(s_handleInputColor, intermediateTargetSetId, 0);
+			igctx.associateTextureTargetSet(ShaderParameter::InputColor, intermediateTargetSetId, 0);
 
 		renderGraph.addPass(rp);
 	}

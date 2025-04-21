@@ -6,16 +6,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Shader.h"
+#include "World/Shared/WorldRenderPassShared.h"
+
 #include "Render/Context/ProgramParameters.h"
+#include "Render/Shader.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
-#include "World/Shared/WorldRenderPassShared.h"
 
 namespace traktor
 {
-	namespace world
-	{
+namespace world
+{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassShared", WorldRenderPassShared, IWorldRenderPass)
 
@@ -23,12 +24,11 @@ WorldRenderPassShared::WorldRenderPassShared(
 	render::handle_t technique,
 	render::ProgramParameters* sharedParams,
 	const WorldRenderView& worldRenderView,
-	uint32_t passFlags
-)
-:	m_technique(technique)
-,	m_sharedParams(sharedParams)
-,	m_worldRenderView(worldRenderView)
-,	m_passFlags(passFlags)
+	uint32_t passFlags)
+	: m_technique(technique)
+	, m_sharedParams(sharedParams)
+	, m_worldRenderView(worldRenderView)
+	, m_passFlags(passFlags)
 {
 }
 
@@ -37,13 +37,12 @@ WorldRenderPassShared::WorldRenderPassShared(
 	render::ProgramParameters* sharedParams,
 	const WorldRenderView& worldRenderView,
 	uint32_t passFlags,
-	const std::initializer_list< TechniqueFlag >& techniqueFlags
-)
-:	m_technique(technique)
-,	m_sharedParams(sharedParams)
-,	m_worldRenderView(worldRenderView)
-,	m_passFlags(passFlags)
-,	m_techniqueFlags(techniqueFlags)
+	const std::initializer_list< TechniqueFlag >& techniqueFlags)
+	: m_technique(technique)
+	, m_sharedParams(sharedParams)
+	, m_worldRenderView(worldRenderView)
+	, m_passFlags(passFlags)
+	, m_techniqueFlags(techniqueFlags)
 {
 }
 
@@ -80,17 +79,17 @@ void WorldRenderPassShared::setWorldProgramParameters(render::ProgramParameters*
 	programParams->attachParameters(m_sharedParams);
 
 	const Matrix44 w = world.toMatrix44();
-	programParams->setMatrixParameter(s_handleWorld, w);
-	programParams->setMatrixParameter(s_handleWorldView, m_worldRenderView.getView() * w);
+	programParams->setMatrixParameter(ShaderParameter::World, w);
+	programParams->setMatrixParameter(ShaderParameter::WorldView, m_worldRenderView.getView() * w);
 
-	if (m_technique == s_techniqueVelocityWrite)
+	if (m_technique == ShaderTechnique::VelocityWrite)
 	{
 		const Matrix44 w0 = lastWorld.toMatrix44();
-		programParams->setMatrixParameter(s_handleLastWorld, w0);
-		programParams->setMatrixParameter(s_handleLastView, m_worldRenderView.getLastView());
-		programParams->setMatrixParameter(s_handleLastWorldView, m_worldRenderView.getLastView() * w0);
+		programParams->setMatrixParameter(ShaderParameter::LastWorld, w0);
+		programParams->setMatrixParameter(ShaderParameter::LastView, m_worldRenderView.getLastView());
+		programParams->setMatrixParameter(ShaderParameter::LastWorldView, m_worldRenderView.getLastView() * w0);
 	}
 }
 
-	}
+}
 }

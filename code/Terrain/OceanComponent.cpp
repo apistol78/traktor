@@ -437,7 +437,7 @@ void OceanComponent::build(
 	if (!m_owner)
 		return;
 
-	const bool writeVelocity = (worldRenderPass.getTechnique() == world::s_techniqueVelocityWrite);
+	const bool writeVelocity = (worldRenderPass.getTechnique() == world::ShaderTechnique::VelocityWrite);
 	bool haveTerrain = false;
 
 	// Get terrain from owner.

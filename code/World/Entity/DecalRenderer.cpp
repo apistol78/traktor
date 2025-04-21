@@ -147,20 +147,20 @@ void DecalRenderer::build(
 			transform
 		);
 
-		renderBlock->programParams->setVectorParameter(s_handleDecalParamsA, Vector4(
+		renderBlock->programParams->setVectorParameter(ShaderParameter::DecalParamsA, Vector4(
 			decalComponent->getSize().x,
 			decalComponent->getSize().y,
 			decalComponent->getThickness(),
 			0.0f
 		));
-		renderBlock->programParams->setVectorParameter(s_handleDecalParamsB, Vector4(
+		renderBlock->programParams->setVectorParameter(ShaderParameter::DecalParamsB, Vector4(
 			decalComponent->getAlpha(),
 			decalComponent->getAge(),
 			0.0f,
 			0.0f
 		));
-		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
-		renderBlock->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
+		renderBlock->programParams->setVectorParameter(ShaderParameter::MagicCoeffs, magicCoeffs);
+		renderBlock->programParams->setMatrixParameter(ShaderParameter::WorldViewInv, worldViewInv);
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(render::RenderPriority::PostOpaque, renderBlock);

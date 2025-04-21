@@ -76,19 +76,19 @@ render::RGTargetSet GBufferPass::setup(
 
 		auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 		sharedParams->beginParameters(renderContext);
-		sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-		sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-		sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
-		sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
+		sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+		sharedParams->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
+		sharedParams->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
+		sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
 
 		if (hiZTextureId != render::RGTexture::Invalid)
 		{
 			auto hiZTexture = renderGraph.getTexture(hiZTextureId);
-			sharedParams->setTextureParameter(s_handleHiZTexture, hiZTexture);
+			sharedParams->setTextureParameter(ShaderParameter::HiZTexture, hiZTexture);
 		}
 
 		if (gatheredView.rtWorldTopLevel != nullptr)
-			sharedParams->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
+			sharedParams->setAccelerationStructureParameter(ShaderParameter::TLAS, gatheredView.rtWorldTopLevel);
 
 		sharedParams->endParameters(renderContext);
 

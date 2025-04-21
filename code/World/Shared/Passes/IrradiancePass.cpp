@@ -149,36 +149,36 @@ render::RGTargetSet IrradiancePass::setup(
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 		const auto halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
 
-		params->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-		params->setVectorParameter(s_handleJitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
-		params->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-		params->setMatrixParameter(s_handleView, worldRenderView.getView());
-		params->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
-		params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
-		params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
-		params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
-		params->setTextureParameter(s_handleHalfResDepthMap, halfResolution ? halfResDepthTexture : gbufferTargetSet->getColorTexture(0));
-		params->setFloatParameter(s_handleRandom, s_random.nextFloat());
+		params->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+		params->setVectorParameter(ShaderParameter::Jitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
+		params->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
+		params->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
+		params->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
+		params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
+		params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
+		params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
+		params->setTextureParameter(ShaderParameter::HalfResDepthMap, halfResolution ? halfResDepthTexture : gbufferTargetSet->getColorTexture(0));
+		params->setFloatParameter(ShaderParameter::Random, s_random.nextFloat());
 
 		if (gatheredView.irradianceGrid)
 		{
 			const auto size = gatheredView.irradianceGrid->getSize();
-			params->setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0] + 0.5f, (float)size[1] + 0.5f, (float)size[2] + 0.5f, 0.0f));
-			params->setVectorParameter(s_handleIrradianceGridBoundsMin, gatheredView.irradianceGrid->getBoundingBox().mn);
-			params->setVectorParameter(s_handleIrradianceGridBoundsMax, gatheredView.irradianceGrid->getBoundingBox().mx);
-			params->setBufferViewParameter(s_handleIrradianceGridSBuffer, gatheredView.irradianceGrid->getBuffer()->getBufferView());
+			params->setVectorParameter(ShaderParameter::IrradianceGridSize, Vector4((float)size[0] + 0.5f, (float)size[1] + 0.5f, (float)size[2] + 0.5f, 0.0f));
+			params->setVectorParameter(ShaderParameter::IrradianceGridBoundsMin, gatheredView.irradianceGrid->getBoundingBox().mn);
+			params->setVectorParameter(ShaderParameter::IrradianceGridBoundsMax, gatheredView.irradianceGrid->getBoundingBox().mx);
+			params->setBufferViewParameter(ShaderParameter::IrradianceGridSBuffer, gatheredView.irradianceGrid->getBuffer()->getBufferView());
 		}
 
 		if (lightSBuffer != nullptr)
 		{
-			params->setBufferViewParameter(s_handleLightSBuffer, lightSBuffer->getBufferView());
-			params->setFloatParameter(s_handleLightCount, (float)gatheredView.lights.size());
+			params->setBufferViewParameter(ShaderParameter::LightSBuffer, lightSBuffer->getBufferView());
+			params->setFloatParameter(ShaderParameter::LightCount, (float)gatheredView.lights.size());
 		}
 		else
-			params->setFloatParameter(s_handleLightCount, 0.0f);
+			params->setFloatParameter(ShaderParameter::LightCount, 0.0f);
 
 		if (gatheredView.rtWorldTopLevel != nullptr)
-			params->setAccelerationStructureParameter(s_handleTLAS, gatheredView.rtWorldTopLevel);
+			params->setAccelerationStructureParameter(ShaderParameter::TLAS, gatheredView.rtWorldTopLevel);
 	};
 
 	// Add irradiance compute pass.
@@ -201,8 +201,8 @@ render::RGTargetSet IrradiancePass::setup(
 
 			render::Shader::Permutation perm(
 				rayTracingEnable ? s_handleTechniqueIrradiance_RT : s_handleTechniqueIrradiance);
-			m_irradianceComputeShader->setCombination(s_handleIrradianceEnable, irradianceEnable, perm);
-			m_irradianceComputeShader->setCombination(s_handleIrradianceSingle, irradianceSingle, perm);
+			m_irradianceComputeShader->setCombination(ShaderPermutation::IrradianceEnable, irradianceEnable, perm);
+			m_irradianceComputeShader->setCombination(ShaderPermutation::IrradianceSingle, irradianceSingle, perm);
 
 			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Irradiance compute");
 			renderBlock->program = m_irradianceComputeShader->getProgram(perm).program;
@@ -211,9 +211,9 @@ render::RGTargetSet IrradiancePass::setup(
 			renderBlock->workSize[1] = outputSize.y;
 			renderBlock->workSize[2] = 1;
 			renderBlock->programParams->beginParameters(renderContext);
-			renderBlock->programParams->setTextureParameter(s_handleVelocityMap, velocityTexture);
-			renderBlock->programParams->setBufferViewParameter(s_handleReservoir, reservoirBuffer->getBufferView());
-			renderBlock->programParams->setBufferViewParameter(s_handleReservoirOutput, reservoirOutputBuffer->getBufferView());
+			renderBlock->programParams->setTextureParameter(ShaderParameter::VelocityMap, velocityTexture);
+			renderBlock->programParams->setBufferViewParameter(ShaderParameter::Reservoir, reservoirBuffer->getBufferView());
+			renderBlock->programParams->setBufferViewParameter(ShaderParameter::ReservoirOutput, reservoirOutputBuffer->getBufferView());
 			renderBlock->programParams->setImageViewParameter(s_handleIrradianceOutput, irradianceTexture, 0);
 			setParameters(renderGraph, renderBlock->programParams);
 			renderBlock->programParams->endParameters(renderContext);
@@ -232,11 +232,11 @@ render::RGTargetSet IrradiancePass::setup(
 		view.projection = worldRenderView.getProjection();
 
 		render::ImageGraphContext igctx;
-		igctx.setTechniqueFlag(s_handleIrradianceEnable, irradianceEnable);
-		igctx.setTechniqueFlag(s_handleIrradianceSingle, irradianceSingle);
-		igctx.setTechniqueFlag(s_handleRayTracingEnable, rayTracingEnable);
-		igctx.associateTexture(s_handleInputColor, irradianceTextureId);
-		igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
+		igctx.setTechniqueFlag(ShaderPermutation::IrradianceEnable, irradianceEnable);
+		igctx.setTechniqueFlag(ShaderPermutation::IrradianceSingle, irradianceSingle);
+		igctx.setTechniqueFlag(ShaderPermutation::RayTracingEnable, rayTracingEnable);
+		igctx.associateTexture(ShaderParameter::InputColor, irradianceTextureId);
+		igctx.associateTextureTargetSet(ShaderParameter::InputVelocity, velocityTargetSetId, 0);
 
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance denoiser");
 		rp->addInput(gbufferTargetSetId);

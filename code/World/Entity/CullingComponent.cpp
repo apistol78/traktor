@@ -6,34 +6,35 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Entity/CullingComponent.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Render/Buffer.h"
+#include "Render/Context/RenderContext.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
-#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/CullingComponent.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_shaderInstanceMeshCull(L"{37998131-BDA1-DE45-B175-35B088FEE61C}");
 
 render::Handle s_handleInstanceWorld(L"InstanceWorld");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.CullingComponent", CullingComponent, IWorldComponent)
 
 CullingComponent::CullingComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
-:	m_renderSystem(renderSystem)
+	: m_renderSystem(renderSystem)
 {
 	resourceManager->bind(c_shaderInstanceMeshCull, m_shaderCull);
 }
@@ -43,10 +44,8 @@ void CullingComponent::destroy()
 	T_FATAL_ASSERT_M(m_instances.empty(), L"Culling instances not empty.");
 	safeDestroy(m_instanceBuffer);
 	for (auto visibilityBuffer : m_visibilityBuffers)
-	{
 		if (visibilityBuffer)
 			visibilityBuffer->destroy();
-	}
 	m_visibilityBuffers.resize(0);
 	m_renderSystem = nullptr;
 }
@@ -58,8 +57,7 @@ void CullingComponent::update(World* world, const UpdateParams& update)
 void CullingComponent::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass
-)
+	const IWorldRenderPass& worldRenderPass)
 {
 	if (m_instances.empty())
 		return;
@@ -116,19 +114,18 @@ void CullingComponent::build(
 		const Vector2 viewSize = worldRenderView.getViewSize();
 
 		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
-			str(L"Cull %d", worldRenderView.getCascade())
-		);
+			str(L"Cull %d", worldRenderView.getCascade()));
 
 		render::Shader::Permutation perm;
-		if (worldRenderPass.getTechnique() == s_techniqueDeferredGBufferWrite)
+		if (worldRenderPass.getTechnique() == ShaderTechnique::DeferredGBufferWrite)
 		{
 			// Deferred g-buffer pass has access to HiZ texture.
-			m_shaderCull->setCombination(s_handleCullingHiZ, true, perm);
+			m_shaderCull->setCombination(ShaderPermutation::CullingHiZ, true, perm);
 		}
 		else
 		{
 			// All other paths use simple frustum culling only.
-			m_shaderCull->setCombination(s_handleCullingHiZ, false, perm);
+			m_shaderCull->setCombination(ShaderPermutation::CullingHiZ, false, perm);
 		}
 
 		renderBlock->program = m_shaderCull->getProgram(perm).program;
@@ -138,11 +135,11 @@ void CullingComponent::build(
 
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
 
-		renderBlock->programParams->setVectorParameter(s_handleTargetSize, Vector4(viewSize.x, viewSize.y, 0.0f, 0.0f));
-		renderBlock->programParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection() * worldRenderView.getView());
-		renderBlock->programParams->setVectorArrayParameter(s_handleCullFrustum, cullFrustum, sizeof_array(cullFrustum));
+		renderBlock->programParams->setVectorParameter(ShaderParameter::TargetSize, Vector4(viewSize.x, viewSize.y, 0.0f, 0.0f));
+		renderBlock->programParams->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection() * worldRenderView.getView());
+		renderBlock->programParams->setVectorArrayParameter(ShaderParameter::CullFrustum, cullFrustum, sizeof_array(cullFrustum));
 		renderBlock->programParams->setBufferViewParameter(s_handleInstanceWorld, m_instanceBuffer->getBufferView());
-		renderBlock->programParams->setBufferViewParameter(s_handleVisibility, visibilityBuffer->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(ShaderParameter::Visibility, visibilityBuffer->getBufferView());
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderBlock->workSize[0] = (int32_t)m_instances.size();
@@ -152,14 +149,12 @@ void CullingComponent::build(
 	}
 
 	// Batch draw instances; assumes m_instances are sorted by "ordinal" so we can scan for run length.
-	for (uint32_t i = 0; i < (uint32_t)m_instances.size(); )
+	for (uint32_t i = 0; i < (uint32_t)m_instances.size();)
 	{
 		uint32_t j = i + 1;
 		for (; j < (uint32_t)m_instances.size(); ++j)
-		{
 			if (m_instances[i]->ordinal != m_instances[j]->ordinal)
 				break;
-		}
 
 		m_instances[i]->cullable->cullableBuild(
 			context,
@@ -168,8 +163,7 @@ void CullingComponent::build(
 			m_instanceBuffer,
 			visibilityBuffer,
 			i,
-			(j - i)
-		);
+			(j - i));
 
 		i = j;
 	}
@@ -183,7 +177,7 @@ CullingComponent::Instance* CullingComponent::createInstance(ICullable* cullable
 	instance->ordinal = ordinal;
 	instance->transform = Transform::identity();
 	instance->boundingBox = cullable->cullableGetBoundingBox();
-	
+
 	// Insert instance sorted by ordinal so we can calculate run length when building.
 	auto it = std::upper_bound(m_instances.begin(), m_instances.end(), instance, [=](Instance* lh, Instance* rh) {
 		return lh->ordinal < rh->ordinal;

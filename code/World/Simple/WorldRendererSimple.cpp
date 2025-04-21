@@ -140,16 +140,16 @@ void WorldRendererSimple::setup(
 		// Default visual parameters.
 		auto globalProgramParams = renderContext->alloc< render::ProgramParameters >();
 		globalProgramParams->beginParameters(renderContext);
-		globalProgramParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-		globalProgramParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-		globalProgramParams->setTextureParameter(s_handleGBufferA, m_depthTexture);
+		globalProgramParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+		globalProgramParams->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
+		globalProgramParams->setTextureParameter(ShaderParameter::GBufferA, m_depthTexture);
 		if (m_gatheredTLAS != nullptr)
-			globalProgramParams->setAccelerationStructureParameter(s_handleTLAS, m_gatheredTLAS);
+			globalProgramParams->setAccelerationStructureParameter(ShaderParameter::TLAS, m_gatheredTLAS);
 		globalProgramParams->endParameters(renderContext);
 
 		// Build visual context.
 		const WorldRenderPassSimple defaultPass(
-			s_techniqueSimpleColor,
+			ShaderTechnique::SimpleColor,
 			globalProgramParams,
 			worldRenderView.getView());
 

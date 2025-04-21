@@ -352,7 +352,7 @@ void SkyComponent::setup(
 				renderBlock->programParams->setVectorParameter(s_handleWeather_SkyCloudAmbientTop, m_data.m_cloudAmbientTop);
 				renderBlock->programParams->setVectorParameter(s_handleWeather_SkyCloudAmbientBottom, m_data.m_cloudAmbientBottom);
 				renderBlock->programParams->setFloatParameter(s_handleWeather_SkyTemporalBlend, (worldRenderView.getSnapshot() || m_cloudFrame == 0) ? 1.0f : 0.2f);
-				renderBlock->programParams->setFloatParameter(world::s_handleTime, worldRenderView.getTime());
+				renderBlock->programParams->setFloatParameter(world::ShaderParameter::Time, worldRenderView.getTime());
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);

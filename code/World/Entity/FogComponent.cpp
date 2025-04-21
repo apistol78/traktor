@@ -6,34 +6,34 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Entity/FogComponent.h"
+
 #include "Core/Misc/Align.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/IRenderSystem.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
+#include "Render/IRenderSystem.h"
 #include "World/Entity.h"
+#include "World/Entity/FogComponentData.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
-#include "World/Entity/FogComponent.h"
-#include "World/Entity/FogComponentData.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
-const render::Handle s_techniqueDefault(L"Default");
 const uint32_t c_interleave = 4;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.FogComponent", FogComponent, IEntityComponent)
 
 FogComponent::FogComponent(const FogComponentData* data, const resource::Proxy< render::Shader >& shader)
-:	m_shader(shader)
+	: m_shader(shader)
 {
 	m_fogDistance = data->m_fogDistance;
 	m_fogDensity = data->m_fogDensity;
@@ -96,13 +96,12 @@ void FogComponent::build(const WorldBuildContext& context, const WorldRenderView
 		return;
 
 	if (
-		worldRenderPass.getTechnique() != s_techniqueDeferredColor &&
-		worldRenderPass.getTechnique() != s_techniqueForwardColor
-	)
+		worldRenderPass.getTechnique() != ShaderTechnique::DeferredColor &&
+		worldRenderPass.getTechnique() != ShaderTechnique::ForwardColor)
 		return;
 
 	auto permutation = worldRenderPass.getPermutation(m_shader);
-	permutation.technique = s_techniqueDefault;
+	permutation.technique = ShaderTechnique::Default;
 	auto injectLightsProgram = m_shader->getProgram(permutation);
 	if (!injectLightsProgram)
 		return;
@@ -112,8 +111,7 @@ void FogComponent::build(const WorldBuildContext& context, const WorldRenderView
 		viewFrustum.getNearZ(),
 		std::min< float >(viewFrustum.getFarZ(), m_maxDistance),
 		0.0f,
-		0.0f
-	);
+		0.0f);
 
 	const Scalar p11 = worldRenderView.getProjection().get(0, 0);
 	const Scalar p22 = worldRenderView.getProjection().get(1, 1);
@@ -131,13 +129,13 @@ void FogComponent::build(const WorldBuildContext& context, const WorldRenderView
 
 	worldRenderPass.setProgramParameters(renderBlock->programParams);
 
-	renderBlock->programParams->setImageViewParameter(s_handleFogVolume, m_fogVolumeTexture, 0);
-	renderBlock->programParams->setVectorParameter(s_handleFogVolumeRange, fogRange);
-	renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-	renderBlock->programParams->setVectorParameter(s_handleFogVolumeMediumColor, m_mediumColor);
-	renderBlock->programParams->setFloatParameter(s_handleFogVolumeMediumDensity, m_mediumDensity / m_sliceCount);
-	renderBlock->programParams->setFloatParameter(s_handleFogVolumeSliceCount, (float)m_sliceCount);
-	renderBlock->programParams->setFloatParameter(s_handleFogVolumeSliceCurrent, (float)m_sliceCurrent);
+	renderBlock->programParams->setImageViewParameter(ShaderParameter::FogVolume, m_fogVolumeTexture, 0);
+	renderBlock->programParams->setVectorParameter(ShaderParameter::FogVolumeRange, fogRange);
+	renderBlock->programParams->setVectorParameter(ShaderParameter::MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	renderBlock->programParams->setVectorParameter(ShaderParameter::FogVolumeMediumColor, m_mediumColor);
+	renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeMediumDensity, m_mediumDensity / m_sliceCount);
+	renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)m_sliceCount);
+	renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeSliceCurrent, (float)m_sliceCurrent);
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->compute(renderBlock);

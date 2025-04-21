@@ -6,26 +6,28 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
+#include "Mesh/Instance/InstanceMesh.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
-#include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshData.h"
 #include "Render/Buffer.h"
+#include "Render/Context/RenderContext.h"
 #include "Render/IProgram.h"
 #include "Render/IRenderSystem.h"
-#include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 
+#include <algorithm>
+
 namespace traktor::mesh
 {
-	namespace
-	{
+namespace
+{
 
 render::Handle s_handleInstanceWorld(L"InstanceWorld");
 render::Handle s_handleInstanceWorldLast(L"InstanceWorldLast");
@@ -34,16 +36,15 @@ render::Handle s_handleIndexCount(L"InstanceMesh_IndexCount");
 render::Handle s_handleFirstIndex(L"InstanceMesh_FirstIndex");
 render::Handle s_handleInstanceOffset(L"InstanceMesh_InstanceOffset");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, IMesh)
 
 InstanceMesh::InstanceMesh(
 	render::IRenderSystem* renderSystem,
-	const resource::Proxy< render::Shader >& shaderDraw
-)
-:	m_renderSystem(renderSystem)
-,	m_shaderDraw(shaderDraw)
+	const resource::Proxy< render::Shader >& shaderDraw)
+	: m_renderSystem(renderSystem)
+	, m_shaderDraw(shaderDraw)
 {
 }
 
@@ -70,8 +71,7 @@ void InstanceMesh::build(
 	render::Buffer* instanceBuffer,
 	render::Buffer* visibilityBuffer,
 	uint32_t start,
-	uint32_t count
-)
+	uint32_t count)
 {
 	const auto it = m_parts.find(worldRenderPass.getTechnique());
 	if (it == m_parts.end())
@@ -96,8 +96,7 @@ void InstanceMesh::build(
 		m_drawBuffers.push_back(m_renderSystem->createBuffer(
 			render::BufferUsage::BuStructured | render::BufferUsage::BuIndirect,
 			bufferItemCount * sizeof(render::IndexedIndirectDraw),
-			false
-		));
+			false));
 
 	// Create draw buffers from visibility buffer.
 	// Compute blocks are executed before render pass, so draws for shadow map rendering all cascades
@@ -117,8 +116,7 @@ void InstanceMesh::build(
 		const auto& primitives = meshParts[part.meshPart].primitives;
 
 		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
-			str(L"InstanceMesh draw commands %d %d", worldRenderView.getCascade(), i)
-		);
+			str(L"InstanceMesh draw commands %d %d", worldRenderView.getCascade(), i));
 
 		renderBlock->program = m_shaderDraw->getProgram().program;
 
@@ -127,7 +125,7 @@ void InstanceMesh::build(
 		renderBlock->programParams->setFloatParameter(s_handleIndexCount, primitives.getVertexCount() + 0.5f);
 		renderBlock->programParams->setFloatParameter(s_handleFirstIndex, primitives.offset + 0.5f);
 		renderBlock->programParams->setFloatParameter(s_handleInstanceOffset, start + 0.5f);
-		renderBlock->programParams->setBufferViewParameter(world::s_handleVisibility, visibilityBuffer->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(world::ShaderParameter::Visibility, visibilityBuffer->getBufferView());
 		renderBlock->programParams->setBufferViewParameter(s_handleDraw, drawBuffer->getBufferView());
 		renderBlock->programParams->endParameters(renderContext);
 
@@ -152,8 +150,7 @@ void InstanceMesh::build(
 		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getCascade() * parts.size() + i];
 
 		auto renderBlock = renderContext->allocNamed< render::IndirectRenderBlock >(
-			str(L"InstanceMesh draw %d %d", worldRenderView.getCascade(), i)
-		);
+			str(L"InstanceMesh draw %d %d", worldRenderView.getCascade(), i));
 		renderBlock->distance = 10000.0f;
 		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -167,14 +164,13 @@ void InstanceMesh::build(
 
 		renderBlock->programParams->beginParameters(renderContext);
 
-		//if (extraParameters)
+		// if (extraParameters)
 		//	renderBlock->programParams->attachParameters(extraParameters);
 
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			Transform::identity(),
-			Transform::identity()
-		);
+			Transform::identity());
 
 		// #todo Same world buffer
 		renderBlock->programParams->setFloatParameter(s_handleInstanceOffset, start + 0.5f);

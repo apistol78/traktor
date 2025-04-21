@@ -47,10 +47,10 @@ void WorldRenderPassSimple::setProgramParameters(render::ProgramParameters* prog
 {
 	const Matrix44 w = Matrix44::identity();
 	programParams->attachParameters(m_globalProgramParams);
-	programParams->setMatrixParameter(s_handleView, m_view);
-	programParams->setMatrixParameter(s_handleViewInverse, m_viewInverse);
-	programParams->setMatrixParameter(s_handleWorld, w);
-	programParams->setMatrixParameter(s_handleWorldView, m_view * w);
+	programParams->setMatrixParameter(ShaderParameter::View, m_view);
+	programParams->setMatrixParameter(ShaderParameter::ViewInverse, m_viewInverse);
+	programParams->setMatrixParameter(ShaderParameter::World, w);
+	programParams->setMatrixParameter(ShaderParameter::WorldView, m_view * w);
 
 }
 
@@ -58,10 +58,10 @@ void WorldRenderPassSimple::setProgramParameters(render::ProgramParameters* prog
 {
 	const Matrix44 w = world.toMatrix44();
 	programParams->attachParameters(m_globalProgramParams);
-	programParams->setMatrixParameter(s_handleView, m_view);
-	programParams->setMatrixParameter(s_handleViewInverse, m_viewInverse);
-	programParams->setMatrixParameter(s_handleWorld, w);
-	programParams->setMatrixParameter(s_handleWorldView, m_view * w);
+	programParams->setMatrixParameter(ShaderParameter::View, m_view);
+	programParams->setMatrixParameter(ShaderParameter::ViewInverse, m_viewInverse);
+	programParams->setMatrixParameter(ShaderParameter::World, w);
+	programParams->setMatrixParameter(ShaderParameter::WorldView, m_view * w);
 }
 
 }
