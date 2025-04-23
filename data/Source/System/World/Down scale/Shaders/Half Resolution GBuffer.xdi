@@ -35,6 +35,8 @@
 			<outputPins/>
 			<script><![CDATA[// Use minimum operator when down sampling depth.
 
+const float BiasZ = 0.1f;
+
 const ivec2 osz = imageSize($Output);
 const ivec2 isz = imageSize($Input);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
@@ -49,7 +51,7 @@ if (pt.x < osz.x && pt.y < osz.y)
 	const vec4 z3 = imageLoad($Input, clamp(p + o.yx, ivec2(0.0f), isz - 1));
 	const vec4 z4 = imageLoad($Input, clamp(p + o.xx, ivec2(0.0f), isz - 1));
 
-	const float mnz = min(min(z1.x, z2.x), min(z3.x, z4.x));
+	const float mnz = min(min(z1.x, z2.x), min(z3.x, z4.x)) - BiasZ;
 	const vec3 avgn = normalize(z1.yzw + z2.yzw + z3.yzw + z4.yzw);
 
 	imageStore($Output, pt, vec4(mnz, avgn));

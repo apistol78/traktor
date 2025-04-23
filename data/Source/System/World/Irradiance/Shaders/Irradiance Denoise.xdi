@@ -145,9 +145,9 @@
 				</item>
 			</outputPins>
 			<script><![CDATA[
-const int N = 16;
-const float NormalRange = 0.5f;
-const float DepthRange = 4.0f;
+const int N = 32;
+const float NormalRange = 0.4f;
+const float DepthRange = 8.0f;
 
 const float offset = $Random;
 
@@ -157,6 +157,9 @@ const vec4 tmp = texture(sampler2D($Depth, $InputSampler), $UV);
 const float centerD = tmp.x;
 const vec3 centerN = vec3(tmp.yzw);
 
+const float k = clamp(1.0f - 1.0f / (centerD * 0.1f), 0.0f, 1.0f);
+const float radius = mix(20.0f, 4.0f, k);
+
 vec3 acc = texture(sampler2D($Input, $InputSampler), $UV).xyz;
 float W = 1.0f;
 
@@ -165,7 +168,7 @@ for (int i = 0; i < N; ++i)
 {
 	const float f = float(i) / N;
 	const float a = (f + offset) * 3.14f * 2.0f * 13;
-	const vec2 r = f * sz * 16.0f;
+	const vec2 r = f * sz * radius;
 
 	const float dx = cos(a) * r.x;
 	const float dy = sin(a) * r.y;
@@ -176,7 +179,7 @@ for (int i = 0; i < N; ++i)
 	const float sampleD = tmp.x;
 	const vec3 sampleN = vec3(tmp.yzw);
 
-	const float dn = clamp((dot(sampleN, centerN) - NormalRange) / NormalRange, 0.0f, 1.0f);
+	const float dn = clamp((dot(sampleN, centerN) - NormalRange) / (1.0f - NormalRange), 0.0f, 1.0f);
 	const float dd = clamp((DepthRange - abs(sampleD - centerD)) / DepthRange, 0.0f, 1.0f);
 	const float w = dn * dd;
 
@@ -185,7 +188,7 @@ for (int i = 0; i < N; ++i)
 	{
 		const vec3 smple = texture(sampler2D($Input, $InputSampler), uv).xyz;
 		acc += smple * w;
-		W += w;
+		W += (w + 0.1f);
 	}
 }
 
@@ -278,12 +281,9 @@ $Output = vec4(acc, 1.0f);
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script><![CDATA[
-			
-uvec2 seed = uvec2(gl_FragCoord.xy);
+			<script><![CDATA[uvec2 seed = uvec2(gl_FragCoord.xy);
 seed += uvec2($Time * 1543, $Time * 543);
 $Output = BlueNoise(seed);
-			
 			]]></script>
 		</item>
 	</nodes>

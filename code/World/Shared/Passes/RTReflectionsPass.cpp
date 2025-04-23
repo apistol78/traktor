@@ -82,6 +82,7 @@ bool RTReflectionsPass::create(resource::IResourceManager* resourceManager, rend
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
 
+	m_halfResolution = (bool)(desc.quality.reflections <= Quality::High);
 	return true;
 }
 
@@ -103,14 +104,12 @@ render::RGTargetSet RTReflectionsPass::setup(
 	if (m_reflectionsComputeShader == nullptr || m_reflectionsDenoise == nullptr /* || gbufferTargetSetId == 0*/)
 		return render::RGTargetSet::Invalid;
 
-	const bool halfResolution = true;
-
 	// Add reservoir buffers.
 	const render::RenderGraphBufferDesc reservoirBufferDesc = {
 		.elementSize = sizeof(World_Reservoir_Type),
 		.elementCount = 0,
-		.referenceWidthDenom = halfResolution ? 2 : 1,
-		.referenceHeightDenom = halfResolution ? 2 : 1
+		.referenceWidthDenom = m_halfResolution ? 2 : 1,
+		.referenceHeightDenom = m_halfResolution ? 2 : 1
 	};
 	const DoubleBufferedBuffer reservoirBufferId = {
 		renderGraph.addPersistentBuffer(L"RTReflections_Reservoir", s_persistentReservoirBuffers[frameCount % 2], reservoirBufferDesc),
@@ -119,8 +118,8 @@ render::RGTargetSet RTReflectionsPass::setup(
 
 	// Add compute output reflections texture.
 	const render::RenderGraphTextureDesc reflectionsTextureDesc = {
-		.referenceWidthDenom = halfResolution ? 2 : 1,
-		.referenceHeightDenom = halfResolution ? 2 : 1,
+		.referenceWidthDenom = m_halfResolution ? 2 : 1,
+		.referenceHeightDenom = m_halfResolution ? 2 : 1,
 		.mipCount = 1,
 		.format = render::TfR11G11B10F // Reflections (RGB)
 	};
@@ -153,7 +152,7 @@ render::RGTargetSet RTReflectionsPass::setup(
 		params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
 		params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
 		params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
-		params->setTextureParameter(ShaderParameter::HalfResDepthMap, halfResolution ? halfResDepthTexture : gbufferTargetSet->getColorTexture(0));
+		params->setTextureParameter(ShaderParameter::HalfResDepthMap, m_halfResolution ? halfResDepthTexture : gbufferTargetSet->getColorTexture(0));
 		params->setFloatParameter(ShaderParameter::Random, s_random.nextFloat());
 
 		if (lightSBuffer != nullptr)
@@ -185,10 +184,8 @@ render::RGTargetSet RTReflectionsPass::setup(
 
 			const render::ITexture::Size outputSize = reflectionsTexture->getSize();
 
-			// render::Shader::Permutation perm;
-
 			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"RTReflections compute");
-			renderBlock->program = m_reflectionsComputeShader->getProgram(/*perm*/).program;
+			renderBlock->program = m_reflectionsComputeShader->getProgram().program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->workSize[0] = outputSize.x;
 			renderBlock->workSize[1] = outputSize.y;

@@ -32,13 +32,13 @@ void Reservoir_Update(
 	{
 		reservoir.normal = normal;
 		reservoir.depth = depth;
-		reservoir.radiance = radiance;
+		reservoir.radiance = radiance / w;
 	}
 }
 
 float Reservoir_CalculateProbability(vec3 radiance)
 {
-	return dot(radiance, vec3(0.21f, 0.72f, 0.07f));
+	return dot(radiance, vec3(1.0f));
 }
 
 vec3 Reservoir_GetRadiance(World_Reservoir_Type r)

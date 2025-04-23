@@ -20,7 +20,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ReflectionsPass", ReflectionsPass, Object
 
 bool ReflectionsPass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
-	if (desc.quality.reflections >= Quality::Ultra && renderSystem->supportRayTracing())
+	if (desc.quality.reflections >= Quality::High && renderSystem->supportRayTracing())
 	{
 		m_rt = new RTReflectionsPass();
 		if (!m_rt->create(resourceManager, renderSystem, desc))

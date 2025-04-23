@@ -6,9 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
-#include "Core/Memory/Alloc.h"
 #include "Render/Context/RenderContext.h"
+
+#include "Core/Memory/Alloc.h"
+
+#include <algorithm>
 
 #if defined(_DEBUG)
 #	include "Core/Log/Log.h"
@@ -17,8 +19,8 @@
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 const float c_distanceQuantizeRangeInv = 1.0f / 10.0f;
 
@@ -43,13 +45,13 @@ T_FORCE_INLINE bool SortAlphaBlendPredicate(const DrawableRenderBlock* renderBlo
 	return renderBlock1->distance > renderBlock2->distance;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderContext", RenderContext, Object)
 
 RenderContext::RenderContext(uint32_t heapSize)
-:	m_heapEnd(nullptr)
-,	m_heapPtr(nullptr)
+	: m_heapEnd(nullptr)
+	, m_heapPtr(nullptr)
 {
 	m_heap.reset(static_cast< uint8_t* >(Alloc::acquireAlign(heapSize, 16, T_FILE_LINE)));
 	T_FATAL_ASSERT_M(m_heap.ptr(), L"Out of memory (Render context)");
@@ -158,24 +160,21 @@ void RenderContext::mergePriorityIntoDraw(uint32_t priorities)
 
 void RenderContext::mergeComputeIntoRender()
 {
-	// Merge compute blocks.
+	// Merge compute blocks into render queue.
 	m_renderQueue.insert(m_renderQueue.end(), m_computeQueue.begin(), m_computeQueue.end());
 	m_computeQueue.resize(0);
 }
 
 void RenderContext::mergeDrawIntoRender()
 {
-	// Merge draw blocks.
+	// Merge draw blocks into render queue.
 	m_renderQueue.insert(m_renderQueue.end(), m_drawQueue.begin(), m_drawQueue.end());
 	m_drawQueue.resize(0);
 }
 
 void RenderContext::render(IRenderView* renderView) const
 {
-	const size_t csize = m_computeQueue.size();
-	for (size_t i = 0; i < csize; ++i)
-		m_computeQueue[i]->render(renderView);
-
+	// Execute all blocks in render queue.
 	const size_t rsize = m_renderQueue.size();
 	for (size_t i = 0; i < rsize; ++i)
 		m_renderQueue[i]->render(renderView);
@@ -218,10 +217,8 @@ bool RenderContext::havePendingComputes() const
 bool RenderContext::havePendingDraws() const
 {
 	for (int32_t i = 0; i < sizeof_array(m_priorityQueue); ++i)
-	{
 		if (!m_priorityQueue[i].empty())
 			return true;
-	}
 	return false;
 }
 
