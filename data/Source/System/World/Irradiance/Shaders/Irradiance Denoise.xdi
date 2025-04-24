@@ -145,7 +145,7 @@
 				</item>
 			</outputPins>
 			<script><![CDATA[
-const int N = 32;
+const int N = 16;
 const float NormalRange = 0.4f;
 const float DepthRange = 8.0f;
 
