@@ -136,7 +136,7 @@
 const int N = 2;
 const int Ndisclose = 32;
 const int Nspatial = 16;
-const int K = 40;
+const int K = 30;
 const float Far = 80.0f;
 const float FarSecond = 10.0f;
 const float TemporalNormalThreshold = 0.8f;
@@ -177,18 +177,10 @@ if (pt.x < sz.x && pt.y < sz.y)
 
 		if (temporalValid)
 		{
-			const float P_hat = Reservoir_CalculateProbability(lastR.radiance);
 			const float m = min(lastR.M, K);
-
-			const float w =
-				(P_hat > 0.0f) ?
-				(1.0f / P_hat) * (lastR.W_sum / lastR.M) :
-				0.0f;
-
-			const vec3 v = lastR.radiance * w;
-			const float p = 1.0f;
+			const vec3 v = Reservoir_GetRadiance(lastR);
 			
-			reservoir.W_sum = (Reservoir_CalculateProbability(v) / p) * m;
+			reservoir.W_sum = Reservoir_CalculateProbability(v) * m;
 			reservoir.M = m;
 			reservoir.normal = $Direction.xyz;
 			reservoir.depth = $Depth;
@@ -210,35 +202,30 @@ if (pt.x < sz.x && pt.y < sz.y)
 
 			const float ratio = float(sz.y) / sz.x;
 			const vec2 radius = vec2(SpatialFilterRadius, SpatialFilterRadius * ratio);
-			const ivec2 spt = uvpt - ivec2(offset * sz * radius);
+			const ivec2 spt = clamp(uvpt - ivec2(offset * sz * radius), ivec2(0), sz - 1);
 			
-			if (spt.x >= 0 && spt.y >= 0 && spt.x < sz.x && spt.y < sz.y)
+			const int spatIndex = spt.x + spt.y * sz.x;
+			$typeof(Reservoir) spatR = $Reservoir[spatIndex];
+
+			const bool valid =
+				dot(spatR.normal, $Direction.xyz) >= SpatialNormalThreshold &&
+				abs(spatR.depth - $Depth) < SpatialDepthThreshold;
+	
+			if (valid)
 			{
-				const int spatIndex = spt.x + spt.y * sz.x;
-				$typeof(Reservoir) spatR = $Reservoir[spatIndex];
+				const vec3 r1 = Reservoir_GetRadiance(reservoir);
+				const vec3 r2 = Reservoir_GetRadiance(spatR);
+				const vec3 r = mix(r1, r2, SpatialFilterCoeff);
 
-				const bool valid =
-					!Reservoir_IsEmpty(spatR) &&
-					dot(spatR.normal, $Direction.xyz) >= SpatialNormalThreshold &&
-					abs(spatR.depth - $Depth) < SpatialDepthThreshold;
-		
-				if (valid)
-				{
-					const vec3 r1 = Reservoir_GetRadiance(reservoir);
-					const vec3 r2 = Reservoir_GetRadiance(spatR);
-
-					const vec3 r = mix(r1, r2, SpatialFilterCoeff);
-
-					const float w = Reservoir_CalculateProbability(r);
-					Reservoir_Update(
-						reservoir,
-						w,
-						$Direction.xyz,
-						$Depth,
-						r,
-						Hash(rndState++)
-					);
-				}
+				const float w = Reservoir_CalculateProbability(r);
+				Reservoir_Update(
+					reservoir,
+					w,
+					$Direction.xyz,
+					$Depth,
+					r,
+					Hash(rndState++)
+				);
 			}
 		}
 	}
@@ -248,95 +235,98 @@ if (pt.x < sz.x && pt.y < sz.y)
 	if (true)
 	{
 		const mat3 R = Rotate($Direction.xyz, Hash(rndState++) * TWO_PI);
-		const int sampleN = (reservoir.M > K) ? N : Ndisclose;
+		const int sampleN = temporalValid ? N : Ndisclose; // (reservoir.M > K) ? N : Ndisclose;
 
-		vec3 Nacc = vec3(0.0f);
-		for (int i = 0; i < sampleN; ++i)
+		for (int I = 0; I < sampleN; I += N)
 		{
-			const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
-			const vec3 rayOrigin = $Origin.xyz;
-			const vec3 rayDir = R * LambertianDirection($Direction.xyz, r);
-			const float phi = 0.5f;
-	
-			HWRT_Material m;
-			float t;
-	
-			if (HWRT_Trace($AS, rayOrigin, rayDir, Far, m, t))
+			vec3 Nacc = vec3(0.0f);
+			for (int i = 0; i < N; ++i)
 			{
-				const vec3 hit = rayOrigin + rayDir * t;
-				const float attenuate = LightAttenuation(t);
-				
-				for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
-				{
-					const $typeof(Lights) light = $Lights[lightIndex];
-					const vec4 incident = HWRT_Light_CalculateIncidentLight(
-						$AS,
-						$ViewInverse,
-						light,
-						hit,
-						m.normal.xyz,
-						true
-					);
-					Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
-				}
-	
-				Nacc += m.albedo * m.emissive * attenuate * phi * PI;
-	
-#if USE_SECOND_BOUNCE
-				{
-					vec3 Sacc = vec3(0.0f);
-					HWRT_Material m2;
-					float t2;
+				const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
+				const vec3 rayOrigin = $Origin.xyz;
+				const vec3 rayDir = R * LambertianDirection($Direction.xyz, r);
+				const float phi = 0.5f;
 		
-					const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
-					const vec3 secondRayDir = LambertianDirection(m.normal.xyz, r);
-	
-					if (HWRT_Trace($AS, hit, secondRayDir, FarSecond, m2, t2))
+				HWRT_Material m;
+				float t;
+		
+				if (HWRT_Trace($AS, rayOrigin, rayDir, Far, m, t))
+				{
+					const vec3 hit = rayOrigin + rayDir * t;
+					const float attenuate = LightAttenuation(t);
+					
+					for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 					{
-						const float attenuate2 = LightAttenuation(t2);
-
-						for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
-						{
-							const float pdfRandomLight = 1.0f; // 1.0f / max($LightCount, 1);
-							//const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
-							const $typeof(Lights) light = $Lights[lightIndex];
-		
-							const vec3 hit2 = hit + secondRayDir * t;
-							const vec4 incident = HWRT_Light_CalculateIncidentLight(
-								$AS,
-								$ViewInverse,
-								light,
-								hit2,
-								m2.normal.xyz,
-								true
-							);
-		
-							Sacc += (m2.albedo * incident.xyz * attenuate2 * phi * PI / pdfRandomLight).xyz;
-						}
-		
-						Sacc += vec3(m2.albedo * m2.emissive * attenuate2 * phi);
+						const $typeof(Lights) light = $Lights[lightIndex];
+						const vec4 incident = HWRT_Light_CalculateIncidentLight(
+							$AS,
+							$ViewInverse,
+							light,
+							hit,
+							m.normal.xyz,
+							true
+						);
+						Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
 					}
 		
-					Nacc += m.albedo * Sacc;
-				}
-#endif
-			}
-			else
-			{
-				Nacc += $Sky.xyz;
-			}
-		}
+					Nacc += m.albedo * m.emissive * attenuate * phi * PI;
+		
+#if USE_SECOND_BOUNCE
+					{
+						vec3 Sacc = vec3(0.0f);
+						HWRT_Material m2;
+						float t2;
+			
+						const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
+						const vec3 secondRayDir = LambertianDirection(m.normal.xyz, r);
+		
+						if (HWRT_Trace($AS, hit, secondRayDir, FarSecond, m2, t2))
+						{
+							const float attenuate2 = LightAttenuation(t2);
 	
-		const vec3 r = Nacc / sampleN;
-		const float w = Reservoir_CalculateProbability(r);
-		Reservoir_Update(
-			reservoir,
-			w,
-			$Direction.xyz,
-			$Depth,
-			r,
-			Hash(rndState++)
-		);
+							for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
+							{
+								const float pdfRandomLight = 1.0f; // 1.0f / max($LightCount, 1);
+								//const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
+								const $typeof(Lights) light = $Lights[lightIndex];
+			
+								const vec3 hit2 = hit + secondRayDir * t;
+								const vec4 incident = HWRT_Light_CalculateIncidentLight(
+									$AS,
+									$ViewInverse,
+									light,
+									hit2,
+									m2.normal.xyz,
+									true
+								);
+			
+								Sacc += (m2.albedo * incident.xyz * attenuate2 * phi * PI / pdfRandomLight).xyz;
+							}
+			
+							Sacc += vec3(m2.albedo * m2.emissive * attenuate2 * phi);
+						}
+			
+						Nacc += m.albedo * Sacc;
+					}
+#endif
+				}
+				else
+				{
+					Nacc += $Sky.xyz;
+				}
+			}
+		
+			const vec3 r = Nacc / N;
+			const float w = Reservoir_CalculateProbability(r);
+			Reservoir_Update(
+				reservoir,
+				w,
+				$Direction.xyz,
+				$Depth,
+				r,
+				Hash(rndState++)
+			);
+		}
 	}
 
 	// 3. Calculate lighting.
