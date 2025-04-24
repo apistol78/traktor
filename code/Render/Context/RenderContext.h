@@ -8,11 +8,11 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Object.h"
 #include "Render/Context/ProgramParameters.h"
 #include "Render/Context/RenderBlock.h"
 
@@ -51,18 +51,18 @@ public:
 	[[nodiscard]] void* alloc(uint32_t blockSize, uint32_t align);
 
 	/*! Allocate object from context's heap. */
-	template < typename ObjectType, typename ... ArgumentTypes >
-	[[nodiscard]] ObjectType* alloc(ArgumentTypes&& ... args)
+	template < typename ObjectType, typename... ArgumentTypes >
+	[[nodiscard]] ObjectType* alloc(ArgumentTypes&&... args)
 	{
 		void* object = alloc((uint32_t)sizeof(ObjectType), (uint32_t)alignOf< ObjectType >());
-		return new (object) ObjectType(std::forward< ArgumentTypes >(args) ...);
+		return new (object) ObjectType(std::forward< ArgumentTypes >(args)...);
 	}
 
 	/*! Allocate named object from context's heap. */
-	template < typename ObjectType, typename ... ArgumentTypes >
-	[[nodiscard]] ObjectType* allocNamed(const std::wstring_view& name, ArgumentTypes&& ... args)
+	template < typename ObjectType, typename... ArgumentTypes >
+	[[nodiscard]] ObjectType* allocNamed(const std::wstring_view& name, ArgumentTypes&&... args)
 	{
-		ObjectType* object = alloc< ObjectType, ArgumentTypes... >(std::forward< ArgumentTypes >(args) ...);
+		ObjectType* object = alloc< ObjectType, ArgumentTypes... >(std::forward< ArgumentTypes >(args)...);
 		object->name = name;
 		return object;
 	}
@@ -71,26 +71,37 @@ public:
 	void compute(RenderBlock* renderBlock);
 
 	/*! Add block to compute queue. */
-	template < typename ObjectType, typename ... ArgumentTypes >
-	void compute(ArgumentTypes&& ... args)
+	template < typename ObjectType, typename... ArgumentTypes >
+	void compute(ArgumentTypes&&... args)
 	{
-		ObjectType* object = alloc< ObjectType, ArgumentTypes... >(std::forward< ArgumentTypes >(args) ...);
+		ObjectType* object = alloc< ObjectType, ArgumentTypes... >(std::forward< ArgumentTypes >(args)...);
 		compute(object);
 	}
 
 	/*! Add a render block to draw queue. */
 	void draw(RenderBlock* renderBlock);
 
+	/*! Add render block to sorting queue. */
+	void draw(uint32_t type, DrawableRenderBlock* renderBlock);
+
 	/*! Add a render block to draw queue. */
-	template < typename ObjectType, typename ... ArgumentTypes >
-	void draw(ArgumentTypes&& ... args)
+	template < typename ObjectType, typename... ArgumentTypes >
+	void draw(ArgumentTypes&&... args)
 	{
-		ObjectType* object = alloc< ObjectType, ArgumentTypes... >(std::forward< ArgumentTypes >(args) ...);
+		ObjectType* object = alloc< ObjectType, ArgumentTypes... >(std::forward< ArgumentTypes >(args)...);
 		draw(object);
 	}
 
-	/*! Add render block to sorting queue. */
-	void draw(uint32_t type, DrawableRenderBlock* renderBlock);
+	/*! Add render block directly to render queue. */
+	void direct(RenderBlock* renderBlock);
+
+	/*! Add a render block directly to render queue. */
+	template < typename ObjectType, typename... ArgumentTypes >
+	void direct(ArgumentTypes&&... args)
+	{
+		ObjectType* object = alloc< ObjectType, ArgumentTypes... >(std::forward< ArgumentTypes >(args)...);
+		direct(object);
+	}
 
 	/*! Merge sorting queues into draw queue. */
 	void mergePriorityIntoDraw(uint32_t priorities);

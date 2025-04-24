@@ -7,16 +7,18 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Render/Context/RenderBlock.h"
+
 #include "Render/Context/ProgramParameters.h"
 #include "Render/IRenderView.h"
 
-//#if defined(_DEBUG)
-#	define T_CONTEXT_PUSH_MARKER(renderView, name) T_RENDER_PUSH_MARKER(renderView, name)
-#	define T_CONTEXT_POP_MARKER(renderView) T_RENDER_POP_MARKER(renderView)
-//#else
-//#	define T_CONTEXT_PUSH_MARKER(renderView, name)
-//#	define T_CONTEXT_POP_MARKER(renderView)
-//#endif
+// #if defined(_DEBUG)
+#define T_CONTEXT_PUSH_MARKER(renderView, name) T_RENDER_PUSH_MARKER(renderView, name)
+#define T_CONTEXT_POP_MARKER(renderView) T_RENDER_POP_MARKER(renderView)
+
+// #else
+// #	define T_CONTEXT_PUSH_MARKER(renderView, name)
+// #	define T_CONTEXT_POP_MARKER(renderView)
+// #endif
 
 namespace traktor::render
 {
@@ -37,8 +39,7 @@ void ComputeRenderBlock::render(IRenderView* renderView) const
 	renderView->compute(
 		program,
 		workSize,
-		asynchronous
-	);
+		asynchronous);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }
@@ -53,8 +54,7 @@ void IndirectComputeRenderBlock::render(IRenderView* renderView) const
 	renderView->computeIndirect(
 		program,
 		workBuffer,
-		workOffset
-	);
+		workOffset);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }
@@ -73,8 +73,7 @@ void SimpleRenderBlock::render(IRenderView* renderView) const
 		indexType,
 		program,
 		primitives,
-		1
-	);
+		1);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }
@@ -93,8 +92,7 @@ void InstancingRenderBlock::render(IRenderView* renderView) const
 		indexType,
 		program,
 		primitives,
-		count
-	);
+		count);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }
@@ -113,8 +111,7 @@ void IndexedInstancingRenderBlock::render(IRenderView* renderView) const
 		indexType,
 		program,
 		Primitives::setIndexed(primitive, offset, count),
-		instanceCount
-	);
+		instanceCount);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }
@@ -133,8 +130,7 @@ void NonIndexedRenderBlock::render(IRenderView* renderView) const
 		IndexType::Void,
 		program,
 		Primitives::setNonIndexed(primitive, offset, count),
-		1
-	);
+		1);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }
@@ -153,8 +149,7 @@ void IndexedRenderBlock::render(IRenderView* renderView) const
 		indexType,
 		program,
 		Primitives::setIndexed(primitive, offset, count),
-		1
-	);
+		1);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }
@@ -175,8 +170,7 @@ void IndirectRenderBlock::render(IRenderView* renderView) const
 		primitive,
 		drawBuffer,
 		drawOffset,
-		drawCount
-	);
+		drawCount);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }
@@ -186,12 +180,10 @@ void BeginPassRenderBlock::render(IRenderView* renderView) const
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	if (renderTargetSet)
-	{
 		if (renderTargetIndex >= 0)
 			renderView->beginPass(renderTargetSet, renderTargetIndex, &clear, load, store);
 		else
 			renderView->beginPass(renderTargetSet, &clear, load, store);
-	}
 	else
 		renderView->beginPass(&clear, load, store);
 }
@@ -248,12 +240,14 @@ void LambdaRenderBlock::render(IRenderView* renderView) const
 
 void ProfileBeginRenderBlock::render(IRenderView* renderView) const
 {
-	*queryHandle = renderView->beginTimeQuery();
+	if (queryHandle)
+		*queryHandle = renderView->beginTimeQuery();
 }
 
 void ProfileEndRenderBlock::render(IRenderView* renderView) const
 {
-	renderView->endTimeQuery(*queryHandle);
+	if (queryHandle)
+		renderView->endTimeQuery(*queryHandle);
 }
 
 void ProfileReportRenderBlock::render(IRenderView* renderView) const
@@ -269,7 +263,7 @@ void ProfileReportRenderBlock::render(IRenderView* renderView) const
 
 		offsetGPU = start;
 	}
-	
+
 	// Get GPU stamps of measured blocks.
 	if (!renderView->getTimeQuery(*queryHandle, false, start, end))
 		return;

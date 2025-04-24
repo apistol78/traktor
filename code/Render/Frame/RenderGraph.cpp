@@ -290,16 +290,6 @@ bool RenderGraph::validate()
 			return lt > rt;
 		});
 
-	// Ensure all targets are unacquired.
-	// for (auto& it : m_targets)
-	//{
-	//	if (!it.second.external)
-	//	{
-	//		it.second.readTargetSet = nullptr;
-	//		it.second.writeTargetSet = nullptr;
-	//	}
-	//}
-
 	// Gather targets which are used as shared depth.
 	for (auto& it : m_targets)
 		if (
@@ -307,7 +297,14 @@ bool RenderGraph::validate()
 			it.second.sharedDepthStencilTargetSetId != RGTargetSet::Output)
 			m_sharedDepthTargets.insert(it.second.sharedDepthStencilTargetSetId);
 
-	// Count input and output reference counts of all targets.
+	return true;
+}
+
+bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t height)
+{
+	T_FATAL_ASSERT(!renderContext->havePendingDraws());
+
+	// Initialize input and output reference counts of all targets.
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
 	{
 		const auto& order = m_order[i];
@@ -329,12 +326,6 @@ bool RenderGraph::validate()
 			}
 		}
 	}
-	return true;
-}
-
-bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t height)
-{
-	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
 	// Calculate size of all targets.
 	for (auto it : m_targets)
@@ -399,6 +390,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	int32_t* queryHandles = nullptr;
 	int32_t* referenceQueryHandle = nullptr;
 	int32_t* passQueryHandles = nullptr;
+	int32_t* profiling = nullptr;
 
 	if (m_profiler)
 	{
@@ -408,10 +400,27 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		referenceQueryHandle = queryHandles;
 		passQueryHandles = queryHandles + 1;
 
-		auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
-		pb->queryHandle = referenceQueryHandle;
-		renderContext->draw(pb);
+		renderContext->direct< ProfileBeginRenderBlock >(referenceQueryHandle);
 	}
+
+#	define T_PASS_PROFILE_BEGIN() \
+		if (profiling) \
+		{ \
+			renderContext->direct< ProfileBeginRenderBlock >(profiling); \
+		}
+#	define T_PASS_PROFILE_END() \
+		if (profiling) \
+		{ \
+			renderContext->direct< ProfileEndRenderBlock >(profiling); \
+			profiling = nullptr; \
+		}
+#	define T_PASS_IS_PROFILING \
+		(profiling != nullptr)
+
+#else
+#	define T_PASS_PROFILE_BEGIN()
+#	define T_PASS_PROFILE_END()
+#	define T_PASS_IS_PROFILING false
 #endif
 
 	// Render passes in dependency order.
@@ -437,13 +446,15 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				if (output.resourceId != 0)
 				{
 					// Continue rendering to same target if possible; else start another pass.
-					if (currentOutput != output)
+					if (T_PASS_IS_PROFILING || currentOutput != output)
 					{
 						if (currentOutput.resourceId != ~0U)
 						{
+							T_PASS_PROFILE_BEGIN();
 							renderContext->mergeComputeIntoRender();
-							renderContext->draw< EndPassRenderBlock >();
 							renderContext->mergeDrawIntoRender();
+							renderContext->direct< EndPassRenderBlock >();
+							T_PASS_PROFILE_END();
 
 							if (currentTarget && currentTarget->doubleBuffered)
 								currentTarget->targetSet->swap();
@@ -482,13 +493,16 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 					}
 				}
 				else // Output to framebuffer; implicit as target 0.
-					if (currentOutput.resourceId != 0)
+
+					if (T_PASS_IS_PROFILING || currentOutput.resourceId != 0)
 					{
 						if (currentOutput.resourceId != ~0U)
 						{
+							T_PASS_PROFILE_BEGIN();
 							renderContext->mergeComputeIntoRender();
-							renderContext->draw< EndPassRenderBlock >();
 							renderContext->mergeDrawIntoRender();
+							renderContext->direct< EndPassRenderBlock >();
+							T_PASS_PROFILE_END();
 
 							if (currentTarget && currentTarget->doubleBuffered)
 								currentTarget->targetSet->swap();
@@ -506,11 +520,11 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			}
 			else if (currentOutput.resourceId != ~0U)
 			{
-				if (renderContext->havePendingComputes())
-					renderContext->mergeComputeIntoRender();
-
-				renderContext->draw< EndPassRenderBlock >();
+				T_PASS_PROFILE_BEGIN();
+				renderContext->mergeComputeIntoRender();
 				renderContext->mergeDrawIntoRender();
+				renderContext->direct< EndPassRenderBlock >();
+				T_PASS_PROFILE_END();
 
 				if (currentTarget && currentTarget->doubleBuffered)
 					currentTarget->targetSet->swap();
@@ -518,37 +532,33 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				currentTarget = nullptr;
 				currentOutput = RenderPass::Output();
 			}
-
-#if !defined(__ANDROID__) && !defined(__IOS__)
-			if (m_profiler)
+			else if (T_PASS_IS_PROFILING)
 			{
-				auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
-				pb->queryHandle = &passQueryHandles[index];
-				renderContext->draw(pb);
+				// Profiling of a non-output pass.
+				T_PASS_PROFILE_BEGIN();
+				renderContext->mergeComputeIntoRender();
+				renderContext->mergeDrawIntoRender();
+				T_PASS_PROFILE_END();
 			}
-#endif
 
 			// Build this pass.
 			T_PROFILER_BEGIN(L"RenderGraph build \"" + pass->getName() + L"\"");
 			m_buildingPasses = true;
+
+#if !defined(__ANDROID__) && !defined(__IOS__)
+			if (m_profiler)
+				profiling = &passQueryHandles[index];
+#endif
 			for (const auto& build : pass->getBuilds())
 			{
 				build(*this, renderContext);
 
-				// Merge all pending draws after each build step.
+				// Merge all pending priority draws (sorted by depth) after each build step.
 				renderContext->mergePriorityIntoDraw(RenderPriority::All);
 			}
 			m_buildingPasses = false;
 			T_PROFILER_END();
 
-#if !defined(__ANDROID__) && !defined(__IOS__)
-			if (m_profiler)
-			{
-				auto pe = renderContext->alloc< ProfileEndRenderBlock >();
-				pe->queryHandle = &passQueryHandles[index];
-				renderContext->draw(pe);
-			}
-#endif
 			// Decrement reference counts on input targets; release if last reference.
 			for (const auto& input : inputs)
 			{
@@ -571,9 +581,11 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 
 	if (currentOutput.resourceId != ~0U)
 	{
+		T_PASS_PROFILE_BEGIN();
 		renderContext->mergeComputeIntoRender();
-		renderContext->draw< EndPassRenderBlock >();
 		renderContext->mergeDrawIntoRender();
+		renderContext->direct< EndPassRenderBlock >();
+		T_PASS_PROFILE_END();
 
 		if (currentTarget && currentTarget->doubleBuffered)
 			currentTarget->targetSet->swap();
@@ -582,17 +594,13 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_profiler)
 	{
-		auto pe = renderContext->alloc< ProfileEndRenderBlock >();
-		pe->queryHandle = referenceQueryHandle;
-		renderContext->draw(pe);
+		renderContext->direct< ProfileEndRenderBlock >(referenceQueryHandle);
 
 		// Report all queries last using reference query to calculate offset.
 		int32_t ordinal = 0;
 		for (int32_t i = sizeof_array(m_order) - 1; i >= 0; --i)
 		{
 			const auto& order = m_order[i];
-			if (order.empty())
-				continue;
 			for (int32_t j = 0; j < (int32_t)order.size(); ++j)
 			{
 				const uint32_t index = order[j];
@@ -605,12 +613,10 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				pr->sink = [=, this](const std::wstring& name, double start, double duration) {
 					m_profiler(ordinal, i, name, start, duration);
 				};
-				renderContext->draw(pr);
+				renderContext->direct(pr);
 				++ordinal;
 			}
 		}
-
-		renderContext->mergeDrawIntoRender();
 	}
 #endif
 

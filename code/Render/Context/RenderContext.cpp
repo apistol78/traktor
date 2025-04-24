@@ -109,6 +109,11 @@ void RenderContext::draw(uint32_t type, DrawableRenderBlock* renderBlock)
 		m_priorityQueue[5].push_back(renderBlock);
 }
 
+void RenderContext::direct(RenderBlock* renderBlock)
+{
+	m_renderQueue.push_back(renderBlock);
+}
+
 void RenderContext::mergePriorityIntoDraw(uint32_t priorities)
 {
 	// Merge setup blocks unsorted.

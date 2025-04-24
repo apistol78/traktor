@@ -8,10 +8,11 @@
  */
 #pragma once
 
-#include <functional>
 #include "Core/Config.h"
 #include "Core/Math/Color4f.h"
 #include "Render/Types.h"
+
+#include <functional>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -56,7 +57,7 @@ class T_DLLCLASS NullRenderBlock : public RenderBlock
 public:
 	IProgram* program = nullptr;
 	ProgramParameters* programParams = nullptr;
-	
+
 	virtual void render(IRenderView* renderView) const override final;
 };
 
@@ -270,10 +271,10 @@ public:
 	BarrierRenderBlock() = default;
 
 	explicit BarrierRenderBlock(Stage from_, Stage to_, ITexture* written_, uint32_t writtenMip_)
-	:	from(from_)
-	,	to(to_)
-	,	written(written_)
-	,	writtenMip(writtenMip_)
+		: from(from_)
+		, to(to_)
+		, written(written_)
+		, writtenMip(writtenMip_)
 	{
 	}
 
@@ -291,7 +292,7 @@ public:
 	LambdaRenderBlock() = default;
 
 	explicit LambdaRenderBlock(const std::function< void(IRenderView*) >& lambda_)
-	:	lambda(lambda_)
+		: lambda(lambda_)
 	{
 	}
 
@@ -304,6 +305,13 @@ class T_DLLCLASS ProfileBeginRenderBlock : public RenderBlock
 public:
 	int32_t* queryHandle = nullptr;
 
+	ProfileBeginRenderBlock() = default;
+
+	explicit ProfileBeginRenderBlock(int32_t* handle)
+		: queryHandle(handle)
+	{
+	}
+
 	virtual void render(IRenderView* renderView) const override final;
 };
 
@@ -312,6 +320,13 @@ class T_DLLCLASS ProfileEndRenderBlock : public RenderBlock
 {
 public:
 	int32_t* queryHandle = nullptr;
+
+	ProfileEndRenderBlock() = default;
+
+	explicit ProfileEndRenderBlock(int32_t* handle)
+		: queryHandle(handle)
+	{
+	}
 
 	virtual void render(IRenderView* renderView) const override final;
 };
