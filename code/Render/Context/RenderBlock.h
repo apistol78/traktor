@@ -335,9 +335,8 @@ public:
 class T_DLLCLASS ProfileReportRenderBlock : public RenderBlock
 {
 public:
-	typedef std::function< void(const std::wstring&, double, double) > fn_sink_t;
+	typedef std::function< void(double, double) > fn_sink_t;
 
-	std::wstring name;
 	int32_t* queryHandle = nullptr;
 	int32_t* referenceQueryHandle = nullptr;
 	double offset = 0.0;

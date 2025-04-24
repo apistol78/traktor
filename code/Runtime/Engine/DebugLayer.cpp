@@ -102,9 +102,9 @@ void DebugLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug");
 	rp->setOutput(render::RGTargetSet::Output, render::TfAll, render::TfAll);
-	rp->addBuild([=, count = m_count](const render::RenderGraph&, render::RenderContext* renderContext) {
+	rp->addBuild([=, count = m_count, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 		auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Debug wire");
-		rb->lambda = [=](render::IRenderView* renderView) {
+		rb->lambda = [=, this](render::IRenderView* renderView) {
 			m_primitiveRenderer->render(renderView, count);
 		};
 		renderContext->draw(rb);

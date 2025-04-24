@@ -459,6 +459,14 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 							if (currentTarget && currentTarget->doubleBuffered)
 								currentTarget->targetSet->swap();
 						}
+						else if (T_PASS_IS_PROFILING)
+						{
+							// Profiling of a non-output pass.
+							T_PASS_PROFILE_BEGIN();
+							renderContext->mergeComputeIntoRender();
+							renderContext->mergeDrawIntoRender();
+							T_PASS_PROFILE_END();
+						}
 
 						// Begin pass if resource is a target.
 						auto it = m_targets.find(RGTargetSet(output.resourceId));
@@ -493,7 +501,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 					}
 				}
 				else // Output to framebuffer; implicit as target 0.
-
+				{
 					if (T_PASS_IS_PROFILING || currentOutput.resourceId != 0)
 					{
 						if (currentOutput.resourceId != ~0U)
@@ -507,7 +515,15 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 							if (currentTarget && currentTarget->doubleBuffered)
 								currentTarget->targetSet->swap();
 						}
-
+						else if (T_PASS_IS_PROFILING)
+						{
+							// Profiling of a non-output pass.
+							T_PASS_PROFILE_BEGIN();
+							renderContext->mergeComputeIntoRender();
+							renderContext->mergeDrawIntoRender();
+							T_PASS_PROFILE_END();
+						}
+						
 						auto tb = renderContext->allocNamed< BeginPassRenderBlock >(pass->getName());
 						tb->clear = output.clear;
 						tb->load = output.load;
@@ -517,6 +533,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 						currentTarget = nullptr;
 						currentOutput = output;
 					}
+				}
 			}
 			else if (currentOutput.resourceId != ~0U)
 			{
@@ -547,7 +564,10 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
 			if (m_profiler)
+			{
+				T_FATAL_ASSERT(profiling == nullptr);
 				profiling = &passQueryHandles[index];
+			}
 #endif
 			for (const auto& build : pass->getBuilds())
 			{
@@ -605,15 +625,16 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			{
 				const uint32_t index = order[j];
 				const auto pass = m_passes[index];
+
 				auto pr = renderContext->alloc< ProfileReportRenderBlock >();
-				pr->name = pass->getName();
 				pr->queryHandle = &passQueryHandles[index];
 				pr->referenceQueryHandle = referenceQueryHandle;
 				pr->offset = referenceOffset;
-				pr->sink = [=, this](const std::wstring& name, double start, double duration) {
+				pr->sink = [=, name = pass->getName(), this](double start, double duration) {
 					m_profiler(ordinal, i, name, start, duration);
 				};
 				renderContext->direct(pr);
+
 				++ordinal;
 			}
 		}

@@ -273,7 +273,7 @@ void ProfileReportRenderBlock::render(IRenderView* renderView) const
 	start -= offsetGPU;
 	start += offset;
 
-	sink(name, start, duration);
+	sink(start, duration);
 }
 
 }
