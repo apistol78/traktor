@@ -98,8 +98,6 @@ render::RGTargetSet SSReflectionsPass::setup(
 	if (m_reflectionsQuality == Quality::Disabled)
 		return render::RGTargetSet::Invalid;
 
-	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr && m_reflectionsQuality == Quality::Ultra);
-
 	// Add reflections target.
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
@@ -163,7 +161,6 @@ render::RGTargetSet SSReflectionsPass::setup(
 	view.deltaTime = (float)worldRenderView.getDeltaTime();
 
 	render::ImageGraphContext igctx;
-	igctx.setTechniqueFlag(ShaderPermutation::RayTracingEnable, rayTracingEnable);
 	igctx.associateTextureTargetSet(ShaderParameter::InputColorLast, visualReadTargetSetId, 0);
 	igctx.associateTextureTargetSet(ShaderParameter::InputVelocity, velocityTargetSetId, 0);
 
