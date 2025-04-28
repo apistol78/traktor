@@ -87,9 +87,6 @@ render::RGTargetSet GBufferPass::setup(
 			sharedParams->setTextureParameter(ShaderParameter::HiZTexture, hiZTexture);
 		}
 
-		if (gatheredView.rtWorldTopLevel != nullptr)
-			sharedParams->setAccelerationStructureParameter(ShaderParameter::TLAS, gatheredView.rtWorldTopLevel);
-
 		sharedParams->endParameters(renderContext);
 
 		const WorldRenderPassShared gbufferPass(
