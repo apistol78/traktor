@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,8 @@
 
 #include "Render/Editor/Shader/INodeTraits.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class MathNodeTraits : public INodeTraits
 {
@@ -28,37 +26,32 @@ public:
 		const ShaderGraph* shaderGraph,
 		const Node* node,
 		const InputPin* inputPin,
-		const PinType pinType
-	) const override final;
+		const PinType pinType) const override final;
 
 	virtual PinType getOutputPinType(
 		const ShaderGraph* shaderGraph,
 		const Node* node,
 		const OutputPin* outputPin,
-		const PinType* inputPinTypes
-	) const override final;
+		const PinType* inputPinTypes) const override final;
 
 	virtual PinType getInputPinType(
 		const ShaderGraph* shaderGraph,
 		const Node* node,
 		const InputPin* inputPin,
 		const PinType* inputPinTypes,
-		const PinType* outputPinTypes
-	) const override final;
+		const PinType* outputPinTypes) const override final;
 
 	virtual int32_t getInputPinGroup(
 		const ShaderGraph* shaderGraph,
 		const Node* node,
-		const InputPin* inputPin
-	) const override final;
+		const InputPin* inputPin) const override final;
 
 	virtual bool evaluatePartial(
 		const ShaderGraph* shaderGraph,
 		const Node* node,
 		const OutputPin* nodeOutputPin,
 		const Constant* inputConstants,
-		Constant& outputConstant
-	) const override final;
+		Constant& outputConstant) const override final;
 
 	virtual bool evaluatePartial(
 		const ShaderGraph* shaderGraph,
@@ -66,17 +59,13 @@ public:
 		const OutputPin* nodeOutputPin,
 		const OutputPin** inputOutputPins,
 		const Constant* inputConstants,
-		const OutputPin*& foldOutputPin
-	) const override final;
+		const OutputPin*& foldOutputPin) const override final;
 
 	virtual PinOrder evaluateOrder(
 		const ShaderGraph* shaderGraph,
 		const Node* node,
 		const OutputPin* nodeOutputPin,
-		const PinOrder* inputPinOrders
-	) const override final;
+		const PinOrder* inputPinOrders) const override final;
 };
 
-	}
 }
-

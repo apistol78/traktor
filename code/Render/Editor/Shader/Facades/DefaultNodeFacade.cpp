@@ -1,29 +1,28 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
+
 #include "Core/Misc/String.h"
 #include "I18N/Text.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
 #include "Ui/Application.h"
 #include "Ui/Graph/DefaultNodeShape.h"
 #include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/InputNodeShape.h"
-#include "Ui/Graph/OutputNodeShape.h"
 #include "Ui/Graph/Node.h"
+#include "Ui/Graph/OutputNodeShape.h"
 #include "Ui/Graph/Pin.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DefaultNodeFacade", DefaultNodeFacade, INodeFacade)
 
@@ -36,8 +35,7 @@ DefaultNodeFacade::DefaultNodeFacade()
 
 Ref< Node > DefaultNodeFacade::createShaderNode(
 	const TypeInfo* nodeType,
-	editor::IEditor* editor
-)
+	editor::IEditor* editor)
 {
 	return checked_type_cast< Node* >(nodeType->createInstance());
 }
@@ -46,15 +44,14 @@ Ref< ui::Node > DefaultNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	std::wstring title = type_name(shaderNode);
 	size_t p = title.find_last_of(L'.');
 	if (p > 0)
 		title = i18n::Text(L"SHADERGRAPH_NODE_" + toUpper(title.substr(p + 1)));
 
-	Ref<ui::INodeShape > shape;
+	Ref< ui::INodeShape > shape;
 	if (shaderNode->getInputPinCount() == 1 && shaderNode->getOutputPinCount() == 0)
 		shape = m_nodeShapes[2];
 	else if (shaderNode->getInputPinCount() == 0 && shaderNode->getOutputPinCount() == 1)
@@ -67,10 +64,8 @@ Ref< ui::Node > DefaultNodeFacade::createEditorNode(
 		shaderNode->getInformation(),
 		ui::UnitPoint(
 			ui::Unit(shaderNode->getPosition().first),
-			ui::Unit(shaderNode->getPosition().second)
-		),
-		shape
-	);
+			ui::Unit(shaderNode->getPosition().second)),
+		shape);
 
 	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
 	{
@@ -79,8 +74,7 @@ Ref< ui::Node > DefaultNodeFacade::createEditorNode(
 			inputPin->getName(),
 			inputPin->getId(),
 			!inputPin->isOptional(),
-			false
-		);
+			false);
 	}
 
 	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
@@ -88,8 +82,7 @@ Ref< ui::Node > DefaultNodeFacade::createEditorNode(
 		const OutputPin* outputPin = shaderNode->getOutputPin(j);
 		editorNode->createOutputPin(
 			outputPin->getName(),
-			outputPin->getId()
-		);
+			outputPin->getId());
 	}
 
 	editorNode->setComment(shaderNode->getComment());
@@ -101,8 +94,7 @@ void DefaultNodeFacade::editShaderNode(
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 }
 
@@ -111,8 +103,7 @@ void DefaultNodeFacade::refreshEditorNode(
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	editorNode->setComment(shaderNode->getComment());
 	editorNode->setInfo(shaderNode->getInformation());
@@ -178,11 +169,9 @@ void DefaultNodeFacade::refreshEditorNode(
 
 void DefaultNodeFacade::setValidationIndicator(
 	ui::Node* editorNode,
-	bool validationSucceeded
-)
+	bool validationSucceeded)
 {
 	editorNode->setState(validationSucceeded ? 0 : 1);
 }
 
-	}
 }

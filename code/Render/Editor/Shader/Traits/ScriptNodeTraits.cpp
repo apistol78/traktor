@@ -1,35 +1,33 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cctype>
-#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/Traits/ScriptNodeTraits.h"
 
-namespace traktor
+#include "Render/Editor/Shader/Script.h"
+
+#include <cctype>
+
+namespace traktor::render
 {
-	namespace render
-	{
-		namespace
-		{
+namespace
+{
 
 int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 {
 	const int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
-	{
 		if (node->getInputPin(i) == inputPin)
 			return i;
-	}
 	T_FATAL_ERROR;
 	return -1;
 }
 
-		}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ScriptNodeTraits", 0, ScriptNodeTraits, INodeTraits)
 
@@ -48,8 +46,7 @@ bool ScriptNodeTraits::isInputTypeValid(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const InputPin* inputPin,
-	const PinType pinType
-) const
+	const PinType pinType) const
 {
 	return true;
 }
@@ -58,8 +55,7 @@ PinType ScriptNodeTraits::getOutputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
-	const PinType* inputPinTypes
-) const
+	const PinType* inputPinTypes) const
 {
 	T_ASSERT(is_a< Script >(node));
 	T_ASSERT(outputPin->getNode() == node);
@@ -89,22 +85,18 @@ PinType ScriptNodeTraits::getInputPinType(
 	const Node* node,
 	const InputPin* inputPin,
 	const PinType* inputPinTypes,
-	const PinType* outputPinTypes
-) const
+	const PinType* outputPinTypes) const
 {
 	for (int32_t i = 0; i < node->getInputPinCount(); ++i)
-	{
 		if (node->getInputPin(i) == inputPin)
 			return inputPinTypes[i];
-	}
 	return PinType::Void;
 }
 
 int32_t ScriptNodeTraits::getInputPinGroup(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
-	const InputPin* inputPin
-) const
+	const InputPin* inputPin) const
 {
 	return getInputPinIndex(node, inputPin);
 }
@@ -114,8 +106,7 @@ bool ScriptNodeTraits::evaluatePartial(
 	const Node* node,
 	const OutputPin* nodeOutputPin,
 	const Constant* inputConstants,
-	Constant& outputConstant
-) const
+	Constant& outputConstant) const
 {
 	return false;
 }
@@ -126,8 +117,7 @@ bool ScriptNodeTraits::evaluatePartial(
 	const OutputPin* nodeOutputPin,
 	const OutputPin** inputOutputPins,
 	const Constant* inputConstants,
-	const OutputPin*& foldOutputPin
-) const
+	const OutputPin*& foldOutputPin) const
 {
 	return false;
 }
@@ -136,11 +126,9 @@ PinOrder ScriptNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrder* inputPinOrders
-) const
+	const PinOrder* inputPinOrders) const
 {
 	return PinOrder::NonLinear;
 }
 
-	}
 }

@@ -1,41 +1,39 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/Facades/ScriptNodeFacade.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "I18N/Text.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
-#include "Render/Editor/Shader/Facades/ScriptNodeFacade.h"
 #include "Ui/Application.h"
 #include "Ui/Graph/DefaultNodeShape.h"
 #include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/Pin.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScriptNodeFacade", ScriptNodeFacade, INodeFacade)
 
 ScriptNodeFacade::ScriptNodeFacade(ShaderGraphEditorPage* page)
-:	m_page(page)
+	: m_page(page)
 {
 	m_nodeShape = new ui::DefaultNodeShape(ui::DefaultNodeShape::StScript);
 }
 
 Ref< Node > ScriptNodeFacade::createShaderNode(
 	const TypeInfo* nodeType,
-	editor::IEditor* editor
-)
+	editor::IEditor* editor)
 {
 	Ref< Script > sc = new Script();
 	sc->setName(L"Unnamed");
@@ -49,8 +47,7 @@ Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	Script* scriptNode = checked_type_cast< Script*, false >(shaderNode);
 
@@ -59,10 +56,8 @@ Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 		L"",
 		ui::UnitPoint(
 			ui::Unit(scriptNode->getPosition().first),
-			ui::Unit(scriptNode->getPosition().second)
-		),
-		m_nodeShape
-	);
+			ui::Unit(scriptNode->getPosition().second)),
+		m_nodeShape);
 
 	for (int j = 0; j < scriptNode->getInputPinCount(); ++j)
 	{
@@ -71,8 +66,7 @@ Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 			inputPin->getName(),
 			inputPin->getId(),
 			!inputPin->isOptional(),
-			false
-		);
+			false);
 	}
 
 	for (int j = 0; j < scriptNode->getOutputPinCount(); ++j)
@@ -80,8 +74,7 @@ Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 		const OutputPin* outputPin = scriptNode->getOutputPin(j);
 		editorNode->createOutputPin(
 			outputPin->getName(),
-			outputPin->getId()
-		);
+			outputPin->getId());
 	}
 
 	editorNode->setComment(scriptNode->getComment());
@@ -94,12 +87,10 @@ void ScriptNodeFacade::editShaderNode(
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	m_page->editScript(
-		mandatory_non_null_type_cast< Script* >(shaderNode)
-	);
+		mandatory_non_null_type_cast< Script* >(shaderNode));
 }
 
 void ScriptNodeFacade::refreshEditorNode(
@@ -107,8 +98,7 @@ void ScriptNodeFacade::refreshEditorNode(
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	Script* scriptNode = checked_type_cast< Script*, false >(shaderNode);
 
@@ -177,11 +167,9 @@ void ScriptNodeFacade::refreshEditorNode(
 
 void ScriptNodeFacade::setValidationIndicator(
 	ui::Node* editorNode,
-	bool validationSucceeded
-)
+	bool validationSucceeded)
 {
 	editorNode->setState(validationSucceeded ? 0 : 1);
 }
 
-	}
 }

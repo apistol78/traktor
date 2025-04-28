@@ -1,35 +1,32 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Traits/MixNodeTraits.h"
 
-namespace traktor
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+
+namespace traktor::render
 {
-	namespace render
-	{
-		namespace
-		{
+namespace
+{
 
 int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 {
 	const int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
-	{
 		if (node->getInputPin(i) == inputPin)
 			return i;
-	}
 	T_FATAL_ERROR;
 	return -1;
 }
 
-		}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MixNodeTraits", 0, MixNodeTraits, INodeTraits)
 
@@ -37,8 +34,7 @@ TypeInfoSet MixNodeTraits::getNodeTypes() const
 {
 	return makeTypeInfoSet<
 		MixIn,
-		MixOut
-	>();
+		MixOut >();
 }
 
 bool MixNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
@@ -50,8 +46,7 @@ bool MixNodeTraits::isInputTypeValid(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const InputPin* inputPin,
-	const PinType pinType
-) const
+	const PinType pinType) const
 {
 	return isPinTypeScalar(pinType);
 }
@@ -60,8 +55,7 @@ PinType MixNodeTraits::getOutputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
-	const PinType* inputPinTypes
-) const
+	const PinType* inputPinTypes) const
 {
 	if (is_a< MixIn >(node))
 	{
@@ -85,8 +79,7 @@ PinType MixNodeTraits::getInputPinType(
 	const Node* node,
 	const InputPin* inputPin,
 	const PinType* inputPinTypes,
-	const PinType* outputPinTypes
-) const
+	const PinType* outputPinTypes) const
 {
 	if (is_a< MixIn >(node))
 		return PinType::Scalar1;
@@ -113,8 +106,7 @@ PinType MixNodeTraits::getInputPinType(
 int32_t MixNodeTraits::getInputPinGroup(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
-	const InputPin* inputPin
-) const
+	const InputPin* inputPin) const
 {
 	return getInputPinIndex(node, inputPin);
 }
@@ -124,50 +116,39 @@ bool MixNodeTraits::evaluatePartial(
 	const Node* node,
 	const OutputPin* nodeOutputPin,
 	const Constant* inputConstants,
-	Constant& outputConstant
-) const
+	Constant& outputConstant) const
 {
 	if (is_a< MixIn >(node))
 	{
 		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-		{
 			if (inputConstants[i].isConst(0))
 				outputConstant.setValue(i, inputConstants[i].getValue(0));
 			else
 				outputConstant.setVariant(i);
-		}
 		return true;
 	}
 	else if (is_a< MixOut >(node))
 	{
 		if (nodeOutputPin->getName() == L"X")
-		{
 			if (inputConstants[0].isConstX())
 				outputConstant.setValue(0, inputConstants[0].x());
 			else
 				outputConstant.setVariant(0);
-		}
 		else if (nodeOutputPin->getName() == L"Y")
-		{
 			if (inputConstants[0].isConstY())
 				outputConstant.setValue(1, inputConstants[0].y());
 			else
 				outputConstant.setVariant(1);
-		}
 		else if (nodeOutputPin->getName() == L"Z")
-		{
 			if (inputConstants[0].isConstZ())
 				outputConstant.setValue(2, inputConstants[0].z());
 			else
 				outputConstant.setVariant(2);
-		}
 		else if (nodeOutputPin->getName() == L"W")
-		{
 			if (inputConstants[0].isConstW())
 				outputConstant.setValue(3, inputConstants[0].w());
 			else
 				outputConstant.setVariant(3);
-		}
 		else
 			return false;
 
@@ -182,8 +163,7 @@ bool MixNodeTraits::evaluatePartial(
 	const OutputPin* nodeOutputPin,
 	const OutputPin** inputOutputPins,
 	const Constant* inputConstants,
-	const OutputPin*& foldOutputPin
-) const
+	const OutputPin*& foldOutputPin) const
 {
 	return false;
 }
@@ -192,11 +172,9 @@ PinOrder MixNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrder* inputPinOrders
-) const
+	const PinOrder* inputPinOrders) const
 {
 	return pinOrderMax(inputPinOrders, node->getInputPinCount());
 }
 
-	}
 }

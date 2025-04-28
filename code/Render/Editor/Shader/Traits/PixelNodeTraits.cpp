@@ -1,35 +1,32 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Traits/PixelNodeTraits.h"
 
-namespace traktor
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+
+namespace traktor::render
 {
-	namespace render
-	{
-		namespace
-		{
+namespace
+{
 
 int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 {
 	const int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
-	{
 		if (node->getInputPin(i) == inputPin)
 			return i;
-	}
 	T_FATAL_ERROR;
 	return -1;
 }
 
-		}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelNodeTraits", 0, PixelNodeTraits, INodeTraits)
 
@@ -47,8 +44,7 @@ bool PixelNodeTraits::isInputTypeValid(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const InputPin* inputPin,
-	const PinType pinType
-) const
+	const PinType pinType) const
 {
 	if (inputPin->getName() == L"State")
 		return isPinTypeState(pinType);
@@ -60,8 +56,7 @@ PinType PixelNodeTraits::getOutputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
-	const PinType* inputPinTypes
-) const
+	const PinType* inputPinTypes) const
 {
 	return PinType::Void;
 }
@@ -71,8 +66,7 @@ PinType PixelNodeTraits::getInputPinType(
 	const Node* node,
 	const InputPin* inputPin,
 	const PinType* inputPinTypes,
-	const PinType* outputPinTypes
-) const
+	const PinType* outputPinTypes) const
 {
 	const PixelOutput* pixelOutputNode = mandatory_non_null_type_cast< const PixelOutput* >(node);
 	RenderState rs = pixelOutputNode->getRenderState();
@@ -105,8 +99,7 @@ PinType PixelNodeTraits::getInputPinType(
 int32_t PixelNodeTraits::getInputPinGroup(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
-	const InputPin* inputPin
-) const
+	const InputPin* inputPin) const
 {
 	return getInputPinIndex(node, inputPin);
 }
@@ -116,8 +109,7 @@ bool PixelNodeTraits::evaluatePartial(
 	const Node* node,
 	const OutputPin* nodeOutputPin,
 	const Constant* inputConstants,
-	Constant& outputConstant
-) const
+	Constant& outputConstant) const
 {
 	return false;
 }
@@ -128,8 +120,7 @@ bool PixelNodeTraits::evaluatePartial(
 	const OutputPin* nodeOutputPin,
 	const OutputPin** inputOutputPins,
 	const Constant* inputConstants,
-	const OutputPin*& foldOutputPin
-) const
+	const OutputPin*& foldOutputPin) const
 {
 	return false;
 }
@@ -138,11 +129,9 @@ PinOrder PixelNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrder* inputPinOrders
-) const
+	const PinOrder* inputPinOrders) const
 {
 	return PinOrder::Constant;
 }
 
-	}
 }

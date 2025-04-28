@@ -1,30 +1,28 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
-#include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Traits/SwitchNodeTraits.h"
 
-namespace traktor
+#include "Render/Editor/Shader/Nodes.h"
+
+#include <algorithm>
+
+namespace traktor::render
 {
-	namespace render
-	{
-		namespace
-		{
+namespace
+{
 
 int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 {
 	int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
-	{
 		if (node->getInputPin(i) == inputPin)
 			return i;
-	}
 	T_FATAL_ERROR;
 	return -1;
 }
@@ -33,15 +31,13 @@ int32_t getOutputPinIndex(const Node* node, const OutputPin* outputPin)
 {
 	int32_t outputPinCount = node->getOutputPinCount();
 	for (int32_t i = 0; i < outputPinCount; ++i)
-	{
 		if (node->getOutputPin(i) == outputPin)
 			return i;
-	}
 	T_FATAL_ERROR;
 	return -1;
 }
 
-		}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SwitchNodeTraits", 0, SwitchNodeTraits, INodeTraits)
 
@@ -59,8 +55,7 @@ bool SwitchNodeTraits::isInputTypeValid(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const InputPin* inputPin,
-	const PinType pinType
-) const
+	const PinType pinType) const
 {
 	return true;
 }
@@ -69,8 +64,7 @@ PinType SwitchNodeTraits::getOutputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
-	const PinType* inputPinTypes
-) const
+	const PinType* inputPinTypes) const
 {
 	PinType outputType = PinType::Void;
 
@@ -78,8 +72,7 @@ PinType SwitchNodeTraits::getOutputPinType(
 	for (uint32_t i = 1; i < inputPinCount; ++i)
 		outputType = std::max< PinType >(
 			outputType,
-			inputPinTypes[i]
-		);
+			inputPinTypes[i]);
 
 	return outputType;
 }
@@ -89,8 +82,7 @@ PinType SwitchNodeTraits::getInputPinType(
 	const Node* node,
 	const InputPin* inputPin,
 	const PinType* inputPinTypes,
-	const PinType* outputPinTypes
-) const
+	const PinType* outputPinTypes) const
 {
 	const Switch* switchNode = mandatory_non_null_type_cast< const Switch* >(node);
 	const int32_t index = getInputPinIndex(switchNode, inputPin);
@@ -109,8 +101,7 @@ PinType SwitchNodeTraits::getInputPinType(
 int32_t SwitchNodeTraits::getInputPinGroup(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
-	const InputPin* inputPin
-) const
+	const InputPin* inputPin) const
 {
 	return getInputPinIndex(node, inputPin);
 }
@@ -120,8 +111,7 @@ bool SwitchNodeTraits::evaluatePartial(
 	const Node* node,
 	const OutputPin* nodeOutputPin,
 	const Constant* inputConstants,
-	Constant& outputConstant
-) const
+	Constant& outputConstant) const
 {
 	const Switch* switchNode = mandatory_non_null_type_cast< const Switch* >(node);
 	const int32_t width = switchNode->getWidth();
@@ -161,8 +151,7 @@ bool SwitchNodeTraits::evaluatePartial(
 	const OutputPin* nodeOutputPin,
 	const OutputPin** inputOutputPins,
 	const Constant* inputConstants,
-	const OutputPin*& foldOutputPin
-) const
+	const OutputPin*& foldOutputPin) const
 {
 	const Switch* switchNode = mandatory_non_null_type_cast< const Switch* >(node);
 	const int32_t width = switchNode->getWidth();
@@ -200,11 +189,9 @@ PinOrder SwitchNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrder* inputPinOrders
-) const
+	const PinOrder* inputPinOrders) const
 {
 	return pinOrderConstantOrNonLinear(inputPinOrders, node->getInputPinCount());
 }
 
-	}
 }

@@ -1,24 +1,23 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/ColorNodeFacade.h"
-#include "Ui/Application.h"
-#include "Ui/Graph/GraphControl.h"
-#include "Ui/Graph/Node.h"
-#include "Ui/Graph/InputNodeShape.h"
-#include "Ui/ColorPicker/ColorDialog.h"
-#include "I18N/Text.h"
 
-namespace traktor
+#include "I18N/Text.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Ui/Application.h"
+#include "Ui/ColorPicker/ColorDialog.h"
+#include "Ui/Graph/GraphControl.h"
+#include "Ui/Graph/InputNodeShape.h"
+#include "Ui/Graph/Node.h"
+
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ColorNodeFacade", ColorNodeFacade, INodeFacade)
 
@@ -29,8 +28,7 @@ ColorNodeFacade::ColorNodeFacade()
 
 Ref< Node > ColorNodeFacade::createShaderNode(
 	const TypeInfo* nodeType,
-	editor::IEditor* editor
-)
+	editor::IEditor* editor)
 {
 	return new Color();
 }
@@ -39,18 +37,15 @@ Ref< ui::Node > ColorNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	Ref< ui::Node > editorNode = graphControl->createNode(
 		i18n::Text(L"SHADERGRAPH_NODE_COLOR"),
 		shaderNode->getInformation(),
 		ui::UnitPoint(
 			ui::Unit(shaderNode->getPosition().first),
-			ui::Unit(shaderNode->getPosition().second)
-		),
-		m_nodeShape
-	);
+			ui::Unit(shaderNode->getPosition().second)),
+		m_nodeShape);
 
 	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
 	{
@@ -59,8 +54,7 @@ Ref< ui::Node > ColorNodeFacade::createEditorNode(
 			inputPin->getName(),
 			inputPin->getId(),
 			!inputPin->isOptional(),
-			false
-		);
+			false);
 	}
 
 	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
@@ -68,8 +62,7 @@ Ref< ui::Node > ColorNodeFacade::createEditorNode(
 		const OutputPin* outputPin = shaderNode->getOutputPin(j);
 		editorNode->createOutputPin(
 			outputPin->getName(),
-			outputPin->getId()
-		);
+			outputPin->getId());
 	}
 
 	editorNode->setComment(shaderNode->getComment());
@@ -82,8 +75,7 @@ void ColorNodeFacade::editShaderNode(
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	Ref< Color > colorNode = checked_type_cast< Color* >(shaderNode);
 
@@ -92,8 +84,7 @@ void ColorNodeFacade::editShaderNode(
 		graphControl,
 		i18n::Text(L"COLOR_DIALOG_TEXT"),
 		ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha | ui::ColorDialog::WsHDR,
-		colorNode->getColor()
-	);
+		colorNode->getColor());
 	if (colorDialog.showModal() == ui::DialogResult::Ok)
 		colorNode->setColor(colorDialog.getColor());
 	colorDialog.destroy();
@@ -104,8 +95,7 @@ void ColorNodeFacade::refreshEditorNode(
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	editorNode->setComment(shaderNode->getComment());
 	editorNode->setInfo(shaderNode->getInformation());
@@ -113,11 +103,9 @@ void ColorNodeFacade::refreshEditorNode(
 
 void ColorNodeFacade::setValidationIndicator(
 	ui::Node* editorNode,
-	bool validationSucceeded
-)
+	bool validationSucceeded)
 {
 	editorNode->setState(validationSucceeded ? 0 : 1);
 }
 
-	}
 }

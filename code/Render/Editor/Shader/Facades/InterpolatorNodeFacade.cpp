@@ -1,24 +1,23 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Editor/InputPin.h"
-#include "Render/Editor/OutputPin.h"
-#include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/Facades/InterpolatorNodeFacade.h"
+
+#include "Render/Editor/InputPin.h"
+#include "Render/Editor/Node.h"
+#include "Render/Editor/OutputPin.h"
 #include "Ui/Application.h"
 #include "Ui/Graph/GraphControl.h"
-#include "Ui/Graph/Node.h"
 #include "Ui/Graph/IpolNodeShape.h"
+#include "Ui/Graph/Node.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.InterpolatorNodeFacade", InterpolatorNodeFacade, INodeFacade)
 
@@ -29,8 +28,7 @@ InterpolatorNodeFacade::InterpolatorNodeFacade()
 
 Ref< Node > InterpolatorNodeFacade::createShaderNode(
 	const TypeInfo* nodeType,
-	editor::IEditor* editor
-)
+	editor::IEditor* editor)
 {
 	return checked_type_cast< Node* >(nodeType->createInstance());
 }
@@ -39,18 +37,15 @@ Ref< ui::Node > InterpolatorNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	Ref< ui::Node > editorNode = graphControl->createNode(
 		L"",
 		L"",
 		ui::UnitPoint(
 			ui::Unit(shaderNode->getPosition().first),
-			ui::Unit(shaderNode->getPosition().second)
-		),
-		m_nodeShape
-	);
+			ui::Unit(shaderNode->getPosition().second)),
+		m_nodeShape);
 
 	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
 	{
@@ -59,8 +54,7 @@ Ref< ui::Node > InterpolatorNodeFacade::createEditorNode(
 			inputPin->getName(),
 			inputPin->getId(),
 			!inputPin->isOptional(),
-			false
-		);
+			false);
 	}
 
 	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
@@ -68,8 +62,7 @@ Ref< ui::Node > InterpolatorNodeFacade::createEditorNode(
 		const OutputPin* outputPin = shaderNode->getOutputPin(j);
 		editorNode->createOutputPin(
 			outputPin->getName(),
-			outputPin->getId()
-		);
+			outputPin->getId());
 	}
 
 	editorNode->setComment(shaderNode->getComment());
@@ -82,8 +75,7 @@ void InterpolatorNodeFacade::editShaderNode(
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 }
 
@@ -92,8 +84,7 @@ void InterpolatorNodeFacade::refreshEditorNode(
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	editorNode->setComment(shaderNode->getComment());
 	editorNode->setInfo(shaderNode->getInformation());
@@ -101,11 +92,9 @@ void InterpolatorNodeFacade::refreshEditorNode(
 
 void InterpolatorNodeFacade::setValidationIndicator(
 	ui::Node* editorNode,
-	bool validationSucceeded
-)
+	bool validationSucceeded)
 {
 	editorNode->setState(validationSucceeded ? 0 : 1);
 }
 
-	}
 }
