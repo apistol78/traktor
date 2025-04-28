@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,14 +9,15 @@
 #if defined(_WIN32) || defined(__LINUX__)
 #	include <renderdoc_app.h>
 #endif
+#include "Render/Vrfy/RenderSystemVrfy.h"
+
 #include "Core/Library/Library.h"
 #include "Render/VertexElement.h"
 #include "Render/Vrfy/AccelerationStructureVrfy.h"
 #include "Render/Vrfy/BufferVrfy.h"
 #include "Render/Vrfy/Error.h"
-#include "Render/Vrfy/ProgramVrfy.h"
 #include "Render/Vrfy/ProgramResourceVrfy.h"
-#include "Render/Vrfy/RenderSystemVrfy.h"
+#include "Render/Vrfy/ProgramVrfy.h"
 #include "Render/Vrfy/RenderTargetSetVrfy.h"
 #include "Render/Vrfy/RenderViewVrfy.h"
 #include "Render/Vrfy/ResourceTracker.h"
@@ -29,7 +30,7 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVrfy", 0, RenderSystemVrfy, IRenderSystem)
 
 RenderSystemVrfy::RenderSystemVrfy(bool useRenderDoc)
-:	m_useRenderDoc(useRenderDoc)
+	: m_useRenderDoc(useRenderDoc)
 {
 }
 
@@ -42,17 +43,17 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	// Try to load RenderDoc capture.
 	if (m_useRenderDoc)
 	{
-#if defined(_WIN32)
+#	if defined(_WIN32)
 		const std::wstring renderDocDLL = Path(L"renderdoc.dll").getPathNameOS();
-#else
+#	else
 		const std::wstring renderDocDLL = Path(L"renderdoc").getPathNameOS();
-#endif
+#	endif
 
 		m_libRenderDoc = new Library();
 		if (m_libRenderDoc->open(renderDocDLL.c_str()))
 		{
 			pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)m_libRenderDoc->find(L"RENDERDOC_GetAPI");
-			const int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_6_0, (void **)&m_apiRenderDoc);
+			const int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_6_0, (void**)&m_apiRenderDoc);
 			if (ret != 1)
 				m_apiRenderDoc = nullptr;
 		}
@@ -144,14 +145,12 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 	if (m_apiRenderDoc)
 		m_apiRenderDoc->SetActiveWindow(
 			m_renderSystem->getInternalHandle(),
-			desc.syswin.hWnd
-		);
+			desc.syswin.hWnd);
 #elif defined(__LINUX__)
 	if (m_apiRenderDoc)
 		m_apiRenderDoc->SetActiveWindow(
 			m_renderSystem->getInternalHandle(),
-			(RENDERDOC_WindowHandle)desc.syswin.window
-		);
+			(RENDERDOC_WindowHandle)desc.syswin.window);
 #endif
 
 	return new RenderViewVrfy(desc, m_renderSystem, renderView);
@@ -174,7 +173,7 @@ Ref< const IVertexLayout > RenderSystemVrfy::createVertexLayout(const AlignedVec
 {
 	T_CAPTURE_TRACE(L"createBuffer");
 	T_CAPTURE_ASSERT(!vertexElements.empty(), L"Invalid vertex layout.");
-	
+
 	Ref< const IVertexLayout > vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
 	if (!vertexLayout)
 		return nullptr;
@@ -191,12 +190,8 @@ Ref< ITexture > RenderSystemVrfy::createSimpleTexture(const SimpleTextureCreateD
 	T_CAPTURE_ASSERT(desc.mipCount < 16, L"Too many mips.");
 
 	if (desc.immutable)
-	{
 		for (int32_t i = 0; i < desc.mipCount; ++i)
-		{
 			T_CAPTURE_ASSERT(desc.initialData[i].data, L"No initial data of immutable texture.");
-		}
-	}
 
 	Ref< ITexture > texture = m_renderSystem->createSimpleTexture(desc, tag);
 	if (!texture)
@@ -213,12 +208,8 @@ Ref< ITexture > RenderSystemVrfy::createCubeTexture(const CubeTextureCreateDesc&
 	T_CAPTURE_ASSERT(desc.mipCount < 16, L"Too many mips.");
 
 	if (desc.immutable)
-	{
 		for (int32_t i = 0; i < desc.mipCount * 6; ++i)
-		{
 			T_CAPTURE_ASSERT(desc.initialData[i].data, L"No initial data of immutable texture.");
-		}
-	}
 
 	Ref< ITexture > texture = m_renderSystem->createCubeTexture(desc, tag);
 	if (!texture)
@@ -237,12 +228,8 @@ Ref< ITexture > RenderSystemVrfy::createVolumeTexture(const VolumeTextureCreateD
 	T_CAPTURE_ASSERT(desc.mipCount < 16, L"Too many mips.");
 
 	if (desc.immutable)
-	{
 		for (int32_t i = 0; i < desc.mipCount; ++i)
-		{
 			T_CAPTURE_ASSERT(desc.initialData[i].data, L"No initial data of immutable texture.");
-		}
-	}
 
 	Ref< ITexture > texture = m_renderSystem->createVolumeTexture(desc, tag);
 	if (!texture)
@@ -265,7 +252,7 @@ Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTarg
 		T_CAPTURE_ASSERT(!desc.usingPrimaryDepthStencil, L"Invalid values in create desc.");
 		T_CAPTURE_ASSERT(sharedDepthStencil == nullptr, L"Invalid values in create desc.");
 	}
-	
+
 	if (sharedDepthStencil)
 	{
 		T_CAPTURE_ASSERT(!desc.createDepthStencil, L"Invalid values in create desc.");
@@ -299,7 +286,7 @@ Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTarg
 	}
 	else
 		renderTargetSet = m_renderSystem->createRenderTargetSet(desc, nullptr, tag);
-	
+
 	if (!renderTargetSet)
 		return nullptr;
 
@@ -309,7 +296,7 @@ Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTarg
 Ref< IAccelerationStructure > RenderSystemVrfy::createTopLevelAccelerationStructure(uint32_t numInstances)
 {
 	T_CAPTURE_TRACE(L"createTopLevelAccelerationStructure");
-	
+
 	Ref< IAccelerationStructure > as = m_renderSystem->createTopLevelAccelerationStructure(numInstances);
 	if (!as)
 		return nullptr;
@@ -317,7 +304,7 @@ Ref< IAccelerationStructure > RenderSystemVrfy::createTopLevelAccelerationStruct
 	return new AccelerationStructureVrfy(as);
 }
 
-Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
+Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives, bool dynamic)
 {
 	T_CAPTURE_TRACE(L"createAccelerationStructure");
 
@@ -325,7 +312,7 @@ Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(cons
 	const BufferVrfy* ib = mandatory_non_null_type_cast< const BufferVrfy* >(indexBuffer);
 	const VertexLayoutVrfy* vl = mandatory_non_null_type_cast< const VertexLayoutVrfy* >(vertexLayout);
 
-	Ref< IAccelerationStructure > as = m_renderSystem->createAccelerationStructure(vb->getWrappedBuffer(), vl->getWrappedVertexLayout(), ib->getWrappedBuffer(), indexType, primitives);
+	Ref< IAccelerationStructure > as = m_renderSystem->createAccelerationStructure(vb->getWrappedBuffer(), vl->getWrappedVertexLayout(), ib->getWrappedBuffer(), indexType, primitives, dynamic);
 	if (!as)
 		return nullptr;
 

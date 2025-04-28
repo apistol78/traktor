@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Ref.h"
 #include "Render/IAccelerationStructure.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
@@ -37,7 +37,7 @@ public:
 
 	static Ref< AccelerationStructureVk > createTopLevel(Context* context, uint32_t numInstances, uint32_t inFlightCount);
 
-	static Ref< AccelerationStructureVk > createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives);
+	static Ref< AccelerationStructureVk > createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives, bool dynamic);
 
 	virtual void destroy() override final;
 
@@ -54,8 +54,9 @@ protected:
 	Ref< ApiBuffer > m_scratchBuffer;
 	VkAccelerationStructureKHR m_as = 0;
 	uint32_t m_scratchAlignment = 0;
+	bool m_dynamic = false;
 
-	explicit AccelerationStructureVk(Context* context);
+	explicit AccelerationStructureVk(Context* context, bool dynamic);
 };
 
 }

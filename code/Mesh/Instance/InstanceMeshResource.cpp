@@ -106,7 +106,8 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 			renderMesh->getVertexLayout(),
 			renderMesh->getIndexBuffer(),
 			renderMesh->getIndexType(),
-			primitives);
+			primitives,
+			false);
 		if (!instanceMesh->m_rtAccelerationStructure)
 		{
 			log::error << L"Instance mesh create failed; unable to create RT acceleration structure." << Endl;

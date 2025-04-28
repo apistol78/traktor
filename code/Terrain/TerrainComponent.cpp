@@ -974,7 +974,7 @@ bool TerrainComponent::createRayTracingPatches()
 			m_rtParts[patchId].perVertexData = perVertexData;
 
 			// Create bottom level acceleration structure.
-			m_rtParts[patchId].blas = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_indexBuffer, render::IndexType::UInt32, { m_primitives[1] });
+			m_rtParts[patchId].blas = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_indexBuffer, render::IndexType::UInt32, { m_primitives[1] }, false);
 			if (!m_rtParts[patchId].blas)
 				return false;
 

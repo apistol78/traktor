@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Vrfy/RenderViewVrfy.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
@@ -19,7 +21,6 @@
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ProgramVrfy.h"
 #include "Render/Vrfy/RenderTargetSetVrfy.h"
-#include "Render/Vrfy/RenderViewVrfy.h"
 #include "Render/Vrfy/TextureVrfy.h"
 #include "Render/Vrfy/VertexLayoutVrfy.h"
 
@@ -29,9 +30,9 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVrfy", RenderViewVrfy, IRenderView)
 
 RenderViewVrfy::RenderViewVrfy(const RenderViewDesc& desc, IRenderSystem* renderSystem, IRenderView* renderView)
-:	m_desc(desc)
-,	m_renderSystem(renderSystem)
-,	m_renderView(renderView)
+	: m_desc(desc)
+	, m_renderSystem(renderSystem)
+	, m_renderView(renderView)
 {
 }
 
@@ -203,16 +204,13 @@ bool RenderViewVrfy::beginPass(IRenderTargetSet* renderTargetSet, const Clear* c
 	RenderTargetSetVrfy* rtsc = mandatory_non_null_type_cast< RenderTargetSetVrfy* >(renderTargetSet);
 
 	if (rtsc->usingPrimaryDepthStencil())
-	{
 		T_CAPTURE_ASSERT(rtsc->getMultiSample() == m_desc.multiSample, L"Trying to render to RenderTargetSet with incompatible multisample configuration.");
-	}
 
 	if (!m_renderView->beginPass(
-		rtsc->getRenderTargetSet(),
-		clear,
-		load,
-		store
-	))
+			rtsc->getRenderTargetSet(),
+			clear,
+			load,
+			store))
 		return false;
 
 	m_insidePass = true;
@@ -229,12 +227,11 @@ bool RenderViewVrfy::beginPass(IRenderTargetSet* renderTargetSet, int32_t render
 	T_CAPTURE_ASSERT(rtsc->haveColorTexture(renderTarget), L"No such render target.");
 
 	if (!m_renderView->beginPass(
-		rtsc->getRenderTargetSet(),
-		renderTarget,
-		clear,
-		load,
-		store
-	))
+			rtsc->getRenderTargetSet(),
+			renderTarget,
+			clear,
+			load,
+			store))
 		return false;
 
 	m_insidePass = true;
@@ -277,7 +274,7 @@ void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 			return;
 
 		const BufferVrfy* ib = ibv->getBuffer();
-		const uint32_t maxVertexCount =  ib->getBufferSize() / ((indexType == IndexType::UInt16) ? 2 : 4);
+		const uint32_t maxVertexCount = ib->getBufferSize() / ((indexType == IndexType::UInt16) ? 2 : 4);
 
 		T_CAPTURE_ASSERT(primitives.offset + vertexCount <= maxVertexCount, L"Trying to draw more primitives than size of index buffer.");
 	}
@@ -458,11 +455,9 @@ void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelera
 
 		const BufferVrfy* vd = dynamic_type_cast< const BufferVrfy* >(instance.perVertexData);
 
-		unwrappedInstances.push_back({
-			blas->getWrappedAS(),
+		unwrappedInstances.push_back({ blas->getWrappedAS(),
 			(vd != nullptr) ? vd->getWrappedBuffer() : nullptr,
-			instance.transform
-		});
+			instance.transform });
 	}
 
 	m_renderView->writeAccelerationStructure(as->getWrappedAS(), unwrappedInstances);

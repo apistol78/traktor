@@ -201,7 +201,8 @@ Ref< render::IAccelerationStructure > SkinnedMesh::createAccelerationStructure(r
 		m_rtVertexLayout,
 		m_mesh->getIndexBuffer(),
 		m_mesh->getIndexType(),
-		primitives);
+		primitives,
+		true);
 }
 
 const render::Buffer* SkinnedMesh::getRTVertexAttributes() const

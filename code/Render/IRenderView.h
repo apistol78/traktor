@@ -8,9 +8,9 @@
  */
 #pragma once
 
+#include "Core/Math/Color4f.h"
 #include "Core/Object.h"
 #include "Core/Platform.h"
-#include "Core/Math/Color4f.h"
 #include "Render/IAccelerationStructure.h"
 #include "Render/Types.h"
 
@@ -36,9 +36,9 @@ class IProgram;
 
 #if defined(T_USE_RENDER_MARKERS)
 #	define T_RENDER_PUSH_MARKER(renderView, marker) \
-	(renderView)->pushMarker(marker)
+		(renderView)->pushMarker(marker)
 #	define T_RENDER_POP_MARKER(renderView) \
-	(renderView)->popMarker()
+		(renderView)->popMarker()
 #else
 #	define T_RENDER_PUSH_MARKER(renderView, marker)
 #	define T_RENDER_POP_MARKER(renderView)
@@ -94,7 +94,7 @@ public:
 	virtual bool setGamma(float gamma) = 0;
 
 	virtual void setViewport(const Viewport& viewport) = 0;
-    
+
 	virtual void setScissor(const Rectangle& scissor) = 0;
 
 	virtual SystemWindow getSystemWindow() = 0;
@@ -187,7 +187,7 @@ public:
 	virtual void computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset) = 0;
 
 	/*! Enqueue a barrier.
-	 * 
+	 *
 	 * \param from From pipeline stage.
 	 * \param to To pipeline stage.
 	 * \param written Optional written to texture, memory barrier.

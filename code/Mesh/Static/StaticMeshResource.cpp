@@ -105,7 +105,8 @@ Ref< IMesh > StaticMeshResource::createMesh(
 			renderMesh->getVertexLayout(),
 			renderMesh->getIndexBuffer(),
 			renderMesh->getIndexType(),
-			primitives);
+			primitives,
+			false);
 		if (!staticMesh->m_rtAccelerationStructure)
 		{
 			log::error << L"Static mesh create failed; unable to create RT acceleration structure." << Endl;

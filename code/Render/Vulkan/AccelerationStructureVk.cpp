@@ -6,33 +6,32 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Vulkan/AccelerationStructureVk.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Buffer.h"
-#include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferDynamicVk.h"
 #include "Render/Vulkan/BufferStaticVk.h"
 #include "Render/Vulkan/BufferViewVk.h"
-#include "Render/Vulkan/VertexLayoutVk.h"
 #include "Render/Vulkan/Private/ApiBuffer.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Queue.h"
+#include "Render/Vulkan/VertexLayoutVk.h"
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 uint32_t getScratchAlignment(Context* context)
 {
 	// Determine alignment requirement of scratch buffer.
-	VkPhysicalDeviceAccelerationStructurePropertiesKHR asp =
-	{
+	VkPhysicalDeviceAccelerationStructurePropertiesKHR asp = {
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_PROPERTIES_KHR
 	};
-	VkPhysicalDeviceProperties2 deviceProperties =
-	{
+	VkPhysicalDeviceProperties2 deviceProperties = {
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
 		.pNext = &asp
 	};
@@ -40,8 +39,8 @@ uint32_t getScratchAlignment(Context* context)
 	return std::max< uint32_t >(128, asp.minAccelerationStructureScratchOffsetAlignment);
 }
 
-	}
-	
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.AccelerationStructureVk", AccelerationStructureVk, IAccelerationStructure)
 
 AccelerationStructureVk::~AccelerationStructureVk()
@@ -59,30 +58,22 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 	Ref< BufferDynamicVk > instanceBuffer = new BufferDynamicVk(
 		context,
 		numInstances * sizeof(VkAccelerationStructureInstanceKHR),
-		instances
-	);
+		instances);
 	instanceBuffer->create(
 		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
-		inFlightCount
-	);
+		inFlightCount);
 
 	// Create the AS object.
-	VkAccelerationStructureGeometryDataKHR topLevelAccelerationStructureGeometryData =
-	{
-		.instances =
-		{
+	VkAccelerationStructureGeometryDataKHR topLevelAccelerationStructureGeometryData = {
+		.instances = {
 			.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_INSTANCES_DATA_KHR,
 			.pNext = nullptr,
 			.arrayOfPointers = VK_FALSE,
-			.data =
-			{
-				.deviceAddress = static_cast< const BufferViewVk* >(instanceBuffer->getBufferView())->getDeviceAddress(context)
-			}
-		}
+			.data = {
+				.deviceAddress = static_cast< const BufferViewVk* >(instanceBuffer->getBufferView())->getDeviceAddress(context) } }
 	};
 
-	VkAccelerationStructureGeometryKHR topLevelAccelerationStructureGeometry =
-	{
+	VkAccelerationStructureGeometryKHR topLevelAccelerationStructureGeometry = {
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR,
 		.pNext = nullptr,
 		.geometryType = VK_GEOMETRY_TYPE_INSTANCES_KHR,
@@ -90,8 +81,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 		.flags = VK_GEOMETRY_OPAQUE_BIT_KHR
 	};
 
-	VkAccelerationStructureBuildGeometryInfoKHR topLevelAccelerationStructureBuildGeometryInfo =
-	{
+	VkAccelerationStructureBuildGeometryInfoKHR topLevelAccelerationStructureBuildGeometryInfo = {
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
 		.pNext = nullptr,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
@@ -102,14 +92,11 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 		.geometryCount = 1,
 		.pGeometries = &topLevelAccelerationStructureGeometry,
 		.ppGeometries = NULL,
-		.scratchData =
-		{
-			.deviceAddress = 0
-		}
+		.scratchData = {
+			.deviceAddress = 0 }
 	};
 
-	VkAccelerationStructureBuildSizesInfoKHR topLevelAccelerationStructureBuildSizesInfo =
-	{
+	VkAccelerationStructureBuildSizesInfoKHR topLevelAccelerationStructureBuildSizesInfo = {
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR,
 		.pNext = nullptr,
 		.accelerationStructureSize = 0,
@@ -123,17 +110,15 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 		VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
 		&topLevelAccelerationStructureBuildGeometryInfo,
 		topLevelMaxPrimitiveCountList.ptr(),
-		&topLevelAccelerationStructureBuildSizesInfo
-	);
+		&topLevelAccelerationStructureBuildSizesInfo);
 
 	// Create buffer to hold AS hierarchical data.
 	Ref< ApiBuffer > hierarchyBuffer = new ApiBuffer(context);
 	if (!hierarchyBuffer->create(
-		topLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,
-		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR,
-		false,
-		true
-	))
+			topLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,
+			VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR,
+			false,
+			true))
 	{
 		safeDestroy(instanceBuffer);
 		return nullptr;
@@ -142,11 +127,10 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 	// Create scratch buffer used when building the hierarchy.
 	Ref< ApiBuffer > scratchBuffer = new ApiBuffer(context);
 	if (!scratchBuffer->create(
-		topLevelAccelerationStructureBuildSizesInfo.buildScratchSize + scratchAlignment,
-		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
-		false,
-		true
-	))
+			topLevelAccelerationStructureBuildSizesInfo.buildScratchSize + scratchAlignment,
+			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+			false,
+			true))
 	{
 		safeDestroy(instanceBuffer);
 		safeDestroy(hierarchyBuffer);
@@ -154,8 +138,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 	}
 
 	// Create AS object.
-	VkAccelerationStructureCreateInfoKHR topLevelAccelerationStructureCreateInfo =
-	{
+	VkAccelerationStructureCreateInfoKHR topLevelAccelerationStructureCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
 		.pNext = nullptr,
 		.createFlags = 0,
@@ -171,8 +154,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 		context->getLogicalDevice(),
 		&topLevelAccelerationStructureCreateInfo,
 		nullptr,
-		&accelerationStructure
-	);
+		&accelerationStructure);
 	if (result != VK_SUCCESS)
 	{
 		safeDestroy(instanceBuffer);
@@ -181,7 +163,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 		return nullptr;
 	}
 
-	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context);
+	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context, false);
 	as->m_hierarchyBuffer = hierarchyBuffer;
 	as->m_instanceBuffer = instanceBuffer;
 	as->m_scratchBuffer = scratchBuffer;
@@ -190,20 +172,21 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 	return as;
 }
 
-Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
+Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives, bool dynamic)
 {
 	auto commandBuffer = context->getGraphicsQueue()->acquireCommandBuffer(L"AccelerationStructureVk::createBottomLevel");
 
-	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context);
+	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context, dynamic);
 	as->m_scratchAlignment = getScratchAlignment(context);
 	as->writeGeometry(commandBuffer, vertexBuffer->getBufferView(), vertexLayout, indexBuffer->getBufferView(), indexType, primitives);
 
 	commandBuffer->submit({}, {}, VK_NULL_HANDLE);
 
 	context->addDeferredCleanup(
-		[=](Context* cx) { commandBuffer->wait(); },
-		Context::CleanupNone
-	);
+		[=](Context* cx) {
+		commandBuffer->wait();
+		},
+		Context::CleanupNone);
 
 	return as;
 }
@@ -213,9 +196,10 @@ void AccelerationStructureVk::destroy()
 	if (m_context != nullptr)
 	{
 		m_context->addDeferredCleanup(
-			[as = m_as](Context* cx) { vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr); },
-			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets
-		);
+			[as = m_as](Context* cx) {
+			vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr);
+			},
+			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
 		m_as = 0;
 	}
 	safeDestroy(m_instanceBuffer);
@@ -232,10 +216,9 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 
 	for (const auto& instance : instances)
 	{
-		const BufferStaticVk* vd = checked_type_cast< const BufferStaticVk* >( instance.perVertexData );
+		const BufferStaticVk* vd = checked_type_cast< const BufferStaticVk* >(instance.perVertexData);
 
-		const VkAccelerationStructureDeviceAddressInfoKHR asai =
-		{
+		const VkAccelerationStructureDeviceAddressInfoKHR asai = {
 			.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR,
 			.pNext = nullptr,
 			.accelerationStructure = mandatory_non_null_type_cast< const AccelerationStructureVk* >(instance.blas)->getVkAccelerationStructureKHR()
@@ -244,17 +227,12 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 		const VkDeviceAddress deviceAddress = vkGetAccelerationStructureDeviceAddressKHR(m_context->getLogicalDevice(), &asai);
 
 		const auto& M = instance.transform;
-		*ptr++ =
-		{
-			.transform =
-			{
-				.matrix =
-				{
+		*ptr++ = {
+			.transform = {
+				.matrix = {
 					{ M(0, 0), M(0, 1), M(0, 2), M(0, 3) },
 					{ M(1, 0), M(1, 1), M(1, 2), M(1, 3) },
-					{ M(2, 0), M(2, 1), M(2, 2), M(2, 3) }
-				}
-			},
+					{ M(2, 0), M(2, 1), M(2, 2), M(2, 3) } } },
 			.instanceCustomIndex = (vd != nullptr) ? vd->getApiBuffer()->makeResourceIndex() : ~0U,
 			.mask = 0xff,
 			.instanceShaderBindingTableRecordOffset = 0,
@@ -265,22 +243,16 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 
 	m_instanceBuffer->unlock();
 
-	const VkAccelerationStructureGeometryDataKHR topLevelAccelerationStructureGeometryData =
-	{
-		.instances =
-		{
+	const VkAccelerationStructureGeometryDataKHR topLevelAccelerationStructureGeometryData = {
+		.instances = {
 			.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_INSTANCES_DATA_KHR,
 			.pNext = nullptr,
 			.arrayOfPointers = VK_FALSE,
-			.data =
-			{
-				.deviceAddress = static_cast< const BufferViewVk* >(m_instanceBuffer->getBufferView())->getDeviceAddress(m_context)
-			}
-		}
+			.data = {
+				.deviceAddress = static_cast< const BufferViewVk* >(m_instanceBuffer->getBufferView())->getDeviceAddress(m_context) } }
 	};
 
-	const VkAccelerationStructureGeometryKHR topLevelAccelerationStructureGeometry =
-	{
+	const VkAccelerationStructureGeometryKHR topLevelAccelerationStructureGeometry = {
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR,
 		.pNext = nullptr,
 		.geometryType = VK_GEOMETRY_TYPE_INSTANCES_KHR,
@@ -288,8 +260,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 		.flags = VK_GEOMETRY_OPAQUE_BIT_KHR
 	};
 
-	const VkAccelerationStructureBuildGeometryInfoKHR topLevelAccelerationStructureBuildGeometryInfo =
-	{
+	const VkAccelerationStructureBuildGeometryInfoKHR topLevelAccelerationStructureBuildGeometryInfo = {
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
 		.pNext = nullptr,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
@@ -300,14 +271,11 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 		.geometryCount = 1,
 		.pGeometries = &topLevelAccelerationStructureGeometry,
 		.ppGeometries = NULL,
-		.scratchData =
-		{
-			.deviceAddress = alignUp(m_scratchBuffer->getDeviceAddress(), m_scratchAlignment)
-		}
+		.scratchData = {
+			.deviceAddress = alignUp(m_scratchBuffer->getDeviceAddress(), m_scratchAlignment) }
 	};
 
-	const VkAccelerationStructureBuildRangeInfoKHR topLevelAccelerationStructureBuildRangeInfo =
-	{
+	const VkAccelerationStructureBuildRangeInfoKHR topLevelAccelerationStructureBuildRangeInfo = {
 		.primitiveCount = (uint32_t)instances.size(),
 		.primitiveOffset = 0,
 		.firstVertex = 0,
@@ -319,8 +287,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 		*commandBuffer,
 		1,
 		&topLevelAccelerationStructureBuildGeometryInfo,
-		&topLevelAccelerationStructureBuildRangeInfos
-	);
+		&topLevelAccelerationStructureBuildRangeInfos);
 
 	return true;
 }
@@ -340,33 +307,21 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 	const BufferViewVk* vb = mandatory_non_null_type_cast< const BufferViewVk* >(vertexBuffer);
 	const BufferViewVk* ib = mandatory_non_null_type_cast< const BufferViewVk* >(indexBuffer);
 
-	const VkAccelerationStructureGeometryDataKHR bottomLevelAccelerationStructureGeometryData =
-	{
-		.triangles =
-		{
+	const VkAccelerationStructureGeometryDataKHR bottomLevelAccelerationStructureGeometryData = {
+		.triangles = {
 			.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR,
 			.pNext = nullptr,
 			.vertexFormat = VK_FORMAT_R32G32B32_SFLOAT,
-			.vertexData =
-			{
-				.deviceAddress = vb->getDeviceAddress(m_context)
-			},
+			.vertexData = {
+				.deviceAddress = vb->getDeviceAddress(m_context) },
 			.vertexStride = vertexLayoutVk->getVkVertexInputBindingDescription().stride,
 			.maxVertex = vb->getVkBufferSize() / vertexLayoutVk->getVkVertexInputBindingDescription().stride,
 			.indexType = (indexType == IndexType::UInt32) ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16,
-			.indexData =
-			{
-				.deviceAddress = ib->getDeviceAddress(m_context)
-			},
-			.transformData =
-			{
-				.deviceAddress = 0
-			}
-		}
+			.indexData = { .deviceAddress = ib->getDeviceAddress(m_context) },
+			.transformData = { .deviceAddress = 0 } }
 	};
 
-	const VkAccelerationStructureGeometryKHR bottomLevelAccelerationStructureGeometry =
-	{
+	const VkAccelerationStructureGeometryKHR bottomLevelAccelerationStructureGeometry = {
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR,
 		.pNext = nullptr,
 		.geometryType = VK_GEOMETRY_TYPE_TRIANGLES_KHR,
@@ -374,26 +329,22 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 		.flags = VK_GEOMETRY_OPAQUE_BIT_KHR
 	};
 
-	VkAccelerationStructureBuildGeometryInfoKHR bottomLevelAccelerationStructureBuildGeometryInfo =
-	{
+	VkAccelerationStructureBuildGeometryInfoKHR bottomLevelAccelerationStructureBuildGeometryInfo = {
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
 		.pNext = nullptr,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
-		.flags = 0,
+		.flags = (VkBuildAccelerationStructureFlagsKHR)(m_dynamic ? VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR : 0),
 		.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
 		.srcAccelerationStructure = VK_NULL_HANDLE,
 		.dstAccelerationStructure = VK_NULL_HANDLE,
 		.geometryCount = 1,
 		.pGeometries = &bottomLevelAccelerationStructureGeometry,
 		.ppGeometries = nullptr,
-		.scratchData =
-		{
-			.deviceAddress = 0
-		}
+		.scratchData = {
+			.deviceAddress = 0 }
 	};
 
-	VkAccelerationStructureBuildSizesInfoKHR bottomLevelAccelerationStructureBuildSizesInfo =
-	{
+	VkAccelerationStructureBuildSizesInfoKHR bottomLevelAccelerationStructureBuildSizesInfo = {
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR,
 		.pNext = nullptr,
 		.accelerationStructureSize = 0,
@@ -408,8 +359,7 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 		VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
 		&bottomLevelAccelerationStructureBuildGeometryInfo,
 		bottomLevelMaxPrimitiveCountList.ptr(),
-		&bottomLevelAccelerationStructureBuildSizesInfo
-	);
+		&bottomLevelAccelerationStructureBuildSizesInfo);
 
 	// Re-create buffer to hold AS hierarchical data.
 	if (m_hierarchyBuffer && m_hierarchyBuffer->getSize() < bottomLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize)
@@ -418,11 +368,10 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 	{
 		m_hierarchyBuffer = new ApiBuffer(m_context);
 		if (!m_hierarchyBuffer->create(
-			bottomLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,
-			VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
-			false,
-			true
-		))
+				bottomLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,
+				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+				false,
+				true))
 			return false;
 
 		recreateAS = true;
@@ -435,11 +384,10 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 	{
 		m_scratchBuffer = new ApiBuffer(m_context);
 		if (!m_scratchBuffer->create(
-			bottomLevelAccelerationStructureBuildSizesInfo.buildScratchSize + m_scratchAlignment,
-			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
-			false,
-			true
-		))
+				bottomLevelAccelerationStructureBuildSizesInfo.buildScratchSize + m_scratchAlignment,
+				VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+				false,
+				true))
 		{
 			safeDestroy(m_hierarchyBuffer);
 			return false;
@@ -449,8 +397,7 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 	}
 
 	// Create AS object.
-	const VkAccelerationStructureCreateInfoKHR bottomLevelAccelerationStructureCreateInfo =
-	{
+	const VkAccelerationStructureCreateInfoKHR bottomLevelAccelerationStructureCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
 		.pNext = nullptr,
 		.createFlags = 0,
@@ -464,9 +411,10 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 	if (recreateAS && m_as != 0)
 	{
 		m_context->addDeferredCleanup(
-			[as = m_as](Context* cx) { vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr); },
-			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets
-		);
+			[as = m_as](Context* cx) {
+			vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr);
+			},
+			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
 		m_as = 0;
 	}
 
@@ -477,8 +425,7 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 			m_context->getLogicalDevice(),
 			&bottomLevelAccelerationStructureCreateInfo,
 			nullptr,
-			&m_as
-		);
+			&m_as);
 		if (result != VK_SUCCESS)
 			return false;
 	}
@@ -492,15 +439,13 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 	{
 		if (
 			primitive.type != PrimitiveType::Triangles ||
-			primitive.indexed == false
-		)
+			primitive.indexed == false)
 			continue;
 
-		VkAccelerationStructureBuildRangeInfoKHR& offset = buildRanges.push_back();
-		offset.firstVertex = 0;
-		offset.primitiveCount = primitive.count;
-		offset.primitiveOffset = primitive.offset * ((indexType == IndexType::UInt32) ? 4 : 2);
-		offset.transformOffset = 0;
+		buildRanges.push_back({ .primitiveCount = primitive.count,
+			.primitiveOffset = primitive.offset * ((indexType == IndexType::UInt32) ? 4 : 2),
+			.firstVertex = 0,
+			.transformOffset = 0 });
 	}
 
 	AlignedVector< VkAccelerationStructureBuildRangeInfoKHR* > buildRangePtrs;
@@ -511,14 +456,14 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 		*commandBuffer,
 		1,
 		&bottomLevelAccelerationStructureBuildGeometryInfo,
-		buildRangePtrs.ptr()
-	);
+		buildRangePtrs.ptr());
 
 	return true;
 }
 
-AccelerationStructureVk::AccelerationStructureVk(Context* context)
-:	m_context(context)
+AccelerationStructureVk::AccelerationStructureVk(Context* context, bool dynamic)
+	: m_context(context)
+	, m_dynamic(dynamic)
 {
 }
 
