@@ -40,8 +40,7 @@ public:
 	explicit SkeletonComponent(
 		const Transform& transform,
 		const resource::Proxy< Skeleton >& skeleton,
-		IPoseController* poseController
-	);
+		IPoseController* poseController);
 
 	virtual void destroy() override final;
 
@@ -85,6 +84,9 @@ public:
 	/*! Set all joint pose transforms. */
 	void setPoseTransforms(const AlignedVector< Transform >& poseTransforms) { m_poseTransforms = poseTransforms; }
 
+	/*! Get update revision. */
+	int32_t getRevision() const { return m_revision; }
+
 private:
 	Transform m_transform;
 	resource::Proxy< Skeleton > m_skeleton;
@@ -92,6 +94,7 @@ private:
 	AlignedVector< Transform > m_jointTransforms;
 	AlignedVector< Transform > m_poseTransforms;
 	mutable Ref< Job > m_updatePoseControllerJob;
+	std::atomic< int32_t > m_revision;
 
 	void updatePoseController(double time, double deltaTime);
 };

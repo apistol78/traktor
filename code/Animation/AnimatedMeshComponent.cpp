@@ -175,12 +175,10 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 
 	// Calculate skinning transforms.
 	auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
-	if (skeletonComponent && skeletonComponent->getSkeleton())
+	if (skeletonComponent && skeletonComponent->getSkeleton() && skeletonComponent->getRevision() != m_revision)
 	{
 		// Ensure all transforms are calculated.
 		skeletonComponent->synchronize();
-
-		auto skeleton = skeletonComponent->getSkeleton();
 
 		const auto& jointTransforms = skeletonComponent->getJointTransforms();
 		const auto& poseTransforms = skeletonComponent->getPoseTransforms();
@@ -196,6 +194,9 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 					m_poseTransforms[m_index][jointIndex] = poseTransforms[i];
 			}
 		}
+
+		m_revision = skeletonComponent->getRevision();
+		m_skinModified = true;
 	}
 
 	mesh::MeshComponent::update(update);
@@ -226,10 +227,7 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 		const auto& poseTransformsLastUpdate = m_poseTransforms[1 - m_index];
 		const auto& poseTransformsCurrentUpdate = m_poseTransforms[m_index];
 
-		auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
-		const auto& jointTransforms = skeletonComponent->getJointTransforms();
-
-		if (isVisible)
+		if (isVisible && m_skinModified)
 		{
 			// Interpolate between updates to get current build skin transforms.
 			if (poseTransformsCurrentUpdate.size() > 0)
@@ -255,6 +253,8 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 				m_rtwInstance->setDirty();
 			}
 		}
+
+		m_skinModified = false;
 	}
 
 	if (supportTechnique && isVisible)

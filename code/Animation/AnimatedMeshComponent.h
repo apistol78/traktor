@@ -94,6 +94,8 @@ private:
 	AlignedVector< Transform > m_poseTransforms[2];
 	Transform m_lastWorldTransform[2];
 	std::atomic< int32_t > m_index;
+	int32_t m_revision = -1;
+	bool m_skinModified = false;
 	bool m_lastIsVisible = false;
 };
 

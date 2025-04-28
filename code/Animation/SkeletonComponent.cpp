@@ -1,20 +1,22 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cmath>
-#include "Animation/Skeleton.h"
 #include "Animation/SkeletonComponent.h"
-#include "Animation/SkeletonUtils.h"
+
 #include "Animation/IPoseController.h"
 #include "Animation/Joint.h"
+#include "Animation/Skeleton.h"
+#include "Animation/SkeletonUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/JobManager.h"
 #include "World/Entity.h"
+
+#include <cmath>
 
 #define T_USE_UPDATE_JOBS
 
@@ -26,18 +28,17 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonComponent", SkeletonComponent
 SkeletonComponent::SkeletonComponent(
 	const Transform& transform,
 	const resource::Proxy< Skeleton >& skeleton,
-	IPoseController* poseController
-)
-:	m_transform(transform)
-,	m_skeleton(skeleton)
-,	m_poseController(poseController)
+	IPoseController* poseController)
+	: m_transform(transform)
+	, m_skeleton(skeleton)
+	, m_poseController(poseController)
+	, m_revision(0)
 {
 	if (m_skeleton)
 	{
 		calculateJointTransforms(
 			m_skeleton,
-			m_jointTransforms
-		);
+			m_jointTransforms);
 		m_poseTransforms.reserve(m_jointTransforms.size());
 		updatePoseController(0.0f, 0.0f);
 	}
@@ -93,15 +94,15 @@ void SkeletonComponent::update(const world::UpdateParams& update)
 		if (m_skeleton)
 			calculateJointTransforms(
 				m_skeleton,
-				m_jointTransforms
-			);
+				m_jointTransforms);
 
 		m_poseTransforms.reserve(m_jointTransforms.size());
 		m_skeleton.consume();
+		m_revision++;
 	}
 
 #if defined(T_USE_UPDATE_JOBS)
-	m_updatePoseControllerJob = JobManager::getInstance().add([=, this](){
+	m_updatePoseControllerJob = JobManager::getInstance().add([=, this]() {
 		updatePoseController(update.alternateTime, update.deltaTime);
 	});
 #else
@@ -172,6 +173,7 @@ bool SkeletonComponent::setPoseTransform(render::handle_t jointName, const Trans
 		});
 	}
 
+	m_revision++;
 	return true;
 }
 
@@ -194,12 +196,11 @@ bool SkeletonComponent::concatenatePoseTransform(render::handle_t jointName, con
 	m_poseTransforms[index] = Tdelta * m_poseTransforms[index];
 
 	if (inclusive)
-	{
-		m_skeleton->findAllChildren(index, [&](uint32_t child){
+		m_skeleton->findAllChildren(index, [&](uint32_t child) {
 			m_poseTransforms[child] = Tdelta * m_poseTransforms[child];
 		});
-	}
 
+	m_revision++;
 	return true;
 }
 
@@ -217,8 +218,9 @@ void SkeletonComponent::updatePoseController(double time, double deltaTime)
 			m_transform,
 			m_skeleton,
 			m_jointTransforms,
-			m_poseTransforms
-		);
+			m_poseTransforms);
+
+		m_revision++;
 	}
 
 	// Ensure we have same number of pose transforms as bones.
