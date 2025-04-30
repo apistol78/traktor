@@ -396,16 +396,16 @@ int main(int argc, const char** argv)
 				const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
 				const Path pwd = cwd.getPathOnly();
 				if (cwd == pwd)
-				{
-					log::error << L"No LICENSE.txt file found." << Endl;
-					return 1;
-				}
+					break;
 				FileSystem::getInstance().setCurrentVolumeAndDirectory(pwd);
 			}
 
 			const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
-			OS::getInstance().setEnvironment(L"TRAKTOR_HOME", cwd.getPathNameOS());
-			FileSystem::getInstance().setCurrentVolumeAndDirectory(originalCwd);
+			if (!cwd.empty())
+			{
+				OS::getInstance().setEnvironment(L"TRAKTOR_HOME", cwd.getPathNameOS());
+				FileSystem::getInstance().setCurrentVolumeAndDirectory(originalCwd);
+			}
 		}
 
 		// Read script into memory.
@@ -424,6 +424,14 @@ int main(int argc, const char** argv)
 		StringOutputStream ss;
 
 		std::wstring tmp;
+#if defined(__LINUX__)
+		// Strip shebang line on linux.
+		if (reader.readLine(tmp) >= 0)
+		{
+			if (!tmp.starts_with(L"#!"))
+				ss << tmp << Endl;
+		}
+#endif
 		while (reader.readLine(tmp) >= 0)
 			ss << tmp << Endl;
 
