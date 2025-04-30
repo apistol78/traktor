@@ -383,6 +383,32 @@ int main(int argc, const char** argv)
 		}
 #endif
 
+		// Check if environment is already set, else set to current working directory.
+		std::wstring home;
+		if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
+		{
+			const Path originalCwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+			const Path executablePath = OS::getInstance().getExecutable().getPathOnly();
+			FileSystem::getInstance().setCurrentVolumeAndDirectory(executablePath);
+
+			while (!FileSystem::getInstance().exist(L"LICENSE.txt"))
+			{
+				const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+				const Path pwd = cwd.getPathOnly();
+				if (cwd == pwd)
+				{
+					log::error << L"No LICENSE.txt file found." << Endl;
+					return 1;
+				}
+				FileSystem::getInstance().setCurrentVolumeAndDirectory(pwd);
+			}
+
+			const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+			OS::getInstance().setEnvironment(L"TRAKTOR_HOME", cwd.getPathNameOS());
+			FileSystem::getInstance().setCurrentVolumeAndDirectory(originalCwd);
+		}
+
+		// Read script into memory.
 		const Path fileName = cmdLine.getString(0);
 
 		Ref< traktor::IStream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
@@ -405,12 +431,14 @@ int main(int argc, const char** argv)
 
 		const std::wstring text = ss.str();
 
+		// Create script manager.
 		g_scriptCompiler = new script::ScriptCompilerLua();
 		g_scriptManager = new script::ScriptManagerLua();
 
 		run::Run::registerRuntimeClasses(g_scriptManager);
 		net::Network::initialize();
 
+		// Execute script.
 		const bool explicitRun = cmdLine.hasOption(L"as-run");
 		const bool explicitTemplate = cmdLine.hasOption(L"as-template");
 
