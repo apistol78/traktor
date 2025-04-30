@@ -106,6 +106,41 @@ exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
+bool registerFileAssociation(const std::wstring& extension, const std::wstring& progId, const std::wstring& description, const std::wstring& executablePath)
+{
+	HKEY hKey;
+	LONG result;
+	std::wstring keyPath;
+	DWORD disposition;
+
+	keyPath = L"Software\\Classes\\" + extension;
+	result = RegCreateKeyExW(HKEY_CURRENT_USER, keyPath.c_str(), 0, nullptr, 0, KEY_WRITE, nullptr, &hKey, &disposition);
+	if (result != ERROR_SUCCESS)
+		return false;
+
+	RegSetValueExW(hKey, nullptr, 0, REG_SZ, reinterpret_cast< const BYTE* >(progId.c_str()), static_cast< DWORD >((progId.size() + 1) * sizeof(wchar_t)));
+	RegCloseKey(hKey);
+
+	keyPath = L"Software\\Classes\\" + progId;
+	result = RegCreateKeyExW(HKEY_CURRENT_USER, keyPath.c_str(), 0, nullptr, 0, KEY_WRITE, nullptr, &hKey, &disposition);
+	if (result != ERROR_SUCCESS)
+		return false;
+
+	RegSetValueExW(hKey, nullptr, 0, REG_SZ, reinterpret_cast< const BYTE* >(description.c_str()), static_cast< DWORD >((description.size() + 1) * sizeof(wchar_t)));
+	RegCloseKey(hKey);
+
+	keyPath = L"Software\\Classes\\" + progId + L"\\shell\\open\\command";
+	result = RegCreateKeyExW(HKEY_CURRENT_USER, keyPath.c_str(), 0, nullptr, 0, KEY_WRITE, nullptr, &hKey, &disposition);
+	if (result != ERROR_SUCCESS)
+		return false;
+
+	const std::wstring command = L"\"" + executablePath + L"\" \"%1\"";
+	RegSetValueExW(hKey, nullptr, 0, REG_SZ, reinterpret_cast< const BYTE* >(command.c_str()), static_cast< DWORD >((command.size() + 1) * sizeof(wchar_t)));
+	RegCloseKey(hKey);
+
+	return true;
+}
+
 #endif
 
 namespace traktor::run
@@ -300,7 +335,12 @@ int main(int argc, const char** argv)
 
 		CommandLine cmdLine(argc, argv);
 
-		if (cmdLine.getCount() < 1)
+		if (
+			cmdLine.getCount() < 1
+#if defined(_WIN32)
+			&& !cmdLine.hasOption(L"register-extensions")
+#endif
+		)
 		{
 			log::info << L"Traktor.Run.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 			log::info << L"Visit https://github.com/apistol78/traktor for more information." << Endl;
@@ -311,6 +351,9 @@ int main(int argc, const char** argv)
 			log::info << L"    -as-run                   Run file as run" << Endl;
 			log::info << L"    -as-template              Run file as template" << Endl;
 			log::info << L"    -debug                    Attach debugger" << Endl;
+#if defined(_WIN32)
+			log::info << L"    -register-extensions      Register .run and .template extensions" << Endl;
+#endif
 			log::info << Endl;
 			log::info << L"  For .run files:" << Endl;
 			log::info << L"    -e,-entry-point=function  Script entry point (default \"main\")" << Endl;
@@ -319,6 +362,26 @@ int main(int argc, const char** argv)
 			log::info << L"    -o,-output=filename       Output file (default stdout)" << Endl;
 			return 0;
 		}
+
+#if defined(_WIN32)
+		if (cmdLine.hasOption(L"register-extensions"))
+		{
+			const std::wstring executable = OS::getInstance().getExecutable().getPathNameOS();
+			if (!registerFileAssociation(L".run", L"TraktorRunScript", L"Traktor Run Script", executable))
+			{
+				log::error << L"Failed to register file extension .run" << Endl;
+				return 1;
+			}
+			if (!registerFileAssociation(L".template", L"TraktorRunTemplate", L"Traktor Run Script", executable))
+			{
+				log::error << L"Failed to register file extension .template" << Endl;
+				return 1;
+			}
+
+			log::info << L"File extension .run and .template association registered successfully." << Endl;
+			return 0;
+		}
+#endif
 
 		const Path fileName = cmdLine.getString(0);
 
