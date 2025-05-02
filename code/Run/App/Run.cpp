@@ -487,7 +487,21 @@ bool Run::loadScript(const std::wstring& fileName)
 	if (!blob)
 		return false;
 
-	return m_scriptContext->load(blob);
+	OS& os = OS::getInstance();
+
+	std::wstring oldScript, oldScriptPath;
+	os.getEnvironment(L"RUN_SCRIPT", oldScript);
+	os.getEnvironment(L"RUN_SCRIPT_PATH", oldScriptPath);
+
+	os.setEnvironment(L"RUN_SCRIPT", pathName.getPathName());
+	os.setEnvironment(L"RUN_SCRIPT_PATH", pathName.getPathOnly());
+
+	const bool result = m_scriptContext->load(blob);
+
+	os.setEnvironment(L"RUN_SCRIPT", oldScript);
+	os.setEnvironment(L"RUN_SCRIPT_PATH", oldScriptPath);
+
+	return result;
 }
 
 std::wstring Run::evaluate(const std::wstring& fileName)
