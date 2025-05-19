@@ -32,7 +32,7 @@ class IScriptDebuggerSessions;
 
 class ScriptDebuggerDialog
 	: public ui::Dialog
-	, public IScriptDebuggerSessions::IListener
+	, public IScriptDebuggerSessions::ISessionListener
 {
 	T_RTTI_CLASS;
 

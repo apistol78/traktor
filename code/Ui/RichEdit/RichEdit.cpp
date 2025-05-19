@@ -485,7 +485,8 @@ std::wstring RichEdit::getLine(int32_t line) const
 	{
 		AlignedVector< wchar_t > text;
 		for (int32_t i = m_lines[line].start; i <= m_lines[line].stop; ++i)
-			text.push_back(m_text[i].ch);
+			if (i >= 0 && i < m_text.size())
+				text.push_back(m_text[i].ch);
 		return std::wstring(text.begin(), text.end());
 	}
 	else

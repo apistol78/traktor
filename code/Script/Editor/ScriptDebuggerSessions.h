@@ -46,9 +46,9 @@ public:
 
 	virtual bool haveBreakpoint(const std::wstring& fileName, int32_t lineNumber) const override final;
 
-	virtual void addListener(IListener* listener) override final;
+	virtual void addListener(ISessionListener* listener) override final;
 
-	virtual void removeListener(IListener* listener) override final;
+	virtual void removeListener(ISessionListener* listener) override final;
 
 private:
 	struct Session
@@ -59,7 +59,7 @@ private:
 
 	std::list< Session > m_sessions;
 	std::map< int32_t, std::set< std::wstring > > m_breakpoints;
-	std::list< IListener* > m_listeners;
+	std::list< ISessionListener* > m_listeners;
 };
 
 }

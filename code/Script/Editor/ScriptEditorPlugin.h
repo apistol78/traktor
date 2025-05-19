@@ -30,7 +30,7 @@ class ScriptDebuggerSessions;
  */
 class ScriptEditorPlugin
 	: public editor::IEditorPlugin
-	, public IScriptDebuggerSessions::IListener
+	, public IScriptDebuggerSessions::ISessionListener
 {
 	T_RTTI_CLASS;
 
@@ -53,7 +53,7 @@ public:
 
 	virtual void handleEditorClosed() override final;
 
-	/*! IScriptDebuggerSessions::IListener */
+	/*! IScriptDebuggerSessions::ISessionListener */
 	// \{
 
 	virtual void notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) override final;

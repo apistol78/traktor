@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,17 +11,27 @@
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeDispatch.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/Resource/ShaderFactory.h"
+#include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
+#include "Script/Editor/ScriptDebuggerSessions.h"
+#include "Script/IScriptManager.h"
+#include "Script/ScriptChunk.h"
+#include "Script/ScriptFactory.h"
 #include "Spark/Acc/AccDisplayRenderer.h"
 #include "Spark/Debug/WireDisplayRenderer.h"
 #include "Spark/DefaultCharacterFactory.h"
@@ -30,11 +40,13 @@
 #include "Spark/Movie.h"
 #include "Spark/MoviePlayer.h"
 #include "Spark/MovieRenderer.h"
+#include "Spark/MovieResourceFactory.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 #include "Ui/Application.h"
 #include "Ui/Itf/IWidget.h"
 #include "UiKit/Editor/Scaffolding.h"
+#include "Video/VideoFactory.h"
 
 namespace traktor::uikit
 {
@@ -77,10 +89,8 @@ int32_t translateVirtualKey(ui::VirtualKey vk)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.uikit.PreviewControl", PreviewControl, ui::Widget)
 
-PreviewControl::PreviewControl(editor::IEditor* editor, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+PreviewControl::PreviewControl(editor::IEditor* editor)
 	: m_editor(editor)
-	, m_resourceManager(resourceManager)
-	, m_renderSystem(renderSystem)
 	, m_debugWires(false)
 {
 }
@@ -89,6 +99,20 @@ bool PreviewControl::create(ui::Widget* parent)
 {
 	if (!ui::Widget::create(parent, ui::WsFocus | ui::WsNoCanvas))
 		return false;
+
+	Ref< db::Database > database = m_editor->getOutputDatabase();
+	if (!database)
+		return false;
+
+	Ref< render::IRenderSystem > renderSystem = m_editor->getObjectStore()->get< render::IRenderSystem >();
+	if (!renderSystem)
+		return false;
+
+	Ref< script::IScriptManager > scriptManager = m_editor->getObjectStore()->get< script::IScriptManager >();
+	if (!scriptManager)
+		return false;
+
+	m_renderSystem = renderSystem;
 
 	// Create render view.
 	render::RenderViewEmbeddedDesc desc;
@@ -105,6 +129,17 @@ bool PreviewControl::create(ui::Widget* parent)
 
 	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
 	m_renderGraph = new render::RenderGraph(m_renderSystem, desc.multiSample);
+
+	Ref< script::IScriptDebugger > debugger = scriptManager->createDebugger();
+	m_editor->getObjectStore()->get< script::ScriptDebuggerSessions >()->beginSession(debugger, nullptr);
+
+	// Create resource manager.
+	m_resourceManager = new resource::ResourceManager(database, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
+	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
+	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
+	m_resourceManager->addFactory(new script::ScriptFactory(scriptManager));
+	m_resourceManager->addFactory(new spark::MovieResourceFactory());
+	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
 
 	// Create an empty flash movie.
 	Ref< spark::Sprite > movieClip = new spark::Sprite(60);
@@ -163,17 +198,28 @@ bool PreviewControl::create(ui::Widget* parent)
 	// Register our idle event handler.
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &PreviewControl::eventIdle);
 
+	// Create process thread.
+	m_threadProcessTicks = ThreadManager::getInstance().create([this]() {
+		threadProcessTicks();
+	});
+	m_threadProcessTicks->start();
+
 	m_timer.reset();
 	return true;
 }
 
 void PreviewControl::destroy()
 {
+	m_threadProcessTicks->stop();
+	ThreadManager::getInstance().destroy(m_threadProcessTicks);
+	m_threadProcessTicks = nullptr;
+
 	ui::Application::getInstance()->removeEventHandler(m_idleEventHandler);
 
 	safeDestroy(m_displayRenderer);
 	safeDestroy(m_renderGraph);
 	safeClose(m_renderView);
+	safeDestroy(m_resourceManager);
 
 	ui::Widget::destroy();
 }
@@ -187,16 +233,95 @@ void PreviewControl::setScaffolding(const Scaffolding* scaffolding)
 		m_scaffoldingClass.clear();
 }
 
-void PreviewControl::invalidateScaffolding(const Guid& eventId)
-{
-	// This will cause the tag in the proxy to be zero so the scaffolding will get re-created.
-	if (m_scaffolding != nullptr && (Guid)m_scaffolding->getScaffoldingClass() != eventId)
-		m_scaffoldingClass.unconsume();
-}
-
 void PreviewControl::setDebugWires(bool debugWires)
 {
 	m_debugWires = debugWires;
+}
+
+void PreviewControl::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+{
+	if (m_resourceManager && database == m_editor->getOutputDatabase())
+	{
+		if (m_resourceManager->reload(eventId, false))
+		{
+			// Content in resource manager was reloaded; in case it's not the main scaffolding script
+			// we need to invalidate it manually so the scaffolding is re-created properly.
+			//
+			// This will cause the tag in the proxy to be zero so the scaffolding will get re-created.
+			if (m_scaffolding != nullptr && (Guid)m_scaffolding->getScaffoldingClass() != eventId)
+				m_scaffoldingClass.unconsume();
+		}
+	}
+}
+
+void PreviewControl::threadProcessTicks()
+{
+	while (!m_threadProcessTicks->stopped())
+	{
+		if (!m_eventProcessTickStart.wait(100))
+			continue;
+
+		// Got process event.
+		const ui::Size sz = getInnerRect().getSize();
+		const float scale = std::max(dpi() / 96.0f, 1.0f);
+
+		// Initialize scaffolding.
+		if (m_scaffoldingClass.changed())
+		{
+			// Create scaffolding object.
+			if (m_scaffoldingClass)
+			{
+				// Remove previous scaffolding.
+				if (m_scaffoldingObject)
+				{
+					const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "remove");
+					if (method != nullptr)
+						method->invoke(m_scaffoldingObject, 0, nullptr);
+				}
+
+				// Construct new scaffolding.
+				const Any argv[] = {
+					Any::fromObject(m_editor->getSourceDatabase()),
+					Any::fromObject(m_resourceManager),
+					Any::fromObject(m_moviePlayer->getMovieInstance()),
+					Any::fromInt32((int32_t)(sz.cx / scale)),
+					Any::fromInt32((int32_t)(sz.cy / scale))
+				};
+				m_scaffoldingObject = createRuntimeClassInstance(m_scaffoldingClass, nullptr, sizeof_array(argv), argv);
+			}
+			else
+				m_scaffoldingObject = nullptr;
+
+			m_scaffoldingClass.consume();
+		}
+
+		if (m_scaffoldingObject)
+		{
+			const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "update");
+			if (method != nullptr)
+				method->invoke(m_scaffoldingObject, 0, nullptr);
+		}
+
+		if (m_moviePlayer)
+		{
+			if (m_resized)
+			{
+				m_moviePlayer->postViewResize((int32_t)(sz.cx / scale), (int32_t)(sz.cy / scale));
+				m_resized = false;
+			}
+
+			const float deltaTime = (float)m_timer.getDeltaTime();
+			m_moviePlayer->progress(deltaTime, nullptr);
+		}
+
+		m_eventProcessTickDone.broadcast();
+	}
+}
+
+bool PreviewControl::processTick()
+{
+	m_eventProcessTickStart.broadcast();
+	return m_eventProcessTickDone.wait(100);
 }
 
 void PreviewControl::eventSize(ui::SizeEvent* event)
@@ -207,15 +332,8 @@ void PreviewControl::eventSize(ui::SizeEvent* event)
 	if (m_renderView)
 		m_renderView->reset(sz.cx, sz.cy);
 
-	if (m_moviePlayer)
-	{
-		m_moviePlayer->postViewResize((int32_t)(sz.cx / scale), (int32_t)(sz.cy / scale));
-
-		// Update movie player while resizing; no idle messages are triggered while resizing.
-		const float deltaTime = (float)m_timer.getDeltaTime();
-		if (m_moviePlayer->progress(deltaTime, nullptr))
-			update();
-	}
+	m_resized = true;
+	update();
 }
 
 void PreviewControl::eventPaint(ui::PaintEvent* event)
@@ -232,42 +350,8 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 		if (re.type == render::RenderEventType::Lost)
 			m_renderView->reset(sz.cx, sz.cy);
 
-	// Initialize scaffolding.
-	if (m_scaffoldingClass.changed())
-	{
-		// Create scaffolding object.
-		if (m_scaffoldingClass)
-		{
-			// Remove previous scaffolding.
-			if (m_scaffoldingObject)
-			{
-				const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "remove");
-				if (method != nullptr)
-					method->invoke(m_scaffoldingObject, 0, nullptr);
-			}
-
-			// Construct new scaffolding.
-			const Any argv[] = {
-				Any::fromObject(m_editor->getSourceDatabase()),
-				Any::fromObject(m_resourceManager),
-				Any::fromObject(m_moviePlayer->getMovieInstance()),
-				Any::fromInt32((int32_t)(sz.cx / scale)),
-				Any::fromInt32((int32_t)(sz.cy / scale))
-			};
-			m_scaffoldingObject = createRuntimeClassInstance(m_scaffoldingClass, nullptr, sizeof_array(argv), argv);
-		}
-		else
-			m_scaffoldingObject = nullptr;
-
-		m_scaffoldingClass.consume();
-	}
-
-	if (m_scaffoldingObject)
-	{
-		const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "update");
-		if (method != nullptr)
-			method->invoke(m_scaffoldingObject, 0, nullptr);
-	}
+	if (!processTick())
+		log::debug << L"processTick timeout; logic stuck" << Endl;
 
 	// Add passes to render graph.
 	m_displayRenderer->beginSetup(m_renderGraph);
@@ -315,11 +399,7 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 void PreviewControl::eventIdle(ui::IdleEvent* event)
 {
 	if (m_moviePlayer && isVisible(true))
-	{
-		const float deltaTime = (float)m_timer.getDeltaTime();
-		m_moviePlayer->progress(deltaTime, nullptr);
 		update();
-	}
 
 	event->requestMore();
 }

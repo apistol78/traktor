@@ -41,7 +41,7 @@ class T_DLLCLASS IScriptDebuggerSessions : public Object
 	T_RTTI_CLASS;
 
 public:
-	struct IListener
+	struct ISessionListener
 	{
 		virtual void notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) = 0;
 
@@ -101,13 +101,13 @@ public:
 	 *
 	 * \param listener Listener implementation.
 	 */
-	virtual void addListener(IListener* listener) = 0;
+	virtual void addListener(ISessionListener* listener) = 0;
 
 	/*! Remove session listener.
 	 *
 	 * \param listener Listener to remove.
 	 */
-	virtual void removeListener(IListener* listener) = 0;
+	virtual void removeListener(ISessionListener* listener) = 0;
 };
 
 }

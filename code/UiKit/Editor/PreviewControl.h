@@ -10,6 +10,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Ref.h"
+#include "Core/Thread/Event.h"
 #include "Core/Timer/Timer.h"
 #include "Resource/Proxy.h"
 #include "Ui/Widget.h"
@@ -18,6 +19,7 @@ namespace traktor
 {
 
 class IRuntimeClass;
+class Thread;
 
 }
 
@@ -73,7 +75,7 @@ class PreviewControl : public ui::Widget
 	T_RTTI_CLASS;
 
 public:
-	explicit PreviewControl(editor::IEditor* editor, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	explicit PreviewControl(editor::IEditor* editor);
 
 	bool create(ui::Widget* parent);
 
@@ -81,11 +83,11 @@ public:
 
 	void setScaffolding(const Scaffolding* scaffolding);
 
-	void invalidateScaffolding(const Guid& eventId);
-
 	void setDebugWires(bool debugWires);
 
 	bool getDebugWires() const { return m_debugWires; }
+
+	void handleDatabaseEvent(db::Database* database, const Guid& eventId);
 
 private:
 	editor::IEditor* m_editor;
@@ -104,8 +106,17 @@ private:
 	Ref< spark::Movie > m_movie;
 	resource::Proxy< IRuntimeClass > m_scaffoldingClass;
 	Ref< ITypedObject > m_scaffoldingObject;
-	bool m_debugWires;
+	bool m_debugWires = false;
+	bool m_resized = false;
 	Timer m_timer;
+
+	Thread* m_threadProcessTicks = nullptr;
+	Event m_eventProcessTickStart;
+	Event m_eventProcessTickDone;
+
+	void threadProcessTicks();
+
+	bool processTick();
 
 	void eventSize(ui::SizeEvent* event);
 

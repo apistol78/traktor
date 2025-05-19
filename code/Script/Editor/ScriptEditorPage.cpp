@@ -476,32 +476,34 @@ void ScriptEditorPage::otherError(const std::wstring& message)
 
 void ScriptEditorPage::debugeeStateChange(IScriptDebugger* scriptDebugger)
 {
-	for (int32_t line = 0; line < m_edit->getLineCount(); ++line)
-		m_edit->setBackgroundAttribute(line, 0xffff);
+	ui::Application::getInstance()->defer([scriptDebugger, this]() {
+		for (int32_t line = 0; line < m_edit->getLineCount(); ++line)
+			m_edit->setBackgroundAttribute(line, 0xffff);
 
-	if (!scriptDebugger->isRunning())
-	{
-		const Guid instanceGuid = m_document->getInstance(0)->getGuid();
-
-		Ref< StackFrame > sf;
-		for (uint32_t depth = 0; scriptDebugger->captureStackFrame(depth, sf); ++depth)
+		if (!scriptDebugger->isRunning())
 		{
-			T_FATAL_ASSERT(sf);
-			if (Guid(sf->getFileName()) == instanceGuid)
-			{
-				// Set breadcrumb trail of execution.
-				AlignedVector< uint32_t > breadcrumbs;
-				if (scriptDebugger->captureBreadcrumbs(breadcrumbs))
-					for (auto line : breadcrumbs)
-						m_edit->setBackgroundAttribute(line, m_debugBreadcrumbAttribute);
+			const Guid instanceGuid = m_document->getInstance(0)->getGuid();
 
-				// Highlight current, breaked, line.
-				const int32_t line = (int32_t)sf->getLine();
-				m_edit->setBackgroundAttribute(line, m_debugCurrentAttribute);
-				break;
+			Ref< StackFrame > sf;
+			for (uint32_t depth = 0; scriptDebugger->captureStackFrame(depth, sf); ++depth)
+			{
+				T_FATAL_ASSERT(sf);
+				if (Guid(sf->getFileName()) == instanceGuid)
+				{
+					// Set breadcrumb trail of execution.
+					AlignedVector< uint32_t > breadcrumbs;
+					if (scriptDebugger->captureBreadcrumbs(breadcrumbs))
+						for (auto line : breadcrumbs)
+							m_edit->setBackgroundAttribute(line, m_debugBreadcrumbAttribute);
+
+					// Highlight current, break;ed, line.
+					const int32_t line = (int32_t)sf->getLine();
+					m_edit->setBackgroundAttribute(line, m_debugCurrentAttribute);
+					break;
+				}
 			}
 		}
-	}
+	});
 }
 
 void ScriptEditorPage::notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)

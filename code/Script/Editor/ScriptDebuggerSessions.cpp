@@ -113,7 +113,7 @@ bool ScriptDebuggerSessions::haveBreakpoint(const std::wstring& fileName, int32_
 		return false;
 }
 
-void ScriptDebuggerSessions::addListener(IListener* listener)
+void ScriptDebuggerSessions::addListener(ISessionListener* listener)
 {
 	T_ASSERT(listener);
 
@@ -127,7 +127,7 @@ void ScriptDebuggerSessions::addListener(IListener* listener)
 	m_listeners.push_back(listener);
 }
 
-void ScriptDebuggerSessions::removeListener(IListener* listener)
+void ScriptDebuggerSessions::removeListener(ISessionListener* listener)
 {
 	T_ASSERT(listener);
 	for (std::list< Session >::iterator i = m_sessions.begin(); i != m_sessions.end(); ++i)

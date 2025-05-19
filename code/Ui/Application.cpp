@@ -1,25 +1,30 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/Application.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Ui/Application.h"
+#include "Core/Thread/Acquire.h"
 #include "Ui/Clipboard.h"
 #include "Ui/StyleSheet.h"
 
 namespace traktor::ui
 {
-	namespace
-	{
-
-const struct { const wchar_t* name; VirtualKey vkey; } c_keyTranslateTable[] =
+namespace
 {
+
+const struct
+{
+	const wchar_t* name;
+	VirtualKey vkey;
+} c_keyTranslateTable[] = {
 	{ L"F1", VkF1 },
 	{ L"F2", VkF2 },
 	{ L"F3", VkF3 },
@@ -48,13 +53,13 @@ const struct { const wchar_t* name; VirtualKey vkey; } c_keyTranslateTable[] =
 	{ L"Space", VkSpace }
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Application", Application, EventSubject)
 
 Application::Application()
-:	m_eventLoop(nullptr)
-,	m_widgetFactory(nullptr)
+	: m_eventLoop(nullptr)
+	, m_widgetFactory(nullptr)
 {
 }
 
@@ -72,12 +77,14 @@ bool Application::initialize(IWidgetFactory* widgetFactory, const StyleSheet* st
 	m_eventLoop = widgetFactory->createEventLoop(this);
 	m_clipboard = new Clipboard(widgetFactory->createClipboard());
 	m_properties = new PropertyGroup();
+	addEventHandler< IdleEvent >(this, &Application::executeDeferred);
 	setStyleSheet(styleSheet);
 	return true;
 }
 
 void Application::finalize()
 {
+	removeAllEventHandlers();
 	safeDestroy(m_clipboard);
 	safeDestroy(m_eventLoop);
 	m_widgetFactory = nullptr;
@@ -138,10 +145,8 @@ PropertyGroup* Application::getProperties()
 VirtualKey Application::translateVirtualKey(const std::wstring& keyName) const
 {
 	for (int i = 0; i < sizeof_array(c_keyTranslateTable); ++i)
-	{
 		if (compareIgnoreCase(keyName, c_keyTranslateTable[i].name) == 0)
 			return c_keyTranslateTable[i].vkey;
-	}
 
 	const wchar_t ch = keyName[0];
 	if ((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z'))
@@ -153,10 +158,8 @@ VirtualKey Application::translateVirtualKey(const std::wstring& keyName) const
 std::wstring Application::translateVirtualKey(VirtualKey virtualKey) const
 {
 	for (int i = 0; i < sizeof_array(c_keyTranslateTable); ++i)
-	{
 		if (virtualKey == c_keyTranslateTable[i].vkey)
 			return c_keyTranslateTable[i].name;
-	}
 
 	if ((virtualKey >= Vk0 && virtualKey <= Vk9) || (virtualKey >= VkA && virtualKey <= VkZ))
 	{
@@ -165,6 +168,20 @@ std::wstring Application::translateVirtualKey(VirtualKey virtualKey) const
 	}
 
 	return L"";
+}
+
+void Application::defer(const std::function< void() >& fn)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_deferredLock);
+	m_deferred.push_back(fn);
+}
+
+void Application::executeDeferred(IdleEvent* event)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_deferredLock);
+	for (const auto& fn : m_deferred)
+		fn();
+	m_deferred.resize(0);
 }
 
 }

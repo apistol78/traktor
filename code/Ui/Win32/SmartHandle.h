@@ -8,6 +8,8 @@
  */
 #pragma once
 
+#include "Ui/Win32/Window.h"
+
 namespace traktor::ui
 {
 
@@ -29,7 +31,7 @@ public:
 	SmartHandle() = default;
 
 	SmartHandle(HandleType h)
-	:	m_object(h)
+		: m_object(h)
 	{
 	}
 
@@ -39,7 +41,7 @@ public:
 			DeletePolicy::deleteObject(m_object);
 	}
 
-	SmartHandle& operator = (HandleType h)
+	SmartHandle& operator=(HandleType h)
 	{
 		if (m_object)
 			DeletePolicy::deleteObject(m_object);
@@ -47,7 +49,7 @@ public:
 		return *this;
 	}
 
-	SmartHandle& operator = (SmartHandle& sh)
+	SmartHandle& operator=(SmartHandle& sh)
 	{
 		if (m_object)
 			DeletePolicy::deleteObject(m_object);
@@ -61,7 +63,7 @@ public:
 		return m_object;
 	}
 
-	operator HandleType ()
+	operator HandleType()
 	{
 		return m_object;
 	}
@@ -70,8 +72,8 @@ private:
 	HandleType m_object = 0;
 };
 
-typedef SmartHandle< HFONT,	GdiDeleteObjectPolicy >	SmartFont;
+typedef SmartHandle< HFONT, GdiDeleteObjectPolicy > SmartFont;
 typedef SmartHandle< HBRUSH, GdiDeleteObjectPolicy > SmartBrush;
-typedef SmartHandle< HPEN,	GdiDeleteObjectPolicy >	SmartPen;
+typedef SmartHandle< HPEN, GdiDeleteObjectPolicy > SmartPen;
 
 }

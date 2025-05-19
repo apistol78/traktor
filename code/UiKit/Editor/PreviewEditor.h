@@ -19,20 +19,13 @@ class IEditor;
 
 }
 
-namespace traktor::resource
-{
-
-class IResourceManager;
-
-}
-
 namespace traktor::ui
 {
-	
+
 class Container;
 class SizeEvent;
 class StatusBar;
-	
+
 }
 
 namespace traktor::uikit
@@ -60,7 +53,6 @@ public:
 private:
 	editor::IEditor* m_editor;
 	editor::IDocument* m_document;
-	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< PreviewControl > m_previewControl;
 	Ref< ui::Container > m_container;
 	Ref< ui::StatusBar > m_statusBar;

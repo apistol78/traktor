@@ -184,67 +184,69 @@ void ScriptDebuggerView::updateLocals(int32_t depth)
 
 void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 {
-	if (!scriptDebugger->isRunning())
-	{
-		// Capture all stack frames.
-		m_stackFrames.resize(0);
-		for (uint32_t depth = 0;; ++depth)
+	ui::Application::getInstance()->defer([scriptDebugger, this]() {
+		if (!scriptDebugger->isRunning())
 		{
-			Ref< StackFrame > sf;
-			if (!scriptDebugger->captureStackFrame(depth, sf))
-				break;
-			T_FATAL_ASSERT(sf);
-			m_stackFrames.push_back(sf);
-		}
-
-		const bool autoOpenDebuggedScript = m_editor->getSettings()->getProperty< bool >(L"Editor.AutoOpenDebuggedScript", true);
-
-		Ref< ui::HierarchicalState > state = m_callStackGrid->captureState();
-		m_callStackGrid->removeAllRows();
-
-		int32_t depth = 0;
-		for (auto stackFrame : m_stackFrames)
-		{
-			const Guid scriptId(stackFrame->getFileName());
-
-			Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(scriptId);
-
-			Ref< ui::GridRow > row = new ui::GridRow(0);
-			row->add(stackFrame->getFunctionName());
-			row->add(toString(stackFrame->getLine() + 1));
-			row->add(scriptInstance ? scriptInstance->getName() : L"(Unknown script)");
-			row->setData(L"SCRIPT_ID", new PropertyString(scriptId.format()));
-			row->setData(L"SCRIPT_LINE", new PropertyInteger(stackFrame->getLine()));
-			row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));
-			m_callStackGrid->addRow(row);
-
-			// Open debugged script and issue a "goto line" to scroll script editor to debugged line.
-			if (autoOpenDebuggedScript && scriptInstance && stackFrame == m_stackFrames.front())
+			// Capture all stack frames.
+			m_stackFrames.resize(0);
+			for (uint32_t depth = 0;; ++depth)
 			{
-				m_editor->openEditor(scriptInstance);
-
-				editor::IEditorPage* activeEditorPage = m_editor->getActiveEditorPage();
-				if (activeEditorPage)
-					activeEditorPage->handleCommand(ui::Command(stackFrame->getLine(), L"Script.Editor.GotoLine"));
+				Ref< StackFrame > sf;
+				if (!scriptDebugger->captureStackFrame(depth, sf))
+					break;
+				T_FATAL_ASSERT(sf);
+				m_stackFrames.push_back(sf);
 			}
+
+			const bool autoOpenDebuggedScript = m_editor->getSettings()->getProperty< bool >(L"Editor.AutoOpenDebuggedScript", true);
+
+			Ref< ui::HierarchicalState > state = m_callStackGrid->captureState();
+			m_callStackGrid->removeAllRows();
+
+			int32_t depth = 0;
+			for (auto stackFrame : m_stackFrames)
+			{
+				const Guid scriptId(stackFrame->getFileName());
+
+				Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(scriptId);
+
+				Ref< ui::GridRow > row = new ui::GridRow(0);
+				row->add(stackFrame->getFunctionName());
+				row->add(toString(stackFrame->getLine() + 1));
+				row->add(scriptInstance ? scriptInstance->getName() : L"(Unknown script)");
+				row->setData(L"SCRIPT_ID", new PropertyString(scriptId.format()));
+				row->setData(L"SCRIPT_LINE", new PropertyInteger(stackFrame->getLine()));
+				row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));
+				m_callStackGrid->addRow(row);
+
+				// Open debugged script and issue a "goto line" to scroll script editor to debugged line.
+				if (autoOpenDebuggedScript && scriptInstance && stackFrame == m_stackFrames.front())
+				{
+					m_editor->openEditor(scriptInstance);
+
+					editor::IEditorPage* activeEditorPage = m_editor->getActiveEditorPage();
+					if (activeEditorPage)
+						activeEditorPage->handleCommand(ui::Command(stackFrame->getLine(), L"Script.Editor.GotoLine"));
+				}
+			}
+
+			updateLocals(0);
+
+			m_callStackGrid->setEnable(true);
+			m_callStackGrid->applyState(state);
+			m_callStackGrid->update();
+
+			m_localsGrid->setEnable(true);
+			m_localsGrid->update();
 		}
-
-		updateLocals(0);
-
-		m_callStackGrid->setEnable(true);
-		m_callStackGrid->applyState(state);
-		m_callStackGrid->update();
-
-		m_localsGrid->setEnable(true);
-		m_localsGrid->update();
-	}
-	else
-	{
-		m_callStackGrid->setEnable(false);
-		m_callStackGrid->update();
-		m_localsGrid->setEnable(false);
-		m_localsGrid->update();
-	}
+		else
+		{
+			m_callStackGrid->setEnable(false);
+			m_callStackGrid->update();
+			m_localsGrid->setEnable(false);
+			m_localsGrid->update();
+		}
+	});
 }
 
 void ScriptDebuggerView::eventDebuggerToolClick(ui::ToolBarButtonClickEvent* event)

@@ -71,7 +71,7 @@ class T_DLLCLASS ScriptEditorPage
 	: public editor::IEditorPage
 	, public IErrorCallback
 	, public IScriptDebugger::IListener
-	, public IScriptDebuggerSessions::IListener
+	, public IScriptDebuggerSessions::ISessionListener
 {
 	T_RTTI_CLASS;
 
@@ -128,7 +128,7 @@ private:
 
 	/*! \} */
 
-	/*! \name IScriptDebuggerSessions::IListener */
+	/*! \name IScriptDebuggerSessions::ISessionListener */
 	/*! \{ */
 
 	virtual void notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) override final;

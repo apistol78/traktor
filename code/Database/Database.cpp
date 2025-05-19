@@ -1,44 +1,44 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
+#include "Database/Database.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Thread/Acquire.h"
-#include "Database/Database.h"
-#include "Database/Group.h"
-#include "Database/Instance.h"
-#include "Database/Traverse.h"
 #include "Database/Events/EvtGroupRenamed.h"
 #include "Database/Events/EvtInstanceCommitted.h"
 #include "Database/Events/EvtInstanceCreated.h"
 #include "Database/Events/EvtInstanceGuidChanged.h"
 #include "Database/Events/EvtInstanceRemoved.h"
 #include "Database/Events/EvtInstanceRenamed.h"
-#include "Database/Provider/IProviderDatabase.h"
+#include "Database/Group.h"
+#include "Database/Instance.h"
 #include "Database/Provider/IProviderBus.h"
+#include "Database/Provider/IProviderDatabase.h"
+#include "Database/Traverse.h"
+
+#include <limits>
 
 namespace traktor::db
 {
-	namespace
-	{
+namespace
+{
 
 void buildInstanceMap(Group* group, SmallMap< Guid, Ref< Instance > >& outInstanceMap)
 {
 	RefArray< Instance > childInstances;
 	group->getChildInstances(childInstances);
+	outInstanceMap.reserve(outInstanceMap.size() + childInstances.size());
 	for (const auto childInstance : childInstances)
-	{
 		outInstanceMap.insert(std::make_pair(
 			childInstance->getGuid(),
-			childInstance
-		));
-	}
+			childInstance));
 
 	RefArray< Group > childGroups;
 	group->getChildGroups(childGroups);
@@ -46,7 +46,7 @@ void buildInstanceMap(Group* group, SmallMap< Guid, Ref< Instance > >& outInstan
 		buildInstanceMap(childGroup, outInstanceMap);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Database", Database, Object)
 
@@ -68,10 +68,9 @@ bool Database::open(IProviderDatabase* providerDatabase)
 		// we know where to start from.
 		m_lastEntrySqnr = std::numeric_limits< uint64_t >::max();
 		if (!m_providerBus->getEvent(
-			m_lastEntrySqnr,
-			event,
-			remote
-		))
+				m_lastEntrySqnr,
+				event,
+				remote))
 		{
 			// Will fail to get event if journal is empty; assume first sequence number.
 			m_lastEntrySqnr = 0;
@@ -174,12 +173,9 @@ Ref< Group > Database::getGroup(const std::wstring& groupPath)
 	T_ASSERT(m_providerDatabase);
 
 	Ref< Group > group = m_rootGroup;
-	StringSplit< std::wstring > pathElements(groupPath, L"/");
-	for (auto i = pathElements.begin(); i != pathElements.end(); ++i)
-	{
-		if (!(group = findChildGroup(group, FindGroupByName(*i))))
+	for (const auto pe : StringSplit< std::wstring >(groupPath, L"/"))
+		if (!(group = findChildGroup(group, FindGroupByName(pe))))
 			break;
-	}
 
 	return group;
 }
@@ -190,14 +186,12 @@ Ref< Group > Database::createGroup(const std::wstring& groupPath)
 	T_ASSERT(m_providerDatabase);
 
 	Ref< Group > group = m_rootGroup;
-
-	StringSplit< std::wstring > groupNames(groupPath, L"/");
-	for (auto i = groupNames.begin(); i != groupNames.end(); ++i)
+	for (const auto gn : StringSplit< std::wstring >(groupPath, L"/"))
 	{
-		Ref< Group > childGroup = group->getGroup(*i);
+		Ref< Group > childGroup = group->getGroup(gn);
 		if (!childGroup)
 		{
-			childGroup = group->createGroup(*i);
+			childGroup = group->createGroup(gn);
 			if (!childGroup)
 				return nullptr;
 		}
@@ -215,8 +209,8 @@ Ref< Instance > Database::getInstance(const Guid& instanceGuid)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT(m_providerDatabase);
 
-	const auto i = m_instanceMap.find(instanceGuid);
-	return i != m_instanceMap.end() ? i->second : nullptr;
+	const auto it = m_instanceMap.find(instanceGuid);
+	return it != m_instanceMap.end() ? it->second : nullptr;
 }
 
 Ref< Instance > Database::getInstance(const std::wstring& instancePath, const TypeInfo* primaryType)
@@ -253,7 +247,7 @@ Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint3
 	{
 		instanceName = instancePath.substr(i + 1);
 
-		std::wstring groupPath = instancePath.substr(0, i);
+		const std::wstring groupPath = instancePath.substr(0, i);
 		if (!groupPath.empty())
 			group = createGroup(instancePath.substr(0, i));
 		else
@@ -279,11 +273,11 @@ Ref< ISerializable > Database::getObjectReadOnly(const Guid& guid) const
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT(m_providerDatabase);
 
-	const auto i = m_instanceMap.find(guid);
-	if (i == m_instanceMap.end() || !i->second)
+	const auto it = m_instanceMap.find(guid);
+	if (it == m_instanceMap.end() || !it->second)
 		return nullptr;
 
-	return i->second->getObject();
+	return it->second->getObject();
 }
 
 bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
@@ -307,19 +301,18 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 		{
 			Ref< Group > group = m_rootGroup;
 
-			StringSplit< std::wstring > pathElements(created->getGroupPath(), L"/");
-			for (auto i = pathElements.begin(); group && i != pathElements.end(); ++i)
+			for (const auto pe : StringSplit< std::wstring >(created->getGroupPath(), L"/"))
 			{
-				Ref< Group > childGroup = findChildGroup(group, FindGroupByName(*i));
+				Ref< Group > childGroup = findChildGroup(group, FindGroupByName(pe));
 				if (childGroup)
 					group = childGroup;
 				else
 				{
-					if (!group->internalAddExtGroup(*i))
-						log::error << L"Unable to add instance; remotely created group not found." << Endl;
-					group = findChildGroup(group, FindGroupByName(*i));
+					if (!group->internalAddExtGroup(pe))
+						log::error << L"Unable to add instance; remotely created group \"" << pe << L"\" not found." << Endl;
+					group = findChildGroup(group, FindGroupByName(pe));
 					if (!group)
-						log::error << L"Unable to add instance; group \"" << *i << L"\" not found." << Endl;
+						log::error << L"Unable to add instance; group \"" << pe << L"\" not found." << Endl;
 				}
 			}
 
@@ -335,16 +328,16 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 
 		else if (const EvtInstanceRemoved* removed = dynamic_type_cast< const EvtInstanceRemoved* >(outEvent))
 		{
-			auto i = m_instanceMap.find(removed->getInstanceGuid());
-			if (i != m_instanceMap.end())
-				m_instanceMap.erase(i);
+			auto it = m_instanceMap.find(removed->getInstanceGuid());
+			if (it != m_instanceMap.end())
+				m_instanceMap.erase(it);
 		}
 
 		else if (const EvtInstanceGuidChanged* guidChanged = dynamic_type_cast< const EvtInstanceGuidChanged* >(outEvent))
 		{
-			auto i = m_instanceMap.find(guidChanged->getInstancePreviousGuid());
-			if (i != m_instanceMap.end())
-				i->second->internalFlush();
+			auto it = m_instanceMap.find(guidChanged->getInstancePreviousGuid());
+			if (it != m_instanceMap.end())
+				it->second->internalFlush();
 
 			m_instanceMap.clear();
 			buildInstanceMap(m_rootGroup, m_instanceMap);
@@ -352,10 +345,10 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 
 		else if (const EvtInstanceRenamed* renamed = dynamic_type_cast< const EvtInstanceRenamed* >(outEvent))
 		{
-			auto i = m_instanceMap.find(renamed->getInstanceGuid());
-			if (i != m_instanceMap.end())
+			auto it = m_instanceMap.find(renamed->getInstanceGuid());
+			if (it != m_instanceMap.end())
 			{
-				Ref< Group > parent = i->second->getParent();
+				Ref< Group > parent = it->second->getParent();
 				if (parent)
 					parent->internalFlushChildInstances();
 			}
@@ -379,8 +372,7 @@ void Database::instanceEventCreated(Instance* instance)
 	if (m_providerBus)
 		m_providerBus->putEvent(new EvtInstanceCreated(
 			instance->getParent()->getPath(),
-			instance->getGuid()
-		));
+			instance->getGuid()));
 }
 
 void Database::instanceEventRemoved(Instance* instance)
@@ -388,9 +380,9 @@ void Database::instanceEventRemoved(Instance* instance)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	// Remove previous cached entry.
-	const auto i = m_instanceMap.find(instance->getGuid());
-	if (i != m_instanceMap.end())
-		m_instanceMap.erase(i);
+	const auto it = m_instanceMap.find(instance->getGuid());
+	if (it != m_instanceMap.end())
+		m_instanceMap.erase(it);
 
 	// Notify others about removed instance.
 	if (m_providerBus)
@@ -402,9 +394,9 @@ void Database::instanceEventGuidChanged(Instance* instance, const Guid& previous
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	// Remove previous cached entry.
-	const auto i = m_instanceMap.find(previousGuid);
-	if (i != m_instanceMap.end())
-		m_instanceMap.erase(i);
+	const auto it = m_instanceMap.find(previousGuid);
+	if (it != m_instanceMap.end())
+		m_instanceMap.erase(it);
 
 	// Insert new cache entry.
 	m_instanceMap[instance->getGuid()] = instance;

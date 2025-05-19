@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,13 +8,14 @@
  */
 #pragma once
 
+#include "Core/Thread/Semaphore.h"
 #include "Ui/Enums.h"
-#include "Ui/EventSubject.h"
 #include "Ui/Events/FocusEvent.h"
 #include "Ui/Events/IdleEvent.h"
 #include "Ui/Events/KeyDownEvent.h"
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Events/KeyUpEvent.h"
+#include "Ui/EventSubject.h"
 #include "Ui/Itf/IEventLoop.h"
 #include "Ui/Itf/IWidgetFactory.h"
 
@@ -127,12 +128,19 @@ public:
 
 	//@}
 
+	/*! Defer execution onto UI thread. */
+	void defer(const std::function< void() >& fn);
+
 private:
 	IEventLoop* m_eventLoop;
 	IWidgetFactory* m_widgetFactory;
 	Ref< Clipboard > m_clipboard;
 	Ref< const StyleSheet > m_styleSheet;
 	Ref< PropertyGroup > m_properties;
+	AlignedVector< std::function< void() > > m_deferred;
+	Semaphore m_deferredLock;
+
+	void executeDeferred(IdleEvent* event);
 };
 
 }
