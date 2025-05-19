@@ -131,7 +131,9 @@ bool PreviewControl::create(ui::Widget* parent)
 	m_renderGraph = new render::RenderGraph(m_renderSystem, desc.multiSample);
 
 	Ref< script::IScriptDebugger > debugger = scriptManager->createDebugger();
-	m_editor->getObjectStore()->get< script::ScriptDebuggerSessions >()->beginSession(debugger, nullptr);
+	Ref< script::IScriptProfiler > profiler = scriptManager->createProfiler();
+
+	m_editor->getObjectStore()->get< script::ScriptDebuggerSessions >()->beginSession(debugger, profiler);
 
 	// Create resource manager.
 	m_resourceManager = new resource::ResourceManager(database, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));

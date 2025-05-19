@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Script/Editor/ScriptProfilerView.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -15,14 +17,13 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
 #include "I18N/Text.h"
-#include "Script/Editor/ScriptProfilerView.h"
 #include "Ui/Application.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/TableLayout.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridView.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -33,8 +34,8 @@ namespace traktor::script
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptProfilerView", ScriptProfilerView, ui::Container)
 
 ScriptProfilerView::ScriptProfilerView(editor::IEditor* editor, IScriptProfiler* scriptProfiler)
-:	m_editor(editor)
-,	m_scriptProfiler(scriptProfiler)
+	: m_editor(editor)
+	, m_scriptProfiler(scriptProfiler)
 {
 	m_scriptProfiler->addListener(this);
 }
@@ -184,11 +185,13 @@ void ScriptProfilerView::callLeave(const Guid& scriptId, const std::wstring& fun
 
 void ScriptProfilerView::callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
 {
-	ProfileEntry& pe = m_profile[std::make_pair(scriptId, function)];
-	pe.callCount += callCount;
-	pe.inclusiveDuration += inclusiveDuration;
-	pe.exclusiveDuration += exclusiveDuration;
-	updateProfileGrid();
+	ui::Application::getInstance()->defer([=, this]() {
+		ProfileEntry& pe = m_profile[std::make_pair(scriptId, function)];
+		pe.callCount += callCount;
+		pe.inclusiveDuration += inclusiveDuration;
+		pe.exclusiveDuration += exclusiveDuration;
+		updateProfileGrid();
+	});
 }
 
 }
