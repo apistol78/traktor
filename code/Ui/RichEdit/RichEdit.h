@@ -8,10 +8,11 @@
  */
 #pragma once
 
-#include <functional>
 #include "Core/Containers/SmallMap.h"
 #include "Ui/ColorReference.h"
 #include "Ui/Widget.h"
+
+#include <functional>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -66,7 +67,7 @@ public:
 	virtual std::wstring getText() const override;
 
 	/*! Get textual content of text editor. */
-	std::wstring getText(std::function< std::wstring (wchar_t) > cfn, std::function< std::wstring (const ISpecialCharacter*) > scfn) const;
+	std::wstring getText(std::function< std::wstring(wchar_t) > cfn, std::function< std::wstring(const ISpecialCharacter*) > scfn) const;
 
 	/*! Set font. */
 	virtual void setFont(const Font& font) override;
@@ -95,7 +96,7 @@ public:
 	/*! Use image on a line of text. */
 	void setImage(int32_t line, int32_t image);
 
-	/*! Add special character with substiute value. */
+	/*! Add special character with substitute value. */
 	wchar_t addSpecialCharacter(const ISpecialCharacter* specialCharacter);
 
 	/*! Clear attributes, images or content of text. */
@@ -150,7 +151,7 @@ public:
 	std::wstring getSelectedText() const;
 
 	/*! Get selected text. */
-	std::wstring getSelectedText(std::function< std::wstring (wchar_t) > cfn, std::function< std::wstring (const ISpecialCharacter*) > scfn) const;
+	std::wstring getSelectedText(std::function< std::wstring(wchar_t) > cfn, std::function< std::wstring(const ISpecialCharacter*) > scfn) const;
 
 	/*! Scroll text view to a certain line. */
 	bool scrollToLine(int32_t line);
@@ -233,10 +234,10 @@ private:
 		Character() = default;
 
 		explicit Character(wchar_t _ch)
-		:	ch(_ch)
-		,	tai(0)
-		,	bgai(0)
-		,	width(0)
+			: ch(_ch)
+			, tai(0)
+			, bgai(0)
+			, width(0)
 		{
 		}
 	};

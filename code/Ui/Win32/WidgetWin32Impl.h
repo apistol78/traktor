@@ -8,17 +8,17 @@
  */
 #pragma once
 
-#include "Core/Misc/TString.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Misc/TString.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
-#include "Ui/EventSubject.h"
 #include "Ui/Events/AllEvents.h"
-#include "Ui/Itf/IWidget.h"
+#include "Ui/EventSubject.h"
 #include "Ui/Itf/IFontMetric.h"
-#include "Ui/Win32/Window.h"
+#include "Ui/Itf/IWidget.h"
 #include "Ui/Win32/SmartHandle.h"
 #include "Ui/Win32/UtilitiesWin32.h"
+#include "Ui/Win32/Window.h"
 
 #if defined(T_USE_DIRECT2D)
 #	include "Ui/Win32/CanvasDirect2DWin32.h"
@@ -40,18 +40,18 @@ class ICanvas;
 
 template < typename ControlType >
 class WidgetWin32Impl
-:	public ControlType
-,	public IFontMetric
+	: public ControlType
+	, public IFontMetric
 {
 public:
 	explicit WidgetWin32Impl(EventSubject* owner)
-	:	m_owner(owner)
-	,	m_doubleBuffer(false)
-	,	m_canvasImpl(nullptr)
-	,	m_hCursor(NULL)
-	,	m_ownCursor(false)
-	,	m_tracking(false)
-	,	m_interval(-1)
+		: m_owner(owner)
+		, m_doubleBuffer(false)
+		, m_canvasImpl(nullptr)
+		, m_hCursor(NULL)
+		, m_ownCursor(false)
+		, m_tracking(false)
+		, m_interval(-1)
 	{
 	}
 
@@ -82,7 +82,7 @@ public:
 		if (length <= 0)
 			return L"";
 
-		AutoArrayPtr< TCHAR > buffer(new TCHAR [length + 1]);
+		AutoArrayPtr< TCHAR > buffer(new TCHAR[length + 1]);
 		GetWindowText(m_hWnd, buffer.ptr(), length + 1);
 
 		return tstows(buffer.ptr());
@@ -171,8 +171,7 @@ public:
 			rect.top,
 			rect.getWidth(),
 			rect.getHeight(),
-			SWP_NOZORDER | SWP_NOACTIVATE
-		);
+			SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 
 	virtual Rect getRect() const override
@@ -330,8 +329,7 @@ public:
 					childRects[i].rect.top,
 					childRects[i].rect.getWidth(),
 					childRects[i].rect.getHeight(),
-					flags
-				);
+					flags);
 				if (!hdwp)
 					break;
 			}
@@ -344,7 +342,6 @@ public:
 
 		// If we reach this point there has been an error in the deferred stuff, fall back on old style.
 		for (uint32_t i = 0; i < count; ++i)
-		{
 			SetWindowPos(
 				(HWND)childRects[i].widget->getInternalHandle(),
 				NULL,
@@ -352,9 +349,7 @@ public:
 				childRects[i].rect.top,
 				childRects[i].rect.getWidth(),
 				childRects[i].rect.getHeight(),
-				flags
-			);
-		}
+				flags);
 	}
 
 	virtual Size getMinimumSize() const override
@@ -448,8 +443,7 @@ protected:
 	bool m_tracking;
 	int32_t m_interval;
 
-	static
-	void getNativeStyles(int style, UINT& nativeStyle, UINT& nativeStyleEx)
+	static void getNativeStyles(int style, UINT& nativeStyle, UINT& nativeStyleEx)
 	{
 		nativeStyle = 0;
 		nativeStyleEx = 0;
@@ -503,32 +497,32 @@ protected:
 				return false;
 		}
 
-		m_hWnd.registerMessageHandler(WM_CHAR,          new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventChar));
-		m_hWnd.registerMessageHandler(WM_KEYDOWN,       new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyDown));
-		m_hWnd.registerMessageHandler(WM_KEYUP,         new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyUp));
-		m_hWnd.registerMessageHandler(WM_SYSKEYDOWN,    new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyDown));
-		m_hWnd.registerMessageHandler(WM_SYSKEYUP,      new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyUp));
-		m_hWnd.registerMessageHandler(WM_MOVE,          new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventMove));
-		m_hWnd.registerMessageHandler(WM_SIZE,          new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventSize));
-		m_hWnd.registerMessageHandler(WM_LBUTTONDOWN,   new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDown));
-		m_hWnd.registerMessageHandler(WM_LBUTTONUP,     new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonUp));
+		m_hWnd.registerMessageHandler(WM_CHAR, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventChar));
+		m_hWnd.registerMessageHandler(WM_KEYDOWN, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyDown));
+		m_hWnd.registerMessageHandler(WM_KEYUP, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyUp));
+		m_hWnd.registerMessageHandler(WM_SYSKEYDOWN, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyDown));
+		m_hWnd.registerMessageHandler(WM_SYSKEYUP, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyUp));
+		m_hWnd.registerMessageHandler(WM_MOVE, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventMove));
+		m_hWnd.registerMessageHandler(WM_SIZE, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventSize));
+		m_hWnd.registerMessageHandler(WM_LBUTTONDOWN, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDown));
+		m_hWnd.registerMessageHandler(WM_LBUTTONUP, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonUp));
 		m_hWnd.registerMessageHandler(WM_LBUTTONDBLCLK, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDblClk));
-		m_hWnd.registerMessageHandler(WM_MBUTTONDOWN,   new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDown));
-		m_hWnd.registerMessageHandler(WM_MBUTTONUP,     new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonUp));
+		m_hWnd.registerMessageHandler(WM_MBUTTONDOWN, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDown));
+		m_hWnd.registerMessageHandler(WM_MBUTTONUP, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonUp));
 		m_hWnd.registerMessageHandler(WM_MBUTTONDBLCLK, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDblClk));
-		m_hWnd.registerMessageHandler(WM_RBUTTONDOWN,   new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDown));
-		m_hWnd.registerMessageHandler(WM_RBUTTONUP,     new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonUp));
+		m_hWnd.registerMessageHandler(WM_RBUTTONDOWN, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDown));
+		m_hWnd.registerMessageHandler(WM_RBUTTONUP, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonUp));
 		m_hWnd.registerMessageHandler(WM_RBUTTONDBLCLK, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDblClk));
-		m_hWnd.registerMessageHandler(WM_MOUSEMOVE,     new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventMouseMove));
-		m_hWnd.registerMessageHandler(WM_MOUSELEAVE,    new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventMouseLeave));
-		m_hWnd.registerMessageHandler(WM_MOUSEWHEEL,    new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventMouseWheel));
-		m_hWnd.registerMessageHandler(WM_SETFOCUS,      new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventFocus));
-		m_hWnd.registerMessageHandler(WM_KILLFOCUS,     new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventFocus));
-		m_hWnd.registerMessageHandler(WM_PAINT,         new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventPaint));
-		m_hWnd.registerMessageHandler(WM_ERASEBKGND,    new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventEraseBkGnd));
-		m_hWnd.registerMessageHandler(WM_TIMER,         new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventTimer));
-		m_hWnd.registerMessageHandler(WM_DROPFILES,		new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventDropFiles));
-		m_hWnd.registerMessageHandler(WM_DPICHANGED_BEFOREPARENT,	new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventDpiChanged));
+		m_hWnd.registerMessageHandler(WM_MOUSEMOVE, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventMouseMove));
+		m_hWnd.registerMessageHandler(WM_MOUSELEAVE, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventMouseLeave));
+		m_hWnd.registerMessageHandler(WM_MOUSEWHEEL, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventMouseWheel));
+		m_hWnd.registerMessageHandler(WM_SETFOCUS, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventFocus));
+		m_hWnd.registerMessageHandler(WM_KILLFOCUS, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventFocus));
+		m_hWnd.registerMessageHandler(WM_PAINT, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventPaint));
+		m_hWnd.registerMessageHandler(WM_ERASEBKGND, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventEraseBkGnd));
+		m_hWnd.registerMessageHandler(WM_TIMER, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventTimer));
+		m_hWnd.registerMessageHandler(WM_DROPFILES, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventDropFiles));
+		m_hWnd.registerMessageHandler(WM_DPICHANGED_BEFOREPARENT, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventDpiChanged));
 
 		if (style & WsWantAllInput)
 			m_hWnd.registerMessageHandler(WM_GETDLGCODE, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventGetDlgCode));
@@ -539,7 +533,7 @@ protected:
 		ICONMETRICS im = {};
 		im.cbSize = sizeof(im);
 		SystemParametersInfo(SPI_GETICONMETRICS, 0, &im, sizeof(im));
-		im.lfFont.lfHeight = 12; //invdpi96(im.lfFont.lfHeight);
+		im.lfFont.lfHeight = 12; // invdpi96(im.lfFont.lfHeight);
 		m_font = logFontToFont(im.lfFont);
 
 		return true;
@@ -602,10 +596,13 @@ protected:
 
 	LRESULT eventSize(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		SizeEvent s(m_owner, Size(LOWORD(lParam), HIWORD(lParam)));
-		m_owner->raiseEvent(&s);
-		if (!s.consumed())
-			outPass = true;
+		if (wParam != SIZE_MINIMIZED && wParam != SIZE_MAXHIDE)
+		{
+			SizeEvent s(m_owner, Size(LOWORD(lParam), HIWORD(lParam)));
+			m_owner->raiseEvent(&s);
+			if (!s.consumed())
+				outPass = true;
+		}
 		return TRUE;
 	}
 
@@ -628,8 +625,7 @@ protected:
 		MouseButtonDownEvent m(
 			m_owner,
 			button,
-			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
-		);
+			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
 		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
@@ -657,8 +653,7 @@ protected:
 		MouseButtonUpEvent m(
 			m_owner,
 			button,
-			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
-		);
+			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
 		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
@@ -685,8 +680,7 @@ protected:
 		MouseDoubleClickEvent m(
 			m_owner,
 			button,
-			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
-		);
+			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
 		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
@@ -722,8 +716,7 @@ protected:
 		MouseMoveEvent m(
 			m_owner,
 			button,
-			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
-		);
+			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
 		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
@@ -751,8 +744,7 @@ protected:
 		MouseWheelEvent m(
 			m_owner,
 			GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA,
-			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
-		);
+			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
 		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
@@ -786,15 +778,13 @@ protected:
 				PaintEvent p(
 					m_owner,
 					canvas,
-					Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom)
-				);
+					Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom));
 				m_owner->raiseEvent(&p);
 
 				OverlayPaintEvent op(
 					m_owner,
 					canvas,
-					Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom)
-				);
+					Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom));
 				m_owner->raiseEvent(&op);
 
 				m_canvasImpl->endPaint(m_hWnd);
@@ -806,8 +796,7 @@ protected:
 				PaintEvent p(
 					m_owner,
 					canvas,
-					Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom)
-				);
+					Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom));
 				m_owner->raiseEvent(&p);
 				outPass = !p.consumed();
 			}

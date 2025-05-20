@@ -6,12 +6,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/SyntaxRichEdit/SyntaxLanguage.h"
-#include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
 
 namespace traktor::ui
 {
@@ -129,7 +130,7 @@ void SyntaxRichEdit::updateLanguage()
 	for (int32_t line = fromLine; line <= toLine; ++line)
 	{
 		const std::wstring text = getLine(line);
-		for (int32_t i = 0; i < int32_t(text.length()); )
+		for (int32_t i = 0; i < int32_t(text.length());)
 		{
 			SyntaxLanguage::State state = currentState;
 			int32_t consumedChars = 0;

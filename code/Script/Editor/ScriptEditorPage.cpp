@@ -477,8 +477,7 @@ void ScriptEditorPage::otherError(const std::wstring& message)
 void ScriptEditorPage::debugeeStateChange(IScriptDebugger* scriptDebugger)
 {
 	ui::Application::getInstance()->defer([scriptDebugger, this]() {
-		for (int32_t line = 0; line < m_edit->getLineCount(); ++line)
-			m_edit->setBackgroundAttribute(line, 0xffff);
+		m_edit->clear(true, false, false, false);
 
 		if (!scriptDebugger->isRunning())
 		{
