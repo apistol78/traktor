@@ -171,7 +171,6 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 	m_jointInverseTransforms.resize(skinJointCount);
 	m_poseTransforms[0].resize(skinJointCount, Transform::identity());
 	m_poseTransforms[1].resize(skinJointCount, Transform::identity());
-	m_index = 1 - m_index;
 
 	// Calculate skinning transforms.
 	auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
@@ -197,6 +196,7 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 
 		m_revision = skeletonComponent->getRevision();
 		m_skinModified = true;
+		m_index = 1 - m_index;
 	}
 
 	mesh::MeshComponent::update(update);
