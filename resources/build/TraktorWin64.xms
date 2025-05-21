@@ -16134,7 +16134,9 @@
 					<includePaths/>
 					<definitions/>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>Winmm.lib</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -16158,7 +16160,9 @@
 					<includePaths/>
 					<definitions/>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>Winmm.lib</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -16184,7 +16188,9 @@
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>Winmm.lib</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -16214,7 +16220,9 @@
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>Winmm.lib</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>

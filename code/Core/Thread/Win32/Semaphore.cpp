@@ -6,8 +6,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/System.h"
 #include "Core/Thread/Semaphore.h"
+
+#include "Core/System.h"
 
 namespace traktor
 {
@@ -24,10 +25,7 @@ Semaphore::~Semaphore()
 
 bool Semaphore::wait(int32_t timeout)
 {
-	const MMRESULT result = timeBeginPeriod(1);
 	const bool ret = bool(WaitForSingleObject(m_handle, (timeout < 0) ? INFINITE : timeout) == WAIT_OBJECT_0);
-	if (result == TIMERR_NOERROR)
-		timeEndPeriod(1);
 	return ret;
 }
 

@@ -6,15 +6,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <process.h>
-#include "Core/System.h"
-#include "Core/Misc/TString.h"
 #include "Core/Thread/Thread.h"
+
+#include "Core/Misc/TString.h"
+#include "Core/System.h"
+
+#include <process.h>
 
 namespace traktor
 {
-	namespace
-	{
+namespace
+{
 
 struct THREADNAME_INFO
 {
@@ -31,12 +33,12 @@ unsigned __stdcall threadProc(void* lparam)
 	return 0;
 }
 
-	}
+}
 
 Thread::Thread(const std::function< void() >& fn, const wchar_t* const name, int32_t hardwareCore)
-:	m_fn(fn)
-,	m_name(name)
-,	m_hardwareCore(hardwareCore)
+	: m_fn(fn)
+	, m_name(name)
+	, m_hardwareCore(hardwareCore)
 {
 }
 
@@ -55,8 +57,7 @@ bool Thread::start(Priority priority)
 		&threadProc,
 		(void*)&m_fn,
 		CREATE_SUSPENDED,
-		&m_id
-	);
+		&m_id);
 	if (!m_handle)
 		return false;
 
@@ -88,8 +89,7 @@ bool Thread::resume()
 
 bool Thread::resume(Priority priority)
 {
-	const int c_priorities[] =
-	{
+	const int c_priorities[] = {
 		THREAD_PRIORITY_LOWEST,
 		THREAD_PRIORITY_BELOW_NORMAL,
 		THREAD_PRIORITY_NORMAL,
@@ -102,14 +102,7 @@ bool Thread::resume(Priority priority)
 
 void Thread::sleep(int duration)
 {
-	MMRESULT result = TIMERR_NOCANDO;
-	if (duration <= 10)
-		result = timeBeginPeriod(1);
-
 	Sleep(duration);
-
-	if (result == TIMERR_NOERROR)
-		timeEndPeriod(1);
 }
 
 void Thread::yield()

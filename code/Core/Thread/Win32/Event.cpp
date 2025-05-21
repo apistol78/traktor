@@ -6,13 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/System.h"
 #include "Core/Thread/Event.h"
+
+#include "Core/System.h"
 
 namespace traktor
 {
-	namespace
-	{
+namespace
+{
 
 const uint32_t c_broadcast = ~0UL;
 
@@ -24,7 +25,7 @@ struct Internal
 	uint32_t signals;
 };
 
-	}
+}
 
 Event::Event()
 {
@@ -83,8 +84,6 @@ bool Event::wait(int32_t timeout)
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	InterlockedIncrement((LPLONG)&in->listeners);
 
-	const MMRESULT mmresult = timeBeginPeriod(1);
-	
 	for (;;)
 	{
 		result = bool(WaitForSingleObject(in->handle, timeout >= 0 ? timeout : INFINITE) == WAIT_OBJECT_0);
@@ -97,11 +96,8 @@ bool Event::wait(int32_t timeout)
 		{
 			if (in->signals != c_broadcast)
 				in->signals--;
-			else
-			{
-				if (in->listeners <= 1)
-					in->signals = 0;
-			}
+			else if (in->listeners <= 1)
+				in->signals = 0;
 
 			if (in->signals == 0)
 				ResetEvent(in->handle);
@@ -112,9 +108,6 @@ bool Event::wait(int32_t timeout)
 
 		LeaveCriticalSection(&in->lock);
 	}
-
-	if (mmresult == TIMERR_NOERROR)
-		timeEndPeriod(1);
 
 	InterlockedDecrement((LPLONG)&in->listeners);
 	return result;

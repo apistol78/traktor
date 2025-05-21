@@ -6,9 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <intrin.h>
-#include "Runtime/App/Win32/ErrorDialog.h"
-#include "Runtime/Impl/Application.h"
 #include "Core/Containers/CircularVector.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Io/FileOutputStreamBuffer.h"
@@ -32,18 +29,22 @@
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
+#include "Runtime/App/Win32/ErrorDialog.h"
+#include "Runtime/Impl/Application.h"
 #include "Ui/Application.h"
 #include "Ui/Win32/EventLoopWin32.h"
 #include "Ui/Win32/WidgetFactoryWin32.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
+#include <intrin.h>
+
 using namespace traktor;
 
 // NVidia hack to get Optimus to enable NVidia GPU when possible.
 extern "C"
 {
-    _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 }
 
 namespace
@@ -72,7 +73,7 @@ class LogStreamTarget : public ILogTarget
 {
 public:
 	LogStreamTarget(OutputStream* stream)
-	:	m_stream(stream)
+		: m_stream(stream)
 	{
 	}
 
@@ -128,10 +129,8 @@ void showErrorDialog()
 	if (errorDialog.create())
 	{
 		if (g_logTail)
-		{
 			for (uint32_t i = 0; i < g_logTail->m_tail.size(); ++i)
 				errorDialog.addErrorString(g_logTail->m_tail[i]);
-		}
 		errorDialog.showModal();
 		errorDialog.destroy();
 	}
@@ -156,28 +155,28 @@ bool isWindows64bit(bool& out64bit)
 {
 	out64bit = false;
 #if _WIN64
-    out64bit =  true;
-    return true;
+	out64bit = true;
+	return true;
 #elif _WIN32
-	typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
-    LPFN_ISWOW64PROCESS fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
-    if(fnIsWow64Process)
-    {
+	typedef BOOL(WINAPI * LPFN_ISWOW64PROCESS)(HANDLE, PBOOL);
+	LPFN_ISWOW64PROCESS fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
+	if (fnIsWow64Process)
+	{
 		BOOL isWow64 = FALSE;
-        if (!fnIsWow64Process(GetCurrentProcess(), &isWow64))
-            return false;
+		if (!fnIsWow64Process(GetCurrentProcess(), &isWow64))
+			return false;
 
-        if(isWow64)
-            out64bit = true;
-        else
-            out64bit = false;
+		if (isWow64)
+			out64bit = true;
+		else
+			out64bit = false;
 
-        return true;
-    }
-    else
-        return false;
+		return true;
+	}
+	else
+		return false;
 #else
-    return false;
+	return false;
 #endif
 }
 
@@ -193,25 +192,25 @@ void logSystemInfo()
 
 	// Log CPU info
 	char CPUString[0x20];
-	int cpuInfo[4] = {-1};
+	int cpuInfo[4] = { -1 };
 
 	__cpuid(cpuInfo, 0);
 	int nIds = cpuInfo[0];
 	std::memset(CPUString, 0, sizeof(CPUString));
 	*((int*)CPUString) = cpuInfo[1];
-	*((int*)(CPUString+4)) = cpuInfo[3];
-	*((int*)(CPUString+8)) = cpuInfo[2];
+	*((int*)(CPUString + 4)) = cpuInfo[3];
+	*((int*)(CPUString + 8)) = cpuInfo[2];
 	log::info << L"CPU" << Endl;
-	log::info << L"\tString \"" << trim(mbstows(CPUString)) << L"\""  << Endl;
+	log::info << L"\tString \"" << trim(mbstows(CPUString)) << L"\"" << Endl;
 
-	if  (nIds >= 1)
+	if (nIds >= 1)
 	{
 		__cpuid(cpuInfo, 1);
-		log::info << L"\tFamily " << ((cpuInfo[0] >> 8)  & 0xf) << Endl;
+		log::info << L"\tFamily " << ((cpuInfo[0] >> 8) & 0xf) << Endl;
 		log::info << L"\tModel " << ((cpuInfo[0] >> 4) & 0xf) << Endl;
 		log::info << L"\tStepping " << (cpuInfo[0] & 0xf) << Endl;
 	}
-	if  (nIds >= 4)
+	if (nIds >= 4)
 	{
 		// Get number of cores
 		__cpuidex(cpuInfo, 0x4, 0);
@@ -230,14 +229,14 @@ void logSystemInfo()
 	for (int i = 0x80000000; i <= nExIds; ++i)
 	{
 		__cpuid(cpuInfo, i);
-		if  (i == 0x80000002)
+		if (i == 0x80000002)
 			std::memcpy(CPUBrandString, cpuInfo, sizeof(cpuInfo));
-		else if  (i == 0x80000003)
+		else if (i == 0x80000003)
 			std::memcpy(CPUBrandString + 16, cpuInfo, sizeof(cpuInfo));
-		else if  (i == 0x80000004)
+		else if (i == 0x80000004)
 			std::memcpy(CPUBrandString + 32, cpuInfo, sizeof(cpuInfo));
 	}
-	if  (nExIds >= 0x80000004)
+	if (nExIds >= 0x80000004)
 		log::info << L"\tBrand String \"" << trim(mbstows(CPUBrandString)) << L"\"" << Endl;
 
 	// Log memory info
@@ -246,9 +245,9 @@ void logSystemInfo()
 	GlobalMemoryStatusEx(&memInfo);
 	log::info << L"System Memory" << Endl;
 	log::info << L"\tTotal physical " << memInfo.ullTotalPhys / 1024 / 1024 << L" MiB" << Endl;
-	log::info << L"\tAvailable physical " << memInfo.ullAvailPhys  / 1024 / 1024  << L" MiB" << Endl;
-	log::info << L"\tTotal virtual " << memInfo.ullTotalVirtual  / 1024 / 1024  << L" MiB" << Endl;
-	log::info << L"\tAvailable virtual " << memInfo.ullAvailVirtual  / 1024 / 1024  << L" MiB" << Endl;
+	log::info << L"\tAvailable physical " << memInfo.ullAvailPhys / 1024 / 1024 << L" MiB" << Endl;
+	log::info << L"\tTotal virtual " << memInfo.ullTotalVirtual / 1024 / 1024 << L" MiB" << Endl;
+	log::info << L"\tAvailable virtual " << memInfo.ullAvailVirtual / 1024 / 1024 << L" MiB" << Endl;
 
 	// Log OS Version
 	log::info << L"Operating System" << Endl;
@@ -259,35 +258,35 @@ void logDriverVersion()
 {
 	typedef enum nvmlReturn_enum
 	{
-		NVML_SUCCESS = 0,                   //!< The operation was successful
-		NVML_ERROR_UNINITIALIZED = 1,       //!< NVML was not first initialized with nvmlInit()
-		NVML_ERROR_INVALID_ARGUMENT = 2,    //!< A supplied argument is invalid
-		NVML_ERROR_NOT_SUPPORTED = 3,       //!< The requested operation is not available on target device
-		NVML_ERROR_NO_PERMISSION = 4,       //!< The current user does not have permission for operation
+		NVML_SUCCESS = 0,					//!< The operation was successful
+		NVML_ERROR_UNINITIALIZED = 1,		//!< NVML was not first initialized with nvmlInit()
+		NVML_ERROR_INVALID_ARGUMENT = 2,	//!< A supplied argument is invalid
+		NVML_ERROR_NOT_SUPPORTED = 3,		//!< The requested operation is not available on target device
+		NVML_ERROR_NO_PERMISSION = 4,		//!< The current user does not have permission for operation
 		NVML_ERROR_ALREADY_INITIALIZED = 5, //!< Deprecated: Multiple initializations are now allowed through ref counting
-		NVML_ERROR_NOT_FOUND = 6,           //!< A query to find an object was unsuccessful
-		NVML_ERROR_INSUFFICIENT_SIZE = 7,   //!< An input argument is not large enough
-		NVML_ERROR_INSUFFICIENT_POWER = 8,  //!< A device's external power cables are not properly attached
-		NVML_ERROR_DRIVER_NOT_LOADED = 9,   //!< NVIDIA driver is not loaded
-		NVML_ERROR_TIMEOUT = 10,            //!< User provided timeout passed
-		NVML_ERROR_IRQ_ISSUE = 11,          //!< NVIDIA Kernel detected an interrupt issue with a GPU
-		NVML_ERROR_LIBRARY_NOT_FOUND = 12,  //!< NVML Shared Library couldn't be found or loaded
+		NVML_ERROR_NOT_FOUND = 6,			//!< A query to find an object was unsuccessful
+		NVML_ERROR_INSUFFICIENT_SIZE = 7,	//!< An input argument is not large enough
+		NVML_ERROR_INSUFFICIENT_POWER = 8,	//!< A device's external power cables are not properly attached
+		NVML_ERROR_DRIVER_NOT_LOADED = 9,	//!< NVIDIA driver is not loaded
+		NVML_ERROR_TIMEOUT = 10,			//!< User provided timeout passed
+		NVML_ERROR_IRQ_ISSUE = 11,			//!< NVIDIA Kernel detected an interrupt issue with a GPU
+		NVML_ERROR_LIBRARY_NOT_FOUND = 12,	//!< NVML Shared Library couldn't be found or loaded
 		NVML_ERROR_FUNCTION_NOT_FOUND = 13, //!< Local version of NVML doesn't implement this function
-		NVML_ERROR_CORRUPTED_INFOROM = 14,  //!< infoROM is corrupted
-		NVML_ERROR_GPU_IS_LOST = 15,        //!< The GPU has fallen off the bus or has otherwise become inaccessible
-		NVML_ERROR_RESET_REQUIRED = 16,     //!< The GPU requires a reset before it can be used again
-		NVML_ERROR_UNKNOWN = 999            //!< An internal driver error occurred
+		NVML_ERROR_CORRUPTED_INFOROM = 14,	//!< infoROM is corrupted
+		NVML_ERROR_GPU_IS_LOST = 15,		//!< The GPU has fallen off the bus or has otherwise become inaccessible
+		NVML_ERROR_RESET_REQUIRED = 16,		//!< The GPU requires a reset before it can be used again
+		NVML_ERROR_UNKNOWN = 999			//!< An internal driver error occurred
 	} nvmlReturn_t;
 
 	typedef nvmlReturn_t (*PFNNVMLINIT)();
 	typedef nvmlReturn_t (*PFNNVMLSHUTDOWN)();
-	typedef nvmlReturn_t (*PFNNVMLSYSTEMGETDRIVERVERSION)(char *, unsigned);
+	typedef nvmlReturn_t (*PFNNVMLSYSTEMGETDRIVERVERSION)(char*, unsigned);
 
 	std::wstring fn;
 	if (!OS::getInstance().getEnvironment(L"ProgramW6432", fn))
 		return;
 
-    fn += L"\\Nvidia Corporation\\nvsmi\\nvml.dll";
+	fn += L"\\Nvidia Corporation\\nvsmi\\nvml.dll";
 
 	HMODULE hNVML = LoadLibrary(fn.c_str());
 	if (hNVML == NULL || hNVML == INVALID_HANDLE_VALUE)
@@ -303,7 +302,7 @@ void logDriverVersion()
 		return;
 
 	char buffer[81] = { 0 };
-    nvmlGetDriverVersion(buffer, sizeof(buffer));
+	nvmlGetDriverVersion(buffer, sizeof(buffer));
 
 	log::info << L"Graphics Driver" << Endl;
 	log::info << L"\tNVidia " << mbstows(buffer) << Endl;
@@ -375,9 +374,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 			Ref< LogStreamTarget > logTarget = new LogStreamTarget(logStream);
 
-			log::info   .setGlobalTarget(logTarget);
+			log::info.setGlobalTarget(logTarget);
 			log::warning.setGlobalTarget(logTarget);
-			log::error  .setGlobalTarget(logTarget);
+			log::error.setGlobalTarget(logTarget);
 
 			log::info << L"Log file \"" << ss.str() << L"\" created." << Endl;
 
@@ -389,13 +388,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #endif
 
 	logSystemInfo();
-	//logDriverVersion();
+	// logDriverVersion();
 
 	g_logTail = new LogTailTarget();
 
-	log::info   .setGlobalTarget(new LogRedirectTarget(g_logTail, log::info   .getGlobalTarget()));
+	log::info.setGlobalTarget(new LogRedirectTarget(g_logTail, log::info.getGlobalTarget()));
 	log::warning.setGlobalTarget(new LogRedirectTarget(g_logTail, log::warning.getGlobalTarget()));
-	log::error  .setGlobalTarget(new LogRedirectTarget(g_logTail, log::error  .getGlobalTarget()));
+	log::error.setGlobalTarget(new LogRedirectTarget(g_logTail, log::error.getGlobalTarget()));
 
 #if defined(_WIN64)
 	log::info << L"Application starting (64-bit) ..." << Endl;
@@ -409,16 +408,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	_controlfp(_RC_NEAR, _MCW_RC);
 #endif
 
+	// Set resolution of this process's timers to 1 ms.
+	timeBeginPeriod(1);
+
 	// Initialize native UI.
 	ui::Application::getInstance()->initialize(
 		new ui::WidgetFactoryWin32(),
-		nullptr
-	);
+		nullptr);
 
 	Ref< runtime::Application > application;
 	{
 		Path currentPath = FileSystem::getInstance().getAbsolutePath(L".");
-		log::info << L"Working directory: " <<currentPath.getPathName() << Endl;
+		log::info << L"Working directory: " << currentPath.getPathName() << Endl;
 
 		// Override settings path either from command line or application bundle.
 		Path settingsPath = L"Application.config";
@@ -446,7 +447,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		}
 
 		Ref< PropertyGroup > settings = DeepClone(defaultSettings).create< PropertyGroup >();
-		T_FATAL_ASSERT (settings);
+		T_FATAL_ASSERT(settings);
 
 		// Merge user settings into application settings.
 		if (!cmdLine.hasOption('s', L"no-settings"))
@@ -496,17 +497,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		// Create runtime application.
 		application = new runtime::Application();
 		if (application->create(
-			defaultSettings,
-			settings,
-			sysapp,
-			nullptr
-		))
+				defaultSettings,
+				settings,
+				sysapp,
+				nullptr))
 		{
 			for (;;)
-			{
 				if (!application->update())
 					break;
-			}
 
 			safeDestroy(application);
 
@@ -531,6 +529,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	ui::Application::getInstance()->finalize();
 
+	timeEndPeriod(1);
+
 #if !defined(_DEBUG)
 	if (logFile)
 	{
@@ -539,9 +539,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	}
 #endif
 
-	log::info   .setGlobalTarget(nullptr);
+	log::info.setGlobalTarget(nullptr);
 	log::warning.setGlobalTarget(nullptr);
-	log::error  .setGlobalTarget(nullptr);
+	log::error.setGlobalTarget(nullptr);
 
 #if defined(_DEBUG)
 	SingletonManager::getInstance().destroy();
