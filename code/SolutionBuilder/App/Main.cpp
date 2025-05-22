@@ -1,33 +1,36 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <set>
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/TString.h"
+#include "Core/System/OS.h"
 #include "Core/Timer/Timer.h"
-#include "SolutionBuilder/Version.h"
-#include "SolutionBuilder/Configuration.h"
-#include "SolutionBuilder/ExternalDependency.h"
-#include "SolutionBuilder/Project.h"
-#include "SolutionBuilder/ProjectDependency.h"
-#include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/SolutionLoader.h"
 #include "SolutionBuilder/CBlocks/SolutionBuilderCBlocks.h"
+#include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/Dependencies/SolutionBuilderDependencies.h"
 #include "SolutionBuilder/Eclipse/SolutionBuilderEclipse.h"
+#include "SolutionBuilder/ExternalDependency.h"
 #include "SolutionBuilder/FBuild/SolutionBuilderFBuild.h"
 #include "SolutionBuilder/GraphViz/SolutionBuilderGraphViz.h"
 #include "SolutionBuilder/Make/SolutionBuilderMake2.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvc.h"
 #include "SolutionBuilder/Ninja/SolutionBuilderNinja.h"
+#include "SolutionBuilder/Project.h"
+#include "SolutionBuilder/ProjectDependency.h"
+#include "SolutionBuilder/Solution.h"
+#include "SolutionBuilder/SolutionLoader.h"
+#include "SolutionBuilder/Version.h"
 #include "SolutionBuilder/Xcode/SolutionBuilderXcode2.h"
+
+#include <set>
 
 using namespace traktor;
 using namespace traktor::sb;
@@ -45,8 +48,7 @@ void flattenIncludePaths(Project* project, SmallMap< std::wstring, std::set< std
 		const auto& includePaths = configuration->getIncludePaths();
 		outConfigurationIncludePaths[configuration->getName()].insert(
 			includePaths.begin(),
-			includePaths.end()
-		);
+			includePaths.end());
 	}
 
 	for (auto dependency : project->getDependencies())
@@ -112,6 +114,31 @@ int main(int argc, const char** argv)
 		return 0;
 	}
 
+	// Check if environment is already set, else set to current working directory.
+	std::wstring home;
+	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
+	{
+		const Path originalCwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+		const Path executablePath = OS::getInstance().getExecutable().getPathOnly();
+		FileSystem::getInstance().setCurrentVolumeAndDirectory(executablePath);
+
+		while (!FileSystem::getInstance().exist(L"LICENSE.txt"))
+		{
+			const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+			const Path pwd = cwd.getPathOnly();
+			if (cwd == pwd)
+				break;
+			FileSystem::getInstance().setCurrentVolumeAndDirectory(pwd);
+		}
+
+		const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+		if (!cwd.empty())
+		{
+			OS::getInstance().setEnvironment(L"TRAKTOR_HOME", cwd.getPathNameOS());
+			FileSystem::getInstance().setCurrentVolumeAndDirectory(originalCwd);
+		}
+	}
+
 	Timer timer;
 	Ref< Solution > solution;
 
@@ -154,10 +181,8 @@ int main(int argc, const char** argv)
 
 				bool include = false;
 				for (uint32_t i = 1; !include && i < cmdLine.getCount(); ++i)
-				{
 					if (cmdLine.getString(i) == project->getName())
 						include = true;
-				}
 
 				project->setEnable(include);
 			}
@@ -181,8 +206,7 @@ int main(int argc, const char** argv)
 
 				configuration->setIncludePaths(std::vector< std::wstring >(
 					includePaths.begin(),
-					includePaths.end()
-				));
+					includePaths.end()));
 			}
 		}
 	}
