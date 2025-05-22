@@ -6,14 +6,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/Filter.h"
+
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "SolutionBuilder/Filter.h"
 
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Filter", 0, Filter, ProjectItem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.Filter", 0, Filter, ProjectItem)
 
 void Filter::setName(const std::wstring& name)
 {

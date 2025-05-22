@@ -6,18 +6,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/Project.h"
+
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "SolutionBuilder/Project.h"
-#include "SolutionBuilder/ProjectItem.h"
 #include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/Dependency.h"
+#include "SolutionBuilder/ProjectItem.h"
 
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Project", 1, Project, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.Project", 1, Project, ISerializable)
 
 void Project::setEnable(bool enable)
 {
@@ -67,10 +68,8 @@ const RefArray< Configuration >& Project::getConfigurations() const
 Configuration* Project::getConfiguration(const std::wstring& name) const
 {
 	for (auto configuration : m_configurations)
-	{
 		if (configuration->getName() == name)
 			return configuration;
-	}
 	return nullptr;
 }
 

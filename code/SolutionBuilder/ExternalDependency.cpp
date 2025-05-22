@@ -6,25 +6,26 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/ExternalDependency.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
-#include "SolutionBuilder/ExternalDependency.h"
-#include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/Project.h"
+#include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/SolutionLoader.h"
 
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"ExternalDependency", 3, ExternalDependency, Dependency)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.ExternalDependency", 3, ExternalDependency, Dependency)
 
 ExternalDependency::ExternalDependency(const std::wstring& solutionFileName, const std::wstring& projectName)
-:	m_solutionFileName(solutionFileName)
-,	m_projectName(projectName)
+	: m_solutionFileName(solutionFileName)
+	, m_projectName(projectName)
 {
 }
 
@@ -98,8 +99,7 @@ bool ExternalDependency::resolve(const Path& referringSolutionPath, SolutionLoad
 		{
 			Ref< ExternalDependency > externalDependency = new ExternalDependency(
 				solutionFileName.getPathName(),
-				projectDependency->getProject()->getName()
-			);
+				projectDependency->getProject()->getName());
 			if (externalDependency->resolve(solutionFileName, solutionLoader))
 				resolvedDependencies.push_back(externalDependency);
 			else

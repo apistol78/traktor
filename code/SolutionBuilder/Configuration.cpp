@@ -6,18 +6,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/Configuration.h"
+
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "SolutionBuilder/AggregationItem.h"
-#include "SolutionBuilder/Configuration.h"
 
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 5, Configuration, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.Configuration", 5, Configuration, ISerializable)
 
 void Configuration::setName(const std::wstring& name)
 {
@@ -216,8 +217,7 @@ const std::wstring& Configuration::getConsumerLibraryPath() const
 
 void Configuration::serialize(ISerializer& s)
 {
-	MemberEnum< TargetFormat >::Key kTargetFormat[] =
-	{
+	MemberEnum< TargetFormat >::Key kTargetFormat[] = {
 		{ L"TfStaticLibrary", TfStaticLibrary },
 		{ L"TfSharedLibrary", TfSharedLibrary },
 		{ L"TfExecutable", TfExecutable },
@@ -225,15 +225,13 @@ void Configuration::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	MemberEnum< TargetProfile >::Key kTargetProfile[] =
-	{
+	MemberEnum< TargetProfile >::Key kTargetProfile[] = {
 		{ L"TpDebug", TpDebug },
 		{ L"TpRelease", TpRelease },
 		{ 0 }
 	};
 
-	MemberEnum< WarningLevel >::Key kWarningLevel[] =
-	{
+	MemberEnum< WarningLevel >::Key kWarningLevel[] = {
 		{ L"WlNoWarnings", WlNoWarnings },
 		{ L"WlCriticalOnly", WlCriticalOnly },
 		{ L"WlCompilerDefault", WlCompilerDefault },

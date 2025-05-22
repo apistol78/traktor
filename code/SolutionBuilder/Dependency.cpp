@@ -6,15 +6,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/Dependency.h"
+
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "SolutionBuilder/Dependency.h"
 
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"Dependency", Dependency, ISerializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.Dependency", Dependency, ISerializable)
 
 void Dependency::setInheritIncludePaths(bool inheritIncludePaths)
 {
@@ -43,8 +44,7 @@ void Dependency::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 	{
-		const MemberEnum< Link >::Key c_Link[] =
-		{
+		const MemberEnum< Link >::Key c_Link[] = {
 			{ L"LnkNo", LnkNo },
 			{ L"LnkYes", LnkYes },
 			{ L"LnkForce", LnkForce }

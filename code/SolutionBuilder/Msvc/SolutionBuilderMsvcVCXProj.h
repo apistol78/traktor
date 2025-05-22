@@ -8,12 +8,14 @@
  */
 #pragma once
 
-#include <map>
-#include <string>
-#include <vector>
+#include "Core/Io/Path.h"
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 #include "SolutionBuilder/Configuration.h"
+
+#include <map>
+#include <string>
+#include <vector>
 
 namespace traktor::sb
 {
@@ -44,14 +46,12 @@ public:
 		std::wstring& outSolutionPath,
 		std::wstring& outProjectPath,
 		std::wstring& outProjectFileName,
-		std::wstring& outProjectGuid
-	) const;
+		std::wstring& outProjectGuid) const;
 
 	bool generate(
 		GeneratorContext& context,
 		const Solution* solution,
-		const Project* project
-	) const;
+		const Project* project) const;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -92,34 +92,29 @@ protected:
 	bool generateProject(
 		GeneratorContext& context,
 		const Solution* solution,
-		const Project* project
-	) const;
+		const Project* project) const;
 
 	bool generateFilters(
 		GeneratorContext& context,
 		const Solution* solution,
-		const Project* project
-	) const;
+		const Project* project) const;
 
 	bool generateUser(
 		GeneratorContext& context,
 		const Solution* solution,
-		const Project* project
-	) const;
+		const Project* project) const;
 
 	bool collectFiles(
 		const Project* project,
 		const ProjectItem* item,
 		const std::wstring& filterPath,
-		std::vector< std::pair< std::wstring, Path > >& outFiles
-	) const;
+		std::vector< std::pair< std::wstring, Path > >& outFiles) const;
 
 	void findDefinitions(
 		GeneratorContext& context,
 		const Solution* solution,
 		const Project* project,
-		const RefArray< ProjectItem >& items
-	) const;
+		const RefArray< ProjectItem >& items) const;
 };
 
 }

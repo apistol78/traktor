@@ -6,21 +6,21 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXPropertyGroup.h"
+
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXPropertyGroup.h"
 
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXPropertyGroup", 1, SolutionBuilderMsvcVCXPropertyGroup, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.SolutionBuilderMsvcVCXPropertyGroup", 1, SolutionBuilderMsvcVCXPropertyGroup, ISerializable)
 
 bool SolutionBuilderMsvcVCXPropertyGroup::generate(
 	GeneratorContext& context,
 	const Solution* solution,
 	const Project* project,
-	OutputStream& os
-) const
+	OutputStream& os) const
 {
 	if (m_condition.empty())
 		os << L"<PropertyGroup Label=\"" << m_label << L"\">" << Endl;

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="Solution" version="5">
+<object type="traktor.sb.Solution" version="5">
 	<name>Extern Raspberry Pi</name>
 	<rootPath>$(TRAKTOR_HOME)/build/rpi</rootPath>
 	<aggregateOutputPath>$(TRAKTOR_HOME)/bin/latest/rpi</aggregateOutputPath>
 	<projects>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.agg</name>
 			<sourcePath>$(AGG_SDK)/agg-src</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -34,7 +34,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -59,7 +59,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -82,14 +82,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.agg.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -112,7 +112,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.agg.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -121,35 +121,35 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>src</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/*.cpp</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>include</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>include/*.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>gpc</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>gpc/*.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>gpc/*.h</fileName>
 							<excludeFilter/>
 							<items/>
@@ -159,12 +159,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.bullet</name>
 			<sourcePath>$(BULLET_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -187,7 +187,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -210,7 +210,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -231,14 +231,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.bullet.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -259,7 +259,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.bullet.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -268,73 +268,73 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>src/*.cpp</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>src/*.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>BulletCollision</name>
 					<items>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>BroadphaseCollision</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletCollision/BroadphaseCollision/*.cpp</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletCollision/BroadphaseCollision/*.h</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>CollisionDispatch</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletCollision/CollisionDispatch/*.cpp</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletCollision/CollisionDispatch/*.h</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>CollisionShapes</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletCollision/CollisionShapes/*.cpp</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletCollision/CollisionShapes/*.h</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>NarrowPhaseCollision</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletCollision/NarrowPhaseCollision/*.cpp</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletCollision/NarrowPhaseCollision/*.h</fileName>
 									<excludeFilter/>
 									<items/>
@@ -343,48 +343,48 @@
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>BulletDynamics</name>
 					<items>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>ConstraintSolver</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletDynamics/ConstraintSolver/*.cpp</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletDynamics/ConstraintSolver/*.h</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>Dynamics</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletDynamics/Dynamics/*.cpp</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletDynamics/Dynamics/*.h</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>Vehicle</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletDynamics/Vehicle/*.cpp</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>src/BulletDynamics/Vehicle/*.h</fileName>
 									<excludeFilter/>
 									<items/>
@@ -393,15 +393,15 @@
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>LinearMath</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/LinearMath/*.cpp</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/LinearMath/*.h</fileName>
 							<excludeFilter/>
 							<items/>
@@ -411,12 +411,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.detour</name>
 			<sourcePath>$(RECAST_SDK)/Detour</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -439,7 +439,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -462,7 +462,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -483,14 +483,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.detour.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -511,7 +511,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.detour.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -520,20 +520,20 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>Source</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>Source/*.*</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>Include</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>Include/*.*</fileName>
 							<excludeFilter/>
 							<items/>
@@ -543,12 +543,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.expat</name>
 			<sourcePath>$(EXPAT_SDK)/lib</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -576,7 +576,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -604,7 +604,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -630,14 +630,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.expat.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -663,7 +663,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.expat.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -672,22 +672,22 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>xmlparse.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>xmlrole.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>xmltok.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.h</fileName>
 					<excludeFilter/>
 					<items/>
@@ -695,12 +695,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>false</enable>
 			<name>Extern.freetype</name>
 			<sourcePath>$(FREETYPE_SDK)/src</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -727,7 +727,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -754,7 +754,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -779,14 +779,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.freetype.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -811,7 +811,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.freetype.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -820,210 +820,210 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>autofit</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>autofit/autofit.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>base</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>base/ft*.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>bdf</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>bdf/bdf.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>cache</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>cache/ftcache.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>cff</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>cff/cff.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>cid</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>cid/type1cid.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>gzip</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>gzip/ftgzip.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>lzw</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>lzw/ftlzw.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>pcf</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>pcf/pcf.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>pfr</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>pfr/pfr.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>psaux</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>psaux/psaux.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>pshinter</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>pshinter/pshinter.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>raster</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>raster/raster.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>sdf</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>sdf/sdf.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>sfnt</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>sfnt/sfnt.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>smooth</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>smooth/smooth.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>svg</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>svg/svg.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>truetype</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>truetype/truetype.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>type1</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>type1/type1.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>type42</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>type42/type42.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>winfonts</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>winfonts/winfnt.c</fileName>
 							<excludeFilter/>
 							<items/>
@@ -1033,12 +1033,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>false</enable>
 			<name>Extern.glew</name>
 			<sourcePath>$(GLEW_SDK)/src</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1062,7 +1062,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1086,7 +1086,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1108,14 +1108,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.glew.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1137,7 +1137,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.glew.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -1146,7 +1146,7 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>glew.c</fileName>
 					<excludeFilter/>
 					<items/>
@@ -1154,12 +1154,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.jpeg</name>
 			<sourcePath>$(JPEG_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1184,7 +1184,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1209,7 +1209,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1232,14 +1232,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.jpeg.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1262,7 +1262,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.jpeg.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -1271,22 +1271,22 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.c</fileName>
 					<excludeFilter>jmem*;example*;wr*;rd*;cjpeg*;ckconfig*;djpeg*</excludeFilter>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>jmemansi.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>jmemmgr.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.h</fileName>
 					<excludeFilter>gz*</excludeFilter>
 					<items/>
@@ -1294,12 +1294,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.flac</name>
 			<sourcePath>$(FLAC_SDK)/src/libFLAC</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1328,7 +1328,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1357,7 +1357,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1384,14 +1384,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.flac.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1418,7 +1418,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.flac.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -1427,28 +1427,28 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>bitmath.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>include</name>
 					<items>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>private</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>include/private/*.*</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>protected</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>include/protected/*.*</fileName>
 									<excludeFilter/>
 									<items/>
@@ -1457,82 +1457,82 @@
 						</item>
 					</items>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>bitreader.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>bitwriter.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>cpu.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>crc.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>fixed.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>float.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>format.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>lpc.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>md5.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>memory.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>metadata_iterators.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>metadata_object.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>stream_decoder.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>stream_encoder.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>stream_encoder_framing.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>window.c</fileName>
 					<excludeFilter/>
 					<items/>
@@ -1540,12 +1540,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.liblzf</name>
 			<sourcePath>$(LZF_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1568,7 +1568,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1591,7 +1591,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1612,14 +1612,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.liblzf.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1640,7 +1640,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.liblzf.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -1649,32 +1649,32 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>lzf_c.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>lzf_d.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>config.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>crc32.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>lzf.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>lzfP.h</fileName>
 					<excludeFilter/>
 					<items/>
@@ -1682,12 +1682,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>false</enable>
 			<name>Extern.libmad-0.15.1b</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1715,7 +1715,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1743,7 +1743,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1769,14 +1769,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.libmad-0.15.1b.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1802,7 +1802,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.libmad-0.15.1b.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -1811,132 +1811,132 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>platform</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>platforms/linux/*.*</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>version.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>bit.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>decoder.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>fixed.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>frame.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>huffman.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>layer3.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>layer12.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>stream.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>synth.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>timer.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>bit.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>decoder.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>fixed.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>frame.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>global.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>huffman.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>layer3.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>layer12.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>mad.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>stream.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>synth.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>timer.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>version.h</fileName>
 					<excludeFilter/>
 					<items/>
@@ -1944,12 +1944,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.ogg</name>
 			<sourcePath>$(OGG_SDK)/src</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -1974,7 +1974,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -1999,7 +1999,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2022,14 +2022,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.ogg.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2052,7 +2052,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.ogg.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -2061,12 +2061,12 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>bitwise.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>framing.c</fileName>
 					<excludeFilter/>
 					<items/>
@@ -2074,12 +2074,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.theora</name>
 			<sourcePath>$(THEORA_SDK)/lib</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2104,7 +2104,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2130,7 +2130,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2153,14 +2153,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.theora.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2184,7 +2184,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.theora.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -2193,32 +2193,32 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="3">
+				<item type="traktor.sb.ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[10]"/>
 				</item>
-				<item type="ProjectDependency" version="3">
+				<item type="traktor.sb.ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project type="Project" version="1">
+					<project type="traktor.sb.Project" version="1">
 						<enable>true</enable>
 						<name>Extern.vorbis</name>
 						<sourcePath>$(VORBIS_SDK)/lib</sourcePath>
 						<configurations>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2243,7 +2243,7 @@
 								<aggregationItems/>
 								<consumerLibraryPath/>
 							</item>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2270,7 +2270,7 @@
 								<aggregationItems/>
 								<consumerLibraryPath/>
 							</item>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2293,14 +2293,14 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile>libExtern.vorbis.a</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2325,7 +2325,7 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile>libExtern.vorbis.a</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
@@ -2334,328 +2334,328 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>vorbisfile.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>analysis.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>backends.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>bitrate.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>bitrate.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>block.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>codebook.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>codebook.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>codec_internal.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>envelope.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>envelope.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>floor0.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>floor1.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>highlevel.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>info.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>lookup.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>lookup.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>lookup_data.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>lpc.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>lpc.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>lsp.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>lsp.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>mapping0.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>masking.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>mdct.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>mdct.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>misc.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>os.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>psy.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>psy.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>registry.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>registry.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>res0.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>scales.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>sharedbook.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>smallft.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>smallft.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>synthesis.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>window.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>window.h</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>vorbisenc.c</fileName>
 								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="Filter">
+							<item type="traktor.sb.Filter">
 								<name>modes</name>
 								<items>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/setup_X.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/floor_all.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/psych_8.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/psych_11.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/psych_16.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/psych_44.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/residue_8.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/residue_16.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/residue_44.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/residue_44u.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/setup_8.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/setup_11.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/setup_16.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/setup_22.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/setup_32.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/setup_44.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>modes/setup_44u.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
 							</item>
-							<item type="Filter">
+							<item type="traktor.sb.Filter">
 								<name>books</name>
 								<items>
-									<item type="Filter">
+									<item type="traktor.sb.Filter">
 										<name>coupled</name>
 										<items>
-											<item type="File" version="1">
+											<item type="traktor.sb.File" version="1">
 												<fileName>books/coupled/res_books_stereo.h</fileName>
 												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
 									</item>
-									<item type="Filter">
+									<item type="traktor.sb.Filter">
 										<name>floor</name>
 										<items>
-											<item type="File" version="1">
+											<item type="traktor.sb.File" version="1">
 												<fileName>books/floor/floor_books.h</fileName>
 												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
 									</item>
-									<item type="Filter">
+									<item type="traktor.sb.Filter">
 										<name>uncoupled</name>
 										<items>
-											<item type="File" version="1">
+											<item type="traktor.sb.File" version="1">
 												<fileName>books/uncoupled/res_books_uncoupled.h</fileName>
 												<excludeFilter/>
 												<items/>
@@ -2666,7 +2666,7 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="3">
+							<item type="traktor.sb.ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
 								<project ref="/object/projects/item[10]"/>
@@ -2677,12 +2677,12 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[11]/dependencies/item[1]/project"/>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.lpng</name>
 			<sourcePath>$(PNG_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2704,14 +2704,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.lpng.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2733,14 +2733,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.lpng.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2765,7 +2765,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2792,27 +2792,27 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="3">
+				<item type="traktor.sb.ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project type="Project" version="1">
+					<project type="traktor.sb.Project" version="1">
 						<enable>true</enable>
 						<name>Extern.zlib</name>
 						<sourcePath>$(ZLIB_SDK)</sourcePath>
 						<configurations>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2834,14 +2834,14 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile>libExtern.zlib.a</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2863,14 +2863,14 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile>libExtern.zlib.a</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>releasestatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2894,7 +2894,7 @@
 								<aggregationItems/>
 								<consumerLibraryPath/>
 							</item>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2920,12 +2920,12 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>*.c</fileName>
 								<excludeFilter>gz*</excludeFilter>
 								<items/>
 							</item>
-							<item type="File" version="1">
+							<item type="traktor.sb.File" version="1">
 								<fileName>*.h</fileName>
 								<excludeFilter>gz*</excludeFilter>
 								<items/>
@@ -2936,12 +2936,12 @@
 				</item>
 			</dependencies>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.lua</name>
 			<sourcePath>$(LUA_SDK)/src</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -2964,7 +2964,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -2987,7 +2987,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3008,14 +3008,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.lua.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3036,7 +3036,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.lua.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -3045,12 +3045,12 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.h</fileName>
 					<excludeFilter/>
 					<items/>
@@ -3058,12 +3058,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>false</enable>
 			<name>Extern.mpg123-1.13.2</name>
 			<sourcePath>$(MPG123_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3090,7 +3090,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3117,7 +3117,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3142,14 +3142,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3174,7 +3174,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -3183,280 +3183,280 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>libmpg123</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/compat.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/dct64.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/equalizer.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/feature.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/format.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/frame.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/icy.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/icy2utf8.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/id3.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/index.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/layer1.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/layer2.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/layer3.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/libmpg123.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/ntom.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/optimize.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/parse.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/readers.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/stringbuf.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/synth.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/tabinit.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/testcpu.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/compat.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/debug.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/decode.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/frame.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/getbits.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/getcpuflags.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/huffman.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/icy.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/icy2utf8.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/id3.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/index.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/intsym.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/l12_integer_tables.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/l2tables.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/l3_integer_tables.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/mangle.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/mpg123lib_intern.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/optimize.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/parse.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/reader.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/sample.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/synth.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/synths.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/true.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/synth_8bit.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/synth_8bit.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/synth_real.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/synth_s32.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/dct64_i386.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>src/libmpg123/mpg123.h.in</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>ports</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>ports/linux/*.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>ports/linux/*.h</fileName>
 							<excludeFilter/>
 							<items/>
@@ -3466,12 +3466,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.recast</name>
 			<sourcePath>$(RECAST_SDK)/Recast</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3494,7 +3494,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3517,7 +3517,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3538,14 +3538,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.recast.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3566,7 +3566,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.recast.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -3575,20 +3575,20 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>Source</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>Source/*.*</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>Include</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>Include/*.*</fileName>
 							<excludeFilter/>
 							<items/>
@@ -3598,12 +3598,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.rg_etc1</name>
 			<sourcePath>$(RG_ETC1_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3626,7 +3626,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3649,7 +3649,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3670,14 +3670,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.rg_etc1.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3698,7 +3698,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.rg_etc1.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -3707,7 +3707,7 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.*</fileName>
 					<excludeFilter/>
 					<items/>
@@ -3715,12 +3715,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.sqlite</name>
 			<sourcePath>$(SQLITE_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3744,7 +3744,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3768,7 +3768,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3790,14 +3790,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.sqlite.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3819,7 +3819,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.sqlite.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -3828,17 +3828,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>sqlite3.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>sqlite3.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>sqlite3ext.h</fileName>
 					<excludeFilter/>
 					<items/>
@@ -3846,12 +3846,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.squish</name>
 			<sourcePath>$(SQUISH_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3875,7 +3875,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3899,7 +3899,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3921,14 +3921,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.squish.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -3950,7 +3950,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.squish.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -3959,12 +3959,12 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.cpp</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.h</fileName>
 					<excludeFilter/>
 					<items/>
@@ -3972,12 +3972,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.stb</name>
 			<sourcePath>$(STB_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -3998,7 +3998,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4019,7 +4019,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4038,14 +4038,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.stb.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4064,7 +4064,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.stb.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -4073,7 +4073,7 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.*</fileName>
 					<excludeFilter/>
 					<items/>
@@ -4082,12 +4082,12 @@
 			<dependencies/>
 		</item>
 		<item ref="/object/projects/item[13]/dependencies/item/project"/>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>false</enable>
 			<name>Extern.vulkan.glslang</name>
 			<sourcePath>$(GLSLANG)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4110,7 +4110,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4133,7 +4133,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4154,14 +4154,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.vulkan.glslang.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4182,7 +4182,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.vulkan.glslang.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -4191,41 +4191,41 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>glslang</name>
 					<items>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>GenericCodeGen</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>glslang/GenericCodeGen/*.*</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>Include</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>glslang/Include/*.*</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>MachineIndependent</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>glslang/MachineIndependent/*.*</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="Filter">
+								<item type="traktor.sb.Filter">
 									<name>preprocessor</name>
 									<items>
-										<item type="File" version="1">
+										<item type="traktor.sb.File" version="1">
 											<fileName>glslang/MachineIndependent/preprocessor/*.*</fileName>
 											<excludeFilter/>
 											<items/>
@@ -4234,13 +4234,13 @@
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>OSDependent</name>
 							<items>
-								<item type="Filter">
+								<item type="traktor.sb.Filter">
 									<name>Unix</name>
 									<items>
-										<item type="File" version="1">
+										<item type="traktor.sb.File" version="1">
 											<fileName>glslang/OSDependent/Unix/ossource.cpp</fileName>
 											<excludeFilter/>
 											<items/>
@@ -4249,10 +4249,10 @@
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>Public</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>glslang/Public/*.*</fileName>
 									<excludeFilter/>
 									<items/>
@@ -4261,20 +4261,20 @@
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>SPIRV</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>SPIRV/*.*</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>OGLCompilersDLL</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>OGLCompilersDLL/*.*</fileName>
 							<excludeFilter/>
 							<items/>
@@ -4284,12 +4284,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>false</enable>
 			<name>Extern.OpenEXR</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4313,7 +4313,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4337,7 +4337,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4365,14 +4365,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.OpenEXR.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4394,7 +4394,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.OpenEXR.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -4403,15 +4403,15 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>IlmImf</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>IlmImf/*.cpp</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>IlmImf/*.h</fileName>
 							<excludeFilter/>
 							<items/>
@@ -4420,20 +4420,20 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="3">
+				<item type="traktor.sb.ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[13]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="3">
+				<item type="traktor.sb.ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project type="Project" version="1">
+					<project type="traktor.sb.Project" version="1">
 						<enable>false</enable>
 						<name>Extern.ilmbase</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0</sourcePath>
 						<configurations>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -4462,7 +4462,7 @@
 								<aggregationItems/>
 								<consumerLibraryPath/>
 							</item>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -4491,7 +4491,7 @@
 								<aggregationItems/>
 								<consumerLibraryPath/>
 							</item>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -4518,14 +4518,14 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile>libExtern.ilmbase.a</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -4552,7 +4552,7 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile>libExtern.ilmbase.a</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
@@ -4561,90 +4561,90 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="Filter">
+							<item type="traktor.sb.Filter">
 								<name>Half</name>
 								<items>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>Half/half.cpp</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>Half/*.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
 							</item>
-							<item type="Filter">
+							<item type="traktor.sb.Filter">
 								<name>Imath</name>
 								<items>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>Imath/*.cpp</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>Imath/*.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
 							</item>
-							<item type="Filter">
+							<item type="traktor.sb.Filter">
 								<name>Iex</name>
 								<items>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>Iex/*.cpp</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>Iex/*.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
 							</item>
-							<item type="Filter">
+							<item type="traktor.sb.Filter">
 								<name>IlmThread</name>
 								<items>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>IlmThread/*.h</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>IlmThread/IlmThread.cpp</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>IlmThread/IlmThreadMutex.cpp</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>IlmThread/IlmThreadMutexPosix.cpp</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>IlmThread/IlmThreadPool.cpp</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>IlmThread/IlmThreadSemaphore.cpp</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>IlmThread/IlmThreadSemaphorePosix.cpp</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File" version="1">
+									<item type="traktor.sb.File" version="1">
 										<fileName>IlmThread/IlmThreadPosix.cpp</fileName>
 										<excludeFilter/>
 										<items/>
@@ -4658,12 +4658,12 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[23]/dependencies/item[1]/project"/>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.xatlas</name>
 			<sourcePath>$(XATLAS_SDK)/source/xatlas</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4686,7 +4686,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4709,7 +4709,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4730,14 +4730,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.xatlas.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4758,7 +4758,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.xatlas.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -4767,12 +4767,12 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.cpp</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.h</fileName>
 					<excludeFilter/>
 					<items/>
@@ -4780,12 +4780,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.MikkTSpace</name>
 			<sourcePath>$(MIKKTSPACE_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4809,7 +4809,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4833,7 +4833,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4857,7 +4857,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4883,7 +4883,7 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.*</fileName>
 					<excludeFilter/>
 					<items/>
@@ -4891,12 +4891,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>false</enable>
 			<name>Extern.SPIRV-Cross</name>
 			<sourcePath>$(SPIRVCROSS_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4919,7 +4919,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4942,7 +4942,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -4965,7 +4965,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -4990,17 +4990,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.cpp</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.hpp</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>*.h</fileName>
 					<excludeFilter/>
 					<items/>
@@ -5008,12 +5008,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.astcenc</name>
 			<sourcePath>$(ASTCENC_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5040,7 +5040,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -5067,7 +5067,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5094,7 +5094,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -5123,15 +5123,15 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>Source</name>
 					<items>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>Source/*.cpp</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>Source/*.h</fileName>
 							<excludeFilter/>
 							<items/>
@@ -5141,12 +5141,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>false</enable>
 			<name>Extern.VulkanMemoryAllocator</name>
 			<sourcePath>$(VMA_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5169,7 +5169,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -5192,7 +5192,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5215,7 +5215,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -5242,12 +5242,12 @@
 			<items/>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>false</enable>
 			<name>Extern.spirvtools</name>
 			<sourcePath>$(SPIRVTOOLS_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5273,7 +5273,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -5299,7 +5299,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5325,7 +5325,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -5353,13 +5353,13 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>include</name>
 					<items>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>spirv-tools</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>include/spirv-tools/*.*</fileName>
 									<excludeFilter/>
 									<items/>
@@ -5368,60 +5368,60 @@
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>source</name>
 					<items>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>link</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>source/link/*.*</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>opt</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>source/opt/*.*</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>reduce</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>source/reduce/*.*</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>util</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>source/util/*.*</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>val</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>source/val/*.*</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="File" version="1">
+						<item type="traktor.sb.File" version="1">
 							<fileName>source/*.*</fileName>
 							<excludeFilter/>
 							<items/>
@@ -5431,12 +5431,12 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name>Extern.tinyexr</name>
 			<sourcePath>$(TINYEXR_SDK)</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5460,7 +5460,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -5484,7 +5484,7 @@
 					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -5506,14 +5506,14 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.tinyexr.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -5535,7 +5535,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile>libExtern.tinyexr.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -5544,28 +5544,28 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>tinyexr.cc</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File" version="1">
+				<item type="traktor.sb.File" version="1">
 					<fileName>tinyexr.h</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="Filter">
+				<item type="traktor.sb.Filter">
 					<name>deps</name>
 					<items>
-						<item type="Filter">
+						<item type="traktor.sb.Filter">
 							<name>miniz</name>
 							<items>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>deps/miniz/*.c</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File" version="1">
+								<item type="traktor.sb.File" version="1">
 									<fileName>deps/miniz/*.h</fileName>
 									<excludeFilter/>
 									<items/>

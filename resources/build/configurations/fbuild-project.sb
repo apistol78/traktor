@@ -1,5 +1,6 @@
 <?--
 import(traktor)
+import(traktor.sb)
 
 
 local toolchain = OS.getInstance():getEnvironment("FBUILD_TOOLCHAIN") or "vc"

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,9 +10,12 @@
 
 #include "Core/Serialization/ISerializable.h"
 
+#include <string>
+
 namespace traktor
 {
 
+class OutputStream;
 class Path;
 
 }
@@ -35,8 +38,7 @@ public:
 		const Project* project,
 		const std::wstring& filter,
 		const Path& fileName,
-		OutputStream& os
-	) const;
+		OutputStream& os) const;
 
 	virtual bool generateFilter(
 		GeneratorContext& context,
@@ -44,8 +46,7 @@ public:
 		const Project* project,
 		const std::wstring& filter,
 		const Path& fileName,
-		OutputStream& os
-	) const;
+		OutputStream& os) const;
 
 	virtual void serialize(ISerializer& s) override;
 

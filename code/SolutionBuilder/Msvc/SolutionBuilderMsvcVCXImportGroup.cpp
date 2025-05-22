@@ -6,20 +6,21 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImportGroup.h"
+
 #include "Core/Io/OutputStream.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImportGroup.h"
 
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXImportGroup", 0, SolutionBuilderMsvcVCXImportGroup, SolutionBuilderMsvcVCXImportCommon)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.SolutionBuilderMsvcVCXImportGroup", 0, SolutionBuilderMsvcVCXImportGroup, SolutionBuilderMsvcVCXImportCommon)
 
 SolutionBuilderMsvcVCXImportGroup::SolutionBuilderMsvcVCXImportGroup(const std::wstring& label, const std::wstring& condition)
-:	m_label(label)
-,	m_condition(condition)
+	: m_label(label)
+	, m_condition(condition)
 {
 }
 

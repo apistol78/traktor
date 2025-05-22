@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXDefinition.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
@@ -15,27 +17,25 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/System/ResolveEnv.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXDefinition.h"
-#include "SolutionBuilder/Msvc/GeneratorContext.h"
+#include "SolutionBuilder/Configuration.h"
+#include "SolutionBuilder/ExternalDependency.h"
 #include "SolutionBuilder/File.h"
-#include "SolutionBuilder/Solution.h"
+#include "SolutionBuilder/Msvc/GeneratorContext.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ProjectDependency.h"
-#include "SolutionBuilder/ExternalDependency.h"
-#include "SolutionBuilder/Configuration.h"
+#include "SolutionBuilder/Solution.h"
 
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXDefinition", 1, SolutionBuilderMsvcVCXDefinition, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.SolutionBuilderMsvcVCXDefinition", 1, SolutionBuilderMsvcVCXDefinition, ISerializable)
 
 bool SolutionBuilderMsvcVCXDefinition::generate(
 	GeneratorContext& context,
 	const Solution* solution,
 	const Project* project,
 	const Configuration* configuration,
-	OutputStream& os
-) const
+	OutputStream& os) const
 {
 	StringOutputStream ssip, ssd, ssl, sslp;
 
@@ -63,12 +63,11 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 	context.set(L"PROJECT_LIBRARIES", ssl.str());
 	context.set(L"PROJECT_LIBRARY_PATHS", sslp.str());
 
-	const wchar_t* c_warningLevels[] =
-	{
-		L"TurnOffAllWarnings",	// WlNoWarnings
-		L"Level1",				// WlCriticalOnly
-		L"Level3",				// WlCompilerDefault
-		L"EnableAllWarnings",	// WlAllWarnings
+	const wchar_t* c_warningLevels[] = {
+		L"TurnOffAllWarnings", // WlNoWarnings
+		L"Level1",			   // WlCriticalOnly
+		L"Level3",			   // WlCompilerDefault
+		L"EnableAllWarnings",  // WlAllWarnings
 	};
 
 	context.set(L"PROJECT_WARNING_LEVEL", c_warningLevels[configuration->getWarningLevel()]);
@@ -124,18 +123,15 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 	const Project* project,
 	const Configuration* configuration,
 	std::set< std::wstring >& outAdditionalLibraries,
-	std::set< std::wstring >& outAdditionalLibraryPaths
-) const
+	std::set< std::wstring >& outAdditionalLibraryPaths) const
 {
 	outAdditionalLibraries.insert(
 		configuration->getLibraries().begin(),
-		configuration->getLibraries().end()
-	);
+		configuration->getLibraries().end());
 
 	outAdditionalLibraryPaths.insert(
 		configuration->getLibraryPaths().begin(),
-		configuration->getLibraryPaths().end()
-	);
+		configuration->getLibraryPaths().end());
 
 	const RefArray< Dependency >& dependencies = project->getDependencies();
 	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
@@ -151,15 +147,12 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 			}
 
 			if (dependentConfiguration->getTargetFormat() == Configuration::TfStaticLibrary)
-			{
 				collectAdditionalLibraries(
 					solution,
 					projectDependency->getProject(),
 					dependentConfiguration,
 					outAdditionalLibraries,
-					outAdditionalLibraryPaths
-				);
-			}
+					outAdditionalLibraryPaths);
 
 			// If "consumer library path" set then include it as well.
 			const std::wstring& consumerLibraryPath = dependentConfiguration->getConsumerLibraryPath();
@@ -191,15 +184,12 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 			}
 
 			if (externalConfiguration->getTargetFormat() == Configuration::TfStaticLibrary)
-			{
 				collectAdditionalLibraries(
 					externalDependency->getSolution(),
 					externalDependency->getProject(),
 					externalConfiguration,
 					outAdditionalLibraries,
-					outAdditionalLibraryPaths
-				);
-			}
+					outAdditionalLibraryPaths);
 
 			// If "consumer library path" set then include it as well.
 			const std::wstring& consumerLibraryPath = externalConfiguration->getConsumerLibraryPath();
@@ -216,8 +206,7 @@ void SolutionBuilderMsvcVCXDefinition::findDefinitions(
 	GeneratorContext& context,
 	const Solution* solution,
 	const Project* project,
-	const RefArray< ProjectItem >& items
-) const
+	const RefArray< ProjectItem >& items) const
 {
 	Path rootPath = FileSystem::getInstance().getAbsolutePath(context.get(L"PROJECT_PATH"));
 
@@ -235,8 +224,7 @@ void SolutionBuilderMsvcVCXDefinition::findDefinitions(
 					FileSystem::getInstance().getRelativePath(
 						*j,
 						rootPath,
-						relativePath
-					);
+						relativePath);
 					context.set(L"MODULE_DEFINITION_FILE", relativePath.getPathName());
 				}
 			}

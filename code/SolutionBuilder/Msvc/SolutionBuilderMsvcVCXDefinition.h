@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,19 @@
  */
 #pragma once
 
-#include <set>
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
+
+#include <set>
+#include <string>
+#include <vector>
+
+namespace traktor
+{
+
+class OutputStream;
+
+}
 
 namespace traktor::sb
 {
@@ -31,8 +41,7 @@ public:
 		const Solution* solution,
 		const Project* project,
 		const Configuration* configuration,
-		OutputStream& os
-	) const;
+		OutputStream& os) const;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -55,15 +64,13 @@ private:
 		const Project* project,
 		const Configuration* configuration,
 		std::set< std::wstring >& outAdditionalLibraries,
-		std::set< std::wstring >& outAdditionalLibraryPaths
-	) const;
+		std::set< std::wstring >& outAdditionalLibraryPaths) const;
 
 	void findDefinitions(
 		GeneratorContext& context,
 		const Solution* solution,
 		const Project* project,
-		const RefArray< ProjectItem >& items
-	) const;
+		const RefArray< ProjectItem >& items) const;
 };
 
 }

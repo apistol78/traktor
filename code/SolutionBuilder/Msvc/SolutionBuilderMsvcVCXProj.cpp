@@ -6,54 +6,55 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXProj.h"
+
 #include "Core/Guid.h"
-#include "Core/Io/FileSystem.h"
+#include "Core/Io/AnsiEncoding.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileOutputStream.h"
-#include "Core/Io/AnsiEncoding.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
-#include "Core/Misc/String.h"
 #include "Core/Misc/MD5.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Core/Serialization/MemberRefArray.h"
 #include "Core/System/ResolveEnv.h"
 #include "SolutionBuilder/AggregationItem.h"
-#include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/Project.h"
-#include "SolutionBuilder/ProjectDependency.h"
-#include "SolutionBuilder/ExternalDependency.h"
 #include "SolutionBuilder/Configuration.h"
-#include "SolutionBuilder/Filter.h"
+#include "SolutionBuilder/ExternalDependency.h"
 #include "SolutionBuilder/File.h"
-#include "SolutionBuilder/Utilities.h"
+#include "SolutionBuilder/Filter.h"
 #include "SolutionBuilder/Msvc/GeneratorContext.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXDefinition.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXBuildTool.h"
+#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXDefinition.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImport.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImportGroup.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXProj.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXPropertyGroup.h"
+#include "SolutionBuilder/Project.h"
+#include "SolutionBuilder/ProjectDependency.h"
+#include "SolutionBuilder/Solution.h"
+#include "SolutionBuilder/Utilities.h"
 
 namespace traktor::sb
 {
-	namespace
-	{
+namespace
+{
 
 std::wstring systemPath(const Path& path)
 {
 	return replaceAll(path.getPathName(), L'/', L'\\');
 }
 
-	}
+}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 10, SolutionBuilderMsvcVCXProj, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.SolutionBuilderMsvcVCXProj", 10, SolutionBuilderMsvcVCXProj, ISerializable)
 
 SolutionBuilderMsvcVCXProj::SolutionBuilderMsvcVCXProj()
-:	m_resolvePaths(true)
+	: m_resolvePaths(true)
 {
 	m_targetPrefixes[0] = L"";
 	m_targetPrefixes[1] = L"";
@@ -77,8 +78,7 @@ bool SolutionBuilderMsvcVCXProj::getInformation(
 	std::wstring& outSolutionPath,
 	std::wstring& outProjectPath,
 	std::wstring& outProjectFileName,
-	std::wstring& outProjectGuid
-) const
+	std::wstring& outProjectGuid) const
 {
 	outSolutionPath = solution->getRootPath();
 	outProjectPath = solution->getRootPath() + L"/" + project->getName();
@@ -90,8 +90,7 @@ bool SolutionBuilderMsvcVCXProj::getInformation(
 bool SolutionBuilderMsvcVCXProj::generate(
 	GeneratorContext& context,
 	const Solution* solution,
-	const Project* project
-) const
+	const Project* project) const
 {
 	if (!generateProject(context, solution, project))
 		return false;
@@ -134,25 +133,21 @@ void SolutionBuilderMsvcVCXProj::serialize(ISerializer& s)
 		RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsRelease[4];
 
 		s >> MemberStaticArray<
-			std::map< std::wstring, std::wstring >,
-			4,
-			MemberStlMap< std::wstring, std::wstring >
-		>(L"configurationDefinitionsDebug", m_configurationDefinitionsDebug, itemNames);
+				 std::map< std::wstring, std::wstring >,
+				 4,
+				 MemberStlMap< std::wstring, std::wstring > >(L"configurationDefinitionsDebug", m_configurationDefinitionsDebug, itemNames);
 		s >> MemberStaticArray<
-			std::map< std::wstring, std::wstring >,
-			4,
-			MemberStlMap< std::wstring, std::wstring >
-		>(L"configurationDefinitionsRelease", m_configurationDefinitionsRelease, itemNames);
+				 std::map< std::wstring, std::wstring >,
+				 4,
+				 MemberStlMap< std::wstring, std::wstring > >(L"configurationDefinitionsRelease", m_configurationDefinitionsRelease, itemNames);
 		s >> MemberStaticArray<
-				RefArray< SolutionBuilderMsvcVCXDefinition >,
-				sizeof_array(m_buildDefinitionsDebug),
-				MemberRefArray< SolutionBuilderMsvcVCXDefinition >
-			>(L"buildDefinitionsDebug", m_buildDefinitionsDebug, itemNames);
+				 RefArray< SolutionBuilderMsvcVCXDefinition >,
+				 sizeof_array(m_buildDefinitionsDebug),
+				 MemberRefArray< SolutionBuilderMsvcVCXDefinition > >(L"buildDefinitionsDebug", m_buildDefinitionsDebug, itemNames);
 		s >> MemberStaticArray<
-				RefArray< SolutionBuilderMsvcVCXDefinition >,
-				sizeof_array(m_buildDefinitionsRelease),
-				MemberRefArray< SolutionBuilderMsvcVCXDefinition >
-			>(L"buildDefinitionsRelease", m_buildDefinitionsRelease, itemNames);
+				 RefArray< SolutionBuilderMsvcVCXDefinition >,
+				 sizeof_array(m_buildDefinitionsRelease),
+				 MemberRefArray< SolutionBuilderMsvcVCXDefinition > >(L"buildDefinitionsRelease", m_buildDefinitionsRelease, itemNames);
 
 		m_profileDebug.staticLibrary.configurationDefinitions = m_configurationDefinitionsDebug[0];
 		m_profileDebug.staticLibrary.buildDefinitions = m_buildDefinitionsDebug[0];
@@ -210,19 +205,17 @@ void SolutionBuilderMsvcVCXProj::Profile::serialize(ISerializer& s)
 bool SolutionBuilderMsvcVCXProj::generateProject(
 	GeneratorContext& context,
 	const Solution* solution,
-	const Project* project
-) const
+	const Project* project) const
 {
 	std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 	if (!getInformation(
-		context,
-		solution,
-		project,
-		solutionPath,
-		projectPath,
-		projectFileName,
-		projectGuid
-	))
+			context,
+			solution,
+			project,
+			solutionPath,
+			projectPath,
+			projectFileName,
+			projectGuid))
 		return false;
 
 	if (!FileSystem::getInstance().makeAllDirectories(projectPath))
@@ -255,8 +248,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 			context,
 			solution,
 			project,
-			os
-		);
+			os);
 
 	// Configurations
 	os << L"<ItemGroup Label=\"ProjectConfigurations\">" << Endl;
@@ -328,8 +320,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 			context,
 			solution,
 			project,
-			os
-		);
+			os);
 
 	// Properties
 	os << L"<PropertyGroup>" << Endl;
@@ -383,15 +374,12 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 		const auto& buildDefinitions = profile.getProduct(configuration->getTargetFormat()).buildDefinitions;
 
 		for (auto buildDefinition : buildDefinitions)
-		{
 			buildDefinition->generate(
 				context,
 				solution,
 				project,
 				configuration,
-				os
-			);
-		}
+				os);
 
 		const auto& aggregationItems = configuration->getAggregationItems();
 		if (!aggregationItems.empty())
@@ -427,10 +415,8 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	// Collect all files.
 	std::vector< std::pair< std::wstring, Path > > files;
 	for (auto item : project->getItems())
-	{
 		if (!collectFiles(project, item, L"", files))
 			return false;
-	}
 
 	// Create item groups.
 	for (auto buildTool : m_buildTools)
@@ -444,16 +430,14 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 			FileSystem::getInstance().getRelativePath(
 				FileSystem::getInstance().getAbsolutePath(file.second),
 				FileSystem::getInstance().getAbsolutePath(projectPath),
-				itemPath
-			);
+				itemPath);
 			buildTool->generateProject(
 				context,
 				solution,
 				project,
 				file.first,
 				itemPath,
-				os
-			);
+				os);
 		}
 
 		os << DecreaseIndent;
@@ -480,22 +464,20 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 			std::wstring dependentProjectGuid;
 
 			if (!getInformation(
-				context,
-				solution,
-				dependentProject,
-				dependentSolutionPath,
-				dependentProjectPath,
-				dependentProjectFileName,
-				dependentProjectGuid
-			))
+					context,
+					solution,
+					dependentProject,
+					dependentSolutionPath,
+					dependentProjectPath,
+					dependentProjectFileName,
+					dependentProjectGuid))
 				return false;
 
 			Path relativePath;
 			if (!FileSystem::getInstance().getRelativePath(
-				FileSystem::getInstance().getAbsolutePath(dependentProjectFileName),
-				FileSystem::getInstance().getAbsolutePath(projectPath),
-				relativePath
-			))
+					FileSystem::getInstance().getAbsolutePath(dependentProjectFileName),
+					FileSystem::getInstance().getAbsolutePath(projectPath),
+					relativePath))
 			{
 				log::warning << L"Unable to determine relative path to \"" << dependentProjectFileName << L"\" from \"" << projectPath << L"\"." << Endl;
 				continue;
@@ -526,19 +508,17 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 bool SolutionBuilderMsvcVCXProj::generateFilters(
 	GeneratorContext& context,
 	const Solution* solution,
-	const Project* project
-) const
+	const Project* project) const
 {
 	std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 	if (!getInformation(
-		context,
-		solution,
-		project,
-		solutionPath,
-		projectPath,
-		projectFileName,
-		projectGuid
-	))
+			context,
+			solution,
+			project,
+			solutionPath,
+			projectPath,
+			projectFileName,
+			projectGuid))
 		return false;
 
 	if (!FileSystem::getInstance().makeAllDirectories(projectPath))
@@ -564,10 +544,8 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 	// Collect all files.
 	std::vector< std::pair< std::wstring, Path > > files;
 	for (auto item : project->getItems())
-	{
 		if (!collectFiles(project, item, L"", files))
 			return false;
-	}
 
 	// Create item groups.
 	for (auto buildTool : m_buildTools)
@@ -581,16 +559,14 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 			FileSystem::getInstance().getRelativePath(
 				FileSystem::getInstance().getAbsolutePath(file.second),
 				FileSystem::getInstance().getAbsolutePath(projectPath),
-				itemPath
-			);
+				itemPath);
 			buildTool->generateFilter(
 				context,
 				solution,
 				project,
 				file.first,
 				itemPath,
-				os
-			);
+				os);
 		}
 
 		os << DecreaseIndent;
@@ -602,10 +578,8 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 
 	std::set< std::wstring > filters;
 	for (const auto& file : files)
-	{
 		if (file.first != L"")
 			filters.insert(file.first);
-	}
 
 	if (!filters.empty())
 	{
@@ -639,19 +613,17 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 bool SolutionBuilderMsvcVCXProj::generateUser(
 	GeneratorContext& context,
 	const Solution* solution,
-	const Project* project
-) const
+	const Project* project) const
 {
 	std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 	if (!getInformation(
-		context,
-		solution,
-		project,
-		solutionPath,
-		projectPath,
-		projectFileName,
-		projectGuid
-	))
+			context,
+			solution,
+			project,
+			solutionPath,
+			projectPath,
+			projectFileName,
+			projectGuid))
 		return false;
 
 	if (!FileSystem::getInstance().makeAllDirectories(projectPath))
@@ -730,10 +702,9 @@ bool SolutionBuilderMsvcVCXProj::collectFiles(
 	const Project* project,
 	const ProjectItem* item,
 	const std::wstring& filterPath,
-	std::vector< std::pair< std::wstring, Path > >& outFiles
-) const
+	std::vector< std::pair< std::wstring, Path > >& outFiles) const
 {
-	Ref< const Filter > filter = dynamic_type_cast<const Filter* >(item);
+	Ref< const Filter > filter = dynamic_type_cast< const Filter* >(item);
 	if (filter)
 	{
 		std::wstring childFilterPath;
@@ -748,8 +719,7 @@ bool SolutionBuilderMsvcVCXProj::collectFiles(
 				project,
 				it,
 				childFilterPath,
-				outFiles
-			);
+				outFiles);
 	}
 
 	Ref< const sb::File > file = dynamic_type_cast< const sb::File* >(item);
@@ -768,8 +738,7 @@ void SolutionBuilderMsvcVCXProj::findDefinitions(
 	GeneratorContext& context,
 	const Solution* solution,
 	const Project* project,
-	const RefArray< ProjectItem >& items
-) const
+	const RefArray< ProjectItem >& items) const
 {
 	const Path rootPath = FileSystem::getInstance().getAbsolutePath(context.get(L"PROJECT_PATH"));
 	for (auto item : items)
@@ -786,8 +755,7 @@ void SolutionBuilderMsvcVCXProj::findDefinitions(
 					FileSystem::getInstance().getRelativePath(
 						systemFile,
 						rootPath,
-						relativePath
-					);
+						relativePath);
 					context.set(L"MODULE_DEFINITION_FILE", relativePath.getPathName());
 				}
 			}

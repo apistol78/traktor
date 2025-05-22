@@ -6,6 +6,7 @@
 local headerScanner = traktor.sb.HeaderScanner()
 
 import(traktor)
+import(traktor.sb)
 
 local function split(s, delimiter)
     local result = {}

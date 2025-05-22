@@ -6,16 +6,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/Msvc/SolutionBuilderMsvcSettings.h"
+
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcSettings.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXProj.h"
 
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcSettings", 0, SolutionBuilderMsvcSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.SolutionBuilderMsvcSettings", 0, SolutionBuilderMsvcSettings, ISerializable)
 
 void SolutionBuilderMsvcSettings::serialize(ISerializer& s)
 {

@@ -11,6 +11,6 @@
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderMsvcVCXImportCommon", SolutionBuilderMsvcVCXImportCommon, ISerializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderMsvcVCXImportCommon", SolutionBuilderMsvcVCXImportCommon, ISerializable)
 
 }

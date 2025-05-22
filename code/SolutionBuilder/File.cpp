@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Io/File.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
@@ -18,7 +19,7 @@
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"File", 1, File, ProjectItem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.File", 1, File, ProjectItem)
 
 void File::setFileName(const std::wstring& fileName)
 {
@@ -62,8 +63,7 @@ void File::getSystemFiles(const Path& sourcePath, std::set< Path >& outFiles) co
 
 		if (
 			!file->isDirectory() &&
-			!file->isHidden()
-		)
+			!file->isHidden())
 		{
 			bool include = true;
 			for (const auto& wc : wcs)

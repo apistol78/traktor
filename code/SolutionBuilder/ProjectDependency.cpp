@@ -6,18 +6,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "ProjectDependency.h"
+
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
-#include "ProjectDependency.h"
 #include "Project.h"
 
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"ProjectDependency", 3, ProjectDependency, Dependency)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.ProjectDependency", 3, ProjectDependency, Dependency)
 
 ProjectDependency::ProjectDependency(Project* project)
-:	m_project(project)
+	: m_project(project)
 {
 }
 
@@ -44,10 +45,8 @@ std::wstring ProjectDependency::getLocation() const
 bool ProjectDependency::resolve(const Path& referringSolutionPath, SolutionLoader* solutionLoader)
 {
 	for (auto dependency : m_project->getDependencies())
-	{
 		if (!dependency->resolve(referringSolutionPath, solutionLoader))
 			return false;
-	}
 	return true;
 }
 

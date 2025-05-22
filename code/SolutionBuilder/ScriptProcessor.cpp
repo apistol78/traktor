@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/ScriptProcessor.h"
+
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/BoxedClassFactory.h"
 #include "Core/Class/CoreClassFactory1.h"
@@ -24,15 +26,14 @@
 #include "Script/Lua/ScriptCompilerLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "SolutionBuilder/ClassFactory.h"
-#include "SolutionBuilder/ScriptProcessor.h"
 #include "SolutionBuilder/Output.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/Solution.h"
 
 namespace traktor::sb
 {
-	namespace
-	{
+namespace
+{
 
 class ScriptProfilerListener : public script::IScriptProfiler::IListener
 {
@@ -53,10 +54,9 @@ public:
 	}
 };
 
+}
 
-	}
-
-T_IMPLEMENT_RTTI_CLASS(L"ScriptProcessor", ScriptProcessor, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ScriptProcessor", ScriptProcessor, Object)
 
 bool ScriptProcessor::create(const CommandLine& cmdLine)
 {

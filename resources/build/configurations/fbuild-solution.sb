@@ -2,6 +2,9 @@
 
 <?--
 
+import(traktor)
+import(traktor.sb)
+
 local cnames = {}
 
 -- Include projects and collect unique configuration names.

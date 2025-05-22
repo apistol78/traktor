@@ -4,6 +4,7 @@
 local headerScanner = traktor.sb.HeaderScanner()
 
 import(traktor)
+import(traktor.sb)
 
 
 local os = "windows"

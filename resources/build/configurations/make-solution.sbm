@@ -2,6 +2,9 @@
 
 <?--
 
+import(traktor)
+import(traktor.sb)
+
 -- Read configuration from environment.
 local os = OS.getInstance():getEnvironment("MAKE_OS")
 local dialect = OS.getInstance():getEnvironment("MAKE_DIALECT")

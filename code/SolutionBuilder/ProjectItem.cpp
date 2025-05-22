@@ -6,14 +6,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/ProjectItem.h"
+
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "SolutionBuilder/ProjectItem.h"
 
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"ProjectItem", ProjectItem, ISerializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ProjectItem", ProjectItem, ISerializable)
 
 void ProjectItem::addItem(ProjectItem* item)
 {

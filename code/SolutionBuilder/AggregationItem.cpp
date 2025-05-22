@@ -6,14 +6,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/AggregationItem.h"
+
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "SolutionBuilder/AggregationItem.h"
 
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"AggregationItem", 0, AggregationItem, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.AggregationItem", 0, AggregationItem, ISerializable)
 
 void AggregationItem::setSourceFile(const std::wstring& sourceFile)
 {

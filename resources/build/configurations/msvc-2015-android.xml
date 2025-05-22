@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="SolutionBuilderMsvcSettings">
+<object type="traktor.sb.SolutionBuilderMsvcSettings">
 	<slnVersion>12.00</slnVersion>
 	<vsVersion>14</vsVersion>
-	<project type="SolutionBuilderMsvcVCXProj" version="10">
+	<project type="traktor.sb.SolutionBuilderMsvcVCXProj" version="10">
 		<platform>ARM</platform>
 		<keyword>Android</keyword>
 		<windowsTargetPlatformVersion/>
@@ -20,7 +20,7 @@
 		</targetExts>
 		<resolvePaths>true</resolvePaths>
 		<propertyGroupsBeforeImports>
-			<item type="SolutionBuilderMsvcVCXPropertyGroup" version="1">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXPropertyGroup" version="1">
 				<label>Globals</label>
 				<condition/>
 				<values>
@@ -36,7 +36,7 @@
 			</item>
 		</propertyGroupsBeforeImports>
 		<imports>
-			<item type="SolutionBuilderMsvcVCXImport">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXImport">
 				<label/>
 				<project>$(VCTargetsPath)\Microsoft.Cpp.props</project>
 				<condition/>
@@ -60,7 +60,7 @@
 					</item>
 				</configurationDefinitions>
 				<buildDefinitions>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>ClCompile</name>
 						<fileTypes>c;cc;cpp</fileTypes>
 						<resolvePaths>true</resolvePaths>
@@ -100,7 +100,7 @@
 			<sharedLibrary>
 				<configurationDefinitions/>
 				<buildDefinitions>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>ClCompile</name>
 						<fileTypes>c;cc;cpp</fileTypes>
 						<resolvePaths>true</resolvePaths>
@@ -135,7 +135,7 @@
 							</item>
 						</options>
 					</item>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>Link</name>
 						<fileTypes/>
 						<resolvePaths>true</resolvePaths>
@@ -155,7 +155,7 @@
 			<executable>
 				<configurationDefinitions/>
 				<buildDefinitions>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>ClCompile</name>
 						<fileTypes>c;cc;cpp</fileTypes>
 						<resolvePaths>true</resolvePaths>
@@ -190,7 +190,7 @@
 							</item>
 						</options>
 					</item>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>Link</name>
 						<fileTypes/>
 						<resolvePaths>true</resolvePaths>
@@ -210,7 +210,7 @@
 			<executableConsole>
 				<configurationDefinitions/>
 				<buildDefinitions>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>ClCompile</name>
 						<fileTypes>c;cc;cpp</fileTypes>
 						<resolvePaths>true</resolvePaths>
@@ -245,7 +245,7 @@
 							</item>
 						</options>
 					</item>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>Link</name>
 						<fileTypes/>
 						<resolvePaths>true</resolvePaths>
@@ -280,7 +280,7 @@
 					</item>
 				</configurationDefinitions>
 				<buildDefinitions>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>ClCompile</name>
 						<fileTypes>c;cc;cpp</fileTypes>
 						<resolvePaths>true</resolvePaths>
@@ -320,7 +320,7 @@
 			<sharedLibrary>
 				<configurationDefinitions/>
 				<buildDefinitions>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>ClCompile</name>
 						<fileTypes>c;cc;cpp</fileTypes>
 						<resolvePaths>true</resolvePaths>
@@ -355,7 +355,7 @@
 							</item>
 						</options>
 					</item>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>Link</name>
 						<fileTypes/>
 						<resolvePaths>true</resolvePaths>
@@ -375,7 +375,7 @@
 			<executable>
 				<configurationDefinitions/>
 				<buildDefinitions>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>ClCompile</name>
 						<fileTypes>c;cc;cpp</fileTypes>
 						<resolvePaths>true</resolvePaths>
@@ -410,7 +410,7 @@
 							</item>
 						</options>
 					</item>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>Link</name>
 						<fileTypes/>
 						<resolvePaths>true</resolvePaths>
@@ -430,7 +430,7 @@
 			<executableConsole>
 				<configurationDefinitions/>
 				<buildDefinitions>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>ClCompile</name>
 						<fileTypes>c;cc;cpp</fileTypes>
 						<resolvePaths>true</resolvePaths>
@@ -465,7 +465,7 @@
 							</item>
 						</options>
 					</item>
-					<item type="SolutionBuilderMsvcVCXDefinition" version="1">
+					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
 						<name>Link</name>
 						<fileTypes/>
 						<resolvePaths>true</resolvePaths>
@@ -484,80 +484,80 @@
 			</executableConsole>
 		</profileRelease>
 		<buildTools>
-			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>js</fileType>
 				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
-			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>css</fileType>
 				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
-			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>lua</fileType>
 				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
-			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>png</fileType>
 				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
-			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>image</fileType>
 				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
-			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>xdi</fileType>
 				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
-			<item type="SolutionBuilderMsvcVCXCustomBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
 				<fileType>exe</fileType>
 				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
-			<item type="SolutionBuilderMsvcVCXBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXBuildTool">
 				<name>ClInclude</name>
 				<fileType>h</fileType>
 			</item>
-			<item type="SolutionBuilderMsvcVCXBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXBuildTool">
 				<name>ClInclude</name>
 				<fileType>hpp</fileType>
 			</item>
-			<item type="SolutionBuilderMsvcVCXClCompileBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXClCompileBuildTool">
 				<name>ClCompile</name>
 				<fileType>cpp</fileType>
 			</item>
-			<item type="SolutionBuilderMsvcVCXClCompileBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXClCompileBuildTool">
 				<name>ClCompile</name>
 				<fileType>cc</fileType>
 			</item>
-			<item type="SolutionBuilderMsvcVCXClCompileBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXClCompileBuildTool">
 				<name>ClCompile</name>
 				<fileType>c</fileType>
 			</item>
-			<item type="SolutionBuilderMsvcVCXBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXBuildTool">
 				<name>None</name>
 				<fileType>inl</fileType>
 			</item>
-			<item type="SolutionBuilderMsvcVCXBuildTool">
+			<item type="traktor.sb.SolutionBuilderMsvcVCXBuildTool">
 				<name>None</name>
 				<fileType>java</fileType>
 			</item>

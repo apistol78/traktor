@@ -6,10 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/Aggregation.h"
+
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "SolutionBuilder/Aggregation.h"
 #include "SolutionBuilder/AggregationItem.h"
 #include "SolutionBuilder/Dependency.h"
 
@@ -18,10 +19,10 @@
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Aggregation", 1, Aggregation, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.Aggregation", 1, Aggregation, ISerializable)
 
 Aggregation::Aggregation()
-:	m_enable(true)
+	: m_enable(true)
 {
 }
 

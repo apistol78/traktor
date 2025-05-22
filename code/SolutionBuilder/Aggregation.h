@@ -11,6 +11,8 @@
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
+#include <string>
+
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOLUTIONBUILDER_EXPORT)
