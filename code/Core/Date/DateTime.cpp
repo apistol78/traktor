@@ -1,20 +1,22 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <ctime>
-#include <cstring>
 #include "Core/Date/DateTime.h"
+
 #include "Core/Serialization/ISerializer.h"
+
+#include <cstring>
+#include <ctime>
 
 namespace traktor
 {
-	namespace
-	{
+namespace
+{
 
 void getLocalTime(time_t t, struct tm* T)
 {
@@ -27,12 +29,12 @@ void getLocalTime(time_t t, struct tm* T)
 #endif
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.DateTime", 0, DateTime, ISerializable)
 
 DateTime::DateTime(uint64_t seconds)
-:	m_epoch(seconds)
+	: m_epoch(seconds)
 {
 }
 
@@ -55,12 +57,17 @@ DateTime::DateTime(uint16_t year, uint8_t month, uint16_t day, uint8_t hour, uin
 	t.tm_yday = 0;
 	t.tm_isdst = 0;
 
-	m_epoch = mktime(&t);
+#if defined(_MSC_VER)
+	m_epoch = ::_mkgmtime(&t);
+#else
+	m_epoch = ::timegm(&t);
+#endif
 }
 
 DateTime DateTime::now()
 {
-	time_t t; ::time(&t);
+	time_t t;
+	::time(&t);
 	return DateTime(uint64_t(t));
 }
 
@@ -158,7 +165,7 @@ std::wstring DateTime::format(const std::wstring& fmt) const
 	return buf;
 }
 
-DateTime::operator uint64_t () const
+DateTime::operator uint64_t() const
 {
 	return m_epoch;
 }
