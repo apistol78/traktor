@@ -71,7 +71,7 @@ local function collectDependencies(
 	for _, includePath in pairs(configuration.includePaths) do
 		local ch = includePath:sub(1, 1)
 		if ch ~= "`" then
-			local ip = fileSystem:getAbsolutePath(Path(includePath)).pathNameNoVolume
+			local ip = fileSystem:getAbsolutePath(Path(includePath)):normalized().pathNameNoVolume
 			if ip ~= "" then
 				insertLast(outIncludePaths, ip)
 			end
@@ -94,9 +94,9 @@ local function collectDependencies(
 		)
 		local lp = ""
 		if libraryRelPath ~= nil then
-			lp = libraryRelPath.pathName
+			lp = libraryRelPath:normalized().pathName
 		else
-			lp = libraryPath.pathName
+			lp = libraryPath:normalized().pathName
 		end
 		if lp ~= "" then
 			insertLast(outLibraryPaths, lp)
@@ -128,7 +128,7 @@ local function collectDependencies(
 				else
 					-- Only add include paths when dealing with shared library dependencies.
 					for _, includePath in pairs(localConfig.includePaths) do
-						local ip = Path(includePath).pathName
+						local ip = Path(includePath):normalized().pathName
 						if ip ~= "" then
 							insertLast(outIncludePaths, ip)
 						end
@@ -152,7 +152,7 @@ local function collectDependencies(
 					)
 
 					if consumerRelPath ~= nil then
-						insertLast(outLibraryPaths, consumerRelPath.pathName)
+						insertLast(outLibraryPaths, consumerRelPath:normalized().pathName)
 					end
 				else
 					local externalRelPath = fileSystem:getRelativePath(
@@ -160,7 +160,7 @@ local function collectDependencies(
 						projectPath
 					)
 					if externalRelPath ~= nil then
-						insertLast(outLibraryPaths, externalRelPath.pathName)
+						insertLast(outLibraryPaths, externalRelPath:normalized().pathName)
 					end
 				end
 
@@ -228,7 +228,7 @@ end
 
 local configurations = project.configurations
 local sourcePath = Path(project.sourcePath)
-local sourcePathAbs = fileSystem:getAbsolutePath(sourcePath)
+local sourcePathAbs = fileSystem:getAbsolutePath(sourcePath):normalized()
 if sourcePathAbs ~= nil then
 	if os == "linux" or os == "osx" then
 		sourcePath = Path(sourcePathAbs.pathNameNoVolume)
@@ -279,7 +279,7 @@ collectFiles(
 
 -- Ensure definition file path is relative to project.
 if definitionFile ~= nil then
-	definitionFile = fileSystem:getRelativePath(definitionFile, projectPath)
+	definitionFile = fileSystem:getRelativePath(definitionFile, projectPath):normalized()
 	assert (definitionFile ~= nil)
 end
 
