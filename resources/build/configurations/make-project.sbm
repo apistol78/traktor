@@ -152,15 +152,19 @@ local function collectDependencies(
 					)
 
 					if consumerRelPath ~= nil then
-						insertLast(outLibraryPaths, consumerRelPath.pathName)
+						insertLast(outLibraryPaths, consumerRelPath.pathNameOS)
 					end
 				else
+					local externalSolutionPath = fileSystem:getAbsolutePath(Path(dependency.solutionFileName)):normalized();
+					local externalLibPath = Path(externalSolutionPath.pathOnlyOS):concat(Path(externalSolution.rootPath .. "/" .. configuration.name))
 					local externalRelPath = fileSystem:getRelativePath(
-						Path(externalSolution.rootPath .. "/" .. configuration.name),
+						externalLibPath,
 						projectPath
 					)
 					if externalRelPath ~= nil then
-						insertLast(outLibraryPaths, externalRelPath.pathName)
+						insertLast(outLibraryPaths, externalRelPath.pathNameOS)
+					else
+						print("Unable to add external path \"" .. externalSolution.rootPath .. "/" .. configuration.name .. "\"")
 					end
 				end
 

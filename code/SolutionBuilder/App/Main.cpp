@@ -10,6 +10,7 @@
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
 #include "Core/Timer/Timer.h"
@@ -41,14 +42,40 @@ using namespace traktor::sb;
 #define ERROR_UNABLE_TO_CREATE_BUILDER 4
 #define ERROR_UNABLE_TO_CREATE_SOLUTION 5
 
-void flattenIncludePaths(Project* project, SmallMap< std::wstring, std::set< std::wstring > >& outConfigurationIncludePaths)
+void flattenIncludePaths(
+	const Path& solutionPath,
+	Project* project,
+	SmallMap< std::wstring, std::set< std::wstring > >& outConfigurationIncludePaths,
+	SmallMap< std::wstring, std::set< std::wstring > >& outConfigurationLibraryPaths
+)
 {
+	const Path solutionPathAbs = FileSystem::getInstance().getAbsolutePath(solutionPath);
+
 	for (auto configuration : project->getConfigurations())
 	{
 		const auto& includePaths = configuration->getIncludePaths();
-		outConfigurationIncludePaths[configuration->getName()].insert(
-			includePaths.begin(),
-			includePaths.end());
+		for (const auto& includePath : includePaths)
+		{
+			if (!startsWith(includePath, L"`"))
+			{
+				const Path resolvedIncludePath = (Path(solutionPathAbs.getPathOnly()) + Path(includePath)).normalized();
+				outConfigurationIncludePaths[configuration->getName()].insert(resolvedIncludePath.getPathNameOS());
+			}
+			else
+				outConfigurationIncludePaths[configuration->getName()].insert(includePath);
+		}
+
+		const auto& libraryPaths = configuration->getIncludePaths();
+		for (const auto& libraryPath : libraryPaths)
+		{
+			if (!startsWith(libraryPath, L"`"))
+			{
+				const Path resolvedLibraryPath = (Path(solutionPathAbs.getPathOnly()) + Path(libraryPath)).normalized();
+				outConfigurationIncludePaths[configuration->getName()].insert(resolvedLibraryPath.getPathNameOS());
+			}
+			else
+				outConfigurationIncludePaths[configuration->getName()].insert(libraryPath);
+		}
 	}
 
 	for (auto dependency : project->getDependencies())
@@ -57,9 +84,12 @@ void flattenIncludePaths(Project* project, SmallMap< std::wstring, std::set< std
 			continue;
 
 		if (auto projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
-			flattenIncludePaths(projectDependency->getProject(), outConfigurationIncludePaths);
+			flattenIncludePaths(solutionPath, projectDependency->getProject(), outConfigurationIncludePaths, outConfigurationLibraryPaths);
 		else if (auto externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency))
-			flattenIncludePaths(externalDependency->getProject(), outConfigurationIncludePaths);
+		{
+			const Path externalSolutionPath = FileSystem::getInstance().getAbsolutePath(Path(externalDependency->getSolutionFileName()));
+			flattenIncludePaths(externalSolutionPath, externalDependency->getProject(), outConfigurationIncludePaths, outConfigurationLibraryPaths);
+		}
 	}
 }
 
@@ -191,22 +221,34 @@ int main(int argc, const char** argv)
 		for (auto project : solution->getProjects())
 		{
 			SmallMap< std::wstring, std::set< std::wstring > > configurationIncludePaths;
-			flattenIncludePaths(project, configurationIncludePaths);
+			SmallMap< std::wstring, std::set< std::wstring > > configurationLibraryPaths;
+			flattenIncludePaths(solutionPath, project, configurationIncludePaths, configurationLibraryPaths);
 
 			for (auto configuration : project->getConfigurations())
 			{
 				const auto& includePaths = configurationIncludePaths[configuration->getName()];
+				const auto& libraryPaths = configurationLibraryPaths[configuration->getName()];
 
 				if (cmdLine.hasOption('v', L"verbose"))
 				{
 					traktor::log::info << L"Include paths of \"" << project->getName() << L"\" " << configuration->getName() << Endl;
 					for (auto includePath : includePaths)
 						traktor::log::info << L"\t" << includePath << Endl;
+
+					traktor::log::info << L"Library paths of \"" << project->getName() << L"\" " << configuration->getName() << Endl;
+					for (auto libraryPath : libraryPaths)
+						traktor::log::info << L"\t" << libraryPath << Endl;
 				}
 
 				configuration->setIncludePaths(std::vector< std::wstring >(
 					includePaths.begin(),
-					includePaths.end()));
+					includePaths.end()
+				));
+
+				configuration->setLibraryPaths(std::vector< std::wstring >(
+					libraryPaths.begin(),
+					libraryPaths.end()
+				));
 			}
 		}
 	}
