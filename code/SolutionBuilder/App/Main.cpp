@@ -65,16 +65,16 @@ void flattenIncludePaths(
 				outConfigurationIncludePaths[configuration->getName()].insert(includePath);
 		}
 
-		const auto& libraryPaths = configuration->getIncludePaths();
+		const auto& libraryPaths = configuration->getLibraryPaths();
 		for (const auto& libraryPath : libraryPaths)
 		{
 			if (!startsWith(libraryPath, L"`"))
 			{
 				const Path resolvedLibraryPath = (Path(solutionPathAbs.getPathOnly()) + Path(libraryPath)).normalized();
-				outConfigurationIncludePaths[configuration->getName()].insert(resolvedLibraryPath.getPathNameOS());
+				outConfigurationLibraryPaths[configuration->getName()].insert(resolvedLibraryPath.getPathNameOS());
 			}
 			else
-				outConfigurationIncludePaths[configuration->getName()].insert(libraryPath);
+				outConfigurationLibraryPaths[configuration->getName()].insert(libraryPath);
 		}
 	}
 

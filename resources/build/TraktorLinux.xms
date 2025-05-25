@@ -16647,7 +16647,7 @@
 			</dependencies>
 		</item>
 		<item type="traktor.sb.Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Database.Local.P4</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Database/Local/Perforce</sourcePath>
 			<configurations>
