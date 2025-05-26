@@ -65,8 +65,16 @@ void BitmapX11::copySubImage(const drawing::Image* image, const Rect& srcRect, c
 
 	const bool haveAlpha = image->getPixelFormat().getAlphaBits() > 0;
 
-	Ref< drawing::Image > sourceImage = image->clone();
-	sourceImage->convert(drawing::PixelFormat::getA8R8G8B8());
+	Ref< drawing::Image > sourceImage;
+	if (image->getPixelFormat() == drawing::PixelFormat::getA8R8G8B8())
+		sourceImage = const_cast< drawing::Image* >(image);
+	else if (image->getPixelFormat() == drawing::PixelFormat::getX8R8G8B8())
+		sourceImage = const_cast< drawing::Image* >(image);
+	else
+	{
+		sourceImage = image->clone();
+		sourceImage->convert(drawing::PixelFormat::getA8R8G8B8());
+	}
 
 	cairo_surface_flush(m_surface);
 
