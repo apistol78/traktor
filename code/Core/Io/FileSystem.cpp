@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Io/FileSystem.h"
+
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
@@ -17,16 +18,16 @@
 #if defined(_WIN32)
 #	include "Core/Io/Win32/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
-#elif defined(__IOS__)		// IOS
+#elif defined(__IOS__) // IOS
 #	include "Core/Io/iOS/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
-#elif defined(__APPLE__)	// MAC
+#elif defined(__APPLE__) // MAC
 #	include "Core/Io/OsX/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
 #elif defined(__ANDROID__)
 #	include "Core/Io/Android/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
-#else						// LINUX
+#else // LINUX
 #	include "Core/Io/Linux/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
 #endif
@@ -305,14 +306,11 @@ Path FileSystem::getAbsolutePath(const Path& basePath, const Path& relativePath)
 			return relativePath;
 	}
 
-	const Path absolutePath = relativePath.isRelative() ?
-		Path(absoluteBasePath.getPathName() + L"/" + relativePath.getPathNameNoVolume()) :
-		Path(absoluteBasePath.getVolume() + L":" + relativePath.getPathNameNoVolume());
-
-	return absolutePath;
+	const Path absolutePath = relativePath.isRelative() ? Path(absoluteBasePath.getPathName() + L"/" + relativePath.getPathNameNoVolume()) : Path(absoluteBasePath.getVolume() + L":" + relativePath.getPathNameNoVolume());
+	return absolutePath.normalized();
 }
 
-bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeToPath, Path& relativePath) const
+bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeToPath, Path& outRelativePath) const
 {
 	if (absolutePath.isRelative() || relativeToPath.isRelative())
 		return false;
@@ -347,7 +345,7 @@ bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeT
 	for (; j != absoluteParts.end(); ++j)
 		ss << L"/" << *j;
 
-	relativePath = ss.str();
+	outRelativePath = ss.str();
 	return true;
 }
 

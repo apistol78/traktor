@@ -46,8 +46,7 @@ void flattenIncludePaths(
 	const Path& solutionPath,
 	Project* project,
 	SmallMap< std::wstring, std::set< std::wstring > >& outConfigurationIncludePaths,
-	SmallMap< std::wstring, std::set< std::wstring > >& outConfigurationLibraryPaths
-)
+	SmallMap< std::wstring, std::set< std::wstring > >& outConfigurationLibraryPaths)
 {
 	const Path solutionPathAbs = FileSystem::getInstance().getAbsolutePath(solutionPath);
 
@@ -55,7 +54,6 @@ void flattenIncludePaths(
 	{
 		const auto& includePaths = configuration->getIncludePaths();
 		for (const auto& includePath : includePaths)
-		{
 			if (!startsWith(includePath, L"`"))
 			{
 				const Path resolvedIncludePath = (Path(solutionPathAbs.getPathOnly()) + Path(includePath)).normalized();
@@ -63,11 +61,9 @@ void flattenIncludePaths(
 			}
 			else
 				outConfigurationIncludePaths[configuration->getName()].insert(includePath);
-		}
 
 		const auto& libraryPaths = configuration->getLibraryPaths();
 		for (const auto& libraryPath : libraryPaths)
-		{
 			if (!startsWith(libraryPath, L"`"))
 			{
 				const Path resolvedLibraryPath = (Path(solutionPathAbs.getPathOnly()) + Path(libraryPath)).normalized();
@@ -75,7 +71,6 @@ void flattenIncludePaths(
 			}
 			else
 				outConfigurationLibraryPaths[configuration->getName()].insert(libraryPath);
-		}
 	}
 
 	for (auto dependency : project->getDependencies())
@@ -170,29 +165,31 @@ int main(int argc, const char** argv)
 	}
 
 	Timer timer;
+	Path solutionPathName;
 	Ref< Solution > solution;
 
 	if (cmdLine.getCount() >= 1)
 	{
-		Path solutionPath = cmdLine.getString(0);
 		SolutionLoader solutionLoader;
+
+		solutionPathName = cmdLine.getString(0);
 
 		if (cmdLine.hasOption('v', L"verbose"))
 		{
 			traktor::log::info << SB_TITLE << Endl;
-			traktor::log::info << L"Loading solution \"" << solutionPath.getPathName() << L"\"..." << Endl;
+			traktor::log::info << L"Loading solution \"" << solutionPathName.getPathName() << L"\"..." << Endl;
 		}
 
 		solution = solutionLoader.load(cmdLine.getString(0));
 		if (!solution)
 		{
-			traktor::log::error << L"Unable to read solution \"" << solutionPath.getPathName() << L"\"" << Endl;
+			traktor::log::error << L"Unable to read solution \"" << solutionPathName.getPathName() << L"\"" << Endl;
 			return ERROR_UNABLE_TO_READ_SOLUTION;
 		}
 
 		if (cmdLine.hasOption(L"rootPath"))
 		{
-			Path rootPath(cmdLine.getOption(L"rootPath").getString());
+			const Path rootPath(cmdLine.getOption(L"rootPath").getString());
 			solution->setRootPath(rootPath.normalized().getPathName());
 		}
 
@@ -222,7 +219,7 @@ int main(int argc, const char** argv)
 		{
 			SmallMap< std::wstring, std::set< std::wstring > > configurationIncludePaths;
 			SmallMap< std::wstring, std::set< std::wstring > > configurationLibraryPaths;
-			flattenIncludePaths(solutionPath, project, configurationIncludePaths, configurationLibraryPaths);
+			flattenIncludePaths(solutionPathName, project, configurationIncludePaths, configurationLibraryPaths);
 
 			for (auto configuration : project->getConfigurations())
 			{
@@ -242,13 +239,11 @@ int main(int argc, const char** argv)
 
 				configuration->setIncludePaths(std::vector< std::wstring >(
 					includePaths.begin(),
-					includePaths.end()
-				));
+					includePaths.end()));
 
 				configuration->setLibraryPaths(std::vector< std::wstring >(
 					libraryPaths.begin(),
-					libraryPaths.end()
-				));
+					libraryPaths.end()));
 			}
 		}
 	}
@@ -264,7 +259,7 @@ int main(int argc, const char** argv)
 
 	if (solution)
 	{
-		if (!builder->generate(solution))
+		if (!builder->generate(solution, solutionPathName))
 		{
 			traktor::log::error << L"Unable to generate target solution." << Endl;
 			return ERROR_UNABLE_TO_CREATE_SOLUTION;

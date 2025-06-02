@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <set>
+#include "SolutionBuilder/GraphViz/SolutionBuilderGraphViz.h"
+
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
@@ -16,26 +17,25 @@
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/GraphViz/SolutionBuilderGraphViz.h"
+
+#include <set>
 
 namespace traktor::sb
 {
-	namespace
-	{
+namespace
+{
 
 void collectActiveProjects(const Project* project, std::set< const Project* >& outProjects)
 {
 	outProjects.insert(project);
 	for (auto dependency : project->getDependencies())
-	{
 		if (auto projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
 			collectActiveProjects(projectDependency->getProject(), outProjects);
 		else if (auto externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency))
 			collectActiveProjects(externalDependency->getProject(), outProjects);
-	}
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderGraphViz", SolutionBuilderGraphViz, SolutionBuilder)
 
@@ -45,7 +45,7 @@ bool SolutionBuilderGraphViz::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderGraphViz::generate(const Solution* solution)
+bool SolutionBuilderGraphViz::generate(const Solution* solution, const Path& solutionPathName)
 {
 	AlignedVector< uint8_t > buffer;
 	buffer.reserve(40000);
@@ -59,10 +59,8 @@ bool SolutionBuilderGraphViz::generate(const Solution* solution)
 
 	std::set< const Project* > activeProjects;
 	for (auto project : solution->getProjects())
-	{
 		if (project->getEnable())
 			collectActiveProjects(project, activeProjects);
-	}
 
 	for (auto project : activeProjects)
 	{
@@ -90,8 +88,7 @@ bool SolutionBuilderGraphViz::generate(const Solution* solution)
 	{
 		Ref< IStream > file = FileSystem::getInstance().open(
 			solution->getName() + L".graphviz",
-			File::FmWrite
-		);
+			File::FmWrite);
 		if (!file)
 			return false;
 		file->write(&buffer[0], int(buffer.size()));

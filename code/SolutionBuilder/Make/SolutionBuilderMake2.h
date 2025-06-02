@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Ref.h"
 #include "SolutionBuilder/SolutionBuilder.h"
 
 // import/export mechanism.
@@ -33,7 +34,7 @@ public:
 
 	virtual bool create(const CommandLine& cmdLine) override final;
 
-	virtual bool generate(const Solution* solution) override final;
+	virtual bool generate(const Solution* solution, const Path& solutionPathName) override final;
 
 	virtual void showOptions() const override final;
 

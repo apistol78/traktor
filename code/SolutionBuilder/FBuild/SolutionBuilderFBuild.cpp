@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/FBuild/SolutionBuilderFBuild.h"
+
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -15,7 +17,6 @@
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ScriptProcessor.h"
 #include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/FBuild/SolutionBuilderFBuild.h"
 
 namespace traktor::sb
 {
@@ -41,7 +42,7 @@ bool SolutionBuilderFBuild::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderFBuild::generate(const Solution* solution)
+bool SolutionBuilderFBuild::generate(const Solution* solution, const Path& solutionPathName)
 {
 	// Create root path.
 	if (!FileSystem::getInstance().makeAllDirectories(solution->getRootPath()))
@@ -83,8 +84,7 @@ bool SolutionBuilderFBuild::generate(const Solution* solution)
 
 			Ref< IStream > file = FileSystem::getInstance().open(
 				projectPath + L"/fbuild.bff",
-				File::FmWrite
-			);
+				File::FmWrite);
 			if (!file)
 			{
 				log::error << L"Unable to create project file \"" << projectPath << L"/" << project->getName() << L".bff" << L"\"." << Endl;
@@ -116,8 +116,7 @@ bool SolutionBuilderFBuild::generate(const Solution* solution)
 
 		Ref< IStream > file = FileSystem::getInstance().open(
 			solution->getRootPath() + L"/" + solution->getName() + L".bff",
-			File::FmWrite
-		);
+			File::FmWrite);
 		if (!file)
 		{
 			log::error << L"Unable to create solution file \"" << solution->getRootPath() << L"/" + solution->getName() << L".bff" << L"\"." << Endl;

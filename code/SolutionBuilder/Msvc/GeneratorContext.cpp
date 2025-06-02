@@ -1,21 +1,24 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <sstream>
+#include "SolutionBuilder/Msvc/GeneratorContext.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/MD5.h"
-#include "SolutionBuilder/Msvc/GeneratorContext.h"
+
+#include <sstream>
 
 namespace traktor::sb
 {
 
-GeneratorContext::GeneratorContext(bool includeExternal)
-:	m_includeExternal(includeExternal)
+GeneratorContext::GeneratorContext(const Path& solutionPathName, bool includeExternal)
+	: m_solutionPathName(solutionPathName)
+	, m_includeExternal(includeExternal)
 {
 }
 
@@ -59,7 +62,7 @@ std::wstring GeneratorContext::format(const std::wstring& option) const
 	return final;
 }
 
-std::wstring GeneratorContext::getProjectRelativePath(const std::wstring& path, bool resolve) const
+std::wstring GeneratorContext::getVCProjectRelativePath(const std::wstring& path, bool resolve) const
 {
 	Path resolvedPath(path);
 
@@ -71,10 +74,9 @@ std::wstring GeneratorContext::getProjectRelativePath(const std::wstring& path, 
 	Path relativePath;
 	FileSystem& fileSystem = FileSystem::getInstance();
 	if (fileSystem.getRelativePath(
-		fileSystem.getAbsolutePath(path),
-		fileSystem.getAbsolutePath(get(L"PROJECT_PATH")),
-		relativePath
-	))
+			fileSystem.getAbsolutePath(path),
+			fileSystem.getAbsolutePath(get(L"PROJECT_PATH")),
+			relativePath))
 		return relativePath.getPathName();
 
 	return resolve ? resolvedPath.getPathName() : path;
@@ -94,8 +96,7 @@ std::wstring GeneratorContext::generateGUID(const std::wstring& key) const
 	ss << L"{";
 	for (int i = 0; i < 16; ++i)
 	{
-		wchar_t hex[] =
-		{
+		wchar_t hex[] = {
 			L"0123456789ABCDEF"[(cs[i] >> 4) & 0xf],
 			L"0123456789ABCDEF"[cs[i] & 0xf]
 		};

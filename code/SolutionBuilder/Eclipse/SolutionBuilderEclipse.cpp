@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
+#include "SolutionBuilder/Eclipse/SolutionBuilderEclipse.h"
+
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
@@ -20,7 +21,8 @@
 #include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/ScriptProcessor.h"
 #include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/Eclipse/SolutionBuilderEclipse.h"
+
+#include <algorithm>
 
 namespace traktor::sb
 {
@@ -42,7 +44,7 @@ bool SolutionBuilderEclipse::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderEclipse::generate(const Solution* solution)
+bool SolutionBuilderEclipse::generate(const Solution* solution, const Path& solutionPathName)
 {
 	// Create root path.
 	if (!FileSystem::getInstance().makeDirectory(solution->getRootPath()))
@@ -81,8 +83,7 @@ bool SolutionBuilderEclipse::generate(const Solution* solution)
 
 			Ref< IStream > file = FileSystem::getInstance().open(
 				projectFileName,
-				traktor::File::FmWrite
-			);
+				traktor::File::FmWrite);
 			if (!file)
 			{
 				log::error << L"Unable to create project \"" << projectFileName << L"\"" << Endl;
@@ -108,8 +109,7 @@ bool SolutionBuilderEclipse::generate(const Solution* solution)
 
 			Ref< IStream > file = FileSystem::getInstance().open(
 				cprojectFileName,
-				traktor::File::FmWrite
-			);
+				traktor::File::FmWrite);
 			if (!file)
 			{
 				log::error << L"Unable to create cproject \"" << cprojectFileName << L"\"" << Endl;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,10 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Containers/SmallMap.h"
+#include "Core/Io/Path.h"
+
+#include <string>
 
 namespace traktor::sb
 {
@@ -18,7 +20,7 @@ namespace traktor::sb
 class GeneratorContext
 {
 public:
-	explicit GeneratorContext(bool includeExternal);
+	explicit GeneratorContext(const Path& solutionPathName, bool includeExternal);
 
 	void set(const std::wstring& key, const std::wstring& value);
 
@@ -26,13 +28,16 @@ public:
 
 	std::wstring format(const std::wstring& option) const;
 
-	std::wstring getProjectRelativePath(const std::wstring& path, bool resolve) const;
+	std::wstring getVCProjectRelativePath(const std::wstring& path, bool resolve) const;
 
 	std::wstring generateGUID(const std::wstring& key) const;
+
+	const Path& getSolutionPathName() const { return m_solutionPathName; }
 
 	bool getIncludeExternal() const { return m_includeExternal; }
 
 private:
+	Path m_solutionPathName;
 	bool m_includeExternal;
 	SmallMap< std::wstring, std::wstring > m_values;
 };

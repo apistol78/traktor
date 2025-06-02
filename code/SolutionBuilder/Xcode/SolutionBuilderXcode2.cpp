@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/Xcode/SolutionBuilderXcode2.h"
+
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -16,7 +18,6 @@
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ScriptProcessor.h"
 #include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/Xcode/SolutionBuilderXcode2.h"
 
 namespace traktor::sb
 {
@@ -44,7 +45,7 @@ bool SolutionBuilderXcode2::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderXcode2::generate(const Solution* solution)
+bool SolutionBuilderXcode2::generate(const Solution* solution, const Path& solutionPathName)
 {
 	log::info << L"Generating Xcode projects..." << Endl;
 
@@ -80,8 +81,7 @@ bool SolutionBuilderXcode2::generate(const Solution* solution)
 
 			Ref< IStream > file = FileSystem::getInstance().open(
 				projectPath + L"/project.pbxproj",
-				File::FmWrite
-			);
+				File::FmWrite);
 			if (!file)
 			{
 				log::error << L"Unable to create project file \"" << projectPath << L"/project.pbxproj" << L"\"." << Endl;
@@ -117,8 +117,7 @@ bool SolutionBuilderXcode2::generate(const Solution* solution)
 
 		Ref< IStream > file = FileSystem::getInstance().open(
 			workspacePath + L"/contents.xcworkspacedata",
-			File::FmWrite
-		);
+			File::FmWrite);
 		if (!file)
 		{
 			log::error << L"Unable to create workspace file \"" << workspacePath << L"/contents.xcworkspacedata\"." << Endl;
@@ -141,10 +140,8 @@ bool SolutionBuilderXcode2::generate(const Solution* solution)
 	for (auto project : solution->getProjects())
 	{
 		if (project->getEnable())
-		{
 			for (auto configuration : project->getConfigurations())
 				configurations.insert(configuration->getName());
-		}
 	}
 
 	std::wstring schemePath = solution->getRootPath() + L"/" + solution->getName() + L".xcworkspace/xcshareddata/xcschemes";
@@ -153,7 +150,7 @@ bool SolutionBuilderXcode2::generate(const Solution* solution)
 		log::error << L"Unable to create project output directory \"" << schemePath << L"\"." << Endl;
 		return false;
 	}
-	
+
 	for (const auto& configuration : configurations)
 	{
 		std::wstring schemeOut;
@@ -165,8 +162,7 @@ bool SolutionBuilderXcode2::generate(const Solution* solution)
 
 		Ref< IStream > file = FileSystem::getInstance().open(
 			schemePath + L"/" + configuration + L".xcscheme",
-			File::FmWrite
-		);
+			File::FmWrite);
 		if (!file)
 		{
 			log::error << L"Unable to create scheme file \"" << schemePath + L"/" << configuration << L".xcscheme\"." << Endl;

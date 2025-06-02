@@ -8,12 +8,12 @@
  */
 #pragma once
 
-#include "Core/Ref.h"
-#include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Io/File.h"
 #include "Core/Io/IVolume.h"
 #include "Core/Io/Path.h"
+#include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Core/Singleton/ISingleton.h"
 
 // import/export mechanism.
@@ -38,8 +38,8 @@ class IStream;
  * in the file system.
  */
 class T_DLLCLASS FileSystem
-:	public Object
-,	public ISingleton
+	: public Object
+	, public ISingleton
 {
 	T_RTTI_CLASS;
 
@@ -145,7 +145,7 @@ public:
 	Ref< IStream > open(const Path& fileName, uint32_t mode);
 
 	/*! Map file into memory for reading.
-	 * 
+	 *
 	 * \param fileName Path to file to open.
 	 * \return Mapped file view.
 	 */
@@ -237,10 +237,10 @@ public:
 	 *
 	 * \param absolutePath Absolute path.
 	 * \param relativeToPath Relative to path.
-	 * \param relativePath Result relative path.
+	 * \param outRelativePath Result relative path.
 	 * \return True if relative path was successfully derived.
 	 */
-	bool getRelativePath(const Path& absolutePath, const Path& relativeToPath, Path& relativePath) const;
+	bool getRelativePath(const Path& absolutePath, const Path& relativeToPath, Path& outRelativePath) const;
 
 protected:
 	virtual void destroy() override final;
@@ -253,4 +253,3 @@ private:
 };
 
 }
-

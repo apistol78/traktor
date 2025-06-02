@@ -40,20 +40,20 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 	StringOutputStream ssip, ssd, ssl, sslp;
 
 	for (auto includePath : configuration->getIncludePaths())
-		ssip << context.getProjectRelativePath(includePath, m_resolvePaths) << L";";
+		ssip << context.getVCProjectRelativePath(includePath, m_resolvePaths) << L";";
 
 	for (auto definition : configuration->getDefinitions())
 		ssd << definition << L";";
 
 	std::set< std::wstring > libraries, libraryPaths;
-	collectAdditionalLibraries(solution, project, configuration, libraries, libraryPaths);
+	collectAdditionalLibraries(context.getSolutionPathName(), solution, project, configuration, libraries, libraryPaths);
 
-	for (std::set< std::wstring >::const_iterator i = libraries.begin(); i != libraries.end(); ++i)
-		ssl << *i << L";";
+	for (const std::wstring& library : libraries)
+		ssl << library << L";";
 
 	for (std::set< std::wstring >::const_iterator i = libraryPaths.begin(); i != libraryPaths.end(); ++i)
 	{
-		const std::wstring libraryPath = context.getProjectRelativePath(*i, m_resolvePaths);
+		const std::wstring libraryPath = context.getVCProjectRelativePath(*i, m_resolvePaths);
 		sslp << libraryPath << L";";
 	}
 
@@ -72,13 +72,13 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 
 	context.set(L"PROJECT_WARNING_LEVEL", c_warningLevels[configuration->getWarningLevel()]);
 
-	std::wstring aco = configuration->getAdditionalCompilerOptions();
+	const std::wstring aco = configuration->getAdditionalCompilerOptions();
 	if (!aco.empty())
 		context.set(L"PROJECT_ADDITIONAL_COMPILER_OPTIONS", aco + L" ");
 	else
 		context.set(L"PROJECT_ADDITIONAL_COMPILER_OPTIONS", L"");
 
-	std::wstring alo = configuration->getAdditionalLinkerOptions();
+	const std::wstring alo = configuration->getAdditionalLinkerOptions();
 	if (!alo.empty())
 		context.set(L"PROJECT_ADDITIONAL_LINKER_OPTIONS", alo + L" ");
 	else
@@ -119,6 +119,7 @@ void SolutionBuilderMsvcVCXDefinition::Option::serialize(ISerializer& s)
 }
 
 void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
+	const Path& solutionPathName,
 	const Solution* solution,
 	const Project* project,
 	const Configuration* configuration,
@@ -133,13 +134,12 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 		configuration->getLibraryPaths().begin(),
 		configuration->getLibraryPaths().end());
 
-	const RefArray< Dependency >& dependencies = project->getDependencies();
-	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	for (auto dependency : project->getDependencies())
 	{
 		// Traverse all static library dependencies and at their "additional libraries" as well.
-		if (ProjectDependency* projectDependency = dynamic_type_cast< ProjectDependency* >(*i))
+		if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
 		{
-			Configuration* dependentConfiguration = projectDependency->getProject()->getConfiguration(configuration->getName());
+			const Configuration* dependentConfiguration = projectDependency->getProject()->getConfiguration(configuration->getName());
 			if (!dependentConfiguration)
 			{
 				log::warning << L"Unable to add dependency \"" << projectDependency->getProject()->getName() << L"\", no matching configuration found" << Endl;
@@ -148,6 +148,7 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 
 			if (dependentConfiguration->getTargetFormat() == Configuration::TfStaticLibrary)
 				collectAdditionalLibraries(
+					solutionPathName,
 					solution,
 					projectDependency->getProject(),
 					dependentConfiguration,
@@ -158,26 +159,37 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 			const std::wstring& consumerLibraryPath = dependentConfiguration->getConsumerLibraryPath();
 			if (!consumerLibraryPath.empty())
 			{
-				Path libraryPath = Path(solution->getAggregateOutputPath()) + Path(consumerLibraryPath);
+				const Path libraryPath = Path(solution->getAggregateOutputPath()) + Path(consumerLibraryPath);
 				outAdditionalLibraryPaths.insert(libraryPath.getPathName());
 			}
 		}
 
 		// Add products from external dependencies and their "additional libraries" as well.
-		if (ExternalDependency* externalDependency = dynamic_type_cast< ExternalDependency* >(*i))
+		if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency))
 		{
-			Ref< Configuration > externalConfiguration = externalDependency->getProject()->getConfiguration(configuration->getName());
+			const Configuration* externalConfiguration = externalDependency->getProject()->getConfiguration(configuration->getName());
 			if (!externalConfiguration)
 			{
 				log::warning << L"Unable to add external dependency \"" << externalDependency->getProject()->getName() << L"\", no matching configuration found" << Endl;
 				continue;
 			}
 
+			const std::wstring externalSolutionPathName = externalDependency->getSolutionFileName();
+
+			const Path absoluteExternalSolutionPathName = FileSystem::getInstance().getAbsolutePath(
+				Path(solutionPathName),
+				Path(externalSolutionPathName));
+
 			if (externalDependency->getLink() != Dependency::LnkNo)
 			{
 				std::wstring externalRootPath = externalDependency->getSolution()->getRootPath();
-				std::wstring externalProjectPath = externalRootPath + L"/" + toLower(externalConfiguration->getName());
-				std::wstring externalProjectName = externalDependency->getProject()->getName() + L".lib";
+
+				const Path absoluteExternalRootPath = FileSystem::getInstance().getAbsolutePath(
+					Path(absoluteExternalSolutionPathName.getPathOnlyOS()),
+					Path(externalRootPath));
+
+				const std::wstring externalProjectPath = absoluteExternalRootPath.getPathNameOS() + L"/" + toLower(externalConfiguration->getName());
+				const std::wstring externalProjectName = externalDependency->getProject()->getName() + L".lib";
 
 				outAdditionalLibraries.insert(externalProjectName);
 				outAdditionalLibraryPaths.insert(externalProjectPath);
@@ -185,6 +197,7 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 
 			if (externalConfiguration->getTargetFormat() == Configuration::TfStaticLibrary)
 				collectAdditionalLibraries(
+					absoluteExternalSolutionPathName,
 					externalDependency->getSolution(),
 					externalDependency->getProject(),
 					externalConfiguration,
@@ -195,7 +208,7 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 			const std::wstring& consumerLibraryPath = externalConfiguration->getConsumerLibraryPath();
 			if (!consumerLibraryPath.empty())
 			{
-				Path libraryPath = Path(externalDependency->getSolution()->getAggregateOutputPath()) + Path(consumerLibraryPath);
+				const Path libraryPath = Path(externalDependency->getSolution()->getAggregateOutputPath()) + Path(consumerLibraryPath);
 				outAdditionalLibraryPaths.insert(libraryPath.getPathName());
 			}
 		}
@@ -208,11 +221,10 @@ void SolutionBuilderMsvcVCXDefinition::findDefinitions(
 	const Project* project,
 	const RefArray< ProjectItem >& items) const
 {
-	Path rootPath = FileSystem::getInstance().getAbsolutePath(context.get(L"PROJECT_PATH"));
-
-	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	const Path rootPath = FileSystem::getInstance().getAbsolutePath(context.get(L"PROJECT_PATH"));
+	for (auto item : items)
 	{
-		if (const sb::File* file = dynamic_type_cast< const sb::File* >(*i))
+		if (const sb::File* file = dynamic_type_cast< const sb::File* >(item))
 		{
 			std::set< Path > systemFiles;
 			file->getSystemFiles(project->getSourcePath(), systemFiles);
@@ -229,7 +241,7 @@ void SolutionBuilderMsvcVCXDefinition::findDefinitions(
 				}
 			}
 		}
-		findDefinitions(context, solution, project, (*i)->getItems());
+		findDefinitions(context, solution, project, item->getItems());
 	}
 }
 

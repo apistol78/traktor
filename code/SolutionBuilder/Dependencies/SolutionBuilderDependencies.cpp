@@ -6,32 +6,32 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <set>
+#include "SolutionBuilder/Dependencies/SolutionBuilderDependencies.h"
+
 #include "Core/Log/Log.h"
 #include "SolutionBuilder/ExternalDependency.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/Dependencies/SolutionBuilderDependencies.h"
+
+#include <set>
 
 namespace traktor::sb
 {
-	namespace
-	{
+namespace
+{
 
 void collectDependencies(const Project* project, std::set< std::wstring >& outDependencies)
 {
 	outDependencies.insert(project->getName());
 	for (auto dependency : project->getDependencies())
-	{
 		if (auto projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
 			collectDependencies(projectDependency->getProject(), outDependencies);
 		else if (auto externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency))
 			collectDependencies(externalDependency->getProject(), outDependencies);
-	}
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderDependencies", SolutionBuilderDependencies, SolutionBuilder)
 
@@ -43,7 +43,7 @@ bool SolutionBuilderDependencies::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderDependencies::generate(const Solution* solution)
+bool SolutionBuilderDependencies::generate(const Solution* solution, const Path& solutionPathName)
 {
 	for (auto project : solution->getProjects())
 	{

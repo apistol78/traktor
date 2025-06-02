@@ -19,6 +19,7 @@ namespace traktor
 {
 
 class OutputStream;
+class Path;
 
 }
 
@@ -60,6 +61,7 @@ private:
 	std::vector< Option > m_options;
 
 	void collectAdditionalLibraries(
+		const Path& solutionPathName,
 		const Solution* solution,
 		const Project* project,
 		const Configuration* configuration,

@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/CBlocks/SolutionBuilderCBlocks.h"
+
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -15,7 +17,6 @@
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ScriptProcessor.h"
 #include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/CBlocks/SolutionBuilderCBlocks.h"
 
 namespace traktor::sb
 {
@@ -41,7 +42,7 @@ bool SolutionBuilderCBlocks::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderCBlocks::generate(const Solution* solution)
+bool SolutionBuilderCBlocks::generate(const Solution* solution, const Path& solutionPathName)
 {
 	// Create root path.
 	if (!FileSystem::getInstance().makeAllDirectories(solution->getRootPath()))
@@ -71,8 +72,7 @@ bool SolutionBuilderCBlocks::generate(const Solution* solution)
 
 			Ref< IStream > file = FileSystem::getInstance().open(
 				projectPath + L"/" + project->getName() + L".cbp",
-				File::FmWrite
-			);
+				File::FmWrite);
 			if (!file)
 				return false;
 
@@ -95,8 +95,7 @@ bool SolutionBuilderCBlocks::generate(const Solution* solution)
 
 		Ref< IStream > file = FileSystem::getInstance().open(
 			solution->getRootPath() + L"/" + solution->getName() + L".workspace",
-			File::FmWrite
-		);
+			File::FmWrite);
 		if (!file)
 			return false;
 

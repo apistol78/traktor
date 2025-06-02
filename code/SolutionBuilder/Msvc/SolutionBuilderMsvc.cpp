@@ -6,44 +6,45 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/RefSet.h"
-#include "Core/Log/Log.h"
-#include "Core/Misc/MD5.h"
-#include "Core/Misc/String.h"
+#include "SolutionBuilder/Msvc/SolutionBuilderMsvc.h"
+
 #include "Core/Io/AnsiEncoding.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
-#include "Xml/XmlDeserializer.h"
-#include "Xml/XmlSerializer.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/MD5.h"
+#include "Core/Misc/String.h"
+#include "Core/RefSet.h"
 #include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/ExternalDependency.h"
+#include "SolutionBuilder/Msvc/GeneratorContext.h"
+#include "SolutionBuilder/Msvc/SolutionBuilderMsvcSettings.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Utilities.h"
-#include "SolutionBuilder/Msvc/GeneratorContext.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvc.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcSettings.h"
+#include "Xml/XmlDeserializer.h"
+#include "Xml/XmlSerializer.h"
 
 // Forced references
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXProj.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXBuildTool.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXClCompileBuildTool.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXCustomBuildTool.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXDefinition.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImport.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImportGroup.h"
+#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXProj.h"
 
 namespace traktor::sb
 {
-	namespace
-	{
+namespace
+{
 
 struct ProjectNamePredicate
 {
-	bool operator () (const Project* p0, const Project* p1) const
+	bool operator()(const Project* p0, const Project* p1) const
 	{
 		return compareIgnoreCase(p0->getName(), p1->getName()) < 0;
 	}
@@ -54,8 +55,7 @@ bool collectExternalSolutions(
 	GeneratorContext& context,
 	Project* project,
 	std::map< const Project*, std::wstring >& outProjectGuids,
-	RefSet< Solution >& outExternalSolutions
-)
+	RefSet< Solution >& outExternalSolutions)
 {
 	for (auto dependency : project->getDependencies())
 	{
@@ -75,14 +75,13 @@ bool collectExternalSolutions(
 
 			std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 			if (!settings->getProject()->getInformation(
-				context,
-				externalSolution,
-				externalProject,
-				solutionPath,
-				projectPath,
-				projectFileName,
-				projectGuid
-			))
+					context,
+					externalSolution,
+					externalProject,
+					solutionPath,
+					projectPath,
+					projectFileName,
+					projectGuid))
 				return false;
 
 			outProjectGuids[externalProject] = projectGuid;
@@ -96,7 +95,7 @@ bool collectExternalSolutions(
 	return true;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderMsvc", SolutionBuilderMsvc, SolutionBuilder)
 
@@ -157,7 +156,7 @@ bool SolutionBuilderMsvc::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderMsvc::generate(const Solution* solution)
+bool SolutionBuilderMsvc::generate(const Solution* solution, const Path& solutionPathName)
 {
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXProj)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXBuildTool)
@@ -167,10 +166,10 @@ bool SolutionBuilderMsvc::generate(const Solution* solution)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXImport)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXImportGroup)
 
-	std::wstring solutionFileName = solution->getRootPath() + L"/" + solution->getName() + L".sln";
+	const std::wstring solutionFileName = solution->getRootPath() + L"/" + solution->getName() + L".sln";
 
 	// Setup generator context.
-	GeneratorContext context(m_includeExternal);
+	GeneratorContext context(solutionPathName, m_includeExternal);
 	context.set(L"SOLUTION_NAME", solution->getName());
 	context.set(L"SOLUTION_ROOTPATH", solution->getRootPath());
 	context.set(L"SOLUTION_FILENAME", solutionFileName);
@@ -191,21 +190,19 @@ bool SolutionBuilderMsvc::generate(const Solution* solution)
 
 		std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 		if (!m_settings->getProject()->getInformation(
-			context,
-			solution,
-			project,
-			solutionPath,
-			projectPath,
-			projectFileName,
-			projectGuid
-		))
+				context,
+				solution,
+				project,
+				solutionPath,
+				projectPath,
+				projectFileName,
+				projectGuid))
 			return false;
 
 		if (!m_settings->getProject()->generate(
-			context,
-			solution,
-			project
-		))
+				context,
+				solution,
+				project))
 			return false;
 
 		// Collect external projects which we should include in generated solution.
@@ -238,18 +235,17 @@ bool SolutionBuilderMsvc::generate(const Solution* solution)
 
 		std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 		if (!m_settings->getProject()->getInformation(
-			context,
-			solution,
-			project,
-			solutionPath,
-			projectPath,
-			projectFileName,
-			projectGuid
-		))
+				context,
+				solution,
+				project,
+				solutionPath,
+				projectPath,
+				projectFileName,
+				projectGuid))
 			return false;
 
 		std::wstring projectExtension = Path(projectFileName).getExtension();
-		os << L"Project(\"" << solutionGuid << L"\") = \"" << project->getName() << L"\", \"" << project->getName() << L"\\" << project->getName() << L"." << projectExtension << L"\", \"" << /*projectGuids[project]*/projectGuid << L"\"" << Endl;
+		os << L"Project(\"" << solutionGuid << L"\") = \"" << project->getName() << L"\", \"" << project->getName() << L"\\" << project->getName() << L"." << projectExtension << L"\", \"" << /*projectGuids[project]*/ projectGuid << L"\"" << Endl;
 
 		// Add local, or first order external if enabled, dependencies.
 		const RefArray< Dependency >& dependencies = project->getDependencies();
@@ -317,14 +313,13 @@ bool SolutionBuilderMsvc::generate(const Solution* solution)
 
 				std::wstring solutionPath, projectPath, projectFileName, projectGuid;
 				if (!m_settings->getProject()->getInformation(
-					context,
-					externalSolution,
-					externalProject,
-					solutionPath,
-					projectPath,
-					projectFileName,
-					projectGuid
-				))
+						context,
+						externalSolution,
+						externalProject,
+						solutionPath,
+						projectPath,
+						projectFileName,
+						projectGuid))
 					continue;
 
 				Path externalProjectPath;

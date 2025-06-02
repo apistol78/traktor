@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "SolutionBuilder/Make/SolutionBuilderMake2.h"
+
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -16,7 +18,6 @@
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ScriptProcessor.h"
 #include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/Make/SolutionBuilderMake2.h"
 
 namespace traktor::sb
 {
@@ -42,7 +43,7 @@ bool SolutionBuilderMake2::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderMake2::generate(const Solution* solution)
+bool SolutionBuilderMake2::generate(const Solution* solution, const Path& solutionPathName)
 {
 	AlignedVector< uint8_t > buf;
 	Timer timer;
@@ -78,8 +79,7 @@ bool SolutionBuilderMake2::generate(const Solution* solution)
 
 		Ref< IStream > file = FileSystem::getInstance().open(
 			projectPath + L"/makefile",
-			File::FmWrite
-		);
+			File::FmWrite);
 		if (!file)
 			return false;
 
@@ -115,8 +115,7 @@ bool SolutionBuilderMake2::generate(const Solution* solution)
 
 		Ref< IStream > file = FileSystem::getInstance().open(
 			solutionPath,
-			File::FmWrite
-		);
+			File::FmWrite);
 		if (!file)
 			return false;
 
