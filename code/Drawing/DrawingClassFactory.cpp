@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Drawing/DrawingClassFactory.h"
+
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes/BoxedAlignedVector.h"
 #include "Core/Class/Boxes/BoxedColor4f.h"
@@ -14,12 +16,6 @@
 #include "Core/Class/Boxes/BoxedVector2.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Io/IStream.h"
-#include "Drawing/DrawingClassFactory.h"
-#include "Drawing/IImageFilter.h"
-#include "Drawing/Image.h"
-#include "Drawing/ITransferFunction.h"
-#include "Drawing/PixelFormat.h"
-#include "Drawing/Raster.h"
 #include "Drawing/Filters/BlurFilter.h"
 #include "Drawing/Filters/BrightnessContrastFilter.h"
 #include "Drawing/Filters/ChainFilter.h"
@@ -44,11 +40,17 @@
 #include "Drawing/Filters/TonemapFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
 #include "Drawing/Functions/BlendFunction.h"
+#include "Drawing/IImageFilter.h"
+#include "Drawing/Image.h"
+#include "Drawing/ITransferFunction.h"
+#include "Drawing/Palette.h"
+#include "Drawing/PixelFormat.h"
+#include "Drawing/Raster.h"
 
 namespace traktor::drawing
 {
-	namespace
-	{
+namespace
+{
 
 Ref< Image > Image_constructor_3(const PixelFormat* pixelFormat, uint32_t width, uint32_t height)
 {
@@ -87,6 +89,16 @@ bool Image_getPixel_2(Image* image, int32_t x, int32_t y, BoxedColor4f* outColor
 	}
 	else
 		return false;
+}
+
+void Image_convert_1(Image* image, const PixelFormat* intoFormat)
+{
+	image->convert(*intoFormat);
+}
+
+void Image_convert_2(Image* image, const PixelFormat* intoFormat, Palette* intoPalette)
+{
+	image->convert(*intoFormat, intoPalette);
 }
 
 Ref< Image > Image_loadFromFile(const std::wstring& filePath)
@@ -129,20 +141,16 @@ Ref< BlendFunction > BlendFunction_constructor(int32_t sourceFactor, int32_t des
 	return new BlendFunction(
 		(BlendFunction::Factor)sourceFactor,
 		(BlendFunction::Factor)destinationFactor,
-		(BlendFunction::Operation)operation
-	);
+		(BlendFunction::Operation)operation);
 }
 
 int32_t Raster_defineLinearGradientStyle(Raster* self, const Matrix33& gradientMatrix, const AlignedVector< Any >& colors)
 {
 	AlignedVector< std::pair< Color4f, float > > cs;
 	for (size_t i = 0; i < colors.size(); i += 2)
-	{
 		cs.push_back(std::make_pair(
 			CastAny< Color4f >::get(colors[i]),
-			CastAny< float >::get(colors[i + 1])
-		));
-	}
+			CastAny< float >::get(colors[i + 1])));
 	return self->defineLinearGradientStyle(gradientMatrix, cs);
 }
 
@@ -150,12 +158,9 @@ int32_t Raster_defineRadialGradientStyle(Raster* self, const Matrix33& gradientM
 {
 	AlignedVector< std::pair< Color4f, float > > cs;
 	for (size_t i = 0; i < colors.size(); i += 2)
-	{
 		cs.push_back(std::make_pair(
 			CastAny< Color4f >::get(colors[i]),
-			CastAny< float >::get(colors[i + 1])
-		));
-	}
+			CastAny< float >::get(colors[i + 1])));
 	return self->defineRadialGradientStyle(gradientMatrix, cs);
 }
 
@@ -189,7 +194,7 @@ void Raster_stroke(Raster* self, int32_t style, float width, int32_t join, int32
 	self->stroke(style, width, (Raster::StrokeJoin)join, (Raster::StrokeCap)cap);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drawing.DrawingClassFactory", 0, DrawingClassFactory, IRuntimeClassFactory)
 
@@ -235,6 +240,8 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classImage = new AutoRuntimeClass< Image >();
 	classImage->addProperty("width", &Image::getWidth);
 	classImage->addProperty("height", &Image::getHeight);
+	classImage->addProperty< const void* >("data", &Image::getData);
+	classImage->addProperty("dataSize", &Image::getDataSize);
 	classImage->addConstructor();
 	classImage->addConstructor< const PixelFormat*, uint32_t, uint32_t >(&Image_constructor_3);
 	classImage->addConstructor< BoxedPointer*, const PixelFormat*, uint32_t, uint32_t >(&Image_constructor_4);
@@ -249,6 +256,8 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classImage->addMethod("getPixel", &Image_getPixel_2);
 	classImage->addMethod("setPixel", &Image::setPixel);
 	classImage->addMethod("apply", &Image::apply);
+	classImage->addMethod("convert", &Image_convert_1);
+	classImage->addMethod("convert", &Image_convert_2);
 	classImage->addStaticMethod("loadFromFile", &Image_loadFromFile);
 	classImage->addStaticMethod("loadFromStream", &Image_loadFromStream);
 	classImage->addMethod("save", &Image_save);
