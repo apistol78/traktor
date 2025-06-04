@@ -52,6 +52,16 @@ namespace traktor::drawing
 namespace
 {
 
+int32_t Palette_find_1(Palette* palette, const Color4f& color)
+{
+	return palette->find(color);
+}
+
+int32_t Palette_find_2(Palette* palette, const Color4f& color, bool exact)
+{
+	return palette->find(color, exact);
+}
+
 Ref< Image > Image_constructor_3(const PixelFormat* pixelFormat, uint32_t width, uint32_t height)
 {
 	return new Image(*pixelFormat, width, height);
@@ -231,6 +241,16 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classPixelFormat->addStaticMethod("getABGRF32", &PixelFormat::getABGRF32);
 	registrar->registerClass(classPixelFormat);
 
+	auto classPalette = new AutoRuntimeClass< Palette >();
+	classPalette->addConstructor();
+	classPalette->addConstructor< int32_t >();
+	classPalette->addProperty("size", &Palette::getSize);
+	classPalette->addMethod("set", &Palette::set);
+	classPalette->addMethod("get", &Palette::get);
+	classPalette->addMethod("find", &Palette_find_1);
+	classPalette->addMethod("find", &Palette_find_2);
+	registrar->registerClass(classPalette);
+
 	auto classIImageFilter = new AutoRuntimeClass< IImageFilter >();
 	registrar->registerClass(classIImageFilter);
 
@@ -238,13 +258,14 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classITransferFunction);
 
 	auto classImage = new AutoRuntimeClass< Image >();
-	classImage->addProperty("width", &Image::getWidth);
-	classImage->addProperty("height", &Image::getHeight);
-	classImage->addProperty< const void* >("data", &Image::getData);
-	classImage->addProperty("dataSize", &Image::getDataSize);
 	classImage->addConstructor();
 	classImage->addConstructor< const PixelFormat*, uint32_t, uint32_t >(&Image_constructor_3);
 	classImage->addConstructor< BoxedPointer*, const PixelFormat*, uint32_t, uint32_t >(&Image_constructor_4);
+	classImage->addProperty("width", &Image::getWidth);
+	classImage->addProperty("height", &Image::getHeight);
+	classImage->addProperty("palette", &Image::getPalette);
+	classImage->addProperty< const void* >("data", &Image::getData);
+	classImage->addProperty("dataSize", &Image::getDataSize);
 	classImage->addMethod("clone", &Image::clone);
 	classImage->addMethod("copy", &Image_copy_1);
 	classImage->addMethod("copy", &Image_copy_2);
