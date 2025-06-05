@@ -33,6 +33,8 @@ class T_DLLCLASS Palette : public ISerializable
 public:
 	Palette(int32_t size = 256);
 
+	explicit Palette(const AlignedVector< Color4f >& colors);
+
 	int32_t getSize() const;
 
 	void set(int32_t index, const Color4f& c);
@@ -40,6 +42,8 @@ public:
 	const Color4f& get(int32_t index) const;
 
 	int32_t find(const Color4f& c, bool exact = false) const;
+
+	Ref< Palette > reduce(int32_t newSize) const;
 
 	virtual void serialize(ISerializer& s) override;
 

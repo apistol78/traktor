@@ -22,6 +22,11 @@ Palette::Palette(int32_t size)
 {
 }
 
+Palette::Palette(const AlignedVector< Color4f >& colors)
+:	m_colors(colors)
+{
+}
+
 int32_t Palette::getSize() const
 {
 	return int32_t(m_colors.size());
@@ -55,6 +60,42 @@ int32_t Palette::find(const Color4f& c, bool exact) const
 		}
 	}
 	return (exact && mn.first != 0.0f) ? -1 : mn.second;
+}
+
+Ref< Palette > Palette::reduce(int32_t newSize) const
+{
+	Ref< Palette > out = new Palette(m_colors);
+
+	std::sort(out->m_colors.begin(), out->m_colors.end(), [](const Color4f& lh, const Color4f& rh) {
+		return Vector4(lh).length2() < Vector4(rh).length();
+	});
+
+	while (out->m_colors.size() > newSize)
+	{
+		Scalar minLn(std::numeric_limits< float >::max());
+		int32_t minIdx = -1;
+
+		for (int32_t i = 0; i < out->m_colors.size() - 1; ++i)
+		{
+			const Scalar ln = Vector4((out->m_colors[i] - out->m_colors[i + 1]).rgb0()).length();
+			if (ln < minLn)
+			{
+				minLn = ln;
+				minIdx = i;
+			}
+		}
+
+		const Color4f replacementColor = lerp(
+			out->m_colors[minIdx],
+			out->m_colors[minIdx + 1],
+			0.5_simd
+		);
+
+		out->m_colors[minIdx] = replacementColor;
+		out->m_colors.erase(out->m_colors.begin() + minIdx + 1);
+	}
+
+	return out;
 }
 
 void Palette::serialize(ISerializer& s)

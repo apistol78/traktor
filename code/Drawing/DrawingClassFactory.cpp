@@ -249,6 +249,7 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classPalette->addMethod("get", &Palette::get);
 	classPalette->addMethod("find", &Palette_find_1);
 	classPalette->addMethod("find", &Palette_find_2);
+	classPalette->addMethod("reduce", &Palette::reduce);
 	registrar->registerClass(classPalette);
 
 	auto classIImageFilter = new AutoRuntimeClass< IImageFilter >();
