@@ -10,6 +10,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Color4f.h"
+#include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

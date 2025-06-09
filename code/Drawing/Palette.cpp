@@ -6,11 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cmath>
-#include <limits>
+#include "Drawing/Palette.h"
+
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
-#include "Drawing/Palette.h"
+
+#include <algorithm>
+#include <cmath>
+#include <limits>
 
 namespace traktor::drawing
 {
@@ -18,12 +21,12 @@ namespace traktor::drawing
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drawing.Palette", 0, Palette, Object)
 
 Palette::Palette(int32_t size)
-:	m_colors(size)
+	: m_colors(size)
 {
 }
 
 Palette::Palette(const AlignedVector< Color4f >& colors)
-:	m_colors(colors)
+	: m_colors(colors)
 {
 }
 
@@ -88,8 +91,7 @@ Ref< Palette > Palette::reduce(int32_t newSize) const
 		const Color4f replacementColor = lerp(
 			out->m_colors[minIdx],
 			out->m_colors[minIdx + 1],
-			0.5_simd
-		);
+			0.5_simd);
 
 		out->m_colors[minIdx] = replacementColor;
 		out->m_colors.erase(out->m_colors.begin() + minIdx + 1);
