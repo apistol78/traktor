@@ -133,8 +133,8 @@ bool SolutionBuilderNinja::generate(const Solution* solution, const Path& soluti
 
 void SolutionBuilderNinja::showOptions() const
 {
-	log::info << L"\t-ninja-solution-template=[template file]" << Endl;
-	log::info << L"\t-ninja-project-template=[template file]" << Endl;
+	log::info << L"\t--ninja-solution-template=[template file]" << Endl;
+	log::info << L"\t--ninja-project-template=[template file]" << Endl;
 }
 
 }

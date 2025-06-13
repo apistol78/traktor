@@ -137,8 +137,8 @@ bool SolutionBuilderMake2::generate(const Solution* solution, const Path& soluti
 
 void SolutionBuilderMake2::showOptions() const
 {
-	log::info << L"\t-s,-make-solution-template=[solution template file]" << Endl;
-	log::info << L"\t-p,-make-project-template=[project template file]" << Endl;
+	log::info << L"\t-s,--make-solution-template=[solution template file]" << Endl;
+	log::info << L"\t-p,--make-project-template=[project template file]" << Endl;
 }
 
 }

@@ -61,7 +61,7 @@ bool SolutionBuilderDependencies::generate(const Solution* solution, const Path&
 
 void SolutionBuilderDependencies::showOptions() const
 {
-	log::info << L"\t-p,-project=Dependencies of project" << Endl;
+	log::info << L"\t-p,--project=Dependencies of project" << Endl;
 }
 
 }

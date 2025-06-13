@@ -272,24 +272,24 @@ int main(int argc, const char** argv)
 	if (cmdLine.hasOption('h', L"help") || port <= 0)
 	{
 		log::info << L"Usage: Traktor.Avalanche.Server.App (options)" << Endl;
-		log::info << L"    -m, -master           Master node." << Endl;
-		log::info << L"    -p, -port             Port number (default 40001)." << Endl;
-		log::info << L"    -d, -dictionary-path  Path to dictionary blobs." << Endl;
-		log::info << L"    -b, -memory-budget    Memory budget in GiB (default 8)." << Endl;
+		log::info << L"    -m, --master           Master node." << Endl;
+		log::info << L"    -p, --port             Port number (default 40001)." << Endl;
+		log::info << L"    -d, --dictionary-path  Path to dictionary blobs." << Endl;
+		log::info << L"    -b, --memory-budget    Memory budget in GiB (default 8)." << Endl;
 #if defined(_WIN32)
-		log::info << L"    -install-service      Install as NT service." << Endl;
-		log::info << L"    -uninstall-service    Uninstall as NT service." << Endl;
+		log::info << L"    --install-service      Install as NT service." << Endl;
+		log::info << L"    --uninstall-service    Uninstall as NT service." << Endl;
 #elif defined(__LINUX__) || defined(__RPI__)
-		log::info << L"    -daemon               Launch as a daemon." << Endl;
+		log::info << L"    --daemon               Launch as a daemon." << Endl;
 #endif
-		log::info << L"    -h, -help             Help" << Endl;
+		log::info << L"    -h, --help             Help" << Endl;
 		return 0;
 	}
 
 #if defined(_WIN32)
 	if (cmdLine.hasOption(L"install-service"))
 	{
-		std::wstring arguments = str(L"-run-service -p=%d", port);
+		std::wstring arguments = str(L"--run-service -p=%d", port);
 		if (cmdLine.hasOption('m', L"master"))
 			arguments += L" -m";
 

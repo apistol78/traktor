@@ -13,6 +13,8 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 
+#define T_SUPPORT_LEGACY_FORMAT 1
+
 namespace traktor
 {
 
@@ -171,9 +173,10 @@ bool CommandLine::parse(const std::wstring& args)
 
 	for (size_t i = 0; i < argv.size(); ++i)
 	{
-		if (argv[i][0] == L'-')
+		const std::wstring& a = argv[i];
+		if (startsWith(a, L"--"))
 		{
-			const wchar_t* cs = argv[i].c_str() + 1;
+			const wchar_t* cs = a.c_str() + 2;
 			const wchar_t* value = wcschr(cs, L'=');
 			if (value)
 				m_opts.push_back(Option(
@@ -186,19 +189,8 @@ bool CommandLine::parse(const std::wstring& args)
 					L""
 				));
 		}
-		else
-			m_args.push_back(trim(argv[i]));
-	}
-
-	return true;
-}
-
-void CommandLine::parse(int argc, const char** argv)
-{
-	for (int i = 0; i < argc; ++i)
-	{
-		std::wstring a = mbstows(argv[i]);
-		if (a[0] == L'-')
+#if T_SUPPORT_LEGACY_FORMAT
+		else if (startsWith(a, L"-"))
 		{
 			const wchar_t* cs = a.c_str() + 1;
 			const wchar_t* value = wcschr(cs, L'=');
@@ -213,6 +205,51 @@ void CommandLine::parse(int argc, const char** argv)
 					L""
 				));
 		}
+#endif
+		else
+			m_args.push_back(trim(argv[i]));
+	}
+
+	return true;
+}
+
+void CommandLine::parse(int argc, const char** argv)
+{
+	for (int i = 0; i < argc; ++i)
+	{
+		const std::wstring a = mbstows(argv[i]);
+		if (startsWith(a, L"--"))
+		{
+			const wchar_t* cs = a.c_str() + 2;
+			const wchar_t* value = wcschr(cs, L'=');
+			if (value)
+				m_opts.push_back(Option(
+					std::wstring(cs, value),
+					trim(value + 1)
+				));
+			else
+				m_opts.push_back(Option(
+					std::wstring(cs),
+					L""
+				));
+		}
+#if T_SUPPORT_LEGACY_FORMAT
+		else if (startsWith(a, L"-"))
+		{
+			const wchar_t* cs = a.c_str() + 1;
+			const wchar_t* value = wcschr(cs, L'=');
+			if (value)
+				m_opts.push_back(Option(
+					std::wstring(cs, value),
+					trim(value + 1)
+				));
+			else
+				m_opts.push_back(Option(
+					std::wstring(cs),
+					L""
+				));
+		}
+#endif
 		else
 			m_args.push_back(trim(a));
 	}

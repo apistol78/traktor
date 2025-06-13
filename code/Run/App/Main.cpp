@@ -348,18 +348,18 @@ int main(int argc, const char** argv)
 			log::info << L"Usage: Run (option(s)) [<file>.run|<file>.template] (args ...)" << Endl;
 			log::info << Endl;
 			log::info << L"  Options:" << Endl;
-			log::info << L"    -as-run                   Run file as run" << Endl;
-			log::info << L"    -as-template              Run file as template" << Endl;
-			log::info << L"    -debug                    Attach debugger" << Endl;
+			log::info << L"    --as-run                   Run file as run" << Endl;
+			log::info << L"    --as-template              Run file as template" << Endl;
+			log::info << L"    --debug                    Attach debugger" << Endl;
 #if defined(_WIN32)
-			log::info << L"    -register-extensions      Register .run and .template extensions" << Endl;
+			log::info << L"    --register-extensions      Register .run and .template extensions" << Endl;
 #endif
 			log::info << Endl;
 			log::info << L"  For .run files:" << Endl;
-			log::info << L"    -e,-entry-point=function  Script entry point (default \"main\")" << Endl;
+			log::info << L"    -e,--entry-point=function  Script entry point (default \"main\")" << Endl;
 			log::info << Endl;
 			log::info << L"  For .template files:" << Endl;
-			log::info << L"    -o,-output=filename       Output file (default stdout)" << Endl;
+			log::info << L"    -o,--output=filename       Output file (default stdout)" << Endl;
 			return 0;
 		}
 

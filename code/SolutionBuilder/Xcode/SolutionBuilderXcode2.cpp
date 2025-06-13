@@ -178,9 +178,9 @@ bool SolutionBuilderXcode2::generate(const Solution* solution, const Path& solut
 
 void SolutionBuilderXcode2::showOptions() const
 {
-	log::info << L"\t-xcode-project-template=[template file]" << Endl;
-	log::info << L"\t-xcode-workspace-template=[template file]" << Endl;
-	log::info << L"\t-xcode-workspace-scheme-template=[template file]" << Endl;
+	log::info << L"\t--xcode-project-template=[template file]" << Endl;
+	log::info << L"\t--xcode-workspace-template=[template file]" << Endl;
+	log::info << L"\t--xcode-workspace-scheme-template=[template file]" << Endl;
 }
 
 }

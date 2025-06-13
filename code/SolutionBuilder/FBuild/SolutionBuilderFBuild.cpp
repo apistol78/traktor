@@ -133,8 +133,8 @@ bool SolutionBuilderFBuild::generate(const Solution* solution, const Path& solut
 
 void SolutionBuilderFBuild::showOptions() const
 {
-	log::info << L"\t-fastbuild-solution-template=[template file]" << Endl;
-	log::info << L"\t-fastbuild-project-template=[template file]" << Endl;
+	log::info << L"\t--fastbuild-solution-template=[template file]" << Endl;
+	log::info << L"\t--fastbuild-project-template=[template file]" << Endl;
 }
 
 }

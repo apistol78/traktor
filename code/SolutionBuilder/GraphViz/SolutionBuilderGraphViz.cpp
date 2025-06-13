@@ -100,7 +100,7 @@ bool SolutionBuilderGraphViz::generate(const Solution* solution, const Path& sol
 
 void SolutionBuilderGraphViz::showOptions() const
 {
-	log::info << L"\t-s,-graphviz-skipleafs=Skip leaf project(s)" << Endl;
+	log::info << L"\t-s,--graphviz-skipleafs=Skip leaf project(s)" << Endl;
 }
 
 }

@@ -109,8 +109,8 @@ bool SolutionBuilderCBlocks::generate(const Solution* solution, const Path& solu
 
 void SolutionBuilderCBlocks::showOptions() const
 {
-	log::info << L"\t-w,-cblocks-workspace-template=[workspace template file]" << Endl;
-	log::info << L"\t-p,-cblocks-project-template=[project template file]" << Endl;
+	log::info << L"\t-w,--cblocks-workspace-template=[workspace template file]" << Endl;
+	log::info << L"\t-p,--cblocks-project-template=[project template file]" << Endl;
 }
 
 }

@@ -486,8 +486,8 @@ bool SolutionBuilderMsvc::generate(const Solution* solution, const Path& solutio
 
 void SolutionBuilderMsvc::showOptions() const
 {
-	log::info << L"\t-p=[platform],-msvc-platform=[platform]			(Platform description file)" << Endl;
-	log::info << L"\t-w=[filename],-msvc-write-platform=[filename]		(Write platform description file)" << Endl;
+	log::info << L"\t-p=[platform],--msvc-platform=[platform]			(Platform description file)" << Endl;
+	log::info << L"\t-w=[filename],--msvc-write-platform=[filename]		(Write platform description file)" << Endl;
 }
 
 }
