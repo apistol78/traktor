@@ -6,27 +6,28 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/RenderClassFactory.h"
+
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/BoxedAllocator.h"
-#include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Class/Boxes/BoxedAlignedVector.h"
 #include "Core/Class/Boxes/BoxedMatrix44.h"
 #include "Core/Class/Boxes/BoxedPointer.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedVector4.h"
+#include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Render/Buffer.h"
+#include "Render/Context/ProgramParameters.h"
 #include "Render/IBufferView.h"
+#include "Render/Image2/ImageGraphContext.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ITexture.h"
-#include "Render/RenderClassFactory.h"
-#include "Render/Context/ProgramParameters.h"
-#include "Render/Image2/ImageGraphContext.h"
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 class BoxedDataType : public Object
 {
@@ -41,7 +42,7 @@ class BoxedDisplayMode : public Object
 
 public:
 	explicit BoxedDisplayMode(const DisplayMode& displayMode)
-	:	m_displayMode(displayMode)
+		: m_displayMode(displayMode)
 	{
 	}
 
@@ -73,7 +74,7 @@ public:
 	}
 
 	explicit BoxedSimpleTextureCreateDesc(const SimpleTextureCreateDesc& stcd)
-	:	m_value(stcd)
+		: m_value(stcd)
 	{
 	}
 
@@ -140,7 +141,7 @@ Ref< BoxedDisplayMode > IRenderSystem_getDisplayMode(IRenderSystem* self, uint32
 	return new BoxedDisplayMode(self->getDisplayMode(display, index));
 }
 
-//Ref< StructBuffer > IRenderSystem_createStructBuffer(IRenderSystem* self, const RefArray< BoxedStructElement >& structElements, uint32_t bufferSize, bool dynamic)
+// Ref< StructBuffer > IRenderSystem_createStructBuffer(IRenderSystem* self, const RefArray< BoxedStructElement >& structElements, uint32_t bufferSize, bool dynamic)
 //{
 //	AlignedVector< StructElement > se;
 //
@@ -149,14 +150,14 @@ Ref< BoxedDisplayMode > IRenderSystem_getDisplayMode(IRenderSystem* self, uint32
 //		se[i] = structElements[i]->unbox();
 //
 //	return self->createStructBuffer(se, bufferSize, dynamic);
-//}
+// }
 
 Ref< ITexture > IRenderSystem_createSimpleTexture(IRenderSystem* self, const BoxedSimpleTextureCreateDesc* stcd)
 {
 	return self->createSimpleTexture(stcd->unbox(), T_FILE_LINE_W);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderClassFactory", 0, RenderClassFactory, IRuntimeClassFactory)
 
@@ -236,23 +237,23 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIRenderView->addProperty("isActive", &IRenderView::isActive);
 	classIRenderView->addProperty("isMinimized", &IRenderView::isMinimized);
 	classIRenderView->addProperty("isFullScreen", &IRenderView::isFullScreen);
+	classIRenderView->addProperty("isHDR", &IRenderView::isHDR);
 	classIRenderView->addMethod("close", &IRenderView::close);
 	classIRenderView->addMethod("showCursor", &IRenderView::showCursor);
 	classIRenderView->addMethod("hideCursor", &IRenderView::hideCursor);
 	classIRenderView->addMethod("isCursorVisible", &IRenderView::isCursorVisible);
-	classIRenderView->addMethod("setGamma", &IRenderView::setGamma);
 	registrar->registerClass(classIRenderView);
 
 	auto classImageGraphContext = new AutoRuntimeClass< ImageGraphContext >();
-	//classImageGraphContext->addMethod("setFloatParameter", &ImageGraphContext::setFloatParameter);
-	//classImageGraphContext->addMethod("setVectorParameter", &ImageGraphContext::setVectorParameter);
+	// classImageGraphContext->addMethod("setFloatParameter", &ImageGraphContext::setFloatParameter);
+	// classImageGraphContext->addMethod("setVectorParameter", &ImageGraphContext::setVectorParameter);
 	registrar->registerClass(classImageGraphContext);
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramParameters", BoxedProgramParameters, Object)
 
 BoxedProgramParameters::BoxedProgramParameters(ProgramParameters* programParameters)
-:	m_programParameters(programParameters)
+	: m_programParameters(programParameters)
 {
 }
 
@@ -301,12 +302,12 @@ void BoxedProgramParameters::setStencilReference(uint32_t stencilReference)
 	m_programParameters->setStencilReference(stencilReference);
 }
 
-void* BoxedProgramParameters::operator new (size_t size)
+void* BoxedProgramParameters::operator new(size_t size)
 {
 	return s_allocBoxedProgramParameters.alloc();
 }
 
-void BoxedProgramParameters::operator delete (void* ptr)
+void BoxedProgramParameters::operator delete(void* ptr)
 {
 	s_allocBoxedProgramParameters.free(ptr);
 }

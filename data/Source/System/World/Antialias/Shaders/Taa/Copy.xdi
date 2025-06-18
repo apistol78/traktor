@@ -152,7 +152,7 @@ for (int iy = -1; iy <= 1; ++iy)
 	}
 }
 
-const float s = 0.15f;
+const float s = 0.05f;
 v = mix(texture(sampler2D($Texture, $TexState), uv), v, s);
 
 $Output = vec4(v.xyz, 1.0f);
@@ -221,22 +221,22 @@ $Output = vec4(v.xyz, 1.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{F4A28E2A-09B8-4E4D-BA8D-BC31B266C704}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[5]"/>
 				<id>{82C966B2-7B19-48B2-8FE0-B85FF4E3C504}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{1DD048B8-C0A5-C447-9EA8-11308D6DC967}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{F4A28E2A-09B8-4E4D-BA8D-BC31B266C704}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>

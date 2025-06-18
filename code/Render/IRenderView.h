@@ -91,7 +91,7 @@ public:
 
 	virtual bool isCursorVisible() const = 0;
 
-	virtual bool setGamma(float gamma) = 0;
+	virtual bool isHDR() const = 0;
 
 	virtual void setViewport(const Viewport& viewport) = 0;
 

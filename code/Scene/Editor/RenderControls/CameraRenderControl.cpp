@@ -275,6 +275,7 @@ void CameraRenderControl::updateWorldRenderer()
 	wcd.quality.antiAlias = m_antiAliasQuality;
 	wcd.quality.imageProcess = m_imageProcessQuality;
 	wcd.multiSample = m_multiSample;
+	wcd.hdr = m_renderView->isHDR();
 
 	if (!worldRenderer->create(
 			m_context->getResourceManager(),

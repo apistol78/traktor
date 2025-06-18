@@ -6,12 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/IEnvironment.h"
-#include "Runtime/Impl/AudioServer.h"
-#include "Runtime/Impl/PhysicsServer.h"
-#include "Runtime/Impl/RenderServer.h"
-#include "Runtime/Impl/ScriptServer.h"
 #include "Runtime/Impl/WorldServer.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/ObjectStore.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -21,24 +17,29 @@
 #include "Core/Settings/PropertyString.h"
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Resource/IResourceManager.h"
+#include "Runtime/IEnvironment.h"
+#include "Runtime/Impl/AudioServer.h"
+#include "Runtime/Impl/PhysicsServer.h"
+#include "Runtime/Impl/RenderServer.h"
+#include "Runtime/Impl/ScriptServer.h"
 #include "Scene/SceneFactory.h"
 #include "Sound/Player/SoundPlayer.h"
 #include "Spray/EffectRenderer.h"
 #include "Terrain/EntityRenderer.h"
+#include "World/Entity/ProbeRenderer.h"
 #include "World/EntityFactory.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldResourceFactory.h"
-#include "World/Entity/ProbeRenderer.h"
 
 namespace traktor::runtime
 {
-	namespace
-	{
-
-const float c_sprayLodDistances[][2] =
+namespace
 {
+
+const float c_sprayLodDistances[][2] = {
 	{ 0.0f, 0.0f },
 	{ 10.0f, 20.0f },
 	{ 40.0f, 90.0f },
@@ -46,8 +47,7 @@ const float c_sprayLodDistances[][2] =
 	{ 100.0f, 200.0f }
 };
 
-const float c_terrainDetailDistances[] =
-{
+const float c_terrainDetailDistances[] = {
 	0.0f,
 	10.0f,
 	30.0f,
@@ -55,8 +55,7 @@ const float c_terrainDetailDistances[] =
 	200.0f
 };
 
-const uint32_t c_terrainSurfaceCacheSizes[] =
-{
+const uint32_t c_terrainSurfaceCacheSizes[] = {
 	0,
 	2048,
 	4096,
@@ -64,7 +63,7 @@ const uint32_t c_terrainSurfaceCacheSizes[] =
 	8192
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.WorldServer", WorldServer, IWorldServer)
 
@@ -160,8 +159,7 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 
 	m_terrainEntityRenderer = new terrain::EntityRenderer(
 		c_terrainDetailDistances[(int32_t)m_terrainQuality],
-		c_terrainSurfaceCacheSizes[(int32_t)m_terrainQuality]
-	);
+		c_terrainSurfaceCacheSizes[(int32_t)m_terrainQuality]);
 
 	m_entityRenderers->add(new world::ProbeRenderer(resourceManager, renderSystem, *m_worldType));
 	m_entityRenderers->add(m_effectEntityRenderer);
@@ -213,8 +211,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 		imageProcessQuality == m_imageProcessQuality &&
 		particleQuality == m_particleQuality &&
 		terrainQuality == m_terrainQuality &&
-		gamma == m_gamma
-	)
+		gamma == m_gamma)
 		return CrUnaffected;
 
 	// Adjust in-place systems.
@@ -281,16 +278,16 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 	wcd.quality.imageProcess = m_imageProcessQuality;
 	wcd.multiSample = m_renderServer->getMultiSample();
 	wcd.gamma = m_gamma;
+	wcd.hdr = m_renderServer->getRenderView()->isHDR();
 
 	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldType->createInstance());
 	if (!worldRenderer)
 		return nullptr;
 
 	if (!worldRenderer->create(
-		m_resourceServer->getResourceManager(),
-		m_renderServer->getRenderSystem(),
-		wcd
-	))
+			m_resourceServer->getResourceManager(),
+			m_renderServer->getRenderSystem(),
+			wcd))
 		return nullptr;
 
 	return worldRenderer;

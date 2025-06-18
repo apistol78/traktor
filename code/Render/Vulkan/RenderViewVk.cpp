@@ -1,3 +1,5 @@
+#pragma optimize("", off)
+
 /*
  * TRAKTOR
  * Copyright (c) 2022-2024 Anders Pistol.
@@ -508,9 +510,9 @@ bool RenderViewVk::isCursorVisible() const
 	return m_cursorVisible;
 }
 
-bool RenderViewVk::setGamma(float gamma)
+bool RenderViewVk::isHDR() const
 {
-	return false;
+	return m_hdr;
 }
 
 void RenderViewVk::setViewport(const Viewport& viewport)
@@ -1578,11 +1580,27 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	VkColorSpaceKHR colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 	for (uint32_t i = 0; i < surfaceFormatCount; ++i)
 	{
-		if (surfaceFormats[i].format != VK_FORMAT_B8G8R8A8_SRGB)
+		if (surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_ST2084_EXT || surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_HLG_EXT)
 		{
+			log::info << L"Using HDR swap chain color space." << Endl;
 			colorFormat = surfaceFormats[i].format;
 			colorSpace = surfaceFormats[i].colorSpace;
+			m_hdr = true;
 			break;
+		}
+	}
+	if (colorFormat == VK_FORMAT_UNDEFINED)
+	{
+		for (uint32_t i = 0; i < surfaceFormatCount; ++i)
+		{
+			if (surfaceFormats[i].format != VK_FORMAT_B8G8R8A8_SRGB)
+			{
+				log::info << L"Using SDR swap chain color space." << Endl;
+				colorFormat = surfaceFormats[i].format;
+				colorSpace = surfaceFormats[i].colorSpace;
+				m_hdr = false;
+				break;
+			}
 		}
 	}
 

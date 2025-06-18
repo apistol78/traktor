@@ -30,6 +30,7 @@ const render::Handle ShaderPermutation::VolumetricFogEnable(L"World_VolumetricFo
 const render::Handle ShaderPermutation::ColorGradingEnable(L"World_ColorGradingEnable");
 const render::Handle ShaderPermutation::RayTracingEnable(L"World_RayTracingEnable");
 const render::Handle ShaderPermutation::CullingHiZ(L"World_CullingHiZ");
+const render::Handle ShaderPermutation::HDR(L"World_HDR");
 
 // Shader parameters.
 const render::Handle ShaderParameter::DecalParamsA(L"World_DecalParamsA");

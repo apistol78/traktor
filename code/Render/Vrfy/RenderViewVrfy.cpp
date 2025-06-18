@@ -122,10 +122,10 @@ bool RenderViewVrfy::isCursorVisible() const
 	return m_renderView->isCursorVisible();
 }
 
-bool RenderViewVrfy::setGamma(float gamma)
+bool RenderViewVrfy::isHDR() const
 {
-	T_CAPTURE_TRACE(L"setGamma");
-	return m_renderView->setGamma(gamma);
+	T_CAPTURE_TRACE(L"isHDR");
+	return m_renderView->isHDR();
 }
 
 void RenderViewVrfy::setViewport(const Viewport& viewport)

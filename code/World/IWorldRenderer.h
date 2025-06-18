@@ -75,6 +75,7 @@ struct WorldCreateDesc
 	QualitySettings quality;
 	uint32_t multiSample = 0;
 	float gamma = 2.2f;
+	bool hdr = false;
 };
 
 /*! World renderer.

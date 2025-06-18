@@ -70,6 +70,7 @@ private:
 	resource::Proxy< render::ImageGraph > m_gammaCorrection;
 	resource::Proxy< render::ITexture > m_colorGrading;
 	float m_gamma = 2.2f;
+	bool m_hdr = false;
 	bool m_needCameraJitter = false;
 };
 

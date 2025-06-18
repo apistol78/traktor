@@ -289,6 +289,8 @@ void AnimationPreviewControl::updateWorldRenderer()
 	wcd.quality.ambientOcclusion = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.AmbientOcclusionQuality", 4);
 	wcd.quality.antiAlias = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.AntiAliasQuality", 4);
 
+	wcd.hdr = m_renderView->isHDR();
+
 	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererDeferred();
 	if (!worldRenderer->create(
 			m_resourceManager,

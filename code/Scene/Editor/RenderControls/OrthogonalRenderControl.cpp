@@ -369,6 +369,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
 	wcd.quality.antiAlias = m_antiAliasQuality;
 	wcd.multiSample = m_multiSample;
+	wcd.hdr = m_renderView->isHDR();
 
 	// Prevent ultra AA quality since jitter cause orthogonal projection to be broken.
 	if (wcd.quality.antiAlias == world::Quality::Ultra)

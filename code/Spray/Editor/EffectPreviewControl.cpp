@@ -358,6 +358,7 @@ void EffectPreviewControl::updateWorldRenderer()
 	wcd.quality.antiAlias = world::Quality::Disabled;
 	wcd.quality.imageProcess = world::Quality::Ultra;
 	wcd.multiSample = 0;
+	wcd.hdr = m_renderView->isHDR();
 
 	if (!worldRenderer->create(
 			m_resourceManager,

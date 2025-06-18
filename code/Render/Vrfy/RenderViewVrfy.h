@@ -69,7 +69,7 @@ public:
 
 	virtual bool isCursorVisible() const override final;
 
-	virtual bool setGamma(float gamma) override final;
+	virtual bool isHDR() const override final;
 
 	virtual void setViewport(const Viewport& viewport) override final;
 

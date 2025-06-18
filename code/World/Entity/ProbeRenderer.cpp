@@ -280,6 +280,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		wcd.quality.imageProcess = world::Quality::Disabled;
 		wcd.multiSample = 0;
 		wcd.gamma = 1.0f;
+		wcd.hdr = true;
 
 		if (!m_worldRenderer->create(
 				m_resourceManager,

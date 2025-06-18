@@ -44,9 +44,8 @@ struct T_DLLCLASS ShaderPermutation
 	static const render::Handle VolumetricFogEnable;
 	static const render::Handle ColorGradingEnable;
 	static const render::Handle RayTracingEnable;
-
-	// Occlusion culling.
 	static const render::Handle CullingHiZ;
+	static const render::Handle HDR;
 };
 
 // Shader parameters.

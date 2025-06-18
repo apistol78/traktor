@@ -154,6 +154,7 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
 
+	m_hdr = desc.hdr;
 	return true;
 }
 
@@ -185,6 +186,7 @@ void PostProcessPass::setup(
 	igctx.associateTextureTargetSet(ShaderParameter::InputVelocity, velocityTargetSetId, 0);
 	igctx.associateExplicitTexture(ShaderParameter::InputColorGrading, m_colorGrading);
 	igctx.setTechniqueFlag(ShaderPermutation::ColorGradingEnable, (bool)(m_colorGrading != nullptr));
+	igctx.setTechniqueFlag(ShaderPermutation::HDR, m_hdr);
 
 	// Expose gamma, exposure and jitter.
 	const float time = (float)worldRenderView.getTime();
