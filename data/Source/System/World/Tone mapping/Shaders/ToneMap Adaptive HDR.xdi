@@ -515,8 +515,8 @@ $Output = vec4(
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{4F257A94-BC66-BA48-8547-1A25C1E18957}</id>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{F321640D-E63E-154A-B1E5-C131ADE3E119}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[19]"/>

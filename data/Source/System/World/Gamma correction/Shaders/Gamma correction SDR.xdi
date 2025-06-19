@@ -184,57 +184,6 @@
 			</position>
 			<parameterName>World_ColorGradingEnable</parameterName>
 		</item>
-		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
-			<id>{07A55109-152F-8E41-8EB9-6C9BCC15BB4C}</id>
-			<comment/>
-			<position>
-				<first>1750</first>
-				<second>666</second>
-			</position>
-			<name>Unnamed</name>
-			<technique/>
-			<domain>Undefined</domain>
-			<localSize>
-				<X>1</X>
-				<Y>1</Y>
-				<Z>1</Z>
-			</localSize>
-			<useRayTracing>false</useRayTracing>
-			<include/>
-			<inputPins>
-				<item>
-					<id>{C84B8F16-7F17-C74C-B524-DADC92E1F7F9}</id>
-					<name>Input</name>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{9E72BE61-98B9-FE40-BF04-1D8B819647FB}</id>
-					<name>Output</name>
-					<type>Vector</type>
-				</item>
-			</outputPins>
-			<script><![CDATA[
-const float wb = 1.0f;
-
-vec3 E = clamp($Input.xyz * wb, 0.0f.xxx, 12.0f.xxx);
-
-const float e = (E.x + E.y + E.z) / 3.0f;
-if (e < 1.0f / 12.0f)
-{
-	E = sqrt(3.0f * E);
-}
-else
-{
-	const float a = 0.17883277f;
-	const float b = 0.28466892f;
-	const float c = 0.55991073f;
-	E = a * log(12.0f * E - b) + c;
-}
-
-$Output = vec4(E.xyz, 0.0f);
-]]></script>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -333,24 +282,14 @@ $Output = vec4(E.xyz, 0.0f);
 				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{C84B8F16-7F17-C74C-B524-DADC92E1F7F9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{9E72BE61-98B9-FE40-BF04-1D8B819647FB}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{E96D386C-3A96-4807-BFC9-50180678A096}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{9E72BE61-98B9-FE40-BF04-1D8B819647FB}</id>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{B4FEA355-7A63-498C-966D-42F58570CB20}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
