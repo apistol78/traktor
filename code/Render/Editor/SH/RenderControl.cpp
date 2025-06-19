@@ -6,15 +6,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/SH/RenderControl.h"
+
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Editor/SH/RenderControlEvent.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Render/Editor/SH/RenderControl.h"
-#include "Render/Editor/SH/RenderControlEvent.h"
-#include "Render/Resource/TextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
+#include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Itf/IWidget.h"
 
@@ -24,10 +25,10 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderControl", RenderControl, ui::Widget)
 
 RenderControl::RenderControl()
-:	m_cameraHead(PI / 4.0f)
-,	m_cameraPitch(-0.4f)
-,	m_cameraZ(4.0f)
-,	m_lastMousePosition(0, 0)
+	: m_cameraHead(PI / 4.0f)
+	, m_cameraPitch(-0.4f)
+	, m_cameraZ(4.0f)
+	, m_lastMousePosition(0, 0)
 {
 }
 
@@ -40,6 +41,7 @@ bool RenderControl::create(ui::Widget* parent, IRenderSystem* renderSystem, db::
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
 	desc.multiSample = 0;
+	desc.allowHDR = false;
 	desc.waitVBlanks = 1;
 	desc.syswin = getIWidget()->getSystemWindow();
 
@@ -91,8 +93,7 @@ void RenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 
 	const Vector2 mouseDelta(
 		float(m_lastMousePosition.x - mousePosition.x),
-		float(m_lastMousePosition.y - mousePosition.y)
-	);
+		float(m_lastMousePosition.y - mousePosition.y));
 
 	if (event->getButton() != ui::MbtRight)
 	{
@@ -131,8 +132,7 @@ void RenderControl::eventPaint(ui::PaintEvent* event)
 		80.0f * PI / 180.0f,
 		aspect,
 		0.1f,
-		2000.0f
-	);
+		2000.0f);
 
 	m_primitiveRenderer->begin(0, projectionTransform);
 	m_primitiveRenderer->pushView(viewTransform);

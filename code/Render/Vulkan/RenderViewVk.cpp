@@ -155,7 +155,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	}
 #endif
 
-	if (!create(desc.displayMode.width, desc.displayMode.height, desc.multiSample, desc.multiSampleShading, desc.waitVBlanks))
+	if (!create(desc.displayMode.width, desc.displayMode.height, desc.multiSample, desc.multiSampleShading, desc.waitVBlanks, desc.allowHDR))
 		return false;
 
 	return true;
@@ -179,7 +179,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		return false;
 	}
 
-	// Get size of surfce.
+	// Get size of surface.
 	RECT rc;
 	GetClientRect((HWND)desc.syswin.hWnd, &rc);
 	width = (int32_t)(rc.right - rc.left);
@@ -246,12 +246,12 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		return false;
 	}
 
-	// Get size of surfce.
+	// Get size of surface.
 	width = getViewWidth(desc.syswin.view);
 	height = getViewHeight(desc.syswin.view);
 #endif
 
-	if (!create(width, height, desc.multiSample, desc.multiSampleShading, desc.waitVBlanks))
+	if (!create(width, height, desc.multiSample, desc.multiSampleShading, desc.waitVBlanks, desc.allowHDR))
 		return false;
 
 	return true;
@@ -439,7 +439,7 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	m_context->performCleanup();
 	m_counter = -1;
 
-	if (create(width, height, m_multiSample, m_multiSampleShading, m_vblanks))
+	if (create(width, height, m_multiSample, m_multiSampleShading, m_vblanks, m_allowHDR))
 		return true;
 	else
 		return false;
@@ -1501,7 +1501,7 @@ void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
 	outStatistics.primitiveCount = m_primitiveCount;
 }
 
-bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks)
+bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks, bool allowHDR)
 {
 	vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &m_deviceProperties);
 
@@ -1511,6 +1511,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	log::debug << L"\tmultiSample " << multiSample << Endl;
 	log::debug << L"\tmultiSampleShading " << multiSampleShading << Endl;
 	log::debug << L"\tvblanks " << vblanks << Endl;
+	log::debug << L"\tallowHDR " << allowHDR << Endl;
 	log::debug << L"\ttimestampPeriod " << m_deviceProperties.limits.timestampPeriod << Endl;
 
 	// In case we fail to create make sure we're lost.
@@ -1518,6 +1519,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	m_multiSample = multiSample;
 	m_multiSampleShading = multiSampleShading;
 	m_vblanks = vblanks;
+	m_allowHDR = allowHDR;
+	m_hdr = false;
 
 	// Do not fail if requested size, assume it will get reset later.
 	if (width == 0 || height == 0)
@@ -1578,15 +1581,18 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	VkFormat colorFormat = VK_FORMAT_UNDEFINED;
 	VkColorSpaceKHR colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-	for (uint32_t i = 0; i < surfaceFormatCount; ++i)
+	if (allowHDR)
 	{
-		if (surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_ST2084_EXT || surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_HLG_EXT)
+		for (uint32_t i = 0; i < surfaceFormatCount; ++i)
 		{
-			log::info << L"Using HDR swap chain color space." << Endl;
-			colorFormat = surfaceFormats[i].format;
-			colorSpace = surfaceFormats[i].colorSpace;
-			m_hdr = true;
-			break;
+			if (surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_ST2084_EXT || surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_HLG_EXT)
+			{
+				log::info << L"Using HDR swap chain color space." << Endl;
+				colorFormat = surfaceFormats[i].format;
+				colorSpace = surfaceFormats[i].colorSpace;
+				m_hdr = true;
+				break;
+			}
 		}
 	}
 	if (colorFormat == VK_FORMAT_UNDEFINED)

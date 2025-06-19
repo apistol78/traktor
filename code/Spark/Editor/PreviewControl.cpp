@@ -6,45 +6,48 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
+#include "Spark/Editor/PreviewControl.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Editor/IEditor.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
+#include "Sound/Player/SoundPlayer.h"
+#include "Spark/Acc/AccDisplayRenderer.h"
 #include "Spark/DefaultCharacterFactory.h"
+#include "Spark/Frame.h"
+#include "Spark/Key.h"
 #include "Spark/Movie.h"
 #include "Spark/MovieLoader.h"
 #include "Spark/MoviePlayer.h"
 #include "Spark/MovieRenderer.h"
-#include "Spark/Frame.h"
-#include "Spark/Key.h"
-#include "Spark/Sprite.h"
-#include "Spark/Acc/AccDisplayRenderer.h"
-#include "Spark/Editor/PreviewControl.h"
 #include "Spark/Sound/SoundRenderer.h"
+#include "Spark/Sprite.h"
 #include "Spark/Sw/SwDisplayRenderer.h"
-#include "Sound/Player/SoundPlayer.h"
-#include "Ui/Itf/IWidget.h"
 #include "Ui/Application.h"
+#include "Ui/Itf/IWidget.h"
+
+#include <cstring>
 
 namespace traktor
 {
-	namespace spark
-	{
-		namespace
-		{
+namespace spark
+{
+namespace
+{
 
 const int c_updateInterval = 30;
 
@@ -52,9 +55,7 @@ const struct
 {
 	ui::VirtualKey vk;
 	int32_t ak;
-}
-c_askeys[] =
-{
+} c_askeys[] = {
 	{ ui::VkBackSpace, Key::AkBackspace },
 	{ ui::VkControl, Key::AkControl },
 	{ ui::VkDelete, Key::AkDeleteKey },
@@ -80,20 +81,18 @@ c_askeys[] =
 int32_t translateVirtualKey(ui::VirtualKey vk)
 {
 	for (int i = 0; i < sizeof_array(c_askeys); ++i)
-	{
 		if (vk == c_askeys[i].vk)
 			return c_askeys[i].ak;
-	}
 	return 0;
 }
 
-		}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.PreviewControl", PreviewControl, ui::Widget)
 
 PreviewControl::PreviewControl(editor::IEditor* editor)
-:	m_editor(editor)
-,	m_playing(false)
+	: m_editor(editor)
+	, m_playing(false)
 {
 }
 
@@ -103,8 +102,7 @@ bool PreviewControl::create(
 	db::Database* database,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	sound::SoundPlayer* soundPlayer
-)
+	sound::SoundPlayer* soundPlayer)
 {
 	if (!Widget::create(parent, style | ui::WsFocus | ui::WsNoCanvas))
 		return false;
@@ -114,6 +112,7 @@ bool PreviewControl::create(
 	desc.stencilBits = 8;
 	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
 	desc.multiSampleShading = m_editor->getSettings()->getProperty< float >(L"Editor.MultiSampleShading", 0.0f);
+	desc.allowHDR = m_editor->getSettings()->getProperty< bool >(L"Editor.HDR", true);
 	desc.waitVBlanks = 1;
 	desc.syswin = getIWidget()->getSystemWindow();
 
@@ -129,8 +128,7 @@ bool PreviewControl::create(
 		resourceManager,
 		renderSystem,
 		1,
-		true
-	);
+		true);
 
 	m_movieRenderer = new MovieRenderer(m_displayRenderer);
 
@@ -186,8 +184,7 @@ void PreviewControl::setMovie(Movie* movie)
 	m_moviePlayer = new MoviePlayer(
 		new DefaultCharacterFactory(),
 		new MovieLoader(),
-		nullptr
-	);
+		nullptr);
 	m_moviePlayer->create(movie, sz.cx, sz.cy, nullptr);
 
 	m_playing = true;
@@ -272,10 +269,8 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 	// Render view events; reset view if it has become lost.
 	render::RenderEvent re;
 	while (m_renderView->nextEvent(re))
-	{
 		if (re.type == render::RenderEventType::Lost)
 			m_renderView->reset(sz.cx, sz.cy);
-	}
 
 	// Add passes to render graph.
 	m_displayRenderer->beginSetup(m_renderGraph);
@@ -385,5 +380,5 @@ void PreviewControl::eventMouseWheel(ui::MouseWheelEvent* event)
 	}
 }
 
-	}
+}
 }

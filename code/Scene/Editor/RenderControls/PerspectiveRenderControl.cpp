@@ -125,6 +125,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	desc.stencilBits = 0;
 	desc.multiSample = m_multiSample;
 	desc.multiSampleShading = settings->getProperty< float >(L"Editor.MultiSampleShading", 0.0f);
+	desc.allowHDR = settings->getProperty< bool >(L"Editor.HDR", true);
 	desc.waitVBlanks = 1;
 	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 

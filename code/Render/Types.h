@@ -509,6 +509,7 @@ struct RenderViewDesc
 	uint16_t stencilBits = 0;
 	uint32_t multiSample = 0;
 	float multiSampleShading = 0.0f;
+	bool allowHDR = true;
 	int32_t waitVBlanks = 0;
 };
 

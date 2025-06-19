@@ -186,6 +186,7 @@ private:
 	uint32_t m_multiSample = 0;
 	float m_multiSampleShading = 0.0f;
 	int32_t m_vblanks = 0;
+	bool m_allowHDR = false;
 	bool m_hdr = false;
 
 	// Event queue.
@@ -214,7 +215,7 @@ private:
 	uint32_t m_drawCalls = 0;
 	uint32_t m_primitiveCount = 0;
 
-	bool create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks);
+	bool create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks, bool allowHDR);
 
 	bool validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt);
 

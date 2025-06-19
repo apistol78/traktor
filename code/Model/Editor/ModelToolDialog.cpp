@@ -6,9 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Model/Editor/ModelToolDialog.h"
+
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Containers/BitVector.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Transform.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
@@ -22,8 +25,6 @@
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
 #include "Model/ModelFormat.h"
-#include "Model/Pose.h"
-#include "Model/Editor/ModelToolDialog.h"
 #include "Model/Operations/BakeVertexColors.h"
 #include "Model/Operations/CalculateConvexHull.h"
 #include "Model/Operations/CalculateNormals.h"
@@ -34,17 +35,18 @@
 #include "Model/Operations/CullDistantFaces.h"
 #include "Model/Operations/ExecuteScript.h"
 #include "Model/Operations/FlattenDoubleSided.h"
+#include "Model/Operations/MergeCoplanarAdjacents.h"
+#include "Model/Operations/MergeTVertices.h"
 #include "Model/Operations/Quantize.h"
 #include "Model/Operations/Reduce.h"
 #include "Model/Operations/ScaleAlongNormal.h"
-#include "Model/Operations/Transform.h"
-#include "Model/Operations/Triangulate.h"
-#include "Model/Operations/MergeCoplanarAdjacents.h"
-#include "Model/Operations/MergeTVertices.h"
 #include "Model/Operations/SortCacheCoherency.h"
 #include "Model/Operations/SortProjectedArea.h"
+#include "Model/Operations/Transform.h"
+#include "Model/Operations/Triangulate.h"
 #include "Model/Operations/Unweld.h"
 #include "Model/Operations/UnwrapUV.h"
+#include "Model/Pose.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ITexture.h"
@@ -52,18 +54,19 @@
 #include "Resource/IResourceManager.h"
 #include "Script/Editor/Script.h"
 #include "Ui/Application.h"
-#include "Ui/Menu.h"
-#include "Ui/MenuItem.h"
-#include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/Splitter.h"
-#include "Ui/StyleBitmap.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridView.h"
+#include "Ui/Itf/IWidget.h"
+#include "Ui/Menu.h"
+#include "Ui/MenuItem.h"
+#include "Ui/Splitter.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Tab.h"
+#include "Ui/TableLayout.h"
 #include "Ui/TabPage.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
@@ -72,12 +75,11 @@
 #include "Ui/ToolBar/ToolBarSeparator.h"
 #include "Ui/TreeView/TreeView.h"
 #include "Ui/TreeView/TreeViewItem.h"
-#include "Ui/Itf/IWidget.h"
 
 namespace traktor::model
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::ITexture > c_textureDebug(Guid(L"{0163BEDD-9297-A64F-AAD5-360E27E37C6E}"));
 
@@ -91,16 +93,13 @@ void updateSkeletonTree(Model* model, ui::TreeView* treeView, ui::TreeViewItem* 
 		{
 			int32_t affecting = 0;
 			for (const auto vtx : model->getVertices())
-			{
 				if (vtx.getJointInfluence(i) > FUZZY_EPSILON)
 					++affecting;
-			}
 
 			Ref< ui::TreeViewItem > itemJoint = treeView->createItem(
 				parentItem,
 				joint.getName() + L" (" + toString(affecting) + L")",
-				1
-			);
+				1);
 			itemJoint->setImage(0, 1);
 			itemJoint->setData(L"JOINT", new PropertyInteger(i));
 
@@ -109,36 +108,34 @@ void updateSkeletonTree(Model* model, ui::TreeView* treeView, ui::TreeViewItem* 
 	}
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelToolDialog", ModelToolDialog, ui::Dialog)
 
 ModelToolDialog::ModelToolDialog(
 	editor::IEditor* editor,
 	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem
-)
-:	m_editor(editor)
-,	m_resourceManager(resourceManager)
-,	m_renderSystem(renderSystem)
-,	m_cameraHead(0.0f)
-,	m_cameraPitch(0.0f)
-,	m_cameraZ(10.0f)
-,	m_normalScale(1.0f)
-,	m_lastMousePosition(0, 0)
+	render::IRenderSystem* renderSystem)
+	: m_editor(editor)
+	, m_resourceManager(resourceManager)
+	, m_renderSystem(renderSystem)
+	, m_cameraHead(0.0f)
+	, m_cameraPitch(0.0f)
+	, m_cameraZ(10.0f)
+	, m_normalScale(1.0f)
+	, m_lastMousePosition(0, 0)
 {
 }
 
 bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, float scale)
 {
 	if (!ui::Dialog::create(
-		parent,
-		i18n::Text(L"MODEL_TOOL_TITLE"),
-		1000_ut,
-		800_ut,
-		ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
-		new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)
-	))
+			parent,
+			i18n::Text(L"MODEL_TOOL_TITLE"),
+			1000_ut,
+			800_ut,
+			ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
+			new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
@@ -300,6 +297,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
 	desc.multiSample = 4;
+	desc.allowHDR = false;
 	desc.waitVBlanks = 1;
 	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 
@@ -512,7 +510,7 @@ void ModelToolDialog::updateModel()
 			row->add(i->getEmissiveMap().name + L" [" + toString(i->getEmissiveMap().channel) + L"]");
 			row->add(i->getReflectiveMap().name + L" [" + toString(i->getReflectiveMap().channel) + L"]");
 			row->add(i->getNormalMap().name + L" [" + toString(i->getNormalMap().channel) + L"]");
-			row->add( toString(cl.getRed()) + L", " + toString(cl.getGreen()) + L", " + toString(cl.getBlue()) + L", " + toString(cl.getAlpha()));
+			row->add(toString(cl.getRed()) + L", " + toString(cl.getGreen()) + L", " + toString(cl.getBlue()) + L", " + toString(cl.getAlpha()));
 			row->add(toString(i->getDiffuseTerm()));
 			row->add(toString(i->getSpecularTerm()));
 			row->add(toString(i->getRoughness()));
@@ -597,25 +595,22 @@ void ModelToolDialog::updateOperations(ui::TreeViewItem* itemModel)
 			T_ASSERT(scriptInstance != nullptr);
 
 			// Ensure script has been built as we're
-			// actually loading class through resource manager. 
+			// actually loading class through resource manager.
 			m_editor->buildAsset(
 				scriptInstance->getGuid(),
-				false
-			);
+				false);
 			m_editor->buildWaitUntilFinished();
 
 			// Ensure script resource isn't cached.
 			m_resourceManager->reload(
 				scriptInstance->getGuid(),
-				false
-			);
+				false);
 
 			// Load compiled script class.
 			resource::Proxy< IRuntimeClass > scriptClass;
 			if (!m_resourceManager->bind(
-				resource::Id< IRuntimeClass >(scriptInstance->getGuid()),
-				scriptClass
-			))
+					resource::Id< IRuntimeClass >(scriptInstance->getGuid()),
+					scriptClass))
 				return;
 
 			// Create new operation; not set in UI item though.
@@ -683,7 +678,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			else if (command == L"ModelTool.Clear")
 			{
 				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clear", 0);
-				itemOperation->setData(L"OPERATION", new Clear( Model::CfMaterials | Model::CfColors | Model::CfNormals | Model::CfTexCoords | Model::CfJoints ));
+				itemOperation->setData(L"OPERATION", new Clear(Model::CfMaterials | Model::CfColors | Model::CfNormals | Model::CfTexCoords | Model::CfJoints));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.CalculateNormals")
@@ -791,31 +786,27 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			else if (command == L"ModelTool.ExecuteScript")
 			{
 				auto scriptInstance = m_editor->browseInstance(
-					type_of< script::Script >()
-				);
+					type_of< script::Script >());
 				if (!scriptInstance)
 					return;
 
 				// Ensure script has been built as we're
-				// actually loading class through resource manager. 
+				// actually loading class through resource manager.
 				m_editor->buildAsset(
 					scriptInstance->getGuid(),
-					false
-				);
+					false);
 				m_editor->buildWaitUntilFinished();
 
 				// Ensure script resource isn't cached.
 				m_resourceManager->reload(
 					scriptInstance->getGuid(),
-					false
-				);
+					false);
 
 				// Load compiled script class.
 				resource::Proxy< IRuntimeClass > scriptClass;
 				if (!m_resourceManager->bind(
-					resource::Id< IRuntimeClass >(scriptInstance->getGuid()),
-					scriptClass
-				))
+						resource::Id< IRuntimeClass >(scriptInstance->getGuid()),
+						scriptClass))
 					return;
 
 				// Add operation to list.
@@ -898,8 +889,7 @@ void ModelToolDialog::eventMouseMove(ui::MouseMoveEvent* event)
 
 	Vector2 mouseDelta(
 		float(m_lastMousePosition.x - mousePosition.x),
-		float(m_lastMousePosition.y - mousePosition.y)
-	);
+		float(m_lastMousePosition.y - mousePosition.y));
 
 	if (event->getButton() != ui::MbtRight)
 	{
@@ -933,17 +923,15 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 	// Render view events; reset view if it has become lost.
 	render::RenderEvent re;
 	while (m_renderView->nextEvent(re))
-	{
 		if (re.type == render::RenderEventType::Lost)
 			m_renderView->reset(rc.getWidth(), rc.getHeight());
-	}
 
 	if (!m_renderView->beginFrame())
 		return;
 
 	render::Clear cl;
 	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	cl.colors[0] = Color4f(46/255.0f, 56/255.0f, 92/255.0f, 1.0f);
+	cl.colors[0] = Color4f(46 / 255.0f, 56 / 255.0f, 92 / 255.0f, 1.0f);
 	cl.depth = 1.0f;
 	cl.stencil = 0;
 
@@ -957,8 +945,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 		80.0f * PI / 180.0f,
 		aspect,
 		0.01f,
-		1000.0f
-	);
+		1000.0f);
 
 	auto texture = (m_texturePreview != nullptr) ? m_texturePreview.ptr() : m_textureDebug.getResource();
 
@@ -972,14 +959,12 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				Vector4(float(x), 0.0f, -10.0f, 1.0f),
 				Vector4(float(x), 0.0f, 10.0f, 1.0f),
 				(x == 0) ? 2.0f : 0.0f,
-				Color4ub(0, 0, 0, 80)
-			);
+				Color4ub(0, 0, 0, 80));
 			m_primitiveRenderer->drawLine(
 				Vector4(-10.0f, 0.0f, float(x), 1.0f),
 				Vector4(10.0f, 0.0f, float(x), 1.0f),
 				(x == 0) ? 2.0f : 0.0f,
-				Color4ub(0, 0, 0, 80)
-			);
+				Color4ub(0, 0, 0, 80));
 		}
 
 		if (m_model)
@@ -997,18 +982,16 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			const auto& rows = m_materialGrid->getRows();
 			BitVector materialSelections(rows.size(), false);
 			for (uint32_t i = 0; i < rows.size(); ++i)
-			{
 				if ((rows[i]->getState() & ui::GridRow::Selected) != 0)
 					materialSelections.set(i);
-			}
 
 			// Render solid.
 			if (m_toolSolid->isToggled())
 			{
 				bool cull = m_toolCull->isToggled();
 
-				Vector4 eyePosition = viewTransform.inverse().translation().xyz1();	// Eye position in object space.
-				Vector4 lightDir = viewTransform.inverse().axisZ();	// Light direction in object space.
+				Vector4 eyePosition = viewTransform.inverse().translation().xyz1(); // Eye position in object space.
+				Vector4 lightDir = viewTransform.inverse().axisZ();					// Light direction in object space.
 
 				const AlignedVector< Vertex >& vertices = m_modelTris->getVertices();
 				const AlignedVector< Polygon >& polygons = m_modelTris->getPolygons();
@@ -1042,8 +1025,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 						int32_t(diffuse * 255),
 						int32_t(diffuse * 255),
 						int32_t(diffuse * 255),
-						255						
-					);
+						255);
 
 					if (!m_toolWeight->isToggled())
 					{
@@ -1053,25 +1035,23 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 
 						if (vertices[indices[0]].getTexCoordCount() > channel)
 						{
-							Color4ub color = 
-								selected ?
-								Color4ub(180, 180, 255, 255) :
-								Color4ub(255, 255, 255, 255);
+							Color4ub color =
+								selected ? Color4ub(180, 180, 255, 255) : Color4ub(255, 255, 255, 255);
 
 							m_primitiveRenderer->drawTextureTriangle(
-								p[2], m_modelTris->getTexCoord(vertices[indices[2]].getTexCoord(channel)),
-								p[1], m_modelTris->getTexCoord(vertices[indices[1]].getTexCoord(channel)),
-								p[0], m_modelTris->getTexCoord(vertices[indices[0]].getTexCoord(channel)),
+								p[2],
+								m_modelTris->getTexCoord(vertices[indices[2]].getTexCoord(channel)),
+								p[1],
+								m_modelTris->getTexCoord(vertices[indices[1]].getTexCoord(channel)),
+								p[0],
+								m_modelTris->getTexCoord(vertices[indices[0]].getTexCoord(channel)),
 								color * shading,
-								texture
-							);
+								texture);
 						}
 						else
 						{
-							Color4ub color = 
-								selected ?
-								Color4ub(180, 180, 255, 255) :
-								Color4ub(81, 105, 195, 255);
+							Color4ub color =
+								selected ? Color4ub(180, 180, 255, 255) : Color4ub(81, 105, 195, 255);
 
 							m_primitiveRenderer->drawSolidTriangle(p[2], p[1], p[0], color * shading);
 						}
@@ -1083,10 +1063,12 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 						const Color4ub c_fullWeight(255, 0, 0, 255);
 
 						m_primitiveRenderer->drawSolidTriangle(
-							p[2], (vertices[indices[2]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[2]].getJointInfluence(weightJoint)) : c_errorWeight,
-							p[1], (vertices[indices[1]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[1]].getJointInfluence(weightJoint)) : c_errorWeight,
-							p[0], (vertices[indices[0]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[0]].getJointInfluence(weightJoint)) : c_errorWeight
-						);
+							p[2],
+							(vertices[indices[2]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[2]].getJointInfluence(weightJoint)) : c_errorWeight,
+							p[1],
+							(vertices[indices[1]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[1]].getJointInfluence(weightJoint)) : c_errorWeight,
+							p[0],
+							(vertices[indices[0]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[0]].getJointInfluence(weightJoint)) : c_errorWeight);
 					}
 				}
 				m_primitiveRenderer->popDepthState();
@@ -1177,9 +1159,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			{
 				m_primitiveRenderer->pushDepthState(true, false, false);
 				for (const auto& position : positions)
-				{
 					m_primitiveRenderer->drawSolidPoint(position, 2.0f, Color4ub(255, 255, 0, 200));
-				}
 				m_primitiveRenderer->popDepthState();
 			}
 
@@ -1215,16 +1195,14 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 									Tjoint.translation(),
 									Tchild.translation(),
 									2.0f,
-									colorRest
-								);
+									colorRest);
 							}
 						}
 						else
 							m_primitiveRenderer->drawSolidPoint(
 								Tjoint.translation(),
 								2.0f,
-								colorRest
-							);
+								colorRest);
 					}
 				}
 
@@ -1245,7 +1223,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 						childJointIds.resize(0);
 						m_modelTris->findChildJoints(i, childJointIds);
 
-						auto TjointPose = pose->getJointGlobalTransform(m_modelTris, i);
+						const auto TjointPose = pose->getJointGlobalTransform(m_modelTris, i);
 
 						m_primitiveRenderer->drawWireFrame(TjointPose.toMatrix44(), frameSize);
 
@@ -1259,16 +1237,14 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 									TjointPose.translation(),
 									TchildPose.translation(),
 									2.0f,
-									colorPose
-								);
+									colorPose);
 							}
 						}
 						else
 							m_primitiveRenderer->drawSolidPoint(
 								TjointPose.translation(),
 								2.0f,
-								colorPose
-							);
+								colorPose);
 					}
 				}
 
@@ -1293,16 +1269,14 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 					Vector4(0.0f, 1.0f, 0.5f, 1.0f),
 					Vector2(0.0f, 1.0f),
 					Color4ub(255, 255, 255, 200),
-					texture
-				);
+					texture);
 
 				m_primitiveRenderer->drawWireQuad(
 					Vector4(0.0f, 0.0f, 0.5f, 1.0f),
 					Vector4(1.0f, 0.0f, 0.5f, 1.0f),
 					Vector4(1.0f, 1.0f, 0.5f, 1.0f),
 					Vector4(0.0f, 1.0f, 0.5f, 1.0f),
-					Color4ub(255, 255, 255, 200)
-				);
+					Color4ub(255, 255, 255, 200));
 
 				for (uint32_t i = 0; i < polygons.size(); ++i)
 				{
@@ -1322,8 +1296,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 							m_primitiveRenderer->drawLine(
 								Vector4(uv0.x, uv0.y, 0.5f, 1.0f),
 								Vector4(uv1.x, uv1.y, 0.5f, 1.0f),
-								Color4ub(255, 255, 255, 200)
-							);
+								Color4ub(255, 255, 255, 200));
 						}
 					}
 				}
@@ -1344,8 +1317,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->pushWorld(Matrix44::identity());
 				m_primitiveRenderer->pushView(
 					translate(w / 2.0f - c_frameSize, h / 2.0f - c_frameSize, 0.0f) *
-					scale(c_frameSize, c_frameSize, c_frameSize)
-				);
+					scale(c_frameSize, c_frameSize, c_frameSize));
 
 				m_primitiveRenderer->pushDepthState(false, true, false);
 				m_primitiveRenderer->drawSolidQuad(
@@ -1353,8 +1325,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 					Vector4(1.0f, 1.0f, 1.0f, 1.0f),
 					Vector4(1.0f, -1.0f, 1.0f, 1.0f),
 					Vector4(-1.0f, -1.0f, 1.0f, 1.0f),
-					Color4ub(0, 0, 0, 32)
-				);
+					Color4ub(0, 0, 0, 32));
 				m_primitiveRenderer->popDepthState();
 
 				m_primitiveRenderer->pushDepthState(true, true, false);
@@ -1362,38 +1333,32 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->drawLine(
 					Vector4::origo(),
 					Vector4::origo() + viewTransform.axisX() * Scalar(1.0f - c_arrowLength),
-					Color4ub(255, 0, 0, 255)
-				);
+					Color4ub(255, 0, 0, 255));
 				m_primitiveRenderer->drawArrowHead(
 					Vector4::origo() + viewTransform.axisX() * Scalar(1.0f - c_arrowLength),
 					Vector4::origo() + viewTransform.axisX(),
 					0.8f,
-					Color4ub(255, 0, 0, 255)
-				);
+					Color4ub(255, 0, 0, 255));
 
 				m_primitiveRenderer->drawLine(
 					Vector4::origo(),
 					Vector4::origo() + viewTransform.axisY() * Scalar(1.0f - c_arrowLength),
-					Color4ub(0, 255, 0, 255)
-				);
+					Color4ub(0, 255, 0, 255));
 				m_primitiveRenderer->drawArrowHead(
 					Vector4::origo() + viewTransform.axisY() * Scalar(1.0f - c_arrowLength),
 					Vector4::origo() + viewTransform.axisY(),
 					0.8f,
-					Color4ub(0, 255, 0, 255)
-				);
+					Color4ub(0, 255, 0, 255));
 
 				m_primitiveRenderer->drawLine(
 					Vector4::origo(),
 					Vector4::origo() + viewTransform.axisZ() * Scalar(1.0f - c_arrowLength),
-					Color4ub(0, 0, 255, 255)
-				);
+					Color4ub(0, 0, 255, 255));
 				m_primitiveRenderer->drawArrowHead(
 					Vector4::origo() + viewTransform.axisZ() * Scalar(1.0f - c_arrowLength),
 					Vector4::origo() + viewTransform.axisZ(),
 					0.8f,
-					Color4ub(0, 0, 255, 255)
-				);
+					Color4ub(0, 0, 255, 255));
 
 				m_primitiveRenderer->popWorld();
 				m_primitiveRenderer->popView();

@@ -230,6 +230,10 @@
 			<second>Enable hardware ray tracing</second>
 		</item>
 		<item>
+			<first>EDITOR_SETTINGS_RENDERER_HDR</first>
+			<second>Enable HDR output</second>
+		</item>
+		<item>
 			<first>EDITOR_SETTINGS_RENDERER_CLAMP_TEXTURE_SIZE</first>
 			<second>Clamp max texture size</second>
 		</item>

@@ -10,6 +10,7 @@
 
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -132,6 +133,7 @@ bool EffectPreviewControl::create(
 	desc.stencilBits = 0;
 	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
 	desc.multiSampleShading = m_editor->getSettings()->getProperty< float >(L"Editor.MultiSampleShading", 0.0f);
+	desc.allowHDR = m_editor->getSettings()->getProperty< bool >(L"Editor.HDR", true);
 	desc.waitVBlanks = 1;
 	desc.syswin = getIWidget()->getSystemWindow();
 

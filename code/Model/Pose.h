@@ -38,9 +38,9 @@ class T_DLLCLASS Pose : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	void setJointTransform(uint32_t jointId, const Transform& jointTransform);
+	void setJointTransform(uint32_t jointId, const traktor::Transform& jointTransform);
 
-	const Transform& getJointTransform(uint32_t jointId) const;
+	const traktor::Transform& getJointTransform(uint32_t jointId) const;
 
 	/*! Evaluate global joint transformation.
 	 *         Traverse chain of joints to concate the global joint transform (in object space).
@@ -49,12 +49,12 @@ public:
 	 * \param jointId Id of joint which we want global transformation calculated.
 	 * \return Global joint transformation.
 	 */
-	Transform getJointGlobalTransform(const Model* model, uint32_t jointId) const;
+	traktor::Transform getJointGlobalTransform(const Model* model, uint32_t jointId) const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	AlignedVector< Transform > m_jointTransforms;
+	AlignedVector< traktor::Transform > m_jointTransforms;
 };
 
 }

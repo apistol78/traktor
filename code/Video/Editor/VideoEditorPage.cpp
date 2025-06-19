@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Video/Editor/VideoEditorPage.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -17,34 +19,33 @@
 #include "Render/IProgram.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/Resource/ShaderFactory.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
-#include "Ui/Widget.h"
 #include "Ui/Itf/IWidget.h"
-#include "Video/Video.h"
+#include "Ui/Widget.h"
 #include "Video/Decoders/VideoDecoderTheora.h"
 #include "Video/Editor/VideoAsset.h"
-#include "Video/Editor/VideoEditorPage.h"
+#include "Video/Video.h"
 
 namespace traktor::video
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_idShaderMovie(Guid(L"{71682019-EB26-234C-8B48-0638F50DA662}"));
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.video.VideoEditorPage", VideoEditorPage, editor::IEditorPage)
 
 VideoEditorPage::VideoEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
-:	m_editor(editor)
-,	m_site(site)
-,	m_document(document)
+	: m_editor(editor)
+	, m_site(site)
+	, m_document(document)
 {
 }
 
@@ -82,6 +83,7 @@ bool VideoEditorPage::create(ui::Container* parent)
 	desc.depthBits = 0;
 	desc.stencilBits = 0;
 	desc.multiSample = 0;
+	desc.allowHDR = false;
 	desc.waitVBlanks = 1;
 	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 

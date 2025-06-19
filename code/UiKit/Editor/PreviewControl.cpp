@@ -120,6 +120,7 @@ bool PreviewControl::create(ui::Widget* parent)
 	desc.stencilBits = 8;
 	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
 	desc.multiSampleShading = m_editor->getSettings()->getProperty< float >(L"Editor.MultiSampleShading", 0.0f);
+	desc.allowHDR = m_editor->getSettings()->getProperty< bool >(L"Editor.HDR", true);
 	desc.waitVBlanks = 1;
 	desc.syswin = getIWidget()->getSystemWindow();
 

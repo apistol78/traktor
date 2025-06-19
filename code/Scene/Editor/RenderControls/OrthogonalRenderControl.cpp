@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Core/Math/Log2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -121,6 +122,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	desc.stencilBits = 0;
 	desc.multiSample = m_multiSample;
 	desc.multiSampleShading = m_context->getEditor()->getSettings()->getProperty< float >(L"Editor.MultiSampleShading", 0.0f);
+	desc.allowHDR = m_context->getEditor()->getSettings()->getProperty< bool >(L"Editor.HDR", true);
 	desc.waitVBlanks = 1;
 	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 

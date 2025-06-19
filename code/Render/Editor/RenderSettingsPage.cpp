@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/RenderSettingsPage.h"
+
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
@@ -13,9 +15,8 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "I18N/Text.h"
-#include "Render/IRenderSystem.h"
 #include "Render/Editor/IProgramCompiler.h"
-#include "Render/Editor/RenderSettingsPage.h"
+#include "Render/IRenderSystem.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
 #include "Ui/DropDown.h"
@@ -89,6 +90,9 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_checkRayTracing = new ui::CheckBox();
 	m_checkRayTracing->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_RAY_TRACING"), false);
 
+	m_checkHDR = new ui::CheckBox();
+	m_checkHDR->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_HDR"), false);
+
 	m_checkBoxValidation = new ui::CheckBox();
 	m_checkBoxValidation->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_VALIDATION"), false);
 
@@ -122,6 +126,7 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_checkBoxValidation->setChecked(settings->getProperty< bool >(L"Editor.RenderValidation", true));
 	m_checkBoxRenderDoc->setChecked(settings->getProperty< bool >(L"Editor.UseRenderDoc", false));
 	m_checkRayTracing->setChecked(settings->getProperty< bool >(L"Editor.RayTracing", false));
+	m_checkHDR->setChecked(settings->getProperty< bool >(L"Editor.HDR", true));
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_RENDERER"));
 	return true;
@@ -144,6 +149,7 @@ bool RenderSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyBoolean >(L"Editor.RenderValidation", m_checkBoxValidation->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.UseRenderDoc", m_checkBoxRenderDoc->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.RayTracing", m_checkRayTracing->isChecked());
+	settings->setProperty< PropertyBoolean >(L"Editor.HDR", m_checkHDR->isChecked());
 	return true;
 }
 

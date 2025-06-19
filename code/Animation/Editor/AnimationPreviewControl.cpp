@@ -124,6 +124,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	desc.stencilBits = 0;
 	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
 	desc.waitVBlanks = 1;
+	desc.allowHDR = m_editor->getSettings()->getProperty< bool >(L"Editor.HDR", true);
 	desc.syswin = getIWidget()->getSystemWindow();
 
 	m_renderView = m_renderSystem->createRenderView(desc);
