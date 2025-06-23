@@ -1054,6 +1054,8 @@ static YYACTIONTYPE yy_find_shift_action(
 #endif
   do{
     i = yy_shift_ofst[stateno];
+    if (i == YY_ACTTAB_COUNT)
+        return yy_default[stateno];
     assert( i>=0 );
     assert( i+YYNTOKEN<=(int)sizeof(yy_lookahead)/sizeof(yy_lookahead[0]) );
     assert( iLookAhead!=YYNOCODE );
