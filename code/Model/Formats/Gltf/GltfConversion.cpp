@@ -69,29 +69,38 @@ Matrix44 calculateGltfAxisTransform()
 	//   0.0f, 0.0f, 0.0f, 1.0f
 	// Where sign = 1.0f (positive Y up) and scale = -1.0f (right-handed)
 
-	const float sign = 1.0f;   // Positive Y up
-	const float scale = -1.0f; // Right-handed (matching FBX implementation)
+	//int upAxis = 1;
+	int upSign = 1;
 
-	//return Matrix44(
-	//	sign * scale,
-	//	0.0f,
-	//	0.0f,
-	//	0.0f, // X axis: -1.0f, 0.0f, 0.0f, 0.0f
-	//	0.0f,
-	//	sign,
-	//	0.0f,
-	//	0.0f, // Y axis: 0.0f, 1.0f, 0.0f, 0.0f
-	//	0.0f,
-	//	0.0f,
-	//	1.0f,
-	//	0.0f, // Z axis: 0.0f, 0.0f, 1.0f, 0.0f
-	//	0.0f,
-	//	0.0f,
-	//	0.0f,
-	//	1.0f // Translation: 0.0f, 0.0f, 0.0f, 1.0f
-	//);
+	int frontAxis = 2;
+	int frontSign = 1;
 
-	return Matrix44::identity();
+	Matrix44 axisTransform = Matrix44::identity();
+
+	bool leftHanded = false;
+
+	const float sign = upSign < 0 ? -1.0f : 1.0f;
+	const float scale = leftHanded ? 1.0f : -1.0f;
+
+	axisTransform = Matrix44(
+		sign * scale,
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		sign,
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		1.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f,
+		1.0f);
+
+	return axisTransform;
 }
 
 }
