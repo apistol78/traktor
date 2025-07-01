@@ -23,7 +23,7 @@ namespace traktor::model
 namespace
 {
 
-std::wstring getTextureName(const cgltf_texture* texture)
+std::wstring getTextureName(const cgltf_texture* texture, const std::wstring& defaultName)
 {
 	if (texture->name)
 		return mbstows(texture->name);
@@ -35,7 +35,7 @@ std::wstring getTextureName(const cgltf_texture* texture)
 		return texturePath.getFileNameNoExtension();
 	}
 	else
-		return L"unnamed_texture";
+		return defaultName;
 }
 
 Ref< drawing::Image > loadTextureImage(const cgltf_texture* texture, const Path& basePath)
@@ -186,7 +186,7 @@ bool convertMaterials(
 			// Base color texture (diffuse)
 			if (pbr->base_color_texture.texture)
 			{
-				const std::wstring textureName = getTextureName(pbr->base_color_texture.texture);
+				const std::wstring textureName = getTextureName(pbr->base_color_texture.texture, L"base_color_texture");
 				const uint32_t channel = getTextureCoordChannel(&pbr->base_color_texture, outModel);
 				Ref< drawing::Image > image = loadTextureImage(pbr->base_color_texture.texture, basePath);
 
@@ -196,7 +196,7 @@ bool convertMaterials(
 			// Metallic-roughness texture
 			if (pbr->metallic_roughness_texture.texture)
 			{
-				const std::wstring textureName = getTextureName(pbr->metallic_roughness_texture.texture);
+				const std::wstring textureName = getTextureName(pbr->metallic_roughness_texture.texture, L"metallic_roughness_texture");
 				const uint32_t channel = getTextureCoordChannel(&pbr->metallic_roughness_texture, outModel);
 				Ref< drawing::Image > metallicRoughnessImage = loadTextureImage(pbr->metallic_roughness_texture.texture, basePath);
 
@@ -228,7 +228,7 @@ bool convertMaterials(
 		// Normal texture
 		if (gltfMaterial->normal_texture.texture)
 		{
-			const std::wstring textureName = getTextureName(gltfMaterial->normal_texture.texture);
+			const std::wstring textureName = getTextureName(gltfMaterial->normal_texture.texture, L"normal_texture");
 			const uint32_t channel = getTextureCoordChannel(&gltfMaterial->normal_texture, outModel);
 			Ref< drawing::Image > image = loadTextureImage(gltfMaterial->normal_texture.texture, basePath);
 
@@ -238,7 +238,7 @@ bool convertMaterials(
 		// Occlusion texture
 		if (gltfMaterial->occlusion_texture.texture)
 		{
-			const std::wstring textureName = getTextureName(gltfMaterial->occlusion_texture.texture);
+			const std::wstring textureName = getTextureName(gltfMaterial->occlusion_texture.texture, L"occlusion_texture");
 			const uint32_t channel = getTextureCoordChannel(&gltfMaterial->occlusion_texture, outModel);
 			Ref< drawing::Image > image = loadTextureImage(gltfMaterial->occlusion_texture.texture, basePath);
 
@@ -253,7 +253,7 @@ bool convertMaterials(
 
 		if (gltfMaterial->emissive_texture.texture)
 		{
-			const std::wstring textureName = getTextureName(gltfMaterial->emissive_texture.texture);
+			const std::wstring textureName = getTextureName(gltfMaterial->emissive_texture.texture, L"emissive_texture");
 			const uint32_t channel = getTextureCoordChannel(&gltfMaterial->emissive_texture, outModel);
 			Ref< drawing::Image > image = loadTextureImage(gltfMaterial->emissive_texture.texture, basePath);
 
@@ -288,7 +288,7 @@ bool convertMaterials(
 
 			if (specGloss->diffuse_texture.texture)
 			{
-				const std::wstring textureName = getTextureName(specGloss->diffuse_texture.texture);
+				const std::wstring textureName = getTextureName(specGloss->diffuse_texture.texture, L"diffuse_texture");
 				const uint32_t channel = getTextureCoordChannel(&specGloss->diffuse_texture, outModel);
 				Ref< drawing::Image > image = loadTextureImage(specGloss->diffuse_texture.texture, basePath);
 
