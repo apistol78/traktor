@@ -247,9 +247,14 @@ bool convertMaterials(
 		}
 
 		// Emissive
-		material.setEmissive(std::max({ gltfMaterial->emissive_factor[0],
-			gltfMaterial->emissive_factor[1],
-			gltfMaterial->emissive_factor[2] }));
+		if (gltfMaterial->has_emissive_strength)
+		{
+			float emissive = gltfMaterial->emissive_strength.emissive_strength;
+			emissive *= std::max({ gltfMaterial->emissive_factor[0],
+				gltfMaterial->emissive_factor[1],
+				gltfMaterial->emissive_factor[2] });
+			material.setEmissive(emissive);
+		}
 
 		if (gltfMaterial->emissive_texture.texture)
 		{
