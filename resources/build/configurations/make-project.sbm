@@ -65,7 +65,8 @@ local function collectDependencies(
 	outIncludePaths,
 	outLibraries,
 	outLibrariesExternal,
-	outLibraryPaths
+	outLibraryPaths,
+	outExtLibraryProducts
 )
 	-- Add include paths.
 	for _, includePath in pairs(configuration.includePaths) do
@@ -123,7 +124,8 @@ local function collectDependencies(
 						outIncludePaths,
 						outLibraries,
 						outLibrariesExternal,
-						outLibraryPaths
+						outLibraryPaths,
+						outExtLibraryProducts
 					)
 				else
 					-- Only add include paths when dealing with shared library dependencies.
@@ -140,6 +142,8 @@ local function collectDependencies(
 			local externalProject = dependency.project
 			local externalConfig = externalProject:getConfiguration(configuration.name)
 			if externalConfig ~= nil then
+
+				local externLibraryProduct = nil
 
 				-- Add path to library.
 				if externalConfig.consumerLibraryPath ~= "" then
@@ -166,11 +170,18 @@ local function collectDependencies(
 					else
 						print("Unable to add external path \"" .. externalSolution.rootPath .. "/" .. configuration.name .. "\"")
 					end
+
+					externLibraryProduct = externalRelPath.pathNameOS .. "/" .. PRODUCTNAME(
+						externalSolution,
+						externalProject,
+						externalConfig
+					)
 				end
 
 				-- Add library.
 				if externalProject.enable then
 					insertLast(outLibraries, externalProject.name)
+					insertLast(outExtLibraryProducts, externLibraryProduct)
 				end
 
 				-- Recurse with child dependencies.
@@ -182,7 +193,8 @@ local function collectDependencies(
 						outIncludePaths,
 						outLibraries,
 						outLibrariesExternal,
-						outLibraryPaths
+						outLibraryPaths,
+						outExtLibraryProducts
 					)
 				else
 					-- Only add include paths when dealing with shared library dependencies.
@@ -246,11 +258,13 @@ local includePaths = {}
 local libraries = {}
 local externalLibraries = {}
 local libraryPaths = {}
+local extLibraryProducts = {}
 for i, configuration in pairs(configurations) do
 	includePaths[i] = {}
 	libraries[i] = {}
 	externalLibraries[i] = {}
 	libraryPaths[i] = {}
+	extLibraryProducts[i] = {}
 	collectDependencies(
 		solution,
 		project,
@@ -258,7 +272,8 @@ for i, configuration in pairs(configurations) do
 		includePaths[i],
 		libraries[i],
 		externalLibraries[i],
-		libraryPaths[i]
+		libraryPaths[i],
+		extLibraryProducts[i]
 	)
 end
 
@@ -553,6 +568,14 @@ else -- No architectures
 		output:printLn("")
 		output:printLn("")
 
+		output:print(configuration.name .. "_XLIBS=")
+		for _, libraryProduct in pairs(extLibraryProducts[i]) do
+			output:printLn(" \\")
+			output:print("\t" .. libraryProduct)
+		end
+		output:printLn("")
+		output:printLn("")
+
 		output:printLn(".PHONY: " .. configuration.name)
 		output:printLn(configuration.name .. " : \\")
 		output:printLn("\t../" .. configuration.name .. "/" .. PRODUCTNAME(solution, project, configuration))
@@ -561,7 +584,8 @@ else -- No architectures
 
 		output:printLn("../" .. configuration.name .. "/" .. PRODUCTNAME(solution, project, configuration) .. " : \\")
 		output:printLn("\t$(" .. configuration.name .. "_OBJS) \\")
-		output:printLn("\t$(" .. configuration.name .. "_PROJECTS)")
+		output:printLn("\t$(" .. configuration.name .. "_PROJECTS) \\")
+		output:printLn("\t$(" .. configuration.name .. "_XLIBS)")
 
 		if format == "StaticLibrary" then
 			printWithColor(Color.Yellow, "Archiving " .. project.name .. "...")
