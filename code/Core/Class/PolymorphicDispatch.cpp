@@ -30,7 +30,7 @@ void PolymorphicDispatch::signature(OutputStream& os) const
 	{
 		if (dispatch)
 		{
-			if (first)
+			if (!first)
 				os << L";";
 			dispatch->signature(os);
 			first = false;
