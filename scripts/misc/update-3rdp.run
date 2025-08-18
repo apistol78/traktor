@@ -188,7 +188,12 @@ function update(pkg)
 
 		run:mkdir(pkg.name)
 		run:pushd(pkg.name)
-		local result = run:execute(WGET .. " " .. pkg.url)
+		local result
+		if pkg.target == nil then
+			result = run:execute(WGET .. " " .. pkg.url)
+		else
+			result = run:execute(WGET .. " -O " .. pkg.target .. " " .. pkg.url)
+		end
 		run:popd()
 
 		if result ~= 0 then
