@@ -234,6 +234,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	{
 		m_context->setPlaying(false);
 		m_context->setPhysicsEnable(false);
+		m_context->buildEntities();
 	}
 	else if (command == L"Scene.Editor.TogglePlay")
 	{
