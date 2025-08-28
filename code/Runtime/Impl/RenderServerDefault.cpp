@@ -194,6 +194,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	m_renderViewDesc.depthBits = settings->getProperty< int32_t >(L"Render.DepthBits", 24);
 	m_renderViewDesc.stencilBits = settings->getProperty< int32_t >(L"Render.StencilBits", 8);
 	m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.MultiSample", 0);
+	m_renderViewDesc.allowHDR = settings->getProperty< bool >(L"Render.AllowHDR", true);
 	m_renderViewDesc.waitVBlanks = settings->getProperty< int32_t >(L"Render.WaitVBlanks", 1);
 	m_renderViewDesc.title = settings->getProperty< std::wstring >(L"Render.Title", L"Traktor");
 	m_renderViewDesc.display = (uint32_t)settings->getProperty< int32_t >(L"Render.Display", 0);

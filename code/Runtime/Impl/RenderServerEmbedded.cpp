@@ -140,6 +140,7 @@ bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, Property
 	m_renderViewDesc.stencilBits = settings->getProperty< int32_t >(L"Render.StencilBits", 8);
 	m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.MultiSample", 4);
 	m_renderViewDesc.multiSample = sanitizeMultiSample(m_renderViewDesc.multiSample);
+	m_renderViewDesc.allowHDR = settings->getProperty< bool >(L"Render.AllowHDR", true);
 	m_renderViewDesc.waitVBlanks = settings->getProperty< int32_t >(L"Render.WaitVBlanks", 1);
 	m_renderViewDesc.syswin = syswin;
 
