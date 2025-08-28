@@ -1,5 +1,3 @@
-#pragma optimize("", off)
-
 /*
  * TRAKTOR
  * Copyright (c) 2022-2024 Anders Pistol.
