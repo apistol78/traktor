@@ -15,6 +15,7 @@
 #include "Core/Class/CoreClassFactory1.h"
 #include "Core/Class/CoreClassFactory2.h"
 #include "Core/Class/OrderedClassRegistrar.h"
+#include "Core/Class/IRuntimeDelegate.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
@@ -577,6 +578,111 @@ std::wstring Run::evaluate(const std::wstring& fileName)
 	return o->getProduct();
 }
 
+bool Run::directory(const std::wstring& path, IRuntimeDelegate* delegate)
+{
+	for (auto file : FileSystem::getInstance().find(path))
+	{
+		if (file->isDirectory() && (file->getPath().getFileName() == L"." || file->getPath().getFileName() == L".."))
+			continue;
+
+		Any argv[] = { CastAny< File* >::set(file) };
+		Any result = delegate->call(sizeof_array(argv), argv);
+		if (!result.getBoolean())
+			return false;
+	}
+	return true;
+}
+
+bool Run::traverseDirectories(const std::wstring& path, int32_t mode, IRuntimeDelegate* delegate)
+{
+	const Path p(path);
+	const RefArray< File > files = FileSystem::getInstance().find(p);
+
+	if (mode == TraverseAny)
+	{
+		for (auto file : files)
+		{
+			if (file->isDirectory() && (file->getPath().getFileName() == L"." || file->getPath().getFileName() == L".."))
+				continue;
+
+			if (file->isDirectory())
+			{
+				const std::wstring rp = file->getPath().getPathNameOS() + L"/" + p.getFileName();
+				const bool result = traverseDirectories(rp, mode, delegate);
+				if (!result)
+					return false;
+			}
+			else
+			{
+				const Any argv[] = { CastAny< File* >::set(file) };
+				const Any result = delegate->call(sizeof_array(argv), argv);
+				if (!result.getBoolean())
+					return false;
+			}
+		}
+	}
+	else if (mode == TraverseBreadthFirst)
+	{
+		for (auto file : files)
+		{
+			if (file->isDirectory() && (file->getPath().getFileName() == L"." || file->getPath().getFileName() == L".."))
+				continue;
+
+			if (!file->isDirectory())
+			{
+				const Any argv[] = { CastAny< File* >::set(file) };
+				const Any result = delegate->call(sizeof_array(argv), argv);
+				if (!result.getBoolean())
+					return false;
+			}
+		}
+		for (auto file : files)
+		{
+			if (file->isDirectory() && (file->getPath().getFileName() == L"." || file->getPath().getFileName() == L".."))
+				continue;
+
+			if (file->isDirectory())
+			{
+				const std::wstring rp = file->getPath().getPathNameOS() + L"/" + p.getFileName();
+				const bool result = traverseDirectories(rp, mode, delegate);
+				if (!result)
+					return false;
+			}
+		}
+	}
+	else if (mode == TraverseDepthFirst)
+	{
+		for (auto file : files)
+		{
+			if (file->isDirectory() && (file->getPath().getFileName() == L"." || file->getPath().getFileName() == L".."))
+				continue;
+
+			if (file->isDirectory())
+			{
+				const std::wstring rp = file->getPath().getPathNameOS() + L"/" + p.getFileName();
+				const bool result = traverseDirectories(rp, mode, delegate);
+				if (!result)
+					return false;
+			}
+		}
+		for (auto file : files)
+		{
+			if (file->isDirectory() && (file->getPath().getFileName() == L"." || file->getPath().getFileName() == L".."))
+				continue;
+
+			if (!file->isDirectory())
+			{
+				const Any argv[] = { CastAny< File* >::set(file) };
+				const Any result = delegate->call(sizeof_array(argv), argv);
+				if (!result.getBoolean())
+					return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 void Run::registerRuntimeClasses(IRuntimeClassRegistrar* runtimeRegistrar)
 {
 	OrderedClassRegistrar registrar;
@@ -640,6 +746,9 @@ void Run::registerRuntimeClasses(IRuntimeClassRegistrar* runtimeRegistrar)
 
 	// Run
 	auto classRun = new AutoRuntimeClass< Run >();
+	classRun->addConstant("TraverseAny", CastAny< int32_t >::set(TraverseAny));
+	classRun->addConstant("TraverseBreadthFirst", CastAny< int32_t >::set(TraverseBreadthFirst));
+	classRun->addConstant("TraverseDepthFirst", CastAny< int32_t >::set(TraverseDepthFirst));
 	classRun->addProperty("cwd", &Run::cwd);
 	classRun->addProperty("stdOut", &Run::stdOut);
 	classRun->addProperty("stdErr", &Run::stdErr);
@@ -673,6 +782,8 @@ void Run::registerRuntimeClasses(IRuntimeClassRegistrar* runtimeRegistrar)
 	classRun->addMethod("loadModule", &Run::loadModule);
 	classRun->addMethod("loadScript", &Run::loadScript);
 	classRun->addMethod("evaluate", &Run::evaluate);
+	classRun->addMethod("directory", &Run::directory);
+	classRun->addMethod("traverseDirectories", &Run::traverseDirectories);
 	registrar.registerClass(classRun);
 
 	// Register all classes to script manager; in class hierarchy order.

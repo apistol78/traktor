@@ -408,9 +408,12 @@ int main(int argc, const char** argv)
 			}
 		}
 
-		// Read script into memory.
-		const Path fileName = cmdLine.getString(0);
+		// Get file name to script; default to "run" if no extension is provided.
+		Path fileName = cmdLine.getString(0);
+		if (fileName.getExtension().empty())
+			fileName = fileName.getPathNameOS() + L".run";
 
+		// Read script into memory.
 		Ref< traktor::IStream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
 		if (!file)
 		{
@@ -456,10 +459,10 @@ int main(int argc, const char** argv)
 			scriptDebugger->addListener(new run::ScriptDebuggerListener());
 		}
 
-		if ((explicitRun && !explicitTemplate) || compareIgnoreCase(fileName.getExtension(), L"run") == 0)
-			result = run::executeRun(text, fileName, cmdLine);
-		else if ((!explicitRun && explicitTemplate) || compareIgnoreCase(fileName.getExtension(), L"template") == 0)
+		if (explicitTemplate || compareIgnoreCase(fileName.getExtension(), L"template") == 0)
 			result = run::executeTemplate(text, fileName, cmdLine);
+		else if (explicitRun || compareIgnoreCase(fileName.getExtension(), L"run") == 0)
+			result = run::executeRun(text, fileName, cmdLine);
 		else
 			log::error << L"Unknown file type \"" << fileName.getExtension() << L"\"; must be either \"run\" or \"template\"." << Endl;
 

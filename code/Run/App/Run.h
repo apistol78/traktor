@@ -19,6 +19,7 @@ namespace traktor
 
 class Environment;
 class IRuntimeClassRegistrar;
+class IRuntimeDelegate;
 
 }
 
@@ -42,6 +43,10 @@ class Run : public Object
 	T_RTTI_CLASS;
 
 public:
+	constexpr static int32_t TraverseAny = 0;
+	constexpr static int32_t TraverseBreadthFirst = 1;
+	constexpr static int32_t TraverseDepthFirst = 2;
+
 	explicit Run(
 		script::IScriptCompiler* scriptCompiler,
 		script::IScriptManager* scriptManager,
@@ -93,6 +98,10 @@ public:
 	bool loadScript(const std::wstring& fileName);
 
 	std::wstring evaluate(const std::wstring& fileName);
+
+	bool directory(const std::wstring& path, IRuntimeDelegate* delegate);
+
+	bool traverseDirectories(const std::wstring& path, int32_t mode, IRuntimeDelegate* delegate);
 
 	static void registerRuntimeClasses(IRuntimeClassRegistrar* runtimeRegistrar);
 
