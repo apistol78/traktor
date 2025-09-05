@@ -172,7 +172,7 @@ void ScaleModifier::end(const TransformChain& transformChain)
 	m_axisEnable = 0;
 }
 
-void ScaleModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
+void ScaleModifier::draw(render::PrimitiveRenderer* primitiveRenderer, bool orthogonal) const
 {
 	if (m_entityAdapters.empty())
 		return;

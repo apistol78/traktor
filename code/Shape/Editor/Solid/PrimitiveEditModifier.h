@@ -69,7 +69,7 @@ public:
 
 	virtual void end(const scene::TransformChain& transformChain) override final;
 
-	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) const override final;
+	virtual void draw(render::PrimitiveRenderer* primitiveRenderer, bool orthogonal) const override final;
 
 private:
 	scene::SceneEditorContext* m_context;

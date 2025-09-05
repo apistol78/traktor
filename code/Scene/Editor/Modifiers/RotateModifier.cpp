@@ -325,14 +325,14 @@ void RotateModifier::end(const TransformChain& transformChain)
 	m_deltaBank = 0.0f;
 }
 
-void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
+void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer, bool orthogonal) const
 {
 	if (m_entityAdapters.empty())
 		return;
 
 	const Vector4 eye = primitiveRenderer->getView().inverse().translation();
 	const Scalar distance = (m_center - eye).xyz0().length();
-	const Scalar radius = (distance / 6.0_simd) * Scalar(m_context->getGuideSize());
+	const Scalar radius = (!orthogonal ? (distance / 6.0_simd) : 1.0_simd) * Scalar(m_context->getGuideSize());
 
 	const Matrix44 mh = rotateY(m_baseHead + m_deltaHead);
 	const Matrix44 mp = rotateX(m_basePitch + m_deltaPitch);

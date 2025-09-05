@@ -105,7 +105,7 @@ public:
 
 	virtual void end(const scene::TransformChain& transformChain) override final;
 
-	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) const override final;
+	virtual void draw(render::PrimitiveRenderer* primitiveRenderer, bool orthogonal) const override final;
 
 	void setBrush(const TypeInfo& brushType);
 

@@ -150,7 +150,7 @@ void PrimitiveEditModifier::end(const scene::TransformChain& transformChain)
 {
 }
 
-void PrimitiveEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
+void PrimitiveEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer, bool orthogonal) const
 {
 	for (auto entityAdapter : m_entityAdapters)
 	{

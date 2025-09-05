@@ -306,13 +306,13 @@ void TranslateModifier::end(const TransformChain& transformChain)
 	m_axisEnable = 0;
 }
 
-void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
+void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer, bool orthogonal) const
 {
 	if (m_entityAdapters.empty())
 		return;
 
 	const Vector4 eye = primitiveRenderer->getView().inverse().translation();
-	const Scalar distance = (m_center - eye).xyz0().length();
+	const Scalar distance = !orthogonal ? (m_center - eye).xyz0().length() : 1.0_simd;
 
 	const float axisLength = (distance / 4.0f) * m_context->getGuideSize();
 	const float arrowLength = axisLength / 7.0f;

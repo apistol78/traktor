@@ -646,7 +646,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		// Draw modifier.
 		IModifier* modifier = m_context->getModifier();
 		if (modifier)
-			modifier->draw(m_primitiveRenderer);
+			modifier->draw(m_primitiveRenderer, true);
 
 		// Draw selection rectangle if non-empty.
 		if (m_selectionRectangle.area() > 0)

@@ -101,7 +101,7 @@ public:
 	/*! \name Preview */
 	//\{
 
-	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) const = 0;
+	virtual void draw(render::PrimitiveRenderer* primitiveRenderer, bool orthogonal) const = 0;
 
 	//\}
 };

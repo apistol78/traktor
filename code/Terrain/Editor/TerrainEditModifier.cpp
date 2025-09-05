@@ -638,7 +638,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 	end();
 }
 
-void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
+void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer, bool orthogonal) const
 {
 	if (!m_terrainComponent || !m_heightfield || m_center.w() <= FUZZY_EPSILON)
 		return;

@@ -702,7 +702,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			// Draw modifier.
 			IModifier* modifier = m_context->getModifier();
 			if (modifier)
-				modifier->draw(m_primitiveRenderer);
+				modifier->draw(m_primitiveRenderer, false);
 
 			// Draw selection rectangle if non-empty.
 			if (m_selectionRectangle.area() > 0)
