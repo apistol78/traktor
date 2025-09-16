@@ -139,8 +139,6 @@ public:
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const override final;
 
 private:
-	typedef std::tuple< uint8_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
-
 	struct Frame
 	{
 		Ref< CommandBuffer > graphicsCommandBuffer;
@@ -148,20 +146,12 @@ private:
 		VkSemaphore renderFinishedSemaphore;
 		VkSemaphore computeFinishedSemaphore;
 		Ref< RenderTargetSetVk > primaryTarget;
-
 		VkPipeline boundPipeline = 0;
 		BufferViewVk boundIndexBuffer;
 		BufferViewVk boundVertexBuffer;
-
 		RefArray< CommandBuffer > flyingCommandBuffers;
 		std::list< std::string > markers;
 		AlignedVector< bool > markerStack;
-	};
-
-	struct PipelineEntry
-	{
-		uint32_t lastAcquired;
-		VkPipeline pipeline;
 	};
 
 	Context* m_context = nullptr;
@@ -201,9 +191,6 @@ private:
 	VkRenderPass m_targetRenderPass = 0;
 	VkFramebuffer m_targetFrameBuffer = 0;
 	uint32_t m_targetRenderPassHash = 0;
-
-	// Pipelines.
-	SmallMap< pipeline_key_t, PipelineEntry > m_pipelines;
 
 	// Stats.
 	bool m_haveDebugMarkers = false;

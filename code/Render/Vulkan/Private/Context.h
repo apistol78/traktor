@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,13 +14,17 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/IdAllocator.h"
 #include "Core/Thread/Semaphore.h"
+#include "Render/Types.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor::render
 {
 
+class ProgramVk;
+class RenderTargetSetVk;
 class Queue;
 class UniformBufferPool;
+class VertexLayoutVk;
 
 /*! Render system shared context.
  * \ingroup Render
@@ -124,12 +128,24 @@ public:
 
 	void freeBufferResourceIndex(uint32_t resourceIndex);
 
+	VkPipeline validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt, uint32_t targetRenderPassHash, const RenderTargetSetVk* targetSet, VkRenderPass targetRenderPass, float multiSampleShading);
+
+	VkPipeline validateComputePipeline(const ProgramVk* p);
+
 private:
 	struct DeferredCleanup
 	{
 		cleanup_fn_t fn;
 		uint32_t flags;
 	};
+
+	struct PipelineEntry
+	{
+		uint32_t lastAcquired;
+		VkPipeline pipeline;
+	};
+
+	typedef std::tuple< uint8_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
 
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
@@ -155,6 +171,7 @@ private:
 	IdAllocator m_sampledResourceIndexAllocator;
 	IdAllocator m_storageResourceIndexAllocator;
 	IdAllocator m_bufferResourceIndexAllocator;
+	SmallMap< pipeline_key_t, PipelineEntry > m_pipelines;
 };
 
 }

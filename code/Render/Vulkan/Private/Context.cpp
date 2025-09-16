@@ -15,6 +15,9 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/Vulkan/ProgramVk.h"
+#include "Render/Vulkan/RenderTargetSetVk.h"
+#include "Render/Vulkan/VertexLayoutVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
@@ -47,6 +50,11 @@ Context::Context(
 
 Context::~Context()
 {
+	// Destroy pipelines.
+	for (auto& pipeline : m_pipelines)
+		vkDestroyPipeline(m_logicalDevice, pipeline.second.pipeline, nullptr);
+	m_pipelines.clear();
+
 	// Destroy uniform buffer pools.
 	for (int32_t i = 0; i < sizeof_array(m_uniformBufferPools); ++i)
 	{
@@ -367,6 +375,269 @@ void Context::freeBufferResourceIndex(uint32_t resourceIndex)
 	T_FATAL_ASSERT(resourceIndex != ~0U);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_resourceIndexLock);
 	m_bufferResourceIndexAllocator.free(resourceIndex);
+}
+
+
+
+VkPipeline Context::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt, uint32_t targetRenderPassHash, const RenderTargetSetVk* targetSet, VkRenderPass targetRenderPass, float multiSampleShading)
+{
+	// Calculate pipeline key.
+	const uint8_t primitiveId = (uint8_t)pt;
+	const uint32_t declHash = (vertexLayout != nullptr) ? vertexLayout->getHash() : 0;
+	const uint32_t shaderHash = program->getShaderHash();
+	const auto key = std::make_tuple(primitiveId, targetRenderPassHash, declHash, shaderHash);
+
+	VkPipeline pipeline = 0;
+
+	auto it = m_pipelines.find(key);
+	if (it != m_pipelines.end())
+	{
+		it->second.lastAcquired = /*m_counter*/0;
+		pipeline = it->second.pipeline;
+	}
+	else
+	{
+		const RenderState& rs = program->getRenderState();
+		const uint32_t colorAttachmentCount = targetSet->getColorTargetCount();
+
+		const VkViewport vp = {
+			.width = 1,
+			.height = 1,
+			.minDepth = 0.0f,
+			.maxDepth = 1.0f
+		};
+
+		const VkRect2D sc = {
+			.offset = { 0, 0 },
+			.extent = { 65536, 65536 }
+		};
+
+		const VkPipelineViewportStateCreateInfo vsci = {
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+			.viewportCount = 1,
+			.pViewports = &vp,
+			.scissorCount = 1,
+			.pScissors = &sc
+		};
+
+		VkPipelineVertexInputStateCreateInfo visci = {};
+		visci.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+		if (vertexLayout != nullptr)
+		{
+			visci.vertexBindingDescriptionCount = 1;
+			visci.pVertexBindingDescriptions = &vertexLayout->getVkVertexInputBindingDescription();
+			visci.vertexAttributeDescriptionCount = (uint32_t)vertexLayout->getVkVertexInputAttributeDescriptions().size();
+			visci.pVertexAttributeDescriptions = vertexLayout->getVkVertexInputAttributeDescriptions().c_ptr();
+		}
+		else
+		{
+			visci.vertexBindingDescriptionCount = 0;
+			visci.pVertexBindingDescriptions = nullptr;
+			visci.vertexAttributeDescriptionCount = 0;
+			visci.pVertexAttributeDescriptions = nullptr;
+		}
+
+		StaticVector< VkPipelineShaderStageCreateInfo, 2 > ssci;
+		ssci.push_back({ .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+			.stage = VK_SHADER_STAGE_VERTEX_BIT,
+			.module = program->getVertexVkShaderModule(),
+			.pName = "main",
+			.pSpecializationInfo = nullptr });
+		ssci.push_back({ .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+			.stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+			.module = program->getFragmentVkShaderModule(),
+			.pName = "main",
+			.pSpecializationInfo = nullptr });
+
+		const VkPipelineRasterizationStateCreateInfo rsci = {
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+			.depthClampEnable = VK_FALSE,
+			.rasterizerDiscardEnable = VK_FALSE,
+			.polygonMode = rs.wireframe ? VK_POLYGON_MODE_LINE : VK_POLYGON_MODE_FILL,
+			.cullMode = (VkCullModeFlags)c_cullMode[(int32_t)rs.cullMode],
+			.frontFace = VK_FRONT_FACE_CLOCKWISE,
+			.depthBiasEnable = VK_FALSE,
+			.depthBiasConstantFactor = 0,
+			.depthBiasClamp = 0,
+			.depthBiasSlopeFactor = 0,
+			.lineWidth = 1
+		};
+
+		VkPipelineMultisampleStateCreateInfo mssci = {};
+		mssci.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+		mssci.rasterizationSamples = targetSet->getVkSampleCount();
+		if (multiSampleShading > FUZZY_EPSILON)
+		{
+			mssci.sampleShadingEnable = VK_TRUE;
+			mssci.minSampleShading = multiSampleShading;
+		}
+		else
+			mssci.sampleShadingEnable = VK_FALSE;
+		mssci.pSampleMask = nullptr;
+		mssci.alphaToCoverageEnable = rs.alphaToCoverageEnable ? VK_TRUE : VK_FALSE;
+		mssci.alphaToOneEnable = VK_FALSE;
+
+		const VkStencilOpState sops = {
+			.failOp = c_stencilOperations[(int)rs.stencilFail],
+			.passOp = c_stencilOperations[(int)rs.stencilPass],
+			.depthFailOp = c_stencilOperations[(int)rs.stencilZFail],
+			.compareOp = c_compareOperations[(int)rs.stencilFunction],
+			.compareMask = rs.stencilMask,
+			.writeMask = rs.stencilMask,
+			.reference = rs.stencilReference
+		};
+
+		const VkPipelineDepthStencilStateCreateInfo dssci = {
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+			.depthTestEnable = rs.depthEnable ? VK_TRUE : VK_FALSE,
+			.depthWriteEnable = rs.depthWriteEnable ? VK_TRUE : VK_FALSE,
+			.depthCompareOp = rs.depthEnable ? c_compareOperations[(int)rs.depthFunction] : VK_COMPARE_OP_ALWAYS,
+			.depthBoundsTestEnable = VK_FALSE,
+			.stencilTestEnable = rs.stencilEnable ? VK_TRUE : VK_FALSE,
+			.front = sops,
+			.back = sops,
+			.minDepthBounds = 0,
+			.maxDepthBounds = 0
+		};
+
+		StaticVector< VkPipelineColorBlendAttachmentState, RenderTargetSetCreateDesc::MaxTargets > blendAttachments;
+		for (uint32_t i = 0; i < colorAttachmentCount; ++i)
+		{
+			auto& cbas = blendAttachments.push_back();
+			cbas.blendEnable = rs.blendEnable ? VK_TRUE : VK_FALSE;
+			cbas.srcColorBlendFactor = c_blendFactors[(int)rs.blendColorSource];
+			cbas.dstColorBlendFactor = c_blendFactors[(int)rs.blendColorDestination];
+			cbas.colorBlendOp = c_blendOperations[(int)rs.blendColorOperation];
+			cbas.srcAlphaBlendFactor = c_blendFactors[(int)rs.blendAlphaSource];
+			cbas.dstAlphaBlendFactor = c_blendFactors[(int)rs.blendAlphaDestination];
+			cbas.alphaBlendOp = c_blendOperations[(int)rs.blendAlphaOperation];
+			cbas.colorWriteMask = rs.colorWriteMask;
+		}
+
+		const VkPipelineColorBlendStateCreateInfo cbsci = {
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+			.logicOpEnable = VK_FALSE,
+			.logicOp = VK_LOGIC_OP_CLEAR,
+			.attachmentCount = (uint32_t)blendAttachments.size(),
+			.pAttachments = blendAttachments.c_ptr(),
+			.blendConstants = { 0.0f, 0.0f, 0.0f, 0.0f }
+		};
+
+		const VkDynamicState ds[3] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR, VK_DYNAMIC_STATE_STENCIL_REFERENCE };
+		const VkPipelineDynamicStateCreateInfo dsci = {
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+			.dynamicStateCount = rs.stencilEnable ? 3U : 2U,
+			.pDynamicStates = ds
+		};
+
+		const VkPipelineInputAssemblyStateCreateInfo iasci = {
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+			.topology = c_primitiveTopology[(int32_t)pt],
+			.primitiveRestartEnable = VK_FALSE
+		};
+
+		const VkGraphicsPipelineCreateInfo gpci = {
+			.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+			.stageCount = (uint32_t)ssci.size(),
+			.pStages = ssci.c_ptr(),
+			.pVertexInputState = &visci,
+			.pInputAssemblyState = &iasci,
+			.pTessellationState = nullptr,
+			.pViewportState = &vsci,
+			.pRasterizationState = &rsci,
+			.pMultisampleState = &mssci,
+			.pDepthStencilState = &dssci,
+			.pColorBlendState = &cbsci,
+			.pDynamicState = &dsci,
+			.layout = program->getPipelineLayout(),
+			.renderPass = targetRenderPass,
+			.subpass = 0,
+			.basePipelineHandle = 0,
+			.basePipelineIndex = 0
+		};
+
+		const VkResult result = vkCreateGraphicsPipelines(
+			m_logicalDevice,
+			m_pipelineCache,
+			1,
+			&gpci,
+			nullptr,
+			&pipeline);
+		if (result != VK_SUCCESS)
+		{
+#if defined(_DEBUG)
+			log::error << L"Unable to create Vulkan graphics pipeline (" << getHumanResult(result) << L"), \"" << program->getTag() << L"\"." << Endl;
+#else
+			log::error << L"Unable to create Vulkan graphics pipeline (" << getHumanResult(result) << L")." << Endl;
+#endif
+			return 0;
+		}
+
+		m_pipelines[key] = { /*m_counter*/0, pipeline };
+#if defined(_DEBUG)
+		log::debug << L"Graphics pipeline created (" << program->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
+#endif
+	}
+
+	return pipeline;
+}
+
+VkPipeline Context::validateComputePipeline(const ProgramVk* p)
+{
+	// Calculate pipeline key.
+	const uint8_t primitiveId = 0;
+	const uint32_t declHash = 0;
+	const uint32_t shaderHash = p->getShaderHash();
+	const auto key = std::make_tuple(primitiveId, 0, declHash, shaderHash);
+
+	VkPipeline pipeline = 0;
+
+	auto it = m_pipelines.find(key);
+	if (it != m_pipelines.end())
+	{
+		it->second.lastAcquired = 0/*m_counter*/;
+		pipeline = it->second.pipeline;
+	}
+	else
+	{
+		const VkPipelineShaderStageCreateInfo ssci = {
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+			.stage = VK_SHADER_STAGE_COMPUTE_BIT,
+			.module = p->getComputeVkShaderModule(),
+			.pName = "main",
+			.pSpecializationInfo = nullptr
+		};
+
+		const VkComputePipelineCreateInfo cpci = {
+			.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
+			.stage = ssci,
+			.layout = p->getPipelineLayout()
+		};
+
+		const VkResult result = vkCreateComputePipelines(
+			m_logicalDevice,
+			m_pipelineCache,
+			1,
+			&cpci,
+			nullptr,
+			&pipeline);
+		if (result != VK_SUCCESS)
+		{
+#if defined(_DEBUG)
+			log::error << L"Unable to create Vulkan compute pipeline (" << getHumanResult(result) << L"), \"" << p->getTag() << L"\"." << Endl;
+#else
+			log::error << L"Unable to create Vulkan compute pipeline (" << getHumanResult(result) << L")." << Endl;
+#endif
+			return 0;
+		}
+
+		m_pipelines[key] = { 0/*m_counter*/, pipeline };
+#if defined(_DEBUG)
+		log::debug << L"Compute pipeline created (" << p->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
+#endif
+	}
+
+	return pipeline;
 }
 
 }

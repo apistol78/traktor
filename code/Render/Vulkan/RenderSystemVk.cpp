@@ -817,7 +817,16 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 
 	Ref< ProgramVk > program = new ProgramVk(m_context, m_statistics.programs);
 	if (program->create(m_shaderModuleCache, m_pipelineLayoutCache, resource, m_maxAnisotropy, m_mipBias, tag))
+	{
+		// Pre-heat compute shader pipeline.
+		if (program->getComputeVkShaderModule() != 0)
+		{
+			const VkPipeline pipeline = m_context->validateComputePipeline(program);
+			if (!pipeline)
+				log::warning << L"Failed to create compute shader pipeline." << Endl;
+		}
 		return program;
+	}
 	else
 		return nullptr;
 }
