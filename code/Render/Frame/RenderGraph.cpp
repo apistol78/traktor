@@ -16,6 +16,7 @@
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraphBufferPool.h"
+#include "Render/Frame/RenderGraphContext.h"
 #include "Render/Frame/RenderGraphTargetSet.h"
 #include "Render/Frame/RenderGraphTargetSetPool.h"
 #include "Render/Frame/RenderGraphTexturePool.h"
@@ -53,24 +54,29 @@ void traverse(const RefArray< const RenderPass >& passes, int32_t depth, int32_t
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraph", RenderGraph, Object)
 
 RenderGraph::RenderGraph(
-	IRenderSystem* renderSystem,
+	RenderGraphContext* context,
 	uint32_t multiSample,
 	const fn_profiler_t& profiler)
-	: m_targetSetPool(new RenderGraphTargetSetPool(renderSystem))
-	, m_bufferPool(new RenderGraphBufferPool(renderSystem))
-	, m_texturePool(new RenderGraphTexturePool(renderSystem))
+	: m_context(context)
 	, m_counter(0)
 	, m_multiSample(multiSample)
 	, m_nextResourceId(1)
 	, m_profiler(profiler)
+	, m_ownContext(false)
 {
 }
 
-RenderGraph::~RenderGraph()
+RenderGraph::RenderGraph(
+	IRenderSystem* renderSystem,
+	uint32_t multiSample,
+	const fn_profiler_t& profiler)
+	: m_context(new RenderGraphContext(renderSystem))
+	, m_counter(0)
+	, m_multiSample(multiSample)
+	, m_nextResourceId(1)
+	, m_profiler(profiler)
+	, m_ownContext(true)
 {
-	T_FATAL_ASSERT_M(m_targetSetPool == nullptr, L"Forgot to destroy RenderGraph instance.");
-	T_FATAL_ASSERT_M(m_bufferPool == nullptr, L"Forgot to destroy RenderGraph instance.");
-	T_FATAL_ASSERT_M(m_texturePool == nullptr, L"Forgot to destroy RenderGraph instance.");
 }
 
 void RenderGraph::destroy()
@@ -80,9 +86,11 @@ void RenderGraph::destroy()
 	m_passes.clear();
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
 		m_order[i].clear();
-	safeDestroy(m_targetSetPool);
-	safeDestroy(m_bufferPool);
-	safeDestroy(m_texturePool);
+
+	if (m_ownContext)
+		safeDestroy(m_context);
+
+	m_context = nullptr;
 }
 
 RGTargetSet RenderGraph::addExplicitTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet)
@@ -367,7 +375,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		auto& sbuffer = it.second;
 		if (sbuffer.buffer == nullptr)
 		{
-			sbuffer.buffer = m_bufferPool->acquire(sbuffer.bufferDesc, width, height, sbuffer.persistentHandle);
+			sbuffer.buffer = m_context->getBufferPool()->acquire(sbuffer.bufferDesc, width, height, sbuffer.persistentHandle);
 			if (!sbuffer.buffer)
 				return false;
 		}
@@ -378,7 +386,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		auto& texture = it.second;
 		if (texture.texture == nullptr)
 		{
-			texture.texture = m_texturePool->acquire(texture.textureDesc, width, height, texture.persistentHandle);
+			texture.texture = m_context->getTexturePool()->acquire(texture.textureDesc, width, height, texture.persistentHandle);
 			if (!texture.texture)
 				return false;
 		}
@@ -593,7 +601,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				if (--target.inputRefCount <= 0)
 				{
 					if (!target.external && target.persistentHandle == 0)
-						m_targetSetPool->release(target.targetSet);
+						m_context->getTargetSetPool()->release(target.targetSet);
 				}
 			}
 		}
@@ -650,7 +658,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	{
 		auto& target = it.second;
 		if (target.persistentHandle != 0)
-			m_targetSetPool->release(target.targetSet);
+			m_context->getTargetSetPool()->release(target.targetSet);
 		target.realized = { 0, 0 };
 		target.targetSet = nullptr;
 	}
@@ -659,19 +667,18 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	{
 		auto& sbuffer = it.second;
 		if (sbuffer.buffer != nullptr)
-			m_bufferPool->release(sbuffer.buffer);
+			m_context->getBufferPool()->release(sbuffer.buffer);
 	}
 
 	for (auto& it : m_textures)
 	{
 		auto& texture = it.second;
 		if (texture.texture != nullptr)
-			m_texturePool->release(texture.texture);
+			m_context->getTexturePool()->release(texture.texture);
 	}
 
 	// Cleanup pool data structures.
-	m_targetSetPool->cleanup();
-	m_texturePool->cleanup();
+	m_context->cleanup();
 
 	// Remove all data; keeps memory allocated for arrays
 	// since it's very likely this will be identically
@@ -744,7 +751,7 @@ bool RenderGraph::acquire(TargetResource& inoutTarget)
 
 	const bool sharedPrimaryDepthStencilTargetSet = (inoutTarget.sharedDepthStencilTargetSetId == RGTargetSet::Output);
 
-	inoutTarget.targetSet = m_targetSetPool->acquire(
+	inoutTarget.targetSet = m_context->getTargetSetPool()->acquire(
 		inoutTarget.name,
 		inoutTarget.targetSetDesc,
 		sharedDepthTargetSet,

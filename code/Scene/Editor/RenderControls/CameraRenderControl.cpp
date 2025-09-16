@@ -118,7 +118,7 @@ bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context
 	}
 
 	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
-	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem(), m_multiSample);
+	m_renderGraph = new render::RenderGraph(m_context->getRenderGraphContext(), m_multiSample);
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(

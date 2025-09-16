@@ -35,10 +35,8 @@ class Buffer;
 class IRenderSystem;
 class ITexture;
 class RenderContext;
-class RenderGraphBufferPool;
+class RenderGraphContext;
 class RenderGraphTargetSet;
-class RenderGraphTargetSetPool;
-class RenderGraphTexturePool;
 
 /*! Render graph.
  * \ingroup Render
@@ -97,12 +95,15 @@ public:
 
 	/*! */
 	explicit RenderGraph(
-		IRenderSystem* renderSystem,
+		RenderGraphContext* context,
 		uint32_t multiSample,
 		const fn_profiler_t& profiler = fn_profiler_t());
 
 	/*! */
-	virtual ~RenderGraph();
+	explicit RenderGraph(
+		IRenderSystem* renderSystem,
+		uint32_t multiSample,
+		const fn_profiler_t& profiler = fn_profiler_t());
 
 	/*! */
 	void destroy();
@@ -252,9 +253,7 @@ public:
 	const RefArray< const RenderPass >& getPasses() const { return m_passes; }
 
 private:
-	Ref< RenderGraphTargetSetPool > m_targetSetPool;
-	Ref< RenderGraphBufferPool > m_bufferPool;
-	Ref< RenderGraphTexturePool > m_texturePool;
+	Ref< RenderGraphContext > m_context;
 	SmallMap< RGTargetSet, TargetResource > m_targets;
 	SmallMap< RGBuffer, BufferResource > m_buffers;
 	SmallMap< RGTexture, TextureResource > m_textures;
@@ -266,6 +265,7 @@ private:
 	handle_t m_nextResourceId;
 	fn_profiler_t m_profiler;
 	bool m_buildingPasses = false;
+	bool m_ownContext = false;
 
 	bool realizeTargetDimensions(int32_t width, int32_t height, RGTargetSet targetId);
 

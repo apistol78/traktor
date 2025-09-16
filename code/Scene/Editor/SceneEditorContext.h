@@ -57,6 +57,7 @@ namespace traktor::render
 {
 
 class IRenderSystem;
+class RenderGraphContext;
 
 }
 
@@ -273,6 +274,8 @@ public:
 
 	render::IRenderSystem* getRenderSystem() const { return m_renderSystem; }
 
+	render::RenderGraphContext* getRenderGraphContext() const { return m_renderGraphContext; }
+
 	physics::PhysicsManager* getPhysicsManager() const { return m_physicsManager; }
 
 	script::IScriptContext* getScriptContext() const { return m_scriptContext; }
@@ -323,6 +326,7 @@ private:
 	Ref< db::Database > m_sourceDb;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
+	Ref< render::RenderGraphContext > m_renderGraphContext;
 	Ref< physics::PhysicsManager > m_physicsManager;
 	Ref< script::IScriptContext > m_scriptContext;
 	RefArray< ISceneEditorProfile > m_editorProfiles;

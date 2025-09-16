@@ -17,7 +17,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.test.CaseRenderGraph", 0, CaseRe
 
 void CaseRenderGraph::run()
 {
-	Ref< RenderGraph > rg = new RenderGraph(nullptr, 0);
+	Ref< RenderGraph > rg = new RenderGraph((IRenderSystem*)nullptr, 0);
 
 	RenderGraphTargetSetDesc desc;
 	desc.count = 1;
