@@ -133,45 +133,84 @@ const sockaddr_in& SocketAddressIPv4::getSockAddr() const
 bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 {
 #if defined(_WIN32)
-	uint8_t buf[16384];
+	ULONG flags = GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER;
+	ULONG bufLen = 15 * 1024; // MS recommends ~15 KB
+	IP_ADAPTER_ADDRESSES* addrs = nullptr;
 
-	ULONG bufLen = 0;
-	GetAdaptersInfo(nullptr, &bufLen);
-	if (bufLen > sizeof(buf))
-		return false;
-
-	if (GetAdaptersInfo((PIP_ADAPTER_INFO)buf, &bufLen) != NO_ERROR)
-		return false;
-
-	for (PIP_ADAPTER_INFO ii = (PIP_ADAPTER_INFO)buf; ii; ii = ii->Next)
+	for (int tries = 0; tries < 3; ++tries)
 	{
-		Interface itf;
+		addrs = (IP_ADAPTER_ADDRESSES*)malloc(bufLen);
+		if (!addrs)
+			return false;
 
-		if (ii->Type == MIB_IF_TYPE_PPP)
-			itf.type = ItVPN;
-		else if (ii->Type == IF_TYPE_IEEE80211)
-			itf.type = ItWiFi;
-		else
-			itf.type = ItDefault;
+		DWORD ret = GetAdaptersAddresses(AF_INET, flags, nullptr, addrs, &bufLen);
+		if (ret == NO_ERROR)
+			break;
 
-		sockaddr_in addr;
-		addr.sin_port = 0;
-		addr.sin_addr.s_addr = inet_addr(ii->IpAddressList.IpAddress.String);
+		free(addrs);
+		addrs = nullptr;
+		if (ret != ERROR_BUFFER_OVERFLOW)
+			return false; // real error
+		// else: bufLen updated; loop and retry
+	}
+	if (!addrs)
+		return false;
 
-		if (!addr.sin_addr.s_addr)
+	for (IP_ADAPTER_ADDRESSES* a = addrs; a; a = a->Next)
+	{
+		// Only consider interfaces that are up
+		if (a->OperStatus != IfOperStatusUp)
 			continue;
 
-		itf.addr = new SocketAddressIPv4(addr);
+		for (IP_ADAPTER_UNICAST_ADDRESS_LH* u = a->FirstUnicastAddress; u; u = u->Next)
+		{
+			if (!u->Address.lpSockaddr || u->Address.lpSockaddr->sa_family != AF_INET)
+				continue;
 
-		outInterfaces.push_back(itf);
+			const sockaddr_in* sin = reinterpret_cast< const sockaddr_in* >(u->Address.lpSockaddr);
+			if (sin->sin_addr.s_addr == 0)
+				continue; // skip 0.0.0.0
+
+			Interface itf{};
+			switch (a->IfType)
+			{
+			case IF_TYPE_SOFTWARE_LOOPBACK:
+				itf.type = ItLoopback;
+				break;
+			case IF_TYPE_PPP:
+				itf.type = ItVPN;
+				break;
+			case IF_TYPE_IEEE80211:
+				itf.type = ItWiFi;
+				break;
+			case IF_TYPE_TUNNEL:
+				itf.type = ItVPN;
+				break;
+			default:
+				itf.type = ItDefault;
+				break;
+			}
+
+			sockaddr_in addr{};
+			addr.sin_family = AF_INET;
+			addr.sin_port = 0;
+			addr.sin_addr = sin->sin_addr;
+
+			itf.addr = new SocketAddressIPv4(addr);
+			outInterfaces.push_back(itf);
+		}
 	}
 
-	sockaddr_in addr;
-	addr.sin_port = 0;
-	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	if (addr.sin_addr.s_addr)
+	free(addrs);
+
+	// Always add 127.0.0.1
 	{
-		Interface itf;
+		sockaddr_in addr{};
+		addr.sin_family = AF_INET;
+		addr.sin_port = 0;
+		inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+
+		Interface itf{};
 		itf.type = ItLoopback;
 		itf.addr = new SocketAddressIPv4(addr);
 		outInterfaces.push_back(itf);
