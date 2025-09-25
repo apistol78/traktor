@@ -681,16 +681,12 @@ bool ProgramVk::validateDescriptorSet()
 	}
 
 	// Get already created descriptor set for resources.
-	for (const auto& k : m_descriptorSets)
+	const auto it = m_descriptorSets.find(key);
+	if (it != m_descriptorSets.end())
 	{
-		if (k.first.size() == key.size())
-		{
-			if (memcmp(k.first.c_ptr(), key.c_ptr(), sizeof(intptr_t) * key.size()) == 0)
-			{
-				m_descriptorSet = k.second;
-				return true;
-			}
-		}
+		T_FATAL_ASSERT(key == it->first);
+		m_descriptorSet = it->second;
+		return true;
 	}
 
 	// No such descriptor set found, need to create another set.
@@ -911,10 +907,10 @@ bool ProgramVk::DescriptorSetKey::operator < (const DescriptorSetKey& rh) const
 		return false;
 
 	for (uint32_t i = 0; i < size(); ++i)
-	{
 		if ((*this)[i] < rh[i])
 			return true;
-	}
+		else if ((*this)[i] > rh[i])
+			return false;
 
 	return false;
 }
@@ -927,12 +923,29 @@ bool ProgramVk::DescriptorSetKey::operator > (const DescriptorSetKey& rh) const
 		return true;
 
 	for (uint32_t i = 0; i < size(); ++i)
-	{
 		if ((*this)[i] > rh[i])
 			return true;
-	}
+		else if ((*this)[i] < rh[i])
+			return false;
 
 	return false;
+}
+
+bool ProgramVk::DescriptorSetKey::operator == (const DescriptorSetKey& rh) const
+{
+	if (size() != rh.size())
+		return false;
+
+	for (uint32_t i = 0; i < size(); ++i)
+		if ((*this)[i] != rh[i])
+			return false;
+
+	return true;
+}
+
+bool ProgramVk::DescriptorSetKey::operator != (const DescriptorSetKey& rh) const
+{
+	return !(*this == rh);
 }
 
 }

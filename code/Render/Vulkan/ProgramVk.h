@@ -42,6 +42,10 @@ public:
 		bool operator < (const DescriptorSetKey& rh) const;
 
 		bool operator > (const DescriptorSetKey& rh) const;
+
+		bool operator == (const DescriptorSetKey& rh) const;
+
+		bool operator != (const DescriptorSetKey& rh) const;
 	};
 
 	explicit ProgramVk(Context* context, uint32_t& instances);
