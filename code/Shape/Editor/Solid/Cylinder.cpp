@@ -55,7 +55,7 @@ Ref< model::Model > Cylinder::createModel() const
 	top.setNormal(npy);
 
 	model::Polygon bottom;
-	top.setMaterial(1);
+	bottom.setMaterial(1);
 	bottom.setNormal(nny);
 
 	for (int32_t i = 0; i < m_faces; ++i)
