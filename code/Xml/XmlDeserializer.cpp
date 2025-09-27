@@ -361,6 +361,14 @@ void XmlDeserializer::operator>>(const Member< void* >& m)
 	if (!ensure(enterElement(m.getName())))
 		return;
 
+	if (m_xpp.next() == XmlPullParser::EventType::EndElement)
+	{
+		// Handle empty element(e.g., <image/>)
+		m.setBlobSize(0);
+		leaveElement(m.getName());
+		return;
+	}
+
 	if (!ensure(m_xpp.next() == XmlPullParser::EventType::Text))
 		return;
 
