@@ -114,7 +114,7 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 	m_key = key;
 
 	if (!defaultPath.empty())
-		m_defaultPath = defaultPath;
+		m_defaultPath = FileSystem::getInstance().getAbsolutePath(defaultPath);
 	else
 		m_defaultPath = FileSystem::getInstance().getCurrentVolumeAndDirectory();
 
@@ -130,7 +130,7 @@ DialogResult FileDialog::showModal(Path& outPath)
 {
 	const std::wstring path = Application::getInstance()->getProperties()->getProperty< std::wstring >(m_key);
 	if (!path.empty())
-		m_currentPath = path;
+		m_currentPath = FileSystem::getInstance().getAbsolutePath(path);
 	else if (!outPath.empty())
 		m_currentPath = FileSystem::getInstance().getAbsolutePath(outPath.getPathOnly());
 	else
@@ -210,25 +210,28 @@ void FileDialog::updatePath()
 		m_containerPath->getFirstChild()->destroy();
 
 	// Add volume drop down.
+#if defined(_WIN32)
+	std::wstring currentVolumeId = FileSystem::getInstance().getCurrentVolumeAndDirectory().getVolume();
 	if (m_currentPath.hasVolume())
+		currentVolumeId = m_currentPath.getVolume();
+
+	Ref< DropDown > dropVolume = new DropDown();
+	dropVolume->create(m_containerPath);
+
+	for (int32_t i = 0; i < FileSystem::getInstance().getVolumeCount(); ++i)
 	{
-		Ref< DropDown > dropVolume = new DropDown();
-		dropVolume->create(m_containerPath);
-
-		for (int32_t i = 0; i < FileSystem::getInstance().getVolumeCount(); ++i)
-		{
-			const std::wstring volumeId = FileSystem::getInstance().getVolumeId(i);
-			const int32_t index = dropVolume->add(volumeId + L":");
-			if (compareIgnoreCase(volumeId, m_currentPath.getVolume()) == 0)
-				dropVolume->select(index);
-		}
-
-		dropVolume->addEventHandler< SelectionChangeEvent >([=, this](SelectionChangeEvent* event) {
-			m_currentPath = dropVolume->getSelectedItem();
-			updatePath();
-			updateFiles();
-		});
+		const std::wstring volumeId = FileSystem::getInstance().getVolumeId(i);
+		const int32_t index = dropVolume->add(volumeId + L":");
+		if (compareIgnoreCase(volumeId, currentVolumeId) == 0)
+			dropVolume->select(index);
 	}
+
+	dropVolume->addEventHandler< SelectionChangeEvent >([=, this](SelectionChangeEvent* event) {
+		m_currentPath = dropVolume->getSelectedItem();
+		updatePath();
+		updateFiles();
+	});
+#endif
 
 	std::wstring pn = m_currentPath.getPathNameNoVolume();
 	std::wstring p = m_currentPath.hasVolume() ? m_currentPath.getVolume() + L":/" : L"/";
