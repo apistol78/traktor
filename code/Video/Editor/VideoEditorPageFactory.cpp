@@ -17,7 +17,7 @@ namespace traktor
 	namespace video
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.VideoEditorPageFactory", 0, VideoEditorPageFactory, editor::IEditorPageFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.video.VideoEditorPageFactory", 0, VideoEditorPageFactory, editor::IEditorPageFactory)
 
 const TypeInfoSet VideoEditorPageFactory::getEditableTypes() const
 {
