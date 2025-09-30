@@ -255,7 +255,8 @@ void Context::removeCleanupListener(ICleanupListener* cleanupListener)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
 	auto it = std::find(m_cleanupListeners.begin(), m_cleanupListeners.end(), cleanupListener);
-	m_cleanupListeners.erase(it);
+	if (it != m_cleanupListeners.end())
+		m_cleanupListeners.erase(it);
 }
 
 void Context::performCleanup()
