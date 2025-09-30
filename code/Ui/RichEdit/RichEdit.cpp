@@ -1325,8 +1325,26 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 	case VkRight:
 		if (!ctrl && !alt) // Move caret right.
 		{
-			if (m_caret < int32_t(m_text.size()))
-				++m_caret;
+			// Find current line
+			int32_t currentLine = getLineFromOffset(m_caret);
+			if (currentLine < int32_t(m_lines.size()))
+			{
+				const Line& line = m_lines[currentLine];
+
+				// If at end of current line
+				if (m_caret == line.stop)
+				{
+					// If not the last line, move to start of next line
+					if (currentLine < int32_t(m_lines.size()) - 1)
+						m_caret = m_lines[currentLine + 1].start;
+					// If last line, don't move cursor
+				}
+				else if (m_caret < line.stop)
+				{
+					// Normal movement within line
+					++m_caret;
+				}
+			}
 		}
 		else if (ctrl && !alt) // Move caret right to previous word.
 		{
