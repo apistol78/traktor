@@ -140,6 +140,13 @@ void RichEdit::setText(const std::wstring& text)
 				break;
 		}
 	}
+	else
+	{
+		// Create one empty line for empty text
+		Line& line = m_lines.push_back();
+		line.start = 0;
+		line.stop = 0;
+	}
 
 	m_selectionStart =
 		m_selectionStop = -1;
@@ -791,7 +798,7 @@ void RichEdit::deleteCharacters()
 
 	T_FATAL_ASSERT(start <= stop);
 
-	if (start >= m_text.size() - 1)
+	if (start >= m_text.size())
 		return;
 
 	// Naive implementation, delete each character
@@ -1318,12 +1325,12 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 	case VkRight:
 		if (!ctrl && !alt) // Move caret right.
 		{
-			if (m_caret < int32_t(m_text.size()) - 1)
+			if (m_caret < int32_t(m_text.size()))
 				++m_caret;
 		}
 		else if (ctrl && !alt) // Move caret right to previous word.
 		{
-			while (m_caret < int32_t(m_text.size()) - 1)
+			while (m_caret < int32_t(m_text.size()))
 			{
 				++m_caret;
 				if (isWordSeparator(m_text[m_caret].ch))
