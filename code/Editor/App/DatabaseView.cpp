@@ -1349,6 +1349,9 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 				continue;
 		}
 
+		if (!m_filter->acceptInstance(childInstance))
+			continue;
+
 		Ref< ui::PreviewItem > item = new ui::PreviewItem();
 		item->setText(childInstance->getName());
 		item->setSubText(getCategoryText(primaryType));
