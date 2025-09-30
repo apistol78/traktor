@@ -56,7 +56,10 @@ void* BufferStaticVk::lock()
 
 	m_stageBuffer = new ApiBuffer(m_context);
 	if (!m_stageBuffer->create(m_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true))
+	{
+		safeDestroy(m_stageBuffer);
 		return nullptr;
+	}
 
 	return m_stageBuffer->lock();
 }
