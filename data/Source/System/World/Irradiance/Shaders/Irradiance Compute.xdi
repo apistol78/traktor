@@ -134,11 +134,11 @@
 #define USE_SPATIAL_FILTER 1
 
 const int N = 2;
-const int Ndisclose = 32;
+const int Ndisclose = 48;
 const int Nspatial = 16;
 const int K = 30;
-const float Far = 80.0f;
-const float FarSecond = 10.0f;
+const float Far = 10.0f;
+const float FarSecond = 8.0f;
 const float TemporalNormalThreshold = 0.8f;
 const float TemporalDepthThreshold = 2.0f;
 const float SpatialNormalThreshold = 0.9f;
@@ -1057,6 +1057,16 @@ imageStore($Output, pt, $Sky);
 				<second>-2717</second>
 			</position>
 			<name>L_TexCoord_NoJitter</name>
+		</item>
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{C4B26B9F-1C56-4E40-9D2F-FB40C6A3B05F}</id>
+			<comment><![CDATA[Compute inital set of GI, output from this compute shader is noisy.
+Still it tries to filter both spatially and temporarily
+values in the reservoir for convergence.]]></comment>
+			<position>
+				<first>-2192</first>
+				<second>-2955</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>

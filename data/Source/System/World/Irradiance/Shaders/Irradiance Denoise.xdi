@@ -286,6 +286,15 @@ seed += uvec2($Time * 1543, $Time * 543);
 $Output = BlueNoise(seed);
 			]]></script>
 		</item>
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{F2105F62-4CC8-644C-93A3-D1ACAE45BAA8}</id>
+			<comment><![CDATA[GI denoiser, executed after GI has been calculated
+to further reduce overall noise. ]]></comment>
+			<position>
+				<first>-277</first>
+				<second>284</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
