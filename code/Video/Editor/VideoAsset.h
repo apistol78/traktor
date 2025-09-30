@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::video
 {
-	namespace video
-	{
 
 /*! \brief
  * \ingroup Video
@@ -31,5 +29,4 @@ class T_DLLCLASS VideoAsset : public editor::Asset
 	T_RTTI_CLASS;
 };
 
-	}
 }

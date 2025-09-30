@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Video/Editor/VideoPipeline.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
@@ -16,14 +18,11 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Video/VideoResource.h"
 #include "Video/Editor/VideoAsset.h"
-#include "Video/Editor/VideoPipeline.h"
+#include "Video/VideoResource.h"
 
-namespace traktor
+namespace traktor::video
 {
-	namespace video
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.video.VideoPipeline", 0, VideoPipeline, editor::IPipeline)
 
@@ -57,8 +56,7 @@ bool VideoPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	const VideoAsset* videoAsset = checked_type_cast< const VideoAsset* >(sourceAsset);
 	pipelineDepends->addDependency(Path(m_assetPath), videoAsset->getFileName().getOriginal());
@@ -74,8 +72,7 @@ bool VideoPipeline::buildOutput(
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
-	uint32_t reason
-) const
+	uint32_t reason) const
 {
 	const VideoAsset* videoAsset = checked_type_cast< const VideoAsset* >(sourceAsset);
 
@@ -91,8 +88,7 @@ bool VideoPipeline::buildOutput(
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
-		outputGuid
-	);
+		outputGuid);
 	if (!instance)
 	{
 		log::error << L"Failed to build video asset, unable to create instance." << Endl;
@@ -133,12 +129,10 @@ Ref< ISerializable > VideoPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const Object* buildParams
-) const
+	const Object* buildParams) const
 {
 	T_FATAL_ERROR;
 	return nullptr;
 }
 
-	}
 }

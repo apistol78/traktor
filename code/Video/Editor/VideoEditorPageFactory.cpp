@@ -6,16 +6,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Video/Editor/VideoEditorPageFactory.h"
+
 #include "Core/Serialization/DeepClone.h"
 #include "Ui/Command.h"
 #include "Video/Editor/VideoAsset.h"
 #include "Video/Editor/VideoEditorPage.h"
-#include "Video/Editor/VideoEditorPageFactory.h"
 
-namespace traktor
+namespace traktor::video
 {
-	namespace video
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.video.VideoEditorPageFactory", 0, VideoEditorPageFactory, editor::IEditorPageFactory)
 
@@ -28,7 +27,7 @@ const TypeInfoSet VideoEditorPageFactory::getEditableTypes() const
 
 bool VideoEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
-	outDependencies.insert(Guid(L"{71682019-EB26-234C-8B48-0638F50DA662}"));	// System/Video/Video
+	outDependencies.insert(Guid(L"{71682019-EB26-234C-8B48-0638F50DA662}")); // System/Video/Video
 	return false;
 }
 
@@ -50,5 +49,4 @@ Ref< ISerializable > VideoEditorPageFactory::cloneAsset(const ISerializable* ass
 	return DeepClone(asset).create();
 }
 
-	}
 }
