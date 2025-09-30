@@ -111,11 +111,11 @@ void Entity::setComponent(IEntityComponent* component)
 	component->setTransform(m_transform);
 
 	// Replace existing component of same type.
-	for (auto comp : m_components)
+	for (size_t i = 0; i < m_components.size(); ++i)
 	{
-		if (is_type_of(type_of(comp), type_of(component)))
+		if (is_type_of(type_of(m_components[i]), type_of(component)))
 		{
-			comp = component;
+			m_components[i] = component;
 			return;
 		}
 	}
