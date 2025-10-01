@@ -2498,6 +2498,23 @@ $Output = m ? 1.0f : 0.0f;
 				<second>-688</second>
 			</position>
 		</item>
+		<item type="traktor.render.Pow" version="traktor.render.Node:1">
+			<id>{E8F46A72-BEB5-1445-846A-312EDE4DB90E}</id>
+			<comment/>
+			<position>
+				<first>2128</first>
+				<second>-500</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{43897F82-3543-B644-B40D-F093BACE1405}</id>
+			<comment/>
+			<position>
+				<first>1957</first>
+				<second>-487</second>
+			</position>
+			<value>0.5</value>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -3352,16 +3369,6 @@ $Output = m ? 1.0f : 0.0f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[41]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[51]"/>
-				<id>{30CE9745-14D3-4AA1-A4A2-ED7F9F952934}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[101]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -3708,6 +3715,36 @@ $Output = m ? 1.0f : 0.0f;
 			<destination>
 				<node ref="/object/nodes/item[130]"/>
 				<id>{3A2017B2-85D1-244B-91F8-7F36F652C21D}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[41]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[134]"/>
+				<id>{E96D386C-3A96-4807-BFC9-50180678A096}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[134]"/>
+				<id>{B4FEA355-7A63-498C-966D-42F58570CB20}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
+				<id>{30CE9745-14D3-4AA1-A4A2-ED7F9F952934}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[135]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[134]"/>
+				<id>{1A674CC4-1D87-4859-AB19-4DDD06A12987}</id>
 			</destination>
 		</item>
 	</edges>
