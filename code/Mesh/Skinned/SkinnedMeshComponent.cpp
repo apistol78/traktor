@@ -73,7 +73,7 @@ void SkinnedMeshComponent::setWorld(world::World* world)
 
 void SkinnedMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren)
 {
-	const bool visible = (state.visible && mask.visible);
+	const bool visible = (m_world != nullptr) && (state.visible && mask.visible);
 	if (visible)
 	{
 		if (!m_rtwInstance)
