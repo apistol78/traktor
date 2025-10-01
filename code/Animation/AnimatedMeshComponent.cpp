@@ -215,7 +215,7 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 
 	if (firstInFrame || supportTechnique)
 		isVisible = worldRenderView.isBoxVisible(
-			m_mesh->getBoundingBox(),
+			getBoundingBox(),
 			worldTransform,
 			distance);
 
