@@ -1129,6 +1129,13 @@
 				<message>Building embedded resource file %(FileName).h</message>
 				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
 			</item>
+			<item type="traktor.sb.SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
+				<fileType>asm</fileType>
+				<command>ml64.exe /c /nologo /Fo$(OutDir)%(FileName).obj /Ta %(FullPath)</command>
+				<message>Assembling %(Filename)%(Extension)</message>
+				<outputs>$(OutDir)%(FileName).obj</outputs>
+			</item>
 			<item type="traktor.sb.SolutionBuilderMsvcVCXBuildTool">
 				<name>ClInclude</name>
 				<fileType>h</fileType>
