@@ -442,6 +442,10 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFont->addMethod("lookupIndex", &Font::lookupIndex);
 	registrar->registerClass(classFont);
 
+	// Frame
+	auto classFrame = new AutoRuntimeClass< Frame >();
+	registrar->registerClass(classFrame);
+
 	// ICharacterFactory
 	auto classICharacterFactory = new AutoRuntimeClass< ICharacterFactory >();
 	registrar->registerClass(classICharacterFactory);
@@ -535,6 +539,10 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classMoviePlayer->addMethod("postMouseUp", &MoviePlayer::postMouseUp);
 	classMoviePlayer->addMethod("postMouseMove", &MoviePlayer::postMouseMove);
 	registrar->registerClass(classMoviePlayer);
+
+	// MovieResult
+	auto classMovieResult = new AutoRuntimeClass< MovieResult >();
+	registrar->registerClass(classMovieResult);
 
 	// Optimizer
 	auto classOptimizer = new AutoRuntimeClass< Optimizer >();

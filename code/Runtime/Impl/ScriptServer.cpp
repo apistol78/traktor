@@ -69,6 +69,10 @@ bool ScriptServer::create(
 	}
 	registrar.registerClassesInOrder(m_scriptManager);
 
+	// Complete registration of all classes (register members, methods, properties, etc.)
+	// This is needed for script backends that require two-phase registration (e.g., AngelScript).
+	m_scriptManager->completeRegistration();
+
 	// Create and attach debugger.
 	if (debugger)
 	{

@@ -13,6 +13,8 @@
 #include "Input/IInputDriver.h"
 #include "Input/InputClassFactory.h"
 #include "Input/InputSystem.h"
+#include "Input/RumbleEffect.h"
+#include "Input/RumbleEffectPlayer.h"
 #include "Input/Binding/EnumKeys.h"
 #include "Input/Binding/IInputSource.h"
 #include "Input/Binding/InputMapping.h"
@@ -227,6 +229,17 @@ void InputClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classInputState->addMethod("isReleased", &InputState::isReleased);
 	classInputState->addMethod("hasChanged", &InputState::hasChanged);
 	registrar->registerClass(classInputState);
+
+	auto classRumbleEffect = new AutoRuntimeClass< RumbleEffect >();
+	classRumbleEffect->addMethod("getDuration", &RumbleEffect::getDuration);
+	registrar->registerClass(classRumbleEffect);
+
+	auto classRumbleEffectPlayer = new AutoRuntimeClass< RumbleEffectPlayer >();
+	classRumbleEffectPlayer->addMethod("play", &RumbleEffectPlayer::play);
+	classRumbleEffectPlayer->addMethod("stop", &RumbleEffectPlayer::stop);
+	classRumbleEffectPlayer->addMethod("stopAll", &RumbleEffectPlayer::stopAll);
+	classRumbleEffectPlayer->addMethod("update", &RumbleEffectPlayer::update);
+	registrar->registerClass(classRumbleEffectPlayer);
 }
 
 }

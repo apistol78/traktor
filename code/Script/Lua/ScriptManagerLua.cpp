@@ -418,6 +418,11 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	}
 }
 
+void ScriptManagerLua::completeRegistration()
+{
+	// Lua doesn't need two-phase registration; everything is done in registerClass().
+}
+
 Ref< IScriptContext > ScriptManagerLua::createContext(bool strict)
 {
 #if defined(T_SCRIPT_LUA_USE_MT_LOCK)

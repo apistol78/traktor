@@ -216,6 +216,9 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBuffer->addMethod("unlock", &Buffer::unlock);
 	registrar->registerClass(classBuffer);
 
+	auto classIBufferView = new AutoRuntimeClass< IBufferView >();
+	registrar->registerClass(classIBufferView);
+
 	auto classITexture = new AutoRuntimeClass< ITexture >();
 	classITexture->addMethod("lock", &ITexture_lock);
 	classITexture->addMethod("unlock", &ITexture::unlock);

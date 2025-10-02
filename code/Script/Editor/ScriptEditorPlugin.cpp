@@ -45,6 +45,10 @@ bool ScriptEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, edi
 		}
 		registrar.registerClassesInOrder(m_scriptManager);
 
+		// Complete registration of all classes (register members, methods, properties, etc.)
+		// This is needed for script backends that require two-phase registration (e.g., AngelScript).
+		m_scriptManager->completeRegistration();
+
 		// Expose script manager to other editors.
 		m_editor->getObjectStore()->set(m_scriptManager);
 	}

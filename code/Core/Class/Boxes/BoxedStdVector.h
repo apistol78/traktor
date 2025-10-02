@@ -10,6 +10,7 @@
 
 #include <vector>
 #include "Core/Class/Boxed.h"
+#include "Core/Class/Boxes/BoxedTypeHelper.h"
 #include "Core/Class/CastAny.h"
 
 // import/export mechanism.
@@ -91,7 +92,7 @@ template < typename InnerType >
 struct CastAny < std::vector< InnerType >, false >
 {
 	static std::wstring typeName() {
-		return L"traktor.StdVector< T >";
+		return str(L"traktor.StdVector< %ls >", BoxedInnerTypeName< InnerType >::get().c_str());
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedStdVector >(value.getObjectUnsafe());
@@ -111,7 +112,7 @@ template < typename InnerType >
 struct CastAny < const std::vector< InnerType >&, false >
 {
 	static std::wstring typeName() {
-		return L"const traktor.StdVector< T >&";
+		return str(L"const traktor.StdVector< %ls >&", BoxedInnerTypeName< InnerType >::get().c_str());
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedStdVector >(value.getObjectUnsafe());
