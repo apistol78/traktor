@@ -65,6 +65,16 @@ public:
 	/*! Destroy script manager. */
 	virtual void destroy() = 0;
 
+	/*! Complete registration of all classes.
+	 *
+	 * This is called after all classes have been registered via registerClass().
+	 * Some script backends (like AngelScript) require two-phase registration where
+	 * types are registered first, then members are registered in a second phase.
+	 * This allows handling forward references and circular dependencies.
+	 * For backends that don't need this (like Lua), this can be a no-op.
+	 */
+	virtual void completeRegistration() = 0;
+
 	/*! Create script context.
 	 *
 	 * \param strict Strict global variable declaration required.

@@ -282,6 +282,9 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classQueryResult->addProperty("material", &QueryResultWrapper::material);
 	registrar->registerClass(classQueryResult);
 
+	auto classBoxedBodyState = new AutoRuntimeClass< BoxedBodyState >();
+	registrar->registerClass(classBoxedBodyState);
+
 	auto classPhysicsManager = new AutoRuntimeClass< PhysicsManager >();
 	classPhysicsManager->addProperty("gravity", &PhysicsManager::setGravity, &PhysicsManager::getGravity);
 	classPhysicsManager->addProperty("bodies", &PhysicsManager::getBodies);

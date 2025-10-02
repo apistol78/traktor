@@ -24,6 +24,7 @@
 #include "World/IWorldComponent.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldClassFactory.h"
+#include "World/WorldEntityRenderers.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/CameraComponentData.h"
 #include "World/Entity.h"
@@ -225,6 +226,9 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classIEntityRenderer = new AutoRuntimeClass< IEntityRenderer >();
 	registrar->registerClass(classIEntityRenderer);
+
+	auto classWorldEntityRenderers = new AutoRuntimeClass< WorldEntityRenderers >();
+	registrar->registerClass(classWorldEntityRenderers);
 
 	auto classEntityData = new AutoRuntimeClass< EntityData >();
 	classEntityData->addConstructor();

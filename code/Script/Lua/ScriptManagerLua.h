@@ -59,6 +59,8 @@ public:
 
 	virtual void registerClass(IRuntimeClass* runtimeClass) override final;
 
+	virtual void completeRegistration() override final;
+
 	virtual Ref< IScriptContext > createContext(bool strict) override final;
 
 	virtual Ref< IScriptDebugger > createDebugger() override final;

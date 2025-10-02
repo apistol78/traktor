@@ -46,6 +46,9 @@ void TerrainClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classTerrain->addProperty("cutMap", &Terrain::getCutMap);
 	registrar->registerClass(classTerrain);
 
+	auto classTerrainSurfaceCache = new AutoRuntimeClass< TerrainSurfaceCache >();
+	registrar->registerClass(classTerrainSurfaceCache);
+
 	auto classTerrainComponent = new AutoRuntimeClass< TerrainComponent >();
 	classTerrainComponent->addProperty("terrain", &TerrainComponent::getTerrain);
 	classTerrainComponent->addProperty("patchCount", &TerrainComponent::getPatchCount);

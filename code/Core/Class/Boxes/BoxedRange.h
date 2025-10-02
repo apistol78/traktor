@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Class/Boxed.h"
+#include "Core/Class/Boxes/BoxedTypeHelper.h"
 #include "Core/Class/CastAny.h"
 #include "Core/Math/Range.h"
 
@@ -71,7 +72,7 @@ template < typename InnerType >
 struct CastAny< Range< InnerType >, false >
 {
 	static std::wstring typeName() {
-		return L"traktor.Range< InnerType >";
+		return str(L"traktor.Range< %ls >", BoxedInnerTypeName< InnerType >::get().c_str());
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRange >(value.getObjectUnsafe());
@@ -91,7 +92,7 @@ template < typename InnerType >
 struct CastAny< const Range< InnerType >&, false >
 {
 	static std::wstring typeName() {
-		return L"const traktor.Range< InnerType >&";
+		return str(L"const traktor.Range< %ls >&", BoxedInnerTypeName< InnerType >::get().c_str());
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRange >(value.getObjectUnsafe());

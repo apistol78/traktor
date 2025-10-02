@@ -9,14 +9,19 @@
 #include "Core/Rtti/TypeInfo.h"
 
 #if defined(T_STATIC)
+#	include "Heightfield/HeightfieldClassFactory.h"
+#endif
 
 namespace traktor::hf
 {
 
+#if defined(T_STATIC)
+
 extern "C" void __module__Traktor_Heightfield()
 {
-}
-
+	T_FORCE_LINK_REF(HeightfieldClassFactory);
 }
 
 #endif
+
+}
