@@ -694,10 +694,11 @@ void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 
 void MeshAssetEditor::eventPreviewModelClick(ui::ButtonClickEvent* event)
 {
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const Path filePath = FileSystem::getInstance().getAbsolutePath(assetPath, m_editFileName->getText());
 
 	Ref< PropertyGroup > params = new PropertyGroup();
-	params->setProperty< PropertyString >(L"fileName", assetPath + L"/" + m_editFileName->getText());
+	params->setProperty< PropertyString >(L"fileName", filePath.getPathNameOS());
 	params->setProperty< PropertyFloat >(L"scale", m_asset->getScaleFactor());
 
 	m_editor->openTool(L"traktor.model.ModelTool", params);
@@ -705,9 +706,9 @@ void MeshAssetEditor::eventPreviewModelClick(ui::ButtonClickEvent* event)
 
 void MeshAssetEditor::eventEditModelClick(ui::ButtonClickEvent* event)
 {
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	Path path = FileSystem::getInstance().getAbsolutePath(Path(assetPath + L"/" + m_editFileName->getText()));
-	OS::getInstance().openFile(path.getPathName());
+	const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const Path filePath = FileSystem::getInstance().getAbsolutePath(assetPath, m_editFileName->getText());
+	OS::getInstance().openFile(filePath.getPathNameOS());
 }
 
 void MeshAssetEditor::eventMaterialShaderToolClick(ui::ToolBarButtonClickEvent* event)
