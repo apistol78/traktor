@@ -44,31 +44,14 @@ void InstanceMeshComponent::destroy()
 
 void InstanceMeshComponent::setWorld(world::World* world)
 {
-	// Remove from last world.
 	safeDestroy(m_cullingInstance);
 	safeDestroy(m_rtwInstance);
-
-	// Add to new world.
-	if (world != nullptr)
-	{
-		T_FATAL_ASSERT(m_rtwInstance == nullptr);
-		T_FATAL_ASSERT(m_cullingInstance == nullptr);
-
-		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
-		if (rtw != nullptr)
-			m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getRTVertexAttributes());
-
-		world::CullingComponent* culling = world->getComponent< world::CullingComponent >();
-		if (culling)
-			m_cullingInstance = culling->createInstance(this, (intptr_t)m_mesh.getResource());
-	}
-
 	m_world = world;
 }
 
 void InstanceMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren)
 {
-	const bool visible = (m_world != nullptr) && (state.visible && mask.visible);
+	const bool visible = (m_world != nullptr) && state.visible;
 	if (visible)
 	{
 		if (!m_rtwInstance)

@@ -49,7 +49,10 @@ void Entity::setWorld(World* world)
 {
 	m_world = world;
 	for (auto component : m_components)
+	{
 		component->setWorld(world);
+		component->setState(m_state, EntityState::All, false);
+	}
 }
 
 EntityState Entity::setState(const EntityState& state, const EntityState& mask, bool includeChildren)

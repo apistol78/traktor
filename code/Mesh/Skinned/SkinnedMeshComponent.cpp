@@ -56,24 +56,13 @@ void SkinnedMeshComponent::destroy()
 
 void SkinnedMeshComponent::setWorld(world::World* world)
 {
-	// Remove from last world.
 	safeDestroy(m_rtwInstance);
-
-	// Add to new world.
-	if (world != nullptr)
-	{
-		T_FATAL_ASSERT(m_rtwInstance == nullptr);
-		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
-		if (rtw != nullptr)
-			m_rtwInstance = rtw->createInstance(m_rtAccelerationStructure, m_mesh->getRTVertexAttributes());
-	}
-
 	m_world = world;
 }
 
 void SkinnedMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren)
 {
-	const bool visible = (m_world != nullptr) && (state.visible && mask.visible);
+	const bool visible = (m_world != nullptr) && state.visible;
 	if (visible)
 	{
 		if (!m_rtwInstance)
