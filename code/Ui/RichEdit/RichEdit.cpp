@@ -1351,7 +1351,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 			while (m_caret < int32_t(m_text.size()))
 			{
 				++m_caret;
-				if (isWordSeparator(m_text[m_caret].ch))
+				if (m_caret >= int32_t(m_text.size()) || isWordSeparator(m_text[m_caret].ch))
 					break;
 			}
 		}
@@ -1576,9 +1576,12 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 				m_selectionStart = -1;
 				m_selectionStop = -1;
 
-				auto it = m_specialCharacters.find(m_text[m_caret].ch);
-				if (it != m_specialCharacters.end())
-					it->second->mouseButtonDown(event);
+				if (offset < (int32_t)m_text.size())
+				{
+					auto it = m_specialCharacters.find(m_text[offset].ch);
+					if (it != m_specialCharacters.end())
+						it->second->mouseButtonDown(event);
+				}
 			}
 
 			CaretEvent caretEvent(this);
@@ -1597,9 +1600,13 @@ void RichEdit::eventButtonUp(MouseButtonUpEvent* event)
 	if (!hasCapture())
 		return;
 
-	auto i = m_specialCharacters.find(m_text[m_caret].ch);
-	if (i != m_specialCharacters.end())
-		i->second->mouseButtonUp(event);
+	// Use m_fromCaret (where button was pressed down) not m_caret (current position after drag)
+	if (m_fromCaret < (int32_t)m_text.size())
+	{
+		auto i = m_specialCharacters.find(m_text[m_fromCaret].ch);
+		if (i != m_specialCharacters.end())
+			i->second->mouseButtonUp(event);
+	}
 
 	releaseCapture();
 }
@@ -1668,9 +1675,13 @@ void RichEdit::eventDoubleClick(MouseDoubleClickEvent* event)
 		}
 		m_caret = m_selectionStop;
 
-		auto i = m_specialCharacters.find(m_text[m_caret].ch);
-		if (i != m_specialCharacters.end())
-			i->second->mouseDoubleClick(event);
+		// Only invoke special character action if user clicked directly on the special character
+		if (offset < (int32_t)m_text.size())
+		{
+			auto i = m_specialCharacters.find(m_text[offset].ch);
+			if (i != m_specialCharacters.end())
+				i->second->mouseDoubleClick(event);
+		}
 
 		CaretEvent caretEvent(this);
 		raiseEvent(&caretEvent);
