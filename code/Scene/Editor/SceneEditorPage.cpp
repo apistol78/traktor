@@ -804,6 +804,12 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		m_context->raiseSelect();
 		m_context->enqueueRedraw(nullptr);
 	}
+	else if (command == L"Editor.Rename")
+	{
+		RefArray< ui::GridRow > selectedRows = m_instanceGrid->getRows(ui::GridView::GfDescendants | ui::GridView::GfSelectedOnly);
+		if (selectedRows.size() == 1)
+			m_instanceGrid->beginEdit(selectedRows.front()->get(c_instanceGridName));
+	}
 	else if (command == L"Scene.Editor.AddComponent")
 		result = addComponent();
 	else if (command == L"Scene.Editor.CreateExternal")
@@ -1592,6 +1598,7 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 	EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 	T_ASSERT(entityAdapter);
 
+	bool shouldUpdate = true;
 	if (event->getColumn() == 1)
 	{
 		const bool wasDynamic = entityAdapter->isDynamic(false);
@@ -1607,9 +1614,14 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 		const bool wasLocked = entityAdapter->isLocked(false);
 		entityAdapter->setLocked(!wasLocked);
 	}
+	else
+		shouldUpdate = false;
 
-	updateInstanceGrid();
-	m_context->enqueueRedraw(nullptr);
+	if (shouldUpdate)
+	{
+		updateInstanceGrid();
+		m_context->enqueueRedraw(nullptr);
+	}
 }
 
 void SceneEditorPage::eventInstanceRename(ui::GridItemContentChangeEvent* event)

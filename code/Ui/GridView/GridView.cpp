@@ -338,6 +338,19 @@ void GridView::applyState(const HierarchicalState* state)
 	}
 }
 
+void GridView::beginEdit(GridItem* item)
+{
+	releaseCapturedCell();
+
+	m_itemEditor->setRect(item->getClientRect());
+	m_itemEditor->setText(item->getText());
+	m_itemEditor->selectAll();
+	m_itemEditor->show();
+	m_itemEditor->setFocus();
+
+	m_editItem = item;
+}
+
 void GridView::layoutCells(const Rect& rc)
 {
 	int32_t fontHeight = getFontMetric().getHeight();
@@ -386,19 +399,6 @@ IBitmap* GridView::getBitmap(const wchar_t* const name)
 	if (it == m_bitmaps.end())
 		m_bitmaps[name] = new ui::StyleBitmap(name);
 	return m_bitmaps[name];
-}
-
-void GridView::beginEdit(GridItem* item)
-{
-	releaseCapturedCell();
-
-	m_itemEditor->setRect(item->getClientRect());
-	m_itemEditor->setText(item->getText());
-	m_itemEditor->selectAll();
-	m_itemEditor->show();
-	m_itemEditor->setFocus();
-
-	m_editItem = item;
 }
 
 void GridView::eventEditFocus(FocusEvent* event)

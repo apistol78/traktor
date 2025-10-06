@@ -100,6 +100,8 @@ public:
 
 	void applyState(const HierarchicalState* state);
 
+	void beginEdit(GridItem* item);
+
 private:
 	friend class GridItem;
 	friend class GridRow;
@@ -122,8 +124,6 @@ private:
 	virtual void layoutCells(const Rect& rc) override final;
 
 	IBitmap* getBitmap(const wchar_t* const name);
-
-	void beginEdit(GridItem* item);
 
 	void eventEditFocus(FocusEvent* event);
 
