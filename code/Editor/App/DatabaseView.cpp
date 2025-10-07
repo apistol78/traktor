@@ -1349,8 +1349,17 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 				continue;
 		}
 
-		if (!m_filter->acceptInstance(childInstance))
-			continue;
+		uint8_t alpha = 255;
+		if (!showFiltered)
+		{
+			if (!m_filter->acceptInstance(childInstance))
+				continue;
+		}
+		else
+		{
+			if (!m_filter->acceptInstance(childInstance))
+				alpha = 80;
+		}
 
 		Ref< ui::PreviewItem > item = new ui::PreviewItem();
 		item->setText(childInstance->getName());
@@ -1371,7 +1380,7 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 			Ref< ui::StyleBitmap > itemImage = new ui::StyleBitmap(type->getName());
 			if (itemImage->getSystemBitmap(m_listInstances) != nullptr)
 			{
-				item->setImage(itemImage);
+				item->setImage(itemImage, alpha);
 				break;
 			}
 		}
@@ -1385,7 +1394,7 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 				m_previewJobs.push_back(JobManager::getInstance().add([=, this]() {
 					item->setImage(browsePreview->generate(
 						m_editor,
-						childInstanceRef));
+						childInstanceRef), alpha);
 					m_listInstances->requestUpdate();
 				}));
 				break;

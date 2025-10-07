@@ -41,7 +41,7 @@ public:
 
 	const std::wstring& getSubText() const;
 
-	void setImage(ui::IBitmap* image);
+	void setImage(ui::IBitmap* image, uint8_t imageAlpha = 255);
 
 	ui::IBitmap* getImage() const;
 
@@ -67,6 +67,7 @@ private:
 	Ref< ui::StyleBitmap > m_imageBackground;
 	Ref< ui::IBitmap > m_bitmapImage;
 	Rect m_textRect;
+	uint8_t m_imageAlpha = 255;
 	bool m_selected = false;
 	bool m_editable = true;
 	int32_t m_editMode = 0;

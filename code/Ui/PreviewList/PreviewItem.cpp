@@ -52,9 +52,10 @@ const std::wstring& PreviewItem::getSubText() const
 	return m_subText;
 }
 
-void PreviewItem::setImage(ui::IBitmap* image)
+void PreviewItem::setImage(ui::IBitmap* image, uint8_t imageAlpha)
 {
 	m_bitmapImage = image;
+	m_imageAlpha = imageAlpha;
 }
 
 ui::IBitmap* PreviewItem::getImage() const
@@ -171,7 +172,9 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 			Point(0, 0),
 			m_bitmapImage->getSize(getWidget()),
 			m_bitmapImage,
-			BlendMode::Alpha
+			BlendMode::Alpha,
+			Filter::Linear,
+			m_imageAlpha
 		);
 	}
 	else
