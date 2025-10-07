@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -533,7 +533,7 @@ void CanvasGdiPlusWin32::fillPolygon(const Point* pnts, int count)
 	}	
 }
 
-void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter)
+void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter, uint8_t alpha)
 {
 	Gdiplus::Bitmap* bm = getCachedBitmap(bitmap);
 	if (!bm)
@@ -565,7 +565,7 @@ void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, cons
 	);
 }
 
-void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter)
+void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter, uint8_t alpha)
 {
 	Gdiplus::Bitmap* bm = getCachedBitmap(bitmap);
 	if (!bm)

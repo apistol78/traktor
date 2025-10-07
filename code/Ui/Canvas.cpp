@@ -174,24 +174,24 @@ void Canvas::fillPolygon(const Point* pnts, int count)
 	m_canvas->fillPolygon(pnts, count);
 }
 
-void Canvas::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, BlendMode blendMode, Filter filter)
+void Canvas::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, BlendMode blendMode, Filter filter, uint8_t alpha)
 {
 	if (!bitmap)
 		return;
 
 	ISystemBitmap* sbm = bitmap->getSystemBitmap(m_widget);
 	if (sbm)
-		m_canvas->drawBitmap(dstAt, srcAt, size, sbm, blendMode, filter);
+		m_canvas->drawBitmap(dstAt, srcAt, size, sbm, blendMode, filter, alpha);
 }
 
-void Canvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode, Filter filter)
+void Canvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode, Filter filter, uint8_t alpha)
 {
 	if (!bitmap)
 		return;
 
 	ISystemBitmap* sbm = bitmap->getSystemBitmap(m_widget);
 	if (sbm)
-		m_canvas->drawBitmap(dstAt, dstSize, srcAt, srcSize, sbm, blendMode, filter);
+		m_canvas->drawBitmap(dstAt, dstSize, srcAt, srcSize, sbm, blendMode, filter, alpha);
 }
 
 void Canvas::drawText(const Point& at, const std::wstring& text)

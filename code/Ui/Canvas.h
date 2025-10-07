@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -96,9 +96,9 @@ public:
 
 	void fillPolygon(const Point* pnts, int count);
 
-	void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, BlendMode blendMode = BlendMode::Opaque, Filter filter = Filter::Linear);
+	void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, BlendMode blendMode = BlendMode::Opaque, Filter filter = Filter::Linear, uint8_t alpha = 255);
 
-	void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode = BlendMode::Opaque, Filter filter = Filter::Linear);
+	void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode = BlendMode::Opaque, Filter filter = Filter::Linear, uint8_t alpha = 255);
 
 	void drawText(const Point& at, const std::wstring& text);
 

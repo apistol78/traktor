@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -674,14 +674,14 @@ void CanvasDirect2DWin32::fillPolygon(const Point* pnts, int npnts)
 		m_d2dBackgroundBrush);
 }
 
-void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter)
+void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter, uint8_t alpha)
 {
-	drawBitmap(dstAt, size, srcAt, size, bitmap, blendMode, filter);
+	drawBitmap(dstAt, size, srcAt, size, bitmap, blendMode, filter, alpha);
 }
 
 DEFINE_GUID(CLSID_D2D1Tint, 0x36312b17, 0xf7dd, 0x4014, 0x91, 0x5d, 0xff, 0xca, 0x76, 0x8c, 0xf2, 0x11);
 
-void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter)
+void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter, uint8_t alpha)
 {
 	ID2D1Bitmap* bm = getCachedBitmap(bitmap);
 	if (!bm)
@@ -718,7 +718,7 @@ void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, co
 				dstAt.y,
 				dstAt.x + dstSize.cx,
 				dstAt.y + dstSize.cy),
-			1.0f,
+			alpha / 255.0f,
 			im,
 			D2D1::RectF(
 				srcAt.x,
