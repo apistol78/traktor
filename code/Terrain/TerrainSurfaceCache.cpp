@@ -123,7 +123,7 @@ bool TerrainSurfaceCache::setupBaseColor(
 			render::Shader::Permutation perm(c_handleTerrain_SurfaceBase);
 			shader->setCombination(c_handleTerrain_ColorEnable, colorMap != nullptr, perm);
 
-			auto sp = shader->getProgram(perm);
+			const auto sp = shader->getProgram(perm);
 			if (!sp)
 				return;
 

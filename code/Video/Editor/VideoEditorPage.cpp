@@ -164,7 +164,7 @@ void VideoEditorPage::eventPaint(ui::PaintEvent* event)
 			render::ITexture* texture = m_video->getTexture();
 			if (texture)
 			{
-				auto program = m_shader->getProgram().program;
+				const auto program = m_shader->getProgram().program;
 				program->setTextureParameter(render::getParameterHandle(L"Texture"), texture);
 				program->setVectorParameter(render::getParameterHandle(L"Bounds"), Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 				m_screenRenderer->draw(m_renderView, program);

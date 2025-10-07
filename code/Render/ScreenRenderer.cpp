@@ -110,7 +110,7 @@ void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, Pr
 	if (!shader)
 		return;
 
-	auto program = shader->getProgram();
+	const auto program = shader->getProgram();
 	if (!program)
 		return;
 
@@ -129,7 +129,7 @@ void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, co
 	if (!shader)
 		return;
 
-	auto program = shader->getProgram(permutation);
+	const auto program = shader->getProgram(permutation);
 	if (!program)
 		return;
 

@@ -102,7 +102,7 @@ void FogComponent::build(const WorldBuildContext& context, const WorldRenderView
 
 	auto permutation = worldRenderPass.getPermutation(m_shader);
 	permutation.technique = ShaderTechnique::Default;
-	auto injectLightsProgram = m_shader->getProgram(permutation);
+	const auto injectLightsProgram = m_shader->getProgram(permutation);
 	if (!injectLightsProgram)
 		return;
 

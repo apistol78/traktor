@@ -222,7 +222,7 @@ void AccGlyph::render(
 
 	const render::Shader::Permutation perm(techniques[glyphFilter]);
 
-	auto sp = m_shaderGlyph->getProgram(perm);
+	const auto sp = m_shaderGlyph->getProgram(perm);
 	if (!sp)
 		return;
 

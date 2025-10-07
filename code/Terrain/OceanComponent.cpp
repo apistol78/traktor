@@ -455,7 +455,7 @@ void OceanComponent::build(
 	// Render ocean geometry.
 	auto perm = worldRenderPass.getPermutation(m_shader);
 	m_shader->setCombination(s_handleOcean_HaveTerrain, haveTerrain, perm);
-	auto sp = m_shader->getProgram(perm);
+	const auto sp = m_shader->getProgram(perm);
 	if (!sp)
 		return;
 

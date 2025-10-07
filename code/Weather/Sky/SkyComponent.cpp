@@ -374,7 +374,7 @@ void SkyComponent::build(
 {
 	auto perm = worldRenderPass.getPermutation(m_shader);
 	m_shader->setCombination(c_handleWeather_CloudsEnable, m_data.m_clouds, perm);
-	auto sp = m_shader->getProgram(perm);
+	const auto sp = m_shader->getProgram(perm);
 	if (!sp)
 		return;
 

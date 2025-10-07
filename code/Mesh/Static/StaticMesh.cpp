@@ -62,7 +62,7 @@ void StaticMesh::build(
 
 		auto permutation = worldRenderPass.getPermutation(m_shader);
 		permutation.technique = part.shaderTechnique;
-		auto sp = m_shader->getProgram(permutation);
+		const auto sp = m_shader->getProgram(permutation);
 		if (!sp)
 			continue;
 
