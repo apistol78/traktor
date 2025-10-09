@@ -5,8 +5,8 @@
 			<id>{4BAA3A0D-D779-C141-B519-197EEA8640D6}</id>
 			<comment/>
 			<position>
-				<first>607</first>
-				<second>241</second>
+				<first>435</first>
+				<second>248</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{B63DBBD3-72C0-C645-8A24-4893BBF22E30}</id>
 			<comment/>
 			<position>
-				<first>836</first>
-				<second>250</second>
+				<first>664</first>
+				<second>248</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -23,8 +23,8 @@
 			<id>{91A1C374-33C8-6F4C-B0E5-0D7C530C3452}</id>
 			<comment/>
 			<position>
-				<first>445</first>
-				<second>450</second>
+				<first>491</first>
+				<second>582</second>
 			</position>
 			<declaration>{0DE9B6CF-1F7E-BC44-8ED6-F5EFC99E6F1C}</declaration>
 			<parameterName/>
@@ -35,8 +35,8 @@
 			<id>{A12CD3AB-ABC5-BE47-882A-206186C7504A}</id>
 			<comment/>
 			<position>
-				<first>706</first>
-				<second>538</second>
+				<first>703</first>
+				<second>453</second>
 			</position>
 			<name>Frustum</name>
 			<technique/>
@@ -167,8 +167,8 @@ $Buffer[index].visible = $Input;
 			<id>{91A8C6C3-38AF-0E49-9137-BEB73CB41DD4}</id>
 			<comment/>
 			<position>
-				<first>323</first>
-				<second>489</second>
+				<first>459</first>
+				<second>621</second>
 			</position>
 			<declaration>{0DE9D39C-4B50-9640-ACFC-E2AE5CF9F917}</declaration>
 			<parameterName/>
@@ -197,7 +197,7 @@ $Buffer[index].visible = $Input;
 			<id>{FAD1FE60-D90C-8A4F-BEFD-145108FE5466}</id>
 			<comment/>
 			<position>
-				<first>-282</first>
+				<first>-237</first>
 				<second>577</second>
 			</position>
 			<structDeclaration>{41FBD00D-14D7-A942-9F00-69922B6A1908}</structDeclaration>
@@ -337,8 +337,8 @@ else
 			<id>{099F295D-79C3-9847-A2B5-E3BE5904F79D}</id>
 			<comment/>
 			<position>
-				<first>365</first>
-				<second>863</second>
+				<first>450</first>
+				<second>942</second>
 			</position>
 			<declaration>{19BF281E-5D64-A84D-8796-3C4A9C59A658}</declaration>
 			<parameterName/>
@@ -349,8 +349,8 @@ else
 			<id>{68311C48-A517-3146-87E8-D82A66146355}</id>
 			<comment/>
 			<position>
-				<first>431</first>
-				<second>821</second>
+				<first>468</first>
+				<second>900</second>
 			</position>
 			<minFilter>Point</minFilter>
 			<mipFilter>Point</mipFilter>
@@ -367,8 +367,8 @@ else
 			<id>{51312172-C4B7-D843-A00A-5C13B2736AC2}</id>
 			<comment/>
 			<position>
-				<first>413</first>
-				<second>779</second>
+				<first>450</first>
+				<second>858</second>
 			</position>
 			<declaration>{58DB3C8D-DADA-EE43-BA2C-655C271C9244}</declaration>
 			<parameterName/>
@@ -379,8 +379,8 @@ else
 			<id>{6F2F3BB2-96D1-7B47-9392-B2E898665813}</id>
 			<comment/>
 			<position>
-				<first>349</first>
-				<second>733</second>
+				<first>450</first>
+				<second>812</second>
 			</position>
 			<declaration>{5FA54E3B-AD14-E148-B385-979BD586BD69}</declaration>
 			<parameterName/>
@@ -391,8 +391,8 @@ else
 			<id>{9F712FC4-60D6-3149-869E-9A33838E48E7}</id>
 			<comment/>
 			<position>
-				<first>1056</first>
-				<second>276</second>
+				<first>884</first>
+				<second>248</second>
 			</position>
 			<name>InstanceIndex</name>
 		</item>
