@@ -89,6 +89,8 @@ void CullingComponent::build(
 			InstanceRenderData& ird = *ptr++;
 			instance->transform.rotation().e.storeAligned(ird.rotation);
 			instance->transform.translation().storeAligned(ird.translation);
+			instance->lastTransform.rotation().e.storeAligned(ird.lastRotation);
+			instance->lastTransform.translation().storeAligned(ird.lastTranslation);
 			instance->boundingBox.mn.storeAligned(ird.boundingBoxMin);
 			instance->boundingBox.mx.storeAligned(ird.boundingBoxMax);
 		}
@@ -176,6 +178,7 @@ CullingComponent::Instance* CullingComponent::createInstance(ICullable* cullable
 	instance->cullable = cullable;
 	instance->ordinal = ordinal;
 	instance->transform = Transform::identity();
+	instance->lastTransform = Transform::identity();
 	instance->boundingBox = cullable->cullableGetBoundingBox();
 
 	// Insert instance sorted by ordinal so we can calculate run length when building.
@@ -204,6 +207,7 @@ void CullingComponent::Instance::destroy()
 
 void CullingComponent::Instance::setTransform(const Transform& transform)
 {
+	this->lastTransform = this->transform;
 	this->transform = transform;
 	this->boundingBox = this->cullable->cullableGetBoundingBox().transform(transform);
 	this->owner->m_instanceBufferDirty = true;

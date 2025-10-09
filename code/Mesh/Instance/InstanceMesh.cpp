@@ -30,7 +30,6 @@ namespace
 {
 
 render::Handle s_handleInstanceWorld(L"InstanceWorld");
-render::Handle s_handleInstanceWorldLast(L"InstanceWorldLast");
 render::Handle s_handleDraw(L"InstanceMesh_Draw");
 render::Handle s_handleIndexCount(L"InstanceMesh_IndexCount");
 render::Handle s_handleFirstIndex(L"InstanceMesh_FirstIndex");
@@ -172,10 +171,8 @@ void InstanceMesh::build(
 			Transform::identity(),
 			Transform::identity());
 
-		// #todo Same world buffer
 		renderBlock->programParams->setFloatParameter(s_handleInstanceOffset, start + 0.5f);
 		renderBlock->programParams->setBufferViewParameter(s_handleInstanceWorld, instanceBuffer->getBufferView());
-		renderBlock->programParams->setBufferViewParameter(s_handleInstanceWorldLast, instanceBuffer->getBufferView());
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(sp.priority, renderBlock);

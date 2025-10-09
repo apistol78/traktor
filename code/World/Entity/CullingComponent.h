@@ -58,6 +58,8 @@ public:
 	{
 		float rotation[4];
 		float translation[4];
+		float lastRotation[4];
+		float lastTranslation[4];
 		float boundingBoxMin[4];
 		float boundingBoxMax[4];
 	};
@@ -84,6 +86,7 @@ public:
 		ICullable* cullable = nullptr;
 		intptr_t ordinal = 0;
 		Transform transform;
+		Transform lastTransform;
 		Aabb3 boundingBox;
 
 		void destroy();

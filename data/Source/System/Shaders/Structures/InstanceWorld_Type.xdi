@@ -12,6 +12,16 @@
 			<length>0</length>
 		</item>
 		<item>
+			<name>lastRotation</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>lastTranslation</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
+		<item>
 			<name>boundingBoxMin</name>
 			<type>Float4</type>
 			<length>0</length>
