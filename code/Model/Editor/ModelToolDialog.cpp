@@ -127,7 +127,7 @@ ModelToolDialog::ModelToolDialog(
 {
 }
 
-bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, float scale)
+bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, const Vector4& scale)
 {
 	if (!ui::Dialog::create(
 			parent,
@@ -316,8 +316,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 		Ref< Model > model = ModelFormat::readAny(fileName);
 		if (model)
 		{
-			if (std::abs(scale - 1.0f) > FUZZY_EPSILON)
-				model->apply(Transform(traktor::scale(scale, scale, scale)));
+			model->apply(Transform(traktor::scale(scale)));
 
 			Ref< ui::TreeViewItem > item = m_modelTree->createItem(0, fileName, 0);
 			item->setData(L"MODEL", model);

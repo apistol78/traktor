@@ -131,7 +131,7 @@ bool MeshPipeline::buildOutput(
 		model->apply(model::Reduce(meshAsset->getReduce()));
 
 	model->apply(model::Transform(
-		scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())
+		scale(meshAsset->getScaleFactor())
 	));
 
 	if (meshAsset->getCenter())

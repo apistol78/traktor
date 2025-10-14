@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,9 +11,9 @@
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
-#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyVector.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -152,7 +152,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	staticDummy->create(containerFile, L"");
 
 	Ref< ui::Container > containerOptions = new ui::Container();
-	containerOptions->create(containerFile, ui::WsNone, new ui::TableLayout(L"50%,50%,*", L"*", 0_ut, 4_ut));
+	containerOptions->create(containerFile, ui::WsNone, new ui::TableLayout(L"*,100%,*", L"*", 0_ut, 16_ut));
 
 	Ref< ui::Container > containerLeft = new ui::Container();
 	containerLeft->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*", L"*", 0_ut, 4_ut));
@@ -179,8 +179,15 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	Ref< ui::Static > staticScaleFactor = new ui::Static();
 	staticScaleFactor->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_SCALE_FACTOR"));
 
-	m_editScaleFactor = new ui::Edit();
-	m_editScaleFactor->create(containerRight, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
+	Ref< ui::Container > containerScaleFactor = new ui::Container();
+	containerScaleFactor->create(containerRight, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0_ut, 4_ut));
+
+	m_editScaleFactor[0] = new ui::Edit();
+	m_editScaleFactor[0]->create(containerScaleFactor, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
+	m_editScaleFactor[1] = new ui::Edit();
+	m_editScaleFactor[1]->create(containerScaleFactor, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
+	m_editScaleFactor[2] = new ui::Edit();
+	m_editScaleFactor[2]->create(containerScaleFactor, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
 
 	Ref< ui::Static > staticPreviewAngle = new ui::Static();
 	staticPreviewAngle->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_PREVIEW_ANGLE"));
@@ -256,7 +263,12 @@ void MeshAssetEditor::apply()
 	m_asset->setCenter(m_checkCenter->isChecked());
 	m_asset->setGrounded(m_checkGrounded->isChecked());
 	m_asset->setDecalResponse(m_checkDecalResponse->isChecked());
-	m_asset->setScaleFactor(parseString< float >(m_editScaleFactor->getText()));
+	m_asset->setScaleFactor(Vector4(
+		parseString< float >(m_editScaleFactor[0]->getText()),
+		parseString< float >(m_editScaleFactor[1]->getText()),
+		parseString< float >(m_editScaleFactor[2]->getText()),
+		1.0f
+	));
 	m_asset->setPreviewAngle(m_sliderPreviewAngle->getValue() * TWO_PI / 100.0f);
 
 	SmallMap< std::wstring, Guid > materialShaders;
@@ -327,7 +339,9 @@ void MeshAssetEditor::updateFile()
 	m_checkCenter->setChecked(m_asset->getCenter());
 	m_checkGrounded->setChecked(m_asset->getGrounded());
 	m_checkDecalResponse->setChecked(m_asset->getDecalResponse());
-	m_editScaleFactor->setText(toString(m_asset->getScaleFactor()));
+	m_editScaleFactor[0]->setText(toString(m_asset->getScaleFactor().x()));
+	m_editScaleFactor[1]->setText(toString(m_asset->getScaleFactor().y()));
+	m_editScaleFactor[2]->setText(toString(m_asset->getScaleFactor().z()));
 	m_sliderPreviewAngle->setValue((int32_t)(m_asset->getPreviewAngle() * 100.0f / TWO_PI));
 }
 
@@ -699,7 +713,7 @@ void MeshAssetEditor::eventPreviewModelClick(ui::ButtonClickEvent* event)
 
 	Ref< PropertyGroup > params = new PropertyGroup();
 	params->setProperty< PropertyString >(L"fileName", filePath.getPathNameOS());
-	params->setProperty< PropertyFloat >(L"scale", m_asset->getScaleFactor());
+	params->setProperty< PropertyVector >(L"scale", m_asset->getScaleFactor());
 
 	m_editor->openTool(L"traktor.model.ModelTool", params);
 }

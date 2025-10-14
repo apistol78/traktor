@@ -77,7 +77,7 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 
 	model->apply(model::Transform(
 		translate(meshAsset->getOffset()) *
-		scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())
+		scale(meshAsset->getScaleFactor())
 	));
 
 	// Create a mesh asset; used by bake pipeline to set appropriate materials.

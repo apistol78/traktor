@@ -127,7 +127,7 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 			// Transform model into world space.
 			model->apply(model::Transform(
 				translate(meshAsset->getOffset()) *
-				scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())
+				scale(meshAsset->getScaleFactor())
 			));
 			model->apply(model::Transform(
 				inEntityData->getTransform().toMatrix44()

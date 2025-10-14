@@ -87,7 +87,7 @@ private:
 	Ref< ui::CheckBox > m_checkCenter;
 	Ref< ui::CheckBox > m_checkGrounded;
 	Ref< ui::CheckBox > m_checkDecalResponse;
-	Ref< ui::Edit > m_editScaleFactor;
+	Ref< ui::Edit > m_editScaleFactor[3];
 	Ref< ui::Slider > m_sliderPreviewAngle;
 	Ref< ui::Image > m_imagePreview;
 	Ref< ui::GridView > m_materialShaderList;

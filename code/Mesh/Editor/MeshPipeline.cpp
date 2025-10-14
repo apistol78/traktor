@@ -296,7 +296,7 @@ bool MeshPipeline::buildOutput(
 	// Scale model according to scale factor in asset.
 	operations.push_back(new model::Transform(
 		translate(asset->getOffset()) *
-		scale(asset->getScaleFactor(), asset->getScaleFactor(), asset->getScaleFactor())));
+		scale(asset->getScaleFactor())));
 
 	// Recalculate normals regardless if already exist in model.
 	if (asset->getRenormalize())

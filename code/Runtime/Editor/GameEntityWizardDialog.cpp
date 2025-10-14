@@ -431,7 +431,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create skeleton mesh asset.
 			Ref< animation::SkeletonAsset > skeletonAsset = new animation::SkeletonAsset();
 			skeletonAsset->setFileName(skeletonMesh);
-			skeletonAsset->setScale(scale);
+			skeletonAsset->setScale(Vector4(scale, scale, scale, 1.0f));
 
 			// Create asset instance.
 			skeletonAssetInstance = m_group->createInstance(
@@ -458,7 +458,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create animation asset.
 			Ref< animation::AnimationAsset > animationAsset = new animation::AnimationAsset();
 			animationAsset->setFileName(animationMesh);
-			animationAsset->setScale(scale);
+			animationAsset->setScale(Vector4(scale, scale, scale, 1.0f));
 
 			// Create asset instance.
 			animationAssetInstance = m_group->createInstance(
@@ -484,7 +484,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create visual mesh asset.
 			Ref< mesh::MeshAsset > meshAsset = new mesh::MeshAsset();
 			meshAsset->setFileName(visualMesh);
-			meshAsset->setScaleFactor(scale);
+			meshAsset->setScaleFactor(Vector4(scale, scale, scale, 1.0f));
 			if (entityType == 3 || entityType == 4)
 				meshAsset->setMeshType(mesh::MeshAsset::MtSkinned);
 			else
@@ -551,7 +551,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create physics mesh asset.
 			Ref< physics::MeshAsset > meshAsset = new physics::MeshAsset();
 			meshAsset->setFileName(collisionMesh);
-			meshAsset->setScaleFactor(scale);
+			meshAsset->setScaleFactor(Vector4(scale, scale, scale, 1.0f));
 			meshAsset->setCalculateConvexHull(entityType == 2);
 			meshAsset->setMargin((entityType == 2) ? 0.04f : 0.0f);
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -90,7 +90,7 @@ bool SkeletonPipeline::buildOutput(
 	}
 
 	// Scale model according to scale factor in asset.
-	model->apply(model::Transform(scale(skeletonAsset->getScale(), skeletonAsset->getScale(), skeletonAsset->getScale())));
+	model->apply(model::Transform(scale(skeletonAsset->getScale())));
 
 	// Convert model's skeleton to an animation skeleton.
 	Ref< Skeleton > skeleton = new Skeleton();

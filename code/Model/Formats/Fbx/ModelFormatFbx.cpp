@@ -203,6 +203,17 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 
 	ufbx_free_scene(scene);
 
+	// Remove anonymous faces.
+	AlignedVector< Polygon > keepPolygons;
+	keepPolygons.reserve(model->getPolygonCount());
+	for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
+	{
+		const Polygon& polygon = model->getPolygon(i);
+		if (polygon.getMaterial() != c_InvalidIndex)
+			keepPolygons.push_back(polygon);
+	}
+	model->setPolygons(keepPolygons);
+	/*
 	// Create and assign default material if anonymous faces has been created.
 	uint32_t defaultMaterialIndex = c_InvalidIndex;
 	for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
@@ -225,6 +236,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 			model->setPolygon(i, replacement);
 		}
 	}
+	*/
 
 	const auto& channels = model->getTexCoordChannels();
 	if (!channels.empty())

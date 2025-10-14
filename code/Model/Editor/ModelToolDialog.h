@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Math/Vector4.h"
 #include "Core/Timer/Timer.h"
 #include "Resource/Proxy.h"
 #include "Ui/Dialog.h"
@@ -67,7 +68,7 @@ public:
 		render::IRenderSystem* renderSystem
 	);
 
-	bool create(ui::Widget* parent, const std::wstring& fileName, float scale);
+	bool create(ui::Widget* parent, const std::wstring& fileName, const Vector4& scale);
 
 	virtual void destroy() override final;
 

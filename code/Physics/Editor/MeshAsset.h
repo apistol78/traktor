@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Math/Vector4.h"
 #include "Editor/Asset.h"
 
 // import/export mechanism.
@@ -43,10 +44,10 @@ public:
 	float getMargin() const { return m_margin; }
 
 	/*! Set scale factor. */
-	void setScaleFactor(float scaleFactor) { m_scaleFactor = scaleFactor; }
+	void setScaleFactor(const Vector4& scaleFactor) { m_scaleFactor = scaleFactor; }
 
 	/*! Get scale factor. */
-	float getScaleFactor() const { return m_scaleFactor; }
+	const Vector4& getScaleFactor() const { return m_scaleFactor; }
 
 	/*! */
 	void setReduce(float reduce) { m_reduce = reduce; }
@@ -76,7 +77,7 @@ private:
 	std::wstring m_importFilter;
 	bool m_calculateConvexHull = true;
 	float m_margin = 0.04f;
-	float m_scaleFactor = 1.0f;
+	Vector4 m_scaleFactor = Vector4::one();
 	float m_reduce = 1.0f;
 	bool m_center = false;
 	bool m_grounded = false;

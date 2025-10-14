@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -66,10 +66,10 @@ public:
 	const SmallMap< std::wstring, Guid >& getMaterialTextures() const { return m_materialTextures; }
 
 	/*! Set scale factor. */
-	void setScaleFactor(float scaleFactor) { m_scaleFactor = scaleFactor; }
+	void setScaleFactor(const Vector4& scaleFactor) { m_scaleFactor = scaleFactor; }
 
 	/*! Get scale factor. */
-	float getScaleFactor() const { return m_scaleFactor; }
+	const Vector4& getScaleFactor() const { return m_scaleFactor; }
 
 	/*! Set offset. */
 	void setOffset(const Vector4& offset) { m_offset = offset; }
@@ -118,7 +118,7 @@ private:
 	MeshType m_meshType = MtStatic;
 	SmallMap< std::wstring, Guid > m_materialShaders;
 	SmallMap< std::wstring, Guid > m_materialTextures;
-	float m_scaleFactor = 1.0f;
+	Vector4 m_scaleFactor = Vector4::one();
 	Vector4 m_offset = Vector4::zero();
 	bool m_renormalize = false;
 	bool m_center = false;

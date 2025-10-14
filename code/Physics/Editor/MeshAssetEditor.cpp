@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,9 +10,9 @@
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
-#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyVector.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -317,7 +317,7 @@ void MeshAssetEditor::eventPreviewModelClick(ui::ButtonClickEvent* event)
 
 	Ref< PropertyGroup > params = new PropertyGroup();
 	params->setProperty< PropertyString >(L"fileName", filePath.getPathNameOS());
-	params->setProperty< PropertyFloat >(L"scale", m_asset->getScaleFactor());
+	params->setProperty< PropertyVector >(L"scale", m_asset->getScaleFactor());
 
 	m_editor->openTool(L"traktor.model.ModelTool", params);
 }

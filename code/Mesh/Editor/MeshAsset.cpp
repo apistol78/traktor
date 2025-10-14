@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Serialization/AttributeNoHash.h"
+#include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
@@ -18,7 +19,7 @@
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 24, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 25, MeshAsset, editor::Asset)
 
 void MeshAsset::serialize(ISerializer& s)
 {
@@ -59,8 +60,14 @@ void MeshAsset::serialize(ISerializer& s)
 	if (s.getVersion() >= 18 && s.getVersion() < 22)
 		s >> ObsoleteMember< Guid >(L"textureSet", AttributeType(type_of< render::TextureSet >()));
 
-	if (s.getVersion() >= 11)
-		s >> Member< float >(L"scaleFactor", m_scaleFactor);
+	if (s.getVersion() >= 25)
+		s >> Member< Vector4 >(L"scaleFactor", m_scaleFactor, AttributePoint());
+	else if (s.getVersion() >= 11)
+	{
+		float scaleFactor;
+		s >> Member< float >(L"scaleFactor", scaleFactor);
+		m_scaleFactor = Vector4(scaleFactor, scaleFactor, scaleFactor, 1.0f);
+	}
 
 	if (s.getVersion() >= 19)
 		s >> Member< Vector4 >(L"offset", m_offset);

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,9 +9,9 @@
 #include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
-#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyVector.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Model/Editor/ModelTool.h"
@@ -73,12 +73,12 @@ bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor, const Proper
 	resourceManager->addFactory(new script::ScriptFactory(scriptManager));
 
 	std::wstring fileName;
-	float scale = 1.0f;
+	Vector4 scale = Vector4::one();
 
 	if (param)
 	{
 		fileName = param->getProperty< std::wstring >(L"fileName", L"");
-		scale = param->getProperty< float >(L"scale", 1.0f);
+		scale = param->getProperty< Vector4 >(L"scale", Vector4::one());
 	}
 
 	m_dialog = new ModelToolDialog(editor, resourceManager, renderSystem);
