@@ -97,6 +97,8 @@ private:
 
 	ui::TreeViewItem* createTreeAggregationItemItem(ui::TreeViewItem* parentItem, Project* project, Configuration* configuration, AggregationItem* item);
 
+	void importFilter(const Path& path, Project* project, ui::TreeViewItem* parentItem, ProjectItem* parentProjectItem);
+
 	Solution* getSelectedSolution() const;
 
 	Project* getSelectedProject() const;

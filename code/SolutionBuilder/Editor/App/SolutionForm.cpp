@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,6 +38,7 @@
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/MessageBox.h"
+#include "Ui/PathDialog.h"
 #include "Ui/Splitter.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
@@ -163,7 +164,9 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddConfiguration"), L"Add New Configuration"));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddFilter"), L"Add New Filter"));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddFile"), L"Add New File"));
+	m_menuProject->add(new ui::MenuItem(L"-"));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddExistingFiles"), L"Add Existing File(s)..."));
+	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddExistingFilters"), L"Add Existing Filter(s)..."));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.Clone"), L"Clone Project"));
 	m_menuProject->add(new ui::MenuItem(L"-"));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.Remove"), L"Remove"));
@@ -176,6 +179,7 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_menuFilter = new ui::Menu();
 	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.AddFilter"), L"Add New Filter"));
 	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.AddFile"), L"Add New File"));
+	m_menuFilter->add(new ui::MenuItem(L"-"));
 	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.AddExistingFiles"), L"Add Existing File(s)..."));
 	m_menuFilter->add(new ui::MenuItem(L"-"));
 	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.Remove"), L"Remove"));
@@ -387,6 +391,32 @@ ui::TreeViewItem* SolutionForm::createTreeAggregationItemItem(ui::TreeViewItem* 
 	treeItem->setData(L"PROJECT", project);
 	treeItem->setData(L"CONFIGURATION", configuration);
 	return treeItem;
+}
+
+void SolutionForm::importFilter(const Path& path, Project* project, ui::TreeViewItem* parentItem, ProjectItem* parentProjectItem)
+{
+	for (auto file : FileSystem::getInstance().find(path.getPathName() + L"/*.*"))
+	{
+		if (!file->isDirectory())
+			continue;
+
+		const Path filePath = file->getPath();
+		if (filePath.getFileName() == L"." || filePath.getFileName() == L"..")
+			continue;
+
+		Ref< Filter > childFilter = new Filter();
+		childFilter->setName(filePath.getFileName());
+
+		if (parentProjectItem)
+			parentProjectItem->addItem(childFilter);
+		else
+			project->addItem(childFilter);
+
+		ui::TreeViewItem* childItem = createTreeFilterItem(parentItem, project, childFilter);
+		childItem->expand();
+
+		importFilter(filePath, project, childItem, childFilter);
+	}
 }
 
 Solution* SolutionForm::getSelectedSolution() const
@@ -894,7 +924,6 @@ void SolutionForm::eventTreeButtonDown(ui::TreeViewItemMouseButtonDownEvent* eve
 					if (fileDialog.showModal(paths) == ui::DialogResult::Ok)
 					{
 						Path sourcePath = FileSystem::getInstance().getAbsolutePath(project->getSourcePath());
-
 						for (std::vector< Path >::iterator i = paths.begin(); i != paths.end(); ++i)
 						{
 							Path relativePath;
@@ -913,6 +942,17 @@ void SolutionForm::eventTreeButtonDown(ui::TreeViewItemMouseButtonDownEvent* eve
 						}
 					}
 					fileDialog.destroy();
+				}
+			}
+			else if (command == L"Project.AddExistingFilters")
+			{
+				ui::PathDialog pathDialog;
+				if (pathDialog.create(this, L"Select path..."))
+				{
+					Path path;
+					if (pathDialog.showModal(path) == ui::DialogResult::Ok)
+						importFilter(path, project, selectedItem, nullptr);
+					pathDialog.destroy();
 				}
 			}
 			else if (command == L"Project.Clone")
