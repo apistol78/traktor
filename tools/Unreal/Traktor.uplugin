@@ -1,0 +1,14 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Traktor",
+	"Category": "ThirdParty",
+	"Modules": [
+		{
+			"Name": "Traktor",
+			"Type": "Runtime",
+			"LoadingPhase": "None"
+		}	
+	]
+}
