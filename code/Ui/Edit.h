@@ -77,6 +77,7 @@ private:
 	int32_t m_selectionStart;
 	int32_t m_selectionEnd;
 	int32_t m_caret;
+	int32_t m_offset;
 	bool m_caretBlink;
 	bool m_acceptTab;
 	bool m_readOnly;

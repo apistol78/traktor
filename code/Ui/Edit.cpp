@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,6 +36,7 @@ Edit::Edit()
 ,	m_selectionStart(-1)
 ,	m_selectionEnd(-1)
 ,	m_caret(0)
+,	m_offset(0)
 ,	m_caretBlink(true)
 ,	m_acceptTab(false)
 ,	m_readOnly(false)
@@ -269,7 +270,7 @@ void Edit::eventMouseTrack(MouseTrackEvent* event)
 void Edit::eventButtonDown(MouseButtonDownEvent* event)
 {
 	const int32_t mx = event->getPosition().x;
-	int32_t x = pixel(4_ut);
+	int32_t x = pixel(4_ut) - m_offset;
 
 	int32_t caret = m_caret;
 	if (mx >= x)
@@ -565,6 +566,7 @@ void Edit::eventPaint(PaintEvent* event)
 	const Rect rcInner = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
 	const FontMetric fm = canvas.getFontMetric();
+	const int32_t ox = pixel(4_ut);
 
 	if (isEnable(true))
 		canvas.setBackground(ss->getColor(this, m_hover ? L"background-color-hover" : L"background-color"));
@@ -580,12 +582,33 @@ void Edit::eventPaint(PaintEvent* event)
 
 	const std::wstring text = getText();
 
+	// Calculate pixel position of caret.
+	int32_t caretX = -m_offset;
+	for (int32_t i = 0; i < text.length(); ++i)
+	{
+		if (i == m_caret)
+			break;
+		const int32_t w = fm.getAdvance(text[i], 0);
+		caretX += w;
+	}
+
+	// Calculate offset to ensure caret is always within client area.
+	if (caretX < 0)
+	{
+		m_offset += caretX;
+		caretX = 0;
+	}
+	else if (caretX >= rcInner.right - ox * 2)
+	{
+		m_offset += (caretX - (rcInner.right - ox * 2));
+		caretX = rcInner.right - ox * 2 - 1;
+	}
+
 	canvas.setForeground(ss->getColor(this, isEnable(true) ? L"color" : L"color-disabled"));
 
 	const int32_t h = fm.getHeight();
 	const int32_t y = (rcInner.getHeight() - h) / 2;
-	int32_t x = pixel(4_ut);
-	int32_t caretX = 0;
+	int32_t x = -m_offset;
 
 	for (int32_t i = 0; i < text.length(); ++i)
 	{
@@ -595,28 +618,22 @@ void Edit::eventPaint(PaintEvent* event)
 		{
 			canvas.setBackground(ss->getColor(this, L"background-color-selection"));
 			canvas.fillRect(Rect(
-				x, rcInner.top + 1,
-				x + w, rcInner.bottom - 1
+				ox + x, rcInner.top + 1,
+				ox + x + w, rcInner.bottom - 1
 			));
 		}
 
 		const wchar_t chs[2] = { text[i], 0 };
-		canvas.drawText(Point(x, y), chs);
-
-		if (i == m_caret)
-			caretX = x;
+		canvas.drawText(Point(ox + x, y), chs);
 
 		x += w;
 	}
-
-	if (m_caret >= text.length())
-		caretX = x;
 
 	const bool caretVisible = hasFocus() && !m_readOnly && m_caretBlink;
 	if (caretVisible)
 	{
 		canvas.setForeground(ss->getColor(this, L"color"));
-		canvas.drawLine(Point(caretX, y), Point(caretX, y + h));
+		canvas.drawLine(Point(ox + caretX, y), Point(ox + caretX, y + h));
 	}
 
 	event->consume();
