@@ -99,6 +99,7 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_shortcutTable->addCommand(ui::KsCommand, ui::VkX, ui::Command(L"Edit.Cut"));
 	m_shortcutTable->addCommand(ui::KsCommand, ui::VkC, ui::Command(L"Edit.Copy"));
 	m_shortcutTable->addCommand(ui::KsCommand, ui::VkV, ui::Command(L"Edit.Paste"));
+	m_shortcutTable->addCommand(ui::KsNone, ui::VkF2, ui::Command(L"Edit.Rename"));
 	m_shortcutTable->addEventHandler< ui::ShortcutEvent >(this, &SolutionForm::eventShortcut);
 
 	m_menuBar = new ui::CaptionBar();
@@ -323,6 +324,7 @@ ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentIt
 		treeProject->disable();
 
 	Ref< ui::TreeViewItem > treeConfigurations = m_treeSolution->createItem(treeProject, L"Configurations", 1);
+	treeConfigurations->setEditable(false);
 	treeConfigurations->setImage(0, 2, 3);
 
 	for (auto configuration : project->getConfigurations())
@@ -728,6 +730,13 @@ void SolutionForm::commandPaste()
 	}
 }
 
+void SolutionForm::commandRename()
+{
+	auto selectedItems = m_treeSolution->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	if (selectedItems.size() == 1)
+		selectedItems[0]->edit();
+}
+
 void SolutionForm::eventTimer(ui::TimerEvent*)
 {
 	updateTitle();
@@ -761,6 +770,8 @@ void SolutionForm::eventShortcut(ui::ShortcutEvent* event)
 		commandCopy(false);
 	else if (command == L"Edit.Paste")
 		commandPaste();
+	else if (command == L"Edit.Rename")
+		commandRename();
 }
 
 void SolutionForm::eventMenuClick(ui::ToolBarButtonClickEvent* event)

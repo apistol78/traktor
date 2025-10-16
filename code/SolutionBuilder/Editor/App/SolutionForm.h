@@ -121,6 +121,8 @@ private:
 
 	void commandPaste();
 
+	void commandRename();
+
 	void eventTimer(ui::TimerEvent*);
 
 	void eventClose(ui::CloseEvent*);

@@ -32,7 +32,7 @@ bool InputDialog::create(
 		title,
 		1280_ut, 720_ut,
 		ConfigDialog::WsCenterParent| ConfigDialog::WsDefaultFixed,
-		new TableLayout(L"100%", L"*,*", 4_ut, 4_ut)
+		new TableLayout(L"100%", L"*,*", 4_ut, 8_ut)
 	))
 		return false;
 
@@ -40,7 +40,7 @@ bool InputDialog::create(
 	labelMessage->create(this, message);
 
 	Ref< Container > container = new Container();
-	container->create(this, WsNone, new TableLayout(L"*,*", L"*", 0_ut, 4_ut));
+	container->create(this, WsNone, new TableLayout(L"*,*", L"*", 0_ut, 8_ut));
 
 	m_outFields = outFields;
 	for (uint32_t i = 0; i < outFieldsCount; ++i)

@@ -283,7 +283,7 @@ void TreeView::eventScroll(ScrollEvent* event)
 
 void TreeView::eventKeyDown(KeyDownEvent* event)
 {
-	RefArray< TreeViewItem > items = getItems(TreeView::GfDescendants | TreeView::GfExpandedOnly);
+	const RefArray< TreeViewItem > items = getItems(TreeView::GfDescendants | TreeView::GfExpandedOnly);
 
 	// Find index of selected item.
 	int32_t current = -1;
@@ -307,6 +307,7 @@ void TreeView::eventKeyDown(KeyDownEvent* event)
 			items[current]->collapse(recursive);
 		else if (items[current]->getParent() != 0)
 			items[current]->getParent()->select();
+		requestUpdate();
 		break;
 
 	case VkRight:
@@ -316,31 +317,37 @@ void TreeView::eventKeyDown(KeyDownEvent* event)
 				items[current]->expand(recursive);
 			else
 				items[current + 1]->select();
+			requestUpdate();
 		}
 		break;
 
 	case VkUp:
 		if (current > 0)
+		{
 			items[current - 1]->select();
+			requestUpdate();
+		}
 		break;
 
 	case VkDown:
 		if (current < items.size() - 1)
+		{
 			items[current + 1]->select();
+			requestUpdate();
+		}
 		break;
 
 	case VkReturn:
 		{
 			TreeViewItemActivateEvent activateEvent(this, items[current]);
 			raiseEvent(&activateEvent);
+			requestUpdate();
 		}
 		break;
 
 	default:
 		break;
 	}
-
-	requestUpdate();
 }
 
 }

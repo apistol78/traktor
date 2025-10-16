@@ -251,7 +251,7 @@ void Edit::setText(const std::wstring& text)
 Size Edit::getPreferredSize(const Size& hint) const
 {
 	const int32_t height = getFontMetric().getHeight() + pixel(4_ut) * 2;
-	return Size(pixel(100_ut), height);
+	return Size(pixel(200_ut), height);
 }
 
 Size Edit::getMaximumSize() const
