@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -71,6 +71,7 @@ void AiEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
 {
+	outComponentEditorFactories.push_back(new NavMeshComponentEditorFactory());
 }
 
 void AiEditorProfile::createEntityEditorFactories(
@@ -85,7 +86,6 @@ void AiEditorProfile::createComponentEditorFactories(
 	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
 ) const
 {
-	outComponentEditorFactories.push_back(new NavMeshComponentEditorFactory());
 }
 
 Ref< world::EntityData > AiEditorProfile::createEntityData(

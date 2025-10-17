@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,21 +13,16 @@
 namespace traktor::ai
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshComponentEditorFactory", NavMeshComponentEditorFactory, scene::IComponentEditorFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshComponentEditorFactory", NavMeshComponentEditorFactory, scene::IWorldComponentEditorFactory)
 
 const TypeInfoSet NavMeshComponentEditorFactory::getComponentDataTypes() const
 {
 	return makeTypeInfoSet< NavMeshComponentData >();
 }
 
-bool NavMeshComponentEditorFactory::alwaysRebuild(const world::IEntityComponentData* componentData) const
+Ref< scene::IWorldComponentEditor > NavMeshComponentEditorFactory::createComponentEditor(const TypeInfo& componentDataType) const
 {
-	return false;
-}
-
-Ref< scene::IComponentEditor > NavMeshComponentEditorFactory::createComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const
-{
-	return new NavMeshComponentEditor(context, entityAdapter, componentData);
+	return new NavMeshComponentEditor();
 }
 
 }

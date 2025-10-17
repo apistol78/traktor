@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,14 +29,14 @@ bool NavMeshEntityFactory::initialize(const ObjectStore& objectStore)
 	return true;
 }
 
-const TypeInfoSet NavMeshEntityFactory::getEntityComponentTypes() const
+const TypeInfoSet NavMeshEntityFactory::getWorldComponentTypes() const
 {
 	return makeTypeInfoSet< NavMeshComponentData >();
 }
 
-Ref< world::IEntityComponent > NavMeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
+Ref< world::IWorldComponent > NavMeshEntityFactory::createWorldComponent(const world::IEntityBuilder* builder, const world::IWorldComponentData& worldComponentData) const
 {
-	auto navMeshComponentData = checked_type_cast<const NavMeshComponentData*>(&entityComponentData);
+	auto navMeshComponentData = checked_type_cast<const NavMeshComponentData*>(&worldComponentData);
 
 	resource::Proxy< NavMesh > navMesh;
 	if (!m_resourceManager->bind(navMeshComponentData->get(), navMesh))

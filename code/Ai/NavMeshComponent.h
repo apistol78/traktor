@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Resource/Proxy.h"
-#include "World/IEntityComponent.h"
+#include "World/IWorldComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,13 +24,13 @@ namespace traktor::ai
 
 class NavMesh;
 
-/*! Navigation mesh entity.
+/*! Navigation mesh component.
  * \ingroup AI
  *
- * Navigation mesh entities are used to attach a navigation mesh
+ * Navigation mesh components are used to attach a navigation mesh
  * to a scene and thus being accessible through-out the engine.
  */
-class T_DLLCLASS NavMeshComponent : public world::IEntityComponent
+class T_DLLCLASS NavMeshComponent : public world::IWorldComponent
 {
 	T_RTTI_CLASS;
 
@@ -41,13 +41,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(world::Entity* owner) override final;
-
-	virtual void setTransform(const Transform& transform) override final;
-
-	virtual Aabb3 getBoundingBox() const override final;
-
-	virtual void update(const world::UpdateParams& update) override final;
+	virtual void update(world::World* world, const world::UpdateParams& update) override final;
 
 	/*! Get navigation mesh.
 	 *

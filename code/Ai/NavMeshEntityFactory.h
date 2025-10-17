@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -42,9 +42,9 @@ public:
 
 	virtual bool initialize(const ObjectStore& objectStore) override final;
 
-	virtual const TypeInfoSet getEntityComponentTypes() const override final;
+	virtual const TypeInfoSet getWorldComponentTypes() const override final;
 
-	virtual Ref< world::IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const override final;
+	virtual Ref< world::IWorldComponent > createWorldComponent(const world::IEntityBuilder* builder, const world::IWorldComponentData& worldComponentData) const override final;
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;

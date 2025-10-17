@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Resource/Id.h"
-#include "World/IEntityComponentData.h"
+#include "World/IWorldComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,19 +24,15 @@ namespace traktor::ai
 
 class NavMesh;
 
-/*! Navigation mesh entity data.
+/*! Navigation mesh component data.
  * \ingroup AI
  */
-class T_DLLCLASS NavMeshComponentData : public world::IEntityComponentData
+class T_DLLCLASS NavMeshComponentData : public world::IWorldComponentData
 {
 	T_RTTI_CLASS;
 
 public:
 	const resource::Id< NavMesh >& get() const { return m_navMesh; }
-
-	virtual int32_t getOrdinal() const override final;
-
-	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

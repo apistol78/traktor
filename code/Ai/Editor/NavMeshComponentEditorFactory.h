@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Scene/Editor/IComponentEditorFactory.h"
+#include "Scene/Editor/IWorldComponentEditorFactory.h"
 
 namespace traktor::ai
 {
@@ -16,16 +16,14 @@ namespace traktor::ai
 /*! Navigation mesh entity scene editor factory.
  * \ingroup AI
  */
-class NavMeshComponentEditorFactory : public scene::IComponentEditorFactory
+class NavMeshComponentEditorFactory : public scene::IWorldComponentEditorFactory
 {
 	T_RTTI_CLASS;
 
 public:
 	virtual const TypeInfoSet getComponentDataTypes() const override final;
 
-	virtual bool alwaysRebuild(const world::IEntityComponentData* componentData) const override final;
-
-	virtual Ref< scene::IComponentEditor > createComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const override final;
+	virtual Ref< scene::IWorldComponentEditor > createComponentEditor(const TypeInfo& componentDataType) const override final;
 };
 
 }
