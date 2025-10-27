@@ -102,7 +102,7 @@ bool convertMesh(
 				break;
 			case cgltf_attribute_type_texcoord:
 				texcoordAccessors.push_back(attr->data);
-				texcoordNames.push_back(attr->name ? mbstows(attr->name) : L"TEXCOORD_" + toString(attr->index));
+				texcoordNames.push_back(L"UV" + toString(attr->index));
 				break;
 			default:
 				break;
@@ -183,8 +183,8 @@ bool convertMesh(
 						cgltf_float texcoord[2];
 						cgltf_accessor_read_float(texcoordAccessors[k], vertexIndex, texcoord, 2);
 						const uint32_t channel = texCoordChannels[k];
-						// Note: glTF uses top-left origin, flip V coordinate
-						vertex.setTexCoord(channel, outModel.addUniqueTexCoord(convertVector2(texcoord) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f)));
+						// Load texture coordinates as-is
+						vertex.setTexCoord(channel, outModel.addUniqueTexCoord(convertVector2(texcoord)));
 					}
 				}
 
@@ -246,7 +246,7 @@ bool convertMesh(
 						cgltf_float texcoord[2];
 						cgltf_accessor_read_float(texcoordAccessors[k], i, texcoord, 2);
 						const uint32_t channel = texCoordChannels[k];
-						vertex.setTexCoord(channel, outModel.addUniqueTexCoord(convertVector2(texcoord) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f)));
+						vertex.setTexCoord(channel, outModel.addUniqueTexCoord(convertVector2(texcoord)));
 					}
 				}
 

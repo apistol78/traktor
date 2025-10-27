@@ -166,9 +166,14 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 	}
 #endif
 
-	// glTF uses Y-up, right-handed coordinate system
-	// Traktor uses Y-up, left-handed - so we need to flip Z
-	const Matrix44 axisTransform = Matrix44::identity();
+	// glTF uses Y-up, right-handed coordinate system (+X right, +Y up, +Z toward viewer)
+	// Traktor uses a different coordinate system - flip X axis
+	const Matrix44 axisTransform = Matrix44(
+		-1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
 
 	Ref< Model > model = new Model();
 	bool success = true;

@@ -123,9 +123,6 @@ Ref< drawing::Image > getEmbeddedTexture(cgltf_texture* texture, const std::wstr
 			const Path imagePath = Path(basePath) + Path(mbstows(uri));
 			return drawing::Image::load(imagePath);
 		}
-
-		//const Path texturePath = Path(basePath) + Path(mbstows(texture->image->uri));
-		//return drawing::Image::load(texturePath);
 	}
 
 	return nullptr;
