@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Model/Material.h"
+
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -13,9 +15,8 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Drawing/Image.h"
 #include "Drawing/Formats/ImageFormatTri.h"
-#include "Model/Material.h"
+#include "Drawing/Image.h"
 
 namespace traktor::model
 {
@@ -23,13 +24,13 @@ namespace traktor::model
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.model.Material", 0, Material, PropertyGroup)
 
 Material::Material(const std::wstring& name)
-:	m_name(name)
+	: m_name(name)
 {
 }
 
 Material::Material(const std::wstring& name, const Color4f& color)
-:	m_name(name)
-,	m_color(color)
+	: m_name(name)
+	, m_color(color)
 {
 }
 
@@ -130,8 +131,7 @@ void Material::setDoubleSided(bool doubleSided)
 
 void Material::serialize(ISerializer& s)
 {
-	const MemberEnum< BlendOperator >::Key c_BlendOperatorKeys[] =
-	{
+	const MemberEnum< BlendOperator >::Key c_BlendOperatorKeys[] = {
 		{ L"BoDecal", BoDecal },
 		{ L"BoAdd", BoAdd },
 		{ L"BoMultiply", BoMultiply },
@@ -151,13 +151,6 @@ void Material::serialize(ISerializer& s)
 	s >> MemberComposite< Map >(L"emissiveMap", m_emissiveMap);
 	s >> MemberComposite< Map >(L"reflectiveMap", m_reflectiveMap);
 	s >> MemberComposite< Map >(L"normalMap", m_normalMap);
-	
-	if (s.getVersion() < 3)
-	{
-		Map lightMap;
-		s >> MemberComposite< Map >(L"lightMap", lightMap);
-	}
-
 	s >> Member< Color4f >(L"color", m_color);
 	s >> Member< float >(L"diffuseTerm", m_diffuseTerm);
 	s >> Member< float >(L"specularTerm", m_specularTerm);
@@ -173,51 +166,10 @@ void Material::serialize(ISerializer& s)
 void Material::Map::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
-	
-	if (s.getVersion() >= 5)
-		s >> Member< uint32_t >(L"channel", channel);
-	else
-		s >> ObsoleteMember< std::wstring >(L"channel");
-
+	s >> Member< uint32_t >(L"channel", channel);
 	s >> Member< bool >(L"anisotropic", anisotropic);
 	s >> Member< Guid >(L"texture", texture);
-
-	if (s.getVersion() >= 4)
-	{
-		s >> MemberRef< drawing::Image >(L"image", image);
-	}
-	else
-	{
-		AlignedVector< uint8_t > blob;
-		if (s.getDirection() == ISerializer::Direction::Read)
-		{
-			s >> Member< void* >(
-				L"image",
-				[&]() { return blob.size(); },	// get blob size
-				[&](size_t size) { blob.resize(size); return true; },	// set blob size
-				[&]() { return blob.ptr(); }
-			);
-			if (!blob.empty())
-			{
-				DynamicMemoryStream ms(blob, true, false);
-				image = drawing::ImageFormatTri().read(&ms);
-			}
-		}
-		else
-		{
-			if (image)
-			{
-				DynamicMemoryStream ms(blob, false, true);
-				drawing::ImageFormatTri().write(&ms, image);
-			}
-			s >> Member< void* >(
-				L"image",
-				[&]() { return blob.size(); },	// get blob size
-				[&](size_t size) { return true; },	// set blob size
-				[&]() { return blob.ptr(); }
-			);
-		}
-	}
+	s >> MemberRef< drawing::Image >(L"image", image);
 }
 
 }
