@@ -13,30 +13,22 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector2.h"
-#include "Core/Math/Vector4.h"
 
 namespace traktor::model
 {
 
-/*! Convert cgltf vector2 to engine Vector2. */
 Vector2 convertVector2(const cgltf_float* v);
 
-/*! Convert cgltf vector3 to engine position vector (w=1). */
 Vector4 convertPosition(const cgltf_float* v);
 
-/*! Convert cgltf vector3 to engine normal vector (w=0). */
 Vector4 convertNormal(const cgltf_float* v);
 
-/*! Convert cgltf 4x4 matrix to engine Matrix44. */
+Vector4 convertVector4(const cgltf_float* v);
+
 Matrix44 convertMatrix(const cgltf_float* m);
 
-/*! Convert cgltf color to engine Color4f. */
-Color4f convertColor(const cgltf_float* c, cgltf_size count);
+Color4f convertColor3(const cgltf_float* c);
 
-/*! Get node's local transform matrix. */
-Matrix44 getNodeTransform(const cgltf_node* node);
-
-/*! Calculate coordinate system transform for GLTF (Y-up, right-handed) to engine coordinates. */
-Matrix44 calculateGltfAxisTransform();
+Color4f convertColor4(const cgltf_float* c);
 
 }

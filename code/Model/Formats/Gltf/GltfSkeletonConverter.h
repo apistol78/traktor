@@ -13,7 +13,9 @@
 
 namespace traktor
 {
+
 class Matrix44;
+
 }
 
 namespace traktor::model
@@ -22,33 +24,17 @@ namespace traktor::model
 class Model;
 class Pose;
 
-/*! Convert GLTF skin to engine skeleton.
- *
- * \param outModel Output model to add skeleton to.
- * \param data GLTF data containing skin information.
- * \param skin GLTF skin to convert.
- * \param axisTransform Coordinate system transformation matrix.
- * \return True if conversion succeeded.
- */
 bool convertSkeleton(
 	Model& outModel,
-	const cgltf_data* data,
-	const cgltf_skin* skin,
+	cgltf_data* data,
+	cgltf_skin* skin,
 	const Matrix44& axisTransform);
 
-/*! Convert GLTF animation to engine pose at specific time.
- *
- * \param model Engine model containing skeleton.
- * \param data GLTF data containing animation.
- * \param animation GLTF animation to convert.
- * \param time Time in seconds to sample animation.
- * \param axisTransform Coordinate system transformation matrix.
- * \return Pose at specified time, or null if conversion failed.
- */
 Ref< Pose > convertPose(
 	const Model& model,
-	const cgltf_data* data,
-	const cgltf_animation* animation,
+	cgltf_data* data,
+	cgltf_animation* anim,
+	cgltf_skin* skin,
 	float time,
 	const Matrix44& axisTransform);
 

@@ -6,32 +6,38 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+
 #include "Model/Formats/Gltf/ModelFormatGltf.h"
 
-#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Model/Formats/Gltf/GltfConversion.h"
-#include "Model/Formats/Gltf/GltfMaterialConverter.h"
 #include "Model/Formats/Gltf/GltfMeshConverter.h"
 #include "Model/Formats/Gltf/GltfSkeletonConverter.h"
 #include "Model/Model.h"
 #include "Model/Operations/CleanDuplicates.h"
 
 #include <functional>
-#include <limits>
 
 namespace traktor::model
 {
 namespace
 {
 
-bool include(const cgltf_node* node, const std::wstring& filter)
+bool include(cgltf_node* node, const std::wstring& filter)
 {
 	if (!node)
 		return false;
+
+	// Always accept root nodes
+	if (!node->parent)
+		return true;
+
+	// Only filter on first level of child nodes
+	if (node->parent && node->parent->parent)
+		return true;
 
 	// Empty filter means everything is included
 	if (filter.empty())
@@ -39,11 +45,8 @@ bool include(const cgltf_node* node, const std::wstring& filter)
 
 	// Check if node's name matches filter tag
 	const std::wstring name = node->name ? mbstows(node->name) : L"";
-
-	// Simple include/exclude logic based on comma-separated list
 	for (auto s : StringSplit< std::wstring >(filter, L",;"))
 	{
-		s = trim(s);
 		if (s.front() != L'!')
 		{
 			if (s == name)
@@ -59,20 +62,42 @@ bool include(const cgltf_node* node, const std::wstring& filter)
 	return false;
 }
 
-bool traverseNodes(const cgltf_data* data, const cgltf_node* node, const std::wstring& filter, const std::function< bool(const cgltf_node* node) >& visitor)
+cgltf_node* search(cgltf_node* node, const std::wstring& filter, const std::function< bool(cgltf_node* node) >& predicate)
+{
+	if (!include(node, filter))
+		return nullptr;
+
+	if (predicate(node))
+		return node;
+
+	for (cgltf_size i = 0; i < node->children_count; ++i)
+	{
+		cgltf_node* child = node->children[i];
+		if (child)
+		{
+			cgltf_node* foundNode = search(child, filter, predicate);
+			if (foundNode)
+				return foundNode;
+		}
+	}
+
+	return nullptr;
+}
+
+bool traverse(cgltf_node* node, const std::wstring& filter, const std::function< bool(cgltf_node* node, int32_t) >& visitor, int32_t depth = 0)
 {
 	if (!include(node, filter))
 		return true;
 
-	if (!visitor(node))
+	if (!visitor(node, depth))
 		return false;
 
 	for (cgltf_size i = 0; i < node->children_count; ++i)
 	{
-		const cgltf_node* child = node->children[i];
+		cgltf_node* child = node->children[i];
 		if (child)
 		{
-			if (!traverseNodes(data, child, filter, visitor))
+			if (!traverse(child, filter, visitor, depth + 1))
 				return false;
 		}
 	}
@@ -86,38 +111,34 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatGltf", 0, ModelFormatG
 
 void ModelFormatGltf::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
 {
-	outDescription = L"glTF 2.0";
+	outDescription = L"GLTF";
 	outExtensions.push_back(L"gltf");
 	outExtensions.push_back(L"glb");
 }
 
 bool ModelFormatGltf::supportFormat(const std::wstring& extension) const
 {
-	return compareIgnoreCase(extension, L"gltf") == 0 ||
-		compareIgnoreCase(extension, L"glb") == 0;
+	return compareIgnoreCase(extension, L"gltf") == 0 || compareIgnoreCase(extension, L"glb") == 0;
 }
 
 Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& filter) const
 {
-	// Setup cgltf options
 	cgltf_options options = {};
-
-	// Parse the GLTF file
 	cgltf_data* data = nullptr;
-	const std::string filePathStr = wstombs(filePath.getPathNameOS());
-	cgltf_result result = cgltf_parse_file(&options, filePathStr.c_str(), &data);
 
+	// Parse the glTF file
+	cgltf_result result = cgltf_parse_file(&options, wstombs(filePath.getPathNameOS()).c_str(), &data);
 	if (result != cgltf_result_success)
 	{
-		log::error << L"Failed to parse GLTF file: " << filePath.getPathNameOS() << L" (error " << (int)result << L")" << Endl;
+		log::error << L"Failed to parse GLTF file: " << filePath.getPathNameOS() << Endl;
 		return nullptr;
 	}
 
 	// Load buffers
-	result = cgltf_load_buffers(&options, data, filePathStr.c_str());
+	result = cgltf_load_buffers(&options, data, wstombs(filePath.getPathNameOS()).c_str());
 	if (result != cgltf_result_success)
 	{
-		log::error << L"Failed to load GLTF buffers: " << filePath.getPathNameOS() << L" (error " << (int)result << L")" << Endl;
+		log::error << L"Failed to load GLTF buffers: " << filePath.getPathNameOS() << Endl;
 		cgltf_free(data);
 		return nullptr;
 	}
@@ -126,181 +147,137 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 	result = cgltf_validate(data);
 	if (result != cgltf_result_success)
 	{
-		log::warning << L"GLTF validation failed: " << filePath.getPathNameOS() << L" (error " << (int)result << L")" << Endl;
-		// Continue anyway - validation failures might not be critical
+		log::warning << L"GLTF validation warnings: " << filePath.getPathNameOS() << Endl;
 	}
 
 #if defined(_DEBUG)
-	// Debug output
-	log::info << L"GLTF file loaded successfully:" << Endl;
-	log::info << L"  Meshes: " << data->meshes_count << Endl;
-	log::info << L"  Materials: " << data->materials_count << Endl;
-	log::info << L"  Nodes: " << data->nodes_count << Endl;
-	log::info << L"  Animations: " << data->animations_count << Endl;
-	log::info << L"  Skins: " << data->skins_count << Endl;
+	// Debug output scene hierarchy
+	if (data->scene && data->scene->nodes_count > 0)
+	{
+		for (cgltf_size i = 0; i < data->scene->nodes_count; ++i)
+		{
+			traverse(data->scene->nodes[i], L"", [](cgltf_node* node, int32_t depth) {
+				for (int32_t j = 0; j < depth; ++j)
+					log::info << L" ";
+				log::info << (node->name ? mbstows(node->name) : L"<unnamed>") << Endl;
+				return true;
+			});
+		}
+	}
 #endif
 
-	// Calculate axis transform
-	const Matrix44 axisTransform = calculateGltfAxisTransform();
+	// glTF uses Y-up, right-handed coordinate system
+	// Traktor uses Y-up, left-handed - so we need to flip Z
+	const Matrix44 axisTransform = Matrix44::identity();
 
 	Ref< Model > model = new Model();
 	bool success = true;
 
-	// Convert materials first
-	SmallMap< cgltf_size, int32_t > materialMap;
-	if (data->materials_count > 0)
-	{
-		if (!convertMaterials(*model, materialMap, data, filePath))
-		{
-			log::error << L"Failed to convert materials." << Endl;
-			success = false;
-		}
-	}
+	const std::wstring basePath = filePath.getPathOnly();
 
 	// Convert skeleton if present
-	if (success && data->skins_count > 0)
+	cgltf_skin* skin = nullptr;
+	if (data->skins_count > 0)
 	{
-		// Use the first skin for now
-		const cgltf_skin* skin = &data->skins[0];
+		skin = &data->skins[0]; // Use first skin
 		if (!convertSkeleton(*model, data, skin, axisTransform))
 		{
-			log::error << L"Failed to convert skeleton." << Endl;
-			success = false;
+			log::warning << L"Failed to convert skeleton." << Endl;
 		}
 	}
 
 	// Convert meshes
-	if (success)
+	if (data->scene && data->scene->nodes_count > 0)
 	{
-		// Process scene nodes or all nodes if no scene is specified
-		const cgltf_scene* scene = data->scene ? data->scene : (data->scenes_count > 0 ? &data->scenes[0] : nullptr);
-
-		if (scene)
+		for (cgltf_size i = 0; i < data->scene->nodes_count; ++i)
 		{
-			// Process scene nodes
-			for (cgltf_size i = 0; i < scene->nodes_count; ++i)
-			{
-				const cgltf_node* node = scene->nodes[i];
-				if (!traverseNodes(data, node, filter, [&](const cgltf_node* n) {
-					if (n->mesh)
-					{
-						if (!convertMesh(*model, data, n, materialMap, axisTransform))
-						{
-							log::error << L"Failed to convert mesh for node." << Endl;
-							success = false;
-							return false;
-						}
-					}
-					return true;
-				}))
-					break;
-			}
-		}
-		else
-		{
-			// Process all nodes
-			for (cgltf_size i = 0; i < data->nodes_count; ++i)
-			{
-				const cgltf_node* node = &data->nodes[i];
-				if (include(node, filter) && node->mesh)
+			success &= traverse(data->scene->nodes[i], filter, [&](cgltf_node* node, int32_t) {
+				if (node->mesh != nullptr)
 				{
-					if (!convertMesh(*model, data, node, materialMap, axisTransform))
-					{
-						log::error << L"Failed to convert mesh for node " << i << Endl;
-						success = false;
-						break;
-					}
+					if (!convertMesh(*model, data, node, axisTransform, basePath))
+						return false;
 				}
-			}
+				return true;
+			});
 		}
 	}
 
 	// Convert animations
-	if (success && data->animations_count > 0 && model->getJointCount() > 0)
+	if (skin && data->animations_count > 0)
 	{
 		for (cgltf_size i = 0; i < data->animations_count; ++i)
 		{
-			const cgltf_animation* animation = &data->animations[i];
+			cgltf_animation* anim = &data->animations[i];
+			std::wstring animName = anim->name ? mbstows(anim->name) : L"Animation_" + toString(i);
 
-			Ref< Animation > anim = new Animation();
-			anim->setName(animation->name ? mbstows(animation->name) : (L"Animation_" + toString(i)));
+			Ref< Animation > animation = new Animation();
+			animation->setName(animName);
 
-			// Sample animation at 30 FPS
-			// Find animation duration
-			float duration = 0.0f;
-			for (cgltf_size j = 0; j < animation->channels_count; ++j)
+			// Find animation time range
+			float minTime = std::numeric_limits<float>::max();
+			float maxTime = std::numeric_limits<float>::min();
+
+			for (cgltf_size j = 0; j < anim->samplers_count; ++j)
 			{
-				const cgltf_animation_channel* channel = &animation->channels[j];
-				if (channel->sampler && channel->sampler->input)
+				cgltf_animation_sampler* sampler = &anim->samplers[j];
+				if (sampler->input)
 				{
-					const cgltf_accessor* timeAccessor = channel->sampler->input;
-					if (timeAccessor->count > 0)
+					for (cgltf_size k = 0; k < sampler->input->count; ++k)
 					{
-						cgltf_float maxTime;
-						if (cgltf_accessor_read_float(timeAccessor, timeAccessor->count - 1, &maxTime, 1))
-							duration = std::max(duration, maxTime);
+						float t;
+						cgltf_accessor_read_float(sampler->input, k, &t, 1);
+						minTime = std::min(minTime, t);
+						maxTime = std::max(maxTime, t);
 					}
 				}
 			}
 
-			if (duration > 0.0f)
+			// Sample animation at 30 fps
+			const float fps = 30.0f;
+			const int32_t startFrame = int32_t(minTime * fps);
+			const int32_t endFrame = int32_t(maxTime * fps);
+
+			for (int32_t frame = startFrame; frame <= endFrame; ++frame)
 			{
-				const float frameRate = 30.0f;
-				const int32_t frameCount = (int32_t)(duration * frameRate) + 1;
+				const float time = float(frame) / fps;
 
-				for (int32_t frame = 0; frame < frameCount; ++frame)
+				Ref< Pose > pose = convertPose(*model, data, anim, skin, time, axisTransform);
+				if (!pose)
 				{
-					const float time = frame / frameRate;
-
-					Ref< Pose > pose = convertPose(*model, data, animation, time, axisTransform);
-					if (pose)
-						anim->insertKeyFrame(time, pose);
+					log::warning << L"Failed to convert pose at frame " << frame << Endl;
+					continue;
 				}
 
-				model->addAnimation(anim);
+				animation->insertKeyFrame(time, pose);
 			}
+
+			model->addAnimation(animation);
 		}
 	}
 
-	// Cleanup
 	cgltf_free(data);
 
 	if (!success)
 		return nullptr;
 
-	// Create default material if needed
-	uint32_t defaultMaterialIndex = c_InvalidIndex;
+	// Remove anonymous faces
+	AlignedVector< Polygon > keepPolygons;
+	keepPolygons.reserve(model->getPolygonCount());
 	for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
 	{
 		const Polygon& polygon = model->getPolygon(i);
-		if (polygon.getMaterial() == c_InvalidIndex)
-		{
-			if (defaultMaterialIndex == c_InvalidIndex)
-			{
-				Material material;
-				material.setName(L"GLTF_Default");
-				material.setColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
-				material.setDiffuseTerm(1.0f);
-				material.setSpecularTerm(1.0f);
-				material.setRoughness(0.5f);
-				material.setMetalness(0.0f);
-				defaultMaterialIndex = model->addMaterial(material);
-			}
-
-			Polygon replacement = polygon;
-			replacement.setMaterial(defaultMaterialIndex);
-			model->setPolygon(i, replacement);
-		}
+		if (polygon.getMaterial() != c_InvalidIndex)
+			keepPolygons.push_back(polygon);
 	}
+	model->setPolygons(keepPolygons);
 
-	// Ensure texture coordinate channels are properly assigned
+	// Set default texture channel for materials
 	const auto& channels = model->getTexCoordChannels();
 	if (!channels.empty())
 	{
 		auto materials = model->getMaterials();
 		for (auto& material : materials)
 		{
-			// Set default texture coordinate channel for maps that don't have one assigned
 			{
 				auto map = material.getDiffuseMap();
 				if (map.channel == c_InvalidIndex)
@@ -353,7 +330,6 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 		model->setMaterials(materials);
 	}
 
-	// Clean up duplicate vertices and optimize the model
 	model->apply(CleanDuplicates(std::numeric_limits< float >::min()));
 
 	return model;
@@ -361,7 +337,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 
 bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 {
-	// Writing GLTF files is not implemented yet
+	// Writing glTF is not implemented
 	return false;
 }
 

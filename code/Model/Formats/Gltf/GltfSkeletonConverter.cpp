@@ -10,341 +10,311 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
-#include "Core/Misc/String.h"
+#include "Core/Math/Vector4.h"
 #include "Core/Misc/TString.h"
 #include "Model/Formats/Gltf/GltfConversion.h"
 #include "Model/Model.h"
 #include "Model/Pose.h"
+
+#include <functional>
 
 namespace traktor::model
 {
 namespace
 {
 
-std::wstring getNodeName(const cgltf_node* node)
+std::wstring getJointName(cgltf_node* node)
 {
-	if (node->name)
-		return mbstows(node->name);
-	else
-		return L"Joint_" + toString((uintptr_t)node);
+	return node->name ? mbstows(node->name) : L"";
 }
 
-float sampleAnimation(const cgltf_accessor* timeAccessor, const cgltf_accessor* valueAccessor, float time, cgltf_size componentIndex, cgltf_interpolation_type interpolation)
+bool traverse(cgltf_node* parent, cgltf_node* node, const std::function< bool(cgltf_node* parent, cgltf_node* node) >& visitor)
 {
-	if (!timeAccessor || !valueAccessor || timeAccessor->count == 0)
-		return 0.0f;
+	if (!node)
+		return true;
 
-	// Find the time frame
-	cgltf_size frameIndex = 0;
-	float frameTime0 = 0.0f, frameTime1 = 0.0f;
+	if (!visitor(parent, node))
+		return false;
 
-	// Simple linear search for now
-	for (cgltf_size i = 0; i < timeAccessor->count - 1; ++i)
+	for (cgltf_size i = 0; i < node->children_count; ++i)
 	{
-		cgltf_accessor_read_float(timeAccessor, i, &frameTime0, 1);
-		cgltf_accessor_read_float(timeAccessor, i + 1, &frameTime1, 1);
-
-		if (time >= frameTime0 && time <= frameTime1)
+		cgltf_node* child = node->children[i];
+		if (child)
 		{
-			frameIndex = i;
-			break;
+			if (!traverse(node, child, visitor))
+				return false;
 		}
 	}
 
-	// Handle edge cases
-	if (time <= frameTime0)
-	{
-		// Before first frame
-		cgltf_float value;
-		if (!cgltf_accessor_read_float(valueAccessor, 0, &value, 1))
-			return 0.0f;
-		return value;
-	}
-
-	if (frameIndex >= timeAccessor->count - 1)
-	{
-		// After last frame
-		cgltf_float value;
-		if (!cgltf_accessor_read_float(valueAccessor, timeAccessor->count - 1, &value, 1))
-			return 0.0f;
-		return value;
-	}
-
-	// Interpolate between frames
-	const float t = (time - frameTime0) / (frameTime1 - frameTime0);
-
-	cgltf_float value0, value1;
-	if (!cgltf_accessor_read_float(valueAccessor, frameIndex, &value0, 1) ||
-		!cgltf_accessor_read_float(valueAccessor, frameIndex + 1, &value1, 1))
-		return 0.0f;
-
-	switch (interpolation)
-	{
-	case cgltf_interpolation_type_step:
-		return value0;
-
-	case cgltf_interpolation_type_linear:
-		return value0 + t * (value1 - value0);
-
-	case cgltf_interpolation_type_cubic_spline:
-		// TODO: Implement cubic spline interpolation
-		return value0 + t * (value1 - value0);
-
-	default:
-		return value0;
-	}
+	return true;
 }
 
-Vector4 sampleVector(const cgltf_accessor* timeAccessor, const cgltf_accessor* valueAccessor, float time, cgltf_interpolation_type interpolation, cgltf_size componentCount)
+void getNodeLocalTransform(cgltf_node* node, cgltf_float* outMatrix)
 {
-	Vector4 result(0.0f, 0.0f, 0.0f, componentCount == 4 ? 1.0f : 0.0f);
-
-	if (!timeAccessor || !valueAccessor || timeAccessor->count == 0)
-		return result;
-
-	// Find the time frame
-	cgltf_size frameIndex = 0;
-	float frameTime0 = 0.0f, frameTime1 = 0.0f;
-
-	for (cgltf_size i = 0; i < timeAccessor->count - 1; ++i)
-	{
-		cgltf_accessor_read_float(timeAccessor, i, &frameTime0, 1);
-		cgltf_accessor_read_float(timeAccessor, i + 1, &frameTime1, 1);
-
-		if (time >= frameTime0 && time <= frameTime1)
-		{
-			frameIndex = i;
-			break;
-		}
-	}
-
-	// Handle edge cases
-	if (time <= frameTime0)
-	{
-		cgltf_float values[4];
-		if (cgltf_accessor_read_float(valueAccessor, 0, values, componentCount))
-			for (cgltf_size i = 0; i < componentCount && i < 4; ++i)
-				result.set(i, Scalar(values[i]));
-		return result;
-	}
-
-	if (frameIndex >= timeAccessor->count - 1)
-	{
-		cgltf_float values[4];
-		if (cgltf_accessor_read_float(valueAccessor, timeAccessor->count - 1, values, componentCount))
-			for (cgltf_size i = 0; i < componentCount && i < 4; ++i)
-				result.set(i, Scalar(values[i]));
-		return result;
-	}
-
-	// Interpolate between frames
-	const float t = (time - frameTime0) / (frameTime1 - frameTime0);
-
-	cgltf_float values0[4], values1[4];
-	if (cgltf_accessor_read_float(valueAccessor, frameIndex, values0, componentCount) &&
-		cgltf_accessor_read_float(valueAccessor, frameIndex + 1, values1, componentCount))
-	{
-		for (cgltf_size i = 0; i < componentCount && i < 4; ++i)
-		{
-			switch (interpolation)
-			{
-			case cgltf_interpolation_type_step:
-				result.set(i, Scalar(values0[i]));
-				break;
-
-			case cgltf_interpolation_type_linear:
-				result.set(i, Scalar(values0[i] + t * (values1[i] - values0[i])));
-				break;
-
-			case cgltf_interpolation_type_cubic_spline:
-				// TODO: Implement cubic spline interpolation
-				result.set(i, Scalar(values0[i] + t * (values1[i] - values0[i])));
-				break;
-
-			default:
-				result.set(i, Scalar(values0[i]));
-				break;
-			}
-		}
-	}
-
-	return result;
+	cgltf_node_transform_local(node, outMatrix);
 }
 
 }
 
 bool convertSkeleton(
 	Model& outModel,
-	const cgltf_data* data,
-	const cgltf_skin* skin,
+	cgltf_data* data,
+	cgltf_skin* skin,
 	const Matrix44& axisTransform)
 {
 	if (!skin || skin->joints_count == 0)
 		return false;
 
-	AlignedVector< Joint > joints;
-	joints.reserve(skin->joints_count);
-
-	// First pass: create all joints
-	for (cgltf_size i = 0; i < skin->joints_count; ++i)
+	// Get inverse bind matrices
+	AlignedVector< Matrix44 > inverseBindMatrices;
+	if (skin->inverse_bind_matrices)
 	{
-		const cgltf_node* jointNode = skin->joints[i];
-		if (!jointNode)
+		inverseBindMatrices.resize(skin->inverse_bind_matrices->count);
+		for (cgltf_size i = 0; i < skin->inverse_bind_matrices->count; ++i)
 		{
-			log::error << L"Invalid joint node in skin." << Endl;
-			return false;
+			cgltf_float matrix[16];
+			cgltf_accessor_read_float(skin->inverse_bind_matrices, i, matrix, 16);
+			inverseBindMatrices[i] = convertMatrix(matrix);
 		}
-
-		Joint joint;
-		joint.setName(getNodeName(jointNode));
-		joint.setParent(c_InvalidIndex); // Will be set in second pass
-
-		// Get node transform
-		Matrix44 nodeTransform = getNodeTransform(jointNode);
-
-		// Apply inverse bind matrix if available
-		if (skin->inverse_bind_matrices && i < skin->inverse_bind_matrices->count)
-		{
-			cgltf_float invBindMatrix[16];
-			if (cgltf_accessor_read_float(skin->inverse_bind_matrices, i, invBindMatrix, 16))
-			{
-				Matrix44 invBind = convertMatrix(invBindMatrix);
-				// The joint transform should incorporate the inverse bind matrix
-				// For now, we'll use the node transform directly
-			}
-		}
-
-		// Apply axis transform
-		nodeTransform = axisTransform * nodeTransform;
-		joint.setTransform(Transform(nodeTransform));
-
-		joints.push_back(joint);
 	}
 
-	// Second pass: set up parent relationships
+	// Process all joints in the skin
 	for (cgltf_size i = 0; i < skin->joints_count; ++i)
 	{
-		const cgltf_node* jointNode = skin->joints[i];
+		cgltf_node* jointNode = skin->joints[i];
+		const std::wstring jointName = getJointName(jointNode);
 
+		// Get local transform
+		cgltf_float localMatrix[16];
+		getNodeLocalTransform(jointNode, localMatrix);
+		Matrix44 Mlocal = convertMatrix(localMatrix);
+
+		// Apply axis transform if this is a root joint (no parent or parent is not a joint)
+		bool isRootJoint = true;
 		if (jointNode->parent)
 		{
-			// Find parent in joints array
+			// Check if parent is also a joint in this skin
 			for (cgltf_size j = 0; j < skin->joints_count; ++j)
 			{
 				if (skin->joints[j] == jointNode->parent)
 				{
-					joints[i].setParent((uint32_t)j);
-
-					// Convert to relative transform
-					const Matrix44 parentTransform = joints[j].getTransform().toMatrix44();
-					const Matrix44 currentTransform = joints[i].getTransform().toMatrix44();
-					const Matrix44 relativeTransform = parentTransform.inverse() * currentTransform;
-					joints[i].setTransform(Transform(relativeTransform));
+					isRootJoint = false;
 					break;
 				}
 			}
 		}
+
+		Matrix44 Mjoint = Mlocal;
+		if (isRootJoint)
+		{
+			// Apply axis transform for root joints
+			Mjoint = axisTransform * Mlocal;
+		}
+
+		// Find parent joint index
+		uint32_t parentId = c_InvalidIndex;
+		if (jointNode->parent)
+		{
+			const std::wstring parentJointName = getJointName(jointNode->parent);
+			parentId = outModel.findJointIndex(parentJointName);
+		}
+
+		Joint joint;
+		joint.setParent(parentId);
+		joint.setName(jointName);
+		joint.setTransform(Transform(Mjoint));
+		outModel.addJoint(joint);
 	}
 
-	// Add joints to model
-	outModel.setJoints(joints);
 	return true;
 }
 
 Ref< Pose > convertPose(
 	const Model& model,
-	const cgltf_data* data,
-	const cgltf_animation* animation,
+	cgltf_data* data,
+	cgltf_animation* anim,
+	cgltf_skin* skin,
 	float time,
 	const Matrix44& axisTransform)
 {
-	if (!animation || animation->channels_count == 0)
+	if (!anim || !skin)
 		return nullptr;
 
 	Ref< Pose > pose = new Pose();
 
-	// Process each animation channel
-	for (cgltf_size i = 0; i < animation->channels_count; ++i)
+	// For each joint in the skeleton
+	for (cgltf_size jointIdx = 0; jointIdx < skin->joints_count; ++jointIdx)
 	{
-		const cgltf_animation_channel* channel = &animation->channels[i];
+		cgltf_node* jointNode = skin->joints[jointIdx];
+		const std::wstring jointName = getJointName(jointNode);
+		const uint32_t traktorJointIdx = model.findJointIndex(jointName);
 
-		if (!channel->target_node || !channel->sampler)
+		if (traktorJointIdx == c_InvalidIndex)
 			continue;
 
-		// Find joint index in model
-		const std::wstring jointName = getNodeName(channel->target_node);
-		const uint32_t jointIndex = model.findJointIndex(jointName);
+		// Find animation channels that target this joint
+		Vector4 translation(0.0f, 0.0f, 0.0f, 1.0f);
+		Vector4 rotation(0.0f, 0.0f, 0.0f, 1.0f); // quaternion (x, y, z, w)
+		Vector4 scale(1.0f, 1.0f, 1.0f, 0.0f);
 
-		if (jointIndex == c_InvalidIndex)
+		bool hasTranslation = false;
+		bool hasRotation = false;
+		bool hasScale = false;
+
+		for (cgltf_size chanIdx = 0; chanIdx < anim->channels_count; ++chanIdx)
 		{
-			log::warning << L"Joint \"" << jointName << L"\" not found in skeleton." << Endl;
-			continue;
+			cgltf_animation_channel* channel = &anim->channels[chanIdx];
+			if (channel->target_node != jointNode)
+				continue;
+
+			cgltf_animation_sampler* sampler = channel->sampler;
+			if (!sampler)
+				continue;
+
+			// Find the appropriate keyframe time indices
+			cgltf_accessor* timeAccessor = sampler->input;
+			cgltf_accessor* valueAccessor = sampler->output;
+
+			if (!timeAccessor || !valueAccessor)
+				continue;
+
+			// Simple linear interpolation between keyframes
+			cgltf_size keyIndex = 0;
+			for (cgltf_size i = 0; i < timeAccessor->count - 1; ++i)
+			{
+				float t0, t1;
+				cgltf_accessor_read_float(timeAccessor, i, &t0, 1);
+				cgltf_accessor_read_float(timeAccessor, i + 1, &t1, 1);
+				if (time >= t0 && time <= t1)
+				{
+					keyIndex = i;
+					break;
+				}
+			}
+
+			float t0, t1;
+			cgltf_accessor_read_float(timeAccessor, keyIndex, &t0, 1);
+			cgltf_accessor_read_float(timeAccessor, keyIndex + 1 < timeAccessor->count ? keyIndex + 1 : keyIndex, &t1, 1);
+
+			float alpha = (t1 - t0) > 0.0f ? (time - t0) / (t1 - t0) : 0.0f;
+			alpha = clamp(alpha, 0.0f, 1.0f);
+
+			switch (channel->target_path)
+			{
+			case cgltf_animation_path_type_translation:
+				{
+					cgltf_float v0[3], v1[3];
+					cgltf_accessor_read_float(valueAccessor, keyIndex, v0, 3);
+					cgltf_accessor_read_float(valueAccessor, keyIndex + 1 < valueAccessor->count ? keyIndex + 1 : keyIndex, v1, 3);
+					translation = lerp(convertPosition(v0), convertPosition(v1), Scalar(alpha));
+					hasTranslation = true;
+				}
+				break;
+
+			case cgltf_animation_path_type_rotation:
+				{
+					cgltf_float q0[4], q1[4];
+					cgltf_accessor_read_float(valueAccessor, keyIndex, q0, 4);
+					cgltf_accessor_read_float(valueAccessor, keyIndex + 1 < valueAccessor->count ? keyIndex + 1 : keyIndex, q1, 4);
+					// Quaternion slerp would be better but lerp is simpler
+					rotation = lerp(convertVector4(q0), convertVector4(q1), Scalar(alpha)).normalized();
+					hasRotation = true;
+				}
+				break;
+
+			case cgltf_animation_path_type_scale:
+				{
+					cgltf_float s0[3], s1[3];
+					cgltf_accessor_read_float(valueAccessor, keyIndex, s0, 3);
+					cgltf_accessor_read_float(valueAccessor, keyIndex + 1 < valueAccessor->count ? keyIndex + 1 : keyIndex, s1, 3);
+					scale = lerp(convertPosition(s0), convertPosition(s1), Scalar(alpha));
+					hasScale = true;
+				}
+				break;
+
+			default:
+				break;
+			}
 		}
 
-		const cgltf_animation_sampler* sampler = channel->sampler;
-
-		// Get current joint transform
-		Transform currentTransform = pose->getJointTransform(jointIndex);
-		Matrix44 transformMatrix = currentTransform.toMatrix44();
-
-		// Sample animation data based on target path
-		switch (channel->target_path)
+		// If no animation data, use bind pose
+		if (!hasTranslation && !hasRotation && !hasScale)
 		{
-		case cgltf_animation_path_type_translation:
+			if (jointNode->has_matrix)
 			{
-				Vector4 translation = sampleVector(
-					sampler->input,
-					sampler->output,
-					time,
-					sampler->interpolation,
-					3);
-				Vector4 transformedTranslation = axisTransform * translation;
-				// Create new transform matrix with updated translation
-				transformMatrix = Matrix44(
-					transformMatrix.axisX(),
-					transformMatrix.axisY(),
-					transformMatrix.axisZ(),
-					transformedTranslation);
+				Matrix44 m = convertMatrix(jointNode->matrix);
+				pose->setJointTransform(traktorJointIdx, Transform(m));
 			}
-			break;
-
-		case cgltf_animation_path_type_rotation:
+			else
 			{
-				Vector4 rotation = sampleVector(
-					sampler->input,
-					sampler->output,
-					time,
-					sampler->interpolation,
-					4);
-				Quaternion quat(rotation);
-				Matrix44 rotMatrix = quat.toMatrix44();
-				// Apply to existing transform
-				transformMatrix = transformMatrix * (axisTransform * rotMatrix * axisTransform.inverse());
+				if (jointNode->has_translation)
+					translation = convertPosition(jointNode->translation);
+				if (jointNode->has_rotation)
+					rotation = convertVector4(jointNode->rotation);
+				if (jointNode->has_scale)
+					scale = convertPosition(jointNode->scale);
+
+				// Build transform from TRS
+				Matrix44 T = translate(translation.xyz1());
+				Matrix44 R = Matrix44::identity(); // Convert quaternion to matrix
+				{
+					float x = rotation.x(), y = rotation.y(), z = rotation.z(), w = rotation.w();
+					float xx = x * x, yy = y * y, zz = z * z;
+					float xy = x * y, xz = x * z, yz = y * z;
+					float wx = w * x, wy = w * y, wz = w * z;
+					R = Matrix44(
+						1.0f - 2.0f * (yy + zz),
+						2.0f * (xy + wz),
+						2.0f * (xz - wy),
+						0.0f,
+						2.0f * (xy - wz),
+						1.0f - 2.0f * (xx + zz),
+						2.0f * (yz + wx),
+						0.0f,
+						2.0f * (xz + wy),
+						2.0f * (yz - wx),
+						1.0f - 2.0f * (xx + yy),
+						0.0f,
+						0.0f,
+						0.0f,
+						0.0f,
+						1.0f);
+				}
+				Matrix44 S = traktor::scale(scale.x(), scale.y(), scale.z());
+				pose->setJointTransform(traktorJointIdx, Transform(T * R * S));
 			}
-			break;
-
-		case cgltf_animation_path_type_scale:
-			{
-				Vector4 scaleVec = sampleVector(
-					sampler->input,
-					sampler->output,
-					time,
-					sampler->interpolation,
-					3);
-				Matrix44 scaleMatrix = traktor::scale(scaleVec.x(), scaleVec.y(), scaleVec.z());
-				transformMatrix = transformMatrix * scaleMatrix;
-			}
-			break;
-
-		case cgltf_animation_path_type_weights:
-			// Morph target weights - not supported in basic joint animation
-			break;
-
-		default:
-			break;
 		}
-
-		pose->setJointTransform(jointIndex, Transform(transformMatrix));
+		else
+		{
+			// Build transform from TRS
+			Matrix44 T = translate(translation.xyz1());
+			Matrix44 R = Matrix44::identity(); // Convert quaternion to matrix
+			{
+				float x = rotation.x(), y = rotation.y(), z = rotation.z(), w = rotation.w();
+				float xx = x * x, yy = y * y, zz = z * z;
+				float xy = x * y, xz = x * z, yz = y * z;
+				float wx = w * x, wy = w * y, wz = w * z;
+				R = Matrix44(
+					1.0f - 2.0f * (yy + zz),
+					2.0f * (xy + wz),
+					2.0f * (xz - wy),
+					0.0f,
+					2.0f * (xy - wz),
+					1.0f - 2.0f * (xx + zz),
+					2.0f * (yz + wx),
+					0.0f,
+					2.0f * (xz + wy),
+					2.0f * (yz - wx),
+					1.0f - 2.0f * (xx + yy),
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f);
+			}
+			Matrix44 S = traktor::scale(scale.x(), scale.y(), scale.z());
+			pose->setJointTransform(traktorJointIdx, Transform(T * R * S));
+		}
 	}
 
 	return pose;

@@ -9,10 +9,12 @@
 #include "Model/Formats/Gltf/GltfMeshConverter.h"
 
 #include "Core/Log/Log.h"
-#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Model/Formats/Gltf/GltfConversion.h"
+#include "Model/Formats/Gltf/GltfMaterialConverter.h"
 #include "Model/Model.h"
+
+#include <Core/Misc/String.h>
 
 namespace traktor::model
 {
@@ -28,84 +30,56 @@ Matrix44 normalize(const Matrix44& m)
 		m.translation());
 }
 
-bool unpackAccessorData(const cgltf_accessor* accessor, AlignedVector< cgltf_float >& outData)
+void getNodeTransform(cgltf_node* node, cgltf_float* outMatrix)
 {
-	if (!accessor)
-		return false;
-
-	const cgltf_size componentCount = cgltf_num_components(accessor->type);
-	const cgltf_size totalFloats = accessor->count * componentCount;
-
-	outData.resize(totalFloats);
-	const cgltf_size unpacked = cgltf_accessor_unpack_floats(accessor, outData.ptr(), totalFloats);
-
-	return unpacked == totalFloats;
-}
-
-bool unpackIndices(const cgltf_accessor* accessor, AlignedVector< uint32_t >& outIndices)
-{
-	if (!accessor)
-		return false;
-
-	outIndices.resize(accessor->count);
-	const cgltf_size unpacked = cgltf_accessor_unpack_indices(accessor, outIndices.ptr(), sizeof(uint32_t), accessor->count);
-
-	return unpacked == accessor->count;
+	cgltf_node_transform_world(node, outMatrix);
 }
 
 }
 
 bool convertMesh(
 	Model& outModel,
-	const cgltf_data* data,
-	const cgltf_node* node,
-	const SmallMap< cgltf_size, int32_t >& materialMap,
-	const Matrix44& axisTransform)
+	cgltf_data* data,
+	cgltf_node* meshNode,
+	const Matrix44& axisTransform,
+	const std::wstring& basePath)
 {
-	if (!node->mesh)
-		return false;
+	T_FATAL_ASSERT(meshNode->mesh != nullptr);
 
-	const cgltf_mesh* mesh = node->mesh;
-	const uint32_t positionBase = uint32_t(outModel.getPositions().size());
+	cgltf_mesh* mesh = meshNode->mesh;
 
-	// Get node transform
-	const Matrix44 nodeTransform = getNodeTransform(node);
-	const Matrix44 globalTransform = axisTransform * nodeTransform;
-	const Matrix44 globalNormalTransform = normalize(globalTransform);
+	// Get node's world transform
+	cgltf_float nodeMatrix[16];
+	getNodeTransform(meshNode, nodeMatrix);
+	const Matrix44 Mnode = convertMatrix(nodeMatrix);
+	const Matrix44 Mglobal = axisTransform * Mnode;
+	const Matrix44 MglobalN = normalize(Mglobal);
 
-	// Setup texture coordinate channels
-	StaticVector< uint32_t, 8 > texCoordChannels;
-	for (uint32_t i = 0; i < 8; ++i)
+	// Process each primitive (submesh) in the mesh
+	for (cgltf_size primIdx = 0; primIdx < mesh->primitives_count; ++primIdx)
 	{
-		std::wstring channelName = L"UV" + toString(i);
-		texCoordChannels.push_back(outModel.addUniqueTexCoordChannel(channelName));
-	}
+		cgltf_primitive* primitive = &mesh->primitives[primIdx];
 
-	// Process each primitive in the mesh
-	for (cgltf_size primIndex = 0; primIndex < mesh->primitives_count; ++primIndex)
-	{
-		const cgltf_primitive* primitive = &mesh->primitives[primIndex];
-
-		// Only support triangles for now
+		// Only handle triangles
 		if (primitive->type != cgltf_primitive_type_triangles)
 		{
-			log::warning << L"Primitive type " << (int)primitive->type << L" not supported, skipping." << Endl;
+			log::warning << L"Skipping non-triangle primitive." << Endl;
 			continue;
 		}
 
-		// Find required attributes
-		const cgltf_accessor* positionAccessor = nullptr;
-		const cgltf_accessor* normalAccessor = nullptr;
-		const cgltf_accessor* tangentAccessor = nullptr;
-		const cgltf_accessor* texCoordAccessors[8] = { nullptr };
-		const cgltf_accessor* colorAccessor = nullptr;
-		const cgltf_accessor* jointsAccessor = nullptr;
-		const cgltf_accessor* weightsAccessor = nullptr;
+		// Find accessors for different attributes
+		cgltf_accessor* positionAccessor = nullptr;
+		cgltf_accessor* normalAccessor = nullptr;
+		cgltf_accessor* tangentAccessor = nullptr;
+		cgltf_accessor* colorAccessor = nullptr;
+		cgltf_accessor* jointsAccessor = nullptr;
+		cgltf_accessor* weightsAccessor = nullptr;
+		StaticVector< cgltf_accessor*, 8 > texcoordAccessors;
+		StaticVector< std::wstring, 8 > texcoordNames;
 
-		for (cgltf_size attrIndex = 0; attrIndex < primitive->attributes_count; ++attrIndex)
+		for (cgltf_size attrIdx = 0; attrIdx < primitive->attributes_count; ++attrIdx)
 		{
-			const cgltf_attribute* attr = &primitive->attributes[attrIndex];
-
+			cgltf_attribute* attr = &primitive->attributes[attrIdx];
 			switch (attr->type)
 			{
 			case cgltf_attribute_type_position:
@@ -117,21 +91,18 @@ bool convertMesh(
 			case cgltf_attribute_type_tangent:
 				tangentAccessor = attr->data;
 				break;
-			case cgltf_attribute_type_texcoord:
-				if (attr->index >= 0 && attr->index < 8)
-					texCoordAccessors[attr->index] = attr->data;
-				break;
 			case cgltf_attribute_type_color:
-				if (attr->index == 0) // Only support COLOR_0 for now
-					colorAccessor = attr->data;
+				colorAccessor = attr->data;
 				break;
 			case cgltf_attribute_type_joints:
-				if (attr->index == 0) // Only support JOINTS_0 for now
-					jointsAccessor = attr->data;
+				jointsAccessor = attr->data;
 				break;
 			case cgltf_attribute_type_weights:
-				if (attr->index == 0) // Only support WEIGHTS_0 for now
-					weightsAccessor = attr->data;
+				weightsAccessor = attr->data;
+				break;
+			case cgltf_attribute_type_texcoord:
+				texcoordAccessors.push_back(attr->data);
+				texcoordNames.push_back(attr->name ? mbstows(attr->name) : L"TEXCOORD_" + toString(attr->index));
 				break;
 			default:
 				break;
@@ -140,164 +111,179 @@ bool convertMesh(
 
 		if (!positionAccessor)
 		{
-			log::error << L"Primitive missing POSITION attribute, skipping." << Endl;
-			continue;
+			log::error << L"Mesh primitive missing position data." << Endl;
+			return false;
 		}
 
-		// Unpack attribute data
-		AlignedVector< cgltf_float > positions, normals, tangents, colors, joints, weights;
-		AlignedVector< cgltf_float > texCoords[8];
+		// Add positions
+		const uint32_t positionBase = uint32_t(outModel.getPositions().size());
+		outModel.reservePositions(positionBase + uint32_t(positionAccessor->count));
 
-		if (!unpackAccessorData(positionAccessor, positions))
+		for (cgltf_size i = 0; i < positionAccessor->count; ++i)
 		{
-			log::error << L"Failed to unpack position data." << Endl;
-			continue;
+			cgltf_float position[3];
+			cgltf_accessor_read_float(positionAccessor, i, position, 3);
+			const Vector4 v = Mglobal * convertPosition(position);
+			outModel.addPosition(v);
 		}
 
-		if (normalAccessor)
-			unpackAccessorData(normalAccessor, normals);
-
-		if (tangentAccessor)
-			unpackAccessorData(tangentAccessor, tangents);
-
-		if (colorAccessor)
-			unpackAccessorData(colorAccessor, colors);
-
-		if (jointsAccessor)
-			unpackAccessorData(jointsAccessor, joints);
-
-		if (weightsAccessor)
-			unpackAccessorData(weightsAccessor, weights);
-
-		for (int i = 0; i < 8; ++i)
-			if (texCoordAccessors[i])
-				unpackAccessorData(texCoordAccessors[i], texCoords[i]);
-
-		// Add positions to model
-		const uint32_t vertexCount = positionAccessor->count;
-		outModel.reservePositions(positionBase + vertexCount);
-
-		for (uint32_t i = 0; i < vertexCount; ++i)
+		// Setup texture coordinate channels
+		StaticVector< uint32_t, 8 > texCoordChannels;
+		for (cgltf_size k = 0; k < texcoordAccessors.size(); ++k)
 		{
-			const cgltf_float* pos = &positions[i * 3];
-			const Vector4 transformedPos = globalTransform * convertPosition(pos);
-			outModel.addPosition(transformedPos);
+			const uint32_t channel = outModel.addUniqueTexCoordChannel(texcoordNames[k]);
+			texCoordChannels.push_back(channel);
 		}
 
-		// Convert joint vertex weights
-		typedef SmallMap< uint32_t, float > bone_influences_t;
-		AlignedVector< bone_influences_t > vertexJoints;
-		vertexJoints.resize(vertexCount);
+		// Convert materials
+		SmallMap< int32_t, int32_t > materialMap;
+		if (!convertMaterials(outModel, materialMap, data, primitive, basePath))
+			return false;
 
-		if (jointsAccessor && weightsAccessor && joints.size() >= vertexCount * 4 && weights.size() >= vertexCount * 4)
-		{
-			for (uint32_t i = 0; i < vertexCount; ++i)
-			{
-				const cgltf_float* jointIndices = &joints[i * 4];
-				const cgltf_float* jointWeights = &weights[i * 4];
+		// Convert vertices based on indices or direct vertex order
+		const uint32_t baseOutputVertexOffset = outModel.getVertexCount();
 
-				for (int j = 0; j < 4; ++j)
-				{
-					const uint32_t jointIndex = (uint32_t)jointIndices[j];
-					const float jointWeight = jointWeights[j];
-
-					if (jointWeight > FUZZY_EPSILON && jointIndex < outModel.getJointCount())
-						vertexJoints[i].insert(std::pair< uint32_t, float >(jointIndex, jointWeight));
-				}
-			}
-		}
-
-		// Create vertices
-		const uint32_t baseVertexIndex = outModel.getVertexCount();
-		for (uint32_t i = 0; i < vertexCount; ++i)
-		{
-			Vertex vertex;
-			vertex.setPosition(positionBase + i);
-
-			// Set joint influences
-			for (const auto& influence : vertexJoints[i])
-				vertex.setJointInfluence(influence.first, influence.second);
-
-			// Set normal
-			if (normals.size() >= (i + 1) * 3)
-			{
-				const cgltf_float* norm = &normals[i * 3];
-				vertex.setNormal(outModel.addUniqueNormal(
-					globalNormalTransform * convertNormal(norm)));
-			}
-
-			// Set tangent
-			if (tangents.size() >= (i + 1) * 4)
-			{
-				const cgltf_float* tang = &tangents[i * 4];
-				vertex.setTangent(outModel.addUniqueNormal(
-					globalNormalTransform * convertNormal(tang)));
-				// Note: tangent[3] contains the bitangent sign, could be used for binormal calculation
-			}
-
-			// Set texture coordinates
-			for (int texIndex = 0; texIndex < 8; ++texIndex)
-			{
-				if (texCoords[texIndex].size() >= (i + 1) * 2)
-				{
-					const cgltf_float* uv = &texCoords[texIndex][i * 2];
-					// Load texture coordinates as-is (like Raylib does)
-					// Don't flip V coordinate unless specifically needed by engine
-					vertex.setTexCoord(texCoordChannels[texIndex], outModel.addUniqueTexCoord(Vector2(uv[0], uv[1])));
-				}
-			}
-
-			// Set vertex color
-			if (colors.size() >= (i + 1) * 3)
-			{
-				const cgltf_float* color = &colors[i * 3];
-				cgltf_size colorComponents = colors.size() / vertexCount;
-				vertex.setColor(outModel.addUniqueColor(
-					convertColor(color, colorComponents)));
-			}
-
-			outModel.addVertex(vertex);
-		}
-
-		// Process indices and create polygons
-		AlignedVector< uint32_t > indices;
 		if (primitive->indices)
 		{
-			if (!unpackIndices(primitive->indices, indices))
+			// Indexed mesh
+			cgltf_accessor* indexAccessor = primitive->indices;
+			for (cgltf_size i = 0; i < indexAccessor->count; ++i)
 			{
-				log::error << L"Failed to unpack index data." << Endl;
-				continue;
+				cgltf_size vertexIndex = cgltf_accessor_read_index(indexAccessor, i);
+
+				Vertex vertex;
+				vertex.setPosition(positionBase + uint32_t(vertexIndex));
+
+				// Joint influences
+				if (jointsAccessor && weightsAccessor && vertexIndex < jointsAccessor->count)
+				{
+					cgltf_uint joints[4];
+					cgltf_float weights[4];
+					cgltf_accessor_read_uint(jointsAccessor, vertexIndex, joints, 4);
+					cgltf_accessor_read_float(weightsAccessor, vertexIndex, weights, 4);
+
+					for (int j = 0; j < 4; ++j)
+						if (weights[j] > FUZZY_EPSILON)
+							vertex.setJointInfluence(joints[j], weights[j]);
+				}
+
+				// Vertex color
+				if (colorAccessor && vertexIndex < colorAccessor->count)
+				{
+					cgltf_float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+					cgltf_accessor_read_float(colorAccessor, vertexIndex, color, 4);
+					vertex.setColor(outModel.addUniqueColor(convertColor4(color)));
+				}
+
+				// Texture coordinates
+				for (cgltf_size k = 0; k < texcoordAccessors.size(); ++k)
+				{
+					if (vertexIndex < texcoordAccessors[k]->count)
+					{
+						cgltf_float texcoord[2];
+						cgltf_accessor_read_float(texcoordAccessors[k], vertexIndex, texcoord, 2);
+						const uint32_t channel = texCoordChannels[k];
+						// Note: glTF uses top-left origin, flip V coordinate
+						vertex.setTexCoord(channel, outModel.addUniqueTexCoord(convertVector2(texcoord) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f)));
+					}
+				}
+
+				// Normal
+				if (normalAccessor && vertexIndex < normalAccessor->count)
+				{
+					cgltf_float normal[3];
+					cgltf_accessor_read_float(normalAccessor, vertexIndex, normal, 3);
+					vertex.setNormal(outModel.addUniqueNormal(
+						(MglobalN * convertNormal(normal)).xyz0().normalized()));
+				}
+
+				// Tangent
+				if (tangentAccessor && vertexIndex < tangentAccessor->count)
+				{
+					cgltf_float tangent[4];
+					cgltf_accessor_read_float(tangentAccessor, vertexIndex, tangent, 4);
+					vertex.setTangent(outModel.addUniqueNormal(
+						(MglobalN * convertVector4(tangent)).xyz0().normalized()));
+				}
+
+				outModel.addVertex(vertex);
 			}
 		}
 		else
 		{
-			// Generate indices for non-indexed geometry
-			indices.resize(vertexCount);
-			for (uint32_t i = 0; i < vertexCount; ++i)
-				indices[i] = i;
+			// Non-indexed mesh
+			for (cgltf_size i = 0; i < positionAccessor->count; ++i)
+			{
+				Vertex vertex;
+				vertex.setPosition(positionBase + uint32_t(i));
+
+				// Joint influences
+				if (jointsAccessor && weightsAccessor && i < jointsAccessor->count)
+				{
+					cgltf_uint joints[4];
+					cgltf_float weights[4];
+					cgltf_accessor_read_uint(jointsAccessor, i, joints, 4);
+					cgltf_accessor_read_float(weightsAccessor, i, weights, 4);
+
+					for (int j = 0; j < 4; ++j)
+						if (weights[j] > FUZZY_EPSILON)
+							vertex.setJointInfluence(joints[j], weights[j]);
+				}
+
+				// Vertex color
+				if (colorAccessor && i < colorAccessor->count)
+				{
+					cgltf_float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+					cgltf_accessor_read_float(colorAccessor, i, color, 4);
+					vertex.setColor(outModel.addUniqueColor(convertColor4(color)));
+				}
+
+				// Texture coordinates
+				for (cgltf_size k = 0; k < texcoordAccessors.size(); ++k)
+				{
+					if (i < texcoordAccessors[k]->count)
+					{
+						cgltf_float texcoord[2];
+						cgltf_accessor_read_float(texcoordAccessors[k], i, texcoord, 2);
+						const uint32_t channel = texCoordChannels[k];
+						vertex.setTexCoord(channel, outModel.addUniqueTexCoord(convertVector2(texcoord) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f)));
+					}
+				}
+
+				// Normal
+				if (normalAccessor && i < normalAccessor->count)
+				{
+					cgltf_float normal[3];
+					cgltf_accessor_read_float(normalAccessor, i, normal, 3);
+					vertex.setNormal(outModel.addUniqueNormal(
+						(MglobalN * convertNormal(normal)).xyz0().normalized()));
+				}
+
+				// Tangent
+				if (tangentAccessor && i < tangentAccessor->count)
+				{
+					cgltf_float tangent[4];
+					cgltf_accessor_read_float(tangentAccessor, i, tangent, 4);
+					vertex.setTangent(outModel.addUniqueNormal(
+						(MglobalN * convertVector4(tangent)).xyz0().normalized()));
+				}
+
+				outModel.addVertex(vertex);
+			}
 		}
 
-		// Create triangles
-		const uint32_t triangleCount = indices.size() / 3;
-		for (uint32_t i = 0; i < triangleCount; ++i)
+		// Create polygons (triangles)
+		const uint32_t materialIndex = materialMap.find(0) != materialMap.end() ? materialMap[0] : c_InvalidIndex;
+		const uint32_t vertexCount = primitive->indices ? uint32_t(primitive->indices->count) : uint32_t(positionAccessor->count);
+
+		for (uint32_t i = 0; i < vertexCount; i += 3)
 		{
-			Polygon& polygon = outModel.addPolygon();
-
-			// Set material
-			int32_t materialIndex = c_InvalidIndex;
-			if (primitive->material)
-			{
-				cgltf_size gltfMaterialIndex = cgltf_material_index(data, primitive->material);
-				auto it = materialMap.find(gltfMaterialIndex);
-				if (it != materialMap.end())
-					materialIndex = it->second;
-			}
+			Polygon polygon;
 			polygon.setMaterial(materialIndex);
-
-			// Add vertices in original order (both GLTF and engine are right-handed)
-			polygon.addVertex(baseVertexIndex + indices[i * 3 + 0]);
-			polygon.addVertex(baseVertexIndex + indices[i * 3 + 1]);
-			polygon.addVertex(baseVertexIndex + indices[i * 3 + 2]);
+			polygon.addVertex(baseOutputVertexOffset + i);
+			polygon.addVertex(baseOutputVertexOffset + i + 1);
+			polygon.addVertex(baseOutputVertexOffset + i + 2);
+			outModel.addPolygon(polygon);
 		}
 	}
 
