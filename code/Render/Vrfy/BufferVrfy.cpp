@@ -120,7 +120,7 @@ void BufferVrfy::verifyGuard() const
 
 void BufferVrfy::verifyUntouched() const
 {
-#if defined(T_VRFY_CHECK_UNTOUCHED)
+#if T_VRFY_CHECK_UNTOUCHED
 	const uint32_t bufferSize = getBufferSize();
 	for (uint32_t i = 0; i < bufferSize; ++i)
 		T_CAPTURE_ASSERT(m_shadow[i + c_guardBytes] == 0x00, L"Memory touched outside of lock/unlock region.");
