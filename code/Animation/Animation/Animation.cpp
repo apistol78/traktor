@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -76,25 +76,24 @@ bool Animation::getPose(float at, Pose& outPose) const
 	{
 		int32_t index = -1;
 		int32_t index0 = 0;
-		int32_t index1 = int32_t(nposes - 2);
+		int32_t index1 = (int32_t)(nposes - 1);
 
 		while (index0 < index1)
 		{
 			index = (index0 + index1) / 2;
 
 			const float Tkey0 = m_poses[index].at;
-			const float Tkey1 = m_poses[index + 1].at;
+			const float Tkey1 = (index + 1) < nposes ? m_poses[index + 1].at : std::numeric_limits< float >::max();
 
 			if (at < Tkey0)
-				index1 = index - 1;
+				index1 = index;
 			else if (at > Tkey1)
-				index0 = index + 1;
+				index0 = index;
 			else
 				break;
 		}
 
 		const Scalar k((at - m_poses[index].at) / (m_poses[index + 1].at - m_poses[index].at));
-
 		blendPoses(
 			&m_poses[index].pose,
 			&m_poses[index + 1].pose,
