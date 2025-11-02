@@ -105,6 +105,9 @@ public:
 	/*! Set style sheet. */
 	void setStyleSheet(const StyleSheet* styleSheet);
 
+	/*! Append styles into current style sheet. */
+	void appendStyleSheet(const StyleSheet* styleSheet);
+
 	/*! Get style sheet. */
 	const StyleSheet* getStyleSheet() const;
 

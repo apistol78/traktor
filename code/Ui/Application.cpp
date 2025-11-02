@@ -132,6 +132,13 @@ void Application::setStyleSheet(const StyleSheet* styleSheet)
 		m_styleSheet = StyleSheet::createDefault();
 }
 
+void Application::appendStyleSheet(const StyleSheet* styleSheet)
+{
+	Ref< StyleSheet > mergedStyleSheet = m_styleSheet->merge(styleSheet);
+	if (mergedStyleSheet)
+		setStyleSheet(mergedStyleSheet);
+}
+
 const StyleSheet* Application::getStyleSheet() const
 {
 	return m_styleSheet;

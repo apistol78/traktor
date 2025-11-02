@@ -281,11 +281,12 @@ Ref< StyleSheet > StyleSheet::createDefault()
 {
 	Ref< StyleSheet > ss = new StyleSheet();
 
-	ss->setColor(L"traktor.ui.Widget", L"color", Color4ub(30, 30, 30));
-	ss->setColor(L"traktor.ui.Widget", L"color-disabled", Color4ub(60, 60, 60));
-	ss->setColor(L"traktor.ui.Widget", L"background-color", Color4ub(239, 239, 242));
-	ss->setColor(L"traktor.ui.Widget", L"background-color-disabled", Color4ub(230, 230, 235));
-	ss->setColor(L"traktor.ui.Widget", L"border-color", Color4ub(160, 160, 160));
+	ss->setColor(L"traktor.Object", L"color", Color4ub(30, 30, 30));
+	ss->setColor(L"traktor.Object", L"color-disabled", Color4ub(60, 60, 60));
+	ss->setColor(L"traktor.Object", L"background-color", Color4ub(239, 239, 242));
+	ss->setColor(L"traktor.Object", L"background-color-disabled", Color4ub(230, 230, 235));
+	ss->setColor(L"traktor.Object", L"border-color", Color4ub(160, 160, 160));
+	ss->setColor(L"traktor.Object", L"theme-color", Color4ub(30, 30, 30));
 
 	ss->setColor(L"traktor.ui.ListBox", L"background-color", Color4ub(255, 255, 255));
 
