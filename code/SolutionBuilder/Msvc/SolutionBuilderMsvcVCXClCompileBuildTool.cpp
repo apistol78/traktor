@@ -34,7 +34,7 @@ bool SolutionBuilderMsvcVCXClCompileBuildTool::generateProject(
 	if (!filter.empty())
 	{
 		os << L"<" << m_name << L" Include=\"" << fileName.getPathName() << L"\">" << Endl;
-		os << L"\t<ObjectFileName>$(IntDir)\\" << filter << L"\\%(Filename).obj</ObjectFileName>" << Endl;
+		os << L"\t<ObjectFileName>$(IntDir)</ObjectFileName>" << Endl;
 		os << L"</" << m_name << L">" << Endl;
 	}
 	else
