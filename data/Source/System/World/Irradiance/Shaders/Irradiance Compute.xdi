@@ -135,8 +135,8 @@
 
 const int N = 2;
 const int Ndisclose = 48;
-const int Nspatial = 16;
-const int K = 30;
+const int Nspatial = 4;
+const int K = 10;
 const float Far = 10.0f;
 const float FarSecond = 8.0f;
 const float TemporalNormalThreshold = 0.8f;
