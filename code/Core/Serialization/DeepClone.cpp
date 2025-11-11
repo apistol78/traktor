@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,7 @@
  */
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/BinarySerializer.h"
-#include "Core/Io/DynamicMemoryStream.h"
-#include "Core/Io/MemoryStream.h"
+#include "Core/Io/ChunkMemoryStream.h"
 
 namespace traktor
 {
@@ -24,14 +23,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.DeepClone", DeepClone, Object)
 
 DeepClone::DeepClone(const ISerializable* source)
 {
-	m_copy.reserve(c_initialCapacity);
-	DynamicMemoryStream stream(m_copy, false, true);
+	ChunkMemoryStream stream(&m_memory, false, true);
 	BinarySerializer(&stream).writeObject(source);
 }
 
 Ref< ISerializable > DeepClone::create() const
 {
-	MemoryStream stream(m_copy.c_ptr(), m_copy.size());
+	ChunkMemoryStream stream(&m_memory, true, false);
 	return BinarySerializer(&stream).readObject();
 }
 
