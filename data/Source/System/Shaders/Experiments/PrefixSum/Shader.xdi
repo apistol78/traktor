@@ -103,13 +103,15 @@ $Output[threadId].Value = ($Input[threadId].Value == matchValue) ? 1 : 0;
 			<outputPins/>
 			<script><![CDATA[// For each thread group (wave) 
 
+// Number of waves are 4 since 64 elements / 16 group size.
+
+
 #define NUM_ELEMENTS 64
 #define GROUP_SIZE 16
 
 const uint local = gl_LocalInvocationID.x;
 const uint group = gl_WorkGroupID.x;
-const uint base = group * GROUP_SIZE;
-const uint idx = base + local;
+const uint idx =  gl_GlobalInvocationID.x; //  base + local;
 
 if (idx >= NUM_ELEMENTS)
 	return;
@@ -132,10 +134,12 @@ for (uint offset = 1; offset < GROUP_SIZE; offset <<= 1)
 
 
 uint inclusive = sdata[local];
-uint exclusive = inclusive - $Input[base + local].Value;
+uint exclusive = inclusive - $Input[idx].Value;
 $Prefix[idx].Value = int(exclusive);
 
 
+// Block sums contain number of matches
+// per group (wave).
 if (local == GROUP_SIZE - 1)
 	$BlockSums[group].Value = int(inclusive);
 
