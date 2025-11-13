@@ -149,8 +149,8 @@ if (local == GROUP_SIZE - 1)
 			<id>{F9434F28-25C9-F54F-9BE1-8B881E3FD67D}</id>
 			<comment/>
 			<position>
-				<first>174</first>
-				<second>148</second>
+				<first>-18</first>
+				<second>137</second>
 			</position>
 			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
 			<parameterName>Buffer_C</parameterName>
@@ -281,6 +281,10 @@ $BlockOffsets[idx].Value = int(exclusive);
 					<id>{D23496BC-38DA-BB4A-A204-0B32E70E8BAE}</id>
 					<name>Prefix</name>
 				</item>
+				<item>
+					<id>{2BC142EC-6B86-4ED8-B8FE-6C14D741193A}</id>
+					<name>PrefixOut</name>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[// Local scan
@@ -296,8 +300,22 @@ if (idx >= NUM_ELEMENTS)
 
 
 const uint offset = $BlockOffsets[idx].Value;
-$Prefix[idx].Value += int(offset);
+$PrefixOut[idx].Value = $Prefix[idx].Value + int(offset);
 ]]></script>
+		</item>
+		<item type="traktor.render.Struct" version="5,traktor.render.Node:1">
+			<id>{376F23BA-6079-49A1-BA5A-0FF632F107FE}</id>
+			<comment/>
+			<position>
+				<first>182</first>
+				<second>656</second>
+			</position>
+			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
+			<parameterName>Buffer_F</parameterName>
+			<declType/>
+			<decl>
+				<elements/>
+			</decl>
 		</item>
 	</nodes>
 	<edges>
@@ -389,6 +407,16 @@ $Prefix[idx].Value += int(offset);
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
 				<id>{D23496BC-38DA-BB4A-A204-0B32E70E8BAE}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{2BC142EC-6B86-4ED8-B8FE-6C14D741193A}</id>
 			</destination>
 		</item>
 	</edges>
