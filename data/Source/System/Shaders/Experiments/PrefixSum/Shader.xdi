@@ -5,14 +5,14 @@
 			<id>{2F6B1C61-8DF6-4EFF-9931-9475FF79F2B2}</id>
 			<comment/>
 			<position>
-				<first>544</first>
+				<first>538</first>
 				<second>-87</second>
 			</position>
 			<name>PrefixSum</name>
 			<technique>Flags</technique>
 			<domain>Compute</domain>
 			<localSize>
-				<X>1</X>
+				<X>16</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
@@ -33,7 +33,10 @@
 
 const int threadId = int(gl_GlobalInvocationID.x);
 
-$Output[threadId].Value = threadId * 2;
+const int matchValue = 2;
+
+$Output[threadId].Value = ($Input[threadId].Value == matchValue) ? 1 : 0;
+
 
 ]]></script>
 		</item>
@@ -41,11 +44,11 @@ $Output[threadId].Value = threadId * 2;
 			<id>{639A2BC0-3C36-4A54-ADA1-CCD91E645915}</id>
 			<comment/>
 			<position>
-				<first>167</first>
+				<first>174</first>
 				<second>-88</second>
 			</position>
 			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
-			<parameterName>Experiment_Input</parameterName>
+			<parameterName>Buffer_A</parameterName>
 			<declType/>
 			<decl>
 				<elements/>
@@ -55,15 +58,248 @@ $Output[threadId].Value = threadId * 2;
 			<id>{B02979B9-8437-4946-B378-39090A87F3B7}</id>
 			<comment/>
 			<position>
-				<first>126</first>
-				<second>-7</second>
+				<first>174</first>
+				<second>-11</second>
 			</position>
 			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
-			<parameterName>Experiment_Output</parameterName>
+			<parameterName>Buffer_B</parameterName>
 			<declType/>
 			<decl>
 				<elements/>
 			</decl>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{9BFE9D38-E300-0D41-A8A3-41DAA9BCCA3A}</id>
+			<comment/>
+			<position>
+				<first>538</first>
+				<second>111</second>
+			</position>
+			<name>PrefixSum</name>
+			<technique>LocalScan</technique>
+			<domain>Compute</domain>
+			<localSize>
+				<X>16</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include>
+				<item>{BE848031-D746-034D-A804-E6D0DDD0E021}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{55A3422C-3F53-40BF-B2CD-E367BB616D2A}</id>
+					<name>Input</name>
+				</item>
+				<item>
+					<id>{9C77A645-D134-4944-8DB5-069C7113D030}</id>
+					<name>Prefix</name>
+				</item>
+				<item>
+					<id>{D50E1C0F-4AF8-1943-B745-C98A9D270A31}</id>
+					<name>BlockSums</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script><![CDATA[// Local scan
+
+#define NUM_ELEMENTS 64
+#define GROUP_SIZE 16
+
+const uint local = gl_LocalInvocationID.x;
+const uint group = gl_WorkGroupID.x;
+const uint base = group * GROUP_SIZE;
+const uint idx = base + local;
+
+if (idx >= NUM_ELEMENTS)
+	return;
+
+uint v = $Input[idx].Value;	// Read flag
+
+sdata[local] = v;
+memoryBarrierShared();
+barrier();
+
+for (uint offset = 1; offset < GROUP_SIZE; offset <<= 1)
+{
+	uint t = 0;
+	if (local >= offset)
+		t = sdata[local - offset];
+	barrier();
+	sdata[local] += t;
+	barrier();
+}
+
+
+uint inclusive = sdata[local];
+uint exclusive = inclusive - $Input[base + local].Value;
+$Prefix[idx].Value = int(exclusive);
+
+
+if (local == GROUP_SIZE - 1)
+	$BlockSums[group].Value = int(inclusive);
+
+
+
+
+
+
+]]></script>
+		</item>
+		<item type="traktor.render.Struct" version="5,traktor.render.Node:1">
+			<id>{F9434F28-25C9-F54F-9BE1-8B881E3FD67D}</id>
+			<comment/>
+			<position>
+				<first>174</first>
+				<second>148</second>
+			</position>
+			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
+			<parameterName>Buffer_C</parameterName>
+			<declType/>
+			<decl>
+				<elements/>
+			</decl>
+		</item>
+		<item type="traktor.render.Struct" version="5,traktor.render.Node:1">
+			<id>{3B45770B-5DD1-CD40-A48A-6CDEBE3010BA}</id>
+			<comment/>
+			<position>
+				<first>174</first>
+				<second>212</second>
+			</position>
+			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
+			<parameterName>Buffer_D</parameterName>
+			<declType/>
+			<decl>
+				<elements/>
+			</decl>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{5636273B-D913-2A48-81ED-CFBBFF893E2D}</id>
+			<comment/>
+			<position>
+				<first>538</first>
+				<second>325</second>
+			</position>
+			<name>PrefixSum</name>
+			<technique>GlobalScan1</technique>
+			<domain>Compute</domain>
+			<localSize>
+				<X>16</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include>
+				<item>{BE848031-D746-034D-A804-E6D0DDD0E021}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{55A3422C-3F53-40BF-B2CD-E367BB616D2A}</id>
+					<name>BlockSums</name>
+				</item>
+				<item>
+					<id>{E3AC7231-058D-8F44-96DB-10CB018FB7AD}</id>
+					<name>BlockOffsets</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script><![CDATA[// Local scan
+
+#define GROUP_SIZE 16
+#define NUM_ELEMENTS 64
+#define NUM_GROUPS (NUM_ELEMENTS / GROUP_SIZE)
+
+
+const uint idx = gl_GlobalInvocationID.x;
+if (idx >= NUM_GROUPS)
+	return;
+
+sdata[idx] = $BlockSums[idx].Value;
+memoryBarrierShared();
+barrier();
+
+
+for (uint offset = 1; offset < GROUP_SIZE; offset <<= 1)
+{
+	uint t = 0;
+	if (idx >= offset)
+		t = sdata[idx - offset];
+	barrier();
+	sdata[idx] += t;
+	barrier();
+}
+
+
+uint exclusive = sdata[idx] - $BlockSums[idx].Value;
+$BlockOffsets[idx].Value = int(exclusive);
+
+
+
+
+
+]]></script>
+		</item>
+		<item type="traktor.render.Struct" version="5,traktor.render.Node:1">
+			<id>{9CF2408B-375E-2249-9E88-D6D9A23ED2E9}</id>
+			<comment/>
+			<position>
+				<first>174</first>
+				<second>314</second>
+			</position>
+			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
+			<parameterName>Buffer_E</parameterName>
+			<declType/>
+			<decl>
+				<elements/>
+			</decl>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{FFF45508-FEE1-CE4F-AA4B-6638D6925D31}</id>
+			<comment/>
+			<position>
+				<first>538</first>
+				<second>523</second>
+			</position>
+			<name>PrefixSum</name>
+			<technique>AddOffsets</technique>
+			<domain>Compute</domain>
+			<localSize>
+				<X>16</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include>
+				<item>{BE848031-D746-034D-A804-E6D0DDD0E021}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{E3AC7231-058D-8F44-96DB-10CB018FB7AD}</id>
+					<name>BlockOffsets</name>
+				</item>
+				<item>
+					<id>{D23496BC-38DA-BB4A-A204-0B32E70E8BAE}</id>
+					<name>Prefix</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script><![CDATA[// Local scan
+
+#define GROUP_SIZE 16
+#define NUM_ELEMENTS 64
+#define NUM_GROUPS (NUM_ELEMENTS / GROUP_SIZE)
+
+
+const uint idx = gl_GlobalInvocationID.x;
+if (idx >= NUM_ELEMENTS)
+	return;
+
+
+const uint offset = $BlockOffsets[idx].Value;
+$Prefix[idx].Value += int(offset);
+]]></script>
 		</item>
 	</nodes>
 	<edges>
@@ -85,6 +321,76 @@ $Output[threadId].Value = threadId * 2;
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{9C77A645-D134-4944-8DB5-069C7113D030}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{55A3422C-3F53-40BF-B2CD-E367BB616D2A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{9C77A645-D134-4944-8DB5-069C7113D030}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D50E1C0F-4AF8-1943-B745-C98A9D270A31}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{55A3422C-3F53-40BF-B2CD-E367BB616D2A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{E3AC7231-058D-8F44-96DB-10CB018FB7AD}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{E3AC7231-058D-8F44-96DB-10CB018FB7AD}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{D23496BC-38DA-BB4A-A204-0B32E70E8BAE}</id>
 			</destination>
 		</item>
 	</edges>

@@ -229,6 +229,8 @@ private:
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 8, Script, Node)
 
 Script::Script()
+	: m_textInputPin(this, Guid(L"{B46B5523-38A1-4D48-BCE4-57161E2CA608}"), L"Text", true)
+	, m_textOutputPin(this, Guid(L"{F87CBDC0-DC55-4954-A88C-A4CBF0767E9B}"), L"Text")
 {
 	m_localSize[0] = 1;
 	m_localSize[1] = 1;
@@ -343,24 +345,28 @@ std::wstring Script::getInformation() const
 
 int Script::getInputPinCount() const
 {
-	return int(m_inputPins.size());
+	return (int)m_inputPins.size() + 1;
 }
 
 const InputPin* Script::getInputPin(int index) const
 {
-	T_ASSERT(index >= 0 && index < int(m_inputPins.size()));
-	return &m_inputPins[index];
+	if (index <= 0)
+		return &m_textInputPin;
+	else
+		return &m_inputPins[index - 1];
 }
 
 int Script::getOutputPinCount() const
 {
-	return int(m_outputPins.size());
+	return (int)m_outputPins.size() + 1;
 }
 
 const OutputPin* Script::getOutputPin(int index) const
 {
-	T_ASSERT(index >= 0 && index < int(m_outputPins.size()));
-	return &m_outputPins[index];
+	if (index <= 0)
+		return &m_textOutputPin;
+	else
+		return &m_outputPins[index];
 }
 
 void Script::serialize(ISerializer& s)
