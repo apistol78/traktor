@@ -32,6 +32,7 @@ public:
     struct Pass
     {
         std::wstring technique;
+        int32_t workSize = 1;
 
         void serialize(ISerializer& s);
     };

@@ -29,10 +29,9 @@
 				</item>
 			</inputPins>
 			<outputPins/>
-			<script><![CDATA[// Scan flags
+			<script><![CDATA[// Output 1 for each element which matches condition.
 
 const int threadId = int(gl_GlobalInvocationID.x);
-
 const int matchValue = 2;
 
 $Output[threadId].Value = ($Input[threadId].Value == matchValue) ? 1 : 0;
@@ -102,7 +101,7 @@ $Output[threadId].Value = ($Input[threadId].Value == matchValue) ? 1 : 0;
 				</item>
 			</inputPins>
 			<outputPins/>
-			<script><![CDATA[// Local scan
+			<script><![CDATA[// For each thread group (wave) 
 
 #define NUM_ELEMENTS 64
 #define GROUP_SIZE 16
@@ -139,11 +138,6 @@ $Prefix[idx].Value = int(exclusive);
 
 if (local == GROUP_SIZE - 1)
 	$BlockSums[group].Value = int(inclusive);
-
-
-
-
-
 
 ]]></script>
 		</item>
@@ -245,8 +239,8 @@ $BlockOffsets[idx].Value = int(exclusive);
 			<id>{9CF2408B-375E-2249-9E88-D6D9A23ED2E9}</id>
 			<comment/>
 			<position>
-				<first>174</first>
-				<second>314</second>
+				<first>177</first>
+				<second>332</second>
 			</position>
 			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
 			<parameterName>Buffer_E</parameterName>
