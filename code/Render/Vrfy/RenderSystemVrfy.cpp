@@ -166,7 +166,7 @@ Ref< Buffer > RenderSystemVrfy::createBuffer(uint32_t usage, uint32_t bufferSize
 	if (!buffer)
 		return nullptr;
 
-	return new BufferVrfy(m_resourceTracker, buffer, bufferSize);
+	return new BufferVrfy(m_resourceTracker, buffer, bufferSize, dynamic);
 }
 
 Ref< const IVertexLayout > RenderSystemVrfy::createVertexLayout(const AlignedVector< VertexElement >& vertexElements)

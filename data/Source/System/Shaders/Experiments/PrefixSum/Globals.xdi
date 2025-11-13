@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule" version="2">
+	<text><![CDATA[
+
+#define GROUP_SIZE 16
+
+shared uint sdata[GROUP_SIZE];
+]]></text>
+	<samplers/>
+	<structDeclarations>
+		<item>{347C689F-7686-460A-8732-1B984FBDD9ED}</item>
+	</structDeclarations>
+</object>
