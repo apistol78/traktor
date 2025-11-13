@@ -99,6 +99,11 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	// Immutable
+	InputPin m_textInputPin;
+	OutputPin m_textOutputPin;
+
+	// Node data.
 	std::wstring m_name;
 	std::wstring m_technique;
 	Domain m_domain = Undefined;

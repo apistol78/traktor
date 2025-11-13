@@ -2222,16 +2222,23 @@ bool emitScript(GlslContext& cx, Script* node)
 
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-	std::wstring script = node->getScript();
+	// Resolve complete script for this node; include inherited scripts first.
+	std::wstring script;
+
+	const Script* textFrom = dynamic_type_cast< const Script* >(cx.getInputNode(node, L"Text"));
+	if (textFrom != nullptr)
+		script = textFrom->getScript();
+
+	script += node->getScript();
 	if (script.empty())
 		return false;
 
-	// Emit input and outputs.
+	// Emit input and outputs; the first pins are "Text" which is meta pins and should not be emitted.
 	const int32_t inputPinCount = node->getInputPinCount();
 	const int32_t outputPinCount = node->getOutputPinCount();
 
 	RefArray< GlslVariable > outs(outputPinCount);
-	for (int32_t i = 0; i < outputPinCount; ++i)
+	for (int32_t i = 1; i < outputPinCount; ++i)
 	{
 		const TypedOutputPin* outputPin = static_cast< const TypedOutputPin* >(node->getOutputPin(i));
 		T_ASSERT(outputPin);
@@ -2244,7 +2251,7 @@ bool emitScript(GlslContext& cx, Script* node)
 	}
 
 	RefArray< GlslVariable > ins(inputPinCount);
-	for (int32_t i = 0; i < inputPinCount; ++i)
+	for (int32_t i = 1; i < inputPinCount; ++i)
 	{
 		const InputPin* inputPin = node->getInputPin(i);
 		Node* inputNode = cx.getInputNode(inputPin);
@@ -2325,7 +2332,7 @@ bool emitScript(GlslContext& cx, Script* node)
 	typedef std::pair< std::wstring, std::wstring > repair_t;
 	AlignedVector< repair_t > reps;
 
-	for (int32_t i = 0; i < inputPinCount; ++i)
+	for (int32_t i = 1; i < inputPinCount; ++i)
 	{
 		const std::wstring variableName = L"$" + node->getInputPin(i)->getName();
 		const std::wstring typeOfName = L"$typeof(" + node->getInputPin(i)->getName() + L")";
@@ -2376,7 +2383,7 @@ bool emitScript(GlslContext& cx, Script* node)
 		}
 	}
 
-	for (int32_t i = 0; i < outputPinCount; ++i)
+	for (int32_t i = 1; i < outputPinCount; ++i)
 	{
 		const std::wstring variableName = L"$" + node->getOutputPin(i)->getName();
 		reps.push_back({ variableName, outs[i]->getName() });
