@@ -4,15 +4,19 @@
 	<pass>
 		<item>
 			<technique>Flags</technique>
+            <workSize>64</workSize>
 		</item>
 		<item>
 			<technique>LocalScan</technique>
-		</item>
-		<item>
-			<technique>GlobalScan1</technique>
-		</item>
-		<item>
-			<technique>AddOffsets</technique>
-		</item>
+            <workSize>64</workSize>
+        </item>
+        <item>
+            <technique>GlobalScan1</technique>
+            <workSize>1</workSize>
+        </item>
+        <item>
+            <technique>AddOffsets</technique>
+            <workSize>64</workSize>
+        </item>
 	</pass>
 </object>

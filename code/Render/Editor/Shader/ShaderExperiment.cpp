@@ -28,6 +28,7 @@ void ShaderExperiment::serialize(ISerializer& s)
 void ShaderExperiment::Pass::serialize(ISerializer& s)
 {
     s >> Member< std::wstring >(L"technique", technique);
+    s >> Member< int32_t >(L"workSize", workSize);
 }
 
 }
