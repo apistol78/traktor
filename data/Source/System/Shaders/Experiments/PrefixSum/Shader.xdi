@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{2F6B1C61-8DF6-4EFF-9931-9475FF79F2B2}</id>
+			<comment/>
+			<position>
+				<first>544</first>
+				<second>-87</second>
+			</position>
+			<name>PrefixSum</name>
+			<technique>Flags</technique>
+			<domain>Compute</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{55A3422C-3F53-40BF-B2CD-E367BB616D2A}</id>
+					<name>Input</name>
+				</item>
+				<item>
+					<id>{9C77A645-D134-4944-8DB5-069C7113D030}</id>
+					<name>Output</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script><![CDATA[// Scan flags
+
+const int threadId = int(gl_GlobalInvocationID.x);
+
+$Output[threadId].Value = threadId * 2;
+
+]]></script>
+		</item>
+		<item type="traktor.render.Struct" version="5,traktor.render.Node:1">
+			<id>{639A2BC0-3C36-4A54-ADA1-CCD91E645915}</id>
+			<comment/>
+			<position>
+				<first>167</first>
+				<second>-88</second>
+			</position>
+			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
+			<parameterName>Experiment_Input</parameterName>
+			<declType/>
+			<decl>
+				<elements/>
+			</decl>
+		</item>
+		<item type="traktor.render.Struct" version="5,traktor.render.Node:1">
+			<id>{B02979B9-8437-4946-B378-39090A87F3B7}</id>
+			<comment/>
+			<position>
+				<first>126</first>
+				<second>-7</second>
+			</position>
+			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
+			<parameterName>Experiment_Output</parameterName>
+			<declType/>
+			<decl>
+				<elements/>
+			</decl>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{55A3422C-3F53-40BF-B2CD-E367BB616D2A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{9C77A645-D134-4944-8DB5-069C7113D030}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>
