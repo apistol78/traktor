@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderExperiment">
+	<shader>{7BAA152D-9185-4624-989A-366D44D35424}</shader>
+	<pass>
+		<item>
+			<technique>Flags</technique>
+		</item>
+	</pass>
+</object>
