@@ -56,7 +56,7 @@ public:
 	{
 	}
 
-	explicit IdProxy< ResourceType >(ResourceType* resource)
+	explicit IdProxy(ResourceType* resource)
 	:	m_handle(new ExplicitResourceHandle(resource))
 	{
 	}

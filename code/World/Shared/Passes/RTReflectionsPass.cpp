@@ -140,7 +140,7 @@ render::RGTargetSet RTReflectionsPass::setup(
 	// Shared shader parameters for all passes.
 	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();
 	const Vector2 jrp = needJitter ? jitter(frameCount - 1) / worldRenderView.getViewSize() : Vector2::zero();
-	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
+	auto setParameters = [=, this](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 		const auto halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
 

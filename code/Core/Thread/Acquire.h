@@ -25,7 +25,7 @@ class Acquire
 public:
 	Acquire(const Acquire< T >&) = delete;
 
-	T_FORCE_INLINE Acquire< T >(T& lock)
+	T_FORCE_INLINE Acquire(T& lock)
 	:	m_lock(lock)
 	{
 		const bool result = m_lock.wait();

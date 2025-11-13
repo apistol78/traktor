@@ -42,7 +42,7 @@ Peer::Peer(
 ,	m_dictionary(dictionary)
 ,	m_finished(false)
 {
-	ThreadPool::getInstance().spawn([=]()
+	ThreadPool::getInstance().spawn([=, this]()
 		{
 			AlignedVector< Key > touch;
 			AlignedVector< Key > evict;

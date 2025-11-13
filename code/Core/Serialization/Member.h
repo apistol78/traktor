@@ -176,14 +176,14 @@ template < >
 class Member< void* >
 {
 public:
-	explicit Member< void* >(const wchar_t* const name, void* blob, size_t& blobSize)
+	explicit Member(const wchar_t* const name, void* blob, size_t& blobSize)
 	:	m_name(name)
 	,	m_blob(blob)
 	,	m_blobSize(&blobSize)
 	{
 	}
 
-	explicit Member< void* >(
+	explicit Member(
 		const wchar_t* const name,
 		const std::function< size_t () >& fn_getSize,
 		const std::function< bool (size_t) >& fn_setSize,
