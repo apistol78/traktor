@@ -26,7 +26,7 @@ const TypeInfoSet ShaderExperimentEditorPageFactory::getEditableTypes() const
 
 bool ShaderExperimentEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
-	return false;
+	return true;
 }
 
 Ref< editor::IEditorPage > ShaderExperimentEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
