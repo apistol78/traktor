@@ -44,7 +44,7 @@
 				<configurationDefinitions>
 					<item>
 						<first>CharacterSet</first>
-						<second>MultiByte</second>
+						<second>Unicode</second>
 					</item>
 					<item>
 						<first>ConfigurationType</first>
@@ -128,7 +128,7 @@
 				<configurationDefinitions>
 					<item>
 						<first>CharacterSet</first>
-						<second>MultiByte</second>
+						<second>Unicode</second>
 					</item>
 					<item>
 						<first>ConfigurationType</first>
@@ -262,7 +262,7 @@
 				<configurationDefinitions>
 					<item>
 						<first>CharacterSet</first>
-						<second>MultiByte</second>
+						<second>Unicode</second>
 					</item>
 					<item>
 						<first>ConfigurationType</first>
@@ -392,7 +392,7 @@
 				<configurationDefinitions>
 					<item>
 						<first>CharacterSet</first>
-						<second>MultiByte</second>
+						<second>Unicode</second>
 					</item>
 					<item>
 						<first>ConfigurationType</first>
@@ -524,7 +524,7 @@
 				<configurationDefinitions>
 					<item>
 						<first>CharacterSet</first>
-						<second>MultiByte</second>
+						<second>Unicode</second>
 					</item>
 					<item>
 						<first>ConfigurationType</first>
@@ -628,7 +628,7 @@
 				<configurationDefinitions>
 					<item>
 						<first>CharacterSet</first>
-						<second>MultiByte</second>
+						<second>Unicode</second>
 					</item>
 					<item>
 						<first>ConfigurationType</first>
@@ -782,7 +782,7 @@
 				<configurationDefinitions>
 					<item>
 						<first>CharacterSet</first>
-						<second>MultiByte</second>
+						<second>Unicode</second>
 					</item>
 					<item>
 						<first>ConfigurationType</first>
@@ -932,7 +932,7 @@
 				<configurationDefinitions>
 					<item>
 						<first>CharacterSet</first>
-						<second>MultiByte</second>
+						<second>Unicode</second>
 					</item>
 					<item>
 						<first>ConfigurationType</first>

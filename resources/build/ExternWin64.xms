@@ -891,7 +891,7 @@
 			<items>
 				<item type="traktor.sb.File" version="1">
 					<fileName>*.c</fileName>
-					<excludeFilter>jmem*;example*;wr*;rd*;cjpeg*;ckconfig*;djpeg*</excludeFilter>
+					<excludeFilter>jmem*;example*;wr*;rd*;cjpeg*;ckconfig*;djpeg*;jpegtran.c</excludeFilter>
 					<items/>
 				</item>
 				<item type="traktor.sb.File" version="1">
@@ -5053,7 +5053,7 @@
 			<items>
 				<item type="traktor.sb.File" version="1">
 					<fileName>*.c</fileName>
-					<excludeFilter/>
+					<excludeFilter>luac.c</excludeFilter>
 					<items/>
 				</item>
 				<item type="traktor.sb.File" version="1">
