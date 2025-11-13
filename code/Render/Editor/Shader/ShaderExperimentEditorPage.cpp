@@ -284,7 +284,7 @@ void ShaderExperimentEditorPage::executeExperiment()
 			);
 		}
 
-		const int32_t workSize[] = { numBufferElements, 1, 1 };
+		const int32_t workSize[] = { pass.workSize, 1, 1 };
 		m_renderView->compute(program.program, workSize, false);
 		m_renderView->barrier(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
 
