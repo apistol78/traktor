@@ -38,28 +38,52 @@ bool ApiBuffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, 
 	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 	VmaAllocationCreateInfo aci = {};
-    if (cpuAccess && gpuAccess)
-	{
-	    aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
-		aci.requiredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-	}
-    else if (!cpuAccess && gpuAccess)
-        aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-    else if (cpuAccess && !gpuAccess)
-        aci.usage = VMA_MEMORY_USAGE_CPU_ONLY;
-    else
-        return false;
+	// if (cpuAccess && gpuAccess)
+	// {
+	//     aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+	// 	aci.requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+	// }
+	// else if (!cpuAccess && gpuAccess)
+	//     aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+	// else if (cpuAccess && !gpuAccess)
+	//     aci.usage = VMA_MEMORY_USAGE_CPU_ONLY;
+	// else
+	//     return false;
 
-	if (vmaCreateBuffer(m_context->getAllocator(), &bci, &aci, &m_buffer, &m_allocation, nullptr) != VK_SUCCESS)
+	if (cpuAccess && gpuAccess)
+	{
+		// Read back etc.
+		aci.usage = VMA_MEMORY_USAGE_AUTO;
+		aci.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
+	}
+	else if (!cpuAccess && gpuAccess)
+	{
+		// GPU only.
+		aci.usage = VMA_MEMORY_USAGE_AUTO;
+		aci.flags = VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT;
+		aci.priority = 1.0f;
+	}
+	else if (cpuAccess && !gpuAccess)
+	{
+		// Staging.
+		aci.usage = VMA_MEMORY_USAGE_AUTO;
+		aci.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;	
+	}
+	else
+		return false;
+
+	VmaAllocationInfo ai;
+	if (vmaCreateBuffer(m_context->getAllocator(), &bci, &aci, &m_buffer, &m_allocation, &ai) != VK_SUCCESS)
 		return false;
 
 	m_bufferSize = bufferSize;
-    return true;
+	m_locked = ai.pMappedData;
+	return true;
 }
 
 void ApiBuffer::destroy()
 {
-	T_FATAL_ASSERT_M(m_locked == nullptr, L"Buffer still locked.");
+	// T_FATAL_ASSERT_M(m_locked == nullptr, L"Buffer still locked.");
 	if (m_buffer != 0)
 	{
 		m_context->addDeferredCleanup(
@@ -72,25 +96,27 @@ void ApiBuffer::destroy()
 		);
 	}
 
+	m_context = nullptr;
 	m_allocation = 0;
 	m_buffer = 0;
-	m_context = nullptr;
+	m_bufferSize = 0;
 	m_resourceIndex = ~0U;
+	m_locked = nullptr;
 }
 
 void* ApiBuffer::lock()
 {
-	T_FATAL_ASSERT_M(m_locked == nullptr, L"Buffer already locked.");
-	if (vmaMapMemory(m_context->getAllocator(), m_allocation, &m_locked) != VK_SUCCESS)
-		m_locked = nullptr;
+	// T_FATAL_ASSERT_M(m_locked == nullptr, L"Buffer already locked.");
+	// if (vmaMapMemory(m_context->getAllocator(), m_allocation, &m_locked) != VK_SUCCESS)
+	// 	m_locked = nullptr;
 	return m_locked;
 }
 
 void ApiBuffer::unlock()
 {
-	T_FATAL_ASSERT_M(m_locked != nullptr, L"Buffer not locked.");
-	vmaUnmapMemory(m_context->getAllocator(), m_allocation);
-	m_locked = nullptr;
+	// T_FATAL_ASSERT_M(m_locked != nullptr, L"Buffer not locked.");
+	// vmaUnmapMemory(m_context->getAllocator(), m_allocation);
+	// m_locked = nullptr;
 }
 
 VkDeviceAddress ApiBuffer::getDeviceAddress()
