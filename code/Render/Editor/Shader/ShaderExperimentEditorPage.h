@@ -96,6 +96,7 @@ private:
 	Ref< ShaderExperiment > m_experiment;
 
 	Ref< ui::Widget > m_renderWidget;
+	Ref< ui::GridView > m_resultGrid;
 
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< IRenderSystem > m_renderSystem;
@@ -104,6 +105,8 @@ private:
 	resource::Proxy< Shader > m_shader;
 
 	void executeExperiment();
+
+	void eventRenderSize(ui::SizeEvent* event);
 };
 
 }

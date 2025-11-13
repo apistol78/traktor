@@ -27,15 +27,18 @@ constexpr int32_t c_guardBytes = 16;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferVrfy", BufferVrfy, Buffer)
 
-BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t bufferSize)
+BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t bufferSize, bool dynamic)
 :	Buffer(bufferSize)
 ,	m_resourceTracker(resourceTracker)
 ,	m_buffer(buffer)
 {
 	m_resourceTracker->add(this);
 
-	m_shadow = (uint8_t*)Alloc::acquireAlign(bufferSize + 2 * c_guardBytes, 16, T_FILE_LINE);
-	std::memset(m_shadow, 0, bufferSize + 2 * c_guardBytes);
+	if (!dynamic)
+	{
+		m_shadow = (uint8_t*)Alloc::acquireAlign(bufferSize + 2 * c_guardBytes, 16, T_FILE_LINE);
+		std::memset(m_shadow, 0, bufferSize + 2 * c_guardBytes);
+	}
 
 	getCallStack(8, m_callstack, 2);
 
@@ -47,7 +50,8 @@ BufferVrfy::~BufferVrfy()
 {
 	verifyGuard();
 	verifyUntouched();
-	Alloc::freeAlign(m_shadow);
+	if (m_shadow)
+		Alloc::freeAlign(m_shadow);
 	m_resourceTracker->remove(this);
 }
 
@@ -75,8 +79,13 @@ void* BufferVrfy::lock()
 	if (m_device)
 	{
 		m_locked = true;
-		std::memset(m_shadow, 0, getBufferSize() + 2 * c_guardBytes);
-		return m_shadow + c_guardBytes;
+		if (m_shadow)
+		{
+			std::memset(m_shadow, 0, getBufferSize() + 2 * c_guardBytes);
+			return m_shadow + c_guardBytes;
+		}
+		else
+			return m_device;
 	}
 	else
 		return nullptr;
@@ -92,8 +101,11 @@ void BufferVrfy::unlock()
 	if (!m_buffer)
 		return;
 
-	std::memcpy(m_device, m_shadow + c_guardBytes, getBufferSize());
-	std::memset(m_shadow, 0, getBufferSize() + 2 * c_guardBytes);
+	if (m_shadow)
+	{
+		std::memcpy(m_device, m_shadow + c_guardBytes, getBufferSize());
+		std::memset(m_shadow, 0, getBufferSize() + 2 * c_guardBytes);
+	}
 
 	m_buffer->unlock();
 	m_locked = false;
@@ -110,6 +122,9 @@ const IBufferView* BufferVrfy::getBufferView() const
 
 void BufferVrfy::verifyGuard() const
 {
+	if (!m_shadow)
+		return;
+
 	const uint32_t bufferSize = getBufferSize();
 	for (uint32_t i = 0; i < c_guardBytes; ++i)
 	{
@@ -120,6 +135,9 @@ void BufferVrfy::verifyGuard() const
 
 void BufferVrfy::verifyUntouched() const
 {
+	if (!m_shadow)
+		return;
+
 #if T_VRFY_CHECK_UNTOUCHED
 	const uint32_t bufferSize = getBufferSize();
 	for (uint32_t i = 0; i < bufferSize; ++i)

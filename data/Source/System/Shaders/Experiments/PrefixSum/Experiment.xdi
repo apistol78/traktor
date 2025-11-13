@@ -5,5 +5,14 @@
 		<item>
 			<technique>Flags</technique>
 		</item>
+		<item>
+			<technique>LocalScan</technique>
+		</item>
+		<item>
+			<technique>GlobalScan1</technique>
+		</item>
+		<item>
+			<technique>AddOffsets</technique>
+		</item>
 	</pass>
 </object>

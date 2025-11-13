@@ -9,6 +9,7 @@
 #include "Render/Editor/Shader/ShaderExperimentEditorPage.h"
 
 #include "Core/Log/Log.h"
+#include "Core/Math/Random.h"
 #include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -112,6 +113,13 @@
 
 namespace traktor::render
 {
+	namespace
+	{
+
+const int32_t numBuffers = 16;
+const int32_t numBufferElements = 64;
+	
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderExperimentEditorPage", ShaderExperimentEditorPage, editor::IEditorPage)
 
@@ -136,16 +144,30 @@ bool ShaderExperimentEditorPage::create(ui::Container* parent)
 	if (!m_renderSystem)
 		return false;
 
-
+	// Create resource manager.
 	m_resourceManager = new resource::ResourceManager(database, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new render::TextureFactory(m_renderSystem, 0));
 	m_resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
 
-
+	// Create dummy render widget.
 	m_renderWidget = new ui::Widget();
 	m_renderWidget->create(parent, ui::WsNoCanvas);
+	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &ShaderExperimentEditorPage::eventRenderSize);
+	m_renderWidget->setVisible(false);
 
 
+
+
+	// Create result grid.
+	m_resultGrid = new ui::GridView();
+	m_resultGrid->create(parent, ui::GridView::WsColumnHeader);
+	m_resultGrid->addColumn(new ui::GridColumn(L"", 30_ut));
+	for (int32_t i = 0; i < numBuffers; ++i)
+		m_resultGrid->addColumn(new ui::GridColumn(str(L"%c", L'A' + i), 60_ut));
+
+
+
+	// Create render view.
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
@@ -158,23 +180,30 @@ bool ShaderExperimentEditorPage::create(ui::Container* parent)
 	if (!m_renderView)
 		return false;
 
-
-
+	// Bind shader.
 	if (!m_resourceManager->bind(
 		resource::Id< Shader >(m_experiment->getShader()),
 		m_shader
 	))
 		return false;
 
+	// Initial resize and reset.
+	m_renderWidget->setRect(ui::Rect(0, 0, 64, 64));
+	m_renderView->reset(64, 64);
 
+	// Execute experiment to show initial results.
 	executeExperiment();
-
 	return true;
 }
 
 void ShaderExperimentEditorPage::destroy()
 {
 	T_FATAL_ASSERT(m_site != nullptr);
+
+	m_shader.clear();
+
+	safeClose(m_renderView);
+	safeDestroy(m_resourceManager);
 
 	m_site = nullptr;
 }
@@ -196,40 +225,47 @@ void ShaderExperimentEditorPage::handleDatabaseEvent(db::Database* database, con
 		if (m_resourceManager->reload(eventId, false))
 		{
 			// Resource reloaded; re-run experiment.
+			executeExperiment();
 		}
 	}	
 }
 
 void ShaderExperimentEditorPage::executeExperiment()
 {
-	log::info << L"Running experiment..." << Endl;
+	Ref< Buffer > buffers[numBuffers];
+	uint32_t* bufferPtrs[numBuffers];
 
-
-	Ref< Buffer > input = m_renderSystem->createBuffer(BufferUsage::BuStructured, 16 * sizeof(uint32_t), true);
-	if (!input)
+	// Create buffers.
+	for (int32_t i = 0; i < numBuffers; ++i)
 	{
-		log::error << L"Unable to execute experiment; failed to create input buffer." << Endl;
-		return;
+		buffers[i] = m_renderSystem->createBuffer(BufferUsage::BuStructured, numBufferElements * sizeof(uint32_t), true);
+		if (!buffers[i])
+		{
+			log::error << L"Unable to execute experiment; failed to create buffer." << Endl;
+			return;
+		}
+
+		if ((bufferPtrs[i] = (uint32_t*)buffers[i]->lock()) == nullptr)
+		{
+			log::error << L"Unable to execute experiment; failed to lock buffer." << Endl;
+			return;
+		}
 	}
 
-	Ref< Buffer > output = m_renderSystem->createBuffer(BufferUsage::BuStructured, 16 * sizeof(uint32_t), true);
-	if (!output)
+	// Upload initial data into buffers.
 	{
-		log::error << L"Unable to execute experiment; failed to create output buffer." << Endl;
-		return;
+		Random rnd;
+		for (int32_t i = 0; i < numBufferElements; ++i)
+		{
+			bufferPtrs[0][i] = rnd.next() & 3;
+			for (int32_t j = 1; j < numBuffers; ++j)
+				bufferPtrs[j][i] = 0;
+		}
 	}
 
-
-
-	for (int i = 0; i < 10; ++i)
-	{
-
-	m_renderView->beginFrame();
-
+	// Execute expermient passes.
 	for (const auto& pass : m_experiment->getPasses())
 	{
-		log::info << L"Executing pass " << pass.technique << L"..." << Endl;
-
 		const Shader::Program program = m_shader->getProgram(Shader::Permutation(getParameterHandle(pass.technique)));
 		if (!program)
 		{
@@ -237,46 +273,51 @@ void ShaderExperimentEditorPage::executeExperiment()
 			continue;
 		}
 
-		program.program->setBufferViewParameter(
-			getParameterHandle(L"Experiment_Input"),
-			input->getBufferView()
-		);
-		program.program->setBufferViewParameter(
-			getParameterHandle(L"Experiment_Output"),
-			output->getBufferView()
-		);
+		m_renderView->beginFrame();
 
-		const int32_t workSize[] = { 16, 1, 1 };
+		for (int32_t i = 0; i < numBuffers; ++i)
+		{
+			const std::wstring bufferName = str(L"Buffer_%c", L'A' + i);
+			program.program->setBufferViewParameter(
+				getParameterHandle(bufferName),
+				buffers[i]->getBufferView()
+			);
+		}
+
+		const int32_t workSize[] = { numBufferElements, 1, 1 };
 		m_renderView->compute(program.program, workSize, false);
+		m_renderView->barrier(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
+
+		m_renderView->endFrame();
+		m_renderView->present();
 	}
 
-	m_renderView->endFrame();
-	m_renderView->present();
-	
-
-	log::info << L"Experiment done; output data:" << Endl;
-
-	const uint32_t* ptr = (const uint32_t*)output->lock();
-	for (int32_t i = 0; i < 16; ++i)
+	// Update buffer views in grid views.
+	m_resultGrid->removeAllRows();
+	for (int32_t i = 0; i < numBufferElements; ++i)
 	{
-		log::info << L"output[" << i << L"] = " << ptr[i] << Endl; 
+		Ref< ui::GridRow > row = new ui::GridRow();
+		row->set(0, new ui::GridItem(toString(i)));
+		for (int32_t j = 0; j < numBuffers; ++j)
+			row->set(j + 1, new ui::GridItem(toString(bufferPtrs[j][i])));
+		m_resultGrid->addRow(row);
 	}
-	output->unlock();
 
-
-	const uint32_t* iptr = (const uint32_t*)input->lock();
-	for (int32_t i = 0; i < 16; ++i)
+	// Destroy all buffers.
+	for (int32_t i = 0; i < numBuffers; ++i)
 	{
-		log::info << L"input[" << i << L"] = " << iptr[i] << Endl; 
+		buffers[i]->unlock();
+		safeDestroy(buffers[i]);
 	}
-	input->unlock();
+}
 
-	}
+void ShaderExperimentEditorPage::eventRenderSize(ui::SizeEvent* event)
+{
+	if (!m_renderView)
+		return;
 
-
-	safeDestroy(output);
-	safeDestroy(input);
-
+	ui::Size sz = event->getSize();
+	m_renderView->reset(sz.cx, sz.cy);
 }
 
 }
