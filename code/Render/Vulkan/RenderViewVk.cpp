@@ -740,6 +740,8 @@ void RenderViewVk::present()
 
 	// Recycle uniform buffers.
 	m_context->recycle();
+
+	vkDeviceWaitIdle(m_context->getLogicalDevice());
 }
 
 bool RenderViewVk::beginPass(const Clear* clear, uint32_t load, uint32_t store)

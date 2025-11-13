@@ -2610,7 +2610,7 @@ void Struct::serialize(ISerializer& s)
 	if (s.getVersion< Struct >() >= 2)
 		s >> Member< Guid >(L"structDeclaration", m_structDeclaration, AttributeType(type_of< StructDeclaration >()));
 
-	s >> Member< std::wstring >(L"parameterName", m_parameterName, AttributePrivate());
+	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 
 	if (s.getVersion< Struct >() < 3)
 	{
