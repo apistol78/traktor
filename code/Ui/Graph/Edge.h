@@ -62,6 +62,10 @@ public:
 
 	Unit getThickness() const;
 
+	void setDrawArrow(bool drawArrow);
+
+	bool getDrawArrow() const;
+
 	void setSelected(bool selected);
 
 	bool isSelected() const;
@@ -75,6 +79,7 @@ private:
 	Ref< Pin > m_destination;
 	std::wstring m_text;
 	Unit m_thickness = Unit(2);
+	bool m_drawArrow = true;
 	bool m_selected = false;
 	SmallMap< std::wstring, Ref< Object > > m_data;
 	mutable AlignedVector< Point > m_spline;

@@ -148,6 +148,16 @@ Unit Edge::getThickness() const
 	return m_thickness;
 }
 
+void Edge::setDrawArrow(bool drawArrow)
+{
+	m_drawArrow = drawArrow;
+}
+
+bool Edge::getDrawArrow() const
+{
+	return m_drawArrow;
+}
+
 void Edge::setSelected(bool selected)
 {
 	m_selected = selected;
@@ -218,7 +228,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	canvas->setBackground(color);
 
 	const Point s = graph->pixel(m_source->getPosition()) + offset;
-	const Point d = graph->pixel(m_destination->getPosition() - UnitSize(8_ut, 0_ut)) + offset;
+	const Point d = graph->pixel(m_destination->getPosition() - UnitSize(m_drawArrow ? 8_ut : 0_ut, 0_ut)) + offset;
 
 	// calculateLinearSpline(graph, s, d, m_spline);
 	// canvas->drawLines(m_spline, graph->pixel(hot ? 4_ut : m_thickness));
@@ -247,13 +257,16 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	canvas->setBackground(color);
 #endif
 
-	const Point at = graph->pixel(m_destination->getPosition()) + offset;
-	const Point arrow[] = {
-		Point(at.x - graph->pixel(10_ut), at.y - graph->pixel(5_ut)),
-		Point(at.x, at.y),
-		Point(at.x - graph->pixel(10_ut), at.y + graph->pixel(5_ut))
-	};
-	canvas->fillPolygon(arrow, 3);
+	if (m_drawArrow)
+	{
+		const Point at = graph->pixel(m_destination->getPosition()) + offset;
+		const Point arrow[] = {
+			Point(at.x - graph->pixel(10_ut), at.y - graph->pixel(5_ut)),
+			Point(at.x, at.y),
+			Point(at.x - graph->pixel(10_ut), at.y + graph->pixel(5_ut))
+		};
+		canvas->fillPolygon(arrow, 3);
+	}
 
 	if (imageLabel && !m_text.empty())
 	{

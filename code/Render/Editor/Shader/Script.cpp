@@ -334,8 +334,10 @@ void Script::removeOutputPin(const std::wstring& name)
 
 ParameterType Script::getOutputPinType(int index) const
 {
-	T_ASSERT(index >= 0 && index < int(m_outputPins.size()));
-	return m_outputPins[index].getType();
+	if (index <= 0)
+		return ParameterType::Scalar;
+	else
+		return m_outputPins[index - 1].getType();
 }
 
 std::wstring Script::getInformation() const
@@ -366,7 +368,7 @@ const OutputPin* Script::getOutputPin(int index) const
 	if (index <= 0)
 		return &m_textOutputPin;
 	else
-		return &m_outputPins[index];
+		return &m_outputPins[index - 1];
 }
 
 void Script::serialize(ISerializer& s)
