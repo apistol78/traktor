@@ -28,6 +28,7 @@ namespace traktor::editor
 class IDocument;
 class IEditor;
 class IEditorPageSite;
+class PropertiesView;
 
 }
 
@@ -95,6 +96,7 @@ private:
 
 	Ref< ShaderExperiment > m_experiment;
 
+	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< ui::GridView > m_resultGrid;
 
@@ -105,6 +107,8 @@ private:
 	resource::Proxy< Shader > m_shader;
 
 	void executeExperiment();
+
+	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 
 	void eventRenderSize(ui::SizeEvent* event);
 };
