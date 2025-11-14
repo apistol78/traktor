@@ -13,103 +13,30 @@
 #include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
-#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Core/Settings/PropertyInteger.h"
-#include "Core/Settings/PropertyString.h"
-#include "Core/Settings/PropertyStringSet.h"
 #include "Database/Database.h"
-#include "Database/Group.h"
-#include "Database/Instance.h"
-#include "Database/Traverse.h"
-#include "Editor/IBrowseFilter.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Editor/PropertiesView.h"
-#include "I18N/Text.h"
 #include "Render/Buffer.h"
 #include "Render/IProgram.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/Shader.h"
-#include "Render/Editor/Edge.h"
-#include "Render/Editor/Group.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphCombinations.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphTechniques.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
-#include "Render/Editor/Shader/Facades/ColorNodeFacade.h"
-#include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
-#include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
-#include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
-#include "Render/Editor/Shader/Facades/IndexedUniformNodeFacade.h"
-#include "Render/Editor/Shader/Facades/InterpolatorNodeFacade.h"
-#include "Render/Editor/Shader/Facades/ScalarNodeFacade.h"
-#include "Render/Editor/Shader/Facades/ScriptNodeFacade.h"
-#include "Render/Editor/Shader/Facades/SwizzleNodeFacade.h"
-#include "Render/Editor/Shader/Facades/TextureNodeFacade.h"
-#include "Render/Editor/Shader/Facades/UniformNodeFacade.h"
-#include "Render/Editor/Shader/Facades/VariableNodeFacade.h"
-#include "Render/Editor/Shader/FragmentLinker.h"
-#include "Render/Editor/Shader/INodeFacade.h"
-#include "Render/Editor/Shader/NodeCategories.h"
-#include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/QuickMenuTool.h"
-#include "Render/Editor/Shader/ShaderDependencyPane.h"
-#include "Render/Editor/Shader/ShaderDependencyTracker.h"
 #include "Render/Editor/Shader/ShaderExperiment.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
-#include "Render/Editor/Shader/ShaderViewer.h"
-#include "Render/Editor/Shader/UniformDeclaration.h"
-#include "Render/Editor/Shader/UniformLinker.h"
-#include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
-#include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
-#include "Ui/FloodLayout.h"
-#include "Ui/Graph/Edge.h"
-#include "Ui/Graph/EdgeConnectEvent.h"
-#include "Ui/Graph/EdgeDisconnectEvent.h"
-#include "Ui/Graph/GraphControl.h"
-#include "Ui/Graph/Group.h"
-#include "Ui/Graph/GroupMovedEvent.h"
-#include "Ui/Graph/Node.h"
-#include "Ui/Graph/NodeActivateEvent.h"
-#include "Ui/Graph/NodeMovedEvent.h"
-#include "Ui/Graph/PaintSettings.h"
-#include "Ui/Graph/Pin.h"
-#include "Ui/Graph/SelectEvent.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
-#include "Ui/GridView/GridItemContentChangeEvent.h"
 #include "Ui/GridView/GridRow.h"
-#include "Ui/GridView/GridRowDoubleClickEvent.h"
 #include "Ui/GridView/GridView.h"
 #include "Ui/Itf/IWidget.h"
-#include "Ui/Menu.h"
-#include "Ui/MenuItem.h"
-#include "Ui/MessageBox.h"
-#include "Ui/Splitter.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/SyntaxRichEdit/SyntaxLanguageGlsl.h"
-#include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
-#include "Ui/Tab.h"
-#include "Ui/TableLayout.h"
-#include "Ui/TabPage.h"
-#include "Ui/ToolBar/ToolBar.h"
-#include "Ui/ToolBar/ToolBarButton.h"
-#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/ToolBar/ToolBarDropDown.h"
-#include "Ui/ToolBar/ToolBarSeparator.h"
 
 namespace traktor::render
 {
@@ -155,25 +82,28 @@ bool ShaderExperimentEditorPage::create(ui::Container* parent)
 	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &ShaderExperimentEditorPage::eventRenderSize);
 	m_renderWidget->setVisible(false);
 
-
-
-
 	// Create result grid.
 	m_resultGrid = new ui::GridView();
 	m_resultGrid->create(parent, ui::GridView::WsColumnHeader);
 	m_resultGrid->addColumn(new ui::GridColumn(L"", 30_ut));
 	for (int32_t i = 0; i < numBuffers; ++i)
-		m_resultGrid->addColumn(new ui::GridColumn(str(L"%c", L'A' + i), 60_ut));
+		m_resultGrid->addColumn(new ui::GridColumn(str(L"%c", L'A' + i), 40_ut));
 
+	// Create properties view.
+	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &ShaderExperimentEditorPage::eventPropertiesChanged);
+	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
 
+	// Expose experiment to properties view.
+	m_propertiesView->setPropertyObject(m_experiment);
 
 	// Create render view.
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
-	desc.multiSample = 4;
+	desc.multiSample = 0;
 	desc.allowHDR = false;
-	desc.waitVBlanks = 1;
+	desc.waitVBlanks = 0;
 	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 
 	m_renderView = m_renderSystem->createRenderView(desc);
@@ -200,10 +130,14 @@ void ShaderExperimentEditorPage::destroy()
 {
 	T_FATAL_ASSERT(m_site != nullptr);
 
+	if (m_propertiesView)
+		m_site->destroyAdditionalPanel(m_propertiesView);
+
 	m_shader.clear();
 
 	safeClose(m_renderView);
 	safeDestroy(m_resourceManager);
+	safeDestroy(m_propertiesView);
 
 	m_site = nullptr;
 }
@@ -215,6 +149,9 @@ bool ShaderExperimentEditorPage::dropInstance(db::Instance* instance, const ui::
 
 bool ShaderExperimentEditorPage::handleCommand(const ui::Command& command)
 {
+	if (m_propertiesView->handleCommand(command))
+		return true;
+
 	return false;
 }
 
@@ -309,6 +246,11 @@ void ShaderExperimentEditorPage::executeExperiment()
 		buffers[i]->unlock();
 		safeDestroy(buffers[i]);
 	}
+}
+
+void ShaderExperimentEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
+{
+	executeExperiment();
 }
 
 void ShaderExperimentEditorPage::eventRenderSize(ui::SizeEvent* event)
