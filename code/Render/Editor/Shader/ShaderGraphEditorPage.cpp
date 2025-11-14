@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -195,15 +195,15 @@ private:
 
 		StringOutputStream ss;
 		ss << L"(";
-		for (int32_t i = 0; i < inputPinCount; ++i)
+		for (int32_t i = 1; i < inputPinCount; ++i)
 		{
-			if (i > 0)
+			if (i > 1)
 				ss << L", ";
 			ss << L"in " << m_script->getInputPin(i)->getName();
 		}
-		for (int32_t i = 0; i < outputPinCount; ++i)
+		for (int32_t i = 1; i < outputPinCount; ++i)
 		{
-			if (i > 0 || inputPinCount > 0)
+			if (i > 1 || inputPinCount > 1)
 				ss << L", ";
 			ss << L"out " << m_script->getOutputPin(i)->getName();
 		}
@@ -212,6 +212,16 @@ private:
 		return ss.str();
 	}
 };
+
+bool isResourceReference(const Node* node)
+{
+	if (is_a< Struct >(node))
+		return true;
+	else if (is_a< Texture >(node))
+		return true;
+	else
+		return false;
+}
 
 }
 
@@ -1198,6 +1208,7 @@ void ShaderGraphEditorPage::createEditorNodes(const RefArray< Node >& shaderNode
 
 		Ref< ui::Edge > editorEdge = new ui::Edge(editorSourcePin, editorDestinationPin);
 		editorEdge->setData(L"SHADEREDGE", shaderEdge);
+		editorEdge->setDrawArrow(!isResourceReference(shaderSourcePin->getNode()));
 
 		m_editorGraph->addEdge(editorEdge);
 	}
@@ -1971,6 +1982,8 @@ void ShaderGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 
 	editorEdge->setData(L"SHADEREDGE", shaderEdge);
 	m_editorGraph->addEdge(editorEdge);
+
+	editorEdge->setDrawArrow(!isResourceReference(shaderSourceNode));
 
 	updateGraph();
 }

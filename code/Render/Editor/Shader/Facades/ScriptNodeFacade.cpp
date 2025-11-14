@@ -107,7 +107,7 @@ void ScriptNodeFacade::refreshEditorNode(
 	editorNode->setInfo(scriptNode->getInformation());
 
 	// Add or rename editor pins.
-	for (int j = 0; j < scriptNode->getInputPinCount(); ++j)
+	for (int j = 1; j < scriptNode->getInputPinCount(); ++j)
 	{
 		const InputPin* inputPin = scriptNode->getInputPin(j);
 		ui::Pin* editorInputPin = editorNode->findInputPin(inputPin->getId());
@@ -117,7 +117,7 @@ void ScriptNodeFacade::refreshEditorNode(
 			editorNode->createInputPin(inputPin->getName(), inputPin->getId(), !inputPin->isOptional(), false);
 	}
 
-	for (int j = 0; j < scriptNode->getOutputPinCount(); ++j)
+	for (int j = 1; j < scriptNode->getOutputPinCount(); ++j)
 	{
 		const OutputPin* outputPin = scriptNode->getOutputPin(j);
 		ui::Pin* editorOutputPin = editorNode->findOutputPin(outputPin->getId());
@@ -132,7 +132,7 @@ void ScriptNodeFacade::refreshEditorNode(
 	for (auto editorInputPin : editorNode->getInputPins())
 	{
 		bool valid = false;
-		for (int j = 0; j < scriptNode->getInputPinCount(); ++j)
+		for (int j = 1; j < scriptNode->getInputPinCount(); ++j)
 		{
 			if (scriptNode->getInputPin(j)->getId() == editorInputPin->getId())
 			{
@@ -150,7 +150,7 @@ void ScriptNodeFacade::refreshEditorNode(
 	for (auto editorOutputPin : editorNode->getOutputPins())
 	{
 		bool valid = false;
-		for (int j = 0; j < scriptNode->getOutputPinCount(); ++j)
+		for (int j = 1; j < scriptNode->getOutputPinCount(); ++j)
 		{
 			if (scriptNode->getOutputPin(j)->getId() == editorOutputPin->getId())
 			{
