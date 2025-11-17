@@ -13,6 +13,7 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Render/Editor/Shader/ShaderExperiment.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/StructDeclaration.h"
 
 namespace traktor::render
 {
@@ -22,7 +23,15 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ShaderExperiment", 0, ShaderExperim
 void ShaderExperiment::serialize(ISerializer& s)
 {
     s >> Member< Guid >(L"shader", m_shader, AttributeType(type_of< ShaderGraph >()));
+    s >> MemberAlignedVector< Data, MemberComposite< Data > >(L"data", m_data);
     s >> MemberAlignedVector< Pass, MemberComposite< Pass > >(L"pass", m_passes);
+}
+
+void ShaderExperiment::Data::serialize(ISerializer& s)
+{
+    s >> Member< std::wstring >(L"name", name);
+    s >> Member< Guid >(L"structDeclaration", structDeclaration, AttributeType(type_of< StructDeclaration >()));
+    s >> Member< int32_t >(L"count", count);
 }
 
 void ShaderExperiment::Pass::serialize(ISerializer& s)

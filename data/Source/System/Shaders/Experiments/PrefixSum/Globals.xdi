@@ -7,7 +7,5 @@
 shared uint sdata[GROUP_SIZE];
 ]]></text>
 	<samplers/>
-	<structDeclarations>
-		<item>{347C689F-7686-460A-8732-1B984FBDD9ED}</item>
-	</structDeclarations>
+	<structDeclarations/>
 </object>
