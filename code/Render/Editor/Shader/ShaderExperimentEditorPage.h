@@ -61,14 +61,17 @@ class SyntaxRichEdit;
 class ToolBar;
 class ToolBarButtonClickEvent;
 class ToolBarDropDown;
+class TreeView;
 
 }
 
 namespace traktor::render
 {
 
+class Buffer;
 class IRenderSystem;
 class IRenderView;
+class StructDeclaration;
 class Shader;
 class ShaderExperiment;
 
@@ -98,6 +101,8 @@ private:
 
 	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::Widget > m_renderWidget;
+
+	Ref< ui::GridView > m_buffersGrid;
 	Ref< ui::GridView > m_resultGrid;
 
 	Ref< resource::IResourceManager > m_resourceManager;

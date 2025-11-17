@@ -141,6 +141,12 @@ void GridView::addColumn(GridColumn* column)
 	requestUpdate();
 }
 
+void GridView::removeAllColumns()
+{
+	m_columns.resize(0);
+	requestUpdate();
+}
+
 const RefArray< GridColumn >& GridView::getColumns() const
 {
 	return m_columns;
@@ -174,6 +180,14 @@ int32_t GridView::getColumnIndex(int32_t x) const
 		left = right;
 	}
 	return -1;
+}
+
+void GridView::setRows(const RefArray< GridRow >& rows)
+{
+	m_rows = rows;
+	for (GridRow* row : m_rows)
+		row->setOwner(this);
+	requestUpdate();
 }
 
 void GridView::addRow(GridRow* row)

@@ -1,22 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderExperiment">
 	<shader>{7BAA152D-9185-4624-989A-366D44D35424}</shader>
+	<data>
+		<item>
+			<name>Buffer_A</name>
+			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
+			<count>64</count>
+		</item>
+		<item>
+			<name>Buffer_B</name>
+			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
+			<count>64</count>
+		</item>
+		<item>
+			<name>Buffer_C</name>
+			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
+			<count>64</count>
+		</item>
+		<item>
+			<name>Buffer_D</name>
+			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
+			<count>64</count>
+		</item>
+		<item>
+			<name>Buffer_E</name>
+			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
+			<count>64</count>
+		</item>
+		<item>
+			<name>Buffer_F</name>
+			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
+			<count>64</count>
+		</item>
+	</data>
 	<pass>
 		<item>
 			<technique>Flags</technique>
-            <workSize>64</workSize>
+			<workSize>64</workSize>
 		</item>
 		<item>
 			<technique>LocalScan</technique>
-            <workSize>64</workSize>
-        </item>
-        <item>
-            <technique>GlobalScan1</technique>
-            <workSize>1</workSize>
-        </item>
-        <item>
-            <technique>AddOffsets</technique>
-            <workSize>64</workSize>
-        </item>
+			<workSize>64</workSize>
+		</item>
+		<item>
+			<technique>GlobalScan1</technique>
+			<workSize>1</workSize>
+		</item>
+		<item>
+			<technique>AddOffsets</technique>
+			<workSize>64</workSize>
+		</item>
 	</pass>
 </object>

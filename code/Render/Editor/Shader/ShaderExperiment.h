@@ -29,6 +29,15 @@ class T_DLLCLASS ShaderExperiment : public ISerializable
     T_RTTI_CLASS;
 
 public:
+    struct Data
+    {
+        std::wstring name;
+        Guid structDeclaration;
+        int32_t count = 1;
+
+        void serialize(ISerializer& s);
+    };
+
     struct Pass
     {
         std::wstring technique;
@@ -39,12 +48,15 @@ public:
 
     const Guid& getShader() const { return m_shader; }
 
+    const AlignedVector< Data >& getData() const { return m_data; }
+
     const AlignedVector< Pass >& getPasses() const { return m_passes; }
 
     virtual void serialize(ISerializer& s) override final;
 
 private:
     Guid m_shader;
+    AlignedVector< Data > m_data;
     AlignedVector< Pass > m_passes;
 };
 
