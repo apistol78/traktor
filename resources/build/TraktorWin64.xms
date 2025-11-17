@@ -16180,7 +16180,7 @@
 				</item>
 				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths/>
@@ -16200,11 +16200,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
-							<sourceFile>Traktor.Runtime.App.pdb</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>Traktor.Runtime.App.lib</sourceFile>
+							<sourceFile>Traktor.Runtime.App.exe</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -16212,7 +16208,7 @@
 				</item>
 				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths/>
@@ -16232,11 +16228,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
-							<sourceFile>Traktor.Runtime.App.pdb</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>Traktor.Runtime.App.lib</sourceFile>
+							<sourceFile>Traktor.Runtime.App.exe</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
