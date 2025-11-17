@@ -65,6 +65,8 @@ public:
 
 	void addColumn(GridColumn* column);
 
+	void removeAllColumns();
+
 	GridColumn* getColumn(uint32_t index) const;
 
 	const RefArray< GridColumn >& getColumns() const;
@@ -74,6 +76,8 @@ public:
 	void setSort(const sort_fn_t& sortFn);
 
 	int32_t getColumnIndex(int32_t x) const;
+
+	void setRows(const RefArray< GridRow >& rows);
 
 	void addRow(GridRow* row);
 
