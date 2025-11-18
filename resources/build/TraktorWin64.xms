@@ -6375,6 +6375,16 @@
 																	</item>
 																</items>
 															</item>
+															<item type="traktor.sb.Filter">
+																<name>Experiment</name>
+																<items>
+																	<item type="traktor.sb.File" version="1">
+																		<fileName>Shader/Experiment/*.*</fileName>
+																		<excludeFilter/>
+																		<items/>
+																	</item>
+																</items>
+															</item>
 														</items>
 													</item>
 													<item type="traktor.sb.Filter">

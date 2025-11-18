@@ -6,10 +6,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Editor/Shader/ShaderExperimentPipeline.h"
+#include "Render/Editor/Shader/Experiment/ShaderExperimentPipeline.h"
 
 #include "Editor/IPipelineDepends.h"
-#include "Render/Editor/Shader/ShaderExperiment.h"
+#include "Render/Editor/Shader/Experiment/ShaderExperiment.h"
 
 namespace traktor::render
 {
