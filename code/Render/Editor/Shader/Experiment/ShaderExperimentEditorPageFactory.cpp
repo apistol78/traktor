@@ -6,12 +6,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/Experiment/ShaderExperimentEditorPageFactory.h"
+
 #include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Node.h"
+#include "Render/Editor/Shader/Experiment/ShaderExperiment.h"
+#include "Render/Editor/Shader/Experiment/ShaderExperimentEditorPage.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderExperiment.h"
-#include "Render/Editor/Shader/ShaderExperimentEditorPage.h"
-#include "Render/Editor/Shader/ShaderExperimentEditorPageFactory.h"
 #include "Ui/Command.h"
 
 namespace traktor::render

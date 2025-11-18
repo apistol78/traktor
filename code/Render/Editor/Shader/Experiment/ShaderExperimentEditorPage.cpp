@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Editor/Shader/ShaderExperimentEditorPage.h"
+#include "Render/Editor/Shader/Experiment/ShaderExperimentEditorPage.h"
 
 #include "Core/Log/Log.h"
 #include "Core/Math/Random.h"
@@ -21,7 +21,7 @@
 #include "Editor/IEditorPageSite.h"
 #include "Editor/PropertiesView.h"
 #include "Render/Buffer.h"
-#include "Render/Editor/Shader/ShaderExperiment.h"
+#include "Render/Editor/Shader/Experiment/ShaderExperiment.h"
 #include "Render/Editor/Shader/StructDeclaration.h"
 #include "Render/IProgram.h"
 #include "Render/IRenderSystem.h"
@@ -330,6 +330,10 @@ void ShaderExperimentEditorPage::executeExperiment()
 		{
 			log::error << L"Unable to execute experiment; failed to lock buffer." << Endl;
 			return;
+		}
+
+		if (data[i].initial != ShaderExperiment::Initial::Undefined)
+		{
 		}
 	}
 
