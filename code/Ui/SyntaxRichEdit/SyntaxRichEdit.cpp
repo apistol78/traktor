@@ -77,6 +77,7 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, uint32_t s
 
 	addEventHandler< ContentChangeEvent >(this, &SyntaxRichEdit::eventChange);
 	addEventHandler< KeyDownEvent >(this, &SyntaxRichEdit::eventKeyDown);
+	addEventHandler< KeyEvent >(this, &SyntaxRichEdit::eventKey);
 	addEventHandler< FocusEvent >(this, &SyntaxRichEdit::eventFocusLost);
 
 	// Create autocomplete popup
@@ -369,9 +370,42 @@ void SyntaxRichEdit::eventKeyDown(KeyDownEvent* event)
 				}
 
 				hideAutocomplete();
-				event->consume();
-				return;
 			}
+			// Always consume Tab/Enter when autocomplete is visible to prevent inserting tab/newline
+			// Set flag so the following KeyEvent also gets consumed
+			m_consumeNextKeyEvent = true;
+			event->consume();
+			return;
+		}
+	}
+}
+
+void SyntaxRichEdit::eventKey(KeyEvent* event)
+{
+	if (!m_autocompleteEnabled || !m_autocompletePopup)
+		return;
+
+	// Check if we need to consume this key event (set by KeyDownEvent handler)
+	if (m_consumeNextKeyEvent)
+	{
+		const wchar_t ch = event->getCharacter();
+		if (ch == L'\t' || ch == L'\r' || ch == L'\n')
+		{
+			m_consumeNextKeyEvent = false;
+			event->consume();
+			return;
+		}
+		m_consumeNextKeyEvent = false;
+	}
+
+	// Also consume Tab and Enter character events when autocomplete is currently visible
+	if (m_autocompletePopup->isVisible(true))
+	{
+		const wchar_t ch = event->getCharacter();
+		if (ch == L'\t' || ch == L'\r' || ch == L'\n')
+		{
+			event->consume();
+			return;
 		}
 	}
 }

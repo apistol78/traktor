@@ -81,12 +81,15 @@ private:
 	std::wstring m_lastWord;
 	int32_t m_lastWordOffset = -1;
 	int32_t m_autocompletePopupX = 0;
+	bool m_consumeNextKeyEvent = false;
 
 	virtual void contentModified() override;
 
 	void eventChange(ContentChangeEvent* event);
 
 	void eventKeyDown(KeyDownEvent* event);
+
+	void eventKey(KeyEvent* event);
 
 	void eventFocusLost(FocusEvent* event);
 
