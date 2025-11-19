@@ -437,6 +437,35 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.ui.AutocompletePopup</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>4</second>
+				</item>
+				<item>
+					<first>background-color-selected</first>
+					<second>19</second>
+				</item>
+				<item>
+					<first>border-color</first>
+					<second>10</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>12</second>
+				</item>
+				<item>
+					<first>color-selected</first>
+					<second>12</second>
+				</item>
+				<item>
+					<first>color-description</first>
+					<second>10</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.ui.LogList</typeName>
 			<colors>
 				<item>

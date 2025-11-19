@@ -57,6 +57,7 @@
 #include "Ui/Tab.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TabPage.h"
+#include "Ui/Autocomplete/LuaAutocompleteProvider.h"
 
 namespace traktor::script
 {
@@ -180,6 +181,12 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
 	const int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
 	m_edit->setFont(ui::Font(font, ui::Unit(fontSize)));
+
+	// Setup autocomplete
+	const bool autocompleteEnabled = m_editor->getSettings()->getProperty< bool >(L"Editor.AutocompleteEnabled", true);
+	Ref< ui::LuaAutocompleteProvider > autocompleteProvider = new ui::LuaAutocompleteProvider();
+	m_edit->setAutocompleteProvider(autocompleteProvider);
+	m_edit->setAutocompleteEnabled(autocompleteEnabled);
 
 	if (m_script)
 	{
