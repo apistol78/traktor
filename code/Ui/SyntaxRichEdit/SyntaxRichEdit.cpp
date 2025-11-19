@@ -353,23 +353,7 @@ void SyntaxRichEdit::eventKeyDown(KeyDownEvent* event)
 			const AutocompleteSuggestion* suggestion = m_autocompletePopup->getSelectedSuggestion();
 			if (suggestion)
 			{
-				// Insert the selected suggestion
-				const int32_t caretOffset = getCaretOffset();
-				int32_t wordStart = 0;
-				const std::wstring currentWord = extractCurrentWord(caretOffset, wordStart);
-
-				// Replace current word with suggestion by manipulating text directly
-				if (!currentWord.empty())
-				{
-					std::wstring text = getText();
-					text.erase(wordStart, currentWord.length());
-					text.insert(wordStart, suggestion->name);
-					const int32_t newCaretPos = wordStart + (int32_t)suggestion->name.length();
-					setText(text);
-					placeCaret(newCaretPos);
-				}
-
-				hideAutocomplete();
+				insertAutocompleteSuggestion(*suggestion);
 			}
 			// Always consume Tab/Enter when autocomplete is visible to prevent inserting tab/newline
 			// Set flag so the following KeyEvent also gets consumed
@@ -415,10 +399,8 @@ void SyntaxRichEdit::eventFocusLost(FocusEvent* event)
 	hideAutocomplete();
 }
 
-void SyntaxRichEdit::eventAutocompleteSelect(AutocompleteSelectEvent* event)
+void SyntaxRichEdit::insertAutocompleteSuggestion(const AutocompleteSuggestion& suggestion)
 {
-	const AutocompleteSuggestion& suggestion = event->getSuggestion();
-
 	// Insert the selected suggestion
 	const int32_t caretOffset = getCaretOffset();
 	int32_t wordStart = 0;
@@ -436,6 +418,12 @@ void SyntaxRichEdit::eventAutocompleteSelect(AutocompleteSelectEvent* event)
 	}
 
 	hideAutocomplete();
+}
+
+void SyntaxRichEdit::eventAutocompleteSelect(AutocompleteSelectEvent* event)
+{
+	const AutocompleteSuggestion& suggestion = event->getSuggestion();
+	insertAutocompleteSuggestion(suggestion);
 }
 
 void SyntaxRichEdit::showAutocomplete()
