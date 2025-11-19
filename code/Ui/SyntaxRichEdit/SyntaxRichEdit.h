@@ -27,6 +27,7 @@ class IAutocompleteProvider;
 class AutocompletePopup;
 class AutocompleteSelectEvent;
 class SyntaxLanguage;
+struct AutocompleteSuggestion;
 
 /*! RichEdit control with automatic syntax highlighting.
  * \ingroup UI
@@ -100,6 +101,8 @@ private:
 	void hideAutocomplete();
 
 	void updateAutocomplete();
+
+	void insertAutocompleteSuggestion(const AutocompleteSuggestion& suggestion);
 
 	std::wstring extractCurrentWord(int32_t caretOffset, int32_t& outWordStart) const;
 };
