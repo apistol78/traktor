@@ -3222,6 +3222,16 @@
 													<excludeFilter/>
 													<items/>
 												</item>
+												<item type="traktor.sb.Filter">
+													<name>Autocomplete</name>
+													<items>
+														<item type="traktor.sb.File" version="1">
+															<fileName>SyntaxRichEdit/Autocomplete/*.*</fileName>
+															<excludeFilter/>
+															<items/>
+														</item>
+													</items>
+												</item>
 											</items>
 										</item>
 										<item type="traktor.sb.Filter">
@@ -3298,16 +3308,6 @@
 											<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 											<excludeFilter/>
 											<items/>
-										</item>
-										<item type="traktor.sb.Filter">
-											<name>Autocomplete</name>
-											<items>
-												<item type="traktor.sb.File" version="1">
-													<fileName>Autocomplete/*.*</fileName>
-													<excludeFilter/>
-													<items/>
-												</item>
-											</items>
 										</item>
 									</items>
 									<dependencies>
