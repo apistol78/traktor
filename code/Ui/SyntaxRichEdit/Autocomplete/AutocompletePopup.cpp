@@ -6,10 +6,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Ui/Autocomplete/AutocompletePopup.h"
+#include "Ui/SyntaxRichEdit/Autocomplete/AutocompletePopup.h"
 
 #include "Ui/Application.h"
-#include "Ui/Autocomplete/AutocompleteSelectEvent.h"
+#include "Ui/SyntaxRichEdit/Autocomplete/AutocompleteSelectEvent.h"
 #include "Ui/Canvas.h"
 #include "Ui/IBitmap.h"
 #include "Ui/ScrollBar.h"

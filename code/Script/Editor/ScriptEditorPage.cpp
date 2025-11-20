@@ -32,6 +32,7 @@
 #include "I18N/Format.h"
 #include "I18N/Text.h"
 #include "Script/Editor/IScriptOutline.h"
+#include "Script/Editor/LuaAutocompleteProvider.h"
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptClassesView.h"
 #include "Script/Editor/ScriptDebuggerView.h"
@@ -57,7 +58,6 @@
 #include "Ui/Tab.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TabPage.h"
-#include "Ui/Autocomplete/LuaAutocompleteProvider.h"
 
 namespace traktor::script
 {
@@ -184,7 +184,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	// Setup autocomplete
 	const bool autocompleteEnabled = m_editor->getSettings()->getProperty< bool >(L"Editor.AutocompleteEnabled", true);
-	Ref< ui::LuaAutocompleteProvider > autocompleteProvider = new ui::LuaAutocompleteProvider();
+	Ref< LuaAutocompleteProvider > autocompleteProvider = new LuaAutocompleteProvider();
 	m_edit->setAutocompleteProvider(autocompleteProvider);
 	m_edit->setAutocompleteEnabled(autocompleteEnabled);
 
@@ -319,12 +319,12 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 
 		const std::wstring selectedText = m_edit->getSelectedText(
 			[&](wchar_t ch) -> std::wstring {
-				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
-			},
+			return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
+		},
 			[&](const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
-				const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
-				return L"\\" + dc->id.format();
-			});
+			const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
+			return L"\\" + dc->id.format();
+		});
 		clipboard->setText(selectedText);
 	}
 	else if (command == L"Editor.Cut")
@@ -338,12 +338,12 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 
 		const std::wstring selectedText = m_edit->getSelectedText(
 			[&](wchar_t ch) -> std::wstring {
-				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
-			},
+			return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
+		},
 			[&](const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
-				const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
-				return L"\\" + dc->id.format();
-			});
+			const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
+			return L"\\" + dc->id.format();
+		});
 		clipboard->setText(selectedText);
 
 		m_edit->deleteSelection();
@@ -670,12 +670,12 @@ void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 		// Transform editor text into "escaped" text.
 		const std::wstring text = m_edit->getText(
 			[&](wchar_t ch) -> std::wstring {
-				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
-			},
+			return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
+		},
 			[&](const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
-				const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
-				return L"\\" + dc->id.format();
-			});
+			const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
+			return L"\\" + dc->id.format();
+		});
 
 		// Update script with text.
 		m_script->setTextDirect(text);

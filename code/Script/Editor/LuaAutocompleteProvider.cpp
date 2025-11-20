@@ -8,13 +8,13 @@
  */
 #include <algorithm>
 #include "Core/Misc/String.h"
-#include "Ui/Autocomplete/LuaAutocompleteProvider.h"
+#include "Script/Editor/LuaAutocompleteProvider.h"
 #include "Ui/StyleBitmap.h"
 
-namespace traktor::ui
+namespace traktor::script
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.LuaAutocompleteProvider", LuaAutocompleteProvider, IAutocompleteProvider)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.LuaAutocompleteProvider", LuaAutocompleteProvider, ui::IAutocompleteProvider)
 
 LuaAutocompleteProvider::LuaAutocompleteProvider()
 {
@@ -22,7 +22,7 @@ LuaAutocompleteProvider::LuaAutocompleteProvider()
     addKeywords();
 }
 
-bool LuaAutocompleteProvider::getSuggestions(const AutocompleteContext& context, std::vector< AutocompleteSuggestion >& outSuggestions)
+bool LuaAutocompleteProvider::getSuggestions(const ui::AutocompleteContext& context, std::vector< ui::AutocompleteSuggestion >& outSuggestions)
 {
     const std::wstring& prefix = context.currentWord;
     if (prefix.empty())
@@ -53,7 +53,7 @@ bool LuaAutocompleteProvider::getSuggestions(const AutocompleteContext& context,
     for (size_t i = 0; i < std::min(candidates.size(), maxSuggestions); ++i)
     {
         const auto& [symbol, relevance] = candidates[i];
-        outSuggestions.push_back(AutocompleteSuggestion(symbol.name, symbol.description, symbol.type, relevance));
+        outSuggestions.push_back(ui::AutocompleteSuggestion(symbol.name, symbol.description, symbol.type, relevance));
     }
 
     return !outSuggestions.empty();
@@ -65,7 +65,7 @@ void LuaAutocompleteProvider::updateContent(const std::wstring& text, const std:
     m_symbols.erase(
         std::remove_if(m_symbols.begin(), m_symbols.end(),
             [](const SymbolInfo& symbol) {
-                return symbol.type != SymbolType::Keyword &&
+		return symbol.type != ui::SymbolType::Keyword &&
                        symbol.scope >= 0; // User symbols have scope >= 0, builtins have -1
             }),
         m_symbols.end());
@@ -74,35 +74,35 @@ void LuaAutocompleteProvider::updateContent(const std::wstring& text, const std:
     parseSymbols(text);
 }
 
-Ref< IBitmap > LuaAutocompleteProvider::getSymbolIcon(SymbolType type) const
+Ref< ui::IBitmap > LuaAutocompleteProvider::getSymbolIcon(ui::SymbolType type) const
 {
     auto it = m_iconCache.find(type);
     if (it != m_iconCache.end())
         return it->second;
 
-    Ref< IBitmap > icon;
+    Ref< ui::IBitmap > icon;
     switch (type)
     {
-    case SymbolType::Function:
-        icon = new StyleBitmap(L"Script.DefineGlobalFunction");
+	case ui::SymbolType::Function:
+		icon = new ui::StyleBitmap(L"Script.DefineGlobalFunction");
         break;
-    case SymbolType::Variable:
-        icon = new StyleBitmap(L"Script.Variable");
+	case ui::SymbolType::Variable:
+		icon = new ui::StyleBitmap(L"Script.Variable");
         break;
-    case SymbolType::Keyword:
-        icon = new StyleBitmap(L"Script.Keyword");
+	case ui::SymbolType::Keyword:
+		icon = new ui::StyleBitmap(L"Script.Keyword");
         break;
-    case SymbolType::Module:
-        icon = new StyleBitmap(L"Script.Module");
+	case ui::SymbolType::Module:
+		icon = new ui::StyleBitmap(L"Script.Module");
         break;
-    case SymbolType::Field:
-        icon = new StyleBitmap(L"Script.Field");
+	case ui::SymbolType::Field:
+		icon = new ui::StyleBitmap(L"Script.Field");
         break;
-    case SymbolType::Parameter:
-        icon = new StyleBitmap(L"Script.Parameter");
+	case ui::SymbolType::Parameter:
+		icon = new ui::StyleBitmap(L"Script.Parameter");
         break;
-    case SymbolType::Constant:
-        icon = new StyleBitmap(L"Script.Constant");
+	case ui::SymbolType::Constant:
+		icon = new ui::StyleBitmap(L"Script.Constant");
         break;
     }
 
@@ -145,7 +145,7 @@ void LuaAutocompleteProvider::parseSymbols(const std::wstring& text)
                 std::wstring funcName = line.substr(nameStart, nameEnd - nameStart);
                 bool isLocal = (line.find(L"local") != std::wstring::npos && line.find(L"local") < funcPos);
 
-                SymbolInfo funcSymbol(funcName, SymbolType::Function, currentLine, scopeDepth, isLocal);
+                SymbolInfo funcSymbol(funcName, ui::SymbolType::Function, currentLine, scopeDepth, isLocal);
                 funcSymbol.description = isLocal ? L"local function" : L"function";
                 m_symbols.push_back(funcSymbol);
             }
@@ -169,7 +169,7 @@ void LuaAutocompleteProvider::parseSymbols(const std::wstring& text)
                 // Skip if it's "local function" (already handled above)
                 if (varName != L"function")
                 {
-                    SymbolInfo varSymbol(varName, SymbolType::Variable, currentLine, scopeDepth, true);
+					SymbolInfo varSymbol(varName, ui::SymbolType::Variable, currentLine, scopeDepth, true);
                     varSymbol.description = L"local variable";
                     m_symbols.push_back(varSymbol);
                 }
@@ -212,7 +212,7 @@ void LuaAutocompleteProvider::addLuaBuiltins()
 
     for (const auto& [name, desc] : luaBuiltins)
     {
-        SymbolInfo symbol(name, SymbolType::Function, -1, -1, false);
+		SymbolInfo symbol(name, ui::SymbolType::Function, -1, -1, false);
         symbol.description = desc;
         m_symbols.push_back(symbol);
     }
@@ -224,7 +224,7 @@ void LuaAutocompleteProvider::addLuaBuiltins()
 
     for (const auto& lib : luaLibraries)
     {
-        SymbolInfo symbol(lib, SymbolType::Module, -1, -1, false);
+		SymbolInfo symbol(lib, ui::SymbolType::Module, -1, -1, false);
         symbol.description = L"Standard library";
         m_symbols.push_back(symbol);
     }
@@ -240,7 +240,7 @@ void LuaAutocompleteProvider::addLuaBuiltins()
 
     for (const auto& [name, desc] : luaConstants)
     {
-        SymbolInfo symbol(name, SymbolType::Constant, -1, -1, false);
+		SymbolInfo symbol(name, ui::SymbolType::Constant, -1, -1, false);
         symbol.description = desc;
         m_symbols.push_back(symbol);
     }
@@ -256,7 +256,7 @@ void LuaAutocompleteProvider::addKeywords()
 
     for (const auto& keyword : luaKeywords)
     {
-        m_symbols.push_back(SymbolInfo(keyword, SymbolType::Keyword, -1, -1, false));
+        m_symbols.push_back(SymbolInfo(keyword, ui::SymbolType::Keyword, -1, -1, false));
     }
 }
 
@@ -275,7 +275,7 @@ bool LuaAutocompleteProvider::matchesPrefix(const std::wstring& symbol, const st
     return true;
 }
 
-int32_t LuaAutocompleteProvider::calculateRelevance(const SymbolInfo& symbol, const AutocompleteContext& context) const
+int32_t LuaAutocompleteProvider::calculateRelevance(const SymbolInfo& symbol, const ui::AutocompleteContext& context) const
 {
     int32_t relevance = 0;
 
@@ -290,19 +290,19 @@ int32_t LuaAutocompleteProvider::calculateRelevance(const SymbolInfo& symbol, co
     // Symbol type relevance
     switch (symbol.type)
     {
-    case SymbolType::Function:
+	case ui::SymbolType::Function:
         relevance += 50;
         break;
-    case SymbolType::Variable:
+	case ui::SymbolType::Variable:
         relevance += 40;
         break;
-    case SymbolType::Field:
+	case ui::SymbolType::Field:
         relevance += 30;
         break;
-    case SymbolType::Keyword:
+	case ui::SymbolType::Keyword:
         relevance += 20;
         break;
-    case SymbolType::Constant:
+	case ui::SymbolType::Constant:
         relevance += 15;
         break;
     default:
