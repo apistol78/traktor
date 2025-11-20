@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Ui/Event.h"
-#include "Ui/Autocomplete/IAutocompleteProvider.h"
+#include "Ui/SyntaxRichEdit/Autocomplete/IAutocompleteProvider.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

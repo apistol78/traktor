@@ -13,9 +13,9 @@
 #include "Ui/Application.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/SyntaxRichEdit/SyntaxLanguage.h"
-#include "Ui/Autocomplete/AutocompletePopup.h"
-#include "Ui/Autocomplete/AutocompleteSelectEvent.h"
-#include "Ui/Autocomplete/IAutocompleteProvider.h"
+#include "Ui/SyntaxRichEdit/Autocomplete/AutocompletePopup.h"
+#include "Ui/SyntaxRichEdit/Autocomplete/AutocompleteSelectEvent.h"
+#include "Ui/SyntaxRichEdit/Autocomplete/IAutocompleteProvider.h"
 
 namespace traktor::ui
 {
