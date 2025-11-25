@@ -10,6 +10,7 @@
 #include "Core/Misc/String.h"
 #include "Script/Editor/AutocompleteProviderLua.h"
 #include "Script/Editor/IScriptOutline.h"
+#include "Script/Editor/ScriptOutlineLua.h"
 #include "Ui/StyleBitmap.h"
 
 namespace traktor::script
@@ -19,6 +20,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.script.AutocompleteProviderLua", AutocompletePr
 
 AutocompleteProviderLua::AutocompleteProviderLua(IScriptOutline* outline)
 :	m_outline(outline)
+,	m_preprocessor(new Preprocessor())
 {
     addLuaBuiltins();
     addKeywords();
@@ -114,72 +116,111 @@ Ref< ui::IBitmap > AutocompleteProviderLua::getSymbolIcon(ui::SymbolType type) c
 
 void AutocompleteProviderLua::parseSymbols(const std::wstring& text)
 {
-    // Simple regex-based parsing to avoid external dependencies
-    // This is a basic implementation that can be enhanced later
+    if (!m_outline)
+        return;
 
-    int32_t currentLine = 0;
-    int32_t scopeDepth = 0;
-
-    // Split text into lines for processing
-    size_t pos = 0;
-    while (pos < text.length())
+    // Preprocess the script text (handle #if, #define, etc.)
+    std::wstring preprocessedText;
+    std::set< std::wstring > usings;
+    if (m_preprocessor)
     {
-        size_t lineEnd = text.find(L'\n', pos);
-        if (lineEnd == std::wstring::npos)
-            lineEnd = text.length();
+        if (!m_preprocessor->evaluate(text, preprocessedText, usings))
+            return;
+    }
+    else
+    {
+        preprocessedText = text;
+    }
 
-        std::wstring line = text.substr(pos, lineEnd - pos);
+    Ref< IScriptOutline::Node > root = m_outline->parse(preprocessedText);
+    if (!root)
+        return;
 
-        // Simple pattern matching for function declarations
-        size_t funcPos = line.find(L"function ");
-        if (funcPos != std::wstring::npos)
+    // Walk the outline tree to extract symbols
+    std::map< std::wstring, int32_t > functionReferences;
+    walkOutlineTree(root, 0, functionReferences);
+
+    // Boost relevance of frequently referenced functions
+    for (auto& symbol : m_symbols)
+    {
+        if (symbol.type == ui::SymbolType::Function)
         {
-            size_t nameStart = funcPos + 9; // length of "function "
-            while (nameStart < line.length() && iswspace(line[nameStart]))
-                nameStart++;
-
-            size_t nameEnd = nameStart;
-            while (nameEnd < line.length() && (iswalnum(line[nameEnd]) || line[nameEnd] == L'_'))
-                nameEnd++;
-
-            if (nameEnd > nameStart)
+            auto it = functionReferences.find(symbol.name);
+            if (it != functionReferences.end())
             {
-                std::wstring funcName = line.substr(nameStart, nameEnd - nameStart);
-                bool isLocal = (line.find(L"local") != std::wstring::npos && line.find(L"local") < funcPos);
+                symbol.referenceCount = it->second;
+            }
+        }
+    }
+}
 
-                SymbolInfo funcSymbol(funcName, ui::SymbolType::Function, currentLine, scopeDepth, isLocal);
-                funcSymbol.description = isLocal ? L"local function" : L"function";
+void AutocompleteProviderLua::walkOutlineTree(IScriptOutline::Node* node, int32_t scopeDepth, std::map< std::wstring, int32_t >& functionReferences)
+{
+    while (node)
+    {
+        // Handle function definitions
+        if (auto funcNode = dynamic_type_cast< IScriptOutline::FunctionNode* >(node))
+        {
+            const std::wstring& name = funcNode->getName();
+            if (!name.empty())
+            {
+                SymbolInfo funcSymbol(
+                    name,
+                    ui::SymbolType::Function,
+                    funcNode->getLine(),
+                    scopeDepth,
+                    funcNode->isLocal()
+                );
+                funcSymbol.description = funcNode->isLocal() ? L"local function" : L"function";
                 m_symbols.push_back(funcSymbol);
             }
-        }
 
-        // Simple pattern matching for local variable declarations
-        size_t localPos = line.find(L"local ");
-        if (localPos != std::wstring::npos)
-        {
-            size_t nameStart = localPos + 6; // length of "local "
-            while (nameStart < line.length() && iswspace(line[nameStart]))
-                nameStart++;
-
-            size_t nameEnd = nameStart;
-            while (nameEnd < line.length() && (iswalnum(line[nameEnd]) || line[nameEnd] == L'_'))
-                nameEnd++;
-
-            if (nameEnd > nameStart)
+            // Recurse into function body (deeper scope)
+            if (funcNode->getBody())
             {
-                std::wstring varName = line.substr(nameStart, nameEnd - nameStart);
-                // Skip if it's "local function" (already handled above)
-                if (varName != L"function")
-                {
-					SymbolInfo varSymbol(varName, ui::SymbolType::Variable, currentLine, scopeDepth, true);
-                    varSymbol.description = L"local variable";
-                    m_symbols.push_back(varSymbol);
-                }
+                walkOutlineTree(funcNode->getBody(), scopeDepth + 1, functionReferences);
+            }
+        }
+        // Handle function references (calls)
+        else if (auto refNode = dynamic_type_cast< IScriptOutline::FunctionReferenceNode* >(node))
+        {
+            const std::wstring& name = refNode->getName();
+            if (!name.empty())
+            {
+                functionReferences[name]++;
+            }
+        }
+        // Handle variable declarations
+        else if (auto varNode = dynamic_type_cast< VariableNode* >(node))
+        {
+            const std::wstring& name = varNode->getName();
+            if (!name.empty())
+            {
+                SymbolInfo varSymbol(
+                    name,
+                    ui::SymbolType::Variable,
+                    varNode->getLine(),
+                    scopeDepth,
+                    varNode->isLocal()
+                );
+                varSymbol.description = varNode->isLocal() ? L"local variable" : L"variable";
+                m_symbols.push_back(varSymbol);
+            }
+        }
+        // Handle table field access
+        else if (auto fieldNode = dynamic_type_cast< FieldAccessNode* >(node))
+        {
+            const std::wstring& tableName = fieldNode->getTableName();
+            const std::wstring& fieldName = fieldNode->getFieldName();
+            if (!tableName.empty() && !fieldName.empty())
+            {
+                // Track which fields are accessed on which tables
+                m_tableMembers[tableName].insert(fieldName);
             }
         }
 
-        currentLine++;
-        pos = lineEnd + 1;
+        // Move to next sibling node
+        node = node->getNext();
     }
 }
 
@@ -323,6 +364,10 @@ int32_t AutocompleteProviderLua::calculateRelevance(const SymbolInfo& symbol, co
         if (distance < 10)
             relevance += 10 - distance;
     }
+
+    // Boost frequently referenced functions
+    if (symbol.referenceCount > 0)
+        relevance += std::min(symbol.referenceCount * 5, 50);
 
     return relevance;
 }
