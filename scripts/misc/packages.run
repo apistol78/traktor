@@ -405,7 +405,7 @@ PACKAGES =
 	-- Lemon
 	{
 		type = "GIT",
-		url = "https://github.com/compiler-dept/lemon.git",
+		url = "https://github.com/traktorengine/lemon.git",
 		license = "SQLITE"
 	},
 
