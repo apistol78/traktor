@@ -11,7 +11,9 @@
 #include <set>
 #include <map>
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Misc/Preprocessor.h"
 #include "Core/Ref.h"
+#include "Script/Editor/IScriptOutline.h"
 #include "Ui/SyntaxRichEdit/Autocomplete/IAutocompleteProvider.h"
 
 namespace traktor::ui
@@ -21,8 +23,6 @@ class IBitmap;
 
 namespace traktor::script
 {
-
-class IScriptOutline;
 
 /*! Symbol information for caching.
  * \ingroup Script
@@ -35,6 +35,7 @@ struct SymbolInfo
     int32_t line = -1;
     int32_t scope = 0;                //!< Scope depth (0 = global, higher = deeper local scope)
     bool isLocal = false;
+    int32_t referenceCount = 0;       //!< How many times this symbol is referenced
 
     SymbolInfo() = default;
     SymbolInfo(const std::wstring& name_, ui::SymbolType type_, int32_t line_ = -1, int32_t scope_ = 0, bool isLocal_ = false)
@@ -59,11 +60,14 @@ public:
 
 private:
     Ref< IScriptOutline > m_outline;
+    Ref< Preprocessor > m_preprocessor;
     AlignedVector< SymbolInfo > m_symbols;
     std::map< std::wstring, std::set< std::wstring > > m_tableMembers;
     mutable std::map< ui::SymbolType, Ref< ui::IBitmap > > m_iconCache;
 
     void parseSymbols(const std::wstring& text);
+
+    void walkOutlineTree(IScriptOutline::Node* node, int32_t scopeDepth, std::map< std::wstring, int32_t >& functionReferences);
 
     void addLuaBuiltins();
 
