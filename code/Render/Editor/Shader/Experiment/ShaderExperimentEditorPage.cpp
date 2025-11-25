@@ -22,6 +22,7 @@
 #include "Editor/PropertiesView.h"
 #include "Render/Buffer.h"
 #include "Render/Editor/Shader/Experiment/ShaderExperiment.h"
+#include "Render/Editor/Shader/Std430.h"
 #include "Render/Editor/Shader/StructDeclaration.h"
 #include "Render/IProgram.h"
 #include "Render/IRenderSystem.h"
@@ -44,83 +45,6 @@
 
 namespace traktor::render
 {
-namespace
-{
-
-// std430
-uint32_t getDeclarationSize(const StructDeclaration* decl)
-{
-	uint32_t offset = 0;
-	for (const auto& elm : decl->getElements())
-	{
-		switch (elm.type)
-		{
-		case DtFloat1:
-			{
-				const uint32_t pad = alignUp(offset, 4) - offset;
-				offset += pad + 4;
-			}
-			break;
-
-		case DtFloat2:
-			{
-				const uint32_t pad = alignUp(offset, 8) - offset;
-				offset += pad + 8;
-			}
-			break;
-
-		case DtFloat3:
-			{
-				const uint32_t pad = alignUp(offset, 16) - offset;
-				offset += pad + 12;
-			}
-			break;
-
-		case DtFloat4:
-			{
-				const uint32_t pad = alignUp(offset, 16) - offset;
-				offset += pad + 16;
-			}
-			break;
-
-		case DtInteger1:
-			{
-				const uint32_t pad = alignUp(offset, 4) - offset;
-				offset += pad + 4;
-			}
-			break;
-
-		case DtInteger2:
-			{
-				const uint32_t pad = alignUp(offset, 8) - offset;
-				offset += pad + 8;
-			}
-			break;
-
-		case DtInteger3:
-			{
-				const uint32_t pad = alignUp(offset, 16) - offset;
-				offset += pad + 12;
-			}
-			break;
-
-		case DtInteger4:
-			{
-				const uint32_t pad = alignUp(offset, 16) - offset;
-				offset += pad + 16;
-			}
-			break;
-
-		default:
-			return 0;
-		}
-	}
-
-	const uint32_t pad = alignUp(offset, 16) - offset;
-	return offset + pad;
-}
-
-}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderExperimentEditorPage", ShaderExperimentEditorPage, editor::IEditorPage)
 
@@ -277,7 +201,7 @@ void ShaderExperimentEditorPage::executeExperiment()
 	{
 		std::wstring name;
 		Ref< const StructDeclaration > decl;
-		uint32_t declSize;
+		Ref< const Std430 > std430;
 		uint32_t count;
 		Ref< Buffer > buffer;
 		uint8_t* bufferPtr;
@@ -305,8 +229,8 @@ void ShaderExperimentEditorPage::executeExperiment()
 			return;
 		}
 
-		bi.declSize = getDeclarationSize(bi.decl);
-		if (!bi.declSize)
+		bi.std430 = Std430::create(bi.decl);
+		if (!bi.std430)
 		{
 			log::error << L"Unable to execute experiment; unsupported struct declaration for buffer \"" << data[i].name << L"\"." << Endl;
 			return;
@@ -319,7 +243,7 @@ void ShaderExperimentEditorPage::executeExperiment()
 			return;
 		}
 
-		bi.buffer = m_renderSystem->createBuffer(BufferUsage::BuStructured, bi.count * bi.declSize, true);
+		bi.buffer = m_renderSystem->createBuffer(BufferUsage::BuStructured, bi.count * bi.std430->getSize(), true);
 		if (!bi.buffer)
 		{
 			log::error << L"Unable to execute experiment; failed to create buffer." << Endl;
@@ -389,93 +313,10 @@ void ShaderExperimentEditorPage::executeExperiment()
 			if (!outputRows[i])
 				outputRows[i] = new ui::GridRow();
 
-			uint32_t offset = 0;
 			for (const auto& elm : it->decl->getElements())
-			{
-				switch (elm.type)
-				{
-				case DtFloat1:
-					{
-						outputRows[i]->add(str(L"%f", *(float*)&rptr[offset + 0]));
-						const uint32_t pad = alignUp(offset, 4) - offset;
-						offset += pad + 4;
-					}
-					break;
+				outputRows[i]->add(it->std430->format(elm.name, rptr));
 
-				case DtFloat2:
-					{
-						outputRows[i]->add(str(L"%f", *(float*)&rptr[offset + 0]));
-						outputRows[i]->add(str(L"%f", *(float*)&rptr[offset + 4]));
-						const uint32_t pad = alignUp(offset, 8) - offset;
-						offset += pad + 8;
-					}
-					break;
-
-				case DtFloat3:
-					{
-						outputRows[i]->add(str(L"%f", *(float*)&rptr[offset + 0]));
-						outputRows[i]->add(str(L"%f", *(float*)&rptr[offset + 4]));
-						outputRows[i]->add(str(L"%f", *(float*)&rptr[offset + 8]));
-						const uint32_t pad = alignUp(offset, 16) - offset;
-						offset += pad + 12;
-					}
-					break;
-
-				case DtFloat4:
-					{
-						outputRows[i]->add(str(L"%f", *(float*)&rptr[offset + 0]));
-						outputRows[i]->add(str(L"%f", *(float*)&rptr[offset + 4]));
-						outputRows[i]->add(str(L"%f", *(float*)&rptr[offset + 8]));
-						outputRows[i]->add(str(L"%f", *(float*)&rptr[offset + 12]));
-						const uint32_t pad = alignUp(offset, 16) - offset;
-						offset += pad + 16;
-					}
-					break;
-
-				case DtInteger1:
-					{
-						outputRows[i]->add(str(L"%d", *(int32_t*)&rptr[offset + 0]));
-						const uint32_t pad = alignUp(offset, 4) - offset;
-						offset += pad + 4;
-					}
-					break;
-
-				case DtInteger2:
-					{
-						outputRows[i]->add(str(L"%d", *(int32_t*)&rptr[offset + 0]));
-						outputRows[i]->add(str(L"%d", *(int32_t*)&rptr[offset + 4]));
-						const uint32_t pad = alignUp(offset, 8) - offset;
-						offset += pad + 8;
-					}
-					break;
-
-				case DtInteger3:
-					{
-						outputRows[i]->add(str(L"%d", *(int32_t*)&rptr[offset + 0]));
-						outputRows[i]->add(str(L"%d", *(int32_t*)&rptr[offset + 4]));
-						outputRows[i]->add(str(L"%d", *(int32_t*)&rptr[offset + 8]));
-						const uint32_t pad = alignUp(offset, 16) - offset;
-						offset += pad + 12;
-					}
-					break;
-
-				case DtInteger4:
-					{
-						outputRows[i]->add(str(L"%d", *(int32_t*)&rptr[offset + 0]));
-						outputRows[i]->add(str(L"%d", *(int32_t*)&rptr[offset + 4]));
-						outputRows[i]->add(str(L"%d", *(int32_t*)&rptr[offset + 8]));
-						outputRows[i]->add(str(L"%d", *(int32_t*)&rptr[offset + 12]));
-						const uint32_t pad = alignUp(offset, 16) - offset;
-						offset += pad + 16;
-					}
-					break;
-
-				default:
-					break;
-				}
-			}
-
-			rptr += it->declSize;
+			rptr += it->std430->getSize();
 		}
 	}
 	m_resultGrid->setRows(outputRows);
