@@ -10,8 +10,9 @@
 
 #include <vector>
 #include "Core/Ref.h"
-#include "Ui/Widget.h"
+#include "Ui/ToolForm.h"
 #include "Ui/SyntaxRichEdit/Autocomplete/IAutocompleteProvider.h"
+#include "Ui/SyntaxRichEdit/Autocomplete/AutocompleteSelectEvent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,12 +25,12 @@
 namespace traktor::ui
 {
 
-class ScrollBar;
+class AutocompleteList;
 
 /*! Autocomplete popup window.
  * \ingroup UI
  */
-class T_DLLCLASS AutocompletePopup : public Widget
+class T_DLLCLASS AutocompletePopup : public ToolForm
 {
     T_RTTI_CLASS;
 
@@ -56,24 +57,9 @@ public:
 
 private:
     Ref< IAutocompleteProvider > m_provider;
-    std::vector< AutocompleteSuggestion > m_suggestions;
-    int32_t m_selectedIndex = 0;
-    int32_t m_scrollOffset = 0;
-    int32_t m_itemHeight = 20;
-    int32_t m_visibleItems = 10;
-    Ref< ScrollBar > m_scrollBar;
+    Ref< AutocompleteList > m_list;
 
-    void eventPaint(PaintEvent* event);
-
-    void eventSize(SizeEvent* event);
-
-    void eventButtonDown(MouseButtonDownEvent* event);
-
-    void eventMouseMove(MouseMoveEvent* event);
-
-    void updateScrollBar();
-
-    int32_t hitTest(const Point& pt) const;
+    void eventSelect(AutocompleteSelectEvent* event);
 };
 
 }

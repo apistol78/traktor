@@ -468,10 +468,11 @@ void SyntaxRichEdit::showAutocomplete()
 	const FontMetric fm = getFontMetric();
 	const int32_t lineHeight = fm.getHeight() + pixel(Unit(1));
 
-	// Y position: bottom of current line (to position popup one line below caret)
-	const int32_t caretY = innerRect.top + (line - scrollLine + 1) * lineHeight;
+	// Calculate position in client coordinates
+	const int32_t clientY = innerRect.top + (line - scrollLine + 1) * lineHeight;
 
-	// X position: calculate from word start position and save it (don't recalculate as user types)
+	// X position: calculate from word start position
+	int32_t clientX;
 	if (!m_autocompletePopup->isVisible(true))
 	{
 		// First time showing - calculate X position from word start
@@ -482,14 +483,21 @@ void SyntaxRichEdit::showAutocomplete()
 		const int32_t marginWidth = getMarginWidth();
 		// Use getAccumulatedWidth to properly handle tabs and special characters
 		const int32_t textWidth = getAccumulatedWidth(wordStartLineOffset, wordStart);
-		m_autocompletePopupX = innerRect.left + marginWidth + 2 + textWidth;
+		clientX = innerRect.left + marginWidth + 2 + textWidth;
+		m_autocompletePopupX = clientX;
+	}
+	else
+	{
+		clientX = m_autocompletePopupX;
 	}
 
-	// Popup is a child widget, so use client coordinates (not screen coordinates)
+	// Convert to screen coordinates since ToolForm is a top-level window
+	const Point screenPos = clientToScreen(Point(clientX, clientY));
+
+	// Position and show popup
 	const int32_t popupWidth = 400;
 	const int32_t popupHeight = 200;
-
-	m_autocompletePopup->setRect(Rect(m_autocompletePopupX, caretY, m_autocompletePopupX + popupWidth, caretY + popupHeight));
+	m_autocompletePopup->setRect(Rect(screenPos.x, screenPos.y, screenPos.x + popupWidth, screenPos.y + popupHeight));
 	m_autocompletePopup->setSuggestions(m_autocompleteProvider, suggestions);
 	m_autocompletePopup->show();
 }
