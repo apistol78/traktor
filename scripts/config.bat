@@ -43,13 +43,13 @@ set UFBX_SDK=%TRAKTOR_HOME%\3rdp\ufbx
 set JOLT_SDK=%TRAKTOR_HOME%\3rdp\JoltPhysics
 
 :: Vulkan SDK
-if ("%VULKAN_SDK%"=="") (
-	echo No system Vulkan SDK found; using local.
-	set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan-windows\vulkan-sdk
-	set HAVE_SYSTEM_VULKAN_SDK=
+if not defined VULKAN_SDK (
+    echo No system Vulkan SDK found; using local.
+    set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan-windows\vulkan-sdk
+    set HAVE_SYSTEM_VULKAN_SDK=false
 ) else (
-	echo Using Vulkan SDK "%VULKAN_SDK%".
-	set HAVE_SYSTEM_VULKAN_SDK="true"
+    echo Using Vulkan SDK "%VULKAN_SDK%".
+    set HAVE_SYSTEM_VULKAN_SDK=true
 )
 
 :: SPIRV tools

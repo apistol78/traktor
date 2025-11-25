@@ -310,7 +310,7 @@ PACKAGES =
 		target = "vulkan-sdk.exe",
 		check = function()
 			-- If HAVE_SYSTEM_VULKAN_SDK is set then we assume there are already a SDK installed.
-			return (run:resolve("$(HAVE_SYSTEM_VULKAN_SDK)") == "")
+			return (run:resolve("$(HAVE_SYSTEM_VULKAN_SDK)") == "false")
 		end,
 		patch = function()
 			local p = run.cwd .. "/vulkan-sdk"
