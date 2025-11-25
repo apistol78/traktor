@@ -11,6 +11,7 @@
 #include <set>
 #include <map>
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Ref.h"
 #include "Ui/SyntaxRichEdit/Autocomplete/IAutocompleteProvider.h"
 
 namespace traktor::ui
@@ -20,6 +21,8 @@ class IBitmap;
 
 namespace traktor::script
 {
+
+class IScriptOutline;
 
 /*! Symbol information for caching.
  * \ingroup Script
@@ -41,12 +44,12 @@ struct SymbolInfo
 /*! Lua language autocomplete provider.
  * \ingroup UI
  */
-class LuaAutocompleteProvider : public ui::IAutocompleteProvider
+class AutocompleteProviderLua : public ui::IAutocompleteProvider
 {
     T_RTTI_CLASS;
 
 public:
-    LuaAutocompleteProvider();
+    explicit AutocompleteProviderLua(IScriptOutline* outline);
 
     virtual bool getSuggestions(const ui::AutocompleteContext& context, std::vector< ui::AutocompleteSuggestion >& outSuggestions) override;
 
@@ -55,6 +58,7 @@ public:
     virtual Ref< ui::IBitmap > getSymbolIcon(ui::SymbolType type) const override;
 
 private:
+    Ref< IScriptOutline > m_outline;
     AlignedVector< SymbolInfo > m_symbols;
     std::map< std::wstring, std::set< std::wstring > > m_tableMembers;
     mutable std::map< ui::SymbolType, Ref< ui::IBitmap > > m_iconCache;
