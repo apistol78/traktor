@@ -437,7 +437,7 @@
 			</colors>
 		</item>
 		<item>
-			<typeName>traktor.ui.AutocompletePopup</typeName>
+			<typeName>traktor.ui.AutocompleteItem</typeName>
 			<colors>
 				<item>
 					<first>background-color</first>
