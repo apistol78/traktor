@@ -32,7 +32,7 @@
 #include "I18N/Format.h"
 #include "I18N/Text.h"
 #include "Script/Editor/IScriptOutline.h"
-#include "Script/Editor/LuaAutocompleteProvider.h"
+#include "Script/Editor/AutocompleteProviderLua.h"
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptClassesView.h"
 #include "Script/Editor/ScriptDebuggerView.h"
@@ -184,9 +184,6 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	// Setup autocomplete
 	const bool autocompleteEnabled = m_editor->getSettings()->getProperty< bool >(L"Editor.AutocompleteEnabled", true);
-	Ref< LuaAutocompleteProvider > autocompleteProvider = new LuaAutocompleteProvider();
-	m_edit->setAutocompleteProvider(autocompleteProvider);
-	m_edit->setAutocompleteEnabled(autocompleteEnabled);
 
 	if (m_script)
 	{
@@ -241,6 +238,10 @@ bool ScriptEditorPage::create(ui::Container* parent)
 			m_scriptOutline = dynamic_type_cast< IScriptOutline* >(scriptOutlineType->createInstance());
 			T_ASSERT(m_scriptOutline);
 		}
+
+		Ref< AutocompleteProviderLua > autocompleteProvider = new AutocompleteProviderLua(m_scriptOutline);
+		m_edit->setAutocompleteProvider(autocompleteProvider);
+		m_edit->setAutocompleteEnabled(autocompleteEnabled);
 	}
 
 	// Setup compile timer.

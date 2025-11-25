@@ -8,21 +8,23 @@
  */
 #include <algorithm>
 #include "Core/Misc/String.h"
-#include "Script/Editor/LuaAutocompleteProvider.h"
+#include "Script/Editor/AutocompleteProviderLua.h"
+#include "Script/Editor/IScriptOutline.h"
 #include "Ui/StyleBitmap.h"
 
 namespace traktor::script
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.LuaAutocompleteProvider", LuaAutocompleteProvider, ui::IAutocompleteProvider)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.AutocompleteProviderLua", AutocompleteProviderLua, ui::IAutocompleteProvider)
 
-LuaAutocompleteProvider::LuaAutocompleteProvider()
+AutocompleteProviderLua::AutocompleteProviderLua(IScriptOutline* outline)
+:	m_outline(outline)
 {
     addLuaBuiltins();
     addKeywords();
 }
 
-bool LuaAutocompleteProvider::getSuggestions(const ui::AutocompleteContext& context, std::vector< ui::AutocompleteSuggestion >& outSuggestions)
+bool AutocompleteProviderLua::getSuggestions(const ui::AutocompleteContext& context, std::vector< ui::AutocompleteSuggestion >& outSuggestions)
 {
     const std::wstring& prefix = context.currentWord;
     if (prefix.empty())
@@ -59,7 +61,7 @@ bool LuaAutocompleteProvider::getSuggestions(const ui::AutocompleteContext& cont
     return !outSuggestions.empty();
 }
 
-void LuaAutocompleteProvider::updateContent(const std::wstring& text, const std::wstring& fileName)
+void AutocompleteProviderLua::updateContent(const std::wstring& text, const std::wstring& fileName)
 {
     // Clear existing user symbols (keep builtins and keywords)
     m_symbols.erase(
@@ -74,7 +76,7 @@ void LuaAutocompleteProvider::updateContent(const std::wstring& text, const std:
     parseSymbols(text);
 }
 
-Ref< ui::IBitmap > LuaAutocompleteProvider::getSymbolIcon(ui::SymbolType type) const
+Ref< ui::IBitmap > AutocompleteProviderLua::getSymbolIcon(ui::SymbolType type) const
 {
     auto it = m_iconCache.find(type);
     if (it != m_iconCache.end())
@@ -110,7 +112,7 @@ Ref< ui::IBitmap > LuaAutocompleteProvider::getSymbolIcon(ui::SymbolType type) c
     return icon;
 }
 
-void LuaAutocompleteProvider::parseSymbols(const std::wstring& text)
+void AutocompleteProviderLua::parseSymbols(const std::wstring& text)
 {
     // Simple regex-based parsing to avoid external dependencies
     // This is a basic implementation that can be enhanced later
@@ -181,7 +183,7 @@ void LuaAutocompleteProvider::parseSymbols(const std::wstring& text)
     }
 }
 
-void LuaAutocompleteProvider::addLuaBuiltins()
+void AutocompleteProviderLua::addLuaBuiltins()
 {
     // Standard Lua global functions
     const std::vector< std::pair< std::wstring, std::wstring > > luaBuiltins = {
@@ -246,7 +248,7 @@ void LuaAutocompleteProvider::addLuaBuiltins()
     }
 }
 
-void LuaAutocompleteProvider::addKeywords()
+void AutocompleteProviderLua::addKeywords()
 {
     const std::vector< std::wstring > luaKeywords = {
         L"and", L"break", L"do", L"else", L"elseif", L"end", L"false", L"for",
@@ -260,7 +262,7 @@ void LuaAutocompleteProvider::addKeywords()
     }
 }
 
-bool LuaAutocompleteProvider::matchesPrefix(const std::wstring& symbol, const std::wstring& prefix) const
+bool AutocompleteProviderLua::matchesPrefix(const std::wstring& symbol, const std::wstring& prefix) const
 {
     if (prefix.length() > symbol.length())
         return false;
@@ -275,7 +277,7 @@ bool LuaAutocompleteProvider::matchesPrefix(const std::wstring& symbol, const st
     return true;
 }
 
-int32_t LuaAutocompleteProvider::calculateRelevance(const SymbolInfo& symbol, const ui::AutocompleteContext& context) const
+int32_t AutocompleteProviderLua::calculateRelevance(const SymbolInfo& symbol, const ui::AutocompleteContext& context) const
 {
     int32_t relevance = 0;
 
@@ -325,7 +327,7 @@ int32_t LuaAutocompleteProvider::calculateRelevance(const SymbolInfo& symbol, co
     return relevance;
 }
 
-std::wstring LuaAutocompleteProvider::extractCurrentScope(const std::wstring& text, int32_t caretOffset) const
+std::wstring AutocompleteProviderLua::extractCurrentScope(const std::wstring& text, int32_t caretOffset) const
 {
     // Find the current function or block scope
     // This is a simplified implementation
