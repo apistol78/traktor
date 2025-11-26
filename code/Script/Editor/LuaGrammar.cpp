@@ -34,6 +34,12 @@
 using namespace traktor;
 using namespace traktor::script;
 
+// Forward declarations for new node types
+//class VariableNode;
+//class ParameterNode;
+//class TableNode;
+//class FieldAccessNode;
+
 LuaGrammarToken* null()
 {
 	return new LuaGrammarToken();
@@ -1023,6 +1029,8 @@ int ParseCoverage(FILE *out){
   int nMissed = 0;
   for(stateno=0; stateno<YYNSTATE; stateno++){
     i = yy_shift_ofst[stateno];
+	  if (i == YY_ACTTAB_COUNT)
+		  return yy_default[stateno];
     for(iLookAhead=0; iLookAhead<YYNTOKEN; iLookAhead++){
       if( yy_lookahead[i+iLookAhead]!=iLookAhead ) continue;
       if( yycoverage[stateno][iLookAhead]==0 ) nMissed++;
@@ -1054,8 +1062,8 @@ static YYACTIONTYPE yy_find_shift_action(
 #endif
   do{
     i = yy_shift_ofst[stateno];
-    if (i == YY_ACTTAB_COUNT)
-        return yy_default[stateno];
+	  if (i == YY_ACTTAB_COUNT)
+		  return yy_default[stateno];
     assert( i>=0 );
     assert( i+YYNTOKEN<=(int)sizeof(yy_lookahead)/sizeof(yy_lookahead[0]) );
     assert( iLookAhead!=YYNOCODE );
@@ -1508,18 +1516,18 @@ static YYACTIONTYPE yy_reduce(
         break;
       case 24: /* binding ::= LOCAL namelist */
 {  yy_destructor(yypParser,20,&yymsp[-1].minor);
-{ yymsp[-1].minor.yy0 = null(); }
+{ yymsp[-1].minor.yy0 = new LuaGrammarToken(new VariableNode(yymsp[0].minor.yy0->line, yymsp[0].minor.yy0->text, true), yymsp[0].minor.yy0->line); }
 }
         break;
       case 25: /* binding ::= LOCAL namelist EQUAL explist1 */
 {  yy_destructor(yypParser,20,&yymsp[-3].minor);
-{ yymsp[-3].minor.yy0 = copy(yymsp[0].minor.yy0); }
+{ yymsp[-3].minor.yy0 = merge(new LuaGrammarToken(new VariableNode(yymsp[-2].minor.yy0->line, yymsp[-2].minor.yy0->text, true), yymsp[-2].minor.yy0->line), yymsp[0].minor.yy0); }
   yy_destructor(yypParser,11,&yymsp[-1].minor);
 }
         break;
       case 26: /* binding ::= LOCAL namelist LESS CONST GREATER EQUAL explist1 */
 {  yy_destructor(yypParser,20,&yymsp[-6].minor);
-{ yymsp[-6].minor.yy0 = copy(yymsp[0].minor.yy0); }
+{ yymsp[-6].minor.yy0 = merge(new LuaGrammarToken(new VariableNode(yymsp[-5].minor.yy0->line, yymsp[-5].minor.yy0->text, true), yymsp[-5].minor.yy0->line), yymsp[0].minor.yy0); }
   yy_destructor(yypParser,21,&yymsp[-4].minor);
   yy_destructor(yypParser,22,&yymsp[-3].minor);
   yy_destructor(yypParser,23,&yymsp[-2].minor);
@@ -1610,7 +1618,7 @@ static YYACTIONTYPE yy_reduce(
   yymsp[-3].minor.yy0 = yylhsminor.yy0;
         break;
       case 54: /* var ::= prefixexp DOT NAME */
-{ yylhsminor.yy0 = new LuaGrammarToken(as_string(yymsp[-2].minor.yy0) + L"." + yymsp[0].minor.yy0->text, yymsp[0].minor.yy0->line); }
+{ yylhsminor.yy0 = merge(new LuaGrammarToken(new FieldAccessNode(yymsp[0].minor.yy0->line, as_string(yymsp[-2].minor.yy0), yymsp[0].minor.yy0->text), yymsp[0].minor.yy0->line), new LuaGrammarToken(as_string(yymsp[-2].minor.yy0) + L"." + yymsp[0].minor.yy0->text, yymsp[0].minor.yy0->line)); }
   yy_destructor(yypParser,25,&yymsp[-1].minor);
   yymsp[-2].minor.yy0 = yylhsminor.yy0;
         break;
