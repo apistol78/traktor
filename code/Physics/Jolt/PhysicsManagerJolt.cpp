@@ -56,6 +56,7 @@
 #include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
 #include <Jolt/Physics/Collision/Shape/HeightFieldShape.h>
 #include <Jolt/Physics/Collision/Shape/MeshShape.h>
+#include <Jolt/Physics/Collision/Shape/MutableCompoundShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
 #include <Jolt/Physics/Collision/ShapeCast.h>
 #include <Jolt/Physics/PhysicsSettings.h>
@@ -278,8 +279,6 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		return nullptr;
 	}
 
-	T_FATAL_ASSERT(shapeDesc->getLocalTransform() == Transform::identity());
-
 	// Resolve collision group and mask value.
 	uint32_t mergedCollisionGroup = 0;
 	for (const auto& group : desc->getShape()->getCollisionGroup())
@@ -311,8 +310,25 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		JPH::SphereShapeSettings shapeSettings(sphereShape->getRadius());
 		shapeSettings.SetEmbedded();
 
-		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
-		JPH::ShapeRefC shape = shapeResult.Get();
+		JPH::ShapeRefC shape;
+
+		const Transform localTransform = shapeDesc->getLocalTransform();
+		if (localTransform != Transform::identity())
+		{
+			JPH::MutableCompoundShapeSettings compoundSettings;
+			compoundSettings.AddShape(
+				convertToJolt(localTransform.translation()),
+				convertToJolt(localTransform.rotation()),
+				&shapeSettings);
+
+			 JPH::ShapeSettings::ShapeResult shapeResult = compoundSettings.Create();
+			 shape = shapeResult.Get();
+		}
+		else
+		{
+			 JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+			 shape = shapeResult.Get();
+		}
 
 		JPH::BodyCreationSettings settings;
 
@@ -815,6 +831,13 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 	const Vector4 centerOfGravity = mesh->getOffset();
 	float inverseMass = 0.0f;
 
+	const ShapeDesc* shapeDesc = desc->getShape();
+	if (!shapeDesc)
+	{
+		log::error << L"Unable to create body, no shape defined." << Endl;
+		return nullptr;
+	}
+
 	if (auto staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
 	{
 		JPH::VertexList vertexList;
@@ -838,8 +861,25 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList);
 		shapeSettings.SetEmbedded();
 
-		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
-		JPH::ShapeRefC shape = shapeResult.Get();
+		JPH::ShapeRefC shape;
+
+		const Transform localTransform = shapeDesc->getLocalTransform();
+		if (localTransform != Transform::identity())
+		{
+			JPH::MutableCompoundShapeSettings compoundSettings;
+			compoundSettings.AddShape(
+				convertToJolt(localTransform.translation()),
+				convertToJolt(localTransform.rotation()),
+				&shapeSettings);
+
+			 JPH::ShapeSettings::ShapeResult shapeResult = compoundSettings.Create();
+			 shape = shapeResult.Get();
+		}
+		else
+		{
+			 JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+			 shape = shapeResult.Get();
+		}
 
 		JPH::BodyCreationSettings settings(
 			shape,
@@ -874,8 +914,25 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		JPH::ConvexHullShapeSettings shapeSettings(vertexList);
 		shapeSettings.SetEmbedded();
 
-		JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
-		JPH::ShapeRefC shape = shapeResult.Get();
+		JPH::ShapeRefC shape;
+
+		const Transform localTransform = shapeDesc->getLocalTransform();
+		if (localTransform != Transform::identity())
+		{
+			JPH::MutableCompoundShapeSettings compoundSettings;
+			compoundSettings.AddShape(
+				convertToJolt(localTransform.translation()),
+				convertToJolt(localTransform.rotation()),
+				&shapeSettings);
+
+			 JPH::ShapeSettings::ShapeResult shapeResult = compoundSettings.Create();
+			 shape = shapeResult.Get();
+		}
+		else
+		{
+			 JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+			 shape = shapeResult.Get();
+		}
 
 		JPH::BodyCreationSettings settings(
 			shape,
