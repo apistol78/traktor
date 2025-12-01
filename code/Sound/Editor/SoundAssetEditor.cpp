@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Sound/Editor/SoundAssetEditor.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/ObjectStore.h"
@@ -17,28 +19,28 @@
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
-#include "Sound/Sound.h"
-#include "Sound/StreamAudioBuffer.h"
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
 #include "Sound/Decoders/TssStreamDecoder.h"
 #include "Sound/Decoders/WavStreamDecoder.h"
+#include "Sound/Decoders/XmpStreamDecoder.h"
 #include "Sound/Editor/SoundAsset.h"
-#include "Sound/Editor/SoundAssetEditor.h"
 #include "Sound/Player/SoundHandle.h"
 #include "Sound/Player/SoundPlayer.h"
+#include "Sound/Sound.h"
+#include "Sound/StreamAudioBuffer.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
 #include "Ui/PathDialog.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/TableLayout.h"
 #include "Ui/PropertyList/ArrayPropertyItem.h"
 #include "Ui/PropertyList/BrowsePropertyItem.h"
 #include "Ui/PropertyList/FilePropertyItem.h"
 #include "Ui/PropertyList/ObjectPropertyItem.h"
 #include "Ui/PropertyList/PropertyCommandEvent.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -49,7 +51,7 @@ namespace traktor::sound
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundAssetEditor", SoundAssetEditor, editor::IObjectEditor)
 
 SoundAssetEditor::SoundAssetEditor(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -116,8 +118,7 @@ ui::Size SoundAssetEditor::getPreferredSize() const
 {
 	return ui::Size(
 		500,
-		400
-	);
+		400);
 }
 
 void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
@@ -151,6 +152,8 @@ void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 			decoder = new sound::OggStreamDecoder();
 		else if (compareIgnoreCase(fileName.getExtension(), L"tss") == 0)
 			decoder = new sound::TssStreamDecoder();
+		else if (compareIgnoreCase(fileName.getExtension(), L"mod") == 0 || compareIgnoreCase(fileName.getExtension(), L"xm") == 0 || compareIgnoreCase(fileName.getExtension(), L"s3m") == 0)
+			decoder = new sound::XmpStreamDecoder();
 		else
 		{
 			log::error << L"Failed to preview sound asset; unable to determine decoder from extension." << Endl;
@@ -207,7 +210,7 @@ void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 					}
 				}
 			}
-			else	// Non-complex array; just apply and refresh.
+			else // Non-complex array; just apply and refresh.
 			{
 				m_propertyList->apply();
 				m_propertyList->refresh();
@@ -340,33 +343,33 @@ void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 			m_editor->openEditor(instance);
 		}
 
-/*
-		ui::TextPropertyItem* textItem = dynamic_type_cast< ui::TextPropertyItem* >(event->getItem());
-		if (textItem)
-		{
-			TextEditorDialog textEditorDialog;
-			textEditorDialog.create(m_propertyList, textItem->getValue());
-			if (textEditorDialog.showModal() == ui::DialogResult::Ok)
-			{
-				textItem->setValue(textEditorDialog.getText());
-				m_propertyList->apply();
-			}
-			textEditorDialog.destroy();
-		}
+		/*
+				ui::TextPropertyItem* textItem = dynamic_type_cast< ui::TextPropertyItem* >(event->getItem());
+				if (textItem)
+				{
+					TextEditorDialog textEditorDialog;
+					textEditorDialog.create(m_propertyList, textItem->getValue());
+					if (textEditorDialog.showModal() == ui::DialogResult::Ok)
+					{
+						textItem->setValue(textEditorDialog.getText());
+						m_propertyList->apply();
+					}
+					textEditorDialog.destroy();
+				}
 
-		ui::ColorPropertyItem* colorItem = dynamic_type_cast< ui::ColorPropertyItem* >(event->getItem());
-		if (colorItem)
-		{
-			ui::ColorDialog colorDialog;
-			colorDialog.create(m_propertyList, i18n::Text(L"COLOR_DIALOG_TEXT"), ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha, colorItem->getValue());
-			if (colorDialog.showModal() == ui::DialogResult::Ok)
-			{
-				colorItem->setValue(colorDialog.getColor());
-				m_propertyList->apply();
-			}
-			colorDialog.destroy();
-		}
-*/
+				ui::ColorPropertyItem* colorItem = dynamic_type_cast< ui::ColorPropertyItem* >(event->getItem());
+				if (colorItem)
+				{
+					ui::ColorDialog colorDialog;
+					colorDialog.create(m_propertyList, i18n::Text(L"COLOR_DIALOG_TEXT"), ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha, colorItem->getValue());
+					if (colorDialog.showModal() == ui::DialogResult::Ok)
+					{
+						colorItem->setValue(colorDialog.getColor());
+						m_propertyList->apply();
+					}
+					colorDialog.destroy();
+				}
+		*/
 	}
 	m_propertyList->update();
 }

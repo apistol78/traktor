@@ -7631,6 +7631,12 @@
 											<solutionFileName>ExternWin64.xms</solutionFileName>
 											<projectName>Extern.stb</projectName>
 										</item>
+										<item type="traktor.sb.ExternalDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<solutionFileName>ExternWin64.xms</solutionFileName>
+											<projectName>Extern.libxmp</projectName>
+										</item>
 									</dependencies>
 								</project>
 							</item>

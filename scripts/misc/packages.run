@@ -498,4 +498,12 @@ PACKAGES =
 		url = "https://github.com/jrouwe/JoltPhysics.git",
 		license = "MIT"
 	},
+	
+	-- libxmp
+	{
+		type = "GIT",
+		name = "libxmp",
+		url = "https://github.com/libxmp/libxmp.git",
+		license = "libxmp"
+	},	
 }
