@@ -52,8 +52,9 @@ if not defined VULKAN_SDK (
     set HAVE_SYSTEM_VULKAN_SDK=true
 )
 
-:: SPIRV tools
-set SPIRVTOOLS_SDK=%TRAKTOR_HOME%\3rdp\spirv-tools\install
+:: SPIRV tools (use Vulkan SDK since it ships spirv-tools)
+::set SPIRVTOOLS_SDK=%TRAKTOR_HOME%\3rdp\spirv-tools\install
+set SPIRVTOOLS_SDK=%VULKAN_SDK%
 
 :: Vulkan Memory Allocator
 set VMA_SDK=%TRAKTOR_HOME%\3rdp\VulkanMemoryAllocator

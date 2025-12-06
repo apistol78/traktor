@@ -306,7 +306,7 @@ PACKAGES =
 		name = "vulkan-windows",
 		os = "windows",
 		-- url = "https://sdk.lunarg.com/sdk/download/latest/windows/vulkan-sdk.exe",
-		url = "https://sdk.lunarg.com/sdk/download/1.4.304.1/windows/vulkansdk-windows-X64-1.4.304.1.exe",
+		url = "https://sdk.lunarg.com/sdk/download/1.4.328.1/windows/vulkansdk-windows-X64-1.4.328.1.exe",
 		target = "vulkan-sdk.exe",
 		check = function()
 			-- If HAVE_SYSTEM_VULKAN_SDK is set then we assume there are already a SDK installed.
