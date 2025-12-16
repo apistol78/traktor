@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,6 +30,8 @@ class T_DLLCLASS Slider : public Widget
 	T_RTTI_CLASS;
 
 public:
+	constexpr static uint32_t WsVertical = WsUser;
+
 	bool create(Widget* parent, uint32_t style = WsNone);
 
 	void setRange(int32_t minValue, int32_t maxValue);
@@ -46,6 +48,7 @@ private:
 	Range< int32_t > m_range = { 0, 100 };
 	int32_t m_value = 0;
 	bool m_drag = false;
+	bool m_vertical = false;
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 

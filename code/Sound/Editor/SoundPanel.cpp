@@ -31,16 +31,17 @@ SoundPanel::SoundPanel(editor::IEditor* editor)
 
 bool SoundPanel::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 8_ut, 8_ut)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"*,*,*,*,*", L"100%", 8_ut, 8_ut)))
 		return false;
 
 	setText(i18n::Text(L"SOUND_EDITOR_SOUND_PANEL"));
 
-	Ref< ui::Static > staticVolume = new ui::Static();
-	staticVolume->create(this, L"Volume");
+	Ref< ui::Container > containerVolume = new ui::Container();
+	containerVolume->create(this, ui::WsNone, new ui::TableLayout(L"*", L"100%,*", 0_ut, 0_ut));
 
 	m_sliderVolume = new ui::Slider();
-	m_sliderVolume->create(this);
+	m_sliderVolume->create(containerVolume, ui::Slider::WsVertical);
+	m_sliderVolume->setHorizontalAlign(ui::AnCenter);
 	m_sliderVolume->setRange(0, 100);
 	m_sliderVolume->setValue(100);
 	m_sliderVolume->addEventHandler< ui::ContentChangeEvent >([&](ui::ContentChangeEvent* event) {
@@ -49,14 +50,19 @@ bool SoundPanel::create(ui::Widget* parent)
 			audioSystem->setVolume(m_sliderVolume->getValue() / 100.0f);
 	});
 
+	Ref< ui::Static > staticVolume = new ui::Static();
+	staticVolume->create(containerVolume, L"Volume");
+	staticVolume->setHorizontalAlign(ui::AnCenter);
+
 	const static wchar_t* parameters[] = { L"A", L"B", L"C", L"D" };
 	for (int32_t i = 0; i < sizeof_array(parameters); ++i)
 	{
-		Ref< ui::Static > staticParameter = new ui::Static();
-		staticParameter->create(this, parameters[i]);
+		Ref< ui::Container > containerParameter = new ui::Container();
+		containerParameter->create(this, ui::WsNone, new ui::TableLayout(L"*", L"100%,*", 0_ut, 0_ut));
 
 		Ref< ui::Slider > sliderParameter = new ui::Slider();
-		sliderParameter->create(this);
+		sliderParameter->create(containerParameter, ui::Slider::WsVertical);
+		sliderParameter->setHorizontalAlign(ui::AnCenter);
 		sliderParameter->setRange(0, 100);
 		sliderParameter->setValue(0);
 		sliderParameter->addEventHandler< ui::ContentChangeEvent >([=, this](ui::ContentChangeEvent* event) {
@@ -74,6 +80,10 @@ bool SoundPanel::create(ui::Widget* parent)
 				}
 			}
 		});
+
+		Ref< ui::Static > staticParameter = new ui::Static();
+		staticParameter->create(containerParameter, parameters[i]);
+		staticParameter->setHorizontalAlign(ui::AnCenter);
 	}
 
 	update();
