@@ -267,16 +267,6 @@ bool ShaderPipeline::buildOutput(
 	Ref< ShaderResource > shaderResource = new ShaderResource();
 	uint32_t parameterBit = 1;
 
-	// Resolve all variables.
-	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getVariableResolved");
-	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getVariableResolved();
-	pipelineBuilder->getProfiler()->end();
-	if (!shaderGraph)
-	{
-		log::error << L"ShaderPipeline failed; unable to resolve variables." << Endl;
-		return false;
-	}
-
 	// Link shader fragments.
 	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline link fragments");
 	FragmentReaderAdapter fragmentReader(pipelineBuilder);

@@ -132,11 +132,16 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 	else
 		errorPrefix = L"Fragment linkage failed; ";
 
-	Ref< ShaderGraph > mutableShaderGraph = new ShaderGraph(
-		shaderGraph->getNodes(),
-		shaderGraph->getEdges());
+	// Connect all variables first.
+	Ref< ShaderGraph > mutableShaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getVariableResolved();
+	if (!mutableShaderGraph)
+	{
+		log::error << errorPrefix << L"unable to resolve variables." << Endl;
+		return nullptr;
+	}
 	T_VALIDATE_SHADERGRAPH(mutableShaderGraph);
 
+	// Resolve each external fragment.
 	for (auto externalNode : externalNodes)
 	{
 		const Guid& fragmentId = externalNode->getFragmentGuid();

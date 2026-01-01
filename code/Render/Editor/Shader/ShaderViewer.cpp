@@ -396,14 +396,6 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	const wchar_t* rendererSignature = compiler->getRendererSignature();
 	T_ASSERT(rendererSignature);
 
-	// Resolve all variables.
-	shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getVariableResolved();
-	if (!shaderGraph)
-	{
-		log::error << L"Shader viewer failed; unable to resolve variables." << Endl;
-		return;
-	}
-
 	// Link shader fragments.
 	FragmentReaderAdapter fragmentReader(m_editor->getSourceDatabase());
 	if ((shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true)) == 0)

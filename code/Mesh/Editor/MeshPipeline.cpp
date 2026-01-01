@@ -567,16 +567,6 @@ bool MeshPipeline::buildOutput(
 			}
 		}
 
-		// Resolve all variables.
-		pipelineBuilder->getProfiler()->begin(L"MeshPipeline getVariableResolved");
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getVariableResolved();
-		pipelineBuilder->getProfiler()->end();
-		if (!materialShaderGraph)
-		{
-			log::error << L"MeshPipeline failed; unable to resolve variables." << Endl;
-			return false;
-		}
-
 		// Link shader fragments.
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline link fragments");
 		FragmentReaderAdapter fragmentReader(pipelineBuilder);

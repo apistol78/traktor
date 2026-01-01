@@ -257,14 +257,6 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 						Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}"));
 				}
 
-				// Resolve all variables.
-				materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, outputGuid).getVariableResolved();
-				if (!materialShaderGraph)
-				{
-					log::error << L"SplineEntityPipeline failed; unable to resolve variables." << Endl;
-					return nullptr;
-				}
-
 				// Link shader fragments.
 				FragmentReaderAdapter fragmentReader(pipelineBuilder);
 				materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
