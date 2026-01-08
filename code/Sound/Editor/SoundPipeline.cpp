@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2025 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
+#include "Sound/Editor/SoundPipeline.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
@@ -21,23 +22,25 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Sound/StaticAudioResource.h"
-#include "Sound/StreamAudioResource.h"
-#include "Sound/Editor/SoundAsset.h"
-#include "Sound/Editor/SoundCategory.h"
-#include "Sound/Editor/SoundPipeline.h"
-#include "Sound/Editor/Encoders/OggStreamEncoder.h"
-#include "Sound/Editor/Encoders/TssStreamEncoder.h"
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
 #include "Sound/Decoders/TssStreamDecoder.h"
 #include "Sound/Decoders/WavStreamDecoder.h"
+#include "Sound/Decoders/XmpStreamDecoder.h"
+#include "Sound/Editor/Encoders/OggStreamEncoder.h"
+#include "Sound/Editor/Encoders/TssStreamEncoder.h"
+#include "Sound/Editor/SoundAsset.h"
+#include "Sound/Editor/SoundCategory.h"
+#include "Sound/StaticAudioResource.h"
+#include "Sound/StreamAudioResource.h"
+
+#include <cstring>
 
 namespace traktor::sound
 {
-	namespace
-	{
+namespace
+{
 
 const float c_isMuteThreshold = 16.0f / 32767.0f;
 
@@ -59,7 +62,7 @@ bool isMute(const AudioBlock& block, uint32_t& outMuteOffset)
 	return true;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 33, SoundPipeline, editor::IPipeline)
 
@@ -93,8 +96,7 @@ bool SoundPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	const SoundAsset* soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
 	pipelineDepends->addDependency(Path(m_assetPath), soundAsset->getFileName().getOriginal());
@@ -124,8 +126,7 @@ bool SoundPipeline::buildOutput(
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
-	uint32_t reason
-) const
+	uint32_t reason) const
 {
 	const SoundAsset* soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
 	const std::wstring extension = soundAsset->getFileName().getExtension();
@@ -141,6 +142,8 @@ bool SoundPipeline::buildOutput(
 		decoder = new sound::OggStreamDecoder();
 	else if (compareIgnoreCase(extension, L"tss") == 0)
 		decoder = new sound::TssStreamDecoder();
+	else if (compareIgnoreCase(extension, L"mod") == 0 || compareIgnoreCase(extension, L"xm") == 0 || compareIgnoreCase(extension, L"s3m") == 0)
+		decoder = new sound::XmpStreamDecoder();
 	else
 	{
 		log::error << L"Failed to build sound asset, unable to determine decoder from extension \"" << extension << L"\"." << Endl;
@@ -191,8 +194,7 @@ bool SoundPipeline::buildOutput(
 
 		Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 			outputPath,
-			outputGuid
-		);
+			outputGuid);
 		if (!instance)
 		{
 			log::error << L"Failed to build sound asset, unable to create instance" << Endl;
@@ -235,8 +237,7 @@ bool SoundPipeline::buildOutput(
 
 		Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 			outputPath,
-			outputGuid
-		);
+			outputGuid);
 		if (!instance)
 		{
 			log::error << L"Failed to build sound asset, unable to create instance" << Endl;
@@ -290,8 +291,7 @@ bool SoundPipeline::buildOutput(
 		{
 			if (
 				block.samplesCount > 0 &&
-				block.maxChannel > 0
-			)
+				block.maxChannel > 0)
 			{
 				uint32_t muteOffset;
 				if (!isMute(block, muteOffset))
@@ -376,8 +376,7 @@ Ref< ISerializable > SoundPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const Object* buildParams
-) const
+	const Object* buildParams) const
 {
 	T_FATAL_ERROR;
 	return nullptr;

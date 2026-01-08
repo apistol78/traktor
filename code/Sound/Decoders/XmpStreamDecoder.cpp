@@ -157,7 +157,8 @@ double XmpStreamDecoder::getDuration() const
 bool XmpStreamDecoder::getBlock(AudioBlock& outBlock)
 {
 	int16_t buffer[1024 * 2];
-	xmp_play_buffer((xmp_context)m_ctx, buffer, 1024 * 2 * sizeof(int16_t), 0);
+	if (xmp_play_buffer((xmp_context)m_ctx, buffer, 1024 * 2 * sizeof(int16_t), 0) != 0)
+		return false;
 
 	for (int32_t i = 0; i < 1024; ++i)
 	{
