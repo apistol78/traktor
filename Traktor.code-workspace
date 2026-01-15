@@ -134,6 +134,7 @@
 			"span": "cpp",
 			"slist": "cpp",
 			"*.prebuilt": "c"
-		}
+		},
+		"task.autoDetect": "off"
 	}
 }
