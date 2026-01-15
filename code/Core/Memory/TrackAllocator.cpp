@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,7 +28,7 @@ TrackAllocator::~TrackAllocator()
 	wsprintf(buf, L"\nAllocation stats:\n");
 	OutputDebugString(buf);
 
-	for (std::map< void*, Stats >::const_iterator i = m_allocStats.begin(); i != m_allocStats.end(); ++i)
+	for (auto i = m_allocStats.begin(); i != m_allocStats.end(); ++i)
 	{
 		wsprintf(buf, L"0x%p, %d time(s) totally %d byte(s), tag \"%S\"\n", i->first, i->second.count, i->second.memory, i->second.tag);
 		OutputDebugString(buf);
@@ -40,13 +40,13 @@ TrackAllocator::~TrackAllocator()
 		std::map< Block, uint32_t > frequency;
 		size_t totalAlive = 0;
 
-		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
+		for (auto i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
 			totalAlive += i->second.size;
 
 #if defined(_WIN32)
 		wsprintf(buf, L"\nMemory leak detected, following %d allocation(s) not freed (%d KiB):\n", m_aliveBlocks.size(), (totalAlive + 1023) / 1024);
 		OutputDebugString(buf);
-		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
+		for (auto i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
 		{
 			wsprintf(buf, L"0x%p, %d byte(s), tag \"%S\"\n", i->first, i->second.size, i->second.tag);
 			OutputDebugString(buf);
@@ -60,7 +60,7 @@ TrackAllocator::~TrackAllocator()
 
 		/*
 		OutputDebugString(L"\nLeak Path Frequency:\n");
-		for (std::map< Block, uint32_t >::const_iterator i = frequency.begin(); i != frequency.end(); ++i)
+		for (auto i = frequency.begin(); i != frequency.end(); ++i)
 		{
 			wsprintf(buf, L"0x%p: %d allocation(s)\n", i->first.at[0], i->second);
 			OutputDebugString(buf);
@@ -74,7 +74,7 @@ TrackAllocator::~TrackAllocator()
 		*/
 #else
 		std::wcout << L"Memory leak detected, following allocation(s) not freed:" << std::endl;
-		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
+		for (auto i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
 		{
 			std::wcout << L"0x" << i->first << L", " << i->second.size << L" byte(s), tag \"" << i->second.tag << L"\"" << std::endl;
 			for (size_t j = 0; j < sizeof_array(i->second.at); ++j)
@@ -88,44 +88,46 @@ TrackAllocator::~TrackAllocator()
 
 void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	void* ptr = m_systemAllocator->alloc(size, align, tag);
 	if (!ptr)
 		return nullptr;
 
-	Block& block = m_aliveBlocks[ptr];
-	block.tag = tag;
-	block.size = size;
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	for (size_t i = 0; i < sizeof_array(block.at); ++i)
-		block.at[i] = nullptr;
+		Block& block = m_aliveBlocks[ptr];
+		block.tag = tag;
+		block.size = size;
 
-	getCallStack(sizeof_array(block.at), block.at, 1);
+		for (size_t i = 0; i < sizeof_array(block.at); ++i)
+			block.at[i] = nullptr;
 
-	Stats& stats = m_allocStats[block.at[0]];
-	stats.tag = tag;
-	stats.count++;
-	stats.memory += size;
+		getCallStack(sizeof_array(block.at), block.at, 1);
+
+		Stats& stats = m_allocStats[block.at[0]];
+		stats.tag = tag;
+		stats.count++;
+		stats.memory += size;
+	}
 
 	return ptr;
 }
 
 void TrackAllocator::free(void* ptr)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	std::map< void*, Block >::iterator i = m_aliveBlocks.find(ptr);
-	if (i != m_aliveBlocks.end())
 	{
-		Block toBeFreed = i->second; (void)toBeFreed;
-		m_aliveBlocks.erase(i);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		auto it = m_aliveBlocks.find(ptr);
+		if (it != m_aliveBlocks.end())
+		{
+			Block toBeFreed = it->second; (void)toBeFreed;
+			m_aliveBlocks.erase(it);
+		}
+		else
+		{
+			T_FATAL_ASSERT_M(ptr == 0, L"Invalid free, pointer does not reference allocated memory!");
+		}
 	}
-	else
-	{
-		T_FATAL_ASSERT_M(ptr == 0, L"Invalid free, pointer does not reference allocated memory!");
-	}
-
 	m_systemAllocator->free(ptr);
 }
 
