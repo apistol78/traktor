@@ -20042,7 +20042,6 @@
 						<item>SPIRV-Toolsd.lib</item>
 						<item>SPIRV-Tools-optd.lib</item>
 						<item>glslangd.lib</item>
-						<item>shaderc_combinedd.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -20091,7 +20090,6 @@
 						<item>SPIRV-Tools.lib</item>
 						<item>SPIRV-Tools-opt.lib</item>
 						<item>glslang.lib</item>
-						<item>shaderc_combined.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -20140,7 +20138,6 @@
 						<item>SPIRV-Toolsd.lib</item>
 						<item>SPIRV-Tools-optd.lib</item>
 						<item>glslangd.lib</item>
-						<item>shaderc_combinedd.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -20185,7 +20182,6 @@
 						<item>SPIRV-Tools.lib</item>
 						<item>SPIRV-Tools-opt.lib</item>
 						<item>glslang.lib</item>
-						<item>shaderc_combined.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>

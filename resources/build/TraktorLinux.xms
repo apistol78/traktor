@@ -17019,7 +17019,6 @@
 						<item>SPIRV</item>
 						<item>SPIRV-Tools</item>
 						<item>SPIRV-Tools-opt</item>
-						<item>shaderc_combined</item>
 						<item>glslang</item>
 						<item>spirv-cross-core</item>
 						<item>spirv-cross-glsl</item>
@@ -17065,7 +17064,6 @@
 						<item>SPIRV</item>
 						<item>SPIRV-Tools</item>
 						<item>SPIRV-Tools-opt</item>
-						<item>shaderc_combined</item>
 						<item>glslang</item>
 						<item>spirv-cross-core</item>
 						<item>spirv-cross-glsl</item>
@@ -17111,7 +17109,6 @@
 						<item>SPIRV</item>
 						<item>SPIRV-Tools</item>
 						<item>SPIRV-Tools-opt</item>
-						<item>shaderc_combined</item>
 						<item>glslang</item>
 						<item>spirv-cross-core</item>
 						<item>spirv-cross-glsl</item>
@@ -17157,7 +17154,6 @@
 						<item>SPIRV</item>
 						<item>SPIRV-Tools</item>
 						<item>SPIRV-Tools-opt</item>
-						<item>shaderc_combined</item>
 						<item>glslang</item>
 						<item>spirv-cross-core</item>
 						<item>spirv-cross-glsl</item>
