@@ -170,6 +170,8 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddExistingFilters"), L"Add Existing Filter(s)..."));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.Clone"), L"Clone Project"));
 	m_menuProject->add(new ui::MenuItem(L"-"));
+	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.SetAsStartup"), L"Set As Startup Project"));
+	m_menuProject->add(new ui::MenuItem(L"-"));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.Remove"), L"Remove"));
 
 	m_menuConfiguration = new ui::Menu();
@@ -315,6 +317,7 @@ bool SolutionForm::isModified() const
 ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentItem, Project* project)
 {
 	Ref< ui::TreeViewItem > treeProject = m_treeSolution->createItem(parentItem, project->getName(), 1);
+	treeProject->setBold(project == m_solution->getStartupProject());
 	treeProject->setEditable(true);
 	treeProject->setImage(0, 1);
 	treeProject->setData(L"PRIMARY", project);
@@ -977,6 +980,11 @@ void SolutionForm::eventTreeButtonDown(ui::TreeViewItemMouseButtonDownEvent* eve
 
 				createTreeProjectItem(solutionItem, clonedProject);
 				solutionItem->expand();
+			}
+			else if (command == L"Project.SetAsStartup")
+			{
+				m_solution->setStartupProject(project);
+				updateSolutionTree();
 			}
 			else if (command == L"Project.Remove")
 			{
