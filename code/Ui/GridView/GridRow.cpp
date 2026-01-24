@@ -117,6 +117,11 @@ void GridRow::set(uint32_t index, GridItem* item)
 	m_items[index] = item;
 }
 
+void GridRow::set(uint32_t index, const std::wstring& text)
+{
+	set(index, new GridItem(text));
+}
+
 void GridRow::set(uint32_t index, IBitmap* image)
 {
 	set(index, new GridItem(image));

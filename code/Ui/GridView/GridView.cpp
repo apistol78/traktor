@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -181,6 +181,15 @@ void GridView::addRow(GridRow* row)
 	row->setOwner(this);
 	m_rows.push_back(row);
 	requestUpdate();
+}
+
+GridRow* GridView::addRow(const std::initializer_list< std::wstring >& iv)
+{
+	Ref< GridRow > row = new GridRow();
+	for (auto it = std::begin(iv); it != std::end(iv); ++it)
+		row->add(new GridItem(*it));
+	addRow(row);
+	return row;
 }
 
 void GridView::removeRow(GridRow* row)

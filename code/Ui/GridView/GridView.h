@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include <functional>
+#include <initializer_list>
 #include "Core/RefArray.h"
 #include "Ui/Auto/AutoWidget.h"
 
@@ -75,6 +76,8 @@ public:
 	int32_t getColumnIndex(int32_t x) const;
 
 	void addRow(GridRow* row);
+
+	GridRow* addRow(const std::initializer_list< std::wstring >& iv);
 
 	void removeRow(GridRow* row);
 

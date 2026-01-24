@@ -76,6 +76,8 @@ public:
 
 	void set(uint32_t index, GridItem* item);
 
+	void set(uint32_t index, const std::wstring& text);
+
 	void set(uint32_t index, IBitmap* image);
 
 	Ref< GridItem > get(uint32_t index) const;
