@@ -11,6 +11,9 @@
 #include <fontconfig/fontconfig.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Ui/WL/DialogWL.h"
+#include "Ui/WL/FormWL.h"
+#include "Ui/WL/UserWidgetWL.h"
 #include "Ui/WL/WidgetFactoryWL.h"
 
 namespace traktor::ui
@@ -85,12 +88,12 @@ IEventLoop* WidgetFactoryWL::createEventLoop(EventSubject* owner)
 
 IDialog* WidgetFactoryWL::createDialog(EventSubject* owner)
 {
-	return nullptr;
+	return new DialogWL(owner);
 }
 
 IForm* WidgetFactoryWL::createForm(EventSubject* owner)
 {
-	return nullptr;
+	return new FormWL(owner);
 }
 
 INotificationIcon* WidgetFactoryWL::createNotificationIcon(EventSubject* owner)
@@ -110,7 +113,7 @@ IToolForm* WidgetFactoryWL::createToolForm(EventSubject* owner)
 
 IUserWidget* WidgetFactoryWL::createUserWidget(EventSubject* owner)
 {
-	return nullptr;
+	return new UserWidgetWL(owner);
 }
 
 ISystemBitmap* WidgetFactoryWL::createBitmap()
