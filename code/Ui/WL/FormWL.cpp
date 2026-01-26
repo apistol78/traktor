@@ -11,14 +11,21 @@
 namespace traktor::ui
 {
 
-FormWL::FormWL(EventSubject* owner)
-:	WidgetWLImpl< IForm >(owner)
+FormWL::FormWL(Context* context, EventSubject* owner)
+:	WidgetWLImpl< IForm >(context, owner)
 {
 }
 
 bool FormWL::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
 {
-	T_FATAL_ASSERT(parent == nullptr);
+	wl_surface* clientSurface = m_context->createSurface(width, height);
+
+	wl_shell_surface* shellSurface = wl_shell_get_shell_surface(
+		m_context->getShell(),
+		clientSurface
+	);
+	wl_shell_surface_set_toplevel(shellSurface);
+
 	return true;
 }
 

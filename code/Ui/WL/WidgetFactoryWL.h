@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <wayland-client.h>
+#include "Core/Ref.h"
 #include "Ui/Itf/IWidgetFactory.h"
 
 // import/export mechanism.
@@ -21,6 +21,8 @@
 
 namespace traktor::ui
 {
+
+class Context;
 
 class T_DLLCLASS WidgetFactoryWL : public IWidgetFactory
 {
@@ -52,7 +54,7 @@ public:
 	virtual void getDesktopRects(std::list< Rect >& outRects) const override final;
 
 private:
-	wl_display* m_display = nullptr;
+	Ref< Context > m_context;
 };
 
 }

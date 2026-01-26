@@ -17,7 +17,7 @@ namespace traktor::ui
 class DialogWL : public WidgetWLImpl< IDialog >
 {
 public:
-	explicit DialogWL(EventSubject* owner);
+	explicit DialogWL(Context* context, EventSubject* owner);
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
 

@@ -17,7 +17,7 @@ namespace traktor::ui
 class UserWidgetWL : public WidgetWLImpl< IUserWidget >
 {
 public:
-	explicit UserWidgetWL(EventSubject* owner);
+	explicit UserWidgetWL(Context* context, EventSubject* owner);
 
 	virtual bool create(IWidget* parent, int style) override final;
 };

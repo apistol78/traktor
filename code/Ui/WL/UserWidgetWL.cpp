@@ -11,8 +11,8 @@
 namespace traktor::ui
 {
 
-UserWidgetWL::UserWidgetWL(EventSubject* owner)
-:	WidgetWLImpl< IUserWidget >(owner)
+UserWidgetWL::UserWidgetWL(Context* context, EventSubject* owner)
+:	WidgetWLImpl< IUserWidget >(context, owner)
 {
 }
 

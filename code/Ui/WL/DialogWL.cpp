@@ -12,8 +12,8 @@
 namespace traktor::ui
 {
 
-DialogWL::DialogWL(EventSubject* owner)
-:	WidgetWLImpl< IDialog >(owner)
+DialogWL::DialogWL(Context* context, EventSubject* owner)
+:	WidgetWLImpl< IDialog >(context, owner)
 {
 }
 

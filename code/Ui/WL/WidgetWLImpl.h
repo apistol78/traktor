@@ -10,6 +10,7 @@
 
 #include "Ui/Itf/IFontMetric.h"
 #include "Ui/Itf/IWidget.h"
+#include "Ui/WL/Context.h"
 
 namespace traktor::ui
 {
@@ -22,8 +23,9 @@ class WidgetWLImpl
 ,	public IFontMetric
 {
 public:
-	explicit WidgetWLImpl(EventSubject* owner)
-	:	m_owner(owner)
+	explicit WidgetWLImpl(Context* context, EventSubject* owner)
+	:	m_context(context)
+	,	m_owner(owner)
 	{
 	}
 
@@ -228,6 +230,7 @@ public:
 	}
 
 protected:
+	Context* m_context = nullptr;
     EventSubject* m_owner = nullptr;
 };
 

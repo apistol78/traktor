@@ -17,7 +17,7 @@ namespace traktor::ui
 class FormWL : public WidgetWLImpl< IForm >
 {
 public:
-	explicit FormWL(EventSubject* owner);
+	explicit FormWL(Context* context, EventSubject* owner);
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
 

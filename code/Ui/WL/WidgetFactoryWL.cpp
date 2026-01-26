@@ -6,94 +6,43 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
 #include <set>
 #include <fontconfig/fontconfig.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Ui/WL/Context.h"
 #include "Ui/WL/DialogWL.h"
+#include "Ui/WL/EventLoopWL.h"
 #include "Ui/WL/FormWL.h"
 #include "Ui/WL/UserWidgetWL.h"
 #include "Ui/WL/WidgetFactoryWL.h"
 
 namespace traktor::ui
 {
-	namespace
-	{
-
-wl_compositor *compositor;
-wl_shm *shm;
-wl_shell *shell;
-
-void registry_global_handler
-(
-	void *data,
-	struct wl_registry *registry,
-	uint32_t name,
-	const char *interface,
-	uint32_t version
-)
-{
-	// printf("interface: '%s', version: %u, name: %u\n", interface, version, name);
-    if (strcmp(interface, "wl_compositor") == 0)
-	{
-        compositor = (wl_compositor*)wl_registry_bind(registry, name, &wl_compositor_interface, 3);
-    }
-	else if (strcmp(interface, "wl_shm") == 0)
-	{
-        shm = (wl_shm*)wl_registry_bind(registry, name, &wl_shm_interface, 1);
-    }
-	else if (strcmp(interface, "wl_shell") == 0)
-	{
-        shell = (wl_shell*)wl_registry_bind(registry, name, &wl_shell_interface, 1);
-    }
-}
-
-void registry_global_remove_handler
-(
-	void *data,
-	struct wl_registry *registry,
-	uint32_t name
-)
-{
-	// printf("removed: %u\n", name);
-}
-
-	}
 
 WidgetFactoryWL::WidgetFactoryWL()
 {
-	m_display = wl_display_connect(NULL);
-
-	wl_registry* registry = wl_display_get_registry(m_display);
-	wl_registry_listener registry_listener =
-	{
-		.global = registry_global_handler,
-		.global_remove = registry_global_remove_handler
-	};
-	wl_registry_add_listener(registry, &registry_listener, nullptr);
-
-	wl_display_roundtrip(m_display);
+	m_context = Context::create();
+	T_FATAL_ASSERT(m_context);
 }
 
 WidgetFactoryWL::~WidgetFactoryWL()
 {
-	wl_display_disconnect(m_display);
 }
 
 IEventLoop* WidgetFactoryWL::createEventLoop(EventSubject* owner)
 {
-	return nullptr;
+	return new EventLoopWL(m_context);
 }
 
 IDialog* WidgetFactoryWL::createDialog(EventSubject* owner)
 {
-	return new DialogWL(owner);
+	return new DialogWL(m_context, owner);
 }
 
 IForm* WidgetFactoryWL::createForm(EventSubject* owner)
 {
-	return new FormWL(owner);
+	return new FormWL(m_context, owner);
 }
 
 INotificationIcon* WidgetFactoryWL::createNotificationIcon(EventSubject* owner)
@@ -113,7 +62,7 @@ IToolForm* WidgetFactoryWL::createToolForm(EventSubject* owner)
 
 IUserWidget* WidgetFactoryWL::createUserWidget(EventSubject* owner)
 {
-	return new UserWidgetWL(owner);
+	return new UserWidgetWL(m_context, owner);
 }
 
 ISystemBitmap* WidgetFactoryWL::createBitmap()
