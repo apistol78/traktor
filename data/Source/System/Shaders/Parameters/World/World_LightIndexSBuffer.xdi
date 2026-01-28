@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ParameterDeclaration">
+	<type>StructBuffer</type>
+	<length>0</length>
+	<frequency>Once</frequency>
+	<structDeclaration>{F1783FA0-68A0-E142-9430-656CC70FECBA}</structDeclaration>
+</object>

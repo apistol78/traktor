@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,7 +13,7 @@
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Editor/ImmutableNode.h"
-#include "Render/Editor/Shader/StructDeclaration.h"
+#include "Render/Editor/Shader/ParameterDeclaration.h"
 #include "Render/Types.h"
 
 #include <string>
@@ -1042,6 +1042,7 @@ public:
 
 private:
 	friend class ListUniformsTool;
+	friend class TouchShaderGraphsTool;
 	friend class UniformLinker;
 
 	Guid m_structDeclaration;
@@ -1394,6 +1395,73 @@ public:
 private:
 	std::wstring m_technique;
 	PrecisionHint m_precisionHint;
+};
+
+// EXPERIMENTAL
+
+class T_DLLCLASS Parameter : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Parameter();
+
+	const std::wstring& getParameterName() const { return m_parameterName; }
+
+	const ParameterDeclaration& getDeclaration() const { T_FATAL_ASSERT(m_linked); return m_declaration; }
+
+	virtual std::wstring getInformation() const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	friend class ParameterLinker;
+	friend class ShaderPipeline;
+	friend class TouchShaderGraphsTool;
+
+	Guid m_parameterDeclaration;
+
+	//!\group Linker
+	//!\{
+	std::wstring m_parameterName;
+	ParameterDeclaration m_declaration;
+	bool m_linked = false;
+	//!\}
+};
+
+class T_DLLCLASS ArrayElement : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	ArrayElement();
+};
+
+class T_DLLCLASS ArrayLength : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	ArrayLength();
+};
+
+class T_DLLCLASS MemberValue : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	MemberValue();
+
+	void setMemberName(const std::wstring& memberName) { m_memberName = memberName; }
+
+	const std::wstring& getMemberName() const { return m_memberName; }
+
+	virtual std::wstring getInformation() const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	std::wstring m_memberName;
 };
 
 //@}

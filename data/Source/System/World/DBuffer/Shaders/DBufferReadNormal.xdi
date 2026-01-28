@@ -47,30 +47,17 @@
 				</item>
 			</outputPins>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{EB9094B7-0D20-724D-8F61-5FAB6C46AF0A}</id>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
 				<first>1011</first>
 				<second>90</second>
 			</position>
-			<declaration>{9A7E041F-19E5-A24E-8BF0-3BE0979D9ECF}</declaration>
-			<parameterName/>
-			<type>Texture2D</type>
-			<frequency>Once</frequency>
+			<parameterDeclaration>{97B210E5-34AD-FB4A-B30E-5E9845A737E0}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{DD499BAF-B821-9347-B77D-24251AB7655D}</id>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item"/>
@@ -89,6 +76,16 @@
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{DD499BAF-B821-9347-B77D-24251AB7655D}</id>
 			</destination>
 		</item>
 	</edges>

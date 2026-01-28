@@ -18,18 +18,6 @@
 				<second>412</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{E15455A9-C985-BA4D-8560-B4D10312157C}</id>
-			<comment/>
-			<position>
-				<first>512</first>
-				<second>471</second>
-			</position>
-			<declaration>{F5CC056E-E04D-E448-B39E-40C11BE1C86C}</declaration>
-			<parameterName/>
-			<type>Vector</type>
-			<frequency>Once</frequency>
-		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{1A91F6A6-D41E-F948-9E0A-94D5190DFAF7}</id>
 			<comment/>
@@ -37,18 +25,6 @@
 				<first>518</first>
 				<second>387</second>
 			</position>
-		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{5D8FB29B-3812-5041-B96E-0B23EF11D62F}</id>
-			<comment/>
-			<position>
-				<first>316</first>
-				<second>436</second>
-			</position>
-			<declaration>{0BEC58AC-31AF-BD40-98DB-39105313BF81}</declaration>
-			<parameterName/>
-			<type>Vector</type>
-			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{A7C58665-DE2C-1B4B-90BA-E27FCE2CA687}</id>
@@ -69,36 +45,34 @@
 			</position>
 			<name>TexCoord</name>
 		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<comment/>
+			<position>
+				<first>512</first>
+				<second>471</second>
+			</position>
+			<parameterDeclaration>{6D45A613-0233-0E45-BE62-7328C13FA293}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<comment/>
+			<position>
+				<first>316</first>
+				<second>436</second>
+			</position>
+			<parameterDeclaration>{25E47BA6-C1E7-0A40-87C9-18E2C48A1B31}</parameterDeclaration>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{3E538F69-C85C-44E2-9320-73F876288BAE}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -113,11 +87,11 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{AA571ACC-7699-4D10-BCD7-4E857EFB35EA}</id>
 			</destination>
 		</item>
@@ -127,8 +101,28 @@
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
 			</destination>
 		</item>
 	</edges>

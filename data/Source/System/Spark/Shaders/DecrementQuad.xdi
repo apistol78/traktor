@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{AA980B87-902C-0C41-B948-B65E95841777}</id>
-			<comment/>
-			<position>
-				<first>291</first>
-				<second>411</second>
-			</position>
-			<declaration>{47CC6C7A-327B-D349-AAC3-18321E48781B}</declaration>
-			<parameterName/>
-			<type>Vector</type>
-			<frequency>Draw</frequency>
-		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{078C4193-0988-8949-AE95-3159A56CB4C3}</id>
 			<comment/>
@@ -90,25 +78,34 @@
 			<technique>Default</technique>
 			<precisionHint>Undefined</precisionHint>
 		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<comment/>
+			<position>
+				<first>291</first>
+				<second>411</second>
+			</position>
+			<parameterDeclaration>{941A1371-421B-0646-BDFB-E63F14E943A3}</parameterDeclaration>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item"/>
 				<id>{CDEB28FB-B15B-0A4D-A58B-98516E1F743C}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{BFBE8191-F6E6-4A4F-A2CC-6CBC1D19BF70}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>

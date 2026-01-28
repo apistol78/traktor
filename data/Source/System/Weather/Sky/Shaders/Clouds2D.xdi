@@ -15,18 +15,6 @@
 				<Z>1</Z>
 			</localSize>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{C8F0FBC3-158B-4E8E-A6DB-389255692A9A}</id>
-			<comment/>
-			<position>
-				<first>27</first>
-				<second>70</second>
-			</position>
-			<declaration>{DEA2B50F-CDC6-9044-8C68-ECBC5198EB9D}</declaration>
-			<parameterName/>
-			<type>Image2D</type>
-			<frequency>Frame</frequency>
-		</item>
 		<item type="traktor.render.DispatchIndex" version="1,traktor.render.Node:1">
 			<id>{0DF29149-6188-4DC2-9052-BD21F35C03FD}</id>
 			<comment/>
@@ -68,8 +56,8 @@
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script>
-			<![CDATA[
+			<script><![CDATA[
+			
 vec2 vUV = $Position.xy / vec2(512.0f);
 vec3 coord = fract(vec3(vUV + vec2(.2, 0.62), .5));
         
@@ -87,24 +75,23 @@ col.g = 0.625 * tilableVoronoi( coord + 0., 3, 15. ) +
 col.b = 1. - tilableVoronoi( coord + 0.5, 6, 9. );
 
 $Output = col;
-			]]>
-			</script>
+			
+			]]></script>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<comment/>
+			<position>
+				<first>27</first>
+				<second>70</second>
+			</position>
+			<parameterDeclaration>{DC7791F0-97E6-9A48-B152-D61AEC1494D4}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{60D25829-A948-4883-B26F-F2BE12B49891}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
 				<id>{AAE82FD3-522F-43C6-A594-2E13D126E5DB}</id>
 			</source>
 			<destination>
@@ -114,22 +101,32 @@ $Output = col;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<id>{AAE82FD3-522F-43C6-A594-2E13D126E5DB}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{0F9EBC5D-9732-4430-A155-DD4B25D6EF7E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{3E051811-B241-4558-A9E7-545715E55E9F}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{60D25829-A948-4883-B26F-F2BE12B49891}</id>
 			</destination>
 		</item>
 	</edges>

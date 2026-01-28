@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -257,23 +257,17 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		return false;
 	}
 
-	const Node* storage = cx.getInputNode(node, L"Storage");
-	if (!storage)
+	const GlslVariable* storage = cx.emitInput(node, L"Storage");
+	if (storage)
 	{
-		cx.pushError(L"Storage not connected.");
-		return false;
-	}
-
-	if (const Uniform* storageUniformNode = dynamic_type_cast< const Uniform* >(storage))
-	{
-		if (!(storageUniformNode->getParameterType() >= ParameterType::Image2D && storageUniformNode->getParameterType() <= ParameterType::ImageCube))
+		if (storage->getType() != GlslType::Image2D && storage->getType() != GlslType::Image3D && storage->getType() != GlslType::ImageCube)
 		{
-			cx.pushError(L"Incorrect parameter type.");
+			cx.pushError(L"Incorrect parameter type on Storage, must be an image.");
 			return false;
 		}
 
 		// Check if image needs to be defined.
-		const auto existing = cx.getLayout().getByName(storageUniformNode->getParameterName());
+		const auto existing = cx.getLayout().getByName(storage->getName());
 		if (existing != nullptr)
 		{
 			auto existingImage = dynamic_type_cast< GlslImage* >(existing);
@@ -290,42 +284,121 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			// Image do not exist; add new image resource.
 			cx.getLayout().addBindless(
 				new GlslImage(
-					storageUniformNode->getParameterName(),
+					storage->getName(),
 					GlslResource::Set::Default,
 					GlslResource::BsCompute,
-					glsl_from_parameter_type(storageUniformNode->getParameterType()),
+					storage->getType(),
 					false));
 		}
 
-		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-		if (storageUniformNode->getParameterType() == ParameterType::Image2D)
-			f << L"imageStore(__bindlessImages2D__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer2) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
-		else if (storageUniformNode->getParameterType() == ParameterType::Image3D)
-			f << L"imageStore(__bindlessImages3D__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
-		else
-			f << L"imageStore(__bindlessImagesCube__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
-
 		// Image parameter; since resource index is passed to shader we define an integer uniform.
-		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw"); // c_uniformBufferNames[(int32_t)node->getFrequency()]);
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw");
 		ub->addStage(cx.getBindStage());
-		if (!ub->add(storageUniformNode->getParameterName(), GlslType::Integer, 1))
+		if (!ub->add(storage->getName(), GlslType::Integer, 1))
 		{
 			cx.pushError(L"Failed to register uniform.");
 			return false;
 		}
 
-		// Define parameter in context.
-		cx.addParameter(
-			storageUniformNode->getParameterName(),
-			storageUniformNode->getParameterType(),
-			1,
-			UpdateFrequency::Draw);
+		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+		if (storage->getType() == GlslType::Image2D)
+		{
+			f << L"imageStore(__bindlessImages2D__[" << storage->getName() << L"], " << offset->cast(GlslType::Integer2) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+			cx.addParameter(
+				storage->getName(),
+				ParameterType::Image2D,
+				1,
+				UpdateFrequency::Draw);
+		}
+		else if (storage->getType() == GlslType::Image3D)
+		{
+			f << L"imageStore(__bindlessImages3D__[" << storage->getName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+			cx.addParameter(
+				storage->getName(),
+				ParameterType::Image3D,
+				1,
+				UpdateFrequency::Draw);
+		}
+		else
+		{
+			f << L"imageStore(__bindlessImagesCube__[" << storage->getName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+			cx.addParameter(
+				storage->getName(),
+				ParameterType::ImageCube,
+				1,
+				UpdateFrequency::Draw);
+		}
 	}
-	else
-	{
-		cx.pushError(L"Unsupported storage type.");
-		return false;
-	}
+
+	// const Node* storage = cx.getInputNode(node, L"Storage");
+	// if (!storage)
+	//{
+	//	cx.pushError(L"Storage not connected.");
+	//	return false;
+	// }
+
+	// if (const Uniform* storageUniformNode = dynamic_type_cast< const Uniform* >(storage))
+	//{
+	//	if (!(storageUniformNode->getParameterType() >= ParameterType::Image2D && storageUniformNode->getParameterType() <= ParameterType::ImageCube))
+	//	{
+	//		cx.pushError(L"Incorrect parameter type.");
+	//		return false;
+	//	}
+
+	//	// Check if image needs to be defined.
+	//	const auto existing = cx.getLayout().getByName(storageUniformNode->getParameterName());
+	//	if (existing != nullptr)
+	//	{
+	//		auto existingImage = dynamic_type_cast< GlslImage* >(existing);
+	//		if (!existingImage)
+	//		{
+	//			cx.pushError(L"Image do not exist.");
+	//			return false;
+	//		}
+
+	//		existingImage->addStage(GlslResource::BsCompute);
+	//	}
+	//	else
+	//	{
+	//		// Image do not exist; add new image resource.
+	//		cx.getLayout().addBindless(
+	//			new GlslImage(
+	//				storageUniformNode->getParameterName(),
+	//				GlslResource::Set::Default,
+	//				GlslResource::BsCompute,
+	//				glsl_from_parameter_type(storageUniformNode->getParameterType()),
+	//				false));
+	//	}
+
+	//	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	//	if (storageUniformNode->getParameterType() == ParameterType::Image2D)
+	//		f << L"imageStore(__bindlessImages2D__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer2) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+	//	else if (storageUniformNode->getParameterType() == ParameterType::Image3D)
+	//		f << L"imageStore(__bindlessImages3D__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+	//	else
+	//		f << L"imageStore(__bindlessImagesCube__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+
+	//	// Image parameter; since resource index is passed to shader we define an integer uniform.
+	//	auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw"); // c_uniformBufferNames[(int32_t)node->getFrequency()]);
+	//	ub->addStage(cx.getBindStage());
+	//	if (!ub->add(storageUniformNode->getParameterName(), GlslType::Integer, 1))
+	//	{
+	//		cx.pushError(L"Failed to register uniform.");
+	//		return false;
+	//	}
+
+	//	// Define parameter in context.
+	//	cx.addParameter(
+	//		storageUniformNode->getParameterName(),
+	//		storageUniformNode->getParameterType(),
+	//		1,
+	//		UpdateFrequency::Draw);
+	//}
+	// else
+	//{
+	//	cx.pushError(L"Unsupported storage type.");
+	//	return false;
+	//}
 
 	cx.requirements().localSize[0] = node->getLocalSize()[0];
 	cx.requirements().localSize[1] = node->getLocalSize()[1];
@@ -1778,8 +1851,12 @@ bool emitReadStruct(GlslContext& cx, ReadStruct* node)
 	if (!strct || strct->getType() != GlslType::StructBuffer)
 		return false;
 
-	const Struct* sn = mandatory_non_null_type_cast< const Struct* >(strct->getNode());
-	const DataType type = sn->getElementType(node->getName());
+	const StructDeclaration& decl = strct->getStructDeclaration();
+
+	if (!decl.haveElement(node->getName()))
+		return false;
+
+	const DataType type = decl.getElementType(node->getName());
 
 	Ref< GlslVariable > index = cx.emitInput(node, L"Index");
 	if (!index)
@@ -1788,7 +1865,7 @@ bool emitReadStruct(GlslContext& cx, ReadStruct* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", glsl_from_data_type(type));
 
 	comment(f, node);
-	f << L"const " << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L"[" << index->cast(GlslType::Integer) << L"]." << node->getName() << L");" << Endl;
+	f << L"const " << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L".data[" << index->cast(GlslType::Integer) << L"]." << node->getName() << L");" << Endl;
 
 	return true;
 }
@@ -1808,17 +1885,20 @@ bool emitReadStruct2(GlslContext& cx, ReadStruct2* node)
 	if (!index)
 		return false;
 
-	const Struct* sn = mandatory_non_null_type_cast< const Struct* >(strct->getNode());
+	const StructDeclaration& decl = strct->getStructDeclaration();
 	for (int32_t i = 0; i < node->getOutputPinCount(); ++i)
 	{
 		const OutputPin* outputPin = node->getOutputPin(i);
 		if (!cx.isConnected(outputPin))
 			continue;
 
-		const DataType type = sn->getElementType(outputPin->getName());
+		if (!decl.haveElement(outputPin->getName()))
+			return false;
+
+		const DataType type = decl.getElementType(outputPin->getName());
 		Ref< GlslVariable > out = cx.emitOutput(node, outputPin->getName(), glsl_from_data_type(type));
 		comment(f, node);
-		f << L"const " << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L"[" << index->cast(GlslType::Integer) << L"]." << outputPin->getName() << L");" << Endl;
+		f << L"const " << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L".data[" << index->cast(GlslType::Integer) << L"]." << outputPin->getName() << L");" << Endl;
 	}
 
 	return true;
@@ -2363,10 +2443,8 @@ bool emitScript(GlslContext& cx, Script* node)
 			break;
 
 		case GlslType::StructBuffer:
-			{
-				reps.push_back({ variableName, ins[i]->getName() });
-				reps.push_back({ typeOfName, ins[i]->getTypeName() });
-			}
+			reps.push_back({ variableName, ins[i]->getName() + L".data" });
+			reps.push_back({ typeOfName, ins[i]->getStructTypeName() });
 			break;
 
 		default:
@@ -2455,8 +2533,9 @@ bool emitStruct(GlslContext& cx, Struct* node)
 {
 	Ref< GlslVariable > out = cx.getShader().createStructVariable(
 		node->findOutputPin(L"Output"),
-		node->getParameterName() + L".data",
-		node->getStructTypeName());
+		node->getParameterName(),
+		node->getStructTypeName(),
+		node->getStructDeclaration());
 
 	// Add structure definition.
 	const std::wstring& structTypeName = node->getStructTypeName();
@@ -3240,6 +3319,299 @@ bool emitVertexOutput(GlslContext& cx, VertexOutput* node)
 	return true;
 }
 
+// EXPERIMENTAL
+
+bool emitParameter(GlslContext& cx, Parameter* node)
+{
+	const ParameterDeclaration& decl = node->getDeclaration();
+	Ref< GlslVariable > out;
+
+	// Scalar parameter.
+	if (decl.getParameterType() == ParameterType::Scalar || decl.getParameterType() == ParameterType::Vector || decl.getParameterType() == ParameterType::Matrix)
+	{
+		const int32_t length = std::max(decl.getLength(), 1);
+
+		// Add to uniform buffer.
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(c_uniformBufferNames[(int32_t)decl.getFrequency()]);
+		ub->addStage(cx.getBindStage());
+		if (!ub->add(node->getParameterName(), glsl_from_parameter_type(decl.getParameterType()), length))
+			return false;
+
+		// Define parameter in context.
+		cx.addParameter(
+			node->getParameterName(),
+			decl.getParameterType(),
+			length,
+			decl.getFrequency());
+
+		// Create variable.
+		if (length <= 1)
+			out = cx.getShader().createVariable(
+				node->findOutputPin(L"Output"),
+				node->getParameterName(),
+				glsl_from_parameter_type(decl.getParameterType()));
+		else
+			out = cx.getShader().createArrayVariable(
+				node->findOutputPin(L"Output"),
+				node->getParameterName(),
+				glsl_from_parameter_type(decl.getParameterType()));
+		if (!out)
+			return false;
+	}
+	// Texture parameter.
+	else if (decl.getParameterType() == ParameterType::Texture2D || decl.getParameterType() == ParameterType::Texture3D || decl.getParameterType() == ParameterType::TextureCube)
+	{
+		// Add texture to layout.
+		const auto existing = cx.getLayout().getByName(node->getParameterName());
+		if (existing != nullptr)
+		{
+			if (auto existingTexture = dynamic_type_cast< GlslTexture* >(existing))
+			{
+				// Texture already exist; ensure type match.
+				if (existingTexture->getUniformType() != glsl_from_parameter_type(decl.getParameterType()))
+					return false;
+				existingTexture->addStage(cx.getBindStage());
+			}
+			else
+			{
+				// Resource already exist but is not a texture.
+				return false;
+			}
+		}
+		else
+		{
+			// Texture do not exist; add new texture resource.
+			cx.getLayout().addBindless(
+				new GlslTexture(
+					node->getParameterName(),
+					GlslResource::Set::Default,
+					cx.getBindStage(),
+					glsl_from_parameter_type(decl.getParameterType()),
+					false));
+		}
+
+		// Texture parameter; since resource index is passed to shader we define an integer uniform.
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw");
+		ub->addStage(cx.getBindStage());
+		if (!ub->add(node->getParameterName(), GlslType::Integer, 1))
+			return false;
+
+		// Define parameter in context.
+		cx.addParameter(
+			node->getParameterName(),
+			decl.getParameterType(),
+			1,
+			decl.getFrequency());
+
+		// Create variable.
+		Ref< GlslVariable > out = cx.getShader().createVariable(
+			node->findOutputPin(L"Output"),
+			node->getParameterName(),
+			glsl_from_parameter_type(decl.getParameterType()));
+		if (!out)
+			return false;
+	}
+	// Image parameter.
+	else if (decl.getParameterType() == ParameterType::Image2D || decl.getParameterType() == ParameterType::Image3D || decl.getParameterType() == ParameterType::ImageCube)
+	{
+		const auto existing = cx.getLayout().getByName(node->getParameterName());
+		if (existing != nullptr)
+		{
+			if (auto existingImage = dynamic_type_cast< GlslImage* >(existing))
+			{
+				// Image already exist; ensure type match.
+				if (existingImage->getUniformType() != glsl_from_parameter_type(decl.getParameterType()))
+					return false;
+				existingImage->addStage(cx.getBindStage());
+			}
+			else
+			{
+				// Resource already exist but is not an image.
+				return false;
+			}
+		}
+		else
+		{
+			// Image do not exist; add new image resource.
+			cx.getLayout().addBindless(
+				new GlslImage(
+					node->getParameterName(),
+					GlslResource::Set::Default,
+					cx.getBindStage(),
+					glsl_from_parameter_type(decl.getParameterType()),
+					false));
+		}
+
+		// Image parameter; since resource index is passed to shader we define an integer uniform.
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw");
+		ub->addStage(cx.getBindStage());
+		if (!ub->add(node->getParameterName(), GlslType::Integer, 1))
+			return false;
+
+		// Define parameter in context.
+		cx.addParameter(
+			node->getParameterName(),
+			decl.getParameterType(),
+			1,
+			decl.getFrequency());
+
+		// Create variable.
+		Ref< GlslVariable > out = cx.getShader().createVariable(
+			node->findOutputPin(L"Output"),
+			node->getParameterName(),
+			glsl_from_parameter_type(decl.getParameterType()));
+		if (!out)
+			return false;
+	}
+	// Struct array parameter.
+	else if (decl.getParameterType() == ParameterType::StructBuffer)
+	{
+		// Add structure declaration.
+		cx.addStructure(decl.getStructType(), decl.getStructDeclaration());
+
+		// Add buffer to layout.
+		const auto existing = cx.getLayout().getByName(node->getParameterName());
+		if (existing != nullptr)
+		{
+			if (auto existingStorageBuffer = dynamic_type_cast< GlslStorageBuffer* >(existing))
+			{
+				// Storage buffer already exist; \tbd ensure elements match.
+				existingStorageBuffer->addStage(cx.getBindStage());
+				return true;
+			}
+			else
+			{
+				// Resource already exist but is not a storage buffer.
+				return false;
+			}
+		}
+		else
+		{
+			// Storage buffer do not exist; add new storage buffer resource.
+			Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(
+				node->getParameterName(),
+				decl.getStructType(),
+				GlslResource::Set::Default,
+				cx.getBindStage(),
+				false);
+			cx.getLayout().add(storageBuffer);
+		}
+
+		// Define parameter in context.
+		cx.addParameter(
+			node->getParameterName(),
+			ParameterType::StructBuffer,
+			1,
+			UpdateFrequency::Draw);
+
+		// Create variable.
+		out = cx.getShader().createStructVariable(
+			node->findOutputPin(L"Output"),
+			node->getParameterName(),
+			decl.getStructType(),
+			decl.getStructDeclaration());
+		if (!out)
+			return false;
+	}
+	// RT acceleration structure parameter.
+	else if (decl.getParameterType() == ParameterType::AccelerationStructure)
+	{
+		// Add RT AS to layout.
+		const auto existing = cx.getLayout().getByName(node->getParameterName());
+		if (existing != nullptr)
+		{
+			if (auto existingAS = dynamic_type_cast< GlslAccelerationStructure* >(existing))
+			{
+				// Acceleration structure already exist.
+				existingAS->addStage(cx.getBindStage());
+			}
+			else
+			{
+				// Resource already exist but is not an acceleration structure.
+				return false;
+			}
+		}
+		else
+		{
+			// Acceleration structure do not exist; add new AS resource.
+			cx.getLayout().add(
+				new GlslAccelerationStructure(
+					node->getParameterName(),
+					GlslResource::Set::Default,
+					cx.getBindStage()));
+		}
+
+		// Define parameter in context.
+		cx.addParameter(
+			node->getParameterName(),
+			decl.getParameterType(),
+			1,
+			decl.getFrequency());
+
+		// Create variable.
+		Ref< GlslVariable > out = cx.getShader().createVariable(
+			node->findOutputPin(L"Output"),
+			node->getParameterName(),
+			glsl_from_parameter_type(decl.getParameterType()));
+		if (!out)
+			return false;
+	}
+	else
+		return false;
+
+	return true;
+}
+
+bool emitArrayElement(GlslContext& cx, ArrayElement* node)
+{
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	Ref< GlslVariable > inp = cx.emitInput(node, L"Input");
+	if (!inp)
+		return false;
+
+	Ref< GlslVariable > index = cx.emitInput(node, L"Index");
+	if (!index)
+		return false;
+
+	if (inp->getType() == GlslType::StructBuffer)
+	{
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Struct);
+		out->setStructTypeName(inp->getStructTypeName());
+		out->setStructDeclaration(inp->getStructDeclaration());
+		f << L"const " << inp->getStructTypeName() << L" " << out->getName() << L" = " << inp->getName() << L".data[" << index->cast(GlslType::Integer) << L"];" << Endl;
+	}
+	else if (inp->isArray())
+	{
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", inp->getType());
+		assign(f, out) << inp->getName() << L"[" << index->cast(GlslType::Integer) << L"];" << Endl;
+	}
+	else
+		return false;
+
+	return true;
+}
+
+bool emitMemberValue(GlslContext& cx, MemberValue* node)
+{
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	Ref< GlslVariable > strct = cx.emitInput(node, L"Input");
+	if (!strct || strct->getType() != GlslType::Struct)
+		return false;
+
+	const DataType memberType = strct->getStructDeclaration().getElementType(node->getMemberName());
+
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", glsl_from_data_type(memberType));
+	if (!out)
+		return false;
+
+	comment(f, node);
+	f << L"const " << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << strct->getName() << L"." << node->getMemberName() << L";" << Endl;
+
+	return true;
+}
+
 }
 
 struct Emitter
@@ -3290,7 +3662,6 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);
 	m_emitters[&type_of< FragmentPosition >()] = new EmitterCast< FragmentPosition >(emitFragmentPosition);
 	m_emitters[&type_of< FrontFace >()] = new EmitterCast< FrontFace >(emitFrontFace);
-	m_emitters[&type_of< IndexedUniform >()] = new EmitterCast< IndexedUniform >(emitIndexedUniform);
 	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
 	m_emitters[&type_of< Iterate >()] = new EmitterCast< Iterate >(emitIterate);
@@ -3312,8 +3683,6 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Polynomial >()] = new EmitterCast< Polynomial >(emitPolynomial);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
-	m_emitters[&type_of< ReadStruct >()] = new EmitterCast< ReadStruct >(emitReadStruct);
-	m_emitters[&type_of< ReadStruct2 >()] = new EmitterCast< ReadStruct2 >(emitReadStruct2);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
 	m_emitters[&type_of< Repeat >()] = new EmitterCast< Repeat >(emitRepeat);
@@ -3325,7 +3694,6 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);
 	m_emitters[&type_of< Step >()] = new EmitterCast< Step >(emitStep);
-	m_emitters[&type_of< Struct >()] = new EmitterCast< Struct >(emitStruct);
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);
 	m_emitters[&type_of< Sum >()] = new EmitterCast< Sum >(emitSum);
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
@@ -3336,10 +3704,21 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
 	m_emitters[&type_of< Truncate >()] = new EmitterCast< Truncate >(emitTruncate);
-	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);
 	m_emitters[&type_of< Vector >()] = new EmitterCast< Vector >(emitVector);
 	m_emitters[&type_of< VertexInput >()] = new EmitterCast< VertexInput >(emitVertexInput);
 	m_emitters[&type_of< VertexOutput >()] = new EmitterCast< VertexOutput >(emitVertexOutput);
+
+	// DEPRECATED
+	m_emitters[&type_of< IndexedUniform >()] = new EmitterCast< IndexedUniform >(emitIndexedUniform);
+	m_emitters[&type_of< ReadStruct >()] = new EmitterCast< ReadStruct >(emitReadStruct);
+	m_emitters[&type_of< ReadStruct2 >()] = new EmitterCast< ReadStruct2 >(emitReadStruct2);
+	m_emitters[&type_of< Struct >()] = new EmitterCast< Struct >(emitStruct);
+	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);
+
+	// EXPERIMENTAL
+	m_emitters[&type_of< Parameter >()] = new EmitterCast< Parameter >(emitParameter);
+	m_emitters[&type_of< ArrayElement >()] = new EmitterCast< ArrayElement >(emitArrayElement);
+	m_emitters[&type_of< MemberValue >()] = new EmitterCast< MemberValue >(emitMemberValue);
 }
 
 GlslEmitter::~GlslEmitter()

@@ -20,20 +20,20 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{7A10271E-3ECE-4842-B049-E058772F339E}</id>
 			<comment/>
 			<position>
 				<first>1569</first>
 				<second>105</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
-			<compare>CfNone</compare>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
+			<addressU>Wrap</addressU>
+			<addressV>Wrap</addressV>
+			<addressW>Wrap</addressW>
+			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -47,17 +47,14 @@
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{68A16A52-2000-40FA-B33E-B99D52FB7C50}</id>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
 				<first>1334</first>
 				<second>100</second>
 			</position>
-			<declaration>{FD1BAF81-D951-784A-BE86-EB15E2F0E812}</declaration>
-			<parameterName/>
-			<type>Texture2D</type>
-			<frequency>Once</frequency>
+			<parameterDeclaration>{3D8E8785-5460-2D4A-A114-F70E69EFE6C5}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -94,7 +91,7 @@
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[4]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>

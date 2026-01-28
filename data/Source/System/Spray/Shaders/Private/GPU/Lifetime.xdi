@@ -1,19 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
-			<id>{6B64B451-AE7F-A944-B65A-46884FB3F875}</id>
-			<comment/>
-			<position>
-				<first>107</first>
-				<second>151</second>
-			</position>
-			<structDeclaration>{E1FC9761-BC90-CF43-937D-D681004CCCDF}</structDeclaration>
-			<parameterName>Spray_Points</parameterName>
-			<decl>
-				<elements/>
-			</decl>
-		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{78C52B18-3CB8-4049-9FE1-1024BA685487}</id>
 			<comment/>
@@ -84,26 +71,35 @@ $Head[0].alive = alive;
 				</item>
 			</outputPins>
 		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<comment/>
+			<position>
+				<first>107</first>
+				<second>151</second>
+			</position>
+			<parameterDeclaration>{11CE94AA-A5D1-8B4E-BD65-755E930947FB}</parameterDeclaration>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{F748F84A-E97B-414C-B25D-33C72B670007}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{51D6EBF1-11D4-DC4C-8C0F-C0FC5D4991A4}</id>
+				<node ref="/object/nodes/item"/>
+				<id>{F06B4BD8-C3F9-964A-ABBF-490E30E9BE0E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<id>{F748F84A-E97B-414C-B25D-33C72B670007}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{F06B4BD8-C3F9-964A-ABBF-490E30E9BE0E}</id>
+				<node ref="/object/nodes/item"/>
+				<id>{51D6EBF1-11D4-DC4C-8C0F-C0FC5D4991A4}</id>
 			</destination>
 		</item>
 	</edges>

@@ -10,19 +10,6 @@
 			</position>
 			<scope>Global</scope>
 		</item>
-		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
-			<id>{23A209F0-CBDF-45DD-95B6-A8FB3B1F9DFF}</id>
-			<comment/>
-			<position>
-				<first>831</first>
-				<second>231</second>
-			</position>
-			<structDeclaration>{C9C589C8-B02C-8147-8E3B-832835BFB56D}</structDeclaration>
-			<parameterName>Output</parameterName>
-			<decl>
-				<elements/>
-			</decl>
-		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{ED1042C7-0B7C-4274-A847-BF78B47AC778}</id>
 			<comment/>
@@ -57,26 +44,35 @@ $Buffer[$Index.x].B = 0;
 			
 			]]></script>
 		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<comment/>
+			<position>
+				<first>831</first>
+				<second>231</second>
+			</position>
+			<parameterDeclaration>{68334133-10F4-8E40-834C-A0CE9D5E9A5C}</parameterDeclaration>
+		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{2AF22CAF-D7F6-4D9F-BAE6-7322B8A4DCD2}</id>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item"/>
 				<id>{AAE82FD3-522F-43C6-A594-2E13D126E5DB}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<id>{9697F837-C045-4783-B395-0F76F25D7EE2}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{2AF22CAF-D7F6-4D9F-BAE6-7322B8A4DCD2}</id>
 			</destination>
 		</item>
 	</edges>

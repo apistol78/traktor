@@ -123,12 +123,18 @@ Ref< render::ShaderGraph > VertexShaderGenerator::generateMesh(
 	}
 
 	// Replace vertex interface with concrete implementation fragment.
+	bool replacedVertexInterface = false;
 	for (auto externalNode : meshShaderGraph->findNodesOf< render::External >())
 	{
 		const Guid& fragmentGuid = externalNode->getFragmentGuid();
 		if (fragmentGuid == c_meshVertexInterface)
+		{
 			externalNode->setFragmentGuid(vertexShaderGuid);
+			replacedVertexInterface = true;
+		}
 	}
+	if (!replacedVertexInterface)
+		return nullptr;
 
 	return meshShaderGraph;
 }

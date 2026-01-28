@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -50,6 +50,7 @@
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ParameterLinker.h"
 #include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderModule.h"
@@ -210,7 +211,13 @@ bool ShaderPipeline::buildDependencies(
 	// Add declaration, fragment, texture and text dependencies.
 	for (auto node : shaderGraph->getNodes())
 	{
-		if (const auto uniformNode = dynamic_type_cast< Uniform* >(node))
+		if (const auto parameterNode = dynamic_type_cast< Parameter* >(node))
+		{
+			const Guid& declarationGuid = parameterNode->m_parameterDeclaration;
+			if (declarationGuid.isNotNull())
+				pipelineDepends->addDependency(declarationGuid, editor::PdfUse);
+		}
+		else if (const auto uniformNode = dynamic_type_cast< Uniform* >(node))
 		{
 			const Guid& declarationGuid = uniformNode->getDeclaration();
 			if (declarationGuid.isNotNull())
@@ -278,6 +285,27 @@ bool ShaderPipeline::buildOutput(
 		return false;
 	}
 
+	// Link parameter declarations.
+	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline link parameter declarations");
+	const auto parameterDeclarationReader = [&](const Guid& declarationId) -> ParameterLinker::named_decl_t {
+		Ref< db::Instance > declarationInstance = pipelineBuilder->getSourceDatabase()->getInstance(declarationId);
+		if (declarationInstance != nullptr)
+			return { declarationInstance->getName(), declarationInstance->getObject() };
+		else
+			return { L"", nullptr };
+	};
+	Ref< ShaderGraph > mutableShaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
+	if (ParameterLinker(parameterDeclarationReader).resolve(mutableShaderGraph))
+		shaderGraph = mutableShaderGraph;
+	else
+		shaderGraph = nullptr;
+	pipelineBuilder->getProfiler()->end();
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to link parameter declarations." << Endl;
+		return false;
+	}
+
 	// Link uniform declarations.
 	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline link uniform declarations");
 	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t {
@@ -287,7 +315,6 @@ bool ShaderPipeline::buildOutput(
 		else
 			return { L"", nullptr };
 	};
-	Ref< ShaderGraph > mutableShaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
 	if (UniformLinker(uniformDeclarationReader).resolve(mutableShaderGraph))
 		shaderGraph = mutableShaderGraph;
 	else
@@ -527,6 +554,36 @@ bool ShaderPipeline::buildOutput(
 					log::error << L"ShaderPipeline failed; unable to cleanup unused branches of \"" << path << L"\"." << Endl;
 					status = false;
 					return;
+				}
+
+				// Extract parameter initial values and add to initialization block in shader resource.
+				for (const auto parameterNode : programGraph->findNodesOf< Parameter >())
+				{
+					const OutputPin* outputPin = programGraph->findSourcePin(parameterNode->getInputPin(0));
+					if (!outputPin)
+						continue;
+
+					const Node* outputNode = outputPin->getNode();
+					T_ASSERT(outputNode);
+
+					if (const Scalar* scalarNode = dynamic_type_cast< const Scalar* >(outputNode))
+					{
+						shaderCombination.initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar(parameterNode->getParameterName(), scalarNode->get()));
+					}
+					else if (const Vector* vectorNode = dynamic_type_cast< const Vector* >(outputNode))
+					{
+						shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(parameterNode->getParameterName(), vectorNode->get()));
+					}
+					else if (const Color* colorNode = dynamic_type_cast< const Color* >(outputNode))
+					{
+						shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(parameterNode->getParameterName(), colorNode->getColor()));
+					}
+					else
+					{
+						log::error << L"ShaderPipeline failed; initial value of parameter \"" << parameterNode->getParameterName() << L"\" must be constant." << Endl;
+						status = false;
+						return;
+					}
 				}
 
 				// Extract uniform initial values and add to initialization block in shader resource.

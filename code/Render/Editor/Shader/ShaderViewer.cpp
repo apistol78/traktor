@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,6 +31,7 @@
 #include "Render/Editor/Shader/Algorithms/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ParameterLinker.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderModule.h"
 #include "Render/Editor/Shader/ShaderModuleResolve.h"
@@ -400,6 +401,20 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	FragmentReaderAdapter fragmentReader(m_editor->getSourceDatabase());
 	if ((shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true)) == 0)
 		return;
+
+	// Link parameter declarations.
+	const auto parameterDeclarationReader = [&](const Guid& declarationId) -> ParameterLinker::named_decl_t {
+		Ref< db::Instance > declarationInstance = m_editor->getSourceDatabase()->getInstance(declarationId);
+		if (declarationInstance != nullptr)
+			return { declarationInstance->getName(), declarationInstance->getObject() };
+		else
+			return { L"", nullptr };
+	};
+	if (!ParameterLinker(parameterDeclarationReader).resolve(shaderGraph))
+	{
+		log::error << L"Shader viewer failed; unable to resolve parameters." << Endl;
+		return;
+	}
 
 	// Link uniform declarations.
 	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t {

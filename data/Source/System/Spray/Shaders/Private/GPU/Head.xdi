@@ -1,19 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Struct" version="4,traktor.render.Node:1">
-			<id>{D04CCED7-111D-3046-B0F6-F35D6D7C00C2}</id>
-			<comment/>
-			<position>
-				<first>120</first>
-				<second>155</second>
-			</position>
-			<structDeclaration>{09488E28-5D0B-DD45-8AF5-152A8F287159}</structDeclaration>
-			<parameterName>Spray_Head</parameterName>
-			<decl>
-				<elements/>
-			</decl>
-		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{F748F84A-E97B-414C-B25D-33C72B670007}</id>
 			<comment/>
@@ -35,15 +22,24 @@ Define Head struct
 				<second>48</second>
 			</position>
 		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<comment/>
+			<position>
+				<first>120</first>
+				<second>155</second>
+			</position>
+			<parameterDeclaration>{2F16D075-77A1-C246-AE8C-90F40D61FCDD}</parameterDeclaration>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>

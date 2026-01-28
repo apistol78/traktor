@@ -1,90 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
-			<id>{FC687025-5E6E-0B44-8167-0CF51A1F17D6}</id>
-			<comment/>
-			<position>
-				<first>30</first>
-				<second>323</second>
-			</position>
-			<structDeclaration>{74A28DC8-6EB4-D84E-A544-8C5D7D737AF5}</structDeclaration>
-			<parameterName>Mesh_SkinBufferOutput</parameterName>
-			<elements>
-				<item>
-					<name>Position</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Normal</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Tangent</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Binormal</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>BlendIndices</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>BlendWeights</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
-		</item>
-		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
-			<id>{2A2AC9CA-7AD9-3646-AC03-275033239255}</id>
-			<comment/>
-			<position>
-				<first>78</first>
-				<second>262</second>
-			</position>
-			<structDeclaration>{E09C7A31-4153-6047-B439-BA234B763458}</structDeclaration>
-			<parameterName>Mesh_SkinBuffer</parameterName>
-			<elements>
-				<item>
-					<name>Position</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Normal</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Tangent</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Binormal</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>BlendIndices</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>BlendWeights</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
-		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{8C6FBA2D-BC40-574D-B811-23C989BE918E}</id>
 			<comment/>
@@ -197,57 +113,62 @@ $SkinBufferOutput[index].Binormal = bn;
 			
 			]]></script>
 		</item>
-		<item type="traktor.render.Struct" version="2,traktor.render.Node:1">
-			<id>{92A9B959-3767-F141-AED5-664F9EE0D94B}</id>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<comment/>
+			<position>
+				<first>30</first>
+				<second>323</second>
+			</position>
+			<parameterDeclaration>{37D82C15-BAE9-FC4D-9A89-7965CE9E2E3F}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<comment/>
+			<position>
+				<first>78</first>
+				<second>262</second>
+			</position>
+			<parameterDeclaration>{053878BD-B0DC-B343-AFE6-8015B79B5972}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
 				<first>110</first>
 				<second>384</second>
 			</position>
-			<structDeclaration>{668AFB98-689E-724B-A31E-59F88E3D8EF9}</structDeclaration>
-			<parameterName>Mesh_Joints</parameterName>
-			<elements>
-				<item>
-					<name>Translation</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-				<item>
-					<name>Rotation</name>
-					<type>DtFloat4</type>
-					<length>0</length>
-				</item>
-			</elements>
+			<parameterDeclaration>{8DEF6AB1-75EA-A14B-A46B-E85BD38D215F}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{575BD8FB-16B5-1647-950A-08C59A8F00B9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
 				<id>{7660C501-EDA7-E349-BDC2-02A6326797DA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item"/>
+				<id>{575BD8FB-16B5-1647-950A-08C59A8F00B9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
 				<id>{C6875BAF-B95F-CF48-9777-1ABC17B87E4F}</id>
 			</destination>
 		</item>

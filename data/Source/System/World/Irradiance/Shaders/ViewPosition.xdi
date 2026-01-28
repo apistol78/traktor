@@ -133,18 +133,6 @@
 				</item>
 			</outputPins>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{1B07DA78-3834-7649-B13B-F2AD7AEDFADE}</id>
-			<comment/>
-			<position>
-				<first>447</first>
-				<second>584</second>
-			</position>
-			<declaration>{5FA54E3B-AD14-E148-B385-979BD586BD69}</declaration>
-			<parameterName/>
-			<type>Scalar</type>
-			<frequency>Once</frequency>
-		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{C7AE5A03-345B-CB4A-97AD-4C5514310C4B}</id>
 			<comment/>
@@ -184,6 +172,15 @@ $Output = vec4(
 );
 
 ]]></script>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<comment/>
+			<position>
+				<first>447</first>
+				<second>584</second>
+			</position>
+			<parameterDeclaration>{99A8A8CB-D479-8945-8F0D-D0E3D936E5AE}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -330,21 +327,21 @@ $Output = vec4(
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[13]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{7A13532D-C8AA-7642-8CA9-913D5AE4D7F5}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
 				<id>{6FAA83EA-A831-6F41-9AAC-B56945B13586}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{7A13532D-C8AA-7642-8CA9-913D5AE4D7F5}</id>
 			</destination>
 		</item>
 	</edges>

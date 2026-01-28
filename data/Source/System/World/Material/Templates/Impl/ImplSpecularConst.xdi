@@ -29,20 +29,27 @@
 			<name>T_Attributes</name>
 			<optional>false</optional>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{3C8FE5EA-229D-49D3-B7A1-82C983870169}</id>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
 				<first>556</first>
 				<second>405</second>
 			</position>
-			<declaration>{ACE670BB-96D6-DE4D-9F94-2ED30A91A76B}</declaration>
-			<parameterName/>
-			<type>Scalar</type>
-			<frequency>Draw</frequency>
+			<parameterDeclaration>{FC59BA4A-FE2D-5A4C-AE0A-7905745D1953}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
@@ -51,16 +58,6 @@
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<id>{CDD51665-CD39-444D-8D5C-5FD37C1646B7}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 	</edges>

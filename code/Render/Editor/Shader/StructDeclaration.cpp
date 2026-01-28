@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,6 +18,23 @@ namespace traktor::render
 {
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.StructDeclaration", 0, StructDeclaration, ISerializable)
+
+bool StructDeclaration::haveElement(const std::wstring& name) const
+{
+	const auto it = std::find_if(m_elements.begin(), m_elements.end(), [&](const StructDeclaration::NamedElement& elm) {
+		return elm.name == name;
+	});
+	return it != m_elements.end();
+}
+
+DataType StructDeclaration::getElementType(const std::wstring& name) const
+{
+	const auto it = std::find_if(m_elements.begin(), m_elements.end(), [&](const StructDeclaration::NamedElement& elm) {
+		return elm.name == name;
+	});
+	T_FATAL_ASSERT(it != m_elements.end());
+	return it != m_elements.end() ? it->type : DtFloat1;
+}
 
 void StructDeclaration::serialize(ISerializer& s)
 {

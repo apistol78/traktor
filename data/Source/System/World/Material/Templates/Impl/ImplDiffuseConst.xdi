@@ -12,11 +12,11 @@
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{6D6E3E5B-EFA2-7F4E-8040-F35BAA88199E}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Tag_DiffuseColor
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>484</first>
 				<second>262</second>
@@ -34,20 +34,27 @@ Tag_DiffuseColor
 			<name>T_Attributes</name>
 			<optional>true</optional>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{A5875DBF-8F5A-4692-B0B3-401F60B11E4B}</id>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
 				<first>756</first>
 				<second>284</second>
 			</position>
-			<declaration>{6F8A260C-C294-5E4F-B202-A526878F4C85}</declaration>
-			<parameterName/>
-			<type>Vector</type>
-			<frequency>Draw</frequency>
+			<parameterDeclaration>{F9435CA7-1F8C-1444-9233-8A4ADADCE8FA}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
@@ -56,16 +63,6 @@ Tag_DiffuseColor
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<id>{CDD51665-CD39-444D-8D5C-5FD37C1646B7}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 	</edges>

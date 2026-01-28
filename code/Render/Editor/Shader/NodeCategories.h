@@ -109,7 +109,12 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Variable >(), L"SHADERGRAPH_VALUE", L"Variable" },
 	{ type_of< Vector >(), L"SHADERGRAPH_VALUE", L"Vector constant" },
 	{ type_of< VertexInput >(), L"SHADERGRAPH_VALUE", L"Read value from vertex stream" },
-	{ type_of< VertexOutput >(), L"SHADERGRAPH_VALUE", L"Output value from vertex shader" }
+	{ type_of< VertexOutput >(), L"SHADERGRAPH_VALUE", L"Output value from vertex shader" },
+
+	{ type_of< Parameter >(), L"SHADERGRAPH_VALUE", L"" },
+	{ type_of< ArrayElement >(), L"SHADERGRAPH_VALUE", L"" },
+	{ type_of< ArrayLength >(), L"SHADERGRAPH_VALUE", L"" },
+	{ type_of< MemberValue >(), L"SHADERGRAPH_VALUE", L"" }
 };
 
 }

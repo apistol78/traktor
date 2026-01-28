@@ -7,30 +7,42 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Serialization/DeepClone.h"
-#include "Core/Serialization/BinarySerializer.h"
+
 #include "Core/Io/ChunkMemoryStream.h"
+#include "Core/Serialization/BinarySerializer.h"
 
 namespace traktor
 {
-	namespace
+namespace
+{
+
+const uint32_t c_initialCapacity = 4096; //!< Estimated initial size of clone; used to reduce number of allocation of m_copy array.
+
+class CloningBinarySerializer : public BinarySerializer
+{
+public:
+	explicit CloningBinarySerializer(IStream* stream)
+		: BinarySerializer(stream)
 	{
-
-const uint32_t c_initialCapacity = 4096;	//!< Estimated initial size of clone; used to reduce number of allocation of m_copy array.
-
 	}
+
+	virtual bool cloning() const override final { return true; }
+};
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.DeepClone", DeepClone, Object)
 
 DeepClone::DeepClone(const ISerializable* source)
 {
 	ChunkMemoryStream stream(&m_memory, false, true);
-	BinarySerializer(&stream).writeObject(source);
+	CloningBinarySerializer(&stream).writeObject(source);
 }
 
 Ref< ISerializable > DeepClone::create() const
 {
 	ChunkMemoryStream stream(&m_memory, true, false);
-	return BinarySerializer(&stream).readObject();
+	return CloningBinarySerializer(&stream).readObject();
 }
 
 }

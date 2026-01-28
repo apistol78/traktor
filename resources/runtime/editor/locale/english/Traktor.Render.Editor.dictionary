@@ -282,6 +282,14 @@
 			<second>Arcus tan</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_NODE_ARRAYELEMENT</first>
+			<second>Array Element</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_NODE_ARRAYLENGTH</first>
+			<second>Array Length</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_NODE_BRANCH</first>
 			<second>Branch</second>
 		</item>
@@ -418,6 +426,10 @@
 			<second>Max</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_NODE_MEMBERVALUE</first>
+			<second>Member Value</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_NODE_MIN</first>
 			<second>Min</second>
 		</item>
@@ -448,6 +460,10 @@
 		<item>
 			<first>SHADERGRAPH_NODE_OUTPUTPORT</first>
 			<second>Output port</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_NODE_PARAMETER</first>
+			<second>Parameter</second>
 		</item>
 		<item>
 			<first>SHADERGRAPH_NODE_PIXELOUTPUT</first>

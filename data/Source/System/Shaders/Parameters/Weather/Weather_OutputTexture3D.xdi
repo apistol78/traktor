@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ParameterDeclaration">
+	<type>Image3D</type>
+	<length>0</length>
+	<frequency>Frame</frequency>
+	<structDeclaration>{00000000-0000-0000-0000-000000000000}</structDeclaration>
+</object>

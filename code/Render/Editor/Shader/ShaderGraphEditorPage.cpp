@@ -51,6 +51,7 @@
 #include "Render/Editor/Shader/INodeFacade.h"
 #include "Render/Editor/Shader/NodeCategories.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ParameterLinker.h"
 #include "Render/Editor/Shader/QuickMenuTool.h"
 #include "Render/Editor/Shader/ShaderDependencyPane.h"
 #include "Render/Editor/Shader/ShaderDependencyTracker.h"
@@ -1117,13 +1118,16 @@ void ShaderGraphEditorPage::createEditorGraph()
 	m_editorGraph->removeAllNodes();
 	m_editorGraph->removeAllEdges();
 
-	createEditorNodes(
-		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges(),
-		nullptr);
+	if (m_shaderGraph)
+	{
+		createEditorNodes(
+			m_shaderGraph->getNodes(),
+			m_shaderGraph->getEdges(),
+			nullptr);
 
-	for (auto group : m_shaderGraph->getGroups())
-		createEditorGroup(group);
+		for (auto group : m_shaderGraph->getGroups())
+			createEditorGroup(group);
+	}
 
 	updateGraph();
 
@@ -1282,18 +1286,8 @@ void ShaderGraphEditorPage::updateGraph()
 		PinType type = PinType::Void;
 	};
 
-	SmallMap< std::wstring, VariableInfo > variables;
-
 	const auto fragmentReader = [&](const Guid& fragmentGuid) -> Ref< const ShaderGraph > {
 		return m_editor->getSourceDatabase()->getObjectReadOnly< ShaderGraph >(fragmentGuid);
-	};
-
-	const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t {
-		Ref< db::Instance > declarationInstance = m_editor->getSourceDatabase()->getInstance(declarationId);
-		if (declarationInstance != nullptr)
-			return { declarationInstance->getName(), declarationInstance->getObject() };
-		else
-			return { L"", nullptr };
 	};
 
 	// Fully resolve shader graph so we can inspect all uniforms etc.
@@ -1301,19 +1295,38 @@ void ShaderGraphEditorPage::updateGraph()
 	if (!resolvedShaderGraph)
 		log::debug << L"Unable to resolve shader graph." << Endl;
 
-	// Link uniform declarations in resolved shader graph.
+	// Link parameter declarations in resolved shader graph.
 	if (resolvedShaderGraph)
+	{
+		const auto parameterDeclarationReader = [&](const Guid& declarationId) -> ParameterLinker::named_decl_t {
+			Ref< db::Instance > declarationInstance = m_editor->getSourceDatabase()->getInstance(declarationId);
+			if (declarationInstance != nullptr)
+				return { declarationInstance->getName(), declarationInstance->getObject() };
+			else
+				return { L"", nullptr };
+		};
+		ParameterLinker(parameterDeclarationReader).resolve(resolvedShaderGraph);
+
+		const auto uniformDeclarationReader = [&](const Guid& declarationId) -> UniformLinker::named_decl_t {
+			Ref< db::Instance > declarationInstance = m_editor->getSourceDatabase()->getInstance(declarationId);
+			if (declarationInstance != nullptr)
+				return { declarationInstance->getName(), declarationInstance->getObject() };
+			else
+				return { L"", nullptr };
+		};
 		UniformLinker(uniformDeclarationReader).resolve(resolvedShaderGraph);
+	}
 
 	// Extract techniques.
 	{
 		m_toolTechniques->removeAll();
-		for (const std::wstring& technique : ShaderGraphTechniques(m_shaderGraph, Guid()).getNames())
+		for (const std::wstring& technique : ShaderGraphTechniques(resolvedShaderGraph, Guid()).getNames())
 			m_toolTechniques->add(technique);
 	}
 
 	// Update variables grid.
 	{
+		SmallMap< std::wstring, VariableInfo > variables;
 		for (auto variableNode : m_shaderGraph->findNodesOf< Variable >())
 		{
 			auto& vi = variables[variableNode->getName()];
@@ -1326,8 +1339,9 @@ void ShaderGraphEditorPage::updateGraph()
 			{
 				++vi.writeCount;
 
-				Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(sourceEdge->getSource());
-				vi.type = value.getType();
+				// #fixme Cannot evaluate non-linked shader graph.
+				//Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(sourceEdge->getSource());
+				//vi.type = value.getType();
 			}
 		}
 		m_variablesGrid->removeAllRows();
@@ -1586,11 +1600,6 @@ void ShaderGraphEditorPage::updateGraph()
 					editorEdge->setThickness(4_ut);
 					break;
 
-				case PinType::StructBuffer:
-					ss << L"StructBuffer";
-					editorEdge->setThickness(4_ut);
-					break;
-
 				case PinType::Image2D:
 					ss << L"Image2d";
 					editorEdge->setThickness(4_ut);
@@ -1603,6 +1612,21 @@ void ShaderGraphEditorPage::updateGraph()
 
 				case PinType::ImageCube:
 					ss << L"ImageCube";
+					editorEdge->setThickness(4_ut);
+					break;
+
+				case PinType::StructBuffer:
+					ss << L"StructBuffer";
+					editorEdge->setThickness(4_ut);
+					break;
+
+				case PinType::Array:
+					ss << L"Array";
+					editorEdge->setThickness(4_ut);
+					break;
+
+				case PinType::Struct:
+					ss << L"Struct";
 					editorEdge->setThickness(4_ut);
 					break;
 
@@ -1995,12 +2019,12 @@ void ShaderGraphEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 	// Transform editor text into "escaped" text.
 	std::wstring text = m_scriptEditor->getText(
 		[&](wchar_t ch) -> std::wstring {
-			return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
-		},
+		return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
+	},
 		[&](const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
-			const EntryCharacter* dc = static_cast< const EntryCharacter* >(sc);
-			return L"ENTRY";
-		});
+		const EntryCharacter* dc = static_cast< const EntryCharacter* >(sc);
+		return L"ENTRY";
+	});
 
 	m_script->setScript(text);
 	m_propertiesView->setPropertyObject(m_script);

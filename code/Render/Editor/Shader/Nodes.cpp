@@ -2559,6 +2559,7 @@ DataType Struct::getElementType(const std::wstring& name) const
 	auto it = std::find_if(m_decl.getElements().begin(), m_decl.getElements().end(), [&](const StructDeclaration::NamedElement& elm) {
 		return elm.name == name;
 	});
+	T_FATAL_ASSERT(it != m_decl.getElements().end());
 	return it != m_decl.getElements().end() ? it->type : DtFloat1;
 }
 
@@ -3527,5 +3528,113 @@ void VertexOutput::serialize(ISerializer& s)
 }
 
 /*---------------------------------------------------------------------------*/
+
+// EXPERIMENTAL
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Parameter", 0, Parameter, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Parameter_i[] = {
+	{ L"Initial", L"{CDD51665-CD39-444D-8D5C-5FD37C1646B7}", true },
+	{ 0 }
+};
+
+const ImmutableNode::OutputPinDesc c_Parameter_o[] = {
+	{ L"Output", L"{D101AE9F-E124-4371-8603-15D187427DDA}" },
+	{ 0 }
+};
+
+Parameter::Parameter()
+	: ImmutableNode(c_Parameter_i, c_Parameter_o)
+{
+}
+
+std::wstring Parameter::getInformation() const
+{
+	return m_parameterName;
+}
+
+void Parameter::serialize(ISerializer& s)
+{
+	ImmutableNode::serialize(s);
+
+	s >> Member< Guid >(L"parameterDeclaration", m_parameterDeclaration, AttributeType(type_of< ParameterDeclaration >()));
+
+	if (s.cloning())
+	{
+		s >> Member< std::wstring >(L"parameterName", m_parameterName);
+		s >> MemberComposite< ParameterDeclaration >(L"declaration", m_declaration);
+		s >> Member< bool >(L"linked", m_linked);
+	}
+}
+
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ArrayElement", 0, ArrayElement, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_ArrayElement_i[] = {
+	{ L"Input", L"{C7A7D7C7-5832-4AA0-A820-6A102A6D1D91}", false },
+	{ L"Index", L"{B0B4B6F6-BAD2-452F-9E41-0E1A50D2C629}", false },
+	{ 0 }
+};
+
+const ImmutableNode::OutputPinDesc c_ArrayElement_o[] = {
+	{ L"Output", L"{C1D22077-14AD-48ED-BDE5-601BEABF62CD}" },
+	{ 0 }
+};
+
+ArrayElement::ArrayElement()
+	: ImmutableNode(c_ArrayElement_i, c_ArrayElement_o)
+{
+}
+
+
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ArrayLength", 0, ArrayLength, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_ArrayLength_i[] = {
+	{ L"Input", L"{EBE6A3DA-1C90-4781-BEC3-164B185AB407}", false },
+	{ 0 }
+};
+
+const ImmutableNode::OutputPinDesc c_ArrayLength_o[] = {
+	{ L"Output", L"{606FFB1B-9E8E-4472-8368-F6EFD8214D8F}" },
+	{ 0 }
+};
+
+ArrayLength::ArrayLength()
+	: ImmutableNode(c_ArrayLength_i, c_ArrayLength_o)
+{
+}
+
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MemberValue", 0, MemberValue, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_MemberValue_i[] = {
+	{ L"Input", L"{EDAE5319-818A-4FFC-8E0D-85CA003EE199}", false },
+	{ 0 }
+};
+
+const ImmutableNode::OutputPinDesc c_MemberValue_o[] = {
+	{ L"Output", L"{E0CC277C-5538-4F0E-82FC-CC85217F4E53}" },
+	{ 0 }
+};
+
+MemberValue::MemberValue()
+	: ImmutableNode(c_MemberValue_i, c_MemberValue_o)
+{
+}
+
+std::wstring MemberValue::getInformation() const
+{
+	return m_memberName;
+}
+
+void MemberValue::serialize(ISerializer& s)
+{
+	ImmutableNode::serialize(s);
+
+	s >> Member< std::wstring >(L"memberName", m_memberName);
+}
+
+
 
 }

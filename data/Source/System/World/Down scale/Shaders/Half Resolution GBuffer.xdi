@@ -58,48 +58,39 @@ if (pt.x < osz.x && pt.y < osz.y)
 }
 	]]></script>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{4FFD4526-1B14-6F41-8124-A7BB1F39ACC1}</id>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
 				<first>-51</first>
 				<second>486</second>
 			</position>
-			<declaration>{114CFDB2-5FF3-CE47-A992-7FD6216E55A2}</declaration>
-			<parameterName/>
-			<type>Image2D</type>
-			<frequency>Frame</frequency>
+			<parameterDeclaration>{8848FFE9-3378-DB49-AE8C-CE7CA7C22FCF}</parameterDeclaration>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{CA974F63-2833-3747-A6D6-FB40E4818040}</id>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
 				<first>-67</first>
 				<second>535</second>
 			</position>
-			<declaration>{CA4C7C91-2182-6742-9B0A-9DCDA02DD5DE}</declaration>
-			<parameterName/>
-			<type>Image2D</type>
-			<frequency>Frame</frequency>
+			<parameterDeclaration>{B75CF1E1-CFBD-CF48-80D8-8F9522F5AF3E}</parameterDeclaration>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{BF758B9B-0D48-7548-A40F-6D0F96BE2E27}</id>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
 				<first>-67</first>
 				<second>592</second>
 			</position>
-			<declaration>{CF08085B-FDC6-4E44-9F33-995AB0ADC632}</declaration>
-			<parameterName/>
-			<type>Vector</type>
-			<frequency>Frame</frequency>
+			<parameterDeclaration>{24BCE2C1-0962-1446-9CEA-CD60C301548C}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
@@ -109,7 +100,7 @@ if (pt.x < osz.x && pt.y < osz.y)
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
@@ -119,7 +110,7 @@ if (pt.x < osz.x && pt.y < osz.y)
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[3]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>

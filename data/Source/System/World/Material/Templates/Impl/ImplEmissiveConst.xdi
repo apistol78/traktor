@@ -29,24 +29,21 @@
 			<name>T_Attributes</name>
 			<optional>false</optional>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
-			<id>{1CFC5D71-338B-4628-A9B8-43C380B106F4}</id>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
 				<first>744</first>
 				<second>386</second>
 			</position>
-			<declaration>{8F4A088A-BCB1-1741-999A-2E07307193A0}</declaration>
-			<parameterName/>
-			<type>Scalar</type>
-			<frequency>Draw</frequency>
+			<parameterDeclaration>{515D3B0A-6A35-EB4F-BE28-8656EFCA6E7E}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[3]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>

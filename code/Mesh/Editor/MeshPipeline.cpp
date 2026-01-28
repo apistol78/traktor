@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -51,6 +51,7 @@
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ParameterLinker.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphPreview.h"
 #include "Render/Editor/Texture/TextureOutput.h"
@@ -490,7 +491,7 @@ bool MeshPipeline::buildOutput(
 	{
 		const std::wstring& materialName = m.getName();
 
-		Ref< const render::ShaderGraph > materialShaderGraph;
+		Ref< render::ShaderGraph > materialShaderGraph;
 		Guid materialShaderGraphId;
 
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateSurface");
@@ -577,6 +578,22 @@ bool MeshPipeline::buildOutput(
 			log::error << L"MeshPipeline failed; unable to link shader fragments, material shader \"" << materialName << L"\"." << Endl;
 			return false;
 		}
+
+		// Link parameter declarations.
+		pipelineBuilder->getProfiler()->begin(L"MeshPipeline getTypePermutation");
+		const auto parameterDeclarationReader = [&](const Guid& declarationId) -> render::ParameterLinker::named_decl_t {
+			Ref< db::Instance > declarationInstance = pipelineBuilder->getSourceDatabase()->getInstance(declarationId);
+			if (declarationInstance != nullptr)
+				return { declarationInstance->getName(), declarationInstance->getObject() };
+			else
+				return { L"", nullptr };
+		};
+		if (!render::ParameterLinker(parameterDeclarationReader).resolve(materialShaderGraph))
+		{
+			log::error << L"MeshPipeline failed; unable to link parameters." << Endl;
+			return false;
+		}
+		pipelineBuilder->getProfiler()->end();
 
 		// Resolve all bundles.
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline getBundleResolved");
