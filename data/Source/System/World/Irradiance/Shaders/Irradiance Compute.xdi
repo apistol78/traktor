@@ -356,7 +356,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<comment/>
 			<position>
 				<first>-2432</first>
-				<second>-998</second>
+				<second>-997</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -382,7 +382,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<comment/>
 			<position>
 				<first>-2432</first>
-				<second>-858</second>
+				<second>-890</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -428,7 +428,7 @@ $Output = BlueNoise(seed);
 			<comment/>
 			<position>
 				<first>-2250</first>
-				<second>-790</second>
+				<second>-756</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -854,8 +854,8 @@ imageStore($Output, pt, $Sky);
 Still it tries to filter both spatially and temporarily
 values in the reservoir for convergence.]]></comment>
 			<position>
-				<first>-2192</first>
-				<second>-2955</second>
+				<first>-2196</first>
+				<second>-2968</second>
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
@@ -970,7 +970,7 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2050</first>
+				<first>-2041</first>
 				<second>-256</second>
 			</position>
 			<parameterDeclaration>{2C06FC6E-5E3E-9442-BD38-EFEAD6DDDCC5}</parameterDeclaration>
@@ -988,7 +988,7 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2070</first>
+				<first>-2016</first>
 				<second>-775</second>
 			</position>
 			<parameterDeclaration>{3C048EC4-ED6A-0847-B08D-95F74407200F}</parameterDeclaration>
@@ -997,7 +997,7 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2054</first>
+				<first>-2000</first>
 				<second>-652</second>
 			</position>
 			<parameterDeclaration>{8B5D917E-016B-B847-82D9-873D43916888}</parameterDeclaration>
@@ -1006,7 +1006,7 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2086</first>
+				<first>-2032</first>
 				<second>-611</second>
 			</position>
 			<parameterDeclaration>{1EA8D019-E2CB-F14E-806E-39E74AFAB00E}</parameterDeclaration>
