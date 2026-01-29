@@ -73,7 +73,7 @@ void CommentNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 
 		canvas->setForeground(ss->getColor(this, L"color"));
 
-		int32_t x = rc.left + (rc.getWidth() - textSize.cx) / 2;
+		int32_t x = rc.left + 24;
 		int32_t y = rc.top + (rc.getHeight() - textSize.cy) / 2;
 		for (const auto& line : lines)
 		{
