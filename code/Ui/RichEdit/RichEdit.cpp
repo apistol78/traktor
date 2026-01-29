@@ -720,6 +720,21 @@ int32_t RichEdit::getMarginWidth() const
 	return m_lineMargin;
 }
 
+int32_t RichEdit::getAccumulatedWidth(int32_t fromOffset, int32_t toOffset) const
+{
+	if (fromOffset < 0 || toOffset < 0 || fromOffset > toOffset)
+		return 0;
+
+	if (toOffset > (int32_t)m_text.size())
+		toOffset = (int32_t)m_text.size();
+
+	int32_t x = 0;
+	for (int32_t i = fromOffset; i < toOffset; ++i)
+		x += m_text[i].width;
+
+	return x;
+}
+
 void RichEdit::contentModified()
 {
 }

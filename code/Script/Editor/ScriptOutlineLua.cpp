@@ -21,6 +21,81 @@ void Parse(void *yyp, int yymajor, traktor::script::LuaGrammarToken* yyminor, co
 
 namespace traktor::script
 {
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.VariableNode", VariableNode, IScriptOutline::Node)
+
+VariableNode::VariableNode(int32_t line, const std::wstring& name, bool isLocal)
+:	Node(line)
+,	m_name(name)
+,	m_local(isLocal)
+{
+}
+
+const std::wstring& VariableNode::getName() const
+{
+	return m_name;
+}
+
+bool VariableNode::isLocal() const
+{
+	return m_local;
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ParameterNode", ParameterNode, IScriptOutline::Node)
+
+ParameterNode::ParameterNode(int32_t line, const std::wstring& name)
+:	Node(line)
+,	m_name(name)
+{
+}
+
+const std::wstring& ParameterNode::getName() const
+{
+	return m_name;
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.TableNode", TableNode, IScriptOutline::Node)
+
+TableNode::TableNode(int32_t line, const std::wstring& name)
+:	Node(line)
+,	m_name(name)
+{
+}
+
+const std::wstring& TableNode::getName() const
+{
+	return m_name;
+}
+
+void TableNode::addField(const std::wstring& fieldName)
+{
+	m_fields.push_back(fieldName);
+}
+
+const std::vector< std::wstring >& TableNode::getFields() const
+{
+	return m_fields;
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.FieldAccessNode", FieldAccessNode, IScriptOutline::Node)
+
+FieldAccessNode::FieldAccessNode(int32_t line, const std::wstring& tableName, const std::wstring& fieldName)
+:	Node(line)
+,	m_tableName(tableName)
+,	m_fieldName(fieldName)
+{
+}
+
+const std::wstring& FieldAccessNode::getTableName() const
+{
+	return m_tableName;
+}
+
+const std::wstring& FieldAccessNode::getFieldName() const
+{
+	return m_fieldName;
+}
+
 	namespace
 	{
 
