@@ -396,13 +396,19 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.shaderDrawParameters = VK_TRUE
 	};
 
-	headFeature = &featuresVulkan1_1;
+	const VkPhysicalDeviceVulkan12Features featuresVulkan_1_2 = {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
+		.pNext = (void*)&featuresVulkan1_1,
+		.shaderFloat16 = VK_TRUE
+	};
+
+	headFeature = &featuresVulkan_1_2;
 
 	if (desc.rayTracing)
 	{
 		static const VkPhysicalDeviceAccelerationStructureFeaturesKHR featuresAccelerationStructure = {
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR,
-			.pNext = (void*)&featuresVulkan1_1,
+			.pNext = (void*)headFeature,
 			.accelerationStructure = VK_TRUE,
 			.accelerationStructureCaptureReplay = VK_FALSE,
 			.accelerationStructureIndirectBuild = VK_FALSE,
