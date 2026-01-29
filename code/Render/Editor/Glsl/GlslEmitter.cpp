@@ -12,6 +12,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/Murmur3.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Render/Editor/Glsl/GlslAccelerationStructure.h"
@@ -55,6 +56,26 @@ std::wstring formatFloat(float v)
 	if (s.find(L'.') == s.npos)
 		s += L".0f";
 	return s;
+}
+
+std::wstring trimEmptyLines(const std::wstring& text)
+{
+	AlignedVector< std::wstring > lns;
+	;
+	for (auto ln : StringSplit< std::wstring >(text, L"\n"))
+		lns.push_back(rtrim(ln));
+
+	while (!lns.empty() && lns.front().empty())
+		lns.erase(lns.begin());
+
+	while (!lns.empty() && lns.back().empty())
+		lns.erase(lns.end() - 1);
+
+	StringOutputStream ss;
+	for (const auto& ln : lns)
+		ss << ln << Endl;
+
+	return ss.str();
 }
 
 std::wstring expandScalar(float v, GlslType type)
@@ -2470,7 +2491,7 @@ bool emitScript(GlslContext& cx, Script* node)
 
 	f << L"{" << Endl;
 	f << IncreaseIndent;
-	f << script << Endl;
+	f << trimEmptyLines(script);
 	f << DecreaseIndent;
 	f << L"}" << Endl;
 
