@@ -111,7 +111,7 @@ int32_t Object::getHeapObjectCount()
 	return s_heapObjectCount;
 }
 
-void Object::finalRelease() const
+void Object::finalRelease() const noexcept
 {
 	if (isObjectHeapAllocated(this))
 		delete this;

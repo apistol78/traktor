@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,7 +29,7 @@ class T_DLLCLASS Object : public RefCountImpl< ITypedObject >
 	T_RTTI_CLASS;
 
 public:
-	virtual void addRef(void* owner) const override
+	virtual void addRef(void* owner) const noexcept override
 #if !defined(_DEBUG)
 	{
 		++m_refCount;
@@ -38,7 +38,7 @@ public:
 	;
 #endif
 
-	virtual void release(void* owner) const override
+	virtual void release(void* owner) const noexcept override
 #if !defined(_DEBUG)
 	{
 		if (--m_refCount == 0)
@@ -68,7 +68,7 @@ public:
 	static int32_t getHeapObjectCount();
 
 private:
-	void finalRelease() const;
+	void finalRelease() const noexcept;
 };
 
 }
