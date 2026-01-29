@@ -3548,11 +3548,6 @@ Parameter::Parameter()
 {
 }
 
-std::wstring Parameter::getInformation() const
-{
-	return m_parameterName;
-}
-
 void Parameter::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);

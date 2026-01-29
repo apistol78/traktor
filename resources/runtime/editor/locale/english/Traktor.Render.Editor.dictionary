@@ -218,6 +218,10 @@
 			<second>Delete</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_DEPRECATED</first>
+			<second>Deprecated</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_EVEN_HORIZONTALLY</first>
 			<second>Even horizonally</second>
 		</item>
@@ -624,6 +628,10 @@
 		<item>
 			<first>SHADERGRAPH_NODE_VERTEXOUTPUT</first>
 			<second>Vertex output</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_NONE</first>
+			<second>&lt; None &gt;</second>
 		</item>
 		<item>
 			<first>SHADERGRAPH_PERMUTATION</first>

@@ -1406,11 +1406,11 @@ class T_DLLCLASS Parameter : public ImmutableNode
 public:
 	Parameter();
 
-	const std::wstring& getParameterName() const { return m_parameterName; }
+	const Guid& getDeclarationId() const { return m_parameterDeclaration; }
 
 	const ParameterDeclaration& getDeclaration() const { T_FATAL_ASSERT(m_linked); return m_declaration; }
 
-	virtual std::wstring getInformation() const override final;
+	const std::wstring& getParameterName() const { return m_parameterName; }
 
 	virtual void serialize(ISerializer& s) override final;
 

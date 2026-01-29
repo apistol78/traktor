@@ -1,12 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2026 Anders Pistol.
+ * Copyright (c) 2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Editor/Shader/Facades/UniformNodeFacade.h"
+#include "Render/Editor/Shader/Facades/ParameterNodeFacade.h"
 
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -24,21 +24,21 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.UniformNodeFacade", UniformNodeFacade, INodeFacade)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ParameterNodeFacade", ParameterNodeFacade, INodeFacade)
 
-UniformNodeFacade::UniformNodeFacade()
+ParameterNodeFacade::ParameterNodeFacade()
 {
 	m_nodeShape = new ui::InOutNodeShape(ui::InOutNodeShape::StUniform);
 }
 
-Ref< Node > UniformNodeFacade::createShaderNode(
+Ref< Node > ParameterNodeFacade::createShaderNode(
 	const TypeInfo* nodeType,
 	editor::IEditor* editor)
 {
-	return new Uniform();
+	return new Parameter();
 }
 
-Ref< ui::Node > UniformNodeFacade::createEditorNode(
+Ref< ui::Node > ParameterNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
@@ -46,7 +46,7 @@ Ref< ui::Node > UniformNodeFacade::createEditorNode(
 {
 	std::wstring information;
 
-	const Guid declarationId = mandatory_non_null_type_cast< Uniform* >(shaderNode)->getDeclaration();
+	const Guid declarationId = mandatory_non_null_type_cast< Parameter* >(shaderNode)->getDeclarationId();
 	if (declarationId.isNotNull())
 	{
 		Ref< db::Instance > instance = editor->getSourceDatabase()->getInstance(declarationId);
@@ -86,7 +86,7 @@ Ref< ui::Node > UniformNodeFacade::createEditorNode(
 	return editorNode;
 }
 
-void UniformNodeFacade::editShaderNode(
+void ParameterNodeFacade::editShaderNode(
 	editor::IEditor* editor,
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
@@ -95,7 +95,7 @@ void UniformNodeFacade::editShaderNode(
 {
 }
 
-void UniformNodeFacade::refreshEditorNode(
+void ParameterNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
@@ -104,7 +104,7 @@ void UniformNodeFacade::refreshEditorNode(
 {
 	std::wstring information;
 
-	const Guid declarationId = mandatory_non_null_type_cast< Uniform* >(shaderNode)->getDeclaration();
+	const Guid declarationId = mandatory_non_null_type_cast< Parameter* >(shaderNode)->getDeclarationId();
 	if (declarationId.isNotNull())
 	{
 		Ref< db::Instance > instance = editor->getSourceDatabase()->getInstance(declarationId);
@@ -117,7 +117,7 @@ void UniformNodeFacade::refreshEditorNode(
 	editorNode->setInfo(information);
 }
 
-void UniformNodeFacade::setValidationIndicator(
+void ParameterNodeFacade::setValidationIndicator(
 	ui::Node* editorNode,
 	bool validationSucceeded)
 {

@@ -29,6 +29,8 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< ArcusCos >(), L"SHADERGRAPH_TRIGONOMETRY", L"Inverse cosine" },
 	{ type_of< ArcusTan >(), L"SHADERGRAPH_TRIGONOMETRY", L"Inverse tangent" },
 	{ type_of< Branch >(), L"SHADERGRAPH_PERMUTATION", L"Static branch permutation" },
+	{ type_of< ArrayElement >(), L"SHADERGRAPH_VALUE", L"Get element from array" },
+	{ type_of< ArrayLength >(), L"SHADERGRAPH_VALUE", L"Get number of elements in array" },
 	{ type_of< BundleUnite >(), L"SHADERGRAPH_MISCELLANEOUS", L"Create a bundle of wires" },
 	{ type_of< BundleSplit >(), L"SHADERGRAPH_MISCELLANEOUS", L"Extract wires from bundle" },
 	{ type_of< Clamp >(), L"SHADERGRAPH_CONDITIONAL", L"Clamp values within range" },
@@ -49,7 +51,6 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Fraction >(), L"SHADERGRAPH_MISCELLANEOUS", L"Extract fractional part of floating point number" },
 	{ type_of< FragmentPosition >(), L"SHADERGRAPH_VALUE", L"Fragment pixel position" },
 	{ type_of< FrontFace >(), L"SHADERGRAPH_VALUE", L"Front face" },
-	{ type_of< IndexedUniform >(), L"SHADERGRAPH_VALUE", L"Indexed uniform" },
 	{ type_of< InputPort >(), L"SHADERGRAPH_VALUE", L"Input connection port into shader fragment" },
 	{ type_of< Instance >(), L"SHADERGRAPH_VALUE", L"Instance index" },
 	{ type_of< Interpolator >(), L"SHADERGRAPH_VALUE", L"Interpolator passing of value from vertex into pixel shader" },
@@ -62,6 +63,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< MatrixIn >(), L"SHADERGRAPH_MISCELLANEOUS", L"Build orthogonal matrix from axises and translation" },
 	{ type_of< MatrixOut >(), L"SHADERGRAPH_MISCELLANEOUS", L"Extract axises and translation from orthogonal matrix" },
 	{ type_of< Max >(), L"SHADERGRAPH_CONDITIONAL", L"Per component maximum value" },
+	{ type_of< MemberValue >(), L"SHADERGRAPH_VALUE", L"Get value of member in struct" },
 	{ type_of< Min >(), L"SHADERGRAPH_CONDITIONAL", L"Per component minimum value" },
 	{ type_of< MixIn >(), L"SHADERGRAPH_MISCELLANEOUS", L"Build a vector from scalars" },
 	{ type_of< MixOut >(), L"SHADERGRAPH_MISCELLANEOUS", L"Access elements from a vector" },
@@ -70,6 +72,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Neg >(), L"SHADERGRAPH_ARITHMETIC", L"Negate number" },
 	{ type_of< Normalize >(), L"SHADERGRAPH_ALGEBRA", L"Normalize vector" },
 	{ type_of< OutputPort >(), L"SHADERGRAPH_VALUE", L"Output connection port from shader fragment" },
+	{ type_of< Parameter >(), L"SHADERGRAPH_VALUE", L"" },
 	{ type_of< Platform >(), L"SHADERGRAPH_CONDITIONAL", L"Select path based on type of platform" },
 	{ type_of< Polynomial >(), L"SHADERGRAPH_ARITHMETIC", L"Evaluate a polynomial" },
 	{ type_of< Pow >(), L"SHADERGRAPH_ARITHMETIC", L"Power of function" },
@@ -77,8 +80,6 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< PixelState >(), L"SHADERGRAPH_VALUE", L"Pixel shader output state" },
 	{ type_of< PreviewInput >(), L"SHADERGRAPH_VALUE", L"Preview input" },
 	{ type_of< PreviewOutput >(), L"SHADERGRAPH_VALUE", L"Preview output" },
-	{ type_of< ReadStruct >(), L"SHADERGRAPH_VALUE", L"Read struct element" },
-	{ type_of< ReadStruct2 >(), L"SHADERGRAPH_VALUE", L"Read struct element(s)" },
 	{ type_of< RecipSqrt >(), L"SHADERGRAPH_ALGEBRA", L"Reciprocal square root" },
 	{ type_of< Reflect >(), L"SHADERGRAPH_ALGEBRA", L"Calculate reflected vector from a input direction and an axis" },
 	{ type_of< Renderer >(), L"SHADERGRAPH_CONDITIONAL", L"Select path based on type of renderer" },
@@ -91,7 +92,6 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Sign >(), L"SHADERGRAPH_MISCELLANEOUS", L"Sign" },
 	{ type_of< Sqrt >(), L"SHADERGRAPH_ARITHMETIC", L"Square-root" },
 	{ type_of< Step >(), L"SHADERGRAPH_CONDITIONAL", L"Step function" },
-	{ type_of< Struct >(), L"SHADERGRAPH_VALUE", L"Define struct" },
 	{ type_of< Sub >(), L"SHADERGRAPH_ARITHMETIC", L"Subtract" },
 	{ type_of< Sum >(), L"SHADERGRAPH_ARITHMETIC", L"Summarize by evaluation branch from iteration" },
 	{ type_of< Switch >(), L"SHADERGRAPH_CONDITIONAL", L"Switch" },
@@ -105,16 +105,17 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Transpose >(), L"SHADERGRAPH_ALGEBRA", L"Transpose matrix, swapping rows and columns" },
 	{ type_of< Truncate >(), L"SHADERGRAPH_MISCELLANEOUS", L"Truncate" },
 	{ type_of< Type >(), L"SHADERGRAPH_CONDITIONAL", L"Static type switch" },
-	{ type_of< Uniform >(), L"SHADERGRAPH_VALUE", L"Uniform" },
 	{ type_of< Variable >(), L"SHADERGRAPH_VALUE", L"Variable" },
 	{ type_of< Vector >(), L"SHADERGRAPH_VALUE", L"Vector constant" },
 	{ type_of< VertexInput >(), L"SHADERGRAPH_VALUE", L"Read value from vertex stream" },
 	{ type_of< VertexOutput >(), L"SHADERGRAPH_VALUE", L"Output value from vertex shader" },
 
-	{ type_of< Parameter >(), L"SHADERGRAPH_VALUE", L"" },
-	{ type_of< ArrayElement >(), L"SHADERGRAPH_VALUE", L"" },
-	{ type_of< ArrayLength >(), L"SHADERGRAPH_VALUE", L"" },
-	{ type_of< MemberValue >(), L"SHADERGRAPH_VALUE", L"" }
+	// Deprecated nodes.
+	{ type_of< IndexedUniform >(), L"SHADERGRAPH_DEPRECATED", L"Indexed uniform" },
+	{ type_of< ReadStruct >(), L"SHADERGRAPH_DEPRECATED", L"Read struct element" },
+	{ type_of< ReadStruct2 >(), L"SHADERGRAPH_DEPRECATED", L"Read struct element(s)" },
+	{ type_of< Struct >(), L"SHADERGRAPH_DEPRECATED", L"Define struct" },
+	{ type_of< Uniform >(), L"SHADERGRAPH_DEPRECATED", L"Uniform" }
 };
 
 }
