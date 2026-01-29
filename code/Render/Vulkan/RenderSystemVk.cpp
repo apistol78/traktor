@@ -344,44 +344,9 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	const void* headFeature = nullptr;
 
 #if !defined(__ANDROID__) && !defined(__RPI__)
-	const VkPhysicalDevice8BitStorageFeaturesKHR features8bitStorage = {
-		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR,
-		.pNext = nullptr,
-		.storageBuffer8BitAccess = VK_FALSE,
-		.uniformAndStorageBuffer8BitAccess = VK_TRUE,
-		.storagePushConstant8 = VK_FALSE
-	};
-
-	const VkPhysicalDeviceFloat16Int8FeaturesKHR features16bitFloat = {
-		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR,
-		.pNext = (void*)&features8bitStorage,
-		.shaderFloat16 = VK_FALSE,
-		.shaderInt8 = VK_TRUE
-	};
-
-	// Bindless textures.
-	const VkPhysicalDeviceDescriptorIndexingFeatures featuresDescriptorIndexing = {
-		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES,
-		.pNext = (void*)&features16bitFloat,
-		.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE,
-		.descriptorBindingStorageImageUpdateAfterBind = VK_TRUE,
-		.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE,
-		.descriptorBindingPartiallyBound = VK_TRUE,
-		.descriptorBindingVariableDescriptorCount = VK_TRUE,
-		.runtimeDescriptorArray = VK_TRUE
-	};
-
-	const VkPhysicalDeviceBufferDeviceAddressFeatures featuresBufferDeviceAddress{
-		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
-		.pNext = (void*)&featuresDescriptorIndexing,
-		.bufferDeviceAddress = VK_TRUE,
-		.bufferDeviceAddressCaptureReplay = VK_FALSE,
-		.bufferDeviceAddressMultiDevice = VK_FALSE
-	};
-
 	const VkPhysicalDeviceVulkan11Features featuresVulkan1_1 = {
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
-		.pNext = (void*)&featuresBufferDeviceAddress,
+		.pNext = nullptr,
 		.storageBuffer16BitAccess = VK_TRUE,
 		.uniformAndStorageBuffer16BitAccess = VK_TRUE,
 		.storagePushConstant16 = VK_FALSE,
@@ -399,7 +364,21 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	const VkPhysicalDeviceVulkan12Features featuresVulkan_1_2 = {
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
 		.pNext = (void*)&featuresVulkan1_1,
-		.shaderFloat16 = VK_TRUE
+		.storageBuffer8BitAccess = VK_FALSE,
+		.uniformAndStorageBuffer8BitAccess = VK_TRUE,
+		.storagePushConstant8 = VK_FALSE,
+		.shaderFloat16 = VK_TRUE,
+		.shaderInt8 = VK_TRUE,
+		.descriptorIndexing = VK_TRUE,
+		.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE,
+		.descriptorBindingStorageImageUpdateAfterBind = VK_TRUE,
+		.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE,
+		.descriptorBindingPartiallyBound = VK_TRUE,
+		.descriptorBindingVariableDescriptorCount = VK_TRUE,
+		.runtimeDescriptorArray = VK_TRUE,
+		.bufferDeviceAddress = VK_TRUE,
+		.bufferDeviceAddressCaptureReplay = VK_FALSE,
+		.bufferDeviceAddressMultiDevice = VK_FALSE
 	};
 
 	headFeature = &featuresVulkan_1_2;
@@ -416,20 +395,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 			.descriptorBindingAccelerationStructureUpdateAfterBind = VK_FALSE
 		};
 
-		// static const VkPhysicalDeviceRayTracingPipelineFeaturesKHR featuresRayTracingPipeline =
-		//{
-		//	.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
-		//	.pNext = (void*)&featuresAccelerationStructure,
-		//	.rayTracingPipeline = VK_TRUE,
-		//	.rayTracingPipelineShaderGroupHandleCaptureReplay = VK_FALSE,
-		//	.rayTracingPipelineShaderGroupHandleCaptureReplayMixed = VK_FALSE,
-		//	.rayTracingPipelineTraceRaysIndirect = VK_FALSE,
-		//	.rayTraversalPrimitiveCulling = VK_FALSE
-		// };
-
 		static const VkPhysicalDeviceRayQueryFeaturesKHR featuresRayQuery = {
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR,
-			//.pNext = (void*)&featuresRayTracingPipeline,
 			.pNext = (void*)&featuresAccelerationStructure,
 			.rayQuery = VK_TRUE
 		};
