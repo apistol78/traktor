@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -44,6 +44,7 @@
 #include "Scene/Editor/Events/PostModifyEvent.h"
 #include "Scene/Editor/Events/PreModifyEvent.h"
 #include "Scene/Editor/Events/RedrawEvent.h"
+#include "Scene/Editor/Events/SceneSelectionChangeEvent.h"
 #include "Script/IScriptContext.h"
 #include "Ui/Events/SelectionChangeEvent.h"
 #include "World/Entity.h"
@@ -814,7 +815,7 @@ void SceneEditorContext::cloneSelected()
 	}
 
 	buildEntities();
-	raiseSelect();
+	raiseSelect(true);
 }
 
 ISceneEditorPlugin* SceneEditorContext::getEditorPluginOf(const TypeInfo& pluginType) const
@@ -851,14 +852,14 @@ void SceneEditorContext::raisePostBuild()
 	raiseEvent(&postBuildEvent);
 }
 
-void SceneEditorContext::raiseSelect()
+void SceneEditorContext::raiseSelect(bool ensureEntityVisible)
 {
 	// Notify modifier about selection change.
 	if (m_modifier)
 		m_modifier->selectionChanged();
 
 	// Notify selection change event listeners.
-	ui::SelectionChangeEvent selectionChangeEvent(this);
+	SceneSelectionChangeEvent selectionChangeEvent(this, ensureEntityVisible);
 	raiseEvent(&selectionChangeEvent);
 }
 

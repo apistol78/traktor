@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -79,6 +79,7 @@ class PostBuildEvent;
 class PostFrameEvent;
 class PostModifyEvent;
 class SceneAsset;
+class SceneSelectionChangeEvent;
 class SceneEditorContext;
 class ScenePreviewControl;
 
@@ -144,7 +145,7 @@ private:
 
 	void updateInstanceGridRow(ui::GridRow* row);
 
-	void updateInstanceGrid();
+	void updateInstanceGrid(bool ensureSelectedVisible);
 
 	void updatePropertyObject();
 
@@ -186,7 +187,7 @@ private:
 
 	void eventContextPostBuild(PostBuildEvent* event);
 
-	void eventContextSelect(ui::SelectionChangeEvent* event);
+	void eventContextSelect(SceneSelectionChangeEvent* event);
 
 	void eventContextPreModify(PreModifyEvent* event);
 

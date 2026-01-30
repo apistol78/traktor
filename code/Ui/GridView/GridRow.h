@@ -54,6 +54,8 @@ public:
 
 	uint32_t getState() const { return m_state; }
 
+	void ensureExpanded();
+
 	void setBackground(const ColorReference& background);
 
 	const ColorReference& getBackground() const { return m_background; }

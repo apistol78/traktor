@@ -52,12 +52,12 @@ inline bool isObjectHeapAllocated(const void* ptr)
 T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.Object", Object)
 
 #if defined(_DEBUG)
-void Object::addRef(void* owner) const
+void Object::addRef(void* owner) const noexcept
 {
 	++m_refCount;
 }
 
-void Object::release(void* owner) const
+void Object::release(void* owner) const noexcept
 {
 	if (--m_refCount == 0)
 		finalRelease();

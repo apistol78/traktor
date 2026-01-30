@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -51,6 +51,20 @@ void GridRow::setEditable(bool editable)
 void GridRow::setState(uint32_t state)
 {
 	m_state = state;
+}
+
+void GridRow::ensureExpanded()
+{
+	for (GridRow* r = this; r != nullptr; r = r->m_parent)
+	{
+		if ((r->m_state & Expanded) == 0)
+		{
+			r->m_state |= Expanded;
+
+			GridRowStateChangeEvent expandEvent(getWidget< GridView >(), r);
+			getWidget< GridView >()->raiseEvent(&expandEvent);
+		}
+	}
 }
 
 void GridRow::setBackground(const ColorReference& background)

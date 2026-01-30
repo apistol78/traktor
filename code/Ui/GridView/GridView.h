@@ -91,6 +91,8 @@ public:
 
 	GridRow* getSelectedRow() const;
 
+	void scrollToRow(const GridRow* row);
+
 	void selectAll();
 
 	void deselectAll();

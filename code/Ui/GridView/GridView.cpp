@@ -267,6 +267,13 @@ GridRow* GridView::getSelectedRow() const
 		return nullptr;
 }
 
+void GridView::scrollToRow(const GridRow* row)
+{
+	updateLayout();
+	const Rect rc = row->getRect();
+	scrollTo(Point(0, rc.top));
+}
+
 void GridView::selectAll()
 {
 	for (auto row : getRows(GfDescendants))

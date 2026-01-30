@@ -307,7 +307,7 @@ public:
 
 	void raisePostBuild();
 
-	void raiseSelect();
+	void raiseSelect(bool ensureEntityVisible);
 
 	void raiseCameraMoved();
 

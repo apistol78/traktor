@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -49,6 +49,7 @@
 #include "Scene/Editor/Events/PostFrameEvent.h"
 #include "Scene/Editor/Events/PostModifyEvent.h"
 #include "Scene/Editor/Events/PreModifyEvent.h"
+#include "Scene/Editor/Events/SceneSelectionChangeEvent.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/IWorldComponentEditorFactory.h"
@@ -485,7 +486,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	// Context event handlers.
 	m_context->addEventHandler< PostBuildEvent >(this, &SceneEditorPage::eventContextPostBuild);
-	m_context->addEventHandler< ui::SelectionChangeEvent >(this, &SceneEditorPage::eventContextSelect);
+	m_context->addEventHandler< SceneSelectionChangeEvent >(this, &SceneEditorPage::eventContextSelect);
 	m_context->addEventHandler< PreModifyEvent >(this, &SceneEditorPage::eventContextPreModify);
 	m_context->addEventHandler< PostModifyEvent >(this, &SceneEditorPage::eventContextPostModify);
 	m_context->addEventHandler< CameraMovedEvent >(this, &SceneEditorPage::eventContextCameraMoved);
@@ -638,7 +639,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		// Select entity.
 		m_context->selectAllEntities(false);
 		m_context->selectEntity(entityAdapter);
-		m_context->raiseSelect();
+		m_context->raiseSelect(true);
 	}
 	else
 		return false;
@@ -662,7 +663,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		updateScene();
 		createInstanceGrid();
 
-		m_context->raiseSelect();
+		m_context->raiseSelect(false);
 	}
 	else if (command == L"Editor.Redo")
 	{
@@ -673,7 +674,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		updateScene();
 		createInstanceGrid();
 
-		m_context->raiseSelect();
+		m_context->raiseSelect(false);
 	}
 	else if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
@@ -710,7 +711,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			updateScene();
 			createInstanceGrid();
 
-			m_context->raiseSelect();
+			m_context->raiseSelect(false);
 		}
 	}
 	else if (command == L"Editor.Paste")
@@ -748,7 +749,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		updateScene();
 		createInstanceGrid();
 
-		m_context->raiseSelect();
+		m_context->raiseSelect(false);
 	}
 	else if (command == L"Editor.Delete")
 	{
@@ -789,19 +790,19 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			updateScene();
 			createInstanceGrid();
 
-			m_context->raiseSelect();
+			m_context->raiseSelect(false);
 		}
 	}
 	else if (command == L"Editor.SelectAll")
 	{
 		m_context->selectAllEntities(true);
-		m_context->raiseSelect();
+		m_context->raiseSelect(false);
 		m_context->enqueueRedraw(nullptr);
 	}
 	else if (command == L"Editor.Unselect")
 	{
 		m_context->selectAllEntities(false);
-		m_context->raiseSelect();
+		m_context->raiseSelect(false);
 		m_context->enqueueRedraw(nullptr);
 	}
 	else if (command == L"Editor.Rename")
@@ -1226,10 +1227,20 @@ void SceneEditorPage::updateInstanceGridRow(ui::GridRow* row)
 		updateInstanceGridRow(childRow);
 }
 
-void SceneEditorPage::updateInstanceGrid()
+void SceneEditorPage::updateInstanceGrid(bool ensureSelectedVisible)
 {
 	for (auto row : m_instanceGrid->getRows())
 		updateInstanceGridRow(row);
+
+	if (ensureSelectedVisible)
+	{
+		ui::GridRow* selectedRow = m_instanceGrid->getSelectedRow();
+		if (selectedRow)
+		{
+			selectedRow->ensureExpanded();
+			m_instanceGrid->scrollToRow(selectedRow);
+		}
+	}
 
 	m_instanceGrid->requestUpdate();
 }
@@ -1555,7 +1566,7 @@ void SceneEditorPage::eventInstanceSelect(ui::SelectionChangeEvent* event)
 	}
 
 	// Raise context select event and the ensure scene is redrawn.
-	m_context->raiseSelect();
+	m_context->raiseSelect(false);
 	m_context->enqueueRedraw(nullptr);
 }
 
@@ -1619,7 +1630,7 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 
 	if (shouldUpdate)
 	{
-		updateInstanceGrid();
+		updateInstanceGrid(false);
 		m_context->enqueueRedraw(nullptr);
 	}
 }
@@ -1684,9 +1695,9 @@ void SceneEditorPage::eventContextPostBuild(PostBuildEvent* event)
 	updateStatusBar();
 }
 
-void SceneEditorPage::eventContextSelect(ui::SelectionChangeEvent* event)
+void SceneEditorPage::eventContextSelect(SceneSelectionChangeEvent* event)
 {
-	updateInstanceGrid();
+	updateInstanceGrid(event->shouldEnsureEntityVisible());
 	updatePropertyObject();
 	updateStatusBar();
 }

@@ -579,6 +579,7 @@ void DatabaseView::setDatabase(db::Database* db)
 	// Expand root items by default after setting a new database.
 	for (auto item : m_treeDatabase->getItems(ui::TreeView::GfDefault))
 		item->expand();
+	m_treeDatabase->requestUpdate();
 }
 
 void DatabaseView::updateView()
