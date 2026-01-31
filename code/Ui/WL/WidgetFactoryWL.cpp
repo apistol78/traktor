@@ -10,6 +10,7 @@
 #include <fontconfig/fontconfig.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Ui/WL/BitmapWL.h"
 #include "Ui/WL/Context.h"
 #include "Ui/WL/DialogWL.h"
 #include "Ui/WL/EventLoopWL.h"
@@ -67,7 +68,7 @@ IUserWidget* WidgetFactoryWL::createUserWidget(EventSubject* owner)
 
 ISystemBitmap* WidgetFactoryWL::createBitmap()
 {
-	return nullptr;
+	return new BitmapWL();
 }
 
 IClipboard* WidgetFactoryWL::createClipboard()
