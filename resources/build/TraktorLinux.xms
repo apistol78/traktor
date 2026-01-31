@@ -8535,6 +8535,16 @@
 								<excludeFilter/>
 								<items/>
 							</item>
+							<item type="traktor.sb.Filter">
+								<name>xdg</name>
+								<items>
+									<item type="traktor.sb.File" version="1">
+										<fileName>xdg/*.*</fileName>
+										<excludeFilter/>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="traktor.sb.ProjectDependency" version="3">

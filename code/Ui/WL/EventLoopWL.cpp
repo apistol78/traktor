@@ -32,6 +32,9 @@ bool EventLoopWL::process(EventSubject* owner)
 
 int32_t EventLoopWL::execute(EventSubject* owner)
 {
+	while (wl_display_dispatch(m_context->getDisplay()) != -1)
+	{
+	}
 	return 0;
 }
 

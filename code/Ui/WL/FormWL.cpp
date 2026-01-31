@@ -18,14 +18,14 @@ FormWL::FormWL(Context* context, EventSubject* owner)
 
 bool FormWL::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
 {
-	wl_surface* clientSurface = m_context->createSurface(width, height);
+	wl_surface* clientSurface = wl_compositor_create_surface(m_context->getCompositor());
+	if (!clientSurface)
+		return false;
 
-	wl_shell_surface* shellSurface = wl_shell_get_shell_surface(
-		m_context->getShell(),
-		clientSurface
-	);
-	wl_shell_surface_set_toplevel(shellSurface);
+	xdg_surface* xdg_surface = xdg_wm_base_get_xdg_surface(m_context->getXDGWMBase(), clientSurface);
+	//xdg_toplevel = xdg_surface_get_toplevel(xdg_surface);
 
+	wl_surface_commit(clientSurface);
 	return true;
 }
 

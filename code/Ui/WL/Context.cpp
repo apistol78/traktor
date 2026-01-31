@@ -10,6 +10,8 @@
 #include <syscall.h>
 #include <unistd.h>
 #include <sys/mman.h>
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Ui/WL/Context.h"
 
 namespace traktor::ui
@@ -42,10 +44,17 @@ Ref< Context > Context::create()
 
 	if (
 		!context->m_compositor ||
-		!context->m_shm /*||
-		!context->m_shell*/
+		!context->m_shm ||
+		!context->m_xdg_wm_base
 	)
 		return nullptr;
+
+	xdg_wm_base_listener xdgWMBaseListener = {
+		.ping = xdgWMBaseHandlePing,
+	};
+	xdg_wm_base_add_listener(context->m_xdg_wm_base, &xdgWMBaseListener, context.ptr());
+
+	wl_display_roundtrip(context->m_display);
 
 	const int32_t size = 1 * 1024 * 1024;
 
@@ -102,18 +111,19 @@ void Context::registryGlobalHandler(
 {
 	Context* context = (Context*)data;
 
-	// printf("interface: '%s', version: %u, name: %u\n", interface, version, name);
-	if (strcmp(interface, "wl_compositor") == 0)
+	log::info << L"Interface \"" << mbstows(interface) << L"\", version " << version << L", name \"" << name << L"\"." << Endl;
+
+	if (strcmp(interface, wl_compositor_interface.name) == 0)
 	{
 		context->m_compositor = (wl_compositor*)wl_registry_bind(registry, name, &wl_compositor_interface, 3);
 	}
-	else if (strcmp(interface, "wl_shm") == 0)
+	else if (strcmp(interface, wl_shm_interface.name) == 0)
 	{
 		context->m_shm = (wl_shm*)wl_registry_bind(registry, name, &wl_shm_interface, 1);
 	}
-	else if (strcmp(interface, "xdg_shell") == 0)
+	else if (strcmp(interface, xdg_wm_base_interface.name) == 0)
 	{
-		context->m_shell = (wl_shell*)wl_registry_bind(registry, name, &wl_shell_interface, 1);
+		context->m_xdg_wm_base = (xdg_wm_base*)wl_registry_bind(registry, name, &wl_shell_interface, 1);
 	}
 }
 
@@ -124,6 +134,15 @@ void Context::registryGlobalRemoveHandler(
 )
 {
 	Context* context = (Context*)data;
+}
+
+void Context::xdgWMBaseHandlePing(
+	void *data,
+	xdg_wm_base* xdg_wm_base,
+	uint32_t serial
+)
+{
+	xdg_wm_base_pong(xdg_wm_base, serial);
 }
 
 }

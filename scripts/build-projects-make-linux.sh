@@ -24,6 +24,18 @@ else
 	export STEAMWORKS_SDK_BIN="$STEAMWORKS_SDK/redistributable_bin/linux32"
 fi
 
+# Create wayland XDG files.
+WAYLAND_FLAGS=$(pkg-config wayland-client --cflags --libs)
+WAYLAND_PROTOCOLS_DIR=$(pkg-config wayland-protocols --variable=pkgdatadir)
+WAYLAND_SCANNER=$(pkg-config --variable=wayland_scanner wayland-scanner)
+
+XDG_SHELL_PROTOCOL=$WAYLAND_PROTOCOLS_DIR/stable/xdg-shell/xdg-shell.xml
+XDG_OUTPUT_PATH="`dirname \"$BASH_SOURCE\"`/../code/Ui/WL/xdg"
+
+mkdir $XDG_OUTPUT_PATH
+$WAYLAND_SCANNER client-header $XDG_SHELL_PROTOCOL $XDG_OUTPUT_PATH/xdg-shell-client-protocol.h
+$WAYLAND_SCANNER private-code $XDG_SHELL_PROTOCOL $XDG_OUTPUT_PATH/xdg-shell-protocol.c
+
 # Build solution files.
 $SOLUTIONBUILDER \
 	-f=make2 \

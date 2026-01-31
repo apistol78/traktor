@@ -9,8 +9,8 @@ clear
 if [[ "$1" == "Linux" ]]; then
 
 	pushd $TRAKTOR_HOME/build/linux
-	make -s -j -f 'Extern Linux.mak' $2
-	make -s -j -f 'Traktor Linux.mak' $2
+	make -s -j4 -f 'Extern Linux.mak' $2
+	make -s -j4 -f 'Traktor Linux.mak' $2
 	popd
 
 elif [[ "$1" == "macOS" ]]; then

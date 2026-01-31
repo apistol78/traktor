@@ -11,6 +11,7 @@
 #include <wayland-client.h>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Ui/WL/xdg/xdg-shell-client-protocol.h"
 
 namespace traktor::ui
 {
@@ -36,7 +37,7 @@ public:
 
 	wl_shm* getSHM() const { return m_shm; }
 
-	wl_shell* getShell() const { return m_shell; }
+	xdg_wm_base* getXDGWMBase() const { return m_xdg_wm_base; }
 
 	//@}
 
@@ -44,7 +45,7 @@ private:
 	wl_display* m_display = nullptr;
 	wl_compositor* m_compositor = nullptr;
 	wl_shm* m_shm = nullptr;
-	wl_shell* m_shell = nullptr;
+	xdg_wm_base* m_xdg_wm_base = nullptr;
 
 	wl_shm_pool* m_pool = nullptr;
 
@@ -60,6 +61,12 @@ private:
 		void* data,
 		wl_registry* registry,
 		uint32_t name
+	);
+
+	static void xdgWMBaseHandlePing(
+		void *data,
+		xdg_wm_base* xdg_wm_base,
+		uint32_t serial
 	);
 };
 
