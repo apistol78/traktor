@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,8 +24,10 @@ bool MiniButton::create(Widget* parent, const std::wstring& text, uint32_t style
 	m_border = ((style & WsNoBorder) == 0);
 	m_background = ((style & WsNoBackground) == 0);
 	m_pushed = false;
+	m_hover = false;
 	setText(text);
 
+	addEventHandler< MouseTrackEvent >(this, &MiniButton::eventMouseTrack);
 	addEventHandler< MouseButtonDownEvent >(this, &MiniButton::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &MiniButton::eventButtonUp);
 	addEventHandler< PaintEvent >(this, &MiniButton::eventPaint);
@@ -41,8 +43,10 @@ bool MiniButton::create(Widget* parent, IBitmap* image, int style)
 	m_border = ((style & WsNoBorder) == 0);
 	m_background = ((style & WsNoBackground) == 0);
 	m_pushed = false;
+	m_hover = false;
 	m_image  = image;
 
+	addEventHandler< MouseTrackEvent >(this, &MiniButton::eventMouseTrack);
 	addEventHandler< MouseButtonDownEvent >(this, &MiniButton::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &MiniButton::eventButtonUp);
 	addEventHandler< PaintEvent >(this, &MiniButton::eventPaint);
@@ -66,6 +70,12 @@ Size MiniButton::getPreferredSize(const Size& hint) const
 Size MiniButton::getMaximumSize() const
 {
 	return getPreferredSize(Size(0, 0));
+}
+
+void MiniButton::eventMouseTrack(MouseTrackEvent* event)
+{
+	m_hover = event->entered();
+	update();
 }
 
 void MiniButton::eventButtonDown(MouseButtonDownEvent* event)
@@ -101,10 +111,13 @@ void MiniButton::eventPaint(PaintEvent* event)
 
 	if (isEnable(true))
 	{
-		if (m_background)
-			canvas.setBackground(ss->getColor(this, m_pushed ? L"background-color-pushed" : L"background-color"));
+		if (m_background && m_pushed)
+			canvas.setBackground(ss->getColor(getParent(), L"background-color-pushed"));
+		else if (m_hover)
+			canvas.setBackground(ss->getColor(getParent(), L"background-color-hover"));
 		else
 			canvas.setBackground(ss->getColor(getParent(), L"background-color"));
+
 		canvas.fillRect(rcInner);
 
 		if (m_border)

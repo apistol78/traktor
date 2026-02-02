@@ -213,9 +213,12 @@ bool PreviewControl::create(ui::Widget* parent)
 
 void PreviewControl::destroy()
 {
-	m_threadProcessTicks->stop();
-	ThreadManager::getInstance().destroy(m_threadProcessTicks);
-	m_threadProcessTicks = nullptr;
+	if (m_threadProcessTicks)
+	{
+		m_threadProcessTicks->stop();
+		ThreadManager::getInstance().destroy(m_threadProcessTicks);
+		m_threadProcessTicks = nullptr;
+	}
 
 	ui::Application::getInstance()->removeEventHandler(m_idleEventHandler);
 
