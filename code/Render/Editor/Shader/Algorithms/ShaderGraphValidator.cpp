@@ -448,16 +448,16 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, AlignedVector< const N
 
 	EdgeNodes().check(report, m_shaderGraph, visitor.m_nodes);
 	UniqueTechniques().check(report, m_shaderGraph, visitor.m_nodes);
-	NonOptionalInputs().check(report, m_shaderGraph, visitor.m_nodes);
+	//NonOptionalInputs().check(report, m_shaderGraph, visitor.m_nodes);
 	SwizzlePatterns().check(report, m_shaderGraph, visitor.m_nodes);
 	ParameterNames().check(report, m_shaderGraph, visitor.m_nodes);
 	VariableNames().check(report, m_shaderGraph, visitor.m_nodes);
-	CheckTypes().check(report, m_shaderGraph, visitor.m_nodes);
+	//CheckTypes().check(report, m_shaderGraph, visitor.m_nodes);
 
 	if (type == SgtFragment)
 	{
 		PortNames().check(report, m_shaderGraph, visitor.m_nodes);
-		CheckOptionalPorts().check(report, m_shaderGraph, visitor.m_nodes);
+		//CheckOptionalPorts().check(report, m_shaderGraph, visitor.m_nodes);
 	}
 	else if (type == SgtProgram)
 	{

@@ -1288,14 +1288,11 @@ void ShaderGraphEditorPage::updateGraph()
 		PinType type = PinType::Void;
 	};
 
+	// Fully resolve shader graph so we can inspect all uniforms etc.
 	const auto fragmentReader = [&](const Guid& fragmentGuid) -> Ref< const ShaderGraph > {
 		return m_editor->getSourceDatabase()->getObjectReadOnly< ShaderGraph >(fragmentGuid);
 	};
-
-	// Fully resolve shader graph so we can inspect all uniforms etc.
 	Ref< ShaderGraph > resolvedShaderGraph = FragmentLinker(fragmentReader).resolve(m_shaderGraph, true);
-	if (!resolvedShaderGraph)
-		log::debug << L"Unable to resolve shader graph." << Endl;
 
 	// Link parameter declarations in resolved shader graph.
 	if (resolvedShaderGraph)
@@ -1320,14 +1317,17 @@ void ShaderGraphEditorPage::updateGraph()
 	}
 
 	// Extract techniques.
-	{
-		m_toolTechniques->removeAll();
+	m_toolTechniques->removeAll();
+	if (resolvedShaderGraph)
 		for (const std::wstring& technique : ShaderGraphTechniques(resolvedShaderGraph, Guid()).getNames())
 			m_toolTechniques->add(technique);
-	}
 
 	// Update variables grid.
+	m_variablesGrid->removeAllRows();
+	if (resolvedShaderGraph)
 	{
+		const ShaderGraphEvaluator evaluator(resolvedShaderGraph);
+
 		SmallMap< std::wstring, VariableInfo > variables;
 		for (auto variableNode : m_shaderGraph->findNodesOf< Variable >())
 		{
@@ -1341,12 +1341,25 @@ void ShaderGraphEditorPage::updateGraph()
 			{
 				++vi.writeCount;
 
-				// #fixme Cannot evaluate non-linked shader graph.
-				//Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(sourceEdge->getSource());
-				//vi.type = value.getType();
+				// Try and evaluate variable type.
+				const auto it = std::find_if(
+					resolvedShaderGraph->getNodes().begin(),
+					resolvedShaderGraph->getNodes().end(),
+					[&](const Node* resolvedNode) {
+					return resolvedNode->getId() == sourceEdge->getSource()->getNode()->getId();
+				});
+				if (it != resolvedShaderGraph->getNodes().end())
+				{
+					const OutputPin* resolvedOutputPin = (*it)->findOutputPin(sourceEdge->getSource()->getId());
+					if (resolvedOutputPin != nullptr)
+					{
+						const Constant value = evaluator.evaluate(resolvedOutputPin);
+						vi.type = value.getType();
+					}
+				}
 			}
 		}
-		m_variablesGrid->removeAllRows();
+
 		for (const auto& variable : variables)
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
@@ -1362,9 +1375,9 @@ void ShaderGraphEditorPage::updateGraph()
 	}
 
 	// Update uniforms grid.
+	m_uniformsGrid->removeAllRows();
 	if (resolvedShaderGraph)
 	{
-		m_uniformsGrid->removeAllRows();
 		for (auto node : m_shaderGraph->getNodes())
 		{
 			Node* resolvedNode = nullptr;
@@ -1434,44 +1447,40 @@ void ShaderGraphEditorPage::updateGraph()
 	}
 
 	// Update ports grid.
+	m_portsGrid->removeAllRows();
+	for (auto node : m_shaderGraph->getNodes())
 	{
-		m_portsGrid->removeAllRows();
-		for (auto node : m_shaderGraph->getNodes())
+		if (InputPort* inputPortNode = dynamic_type_cast< InputPort* >(node))
 		{
-			if (InputPort* inputPortNode = dynamic_type_cast< InputPort* >(node))
-			{
-				Ref< ui::GridRow > row = new ui::GridRow();
-				row->setData(L"SHADERNODE", inputPortNode);
-				row->add(inputPortNode->getName());
-				row->add(L"Input");
-				m_portsGrid->addRow(row);
-			}
-			else if (OutputPort* outputPortNode = dynamic_type_cast< OutputPort* >(node))
-			{
-				Ref< ui::GridRow > row = new ui::GridRow();
-				row->setData(L"SHADERNODE", outputPortNode);
-				row->add(outputPortNode->getName());
-				row->add(L"Output");
-				m_portsGrid->addRow(row);
-			}
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->setData(L"SHADERNODE", inputPortNode);
+			row->add(inputPortNode->getName());
+			row->add(L"Input");
+			m_portsGrid->addRow(row);
+		}
+		else if (OutputPort* outputPortNode = dynamic_type_cast< OutputPort* >(node))
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->setData(L"SHADERNODE", outputPortNode);
+			row->add(outputPortNode->getName());
+			row->add(L"Output");
+			m_portsGrid->addRow(row);
 		}
 	}
 
 	// Update node count grid.
+	m_nodeCountGrid->removeAllRows();
+
+	SmallMap< const TypeInfo*, int32_t > nodeCounts;
+	for (auto node : m_shaderGraph->getNodes())
+		nodeCounts[&type_of(node)]++;
+
+	for (const auto& it : nodeCounts)
 	{
-		m_nodeCountGrid->removeAllRows();
-
-		SmallMap< const TypeInfo*, int32_t > nodeCounts;
-		for (auto node : m_shaderGraph->getNodes())
-			nodeCounts[&type_of(node)]++;
-
-		for (const auto& it : nodeCounts)
-		{
-			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(it.first->getName());
-			row->add(str(L"%d", it.second));
-			m_nodeCountGrid->addRow(row);
-		}
+		Ref< ui::GridRow > row = new ui::GridRow();
+		row->add(it.first->getName());
+		row->add(str(L"%d", it.second));
+		m_nodeCountGrid->addRow(row);
 	}
 
 	// Determine type of shader graph.
@@ -1483,8 +1492,7 @@ void ShaderGraphEditorPage::updateGraph()
 	bool validationResult = false;
 	if (resolvedShaderGraph)
 	{
-		const ShaderGraphValidator validator(resolvedShaderGraph);
-		validationResult = validator.validate(graphType, &errorNodes);
+		validationResult = ShaderGraphValidator(resolvedShaderGraph).validate(graphType, &errorNodes);
 		if (!validationResult)
 			log::debug << L"Validation of resolve shader graph failed." << Endl;
 	}
