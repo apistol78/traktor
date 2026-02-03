@@ -144,6 +144,8 @@ public:
 
 	virtual void getStatistics(PhysicsStatistics& outStatistics) const override final;
 
+	JPH::PhysicsSystem* getJPhysicsSystem() const { return m_physicsSystem.ptr(); }
+
 private:
 	AutoPtr< JPH::TempAllocatorImpl > m_tempAllocator;
 	AutoPtr< JPH::JobSystemThreadPool > m_jobSystem;
@@ -151,7 +153,7 @@ private:
 	AutoPtr< JPH::ObjectVsBroadPhaseLayerFilter > m_objectVsBroadPhaseLayerFilter;
 	AutoPtr< JPH::ObjectLayerPairFilter > m_objectVsObjectLayerFilter;
 	AutoPtr< JPH::ContactListener > m_contactListener;
-	AutoPtr< JPH::PhysicsSystem > m_physicsSystem;
+	mutable AutoPtr< JPH::PhysicsSystem > m_physicsSystem;
 	RefArray< BodyJolt > m_bodies;
 	float m_timeScale = 1.0f;
 

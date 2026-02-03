@@ -53,7 +53,9 @@
 #include <Jolt/Physics/Collision/PhysicsMaterialSimple.h>
 #include <Jolt/Physics/Collision/RayCast.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
+#include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
 #include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
+#include <Jolt/Physics/Collision/Shape/CylinderShape.h>
 #include <Jolt/Physics/Collision/Shape/HeightFieldShape.h>
 #include <Jolt/Physics/Collision/Shape/MeshShape.h>
 #include <Jolt/Physics/Collision/Shape/MutableCompoundShape.h>
@@ -165,6 +167,116 @@ public:
 	virtual void OnContactRemoved(const JPH::SubShapeIDPair& subShapePair) override
 	{
 	}
+};
+
+class SweepCollector : public JPH::CastShapeCollector
+{
+public:
+	explicit SweepCollector(const PhysicsManagerJolt* outer, const JPH::RShapeCast& shapeCast, const QueryFilter& queryFilter, QueryResult& outResult)
+		: m_outer(outer)
+		, m_shapeCast(shapeCast)
+		, m_queryFilter(queryFilter)
+		, m_outResult(outResult)
+	{
+	}
+
+	virtual void AddHit(const JPH::ShapeCastResult& result) override
+	{
+		if (result.mFraction < GetEarlyOutFraction())
+		{
+			JPH::BodyLockRead lock(m_outer->getJPhysicsSystem()->GetBodyLockInterface(), result.mBodyID2);
+			if (lock.Succeeded())
+			{
+				const JPH::Body& hitBody = lock.GetBody();
+
+				BodyJolt* unwrappedBody = (BodyJolt*)hitBody.GetUserData();
+				if (!unwrappedBody)
+					return;
+
+				if (m_queryFilter.ignoreClusterId != 0 && unwrappedBody->getClusterId() == m_queryFilter.ignoreClusterId)
+					return;
+
+				const uint32_t group = unwrappedBody->getCollisionGroup();
+				if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
+					return;
+
+				JPH::Vec3 position = m_shapeCast.GetPointOnRay(result.mFraction);
+				JPH::Vec3 normal = -result.mPenetrationAxis.Normalized();
+
+				m_outResult.body = unwrappedBody;
+				m_outResult.position = convertFromJolt(position, 1.0f);
+				m_outResult.normal = convertFromJolt(normal, 0.0f);
+				m_outResult.fraction = result.mFraction;
+				// m_outResult.material = ;
+
+				m_anyHit = true;
+
+				UpdateEarlyOutFraction(result.mFraction);
+			}
+		}
+	}
+
+	bool AnyHit() const { return m_anyHit; }
+
+private:
+	const PhysicsManagerJolt* m_outer;
+	const JPH::RShapeCast& m_shapeCast;
+	const QueryFilter& m_queryFilter;
+	QueryResult& m_outResult;
+	bool m_anyHit = false;
+};
+
+class SweepMultiCollector : public JPH::CastShapeCollector
+{
+public:
+	explicit SweepMultiCollector(const PhysicsManagerJolt* outer, const JPH::RShapeCast& shapeCast, const QueryFilter& queryFilter, AlignedVector< QueryResult >& outResult)
+		: m_outer(outer)
+		, m_shapeCast(shapeCast)
+		, m_queryFilter(queryFilter)
+		, m_outResult(outResult)
+	{
+	}
+
+	virtual void AddHit(const JPH::ShapeCastResult& result) override
+	{
+		if (result.mFraction < GetEarlyOutFraction())
+		{
+			JPH::BodyLockRead lock(m_outer->getJPhysicsSystem()->GetBodyLockInterface(), result.mBodyID2);
+			if (lock.Succeeded())
+			{
+				const JPH::Body& hitBody = lock.GetBody();
+
+				BodyJolt* unwrappedBody = (BodyJolt*)hitBody.GetUserData();
+				if (!unwrappedBody)
+					return;
+
+				if (m_queryFilter.ignoreClusterId != 0 && unwrappedBody->getClusterId() == m_queryFilter.ignoreClusterId)
+					return;
+
+				const uint32_t group = unwrappedBody->getCollisionGroup();
+				if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
+					return;
+
+				JPH::Vec3 position = m_shapeCast.GetPointOnRay(result.mFraction);
+				JPH::Vec3 normal = -result.mPenetrationAxis.Normalized();
+
+				auto& outResult = m_outResult.push_back();
+				outResult.body = unwrappedBody;
+				outResult.position = convertFromJolt(position, 1.0f);
+				outResult.normal = convertFromJolt(normal, 0.0f);
+				outResult.fraction = result.mFraction;
+				// outResult.material = ;
+
+				UpdateEarlyOutFraction(result.mFraction);
+			}
+		}
+	}
+
+private:
+	const PhysicsManagerJolt* m_outer;
+	const JPH::RShapeCast& m_shapeCast;
+	const QueryFilter& m_queryFilter;
+	AlignedVector< QueryResult >& m_outResult;
 };
 
 }
@@ -321,13 +433,149 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 				convertToJolt(localTransform.rotation()),
 				&shapeSettings);
 
-			 JPH::ShapeSettings::ShapeResult shapeResult = compoundSettings.Create();
-			 shape = shapeResult.Get();
+			JPH::ShapeSettings::ShapeResult shapeResult = compoundSettings.Create();
+			shape = shapeResult.Get();
 		}
 		else
 		{
-			 JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
-			 shape = shapeResult.Get();
+			JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+			shape = shapeResult.Get();
+		}
+
+		JPH::BodyCreationSettings settings;
+
+		if (auto staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
+		{
+			settings = JPH::BodyCreationSettings(
+				shape,
+				JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
+				JPH::Quat::sIdentity(),
+				JPH::EMotionType::Static,
+				Layers::NON_MOVING);
+			settings.mFriction = staticDesc->getFriction();
+			settings.mRestitution = staticDesc->getRestitution();
+		}
+		else if (auto dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
+		{
+			settings = JPH::BodyCreationSettings(
+				shape,
+				JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
+				JPH::Quat::sIdentity(),
+				JPH::EMotionType::Dynamic,
+				Layers::MOVING);
+			settings.mLinearDamping = dynamicDesc->getLinearDamping();
+			settings.mAngularDamping = dynamicDesc->getAngularDamping();
+			settings.mFriction = dynamicDesc->getFriction();
+			settings.mRestitution = dynamicDesc->getRestitution();
+		}
+
+		body = bodyInterface.CreateBody(settings);
+		if (!body)
+			return nullptr;
+
+		Ref< BodyJolt > bj = new BodyJolt(
+			tag,
+			this,
+			m_physicsSystem.ptr(),
+			body,
+			0.0f,
+			Vector4::zero(),
+			mergedCollisionGroup,
+			mergedCollisionMask);
+		m_bodies.push_back(bj);
+		return bj;
+	}
+	else if (const CapsuleShapeDesc* capsuleShape = dynamic_type_cast< const CapsuleShapeDesc* >(shapeDesc))
+	{
+		JPH::CapsuleShapeSettings shapeSettings(capsuleShape->getLength(), capsuleShape->getRadius());
+		shapeSettings.SetEmbedded();
+
+		JPH::ShapeRefC shape;
+
+		const Transform localTransform = shapeDesc->getLocalTransform();
+		if (localTransform != Transform::identity())
+		{
+			JPH::MutableCompoundShapeSettings compoundSettings;
+			compoundSettings.AddShape(
+				convertToJolt(localTransform.translation()),
+				convertToJolt(localTransform.rotation()),
+				&shapeSettings);
+
+			JPH::ShapeSettings::ShapeResult shapeResult = compoundSettings.Create();
+			shape = shapeResult.Get();
+		}
+		else
+		{
+			JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+			shape = shapeResult.Get();
+		}
+
+		JPH::BodyCreationSettings settings;
+
+		if (auto staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
+		{
+			settings = JPH::BodyCreationSettings(
+				shape,
+				JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
+				JPH::Quat::sIdentity(),
+				JPH::EMotionType::Static,
+				Layers::NON_MOVING);
+			settings.mFriction = staticDesc->getFriction();
+			settings.mRestitution = staticDesc->getRestitution();
+		}
+		else if (auto dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
+		{
+			settings = JPH::BodyCreationSettings(
+				shape,
+				JPH::RVec3(0.0_r, 0.0_r, 0.0_r),
+				JPH::Quat::sIdentity(),
+				JPH::EMotionType::Dynamic,
+				Layers::MOVING);
+			settings.mLinearDamping = dynamicDesc->getLinearDamping();
+			settings.mAngularDamping = dynamicDesc->getAngularDamping();
+			settings.mFriction = dynamicDesc->getFriction();
+			settings.mRestitution = dynamicDesc->getRestitution();
+		}
+
+		body = bodyInterface.CreateBody(settings);
+		if (!body)
+			return nullptr;
+
+		Ref< BodyJolt > bj = new BodyJolt(
+			tag,
+			this,
+			m_physicsSystem.ptr(),
+			body,
+			0.0f,
+			Vector4::zero(),
+			mergedCollisionGroup,
+			mergedCollisionMask);
+		m_bodies.push_back(bj);
+		return bj;
+	}
+	else if (const CylinderShapeDesc* cylinderShape = dynamic_type_cast< const CylinderShapeDesc* >(shapeDesc))
+	{
+		JPH::CylinderShapeSettings shapeSettings(cylinderShape->getLength(), cylinderShape->getRadius());
+		shapeSettings.SetEmbedded();
+
+		JPH::ShapeRefC shape;
+
+		const Transform localTransform = shapeDesc->getLocalTransform();
+		if (localTransform != Transform::identity())
+		{
+			JPH::MutableCompoundShapeSettings compoundSettings;
+			compoundSettings.AddShape(
+				convertToJolt(localTransform.translation()),
+				convertToJolt(localTransform.rotation()),
+				&shapeSettings);
+
+			JPH::ShapeSettings::ShapeResult shapeResult = compoundSettings.Create();
+			shape = shapeResult.Get();
+		}
+		else
+		{
+			JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+			shape = shapeResult.Get();
 		}
 
 		JPH::BodyCreationSettings settings;
@@ -633,63 +881,6 @@ bool PhysicsManagerJolt::querySweep(
 {
 	const JPH::NarrowPhaseQuery& narrowPhaseQuery = m_physicsSystem->GetNarrowPhaseQuery();
 
-	class SweepCollector : public JPH::CastShapeCollector
-	{
-	public:
-		explicit SweepCollector(const PhysicsManagerJolt* outer, const JPH::RShapeCast& shapeCast, const QueryFilter& queryFilter, QueryResult& outResult)
-			: m_outer(outer)
-			, m_shapeCast(shapeCast)
-			, m_queryFilter(queryFilter)
-			, m_outResult(outResult)
-		{
-		}
-
-		virtual void AddHit(const JPH::ShapeCastResult& result) override
-		{
-			if (result.mFraction < GetEarlyOutFraction())
-			{
-				JPH::BodyLockRead lock(m_outer->m_physicsSystem->GetBodyLockInterface(), result.mBodyID2);
-				if (lock.Succeeded())
-				{
-					const JPH::Body& hitBody = lock.GetBody();
-
-					BodyJolt* unwrappedBody = (BodyJolt*)hitBody.GetUserData();
-					if (!unwrappedBody)
-						return;
-
-					if (m_queryFilter.ignoreClusterId != 0 && unwrappedBody->getClusterId() == m_queryFilter.ignoreClusterId)
-						return;
-
-					const uint32_t group = unwrappedBody->getCollisionGroup();
-					if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
-						return;
-
-					JPH::Vec3 position = m_shapeCast.GetPointOnRay(result.mFraction);
-					JPH::Vec3 normal = -result.mPenetrationAxis.Normalized();
-
-					m_outResult.body = unwrappedBody;
-					m_outResult.position = convertFromJolt(position, 1.0f);
-					m_outResult.normal = convertFromJolt(normal, 0.0f);
-					m_outResult.fraction = result.mFraction;
-					// m_outResult.material = ;
-
-					m_anyHit = true;
-
-					UpdateEarlyOutFraction(result.mFraction);
-				}
-			}
-		}
-
-		bool AnyHit() const { return m_anyHit; }
-
-	private:
-		const PhysicsManagerJolt* m_outer;
-		const JPH::RShapeCast& m_shapeCast;
-		const QueryFilter& m_queryFilter;
-		QueryResult& m_outResult;
-		bool m_anyHit = false;
-	};
-
 	JPH::SphereShape sphere(radius);
 	sphere.SetEmbedded();
 
@@ -719,7 +910,26 @@ bool PhysicsManagerJolt::querySweep(
 	const QueryFilter& queryFilter,
 	QueryResult& outResult) const
 {
-	return false;
+	const JPH::NarrowPhaseQuery& narrowPhaseQuery = m_physicsSystem->GetNarrowPhaseQuery();
+
+	const BodyJolt* bj = mandatory_non_null_type_cast< const BodyJolt* >(body);
+	const JPH::Shape* shape = bj->getJBody()->GetShape();
+
+	JPH::RShapeCast shapeCast(
+		shape,
+		JPH::Vec3::sReplicate(1.0f),
+		JPH::RMat44::sTranslation(convertToJolt(at)),
+		convertToJolt(direction * Scalar(maxLength)));
+
+	JPH::ShapeCastSettings settings;
+	settings.mUseShrunkenShapeAndConvexRadius = true;
+	settings.mReturnDeepestPoint = true;
+
+	SweepCollector collector(this, shapeCast, queryFilter, outResult);
+	narrowPhaseQuery.CastShape(shapeCast, settings, JPH::Vec3::sReplicate(0.0f), collector);
+
+	outResult.distance = dot3(outResult.position - at, direction);
+	return collector.AnyHit();
 }
 
 void PhysicsManagerJolt::querySweep(
@@ -731,59 +941,6 @@ void PhysicsManagerJolt::querySweep(
 	AlignedVector< QueryResult >& outResult) const
 {
 	const JPH::NarrowPhaseQuery& narrowPhaseQuery = m_physicsSystem->GetNarrowPhaseQuery();
-
-	class SweepCollector : public JPH::CastShapeCollector
-	{
-	public:
-		explicit SweepCollector(const PhysicsManagerJolt* outer, const JPH::RShapeCast& shapeCast, const QueryFilter& queryFilter, AlignedVector< QueryResult >& outResult)
-			: m_outer(outer)
-			, m_shapeCast(shapeCast)
-			, m_queryFilter(queryFilter)
-			, m_outResult(outResult)
-		{
-		}
-
-		virtual void AddHit(const JPH::ShapeCastResult& result) override
-		{
-			if (result.mFraction < GetEarlyOutFraction())
-			{
-				JPH::BodyLockRead lock(m_outer->m_physicsSystem->GetBodyLockInterface(), result.mBodyID2);
-				if (lock.Succeeded())
-				{
-					const JPH::Body& hitBody = lock.GetBody();
-
-					BodyJolt* unwrappedBody = (BodyJolt*)hitBody.GetUserData();
-					if (!unwrappedBody)
-						return;
-
-					if (m_queryFilter.ignoreClusterId != 0 && unwrappedBody->getClusterId() == m_queryFilter.ignoreClusterId)
-						return;
-
-					const uint32_t group = unwrappedBody->getCollisionGroup();
-					if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
-						return;
-
-					JPH::Vec3 position = m_shapeCast.GetPointOnRay(result.mFraction);
-					JPH::Vec3 normal = -result.mPenetrationAxis.Normalized();
-
-					auto& outResult = m_outResult.push_back();
-					outResult.body = unwrappedBody;
-					outResult.position = convertFromJolt(position, 1.0f);
-					outResult.normal = convertFromJolt(normal, 0.0f);
-					outResult.fraction = result.mFraction;
-					// outResult.material = ;
-
-					UpdateEarlyOutFraction(result.mFraction);
-				}
-			}
-		}
-
-	private:
-		const PhysicsManagerJolt* m_outer;
-		const JPH::RShapeCast& m_shapeCast;
-		const QueryFilter& m_queryFilter;
-		AlignedVector< QueryResult >& m_outResult;
-	};
 
 	JPH::SphereShape sphere(radius);
 	sphere.SetEmbedded();
@@ -798,7 +955,7 @@ void PhysicsManagerJolt::querySweep(
 	settings.mUseShrunkenShapeAndConvexRadius = true;
 	settings.mReturnDeepestPoint = true;
 
-	SweepCollector collector(this, shapeCast, queryFilter, outResult);
+	SweepMultiCollector collector(this, shapeCast, queryFilter, outResult);
 	narrowPhaseQuery.CastShape(shapeCast, settings, JPH::Vec3::sReplicate(0.0f), collector);
 
 	for (auto& result : outResult)
@@ -872,13 +1029,13 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 				convertToJolt(localTransform.rotation()),
 				&shapeSettings);
 
-			 JPH::ShapeSettings::ShapeResult shapeResult = compoundSettings.Create();
-			 shape = shapeResult.Get();
+			JPH::ShapeSettings::ShapeResult shapeResult = compoundSettings.Create();
+			shape = shapeResult.Get();
 		}
 		else
 		{
-			 JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
-			 shape = shapeResult.Get();
+			JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+			shape = shapeResult.Get();
 		}
 
 		JPH::BodyCreationSettings settings(
@@ -925,13 +1082,13 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 				convertToJolt(localTransform.rotation()),
 				&shapeSettings);
 
-			 JPH::ShapeSettings::ShapeResult shapeResult = compoundSettings.Create();
-			 shape = shapeResult.Get();
+			JPH::ShapeSettings::ShapeResult shapeResult = compoundSettings.Create();
+			shape = shapeResult.Get();
 		}
 		else
 		{
-			 JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
-			 shape = shapeResult.Get();
+			JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+			shape = shapeResult.Get();
 		}
 
 		JPH::BodyCreationSettings settings(

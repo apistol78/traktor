@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,8 +48,7 @@ public:
 		float inverseMass,
 		const Vector4& centerOfGravity,
 		uint32_t collisionGroup,
-		uint32_t collisionMask
-	);
+		uint32_t collisionMask);
 
 	virtual void destroy() override final;
 
@@ -106,6 +105,8 @@ public:
 	virtual BodyState getState() const override final;
 
 	virtual void integrate(float deltaTime) override final;
+
+	JPH::Body* getJBody() const { return m_body; }
 
 	uint32_t getCollisionGroup() const { return m_collisionGroup; }
 
