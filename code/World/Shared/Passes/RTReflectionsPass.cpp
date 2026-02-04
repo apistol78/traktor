@@ -20,12 +20,9 @@
 #include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity/LightComponent.h"
-#include "World/IEntityRenderer.h"
+#include "World/Entity/ProbeComponent.h"
 #include "World/IrradianceGrid.h"
 #include "World/IWorldRenderer.h"
-#include "World/Shared/WorldRenderPassShared.h"
-#include "World/WorldBuildContext.h"
-#include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 
@@ -140,6 +137,17 @@ render::RGTargetSet RTReflectionsPass::setup(
 	// Shared shader parameters for all passes.
 	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();
 	const Vector2 jrp = needJitter ? jitter(frameCount - 1) / worldRenderView.getViewSize() : Vector2::zero();
+
+	const ProbeComponent* probe = nullptr;
+	for (auto p : gatheredView.probes)
+	{
+		if (!p->getLocal() && p->getTexture() != nullptr)
+		{
+			probe = p;
+			break;
+		}
+	}
+
 	auto setParameters = [=, this](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 		const auto halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
@@ -154,6 +162,13 @@ render::RGTargetSet RTReflectionsPass::setup(
 		params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
 		params->setTextureParameter(ShaderParameter::HalfResDepthMap, m_halfResolution ? halfResDepthTexture : gbufferTargetSet->getColorTexture(0));
 		params->setFloatParameter(ShaderParameter::Random, s_random.nextFloat());
+
+		if (probe != nullptr)
+		{
+			params->setFloatParameter(ShaderParameter::ProbeIntensity, probe->getIntensity());
+			params->setFloatParameter(ShaderParameter::ProbeTextureMips, (float)probe->getTexture()->getSize().mips);
+			params->setTextureParameter(ShaderParameter::ProbeTexture, probe->getTexture());
+		}
 
 		if (lightSBuffer != nullptr)
 		{
