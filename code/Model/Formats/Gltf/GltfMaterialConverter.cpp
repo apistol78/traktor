@@ -191,6 +191,9 @@ bool convertMaterials(
 				Ref< drawing::Image > image = loadTextureImage(pbr->base_color_texture.texture, basePath);
 
 				material.setDiffuseMap(Material::Map(textureName, channel, true, Guid(), image));
+
+				if (gltfMaterial->alpha_mode == cgltf_alpha_mode_blend || gltfMaterial->alpha_mode == cgltf_alpha_mode_mask)
+					material.setTransparencyMap(Material::Map(textureName, channel, true, Guid(), image));
 			}
 
 			// Metallic-roughness texture
@@ -272,7 +275,7 @@ bool convertMaterials(
 		}
 		else if (gltfMaterial->alpha_mode == cgltf_alpha_mode_mask)
 		{
-			material.setBlendOperator(Material::BoAlpha);
+			material.setBlendOperator(Material::BoAlphaTest);
 			// Alpha cutoff could be stored in transparency if needed
 		}
 
