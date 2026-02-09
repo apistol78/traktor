@@ -20,7 +20,6 @@ set LUA_SDK=%TRAKTOR_HOME%\3rdp\lua\lua-5.4.8
 set LZF_SDK=%TRAKTOR_HOME%\3rdp\liblzf\liblzf-3.6
 set MIKKTSPACE_SDK=%TRAKTOR_HOME%\3rdp\MikkTSpace
 set OGG_SDK=%TRAKTOR_HOME%\3rdp\ogg
-::set P4_SDK=%TRAKTOR_HOME%\3rdp\p4api-linux\p4api-2022.1.2305383
 set PNG_SDK=%TRAKTOR_HOME%\3rdp\libpng
 set RAPIDJSON_SDK=%TRAKTOR_HOME%\3rdp\rapidjson
 set RECAST_SDK=%TRAKTOR_HOME%\3rdp\recastnavigation
@@ -41,6 +40,7 @@ set MINIMP3_SDK=%TRAKTOR_HOME%\3rdp\minimp3
 set MIMALLOC_SDK=%TRAKTOR_HOME%\3rdp\mimalloc
 set UFBX_SDK=%TRAKTOR_HOME%\3rdp\ufbx
 set JOLT_SDK=%TRAKTOR_HOME%\3rdp\JoltPhysics
+set LEMON_SDK=%TRAKTOR_HOME%\3rdp\lemon
 
 :: Vulkan SDK
 if not defined VULKAN_SDK (

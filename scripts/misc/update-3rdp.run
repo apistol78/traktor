@@ -177,29 +177,37 @@ function update(pkg)
 			stdout:printLn("Path \"" .. pkg.name .. "\" already exist; assuming up to date.")
 			return true
 		end
-
-		local file = pkg.url:match(".+/(.*)")
-		if file == nil then
-			stderr:printLn("Unable to extract file name from url " .. pkg.url)
-			return false
-		end
-
-		stdout:printLn("Downloading " .. file .. " into " .. pkg.name .. " ...")
+		
+		local urls = {}
+		if type(pkg.url) == "table" then urls = pkg.url; else urls = { pkg.url }; end
 
 		run:mkdir(pkg.name)
-		run:pushd(pkg.name)
-		local result
-		if pkg.target == nil then
-			result = run:execute(WGET .. " " .. pkg.url)
-		else
-			result = run:execute(WGET .. " -O " .. pkg.target .. " " .. pkg.url)
-		end
-		run:popd()
 
-		if result ~= 0 then
-			stderr:printLn("GET failed \"" .. pkg.url .. "\", error code " .. result)
-			run:rmdir(pkg.name)
-			return false
+		for _, url in pairs(urls) do
+			local file = (url.url or url):match(".+/(.*)")
+			if file == nil then
+				stderr:printLn("Unable to extract file name from url " .. url)
+				return false
+			end
+
+			stdout:printLn("Downloading " .. file .. " into " .. pkg.name .. " ...")
+			run:pushd(pkg.name)
+
+			local result
+			if url.target ~= nil then
+				result = run:execute(WGET .. " -O " .. url.target .. " " .. url.url)
+			elseif pkg.target ~= nil then
+				result = run:execute(WGET .. " -O " .. pkg.target .. " " .. url)
+			else
+				result = run:execute(WGET .. " " .. url)
+			end
+
+			run:popd()
+
+			if result ~= 0 then
+				stderr:printLn("GET failed \"" .. url .. "\", error code " .. result)
+				return false
+			end
 		end
 
 		if pkg.patch ~= nil then

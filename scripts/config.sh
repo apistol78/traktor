@@ -25,7 +25,6 @@ export LUA_SDK=$TRAKTOR_HOME/3rdp/lua/lua-5.4.8
 export LZF_SDK=$TRAKTOR_HOME/3rdp/liblzf/liblzf-3.6
 export MIKKTSPACE_SDK=$TRAKTOR_HOME/3rdp/MikkTSpace
 export OGG_SDK=$TRAKTOR_HOME/3rdp/ogg
-#export P4_SDK=$TRAKTOR_HOME/3rdp/p4api-linux/p4api
 export PNG_SDK=$TRAKTOR_HOME/3rdp/libpng
 export RAPIDJSON_SDK=$TRAKTOR_HOME/3rdp/rapidjson
 export RECAST_SDK=$TRAKTOR_HOME/3rdp/recastnavigation
@@ -45,6 +44,7 @@ export MINIMP3_SDK=$TRAKTOR_HOME/3rdp/minimp3
 export MIMALLOC_SDK=$TRAKTOR_HOME/3rdp/mimalloc
 export UFBX_SDK=$TRAKTOR_HOME/3rdp/ufbx
 export JOLT_SDK=$TRAKTOR_HOME/3rdp/JoltPhysics
+export LEMON_SDK=$TRAKTOR_HOME/3rdp/lemon
 
 # Vulkan SDK
 # - cleanup Extern and add Extern.vulkan which contain all paths,
