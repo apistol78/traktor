@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,7 +35,7 @@ Ref< Mesh > MeshReader::read(IStream* stream, const AlignedVector< AuxPatch >& p
 
 	uint32_t version;
 	reader >> version;
-	if (version != 7)
+	if (version != 8)
 		return nullptr;
 
 	// Read vertex declaration.
@@ -158,6 +158,7 @@ Ref< Mesh > MeshReader::read(IStream* stream, const AlignedVector< AuxPatch >& p
 		reader >> parts[i].primitives.offset;
 		reader >> parts[i].primitives.count;
 		reader >> parts[i].primitives.indexed;
+		reader >> parts[i].raytracing;
 	}
 
 	mesh->setParts(parts);

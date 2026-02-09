@@ -200,6 +200,7 @@ bool InstanceMeshConverter::convert(
 			render::PrimitiveType::Triangles,
 			0,
 			(uint32_t)model->getPolygons().size());
+		meshPart.raytracing = true;
 		meshParts.push_back(meshPart);
 
 		world::HWRT_Material* vptr = (world::HWRT_Material*)renderMesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();

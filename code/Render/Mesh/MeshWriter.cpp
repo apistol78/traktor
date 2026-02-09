@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,7 +21,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 {
 	Writer writer(stream);
 
-	writer << (uint32_t)7;
+	writer << (uint32_t)8;
 
 	// Write vertex buffer.
 	const auto& vertexElements = mesh->getVertexElements();
@@ -160,6 +160,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 		writer << parts[i].primitives.offset;
 		writer << parts[i].primitives.count;
 		writer << parts[i].primitives.indexed;
+		writer << (bool)parts[i].raytracing;
 	}
 
 	// Write bounding box.

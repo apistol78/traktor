@@ -271,6 +271,7 @@ bool SkinnedMeshConverter::convert(
 			render::PrimitiveType::Triangles,
 			0,
 			model->getPolygons().size());
+		meshPart.raytracing = true;
 		meshParts.push_back(meshPart);
 
 		world::HWRT_Material* vptr = (world::HWRT_Material*)mesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
