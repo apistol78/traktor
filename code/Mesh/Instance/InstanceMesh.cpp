@@ -79,7 +79,7 @@ void InstanceMesh::build(
 	render::RenderContext* renderContext = context.getRenderContext();
 
 	const AlignedVector< Part >& parts = it->second;
-	const auto& meshParts = m_renderMesh->getParts();
+	const auto& meshPrimitives = m_renderMesh->getPrimitives();
 
 	// Lazy create the buffers.
 	const uint32_t bufferItemCount = (uint32_t)alignUp(count, 16);
@@ -112,7 +112,7 @@ void InstanceMesh::build(
 
 		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getCascade() * parts.size() + i];
 
-		const auto& primitives = meshParts[part.meshPart].primitives;
+		const auto& primitives = meshPrimitives[part.meshPart];
 
 		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
 			str(L"InstanceMesh draw commands %d %d", worldRenderView.getCascade(), i));
@@ -157,7 +157,7 @@ void InstanceMesh::build(
 		renderBlock->indexType = m_renderMesh->getIndexType();
 		renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer()->getBufferView();
 		renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
-		renderBlock->primitive = meshParts[part.meshPart].primitives.type;
+		renderBlock->primitive = meshPrimitives[part.meshPart].type;
 		renderBlock->drawBuffer = drawBuffer->getBufferView();
 		renderBlock->drawCount = (uint32_t)count;
 

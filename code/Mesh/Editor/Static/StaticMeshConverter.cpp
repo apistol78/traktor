@@ -163,7 +163,7 @@ bool StaticMeshConverter::convert(
 #endif
 
 	// Build parts.
-	AlignedVector< render::Mesh::Part > meshParts;
+	AlignedVector< render::Primitives > meshPrimitives;
 	SmallMap< std::wstring, StaticMeshResource::parts_t > parts;
 
 	for (const auto& techniqueRange : techniqueRanges)
@@ -175,28 +175,25 @@ bool StaticMeshConverter::convert(
 		{
 			StaticMeshResource::Part part;
 			part.shaderTechnique = shaderTechnique;
-			part.meshPart = (uint32_t)meshParts.size();
+			part.meshPart = (uint32_t)meshPrimitives.size();
 
-			for (uint32_t k = 0; k < (uint32_t)meshParts.size(); ++k)
+			for (uint32_t k = 0; k < (uint32_t)meshPrimitives.size(); ++k)
 			{
 				if (
-					meshParts[k].primitives.offset == range.offsetFirst &&
-					meshParts[k].primitives.count == (range.offsetLast - range.offsetFirst) / 3)
+					meshPrimitives[k].offset == range.offsetFirst &&
+					meshPrimitives[k].count == (range.offsetLast - range.offsetFirst) / 3)
 				{
 					part.meshPart = k;
 					break;
 				}
 			}
 
-			if (part.meshPart >= meshParts.size())
+			if (part.meshPart >= meshPrimitives.size())
 			{
-				render::Mesh::Part meshPart;
-				meshPart.name = techniqueRange.first;
-				meshPart.primitives = render::Primitives::setIndexed(
+				meshPrimitives.push_back() = render::Primitives::setIndexed(
 					render::PrimitiveType::Triangles,
 					range.offsetFirst,
 					(range.offsetLast - range.offsetFirst) / 3);
-				meshParts.push_back(meshPart);
 			}
 
 			parts[worldTechnique].push_back(part);
@@ -204,16 +201,13 @@ bool StaticMeshConverter::convert(
 	}
 
 	// Add ray tracing part.
+	AlignedVector< render::RaytracingPrimitives > meshRaytracingPrimitives;
 	AlignedVector< resource::Id< render::ITexture > > albedoTextures;
 	{
-		render::Mesh::Part meshPart;
-		meshPart.name = L"__RT__";
-		meshPart.primitives = render::Primitives::setIndexed(
+		meshRaytracingPrimitives.push_back() = { render::Primitives::setIndexed(
 			render::PrimitiveType::Triangles,
 			0,
-			(uint32_t)model->getPolygons().size());
-		meshPart.raytracing = true;
-		meshParts.push_back(meshPart);
+			(uint32_t)model->getPolygons().size()), true };
 
 		world::HWRT_Material* vptr = (world::HWRT_Material*)renderMesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
 
@@ -283,7 +277,8 @@ bool StaticMeshConverter::convert(
 		renderMesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->unlock();
 	}
 
-	renderMesh->setParts(meshParts);
+	renderMesh->setPrimitives(meshPrimitives);
+	renderMesh->setRaytracingPrimitives(meshRaytracingPrimitives);
 	renderMesh->setBoundingBox(model->getBoundingBox());
 
 	if (!render::MeshWriter().write(meshResourceStream, renderMesh))

@@ -21,7 +21,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 {
 	Writer writer(stream);
 
-	writer << (uint32_t)8;
+	writer << (uint32_t)9;
 
 	// Write vertex buffer.
 	const auto& vertexElements = mesh->getVertexElements();
@@ -147,20 +147,35 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 		aux.second->unlock();
 	}
 
-	// Write parts.
-	const AlignedVector< Mesh::Part >& parts = mesh->getParts();
-
-	const uint32_t partCount = (uint32_t)parts.size();
-	writer << partCount;
-
-	for (unsigned int i = 0; i < partCount; ++i)
+	// Write primitives.
 	{
-		writer << parts[i].name;
-		writer << (int32_t)parts[i].primitives.type;
-		writer << parts[i].primitives.offset;
-		writer << parts[i].primitives.count;
-		writer << parts[i].primitives.indexed;
-		writer << (bool)parts[i].raytracing;
+		const AlignedVector< Primitives >& primitives = mesh->getPrimitives();
+
+		const uint32_t primitivesCount = (uint32_t)primitives.size();
+		writer << primitivesCount;
+
+		for (unsigned int i = 0; i < primitivesCount; ++i)
+		{
+			writer << (int32_t)primitives[i].type;
+			writer << primitives[i].offset;
+			writer << primitives[i].count;
+			writer << primitives[i].indexed;
+		}
+	}
+	{
+		const AlignedVector< RaytracingPrimitives >& rtp = mesh->getRaytracingPrimitives();
+
+		const uint32_t rtpCount = (uint32_t)rtp.size();
+		writer << rtpCount;
+
+		for (unsigned int i = 0; i < rtpCount; ++i)
+		{
+			writer << (int32_t)rtp[i].primitives.type;
+			writer << rtp[i].primitives.offset;
+			writer << rtp[i].primitives.count;
+			writer << rtp[i].primitives.indexed;
+			writer << rtp[i].opaque;
+		}
 	}
 
 	// Write bounding box.

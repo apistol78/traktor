@@ -223,7 +223,7 @@ bool SkinnedMeshConverter::convert(
 	mesh->getIndexBuffer()->unlock();
 
 	// Build parts.
-	AlignedVector< render::Mesh::Part > meshParts;
+	AlignedVector< render::Primitives > meshPrimitives;
 	SmallMap< std::wstring, SkinnedMeshResource::parts_t > parts;
 
 	for (std::map< std::wstring, AlignedVector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)
@@ -235,27 +235,25 @@ bool SkinnedMeshConverter::convert(
 		{
 			SkinnedMeshResource::Part part;
 			part.shaderTechnique = shaderTechnique;
-			part.meshPart = uint32_t(meshParts.size());
+			part.meshPart = uint32_t(meshPrimitives.size());
 
-			for (uint32_t k = 0; k < uint32_t(meshParts.size()); ++k)
+			for (uint32_t k = 0; k < uint32_t(meshPrimitives.size()); ++k)
 			{
 				if (
-					meshParts[k].primitives.offset == j->offsetFirst &&
-					meshParts[k].primitives.count == (j->offsetLast - j->offsetFirst) / 3)
+					meshPrimitives[k].offset == j->offsetFirst &&
+					meshPrimitives[k].count == (j->offsetLast - j->offsetFirst) / 3)
 				{
 					part.meshPart = k;
 					break;
 				}
 			}
 
-			if (part.meshPart >= meshParts.size())
+			if (part.meshPart >= meshPrimitives.size())
 			{
-				render::Mesh::Part meshPart;
-				meshPart.primitives = render::Primitives::setIndexed(
+				meshPrimitives.push_back() = render::Primitives::setIndexed(
 					render::PrimitiveType::Triangles,
 					j->offsetFirst,
 					(j->offsetLast - j->offsetFirst) / 3);
-				meshParts.push_back(meshPart);
 			}
 
 			parts[worldTechnique].push_back(part);
@@ -263,16 +261,13 @@ bool SkinnedMeshConverter::convert(
 	}
 
 	// Add ray tracing part.
+	AlignedVector< render::RaytracingPrimitives > meshRaytracingPrimitives;
 	AlignedVector< resource::Id< render::ITexture > > albedoTextures;
 	{
-		render::Mesh::Part meshPart;
-		meshPart.name = L"__RT__";
-		meshPart.primitives = render::Primitives::setIndexed(
+		meshRaytracingPrimitives.push_back() = { render::Primitives::setIndexed(
 			render::PrimitiveType::Triangles,
 			0,
-			model->getPolygons().size());
-		meshPart.raytracing = true;
-		meshParts.push_back(meshPart);
+			(uint32_t)model->getPolygons().size()), true };
 
 		world::HWRT_Material* vptr = (world::HWRT_Material*)mesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
 
@@ -342,7 +337,8 @@ bool SkinnedMeshConverter::convert(
 		mesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->unlock();
 	}
 
-	mesh->setParts(meshParts);
+	mesh->setPrimitives(meshPrimitives);
+	mesh->setRaytracingPrimitives(meshRaytracingPrimitives);
 	mesh->setBoundingBox(model->getBoundingBox());
 
 	if (!render::MeshWriter().write(meshResourceStream, mesh))

@@ -35,7 +35,7 @@ Ref< Mesh > MeshReader::read(IStream* stream, const AlignedVector< AuxPatch >& p
 
 	uint32_t version;
 	reader >> version;
-	if (version != 8)
+	if (version != 9)
 		return nullptr;
 
 	// Read vertex declaration.
@@ -143,25 +143,46 @@ Ref< Mesh > MeshReader::read(IStream* stream, const AlignedVector< AuxPatch >& p
 		mesh->getAuxBuffer(aux.first)->unlock();
 	}
 
-	uint32_t partCount;
-	reader >> partCount;
-
-	AlignedVector< Mesh::Part > parts;
-	parts.resize(partCount);
-
-	int32_t primitiveType;
-	for (uint32_t i = 0; i < partCount; ++i)
 	{
-		reader >> parts[i].name;
-		reader >> primitiveType;
-		parts[i].primitives.type = PrimitiveType(primitiveType);
-		reader >> parts[i].primitives.offset;
-		reader >> parts[i].primitives.count;
-		reader >> parts[i].primitives.indexed;
-		reader >> parts[i].raytracing;
+		uint32_t primitivesCount;
+		reader >> primitivesCount;
+
+		AlignedVector< Primitives > primitives;
+		primitives.resize(primitivesCount);
+
+		int32_t primitiveType;
+		for (uint32_t i = 0; i < primitivesCount; ++i)
+		{
+			reader >> primitiveType;
+			primitives[i].type = PrimitiveType(primitiveType);
+			reader >> primitives[i].offset;
+			reader >> primitives[i].count;
+			reader >> primitives[i].indexed;
+		}
+
+		mesh->setPrimitives(primitives);
 	}
 
-	mesh->setParts(parts);
+	{
+		uint32_t rtpCount;
+		reader >> rtpCount;
+
+		AlignedVector< RaytracingPrimitives > rtp;
+		rtp.resize(rtpCount);
+
+		int32_t primitiveType;
+		for (uint32_t i = 0; i < rtpCount; ++i)
+		{
+			reader >> primitiveType;
+			rtp[i].primitives.type = PrimitiveType(primitiveType);
+			reader >> rtp[i].primitives.offset;
+			reader >> rtp[i].primitives.count;
+			reader >> rtp[i].primitives.indexed;
+			reader >> rtp[i].opaque;
+		}
+
+		mesh->setRaytracingPrimitives(rtp);
+	}
 
 	float ext[6];
 	reader >> ext[0];

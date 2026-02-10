@@ -76,20 +76,13 @@ void SkinnedMesh::buildAccelerationStructure(
 	// Rebuild acceleration structure.
 	auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"SkinnedMesh update AS");
 	rb->lambda = [=, this](render::IRenderView* renderView) {
-		AlignedVector< render::RaytracingPrimitives > primitives;
-		for (const auto& part : m_mesh->getParts())
-		{
-			if (part.raytracing)
-				primitives.push_back({ part.primitives, true });
-		}
-
 		renderView->writeAccelerationStructure(
 			accelerationStructure,
 			skinBuffer->getBufferView(),
 			m_rtVertexLayout,
 			m_mesh->getIndexBuffer()->getBufferView(),
 			m_mesh->getIndexType(),
-			primitives);
+			m_mesh->getRaytracingPrimitives());
 	};
 	renderContext->compute(rb);
 }
@@ -125,7 +118,7 @@ void SkinnedMesh::build(
 	programParams->endParameters(renderContext);
 
 	// Draw each technique part.
-	const auto& meshParts = m_mesh->getParts();
+	const auto& meshPrimitives = m_mesh->getPrimitives();
 	for (const auto& part : it->second)
 	{
 		auto permutation = worldRenderPass.getPermutation(m_shader);
@@ -142,7 +135,7 @@ void SkinnedMesh::build(
 		renderBlock->indexType = m_mesh->getIndexType();
 		renderBlock->vertexBuffer = (m_mesh->getVertexBuffer() != nullptr) ? m_mesh->getVertexBuffer()->getBufferView() : nullptr;
 		renderBlock->vertexLayout = m_mesh->getVertexLayout();
-		renderBlock->primitives = meshParts[part.meshPart].primitives;
+		renderBlock->primitives = meshPrimitives[part.meshPart];
 
 		renderContext->draw(
 			sp.priority,
@@ -191,19 +184,12 @@ Ref< render::IAccelerationStructure > SkinnedMesh::createAccelerationStructure(r
 	if (!renderSystem->supportRayTracing())
 		return nullptr;
 
-	AlignedVector< render::RaytracingPrimitives > primitives;
-	for (const auto& part : m_mesh->getParts())
-	{
-		if (part.raytracing)
-			primitives.push_back({ part.primitives, true });
-	}
-
 	return renderSystem->createAccelerationStructure(
 		m_mesh->getAuxBuffer(SkinnedMesh::c_fccSkinPosition),
 		m_rtVertexLayout,
 		m_mesh->getIndexBuffer(),
 		m_mesh->getIndexType(),
-		primitives,
+		m_mesh->getRaytracingPrimitives(),
 		true);
 }
 

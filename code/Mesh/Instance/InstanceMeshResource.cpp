@@ -95,19 +95,12 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 
 	if (renderSystem->supportRayTracing())
 	{
-		AlignedVector< render::RaytracingPrimitives > primitives;
-		for (const auto& part : renderMesh->getParts())
-		{
-			if (part.raytracing)
-				primitives.push_back({ part.primitives, true });
-		}
-
 		instanceMesh->m_rtAccelerationStructure = renderSystem->createAccelerationStructure(
 			renderMesh->getVertexBuffer(),
 			renderMesh->getVertexLayout(),
 			renderMesh->getIndexBuffer(),
 			renderMesh->getIndexType(),
-			primitives,
+			renderMesh->getRaytracingPrimitives(),
 			false);
 		if (!instanceMesh->m_rtAccelerationStructure)
 		{

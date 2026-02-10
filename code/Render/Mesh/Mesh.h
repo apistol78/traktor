@@ -38,13 +38,6 @@ class T_DLLCLASS Mesh : public Object
 	T_RTTI_CLASS;
 
 public:
-	struct Part
-	{
-		std::wstring name;
-		Primitives primitives;
-		bool raytracing = false;
-	};
-
 	void setVertexElements(const AlignedVector< VertexElement >& vertexDeclaration);
 
 	void setVertexLayout(const IVertexLayout* vertexLayout);
@@ -59,7 +52,9 @@ public:
 
 	void setAuxBuffers(const SmallMap< FourCC, Ref< Buffer > >& auxBuffers);
 
-	void setParts(const AlignedVector< Part >& parts);
+	void setPrimitives(const AlignedVector< Primitives >& primitives);
+
+	void setRaytracingPrimitives(const AlignedVector< RaytracingPrimitives >& primitives);
 
 	void setBoundingBox(const Aabb3& boundingBox);
 	
@@ -77,7 +72,9 @@ public:
 
 	const SmallMap< FourCC, Ref< Buffer > >& getAuxBuffers() const { return m_auxBuffers; }
 
-	const AlignedVector< Part >& getParts() const { return m_parts; }
+	const AlignedVector< Primitives >& getPrimitives() const { return m_primitives; }
+
+	const AlignedVector< RaytracingPrimitives >& getRaytracingPrimitives() const { return m_raytracingPrimitives; }
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
@@ -88,7 +85,8 @@ private:
 	IndexType m_indexType;
 	Ref< Buffer > m_indexBuffer;
 	SmallMap< FourCC, Ref< Buffer > > m_auxBuffers;
-	AlignedVector< Part > m_parts;
+	AlignedVector< Primitives > m_primitives;
+	AlignedVector< RaytracingPrimitives > m_raytracingPrimitives;
 	Aabb3 m_boundingBox;
 };
 
