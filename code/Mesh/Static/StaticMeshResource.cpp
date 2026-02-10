@@ -94,11 +94,11 @@ Ref< IMesh > StaticMeshResource::createMesh(
 	// Create ray tracing structures.
 	if (renderSystem->supportRayTracing())
 	{
-		AlignedVector< render::Primitives > primitives;
+		AlignedVector< render::RaytracingPrimitives > primitives;
 		for (const auto& part : renderMesh->getParts())
 		{
 			if (part.raytracing)
-				primitives.push_back(part.primitives);
+				primitives.push_back({ part.primitives, true });
 		}
 
 		staticMesh->m_rtAccelerationStructure = renderSystem->createAccelerationStructure(

@@ -326,11 +326,11 @@ void SplineComponent::update(const world::UpdateParams& update)
 
 							vertexAttributes->unlock();
 
-							AlignedVector< render::Primitives > primitives;
-							primitives.push_back(render::Primitives::setIndexed(
+							AlignedVector< render::RaytracingPrimitives > primitives;
+							primitives.push_back({ render::Primitives::setIndexed(
 								render::PrimitiveType::Triangles,
 								0,
-								nindices / 3));
+								nindices / 3), true });
 
 							Ref< render::IAccelerationStructure > blas = m_renderSystem->createAccelerationStructure(m_vertexBuffer, m_vertexLayout, m_indexBuffer, render::IndexType::UInt32, primitives, false);
 							if (blas != nullptr)

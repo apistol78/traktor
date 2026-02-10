@@ -304,7 +304,7 @@ Ref< IAccelerationStructure > RenderSystemVrfy::createTopLevelAccelerationStruct
 	return new AccelerationStructureVrfy(as);
 }
 
-Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives, bool dynamic)
+Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic)
 {
 	T_CAPTURE_TRACE(L"createAccelerationStructure");
 

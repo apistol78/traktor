@@ -659,6 +659,13 @@ struct Primitives
 	}
 };
 
+/*! Raytracing primitives. */
+struct RaytracingPrimitives
+{
+	Primitives primitives;
+	bool opaque;
+};
+
 /*! Copy region. */
 struct Region
 {

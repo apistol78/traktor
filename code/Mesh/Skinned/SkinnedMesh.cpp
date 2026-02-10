@@ -76,11 +76,11 @@ void SkinnedMesh::buildAccelerationStructure(
 	// Rebuild acceleration structure.
 	auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"SkinnedMesh update AS");
 	rb->lambda = [=, this](render::IRenderView* renderView) {
-		AlignedVector< render::Primitives > primitives;
+		AlignedVector< render::RaytracingPrimitives > primitives;
 		for (const auto& part : m_mesh->getParts())
 		{
 			if (part.raytracing)
-				primitives.push_back(part.primitives);
+				primitives.push_back({ part.primitives, true });
 		}
 
 		renderView->writeAccelerationStructure(
@@ -191,11 +191,11 @@ Ref< render::IAccelerationStructure > SkinnedMesh::createAccelerationStructure(r
 	if (!renderSystem->supportRayTracing())
 		return nullptr;
 
-	AlignedVector< render::Primitives > primitives;
+	AlignedVector< render::RaytracingPrimitives > primitives;
 	for (const auto& part : m_mesh->getParts())
 	{
 		if (part.raytracing)
-			primitives.push_back(part.primitives);
+			primitives.push_back({ part.primitives, true });
 	}
 
 	return renderSystem->createAccelerationStructure(

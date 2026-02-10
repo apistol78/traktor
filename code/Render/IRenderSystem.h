@@ -151,7 +151,7 @@ public:
 	virtual Ref< IAccelerationStructure > createTopLevelAccelerationStructure(uint32_t numInstances) = 0;
 
 	/*! */
-	virtual Ref< IAccelerationStructure > createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives, bool dynamic) = 0;
+	virtual Ref< IAccelerationStructure > createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic) = 0;
 
 	/*! Create program from program resource.
 	 *

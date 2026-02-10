@@ -37,13 +37,13 @@ public:
 
 	static Ref< AccelerationStructureVk > createTopLevel(Context* context, uint32_t numInstances, uint32_t inFlightCount);
 
-	static Ref< AccelerationStructureVk > createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives, bool dynamic);
+	static Ref< AccelerationStructureVk > createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic);
 
 	virtual void destroy() override final;
 
 	bool writeInstances(CommandBuffer* commandBuffer, const AlignedVector< Instance >& instances);
 
-	bool writeGeometry(CommandBuffer* commandBuffer, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives);
+	bool writeGeometry(CommandBuffer* commandBuffer, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives);
 
 	const VkAccelerationStructureKHR& getVkAccelerationStructureKHR() const { return m_as; }
 

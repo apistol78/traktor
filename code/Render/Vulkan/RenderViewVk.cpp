@@ -1387,7 +1387,7 @@ void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerati
 	as->writeInstances(m_frames[m_currentImageIndex].graphicsCommandBuffer, instances);
 }
 
-void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
+void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives)
 {
 	AccelerationStructureVk* as = mandatory_non_null_type_cast< AccelerationStructureVk* >(accelerationStructure);
 	as->writeGeometry(m_frames[m_currentImageIndex].graphicsCommandBuffer, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives);

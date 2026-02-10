@@ -463,7 +463,7 @@ void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelera
 	m_renderView->writeAccelerationStructure(as->getWrappedAS(), unwrappedInstances);
 }
 
-void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
+void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives)
 {
 	T_CAPTURE_TRACE(L"writeAccelerationStructure");
 	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");

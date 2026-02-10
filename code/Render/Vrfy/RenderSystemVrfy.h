@@ -89,7 +89,7 @@ public:
 
 	virtual Ref< IAccelerationStructure > createTopLevelAccelerationStructure(uint32_t numInstances) override final;
 
-	virtual Ref< IAccelerationStructure > createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives, bool dynamic) override final;
+	virtual Ref< IAccelerationStructure > createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic) override final;
 
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) override final;
 

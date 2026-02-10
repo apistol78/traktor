@@ -172,7 +172,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 	return as;
 }
 
-Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives, bool dynamic)
+Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic)
 {
 	auto commandBuffer = context->getGraphicsQueue()->acquireCommandBuffer(L"AccelerationStructureVk::createBottomLevel");
 
@@ -292,7 +292,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 	return true;
 }
 
-bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
+bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives)
 {
 	bool recreateAS = false;
 	VkResult result;
@@ -435,15 +435,17 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 	bottomLevelAccelerationStructureBuildGeometryInfo.scratchData.deviceAddress = alignUp(m_scratchBuffer->getDeviceAddress(), m_scratchAlignment);
 
 	AlignedVector< VkAccelerationStructureBuildRangeInfoKHR > buildRanges;
-	for (const auto& primitive : primitives)
+	for (const auto& rtp : primitives)
 	{
+		const auto& primitives = rtp.primitives;
+
 		if (
-			primitive.type != PrimitiveType::Triangles ||
-			primitive.indexed == false)
+			primitives.type != PrimitiveType::Triangles ||
+			primitives.indexed == false)
 			continue;
 
-		buildRanges.push_back({ .primitiveCount = primitive.count,
-			.primitiveOffset = primitive.offset * ((indexType == IndexType::UInt32) ? 4 : 2),
+		buildRanges.push_back({ .primitiveCount = primitives.count,
+			.primitiveOffset = primitives.offset * ((indexType == IndexType::UInt32) ? 4 : 2),
 			.firstVertex = 0,
 			.transformOffset = 0 });
 	}
