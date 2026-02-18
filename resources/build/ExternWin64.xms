@@ -2158,7 +2158,6 @@
 								</includePaths>
 								<definitions>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
-									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -2191,7 +2190,6 @@
 								</includePaths>
 								<definitions>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
-									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -2224,7 +2222,6 @@
 								</includePaths>
 								<definitions>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
-									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -2248,7 +2245,6 @@
 								</includePaths>
 								<definitions>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
-									<item>Z_SOLO</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
