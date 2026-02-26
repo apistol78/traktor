@@ -116,8 +116,14 @@ bool WorldRendererShared::create(
 
 	// Create default value textures.
 	m_blackTexture = create1x1Texture(renderSystem, 0x00000000);
+	if (!m_blackTexture)
+		return false;
 	m_whiteTexture = create1x1Texture(renderSystem, 0xffffffff);
+	if (!m_whiteTexture)
+		return false;
 	m_blackCubeTexture = createCubeTexture(renderSystem, 0x00000000);
+	if (!m_blackCubeTexture)
+		return false;
 
 	// Lights struct buffer.
 	for (int32_t i = 0; i < sizeof_array(m_state); ++i)

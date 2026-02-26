@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -145,7 +145,7 @@ void WorldRendererForward::setup(
 	// m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, render::RGTexture::Invalid, outputTargetSetId);
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, render::RGTexture::Invalid, outputTargetSetId);
+	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, m_blackCubeTexture, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, render::RGTexture::Invalid, outputTargetSetId);
 
 	render::RGTargetSet shadowMapAtlasTargetSetId;
 	setupLightPass(
@@ -164,7 +164,7 @@ void WorldRendererForward::setup(
 		reflectionsTargetSetId,
 		shadowMapAtlasTargetSetId);
 
-	m_postProcessPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
+	m_postProcessPass->setup(worldRenderView, m_gatheredView, count, m_whiteTexture, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
 
 	m_state[worldRenderView.getIndex()].count++;
 }

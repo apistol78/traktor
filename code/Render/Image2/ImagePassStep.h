@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -79,7 +79,7 @@ protected:
 
 	void addInputs(const ImageGraphContext& context, RenderPass& pass) const;
 
-	void bindSources(const ImageGraphContext& context, const RenderGraph& renderGraph, ProgramParameters* programParameters) const;
+	bool bindSources(const ImageGraphContext& context, const RenderGraph& renderGraph, ProgramParameters* programParameters) const;
 };
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,6 +17,7 @@
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
 #include "Render/IRenderTargetSet.h"
+#include "Render/ITexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity/LightComponent.h"
@@ -87,6 +88,7 @@ render::RGTargetSet RTReflectionsPass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
 	const render::Buffer* lightSBuffer,
+	render::ITexture* blackCubeTexture,
 	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
@@ -168,6 +170,12 @@ render::RGTargetSet RTReflectionsPass::setup(
 			params->setFloatParameter(ShaderParameter::ProbeIntensity, probe->getIntensity());
 			params->setFloatParameter(ShaderParameter::ProbeTextureMips, (float)probe->getTexture()->getSize().mips);
 			params->setTextureParameter(ShaderParameter::ProbeTexture, probe->getTexture());
+		}
+		else
+		{
+			params->setFloatParameter(ShaderParameter::ProbeIntensity, 0.0f);
+			params->setFloatParameter(ShaderParameter::ProbeTextureMips, 0.0f);
+			params->setTextureParameter(ShaderParameter::ProbeTexture, blackCubeTexture);
 		}
 
 		if (lightSBuffer != nullptr)

@@ -45,6 +45,7 @@ render::RGTargetSet ReflectionsPass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
 	const render::Buffer* lightSBuffer,
+	render::ITexture* blackCubeTexture,
 	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
@@ -56,7 +57,7 @@ render::RGTargetSet ReflectionsPass::setup(
 	render::RGTargetSet outputTargetSetId) const
 {
 	if (m_rt != nullptr)
-		return m_rt->setup(worldRenderView, gatheredView, lightSBuffer, needJitter, frameCount, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, outputTargetSetId);
+		return m_rt->setup(worldRenderView, gatheredView, lightSBuffer, blackCubeTexture, needJitter, frameCount, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, outputTargetSetId);
 	else if (m_ss != nullptr)
 		return m_ss->setup(worldRenderView, gatheredView, lightSBuffer, needJitter, frameCount, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualReadTargetSetId, velocityTargetSetId, outputTargetSetId);
 	else

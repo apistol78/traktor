@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,6 +18,7 @@ namespace traktor::render
 class Buffer;
 class ImageGraph;
 class IRenderSystem;
+class ITexture;
 class RenderGraph;
 class ScreenRenderer;
 class Shader;
@@ -53,6 +54,7 @@ public:
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
 		const render::Buffer* lightSBuffer,
+		render::ITexture* blackCubeTexture,
 		bool needJitter,
 		uint32_t frameCount,
 		render::RenderGraph& renderGraph,

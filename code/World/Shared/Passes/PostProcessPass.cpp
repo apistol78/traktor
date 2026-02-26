@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2025 Anders Pistol.
+ * Copyright (c) 2023-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -162,6 +162,7 @@ void PostProcessPass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
 	uint32_t frameCount,
+	render::ITexture* whiteTexture,
 	render::RenderGraph& renderGraph,
 	render::RGTargetSet gbufferTargetSetId,
 	render::RGTargetSet velocityTargetSetId,
@@ -184,7 +185,7 @@ void PostProcessPass::setup(
 	igctx.associateTextureTargetSet(ShaderParameter::InputDepth, gbufferTargetSetId, 0);
 	igctx.associateTextureTargetSet(ShaderParameter::InputNormal, gbufferTargetSetId, 1);
 	igctx.associateTextureTargetSet(ShaderParameter::InputVelocity, velocityTargetSetId, 0);
-	igctx.associateExplicitTexture(ShaderParameter::InputColorGrading, m_colorGrading);
+	igctx.associateExplicitTexture(ShaderParameter::InputColorGrading, (bool)(m_colorGrading != nullptr) ? m_colorGrading.getResource() : whiteTexture);
 	igctx.setTechniqueFlag(ShaderPermutation::ColorGradingEnable, (bool)(m_colorGrading != nullptr));
 	igctx.setTechniqueFlag(ShaderPermutation::HDR, m_hdr);
 

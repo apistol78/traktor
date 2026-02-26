@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -108,15 +108,18 @@ void ShadowProject::build(
 	pp->setMatrixParameter(s_handleViewToLight, view.viewToLight);
 	pp->setTextureParameter(s_handleShadowMapDiscRotation, m_shadowMapDiscRotation[view.frame & 1]);
 
-	bindSources(context, renderGraph, pp);
+	const bool bindResult = bindSources(context, renderGraph, pp);
 
 	pp->endParameters(renderContext);
 
 	// Draw fullscreen quad with shader.
-	Shader::Permutation permutation;
-	context.applyTechniqueFlags(m_shader, permutation);
-	m_shader->setCombination(s_handleLastSlice, (bool)(view.sliceIndex >= (view.sliceCount - 1)), permutation);
-	screenRenderer->draw(renderContext, m_shader, permutation, pp);
+	if (bindResult)
+	{
+		Shader::Permutation permutation;
+		context.applyTechniqueFlags(m_shader, permutation);
+		m_shader->setCombination(s_handleLastSlice, (bool)(view.sliceIndex >= (view.sliceCount - 1)), permutation);
+		screenRenderer->draw(renderContext, m_shader, permutation, pp);
+	}
 }
 
 }
