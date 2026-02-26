@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,17 +14,15 @@
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/MergeCoplanarAdjacents.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 const float c_planarAngleThreshold = deg2rad(0.1f);
 const float c_vertexDistanceThreshold = 0.001f;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.MergeCoplanarAdjacents", MergeCoplanarAdjacents, IModelOperation)
 
@@ -169,5 +167,4 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 	return true;
 }
 
-	}
 }
