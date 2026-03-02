@@ -301,6 +301,10 @@
 			<second>$(Images.Path)/Scene/ToggleGuide.svg</second>
 		</item>
 		<item>
+			<first>Scene.ToggleRayTracing</first>
+			<second>$(Images.Path)/Scene/ToggleRayTracing.svg</second>
+		</item>
+		<item>
 			<first>Scene.Translate</first>
 			<second>$(Images.Path)/Scene/Translate.svg</second>
 		</item>

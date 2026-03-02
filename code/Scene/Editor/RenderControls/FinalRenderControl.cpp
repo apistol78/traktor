@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -76,7 +76,6 @@ FinalRenderControl::FinalRenderControl()
 	, m_fieldOfView(c_defaultFieldOfView)
 	, m_mouseWheelRate(c_defaultMouseWheelRate)
 	, m_multiSample(c_defaultMultiSample)
-	, m_invertPanY(false)
 	, m_dirtySize(0, 0)
 {
 }
@@ -245,6 +244,17 @@ bool FinalRenderControl::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.SettingsChanged")
 		updateSettings();
+	else if (command == L"Scene.Editor.EnableRayTracing")
+	{
+		m_rayTracingEnable = true;
+		updateWorldRenderer();
+	}
+	else if (command == L"Scene.Editor.DisableRayTracing")
+	{
+		m_rayTracingEnable = false;
+		updateWorldRenderer();
+	}
+
 	return false;
 }
 
@@ -351,6 +361,7 @@ void FinalRenderControl::updateWorldRenderer()
 	wcd.quality.antiAlias = m_antiAliasQuality;
 	wcd.quality.imageProcess = m_imageProcessQuality;
 	wcd.multiSample = m_multiSample;
+	wcd.rt = m_rayTracingEnable;
 
 	if (!worldRenderer->create(
 			m_context->getResourceManager(),

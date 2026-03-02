@@ -122,7 +122,7 @@
 			<outputPins/>
 			<script><![CDATA[
 #define USE_TEMPORAL_FILTER 1
-#define USE_SPATIAL_FILTER 1
+#define USE_SPATIAL_FILTER 0
 
 const int N = 2;
 const int Ndisclose = 16;
@@ -130,7 +130,7 @@ const int Nspatial = 16;
 const int K = 8;
 const float NormalThreshold = 0.95f;
 const float DepthThreshold = 10.0f;
-const float Far = 10.0f;
+const float Far = 30.0f;
 const float SpatialFilterRadius = 0.005f;
 const float SpatialFilterCoeff = 0.75f;
 
@@ -251,8 +251,10 @@ if (pt.x < sz.x && pt.y < sz.y)
 			{
 				const float roughness = $Roughness;
 				const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.25f;
-				const vec2 r = ((Hammersley(i, N) + jitter) * 2.0f - 1.0f) * roughness * roughness;
-				
+
+				const vec2 ruv = Hammersley(i, N) + jitter;
+				const vec2 r = UniformDisc(roughness * roughness, ruv);
+	
 				const vec3 rayOrigin = $Origin.xyz;
 				const vec3 rayDir = normalize($Direction.xyz + u * r.x + v * r.y);
 

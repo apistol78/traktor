@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -108,6 +108,7 @@ bool WorldRendererShared::create(
 	// Store settings.
 	m_settings = *desc.worldRenderSettings;
 	m_shadowsQuality = desc.quality.shadows;
+	m_rayTracingEnabled = desc.rt;
 
 	// Create screen renderer.
 	m_screenRenderer = new render::ScreenRenderer();
@@ -241,8 +242,13 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 		// Filter out components used to setup frame's lighting etc.
 		if (auto irradianceGridComponent = dynamic_type_cast< const IrradianceGridComponent* >(component))
 			m_gatheredView.irradianceGrid = irradianceGridComponent->getIrradianceGrid();
-		else if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
-			m_gatheredView.rtWorldTopLevel = rtWorldComponent->getTopLevel();
+		// If world raytracing is enabled we gather TLAS; if no TLAS
+		// paths should assume no RT is enabled.
+		else if (m_rayTracingEnabled)
+		{
+			if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
+				m_gatheredView.rtWorldTopLevel = rtWorldComponent->getTopLevel();
+		}
 	}
 
 	for (auto entity : world->getEntities())

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -74,6 +74,7 @@ private:
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::ToolBarButton > m_toolToggleGrid;
 	Ref< ui::ToolBarButton > m_toolToggleGuide;
+	Ref< ui::ToolBarButton > m_toolToggleRayTracing;
 	Ref< ui::ToolBarDropDown > m_toolView;
 	Ref< ui::ToolBarDropDown > m_toolAspect;
 	Ref< ui::ToolBarDropMenu > m_toolQualityMenu;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -71,8 +71,6 @@ CameraRenderControl::CameraRenderControl()
 	, m_motionBlurQuality(world::Quality::Disabled)
 	, m_ambientOcclusionQuality(world::Quality::Disabled)
 	, m_antiAliasQuality(world::Quality::Disabled)
-	, m_gridEnable(true)
-	, m_guideEnable(true)
 	, m_multiSample(c_defaultMultiSample)
 	, m_invertPanY(false)
 	, m_dirtySize(0, 0)
@@ -206,6 +204,16 @@ bool CameraRenderControl::handleCommand(const ui::Command& command)
 		m_guideEnable = true;
 	else if (command == L"Scene.Editor.DisableGuide")
 		m_guideEnable = false;
+	else if (command == L"Scene.Editor.EnableRayTracing")
+	{
+		m_rayTracingEnable = true;
+		updateWorldRenderer();
+	}
+	else if (command == L"Scene.Editor.DisableRayTracing")
+	{
+		m_rayTracingEnable = false;
+		updateWorldRenderer();
+	}
 
 	return result;
 }
@@ -277,6 +285,7 @@ void CameraRenderControl::updateWorldRenderer()
 	wcd.quality.imageProcess = m_imageProcessQuality;
 	wcd.multiSample = m_multiSample;
 	wcd.hdr = m_renderView->isHDR();
+	wcd.rt = m_rayTracingEnable;
 
 	if (!worldRenderer->create(
 			m_context->getResourceManager(),

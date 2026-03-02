@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,7 +20,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ReflectionsPass", ReflectionsPass, Object
 
 bool ReflectionsPass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
-	if (desc.quality.reflections >= Quality::High && renderSystem->supportRayTracing())
+	if (desc.quality.reflections >= Quality::High && desc.rt && renderSystem->supportRayTracing())
 	{
 		m_rt = new RTReflectionsPass();
 		if (!m_rt->create(resourceManager, renderSystem, desc))

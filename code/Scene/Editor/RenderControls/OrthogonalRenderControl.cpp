@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -89,8 +89,6 @@ OrthogonalRenderControl::OrthogonalRenderControl()
 	, m_motionBlurQuality(world::Quality::Disabled)
 	, m_ambientOcclusionQuality(world::Quality::Disabled)
 	, m_antiAliasQuality(world::Quality::Disabled)
-	, m_gridEnable(true)
-	, m_guideEnable(true)
 	, m_multiSample(0)
 	, m_viewPlane(PositiveX)
 	, m_viewFarZ(0.0f)
@@ -248,6 +246,16 @@ bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
 		m_guideEnable = true;
 	else if (command == L"Scene.Editor.DisableGuide")
 		m_guideEnable = false;
+	else if (command == L"Scene.Editor.EnableRayTracing")
+	{
+		m_rayTracingEnable = true;
+		updateWorldRenderer();
+	}
+	else if (command == L"Scene.Editor.DisableRayTracing")
+	{
+		m_rayTracingEnable = false;
+		updateWorldRenderer();
+	}
 
 	return result;
 }
@@ -372,6 +380,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	wcd.quality.antiAlias = m_antiAliasQuality;
 	wcd.multiSample = m_multiSample;
 	wcd.hdr = m_renderView->isHDR();
+	wcd.rt = m_rayTracingEnable;
 
 	// Prevent ultra AA quality since jitter cause orthogonal projection to be broken.
 	if (wcd.quality.antiAlias == world::Quality::Ultra)

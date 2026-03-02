@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -269,6 +269,16 @@ bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
 		m_guideEnable = true;
 	else if (command == L"Scene.Editor.DisableGuide")
 		m_guideEnable = false;
+	else if (command == L"Scene.Editor.EnableRayTracing")
+	{
+		m_rayTracingEnable = true;
+		updateWorldRenderer();
+	}
+	else if (command == L"Scene.Editor.DisableRayTracing")
+	{
+		m_rayTracingEnable = false;
+		updateWorldRenderer();
+	}
 
 	return result;
 }
@@ -424,6 +434,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	wcd.quality.imageProcess = m_imageProcessQuality;
 	wcd.multiSample = m_multiSample;
 	wcd.hdr = m_renderView->isHDR();
+	wcd.rt = m_rayTracingEnable;
 
 	if (!worldRenderer->create(
 			m_context->getResourceManager(),

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -116,6 +116,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGrid"));
 	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGuide"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleRayTracing"));
 
 	m_toolView = new ui::ToolBarDropDown(ui::Command(L"Scene.Editor.View"), 100_ut, i18n::Text(L"SCENE_EDITOR_VIEW_MODE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE"));
@@ -140,6 +141,13 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		i18n::Text(L"SCENE_EDITOR_TOGGLE_GUIDE"),
 		1,
 		ui::Command(1, L"Scene.Editor.ToggleGuide"),
+		guideEnable ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle
+	);
+
+	m_toolToggleRayTracing = new ui::ToolBarButton(
+		i18n::Text(L"SCENE_EDITOR_TOGGLE_RAYTRACING"),
+		2,
+		ui::Command(1, L"Scene.Editor.ToggleRayTracing"),
 		guideEnable ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle
 	);
 
@@ -256,6 +264,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(m_toolView);
 	m_toolBar->addItem(m_toolToggleGrid);
 	m_toolBar->addItem(m_toolToggleGuide);
+	m_toolBar->addItem(m_toolToggleRayTracing);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolAspect);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
@@ -282,6 +291,7 @@ void DefaultRenderControl::destroy()
 
 	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_viewId), m_toolToggleGrid->isToggled());
 	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_viewId), m_toolToggleGuide->isToggled());
+	settings->setProperty< PropertyBoolean >(L"Scene.Editor.RayTracingEnable" + toString(m_viewId), m_toolToggleRayTracing->isToggled());
 
 	m_context->getEditor()->commitGlobalSettings();
 	m_toolView = nullptr;
@@ -384,6 +394,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	// Enable all tools by default.
 	m_toolToggleGrid->setEnable(true);
 	m_toolToggleGuide->setEnable(true);
+	m_toolToggleRayTracing->setEnable(true);
 	m_toolView->setEnable(true);
 	m_toolAspect->setEnable(true);
 	m_toolQualityMenu->setEnable(true);
@@ -496,6 +507,11 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	else
 		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGuide"));
 
+	if (m_toolToggleRayTracing->isToggled())
+		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableRayTracing"));
+	else
+		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableRayTracing"));
+
 	m_renderControl->setQuality(
 		(world::Quality)getChecked(m_menuPostProcess)->getCommand().getId(),
 		(world::Quality)getChecked(m_menuShadows)->getCommand().getId(),
@@ -533,7 +549,7 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 
 	if (event->getCommand() == L"Scene.Editor.View")
 	{
-		int32_t selected = m_toolView->getSelected();
+		const int32_t selected = m_toolView->getSelected();
 		T_ASSERT(selected >= 0);
 		createRenderControl(selected);
 	}
@@ -551,43 +567,50 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 		else
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGuide"));
 	}
+	else if (event->getCommand() == L"Scene.Editor.ToggleRayTracing")
+	{
+		if (m_toolToggleRayTracing->isToggled())
+			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableRayTracing"));
+		else
+			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableRayTracing"));
+	}
 	else if (event->getCommand() == L"Scene.Editor.Aspect")
 	{
 		m_renderControl->setAspect(c_aspects[m_toolAspect->getSelected()]);
 	}
 	else if (event->getCommand() == L"Scene.Editor.PostProcessQuality")
 	{
-		for (int i = 0; i < m_menuPostProcess->count(); ++i)
+		for (int32_t i = 0; i < m_menuPostProcess->count(); ++i)
 			m_menuPostProcess->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}
 	else if (event->getCommand() == L"Scene.Editor.MotionBlurQuality")
 	{
-		for (int i = 0; i < m_menuMotionBlur->count(); ++i)
+		for (int32_t i = 0; i < m_menuMotionBlur->count(); ++i)
 			m_menuMotionBlur->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}
 	else if (event->getCommand() == L"Scene.Editor.ShadowQuality")
 	{
-		for (int i = 0; i < m_menuShadows->count(); ++i)
+		for (int32_t i = 0; i < m_menuShadows->count(); ++i)
 			m_menuShadows->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}
 	else if (event->getCommand() == L"Scene.Editor.ReflectionsQuality")
 	{
-		for (int i = 0; i < m_menuReflections->count(); ++i)
+		for (int32_t i = 0; i < m_menuReflections->count(); ++i)
 			m_menuReflections->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}
 	else if (event->getCommand() == L"Scene.Editor.AmbientOcclusionQuality")
 	{
-		for (int i = 0; i < m_menuAO->count(); ++i)
+		for (int32_t i = 0; i < m_menuAO->count(); ++i)
 			m_menuAO->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}
 	else if (event->getCommand() == L"Scene.Editor.AntiAliasQuality")
 	{
-		for (int i = 0; i < m_menuAA->count(); ++i)
+		for (int32_t i = 0; i < m_menuAA->count(); ++i)
 			m_menuAA->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}

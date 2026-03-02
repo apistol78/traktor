@@ -314,6 +314,10 @@
 			<second>Toggle post processing</second>
 		</item>
 		<item>
+			<first>SCENE_EDITOR_TOGGLE_RAYTRACING</first>
+			<second>Toggle raytracing</second>
+		</item>
+		<item>
 			<first>SCENE_EDITOR_TOGGLE_SNAP</first>
 			<second>Toggle snap</second>
 		</item>

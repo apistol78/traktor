@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -106,8 +106,9 @@ private:
 	world::Quality m_ambientOcclusionQuality;
 	world::Quality m_antiAliasQuality;
 	RenderControlModel m_model;
-	bool m_gridEnable;
-	bool m_guideEnable;
+	bool m_gridEnable = true;
+	bool m_guideEnable = true;
+	bool m_rayTracingEnable = true;
 	Color4ub m_colorClear;
 	Color4ub m_colorGrid;
 	Color4ub m_colorRef;
