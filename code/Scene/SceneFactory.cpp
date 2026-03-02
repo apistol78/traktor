@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -51,6 +51,11 @@ Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, 
 		return sceneResource->createScene(resourceManager, m_renderSystem, m_entityFactory);
 	else
 		return nullptr;
+}
+
+void SceneFactory::destroy(Object* resource) const
+{
+	mandatory_non_null_type_cast< Scene* >(resource)->destroy();
 }
 
 }

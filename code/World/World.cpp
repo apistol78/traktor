@@ -64,6 +64,11 @@ void World::setComponent(IWorldComponent* component)
 	m_components.push_back(component);
 }
 
+bool World::removeComponent(IWorldComponent* component)
+{
+	return m_components.remove(component);
+}
+
 IWorldComponent* World::getComponent(const TypeInfo& componentType) const
 {
 	for (auto component : m_components)
@@ -86,9 +91,6 @@ void World::addEntity(Entity* entity)
 
 void World::removeEntity(Entity* entity)
 {
-	if (entity->getWorld() == nullptr)
-		return;
-
 	T_FATAL_ASSERT(entity->getWorld() == this);
 	if (m_update)
 		m_deferredRemove.push_back(entity);

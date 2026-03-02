@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,6 +25,12 @@ LightClusterPass::LightClusterPass(
 )
 :   m_settings(settings)
 {
+}
+
+LightClusterPass::~LightClusterPass()
+{
+	T_FATAL_ASSERT(m_lightIndexSBuffer == nullptr);
+	T_FATAL_ASSERT(m_tileSBuffer == nullptr);
 }
 
 bool LightClusterPass::create(render::IRenderSystem* renderSystem)

@@ -63,6 +63,13 @@ public:
 	 */
 	void setComponent(IWorldComponent* component);
 
+	/*! Remove component from world.
+	 *
+	 * \param component Component instance.
+	 * \return True if component removed.
+	 */
+	bool removeComponent(IWorldComponent* component);
+
 	/*! Get component of type.
 	 *
 	 * \param componentType Type of component.

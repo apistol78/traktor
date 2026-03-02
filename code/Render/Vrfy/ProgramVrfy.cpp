@@ -29,12 +29,13 @@ ProgramVrfy::ProgramVrfy(ResourceTracker* resourceTracker, IProgram* program, co
 
 ProgramVrfy::~ProgramVrfy()
 {
+	T_CAPTURE_ASSERT(!m_program, L"Program not destroyed.");
 	m_resourceTracker->remove(this);
 }
 
 void ProgramVrfy::destroy()
 {
-	T_CAPTURE_ASSERT (m_program, L"Program already destroyed.");
+	T_CAPTURE_ASSERT(m_program, L"Program already destroyed.");
 	safeDestroy(m_program);
 }
 
@@ -301,7 +302,7 @@ void ProgramVrfy::verify()
 
 		if (TextureVrfy* textureVrfy = dynamic_type_cast< TextureVrfy* >(i->second->resolve()))
 		{
-			T_CAPTURE_ASSERT(textureVrfy->getTexture(), L"Trying to draw with destroyed texture " << getParameterName(i->first) << L" (" << m_tag << L").");
+			T_CAPTURE_ASSERT(textureVrfy->getTexture(), L"Trying to draw with destroyed texture in parameter " << getParameterName(i->first) << L" (" << m_tag << L").");
 			m_program->setTextureParameter(i->first, textureVrfy->getTexture());
 		}
 	}
@@ -315,7 +316,7 @@ void ProgramVrfy::verify()
 
 		if (TextureVrfy* textureVrfy = dynamic_type_cast< TextureVrfy* >(it.first->resolve()))
 		{
-			T_CAPTURE_ASSERT(textureVrfy->getTexture(), L"Trying to draw with destroyed image " << getParameterName(i->first) << L" (" << m_tag << L").");
+			T_CAPTURE_ASSERT(textureVrfy->getTexture(), L"Trying to draw with destroyed image in parameter " << getParameterName(i->first) << L" (" << m_tag << L").");
 			m_program->setImageViewParameter(i->first, textureVrfy->getTexture(), it.second);
 		}
 	}

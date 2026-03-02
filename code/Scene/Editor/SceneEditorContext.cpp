@@ -482,8 +482,10 @@ void SceneEditorContext::buildEntities()
 		}
 		else
 		{
-			// Create world and it's components.
+			// No world created yet; create new world.
 			world = new world::World(getResourceManager(), getRenderSystem());
+
+			// Create new set of world components.
 			for (auto worldComponentData : m_sceneAsset->getWorldComponents())
 			{
 				Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityFactory, world, nullptr);

@@ -10,6 +10,7 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Math/Random.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
@@ -82,6 +83,13 @@ bool RTReflectionsPass::create(resource::IResourceManager* resourceManager, rend
 
 	m_halfResolution = (bool)(desc.quality.reflections <= Quality::High);
 	return true;
+}
+
+void RTReflectionsPass::destroy()
+{
+	safeDestroy(m_screenRenderer);
+	m_reflectionsComputeShader.clear();
+	m_reflectionsDenoise.clear();
 }
 
 render::RGTargetSet RTReflectionsPass::setup(

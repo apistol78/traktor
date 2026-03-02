@@ -25,16 +25,22 @@ public:
 
 	void remove(const Object* resource);
 
-	void alive();
+	void snapshot();
+
+	void alive(const TypeInfo& resourceType, bool diff) const;
+
+	uint32_t count(const TypeInfo& resourceType) const;
 
 private:
 	struct Data
 	{
-		void* callstack[16] = { nullptr };
+		void* callstack[32] = { nullptr };
+		int32_t callstackDepth = 0;
 	};
 
-	Semaphore m_lock;
+	mutable Semaphore m_lock;
 	SmallMap< const Object*, Data > m_data;
+	SmallMap< const Object*, Data > m_snapshot;
 };
 
 }

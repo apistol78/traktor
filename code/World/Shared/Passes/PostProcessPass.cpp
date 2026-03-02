@@ -9,6 +9,7 @@
 #include "World/Shared/Passes/PostProcessPass.h"
 
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
@@ -156,6 +157,17 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 
 	m_hdr = desc.hdr;
 	return true;
+}
+
+void PostProcessPass::destroy()
+{
+	safeDestroy(m_screenRenderer);
+	m_toneMap.clear();
+	m_motionBlur.clear();
+	m_antiAlias.clear();
+	m_visual.clear();
+	m_gammaCorrection.clear();
+	m_colorGrading.clear();
 }
 
 void PostProcessPass::setup(

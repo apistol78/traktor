@@ -49,6 +49,8 @@ class ReflectionsPass : public Object
 public:
 	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc);
 
+	void destroy();
+
 	render::RGTargetSet setup(
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,

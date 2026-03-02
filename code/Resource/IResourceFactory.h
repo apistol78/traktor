@@ -102,6 +102,12 @@ public:
 	 * \return Product.
 	 */
 	virtual Ref< Object > create(IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const = 0;
+
+	/*! Destroy resource, called when resource being recreated.
+	 * 
+	 * \param resource Previously created resource by this factory.
+	 */
+	virtual void destroy(Object* resource) const = 0;
 };
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2025 Anders Pistol.
+ * Copyright (c) 2023-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include "World/Shared/Passes/ContactShadowsPass.h"
 
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
@@ -55,6 +56,13 @@ bool ContactShadowsPass::create(resource::IResourceManager* resourceManager, ren
 		return false;
 
 	return true;
+}
+
+void ContactShadowsPass::destroy()
+{
+	safeDestroy(m_sharedDepthStencil);
+	safeDestroy(m_screenRenderer);
+	m_contactShadows.clear();
 }
 
 render::RGTargetSet ContactShadowsPass::setup(

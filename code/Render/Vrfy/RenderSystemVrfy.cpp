@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -78,7 +78,7 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 
 void RenderSystemVrfy::destroy()
 {
-	m_resourceTracker->alive();
+	m_resourceTracker->alive(type_of< Object >(), false);
 	m_renderSystem->destroy();
 }
 
@@ -366,6 +366,17 @@ void RenderSystemVrfy::purge()
 void RenderSystemVrfy::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 	m_renderSystem->getStatistics(outStatistics);
+
+	outStatistics.buffers = m_resourceTracker->count(type_of< BufferVrfy >());
+	outStatistics.renderTargetSets = m_resourceTracker->count(type_of< RenderTargetSetVrfy >());
+	outStatistics.programs = m_resourceTracker->count(type_of< ProgramVrfy >());
+
+	static int32_t dump = 0;
+	if (dump == 1)
+		m_resourceTracker->snapshot();
+	else if (dump == 2)
+		m_resourceTracker->alive(type_of< BufferVrfy >(), true);
+	dump = 0;
 }
 
 void* RenderSystemVrfy::getInternalHandle() const

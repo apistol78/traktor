@@ -201,24 +201,28 @@ bool WorldRendererShared::create(
 void WorldRendererShared::destroy()
 {
 	safeDestroy(m_screenRenderer);
+	safeDestroy(m_blackCubeTexture);
 	safeDestroy(m_blackTexture);
 	safeDestroy(m_whiteTexture);
 
 	for (int32_t i = 0; i < sizeof_array(m_state); ++i)
 		safeDestroy(m_state[i].lightSBuffer);
 
-	m_postProcessPass = nullptr;
-	m_reflectionsPass = nullptr;
-	m_contactShadowsPass = nullptr;
-	m_ambientOcclusionPass = nullptr;
-	m_irradiancePass = nullptr;
-	m_velocityPass = nullptr;
-	m_hiZPass = nullptr;
-	m_downScalePass = nullptr;
-	m_dbufferPass = nullptr;
-	m_gbufferPass = nullptr;
-
+	safeDestroy(m_postProcessPass);
+	safeDestroy(m_reflectionsPass);
+	safeDestroy(m_contactShadowsPass);
+	safeDestroy(m_ambientOcclusionPass);
+	safeDestroy(m_irradiancePass);
+	safeDestroy(m_velocityPass);
+	safeDestroy(m_hiZPass);
+	safeDestroy(m_downScalePass);
+	safeDestroy(m_dbufferPass);
+	safeDestroy(m_gbufferPass);
 	safeDestroy(m_lightClusterPass);
+
+	m_entityRenderers = nullptr;
+	m_clearDepthShader.clear();
+	m_gatheredView = {};
 }
 
 void WorldRendererShared::gather(const World* world, const std::function< bool(const EntityState& state) >& filter)

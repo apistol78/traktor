@@ -181,4 +181,8 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 	return succeeded ? shader : nullptr;
 }
 
+void ShaderFactory::destroy(Object* resource) const
+{
+}
+
 }

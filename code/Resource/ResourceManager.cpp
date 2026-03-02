@@ -426,6 +426,11 @@ void ResourceManager::load(const db::Instance* instance, const IResourceFactory*
 		if (m_verbose)
 			log::info << L"Resource \"" << instance->getGuid().format() << L"\" (" << type_name(object) << L") created." << Endl;
 
+		// In case resource gets reloaded; call factory to do specialized cleanup of old resource before
+		// replacing resource in handle.
+		if (handle->get() != nullptr)
+			factory->destroy(handle->get());
+
 		handle->replace(object);
 
 		// Yield current thread; we want other threads to get some periodic CPU time to

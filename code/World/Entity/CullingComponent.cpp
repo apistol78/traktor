@@ -25,7 +25,7 @@ namespace traktor::world
 namespace
 {
 
-const resource::Id< render::Shader > c_shaderInstanceMeshCull(L"{37998131-BDA1-DE45-B175-35B088FEE61C}");
+const resource::Id< render::Shader > c_shaderInstanceMeshCull(L"{37998131-BDA1-DE45-B175-35B088FEE61C}");	// World/Culling/Visibility
 
 render::Handle s_handleInstanceWorld(L"InstanceWorld");
 
@@ -47,6 +47,7 @@ void CullingComponent::destroy()
 		if (visibilityBuffer)
 			visibilityBuffer->destroy();
 	m_visibilityBuffers.resize(0);
+	m_shaderCull.clear();
 	m_renderSystem = nullptr;
 }
 

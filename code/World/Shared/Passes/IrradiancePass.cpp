@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024-2025 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Math/Random.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
@@ -85,6 +86,13 @@ bool IrradiancePass::create(resource::IResourceManager* resourceManager, render:
 		return false;
 
 	return true;
+}
+
+void IrradiancePass::destroy()
+{
+	safeDestroy(m_screenRenderer);
+	m_irradianceComputeShader.clear();
+	m_irradianceDenoise.clear();
 }
 
 render::RGTargetSet IrradiancePass::setup(

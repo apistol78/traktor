@@ -8,6 +8,7 @@
  */
 #include "World/Shared/Passes/ReflectionsPass.h"
 
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
 #include "World/IWorldRenderer.h"
 #include "World/Shared/Passes/RTReflectionsPass.h"
@@ -39,6 +40,12 @@ bool ReflectionsPass::create(resource::IResourceManager* resourceManager, render
 		}
 	}
 	return true;
+}
+
+void ReflectionsPass::destroy()
+{
+	safeDestroy(m_rt);
+	safeDestroy(m_ss);
 }
 
 render::RGTargetSet ReflectionsPass::setup(

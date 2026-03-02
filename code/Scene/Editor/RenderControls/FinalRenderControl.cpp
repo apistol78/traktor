@@ -247,12 +247,12 @@ bool FinalRenderControl::handleCommand(const ui::Command& command)
 	else if (command == L"Scene.Editor.EnableRayTracing")
 	{
 		m_rayTracingEnable = true;
-		updateWorldRenderer();
+		safeDestroy(m_worldRenderer);
 	}
 	else if (command == L"Scene.Editor.DisableRayTracing")
 	{
 		m_rayTracingEnable = false;
-		updateWorldRenderer();
+		safeDestroy(m_worldRenderer);
 	}
 
 	return false;
@@ -468,7 +468,7 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	// Reload scene if changed.
 	if (m_sceneInstance.changed())
 	{
-		m_worldRenderer = nullptr;
+		safeDestroy(m_worldRenderer);
 		m_sceneInstance.consume();
 	}
 

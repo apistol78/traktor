@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2025 Anders Pistol.
+ * Copyright (c) 2023-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include "World/Shared/Passes/SSReflectionsPass.h"
 
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
@@ -78,6 +79,14 @@ bool SSReflectionsPass::create(resource::IResourceManager* resourceManager, rend
 		m_reflectionsQuality = desc.quality.reflections;
 	}
 	return true;
+}
+
+void SSReflectionsPass::destroy()
+{
+	safeDestroy(m_screenRenderer);
+	m_probeGlobalReflections.clear();
+	m_probeLocalReflections.clear();
+	m_screenReflections.clear();
 }
 
 render::RGTargetSet SSReflectionsPass::setup(

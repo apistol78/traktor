@@ -205,7 +205,6 @@ void SkyComponent::destroy()
 	m_texture.clear();
 	m_shaderClouds2D.clear();
 	m_shaderClouds3D.clear();
-	setWorld(nullptr);
 }
 
 void SkyComponent::setOwner(world::Entity* owner)

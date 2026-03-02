@@ -235,17 +235,7 @@ bool StaticMeshConverter::convert(
 
 			for (const auto& polygon : model->getPolygonsByMaterial(materialId))
 			{
-				Vector4 albedo = material.getColor();
-				for (const auto& vertex : polygon.getVertices())
-				{
-					const uint32_t colorId = model->getVertex(vertex).getColor();
-					if (colorId != model::c_InvalidIndex)
-					{
-						albedo = model->getColor(colorId);
-						break;
-					}
-				}
-
+				const Vector4 albedo = material.getColor();
 				for (uint32_t j = 0; j < 3; ++j)
 				{
 					const auto& vertex = model->getVertex(polygon.getVertex(j));
