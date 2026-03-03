@@ -45,15 +45,19 @@ void RigidBodyComponent::setOwner(world::Entity* owner)
 	if ((m_owner = owner) != nullptr)
 	{
 		const Transform transform = m_owner->getTransform();
-		m_body->setTransform(transform);
-		m_body->setEnable(true);
+		if (m_body)
+		{
+			m_body->setTransform(transform);
+			m_body->setEnable(true);
+		}
 		m_lastTransform = transform;
 	}
 }
 
 void RigidBodyComponent::setTransform(const Transform& transform)
 {
-	m_body->setTransform(transform);
+	if (m_body)
+		m_body->setTransform(transform);
 	m_lastTransform = transform;
 }
 
@@ -64,7 +68,7 @@ Aabb3 RigidBodyComponent::getBoundingBox() const
 
 void RigidBodyComponent::update(const world::UpdateParams& update)
 {
-	if (!m_body->isActive() || m_body->isStatic() || m_body->isKinematic())
+	if (!m_body || !m_body->isActive() || m_body->isStatic() || m_body->isKinematic())
 		return;
 
 	// Body is dynamic and active; need to update owner's transform.
