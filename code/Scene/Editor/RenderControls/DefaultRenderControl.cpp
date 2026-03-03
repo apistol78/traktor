@@ -14,6 +14,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
+#include "Render/IRenderSystem.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -144,12 +145,14 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		guideEnable ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle
 	);
 
+	const bool supportRayTracing = m_context->getRenderSystem()->supportRayTracing();
 	m_toolToggleRayTracing = new ui::ToolBarButton(
 		i18n::Text(L"SCENE_EDITOR_TOGGLE_RAYTRACING"),
 		2,
 		ui::Command(1, L"Scene.Editor.ToggleRayTracing"),
-		guideEnable ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle
+		supportRayTracing ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle
 	);
+	m_toolToggleRayTracing->setEnable(supportRayTracing);
 
 	m_toolAspect = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), 70_ut, i18n::Text(L"SCENE_EDITOR_ASPECT"));
 	m_toolAspect->add(L"Full");
@@ -394,7 +397,6 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	// Enable all tools by default.
 	m_toolToggleGrid->setEnable(true);
 	m_toolToggleGuide->setEnable(true);
-	m_toolToggleRayTracing->setEnable(true);
 	m_toolView->setEnable(true);
 	m_toolAspect->setEnable(true);
 	m_toolQualityMenu->setEnable(true);
