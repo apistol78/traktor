@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,7 +32,7 @@ bool LaunchRenderDocTool::needOutputResources(std::set< Guid >& outDependencies)
 
 bool LaunchRenderDocTool::launch(ui::Widget* parent, editor::IEditor* runtime, const PropertyGroup* param)
 {
-	Path renderDocPath;
+	std::wstring renderDocPath;
 	if (!OS::getInstance().whereIs(L"renderdocui", renderDocPath))
 	{
 #if defined(_WIN32)
@@ -47,11 +47,8 @@ bool LaunchRenderDocTool::launch(ui::Widget* parent, editor::IEditor* runtime, c
 #endif
 	}
 
-	const std::wstring renderDoc = renderDocPath.getPathName();
-	const std::wstring commandLine = L"\"" + renderDoc + L"\"";
-
 	return OS::getInstance().execute(
-		commandLine,
+		renderDocPath,
 		L"",
 		nullptr,
 		OS::EfMute) != nullptr;

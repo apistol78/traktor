@@ -1,12 +1,14 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
@@ -14,6 +16,7 @@
 #include "Core/System/Environment.h"
 #include "Core/System/Linux/ProcessLinux.h"
 #include "Core/System/Linux/SharedMemoryLinux.h"
+#include "Core/System/PipeReader.h"
 #include "Core/System/ResolveEnv.h"
 
 #include <cstdio>
@@ -341,29 +344,56 @@ bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
 	return false;
 }
 
-bool OS::whereIs(const std::wstring& executable, Path& outPath) const
+bool OS::whereIs(const std::wstring& executable, std::wstring& outPath) const
 {
 	std::wstring paths;
 
 	// Get system "PATH" environment variable.
-	if (!getEnvironment(L"PATH", paths))
-		return false;
-
-	// Try to locate binary in any of the paths specified in "PATH".
-	for (auto path : StringSplit< std::wstring >(paths, L";:,"))
+	if (getEnvironment(L"PATH", paths))
 	{
-		Ref< File > file = FileSystem::getInstance().get(path + L"/" + executable);
-		if (file)
+		// Try to locate binary in any of the paths specified in "PATH".
+		for (auto path : StringSplit< std::wstring >(paths, L";:,"))
 		{
-			outPath = file->getPath();
-			return true;
+			Ref< File > file = FileSystem::getInstance().get(path + L"/" + executable);
+			if (file)
+			{
+				outPath = L"\"" + file->getPath().getPathNameOS() + L"\"";
+				return true;
+			}
 		}
+	}
+
+	// Check if it's a flatpak application.
+	Ref< IProcess > fp = execute(L"flatpak list --app", L"", nullptr, OS::EfRedirectStdIO);
+	if (fp)
+	{
+		PipeReader reader(fp->getPipeStream(IProcess::SpStdOut));
+
+		AlignedVector< std::wstring > tkns;
+		PipeReader::Result result;
+		std::wstring str;
+
+		while ((result = reader.readLine(str)) != PipeReader::RtEnd)
+		{
+			if (str.empty())
+				continue;
+
+			tkns.resize(0);
+			Split< std::wstring >::any(str, L" \t", tkns);
+
+			if (tkns.size() >= 2 && compareIgnoreCase(tkns[0], executable) == 0)
+			{
+				// Found flatpak identifier.
+				outPath = L"flatpak run " + tkns[1];
+				return true;
+			}
+		}		
 	}
 
 	return false;
 }
 
-bool OS::getAssociatedExecutable(const std::wstring& extension, Path& outPath) const
+bool OS::getAssociatedExecutable(const std::wstring& extension, std::wstring& outPath) const
 {
 	return false;
 }

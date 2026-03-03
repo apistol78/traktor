@@ -8,6 +8,7 @@
  */
 #include "Runtime/Editor/LaunchBlenderTool.h"
 
+#include "Core/Log/Log.h"
 #include "Core/System/OS.h"
 #include "Ui/StyleBitmap.h"
 
@@ -33,7 +34,7 @@ bool LaunchBlenderTool::needOutputResources(std::set< Guid >& outDependencies) c
 
 bool LaunchBlenderTool::launch(ui::Widget* parent, editor::IEditor* runtime, const PropertyGroup* param)
 {
-	Path blenderPath;
+	std::wstring blenderPath;
 	if (!OS::getInstance().getAssociatedExecutable(L"blend", blenderPath))
 	{
 		// No file association registered; try find executable in environment.
@@ -45,11 +46,8 @@ bool LaunchBlenderTool::launch(ui::Widget* parent, editor::IEditor* runtime, con
 		}
 	}
 
-	const std::wstring blender = blenderPath.getPathNameOS();
-	const std::wstring commandLine = L"\"" + blender + L"\"";
-
 	return OS::getInstance().execute(
-			   commandLine,
+			   blenderPath,
 			   L"",
 			   nullptr,
 			   OS::EfDetach) != nullptr;

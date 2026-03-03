@@ -586,7 +586,7 @@ bool OS::getRegistry(const std::wstring& key, const std::wstring& subKey, const 
 	return false;
 }
 
-bool OS::whereIs(const std::wstring& executable, Path& outPath) const
+bool OS::whereIs(const std::wstring& executable, std::wstring& outPath) const
 {
 	std::wstring paths;
 
@@ -600,7 +600,7 @@ bool OS::whereIs(const std::wstring& executable, Path& outPath) const
 		Ref< File > file = FileSystem::getInstance().get(path + L"/" + executable + L".exe");
 		if (file)
 		{
-			outPath = file->getPath();
+			outPath = L"\"" + file->getPath().getPathNameOS() + L"\"";
 			return true;
 		}
 	}
@@ -608,7 +608,7 @@ bool OS::whereIs(const std::wstring& executable, Path& outPath) const
 	return false;
 }
 
-bool OS::getAssociatedExecutable(const std::wstring& extension, Path& outPath) const
+bool OS::getAssociatedExecutable(const std::wstring& extension, std::wstring& outPath) const
 {
 	const std::wstring tmp = L"." + extension;
 	wchar_t path[MAX_PATH];
@@ -624,7 +624,7 @@ bool OS::getAssociatedExecutable(const std::wstring& extension, Path& outPath) c
 	if (FAILED(hr))
 		return false;
 
-	outPath = Path(path);
+	outPath = path;
 	return true;
 }
 

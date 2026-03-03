@@ -238,7 +238,7 @@ Any OS_getRegistry(OS* self, const std::wstring& key, const std::wstring& subKey
 
 Any OS_whereIs(OS* self, const std::wstring& executable)
 {
-	Path path;
+	std::wstring path;
 	if (self->whereIs(executable, path))
 		return CastAny< Path >::set(path);
 	else
@@ -247,7 +247,7 @@ Any OS_whereIs(OS* self, const std::wstring& executable)
 
 Any OS_getAssociatedExecutable(OS* self, const std::wstring& extension)
 {
-	Path path;
+	std::wstring path;
 	if (self->getAssociatedExecutable(extension, path))
 		return CastAny< Path >::set(path);
 	else

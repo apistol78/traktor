@@ -185,17 +185,20 @@ public:
 	bool getRegistry(const std::wstring& key, const std::wstring& subKey, const std::wstring& valueName, std::wstring& outValue) const;
 #endif
 
-	/*! Query OS about location of executable binary.
+	/*! Query OS about "location" of executable.
+	 *
+	 * Executable might be a containerized application
+	 * thus the output path might not be a OS path per se.
 	 *
 	 * \param executable Name of executable.
-	 * \param outPath Path to executable.
+	 * \param outPath "Path" to executable.
 	 * \return True if executable was found.
 	 */
-	bool whereIs(const std::wstring& executable, Path& outPath) const;
+	bool whereIs(const std::wstring& executable, std::wstring& outPath) const;
 
 	/*! Query OS about executable associated with file extension.
 	 */
-	bool getAssociatedExecutable(const std::wstring& extension, Path& outPath) const;
+	bool getAssociatedExecutable(const std::wstring& extension, std::wstring& outPath) const;
 
 protected:
 	OS();
