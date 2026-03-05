@@ -68,6 +68,7 @@ void VelocityPass::destroy()
 render::RGTargetSet VelocityPass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
+	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
 	render::RGTargetSet gbufferTargetSetId,
 	render::RGTargetSet outputTargetSetId) const
@@ -75,6 +76,8 @@ render::RGTargetSet VelocityPass::setup(
 	T_PROFILER_SCOPE(L"VelocityPass::setup");
 
 	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr);
+	const Vector2 rc = jitter(frameCount) / worldRenderView.getViewSize();
+	const Vector2 rp = jitter(frameCount - 1) / worldRenderView.getViewSize();
 
 	// Add Velocity target set.
 	render::RenderGraphTargetSetDesc rgtd;
@@ -86,9 +89,9 @@ render::RGTargetSet VelocityPass::setup(
 	const render::RGTargetSet velocityTargetSetId = renderGraph.addTransientTargetSet(L"Velocity", rgtd, outputTargetSetId, outputTargetSetId);
 
 	// Add Velocity render pass.
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity");
-	rp->addInput(gbufferTargetSetId);
-	rp->setOutput(velocityTargetSetId, render::TfDepth, render::TfColor | render::TfDepth);
+	Ref< render::RenderPass > pass = new render::RenderPass(L"Velocity");
+	pass->addInput(gbufferTargetSetId);
+	pass->setOutput(velocityTargetSetId, render::TfDepth, render::TfColor | render::TfDepth);
 
 	if (m_velocityPrime)
 	{
@@ -106,18 +109,19 @@ render::RGTargetSet VelocityPass::setup(
 			params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
 			params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
 			params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
+			params->setVectorParameter(ShaderParameter::Jitter, Vector4(rp.x, -rp.y, rc.x, -rc.y)); // Texture space.
 		};
 
 		m_velocityPrime->addPasses(
 			m_screenRenderer,
 			renderGraph,
-			rp,
+			pass,
 			igctx,
 			view,
 			setParameters);
 	}
 
-	rp->addBuild(
+	pass->addBuild(
 		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		const WorldBuildContext wc(
 			m_entityRenderers,
@@ -129,6 +133,7 @@ render::RGTargetSet VelocityPass::setup(
 		sharedParams->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
 		sharedParams->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
 		sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
+		sharedParams->setVectorParameter(ShaderParameter::Jitter, Vector4(rp.x, -rp.y, rc.x, -rc.y)); // Texture space.
 		sharedParams->endParameters(renderContext);
 
 		const WorldRenderPassShared velocityPass(
@@ -145,7 +150,7 @@ render::RGTargetSet VelocityPass::setup(
 			entityRenderer->build(wc, worldRenderView, velocityPass);
 	});
 
-	renderGraph.addPass(rp);
+	renderGraph.addPass(pass);
 	return velocityTargetSetId;
 }
 }
