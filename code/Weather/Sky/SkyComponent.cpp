@@ -269,6 +269,9 @@ void SkyComponent::setup(
 			m_shaderClouds3D.consume();
 		}
 
+		if (!m_shaderCloudsDome)
+			return;
+
 		if (m_dirty)
 		{
 			Ref< render::RenderPass > rp = new render::RenderPass(L"Sky compute clouds noise");

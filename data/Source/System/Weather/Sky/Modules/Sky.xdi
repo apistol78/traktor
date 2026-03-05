@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderModule">
-	<text>
-	<![CDATA[
+<object type="traktor.render.ShaderModule" version="2">
+	<text><![CDATA[
+	
 // Sky and clouds from shadertoy.com/view/MdGfzh
 #using \{921BBC45-4C75-624A-AA78-9B5FEC80645B}
 
@@ -73,10 +73,10 @@ float remap(float v, float s, float e)
 	return (v - s) / (e - s);
 }
 
-float cloudMapBase(vec3 p, float norY, float time, texture2D clouds2D, sampler cloudSampler)
+float cloudMapBase(vec3 p, float norY, float time, texture2D clouds2D)
 {
 	const vec3 uv = (p + vec3(0.0f, 0.0f, time * 80.0f)) * (0.00005f * CLOUDS_BASE_SCALE);
-	const vec3 cloud = texture(sampler2D(clouds2D, cloudSampler), uv.xz).rgb;
+	const vec3 cloud = texture(sampler2D(clouds2D, __cloudSampler__), uv.xz).rgb;
 
 	float n = norY * norY;
 	n *= cloud.b;
@@ -84,10 +84,10 @@ float cloudMapBase(vec3 p, float norY, float time, texture2D clouds2D, sampler c
 	return remap(cloud.r - n, cloud.g, 1.0f);
 }
 
-float cloudMapDetail(vec3 p, texture3D clouds3D, sampler cloudSampler)
+float cloudMapDetail(vec3 p, texture3D clouds3D)
 { 
 	p = abs(p) * (0.0016 * CLOUDS_BASE_SCALE * CLOUDS_DETAIL_SCALE);
-	return texture(sampler3D(clouds3D, cloudSampler), p).r;
+	return texture(sampler3D(clouds3D, __cloudSampler__), p).r;
 }
 
 float cloudGradient(float norY)
@@ -95,11 +95,11 @@ float cloudGradient(float norY)
 	return linearstep(0.0f, 0.05f, norY) - linearstep(0.8f, 1.2f, norY);
 }
 
-float cloudMap(vec3 pos, vec3 offset, vec3 rd, float norY, float time, texture2D clouds2D, texture3D clouds3D, sampler cloudSampler)
+float cloudMap(vec3 pos, vec3 offset, vec3 rd, float norY, float time, texture2D clouds2D, texture3D clouds3D)
 {
 	vec3 ps = pos + offset;
 
-	float m = cloudMapBase(ps, norY, time, clouds2D, cloudSampler);
+	float m = cloudMapBase(ps, norY, time, clouds2D);
 	m *= cloudGradient(norY);
 
 	float dstrength = smoothstep(1., 0.5, m);
@@ -107,7 +107,7 @@ float cloudMap(vec3 pos, vec3 offset, vec3 rd, float norY, float time, texture2D
 	// erode with detail
 	if (dstrength > 0.)
 	{
-		m -= cloudMapDetail( ps, clouds3D, cloudSampler ) * dstrength * CLOUDS_DETAIL_STRENGTH;
+		m -= cloudMapDetail(ps, clouds3D) * dstrength * CLOUDS_DETAIL_STRENGTH;
 	}
 
 	m = smoothstep(0.0f, CLOUDS_BASE_EDGE_SOFTNESS, m + (CLOUDS_COVERAGE - 1.0f));
@@ -116,7 +116,7 @@ float cloudMap(vec3 pos, vec3 offset, vec3 rd, float norY, float time, texture2D
 	return clamp(m * CLOUDS_DENSITY * (1.0f + max((pos.x - 7000.0f) * 0.005f, 0.0f)), 0.0f, 1.0f);
 }
 
-float volumetricShadow(vec3 from, vec3 offset, float sundotrd, float time, vec3 sunDirection, texture2D clouds2D, texture3D clouds3D, sampler cloudSampler )
+float volumetricShadow(vec3 from, vec3 offset, float sundotrd, float time, vec3 sunDirection, texture2D clouds2D, texture3D clouds3D)
 {
     float dd = CLOUDS_SHADOW_MARGE_STEP_SIZE;
     vec3 rd = sunDirection;
@@ -131,7 +131,7 @@ float volumetricShadow(vec3 from, vec3 offset, float sundotrd, float time, vec3 
         if (norY > 1.)
 			return shadow;
 
-        float muE = cloudMap(pos, offset, rd, norY, time, clouds2D, clouds3D, cloudSampler);
+        float muE = cloudMap(pos, offset, rd, norY, time, clouds2D, clouds3D);
         shadow *= exp(-muE * dd);
 
         dd *= CLOUDS_SHADOW_MARGE_STEP_MULTIPLY;
@@ -155,7 +155,18 @@ CloudConfig GetDefaultCloudConfig()
 	return c;
 }
 
-vec4 RenderClouds(const CloudConfig config, vec3 ro, vec3 rd, float time, vec3 sunDirection, vec3 sunColor, vec2 worldOffset, texture2D clouds2D, texture3D clouds3D, sampler cloudSampler, inout float dist)
+vec4 RenderClouds(
+	const CloudConfig config,
+	vec3 ro,
+	vec3 rd,
+	float time,
+	vec3 sunDirection,
+	vec3 sunColor,
+	vec2 worldOffset,
+	texture2D clouds2D,
+	texture3D clouds3D,
+	inout float dist
+)
 {
     if (rd.y < 0.0f)
         return vec4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -197,14 +208,14 @@ vec4 RenderClouds(const CloudConfig config, vec3 ro, vec3 rd, float time, vec3 s
 		const vec3 p = ro + d * rd;
 
 		const float norY = clamp((length(p) - (EARTH_RADIUS + CLOUDS_BOTTOM)) * (1.0f / (CLOUDS_TOP - CLOUDS_BOTTOM)), 0.0f, 1.0f);
-		const float alpha = cloudMap( p, offset, rd, norY, time, clouds2D, clouds3D, cloudSampler );
+		const float alpha = cloudMap( p, offset, rd, norY, time, clouds2D, clouds3D);
 
         if (alpha > 0.0f)
 		{
             dist = min( dist, d);
             const vec3 ambientLight = mix(config.ambientBottom, config.ambientTop, norY);
 
-			const vec3 S = (ambientLight + sunColor * (scattering * volumetricShadow(p, offset, sundotrd, time, sunDirection, clouds2D, clouds3D, cloudSampler))) * alpha;
+			const vec3 S = (ambientLight + sunColor * (scattering * volumetricShadow(p, offset, sundotrd, time, sunDirection, clouds2D, clouds3D))) * alpha;
 			const float dTrans = exp(-alpha * dD);
 			const vec3 Sint = (S - S * dTrans) * (1. / alpha);
 
@@ -323,6 +334,24 @@ float tilableFbm(vec3 p, const int octaves, float tile)
     return c / w;
 }
 
-	]]>
-	</text>
+	
+	]]></text>
+	<samplers>
+		<item>
+			<first>__cloudSampler__</first>
+			<second>
+				<minFilter>Linear</minFilter>
+				<mipFilter>Linear</mipFilter>
+				<magFilter>Linear</magFilter>
+				<addressU>Wrap</addressU>
+				<addressV>Wrap</addressV>
+				<addressW>Wrap</addressW>
+				<compare>None</compare>
+				<mipBias>0</mipBias>
+				<ignoreMips>true</ignoreMips>
+				<useAnisotropic>false</useAnisotropic>
+			</second>
+		</item>
+	</samplers>
+	<structDeclarations/>
 </object>
