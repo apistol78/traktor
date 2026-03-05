@@ -132,7 +132,7 @@
 			"program": "${workspaceRoot}/../bin/latest/linux/releaseshared/Traktor.Runtime.App",
 			"args": [ "-s" ],
 			"stopAtEntry": false,
-			"cwd": "/home/apistol/private/kobolt/output/Kobalt/Linux",
+			"cwd": "/home/apistol/private/kartong/output/Kartong/Linux",
 			"environment": [],
 			"externalConsole": false,
 			"MIMode": "gdb",

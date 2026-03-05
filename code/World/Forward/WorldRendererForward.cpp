@@ -35,6 +35,7 @@
 #include "World/IrradianceGrid.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
 #include "World/Shared/Passes/DBufferPass.h"
+#include "World/Shared/Passes/DownScalePass.h"
 #include "World/Shared/Passes/GBufferPass.h"
 #include "World/Shared/Passes/HiZPass.h"
 #include "World/Shared/Passes/LightClusterPass.h"
@@ -99,11 +100,15 @@ void WorldRendererForward::setup(
 	}
 #endif
 
+	// Adjust view size to properly reflect our internal resolution.
+	const int32_t visualDenom = (m_postProcessPass != nullptr) ? m_postProcessPass->getVisualDenominator() : 1;
+	worldRenderView.setViewSize(worldRenderView.getViewSize() / visualDenom);
+
 	// Jitter projection for TAA, calculate jitter in clip space.
 	if (needJitter)
 	{
 		const Vector2 ndc = (jitter(count) * 2.0f) / worldRenderView.getViewSize();
-		Matrix44 proj = immutableWorldRenderView.getProjection();
+		Matrix44 proj = worldRenderView.getProjection();
 		proj = translate(ndc.x, ndc.y, 0.0f) * proj;
 		worldRenderView.setProjection(proj);
 	}
@@ -124,34 +129,36 @@ void WorldRendererForward::setup(
 	}
 
 	// Add visual target sets.
+	const render::RGTargetSet sharedDepthTargetSetId = (visualDenom <= 1) ? outputTargetSetId : render::RGTargetSet::Invalid;
+
 	const render::RenderGraphTargetSetDesc rgtd = {
 		.count = 1,
-		.referenceWidthDenom = 1,
-		.referenceHeightDenom = 1,
-		.createDepthStencil = false,
+		.referenceWidthDenom = visualDenom,
+		.referenceHeightDenom = visualDenom,
+		.createDepthStencil = (bool)(visualDenom >= 2),
 		.targets = { { .colorFormat = render::TfR11G11B10F } }
 	};
 	const DoubleBufferedTarget visualTargetSetId = {
-		renderGraph.addPersistentTargetSet(L"Previous", s_handleVisualTargetSet[count % 2], false, rgtd, outputTargetSetId, outputTargetSetId),
-		renderGraph.addPersistentTargetSet(L"Current", s_handleVisualTargetSet[(count + 1) % 2], false, rgtd, outputTargetSetId, outputTargetSetId)
+		renderGraph.addPersistentTargetSet(L"Previous", s_handleVisualTargetSet[count % 2], false, rgtd, sharedDepthTargetSetId, outputTargetSetId),
+		renderGraph.addPersistentTargetSet(L"Current", s_handleVisualTargetSet[(count + 1) % 2], false, rgtd, sharedDepthTargetSetId, outputTargetSetId)
 	};
 
 	const render::Buffer* lightSBuffer = m_state[worldRenderView.getIndex()].lightSBuffer;
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
-	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::ForwardGBufferWrite, renderGraph, render::RGTexture::Invalid, outputTargetSetId);
-	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	const auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::ForwardGBufferWrite, renderGraph, render::RGTexture::Invalid, visualTargetSetId.current);
+	const auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
+	const auto halfResDepthTextureId = m_downScalePass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	// m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
-	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, render::RGTexture::Invalid, outputTargetSetId);
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, m_blackCubeTexture, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, render::RGTexture::Invalid, outputTargetSetId);
+	const auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
+	const auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
+	const auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, m_blackCubeTexture, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, render::RGTexture::Invalid, visualTargetSetId.current);
 
 	render::RGTargetSet shadowMapAtlasTargetSetId;
 	setupLightPass(
 		worldRenderView,
 		renderGraph,
-		outputTargetSetId,
 		shadowMapAtlasTargetSetId);
 
 	setupVisualPass(

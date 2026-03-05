@@ -82,7 +82,7 @@ render::RGTargetSet VelocityPass::setup(
 	rgtd.createDepthStencil = false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR16G16F;
+	rgtd.targets[0].colorFormat = render::TfR32G32F;
 	const render::RGTargetSet velocityTargetSetId = renderGraph.addTransientTargetSet(L"Velocity", rgtd, outputTargetSetId, outputTargetSetId);
 
 	// Add Velocity render pass.

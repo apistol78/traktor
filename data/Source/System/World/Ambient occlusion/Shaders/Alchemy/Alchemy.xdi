@@ -97,7 +97,7 @@
 				<first>-129</first>
 				<second>-1239</second>
 			</position>
-			<value>6</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{18C69780-4963-BE40-B515-680D0FC06969}</id>
@@ -358,7 +358,7 @@ Heaveside
 				<first>-161</first>
 				<second>-1144</second>
 			</position>
-			<value>-0.01</value>
+			<value>-0.001</value>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{5EBCD85E-AA7A-F542-931D-AB015ED301CE}</id>
@@ -587,7 +587,7 @@ Heaveside
 				<first>-135</first>
 				<second>-1183</second>
 			</position>
-			<value>0.85</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E1369009-8C7B-0149-A2E7-98A906A409B7}</id>
@@ -634,7 +634,7 @@ Heaveside
 				<first>-136</first>
 				<second>-1098</second>
 			</position>
-			<value>0.2</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{A9C4313A-D65D-EF46-B90B-19B3F07FC281}</id>
@@ -869,7 +869,7 @@ Edge
 				<first>-137</first>
 				<second>-1057</second>
 			</position>
-			<value>16</value>
+			<value>64</value>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{6979E313-63BB-0E4C-A433-EBB932E8E11E}</id>
@@ -1223,6 +1223,15 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 				<second>224</second>
 			</position>
 			<parameterDeclaration>{6025A87F-C360-C14D-8B20-F6D989D05434}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{E85E953A-C76C-46E6-B15D-BEBC810EE8E8}</id>
+			<comment/>
+			<position>
+				<first>3266</first>
+				<second>-627</second>
+			</position>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -2278,16 +2287,6 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[107]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[110]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
@@ -2404,6 +2403,16 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 			<destination>
 				<node ref="/object/nodes/item[115]"/>
 				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[107]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>

@@ -114,6 +114,7 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 		}
 	}
 	m_needCameraJitter = (bool)(desc.quality.antiAlias >= Quality::Ultra);
+	m_visualDenominator = (bool)(desc.quality.antiAlias >= Quality::Ultra) ? 2 : 1;
 
 	// Create "visual" post processing filter.
 	if (desc.quality.imageProcess > Quality::Disabled)
@@ -218,20 +219,26 @@ void PostProcessPass::setup(
 	StaticVector< render::ImageGraph*, 5 > processes;
 	if (m_toneMap)
 		processes.push_back(m_toneMap);
-	if (m_antiAlias)
-		processes.push_back(m_antiAlias);
 	if (m_motionBlur)
 		processes.push_back(m_motionBlur);
+	if (m_antiAlias)
+		processes.push_back(m_antiAlias);
 	if (m_visual)
 		processes.push_back(m_visual);
 	if (m_gammaCorrection)
 		processes.push_back(m_gammaCorrection);
+
+	render::RGTargetSet sizeReferenceTargetSetId = visualTargetSetId.current;
 
 	render::RGTargetSet intermediateTargetSetId;
 	for (size_t i = 0; i < processes.size(); ++i)
 	{
 		auto process = processes[i];
 		const bool next = (bool)((i + 1) < processes.size());
+
+		// Output of AA and after is referenced to native output target.
+		if (process == m_antiAlias)
+			sizeReferenceTargetSetId = outputTargetSetId;
 
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Process");
 
@@ -243,16 +250,28 @@ void PostProcessPass::setup(
 			rgtd.referenceWidthDenom = 1;
 			rgtd.referenceHeightDenom = 1;
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, render::RGTargetSet::Invalid, outputTargetSetId);
+			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, render::RGTargetSet::Invalid, sizeReferenceTargetSetId);
 
 			rp->setOutput(intermediateTargetSetId, render::TfColor, render::TfColor);
 		}
 		else
 		{
-			render::Clear cl;
-			cl.mask = render::CfColor;
-			cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-			rp->setOutput(outputTargetSetId, cl, render::TfDepth, render::TfColor | render::TfDepth);
+			// Ensure output depth is in known value if we are using upscaling.
+			if (m_visualDenominator > 1)
+			{
+				render::Clear cl;
+				cl.mask = render::CfColor | render::CfDepth;
+				cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+				cl.depth = 1.0f;
+				rp->setOutput(outputTargetSetId, cl, render::TfNone, render::TfColor | render::TfDepth);
+			}
+			else
+			{
+				render::Clear cl;
+				cl.mask = render::CfColor;
+				cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+				rp->setOutput(outputTargetSetId, cl, render::TfDepth, render::TfColor | render::TfDepth);
+			}
 		}
 
 		process->addPasses(

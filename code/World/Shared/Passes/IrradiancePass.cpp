@@ -136,7 +136,7 @@ render::RGTargetSet IrradiancePass::setup(
 		.mipCount = 1,
 		.format = render::TfR11G11B10F // Irradiance (RGB)
 	};
-	const auto irradianceTextureId = renderGraph.addTransientTexture(L"Irradiance", irradianceTextureDesc);
+	const auto irradianceTextureId = renderGraph.addTransientTexture(L"Irradiance", irradianceTextureDesc, gbufferTargetSetId);
 
 	// Add final, up-sampled and denoised, irradiance target.
 	const render::RenderGraphTargetSetDesc irradianceFinalTargetDesc = {

@@ -44,9 +44,6 @@ void EntityAdapter::prepare(
 {
 	m_entityData = entityData;
 
-	if (m_entity != nullptr && m_entity != entity)
-		m_entity->destroy();
-
 	if ((m_entity = entity) != nullptr)
 		m_entity->setState(m_entityData->getState(), world::EntityState::All, false);
 

@@ -90,6 +90,7 @@ public:
 		const wchar_t* name = nullptr;
 		handle_t persistentHandle = 0;
 		RenderGraphTextureDesc textureDesc;
+		RGTargetSet sizeReferenceTargetSetId = RGTargetSet::Output;
 		Ref< ITexture > texture;
 	};
 
@@ -188,13 +189,33 @@ public:
 	 *
 	 * \param name Name of texture, used for debugging only.
 	 * \param textureDesc Description of transient texture.
+	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
 	 * \return Opaque resource handle.
 	 */
-	RGTexture addTransientTexture(const wchar_t* const name, const RenderGraphTextureDesc& textureDesc);
+	RGTexture addTransientTexture(
+		const wchar_t* const name,
+		const RenderGraphTextureDesc& textureDesc,
+		RGTargetSet sizeReferenceTargetSetId = RGTargetSet::Output
+	);
 
-	/*!
+	/*! Add a persistent texture.
+	 *
+	 * A persistent texture is always created with storage texture
+	 * capabilities because it's the only reason that make sense.
+	 * Thus useful for intermediate textures between compute passes.
+	 *
+	 * \param name Name of texture, used for debugging only.
+	 * \param persistentHandle Unique handle to track persistent texture.
+	 * \param textureDesc Description of transient texture.
+	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
+	 * \return Opaque resource handle.
 	 */
-	RGTexture addPersistentTexture(const wchar_t* const name, handle_t persistentHandle, const RenderGraphTextureDesc& textureDesc);
+	RGTexture addPersistentTexture(
+		const wchar_t* const name,
+		handle_t persistentHandle,
+		const RenderGraphTextureDesc& textureDesc,
+		RGTargetSet sizeReferenceTargetSetId = RGTargetSet::Output
+	);
 
 	/*!
 	 */

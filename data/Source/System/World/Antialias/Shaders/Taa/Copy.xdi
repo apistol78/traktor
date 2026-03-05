@@ -156,13 +156,13 @@ $Output = vec4(v.xyz, 1.0f);
 			</position>
 			<minFilter>Point</minFilter>
 			<mipFilter>Point</mipFilter>
-			<magFilter>Point</magFilter>
+			<magFilter>Linear</magFilter>
 			<addressU>Clamp</addressU>
 			<addressV>Clamp</addressV>
 			<addressW>Clamp</addressW>
 			<compare>None</compare>
 			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">

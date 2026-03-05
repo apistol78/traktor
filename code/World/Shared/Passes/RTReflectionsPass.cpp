@@ -130,7 +130,7 @@ render::RGTargetSet RTReflectionsPass::setup(
 		.mipCount = 1,
 		.format = render::TfR11G11B10F // Reflections (RGB)
 	};
-	const auto reflectionsTextureId = renderGraph.addTransientTexture(L"RTReflections", reflectionsTextureDesc);
+	const auto reflectionsTextureId = renderGraph.addTransientTexture(L"RTReflections", reflectionsTextureDesc, gbufferTargetSetId);
 
 	// Add final, up-sampled and denoised, reflections target.
 	const render::RenderGraphTargetSetDesc reflectionsFinalTargetDesc = {

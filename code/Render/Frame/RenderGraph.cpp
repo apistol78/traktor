@@ -49,6 +49,17 @@ void traverse(const RefArray< const RenderPass >& passes, int32_t depth, int32_t
 	fn(depth, index);
 }
 
+bool isExplicitTargetSetId(RGTargetSet targetSetId)
+{
+	return targetSetId != RGTargetSet::Output && targetSetId != RGTargetSet::Invalid;
+}
+
+const RenderGraph::TargetResource* findTargetResource(const SmallMap< RGTargetSet, RenderGraph::TargetResource >& targets, RGTargetSet targetSetId)
+{
+	const auto it = targets.find(targetSetId);
+	return it != targets.end() ? &it->second : nullptr;
+}
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraph", RenderGraph, Object)
@@ -190,18 +201,19 @@ RGBuffer RenderGraph::addPersistentBuffer(const wchar_t* const name, handle_t pe
 	return resourceId;
 }
 
-RGTexture RenderGraph::addTransientTexture(const wchar_t* const name, const RenderGraphTextureDesc& textureDesc)
+RGTexture RenderGraph::addTransientTexture(const wchar_t* const name, const RenderGraphTextureDesc& textureDesc, RGTargetSet sizeReferenceTargetSetId)
 {
 	const RGTexture resourceId(m_nextResourceId++);
 
 	auto& tr = m_textures[resourceId];
 	tr.name = name;
 	tr.textureDesc = textureDesc;
+	tr.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
 
 	return resourceId;
 }
 
-RGTexture RenderGraph::addPersistentTexture(const wchar_t* const name, handle_t persistentHandle, const RenderGraphTextureDesc& textureDesc)
+RGTexture RenderGraph::addPersistentTexture(const wchar_t* const name, handle_t persistentHandle, const RenderGraphTextureDesc& textureDesc, RGTargetSet sizeReferenceTargetSetId)
 {
 	const RGTexture resourceId(m_nextResourceId++);
 
@@ -209,6 +221,7 @@ RGTexture RenderGraph::addPersistentTexture(const wchar_t* const name, handle_t 
 	tr.name = name;
 	tr.persistentHandle = persistentHandle;
 	tr.textureDesc = textureDesc;
+	tr.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
 
 	return resourceId;
 }
@@ -386,7 +399,26 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		auto& texture = it.second;
 		if (texture.texture == nullptr)
 		{
-			texture.texture = m_context->getTexturePool()->acquire(texture.textureDesc, width, height, texture.persistentHandle);
+			int32_t referenceWidth = width;
+			int32_t referenceHeight = height;
+
+			if (
+				texture.sizeReferenceTargetSetId != RGTargetSet::Invalid &&
+				texture.sizeReferenceTargetSetId != RGTargetSet::Output
+			)
+			{
+				auto it = m_targets.find(texture.sizeReferenceTargetSetId);
+				if (it != m_targets.end())
+				{
+					const TargetResource& target = it->second;
+					referenceWidth = target.realized.width;
+					referenceHeight = target.realized.height;
+				}
+				else
+					log::error << L"No target " << (int32_t)texture.sizeReferenceTargetSetId.get() << Endl;
+			}
+
+			texture.texture = m_context->getTexturePool()->acquire(texture.textureDesc, referenceWidth, referenceHeight, texture.persistentHandle);
 			if (!texture.texture)
 				return false;
 		}
@@ -702,26 +734,28 @@ bool RenderGraph::realizeTargetDimensions(int32_t width, int32_t height, RGTarge
 		height = targetSetDesc.height;
 	}
 
-	if (target.sizeReferenceTargetSetId != RGTargetSet::Output)
+	if (isExplicitTargetSetId(target.sizeReferenceTargetSetId))
 	{
 		if (!realizeTargetDimensions(width, height, target.sizeReferenceTargetSetId))
 			return false;
 
-		const TargetResource& sizeReferenceTarget = m_targets[target.sizeReferenceTargetSetId];
-		width = sizeReferenceTarget.realized.width;
-		height = sizeReferenceTarget.realized.height;
+		const TargetResource* tr = findTargetResource(m_targets, target.sizeReferenceTargetSetId);
+		T_FATAL_ASSERT(tr != nullptr);
+
+		width = tr->realized.width;
+		height = tr->realized.height;
 	}
 
-	if (
-		target.sharedDepthStencilTargetSetId != RGTargetSet::Output &&
-		target.sharedDepthStencilTargetSetId != RGTargetSet::Invalid)
+	if (isExplicitTargetSetId(target.sharedDepthStencilTargetSetId))
 	{
 		if (!realizeTargetDimensions(width, height, target.sharedDepthStencilTargetSetId))
 			return false;
 
-		const TargetResource& sharedDepthStencilTarget = m_targets[target.sharedDepthStencilTargetSetId];
-		width = sharedDepthStencilTarget.realized.width;
-		height = sharedDepthStencilTarget.realized.height;
+		const TargetResource* tr = findTargetResource(m_targets, target.sharedDepthStencilTargetSetId);
+		T_FATAL_ASSERT(tr != nullptr);
+
+		width = tr->realized.width;
+		height = tr->realized.height;
 	}
 
 	if (targetSetDesc.referenceWidthDenom > 0)
@@ -740,16 +774,42 @@ bool RenderGraph::realizeTargetDimensions(int32_t width, int32_t height, RGTarge
 
 bool RenderGraph::acquire(TargetResource& inoutTarget)
 {
-	Ref< IRenderTargetSet > sharedDepthTargetSet;
-	if (
-		inoutTarget.sharedDepthStencilTargetSetId != RGTargetSet::Output &&
-		inoutTarget.sharedDepthStencilTargetSetId != RGTargetSet::Invalid)
+	RGTargetSet sharedDepthStencilTargetSetId = inoutTarget.sharedDepthStencilTargetSetId;
+
+	if (isExplicitTargetSetId(sharedDepthStencilTargetSetId))
 	{
-		const auto& t = m_targets[inoutTarget.sharedDepthStencilTargetSetId];
-		sharedDepthTargetSet = t.targetSet->getWriteTargetSet();
+		// This target depends on depth buffer from non-primary target; search chain for
+		// actual depth buffer.
+		for (;;)
+		{
+			const TargetResource* tr = findTargetResource(m_targets, sharedDepthStencilTargetSetId);
+			T_FATAL_ASSERT(tr != nullptr);
+
+			// Do this target have a depth buffer?
+			if (tr->targetSetDesc.createDepthStencil)
+				break;
+
+			sharedDepthStencilTargetSetId = tr->sharedDepthStencilTargetSetId;
+
+			// Do this target use primary depth buffer?
+			if (tr->sharedDepthStencilTargetSetId == RGTargetSet::Output)
+				break;
+
+			// If this target not have a shared depth valid then it's an error.
+			if (tr->sharedDepthStencilTargetSetId == RGTargetSet::Invalid)
+				return false;
+		}
 	}
 
-	const bool sharedPrimaryDepthStencilTargetSet = (inoutTarget.sharedDepthStencilTargetSetId == RGTargetSet::Output);
+	Ref< IRenderTargetSet > sharedDepthTargetSet;
+	if (isExplicitTargetSetId(sharedDepthStencilTargetSetId))
+	{
+		const TargetResource* tr = findTargetResource(m_targets, sharedDepthStencilTargetSetId);
+		T_FATAL_ASSERT(tr != nullptr);
+		sharedDepthTargetSet = tr->targetSet->getWriteTargetSet();
+	}
+
+	const bool sharedPrimaryDepthStencilTargetSet = (sharedDepthStencilTargetSetId == RGTargetSet::Output);
 
 	inoutTarget.targetSet = m_context->getTargetSetPool()->acquire(
 		inoutTarget.name,
@@ -773,6 +833,7 @@ void RenderGraph::cleanup()
 	m_passes.resize(0);
 	m_targets.reset();
 	m_buffers.reset();
+	m_textures.reset();
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
 		m_order[i].resize(0);
 	m_sharedDepthTargets.clear();

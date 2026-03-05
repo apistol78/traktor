@@ -67,7 +67,7 @@ render::RGTexture DownScalePass::setup(
 		.mipCount = 1,
 		.format = render::TfR16G16B16A16F
 	};
-	const render::RGTexture downScaleTextureId = renderGraph.addTransientTexture(L"DownScale", rgtxd);
+	const render::RGTexture downScaleTextureId = renderGraph.addTransientTexture(L"DownScale", rgtxd, gbufferTargetSetId);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"DownScale");
 	rp->addInput(gbufferTargetSetId);
