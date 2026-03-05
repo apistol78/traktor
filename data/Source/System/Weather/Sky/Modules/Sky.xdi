@@ -17,31 +17,31 @@ vec3 GetSkyColor(vec3 sunDirection, vec3 sunColor, vec3 overHorizon, vec3 underH
 #define SCENE_SCALE						(10.0f)
 #define INV_SCENE_SCALE					(0.1f)
 
-#define CLOUD_MARCH_STEPS				20
-#define CLOUD_SELF_SHADOW_STEPS			8
+#define CLOUD_MARCH_STEPS				24
+#define CLOUD_SELF_SHADOW_STEPS			12
 
 #define EARTH_RADIUS   					(50000.0f)
-#define CLOUDS_BOTTOM   					(1050.)
-#define CLOUDS_TOP      					(2450.)
+#define CLOUDS_BOTTOM   				(1050.)
+#define CLOUDS_TOP      				(2450.)
 
-#define CLOUDS_COVERAGE					(0.5f)
+#define CLOUDS_COVERAGE					(0.6f)
 
-#define CLOUDS_DETAIL_STRENGTH			(0.25f)
+#define CLOUDS_DETAIL_STRENGTH			(0.5f)
 #define CLOUDS_BASE_EDGE_SOFTNESS		(0.15f)
 #define CLOUDS_BOTTOM_SOFTNESS			(0.01f)
-#define CLOUDS_DENSITY					(0.15f)
+#define CLOUDS_DENSITY					(0.01f)
 #define CLOUDS_SHADOW_MARGE_STEP_SIZE	(6.0f)
 #define CLOUDS_SHADOW_MARGE_STEP_MULTIPLY	(1.3f)
 #define CLOUDS_FORWARD_SCATTERING_G		(0.8f)
 #define CLOUDS_BACKWARD_SCATTERING_G		(-0.4f)
 #define CLOUDS_SCATTERING_LERP			(0.4f)
 
-#define CLOUDS_AMBIENT_COLOR_TOP			(vec3(169.0f, 167.0f, 200.0f) * (1.5f / 255.f))
+#define CLOUDS_AMBIENT_COLOR_TOP		(vec3(169.0f, 167.0f, 200.0f) * (1.5f / 255.f))
 #define CLOUDS_AMBIENT_COLOR_BOTTOM		(vec3( 39.0f,  67.0f,  87.0f) * (1.5f / 255.f))
 #define CLOUDS_MIN_TRANSMITTANCE 		0.1f
 
 #define CLOUDS_BASE_SCALE 				1.3f
-#define CLOUDS_DETAIL_SCALE 				0.4f
+#define CLOUDS_DETAIL_SCALE 			0.4f
 
 #define CLOUDS_OFFSET_SCALE				40.0f
 
