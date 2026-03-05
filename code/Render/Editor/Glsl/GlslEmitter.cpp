@@ -50,11 +50,20 @@ bool compareSamplerState(const SamplerState& lh, const SamplerState& rh, bool ne
 		lh.useAnisotropic == rh.useAnisotropic;
 }
 
+bool isInteger(float v)
+{
+	return (v - std::floor(v)) < FUZZY_EPSILON;
+}
+
 std::wstring formatFloat(float v)
 {
 	std::wstring s = toString(v);
+	if (s.empty())
+		return L"0.0f";
 	if (s.find(L'.') == s.npos)
-		s += L".0f";
+		s += L".0";
+	if (s.back() != L'f')
+		s += L'f';
 	return s;
 }
 
@@ -2263,7 +2272,7 @@ bool emitScalar(GlslContext& cx, Scalar* node)
 	comment(f, node);
 
 	const float v = std::abs(node->get());
-	if ((v - std::floor(v)) < FUZZY_EPSILON)
+	if (isInteger(v))
 	{
 		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Integer);
 		f << L"const int " << out->getName() << L" = " << (int32_t)node->get() << L";" << Endl;
@@ -2687,11 +2696,218 @@ bool emitSum(GlslContext& cx, Sum* node)
 
 bool emitSwizzle(GlslContext& cx, Swizzle* node)
 {
+	const GlslType integerTypes[] = { GlslType::Integer, GlslType::Integer2, GlslType::Integer3, GlslType::Integer4 };
+	const GlslType floatTypes[] = { GlslType::Float, GlslType::Float2, GlslType::Float3, GlslType::Float4 };
+
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	const std::wstring map = toLower(node->get());
 	if (map.length() == 0)
 		return false;
+
+	bool haveNumeric = false;
+	bool haveX = false;
+	bool haveYZW = false;
+	for (size_t i = 0; i < map.length(); ++i)
+	{
+		switch (map[i])
+		{
+		case L'x':
+			haveX = true;
+			break;
+		case L'y':
+		case L'z':
+		case L'w':
+			haveYZW = true;
+			break;
+		case L'0':
+		case L'1':
+			haveNumeric = true;
+			break;
+		default:
+			return false;
+		}
+	}
+
+	// Only need to generate a constant?
+	if (haveNumeric && !haveX && !haveYZW)
+	{
+		const GlslType type = integerTypes[map.length() - 1];
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
+
+		if (map.length() > 1)
+		{
+			StringOutputStream ss;
+			ss << glsl_type_name(type) << L"(";
+			for (size_t i = 0; i < map.length(); ++i)
+			{
+				if (i > 0)
+					ss << L", ";
+				ss << map[i];
+			}
+			ss << L")";
+			assign(f, out) << ss.str() << L";" << Endl;
+		}
+		else // == 1
+			assign(f, out) << map[0] << L";" << Endl;
+
+		return true;
+	}
+
+	const Node* inputNode = cx.getInputNode(node, L"Input");
+	if (!inputNode)
+		return false;
+
+	// If input is a vector node we can rearrange it to output proper GLSL type.
+	// Since vector node is always considered 4 element wide we can make to GLSL
+	// less verbose if we hade this explicitly.
+	// Also the type propagation optimization step ensure vector nodes have
+	// a swizzle node after it if it's width are less than four.
+	if (const Vector* vectorInputNode = dynamic_type_cast< const Vector* >(inputNode))
+	{
+		float T_MATH_ALIGN16 v[4];
+		vectorInputNode->get().storeAligned(v);
+
+		// Check if all values can be represented as integers.
+		bool allIntegers = true;
+		for (size_t i = 0; i < map.length(); ++i)
+		{
+			switch (map[i])
+			{
+			case L'x':
+				allIntegers &= isInteger(v[0]);
+				break;
+			case L'y':
+				allIntegers &= isInteger(v[1]);
+				break;
+			case L'z':
+				allIntegers &= isInteger(v[2]);
+				break;
+			case L'w':
+				allIntegers &= isInteger(v[3]);
+				break;
+			}
+		}
+
+		if (allIntegers)
+		{
+			const GlslType type = integerTypes[map.length() - 1];
+			Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
+
+			if (map.length() > 1)
+			{
+				StringOutputStream ss;
+				ss << glsl_type_name(type) << L"(";
+				for (size_t i = 0; i < map.length(); ++i)
+				{
+					if (i > 0)
+						ss << L", ";
+					switch (map[i])
+					{
+					case L'x':
+						ss << (int32_t)v[0];
+						break;
+					case L'y':
+						ss << (int32_t)v[1];
+						break;
+					case L'z':
+						ss << (int32_t)v[2];
+						break;
+					case L'w':
+						ss << (int32_t)v[3];
+						break;
+					case L'0':
+						ss << L"0";
+						break;
+					case L'1':
+						ss << L"1";
+						break;
+					}
+				}
+				ss << L")";
+				assign(f, out) << ss.str() << L";" << Endl;
+			}
+			else // == 1
+			{
+				switch (map[0])
+				{
+				case L'x':
+					assign(f, out) << (int32_t)v[0] << L";" << Endl;
+					break;
+				case L'y':
+					assign(f, out) << (int32_t)v[1] << L";" << Endl;
+					break;
+				case L'z':
+					assign(f, out) << (int32_t)v[2] << L";" << Endl;
+					break;
+				case L'w':
+					assign(f, out) << (int32_t)v[3] << L";" << Endl;
+					break;
+				}
+			}
+		}
+		else
+		{
+			const GlslType type = floatTypes[map.length() - 1];
+			Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
+
+			if (map.length() > 1)
+			{
+				StringOutputStream ss;
+				ss << glsl_type_name(type) << L"(";
+				for (size_t i = 0; i < map.length(); ++i)
+				{
+					if (i > 0)
+						ss << L", ";
+					switch (map[i])
+					{
+					case L'x':
+						ss << formatFloat(v[0]);
+						break;
+					case L'y':
+						ss << formatFloat(v[1]);
+						break;
+					case L'z':
+						ss << formatFloat(v[2]);
+						break;
+					case L'w':
+						ss << formatFloat(v[3]);
+						break;
+					case L'0':
+						ss << L"0.0f";
+						break;
+					case L'1':
+						ss << L"1.0f";
+						break;
+					}
+				}
+				ss << L")";
+				assign(f, out) << ss.str() << L";" << Endl;
+			}
+			else // == 1
+			{
+				switch (map[0])
+				{
+				case L'x':
+					assign(f, out) << formatFloat(v[0]) << L";" << Endl;
+					break;
+				case L'y':
+					assign(f, out) << formatFloat(v[1]) << L";" << Endl;
+					break;
+				case L'z':
+					assign(f, out) << formatFloat(v[2]) << L";" << Endl;
+					break;
+				case L'w':
+					assign(f, out) << formatFloat(v[3]) << L";" << Endl;
+					break;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	// Not constant input; use univeral swizzle path.
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
@@ -2699,25 +2915,14 @@ bool emitSwizzle(GlslContext& cx, Swizzle* node)
 
 	GlslType type = GlslType::Void;
 	if (in->getType() >= GlslType::Integer && in->getType() <= GlslType::Integer4)
-	{
-		const GlslType types[] = { GlslType::Integer, GlslType::Integer2, GlslType::Integer3, GlslType::Integer4 };
-		type = types[map.length() - 1];
-	}
+		type = integerTypes[map.length() - 1];
 	else
-	{
-		const GlslType types[] = { GlslType::Float, GlslType::Float2, GlslType::Float3, GlslType::Float4 };
-		type = types[map.length() - 1];
-	}
+		type = floatTypes[map.length() - 1];
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
-	bool containConstant = false;
-	for (size_t i = 0; i < map.length() && !containConstant; ++i)
-		if (map[i] == L'0' || map[i] == L'1')
-			containConstant = true;
-
 	StringOutputStream ss;
-	if (containConstant || (map.length() > 1 && in->getType() == GlslType::Float))
+	if (haveNumeric || (map.length() > 1 && in->getType() == GlslType::Float))
 	{
 		ss << glsl_type_name(type) << L"(";
 		for (size_t i = 0; i < map.length(); ++i)
@@ -2726,22 +2931,22 @@ bool emitSwizzle(GlslContext& cx, Swizzle* node)
 				ss << L", ";
 			switch (map[i])
 			{
-			case 'x':
+			case L'x':
 				if (in->getType() == GlslType::Float)
 				{
 					ss << in->getName();
 					break;
 				}
 				// Don't break, multidimensional source.
-			case 'y':
-			case 'z':
-			case 'w':
+			case L'y':
+			case L'z':
+			case L'w':
 				ss << in->getName() << L'.' << map[i];
 				break;
-			case '0':
+			case L'0':
 				ss << L"0.0";
 				break;
-			case '1':
+			case L'1':
 				ss << L"1.0";
 				break;
 			}
@@ -3189,8 +3394,7 @@ bool emitVector(GlslContext& cx, Vector* node)
 
 	bool integer = true;
 	for (int32_t i = 0; i < 4; ++i)
-		if ((e[i] - std::floor(e[i])) >= FUZZY_EPSILON)
-			integer = false;
+		integer &= isInteger(e[i]);
 
 	if (integer)
 	{
