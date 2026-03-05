@@ -119,10 +119,12 @@ void WorldRendererDeferred::setup(
 	// Jitter projection for TAA, calculate jitter in clip space.
 	if (needJitter)
 	{
-		const Vector2 ndc = (jitter(count) * 2.0f) / worldRenderView.getViewSize();
-		Matrix44 proj = worldRenderView.getProjection();
-		proj = translate(ndc.x, ndc.y, 0.0f) * proj;
-		worldRenderView.setProjection(proj);
+		const Matrix44 originalProjection = worldRenderView.getProjection();
+
+		const Vector2 ndcc = (jitter(count) * 2.0f) / worldRenderView.getViewSize();
+		const Matrix44 currentProjection = translate(ndcc.x, ndcc.y, 0.0f) * originalProjection;
+
+		worldRenderView.setProjection(currentProjection);
 	}
 
 	// Gather active renderables for this frame.
