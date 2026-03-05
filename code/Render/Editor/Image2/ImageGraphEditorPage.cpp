@@ -646,16 +646,16 @@ void ImageGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 	T_ASSERT(destinationNode);
 
 	// Ensure compatible types of nodes are connected.
-	if (!is_a< ImgPermutation >(sourceNode) && !is_a< ImgPermutation >(destinationNode))
-	{
-		const bool sourceTarget = is_a< ImgInput >(sourceNode) || is_a< ImgOutput >(sourceNode) || is_a< ImgStructBuffer >(sourceNode) || is_a< ImgTargetSet >(sourceNode) || is_a< ImgTexture >(sourceNode);
-		const bool destinationTarget = is_a< ImgInput >(destinationNode) || is_a< ImgOutput >(destinationNode) || is_a< ImgStructBuffer >(destinationNode) || is_a< ImgTargetSet >(destinationNode);
-		if (sourceTarget == destinationTarget)
-		{
-			log::warning << L"Only \"pass to target\" or \"target to pass\" can be connected." << Endl;
-			return;
-		}
-	}
+	// if (!is_a< ImgPermutation >(sourceNode) && !is_a< ImgPermutation >(destinationNode))
+	// {
+	// 	const bool sourceTarget = is_a< ImgInput >(sourceNode) || is_a< ImgOutput >(sourceNode) || is_a< ImgStructBuffer >(sourceNode) || is_a< ImgTargetSet >(sourceNode) || is_a< ImgTexture >(sourceNode);
+	// 	const bool destinationTarget = is_a< ImgInput >(destinationNode) || is_a< ImgOutput >(destinationNode) || is_a< ImgStructBuffer >(destinationNode) || is_a< ImgTargetSet >(destinationNode);
+	// 	if (sourceTarget == destinationTarget)
+	// 	{
+	// 		log::warning << L"Only \"pass to target\" or \"target to pass\" can be connected." << Endl;
+	// 		return;
+	// 	}
+	// }
 
 	const OutputPin* sourcePin = sourceNode->findOutputPin(editorSourcePin->getName());
 	T_ASSERT(sourcePin);

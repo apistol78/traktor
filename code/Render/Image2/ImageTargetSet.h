@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,7 +31,13 @@ class T_DLLCLASS ImageTargetSet : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit ImageTargetSet(const std::wstring& name, handle_t persistentHandle, img_handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets], const RenderGraphTargetSetDesc& targetSetDesc);
+	explicit ImageTargetSet(
+		const std::wstring& name,
+		handle_t persistentHandle,
+		img_handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets],
+		const RenderGraphTargetSetDesc& targetSetDesc,
+		img_handle_t referenceTextureId
+	);
 
 	const std::wstring& getName() const;
 
@@ -41,11 +47,14 @@ public:
 
 	const RenderGraphTargetSetDesc& getTargetSetDesc() const;
 
+	img_handle_t getReferenceTextureId() const;
+
 private:
 	std::wstring m_name;
 	handle_t m_persistentHandle;
 	img_handle_t m_textureIds[RenderGraphTargetSetDesc::MaxColorTargets];
 	RenderGraphTargetSetDesc m_targetSetDesc;
+	img_handle_t m_referenceTextureId;
 };
 
 }

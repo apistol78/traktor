@@ -111,19 +111,19 @@
 				</item>
 			</steps>
 		</item>
-		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
+		<item type="traktor.render.ImgTargetSet" version="2,traktor.render.Node:1">
 			<id>{50EC2CAB-AE90-CB42-8F61-24D9B6CD361C}</id>
 			<comment/>
 			<position>
-				<first>276</first>
-				<second>504</second>
+				<first>241</first>
+				<second>494</second>
 			</position>
 			<targetSetId>TAA history</targetSetId>
 			<persistent>true</persistent>
 			<width>0</width>
 			<height>0</height>
-			<screenWidthDenom>2</screenWidthDenom>
-			<screenHeightDenom>2</screenHeightDenom>
+			<referenceWidthDenom>1</referenceWidthDenom>
+			<referenceHeightDenom>1</referenceHeightDenom>
 			<maxWidth>0</maxWidth>
 			<maxHeight>0</maxHeight>
 			<createDepthStencil>false</createDepthStencil>
@@ -206,6 +206,16 @@
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{DDB00201-E818-429B-B3FB-E313B3C1679C}</id>
 			</destination>
 		</item>
 	</edges>

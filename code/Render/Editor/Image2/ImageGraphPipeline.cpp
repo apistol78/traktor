@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,7 +40,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 19, ImageGraphPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 21, ImageGraphPipeline, editor::IPipeline)
 
 bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -213,6 +213,20 @@ bool ImageGraphPipeline::buildOutput(
 				for (int32_t i = 0; i < targetSetNode->getTextureCount(); ++i)
 					tsd->m_textureIds[i] = targetSetNode->getTargetSetId() + L"/" + targetSetNode->getTextureId(i);
 				tsd->m_targetSetDesc = targetSetNode->getRenderGraphTargetSetDesc();
+
+				const OutputPin* referenceOutputPin = permutation->findSourcePin(targetSetNode->getInputPin(1));
+				if (referenceOutputPin)
+				{
+					const ImgInput* referenceInputNode = dynamic_type_cast< const ImgInput* >(referenceOutputPin->getNode());
+					if (!referenceInputNode)
+					{
+						log::error << L"Image graph pipeline failed; target reference must be connected to an input node." << Endl;
+						return false;
+					}
+
+					tsd->m_referenceTextureId = referenceInputNode->getTextureId();
+				}
+
 				pd.targetSets.push_back(tsd);
 			}
 		}

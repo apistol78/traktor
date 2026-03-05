@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -65,16 +65,16 @@ private:
 	AlignedVector< OutputPin* > m_outputPins;
 
 	std::wstring m_targetSetId;
-	bool m_persistent;
-	int32_t m_width;
-	int32_t m_height;
-	int32_t m_screenWidthDenom;
-	int32_t m_screenHeightDenom;
-	int32_t m_maxWidth;
-	int32_t m_maxHeight;
-	bool m_createDepthStencil;
-	bool m_ignoreStencil;
-	bool m_generateMips;
+	bool m_persistent = false;
+	int32_t m_width = 0;
+	int32_t m_height = 0;
+	int32_t m_referenceWidthDenom = 0;
+	int32_t m_referenceHeightDenom = 0;
+	int32_t m_maxWidth = 0;
+	int32_t m_maxHeight = 0;
+	bool m_createDepthStencil = false;
+	bool m_ignoreStencil = false;
+	bool m_generateMips = false;
 	AlignedVector< TargetDesc > m_targets;
 
 	void refresh();

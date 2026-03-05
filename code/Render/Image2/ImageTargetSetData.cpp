@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -117,7 +117,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageTargetSetData", 2, ImageTargetSetData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageTargetSetData", 3, ImageTargetSetData, ISerializable)
 
 Ref< const ImageTargetSet > ImageTargetSetData::createInstance(int32_t instance) const
 {
@@ -125,22 +125,27 @@ Ref< const ImageTargetSet > ImageTargetSetData::createInstance(int32_t instance)
 	for (int32_t i = 0; i < sizeof_array(textureIds); ++i)
 		textureIds[i] = getParameterHandle(m_textureIds[i]);
 
+	handle_t persistentHandle = !m_persistentHandle.empty() ? getParameterHandle(m_persistentHandle + toString(instance)) : 0;
+	handle_t referenceTextureId = !m_referenceTextureId.empty() ? getParameterHandle(m_referenceTextureId) : 0;
+
 	return new ImageTargetSet(
 		m_targetSetId,
-		!m_persistentHandle.empty() ? getParameterHandle(m_persistentHandle + toString(instance)) : 0,
+		persistentHandle,
 		textureIds,
-		m_targetSetDesc
+		m_targetSetDesc,
+		referenceTextureId
 	);
 }
 
 void ImageTargetSetData::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT(s.getVersion() >= 2);
+	T_FATAL_ASSERT(s.getVersion() >= 3);
 
 	s >> Member< std::wstring >(L"targetSetId", m_targetSetId);
 	s >> Member< std::wstring >(L"persistentHandle", m_persistentHandle);
 	s >> MemberStaticArray< std::wstring, RenderGraphTargetSetDesc::MaxColorTargets >(L"textureIds", m_textureIds);
 	s >> MemberRenderGraphTargetSetDesc(L"targetSetDesc", m_targetSetDesc);
+	s >> Member< std::wstring >(L"referenceTextureId", m_referenceTextureId);
 }
 
 }
