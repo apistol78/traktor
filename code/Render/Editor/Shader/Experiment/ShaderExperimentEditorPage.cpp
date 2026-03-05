@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,6 +22,8 @@
 #include "Editor/PropertiesView.h"
 #include "Render/Buffer.h"
 #include "Render/Editor/Shader/Experiment/ShaderExperiment.h"
+#include "Render/Editor/Shader/Experiment/SxDataBuffer.h"
+#include "Render/Editor/Shader/Experiment/SxDataImage.h"
 #include "Render/Editor/Shader/Std430.h"
 #include "Render/Editor/Shader/StructDeclaration.h"
 #include "Render/IProgram.h"
@@ -92,9 +94,11 @@ bool ShaderExperimentEditorPage::create(ui::Container* parent)
 	m_resultGrid = new ui::GridView();
 	m_resultGrid->create(splitter, ui::GridView::WsColumnHeader);
 
-	const auto& data = m_experiment->getData();
-	for (int32_t i = 0; i < data.size(); ++i)
-		m_resultGrid->addColumn(new ui::GridColumn(data[i].name, 50_ut));
+	for (auto data : m_experiment->getData())
+	{
+		if (auto dataBuffer = dynamic_type_cast< const SxDataBuffer* >(data))
+			m_resultGrid->addColumn(new ui::GridColumn(dataBuffer->getName(), 50_ut));
+	}
 
 	// Create properties view.
 	m_propertiesView = m_site->createPropertiesView(parent);
@@ -127,24 +131,33 @@ bool ShaderExperimentEditorPage::create(ui::Container* parent)
 	m_renderWidget->setRect(ui::Rect(0, 0, 64, 64));
 	m_renderView->reset(64, 64);
 
-	// Add buffers to tree.
-	for (const auto& data : m_experiment->getData())
+	// Add resources to tree.
+	for (auto data : m_experiment->getData())
 	{
-		Ref< const StructDeclaration > decl = m_editor->getSourceDatabase()->getObjectReadOnly< StructDeclaration >(data.structDeclaration);
-		if (!decl)
-			continue;
-
-		Ref< ui::GridRow > row = new ui::GridRow();
-		row->add(data.name);
-
-		for (const auto& elm : decl->getElements())
+		if (auto dataBuffer = dynamic_type_cast< const SxDataBuffer* >(data))
 		{
-			Ref< ui::GridRow > childRow = new ui::GridRow();
-			childRow->add(elm.name);
-			row->addChild(childRow);
-		}
+			Ref< const StructDeclaration > decl = m_editor->getSourceDatabase()->getObjectReadOnly< StructDeclaration >(dataBuffer->getStructDeclaration());
+			if (!decl)
+				continue;
 
-		m_buffersGrid->addRow(row);
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(dataBuffer->getName());
+
+			for (const auto& elm : decl->getElements())
+			{
+				Ref< ui::GridRow > childRow = new ui::GridRow();
+				childRow->add(elm.name);
+				row->addChild(childRow);
+			}
+
+			m_buffersGrid->addRow(row);
+		}
+		else if (auto dataImage = dynamic_type_cast< const SxDataImage* >(data))
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(dataImage->getName());
+			m_buffersGrid->addRow(row);		
+		}
 	}
 
 	// Execute experiment to show initial results.
@@ -195,8 +208,6 @@ void ShaderExperimentEditorPage::handleDatabaseEvent(db::Database* database, con
 
 void ShaderExperimentEditorPage::executeExperiment()
 {
-	const auto& data = m_experiment->getData();
-
 	struct BufferInfo
 	{
 		std::wstring name;
@@ -209,55 +220,57 @@ void ShaderExperimentEditorPage::executeExperiment()
 
 	AlignedVector< BufferInfo > buffers;
 
-	// Create buffers.
-	buffers.resize(data.size());
-	for (int32_t i = 0; i < data.size(); ++i)
+	// Create resources.
+	for (auto data : m_experiment->getData())
 	{
-		BufferInfo& bi = buffers[i];
-
-		bi.name = data[i].name;
-		if (bi.name.empty())
+		if (auto dataBuffer = dynamic_type_cast< const SxDataBuffer* >(data))
 		{
-			log::error << L"Unable to execute experiment; unnamed buffer." << Endl;
-			return;
-		}
+			BufferInfo& bi = buffers.push_back();
 
-		bi.decl = m_editor->getSourceDatabase()->getObjectReadOnly< StructDeclaration >(data[i].structDeclaration);
-		if (!bi.decl)
-		{
-			log::error << L"Unable to execute experiment; missing struct declaration for buffer \"" << data[i].name << L"\"." << Endl;
-			return;
-		}
+			bi.name = dataBuffer->getName();
+			if (bi.name.empty())
+			{
+				log::error << L"Unable to execute experiment; unnamed buffer." << Endl;
+				return;
+			}
 
-		bi.std430 = Std430::create(bi.decl);
-		if (!bi.std430)
-		{
-			log::error << L"Unable to execute experiment; unsupported struct declaration for buffer \"" << data[i].name << L"\"." << Endl;
-			return;
-		}
+			bi.decl = m_editor->getSourceDatabase()->getObjectReadOnly< StructDeclaration >(dataBuffer->getStructDeclaration());
+			if (!bi.decl)
+			{
+				log::error << L"Unable to execute experiment; missing struct declaration for buffer \"" << dataBuffer->getName() << L"\"." << Endl;
+				return;
+			}
 
-		bi.count = data[i].count;
-		if (!bi.count)
-		{
-			log::error << L"Unable to execute experiment; buffer needs atleast one item." << Endl;
-			return;
-		}
+			bi.std430 = Std430::create(bi.decl);
+			if (!bi.std430)
+			{
+				log::error << L"Unable to execute experiment; unsupported struct declaration for buffer \"" << dataBuffer->getName() << L"\"." << Endl;
+				return;
+			}
 
-		bi.buffer = m_renderSystem->createBuffer(BufferUsage::BuStructured, bi.count * bi.std430->getSize(), true);
-		if (!bi.buffer)
-		{
-			log::error << L"Unable to execute experiment; failed to create buffer." << Endl;
-			return;
-		}
+			bi.count = dataBuffer->getCount();
+			if (!bi.count)
+			{
+				log::error << L"Unable to execute experiment; buffer needs atleast one item." << Endl;
+				return;
+			}
 
-		if ((bi.bufferPtr = (uint8_t*)bi.buffer->lock()) == nullptr)
-		{
-			log::error << L"Unable to execute experiment; failed to lock buffer." << Endl;
-			return;
-		}
+			bi.buffer = m_renderSystem->createBuffer(BufferUsage::BuStructured, bi.count * bi.std430->getSize(), true);
+			if (!bi.buffer)
+			{
+				log::error << L"Unable to execute experiment; failed to create buffer." << Endl;
+				return;
+			}
 
-		if (data[i].initial != ShaderExperiment::Initial::Undefined)
-		{
+			if ((bi.bufferPtr = (uint8_t*)bi.buffer->lock()) == nullptr)
+			{
+				log::error << L"Unable to execute experiment; failed to lock buffer." << Endl;
+				return;
+			}
+
+			if (dataBuffer->getInitial() != SxDataBuffer::Initial::Undefined)
+			{
+			}
 		}
 	}
 
@@ -275,7 +288,7 @@ void ShaderExperimentEditorPage::executeExperiment()
 
 		for (int32_t i = 0; i < buffers.size(); ++i)
 			program.program->setBufferViewParameter(
-				getParameterHandle(data[i].name),
+				getParameterHandle(buffers[i].name),
 				buffers[i].buffer->getBufferView());
 
 		const int32_t workSize[] = { pass.workSize, 1, 1 };
@@ -301,6 +314,8 @@ void ShaderExperimentEditorPage::executeExperiment()
 			[&](const BufferInfo& it) {
 			return bufferName == it.name;
 		});
+		if (it == buffers.end())
+			continue;
 
 		for (const auto& elm : it->decl->getElements())
 			m_resultGrid->addColumn(new ui::GridColumn(str(L"%s.%s", bufferName.c_str(), elm.name.c_str()), 100_ut));

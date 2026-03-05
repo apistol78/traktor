@@ -2,35 +2,40 @@
 <object type="traktor.render.ShaderExperiment">
 	<shader>{7BAA152D-9185-4624-989A-366D44D35424}</shader>
 	<data>
-		<item>
+		<item type="traktor.render.SxDataBuffer">
 			<name>Buffer_A</name>
 			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
 			<count>64</count>
 		</item>
-		<item>
+		<item type="traktor.render.SxDataBuffer">
 			<name>Buffer_B</name>
 			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
 			<count>64</count>
 		</item>
-		<item>
+		<item type="traktor.render.SxDataBuffer">
 			<name>Buffer_C</name>
 			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
 			<count>64</count>
 		</item>
-		<item>
+		<item type="traktor.render.SxDataBuffer">
 			<name>Buffer_D</name>
 			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
 			<count>64</count>
 		</item>
-		<item>
+		<item type="traktor.render.SxDataBuffer">
 			<name>Buffer_E</name>
 			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
 			<count>64</count>
 		</item>
-		<item>
+		<item type="traktor.render.SxDataBuffer">
 			<name>Buffer_F</name>
 			<structDeclaration>{347C689F-7686-460A-8732-1B984FBDD9ED}</structDeclaration>
 			<count>64</count>
+		</item>
+		<item type="traktor.render.SxDataImage">
+			<name>Image_Ripple</name>
+			<width>128</width>
+			<height>128</height>
 		</item>
 	</data>
 	<pass>

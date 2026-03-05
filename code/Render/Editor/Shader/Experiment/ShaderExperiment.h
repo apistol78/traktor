@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Guid.h"
+#include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
 #include <string>
@@ -25,6 +26,8 @@
 namespace traktor::render
 {
 
+class SxData;
+
 class T_DLLCLASS ShaderExperiment : public ISerializable
 {
 	T_RTTI_CLASS;
@@ -37,16 +40,6 @@ public:
 		Random
 	};
 
-	struct Data
-	{
-		std::wstring name;
-		Guid structDeclaration;
-		int32_t count = 1;
-		Initial initial = Initial::Undefined;
-
-		void serialize(ISerializer& s);
-	};
-
 	struct Pass
 	{
 		std::wstring technique;
@@ -57,7 +50,7 @@ public:
 
 	const Guid& getShader() const { return m_shader; }
 
-	const AlignedVector< Data >& getData() const { return m_data; }
+	const RefArray< SxData >& getData() const { return m_data; }
 
 	const AlignedVector< Pass >& getPasses() const { return m_passes; }
 
@@ -65,7 +58,7 @@ public:
 
 private:
 	Guid m_shader;
-	AlignedVector< Data > m_data;
+	RefArray< SxData > m_data;
 	AlignedVector< Pass > m_passes;
 };
 
