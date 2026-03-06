@@ -52,11 +52,6 @@ const resource::Id< render::ImageGraph > c_reflectionsDenoise(L"{22777807-DD5F-1
 
 const render::Handle s_handleReflectionsOutput(L"World_ReflectionsOutput");
 
-const render::Handle s_persistentReservoirBuffers[] = {
-	render::Handle(L"World_RTReflections_Reservoir_Even"),
-	render::Handle(L"World_RTReflections_Reservoir_Odd")
-};
-
 static Random s_random;
 
 }
@@ -82,6 +77,11 @@ bool RTReflectionsPass::create(resource::IResourceManager* resourceManager, rend
 		return false;
 
 	m_halfResolution = (bool)(desc.quality.reflections <= Quality::High);
+
+	const std::wstring id = Guid::create().format();
+	m_persistentReservoirBuffers[0] = render::Handle(render::getParameterHandle(std::wstring(L"World_RTReflections_Reservoir_Even_") + id));
+	m_persistentReservoirBuffers[1] = render::Handle(render::getParameterHandle(std::wstring(L"World_RTReflections_Reservoir_Odd_") + id));
+
 	return true;
 }
 
@@ -119,8 +119,8 @@ render::RGTargetSet RTReflectionsPass::setup(
 		.referenceHeightDenom = m_halfResolution ? 2 : 1
 	};
 	const DoubleBufferedBuffer reservoirBufferId = {
-		renderGraph.addPersistentBuffer(L"RTReflections_Reservoir", s_persistentReservoirBuffers[frameCount % 2], reservoirBufferDesc),
-		renderGraph.addPersistentBuffer(L"RTReflections_Reservoir", s_persistentReservoirBuffers[(frameCount + 1) % 2], reservoirBufferDesc)
+		renderGraph.addPersistentBuffer(L"RTReflections_Reservoir", m_persistentReservoirBuffers[frameCount % 2], reservoirBufferDesc),
+		renderGraph.addPersistentBuffer(L"RTReflections_Reservoir", m_persistentReservoirBuffers[(frameCount + 1) % 2], reservoirBufferDesc)
 	};
 
 	// Add compute output reflections texture.

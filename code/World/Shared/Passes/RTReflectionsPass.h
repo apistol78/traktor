@@ -69,6 +69,7 @@ private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_reflectionsComputeShader;
 	resource::Proxy< render::ImageGraph > m_reflectionsDenoise;
+	render::Handle m_persistentReservoirBuffers[2];
 	bool m_halfResolution = true;
 };
 

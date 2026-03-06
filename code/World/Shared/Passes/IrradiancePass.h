@@ -67,6 +67,7 @@ private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_irradianceComputeShader;
 	resource::Proxy< render::ImageGraph > m_irradianceDenoise;
+	render::Handle m_persistentReservoirBuffers[2];
 };
 
 }

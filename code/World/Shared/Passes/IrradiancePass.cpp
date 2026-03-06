@@ -56,11 +56,6 @@ const render::Handle s_handleTechniqueIrradiance(L"World_ComputeIrradiance");
 const render::Handle s_handleTechniqueIrradiance_RT(L"World_ComputeIrradiance_RT");
 const render::Handle s_handleIrradianceOutput(L"World_IrradianceOutput");
 
-const render::Handle s_persistentReservoirBuffers[] = {
-	render::Handle(L"World_Reservoir_Even"),
-	render::Handle(L"World_Reservoir_Odd")
-};
-
 static Random s_random;
 
 }
@@ -84,6 +79,10 @@ bool IrradiancePass::create(resource::IResourceManager* resourceManager, render:
 	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
+
+	const std::wstring id = Guid::create().format();
+	m_persistentReservoirBuffers[0] = render::Handle(render::getParameterHandle(std::wstring(L"World_Reservoir_Even_") + id));
+	m_persistentReservoirBuffers[1] = render::Handle(render::getParameterHandle(std::wstring(L"World_Reservoir_Odd_") + id));
 
 	return true;
 }
@@ -125,8 +124,8 @@ render::RGTargetSet IrradiancePass::setup(
 		.referenceHeightDenom = halfResolution ? 2 : 1
 	};
 	const DoubleBufferedBuffer reservoirBufferId = {
-		renderGraph.addPersistentBuffer(L"Reservoir", s_persistentReservoirBuffers[frameCount % 2], reservoirBufferDesc),
-		renderGraph.addPersistentBuffer(L"Reservoir", s_persistentReservoirBuffers[(frameCount + 1) % 2], reservoirBufferDesc)
+		renderGraph.addPersistentBuffer(L"Reservoir", m_persistentReservoirBuffers[frameCount % 2], reservoirBufferDesc),
+		renderGraph.addPersistentBuffer(L"Reservoir", m_persistentReservoirBuffers[(frameCount + 1) % 2], reservoirBufferDesc)
 	};
 
 	// Add compute output irradiance texture.
