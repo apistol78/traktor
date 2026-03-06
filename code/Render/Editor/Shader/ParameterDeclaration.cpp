@@ -19,6 +19,16 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ParameterDeclaration", 0, ParameterDeclaration, ISerializable)
 
+ParameterDeclaration::ParameterDeclaration(
+	ParameterType type,
+	int32_t length,
+	UpdateFrequency frequency)
+	: m_type(type)
+	, m_length(length)
+	, m_frequency(frequency)
+{
+}
+
 void ParameterDeclaration::serialize(ISerializer& s)
 {
 	const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] = {

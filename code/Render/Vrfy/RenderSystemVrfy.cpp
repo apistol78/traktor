@@ -341,21 +341,7 @@ Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programRe
 	if (!program)
 		return nullptr;
 
-	Ref< ProgramVrfy > programVrfy = new ProgramVrfy(m_resourceTracker, program, tag);
-
-	if (resource != nullptr)
-	{
-		for (const auto& uniform : resource->m_uniforms)
-		{
-			const handle_t handle = getParameterHandle(uniform.name);
-			programVrfy->m_shadow[handle].name = uniform.name;
-			programVrfy->m_shadow[handle].type = uniform.type;
-			programVrfy->m_shadow[handle].length = uniform.length;
-			programVrfy->m_shadow[handle].set = false;
-		}
-	}
-
-	return programVrfy;
+	return new ProgramVrfy(m_resourceTracker, resource, program, tag);
 }
 
 void RenderSystemVrfy::purge()

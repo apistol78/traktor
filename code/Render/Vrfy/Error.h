@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,9 +11,9 @@
 #include "Core/Log/Log.h"
 
 #define T_CAPTURE_ASSERT(condition, message) \
-	if (!(condition)) { \
+	{ if (!(condition)) { \
 		log::error << L"Render error: " << message << Endl; \
-	}
+	} }
 
 #if 0
 #	define T_CAPTURE_TRACE(method) \

@@ -145,7 +145,6 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 	for (auto externalNode : externalNodes)
 	{
 		const Guid& fragmentId = externalNode->getFragmentGuid();
-		log::debug << L"Resolving external fragment \"" << fragmentId.format() << L"\"..." << Endl;
 
 		// Read fragment shader.
 		Ref< const ShaderGraph > fragmentShaderGraph = m_fragmentReader->read(fragmentId);

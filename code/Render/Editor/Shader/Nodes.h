@@ -1406,6 +1406,11 @@ class T_DLLCLASS Parameter : public ImmutableNode
 public:
 	Parameter();
 
+	explicit Parameter(
+		const std::wstring& parameterName,
+		ParameterType type,
+		UpdateFrequency frequency);
+
 	const Guid& getDeclarationId() const { return m_parameterDeclaration; }
 
 	const ParameterDeclaration& getDeclaration() const { T_FATAL_ASSERT(m_linked); return m_declaration; }
@@ -1425,6 +1430,7 @@ private:
 	//!\{
 	std::wstring m_parameterName;
 	ParameterDeclaration m_declaration;
+	bool m_explicit = false;
 	bool m_linked = false;
 	//!\}
 };

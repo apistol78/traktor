@@ -3548,20 +3548,32 @@ Parameter::Parameter()
 {
 }
 
+Parameter::Parameter(
+	const std::wstring& parameterName,
+	ParameterType type,
+	UpdateFrequency frequency)
+	: ImmutableNode(c_Parameter_i, c_Parameter_o)
+	, m_parameterName(parameterName)
+	, m_declaration(type, 0, frequency)
+	, m_explicit(true)
+	, m_linked(true)
+{
+}
+
 void Parameter::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
 
 	s >> Member< Guid >(L"parameterDeclaration", m_parameterDeclaration, AttributeType(type_of< ParameterDeclaration >()));
 
-	if (s.cloning())
+	if (m_explicit || s.cloning())
 	{
 		s >> Member< std::wstring >(L"parameterName", m_parameterName);
 		s >> MemberComposite< ParameterDeclaration >(L"declaration", m_declaration);
+		s >> Member< bool >(L"explicit", m_explicit);
 		s >> Member< bool >(L"linked", m_linked);
 	}
 }
-
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ArrayElement", 0, ArrayElement, ImmutableNode)
 
@@ -3581,8 +3593,6 @@ ArrayElement::ArrayElement()
 {
 }
 
-
-
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ArrayLength", 0, ArrayLength, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_ArrayLength_i[] = {
@@ -3599,7 +3609,6 @@ ArrayLength::ArrayLength()
 	: ImmutableNode(c_ArrayLength_i, c_ArrayLength_o)
 {
 }
-
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MemberValue", 0, MemberValue, ImmutableNode)
 
@@ -3629,7 +3638,5 @@ void MemberValue::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"memberName", m_memberName);
 }
-
-
 
 }

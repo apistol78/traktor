@@ -1,16 +1,18 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Vrfy/ProgramVrfy.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vrfy/AccelerationStructureVrfy.h"
 #include "Render/Vrfy/BufferViewVrfy.h"
 #include "Render/Vrfy/Error.h"
-#include "Render/Vrfy/ProgramVrfy.h"
+#include "Render/Vrfy/ProgramResourceVrfy.h"
 #include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/TextureVrfy.h"
 
@@ -19,12 +21,28 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVrfy", ProgramVrfy, IProgram)
 
-ProgramVrfy::ProgramVrfy(ResourceTracker* resourceTracker, IProgram* program, const wchar_t* const tag)
-:	m_resourceTracker(resourceTracker)
-,	m_program(program)
-,	m_tag(tag)
+ProgramVrfy::ProgramVrfy(ResourceTracker* resourceTracker, const ProgramResourceVrfy* resource, IProgram* program, const wchar_t* const tag)
+	: m_resourceTracker(resourceTracker)
+	, m_resource(resource)
+	, m_program(program)
+	, m_tag(tag)
 {
 	m_resourceTracker->add(this);
+
+	if (m_resource)
+	{
+		for (const auto& uniform : m_resource->getUniforms())
+		{
+			const handle_t handle = getParameterHandle(uniform.name);
+
+			m_validHandles.insert(handle);
+
+			m_shadow[handle].name = uniform.name;
+			m_shadow[handle].type = uniform.type;
+			m_shadow[handle].length = uniform.length;
+			m_shadow[handle].set = false;
+		}
+	}
 }
 
 ProgramVrfy::~ProgramVrfy()
@@ -181,7 +199,8 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 	else
 		m_program->setTextureParameter(handle, nullptr);
 
-	m_boundTextures[handle] = texture;
+	if (m_validHandles.find(handle) != m_validHandles.end())
+		m_boundTextures[handle] = texture;
 
 	const auto it = m_shadow.find(handle);
 	if (it != m_shadow.end())
@@ -189,10 +208,9 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 		T_CAPTURE_ASSERT(it->second.length <= 0, L"Incorrect parameter type, not a single uniform.");
 		T_CAPTURE_ASSERT(
 			(it->second.type == ParameterType::Texture2D) ||
-			(it->second.type == ParameterType::TextureCube) ||
-			(it->second.type == ParameterType::Texture3D),
-			L"Incorrect parameter type, not texture."
-		);
+				(it->second.type == ParameterType::TextureCube) ||
+				(it->second.type == ParameterType::Texture3D),
+			L"Incorrect parameter type, not texture.");
 		it->second.set = true;
 	}
 }
@@ -217,7 +235,8 @@ void ProgramVrfy::setImageViewParameter(handle_t handle, ITexture* imageView, in
 	else
 		m_program->setImageViewParameter(handle, nullptr, 0);
 
-	m_boundImages[handle] = { imageView, mip };
+	if (m_validHandles.find(handle) != m_validHandles.end())
+		m_boundImages[handle] = { imageView, mip };
 
 	const auto it = m_shadow.find(handle);
 	if (it != m_shadow.end())
@@ -225,10 +244,9 @@ void ProgramVrfy::setImageViewParameter(handle_t handle, ITexture* imageView, in
 		T_CAPTURE_ASSERT(it->second.length <= 0, L"Incorrect parameter type, not a single uniform.");
 		T_CAPTURE_ASSERT(
 			(it->second.type == ParameterType::Image2D) ||
-			(it->second.type == ParameterType::ImageCube) ||
-			(it->second.type == ParameterType::Image3D),
-			L"Incorrect parameter type, not image."
-		);
+				(it->second.type == ParameterType::ImageCube) ||
+				(it->second.type == ParameterType::Image3D),
+			L"Incorrect parameter type, not image.");
 		it->second.set = true;
 	}
 }

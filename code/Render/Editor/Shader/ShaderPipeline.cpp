@@ -638,19 +638,19 @@ bool ShaderPipeline::buildOutput(
 						shaderCombination.textures.push_back(textureGuid);
 					}
 
-					Ref< Uniform > textureUniform = new Uniform(
+					Ref< Parameter > textureParameter = new Parameter(
 						getParameterNameFromTextureReferenceIndex(textureIndex),
 						textureNode->getParameterType(),
 						UpdateFrequency::Once);
 
-					const OutputPin* textureUniformOutput = textureUniform->getOutputPin(0);
-					T_ASSERT(textureUniformOutput);
+					const OutputPin* textureParameterOutput = textureParameter->getOutputPin(0);
+					T_ASSERT(textureParameterOutput);
 
 					const OutputPin* textureNodeOutput = textureNode->getOutputPin(0);
 					T_ASSERT(textureNodeOutput);
 
-					programGraph->addNode(textureUniform);
-					programGraph->rewire(textureNodeOutput, textureUniformOutput);
+					programGraph->addNode(textureParameter);
+					programGraph->rewire(textureNodeOutput, textureParameterOutput);
 				}
 
 				// Resolve shader modules.

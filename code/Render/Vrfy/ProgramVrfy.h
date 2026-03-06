@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,13 +8,15 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Containers/SmallMap.h"
 #include "Render/IProgram.h"
+
+#include <string>
 
 namespace traktor::render
 {
 
+class ProgramResourceVrfy;
 class ResourceTracker;
 
 /*!
@@ -25,7 +27,7 @@ class ProgramVrfy : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	explicit ProgramVrfy(ResourceTracker* resourceTracker, IProgram* program, const wchar_t* const tag);
+	explicit ProgramVrfy(ResourceTracker* resourceTracker, const ProgramResourceVrfy* resource, IProgram* program, const wchar_t* const tag);
 
 	virtual ~ProgramVrfy();
 
@@ -68,8 +70,10 @@ private:
 	};
 
 	Ref< ResourceTracker > m_resourceTracker;
+	Ref< const ProgramResourceVrfy > m_resource;
 	Ref< IProgram > m_program;
 	std::wstring m_tag;
+	SmallSet< handle_t > m_validHandles;
 	SmallMap< handle_t, Parameter > m_shadow;
 	SmallMap< handle_t, Ref< ITexture > > m_boundTextures;
 	SmallMap< handle_t, std::pair< Ref< ITexture >, int > > m_boundImages;

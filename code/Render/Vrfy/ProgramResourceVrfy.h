@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,11 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Ref.h"
-#include "Render/Types.h"
 #include "Render/Resource/ProgramResource.h"
+#include "Render/Types.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -35,11 +36,14 @@ public:
 	struct Uniform
 	{
 		std::wstring name;
-		ParameterType type;
-		int32_t length;		// Length of uniform array, 0 = non array uniform.
+		ParameterType type = ParameterType::Scalar;
+		int32_t length = 0; //!< Length of uniform array, 0 = non array uniform.
+		bool initialized = false;
 
 		void serialize(ISerializer& s);
 	};
+
+	const AlignedVector< Uniform >& getUniforms() const { return m_uniforms; }
 
 	virtual void serialize(ISerializer& s) override;
 

@@ -28,6 +28,14 @@ class T_DLLCLASS ParameterDeclaration : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	ParameterDeclaration() = default;
+
+	explicit ParameterDeclaration(
+		ParameterType type,
+		int32_t length,
+		UpdateFrequency frequency
+	);
+
 	ParameterType getParameterType() const { return m_type; }
 
 	int32_t getLength() const { return m_length; }

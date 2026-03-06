@@ -45,15 +45,22 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 	resourceVrfy->m_requireRayTracing = resource->requireRayTracing();
 	resourceVrfy->m_embedded = resource;
 
-	// Record all uniforms used in shader.
-	for (auto uniform : shaderGraph->findNodesOf< Uniform >())
-		resourceVrfy->m_uniforms.push_back({ uniform->getParameterName(),
-			uniform->getParameterType(),
-			0 });
-	for (auto indexedUniform : shaderGraph->findNodesOf< IndexedUniform >())
-		resourceVrfy->m_uniforms.push_back({ indexedUniform->getParameterName(),
-			indexedUniform->getParameterType(),
-			indexedUniform->getLength() });
+	for (auto param : shaderGraph->findNodesOf< Parameter >())
+	{
+		const bool initialized = (bool)(shaderGraph->findEdge(param->getInputPin(0)) != nullptr);
+
+		const ParameterDeclaration& decl = param->getDeclaration();
+		if (decl.getLength() <= 1)
+			resourceVrfy->m_uniforms.push_back({ .name = param->getParameterName(),
+				.type = decl.getParameterType(),
+				.length = 0,
+				.initialized = initialized });
+		else
+			resourceVrfy->m_uniforms.push_back({ .name = param->getParameterName(),
+				.type = decl.getParameterType(),
+				.length = decl.getLength(),
+				.initialized = initialized });
+	}
 
 	// Keep copy of readable shader in capture.
 	Output output;
