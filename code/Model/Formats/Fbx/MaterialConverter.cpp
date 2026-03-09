@@ -143,6 +143,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 				true,
 				Guid(),
 				diffuseImage));
+			mm.setColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 		}
 
 		if (material->pbr.specular_color.texture)
