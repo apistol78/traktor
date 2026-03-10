@@ -1133,7 +1133,8 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 			btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
 			T_ASSERT(manifold);
 
-			manifold->getContactPoint(0).m_userPersistentData = nullptr;
+			if (manifold->getNumContacts() > 0)
+				manifold->getContactPoint(0).m_userPersistentData = nullptr;
 		}
 	}
 
