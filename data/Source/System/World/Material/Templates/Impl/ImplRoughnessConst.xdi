@@ -17,7 +17,7 @@
 				<first>433</first>
 				<second>422</second>
 			</position>
-			<value>0</value>
+			<value>0.8</value>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{F40E8D07-44B3-A54D-8A02-31FA6447C6CC}</id>

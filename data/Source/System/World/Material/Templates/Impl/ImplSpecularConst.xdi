@@ -17,7 +17,7 @@
 				<first>350</first>
 				<second>383</second>
 			</position>
-			<value>0</value>
+			<value>0.5</value>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{6D0CCCA7-1A3E-5141-B7E9-B78AB5105627}</id>

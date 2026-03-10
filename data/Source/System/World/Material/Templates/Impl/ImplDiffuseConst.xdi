@@ -18,10 +18,10 @@ Tag_DiffuseColor
 			
 			]]></comment>
 			<position>
-				<first>484</first>
-				<second>262</second>
+				<first>459</first>
+				<second>263</second>
 			</position>
-			<color>0, 0, 0, 0</color>
+			<color>0.501961, 0.501961, 0.501961, 1</color>
 			<linear>true</linear>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
