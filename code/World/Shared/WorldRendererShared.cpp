@@ -132,7 +132,8 @@ bool WorldRendererShared::create(
 		m_state[i].lightSBuffer = renderSystem->createBuffer(
 			render::BuStructured,
 			(LightClusterPass::c_maxLightCount + 3) * sizeof(LightShaderData),
-			true);
+			true,
+			T_FILE_LINE_W);
 		if (!m_state[i].lightSBuffer)
 			return false;
 	}
@@ -330,6 +331,9 @@ void WorldRendererShared::setupLightPass(
 	const bool shadowMapEnable = (bool)(m_shadowsQuality != Quality::Disabled && m_gatheredView.rtWorldTopLevel == nullptr);
 	const UniformShadowProjection shadowProjection(shadowSettings.resolution);
 
+	T_FATAL_ASSERT(worldRenderView.getIndex() < sizeof_array(m_state));
+	State& state = m_state[worldRenderView.getIndex()];
+
 	LightShaderData* lightShaderData = (LightShaderData*)m_state[worldRenderView.getIndex()].lightSBuffer->lock();
 	if (!lightShaderData)
 		return;
@@ -343,8 +347,8 @@ void WorldRendererShared::setupLightPass(
 	const Matrix44 viewInverse = worldRenderView.getView().inverse();
 	const Frustum viewFrustum = worldRenderView.getViewFrustum();
 
-	Frustum* shadowSlices = m_state[worldRenderView.getIndex()].shadowSlices;
-	Matrix44* shadowLightViews = m_state[worldRenderView.getIndex()].shadowLightViews;
+	Frustum* shadowSlices = state.shadowSlices;
+	Matrix44* shadowLightViews = state.shadowLightViews;
 
 	// Find atlas shadow lights.
 	StaticVector< int32_t, 32 > lightAtlasIndices;
@@ -359,42 +363,40 @@ void WorldRendererShared::setupLightPass(
 	}
 
 	// Write all lights to sbuffer; without shadow map information.
+	for (int32_t i = 0; i < (int32_t)m_gatheredView.lights.size(); ++i)
 	{
-		for (int32_t i = 0; i < (int32_t)m_gatheredView.lights.size(); ++i)
-		{
-			const auto& light = m_gatheredView.lights[i];
-			auto* lsd = &lightShaderData[i];
+		const auto& light = m_gatheredView.lights[i];
+		auto* lsd = &lightShaderData[i];
 
-			lsd->type = (float)light->getLightType();
-			lsd->rangeRadius[0] = light->getNearRange();
-			lsd->rangeRadius[1] = light->getFarRange();
-			lsd->rangeRadius[2] = std::cos((light->getRadius() - deg2rad(16.0f)) / 2.0f);
-			lsd->rangeRadius[3] = std::cos(light->getRadius() / 2.0f);
+		lsd->type = (float)light->getLightType();
+		lsd->rangeRadius[0] = light->getNearRange();
+		lsd->rangeRadius[1] = light->getFarRange();
+		lsd->rangeRadius[2] = std::cos((light->getRadius() - deg2rad(16.0f)) / 2.0f);
+		lsd->rangeRadius[3] = std::cos(light->getRadius() / 2.0f);
 
-			const Matrix44 lightTransform = view * light->getTransform().toMatrix44();
-			lightTransform.translation().xyz1().storeUnaligned(lsd->position);
-			lightTransform.axisY().xyz0().storeUnaligned(lsd->direction);
-			(light->getColor() * light->getFlickerCoeff()).storeUnaligned(lsd->color);
+		const Matrix44 lightTransform = view * light->getTransform().toMatrix44();
+		lightTransform.translation().xyz1().storeUnaligned(lsd->position);
+		lightTransform.axisY().xyz0().storeUnaligned(lsd->direction);
+		(light->getColor() * light->getFlickerCoeff()).storeUnaligned(lsd->color);
 
-			Vector4::zero().storeUnaligned(lsd->viewToLight0);
-			Vector4::zero().storeUnaligned(lsd->viewToLight1);
-			Vector4::zero().storeUnaligned(lsd->viewToLight2);
-			Vector4::zero().storeUnaligned(lsd->viewToLight3);
-			Vector4::zero().storeUnaligned(lsd->atlasTransform);
-		}
+		Vector4::zero().storeUnaligned(lsd->viewToLight0);
+		Vector4::zero().storeUnaligned(lsd->viewToLight1);
+		Vector4::zero().storeUnaligned(lsd->viewToLight2);
+		Vector4::zero().storeUnaligned(lsd->viewToLight3);
+		Vector4::zero().storeUnaligned(lsd->atlasTransform);
+	}
 
-		for (int32_t i = (int32_t)m_gatheredView.lights.size(); i < (int32_t)m_gatheredView.lights.size() + 3; ++i)
-		{
-			auto* lsd = &lightShaderData[i];
+	for (int32_t i = (int32_t)m_gatheredView.lights.size(); i < (int32_t)m_gatheredView.lights.size() + 3; ++i)
+	{
+		auto* lsd = &lightShaderData[i];
 
-			lsd->type = 0.0f;
+		lsd->type = 0.0f;
 
-			Vector4::zero().storeUnaligned(lsd->viewToLight0);
-			Vector4::zero().storeUnaligned(lsd->viewToLight1);
-			Vector4::zero().storeUnaligned(lsd->viewToLight2);
-			Vector4::zero().storeUnaligned(lsd->viewToLight3);
-			Vector4::zero().storeUnaligned(lsd->atlasTransform);
-		}
+		Vector4::zero().storeUnaligned(lsd->viewToLight0);
+		Vector4::zero().storeUnaligned(lsd->viewToLight1);
+		Vector4::zero().storeUnaligned(lsd->viewToLight2);
+		Vector4::zero().storeUnaligned(lsd->viewToLight3);
+		Vector4::zero().storeUnaligned(lsd->atlasTransform);
 	}
 
 	// If shadow casting directional light found add cascade shadow map pass
@@ -453,7 +455,7 @@ void WorldRendererShared::setupLightPass(
 					const Matrix44 viewDelta = view * lastView.inverse();
 					if (includeDynamic)
 					{
-						const int32_t force = (m_state[worldRenderView.getIndex()].count % (shadowSettings.cascadingSlices - 1)) + 1;
+						const int32_t force = (state.count % (shadowSettings.cascadingSlices - 1)) + 1;
 						if (slice != force && shadowSlices[i].inside(viewDelta, sliceViewFrustum) == Frustum::Result::Inside)
 							continue;
 					}
@@ -612,7 +614,10 @@ void WorldRendererShared::setupLightPass(
 
 			Packer::Rectangle atlasRect;
 			if (!shadowAtlasPacker->insert(atlasSize, atlasSize, atlasRect))
+			{
+				state.lightSBuffer->unlock();
 				return;
+			}
 
 			// Write atlas coordinates to shaders.
 			Vector4(
@@ -687,7 +692,7 @@ void WorldRendererShared::setupLightPass(
 		renderGraph.addPass(rp);
 	}
 
-	m_state[worldRenderView.getIndex()].lightSBuffer->unlock();
+	state.lightSBuffer->unlock();
 }
 
 }

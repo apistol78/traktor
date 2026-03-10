@@ -210,7 +210,8 @@ void SplineComponent::update(const world::UpdateParams& update)
 							m_vertexBuffer = m_renderSystem->createBuffer(
 								render::BuVertex,
 								(nvertices + 4 * 128) * sizeof(Vertex),
-								false);
+								false,
+								T_FILE_LINE_W);
 						}
 
 						Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
@@ -238,7 +239,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 						if (m_indexBuffer == nullptr || m_indexBuffer->getBufferSize() < nindices * sizeof(uint32_t))
 						{
 							safeDestroy(m_indexBuffer);
-							m_indexBuffer = m_renderSystem->createBuffer(render::BuIndex, (nindices + 3 * 128) * sizeof(uint32_t), false);
+							m_indexBuffer = m_renderSystem->createBuffer(render::BuIndex, (nindices + 3 * 128) * sizeof(uint32_t), false, T_FILE_LINE_W);
 						}
 
 						uint32_t* index = (uint32_t*)m_indexBuffer->lock();
@@ -283,7 +284,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 						{
 							safeDestroy(m_rtwInstance);
 
-							Ref< render::Buffer > vertexAttributes = m_renderSystem->createBuffer(render::BuStructured, m_updateJobModel->getPolygonCount() * 3 * sizeof(world::HWRT_Material), false);
+							Ref< render::Buffer > vertexAttributes = m_renderSystem->createBuffer(render::BuStructured, m_updateJobModel->getPolygonCount() * 3 * sizeof(world::HWRT_Material), false, T_FILE_LINE_W);
 							world::HWRT_Material* vptr = (world::HWRT_Material*)vertexAttributes->lock();
 
 							for (uint32_t i = 0; i < m_updateJobModel->getMaterialCount(); ++i)

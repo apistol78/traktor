@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,10 +27,11 @@ constexpr int32_t c_guardBytes = 16;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferVrfy", BufferVrfy, Buffer)
 
-BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t bufferSize)
+BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t bufferSize, const wchar_t* const tag)
 :	Buffer(bufferSize)
 ,	m_resourceTracker(resourceTracker)
 ,	m_buffer(buffer)
+,	m_tag(tag)
 {
 	m_resourceTracker->add(this);
 
@@ -53,8 +54,8 @@ BufferVrfy::~BufferVrfy()
 
 void BufferVrfy::destroy()
 {
-	T_CAPTURE_ASSERT (m_buffer, L"Buffer already destroyed.");
-	T_CAPTURE_ASSERT (!m_locked, L"Cannot destroy locked struct buffer.");
+	T_CAPTURE_ASSERT (m_buffer, L"Buffer (" << m_tag << L") already destroyed.");
+	T_CAPTURE_ASSERT (!m_locked, L"Cannot destroy locked struct buffer (" << m_tag << L").");
 	verifyGuard();
 	verifyUntouched();
 	safeDestroy(m_buffer);
@@ -62,8 +63,8 @@ void BufferVrfy::destroy()
 
 void* BufferVrfy::lock()
 {
-	T_CAPTURE_ASSERT (m_buffer, L"Buffer destroyed.");
-	T_CAPTURE_ASSERT (!m_locked, L"Buffer already locked.");
+	T_CAPTURE_ASSERT (m_buffer, L"Buffer (" << m_tag << L") destroyed.");
+	T_CAPTURE_ASSERT (!m_locked, L"Buffer (" << m_tag << L") already locked.");
 
 	verifyGuard();
 	verifyUntouched();	
@@ -84,10 +85,12 @@ void* BufferVrfy::lock()
 
 void BufferVrfy::unlock()
 {
-	T_CAPTURE_ASSERT(m_buffer, L"Buffer destroyed.");
-	T_CAPTURE_ASSERT(m_locked, L"Buffer not locked.");
+	T_CAPTURE_ASSERT(m_buffer, L"Buffer (" << m_tag << L") destroyed.");
+	T_CAPTURE_ASSERT(m_locked, L"Buffer (" << m_tag << L") not locked.");
 
 	verifyGuard();
+
+	m_locked = false;
 
 	if (!m_buffer)
 		return;
@@ -96,12 +99,11 @@ void BufferVrfy::unlock()
 	std::memset(m_shadow, 0, getBufferSize() + 2 * c_guardBytes);
 
 	m_buffer->unlock();
-	m_locked = false;
 }
 
 const IBufferView* BufferVrfy::getBufferView() const
 {
-	T_CAPTURE_ASSERT(m_buffer, L"Buffer destroyed.");
+	T_CAPTURE_ASSERT(m_buffer, L"Buffer (" << m_tag << L") destroyed.");
 	auto& bv = m_bufferViews[m_bufferViewIndex];
 	m_bufferViewIndex = (m_bufferViewIndex + 1) % sizeof_array(m_bufferViews);
 	bv.m_wrappedBufferView = m_buffer->getBufferView();
@@ -113,8 +115,8 @@ void BufferVrfy::verifyGuard() const
 	const uint32_t bufferSize = getBufferSize();
 	for (uint32_t i = 0; i < c_guardBytes; ++i)
 	{
-		T_CAPTURE_ASSERT(m_shadow[i] == 0x00, L"Low guard bytes overwritten.");
-		T_CAPTURE_ASSERT(m_shadow[i + c_guardBytes + bufferSize] == 0x00, L"High guard bytes overwritten.");
+		T_CAPTURE_ASSERT(m_shadow[i] == 0x00, L"Low guard bytes overwritten (" << m_tag << L").");
+		T_CAPTURE_ASSERT(m_shadow[i + c_guardBytes + bufferSize] == 0x00, L"High guard bytes overwritten (" << m_tag << L").");
 	}
 }
 
@@ -123,7 +125,7 @@ void BufferVrfy::verifyUntouched() const
 #if T_VRFY_CHECK_UNTOUCHED
 	const uint32_t bufferSize = getBufferSize();
 	for (uint32_t i = 0; i < bufferSize; ++i)
-		T_CAPTURE_ASSERT(m_shadow[i + c_guardBytes] == 0x00, L"Memory touched outside of lock/unlock region.");
+		T_CAPTURE_ASSERT(m_shadow[i + c_guardBytes] == 0x00, L"Memory touched outside of lock/unlock region (" << m_tag << L").");
 #endif
 }
 

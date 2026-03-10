@@ -43,14 +43,14 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 		if (!vertexLayout)
 			return nullptr;
 
-		vertexBuffer = m_renderSystem->createBuffer(BuVertex, vertexBufferSize, false);
+		vertexBuffer = m_renderSystem->createBuffer(BuVertex, vertexBufferSize, false, T_FILE_LINE_W);
 		if (!vertexBuffer)
 			return nullptr;
 	}
 
 	if (indexBufferSize > 0)
 	{
-		indexBuffer = m_renderSystem->createBuffer(BuIndex, indexBufferSize, false);
+		indexBuffer = m_renderSystem->createBuffer(BuIndex, indexBufferSize, false, T_FILE_LINE_W);
 		if (!indexBuffer)
 			return nullptr;
 	}
@@ -58,7 +58,7 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 	SmallMap< FourCC, Ref< Buffer > > auxBuffers;
 	for (auto aux : auxBufferSizes)
 	{
-		auxBuffer = m_renderSystem->createBuffer(BuStructured, aux.second, false);
+		auxBuffer = m_renderSystem->createBuffer(BuStructured, aux.second, false, T_FILE_LINE_W);
 		if (!auxBuffer)
 			return nullptr;
 		auxBuffers[aux.first] = auxBuffer;

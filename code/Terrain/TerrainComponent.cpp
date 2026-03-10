@@ -655,7 +655,8 @@ bool TerrainComponent::createPatches()
 	m_vertexBuffer = m_renderSystem->createBuffer(
 		render::BuVertex,
 		patchVertexCount * vertexSize,
-		false);
+		false,
+		T_FILE_LINE_W);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -804,7 +805,8 @@ bool TerrainComponent::createPatches()
 	m_indexBuffer = m_renderSystem->createBuffer(
 		render::BuIndex,
 		(uint32_t)m_indices.size() * sizeof(uint32_t),
-		false);
+		false,
+		T_FILE_LINE_W);
 	if (!m_indexBuffer)
 		return false;
 
@@ -821,21 +823,24 @@ bool TerrainComponent::createPatches()
 	m_drawBuffer = m_renderSystem->createBuffer(
 		render::BuStructured | render::BuIndirect,
 		alignedPatchCount * sizeof(render::IndexedIndirectDraw),
-		true);
+		true,
+		T_FILE_LINE_W);
 	if (!m_drawBuffer)
 		return false;
 
 	m_culledDrawBuffer = m_renderSystem->createBuffer(
 		render::BuStructured | render::BuIndirect,
 		alignedPatchCount * sizeof(render::IndexedIndirectDraw),
-		false);
+		false,
+		T_FILE_LINE_W);
 	if (!m_culledDrawBuffer)
 		return false;
 
 	m_dataBuffer = m_renderSystem->createBuffer(
 		render::BuStructured,
 		alignedPatchCount * sizeof(DrawData),
-		true);
+		true,
+		T_FILE_LINE_W);
 	if (!m_dataBuffer)
 		return false;
 
@@ -895,7 +900,8 @@ bool TerrainComponent::createRayTracingPatches()
 			m_rtVertexBuffers[patchId] = m_renderSystem->createBuffer(
 				render::BuVertex,
 				patchVertexCount * vertexSize,
-				false);
+				false,
+				T_FILE_LINE_W);
 			if (!m_rtVertexBuffers[patchId])
 				return false;
 
@@ -934,7 +940,8 @@ bool TerrainComponent::createRayTracingPatches()
 			Ref< render::Buffer > perVertexData = m_renderSystem->createBuffer(
 				render::BuStructured,
 				vertexAttribCount * sizeof(world::HWRT_Material),
-				false);
+				false,
+				T_FILE_LINE_W);
 			if (!perVertexData)
 				return false;
 

@@ -273,7 +273,10 @@ void Graph::updateInputPinToEdge()
 	m_inputPinToEdge.reset();
 	m_inputPinToEdge.reserve(m_edges.size());
 	for (auto edge : m_edges)
-		m_inputPinToEdge[edge->getDestination()] = edge;
+	{
+		if (edge && edge->getDestination())
+			m_inputPinToEdge[edge->getDestination()] = edge;
+	}
 }
 
 void Graph::updateOutputPinDestinationCount()
@@ -281,7 +284,10 @@ void Graph::updateOutputPinDestinationCount()
 	m_outputPinDestinationCount.reset();
 	m_outputPinDestinationCount.reserve(m_edges.size());
 	for (auto edge : m_edges)
-		m_outputPinDestinationCount[edge->getSource()]++;
+	{
+		if (edge && edge->getDestination())
+			m_outputPinDestinationCount[edge->getSource()]++;
+	}
 }
 
 }

@@ -156,14 +156,14 @@ const SmallMap< std::wstring, int >& SkinnedMesh::getJointMap() const
 Ref< render::Buffer > SkinnedMesh::createSkinBuffer(render::IRenderSystem* renderSystem) const
 {
 	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferSize() / (6 * 4 * sizeof(float));
-	return renderSystem->createBuffer(render::BuStructured, vertexCount * 6 * 4 * sizeof(float), false);
+	return renderSystem->createBuffer(render::BuStructured, vertexCount * 6 * 4 * sizeof(float), false, T_FILE_LINE_W);
 }
 
 Ref< render::Buffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount)
 {
 	jointCount = std::max< uint32_t >(jointCount, 1);
 
-	Ref< render::Buffer > jointBuffer = renderSystem->createBuffer(render::BuStructured, jointCount * sizeof(JointData), true);
+	Ref< render::Buffer > jointBuffer = renderSystem->createBuffer(render::BuStructured, jointCount * sizeof(JointData), true, T_FILE_LINE_W);
 	if (!jointBuffer)
 		return nullptr;
 

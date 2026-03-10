@@ -119,7 +119,7 @@ public:
 	 * \param bufferSize Size of buffer in bytes.
 	 * \param dynamic If index buffer is frequently updated.
 	 */
-	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic) = 0;
+	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic, const wchar_t* const tag) = 0;
 
 	/*! Create vertex layout. */
 	virtual Ref< const IVertexLayout > createVertexLayout(const AlignedVector< VertexElement >& vertexElements) = 0;

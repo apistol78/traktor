@@ -69,7 +69,7 @@ void CullingComponent::build(
 	// Lazy create the buffers if necessary.
 	if (!m_instanceBuffer || bufferItemCount > m_instanceAllocatedCount)
 	{
-		m_instanceBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, bufferItemCount * sizeof(InstanceRenderData), true);
+		m_instanceBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, bufferItemCount * sizeof(InstanceRenderData), true, T_FILE_LINE_W);
 		m_visibilityBuffers.resize(0);
 		m_instanceAllocatedCount = bufferItemCount;
 		m_instanceBufferDirty = true;
@@ -79,7 +79,7 @@ void CullingComponent::build(
 	const uint32_t peakCascade = worldRenderView.getCascade();
 	const uint32_t vbSize = (uint32_t)m_visibilityBuffers.size();
 	for (uint32_t i = vbSize; i < peakCascade + 1; ++i)
-		m_visibilityBuffers.push_back(m_renderSystem->createBuffer(render::BufferUsage::BuStructured, bufferItemCount * sizeof(float), false));
+		m_visibilityBuffers.push_back(m_renderSystem->createBuffer(render::BufferUsage::BuStructured, bufferItemCount * sizeof(float), false, T_FILE_LINE_W));
 
 	// Update buffer is any instance has moved.
 	if (m_instanceBufferDirty)

@@ -100,7 +100,8 @@ bool UndergrowthComponent::create(
 	m_vertexBuffer = renderSystem->createBuffer(
 		render::BuVertex,
 		4 * sizeof(Vertex),
-		false
+		false,
+		T_FILE_LINE_W
 	);
 	if (!m_vertexBuffer)
 		return false;
@@ -123,7 +124,8 @@ bool UndergrowthComponent::create(
 	m_indexBuffer = renderSystem->createBuffer(
 		render::BuIndex,
 		3 * 2 * 2 * sizeof(uint16_t),
-		false
+		false,
+		T_FILE_LINE_W
 	);
 	if (!m_indexBuffer)
 		return 0;
@@ -203,8 +205,8 @@ void UndergrowthComponent::build(
 	ViewState& vs = m_viewState[worldRenderView.getIndex()];
 	if (vs.plantBuffer == nullptr || vs.plantBuffer->getBufferSize() / sizeof(PlantData) != m_plantsCount)
 	{
-		vs.plantBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_plantsCount * sizeof(PlantData), true);
-		vs.orderBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_plantsCount * sizeof(int32_t), true);
+		vs.plantBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_plantsCount * sizeof(PlantData), true, T_FILE_LINE_W);
+		vs.orderBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_plantsCount * sizeof(int32_t), true, T_FILE_LINE_W);
 		updateClusters = true;
 	}
 

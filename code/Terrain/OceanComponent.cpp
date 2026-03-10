@@ -121,7 +121,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat2, offsetof(OceanVertex, pos)));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, c_gridSize * c_gridSize * sizeof(OceanVertex), false);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, c_gridSize * c_gridSize * sizeof(OceanVertex), false, T_FILE_LINE_W);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -142,7 +142,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 
 	m_vertexBuffer->unlock();
 
-	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, c_gridCells * 6 * sizeof(uint32_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, c_gridCells * 6 * sizeof(uint32_t), false, T_FILE_LINE_W);
 	if (!m_indexBuffer)
 		return false;
 

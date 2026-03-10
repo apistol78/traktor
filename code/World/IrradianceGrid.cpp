@@ -35,7 +35,8 @@ Ref< IrradianceGrid > IrradianceGrid::createSingle(render::IRenderSystem* render
 	Ref< render::Buffer > buffer = renderSystem->createBuffer(
 		render::BuStructured,
 		sizeof(IrradianceGridData),
-		false);
+		false,
+		T_FILE_LINE_W);
 	if (!buffer)
 		return nullptr;
 

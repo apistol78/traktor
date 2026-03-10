@@ -65,13 +65,13 @@ bool ClothComponent::create(
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat2, offsetof(ClothVertex, texCoord)));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, m_nodes.size() * sizeof(ClothVertex), true);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, m_nodes.size() * sizeof(ClothVertex), true, T_FILE_LINE_W);
 	if (!m_vertexBuffer)
 		return false;
 
 	m_triangleCount = cloth->m_triangles.size() / 3;
 
-	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, cloth->m_triangles.size() * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, cloth->m_triangles.size() * sizeof(uint16_t), false, T_FILE_LINE_W);
 	if (!m_indexBuffer)
 		return false;
 

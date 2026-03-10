@@ -95,7 +95,8 @@ void InstanceMesh::build(
 		m_drawBuffers.push_back(m_renderSystem->createBuffer(
 			render::BufferUsage::BuStructured | render::BufferUsage::BuIndirect,
 			bufferItemCount * sizeof(render::IndexedIndirectDraw),
-			false));
+			false,
+			T_FILE_LINE_W));
 
 	// Create draw buffers from visibility buffer.
 	// Compute blocks are executed before render pass, so draws for shadow map rendering all cascades

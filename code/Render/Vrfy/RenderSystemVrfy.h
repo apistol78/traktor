@@ -75,7 +75,7 @@ public:
 
 	virtual Ref< IRenderView > createRenderView(const RenderViewEmbeddedDesc& desc) override final;
 
-	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic) override final;
+	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic, const wchar_t* const tag) override final;
 
 	virtual Ref< const IVertexLayout > createVertexLayout(const AlignedVector< VertexElement >& vertexElements) override final;
 

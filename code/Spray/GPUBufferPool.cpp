@@ -56,7 +56,7 @@ bool GPUBufferPool::allocBuffers(uint32_t capacity, Ref< render::Buffer >& outHe
 
 	if (outPointBuffer == nullptr)
 	{
-		outPointBuffer = m_renderSystem->createBuffer(render::BuStructured, capacity * sizeof(Point), false);
+		outPointBuffer = m_renderSystem->createBuffer(render::BuStructured, capacity * sizeof(Point), false, T_FILE_LINE_W);
 		if (outPointBuffer == nullptr)
 			return false;
 	}
@@ -68,7 +68,7 @@ bool GPUBufferPool::allocBuffers(uint32_t capacity, Ref< render::Buffer >& outHe
 	}
 	else
 	{
-		outHeadBuffer = m_renderSystem->createBuffer(render::BuStructured | render::BuIndirect, sizeof(Head), false);
+		outHeadBuffer = m_renderSystem->createBuffer(render::BuStructured | render::BuIndirect, sizeof(Head), false, T_FILE_LINE_W);
 		if (outHeadBuffer == nullptr)
 		{
 			m_pointBuffers.push_back(outPointBuffer);

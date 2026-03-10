@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -660,7 +660,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc
 		return nullptr;
 }
 
-Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic)
+Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic, const wchar_t* const tag)
 {
 	uint32_t usageBits = 0;
 	if ((usage & BuVertex) != 0)

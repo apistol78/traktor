@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,7 +25,7 @@ class BufferVrfy : public Buffer
 	T_RTTI_CLASS;
 
 public:
-	explicit BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t bufferSize);
+	explicit BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t bufferSize, const wchar_t* const tag);
 
 	virtual ~BufferVrfy();
 
@@ -42,6 +42,7 @@ public:
 protected:
 	Ref< ResourceTracker > m_resourceTracker;
 	Ref< Buffer > m_buffer;
+	std::wstring m_tag;
 	mutable BufferViewVrfy m_bufferViews[256];
 	mutable int32_t m_bufferViewIndex = 0;
 	bool m_locked = false;

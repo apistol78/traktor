@@ -81,7 +81,8 @@ Ref< Buffer > RenderGraphBufferPool::acquire(const RenderGraphBufferDesc& buffer
 		Ref< Buffer > buffer = m_renderSystem->createBuffer(
 			render::BuStructured,
 			bufferSize,
-			false);
+			false,
+			T_FILE_LINE_W);
 		if (buffer)
 		{
 			void* ptr = buffer->lock();

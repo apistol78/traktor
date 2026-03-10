@@ -39,8 +39,8 @@ bool LightClusterPass::create(render::IRenderSystem* renderSystem)
 	m_lightIndexSBuffer = renderSystem->createBuffer(
 		render::BuStructured,
 		ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster * sizeof(LightIndexShaderData),
-		true
-	);
+		true,
+		T_FILE_LINE_W);
 	if (!m_lightIndexSBuffer)
 		return false;
 
@@ -48,8 +48,8 @@ bool LightClusterPass::create(render::IRenderSystem* renderSystem)
 	m_tileSBuffer = renderSystem->createBuffer(
 		render::BuStructured,
 		ClusterDimXY * ClusterDimXY * ClusterDimZ * sizeof(TileShaderData),
-		true
-	);
+		true,
+		T_FILE_LINE_W);
 	if (!m_tileSBuffer)
 		return false;
 

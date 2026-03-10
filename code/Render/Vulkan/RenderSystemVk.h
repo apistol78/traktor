@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -65,7 +65,7 @@ public:
 
 	virtual Ref< IRenderView > createRenderView(const RenderViewEmbeddedDesc& desc) override final;
 
-	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic) override final;
+	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic, const wchar_t* const tag) override final;
 
 	virtual Ref< const IVertexLayout > createVertexLayout(const AlignedVector< VertexElement >& vertexElements) override final;
 

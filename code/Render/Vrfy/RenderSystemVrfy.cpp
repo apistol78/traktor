@@ -156,17 +156,17 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 	return new RenderViewVrfy(desc, m_renderSystem, renderView);
 }
 
-Ref< Buffer > RenderSystemVrfy::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic)
+Ref< Buffer > RenderSystemVrfy::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic, const wchar_t* const tag)
 {
 	T_CAPTURE_TRACE(L"createBuffer");
 	T_CAPTURE_ASSERT(usage != 0, L"Invalid usage.");
 	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid buffer size.");
 
-	Ref< Buffer > buffer = m_renderSystem->createBuffer(usage, bufferSize, dynamic);
+	Ref< Buffer > buffer = m_renderSystem->createBuffer(usage, bufferSize, dynamic, tag);
 	if (!buffer)
 		return nullptr;
 
-	return new BufferVrfy(m_resourceTracker, buffer, bufferSize);
+	return new BufferVrfy(m_resourceTracker, buffer, bufferSize, tag);
 }
 
 Ref< const IVertexLayout > RenderSystemVrfy::createVertexLayout(const AlignedVector< VertexElement >& vertexElements)
