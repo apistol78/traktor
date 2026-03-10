@@ -47,7 +47,7 @@
 			</clear>
 			<steps>
 				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:2">
-					<shader>{67D57965-F927-D040-B2B6-18B1A41A9807}</shader>
+					<shader>{E372C0EB-2724-E642-869A-8AC8C2A4512B}</shader>
 					<parameters>
 						<item>Input</item>
 					</parameters>

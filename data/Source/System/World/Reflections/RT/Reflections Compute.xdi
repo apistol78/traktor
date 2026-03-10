@@ -122,7 +122,7 @@
 			<outputPins/>
 			<script><![CDATA[
 #define USE_TEMPORAL_FILTER 1
-#define USE_SPATIAL_FILTER 0
+#define USE_SPATIAL_FILTER 1
 
 const int N = 2;
 const int Ndisclose = 16;
@@ -1291,16 +1291,6 @@ $TexCoord = vec4(
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[36]"/>
-				<id>{DA71CC25-EA8C-574D-AFFD-02F27FC9C7F4}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[37]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[38]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -1616,6 +1606,16 @@ $TexCoord = vec4(
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[54]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[36]"/>
+				<id>{DA71CC25-EA8C-574D-AFFD-02F27FC9C7F4}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[37]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>

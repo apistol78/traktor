@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
-			<id>{68C46A53-7E9F-964C-AD99-93ACCAD568FA}</id>
+			<id>{F785BB26-3F65-B148-881E-CF4723ECF0C9}</id>
 			<comment/>
 			<position>
 				<first>328</first>
@@ -49,7 +49,7 @@
 			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
-			<id>{656414E5-7EB7-B14B-AB81-7B46130E9F59}</id>
+			<id>{1A93852E-89C6-144B-92EE-8B4F580CC935}</id>
 			<comment/>
 			<position>
 				<first>-812</first>
@@ -69,7 +69,7 @@
 			</outputPins>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
-			<id>{D1668071-9FC8-7147-99C8-C59FADC116BF}</id>
+			<id>{FD904A09-533C-D843-B404-3961485404E5}</id>
 			<comment/>
 			<position>
 				<first>-579</first>
@@ -78,16 +78,16 @@
 			<name>UV_Center</name>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
-			<id>{98FC564C-C85B-8A47-8481-875BA49E55EB}</id>
+			<id>{9E27CBDC-A1E5-DF4E-8E54-5A2E8E1F33C3}</id>
 			<comment/>
 			<position>
-				<first>-337</first>
-				<second>597</second>
+				<first>-332</first>
+				<second>599</second>
 			</position>
 			<name>UV_Center</name>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
-			<id>{40C62AC8-2D77-0C45-87B5-DF9372E21C7A}</id>
+			<id>{BE904F51-57AD-5D4B-B725-F104C2AF1ACC}</id>
 			<comment/>
 			<position>
 				<first>-46</first>
@@ -124,6 +124,10 @@
 					<id>{1227A2B1-A931-6249-9150-423F289E5758}</id>
 					<name>Random</name>
 				</item>
+				<item>
+					<id>{8F7A264B-3266-B743-8B5B-28E77801BF47}</id>
+					<name>Roughness</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -145,8 +149,7 @@ const vec4 tmp = texture(sampler2D($Depth, $InputSampler), $UV);
 const float centerD = tmp.x;
 const vec3 centerN = vec3(tmp.yzw);
 
-const float k = clamp(1.0f - 1.0f / (centerD * 0.1f), 0.0f, 1.0f);
-const float radius = mix(20.0f, 6.0f, k);
+const float radius = mix(1.0f, 10.0f, $Roughness);
 
 vec3 acc = texture(sampler2D($Input, $InputSampler), $UV).xyz;
 float W = 1.0f;
@@ -187,11 +190,11 @@ $Output = vec4(acc, 1.0f);
 ]]></script>
 		</item>
 		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
-			<id>{F7876FFD-B7BD-2D4B-9D03-A52788665661}</id>
+			<id>{56DB312D-60E3-8948-B657-5FB4ACA2628F}</id>
 			<comment/>
 			<position>
-				<first>-335</first>
-				<second>533</second>
+				<first>-330</first>
+				<second>534</second>
 			</position>
 			<minFilter>Point</minFilter>
 			<mipFilter>Point</mipFilter>
@@ -205,7 +208,7 @@ $Output = vec4(acc, 1.0f);
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{B1C21C8E-D51D-8449-A32E-046D6E2FDFD1}</id>
+			<id>{5F8CF669-BAFA-1245-9374-81ECB34529C2}</id>
 			<comment/>
 			<position>
 				<first>-606</first>
@@ -214,11 +217,11 @@ $Output = vec4(acc, 1.0f);
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
-			<id>{B024E324-1875-0545-89A8-86DA2F0DA6A1}</id>
+			<id>{7A8DCB15-774B-8E4A-B465-55B270CFC6CB}</id>
 			<comment/>
 			<position>
-				<first>-347</first>
-				<second>725</second>
+				<first>-342</first>
+				<second>729</second>
 			</position>
 			<name>Random</name>
 			<technique/>
@@ -250,41 +253,63 @@ seed += uvec2($Time * 1543, $Time * 543);
 $Output = BlueNoise(seed);
 			]]></script>
 		</item>
-		<item type="traktor.render.Comment" version="traktor.render.Node:1">
-			<id>{F2105F62-4CC8-644C-93A3-D1ACAE45BAA8}</id>
-			<comment><![CDATA[GI denoiser, executed after GI has been calculated
-to further reduce overall noise. ]]></comment>
-			<position>
-				<first>-277</first>
-				<second>284</second>
-			</position>
-		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{44623E47-A907-E04B-87E2-3A50DB7F1F7D}</id>
 			<comment/>
 			<position>
-				<first>-337</first>
+				<first>-332</first>
 				<second>469</second>
 			</position>
 			<parameterDeclaration>{A480EAAD-ADF1-214D-883B-4207444C3749}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{C4B15485-391F-7E4D-B88B-52038C2BF49F}</id>
 			<comment/>
 			<position>
-				<first>-353</first>
-				<second>661</second>
+				<first>-348</first>
+				<second>664</second>
 			</position>
 			<parameterDeclaration>{1B7EE70B-CFE2-EF44-A21B-13A748CEAC26}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0F7CB6C7-85D3-D243-95AC-09E13C6F48DE}</id>
 			<comment/>
 			<position>
 				<first>-839</first>
 				<second>791</second>
 			</position>
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
+			<id>{66CF5802-4F12-794C-9F0C-5D88E6F7CC9A}</id>
+			<comment/>
+			<position>
+				<first>-406</first>
+				<second>816</second>
+			</position>
+			<fragmentGuid>{FDCA9563-2389-4B43-A8E5-5262EC02EC1F}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{97DC9817-9348-4045-84D1-5E3E34942BEF}</id>
+					<name>UV</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{DA71CC25-EA8C-574D-AFFD-02F27FC9C7F4}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{96473A83-EA5A-7341-A7A8-A036DC960EBA}</id>
+			<comment/>
+			<position>
+				<first>-600</first>
+				<second>865</second>
+			</position>
+			<name>UV_Center</name>
 		</item>
 	</nodes>
 	<edges>
@@ -350,7 +375,7 @@ to further reduce overall noise. ]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -360,7 +385,7 @@ to further reduce overall noise. ]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[10]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -370,12 +395,32 @@ to further reduce overall noise. ]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{97DC9817-9348-4045-84D1-5E3E34942BEF}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{DA71CC25-EA8C-574D-AFFD-02F27FC9C7F4}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{8F7A264B-3266-B743-8B5B-28E77801BF47}</id>
 			</destination>
 		</item>
 	</edges>
