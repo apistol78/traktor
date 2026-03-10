@@ -164,7 +164,7 @@ VkSampler PipelineLayoutCache::getSampler(const VkSamplerCreateInfo& sci)
 		if (vkCreateSampler(m_context->getLogicalDevice(), &sci, nullptr, &sampler) != VK_SUCCESS)
 			return 0;
 
-		setObjectDebugName(m_context->getLogicalDevice(), L"Sampler", (uint64_t)sampler, VK_OBJECT_TYPE_SAMPLER);
+		m_context->setObjectDebugName(L"Sampler", (uint64_t)sampler, VK_OBJECT_TYPE_SAMPLER);
 
 		m_samplers.insert(samplerHash, sampler);
 	}

@@ -60,8 +60,8 @@ bool RenderTargetVk::createPrimary(
 		m_imageResolved = m_imageTarget;
 	}
 
-	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_imageTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
-	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_imageResolved->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+	m_context->setObjectDebugName(tag, (uint64_t)m_imageTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+	m_context->setObjectDebugName(tag, (uint64_t)m_imageResolved->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 
 	m_format = format;
 	m_width = width;
@@ -95,8 +95,8 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 		m_imageResolved = m_imageTarget;
 	}
 
-	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_imageTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
-	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_imageResolved->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+	m_context->setObjectDebugName(tag, (uint64_t)m_imageTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+	m_context->setObjectDebugName(tag, (uint64_t)m_imageResolved->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 
 	m_format = formatView;
 	m_width = setDesc.width;

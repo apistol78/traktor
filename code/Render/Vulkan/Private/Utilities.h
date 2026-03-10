@@ -34,8 +34,6 @@ uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFla
 
 std::wstring getHumanResult(VkResult result);
 
-void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t object, VkObjectType objectType);
-
 VkFormat determineSupportedTargetFormat(VkPhysicalDevice physicalDevice, TextureFormat textureFormat, bool sRGB);
 
 VkPipelineStageFlags getPipelineStageFlags(const VkImageLayout layout);

@@ -20,8 +20,6 @@
 namespace traktor::render
 {
 
-CriticalSection s_debugNameLock;
-
 const VkCullModeFlagBits c_cullMode[] = {
 	VK_CULL_MODE_NONE,
 	VK_CULL_MODE_FRONT_BIT,
@@ -462,29 +460,6 @@ std::wstring getHumanResult(VkResult result)
 	default:
 		return str(L"Unknown Vulkan result 0x%08x", (uint32_t)result);
 	}
-}
-
-void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t object, VkObjectType objectType)
-{
-#if !defined(__ANDROID__) && !defined(__APPLE__)
-	{
-		T_ANONYMOUS_VAR(Acquire< CriticalSection >)(s_debugNameLock);
-
-		static std::map< VkObjectType, uint32_t > s_objectCount;
-		uint32_t& count = s_objectCount[objectType];
-
-		std::stringstream ss;
-		ss << wstombs(tag) << " [" << count << "]";
-		++count;
-
-		VkDebugUtilsObjectNameInfoEXT ni = {};
-		ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-		ni.objectType = objectType;
-		ni.objectHandle = object;
-		ni.pObjectName = tag ? ss.str().c_str() : "Unnamed";
-		vkSetDebugUtilsObjectNameEXT(device, &ni);
-	}
-#endif
 }
 
 VkFormat determineSupportedTargetFormat(VkPhysicalDevice physicalDevice, TextureFormat textureFormat, bool sRGB)

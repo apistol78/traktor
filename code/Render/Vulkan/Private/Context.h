@@ -132,6 +132,8 @@ public:
 
 	VkPipeline validateComputePipeline(const ProgramVk* p);
 
+	void setObjectDebugName(const wchar_t* const tag, uint64_t object, VkObjectType objectType);
+
 private:
 	struct DeferredCleanup
 	{
@@ -172,6 +174,10 @@ private:
 	IdAllocator m_storageResourceIndexAllocator;
 	IdAllocator m_bufferResourceIndexAllocator;
 	SmallMap< pipeline_key_t, PipelineEntry > m_pipelines;
+
+#if !defined(__ANDROID__) && !defined(__APPLE__)
+	AlignedVector< char* > m_debugNames;
+#endif
 };
 
 }

@@ -150,11 +150,11 @@ void RenderTargetSetVk::setDebugName(const wchar_t* name)
 {
 	for (auto colorTarget : m_colorTargets)
 	{
-		setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)colorTarget->getImageTarget()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
-		setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)colorTarget->getImageResolved()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+		m_context->setObjectDebugName(name, (uint64_t)colorTarget->getImageTarget()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+		m_context->setObjectDebugName(name, (uint64_t)colorTarget->getImageResolved()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 	}
 	if (m_depthTarget)
-		setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)m_depthTarget->getImage()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+		m_context->setObjectDebugName(name, (uint64_t)m_depthTarget->getImage()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 }
 
 bool RenderTargetSetVk::prepareAsTarget(

@@ -6,14 +6,20 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <cstring>
+#include <map>
+#include <string>
+#include <sstream>
 
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"
+#include "Core/Thread/CriticalSection.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
@@ -639,6 +645,35 @@ VkPipeline Context::validateComputePipeline(const ProgramVk* p)
 	}
 
 	return pipeline;
+}
+
+void Context::setObjectDebugName(const wchar_t* const tag, uint64_t object, VkObjectType objectType)
+{
+#if !defined(__ANDROID__) && !defined(__APPLE__)
+	{
+		static CriticalSection s_debugNameLock;
+		T_ANONYMOUS_VAR(Acquire< CriticalSection >)(s_debugNameLock);
+
+		static std::map< VkObjectType, uint32_t > s_objectCount;
+		uint32_t& count = s_objectCount[objectType];
+
+		std::stringstream ss;
+		if (tag)
+			ss << wstombs(tag) << " [" << count << "]";
+		else
+			ss << "<unnamed> [" << count << "]";
+		++count;
+
+		m_debugNames.push_back(strdup(ss.str().c_str()));
+
+		VkDebugUtilsObjectNameInfoEXT ni = {};
+		ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+		ni.objectType = objectType;
+		ni.objectHandle = object;
+		ni.pObjectName = m_debugNames.back();
+		vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
+	}
+#endif
 }
 
 }

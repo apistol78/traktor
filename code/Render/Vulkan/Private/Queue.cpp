@@ -72,7 +72,7 @@ Ref< CommandBuffer > Queue::acquireCommandBuffer(const wchar_t* const tag)
 	if (vkAllocateCommandBuffers(m_context->getLogicalDevice(), &cbai, &commandBuffer) != VK_SUCCESS)
 		return nullptr;
 
-	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)commandBuffer, VK_OBJECT_TYPE_COMMAND_BUFFER);
+	m_context->setObjectDebugName(tag, (uint64_t)commandBuffer, VK_OBJECT_TYPE_COMMAND_BUFFER);
 
 	const VkCommandBufferBeginInfo cbbi =
 	{

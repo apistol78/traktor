@@ -130,7 +130,7 @@ CommandBuffer::CommandBuffer(Context* context, Queue* queue, VkCommandPool comma
 	vkCreateFence(m_context->getLogicalDevice(), &fci, nullptr, &m_inFlight);
 	vkResetFences(m_context->getLogicalDevice(), 1, &m_inFlight);
 
-	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_inFlight, VK_OBJECT_TYPE_FENCE);
+	m_context->setObjectDebugName(T_FILE_LINE_W, (uint64_t)m_inFlight, VK_OBJECT_TYPE_FENCE);
 
 	m_thread = ThreadManager::getInstance().getCurrentThread();
 }

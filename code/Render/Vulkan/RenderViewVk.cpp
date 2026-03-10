@@ -1714,7 +1714,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		};
 		if (vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS)
 			return false;
-		setObjectDebugName(m_context->getLogicalDevice(), L"m_imageAvailableSemaphore", (uint64_t)m_imageAvailableSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE);
+		m_context->setObjectDebugName(L"m_imageAvailableSemaphore", (uint64_t)m_imageAvailableSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE);
 	}
 
 #if defined(T_USE_QUERY)
@@ -1763,9 +1763,9 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
 		};
 		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.renderFinishedSemaphore);
-		setObjectDebugName(m_context->getLogicalDevice(), L"frame.renderFinishedSemaphore", (uint64_t)frame.renderFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
+		m_context->setObjectDebugName(L"frame.renderFinishedSemaphore", (uint64_t)frame.renderFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
 		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.computeFinishedSemaphore);
-		setObjectDebugName(m_context->getLogicalDevice(), L"frame.computeFinishedSemaphore", (uint64_t)frame.computeFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
+		m_context->setObjectDebugName(L"frame.computeFinishedSemaphore", (uint64_t)frame.computeFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
 
 		static uint32_t primaryInstances = 0;
 		frame.primaryTarget = new RenderTargetSetVk(m_context, primaryInstances);

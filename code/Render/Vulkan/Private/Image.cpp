@@ -64,7 +64,7 @@ bool Image::createSimple(
 		log::error << L"Failed to create image; unable to allocate image memory." << Endl;
 		return false;
 	}
-	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
+	m_context->setObjectDebugName(T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 
 	// Create image view.
 	VkImageViewCreateInfo ivci = {};
@@ -83,7 +83,7 @@ bool Image::createSimple(
 		log::error << L"Failed to create image view; unable to create image view." << Endl;
 		return false;
 	}
-	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
+	m_context->setObjectDebugName(T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
 	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
 	{
@@ -154,7 +154,7 @@ bool Image::createCube(
 		log::error << L"Failed to create image; unable to allocate image memory." << Endl;
 		return false;
 	}
-	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
+	m_context->setObjectDebugName(T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 
 	// Create image view.
 	VkImageViewCreateInfo ivci = {};
@@ -173,7 +173,7 @@ bool Image::createCube(
 		log::error << L"Failed to create image view; unable to create image view." << Endl;
 		return false;
 	}
-	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
+	m_context->setObjectDebugName(T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
 	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
 	{
@@ -245,7 +245,7 @@ bool Image::createVolume(
 		log::error << L"Failed to create image; unable to allocate image memory." << Endl;
 		return false;
 	}
-	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
+	m_context->setObjectDebugName(T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 
 	// Create image view.
 	VkImageViewCreateInfo ivci = {};
@@ -264,7 +264,7 @@ bool Image::createVolume(
 		log::error << L"Failed to create image view; unable to create image view." << Endl;
 		return false;
 	}
-	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
+	m_context->setObjectDebugName(T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
 	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
 	{
@@ -351,7 +351,7 @@ bool Image::createTarget(
 			log::error << L"Failed to create image; unable to allocate image memory." << Endl;
 			return false;
 		}
-		setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
+		m_context->setObjectDebugName(T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 	}
 	else
 	{
@@ -388,7 +388,7 @@ bool Image::createTarget(
 		log::error << L"Failed to create image view; unable to create image view." << Endl;
 		return false;
 	}
-	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
+	m_context->setObjectDebugName(T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
 	m_storageImageViews.push_back(m_imageView);
 	m_mipCount = 1;
@@ -448,7 +448,7 @@ bool Image::createDepthTarget(
 		log::error << L"Failed to create image; unable to allocate image memory." << Endl;
 		return false;
 	}
-	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
+	m_context->setObjectDebugName(T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 
 	// Create image view.
 	VkImageViewCreateInfo ivci = {};
@@ -467,7 +467,7 @@ bool Image::createDepthTarget(
 		log::error << L"Failed to create image view; unable to create image view." << Endl;
 		return false;
 	}
-	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
+	m_context->setObjectDebugName(T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
 	m_storageImageViews.push_back(m_imageView);
 
