@@ -45,6 +45,24 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 	resourceVrfy->m_requireRayTracing = resource->requireRayTracing();
 	resourceVrfy->m_embedded = resource;
 
+	for (auto uniform : shaderGraph->findNodesOf< Uniform >())
+	{
+		const bool initialized = (bool)(shaderGraph->findEdge(uniform->getInputPin(0)) != nullptr);
+
+		resourceVrfy->m_uniforms.push_back({ .name = uniform->getParameterName(),
+			.type = uniform->getParameterType(),
+			.length = 0,
+			.initialized = initialized });
+	}
+
+	for (auto indexedUniform : shaderGraph->findNodesOf< IndexedUniform >())
+	{
+		resourceVrfy->m_uniforms.push_back({ .name = indexedUniform->getParameterName(),
+			.type = indexedUniform->getParameterType(),
+			.length = indexedUniform->getLength(),
+			.initialized = false });
+	}
+
 	for (auto param : shaderGraph->findNodesOf< Parameter >())
 	{
 		const bool initialized = (bool)(shaderGraph->findEdge(param->getInputPin(0)) != nullptr);

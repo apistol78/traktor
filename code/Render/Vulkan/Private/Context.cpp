@@ -1,15 +1,16 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <cstring>
-#include <map>
 #include <string>
 #include <sstream>
+
+#include "Render/Vulkan/Private/Context.h"
 
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -26,7 +27,6 @@
 #include "Render/Vulkan/VertexLayoutVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
-#include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Queue.h"
 #include "Render/Vulkan/Private/UniformBufferPool.h"
 #include "Render/Vulkan/Private/Utilities.h"
@@ -74,6 +74,12 @@ Context::~Context()
 		vkDestroyDescriptorPool(m_logicalDevice, m_descriptorPool, nullptr);
 		m_descriptorPool = 0;
 	}
+
+#if !defined(__ANDROID__) && !defined(__APPLE__)
+	for (char* name : m_debugNames)
+		free(name);
+	m_debugNames.clear();
+#endif
 }
 
 bool Context::create()
@@ -650,29 +656,29 @@ VkPipeline Context::validateComputePipeline(const ProgramVk* p)
 void Context::setObjectDebugName(const wchar_t* const tag, uint64_t object, VkObjectType objectType)
 {
 #if !defined(__ANDROID__) && !defined(__APPLE__)
+	static CriticalSection s_debugNameLock;
+	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(s_debugNameLock);
+
+	static SmallMap< VkObjectType, uint32_t > s_objectCount;
+	uint32_t& count = s_objectCount[objectType];
+
+	std::stringstream ss;
+	if (tag)
+		ss << wstombs(tag) << " [" << count << "]";
+	else
+		ss << "<unnamed> [" << count << "]";
+	++count;
+
+	m_debugNames.push_back(strdup(ss.str().c_str()));
+
+	const VkDebugUtilsObjectNameInfoEXT ni =
 	{
-		static CriticalSection s_debugNameLock;
-		T_ANONYMOUS_VAR(Acquire< CriticalSection >)(s_debugNameLock);
-
-		static std::map< VkObjectType, uint32_t > s_objectCount;
-		uint32_t& count = s_objectCount[objectType];
-
-		std::stringstream ss;
-		if (tag)
-			ss << wstombs(tag) << " [" << count << "]";
-		else
-			ss << "<unnamed> [" << count << "]";
-		++count;
-
-		m_debugNames.push_back(strdup(ss.str().c_str()));
-
-		VkDebugUtilsObjectNameInfoEXT ni = {};
-		ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-		ni.objectType = objectType;
-		ni.objectHandle = object;
-		ni.pObjectName = m_debugNames.back();
-		vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
-	}
+		.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
+		.objectType = objectType,
+		.objectHandle = object,
+		.pObjectName = m_debugNames.back()
+	};
+	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
 #endif
 }
 
