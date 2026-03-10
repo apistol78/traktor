@@ -74,7 +74,8 @@ bool SpawnEffectEventInstance::update(world::World* world, const world::UpdatePa
 
 	if (m_effectEntity->getComponent< EffectComponent >()->isFinished())
 	{
-		m_world->removeEntity(m_effectEntity);
+		if (m_effectEntity->getWorld() != nullptr)
+			m_world->removeEntity(m_effectEntity);
 		safeDestroy(m_effectEntity);
 		return false;	
 	}
@@ -89,7 +90,8 @@ void SpawnEffectEventInstance::cancel(world::Cancel when)
 
 	if (when == world::Cancel::Immediate)
 	{
-		m_world->removeEntity(m_effectEntity);
+		if (m_effectEntity->getWorld() != nullptr)
+			m_world->removeEntity(m_effectEntity);
 		safeDestroy(m_effectEntity);
 	}
 	else
