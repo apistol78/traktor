@@ -76,9 +76,9 @@ void CullingComponent::build(
 	}
 
 	// Ensure we have visibility buffers for all cascades.
-	const uint32_t peakCascade = worldRenderView.getCascade();
+	const int32_t peakShadowMapIndex = worldRenderView.getShadowMapIndex();
 	const uint32_t vbSize = (uint32_t)m_visibilityBuffers.size();
-	for (uint32_t i = vbSize; i < peakCascade + 1; ++i)
+	for (uint32_t i = vbSize; i < peakShadowMapIndex + 1; ++i)
 		m_visibilityBuffers.push_back(m_renderSystem->createBuffer(render::BufferUsage::BuStructured, bufferItemCount * sizeof(float), false, T_FILE_LINE_W));
 
 	// Update buffer is any instance has moved.
@@ -99,7 +99,7 @@ void CullingComponent::build(
 		m_instanceBufferDirty = false;
 	}
 
-	render::Buffer* visibilityBuffer = m_visibilityBuffers[worldRenderView.getCascade()];
+	render::Buffer* visibilityBuffer = m_visibilityBuffers[worldRenderView.getShadowMapIndex()];
 
 	// Cull instances, output are visibility buffer.
 	// Compute blocks are executed before render pass, so for shadow map rendering all cascades
@@ -117,7 +117,7 @@ void CullingComponent::build(
 		const Vector2 viewSize = worldRenderView.getViewSize();
 
 		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
-			str(L"Cull %d", worldRenderView.getCascade()));
+			str(L"Cull %d", worldRenderView.getShadowMapIndex()));
 
 		render::Shader::Permutation perm;
 		if (worldRenderPass.getTechnique() == ShaderTechnique::DeferredGBufferWrite)

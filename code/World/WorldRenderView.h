@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -49,7 +49,7 @@ public:
 	void setIndex(int32_t index);
 
 	/*! */
-	void setCascade(int32_t cascade);
+	void setShadowMapIndex(int32_t shadowMapIndex);
 
 	/*! Set snapshot requirement.
 	 *
@@ -84,8 +84,8 @@ public:
 		return m_index;
 	}
 
-	T_FORCE_INLINE int32_t getCascade() const {
-		return m_cascade;
+	T_FORCE_INLINE int32_t getShadowMapIndex() const {
+		return m_shadowMapIndex;
 	}
 
 	T_FORCE_INLINE bool getSnapshot() const {
@@ -138,7 +138,7 @@ public:
 
 private:
 	int32_t m_index;
-	int32_t m_cascade;
+	int32_t m_shadowMapIndex;
 	bool m_snapshot;
 	Frustum m_viewFrustum;
 	Frustum m_cullFrustum;

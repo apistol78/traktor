@@ -408,6 +408,7 @@ void WorldRendererShared::setupLightPass(
 		const int32_t shmh = shadowSettings.resolution;
 		const int32_t sliceDim = shadowSettings.resolution;
 		const int32_t atlasOffset = shadowSettings.resolution * cascadingSlices;
+		int32_t shadowMapIndex = 0;
 
 		// Add shadow map target.
 		render::RenderGraphTargetSetDesc rgtd;
@@ -489,6 +490,8 @@ void WorldRendererShared::setupLightPass(
 
 				shadowLightViews[slice] = shadowLightProjection * shadowLightView;
 
+				const int32_t passShadowMapIndex = shadowMapIndex++;
+
 				rp->addBuild(
 					[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 					WorldBuildContext wc(
@@ -498,7 +501,7 @@ void WorldRendererShared::setupLightPass(
 					// Render shadow map.
 					WorldRenderView shadowRenderView;
 					shadowRenderView.setIndex(worldRenderView.getIndex());
-					shadowRenderView.setCascade(slice);
+					shadowRenderView.setShadowMapIndex(passShadowMapIndex);
 					shadowRenderView.setProjection(shadowLightProjection);
 					shadowRenderView.setView(shadowLightView, shadowLightView);
 					shadowRenderView.setViewFrustum(shadowFrustum);
@@ -627,6 +630,8 @@ void WorldRendererShared::setupLightPass(
 				(float)atlasRect.height / shmh)
 				.storeUnaligned(lsd->atlasTransform);
 
+			const int32_t passShadowMapIndex = shadowMapIndex++;
+
 			rp->addBuild(
 				[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 				const WorldBuildContext wc(
@@ -634,10 +639,9 @@ void WorldRendererShared::setupLightPass(
 					renderContext);
 
 				// Render shadow map.
-				// #todo Cascade?
 				WorldRenderView shadowRenderView;
 				shadowRenderView.setIndex(worldRenderView.getIndex());
-				// shadowRenderView.setCascade(slice);
+				shadowRenderView.setShadowMapIndex(passShadowMapIndex);
 				shadowRenderView.setProjection(shadowLightProjection);
 				shadowRenderView.setView(shadowLightView, shadowLightView);
 				shadowRenderView.setViewFrustum(shadowFrustum);

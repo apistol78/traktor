@@ -5,8 +5,8 @@
 			<id>{AA20BF80-C68A-D649-9BF9-23BC5F6257F8}</id>
 			<comment/>
 			<position>
-				<first>119</first>
-				<second>324</second>
+				<first>189</first>
+				<second>312</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{0C63324D-D49B-7C44-BE53-17ECD5DBE92E}</id>
 			<comment/>
 			<position>
-				<first>-106</first>
-				<second>330</second>
+				<first>-32</first>
+				<second>289</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -23,14 +23,14 @@
 			<id>{EF3C22BB-6DAD-ED47-B381-BF0850063421}</id>
 			<comment/>
 			<position>
-				<first>358</first>
-				<second>270</second>
+				<first>397</first>
+				<second>271</second>
 			</position>
 			<name>WriteOut</name>
 			<technique>Default</technique>
 			<domain>Compute</domain>
 			<localSize>
-				<X>16</X>
+				<X>32</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
@@ -61,29 +61,34 @@
 					<id>{7BC3CE94-B279-F442-A983-DD2FA6DFBDD4}</id>
 					<name>InstanceOffset</name>
 				</item>
+				<item>
+					<id>{4A8B3345-4152-724E-A1AC-DCD55E20AB05}</id>
+					<name>InstanceCount</name>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
 			
 const int index = int($Index);
-const int offset = int($InstanceOffset);
-
-const bool visible = ($VisibilityBuffer[index + offset].visible != 0.0f);
-
-$DrawBuffer[index].indexCount = int($PrimIndexCount);
-$DrawBuffer[index].instanceCount = visible ? 1 : 0;
-$DrawBuffer[index].firstIndex = int($PrimFirstIndex);
-$DrawBuffer[index].vertexOffset = 0;
-$DrawBuffer[index].firstInstance = 0;
-			
-			]]></script>
+if (index < $InstanceCount)
+{
+	const int offset = int($InstanceOffset);
+	const bool visible = ($VisibilityBuffer[index + offset].visible != 0.0f);
+	
+	$DrawBuffer[index].indexCount = int($PrimIndexCount);
+	$DrawBuffer[index].instanceCount = visible ? 1 : 0;
+	$DrawBuffer[index].firstIndex = int($PrimFirstIndex);
+	$DrawBuffer[index].vertexOffset = 0;
+	$DrawBuffer[index].firstInstance = 0;
+}
+]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>109</first>
-				<second>362</second>
+				<first>125</first>
+				<second>366</second>
 			</position>
 			<parameterDeclaration>{325997C1-F582-1249-9620-EC0ADCA02EC9}</parameterDeclaration>
 		</item>
@@ -91,8 +96,8 @@ $DrawBuffer[index].firstInstance = 0;
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>109</first>
-				<second>422</second>
+				<first>141</first>
+				<second>420</second>
 			</position>
 			<parameterDeclaration>{9E8DA99E-1456-634C-AC71-3EDCDE5B8B41}</parameterDeclaration>
 		</item>
@@ -101,7 +106,7 @@ $DrawBuffer[index].firstInstance = 0;
 			<comment/>
 			<position>
 				<first>109</first>
-				<second>482</second>
+				<second>474</second>
 			</position>
 			<parameterDeclaration>{39E27A9D-4CCD-0F42-881E-95744149442E}</parameterDeclaration>
 		</item>
@@ -109,8 +114,8 @@ $DrawBuffer[index].firstInstance = 0;
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>109</first>
-				<second>264</second>
+				<first>189</first>
+				<second>258</second>
 			</position>
 			<parameterDeclaration>{5BD7E68E-843E-5F4C-9DA9-15DB66FA288E}</parameterDeclaration>
 		</item>
@@ -118,10 +123,19 @@ $DrawBuffer[index].firstInstance = 0;
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>109</first>
+				<first>157</first>
 				<second>204</second>
 			</position>
 			<parameterDeclaration>{2F1BFD3B-182C-FE45-BE1B-C87D5FDAE15F}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{0856DB50-BD57-EF49-84CD-8266637886FC}</id>
+			<comment/>
+			<position>
+				<first>109</first>
+				<second>528</second>
+			</position>
+			<parameterDeclaration>{636BD145-F27A-0A45-9DE8-9574E4DB5683}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -193,6 +207,16 @@ $DrawBuffer[index].firstInstance = 0;
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{AF60E34F-9E23-4E4B-8874-3FCB33F46C2F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{4A8B3345-4152-724E-A1AC-DCD55E20AB05}</id>
 			</destination>
 		</item>
 	</edges>
