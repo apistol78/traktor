@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -291,7 +291,6 @@ void SkyComponent::setup(
 					renderBlock->programParams->endParameters(renderContext);
 
 					renderContext->compute(renderBlock);
-					renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, m_cloudTextures[0], 0);
 				}
 				{
 					auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds 3D");
@@ -306,8 +305,9 @@ void SkyComponent::setup(
 					renderBlock->programParams->endParameters(renderContext);
 
 					renderContext->compute(renderBlock);
-					renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, m_cloudTextures[1], 0);
 				}
+				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, m_cloudTextures[0], 0);
+				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, m_cloudTextures[1], 0);
 			});
 			renderGraph.addPass(rp);
 
