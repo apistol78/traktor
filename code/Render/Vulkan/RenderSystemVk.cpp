@@ -361,7 +361,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.shaderDrawParameters = VK_TRUE
 	};
 
-	const VkPhysicalDeviceVulkan12Features featuresVulkan_1_2 = {
+	const VkPhysicalDeviceVulkan12Features featuresVulkan1_2 = {
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
 		.pNext = (void*)&featuresVulkan1_1,
 		.storageBuffer8BitAccess = VK_FALSE,
@@ -373,6 +373,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE,
 		.descriptorBindingStorageImageUpdateAfterBind = VK_TRUE,
 		.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE,
+		.descriptorBindingUpdateUnusedWhilePending = VK_TRUE,
 		.descriptorBindingPartiallyBound = VK_TRUE,
 		.descriptorBindingVariableDescriptorCount = VK_TRUE,
 		.runtimeDescriptorArray = VK_TRUE,
@@ -381,7 +382,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.bufferDeviceAddressMultiDevice = VK_FALSE
 	};
 
-	headFeature = &featuresVulkan_1_2;
+	headFeature = &featuresVulkan1_2;
 
 	if (desc.rayTracing)
 	{
