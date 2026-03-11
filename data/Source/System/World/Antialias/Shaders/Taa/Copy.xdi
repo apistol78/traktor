@@ -140,7 +140,7 @@ for (int iy = -1; iy <= 1; ++iy)
 	}
 }
 
-const float s = 0.2f;
+const float s = 0.125f;
 v = mix(texture(sampler2D($Texture, $TexState), uv), v, s);
 
 $Output = vec4(v.xyz, 1.0f);

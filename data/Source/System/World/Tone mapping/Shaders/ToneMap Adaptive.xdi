@@ -262,8 +262,8 @@ W
 			<script><![CDATA[
 			
 vec3 x = max($Input.xyz, vec3(0.0f));
-float a = 3.75f;
-float b = 0.05f;
+float a = 3.0f;
+float b = 0.1f;
 float c = 1.25f;
 float d = 1.3f;
 float e = 0.5f;
@@ -452,16 +452,6 @@ $Output = vec4(
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{F321640D-E63E-154A-B1E5-C131ADE3E119}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[16]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
@@ -528,6 +518,16 @@ $Output = vec4(
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{F321640D-E63E-154A-B1E5-C131ADE3E119}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>
