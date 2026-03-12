@@ -6,12 +6,23 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#if defined(_WIN32)
+#	include <GFSDK_Aftermath.h>
+#	include <GFSDK_Aftermath_GpuCrashDump.h>
+#	include <GFSDK_Aftermath_GpuCrashDumpDecoding.h>
+#endif
 #if defined(_WIN32) || defined(__LINUX__)
 #	include <renderdoc_app.h>
 #endif
 #include "Render/Vrfy/RenderSystemVrfy.h"
 
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Library/Library.h"
+#include "Core/Misc/String.h"
+#include "Core/System/OS.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Semaphore.h"
 #include "Render/VertexElement.h"
 #include "Render/Vrfy/AccelerationStructureVrfy.h"
 #include "Render/Vrfy/BufferVrfy.h"
@@ -26,11 +37,57 @@
 
 namespace traktor::render
 {
+namespace
+{
+
+#if defined(_WIN32)
+
+Semaphore s_aftermathLock;
+
+void aftermathGpuCrashDumpCallback(const void* crashDump, const uint32_t crashDumpSize, void* userData)
+{
+	const std::wstring filename = OS::getInstance().getWritableFolderPath() + L"/Traktor/traktor_gpu_crash.nv-gpudmp";
+	log::error << L"GPU crash detected! Writing GPU crash dump \"" << filename << L"\"..." << Endl;
+
+	Ref< IStream > f = FileSystem::getInstance().open(filename, File::FmWrite);
+	if (f)
+	{
+		f->write(crashDump, crashDumpSize);
+		f->close();
+		f = nullptr;
+	}
+	else
+		log::error << L"Unable to create GPU crash dump file!" << Endl;
+}
+
+void aftermathShaderDebugInfo(const void* shaderDebugInfo, const uint32_t shaderDebugInfoSize, void* userData)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_aftermathLock);
+
+	GFSDK_Aftermath_ShaderDebugInfoIdentifier identifier = {};
+	GFSDK_Aftermath_GetShaderDebugInfoIdentifier(GFSDK_Aftermath_Version_API, shaderDebugInfo, shaderDebugInfoSize, &identifier);
+
+	const std::wstring filename = OS::getInstance().getWritableFolderPath() + L"/Traktor/" + str(L"%016x%016x", identifier.id[0], identifier.id[1]);
+	Ref< IStream > f = FileSystem::getInstance().open(filename, File::FmWrite);
+	if (f)
+	{
+		f->write(shaderDebugInfo, shaderDebugInfoSize);
+		f->close();
+		f = nullptr;
+	}
+	else
+		log::error << L"Unable to create shader debug information file!" << Endl;
+}
+
+#endif
+
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVrfy", 0, RenderSystemVrfy, IRenderSystem)
 
-RenderSystemVrfy::RenderSystemVrfy(bool useRenderDoc)
+RenderSystemVrfy::RenderSystemVrfy(bool useRenderDoc, bool useAftermath)
 	: m_useRenderDoc(useRenderDoc)
+	, m_useAftermath(useAftermath)
 {
 }
 
@@ -38,6 +95,34 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 {
 	if ((m_renderSystem = desc.capture) == nullptr)
 		return false;
+
+#if defined(_WIN32)
+	if (m_useAftermath)
+	{
+		// Load NVidia aftermath.
+		const GFSDK_Aftermath_Result result = GFSDK_Aftermath_EnableGpuCrashDumps(
+			GFSDK_Aftermath_Version_API,
+			GFSDK_Aftermath_GpuCrashDumpWatchedApiFlags_Vulkan,
+			GFSDK_Aftermath_GpuCrashDumpFeatureFlags_Default,
+			aftermathGpuCrashDumpCallback, // Register callback for GPU crash dumps.
+			aftermathShaderDebugInfo,	   // Register callback for shader debug information.
+			nullptr,					   // Register callback for GPU crash dump description.
+			nullptr,					   // Register callback for marker resolution (R495 or later NVIDIA graphics driver).
+			nullptr);
+		if (result == GFSDK_Aftermath_Result_Success)
+		{
+			log::info << L"NV Aftermath integration initialized." << Endl;
+
+			// We cannot have RD enabled if we are using the aftermath SDK; not compatible.
+			m_useRenderDoc = false;
+		}
+		else
+		{
+			log::warning << L"NV Aftermath integration failed." << Endl;
+			m_useAftermath = false;
+		}
+	}
+#endif
 
 #if defined(_WIN32) || defined(__LINUX__)
 	// Try to load RenderDoc capture.
@@ -53,23 +138,28 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 		if (m_libRenderDoc->open(renderDocDLL.c_str()))
 		{
 			pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)m_libRenderDoc->find(L"RENDERDOC_GetAPI");
-			const int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_6_0, (void**)&m_apiRenderDoc);
+			const int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_7_0, (void**)&m_apiRenderDoc);
 			if (ret != 1)
 				m_apiRenderDoc = nullptr;
 		}
 		else
+		{
 			m_libRenderDoc = nullptr;
+			m_useRenderDoc = false;
+		}
 
 		if (m_apiRenderDoc)
 		{
-			m_apiRenderDoc->SetCaptureTitle("Traktor");
-			m_apiRenderDoc->MaskOverlayBits(eRENDERDOC_Overlay_All, eRENDERDOC_Overlay_Default);
+			((RENDERDOC_API_1_7_0*)m_apiRenderDoc)->SetCaptureTitle("Traktor");
+			((RENDERDOC_API_1_7_0*)m_apiRenderDoc)->MaskOverlayBits(eRENDERDOC_Overlay_All, eRENDERDOC_Overlay_Default);
 			log::info << L"RenderDoc integration initialized." << Endl;
 		}
 	}
 #endif
 
-	if (!m_renderSystem->create(desc))
+	RenderSystemDesc mutableDesc = desc;
+	mutableDesc.aftermath = m_useAftermath;
+	if (!m_renderSystem->create(mutableDesc))
 		return false;
 
 	m_resourceTracker = new ResourceTracker();
@@ -143,14 +233,10 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 
 #if defined(_WIN32)
 	if (m_apiRenderDoc)
-		m_apiRenderDoc->SetActiveWindow(
-			m_renderSystem->getInternalHandle(),
-			desc.syswin.hWnd);
+		((RENDERDOC_API_1_7_0*)m_apiRenderDoc)->SetActiveWindow(m_renderSystem->getInternalHandle(), desc.syswin.hWnd);
 #elif defined(__LINUX__)
 	if (m_apiRenderDoc)
-		m_apiRenderDoc->SetActiveWindow(
-			m_renderSystem->getInternalHandle(),
-			(RENDERDOC_WindowHandle)desc.syswin.window);
+		((RENDERDOC_API_1_7_0*)m_apiRenderDoc)->SetActiveWindow(m_renderSystem->getInternalHandle(), (RENDERDOC_WindowHandle)desc.syswin.window);
 #endif
 
 	return new RenderViewVrfy(desc, m_renderSystem, renderView);

@@ -142,7 +142,10 @@ bool RenderEditorPlugin::createRenderSystem()
 	m_renderSystem = dynamic_type_cast< IRenderSystem* >(renderSystemType->createInstance());
 	T_ASSERT(m_renderSystem);
 
-	Ref< RenderSystemVrfy > renderSystemVrfy = new RenderSystemVrfy(settings->getProperty< bool >(L"Editor.UseRenderDoc", false));
+	Ref< RenderSystemVrfy > renderSystemVrfy = new RenderSystemVrfy(
+		settings->getProperty< bool >(L"Editor.UseRenderDoc", false),
+		settings->getProperty< bool >(L"Editor.UseNsightAftermath", false)
+	);
 
 	RenderSystemDesc desc;
 	desc.capture = m_renderSystem;

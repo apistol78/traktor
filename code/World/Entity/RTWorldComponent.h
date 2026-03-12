@@ -91,7 +91,7 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IAccelerationStructure > m_tlas;
 	AlignedVector< Instance* > m_instances;
-	bool m_instanceBufferDirty = false;
+	bool m_instanceBufferDirty = true;
 
 	void destroyInstance(Instance* instance);
 };

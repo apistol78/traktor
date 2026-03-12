@@ -438,18 +438,18 @@ PACKAGES =
 		type = "GET",
 		name = "renderdoc",
 		os = "linux",
-		url = "https://renderdoc.org/stable/1.36/renderdoc_1.36.tar.gz",
+		url = "https://renderdoc.org/stable/1.43/renderdoc_1.43.tar.gz",
 		patch = function()
-			run:execute(TAR .. " -xf renderdoc_1.36.tar.gz")
+			run:execute(TAR .. " -xf renderdoc_1.43.tar.gz")
 		end
 	},
 	{
 		type = "GET",
 		name = "renderdoc",
 		os = "windows",
-		url = "https://renderdoc.org/stable/1.36/RenderDoc_1.36_64.zip",
+		url = "https://renderdoc.org/stable/1.43/RenderDoc_1.43_64.zip",
 		patch = function()
-			run:execute(UNZIP .. " -qq RenderDoc_1.36_64.zip")
+			run:execute(UNZIP .. " -qq RenderDoc_1.43_64.zip")
 		end
 	},
 
@@ -502,5 +502,25 @@ PACKAGES =
 		name = "jolt",
 		url = "https://github.com/jrouwe/JoltPhysics.git",
 		license = "MIT"
+	},
+
+	-- nvidia nsight aftermath SDK
+	{
+		type = "GET",
+		name = "aftermath",
+		os = "windows",
+		url = "https://developer.nvidia.com/downloads/assets/tools/secure/nsight-aftermath-sdk/2025_5_0/windows/NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317.zip",
+		patch = function()
+			run:execute(UNZIP .. " -qq NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317.zip")
+		end
+	},
+	{
+		type = "GET",
+		name = "aftermath",
+		os = "linux",
+		url = "https://developer.nvidia.com/downloads/assets/tools/secure/nsight-aftermath-sdk/2025_5_0/linux/NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317.tgz",
+		patch = function()
+			run:execute(TAR .. " -xf NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317.tgz")
+		end
 	},
 }

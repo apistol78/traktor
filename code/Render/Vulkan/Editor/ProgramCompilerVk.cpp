@@ -8,6 +8,8 @@
  */
 #include "Render/Vulkan/Editor/ProgramCompilerVk.h"
 
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/Murmur3.h"
@@ -17,6 +19,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/System/OS.h"
 #include "Render/Editor/Glsl/GlslAccelerationStructure.h"
 #include "Render/Editor/Glsl/GlslContext.h"
 #include "Render/Editor/Glsl/GlslImage.h"
@@ -248,6 +251,24 @@ const std::wstring& lookupCompareFunctionName(CompareFunction compareFunction)
 {
 	const static std::wstring names[] = { L"Always", L"Never", L"Less", L"LessEqual", L"Greater", L"GreaterEqual", L"Equal", L"NotEqual", L"None" };
 	return names[(int32_t)compareFunction];
+}
+
+void writeShaderBinaryFile(uint32_t hash, const AlignedVector< uint32_t >& shader)
+{
+	if (shader.empty())
+		return;
+
+	const Path filename = OS::getInstance().getWritableFolderPath() + L"/Traktor/ShaderBinaries/" + str(L"%08x.shb", hash);
+
+	FileSystem::getInstance().makeAllDirectories(filename.getPathOnly());
+
+	Ref< IStream > f = FileSystem::getInstance().open(filename, File::FmWrite);
+	if (f)
+	{
+		f->write(shader.c_ptr(), shader.size() * sizeof(uint32_t));
+		f->close();
+		f = nullptr;
+	}
 }
 
 }
@@ -777,6 +798,11 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		checksum.end();
 		programResource->m_layoutHash = checksum.get();
 	}
+
+	// Write shader binaries for debugging.
+	writeShaderBinaryFile(programResource->m_vertexShaderHash, programResource->m_vertexShader);
+	writeShaderBinaryFile(programResource->m_fragmentShaderHash, programResource->m_fragmentShader);
+	writeShaderBinaryFile(programResource->m_computeShaderHash, programResource->m_computeShader);
 
 	// #note Need to delete program before shaders due to glslang weirdness.
 	delete program;

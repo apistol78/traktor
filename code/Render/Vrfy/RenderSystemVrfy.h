@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,8 +17,6 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
-
-struct RENDERDOC_API_1_6_0;
 
 namespace traktor
 {
@@ -49,7 +47,7 @@ class T_DLLCLASS RenderSystemVrfy : public IRenderSystem
 public:
 	RenderSystemVrfy() = default;
 
-	explicit RenderSystemVrfy(bool useRenderDoc);
+	explicit RenderSystemVrfy(bool useRenderDoc, bool useAftermath);
 
 	virtual bool create(const RenderSystemDesc& desc) override final;
 
@@ -102,8 +100,9 @@ public:
 private:
 	Ref< IRenderSystem > m_renderSystem;
 	bool m_useRenderDoc = false;
+	bool m_useAftermath = false;
 	Ref< Library > m_libRenderDoc;
-	RENDERDOC_API_1_6_0* m_apiRenderDoc = nullptr;
+	void* m_apiRenderDoc = nullptr;
 	Ref< ResourceTracker > m_resourceTracker;
 };
 

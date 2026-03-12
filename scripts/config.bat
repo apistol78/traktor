@@ -8,6 +8,7 @@ if %TRAKTOR_HOME:~-1%==\ set TRAKTOR_HOME=%TRAKTOR_HOME:~0,-1%
 set RPI_SYSROOT=%TRAKTOR_HOME%\3rdp-restricted\raspberry-sysroot
 set MOLTEN_SDK=%TRAKTOR_HOME%\3rdp-restricted\vulkan\vulkansdk-macos-1.2.154.0\MoltenVK 
 
+set AFTERMATH_SDK=%TRAKTOR_HOME%\3rdp\aftermath
 set AGG_SDK=%TRAKTOR_HOME%\3rdp\agg-2.6
 set ASTCENC_SDK=%TRAKTOR_HOME%\3rdp\astc-encoder
 set BULLET_SDK=%TRAKTOR_HOME%\3rdp\bullet3
@@ -23,7 +24,7 @@ set OGG_SDK=%TRAKTOR_HOME%\3rdp\ogg
 set PNG_SDK=%TRAKTOR_HOME%\3rdp\libpng
 set RAPIDJSON_SDK=%TRAKTOR_HOME%\3rdp\rapidjson
 set RECAST_SDK=%TRAKTOR_HOME%\3rdp\recastnavigation
-set RENDERDOC_SDK=%TRAKTOR_HOME%\3rdp\renderdoc\RenderDoc_1.36_64
+set RENDERDOC_SDK=%TRAKTOR_HOME%\3rdp\renderdoc\RenderDoc_1.43_64
 set RG_ETC1_SDK=%TRAKTOR_HOME%\3rdp\rg-etc1
 set STB_SDK=%TRAKTOR_HOME%\3rdp\stb
 set STEAMWORKS_SDK=%TRAKTOR_HOME%\3rdp\steamworks\sdk

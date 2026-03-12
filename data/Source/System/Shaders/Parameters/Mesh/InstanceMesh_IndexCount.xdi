@@ -2,6 +2,6 @@
 <object type="traktor.render.ParameterDeclaration">
 	<type>Scalar</type>
 	<length>0</length>
-	<frequency>Frame</frequency>
+	<frequency>Draw</frequency>
 	<structDeclaration>{00000000-0000-0000-0000-000000000000}</structDeclaration>
 </object>

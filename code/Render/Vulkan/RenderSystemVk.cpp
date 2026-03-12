@@ -333,6 +333,9 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		for (int32_t i = 0; i < sizeof_array(c_deviceExtensionsRayTracing); ++i)
 			deviceExtensions.push_back(c_deviceExtensionsRayTracing[i]);
 
+	if (desc.aftermath)
+		deviceExtensions.push_back(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME);
+
 	// Create logical device.
 	const VkPhysicalDeviceFeatures features = {
 		.sampleRateShading = VK_TRUE,
@@ -405,6 +408,23 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		headFeature = &featuresRayQuery;
 	}
 #endif
+
+	if (desc.aftermath)
+	{
+		const VkDeviceDiagnosticsConfigFlagsNV aftermathFlags =
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_AUTOMATIC_CHECKPOINTS_BIT_NV |  // Enable automatic call stack checkpoints.
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_RESOURCE_TRACKING_BIT_NV |      // Enable tracking of resources.
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_DEBUG_INFO_BIT_NV |      // Generate debug information for shaders.
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_ERROR_REPORTING_BIT_NV;  // Enable additional runtime shader error reporting.
+
+		static const VkDeviceDiagnosticsConfigCreateInfoNV aftermathInfo = {
+			.sType = VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV,
+			.pNext = (void*)headFeature,
+			.flags = aftermathFlags
+		};
+
+		headFeature = &aftermathInfo;
+	}
 
 	const float queuePriorities[] = { 1.0f, 1.0f };
 

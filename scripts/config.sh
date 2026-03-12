@@ -14,6 +14,7 @@ export TRAKTOR_HOME
 export RPI_SYSROOT=$TRAKTOR_HOME/3rdp-restricted/raspberry-sysroot
 export MOLTEN_SDK=$TRAKTOR_HOME/3rdp-restricted/vulkan/vulkansdk-macos-1.2.154.0/MoltenVK 
 
+export AFTERMATH_SDK=$TRAKTOR_HOME/3rdp/aftermath
 export AGG_SDK=$TRAKTOR_HOME/3rdp/agg-2.6
 export ASTCENC_SDK=$TRAKTOR_HOME/3rdp/astc-encoder
 export BULLET_SDK=$TRAKTOR_HOME/3rdp/bullet3
@@ -28,7 +29,7 @@ export OGG_SDK=$TRAKTOR_HOME/3rdp/ogg
 export PNG_SDK=$TRAKTOR_HOME/3rdp/libpng
 export RAPIDJSON_SDK=$TRAKTOR_HOME/3rdp/rapidjson
 export RECAST_SDK=$TRAKTOR_HOME/3rdp/recastnavigation
-export RENDERDOC_SDK=$TRAKTOR_HOME/3rdp/renderdoc/renderdoc_1.36
+export RENDERDOC_SDK=$TRAKTOR_HOME/3rdp/renderdoc/renderdoc_1.43
 export RG_ETC1_SDK=$TRAKTOR_HOME/3rdp/rg-etc1
 export STB_SDK=$TRAKTOR_HOME/3rdp/stb
 export STEAMWORKS_SDK=$TRAKTOR_HOME/3rdp/steamworks/sdk

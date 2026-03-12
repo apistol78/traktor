@@ -6532,12 +6532,17 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(RENDERDOC_SDK)</item>
+																		<item>$(AFTERMATH_SDK)/include</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_RENDER_VRFY_EXPORT</item>
 																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
+																	<libraryPaths>
+																		<item>$(AFTERMATH_SDK)/lib/x64</item>
+																	</libraryPaths>
+																	<libraries>
+																		<item>GFSDK_Aftermath_Lib.x64.lib</item>
+																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
 																	<additionalLinkerOptions/>
@@ -6556,6 +6561,10 @@
 																		</item>
 																		<item type="traktor.sb.AggregationItem">
 																			<sourceFile>Traktor.Render.Vrfy.dll</sourceFile>
+																			<targetPath>debugshared</targetPath>
+																		</item>
+																		<item type="traktor.sb.AggregationItem">
+																			<sourceFile>$(AFTERMATH_SDK)/lib/x64/*.dll</sourceFile>
 																			<targetPath>debugshared</targetPath>
 																		</item>
 																	</aggregationItems>
@@ -6568,12 +6577,17 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(RENDERDOC_SDK)</item>
+																		<item>$(AFTERMATH_SDK)/include</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_RENDER_VRFY_EXPORT</item>
 																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
+																	<libraryPaths>
+																		<item>$(AFTERMATH_SDK)/lib/x64</item>
+																	</libraryPaths>
+																	<libraries>
+																		<item>GFSDK_Aftermath_Lib.x64.lib</item>
+																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
 																	<additionalLinkerOptions/>
@@ -6594,6 +6608,10 @@
 																			<sourceFile>Traktor.Render.Vrfy.dll</sourceFile>
 																			<targetPath>releaseshared</targetPath>
 																		</item>
+																		<item type="traktor.sb.AggregationItem">
+																			<sourceFile>$(AFTERMATH_SDK)/lib/x64/*.dll</sourceFile>
+																			<targetPath>releaseshared</targetPath>
+																		</item>
 																	</aggregationItems>
 																	<consumerLibraryPath>releaseshared</consumerLibraryPath>
 																</item>
@@ -6604,12 +6622,17 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(RENDERDOC_SDK)</item>
+																		<item>$(AFTERMATH_SDK)/include</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
 																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
+																	<libraryPaths>
+																		<item>$(AFTERMATH_SDK)/lib/x64</item>
+																	</libraryPaths>
+																	<libraries>
+																		<item>GFSDK_Aftermath_Lib.x64.lib</item>
+																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
 																	<additionalLinkerOptions/>
@@ -6626,6 +6649,10 @@
 																			<sourceFile>Traktor.Render.Vrfy.lib</sourceFile>
 																			<targetPath>debugstatic</targetPath>
 																		</item>
+																		<item type="traktor.sb.AggregationItem">
+																			<sourceFile>$(AFTERMATH_SDK)/lib/x64/*.dll</sourceFile>
+																			<targetPath>debugstatic</targetPath>
+																		</item>
 																	</aggregationItems>
 																	<consumerLibraryPath>debugstatic</consumerLibraryPath>
 																</item>
@@ -6636,12 +6663,17 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(RENDERDOC_SDK)</item>
+																		<item>$(AFTERMATH_SDK)/include</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
 																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
+																	<libraryPaths>
+																		<item>$(AFTERMATH_SDK)/lib/x64</item>
+																	</libraryPaths>
+																	<libraries>
+																		<item>GFSDK_Aftermath_Lib.x64.lib</item>
+																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
 																	<additionalLinkerOptions/>
@@ -6656,6 +6688,10 @@
 																		</item>
 																		<item type="traktor.sb.AggregationItem">
 																			<sourceFile>Traktor.Render.Vrfy.lib</sourceFile>
+																			<targetPath>releasestatic</targetPath>
+																		</item>
+																		<item type="traktor.sb.AggregationItem">
+																			<sourceFile>$(AFTERMATH_SDK)/lib/x64/*.dll</sourceFile>
 																			<targetPath>releasestatic</targetPath>
 																		</item>
 																	</aggregationItems>

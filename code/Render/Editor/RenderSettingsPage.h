@@ -58,6 +58,7 @@ private:
 	Ref< ui::CheckBox > m_checkHDR;
 	Ref< ui::CheckBox > m_checkBoxValidation;
 	Ref< ui::CheckBox > m_checkBoxRenderDoc;
+	Ref< ui::CheckBox > m_checkBoxAftermath;
 };
 
 }
