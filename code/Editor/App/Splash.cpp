@@ -1,19 +1,19 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Editor/App/Splash.h"
-#include "Ui/Application.h"
-#include "Ui/FloodLayout.h"
-#include "Ui/Bitmap.h"
-#include "Ui/Image.h"
 
-// Resources
-#include "Resources/Splash.h"
+#include "Ui/Application.h"
+#include "Ui/Bitmap.h"
+#include "Ui/FloodLayout.h"
+#include "Ui/Image.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
 
 namespace traktor::editor
 {
@@ -25,8 +25,12 @@ bool Splash::create()
 	if (!ui::Dialog::create(nullptr, L"", 0_ut, 0_ut, ui::WsTop | ui::Dialog::WsCenterDesktop, new ui::FloodLayout()))
 		return false;
 
-	Ref< ui::Bitmap > splash = ui::Bitmap::load(c_ResourceSplash, sizeof(c_ResourceSplash), L"png");
-	T_ASSERT(splash);
+	// Since no stylesheet is currently loaded we hardcode the splash image and append to default sheet.
+	Ref< ui::StyleSheet > ss = new ui::StyleSheet();
+	ss->setValue(L"Editor.Splash", L"$(TRAKTOR_HOME)/resources/runtime/themes/Shared/Images/Editor/Splash.svg");
+	ui::Application::getInstance()->appendStyleSheet(ss);
+
+	Ref< ui::StyleBitmap > splash = new ui::StyleBitmap(L"Editor.Splash");
 
 	Ref< ui::Image > image = new ui::Image();
 	image->create(this, splash, ui::Image::WsScale);

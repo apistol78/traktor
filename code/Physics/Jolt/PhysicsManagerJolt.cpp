@@ -1044,6 +1044,8 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			JPH::Quat::sIdentity(),
 			staticDesc->isKinematic() ? JPH::EMotionType::Kinematic : JPH::EMotionType::Static,
 			Layers::NON_MOVING);
+		settings.mFriction = staticDesc->getFriction();
+		settings.mRestitution = staticDesc->getRestitution();
 
 		body = bodyInterface.CreateBody(settings);
 		if (!body)
