@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/WorldClassFactory.h"
+
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes/BoxedAabb3.h"
 #include "Core/Class/Boxes/BoxedColor4f.h"
@@ -15,21 +17,9 @@
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Render/Image2/ImageGraphContext.h"
-#include "World/EntityBuilder.h"
-#include "World/IEntityEvent.h"
-#include "World/IEntityEventData.h"
-#include "World/IEntityEventInstance.h"
-#include "World/IEntityFactory.h"
-#include "World/IEntityRenderer.h"
-#include "World/IWorldComponent.h"
-#include "World/IWorldRenderer.h"
-#include "World/WorldClassFactory.h"
-#include "World/WorldEntityRenderers.h"
+#include "World/Entity.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/CameraComponentData.h"
-#include "World/Entity.h"
-#include "World/EntityData.h"
-#include "World/World.h"
 #include "World/Entity/EventManagerComponent.h"
 #include "World/Entity/EventSetComponent.h"
 #include "World/Entity/EventSetComponentData.h"
@@ -44,11 +34,22 @@
 #include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/VolumeComponent.h"
 #include "World/Entity/VolumeComponentData.h"
+#include "World/EntityBuilder.h"
+#include "World/EntityData.h"
+#include "World/IEntityEvent.h"
+#include "World/IEntityEventData.h"
+#include "World/IEntityEventInstance.h"
+#include "World/IEntityFactory.h"
+#include "World/IEntityRenderer.h"
+#include "World/IWorldComponent.h"
+#include "World/IWorldRenderer.h"
+#include "World/World.h"
+#include "World/WorldEntityRenderers.h"
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 IWorldComponent* World_getComponent(World* self, const TypeInfo& componentType)
 {
@@ -174,7 +175,7 @@ IEntityComponent* Entity_getComponent(Entity* self, const TypeInfo& componentTyp
 	return self->getComponent(componentType);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldClassFactory", 0, WorldClassFactory, IRuntimeClassFactory)
 
@@ -322,6 +323,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classScriptComponent = new AutoRuntimeClass< ScriptComponent >();
 	classScriptComponent->addProperty("owner", &ScriptComponent::getOwner);
+	classScriptComponent->addProperty("world", &ScriptComponent::getWorld);
 	classScriptComponent->addProperty("properties", &ScriptComponent::getProperties);
 	registrar->registerClass(classScriptComponent);
 

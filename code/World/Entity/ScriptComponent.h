@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -47,6 +47,8 @@ public:
 
 	virtual void setOwner(Entity* owner) override final;
 
+	virtual void setWorld(World* world) override final;
+
 	virtual void setTransform(const Transform& transform) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
@@ -57,12 +59,15 @@ public:
 
 	Entity* getOwner() const { return m_owner; }
 
+	World* getWorld() const { return m_world; }
+
 	const PropertyGroup* getProperties() const { return m_properties; }
 
 private:
-	Entity* m_owner;
 	resource::Proxy< IRuntimeClass > m_class;
 	Ref< const PropertyGroup > m_properties;
+	Entity* m_owner = nullptr;
+	World* m_world = nullptr;
 	Ref< ITypedObject > m_object;
 	Ref< const IRuntimeDispatch > m_methodSetTransform;
 	Ref< const IRuntimeDispatch > m_methodUpdate;
