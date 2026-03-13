@@ -5,14 +5,14 @@
 			<id>{8C6FBA2D-BC40-574D-B811-23C989BE918E}</id>
 			<comment/>
 			<position>
-				<first>392</first>
-				<second>272</second>
+				<first>386</first>
+				<second>258</second>
 			</position>
 			<name>Skin</name>
 			<technique>Default</technique>
 			<domain>Compute</domain>
 			<localSize>
-				<X>1</X>
+				<X>64</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
@@ -33,92 +33,96 @@
 					<id>{C6875BAF-B95F-CF48-9777-1ABC17B87E4F}</id>
 					<name>Joints</name>
 				</item>
+				<item>
+					<id>{2CAEE763-9825-DD40-A905-1D3A7C516FF5}</id>
+					<name>VertexCount</name>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
-			
 const uint index = gl_GlobalInvocationID.x;
-
-vec4 position = $SkinBufferInput[index].Position;
-vec4 normal = $SkinBufferInput[index].Normal;
-vec4 tangent = $SkinBufferInput[index].Tangent;
-vec4 binormal = $SkinBufferInput[index].Binormal;
-
-ivec4 blendIndices = ivec4($SkinBufferInput[index].BlendIndices);
-vec4 blendWeights = $SkinBufferInput[index].BlendWeights;
-
-vec4 t0 = $Joints[blendIndices.x].Translation;
-vec4 r0 = $Joints[blendIndices.x].Rotation;
-vec4 t1 = $Joints[blendIndices.y].Translation;
-vec4 r1 = $Joints[blendIndices.y].Rotation;
-vec4 t2 = $Joints[blendIndices.z].Translation;
-vec4 r2 = $Joints[blendIndices.z].Rotation;
-vec4 t3 = $Joints[blendIndices.w].Translation;
-vec4 r3 = $Joints[blendIndices.w].Rotation;
-
-vec4 p0 = QuaternionRotate(r0, position) + t0;
-vec4 p1 = QuaternionRotate(r1, position) + t1;
-vec4 p2 = QuaternionRotate(r2, position) + t2;
-vec4 p3 = QuaternionRotate(r3, position) + t3;
-
-vec4 n0 = QuaternionRotate(r0, normal);
-vec4 n1 = QuaternionRotate(r1, normal);
-vec4 n2 = QuaternionRotate(r2, normal);
-vec4 n3 = QuaternionRotate(r3, normal);
-
-vec4 tn0 = QuaternionRotate(r0, tangent);
-vec4 tn1 = QuaternionRotate(r1, tangent);
-vec4 tn2 = QuaternionRotate(r2, tangent);
-vec4 tn3 = QuaternionRotate(r3, tangent);
-
-vec4 bn0 = QuaternionRotate(r0, binormal);
-vec4 bn1 = QuaternionRotate(r1, binormal);
-vec4 bn2 = QuaternionRotate(r2, binormal);
-vec4 bn3 = QuaternionRotate(r3, binormal);
-
-float k = 1.0f - dot(blendWeights, vec4(1.0f));
-
-const vec4 p =
-	p0 * blendWeights.x +
-	p1 * blendWeights.y +
-	p2 * blendWeights.z +
-	p3 * blendWeights.w +
-	position * k;
-
-const vec4 n =
-	n0 * blendWeights.x +
-	n1 * blendWeights.y +
-	n2 * blendWeights.z +
-	n3 * blendWeights.w +
-	normal * k;
-
-const vec4 tn =
-	tn0 * blendWeights.x +
-	tn1 * blendWeights.y +
-	tn2 * blendWeights.z +
-	tn3 * blendWeights.w +
-	tangent * k;
-
-const vec4 bn =
-	bn0 * blendWeights.x +
-	bn1 * blendWeights.y +
-	bn2 * blendWeights.z +
-	bn3 * blendWeights.w +
-	binormal * k;
-
-$SkinBufferOutput[index].Position = vec4(p.xyz, 1.0f);
-$SkinBufferOutput[index].Normal = n;
-$SkinBufferOutput[index].Tangent = tn;
-$SkinBufferOutput[index].Binormal = bn;
-			
+if (index < uint($VertexCount))
+{
+	vec4 position = $SkinBufferInput[index].Position;
+	vec4 normal = $SkinBufferInput[index].Normal;
+	vec4 tangent = $SkinBufferInput[index].Tangent;
+	vec4 binormal = $SkinBufferInput[index].Binormal;
+	
+	ivec4 blendIndices = ivec4($SkinBufferInput[index].BlendIndices);
+	vec4 blendWeights = $SkinBufferInput[index].BlendWeights;
+	
+	vec4 t0 = $Joints[blendIndices.x].Translation;
+	vec4 r0 = $Joints[blendIndices.x].Rotation;
+	vec4 t1 = $Joints[blendIndices.y].Translation;
+	vec4 r1 = $Joints[blendIndices.y].Rotation;
+	vec4 t2 = $Joints[blendIndices.z].Translation;
+	vec4 r2 = $Joints[blendIndices.z].Rotation;
+	vec4 t3 = $Joints[blendIndices.w].Translation;
+	vec4 r3 = $Joints[blendIndices.w].Rotation;
+	
+	vec4 p0 = QuaternionRotate(r0, position) + t0;
+	vec4 p1 = QuaternionRotate(r1, position) + t1;
+	vec4 p2 = QuaternionRotate(r2, position) + t2;
+	vec4 p3 = QuaternionRotate(r3, position) + t3;
+	
+	vec4 n0 = QuaternionRotate(r0, normal);
+	vec4 n1 = QuaternionRotate(r1, normal);
+	vec4 n2 = QuaternionRotate(r2, normal);
+	vec4 n3 = QuaternionRotate(r3, normal);
+	
+	vec4 tn0 = QuaternionRotate(r0, tangent);
+	vec4 tn1 = QuaternionRotate(r1, tangent);
+	vec4 tn2 = QuaternionRotate(r2, tangent);
+	vec4 tn3 = QuaternionRotate(r3, tangent);
+	
+	vec4 bn0 = QuaternionRotate(r0, binormal);
+	vec4 bn1 = QuaternionRotate(r1, binormal);
+	vec4 bn2 = QuaternionRotate(r2, binormal);
+	vec4 bn3 = QuaternionRotate(r3, binormal);
+	
+	float k = 1.0f - dot(blendWeights, vec4(1.0f));
+	
+	const vec4 p =
+		p0 * blendWeights.x +
+		p1 * blendWeights.y +
+		p2 * blendWeights.z +
+		p3 * blendWeights.w +
+		position * k;
+	
+	const vec4 n =
+		n0 * blendWeights.x +
+		n1 * blendWeights.y +
+		n2 * blendWeights.z +
+		n3 * blendWeights.w +
+		normal * k;
+	
+	const vec4 tn =
+		tn0 * blendWeights.x +
+		tn1 * blendWeights.y +
+		tn2 * blendWeights.z +
+		tn3 * blendWeights.w +
+		tangent * k;
+	
+	const vec4 bn =
+		bn0 * blendWeights.x +
+		bn1 * blendWeights.y +
+		bn2 * blendWeights.z +
+		bn3 * blendWeights.w +
+		binormal * k;
+	
+	$SkinBufferOutput[index].Position = vec4(p.xyz, 1.0f);
+	$SkinBufferOutput[index].Normal = n;
+	$SkinBufferOutput[index].Tangent = tn;
+	$SkinBufferOutput[index].Binormal = bn;
+}
 			]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>30</first>
-				<second>323</second>
+				<first>47</first>
+				<second>299</second>
 			</position>
 			<parameterDeclaration>{37D82C15-BAE9-FC4D-9A89-7965CE9E2E3F}</parameterDeclaration>
 		</item>
@@ -126,7 +130,7 @@ $SkinBufferOutput[index].Binormal = bn;
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>78</first>
+				<first>79</first>
 				<second>262</second>
 			</position>
 			<parameterDeclaration>{053878BD-B0DC-B343-AFE6-8015B79B5972}</parameterDeclaration>
@@ -135,10 +139,19 @@ $SkinBufferOutput[index].Binormal = bn;
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>110</first>
-				<second>384</second>
+				<first>95</first>
+				<second>336</second>
 			</position>
 			<parameterDeclaration>{8DEF6AB1-75EA-A14B-A46B-E85BD38D215F}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{7F513575-A885-4248-9F51-ADAD49584E7C}</id>
+			<comment/>
+			<position>
+				<first>47</first>
+				<second>373</second>
+			</position>
+			<parameterDeclaration>{B863E08C-8258-404C-A785-E1F051CDDD79}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -170,6 +183,16 @@ $SkinBufferOutput[index].Binormal = bn;
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{C6875BAF-B95F-CF48-9777-1ABC17B87E4F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{2CAEE763-9825-DD40-A905-1D3A7C516FF5}</id>
 			</destination>
 		</item>
 	</edges>

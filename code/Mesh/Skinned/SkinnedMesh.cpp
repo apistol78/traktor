@@ -21,6 +21,7 @@ namespace traktor::mesh
 namespace
 {
 
+const render::Handle s_handleSkinVertexCount(L"Mesh_SkinVertexCount");
 const render::Handle s_handleSkinBuffer(L"Mesh_SkinBuffer");
 const render::Handle s_handleSkinBufferLast(L"Mesh_SkinBufferLast");
 const render::Handle s_handleSkinBufferOutput(L"Mesh_SkinBufferOutput");
@@ -51,6 +52,7 @@ void SkinnedMesh::buildSkin(
 
 	auto programParams = renderContext->alloc< render::ProgramParameters >();
 	programParams->beginParameters(renderContext);
+	programParams->setFloatParameter(s_handleSkinVertexCount, vertexCount + 0.5f);
 	programParams->setBufferViewParameter(s_handleSkinBuffer, m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferView());
 	programParams->setBufferViewParameter(s_handleSkinBufferOutput, skinBuffer->getBufferView());
 	programParams->setBufferViewParameter(s_handleJoints, jointTransforms->getBufferView());
