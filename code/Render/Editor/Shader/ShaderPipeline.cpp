@@ -112,7 +112,7 @@ uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 122, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 123, ShaderPipeline, editor::IPipeline)
 
 bool ShaderPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {

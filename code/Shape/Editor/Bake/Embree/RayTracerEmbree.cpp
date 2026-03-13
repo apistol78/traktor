@@ -199,7 +199,8 @@ void RayTracerEmbree::addLight(const Light& light)
 
 void RayTracerEmbree::addModel(const model::Model* model, const Transform& transform)
 {
-	T_FATAL_ASSERT(model->getPolygonCount() > 0);
+	if (model->getPolygonCount() == 0)
+		return;
 
 	const uint32_t vertexCount = model->getVertexCount();
 

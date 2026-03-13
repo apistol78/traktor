@@ -390,7 +390,10 @@ void OrthogonalRenderControl::updateWorldRenderer()
 			m_context->getResourceManager(),
 			m_context->getRenderSystem(),
 			wcd))
+	{
+		safeDestroy(worldRenderer);
 		return;
+	}
 
 	m_viewFarZ = worldRenderSettings->viewFarZ;
 	m_worldRenderer = worldRenderer;

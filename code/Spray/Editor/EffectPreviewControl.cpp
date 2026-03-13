@@ -367,7 +367,10 @@ void EffectPreviewControl::updateWorldRenderer()
 			m_resourceManager,
 			m_renderSystem,
 			wcd))
+	{
+		safeDestroy(worldRenderer);
 		return;
+	}
 
 	m_worldRenderer = worldRenderer;
 }

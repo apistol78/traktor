@@ -440,7 +440,10 @@ void PerspectiveRenderControl::updateWorldRenderer()
 			m_context->getResourceManager(),
 			m_context->getRenderSystem(),
 			wcd))
+	{
+		safeDestroy(worldRenderer);
 		return;
+	}
 
 	m_worldRenderer = worldRenderer;
 	m_worldRendererHash = DeepHash(sceneInstance->getWorldRenderSettings()).get();
