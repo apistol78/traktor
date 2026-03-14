@@ -6398,13 +6398,18 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(RENDERDOC_SDK)/include</item>
+																		<item>$(AFTERMATH_SDK)/include</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_RENDER_VRFY_EXPORT</item>
 																		<item>_DEBUG</item>
 																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
+																	<libraryPaths>
+																		<item>$(AFTERMATH_SDK)/lib/x64</item>
+																	</libraryPaths>
+																	<libraries>
+																		<item>GFSDK_Aftermath_Lib.x64</item>
+																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
 																	<additionalLinkerOptions/>
@@ -6419,6 +6424,10 @@
 																		</item>
 																		<item type="traktor.sb.AggregationItem">
 																			<sourceFile>$(RENDERDOC_SDK)/lib/librenderdoc.so</sourceFile>
+																			<targetPath>debugshared</targetPath>
+																		</item>
+																		<item type="traktor.sb.AggregationItem">
+																			<sourceFile>$(AFTERMATH_SDK)/lib/x64/*.so</sourceFile>
 																			<targetPath>debugshared</targetPath>
 																		</item>
 																	</aggregationItems>
@@ -6431,13 +6440,18 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(RENDERDOC_SDK)/include</item>
+																		<item>$(AFTERMATH_SDK)/include</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_RENDER_VRFY_EXPORT</item>
 																		<item>NDEBUG</item>
 																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
+																	<libraryPaths>
+																		<item>$(AFTERMATH_SDK)/lib/x64</item>
+																	</libraryPaths>
+																	<libraries>
+																		<item>GFSDK_Aftermath_Lib.x64</item>
+																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
 																	<additionalLinkerOptions/>
@@ -6454,6 +6468,10 @@
 																			<sourceFile>$(RENDERDOC_SDK)/lib/librenderdoc.so</sourceFile>
 																			<targetPath>releaseshared</targetPath>
 																		</item>
+																		<item type="traktor.sb.AggregationItem">
+																			<sourceFile>$(AFTERMATH_SDK)/lib/x64/*.so</sourceFile>
+																			<targetPath>releaseshared</targetPath>
+																		</item>
 																	</aggregationItems>
 																	<consumerLibraryPath>releaseshared</consumerLibraryPath>
 																</item>
@@ -6464,13 +6482,18 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(RENDERDOC_SDK)/include</item>
+																		<item>$(AFTERMATH_SDK)/include</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
 																		<item>_DEBUG</item>
 																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
+																	<libraryPaths>
+																		<item>$(AFTERMATH_SDK)/lib/x64</item>
+																	</libraryPaths>
+																	<libraries>
+																		<item>GFSDK_Aftermath_Lib.x64</item>
+																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
 																	<additionalLinkerOptions/>
@@ -6487,6 +6510,10 @@
 																			<sourceFile>$(RENDERDOC_SDK)/lib/librenderdoc.so</sourceFile>
 																			<targetPath>debugstatic</targetPath>
 																		</item>
+																		<item type="traktor.sb.AggregationItem">
+																			<sourceFile>$(AFTERMATH_SDK)/lib/x64/*.so</sourceFile>
+																			<targetPath>debugstatic</targetPath>
+																		</item>
 																	</aggregationItems>
 																	<consumerLibraryPath>debugstatic</consumerLibraryPath>
 																</item>
@@ -6497,13 +6524,18 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(RENDERDOC_SDK)/include</item>
+																		<item>$(AFTERMATH_SDK)/include</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
 																		<item>NDEBUG</item>
 																	</definitions>
-																	<libraryPaths/>
-																	<libraries/>
+																	<libraryPaths>
+																		<item>$(AFTERMATH_SDK)/lib/x64</item>
+																	</libraryPaths>
+																	<libraries>
+																		<item>GFSDK_Aftermath_Lib.x64</item>
+																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
 																	<additionalLinkerOptions/>
@@ -6518,6 +6550,10 @@
 																		</item>
 																		<item type="traktor.sb.AggregationItem">
 																			<sourceFile>$(RENDERDOC_SDK)/lib/librenderdoc.so</sourceFile>
+																			<targetPath>releasestatic</targetPath>
+																		</item>
+																		<item type="traktor.sb.AggregationItem">
+																			<sourceFile>$(AFTERMATH_SDK)/lib/x64/*.so</sourceFile>
 																			<targetPath>releasestatic</targetPath>
 																		</item>
 																	</aggregationItems>

@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 #	include <GFSDK_Aftermath.h>
 #	include <GFSDK_Aftermath_GpuCrashDump.h>
 #	include <GFSDK_Aftermath_GpuCrashDumpDecoding.h>
@@ -40,7 +40,7 @@ namespace traktor::render
 namespace
 {
 
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 
 Semaphore s_aftermathLock;
 
@@ -96,7 +96,7 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	if ((m_renderSystem = desc.capture) == nullptr)
 		return false;
 
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 	if (m_useAftermath)
 	{
 		// Load NVidia aftermath.
