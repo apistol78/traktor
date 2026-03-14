@@ -583,8 +583,16 @@ bool RenderViewVk::beginFrame()
 		VK_NULL_HANDLE,
 		&m_currentImageIndex);
 	T_PROFILER_END();
-	if (result != VK_SUCCESS || m_currentImageIndex >= m_frames.size())
+	if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+	{
+		log::error << L"vkAcquireNextImageKHR failed; result = " << getHumanResult(result) << Endl;
 		return false;
+	}
+	if (m_currentImageIndex >= m_frames.size())
+	{
+		log::error << L"Acquired image index greater than allowed number of frames." << Endl;
+		return false;		
+	}
 
 	auto& frame = m_frames[m_currentImageIndex];
 	frame.markers.clear();
@@ -611,17 +619,25 @@ bool RenderViewVk::beginFrame()
 			evt.type = RenderEventType::Lost;
 			m_eventQueue.push_back(evt);
 			m_lost = true;
+
+			log::error << L"Timeout while waiting on graphics command buffer to complete." << Endl;
 			return false;
 		}
 
 		if (!frame.graphicsCommandBuffer->reset())
-			return false;
+		{
+			log::error << L"Failed to reset graphics command buffer." << Endl;
+			return false;		
+		}
 	}
 	else
 	{
 		frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
 		if (!frame.graphicsCommandBuffer)
-			return false;
+		{
+			log::error << L"Failed to acquire command buffer from graphics queue." << Endl;
+			return false;		
+		}
 	}
 	T_PROFILER_END();
 
@@ -636,17 +652,25 @@ bool RenderViewVk::beginFrame()
 			evt.type = RenderEventType::Lost;
 			m_eventQueue.push_back(evt);
 			m_lost = true;
+
+			log::error << L"Timeout while waiting on compute command buffer to complete." << Endl;
 			return false;
 		}
 
 		if (!frame.computeCommandBuffer->reset())
-			return false;
+		{
+			log::error << L"Failed to reset compute command buffer." << Endl;
+			return false;		
+		}
 	}
 	else
 	{
 		frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
 		if (!frame.computeCommandBuffer)
-			return false;
+		{
+			log::error << L"Failed to acquire command buffer from compute queue." << Endl;
+			return false;		
+		}
 	}
 	T_PROFILER_END();
 
@@ -710,7 +734,6 @@ void RenderViewVk::present()
 	T_PROFILER_SCOPE(L"RenderViewVk::present");
 
 	auto& frame = m_frames[m_currentImageIndex];
-	VkResult result;
 
 	// Queue presentation of current primary target.
 	const VkSemaphore waitSemaphores[] = { frame.computeFinishedSemaphore, frame.renderFinishedSemaphore };
@@ -723,7 +746,8 @@ void RenderViewVk::present()
 		.pImageIndices = &m_currentImageIndex,
 		.pResults = nullptr
 	};
-	if ((result = m_presentQueue->present(pi)) != VK_SUCCESS)
+	VkResult result = m_presentQueue->present(pi);
+	if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 	{
 		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (3)." << Endl;
 
