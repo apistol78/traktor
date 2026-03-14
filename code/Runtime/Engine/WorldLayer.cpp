@@ -247,12 +247,16 @@ void WorldLayer::postReconfigured()
 	{
 		for (auto entity : m_scene->getWorld()->getEntities())
 		{
-			if (auto persistentIdComponent = entity->getComponent< world::PersistentIdComponent >())
-			{
-				auto it = m_entityTransforms.find(persistentIdComponent->getId());
-				if (it != m_entityTransforms.end())
-					entity->setTransform(it->second);
-			}
+			auto it = m_entityTransforms.find(entity->getId());
+			if (it != m_entityTransforms.end())
+				entity->setTransform(it->second);
+		}
+
+		if (m_cameraEntityId.isNotNull())
+		{
+			m_cameraEntity = m_scene->getWorld()->getEntity(m_cameraEntityId);
+			if (m_cameraEntity == nullptr)
+				m_cameraEntityId = Guid();
 		}
 	}
 
@@ -274,14 +278,19 @@ void WorldLayer::resume()
 
 void WorldLayer::hotReload()
 {
-	// Capture transforms of all entities in the scene, so we
-	// can restore then after reload.
+	// Capture transforms of dynamic entities in the scene so
+	// hot reloading doesn't restore original transforms.
 	if (m_scene)
 	{
 		for (auto entity : m_scene->getWorld()->getEntities())
-			if (auto persistentIdComponent = entity->getComponent< world::PersistentIdComponent >())
-				m_entityTransforms[persistentIdComponent->getId()] = entity->getTransform();
+		{
+			if (entity->getState().dynamic || entity->getComponent< world::PersistentIdComponent >() != nullptr)
+				m_entityTransforms[entity->getId()] = entity->getTransform();
+		}
 	}
+
+	// Drop camera entity so we can recover new one after hot reload.
+	m_cameraEntity = nullptr;
 }
 
 scene::Scene* WorldLayer::getScene() const
@@ -391,7 +400,10 @@ double WorldLayer::getAlternateTime() const
 
 void WorldLayer::setCamera(const world::Entity* cameraEntity)
 {
-	m_cameraEntity = cameraEntity;
+	if ((m_cameraEntity = cameraEntity) != nullptr)
+		m_cameraEntityId = m_cameraEntity->getId();
+	else
+		m_cameraEntityId = Guid();
 }
 
 const world::Entity* WorldLayer::getCamera() const
