@@ -132,6 +132,15 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 				mm.setBlendOperator(Material::BoAlpha);
 			}
 		}
+		if (material->pbr.transmission_factor.has_value)
+		{
+			const float alpha = 1.0f - material->pbr.transmission_factor.value_real;
+			if (alpha < 1.0f - FUZZY_EPSILON)
+			{
+				mm.setTransparency(alpha);
+				mm.setBlendOperator(Material::BoAlpha);
+			}
+		}
 
 		if (material->pbr.base_color.texture)
 		{

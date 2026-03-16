@@ -93,8 +93,8 @@
 			<id>{9687451C-2FB4-4176-8F29-3E3BDEAADCC0}</id>
 			<comment/>
 			<position>
-				<first>2209</first>
-				<second>639</second>
+				<first>2250</first>
+				<second>634</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -137,8 +137,8 @@
 			<id>{3F3E944C-2CB7-4D2B-9850-87883D75ABE4}</id>
 			<comment/>
 			<position>
-				<first>-546</first>
-				<second>508</second>
+				<first>-636</first>
+				<second>500</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -192,8 +192,8 @@
 			<id>{B2A1061B-7FD2-4C5D-89E2-EDCBCAFEE774}</id>
 			<comment/>
 			<position>
-				<first>-796</first>
-				<second>519</second>
+				<first>-886</first>
+				<second>511</second>
 			</position>
 			<name>ViewPosition</name>
 			<optional>false</optional>
@@ -305,7 +305,7 @@ Eye direction
 			<id>{EE31CFB0-EF12-6B4F-BF6C-30DDE7293048}</id>
 			<comment/>
 			<position>
-				<first>422</first>
+				<first>438</first>
 				<second>738</second>
 			</position>
 			<name>L_ViewPosition</name>
@@ -323,7 +323,7 @@ Eye direction
 			<id>{CC0684ED-4BB4-D943-A71A-DAB1ABD67C1A}</id>
 			<comment/>
 			<position>
-				<first>390</first>
+				<first>406</first>
 				<second>702</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
@@ -341,7 +341,7 @@ Eye direction
 			<id>{30E3837C-DFFE-1448-83AF-98615EBF3F7D}</id>
 			<comment/>
 			<position>
-				<first>422</first>
+				<first>438</first>
 				<second>666</second>
 			</position>
 			<name>L_Roughness</name>
@@ -350,8 +350,8 @@ Eye direction
 			<id>{876F975D-4992-7E44-AE35-07C77D9E2ADE}</id>
 			<comment/>
 			<position>
-				<first>2009</first>
-				<second>-223</second>
+				<first>1938</first>
+				<second>-270</second>
 			</position>
 			<name>L_Irradiance</name>
 		</item>
@@ -359,16 +359,16 @@ Eye direction
 			<id>{41EF4B41-A0ED-4B45-87DD-D3622DAD8DE2}</id>
 			<comment/>
 			<position>
-				<first>1558</first>
-				<second>-288</second>
+				<first>1487</first>
+				<second>-335</second>
 			</position>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{52C368AE-50C8-8546-9A54-7310E5BC8257}</id>
 			<comment/>
 			<position>
-				<first>1444</first>
-				<second>-204</second>
+				<first>1373</first>
+				<second>-251</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>
@@ -377,8 +377,8 @@ Eye direction
 			<id>{77DFF199-651E-3E44-B423-DE94AF8110B8}</id>
 			<comment/>
 			<position>
-				<first>271</first>
-				<second>-347</second>
+				<first>158</first>
+				<second>-390</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
 		</item>
@@ -386,8 +386,8 @@ Eye direction
 			<id>{26649BB3-8826-FA40-BD15-DFF441ED4E5E}</id>
 			<comment/>
 			<position>
-				<first>253</first>
-				<second>-183</second>
+				<first>139</first>
+				<second>-233</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -395,8 +395,8 @@ Eye direction
 			<id>{347680BF-DD44-E84D-AD68-236A87615F15}</id>
 			<comment/>
 			<position>
-				<first>990</first>
-				<second>-270</second>
+				<first>919</first>
+				<second>-317</second>
 			</position>
 			<fragmentGuid>{ADFB49ED-56BB-4981-8121-E9154AB0B2D4}</fragmentGuid>
 			<inputPins>
@@ -422,8 +422,8 @@ Eye direction
 			<id>{1ED3EB24-C280-BE49-A6CB-E40BDE6B4F8D}</id>
 			<comment/>
 			<position>
-				<first>489</first>
-				<second>-329</second>
+				<first>376</first>
+				<second>-372</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -431,8 +431,8 @@ Eye direction
 			<id>{E1341B9C-EB70-7442-9BEA-B06CF5580054}</id>
 			<comment/>
 			<position>
-				<first>477</first>
-				<second>-163</second>
+				<first>363</first>
+				<second>-213</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -440,24 +440,24 @@ Eye direction
 			<id>{5280E162-D022-6740-BBAB-88F7F2EBF73F}</id>
 			<comment/>
 			<position>
-				<first>642</first>
-				<second>-161</second>
+				<first>571</first>
+				<second>-208</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{79A4B9CC-91A0-864E-BFD2-4E4D11FAF5B3}</id>
 			<comment/>
 			<position>
-				<first>639</first>
-				<second>-326</second>
+				<first>568</first>
+				<second>-373</second>
 			</position>
 		</item>
 		<item type="traktor.render.Branch" version="traktor.render.Node:1">
 			<id>{456CF880-EA91-704D-8943-E0D404E81A7F}</id>
 			<comment/>
 			<position>
-				<first>1715</first>
-				<second>-292</second>
+				<first>1644</first>
+				<second>-339</second>
 			</position>
 			<parameterName>World_IrradianceEnable</parameterName>
 		</item>
@@ -720,8 +720,8 @@ Eye direction
 			<id>{F8D7B76B-C918-7842-96F8-3AF0A14AA5BF}</id>
 			<comment/>
 			<position>
-				<first>994</first>
-				<second>-381</second>
+				<first>923</first>
+				<second>-428</second>
 			</position>
 			<fragmentGuid>{1F5FB15A-CCA0-264F-A150-7EDEAD93E644}</fragmentGuid>
 			<inputPins>
@@ -742,8 +742,8 @@ Eye direction
 			<id>{B0279451-EE05-644C-8CB3-A305E0404006}</id>
 			<comment/>
 			<position>
-				<first>1312</first>
-				<second>-354</second>
+				<first>1241</first>
+				<second>-401</second>
 			</position>
 			<parameterName>World_IrradianceSingle</parameterName>
 		</item>
@@ -751,8 +751,8 @@ Eye direction
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>403</first>
-				<second>-110</second>
+				<first>332</first>
+				<second>-157</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -760,8 +760,8 @@ Eye direction
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>415</first>
-				<second>-268</second>
+				<first>344</first>
+				<second>-315</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -1424,8 +1424,8 @@ Eye direction
 			<title>Irradiance</title>
 			<comment/>
 			<position>
-				<first>10</first>
-				<second>-461</second>
+				<first>-61</first>
+				<second>-508</second>
 			</position>
 			<size>
 				<first>2169</first>

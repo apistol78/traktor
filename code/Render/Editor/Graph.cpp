@@ -187,13 +187,15 @@ bool Graph::detach(const Node* node)
 {
 	int32_t removed = 0;
 	for (int32_t i = 0; i < (int32_t)m_edges.size();)
-		if (m_edges[i]->getSource()->getNode() == node || m_edges[i]->getDestination()->getNode() == node)
+	{
+		if (m_edges[i]->getSource() == nullptr || m_edges[i]->getDestination() == nullptr || m_edges[i]->getSource()->getNode() == node || m_edges[i]->getDestination()->getNode() == node)
 		{
 			m_edges.erase(m_edges.begin() + i);
 			removed++;
 		}
 		else
 			++i;
+	}
 
 	updateInputPinToEdge();
 	updateOutputPinDestinationCount();

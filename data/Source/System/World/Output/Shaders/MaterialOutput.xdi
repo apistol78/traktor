@@ -613,6 +613,11 @@ World_ForwardColor
 			<fragmentGuid>{F9069A9E-699D-499C-B6BF-5F5B2BC0AF82}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{06C92643-3818-6941-A548-5D306BC2AEF6}</id>
+					<name>Alpha</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
@@ -626,11 +631,6 @@ World_ForwardColor
 					<id>{505DD2CD-E305-084F-8673-848F43B149F0}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
-				</item>
-				<item>
-					<id>{06C92643-3818-6941-A548-5D306BC2AEF6}</id>
-					<name>Alpha</name>
-					<optional>true</optional>
 				</item>
 				<item>
 					<id>{72048415-F7D0-42B2-BF26-7F7F4D97A902}</id>
@@ -660,7 +660,7 @@ World_ForwardColor
 			<comment/>
 			<position>
 				<first>-1069</first>
-				<second>1209</second>
+				<second>1203</second>
 			</position>
 			<fragmentGuid>{819D0D66-7FB8-4EA0-9D8D-445F3EBC2E8D}</fragmentGuid>
 			<inputPins>
@@ -685,8 +685,8 @@ Opaque
 			
 			]]></comment>
 			<position>
-				<first>-1282</first>
-				<second>1221</second>
+				<first>-1236</first>
+				<second>1202</second>
 			</position>
 			<name>E_Opaque</name>
 		</item>
@@ -695,7 +695,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1059</first>
-				<second>1033</second>
+				<second>1071</second>
 			</position>
 			<name>V_SurfaceColor</name>
 		</item>
@@ -704,7 +704,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1059</first>
-				<second>1319</second>
+				<second>1313</second>
 			</position>
 			<name>V_Roughness</name>
 		</item>
@@ -794,7 +794,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1091</first>
-				<second>1077</second>
+				<second>1115</second>
 			</position>
 			<name>V_ViewNormalDetail</name>
 		</item>
@@ -803,7 +803,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1059</first>
-				<second>1275</second>
+				<second>1269</second>
 			</position>
 			<name>V_Metalness</name>
 		</item>
@@ -812,7 +812,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1059</first>
-				<second>1363</second>
+				<second>1357</second>
 			</position>
 			<name>V_Specular</name>
 		</item>
@@ -949,7 +949,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1059</first>
-				<second>1121</second>
+				<second>1159</second>
 			</position>
 			<name>V_ViewPosition</name>
 		</item>
@@ -1099,7 +1099,7 @@ World_DeferredGBufferWrite
 			<comment/>
 			<position>
 				<first>-1059</first>
-				<second>1165</second>
+				<second>1027</second>
 			</position>
 			<name>V_Alpha</name>
 		</item>
@@ -1916,16 +1916,6 @@ World_DeferredGBufferWrite
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[74]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[42]"/>
-				<id>{06C92643-3818-6941-A548-5D306BC2AEF6}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[76]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -2142,6 +2132,16 @@ World_DeferredGBufferWrite
 			<destination>
 				<node ref="/object/nodes/item[35]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[74]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[42]"/>
+				<id>{06C92643-3818-6941-A548-5D306BC2AEF6}</id>
 			</destination>
 		</item>
 	</edges>
