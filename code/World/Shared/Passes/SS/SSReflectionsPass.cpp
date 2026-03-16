@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "World/Shared/Passes/SSReflectionsPass.h"
+#include "World/Shared/Passes/SS/SSReflectionsPass.h"
 
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"

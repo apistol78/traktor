@@ -277,6 +277,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
 	wcd.quality.antiAlias = m_antiAliasQuality;
 	wcd.quality.imageProcess = m_imageProcessQuality;
+	wcd.quality.irradiance = world::Quality::Ultra;
 	wcd.multiSample = m_renderServer->getMultiSample();
 	wcd.gamma = m_gamma;
 	wcd.hdr = m_renderServer->getRenderView()->isHDR();

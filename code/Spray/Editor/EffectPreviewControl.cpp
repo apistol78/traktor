@@ -359,6 +359,7 @@ void EffectPreviewControl::updateWorldRenderer()
 	wcd.quality.ambientOcclusion = world::Quality::Disabled;
 	wcd.quality.antiAlias = world::Quality::Disabled;
 	wcd.quality.imageProcess = world::Quality::Ultra;
+	wcd.quality.irradiance = world::Quality::Ultra;
 	wcd.multiSample = 0;
 	wcd.hdr = m_renderView->isHDR();
 	wcd.rt = false;

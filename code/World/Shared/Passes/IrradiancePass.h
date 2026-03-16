@@ -40,6 +40,9 @@ struct WorldCreateDesc;
 class WorldEntityRenderers;
 class WorldRenderView;
 
+class RTIrradiancePass;
+class SSIrradiancePass;
+
 /*!
  */
 class IrradiancePass : public Object
@@ -64,10 +67,8 @@ public:
 		render::RGTargetSet outputTargetSetId) const;
 
 private:
-	Ref< render::ScreenRenderer > m_screenRenderer;
-	resource::Proxy< render::Shader > m_irradianceComputeShader;
-	resource::Proxy< render::ImageGraph > m_irradianceDenoise;
-	render::Handle m_persistentReservoirBuffers[2];
+	Ref< SSIrradiancePass > m_ss;
+	Ref< RTIrradiancePass > m_rt;
 };
 
 }

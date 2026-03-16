@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2026 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,10 +15,12 @@
 namespace traktor::render
 {
 
+class Buffer;
 class ImageGraph;
 class IRenderSystem;
 class RenderGraph;
 class ScreenRenderer;
+class Shader;
 
 }
 
@@ -35,13 +37,12 @@ namespace traktor::world
 struct GatherView;
 struct WorldCreateDesc;
 
-class RTAmbientOcclusionPass;
-class SSAmbientOcclusionPass;
+class WorldEntityRenderers;
 class WorldRenderView;
 
 /*!
  */
-class AmbientOcclusionPass : public Object
+class SSIrradiancePass : public Object
 {
 	T_RTTI_CLASS;
 
@@ -53,16 +54,19 @@ public:
 	render::RGTargetSet setup(
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
+		const render::Buffer* lightSBuffer,
 		bool needJitter,
 		uint32_t frameCount,
 		render::RenderGraph& renderGraph,
 		render::RGTargetSet gbufferTargetSetId,
+		render::RGTargetSet velocityTargetSetId,
 		render::RGTexture halfResDepthTextureId,
 		render::RGTargetSet outputTargetSetId) const;
 
 private:
-	Ref< SSAmbientOcclusionPass > m_ss;
-	Ref< RTAmbientOcclusionPass > m_rt;
+	Ref< render::ScreenRenderer > m_screenRenderer;
+	resource::Proxy< render::Shader > m_irradianceComputeShader;
+	resource::Proxy< render::ImageGraph > m_irradianceDenoise;
 };
 
 }

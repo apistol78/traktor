@@ -827,6 +827,26 @@
 												<excludeFilter/>
 												<items/>
 											</item>
+											<item type="traktor.sb.Filter">
+												<name>RT</name>
+												<items>
+													<item type="traktor.sb.File" version="1">
+														<fileName>Shared/Passes/RT/*.*</fileName>
+														<excludeFilter/>
+														<items/>
+													</item>
+												</items>
+											</item>
+											<item type="traktor.sb.Filter">
+												<name>SS</name>
+												<items>
+													<item type="traktor.sb.File" version="1">
+														<fileName>Shared/Passes/SS/*.*</fileName>
+														<excludeFilter/>
+														<items/>
+													</item>
+												</items>
+											</item>
 										</items>
 									</item>
 								</items>

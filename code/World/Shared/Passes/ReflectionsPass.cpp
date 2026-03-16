@@ -11,8 +11,8 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
 #include "World/IWorldRenderer.h"
-#include "World/Shared/Passes/RTReflectionsPass.h"
-#include "World/Shared/Passes/SSReflectionsPass.h"
+#include "World/Shared/Passes/RT/RTReflectionsPass.h"
+#include "World/Shared/Passes/SS/SSReflectionsPass.h"
 
 namespace traktor::world
 {

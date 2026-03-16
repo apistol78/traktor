@@ -278,6 +278,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		wcd.quality.ambientOcclusion = world::Quality::Disabled;
 		wcd.quality.antiAlias = world::Quality::Disabled;
 		wcd.quality.imageProcess = world::Quality::Disabled;
+		wcd.quality.irradiance = world::Quality::Disabled;
 		wcd.multiSample = 0;
 		wcd.gamma = 1.0f;
 		wcd.hdr = true;

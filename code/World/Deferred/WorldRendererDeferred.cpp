@@ -43,7 +43,6 @@
 #include "World/Shared/Passes/LightClusterPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
-#include "World/Shared/Passes/RTReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/WorldBuildContext.h"

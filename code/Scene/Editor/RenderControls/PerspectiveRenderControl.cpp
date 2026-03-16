@@ -432,6 +432,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
 	wcd.quality.antiAlias = m_antiAliasQuality;
 	wcd.quality.imageProcess = m_imageProcessQuality;
+	wcd.quality.irradiance = world::Quality::Ultra;
 	wcd.multiSample = m_multiSample;
 	wcd.hdr = m_renderView->isHDR();
 	wcd.rt = m_rayTracingEnable;

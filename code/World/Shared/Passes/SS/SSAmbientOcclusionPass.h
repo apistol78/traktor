@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2026 Anders Pistol.
+ * Copyright (c) 2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,13 +35,11 @@ namespace traktor::world
 struct GatherView;
 struct WorldCreateDesc;
 
-class RTAmbientOcclusionPass;
-class SSAmbientOcclusionPass;
 class WorldRenderView;
 
 /*!
  */
-class AmbientOcclusionPass : public Object
+class SSAmbientOcclusionPass : public Object
 {
 	T_RTTI_CLASS;
 
@@ -61,8 +59,8 @@ public:
 		render::RGTargetSet outputTargetSetId) const;
 
 private:
-	Ref< SSAmbientOcclusionPass > m_ss;
-	Ref< RTAmbientOcclusionPass > m_rt;
+	Ref< render::ScreenRenderer > m_screenRenderer;
+	resource::Proxy< render::ImageGraph > m_ambientOcclusion;
 };
 
 }

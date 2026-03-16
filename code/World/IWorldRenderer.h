@@ -61,6 +61,7 @@ struct QualitySettings
 	Quality shadows = Quality::Disabled;
 	Quality reflections = Quality::Disabled;
 	Quality ambientOcclusion = Quality::Disabled;
+	Quality irradiance = Quality::Disabled;
 	Quality antiAlias = Quality::Disabled;
 	Quality imageProcess = Quality::Disabled;
 };

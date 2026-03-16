@@ -378,6 +378,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	wcd.quality.reflections = m_reflectionsQuality;
 	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
 	wcd.quality.antiAlias = m_antiAliasQuality;
+	wcd.quality.irradiance = world::Quality::Ultra;
 	wcd.multiSample = m_multiSample;
 	wcd.hdr = m_renderView->isHDR();
 	wcd.rt = m_rayTracingEnable;

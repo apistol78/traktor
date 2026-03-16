@@ -17,7 +17,6 @@ namespace traktor::render
 {
 
 class Buffer;
-class ImageGraph;
 class IRenderSystem;
 class ITexture;
 class RenderGraph;

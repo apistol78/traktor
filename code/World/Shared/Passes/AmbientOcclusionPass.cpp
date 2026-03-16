@@ -8,80 +8,44 @@
  */
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
 
-#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Core/Timer/Profiler.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
-#include "Render/Image2/ImageGraph.h"
-#include "Render/Image2/ImageGraphContext.h"
-#include "Render/IRenderTargetSet.h"
-#include "Render/ScreenRenderer.h"
-#include "Resource/IResourceManager.h"
-#include "World/IEntityRenderer.h"
+#include "Render/IRenderSystem.h"
 #include "World/IWorldRenderer.h"
-#include "World/Shared/WorldRenderPassShared.h"
-#include "World/WorldBuildContext.h"
-#include "World/WorldEntityRenderers.h"
-#include "World/WorldHandles.h"
-#include "World/WorldRenderView.h"
+#include "World/Shared/Passes/RT/RTAmbientOcclusionPass.h"
+#include "World/Shared/Passes/SS/SSAmbientOcclusionPass.h"
 
 namespace traktor::world
 {
-namespace
-{
-
-const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{416745F9-93C7-8D45-AE28-F2823DEE636A}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionHigh(L"{45F9CD9F-C700-9942-BB36-443629C88748}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionUltra(L"{302E57C8-711D-094F-A764-75F76553E81B}");
-
-resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
-{
-	switch (quality)
-	{
-	default:
-	case Quality::Disabled:
-		return resource::Id< render::ImageGraph >();
-	case Quality::Low:
-		return c_ambientOcclusionLow;
-	case Quality::Medium:
-		return c_ambientOcclusionMedium;
-	case Quality::High:
-		return c_ambientOcclusionHigh;
-	case Quality::Ultra:
-		return c_ambientOcclusionUltra;
-	}
-}
-
-}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.AmbientOcclusionPass", AmbientOcclusionPass, Object)
 
 bool AmbientOcclusionPass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
-	// Create ambient occlusion processing.
-	if (desc.quality.ambientOcclusion > Quality::Disabled)
+	if (desc.quality.ambientOcclusion >= Quality::High && desc.rt && renderSystem->supportRayTracing())
 	{
-		resource::Id< render::ImageGraph > ambientOcclusion = getAmbientOcclusionId(desc.quality.ambientOcclusion);
-		if (!resourceManager->bind(ambientOcclusion, m_ambientOcclusion))
+		m_rt = new RTAmbientOcclusionPass();
+		if (!m_rt->create(resourceManager, renderSystem, desc))
 		{
-			log::error << L"Unable to create ambient occlusion process." << Endl;
+			m_rt = nullptr;
 			return false;
 		}
 	}
-
-	// Create screen renderer.
-	m_screenRenderer = new render::ScreenRenderer();
-	if (!m_screenRenderer->create(renderSystem))
-		return false;
-
+	else if (desc.quality.ambientOcclusion > Quality::Disabled)
+	{
+		m_ss = new SSAmbientOcclusionPass();
+		if (!m_ss->create(resourceManager, renderSystem, desc))
+		{
+			m_ss = nullptr;
+			return false;
+		}
+	}
 	return true;
 }
 
 void AmbientOcclusionPass::destroy()
 {
-	safeDestroy(m_screenRenderer);
+	safeDestroy(m_rt);
+	safeDestroy(m_ss);
 }
 
 render::RGTargetSet AmbientOcclusionPass::setup(
@@ -94,76 +58,12 @@ render::RGTargetSet AmbientOcclusionPass::setup(
 	render::RGTexture halfResDepthTextureId,
 	render::RGTargetSet outputTargetSetId) const
 {
-	T_PROFILER_SCOPE(L"AmbientOcclusionPass::setup");
-	render::ImageGraphView view;
-
-	if (m_ambientOcclusion == nullptr || gbufferTargetSetId == render::RGTargetSet::Invalid)
+	if (m_rt != nullptr)
+		return m_rt->setup(worldRenderView, gatheredView, needJitter, frameCount, renderGraph, gbufferTargetSetId, halfResDepthTextureId, outputTargetSetId);
+	else if (m_ss != nullptr)
+		return m_ss->setup(worldRenderView, gatheredView, needJitter, frameCount, renderGraph, gbufferTargetSetId, halfResDepthTextureId, outputTargetSetId);
+	else
 		return render::RGTargetSet::Invalid;
-
-	const bool rayTracingEnable = (bool)(gatheredView.rtWorldTopLevel != nullptr);
-	const Matrix44& projection = worldRenderView.getProjection();
-	const Scalar p11 = projection.get(0, 0);
-	const Scalar p22 = projection.get(1, 1);
-	const Vector4 magicCoeffs(1.0f / p11, 1.0f / p22, 0.0f, 0.0f);
-
-	// Add ambient occlusion target set.
-	render::RenderGraphTargetSetDesc rgtd;
-	rgtd.count = 1;
-	rgtd.createDepthStencil = false;
-	rgtd.referenceWidthDenom = 1;
-	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR8; // Ambient occlusion (R)
-	auto ambientOcclusionTargetSetId = renderGraph.addTransientTargetSet(L"Ambient occlusion", rgtd, render::RGTargetSet::Invalid, outputTargetSetId);
-
-	// Add ambient occlusion render pass.
-	view.viewFrustum = worldRenderView.getViewFrustum();
-	view.view = worldRenderView.getView();
-	view.projection = worldRenderView.getProjection();
-
-	render::ImageGraphContext igctx;
-	igctx.setTechniqueFlag(ShaderPermutation::RayTracingEnable, rayTracingEnable);
-
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
-	rp->addInput(gbufferTargetSetId);
-	rp->addInput(halfResDepthTextureId);
-
-	render::Clear clear;
-	clear.mask = render::CfColor;
-	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	rp->setOutput(ambientOcclusionTargetSetId, clear, render::TfNone, render::TfColor);
-
-	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();
-	const Vector2 jrp = needJitter ? jitter(frameCount - 1) / worldRenderView.getViewSize() : Vector2::zero();
-
-	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
-		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
-		const auto halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
-
-		params->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
-		params->setVectorParameter(ShaderParameter::Jitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
-		params->setVectorParameter(ShaderParameter::MagicCoeffs, magicCoeffs);
-		params->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
-		params->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
-		params->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
-		params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
-		params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
-		params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
-		params->setTextureParameter(ShaderParameter::HalfResDepthMap, halfResDepthTexture);
-
-		if (gatheredView.rtWorldTopLevel != nullptr)
-			params->setAccelerationStructureParameter(ShaderParameter::TLAS, gatheredView.rtWorldTopLevel);
-	};
-
-	m_ambientOcclusion->addPasses(
-		m_screenRenderer,
-		renderGraph,
-		rp,
-		igctx,
-		view,
-		setParameters);
-
-	renderGraph.addPass(rp);
-	return ambientOcclusionTargetSetId;
 }
 
 }
