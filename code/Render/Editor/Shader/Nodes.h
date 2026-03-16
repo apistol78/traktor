@@ -115,7 +115,7 @@ public:
 
 private:
 	AlignedVector< std::wstring > m_names;
-	StaticVector< InputPin, 32 > m_inputPins;
+	StaticVector< InputPin, 64 > m_inputPins;
 	OutputPin m_outputPin;
 
 	void updatePins();
@@ -142,7 +142,7 @@ public:
 private:
 	AlignedVector< std::wstring > m_names;
 	InputPin m_inputPin;
-	StaticVector< OutputPin, 32 > m_outputPins;
+	StaticVector< OutputPin, 64 > m_outputPins;
 
 	void updatePins();
 };

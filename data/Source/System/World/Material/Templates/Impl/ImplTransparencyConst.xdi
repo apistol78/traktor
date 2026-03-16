@@ -5,17 +5,17 @@
 			<id>{5F0DE021-A3D8-3949-A580-75D95070530A}</id>
 			<comment/>
 			<position>
-				<first>940</first>
-				<second>441</second>
+				<first>1148</first>
+				<second>499</second>
 			</position>
-			<name>T_Transparency</name>
+			<name>T_Alpha</name>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{8754C104-D6D0-EA4D-B7B8-F6BA9AFEB865}</id>
 			<comment><![CDATA[Tag_Transparency]]></comment>
 			<position>
-				<first>746</first>
-				<second>417</second>
+				<first>945</first>
+				<second>515</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -23,11 +23,29 @@
 			<id>{CDFE7478-7B61-6146-9C00-871B63C36BDC}</id>
 			<comment/>
 			<position>
-				<first>682</first>
-				<second>480</second>
+				<first>690</first>
+				<second>538</second>
 			</position>
 			<name>T_Attributes</name>
 			<optional>false</optional>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{2B900967-A4B1-DC49-A3EC-D5380A75D965}</id>
+			<comment/>
+			<position>
+				<first>1146</first>
+				<second>545</second>
+			</position>
+			<name>T_Opaque</name>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{6F7694EF-E13E-074D-A728-19FD00BF07A2}</id>
+			<comment/>
+			<position>
+				<first>945</first>
+				<second>561</second>
+			</position>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -38,6 +56,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>

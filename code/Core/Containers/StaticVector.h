@@ -648,7 +648,7 @@ public:
 	 */
 	ItemType& operator [] (size_t index)
 	{
-		T_ASSERT(index < Capacity);
+		T_ASSERT(index < m_size);
 		return m_items[index];
 	}
 
@@ -656,7 +656,7 @@ public:
 	 */
 	const ItemType& operator [] (size_t index) const
 	{
-		T_ASSERT(index < Capacity);
+		T_ASSERT(index < m_size);
 		return m_items[index];
 	}
 

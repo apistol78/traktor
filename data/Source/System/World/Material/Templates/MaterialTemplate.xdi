@@ -85,7 +85,11 @@
 			<outputPins>
 				<item>
 					<id>{8A2A237F-D870-E045-9FCE-2243FBBE172B}</id>
-					<name>T_Transparency</name>
+					<name>T_Alpha</name>
+				</item>
+				<item>
+					<id>{CB16C83A-D01E-9A44-A004-502908CA949B}</id>
+					<name>T_Opaque</name>
 				</item>
 			</outputPins>
 		</item>
@@ -157,11 +161,11 @@
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{61CA8F81-F792-C743-A9CB-68C9C350854E}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Tag_DiffuseTexCoord
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>-67</first>
 				<second>68</second>
@@ -183,11 +187,11 @@ Tag_DiffuseTexCoord
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{409061D1-1AB9-1647-9FAE-F22F6D4DE0DE}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Tag_EmissiveTexCoord
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>-67</first>
 				<second>246</second>
@@ -209,11 +213,11 @@ Tag_EmissiveTexCoord
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{4DB5D72A-8182-3040-AFF5-88C920CC2F68}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Tag_MetalnessTexCoord
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>-67</first>
 				<second>336</second>
@@ -235,11 +239,11 @@ Tag_MetalnessTexCoord
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{43C81D92-7236-8C4C-8D4F-A56A878ADCB7}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Tag_RoughnessTexCoord
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>-67</first>
 				<second>531</second>
@@ -261,11 +265,11 @@ Tag_RoughnessTexCoord
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{AE9286E4-4237-0C4E-9CA8-B291D9C8AD60}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Tag_SpecularTexCoord
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>-67</first>
 				<second>639</second>
@@ -287,11 +291,11 @@ Tag_SpecularTexCoord
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{C30C20B4-9E83-4A48-9FAD-06D6A2861A73}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Tag_TransparencyTexCoord
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>-67</first>
 				<second>152</second>
@@ -313,11 +317,11 @@ Tag_TransparencyTexCoord
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{EBD3A38A-C841-0840-A4F9-B094879CA369}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Tag_NormalTexCoord
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
 				<first>-67</first>
 				<second>433</second>
@@ -358,14 +362,14 @@ Tag_NormalTexCoord
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{EC29B15E-9AE3-4FD1-9253-CF5C3E9C5D8A}</id>
-			<comment>
-			<![CDATA[
+			<comment><![CDATA[
+			
 Tag_DecalResponse
-			]]>
-			</comment>
+			
+			]]></comment>
 			<position>
-				<first>692</first>
-				<second>152</second>
+				<first>697</first>
+				<second>39</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -411,6 +415,11 @@ Tag_DecalResponse
 				<item>
 					<id>{5D56B51C-EF42-4669-9F88-07D446673255}</id>
 					<name>Normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{8315F0AB-D0D8-9E46-975D-AF292733C022}</id>
+					<name>Opaque</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -640,16 +649,6 @@ Tag_DecalResponse
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{8A2A237F-D870-E045-9FCE-2243FBBE172B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{851EEB8C-0FDE-4133-8821-8AFDCA63A98E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[17]"/>
 				<id>{4CBEFFF7-322F-43C2-BEAD-057E8A93B57A}</id>
 			</source>
@@ -666,6 +665,26 @@ Tag_DecalResponse
 			<destination>
 				<node ref="/object/nodes/item[17]"/>
 				<id>{69D2DC0A-88A3-6B47-BFD0-2417B8C08B41}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{CB16C83A-D01E-9A44-A004-502908CA949B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{8315F0AB-D0D8-9E46-975D-AF292733C022}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{8A2A237F-D870-E045-9FCE-2243FBBE172B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{851EEB8C-0FDE-4133-8821-8AFDCA63A98E}</id>
 			</destination>
 		</item>
 	</edges>

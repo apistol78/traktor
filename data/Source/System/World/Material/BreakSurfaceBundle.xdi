@@ -5,8 +5,8 @@
 			<id>{CE356640-AA3B-4438-A964-6D331A68DFEA}</id>
 			<comment/>
 			<position>
-				<first>452</first>
-				<second>81</second>
+				<first>448</first>
+				<second>102</second>
 			</position>
 			<names>
 				<item>Albedo</item>
@@ -18,14 +18,15 @@
 				<item>Decal response</item>
 				<item>World position offset</item>
 				<item>Emissive</item>
+				<item>Opaque</item>
 			</names>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D55AC672-5F6E-429B-9759-E8CFD9383F73}</id>
 			<comment/>
 			<position>
-				<first>150</first>
-				<second>116</second>
+				<first>146</first>
+				<second>137</second>
 			</position>
 			<name>SurfaceAttributes</name>
 			<optional>false</optional>
@@ -110,6 +111,15 @@
 				<second>301</second>
 			</position>
 			<name>Emissive</name>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{2F33C345-06B1-8848-81B5-E6E45FC2265D}</id>
+			<comment/>
+			<position>
+				<first>787</first>
+				<second>336</second>
+			</position>
+			<name>Opaque</name>
 		</item>
 	</nodes>
 	<edges>
@@ -210,6 +220,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{D596E4E4-1A78-4D80-C66B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>

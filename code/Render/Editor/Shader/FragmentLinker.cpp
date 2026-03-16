@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -246,31 +246,31 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 	}
 
 	// Re-wire edges which has been temporarily connected to a "port connection" node.
-	for (auto connector : mutableShaderGraph->findNodesOf< PortConnector >())
+	RefArray< PortConnector > connectors = mutableShaderGraph->findNodesOf< PortConnector >();
+	for (auto connector : connectors)
 	{
-		const OutputPin* sourcePin = mutableShaderGraph->findSourcePin(connector->getInputPin(0));
-		if (!sourcePin)
-		{
-			mutableShaderGraph->removeNode(connector);
+		Ref< Edge > sourceEdge = mutableShaderGraph->findEdge(connector->getInputPin(0));
+		if (!sourceEdge)
 			continue;
-		}
 
-		AlignedVector< const InputPin* > destinationPins = mutableShaderGraph->findDestinationPins(connector->getOutputPin(0));
-		for (auto destinationPin : destinationPins)
+		const OutputPin* sourcePin = sourceEdge->getSource();
+		if (!sourcePin)
+			continue;
+
+		const RefArray< Edge > edges = mutableShaderGraph->findEdges(connector->getOutputPin(0));
+		mutableShaderGraph->removeEdges(edges);
+
+		for (auto edge : edges)
 		{
+			const InputPin* destinationPin = edge->getDestination();
 			T_FATAL_ASSERT(destinationPin->getNode() != sourcePin->getNode());
-
-			Edge* existingEdge = mutableShaderGraph->findEdge(destinationPin);
-			if (existingEdge)
-				mutableShaderGraph->removeEdge(existingEdge);
 
 			mutableShaderGraph->addEdge(new Edge(
 				sourcePin,
 				destinationPin));
 		}
-
-		mutableShaderGraph->removeNode(connector);
 	}
+	mutableShaderGraph->removeNodes((RefArray< Node >&)connectors);
 
 	// Create a unique clone of the resolved shader before returning.
 	mutableShaderGraph = DeepClone(mutableShaderGraph).create< ShaderGraph >();

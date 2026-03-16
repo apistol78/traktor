@@ -73,6 +73,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{BA9F8D25-37BA-F44C-A36C-EF85C51CA6BE}</id>
+					<name>Opaque</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{98A97471-F8FE-4946-9379-DD12C5FD39D7}</id>
 					<name>Roughness</name>
 					<optional>true</optional>
@@ -146,7 +151,7 @@
 			<comment/>
 			<position>
 				<first>-106</first>
-				<second>691</second>
+				<second>720</second>
 			</position>
 			<name>SurfaceAttributes</name>
 		</item>
@@ -368,8 +373,8 @@
 			<id>{BFC530DE-6DE2-2B4C-A4A7-0F4CA291C84D}</id>
 			<comment/>
 			<position>
-				<first>2164</first>
-				<second>446</second>
+				<first>2166</first>
+				<second>476</second>
 			</position>
 			<name>Albedo</name>
 		</item>
@@ -377,8 +382,8 @@
 			<id>{E82A3FCC-B49B-F949-8460-397FA7A319CF}</id>
 			<comment/>
 			<position>
-				<first>2164</first>
-				<second>302</second>
+				<first>2166</first>
+				<second>284</second>
 			</position>
 			<name>Metalness</name>
 		</item>
@@ -386,8 +391,8 @@
 			<id>{389F0ADE-2A3C-B74B-8986-205F7DFBA69A}</id>
 			<comment/>
 			<position>
-				<first>2164</first>
-				<second>350</second>
+				<first>2166</first>
+				<second>380</second>
 			</position>
 			<name>Roughness</name>
 		</item>
@@ -486,7 +491,7 @@
 			<id>{EE5E6E0E-4090-1142-B3A8-61066E4B4C5A}</id>
 			<comment/>
 			<position>
-				<first>696</first>
+				<first>712</first>
 				<second>1850</second>
 			</position>
 			<name>ViewTangent</name>
@@ -495,7 +500,7 @@
 			<id>{636954B7-A639-3243-B0CD-F3B75F6B5DA6}</id>
 			<comment/>
 			<position>
-				<first>696</first>
+				<first>712</first>
 				<second>1748</second>
 			</position>
 			<name>ViewBinormal</name>
@@ -539,8 +544,8 @@
 			<id>{022E4295-684C-AE48-B510-8DAAADADC3CA}</id>
 			<comment/>
 			<position>
-				<first>2164</first>
-				<second>494</second>
+				<first>2166</first>
+				<second>524</second>
 			</position>
 			<name>Normal</name>
 		</item>
@@ -610,8 +615,8 @@
 			<id>{80D90961-6B94-8648-BF31-494072A15B7A}</id>
 			<comment/>
 			<position>
-				<first>2164</first>
-				<second>398</second>
+				<first>2166</first>
+				<second>428</second>
 			</position>
 			<name>Specular</name>
 		</item>
@@ -628,8 +633,8 @@
 			<id>{F15A971B-B5D2-8048-967F-F856D9C4EE7C}</id>
 			<comment/>
 			<position>
-				<first>2164</first>
-				<second>590</second>
+				<first>2166</first>
+				<second>620</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -646,8 +651,8 @@
 			<id>{0EB7CD19-65D4-654F-B973-3A4639A1EF6E}</id>
 			<comment/>
 			<position>
-				<first>2164</first>
-				<second>638</second>
+				<first>2166</first>
+				<second>668</second>
 			</position>
 			<name>ViewVelocity</name>
 		</item>
@@ -686,8 +691,8 @@ on type of mesh.
 			
 			]]></comment>
 			<position>
-				<first>-1048</first>
-				<second>96</second>
+				<first>-1054</first>
+				<second>62</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
@@ -760,8 +765,8 @@ Tag_LightmapTexCoord
 			<id>{612C2732-C24F-B746-BC76-B705FD62BF4C}</id>
 			<comment/>
 			<position>
-				<first>2164</first>
-				<second>254</second>
+				<first>2166</first>
+				<second>236</second>
 			</position>
 			<name>Irradiance</name>
 		</item>
@@ -769,8 +774,8 @@ Tag_LightmapTexCoord
 			<id>{90A4E7B8-F84A-447B-9E26-0481E405B73A}</id>
 			<comment/>
 			<position>
-				<first>444</first>
-				<second>983</second>
+				<first>434</first>
+				<second>972</second>
 			</position>
 			<name>Alpha</name>
 		</item>
@@ -778,8 +783,8 @@ Tag_LightmapTexCoord
 			<id>{9CF1BAA5-3C98-4786-96D8-9D42D282475D}</id>
 			<comment/>
 			<position>
-				<first>2164</first>
-				<second>110</second>
+				<first>2166</first>
+				<second>92</second>
 			</position>
 			<name>Alpha</name>
 		</item>
@@ -787,8 +792,8 @@ Tag_LightmapTexCoord
 			<id>{3A67EFF2-10D5-F745-B2E1-BCC69842163C}</id>
 			<comment/>
 			<position>
-				<first>2164</first>
-				<second>542</second>
+				<first>2166</first>
+				<second>572</second>
 			</position>
 			<name>ViewNormal</name>
 		</item>
@@ -796,8 +801,8 @@ Tag_LightmapTexCoord
 			<id>{5725F7FA-D37D-4026-8483-5BCFC9B45D73}</id>
 			<comment/>
 			<position>
-				<first>2164</first>
-				<second>158</second>
+				<first>2166</first>
+				<second>140</second>
 			</position>
 			<name>DecalResponse</name>
 		</item>
@@ -805,8 +810,8 @@ Tag_LightmapTexCoord
 			<id>{2AC1E4E5-2AFB-4C34-BAF7-DC38976756C5}</id>
 			<comment/>
 			<position>
-				<first>444</first>
-				<second>1025</second>
+				<first>434</first>
+				<second>1011</second>
 			</position>
 			<name>DecalResponse</name>
 		</item>
@@ -858,8 +863,8 @@ Tag_LightmapTexCoord
 			<id>{FC31AB4C-86E6-6545-A7C4-3CB197AF7C55}</id>
 			<comment/>
 			<position>
-				<first>444</first>
-				<second>1067</second>
+				<first>434</first>
+				<second>1089</second>
 			</position>
 			<name>WorldPositionOffset</name>
 		</item>
@@ -891,13 +896,10 @@ Tag_LightmapTexCoord
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
 			<id>{98158568-810A-C845-A712-2E406566828C}</id>
 			<comment><![CDATA[
-			
-In case WPO is used then we need to calculate ViewPosition from WorldPosition
-			
-			]]></comment>
+In case WPO is used then we need to calculate ViewPosition from WorldPosition]]></comment>
 			<position>
-				<first>-1597</first>
-				<second>801</second>
+				<first>-1637</first>
+				<second>827</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
@@ -939,6 +941,10 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition
 				<item>
 					<id>{D118C611-C6C0-4145-AD0E-4B395E161044}</id>
 					<name>Normal</name>
+				</item>
+				<item>
+					<id>{8719F6AD-2DB3-1746-9E1E-38BA222AF626}</id>
+					<name>Opaque</name>
 				</item>
 				<item>
 					<id>{098603B0-CE71-49AB-B118-67720BFCD6FA}</id>
@@ -1138,8 +1144,8 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition
 			<id>{C496E435-9F05-8246-816A-229050ED0AB3}</id>
 			<comment/>
 			<position>
-				<first>2164</first>
-				<second>206</second>
+				<first>2166</first>
+				<second>188</second>
 			</position>
 			<name>Emissive</name>
 		</item>
@@ -1160,6 +1166,24 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition
 				<second>998</second>
 			</position>
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{67938595-39CD-0441-9415-504DD1EC74FE}</id>
+			<comment/>
+			<position>
+				<first>2165</first>
+				<second>332</second>
+			</position>
+			<name>Opaque</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{2D29AB62-3A29-F546-B435-EB8DB490F407}</id>
+			<comment/>
+			<position>
+				<first>434</first>
+				<second>1050</second>
+			</position>
+			<name>Opaque</name>
 		</item>
 	</nodes>
 	<edges>
@@ -2151,6 +2175,26 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition
 			<destination>
 				<node ref="/object/nodes/item[70]"/>
 				<id>{71A0310C-3928-44C3-8D4F-7D9AFF9EAE70}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[89]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{BA9F8D25-37BA-F44C-A36C-EF85C51CA6BE}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[76]"/>
+				<id>{8719F6AD-2DB3-1746-9E1E-38BA222AF626}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 	</edges>

@@ -24,8 +24,8 @@
 			<id>{EAB86259-9DA5-4260-8E53-B29D56F4DDEF}</id>
 			<comment/>
 			<position>
-				<first>561</first>
-				<second>146</second>
+				<first>556</first>
+				<second>133</second>
 			</position>
 			<fragmentGuid>{0524A94E-4377-42AC-8A13-26FFE3491CC3}</fragmentGuid>
 			<inputPins>
@@ -62,6 +62,11 @@
 				<item>
 					<id>{5D56B51C-EF42-4669-9F88-07D446673255}</id>
 					<name>Normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{8315F0AB-D0D8-9E46-975D-AF292733C022}</id>
+					<name>Opaque</name>
 					<optional>true</optional>
 				</item>
 				<item>

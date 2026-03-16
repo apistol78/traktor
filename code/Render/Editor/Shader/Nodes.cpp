@@ -424,6 +424,8 @@ void BundleUnite::serialize(ISerializer& s)
 
 void BundleUnite::updatePins()
 {
+	T_FATAL_ASSERT(1 + m_names.size() < m_inputPins.capacity());
+
 	m_inputPins.resize(1 + m_names.size());
 	m_inputPins[0] = InputPin(this, Guid(L"{FFD72AB8-3ECF-4EBE-AF54-041F18540D4D}"), L"Input", true);
 
@@ -479,6 +481,8 @@ void BundleSplit::serialize(ISerializer& s)
 
 void BundleSplit::updatePins()
 {
+	T_FATAL_ASSERT(m_names.size() < m_outputPins.capacity());
+
 	Guid id(L"{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}");
 
 	m_inputPin = InputPin(this, id, L"Input", false);
