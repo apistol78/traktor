@@ -3552,6 +3552,12 @@ Parameter::Parameter()
 {
 }
 
+Parameter::Parameter(const Guid& parameterDeclaration)
+	: ImmutableNode(c_Parameter_i, c_Parameter_o)
+	, m_parameterDeclaration(parameterDeclaration)
+{
+}
+
 Parameter::Parameter(
 	const std::wstring& parameterName,
 	ParameterType type,

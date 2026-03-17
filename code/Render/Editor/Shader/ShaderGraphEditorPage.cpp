@@ -564,10 +564,10 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 		createEditorNode(shaderNode);
 		updateGraph();
 	}
-	// Create uniform in case of UniformDeclaration.
-	else if (is_type_of< UniformDeclaration >(*primaryType))
+	// Create parameter in case of ParameterDeclaration.
+	else if (is_type_of< ParameterDeclaration >(*primaryType))
 	{
-		Ref< Uniform > shaderNode = new Uniform(instance->getGuid());
+		Ref< Parameter > shaderNode = new Parameter(instance->getGuid());
 		shaderNode->setId(Guid::create());
 		m_shaderGraph->addNode(shaderNode);
 

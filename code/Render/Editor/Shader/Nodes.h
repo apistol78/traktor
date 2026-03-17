@@ -1406,6 +1406,8 @@ class T_DLLCLASS Parameter : public ImmutableNode
 public:
 	Parameter();
 
+	explicit Parameter(const Guid& parameterDeclaration);
+
 	explicit Parameter(
 		const std::wstring& parameterName,
 		ParameterType type,
