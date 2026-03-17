@@ -10,6 +10,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
+#include "Render/Compute/ComputeTexture.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
@@ -42,6 +43,8 @@
 #include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/VolumeComponent.h"
 #include "World/Entity/VolumeComponentData.h"
+#include "World/Entity/ComputeTextureComponent.h"
+#include "World/Entity/ComputeTextureComponentData.h"
 #include "World/Entity/FogComponent.h"
 #include "World/Entity/FogComponentData.h"
 #include "World/Entity/WorldEntityFactory.h"
@@ -96,7 +99,10 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 
 const TypeInfoSet WorldEntityFactory::getWorldComponentTypes() const
 {
-	return makeTypeInfoSet< IrradianceGridComponentData >();
+	return makeTypeInfoSet<
+		ComputeTextureComponentData,
+		IrradianceGridComponentData
+	>();
 }
 
 Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, const EntityData& entityData) const
@@ -316,6 +322,24 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const IEntityB
 
 Ref< IWorldComponent > WorldEntityFactory::createWorldComponent(const IEntityBuilder* builder, const IWorldComponentData& worldComponentData) const
 {
+	if (auto computeTextureComponentData = dynamic_type_cast< const ComputeTextureComponentData* >(&worldComponentData))
+	{
+		Ref< ComputeTextureComponent > component = new ComputeTextureComponent();
+
+		for (const auto& textureId : computeTextureComponentData->getTextures())
+		{
+			resource::Proxy< render::ITexture > texture;
+			if (!m_resourceManager->bind(textureId, texture))
+				return nullptr;
+
+			auto* computeTexture = dynamic_type_cast< render::ComputeTexture* >(texture.getResource());
+			if (computeTexture)
+				component->add(computeTexture);
+		}
+
+		return component;
+	}
+
 	if (auto irradianceGridComponentData = dynamic_type_cast< const IrradianceGridComponentData* >(&worldComponentData))
 	{
 		resource::Proxy< IrradianceGrid > irradianceGrid;

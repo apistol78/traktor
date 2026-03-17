@@ -15,6 +15,7 @@
 #include "World/Entity/ExternalEntityData.h"
 
 // Resource factories
+#include "Render/Compute/ComputeTextureFactory.h"
 #include "Render/Image2/ImageGraphFactory.h"
 #include "Render/Resource/AliasTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
@@ -29,6 +30,7 @@
 #include "World/Entity/WorldEntityFactory.h"
 
 // Entity renderers
+#include "World/Entity/ComputeTextureRenderer.h"
 #include "World/Entity/CullingRenderer.h"
 #include "World/Entity/DecalRenderer.h"
 #include "World/Entity/FogRenderer.h"
@@ -77,6 +79,7 @@ void DefaultEditorProfile::createResourceFactories(
 	outResourceFactories.push_back(new render::ImageGraphFactory(context->getRenderSystem()));
 	outResourceFactories.push_back(new render::ShaderFactory(context->getRenderSystem()));
 	outResourceFactories.push_back(new render::TextureFactory(context->getRenderSystem(), 0));
+	outResourceFactories.push_back(new render::ComputeTextureFactory(context->getRenderSystem()));
 	outResourceFactories.push_back(new sound::AudioResourceFactory());
 	outResourceFactories.push_back(new video::VideoFactory(context->getRenderSystem()));
 	outResourceFactories.push_back(new world::WorldResourceFactory(context->getRenderSystem(), nullptr));
@@ -100,6 +103,7 @@ void DefaultEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
+	outEntityRenderers.push_back(new world::ComputeTextureRenderer());
 	outEntityRenderers.push_back(new world::CullingRenderer());
 	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));
 	outEntityRenderers.push_back(new world::FogRenderer());
