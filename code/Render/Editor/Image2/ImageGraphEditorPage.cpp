@@ -705,27 +705,32 @@ void ImageGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 		Node* node = nodes.front()->getData< Node >(L"IMGNODE");
 		T_FATAL_ASSERT(&type_of(m_propertiesNode) == &type_of(node));
 
+		Ref< Node > propertiesNode = m_propertiesNode;
+
 		// Keep position; user might have moved node while being selected.
-		m_propertiesNode->setPosition(node->getPosition());
+		propertiesNode->setPosition(node->getPosition());
 
 		m_imageGraph->replace(
 			node,
-			m_propertiesNode
+			propertiesNode
 		);
 
+		// Create new graph nodes; this will issue de-select events
+		// and therefor we are storing current node locally above.
 		createEditorGraph();
 
 		// Find and select re-created node.
 		for (auto n : m_editorGraph->getNodes())
 		{
-			if (n->getData< Node >(L"IMGNODE") == m_propertiesNode)
+			Node* nn = n->getData< Node >(L"IMGNODE");
+			if (nn != nullptr && nn->getId() == propertiesNode->getId())
 				n->setSelected(true);
 		}
 
 		// Re-create a clone of the selected node as we cannot
 		// allow in-place editing of a node as graph contain
 		// pointers to pins within each node.
-		m_propertiesNode = DeepClone(m_propertiesNode).create< Node >();
+		m_propertiesNode = DeepClone(propertiesNode).create< Node >();
 		m_propertiesView->setPropertyObject(m_propertiesNode);
 	}
 }
