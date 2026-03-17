@@ -55,19 +55,19 @@ vec4 TemporalAntiAlias(
 	const vec2 Vuv = v * vec2(-0.5f, 0.5f);
 
 	// Sample current colour.
-	const vec4 cc = texture(sampler2D(currentFrame, __pointSampler__), cuv);
+	const vec4 cc = texture(sampler2D(currentFrame, __linearSampler__), cuv);
 
 	// Blend with previous colour.
 	if (!Clipped(uv - Vuv))
 	{
 		// Get velocity of previous pixel, in NDC space.
-		const vec2 pv = texture(sampler2D(velocity, __pointSampler__), cuv - Vuv).xy;
+		const vec2 pv = texture(sampler2D(velocity, __linearSampler__), cuv - Vuv).xy;
 		
 		// Sample previous colour,
 		const vec4 cp = CatmullRomFilterSample(previousFrame, __linearSampler__, puv - Vuv);
 
 		// Clamp previous colour to current color neighbourhood.
-		vec4 ccp = ColorClamp(currentFrame, __pointSampler__, cc, cp, cuv);
+		vec4 ccp = ColorClamp(currentFrame, __linearSampler__, cc, cp, cuv);
 
 		// Compare velocities; if wastly different then don't merge samples.
 		const float fr = clamp(length(pv - v) * 40.0f, 0.0f, 1.0f);

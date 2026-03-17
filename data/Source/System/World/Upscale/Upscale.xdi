@@ -10,10 +10,10 @@
 			</position>
 			<minFilter>Linear</minFilter>
 			<mipFilter>Linear</mipFilter>
-			<magFilter>Linear</magFilter>
-			<addressU>Wrap</addressU>
-			<addressV>Wrap</addressV>
-			<addressW>Wrap</addressW>
+			<magFilter>Point</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
 			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
@@ -23,8 +23,8 @@
 			<id>{D4980D6E-8CD7-4C72-85AD-B892CCE478E3}</id>
 			<comment/>
 			<position>
-				<first>525</first>
-				<second>437</second>
+				<first>778</first>
+				<second>428</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -95,6 +95,77 @@
 			</position>
 			<parameterDeclaration>{5E51DA0A-7A74-6D4B-990D-E3719B91329B}</parameterDeclaration>
 		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{AF8BF828-5C5D-4318-8156-795CC0B757A3}</id>
+			<comment/>
+			<position>
+				<first>525</first>
+				<second>551</second>
+			</position>
+			<swizzle>xxxx</swizzle>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{26E837E6-F02C-4F8D-8335-B851524074D3}</id>
+			<comment/>
+			<position>
+				<first>276</first>
+				<second>620</second>
+			</position>
+			<name>CatmullRomSample</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include>
+				<item>{935D9DEF-A5F9-4D4B-85BE-9F2E059662BB}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{49257CBF-A44B-4AC5-98D1-DB56513318C0}</id>
+					<name>Texture</name>
+				</item>
+				<item>
+					<id>{99F0CABC-957D-49BC-96C1-80714D533BFD}</id>
+					<name>TexCoord</name>
+				</item>
+				<item>
+					<id>{FCEF4625-7129-44C0-9B72-0A3040DB3197}</id>
+					<name>Sampler</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{E1A7AF72-214D-4492-9338-3B99B49BF199}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[$Output = CatmullRomFilterSample($Texture, $Sampler, $TexCoord.xy);
+
+]]></script>
+		</item>
+		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
+			<id>{7EED3871-C26A-4A9B-AB37-BBBCAF7F3D50}</id>
+			<comment/>
+			<position>
+				<first>87</first>
+				<second>691</second>
+			</position>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -109,12 +180,32 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item"/>
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{82C966B2-7B19-48B2-8FE0-B85FF4E3C504}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{FCEF4625-7129-44C0-9B72-0A3040DB3197}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -123,8 +214,28 @@
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{49257CBF-A44B-4AC5-98D1-DB56513318C0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{99F0CABC-957D-49BC-96C1-80714D533BFD}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{E1A7AF72-214D-4492-9338-3B99B49BF199}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>
