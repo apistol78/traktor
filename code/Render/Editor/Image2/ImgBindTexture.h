@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,12 +24,12 @@ namespace traktor::render
 
 class ITexture;
 
-class T_DLLCLASS ImgTexture : public ImmutableNode
+class T_DLLCLASS ImgBindTexture : public ImmutableNode
 {
 	T_RTTI_CLASS;
 
 public:
-	ImgTexture();
+	ImgBindTexture();
 
 	const resource::Id< ITexture >& getTexture() const;
 

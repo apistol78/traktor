@@ -950,8 +950,8 @@
 			<second>Target set</second>
 		</item>
 		<item>
-			<first>IMAGEGRAPH_CREATE_TEXTURE</first>
-			<second>Texture</second>
+			<first>IMAGEGRAPH_CREATE_BIND_TEXTURE</first>
+			<second>Bind texture</second>
 		</item>
 		<item>
 			<first>IMAGEGRAPH_DELETE</first>

@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Image2/ImageGraphEditorPage.h"
+
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -21,21 +23,16 @@
 #include "Render/Editor/Image2/IImgStep.h"
 #include "Render/Editor/Image2/ImageGraphAsset.h"
 #include "Render/Editor/Image2/ImageGraphClipboardData.h"
-#include "Render/Editor/Image2/ImageGraphEditorPage.h"
+#include "Render/Editor/Image2/ImgBindTexture.h"
 #include "Render/Editor/Image2/ImgInput.h"
 #include "Render/Editor/Image2/ImgOutput.h"
 #include "Render/Editor/Image2/ImgPass.h"
 #include "Render/Editor/Image2/ImgPermutation.h"
 #include "Render/Editor/Image2/ImgStructBuffer.h"
 #include "Render/Editor/Image2/ImgTargetSet.h"
-#include "Render/Editor/Image2/ImgTexture.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
-#include "Ui/Menu.h"
-#include "Ui/MenuItem.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/TableLayout.h"
 #include "Ui/Graph/DefaultNodeShape.h"
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/EdgeConnectEvent.h"
@@ -47,6 +44,10 @@
 #include "Ui/Graph/OutputNodeShape.h"
 #include "Ui/Graph/Pin.h"
 #include "Ui/Graph/SelectEvent.h"
+#include "Ui/Menu.h"
+#include "Ui/MenuItem.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -58,9 +59,9 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraphEditorPage", ImageGraphEditorPage, editor::IEditorPage)
 
 ImageGraphEditorPage::ImageGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
-:	m_editor(editor)
-,	m_site(site)
-,	m_document(document)
+	: m_editor(editor)
+	, m_site(site)
+	, m_document(document)
 {
 }
 
@@ -109,8 +110,8 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddInput"), i18n::Text(L"IMAGEGRAPH_CREATE_INPUT")));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddOutput"), i18n::Text(L"IMAGEGRAPH_CREATE_OUTPUT")));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddPass"), i18n::Text(L"IMAGEGRAPH_CREATE_PASS")));
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddBindTexture"), i18n::Text(L"IMAGEGRAPH_CREATE_BIND_TEXTURE")));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTargetSet"), i18n::Text(L"IMAGEGRAPH_CREATE_TARGETSET")));
-	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTexture"), i18n::Text(L"IMAGEGRAPH_CREATE_TEXTURE")));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddStructBuffer"), i18n::Text(L"IMAGEGRAPH_CREATE_STRUCT_BUFFER")));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddPermutation"), i18n::Text(L"IMAGEGRAPH_CREATE_PERMUTATION")));
 	m_menuPopup->add(menuItemCreate);
@@ -125,7 +126,7 @@ void ImageGraphEditorPage::destroy()
 	if (m_propertiesView)
 		m_site->destroyAdditionalPanel(m_propertiesView);
 
-	safeDestroy(m_propertiesView);	
+	safeDestroy(m_propertiesView);
 	safeDestroy(m_editorGraph);
 
 	m_site = nullptr;
@@ -140,105 +141,104 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 {
 	if (m_propertiesView->handleCommand(command))
 		return true;
-	
+
 	if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
-		 const RefArray< ui::Node > selectedNodes = m_editorGraph->getSelectedNodes();
-		 if (!selectedNodes.empty())
-		 {
-		 	// Also copy edges which are affected by selected nodes.
-		 	RefArray< ui::Edge > selectedEdges = m_editorGraph->getConnectedEdges(selectedNodes, true);
+		const RefArray< ui::Node > selectedNodes = m_editorGraph->getSelectedNodes();
+		if (!selectedNodes.empty())
+		{
+			// Also copy edges which are affected by selected nodes.
+			RefArray< ui::Edge > selectedEdges = m_editorGraph->getConnectedEdges(selectedNodes, true);
 
-		 	Ref< ImageGraphClipboardData > data = new ImageGraphClipboardData();
+			Ref< ImageGraphClipboardData > data = new ImageGraphClipboardData();
 
-		 	ui::UnitRect bounds(0_ut, 0_ut, 0_ut, 0_ut);
-		 	for (auto i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
-		 	{
-		 		Ref< Node > shaderNode = (*i)->getData< Node >(L"IMGNODE");
-		 		T_ASSERT(shaderNode);
-		 		data->addNode(shaderNode);
+			ui::UnitRect bounds(0_ut, 0_ut, 0_ut, 0_ut);
+			for (auto i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+			{
+				Ref< Node > shaderNode = (*i)->getData< Node >(L"IMGNODE");
+				T_ASSERT(shaderNode);
+				data->addNode(shaderNode);
 
-		 		if (i != selectedNodes.begin())
-		 		{
-		 			const ui::UnitRect rc = (*i)->calculateRect();
-		 			bounds.left = std::min(bounds.left, rc.left);
-		 			bounds.top = std::min(bounds.top, rc.top);
-		 			bounds.right = std::max(bounds.right, rc.right);
-		 			bounds.bottom = std::max(bounds.bottom, rc.bottom);
-		 		}
-		 		else
-		 			bounds = (*i)->calculateRect();
-		 	}
+				if (i != selectedNodes.begin())
+				{
+					const ui::UnitRect rc = (*i)->calculateRect();
+					bounds.left = std::min(bounds.left, rc.left);
+					bounds.top = std::min(bounds.top, rc.top);
+					bounds.right = std::max(bounds.right, rc.right);
+					bounds.bottom = std::max(bounds.bottom, rc.bottom);
+				}
+				else
+					bounds = (*i)->calculateRect();
+			}
 
-		 	data->setBounds(bounds);
+			data->setBounds(bounds);
 
-		 	for (auto selectedEdge : selectedEdges)
-		 	{
-		 		Ref< Edge > edge = selectedEdge->getData< Edge >(L"IMGEDGE");
-		 		T_ASSERT(edge);
-		 		data->addEdge(edge);
-		 	}
+			for (auto selectedEdge : selectedEdges)
+			{
+				Ref< Edge > edge = selectedEdge->getData< Edge >(L"IMGEDGE");
+				T_ASSERT(edge);
+				data->addEdge(edge);
+			}
 
-		 	ui::Application::getInstance()->getClipboard()->setObject(data);
+			ui::Application::getInstance()->getClipboard()->setObject(data);
 
-		 	// Remove edges and nodes from graphs if user cuts.
-		 	if (command == L"Editor.Cut")
-		 	{
-		 		// Save undo state.
-		 		m_document->push();
+			// Remove edges and nodes from graphs if user cuts.
+			if (command == L"Editor.Cut")
+			{
+				// Save undo state.
+				m_document->push();
 
-		 		// Remove edges which are connected to any selected node, not only those who connects to both selected end nodes.
+				// Remove edges which are connected to any selected node, not only those who connects to both selected end nodes.
 				selectedEdges = m_editorGraph->getConnectedEdges(selectedNodes, false);
 
-		 		for (auto selectedEdge : selectedEdges)
-		 		{
-		 			m_imageGraph->removeEdge(selectedEdge->getData< Edge >(L"IMGEDGE"));
-		 			m_editorGraph->removeEdge(selectedEdge);
-		 		}
+				for (auto selectedEdge : selectedEdges)
+				{
+					m_imageGraph->removeEdge(selectedEdge->getData< Edge >(L"IMGEDGE"));
+					m_editorGraph->removeEdge(selectedEdge);
+				}
 
-		 		for (auto selectedNode : selectedNodes)
-		 		{
-		 			m_imageGraph->removeNode(selectedNode->getData< Node >(L"IMGNODE"));
-		 			m_editorGraph->removeNode(selectedNode);
-		 		}
-		 	}
-		 }
+				for (auto selectedNode : selectedNodes)
+				{
+					m_imageGraph->removeNode(selectedNode->getData< Node >(L"IMGNODE"));
+					m_editorGraph->removeNode(selectedNode);
+				}
+			}
+		}
 	}
 	else if (command == L"Editor.Paste")
 	{
-		 Ref< ImageGraphClipboardData > data = dynamic_type_cast< ImageGraphClipboardData* >(
-		 	ui::Application::getInstance()->getClipboard()->getObject()
-		 );
-		 if (data)
-		 {
-		 	// Save undo state.
-		 	m_document->push();
+		Ref< ImageGraphClipboardData > data = dynamic_type_cast< ImageGraphClipboardData* >(
+			ui::Application::getInstance()->getClipboard()->getObject());
+		if (data)
+		{
+			// Save undo state.
+			m_document->push();
 
-		 	const ui::UnitRect& bounds = data->getBounds();
+			const ui::UnitRect& bounds = data->getBounds();
 
-		 	ui::Rect rcClient = m_editorGraph->getInnerRect();
-		 	ui::Point center = m_editorGraph->clientToVirtual(rcClient.getCenter());
+			ui::Rect rcClient = m_editorGraph->getInnerRect();
+			ui::Point center = m_editorGraph->clientToVirtual(rcClient.getCenter());
 
 			for (auto node : data->getNodes())
-		 	{
-		 		// Create new unique instance ID.
-		 		node->setId(Guid::create());
+			{
+				// Create new unique instance ID.
+				node->setId(Guid::create());
 
-		 		// Place node in view.
-		 		//std::pair< int, int > position = node->getPosition();
-		 		//position.first = center.x + position.first - bounds.left - bounds.getWidth() / 2;
-		 		//position.second = center.y + position.second - bounds.top - bounds.getHeight() / 2;
-		 		//node->setPosition(position);
+				// Place node in view.
+				// std::pair< int, int > position = node->getPosition();
+				// position.first = center.x + position.first - bounds.left - bounds.getWidth() / 2;
+				// position.second = center.y + position.second - bounds.top - bounds.getHeight() / 2;
+				// node->setPosition(position);
 
-		 		// Add node to graph.
-		 		m_imageGraph->addNode(node);
-		 	}
+				// Add node to graph.
+				m_imageGraph->addNode(node);
+			}
 
 			for (auto edge : data->getEdges())
-		 		m_imageGraph->addEdge(edge);
+				m_imageGraph->addEdge(edge);
 
-		 	createEditorGraph();
-		 }
+			createEditorGraph();
+		}
 	}
 	else if (command == L"Editor.SelectAll")
 	{
@@ -370,10 +370,10 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		// Create node in graph control.
 		createEditorNode(targetSet);
 	}
-	else if (command == L"ImageGraph.Editor.AddTexture")
+	else if (command == L"ImageGraph.Editor.AddBindTexture")
 	{
 		// Create image graph texture reference.
-		Ref< ImgTexture > texture = new ImgTexture();
+		Ref< ImgBindTexture > texture = new ImgBindTexture();
 		texture->setId(Guid::create());
 		m_imageGraph->addNode(texture);
 
@@ -424,8 +424,7 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 			L"Input",
 			input->getTextureId(),
 			position,
-			new ui::InputNodeShape()
-		);
+			new ui::InputNodeShape());
 	}
 	else if (auto output = dynamic_type_cast< ImgOutput* >(node))
 	{
@@ -433,8 +432,7 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 			L"Output",
 			L"",
 			position,
-			new ui::OutputNodeShape()
-		);
+			new ui::OutputNodeShape());
 	}
 	else if (auto pass = dynamic_type_cast< ImgPass* >(node))
 	{
@@ -442,8 +440,7 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 			L"Pass",
 			pass->getName(),
 			position,
-			new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault)
-		);
+			new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault));
 	}
 	else if (auto permutation = dynamic_type_cast< ImgPermutation* >(node))
 	{
@@ -451,8 +448,7 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 			L"Permutation",
 			permutation->getName(),
 			position,
-			new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault)
-		);
+			new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault));
 	}
 	else if (auto targetSet = dynamic_type_cast< ImgTargetSet* >(node))
 	{
@@ -460,18 +456,16 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 			L"TargetSet",
 			targetSet->getName(),
 			position,
-			new ui::DefaultNodeShape(ui::DefaultNodeShape::StExternal)
-		);
+			new ui::DefaultNodeShape(ui::DefaultNodeShape::StExternal));
 	}
-	else if (auto texture = dynamic_type_cast< ImgTexture* >(node))
+	else if (auto texture = dynamic_type_cast< ImgBindTexture* >(node))
 	{
 		Ref< db::Instance > textureInstance = m_editor->getSourceDatabase()->getInstance(texture->getTexture());
 		editorNode = m_editorGraph->createNode(
-			L"Texture",
+			L"Bind texture",
 			textureInstance ? textureInstance->getName() : Guid(texture->getTexture()).format(),
 			position,
-			new ui::InputNodeShape()
-		);
+			new ui::InputNodeShape());
 	}
 	else if (auto sbuffer = dynamic_type_cast< ImgStructBuffer* >(node))
 	{
@@ -479,8 +473,7 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 			L"Struct buffer",
 			L"",
 			position,
-			new ui::DefaultNodeShape(ui::DefaultNodeShape::StExternal)
-		);
+			new ui::DefaultNodeShape(ui::DefaultNodeShape::StExternal));
 	}
 	else
 	{
@@ -626,8 +619,7 @@ void ImageGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 	// Save position in node.
 	node->setPosition(std::make_pair(
 		position.x.get(),
-		position.y.get()
-	));
+		position.y.get()));
 }
 
 void ImageGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
@@ -712,8 +704,7 @@ void ImageGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 
 		m_imageGraph->replace(
 			node,
-			propertiesNode
-		);
+			propertiesNode);
 
 		// Create new graph nodes; this will issue de-select events
 		// and therefor we are storing current node locally above.
