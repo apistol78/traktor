@@ -59,7 +59,7 @@ public:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgTargetSet", 2, ImgTargetSet, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgTargetSet", 3, ImgTargetSet, Node)
 
 ImgTargetSet::ImgTargetSet()
 {
@@ -75,9 +75,9 @@ ImgTargetSet::~ImgTargetSet()
 		delete outputPin;
 }
 
-const std::wstring& ImgTargetSet::getTargetSetId() const
+const std::wstring& ImgTargetSet::getName() const
 {
-	return m_targetSetId;
+	return m_name;
 }
 
 bool ImgTargetSet::getPersistent() const
@@ -143,7 +143,10 @@ void ImgTargetSet::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 	
-	s >> Member< std::wstring >(L"targetSetId", m_targetSetId);
+	if (s.getVersion< ImgTargetSet >() >= 3)
+		s >> Member< std::wstring >(L"name", m_name);
+	else
+		s >> Member< std::wstring >(L"targetSetId", m_name);
 
 	if (s.getVersion< ImgTargetSet >() >= 1)
 		s >> Member< bool >(L"persistent", m_persistent);

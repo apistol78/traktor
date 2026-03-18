@@ -458,7 +458,7 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 	{
 		editorNode = m_editorGraph->createNode(
 			L"TargetSet",
-			targetSet->getTargetSetId(),
+			targetSet->getName(),
 			position,
 			new ui::DefaultNodeShape(ui::DefaultNodeShape::StExternal)
 		);

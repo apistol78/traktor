@@ -40,7 +40,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 21, ImageGraphPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 22, ImageGraphPipeline, editor::IPipeline)
 
 bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -207,11 +207,11 @@ bool ImageGraphPipeline::buildOutput(
 			else if (auto targetSetNode = dynamic_type_cast<const ImgTargetSet*>(nodes[i]))
 			{
 				Ref< ImageTargetSetData > tsd = new ImageTargetSetData();
-				tsd->m_targetSetId = targetSetNode->getTargetSetId();
+				tsd->m_targetSetId = targetSetNode->getId().format();
 				if (targetSetNode->getPersistent())
 					tsd->m_persistentHandle = Guid::create().format();
 				for (int32_t i = 0; i < targetSetNode->getTextureCount(); ++i)
-					tsd->m_textureIds[i] = targetSetNode->getTargetSetId() + L"/" + targetSetNode->getTextureId(i);
+					tsd->m_textureIds[i] = targetSetNode->getId().format() + L"/" + targetSetNode->getTextureId(i);
 				tsd->m_targetSetDesc = targetSetNode->getRenderGraphTargetSetDesc();
 
 				const OutputPin* referenceOutputPin = permutation->findSourcePin(targetSetNode->getInputPin(1));
@@ -342,7 +342,7 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 
 		if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(destinationPins.front()->getNode()))
 		{
-			const std::wstring textureId = targetSetNode->getTargetSetId() + L"/" + outputPin->getName();
+			const std::wstring textureId = targetSetNode->getId().format() + L"/" + outputPin->getName();
 			if (!targetSetNode->getPersistent())
 				log::info << L"\tOutput into transient target \"" << textureId << L"\"." << Endl;
 			else
@@ -456,7 +456,7 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 			{
 				// Reading texture from transient target set.
 				auto& sourceData = opData->m_textureSources.push_back();
-				sourceData.id = targetSetNode->getTargetSetId() + L"/" + sourcePin->getName();
+				sourceData.id = targetSetNode->getId().format() + L"/" + sourcePin->getName();
 				sourceData.shaderParameter = input;
 				if (!targetSetNode->getPersistent())
 					log::info << L"\t\tParameter \"" << sourceData.shaderParameter << L"\" = transient target \"" << sourceData.id << L"\"." << Endl;

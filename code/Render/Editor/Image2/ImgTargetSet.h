@@ -32,7 +32,7 @@ public:
 
 	virtual ~ImgTargetSet();
 
-	const std::wstring& getTargetSetId() const;
+	const std::wstring& getName() const;
 
 	bool getPersistent() const;
 
@@ -64,7 +64,7 @@ private:
 	AlignedVector< InputPin* > m_inputPins;
 	AlignedVector< OutputPin* > m_outputPins;
 
-	std::wstring m_targetSetId;
+	std::wstring m_name;
 	bool m_persistent = false;
 	int32_t m_width = 0;
 	int32_t m_height = 0;
