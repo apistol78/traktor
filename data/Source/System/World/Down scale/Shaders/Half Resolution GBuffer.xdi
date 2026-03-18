@@ -35,7 +35,7 @@
 			<outputPins/>
 			<script><![CDATA[// Use minimum operator when down sampling depth.
 
-const float BiasZ = 0.1f;
+const float BiasZ = 0.5f;
 
 const ivec2 osz = imageSize($Output);
 const ivec2 isz = imageSize($Input);
