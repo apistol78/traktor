@@ -46,6 +46,7 @@ struct T_DLLCLASS ShaderPermutation
 	static const render::Handle RayTracingEnable;
 	static const render::Handle CullingHiZ;
 	static const render::Handle HDR;
+	static const render::Handle UpscalingEnable;
 };
 
 // Shader parameters.

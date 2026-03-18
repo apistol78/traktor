@@ -200,6 +200,7 @@ void PostProcessPass::setup(
 	igctx.associateTextureTargetSet(ShaderParameter::InputVelocity, velocityTargetSetId, 0);
 	igctx.associateExplicitTexture(ShaderParameter::InputColorGrading, (bool)(m_colorGrading != nullptr) ? m_colorGrading.getResource() : whiteTexture);
 	igctx.setTechniqueFlag(ShaderPermutation::ColorGradingEnable, (bool)(m_colorGrading != nullptr));
+	igctx.setTechniqueFlag(ShaderPermutation::UpscalingEnable, m_visualDenominator > 1);
 	igctx.setTechniqueFlag(ShaderPermutation::HDR, m_hdr);
 
 	// Expose gamma, exposure and jitter.

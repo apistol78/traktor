@@ -5,8 +5,8 @@
 			<id>{7AB9C7A2-130B-9B42-84DD-CCFADF451C6B}</id>
 			<comment/>
 			<position>
-				<first>-591</first>
-				<second>398</second>
+				<first>-662</first>
+				<second>514</second>
 			</position>
 			<textureId>InputColor</textureId>
 		</item>
@@ -14,16 +14,16 @@
 			<id>{36BA727B-AA6D-3345-8193-2BA385FC183A}</id>
 			<comment/>
 			<position>
-				<first>759</first>
-				<second>603</second>
+				<first>844</first>
+				<second>895</second>
 			</position>
 		</item>
 		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
 			<id>{A927780D-D5EB-194C-B454-8AA4C48EDCD9}</id>
 			<comment/>
 			<position>
-				<first>-12</first>
-				<second>406</second>
+				<first>78</first>
+				<second>698</second>
 			</position>
 			<textureId>InputVelocity</textureId>
 		</item>
@@ -31,8 +31,8 @@
 			<id>{36E5CA9F-184A-834C-973B-33E8F74371CA}</id>
 			<comment/>
 			<position>
-				<first>0</first>
-				<second>354</second>
+				<first>94</first>
+				<second>640</second>
 			</position>
 			<textureId>InputDepth</textureId>
 		</item>
@@ -40,8 +40,8 @@
 			<id>{13E22B51-0DE0-944D-9285-C9438C6316A7}</id>
 			<comment/>
 			<position>
-				<first>256</first>
-				<second>302</second>
+				<first>341</first>
+				<second>594</second>
 			</position>
 			<name>Temporal antialias</name>
 			<clear>
@@ -79,8 +79,8 @@
 			<id>{216A3B53-5680-6B46-9BAF-88D469C90302}</id>
 			<comment/>
 			<position>
-				<first>508</first>
-				<second>533</second>
+				<first>593</first>
+				<second>825</second>
 			</position>
 			<name>Antialias copy</name>
 			<clear>
@@ -115,8 +115,8 @@
 			<id>{50EC2CAB-AE90-CB42-8F61-24D9B6CD361C}</id>
 			<comment/>
 			<position>
-				<first>241</first>
-				<second>494</second>
+				<first>326</first>
+				<second>786</second>
 			</position>
 			<targetSetId>TAA history</targetSetId>
 			<persistent>true</persistent>
@@ -140,8 +140,8 @@
 			<id>{23A98EC8-97BF-4325-B732-1F984FC05DBC}</id>
 			<comment/>
 			<position>
-				<first>-79</first>
-				<second>530</second>
+				<first>-148</first>
+				<second>447</second>
 			</position>
 			<targetSetId>TAAU</targetSetId>
 			<persistent>true</persistent>
@@ -165,8 +165,8 @@
 			<id>{D2772FD3-F72E-4EDF-8C2E-FB4DBA3B6FA2}</id>
 			<comment/>
 			<position>
-				<first>-333</first>
-				<second>453</second>
+				<first>-415</first>
+				<second>422</second>
 			</position>
 			<name>Upscale</name>
 			<clear>
@@ -196,6 +196,15 @@
 					</parameters>
 				</item>
 			</steps>
+		</item>
+		<item type="traktor.render.ImgPermutation" version="traktor.render.Node:1">
+			<id>{B82E2E29-DA1B-B742-A01B-14ABDB201EE1}</id>
+			<comment/>
+			<position>
+				<first>84</first>
+				<second>502</second>
+			</position>
+			<name>World_UpscalingEnable</name>
 		</item>
 	</nodes>
 	<edges>
@@ -261,16 +270,6 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[8]"/>
 				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
@@ -281,8 +280,38 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[7]"/>
 				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{71E4277E-8919-4FC6-B289-532EF34E0702}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{21DBF30F-4888-47EA-943C-AC8ABF38E8DF}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{9B51E249-A97B-40E3-9CD0-FA2C714FE243}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
