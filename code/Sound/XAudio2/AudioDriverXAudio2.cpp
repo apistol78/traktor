@@ -1,26 +1,28 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
-#include <limits>
+#include "Sound/XAudio2/AudioDriverXAudio2.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Sound/XAudio2/AudioDriverXAudio2.h"
+
+#include <algorithm>
+#include <limits>
 
 #undef min
 #undef max
 
 namespace traktor::sound
 {
-	namespace
-	{
+namespace
+{
 
 struct EngineCallback : public IXAudio2EngineCallback
 {
@@ -28,8 +30,8 @@ struct EngineCallback : public IXAudio2EngineCallback
 	HRESULT& m_hResult;
 
 	EngineCallback(HANDLE hEvent, HRESULT& hResult)
-	:	m_hEvent(hEvent)
-	,	m_hResult(hResult)
+		: m_hEvent(hEvent)
+		, m_hResult(hResult)
 	{
 	}
 
@@ -37,7 +39,11 @@ struct EngineCallback : public IXAudio2EngineCallback
 
 	virtual void STDMETHODCALLTYPE OnProcessingPassEnd() {}
 
-	virtual void STDMETHODCALLTYPE OnCriticalError(HRESULT hResult) { m_hResult = hResult; SetEvent(m_hEvent); }
+	virtual void STDMETHODCALLTYPE OnCriticalError(HRESULT hResult)
+	{
+		m_hResult = hResult;
+		SetEvent(m_hEvent);
+	}
 };
 
 struct VoiceCallback : public IXAudio2VoiceCallback
@@ -46,18 +52,32 @@ struct VoiceCallback : public IXAudio2VoiceCallback
 	HRESULT& m_hResult;
 
 	VoiceCallback(HANDLE hEvent, HRESULT& hResult)
-	:	m_hEvent(hEvent)
-	,	m_hResult(hResult)
+		: m_hEvent(hEvent)
+		, m_hResult(hResult)
 	{
 	}
 
 	virtual void STDMETHODCALLTYPE OnVoiceProcessingPassStart(UINT32 BytesRequired) {}
+
 	virtual void STDMETHODCALLTYPE OnVoiceProcessingPassEnd() {}
+
 	virtual void STDMETHODCALLTYPE OnStreamEnd() {}
+
 	virtual void STDMETHODCALLTYPE OnBufferStart(void*) {}
-	virtual void STDMETHODCALLTYPE OnBufferEnd( void*) { m_hResult = S_OK; SetEvent(m_hEvent); }
+
+	virtual void STDMETHODCALLTYPE OnBufferEnd(void*)
+	{
+		m_hResult = S_OK;
+		SetEvent(m_hEvent);
+	}
+
 	virtual void STDMETHODCALLTYPE OnLoopEnd(void*) {}
-	virtual void STDMETHODCALLTYPE OnVoiceError(void*, HRESULT hResult) { m_hResult = hResult; SetEvent(m_hEvent); }
+
+	virtual void STDMETHODCALLTYPE OnVoiceError(void*, HRESULT hResult)
+	{
+		m_hResult = hResult;
+		SetEvent(m_hEvent);
+	}
 };
 
 template < typename SampleType >
@@ -69,8 +89,8 @@ struct CastSample
 	}
 };
 
-template < >
-struct CastSample < int8_t >
+template <>
+struct CastSample< int8_t >
 {
 	__m128 f;
 
@@ -88,8 +108,8 @@ struct CastSample < int8_t >
 	}
 };
 
-template < >
-struct CastSample < int16_t >
+template <>
+struct CastSample< int16_t >
 {
 	__m128 f;
 
@@ -120,19 +140,19 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 	}
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverXAudio2", 0, AudioDriverXAudio2, IAudioDriver)
 
 AudioDriverXAudio2::AudioDriverXAudio2()
-:	m_engineCallback(nullptr)
-,	m_voiceCallback(nullptr)
-,	m_masteringVoice(nullptr)
-,	m_sourceVoice(nullptr)
-,	m_eventNotify(NULL)
-,	m_hResult(S_OK)
-,	m_bufferSize(0)
-,	m_nextSubmitBuffer(0)
+	: m_engineCallback(nullptr)
+	, m_voiceCallback(nullptr)
+	, m_masteringVoice(nullptr)
+	, m_sourceVoice(nullptr)
+	, m_eventNotify(NULL)
+	, m_hResult(S_OK)
+	, m_bufferSize(0)
+	, m_nextSubmitBuffer(0)
 {
 	std::memset(&m_wfx, 0, sizeof(m_wfx));
 	for (uint32_t i = 0; i < sizeof_array(m_buffers); ++i)
@@ -148,6 +168,13 @@ bool AudioDriverXAudio2::create(const SystemApplication& sysapp, const AudioDriv
 {
 	m_desc = desc;
 
+	// Cannot use XAudio2 in remote sessions.
+	if (GetSystemMetrics(SM_REMOTESESSION) != 0)
+	{
+		log::error << L"Unable to create XAudio2 sound driver; doesn't support RDP." << Endl;
+		return false;
+	}
+
 	// Allocate submission buffers.
 	m_bufferSize = desc.frameSamples * desc.hwChannels * desc.bitsPerSample / 8;
 	for (uint32_t i = 0; i < sizeof_array(m_buffers); ++i)
@@ -155,7 +182,7 @@ bool AudioDriverXAudio2::create(const SystemApplication& sysapp, const AudioDriv
 		m_buffers[i] = (uint8_t*)Alloc::acquireAlign(m_bufferSize, 16, T_FILE_LINE);
 		if (!m_buffers[i])
 		{
-			log::error << L"Unable to create XAudio2 sound driver; Out of memory" << Endl;
+			log::error << L"Unable to create XAudio2 sound driver; out of memory." << Endl;
 			return false;
 		}
 	}
@@ -165,7 +192,7 @@ bool AudioDriverXAudio2::create(const SystemApplication& sysapp, const AudioDriv
 	m_eventNotify = CreateEvent(NULL, FALSE, FALSE, NULL);
 	if (!m_eventNotify)
 	{
-		log::error << L"Unable to create XAudio2 sound driver; CreateEvent failed" << Endl;
+		log::error << L"Unable to create XAudio2 sound driver; CreateEvent failed." << Endl;
 		return false;
 	}
 
@@ -308,13 +335,13 @@ bool AudioDriverXAudio2::reset()
 	if (!m_audio)
 	{
 		UINT32 flags = 0;
-	#if defined(_DEBUG)
+#if defined(_DEBUG)
 		flags |= XAUDIO2_DEBUG_ENGINE;
-	#endif
+#endif
 		hr = XAudio2Create(&m_audio.getAssign(), flags, XAUDIO2_DEFAULT_PROCESSOR);
 		if (FAILED(hr))
 		{
-			log::error << L"Unable to create XAudio2 sound driver; XAudio2Create failed (" << int32_t(hr) << L")" << Endl;
+			log::error << L"Unable to create XAudio2 sound driver; XAudio2Create failed (" << int32_t(hr) << L")." << Endl;
 			return false;
 		}
 
@@ -327,11 +354,10 @@ bool AudioDriverXAudio2::reset()
 		XAUDIO2_DEFAULT_SAMPLERATE,
 		0,
 		0,
-		NULL
-	);
+		NULL);
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create XAudio2 sound driver; CreateMasteringVoice failed (" << m_desc.hwChannels << L" channels, " << int32_t(hr) << L")" << Endl;
+		log::error << L"Unable to create XAudio2 sound driver; CreateMasteringVoice failed (" << m_desc.hwChannels << L" channels, " << int32_t(hr) << L")." << Endl;
 		return false;
 	}
 
@@ -349,19 +375,19 @@ bool AudioDriverXAudio2::reset()
 
 	switch (m_desc.hwChannels)
 	{
-	case 7+1:
+	case 7 + 1:
 		m_wfx.dwChannelMask |= SPEAKER_BACK_LEFT | SPEAKER_BACK_RIGHT;
-	case 5+1:
+	case 5 + 1:
 		m_wfx.dwChannelMask |= SPEAKER_FRONT_CENTER;
-	case 4+1:
+	case 4 + 1:
 		m_wfx.dwChannelMask |= SPEAKER_SIDE_LEFT | SPEAKER_SIDE_RIGHT;
-	case 2+1:
+	case 2 + 1:
 		m_wfx.dwChannelMask |= SPEAKER_LOW_FREQUENCY;
 	case 2:
 		m_wfx.dwChannelMask |= SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
 		break;
 	default:
-		log::error << L"Unable to create XAudio2 sound driver; Incorrect number of channels" << Endl;
+		log::error << L"Unable to create XAudio2 sound driver; Incorrect number of channels." << Endl;
 		return false;
 	}
 
@@ -374,8 +400,7 @@ bool AudioDriverXAudio2::reset()
 		XAUDIO2_DEFAULT_FREQ_RATIO,
 		m_voiceCallback,
 		NULL,
-		NULL
-	);
+		NULL);
 	if (FAILED(hr))
 	{
 		// Unable to create source voice with extensible wave format; try with default.
@@ -400,11 +425,10 @@ bool AudioDriverXAudio2::reset()
 			XAUDIO2_DEFAULT_FREQ_RATIO,
 			m_voiceCallback,
 			NULL,
-			NULL
-		);
+			NULL);
 		if (FAILED(hr))
 		{
-			log::error << L"Unable to create XAudio2 sound driver; CreateSourceVoice failed (" << int32_t(hr) << L")" << Endl;
+			log::error << L"Unable to create XAudio2 sound driver; CreateSourceVoice failed (" << int32_t(hr) << L")." << Endl;
 			return false;
 		}
 	}
