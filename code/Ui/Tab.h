@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,6 +23,8 @@ namespace traktor::ui
 
 class IBitmap;
 class TabPage;
+class ToolTip;
+class ToolTipEvent;
 
 /*! Tab container.
  * \ingroup UI
@@ -43,6 +45,8 @@ public:
 	Tab();
 
 	bool create(Widget* parent, uint32_t style = WsDefault);
+
+	virtual void destroy() override;
 
 	virtual Rect getInnerRect() const override;
 
@@ -84,6 +88,7 @@ private:
 		bool operator == (const PageState& rh) const;
 	};
 
+	Ref< ToolTip > m_toolTip;
 	Ref< IBitmap > m_bitmapClose;
 	Ref< IBitmap > m_bitmapImages;
 	uint32_t m_imageWidth;
@@ -112,6 +117,8 @@ private:
 	void eventSize(SizeEvent* event);
 
 	void eventPaint(PaintEvent* event);
+
+	void eventShowTip(ToolTipEvent* event);
 };
 
 }

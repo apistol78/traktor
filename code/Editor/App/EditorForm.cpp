@@ -1109,7 +1109,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 		// Create tab page container.
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
-		if (!tabPage->create(m_tabGroupLastFocus, instance->getName(), iconIndex, new ui::FloodLayout()))
+		if (!tabPage->create(m_tabGroupLastFocus, instance->getName(), instance->getPath(), iconIndex, new ui::FloodLayout()))
 		{
 			log::error << L"Failed to create editor; unable to create tab page." << Endl;
 			instance->revert();
@@ -2128,8 +2128,11 @@ void EditorForm::moveNewTabGroup()
 	tab->addEventHandler< ui::ChildEvent >(this, &EditorForm::eventTabChild);
 	m_tabGroups.push_back(tab);
 
+	std::wstring toolTip;
+	activeTabPage->getToolTip(toolTip);
+
 	Ref< ui::TabPage > tabPage = new ui::TabPage();
-	tabPage->create(tab, activeTabPage->getText(), activeTabPage->getImageIndex(), new ui::FloodLayout());
+	tabPage->create(tab, activeTabPage->getText(), toolTip, activeTabPage->getImageIndex(), new ui::FloodLayout());
 	tabPage->copyData(activeTabPage);
 
 	tab->addPage(tabPage);

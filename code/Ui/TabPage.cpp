@@ -14,10 +14,11 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TabPage", TabPage, Container)
 
-bool TabPage::create(Tab* tab, const std::wstring& text, int32_t imageIndex, Layout* layout)
+bool TabPage::create(Tab* tab, const std::wstring& text, const std::wstring& toolTip, int32_t imageIndex, Layout* layout)
 {
 	m_tab = tab;
 	m_imageIndex = imageIndex;
+	m_toolTip = toolTip;
 
 	if (!Container::create(tab, WsNone, layout))
 		return false;
@@ -26,9 +27,19 @@ bool TabPage::create(Tab* tab, const std::wstring& text, int32_t imageIndex, Lay
 	return true;
 }
 
+bool TabPage::create(Tab* tab, const std::wstring& text, const std::wstring& toolTip, Layout* layout)
+{
+	return create(tab, text, toolTip, 0, layout);
+}
+
+bool TabPage::create(Tab* tab, const std::wstring& text, int32_t imageIndex, Layout* layout)
+{
+	return create(tab, text, L"", imageIndex, layout);
+}
+
 bool TabPage::create(Tab* tab, const std::wstring& text, Layout* layout)
 {
-	return create(tab, text, 0, layout);
+	return create(tab, text, L"", 0, layout);
 }
 
 void TabPage::setActive()
@@ -49,6 +60,12 @@ Tab* TabPage::getTab() const
 int32_t TabPage::getImageIndex() const
 {
 	return m_imageIndex;
+}
+
+bool TabPage::getToolTip(std::wstring& outToolTip) const
+{
+	outToolTip = m_toolTip;
+	return !m_toolTip.empty();
 }
 
 }

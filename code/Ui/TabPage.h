@@ -31,6 +31,10 @@ class T_DLLCLASS TabPage : public Container
 	T_RTTI_CLASS;
 
 public:
+	bool create(Tab* tab, const std::wstring& text, const std::wstring& toolTip, int32_t imageIndex, Layout* layout);
+
+	bool create(Tab* tab, const std::wstring& text, const std::wstring& toolTip, Layout* layout);
+
 	bool create(Tab* tab, const std::wstring& text, int32_t imageIndex, Layout* layout);
 
 	bool create(Tab* tab, const std::wstring& text, Layout* layout);
@@ -43,9 +47,12 @@ public:
 
 	int32_t getImageIndex() const;
 
+	bool getToolTip(std::wstring& outToolTip) const;
+
 private:
 	Tab* m_tab = nullptr;
 	int32_t m_imageIndex = 0;
+	std::wstring m_toolTip;
 };
 
 }
