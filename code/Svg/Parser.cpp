@@ -699,8 +699,10 @@ void Parser::parseDefs(xml::Element* elm)
 			if (gradient)
 				m_gradients[id] = gradient;
 		}
+#if defined(_DEBUG)
 		else
 			log::debug << L"Unknown definition element \"" << name << L"\"" << Endl;
+#endif
 	}
 }
 
@@ -724,8 +726,10 @@ Ref< Gradient > Parser::parseGradientDef(const xml::Element* defs, const xml::El
 			if (refGradient)
 				gradient->setStops(refGradient->getStops());
 		}
+#if defined(_DEBUG)
 		else
 			log::debug << L"Unable to resolve reference \"" << ref << L"\"; no such element." << Endl;
+#endif
 	}
 
 	RefArray< xml::Element > stops;
@@ -835,8 +839,10 @@ void Parser::parseStyle(const xml::Element* elm, Style* style)
 						style->setFillEnable(true);
 						style->setFillGradient(it->second);
 					}
+#if defined(_DEBUG)
 					else
 						log::debug << L"Invalid style; no such gradient \"" << id << L"\"." << Endl;
+#endif
 				}
 				else if (parseColor(value, color))
 				{
@@ -912,8 +918,10 @@ void Parser::parseStyle(const xml::Element* elm, Style* style)
 				const float fontSize = parseNumber(value);
 				style->setFontSize(fontSize);
 			}
+#if defined(_DEBUG)
 			else
-				log::debug << L"Unknown CSS style \"" << key << L"\"" << Endl;
+				log::debug << L"Unknown CSS style \"" << key << L"\" (value: " << value << L")." << Endl;
+#endif
 		}
 	}
 }
