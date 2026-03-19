@@ -50,7 +50,6 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 
 	// Build model adjacency information.
 	ModelAdjacency adjacency(&model, ModelAdjacency::Mode::ByPosition);
-	ModelAdjacency::share_vector_t sharedEdges;
 	AlignedVector< uint32_t > removeIndices;
 
 	// Keep iterating until no more polygons are merged.
@@ -62,11 +61,11 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 			Polygon& leftPolygon = polygons[i];
 			for (size_t j = 0; j < leftPolygon.getVertexCount(); ++j)
 			{
-				sharedEdges = adjacency.getSharedEdges(i, j);
-				if (sharedEdges.size() != 1)
+				const auto sharedEdges = adjacency.getSharedEdges(i, j);
+				if (sharedEdges.count != 1)
 					continue;
 
-				const uint32_t sharedEdge = sharedEdges.front();
+				const uint32_t sharedEdge = sharedEdges[0];
 				const uint32_t sharedPolygon = adjacency.getPolygon(sharedEdge);
 
 				if (sharedPolygon <= i)

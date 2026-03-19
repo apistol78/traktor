@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,6 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Containers/StaticVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -40,7 +39,15 @@ public:
 		ByTexCoord
 	};
 
-	typedef StaticVector< uint32_t, 16 > share_vector_t;
+	struct ShareView
+	{
+		uint32_t count;
+		const uint32_t* data;
+
+		uint32_t operator [] (uint32_t index) const { return data[index]; }
+	};
+
+	typedef AlignedVector< uint32_t > share_vector_t;
 
 	explicit ModelAdjacency(const Model* model, Mode mode, uint32_t channel = 0);
 
@@ -65,10 +72,10 @@ public:
 	void getLeavingEdges(uint32_t vertexId, share_vector_t& outLeavingEdges) const;
 
 	/*! Get sharing edges; ie opposite edges. */
-	const share_vector_t& getSharedEdges(uint32_t edge) const;
+	ShareView getSharedEdges(uint32_t edge) const;
 
 	/*! Get sharing edges; ie opposite edges. */
-	share_vector_t getSharedEdges(uint32_t polygon, uint32_t polygonEdge) const;
+	ShareView getSharedEdges(uint32_t polygon, uint32_t polygonEdge) const;
 
 	/*! Count number of sharing edges. */
 	uint32_t getSharedEdgeCount(uint32_t edge) const;
@@ -91,11 +98,13 @@ public:
 private:
 	struct Edge
 	{
-		uint32_t polygon;
-		uint32_t polygonEdge;
-		uint32_t index0;
-		uint32_t index1;
-		share_vector_t share;
+		uint32_t polygon = c_InvalidIndex;
+		uint32_t polygonEdge = 0;
+		uint32_t index0 = c_InvalidIndex;
+		uint32_t index1 = c_InvalidIndex;
+		uint32_t shareDataOffset = 0;
+		uint32_t shareDataCount = 0;
+		uint32_t shareDataCapacity = 0;
 	};
 
 	Ref< const Model > m_model;
@@ -103,6 +112,11 @@ private:
 	uint32_t m_channel;
 	AlignedVector< Edge > m_edges;
 	AlignedVector< uint32_t > m_polygonToFirstEdge;
+	AlignedVector< uint32_t > m_shareData;
+
+	void shareDataPushBack(Edge& edge, uint32_t value);
+
+	void shareDataErase(Edge& edge, uint32_t index);
 };
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -55,8 +55,8 @@ void ModelAdjacency::add(uint32_t polygon)
 			Edge& rightEdge = m_edges[j];
 			if (e.index0 == rightEdge.index1 && e.index1 == rightEdge.index0)
 			{
-				rightEdge.share.push_back(edge);
-				e.share.push_back(j);
+				shareDataPushBack(rightEdge, edge);
+				shareDataPushBack(e, j);
 			}
 		}
 
@@ -76,14 +76,17 @@ void ModelAdjacency::remove(uint32_t polygon, bool reindex)
 		Edge& edge = m_edges[i];
 
 		// Remove references to this edge from sharing edges.
-		for (uint32_t j : edge.share)
+		for (uint32_t o = 0; o < edge.shareDataCount; ++o)
 		{
-			Edge& edgeShare = m_edges[j];
-			for (auto it = edgeShare.share.begin(); it != edgeShare.share.end(); ++it)
+			const uint32_t edgeIndex = m_shareData[edge.shareDataOffset + o];
+			Edge& edgeShare = m_edges[edgeIndex];
+
+			for (uint32_t k = 0; k < edgeShare.shareDataCount; ++k)
 			{
-				if (*it == i)
+				const uint32_t shareEdgeIndex = m_shareData[edgeShare.shareDataOffset + k];
+				if (shareEdgeIndex == i)
 				{
-					edgeShare.share.erase(it);
+					shareDataErase(edgeShare, k);
 					break;
 				}
 			}
@@ -92,7 +95,7 @@ void ModelAdjacency::remove(uint32_t polygon, bool reindex)
 		edge.polygon = c_InvalidIndex;
 		edge.index0 = c_InvalidIndex;
 		edge.index1 = c_InvalidIndex;
-		edge.share.resize(0);
+		edge.shareDataCount = 0;
 	}
 
 	m_polygonToFirstEdge[polygon] = c_InvalidIndex;
@@ -122,19 +125,23 @@ void ModelAdjacency::update(uint32_t polygon)
 	for (uint32_t i = firstEdge; m_edges[i].polygon == polygon; ++i)
 	{
 		Edge& edge = m_edges[i];
-		for (uint32_t j : edge.share)
+		for (uint32_t o = 0; o < edge.shareDataCount; ++o)
 		{
-			Edge& edgeShare = m_edges[j];
-			for (auto it = edgeShare.share.begin(); it != edgeShare.share.end(); ++it)
+			const uint32_t edgeIndex = m_shareData[edge.shareDataOffset + o];
+			Edge& edgeShare = m_edges[edgeIndex];
+
+			for (uint32_t k = 0; k < edgeShare.shareDataCount; ++k)
 			{
-				if (*it == i)
+				const uint32_t shareEdgeIndex = m_shareData[edgeShare.shareDataOffset + k];
+				if (shareEdgeIndex == i)
 				{
-					edgeShare.share.erase(it);
+					shareDataErase(edgeShare, k);
 					break;
 				}
 			}
 		}
-		edge.share.resize(0);
+
+		edge.shareDataCount = 0;
 	}
 
 	// Add sharing references.
@@ -153,8 +160,8 @@ void ModelAdjacency::update(uint32_t polygon)
 			Edge& rightEdge = m_edges[j];
 			if (e.index0 == rightEdge.index1 && e.index1 == rightEdge.index0)
 			{
-				rightEdge.share.push_back(edgeIndex);
-				e.share.push_back(j);
+				shareDataPushBack(rightEdge, edgeIndex);
+				shareDataPushBack(e, j);
 			}
 		}
 		++edgeIndex;
@@ -250,12 +257,12 @@ void ModelAdjacency::getLeavingEdges(uint32_t vertexId, share_vector_t& outLeavi
 	}
 }
 
-const ModelAdjacency::share_vector_t& ModelAdjacency::getSharedEdges(uint32_t edge) const
+ModelAdjacency::ShareView ModelAdjacency::getSharedEdges(uint32_t edge) const
 {
-	return m_edges[edge].share;
+	return { m_edges[edge].shareDataCount, &m_shareData[m_edges[edge].shareDataOffset] };
 }
 
-ModelAdjacency::share_vector_t ModelAdjacency::getSharedEdges(uint32_t polygon, uint32_t polygonEdge) const
+ModelAdjacency::ShareView ModelAdjacency::getSharedEdges(uint32_t polygon, uint32_t polygonEdge) const
 {
 	const uint32_t firstEdge = m_polygonToFirstEdge[polygon];
 	T_FATAL_ASSERT(firstEdge != c_InvalidIndex);
@@ -264,15 +271,15 @@ ModelAdjacency::share_vector_t ModelAdjacency::getSharedEdges(uint32_t polygon, 
 	{
 		const Edge& edge = m_edges[i];
 		if (edge.polygon == polygon && edge.polygonEdge == polygonEdge)
-			return edge.share;
+			return getSharedEdges(i);
 	}
 
-	return share_vector_t();
+	return { 0, nullptr };
 }
 
 uint32_t ModelAdjacency::getSharedEdgeCount(uint32_t edge) const
 {
-	return (uint32_t)m_edges[edge].share.size();
+	return m_edges[edge].shareDataCount;
 }
 
 uint32_t ModelAdjacency::getSharedEdgeCount(uint32_t polygon, uint32_t polygonEdge) const
@@ -284,7 +291,7 @@ uint32_t ModelAdjacency::getSharedEdgeCount(uint32_t polygon, uint32_t polygonEd
 	{
 		const Edge& edge = m_edges[i];
 		if (edge.polygon == polygon && edge.polygonEdge == polygonEdge)
-			return (uint32_t)edge.share.size();
+			return edge.shareDataCount;
 	}
 
 	return 0;
@@ -356,6 +363,37 @@ void ModelAdjacency::getEdgeIndices(uint32_t edge, uint32_t& outIndex0, uint32_t
 		}
 		break;
 	}
+}
+
+void ModelAdjacency::shareDataPushBack(Edge& edge, uint32_t value)
+{
+	if (edge.shareDataCount >= edge.shareDataCapacity)
+	{
+		// Region full; move all to the end before appending.
+		edge.shareDataCapacity += 16;
+		const uint32_t newOffset = m_shareData.size();
+
+		m_shareData.reserve(newOffset + 16);
+		for (uint32_t i = 0; i < edge.shareDataCount; ++i)
+			m_shareData.push_back(m_shareData[edge.shareDataOffset + i]);
+		for (uint32_t i = edge.shareDataCount; i < edge.shareDataCapacity; ++i)
+			m_shareData.push_back(0);
+
+		edge.shareDataOffset = newOffset;
+	}
+
+	m_shareData[edge.shareDataOffset + edge.shareDataCount] = value;
+	edge.shareDataCount++;
+}
+
+void ModelAdjacency::shareDataErase(Edge& edge, uint32_t index)
+{
+	T_FATAL_ASSERT(edge.shareDataCount > 0);
+
+	for (uint32_t i = index; i < edge.shareDataCount - 1; ++i)
+		m_shareData[edge.shareDataOffset + i] = m_shareData[edge.shareDataOffset + i + 1];
+	
+	edge.shareDataCount--;
 }
 
 }
