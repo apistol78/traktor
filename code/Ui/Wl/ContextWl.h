@@ -82,6 +82,10 @@ public:
 	//! Unbind all callbacks for specified widget.
 	void unbind(WidgetData* widget);
 
+	//! Register a widget's render surface as an input alias so pointer
+	//! events on the render surface are routed to the owning widget.
+	void bindRenderSurface(WidgetData* widget);
+
 	//! Push modal widget.
 	void pushModal(WidgetData* widget);
 

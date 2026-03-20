@@ -92,7 +92,7 @@
 				<first>-722</first>
 				<second>-13</second>
 			</position>
-			<value>0.45</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{18EB0C0D-D6B4-4B45-BFED-4459E3CCE610}</id>
@@ -175,8 +175,8 @@
 				<second>-165</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1303</first>
+				<second>368</second>
 			</size>
 		</item>
 	</groups>

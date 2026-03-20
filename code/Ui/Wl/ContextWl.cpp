@@ -170,11 +170,21 @@ void ContextWl::bind(WidgetData* widget, int32_t eventType, const std::function<
 	b.fns[eventType] = fn;
 }
 
+void ContextWl::bindRenderSurface(WidgetData* widget)
+{
+	auto& b = m_bindings[widget->renderSurface];
+	b.widget = widget;
+	b.fns = m_bindings[widget->surface].fns;
+}
+
 void ContextWl::unbind(WidgetData* widget)
 {
 	auto it = std::find(m_modal.begin(), m_modal.end(), widget);
 	if (it != m_modal.end())
 		m_modal.erase(it);
+
+	if (widget->renderSurface)
+		m_bindings.remove(widget->renderSurface);
 
 	const bool erased = m_bindings.remove(widget->surface);
 	T_FATAL_ASSERT(erased);
@@ -709,7 +719,23 @@ void ContextWl::keyboardEnter(void* data, struct wl_keyboard* keyboard, uint32_t
 
 	auto b = ctx->m_bindings.find(surface);
 	if (b != ctx->m_bindings.end())
+	{
 		ctx->m_keyboardFocus = b->second.widget;
+	}
+	else
+	{
+		// Surface not in bindings — libdecor CSD creates an internal
+		// parent surface that we don't track. Fall back to the first
+		// toplevel widget so keyboard routing still works.
+		for (auto it = ctx->m_bindings.begin(); it != ctx->m_bindings.end(); ++it)
+		{
+			if (it->second.widget && it->second.widget->topLevel)
+			{
+				ctx->m_keyboardFocus = it->second.widget;
+				break;
+			}
+		}
+	}
 
 	// If no child widget has internal focus, give it to the toplevel.
 	if (!ctx->m_internalFocus && ctx->m_keyboardFocus)
@@ -740,13 +766,7 @@ void ContextWl::keyboardLeave(void* data, struct wl_keyboard* keyboard, uint32_t
 		ctx->enqueueEvent(e);
 	}
 
-	if (ctx->m_keyboardFocus)
-	{
-		auto b = ctx->m_bindings.find(surface);
-		if (b != ctx->m_bindings.end() && b->second.widget == ctx->m_keyboardFocus)
-			ctx->m_keyboardFocus = nullptr;
-	}
-
+	ctx->m_keyboardFocus = nullptr;
 	ctx->m_internalFocus = nullptr;
 }
 

@@ -128,6 +128,18 @@ public:
 				m_data.xdgSurface = nullptr;
 			}
 
+			if (m_data.renderSubsurface != nullptr)
+			{
+				wl_subsurface_destroy(m_data.renderSubsurface);
+				m_data.renderSubsurface = nullptr;
+			}
+
+			if (m_data.renderSurface != nullptr)
+			{
+				wl_surface_destroy(m_data.renderSurface);
+				m_data.renderSurface = nullptr;
+			}
+
 			if (m_data.subsurface != nullptr)
 			{
 				wl_subsurface_destroy(m_data.subsurface);
@@ -462,9 +474,30 @@ public:
 
 	virtual SystemWindow getSystemWindow() override
 	{
+		// Create a dedicated child surface for Vulkan/GL rendering.
+		// The NVIDIA Vulkan driver activates wp_linux_drm_syncobj (explicit sync)
+		// on the surface, which requires that ONLY dmabuf buffers are committed
+		// to it. A separate surface prevents the UI code from accidentally
+		// committing SHM or null buffers to the render surface.
+		if (!m_data.renderSurface)
+		{
+			m_data.renderSurface = wl_compositor_create_surface(m_context->getCompositor());
+			m_data.renderSubsurface = wl_subcompositor_get_subsurface(
+				m_context->getSubcompositor(),
+				m_data.renderSurface,
+				m_data.surface
+			);
+			wl_subsurface_set_desync(m_data.renderSubsurface);
+			wl_subsurface_set_position(m_data.renderSubsurface, 0, 0);
+
+			// Register the render surface as an input alias so that
+			// pointer events on it are routed to this widget.
+			m_context->bindRenderSurface(&m_data);
+		}
+
 		return SystemWindow(
 			m_context->getDisplay(),
-			(unsigned long)(uintptr_t)m_data.surface,
+			(unsigned long)(uintptr_t)m_data.renderSurface,
 			m_rect.getWidth(),
 			m_rect.getHeight()
 		);

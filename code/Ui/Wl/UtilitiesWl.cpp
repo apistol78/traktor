@@ -1,12 +1,14 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <xkbcommon/xkbcommon-keysyms.h>
+
+#include "Core/Log/Log.h"
 #include "Ui/Wl/UtilitiesWl.h"
 
 namespace traktor::ui
@@ -112,11 +114,16 @@ const struct { xkb_keysym_t keySym; VirtualKey vkey; } c_translateTable[] =
 
 VirtualKey translateToVirtualKey(xkb_keysym_t keySym)
 {
+	// Normalize lowercase keysyms to uppercase so that e.g. 'a' maps
+	// to VkA the same way 'A' does (shift state is reported separately).
+	const xkb_keysym_t upper = xkb_keysym_to_upper(keySym);
+
 	for (int32_t i = 0; i < sizeof_array(c_translateTable); ++i)
 	{
-		if (c_translateTable[i].keySym == keySym)
+		if (c_translateTable[i].keySym == upper)
 			return c_translateTable[i].vkey;
 	}
+	log::debug << L"Virtual key " << (int32_t)keySym << L" has no mapping; returning VkNull." << Endl;
 	return VkNull;
 }
 

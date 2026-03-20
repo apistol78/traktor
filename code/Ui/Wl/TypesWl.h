@@ -23,6 +23,8 @@ struct WidgetData
 	WidgetData* parent = nullptr;
 	struct wl_surface* surface = nullptr;
 	struct wl_subsurface* subsurface = nullptr;
+	struct wl_surface* renderSurface = nullptr;		//!< Dedicated child surface for Vulkan/GL rendering.
+	struct wl_subsurface* renderSubsurface = nullptr;
 	struct xdg_surface* xdgSurface = nullptr;
 	struct xdg_toplevel* xdgToplevel = nullptr;
 	struct xdg_popup* xdgPopup = nullptr;
