@@ -455,7 +455,12 @@ public:
 
 	virtual SystemWindow getSystemWindow() override
 	{
-		return SystemWindow(m_context->getDisplay(), (unsigned long)(uintptr_t)m_data.surface);
+		return SystemWindow(
+			m_context->getDisplay(),
+			(unsigned long)(uintptr_t)m_data.surface,
+			m_rect.getWidth(),
+			m_rect.getHeight()
+		);
 	}
 
 	// IFontMetric

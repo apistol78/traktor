@@ -208,8 +208,8 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	// width = sc.currentExtent.width;
 	// height = sc.currentExtent.height;
 
-	width = 64;
-	height = 64;
+	width = std::max(desc.syswin.width, 16);
+	height = std::max(desc.syswin.height, 16);
 
 #elif defined(__ANDROID__)
 	VkAndroidSurfaceCreateInfoKHR sci = {};

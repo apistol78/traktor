@@ -53,12 +53,16 @@ namespace traktor
 #elif defined(__LINUX__) || defined(__RPI__)
 		void* display = nullptr;
 		unsigned long window = 0;
+		int32_t width = -1;
+		int32_t height = -1;
 
 		SystemWindow() = default;
 
-		explicit SystemWindow(void* display_, unsigned long window_)
+		explicit SystemWindow(void* display_, unsigned long window_, int32_t width_ = -1, int32_t height_ = -1)
 		:	display(display_)
 		,	window(window_)
+		,	width(width_)
+		,	height(height_)
 		{
 		}
 
