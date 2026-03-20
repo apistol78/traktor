@@ -67,7 +67,7 @@ const char* c_validationLayerNames[] = { "VK_LAYER_KHRONOS_validation", nullptr 
 #if defined(_WIN32)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2" };
 #elif defined(__LINUX__) || defined(__RPI__)
-const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_KHR_wayland_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2" };
 #elif defined(__ANDROID__)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_android_surface" };
 #elif defined(__MAC__)

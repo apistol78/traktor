@@ -9,6 +9,7 @@
 #pragma once
 
 #define VK_USE_PLATFORM_XLIB_KHR
+#define VK_USE_PLATFORM_WAYLAND_KHR
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
 
@@ -115,6 +116,7 @@ extern PFN_vkCmdPushConstants vkCmdPushConstants;
 
 // Linux Vulkan extensions.
 extern PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;
+extern PFN_vkCreateWaylandSurfaceKHR vkCreateWaylandSurfaceKHR;
 extern PFN_vkDestroySurfaceKHR vkDestroySurfaceKHR;
 extern PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR;
 extern PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR;

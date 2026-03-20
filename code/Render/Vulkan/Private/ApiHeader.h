@@ -14,6 +14,7 @@
 #	include <vulkan/vulkan.h>
 #elif defined(__LINUX__) || defined(__RPI__)
 #	define VK_USE_PLATFORM_XLIB_KHR
+#   define VK_USE_PLATFORM_WAYLAND_KHR
 #	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>
 #elif defined(__ANDROID__)

@@ -130,6 +130,7 @@ T_DEFINE_VK(vkCmdDrawIndexedIndirect);
 T_DEFINE_VK(vkCmdPushConstants);
 
 T_DEFINE_VK(vkCreateXlibSurfaceKHR);
+T_DEFINE_VK(vkCreateWaylandSurfaceKHR);
 T_DEFINE_VK(vkDestroySurfaceKHR);
 T_DEFINE_VK(vkGetPhysicalDeviceSurfaceSupportKHR);
 T_DEFINE_VK(vkGetPhysicalDeviceSurfaceFormatsKHR);
@@ -283,6 +284,7 @@ bool initializeVulkanApi()
 bool initializeVulkanExtensions(VkInstance instance)
 {
 	T_RESOLVE_VK_EXT(vkCreateXlibSurfaceKHR);
+	T_RESOLVE_VK_EXT(vkCreateWaylandSurfaceKHR);
 	T_RESOLVE_VK_EXT(vkDestroySurfaceKHR);
 	T_RESOLVE_VK_EXT(vkGetPhysicalDeviceSurfaceSupportKHR);
 	T_RESOLVE_VK_EXT(vkGetPhysicalDeviceSurfaceFormatsKHR);

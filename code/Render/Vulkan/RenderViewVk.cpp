@@ -181,21 +181,35 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	height = (int32_t)(rc.bottom - rc.top);
 
 #elif defined(__LINUX__) || defined(__RPI__)
-	VkXlibSurfaceCreateInfoKHR sci = {};
-	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-	sci.dpy = (::Display*)desc.syswin.display;
-	sci.window = desc.syswin.window;
-	if ((result = vkCreateXlibSurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
-	{
-		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface (" << getHumanResult(result) << L")." << Endl;
-		return false;
-	}
+	// VkXlibSurfaceCreateInfoKHR sci = {};
+	// sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+	// sci.dpy = (::Display*)desc.syswin.display;
+	// sci.window = desc.syswin.window;
+	// if ((result = vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	// {
+	// 	log::error << L"Failed to create Vulkan; unable to create X11 renderable surface (" << getHumanResult(result) << L")." << Endl;
+	// 	return false;
+	// }
 
-	// Get size of surface.
-	VkSurfaceCapabilitiesKHR sc;
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &sc);
-	width = sc.currentExtent.width;
-	height = sc.currentExtent.height;
+	const VkWaylandSurfaceCreateInfoKHR sci =
+	{
+		.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR,
+		.pNext = nullptr,
+		.flags = 0,
+		.display = (struct wl_display*)desc.syswin.display,
+		.surface = (struct wl_surface*)desc.syswin.window
+	};
+
+	vkCreateWaylandSurfaceKHR(m_instance, &sci, nullptr, &m_surface);
+
+	// // Get size of surface.
+	// VkSurfaceCapabilitiesKHR sc;
+	// vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &sc);
+	// width = sc.currentExtent.width;
+	// height = sc.currentExtent.height;
+
+	width = 64;
+	height = 64;
 
 #elif defined(__ANDROID__)
 	VkAndroidSurfaceCreateInfoKHR sci = {};
