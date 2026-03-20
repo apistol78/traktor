@@ -94,11 +94,11 @@
 		},
 
 		{
-			"name": "SolutionBuilder - ReleaseShared",
+			"name": "SolutionBuilder - DebugShared",
 			"request": "launch",
 
 			"type": "cppdbg",
-			"program": "${workspaceRoot}/../bin/latest/linux/releaseshared/Traktor.SolutionBuilder.Editor.App",
+			"program": "${workspaceRoot}/../bin/latest/linux/debugshared/Traktor.SolutionBuilder.Editor.App",
 			"args": [ "-s" ],
 			"stopAtEntry": false,
 			"cwd": "${workspaceRoot}/..",
@@ -115,7 +115,7 @@
 
 			"windows": {
 				"type": "cppvsdbg",
-				"program": "${workspaceRoot}/../bin/latest/win64/releaseshared/Traktor.SolutionBuilder.Editor.App.exe",
+				"program": "${workspaceRoot}/../bin/latest/win64/debugshared/Traktor.SolutionBuilder.Editor.App.exe",
 				"args": [],
 				"stopAtEntry": false,
 				"cwd": "${workspaceRoot}/..",

@@ -23,7 +23,7 @@
 #elif defined(__APPLE__)
 #	include "Ui/Cocoa/WidgetFactoryCocoa.h"
 #elif defined(__LINUX__) || defined(__RPI__)
-#	include "Ui/X11/WidgetFactoryX11.h"
+#	include "Ui/Wl/WidgetFactoryWl.h"
 #endif
 
 using namespace traktor;
@@ -79,7 +79,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	);
 #elif defined(__LINUX__) || defined(__RPI__)
 	ui::Application::getInstance()->initialize(
-		new ui::WidgetFactoryX11(),
+		new ui::WidgetFactoryWl(),
 		nullptr
 	);
 #endif

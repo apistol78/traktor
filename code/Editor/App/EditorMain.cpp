@@ -34,14 +34,18 @@ typedef traktor::ui::WidgetFactoryWin32 WidgetFactoryImpl;
 #elif defined(__APPLE__)
 #	include "Ui/Cocoa/WidgetFactoryCocoa.h"
 typedef traktor::ui::WidgetFactoryCocoa WidgetFactoryImpl;
-#elif defined(__LINUX__) || defined(__RPI__)
-#	include "Ui/X11/WidgetFactoryX11.h"
-typedef traktor::ui::WidgetFactoryX11 WidgetFactoryImpl;
+// #elif defined(__LINUX__) || defined(__RPI__)
+// #	include "Ui/X11/WidgetFactoryX11.h"
+// typedef traktor::ui::WidgetFactoryX11 WidgetFactoryImpl;
+// #endif
+#elif defined(__LINUX__)
+#	include "Ui/Wl/WidgetFactoryWl.h"
+typedef traktor::ui::WidgetFactoryWl WidgetFactoryImpl;
 #endif
 
-#if defined(__LINUX__) || defined(__RPI__)
-#	include <X11/Xlib.h>
-#endif
+// #if defined(__LINUX__) || defined(__RPI__)
+// #	include <X11/Xlib.h>
+// #endif
 
 using namespace traktor;
 
@@ -87,10 +91,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	const CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
 
-#if defined(__LINUX__) || defined(__RPI__)
-	// Initialize X11 thread primitives; thus must be performed very early.
-	XInitThreads();
-#endif
+// #if defined(__LINUX__) || defined(__RPI__)
+// 	// Initialize X11 thread primitives; thus must be performed very early.
+// 	XInitThreads();
+// #endif
 
 	// Ensure temporary folder exist.
 	const std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Logs";
