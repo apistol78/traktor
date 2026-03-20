@@ -13,6 +13,7 @@
 #include "Core/Assert.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/KeyDownEvent.h"
 #include "Ui/Events/KeyEvent.h"
@@ -23,7 +24,6 @@
 #include "Ui/Wl/ContextWl.h"
 #include "Ui/Wl/UtilitiesWl.h"
 #include "xdg-shell-client-protocol.h"
-#include "xdg-decoration-client-protocol.h"
 
 namespace traktor::ui
 {
@@ -78,6 +78,16 @@ static const struct wl_output_listener s_outputListener = {
 	ContextWl::outputScale
 };
 
+// libdecor interface
+static void libdecorError(struct libdecor* context, enum libdecor_error error, const char* message)
+{
+	log::error << L"libdecor error: " << mbstows(message) << Endl;
+}
+
+static struct libdecor_interface s_libdecorInterface = {
+	libdecorError
+};
+
 ContextWl::ContextWl()
 {
 }
@@ -99,6 +109,9 @@ ContextWl::~ContextWl()
 		wl_pointer_destroy(m_pointer);
 	if (m_keyboard)
 		wl_keyboard_destroy(m_keyboard);
+
+	if (m_libdecor)
+		libdecor_unref(m_libdecor);
 
 	if (m_display)
 		wl_display_disconnect(m_display);
@@ -131,6 +144,14 @@ bool ContextWl::initialize()
 	if (!m_compositor || !m_xdgWmBase)
 	{
 		log::error << L"Wayland compositor missing required interfaces." << Endl;
+		return false;
+	}
+
+	// Create libdecor context for window decorations.
+	m_libdecor = libdecor_new(m_display, &s_libdecorInterface);
+	if (!m_libdecor)
+	{
+		log::error << L"Failed to create libdecor context." << Endl;
 		return false;
 	}
 
@@ -507,11 +528,6 @@ void ContextWl::registryGlobal(void* data, struct wl_registry* registry, uint32_
 	{
 		ctx->m_output = static_cast< struct wl_output* >(wl_registry_bind(registry, name, &wl_output_interface, 2));
 		wl_output_add_listener(ctx->m_output, &s_outputListener, ctx);
-	}
-	else if (std::strcmp(interface, zxdg_decoration_manager_v1_interface.name) == 0)
-	{
-		ctx->m_decorationManager = static_cast< struct zxdg_decoration_manager_v1* >(
-			wl_registry_bind(registry, name, &zxdg_decoration_manager_v1_interface, 1));
 	}
 }
 

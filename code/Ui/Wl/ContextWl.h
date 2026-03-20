@@ -12,12 +12,12 @@
 #include <wayland-client.h>
 #include <wayland-cursor.h>
 #include <xkbcommon/xkbcommon.h>
+#include <libdecor.h>
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
 #include "Ui/Wl/TypesWl.h"
 
 struct xdg_wm_base;
-struct zxdg_decoration_manager_v1;
 
 namespace traktor::ui
 {
@@ -127,7 +127,7 @@ public:
 
 	struct wl_surface* getCursorSurface() const { return m_cursorSurface; }
 
-	struct zxdg_decoration_manager_v1* getDecorationManager() const { return m_decorationManager; }
+	struct libdecor* getLibdecor() const { return m_libdecor; }
 
 	struct xkb_state* getXkbState() const { return m_xkbState; }
 
@@ -180,7 +180,7 @@ private:
 	struct wl_cursor_theme* m_cursorTheme = nullptr;
 	struct wl_surface* m_cursorSurface = nullptr;
 	struct xdg_wm_base* m_xdgWmBase = nullptr;
-	struct zxdg_decoration_manager_v1* m_decorationManager = nullptr;
+	struct libdecor* m_libdecor = nullptr;
 	struct wl_output* m_output = nullptr;
 
 	struct xkb_context* m_xkbContext = nullptr;

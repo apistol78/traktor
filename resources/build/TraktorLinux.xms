@@ -8469,7 +8469,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>`pkg-config --cflags wayland-client wayland-cursor cairo xkbcommon`</item>
+									<item>`pkg-config --cflags wayland-client wayland-cursor cairo xkbcommon libdecor-0`</item>
 								</includePaths>
 								<definitions>
 									<item>T_UI_WL_EXPORT</item>
@@ -8477,7 +8477,7 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>`pkg-config --libs wayland-client wayland-cursor cairo xkbcommon`</item>
+									<item>`pkg-config --libs wayland-client wayland-cursor cairo xkbcommon libdecor-0`</item>
 									<item>fontconfig</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
@@ -8502,7 +8502,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>`pkg-config --cflags wayland-client wayland-cursor cairo xkbcommon`</item>
+									<item>`pkg-config --cflags wayland-client wayland-cursor cairo xkbcommon libdecor-0`</item>
 								</includePaths>
 								<definitions>
 									<item>T_UI_WL_EXPORT</item>
@@ -8510,7 +8510,7 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>`pkg-config --libs wayland-client wayland-cursor cairo xkbcommon`</item>
+									<item>`pkg-config --libs wayland-client wayland-cursor cairo xkbcommon libdecor-0`</item>
 									<item>fontconfig</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
@@ -8535,7 +8535,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>`pkg-config --cflags wayland-client wayland-cursor cairo xkbcommon`</item>
+									<item>`pkg-config --cflags wayland-client wayland-cursor cairo xkbcommon libdecor-0`</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -8543,7 +8543,7 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>`pkg-config --libs wayland-client wayland-cursor cairo xkbcommon`</item>
+									<item>`pkg-config --libs wayland-client wayland-cursor cairo xkbcommon libdecor-0`</item>
 									<item>fontconfig</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
@@ -8568,7 +8568,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>`pkg-config --cflags wayland-client wayland-cursor cairo xkbcommon`</item>
+									<item>`pkg-config --cflags wayland-client wayland-cursor cairo xkbcommon libdecor-0`</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -8576,7 +8576,7 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>`pkg-config --libs wayland-client wayland-cursor cairo xkbcommon`</item>
+									<item>`pkg-config --libs wayland-client wayland-cursor cairo xkbcommon libdecor-0`</item>
 									<item>fontconfig</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>

@@ -6,67 +6,53 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <libdecor.h>
 #include "Core/Misc/TString.h"
 #include "Ui/Events/CloseEvent.h"
 #include "Ui/Itf/ISystemBitmap.h"
 #include "Ui/Wl/FormWl.h"
-#include "xdg-shell-client-protocol.h"
-#include "xdg-decoration-client-protocol.h"
 
 namespace traktor::ui
 {
 	namespace
 	{
 
-void xdgSurfaceConfigure(void* data, struct xdg_surface* xdgSurface, uint32_t serial)
+void frameConfigure(struct libdecor_frame* frame, struct libdecor_configuration* configuration, void* userData)
 {
-	xdg_surface_ack_configure(xdgSurface, serial);
-
-	FormWl* form = static_cast< FormWl* >(data);
+	FormWl* form = static_cast< FormWl* >(userData);
 	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
+
+	int width = 0, height = 0;
+	if (!libdecor_configuration_get_content_size(configuration, frame, &width, &height))
+	{
+		// No size provided (initial configure) — use current.
+		const Rect rc = form->getRect();
+		const int32_t scale = form->getContextWl()->getOutputScale();
+		width = rc.getWidth() / scale;
+		height = rc.getHeight() / scale;
+	}
+
+	struct libdecor_state* state = libdecor_state_new(width, height);
+	libdecor_frame_commit(frame, state, configuration);
+	libdecor_state_free(state);
+
 	wd->configured = true;
 
-	// Apply pending size from the preceding xdg_toplevel::configure, then
-	// immediately draw so the ack and the matching buffer commit happen
-	// in the same event cycle.
-	if (wd->pendingWidth > 0 && wd->pendingHeight > 0)
+	if (width > 0 && height > 0)
 	{
-		// Convert Wayland logical size to device pixels for the UI library.
 		const int32_t scale = form->getContextWl()->getOutputScale();
 		const Rect prev = form->getRect();
-		const Rect next(prev.left, prev.top, prev.left + wd->pendingWidth * scale, prev.top + wd->pendingHeight * scale);
-		wd->pendingWidth = 0;
-		wd->pendingHeight = 0;
+		const Rect next(prev.left, prev.top, prev.left + width * scale, prev.top + height * scale);
 
 		form->setRect(next);
-
-		// Draw all children that were queued during setRect/relayout
-		// before drawing the form itself, so all subsurface buffers
-		// are committed in a single batch.
 		form->getContextWl()->processPendingExposes();
-
 		form->update(nullptr, true);
 	}
 }
 
-static const struct xdg_surface_listener s_xdgSurfaceListener = {
-	xdgSurfaceConfigure
-};
-
-void xdgToplevelConfigure(void* data, struct xdg_toplevel* toplevel, int32_t width, int32_t height, struct wl_array* states)
+void frameClose(struct libdecor_frame* frame, void* userData)
 {
-	FormWl* form = static_cast< FormWl* >(data);
-	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
-
-	// Store pending size; applied when xdg_surface::configure arrives.
-	// width/height of 0 means the client may pick its own size.
-	wd->pendingWidth = width;
-	wd->pendingHeight = height;
-}
-
-void xdgToplevelClose(void* data, struct xdg_toplevel* toplevel)
-{
-	FormWl* form = static_cast< FormWl* >(data);
+	FormWl* form = static_cast< FormWl* >(userData);
 	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
 
 	WlEvent e;
@@ -75,9 +61,24 @@ void xdgToplevelClose(void* data, struct xdg_toplevel* toplevel)
 	form->getContextWl()->dispatch(e);
 }
 
-static const struct xdg_toplevel_listener s_xdgToplevelListener = {
-	xdgToplevelConfigure,
-	xdgToplevelClose
+void frameCommit(struct libdecor_frame* frame, void* userData)
+{
+	FormWl* form = static_cast< FormWl* >(userData);
+	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
+	wl_surface_commit(wd->surface);
+}
+
+void frameDismissPopup(struct libdecor_frame* frame, const char* seatName, void* userData)
+{
+}
+
+static struct libdecor_frame_interface s_frameInterface = {
+	frameConfigure,
+	frameClose,
+	frameCommit,
+	frameDismissPopup,
+	nullptr, nullptr, nullptr, nullptr, nullptr,
+	nullptr, nullptr, nullptr, nullptr
 };
 
 	}
@@ -102,24 +103,23 @@ bool FormWl::create(IWidget* parent, const std::wstring& text, int width, int he
 	if (!WidgetWlImpl< IForm >::create(nullptr, style, false, true))
 		return false;
 
-	// Create xdg_surface and xdg_toplevel.
-	m_data.xdgSurface = xdg_wm_base_get_xdg_surface(m_context->getXdgWmBase(), m_data.surface);
-	xdg_surface_add_listener(m_data.xdgSurface, &s_xdgSurfaceListener, this);
-
-	m_data.xdgToplevel = xdg_surface_get_toplevel(m_data.xdgSurface);
-	xdg_toplevel_add_listener(m_data.xdgToplevel, &s_xdgToplevelListener, this);
+	// Use libdecor to create a decorated toplevel.
+	m_data.frame = libdecor_decorate(
+		m_context->getLibdecor(),
+		m_data.surface,
+		&s_frameInterface,
+		this
+	);
+	if (!m_data.frame)
+		return false;
 
 	// Set title.
-	xdg_toplevel_set_title(m_data.xdgToplevel, wstombs(text).c_str());
+	libdecor_frame_set_title(m_data.frame, wstombs(text).c_str());
 	m_text = text;
 
-	// Request server-side decorations (title bar, close button, etc.).
-	struct zxdg_decoration_manager_v1* decorationManager = m_context->getDecorationManager();
-	if (decorationManager)
-	{
-		m_data.decoration = zxdg_decoration_manager_v1_get_toplevel_decoration(decorationManager, m_data.xdgToplevel);
-		zxdg_toplevel_decoration_v1_set_mode(m_data.decoration, ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
-	}
+	// Retrieve the xdg objects owned by libdecor for any code that needs them.
+	m_data.xdgSurface = libdecor_frame_get_xdg_surface(m_data.frame);
+	m_data.xdgToplevel = libdecor_frame_get_xdg_toplevel(m_data.frame);
 
 	// Listen for close events via the context.
 	m_context->bind(&m_data, WlEvtClose, [this](WlEvent& e) {
@@ -129,8 +129,8 @@ bool FormWl::create(IWidget* parent, const std::wstring& text, int width, int he
 			destroy();
 	});
 
-	// Commit the surface to trigger the initial configure.
-	wl_surface_commit(m_data.surface);
+	// Map the frame — this triggers the initial configure.
+	libdecor_frame_map(m_data.frame);
 	wl_display_roundtrip(m_context->getDisplay());
 
 	return true;
@@ -139,21 +139,19 @@ bool FormWl::create(IWidget* parent, const std::wstring& text, int width, int he
 void FormWl::setText(const std::wstring& text)
 {
 	WidgetWlImpl< IForm >::setText(text);
-	if (m_data.xdgToplevel)
-		xdg_toplevel_set_title(m_data.xdgToplevel, wstombs(text).c_str());
+	if (m_data.frame)
+		libdecor_frame_set_title(m_data.frame, wstombs(text).c_str());
 }
 
 void FormWl::setIcon(ISystemBitmap* icon)
 {
-	// Wayland doesn't have a standard way to set window icons.
-	// Some compositors support it through desktop entry files.
 }
 
 void FormWl::maximize()
 {
-	if (m_data.xdgToplevel)
+	if (m_data.frame)
 	{
-		xdg_toplevel_set_maximized(m_data.xdgToplevel);
+		libdecor_frame_set_maximized(m_data.frame);
 		m_maximized = true;
 		m_minimized = false;
 	}
@@ -161,18 +159,18 @@ void FormWl::maximize()
 
 void FormWl::minimize()
 {
-	if (m_data.xdgToplevel)
+	if (m_data.frame)
 	{
-		xdg_toplevel_set_minimized(m_data.xdgToplevel);
+		libdecor_frame_set_minimized(m_data.frame);
 		m_minimized = true;
 	}
 }
 
 void FormWl::restore()
 {
-	if (m_data.xdgToplevel)
+	if (m_data.frame)
 	{
-		xdg_toplevel_unset_maximized(m_data.xdgToplevel);
+		libdecor_frame_unset_maximized(m_data.frame);
 		m_maximized = false;
 		m_minimized = false;
 	}

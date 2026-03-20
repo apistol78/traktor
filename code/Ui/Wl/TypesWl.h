@@ -10,11 +10,10 @@
 
 #include <wayland-client.h>
 #include "xdg-shell-client-protocol.h"
-#include "xdg-decoration-client-protocol.h"
 
 struct xdg_surface;
 struct xdg_toplevel;
-struct zxdg_toplevel_decoration_v1;
+struct libdecor_frame;
 
 namespace traktor::ui
 {
@@ -27,7 +26,7 @@ struct WidgetData
 	struct xdg_surface* xdgSurface = nullptr;
 	struct xdg_toplevel* xdgToplevel = nullptr;
 	struct xdg_popup* xdgPopup = nullptr;
-	struct zxdg_toplevel_decoration_v1* decoration = nullptr;
+	struct libdecor_frame* frame = nullptr;
 	bool topLevel = false;
 	bool mapped = false;
 	bool visible = false;

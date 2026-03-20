@@ -6,35 +6,44 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <libdecor.h>
 #include "Core/Timer/Timer.h"
 #include "Core/Misc/TString.h"
 #include "Ui/Dialog.h"
 #include "Ui/Wl/ContextWl.h"
 #include "Ui/Wl/DialogWl.h"
 #include "Ui/Wl/Timers.h"
-#include "xdg-shell-client-protocol.h"
-#include "xdg-decoration-client-protocol.h"
 
 namespace traktor::ui
 {
 	namespace
 	{
 
-void dialogXdgSurfaceConfigure(void* data, struct xdg_surface* xdgSurface, uint32_t serial)
+void dialogFrameConfigure(struct libdecor_frame* frame, struct libdecor_configuration* configuration, void* userData)
 {
-	xdg_surface_ack_configure(xdgSurface, serial);
-
-	DialogWl* dialog = static_cast< DialogWl* >(data);
+	DialogWl* dialog = static_cast< DialogWl* >(userData);
 	WidgetData* wd = static_cast< WidgetData* >(dialog->getInternalHandle());
+
+	int width = 0, height = 0;
+	if (!libdecor_configuration_get_content_size(configuration, frame, &width, &height))
+	{
+		const Rect rc = dialog->getRect();
+		const int32_t scale = dialog->getContextWl()->getOutputScale();
+		width = rc.getWidth() / scale;
+		height = rc.getHeight() / scale;
+	}
+
+	struct libdecor_state* state = libdecor_state_new(width, height);
+	libdecor_frame_commit(frame, state, configuration);
+	libdecor_state_free(state);
+
 	wd->configured = true;
 
-	if (wd->pendingWidth > 0 && wd->pendingHeight > 0)
+	if (width > 0 && height > 0)
 	{
 		const int32_t scale = dialog->getContextWl()->getOutputScale();
 		const Rect prev = dialog->getRect();
-		const Rect next(prev.left, prev.top, prev.left + wd->pendingWidth * scale, prev.top + wd->pendingHeight * scale);
-		wd->pendingWidth = 0;
-		wd->pendingHeight = 0;
+		const Rect next(prev.left, prev.top, prev.left + width * scale, prev.top + height * scale);
 
 		dialog->setRect(next);
 		dialog->getContextWl()->processPendingExposes();
@@ -42,21 +51,9 @@ void dialogXdgSurfaceConfigure(void* data, struct xdg_surface* xdgSurface, uint3
 	}
 }
 
-static const struct xdg_surface_listener s_dialogXdgSurfaceListener = {
-	dialogXdgSurfaceConfigure
-};
-
-void dialogXdgToplevelConfigure(void* data, struct xdg_toplevel* toplevel, int32_t width, int32_t height, struct wl_array* states)
+void dialogFrameClose(struct libdecor_frame* frame, void* userData)
 {
-	DialogWl* dialog = static_cast< DialogWl* >(data);
-	WidgetData* wd = static_cast< WidgetData* >(dialog->getInternalHandle());
-	wd->pendingWidth = width;
-	wd->pendingHeight = height;
-}
-
-void dialogXdgToplevelClose(void* data, struct xdg_toplevel* toplevel)
-{
-	DialogWl* dialog = static_cast< DialogWl* >(data);
+	DialogWl* dialog = static_cast< DialogWl* >(userData);
 	WidgetData* wd = static_cast< WidgetData* >(dialog->getInternalHandle());
 
 	WlEvent e;
@@ -65,9 +62,24 @@ void dialogXdgToplevelClose(void* data, struct xdg_toplevel* toplevel)
 	dialog->getContextWl()->dispatch(e);
 }
 
-static const struct xdg_toplevel_listener s_dialogXdgToplevelListener = {
-	dialogXdgToplevelConfigure,
-	dialogXdgToplevelClose
+void dialogFrameCommit(struct libdecor_frame* frame, void* userData)
+{
+	DialogWl* dialog = static_cast< DialogWl* >(userData);
+	WidgetData* wd = static_cast< WidgetData* >(dialog->getInternalHandle());
+	wl_surface_commit(wd->surface);
+}
+
+void dialogFrameDismissPopup(struct libdecor_frame* frame, const char* seatName, void* userData)
+{
+}
+
+static struct libdecor_frame_interface s_dialogFrameInterface = {
+	dialogFrameConfigure,
+	dialogFrameClose,
+	dialogFrameCommit,
+	dialogFrameDismissPopup,
+	nullptr, nullptr, nullptr, nullptr, nullptr,
+	nullptr, nullptr, nullptr, nullptr
 };
 
 	}
@@ -92,29 +104,29 @@ bool DialogWl::create(IWidget* parent, const std::wstring& text, int width, int 
 	if (!WidgetWlImpl< IDialog >::create(nullptr, style, false, true))
 		return false;
 
-	m_data.xdgSurface = xdg_wm_base_get_xdg_surface(m_context->getXdgWmBase(), m_data.surface);
-	xdg_surface_add_listener(m_data.xdgSurface, &s_dialogXdgSurfaceListener, this);
-
-	m_data.xdgToplevel = xdg_surface_get_toplevel(m_data.xdgSurface);
-	xdg_toplevel_add_listener(m_data.xdgToplevel, &s_dialogXdgToplevelListener, this);
+	// Use libdecor to create a decorated toplevel.
+	m_data.frame = libdecor_decorate(
+		m_context->getLibdecor(),
+		m_data.surface,
+		&s_dialogFrameInterface,
+		this
+	);
+	if (!m_data.frame)
+		return false;
 
 	if ((style & WsCaption) != 0)
-		xdg_toplevel_set_title(m_data.xdgToplevel, wstombs(text).c_str());
+		libdecor_frame_set_title(m_data.frame, wstombs(text).c_str());
 
-	// Request server-side decorations.
-	struct zxdg_decoration_manager_v1* decorationManager = m_context->getDecorationManager();
-	if (decorationManager)
-	{
-		m_data.decoration = zxdg_decoration_manager_v1_get_toplevel_decoration(decorationManager, m_data.xdgToplevel);
-		zxdg_toplevel_decoration_v1_set_mode(m_data.decoration, ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
-	}
+	// Retrieve xdg objects owned by libdecor.
+	m_data.xdgSurface = libdecor_frame_get_xdg_surface(m_data.frame);
+	m_data.xdgToplevel = libdecor_frame_get_xdg_toplevel(m_data.frame);
 
 	// Make dialog appear on top of parent.
 	if (parent != nullptr)
 	{
 		WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
-		if (parentData->xdgToplevel)
-			xdg_toplevel_set_parent(m_data.xdgToplevel, parentData->xdgToplevel);
+		if (parentData->frame)
+			libdecor_frame_set_parent(m_data.frame, parentData->frame);
 	}
 
 	m_context->bind(&m_data, WlEvtClose, [this](WlEvent& e) {
@@ -124,7 +136,7 @@ bool DialogWl::create(IWidget* parent, const std::wstring& text, int width, int 
 			endModal(DialogResult::Cancel);
 	});
 
-	wl_surface_commit(m_data.surface);
+	libdecor_frame_map(m_data.frame);
 	wl_display_roundtrip(m_context->getDisplay());
 
 	return true;
@@ -144,8 +156,6 @@ DialogResult DialogWl::showModal()
 {
 	setVisible(true);
 
-	// Ensure all child subsurfaces have buffers committed before
-	// activating the modal filter.
 	m_context->processPendingExposes();
 	wl_display_flush(m_context->getDisplay());
 	wl_display_roundtrip(m_context->getDisplay());
@@ -172,14 +182,17 @@ void DialogWl::endModal(DialogResult result)
 
 void DialogWl::setMinSize(const Size& minSize)
 {
-	if (m_data.xdgToplevel)
-		xdg_toplevel_set_min_size(m_data.xdgToplevel, minSize.cx, minSize.cy);
+	if (m_data.frame)
+	{
+		const int32_t scale = m_context->getOutputScale();
+		libdecor_frame_set_min_content_size(m_data.frame, minSize.cx / scale, minSize.cy / scale);
+	}
 }
 
 void DialogWl::setText(const std::wstring& text)
 {
-	if (m_data.xdgToplevel)
-		xdg_toplevel_set_title(m_data.xdgToplevel, wstombs(text).c_str());
+	if (m_data.frame)
+		libdecor_frame_set_title(m_data.frame, wstombs(text).c_str());
 }
 
 void DialogWl::setVisible(bool visible)

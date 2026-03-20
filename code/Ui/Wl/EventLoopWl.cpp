@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <poll.h>
+#include <libdecor.h>
 #include "Core/Log/Log.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/IdleEvent.h"
@@ -60,6 +61,10 @@ bool EventLoopWl::process(EventSubject* owner)
 	// Dispatch newly-read events (again populates the context event queue).
 	wl_display_dispatch_pending(m_context->getDisplay());
 
+	// Dispatch libdecor events (decoration configure/close/commit).
+	if (m_context->getLibdecor())
+		libdecor_dispatch(m_context->getLibdecor(), 0);
+
 	// Pre-translate through Application owner, then dispatch to widgets.
 	m_context->processEventQueue(owner);
 
@@ -102,6 +107,10 @@ int32_t EventLoopWl::execute(EventSubject* owner)
 
 		// Dispatch newly-read events.
 		wl_display_dispatch_pending(m_context->getDisplay());
+
+		// Dispatch libdecor events.
+		if (m_context->getLibdecor())
+			libdecor_dispatch(m_context->getLibdecor(), 0);
 
 		// Pre-translate through Application owner, then dispatch to widgets.
 		m_context->processEventQueue(owner);

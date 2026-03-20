@@ -15,6 +15,7 @@
 #include <wayland-cursor.h>
 #include <xkbcommon/xkbcommon.h>
 #include <cairo.h>
+#include <libdecor.h>
 #include <linux/input-event-codes.h>
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
@@ -97,10 +98,16 @@ public:
 				m_buffer = nullptr;
 			}
 
-			if (m_data.decoration != nullptr)
+			// libdecor_frame owns the xdg_surface and xdg_toplevel,
+			// so unref it first; only destroy bare xdg objects
+			// that were created without libdecor (popups).
+			if (m_data.frame != nullptr)
 			{
-				zxdg_toplevel_decoration_v1_destroy(m_data.decoration);
-				m_data.decoration = nullptr;
+				libdecor_frame_unref(m_data.frame);
+				m_data.frame = nullptr;
+				// These are now owned by libdecor, don't double-free.
+				m_data.xdgToplevel = nullptr;
+				m_data.xdgSurface = nullptr;
 			}
 
 			if (m_data.xdgToplevel != nullptr)
