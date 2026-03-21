@@ -680,8 +680,7 @@ protected:
 		m_context->bind(&m_data, WlEvtPointerMotion, [=, this](WlEvent& e) {
 			T_FATAL_ASSERT(m_data.enable);
 			m_lastPointerPos = Point((int)e.pointerX, (int)e.pointerY);
-			int32_t button = 0;
-			MouseMoveEvent mouseMoveEvent(m_owner, button, m_lastPointerPos);
+			MouseMoveEvent mouseMoveEvent(m_owner, e.buttons, m_lastPointerPos);
 			m_owner->raiseEvent(&mouseMoveEvent);
 		});
 

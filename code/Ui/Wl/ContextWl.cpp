@@ -224,12 +224,13 @@ void ContextWl::grab(WidgetData* widget)
 {
 	T_FATAL_ASSERT(!widget->grabbed);
 
-	widget->grabbed = true;
 	if (m_grabbed)
 	{
 		m_grabbed->grabbed = false;
 		m_grabbed = nullptr;
 	}
+
+	widget->grabbed = true;
 	m_grabbed = widget;
 }
 
@@ -293,12 +294,9 @@ bool ContextWl::preTranslateEvent(EventSubject* owner, WlEvent& e)
 
 	if (e.type == WlEvtPointerMotion)
 	{
-		int32_t button = 0;
-		// Pointer coordinates are surface-local; use them as-is for the global event
-		// since Wayland doesn't provide screen-global coordinates.
 		MouseMoveEvent mouseMoveEvent(
 			owner,
-			button,
+			e.buttons,
 			Point((int)e.pointerX, (int)e.pointerY)
 		);
 		owner->raiseEvent(&mouseMoveEvent);
@@ -633,6 +631,7 @@ void ContextWl::pointerMotion(void* data, struct wl_pointer* pointer, uint32_t t
 	e.surface = surface;
 	e.pointerX = ctx->m_pointerX;
 	e.pointerY = ctx->m_pointerY;
+	e.buttons = ctx->m_buttonMask;
 	ctx->enqueueEvent(e);
 }
 
@@ -640,6 +639,20 @@ void ContextWl::pointerButton(void* data, struct wl_pointer* pointer, uint32_t s
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 	ctx->m_pointerSerial = serial;
+
+	// Maintain running button mask (MbtLeft/MbtMiddle/MbtRight).
+	int32_t mbt = 0;
+	switch (button)
+	{
+	case 0x110: mbt = MbtLeft; break;   // BTN_LEFT
+	case 0x111: mbt = MbtRight; break;  // BTN_RIGHT
+	case 0x112: mbt = MbtMiddle; break; // BTN_MIDDLE
+	default: break;
+	}
+	if (state == WL_POINTER_BUTTON_STATE_PRESSED)
+		ctx->m_buttonMask |= mbt;
+	else
+		ctx->m_buttonMask &= ~mbt;
 
 	struct wl_surface* surface = ctx->m_pointerFocus ? ctx->m_pointerFocus->surface : nullptr;
 	if (ctx->m_grabbed)

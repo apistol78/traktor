@@ -54,6 +54,7 @@ struct WlEvent
 	double pointerY = 0.0;
 	uint32_t button = 0;
 	uint32_t buttonState = 0;
+	int32_t buttons = 0;		//!< Currently held button bitmask (MbtLeft|MbtMiddle|MbtRight).
 	double axisValue = 0.0;
 	uint32_t axisType = 0;
 	// Keyboard
@@ -204,6 +205,7 @@ private:
 	uint32_t m_keyboardModifiers = 0;
 	double m_pointerX = 0.0;
 	double m_pointerY = 0.0;
+	int32_t m_buttonMask = 0;		//!< Currently pressed buttons (MbtLeft | MbtMiddle | MbtRight).
 
 	SmallMap< struct wl_surface*, Binding > m_bindings;
 	AlignedVector< WidgetData* > m_modal;
