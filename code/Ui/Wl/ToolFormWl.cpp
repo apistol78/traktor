@@ -12,6 +12,7 @@
 #include "Ui/ToolForm.h"
 #include "Ui/Wl/ToolFormWl.h"
 #include "xdg-shell-client-protocol.h"
+#include "xdg-decoration-client-protocol.h"
 
 namespace traktor::ui
 {
@@ -76,6 +77,29 @@ static struct libdecor_frame_interface s_toolFormFrameInterface = {
 	toolFormFrameDismissPopup,
 	nullptr, nullptr, nullptr, nullptr, nullptr,
 	nullptr, nullptr, nullptr, nullptr
+};
+
+// ============================================================
+// SSD path — xdg_toplevel listeners for WsDefault
+// ============================================================
+
+void toolFormSsdToplevelConfigure(void* data, struct xdg_toplevel* toplevel, int32_t width, int32_t height, struct wl_array* states)
+{
+	ToolFormWl* form = static_cast< ToolFormWl* >(data);
+	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
+	wd->pendingWidth = width;
+	wd->pendingHeight = height;
+}
+
+void toolFormSsdToplevelClose(void* data, struct xdg_toplevel* toplevel)
+{
+	ToolFormWl* form = static_cast< ToolFormWl* >(data);
+	form->endModal(DialogResult::Cancel);
+}
+
+static const struct xdg_toplevel_listener s_toolFormXdgToplevelListener = {
+	toolFormSsdToplevelConfigure,
+	toolFormSsdToplevelClose
 };
 
 // --- Popup xdg_surface listener (non-WsDefault / floating) ---
@@ -163,32 +187,61 @@ bool ToolFormWl::create(IWidget* parent, const std::wstring& text, int width, in
 
 	if ((style & ToolForm::WsDefault) != 0)
 	{
-		// Dialog-like tool form: use libdecor for decorations.
-		m_data.frame = libdecor_decorate(
-			m_context->getLibdecor(),
-			m_data.surface,
-			&s_toolFormFrameInterface,
-			this
-		);
-		if (!m_data.frame)
-			return false;
-
-		if ((style & WsCaption) != 0)
-			libdecor_frame_set_title(m_data.frame, wstombs(text).c_str());
-
-		m_data.xdgSurface = libdecor_frame_get_xdg_surface(m_data.frame);
-		m_data.xdgToplevel = libdecor_frame_get_xdg_toplevel(m_data.frame);
-
-		// Make tool form on top of parent.
-		if (parent != nullptr)
+		if (m_context->hasServerSideDecorations())
 		{
-			WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
-			if (parentData->frame)
-				libdecor_frame_set_parent(m_data.frame, parentData->frame);
-		}
+			// SSD path.
+			m_data.xdgSurface = xdg_wm_base_get_xdg_surface(m_context->getXdgWmBase(), m_data.surface);
+			xdg_surface_add_listener(m_data.xdgSurface, &s_toolFormPopupXdgSurfaceListener, this);
 
-		libdecor_frame_map(m_data.frame);
-		wl_display_roundtrip(m_context->getDisplay());
+			m_data.xdgToplevel = xdg_surface_get_toplevel(m_data.xdgSurface);
+			xdg_toplevel_add_listener(m_data.xdgToplevel, &s_toolFormXdgToplevelListener, this);
+
+			if ((style & WsCaption) != 0)
+				xdg_toplevel_set_title(m_data.xdgToplevel, wstombs(text).c_str());
+
+			m_data.decoration = zxdg_decoration_manager_v1_get_toplevel_decoration(
+				m_context->getDecorationManager(), m_data.xdgToplevel);
+			zxdg_toplevel_decoration_v1_set_mode(
+				m_data.decoration, ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
+
+			if (parent != nullptr)
+			{
+				WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
+				if (parentData->xdgToplevel)
+					xdg_toplevel_set_parent(m_data.xdgToplevel, parentData->xdgToplevel);
+			}
+
+			wl_surface_commit(m_data.surface);
+			wl_display_roundtrip(m_context->getDisplay());
+		}
+		else
+		{
+			// libdecor fallback.
+			m_data.frame = libdecor_decorate(
+				m_context->getLibdecor(),
+				m_data.surface,
+				&s_toolFormFrameInterface,
+				this
+			);
+			if (!m_data.frame)
+				return false;
+
+			if ((style & WsCaption) != 0)
+				libdecor_frame_set_title(m_data.frame, wstombs(text).c_str());
+
+			m_data.xdgSurface = libdecor_frame_get_xdg_surface(m_data.frame);
+			m_data.xdgToplevel = libdecor_frame_get_xdg_toplevel(m_data.frame);
+
+			if (parent != nullptr)
+			{
+				WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
+				if (parentData->frame)
+					libdecor_frame_set_parent(m_data.frame, parentData->frame);
+			}
+
+			libdecor_frame_map(m_data.frame);
+			wl_display_roundtrip(m_context->getDisplay());
+		}
 	}
 	// For popup/floating style, the xdg_popup is created in setVisible(true)
 	// so the position from setRect() is available at that time.

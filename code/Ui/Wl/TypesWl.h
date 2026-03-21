@@ -14,6 +14,7 @@
 struct xdg_surface;
 struct xdg_toplevel;
 struct libdecor_frame;
+struct zxdg_toplevel_decoration_v1;
 
 namespace traktor::ui
 {
@@ -29,6 +30,7 @@ struct WidgetData
 	struct xdg_toplevel* xdgToplevel = nullptr;
 	struct xdg_popup* xdgPopup = nullptr;
 	struct libdecor_frame* frame = nullptr;
+	struct zxdg_toplevel_decoration_v1* decoration = nullptr;
 	bool topLevel = false;
 	bool mapped = false;
 	bool visible = false;

@@ -24,6 +24,7 @@
 #include "Ui/Wl/ContextWl.h"
 #include "Ui/Wl/UtilitiesWl.h"
 #include "xdg-shell-client-protocol.h"
+#include "xdg-decoration-client-protocol.h"
 
 namespace traktor::ui
 {
@@ -538,6 +539,11 @@ void ContextWl::registryGlobal(void* data, struct wl_registry* registry, uint32_
 	{
 		ctx->m_output = static_cast< struct wl_output* >(wl_registry_bind(registry, name, &wl_output_interface, 2));
 		wl_output_add_listener(ctx->m_output, &s_outputListener, ctx);
+	}
+	else if (std::strcmp(interface, zxdg_decoration_manager_v1_interface.name) == 0)
+	{
+		ctx->m_decorationManager = static_cast< struct zxdg_decoration_manager_v1* >(
+			wl_registry_bind(registry, name, &zxdg_decoration_manager_v1_interface, 1));
 	}
 }
 

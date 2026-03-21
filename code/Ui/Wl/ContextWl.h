@@ -18,6 +18,7 @@
 #include "Ui/Wl/TypesWl.h"
 
 struct xdg_wm_base;
+struct zxdg_decoration_manager_v1;
 
 namespace traktor::ui
 {
@@ -133,6 +134,11 @@ public:
 
 	struct libdecor* getLibdecor() const { return m_libdecor; }
 
+	//! True if the compositor supports server-side decorations via zxdg_decoration_manager_v1.
+	bool hasServerSideDecorations() const { return m_decorationManager != nullptr; }
+
+	struct zxdg_decoration_manager_v1* getDecorationManager() const { return m_decorationManager; }
+
 	struct xkb_state* getXkbState() const { return m_xkbState; }
 
 	bool anyGrabbed() const { return m_grabbed != nullptr; }
@@ -185,6 +191,7 @@ private:
 	struct wl_surface* m_cursorSurface = nullptr;
 	struct xdg_wm_base* m_xdgWmBase = nullptr;
 	struct libdecor* m_libdecor = nullptr;
+	struct zxdg_decoration_manager_v1* m_decorationManager = nullptr;
 	struct wl_output* m_output = nullptr;
 
 	struct xkb_context* m_xkbContext = nullptr;
