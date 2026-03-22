@@ -181,36 +181,49 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	height = (int32_t)(rc.bottom - rc.top);
 
 #elif defined(__LINUX__) || defined(__RPI__)
-	// VkXlibSurfaceCreateInfoKHR sci = {};
-	// sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-	// sci.dpy = (::Display*)desc.syswin.display;
-	// sci.window = desc.syswin.window;
-	// if ((result = vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
-	// {
-	// 	log::error << L"Failed to create Vulkan; unable to create X11 renderable surface (" << getHumanResult(result) << L")." << Endl;
-	// 	return false;
-	// }
-
-	const VkWaylandSurfaceCreateInfoKHR sci =
+	if (desc.syswin.x11_display != nullptr)
 	{
-		.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR,
-		.pNext = nullptr,
-		.flags = 0,
-		.display = (struct wl_display*)desc.syswin.display,
-		.surface = (struct wl_surface*)desc.syswin.window
-	};
+		VkXlibSurfaceCreateInfoKHR sci = {};
+		sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+		sci.dpy = (::Display*)desc.syswin.x11_display;
+		sci.window = desc.syswin.x11_window;
+		if ((result = vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+		{
+			log::error << L"Failed to create Vulkan; unable to create X11 renderable surface (" << getHumanResult(result) << L")." << Endl;
+			return false;
+		}
 
-	vkCreateWaylandSurfaceKHR(m_instance, &sci, nullptr, &m_surface);
+		// Get size of surface.
+		VkSurfaceCapabilitiesKHR sc;
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &sc);
+		width = sc.currentExtent.width;
+		height = sc.currentExtent.height;
+	}
+	else if (desc.syswin.wl_display != nullptr)
+	{
+		const VkWaylandSurfaceCreateInfoKHR sci =
+		{
+			.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR,
+			.pNext = nullptr,
+			.flags = 0,
+			.display = (struct wl_display*)desc.syswin.wl_display,
+			.surface = (struct wl_surface*)desc.syswin.wl_surface
+		};
 
-	// // Get size of surface.
-	// VkSurfaceCapabilitiesKHR sc;
-	// vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &sc);
-	// width = sc.currentExtent.width;
-	// height = sc.currentExtent.height;
+		if ((result = vkCreateWaylandSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+		{
+			log::error << L"Failed to create Vulkan; unable to create Wayland renderable surface (" << getHumanResult(result) << L")." << Endl;
+			return false;
+		}
 
-	width = std::max(desc.syswin.width, 16);
-	height = std::max(desc.syswin.height, 16);
-
+		width = std::max(desc.syswin.width, 16);
+		height = std::max(desc.syswin.height, 16);
+	}
+	else
+	{
+		log::error << L"Failed to create Vulkan; no valid syswin." << Endl;
+		return false;
+	}
 #elif defined(__ANDROID__)
 	VkAndroidSurfaceCreateInfoKHR sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
@@ -572,8 +585,8 @@ SystemWindow RenderViewVk::getSystemWindow()
 {
 #if defined(_WIN32)
 	return SystemWindow(*m_window);
-#elif defined(__LINUX__) || defined(__RPI__)
-	return SystemWindow(m_window->getDisplay(), m_window->getWindow());
+// #elif defined(__LINUX__) || defined(__RPI__)
+// 	return SystemWindow(m_window->getDisplay(), m_window->getWindow());
 #elif defined(__MAC__)
 	return SystemWindow(m_window->getView());
 #else

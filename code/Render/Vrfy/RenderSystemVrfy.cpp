@@ -236,8 +236,8 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 	if (m_apiRenderDoc)
 		((RENDERDOC_API_1_7_0*)m_apiRenderDoc)->SetActiveWindow(m_renderSystem->getInternalHandle(), desc.syswin.hWnd);
 #elif defined(__LINUX__)
-	if (m_apiRenderDoc)
-		((RENDERDOC_API_1_7_0*)m_apiRenderDoc)->SetActiveWindow(m_renderSystem->getInternalHandle(), (RENDERDOC_WindowHandle)desc.syswin.window);
+	// if (m_apiRenderDoc)
+	// 	((RENDERDOC_API_1_7_0*)m_apiRenderDoc)->SetActiveWindow(m_renderSystem->getInternalHandle(), (RENDERDOC_WindowHandle)desc.syswin.window);
 #endif
 
 	return new RenderViewVrfy(desc, m_renderSystem, renderView);

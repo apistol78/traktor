@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,13 +28,19 @@ InputDriverX11::InputDriverX11()
 
 bool InputDriverX11::create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories)
 {
-	m_display = (Display*)syswin.display;
-	m_window = (Window)syswin.window;
+	m_display = (Display*)syswin.x11_display;
+	m_window = (Window)syswin.x11_window;
+
+	if (!m_display)
+	{
+		log::error << L"X11 input failed; unsupported syswin." << Endl;
+		return false;
+	}
 
 	static int32_t opcode = 0, event = 0, error = 0;
 	if (!XQueryExtension(m_display, "XInputExtension", &opcode, &event, &error))
 	{
-		log::error << L"X11 input failed; \"XInputExtension\" not supported" << Endl;
+		log::error << L"X11 input failed; \"XInputExtension\" not supported." << Endl;
 		return false;
 	}
 

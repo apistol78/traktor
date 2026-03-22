@@ -51,19 +51,21 @@ namespace traktor
 		}
 
 #elif defined(__LINUX__) || defined(__RPI__)
-		void* display = nullptr;
-		unsigned long window = 0;
+		void* x11_display = nullptr;
+		unsigned long x11_window = 0;
+		void* wl_display = nullptr;
+		unsigned long wl_surface = 0;
 		int32_t width = -1;
 		int32_t height = -1;
 
-		SystemWindow() = default;
-
-		explicit SystemWindow(void* display_, unsigned long window_, int32_t width_ = -1, int32_t height_ = -1)
-		:	display(display_)
-		,	window(window_)
-		,	width(width_)
-		,	height(height_)
+		static SystemWindow fromX11(void* display_, unsigned long window_)
 		{
+			return { display_, window_, nullptr, 0, -1, -1 };
+		}
+
+		static SystemWindow fromWayland(void* display_, unsigned long surface_, int32_t width, int32_t height)
+		{
+			return { nullptr, 0, display_, surface_, width, height };
 		}
 
 #elif defined(__APPLE__)

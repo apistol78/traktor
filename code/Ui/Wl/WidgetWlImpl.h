@@ -505,7 +505,7 @@ public:
 			m_context->bindRenderSurface(&m_data);
 		}
 
-		return SystemWindow(
+		return SystemWindow::fromWayland(
 			m_context->getDisplay(),
 			(unsigned long)(uintptr_t)m_data.renderSurface,
 			m_rect.getWidth(),

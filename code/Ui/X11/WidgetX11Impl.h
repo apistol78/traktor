@@ -464,7 +464,7 @@ public:
 
 	virtual SystemWindow getSystemWindow() override
 	{
-		return SystemWindow(m_context->getDisplay(), m_data.window);
+		return SystemWindow::fromX11(m_context->getDisplay(), m_data.window);
 	}
 
 	// IFontMetric
