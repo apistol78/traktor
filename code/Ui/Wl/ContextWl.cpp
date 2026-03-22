@@ -31,6 +31,8 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ContextWl", ContextWl, Object)
 
+Timer ContextWl::ms_timer;
+
 // Registry listener
 static const struct wl_registry_listener s_registryListener = {
 	ContextWl::registryGlobal,
@@ -590,6 +592,7 @@ void ContextWl::pointerEnter(void* data, struct wl_pointer* pointer, uint32_t se
 	e.pointerX = ctx->m_pointerX;
 	e.pointerY = ctx->m_pointerY;
 	e.serial = serial;
+	e.stamp = ms_timer.getElapsedTime();
 	ctx->enqueueEvent(e);
 }
 
@@ -602,6 +605,7 @@ void ContextWl::pointerLeave(void* data, struct wl_pointer* pointer, uint32_t se
 	e.type = WlEvtPointerLeave;
 	e.surface = surface;
 	e.serial = serial;
+	e.stamp = ms_timer.getElapsedTime();
 	ctx->enqueueEvent(e);
 
 	if (ctx->m_pointerFocus)
@@ -632,6 +636,7 @@ void ContextWl::pointerMotion(void* data, struct wl_pointer* pointer, uint32_t t
 	e.pointerX = ctx->m_pointerX;
 	e.pointerY = ctx->m_pointerY;
 	e.buttons = ctx->m_buttonMask;
+	e.stamp = ms_timer.getElapsedTime();
 	ctx->enqueueEvent(e);
 }
 
@@ -669,6 +674,7 @@ void ContextWl::pointerButton(void* data, struct wl_pointer* pointer, uint32_t s
 	e.button = button;
 	e.buttonState = state;
 	e.serial = serial;
+	e.stamp = ms_timer.getElapsedTime();
 	ctx->enqueueEvent(e);
 }
 
@@ -687,6 +693,7 @@ void ContextWl::pointerAxis(void* data, struct wl_pointer* pointer, uint32_t tim
 	e.pointerY = ctx->m_pointerY;
 	e.axisType = axis;
 	e.axisValue = wl_fixed_to_double(value);
+	e.stamp = ms_timer.getElapsedTime();
 	ctx->enqueueEvent(e);
 }
 
@@ -767,6 +774,7 @@ void ContextWl::keyboardEnter(void* data, struct wl_keyboard* keyboard, uint32_t
 		e.type = WlEvtFocusIn;
 		e.surface = ctx->m_internalFocus->surface;
 		e.serial = serial;
+		e.stamp = ms_timer.getElapsedTime();
 		ctx->enqueueEvent(e);
 	}
 }
@@ -782,6 +790,7 @@ void ContextWl::keyboardLeave(void* data, struct wl_keyboard* keyboard, uint32_t
 		e.type = WlEvtFocusOut;
 		e.surface = ctx->m_internalFocus->surface;
 		e.serial = serial;
+		e.stamp = ms_timer.getElapsedTime();
 		ctx->enqueueEvent(e);
 	}
 
@@ -805,6 +814,7 @@ void ContextWl::keyboardKey(void* data, struct wl_keyboard* keyboard, uint32_t s
 	e.key = key;
 	e.keyState = state;
 	e.serial = serial;
+	e.stamp = ms_timer.getElapsedTime();
 	ctx->enqueueEvent(e);
 }
 

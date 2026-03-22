@@ -570,7 +570,7 @@ protected:
 	std::wstring m_text;
 	int32_t m_timer = -1;
 	int32_t m_lastMouseButton = 0;
-	uint32_t m_lastMousePress = 0;
+	double m_lastMousePress = 0.0;
 	Point m_lastPointerPos;		// Device coordinates.
 	bool m_pendingExposure = false;
 
@@ -712,15 +712,20 @@ protected:
 				if ((style & WsFocus) != 0)
 					setFocus();
 
-				MouseButtonDownEvent mouseButtonDownEvent(m_owner, button, m_lastPointerPos);
-				m_owner->raiseEvent(&mouseButtonDownEvent);
+				const double now = e.stamp;
+				const double delta = now - m_lastMousePress;
 
-				const uint32_t now = e.serial;
-				if ((int32_t)(now - m_lastMousePress) <= 200 && m_lastMouseButton == button)
+				if (delta <= 0.2 && m_lastMouseButton == button)
 				{
 					MouseDoubleClickEvent mouseDoubleClickEvent(m_owner, button, m_lastPointerPos);
 					m_owner->raiseEvent(&mouseDoubleClickEvent);
 				}
+				else
+				{
+					MouseButtonDownEvent mouseButtonDownEvent(m_owner, button, m_lastPointerPos);
+					m_owner->raiseEvent(&mouseButtonDownEvent);
+				}
+
 				m_lastMousePress = now;
 				m_lastMouseButton = button;
 			}

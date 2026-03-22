@@ -15,6 +15,7 @@
 #include <libdecor.h>
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Timer/Timer.h"
 #include "Ui/Wl/TypesWl.h"
 
 struct xdg_wm_base;
@@ -49,6 +50,7 @@ struct WlEvent
 {
 	int32_t type = 0;
 	struct wl_surface* surface = nullptr;
+	double stamp = 0.0;
 	// Pointer
 	double pointerX = 0.0;
 	double pointerY = 0.0;
@@ -215,6 +217,8 @@ private:
 	WidgetData* m_internalFocus = nullptr;
 	AlignedVector< WidgetData* > m_pendingExposes;
 	AlignedVector< WlEvent > m_eventQueue;
+
+	static Timer ms_timer;
 
 	void dispatch(struct wl_surface* surface, int32_t eventType, bool always, WlEvent& e);
 	bool preTranslateEvent(EventSubject* owner, WlEvent& e);
