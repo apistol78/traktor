@@ -34,12 +34,10 @@ typedef traktor::ui::WidgetFactoryWin32 WidgetFactoryImpl;
 #elif defined(__APPLE__)
 #	include "Ui/Cocoa/WidgetFactoryCocoa.h"
 typedef traktor::ui::WidgetFactoryCocoa WidgetFactoryImpl;
-// #elif defined(__LINUX__) || defined(__RPI__)
-// #	include "Ui/X11/WidgetFactoryX11.h"
-// typedef traktor::ui::WidgetFactoryX11 WidgetFactoryImpl;
-// #endif
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
+#	include "Ui/X11/WidgetFactoryX11.h"
 #	include "Ui/Wl/WidgetFactoryWl.h"
+#elif defined(__LINUX__)
 typedef traktor::ui::WidgetFactoryWl WidgetFactoryImpl;
 #endif
 
@@ -185,10 +183,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", cwd.getPathNameOS());
 	}
 
+#if defined(__LINUX__) || defined(__RPI__)
+	if (cmdLine.hasOption(L"x11"))
+	{
+		ui::Application::getInstance()->initialize(
+			new traktor::ui::WidgetFactoryX11(),
+			nullptr
+		);
+	}
+	else
+	{
+		ui::Application::getInstance()->initialize(
+			new traktor::ui::WidgetFactoryWl(),
+			nullptr
+		);
+	}
+#else
 	ui::Application::getInstance()->initialize(
 		new WidgetFactoryImpl(),
 		nullptr
 	);
+#endif
 
 	net::Network::initialize();
 
