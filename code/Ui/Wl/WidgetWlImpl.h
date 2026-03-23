@@ -500,6 +500,11 @@ public:
 			wl_subsurface_set_desync(m_data.renderSubsurface);
 			wl_subsurface_set_position(m_data.renderSubsurface, 0, 0);
 
+			// Tell the compositor that the Vulkan buffer is at device-pixel
+			// resolution so it maps to the correct logical size on screen.
+			const int32_t scale = m_context->getOutputScale();
+			wl_surface_set_buffer_scale(m_data.renderSurface, scale);
+
 			// Register the render surface as an input alias so that
 			// pointer events on it are routed to this widget.
 			m_context->bindRenderSurface(&m_data);
