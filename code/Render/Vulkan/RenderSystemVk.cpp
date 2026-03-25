@@ -380,6 +380,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.descriptorBindingPartiallyBound = VK_TRUE,
 		.descriptorBindingVariableDescriptorCount = VK_TRUE,
 		.runtimeDescriptorArray = VK_TRUE,
+		.timelineSemaphore = VK_TRUE,
 		.bufferDeviceAddress = VK_TRUE,
 		.bufferDeviceAddressCaptureReplay = VK_FALSE,
 		.bufferDeviceAddressMultiDevice = VK_FALSE
