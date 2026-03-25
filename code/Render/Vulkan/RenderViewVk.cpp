@@ -312,6 +312,13 @@ void RenderViewVk::close()
 	}
 	m_frames.clear();
 
+	// Destroy cross queue synchronization.
+	if (m_timelineSemaphore != 0)
+	{
+		vkDestroySemaphore(m_context->getLogicalDevice(), m_timelineSemaphore, nullptr);
+		m_timelineSemaphore = 0;
+	}
+
 	// More pending cleanups since frames own render targets.
 	m_context->performCleanup();
 
@@ -333,9 +340,9 @@ void RenderViewVk::close()
 	}
 
 	//// Destroy pipelines.
-	//for (auto& pipeline : m_pipelines)
+	// for (auto& pipeline : m_pipelines)
 	//	vkDestroyPipeline(m_context->getLogicalDevice(), pipeline.second.pipeline, nullptr);
-	//m_pipelines.clear();
+	// m_pipelines.clear();
 
 	// Destroy previous swap chain.
 	if (m_swapChain != 0)
@@ -429,9 +436,12 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	}
 
 	//// Destroy pipelines.
-	//for (auto& pipeline : m_pipelines)
+	// for (auto& pipeline : m_pipelines)
 	//	vkDestroyPipeline(m_context->getLogicalDevice(), pipeline.second.pipeline, nullptr);
-	//m_pipelines.clear();
+	// m_pipelines.clear();
+
+	// Delete cross queue synchronization.
+	vkDestroySemaphore(m_context->getLogicalDevice(), m_timelineSemaphore, nullptr);
 
 	// More pending cleanups since frames own render targets.
 	m_context->performCleanup();
@@ -591,7 +601,7 @@ bool RenderViewVk::beginFrame()
 	if (m_currentImageIndex >= m_frames.size())
 	{
 		log::error << L"Acquired image index greater than allowed number of frames." << Endl;
-		return false;		
+		return false;
 	}
 
 	auto& frame = m_frames[m_currentImageIndex];
@@ -627,7 +637,7 @@ bool RenderViewVk::beginFrame()
 		if (!frame.graphicsCommandBuffer->reset())
 		{
 			log::error << L"Failed to reset graphics command buffer." << Endl;
-			return false;		
+			return false;
 		}
 	}
 	else
@@ -636,7 +646,7 @@ bool RenderViewVk::beginFrame()
 		if (!frame.graphicsCommandBuffer)
 		{
 			log::error << L"Failed to acquire command buffer from graphics queue." << Endl;
-			return false;		
+			return false;
 		}
 	}
 	T_PROFILER_END();
@@ -660,7 +670,7 @@ bool RenderViewVk::beginFrame()
 		if (!frame.computeCommandBuffer->reset())
 		{
 			log::error << L"Failed to reset compute command buffer." << Endl;
-			return false;		
+			return false;
 		}
 	}
 	else
@@ -669,7 +679,7 @@ bool RenderViewVk::beginFrame()
 		if (!frame.computeCommandBuffer)
 		{
 			log::error << L"Failed to acquire command buffer from compute queue." << Endl;
-			return false;		
+			return false;
 		}
 	}
 	T_PROFILER_END();
@@ -1287,17 +1297,18 @@ void RenderViewVk::synchronize()
 	T_PROFILER_SCOPE(L"RenderViewVk::synchronize");
 	auto& frame = m_frames[m_currentImageIndex];
 
+	++m_timelineSemaphoreValue;
+
 	// Submit compute command buffer.
-	frame.computeCommandBuffer->submit(
-		{},
-		{},
-		frame.computeFinishedSemaphore);
+	frame.computeCommandBuffer->submitSignal(
+		m_timelineSemaphore,
+		m_timelineSemaphoreValue);
 
 	// Submit graphics command buffer; wait until compute queue has finished.
-	frame.graphicsCommandBuffer->submit(
-		{ frame.computeFinishedSemaphore },
-		{ VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT },
-		VK_NULL_HANDLE);
+	frame.graphicsCommandBuffer->submitWait(
+		m_timelineSemaphore,
+		m_timelineSemaphoreValue,
+		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
 
 	// Defer release at end of frame.
 	frame.flyingCommandBuffers.push_back(frame.computeCommandBuffer);
@@ -1783,12 +1794,12 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	{
 		auto& frame = m_frames[i];
 
-		const VkSemaphoreCreateInfo sci = {
+		const VkSemaphoreCreateInfo createInfo = {
 			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
 		};
-		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.renderFinishedSemaphore);
+		vkCreateSemaphore(m_context->getLogicalDevice(), &createInfo, nullptr, &frame.renderFinishedSemaphore);
 		m_context->setObjectDebugName(L"frame.renderFinishedSemaphore", (uint64_t)frame.renderFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
-		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.computeFinishedSemaphore);
+		vkCreateSemaphore(m_context->getLogicalDevice(), &createInfo, nullptr, &frame.computeFinishedSemaphore);
 		m_context->setObjectDebugName(L"frame.computeFinishedSemaphore", (uint64_t)frame.computeFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
 
 		static uint32_t primaryInstances = 0;
@@ -1822,6 +1833,20 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	}
 #endif
 
+	// Create timeline semaphore for synchronizing async compute and graphics queues.
+	const VkSemaphoreTypeCreateInfo typeInfo = {
+		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO,
+		.semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE,
+		.initialValue = 0
+	};
+	const VkSemaphoreCreateInfo createInfo = {
+		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+		.pNext = &typeInfo
+	};
+	vkCreateSemaphore(m_context->getLogicalDevice(), &createInfo, nullptr, &m_timelineSemaphore);
+	m_timelineSemaphoreValue = 0;
+
+	// Cleanup.
 	m_renderPassCache = new RenderPassCache(m_context->getLogicalDevice());
 	m_nextQueryIndex = 0;
 	m_lastQueryIndex = 0;
