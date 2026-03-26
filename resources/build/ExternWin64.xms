@@ -765,6 +765,21 @@
 						</item>
 					</items>
 				</item>
+				<item type="traktor.sb.Filter">
+					<name>hvf</name>
+					<items>
+						<item type="traktor.sb.File" version="1">
+							<fileName>hvf/*.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="traktor.sb.File" version="1">
+							<fileName>hvf/*.h</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies/>
 		</item>

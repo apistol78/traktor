@@ -6,10 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
-#include <string>
-#include <sstream>
-
 #include "Render/Vulkan/Private/Context.h"
 
 #include "Core/Io/FileSystem.h"
@@ -22,14 +18,18 @@
 #include "Core/Thread/Atomic.h"
 #include "Core/Thread/CriticalSection.h"
 #include "Core/Timer/Profiler.h"
-#include "Render/Vulkan/ProgramVk.h"
-#include "Render/Vulkan/RenderTargetSetVk.h"
-#include "Render/Vulkan/VertexLayoutVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Queue.h"
 #include "Render/Vulkan/Private/UniformBufferPool.h"
 #include "Render/Vulkan/Private/Utilities.h"
+#include "Render/Vulkan/ProgramVk.h"
+#include "Render/Vulkan/RenderTargetSetVk.h"
+#include "Render/Vulkan/VertexLayoutVk.h"
+
+#include <cstring>
+#include <sstream>
+#include <string>
 
 namespace traktor::render
 {
@@ -37,20 +37,21 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Context", Context, Object)
 
 Context::Context(
+	VkInstance instance,
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
 	VmaAllocator allocator,
 	uint32_t graphicsQueueIndex,
-	uint32_t computeQueueIndex
-)
-:	m_physicalDevice(physicalDevice)
-,	m_logicalDevice(logicalDevice)
-,	m_allocator(allocator)
-,	m_graphicsQueueIndex(graphicsQueueIndex)
-,	m_computeQueueIndex(computeQueueIndex)
-,	m_sampledResourceIndexAllocator(0, MaxBindlessResources - 1)
-,	m_storageResourceIndexAllocator(0, MaxBindlessResources - 1)
-,	m_bufferResourceIndexAllocator(0, MaxBindlessResources - 1)
+	uint32_t computeQueueIndex)
+	: m_instance(instance)
+	, m_physicalDevice(physicalDevice)
+	, m_logicalDevice(logicalDevice)
+	, m_allocator(allocator)
+	, m_graphicsQueueIndex(graphicsQueueIndex)
+	, m_computeQueueIndex(computeQueueIndex)
+	, m_sampledResourceIndexAllocator(0, MaxBindlessResources - 1)
+	, m_storageResourceIndexAllocator(0, MaxBindlessResources - 1)
+	, m_bufferResourceIndexAllocator(0, MaxBindlessResources - 1)
 {
 }
 
@@ -107,10 +108,10 @@ bool Context::create()
 	Ref< IStream > file = FileSystem::getInstance().open(ss.str(), File::FmRead);
 	if (file)
 	{
-	 	const uint32_t size = (uint32_t)file->available();
+		const uint32_t size = (uint32_t)file->available();
 		buffer.resize(size);
-	 	file->read(buffer.ptr(), size);
-	 	file->close();
+		file->read(buffer.ptr(), size);
+		file->close();
 
 		pcci.initialDataSize = size;
 		pcci.pInitialData = buffer.c_ptr();
@@ -124,8 +125,7 @@ bool Context::create()
 		m_logicalDevice,
 		&pcci,
 		nullptr,
-		&m_pipelineCache
-	);
+		&m_pipelineCache);
 
 	// Create descriptor set pool.
 	VkDescriptorPoolSize dps[6];
@@ -142,8 +142,7 @@ bool Context::create()
 	dps[5].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 	dps[5].descriptorCount = MaxBindlessResources;
 
-	const VkDescriptorPoolCreateInfo dpci =
-	{
+	const VkDescriptorPoolCreateInfo dpci = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT,
@@ -155,8 +154,8 @@ bool Context::create()
 	vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_descriptorPool);
 
 	// Create uniform buffer pools.
-	m_uniformBufferPools[0] = new UniformBufferPool(this,   1000, L"Once");
-	m_uniformBufferPools[1] = new UniformBufferPool(this,  10000, L"Frame");
+	m_uniformBufferPools[0] = new UniformBufferPool(this, 1000, L"Once");
+	m_uniformBufferPools[1] = new UniformBufferPool(this, 10000, L"Frame");
 	m_uniformBufferPools[2] = new UniformBufferPool(this, 100000, L"Draw");
 
 	// Bindless resources.
@@ -167,21 +166,19 @@ bool Context::create()
 
 	for (int32_t i = 0; i < sizeof_array(bindings); ++i)
 	{
-		const VkDescriptorBindingFlags bindlessFlags = 
+		const VkDescriptorBindingFlags bindlessFlags =
 			VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT |
 			VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT |
 			VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT |
 			VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT_EXT;
 
-		const VkDescriptorSetLayoutBindingFlagsCreateInfoEXT extendedInfo =
-		{
+		const VkDescriptorSetLayoutBindingFlagsCreateInfoEXT extendedInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT,
 			.bindingCount = 1,
 			.pBindingFlags = &bindlessFlags
 		};
 
-		const VkDescriptorSetLayoutBinding binding =
-		{
+		const VkDescriptorSetLayoutBinding binding = {
 			.binding = bindings[i],
 			.descriptorType = descriptorTypes[i],
 			.descriptorCount = MaxBindlessResources,
@@ -189,8 +186,7 @@ bool Context::create()
 			.pImmutableSamplers = nullptr
 		};
 
-		const VkDescriptorSetLayoutCreateInfo layoutInfo =
-		{
+		const VkDescriptorSetLayoutCreateInfo layoutInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 			.pNext = &extendedInfo,
 			.flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT,
@@ -207,15 +203,13 @@ bool Context::create()
 		// Create descriptor set.
 		const uint32_t maxBinding = MaxBindlessResources - 1;
 
-		const VkDescriptorSetVariableDescriptorCountAllocateInfoEXT countInfo =
-		{
+		const VkDescriptorSetVariableDescriptorCountAllocateInfoEXT countInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT,
 			.descriptorSetCount = 1,
-			.pDescriptorCounts = &maxBinding	// This number is the max allocatable count.
+			.pDescriptorCounts = &maxBinding // This number is the max allocatable count.
 		};
 
-		const VkDescriptorSetAllocateInfo allocInfo =
-		{
+		const VkDescriptorSetAllocateInfo allocInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = &countInfo,
 			.descriptorPool = m_descriptorPool,
@@ -228,7 +222,6 @@ bool Context::create()
 		{
 			log::error << L"Failed to create Vulkan; failed to create bindless descriptor set. " << getHumanResult(result) << Endl;
 			return false;
-
 		}
 	}
 
@@ -305,10 +298,8 @@ void Context::performCleanup()
 
 		// Only call cleanup listeners to free descriptors.
 		if (freeDescriptors)
-		{
 			for (auto cleanupListener : m_cleanupListeners)
 				cleanupListener->postCleanup();
-		}
 	}
 }
 
@@ -346,7 +337,7 @@ bool Context::savePipelineCache()
 
 	file->write(buffer.c_ptr(), size);
 	file->close();
-	
+
 	log::debug << L"Pipeline cache \"" << ss.str() << L"\" saved successfully." << Endl;
 	return true;
 }
@@ -390,8 +381,6 @@ void Context::freeBufferResourceIndex(uint32_t resourceIndex)
 	m_bufferResourceIndexAllocator.free(resourceIndex);
 }
 
-
-
 VkPipeline Context::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt, uint32_t targetRenderPassHash, const RenderTargetSetVk* targetSet, VkRenderPass targetRenderPass, float multiSampleShading)
 {
 	// Calculate pipeline key.
@@ -405,7 +394,7 @@ VkPipeline Context::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout,
 	auto it = m_pipelines.find(key);
 	if (it != m_pipelines.end())
 	{
-		it->second.lastAcquired = /*m_counter*/0;
+		it->second.lastAcquired = /*m_counter*/ 0;
 		pipeline = it->second.pipeline;
 	}
 	else
@@ -586,7 +575,7 @@ VkPipeline Context::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout,
 			return 0;
 		}
 
-		m_pipelines[key] = { /*m_counter*/0, pipeline };
+		m_pipelines[key] = { /*m_counter*/ 0, pipeline };
 #if defined(_DEBUG)
 		log::debug << L"Graphics pipeline created (" << program->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
 #endif
@@ -608,7 +597,7 @@ VkPipeline Context::validateComputePipeline(const ProgramVk* p)
 	auto it = m_pipelines.find(key);
 	if (it != m_pipelines.end())
 	{
-		it->second.lastAcquired = 0/*m_counter*/;
+		it->second.lastAcquired = 0 /*m_counter*/;
 		pipeline = it->second.pipeline;
 	}
 	else
@@ -644,7 +633,7 @@ VkPipeline Context::validateComputePipeline(const ProgramVk* p)
 			return 0;
 		}
 
-		m_pipelines[key] = { 0/*m_counter*/, pipeline };
+		m_pipelines[key] = { 0 /*m_counter*/, pipeline };
 #if defined(_DEBUG)
 		log::debug << L"Compute pipeline created (" << p->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
 #endif
@@ -671,8 +660,7 @@ void Context::setObjectDebugName(const wchar_t* const tag, uint64_t object, VkOb
 
 	m_debugNames.push_back(strdup(ss.str().c_str()));
 
-	const VkDebugUtilsObjectNameInfoEXT ni =
-	{
+	const VkDebugUtilsObjectNameInfoEXT ni = {
 		.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
 		.objectType = objectType,
 		.objectHandle = object,

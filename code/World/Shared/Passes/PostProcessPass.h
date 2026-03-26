@@ -17,6 +17,7 @@ namespace traktor::render
 {
 
 class ImageGraph;
+class IRenderPlugin;
 class IRenderSystem;
 class RenderGraph;
 class ScreenRenderer;
@@ -79,6 +80,8 @@ private:
 	bool m_hdr = false;
 	bool m_needCameraJitter = false;
 	int32_t m_visualDenominator = 1;
+
+	Ref< render::IRenderPlugin > m_antiAliasPlugin;
 };
 
 }

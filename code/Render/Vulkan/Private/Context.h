@@ -55,6 +55,7 @@ public:
 	};
 
 	explicit Context(
+		VkInstance instance,
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
 		VmaAllocator allocator,
@@ -87,6 +88,8 @@ public:
 	void recycle();
 
 	bool savePipelineCache();
+
+	VkInstance getInstance() const { return m_instance; }
 
 	VkPhysicalDevice getPhysicalDevice() const { return m_physicalDevice; }
 
@@ -149,6 +152,7 @@ private:
 
 	typedef std::tuple< uint8_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
 
+	VkInstance m_instance;
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;

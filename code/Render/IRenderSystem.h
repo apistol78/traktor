@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,6 +27,7 @@ namespace traktor::render
 class Buffer;
 class IAccelerationStructure;
 class IProgram;
+class IRenderPlugin;
 class IRenderTargetSet;
 class IRenderView;
 class IVertexLayout;
@@ -173,7 +174,11 @@ public:
 
 	//@}
 
+	/*! */
 	virtual void* getInternalHandle() const = 0;
+
+	/*! */
+	virtual Ref< IRenderPlugin > createPlugin(const TypeInfo& pluginType) = 0;
 };
 
 }

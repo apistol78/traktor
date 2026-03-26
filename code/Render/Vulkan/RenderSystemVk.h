@@ -89,6 +89,8 @@ public:
 
 	virtual void* getInternalHandle() const override final;
 
+	virtual Ref< IRenderPlugin > createPlugin(const TypeInfo& pluginType) override final;
+
 private:
 #if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__)
 	Ref< Window > m_window;

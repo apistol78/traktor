@@ -29,6 +29,7 @@
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ProgramResourceVrfy.h"
 #include "Render/Vrfy/ProgramVrfy.h"
+#include "Render/Vrfy/RenderPluginVrfy.h"
 #include "Render/Vrfy/RenderTargetSetVrfy.h"
 #include "Render/Vrfy/RenderViewVrfy.h"
 #include "Render/Vrfy/ResourceTracker.h"
@@ -454,6 +455,15 @@ void RenderSystemVrfy::getStatistics(RenderSystemStatistics& outStatistics) cons
 void* RenderSystemVrfy::getInternalHandle() const
 {
 	return m_renderSystem->getInternalHandle();
+}
+
+Ref< IRenderPlugin > RenderSystemVrfy::createPlugin(const TypeInfo& pluginType)
+{
+	Ref< IRenderPlugin > plugin = m_renderSystem->createPlugin(pluginType);
+	if (plugin)
+		return new RenderPluginVrfy(plugin);
+	else
+		return nullptr;
 }
 
 }

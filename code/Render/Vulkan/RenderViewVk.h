@@ -48,9 +48,7 @@ class RenderViewVk
 	T_RTTI_CLASS;
 
 public:
-	explicit RenderViewVk(
-		Context* context,
-		VkInstance instance);
+	explicit RenderViewVk(Context* context);
 
 	virtual ~RenderViewVk();
 
@@ -138,6 +136,10 @@ public:
 
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const override final;
 
+	Context* getContext() const { return m_context; }
+
+	CommandBuffer* getGraphicsCommandBuffer();
+
 private:
 	struct Frame
 	{
@@ -155,7 +157,6 @@ private:
 	};
 
 	Context* m_context = nullptr;
-	VkInstance m_instance = 0;
 #if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__) || defined(__MAC__)
 	Ref< Window > m_window;
 #endif
@@ -191,6 +192,10 @@ private:
 	VkRenderPass m_targetRenderPass = 0;
 	VkFramebuffer m_targetFrameBuffer = 0;
 	uint32_t m_targetRenderPassHash = 0;
+
+	// Cross queue synchronization.
+	VkSemaphore m_timelineSemaphore = VK_NULL_HANDLE;
+	uint64_t m_timelineSemaphoreValue = 0;
 
 	// Stats.
 	bool m_haveDebugMarkers = false;

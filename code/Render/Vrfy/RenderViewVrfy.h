@@ -123,6 +123,8 @@ public:
 
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const override final;
 
+	IRenderView* getRenderView() const { return m_renderView; }
+
 private:
 	struct ProfileVrfy
 	{

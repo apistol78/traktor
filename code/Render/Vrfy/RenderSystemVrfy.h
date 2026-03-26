@@ -97,6 +97,8 @@ public:
 
 	virtual void* getInternalHandle() const override final;
 
+	virtual Ref< IRenderPlugin > createPlugin(const TypeInfo& pluginType) override final;
+
 private:
 	Ref< IRenderSystem > m_renderSystem;
 	bool m_useRenderDoc = false;

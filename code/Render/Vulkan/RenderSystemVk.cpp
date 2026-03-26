@@ -43,12 +43,17 @@
 
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/Window.h"
+#	define HAVE_VULKAN_XESS_PLUGIN
 #elif defined(__LINUX__) || defined(__RPI__)
 #	include "Render/Vulkan/Linux/Window.h"
 #elif defined(__ANDROID__)
 #	include "Core/System/Android/DelegateInstance.h"
 #elif defined(__IOS__)
 #	include "Render/Vulkan/iOS/Utilities.h"
+#endif
+
+#if defined(HAVE_VULKAN_XESS_PLUGIN)
+#	include "Render/Vulkan/XeSS/RenderPluginXeSS.h"
 #endif
 
 // https://github.com/WilliamLewww/vulkan_ray_tracing_minimal_abstraction/blob/master/headless/src/main.cpp
@@ -201,6 +206,15 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 			log::warning << L"No validation layers found; validation disabled." << Endl;
 	}
 
+	// Get extensions.
+	AlignedVector< const char* > extensions;
+	for (int32_t i = 0; i < sizeof_array(c_extensions); ++i)
+		extensions.push_back(c_extensions[i]);
+
+#if defined(HAVE_VULKAN_XESS_PLUGIN)
+	RenderPluginXeSS::getExtensions(extensions);
+#endif
+
 	// Create Vulkan instance.
 	const VkApplicationInfo applicationInfo = {
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -216,8 +230,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.pApplicationInfo = &applicationInfo,
 		.enabledLayerCount = (uint32_t)validationLayers.size(),
 		.ppEnabledLayerNames = validationLayers.c_ptr(),
-		.enabledExtensionCount = sizeof_array(c_extensions),
-		.ppEnabledExtensionNames = c_extensions
+		.enabledExtensionCount = (uint32_t)extensions.size(),
+		.ppEnabledExtensionNames = extensions.c_ptr()
 	};
 
 	if ((result = vkCreateInstance(&instanceCreateInfo, 0, &m_instance)) != VK_SUCCESS)
@@ -333,6 +347,10 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		for (int32_t i = 0; i < sizeof_array(c_deviceExtensionsRayTracing); ++i)
 			deviceExtensions.push_back(c_deviceExtensionsRayTracing[i]);
 
+#if defined(HAVE_VULKAN_XESS_PLUGIN)
+	RenderPluginXeSS::getDeviceExtensions(m_instance, m_physicalDevice, extensions);
+#endif
+
 	if (desc.aftermath)
 		deviceExtensions.push_back(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME);
 
@@ -413,10 +431,10 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	if (desc.aftermath)
 	{
 		const VkDeviceDiagnosticsConfigFlagsNV aftermathFlags =
-			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_AUTOMATIC_CHECKPOINTS_BIT_NV |  // Enable automatic call stack checkpoints.
-			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_RESOURCE_TRACKING_BIT_NV |      // Enable tracking of resources.
-			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_DEBUG_INFO_BIT_NV |      // Generate debug information for shaders.
-			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_ERROR_REPORTING_BIT_NV;  // Enable additional runtime shader error reporting.
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_AUTOMATIC_CHECKPOINTS_BIT_NV | // Enable automatic call stack checkpoints.
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_RESOURCE_TRACKING_BIT_NV |	   // Enable tracking of resources.
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_DEBUG_INFO_BIT_NV |	   // Generate debug information for shaders.
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_ERROR_REPORTING_BIT_NV; // Enable additional runtime shader error reporting.
 
 		static const VkDeviceDiagnosticsConfigCreateInfoNV aftermathInfo = {
 			.sType = VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV,
@@ -506,6 +524,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 	m_context = new Context(
+		m_instance,
 		m_physicalDevice,
 		m_logicalDevice,
 		m_allocator,
@@ -662,9 +681,7 @@ float RenderSystemVk::getDisplayAspectRatio(uint32_t display) const
 
 Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc& desc)
 {
-	Ref< RenderViewVk > renderView = new RenderViewVk(
-		m_context,
-		m_instance);
+	Ref< RenderViewVk > renderView = new RenderViewVk(m_context);
 	if (renderView->create(desc))
 		return renderView;
 	else
@@ -673,9 +690,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 
 Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
-	Ref< RenderViewVk > renderView = new RenderViewVk(
-		m_context,
-		m_instance);
+	Ref< RenderViewVk > renderView = new RenderViewVk(m_context);
 	if (renderView->create(desc))
 		return renderView;
 	else
@@ -840,6 +855,15 @@ void RenderSystemVk::getStatistics(RenderSystemStatistics& outStatistics) const
 void* RenderSystemVk::getInternalHandle() const
 {
 	return (*((void**)(m_instance)));
+}
+
+Ref< IRenderPlugin > RenderSystemVk::createPlugin(const TypeInfo& pluginType)
+{
+#if defined(HAVE_VULKAN_XESS_PLUGIN)
+	if (&pluginType == &type_of< RenderPluginXeSS >())
+		return new RenderPluginXeSS();
+#endif
+	return nullptr;
 }
 
 }

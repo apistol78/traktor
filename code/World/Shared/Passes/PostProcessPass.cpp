@@ -15,6 +15,9 @@
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
+#include "Render/IRenderPlugin.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/ITexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
@@ -156,12 +159,24 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
 
+	// Attempt to load XeSS plugin for AA/upscaling.
+	if (desc.quality.antiAlias >= Quality::Ultra)
+	{
+		const TypeInfo* pluginType = TypeInfo::find(L"traktor.render.RenderPluginXeSS");
+		if (pluginType != nullptr)
+		{
+			m_antiAliasPlugin = renderSystem->createPlugin(*pluginType);
+			m_needCameraJitter = true;
+		}
+	}
+
 	m_hdr = desc.hdr;
 	return true;
 }
 
 void PostProcessPass::destroy()
 {
+	safeDestroy(m_antiAliasPlugin);
 	safeDestroy(m_screenRenderer);
 	m_toneMap.clear();
 	m_motionBlur.clear();
@@ -207,12 +222,13 @@ void PostProcessPass::setup(
 	const float time = (float)worldRenderView.getTime();
 	const Vector2 rc = jitter(frameCount) / worldRenderView.getViewSize();
 	const Vector2 rp = jitter(frameCount - 1) / worldRenderView.getViewSize();
+	const Vector4 jtr = Vector4(rp.x, -rp.y, rc.x, -rc.y);
 	auto setParameters = [=, this](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		params->setFloatParameter(ShaderParameter::Time, time);
 		params->setFloatParameter(ShaderParameter::Gamma, m_gamma);
 		params->setFloatParameter(ShaderParameter::GammaInverse, 1.0f / m_gamma);
 		params->setFloatParameter(ShaderParameter::Exposure, std::pow(2.0f, m_settings.exposure));
-		params->setVectorParameter(ShaderParameter::Jitter, Vector4(rp.x, -rp.y, rc.x, -rc.y)); // Texture space.
+		params->setVectorParameter(ShaderParameter::Jitter, jtr); // Texture space.
 		if (gatheredView.rtWorldTopLevel != nullptr)
 			params->setAccelerationStructureParameter(ShaderParameter::TLAS, gatheredView.rtWorldTopLevel);
 	};
@@ -275,13 +291,38 @@ void PostProcessPass::setup(
 			}
 		}
 
-		process->addPasses(
-			m_screenRenderer,
-			renderGraph,
-			rp,
-			igctx,
-			view,
-			setParameters);
+		if (m_antiAliasPlugin != nullptr && process == m_antiAlias)
+		{
+
+			const render::RGTargetSet colorTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputColor);
+			const render::RGTargetSet velocityTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputVelocity);
+
+			rp->addInput(colorTargetSetId);
+			rp->addInput(velocityTargetSetId);
+
+			rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+
+				render::ITexture* colorTexture = renderGraph.getTargetSet(colorTargetSetId)->getColorTexture(0);
+				render::ITexture* velocityTexture = renderGraph.getTargetSet(velocityTargetSetId)->getColorTexture(0);
+				render::ITexture* outputTexture = renderGraph.getTargetSet(intermediateTargetSetId)->getColorTexture(0);
+
+				auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"XeSS");
+				rb->lambda = [=](render::IRenderView* renderView) {
+					m_antiAliasPlugin->render(renderView, colorTexture, velocityTexture, outputTexture, jtr);
+				};
+				renderContext->draw(rb);
+			});
+		}
+		else
+		{
+			process->addPasses(
+				m_screenRenderer,
+				renderGraph,
+				rp,
+				igctx,
+				view,
+				setParameters);
+		}
 
 		if (next)
 			igctx.associateTextureTargetSet(ShaderParameter::InputColor, intermediateTargetSetId, 0);

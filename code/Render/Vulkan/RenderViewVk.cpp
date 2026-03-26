@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -85,11 +85,8 @@ VkPipelineStageFlagBits convertStage(Stage st)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVk", RenderViewVk, IRenderView)
 
-RenderViewVk::RenderViewVk(
-	Context* context,
-	VkInstance instance)
+RenderViewVk::RenderViewVk(Context* context)
 	: m_context(context)
-	, m_instance(instance)
 {
 	m_context->incrementViews();
 }
@@ -123,7 +120,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	sci.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 	sci.hinstance = GetModuleHandle(nullptr);
 	sci.hwnd = (HWND)*m_window;
-	if (vkCreateWin32SurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	if (vkCreateWin32SurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface." << Endl;
 		return false;
@@ -133,7 +130,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 	sci.dpy = m_window->getDisplay();
 	sci.window = m_window->getWindow();
-	if (vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	if (vkCreateXlibSurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface." << Endl;
 		return false;
@@ -146,7 +143,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	VkMetalSurfaceCreateInfoEXT sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
 	sci.pLayer = getMetalLayer(m_window->getView());
-	if (vkCreateMetalSurfaceEXT(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	if (vkCreateMetalSurfaceEXT(m_context->getInstance(), &sci, nullptr, &m_surface) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create macOS renderable surface." << Endl;
 		return false;
@@ -171,7 +168,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	sci.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 	sci.hinstance = GetModuleHandle(nullptr);
 	sci.hwnd = (HWND)desc.syswin.hWnd;
-	if ((result = vkCreateWin32SurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	if ((result = vkCreateWin32SurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
@@ -188,7 +185,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 	sci.dpy = (::Display*)desc.syswin.display;
 	sci.window = desc.syswin.window;
-	if ((result = vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	if ((result = vkCreateXlibSurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
@@ -205,7 +202,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	sci.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
 	sci.flags = 0;
 	sci.window = *desc.syswin.window;
-	if ((result = vkCreateAndroidSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	if ((result = vkCreateAndroidSurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create Android renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
@@ -223,7 +220,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	VkMetalSurfaceCreateInfoEXT sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
 	sci.pLayer = getMetalLayer(desc.syswin.view);
-	if ((result = vkCreateMetalSurfaceEXT(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	if ((result = vkCreateMetalSurfaceEXT(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create macOS renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
@@ -238,7 +235,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	VkIOSSurfaceCreateInfoMVK sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK;
 	sci.pView = desc.syswin.view;
-	if ((result = vkCreateIOSSurfaceMVK(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	if ((result = vkCreateIOSSurfaceMVK(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create iOS renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
@@ -354,7 +351,7 @@ void RenderViewVk::close()
 	// Destroy surface.
 	if (m_surface != 0)
 	{
-		vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
+		vkDestroySurfaceKHR(m_context->getInstance(), m_surface, nullptr);
 		m_surface = 0;
 	}
 
@@ -1532,6 +1529,12 @@ void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
 	outStatistics.passCount = m_passCount;
 	outStatistics.drawCalls = m_drawCalls;
 	outStatistics.primitiveCount = m_primitiveCount;
+}
+
+CommandBuffer* RenderViewVk::getGraphicsCommandBuffer()
+{
+	auto& frame = m_frames[m_currentImageIndex];
+	return frame.graphicsCommandBuffer;
 }
 
 bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks, bool allowHDR)

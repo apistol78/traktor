@@ -42,6 +42,7 @@ set MIMALLOC_SDK=%TRAKTOR_HOME%\3rdp\mimalloc
 set UFBX_SDK=%TRAKTOR_HOME%\3rdp\ufbx
 set JOLT_SDK=%TRAKTOR_HOME%\3rdp\JoltPhysics
 set LEMON_SDK=%TRAKTOR_HOME%\3rdp\lemon
+set XESS_SDK=%TRAKTOR_HOME%\3rdp\xess
 
 :: Vulkan SDK
 if not defined VULKAN_SDK (

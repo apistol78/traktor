@@ -119,6 +119,7 @@ void LightClusterPass::setup(
 			const Vector4 d = tl + vx * fx + vy * (fy + dy);
 
 			auto& tileFrustum = tileFrustums[x + y * ClusterDimXY];
+			tileFrustum.planes.resize(6);
 			tileFrustum.planes[Frustum::Left] = Plane(Vector4::zero(), d, a);
 			tileFrustum.planes[Frustum::Right] = Plane(Vector4::zero(), b, c);
 			tileFrustum.planes[Frustum::Bottom] = Plane(Vector4::zero(), c, d);
@@ -141,6 +142,7 @@ void LightClusterPass::setup(
 			const auto light = gatheredView.lights[i];
 			if (light->getLightType() == LightType::Directional)
 			{
+				T_FATAL_ASSERT(!sliceLights.full());
 				sliceLights.push_back(i);
 			}
 			else if (light->getLightType() == LightType::Point)
@@ -148,7 +150,10 @@ void LightClusterPass::setup(
 				const Scalar lr = light->getFarRange();
 				const Scalar lz = lightPositions[i].z();
 				if (lz + lr >= snz && lz - lr <= sfz)
+				{
+					T_FATAL_ASSERT(!sliceLights.full());
 					sliceLights.push_back(i);
+				}
 			}
 			else if (light->getLightType() == LightType::Spot)
 			{
@@ -185,7 +190,10 @@ void LightClusterPass::setup(
 						bb.max = max(bb.max, p[i].z());
 					}
 					if (Range< Scalar >::intersection(bb, Range< Scalar >(snz, sfz)).delta() >= 0.0_simd)
+					{
+						T_FATAL_ASSERT(!sliceLights.full());
 						sliceLights.push_back(i);
+					}
 				}
 			}
 		}
