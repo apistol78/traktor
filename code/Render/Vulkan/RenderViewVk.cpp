@@ -187,7 +187,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 		sci.dpy = (::Display*)desc.syswin.x11_display;
 		sci.window = desc.syswin.x11_window;
-		if ((result = vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+		if ((result = vkCreateXlibSurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
 		{
 			log::error << L"Failed to create Vulkan; unable to create X11 renderable surface (" << getHumanResult(result) << L")." << Endl;
 			return false;
@@ -210,7 +210,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 			.surface = (struct wl_surface*)desc.syswin.wl_surface
 		};
 
-		if ((result = vkCreateWaylandSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+		if ((result = vkCreateWaylandSurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
 		{
 			log::error << L"Failed to create Vulkan; unable to create Wayland renderable surface (" << getHumanResult(result) << L")." << Endl;
 			return false;
@@ -1650,7 +1650,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		{
 			if (surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_ST2084_EXT || surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_HLG_EXT)
 			{
-				log::info << L"Using HDR swap chain color space." << Endl;
+				log::debug << L"Using HDR swap chain color space." << Endl;
 				colorFormat = surfaceFormats[i].format;
 				colorSpace = surfaceFormats[i].colorSpace;
 				m_hdr = true;
@@ -1662,14 +1662,24 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	{
 		for (uint32_t i = 0; i < surfaceFormatCount; ++i)
 		{
-			if (surfaceFormats[i].format != VK_FORMAT_B8G8R8A8_SRGB)
+			if (surfaceFormats[i].format == VK_FORMAT_R8G8B8A8_UNORM || surfaceFormats[i].format == VK_FORMAT_B8G8R8A8_UNORM)
 			{
-				log::info << L"Using SDR swap chain color space." << Endl;
+				log::debug << L"Using SDR swap chain color space." << Endl;
 				colorFormat = surfaceFormats[i].format;
 				colorSpace = surfaceFormats[i].colorSpace;
 				m_hdr = false;
 				break;
 			}
+		}
+	}
+	if (colorFormat == VK_FORMAT_UNDEFINED)
+	{
+		if (surfaceFormatCount > 0)
+		{
+			log::debug << L"Using SDR swap chain color space." << Endl;
+			colorFormat = surfaceFormats[0].format;
+			colorSpace = surfaceFormats[0].colorSpace;
+			m_hdr = false;			
 		}
 	}
 

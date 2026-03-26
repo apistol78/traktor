@@ -40,8 +40,7 @@ void ssdXdgSurfaceConfigure(void* data, struct xdg_surface* xdgSurface, uint32_t
 		wd->pendingHeight = 0;
 
 		form->setRect(next);
-		form->getContextWl()->processPendingExposes();
-		form->update(nullptr, true);
+		form->update(nullptr, false);
 	}
 }
 
