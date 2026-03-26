@@ -58,6 +58,7 @@ See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binar
 - ReSTIR based global illumination.
 - Easy to use graph based image processing system for fullscreen effects.
 - Multithreaded and API agnostic.
+- Support for thirdparty upscalers; XeSS support implemented.
 
 ## Scripting
 - LUA as primary scripting language.
