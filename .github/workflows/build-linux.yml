@@ -22,6 +22,7 @@ jobs:
           libasound2-dev
           libopenal-dev
           libpulse-dev
+          libdecor-0-dev
           mesa-vulkan-drivers
           clang
           lld
