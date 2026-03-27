@@ -45,7 +45,7 @@ void RenderPluginXeSS::destroy()
 {
 }
 
-void RenderPluginXeSS::render(IRenderView* renderView, ITexture* colorTexture, ITexture* velocityTexture, ITexture* outputTexture, const Vector4& jitter)
+void RenderPluginXeSS::render(IRenderView* renderView, ITexture* colorTexture, ITexture* depthTexture, ITexture* velocityTexture, ITexture* outputTexture, const Vector4& jitter)
 {
 	RenderViewVk* rv = mandatory_non_null_type_cast< RenderViewVk* >(renderView);
 	Context* ctx = rv->getContext();
@@ -129,6 +129,14 @@ void RenderPluginXeSS::render(IRenderView* renderView, ITexture* colorTexture, I
 		.width = (unsigned int)inputSize.x,
 		.height = (unsigned int)inputSize.y
 	};
+	exec_params.depthTexture = {
+		.imageView = static_cast< RenderTargetVk* >(depthTexture)->getImageTarget()->getVkImageView(),
+		.image = static_cast< RenderTargetVk* >(depthTexture)->getImageTarget()->getVkImage(),
+		.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0u, 1u, 0u, 1u },
+		.format = static_cast< RenderTargetVk* >(depthTexture)->getVkFormat(),
+		.width = (unsigned int)inputSize.x,
+		.height = (unsigned int)inputSize.y
+	};
 	exec_params.outputTexture = {
 		.imageView = static_cast< RenderTargetVk* >(outputTexture)->getImageTarget()->getVkImageView(),
 		.image = static_cast< RenderTargetVk* >(outputTexture)->getImageTarget()->getVkImage(),
@@ -137,8 +145,6 @@ void RenderPluginXeSS::render(IRenderView* renderView, ITexture* colorTexture, I
 		.width = (unsigned int)outputSize.x,
 		.height = (unsigned int)outputSize.y
 	};
-	exec_params.depthTexture.image = nullptr;
-	exec_params.depthTexture.imageView = nullptr;
 	exec_params.exposureScaleTexture.image = nullptr;
 	exec_params.exposureScaleTexture.imageView = nullptr;
 

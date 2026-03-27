@@ -26,7 +26,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void render(IRenderView* renderView, ITexture* colorTexture, ITexture* velocityTexture, ITexture* outputTexture, const Vector4& jitter) override final;
+	virtual void render(IRenderView* renderView, ITexture* colorTexture, ITexture* depthTexture, ITexture* velocityTexture, ITexture* outputTexture, const Vector4& jitter) override final;
 
 private:
 	Ref< IRenderPlugin > m_wrappedPlugin;

@@ -234,12 +234,12 @@ void PostProcessPass::setup(
 	};
 
 	StaticVector< render::ImageGraph*, 5 > processes;
+	if (m_antiAlias)
+		processes.push_back(m_antiAlias);
 	if (m_toneMap)
 		processes.push_back(m_toneMap);
 	if (m_motionBlur)
 		processes.push_back(m_motionBlur);
-	if (m_antiAlias)
-		processes.push_back(m_antiAlias);
 	if (m_visual)
 		processes.push_back(m_visual);
 	if (m_gammaCorrection)
@@ -295,20 +295,23 @@ void PostProcessPass::setup(
 		{
 
 			const render::RGTargetSet colorTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputColor);
+			const render::RGTargetSet depthTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputDepth);
 			const render::RGTargetSet velocityTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputVelocity);
 
 			rp->addInput(colorTargetSetId);
+			rp->addInput(depthTargetSetId);
 			rp->addInput(velocityTargetSetId);
 
 			rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 
 				render::ITexture* colorTexture = renderGraph.getTargetSet(colorTargetSetId)->getColorTexture(0);
+				render::ITexture* depthTexture = renderGraph.getTargetSet(depthTargetSetId)->getColorTexture(0);
 				render::ITexture* velocityTexture = renderGraph.getTargetSet(velocityTargetSetId)->getColorTexture(0);
 				render::ITexture* outputTexture = renderGraph.getTargetSet(intermediateTargetSetId)->getColorTexture(0);
 
 				auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"XeSS");
 				rb->lambda = [=](render::IRenderView* renderView) {
-					m_antiAliasPlugin->render(renderView, colorTexture, velocityTexture, outputTexture, jtr);
+					m_antiAliasPlugin->render(renderView, colorTexture, depthTexture, velocityTexture, outputTexture, jtr);
 				};
 				renderContext->draw(rb);
 			});

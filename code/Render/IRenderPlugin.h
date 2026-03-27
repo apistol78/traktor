@@ -41,7 +41,7 @@ public:
 	 * Will need to be extended in the future if other
 	 * kinds of plugins are implemented.
 	 */
-	virtual void render(IRenderView* renderView, ITexture* colorTexture, ITexture* velocityTexture, ITexture* outputTexture, const Vector4& jitter) = 0;
+	virtual void render(IRenderView* renderView, ITexture* colorTexture, ITexture* depthTexture, ITexture* velocityTexture, ITexture* outputTexture, const Vector4& jitter) = 0;
 };
 
 }

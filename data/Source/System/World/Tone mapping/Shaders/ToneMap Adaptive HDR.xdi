@@ -199,8 +199,8 @@ W
 			<id>{2BB76641-AB5E-834C-A2A6-07A15A0D4BB4}</id>
 			<comment/>
 			<position>
-				<first>-349</first>
-				<second>434</second>
+				<first>-305</first>
+				<second>443</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -262,11 +262,11 @@ W
 			<script><![CDATA[
 			
 vec3 x = max($Input.xyz, vec3(0.0f));
-float a = 3.75f;
-float b = 0.05f;
-float c = 1.25f;
-float d = 1.3f;
-float e = 0.5f;
+float a = 3.5f;
+float b = 0.025f;
+float c = 1.5f;
+float d = 2.0f;
+float e = 0.6f;
 $Output = vec4(
 	clamp((x * (a * x + b)) / (x * (c * x + d) + e), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f)),
 	1.0f
@@ -288,7 +288,7 @@ $Output = vec4(
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-74</first>
+				<first>-68</first>
 				<second>524</second>
 			</position>
 			<parameterDeclaration>{61140E45-0786-6F41-BB29-907049C1655B}</parameterDeclaration>
@@ -297,7 +297,7 @@ $Output = vec4(
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-304</first>
+				<first>-331</first>
 				<second>232</second>
 			</position>
 			<parameterDeclaration>{52AF854A-DA70-814A-91D9-E868AD8C52F6}</parameterDeclaration>
@@ -306,8 +306,8 @@ $Output = vec4(
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-398</first>
-				<second>351</second>
+				<first>-315</first>
+				<second>378</second>
 			</position>
 			<parameterDeclaration>{A1238CFC-ACC1-7C40-BFAE-D70B4B370C26}</parameterDeclaration>
 		</item>
@@ -315,16 +315,16 @@ $Output = vec4(
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-76</first>
-				<second>348</second>
+				<first>-127</first>
+				<second>385</second>
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-76</first>
-				<second>348</second>
+				<first>53</first>
+				<second>385</second>
 			</position>
 			<memberName>value</memberName>
 		</item>
