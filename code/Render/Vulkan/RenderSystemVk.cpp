@@ -89,7 +89,9 @@ const char* c_deviceExtensions[] = {
 	"VK_EXT_shader_subgroup_ballot",
 	"VK_EXT_memory_budget",
 	"VK_EXT_descriptor_indexing",
-	"VK_KHR_buffer_device_address",
+	"VK_EXT_mutable_descriptor_type",
+	"VK_KHR_shader_integer_dot_product",
+	"VK_KHR_buffer_device_address"
 };
 const char* c_deviceExtensionsRayTracing[] = {
 	// Ray tracing
@@ -359,6 +361,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.sampleRateShading = VK_TRUE,
 		.multiDrawIndirect = VK_TRUE,
 		.samplerAnisotropy = VK_TRUE,
+		.shaderStorageImageWriteWithoutFormat = VK_TRUE,
 		.shaderClipDistance = VK_TRUE
 	};
 
@@ -427,6 +430,22 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		headFeature = &featuresRayQuery;
 	}
 #endif
+
+	const VkPhysicalDeviceShaderIntegerDotProductFeaturesKHR deviceShaderIntegerDotProduct = {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES_KHR,
+		.pNext = (void*)headFeature,
+		.shaderIntegerDotProduct = VK_TRUE
+	};
+
+	headFeature = &deviceShaderIntegerDotProduct;
+
+	const VkPhysicalDeviceMutableDescriptorTypeFeaturesEXT mutableDescriptorType = {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MUTABLE_DESCRIPTOR_TYPE_FEATURES_EXT,
+		.pNext = (void*)headFeature,
+		.mutableDescriptorType = VK_TRUE
+	};
+
+	headFeature = &mutableDescriptorType;
 
 	if (desc.aftermath)
 	{
