@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -255,7 +255,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	};
 	canvas->fillPolygon(arrow, 3);
 
-	if (imageLabel && !m_text.empty())
+	if (imageLabel && !m_text.empty() && canvas->getScaledFont().getSize() >= 4_ut)
 	{
 		canvas->setForeground(ss->getColor(this, L"color-label"));
 		canvas->setFont(settings.getFontLabel());

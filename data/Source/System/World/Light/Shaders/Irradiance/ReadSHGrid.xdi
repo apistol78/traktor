@@ -5,8 +5,8 @@
 			<id>{31074BE1-F585-4FA4-A882-3FED43320E7E}</id>
 			<comment/>
 			<position>
-				<first>505</first>
-				<second>387</second>
+				<first>211</first>
+				<second>442</second>
 			</position>
 			<name>Index</name>
 			<optional>false</optional>
@@ -15,8 +15,8 @@
 			<id>{1D7415A5-02E2-4C38-AB35-0E0793072CD7}</id>
 			<comment/>
 			<position>
-				<first>1016</first>
-				<second>243</second>
+				<first>1053</first>
+				<second>280</second>
 			</position>
 			<name>shR0_3</name>
 		</item>
@@ -24,8 +24,8 @@
 			<id>{AD973A3B-61AF-46D6-8967-924A34CAD5CC}</id>
 			<comment/>
 			<position>
-				<first>1016</first>
-				<second>288</second>
+				<first>1053</first>
+				<second>325</second>
 			</position>
 			<name>shR4_7</name>
 		</item>
@@ -33,8 +33,8 @@
 			<id>{D4228ED6-2439-4113-87BD-8D7D33BEDCB3}</id>
 			<comment/>
 			<position>
-				<first>1016</first>
-				<second>333</second>
+				<first>1053</first>
+				<second>370</second>
 			</position>
 			<name>shG0_3</name>
 		</item>
@@ -42,8 +42,8 @@
 			<id>{7649B485-2993-4425-808F-FBAFF5CFE93A}</id>
 			<comment/>
 			<position>
-				<first>1016</first>
-				<second>378</second>
+				<first>1053</first>
+				<second>415</second>
 			</position>
 			<name>shG4_7</name>
 		</item>
@@ -51,8 +51,8 @@
 			<id>{3FF933F2-3A53-4277-8FC8-B9E2A8FCB7DC}</id>
 			<comment/>
 			<position>
-				<first>1016</first>
-				<second>423</second>
+				<first>1053</first>
+				<second>460</second>
 			</position>
 			<name>shB0_3</name>
 		</item>
@@ -60,8 +60,8 @@
 			<id>{AD83DCCD-7923-4A07-8C65-5C8B20F40A88}</id>
 			<comment/>
 			<position>
-				<first>1016</first>
-				<second>468</second>
+				<first>1053</first>
+				<second>505</second>
 			</position>
 			<name>shB4_7</name>
 		</item>
@@ -69,8 +69,8 @@
 			<id>{90ED05F2-12AE-4CF8-8F47-6FD2A92A2A05}</id>
 			<comment/>
 			<position>
-				<first>1016</first>
-				<second>513</second>
+				<first>1053</first>
+				<second>550</second>
 			</position>
 			<name>shRGB_8</name>
 		</item>
@@ -78,8 +78,8 @@
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>377</first>
-				<second>343</second>
+				<first>153</first>
+				<second>398</second>
 			</position>
 			<parameterDeclaration>{EA77CECB-1DC2-E340-B4CE-3E94B17C8061}</parameterDeclaration>
 		</item>
@@ -87,16 +87,16 @@
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>759</first>
-				<second>330</second>
+				<first>457</first>
+				<second>396</second>
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>759</first>
-				<second>330</second>
+				<first>779</first>
+				<second>157</second>
 			</position>
 			<memberName>shR0_3</memberName>
 		</item>
@@ -104,8 +104,8 @@
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>759</first>
-				<second>330</second>
+				<first>779</first>
+				<second>237</second>
 			</position>
 			<memberName>shR4_7</memberName>
 		</item>
@@ -113,8 +113,8 @@
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>759</first>
-				<second>330</second>
+				<first>779</first>
+				<second>317</second>
 			</position>
 			<memberName>shG0_3</memberName>
 		</item>
@@ -122,8 +122,8 @@
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>759</first>
-				<second>330</second>
+				<first>779</first>
+				<second>397</second>
 			</position>
 			<memberName>shG4_7</memberName>
 		</item>
@@ -131,8 +131,8 @@
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>759</first>
-				<second>330</second>
+				<first>779</first>
+				<second>477</second>
 			</position>
 			<memberName>shB0_3</memberName>
 		</item>
@@ -140,8 +140,8 @@
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>759</first>
-				<second>330</second>
+				<first>779</first>
+				<second>557</second>
 			</position>
 			<memberName>shB4_7</memberName>
 		</item>
@@ -149,8 +149,8 @@
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>759</first>
-				<second>330</second>
+				<first>779</first>
+				<second>637</second>
 			</position>
 			<memberName>shRGB_8</memberName>
 		</item>

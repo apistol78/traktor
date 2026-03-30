@@ -85,6 +85,29 @@ void PreviewList::getSelectedItems(RefArray< PreviewItem >& outItems) const
 			outItems.push_back(m_items->get(i));
 }
 
+bool PreviewList::show(PreviewItem* item)
+{
+	if (!item || !m_items)
+		return false;
+
+	int32_t index = 0;
+	for (; index < m_items->count(); ++index)
+	{
+		if (m_items->get(index) == item)
+			break;
+	}
+	if (index >= m_items->count())
+		return false;
+
+	// Layout all cells immediately.
+	updateLayout();
+
+	// Scroll view to this item.
+	const Rect rc = m_items->get(index)->getRect();
+	scrollTo({ 0, rc.getCenter().y });
+	return true;
+}
+
 void PreviewList::beginEdit(PreviewItem* item)
 {
 	const Rect rcItem = item->getTextRect();

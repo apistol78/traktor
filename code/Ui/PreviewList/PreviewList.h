@@ -49,6 +49,8 @@ public:
 
 	void getSelectedItems(RefArray< PreviewItem >& outItems) const;
 
+	bool show(PreviewItem* item);
+
 	void beginEdit(PreviewItem* item);
 
 private:

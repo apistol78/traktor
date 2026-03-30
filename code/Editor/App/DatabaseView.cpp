@@ -1337,6 +1337,7 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 	const bool showFavorites = m_toolFavoritesShow->isToggled();
 
 	Ref< ui::PreviewItems > previewItems = new ui::PreviewItems();
+	Ref< ui::PreviewItem > previewShowItem = nullptr;
 
 	for (auto childInstance : childInstances)
 	{
@@ -1368,8 +1369,11 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 		item->setData(L"GROUP", childInstance->getParent());
 		item->setData(L"INSTANCE", childInstance);
 
-		if (highlightInstance)
-			item->setSelected(highlightInstance == childInstance);
+		if (highlightInstance != nullptr && highlightInstance == childInstance)
+		{
+			item->setSelected(true);
+			previewShowItem = item;
+		}
 
 		previewItems->add(item);
 
@@ -1404,6 +1408,7 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 	}
 
 	m_listInstances->setItems(previewItems);
+	m_listInstances->show(previewShowItem);
 }
 
 void DatabaseView::filterType(db::Instance* instance)

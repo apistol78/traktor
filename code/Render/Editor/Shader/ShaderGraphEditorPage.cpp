@@ -1011,40 +1011,22 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			if (nodes.size() != 1)
 				return false;
 
+			Ref< db::Instance > foundInstance;
 			if (auto selectedExternal = nodes[0]->getData< External >(L"SHADERNODE"))
-			{
-				Ref< db::Instance > fragmentInstance = m_editor->getSourceDatabase()->getInstance(selectedExternal->getFragmentGuid());
-				if (fragmentInstance)
-					m_editor->highlightInstance(fragmentInstance);
-			}
+				foundInstance = m_editor->getSourceDatabase()->getInstance(selectedExternal->getFragmentGuid());
 			else if (auto selectedTexture = nodes[0]->getData< Texture >(L"SHADERNODE"))
+				foundInstance = m_editor->getSourceDatabase()->getInstance(selectedTexture->getExternal());
+			else if (auto selectedParameter = nodes[0]->getData< Parameter >(L"SHADERNODE"))
+				foundInstance = m_editor->getSourceDatabase()->getInstance(selectedParameter->getDeclarationId());
+			else if (auto selectedScript = nodes[0]->getData< Script >(L"SHADERNODE"))
 			{
-				Ref< db::Instance > textureInstance = m_editor->getSourceDatabase()->getInstance(selectedTexture->getExternal());
-				if (textureInstance)
-					m_editor->highlightInstance(textureInstance);
+				const auto& includes = selectedScript->getIncludes();
+				if (!includes.empty())
+					foundInstance = m_editor->getSourceDatabase()->getInstance(includes.front());
 			}
-			else if (auto selectedNode = nodes[0]->getData< Node >(L"SHADERNODE"))
-			{
-				const Guid selectedNodeId = selectedNode->getId();
-				if (selectedNodeId.isNotNull())
-				{
-					RefArray< db::Instance > shaderGraphInstances;
-					db::recursiveFindChildInstances(
-						m_editor->getSourceDatabase()->getRootGroup(),
-						db::FindInstanceByType(type_of< ShaderGraph >()),
-						shaderGraphInstances);
-					for (auto shaderGraphInstance : shaderGraphInstances)
-					{
-						auto shaderGraph = shaderGraphInstance->getObject< ShaderGraph >();
-						if (!shaderGraph)
-							continue;
 
-						for (auto node : shaderGraph->getNodes())
-							if (node->getId() == selectedNodeId)
-								log::info << L"Found node in " << shaderGraphInstance->getGuid().format() << Endl;
-					}
-				}
-			}
+			if (foundInstance)
+				m_editor->highlightInstance(foundInstance);
 		}
 		else
 			return false;

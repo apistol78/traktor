@@ -224,7 +224,11 @@
 		<item>
 			<first>TRAKTOR_INPUT_RUMBLEEFFECT</first>
 			<second>Rumble effect</second>
-		</item>		
+		</item>
+		<item>
+			<first>TRAKTOR_RENDER_PARAMETERDECLARATION</first>
+			<second>Parameter declaration</second>
+		</item>
 <!--
 		<item>
 			<first>TRAKTOR_</first>

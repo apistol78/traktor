@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -65,6 +65,8 @@ public:
 	const PaintSettings& getPaintSettings() const { return m_paintSettings; }
 
 	void draw9gridBitmap(const Point& dstAt, const Size& dstSize, IBitmap* bitmap, BlendMode blendMode);
+
+	const Font& getScaledFont() const { return m_scaledFont; }
 
 private:
 	Widget* m_owner;
