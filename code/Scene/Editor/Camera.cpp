@@ -60,7 +60,15 @@ bool Camera::update(float deltaTime)
 {
 	const Scalar k = clamp(Scalar(deltaTime) * 8.0_simd, 0.0_simd, 1.0_simd);
 
-	m_filteredPosition = lerp(m_filteredPosition, m_position, k);
+	Vector4 deltaOffset = m_position - m_filteredPosition;
+	Scalar deltaLength = deltaOffset.length();
+	if (deltaLength > 0.0001_simd)
+	{
+		deltaLength *= k;
+		deltaLength = min(deltaLength, 4.0_simd);
+		m_filteredPosition += deltaOffset.normalized() * deltaLength;
+	}
+
 	m_filteredOrientation = slerp(m_filteredOrientation, m_orientation, k);
 
 	// Check if we are close enough, we are given some slack due to auto update will redraw a couple of more frames.
