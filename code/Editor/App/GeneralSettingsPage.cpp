@@ -1,49 +1,33 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Editor/App/GeneralSettingsPage.h"
+
+#include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Editor/App/GeneralSettingsPage.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
+#include "Ui/DropDown.h"
 #include "Ui/Edit.h"
+#include "Ui/Itf/IWidgetFactory.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/DropDown.h"
-#include "Ui/Itf/IWidgetFactory.h"
 
 namespace traktor::editor
 {
-	namespace
-	{
-
-const struct
-{
-	const wchar_t* id;
-	const wchar_t* path;
-}
-c_styleSheets[] =
-{
-	{ L"EDITOR_SETTINGS_STYLESHEET_LIGHT", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss" },
-	{ L"EDITOR_SETTINGS_STYLESHEET_DARK", L"$(TRAKTOR_HOME)/resources/runtime/themes/Dark/StyleSheet.xss" },
-	{ L"EDITOR_SETTINGS_STYLESHEET_MONOKAI", L"$(TRAKTOR_HOME)/resources/runtime/themes/Monokai/StyleSheet.xss" },
-	{ L"EDITOR_SETTINGS_STYLESHEET_ORANGE", L"$(TRAKTOR_HOME)/resources/runtime/themes/Orange/StyleSheet.xss" },
-	{ 0 }
-};
-
-	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.GeneralSettingsPage", 0, GeneralSettingsPage, ISettingsPage)
 
@@ -69,11 +53,26 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	m_dropStyleSheet = new ui::DropDown();
 	m_dropStyleSheet->create(containerInner);
 
-	int32_t current = 0;
-	for (int32_t i = 0; c_styleSheets[i].id; ++i)
+	RefArray< File > files = FileSystem::getInstance().find(L"$(TRAKTOR_HOME)/resources/runtime/themes/*.*");
+	for (auto file : files)
 	{
-		m_dropStyleSheet->add(i18n::Text(c_styleSheets[i].id));
-		if (compareIgnoreCase(c_styleSheets[i].path, settings->getProperty< std::wstring >(L"Editor.StyleSheet")) == 0)
+		if (file->isDirectory() &&
+			file->getPath().getFileNameNoExtension() != L"." &&
+			file->getPath().getFileNameNoExtension() != L".." &&
+			file->getPath().getFileNameNoExtension() != L"Shared")
+		{
+			Ref< File > styleSheetFile = FileSystem::getInstance().get(file->getPath().getPathName() + L"/StyleSheet.xss");
+			if (styleSheetFile)
+				m_styleSheets.push_back({ file->getPath().getFileNameNoExtension(),
+					styleSheetFile->getPath().getPathName() });
+		}
+	}
+
+	int32_t current = 0;
+	for (int32_t i = 0; i < m_styleSheets.size(); ++i)
+	{
+		m_dropStyleSheet->add(m_styleSheets[i].name);
+		if (compareIgnoreCase(m_styleSheets[i].path, settings->getProperty< std::wstring >(L"Editor.StyleSheet")) == 0)
 			current = i;
 	}
 	m_dropStyleSheet->select(current);
@@ -143,7 +142,7 @@ void GeneralSettingsPage::destroy()
 bool GeneralSettingsPage::apply(PropertyGroup* settings)
 {
 	settings->setProperty< PropertyString >(L"Editor.Dictionary", m_editDictionary->getText());
-	settings->setProperty< PropertyString >(L"Editor.StyleSheet", c_styleSheets[m_dropStyleSheet->getSelected()].path);
+	settings->setProperty< PropertyString >(L"Editor.StyleSheet", m_styleSheets[m_dropStyleSheet->getSelected()].path);
 	settings->setProperty< PropertyString >(L"Editor.Font", m_dropFonts->getSelectedItem());
 	settings->setProperty< PropertyInteger >(L"Editor.FontSize", parseString< int32_t >(m_editFontSize->getText()));
 	settings->setProperty< PropertyBoolean >(L"Editor.AutoOpenRecentlyUsedWorkspace", m_checkAutoOpen->isChecked());
