@@ -89,7 +89,6 @@ private:
 	float m_maxDistance = 0.0f;
 	float m_maxScattering = 0.0f;
 	int32_t m_sliceCount = 0;
-	int32_t m_sliceCurrent = 0;
 	Color4f m_mediumColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	float m_mediumDensity = 0.0f;
 };

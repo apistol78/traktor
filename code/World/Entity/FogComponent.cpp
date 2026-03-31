@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,12 +23,6 @@
 
 namespace traktor::world
 {
-namespace
-{
-
-const uint32_t c_interleave = 4;
-
-}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.FogComponent", FogComponent, IEntityComponent)
 
@@ -43,7 +37,7 @@ FogComponent::FogComponent(const FogComponentData* data, const resource::Proxy< 
 	m_volumetricFogEnable = data->m_volumetricFogEnable;
 	m_maxDistance = data->m_maxDistance;
 	m_maxScattering = data->m_maxScattering;
-	m_sliceCount = alignUp(data->m_sliceCount, c_interleave);
+	m_sliceCount = data->m_sliceCount;
 	m_mediumColor = data->m_mediumColor;
 	m_mediumDensity = data->m_mediumDensity;
 }
@@ -123,7 +117,7 @@ void FogComponent::build(const WorldBuildContext& context, const WorldRenderView
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->workSize[0] = 128;
 	renderBlock->workSize[1] = 128;
-	renderBlock->workSize[2] = m_sliceCount / c_interleave;
+	renderBlock->workSize[2] = m_sliceCount;
 
 	renderBlock->programParams->beginParameters(renderContext);
 
@@ -135,13 +129,11 @@ void FogComponent::build(const WorldBuildContext& context, const WorldRenderView
 	renderBlock->programParams->setVectorParameter(ShaderParameter::FogVolumeMediumColor, m_mediumColor);
 	renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeMediumDensity, m_mediumDensity / m_sliceCount);
 	renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)m_sliceCount);
-	renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeSliceCurrent, (float)m_sliceCurrent);
+
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->compute(renderBlock);
 	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, m_fogVolumeTexture, 0);
-
-	m_sliceCurrent = (m_sliceCurrent + 1) % c_interleave;
 }
 
 }

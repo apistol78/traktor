@@ -476,6 +476,7 @@ void WorldRendererDeferred::setupVisualPass(
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
 			sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+			sharedParams->setFloatParameter(ShaderParameter::Random, s_random.nextFloat());
 			sharedParams->setVectorParameter(ShaderParameter::ViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
 			sharedParams->setVectorParameter(ShaderParameter::SlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
 			sharedParams->setMatrixParameter(ShaderParameter::Projection, projection);
@@ -587,9 +588,12 @@ void WorldRendererDeferred::setupVisualPass(
 				sharedParams,
 				worldRenderView,
 				IWorldRenderPass::Last,
-				{ { ShaderPermutation::IrradianceEnable, irradianceEnable },
+				{
+					{ ShaderPermutation::IrradianceEnable, irradianceEnable },
 					{ ShaderPermutation::IrradianceSingle, irradianceSingle },
-					{ ShaderPermutation::VolumetricFogEnable, (bool)(fog != nullptr && fog->m_volumetricFogEnable) } });
+					{ ShaderPermutation::VolumetricFogEnable, (bool)(fog != nullptr && fog->m_volumetricFogEnable) },
+					{ ShaderPermutation::RayTracingEnable, (bool)(m_gatheredView.rtWorldTopLevel != nullptr) },
+				});
 
 			for (const auto& r : m_gatheredView.renderables)
 				r.renderer->build(wc, worldRenderView, deferredColorPass, r.renderable);
