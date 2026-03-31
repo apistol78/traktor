@@ -71,7 +71,7 @@ void RenderPluginXeSS::render(IRenderView* renderView, ITexture* colorTexture, I
 			/* Quality setting */
 			XESS_QUALITY_SETTING_AA,
 			/* Initialization flags. */
-			XESS_INIT_FLAG_NONE, // XESS_INIT_FLAG_HIGH_RES_MV,
+			XESS_INIT_FLAG_ENABLE_AUTOEXPOSURE, // XESS_INIT_FLAG_HIGH_RES_MV,
 			/* Specfies the node mask for internally created resources on
 			 * multi-adapter systems. */
 			0,

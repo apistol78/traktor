@@ -116,7 +116,7 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 			return false;
 		}
 	}
-	m_needCameraJitter = (bool)(desc.quality.antiAlias >= Quality::Ultra);
+	m_needCameraJitter = (bool)(desc.quality.antiAlias >= Quality::High);
 	m_visualDenominator = (bool)(desc.quality.antiAlias >= Quality::Ultra) ? 1 : 1;
 
 	// Create "visual" post processing filter.
