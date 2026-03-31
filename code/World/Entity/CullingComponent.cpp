@@ -85,7 +85,7 @@ void CullingComponent::build(
 	if (m_instanceBufferDirty)
 	{
 		auto ptr = (InstanceRenderData*)m_instanceBuffer->lock();
-		for (const auto& instance : m_instances)
+		for (auto& instance : m_instances)
 		{
 			InstanceRenderData& ird = *ptr++;
 			instance->transform.rotation().e.storeAligned(ird.rotation);
@@ -94,6 +94,7 @@ void CullingComponent::build(
 			instance->lastTransform.translation().storeAligned(ird.lastTranslation);
 			instance->boundingBox.mn.storeAligned(ird.boundingBoxMin);
 			instance->boundingBox.mx.storeAligned(ird.boundingBoxMax);
+			instance->lastTransform = instance->transform;
 		}
 		m_instanceBuffer->unlock();
 		m_instanceBufferDirty = false;
