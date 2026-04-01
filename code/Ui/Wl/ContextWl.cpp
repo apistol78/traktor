@@ -180,6 +180,40 @@ void ContextWl::bindRenderSurface(WidgetData* widget)
 	b.fns = m_bindings[widget->surface].fns;
 }
 
+void ContextWl::pushPopup(WidgetData* widget)
+{
+	m_popupStack.push_back(widget);
+}
+
+void ContextWl::destroyPopupsAbove(WidgetData* widget)
+{
+	// Find our position in the stack.
+	auto it = std::find(m_popupStack.begin(), m_popupStack.end(), widget);
+	if (it == m_popupStack.end())
+		return;
+
+	// Destroy all popups above us in reverse order (LIFO),
+	// as required by xdg-shell.
+	for (auto top = m_popupStack.end(); top != it + 1; )
+	{
+		--top;
+		WidgetData* wd = *top;
+		if (wd->xdgPopup)
+		{
+			xdg_popup_destroy(wd->xdgPopup);
+			wd->xdgPopup = nullptr;
+		}
+		if (wd->xdgSurface && !wd->frame)
+		{
+			xdg_surface_destroy(wd->xdgSurface);
+			wd->xdgSurface = nullptr;
+		}
+	}
+
+	// Remove everything from our position onward.
+	m_popupStack.erase(it, m_popupStack.end());
+}
+
 void ContextWl::unbind(WidgetData* widget)
 {
 	auto it = std::find(m_modal.begin(), m_modal.end(), widget);
@@ -644,6 +678,11 @@ void ContextWl::pointerButton(void* data, struct wl_pointer* pointer, uint32_t s
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 	ctx->m_pointerSerial = serial;
+
+	// Save button-press serials separately — Mutter only accepts press
+	// serials for xdg_popup_grab (not release or enter serials).
+	if (state == WL_POINTER_BUTTON_STATE_PRESSED)
+		ctx->m_grabSerial = serial;
 
 	// Maintain running button mask (MbtLeft/MbtMiddle/MbtRight).
 	int32_t mbt = 0;

@@ -47,7 +47,7 @@ Ref< Widget > Menu::show(Widget* parent, const Point& at) const
 		return nullptr;
 
 	Ref< ToolForm > form = new ToolForm();
-	if (!form->create(parent, L"", 0_ut, 0_ut, WsTop, new FloodLayout()))
+	if (!form->create(parent, L"", 64_ut, 64_ut, WsTop, new FloodLayout()))
 		return nullptr;
 
 	Ref< MenuShell > shell = new MenuShell();

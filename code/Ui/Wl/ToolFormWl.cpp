@@ -276,6 +276,12 @@ void ToolFormWl::setVisible(bool visible)
 			if (m_data.mapped)
 				draw(nullptr);
 
+			// Flush immediately so the compositor receives the buffer
+			// in the same frame as the popup creation.  Without this,
+			// the buffer from draw() sits in the outgoing queue and
+			// compositors such as Mutter never display the popup.
+			wl_display_flush(m_context->getDisplay());
+
 			ShowEvent showEvent(m_owner, true);
 			m_owner->raiseEvent(&showEvent);
 		}
@@ -344,18 +350,27 @@ void ToolFormWl::createPopup()
 
 	// Convert device-pixel rect to Wayland logical coordinates for the positioner.
 	const int32_t scale = m_context->getOutputScale();
+	const int32_t lx = m_rect.left / scale;
+	const int32_t ly = m_rect.top / scale;
+	const int32_t lw = m_rect.getWidth() / scale;
+	const int32_t lh = m_rect.getHeight() / scale;
+
 	struct xdg_positioner* positioner = xdg_wm_base_create_positioner(m_context->getXdgWmBase());
-	xdg_positioner_set_size(positioner, m_rect.getWidth() / scale, m_rect.getHeight() / scale);
-	xdg_positioner_set_anchor_rect(positioner, m_rect.left / scale, m_rect.top / scale, 1, 1);
+	xdg_positioner_set_size(positioner, lw, lh);
+	xdg_positioner_set_anchor_rect(positioner, lx, ly, 1, 1);
 	xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_TOP_LEFT);
 	xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
 
 	m_data.xdgPopup = xdg_surface_get_popup(m_data.xdgSurface, parentXdg->xdgSurface, positioner);
 	xdg_popup_add_listener(m_data.xdgPopup, &s_toolFormXdgPopupListener, this);
 
-	xdg_popup_grab(m_data.xdgPopup, m_context->getSeat(), m_context->getPointerSerial());
+	// Use the button-press serial; Mutter rejects enter/release serials
+	// for popup grabs and immediately sends popup_done.
+	xdg_popup_grab(m_data.xdgPopup, m_context->getSeat(), m_context->getGrabSerial());
 
 	xdg_positioner_destroy(positioner);
+
+	m_context->pushPopup(&m_data);
 
 	wl_surface_commit(m_data.surface);
 	wl_display_roundtrip(m_context->getDisplay());
@@ -365,15 +380,9 @@ void ToolFormWl::destroyPopup()
 {
 	if (m_data.xdgPopup)
 	{
-		xdg_popup_destroy(m_data.xdgPopup);
-		m_data.xdgPopup = nullptr;
-	}
-
-	// Only destroy xdg_surface if it's not owned by libdecor.
-	if (m_data.xdgSurface && !m_data.frame)
-	{
-		xdg_surface_destroy(m_data.xdgSurface);
-		m_data.xdgSurface = nullptr;
+		// Enforce xdg-shell LIFO order: destroy all child popups
+		// above us before destroying our own popup.
+		m_context->destroyPopupsAbove(&m_data);
 	}
 }
 

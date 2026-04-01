@@ -118,10 +118,6 @@ void WidgetFactoryWl::getSystemFonts(std::list< std::wstring >& outFonts)
 
 void WidgetFactoryWl::getDesktopRects(std::list< Rect >& outRects) const
 {
-	// Return device-pixel dimensions.  In a complete implementation we'd
-	// track actual output geometry from wl_output events.
-	const int32_t scale = m_context->getOutputScale();
-	outRects.push_back(Rect(0, 0, 1920 * scale, 1080 * scale));
 }
 
 }

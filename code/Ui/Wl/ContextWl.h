@@ -90,6 +90,13 @@ public:
 	//! events on the render surface are routed to the owning widget.
 	void bindRenderSurface(WidgetData* widget);
 
+	//! Push a popup onto the active popup stack (called from createPopup).
+	void pushPopup(WidgetData* widget);
+
+	//! Destroy all popups above (and including) the given widget,
+	//! enforcing xdg-shell LIFO destruction order.
+	void destroyPopupsAbove(WidgetData* widget);
+
 	//! Push modal widget.
 	void pushModal(WidgetData* widget);
 
@@ -150,6 +157,9 @@ public:
 
 	uint32_t getPointerSerial() const { return m_pointerSerial; }
 
+	//! Serial from the most recent button press (for xdg_popup_grab).
+	uint32_t getGrabSerial() const { return m_grabSerial; }
+
 	uint32_t getKeyboardModifiers() const { return m_keyboardModifiers; }
 
 	int32_t getOutputScale() const { return m_outputScale; }
@@ -204,6 +214,7 @@ private:
 	int32_t m_dpi = 96;
 	int32_t m_outputScale = 1;
 	uint32_t m_pointerSerial = 0;
+	uint32_t m_grabSerial = 0;
 	uint32_t m_keyboardModifiers = 0;
 	double m_pointerX = 0.0;
 	double m_pointerY = 0.0;
@@ -215,6 +226,7 @@ private:
 	WidgetData* m_pointerFocus = nullptr;
 	WidgetData* m_keyboardFocus = nullptr;
 	WidgetData* m_internalFocus = nullptr;
+	AlignedVector< WidgetData* > m_popupStack;	//!< Active xdg_popups in creation order.
 	AlignedVector< WidgetData* > m_pendingExposes;
 	AlignedVector< WlEvent > m_eventQueue;
 

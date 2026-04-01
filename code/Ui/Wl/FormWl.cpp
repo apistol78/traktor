@@ -103,8 +103,7 @@ void libdecorConfigure(struct libdecor_frame* frame, struct libdecor_configurati
 		const Rect next(prev.left, prev.top, prev.left + width * scale, prev.top + height * scale);
 
 		form->setRect(next);
-		form->getContextWl()->processPendingExposes();
-		form->update(nullptr, true);
+		form->update(nullptr, false);
 	}
 }
 
