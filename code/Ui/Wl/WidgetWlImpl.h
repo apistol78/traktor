@@ -299,6 +299,8 @@ public:
 		const Size fromSize = m_rect.getSize();
 		const bool wasMapped = m_data.mapped;
 		m_rect = rect;
+		m_data.posX = rect.left;
+		m_data.posY = rect.top;
 
 		if (!m_data.visible)
 			return;
@@ -422,16 +424,27 @@ public:
 
 	virtual Point screenToClient(const Point& pt) const override
 	{
-		if (m_data.topLevel)
-			return pt;
-		return Point(pt.x - m_rect.left, pt.y - m_rect.top);
+		// Walk up the parent chain to accumulate offsets from this
+		// widget all the way to the toplevel, mirroring what
+		// XTranslateCoordinates does on X11.
+		int32_t ox = 0, oy = 0;
+		for (const WidgetData* w = &m_data; w != nullptr && !w->topLevel; w = w->parent)
+		{
+			ox += w->posX;
+			oy += w->posY;
+		}
+		return Point(pt.x - ox, pt.y - oy);
 	}
 
 	virtual Point clientToScreen(const Point& pt) const override
 	{
-		if (m_data.topLevel)
-			return pt;
-		return Point(pt.x + m_rect.left, pt.y + m_rect.top);
+		int32_t ox = 0, oy = 0;
+		for (const WidgetData* w = &m_data; w != nullptr && !w->topLevel; w = w->parent)
+		{
+			ox += w->posX;
+			oy += w->posY;
+		}
+		return Point(pt.x + ox, pt.y + oy);
 	}
 
 	virtual bool hitTest(const Point& pt) const override

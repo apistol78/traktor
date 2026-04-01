@@ -37,6 +37,8 @@ struct WidgetData
 	bool enable = true;
 	bool grabbed = false;
 	bool configured = false;
+	int32_t posX = 0;			//!< Widget position (device coords), kept in sync with m_rect for parent chain walks.
+	int32_t posY = 0;
 	int32_t pendingWidth = 0;
 	int32_t pendingHeight = 0;
 };
