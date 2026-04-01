@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -227,13 +227,6 @@ private:
 }
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 8, Script, Node)
-
-Script::Script()
-{
-	m_localSize[0] = 1;
-	m_localSize[1] = 1;
-	m_localSize[2] = 1;
-}
 
 void Script::setName(const std::wstring& name)
 {
