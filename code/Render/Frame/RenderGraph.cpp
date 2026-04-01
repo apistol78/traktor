@@ -523,15 +523,23 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 								}
 							}
 
-							auto tb = renderContext->allocNamed< BeginPassRenderBlock >(pass->getName());
-							tb->renderTargetSet = target.targetSet->getWriteTargetSet();
-							tb->clear = output.clear;
-							tb->load = output.load;
-							tb->store = output.store;
-							renderContext->draw(tb);
+							if (output.pass)
+							{
+								auto tb = renderContext->allocNamed< BeginPassRenderBlock >(pass->getName());
+								tb->renderTargetSet = target.targetSet->getWriteTargetSet();
+								tb->clear = output.clear;
+								tb->load = output.load;
+								tb->store = output.store;
+								renderContext->draw(tb);
 
-							currentTarget = &target;
-							currentOutput = output;
+								currentTarget = &target;
+								currentOutput = output;
+							}
+							else
+							{
+								currentTarget = nullptr;
+								currentOutput = RenderPass::Output();
+							}
 						}
 						else
 						{

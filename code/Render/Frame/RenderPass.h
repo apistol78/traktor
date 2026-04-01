@@ -52,6 +52,7 @@ public:
 		Clear clear;			  //!< Target clear value and mask (only applicable to render target resources).
 		uint32_t load = 0;
 		uint32_t store = 0;
+		bool pass = true; //!< If RG should begin/end renderer pass when to this output.
 
 		// !note! We're not comparing clear value for now since it depends on the load and store.
 		bool operator==(const Output& rh) const
@@ -119,6 +120,8 @@ public:
 	//! \}
 
 	//! \{
+
+	void setOutput(RGTargetSet targetSet);
 
 	void setOutput(RGTargetSet targetSet, uint32_t load, uint32_t store);
 

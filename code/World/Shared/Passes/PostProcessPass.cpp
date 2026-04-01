@@ -259,8 +259,12 @@ void PostProcessPass::setup(
 
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Process");
 
-		if (next)
+		if (m_antiAliasPlugin != nullptr && process == m_antiAlias)
 		{
+			const render::RGTargetSet colorTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputColor);
+			const render::RGTargetSet depthTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputDepth);
+			const render::RGTargetSet velocityTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputVelocity);
+
 			render::RenderGraphTargetSetDesc rgtd;
 			rgtd.count = 1;
 			rgtd.createDepthStencil = false;
@@ -269,41 +273,13 @@ void PostProcessPass::setup(
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, render::RGTargetSet::Invalid, sizeReferenceTargetSetId);
 
-			rp->setOutput(intermediateTargetSetId, render::TfColor, render::TfColor);
-		}
-		else
-		{
-			// Ensure output depth is in known value if we are using upscaling.
-			if (m_visualDenominator > 1)
-			{
-				render::Clear cl;
-				cl.mask = render::CfColor | render::CfDepth;
-				cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-				cl.depth = 1.0f;
-				rp->setOutput(outputTargetSetId, cl, render::TfNone, render::TfColor | render::TfDepth);
-			}
-			else
-			{
-				render::Clear cl;
-				cl.mask = render::CfColor;
-				cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-				rp->setOutput(outputTargetSetId, cl, render::TfDepth, render::TfColor | render::TfDepth);
-			}
-		}
-
-		if (m_antiAliasPlugin != nullptr && process == m_antiAlias)
-		{
-
-			const render::RGTargetSet colorTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputColor);
-			const render::RGTargetSet depthTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputDepth);
-			const render::RGTargetSet velocityTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputVelocity);
+			rp->setOutput(intermediateTargetSetId);
 
 			rp->addInput(colorTargetSetId);
 			rp->addInput(depthTargetSetId);
 			rp->addInput(velocityTargetSetId);
 
 			rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-
 				render::ITexture* colorTexture = renderGraph.getTargetSet(colorTargetSetId)->getColorTexture(0);
 				render::ITexture* depthTexture = renderGraph.getTargetSet(depthTargetSetId)->getColorTexture(0);
 				render::ITexture* velocityTexture = renderGraph.getTargetSet(velocityTargetSetId)->getColorTexture(0);
@@ -318,6 +294,38 @@ void PostProcessPass::setup(
 		}
 		else
 		{
+			if (next)
+			{
+				render::RenderGraphTargetSetDesc rgtd;
+				rgtd.count = 1;
+				rgtd.createDepthStencil = false;
+				rgtd.referenceWidthDenom = 1;
+				rgtd.referenceHeightDenom = 1;
+				rgtd.targets[0].colorFormat = render::TfR11G11B10F;
+				intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, render::RGTargetSet::Invalid, sizeReferenceTargetSetId);
+
+				rp->setOutput(intermediateTargetSetId, render::TfColor, render::TfColor);
+			}
+			else
+			{
+				// Ensure output depth is in known value if we are using upscaling.
+				if (m_visualDenominator > 1)
+				{
+					render::Clear cl;
+					cl.mask = render::CfColor | render::CfDepth;
+					cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+					cl.depth = 1.0f;
+					rp->setOutput(outputTargetSetId, cl, render::TfNone, render::TfColor | render::TfDepth);
+				}
+				else
+				{
+					render::Clear cl;
+					cl.mask = render::CfColor;
+					cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+					rp->setOutput(outputTargetSetId, cl, render::TfDepth, render::TfColor | render::TfDepth);
+				}
+			}
+
 			process->addPasses(
 				m_screenRenderer,
 				renderGraph,
