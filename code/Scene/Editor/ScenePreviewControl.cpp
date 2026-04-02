@@ -223,7 +223,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		m_context->setTime(0.0f);
 		m_context->setPlaying(false);
 		m_context->setPhysicsEnable(false);
-		m_context->buildEntities();
+		m_context->buildEntities(false);
 	}
 	else if (command == L"Scene.Editor.Play")
 	{
@@ -234,7 +234,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	{
 		m_context->setPlaying(false);
 		m_context->setPhysicsEnable(false);
-		m_context->buildEntities();
+		m_context->buildEntities(false);
 	}
 	else if (command == L"Scene.Editor.TogglePlay")
 	{

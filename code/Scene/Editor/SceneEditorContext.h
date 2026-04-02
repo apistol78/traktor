@@ -225,7 +225,7 @@ public:
 
 	const IComponentEditorFactory* findComponentEditorFactory(const TypeInfo& componentDataType) const;
 
-	void buildEntities();
+	void buildEntities(bool rebuildWorld);
 
 	void buildController();
 

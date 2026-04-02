@@ -1108,7 +1108,7 @@ void SceneEditorPage::createControllerEditor()
 
 void SceneEditorPage::updateScene()
 {
-	m_context->buildEntities();
+	m_context->buildEntities(false);
 	m_context->enqueueRedraw(nullptr);
 }
 
@@ -1669,14 +1669,13 @@ void SceneEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 	const ui::PropertyContentChangeEvent* propChange = dynamic_type_cast< const ui::PropertyContentChangeEvent* >(event);
 	const bool trivialChange = (selectedEntities.size() == 1 && propChange != nullptr && is_a< ui::NumericPropertyItem >(propChange->getItem()));
+	const bool rebuildWorld = selectedEntities.empty();
 
-	if (trivialChange)
+	m_context->buildEntities(rebuildWorld);
+	m_context->enqueueRedraw(nullptr);
+
+	if (!trivialChange)
 	{
-		updateScene();
-	}
-	else
-	{
-		updateScene();
 		createInstanceGrid();
 
 		// Notify controller editor as well.

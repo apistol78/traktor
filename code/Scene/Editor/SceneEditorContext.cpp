@@ -434,7 +434,7 @@ const IComponentEditorFactory* SceneEditorContext::findComponentEditorFactory(co
 	return foundComponentEditorFactory;
 }
 
-void SceneEditorContext::buildEntities()
+void SceneEditorContext::buildEntities(bool rebuildWorld)
 {
 	// Reset physics before creating entities in case
 	// a new body is created with an initial velocity etc.
@@ -473,7 +473,7 @@ void SceneEditorContext::buildEntities()
 		}
 
 		Ref< world::World > world = m_scene ? m_scene->getWorld() : nullptr;
-		if (world)
+		if (!rebuildWorld && world)
 		{
 			// Remove all entities from world, will get re-added.
 			RefArray< world::Entity > entities = world->getEntities();
@@ -482,7 +482,7 @@ void SceneEditorContext::buildEntities()
 		}
 		else
 		{
-			// No world created yet; create new world.
+			// No world created yet (or need to be rebuilt); create new world.
 			world = new world::World(getResourceManager(), getRenderSystem());
 
 			// Create new set of world components.
@@ -816,7 +816,7 @@ void SceneEditorContext::cloneSelected()
 		clonedEntityAdapter->m_selected = true;
 	}
 
-	buildEntities();
+	buildEntities(false);
 	raiseSelect(true);
 }
 
