@@ -216,6 +216,10 @@ private:
 	uint32_t m_pointerSerial = 0;
 	uint32_t m_grabSerial = 0;
 	uint32_t m_keyboardModifiers = 0;
+	int32_t m_repeatRate = 0;		//!< Key repeats per second (0 = disabled).
+	int32_t m_repeatDelay = 0;		//!< Delay in ms before first repeat.
+	int32_t m_repeatTimer = -1;		//!< Timers handle for active repeat, or -1.
+	uint32_t m_repeatKey = 0;		//!< Key code currently repeating.
 	double m_pointerX = 0.0;
 	double m_pointerY = 0.0;
 	int32_t m_buttonMask = 0;		//!< Currently pressed buttons (MbtLeft | MbtMiddle | MbtRight).

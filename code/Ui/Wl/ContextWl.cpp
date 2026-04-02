@@ -22,6 +22,7 @@
 #include "Ui/Events/MouseButtonUpEvent.h"
 #include "Ui/Events/MouseMoveEvent.h"
 #include "Ui/Wl/ContextWl.h"
+#include "Ui/Wl/Timers.h"
 #include "Ui/Wl/UtilitiesWl.h"
 #include "xdg-shell-client-protocol.h"
 #include "xdg-decoration-client-protocol.h"
@@ -822,6 +823,13 @@ void ContextWl::keyboardLeave(void* data, struct wl_keyboard* keyboard, uint32_t
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 
+	// Stop key repeat on focus loss.
+	if (ctx->m_repeatTimer >= 0)
+	{
+		Timers::getInstance().unbind(ctx->m_repeatTimer);
+		ctx->m_repeatTimer = -1;
+	}
+
 	// Dispatch FocusOut to the internally focused widget.
 	if (ctx->m_internalFocus)
 	{
@@ -841,6 +849,13 @@ void ContextWl::keyboardKey(void* data, struct wl_keyboard* keyboard, uint32_t s
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 
+	// Stop any active key repeat.
+	if (ctx->m_repeatTimer >= 0)
+	{
+		Timers::getInstance().unbind(ctx->m_repeatTimer);
+		ctx->m_repeatTimer = -1;
+	}
+
 	// Route keyboard events to the internally focused widget,
 	// falling back to the compositor-level keyboard focus toplevel.
 	WidgetData* target = ctx->m_internalFocus ? ctx->m_internalFocus : ctx->m_keyboardFocus;
@@ -855,6 +870,56 @@ void ContextWl::keyboardKey(void* data, struct wl_keyboard* keyboard, uint32_t s
 	e.serial = serial;
 	e.stamp = ms_timer.getElapsedTime();
 	ctx->enqueueEvent(e);
+
+	// Start key repeat for press events on keys that support it.
+	if (state == WL_KEYBOARD_KEY_STATE_PRESSED && ctx->m_repeatRate > 0 && ctx->m_xkbKeymap)
+	{
+		if (xkb_keymap_key_repeats(ctx->m_xkbKeymap, key + 8))
+		{
+			ctx->m_repeatKey = key;
+			const int32_t intervalMs = 1000 / ctx->m_repeatRate;
+
+			// First repeat fires after the delay; subsequent repeats
+			// are re-armed inside the callback at the repeat interval.
+			ctx->m_repeatTimer = Timers::getInstance().bind(ctx->m_repeatDelay, [ctx, key, serial, intervalMs]() {
+				// Stop the delay timer and switch to interval timer.
+				if (ctx->m_repeatTimer >= 0)
+				{
+					Timers::getInstance().unbind(ctx->m_repeatTimer);
+					ctx->m_repeatTimer = -1;
+				}
+
+				// Emit the first repeat.
+				WidgetData* t = ctx->m_internalFocus ? ctx->m_internalFocus : ctx->m_keyboardFocus;
+				if (t)
+				{
+					WlEvent re;
+					re.type = WlEvtKeyboardKey;
+					re.surface = t->surface;
+					re.key = key;
+					re.keyState = WL_KEYBOARD_KEY_STATE_PRESSED;
+					re.serial = serial;
+					re.stamp = ms_timer.getElapsedTime();
+					ctx->enqueueEvent(re);
+				}
+
+				// Arm the steady-state interval timer.
+				ctx->m_repeatTimer = Timers::getInstance().bind(intervalMs, [ctx, key, serial]() {
+					WidgetData* t = ctx->m_internalFocus ? ctx->m_internalFocus : ctx->m_keyboardFocus;
+					if (!t)
+						return;
+					WlEvent re;
+					re.type = WlEvtKeyboardKey;
+					re.surface = t->surface;
+					re.key = key;
+					re.keyState = WL_KEYBOARD_KEY_STATE_PRESSED;
+					re.serial = serial;
+					re.stamp = ms_timer.getElapsedTime();
+					ctx->enqueueEvent(re);
+				});
+			});
+		}
+	}
 }
 
 void ContextWl::keyboardModifiers(void* data, struct wl_keyboard* keyboard, uint32_t serial, uint32_t modsDepressed, uint32_t modsLatched, uint32_t modsLocked, uint32_t group)
@@ -867,7 +932,12 @@ void ContextWl::keyboardModifiers(void* data, struct wl_keyboard* keyboard, uint
 	ctx->m_keyboardModifiers = modsDepressed;
 }
 
-void ContextWl::keyboardRepeatInfo(void* data, struct wl_keyboard* keyboard, int32_t rate, int32_t delay) {}
+void ContextWl::keyboardRepeatInfo(void* data, struct wl_keyboard* keyboard, int32_t rate, int32_t delay)
+{
+	ContextWl* ctx = static_cast< ContextWl* >(data);
+	ctx->m_repeatRate = rate;
+	ctx->m_repeatDelay = delay;
+}
 
 // XDG WM base
 void ContextWl::xdgWmBasePing(void* data, struct xdg_wm_base* wmBase, uint32_t serial)
