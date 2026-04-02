@@ -94,6 +94,7 @@ void FogComponent::build(const WorldBuildContext& context, const WorldRenderView
 		worldRenderPass.getTechnique() != ShaderTechnique::ForwardColor)
 		return;
 
+	// Inject light into volumetric fog.
 	auto permutation = worldRenderPass.getPermutation(m_shader);
 	permutation.technique = ShaderTechnique::Default;
 	const auto injectLightsProgram = m_shader->getProgram(permutation);
@@ -134,6 +135,32 @@ void FogComponent::build(const WorldBuildContext& context, const WorldRenderView
 
 	renderContext->compute(renderBlock);
 	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, m_fogVolumeTexture, 0);
+}
+
+void FogComponent::setupSharedParameters(const FogComponent* fog, float viewNearZ, float viewFarZ, render::ProgramParameters* parameters)
+{
+	if (fog)
+	{
+		const Vector4 fogRange(
+			viewNearZ,
+			std::min< float >(viewFarZ, fog->getMaxDistance()),
+			fog->getMaxScattering(),
+			0.0f);
+
+		// Distance fog.
+		parameters->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, 0.0f));
+		parameters->setVectorParameter(ShaderParameter::FogColor, fog->m_fogColor);
+
+		// Volumetric fog.
+		parameters->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)fog->getSliceCount());
+		parameters->setVectorParameter(ShaderParameter::FogVolumeRange, fogRange);
+		parameters->setTextureParameter(ShaderParameter::FogVolumeTexture, fog->getFogVolumeTexture());
+	}
+	else
+	{
+		parameters->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4::zero());
+		parameters->setVectorParameter(ShaderParameter::FogColor, Vector4::zero());
+	}
 }
 
 }

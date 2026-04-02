@@ -309,41 +309,8 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->setBufferViewParameter(ShaderParameter::LightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
 			sharedParams->setBufferViewParameter(ShaderParameter::LightSBuffer, lightSBuffer->getBufferView());
 
-			if (probe)
-			{
-				sharedParams->setFloatParameter(ShaderParameter::ProbeIntensity, probe->getIntensity());
-				sharedParams->setFloatParameter(ShaderParameter::ProbeTextureMips, (float)probe->getTexture()->getSize().mips);
-				sharedParams->setTextureParameter(ShaderParameter::ProbeTexture, probe->getTexture());
-			}
-			else
-			{
-				sharedParams->setFloatParameter(ShaderParameter::ProbeIntensity, 0.0f);
-				sharedParams->setFloatParameter(ShaderParameter::ProbeTextureMips, 0.0f);
-				sharedParams->setTextureParameter(ShaderParameter::ProbeTexture, m_blackCubeTexture);
-			}
-
-			if (fog)
-			{
-				const Vector4 fogRange(
-					viewNearZ,
-					std::min< float >(viewFarZ, fog->getMaxDistance()),
-					fog->getMaxScattering(),
-					0.0f);
-
-				// Distance fog.
-				sharedParams->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, 0.0f));
-				sharedParams->setVectorParameter(ShaderParameter::FogColor, fog->m_fogColor);
-
-				// Volumetric fog.
-				sharedParams->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)fog->getSliceCount());
-				sharedParams->setVectorParameter(ShaderParameter::FogVolumeRange, fogRange);
-				sharedParams->setTextureParameter(ShaderParameter::FogVolumeTexture, fog->getFogVolumeTexture());
-			}
-			else
-			{
-				sharedParams->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4::zero());
-				sharedParams->setVectorParameter(ShaderParameter::FogColor, Vector4::zero());
-			}
+			ProbeComponent::setupSharedParameters(probe, m_blackCubeTexture, sharedParams);
+			FogComponent::setupSharedParameters(fog, viewNearZ, viewFarZ, sharedParams);
 
 			if (shadowAtlasTargetSet != nullptr)
 			{
@@ -497,41 +464,8 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->setBufferViewParameter(ShaderParameter::LightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
 			sharedParams->setBufferViewParameter(ShaderParameter::LightSBuffer, lightSBuffer->getBufferView());
 
-			if (probe)
-			{
-				sharedParams->setFloatParameter(ShaderParameter::ProbeIntensity, probe->getIntensity());
-				sharedParams->setFloatParameter(ShaderParameter::ProbeTextureMips, (float)probe->getTexture()->getSize().mips);
-				sharedParams->setTextureParameter(ShaderParameter::ProbeTexture, probe->getTexture());
-			}
-			else
-			{
-				sharedParams->setFloatParameter(ShaderParameter::ProbeIntensity, 0.0f);
-				sharedParams->setFloatParameter(ShaderParameter::ProbeTextureMips, 0.0f);
-				sharedParams->setTextureParameter(ShaderParameter::ProbeTexture, m_blackCubeTexture);
-			}
-
-			if (fog)
-			{
-				const Vector4 fogRange(
-					viewNearZ,
-					std::min< float >(viewFarZ, fog->getMaxDistance()),
-					fog->getMaxScattering(),
-					0.0f);
-
-				// Distance fog.
-				sharedParams->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, 0.0f));
-				sharedParams->setVectorParameter(ShaderParameter::FogColor, fog->m_fogColor);
-
-				// Volumetric fog.
-				sharedParams->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)fog->getSliceCount());
-				sharedParams->setVectorParameter(ShaderParameter::FogVolumeRange, fogRange);
-				sharedParams->setTextureParameter(ShaderParameter::FogVolumeTexture, fog->getFogVolumeTexture());
-			}
-			else
-			{
-				sharedParams->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4::zero());
-				sharedParams->setVectorParameter(ShaderParameter::FogColor, Vector4::zero());
-			}
+			ProbeComponent::setupSharedParameters(probe, m_blackCubeTexture, sharedParams);
+			FogComponent::setupSharedParameters(fog, viewNearZ, viewFarZ, sharedParams);
 
 			if (shadowAtlasTargetSet != nullptr)
 			{

@@ -1,13 +1,17 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "World/Entity.h"
 #include "World/Entity/ProbeComponent.h"
+
+#include "Render/ITexture.h"
+#include "Render/Context/ProgramParameters.h"
+#include "World/Entity.h"
+#include "World/WorldHandles.h"
 
 namespace traktor::world
 {
@@ -65,6 +69,22 @@ Aabb3 ProbeComponent::getBoundingBox() const
 Transform ProbeComponent::getTransform() const
 {
 	return m_owner->getTransform();
+}
+
+void ProbeComponent::setupSharedParameters(const ProbeComponent* probe, render::ITexture* blackCubeTexture, render::ProgramParameters* parameters)
+{
+	if (probe)
+	{
+		parameters->setFloatParameter(ShaderParameter::ProbeIntensity, probe->getIntensity());
+		parameters->setFloatParameter(ShaderParameter::ProbeTextureMips, (float)probe->getTexture()->getSize().mips);
+		parameters->setTextureParameter(ShaderParameter::ProbeTexture, probe->getTexture());
+	}
+	else
+	{
+		parameters->setFloatParameter(ShaderParameter::ProbeIntensity, 0.0f);
+		parameters->setFloatParameter(ShaderParameter::ProbeTextureMips, 0.0f);
+		parameters->setTextureParameter(ShaderParameter::ProbeTexture, blackCubeTexture);
+	}
 }
 
 }

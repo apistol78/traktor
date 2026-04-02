@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,6 +23,7 @@ namespace traktor::render
 {
 
 class ITexture;
+class ProgramParameters;
 
 }
 
@@ -57,6 +58,8 @@ public:
 	virtual Aabb3 getBoundingBox() const override final;
 
 	Transform getTransform() const;
+
+	static void setupSharedParameters(const ProbeComponent* probe, render::ITexture* blackCubeTexture, render::ProgramParameters* parameters);
 
 	bool hasOwner() const { return m_owner != nullptr; }
 

@@ -26,6 +26,7 @@ namespace traktor::render
 
 class IRenderSystem;
 class ITexture;
+class ProgramParameters;
 class Shader;
 
 }
@@ -61,6 +62,8 @@ public:
 	virtual void update(const UpdateParams& update) override final;
 
 	void build(const WorldBuildContext& context, const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass);
+
+	static void setupSharedParameters(const FogComponent* fog, float viewNearZ, float viewFarZ, render::ProgramParameters* parameters);
 
 	render::ITexture* getFogVolumeTexture() const { return m_fogVolumeTexture; }
 
