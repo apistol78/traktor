@@ -35,19 +35,19 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ContextWl", ContextWl, Object)
 Timer ContextWl::ms_timer;
 
 // Registry listener
-static const struct wl_registry_listener s_registryListener = {
+static const wl_registry_listener s_registryListener = {
 	ContextWl::registryGlobal,
 	ContextWl::registryGlobalRemove
 };
 
 // Seat listener
-static const struct wl_seat_listener s_seatListener = {
+static const wl_seat_listener s_seatListener = {
 	ContextWl::seatCapabilities,
 	ContextWl::seatName
 };
 
 // Pointer listener
-static const struct wl_pointer_listener s_pointerListener = {
+static const wl_pointer_listener s_pointerListener = {
 	ContextWl::pointerEnter,
 	ContextWl::pointerLeave,
 	ContextWl::pointerMotion,
@@ -60,7 +60,7 @@ static const struct wl_pointer_listener s_pointerListener = {
 };
 
 // Keyboard listener
-static const struct wl_keyboard_listener s_keyboardListener = {
+static const wl_keyboard_listener s_keyboardListener = {
 	ContextWl::keyboardKeymap,
 	ContextWl::keyboardEnter,
 	ContextWl::keyboardLeave,
@@ -70,12 +70,12 @@ static const struct wl_keyboard_listener s_keyboardListener = {
 };
 
 // XDG WM base listener
-static const struct xdg_wm_base_listener s_xdgWmBaseListener = {
+static const xdg_wm_base_listener s_xdgWmBaseListener = {
 	ContextWl::xdgWmBasePing
 };
 
 // Output listener
-static const struct wl_output_listener s_outputListener = {
+static const wl_output_listener s_outputListener = {
 	ContextWl::outputGeometry,
 	ContextWl::outputMode,
 	ContextWl::outputDone,
@@ -83,12 +83,12 @@ static const struct wl_output_listener s_outputListener = {
 };
 
 // libdecor interface
-static void libdecorError(struct libdecor* context, enum libdecor_error error, const char* message)
+static void libdecorError(libdecor* context, libdecor_error error, const char* message)
 {
 	log::error << L"libdecor error: " << mbstows(message) << Endl;
 }
 
-static struct libdecor_interface s_libdecorInterface = {
+static libdecor_interface s_libdecorInterface = {
 	libdecorError
 };
 
@@ -508,7 +508,7 @@ int32_t ContextWl::getSystemDPI() const
 	return m_dpi;
 }
 
-void ContextWl::dispatch(struct wl_surface* surface, int32_t eventType, bool always, WlEvent& e)
+void ContextWl::dispatch(wl_surface* surface, int32_t eventType, bool always, WlEvent& e)
 {
 	auto b = m_bindings.find(surface);
 	if (b == m_bindings.end())
@@ -550,44 +550,44 @@ void ContextWl::dispatch(struct wl_surface* surface, int32_t eventType, bool alw
 }
 
 // Registry
-void ContextWl::registryGlobal(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version)
+void ContextWl::registryGlobal(void* data, wl_registry* registry, uint32_t name, const char* interface, uint32_t version)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 
 	if (std::strcmp(interface, wl_compositor_interface.name) == 0)
-		ctx->m_compositor = static_cast< struct wl_compositor* >(wl_registry_bind(registry, name, &wl_compositor_interface, 4));
+		ctx->m_compositor = static_cast< wl_compositor* >(wl_registry_bind(registry, name, &wl_compositor_interface, 4));
 	else if (std::strcmp(interface, wl_subcompositor_interface.name) == 0)
-		ctx->m_subcompositor = static_cast< struct wl_subcompositor* >(wl_registry_bind(registry, name, &wl_subcompositor_interface, 1));
+		ctx->m_subcompositor = static_cast< wl_subcompositor* >(wl_registry_bind(registry, name, &wl_subcompositor_interface, 1));
 	else if (std::strcmp(interface, wl_shm_interface.name) == 0)
-		ctx->m_shm = static_cast< struct wl_shm* >(wl_registry_bind(registry, name, &wl_shm_interface, 1));
+		ctx->m_shm = static_cast< wl_shm* >(wl_registry_bind(registry, name, &wl_shm_interface, 1));
 	else if (std::strcmp(interface, xdg_wm_base_interface.name) == 0)
 	{
-		ctx->m_xdgWmBase = static_cast< struct xdg_wm_base* >(wl_registry_bind(registry, name, &xdg_wm_base_interface, 1));
+		ctx->m_xdgWmBase = static_cast< xdg_wm_base* >(wl_registry_bind(registry, name, &xdg_wm_base_interface, 1));
 		xdg_wm_base_add_listener(ctx->m_xdgWmBase, &s_xdgWmBaseListener, ctx);
 	}
 	else if (std::strcmp(interface, wl_seat_interface.name) == 0)
 	{
-		ctx->m_seat = static_cast< struct wl_seat* >(wl_registry_bind(registry, name, &wl_seat_interface, 5));
+		ctx->m_seat = static_cast< wl_seat* >(wl_registry_bind(registry, name, &wl_seat_interface, 5));
 		wl_seat_add_listener(ctx->m_seat, &s_seatListener, ctx);
 	}
 	else if (std::strcmp(interface, wl_output_interface.name) == 0)
 	{
-		ctx->m_output = static_cast< struct wl_output* >(wl_registry_bind(registry, name, &wl_output_interface, 2));
+		ctx->m_output = static_cast< wl_output* >(wl_registry_bind(registry, name, &wl_output_interface, 2));
 		wl_output_add_listener(ctx->m_output, &s_outputListener, ctx);
 	}
 	else if (std::strcmp(interface, zxdg_decoration_manager_v1_interface.name) == 0)
 	{
-		ctx->m_decorationManager = static_cast< struct zxdg_decoration_manager_v1* >(
+		ctx->m_decorationManager = static_cast< zxdg_decoration_manager_v1* >(
 			wl_registry_bind(registry, name, &zxdg_decoration_manager_v1_interface, 1));
 	}
 }
 
-void ContextWl::registryGlobalRemove(void* data, struct wl_registry* registry, uint32_t name)
+void ContextWl::registryGlobalRemove(void* data, wl_registry* registry, uint32_t name)
 {
 }
 
 // Seat
-void ContextWl::seatCapabilities(void* data, struct wl_seat* seat, uint32_t caps)
+void ContextWl::seatCapabilities(void* data, wl_seat* seat, uint32_t caps)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 
@@ -604,12 +604,12 @@ void ContextWl::seatCapabilities(void* data, struct wl_seat* seat, uint32_t caps
 	}
 }
 
-void ContextWl::seatName(void* data, struct wl_seat* seat, const char* name)
+void ContextWl::seatName(void* data, wl_seat* seat, const char* name)
 {
 }
 
 // Pointer
-void ContextWl::pointerEnter(void* data, struct wl_pointer* pointer, uint32_t serial, struct wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy)
+void ContextWl::pointerEnter(void* data, wl_pointer* pointer, uint32_t serial, wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 	ctx->m_pointerSerial = serial;
@@ -631,7 +631,7 @@ void ContextWl::pointerEnter(void* data, struct wl_pointer* pointer, uint32_t se
 	ctx->enqueueEvent(e);
 }
 
-void ContextWl::pointerLeave(void* data, struct wl_pointer* pointer, uint32_t serial, struct wl_surface* surface)
+void ContextWl::pointerLeave(void* data, wl_pointer* pointer, uint32_t serial, wl_surface* surface)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 	ctx->m_pointerSerial = serial;
@@ -651,11 +651,11 @@ void ContextWl::pointerLeave(void* data, struct wl_pointer* pointer, uint32_t se
 	}
 }
 
-void ContextWl::pointerMotion(void* data, struct wl_pointer* pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy)
+void ContextWl::pointerMotion(void* data, wl_pointer* pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 
-	struct wl_surface* surface = ctx->m_pointerFocus ? ctx->m_pointerFocus->surface : nullptr;
+	wl_surface* surface = ctx->m_pointerFocus ? ctx->m_pointerFocus->surface : nullptr;
 	if (ctx->m_grabbed)
 		surface = ctx->m_grabbed->surface;
 
@@ -675,7 +675,7 @@ void ContextWl::pointerMotion(void* data, struct wl_pointer* pointer, uint32_t t
 	ctx->enqueueEvent(e);
 }
 
-void ContextWl::pointerButton(void* data, struct wl_pointer* pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
+void ContextWl::pointerButton(void* data, wl_pointer* pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 	ctx->m_pointerSerial = serial;
@@ -699,7 +699,7 @@ void ContextWl::pointerButton(void* data, struct wl_pointer* pointer, uint32_t s
 	else
 		ctx->m_buttonMask &= ~mbt;
 
-	struct wl_surface* surface = ctx->m_pointerFocus ? ctx->m_pointerFocus->surface : nullptr;
+	wl_surface* surface = ctx->m_pointerFocus ? ctx->m_pointerFocus->surface : nullptr;
 	if (ctx->m_grabbed)
 		surface = ctx->m_grabbed->surface;
 
@@ -718,11 +718,11 @@ void ContextWl::pointerButton(void* data, struct wl_pointer* pointer, uint32_t s
 	ctx->enqueueEvent(e);
 }
 
-void ContextWl::pointerAxis(void* data, struct wl_pointer* pointer, uint32_t time, uint32_t axis, wl_fixed_t value)
+void ContextWl::pointerAxis(void* data, wl_pointer* pointer, uint32_t time, uint32_t axis, wl_fixed_t value)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 
-	struct wl_surface* surface = ctx->m_pointerFocus ? ctx->m_pointerFocus->surface : nullptr;
+	wl_surface* surface = ctx->m_pointerFocus ? ctx->m_pointerFocus->surface : nullptr;
 	if (!surface)
 		return;
 
@@ -737,13 +737,13 @@ void ContextWl::pointerAxis(void* data, struct wl_pointer* pointer, uint32_t tim
 	ctx->enqueueEvent(e);
 }
 
-void ContextWl::pointerFrame(void* data, struct wl_pointer* pointer) {}
-void ContextWl::pointerAxisSource(void* data, struct wl_pointer* pointer, uint32_t source) {}
-void ContextWl::pointerAxisStop(void* data, struct wl_pointer* pointer, uint32_t time, uint32_t axis) {}
-void ContextWl::pointerAxisDiscrete(void* data, struct wl_pointer* pointer, uint32_t axis, int32_t discrete) {}
+void ContextWl::pointerFrame(void* data, wl_pointer* pointer) {}
+void ContextWl::pointerAxisSource(void* data, wl_pointer* pointer, uint32_t source) {}
+void ContextWl::pointerAxisStop(void* data, wl_pointer* pointer, uint32_t time, uint32_t axis) {}
+void ContextWl::pointerAxisDiscrete(void* data, wl_pointer* pointer, uint32_t axis, int32_t discrete) {}
 
 // Keyboard
-void ContextWl::keyboardKeymap(void* data, struct wl_keyboard* keyboard, uint32_t format, int32_t fd, uint32_t size)
+void ContextWl::keyboardKeymap(void* data, wl_keyboard* keyboard, uint32_t format, int32_t fd, uint32_t size)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 
@@ -779,7 +779,7 @@ void ContextWl::keyboardKeymap(void* data, struct wl_keyboard* keyboard, uint32_
 		ctx->m_xkbState = xkb_state_new(ctx->m_xkbKeymap);
 }
 
-void ContextWl::keyboardEnter(void* data, struct wl_keyboard* keyboard, uint32_t serial, struct wl_surface* surface, struct wl_array* keys)
+void ContextWl::keyboardEnter(void* data, wl_keyboard* keyboard, uint32_t serial, wl_surface* surface, wl_array* keys)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 
@@ -819,7 +819,7 @@ void ContextWl::keyboardEnter(void* data, struct wl_keyboard* keyboard, uint32_t
 	}
 }
 
-void ContextWl::keyboardLeave(void* data, struct wl_keyboard* keyboard, uint32_t serial, struct wl_surface* surface)
+void ContextWl::keyboardLeave(void* data, wl_keyboard* keyboard, uint32_t serial, wl_surface* surface)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 
@@ -845,7 +845,7 @@ void ContextWl::keyboardLeave(void* data, struct wl_keyboard* keyboard, uint32_t
 	ctx->m_internalFocus = nullptr;
 }
 
-void ContextWl::keyboardKey(void* data, struct wl_keyboard* keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
+void ContextWl::keyboardKey(void* data, wl_keyboard* keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 
@@ -922,7 +922,7 @@ void ContextWl::keyboardKey(void* data, struct wl_keyboard* keyboard, uint32_t s
 	}
 }
 
-void ContextWl::keyboardModifiers(void* data, struct wl_keyboard* keyboard, uint32_t serial, uint32_t modsDepressed, uint32_t modsLatched, uint32_t modsLocked, uint32_t group)
+void ContextWl::keyboardModifiers(void* data, wl_keyboard* keyboard, uint32_t serial, uint32_t modsDepressed, uint32_t modsLatched, uint32_t modsLocked, uint32_t group)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 
@@ -932,7 +932,7 @@ void ContextWl::keyboardModifiers(void* data, struct wl_keyboard* keyboard, uint
 	ctx->m_keyboardModifiers = modsDepressed;
 }
 
-void ContextWl::keyboardRepeatInfo(void* data, struct wl_keyboard* keyboard, int32_t rate, int32_t delay)
+void ContextWl::keyboardRepeatInfo(void* data, wl_keyboard* keyboard, int32_t rate, int32_t delay)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 	ctx->m_repeatRate = rate;
@@ -940,25 +940,25 @@ void ContextWl::keyboardRepeatInfo(void* data, struct wl_keyboard* keyboard, int
 }
 
 // XDG WM base
-void ContextWl::xdgWmBasePing(void* data, struct xdg_wm_base* wmBase, uint32_t serial)
+void ContextWl::xdgWmBasePing(void* data, xdg_wm_base* wmBase, uint32_t serial)
 {
 	xdg_wm_base_pong(wmBase, serial);
 }
 
 // Output
-void ContextWl::outputGeometry(void* data, struct wl_output* output, int32_t x, int32_t y, int32_t pw, int32_t ph, int32_t subpixel, const char* make, const char* model, int32_t transform)
+void ContextWl::outputGeometry(void* data, wl_output* output, int32_t x, int32_t y, int32_t pw, int32_t ph, int32_t subpixel, const char* make, const char* model, int32_t transform)
 {
 }
 
-void ContextWl::outputMode(void* data, struct wl_output* output, uint32_t flags, int32_t width, int32_t height, int32_t refresh)
+void ContextWl::outputMode(void* data, wl_output* output, uint32_t flags, int32_t width, int32_t height, int32_t refresh)
 {
 }
 
-void ContextWl::outputDone(void* data, struct wl_output* output)
+void ContextWl::outputDone(void* data, wl_output* output)
 {
 }
 
-void ContextWl::outputScale(void* data, struct wl_output* output, int32_t factor)
+void ContextWl::outputScale(void* data, wl_output* output, int32_t factor)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 	ctx->m_outputScale = factor;

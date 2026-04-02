@@ -49,7 +49,7 @@ enum WlEventType
 struct WlEvent
 {
 	int32_t type = 0;
-	struct wl_surface* surface = nullptr;
+	wl_surface* surface = nullptr;
 	double stamp = 0.0;
 	// Pointer
 	double pointerX = 0.0;
@@ -124,32 +124,32 @@ public:
 
 	//@{
 
-	struct wl_display* getDisplay() const { return m_display; }
+	wl_display* getDisplay() const { return m_display; }
 
-	struct wl_compositor* getCompositor() const { return m_compositor; }
+	wl_compositor* getCompositor() const { return m_compositor; }
 
-	struct wl_subcompositor* getSubcompositor() const { return m_subcompositor; }
+	wl_subcompositor* getSubcompositor() const { return m_subcompositor; }
 
-	struct wl_shm* getShm() const { return m_shm; }
+	wl_shm* getShm() const { return m_shm; }
 
-	struct xdg_wm_base* getXdgWmBase() const { return m_xdgWmBase; }
+	xdg_wm_base* getXdgWmBase() const { return m_xdgWmBase; }
 
-	struct wl_seat* getSeat() const { return m_seat; }
+	wl_seat* getSeat() const { return m_seat; }
 
-	struct wl_pointer* getPointer() const { return m_pointer; }
+	wl_pointer* getPointer() const { return m_pointer; }
 
-	struct wl_cursor_theme* getCursorTheme() const { return m_cursorTheme; }
+	wl_cursor_theme* getCursorTheme() const { return m_cursorTheme; }
 
-	struct wl_surface* getCursorSurface() const { return m_cursorSurface; }
+	wl_surface* getCursorSurface() const { return m_cursorSurface; }
 
-	struct libdecor* getLibdecor() const { return m_libdecor; }
+	libdecor* getLibdecor() const { return m_libdecor; }
 
 	//! True if the compositor supports server-side decorations via zxdg_decoration_manager_v1.
 	bool hasServerSideDecorations() const { return m_decorationManager != nullptr; }
 
-	struct zxdg_decoration_manager_v1* getDecorationManager() const { return m_decorationManager; }
+	zxdg_decoration_manager_v1* getDecorationManager() const { return m_decorationManager; }
 
-	struct xkb_state* getXkbState() const { return m_xkbState; }
+	xkb_state* getXkbState() const { return m_xkbState; }
 
 	bool anyGrabbed() const { return m_grabbed != nullptr; }
 
@@ -192,24 +192,24 @@ private:
 		SmallMap< int32_t, std::function< void(WlEvent& e) > > fns;
 	};
 
-	struct wl_display* m_display = nullptr;
-	struct wl_registry* m_registry = nullptr;
-	struct wl_compositor* m_compositor = nullptr;
-	struct wl_subcompositor* m_subcompositor = nullptr;
-	struct wl_shm* m_shm = nullptr;
-	struct wl_seat* m_seat = nullptr;
-	struct wl_pointer* m_pointer = nullptr;
-	struct wl_keyboard* m_keyboard = nullptr;
-	struct wl_cursor_theme* m_cursorTheme = nullptr;
-	struct wl_surface* m_cursorSurface = nullptr;
-	struct xdg_wm_base* m_xdgWmBase = nullptr;
-	struct libdecor* m_libdecor = nullptr;
-	struct zxdg_decoration_manager_v1* m_decorationManager = nullptr;
-	struct wl_output* m_output = nullptr;
+	wl_display* m_display = nullptr;
+	wl_registry* m_registry = nullptr;
+	wl_compositor* m_compositor = nullptr;
+	wl_subcompositor* m_subcompositor = nullptr;
+	wl_shm* m_shm = nullptr;
+	wl_seat* m_seat = nullptr;
+	wl_pointer* m_pointer = nullptr;
+	wl_keyboard* m_keyboard = nullptr;
+	wl_cursor_theme* m_cursorTheme = nullptr;
+	wl_surface* m_cursorSurface = nullptr;
+	xdg_wm_base* m_xdgWmBase = nullptr;
+	libdecor* m_libdecor = nullptr;
+	zxdg_decoration_manager_v1* m_decorationManager = nullptr;
+	wl_output* m_output = nullptr;
 
-	struct xkb_context* m_xkbContext = nullptr;
-	struct xkb_keymap* m_xkbKeymap = nullptr;
-	struct xkb_state* m_xkbState = nullptr;
+	xkb_context* m_xkbContext = nullptr;
+	xkb_keymap* m_xkbKeymap = nullptr;
+	xkb_state* m_xkbState = nullptr;
 
 	int32_t m_dpi = 96;
 	int32_t m_outputScale = 1;
@@ -224,7 +224,7 @@ private:
 	double m_pointerY = 0.0;
 	int32_t m_buttonMask = 0;		//!< Currently pressed buttons (MbtLeft | MbtMiddle | MbtRight).
 
-	SmallMap< struct wl_surface*, Binding > m_bindings;
+	SmallMap< wl_surface*, Binding > m_bindings;
 	AlignedVector< WidgetData* > m_modal;
 	WidgetData* m_grabbed = nullptr;
 	WidgetData* m_pointerFocus = nullptr;
@@ -236,45 +236,45 @@ private:
 
 	static Timer ms_timer;
 
-	void dispatch(struct wl_surface* surface, int32_t eventType, bool always, WlEvent& e);
+	void dispatch(wl_surface* surface, int32_t eventType, bool always, WlEvent& e);
 	bool preTranslateEvent(EventSubject* owner, WlEvent& e);
 
 public:
 	// Registry listener
-	static void registryGlobal(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version);
-	static void registryGlobalRemove(void* data, struct wl_registry* registry, uint32_t name);
+	static void registryGlobal(void* data, wl_registry* registry, uint32_t name, const char* interface, uint32_t version);
+	static void registryGlobalRemove(void* data, wl_registry* registry, uint32_t name);
 
 	// Seat listener
-	static void seatCapabilities(void* data, struct wl_seat* seat, uint32_t caps);
-	static void seatName(void* data, struct wl_seat* seat, const char* name);
+	static void seatCapabilities(void* data, wl_seat* seat, uint32_t caps);
+	static void seatName(void* data, wl_seat* seat, const char* name);
 
 	// Pointer listener
-	static void pointerEnter(void* data, struct wl_pointer* pointer, uint32_t serial, struct wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy);
-	static void pointerLeave(void* data, struct wl_pointer* pointer, uint32_t serial, struct wl_surface* surface);
-	static void pointerMotion(void* data, struct wl_pointer* pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy);
-	static void pointerButton(void* data, struct wl_pointer* pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state);
-	static void pointerAxis(void* data, struct wl_pointer* pointer, uint32_t time, uint32_t axis, wl_fixed_t value);
-	static void pointerFrame(void* data, struct wl_pointer* pointer);
-	static void pointerAxisSource(void* data, struct wl_pointer* pointer, uint32_t source);
-	static void pointerAxisStop(void* data, struct wl_pointer* pointer, uint32_t time, uint32_t axis);
-	static void pointerAxisDiscrete(void* data, struct wl_pointer* pointer, uint32_t axis, int32_t discrete);
+	static void pointerEnter(void* data, wl_pointer* pointer, uint32_t serial, wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy);
+	static void pointerLeave(void* data, wl_pointer* pointer, uint32_t serial, wl_surface* surface);
+	static void pointerMotion(void* data, wl_pointer* pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy);
+	static void pointerButton(void* data, wl_pointer* pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state);
+	static void pointerAxis(void* data, wl_pointer* pointer, uint32_t time, uint32_t axis, wl_fixed_t value);
+	static void pointerFrame(void* data, wl_pointer* pointer);
+	static void pointerAxisSource(void* data, wl_pointer* pointer, uint32_t source);
+	static void pointerAxisStop(void* data, wl_pointer* pointer, uint32_t time, uint32_t axis);
+	static void pointerAxisDiscrete(void* data, wl_pointer* pointer, uint32_t axis, int32_t discrete);
 
 	// Keyboard listener
-	static void keyboardKeymap(void* data, struct wl_keyboard* keyboard, uint32_t format, int32_t fd, uint32_t size);
-	static void keyboardEnter(void* data, struct wl_keyboard* keyboard, uint32_t serial, struct wl_surface* surface, struct wl_array* keys);
-	static void keyboardLeave(void* data, struct wl_keyboard* keyboard, uint32_t serial, struct wl_surface* surface);
-	static void keyboardKey(void* data, struct wl_keyboard* keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state);
-	static void keyboardModifiers(void* data, struct wl_keyboard* keyboard, uint32_t serial, uint32_t modsDepressed, uint32_t modsLatched, uint32_t modsLocked, uint32_t group);
-	static void keyboardRepeatInfo(void* data, struct wl_keyboard* keyboard, int32_t rate, int32_t delay);
+	static void keyboardKeymap(void* data, wl_keyboard* keyboard, uint32_t format, int32_t fd, uint32_t size);
+	static void keyboardEnter(void* data, wl_keyboard* keyboard, uint32_t serial, wl_surface* surface, wl_array* keys);
+	static void keyboardLeave(void* data, wl_keyboard* keyboard, uint32_t serial, wl_surface* surface);
+	static void keyboardKey(void* data, wl_keyboard* keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state);
+	static void keyboardModifiers(void* data, wl_keyboard* keyboard, uint32_t serial, uint32_t modsDepressed, uint32_t modsLatched, uint32_t modsLocked, uint32_t group);
+	static void keyboardRepeatInfo(void* data, wl_keyboard* keyboard, int32_t rate, int32_t delay);
 
 	// XDG WM base listener
-	static void xdgWmBasePing(void* data, struct xdg_wm_base* wmBase, uint32_t serial);
+	static void xdgWmBasePing(void* data, xdg_wm_base* wmBase, uint32_t serial);
 
 	// Output listener
-	static void outputGeometry(void* data, struct wl_output* output, int32_t x, int32_t y, int32_t pw, int32_t ph, int32_t subpixel, const char* make, const char* model, int32_t transform);
-	static void outputMode(void* data, struct wl_output* output, uint32_t flags, int32_t width, int32_t height, int32_t refresh);
-	static void outputDone(void* data, struct wl_output* output);
-	static void outputScale(void* data, struct wl_output* output, int32_t factor);
+	static void outputGeometry(void* data, wl_output* output, int32_t x, int32_t y, int32_t pw, int32_t ph, int32_t subpixel, const char* make, const char* model, int32_t transform);
+	static void outputMode(void* data, wl_output* output, uint32_t flags, int32_t width, int32_t height, int32_t refresh);
+	static void outputDone(void* data, wl_output* output);
+	static void outputScale(void* data, wl_output* output, int32_t factor);
 };
 
 }

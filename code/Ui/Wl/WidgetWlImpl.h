@@ -387,18 +387,18 @@ public:
 		if (!cursorName)
 			return;
 
-		struct wl_pointer* pointer = m_context->getPointer();
-		struct wl_cursor_theme* theme = m_context->getCursorTheme();
-		struct wl_surface* cursorSurface = m_context->getCursorSurface();
+		wl_pointer* pointer = m_context->getPointer();
+		wl_cursor_theme* theme = m_context->getCursorTheme();
+		wl_surface* cursorSurface = m_context->getCursorSurface();
 		if (!pointer || !theme || !cursorSurface)
 			return;
 
-		struct wl_cursor* wlCursor = wl_cursor_theme_get_cursor(theme, cursorName);
+		wl_cursor* wlCursor = wl_cursor_theme_get_cursor(theme, cursorName);
 		if (!wlCursor || wlCursor->image_count < 1)
 			return;
 
-		struct wl_cursor_image* image = wlCursor->images[0];
-		struct wl_buffer* buffer = wl_cursor_image_get_buffer(image);
+		wl_cursor_image* image = wlCursor->images[0];
+		wl_buffer* buffer = wl_cursor_image_get_buffer(image);
 
 		wl_surface_attach(cursorSurface, buffer, 0, 0);
 		wl_surface_damage(cursorSurface, 0, 0, image->width, image->height);
@@ -582,7 +582,7 @@ protected:
 	Font m_font;
 	cairo_surface_t* m_surface = nullptr;
 	cairo_t* m_cairo = nullptr;
-	struct wl_buffer* m_buffer = nullptr;
+	wl_buffer* m_buffer = nullptr;
 	void* m_shmData = nullptr;
 	int32_t m_shmSize = 0;
 	std::wstring m_text;
@@ -654,7 +654,7 @@ protected:
 		m_context->bind(&m_data, WlEvtKeyboardKey, [=, this](WlEvent& e) {
 			T_FATAL_ASSERT(m_data.enable);
 
-			struct xkb_state* xkbState = m_context->getXkbState();
+			xkb_state* xkbState = m_context->getXkbState();
 			if (!xkbState)
 				return;
 

@@ -22,15 +22,15 @@ namespace traktor::ui
 struct WidgetData
 {
 	WidgetData* parent = nullptr;
-	struct wl_surface* surface = nullptr;
-	struct wl_subsurface* subsurface = nullptr;
-	struct wl_surface* renderSurface = nullptr;		//!< Dedicated child surface for Vulkan/GL rendering.
-	struct wl_subsurface* renderSubsurface = nullptr;
-	struct xdg_surface* xdgSurface = nullptr;
-	struct xdg_toplevel* xdgToplevel = nullptr;
-	struct xdg_popup* xdgPopup = nullptr;
-	struct libdecor_frame* frame = nullptr;
-	struct zxdg_toplevel_decoration_v1* decoration = nullptr;
+	wl_surface* surface = nullptr;
+	wl_subsurface* subsurface = nullptr;
+	wl_surface* renderSurface = nullptr;		//!< Dedicated child surface for Vulkan/GL rendering.
+	wl_subsurface* renderSubsurface = nullptr;
+	xdg_surface* xdgSurface = nullptr;
+	xdg_toplevel* xdgToplevel = nullptr;
+	xdg_popup* xdgPopup = nullptr;
+	libdecor_frame* frame = nullptr;
+	zxdg_toplevel_decoration_v1* decoration = nullptr;
 	bool topLevel = false;
 	bool mapped = false;
 	bool visible = false;
