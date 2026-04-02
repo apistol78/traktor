@@ -139,7 +139,7 @@ void FogComponent::build(const WorldBuildContext& context, const WorldRenderView
 
 void FogComponent::setupSharedParameters(const FogComponent* fog, float viewNearZ, float viewFarZ, render::ProgramParameters* parameters)
 {
-	if (fog)
+	if (fog && fog->m_owner)
 	{
 		const Vector4 fogRange(
 			viewNearZ,
@@ -147,8 +147,10 @@ void FogComponent::setupSharedParameters(const FogComponent* fog, float viewNear
 			fog->getMaxScattering(),
 			0.0f);
 
+		const float elevation = fog->m_owner->getTransform().translation().y();
+
 		// Distance fog.
-		parameters->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, 0.0f));
+		parameters->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, elevation));
 		parameters->setVectorParameter(ShaderParameter::FogColor, fog->m_fogColor);
 
 		// Volumetric fog.
