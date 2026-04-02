@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,7 +26,7 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{FEDA90CE-25C6-BC4D-
 
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.FogComponentData", 0, FogComponentData, IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.FogComponentData", 0, FogComponentData, IWorldComponentData)
 
 Ref< FogComponent > FogComponentData::createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
@@ -49,18 +49,10 @@ const resource::Id< render::Shader >& FogComponentData::getShader() const
 	return c_defaultShader;
 }
 
-int32_t FogComponentData::getOrdinal() const
-{
-	return 0;
-}
-
-void FogComponentData::setTransform(const EntityData* owner, const Transform& transform)
-{
-}
-
 void FogComponentData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"fogDistance", m_fogDistance, AttributeUnit(UnitType::Metres));
+	s >> Member< float >(L"fogElevation", m_fogElevation, AttributeUnit(UnitType::Metres));
 	s >> Member< float >(L"fogDensity", m_fogDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 	s >> Member< float >(L"fogDensityMax", m_fogDensityMax, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 	s >> Member< Color4f >(L"fogColor", m_fogColor, AttributeHdr());

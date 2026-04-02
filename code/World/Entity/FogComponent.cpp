@@ -13,7 +13,6 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
-#include "World/Entity.h"
 #include "World/Entity/FogComponentData.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
@@ -24,12 +23,13 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.FogComponent", FogComponent, IEntityComponent)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.FogComponent", FogComponent, IWorldComponent)
 
 FogComponent::FogComponent(const FogComponentData* data, const resource::Proxy< render::Shader >& shader)
 	: m_shader(shader)
 {
 	m_fogDistance = data->m_fogDistance;
+	m_fogElevation = data->m_fogElevation;
 	m_fogDensity = data->m_fogDensity;
 	m_fogDensityMax = data->m_fogDensityMax;
 	m_fogColor = data->m_fogColor;
@@ -66,27 +66,13 @@ void FogComponent::destroy()
 	safeDestroy(m_fogVolumeTexture);
 }
 
-void FogComponent::setOwner(Entity* owner)
-{
-	m_owner = owner;
-}
-
-void FogComponent::setTransform(const Transform& transform)
-{
-}
-
-Aabb3 FogComponent::getBoundingBox() const
-{
-	return Aabb3();
-}
-
-void FogComponent::update(const UpdateParams& update)
+void FogComponent::update(World* world, const UpdateParams& update)
 {
 }
 
 void FogComponent::build(const WorldBuildContext& context, const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass)
 {
-	if (!m_owner || !m_volumetricFogEnable || worldRenderView.getSnapshot())
+	if (!m_volumetricFogEnable || worldRenderView.getSnapshot())
 		return;
 
 	if (
@@ -139,7 +125,7 @@ void FogComponent::build(const WorldBuildContext& context, const WorldRenderView
 
 void FogComponent::setupSharedParameters(const FogComponent* fog, float viewNearZ, float viewFarZ, render::ProgramParameters* parameters)
 {
-	if (fog && fog->m_owner)
+	if (fog)
 	{
 		const Vector4 fogRange(
 			viewNearZ,
@@ -147,10 +133,8 @@ void FogComponent::setupSharedParameters(const FogComponent* fog, float viewNear
 			fog->getMaxScattering(),
 			0.0f);
 
-		const float elevation = fog->m_owner->getTransform().translation().y();
-
 		// Distance fog.
-		parameters->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, elevation));
+		parameters->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, fog->m_fogElevation));
 		parameters->setVectorParameter(ShaderParameter::FogColor, fog->m_fogColor);
 
 		// Volumetric fog.

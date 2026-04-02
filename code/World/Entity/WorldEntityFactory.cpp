@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -93,7 +93,6 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< ProbeComponentData >();
 	typeSet.insert< ScriptComponentData >();
 	typeSet.insert< VolumeComponentData >();
-	typeSet.insert< FogComponentData >();
 	return typeSet;
 }
 
@@ -101,6 +100,7 @@ const TypeInfoSet WorldEntityFactory::getWorldComponentTypes() const
 {
 	return makeTypeInfoSet<
 		ComputeTextureComponentData,
+		FogComponentData,
 		IrradianceGridComponentData
 	>();
 }
@@ -314,9 +314,6 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const IEntityB
 	if (auto volumeComponentData = dynamic_type_cast< const VolumeComponentData* >(&entityComponentData))
 		return new VolumeComponent(volumeComponentData);
 
-	if (auto fogComponentData = dynamic_type_cast< const FogComponentData* >(&entityComponentData))
-		return fogComponentData->createComponent(m_resourceManager, m_renderSystem);
-
 	return nullptr;
 }
 
@@ -348,6 +345,10 @@ Ref< IWorldComponent > WorldEntityFactory::createWorldComponent(const IEntityBui
 
 		return new IrradianceGridComponent(irradianceGrid);
 	}
+
+	if (auto fogComponentData = dynamic_type_cast< const FogComponentData* >(&worldComponentData))
+		return fogComponentData->createComponent(m_resourceManager, m_renderSystem);
+		
 	return nullptr;
 }
 

@@ -247,6 +247,8 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 		// Filter out components used to setup frame's lighting etc.
 		if (auto irradianceGridComponent = dynamic_type_cast< const IrradianceGridComponent* >(component))
 			m_gatheredView.irradianceGrid = irradianceGridComponent->getIrradianceGrid();
+		else if (auto fogComponent = dynamic_type_cast< const FogComponent* >(component))
+			m_gatheredView.fog = fogComponent;
 		// If world raytracing is enabled we gather TLAS; if no TLAS
 		// paths should assume no RT is enabled.
 		else if (m_rayTracingEnabled)
@@ -279,8 +281,6 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 			}
 			else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(component))
 				m_gatheredView.probes.push_back(probeComponent);
-			else if (auto fogComponent = dynamic_type_cast< const FogComponent* >(component))
-				m_gatheredView.fog = fogComponent;
 		}
 	}
 

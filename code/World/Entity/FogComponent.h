@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,7 +11,7 @@
 #include "Core/Ref.h"
 #include "Core/Math/Color4f.h"
 #include "Resource/Proxy.h"
-#include "World/IEntityComponent.h"
+#include "World/IWorldComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -42,7 +42,7 @@ class WorldSetupContext;
 
 /*!
  */
-class T_DLLCLASS FogComponent : public IEntityComponent
+class T_DLLCLASS FogComponent : public IWorldComponent
 {
 	T_RTTI_CLASS;
 
@@ -53,13 +53,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(Entity* owner) override final;
-
-	virtual void setTransform(const Transform& transform) override final;
-
-	virtual Aabb3 getBoundingBox() const override final;
-
-	virtual void update(const UpdateParams& update) override final;
+	virtual void update(World* world, const UpdateParams& update) override final;
 
 	void build(const WorldBuildContext& context, const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass);
 
@@ -77,10 +71,9 @@ private:
 	friend class WorldRendererDeferred;
 	friend class WorldRendererForward;
 
-	Entity* m_owner = nullptr;
-
 	// Distance fog.
 	float m_fogDistance = 90.0f;
+	float m_fogElevation = 0.0f;
 	float m_fogDensity = 0.0f;
 	float m_fogDensityMax = 1.0f;
 	Color4f m_fogColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
