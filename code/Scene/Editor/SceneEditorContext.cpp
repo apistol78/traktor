@@ -265,7 +265,7 @@ Camera* SceneEditorContext::getCamera(int index) const
 	return m_cameras[index];
 }
 
-void SceneEditorContext::moveToEntityAdapter(EntityAdapter* entityAdapter)
+void SceneEditorContext::moveToEntityAdapter(const EntityAdapter* entityAdapter)
 {
 	if (!entityAdapter)
 		return;
@@ -675,7 +675,7 @@ uint32_t SceneEditorContext::findAdaptersOfType(const TypeInfo& entityType, RefA
 
 			if (
 				is_type_of(entityType, type_of(entityAdapter->getEntity())) ||
-				entityAdapter->getComponent(entityType) != 0
+				entityAdapter->getComponent(entityType) != nullptr
 			)
 			{
 				bool include = true;

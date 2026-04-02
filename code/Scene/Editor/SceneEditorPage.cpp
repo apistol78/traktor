@@ -1247,10 +1247,10 @@ void SceneEditorPage::updateInstanceGrid(bool ensureSelectedVisible)
 
 void SceneEditorPage::updatePropertyObject()
 {
-	RefArray< EntityAdapter > entityAdapters = m_context->getEntities(SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly);
+	const RefArray< EntityAdapter > entityAdapters = m_context->getEntities(SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly);
 	if (entityAdapters.size() == 1)
 	{
-		Ref< EntityAdapter > entityAdapter = entityAdapters.front();
+		const EntityAdapter* entityAdapter = entityAdapters.front();
 		T_ASSERT(entityAdapter);
 
 		m_propertiesView->setPropertyObject(entityAdapter->getEntityData());
@@ -1264,15 +1264,15 @@ void SceneEditorPage::updateStatusBar()
 	const Camera* camera = m_context->getCamera(0);
 	T_ASSERT(camera);
 
-	Vector4 position = camera->getPosition();
-	Vector4 angles = camera->getOrientation().toEulerAngles();
+	const Vector4 position = camera->getPosition();
+	const Vector4 angles = camera->getOrientation().toEulerAngles();
 
 	m_statusBar->setText(c_statusBarPosition, str(L"%.1f, %.1f, %.1f", (float)position.x(), (float)position.y(), (float)position.z()));
 	m_statusBar->setText(c_statusBarOrientation, str(L"%.1f, %.1f, %.1f", rad2deg(angles.x()), rad2deg(angles.y()), rad2deg(angles.z())));
 	m_statusBar->setText(c_statusBarEntityCount, str(L"%d entities", m_context->getEntityCount()));
 	m_statusBar->setText(c_statusBarTime, str(L"%.1f (%.1f)", m_context->getTime(), m_context->getTimeScale()));
 
-	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	const RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 	if (selectedEntities.size() == 1)
 		m_statusBar->setText(c_statusBarSelectedEntity, selectedEntities[0]->getPath() /* + L" " + selectedEntities[0]->getEntityData()->getId().format()*/);
 	else
@@ -1284,7 +1284,7 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 	Ref< EntityAdapter > parentGroupAdapter;
 
 	// Get selected entity, must be a single item.
-	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	const RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 	if (selectedEntities.size() == 1)
 		parentGroupAdapter = selectedEntities[0]->getParentGroup();
 
@@ -1428,7 +1428,7 @@ bool SceneEditorPage::resolveExternal()
 
 bool SceneEditorPage::moveToEntity()
 {
-	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	const RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 	if (selectedEntities.size() == 1)
 		m_context->moveToEntityAdapter(selectedEntities[0]);
 	else

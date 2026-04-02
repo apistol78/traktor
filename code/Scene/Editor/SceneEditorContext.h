@@ -185,7 +185,7 @@ public:
 	 */
 	Camera* getCamera(int index) const;
 
-	void moveToEntityAdapter(EntityAdapter* entityAdapter);
+	void moveToEntityAdapter(const EntityAdapter* entityAdapter);
 
 	//@}
 
