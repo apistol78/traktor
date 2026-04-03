@@ -22046,5 +22046,5 @@
 			</dependencies>
 		</item>
 	</projects>
-	<startupProject/>
+	<startupProject ref="/object/projects/item[8]"/>
 </object>
