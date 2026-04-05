@@ -164,6 +164,10 @@ public:
 
 	int32_t getOutputScale() const { return m_outputScale; }
 
+	//! Output dimensions in logical pixels (from wl_output::mode).
+	int32_t getOutputWidth() const { return m_outputWidth; }
+	int32_t getOutputHeight() const { return m_outputHeight; }
+
 	//@}
 
 	//! Set internal focus to a widget within the toplevel.
@@ -213,6 +217,8 @@ private:
 
 	int32_t m_dpi = 96;
 	int32_t m_outputScale = 1;
+	int32_t m_outputWidth = 1920;
+	int32_t m_outputHeight = 1080;
 	uint32_t m_pointerSerial = 0;
 	uint32_t m_grabSerial = 0;
 	uint32_t m_keyboardModifiers = 0;

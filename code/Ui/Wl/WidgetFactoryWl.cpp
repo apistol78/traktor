@@ -118,6 +118,11 @@ void WidgetFactoryWl::getSystemFonts(std::list< std::wstring >& outFonts)
 
 void WidgetFactoryWl::getDesktopRects(std::list< Rect >& outRects) const
 {
+	// Output mode reports physical pixels; convert to device coordinates
+	// consistent with the UI coordinate space.
+	const int32_t w = m_context->getOutputWidth();
+	const int32_t h = m_context->getOutputHeight();
+	outRects.push_back(Rect(0, 0, w, h));
 }
 
 }

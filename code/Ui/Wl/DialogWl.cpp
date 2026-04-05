@@ -22,6 +22,25 @@ namespace traktor::ui
 	{
 
 // ============================================================
+// Popup listeners (decoration-less centered dialog)
+// ============================================================
+
+void dialogPopupConfigure(void* data, struct xdg_popup* popup, int32_t x, int32_t y, int32_t width, int32_t height)
+{
+}
+
+void dialogPopupDone(void* data, struct xdg_popup* popup)
+{
+	DialogWl* dialog = static_cast< DialogWl* >(data);
+	dialog->endModal(DialogResult::Cancel);
+}
+
+static const struct xdg_popup_listener s_dialogPopupListener = {
+	dialogPopupConfigure,
+	dialogPopupDone
+};
+
+// ============================================================
 // SSD path
 // ============================================================
 
@@ -164,7 +183,62 @@ bool DialogWl::create(IWidget* parent, const std::wstring& text, int width, int 
 	if (!WidgetWlImpl< IDialog >::create(nullptr, style, false, true))
 		return false;
 
-	if (m_context->hasServerSideDecorations())
+	const bool wantDecorations = (style & (WsResizable | WsCaption | WsSystemBox | WsMinimizeBox | WsMaximizeBox)) != 0;
+
+	if (!wantDecorations)
+	{
+		// Decoration-less dialog (e.g. splash screen).
+		m_data.xdgSurface = xdg_wm_base_get_xdg_surface(m_context->getXdgWmBase(), m_data.surface);
+		xdg_surface_add_listener(m_data.xdgSurface, &s_ssdDialogXdgSurfaceListener, this);
+
+		// If centering is requested and we have a parent with an xdg_surface,
+		// use an xdg_popup with a centered positioner — this is the only way
+		// to position a toplevel on Wayland.
+		WidgetData* parentData = (parent != nullptr) ? static_cast< WidgetData* >(parent->getInternalHandle()) : nullptr;
+		WidgetData* anchorData = nullptr;
+		if (parentData)
+		{
+			for (WidgetData* w = parentData; w != nullptr; w = w->parent)
+			{
+				if (w->xdgSurface) { anchorData = w; break; }
+			}
+		}
+
+		if ((style & Dialog::WsCenterDesktop) != 0 && anchorData)
+		{
+			// Compute centered anchor position in the parent surface (logical coords).
+			const int32_t scale = m_context->getOutputScale();
+			const int32_t pw = m_context->getOutputWidth() / scale;
+			const int32_t ph = m_context->getOutputHeight() / scale;
+			const int32_t dw = m_rect.getWidth() / scale;
+			const int32_t dh = m_rect.getHeight() / scale;
+			const int32_t cx = (pw - dw) / 2;
+			const int32_t cy = (ph - dh) / 2;
+
+			struct xdg_positioner* positioner = xdg_wm_base_create_positioner(m_context->getXdgWmBase());
+			xdg_positioner_set_size(positioner, dw, dh);
+			xdg_positioner_set_anchor_rect(positioner, cx, cy, 1, 1);
+			xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_TOP_LEFT);
+			xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
+
+			m_data.xdgPopup = xdg_surface_get_popup(m_data.xdgSurface, anchorData->xdgSurface, positioner);
+			xdg_popup_add_listener(m_data.xdgPopup, &s_dialogPopupListener, this);
+			xdg_positioner_destroy(positioner);
+		}
+		else
+		{
+			// Non-centered decoration-less toplevel.
+			m_data.xdgToplevel = xdg_surface_get_toplevel(m_data.xdgSurface);
+			xdg_toplevel_add_listener(m_data.xdgToplevel, &s_ssdDialogXdgToplevelListener, this);
+
+			if (anchorData && anchorData->xdgToplevel)
+				xdg_toplevel_set_parent(m_data.xdgToplevel, anchorData->xdgToplevel);
+		}
+
+		wl_surface_commit(m_data.surface);
+		wl_display_roundtrip(m_context->getDisplay());
+	}
+	else if (m_context->hasServerSideDecorations())
 	{
 		// SSD path.
 		m_data.xdgSurface = xdg_wm_base_get_xdg_surface(m_context->getXdgWmBase(), m_data.surface);
