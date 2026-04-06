@@ -15,7 +15,8 @@
 namespace traktor::scene
 {
 
-class EntityAdapter;
+class IModifierAnchor;
+class SceneEditorContext;
 
 /*! Translation modifier. */
 class TranslateModifier : public IModifier
@@ -81,7 +82,7 @@ public:
 
 private:
 	SceneEditorContext* m_context;
-	RefArray< EntityAdapter > m_entityAdapters;
+	RefArray< IModifierAnchor > m_anchors;
 	AlignedVector< Vector4 > m_baseTranslations;
 	Vector4 m_center0;
 	Vector4 m_center;

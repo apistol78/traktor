@@ -84,6 +84,7 @@ class EntityAdapter;
 class IComponentEditorFactory;
 class IEntityEditorFactory;
 class IModifier;
+class IModifierAnchor;
 class IWorldComponentEditor;
 class ISceneEditorPlugin;
 class ISceneEditorProfile;
@@ -235,6 +236,9 @@ public:
 
 	/*! Get entities. */
 	RefArray< EntityAdapter > getEntities(uint32_t flags = GfDefault) const;
+
+	/*! Get modifier anchors for selected entities. */
+	RefArray< IModifierAnchor > getModifierAnchors() const;
 
 	uint32_t findAdaptersOfType(const TypeInfo& entityType, RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags = GfDefault) const;
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2026 Anders Pistol.
+ * Copyright (c) 2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,34 +19,25 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::render
-{
-
-class PrimitiveRenderer;
-
-}
-
 namespace traktor::scene
 {
 
-class EntityAdapter;
-
-/*!
+/*! Modifier anchor point.
  * \ingroup Scene
+ *
+ * An anchor represents a point of interest that modifiers
+ * can manipulate. The default implementation wraps an entity
+ * transform, but custom anchors can represent sub-entity
+ * features such as faces, vertices or control points.
  */
-class T_DLLCLASS IComponentEditor : public Object
+class T_DLLCLASS IModifierAnchor : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	/*! Draw guide for component.
-	 *
-	 * A guide is the wire overlay
-	 * in the 3d editor view.
-	 *
-	 * \param primitiveRenderer Primitive wire renderer.
-	 */
-	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const = 0;
+	virtual Transform getTransform() const = 0;
+
+	virtual void setTransform(const Transform& transform) = 0;
 };
 
 }

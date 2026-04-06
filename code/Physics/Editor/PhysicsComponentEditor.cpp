@@ -1,14 +1,15 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Physics/Editor/PhysicsComponentEditor.h"
+
 #include "Physics/BodyDesc.h"
 #include "Physics/ShapeDesc.h"
-#include "Physics/Editor/PhysicsComponentEditor.h"
 #include "Physics/World/JointComponentData.h"
 #include "Physics/World/RigidBodyComponentData.h"
 #include "Physics/World/Character/CharacterComponent.h"
@@ -30,10 +31,6 @@ PhysicsComponentEditor::PhysicsComponentEditor(scene::SceneEditorContext* contex
 :	m_context(context)
 ,	m_entityAdapter(entityAdapter)
 ,	m_componentData(componentData)
-{
-}
-
-void PhysicsComponentEditor::transformModified(scene::EntityAdapter* entityAdapter, scene::EntityAdapter* modifiedEntityAdapter)
 {
 }
 

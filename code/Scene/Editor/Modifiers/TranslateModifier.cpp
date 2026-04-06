@@ -1,20 +1,22 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <numeric>
+
+#include "Scene/Editor/Modifiers/TranslateModifier.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Line2.h"
 #include "Core/Math/Winding2.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/IModifierAnchor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
-#include "Scene/Editor/Modifiers/TranslateModifier.h"
 #include "Ui/Application.h"
 #include "Ui/Command.h"
 
@@ -50,12 +52,12 @@ void TranslateModifier::deactivate()
 
 void TranslateModifier::selectionChanged()
 {
-	m_entityAdapters = m_context->getEntities(SceneEditorContext::GfDefault | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
+	m_anchors = m_context->getModifierAnchors();
 
 	m_baseTranslations.clear();
-	for (auto entityAdapter : m_entityAdapters)
+	for (auto anchor : m_anchors)
 	{
-		const Transform T = entityAdapter->getTransform();
+		const Transform T = anchor->getTransform();
 		m_baseTranslations.push_back(T.translation());
 	}
 
@@ -82,7 +84,7 @@ IModifier::CursorMovedResult TranslateModifier::cursorMoved(
 	const Vector4& worldRayDirection
 )
 {
-	if (m_entityAdapters.empty())
+	if (m_anchors.empty())
 		return { false, false };
 
 	const Vector4 eye = transformChain.getView().inverse().translation();
@@ -184,10 +186,10 @@ bool TranslateModifier::handleCommand(const ui::Command& command)
 {
 	if (command == L"Scene.Editor.Snap")
 	{
-		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
+		for (uint32_t i = 0; i < m_anchors.size(); ++i)
 		{
-			Transform T = m_entityAdapters[i]->getTransform0();
-			m_entityAdapters[i]->setTransform(Transform(
+			const Transform T = m_anchors[i]->getTransform();
+			m_anchors[i]->setTransform(Transform(
 				snap(m_baseTranslations[i], 1 | 2 | 4, false),
 				T.rotation()
 			));
@@ -213,10 +215,10 @@ bool TranslateModifier::handleCommand(const ui::Command& command)
 			0.0f
 		);
 
-		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
+		for (uint32_t i = 0; i < m_anchors.size(); ++i)
 		{
-			const Transform T = m_entityAdapters[i]->getTransform0();
-			m_entityAdapters[i]->setTransform(Transform(
+			const Transform T = m_anchors[i]->getTransform();
+			m_anchors[i]->setTransform(Transform(
 				snap(m_baseTranslations[i] + delta, m_axisHot, false),
 				T.rotation()
 			));
@@ -271,10 +273,10 @@ void TranslateModifier::apply(
 		if (!(m_axisEnable & 4))
 			baseDelta *= Vector4(1.0f, 1.0f, 0.0f);
 
-		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
+		for (uint32_t i = 0; i < m_anchors.size(); ++i)
 		{
-			const Transform T = m_entityAdapters[i]->getTransform();
-			m_entityAdapters[i]->setTransform(Transform(
+			const Transform T = m_anchors[i]->getTransform();
+			m_anchors[i]->setTransform(Transform(
 				snap(m_baseTranslations[i] + baseDelta, m_axisEnable, snapOverrideEnable),
 				T.rotation()
 			));
@@ -287,10 +289,10 @@ void TranslateModifier::apply(
 
 		Vector4 baseDelta = m_center - m_center0;
 
-		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
+		for (uint32_t i = 0; i < m_anchors.size(); ++i)
 		{
-			const Transform T = m_entityAdapters[i]->getTransform();
-			m_entityAdapters[i]->setTransform(Transform(
+			const Transform T = m_anchors[i]->getTransform();
+			m_anchors[i]->setTransform(Transform(
 				snap(m_baseTranslations[i] + baseDelta, 1 | 2 | 4, snapOverrideEnable),
 				T.rotation()
 			));
@@ -308,7 +310,7 @@ void TranslateModifier::end(const TransformChain& transformChain)
 
 void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer, bool orthogonal) const
 {
-	if (m_entityAdapters.empty())
+	if (m_anchors.empty())
 		return;
 
 	const Vector4 eye = primitiveRenderer->getView().inverse().translation();

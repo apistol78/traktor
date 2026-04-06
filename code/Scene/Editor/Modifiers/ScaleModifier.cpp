@@ -10,7 +10,7 @@
 #include "Core/Math/Line2.h"
 #include "Core/Math/Winding2.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/IModifierAnchor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Scene/Editor/Modifiers/ScaleModifier.h"
@@ -49,20 +49,20 @@ void ScaleModifier::deactivate()
 
 void ScaleModifier::selectionChanged()
 {
-	m_entityAdapters = m_context->getEntities(SceneEditorContext::GfDefault | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
+	m_anchors = m_context->getModifierAnchors();
 
 	m_baseScale.clear();
 	m_center = Vector4::zero();
 
-	for (auto entityAdapter : m_entityAdapters)
+	for (auto anchor : m_anchors)
 	{
-		const Transform T = entityAdapter->getTransform0();
+		const Transform T = anchor->getTransform();
 		m_baseScale.push_back(Vector4::one()); // T.scale());
 		m_center += T.translation();
 	}
 
-	if (!m_entityAdapters.empty())
-		m_center /= Scalar(float(m_entityAdapters.size()));
+	if (!m_anchors.empty())
+		m_center /= Scalar(float(m_anchors.size()));
 
 	m_center = m_center.xyz1();
 	m_deltaScale = Vector4::zero();
@@ -79,7 +79,7 @@ IModifier::CursorMovedResult ScaleModifier::cursorMoved(
 	const Vector4& worldRayDirection
 )
 {
-	if (m_entityAdapters.empty())
+	if (m_anchors.empty())
 		return { false, false };
 
 	const float axisLength = m_context->getGuideSize();
@@ -153,10 +153,10 @@ void ScaleModifier::apply(
 	if (m_axisEnable & 4)
 		m_deltaScale += Vector4(0.0f, 0.0f, screenDelta.x()) * Scalar(0.01f);
 
-	//for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
+	//for (uint32_t i = 0; i < m_anchors.size(); ++i)
 	//{
-	//	Transform T = m_entityAdapters[i]->getTransform0();
-	//	m_entityAdapters[i]->setTransform(Transform(
+	//	Transform T = m_anchors[i]->getTransform();
+	//	m_anchors[i]->setTransform(Transform(
 	//		T.translation(),
 	//		T.rotation(),
 	//		(m_baseScale[i] + m_deltaScale).xyz1()
@@ -174,7 +174,7 @@ void ScaleModifier::end(const TransformChain& transformChain)
 
 void ScaleModifier::draw(render::PrimitiveRenderer* primitiveRenderer, bool orthogonal) const
 {
-	if (m_entityAdapters.empty())
+	if (m_anchors.empty())
 		return;
 
 	const float axisLength = m_context->getGuideSize();

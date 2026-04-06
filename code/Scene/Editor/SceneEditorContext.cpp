@@ -27,6 +27,7 @@
 #include "Scene/Editor/DefaultEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityAdapterBuilder.h"
+#include "Scene/Editor/EntityTransformAnchor.h"
 #include "Scene/Editor/IComponentEditorFactory.h"
 #include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/IModifier.h"
@@ -651,6 +652,18 @@ RefArray< EntityAdapter > SceneEditorContext::getEntities(uint32_t flags) const
 	}
 
 	return std::move(entityAdapters);
+}
+
+RefArray< IModifierAnchor > SceneEditorContext::getModifierAnchors() const
+{
+	const RefArray< EntityAdapter > entityAdapters = getEntities(GfDefault | GfSelectedOnly | GfNoExternalChild);
+
+	RefArray< IModifierAnchor > anchors;
+	anchors.reserve(entityAdapters.size());
+	for (auto entityAdapter : entityAdapters)
+		anchors.push_back(new EntityTransformAnchor(entityAdapter));
+
+	return anchors;
 }
 
 uint32_t SceneEditorContext::findAdaptersOfType(const TypeInfo& entityType, RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags) const
