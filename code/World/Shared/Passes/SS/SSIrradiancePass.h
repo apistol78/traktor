@@ -66,7 +66,6 @@ public:
 private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_irradianceComputeShader;
-	resource::Proxy< render::ImageGraph > m_irradianceDenoise;
 };
 
 }
