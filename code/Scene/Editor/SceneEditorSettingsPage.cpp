@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Scene/Editor/SceneEditorSettingsPage.h"
+
 #include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -14,25 +16,24 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "I18N/Text.h"
-#include "Scene/Editor/SceneEditorSettingsPage.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
+#include "Ui/DropDown.h"
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/DropDown.h"
 #include "World/IWorldRenderer.h"
 
 namespace traktor::scene
 {
-	namespace
-	{
+namespace
+{
 
 const float c_defaultFieldOfView = 80.0f;
 const float c_defaultMovementSpeed = 40.0f;
 const float c_defaultMouseWheelRate = 10.0f;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneEditorSettingsPage", 0, SceneEditorSettingsPage, editor::ISettingsPage)
 
@@ -157,6 +158,18 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 	m_dropDownReflections->add(L"Ultra");
 	m_dropDownReflections->select(settings->getProperty< int32_t >(L"SceneEditor.ReflectionsQuality", 4));
 
+	Ref< ui::Static > staticIrradiance = new ui::Static();
+	staticIrradiance->create(containerQuality, i18n::Text(L"SCENE_EDITOR_IRRADIANCE"));
+
+	m_dropDownIrradiance = new ui::DropDown();
+	m_dropDownIrradiance->create(containerQuality);
+	m_dropDownIrradiance->add(L"Disabled");
+	m_dropDownIrradiance->add(L"Low");
+	m_dropDownIrradiance->add(L"Medium");
+	m_dropDownIrradiance->add(L"High");
+	m_dropDownIrradiance->add(L"Ultra");
+	m_dropDownIrradiance->select(settings->getProperty< int32_t >(L"SceneEditor.IrradianceQuality", 4));
+
 	Ref< ui::Static > staticAmbientOcclusion = new ui::Static();
 	staticAmbientOcclusion->create(containerQuality, i18n::Text(L"SCENE_EDITOR_AO"));
 
@@ -219,6 +232,7 @@ bool SceneEditorSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyInteger >(L"SceneEditor.MotionBlurQuality", m_dropDownMotionBlur->getSelected());
 	settings->setProperty< PropertyInteger >(L"SceneEditor.ShadowQuality", m_dropDownShadows->getSelected());
 	settings->setProperty< PropertyInteger >(L"SceneEditor.ReflectionsQuality", m_dropDownReflections->getSelected());
+	settings->setProperty< PropertyInteger >(L"SceneEditor.IrradianceQuality", m_dropDownIrradiance->getSelected());
 	settings->setProperty< PropertyInteger >(L"SceneEditor.AmbientOcclusionQuality", m_dropDownAmbientOcclusion->getSelected());
 	settings->setProperty< PropertyInteger >(L"SceneEditor.AntiAliasQuality", m_dropAntialias->getSelected());
 	return true;

@@ -72,7 +72,7 @@ public:
 
 	virtual void setAspect(float aspect) override final;
 
-	virtual void setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias) override final;
+	virtual void setQuality(const world::QualitySettings& qualitySettings) override final;
 
 	virtual void setDebugOverlay(world::IDebugOverlay* overlay) override final;
 
@@ -102,11 +102,7 @@ private:
 	const TypeInfo* m_worldRendererType;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	uint32_t m_worldRendererHash = 0;
-	world::Quality m_shadowQuality;
-	world::Quality m_reflectionsQuality;
-	world::Quality m_motionBlurQuality;
-	world::Quality m_ambientOcclusionQuality;
-	world::Quality m_antiAliasQuality;
+	world::QualitySettings m_worldQuality;
 	RenderControlModel m_model;
 	bool m_gridEnable = true;
 	bool m_guideEnable = true;

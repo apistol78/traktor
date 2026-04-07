@@ -337,7 +337,7 @@ void WorldRendererDeferred::setupVisualPass(
 			if (irradianceTargetSet != nullptr)
 				sharedParams->setTextureParameter(ShaderParameter::IrradianceMap, irradianceTargetSet->getColorTexture(0));
 			else
-				sharedParams->setTextureParameter(ShaderParameter::IrradianceMap, m_whiteTexture);
+				sharedParams->setTextureParameter(ShaderParameter::IrradianceMap, m_blackTexture);
 
 			if (ambientOcclusionTargetSet != nullptr)
 				sharedParams->setTextureParameter(ShaderParameter::OcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));

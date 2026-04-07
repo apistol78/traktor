@@ -64,13 +64,7 @@ const int32_t c_defaultMultiSample = 0;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CameraRenderControl", CameraRenderControl, ISceneRenderControl)
 
 CameraRenderControl::CameraRenderControl()
-	: m_imageProcessQuality(world::Quality::Disabled)
-	, m_shadowQuality(world::Quality::Disabled)
-	, m_reflectionsQuality(world::Quality::Disabled)
-	, m_motionBlurQuality(world::Quality::Disabled)
-	, m_ambientOcclusionQuality(world::Quality::Disabled)
-	, m_antiAliasQuality(world::Quality::Disabled)
-	, m_multiSample(c_defaultMultiSample)
+	: m_multiSample(c_defaultMultiSample)
 	, m_invertPanY(false)
 	, m_dirtySize(0, 0)
 {
@@ -158,14 +152,9 @@ void CameraRenderControl::setAspect(float aspect)
 	m_containerAspect->update();
 }
 
-void CameraRenderControl::setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias)
+void CameraRenderControl::setQuality(const world::QualitySettings& qualitySettings)
 {
-	m_imageProcessQuality = imageProcess;
-	m_shadowQuality = shadows;
-	m_reflectionsQuality = reflections;
-	m_motionBlurQuality = motionBlur;
-	m_ambientOcclusionQuality = ambientOcclusion;
-	m_antiAliasQuality = antiAlias;
+	m_worldQuality = qualitySettings;
 	safeDestroy(m_worldRenderer);
 }
 
@@ -276,13 +265,7 @@ void CameraRenderControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = &m_worldRenderSettings;
 	wcd.entityRenderers = worldEntityRenderers;
-	wcd.quality.motionBlur = m_motionBlurQuality;
-	wcd.quality.reflections = m_reflectionsQuality;
-	wcd.quality.shadows = m_shadowQuality;
-	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
-	wcd.quality.antiAlias = m_antiAliasQuality;
-	wcd.quality.imageProcess = m_imageProcessQuality;
-	wcd.quality.irradiance = world::Quality::Ultra;
+	wcd.quality = m_worldQuality;
 	wcd.multiSample = m_multiSample;
 	wcd.hdr = m_renderView->isHDR();
 	wcd.rt = m_rayTracingEnable;

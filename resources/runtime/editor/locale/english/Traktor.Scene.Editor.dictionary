@@ -194,6 +194,10 @@
 			<second>Change render quality</second>
 		</item>
 		<item>
+			<first>SCENE_EDITOR_IRRADIANCE</first>
+			<second>Irradiance</second>
+		</item>
+		<item>
 			<first>SCENE_EDITOR_REFLECTIONS</first>
 			<second>Reflections</second>
 		</item>

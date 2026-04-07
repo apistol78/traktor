@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include "Core/RefArray.h"
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Matrix44.h"
+#include "Core/RefArray.h"
 #include "Core/Timer/Timer.h"
 #include "Resource/Proxy.h"
 #include "Scene/Editor/ISceneRenderControl.h"
@@ -69,7 +69,7 @@ public:
 
 	virtual void setAspect(float aspect) override final;
 
-	virtual void setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias) override final;
+	virtual void setQuality(const world::QualitySettings& qualitySettings) override final;
 
 	virtual void setDebugOverlay(world::IDebugOverlay* overlay) override final;
 
@@ -103,12 +103,7 @@ private:
 	uint32_t m_worldRendererHash = 0;
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;
-	world::Quality m_imageProcessQuality = world::Quality::Disabled;
-	world::Quality m_shadowQuality = world::Quality::Disabled;
-	world::Quality m_reflectionsQuality = world::Quality::Disabled;
-	world::Quality m_motionBlurQuality = world::Quality::Disabled;
-	world::Quality m_ambientOcclusionQuality = world::Quality::Disabled;
-	world::Quality m_antiAliasQuality = world::Quality::Disabled;
+	world::QualitySettings m_worldQuality;
 	RenderControlModel m_model;
 	Ref< world::IDebugOverlay > m_overlay;
 	float m_overlayAlpha = 1.0f;

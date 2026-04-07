@@ -68,6 +68,7 @@ private:
 	resource::Proxy< render::Shader > m_irradianceComputeShader;
 	resource::Proxy< render::ImageGraph > m_irradianceDenoise;
 	render::Handle m_persistentReservoirBuffers[2];
+	bool m_halfResolution = false;
 };
 
 }

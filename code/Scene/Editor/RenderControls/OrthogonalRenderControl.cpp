@@ -83,11 +83,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRend
 
 OrthogonalRenderControl::OrthogonalRenderControl()
 	: m_worldRendererType(nullptr)
-	, m_shadowQuality(world::Quality::Disabled)
-	, m_reflectionsQuality(world::Quality::Disabled)
-	, m_motionBlurQuality(world::Quality::Disabled)
-	, m_ambientOcclusionQuality(world::Quality::Disabled)
-	, m_antiAliasQuality(world::Quality::Disabled)
 	, m_multiSample(0)
 	, m_viewPlane(PositiveX)
 	, m_viewFarZ(0.0f)
@@ -201,13 +196,9 @@ void OrthogonalRenderControl::setAspect(float aspect)
 {
 }
 
-void OrthogonalRenderControl::setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias)
+void OrthogonalRenderControl::setQuality(const world::QualitySettings& qualitySettings)
 {
-	m_shadowQuality = shadows;
-	m_reflectionsQuality = reflections;
-	m_motionBlurQuality = motionBlur;
-	m_ambientOcclusionQuality = ambientOcclusion;
-	m_antiAliasQuality = antiAlias;
+	m_worldQuality = qualitySettings;
 	safeDestroy(m_worldRenderer);
 }
 
@@ -372,12 +363,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = worldRenderSettings;
 	wcd.entityRenderers = worldEntityRenderers;
-	wcd.quality.motionBlur = m_motionBlurQuality;
-	wcd.quality.shadows = m_shadowQuality;
-	wcd.quality.reflections = m_reflectionsQuality;
-	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
-	wcd.quality.antiAlias = m_antiAliasQuality;
-	wcd.quality.irradiance = world::Quality::Ultra;
+	wcd.quality = m_worldQuality;
 	wcd.multiSample = m_multiSample;
 	wcd.hdr = m_renderView->isHDR();
 	wcd.rt = m_rayTracingEnable;

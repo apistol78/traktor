@@ -83,6 +83,8 @@ bool RTIrradiancePass::create(resource::IResourceManager* resourceManager, rende
 	m_persistentReservoirBuffers[0] = render::Handle(render::getParameterHandle(std::wstring(L"World_Reservoir_Even_") + id));
 	m_persistentReservoirBuffers[1] = render::Handle(render::getParameterHandle(std::wstring(L"World_Reservoir_Odd_") + id));
 
+	// Use half-resolution output if high quality or less.
+	m_halfResolution = (bool)(desc.quality.irradiance <= Quality::High);
 	return true;
 }
 
@@ -110,7 +112,6 @@ render::RGTargetSet RTIrradiancePass::setup(
 	if (m_irradianceComputeShader == nullptr || m_irradianceDenoise == nullptr /* || gbufferTargetSetId == 0*/)
 		return render::RGTargetSet::Invalid;
 
-	const bool halfResolution = false;
 	const bool irradianceEnable = (bool)(gatheredView.irradianceGrid != nullptr);
 	const bool irradianceSingle = (bool)(gatheredView.irradianceGrid != nullptr && gatheredView.irradianceGrid->isSingle());
 
@@ -118,8 +119,8 @@ render::RGTargetSet RTIrradiancePass::setup(
 	const render::RenderGraphBufferDesc reservoirBufferDesc = {
 		.elementSize = sizeof(World_Reservoir_Type),
 		.elementCount = 0,
-		.referenceWidthDenom = halfResolution ? 2 : 1,
-		.referenceHeightDenom = halfResolution ? 2 : 1
+		.referenceWidthDenom = m_halfResolution ? 2 : 1,
+		.referenceHeightDenom = m_halfResolution ? 2 : 1
 	};
 	const DoubleBufferedBuffer reservoirBufferId = {
 		renderGraph.addPersistentBuffer(L"Reservoir", m_persistentReservoirBuffers[frameCount % 2], reservoirBufferDesc),
@@ -128,8 +129,8 @@ render::RGTargetSet RTIrradiancePass::setup(
 
 	// Add compute output irradiance texture.
 	const render::RenderGraphTextureDesc irradianceTextureDesc = {
-		.referenceWidthDenom = halfResolution ? 2 : 1,
-		.referenceHeightDenom = halfResolution ? 2 : 1,
+		.referenceWidthDenom = m_halfResolution ? 2 : 1,
+		.referenceHeightDenom = m_halfResolution ? 2 : 1,
 		.mipCount = 1,
 		.format = render::TfR11G11B10F // Irradiance (RGB)
 	};
@@ -162,7 +163,7 @@ render::RGTargetSet RTIrradiancePass::setup(
 		params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
 		params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
 		params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
-		params->setTextureParameter(ShaderParameter::HalfResDepthMap, halfResolution ? halfResDepthTexture : gbufferTargetSet->getColorTexture(0));
+		params->setTextureParameter(ShaderParameter::HalfResDepthMap, m_halfResolution ? halfResDepthTexture : gbufferTargetSet->getColorTexture(0));
 		params->setFloatParameter(ShaderParameter::Random, s_random.nextFloat());
 
 		if (gatheredView.irradianceGrid)
