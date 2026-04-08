@@ -258,7 +258,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	env->set(L"DEPLOY_OUTPUT_PATH", m_outputPath);
 	env->set(L"DEPLOY_DEBUG", m_globalSettings->getProperty< bool >(L"Runtime.UseDebugBinaries", false) ? L"YES" : L"");
 	env->set(L"DEPLOY_STATIC_LINK", m_globalSettings->getProperty< bool >(L"Runtime.StaticallyLinked", false) ? L"YES" : L"");
-	env->set(L"DEPLOY_BUILD_VERBOSE", m_globalSettings->getProperty< bool >(L"Pipeline.Verbose", false) ? L"YES" : L"");
+	env->set(L"DEPLOY_BUILD_VERBOSE", L"YES");
 	env->set(L"DEPLOY_BUILD_FORCE", m_force ? L"YES" : L"");
 
 	env->set(L"DEPLOY_ANDROID_HOME", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Runtime.AndroidHome", L"$(ANDROID_HOME)"), 0));
@@ -303,8 +303,8 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 			ss << L" " << dependency.format();
 	}
 
-	if (m_globalSettings->getProperty< bool >(L"Pipeline.Verbose", false))
-		ss << L" -verbose";
+	ss << L" -verbose";
+
 	if (m_force)
 		ss << L" -force";
 
