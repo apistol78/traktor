@@ -110,6 +110,7 @@ private:
 	Ref< Context > m_context;
 	Ref< ShaderModuleCache > m_shaderModuleCache;
 	Ref< PipelineLayoutCache > m_pipelineLayoutCache;
+	SmallSet< const TypeInfo* > m_enabledPlugins;
 	VmaAllocator m_allocator = 0;
 	int32_t m_maxAnisotropy = 0;
 	float m_mipBias = 0.0f;

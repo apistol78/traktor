@@ -37,8 +37,13 @@ void RenderPluginXeSS::getDeviceExtensions(VkInstance instance, VkPhysicalDevice
 
 	auto status = xessVKGetRequiredDeviceExtensions(instance, physicalDevice, &extensionCount, &extensions);
 	if (status == XESS_RESULT_SUCCESS)
+	{
 		for (size_t extensionIdx = 0; extensionIdx < extensionCount; ++extensionIdx)
 			outExtensions.push_back(extensions[extensionIdx]);
+
+		// This is required but XeSS seem to fail to report that.
+		outExtensions.push_back("VK_KHR_shader_integer_dot_product");
+	}
 }
 
 void RenderPluginXeSS::destroy()

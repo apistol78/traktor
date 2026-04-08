@@ -89,8 +89,6 @@ const char* c_deviceExtensions[] = {
 	"VK_EXT_shader_subgroup_ballot",
 	"VK_EXT_memory_budget",
 	"VK_EXT_descriptor_indexing",
-	"VK_EXT_mutable_descriptor_type",
-	"VK_KHR_shader_integer_dot_product",
 	"VK_KHR_buffer_device_address"
 };
 const char* c_deviceExtensionsRayTracing[] = {
@@ -341,6 +339,13 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	log::info << L"Using graphics queue " << graphicsQueueIndex << L", compute queue " << computeQueueIndex << L"." << Endl;
 
+	// Get available extensions from the physical device.
+	uint32_t availableExtensionCount = 0;
+	vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &availableExtensionCount, nullptr);
+
+	AlignedVector< VkExtensionProperties > availableExtensions(availableExtensionCount);
+	vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &availableExtensionCount, availableExtensions.ptr());
+
 	// Build array of required extensions.
 	AlignedVector< const char* > deviceExtensions;
 	for (int32_t i = 0; i < sizeof_array(c_deviceExtensions); ++i)
@@ -350,7 +355,31 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 			deviceExtensions.push_back(c_deviceExtensionsRayTracing[i]);
 
 #if defined(HAVE_VULKAN_XESS_PLUGIN)
-	RenderPluginXeSS::getDeviceExtensions(m_instance, m_physicalDevice, extensions);
+	// Get required extensions for plugins.
+	AlignedVector< const char* > pluginDeviceExtensions;
+	RenderPluginXeSS::getDeviceExtensions(m_instance, m_physicalDevice, pluginDeviceExtensions);
+
+	// Check if all plugin extensions are supported; if so merge into requested extensions and enable plugin.
+	bool pluginSupported = true;
+	for (const char* pluginDeviceExtension : pluginDeviceExtensions)
+	{
+		const auto it = std::find_if(availableExtensions.begin(), availableExtensions.end(), [&](const VkExtensionProperties& ext){
+			return std::strcmp(pluginDeviceExtension, ext.extensionName) == 0;
+			});
+		if (it == availableExtensions.end())
+		{
+			log::debug << L"Plugin \"RenderPluginXeSS\" require \"" << mbstows(pluginDeviceExtension) << L"\" but is not supported on device; plugin disabled." << Endl;
+			pluginSupported = false;
+			break;
+		}
+	}
+
+	// Merge plugin extensions into required extensions.
+	if (pluginSupported)
+	{
+		deviceExtensions.insert(deviceExtensions.end(), pluginDeviceExtensions.begin(), pluginDeviceExtensions.end());
+		m_enabledPlugins.insert(&type_of< RenderPluginXeSS >());
+	}
 #endif
 
 	if (desc.aftermath)
@@ -665,7 +694,7 @@ DisplayMode RenderSystemVk::getCurrentDisplayMode(uint32_t display) const
 	dm.width = dmgl.dmPelsWidth;
 	dm.height = dmgl.dmPelsHeight;
 	dm.dpi = 96;
-	dm.refreshRate = dmgl.dmDisplayFrequency;
+	dm.refreshRate = (float)dmgl.dmDisplayFrequency;
 	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
 #elif defined(__LINUX__) || defined(__RPI__)
 	const int screen = DefaultScreen(m_display);
@@ -878,10 +907,14 @@ void* RenderSystemVk::getInternalHandle() const
 
 Ref< IRenderPlugin > RenderSystemVk::createPlugin(const TypeInfo& pluginType)
 {
+	if (m_enabledPlugins.find(&pluginType) == m_enabledPlugins.end())
+		return nullptr;
+
 #if defined(HAVE_VULKAN_XESS_PLUGIN)
 	if (&pluginType == &type_of< RenderPluginXeSS >())
 		return new RenderPluginXeSS();
 #endif
+
 	return nullptr;
 }
 
