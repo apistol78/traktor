@@ -25,6 +25,7 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
+#include "Editor/DataAccessCache.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
@@ -65,26 +66,18 @@ namespace traktor::mesh
 namespace
 {
 
-class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
+class FragmentReaderAdapter : public render::FragmentLinker::FragmentReaderTransientCache
 {
 public:
-	explicit FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
-		: m_pipelineBuilder(pipelineBuilder)
+	explicit FragmentReaderAdapter(SmallMap< Key, Ref< render::ShaderGraph > >& cache, editor::IPipelineBuilder* pipelineBuilder)
+		: render::FragmentLinker::FragmentReaderTransientCache(cache)
+		, m_pipelineBuilder(pipelineBuilder)
 	{
 	}
 
 	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid) const
 	{
-		Ref< const render::ShaderGraph > shaderGraph = m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
-		if (!shaderGraph)
-			return nullptr;
-
-		// if (render::ShaderGraphValidator(shaderGraph, fragmentGuid).validateIntegrity())
-		// 	return shaderGraph;
-		// else
-		// 	return nullptr;
-
-		return shaderGraph;
+		return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
 	}
 
 private:
@@ -570,7 +563,7 @@ bool MeshPipeline::buildOutput(
 
 		// Link shader fragments.
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline link fragments");
-		FragmentReaderAdapter fragmentReader(pipelineBuilder);
+		FragmentReaderAdapter fragmentReader(m_linkerCache, pipelineBuilder);
 		materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
 		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
@@ -584,7 +577,7 @@ bool MeshPipeline::buildOutput(
 		const auto parameterDeclarationReader = [&](const Guid& declarationId) -> render::ParameterLinker::named_decl_t {
 			Ref< db::Instance > declarationInstance = pipelineBuilder->getSourceDatabase()->getInstance(declarationId);
 			if (declarationInstance != nullptr)
-				return { declarationInstance->getName(), declarationInstance->getObject() };
+				return { declarationInstance->getName(), pipelineBuilder->getObjectReadOnly(declarationId) };
 			else
 				return { L"", nullptr };
 		};

@@ -53,7 +53,7 @@ const Guid c_guidTerrainShaderTemplate(L"{A6C4532A-0540-4D42-93FC-964C7BFDD1FD}"
 const Guid c_guidSurfaceShaderTemplate(L"{BAD675B3-9799-7D49-A045-BDA471DD5A3E}");
 const Guid c_guidSurfaceShaderPlaceholder(L"{23790224-9E2A-4C43-9C3B-F659BE962E10}");
 
-class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
+class FragmentReaderAdapter : public render::FragmentLinker::FragmentReaderNoCache
 {
 public:
 	explicit FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder, const render::ShaderGraph* surfaceShaderImpl)

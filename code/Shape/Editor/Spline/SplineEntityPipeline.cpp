@@ -61,7 +61,7 @@ namespace
 
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-9A17-899B44D5414E}"));
 
-class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
+class FragmentReaderAdapter : public render::FragmentLinker::FragmentReaderNoCache
 {
 public:
 	explicit FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
@@ -306,7 +306,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				const auto parameterDeclarationReader = [&](const Guid& declarationId) -> render::ParameterLinker::named_decl_t {
 					Ref< db::Instance > declarationInstance = pipelineBuilder->getSourceDatabase()->getInstance(declarationId);
 					if (declarationInstance != nullptr)
-						return { declarationInstance->getName(), declarationInstance->getObject() };
+						return { declarationInstance->getName(), pipelineBuilder->getObjectReadOnly(declarationId) };
 					else
 						return { L"", nullptr };
 				};

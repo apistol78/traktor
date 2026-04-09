@@ -59,7 +59,7 @@ namespace traktor::render
 namespace
 {
 
-class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
+class FragmentReaderAdapter : public FragmentLinker::FragmentReaderNoCache
 {
 public:
 	explicit FragmentReaderAdapter(db::Database* db)

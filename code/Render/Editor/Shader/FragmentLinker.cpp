@@ -12,6 +12,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/Node.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 #include "Render/Editor/Shader/External.h"
@@ -126,6 +127,21 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 
 Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const RefArray< External >& externalNodes, bool fullResolve, const Guid* optionalShaderGraphGuid) const
 {
+	// Check if we already have a cached, linked, shader graph.
+	uint32_t hash = ShaderGraphHash(true, true).calculate(shaderGraph);
+	for (auto externalNode : externalNodes)
+		hash += ShaderGraphHash(false, false).calculate(externalNode);
+
+	const Key key(hash, 0, 0, fullResolve ? 1 : 0);
+
+	Ref< const ShaderGraph > linkedGraph = m_fragmentReader->get(key);
+	if (linkedGraph)
+	{
+		// Found cached shader graph.
+		return DeepClone(linkedGraph).create< ShaderGraph >();
+	}
+
+	// Create error prefix string.
 	std::wstring errorPrefix;
 	if (optionalShaderGraphGuid)
 		errorPrefix = L"Fragment linkage of \"" + optionalShaderGraphGuid->format() + L"\" failed; ";
@@ -277,7 +293,35 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 	T_VALIDATE_SHADERGRAPH(mutableShaderGraph);
 	T_FATAL_ASSERT(mutableShaderGraph->findNodesOf< PortConnector >().empty());
 
+	// Add finished shader graph to cache.
+	m_fragmentReader->put(key, mutableShaderGraph);
+
 	return mutableShaderGraph;
+}
+
+Ref< const ShaderGraph > FragmentLinker::FragmentReaderNoCache::get(const Key& key) const
+{
+	return nullptr;
+}
+
+void FragmentLinker::FragmentReaderNoCache::put(const Key& key, const ShaderGraph* shaderGraph) const
+{
+}
+
+FragmentLinker::FragmentReaderTransientCache::FragmentReaderTransientCache(SmallMap< Key, Ref< ShaderGraph > >& cache)
+	: m_cache(cache)
+{
+}
+
+Ref< const ShaderGraph > FragmentLinker::FragmentReaderTransientCache::get(const Key& key) const
+{
+	const auto it = m_cache.find(key);
+	return it != m_cache.end() ? it->second : nullptr;
+}
+
+void FragmentLinker::FragmentReaderTransientCache::put(const Key& key, const ShaderGraph* shaderGraph) const
+{
+	m_cache.insert(key, DeepClone(shaderGraph).create< ShaderGraph >());
 }
 
 }

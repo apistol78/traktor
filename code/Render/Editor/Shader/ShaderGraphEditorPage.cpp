@@ -143,7 +143,7 @@ const wchar_t* c_uniformFrequencyNames[] = {
 	L"Draw"
 };
 
-class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
+class FragmentReaderAdapter : public FragmentLinker::FragmentReaderNoCache
 {
 public:
 	explicit FragmentReaderAdapter(db::Database* db)

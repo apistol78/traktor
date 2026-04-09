@@ -39,10 +39,10 @@ const Guid c_implLightMap(L"{DD1F6C98-F5E2-D34B-A5FB-B21CCE3034A2}");
 const Guid c_implTexCoordSelect0(L"{D235FD2F-5ED9-5B49-B3F0-14F03B6D8748}");
 const Guid c_implTexCoordSelect1(L"{0269F15C-2543-6D4A-ADC0-4DC584976AAF}");
 
-class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
+class FragmentReaderAdapter : public render::FragmentLinker::FragmentReaderNoCache
 {
 public:
-	FragmentReaderAdapter(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve)
+	explicit FragmentReaderAdapter(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve)
 		: m_resolve(resolve)
 	{
 	}

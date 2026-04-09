@@ -67,11 +67,12 @@ namespace traktor::render
 namespace
 {
 
-class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
+class FragmentReaderAdapter : public FragmentLinker::FragmentReaderTransientCache
 {
 public:
-	explicit FragmentReaderAdapter(editor::IPipelineCommon* pipeline)
-		: m_pipeline(pipeline)
+	explicit FragmentReaderAdapter(SmallMap< Key, Ref< ShaderGraph > >& cache, editor::IPipelineCommon* pipeline)
+		: FragmentLinker::FragmentReaderTransientCache(cache)
+		, m_pipeline(pipeline)
 	{
 	}
 
@@ -276,7 +277,7 @@ bool ShaderPipeline::buildOutput(
 
 	// Link shader fragments.
 	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline link fragments");
-	FragmentReaderAdapter fragmentReader(pipelineBuilder);
+	FragmentReaderAdapter fragmentReader(m_linkerCache, pipelineBuilder);
 	shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true);
 	pipelineBuilder->getProfiler()->end();
 	if (!shaderGraph)
@@ -290,7 +291,7 @@ bool ShaderPipeline::buildOutput(
 	const auto parameterDeclarationReader = [&](const Guid& declarationId) -> ParameterLinker::named_decl_t {
 		Ref< db::Instance > declarationInstance = pipelineBuilder->getSourceDatabase()->getInstance(declarationId);
 		if (declarationInstance != nullptr)
-			return { declarationInstance->getName(), declarationInstance->getObject() };
+			return { declarationInstance->getName(), pipelineBuilder->getObjectReadOnly(declarationId) };
 		else
 			return { L"", nullptr };
 	};
@@ -695,7 +696,7 @@ bool ShaderPipeline::buildOutput(
 
 					pipelineBuilder->getProfiler()->end();
 					return programResource;
-					});
+				});
 				if (!programResource)
 				{
 					log::error << L"ShaderPipeline failed; unable to compile shader \"" << path << L"\"." << Endl;
