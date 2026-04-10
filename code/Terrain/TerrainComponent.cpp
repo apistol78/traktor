@@ -873,12 +873,6 @@ bool TerrainComponent::createRayTracingPatches()
 	const Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
 	Vector4 patchTopLeft = (-worldExtent * 0.5_simd).xyz1();
 
-	// for (auto& part : m_rtParts)
-	//{
-	//	safeDestroy(part.perVertexData);
-	//	safeDestroy(part.blas);
-	// }
-
 	safeDestroy(m_rtwInstance);
 
 	m_rtVertexBuffers.resize(m_patchCount * m_patchCount);
@@ -937,13 +931,17 @@ bool TerrainComponent::createRayTracingPatches()
 			// Create "per-vertex" attribute buffer.
 			const uint32_t vertexAttribCount = m_primitives[1].count * 3;
 
-			Ref< render::Buffer > perVertexData = m_renderSystem->createBuffer(
-				render::BuStructured,
-				vertexAttribCount * sizeof(world::HWRT_Material),
-				false,
-				T_FILE_LINE_W);
+			Ref< render::Buffer > perVertexData = const_cast< render::Buffer* >(m_rtParts[patchId].perVertexData.ptr());
 			if (!perVertexData)
-				return false;
+			{
+				perVertexData = m_renderSystem->createBuffer(
+					render::BuStructured,
+					vertexAttribCount * sizeof(world::HWRT_Material),
+					false,
+					T_FILE_LINE_W);
+				if (!perVertexData)
+					return false;
+			}
 
 			world::HWRT_Material* va = static_cast< world::HWRT_Material* >(perVertexData->lock());
 			T_ASSERT_M(va, L"Unable to lock vertex attribute buffer");
@@ -951,8 +949,8 @@ bool TerrainComponent::createRayTracingPatches()
 			{
 				const uint32_t index = m_indices[m_primitives[1].offset + i];
 
-				int32_t ix = index % patchDim;
-				int32_t iz = index / patchDim;
+				const int32_t ix = index % patchDim;
+				const int32_t iz = index / patchDim;
 
 				const float fx = float(ix) / (patchDim - 1);
 				const float fz = float(iz) / (patchDim - 1);

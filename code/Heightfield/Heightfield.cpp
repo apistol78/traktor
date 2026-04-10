@@ -1,33 +1,44 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Heightfield/Heightfield.h"
+
+#include "Core/Math/Winding3.h"
+
 #include <algorithm>
 #include <cmath>
 #include <limits>
-#include "Core/Math/Aabb3.h"
-#include "Core/Math/Winding3.h"
-#include "Heightfield/Heightfield.h"
 
 namespace traktor::hf
 {
+namespace
+{
+
+constexpr int32_t c_cellSize = 64;
+constexpr int32_t c_skip = 1;
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.Heightfield", Heightfield, Object)
 
 Heightfield::Heightfield(
 	int32_t size,
-	const Vector4& worldExtent
-)
-:	m_size(size)
-,	m_worldExtent(worldExtent)
+	const Vector4& worldExtent)
+	: m_size(size)
+	, m_worldExtent(worldExtent)
 {
-	m_heights.reset(new height_t [m_size * m_size]);
-	m_cuts.reset(new uint8_t [(m_size * m_size) / 8]);
-	m_attributes.reset(new uint8_t [m_size * m_size]);
+	m_cellBoundsPitch = (m_size + c_cellSize - 1) / c_cellSize;
+
+	m_heights.reset(new height_t[m_size * m_size]);
+	m_cuts.reset(new uint8_t[(m_size * m_size) / 8]);
+	m_attributes.reset(new uint8_t[m_size * m_size]);
+	m_cellBounds.reset(new Aabb3[m_cellBoundsPitch * m_cellBoundsPitch]);
+
 	m_worldExtent.storeUnaligned(m_worldExtentFloats);
 }
 
@@ -38,6 +49,7 @@ void Heightfield::setGridHeight(int32_t gridX, int32_t gridZ, float unitY)
 	if (gridZ < 0 || gridZ >= (int32_t)m_size)
 		return;
 	m_heights[gridX + gridZ * m_size] = height_t(clamp(unitY, 0.0f, 1.0f) * 65535.0f);
+	updateCellBounds(gridX, gridZ);
 }
 
 void Heightfield::setGridCut(int32_t gridX, int32_t gridZ, bool cut)
@@ -97,8 +109,7 @@ float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
 
 	const int32_t offset = igridX + igridZ * m_size;
 
-	height_t hts[] =
-	{
+	height_t hts[] = {
 		m_heights[offset],
 		m_heights[offset + 1],
 		m_heights[offset + m_size],
@@ -131,16 +142,16 @@ float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
 		hts[0] = hts[1] + (hts[2] - hts[3]);
 	}
 #else
-/*
-0,1(2)  1,1(3)
-   +----+
-   |   /|
-   |  / |
-   | /  |
-   |/   |
-   +----+
-0,0(0)  1,0(1)
-*/
+	/*
+	0,1(2)  1,1(3)
+	   +----+
+	   |   /|
+	   |  / |
+	   | /  |
+	   |/   |
+	   +----+
+	0,0(0)  1,0(1)
+	*/
 	const float k = fgridX - fgridZ;
 	if (k < 0.0f)
 	{
@@ -233,8 +244,7 @@ Vector4 Heightfield::gridToWorld(float gridX, float gridZ) const
 		worldX,
 		getWorldHeight(worldX, worldZ),
 		worldZ,
-		1.0f
-	);
+		1.0f);
 }
 
 void Heightfield::worldToGrid(float worldX, float worldZ, int32_t& outGridX, int32_t& outGridZ) const
@@ -266,16 +276,15 @@ float Heightfield::worldToUnit(float worldY) const
 Vector4 Heightfield::normalAt(float gridX, float gridZ) const
 {
 	const float c_distance = 0.5f;
-	const float directions[][2] =
-	{
+	const float directions[][2] = {
 		{ -c_distance, -c_distance },
-		{        0.0f, -c_distance },
-		{  c_distance, -c_distance },
-		{  c_distance,        0.0f },
-		{  c_distance,  c_distance },
-		{        0.0f,        0.0f },
-		{ -c_distance,  c_distance },
-		{ -c_distance,        0.0f }
+		{ 0.0f, -c_distance },
+		{ c_distance, -c_distance },
+		{ c_distance, 0.0f },
+		{ c_distance, c_distance },
+		{ 0.0f, 0.0f },
+		{ -c_distance, c_distance },
+		{ -c_distance, 0.0f }
 	};
 
 	const float h0 = getGridHeightBilinear(gridX, gridZ);
@@ -305,8 +314,7 @@ Vector4 Heightfield::normalAt(float gridX, float gridZ) const
 
 		const Vector4 n = cross(
 			Vector4(dx2, dy2, dz2),
-			Vector4(dx1, dy1, dz1)
-		);
+			Vector4(dx1, dy1, dz1));
 
 		N += n;
 	}
@@ -316,9 +324,6 @@ Vector4 Heightfield::normalAt(float gridX, float gridZ) const
 
 bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const
 {
-	const int32_t c_cellSize = 64;
-	const int32_t c_skip = 1;
-
 	Scalar k;
 	Scalar kIn, kOut;
 
@@ -334,29 +339,10 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 	{
 		for (int32_t cx = 0; cx < m_size; cx += c_cellSize)
 		{
-			// Calculate bounding box of cell.
-			float cx1w, cz1w;
-			float cx2w, cz2w;
-
-			gridToWorld(float(cx), float(cz), cx1w, cz1w);
-			gridToWorld(float(cx + c_cellSize), float(cz + c_cellSize), cx2w, cz2w);
-
-			float cy1w = std::numeric_limits< float >::max();
-			float cy2w = -std::numeric_limits< float >::max();
-
-			for (int32_t iz = cz; iz <= cz + c_cellSize; iz += c_skip)
-			{
-				for (int32_t ix = cx; ix <= cx + c_cellSize; ix += c_skip)
-				{
-					const float wy = unitToWorld(getGridHeightNearest(ix, iz));
-					cy1w = std::min(cy1w, wy);
-					cy2w = std::max(cy2w, wy);
-				}
-			}
-
-			Aabb3 bb;
-			bb.mn = Vector4(cx1w, cy1w, cz1w, 1.0f);
-			bb.mx = Vector4(cx2w, cy2w, cz2w, 1.0f);
+			// First check cell bounding box before finding more refined intersection.
+			const int32_t icx = gridToCell(cx);
+			const int32_t icz = gridToCell(cz);
+			const Aabb3& bb = m_cellBounds[icx + icz * m_cellBoundsPitch];
 
 			// Check if ray intersect bounding box; skip tracing triangles if not.
 			if (!bb.intersectRay(worldRayOrigin, worldRayDirection, kIn, kOut))
@@ -373,16 +359,14 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 					gridToWorld(float(ix), float(iz), x1w, z1w);
 					gridToWorld(float(ix + c_skip), float(iz + c_skip), x2w, z2w);
 
-					float yw[] =
-					{
+					const float yw[] = {
 						unitToWorld(getGridHeightNearest(ix, iz)),
 						unitToWorld(getGridHeightNearest(ix + c_skip, iz)),
 						unitToWorld(getGridHeightNearest(ix, iz + c_skip)),
 						unitToWorld(getGridHeightNearest(ix + c_skip, iz + c_skip))
 					};
 
-					const Vector4 vw[] =
-					{
+					const Vector4 vw[] = {
 						Vector4(x1w, yw[0], z1w, 1.0f),
 						Vector4(x2w, yw[1], z1w, 1.0f),
 						Vector4(x1w, yw[2], z2w, 1.0f),
@@ -412,6 +396,51 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 	}
 
 	return foundIntersection;
+}
+
+int32_t Heightfield::gridToCell(int32_t grid) const
+{
+	return grid / c_cellSize;
+}
+
+void Heightfield::updateCellBounds()
+{
+	for (int32_t cz = 0; cz < m_size; cz += c_cellSize)
+		for (int32_t cx = 0; cx < m_size; cx += c_cellSize)
+			updateCellBounds(cx, cz);
+}
+
+void Heightfield::updateCellBounds(int32_t gridX, int32_t gridZ)
+{
+	const int32_t icx = gridToCell(gridX);
+	const int32_t icz = gridToCell(gridZ);
+
+	const int32_t cx = icx * c_cellSize;
+	const int32_t cz = icz * c_cellSize;
+
+	// Calculate bounding box of cell.
+	float cx1w, cz1w;
+	float cx2w, cz2w;
+
+	gridToWorld(float(cx), float(cz), cx1w, cz1w);
+	gridToWorld(float(cx + c_cellSize), float(cz + c_cellSize), cx2w, cz2w);
+
+	float cy1w = std::numeric_limits< float >::max();
+	float cy2w = -std::numeric_limits< float >::max();
+
+	for (int32_t iz = cz; iz <= cz + c_cellSize; iz += c_skip)
+	{
+		for (int32_t ix = cx; ix <= cx + c_cellSize; ix += c_skip)
+		{
+			const float wy = unitToWorld(getGridHeightNearest(ix, iz));
+			cy1w = std::min(cy1w, wy);
+			cy2w = std::max(cy2w, wy);
+		}
+	}
+
+	Aabb3& bb = m_cellBounds[icx + icz * m_cellBoundsPitch];
+	bb.mn = Vector4(cx1w, cy1w, cz1w, 1.0f);
+	bb.mx = Vector4(cx2w, cy2w, cz2w, 1.0f);
 }
 
 }
