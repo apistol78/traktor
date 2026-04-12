@@ -9,10 +9,12 @@
 #pragma once
 
 #include <functional>
+#include <string>
 #include <wayland-client.h>
 #include <wayland-cursor.h>
 #include <xkbcommon/xkbcommon.h>
 #include <libdecor.h>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Timer/Timer.h"
@@ -24,6 +26,7 @@ struct zxdg_decoration_manager_v1;
 namespace traktor::ui
 {
 
+class EventSubject;
 struct WidgetData;
 
 /*! Wayland event types (internal). */
@@ -149,6 +152,16 @@ public:
 
 	zxdg_decoration_manager_v1* getDecorationManager() const { return m_decorationManager; }
 
+	wl_data_device_manager* getDataDeviceManager() const { return m_dataDeviceManager; }
+
+	wl_data_device* getDataDevice() const { return m_dataDevice; }
+
+	wl_data_offer* getSelectionOffer() const { return m_selectionOffer; }
+
+	const AlignedVector< std::string >& getSelectionMimeTypes() const { return m_selectionMimeTypes; }
+
+	uint32_t getInputSerial() const { return m_inputSerial; }
+
 	xkb_state* getXkbState() const { return m_xkbState; }
 
 	bool anyGrabbed() const { return m_grabbed != nullptr; }
@@ -209,6 +222,12 @@ private:
 	xdg_wm_base* m_xdgWmBase = nullptr;
 	libdecor* m_libdecor = nullptr;
 	zxdg_decoration_manager_v1* m_decorationManager = nullptr;
+	wl_data_device_manager* m_dataDeviceManager = nullptr;
+	wl_data_device* m_dataDevice = nullptr;
+	wl_data_offer* m_selectionOffer = nullptr;
+	wl_data_offer* m_pendingOffer = nullptr;
+	AlignedVector< std::string > m_selectionMimeTypes;
+	AlignedVector< std::string > m_pendingMimeTypes;
 	wl_output* m_output = nullptr;
 
 	xkb_context* m_xkbContext = nullptr;
@@ -221,6 +240,7 @@ private:
 	int32_t m_outputHeight = 1080;
 	uint32_t m_pointerSerial = 0;
 	uint32_t m_grabSerial = 0;
+	uint32_t m_inputSerial = 0;
 	uint32_t m_keyboardModifiers = 0;
 	int32_t m_repeatRate = 0;		//!< Key repeats per second (0 = disabled).
 	int32_t m_repeatDelay = 0;		//!< Delay in ms before first repeat.
@@ -281,6 +301,17 @@ public:
 	static void outputMode(void* data, wl_output* output, uint32_t flags, int32_t width, int32_t height, int32_t refresh);
 	static void outputDone(void* data, wl_output* output);
 	static void outputScale(void* data, wl_output* output, int32_t factor);
+
+	// Data device listener
+	static void dataDeviceDataOffer(void* data, wl_data_device* device, wl_data_offer* offer);
+	static void dataDeviceEnter(void* data, wl_data_device* device, uint32_t serial, wl_surface* surface, wl_fixed_t x, wl_fixed_t y, wl_data_offer* offer);
+	static void dataDeviceLeave(void* data, wl_data_device* device);
+	static void dataDeviceMotion(void* data, wl_data_device* device, uint32_t time, wl_fixed_t x, wl_fixed_t y);
+	static void dataDeviceDrop(void* data, wl_data_device* device);
+	static void dataDeviceSelection(void* data, wl_data_device* device, wl_data_offer* offer);
+
+	// Data offer listener
+	static void dataOfferOffer(void* data, wl_data_offer* offer, const char* mimeType);
 };
 
 }

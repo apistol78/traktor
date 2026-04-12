@@ -79,7 +79,7 @@ ISystemBitmap* WidgetFactoryWl::createBitmap()
 
 IClipboard* WidgetFactoryWl::createClipboard()
 {
-	return new ClipboardWl();
+	return new ClipboardWl(m_context);
 }
 
 void WidgetFactoryWl::getSystemFonts(std::list< std::wstring >& outFonts)

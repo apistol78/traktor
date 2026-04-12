@@ -82,6 +82,21 @@ static const wl_output_listener s_outputListener = {
 	ContextWl::outputScale
 };
 
+// Data device listener
+static const wl_data_device_listener s_dataDeviceListener = {
+	ContextWl::dataDeviceDataOffer,
+	ContextWl::dataDeviceEnter,
+	ContextWl::dataDeviceLeave,
+	ContextWl::dataDeviceMotion,
+	ContextWl::dataDeviceDrop,
+	ContextWl::dataDeviceSelection
+};
+
+// Data offer listener (only the "offer" event; source_actions/action are DnD-only)
+static const wl_data_offer_listener s_dataOfferListener = {
+	ContextWl::dataOfferOffer
+};
+
 // libdecor interface
 static void libdecorError(libdecor* context, libdecor_error error, const char* message)
 {
@@ -113,6 +128,13 @@ ContextWl::~ContextWl()
 		wl_pointer_destroy(m_pointer);
 	if (m_keyboard)
 		wl_keyboard_destroy(m_keyboard);
+
+	if (m_selectionOffer)
+		wl_data_offer_destroy(m_selectionOffer);
+	if (m_dataDevice)
+		wl_data_device_destroy(m_dataDevice);
+	if (m_dataDeviceManager)
+		wl_data_device_manager_destroy(m_dataDeviceManager);
 
 	if (m_libdecor)
 		libdecor_unref(m_libdecor);
@@ -149,6 +171,14 @@ bool ContextWl::initialize()
 	{
 		log::error << L"Wayland compositor missing required interfaces." << Endl;
 		return false;
+	}
+
+	// Create data device for clipboard support.
+	if (m_dataDeviceManager && m_seat)
+	{
+		m_dataDevice = wl_data_device_manager_get_data_device(m_dataDeviceManager, m_seat);
+		wl_data_device_add_listener(m_dataDevice, &s_dataDeviceListener, this);
+		wl_display_roundtrip(m_display);
 	}
 
 	// Create libdecor context for window decorations.
@@ -580,6 +610,11 @@ void ContextWl::registryGlobal(void* data, wl_registry* registry, uint32_t name,
 		ctx->m_decorationManager = static_cast< zxdg_decoration_manager_v1* >(
 			wl_registry_bind(registry, name, &zxdg_decoration_manager_v1_interface, 1));
 	}
+	else if (std::strcmp(interface, wl_data_device_manager_interface.name) == 0)
+	{
+		ctx->m_dataDeviceManager = static_cast< wl_data_device_manager* >(
+			wl_registry_bind(registry, name, &wl_data_device_manager_interface, 1));
+	}
 }
 
 void ContextWl::registryGlobalRemove(void* data, wl_registry* registry, uint32_t name)
@@ -679,6 +714,7 @@ void ContextWl::pointerButton(void* data, wl_pointer* pointer, uint32_t serial, 
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 	ctx->m_pointerSerial = serial;
+	ctx->m_inputSerial = serial;
 
 	// Save button-press serials separately — Mutter only accepts press
 	// serials for xdg_popup_grab (not release or enter serials).
@@ -848,6 +884,7 @@ void ContextWl::keyboardLeave(void* data, wl_keyboard* keyboard, uint32_t serial
 void ContextWl::keyboardKey(void* data, wl_keyboard* keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
+	ctx->m_inputSerial = serial;
 
 	// Stop any active key repeat.
 	if (ctx->m_repeatTimer >= 0)
@@ -971,6 +1008,65 @@ void ContextWl::outputScale(void* data, wl_output* output, int32_t factor)
 	// This is needed by code that rasterizes bitmaps/SVGs at the
 	// correct physical resolution (e.g. StyleBitmap).
 	ctx->m_dpi = 96 * factor;
+}
+
+// Data device
+void ContextWl::dataDeviceDataOffer(void* data, wl_data_device* device, wl_data_offer* offer)
+{
+	ContextWl* ctx = static_cast< ContextWl* >(data);
+	// A new offer was created; start collecting its MIME types.
+	if (ctx->m_pendingOffer)
+		wl_data_offer_destroy(ctx->m_pendingOffer);
+	ctx->m_pendingOffer = offer;
+	ctx->m_pendingMimeTypes.resize(0);
+	wl_data_offer_add_listener(offer, &s_dataOfferListener, ctx);
+}
+
+void ContextWl::dataDeviceEnter(void* data, wl_data_device* device, uint32_t serial, wl_surface* surface, wl_fixed_t x, wl_fixed_t y, wl_data_offer* offer)
+{
+}
+
+void ContextWl::dataDeviceLeave(void* data, wl_data_device* device)
+{
+}
+
+void ContextWl::dataDeviceMotion(void* data, wl_data_device* device, uint32_t time, wl_fixed_t x, wl_fixed_t y)
+{
+}
+
+void ContextWl::dataDeviceDrop(void* data, wl_data_device* device)
+{
+}
+
+void ContextWl::dataDeviceSelection(void* data, wl_data_device* device, wl_data_offer* offer)
+{
+	ContextWl* ctx = static_cast< ContextWl* >(data);
+
+	// Destroy previous selection offer.
+	if (ctx->m_selectionOffer && ctx->m_selectionOffer != offer)
+		wl_data_offer_destroy(ctx->m_selectionOffer);
+
+	if (offer)
+	{
+		// Promote the pending offer to the current selection.
+		ctx->m_selectionOffer = offer;
+		ctx->m_selectionMimeTypes = ctx->m_pendingMimeTypes;
+		ctx->m_pendingOffer = nullptr;
+		ctx->m_pendingMimeTypes.resize(0);
+	}
+	else
+	{
+		ctx->m_selectionOffer = nullptr;
+		ctx->m_selectionMimeTypes.resize(0);
+	}
+}
+
+// Data offer
+void ContextWl::dataOfferOffer(void* data, wl_data_offer* offer, const char* mimeType)
+{
+	ContextWl* ctx = static_cast< ContextWl* >(data);
+	if (offer == ctx->m_pendingOffer)
+		ctx->m_pendingMimeTypes.push_back(std::string(mimeType));
 }
 
 }
