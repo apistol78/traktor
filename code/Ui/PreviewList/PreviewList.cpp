@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -121,14 +121,20 @@ void PreviewList::beginEdit(PreviewItem* item)
 	m_editItem = item;
 }
 
+void PreviewList::setScalingFactor(float scaling)
+{
+	m_scaling = scaling;
+	requestUpdate();
+}
+
 void PreviewList::layoutCells(const Rect& rc)
 {
 	const int32_t nitems = m_items ? m_items->count() : 0;
 	if (nitems <= 0)
 		return;
 
-	const int32_t width = pixel(c_itemWidth);
-	const int32_t height = pixel(c_itemHeight);
+	const int32_t width = (int32_t)(pixel(c_itemWidth) * m_scaling);
+	const int32_t height = (int32_t)(pixel(c_itemHeight) * m_scaling);
 
 	const int32_t ncolumns = (rc.getWidth() - pixel(c_marginX * 2_ut)) / width;
 	if (ncolumns <= 0)

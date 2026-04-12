@@ -413,6 +413,14 @@ bool DatabaseView::create(ui::Widget* parent)
 		m_editor->getSettings()->getProperty< int32_t >(L"Editor.DatabaseView", 1));
 	m_toolSelection->addItem(m_toolViewMode);
 
+	m_toolViewSize = new ui::ToolBarDropDown(ui::Command(L"Database.ViewSize"), 80_ut, i18n::Text(L"DATABASE_VIEW_MODE"));
+	m_toolViewSize->add(i18n::Text(L"DATABASE_VIEW_SIZE_SMALL"));
+	m_toolViewSize->add(i18n::Text(L"DATABASE_VIEW_SIZE_NORMAL"));
+	m_toolViewSize->add(i18n::Text(L"DATABASE_VIEW_SIZE_LARGE"));
+	m_toolViewSize->select(
+		m_editor->getSettings()->getProperty< int32_t >(L"Editor.DatabaseViewSize", 2));
+	m_toolSelection->addItem(m_toolViewSize);
+
 	m_toolSelection->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DatabaseView::eventToolSelectionClicked);
 
 	m_splitter = new ui::Splitter();
@@ -585,11 +593,28 @@ void DatabaseView::setDatabase(db::Database* db)
 void DatabaseView::updateView()
 {
 	const int32_t viewMode = m_toolViewMode->getSelected();
+	const int32_t viewSize = m_toolViewSize->getSelected();
 	Ref< ui::HierarchicalState > treeState = m_treeDatabase->captureState();
 
 	m_treeDatabase->removeAllItems();
 	m_listInstances->setItems(nullptr);
 	m_listInstances->setVisible(false);
+
+	switch (viewSize)
+	{
+	case 0:
+		m_listInstances->setScalingFactor(0.75f);
+		break;
+
+	default:
+	case 1:
+		m_listInstances->setScalingFactor(1.0f);
+		break;
+
+	case 2:
+		m_listInstances->setScalingFactor(1.25f);
+		break;
+	}
 
 	if (m_db)
 	{
@@ -1651,6 +1676,11 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 	{
 		const int32_t viewMode = m_toolViewMode->getSelected();
 		m_editor->checkoutGlobalSettings()->setProperty< PropertyInteger >(L"Editor.DatabaseView", viewMode);
+	}
+	else if (cmd == L"Database.ViewSize")
+	{
+		const int32_t viewSize = m_toolViewSize->getSelected();
+		m_editor->checkoutGlobalSettings()->setProperty< PropertyInteger >(L"Editor.DatabaseViewSize", viewSize);
 	}
 
 	updateView();

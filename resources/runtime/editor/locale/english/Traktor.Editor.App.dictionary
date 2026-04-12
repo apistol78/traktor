@@ -286,6 +286,18 @@
 			<second>Split</second>
 		</item>
 		<item>
+			<first>DATABASE_VIEW_SIZE_SMALL</first>
+			<second>Small</second>
+		</item>
+		<item>
+			<first>DATABASE_VIEW_SIZE_NORMAL</first>
+			<second>Normal</second>
+		</item>
+		<item>
+			<first>DATABASE_VIEW_SIZE_LARGE</first>
+			<second>Large</second>
+		</item>
+		<item>
 			<first>DATABASE_WIZARDS</first>
 			<second>Wizards...</second>
 		</item>

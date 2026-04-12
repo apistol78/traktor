@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -53,6 +53,8 @@ public:
 
 	void beginEdit(PreviewItem* item);
 
+	void setScalingFactor(float scaling);
+
 private:
 	Ref< Edit > m_itemEditor;
 	Ref< PreviewItems > m_items;
@@ -62,6 +64,7 @@ private:
 	Ref< PreviewItem > m_dragItem;
 	Ref< PreviewItem > m_editItem;
 	Ref< ToolForm > m_thumb;
+	float m_scaling = 1.0f;
 
 	virtual void layoutCells(const Rect& rc) override final;
 
