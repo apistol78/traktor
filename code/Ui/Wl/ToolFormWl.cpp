@@ -145,6 +145,7 @@ void toolFormXdgPopupDone(void* data, struct xdg_popup* popup)
 {
 	ToolFormWl* form = static_cast< ToolFormWl* >(data);
 	form->endModal(DialogResult::Cancel);
+	form->setVisible(false);
 }
 
 static const struct xdg_popup_listener s_toolFormXdgPopupListener = {
@@ -383,6 +384,23 @@ void ToolFormWl::destroyPopup()
 		// Enforce xdg-shell LIFO order: destroy all child popups
 		// above us before destroying our own popup.
 		m_context->destroyPopupsAbove(&m_data);
+
+		// destroyPopupsAbove removes us from the popup stack and
+		// destroys child popups, but does not destroy our own
+		// xdg objects — do that now.
+		xdg_popup_destroy(m_data.xdgPopup);
+		m_data.xdgPopup = nullptr;
+
+		if (m_data.xdgSurface)
+		{
+			xdg_surface_destroy(m_data.xdgSurface);
+			m_data.xdgSurface = nullptr;
+		}
+
+		// Detach buffer and commit so the compositor unmaps the
+		// surface immediately rather than showing a stale frame.
+		wl_surface_attach(m_data.surface, nullptr, 0, 0);
+		wl_surface_commit(m_data.surface);
 	}
 }
 
