@@ -10,7 +10,7 @@
 
 #include <list>
 #include <string>
-#include "Core/Config.h"
+#include "Core/IRefCount.h"
 #include "Ui/Enums.h"
 #include "Ui/Rect.h"
 
@@ -32,7 +32,7 @@ class IClipboard;
 /*! Widget factory interface.
  * \ingroup UI
  */
-class IWidgetFactory
+class IWidgetFactory : public IRefCount
 {
 public:
 	virtual ~IWidgetFactory() {}

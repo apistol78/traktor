@@ -24,7 +24,7 @@ namespace traktor::ui
 
 class Context;
 
-class T_DLLCLASS WidgetFactoryX11 : public IWidgetFactory
+class T_DLLCLASS WidgetFactoryX11 : public RefCountImpl< IWidgetFactory >
 {
 public:
 	WidgetFactoryX11();

@@ -85,8 +85,9 @@ bool Application::initialize(IWidgetFactory* widgetFactory, const StyleSheet* st
 void Application::finalize()
 {
 	removeAllEventHandlers();
-	safeDestroy(m_clipboard);
-	safeDestroy(m_eventLoop);
+	m_properties = nullptr;
+	m_styleSheet = nullptr;
+	m_clipboard = nullptr;
 	m_widgetFactory = nullptr;
 	m_eventLoop = nullptr;
 }

@@ -295,9 +295,17 @@ bool DialogWl::create(IWidget* parent, const std::wstring& text, int width, int 
 	}
 
 	m_context->bind(&m_data, WlEvtClose, [this](WlEvent& e) {
+		// Cache modal state before raising the event — the handler may
+		// destroy us inside raiseEvent (e.g. a tool that owns the dialog
+		// will typically safeDestroy it on close), after which `this` is
+		// freed and must not be dereferenced.
+		const bool wasModal = m_modal;
 		CloseEvent closeEvent(m_owner);
 		m_owner->raiseEvent(&closeEvent);
-		if (!(closeEvent.consumed() && closeEvent.cancelled()))
+		// Only touch `this` again if we were modal — modal dialogs own
+		// their showModal() stack frame and cannot legally be destroyed
+		// from inside the close handler.
+		if (wasModal && !(closeEvent.consumed() && closeEvent.cancelled()))
 			endModal(DialogResult::Cancel);
 	});
 

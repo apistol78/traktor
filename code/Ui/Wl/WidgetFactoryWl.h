@@ -23,7 +23,7 @@ namespace traktor::ui
 
 class ContextWl;
 
-class T_DLLCLASS WidgetFactoryWl : public IWidgetFactory
+class T_DLLCLASS WidgetFactoryWl : public RefCountImpl< IWidgetFactory >
 {
 public:
 	WidgetFactoryWl();

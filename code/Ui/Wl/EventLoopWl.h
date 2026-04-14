@@ -26,7 +26,7 @@ namespace traktor::ui
 
 class ContextWl;
 
-class T_DLLCLASS EventLoopWl : public IEventLoop
+class T_DLLCLASS EventLoopWl : public RefCountImpl< IEventLoop >
 {
 public:
 	explicit EventLoopWl(ContextWl* context);

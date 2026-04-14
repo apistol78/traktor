@@ -78,7 +78,14 @@ TrackAllocator::~TrackAllocator()
 		{
 			std::wcout << L"0x" << i->first << L", " << i->second.size << L" byte(s), tag \"" << i->second.tag << L"\"" << std::endl;
 			for (size_t j = 0; j < sizeof_array(i->second.at); ++j)
-				std::wcout << L"   " << j << L": 0x" << i->second.at[j] << std::endl;
+			{
+				std::wstring source;
+				int32_t line;
+				if (getSourceFromAddress(i->second.at[j], source, line))
+					std::wcout << L"   " << j << L": 0x" << i->second.at[j] << L" " << source << L" (" << line << L")" << std::endl;
+				else
+					std::wcout << L"   " << j << L": 0x" << i->second.at[j] << std::endl;
+			}
 		}
 #endif
 	}

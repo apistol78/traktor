@@ -135,8 +135,8 @@ public:
 	void defer(const std::function< void() >& fn);
 
 private:
-	IEventLoop* m_eventLoop;
-	IWidgetFactory* m_widgetFactory;
+	Ref< IEventLoop > m_eventLoop;
+	Ref< IWidgetFactory > m_widgetFactory;
 	Ref< Clipboard > m_clipboard;
 	Ref< const StyleSheet > m_styleSheet;
 	Ref< PropertyGroup > m_properties;

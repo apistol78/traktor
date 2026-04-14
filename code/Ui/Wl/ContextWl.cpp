@@ -92,9 +92,14 @@ static const wl_data_device_listener s_dataDeviceListener = {
 	ContextWl::dataDeviceSelection
 };
 
-// Data offer listener (only the "offer" event; source_actions/action are DnD-only)
+// Data offer listener - all callbacks must be non-null to be safe when data_offer
+// proxy is at version >= 3 (some compositors may send source_actions/action).
+static void dataOfferNoop2(void* data, wl_data_offer* offer, uint32_t value) {}
+
 static const wl_data_offer_listener s_dataOfferListener = {
-	ContextWl::dataOfferOffer
+	ContextWl::dataOfferOffer,
+	dataOfferNoop2,
+	dataOfferNoop2
 };
 
 // libdecor interface
@@ -129,6 +134,8 @@ ContextWl::~ContextWl()
 	if (m_keyboard)
 		wl_keyboard_destroy(m_keyboard);
 
+	if (m_pendingOffer)
+		wl_data_offer_destroy(m_pendingOffer);
 	if (m_selectionOffer)
 		wl_data_offer_destroy(m_selectionOffer);
 	if (m_dataDevice)
@@ -1024,6 +1031,16 @@ void ContextWl::dataDeviceDataOffer(void* data, wl_data_device* device, wl_data_
 
 void ContextWl::dataDeviceEnter(void* data, wl_data_device* device, uint32_t serial, wl_surface* surface, wl_fixed_t x, wl_fixed_t y, wl_data_offer* offer)
 {
+	// Drag-and-drop enter — this offer belongs to a DnD session, not clipboard.
+	// If the pending offer we've been collecting MIME types for is in fact
+	// a DnD offer, discard it so it isn't confused with a selection.
+	ContextWl* ctx = static_cast< ContextWl* >(data);
+	if (ctx->m_pendingOffer && ctx->m_pendingOffer == offer)
+	{
+		wl_data_offer_destroy(ctx->m_pendingOffer);
+		ctx->m_pendingOffer = nullptr;
+		ctx->m_pendingMimeTypes.resize(0);
+	}
 }
 
 void ContextWl::dataDeviceLeave(void* data, wl_data_device* device)

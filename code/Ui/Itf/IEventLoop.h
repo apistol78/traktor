@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Core/Config.h"
+#include "Core/IRefCount.h"
 #include "Ui/Enums.h"
 #include "Ui/Size.h"
 
@@ -20,7 +20,7 @@ class EventSubject;
 /*! EventLoop interface.
  * \ingroup UI
  */
-class IEventLoop
+class IEventLoop : public IRefCount
 {
 public:
 	virtual ~IEventLoop() {}
