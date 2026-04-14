@@ -40,7 +40,8 @@ void ssdXdgSurfaceConfigure(void* data, struct xdg_surface* xdgSurface, uint32_t
 		wd->pendingHeight = 0;
 
 		form->setRect(next);
-		form->update(nullptr, false);
+		form->getContextWl()->processPendingExposes();
+		form->update(nullptr, true);
 	}
 }
 
@@ -103,7 +104,8 @@ void libdecorConfigure(struct libdecor_frame* frame, struct libdecor_configurati
 		const Rect next(prev.left, prev.top, prev.left + width * scale, prev.top + height * scale);
 
 		form->setRect(next);
-		form->update(nullptr, false);
+		form->getContextWl()->processPendingExposes();
+		form->update(nullptr, true);
 	}
 }
 
