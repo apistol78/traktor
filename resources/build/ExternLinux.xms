@@ -711,8 +711,6 @@
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 						<item>FT2_BUILD_LIBRARY</item>
 					</definitions>
 					<libraryPaths/>
@@ -738,8 +736,6 @@
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 						<item>FT2_BUILD_LIBRARY</item>
 					</definitions>
 					<libraryPaths/>
@@ -765,8 +761,6 @@
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 						<item>FT2_BUILD_LIBRARY</item>
 					</definitions>
 					<libraryPaths/>
@@ -797,8 +791,6 @@
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 						<item>FT2_BUILD_LIBRARY</item>
 					</definitions>
 					<libraryPaths/>
@@ -1035,6 +1027,21 @@
 					<items>
 						<item type="traktor.sb.File" version="1">
 							<fileName>winfonts/winfnt.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="traktor.sb.Filter">
+					<name>hvf</name>
+					<items>
+						<item type="traktor.sb.File" version="1">
+							<fileName>hvf/*.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+						<item type="traktor.sb.File" version="1">
+							<fileName>hvf/*.h</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
