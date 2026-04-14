@@ -997,10 +997,11 @@ void ContextWl::outputGeometry(void* data, wl_output* output, int32_t x, int32_t
 void ContextWl::outputMode(void* data, wl_output* output, uint32_t flags, int32_t width, int32_t height, int32_t refresh)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
-	// Store logical output dimensions (mode reports physical pixels;
-	// divide by scale in outputDone or use as-is when scale == 1).
-	ctx->m_outputWidth = width;
-	ctx->m_outputHeight = height;
+	if (flags & WL_OUTPUT_MODE_CURRENT)
+	{
+		ctx->m_outputWidth = width;
+		ctx->m_outputHeight = height;
+	}
 }
 
 void ContextWl::outputDone(void* data, wl_output* output)
