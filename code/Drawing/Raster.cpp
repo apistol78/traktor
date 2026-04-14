@@ -101,6 +101,8 @@ template < typename color_type >
 class IStyle
 {
 public:
+	virtual ~IStyle() = default;
+
 	virtual void generateSpan(color_type* span, int x, int y, unsigned len) const = 0;
 };
 
@@ -331,8 +333,15 @@ template < >
 class StyleHandler< agg::gray8 >
 {
 public:
+	virtual ~StyleHandler()
+	{
+		clearStyles();
+	}
+
 	void clearStyles()
 	{
+		for (auto style : m_styles)
+			delete style;
 		m_styles.resize(0);
 	}
 
@@ -382,8 +391,15 @@ template < >
 class StyleHandler< agg::rgba8 >
 {
 public:
+	virtual ~StyleHandler()
+	{
+		clearStyles();
+	}
+
 	void clearStyles()
 	{
+		for (auto style : m_styles)
+			delete style;
 		m_styles.resize(0);
 	}
 
