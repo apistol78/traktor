@@ -6,16 +6,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Net/BidirectionalObjectTransport.h"
+
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/ChunkMemory.h"
 #include "Core/Io/ChunkMemoryStream.h"
+#include "Core/Io/MemoryStream.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Thread/Acquire.h"
-#include "Net/BidirectionalObjectTransport.h"
 #include "Net/Socket.h"
-#include "Net/SocketStream.h"
 
 namespace traktor::net
 {
@@ -23,7 +24,7 @@ namespace traktor::net
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BidirectionalObjectTransport", BidirectionalObjectTransport, Object)
 
 BidirectionalObjectTransport::BidirectionalObjectTransport(Socket* socket)
-:	m_socket(socket)
+	: m_socket(socket)
 {
 }
 
@@ -47,7 +48,14 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 	// Send entire blob in one go.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		for (size_t offset = 0; m_socket != nullptr && offset < memory.size(); )
+
+		// Send size of blob first.
+		const uint32_t osz = memory.size();
+		if (m_socket->send(&osz, sizeof(uint32_t)) != sizeof(uint32_t))
+			return false;
+
+		// Send each blob chunk.
+		for (size_t offset = 0; m_socket != nullptr && offset < memory.size();)
 		{
 			const auto chunk = memory.getChunk(offset);
 			if (!chunk.ptr)
@@ -67,6 +75,7 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const TypeInfoSet& objectTypes, int32_t timeout, Ref< ISerializable >& outObject)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	AlignedVector< uint8_t > buffer;
 
 	// Check queue if any object of given type has already been received.
 	for (const auto& objectType : objectTypes)
@@ -108,13 +117,25 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 				continue;
 
 			// Receive object from socket.
-			net::SocketStream ss(m_socket, true, false);
-			Ref< ISerializable > object = BinarySerializer(&ss).readObject();
-			if (!object)
+			uint32_t osz = 0;
+			if (m_socket->recv(&osz, sizeof(uint32_t)) != sizeof(uint32_t))
 			{
 				m_socket = nullptr;
 				break;
 			}
+
+			buffer.resize(osz);
+			if (m_socket->recv(buffer.ptr(), osz) != osz)
+			{
+				m_socket = nullptr;
+				break;
+			}
+
+			// Deserialize object.
+			MemoryStream ms(buffer.c_ptr(), osz);
+			Ref< ISerializable > object = BinarySerializer(&ms).readObject();
+			if (!object)
+				continue;
 
 			// Check if received object is of desired type.
 			for (const auto& objectType : objectTypes)
@@ -137,10 +158,8 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 		// If no connection return either timeout or disconnected, if any pending
 		// object is queued then we timeout.
 		for (const auto& it : m_inQueue)
-		{
 			if (!it.second.empty())
 				return Result::Timeout;
-		}
 		return Result::Disconnected;
 	}
 
