@@ -1,13 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
-#include <list>
+#include "Spark/Editor/Pipeline.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -23,27 +23,29 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Render/Shader.h"
 #include "Render/Editor/Texture/TextureOutput.h"
+#include "Render/Shader.h"
 #include "Resource/Id.h"
 #include "Spark/BitmapImage.h"
 #include "Spark/BitmapResource.h"
-#include "Spark/Frame.h"
-#include "Spark/Movie.h"
-#include "Spark/Optimizer.h"
-#include "Spark/Packer.h"
-#include "Spark/Sprite.h"
 #include "Spark/Editor/ConvertImage.h"
 #include "Spark/Editor/ConvertSvg.h"
 #include "Spark/Editor/ConvertSwf.h"
 #include "Spark/Editor/EmptyMovieAsset.h"
 #include "Spark/Editor/MovieAsset.h"
-#include "Spark/Editor/Pipeline.h"
+#include "Spark/Frame.h"
+#include "Spark/Movie.h"
+#include "Spark/Optimizer.h"
+#include "Spark/Packer.h"
+#include "Spark/Sprite.h"
+
+#include <cstring>
+#include <list>
 
 namespace traktor::spark
 {
-	namespace
-	{
+namespace
+{
 
 const Guid c_idFlashShaderAssets(L"{14D6A2DB-796D-E54D-9D70-73DE4AE7C4E8}");
 
@@ -60,16 +62,16 @@ struct AtlasBucket
 	std::list< AtlasBitmap > bitmaps;
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 13, Pipeline, editor::IPipeline)
 
 Pipeline::Pipeline()
-:	m_generateMips(false)
-,	m_sharpenStrength(0.0f)
-,	m_useTextureCompression(true)
-,	m_textureSizeDenom(1)
-,	m_textureAtlasSize(1024)
+	: m_generateMips(false)
+	, m_sharpenStrength(0.0f)
+	, m_useTextureCompression(true)
+	, m_textureSizeDenom(1)
+	, m_textureAtlasSize(1024)
 {
 }
 
@@ -92,8 +94,7 @@ TypeInfoSet Pipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet<
 		EmptyMovieAsset,
-		MovieAsset
-	>();
+		MovieAsset >();
 }
 
 bool Pipeline::shouldCache() const
@@ -111,10 +112,9 @@ bool Pipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
-	if (const MovieAsset* movieAsset = dynamic_type_cast<const MovieAsset*>(sourceAsset))
+	if (const MovieAsset* movieAsset = dynamic_type_cast< const MovieAsset* >(sourceAsset))
 	{
 		pipelineDepends->addDependency(traktor::Path(m_assetPath), movieAsset->getFileName().getOriginal());
 		for (const auto& font : movieAsset->getFonts())
@@ -134,8 +134,7 @@ bool Pipeline::buildOutput(
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
-	uint32_t reason
-) const
+	uint32_t reason) const
 {
 	Ref< Movie > movie;
 	bool optimize = false;
@@ -175,10 +174,8 @@ bool Pipeline::buildOutput(
 		movie = new Movie(
 			Aabb2(
 				Vector2(0.0f, 0.0f),
-				Vector2(emptyMovieAsset->getStageWidth() * 20.0f, emptyMovieAsset->getStageHeight() * 20.0f)
-			),
-			sprite
-		);
+				Vector2(emptyMovieAsset->getStageWidth() * 20.0f, emptyMovieAsset->getStageHeight() * 20.0f)),
+			sprite);
 	}
 
 	// Show some information about the Flash.
@@ -285,8 +282,7 @@ bool Pipeline::buildOutput(
 			Ref< drawing::Image > atlasImage = new drawing::Image(
 				drawing::PixelFormat::getA8B8G8R8(),
 				m_textureAtlasSize,
-				m_textureAtlasSize
-			);
+				m_textureAtlasSize);
 
 			atlasImage->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
@@ -295,14 +291,12 @@ bool Pipeline::buildOutput(
 				Ref< drawing::Image > bitmapImage = new drawing::Image(
 					drawing::PixelFormat::getA8B8G8R8(),
 					ab.bitmap->getWidth(),
-					ab.bitmap->getHeight()
-				);
+					ab.bitmap->getHeight());
 
 				std::memcpy(
 					bitmapImage->getData(),
 					ab.bitmap->getBits(),
-					ab.bitmap->getWidth() * ab.bitmap->getHeight() * 4
-				);
+					ab.bitmap->getWidth() * ab.bitmap->getHeight() * 4);
 
 				for (int32_t y = -1; y < ab.packedRect.height + 1; ++y)
 				{
@@ -366,25 +360,14 @@ bool Pipeline::buildOutput(
 
 			const std::wstring bitmapOutputPath = traktor::Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
 			if (!pipelineBuilder->buildAdHocOutput(
-				output,
-				bitmapOutputPath,
-				bitmapOutputGuid,
-				atlasImage
-			))
+					output,
+					bitmapOutputPath,
+					bitmapOutputGuid,
+					atlasImage))
 				return false;
 
 			for (const auto& ab : bucket.bitmaps)
-			{
-				movie->defineBitmap(ab.id, new BitmapResource(
-					ab.packedRect.x,
-					ab.packedRect.y,
-					ab.packedRect.width,
-					ab.packedRect.height,
-					m_textureAtlasSize,
-					m_textureAtlasSize,
-					bitmapOutputGuid
-				));
-			}
+				movie->defineBitmap(ab.id, new BitmapResource(ab.packedRect.x, ab.packedRect.y, ab.packedRect.width, ab.packedRect.height, m_textureAtlasSize, m_textureAtlasSize, bitmapOutputGuid));
 		}
 		else if (bucket.bitmaps.size() == 1)
 		{
@@ -404,14 +387,12 @@ bool Pipeline::buildOutput(
 		Ref< drawing::Image > bitmapImage = new drawing::Image(
 			drawing::PixelFormat::getA8B8G8R8(),
 			i->bitmap->getWidth(),
-			i->bitmap->getHeight()
-		);
+			i->bitmap->getHeight());
 
 		std::memcpy(
 			bitmapImage->getData(),
 			i->bitmap->getBits(),
-			i->bitmap->getWidth() * i->bitmap->getHeight() * 4
-		);
+			i->bitmap->getWidth() * i->bitmap->getHeight() * 4);
 
 #if defined(_DEBUG)
 		bitmapImage->save(L"SparkBitmap" + toString(count) + L".png");
@@ -450,28 +431,18 @@ bool Pipeline::buildOutput(
 
 		const std::wstring bitmapOutputPath = traktor::Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
 		if (!pipelineBuilder->buildAdHocOutput(
-			output,
-			bitmapOutputPath,
-			bitmapOutputGuid,
-			bitmapImage
-		))
+				output,
+				bitmapOutputPath,
+				bitmapOutputGuid,
+				bitmapImage))
 			return false;
 
-		movie->defineBitmap(i->id, new BitmapResource(
-			0,
-			0,
-			bitmapImage->getWidth(),
-			bitmapImage->getHeight(),
-			bitmapImage->getWidth(),
-			bitmapImage->getHeight(),
-			bitmapOutputGuid
-		));
+		movie->defineBitmap(i->id, new BitmapResource(0, 0, bitmapImage->getWidth(), bitmapImage->getHeight(), bitmapImage->getWidth(), bitmapImage->getHeight(), bitmapOutputGuid));
 	}
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
-		outputGuid
-	);
+		outputGuid);
 	if (!instance)
 	{
 		log::error << L"Failed to import Spark movie; unable to create instance." << Endl;
@@ -493,8 +464,7 @@ Ref< ISerializable > Pipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const Object* buildParams
-) const
+	const Object* buildParams) const
 {
 	T_FATAL_ERROR;
 	return nullptr;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,18 +19,14 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class T_DLLCLASS EmptyMovieAsset : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	EmptyMovieAsset();
-
 	virtual void serialize(ISerializer& s) override final;
 
 	int32_t getStageWidth() const { return m_stageWidth; }
@@ -42,12 +38,10 @@ public:
 	const Color4ub& getBackgroundColor() const { return m_backgroundColor; }
 
 private:
-	int32_t m_stageWidth;
-	int32_t m_stageHeight;
-	int32_t m_frameRate;
-	Color4ub m_backgroundColor;
+	int32_t m_stageWidth = 1920;
+	int32_t m_stageHeight = 1280;
+	int32_t m_frameRate = 60;
+	Color4ub m_backgroundColor = Color4ub(255, 255, 255, 255);
 };
 
-	}
 }
-

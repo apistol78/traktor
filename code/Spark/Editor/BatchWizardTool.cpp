@@ -1,25 +1,24 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Spark/Editor/BatchWizardTool.h"
+
 #include "Core/Log/Log.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
-#include "Spark/Editor/MovieAsset.h"
 #include "Spark/Editor/BatchDialog.h"
-#include "Spark/Editor/BatchWizardTool.h"
+#include "Spark/Editor/MovieAsset.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.BatchWizardTool", 0, BatchWizardTool, editor::IWizardTool)
 
@@ -66,5 +65,4 @@ bool BatchWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Gr
 	return true;
 }
 
-	}
 }

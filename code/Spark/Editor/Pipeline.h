@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class T_DLLCLASS Pipeline : public editor::IPipeline
 {
@@ -39,14 +37,13 @@ public:
 	virtual bool shouldCache() const override final;
 
 	virtual uint32_t hashAsset(const ISerializable* sourceAsset) const override final;
-	
+
 	virtual bool buildDependencies(
 		editor::IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
 		const std::wstring& outputPath,
-		const Guid& outputGuid
-	) const override final;
+		const Guid& outputGuid) const override final;
 
 	virtual bool buildOutput(
 		editor::IPipelineBuilder* pipelineBuilder,
@@ -57,15 +54,13 @@ public:
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
 		const Object* buildParams,
-		uint32_t reason
-	) const override final;
+		uint32_t reason) const override final;
 
 	virtual Ref< ISerializable > buildProduct(
 		editor::IPipelineBuilder* pipelineBuilder,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
-		const Object* buildParams
-	) const override final;
+		const Object* buildParams) const override final;
 
 private:
 	std::wstring m_assetPath;
@@ -76,6 +71,4 @@ private:
 	int32_t m_textureAtlasSize;
 };
 
-	}
 }
-

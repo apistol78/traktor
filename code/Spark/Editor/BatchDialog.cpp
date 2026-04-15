@@ -1,53 +1,51 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Spark/Editor/BatchDialog.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
-#include "Spark/Editor/MovieAsset.h"
-#include "Spark/Editor/BatchDialog.h"
 #include "I18N/Text.h"
+#include "Spark/Editor/MovieAsset.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
-#include "Ui/FloodLayout.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
-#include "Ui/Splitter.h"
+#include "Ui/FloodLayout.h"
 #include "Ui/ListBox/ListBox.h"
 #include "Ui/PropertyList/AutoPropertyList.h"
+#include "Ui/Splitter.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BatchDialog", BatchDialog, ui::ConfigDialog)
 
 BatchDialog::BatchDialog(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
 bool BatchDialog::create(ui::Widget* parent)
 {
 	if (!ui::ConfigDialog::create(
-		parent,
-		i18n::Text(L"FLASH_BATCH_DIALOG_TITLE"),
-		900_ut,
-		500_ut,
-		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
-		new ui::FloodLayout()
-	))
+			parent,
+			i18n::Text(L"FLASH_BATCH_DIALOG_TITLE"),
+			900_ut,
+			500_ut,
+			ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
+			new ui::FloodLayout()))
 		return false;
 
 	Ref< ui::Splitter > splitter = new ui::Splitter();
@@ -119,10 +117,9 @@ void BatchDialog::addTexture()
 	{
 		Path moviePath;
 		if (!FileSystem::getInstance().getRelativePath(
-			FileSystem::getInstance().getAbsolutePath(fileName),
-			FileSystem::getInstance().getAbsolutePath(assetPath),
-			moviePath
-		))
+				FileSystem::getInstance().getAbsolutePath(fileName),
+				FileSystem::getInstance().getAbsolutePath(assetPath),
+				moviePath))
 			moviePath = fileName;
 
 		Ref< MovieAsset > asset = new MovieAsset();
@@ -130,8 +127,7 @@ void BatchDialog::addTexture()
 
 		m_movieList->add(
 			fileName.getFileName(),
-			asset
-		);
+			asset);
 	}
 }
 
@@ -161,5 +157,4 @@ void BatchDialog::eventTextureListSelect(ui::SelectionChangeEvent* event)
 	m_moviePropertyList->update();
 }
 
-	}
 }
