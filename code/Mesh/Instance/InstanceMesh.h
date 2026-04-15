@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,6 +17,7 @@
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
+#include "World/Entity/CullingComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -58,7 +59,9 @@ namespace traktor::mesh
  * automatically by the GPU in any number of instances
  * using hardware instancing in a single draw call.
  */
-class T_DLLCLASS InstanceMesh : public IMesh
+class T_DLLCLASS InstanceMesh
+	: public IMesh
+	, public world::CullingComponent::ICullable
 {
 	T_RTTI_CLASS;
 
@@ -79,18 +82,23 @@ public:
 
 	void getTechniques(SmallSet< render::handle_t >& outHandles) const;
 
-	void build(
+	const render::IAccelerationStructure* getAccelerationStructure() const { return m_rtAccelerationStructure; }
+
+	const render::Buffer* getRTVertexAttributes() const;
+
+	/* world::CullingComponent::ICullable */
+
+	virtual Aabb3 cullableGetBoundingBox() const override final { return getBoundingBox(); }
+
+	virtual void cullableBuild(
 		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
 		render::Buffer* instanceBuffer,
 		render::Buffer* visibilityBuffer,
 		uint32_t start,
-		uint32_t count);
-
-	const render::IAccelerationStructure* getAccelerationStructure() const { return m_rtAccelerationStructure; }
-
-	const render::Buffer* getRTVertexAttributes() const;
+		uint32_t count
+	) override final;
 
 private:
 	friend class InstanceMeshResource;

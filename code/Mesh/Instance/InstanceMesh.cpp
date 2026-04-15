@@ -64,7 +64,12 @@ void InstanceMesh::getTechniques(SmallSet< render::handle_t >& outHandles) const
 		outHandles.insert(part.first);
 }
 
-void InstanceMesh::build(
+const render::Buffer* InstanceMesh::getRTVertexAttributes() const
+{
+	return m_renderMesh->getAuxBuffer(c_fccRayTracingVertexAttributes);
+}
+
+void InstanceMesh::cullableBuild(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
@@ -180,11 +185,6 @@ void InstanceMesh::build(
 
 		renderContext->draw(sp.priority, renderBlock);
 	}
-}
-
-const render::Buffer* InstanceMesh::getRTVertexAttributes() const
-{
-	return m_renderMesh->getAuxBuffer(c_fccRayTracingVertexAttributes);
 }
 
 }

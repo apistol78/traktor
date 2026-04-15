@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -66,7 +66,7 @@ void InstanceMeshComponent::setState(const world::EntityState& state, const worl
 		if (!m_cullingInstance)
 		{
 			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
-			m_cullingInstance = culling->createInstance(this, (intptr_t)m_mesh.getResource());
+			m_cullingInstance = culling->createInstance(m_mesh, (intptr_t)m_mesh.getResource());
 			m_cullingInstance->setTransform(m_transform.get0());
 		}
 	}
@@ -97,29 +97,30 @@ void InstanceMeshComponent::build(
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass)
 {
-	// Not used since we're getting called by the culling component when we should build.
-}
+	// Recreate RT and culling if mesh has been reloaded.
+	if (m_mesh.changed())
+	{
+		if (m_rtwInstance)
+		{
+			safeDestroy(m_rtwInstance);
 
-void InstanceMeshComponent::cullableBuild(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	render::Buffer* instanceBuffer,
-	render::Buffer* visibilityBuffer,
-	uint32_t start,
-	uint32_t count)
-{
-	// Draw mesh instances; this method is called for the "first" InstanceMeshComponent using the same ordinal number
-	// assuming all other components reference the same mesh.
-	if (m_mesh)
-		m_mesh->build(
-			context,
-			worldRenderView,
-			worldRenderPass,
-			instanceBuffer,
-			visibilityBuffer,
-			start,
-			count);
+			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
+			if (rtw != nullptr)
+			{
+				m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getRTVertexAttributes());
+				m_rtwInstance->setTransform(m_transform.get0());
+			}
+		}
+		if (m_cullingInstance)
+		{
+			safeDestroy(m_cullingInstance);
+
+			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
+			m_cullingInstance = culling->createInstance(m_mesh, (intptr_t)m_mesh.getResource());
+			m_cullingInstance->setTransform(m_transform.get0());
+		}
+		m_mesh.consume();
+	}
 }
 
 }
