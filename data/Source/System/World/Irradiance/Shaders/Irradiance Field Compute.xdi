@@ -23,6 +23,7 @@
 				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
 				<item>{1C13688E-63BC-3141-ACB1-58EEE72EEF2F}</item>
 				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
+				<item>{F6048A61-5C30-204E-8ACC-D203978866C8}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -53,23 +54,12 @@
 			<outputPins/>
 			<script><![CDATA[
 const int N = 32;
-const int GridSize = 128;
-
-const float Far = 10.0f;
-
-const float VolumeExtent = 20.0f;
-const float VolumeSize = VolumeExtent * 2.0f;
-const float CellSize = VolumeSize / GridSize;
-
-const vec3 cameraPosition = ($ViewInverse * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz;
-
-const vec3 cellNC = (gl_GlobalInvocationID.xyz / float(GridSize)) * 2.0f - 1.0f;
-const vec3 cellPosition = (cellNC * VolumeExtent) + cameraPosition;
-
+const float Far = 50.0f;
 
 const ivec3 pt = ivec3(gl_GlobalInvocationID.xyz);
-const vec3 Nacc0 = imageLoad($Output, pt).xyz;
+const vec3 cellPosition = CellToWorldSpace($ViewInverse, pt);
 
+const vec3 Nacc0 = imageLoad($Output, pt).xyz;
 
 int rndState = int($Random);
 vec3 Nacc = vec3(0.0f, 0.0f, 0.0f);
@@ -85,8 +75,8 @@ for (int i = 0; i < N; ++i)
 	);
 
 	const vec3 rayDir = Sphere(rnd);
-	const vec3 rayOrigin = cellPosition + ro;
-	const float phi = 0.5f;
+	const vec3 rayOrigin = cellPosition; // + ro;
+	//const float phi = 0.5f;
 
 	HWRT_Material m;
 	float t;
@@ -94,7 +84,7 @@ for (int i = 0; i < N; ++i)
 	if (HWRT_Trace($AS, rayOrigin, rayDir, Far, m, t))
 	{
 		const vec3 hit = rayOrigin + rayDir * t;
-		const float attenuate = LightAttenuation(t);
+		//const float attenuate = LightAttenuation(t);
 		
 		for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 		{
@@ -107,16 +97,13 @@ for (int i = 0; i < N; ++i)
 				m.normal.xyz,
 				true
 			);
-			// Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
 			Nacc += incident.xyz;
 		}
-
-		// Nacc += m.albedo * m.emissive * attenuate * phi * PI;
 	}
 }
 Nacc /= float(N);
 
-Nacc = Nacc * 0.1f + Nacc0 * 0.9f;
+//Nacc = Nacc * 0.5f + Nacc0 * 0.5f;
 
 imageStore($Output, pt, vec4(Nacc, 0.0f));
 

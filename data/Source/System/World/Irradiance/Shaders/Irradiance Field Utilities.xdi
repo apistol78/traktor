@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule" version="2">
+	<text><![CDATA[
+const int GridSize = 128;
+
+const float VolumeExtent = 20.0f;
+const float VolumeSize = VolumeExtent * 2.0f;
+const float CellExtent = VolumeExtent / GridSize;
+const float CellSize = VolumeSize / GridSize;
+
+vec3 QuantizeOrigin(vec3 origin)
+{
+	return floor(origin * CellExtent + 0.5f) / CellExtent;
+}
+
+vec3 SampleIrradianceField(texture3D irradianceField, mat4 viewInverse, vec3 w)
+{
+	const vec3 origin = QuantizeOrigin((viewInverse * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz);
+	const vec3 nc = (w.xyz - origin) / vec3(VolumeExtent);
+	const vec3 uv = nc * 0.5f + 0.5f;
+	return texture(sampler3D(irradianceField, irradianceFieldSampler), uv).xyz;
+}
+
+vec3 CellToWorldSpace(mat4 viewInverse, ivec3 cell)
+{
+	const vec3 origin = QuantizeOrigin((viewInverse * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz);
+	const vec3 cellNC = (cell / float(GridSize)) * 2.0f - 1.0f;
+	return (cellNC * VolumeExtent) + origin;
+}]]></text>
+	<samplers>
+		<item>
+			<first>irradianceFieldSampler</first>
+			<second>
+				<minFilter>Linear</minFilter>
+				<mipFilter>Linear</mipFilter>
+				<magFilter>Linear</magFilter>
+				<addressU>Border</addressU>
+				<addressV>Border</addressV>
+				<addressW>Border</addressW>
+				<compare>None</compare>
+				<mipBias>0</mipBias>
+				<ignoreMips>true</ignoreMips>
+				<useAnisotropic>false</useAnisotropic>
+			</second>
+		</item>
+	</samplers>
+	<structDeclarations/>
+</object>

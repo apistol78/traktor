@@ -60,6 +60,7 @@
 				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
 				<item>{6ED30419-6A30-3D41-9583-D6E71FFE0064}</item>
 				<item>{D2199F29-20FD-BB44-9484-F57840FF0332}</item>
+				<item>{F6048A61-5C30-204E-8ACC-D203978866C8}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -117,10 +118,6 @@
 				<item>
 					<id>{F16CFD45-549F-8C44-9075-C99984FCD8B8}</id>
 					<name>IrradianceField</name>
-				</item>
-				<item>
-					<id>{E3B89F6C-C206-C74F-A31B-284A02135B41}</id>
-					<name>State</name>
 				</item>
 			</inputPins>
 			<outputPins/>
@@ -268,9 +265,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 					}
 */
 					{
-						const vec3 nc = (hit - cameraPosition) / vec3(20.0f, 20.0f, 20.0f);
-						const vec3 uv = nc * 0.5f + 0.5f;
-						const vec3 incident = texture(sampler3D($IrradianceField, $State), uv).xyz;
+						const vec3 incident = SampleIrradianceField($IrradianceField, $ViewInverse, hit);
 						Nacc += (m.albedo * incident * attenuate * phi * PI).xyz;
 					}
 
@@ -310,9 +305,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 							}
 */
 							{
-								const vec3 nc = (hit2 - cameraPosition) / vec3(20.0f, 20.0f, 20.0f);
-								const vec3 uv = nc * 0.5f + 0.5f;
-								const vec3 incident = texture(sampler3D($IrradianceField, $State), uv).xyz;
+								const vec3 incident = SampleIrradianceField($IrradianceField, $ViewInverse, hit2);
 								Sacc += (m2.albedo * incident * attenuate2 * phi * PI).xyz;
 							}		
 
@@ -348,11 +341,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 		acc += vec4(Reservoir_GetRadiance(reservoir), 1.0f);
 
 #if 0
-	{
-		vec3 nc = ($Origin.xyz - cameraPosition) / vec3(20.0f, 20.0f, 20.0f);
-		vec3 uv = nc * 0.5f + 0.5f;
-		acc = texture(sampler3D($IrradianceField, $State), uv);
-	}
+	acc = vec4(SampleIrradianceField($IrradianceField, $ViewInverse, $Origin.xyz), 1.0f);
 #endif
 
 #if 0
@@ -1053,24 +1042,6 @@ values in the reservoir for convergence.]]></comment>
 			</position>
 			<parameterDeclaration>{3E83158A-0056-F54E-94B0-C23DF1573D3B}</parameterDeclaration>
 		</item>
-		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
-			<id>{F1F4968C-07B6-E242-8867-ACA439CD3F9D}</id>
-			<comment/>
-			<position>
-				<first>-1989</first>
-				<second>94</second>
-			</position>
-			<minFilter>Linear</minFilter>
-			<mipFilter>Linear</mipFilter>
-			<magFilter>Linear</magFilter>
-			<addressU>Border</addressU>
-			<addressV>Border</addressV>
-			<addressW>Border</addressW>
-			<compare>None</compare>
-			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
-			<useAnisotropic>false</useAnisotropic>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -1661,16 +1632,6 @@ values in the reservoir for convergence.]]></comment>
 			<destination>
 				<node ref="/object/nodes/item[25]"/>
 				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[65]"/>
-				<id>{82C966B2-7B19-48B2-8FE0-B85FF4E3C504}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{E3B89F6C-C206-C74F-A31B-284A02135B41}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
