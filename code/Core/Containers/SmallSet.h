@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -61,6 +61,11 @@ public:
 	const_iterator end() const
 	{
 		return m_data.end();
+	}
+
+	void reserve(size_t capacity)
+	{
+		m_data.reserve(capacity);
 	}
 
 	void clear()
