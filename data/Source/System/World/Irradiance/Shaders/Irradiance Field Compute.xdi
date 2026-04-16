@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{A468EB82-EAA9-AE43-969E-013DCCE6AC18}</id>
+			<comment/>
+			<position>
+				<first>-1721</first>
+				<second>-290</second>
+			</position>
+			<name>Pass</name>
+			<technique>Default</technique>
+			<domain>Compute</domain>
+			<localSize>
+				<X>8</X>
+				<Y>8</Y>
+				<Z>8</Z>
+			</localSize>
+			<useRayTracing>true</useRayTracing>
+			<include>
+				<item>{4370C471-3C5D-914B-A3AC-866BE15AD328}</item>
+				<item>{6ED30419-6A30-3D41-9583-D6E71FFE0064}</item>
+				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
+				<item>{1C13688E-63BC-3141-ACB1-58EEE72EEF2F}</item>
+				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{EADA77CC-17C7-41D7-B0E1-8D59463CCDD6}</id>
+					<name>Output</name>
+				</item>
+				<item>
+					<id>{41A91F91-0E23-B74A-8D5B-14716C7412D5}</id>
+					<name>AS</name>
+				</item>
+				<item>
+					<id>{014DA7E5-18F0-8D49-AD7C-CBE5689F001E}</id>
+					<name>Lights</name>
+				</item>
+				<item>
+					<id>{B63DD5AC-E9B0-AA4C-9FD2-E8B0CD4DEF98}</id>
+					<name>LightCount</name>
+				</item>
+				<item>
+					<id>{CED9EC33-5AE5-6541-964F-107108C02751}</id>
+					<name>ViewInverse</name>
+				</item>
+				<item>
+					<id>{E6B53F89-364B-2C40-A08C-91CCE471354E}</id>
+					<name>Random</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script><![CDATA[
+const int N = 32;
+const int GridSize = 128;
+
+const float Far = 10.0f;
+
+const float VolumeExtent = 20.0f;
+const float VolumeSize = VolumeExtent * 2.0f;
+const float CellSize = VolumeSize / GridSize;
+
+const vec3 cameraPosition = ($ViewInverse * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz;
+
+const vec3 cellNC = (gl_GlobalInvocationID.xyz / float(GridSize)) * 2.0f - 1.0f;
+const vec3 cellPosition = (cellNC * VolumeExtent) + cameraPosition;
+
+
+const ivec3 pt = ivec3(gl_GlobalInvocationID.xyz);
+const vec3 Nacc0 = imageLoad($Output, pt).xyz;
+
+
+int rndState = int($Random);
+vec3 Nacc = vec3(0.0f, 0.0f, 0.0f);
+
+for (int i = 0; i < N; ++i)
+{
+	const vec2 rnd = Hammersley(i, N);
+
+	const vec3 ro = vec3(
+		Hash(rndState++) * CellSize / 2.0f,
+		Hash(rndState++) * CellSize / 2.0f,
+		Hash(rndState++) * CellSize / 2.0f
+	);
+
+	const vec3 rayDir = Sphere(rnd);
+	const vec3 rayOrigin = cellPosition + ro;
+	const float phi = 0.5f;
+
+	HWRT_Material m;
+	float t;
+
+	if (HWRT_Trace($AS, rayOrigin, rayDir, Far, m, t))
+	{
+		const vec3 hit = rayOrigin + rayDir * t;
+		const float attenuate = LightAttenuation(t);
+		
+		for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
+		{
+			const $typeof(Lights) light = $Lights[lightIndex];
+			const vec4 incident = HWRT_Light_CalculateIncidentLight(
+				$AS,
+				$ViewInverse,
+				light,
+				hit,
+				m.normal.xyz,
+				true
+			);
+			// Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
+			Nacc += incident.xyz;
+		}
+
+		// Nacc += m.albedo * m.emissive * attenuate * phi * PI;
+	}
+}
+Nacc /= float(N);
+
+Nacc = Nacc * 0.1f + Nacc0 * 0.9f;
+
+imageStore($Output, pt, vec4(Nacc, 0.0f));
+
+]]></script>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{6E3237E0-52CA-3C42-9002-CE35D2F6ED44}</id>
+			<comment/>
+			<position>
+				<first>-1959</first>
+				<second>-262</second>
+			</position>
+			<parameterDeclaration>{C651B846-F51A-CB49-BBAB-10C2A527DE97}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{1D33C833-8971-A14B-82D6-2FC2DD250B48}</id>
+			<comment/>
+			<position>
+				<first>-2039</first>
+				<second>-313</second>
+			</position>
+			<parameterDeclaration>{165AC628-6F1A-DA43-96EF-D57E2BFA5D93}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{92222615-27EA-534B-936C-F95FDAED49CC}</id>
+			<comment/>
+			<position>
+				<first>-1991</first>
+				<second>-211</second>
+			</position>
+			<parameterDeclaration>{3C048EC4-ED6A-0847-B08D-95F74407200F}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{B20BEC9F-48C6-BF47-8E7A-20E0DA0A51DF}</id>
+			<comment/>
+			<position>
+				<first>-1975</first>
+				<second>-160</second>
+			</position>
+			<parameterDeclaration>{1527F0C9-DD5E-5C47-8A6B-5B7932CFD43D}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{C55D0566-3C08-934B-A3ED-2C8ABDF816F3}</id>
+			<comment/>
+			<position>
+				<first>-1991</first>
+				<second>-109</second>
+			</position>
+			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{566AD37E-85DC-9B40-A1E4-2EA4D5C3AC03}</id>
+			<comment/>
+			<position>
+				<first>-2419</first>
+				<second>30</second>
+			</position>
+			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{DB3FDBA5-7C43-E94D-B8F0-7BDECD8D0693}</id>
+			<comment/>
+			<position>
+				<first>-2222</first>
+				<second>30</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{A423E5DF-19C7-C442-9574-0F3ABA684186}</id>
+			<comment/>
+			<position>
+				<first>-1969</first>
+				<second>-58</second>
+			</position>
+			<name>Random</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include>
+				<item>{6770B973-C860-9541-A411-28FE83D9EE82}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{2F15EAF1-E617-4931-AF16-BA52D9315156}</id>
+					<name>Time</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
+					<name>Output</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[uvec2 seed = uvec2(gl_GlobalInvocationID.xy);
+seed += uvec2($Time * 1543, $Time * 543);
+$Output = BlueNoise(seed);
+			]]></script>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{EADA77CC-17C7-41D7-B0E1-8D59463CCDD6}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{41A91F91-0E23-B74A-8D5B-14716C7412D5}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{014DA7E5-18F0-8D49-AD7C-CBE5689F001E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{B63DD5AC-E9B0-AA4C-9FD2-E8B0CD4DEF98}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{CED9EC33-5AE5-6541-964F-107108C02751}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{2F15EAF1-E617-4931-AF16-BA52D9315156}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{E6B53F89-364B-2C40-A08C-91CCE471354E}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>

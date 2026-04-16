@@ -18,6 +18,7 @@ namespace traktor::render
 class Buffer;
 class ImageGraph;
 class IRenderSystem;
+class ITexture;
 class RenderGraph;
 class ScreenRenderer;
 class Shader;
@@ -65,6 +66,8 @@ public:
 
 private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
+	Ref< render::ITexture > m_irradianceFieldTexture;
+	resource::Proxy< render::Shader > m_irradianceFieldComputeShader;
 	resource::Proxy< render::Shader > m_irradianceComputeShader;
 	resource::Proxy< render::ImageGraph > m_irradianceDenoise;
 	render::Handle m_persistentReservoirBuffers[2];

@@ -181,6 +181,14 @@ public:
 	 */
 	RGBuffer addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, const RenderGraphBufferDesc& bufferDesc);
 
+	/*! Add explicit texture resource.
+	 *
+	 * \param name Name of buffer, used for debugging only.
+	 * \param texture Texture resource.
+	 * \return Opaque resource handle.
+	 */
+	RGTexture addExplicitTexture(const wchar_t* const name, ITexture* texture);
+
 	/*! Add a transient texture.
 	 *
 	 * A transient texture is always created with storage texture

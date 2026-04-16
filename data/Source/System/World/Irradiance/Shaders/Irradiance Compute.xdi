@@ -41,8 +41,8 @@
 			<id>{5AA873C8-99FE-0F49-873A-EAC0E36A656A}</id>
 			<comment/>
 			<position>
-				<first>-1665</first>
-				<second>-878</second>
+				<first>-1672</first>
+				<second>-405</second>
 			</position>
 			<name>Raytracing</name>
 			<technique>World_ComputeIrradiance_RT</technique>
@@ -114,6 +114,14 @@
 					<id>{E204E2D0-3918-4A42-A83B-035B9F452AD4}</id>
 					<name>Depth</name>
 				</item>
+				<item>
+					<id>{F16CFD45-549F-8C44-9075-C99984FCD8B8}</id>
+					<name>IrradianceField</name>
+				</item>
+				<item>
+					<id>{E3B89F6C-C206-C74F-A31B-284A02135B41}</id>
+					<name>State</name>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
@@ -122,7 +130,7 @@
 #define USE_SPATIAL_FILTER 1
 
 const int N = 2;
-const int Ndisclose = 48;
+const int Ndisclose = 16;
 const int Nspatial = 4;
 const int K = 10;
 const float Far = 10.0f;
@@ -142,6 +150,7 @@ const ivec2 uvpt = pt - ivec2($Velocity.xy * vec2(sz) + hdv);
 const ivec2 cvpt = clamp(uvpt, ivec2(0), sz - 1);
 const int lastIndex = cvpt.x + cvpt.y * sz.x;
 const bool lastIndexOutside = (uvpt != cvpt);
+const vec3 cameraPosition = ($ViewInverse * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz;
 
 int rndState = int($Random * sz.x * sz.y);
 
@@ -243,6 +252,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 					const vec3 hit = rayOrigin + rayDir * t;
 					const float attenuate = LightAttenuation(t);
 					
+/*
 					for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 					{
 						const $typeof(Lights) light = $Lights[lightIndex];
@@ -256,9 +266,16 @@ if (pt.x < sz.x && pt.y < sz.y)
 						);
 						Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
 					}
-		
+*/
+					{
+						const vec3 nc = (hit - cameraPosition) / vec3(20.0f, 20.0f, 20.0f);
+						const vec3 uv = nc * 0.5f + 0.5f;
+						const vec3 incident = texture(sampler3D($IrradianceField, $State), uv).xyz;
+						Nacc += (m.albedo * incident * attenuate * phi * PI).xyz;
+					}
+
 					Nacc += m.albedo * m.emissive * attenuate * phi * PI;
-		
+
 #if USE_SECOND_BOUNCE
 					{
 						vec3 Sacc = vec3(0.0f);
@@ -270,15 +287,16 @@ if (pt.x < sz.x && pt.y < sz.y)
 		
 						if (HWRT_Trace($AS, hit, secondRayDir, FarSecond, m2, t2))
 						{
+							const vec3 hit2 = hit + secondRayDir * t;
 							const float attenuate2 = LightAttenuation(t2);
 	
+/*
 							for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 							{
 								const float pdfRandomLight = 1.0f; // 1.0f / max($LightCount, 1);
 								//const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
 								const $typeof(Lights) light = $Lights[lightIndex];
 			
-								const vec3 hit2 = hit + secondRayDir * t;
 								const vec4 incident = HWRT_Light_CalculateIncidentLight(
 									$AS,
 									$ViewInverse,
@@ -290,8 +308,15 @@ if (pt.x < sz.x && pt.y < sz.y)
 			
 								Sacc += (m2.albedo * incident.xyz * attenuate2 * phi * PI / pdfRandomLight).xyz;
 							}
-			
-							Sacc += vec3(m2.albedo * m2.emissive * attenuate2 * phi);
+*/
+							{
+								const vec3 nc = (hit2 - cameraPosition) / vec3(20.0f, 20.0f, 20.0f);
+								const vec3 uv = nc * 0.5f + 0.5f;
+								const vec3 incident = texture(sampler3D($IrradianceField, $State), uv).xyz;
+								Sacc += (m2.albedo * incident * attenuate2 * phi * PI).xyz;
+							}		
+
+							Sacc += m2.albedo * m2.emissive * attenuate2 * phi * PI;
 						}
 			
 						Nacc += m.albedo * Sacc;
@@ -323,6 +348,14 @@ if (pt.x < sz.x && pt.y < sz.y)
 		acc += vec4(Reservoir_GetRadiance(reservoir), 1.0f);
 
 #if 0
+	{
+		vec3 nc = ($Origin.xyz - cameraPosition) / vec3(20.0f, 20.0f, 20.0f);
+		vec3 uv = nc * 0.5f + 0.5f;
+		acc = texture(sampler3D($IrradianceField, $State), uv);
+	}
+#endif
+
+#if 0
 	acc = temporalValid ? 
 		vec4(0.0f, 1.0f, 0.0f, 1.0f) :
 		vec4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -338,16 +371,16 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{81CB637D-9323-C440-BD0D-C85298C4B08A}</id>
 			<comment/>
 			<position>
-				<first>-2042</first>
-				<second>-996</second>
+				<first>-2049</first>
+				<second>-524</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{72B0215A-07BF-7E4E-ADEA-9D796B9EB0CD}</id>
 			<comment/>
 			<position>
-				<first>-2250</first>
-				<second>-997</second>
+				<first>-2254</first>
+				<second>-524</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -355,8 +388,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{456643BE-2442-B544-8561-9DA08E681109}</id>
 			<comment/>
 			<position>
-				<first>-2432</first>
-				<second>-997</second>
+				<first>-2439</first>
+				<second>-524</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -364,16 +397,16 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{7FA71DD2-2214-2D40-B818-AAFDE8461BC9}</id>
 			<comment/>
 			<position>
-				<first>-2042</first>
-				<second>-917</second>
+				<first>-2049</first>
+				<second>-446</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{9D74B05E-EC09-E342-839C-006F965973B9}</id>
 			<comment/>
 			<position>
-				<first>-2250</first>
-				<second>-890</second>
+				<first>-2254</first>
+				<second>-417</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -381,8 +414,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{86D624E3-EEF3-E146-BA93-139506322BE9}</id>
 			<comment/>
 			<position>
-				<first>-2432</first>
-				<second>-890</second>
+				<first>-2439</first>
+				<second>-417</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -390,8 +423,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{A9FA4598-AB06-634C-B4C8-5BB277012B11}</id>
 			<comment/>
 			<position>
-				<first>-1994</first>
-				<second>-838</second>
+				<first>-2001</first>
+				<second>-368</second>
 			</position>
 			<name>Random</name>
 			<technique/>
@@ -427,8 +460,8 @@ $Output = BlueNoise(seed);
 			<id>{17849A29-E1D2-C24C-A0E0-3395541637C2}</id>
 			<comment/>
 			<position>
-				<first>-2250</first>
-				<second>-756</second>
+				<first>-2254</first>
+				<second>-283</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -582,8 +615,8 @@ $TexCoord = vec4(
 			<id>{CAB31635-5AD6-5A46-B373-4BF451A31AE0}</id>
 			<comment/>
 			<position>
-				<first>-1984</first>
-				<second>-529</second>
+				<first>-1991</first>
+				<second>-66</second>
 			</position>
 			<name>L_Velocity</name>
 		</item>
@@ -738,8 +771,8 @@ $TexCoord = vec4(
 			<id>{67436684-6E86-4C4B-8CD2-937BABB30A51}</id>
 			<comment/>
 			<position>
-				<first>-1984</first>
-				<second>-488</second>
+				<first>-1991</first>
+				<second>-26</second>
 			</position>
 			<name>L_Sky</name>
 		</item>
@@ -756,8 +789,8 @@ $TexCoord = vec4(
 			<id>{B46D8DBA-7927-4F74-B9A5-D85117428DF8}</id>
 			<comment/>
 			<position>
-				<first>-1647</first>
-				<second>-268</second>
+				<first>-1665</first>
+				<second>195</second>
 			</position>
 			<name>Pass</name>
 			<technique>World_ComputeIrradiance</technique>
@@ -790,8 +823,8 @@ imageStore($Output, pt, $Sky);
 			<id>{62BCF65D-1878-41FF-A232-221EE0CA6CDD}</id>
 			<comment/>
 			<position>
-				<first>-1993</first>
-				<second>-214</second>
+				<first>-2000</first>
+				<second>259</second>
 			</position>
 			<name>L_Sky</name>
 		</item>
@@ -834,8 +867,8 @@ imageStore($Output, pt, $Sky);
 			<id>{4A5CADDA-27DB-9D4D-81F9-1759B8BF7FBC}</id>
 			<comment/>
 			<position>
-				<first>-1984</first>
-				<second>-447</second>
+				<first>-1991</first>
+				<second>14</second>
 			</position>
 			<name>L_Depth</name>
 		</item>
@@ -871,8 +904,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-1984</first>
-				<second>-1037</second>
+				<first>-1991</first>
+				<second>-564</second>
 			</position>
 			<parameterDeclaration>{C651B846-F51A-CB49-BBAB-10C2A527DE97}</parameterDeclaration>
 		</item>
@@ -880,8 +913,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2282</first>
-				<second>-947</second>
+				<first>-2286</first>
+				<second>-474</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -889,8 +922,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2464</first>
-				<second>-802</second>
+				<first>-2286</first>
+				<second>-367</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -898,8 +931,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2444</first>
-				<second>-756</second>
+				<first>-2451</first>
+				<second>-283</second>
 			</position>
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
 		</item>
@@ -907,8 +940,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2000</first>
-				<second>-734</second>
+				<first>-2007</first>
+				<second>-266</second>
 			</position>
 			<parameterDeclaration>{1527F0C9-DD5E-5C47-8A6B-5B7932CFD43D}</parameterDeclaration>
 		</item>
@@ -916,8 +949,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2016</first>
-				<second>-693</second>
+				<first>-2023</first>
+				<second>-226</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -934,8 +967,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2032</first>
-				<second>-570</second>
+				<first>-2039</first>
+				<second>-106</second>
 			</position>
 			<parameterDeclaration>{2C06FC6E-5E3E-9442-BD38-EFEAD6DDDCC5}</parameterDeclaration>
 		</item>
@@ -970,8 +1003,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2041</first>
-				<second>-256</second>
+				<first>-2048</first>
+				<second>217</second>
 			</position>
 			<parameterDeclaration>{2C06FC6E-5E3E-9442-BD38-EFEAD6DDDCC5}</parameterDeclaration>
 		</item>
@@ -988,8 +1021,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2016</first>
-				<second>-775</second>
+				<first>-2023</first>
+				<second>-306</second>
 			</position>
 			<parameterDeclaration>{3C048EC4-ED6A-0847-B08D-95F74407200F}</parameterDeclaration>
 		</item>
@@ -997,8 +1030,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2000</first>
-				<second>-652</second>
+				<first>-2007</first>
+				<second>-186</second>
 			</position>
 			<parameterDeclaration>{8B5D917E-016B-B847-82D9-873D43916888}</parameterDeclaration>
 		</item>
@@ -1006,10 +1039,37 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2032</first>
-				<second>-611</second>
+				<first>-2039</first>
+				<second>-146</second>
 			</position>
 			<parameterDeclaration>{1EA8D019-E2CB-F14E-806E-39E74AFAB00E}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{50D65E52-7886-3C45-B57E-6143E16E33BC}</id>
+			<comment/>
+			<position>
+				<first>-2071</first>
+				<second>54</second>
+			</position>
+			<parameterDeclaration>{3E83158A-0056-F54E-94B0-C23DF1573D3B}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
+			<id>{F1F4968C-07B6-E242-8867-ACA439CD3F9D}</id>
+			<comment/>
+			<position>
+				<first>-1989</first>
+				<second>94</second>
+			</position>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
+			<addressU>Border</addressU>
+			<addressV>Border</addressV>
+			<addressW>Border</addressW>
+			<compare>None</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 	</nodes>
 	<edges>
@@ -1601,6 +1661,26 @@ values in the reservoir for convergence.]]></comment>
 			<destination>
 				<node ref="/object/nodes/item[25]"/>
 				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[65]"/>
+				<id>{82C966B2-7B19-48B2-8FE0-B85FF4E3C504}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{E3B89F6C-C206-C74F-A31B-284A02135B41}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[64]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{F16CFD45-549F-8C44-9075-C99984FCD8B8}</id>
 			</destination>
 		</item>
 	</edges>

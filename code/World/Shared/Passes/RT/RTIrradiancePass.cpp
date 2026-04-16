@@ -17,6 +17,7 @@
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
+#include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
@@ -49,11 +50,14 @@ struct World_Reservoir_Type
 
 #pragma pack()
 
+const resource::Id< render::Shader > c_irradianceFieldComputeShader(L"{593A522F-206C-9046-B8A1-25488BEA362A}");
 const resource::Id< render::Shader > c_irradianceComputeShader(L"{7C871925-C1A9-5B47-A361-114BC8FB5A98}");
 const resource::Id< render::ImageGraph > c_irradianceDenoise(L"{14A0E977-7C13-9B43-A26E-F1D21117AEC6}");
 
 const render::Handle s_handleTechniqueIrradiance_RT(L"World_ComputeIrradiance_RT");
 const render::Handle s_handleIrradianceOutput(L"World_IrradianceOutput");
+const render::Handle s_handleIrradianceFieldImage(L"World_IrradianceFieldImage");
+const render::Handle s_handleIrradianceFieldTexture(L"World_IrradianceFieldTexture");
 
 static Random s_random;
 
@@ -63,6 +67,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.RTIrradiancePass", RTIrradiancePass, Obje
 
 bool RTIrradiancePass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
+	if (!resourceManager->bind(c_irradianceFieldComputeShader, m_irradianceFieldComputeShader))
+	{
+		log::error << L"Unable to create irradiance grid compute shader." << Endl;
+		return false;
+	}
 	if (!resourceManager->bind(c_irradianceComputeShader, m_irradianceComputeShader))
 	{
 		log::error << L"Unable to create irradiance compute shader." << Endl;
@@ -73,6 +82,19 @@ bool RTIrradiancePass::create(resource::IResourceManager* resourceManager, rende
 		log::error << L"Unable to create irradiance denoiser process." << Endl;
 		return false;
 	}
+
+	// Create irradiance volume texture.
+	render::VolumeTextureCreateDesc vtcd;
+	vtcd.width = 128;
+	vtcd.height = 128;
+	vtcd.depth = 128;
+	vtcd.mipCount = 1;
+	vtcd.format = render::TfR16G16B16A16F;
+	vtcd.sRGB = false;
+	vtcd.immutable = false;
+	vtcd.shaderStorage = true;
+	if ((m_irradianceFieldTexture = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
+		return false;
 
 	// Create screen renderer.
 	m_screenRenderer = new render::ScreenRenderer();
@@ -126,6 +148,9 @@ render::RGTargetSet RTIrradiancePass::setup(
 		renderGraph.addPersistentBuffer(L"Reservoir", m_persistentReservoirBuffers[frameCount % 2], reservoirBufferDesc),
 		renderGraph.addPersistentBuffer(L"Reservoir", m_persistentReservoirBuffers[(frameCount + 1) % 2], reservoirBufferDesc)
 	};
+
+	// Add compute output irradiance field volume texture.
+	const auto irradianceFieldTextureId = renderGraph.addExplicitTexture(L"Irradiance field", m_irradianceFieldTexture);
 
 	// Add compute output irradiance texture.
 	const render::RenderGraphTextureDesc irradianceTextureDesc = {
@@ -186,6 +211,31 @@ render::RGTargetSet RTIrradiancePass::setup(
 		params->setAccelerationStructureParameter(ShaderParameter::TLAS, gatheredView.rtWorldTopLevel);
 	};
 
+	// Add irradiance field compute pass.
+	{
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance field compute");
+		rp->setOutput(irradianceFieldTextureId);
+		rp->addBuild(
+			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+			render::ITexture* irradianceFieldTexture = renderGraph.getTexture(irradianceFieldTextureId);
+
+			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Irradiance field compute");
+			renderBlock->program = m_irradianceFieldComputeShader->getProgram().program;
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->workSize[0] = 128;
+			renderBlock->workSize[1] = 128;
+			renderBlock->workSize[2] = 128;
+			renderBlock->programParams->beginParameters(renderContext);
+			renderBlock->programParams->setImageViewParameter(s_handleIrradianceFieldImage, irradianceFieldTexture, 0);
+			setParameters(renderGraph, renderBlock->programParams);
+			renderBlock->programParams->endParameters(renderContext);
+
+			renderContext->compute(renderBlock);
+		});
+
+		renderGraph.addPass(rp);
+	}
+
 	// Add irradiance compute pass.
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance compute");
@@ -194,11 +244,13 @@ render::RGTargetSet RTIrradiancePass::setup(
 		rp->addInput(velocityTargetSetId);
 		rp->addInput(reservoirBufferId.previous);
 		rp->addInput(reservoirBufferId.current);
+		rp->addInput(irradianceFieldTextureId);
 		rp->setOutput(irradianceTextureId);
 		rp->addBuild(
 			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 			render::ITexture* velocityTexture = renderGraph.getTargetSet(velocityTargetSetId)->getColorTexture(0);
 			render::ITexture* irradianceTexture = renderGraph.getTexture(irradianceTextureId);
+			render::ITexture* irradianceFieldTexture = renderGraph.getTexture(irradianceFieldTextureId);
 			render::Buffer* reservoirBuffer = renderGraph.getBuffer(reservoirBufferId.previous);
 			render::Buffer* reservoirOutputBuffer = renderGraph.getBuffer(reservoirBufferId.current);
 
@@ -216,6 +268,7 @@ render::RGTargetSet RTIrradiancePass::setup(
 			renderBlock->workSize[2] = 1;
 			renderBlock->programParams->beginParameters(renderContext);
 			renderBlock->programParams->setTextureParameter(ShaderParameter::VelocityMap, velocityTexture);
+			renderBlock->programParams->setTextureParameter(s_handleIrradianceFieldTexture, irradianceFieldTexture);
 			renderBlock->programParams->setBufferViewParameter(ShaderParameter::Reservoir, reservoirBuffer->getBufferView());
 			renderBlock->programParams->setBufferViewParameter(ShaderParameter::ReservoirOutput, reservoirOutputBuffer->getBufferView());
 			renderBlock->programParams->setImageViewParameter(s_handleIrradianceOutput, irradianceTexture, 0);
@@ -223,7 +276,6 @@ render::RGTargetSet RTIrradiancePass::setup(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);
-			// renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, irradianceTexture, 0);
 		});
 		renderGraph.addPass(rp);
 	}

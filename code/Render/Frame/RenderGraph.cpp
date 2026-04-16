@@ -201,6 +201,17 @@ RGBuffer RenderGraph::addPersistentBuffer(const wchar_t* const name, handle_t pe
 	return resourceId;
 }
 
+RGTexture RenderGraph::addExplicitTexture(const wchar_t* const name, ITexture* texture)
+{
+	const RGTexture resourceId(m_nextResourceId++);
+
+	auto& br = m_textures[resourceId];
+	br.name = name;
+	br.texture = texture;
+
+	return resourceId;
+}
+
 RGTexture RenderGraph::addTransientTexture(const wchar_t* const name, const RenderGraphTextureDesc& textureDesc, RGTargetSet sizeReferenceTargetSetId)
 {
 	const RGTexture resourceId(m_nextResourceId++);
