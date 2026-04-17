@@ -44,6 +44,7 @@ const render::Handle ShaderParameter::Gamma(L"World_Gamma");
 const render::Handle ShaderParameter::GammaInverse(L"World_GammaInverse");
 const render::Handle ShaderParameter::LastWorld(L"World_LastWorld");
 const render::Handle ShaderParameter::LastView(L"World_LastView");
+const render::Handle ShaderParameter::LastViewInverse(L"World_LastViewInverse");
 const render::Handle ShaderParameter::LastWorldView(L"World_LastWorldView");
 const render::Handle ShaderParameter::LightIndexSBuffer(L"World_LightIndexSBuffer");
 const render::Handle ShaderParameter::LightMap(L"World_LightMap");

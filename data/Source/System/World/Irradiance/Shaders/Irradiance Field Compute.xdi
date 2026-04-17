@@ -5,8 +5,8 @@
 			<id>{A468EB82-EAA9-AE43-969E-013DCCE6AC18}</id>
 			<comment/>
 			<position>
-				<first>-1721</first>
-				<second>-290</second>
+				<first>-1672</first>
+				<second>-215</second>
 			</position>
 			<name>Pass</name>
 			<technique>Default</technique>
@@ -50,33 +50,42 @@
 					<id>{E6B53F89-364B-2C40-A08C-91CCE471354E}</id>
 					<name>Random</name>
 				</item>
+				<item>
+					<id>{D518FD9D-7908-F441-893E-EB695A069EF2}</id>
+					<name>LastIrradianceField</name>
+				</item>
+				<item>
+					<id>{08D46483-83DB-B640-88F4-E221D06E1420}</id>
+					<name>LastViewInverse</name>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
-const int N = 32;
-const float Far = 50.0f;
+const int N = 4;
+const float Far = 70.0f;
 
 const ivec3 pt = ivec3(gl_GlobalInvocationID.xyz);
 const vec3 cellPosition = CellToWorldSpace($ViewInverse, pt);
 
-const vec3 Nacc0 = imageLoad($Output, pt).xyz;
+const vec3 Nacc0 = SampleIrradianceField($LastIrradianceField, $LastViewInverse, cellPosition);
 
-int rndState = int($Random);
 vec3 Nacc = vec3(0.0f, 0.0f, 0.0f);
+
+int sampleOffset = int($Random * 256 / N);
+int rndState = int($Random * 768);
 
 for (int i = 0; i < N; ++i)
 {
-	const vec2 rnd = Hammersley(i, N);
+	const vec2 rnd = Hammersley(sampleOffset++ & 255, 256);
 
 	const vec3 ro = vec3(
-		Hash(rndState++) * CellSize / 2.0f,
-		Hash(rndState++) * CellSize / 2.0f,
-		Hash(rndState++) * CellSize / 2.0f
+		(Hash(rndState++) * 2.0f - 1.0f) * CellExtent,
+		(Hash(rndState++) * 2.0f - 1.0f) * CellExtent,
+		(Hash(rndState++) * 2.0f - 1.0f) * CellExtent
 	);
 
 	const vec3 rayDir = Sphere(rnd);
-	const vec3 rayOrigin = cellPosition; // + ro;
-	//const float phi = 0.5f;
+	const vec3 rayOrigin = cellPosition + ro;
 
 	HWRT_Material m;
 	float t;
@@ -84,7 +93,7 @@ for (int i = 0; i < N; ++i)
 	if (HWRT_Trace($AS, rayOrigin, rayDir, Far, m, t))
 	{
 		const vec3 hit = rayOrigin + rayDir * t;
-		//const float attenuate = LightAttenuation(t);
+		const float attenuate = LightAttenuation(t);
 		
 		for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 		{
@@ -97,13 +106,13 @@ for (int i = 0; i < N; ++i)
 				m.normal.xyz,
 				true
 			);
-			Nacc += incident.xyz;
+			Nacc += incident.xyz * attenuate;
 		}
 	}
 }
 Nacc /= float(N);
 
-//Nacc = Nacc * 0.5f + Nacc0 * 0.5f;
+Nacc = Nacc * 0.1f + Nacc0 * 0.9f;
 
 imageStore($Output, pt, vec4(Nacc, 0.0f));
 
@@ -114,13 +123,13 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<comment/>
 			<position>
 				<first>-1959</first>
-				<second>-262</second>
+				<second>-257</second>
 			</position>
 			<parameterDeclaration>{C651B846-F51A-CB49-BBAB-10C2A527DE97}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{1D33C833-8971-A14B-82D6-2FC2DD250B48}</id>
-			<comment/>
+			<comment><![CDATA[Output, current, field.]]></comment>
 			<position>
 				<first>-2039</first>
 				<second>-313</second>
@@ -132,7 +141,7 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<comment/>
 			<position>
 				<first>-1991</first>
-				<second>-211</second>
+				<second>-201</second>
 			</position>
 			<parameterDeclaration>{3C048EC4-ED6A-0847-B08D-95F74407200F}</parameterDeclaration>
 		</item>
@@ -141,7 +150,7 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<comment/>
 			<position>
 				<first>-1975</first>
-				<second>-160</second>
+				<second>-145</second>
 			</position>
 			<parameterDeclaration>{1527F0C9-DD5E-5C47-8A6B-5B7932CFD43D}</parameterDeclaration>
 		</item>
@@ -150,7 +159,7 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<comment/>
 			<position>
 				<first>-1991</first>
-				<second>-109</second>
+				<second>-89</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -158,56 +167,28 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<id>{566AD37E-85DC-9B40-A1E4-2EA4D5C3AC03}</id>
 			<comment/>
 			<position>
-				<first>-2419</first>
-				<second>30</second>
+				<first>-1975</first>
+				<second>-33</second>
 			</position>
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
 		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{DB3FDBA5-7C43-E94D-B8F0-7BDECD8D0693}</id>
-			<comment/>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{E6778CA1-45D0-9B42-A52D-0B8ECC95BCF9}</id>
+			<comment><![CDATA[Previous field]]></comment>
 			<position>
-				<first>-2222</first>
-				<second>30</second>
+				<first>-2039</first>
+				<second>23</second>
 			</position>
-			<swizzle>x</swizzle>
+			<parameterDeclaration>{3E83158A-0056-F54E-94B0-C23DF1573D3B}</parameterDeclaration>
 		</item>
-		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
-			<id>{A423E5DF-19C7-C442-9574-0F3ABA684186}</id>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{5F0C630C-B6A0-1240-8095-7027C0A758F9}</id>
 			<comment/>
 			<position>
-				<first>-1969</first>
-				<second>-58</second>
+				<first>-2007</first>
+				<second>79</second>
 			</position>
-			<name>Random</name>
-			<technique/>
-			<domain>Undefined</domain>
-			<localSize>
-				<X>1</X>
-				<Y>1</Y>
-				<Z>1</Z>
-			</localSize>
-			<useRayTracing>false</useRayTracing>
-			<include>
-				<item>{6770B973-C860-9541-A411-28FE83D9EE82}</item>
-			</include>
-			<inputPins>
-				<item>
-					<id>{2F15EAF1-E617-4931-AF16-BA52D9315156}</id>
-					<name>Time</name>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
-					<name>Output</name>
-					<type>Scalar</type>
-				</item>
-			</outputPins>
-			<script><![CDATA[uvec2 seed = uvec2(gl_GlobalInvocationID.xy);
-seed += uvec2($Time * 1543, $Time * 543);
-$Output = BlueNoise(seed);
-			]]></script>
+			<parameterDeclaration>{C50CF06B-743F-E848-A69F-FD95CA9E7676}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -264,27 +245,27 @@ $Output = BlueNoise(seed);
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[7]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{D518FD9D-7908-F441-893E-EB695A069EF2}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[8]"/>
-				<id>{2F15EAF1-E617-4931-AF16-BA52D9315156}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{08D46483-83DB-B640-88F4-E221D06E1420}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[6]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>

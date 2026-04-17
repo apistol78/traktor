@@ -66,7 +66,7 @@ public:
 
 private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	Ref< render::ITexture > m_irradianceFieldTexture;
+	Ref< render::ITexture > m_irradianceFieldTextures[2];
 	resource::Proxy< render::Shader > m_irradianceFieldComputeShader;
 	resource::Proxy< render::Shader > m_irradianceComputeShader;
 	resource::Proxy< render::ImageGraph > m_irradianceDenoise;

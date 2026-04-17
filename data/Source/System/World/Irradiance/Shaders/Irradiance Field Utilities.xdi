@@ -3,19 +3,14 @@
 	<text><![CDATA[
 const int GridSize = 128;
 
-const float VolumeExtent = 20.0f;
+const float VolumeExtent = 40.0f;
 const float VolumeSize = VolumeExtent * 2.0f;
 const float CellExtent = VolumeExtent / GridSize;
 const float CellSize = VolumeSize / GridSize;
 
-vec3 QuantizeOrigin(vec3 origin)
-{
-	return floor(origin * CellExtent + 0.5f) / CellExtent;
-}
-
 vec3 SampleIrradianceField(texture3D irradianceField, mat4 viewInverse, vec3 w)
 {
-	const vec3 origin = QuantizeOrigin((viewInverse * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz);
+	const vec3 origin = viewInverse[3].xyz;
 	const vec3 nc = (w.xyz - origin) / vec3(VolumeExtent);
 	const vec3 uv = nc * 0.5f + 0.5f;
 	return texture(sampler3D(irradianceField, irradianceFieldSampler), uv).xyz;
@@ -23,8 +18,8 @@ vec3 SampleIrradianceField(texture3D irradianceField, mat4 viewInverse, vec3 w)
 
 vec3 CellToWorldSpace(mat4 viewInverse, ivec3 cell)
 {
-	const vec3 origin = QuantizeOrigin((viewInverse * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz);
-	const vec3 cellNC = (cell / float(GridSize)) * 2.0f - 1.0f;
+	const vec3 origin = viewInverse[3].xyz;
+	const vec3 cellNC = ((vec3(cell) + 0.5f) / float(GridSize)) * 2.0f - 1.0f;
 	return (cellNC * VolumeExtent) + origin;
 }]]></text>
 	<samplers>

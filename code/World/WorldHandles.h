@@ -62,6 +62,7 @@ struct T_DLLCLASS ShaderParameter
 	static const render::Handle GammaInverse;
 	static const render::Handle LastWorld;
 	static const render::Handle LastView;
+	static const render::Handle LastViewInverse;
 	static const render::Handle LastWorldView;
 	static const render::Handle LightIndexSBuffer;
 	static const render::Handle LightMap;

@@ -93,7 +93,9 @@ bool RTIrradiancePass::create(resource::IResourceManager* resourceManager, rende
 	vtcd.sRGB = false;
 	vtcd.immutable = false;
 	vtcd.shaderStorage = true;
-	if ((m_irradianceFieldTexture = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
+	if ((m_irradianceFieldTextures[0] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
+		return false;
+	if ((m_irradianceFieldTextures[1] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
 		return false;
 
 	// Create screen renderer.
@@ -150,7 +152,8 @@ render::RGTargetSet RTIrradiancePass::setup(
 	};
 
 	// Add compute output irradiance field volume texture.
-	const auto irradianceFieldTextureId = renderGraph.addExplicitTexture(L"Irradiance field", m_irradianceFieldTexture);
+	const auto irradianceFieldTexturePreviousId = renderGraph.addExplicitTexture(L"Irradiance field", m_irradianceFieldTextures[frameCount % 2]);
+	const auto irradianceFieldTextureCurrentId = renderGraph.addExplicitTexture(L"Irradiance field", m_irradianceFieldTextures[(frameCount + 1) % 2]);
 
 	// Add compute output irradiance texture.
 	const render::RenderGraphTextureDesc irradianceTextureDesc = {
@@ -184,6 +187,7 @@ render::RGTargetSet RTIrradiancePass::setup(
 		params->setVectorParameter(ShaderParameter::Jitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
 		params->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
 		params->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
+		params->setMatrixParameter(ShaderParameter::LastViewInverse, worldRenderView.getLastView().inverse());
 		params->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
 		params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
 		params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
@@ -214,10 +218,13 @@ render::RGTargetSet RTIrradiancePass::setup(
 	// Add irradiance field compute pass.
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance field compute");
-		rp->setOutput(irradianceFieldTextureId);
+		rp->addInput(irradianceFieldTexturePreviousId);
+		rp->setOutput(irradianceFieldTextureCurrentId);
 		rp->addBuild(
 			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-			render::ITexture* irradianceFieldTexture = renderGraph.getTexture(irradianceFieldTextureId);
+
+			render::ITexture* irradianceFieldTexturePrevious = renderGraph.getTexture(irradianceFieldTexturePreviousId);
+			render::ITexture* irradianceFieldTextureCurrent = renderGraph.getTexture(irradianceFieldTextureCurrentId);
 
 			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Irradiance field compute");
 			renderBlock->program = m_irradianceFieldComputeShader->getProgram().program;
@@ -226,7 +233,8 @@ render::RGTargetSet RTIrradiancePass::setup(
 			renderBlock->workSize[1] = 128;
 			renderBlock->workSize[2] = 128;
 			renderBlock->programParams->beginParameters(renderContext);
-			renderBlock->programParams->setImageViewParameter(s_handleIrradianceFieldImage, irradianceFieldTexture, 0);
+			renderBlock->programParams->setTextureParameter(s_handleIrradianceFieldTexture, irradianceFieldTexturePrevious);
+			renderBlock->programParams->setImageViewParameter(s_handleIrradianceFieldImage, irradianceFieldTextureCurrent, 0);
 			setParameters(renderGraph, renderBlock->programParams);
 			renderBlock->programParams->endParameters(renderContext);
 
@@ -244,13 +252,13 @@ render::RGTargetSet RTIrradiancePass::setup(
 		rp->addInput(velocityTargetSetId);
 		rp->addInput(reservoirBufferId.previous);
 		rp->addInput(reservoirBufferId.current);
-		rp->addInput(irradianceFieldTextureId);
+		rp->addInput(irradianceFieldTextureCurrentId);
 		rp->setOutput(irradianceTextureId);
 		rp->addBuild(
 			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 			render::ITexture* velocityTexture = renderGraph.getTargetSet(velocityTargetSetId)->getColorTexture(0);
 			render::ITexture* irradianceTexture = renderGraph.getTexture(irradianceTextureId);
-			render::ITexture* irradianceFieldTexture = renderGraph.getTexture(irradianceFieldTextureId);
+			render::ITexture* irradianceFieldTexture = renderGraph.getTexture(irradianceFieldTextureCurrentId);
 			render::Buffer* reservoirBuffer = renderGraph.getBuffer(reservoirBufferId.previous);
 			render::Buffer* reservoirOutputBuffer = renderGraph.getBuffer(reservoirBufferId.current);
 
