@@ -445,6 +445,13 @@ bool CanvasWl::realizeFont() const
 		(m_font.getSize().get() * m_dpi) / 96.0f
 	);
 
+	cairo_font_options_t* font_options = cairo_font_options_create();
+	cairo_get_font_options(m_cr, font_options);
+	cairo_font_options_set_antialias(font_options, CAIRO_ANTIALIAS_SUBPIXEL);
+	cairo_font_options_set_subpixel_order(font_options, CAIRO_SUBPIXEL_ORDER_RGB);
+	cairo_set_font_options(m_cr, font_options);
+	cairo_font_options_destroy(font_options);
+
 	m_fontDirty = false;
 	return true;
 }
