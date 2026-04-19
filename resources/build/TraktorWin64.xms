@@ -6571,7 +6571,7 @@
 																		<item>$(AFTERMATH_SDK)/lib/x64</item>
 																	</libraryPaths>
 																	<libraries>
-																		<item>GFSDK_Aftermath_Lib.x64.lib</item>
+																		<!--<item>GFSDK_Aftermath_Lib.x64.lib</item>-->
 																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
@@ -6616,7 +6616,7 @@
 																		<item>$(AFTERMATH_SDK)/lib/x64</item>
 																	</libraryPaths>
 																	<libraries>
-																		<item>GFSDK_Aftermath_Lib.x64.lib</item>
+																		<!--<item>GFSDK_Aftermath_Lib.x64.lib</item>-->
 																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
@@ -6661,7 +6661,7 @@
 																		<item>$(AFTERMATH_SDK)/lib/x64</item>
 																	</libraryPaths>
 																	<libraries>
-																		<item>GFSDK_Aftermath_Lib.x64.lib</item>
+																		<!--<item>GFSDK_Aftermath_Lib.x64.lib</item>-->
 																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
@@ -6702,7 +6702,7 @@
 																		<item>$(AFTERMATH_SDK)/lib/x64</item>
 																	</libraryPaths>
 																	<libraries>
-																		<item>GFSDK_Aftermath_Lib.x64.lib</item>
+																		<!--<item>GFSDK_Aftermath_Lib.x64.lib</item>-->
 																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>

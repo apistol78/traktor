@@ -7,11 +7,16 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #if defined(_WIN32) || defined(__LINUX__)
+//#	define T_USE_AFTERMATH
+#	define T_USE_RENDERDOC
+#endif
+
+#if defined(T_USE_AFTERMATH)
 #	include <GFSDK_Aftermath.h>
 #	include <GFSDK_Aftermath_GpuCrashDump.h>
 #	include <GFSDK_Aftermath_GpuCrashDumpDecoding.h>
 #endif
-#if defined(_WIN32) || defined(__LINUX__)
+#if defined(T_USE_RENDERDOC)
 #	include <renderdoc_app.h>
 #endif
 #include "Render/Vrfy/RenderSystemVrfy.h"
@@ -41,7 +46,7 @@ namespace traktor::render
 namespace
 {
 
-#if defined(_WIN32) || defined(__LINUX__)
+#if defined(T_USE_AFTERMATH)
 
 Semaphore s_aftermathLock;
 
@@ -97,7 +102,7 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	if ((m_renderSystem = desc.capture) == nullptr)
 		return false;
 
-#if defined(_WIN32) || defined(__LINUX__)
+#if defined(T_USE_AFTERMATH)
 	if (m_useAftermath)
 	{
 		// Load NVidia aftermath.
@@ -125,7 +130,7 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	}
 #endif
 
-#if defined(_WIN32) || defined(__LINUX__)
+#if defined(T_USE_RENDERDOC)
 	// Try to load RenderDoc capture.
 	if (m_useRenderDoc)
 	{
@@ -232,12 +237,14 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 	if (!renderView)
 		return nullptr;
 
-#if defined(_WIN32)
+#if defined(T_USE_RENDERDOC)
+#	if defined(_WIN32)
 	if (m_apiRenderDoc)
 		((RENDERDOC_API_1_7_0*)m_apiRenderDoc)->SetActiveWindow(m_renderSystem->getInternalHandle(), desc.syswin.hWnd);
-#elif defined(__LINUX__)
+#	elif defined(__LINUX__)
 	// if (m_apiRenderDoc)
 	// 	((RENDERDOC_API_1_7_0*)m_apiRenderDoc)->SetActiveWindow(m_renderSystem->getInternalHandle(), (RENDERDOC_WindowHandle)desc.syswin.window);
+#	endif
 #endif
 
 	return new RenderViewVrfy(desc, m_renderSystem, renderView);
