@@ -153,7 +153,7 @@
 					<items/>
 				</item>
 				<item type="traktor.sb.File" version="1">
-					<fileName>random_dev_urandom.c</fileName>
+					<fileName>random_rand_s.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
