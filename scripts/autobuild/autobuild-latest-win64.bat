@@ -10,5 +10,8 @@ call "%~dp0..\config-vs-x64.bat"
 :: Rebuild entire solution.
 pushd "%TRAKTOR_HOME%\build\win64"
 msbuild -m "Traktor Win64.sln" %CONFIG%
-::if %ERRORLEVEL% neq 1 ( exit 1 )
+set XL=%ERRORLEVEL%
 popd
+
+echo Autobuild Win64 finished, exit %XL% 
+exit %XL%
