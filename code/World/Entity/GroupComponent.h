@@ -38,7 +38,7 @@ public:
 
 	virtual void setOwner(Entity* owner) override final;
 
-	virtual void setState(const EntityState& state, const EntityState& mask, bool includeChildren);
+	virtual void setState(const EntityState& state, const EntityState& mask, bool includeChildren) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,6 +33,7 @@ T_DEFINE_VK(vkEnumerateInstanceLayerProperties);
 T_DEFINE_VK(vkEnumerateInstanceExtensionProperties);
 T_DEFINE_VK(vkEnumeratePhysicalDevices);
 T_DEFINE_VK(vkGetPhysicalDeviceProperties);
+T_DEFINE_VK(vkGetPhysicalDeviceProperties2);
 T_DEFINE_VK(vkGetPhysicalDeviceQueueFamilyProperties);
 T_DEFINE_VK(vkGetPhysicalDeviceMemoryProperties);
 T_DEFINE_VK(vkGetPhysicalDeviceFormatProperties);
@@ -104,6 +105,7 @@ T_DEFINE_VK(vkCmdCopyImage);
 T_DEFINE_VK(vkGetImageSubresourceLayout);
 T_DEFINE_VK(vkDestroyImage);
 T_DEFINE_VK(vkCmdDispatch);
+T_DEFINE_VK(vkCmdDispatchIndirect);
 T_DEFINE_VK(vkInvalidateMappedMemoryRanges);
 T_DEFINE_VK(vkCmdCopyBuffer);
 T_DEFINE_VK(vkDestroyShaderModule);
@@ -142,17 +144,24 @@ T_DEFINE_VK(vkDestroySwapchainKHR);
 //PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectNameEXT = nullptr;
 T_DEFINE_VK(vkGetBufferMemoryRequirements2KHR);
 T_DEFINE_VK(vkGetImageMemoryRequirements2KHR);
+T_DEFINE_VK(vkGetBufferDeviceAddressKHR);
+T_DEFINE_VK(vkCreateRayTracingPipelinesKHR);
+T_DEFINE_VK(vkGetAccelerationStructureBuildSizesKHR);
+T_DEFINE_VK(vkCreateAccelerationStructureKHR);
+T_DEFINE_VK(vkDestroyAccelerationStructureKHR);
+T_DEFINE_VK(vkGetAccelerationStructureDeviceAddressKHR);
+T_DEFINE_VK(vkCmdBuildAccelerationStructuresKHR);
+T_DEFINE_VK(vkGetRayTracingShaderGroupHandlesKHR);
+T_DEFINE_VK(vkCmdTraceRaysKHR);
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 void* s_hVulkanModule = nullptr;
 
-		}
+	}
 
 bool initializeVulkanApi()
 {
@@ -168,6 +177,7 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkEnumerateInstanceExtensionProperties);
 	T_RESOLVE_VK(vkEnumeratePhysicalDevices);
 	T_RESOLVE_VK(vkGetPhysicalDeviceProperties);
+	T_RESOLVE_VK(vkGetPhysicalDeviceProperties2);
 	T_RESOLVE_VK(vkGetPhysicalDeviceQueueFamilyProperties);
 	T_RESOLVE_VK(vkGetPhysicalDeviceMemoryProperties);
 	T_RESOLVE_VK(vkGetPhysicalDeviceFormatProperties);
@@ -239,6 +249,7 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkGetImageSubresourceLayout);
 	T_RESOLVE_VK(vkDestroyImage);
 	T_RESOLVE_VK(vkCmdDispatch);
+	T_RESOLVE_VK(vkCmdDispatchIndirect);
 	T_RESOLVE_VK(vkInvalidateMappedMemoryRanges);
 	T_RESOLVE_VK(vkCmdCopyBuffer);
 	T_RESOLVE_VK(vkDestroyShaderModule);
@@ -279,6 +290,14 @@ bool initializeVulkanExtensions(VkInstance instance)
 	T_RESOLVE_VK_EXT(vkDestroySwapchainKHR);
 	T_RESOLVE_VK_EXT(vkGetBufferMemoryRequirements2KHR);
 	T_RESOLVE_VK_EXT(vkGetImageMemoryRequirements2KHR);	
+	T_RESOLVE_VK_EXT(vkCreateRayTracingPipelinesKHR);
+	T_RESOLVE_VK_EXT(vkGetAccelerationStructureBuildSizesKHR);
+	T_RESOLVE_VK_EXT(vkCreateAccelerationStructureKHR);
+	T_RESOLVE_VK_EXT(vkDestroyAccelerationStructureKHR);
+	T_RESOLVE_VK_EXT(vkGetAccelerationStructureDeviceAddressKHR);
+	T_RESOLVE_VK_EXT(vkCmdBuildAccelerationStructuresKHR);
+	T_RESOLVE_VK_EXT(vkGetRayTracingShaderGroupHandlesKHR);
+	T_RESOLVE_VK_EXT(vkCmdTraceRaysKHR);
 	return true;
 }
 
@@ -286,5 +305,4 @@ void finalizeVulkanApi()
 {
 }
 
-	}
 }

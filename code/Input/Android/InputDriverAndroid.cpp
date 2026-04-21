@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,10 +17,8 @@
 #include "Input/Android/SensorDeviceAndroid.h"
 #include "Input/Android/TouchDeviceAndroid.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverAndroid", 0, InputDriverAndroid, IInputDriver)
 
@@ -39,7 +37,7 @@ InputDriverAndroid::~InputDriverAndroid()
 	}
 }
 
-bool InputDriverAndroid::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
+bool InputDriverAndroid::create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories)
 {
 	m_instance = sysapp.instance;
 	if (!m_instance)
@@ -50,29 +48,29 @@ bool InputDriverAndroid::create(const SystemApplication& sysapp, const SystemWin
 
 	m_instance->addDelegate(this);
 
-	if (inputCategories & CtKeyboard)
+	if ((inputCategories & InputCategory::Keyboard) != InputCategory::Invalid)
 	{
 		m_keyboardDevice = new KeyboardDeviceAndroid();
 		m_keyboardDevice->ms_activity = m_instance->getActivity();
 		m_devices.push_back(m_keyboardDevice);
 	}
-	if (inputCategories & CtMouse)
+	if ((inputCategories & InputCategory::Mouse) != InputCategory::Invalid)
 	{
 		m_mouseDevice = new MouseDeviceAndroid(syswin);
 		m_devices.push_back(m_mouseDevice);
 	}
-	if (inputCategories & CtTouch)
+	if ((inputCategories & InputCategory::Touch) != InputCategory::Invalid)
 	{
 		m_touchDevice = new TouchDeviceAndroid(syswin);
 		m_devices.push_back(m_touchDevice);
 	}
-	if (inputCategories & CtJoystick)
+	if ((inputCategories & InputCategory::Joystick) != InputCategory::Invalid)
 	{
 		m_gamepadDevice = new GamepadDeviceAndroid(syswin);
 		m_devices.push_back(m_gamepadDevice);
 	}
 
-	if (inputCategories & (CtAcceleration | CtOrientation))
+	if ((inputCategories & (InputCategory::Acceleration | InputCategory::Orientation)) != InputCategory::Invalid)
 	{
 		ASensorManager* sensorManager = ASensorManager_getInstance();
 
@@ -101,7 +99,7 @@ bool InputDriverAndroid::create(const SystemApplication& sysapp, const SystemWin
 			switch (ASensor_getType(sensor))
 			{
 			case ASENSOR_TYPE_ACCELEROMETER:
-				if ((inputCategories & CtAcceleration) != 0 && !m_accelerationDevice)
+				if ((inputCategories & InputCategory::Acceleration) == InputCategory::Acceleration && !m_accelerationDevice)
 				{
 					if (
 						ASensorEventQueue_enableSensor(m_sensorQueue, sensor) >= 0 &&
@@ -109,14 +107,14 @@ bool InputDriverAndroid::create(const SystemApplication& sysapp, const SystemWin
 					)
 					{
 						log::info << L"Creating Android acceleration device \"" << mbstows(ASensor_getName(sensor)) << L"\"" << Endl;
-						m_accelerationDevice = new SensorDeviceAndroid(CtAcceleration, sensor);
+						m_accelerationDevice = new SensorDeviceAndroid(InputCategory::Acceleration, sensor);
 						m_devices.push_back(m_accelerationDevice);
 					}
 				}
 				break;
 
 			case ASENSOR_TYPE_GYROSCOPE:
-				if ((inputCategories & CtOrientation) != 0 && !m_orientationDevice)
+				if ((inputCategories & InputCategory::Orientation) == InputCategory::Orientation && !m_orientationDevice)
 				{
 					if (
 						ASensorEventQueue_enableSensor(m_sensorQueue, sensor) >= 0 &&
@@ -124,7 +122,7 @@ bool InputDriverAndroid::create(const SystemApplication& sysapp, const SystemWin
 					)
 					{
 						log::info << L"Creating Android orientation device \"" << mbstows(ASensor_getName(sensor)) << L"\"" << Endl;
-						m_orientationDevice = new SensorDeviceAndroid(CtOrientation, sensor);
+						m_orientationDevice = new SensorDeviceAndroid(InputCategory::Orientation, sensor);
 						m_devices.push_back(m_orientationDevice);
 					}
 				}
@@ -182,5 +180,4 @@ void InputDriverAndroid::notifyHandleEvents(DelegateInstance* instance)
 	}
 }
 
-	}
 }

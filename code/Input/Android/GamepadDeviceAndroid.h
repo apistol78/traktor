@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,10 +15,8 @@
 
 struct AInputEvent;
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class GamepadDeviceAndroid : public IInputDevice
 {
@@ -45,7 +43,7 @@ public:
 
 	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const override final;
 
-	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const override final;
+	virtual bool getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const override final;
 
 	virtual bool getKeyEvent(KeyEvent& outEvent) override final;
 
@@ -82,5 +80,4 @@ private:
 	void handleInput(AInputEvent* event);
 };
 
-	}
 }

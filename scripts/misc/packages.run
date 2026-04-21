@@ -377,7 +377,10 @@ PACKAGES =
 				{
 					"#/bin/sh",
 					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. platform-tools",
-					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle"
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle",
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. \"platforms;android-37\"",
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. \"build-tools;37.0.0\"",
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. \"system-images;android-37.0;google_apis_ps16k;x86_64\"",
 				}
 			)
 			run:execute("sh ./install.sh")
@@ -395,7 +398,10 @@ PACKAGES =
 				"install.bat",
 				{
 					"./cmdline-tools/bin/sdkmanager --sdk_root=. platform-tools",
-					"./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle"
+					"./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle",
+					"./cmdline-tools/bin/sdkmanager --sdk_root=. \"platforms;android-37\"",
+					"./cmdline-tools/bin/sdkmanager --sdk_root=. \"build-tools;37.0.0\"",
+					"./cmdline-tools/bin/sdkmanager --sdk_root=. \"system-images;android-37.0;google_apis_ps16k;x86_64\"",
 				}
 			)
 			run:execute("./install.bat")

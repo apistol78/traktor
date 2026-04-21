@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,36 +12,34 @@
 #include "Core/Math/MathUtils.h"
 #include "Input/Android/TouchDeviceAndroid.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 const struct TouchControlMap
 {
 	const wchar_t* name;
-	InputDefaultControlType controlType;
+	DefaultControl controlType;
 	bool analogue;
 }
 c_touchControlMap[] =
 {
-	{ L"Finger 1", DtButton1, false },
-	{ L"Finger 2", DtButton2, false },
-	{ L"Finger 3", DtButton3, false },
-	{ L"Finger 4", DtButton4, false },
-	{ L"Touch X axis 1", DtPositionX, true },
-	{ L"Touch Y axis 1", DtPositionY, true },
-	{ L"Touch X axis 2", DtPositionX2, true },
-	{ L"Touch Y axis 2", DtPositionY2, true },
-	{ L"Touch X axis 3", DtPositionX3, true },
-	{ L"Touch Y axis 3", DtPositionY3, true },
-	{ L"Touch X axis 4", DtPositionX4, true },
-	{ L"Touch Y axis 4", DtPositionY4, true }
+	{ L"Finger 1", DefaultControl::Button1, false },
+	{ L"Finger 2", DefaultControl::Button2, false },
+	{ L"Finger 3", DefaultControl::Button3, false },
+	{ L"Finger 4", DefaultControl::Button4, false },
+	{ L"Touch X axis 1", DefaultControl::PositionX, true },
+	{ L"Touch Y axis 1", DefaultControl::PositionY, true },
+	{ L"Touch X axis 2", DefaultControl::PositionX2, true },
+	{ L"Touch Y axis 2", DefaultControl::PositionY2, true },
+	{ L"Touch X axis 3", DefaultControl::PositionX3, true },
+	{ L"Touch Y axis 3", DefaultControl::PositionY3, true },
+	{ L"Touch X axis 4", DefaultControl::PositionX4, true },
+	{ L"Touch Y axis 4", DefaultControl::PositionY4, true }
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.TouchDeviceAndroid", TouchDeviceAndroid, IInputDevice)
 
@@ -61,7 +59,7 @@ std::wstring TouchDeviceAndroid::getName() const
 
 InputCategory TouchDeviceAndroid::getCategory() const
 {
-	return CtTouch;
+	return InputCategory::Touch;
 }
 
 bool TouchDeviceAndroid::isConnected() const
@@ -92,44 +90,44 @@ bool TouchDeviceAndroid::isControlStable(int32_t control) const
 float TouchDeviceAndroid::getControlValue(int32_t control)
 {
 	const TouchControlMap& mc = c_touchControlMap[control];
-	if (mc.controlType == DtPositionX)
+	if (mc.controlType == DefaultControl::PositionX)
 		return m_positionX[0];
-	else if (mc.controlType == DtPositionY)
+	else if (mc.controlType == DefaultControl::PositionY)
 		return m_positionY[0];
-	else if (mc.controlType == DtPositionX2)
+	else if (mc.controlType == DefaultControl::PositionX2)
 		return m_positionX[1];
-	else if (mc.controlType == DtPositionY2)
+	else if (mc.controlType == DefaultControl::PositionY2)
 		return m_positionY[1];
-	else if (mc.controlType == DtPositionX3)
+	else if (mc.controlType == DefaultControl::PositionX3)
 		return m_positionX[2];
-	else if (mc.controlType == DtPositionY3)
+	else if (mc.controlType == DefaultControl::PositionY3)
 		return m_positionY[2];
-	else if (mc.controlType == DtPositionX4)
+	else if (mc.controlType == DefaultControl::PositionX4)
 		return m_positionX[3];
-	else if (mc.controlType == DtPositionY4)
+	else if (mc.controlType == DefaultControl::PositionY4)
 		return m_positionY[3];
-	else if (mc.controlType == DtButton1)
+	else if (mc.controlType == DefaultControl::Button1)
 	{
 		if (m_activePointerIds.size() >= 1)
 			return m_activePointerIds[0].active ? 1.0f : 0.0f;
 		else
 			return 0.0f;
 	}
-	else if (mc.controlType == DtButton2)
+	else if (mc.controlType == DefaultControl::Button2)
 	{
 		if (m_activePointerIds.size() >= 2)
 			return m_activePointerIds[1].active ? 1.0f : 0.0f;
 		else
 			return 0.0f;
 	}
-	else if (mc.controlType == DtButton3)
+	else if (mc.controlType == DefaultControl::Button3)
 	{
 		if (m_activePointerIds.size() >= 3)
 			return m_activePointerIds[2].active ? 1.0f : 0.0f;
 		else
 			return 0.0f;
 	}
-	else if (mc.controlType == DtButton4)
+	else if (mc.controlType == DefaultControl::Button4)
 	{
 		if (m_activePointerIds.size() >= 4)
 			return m_activePointerIds[3].active ? 1.0f : 0.0f;
@@ -143,13 +141,13 @@ float TouchDeviceAndroid::getControlValue(int32_t control)
 bool TouchDeviceAndroid::getControlRange(int32_t control, float& outMin, float& outMax) const
 {
 	const TouchControlMap& tc = c_touchControlMap[control];
-	if (tc.controlType == DtPositionX || tc.controlType == DtPositionX2 || tc.controlType == DtPositionX3 || tc.controlType == DtPositionX4)
+	if (tc.controlType == DefaultControl::PositionX || tc.controlType == DefaultControl::PositionX2 || tc.controlType == DefaultControl::PositionX3 || tc.controlType == DefaultControl::PositionX4)
 	{
 		outMin = 0.0f;
 		outMax = m_width;
 		return true;
 	}
-	else if (tc.controlType == DtPositionY || tc.controlType == DtPositionY2 || tc.controlType == DtPositionY3 || tc.controlType == DtPositionY4)
+	else if (tc.controlType == DefaultControl::PositionY || tc.controlType == DefaultControl::PositionY2 || tc.controlType == DefaultControl::PositionY3 || tc.controlType == DefaultControl::PositionY4)
 	{
 		outMin = 0.0f;
 		outMax = m_height;
@@ -159,7 +157,7 @@ bool TouchDeviceAndroid::getControlRange(int32_t control, float& outMin, float& 
 		return false;
 }
 
-bool TouchDeviceAndroid::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool TouchDeviceAndroid::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	for (int32_t i = 0; i < sizeof_array(c_touchControlMap); ++i)
 	{
@@ -278,5 +276,4 @@ void TouchDeviceAndroid::handleInput(AInputEvent* event)
 	}
 }
 
-	}
 }

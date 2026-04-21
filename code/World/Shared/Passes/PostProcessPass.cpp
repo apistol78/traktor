@@ -254,12 +254,12 @@ void PostProcessPass::setup(
 		const bool next = (bool)((i + 1) < processes.size());
 
 		// Output of AA and after is referenced to native output target.
-		if (process == m_antiAlias)
+		if (process == m_antiAlias.getResource())
 			sizeReferenceTargetSetId = outputTargetSetId;
 
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Process");
 
-		if (m_antiAliasPlugin != nullptr && process == m_antiAlias)
+		if (m_antiAliasPlugin != nullptr && process == m_antiAlias.getResource())
 		{
 			const render::RGTargetSet colorTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputColor);
 			const render::RGTargetSet depthTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputDepth);

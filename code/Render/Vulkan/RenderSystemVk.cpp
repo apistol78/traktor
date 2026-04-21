@@ -78,6 +78,13 @@ const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils", "VK_KHR_g
 
 #if defined(__ANDROID__) || defined(__RPI__)
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
+const char* c_deviceExtensionsRayTracing[] = {
+	// Ray tracing
+	"VK_KHR_deferred_host_operations",
+	"VK_KHR_ray_tracing_pipeline",
+	"VK_KHR_acceleration_structure",
+	"VK_KHR_ray_query"
+};
 #else
 const char* c_deviceExtensions[] = {
 	"VK_KHR_swapchain",

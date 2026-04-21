@@ -62,7 +62,7 @@ public:
 
 	const std::wstring& getString() const { return m_option.getString(); }
 
-	virtual std::wstring toString() const
+	virtual std::wstring toString() const override final
 	{
 		return L"CommandLine::Option";
 	}

@@ -144,10 +144,8 @@ extern PFN_vkCmdBuildAccelerationStructuresKHR vkCmdBuildAccelerationStructuresK
 extern PFN_vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR;
 extern PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR;
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 bool initializeVulkanApi();
 
@@ -155,6 +153,5 @@ bool initializeVulkanExtensions(VkInstance instance);
 
 void finalizeVulkanApi();
 
-	}
 }
 

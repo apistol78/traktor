@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -47,7 +47,7 @@ class T_DLLCLASS RtStateGraphData : public ISerializable
 public:
 	Ref< RtStateGraph > createInstance(resource::IResourceManager* resourceManager) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	friend class StateGraphCompiler;
