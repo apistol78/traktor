@@ -332,7 +332,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	uint32_t computeQueueIndex = ~0;
 	for (uint32_t i = 0; i < queueFamilyCount; ++i)
 	{
-		if ((queueFamilyProperties[i].queueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT)) == VK_QUEUE_COMPUTE_BIT)
+		if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) == VK_QUEUE_COMPUTE_BIT)
 		{
 			computeQueueIndex = i;
 			break;
@@ -340,8 +340,9 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 	if (computeQueueIndex == ~0)
 	{
-		log::error << L"Failed to create Vulkan; no suitable compute queue found." << Endl;
-		return false;
+		// No dedicated compute queue found; use same as graphics since
+		// graphics must support compute.
+		computeQueueIndex = graphicsQueueIndex;
 	}
 
 	log::info << L"Using graphics queue " << graphicsQueueIndex << L", compute queue " << computeQueueIndex << L"." << Endl;
@@ -445,26 +446,24 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	headFeature = &featuresVulkan1_2;
 
+	const VkPhysicalDeviceAccelerationStructureFeaturesKHR featuresAccelerationStructure = {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR,
+		.pNext = (void*)headFeature,
+		.accelerationStructure = VK_TRUE,
+		.accelerationStructureCaptureReplay = VK_FALSE,
+		.accelerationStructureIndirectBuild = VK_FALSE,
+		.accelerationStructureHostCommands = VK_FALSE,
+		.descriptorBindingAccelerationStructureUpdateAfterBind = VK_FALSE
+	};
+
+	const VkPhysicalDeviceRayQueryFeaturesKHR featuresRayQuery = {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR,
+		.pNext = (void*)&featuresAccelerationStructure,
+		.rayQuery = VK_TRUE
+	};
+
 	if (desc.rayTracing)
-	{
-		static const VkPhysicalDeviceAccelerationStructureFeaturesKHR featuresAccelerationStructure = {
-			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR,
-			.pNext = (void*)headFeature,
-			.accelerationStructure = VK_TRUE,
-			.accelerationStructureCaptureReplay = VK_FALSE,
-			.accelerationStructureIndirectBuild = VK_FALSE,
-			.accelerationStructureHostCommands = VK_FALSE,
-			.descriptorBindingAccelerationStructureUpdateAfterBind = VK_FALSE
-		};
-
-		static const VkPhysicalDeviceRayQueryFeaturesKHR featuresRayQuery = {
-			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR,
-			.pNext = (void*)&featuresAccelerationStructure,
-			.rayQuery = VK_TRUE
-		};
-
 		headFeature = &featuresRayQuery;
-	}
 #endif
 
 	const VkPhysicalDeviceShaderIntegerDotProductFeaturesKHR deviceShaderIntegerDotProduct = {
@@ -559,10 +558,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	VmaAllocatorCreateInfo aci = {};
 #if !defined(__RPI__) && !defined(__ANDROID__) && !defined(__IOS__)
-	// \note Disabled for now, not clear if we need it and until we do let's leave it disabled.
 	// if (memoryAllocatorFunctions.vkGetBufferMemoryRequirements2KHR != nullptr && memoryAllocatorFunctions.vkGetImageMemoryRequirements2KHR != nullptr)
-	//	aci.vulkanApiVersion = VK_API_VERSION_1_2;
-
+	// 	aci.vulkanApiVersion = VK_API_VERSION_1_2;
 	aci.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT | VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
 #endif
 	aci.physicalDevice = m_physicalDevice;
@@ -606,6 +603,30 @@ void RenderSystemVk::destroy()
 	m_shaderModuleCache = nullptr;
 	m_pipelineLayoutCache = nullptr;
 	m_context = nullptr;
+
+	if (m_allocator != 0)
+	{
+		vmaDestroyAllocator(m_allocator);
+		m_allocator = 0;
+	}
+#if !defined(__ANDROID__)
+	if (m_debugMessenger != 0)
+	{
+		vkDestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
+		m_debugMessenger = 0;
+	}
+#endif
+	if (m_logicalDevice != 0)
+	{
+		vkDestroyDevice(m_logicalDevice, nullptr);
+		m_logicalDevice = 0;
+	}
+	if (m_instance != 0)
+	{
+		vkDestroyInstance(m_instance, nullptr);
+		m_instance = 0;
+	}
+
 	finalizeVulkanApi();
 }
 

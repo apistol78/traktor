@@ -29,6 +29,7 @@
 	}
 
 T_DEFINE_VK(vkCreateInstance);
+T_DEFINE_VK(vkDestroyInstance);
 T_DEFINE_VK(vkEnumerateInstanceLayerProperties);
 T_DEFINE_VK(vkEnumerateInstanceExtensionProperties);
 T_DEFINE_VK(vkEnumeratePhysicalDevices);
@@ -38,6 +39,7 @@ T_DEFINE_VK(vkGetPhysicalDeviceQueueFamilyProperties);
 T_DEFINE_VK(vkGetPhysicalDeviceMemoryProperties);
 T_DEFINE_VK(vkGetPhysicalDeviceFormatProperties);
 T_DEFINE_VK(vkCreateDevice);
+T_DEFINE_VK(vkDestroyDevice);
 T_DEFINE_VK(vkGetDeviceQueue);
 T_DEFINE_VK(vkGetDeviceProcAddr);
 T_DEFINE_VK(vkGetInstanceProcAddr);
@@ -173,6 +175,7 @@ bool initializeVulkanApi()
 	}
 
 	T_RESOLVE_VK(vkCreateInstance);
+	T_RESOLVE_VK(vkDestroyInstance);
 	T_RESOLVE_VK(vkEnumerateInstanceLayerProperties);
 	T_RESOLVE_VK(vkEnumerateInstanceExtensionProperties);
 	T_RESOLVE_VK(vkEnumeratePhysicalDevices);
@@ -182,6 +185,7 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkGetPhysicalDeviceMemoryProperties);
 	T_RESOLVE_VK(vkGetPhysicalDeviceFormatProperties);
 	T_RESOLVE_VK(vkCreateDevice);
+	T_RESOLVE_VK(vkDestroyDevice);
 	T_RESOLVE_VK(vkGetDeviceQueue);
 	T_RESOLVE_VK(vkGetDeviceProcAddr);
 	T_RESOLVE_VK(vkGetInstanceProcAddr);
