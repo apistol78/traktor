@@ -193,8 +193,11 @@ public:
 	}
 
 	virtual void setText(const std::wstring& text) override { m_text = text; }
+	
 	virtual std::wstring getText() const override { return m_text; }
+
 	virtual void setForeground() override { }
+
 	virtual bool isForeground() const override { return false; }
 
 	virtual void setVisible(bool visible) override
@@ -243,7 +246,9 @@ public:
 	}
 
 	virtual bool isVisible() const override { return m_data.visible; }
+
 	virtual void setEnable(bool enable) override { m_data.enable = enable; }
+
 	virtual bool isEnable() const override { return m_data.enable; }
 
 	virtual bool hasFocus() const override
@@ -344,7 +349,9 @@ public:
 
 	// All rects returned in device coordinates.
 	virtual Rect getRect() const override { return m_rect; }
+
 	virtual Rect getInnerRect() const override { return Rect(0, 0, m_rect.getWidth(), m_rect.getHeight()); }
+
 	virtual Rect getNormalRect() const override { return Rect(0, 0, m_rect.getWidth(), m_rect.getHeight()); }
 
 	virtual void setFont(const Font& font) override
@@ -363,6 +370,7 @@ public:
 	}
 
 	virtual Font getFont() const override { return m_font; }
+
 	virtual const IFontMetric* getFontMetric() const override { return this; }
 
 	virtual void setCursor(Cursor cursor) override
@@ -462,7 +470,9 @@ public:
 	}
 
 	virtual Size getMinimumSize() const override { return Size(0, 0); }
+
 	virtual Size getPreferredSize(const Size& hint) const override { return Size(dpi96(128), dpi96(64)); }
+
 	virtual Size getMaximumSize() const override { return Size(65535, 65535); }
 
 	virtual void update(const Rect* rc, bool immediate) override

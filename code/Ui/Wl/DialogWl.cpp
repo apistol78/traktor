@@ -25,17 +25,18 @@ namespace traktor::ui
 // Popup listeners (decoration-less centered dialog)
 // ============================================================
 
-void dialogPopupConfigure(void* data, struct xdg_popup* popup, int32_t x, int32_t y, int32_t width, int32_t height)
+void dialogPopupConfigure(void* data, xdg_popup* popup, int32_t x, int32_t y, int32_t width, int32_t height)
 {
 }
 
-void dialogPopupDone(void* data, struct xdg_popup* popup)
+void dialogPopupDone(void* data, xdg_popup* popup)
 {
 	DialogWl* dialog = static_cast< DialogWl* >(data);
 	dialog->endModal(DialogResult::Cancel);
 }
 
-static const struct xdg_popup_listener s_dialogPopupListener = {
+static const xdg_popup_listener s_dialogPopupListener =
+{
 	dialogPopupConfigure,
 	dialogPopupDone
 };
@@ -44,7 +45,7 @@ static const struct xdg_popup_listener s_dialogPopupListener = {
 // SSD path
 // ============================================================
 
-void ssdDialogXdgSurfaceConfigure(void* data, struct xdg_surface* xdgSurface, uint32_t serial)
+void ssdDialogXdgSurfaceConfigure(void* data, xdg_surface* xdgSurface, uint32_t serial)
 {
 	xdg_surface_ack_configure(xdgSurface, serial);
 
@@ -66,11 +67,12 @@ void ssdDialogXdgSurfaceConfigure(void* data, struct xdg_surface* xdgSurface, ui
 	}
 }
 
-static const struct xdg_surface_listener s_ssdDialogXdgSurfaceListener = {
+static const xdg_surface_listener s_ssdDialogXdgSurfaceListener =
+{
 	ssdDialogXdgSurfaceConfigure
 };
 
-void ssdDialogXdgToplevelConfigure(void* data, struct xdg_toplevel* toplevel, int32_t width, int32_t height, struct wl_array* states)
+void ssdDialogXdgToplevelConfigure(void* data, xdg_toplevel* toplevel, int32_t width, int32_t height, wl_array* states)
 {
 	DialogWl* dialog = static_cast< DialogWl* >(data);
 	WidgetData* wd = static_cast< WidgetData* >(dialog->getInternalHandle());
@@ -78,7 +80,7 @@ void ssdDialogXdgToplevelConfigure(void* data, struct xdg_toplevel* toplevel, in
 	wd->pendingHeight = height;
 }
 
-void ssdDialogXdgToplevelClose(void* data, struct xdg_toplevel* toplevel)
+void ssdDialogXdgToplevelClose(void* data, xdg_toplevel* toplevel)
 {
 	DialogWl* dialog = static_cast< DialogWl* >(data);
 	WidgetData* wd = static_cast< WidgetData* >(dialog->getInternalHandle());
@@ -89,7 +91,7 @@ void ssdDialogXdgToplevelClose(void* data, struct xdg_toplevel* toplevel)
 	dialog->getContextWl()->dispatch(e);
 }
 
-static const struct xdg_toplevel_listener s_ssdDialogXdgToplevelListener = {
+static const xdg_toplevel_listener s_ssdDialogXdgToplevelListener = {
 	ssdDialogXdgToplevelConfigure,
 	ssdDialogXdgToplevelClose
 };
@@ -98,7 +100,7 @@ static const struct xdg_toplevel_listener s_ssdDialogXdgToplevelListener = {
 // libdecor fallback path
 // ============================================================
 
-void libdecorDialogConfigure(struct libdecor_frame* frame, struct libdecor_configuration* configuration, void* userData)
+void libdecorDialogConfigure(libdecor_frame* frame, libdecor_configuration* configuration, void* userData)
 {
 	DialogWl* dialog = static_cast< DialogWl* >(userData);
 	WidgetData* wd = static_cast< WidgetData* >(dialog->getInternalHandle());
@@ -112,7 +114,7 @@ void libdecorDialogConfigure(struct libdecor_frame* frame, struct libdecor_confi
 		height = rc.getHeight() / scale;
 	}
 
-	struct libdecor_state* state = libdecor_state_new(width, height);
+	libdecor_state* state = libdecor_state_new(width, height);
 	libdecor_frame_commit(frame, state, configuration);
 	libdecor_state_free(state);
 
@@ -130,7 +132,7 @@ void libdecorDialogConfigure(struct libdecor_frame* frame, struct libdecor_confi
 	}
 }
 
-void libdecorDialogClose(struct libdecor_frame* frame, void* userData)
+void libdecorDialogClose(libdecor_frame* frame, void* userData)
 {
 	DialogWl* dialog = static_cast< DialogWl* >(userData);
 	WidgetData* wd = static_cast< WidgetData* >(dialog->getInternalHandle());
@@ -141,18 +143,19 @@ void libdecorDialogClose(struct libdecor_frame* frame, void* userData)
 	dialog->getContextWl()->dispatch(e);
 }
 
-void libdecorDialogCommit(struct libdecor_frame* frame, void* userData)
+void libdecorDialogCommit(libdecor_frame* frame, void* userData)
 {
 	DialogWl* dialog = static_cast< DialogWl* >(userData);
 	WidgetData* wd = static_cast< WidgetData* >(dialog->getInternalHandle());
 	wl_surface_commit(wd->surface);
 }
 
-void libdecorDialogDismissPopup(struct libdecor_frame* frame, const char* seatName, void* userData)
+void libdecorDialogDismissPopup(libdecor_frame* frame, const char* seatName, void* userData)
 {
 }
 
-static struct libdecor_frame_interface s_libdecorDialogFrameInterface = {
+static libdecor_frame_interface s_libdecorDialogFrameInterface =
+{
 	libdecorDialogConfigure,
 	libdecorDialogClose,
 	libdecorDialogCommit,
@@ -215,7 +218,7 @@ bool DialogWl::create(IWidget* parent, const std::wstring& text, int width, int 
 			const int32_t cx = (pw - dw) / 2;
 			const int32_t cy = (ph - dh) / 2;
 
-			struct xdg_positioner* positioner = xdg_wm_base_create_positioner(m_context->getXdgWmBase());
+			xdg_positioner* positioner = xdg_wm_base_create_positioner(m_context->getXdgWmBase());
 			xdg_positioner_set_size(positioner, dw, dh);
 			xdg_positioner_set_anchor_rect(positioner, cx, cy, 1, 1);
 			xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_TOP_LEFT);

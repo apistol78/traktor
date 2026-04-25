@@ -23,7 +23,7 @@ namespace traktor::ui
 // SSD path — xdg_toplevel + zxdg_decoration_manager_v1
 // ============================================================
 
-void ssdXdgSurfaceConfigure(void* data, struct xdg_surface* xdgSurface, uint32_t serial)
+void ssdXdgSurfaceConfigure(void* data, xdg_surface* xdgSurface, uint32_t serial)
 {
 	xdg_surface_ack_configure(xdgSurface, serial);
 
@@ -45,11 +45,12 @@ void ssdXdgSurfaceConfigure(void* data, struct xdg_surface* xdgSurface, uint32_t
 	}
 }
 
-static const struct xdg_surface_listener s_ssdXdgSurfaceListener = {
+static const xdg_surface_listener s_ssdXdgSurfaceListener =
+{
 	ssdXdgSurfaceConfigure
 };
 
-void ssdXdgToplevelConfigure(void* data, struct xdg_toplevel* toplevel, int32_t width, int32_t height, struct wl_array* states)
+void ssdXdgToplevelConfigure(void* data, xdg_toplevel* toplevel, int32_t width, int32_t height, wl_array* states)
 {
 	FormWl* form = static_cast< FormWl* >(data);
 	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
@@ -57,7 +58,7 @@ void ssdXdgToplevelConfigure(void* data, struct xdg_toplevel* toplevel, int32_t 
 	wd->pendingHeight = height;
 }
 
-void ssdXdgToplevelClose(void* data, struct xdg_toplevel* toplevel)
+void ssdXdgToplevelClose(void* data, xdg_toplevel* toplevel)
 {
 	FormWl* form = static_cast< FormWl* >(data);
 	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
@@ -68,7 +69,8 @@ void ssdXdgToplevelClose(void* data, struct xdg_toplevel* toplevel)
 	form->getContextWl()->dispatch(e);
 }
 
-static const struct xdg_toplevel_listener s_ssdXdgToplevelListener = {
+static const xdg_toplevel_listener s_ssdXdgToplevelListener =
+{
 	ssdXdgToplevelConfigure,
 	ssdXdgToplevelClose
 };
@@ -77,7 +79,7 @@ static const struct xdg_toplevel_listener s_ssdXdgToplevelListener = {
 // libdecor fallback path
 // ============================================================
 
-void libdecorConfigure(struct libdecor_frame* frame, struct libdecor_configuration* configuration, void* userData)
+void libdecorConfigure(libdecor_frame* frame, libdecor_configuration* configuration, void* userData)
 {
 	FormWl* form = static_cast< FormWl* >(userData);
 	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
@@ -91,7 +93,7 @@ void libdecorConfigure(struct libdecor_frame* frame, struct libdecor_configurati
 		height = rc.getHeight() / scale;
 	}
 
-	struct libdecor_state* state = libdecor_state_new(width, height);
+	libdecor_state* state = libdecor_state_new(width, height);
 	libdecor_frame_commit(frame, state, configuration);
 	libdecor_state_free(state);
 
@@ -109,7 +111,7 @@ void libdecorConfigure(struct libdecor_frame* frame, struct libdecor_configurati
 	}
 }
 
-void libdecorClose(struct libdecor_frame* frame, void* userData)
+void libdecorClose(libdecor_frame* frame, void* userData)
 {
 	FormWl* form = static_cast< FormWl* >(userData);
 	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
@@ -120,18 +122,19 @@ void libdecorClose(struct libdecor_frame* frame, void* userData)
 	form->getContextWl()->dispatch(e);
 }
 
-void libdecorCommit(struct libdecor_frame* frame, void* userData)
+void libdecorCommit(libdecor_frame* frame, void* userData)
 {
 	FormWl* form = static_cast< FormWl* >(userData);
 	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
 	wl_surface_commit(wd->surface);
 }
 
-void libdecorDismissPopup(struct libdecor_frame* frame, const char* seatName, void* userData)
+void libdecorDismissPopup(libdecor_frame* frame, const char* seatName, void* userData)
 {
 }
 
-static struct libdecor_frame_interface s_libdecorFrameInterface = {
+static libdecor_frame_interface s_libdecorFrameInterface =
+{
 	libdecorConfigure,
 	libdecorClose,
 	libdecorCommit,

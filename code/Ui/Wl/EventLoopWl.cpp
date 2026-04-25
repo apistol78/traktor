@@ -48,7 +48,7 @@ bool EventLoopWl::process(EventSubject* owner)
 		wl_display_dispatch_pending(m_context->getDisplay());
 
 	// Poll for new data from the compositor.
-	struct pollfd pfd;
+	pollfd pfd;
 	pfd.fd = wl_display_get_fd(m_context->getDisplay());
 	pfd.events = POLLIN;
 	pfd.revents = 0;
@@ -91,7 +91,7 @@ int32_t EventLoopWl::execute(EventSubject* owner)
 			wl_display_dispatch_pending(m_context->getDisplay());
 
 		// Poll for new data from the compositor.
-		struct pollfd pfd;
+		pollfd pfd;
 		pfd.fd = wl_display_get_fd(m_context->getDisplay());
 		pfd.events = POLLIN;
 		pfd.revents = 0;
@@ -148,7 +148,7 @@ int32_t EventLoopWl::getAsyncKeyState() const
 {
 	int32_t keyState = KsNone;
 
-	struct xkb_state* xkbState = m_context->getXkbState();
+	xkb_state* xkbState = m_context->getXkbState();
 	if (xkbState)
 	{
 		if (xkb_state_mod_name_is_active(xkbState, XKB_MOD_NAME_SHIFT, XKB_STATE_MODS_EFFECTIVE))

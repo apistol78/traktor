@@ -21,7 +21,7 @@ namespace traktor::ui
 
 // --- libdecor frame callbacks (WsDefault / dialog-like) ---
 
-void toolFormFrameConfigure(struct libdecor_frame* frame, struct libdecor_configuration* configuration, void* userData)
+void toolFormFrameConfigure(libdecor_frame* frame, libdecor_configuration* configuration, void* userData)
 {
 	ToolFormWl* form = static_cast< ToolFormWl* >(userData);
 	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
@@ -35,7 +35,7 @@ void toolFormFrameConfigure(struct libdecor_frame* frame, struct libdecor_config
 		height = rc.getHeight() / scale;
 	}
 
-	struct libdecor_state* state = libdecor_state_new(width, height);
+	libdecor_state* state = libdecor_state_new(width, height);
 	libdecor_frame_commit(frame, state, configuration);
 	libdecor_state_free(state);
 
@@ -53,24 +53,25 @@ void toolFormFrameConfigure(struct libdecor_frame* frame, struct libdecor_config
 	}
 }
 
-void toolFormFrameClose(struct libdecor_frame* frame, void* userData)
+void toolFormFrameClose(libdecor_frame* frame, void* userData)
 {
 	ToolFormWl* form = static_cast< ToolFormWl* >(userData);
 	form->endModal(DialogResult::Cancel);
 }
 
-void toolFormFrameCommit(struct libdecor_frame* frame, void* userData)
+void toolFormFrameCommit(libdecor_frame* frame, void* userData)
 {
 	ToolFormWl* form = static_cast< ToolFormWl* >(userData);
 	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
 	wl_surface_commit(wd->surface);
 }
 
-void toolFormFrameDismissPopup(struct libdecor_frame* frame, const char* seatName, void* userData)
+void toolFormFrameDismissPopup(libdecor_frame* frame, const char* seatName, void* userData)
 {
 }
 
-static struct libdecor_frame_interface s_toolFormFrameInterface = {
+static libdecor_frame_interface s_toolFormFrameInterface =
+{
 	toolFormFrameConfigure,
 	toolFormFrameClose,
 	toolFormFrameCommit,
@@ -83,7 +84,7 @@ static struct libdecor_frame_interface s_toolFormFrameInterface = {
 // SSD path — xdg_toplevel listeners for WsDefault
 // ============================================================
 
-void toolFormSsdToplevelConfigure(void* data, struct xdg_toplevel* toplevel, int32_t width, int32_t height, struct wl_array* states)
+void toolFormSsdToplevelConfigure(void* data, xdg_toplevel* toplevel, int32_t width, int32_t height, wl_array* states)
 {
 	ToolFormWl* form = static_cast< ToolFormWl* >(data);
 	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
@@ -91,20 +92,20 @@ void toolFormSsdToplevelConfigure(void* data, struct xdg_toplevel* toplevel, int
 	wd->pendingHeight = height;
 }
 
-void toolFormSsdToplevelClose(void* data, struct xdg_toplevel* toplevel)
+void toolFormSsdToplevelClose(void* data, xdg_toplevel* toplevel)
 {
 	ToolFormWl* form = static_cast< ToolFormWl* >(data);
 	form->endModal(DialogResult::Cancel);
 }
 
-static const struct xdg_toplevel_listener s_toolFormXdgToplevelListener = {
+static const xdg_toplevel_listener s_toolFormXdgToplevelListener = {
 	toolFormSsdToplevelConfigure,
 	toolFormSsdToplevelClose
 };
 
 // --- Popup xdg_surface listener (non-WsDefault / floating) ---
 
-void toolFormPopupXdgSurfaceConfigure(void* data, struct xdg_surface* xdgSurface, uint32_t serial)
+void toolFormPopupXdgSurfaceConfigure(void* data, xdg_surface* xdgSurface, uint32_t serial)
 {
 	xdg_surface_ack_configure(xdgSurface, serial);
 
@@ -126,11 +127,11 @@ void toolFormPopupXdgSurfaceConfigure(void* data, struct xdg_surface* xdgSurface
 	}
 }
 
-static const struct xdg_surface_listener s_toolFormPopupXdgSurfaceListener = {
+static const xdg_surface_listener s_toolFormPopupXdgSurfaceListener = {
 	toolFormPopupXdgSurfaceConfigure
 };
 
-void toolFormXdgPopupConfigure(void* data, struct xdg_popup* popup, int32_t x, int32_t y, int32_t width, int32_t height)
+void toolFormXdgPopupConfigure(void* data, xdg_popup* popup, int32_t x, int32_t y, int32_t width, int32_t height)
 {
 	if (width > 0 && height > 0)
 	{
@@ -141,14 +142,15 @@ void toolFormXdgPopupConfigure(void* data, struct xdg_popup* popup, int32_t x, i
 	}
 }
 
-void toolFormXdgPopupDone(void* data, struct xdg_popup* popup)
+void toolFormXdgPopupDone(void* data, xdg_popup* popup)
 {
 	ToolFormWl* form = static_cast< ToolFormWl* >(data);
 	form->endModal(DialogResult::Cancel);
 	form->setVisible(false);
 }
 
-static const struct xdg_popup_listener s_toolFormXdgPopupListener = {
+static const xdg_popup_listener s_toolFormXdgPopupListener =
+{
 	toolFormXdgPopupConfigure,
 	toolFormXdgPopupDone
 };
@@ -356,7 +358,7 @@ void ToolFormWl::createPopup()
 	const int32_t lw = m_rect.getWidth() / scale;
 	const int32_t lh = m_rect.getHeight() / scale;
 
-	struct xdg_positioner* positioner = xdg_wm_base_create_positioner(m_context->getXdgWmBase());
+	xdg_positioner* positioner = xdg_wm_base_create_positioner(m_context->getXdgWmBase());
 	xdg_positioner_set_size(positioner, lw, lh);
 	xdg_positioner_set_anchor_rect(positioner, lx, ly, 1, 1);
 	xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_TOP_LEFT);
