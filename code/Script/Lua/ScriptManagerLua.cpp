@@ -103,7 +103,7 @@ ScriptManagerLua::ScriptManagerLua()
 	ms_instance = this;
 
 #if defined(T_USE_ALLOCATOR)
-	m_luaState = lua_newstate(&luaAlloc, this);
+	m_luaState = lua_newstate(&luaAlloc, this, 0);
 #else
 	m_luaState = luaL_newstate();
 
