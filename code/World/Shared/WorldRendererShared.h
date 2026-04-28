@@ -43,6 +43,7 @@ class PostProcessPass;
 class ProbeComponent;
 class ReflectionsPass;
 class VelocityPass;
+class VolumetricFogPass;
 class WorldEntityRenderers;
 
 /*! World renderer shared implementation.
@@ -106,6 +107,7 @@ protected:
 	Ref< VelocityPass > m_velocityPass;
 	Ref< IrradiancePass > m_irradiancePass;
 	Ref< AmbientOcclusionPass > m_ambientOcclusionPass;
+	Ref< VolumetricFogPass > m_volumetricFogPass;
 	Ref< ContactShadowsPass > m_contactShadowsPass;
 	Ref< ReflectionsPass > m_reflectionsPass;
 	Ref< PostProcessPass > m_postProcessPass;
@@ -129,6 +131,11 @@ protected:
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
 		render::RGTargetSet& outShadowMapAtlasTargetSetId);
+
+	render::RGTexture setupVolumetricFog(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph,
+		render::RGTargetSet shadowMapAtlasTargetSetId);
 };
 
 }

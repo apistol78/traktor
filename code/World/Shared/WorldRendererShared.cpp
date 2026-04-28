@@ -17,6 +17,7 @@
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
@@ -40,6 +41,7 @@
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
+#include "World/Shared/Passes/VolumetricFogPass.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/SMProj/UniformShadowProjection.h"
 #include "World/World.h"
@@ -184,6 +186,10 @@ bool WorldRendererShared::create(
 	if (!m_ambientOcclusionPass->create(resourceManager, renderSystem, desc))
 		return false;
 
+	m_volumetricFogPass = new VolumetricFogPass(m_settings);
+	if (!m_volumetricFogPass->create(resourceManager, renderSystem, desc))
+		return false;
+
 	m_contactShadowsPass = new ContactShadowsPass();
 	if (!m_contactShadowsPass->create(resourceManager, renderSystem, desc))
 		return false;
@@ -212,6 +218,7 @@ void WorldRendererShared::destroy()
 	safeDestroy(m_postProcessPass);
 	safeDestroy(m_reflectionsPass);
 	safeDestroy(m_contactShadowsPass);
+	safeDestroy(m_volumetricFogPass);
 	safeDestroy(m_ambientOcclusionPass);
 	safeDestroy(m_irradiancePass);
 	safeDestroy(m_velocityPass);

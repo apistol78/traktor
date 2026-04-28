@@ -347,7 +347,7 @@ Ref< IWorldComponent > WorldEntityFactory::createWorldComponent(const IEntityBui
 	}
 
 	if (auto fogComponentData = dynamic_type_cast< const FogComponentData* >(&worldComponentData))
-		return fogComponentData->createComponent(m_resourceManager, m_renderSystem);
+		return fogComponentData->createComponent();
 		
 	return nullptr;
 }

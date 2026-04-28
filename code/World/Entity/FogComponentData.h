@@ -48,9 +48,7 @@ class T_DLLCLASS FogComponentData : public IWorldComponentData
 	T_RTTI_CLASS;
 
 public:
-	Ref< FogComponent > createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
-
-	const resource::Id< render::Shader >& getShader() const;
+	Ref< FogComponent > createComponent() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -68,7 +66,6 @@ private:
 	bool m_volumetricFogEnable = false;
 	float m_maxDistance = 100.0f;
 	float m_maxScattering = 10.0f;
-	int32_t m_sliceCount = 128;
 	Color4f m_mediumColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	float m_mediumDensity = 0.2f;
 };

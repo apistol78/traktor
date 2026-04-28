@@ -44,6 +44,7 @@
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
+#include "World/Shared/Passes/VolumetricFogPass.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
@@ -175,6 +176,8 @@ void WorldRendererDeferred::setup(
 		shadowMapAtlasTargetSetId);
 
 	const render::Buffer* lightSBuffer = m_state[worldRenderView.getIndex()].lightSBuffer;
+	const render::Buffer* tileSBuffer = m_lightClusterPass->getTileSBuffer();
+	const render::Buffer* lightIndexSBuffer = m_lightClusterPass->getLightIndexSBuffer();
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
@@ -185,6 +188,7 @@ void WorldRendererDeferred::setup(
 	const auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
 	const auto irradianceTargetSetId = m_irradiancePass->setup(worldRenderView, m_gatheredView, lightSBuffer, needJitter, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
 	const auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
+	const auto fogVolumeTextureId = m_volumetricFogPass->setup(worldRenderView, m_gatheredView, lightSBuffer, tileSBuffer, lightIndexSBuffer, m_whiteTexture, m_slicePositions, renderGraph, shadowMapAtlasTargetSetId);
 	const auto contactShadowsTargetSetId = m_contactShadowsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
 	const auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, m_blackCubeTexture, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
 
@@ -200,6 +204,7 @@ void WorldRendererDeferred::setup(
 		contactShadowsTargetSetId,
 		reflectionsTargetSetId,
 		shadowMapAtlasTargetSetId,
+		fogVolumeTextureId,
 		hizTextureId);
 
 	m_postProcessPass->setup(worldRenderView, m_gatheredView, count, m_whiteTexture, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
@@ -219,6 +224,7 @@ void WorldRendererDeferred::setupVisualPass(
 	render::RGTargetSet contactShadowsTargetSetId,
 	render::RGTargetSet reflectionsTargetSetId,
 	render::RGTargetSet shadowMapAtlasTargetSetId,
+	render::RGTexture fogVolumeTextureId,
 	render::RGTexture outputHiZTextureId) const
 {
 	T_PROFILER_SCOPE(L"World setup visual");
@@ -238,7 +244,7 @@ void WorldRendererDeferred::setupVisualPass(
 	}
 
 	// Get volumetric fog volume.
-	const FogComponent* fog = m_gatheredView.fog;
+	// const FogComponent* fog = m_gatheredView.fog;
 
 	// Calculate jitter vectors.
 	const uint32_t count = m_state[worldRenderView.getIndex()].count;
@@ -257,6 +263,7 @@ void WorldRendererDeferred::setupVisualPass(
 		// rp->addInput(contactShadowsTargetSetId);
 		rp->addInput(reflectionsTargetSetId);
 		rp->addInput(shadowMapAtlasTargetSetId);
+		rp->addInput(fogVolumeTextureId);
 		rp->addInput(outputHiZTextureId);
 		for (auto attachment : m_visualAttachments)
 			rp->addInput(attachment);
@@ -281,6 +288,7 @@ void WorldRendererDeferred::setupVisualPass(
 			// const auto contactShadowsTargetSet = renderGraph.getTargetSet(contactShadowsTargetSetId);
 			const auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
 			const auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
+			const auto fogVolumeTexture = renderGraph.getTexture(fogVolumeTextureId);
 
 			const auto& view = worldRenderView.getView();
 			const auto& projection = worldRenderView.getProjection();
@@ -310,7 +318,10 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->setBufferViewParameter(ShaderParameter::LightSBuffer, lightSBuffer->getBufferView());
 
 			ProbeComponent::setupSharedParameters(probe, m_blackCubeTexture, sharedParams);
-			FogComponent::setupSharedParameters(fog, viewNearZ, viewFarZ, sharedParams);
+			VolumetricFogPass::setupSharedParameters(m_gatheredView, viewNearZ, viewFarZ, sharedParams);
+
+			if (fogVolumeTexture != nullptr)
+				sharedParams->setTextureParameter(ShaderParameter::FogVolumeTexture, fogVolumeTexture);
 
 			if (shadowAtlasTargetSet != nullptr)
 			{
@@ -367,7 +378,7 @@ void WorldRendererDeferred::setupVisualPass(
 				render::Shader::Permutation perm;
 				m_lightShader->setCombination(ShaderPermutation::IrradianceEnable, irradianceEnable, perm);
 				m_lightShader->setCombination(ShaderPermutation::IrradianceSingle, irradianceSingle, perm);
-				m_lightShader->setCombination(ShaderPermutation::VolumetricFogEnable, (bool)(fog != nullptr && fog->m_volumetricFogEnable), perm);
+				m_lightShader->setCombination(ShaderPermutation::VolumetricFogEnable, (bool)(fogVolumeTexture != nullptr), perm);
 				m_lightShader->setCombination(ShaderPermutation::RayTracingEnable, (bool)(m_gatheredView.rtWorldTopLevel != nullptr), perm);
 				m_screenRenderer->draw(renderContext, m_lightShader, perm, sharedParams, L"GBuffer resolve");
 			}
@@ -465,7 +476,10 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->setBufferViewParameter(ShaderParameter::LightSBuffer, lightSBuffer->getBufferView());
 
 			ProbeComponent::setupSharedParameters(probe, m_blackCubeTexture, sharedParams);
-			FogComponent::setupSharedParameters(fog, viewNearZ, viewFarZ, sharedParams);
+			// VolumetricFogPass::setupSharedParameters(fog, viewNearZ, viewFarZ, sharedParams);
+
+			// if (fogVolumeTexture != nullptr)
+			// 	sharedParams->setTextureParameter(ShaderParameter::FogVolumeTexture, fogVolumeTexture);
 
 			if (shadowAtlasTargetSet != nullptr)
 			{
@@ -525,7 +539,7 @@ void WorldRendererDeferred::setupVisualPass(
 				{
 					{ ShaderPermutation::IrradianceEnable, irradianceEnable },
 					{ ShaderPermutation::IrradianceSingle, irradianceSingle },
-					{ ShaderPermutation::VolumetricFogEnable, (bool)(fog != nullptr && fog->m_volumetricFogEnable) },
+					{ ShaderPermutation::VolumetricFogEnable, false }, // (bool)(fog != nullptr && fog->m_volumetricFogEnable) },
 					{ ShaderPermutation::RayTracingEnable, (bool)(m_gatheredView.rtWorldTopLevel != nullptr) },
 				});
 

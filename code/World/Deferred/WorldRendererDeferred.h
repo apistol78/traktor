@@ -70,6 +70,7 @@ private:
 		render::RGTargetSet contactShadowsTargetSetId,
 		render::RGTargetSet reflectionsTargetSetId,
 		render::RGTargetSet shadowMapAtlasTargetSetId,
+		render::RGTexture fogVolumeTextureId,
 		render::RGTexture outputHiZTextureId) const;
 };
 

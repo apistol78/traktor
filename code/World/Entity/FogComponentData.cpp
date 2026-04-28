@@ -10,43 +10,17 @@
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Resource/IResourceManager.h"
-#include "Render/IRenderSystem.h"
-#include "Render/Shader.h"
-#include "Resource/Member.h"
 #include "World/Entity/FogComponent.h"
 #include "World/Entity/FogComponentData.h"
 
 namespace traktor::world
 {
-	namespace
-	{
 
-const resource::Id< render::Shader > c_defaultShader(Guid(L"{FEDA90CE-25C6-BC4D-9767-EA4B45F4A043}"));
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.FogComponentData", 1, FogComponentData, IWorldComponentData)
 
-	}
-
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.FogComponentData", 0, FogComponentData, IWorldComponentData)
-
-Ref< FogComponent > FogComponentData::createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< FogComponent > FogComponentData::createComponent() const
 {
-	resource::Proxy< render::Shader > shader;
-	if (m_volumetricFogEnable)
-	{
-		if (!resourceManager->bind(c_defaultShader, shader))
-			return nullptr;
-	}
-
-	Ref< FogComponent > component = new FogComponent(this, shader);
-	if (component->create(renderSystem))
-		return component;
-	else
-		return nullptr;
-}
-
-const resource::Id< render::Shader >& FogComponentData::getShader() const
-{
-	return c_defaultShader;
+	return new FogComponent(this);
 }
 
 void FogComponentData::serialize(ISerializer& s)
@@ -60,7 +34,10 @@ void FogComponentData::serialize(ISerializer& s)
 	s >> Member< bool >(L"volumetricFogEnable", m_volumetricFogEnable);
 	s >> Member< float >(L"maxDistance", m_maxDistance, AttributeRange(0.0f));
 	s >> Member< float >(L"maxScattering", m_maxScattering, AttributeRange(0.0f));
-	s >> Member< int32_t >(L"sliceCount", m_sliceCount, AttributeRange(1));
+	
+	if (s.getVersion< FogComponentData >() < 1)
+		s >> ObsoleteMember< int32_t >(L"sliceCount");
+
 	s >> Member< Color4f >(L"mediumColor", m_mediumColor);
 	s >> Member< float >(L"mediumDensity", m_mediumDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 }

@@ -42,6 +42,7 @@
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
+#include "World/Shared/Passes/VolumetricFogPass.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
@@ -156,6 +157,7 @@ void WorldRendererForward::setup(
 	const auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
 	const auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
 	const auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, m_blackCubeTexture, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, render::RGTexture::Invalid, visualTargetSetId.current);
+	// const auto fogVolumeTextureId = m_volumetricFogPass->setup(worldRenderView, m_gatheredView, lightSBuffer, m_slicePositions, renderGraph, shadowMapAtlasTargetSetId);
 
 	render::RGTargetSet shadowMapAtlasTargetSetId;
 	setupLightPass(
@@ -268,7 +270,7 @@ void WorldRendererForward::setupVisualPass(
 		sharedParams->setBufferViewParameter(ShaderParameter::LightSBuffer, lightSBuffer->getBufferView());
 
 		ProbeComponent::setupSharedParameters(probe, m_blackCubeTexture, sharedParams);
-		FogComponent::setupSharedParameters(fog, viewNearZ, viewFarZ, sharedParams);
+		// FogComponent::setupSharedParameters(fog, viewNearZ, viewFarZ, sharedParams);
 
 		if (shadowAtlasTargetSet != nullptr)
 		{
@@ -315,7 +317,7 @@ void WorldRendererForward::setupVisualPass(
 			IWorldRenderPass::Last,
 			{ { ShaderPermutation::IrradianceEnable, irradianceEnable },
 				{ ShaderPermutation::IrradianceSingle, irradianceSingle },
-				{ ShaderPermutation::VolumetricFogEnable, (bool)(fog != nullptr && fog->m_volumetricFogEnable) } });
+				{ ShaderPermutation::VolumetricFogEnable, false } }); //(bool)(fog != nullptr && fog->m_volumetricFogEnable) } });
 
 		T_ASSERT(!wc.getRenderContext()->havePendingDraws());
 
