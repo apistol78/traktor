@@ -11,17 +11,32 @@ struct VSFrustum
 	float farZ;
 };
 
-vec3 FrustumCellToViewspace(const VSFrustum vsf, const vec3 cell)
+//! Convert from "cell" to NDC coordinates.
+vec3 FrustumCellToNDC(const VSFrustum vsf, const vec3 cell)
 {
 	const vec3 tmp = cell / vec3(vsf.volumeSize);
 	const vec3 ndc = tmp * vec3(2, -2, 1) + vec3(-1, 1, 0);
+	return ndc;
+}
+
+//! Convert from NDC to "cell" coordinates.
+vec3 NDCToFrustumCell(const VSFrustum vsf, const vec3 ndc)
+{
+	const vec3 tmp = ndc * vec3(0.5f, -0.5f, 1.0f) + vec3(0.5f, 0.5f, 0.0f);
+	return tmp * vec3(vsf.volumeSize);
+}
+
+//! Convert from NDC to viewspace coordinates.
+vec3 NDCToViewspace(const VSFrustum vsf, const vec3 ndc)
+{
 	const float k = pow(ndc.z, SLICE_DISTRIBUTION_EXPONENT);
 	const float viewZ = mix(vsf.nearZ, vsf.farZ, k);
 	const vec2 viewXY = (vsf.magicCoeffs * viewZ) * ndc.xy;
 	return vec3(viewXY, viewZ);
 }
 
-vec3 ViewspaceToFrustumCellNDC(const VSFrustum vsf, const vec3 vs)
+//! Convert from viewspace to NDC coordinates.
+vec3 ViewspaceToNDC(const VSFrustum vsf, const vec3 vs)
 {
 	const vec2 nxy = vs.xy / (vsf.magicCoeffs * vs.z);
 	const float k = (vs.z - vsf.nearZ) / (vsf.farZ - vsf.nearZ);
@@ -34,6 +49,19 @@ float FractionToViewZ(const VSFrustum vsf, const float f)
 	const float k = pow(f, SLICE_DISTRIBUTION_EXPONENT);
 	return mix(vsf.nearZ, vsf.farZ, k);
 }
+
+bool NDCInRange(const vec3 ndc)
+{
+	if (ndc.x < -0.9f || ndc.x > 0.9f)
+		return false;
+	if (ndc.y < -0.9f || ndc.y > 0.9f)
+		return false;
+	if (ndc.z < 0.1f || ndc.z > 0.9f)
+		return false;
+
+	return true;
+}
+
 ]]></text>
 	<samplers/>
 	<structDeclarations/>

@@ -666,7 +666,7 @@ vsf.magicCoeffs = $MagicCoeffs.xy;
 vsf.nearZ = $NearZ;
 vsf.farZ = $FarZ;
 
-const vec3 ndc = ViewspaceToFrustumCellNDC(vsf, $ViewPosition.xyz);
+const vec3 ndc = ViewspaceToNDC(vsf, $ViewPosition.xyz);
 $Output = vec4(ndc, 0.0f);
 
 ]]></script>
