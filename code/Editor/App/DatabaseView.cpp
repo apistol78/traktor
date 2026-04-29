@@ -831,6 +831,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			}
 
 			updateView();
+			highlight(instanceClone);
 		}
 		else if (command == L"Editor.Database.DefaultEditInstance") // Default edit instance
 		{
@@ -1127,6 +1128,10 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				}
 
 				updateView();
+
+				// If only one instance pasted then highlight it after paste.
+				if (pasteInstances.size() == 1)
+					highlight(instanceCopy);
 			}
 		}
 		else if (command == L"Editor.Database.FavoriteEntireGroup" || command == L"Editor.Database.UnFavoriteEntireGroup")
