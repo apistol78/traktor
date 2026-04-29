@@ -5,8 +5,8 @@
 			<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
 			<comment/>
 			<position>
-				<first>1867</first>
-				<second>1440</second>
+				<first>1907</first>
+				<second>1442</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -14,16 +14,16 @@
 			<id>{40422772-1B41-403C-AA95-E9B3F4A21B15}</id>
 			<comment/>
 			<position>
-				<first>1586</first>
-				<second>1404</second>
+				<first>1626</first>
+				<second>1406</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{F168E193-D179-43D9-BA69-677B60CF95E0}</id>
 			<comment/>
 			<position>
-				<first>1388</first>
-				<second>1412</second>
+				<first>1428</first>
+				<second>1414</second>
 			</position>
 			<swizzle>000w</swizzle>
 		</item>
@@ -40,8 +40,8 @@
 			<id>{40A5DD0D-5F8B-4522-B715-AD2548F7DD44}</id>
 			<comment/>
 			<position>
-				<first>1388</first>
-				<second>1454</second>
+				<first>1428</first>
+				<second>1456</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>

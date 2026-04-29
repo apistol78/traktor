@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule" version="2">
+	<text><![CDATA[
+#define SLICE_DISTRIBUTION_EXPONENT 2.0f
+
+struct VSFrustum
+{
+	ivec3 volumeSize;
+	vec2 magicCoeffs;
+	float nearZ;
+	float farZ;
+};
+
+vec3 FrustumCellToViewspace(const VSFrustum vsf, const vec3 cell)
+{
+	const vec3 tmp = cell / vec3(vsf.volumeSize);
+	const vec3 ndc = tmp * vec3(2, -2, 1) + vec3(-1, 1, 0);
+	const float k = pow(ndc.z, SLICE_DISTRIBUTION_EXPONENT);
+	const float viewZ = mix(vsf.nearZ, vsf.farZ, k);
+	const vec2 viewXY = (vsf.magicCoeffs * viewZ) * ndc.xy;
+	return vec3(viewXY, viewZ);
+}
+
+vec3 ViewspaceToFrustumCellNDC(const VSFrustum vsf, const vec3 vs)
+{
+	const vec2 nxy = vs.xy / (vsf.magicCoeffs * vs.z);
+	const float k = (vs.z - vsf.nearZ) / (vsf.farZ - vsf.nearZ);
+	const float nz = pow(k, 1.0f / SLICE_DISTRIBUTION_EXPONENT);
+	return vec3(nxy, nz);
+}
+
+float FractionToViewZ(const VSFrustum vsf, const float f)
+{
+	const float k = pow(f, SLICE_DISTRIBUTION_EXPONENT);
+	return mix(vsf.nearZ, vsf.farZ, k);
+}
+]]></text>
+	<samplers/>
+	<structDeclarations/>
+</object>

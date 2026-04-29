@@ -9,14 +9,15 @@
 #include "World/Shared/Passes/VolumetricFogPass.h"
 
 #include "Core/Log/Log.h"
+#include "Core/Math/Random.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/Shader.h"
-#include "Render/Context/RenderContext.h"
-#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity/FogComponent.h"
 #include "World/IEntityRenderer.h"
@@ -28,18 +29,20 @@
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_injectShader(Guid(L"{FEDA90CE-25C6-BC4D-9767-EA4B45F4A043}"));
-const int32_t c_sliceCount = 64;
+const int32_t c_sliceCount = 128;
 
-	}
+Random s_random;
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VolumetricFogPass", VolumetricFogPass, Object)
 
 VolumetricFogPass::VolumetricFogPass(const WorldRenderSettings& settings)
-:   m_settings(settings)
+	: m_settings(settings)
 {
 }
 
@@ -48,16 +51,19 @@ bool VolumetricFogPass::create(resource::IResourceManager* resourceManager, rend
 	if (!resourceManager->bind(c_injectShader, m_injectShader))
 		return false;
 
-	render::VolumeTextureCreateDesc vtcd;
-	vtcd.width = 128;
-	vtcd.height = 128;
-	vtcd.depth = c_sliceCount;
-	vtcd.mipCount = 1;
-	vtcd.format = render::TfR16G16B16A16F;
-	vtcd.sRGB = false;
-	vtcd.immutable = false;
-	vtcd.shaderStorage = true;
-	if ((m_volumeTexture = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
+	const render::VolumeTextureCreateDesc vtcd = {
+		.width = 128,
+		.height = 128,
+		.depth = c_sliceCount,
+		.mipCount = 1,
+		.format = render::TfR16G16B16A16F,
+		.sRGB = false,
+		.immutable = false,
+		.shaderStorage = true
+	};
+	if ((m_volumeTextures[0] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
+		return false;
+	if ((m_volumeTextures[1] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
 		return false;
 
 	m_shadowsQuality = desc.quality.shadows;
@@ -66,7 +72,8 @@ bool VolumetricFogPass::create(resource::IResourceManager* resourceManager, rend
 
 void VolumetricFogPass::destroy()
 {
-	safeDestroy(m_volumeTexture);
+	safeDestroy(m_volumeTextures[0]);
+	safeDestroy(m_volumeTextures[1]);
 	m_injectShader.clear();
 }
 
@@ -77,6 +84,7 @@ render::RGTexture VolumetricFogPass::setup(
 	const render::Buffer* tileSBuffer,
 	const render::Buffer* lightIndexSBuffer,
 	render::ITexture* whiteTexture,
+	uint32_t frameCount,
 	const float* slicePositions,
 	render::RenderGraph& renderGraph,
 	render::RGTargetSet shadowMapAtlasTargetSetId) const
@@ -88,21 +96,28 @@ render::RGTexture VolumetricFogPass::setup(
 		return render::RGTexture::Invalid;
 
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
-	const auto fogVolumeTextureId = renderGraph.addExplicitTexture(L"Fog volume", m_volumeTexture);
+
+	const auto fogVolumeInputTextureId = renderGraph.addExplicitTexture(L"Fog volume input", m_volumeTextures[frameCount & 1]);
+	const auto fogVolumeOutputTextureId = renderGraph.addExplicitTexture(L"Fog volume output", m_volumeTextures[1 - (frameCount & 1)]);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Volumetric fog");
-	rp->setOutput(fogVolumeTextureId);
+	rp->setOutput(fogVolumeOutputTextureId);
+	rp->addInput(fogVolumeInputTextureId);
 	rp->addInput(shadowMapAtlasTargetSetId);
 
 	rp->addBuild(
 		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-
 		const auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
+		const auto fogVolumeInputTexture = renderGraph.getTexture(fogVolumeInputTextureId);
+		const auto fogVolumeOutputTexture = renderGraph.getTexture(fogVolumeOutputTextureId);
 
-		const auto injectLightsProgram = m_injectShader->getProgram();
+		render::Shader::Permutation perm;
+		m_injectShader->setCombination(ShaderPermutation::RayTracingEnable, (bool)(gatheredView.rtWorldTopLevel != nullptr), perm);
+		const auto injectLightsProgram = m_injectShader->getProgram(perm);
 		if (!injectLightsProgram)
 			return;
 
+		const auto& lastView = worldRenderView.getLastView();
 		const auto& view = worldRenderView.getView();
 		const auto& projection = worldRenderView.getProjection();
 
@@ -131,8 +146,14 @@ render::RGTexture VolumetricFogPass::setup(
 
 		renderBlock->programParams->beginParameters(renderContext);
 
+		renderBlock->programParams->setFloatParameter(ShaderParameter::Time, worldRenderView.getTime());
+		renderBlock->programParams->setFloatParameter(ShaderParameter::Random, s_random.nextFloat());
 		renderBlock->programParams->setVectorParameter(ShaderParameter::ViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
 		renderBlock->programParams->setVectorParameter(ShaderParameter::SlicePositions, Vector4(slicePositions[1], slicePositions[2], slicePositions[3], slicePositions[4]));
+		renderBlock->programParams->setMatrixParameter(ShaderParameter::LastView, lastView);
+		renderBlock->programParams->setMatrixParameter(ShaderParameter::LastViewInverse, lastView.inverse());
+		renderBlock->programParams->setMatrixParameter(ShaderParameter::View, view);
+		renderBlock->programParams->setMatrixParameter(ShaderParameter::ViewInverse, view.inverse());
 		renderBlock->programParams->setMatrixParameter(ShaderParameter::Projection, projection);
 
 		renderBlock->programParams->setBufferViewParameter(ShaderParameter::TileSBuffer, tileSBuffer->getBufferView());
@@ -153,22 +174,25 @@ render::RGTexture VolumetricFogPass::setup(
 		if (gatheredView.rtWorldTopLevel != nullptr)
 			renderBlock->programParams->setAccelerationStructureParameter(ShaderParameter::TLAS, gatheredView.rtWorldTopLevel);
 
-		renderBlock->programParams->setImageViewParameter(ShaderParameter::FogVolume, m_volumeTexture, 0);
+		renderBlock->programParams->setTextureParameter(ShaderParameter::FogVolumeTexture, fogVolumeInputTexture);
+		renderBlock->programParams->setImageViewParameter(ShaderParameter::FogVolume, fogVolumeOutputTexture, 0);
+
 		renderBlock->programParams->setVectorParameter(ShaderParameter::FogVolumeRange, fogRange);
 		renderBlock->programParams->setVectorParameter(ShaderParameter::MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 		renderBlock->programParams->setVectorParameter(ShaderParameter::FogVolumeMediumColor, fog->m_mediumColor);
 		renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeMediumDensity, fog->m_mediumDensity / c_sliceCount);
 		renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)c_sliceCount);
+		renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeSliceUpdate, (float)(frameCount % c_sliceCount));
 
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->compute(renderBlock);
-		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, m_volumeTexture, 0);
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, fogVolumeOutputTexture, 0);
 	});
 
 	renderGraph.addPass(rp);
 
-	return fogVolumeTextureId;
+	return fogVolumeOutputTextureId;
 }
 
 void VolumetricFogPass::setupSharedParameters(const GatherView& gatheredView, float viewNearZ, float viewFarZ, render::ProgramParameters* parameters)
@@ -182,18 +206,20 @@ void VolumetricFogPass::setupSharedParameters(const GatherView& gatheredView, fl
 			0.0f);
 
 		// Distance fog.
-		parameters->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4(
-			gatheredView.fog->m_fogDistance,
-			gatheredView.fog->m_fogDensity,
-			gatheredView.fog->m_fogDensityMax,
-			gatheredView.fog->m_fogElevation
-		));
-		parameters->setVectorParameter(ShaderParameter::FogColor, gatheredView.fog->m_fogColor);
+		if (gatheredView.fog->m_distanceFogEnable)
+		{
+			parameters->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4(gatheredView.fog->m_fogDistance, gatheredView.fog->m_mediumDensity, 1.0f, gatheredView.fog->m_fogElevation));
+			parameters->setVectorParameter(ShaderParameter::FogColor, gatheredView.fog->m_mediumColor);
+		}
+		else
+		{
+			parameters->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4::zero());
+			parameters->setVectorParameter(ShaderParameter::FogColor, Vector4::zero());
+		}
 
 		// Volumetric fog.
 		parameters->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)c_sliceCount);
 		parameters->setVectorParameter(ShaderParameter::FogVolumeRange, fogRange);
-		// parameters->setTextureParameter(ShaderParameter::FogVolumeTexture, fog->getFogVolumeTexture());
 	}
 	else
 	{

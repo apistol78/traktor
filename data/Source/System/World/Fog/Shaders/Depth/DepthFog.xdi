@@ -189,11 +189,9 @@ $Output = clamp(t, 0.0f, $Clamp);
 				</item>
 			</outputPins>
 			<script><![CDATA[
-
 // Get world positions to check against fog elevation.
-const vec4 worldOrigin = $ViewInverse * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+const vec4 worldOrigin = $ViewInverse[3];
 const vec4 worldPosition = $ViewInverse * vec4($ViewPosition.xyz, 1.0f);
-
 
 if (worldOrigin.y > $FogElevation && worldPosition.y <= $FogElevation)
 {

@@ -127,7 +127,8 @@ struct T_DLLCLASS ShaderParameter
 	static const render::Handle FogVolumeTexture;
 	static const render::Handle FogVolumeRange;
 	static const render::Handle FogVolumeSliceCount;
-		static const render::Handle FogVolumeMediumColor;
+	static const render::Handle FogVolumeSliceUpdate;
+	static const render::Handle FogVolumeMediumColor;
 	static const render::Handle FogVolumeMediumDensity;
 
 	// Contact shadows.

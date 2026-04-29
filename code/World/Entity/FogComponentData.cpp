@@ -16,7 +16,7 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.FogComponentData", 1, FogComponentData, IWorldComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.FogComponentData", 2, FogComponentData, IWorldComponentData)
 
 Ref< FogComponent > FogComponentData::createComponent() const
 {
@@ -25,11 +25,22 @@ Ref< FogComponent > FogComponentData::createComponent() const
 
 void FogComponentData::serialize(ISerializer& s)
 {
+	if (s.getVersion< FogComponentData >() >= 2)
+	{
+		s >> Member< Color4f >(L"mediumColor", m_mediumColor);
+		s >> Member< float >(L"mediumDensity", m_mediumDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
+		s >> Member< bool >(L"distanceFogEnable", m_distanceFogEnable);
+	}
+
 	s >> Member< float >(L"fogDistance", m_fogDistance, AttributeUnit(UnitType::Metres));
 	s >> Member< float >(L"fogElevation", m_fogElevation, AttributeUnit(UnitType::Metres));
-	s >> Member< float >(L"fogDensity", m_fogDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
-	s >> Member< float >(L"fogDensityMax", m_fogDensityMax, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
-	s >> Member< Color4f >(L"fogColor", m_fogColor, AttributeHdr());
+
+	if (s.getVersion< FogComponentData >() < 2)
+	{
+		s >> ObsoleteMember< float >(L"fogDensity");
+		s >> ObsoleteMember< float >(L"fogDensityMax");
+		s >> ObsoleteMember< Color4f >(L"fogColor");
+	}
 
 	s >> Member< bool >(L"volumetricFogEnable", m_volumetricFogEnable);
 	s >> Member< float >(L"maxDistance", m_maxDistance, AttributeRange(0.0f));
@@ -38,8 +49,11 @@ void FogComponentData::serialize(ISerializer& s)
 	if (s.getVersion< FogComponentData >() < 1)
 		s >> ObsoleteMember< int32_t >(L"sliceCount");
 
-	s >> Member< Color4f >(L"mediumColor", m_mediumColor);
-	s >> Member< float >(L"mediumDensity", m_mediumDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
+	if (s.getVersion< FogComponentData >() < 2)
+	{
+		s >> Member< Color4f >(L"mediumColor", m_mediumColor);
+		s >> Member< float >(L"mediumDensity", m_mediumDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
+	}
 }
 
 }

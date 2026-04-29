@@ -17,17 +17,16 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.FogComponent", FogComponent, IWorldCompon
 
 FogComponent::FogComponent(const FogComponentData* data)
 {
+	m_mediumColor = data->m_mediumColor;
+	m_mediumDensity = data->m_mediumDensity;
+
+	m_distanceFogEnable = data->m_distanceFogEnable;
 	m_fogDistance = data->m_fogDistance;
 	m_fogElevation = data->m_fogElevation;
-	m_fogDensity = data->m_fogDensity;
-	m_fogDensityMax = data->m_fogDensityMax;
-	m_fogColor = data->m_fogColor;
 
 	m_volumetricFogEnable = data->m_volumetricFogEnable;
 	m_maxDistance = data->m_maxDistance;
 	m_maxScattering = data->m_maxScattering;
-	m_mediumColor = data->m_mediumColor;
-	m_mediumDensity = data->m_mediumDensity;
 }
 
 void FogComponent::destroy()

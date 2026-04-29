@@ -60,6 +60,7 @@ public:
 		const render::Buffer* tileSBuffer,
 		const render::Buffer* lightIndexSBuffer,
 		render::ITexture* whiteTexture,
+		uint32_t frameCount,
 		const float* slicePositions,
 		render::RenderGraph& renderGraph,
 		render::RGTargetSet shadowMapAtlasTargetSetId) const;
@@ -70,7 +71,7 @@ private:
 	WorldRenderSettings m_settings;
 	Quality m_shadowsQuality = Quality::Disabled;
 	resource::Proxy< render::Shader > m_injectShader;
-	Ref< render::ITexture > m_volumeTexture;
+	Ref< render::ITexture > m_volumeTextures[2];
 };
 
 }

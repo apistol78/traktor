@@ -55,19 +55,18 @@ public:
 private:
 	friend class FogComponent;
 
+	Color4f m_mediumColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	float m_mediumDensity = 0.2f;
+
 	// Distance fog.
+	bool m_distanceFogEnable = false;
 	float m_fogDistance = 90.0f;
 	float m_fogElevation = 0.0f;
-	float m_fogDensity = 0.0f;
-	float m_fogDensityMax = 1.0f;
-	Color4f m_fogColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Volumetric fog.
 	bool m_volumetricFogEnable = false;
 	float m_maxDistance = 100.0f;
 	float m_maxScattering = 10.0f;
-	Color4f m_mediumColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	float m_mediumDensity = 0.2f;
 };
 
 }

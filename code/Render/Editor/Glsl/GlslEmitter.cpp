@@ -2091,7 +2091,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	for (auto sampler : cx.getLayout().get< GlslSampler >())
 	{
 		const auto& rh = sampler->getState();
-		if (compareSamplerState(rh, samplerState, texture->getType() == GlslType::Texture2D))
+		if (compareSamplerState(rh, samplerState, texture->getType() != GlslType::Texture2D))
 		{
 			samplerName = sampler->getName();
 			sampler->addStage(cx.getBindStage());
