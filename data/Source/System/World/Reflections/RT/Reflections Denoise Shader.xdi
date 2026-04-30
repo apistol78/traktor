@@ -52,8 +52,8 @@
 			<id>{1A93852E-89C6-144B-92EE-8B4F580CC935}</id>
 			<comment/>
 			<position>
-				<first>-812</first>
-				<second>1021</second>
+				<first>-149</first>
+				<second>142</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -72,8 +72,8 @@
 			<id>{FD904A09-533C-D843-B404-3961485404E5}</id>
 			<comment/>
 			<position>
-				<first>-579</first>
-				<second>1106</second>
+				<first>55</first>
+				<second>201</second>
 			</position>
 			<name>UV_Center</name>
 		</item>

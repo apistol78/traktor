@@ -41,8 +41,8 @@
 			<id>{A2614290-ECF4-BF44-8401-C15462032879}</id>
 			<comment/>
 			<position>
-				<first>-1581</first>
-				<second>-1729</second>
+				<first>-1445</first>
+				<second>-1733</second>
 			</position>
 			<name>Raytracing</name>
 			<technique>Default</technique>
@@ -121,10 +121,10 @@
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
-#define USE_TEMPORAL_FILTER 1
-#define USE_SPATIAL_FILTER 1
+#define USE_TEMPORAL_FILTER 0
+#define USE_SPATIAL_FILTER 0
 
-const int N = 2;
+const int N = 4;
 const int Ndisclose = 16;
 const int Nspatial = 16;
 const int K = 8;
@@ -133,6 +133,7 @@ const float DepthThreshold = 10.0f;
 const float Far = 30.0f;
 const float SpatialFilterRadius = 0.005f;
 const float SpatialFilterCoeff = 0.75f;
+const float Ambient = 0.1f;
 
 const ivec2 sz = imageSize($Output);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
@@ -268,6 +269,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 					const vec3 hit = rayOrigin + rayDir * t;
 					const float attenuate = LightAttenuation(t);
 					
+					vec3 Tincident = vec3(0.0f);
 					for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 					{
 						const $typeof(Lights) light = $Lights[lightIndex];
@@ -279,10 +281,13 @@ if (pt.x < sz.x && pt.y < sz.y)
 							m.normal.xyz,
 							true
 						);
-						Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
+						Tincident += (incident.xyz * attenuate * phi * PI).xyz;
 					}
 		
-					Nacc += m.albedo * m.emissive * attenuate * phi * PI;
+					Tincident += m.emissive * attenuate * phi * PI;
+					Tincident += Ambient;
+
+					Nacc += m.albedo * Tincident;
 				}
 				else
 					Nacc += $Sky.xyz;
@@ -321,16 +326,16 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{5BEE009D-B02A-1F4A-8750-96A71317E437}</id>
 			<comment/>
 			<position>
-				<first>-1938</first>
-				<second>-1846</second>
+				<first>-1802</first>
+				<second>-1850</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{3BA6EB62-E020-4741-ACF1-092F80E54484}</id>
 			<comment/>
 			<position>
-				<first>-2167</first>
-				<second>-1847</second>
+				<first>-2031</first>
+				<second>-1851</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -338,8 +343,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{D8635802-0711-0745-8205-9E9969F9D8C1}</id>
 			<comment/>
 			<position>
-				<first>-2349</first>
-				<second>-1849</second>
+				<first>-2213</first>
+				<second>-1853</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -347,8 +352,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{7DAF8C2E-13E4-9147-9791-042F945AC0F2}</id>
 			<comment/>
 			<position>
-				<first>-1890</first>
-				<second>-1593</second>
+				<first>-1754</first>
+				<second>-1597</second>
 			</position>
 			<name>Random</name>
 			<technique/>
@@ -384,8 +389,8 @@ $Output = BlueNoise(seed);
 			<id>{7046980C-A69C-E14A-A3AD-F047AEB093D3}</id>
 			<comment/>
 			<position>
-				<first>-2173</first>
-				<second>-1546</second>
+				<first>-1968</first>
+				<second>-1559</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -548,8 +553,8 @@ $TexCoord = vec4(
 			<id>{279609DA-272A-904D-A567-BD21284B8704}</id>
 			<comment/>
 			<position>
-				<first>-1880</first>
-				<second>-1284</second>
+				<first>-1744</first>
+				<second>-1288</second>
 			</position>
 			<name>L_Velocity</name>
 		</item>
@@ -601,8 +606,8 @@ $TexCoord = vec4(
 			<id>{0DF01388-1F5A-3746-B2D8-C9970E434CF4}</id>
 			<comment/>
 			<position>
-				<first>-1880</first>
-				<second>-1243</second>
+				<first>-1744</first>
+				<second>-1247</second>
 			</position>
 			<name>L_Depth</name>
 		</item>
@@ -728,8 +733,8 @@ $TexCoord = vec4(
 			<id>{5C197609-2152-3441-AB55-463CACCB137F}</id>
 			<comment/>
 			<position>
-				<first>-1880</first>
-				<second>-1202</second>
+				<first>-1744</first>
+				<second>-1206</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -746,8 +751,8 @@ $TexCoord = vec4(
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-1880</first>
-				<second>-1887</second>
+				<first>-1744</first>
+				<second>-1891</second>
 			</position>
 			<parameterDeclaration>{C651B846-F51A-CB49-BBAB-10C2A527DE97}</parameterDeclaration>
 		</item>
@@ -755,8 +760,8 @@ $TexCoord = vec4(
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2199</first>
-				<second>-1797</second>
+				<first>-2063</first>
+				<second>-1801</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -764,8 +769,8 @@ $TexCoord = vec4(
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2367</first>
-				<second>-1512</second>
+				<first>-2216</first>
+				<second>-1535</second>
 			</position>
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
 		</item>
@@ -773,8 +778,8 @@ $TexCoord = vec4(
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-1896</first>
-				<second>-1489</second>
+				<first>-1760</first>
+				<second>-1493</second>
 			</position>
 			<parameterDeclaration>{1527F0C9-DD5E-5C47-8A6B-5B7932CFD43D}</parameterDeclaration>
 		</item>
@@ -782,8 +787,8 @@ $TexCoord = vec4(
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-1912</first>
-				<second>-1448</second>
+				<first>-1776</first>
+				<second>-1452</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -791,8 +796,8 @@ $TexCoord = vec4(
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-1944</first>
-				<second>-1325</second>
+				<first>-1808</first>
+				<second>-1329</second>
 			</position>
 			<parameterDeclaration>{18C69B12-0FE8-5C46-ABC8-38E25A3BD13E}</parameterDeclaration>
 		</item>
@@ -836,8 +841,8 @@ $TexCoord = vec4(
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-1912</first>
-				<second>-1530</second>
+				<first>-1776</first>
+				<second>-1534</second>
 			</position>
 			<parameterDeclaration>{3C048EC4-ED6A-0847-B08D-95F74407200F}</parameterDeclaration>
 		</item>
@@ -845,8 +850,8 @@ $TexCoord = vec4(
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-1896</first>
-				<second>-1407</second>
+				<first>-1760</first>
+				<second>-1411</second>
 			</position>
 			<parameterDeclaration>{8B5D917E-016B-B847-82D9-873D43916888}</parameterDeclaration>
 		</item>
@@ -854,8 +859,8 @@ $TexCoord = vec4(
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-1928</first>
-				<second>-1366</second>
+				<first>-1792</first>
+				<second>-1370</second>
 			</position>
 			<parameterDeclaration>{1EA8D019-E2CB-F14E-806E-39E74AFAB00E}</parameterDeclaration>
 		</item>
@@ -872,8 +877,8 @@ $TexCoord = vec4(
 			<id>{23314B6D-2779-1646-937E-EFDD55320BB8}</id>
 			<comment/>
 			<position>
-				<first>-1880</first>
-				<second>-1161</second>
+				<first>-1744</first>
+				<second>-1165</second>
 			</position>
 			<name>L_Sky</name>
 		</item>
@@ -926,8 +931,8 @@ $TexCoord = vec4(
 			<id>{01E7EF38-CDCD-F641-A735-A563629A1B4E}</id>
 			<comment/>
 			<position>
-				<first>-1912</first>
-				<second>-1692</second>
+				<first>-1776</first>
+				<second>-1696</second>
 			</position>
 			<name>ReflectionDirection</name>
 		</item>
@@ -1637,12 +1642,12 @@ $TexCoord = vec4(
 			<title>Trace RT reflections</title>
 			<comment/>
 			<position>
-				<first>-2648</first>
-				<second>-2002</second>
+				<first>-2512</first>
+				<second>-2006</second>
 			</position>
 			<size>
-				<first>1744</first>
-				<second>943</second>
+				<first>1497</first>
+				<second>941</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">

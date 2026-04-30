@@ -61,8 +61,9 @@
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
-const int N = 4;
+const int N = 16;
 const float Far = 70.0f;
+const float TemporalFilter = 0.99f;
 
 const ivec3 pt = ivec3(gl_GlobalInvocationID.xyz);
 const vec3 cellPosition = CellToWorldSpace($ViewInverse, pt);
@@ -112,7 +113,7 @@ for (int i = 0; i < N; ++i)
 }
 Nacc /= float(N);
 
-Nacc = Nacc * 0.1f + Nacc0 * 0.9f;
+Nacc = Nacc * (1.0f - TemporalFilter) + Nacc0 * TemporalFilter;
 
 imageStore($Output, pt, vec4(Nacc, 0.0f));
 

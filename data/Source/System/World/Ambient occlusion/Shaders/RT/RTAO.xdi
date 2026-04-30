@@ -171,8 +171,8 @@
 				</item>
 			</outputPins>
 			<script><![CDATA[
-const int N = 128;
-const float far = 1.0f;
+const int N = 64;
+const float far = 2.0f;
 
 float occlusions = 0.0f;
 int rndState = int($Random);
@@ -184,8 +184,8 @@ for (int i = 0; i < N; ++i)
 		Hash(rndState++)
 	) * 0.5f + 0.5f;
 
-	const vec3 rayOrigin = $Origin.xyz+ $Direction.xyz * 0.01f;
-	const vec3 rayDir = normalize(Hemi($Direction.xyz, r));
+	const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.01f;
+	const vec3 rayDir = normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.1f);
 
 	if (HWRT_TraceShadow($AS, rayOrigin, rayDir, far))
 		occlusions += 1.0f;

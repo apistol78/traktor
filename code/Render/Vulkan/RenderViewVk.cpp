@@ -442,6 +442,10 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	}
 	m_frames.clear();
 
+	// More pending cleanups since frames own render targets.
+	m_context->performCleanup();
+	m_counter = -1;
+
 #if defined(T_USE_QUERY)
 	if (m_queryPool != 0)
 	{
@@ -466,10 +470,6 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 
 	// Delete cross queue synchronization.
 	vkDestroySemaphore(m_context->getLogicalDevice(), m_timelineSemaphore, nullptr);
-
-	// More pending cleanups since frames own render targets.
-	m_context->performCleanup();
-	m_counter = -1;
 
 	if (create(width, height, m_multiSample, m_multiSampleShading, m_vblanks, m_allowHDR))
 		return true;
