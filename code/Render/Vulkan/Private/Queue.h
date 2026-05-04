@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -49,7 +49,7 @@ private:
 	uint32_t m_queueIndex;
 	Semaphore m_lock;
 
-	Queue(Context* context, VkQueue queue, uint32_t queueIndex);
+	explicit Queue(Context* context, VkQueue queue, uint32_t queueIndex);
 };
 
 }

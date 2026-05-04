@@ -180,13 +180,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 	as->m_scratchAlignment = getScratchAlignment(context);
 	as->writeGeometry(commandBuffer, vertexBuffer->getBufferView(), vertexLayout, indexBuffer->getBufferView(), indexType, primitives);
 
-	commandBuffer->submit({}, {}, VK_NULL_HANDLE);
-
-	context->addDeferredCleanup(
-		[=](Context* cx) {
-		commandBuffer->wait();
-		},
-		Context::CleanupNone);
+	commandBuffer->submitAndWait();
 
 	return as;
 }

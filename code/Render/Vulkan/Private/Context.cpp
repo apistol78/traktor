@@ -89,7 +89,10 @@ bool Context::create()
 
 	// Create queues.
 	m_graphicsQueue = Queue::create(this, m_graphicsQueueIndex);
-	m_computeQueue = Queue::create(this, m_computeQueueIndex);
+	if (m_computeQueueIndex == m_graphicsQueueIndex)
+		m_computeQueue = m_graphicsQueue;
+	else
+		m_computeQueue = Queue::create(this, m_computeQueueIndex);
 
 	// Create pipeline cache.
 	VkPipelineCacheCreateInfo pcci = {};
@@ -273,6 +276,7 @@ void Context::performCleanup()
 		T_PROFILER_SCOPE(L"Context::performCleanup");
 
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_graphicsQueue->m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_computeQueue->m_lock);
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
 
 		bool gpuIdle = false;

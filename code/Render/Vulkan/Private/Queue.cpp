@@ -31,6 +31,7 @@ VkCommandPool getCommandPool(VkDevice logicalDevice, uint32_t queueIndex)
 			commandPools[i] = 0;
 		s_commandPools.set(commandPools);
 	}
+	T_FATAL_ASSERT(queueIndex < 32);
 	if (commandPools[queueIndex] == 0)
 	{
 		const VkCommandPoolCreateInfo cpci =
@@ -87,22 +88,16 @@ Ref< CommandBuffer > Queue::acquireCommandBuffer(const wchar_t* const tag)
 
 VkResult Queue::submit(const VkSubmitInfo& si, VkFence fence)
 {
-	VkResult result;
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		result = vkQueueSubmit(m_queue, 1, &si, fence);
-		T_ASSERT(result == VK_SUCCESS);
-	}
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	const VkResult result = vkQueueSubmit(m_queue, 1, &si, fence);
+	T_ASSERT(result == VK_SUCCESS);
 	return result;
 }
 
 VkResult Queue::present(const VkPresentInfoKHR& pi)
 {
-	VkResult result;
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		result = vkQueuePresentKHR(m_queue, &pi);
-	}
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	const VkResult result = vkQueuePresentKHR(m_queue, &pi);
 	return result;
 }
 
