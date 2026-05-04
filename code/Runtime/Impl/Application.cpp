@@ -139,6 +139,7 @@ bool Application::create(
 	// Simulation setup.
 	m_maxSimulationUpdates = defaultSettings->getProperty< int32_t >(L"Runtime.MaxSimulationUpdates", 8);
 	m_maxSimulationUpdates = max(m_maxSimulationUpdates, 1);
+	m_renderTimeInterpolation = defaultSettings->getProperty< bool >(L"Runtime.RenderTimeInterpolation", true);
 
 	m_stateManager = new StateManager();
 
@@ -712,7 +713,7 @@ bool Application::update()
 			m_updateInfo.m_simulationTime += dT * (updateCountNoClamp - updateCount);
 
 			// Calculate interval value; interval is only required if simulation runs slower than render framerate.
-			if (dT > dFT + 0.01)
+			if (m_renderTimeInterpolation && dT > dFT + 0.01)
 				m_updateInfo.m_interval = (float)((m_updateInfo.m_stateTime - m_updateInfo.m_simulationTime) / m_updateInfo.m_simulationDeltaTime);
 			else
 				m_updateInfo.m_interval = 1.0f;

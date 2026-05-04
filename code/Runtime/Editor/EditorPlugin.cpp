@@ -185,13 +185,14 @@ bool EditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::I
 		m_toolTweaks->add(createTweakMenuItem(L"Attach Script Debugger", true));
 		m_toolTweaks->add(createTweakMenuItem(L"Attach Script Profiler", false));
 		m_toolTweaks->add(createTweakMenuItem(L"Disable All DLC", false));
-		m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Updates", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Physics Update", false));
 		m_toolTweaks->add(createTweakMenuItem(L"Launch With 1/4 Window", false));
 		m_toolTweaks->add(createTweakMenuItem(L"Disable Baked Lighting", false));
 		m_toolTweaks->add(createTweakMenuItem(L"Validate Rendering", m_editor->getSettings()->getProperty< bool >(L"Editor.RenderValidation", false)));
 		m_toolTweaks->add(createTweakMenuItem(L"Debug Layer", true));
 		m_toolTweaks->add(createTweakMenuItem(L"Ray Tracing", m_editor->getSettings()->getProperty< bool >(L"Editor.RayTracing", false)));
 		m_toolTweaks->add(createTweakMenuItem(L"Disable HDR", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Disable Render Time Interpolation", false));
 		m_toolBar->addItem(m_toolTweaks);
 
 		m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Runtime.Language"), 85_ut, i18n::Text(L"RUNTIME_LANGUAGE"));
@@ -577,6 +578,8 @@ Ref< PropertyGroup > EditorPlugin::getTweakSettings() const
 		tweakSettings->setProperty< PropertyBoolean >(L"Render.RayTracing", true);
 	if (m_toolTweaks->get(14)->isChecked())
 		tweakSettings->setProperty< PropertyBoolean >(L"Render.AllowHDR", false);
+	if (m_toolTweaks->get(15)->isChecked())
+		tweakSettings->setProperty< PropertyBoolean >(L"Runtime.RenderTimeInterpolation", false);
 
 	const int32_t language = m_toolLanguage->getSelected();
 	if (language > 0)

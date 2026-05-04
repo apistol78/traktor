@@ -113,6 +113,7 @@ private:
 	Thread* m_threadRender = nullptr;
 	Timer m_timer;
 	int32_t m_maxSimulationUpdates = 1;
+	bool m_renderTimeInterpolation = true;
 	UpdateControl m_updateControl;
 	UpdateInfo m_updateInfo;
 	bool m_renderViewActive = true;
