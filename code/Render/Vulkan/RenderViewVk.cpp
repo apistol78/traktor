@@ -585,8 +585,8 @@ SystemWindow RenderViewVk::getSystemWindow()
 {
 #if defined(_WIN32)
 	return SystemWindow(*m_window);
-// #elif defined(__LINUX__) || defined(__RPI__)
-// 	return SystemWindow(m_window->getDisplay(), m_window->getWindow());
+#elif defined(__LINUX__) || defined(__RPI__)
+ 	return SystemWindow::fromX11(m_window->getDisplay(), m_window->getWindow());
 #elif defined(__MAC__)
 	return SystemWindow(m_window->getView());
 #else
