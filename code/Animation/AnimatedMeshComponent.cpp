@@ -142,9 +142,6 @@ void AnimatedMeshComponent::setState(const world::EntityState& state, const worl
 void AnimatedMeshComponent::setTransform(const Transform& transform)
 {
 	MeshComponent::setTransform(transform);
-
-	if (m_rtwInstance)
-		m_rtwInstance->setTransform(transform);
 }
 
 Aabb3 AnimatedMeshComponent::getBoundingBox() const
@@ -236,11 +233,18 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 			// Update skin.
 			std::swap(m_skinBuffer[0], m_skinBuffer[1]);
 			m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0]);
+
+			// Update RT geometry and RT instance transform.
 			if (m_rtwInstance)
 			{
 				m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure);
-				m_rtwInstance->setDirty();
+				m_rtwInstance->setTransform(worldTransform);
 			}
+		}
+		else if (isVisible && m_rtwInstance && m_lastWorldTransform[1] != worldTransform)
+		{
+			// Update RT instance transform only.
+			m_rtwInstance->setTransform(worldTransform);
 		}
 
 		m_skinModified = false;

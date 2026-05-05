@@ -245,26 +245,6 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 	m_gatheredView.irradianceGrid = nullptr;
 	m_gatheredView.rtWorldTopLevel = nullptr;
 
-	for (auto component : world->getComponents())
-	{
-		IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
-		if (entityRenderer)
-			m_gatheredView.renderables.push_back({ entityRenderer, component, EntityState::All });
-
-		// Filter out components used to setup frame's lighting etc.
-		if (auto irradianceGridComponent = dynamic_type_cast< const IrradianceGridComponent* >(component))
-			m_gatheredView.irradianceGrid = irradianceGridComponent->getIrradianceGrid();
-		else if (auto fogComponent = dynamic_type_cast< const FogComponent* >(component))
-			m_gatheredView.fog = fogComponent;
-		// If world raytracing is enabled we gather TLAS; if no TLAS
-		// paths should assume no RT is enabled.
-		else if (m_rayTracingEnabled)
-		{
-			if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
-				m_gatheredView.rtWorldTopLevel = rtWorldComponent->getTopLevel();
-		}
-	}
-
 	for (auto entity : world->getEntities())
 	{
 		const EntityState state = entity->getState();
@@ -288,6 +268,26 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 			}
 			else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(component))
 				m_gatheredView.probes.push_back(probeComponent);
+		}
+	}
+
+	for (auto component : world->getComponents())
+	{
+		IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
+		if (entityRenderer)
+			m_gatheredView.renderables.push_back({ entityRenderer, component, EntityState::All });
+
+		// Filter out components used to setup frame's lighting etc.
+		if (auto irradianceGridComponent = dynamic_type_cast< const IrradianceGridComponent* >(component))
+			m_gatheredView.irradianceGrid = irradianceGridComponent->getIrradianceGrid();
+		else if (auto fogComponent = dynamic_type_cast< const FogComponent* >(component))
+			m_gatheredView.fog = fogComponent;
+		// If world raytracing is enabled we gather TLAS; if no TLAS
+		// paths should assume no RT is enabled.
+		else if (m_rayTracingEnabled)
+		{
+			if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
+				m_gatheredView.rtWorldTopLevel = rtWorldComponent->getTopLevel();
 		}
 	}
 

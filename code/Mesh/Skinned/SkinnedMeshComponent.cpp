@@ -84,9 +84,6 @@ void SkinnedMeshComponent::setState(const world::EntityState& state, const world
 void SkinnedMeshComponent::setTransform(const Transform& transform)
 {
 	MeshComponent::setTransform(transform);
-
-	if (m_rtwInstance)
-		m_rtwInstance->setTransform(transform);
 }
 
 Aabb3 SkinnedMeshComponent::getBoundingBox() const
@@ -96,6 +93,9 @@ Aabb3 SkinnedMeshComponent::getBoundingBox() const
 
 void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
+	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+	const Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
+
 	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0 && worldRenderView.getIndex() == 0)
 	{
 		std::swap(m_skinBuffer[0], m_skinBuffer[1]);
@@ -103,15 +103,12 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 		if (m_rtwInstance)
 		{
 			m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure);
-			m_rtwInstance->setDirty();
+			m_rtwInstance->setTransform(worldTransform);
 		}
 	}
 
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
-
-	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
-	const Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
 
 	// Skip rendering velocities if mesh hasn't moved since last frame.
 	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)

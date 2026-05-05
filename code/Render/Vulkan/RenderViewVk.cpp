@@ -1299,6 +1299,26 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 			0,
 			nullptr);
 	}
+	else if (from == Stage::AccelerationStructureUpdate && to == Stage::Compute)
+	{
+		VkMemoryBarrier mb = {};
+		mb.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+		mb.pNext = nullptr;
+		mb.srcAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR;
+		mb.dstAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR;
+
+		vkCmdPipelineBarrier(
+			*frame.graphicsCommandBuffer,
+			VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
+			VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+			0,
+			1,
+			&mb,
+			0,
+			nullptr,
+			0,
+			nullptr);
+	}
 	else
 	{
 		// No memory access; only add an execution barrier.
