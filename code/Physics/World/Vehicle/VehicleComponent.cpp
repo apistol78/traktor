@@ -6,13 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Physics/World/Vehicle/VehicleComponent.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/Body.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/World/RigidBodyComponent.h"
-#include "Physics/World/Vehicle/VehicleComponent.h"
 #include "Physics/World/Vehicle/VehicleComponentData.h"
 #include "Physics/World/Vehicle/Wheel.h"
 #include "Physics/World/Vehicle/WheelData.h"
@@ -20,8 +21,8 @@
 
 namespace traktor::physics
 {
-	namespace
-	{
+namespace
+{
 
 const float c_maxSuspensionForce = 250.0f;
 const float c_maxDampingForce = 250.0f;
@@ -33,7 +34,14 @@ const float c_suspensionTraceRadius = 0.25f;
 
 std::atomic< uint32_t > s_clusterId(1);
 
-	}
+void applyFrictionForce(Body* body, const Vector4& at, const Vector4& force)
+{
+	const Vector4 velocity = body->getVelocityAt(at, false);
+
+	body->addForceAt(at, force, false);
+}
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.VehicleComponent", VehicleComponent, world::IEntityComponent)
 
@@ -42,21 +50,20 @@ VehicleComponent::VehicleComponent(
 	const VehicleComponentData* data,
 	const RefArray< Wheel >& wheels,
 	uint32_t traceInclude,
-	uint32_t traceIgnore
-)
-:	m_owner(nullptr)
-,	m_physicsManager(physicsManager)
-,	m_data(data)
-,	m_wheels(wheels)
-,	m_traceInclude(traceInclude)
-,	m_traceIgnore(traceIgnore)
-,	m_maxVelocity(data->getMaxVelocity())
-,	m_steerAngle(0.0f)
-,	m_steerAngleTarget(0.0f)
-,	m_engineThrottle(0.0f)
-,	m_engineTorque(0.0f)
-,	m_breaking(0.0f)
-,	m_airBorn(true)
+	uint32_t traceIgnore)
+	: m_owner(nullptr)
+	, m_physicsManager(physicsManager)
+	, m_data(data)
+	, m_wheels(wheels)
+	, m_traceInclude(traceInclude)
+	, m_traceIgnore(traceIgnore)
+	, m_maxVelocity(data->getMaxVelocity())
+	, m_steerAngle(0.0f)
+	, m_steerAngleTarget(0.0f)
+	, m_engineThrottle(0.0f)
+	, m_engineTorque(0.0f)
+	, m_breaking(0.0f)
+	, m_airBorn(true)
 {
 }
 
@@ -209,14 +216,13 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 		float contactFudge = 0.0f;
 
 		if (m_physicsManager->querySweep(
-			anchorW,
-			axisW,
-			data->getSuspensionLength().max + data->getRadius() + m_data->getFudgeDistance(),
-			0.2f,
-			physics::QueryFilter(m_traceInclude, m_traceIgnore, body->getClusterId()),
-			//false,
-			result
-		))
+				anchorW,
+				axisW,
+				data->getSuspensionLength().max + data->getRadius() + m_data->getFudgeDistance(),
+				0.2f,
+				physics::QueryFilter(m_traceInclude, m_traceIgnore, body->getClusterId()),
+				// false,
+				result))
 		{
 			if (result.distance <= data->getSuspensionLength().max + data->getRadius())
 				contactFudge = 1.0f;
@@ -251,15 +257,13 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 				body->addForceAt(
 					anchorW,
 					normal * Scalar(springForce + dampingForce),
-					false
-				);
+					false);
 
 				// Apply sway-bar force on the opposite side.
 				body->addForceAt(
 					bodyT * (data->getAnchor() * Vector4(-1.0f, 1.0f, 1.0f, 1.0f)),
 					normal * -Scalar((springForce + dampingForce) * m_data->getSwayBarForce()),
-					false
-				);
+					false);
 
 				wheel->suspensionForce = springForce + dampingForce;
 			}
@@ -310,7 +314,7 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 			wheel->contactNormal = Vector4::zero();
 			wheel->contactVelocity = Vector4::zero();
 		}
-		
+
 		// Object space wheel center.
 		wheel->center = (data->getAnchor() - data->getAxis() * Scalar(wheel->suspensionLength)).xyz1();
 	}
@@ -323,18 +327,14 @@ void VehicleComponent::updateGrip(Body* body, float /*dT*/)
 		totalSuspensionForce += max(wheel->suspensionForce, 0.0f);
 
 	if (totalSuspensionForce > 0.0f)
-	{
 		for (auto wheel : m_wheels)
 			wheel->grip = max(wheel->suspensionForce, 0.0f) / totalSuspensionForce;
-	}
 	else
-	{
 		for (auto wheel : m_wheels)
 			wheel->grip = 0.0f;
-	}
 }
 
-void VehicleComponent::updateFriction(Body* body, float /*dT*/)
+void VehicleComponent::updateFriction(Body* body, float dT)
 {
 	const Transform bodyT = body->getTransform();
 	const Transform bodyTinv = bodyT.inverse();
@@ -343,6 +343,13 @@ void VehicleComponent::updateFriction(Body* body, float /*dT*/)
 	const Scalar totalMass = 1.0_simd / Scalar(body->getInverseMass());
 	const Scalar massPerWheel = totalMass / Scalar((float)m_wheels.size());
 	const Scalar breakingForce(m_data->getBreakingForce());
+
+	int32_t contactWheels = 0;
+	for (auto wheel : m_wheels)
+		if (wheel->contact && wheel->grip > 0.0f)
+			++contactWheels;
+
+	const Scalar wheelEffectiveMass = (totalMass > FUZZY_EPSILON && contactWheels > 0) ? totalMass / Scalar((float)contactWheels) : 0.0_simd;
 
 	// Method factor lerps between slip angle based friction and purely perpendicular friction.
 	const Scalar c_methodLimit = 2.0_simd;
@@ -399,19 +406,23 @@ void VehicleComponent::updateFriction(Body* body, float /*dT*/)
 				wheel->sliding = true;
 		}
 
-		// Apply friction force.
+		// Apply lateral force to vehicle.
+		Scalar applyForce = 0.0_simd;
+		applyForce += Scalar(force * sign(-sideVelocity)) * grip * (1.0_simd - method);
+		applyForce += -sideVelocity * Scalar(peakSlipFriction) * grip * method;
+
+		// Clamp magnitude so a single substep can't reverse SideVelocity (no overshoot).
+		// applyForce already opposes SideVelocity, so we just bound its magnitude.
+		if (wheelEffectiveMass > 0.0f && dT > FUZZY_EPSILON)
+		{
+			const Scalar maxStable = wheelEffectiveMass * abs(sideVelocity) / Scalar(dT);
+			applyForce = sign(applyForce) * min(abs(applyForce), maxStable);
+		}
+
 		body->addForceAt(
 			bodyT * wheel->center,
-			directionPerpW * Scalar(force * sign(-sideVelocity)) * grip * (1.0_simd - method),
-			false
-		);
-	
-		// Apply perpendicular friction force if going slow.
-		body->addForceAt(
-			bodyT * wheel->center,
-			directionPerpW * -sideVelocity * Scalar(peakSlipFriction) * grip * method,
-			false
-		);
+			directionPerpW * applyForce,
+			false);
 
 		// Accumulate rolling friction, applied at center of mass for simplicity.
 		rollingFriction += forwardVelocity * Scalar(data->getRollingFriction()) * grip;
@@ -422,21 +433,17 @@ void VehicleComponent::updateFriction(Body* body, float /*dT*/)
 			const Scalar f = Scalar(m_breaking * data->getBreakFactor());
 			const Scalar mag = sign(forwardVelocity) * breakingForce * f * grip;
 			body->addForceAt(
-				bodyT * wheel->center, //wheel->contactPosition,
+				bodyT * wheel->center, // wheel->contactPosition,
 				directionW * -mag,
-				false
-			);
+				false);
 		}
 	}
 
 	if (abs(rollingFriction) > FUZZY_EPSILON)
-	{
 		body->addForceAt(
 			Vector4::origo(),
 			Vector4(0.0f, 0.0f, -rollingFriction, 0.0f),
-			true
-		);
-	}
+			true);
 }
 
 void VehicleComponent::updateEngine(Body* body, float /*dT*/)
@@ -467,8 +474,7 @@ void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 		body->addForceAt(
 			wheel->center,
 			wheel->direction * engineForce * grip,
-			true
-		);
+			true);
 	}
 
 	// Save engine force so user can query momentus force.
