@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,7 @@
  */
 #include "Script/Lua/ScriptDebuggerLua.h"
 
-#include "Core/Class/Boxed.h"
+#include "Core/Class/IObjectInspector.h"
 #include "Core/Guid.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/String.h"
@@ -38,6 +38,20 @@ namespace
 {
 
 const int32_t c_tableKey_instance = -2;
+
+bool describeObject(const ITypedObject* object, std::wstring& outDescription)
+{
+	for (const TypeInfo* objectInspectorType : type_of< IObjectInspector >().findAllOf(false))
+	{
+		Ref< const IObjectInspector > objectInspector = mandatory_non_null_type_cast< const IObjectInspector* >(objectInspectorType->createInstance());
+		if (objectInspector->supportType(type_of(object)))
+		{
+			outDescription = objectInspector->toString(object);
+			return true;
+		}
+	}
+	return false;
+}
 
 }
 
@@ -110,6 +124,7 @@ bool ScriptDebuggerLua::captureStackFrame(uint32_t depth, Ref< StackFrame >& out
 bool ScriptDebuggerLua::captureLocals(uint32_t depth, RefArray< Variable >& outLocals)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	std::wstring objectDescription;
 
 	ScriptContextLua* currentContext = m_scriptManager->m_lockContext;
 	if (!currentContext)
@@ -166,9 +181,8 @@ bool ScriptDebuggerLua::captureLocals(uint32_t depth, RefArray< Variable >& outL
 
 					const uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 
-					Boxed* b = dynamic_type_cast< Boxed* >(object);
-					if (b)
-						variable->setValue(new ValueObject(objectRef, b->toString()));
+					if (describeObject(object, objectDescription))
+						variable->setValue(new ValueObject(objectRef, objectDescription));
 					else
 						variable->setValue(new ValueObject(objectRef));
 				}
@@ -235,9 +249,8 @@ bool ScriptDebuggerLua::captureLocals(uint32_t depth, RefArray< Variable >& outL
 
 						const uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 
-						Boxed* b = dynamic_type_cast< Boxed* >(object);
-						if (b)
-							variable->setValue(new ValueObject(objectRef, b->toString()));
+						if (describeObject(object, objectDescription))
+							variable->setValue(new ValueObject(objectRef, objectDescription));
 						else
 							variable->setValue(new ValueObject(objectRef));
 					}
