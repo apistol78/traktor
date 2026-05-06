@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,14 +33,15 @@ CommandBuffer::~CommandBuffer()
 
 bool CommandBuffer::reset()
 {
-	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
-	T_ASSERT(!m_submitted);
+	T_FATAL_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
+	T_FATAL_ASSERT(!m_submitted);
 
 	vkResetCommandBuffer(m_commandBuffer, 0);
 
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+	const VkCommandBufferBeginInfo beginInfo = {
+		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
+	};
 	if (vkBeginCommandBuffer(m_commandBuffer, &beginInfo) != VK_SUCCESS)
 		return false;
 
@@ -50,8 +51,8 @@ bool CommandBuffer::reset()
 
 bool CommandBuffer::submit(const StaticVector< VkSemaphore, 2 >& waitSemaphores, const StaticVector< VkPipelineStageFlags, 2 >& waitStageFlags, VkSemaphore signalSemaphore)
 {
-	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
-	T_ASSERT(!m_submitted);
+	T_FATAL_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
+	T_FATAL_ASSERT(!m_submitted);
 	VkResult result;
 
 	vkEndCommandBuffer(m_commandBuffer);
@@ -88,8 +89,8 @@ bool CommandBuffer::submit(const StaticVector< VkSemaphore, 2 >& waitSemaphores,
 
 bool CommandBuffer::submitSignal(VkSemaphore semaphore, uint64_t semaphoreValue)
 {
-	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
-	T_ASSERT(!m_submitted);
+	T_FATAL_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
+	T_FATAL_ASSERT(!m_submitted);
 	VkResult result;
 
 	vkEndCommandBuffer(m_commandBuffer);
@@ -121,8 +122,8 @@ bool CommandBuffer::submitSignal(VkSemaphore semaphore, uint64_t semaphoreValue)
 
 bool CommandBuffer::submitWait(VkSemaphore semaphore, uint64_t semaphoreValue, VkPipelineStageFlags stages)
 {
-	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
-	T_ASSERT(!m_submitted);
+	T_FATAL_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
+	T_FATAL_ASSERT(!m_submitted);
 	VkResult result;
 
 	vkEndCommandBuffer(m_commandBuffer);
@@ -191,10 +192,11 @@ CommandBuffer::CommandBuffer(Context* context, Queue* queue, VkCommandPool comma
 	, m_commandPool(commandPool)
 	, m_commandBuffer(commandBuffer)
 {
-	VkFenceCreateInfo fci = {};
-	fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	fci.flags = 0;
-	vkCreateFence(m_context->getLogicalDevice(), &fci, nullptr, &m_inFlight);
+	const VkFenceCreateInfo fenceCreateInfo = {
+		.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+		.flags = 0
+	};
+	vkCreateFence(m_context->getLogicalDevice(), &fenceCreateInfo, nullptr, &m_inFlight);
 	vkResetFences(m_context->getLogicalDevice(), 1, &m_inFlight);
 
 	m_context->setObjectDebugName(T_FILE_LINE_W, (uint64_t)m_inFlight, VK_OBJECT_TYPE_FENCE);

@@ -244,13 +244,9 @@ void Context::decrementViews()
 void Context::addDeferredCleanup(const cleanup_fn_t& fn, uint32_t cleanupFlags)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
-
-	// In case there are no render views which can perform cleanup
-	// after each frame, we do this immediately.
-	if (m_views > 0)
-		m_cleanupFns.push_back({ fn, cleanupFlags });
-	else
-		fn(this);
+	m_cleanupFns.push_back({ fn, cleanupFlags });
+	if (m_views <= 0)
+		performCleanup();
 }
 
 void Context::addCleanupListener(ICleanupListener* cleanupListener)
@@ -309,8 +305,10 @@ void Context::performCleanup()
 
 void Context::addDeferredUpload(const upload_fn_t& fn)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_updateLock);
 	m_uploadFns.push_back(fn);
+	if (m_views <= 0)
+		performUploads();
 }
 
 void Context::performUploads()
@@ -319,11 +317,11 @@ void Context::performUploads()
 		return;
 
 	{
-		T_PROFILER_SCOPE(L"Context::performCleanup");
+		T_PROFILER_SCOPE(L"Context::performUploads");
 
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_graphicsQueue->m_lock);
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_computeQueue->m_lock);
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_updateLock);
 
 		auto commandBuffer = m_graphicsQueue->acquireCommandBuffer(L"Context::performUploads");
 		if (!commandBuffer)

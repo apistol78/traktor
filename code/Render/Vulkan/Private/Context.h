@@ -171,6 +171,7 @@ private:
 	Ref< Queue > m_computeQueue;
 	Ref< UniformBufferPool > m_uniformBufferPools[3];
 	Semaphore m_cleanupLock;
+	Semaphore m_updateLock;
 	Semaphore m_resourceIndexLock;
 	AlignedVector< DeferredCleanup > m_cleanupFns;
 	AlignedVector< ICleanupListener* > m_cleanupListeners;
