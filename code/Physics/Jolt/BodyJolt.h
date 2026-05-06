@@ -25,12 +25,15 @@ namespace JPH
 {
 
 class Body;
+class Constraint;
 class PhysicsSystem;
 
 }
 
 namespace traktor::physics
 {
+
+class Mesh;
 
 /*!
  * \ingroup Physics
@@ -48,7 +51,9 @@ public:
 		float inverseMass,
 		const Vector4& centerOfGravity,
 		uint32_t collisionGroup,
-		uint32_t collisionMask);
+		uint32_t collisionMask,
+		int32_t material,
+		const resource::Proxy< Mesh >& mesh);
 
 	virtual void destroy() override final;
 
@@ -106,11 +111,21 @@ public:
 
 	virtual void integrate(float deltaTime) override final;
 
+	void addConstraint(JPH::Constraint* constraint);
+
+	void removeConstraint(JPH::Constraint* constraint);
+
+	void getFrictionAndRestitution(int32_t triangleIndex, float& outFriction, float& outRestitution) const;
+
 	JPH::Body* getJBody() const { return m_body; }
 
 	uint32_t getCollisionGroup() const { return m_collisionGroup; }
 
 	uint32_t getCollisionMask() const { return m_collisionMask; }
+
+	int32_t getMaterial() const { return m_material; }
+
+	const AlignedVector< JPH::Constraint* >& getConstraints() const { return m_constraints; }
 
 private:
 	IWorldCallback* m_callback;
@@ -120,6 +135,10 @@ private:
 	Vector4 m_centerOfGravity;
 	uint32_t m_collisionGroup;
 	uint32_t m_collisionMask;
+	int32_t m_material;
+	resource::Proxy< Mesh > m_mesh;
+	AlignedVector< JPH::Constraint* > m_constraints;
+	bool m_enabled = false;
 };
 
 }

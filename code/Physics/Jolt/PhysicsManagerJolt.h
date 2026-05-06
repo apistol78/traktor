@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/Jolt/Types.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,10 +26,12 @@ namespace JPH
 
 class BroadPhaseLayerInterface;
 class ContactListener;
+class GroupFilter;
 class JobSystemThreadPool;
 class ObjectLayerPairFilter;
 class ObjectVsBroadPhaseLayerFilter;
 class PhysicsSystem;
+class ShapeSettings;
 class TempAllocatorImpl;
 
 }
@@ -154,14 +157,27 @@ private:
 	AutoPtr< JPH::ObjectLayerPairFilter > m_objectVsObjectLayerFilter;
 	AutoPtr< JPH::ContactListener > m_contactListener;
 	mutable AutoPtr< JPH::PhysicsSystem > m_physicsSystem;
+	JPH::GroupFilter* m_groupFilter = nullptr;
 	RefArray< BodyJolt > m_bodies;
+	RefArray< Joint > m_joints;
 	float m_timeScale = 1.0f;
+	int32_t m_collisionSteps = 1;
+	mutable uint32_t m_queryCount = 0;
+	mutable uint32_t m_queryCountLast = 0;
 
 	Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const Mesh* mesh, uint32_t collisionGroup, uint32_t collisionMask, const wchar_t* const tag);
+
+	Ref< Body > createBodyFromShape(JPH::ShapeSettings& shapeSettings, const ShapeDesc* shapeDesc, const BodyDesc* desc, float inverseMass, const Vector4& centerOfGravity, uint32_t collisionGroup, uint32_t collisionMask, const resource::Proxy< Mesh >& mesh, const wchar_t* const tag);
 
 	// IWorldCallback
 
 	virtual void destroyBody(BodyJolt* body) override final;
+
+	virtual void destroyConstraint(Joint* joint, JPH::Constraint* constraint) override final;
+
+	virtual void insertConstraint(JPH::Constraint* constraint) override final;
+
+	virtual void removeConstraint(JPH::Constraint* constraint) override final;
 };
 
 }
