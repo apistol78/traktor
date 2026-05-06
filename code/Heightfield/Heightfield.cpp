@@ -49,7 +49,6 @@ void Heightfield::setGridHeight(int32_t gridX, int32_t gridZ, float unitY)
 	if (gridZ < 0 || gridZ >= (int32_t)m_size)
 		return;
 	m_heights[gridX + gridZ * m_size] = height_t(clamp(unitY, 0.0f, 1.0f) * 65535.0f);
-	updateCellBounds(gridX, gridZ);
 }
 
 void Heightfield::setGridCut(int32_t gridX, int32_t gridZ, bool cut)
@@ -412,6 +411,9 @@ void Heightfield::updateCellBounds()
 
 void Heightfield::updateCellBounds(int32_t gridX, int32_t gridZ)
 {
+	if (gridX < 0 || gridZ < 0 || gridX >= m_size || gridZ >= m_size)
+		return;
+
 	const int32_t icx = gridToCell(gridX);
 	const int32_t icz = gridToCell(gridZ);
 
@@ -441,6 +443,18 @@ void Heightfield::updateCellBounds(int32_t gridX, int32_t gridZ)
 	Aabb3& bb = m_cellBounds[icx + icz * m_cellBoundsPitch];
 	bb.mn = Vector4(cx1w, cy1w, cz1w, 1.0f);
 	bb.mx = Vector4(cx2w, cy2w, cz2w, 1.0f);
+}
+
+void Heightfield::updateCellBounds(int32_t gridX0, int32_t gridY0, int32_t gridX1, int32_t gridY1)
+{
+	gridX0 = gridToCell(gridX0) * c_cellSize;
+	gridY0 = gridToCell(gridY0) * c_cellSize;
+	gridX1 = gridToCell(gridX1) * c_cellSize;
+	gridY1 = gridToCell(gridY1) * c_cellSize;
+
+	for (int32_t y = gridY0; y <= gridY1; y += c_cellSize)
+		for (int32_t x = gridX0; x <= gridX1; x += c_cellSize)
+			updateCellBounds(x, y);
 }
 
 }

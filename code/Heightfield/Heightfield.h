@@ -44,6 +44,8 @@ public:
 
 	float getGridHeightNearest(int32_t gridX, int32_t gridZ) const;
 
+	float getGridHeightNearestUnsafe(int32_t gridX, int32_t gridZ) const { return m_heights[gridX + gridZ * m_size] / 65535.0f; }
+
 	float getGridHeightBilinear(float gridX, float gridZ) const;
 
 	float getWorldHeight(float worldX, float worldZ) const;
@@ -94,7 +96,9 @@ public:
 
 	void updateCellBounds();
 
-	void updateCellBounds(int32_t cellX, int32_t cellY);
+	void updateCellBounds(int32_t gridX, int32_t gridZ);
+
+	void updateCellBounds(int32_t gridX0, int32_t gridY0, int32_t gridX1, int32_t gridY1);
 
 private:
 	int32_t m_size;

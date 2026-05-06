@@ -242,6 +242,7 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 				m_heightfield->setGridCut(x, z, true);
 			}
 		}
+		m_heightfield->updateCellBounds();
 		updatePreviewImage();
 		return true;
 	}
@@ -301,6 +302,7 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 		}
 
 		m_heightfield = resized;
+		m_heightfield->updateCellBounds();
 
 		m_editSize->setText(toString(m_heightfield->getSize()));
 		updatePreviewImage();
@@ -367,6 +369,8 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 		}
 
 		m_heightfield = cropped;
+		m_heightfield->updateCellBounds();
+
 		m_editSize->setText(toString(m_heightfield->getSize()));
 
 		updatePreviewImage();
@@ -398,6 +402,7 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 		}
 
 		m_heightfield = cropped;
+		m_heightfield->updateCellBounds();
 
 		updatePreviewImage();
 		return true;
