@@ -313,6 +313,7 @@ void RenderViewVk::close()
 
 	// Ensure any pending cleanups are performed before closing render view.
 	m_context->savePipelineCache();
+	m_context->performUploads();
 	m_context->performCleanup();
 	m_lost = true;
 
@@ -422,6 +423,7 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	vkDeviceWaitIdle(m_context->getLogicalDevice());
 
 	// Ensure any pending cleanups are performed before closing render view.
+	m_context->performUploads();
 	m_context->performCleanup();
 	m_lost = true;
 
@@ -731,6 +733,9 @@ void RenderViewVk::endFrame()
 	frame.boundPipeline = 0;
 	frame.boundIndexBuffer = BufferViewVk();
 	frame.boundVertexBuffer = BufferViewVk();
+
+	// Submit any upload command buffers.
+	m_context->performUploads();
 
 	// Prepare primary color for presentation.
 	frame.primaryTarget->getColorTargetVk(0)->prepareForPresentation(frame.graphicsCommandBuffer);

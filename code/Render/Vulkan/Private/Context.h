@@ -20,6 +20,7 @@
 namespace traktor::render
 {
 
+class CommandBuffer;
 class ProgramVk;
 class RenderTargetSetVk;
 class Queue;
@@ -48,6 +49,7 @@ public:
 	constexpr static uint32_t CleanupFreeDescriptorSets = 2;
 
 	typedef std::function< void(Context*) > cleanup_fn_t;
+	typedef std::function< void(Context*, CommandBuffer*) > upload_fn_t;
 
 	struct ICleanupListener
 	{
@@ -84,6 +86,10 @@ public:
 	void removeCleanupListener(ICleanupListener* cleanupListener);
 
 	void performCleanup();
+
+	void addDeferredUpload(const upload_fn_t& fn);
+
+	void performUploads();
 
 	void recycle();
 
@@ -168,6 +174,7 @@ private:
 	Semaphore m_resourceIndexLock;
 	AlignedVector< DeferredCleanup > m_cleanupFns;
 	AlignedVector< ICleanupListener* > m_cleanupListeners;
+	AlignedVector< upload_fn_t > m_uploadFns;
 	VkDescriptorSetLayout m_bindlessTexturesDescriptorLayout = 0;
 	VkDescriptorSet m_bindlessTexturesDescriptorSet = 0;
 	VkDescriptorSetLayout m_bindlessImagesDescriptorLayout = 0;

@@ -307,6 +307,38 @@ void Context::performCleanup()
 	}
 }
 
+void Context::addDeferredUpload(const upload_fn_t& fn)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
+	m_uploadFns.push_back(fn);
+}
+
+void Context::performUploads()
+{
+	if (m_uploadFns.empty())
+		return;
+
+	{
+		T_PROFILER_SCOPE(L"Context::performCleanup");
+
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_graphicsQueue->m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_computeQueue->m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
+
+		auto commandBuffer = m_graphicsQueue->acquireCommandBuffer(L"Context::performUploads");
+		if (!commandBuffer)
+			return;
+
+		for (const upload_fn_t& fn : m_uploadFns)
+			fn(this, commandBuffer);
+
+		commandBuffer->submitAndWait();
+		commandBuffer = nullptr;
+
+		m_uploadFns.resize(0);
+	}
+}
+
 void Context::recycle()
 {
 	for (int32_t i = 0; i < sizeof_array(m_uniformBufferPools); ++i)
