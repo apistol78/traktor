@@ -200,6 +200,16 @@ public:
 	 */
 	bool getAssociatedExecutable(const std::wstring& extension, std::wstring& outPath) const;
 
+#if defined(_WIN32)
+	/*! Wait until any file has been changed in a directory.
+	 * 
+	 * \param path Path to directory.
+	 * \param timeout Timeout in milliseconds.
+	 * \return True if any change has been detected.
+	 */
+	bool waitUntilAnyFileChange(const Path& path, int32_t timeout = -1) const;
+#endif
+
 protected:
 	OS();
 

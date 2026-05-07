@@ -628,6 +628,20 @@ bool OS::getAssociatedExecutable(const std::wstring& extension, std::wstring& ou
 	return true;
 }
 
+bool OS::waitUntilAnyFileChange(const Path& path, int32_t timeout) const
+{
+	const std::string osp = wstombs(FileSystem::getInstance().getAbsolutePath(path).getPathNameOS());
+
+	HANDLE hndl = FindFirstChangeNotificationA(osp.c_str(), TRUE, FILE_NOTIFY_CHANGE_LAST_WRITE);
+	if (hndl == INVALID_HANDLE_VALUE)
+		return false;
+
+	const bool change = (bool)(WaitForSingleObject(hndl, timeout) == WAIT_OBJECT_0);
+	FindCloseChangeNotification(hndl);
+
+	return change;
+}
+
 OS::OS()
 {
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);

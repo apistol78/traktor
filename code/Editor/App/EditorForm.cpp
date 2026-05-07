@@ -3152,6 +3152,15 @@ void EditorForm::threadAssetMonitor()
 
 			const std::wstring assetPath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
+#if defined(_WIN32)
+			// Wait for any asset file change.
+			if (!OS::getInstance().waitUntilAnyFileChange(assetPath, 1000))
+			{
+				m_lockBuild.release();
+				continue;
+			}
+#endif
+
 			// Find all assets which have archive flag set.
 			modifiedFiles.resize(0);
 			modifiedAssets.resize(0);
@@ -3201,8 +3210,10 @@ void EditorForm::threadAssetMonitor()
 					editorPluginSite->handleCommand(ui::Command(L"Editor.AutoBuild"), false);
 			}
 		}
-
-		m_threadAssetMonitor->sleep(1000);
+#if defined(_WIN32)
+		else
+#endif
+			m_threadAssetMonitor->sleep(1000);
 	}
 }
 
