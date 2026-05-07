@@ -52,7 +52,12 @@ TrackAllocator::~TrackAllocator()
 			OutputDebugString(buf);
 			for (size_t j = 0; j < sizeof_array(i->second.at); ++j)
 			{
-				wsprintf(buf, L"   %d: 0x%p\n", j, i->second.at[j]);
+				std::wstring source;
+				int32_t line;
+				if (getSourceFromAddress(i->second.at[j], source, line))
+					wsprintf(buf, L"   %d: 0x%p %s (%d)\n", j, i->second.at[j], source.c_str(), line);
+				else
+					wsprintf(buf, L"   %d: 0x%p\n", j, i->second.at[j]);
 				OutputDebugString(buf);
 			}
 			frequency[i->second]++;

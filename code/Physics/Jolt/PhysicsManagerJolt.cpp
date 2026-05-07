@@ -51,10 +51,11 @@
 #include <unordered_map>
 
 // Keep Jolt includes here, Jolt.h must be first.
-#include <Jolt/Jolt.h>
 #include <Jolt/Core/Factory.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
 #include <Jolt/Core/TempAllocator.h>
+#include <Jolt/Jolt.h>
+#include <Jolt/Physics/Body/Body.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Collision/CastResult.h>
@@ -77,7 +78,6 @@
 #include <Jolt/Physics/Constraints/PointConstraint.h>
 #include <Jolt/Physics/Constraints/SixDOFConstraint.h>
 #include <Jolt/Physics/Constraints/SwingTwistConstraint.h>
-#include <Jolt/Physics/Body/Body.h>
 #include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/RegisterTypes.h>
@@ -284,20 +284,16 @@ public:
 	void onBodyDestroyed(BodyJolt* body)
 	{
 		std::lock_guard< std::mutex > lock(m_mutex);
-		for (auto it = m_pairs.begin(); it != m_pairs.end(); )
-		{
+		for (auto it = m_pairs.begin(); it != m_pairs.end();)
 			if (it->second.body1 == body || it->second.body2 == body)
 				it = m_pairs.erase(it);
 			else
 				++it;
-		}
-		for (auto it = m_pending.begin(); it != m_pending.end(); )
-		{
+		for (auto it = m_pending.begin(); it != m_pending.end();)
 			if (it->body1 == body || it->body2 == body)
 				it = m_pending.erase(it);
 			else
 				++it;
-		}
 	}
 
 private:
@@ -407,7 +403,11 @@ class RayCollector : public JPH::CastRayCollector
 {
 public:
 	RayCollector(const PhysicsManagerJolt* outer, const JPH::RRayCast& ray, const QueryFilter& queryFilter, uint32_t queryTypes, QueryResult& outResult)
-		: m_outer(outer), m_ray(ray), m_queryFilter(queryFilter), m_queryTypes(queryTypes), m_outResult(outResult)
+		: m_outer(outer)
+		, m_ray(ray)
+		, m_queryFilter(queryFilter)
+		, m_queryTypes(queryTypes)
+		, m_outResult(outResult)
 	{
 	}
 
@@ -453,7 +453,10 @@ class SweepCollectorBase : public JPH::CastShapeCollector
 {
 public:
 	SweepCollectorBase(const PhysicsManagerJolt* outer, const JPH::RShapeCast& shapeCast, const QueryFilter& queryFilter, const BodyJolt* ignoreBody)
-		: m_outer(outer), m_shapeCast(shapeCast), m_queryFilter(queryFilter), m_ignoreBody(ignoreBody)
+		: m_outer(outer)
+		, m_shapeCast(shapeCast)
+		, m_queryFilter(queryFilter)
+		, m_ignoreBody(ignoreBody)
 	{
 	}
 
@@ -489,7 +492,8 @@ class SweepCollector final : public SweepCollectorBase
 {
 public:
 	SweepCollector(const PhysicsManagerJolt* outer, const JPH::RShapeCast& shapeCast, const QueryFilter& queryFilter, QueryResult& outResult, const BodyJolt* ignoreBody = nullptr)
-		: SweepCollectorBase(outer, shapeCast, queryFilter, ignoreBody), m_outResult(outResult)
+		: SweepCollectorBase(outer, shapeCast, queryFilter, ignoreBody)
+		, m_outResult(outResult)
 	{
 	}
 
@@ -513,7 +517,8 @@ class SweepMultiCollector final : public SweepCollectorBase
 {
 public:
 	SweepMultiCollector(const PhysicsManagerJolt* outer, const JPH::RShapeCast& shapeCast, const QueryFilter& queryFilter, AlignedVector< QueryResult >& outResult)
-		: SweepCollectorBase(outer, shapeCast, queryFilter, nullptr), m_outResult(outResult)
+		: SweepCollectorBase(outer, shapeCast, queryFilter, nullptr)
+		, m_outResult(outResult)
 	{
 	}
 
@@ -535,7 +540,9 @@ class OverlapCollector : public JPH::CollideShapeCollector
 {
 public:
 	OverlapCollector(const PhysicsManagerJolt* outer, const BodyJolt* ignoreBody, RefArray< Body >& outResult)
-		: m_outer(outer), m_ignoreBody(ignoreBody), m_outResult(outResult)
+		: m_outer(outer)
+		, m_ignoreBody(ignoreBody)
+		, m_outResult(outResult)
 	{
 	}
 
@@ -560,7 +567,10 @@ class SphereOverlapCollector : public JPH::CollideShapeBodyCollector
 {
 public:
 	SphereOverlapCollector(const PhysicsManagerJolt* outer, const QueryFilter& queryFilter, uint32_t queryTypes, RefArray< Body >& outResult)
-		: m_outer(outer), m_queryFilter(queryFilter), m_queryTypes(queryTypes), m_outResult(outResult)
+		: m_outer(outer)
+		, m_queryFilter(queryFilter)
+		, m_queryTypes(queryTypes)
+		, m_outResult(outResult)
 	{
 	}
 
@@ -1399,10 +1409,8 @@ void PhysicsManagerJolt::destroyBody(BodyJolt* body)
 	// Destroy joints which reference the body being destroyed.
 	RefArray< Joint > joints = m_joints;
 	for (auto joint : joints)
-	{
 		if (joint->getBody1() == body || joint->getBody2() == body)
 			joint->destroy();
-	}
 
 	const bool removed = m_bodies.remove(body);
 	T_FATAL_ASSERT(removed);

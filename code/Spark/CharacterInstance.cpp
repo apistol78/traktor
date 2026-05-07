@@ -65,7 +65,10 @@ void CharacterInstance::destroy()
 	}
 
 	m_context = nullptr;
+	m_dictionary = nullptr;
 	m_parent = nullptr;
+	m_cacheObject = nullptr;
+	m_userObject = nullptr;
 
 	m_eventSetFocus.removeAll();
 	m_eventKillFocus.removeAll();

@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Spark/Runtime/SparkLayer.h"
+
 #include "Core/Class/Any.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
@@ -18,39 +20,36 @@
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/TcpSocket.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
-#include "Render/Frame/RenderGraph.h"
+#include "Runtime/Engine/Stage.h"
 #include "Runtime/IEnvironment.h"
 #include "Runtime/UpdateInfo.h"
-#include "Runtime/Engine/Stage.h"
+#include "Spark/Acc/AccDisplayRenderer.h"
+#include "Spark/Debug/MovieDebugger.h"
 #include "Spark/DefaultCharacterFactory.h"
 #include "Spark/Font.h"
+#include "Spark/ISoundRenderer.h"
 #include "Spark/Key.h"
 #include "Spark/Movie.h"
 #include "Spark/MovieLoader.h"
-#include "Spark/MovieRenderer.h"
 #include "Spark/MoviePlayer.h"
-#include "Spark/SpriteInstance.h"
-#include "Spark/ISoundRenderer.h"
-#include "Spark/Acc/AccDisplayRenderer.h"
-#include "Spark/Debug/MovieDebugger.h"
-#include "Spark/Runtime/SparkLayer.h"
+#include "Spark/MovieRenderer.h"
 #include "Spark/Sound/SoundRenderer.h"
+#include "Spark/SpriteInstance.h"
 
 namespace traktor::spark
 {
-	namespace
-	{
+namespace
+{
 
 const struct InputKeyCode
 {
 	input::DefaultControl inputKeyCode;
 	uint32_t asKeyCode;
-}
-c_inputKeyCodes[] =
-{
+} c_inputKeyCodes[] = {
 	{ input::DefaultControl::KeyLeftControl, Key::AkControl },
 	{ input::DefaultControl::KeyRightControl, Key::AkControl },
 	{ input::DefaultControl::KeyDelete, Key::AkDeleteKey },
@@ -77,10 +76,8 @@ bool isWhiteSpace(wchar_t ch)
 uint32_t translateInputKeyCode(uint32_t inputKeyCode)
 {
 	for (uint32_t i = 0; i < sizeof_array(c_inputKeyCodes); ++i)
-	{
 		if (c_inputKeyCodes[i].inputKeyCode == (input::DefaultControl)inputKeyCode)
 			return c_inputKeyCodes[i].asKeyCode;
-	}
 	return 0;
 }
 
@@ -88,7 +85,7 @@ class CustomMovieLoader : public IMovieLoader
 {
 public:
 	explicit CustomMovieLoader(const SmallMap< std::wstring, resource::Proxy< Movie > >& externalMovies)
-	:	m_externalMovies(externalMovies)
+		: m_externalMovies(externalMovies)
 	{
 	}
 
@@ -113,7 +110,7 @@ private:
 	const SmallMap< std::wstring, resource::Proxy< Movie > >& m_externalMovies;
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SparkLayer", SparkLayer, runtime::Layer)
 
@@ -125,23 +122,22 @@ SparkLayer::SparkLayer(
 	const resource::Proxy< Movie >& movie,
 	const SmallMap< std::wstring, resource::Proxy< Movie > >& externalMovies,
 	bool clearBackground,
-	bool enableSound
-)
-:	Layer(stage, name, permitTransition)
-,	m_environment(environment)
-,	m_movie(movie)
-,	m_externalMovies(externalMovies)
-,	m_clearBackground(clearBackground)
-,	m_enableSound(enableSound)
-,	m_visible(true)
-,	m_offset(0.0f, 0.0f)
-,	m_scale(1.0f)
-,	m_lastUpValue(false)
-,	m_lastDownValue(false)
-,	m_lastConfirmValue(false)
-,	m_lastEscapeValue(false)
-,	m_lastMouseX(-1)
-,	m_lastMouseY(-1)
+	bool enableSound)
+	: Layer(stage, name, permitTransition)
+	, m_environment(environment)
+	, m_movie(movie)
+	, m_externalMovies(externalMovies)
+	, m_clearBackground(clearBackground)
+	, m_enableSound(enableSound)
+	, m_visible(true)
+	, m_offset(0.0f, 0.0f)
+	, m_scale(1.0f)
+	, m_lastUpValue(false)
+	, m_lastDownValue(false)
+	, m_lastConfirmValue(false)
+	, m_lastEscapeValue(false)
+	, m_lastMouseX(-1)
+	, m_lastMouseY(-1)
 {
 }
 
@@ -154,6 +150,8 @@ void SparkLayer::destroy()
 	safeDestroy(m_moviePlayer);
 	safeDestroy(m_displayRenderer);
 	safeDestroy(m_soundRenderer);
+
+	m_movieRenderer = nullptr;
 
 	Layer::destroy();
 }
@@ -527,11 +525,10 @@ void SparkLayer::createMoviePlayer()
 	{
 		Ref< AccDisplayRenderer > displayRenderer = new AccDisplayRenderer();
 		if (!displayRenderer->create(
-			m_environment->getResource()->getResourceManager(),
-			m_environment->getRender()->getRenderSystem(),
-			m_environment->getRender()->getThreadFrameQueueCount(),
-			m_clearBackground
-		))
+				m_environment->getResource()->getResourceManager(),
+				m_environment->getRender()->getRenderSystem(),
+				m_environment->getRender()->getThreadFrameQueueCount(),
+				m_clearBackground))
 		{
 			log::error << L"Unable to create display renderer." << Endl;
 			return;
@@ -589,8 +586,7 @@ void SparkLayer::createMoviePlayer()
 		Ref< MoviePlayer > moviePlayer = new MoviePlayer(
 			new DefaultCharacterFactory(),
 			new CustomMovieLoader(m_externalMovies),
-			movieDebugger
-		);
+			movieDebugger);
 		if (!moviePlayer->create(m_movie, width, height, m_soundRenderer))
 		{
 			log::error << L"Unable to create movie player" << Endl;
@@ -598,7 +594,8 @@ void SparkLayer::createMoviePlayer()
 		}
 
 		// Execute first frame, do not provide sound renderer so we don't trigger alot of sounds initially.
-		while (!moviePlayer->progress(1.0f / 60.0f, 0));
+		while (!moviePlayer->progress(1.0f / 60.0f, 0))
+			;
 
 		// All success, replace instances.
 		m_moviePlayer = moviePlayer;
