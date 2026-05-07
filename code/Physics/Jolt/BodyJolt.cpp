@@ -10,6 +10,8 @@
 // Keep Jolt includes here, Jolt.h must be first.
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Body/MotionProperties.h>
+#include <Jolt/Physics/Collision/Shape/MeshShape.h>
+#include <Jolt/Physics/Collision/Shape/SubShapeID.h>
 #include <Jolt/Physics/Constraints/Constraint.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 
@@ -387,24 +389,30 @@ void BodyJolt::removeConstraint(JPH::Constraint* constraint)
 	m_constraints.erase(it);
 }
 
-void BodyJolt::getFrictionAndRestitution(int32_t triangleIndex, float& outFriction, float& outRestitution) const
+void BodyJolt::getFrictionAndRestitution(const JPH::SubShapeID& subShapeID, float& outFriction, float& outRestitution) const
 {
 	outFriction = m_body ? m_body->GetFriction() : 0.0f;
 	outRestitution = m_body ? m_body->GetRestitution() : 0.0f;
 
-	if (m_mesh)
+	if (!m_body || !m_mesh)
+		return;
+
+	// SubShapeID is an opaque BVH path — resolve it through any wrapping
+	// (e.g. compound) shapes to the leaf MeshShape, then ask Jolt for the
+	// material index it stored for the hit triangle.
+	JPH::SubShapeID remainder;
+	const JPH::Shape* leaf = m_body->GetShape()->GetLeafShape(subShapeID, remainder);
+	if (!leaf || leaf->GetSubType() != JPH::EShapeSubType::Mesh)
+		return;
+
+	const auto* meshShape = static_cast< const JPH::MeshShape* >(leaf);
+	const uint32_t midx = meshShape->GetMaterialIndex(remainder);
+
+	const auto& materials = m_mesh->getMaterials();
+	if (midx < materials.size())
 	{
-		const auto& triangles = m_mesh->getShapeTriangles();
-		const auto& materials = m_mesh->getMaterials();
-		if (triangleIndex >= 0 && triangleIndex < (int32_t)triangles.size())
-		{
-			const uint32_t midx = triangles[triangleIndex].material;
-			if (midx < materials.size())
-			{
-				outFriction = materials[midx].friction;
-				outRestitution = materials[midx].restitution;
-			}
-		}
+		outFriction = materials[midx].friction;
+		outRestitution = materials[midx].restitution;
 	}
 }
 

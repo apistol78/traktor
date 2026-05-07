@@ -209,8 +209,8 @@ public:
 		// Combine per-triangle friction and restitution from both bodies.
 		float friction1 = body1.GetFriction(), restitution1 = body1.GetRestitution();
 		float friction2 = body2.GetFriction(), restitution2 = body2.GetRestitution();
-		b1->getFrictionAndRestitution(manifold.mSubShapeID1.GetValue(), friction1, restitution1);
-		b2->getFrictionAndRestitution(manifold.mSubShapeID2.GetValue(), friction2, restitution2);
+		b1->getFrictionAndRestitution(manifold.mSubShapeID1, friction1, restitution1);
+		b2->getFrictionAndRestitution(manifold.mSubShapeID2, friction2, restitution2);
 
 		ioSettings.mCombinedFriction = friction1 * friction2;
 		ioSettings.mCombinedRestitution = restitution1 * restitution2;
@@ -1296,6 +1296,8 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		for (const auto& vertex : vertices)
 			vertexList.push_back(JPH::Float3(vertex.x(), vertex.y(), vertex.z()));
 
+		const uint32_t materialCount = (uint32_t)mesh->getMaterials().size();
+
 		JPH::IndexedTriangleList triangleList;
 		triangleList.reserve(triangles.size());
 		for (const auto& triangle : triangles)
@@ -1303,9 +1305,18 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 				triangle.indices[2],
 				triangle.indices[1],
 				triangle.indices[0],
-				0));
+				triangle.material < materialCount ? triangle.material : 0));
 
-		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList);
+		// Jolt requires mMaterials to be populated for any non-zero per-triangle
+		// material index. The actual friction/restitution come from the contact
+		// callback (which reads our Mesh::Material table), so we just hand Jolt
+		// a parallel list of placeholder PhysicsMaterials of the right size.
+		JPH::PhysicsMaterialList joltMaterials;
+		joltMaterials.reserve(materialCount);
+		for (uint32_t i = 0; i < materialCount; ++i)
+			joltMaterials.push_back(JPH::PhysicsMaterial::sDefault);
+
+		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList, std::move(joltMaterials));
 		shapeSettings.SetEmbedded();
 
 		return createBodyFromShape(shapeSettings, shapeDesc, desc, 0.0f, centerOfGravity, collisionGroup, collisionMask, meshProxy, tag);

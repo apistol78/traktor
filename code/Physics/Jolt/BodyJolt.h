@@ -27,6 +27,7 @@ namespace JPH
 class Body;
 class Constraint;
 class PhysicsSystem;
+class SubShapeID;
 
 }
 
@@ -115,7 +116,7 @@ public:
 
 	void removeConstraint(JPH::Constraint* constraint);
 
-	void getFrictionAndRestitution(int32_t triangleIndex, float& outFriction, float& outRestitution) const;
+	void getFrictionAndRestitution(const JPH::SubShapeID& subShapeID, float& outFriction, float& outRestitution) const;
 
 	JPH::Body* getJBody() const { return m_body; }
 
