@@ -620,13 +620,13 @@ bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 	JPH::Factory::sInstance = new JPH::Factory();
 	JPH::RegisterTypes();
 
-	m_tempAllocator.reset(new JPH::TempAllocatorImpl(10 * 1024 * 1024));
+	m_tempAllocator.reset(new JPH::TempAllocatorImpl(32 * 1024 * 1024));
 	m_jobSystem.reset(new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1));
 
 	const JPH::uint cMaxBodies = 16384;
 	const JPH::uint cNumBodyMutexes = 0;
 	const JPH::uint cMaxBodyPairs = 16384;
-	const JPH::uint cMaxContactConstraints = 16384;
+	const JPH::uint cMaxContactConstraints = 4096;
 
 	m_broadPhaseLayerInterface.reset(new BPLayerInterfaceImpl());
 	m_objectVsBroadPhaseLayerFilter.reset(new ObjectVsBroadPhaseLayerFilterImpl());
