@@ -116,6 +116,7 @@ private:
 	RefArray< render::Buffer > m_visibilityBuffers;
 	uint32_t m_instanceAllocatedCount = 0;
 	bool m_instanceBufferDirty = false;
+	bool m_velocityDirty = false;
 
 	void destroyInstance(Instance* instance);
 };

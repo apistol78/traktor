@@ -27,7 +27,8 @@ namespace
 
 const resource::Id< render::Shader > c_shaderInstanceMeshCull(L"{37998131-BDA1-DE45-B175-35B088FEE61C}");	// World/Culling/Visibility
 
-render::Handle s_handleInstanceWorld(L"InstanceWorld");
+static const render::Handle s_handleInstanceWorld(L"InstanceWorld");
+static const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 
 }
 
@@ -98,6 +99,14 @@ void CullingComponent::build(
 		}
 		m_instanceBuffer->unlock();
 		m_instanceBufferDirty = false;
+	}
+
+	// In case no instance has been moved we don't render at all for velocity technique.
+	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
+	{
+		if (!m_velocityDirty)
+			return;
+		m_velocityDirty = false;
 	}
 
 	render::Buffer* visibilityBuffer = m_visibilityBuffers[worldRenderView.getShadowMapIndex()];
@@ -213,6 +222,7 @@ void CullingComponent::Instance::setTransform(const Transform& transform)
 	this->transform = transform;
 	this->boundingBox = this->cullable->cullableGetBoundingBox().transform(transform);
 	this->owner->m_instanceBufferDirty = true;
+	this->owner->m_velocityDirty = true;
 }
 
 }
