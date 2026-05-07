@@ -234,7 +234,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 #endif
 
 	// 3. Sample generation.
-	if (true)
+	if ($Roughness < 0.4f)
 	{
 		vec3 u, v;
 		OrthogonalFrame($Direction.xyz, u, v);
@@ -304,6 +304,18 @@ if (pt.x < sz.x && pt.y < sz.y)
 			);
 		}
 	}
+	else
+	{
+		const float w = Reservoir_CalculateProbability($Sky.xyz);
+		Reservoir_Update(
+			reservoir,
+			w,
+			$Direction.xyz,
+			$Depth,
+			$Sky.xyz,
+			Hash(rndState++)
+		);
+	}
 
 	// 3. Calculate lighting.
 	vec4 acc = vec4(0.0f.xxx, 1.0f);
@@ -317,6 +329,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 #endif
 
 	imageStore($Output, pt, acc);
+
 	$ReservoirOutput[index] = reservoir;
 }
 

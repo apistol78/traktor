@@ -138,6 +138,7 @@ const float SpatialNormalThreshold = 0.9f;
 const float SpatialDepthThreshold = 2.0f;
 const float SpatialFilterRadius = 0.025f;
 const float SpatialFilterCoeff = 0.8f;
+const float Boost = 2.0f;
 
 const ivec2 sz = imageSize($Output);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
@@ -350,7 +351,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 		vec4(1.0f, 0.0f, 0.0f, 1.0f);
 #endif
 
-	imageStore($Output, pt, acc);
+	imageStore($Output, pt, acc * Boost);
 	$ReservoirOutput[index] = reservoir;
 }
 
