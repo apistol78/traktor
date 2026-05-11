@@ -93,8 +93,14 @@ bool TextureVk::create(
 
 	m_stagingBuffer->unlock();
 
+	Ref< ITexture > self = this;
 	m_context->addDeferredUpload(
-		[desc, this](Context* cx, CommandBuffer* commandBuffer) {
+		[desc, self, this](Context* cx, CommandBuffer* commandBuffer) {
+
+			// Drop out if no texture image still exist; this texture
+			// has been destroyed while the upload was in the queue.
+			if (!m_textureImage)
+				return;
 
 			// Change layout of texture to be able to copy staging buffer into texture.
 			m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, desc.mipCount, 0, 1);
