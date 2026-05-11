@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <linux/input-event-codes.h>
 #include <xkbcommon/xkbcommon.h>
 #include "Core/Config.h"
 #include "Ui/Enums.h"
@@ -22,5 +23,19 @@ namespace traktor::ui
  * \return Virtual key.
  */
 VirtualKey translateToVirtualKey(xkb_keysym_t keySym);
+
+/*! Translate a Linux input button code (BTN_LEFT/MIDDLE/RIGHT) to an MbtX mask.
+ *  Returns 0 for unsupported buttons.
+ */
+inline int32_t translateMouseButton(uint32_t button)
+{
+	switch (button)
+	{
+	case BTN_LEFT:   return MbtLeft;
+	case BTN_MIDDLE: return MbtMiddle;
+	case BTN_RIGHT:  return MbtRight;
+	default:         return 0;
+	}
+}
 
 }

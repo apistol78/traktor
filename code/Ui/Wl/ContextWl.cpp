@@ -322,22 +322,19 @@ void ContextWl::dispatch(WlEvent& e)
 	if (!e.surface)
 		return;
 
-	switch (e.type)
-	{
-	case WlEvtFocusIn:
-	case WlEvtFocusOut:
-	case WlEvtConfigure:
-	case WlEvtClose:
-	case WlEvtExpose:
-	case WlEvtPointerEnter:
-	case WlEvtPointerLeave:
-		dispatch(e.surface, e.type, true, e);
-		break;
+	// Events that bypass enable/modal checks: lifecycle and pointer
+	// enter/leave (the latter so cursor management still works on
+	// disabled or non-modal widgets).
+	const bool always =
+		e.type == WlEvtFocusIn ||
+		e.type == WlEvtFocusOut ||
+		e.type == WlEvtConfigure ||
+		e.type == WlEvtClose ||
+		e.type == WlEvtExpose ||
+		e.type == WlEvtPointerEnter ||
+		e.type == WlEvtPointerLeave;
 
-	default:
-		dispatch(e.surface, e.type, false, e);
-		break;
-	}
+	dispatch(e.surface, e.type, always, e);
 }
 
 void ContextWl::enqueueEvent(const WlEvent& e)
@@ -377,14 +374,7 @@ bool ContextWl::preTranslateEvent(EventSubject* owner, WlEvent& e)
 	}
 	else if (e.type == WlEvtPointerButton)
 	{
-		int32_t button = 0;
-		switch (e.button)
-		{
-		case 0x110: button = MbtLeft; break;   // BTN_LEFT
-		case 0x112: button = MbtMiddle; break; // BTN_MIDDLE
-		case 0x111: button = MbtRight; break;  // BTN_RIGHT
-		default: break;
-		}
+		const int32_t button = translateMouseButton(e.button);
 
 		if (e.buttonState == WL_POINTER_BUTTON_STATE_PRESSED)
 		{
@@ -729,14 +719,7 @@ void ContextWl::pointerButton(void* data, wl_pointer* pointer, uint32_t serial, 
 		ctx->m_grabSerial = serial;
 
 	// Maintain running button mask (MbtLeft/MbtMiddle/MbtRight).
-	int32_t mbt = 0;
-	switch (button)
-	{
-	case 0x110: mbt = MbtLeft; break;   // BTN_LEFT
-	case 0x111: mbt = MbtRight; break;  // BTN_RIGHT
-	case 0x112: mbt = MbtMiddle; break; // BTN_MIDDLE
-	default: break;
-	}
+	const int32_t mbt = translateMouseButton(button);
 	if (state == WL_POINTER_BUTTON_STATE_PRESSED)
 		ctx->m_buttonMask |= mbt;
 	else

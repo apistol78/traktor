@@ -99,12 +99,9 @@ public:
 				m_buffer = nullptr;
 			}
 
-			// libdecor_frame owns the xdg_surface and xdg_toplevel,
-			// so unref it first; only destroy bare xdg objects
-			// that were created without libdecor (popups).
-			// libdecor_frame owns xdg_surface/xdg_toplevel when using
-			// the libdecor path.  When using the SSD path, the decoration
-			// object must be destroyed before the toplevel.
+			// libdecor owns the xdg_surface, xdg_toplevel and decoration when
+			// using CSD; unref the frame and the owned objects go with it.
+			// SSD path destroys decoration before toplevel before surface.
 			if (m_data.frame != nullptr)
 			{
 				libdecor_frame_unref(m_data.frame);
@@ -202,47 +199,36 @@ public:
 
 	virtual void setVisible(bool visible) override
 	{
-		if (visible != m_data.visible)
+		if (visible == m_data.visible)
+			return;
+
+		m_data.visible = visible;
+
+		if (visible)
 		{
-			m_data.visible = visible;
-
-			if (visible)
+			if (!m_data.mapped && m_rect.area() > 0)
 			{
-				if (m_rect.area() > 0)
-				{
-					if (!m_data.mapped)
-					{
-						if (m_data.topLevel && m_data.xdgToplevel)
-						{
-							m_data.mapped = true;
-						}
-						else if (m_data.subsurface)
-						{
-							wl_subsurface_set_position(m_data.subsurface, toLogical(m_rect.left), toLogical(m_rect.top));
-							m_data.mapped = true;
-						}
-					}
-				}
+				if (m_data.subsurface)
+					wl_subsurface_set_position(m_data.subsurface, toLogical(m_rect.left), toLogical(m_rect.top));
 
-				SizeEvent sizeEvent(m_owner, m_rect.getSize());
-				m_owner->raiseEvent(&sizeEvent);
-
-				if (m_data.mapped)
-					draw(nullptr);
-			}
-			else
-			{
-				if (m_data.mapped)
-				{
-					wl_surface_attach(m_data.surface, nullptr, 0, 0);
-					wl_surface_commit(m_data.surface);
-					m_data.mapped = false;
-				}
+				m_data.mapped = (m_data.topLevel && m_data.xdgToplevel) || m_data.subsurface;
 			}
 
-			ShowEvent showEvent(m_owner, visible);
-			m_owner->raiseEvent(&showEvent);
+			SizeEvent sizeEvent(m_owner, m_rect.getSize());
+			m_owner->raiseEvent(&sizeEvent);
+
+			if (m_data.mapped)
+				draw(nullptr);
 		}
+		else if (m_data.mapped)
+		{
+			wl_surface_attach(m_data.surface, nullptr, 0, 0);
+			wl_surface_commit(m_data.surface);
+			m_data.mapped = false;
+		}
+
+		ShowEvent showEvent(m_owner, visible);
+		m_owner->raiseEvent(&showEvent);
 	}
 
 	virtual bool isVisible() const override { return m_data.visible; }
@@ -302,7 +288,6 @@ public:
 			return;
 
 		const Size fromSize = m_rect.getSize();
-		const bool wasMapped = m_data.mapped;
 		m_rect = rect;
 		m_data.posX = rect.left;
 		m_data.posY = rect.top;
@@ -312,26 +297,15 @@ public:
 
 		if (m_rect.area() > 0)
 		{
-			if (!m_data.mapped)
-			{
-				if (m_data.subsurface)
-					wl_subsurface_set_position(m_data.subsurface, toLogical(m_rect.left), toLogical(m_rect.top));
-				m_data.mapped = true;
-			}
-			else
-			{
-				if (m_data.subsurface)
-					wl_subsurface_set_position(m_data.subsurface, toLogical(m_rect.left), toLogical(m_rect.top));
-			}
+			if (m_data.subsurface)
+				wl_subsurface_set_position(m_data.subsurface, toLogical(m_rect.left), toLogical(m_rect.top));
+			m_data.mapped = true;
 		}
-		else
+		else if (m_data.mapped)
 		{
-			if (m_data.mapped)
-			{
-				wl_surface_attach(m_data.surface, nullptr, 0, 0);
-				wl_surface_commit(m_data.surface);
-				m_data.mapped = false;
-			}
+			wl_surface_attach(m_data.surface, nullptr, 0, 0);
+			wl_surface_commit(m_data.surface);
+			m_data.mapped = false;
 		}
 
 		if (m_rect.getSize() != fromSize)
@@ -340,11 +314,8 @@ public:
 			m_owner->raiseEvent(&sizeEvent);
 		}
 
-		if (m_data.mapped && m_rect.area() > 0 && !m_pendingExposure)
-		{
-			m_pendingExposure = true;
+		if (m_data.mapped && m_rect.area() > 0)
 			m_context->queueExpose(&m_data);
-		}
 	}
 
 	// All rects returned in device coordinates.
@@ -379,17 +350,39 @@ public:
 		switch (cursor)
 		{
 		default:
-		case Cursor::Arrow:     cursorName = "left_ptr"; break;
-		case Cursor::Hand:      cursorName = "hand2"; break;
-		case Cursor::IBeam:     cursorName = "xterm"; break;
-		case Cursor::SizeNS:    cursorName = "sb_v_double_arrow"; break;
-		case Cursor::SizeWE:    cursorName = "sb_h_double_arrow"; break;
-		case Cursor::SizeNESW:  cursorName = "bottom_left_corner"; break;
-		case Cursor::SizeNWSE:  cursorName = "bottom_right_corner"; break;
-		case Cursor::Cross:     cursorName = "crosshair"; break;
-		case Cursor::Wait:      cursorName = "watch"; break;
-		case Cursor::ArrowWait: cursorName = "left_ptr_watch"; break;
-		case Cursor::Sizing:    cursorName = "fleur"; break;
+		case Cursor::Arrow:
+		    cursorName = "left_ptr";
+			break;
+		case Cursor::Hand:
+		    cursorName = "hand2";
+			break;
+		case Cursor::IBeam:
+		    cursorName = "xterm";
+			break;
+		case Cursor::SizeNS:
+		    cursorName = "sb_v_double_arrow";
+			break;
+		case Cursor::SizeWE:
+		    cursorName = "sb_h_double_arrow";
+			break;
+		case Cursor::SizeNESW:
+			cursorName = "bottom_left_corner";
+			break;
+		case Cursor::SizeNWSE:
+			cursorName = "bottom_right_corner";
+			break;
+		case Cursor::Cross:
+			cursorName = "crosshair";
+			break;
+		case Cursor::Wait:
+			cursorName = "watch";
+			break;
+		case Cursor::ArrowWait:
+			cursorName = "left_ptr_watch";
+			break;
+		case Cursor::Sizing:
+			cursorName = "fleur";
+			break;
 		}
 
 		if (!cursorName)
@@ -480,15 +473,10 @@ public:
 		if (!m_data.visible || !m_data.mapped)
 			return;
 
-		if (!immediate)
-		{
-			if (m_pendingExposure)
-				return;
-			m_pendingExposure = true;
-			m_context->queueExpose(&m_data);
-		}
-		else
+		if (immediate)
 			draw(rc);
+		else
+			m_context->queueExpose(&m_data);
 	}
 
 	virtual int32_t dpi96(int32_t measure) const override
@@ -600,7 +588,6 @@ protected:
 	int32_t m_lastMouseButton = 0;
 	double m_lastMousePress = 0.0;
 	Point m_lastPointerPos;		// Device coordinates.
-	bool m_pendingExposure = false;
 
 	// --- Coordinate helpers ---
 
@@ -726,14 +713,9 @@ protected:
 		m_context->bind(&m_data, WlEvtPointerButton, [=, this](WlEvent& e) {
 			T_FATAL_ASSERT(m_data.enable);
 
-			int32_t button = 0;
-			switch (e.button)
-			{
-			case BTN_LEFT:   button = MbtLeft; break;
-			case BTN_MIDDLE: button = MbtMiddle; break;
-			case BTN_RIGHT:  button = MbtRight; break;
-			default: return;
-			}
+			const int32_t button = translateMouseButton(e.button);
+			if (button == 0)
+				return;
 
 			if (e.buttonState == WL_POINTER_BUTTON_STATE_PRESSED)
 			{
@@ -857,8 +839,6 @@ protected:
 
 	void draw(const Rect* rc)
 	{
-		m_pendingExposure = false;
-
 		if (!m_data.visible || !m_data.mapped)
 			return;
 

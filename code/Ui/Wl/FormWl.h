@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Ui/Itf/IForm.h"
+#include "Ui/Wl/ToplevelWl.h"
 #include "Ui/Wl/WidgetWlImpl.h"
 
 namespace traktor::ui
@@ -40,6 +41,7 @@ public:
 	virtual void showProgress(int32_t current, int32_t total) override final;
 
 private:
+	ToplevelListenerCtx m_listenerCtx;
 	bool m_maximized = false;
 	bool m_minimized = false;
 };

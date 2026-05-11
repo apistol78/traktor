@@ -179,6 +179,7 @@ public:
 
 	//! Output dimensions in logical pixels (from wl_output::mode).
 	int32_t getOutputWidth() const { return m_outputWidth; }
+
 	int32_t getOutputHeight() const { return m_outputHeight; }
 
 	//@}
@@ -263,34 +264,50 @@ private:
 	static Timer ms_timer;
 
 	void dispatch(wl_surface* surface, int32_t eventType, bool always, WlEvent& e);
+
 	bool preTranslateEvent(EventSubject* owner, WlEvent& e);
 
 public:
 	// Registry listener
 	static void registryGlobal(void* data, wl_registry* registry, uint32_t name, const char* interface, uint32_t version);
+
 	static void registryGlobalRemove(void* data, wl_registry* registry, uint32_t name);
 
 	// Seat listener
 	static void seatCapabilities(void* data, wl_seat* seat, uint32_t caps);
+
 	static void seatName(void* data, wl_seat* seat, const char* name);
 
 	// Pointer listener
 	static void pointerEnter(void* data, wl_pointer* pointer, uint32_t serial, wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy);
+
 	static void pointerLeave(void* data, wl_pointer* pointer, uint32_t serial, wl_surface* surface);
+
 	static void pointerMotion(void* data, wl_pointer* pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy);
+
 	static void pointerButton(void* data, wl_pointer* pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state);
+
 	static void pointerAxis(void* data, wl_pointer* pointer, uint32_t time, uint32_t axis, wl_fixed_t value);
+
 	static void pointerFrame(void* data, wl_pointer* pointer);
+
 	static void pointerAxisSource(void* data, wl_pointer* pointer, uint32_t source);
+
 	static void pointerAxisStop(void* data, wl_pointer* pointer, uint32_t time, uint32_t axis);
+
 	static void pointerAxisDiscrete(void* data, wl_pointer* pointer, uint32_t axis, int32_t discrete);
 
 	// Keyboard listener
 	static void keyboardKeymap(void* data, wl_keyboard* keyboard, uint32_t format, int32_t fd, uint32_t size);
+
 	static void keyboardEnter(void* data, wl_keyboard* keyboard, uint32_t serial, wl_surface* surface, wl_array* keys);
+
 	static void keyboardLeave(void* data, wl_keyboard* keyboard, uint32_t serial, wl_surface* surface);
+
 	static void keyboardKey(void* data, wl_keyboard* keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state);
+
 	static void keyboardModifiers(void* data, wl_keyboard* keyboard, uint32_t serial, uint32_t modsDepressed, uint32_t modsLatched, uint32_t modsLocked, uint32_t group);
+
 	static void keyboardRepeatInfo(void* data, wl_keyboard* keyboard, int32_t rate, int32_t delay);
 
 	// XDG WM base listener
@@ -298,16 +315,24 @@ public:
 
 	// Output listener
 	static void outputGeometry(void* data, wl_output* output, int32_t x, int32_t y, int32_t pw, int32_t ph, int32_t subpixel, const char* make, const char* model, int32_t transform);
+
 	static void outputMode(void* data, wl_output* output, uint32_t flags, int32_t width, int32_t height, int32_t refresh);
+
 	static void outputDone(void* data, wl_output* output);
+
 	static void outputScale(void* data, wl_output* output, int32_t factor);
 
 	// Data device listener
 	static void dataDeviceDataOffer(void* data, wl_data_device* device, wl_data_offer* offer);
+
 	static void dataDeviceEnter(void* data, wl_data_device* device, uint32_t serial, wl_surface* surface, wl_fixed_t x, wl_fixed_t y, wl_data_offer* offer);
+
 	static void dataDeviceLeave(void* data, wl_data_device* device);
+
 	static void dataDeviceMotion(void* data, wl_data_device* device, uint32_t time, wl_fixed_t x, wl_fixed_t y);
+
 	static void dataDeviceDrop(void* data, wl_data_device* device);
+
 	static void dataDeviceSelection(void* data, wl_data_device* device, wl_data_offer* offer);
 
 	// Data offer listener

@@ -44,7 +44,9 @@ public:
 
 	// Data source listener callbacks (must be public for listener struct init).
 	static void dataSourceTarget(void* data, wl_data_source* source, const char* mimeType);
+
 	static void dataSourceSend(void* data, wl_data_source* source, const char* mimeType, int32_t fd);
+	
 	static void dataSourceCancelled(void* data, wl_data_source* source);
 
 private:

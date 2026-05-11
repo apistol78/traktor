@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Ui/Itf/IDialog.h"
+#include "Ui/Wl/ToplevelWl.h"
 #include "Ui/Wl/WidgetWlImpl.h"
 
 namespace traktor::ui
@@ -36,6 +37,7 @@ public:
 	virtual void setVisible(bool visible) override final;
 
 private:
+	ToplevelListenerCtx m_listenerCtx;
 	DialogResult m_result;
 	bool m_modal;
 };

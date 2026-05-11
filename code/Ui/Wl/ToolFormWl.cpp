@@ -11,138 +11,26 @@
 #include "Ui/Itf/ISystemBitmap.h"
 #include "Ui/ToolForm.h"
 #include "Ui/Wl/ToolFormWl.h"
+#include "Ui/Wl/ToplevelWl.h"
 #include "xdg-shell-client-protocol.h"
 #include "xdg-decoration-client-protocol.h"
 
 namespace traktor::ui
 {
 	namespace
-	{
-
-// --- libdecor frame callbacks (WsDefault / dialog-like) ---
-
-void toolFormFrameConfigure(libdecor_frame* frame, libdecor_configuration* configuration, void* userData)
 {
-	ToolFormWl* form = static_cast< ToolFormWl* >(userData);
-	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
 
-	int width = 0, height = 0;
-	if (!libdecor_configuration_get_content_size(configuration, frame, &width, &height))
-	{
-		const Rect rc = form->getRect();
-		const int32_t scale = form->getContextWl()->getOutputScale();
-		width = rc.getWidth() / scale;
-		height = rc.getHeight() / scale;
-	}
-
-	libdecor_state* state = libdecor_state_new(width, height);
-	libdecor_frame_commit(frame, state, configuration);
-	libdecor_state_free(state);
-
-	wd->configured = true;
-
-	if (width > 0 && height > 0)
-	{
-		const int32_t scale = form->getContextWl()->getOutputScale();
-		const Rect prev = form->getRect();
-		const Rect next(prev.left, prev.top, prev.left + width * scale, prev.top + height * scale);
-
-		form->setRect(next);
-		form->getContextWl()->processPendingExposes();
-		form->update(nullptr, true);
-	}
-}
-
-void toolFormFrameClose(libdecor_frame* frame, void* userData)
+void toolFormXdgPopupConfigure(void* data, xdg_popup*, int32_t, int32_t, int32_t width, int32_t height)
 {
-	ToolFormWl* form = static_cast< ToolFormWl* >(userData);
-	form->endModal(DialogResult::Cancel);
-}
-
-void toolFormFrameCommit(libdecor_frame* frame, void* userData)
-{
-	ToolFormWl* form = static_cast< ToolFormWl* >(userData);
-	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
-	wl_surface_commit(wd->surface);
-}
-
-void toolFormFrameDismissPopup(libdecor_frame* frame, const char* seatName, void* userData)
-{
-}
-
-static libdecor_frame_interface s_toolFormFrameInterface =
-{
-	toolFormFrameConfigure,
-	toolFormFrameClose,
-	toolFormFrameCommit,
-	toolFormFrameDismissPopup,
-	nullptr, nullptr, nullptr, nullptr, nullptr,
-	nullptr, nullptr, nullptr, nullptr
-};
-
-// ============================================================
-// SSD path — xdg_toplevel listeners for WsDefault
-// ============================================================
-
-void toolFormSsdToplevelConfigure(void* data, xdg_toplevel* toplevel, int32_t width, int32_t height, wl_array* states)
-{
+	if (width <= 0 || height <= 0)
+		return;
 	ToolFormWl* form = static_cast< ToolFormWl* >(data);
 	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
 	wd->pendingWidth = width;
 	wd->pendingHeight = height;
 }
 
-void toolFormSsdToplevelClose(void* data, xdg_toplevel* toplevel)
-{
-	ToolFormWl* form = static_cast< ToolFormWl* >(data);
-	form->endModal(DialogResult::Cancel);
-}
-
-static const xdg_toplevel_listener s_toolFormXdgToplevelListener = {
-	toolFormSsdToplevelConfigure,
-	toolFormSsdToplevelClose
-};
-
-// --- Popup xdg_surface listener (non-WsDefault / floating) ---
-
-void toolFormPopupXdgSurfaceConfigure(void* data, xdg_surface* xdgSurface, uint32_t serial)
-{
-	xdg_surface_ack_configure(xdgSurface, serial);
-
-	ToolFormWl* form = static_cast< ToolFormWl* >(data);
-	WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
-	wd->configured = true;
-
-	if (wd->pendingWidth > 0 && wd->pendingHeight > 0)
-	{
-		const int32_t scale = form->getContextWl()->getOutputScale();
-		const Rect prev = form->getRect();
-		const Rect next(prev.left, prev.top, prev.left + wd->pendingWidth * scale, prev.top + wd->pendingHeight * scale);
-		wd->pendingWidth = 0;
-		wd->pendingHeight = 0;
-
-		form->setRect(next);
-		form->getContextWl()->processPendingExposes();
-		form->update(nullptr, true);
-	}
-}
-
-static const xdg_surface_listener s_toolFormPopupXdgSurfaceListener = {
-	toolFormPopupXdgSurfaceConfigure
-};
-
-void toolFormXdgPopupConfigure(void* data, xdg_popup* popup, int32_t x, int32_t y, int32_t width, int32_t height)
-{
-	if (width > 0 && height > 0)
-	{
-		ToolFormWl* form = static_cast< ToolFormWl* >(data);
-		WidgetData* wd = static_cast< WidgetData* >(form->getInternalHandle());
-		wd->pendingWidth = width;
-		wd->pendingHeight = height;
-	}
-}
-
-void toolFormXdgPopupDone(void* data, xdg_popup* popup)
+void toolFormXdgPopupDone(void* data, xdg_popup*)
 {
 	ToolFormWl* form = static_cast< ToolFormWl* >(data);
 	form->endModal(DialogResult::Cancel);
@@ -188,16 +76,18 @@ bool ToolFormWl::create(IWidget* parent, const std::wstring& text, int width, in
 	if (!WidgetWlImpl< IToolForm >::create(parent, style, false, true))
 		return false;
 
+	m_listenerCtx = { m_context, this };
+
 	if ((style & ToolForm::WsDefault) != 0)
 	{
 		if (m_context->hasServerSideDecorations())
 		{
 			// SSD path.
 			m_data.xdgSurface = xdg_wm_base_get_xdg_surface(m_context->getXdgWmBase(), m_data.surface);
-			xdg_surface_add_listener(m_data.xdgSurface, &s_toolFormPopupXdgSurfaceListener, this);
+			xdg_surface_add_listener(m_data.xdgSurface, &s_toplevelXdgSurfaceListener, &m_listenerCtx);
 
 			m_data.xdgToplevel = xdg_surface_get_toplevel(m_data.xdgSurface);
-			xdg_toplevel_add_listener(m_data.xdgToplevel, &s_toolFormXdgToplevelListener, this);
+			xdg_toplevel_add_listener(m_data.xdgToplevel, &s_toplevelXdgToplevelListener, &m_listenerCtx);
 
 			if ((style & WsCaption) != 0)
 				xdg_toplevel_set_title(m_data.xdgToplevel, wstombs(text).c_str());
@@ -215,7 +105,6 @@ bool ToolFormWl::create(IWidget* parent, const std::wstring& text, int width, in
 			}
 
 			wl_surface_commit(m_data.surface);
-			wl_display_roundtrip(m_context->getDisplay());
 		}
 		else
 		{
@@ -223,8 +112,8 @@ bool ToolFormWl::create(IWidget* parent, const std::wstring& text, int width, in
 			m_data.frame = libdecor_decorate(
 				m_context->getLibdecor(),
 				m_data.surface,
-				&s_toolFormFrameInterface,
-				this
+				&s_toplevelLibdecorFrameInterface,
+				&m_listenerCtx
 			);
 			if (!m_data.frame)
 				return false;
@@ -243,10 +132,15 @@ bool ToolFormWl::create(IWidget* parent, const std::wstring& text, int width, in
 			}
 
 			libdecor_frame_map(m_data.frame);
-			wl_display_roundtrip(m_context->getDisplay());
 		}
+
+		wl_display_roundtrip(m_context->getDisplay());
+
+		m_context->bind(&m_data, WlEvtClose, [this](WlEvent& e) {
+			endModal(DialogResult::Cancel);
+		});
 	}
-	// For popup/floating style, the xdg_popup is created in setVisible(true)
+	// For popup/floating style the xdg_popup is created in setVisible(true)
 	// so the position from setRect() is available at that time.
 
 	return true;
@@ -264,43 +158,40 @@ void ToolFormWl::setVisible(bool visible)
 	if (visible == m_data.visible)
 		return;
 
-	if ((m_style & ToolForm::WsDefault) == 0)
+	if ((m_style & ToolForm::WsDefault) != 0)
 	{
-		// Popup path: create/destroy popup on show/hide.
-		if (visible)
-		{
-			createPopup();
-			m_data.visible = true;
-			m_data.mapped = true;
+		WidgetWlImpl< IToolForm >::setVisible(visible);
+		return;
+	}
 
-			SizeEvent sizeEvent(m_owner, m_rect.getSize());
-			m_owner->raiseEvent(&sizeEvent);
+	// Popup path: create/destroy popup on show/hide.
+	if (visible)
+	{
+		createPopup();
+		m_data.visible = true;
+		m_data.mapped = true;
 
-			if (m_data.mapped)
-				draw(nullptr);
+		SizeEvent sizeEvent(m_owner, m_rect.getSize());
+		m_owner->raiseEvent(&sizeEvent);
 
-			// Flush immediately so the compositor receives the buffer
-			// in the same frame as the popup creation.  Without this,
-			// the buffer from draw() sits in the outgoing queue and
-			// compositors such as Mutter never display the popup.
-			wl_display_flush(m_context->getDisplay());
+		draw(nullptr);
 
-			ShowEvent showEvent(m_owner, true);
-			m_owner->raiseEvent(&showEvent);
-		}
-		else
-		{
-			m_data.visible = false;
-			m_data.mapped = false;
-			destroyPopup();
+		// Flush immediately so the compositor receives the buffer in the
+		// same frame as the popup creation.  Without this, Mutter never
+		// displays the popup because the buffer sits in the outgoing queue.
+		wl_display_flush(m_context->getDisplay());
 
-			ShowEvent showEvent(m_owner, false);
-			m_owner->raiseEvent(&showEvent);
-		}
+		ShowEvent showEvent(m_owner, true);
+		m_owner->raiseEvent(&showEvent);
 	}
 	else
 	{
-		WidgetWlImpl< IToolForm >::setVisible(visible);
+		m_data.visible = false;
+		m_data.mapped = false;
+		destroyPopup();
+
+		ShowEvent showEvent(m_owner, false);
+		m_owner->raiseEvent(&showEvent);
 	}
 }
 
@@ -347,9 +238,9 @@ void ToolFormWl::createPopup()
 	if (!parentXdg)
 		return;
 
-	// Create xdg_surface for the popup (not using libdecor — popups have no decorations).
+	// Popups have no decorations — use a raw xdg_surface (not libdecor).
 	m_data.xdgSurface = xdg_wm_base_get_xdg_surface(m_context->getXdgWmBase(), m_data.surface);
-	xdg_surface_add_listener(m_data.xdgSurface, &s_toolFormPopupXdgSurfaceListener, this);
+	xdg_surface_add_listener(m_data.xdgSurface, &s_toplevelXdgSurfaceListener, &m_listenerCtx);
 
 	// Convert device-pixel rect to Wayland logical coordinates for the positioner.
 	const int32_t scale = m_context->getOutputScale();
@@ -367,8 +258,8 @@ void ToolFormWl::createPopup()
 	m_data.xdgPopup = xdg_surface_get_popup(m_data.xdgSurface, parentXdg->xdgSurface, positioner);
 	xdg_popup_add_listener(m_data.xdgPopup, &s_toolFormXdgPopupListener, this);
 
-	// Use the button-press serial; Mutter rejects enter/release serials
-	// for popup grabs and immediately sends popup_done.
+	// Mutter only accepts button-press serials for xdg_popup_grab; enter or
+	// release serials cause it to immediately send popup_done.
 	xdg_popup_grab(m_data.xdgPopup, m_context->getSeat(), m_context->getGrabSerial());
 
 	xdg_positioner_destroy(positioner);
@@ -381,29 +272,26 @@ void ToolFormWl::createPopup()
 
 void ToolFormWl::destroyPopup()
 {
-	if (m_data.xdgPopup)
+	if (!m_data.xdgPopup)
+		return;
+
+	// Enforce xdg-shell LIFO order: destroy all child popups above us
+	// before destroying our own popup.
+	m_context->destroyPopupsAbove(&m_data);
+
+	xdg_popup_destroy(m_data.xdgPopup);
+	m_data.xdgPopup = nullptr;
+
+	if (m_data.xdgSurface)
 	{
-		// Enforce xdg-shell LIFO order: destroy all child popups
-		// above us before destroying our own popup.
-		m_context->destroyPopupsAbove(&m_data);
-
-		// destroyPopupsAbove removes us from the popup stack and
-		// destroys child popups, but does not destroy our own
-		// xdg objects — do that now.
-		xdg_popup_destroy(m_data.xdgPopup);
-		m_data.xdgPopup = nullptr;
-
-		if (m_data.xdgSurface)
-		{
-			xdg_surface_destroy(m_data.xdgSurface);
-			m_data.xdgSurface = nullptr;
-		}
-
-		// Detach buffer and commit so the compositor unmaps the
-		// surface immediately rather than showing a stale frame.
-		wl_surface_attach(m_data.surface, nullptr, 0, 0);
-		wl_surface_commit(m_data.surface);
+		xdg_surface_destroy(m_data.xdgSurface);
+		m_data.xdgSurface = nullptr;
 	}
+
+	// Detach buffer and commit so the compositor unmaps the surface
+	// immediately rather than showing a stale frame.
+	wl_surface_attach(m_data.surface, nullptr, 0, 0);
+	wl_surface_commit(m_data.surface);
 }
 
 }

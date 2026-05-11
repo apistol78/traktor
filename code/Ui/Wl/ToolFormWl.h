@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Ui/Itf/IToolForm.h"
+#include "Ui/Wl/ToplevelWl.h"
 #include "Ui/Wl/WidgetWlImpl.h"
 
 namespace traktor::ui
@@ -34,11 +35,13 @@ public:
 	virtual void endModal(DialogResult result) override final;
 
 private:
+	ToplevelListenerCtx m_listenerCtx;
 	int32_t m_style = 0;
 	DialogResult m_result;
 	bool m_modal;
 
 	void createPopup();
+	
 	void destroyPopup();
 };
 
