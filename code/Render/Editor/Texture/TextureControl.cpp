@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -233,6 +233,8 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 		}
 
 		m_bitmapOutput = new ui::Bitmap(m_imageOutput);
+
+		m_offset = m_bitmapSource->getSize(this) * (1.0f / 2.0f);
 	}
 
 	// Update view.
@@ -319,22 +321,24 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 			(clientSize.cy - imageSize.cy) / 2
 		};
 
+		ui::Size offset = m_offset - imageSize * m_scale * (1.0f / 2.0f);
+
 		canvas.setClipRect(ui::Rect(0, 0, clientSize.cx / 2, clientSize.cy));
 		canvas.drawBitmap(
-			center + m_offset,
-			m_bitmapSource->getSize(this) * m_scale,
+			center + offset,
+			imageSize * m_scale,
 			ui::Point(0, 0),
-			m_bitmapSource->getSize(this),
+			imageSize,
 			m_bitmapSource,
 			ui::BlendMode::Opaque,
 			ui::Filter::Nearest);
 
 		canvas.setClipRect(ui::Rect(clientSize.cx / 2, 0, clientSize.cx, clientSize.cy));
 		canvas.drawBitmap(
-			center + m_offset,
-			m_bitmapOutput->getSize(this) * m_scale,
+			center + offset,
+			imageSize * m_scale,
 			ui::Point(0, 0),
-			m_bitmapOutput->getSize(this),
+			imageSize,
 			m_bitmapOutput,
 			ui::BlendMode::Opaque,
 			ui::Filter::Nearest);
