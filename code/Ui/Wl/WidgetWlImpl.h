@@ -74,6 +74,20 @@ public:
 		{
 			m_context->unbind(&m_data);
 
+			// Detach from parent's children list so a later parent resize
+			// doesn't walk into freed memory.
+			if (m_data.parent != nullptr)
+			{
+				auto& siblings = m_data.parent->children;
+				auto it = std::find(siblings.begin(), siblings.end(), &m_data);
+				if (it != siblings.end())
+					siblings.erase(it);
+			}
+
+			// A surviving widget tree shouldn't have us as their parent. If it
+			// does there's a destruction-order bug — flag rather than crash.
+			T_FATAL_ASSERT(m_data.children.empty());
+
 			if (m_cairo != nullptr)
 			{
 				cairo_destroy(m_cairo);
@@ -124,6 +138,12 @@ public:
 				m_data.xdgSurface = nullptr;
 			}
 
+			if (m_data.renderViewport != nullptr)
+			{
+				wp_viewport_destroy(m_data.renderViewport);
+				m_data.renderViewport = nullptr;
+			}
+
 			if (m_data.renderSubsurface != nullptr)
 			{
 				wl_subsurface_destroy(m_data.renderSubsurface);
@@ -134,6 +154,12 @@ public:
 			{
 				wl_surface_destroy(m_data.renderSurface);
 				m_data.renderSurface = nullptr;
+			}
+
+			if (m_data.viewport != nullptr)
+			{
+				wp_viewport_destroy(m_data.viewport);
+				m_data.viewport = nullptr;
 			}
 
 			if (m_data.subsurface != nullptr)
@@ -159,6 +185,15 @@ public:
 	{
 		WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
 
+		// Remove from old parent's children list before reparenting.
+		if (m_data.parent != nullptr)
+		{
+			auto& siblings = m_data.parent->children;
+			auto it = std::find(siblings.begin(), siblings.end(), &m_data);
+			if (it != siblings.end())
+				siblings.erase(it);
+		}
+
 		if (m_data.subsurface != nullptr)
 		{
 			wl_subsurface_destroy(m_data.subsurface);
@@ -176,6 +211,12 @@ public:
 		}
 
 		m_data.parent = parentData;
+		parentData->children.push_back(&m_data);
+
+		// Viewport is bound to m_data.surface, which is unchanged, so the
+		// existing wp_viewport is still valid. Re-apply clip against the new
+		// ancestor chain.
+		m_context->applyClip(&m_data);
 	}
 
 	virtual void setText(const std::wstring& text) override { m_text = text; }
@@ -198,7 +239,7 @@ public:
 			if (!m_data.mapped && m_rect.area() > 0)
 			{
 				if (m_data.subsurface)
-					wl_subsurface_set_position(m_data.subsurface, toLogical(m_rect.left), toLogical(m_rect.top));
+					m_context->applyClip(&m_data);
 
 				m_data.mapped = (m_data.topLevel && m_data.xdgToplevel) || m_data.subsurface;
 			}
@@ -277,18 +318,30 @@ public:
 			return;
 
 		const Size fromSize = m_rect.getSize();
-		
+
 		m_rect = rect;
 		m_data.posX = rect.left;
 		m_data.posY = rect.top;
+		m_data.width = m_rect.getWidth();
+		m_data.height = m_rect.getHeight();
 
 		if (!m_data.visible)
 			return;
 
 		if (m_rect.area() > 0)
 		{
+			// applyClipRecursive sets subsurface position + viewport for this
+			// widget and every descendant, since both position and size may
+			// have changed and that cascades down the tree.
 			if (m_data.subsurface)
-				wl_subsurface_set_position(m_data.subsurface, toLogical(m_rect.left), toLogical(m_rect.top));
+				m_context->applyClipRecursive(&m_data);
+			else if (m_data.topLevel)
+			{
+				// Toplevel itself isn't subsurface'd, but every descendant's
+				// clip depends on its size — propagate to children.
+				for (auto* child : m_data.children)
+					m_context->applyClipRecursive(child);
+			}
 			m_data.mapped = true;
 		}
 		else if (m_data.mapped)
@@ -506,9 +559,23 @@ public:
 			const int32_t scale = m_context->getOutputScale();
 			wl_surface_set_buffer_scale(m_data.renderSurface, scale);
 
+			// Crop the dmabuf render output to the widget's visible region —
+			// otherwise a partially-clipped 3D view leaks past its parent.
+			if (m_context->getViewporter() != nullptr)
+			{
+				m_data.renderViewport = wp_viewporter_get_viewport(
+					m_context->getViewporter(),
+					m_data.renderSurface
+				);
+			}
+
 			// Register the render surface as an input alias so that
 			// pointer events on it are routed to this widget.
 			m_context->bindRenderSurface(&m_data);
+
+			// Apply the current clip so the render viewport is initialised
+			// rather than starting at "no crop, full buffer".
+			m_context->applyClip(&m_data);
 		}
 
 		return SystemWindow::fromWayland(
@@ -600,6 +667,18 @@ protected:
 		m_data.visible = visible;
 		m_data.mapped = false;
 
+		// Mirror m_rect into the WidgetData fields up-front — computeVisibleRect
+		// walks the parent chain via WidgetData and must see the right pos+size
+		// from the first applyClip onward.
+		m_data.posX = m_rect.left;
+		m_data.posY = m_rect.top;
+		m_data.width = m_rect.getWidth();
+		m_data.height = m_rect.getHeight();
+
+		// Track in parent's children list so a parent resize re-clips us.
+		if (m_data.parent != nullptr)
+			m_data.parent->children.push_back(&m_data);
+
 		m_data.surface = wl_compositor_create_surface(m_context->getCompositor());
 		if (!m_data.surface)
 			return false;
@@ -614,7 +693,18 @@ protected:
 			if (m_data.subsurface)
 			{
 				wl_subsurface_set_desync(m_data.subsurface);
-				wl_subsurface_set_position(m_data.subsurface, toLogical(m_rect.left), toLogical(m_rect.top));
+
+				// Create the wp_viewport up-front so applyClip can crop without
+				// branching every call.
+				if (m_context->getViewporter() != nullptr)
+				{
+					m_data.viewport = wp_viewporter_get_viewport(
+						m_context->getViewporter(),
+						m_data.surface
+					);
+				}
+
+				m_context->applyClip(&m_data);
 			}
 		}
 

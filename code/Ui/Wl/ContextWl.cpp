@@ -474,6 +474,128 @@ bool ContextWl::processPendingExposes()
 	return true;
 }
 
+Rect ContextWl::computeVisibleRect(const WidgetData* widget)
+{
+	// Toplevel widgets are not clipped against anything.
+	if (widget->topLevel || widget->parent == nullptr)
+		return Rect(0, 0, widget->width, widget->height);
+
+	int32_t vLeft = 0;
+	int32_t vTop = 0;
+	int32_t vRight = widget->width;
+	int32_t vBottom = widget->height;
+
+	// Widget's top-left in the current ancestor's local coords.
+	int32_t accLeft = widget->posX;
+	int32_t accTop = widget->posY;
+
+	for (const WidgetData* anc = widget->parent; anc != nullptr; anc = anc->parent)
+	{
+		// Intersection of widget rect with ancestor inner rect (in ancestor local).
+		const int32_t iLeft = std::max< int32_t >(accLeft, 0);
+		const int32_t iTop = std::max< int32_t >(accTop, 0);
+		const int32_t iRight = std::min< int32_t >(accLeft + widget->width, anc->width);
+		const int32_t iBottom = std::min< int32_t >(accTop + widget->height, anc->height);
+
+		// Convert intersection back to widget local: subtract widget pos in this ancestor.
+		vLeft = std::max< int32_t >(vLeft, iLeft - accLeft);
+		vTop = std::max< int32_t >(vTop, iTop - accTop);
+		vRight = std::min< int32_t >(vRight, iRight - accLeft);
+		vBottom = std::min< int32_t >(vBottom, iBottom - accTop);
+
+		if (vLeft >= vRight || vTop >= vBottom)
+			return Rect(0, 0, 0, 0);
+
+		if (anc->topLevel || anc->parent == nullptr)
+			break;
+
+		// Step up: widget pos in grandparent = widget pos in ancestor + ancestor pos.
+		accLeft += anc->posX;
+		accTop += anc->posY;
+	}
+
+	return Rect(vLeft, vTop, vRight, vBottom);
+}
+
+void ContextWl::applyClip(WidgetData* widget) const
+{
+	// Toplevels manage their own buffer; no clipping path.
+	if (widget->topLevel || widget->subsurface == nullptr)
+		return;
+
+	const Rect visible = computeVisibleRect(widget);
+	const int32_t scale = m_outputScale > 0 ? m_outputScale : 1;
+
+	auto toLogical = [scale](int32_t device) {
+		return (scale > 1) ? device / scale : device;
+	};
+
+	const int32_t vw = visible.getWidth();
+	const int32_t vh = visible.getHeight();
+
+	if (vw <= 0 || vh <= 0)
+	{
+		// Fully clipped — detach buffer so nothing is shown. m_data.mapped is
+		// left as-is so a redraw rebinds the buffer once the widget becomes
+		// visible again (e.g. parent grows back).
+		if (widget->mapped)
+		{
+			wl_surface_attach(widget->surface, nullptr, 0, 0);
+			wl_surface_commit(widget->surface);
+		}
+		if (widget->renderSurface)
+		{
+			wl_surface_attach(widget->renderSurface, nullptr, 0, 0);
+			wl_surface_commit(widget->renderSurface);
+		}
+		return;
+	}
+
+	// Shift the subsurface origin by the amount we cropped from the top-left.
+	wl_subsurface_set_position(
+		widget->subsurface,
+		toLogical(widget->posX + visible.left),
+		toLogical(widget->posY + visible.top)
+	);
+
+	const int32_t dw = std::max< int32_t >(toLogical(vw), 1);
+	const int32_t dh = std::max< int32_t >(toLogical(vh), 1);
+
+	if (widget->viewport != nullptr)
+	{
+		wp_viewport_set_source(
+			widget->viewport,
+			wl_fixed_from_int(visible.left),
+			wl_fixed_from_int(visible.top),
+			wl_fixed_from_int(vw),
+			wl_fixed_from_int(vh)
+		);
+		wp_viewport_set_destination(widget->viewport, dw, dh);
+	}
+
+	if (widget->renderViewport != nullptr)
+	{
+		// The render subsurface lives at (0, 0) of the widget surface, so the
+		// same visible rect crops it identically — output aligns with the
+		// cropped cairo content.
+		wp_viewport_set_source(
+			widget->renderViewport,
+			wl_fixed_from_int(visible.left),
+			wl_fixed_from_int(visible.top),
+			wl_fixed_from_int(vw),
+			wl_fixed_from_int(vh)
+		);
+		wp_viewport_set_destination(widget->renderViewport, dw, dh);
+	}
+}
+
+void ContextWl::applyClipRecursive(WidgetData* widget) const
+{
+	applyClip(widget);
+	for (auto* child : widget->children)
+		applyClipRecursive(child);
+}
+
 void ContextWl::setInternalFocus(WidgetData* widget)
 {
 	if (widget == m_internalFocus)
@@ -555,6 +677,8 @@ void ContextWl::registryGlobal(void* data, wl_registry* registry, uint32_t name,
 		ctx->m_compositor = static_cast< wl_compositor* >(wl_registry_bind(registry, name, &wl_compositor_interface, 4));
 	else if (std::strcmp(interface, wl_subcompositor_interface.name) == 0)
 		ctx->m_subcompositor = static_cast< wl_subcompositor* >(wl_registry_bind(registry, name, &wl_subcompositor_interface, 1));
+	else if (std::strcmp(interface, wp_viewporter_interface.name) == 0)
+		ctx->m_viewporter = static_cast< wp_viewporter* >(wl_registry_bind(registry, name, &wp_viewporter_interface, 1));
 	else if (std::strcmp(interface, wl_shm_interface.name) == 0)
 		ctx->m_shm = static_cast< wl_shm* >(wl_registry_bind(registry, name, &wl_shm_interface, 1));
 	else if (std::strcmp(interface, xdg_wm_base_interface.name) == 0)

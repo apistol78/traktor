@@ -18,7 +18,9 @@
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Timer/Timer.h"
+#include "Ui/Rect.h"
 #include "Ui/Wl/TypesWl.h"
+#include "Ui/Wl/viewporter-client-protocol.h"
 
 struct xdg_wm_base;
 struct zxdg_decoration_manager_v1;
@@ -130,6 +132,8 @@ public:
 
 	wl_subcompositor* getSubcompositor() const { return m_subcompositor; }
 
+	wp_viewporter* getViewporter() const { return m_viewporter; }
+
 	wl_shm* getShm() const { return m_shm; }
 
 	xdg_wm_base* getXdgWmBase() const { return m_xdgWmBase; }
@@ -194,6 +198,21 @@ public:
 	//! Process all pending expose requests; returns true if any were processed.
 	bool processPendingExposes();
 
+	//! Compute the visible portion of a widget in its own local device coords,
+	//! by walking up the ancestor chain and intersecting against every ancestor's
+	//! inner rect. Returns an empty rect when the widget is fully clipped away.
+	static Rect computeVisibleRect(const WidgetData* widget);
+
+	//! Apply the visible rect to a widget: positions the subsurface at the clipped
+	//! offset, sets wp_viewport source/destination on both the widget surface and
+	//! the optional render subsurface, or hides via a null-buffer attach when
+	//! fully clipped. Equivalent to X11's automatic child clipping.
+	void applyClip(WidgetData* widget) const;
+
+	//! Re-apply clip to a widget and all its descendants. Called when an ancestor's
+	//! rect changes, since that can change every descendant's visibility.
+	void applyClipRecursive(WidgetData* widget) const;
+
 	//@{
 
 	int32_t getSystemDPI() const;
@@ -211,6 +230,7 @@ private:
 	wl_registry* m_registry = nullptr;
 	wl_compositor* m_compositor = nullptr;
 	wl_subcompositor* m_subcompositor = nullptr;
+	wp_viewporter* m_viewporter = nullptr;
 	wl_shm* m_shm = nullptr;
 	wl_seat* m_seat = nullptr;
 	wl_pointer* m_pointer = nullptr;
