@@ -39,9 +39,11 @@ inline void applyToplevelConfiguredSize(ContextWl* context, IWidget* widget, int
 	const Rect prev = widget->getRect();
 	const Rect next(prev.left, prev.top, prev.left + logicalWidth * scale, prev.top + logicalHeight * scale);
 
+	// setRect queues an expose; the event loop drains it at the end of the
+	// current iteration. Draining synchronously here would force a full
+	// repaint (and a Vulkan swapchain rebuild for any embedded 3D view) for
+	// every configure event the compositor sends during an interactive drag.
 	widget->setRect(next);
-	context->processPendingExposes();
-	widget->update(nullptr, true);
 }
 
 inline void toplevelXdgSurfaceConfigure(void* data, xdg_surface* xdgSurface, uint32_t serial)
