@@ -9,8 +9,6 @@
 #pragma once
 
 #include <cstring>
-#include <sys/mman.h>
-#include <unistd.h>
 #include <wayland-client.h>
 #include <wayland-cursor.h>
 #include <xkbcommon/xkbcommon.h>
@@ -29,6 +27,7 @@
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Wl/ContextWl.h"
 #include "Ui/Wl/CanvasWl.h"
+#include "Ui/Wl/ShmPoolWl.h"
 #include "Ui/Wl/Timers.h"
 #include "Ui/Wl/TypesWl.h"
 #include "Ui/Wl/UtilitiesWl.h"
@@ -54,6 +53,7 @@ public:
 	explicit WidgetWlImpl(ContextWl* context, EventSubject* owner)
 	:	m_context(context)
 	,	m_owner(owner)
+	,	m_shmPool(context->getShm())
 	{
 	}
 
@@ -86,18 +86,7 @@ public:
 				m_surface = nullptr;
 			}
 
-			if (m_shmData != nullptr && m_shmSize > 0)
-			{
-				munmap(m_shmData, m_shmSize);
-				m_shmData = nullptr;
-				m_shmSize = 0;
-			}
-
-			if (m_buffer != nullptr)
-			{
-				wl_buffer_destroy(m_buffer);
-				m_buffer = nullptr;
-			}
+			// m_shmPool releases the wl_buffer / wl_shm_pool / mmap in its destructor.
 
 			// libdecor owns the xdg_surface, xdg_toplevel and decoration when
 			// using CSD; unref the frame and the owned objects go with it.
@@ -288,6 +277,7 @@ public:
 			return;
 
 		const Size fromSize = m_rect.getSize();
+		
 		m_rect = rect;
 		m_data.posX = rect.left;
 		m_data.posY = rect.top;
@@ -580,9 +570,7 @@ protected:
 	Font m_font;
 	cairo_surface_t* m_surface = nullptr;
 	cairo_t* m_cairo = nullptr;
-	wl_buffer* m_buffer = nullptr;
-	void* m_shmData = nullptr;
-	int32_t m_shmSize = 0;
+	ShmPoolWl m_shmPool;
 	std::wstring m_text;
 	int32_t m_timer = -1;
 	int32_t m_lastMouseButton = 0;
@@ -776,13 +764,19 @@ protected:
 		const int32_t w = std::max(m_rect.getWidth(), 1);
 		const int32_t h = std::max(m_rect.getHeight(), 1);
 		const int32_t stride = w * 4;
-		const int32_t size = stride * h;
 
+		void* data = nullptr;
+		if (m_shmPool.acquire(w, h, stride, &data) == nullptr)
+			return;
+
+		// Rebind cairo when the slot's data pointer or geometry changes
+		// (slot rotation under double-buffering, or mmap moved on grow).
 		if (m_surface != nullptr)
 		{
 			const int32_t cw = cairo_image_surface_get_width(m_surface);
 			const int32_t ch = cairo_image_surface_get_height(m_surface);
-			if (cw == w && ch == h)
+			unsigned char* cd = cairo_image_surface_get_data(m_surface);
+			if (cw == w && ch == h && cd == static_cast< unsigned char* >(data))
 				return;
 
 			cairo_destroy(m_cairo);
@@ -791,27 +785,8 @@ protected:
 			m_surface = nullptr;
 		}
 
-		if (m_shmData != nullptr && m_shmSize > 0)
-		{
-			munmap(m_shmData, m_shmSize);
-			m_shmData = nullptr;
-			m_shmSize = 0;
-		}
-
-		if (m_buffer != nullptr)
-		{
-			wl_buffer_destroy(m_buffer);
-			m_buffer = nullptr;
-		}
-
-		m_buffer = m_context->createShmBuffer(w, h, stride, &m_shmData);
-		if (!m_buffer)
-			return;
-
-		m_shmSize = size;
-
 		m_surface = cairo_image_surface_create_for_data(
-			static_cast< unsigned char* >(m_shmData),
+			static_cast< unsigned char* >(data),
 			CAIRO_FORMAT_ARGB32,
 			w, h, stride
 		);
@@ -872,9 +847,10 @@ protected:
 			cairo_surface_flush(m_surface);
 
 			// Damage in buffer coordinates (device pixels).
-			wl_surface_attach(m_data.surface, m_buffer, 0, 0);
+			wl_surface_attach(m_data.surface, m_shmPool.getBuffer(), 0, 0);
 			wl_surface_damage_buffer(m_data.surface, 0, 0, sz.cx, sz.cy);
 			wl_surface_commit(m_data.surface);
+			m_shmPool.markCommitted();
 		}
 		else
 		{

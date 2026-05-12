@@ -444,36 +444,6 @@ bool ContextWl::preTranslateEvent(EventSubject* owner, WlEvent& e)
 	return false;
 }
 
-struct wl_buffer* ContextWl::createShmBuffer(int32_t width, int32_t height, int32_t stride, void** outData)
-{
-	const int32_t size = stride * height;
-
-	int fd = memfd_create("traktor-wl-shm", MFD_CLOEXEC);
-	if (fd < 0)
-		return nullptr;
-
-	if (ftruncate(fd, size) < 0)
-	{
-		close(fd);
-		return nullptr;
-	}
-
-	void* data = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-	if (data == MAP_FAILED)
-	{
-		close(fd);
-		return nullptr;
-	}
-
-	struct wl_shm_pool* pool = wl_shm_create_pool(m_shm, fd, size);
-	struct wl_buffer* buffer = wl_shm_pool_create_buffer(pool, 0, width, height, stride, WL_SHM_FORMAT_ARGB8888);
-	wl_shm_pool_destroy(pool);
-	close(fd);
-
-	*outData = data;
-	return buffer;
-}
-
 void ContextWl::queueExpose(WidgetData* widget)
 {
 	// Avoid duplicates.

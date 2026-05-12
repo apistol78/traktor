@@ -122,9 +122,6 @@ public:
 	//! Returns true if any event was processed.
 	bool processEventQueue(EventSubject* owner);
 
-	//! Create shared memory buffer.
-	struct wl_buffer* createShmBuffer(int32_t width, int32_t height, int32_t stride, void** outData);
-
 	//@{
 
 	wl_display* getDisplay() const { return m_display; }
