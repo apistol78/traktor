@@ -180,6 +180,13 @@ private:
 	bool m_allowHDR = false;
 	bool m_hdr = false;
 
+	// Cached surface state, populated lazily on first create() and kept across reset().
+	bool m_surfaceCacheValid = false;
+	VkFormat m_colorFormat = VK_FORMAT_UNDEFINED;
+	VkColorSpaceKHR m_colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+	VkPresentModeKHR m_presentMode = VK_PRESENT_MODE_FIFO_KHR;
+	uint32_t m_presentQueueFamilyIndex = ~0u;
+
 	// Event queue.
 	std::list< RenderEvent > m_eventQueue;
 

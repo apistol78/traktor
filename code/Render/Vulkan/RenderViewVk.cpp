@@ -53,18 +53,6 @@ namespace traktor::render
 namespace
 {
 
-bool presentationModeSupported(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkPresentModeKHR presentationMode)
-{
-	uint32_t presentModeCount = 0;
-	vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, 0);
-	AutoArrayPtr< VkPresentModeKHR > presentModes(new VkPresentModeKHR[presentModeCount]);
-	vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes.ptr());
-	for (uint32_t i = 0; i < presentModeCount; ++i)
-		if (presentModes[i] == presentationMode)
-			return true;
-	return false;
-}
-
 VkPipelineStageFlagBits convertStage(Stage st)
 {
 	uint32_t ps = 0;
@@ -375,6 +363,11 @@ void RenderViewVk::close()
 		m_swapChain = 0;
 	}
 
+	// Invalidate cached surface-static state since we're tearing down the surface.
+	m_surfaceCacheValid = false;
+	m_colorFormat = VK_FORMAT_UNDEFINED;
+	m_presentQueueFamilyIndex = ~0u;
+
 	// Destroy surface.
 	if (m_surface != 0)
 	{
@@ -421,55 +414,30 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 {
 	vkDeviceWaitIdle(m_context->getLogicalDevice());
 
-	// Ensure any pending cleanups are performed before closing render view.
-	m_context->performCleanup();
 	m_lost = true;
 
 	// Ensure event queue doesn't contain stale events.
 	m_eventQueue.clear();
 
-	// Destroy frame resources.
+	// Destroy only the size-dependent per-frame resources: the primary target owns image views onto
+	// the swap chain images and must be rebuilt. Semaphores, command buffers and the query pool are
+	// size-independent and reused; create() will refresh them if the image count happens to change.
 	for (auto& frame : m_frames)
 	{
 		if (frame.graphicsCommandBuffer)
 			frame.graphicsCommandBuffer->externalSynced();
 		if (frame.computeCommandBuffer)
 			frame.computeCommandBuffer->externalSynced();
-
-		frame.primaryTarget->destroy();
-		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
-		vkDestroySemaphore(m_context->getLogicalDevice(), frame.computeFinishedSemaphore, nullptr);
-	}
-	m_frames.clear();
-
-	// More pending cleanups since frames own render targets.
-	m_context->performCleanup();
-	m_counter = -1;
-
-#if defined(T_USE_QUERY)
-	if (m_queryPool != 0)
-	{
-		vkDestroyQueryPool(m_context->getLogicalDevice(), m_queryPool, nullptr);
-		m_queryPool = 0;
-	}
-#endif
-
-	for (auto& imageAvailableSemaphore : m_imageAvailableSemaphores)
-	{
-		if (imageAvailableSemaphore != 0)
+		if (frame.primaryTarget)
 		{
-			vkDestroySemaphore(m_context->getLogicalDevice(), imageAvailableSemaphore, nullptr);
-			imageAvailableSemaphore = 0;
+			frame.primaryTarget->destroy();
+			frame.primaryTarget = nullptr;
 		}
 	}
 
-	//// Destroy pipelines.
-	// for (auto& pipeline : m_pipelines)
-	//	vkDestroyPipeline(m_context->getLogicalDevice(), pipeline.second.pipeline, nullptr);
-	// m_pipelines.clear();
-
-	// Delete cross queue synchronization.
-	vkDestroySemaphore(m_context->getLogicalDevice(), m_timelineSemaphore, nullptr);
+	// Frames hold render-target references that need to drain via the deferred cleanup queue.
+	m_context->performCleanup();
+	m_counter = -1;
 
 	if (create(width, height, m_multiSample, m_multiSampleShading, m_vblanks, m_allowHDR))
 		return true;
@@ -1589,8 +1557,6 @@ CommandBuffer* RenderViewVk::getGraphicsCommandBuffer()
 
 bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks, bool allowHDR)
 {
-	vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &m_deviceProperties);
-
 	log::debug << L"Vulkan; Render view create:" << Endl;
 	log::debug << L"\twidth " << width << Endl;
 	log::debug << L"\theight " << height << Endl;
@@ -1598,7 +1564,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	log::debug << L"\tmultiSampleShading " << multiSampleShading << Endl;
 	log::debug << L"\tvblanks " << vblanks << Endl;
 	log::debug << L"\tallowHDR " << allowHDR << Endl;
-	log::debug << L"\ttimestampPeriod " << m_deviceProperties.limits.timestampPeriod << Endl;
 
 	// In case we fail to create make sure we're lost.
 	m_lost = true;
@@ -1606,7 +1571,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	m_multiSampleShading = multiSampleShading;
 	m_vblanks = vblanks;
 	m_allowHDR = allowHDR;
-	m_hdr = false;
 
 	// Do not fail if requested size, assume it will get reset later.
 	if (width == 0 || height == 0)
@@ -1615,7 +1579,161 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		return true;
 	}
 
-	// Clamp surface size to physical device limits.
+	// Populate cached surface-static state once per surface; subsequent resets reuse it.
+	if (!m_surfaceCacheValid)
+	{
+		vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &m_deviceProperties);
+		log::debug << L"\ttimestampPeriod " << m_deviceProperties.limits.timestampPeriod << Endl;
+
+		// Find present queue family.
+		uint32_t queueFamilyCount = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(m_context->getPhysicalDevice(), &queueFamilyCount, 0);
+
+		uint32_t presentQueueIndex = ~0u;
+		for (uint32_t i = 0; i < queueFamilyCount; ++i)
+		{
+			VkBool32 supportsPresent = VK_FALSE;
+			vkGetPhysicalDeviceSurfaceSupportKHR(m_context->getPhysicalDevice(), i, m_surface, &supportsPresent);
+			if (supportsPresent)
+			{
+				presentQueueIndex = i;
+				break;
+			}
+		}
+		if (presentQueueIndex == ~0u)
+		{
+			log::error << L"Failed to create Vulkan; no suitable present queue found." << Endl;
+			return false;
+		}
+		m_presentQueueFamilyIndex = presentQueueIndex;
+
+		if (m_context->getGraphicsQueue()->getQueueIndex() != presentQueueIndex)
+			m_presentQueue = Queue::create(m_context, presentQueueIndex);
+		else
+			m_presentQueue = m_context->getGraphicsQueue();
+
+		// Determine primary target color format/space.
+		uint32_t surfaceFormatCount = 0;
+		vkGetPhysicalDeviceSurfaceFormatsKHR(m_context->getPhysicalDevice(), m_surface, &surfaceFormatCount, nullptr);
+		if (surfaceFormatCount == 0)
+		{
+			log::error << L"Failed to create Vulkan; no surface formats." << Endl;
+			return false;
+		}
+
+		AutoArrayPtr< VkSurfaceFormatKHR > surfaceFormats(new VkSurfaceFormatKHR[surfaceFormatCount]);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(m_context->getPhysicalDevice(), m_surface, &surfaceFormatCount, surfaceFormats.ptr());
+
+		VkFormat colorFormat = VK_FORMAT_UNDEFINED;
+		VkColorSpaceKHR colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+		bool hdr = false;
+		if (allowHDR)
+		{
+			for (uint32_t i = 0; i < surfaceFormatCount; ++i)
+			{
+				if (surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_ST2084_EXT || surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_HLG_EXT)
+				{
+					log::debug << L"Using HDR swap chain color space." << Endl;
+					colorFormat = surfaceFormats[i].format;
+					colorSpace = surfaceFormats[i].colorSpace;
+					hdr = true;
+					break;
+				}
+			}
+		}
+		if (colorFormat == VK_FORMAT_UNDEFINED)
+		{
+			for (uint32_t i = 0; i < surfaceFormatCount; ++i)
+			{
+				if (surfaceFormats[i].format == VK_FORMAT_R8G8B8A8_UNORM || surfaceFormats[i].format == VK_FORMAT_B8G8R8A8_UNORM)
+				{
+					log::debug << L"Using SDR swap chain color space." << Endl;
+					colorFormat = surfaceFormats[i].format;
+					colorSpace = surfaceFormats[i].colorSpace;
+					hdr = false;
+					break;
+				}
+			}
+		}
+		if (colorFormat == VK_FORMAT_UNDEFINED)
+		{
+			if (surfaceFormatCount > 0)
+			{
+				log::debug << L"Using SDR swap chain color space." << Endl;
+				colorFormat = surfaceFormats[0].format;
+				colorSpace = surfaceFormats[0].colorSpace;
+				hdr = false;
+			}
+		}
+		m_colorFormat = colorFormat;
+		m_colorSpace = colorSpace;
+		m_hdr = hdr;
+
+		// Determine presentation mode by enumerating once.
+		uint32_t presentModeCount = 0;
+		vkGetPhysicalDeviceSurfacePresentModesKHR(m_context->getPhysicalDevice(), m_surface, &presentModeCount, nullptr);
+		AutoArrayPtr< VkPresentModeKHR > presentModes(new VkPresentModeKHR[presentModeCount]);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(m_context->getPhysicalDevice(), m_surface, &presentModeCount, presentModes.ptr());
+
+		const auto hasMode = [&](VkPresentModeKHR m) {
+			for (uint32_t i = 0; i < presentModeCount; ++i)
+				if (presentModes[i] == m)
+					return true;
+			return false;
+		};
+
+		VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;
+#if defined(__IOS__)
+		if (hasMode(VK_PRESENT_MODE_MAILBOX_KHR))
+			presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
+#else
+		if (vblanks <= 0)
+		{
+			if (hasMode(VK_PRESENT_MODE_MAILBOX_KHR))
+				presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
+			else if (hasMode(VK_PRESENT_MODE_FIFO_RELAXED_KHR))
+				presentationMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
+		}
+#endif
+		if (vblanks <= 0)
+		{
+			if (hasMode(VK_PRESENT_MODE_IMMEDIATE_KHR))
+				presentationMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+		}
+
+		if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
+			log::debug << L"Using FIFO presentation mode." << Endl;
+		else if (presentationMode == VK_PRESENT_MODE_FIFO_RELAXED_KHR)
+			log::debug << L"Using FIFO (relaxed) presentation mode." << Endl;
+		else if (presentationMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
+			log::debug << L"Using IMMEDIATE presentation mode." << Endl;
+		else if (presentationMode == VK_PRESENT_MODE_MAILBOX_KHR)
+			log::debug << L"Using MAILBOX presentation mode." << Endl;
+
+		m_presentMode = presentationMode;
+
+		// Check if debug marker extension is available; this also never changes for the device.
+		m_haveDebugMarkers = false;
+#if !defined(__ANDROID__) && !defined(__IOS__)
+		uint32_t extensionCount;
+		vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, nullptr);
+		AlignedVector< VkExtensionProperties > extensions(extensionCount);
+		vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, extensions.ptr());
+		for (auto extension : extensions)
+		{
+			if (std::strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
+			{
+				T_DEBUG(L"Found debug marker extension; debug markers enabled.");
+				m_haveDebugMarkers = true;
+				break;
+			}
+		}
+#endif
+
+		m_surfaceCacheValid = true;
+	}
+
+	// Clamp surface size to physical device limits (capabilities can change per resize, so always re-query).
 	VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &surfaceCapabilities);
 
@@ -1623,88 +1741,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	width = std::min(surfaceCapabilities.maxImageExtent.width, width);
 	height = std::max(surfaceCapabilities.minImageExtent.height, height);
 	height = std::min(surfaceCapabilities.maxImageExtent.height, height);
-
-	// Find present queue.
-	uint32_t queueFamilyCount = 0;
-	vkGetPhysicalDeviceQueueFamilyProperties(m_context->getPhysicalDevice(), &queueFamilyCount, 0);
-
-	AutoArrayPtr< VkQueueFamilyProperties > queueFamilyProperties(new VkQueueFamilyProperties[queueFamilyCount]);
-	vkGetPhysicalDeviceQueueFamilyProperties(m_context->getPhysicalDevice(), &queueFamilyCount, queueFamilyProperties.ptr());
-
-	uint32_t presentQueueIndex = ~0;
-	for (uint32_t i = 0; i < queueFamilyCount; ++i)
-	{
-		VkBool32 supportsPresent = VK_FALSE;
-		vkGetPhysicalDeviceSurfaceSupportKHR(m_context->getPhysicalDevice(), i, m_surface, &supportsPresent);
-		if (supportsPresent)
-		{
-			presentQueueIndex = i;
-			break;
-		}
-	}
-	if (presentQueueIndex == ~0)
-	{
-		log::error << L"Failed to create Vulkan; no suitable present queue found." << Endl;
-		return false;
-	}
-
-	if (m_context->getGraphicsQueue()->getQueueIndex() != presentQueueIndex)
-		m_presentQueue = Queue::create(m_context, presentQueueIndex);
-	else
-		m_presentQueue = m_context->getGraphicsQueue();
-
-	// Determine primary target color format/space.
-	uint32_t surfaceFormatCount = 0;
-	vkGetPhysicalDeviceSurfaceFormatsKHR(m_context->getPhysicalDevice(), m_surface, &surfaceFormatCount, nullptr);
-	if (surfaceFormatCount == 0)
-	{
-		log::error << L"Failed to create Vulkan; no surface formats." << Endl;
-		return false;
-	}
-
-	AutoArrayPtr< VkSurfaceFormatKHR > surfaceFormats(new VkSurfaceFormatKHR[surfaceFormatCount]);
-	vkGetPhysicalDeviceSurfaceFormatsKHR(m_context->getPhysicalDevice(), m_surface, &surfaceFormatCount, surfaceFormats.ptr());
-
-	VkFormat colorFormat = VK_FORMAT_UNDEFINED;
-	VkColorSpaceKHR colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-	if (allowHDR)
-	{
-		for (uint32_t i = 0; i < surfaceFormatCount; ++i)
-		{
-			if (surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_ST2084_EXT || surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_HLG_EXT)
-			{
-				log::debug << L"Using HDR swap chain color space." << Endl;
-				colorFormat = surfaceFormats[i].format;
-				colorSpace = surfaceFormats[i].colorSpace;
-				m_hdr = true;
-				break;
-			}
-		}
-	}
-	if (colorFormat == VK_FORMAT_UNDEFINED)
-	{
-		for (uint32_t i = 0; i < surfaceFormatCount; ++i)
-		{
-			if (surfaceFormats[i].format == VK_FORMAT_R8G8B8A8_UNORM || surfaceFormats[i].format == VK_FORMAT_B8G8R8A8_UNORM)
-			{
-				log::debug << L"Using SDR swap chain color space." << Endl;
-				colorFormat = surfaceFormats[i].format;
-				colorSpace = surfaceFormats[i].colorSpace;
-				m_hdr = false;
-				break;
-			}
-		}
-	}
-	if (colorFormat == VK_FORMAT_UNDEFINED)
-	{
-		if (surfaceFormatCount > 0)
-		{
-			log::debug << L"Using SDR swap chain color space." << Endl;
-			colorFormat = surfaceFormats[0].format;
-			colorSpace = surfaceFormats[0].colorSpace;
-			m_hdr = false;			
-		}
-	}
 
 	VkExtent2D surfaceResolution = surfaceCapabilities.currentExtent;
 	if (surfaceResolution.width <= -1)
@@ -1717,39 +1753,9 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	if (surfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR)
 		preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
 
-	// Determine presentation mode and desired number of images.
-	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;
-
-#if defined(__IOS__)
-	if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
-	{
-		presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
-		desiredImageCount = 3;
-	}
-#else
-	if (vblanks <= 0)
-	{
-		if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
-			presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
-		else if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_FIFO_RELAXED_KHR))
-			presentationMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
-	}
-#endif
-
-	if (vblanks <= 0)
-	{
-		if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_IMMEDIATE_KHR))
-			presentationMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
-	}
-
-	if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
-		log::debug << L"Using FIFO presentation mode." << Endl;
-	else if (presentationMode == VK_PRESENT_MODE_FIFO_RELAXED_KHR)
-		log::debug << L"Using FIFO (relaxed) presentation mode." << Endl;
-	else if (presentationMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
-		log::debug << L"Using IMMEDIATE presentation mode." << Endl;
-	else if (presentationMode == VK_PRESENT_MODE_MAILBOX_KHR)
-		log::debug << L"Using MAILBOX presentation mode." << Endl;
+	const VkFormat colorFormat = m_colorFormat;
+	const VkColorSpaceKHR colorSpace = m_colorSpace;
+	const VkPresentModeKHR presentationMode = m_presentMode;
 
 	// Check so desired image count is supported.
 	uint32_t desiredImageCount = 3;
@@ -1805,37 +1811,68 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	log::debug << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
-	for (int32_t i = 0; i < sizeof_array(m_imageAvailableSemaphores); ++i)
+	// Image-available semaphores are size-independent; create once and reuse across resets.
+	if (m_imageAvailableSemaphores[0] == 0)
 	{
-		const VkSemaphoreCreateInfo sci = {
-			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
-		};
-		if (vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS)
-			return false;
-		m_context->setObjectDebugName(L"m_imageAvailableSemaphore", (uint64_t)m_imageAvailableSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE);
+		for (int32_t i = 0; i < sizeof_array(m_imageAvailableSemaphores); ++i)
+		{
+			const VkSemaphoreCreateInfo sci = {
+				.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
+			};
+			if (vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS)
+				return false;
+			m_context->setObjectDebugName(L"m_imageAvailableSemaphore", (uint64_t)m_imageAvailableSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE);
+		}
+	}
+
+	// If the number of swap chain images changed (rare), throw away any per-image resources that depend on it.
+	if (!m_frames.empty() && m_frames.size() != imageCount)
+	{
+		for (auto& frame : m_frames)
+		{
+			if (frame.graphicsCommandBuffer)
+				frame.graphicsCommandBuffer->externalSynced();
+			if (frame.computeCommandBuffer)
+				frame.computeCommandBuffer->externalSynced();
+			if (frame.primaryTarget)
+				frame.primaryTarget->destroy();
+			if (frame.renderFinishedSemaphore)
+				vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
+			if (frame.computeFinishedSemaphore)
+				vkDestroySemaphore(m_context->getLogicalDevice(), frame.computeFinishedSemaphore, nullptr);
+		}
+		m_frames.clear();
+
+#if defined(T_USE_QUERY)
+		if (m_queryPool != 0)
+		{
+			vkDestroyQueryPool(m_context->getLogicalDevice(), m_queryPool, nullptr);
+			m_queryPool = 0;
+		}
+#endif
 	}
 
 #if defined(T_USE_QUERY)
-	// Create time query pool.
-	const VkQueryPoolCreateInfo qpci = {
-		.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO,
-		.pNext = nullptr,
-		.queryType = VK_QUERY_TYPE_TIMESTAMP,
-		.queryCount = imageCount * 2 * T_QUERY_SEGMENT_SIZE
-	};
-	if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
-		return false;
-
-	// Ensure all queries are reset to silence validation layer.
+	// Create time query pool sized to imageCount; reused across resets unless imageCount changes.
+	if (m_queryPool == 0)
 	{
-		Ref< CommandBuffer > commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"RenderViewVk::create");
-		vkCmdResetQueryPool(*commandBuffer, m_queryPool, 0, imageCount * 2 * T_QUERY_SEGMENT_SIZE);
-		if (!commandBuffer->submitAndWait())
+		const VkQueryPoolCreateInfo qpci = {
+			.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO,
+			.pNext = nullptr,
+			.queryType = VK_QUERY_TYPE_TIMESTAMP,
+			.queryCount = imageCount * 2 * T_QUERY_SEGMENT_SIZE
+		};
+		if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
 			return false;
+
+		// Each frame's segment is reset in beginFrame before reuse, so the initial pool-wide reset can
+		// be issued lazily — fold it into the first frame's command buffer instead of submitting + waiting here.
+		m_nextQueryIndex = 0;
+		m_lastQueryIndex = 0;
 	}
 #endif
 
-	// Create primary depth target.
+	// Create primary depth target (size-dependent, always rebuilt).
 	Ref< RenderTargetDepthVk > primaryDepth = new RenderTargetDepthVk(m_context);
 	if (!primaryDepth->createPrimary(
 			width,
@@ -1851,19 +1888,29 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 			L"Primary Depth"))
 		return false;
 
-	// Create frame resources.
+	// Create / refresh frame resources. Per-frame semaphores are kept across resets; only the primary target
+	// (which owns the swap chain image view) gets rebuilt with the new dimensions.
+	const bool freshFrames = m_frames.empty();
 	m_frames.resize(imageCount);
 	for (uint32_t i = 0; i < imageCount; ++i)
 	{
 		auto& frame = m_frames[i];
 
-		const VkSemaphoreCreateInfo createInfo = {
-			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
-		};
-		vkCreateSemaphore(m_context->getLogicalDevice(), &createInfo, nullptr, &frame.renderFinishedSemaphore);
-		m_context->setObjectDebugName(L"frame.renderFinishedSemaphore", (uint64_t)frame.renderFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
-		vkCreateSemaphore(m_context->getLogicalDevice(), &createInfo, nullptr, &frame.computeFinishedSemaphore);
-		m_context->setObjectDebugName(L"frame.computeFinishedSemaphore", (uint64_t)frame.computeFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
+		if (freshFrames || frame.renderFinishedSemaphore == 0)
+		{
+			const VkSemaphoreCreateInfo createInfo = {
+				.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
+			};
+			vkCreateSemaphore(m_context->getLogicalDevice(), &createInfo, nullptr, &frame.renderFinishedSemaphore);
+			m_context->setObjectDebugName(L"frame.renderFinishedSemaphore", (uint64_t)frame.renderFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
+			vkCreateSemaphore(m_context->getLogicalDevice(), &createInfo, nullptr, &frame.computeFinishedSemaphore);
+			m_context->setObjectDebugName(L"frame.computeFinishedSemaphore", (uint64_t)frame.computeFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
+		}
+
+		// boundPipeline is a per-swap-chain-image cache and is invalid against the new render targets.
+		frame.boundPipeline = 0;
+		frame.boundIndexBuffer = BufferViewVk();
+		frame.boundVertexBuffer = BufferViewVk();
 
 		static uint32_t primaryInstances = 0;
 		frame.primaryTarget = new RenderTargetSetVk(m_context, primaryInstances);
@@ -1878,41 +1925,26 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 			return false;
 	}
 
-	// Check if debug marker extension is available.
-	m_haveDebugMarkers = false;
-#if !defined(__ANDROID__) && !defined(__IOS__)
-	uint32_t extensionCount;
-	vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, nullptr);
-	AlignedVector< VkExtensionProperties > extensions(extensionCount);
-	vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, extensions.ptr());
-	for (auto extension : extensions)
+	// Timeline semaphore for synchronizing async compute and graphics queues; size-independent.
+	if (m_timelineSemaphore == VK_NULL_HANDLE)
 	{
-		if (std::strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
-		{
-			T_DEBUG(L"Found debug marker extension; debug markers enabled.");
-			m_haveDebugMarkers = true;
-			break;
-		}
+		const VkSemaphoreTypeCreateInfo typeInfo = {
+			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO,
+			.semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE,
+			.initialValue = 0
+		};
+		const VkSemaphoreCreateInfo createInfo = {
+			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+			.pNext = &typeInfo
+		};
+		vkCreateSemaphore(m_context->getLogicalDevice(), &createInfo, nullptr, &m_timelineSemaphore);
+		m_timelineSemaphoreValue = 0;
 	}
-#endif
 
-	// Create timeline semaphore for synchronizing async compute and graphics queues.
-	const VkSemaphoreTypeCreateInfo typeInfo = {
-		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO,
-		.semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE,
-		.initialValue = 0
-	};
-	const VkSemaphoreCreateInfo createInfo = {
-		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-		.pNext = &typeInfo
-	};
-	vkCreateSemaphore(m_context->getLogicalDevice(), &createInfo, nullptr, &m_timelineSemaphore);
-	m_timelineSemaphoreValue = 0;
+	// Render pass cache is keyed by attachment format hashes and is independent of size.
+	if (!m_renderPassCache)
+		m_renderPassCache = new RenderPassCache(m_context->getLogicalDevice());
 
-	// Cleanup.
-	m_renderPassCache = new RenderPassCache(m_context->getLogicalDevice());
-	m_nextQueryIndex = 0;
-	m_lastQueryIndex = 0;
 	m_lost = false;
 	return true;
 }
