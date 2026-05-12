@@ -3136,6 +3136,7 @@ void EditorForm::threadAssetMonitor()
 	RefArray< const File > modifiedFiles;
 	RefArray< File > files;
 	AlignedVector< Guid > modifiedAssets;
+	DateTime beforeWaiting = DateTime::now();
 
 	while (!m_threadAssetMonitor->stopped())
 	{
@@ -3152,13 +3153,12 @@ void EditorForm::threadAssetMonitor()
 
 			const std::wstring assetPath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 			// Wait for any asset file change.
+			m_lockBuild.release();
 			if (!OS::getInstance().waitUntilAnyFileChange(assetPath, 1000))
-			{
-				m_lockBuild.release();
 				continue;
-			}
+			m_lockBuild.wait();
 #endif
 
 			// Find all assets which have archive flag set.
@@ -3178,8 +3178,7 @@ void EditorForm::threadAssetMonitor()
 				files = FileSystem::getInstance().find(fileName);
 				for (auto file : files)
 				{
-					const uint32_t flags = file->getFlags();
-					if ((flags & (File::FfReadOnly | File::FfArchive)) == File::FfArchive)
+					if (file->getLastWriteTime() > beforeWaiting)
 					{
 						log::info << L"Source asset \"" << file->getPath().getPathName() << L"\" modified." << Endl;
 						modifiedFiles.push_back(file);
@@ -3187,6 +3186,9 @@ void EditorForm::threadAssetMonitor()
 					}
 				}
 			}
+
+			// Capture time before building any modified assets.
+			beforeWaiting = DateTime::now();
 
 			m_lockBuild.release();
 
@@ -3198,10 +3200,6 @@ void EditorForm::threadAssetMonitor()
 			// Build assets.
 			if (!modifiedAssets.empty())
 			{
-				// Reset archive flag on all found assets.
-				for (auto modifiedFile : modifiedFiles)
-					FileSystem::getInstance().modify(modifiedFile->getPath(), modifiedFile->getFlags() & ~File::FfArchive);
-
 				log::info << L"Modified source asset(s) detected; building asset(s)..." << Endl;
 				buildAssets(modifiedAssets, false);
 
@@ -3210,7 +3208,7 @@ void EditorForm::threadAssetMonitor()
 					editorPluginSite->handleCommand(ui::Command(L"Editor.AutoBuild"), false);
 			}
 		}
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 		else
 #endif
 			m_threadAssetMonitor->sleep(1000);

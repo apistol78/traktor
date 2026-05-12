@@ -200,7 +200,7 @@ public:
 	 */
 	bool getAssociatedExecutable(const std::wstring& extension, std::wstring& outPath) const;
 
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 	/*! Wait until any file has been changed in a directory.
 	 * 
 	 * \param path Path to directory.

@@ -22,10 +22,13 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <dirent.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <poll.h>
 #include <pwd.h>
 #include <spawn.h>
+#include <sys/inotify.h>
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -396,6 +399,53 @@ bool OS::whereIs(const std::wstring& executable, std::wstring& outPath) const
 bool OS::getAssociatedExecutable(const std::wstring& extension, std::wstring& outPath) const
 {
 	return false;
+}
+
+bool OS::waitUntilAnyFileChange(const Path& path, int32_t timeout) const
+{
+	const std::string osp = wstombs(FileSystem::getInstance().getAbsolutePath(path).getPathNameOS());
+
+	const int fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
+	if (fd < 0)
+		return false;
+
+	// inotify does not support recursive watches; walk the tree and add a watch per directory.
+	AlignedVector< std::string > pending;
+	pending.push_back(osp);
+	while (!pending.empty())
+	{
+		const std::string dir = pending.back();
+		pending.pop_back();
+
+		if (inotify_add_watch(fd, dir.c_str(), IN_MODIFY | IN_CLOSE_WRITE) < 0)
+			continue;
+
+		DIR* d = opendir(dir.c_str());
+		if (!d)
+			continue;
+
+		struct dirent* entry;
+		while ((entry = readdir(d)) != nullptr)
+		{
+			if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+				continue;
+
+			const std::string sub = dir + "/" + entry->d_name;
+			struct stat st;
+			if (lstat(sub.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
+				pending.push_back(sub);
+		}
+		closedir(d);
+	}
+
+	struct pollfd pfd;
+	pfd.fd = fd;
+	pfd.events = POLLIN;
+	const int pollResult = poll(&pfd, 1, timeout);
+	const bool change = (pollResult > 0 && (pfd.revents & POLLIN) != 0);
+
+	close(fd);
+	return change;
 }
 
 OS::OS()
