@@ -624,6 +624,10 @@
 					<first>color-selected</first>
 					<second>12</second>
 				</item>
+				<item>
+					<first>color-typename</first>
+					<second>6</second>
+				</item>
 			</colors>
 		</item>
 		<item>
