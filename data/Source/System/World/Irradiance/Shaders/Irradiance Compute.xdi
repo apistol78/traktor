@@ -41,8 +41,8 @@
 			<id>{5AA873C8-99FE-0F49-873A-EAC0E36A656A}</id>
 			<comment/>
 			<position>
-				<first>-1672</first>
-				<second>-405</second>
+				<first>-1570</first>
+				<second>-837</second>
 			</position>
 			<name>Raytracing</name>
 			<technique>World_ComputeIrradiance_RT</technique>
@@ -361,16 +361,16 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{81CB637D-9323-C440-BD0D-C85298C4B08A}</id>
 			<comment/>
 			<position>
-				<first>-2049</first>
-				<second>-524</second>
+				<first>-1947</first>
+				<second>-956</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{72B0215A-07BF-7E4E-ADEA-9D796B9EB0CD}</id>
 			<comment/>
 			<position>
-				<first>-2254</first>
-				<second>-524</second>
+				<first>-2152</first>
+				<second>-956</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -378,8 +378,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{456643BE-2442-B544-8561-9DA08E681109}</id>
 			<comment/>
 			<position>
-				<first>-2439</first>
-				<second>-524</second>
+				<first>-2337</first>
+				<second>-956</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -387,16 +387,16 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{7FA71DD2-2214-2D40-B818-AAFDE8461BC9}</id>
 			<comment/>
 			<position>
-				<first>-2049</first>
-				<second>-446</second>
+				<first>-1947</first>
+				<second>-878</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{9D74B05E-EC09-E342-839C-006F965973B9}</id>
 			<comment/>
 			<position>
-				<first>-2254</first>
-				<second>-417</second>
+				<first>-2152</first>
+				<second>-849</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -404,8 +404,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{86D624E3-EEF3-E146-BA93-139506322BE9}</id>
 			<comment/>
 			<position>
-				<first>-2439</first>
-				<second>-417</second>
+				<first>-2337</first>
+				<second>-849</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -413,8 +413,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{A9FA4598-AB06-634C-B4C8-5BB277012B11}</id>
 			<comment/>
 			<position>
-				<first>-2001</first>
-				<second>-368</second>
+				<first>-1899</first>
+				<second>-800</second>
 			</position>
 			<name>Random</name>
 			<technique/>
@@ -450,8 +450,8 @@ $Output = BlueNoise(seed);
 			<id>{17849A29-E1D2-C24C-A0E0-3395541637C2}</id>
 			<comment/>
 			<position>
-				<first>-2254</first>
-				<second>-283</second>
+				<first>-2152</first>
+				<second>-715</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -596,8 +596,8 @@ $TexCoord = vec4(
 			<id>{3FB766B4-DCFA-2240-93AE-D2C072271A60}</id>
 			<comment/>
 			<position>
-				<first>-1432</first>
-				<second>-2118</second>
+				<first>-1405</first>
+				<second>-2084</second>
 			</position>
 			<name>L_Velocity</name>
 		</item>
@@ -605,8 +605,8 @@ $TexCoord = vec4(
 			<id>{CAB31635-5AD6-5A46-B373-4BF451A31AE0}</id>
 			<comment/>
 			<position>
-				<first>-1991</first>
-				<second>-66</second>
+				<first>-1889</first>
+				<second>-498</second>
 			</position>
 			<name>L_Velocity</name>
 		</item>
@@ -623,8 +623,8 @@ $TexCoord = vec4(
 			<id>{7C4D31A9-252A-374E-8AB7-9894678E1217}</id>
 			<comment/>
 			<position>
-				<first>-2890</first>
-				<second>-1602</second>
+				<first>-2938</first>
+				<second>-1764</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -632,8 +632,8 @@ $TexCoord = vec4(
 			<id>{9CC8CA46-B132-0E47-94B4-E57380D00118}</id>
 			<comment/>
 			<position>
-				<first>-1298</first>
-				<second>-1553</second>
+				<first>-1346</first>
+				<second>-1715</second>
 			</position>
 			<parameterName>World_IrradianceEnable</parameterName>
 		</item>
@@ -641,24 +641,24 @@ $TexCoord = vec4(
 			<id>{2E1B43E8-0C7E-F943-9337-8448DCC89B4D}</id>
 			<comment/>
 			<position>
-				<first>-2414</first>
-				<second>-1575</second>
+				<first>-2462</first>
+				<second>-1737</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{2681EFF2-96DD-774B-9BC7-6999AECA4D0F}</id>
 			<comment/>
 			<position>
-				<first>-2411</first>
-				<second>-1410</second>
+				<first>-2459</first>
+				<second>-1572</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{9B53349A-F5B0-B34B-8A86-A05CE399514A}</id>
 			<comment/>
 			<position>
-				<first>-2675</first>
-				<second>-1415</second>
+				<first>-2723</first>
+				<second>-1577</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -666,8 +666,8 @@ $TexCoord = vec4(
 			<id>{D47CD934-5223-7842-B017-AD1CE6D2B58D}</id>
 			<comment/>
 			<position>
-				<first>-2675</first>
-				<second>-1577</second>
+				<first>-2723</first>
+				<second>-1739</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -675,8 +675,8 @@ $TexCoord = vec4(
 			<id>{3B36CFE9-9E7E-A240-968D-ECCBB71571EB}</id>
 			<comment/>
 			<position>
-				<first>-2063</first>
-				<second>-1519</second>
+				<first>-2111</first>
+				<second>-1681</second>
 			</position>
 			<fragmentGuid>{ADFB49ED-56BB-4981-8121-E9154AB0B2D4}</fragmentGuid>
 			<inputPins>
@@ -702,8 +702,8 @@ $TexCoord = vec4(
 			<id>{26B6ACCD-5FFE-7742-9262-EAEBDC0E5D5D}</id>
 			<comment/>
 			<position>
-				<first>-2892</first>
-				<second>-1442</second>
+				<first>-2940</first>
+				<second>-1604</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -711,8 +711,8 @@ $TexCoord = vec4(
 			<id>{0CDC8290-424F-1F41-9AC7-6F97D5262407}</id>
 			<comment/>
 			<position>
-				<first>-1693</first>
-				<second>-1436</second>
+				<first>-1741</first>
+				<second>-1598</second>
 			</position>
 			<color>0, 0, 0, 1</color>
 			<linear>false</linear>
@@ -721,8 +721,8 @@ $TexCoord = vec4(
 			<id>{62695C9C-CD61-4E4C-B724-57251EBA3971}</id>
 			<comment/>
 			<position>
-				<first>-2063</first>
-				<second>-1629</second>
+				<first>-2111</first>
+				<second>-1791</second>
 			</position>
 			<fragmentGuid>{1F5FB15A-CCA0-264F-A150-7EDEAD93E644}</fragmentGuid>
 			<inputPins>
@@ -743,8 +743,8 @@ $TexCoord = vec4(
 			<id>{24163C3B-AEF9-CC43-9AEB-E39122AE7235}</id>
 			<comment/>
 			<position>
-				<first>-1677</first>
-				<second>-1583</second>
+				<first>-1725</first>
+				<second>-1745</second>
 			</position>
 			<parameterName>World_IrradianceSingle</parameterName>
 		</item>
@@ -752,8 +752,8 @@ $TexCoord = vec4(
 			<id>{C7209D41-AF49-FE40-B4F6-4A644649AAF2}</id>
 			<comment/>
 			<position>
-				<first>-781</first>
-				<second>-1471</second>
+				<first>-829</first>
+				<second>-1633</second>
 			</position>
 			<name>L_Sky</name>
 		</item>
@@ -761,8 +761,8 @@ $TexCoord = vec4(
 			<id>{67436684-6E86-4C4B-8CD2-937BABB30A51}</id>
 			<comment/>
 			<position>
-				<first>-1991</first>
-				<second>-26</second>
+				<first>-1889</first>
+				<second>-458</second>
 			</position>
 			<name>L_Sky</name>
 		</item>
@@ -770,8 +770,8 @@ $TexCoord = vec4(
 			<id>{7ACE338A-D4B2-734B-A72E-9E9C05F3E135}</id>
 			<comment/>
 			<position>
-				<first>-1004</first>
-				<second>-1492</second>
+				<first>-1052</first>
+				<second>-1654</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -779,8 +779,8 @@ $TexCoord = vec4(
 			<id>{B46D8DBA-7927-4F74-B9A5-D85117428DF8}</id>
 			<comment/>
 			<position>
-				<first>-1665</first>
-				<second>195</second>
+				<first>-1563</first>
+				<second>-237</second>
 			</position>
 			<name>Pass</name>
 			<technique>World_ComputeIrradiance</technique>
@@ -813,8 +813,8 @@ imageStore($Output, pt, $Sky);
 			<id>{62BCF65D-1878-41FF-A232-221EE0CA6CDD}</id>
 			<comment/>
 			<position>
-				<first>-2000</first>
-				<second>259</second>
+				<first>-1898</first>
+				<second>-173</second>
 			</position>
 			<name>L_Sky</name>
 		</item>
@@ -857,8 +857,8 @@ imageStore($Output, pt, $Sky);
 			<id>{4A5CADDA-27DB-9D4D-81F9-1759B8BF7FBC}</id>
 			<comment/>
 			<position>
-				<first>-1991</first>
-				<second>14</second>
+				<first>-1889</first>
+				<second>-418</second>
 			</position>
 			<name>L_Depth</name>
 		</item>
@@ -870,16 +870,6 @@ imageStore($Output, pt, $Sky);
 				<second>-2717</second>
 			</position>
 			<name>L_TexCoord_NoJitter</name>
-		</item>
-		<item type="traktor.render.Comment" version="traktor.render.Node:1">
-			<id>{C4B26B9F-1C56-4E40-9D2F-FB40C6A3B05F}</id>
-			<comment><![CDATA[Compute inital set of GI, output from this compute shader is noisy.
-Still it tries to filter both spatially and temporarily
-values in the reservoir for convergence.]]></comment>
-			<position>
-				<first>-2196</first>
-				<second>-2968</second>
-			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{00000000-0000-0000-0000-000000000000}</id>
@@ -894,8 +884,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-1991</first>
-				<second>-564</second>
+				<first>-1889</first>
+				<second>-996</second>
 			</position>
 			<parameterDeclaration>{C651B846-F51A-CB49-BBAB-10C2A527DE97}</parameterDeclaration>
 		</item>
@@ -903,8 +893,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2286</first>
-				<second>-474</second>
+				<first>-2184</first>
+				<second>-906</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -912,8 +902,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2286</first>
-				<second>-367</second>
+				<first>-2184</first>
+				<second>-799</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -921,8 +911,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2451</first>
-				<second>-283</second>
+				<first>-2349</first>
+				<second>-715</second>
 			</position>
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
 		</item>
@@ -930,8 +920,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2007</first>
-				<second>-266</second>
+				<first>-1905</first>
+				<second>-698</second>
 			</position>
 			<parameterDeclaration>{1527F0C9-DD5E-5C47-8A6B-5B7932CFD43D}</parameterDeclaration>
 		</item>
@@ -939,8 +929,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2023</first>
-				<second>-226</second>
+				<first>-1921</first>
+				<second>-658</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -957,8 +947,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2039</first>
-				<second>-106</second>
+				<first>-1937</first>
+				<second>-538</second>
 			</position>
 			<parameterDeclaration>{2C06FC6E-5E3E-9442-BD38-EFEAD6DDDCC5}</parameterDeclaration>
 		</item>
@@ -975,8 +965,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2707</first>
-				<second>-1520</second>
+				<first>-2755</first>
+				<second>-1682</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -984,8 +974,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2707</first>
-				<second>-1362</second>
+				<first>-2755</first>
+				<second>-1524</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -993,8 +983,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2048</first>
-				<second>217</second>
+				<first>-1946</first>
+				<second>-215</second>
 			</position>
 			<parameterDeclaration>{2C06FC6E-5E3E-9442-BD38-EFEAD6DDDCC5}</parameterDeclaration>
 		</item>
@@ -1011,8 +1001,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2023</first>
-				<second>-306</second>
+				<first>-1921</first>
+				<second>-738</second>
 			</position>
 			<parameterDeclaration>{3C048EC4-ED6A-0847-B08D-95F74407200F}</parameterDeclaration>
 		</item>
@@ -1020,8 +1010,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2007</first>
-				<second>-186</second>
+				<first>-1905</first>
+				<second>-618</second>
 			</position>
 			<parameterDeclaration>{8B5D917E-016B-B847-82D9-873D43916888}</parameterDeclaration>
 		</item>
@@ -1029,8 +1019,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{00000000-0000-0000-0000-000000000000}</id>
 			<comment/>
 			<position>
-				<first>-2039</first>
-				<second>-146</second>
+				<first>-1937</first>
+				<second>-578</second>
 			</position>
 			<parameterDeclaration>{1EA8D019-E2CB-F14E-806E-39E74AFAB00E}</parameterDeclaration>
 		</item>
@@ -1038,8 +1028,8 @@ values in the reservoir for convergence.]]></comment>
 			<id>{50D65E52-7886-3C45-B57E-6143E16E33BC}</id>
 			<comment/>
 			<position>
-				<first>-2071</first>
-				<second>54</second>
+				<first>-1969</first>
+				<second>-378</second>
 			</position>
 			<parameterDeclaration>{3E83158A-0056-F54E-94B0-C23DF1573D3B}</parameterDeclaration>
 		</item>
@@ -1447,7 +1437,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[47]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1457,7 +1447,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[47]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1467,7 +1457,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[48]"/>
+				<node ref="/object/nodes/item[47]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1477,7 +1467,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1487,7 +1477,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[50]"/>
+				<node ref="/object/nodes/item[49]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1497,7 +1487,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[51]"/>
+				<node ref="/object/nodes/item[50]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1507,7 +1497,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[52]"/>
+				<node ref="/object/nodes/item[51]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1517,7 +1507,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[53]"/>
+				<node ref="/object/nodes/item[52]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1527,7 +1517,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[54]"/>
+				<node ref="/object/nodes/item[53]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1537,7 +1527,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[55]"/>
+				<node ref="/object/nodes/item[54]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1547,7 +1537,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[56]"/>
+				<node ref="/object/nodes/item[55]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1557,7 +1547,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[57]"/>
+				<node ref="/object/nodes/item[56]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1567,7 +1557,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[58]"/>
+				<node ref="/object/nodes/item[57]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1577,7 +1567,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[59]"/>
+				<node ref="/object/nodes/item[58]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1587,7 +1577,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[60]"/>
+				<node ref="/object/nodes/item[59]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1597,7 +1587,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[61]"/>
+				<node ref="/object/nodes/item[60]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1607,7 +1597,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[61]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1617,7 +1607,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[63]"/>
+				<node ref="/object/nodes/item[62]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1637,7 +1627,7 @@ values in the reservoir for convergence.]]></comment>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[64]"/>
+				<node ref="/object/nodes/item[63]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1646,5 +1636,30 @@ values in the reservoir for convergence.]]></comment>
 			</destination>
 		</item>
 	</edges>
-	<groups/>
+	<groups>
+		<item type="traktor.render.Group">
+			<title>Setup parameters</title>
+			<comment/>
+			<position>
+				<first>-3052</first>
+				<second>-2839</second>
+			</position>
+			<size>
+				<first>2483</first>
+				<second>1468</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Calculate irradiance GI</title>
+			<comment/>
+			<position>
+				<first>-2563</first>
+				<second>-1198</second>
+			</position>
+			<size>
+				<first>1468</first>
+				<second>1182</second>
+			</size>
+		</item>
+	</groups>
 </object>
