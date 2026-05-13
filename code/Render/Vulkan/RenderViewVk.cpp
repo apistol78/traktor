@@ -1865,8 +1865,18 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
 			return false;
 
-		// Each frame's segment is reset in beginFrame before reuse, so the initial pool-wide reset can
-		// be issued lazily — fold it into the first frame's command buffer instead of submitting + waiting here.
+		// Validation considers freshly created queries "uninitialized" until a reset has been
+		// queue-submitted and observed; ProfileReportRenderBlock reads results inline during render
+		// context execution (before endFrame submits the per-frame reset), so we need an up-front
+		// reset that has been completed before any read can happen. This only runs once per pool
+		// (re)creation rather than on every reset(), so the optimization vs. the original code stands.
+		{
+			Ref< CommandBuffer > commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"RenderViewVk::create");
+			vkCmdResetQueryPool(*commandBuffer, m_queryPool, 0, imageCount * 2 * T_QUERY_SEGMENT_SIZE);
+			if (!commandBuffer->submitAndWait())
+				return false;
+		}
+
 		m_nextQueryIndex = 0;
 		m_lastQueryIndex = 0;
 	}

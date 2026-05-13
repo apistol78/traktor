@@ -177,7 +177,11 @@ bool CommandBuffer::submitAndWait()
 
 void CommandBuffer::externalSynced()
 {
-	m_submitted = false;
+	if (m_submitted)
+	{
+		vkResetFences(m_context->getLogicalDevice(), 1, &m_inFlight);
+		m_submitted = false;
+	}
 }
 
 CommandBuffer::operator VkCommandBuffer()
