@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,8 @@
 
 #include "Core/Serialization/ISerializable.h"
 #include "Render/Types.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -57,6 +59,7 @@ public:
 	float m_sharpenStrength = 0.0f;
 	float m_noiseStrength = 0.0f;
 	bool m_systemTexture = false;
+	std::wstring m_swizzle = L"rgba";
 
 	virtual void serialize(ISerializer& s) override;
 };

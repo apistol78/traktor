@@ -9,6 +9,7 @@
 #include "Render/Editor/Texture/TextureControl.h"
 
 #include "Core/Math/Const.h"
+#include "Core/Misc/String.h"
 #include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Filters/EncodeRGBM.h"
 #include "Drawing/Filters/GammaFilter.h"
@@ -100,10 +101,17 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 		m_imageOutput = image->clone();
 		m_imageOutput->convert(drawing::PixelFormat::getR8G8B8A8());
 
+		// Apply user swizzle.
+		if (toUpper(output.m_swizzle) != L"rgba")
+		{
+			const drawing::SwizzleFilter swizzleFilter(output.m_swizzle);
+			m_imageOutput->apply(&swizzleFilter);
+		}
+
 		// Discard alpha.
 		if (output.m_ignoreAlpha)
 		{
-			const drawing::SwizzleFilter swizzleFilter(L"RGB1");
+			const drawing::SwizzleFilter swizzleFilter(L"rgb1");
 			m_imageOutput->apply(&swizzleFilter);
 		}
 
