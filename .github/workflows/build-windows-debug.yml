@@ -8,12 +8,12 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     steps:
     - uses: actions/checkout@v3
     - name: Install 3rdp dependencies
       run: ./scripts/update-3rdp.bat
     - name: Generate build files
-      run: ./scripts/build-projects-vs2022-win64.bat
+      run: ./scripts/build-projects-vs2026-win64.bat
     - name: Build DebugShared
       run: ./scripts/autobuild/autobuild-latest-win64.bat DebugShared
