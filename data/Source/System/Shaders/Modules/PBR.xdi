@@ -57,15 +57,16 @@ vec3 CalculateLighting(vec3 N, vec3 V, vec3 L, vec3 albedo, float metallic, floa
 {
 	const float PI = 3.14159265359f;
 	const vec3 H = normalize(V + L);
+	const float R = roughness * 0.95f + 0.05f;
 
 	const float NdotL = max(dot(N, L), 0.0f);
 	const float NdotV = max(dot(N, V), 0.0f);
 
 	const vec3 F0 = mix(vec3(0.01f), albedo, metallic);
-	const vec3 F = FresnelSchlickRoughness(NdotV, F0, roughness);
+	const vec3 F = FresnelSchlickRoughness(NdotV, F0, R);
 
-	const float NDF = DistributionGGX(N, H, roughness);
-	const float G = GeometrySmith(N, V, L, roughness);
+	const float NDF = DistributionGGX(N, H, R);
+	const float G = GeometrySmith(N, V, L, R);
 
 	const vec3 numerator = NDF * G * F;
 	const float denominator = 4.0f * NdotV * NdotL + 0.0001f;
