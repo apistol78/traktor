@@ -1,0 +1,29 @@
+# Sample .desktop file for the Traktor editor on Linux.
+#
+# The basename of this file (Traktor.Editor.App.desktop) MUST match the app_id
+# that the Wayland backend reports for its toplevels. ContextWl derives the
+# app_id from the executable basename (Traktor.Editor.App), so renaming
+# either side requires renaming the other.
+#
+# Install (per user):
+#   cp Traktor.Editor.App.desktop ~/.local/share/applications/
+#   mkdir -p ~/.local/share/icons/hicolor/scalable/apps
+#   cp resources/icons/Traktor.svg \
+#      ~/.local/share/icons/hicolor/scalable/apps/Traktor.Editor.App.svg
+#   update-desktop-database ~/.local/share/applications     # optional
+#   gtk-update-icon-cache ~/.local/share/icons/hicolor      # optional
+#
+# After installing, fix the Exec= line below to point at your actual binary.
+
+[Desktop Entry]
+Type=Application
+Version=1.5
+Name=Traktor Editor
+GenericName=Game Editor
+Comment=Traktor game engine editor
+Exec=Traktor.Editor.App %F
+Icon=Traktor.Editor.App
+Terminal=false
+Categories=Development;IDE;
+StartupNotify=true
+StartupWMClass=Traktor.Editor.App

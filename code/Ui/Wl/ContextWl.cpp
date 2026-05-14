@@ -14,6 +14,7 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Core/System/OS.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/KeyDownEvent.h"
 #include "Ui/Events/KeyEvent.h"
@@ -152,6 +153,14 @@ ContextWl::~ContextWl()
 
 bool ContextWl::initialize()
 {
+	// Derive app id from the executable basename.  Wayland has no per-window
+	// icon protocol in xdg-shell; the compositor maps app_id to an installed
+	// .desktop file and reads Icon= from it, so the executable name must
+	// match the basename of <app>.desktop for the icon to appear.
+	const std::wstring appId = OS::getInstance().getExecutable().getFileName();
+	log::info << L"Application identifier: " << appId << Endl;
+	m_appId = wstombs(appId);
+
 	m_display = wl_display_connect(nullptr);
 	if (!m_display)
 	{

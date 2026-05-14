@@ -10,6 +10,7 @@
 #include "Core/Misc/TString.h"
 #include "Ui/Events/CloseEvent.h"
 #include "Ui/Itf/ISystemBitmap.h"
+#include "Ui/Wl/ContextWl.h"
 #include "Ui/Wl/FormWl.h"
 #include "Ui/Wl/ToplevelWl.h"
 #include "xdg-shell-client-protocol.h"
@@ -50,6 +51,7 @@ bool FormWl::create(IWidget* parent, const std::wstring& text, int width, int he
 		xdg_toplevel_add_listener(m_data.xdgToplevel, &s_toplevelXdgToplevelListener, &m_listenerCtx);
 
 		xdg_toplevel_set_title(m_data.xdgToplevel, wstombs(text).c_str());
+		xdg_toplevel_set_app_id(m_data.xdgToplevel, m_context->getAppId());
 
 		m_data.decoration = zxdg_decoration_manager_v1_get_toplevel_decoration(
 			m_context->getDecorationManager(), m_data.xdgToplevel);
@@ -71,6 +73,7 @@ bool FormWl::create(IWidget* parent, const std::wstring& text, int width, int he
 			return false;
 
 		libdecor_frame_set_title(m_data.frame, wstombs(text).c_str());
+		libdecor_frame_set_app_id(m_data.frame, m_context->getAppId());
 
 		m_data.xdgSurface = libdecor_frame_get_xdg_surface(m_data.frame);
 		m_data.xdgToplevel = libdecor_frame_get_xdg_toplevel(m_data.frame);
@@ -103,6 +106,8 @@ void FormWl::setText(const std::wstring& text)
 
 void FormWl::setIcon(ISystemBitmap* icon)
 {
+	// Wayland xdg-shell has no per-window icon protocol; the compositor
+	// resolves the icon via app_id → .desktop file (set in ContextWl).
 }
 
 void FormWl::maximize()

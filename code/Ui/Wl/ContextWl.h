@@ -148,6 +148,13 @@ public:
 
 	libdecor* getLibdecor() const { return m_libdecor; }
 
+	//! Application id reported to the compositor on every toplevel
+	//! (xdg_toplevel_set_app_id / libdecor_frame_set_app_id).  Wayland uses
+	//! this to associate the surface with an installed .desktop file, which
+	//! is the only mechanism available for the per-window icon.  Derived
+	//! from the executable basename at initialize() time.
+	const char* getAppId() const { return m_appId.c_str(); }
+
 	//! True if the compositor supports server-side decorations via zxdg_decoration_manager_v1.
 	bool hasServerSideDecorations() const { return m_decorationManager != nullptr; }
 
@@ -251,6 +258,8 @@ private:
 	xkb_context* m_xkbContext = nullptr;
 	xkb_keymap* m_xkbKeymap = nullptr;
 	xkb_state* m_xkbState = nullptr;
+
+	std::string m_appId;
 
 	int32_t m_dpi = 96;
 	int32_t m_outputScale = 1;

@@ -108,6 +108,8 @@ bool DialogWl::create(IWidget* parent, const std::wstring& text, int width, int 
 			m_data.xdgToplevel = xdg_surface_get_toplevel(m_data.xdgSurface);
 			xdg_toplevel_add_listener(m_data.xdgToplevel, &s_toplevelXdgToplevelListener, &m_listenerCtx);
 
+			xdg_toplevel_set_app_id(m_data.xdgToplevel, m_context->getAppId());
+
 			if (anchorData && anchorData->xdgToplevel)
 				xdg_toplevel_set_parent(m_data.xdgToplevel, anchorData->xdgToplevel);
 		}
@@ -125,6 +127,7 @@ bool DialogWl::create(IWidget* parent, const std::wstring& text, int width, int 
 
 		if ((style & WsCaption) != 0)
 			xdg_toplevel_set_title(m_data.xdgToplevel, wstombs(text).c_str());
+		xdg_toplevel_set_app_id(m_data.xdgToplevel, m_context->getAppId());
 
 		m_data.decoration = zxdg_decoration_manager_v1_get_toplevel_decoration(
 			m_context->getDecorationManager(), m_data.xdgToplevel);
@@ -154,6 +157,7 @@ bool DialogWl::create(IWidget* parent, const std::wstring& text, int width, int 
 
 		if ((style & WsCaption) != 0)
 			libdecor_frame_set_title(m_data.frame, wstombs(text).c_str());
+		libdecor_frame_set_app_id(m_data.frame, m_context->getAppId());
 
 		m_data.xdgSurface = libdecor_frame_get_xdg_surface(m_data.frame);
 		m_data.xdgToplevel = libdecor_frame_get_xdg_toplevel(m_data.frame);
@@ -193,6 +197,8 @@ void DialogWl::destroy()
 
 void DialogWl::setIcon(ISystemBitmap* icon)
 {
+	// Wayland xdg-shell has no per-window icon protocol; the compositor
+	// resolves the icon via app_id → .desktop file (set in ContextWl).
 }
 
 DialogResult DialogWl::showModal()
