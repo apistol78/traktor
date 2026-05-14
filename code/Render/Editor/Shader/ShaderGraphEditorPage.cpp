@@ -985,7 +985,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			m_document->push();
 
 			const std::wstring technique = m_toolTechniques->getSelectedItem();
-			m_shaderGraph = ShaderGraphTechniques(m_shaderGraph, Guid()).generate(technique);
+			m_shaderGraph = ShaderGraphTechniques(m_shaderGraph, Guid(), true).generate(technique);
 			T_ASSERT(m_shaderGraph);
 
 			m_document->setObject(0, m_shaderGraph);
@@ -1298,7 +1298,7 @@ void ShaderGraphEditorPage::updateGraph()
 	// Extract techniques.
 	m_toolTechniques->removeAll();
 	if (resolvedShaderGraph)
-		for (const std::wstring& technique : ShaderGraphTechniques(resolvedShaderGraph, Guid()).getNames())
+		for (const std::wstring& technique : ShaderGraphTechniques(resolvedShaderGraph, Guid(), true).getNames())
 			m_toolTechniques->add(technique);
 
 	// Update variables grid.

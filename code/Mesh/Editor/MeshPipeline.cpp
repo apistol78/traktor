@@ -669,7 +669,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Extract each material technique.
-		render::ShaderGraphTechniques techniques(materialShaderGraph, materialShaderGraphId);
+		render::ShaderGraphTechniques techniques(materialShaderGraph, materialShaderGraphId, false);
 		if (!techniques.valid())
 		{
 			log::error << L"MeshPipeline failed; unable to generate techniques, material \"" << materialName << L"\"." << Endl;

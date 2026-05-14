@@ -381,7 +381,7 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Generate shader graphs from techniques and combinations.
-	ShaderGraphTechniques techniques(shaderGraph, shaderGraphId);
+	ShaderGraphTechniques techniques(shaderGraph, shaderGraphId, false);
 	if (!techniques.valid())
 		return false;
 

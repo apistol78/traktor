@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -44,7 +44,7 @@ struct CopyVisitor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTechniques", ShaderGraphTechniques, Object)
 
-ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph, const Guid& shaderGraphId)
+ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph, const Guid& shaderGraphId, bool fragment)
 :	m_valid(true)
 {
 	T_IMMUTABLE_CHECK(shaderGraph);
@@ -55,10 +55,13 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph, con
 	);
 
 	// Constant fold entire graph so disabled outputs can be efficiently evaluated.
-	if (shaderGraphOpt)
-		shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt, shaderGraphId).getConstantFolded();
-	if (shaderGraphOpt)
-		shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt, shaderGraphId).removeDisabledOutputs();
+	if (!fragment)
+	{
+		if (shaderGraphOpt)
+			shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt, shaderGraphId).getConstantFolded();
+		if (shaderGraphOpt)
+			shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt, shaderGraphId).removeDisabledOutputs();
+	}
 
 	// Get all technique names.
 	if (shaderGraphOpt)
