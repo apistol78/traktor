@@ -180,10 +180,15 @@ bool emitAdd(GlslContext& cx, Add* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
 	{
-		cx.pushError(L"Inputs not connected.");
+		cx.pushError(L"Input1 not connected.");
+		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
 		return false;
 	}
 
@@ -585,10 +590,15 @@ bool emitCross(GlslContext& cx, Cross* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
 	{
-		cx.pushError(L"Input1 or Input2 not connected.");
+		cx.pushError(L"Input1 not connected.");
+		return false;
+	}
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
 		return false;
 	}
 
@@ -625,6 +635,7 @@ bool emitDerivative(GlslContext& cx, Derivative* node)
 		break;
 
 	default:
+		cx.pushError(L"Axis incorrect.");
 		return false;
 	}
 
@@ -720,10 +731,15 @@ bool emitDiv(GlslContext& cx, Div* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
 	{
-		cx.pushError(L"Input1 or Input2 not connected.");
+		cx.pushError(L"Input1 not connected.");
+		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
 		return false;
 	}
 
@@ -742,10 +758,15 @@ bool emitDot(GlslContext& cx, Dot* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
 	{
-		cx.pushError(L"Input1 or Input2 not connected.");
+		cx.pushError(L"Input1 not connected.");
+		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
 		return false;
 	}
 
@@ -910,7 +931,10 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 		ub->add(node->getParameterName(), out->getType(), node->getLength());
 	}
 	else
+	{
+		cx.pushError(L"Output incorrect type.");
 		return false;
+	}
 
 	// Define parameter in context.
 	cx.addParameter(
@@ -1143,7 +1167,10 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 		cx.getInputNode(node, L"Input3") != nullptr ? cx.emitOutput(node, L"Output3", GlslType::Void) : nullptr,
 	};
 	if (!out[0])
+	{
+		cx.pushError(L"No output.");
 		return false;
+	}
 
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
@@ -1192,6 +1219,7 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 		{
 			cx.getShader().popScope();
 			cx.getShader().popOutputStream(GlslShader::BtBody);
+			cx.pushError(L"No body.");
 			return false;
 		}
 
@@ -1321,7 +1349,10 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 
 	Ref< GlslVariable > input = cx.emitInput(node, L"Input");
 	if (!input)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	// Emit post condition if connected; break iteration if condition is false.
 	Ref< GlslVariable > condition = cx.emitInput(node, L"Condition");
@@ -1386,7 +1417,10 @@ bool emitLength(GlslContext& cx, Length* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 
@@ -1401,9 +1435,17 @@ bool emitLerp(GlslContext& cx, Lerp* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
+	{
+		cx.pushError(L"Input1 not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
+		return false;
+	}
 
 	GlslType type = glsl_promote_to_float(glsl_precedence(in1->getType(), in2->getType()));
 	if (type == GlslType::Void)
@@ -1427,7 +1469,10 @@ bool emitLog(GlslContext& cx, Log* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 
@@ -1480,7 +1525,10 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	comment(f, node);
 
@@ -1508,9 +1556,17 @@ bool emitMax(GlslContext& cx, Max* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
+	{
+		cx.pushError(L"Input1 not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -1526,9 +1582,17 @@ bool emitMin(GlslContext& cx, Min* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
+	{
+		cx.pushError(L"Input1 not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -1624,7 +1688,10 @@ bool emitMixOut(GlslContext& cx, MixOut* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	comment(f, node);
 	switch (in->getType())
@@ -1689,9 +1756,17 @@ bool emitMul(GlslContext& cx, Mul* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
+	{
+		cx.pushError(L"Input1 not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -1707,10 +1782,23 @@ bool emitMulAdd(GlslContext& cx, MulAdd* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	Ref< GlslVariable > in3 = cx.emitInput(node, L"Input3");
-	if (!in1 || !in2 || !in3)
+	if (!in1)
+	{
+		cx.pushError(L"Input1 not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
+		return false;
+	}
+	Ref< GlslVariable > in3 = cx.emitInput(node, L"Input3");
+	if (!in3)
+	{
+		cx.pushError(L"Input3 not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(glsl_precedence(in1->getType(), in2->getType()), in3->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -1727,7 +1815,10 @@ bool emitNeg(GlslContext& cx, Neg* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -1743,7 +1834,10 @@ bool emitNormalize(GlslContext& cx, Normalize* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -1793,7 +1887,10 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 		in[i] = cx.emitInput(node, inputs[i]);
 
 	if (!in[0])
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	if (rs.colorWriteMask != 0)
 	{
@@ -1821,9 +1918,17 @@ bool emitPolynomial(GlslContext& cx, Polynomial* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > x = cx.emitInput(node, L"X");
-	Ref< GlslVariable > coeffs = cx.emitInput(node, L"Coefficients");
-	if (!x || !coeffs)
+	if (!x)
+	{
+		cx.pushError(L"X not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > coeffs = cx.emitInput(node, L"Coefficients");
+	if (!coeffs)
+	{
+		cx.pushError(L"Coefficients not connected.");
+		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 
@@ -1860,9 +1965,17 @@ bool emitPow(GlslContext& cx, Pow* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > exponent = cx.emitInput(node, L"Exponent");
-	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
-	if (!exponent || !in)
+	if (!exponent)
+	{
+		cx.pushError(L"Exponent not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
+	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(exponent->getType(), in->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -1879,18 +1992,27 @@ bool emitReadStruct(GlslContext& cx, ReadStruct* node)
 
 	Ref< GlslVariable > strct = cx.emitInput(node, L"Struct");
 	if (!strct || strct->getType() != GlslType::StructBuffer)
+	{
+		cx.pushError(L"Struct not connected or incorrect type.");
 		return false;
+	}
 
 	const StructDeclaration& decl = strct->getStructDeclaration();
 
 	if (!decl.haveElement(node->getName()))
+	{
+		cx.pushError(L"No such elements.");
 		return false;
+	}
 
 	const DataType type = decl.getElementType(node->getName());
 
 	Ref< GlslVariable > index = cx.emitInput(node, L"Index");
 	if (!index)
+	{
+		cx.pushError(L"Index not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", glsl_from_data_type(type));
 
@@ -1939,9 +2061,17 @@ bool emitReflect(GlslContext& cx, Reflect* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > normal = cx.emitInput(node, L"Normal");
-	Ref< GlslVariable > direction = cx.emitInput(node, L"Direction");
-	if (!normal || !direction)
+	if (!normal)
+	{
+		cx.pushError(L"Normal not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > direction = cx.emitInput(node, L"Direction");
+	if (!direction)
+	{
+		cx.pushError(L"Direction not connected.");
+		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", direction->getType());
 
@@ -1957,7 +2087,10 @@ bool emitRecipSqrt(GlslContext& cx, RecipSqrt* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -2007,7 +2140,10 @@ bool emitRepeat(GlslContext& cx, Repeat* node)
 
 		Ref< GlslVariable > input = cx.emitInput(node, L"Input");
 		if (!input)
+		{
+			cx.pushError(L"Input not connected.");
 			return false;
+		}
 
 		inputName = input->getName();
 
@@ -2051,7 +2187,10 @@ bool emitRound(GlslContext& cx, Round* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -2066,12 +2205,23 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > texture = cx.emitInput(node, L"Texture");
-	if (!texture || texture->getType() < GlslType::Texture2D)
+	if (!texture)
+	{
+		cx.pushError(L"Texture not connected or incorrect type.");
 		return false;
+	}
+	if (texture->getType() < GlslType::Texture2D || texture->getType() > GlslType::TextureCube)
+	{
+		cx.pushError(L"Texture input incorrect type (\"" + texture->getName() + L"\" " + glsl_type_name(texture->getType()) + L").");
+		return false;
+	}
 
 	Ref< GlslVariable > texCoord = cx.emitInput(node, L"TexCoord");
 	if (!texCoord || texCoord->getType() < GlslType::Integer || texCoord->getType() > GlslType::Float4)
+	{
+		cx.pushError(L"TexCoord not connected or incorrect type.");
 		return false;
+	}
 
 	Ref< GlslVariable > mip = cx.emitInput(node, L"Mip");
 
@@ -2292,7 +2442,10 @@ bool emitSign(GlslContext& cx, Sign* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -2334,7 +2487,10 @@ bool emitScript(GlslContext& cx, Script* node)
 
 	std::wstring script = node->getScript();
 	if (script.empty())
+	{
+		cx.pushError(L"Script empty.");
 		return false;
+	}
 
 	// Emit input and outputs.
 	const int32_t inputPinCount = node->getInputPinCount();
@@ -2515,7 +2671,10 @@ bool emitSin(GlslContext& cx, Sin* node)
 
 	Ref< GlslVariable > theta = cx.emitInput(node, L"Theta");
 	if (!theta || theta->getType() != GlslType::Float)
+	{
+		cx.pushError(L"Theta not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 
@@ -2531,7 +2690,10 @@ bool emitSqrt(GlslContext& cx, Sqrt* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -2546,9 +2708,17 @@ bool emitStep(GlslContext& cx, Step* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Edge");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"X");
-	if (!in1 || !in2)
+	if (!in1)
+	{
+		cx.pushError(L"Edge not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"X");
+	if (!in2)
+	{
+		cx.pushError(L"X not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -2613,9 +2783,17 @@ bool emitSub(GlslContext& cx, Sub* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
+	{
+		cx.pushError(L"Input1 not connected.");
 		return false;
+	}
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -2658,7 +2836,10 @@ bool emitSum(GlslContext& cx, Sum* node)
 	{
 		Ref< GlslVariable > input = cx.emitInput(node, L"Input");
 		if (!input)
+		{
+			cx.pushError(L"Input not connected.");
 			return false;
+		}
 
 		inputName = input->getName();
 
@@ -2756,7 +2937,10 @@ bool emitSwizzle(GlslContext& cx, Swizzle* node)
 
 	const Node* inputNode = cx.getInputNode(node, L"Input");
 	if (!inputNode)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	// If input is a vector node we can rearrange it to output proper GLSL type.
 	// Since vector node is always considered 4 element wide we can make to GLSL
@@ -2911,7 +3095,10 @@ bool emitSwizzle(GlslContext& cx, Swizzle* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	GlslType type = GlslType::Void;
 	if (in->getType() >= GlslType::Integer && in->getType() <= GlslType::Integer4)
@@ -2978,7 +3165,10 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Select");
 	if (!in)
+	{
+		cx.pushError(L"Select not connected.");
 		return false;
+	}
 
 	const auto& cases = node->getCases();
 	const int32_t width = node->getWidth();
@@ -3145,7 +3335,10 @@ bool emitTan(GlslContext& cx, Tan* node)
 
 	Ref< GlslVariable > theta = cx.emitInput(node, L"Theta");
 	if (!theta || theta->getType() != GlslType::Float)
+	{
+		cx.pushError(L"Theta not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 
@@ -3174,7 +3367,10 @@ bool emitTextureSize(GlslContext& cx, TextureSize* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	const std::wstring textureName = in->getName();
 	Ref< GlslVariable > out;
@@ -3209,9 +3405,18 @@ bool emitTransform(GlslContext& cx, Transform* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
-	Ref< GlslVariable > transform = cx.emitInput(node, L"Transform");
-	if (!in || !transform)
+	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
+
+	Ref< GlslVariable > transform = cx.emitInput(node, L"Transform");
+	if (!transform)
+	{
+		cx.pushError(L"Transform not connected.");
+		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float4);
 
@@ -3227,7 +3432,10 @@ bool emitTranspose(GlslContext& cx, Transpose* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -3243,7 +3451,10 @@ bool emitTruncate(GlslContext& cx, Truncate* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	const GlslType type = glsl_degrade_to_integer(in->getType());
 	if (type == GlslType::Void)
@@ -3549,7 +3760,13 @@ bool emitVertexOutput(GlslContext& cx, VertexOutput* node)
 bool emitParameter(GlslContext& cx, Parameter* node)
 {
 	const ParameterDeclaration& decl = node->getDeclaration();
-	Ref< GlslVariable > out;
+
+	const std::wstring parameterName = node->getParameterName();
+	if (parameterName.empty())
+	{
+		cx.pushError(L"Empty parameter name.");
+		return false;
+	}
 
 	// Scalar parameter.
 	if (decl.getParameterType() == ParameterType::Scalar || decl.getParameterType() == ParameterType::Vector || decl.getParameterType() == ParameterType::Matrix)
@@ -3559,47 +3776,58 @@ bool emitParameter(GlslContext& cx, Parameter* node)
 		// Add to uniform buffer.
 		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(c_uniformBufferNames[(int32_t)decl.getFrequency()]);
 		ub->addStage(cx.getBindStage());
-		if (!ub->add(node->getParameterName(), glsl_from_parameter_type(decl.getParameterType()), length))
+		if (!ub->add(parameterName, glsl_from_parameter_type(decl.getParameterType()), length))
+		{
+			cx.pushError(L"Unable to add parameter to uniform buffer.");
 			return false;
+		}
 
 		// Define parameter in context.
 		cx.addParameter(
-			node->getParameterName(),
+			parameterName,
 			decl.getParameterType(),
 			length,
 			decl.getFrequency());
 
 		// Create variable.
+		Ref< GlslVariable > out;
 		if (length <= 1)
 			out = cx.getShader().createVariable(
 				node->findOutputPin(L"Output"),
-				node->getParameterName(),
+				parameterName,
 				glsl_from_parameter_type(decl.getParameterType()));
 		else
 			out = cx.getShader().createArrayVariable(
 				node->findOutputPin(L"Output"),
-				node->getParameterName(),
+				parameterName,
 				glsl_from_parameter_type(decl.getParameterType()));
 		if (!out)
+		{
+			cx.pushError(L"Unable to create parameter variable.");
 			return false;
+		}
 	}
 	// Texture parameter.
 	else if (decl.getParameterType() == ParameterType::Texture2D || decl.getParameterType() == ParameterType::Texture3D || decl.getParameterType() == ParameterType::TextureCube)
 	{
 		// Add texture to layout.
-		const auto existing = cx.getLayout().getByName(node->getParameterName());
+		const auto existing = cx.getLayout().getByName(parameterName);
 		if (existing != nullptr)
 		{
 			if (auto existingTexture = dynamic_type_cast< GlslTexture* >(existing))
 			{
 				// Texture already exist; ensure type match.
 				if (existingTexture->getUniformType() != glsl_from_parameter_type(decl.getParameterType()))
+				{
+					cx.pushError(L"Parameter texture already defined with another texture type.");
 					return false;
+				}
 				existingTexture->addStage(cx.getBindStage());
 			}
 			else
 			{
 				// Resource already exist but is not a texture.
+				cx.pushError(L"Parameter already exist with another type.");
 				return false;
 			}
 		}
@@ -3608,7 +3836,7 @@ bool emitParameter(GlslContext& cx, Parameter* node)
 			// Texture do not exist; add new texture resource.
 			cx.getLayout().addBindless(
 				new GlslTexture(
-					node->getParameterName(),
+					parameterName,
 					GlslResource::Set::Default,
 					cx.getBindStage(),
 					glsl_from_parameter_type(decl.getParameterType()),
@@ -3618,12 +3846,15 @@ bool emitParameter(GlslContext& cx, Parameter* node)
 		// Texture parameter; since resource index is passed to shader we define an integer uniform.
 		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw");
 		ub->addStage(cx.getBindStage());
-		if (!ub->add(node->getParameterName(), GlslType::Integer, 1))
+		if (!ub->add(parameterName, GlslType::Integer, 1))
+		{
+			cx.pushError(L"Unable to add parameter to uniform buffer.");
 			return false;
+		}
 
 		// Define parameter in context.
 		cx.addParameter(
-			node->getParameterName(),
+			parameterName,
 			decl.getParameterType(),
 			1,
 			decl.getFrequency());
@@ -3631,27 +3862,34 @@ bool emitParameter(GlslContext& cx, Parameter* node)
 		// Create variable.
 		Ref< GlslVariable > out = cx.getShader().createVariable(
 			node->findOutputPin(L"Output"),
-			node->getParameterName(),
+			parameterName,
 			glsl_from_parameter_type(decl.getParameterType()));
 		if (!out)
+		{
+			cx.pushError(L"Unable to create parameter variable.");
 			return false;
+		}
 	}
 	// Image parameter.
 	else if (decl.getParameterType() == ParameterType::Image2D || decl.getParameterType() == ParameterType::Image3D || decl.getParameterType() == ParameterType::ImageCube)
 	{
-		const auto existing = cx.getLayout().getByName(node->getParameterName());
+		const auto existing = cx.getLayout().getByName(parameterName);
 		if (existing != nullptr)
 		{
 			if (auto existingImage = dynamic_type_cast< GlslImage* >(existing))
 			{
 				// Image already exist; ensure type match.
 				if (existingImage->getUniformType() != glsl_from_parameter_type(decl.getParameterType()))
+				{
+					cx.pushError(L"Parameter image already defined with another image type.");
 					return false;
+				}
 				existingImage->addStage(cx.getBindStage());
 			}
 			else
 			{
 				// Resource already exist but is not an image.
+				cx.pushError(L"Parameter already exist with another type.");
 				return false;
 			}
 		}
@@ -3660,7 +3898,7 @@ bool emitParameter(GlslContext& cx, Parameter* node)
 			// Image do not exist; add new image resource.
 			cx.getLayout().addBindless(
 				new GlslImage(
-					node->getParameterName(),
+					parameterName,
 					GlslResource::Set::Default,
 					cx.getBindStage(),
 					glsl_from_parameter_type(decl.getParameterType()),
@@ -3670,12 +3908,15 @@ bool emitParameter(GlslContext& cx, Parameter* node)
 		// Image parameter; since resource index is passed to shader we define an integer uniform.
 		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw");
 		ub->addStage(cx.getBindStage());
-		if (!ub->add(node->getParameterName(), GlslType::Integer, 1))
+		if (!ub->add(parameterName, GlslType::Integer, 1))
+		{
+			cx.pushError(L"Unable to add parameter to uniform buffer.");
 			return false;
+		}
 
 		// Define parameter in context.
 		cx.addParameter(
-			node->getParameterName(),
+			parameterName,
 			decl.getParameterType(),
 			1,
 			decl.getFrequency());
@@ -3683,10 +3924,13 @@ bool emitParameter(GlslContext& cx, Parameter* node)
 		// Create variable.
 		Ref< GlslVariable > out = cx.getShader().createVariable(
 			node->findOutputPin(L"Output"),
-			node->getParameterName(),
+			parameterName,
 			glsl_from_parameter_type(decl.getParameterType()));
 		if (!out)
+		{
+			cx.pushError(L"Unable to create parameter variable.");
 			return false;
+		}
 	}
 	// Struct array parameter.
 	else if (decl.getParameterType() == ParameterType::StructBuffer)
@@ -3695,18 +3939,18 @@ bool emitParameter(GlslContext& cx, Parameter* node)
 		cx.addStructure(decl.getStructType(), decl.getStructDeclaration());
 
 		// Add buffer to layout.
-		const auto existing = cx.getLayout().getByName(node->getParameterName());
+		const auto existing = cx.getLayout().getByName(parameterName);
 		if (existing != nullptr)
 		{
 			if (auto existingStorageBuffer = dynamic_type_cast< GlslStorageBuffer* >(existing))
 			{
 				// Storage buffer already exist; \tbd ensure elements match.
 				existingStorageBuffer->addStage(cx.getBindStage());
-				return true;
 			}
 			else
 			{
 				// Resource already exist but is not a storage buffer.
+				cx.pushError(L"Parameter already exist with another type.");
 				return false;
 			}
 		}
@@ -3714,7 +3958,7 @@ bool emitParameter(GlslContext& cx, Parameter* node)
 		{
 			// Storage buffer do not exist; add new storage buffer resource.
 			Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(
-				node->getParameterName(),
+				parameterName,
 				decl.getStructType(),
 				GlslResource::Set::Default,
 				cx.getBindStage(),
@@ -3724,25 +3968,28 @@ bool emitParameter(GlslContext& cx, Parameter* node)
 
 		// Define parameter in context.
 		cx.addParameter(
-			node->getParameterName(),
+			parameterName,
 			ParameterType::StructBuffer,
 			1,
 			UpdateFrequency::Draw);
 
 		// Create variable.
-		out = cx.getShader().createStructVariable(
+		Ref< GlslVariable > out = cx.getShader().createStructVariable(
 			node->findOutputPin(L"Output"),
-			node->getParameterName(),
+			parameterName,
 			decl.getStructType(),
 			decl.getStructDeclaration());
 		if (!out)
+		{
+			cx.pushError(L"Unable to create parameter variable.");
 			return false;
+		}
 	}
 	// RT acceleration structure parameter.
 	else if (decl.getParameterType() == ParameterType::AccelerationStructure)
 	{
 		// Add RT AS to layout.
-		const auto existing = cx.getLayout().getByName(node->getParameterName());
+		const auto existing = cx.getLayout().getByName(parameterName);
 		if (existing != nullptr)
 		{
 			if (auto existingAS = dynamic_type_cast< GlslAccelerationStructure* >(existing))
@@ -3753,6 +4000,7 @@ bool emitParameter(GlslContext& cx, Parameter* node)
 			else
 			{
 				// Resource already exist but is not an acceleration structure.
+				cx.pushError(L"Parameter already exist with another type.");
 				return false;
 			}
 		}
@@ -3761,14 +4009,14 @@ bool emitParameter(GlslContext& cx, Parameter* node)
 			// Acceleration structure do not exist; add new AS resource.
 			cx.getLayout().add(
 				new GlslAccelerationStructure(
-					node->getParameterName(),
+					parameterName,
 					GlslResource::Set::Default,
 					cx.getBindStage()));
 		}
 
 		// Define parameter in context.
 		cx.addParameter(
-			node->getParameterName(),
+			parameterName,
 			decl.getParameterType(),
 			1,
 			decl.getFrequency());
@@ -3776,13 +4024,19 @@ bool emitParameter(GlslContext& cx, Parameter* node)
 		// Create variable.
 		Ref< GlslVariable > out = cx.getShader().createVariable(
 			node->findOutputPin(L"Output"),
-			node->getParameterName(),
+			parameterName,
 			glsl_from_parameter_type(decl.getParameterType()));
 		if (!out)
+		{
+			cx.pushError(L"Unable to create parameter variable.");
 			return false;
+		}
 	}
 	else
+	{
+		cx.pushError(L"Unsupported parameter type.");
 		return false;
+	}
 
 	return true;
 }
@@ -3793,11 +4047,17 @@ bool emitArrayElement(GlslContext& cx, ArrayElement* node)
 
 	Ref< GlslVariable > inp = cx.emitInput(node, L"Input");
 	if (!inp)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > index = cx.emitInput(node, L"Index");
 	if (!index)
+	{
+		cx.pushError(L"Index not connected.");
 		return false;
+	}
 
 	if (inp->getType() == GlslType::StructBuffer)
 	{
@@ -3823,7 +4083,10 @@ bool emitMemberValue(GlslContext& cx, MemberValue* node)
 
 	Ref< GlslVariable > strct = cx.emitInput(node, L"Input");
 	if (!strct || strct->getType() != GlslType::Struct)
+	{
+		cx.pushError(L"Input not connected or incorrect type.");
 		return false;
+	}
 
 	const DataType memberType = strct->getStructDeclaration().getElementType(node->getMemberName());
 

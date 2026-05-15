@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -65,7 +65,8 @@ private:
 		render::RGTargetSet gbufferTargetSetId,
 		render::RGTargetSet ambientOcclusionTargetSetId,
 		render::RGTargetSet reflectionsTargetSetId,
-		render::RGTargetSet shadowMapAtlasTargetSetId);
+		render::RGTargetSet shadowMapAtlasTargetSetId,
+		render::RGTexture fogVolumeTextureId);
 };
 
 }

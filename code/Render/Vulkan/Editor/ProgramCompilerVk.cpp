@@ -337,15 +337,20 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 	{
 		const auto defaultBuiltInResource = getDefaultBuiltInResource();
+		bool result;
 
 		// Emit shader code by traversing from output nodes.
-		cx.getEmitter().emit(cx, pixelOutputs[0]);
-		cx.getEmitter().emit(cx, vertexOutputs[0]);
-
-		const std::wstring errorReport = cx.getErrorReport();
-		if (!errorReport.empty())
+		result = cx.getEmitter().emit(cx, pixelOutputs[0]);
+		if (!result)
 		{
-			log::error << errorReport;
+			outErrors.push_back({ L"Emit pixel shader failed.", cx.getErrorReport() });
+			return nullptr;
+		}
+
+		result = cx.getEmitter().emit(cx, vertexOutputs[0]);
+		if (!result)
+		{
+			outErrors.push_back({ L"Emit vertex shader failed.", cx.getErrorReport() });
 			return nullptr;
 		}
 
@@ -403,17 +408,17 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (computeOutputs.size() >= 1 || scriptOutputs[Script::Compute].size() >= 1)
 	{
 		const auto defaultBuiltInResource = getDefaultBuiltInResource();
+		bool result = true;
 
 		// Emit shader code by traversing from output nodes.
 		for (auto computeOutput : computeOutputs)
-			cx.getEmitter().emit(cx, computeOutput);
+			result &= cx.getEmitter().emit(cx, computeOutput);
 		for (auto scriptOutput : scriptOutputs[Script::Compute])
-			cx.getEmitter().emit(cx, scriptOutput);
+			result &= cx.getEmitter().emit(cx, scriptOutput);
 
-		const std::wstring errorReport = cx.getErrorReport();
-		if (!errorReport.empty())
+		if (!result)
 		{
-			log::error << errorReport;
+			outErrors.push_back({ L"Emit compute shader failed.", cx.getErrorReport() });
 			return nullptr;
 		}
 
@@ -847,12 +852,25 @@ bool ProgramCompilerVk::generate(
 
 	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 	{
-		bool result = true;
-		result &= cx.getEmitter().emit(cx, pixelOutputs[0]);
-		result &= cx.getEmitter().emit(cx, vertexOutputs[0]);
+		bool result;
+		
+		result = cx.getEmitter().emit(cx, pixelOutputs[0]);
 		if (!result)
 		{
-			log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
+			log::error << L"Unable to generate Vulkan GLSL pixel shader (" << name << L"); GLSL emitter failed." << Endl;
+			const std::wstring errorReport = cx.getErrorReport();
+			if (!errorReport.empty())
+				log::error << errorReport;
+			return false;
+		}
+
+		result = cx.getEmitter().emit(cx, vertexOutputs[0]);
+		if (!result)
+		{
+			log::error << L"Unable to generate Vulkan GLSL vertex shader (" << name << L"); GLSL emitter failed." << Endl;
+			const std::wstring errorReport = cx.getErrorReport();
+			if (!errorReport.empty())
+				log::error << errorReport;
 			return false;
 		}
 	}
@@ -866,7 +884,10 @@ bool ProgramCompilerVk::generate(
 			result &= cx.getEmitter().emit(cx, scriptOutput);
 		if (!result)
 		{
-			log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
+			log::error << L"Unable to generate Vulkan GLSL compute shader (" << name << L"); GLSL emitter failed." << Endl;
+			const std::wstring errorReport = cx.getErrorReport();
+			if (!errorReport.empty())
+				log::error << errorReport;
 			return false;
 		}
 	}

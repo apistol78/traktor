@@ -569,7 +569,6 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 				{
 					ci.shaders[0] = L"Failed to generate vertex shader!";
 					ci.shaders[1] = L"Failed to generate pixel shader!";
-					;
 					ci.shaders[2] = L"Failed to generate compute shader!";
 				}
 			}

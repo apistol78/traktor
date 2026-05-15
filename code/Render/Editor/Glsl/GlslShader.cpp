@@ -75,7 +75,7 @@ GlslVariable* GlslShader::createVariable(const OutputPin* outputPin, const std::
 		T_FATAL_ASSERT(v.outputPin != outputPin);
 	}
 #endif
-
+	T_FATAL_ASSERT(!variableName.empty());
 	auto& v = m_variables.push_back();
 	v.outputPin = outputPin;
 	v.variable = new GlslVariable(outputPin->getNode(), variableName, type, false);
@@ -92,7 +92,7 @@ GlslVariable* GlslShader::createArrayVariable(const OutputPin* outputPin, const 
 		T_FATAL_ASSERT(v.outputPin != outputPin);
 	}
 #endif
-
+	T_FATAL_ASSERT(!variableName.empty());
 	auto& v = m_variables.push_back();
 	v.outputPin = outputPin;
 	v.variable = new GlslVariable(outputPin->getNode(), variableName, type, true);
@@ -109,7 +109,8 @@ GlslVariable* GlslShader::createStructVariable(const OutputPin* outputPin, const
 		T_FATAL_ASSERT(v.outputPin != outputPin);
 	}
 #endif
-
+	T_FATAL_ASSERT(!variableName.empty());
+	T_FATAL_ASSERT(!structTypeName.empty());
 	auto& v = m_variables.push_back();
 	v.outputPin = outputPin;
 	v.variable = new GlslVariable(outputPin->getNode(), variableName, structTypeName, structDeclaration, GlslType::StructBuffer);
@@ -119,6 +120,7 @@ GlslVariable* GlslShader::createStructVariable(const OutputPin* outputPin, const
 
 GlslVariable* GlslShader::createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type)
 {
+	T_FATAL_ASSERT(!variableName.empty());
 	auto& v = m_outerVariables.push_back();
 	v.outputPin = outputPin;
 	v.variable = new GlslVariable(outputPin->getNode(), variableName, type, false);

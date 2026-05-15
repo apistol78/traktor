@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,6 +21,7 @@
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/Node.h"
 #include "Render/Editor/OutputPin.h"
+#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderModule.h"
 
@@ -57,9 +58,14 @@ const SamplerState c_samplerLinearState = {
 
 std::wstring getClassNameOnly(const Object* o)
 {
-	const std::wstring qn = type_name(o);
-	const size_t p = qn.find_last_of('.');
-	return qn.substr(p + 1);
+	if (const Script* so = dynamic_type_cast< const Script* >(o))
+		return so->getName();
+	else
+	{
+		const std::wstring qn = type_name(o);
+		const size_t p = qn.find_last_of('.');
+		return qn.substr(p + 1);
+	}
 }
 
 }
@@ -70,7 +76,6 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const ShaderModule* sha
 	, m_vertexShader(GlslShader::StVertex, shaderModule)
 	, m_fragmentShader(GlslShader::StFragment, shaderModule)
 	, m_computeShader(GlslShader::StCompute, shaderModule)
-	, m_currentShader(nullptr)
 {
 	m_layout.addStatic(new GlslTexture(L"__bindlessTextures2D__", GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::Texture2D, true), /* binding */ 0);
 	m_layout.addStatic(new GlslTexture(L"__bindlessTextures3D__", GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::Texture3D, true), /* binding */ 0);
@@ -115,7 +120,7 @@ Node* GlslContext::getInputNode(Node* node, const std::wstring& inputPinName)
 bool GlslContext::emit(Node* node)
 {
 	// In case we're in failure state we ignore recursing further.
-	if (!m_error.empty())
+	if (m_failed)
 		return false;
 
 	bool allOutputsEmitted = true;
@@ -125,7 +130,7 @@ bool GlslContext::emit(Node* node)
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
 		const OutputPin* outputPin = node->getOutputPin(i);
-		T_ASSERT(outputPin != nullptr);
+		T_FATAL_ASSERT(outputPin != nullptr);
 
 		if (m_shaderGraph->getDestinationCount(outputPin) == 0)
 			continue;
@@ -142,11 +147,7 @@ bool GlslContext::emit(Node* node)
 
 	const bool result = m_emitter.emit(*this, node);
 	if (!result)
-	{
-		// Only log first failure point; all recursions will also fail.
-		if (m_error.empty())
-			m_error = getCurrentScope();
-	}
+		m_failed = true;
 
 	return result;
 }
@@ -154,7 +155,7 @@ bool GlslContext::emit(Node* node)
 GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 {
 	// In case we're in failure state we ignore recursing further.
-	if (!m_error.empty())
+	if (m_failed)
 		return nullptr;
 
 	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
@@ -176,21 +177,14 @@ GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 	if (result)
 	{
 		variable = m_currentShader->getVariable(sourcePin);
-		T_ASSERT(variable);
-	}
-	else
-	{
-		// Only log first failure point; all recursions will also fail.
-		if (m_error.empty())
+		if (!variable)
 		{
-			// Format chain to properly indicate source of error.
-			StringOutputStream ss;
-			for (std::list< Scope >::const_reverse_iterator i = m_emitScope.rbegin(); i != m_emitScope.rend(); ++i)
-				ss << getClassNameOnly(i->outputPin->getNode()) << L"[" << i->outputPin->getName() << L"] <-- [" << i->inputPin->getName() << L"]";
-			ss << getClassNameOnly(m_emitScope.front().inputPin->getNode());
-			m_error = ss.str();
+			pushError(L"No variable defined for pin " + sourcePin->getName() + L".");
+			m_failed = true;
 		}
 	}
+	else
+		m_failed = true;
 
 	m_emitScope.pop_back();
 	return variable;
@@ -199,21 +193,21 @@ GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 GlslVariable* GlslContext::emitInput(Node* node, const std::wstring& inputPinName)
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
-	T_ASSERT(inputPin);
+	T_FATAL_ASSERT(inputPin);
 	return emitInput(inputPin);
 }
 
 GlslVariable* GlslContext::emitOutput(const OutputPin* outputPin, GlslType type)
 {
 	GlslVariable* out = m_currentShader->createTemporaryVariable(outputPin, type);
-	T_ASSERT(out);
+	T_FATAL_ASSERT(out);
 	return out;
 }
 
 GlslVariable* GlslContext::emitOutput(Node* node, const std::wstring& outputPinName, GlslType type)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-	T_ASSERT(outputPin);
+	T_FATAL_ASSERT(outputPin);
 	return emitOutput(outputPin, type);
 }
 
@@ -358,15 +352,30 @@ void GlslContext::setRenderState(const RenderState& renderState)
 
 void GlslContext::pushError(const std::wstring& errorMessage)
 {
-	m_errorMessages.push_back({ errorMessage, getCurrentScope() });
+	if (!m_failed)
+		m_errorMessages.push_back({ errorMessage, getCurrentScope() });
 }
 
 std::wstring GlslContext::getErrorReport() const
 {
 	StringOutputStream ss;
+	uint32_t index = 0;
+
 	for (auto errorMessage : m_errorMessages)
-		ss << errorMessage.message << L" (" << errorMessage.scope << L")" << Endl;
+	{
+		ss << L"Error " << ++index << L"/" << m_errorMessages.size() << L": " << errorMessage.message << Endl;
+		ss << errorMessage.scope << Endl;
+	}
+
 	return ss.str();
+}
+
+const Node* GlslContext::getErrorNode() const
+{
+	if (!m_emitScope.empty())
+		return m_emitScope.back().outputPin->getNode();
+	else
+		return nullptr;
 }
 
 std::wstring GlslContext::getCurrentScope() const
@@ -374,8 +383,22 @@ std::wstring GlslContext::getCurrentScope() const
 	StringOutputStream ss;
 	if (!m_emitScope.empty())
 	{
+		std::wstring input;
 		for (std::list< Scope >::const_reverse_iterator i = m_emitScope.rbegin(); i != m_emitScope.rend(); ++i)
-			ss << getClassNameOnly(i->outputPin->getNode()) << L"[" << i->outputPin->getName() << L"] <-- [" << i->inputPin->getName() << L"]";
+		{
+			ss << i->outputPin->getNode()->getId().format() << L" ";
+
+			if (!input.empty())
+				ss << L"[" << input << L"]";
+
+			ss << getClassNameOnly(i->outputPin->getNode());
+			ss << L"[" << i->outputPin->getName() << L"] ->" << Endl;
+
+			input = i->inputPin->getName();
+		}
+		
+		ss << m_emitScope.front().inputPin->getNode()->getId().format() << L" ";
+		ss << L"[" << input << L"]";
 		ss << getClassNameOnly(m_emitScope.front().inputPin->getNode());
 	}
 	return ss.str();

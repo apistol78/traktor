@@ -111,6 +111,25 @@ uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 	return priority;
 }
 
+void writeErrorShaderGraph(db::Database* database, const ShaderGraph* shaderGraph, /* const Node* errorNode,*/ const std::wstring& path)
+{
+	// Do not write errors found in already broken shaders.
+	if (startsWith(path, L"Errors/"))
+		return;
+
+	// if (errorNode)
+	// {
+	// 	const_cast< Node* >(errorNode)->setComment(L"FAILED");
+	// }
+
+	Ref< db::Instance > instance = database->createInstance(L"Errors/" + path);
+	if (instance)
+	{
+		instance->setObject(shaderGraph);
+		instance->commit();
+	}
+}
+
 }
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 123, ShaderPipeline, editor::IPipeline)
@@ -721,6 +740,9 @@ bool ShaderPipeline::buildOutput(
 			log::error << L"-----------------------------------------------------" << Endl;
 			log::error << error.error.message << Endl;
 			log::error << L"-----------------------------------------------------" << Endl;
+
+			if (error.programGraph)
+				writeErrorShaderGraph(pipelineBuilder->getSourceDatabase(), error.programGraph, path);
 		}
 
 		if (!status)

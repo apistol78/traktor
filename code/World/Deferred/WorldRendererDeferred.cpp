@@ -542,7 +542,7 @@ void WorldRendererDeferred::setupVisualPass(
 					{ ShaderPermutation::IrradianceEnable, irradianceEnable },
 					{ ShaderPermutation::IrradianceSingle, irradianceSingle },
 					{ ShaderPermutation::VolumetricFogEnable, (bool)(fogVolumeTexture != nullptr) },
-					{ ShaderPermutation::RayTracingEnable, (bool)(m_gatheredView.rtWorldTopLevel != nullptr) },
+					{ ShaderPermutation::RayTracingEnable, (bool)(m_gatheredView.rtWorldTopLevel != nullptr) }
 				});
 
 			for (const auto& r : m_gatheredView.renderables)

@@ -168,6 +168,8 @@ public:
 
 	std::wstring getErrorReport() const;
 
+	const Node* getErrorNode() const;
+
 	/*! \} */
 
 private:
@@ -196,7 +198,7 @@ private:
 	GlslShader m_vertexShader;
 	GlslShader m_fragmentShader;
 	GlslShader m_computeShader;
-	GlslShader* m_currentShader;
+	GlslShader* m_currentShader = nullptr;
 	GlslEmitter m_emitter;
 	GlslRequirements m_requirements;
 	AlignedVector< uint8_t > m_interpolatorMap;
@@ -205,7 +207,7 @@ private:
 	RenderState m_renderState;
 	std::list< Scope > m_emitScope;
 	std::list< Error > m_errorMessages;
-	std::wstring m_error;
+	bool m_failed = false;
 
 	std::wstring getCurrentScope() const;
 };

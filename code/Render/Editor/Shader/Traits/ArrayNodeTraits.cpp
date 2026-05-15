@@ -103,7 +103,15 @@ PinType ArrayNodeTraits::getInputPinType(
 	const PinType* inputPinTypes,
 	const PinType* outputPinTypes) const
 {
-	return PinType::Array;
+	if (const ArrayElement* arrayElement = dynamic_type_cast< const ArrayElement* >(node))
+	{
+		if (inputPin->getName() == L"Index")
+			return PinType::Scalar1;
+		else
+			return inputPinTypes[0];
+	}
+	else
+		return PinType::Array;
 }
 
 int32_t ArrayNodeTraits::getInputPinGroup(

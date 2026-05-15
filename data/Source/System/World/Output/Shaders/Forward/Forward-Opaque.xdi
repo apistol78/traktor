@@ -243,8 +243,8 @@ Eye direction
 			<id>{2D7E85C3-B38E-4177-B5AE-575F7976F1B6}</id>
 			<comment/>
 			<position>
-				<first>800</first>
-				<second>485</second>
+				<first>829</first>
+				<second>476</second>
 			</position>
 			<name>BRDF</name>
 		</item>
@@ -252,8 +252,8 @@ Eye direction
 			<id>{B1B8C9CA-87C6-4A33-AD49-D72E7C94DE7D}</id>
 			<comment/>
 			<position>
-				<first>594</first>
-				<second>497</second>
+				<first>623</first>
+				<second>488</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -269,8 +269,8 @@ Eye direction
 			<id>{9CF8ABBA-CC65-49B9-A135-CDCD99E11FAE}</id>
 			<comment/>
 			<position>
-				<first>328</first>
-				<second>465</second>
+				<first>357</first>
+				<second>456</second>
 			</position>
 			<minFilter>Linear</minFilter>
 			<mipFilter>Linear</mipFilter>
@@ -287,8 +287,8 @@ Eye direction
 			<id>{1629109C-DE99-473C-840F-5DA08DDD77BA}</id>
 			<comment/>
 			<position>
-				<first>124</first>
-				<second>383</second>
+				<first>143</first>
+				<second>410</second>
 			</position>
 			<external>{934F1D92-C961-485A-A5B8-6703A51266D8}</external>
 			<type>Texture2D</type>
@@ -341,8 +341,8 @@ Eye direction
 			<id>{B065C46B-7687-4F8D-AD4E-2EADE6527B75}</id>
 			<comment/>
 			<position>
-				<first>-36</first>
-				<second>406</second>
+				<first>-21</first>
+				<second>403</second>
 			</position>
 			<name>kD</name>
 		</item>
@@ -350,8 +350,8 @@ Eye direction
 			<id>{F576288F-1517-48E0-BB9F-E880F3536EB0}</id>
 			<comment/>
 			<position>
-				<first>-740</first>
-				<second>452</second>
+				<first>-761</first>
+				<second>456</second>
 			</position>
 			<name>kS</name>
 		</item>
@@ -413,8 +413,8 @@ Eye direction
 			<id>{A6716D93-BCE9-4467-94B8-D6BB9E0BEA55}</id>
 			<comment/>
 			<position>
-				<first>-762</first>
-				<second>636</second>
+				<first>-776</first>
+				<second>640</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
 		</item>
@@ -1580,7 +1580,7 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<name>L_SpecularG</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{021CEAF8-5D36-441C-9620-984AD30D0005}</id>
 			<comment/>
 			<position>
 				<first>1449</first>
@@ -1589,7 +1589,7 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<parameterDeclaration>{464CFA00-C1A4-B942-BF9D-B4BA1A43C2D0}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{748FB01F-D0DE-446F-8EF3-713EDA30EBB7}</id>
 			<comment/>
 			<position>
 				<first>1442</first>
@@ -1598,7 +1598,7 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E4446E40-CC19-4FA0-986A-346283E8653C}</id>
 			<comment/>
 			<position>
 				<first>1454</first>
@@ -1607,7 +1607,7 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{638FDA58-8A3C-48EB-B6CE-F6B5E4A83A9C}</id>
 			<comment/>
 			<position>
 				<first>3815</first>
@@ -1616,7 +1616,7 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D20902C2-7D31-474C-8285-B41530101184}</id>
 			<comment/>
 			<position>
 				<first>4019</first>

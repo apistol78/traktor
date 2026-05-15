@@ -78,7 +78,7 @@
 				"stopAtEntry": false,
 				"cwd": "${workspaceRoot}/..",
 				"environment": [],
-				"externalConsole": fale
+				"externalConsole": false
 			},
 
 			"osx": {
