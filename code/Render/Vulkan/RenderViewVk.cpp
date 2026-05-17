@@ -363,6 +363,12 @@ void RenderViewVk::close()
 		m_swapChain = 0;
 	}
 
+	// Destroy any image-available semaphores retired from prior swap chain rebuilds.
+	// Done after the swap chain destruction above so the present engine has released them.
+	for (VkSemaphore retired : m_retiredImageAvailableSemaphores)
+		vkDestroySemaphore(m_context->getLogicalDevice(), retired, nullptr);
+	m_retiredImageAvailableSemaphores.clear();
+
 	// Invalidate cached surface-static state since we're tearing down the surface.
 	m_surfaceCacheValid = false;
 	m_colorFormat = VK_FORMAT_UNDEFINED;
@@ -1798,9 +1804,27 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		return false;
 	}
 
-	// Destroy previous swap chain.
+	// Destroy previous swap chain. A binary semaphore signaled by a previous
+	// vkAcquireNextImageKHR that was never consumed cannot be reused on a
+	// subsequent acquire (VUID-vkAcquireNextImageKHR-semaphore-01779). Trying
+	// to destroy such a semaphore is also a spec violation since the signal
+	// operation may still be pending. We retire the old image-available
+	// semaphores into a list and defer their destruction until the view is
+	// torn down (where the device is fully idle and the swap chain is gone),
+	// then allocate a fresh set for the new swap chain below.
 	if (scci.oldSwapchain != 0)
+	{
 		vkDestroySwapchainKHR(m_context->getLogicalDevice(), scci.oldSwapchain, 0);
+
+		for (auto& imageAvailableSemaphore : m_imageAvailableSemaphores)
+		{
+			if (imageAvailableSemaphore != 0)
+			{
+				m_retiredImageAvailableSemaphores.push_back(imageAvailableSemaphore);
+				imageAvailableSemaphore = 0;
+			}
+		}
+	}
 
 	// Get primary color images.
 	uint32_t imageCount = 0;
@@ -1811,7 +1835,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	log::debug << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
-	// Image-available semaphores are size-independent; create once and reuse across resets.
 	if (m_imageAvailableSemaphores[0] == 0)
 	{
 		for (int32_t i = 0; i < sizeof_array(m_imageAvailableSemaphores); ++i)

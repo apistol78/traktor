@@ -71,6 +71,7 @@ T_DEFINE_VK(vkGetImageMemoryRequirements);
 T_DEFINE_VK(vkBindImageMemory);
 T_DEFINE_VK(vkCreateRenderPass);
 T_DEFINE_VK(vkCreateFramebuffer);
+T_DEFINE_VK(vkDestroyFramebuffer);
 T_DEFINE_VK(vkCmdEndRenderPass);
 T_DEFINE_VK(vkCmdBindVertexBuffers);
 T_DEFINE_VK(vkCmdDraw);
@@ -224,6 +225,7 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkBindImageMemory);
 	T_RESOLVE_VK(vkCreateRenderPass);
 	T_RESOLVE_VK(vkCreateFramebuffer);
+	T_RESOLVE_VK(vkDestroyFramebuffer);
 	T_RESOLVE_VK(vkCmdEndRenderPass);
 	T_RESOLVE_VK(vkCmdBindVertexBuffers);
 	T_RESOLVE_VK(vkCmdDraw);

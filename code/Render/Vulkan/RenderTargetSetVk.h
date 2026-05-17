@@ -90,12 +90,18 @@ public:
 	VkSampleCountFlagBits getVkSampleCount() const { return needResolve() ? (VkSampleCountFlagBits)m_setDesc.multiSample : VK_SAMPLE_COUNT_1_BIT; }
 
 private:
+	struct CachedFrameBuffer
+	{
+		VkFramebuffer frameBuffer = 0;
+		VkImageView primaryDepthView = VK_NULL_HANDLE;
+	};
+
 	Context* m_context = nullptr;
 	uint32_t& m_instances;
 	RenderTargetSetCreateDesc m_setDesc;
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
-	SmallMap< VkRenderPass, VkFramebuffer > m_frameBuffers;
+	SmallMap< VkRenderPass, CachedFrameBuffer > m_frameBuffers;
 	bool m_depthTargetShared = false;
 };
 
