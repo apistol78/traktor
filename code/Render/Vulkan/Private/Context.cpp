@@ -42,13 +42,15 @@ Context::Context(
 	VkDevice logicalDevice,
 	VmaAllocator allocator,
 	uint32_t graphicsQueueIndex,
-	uint32_t computeQueueIndex)
+	uint32_t computeQueueIndex,
+	bool rayTracing)
 	: m_instance(instance)
 	, m_physicalDevice(physicalDevice)
 	, m_logicalDevice(logicalDevice)
 	, m_allocator(allocator)
 	, m_graphicsQueueIndex(graphicsQueueIndex)
 	, m_computeQueueIndex(computeQueueIndex)
+	, m_rayTracing(rayTracing)
 	, m_sampledResourceIndexAllocator(0, MaxBindlessResources - 1)
 	, m_storageResourceIndexAllocator(0, MaxBindlessResources - 1)
 	, m_bufferResourceIndexAllocator(0, MaxBindlessResources - 1)
@@ -152,7 +154,7 @@ bool Context::create()
 		.pNext = nullptr,
 		.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT,
 		.maxSets = 32000,
-		.poolSizeCount = sizeof_array(dps),
+		.poolSizeCount = (uint32_t)(m_rayTracing ? 7 : 6),	// Only include last entry if RT enabled.
 		.pPoolSizes = dps
 	};
 

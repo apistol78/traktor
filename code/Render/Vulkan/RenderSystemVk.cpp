@@ -581,7 +581,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		m_logicalDevice,
 		m_allocator,
 		graphicsQueueIndex,
-		computeQueueIndex);
+		computeQueueIndex,
+		desc.rayTracing);
 	if (!m_context->create())
 	{
 		log::error << L"Failed to create Vulkan; failed to create context." << Endl;

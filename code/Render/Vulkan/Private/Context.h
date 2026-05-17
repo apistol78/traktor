@@ -62,7 +62,8 @@ public:
 		VkDevice logicalDevice,
 		VmaAllocator allocator,
 		uint32_t graphicsQueueIndex,
-		uint32_t computeQueueIndex
+		uint32_t computeQueueIndex,
+		bool rayTracing
 	);
 
 	virtual ~Context();
@@ -164,6 +165,7 @@ private:
 	VmaAllocator m_allocator;
 	uint32_t m_graphicsQueueIndex;
 	uint32_t m_computeQueueIndex;
+	bool m_rayTracing = false;
 	VkPipelineCache m_pipelineCache = 0;
 	VkDescriptorPool m_descriptorPool = 0;
 	int32_t m_views = 0;
