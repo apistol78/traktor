@@ -380,19 +380,19 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	tab->addPage(tabPageVariables);
 
-	// Uniforms
-	Ref< ui::TabPage > tabPageUniforms = new ui::TabPage();
-	tabPageUniforms->create(tab, i18n::Text(L"SHADERGRAPH_UNIFORMS"), new ui::FloodLayout());
+	// Parameters
+	Ref< ui::TabPage > tabPageParameters = new ui::TabPage();
+	tabPageParameters->create(tab, i18n::Text(L"SHADERGRAPH_PARAMETERS"), new ui::FloodLayout());
 
-	m_uniformsGrid = new ui::GridView();
-	m_uniformsGrid->create(tabPageUniforms, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
-	m_uniformsGrid->setSortColumn(0, false, ui::GridView::SmLexical);
-	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_NAME"), 190_ut, false));
-	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_TYPE"), 80_ut, false));
-	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_FREQUENCY"), 80_ut, false));
-	m_uniformsGrid->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ShaderGraphEditorPage::eventUniformOrPortDoubleClick);
+	m_parameterGrid = new ui::GridView();
+	m_parameterGrid->create(tabPageParameters, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
+	m_parameterGrid->setSortColumn(0, false, ui::GridView::SmLexical);
+	m_parameterGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_PARAMETERS_NAME"), 190_ut, false));
+	m_parameterGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_PARAMETERS_TYPE"), 80_ut, false));
+	m_parameterGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_PARAMETERS_FREQUENCY"), 80_ut, false));
+	m_parameterGrid->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ShaderGraphEditorPage::eventParameterOrPortDoubleClick);
 
-	tab->addPage(tabPageUniforms);
+	tab->addPage(tabPageParameters);
 
 	// Ports
 	Ref< ui::TabPage > tabPagePorts = new ui::TabPage();
@@ -403,7 +403,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_portsGrid->setSortColumn(0, false, ui::GridView::SmLexical);
 	m_portsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_PORTS_NAME"), 140_ut, false));
 	m_portsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_PORTS_DIRECTION"), 80_ut, false));
-	m_portsGrid->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ShaderGraphEditorPage::eventUniformOrPortDoubleClick);
+	m_portsGrid->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ShaderGraphEditorPage::eventParameterOrPortDoubleClick);
 
 	tab->addPage(tabPagePorts);
 
@@ -1361,8 +1361,8 @@ void ShaderGraphEditorPage::updateGraph()
 		}
 	}
 
-	// Update uniforms grid.
-	m_uniformsGrid->removeAllRows();
+	// Update parameter grid.
+	m_parameterGrid->removeAllRows();
 	if (resolvedShaderGraph)
 	{
 		for (auto node : m_shaderGraph->getNodes())
@@ -1377,23 +1377,14 @@ void ShaderGraphEditorPage::updateGraph()
 				}
 			}
 
-			if (Uniform* uniformNode = dynamic_type_cast< Uniform* >(resolvedNode))
+			if (Parameter* parameterNode = dynamic_type_cast< Parameter* >(resolvedNode))
 			{
 				Ref< ui::GridRow > row = new ui::GridRow();
 				row->setData(L"SHADERNODE", node);
-				row->add(uniformNode->getParameterName());
-				row->add(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]);
-				row->add(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]);
-				m_uniformsGrid->addRow(row);
-			}
-			else if (IndexedUniform* indexedUniformNode = dynamic_type_cast< IndexedUniform* >(resolvedNode))
-			{
-				Ref< ui::GridRow > row = new ui::GridRow();
-				row->setData(L"SHADERNODE", node);
-				row->add(indexedUniformNode->getParameterName());
-				row->add(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]);
-				row->add(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]);
-				m_uniformsGrid->addRow(row);
+				row->add(parameterNode->getParameterName());
+				row->add(c_parameterTypeNames[(int32_t)parameterNode->getDeclaration().getParameterType()]);
+				row->add(c_uniformFrequencyNames[(int32_t)parameterNode->getDeclaration().getFrequency()]);
+				m_parameterGrid->addRow(row);
 			}
 		}
 
@@ -1419,7 +1410,7 @@ void ShaderGraphEditorPage::updateGraph()
 				row->add(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]);
 				row->add(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]);
 				row->setBackground(Color4ub(90, 60, 40, 255));
-				m_uniformsGrid->addRow(row);
+				m_parameterGrid->addRow(row);
 			}
 			else if (IndexedUniform* indexedUniformNode = dynamic_type_cast< IndexedUniform* >(node))
 			{
@@ -1428,7 +1419,7 @@ void ShaderGraphEditorPage::updateGraph()
 				row->add(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]);
 				row->add(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]);
 				row->setBackground(Color4ub(90, 60, 40, 255));
-				m_uniformsGrid->addRow(row);
+				m_parameterGrid->addRow(row);
 			}
 		}
 	}
@@ -2108,7 +2099,7 @@ void ShaderGraphEditorPage::eventVariableDoubleClick(ui::GridRowDoubleClickEvent
 	event->consume();
 }
 
-void ShaderGraphEditorPage::eventUniformOrPortDoubleClick(ui::GridRowDoubleClickEvent* event)
+void ShaderGraphEditorPage::eventParameterOrPortDoubleClick(ui::GridRowDoubleClickEvent* event)
 {
 	Node* node = event->getRow()->getData< Node >(L"SHADERNODE");
 	if (!node)

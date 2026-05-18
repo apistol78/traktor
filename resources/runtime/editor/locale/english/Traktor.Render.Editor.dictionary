@@ -818,19 +818,19 @@
 			<second>Data</second>
 		</item>
 		<item>
-			<first>SHADERGRAPH_UNIFORMS</first>
-			<second>Uniforms</second>
+			<first>SHADERGRAPH_PARAMETERS</first>
+			<second>Parameters</second>
 		</item>
 		<item>
-			<first>SHADERGRAPH_UNIFORMS_FREQUENCY</first>
+			<first>SHADERGRAPH_PARAMETERS_FREQUENCY</first>
 			<second>Frequency</second>
 		</item>
 		<item>
-			<first>SHADERGRAPH_UNIFORMS_NAME</first>
+			<first>SHADERGRAPH_PARAMETERS_NAME</first>
 			<second>Name</second>
 		</item>
 		<item>
-			<first>SHADERGRAPH_UNIFORMS_TYPE</first>
+			<first>SHADERGRAPH_PARAMETERS_TYPE</first>
 			<second>Type</second>
 		</item>
 		<item>

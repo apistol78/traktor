@@ -113,7 +113,7 @@ private:
 	Ref< ShaderViewer > m_shaderViewer;
 	Ref< ui::Container > m_dataContainer;
 	Ref< ui::GridView > m_variablesGrid;
-	Ref< ui::GridView > m_uniformsGrid;
+	Ref< ui::GridView > m_parameterGrid;
 	Ref< ui::GridView > m_portsGrid;
 	Ref< ui::GridView > m_nodeCountGrid;
 	Ref< ui::Menu > m_menuPopup;
@@ -165,7 +165,7 @@ private:
 
 	void eventVariableDoubleClick(ui::GridRowDoubleClickEvent* event);
 
-	void eventUniformOrPortDoubleClick(ui::GridRowDoubleClickEvent* event);
+	void eventParameterOrPortDoubleClick(ui::GridRowDoubleClickEvent* event);
 };
 
 }
