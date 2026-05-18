@@ -105,7 +105,7 @@ void RenderPluginXeSS::render(IRenderView* renderView, ITexture* colorTexture, I
 
 		// NDC to pixels scaling factors.
 		xessSetVelocityScale(m_xessContext, inputSize.x / 2.0f, -inputSize.y / 2.0f);
-		xessSetJitterScale(m_xessContext, inputSize.x / 2.0f, -inputSize.y / 2.0f);
+		xessSetJitterScale(m_xessContext, inputSize.x, inputSize.y);
 
 		m_initWidth = outputSize.x;
 		m_initHeight = outputSize.y;
