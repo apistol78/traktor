@@ -93,7 +93,7 @@ const vec3 viewDirection = normalize($ViewPosition.xyz);
 const vec3 viewNormal = normalize($ViewNormal.xyz);
 const vec3 viewTraceDirection = reflect(viewDirection, viewNormal);
 
-const float bias = $Random.x * 0.1f + 0.02f;
+const float bias = $Random.x * 0.1f;
 
 $Hit = vec4(0.0f);
 
@@ -109,15 +109,15 @@ for (int i = 0; i < 64; ++i)
 
 	const float depth = texture(sampler2D($DepthMap, $DepthMapState), t.xy).x;
 
-	const float d = abs(depth - viewStepPosition.z);
-	if (d < 0.075f)
+	const float d = (depth - viewStepPosition.z);
+	if (d < -0.1f)
 	{
 		// Edge attenuation.
 		float a = t.x * (1.0f - t.x) * t.y * (1.0f - t.y);
-		a = clamp(a * 64.0f, 0.0f, 1.0f);
+		a = clamp(a * 256.0f, 0.0f, 1.0f);
 
 		// Output UV coordinate of hit.
-		$Hit = vec4(t.xy, (1.0f - f * f) * a, 0.0f);
+		$Hit = vec4(t.xy, a, 0.0f);
 		break;
 	}
 }

@@ -172,7 +172,7 @@
 			</outputPins>
 			<script><![CDATA[
 const int N = 64;
-const float far = 2.0f;
+const float far = 1.0f;
 
 float occlusions = 0.0f;
 int rndState = int($Random);
@@ -444,7 +444,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<name>L_UV</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{832C4C4B-B445-3941-ABF0-ABC8BB9E22A0}</id>
 			<comment/>
 			<position>
 				<first>2001</first>
@@ -453,7 +453,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A352EB69-28CF-4045-8DF5-830569D69A62}</id>
 			<comment/>
 			<position>
 				<first>1998</first>
@@ -462,7 +462,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E7EE0D58-D274-784B-9FEA-2CEBF0CC4B78}</id>
 			<comment/>
 			<position>
 				<first>2267</first>
@@ -471,7 +471,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<parameterDeclaration>{C651B846-F51A-CB49-BBAB-10C2A527DE97}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F57682B7-E72F-2948-88C7-776947AE24A3}</id>
 			<comment/>
 			<position>
 				<first>1810</first>
@@ -480,7 +480,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<parameterDeclaration>{41C095E8-1A66-A249-A474-349B74E9CC2D}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{C2003240-0839-624D-855E-FFCEC593A995}</id>
 			<comment/>
 			<position>
 				<first>1187</first>
@@ -489,7 +489,7 @@ $Output = BlueNoise(seed) * 2.0f * 3.142f;
 			<parameterDeclaration>{6025A87F-C360-C14D-8B20-F6D989D05434}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E842F659-AA35-C648-ADD0-949C1887E461}</id>
 			<comment/>
 			<position>
 				<first>1178</first>
