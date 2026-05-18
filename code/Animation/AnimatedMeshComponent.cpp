@@ -39,6 +39,8 @@ namespace
 const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 const render::Handle s_handleWorld_ShadowWrite(L"World_ShadowWrite");
 
+const int32_t c_maxRtUpdatesBeforeBuild = 400;
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponent", AnimatedMeshComponent, mesh::MeshComponent)
@@ -237,7 +239,13 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 			// Update RT geometry and RT instance transform.
 			if (m_rtwInstance)
 			{
-				m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure);
+				bool rebuild = false;
+				if (++m_rtUpdates > c_maxRtUpdatesBeforeBuild)
+				{
+					rebuild = true;
+					m_rtUpdates = 0;
+				}
+				m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild);
 				m_rtwInstance->setTransform(worldTransform);
 			}
 		}

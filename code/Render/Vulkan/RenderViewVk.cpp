@@ -702,7 +702,8 @@ void RenderViewVk::endFrame()
 	T_PROFILER_SCOPE(L"RenderViewVk::endFrame");
 	auto& frame = m_frames[m_currentImageIndex];
 
-	frame.boundPipeline = 0;
+	frame.boundGraphicsPipeline = 0;
+	frame.boundComputePipeline = 0;
 	frame.boundIndexBuffer = BufferViewVk();
 	frame.boundVertexBuffer = BufferViewVk();
 
@@ -1443,10 +1444,10 @@ void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerati
 	as->writeInstances(m_frames[m_currentImageIndex].graphicsCommandBuffer, instances);
 }
 
-void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives)
+void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild)
 {
 	AccelerationStructureVk* as = mandatory_non_null_type_cast< AccelerationStructureVk* >(accelerationStructure);
-	as->writeGeometry(m_frames[m_currentImageIndex].graphicsCommandBuffer, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives);
+	as->writeGeometry(m_frames[m_currentImageIndex].graphicsCommandBuffer, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, rebuild);
 }
 
 int32_t RenderViewVk::beginTimeQuery()
@@ -1940,8 +1941,9 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 			m_context->setObjectDebugName(L"frame.computeFinishedSemaphore", (uint64_t)frame.computeFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
 		}
 
-		// boundPipeline is a per-swap-chain-image cache and is invalid against the new render targets.
-		frame.boundPipeline = 0;
+		// boundGraphicsPipeline/boundComputePipeline is per-swap-chain-image cache and is invalid against the new render targets.
+		frame.boundGraphicsPipeline = 0;
+		frame.boundComputePipeline = 0;
 		frame.boundIndexBuffer = BufferViewVk();
 		frame.boundVertexBuffer = BufferViewVk();
 
@@ -1989,10 +1991,10 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		return false;
 
 	auto& frame = m_frames[m_currentImageIndex];
-	if (pipeline != frame.boundPipeline)
+	if (pipeline != frame.boundGraphicsPipeline)
 	{
 		vkCmdBindPipeline(*frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-		frame.boundPipeline = pipeline;
+		frame.boundGraphicsPipeline = pipeline;
 	}
 	return true;
 }
@@ -2003,7 +2005,12 @@ bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const P
 	if (!pipeline)
 		return false;
 
-	vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+	auto& frame = m_frames[m_currentImageIndex];
+	if (pipeline != frame.boundComputePipeline)
+	{
+		vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+		frame.boundComputePipeline = pipeline;
+	}
 	return true;
 }
 

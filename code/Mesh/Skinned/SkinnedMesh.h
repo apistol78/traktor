@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -85,7 +85,8 @@ public:
 	void buildAccelerationStructure(
 		render::RenderContext* renderContext,
 		render::Buffer* skinBuffer,
-		render::IAccelerationStructure* accelerationStructure) const;
+		render::IAccelerationStructure* accelerationStructure,
+		bool rebuild) const;
 
 	void build(
 		render::RenderContext* renderContext,

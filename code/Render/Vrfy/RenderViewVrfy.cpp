@@ -463,7 +463,7 @@ void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelera
 	m_renderView->writeAccelerationStructure(as->getWrappedAS(), unwrappedInstances);
 }
 
-void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives)
+void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild)
 {
 	T_CAPTURE_TRACE(L"writeAccelerationStructure");
 	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
@@ -487,7 +487,7 @@ void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelera
 	const BufferViewVrfy* ibv = checked_type_cast< const BufferViewVrfy* >(indexBuffer);
 	const VertexLayoutVrfy* vl = checked_type_cast< const VertexLayoutVrfy* >(vertexLayout);
 
-	m_renderView->writeAccelerationStructure(as->getWrappedAS(), vbv->getWrappedBufferView(), vl->getWrappedVertexLayout(), ibv->getWrappedBufferView(), indexType, primitives);
+	m_renderView->writeAccelerationStructure(as->getWrappedAS(), vbv->getWrappedBufferView(), vl->getWrappedVertexLayout(), ibv->getWrappedBufferView(), indexType, primitives, rebuild);
 }
 
 int32_t RenderViewVrfy::beginTimeQuery()

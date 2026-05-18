@@ -120,7 +120,7 @@ public:
 
 	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances) override final;
 
-	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives) override final;
+	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild) override final;
 
 	virtual int32_t beginTimeQuery() override final;
 
@@ -148,7 +148,8 @@ private:
 		VkSemaphore renderFinishedSemaphore;
 		VkSemaphore computeFinishedSemaphore;
 		Ref< RenderTargetSetVk > primaryTarget;
-		VkPipeline boundPipeline = 0;
+		VkPipeline boundGraphicsPipeline = 0;
+		VkPipeline boundComputePipeline = 0;
 		BufferViewVk boundIndexBuffer;
 		BufferViewVk boundVertexBuffer;
 		RefArray< CommandBuffer > flyingCommandBuffers;

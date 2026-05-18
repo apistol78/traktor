@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,6 +23,8 @@ namespace
 {
 
 const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
+
+const int32_t c_maxRtUpdatesBeforeBuild = 400;
 
 }
 
@@ -102,7 +104,13 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 		m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0]);
 		if (m_rtwInstance)
 		{
-			m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure);
+			bool rebuild = false;
+			if (++m_rtUpdates > c_maxRtUpdatesBeforeBuild)
+			{
+				rebuild = true;
+				m_rtUpdates = 0;
+			}
+			m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild);
 			m_rtwInstance->setTransform(worldTransform);
 		}
 	}

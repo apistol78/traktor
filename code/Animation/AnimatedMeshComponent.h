@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -82,19 +82,17 @@ public:
 private:
 	resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	world::World* m_world = nullptr;
-
 	Ref< render::Buffer > m_jointBuffer;
 	Ref< render::Buffer > m_skinBuffer[2];
-
 	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
-
 	AlignedVector< int32_t > m_jointRemap;
 	AlignedVector< Transform > m_jointInverseTransforms;
 	AlignedVector< Transform > m_poseTransforms[2];
 	Transform m_lastWorldTransform[2];
 	std::atomic< int32_t > m_index;
 	int32_t m_revision = -1;
+	int32_t m_rtUpdates = 0;
 	bool m_skinModified = false;
 	bool m_lastIsVisible = false;
 };

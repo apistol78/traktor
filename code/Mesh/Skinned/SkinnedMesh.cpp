@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -58,7 +58,7 @@ void SkinnedMesh::buildSkin(
 	programParams->setBufferViewParameter(s_handleJoints, jointTransforms->getBufferView());
 	programParams->endParameters(renderContext);
 
-	auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >();
+	auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"SkinnedMesh update skin");
 	renderBlock->program = m_shaderUpdateSkin->getProgram().program;
 	renderBlock->programParams = programParams;
 	renderBlock->workSize[0] = vertexCount;
@@ -70,7 +70,8 @@ void SkinnedMesh::buildSkin(
 void SkinnedMesh::buildAccelerationStructure(
 	render::RenderContext* renderContext,
 	render::Buffer* skinBuffer,
-	render::IAccelerationStructure* accelerationStructure) const
+	render::IAccelerationStructure* accelerationStructure,
+	bool rebuild) const
 {
 	// Wait for data to be ready for building AS.
 	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::AccelerationStructureUpdate, nullptr, 0);
@@ -84,7 +85,8 @@ void SkinnedMesh::buildAccelerationStructure(
 			m_rtVertexLayout,
 			m_mesh->getIndexBuffer()->getBufferView(),
 			m_mesh->getIndexType(),
-			m_mesh->getRaytracingPrimitives());
+			m_mesh->getRaytracingPrimitives(),
+			rebuild);
 	};
 	renderContext->compute(rb);
 }

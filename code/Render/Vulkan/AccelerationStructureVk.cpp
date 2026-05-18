@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -178,7 +178,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 
 	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context, dynamic);
 	as->m_scratchAlignment = getScratchAlignment(context);
-	as->writeGeometry(commandBuffer, vertexBuffer->getBufferView(), vertexLayout, indexBuffer->getBufferView(), indexType, primitives);
+	as->writeGeometry(commandBuffer, vertexBuffer->getBufferView(), vertexLayout, indexBuffer->getBufferView(), indexType, primitives, true);
 
 	commandBuffer->submitAndWait();
 
@@ -286,7 +286,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 	return true;
 }
 
-bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives)
+bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild)
 {
 	bool recreateAS = false;
 	VkResult result;
@@ -327,7 +327,7 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
 		.pNext = nullptr,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
-		.flags = (VkBuildAccelerationStructureFlagsKHR)(m_dynamic ? VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR : 0),
+		.flags = (VkBuildAccelerationStructureFlagsKHR)(m_dynamic ? VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR : 0),
 		.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
 		.srcAccelerationStructure = VK_NULL_HANDLE,
 		.dstAccelerationStructure = VK_NULL_HANDLE,
@@ -410,6 +410,17 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 			},
 			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
 		m_as = 0;
+	}
+
+	// If dynamic and the AS object is still valid, perform an in-place update
+	// rather than a full rebuild. Requires that the source AS was built with
+	// VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR and that the geometry
+	// topology (primitive counts and layout) is unchanged.
+	const bool updateInPlace = (m_dynamic && !rebuild && !recreateAS && m_as != 0);
+	if (updateInPlace)
+	{
+		bottomLevelAccelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR;
+		bottomLevelAccelerationStructureBuildGeometryInfo.srcAccelerationStructure = m_as;
 	}
 
 	// Re-create if necessary.

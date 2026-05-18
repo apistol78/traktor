@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -43,7 +43,7 @@ public:
 
 	bool writeInstances(CommandBuffer* commandBuffer, const AlignedVector< Instance >& instances);
 
-	bool writeGeometry(CommandBuffer* commandBuffer, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives);
+	bool writeGeometry(CommandBuffer* commandBuffer, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild);
 
 	const VkAccelerationStructureKHR& getVkAccelerationStructureKHR() const { return m_as; }
 
