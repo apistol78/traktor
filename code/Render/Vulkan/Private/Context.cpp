@@ -43,7 +43,8 @@ Context::Context(
 	VmaAllocator allocator,
 	uint32_t graphicsQueueIndex,
 	uint32_t computeQueueIndex,
-	bool rayTracing)
+	bool rayTracing,
+	bool smoothLines)
 	: m_instance(instance)
 	, m_physicalDevice(physicalDevice)
 	, m_logicalDevice(logicalDevice)
@@ -51,6 +52,7 @@ Context::Context(
 	, m_graphicsQueueIndex(graphicsQueueIndex)
 	, m_computeQueueIndex(computeQueueIndex)
 	, m_rayTracing(rayTracing)
+	, m_smoothLines(smoothLines)
 	, m_sampledResourceIndexAllocator(0, MaxBindlessResources - 1)
 	, m_storageResourceIndexAllocator(0, MaxBindlessResources - 1)
 	, m_bufferResourceIndexAllocator(0, MaxBindlessResources - 1)
@@ -489,8 +491,20 @@ VkPipeline Context::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout,
 			.pName = "main",
 			.pSpecializationInfo = nullptr });
 
+		const bool isLineTopology = (pt == PrimitiveType::Lines || pt == PrimitiveType::LineStrip);
+
+		const VkPipelineRasterizationLineStateCreateInfoKHR lineStateCreateInfo = {
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_KHR,
+			.pNext = nullptr,
+			.lineRasterizationMode = VK_LINE_RASTERIZATION_MODE_RECTANGULAR_SMOOTH_KHR,
+			.stippledLineEnable = VK_FALSE,
+			.lineStippleFactor = 0,
+			.lineStipplePattern = 0
+		};
+
 		const VkPipelineRasterizationStateCreateInfo rsci = {
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+			.pNext = (m_smoothLines && isLineTopology) ? (const void*)&lineStateCreateInfo : nullptr,
 			.depthClampEnable = VK_FALSE,
 			.rasterizerDiscardEnable = VK_FALSE,
 			.polygonMode = rs.wireframe ? VK_POLYGON_MODE_LINE : VK_POLYGON_MODE_FILL,

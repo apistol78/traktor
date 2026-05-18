@@ -393,6 +393,31 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	if (desc.aftermath)
 		deviceExtensions.push_back(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME);
 
+	// Check if smooth line rasterization is supported.
+	bool smoothLinesSupported = false;
+	{
+		const auto it = std::find_if(availableExtensions.begin(), availableExtensions.end(), [](const VkExtensionProperties& ext) {
+			return std::strcmp(VK_KHR_LINE_RASTERIZATION_EXTENSION_NAME, ext.extensionName) == 0;
+		});
+		if (it != availableExtensions.end())
+		{
+			VkPhysicalDeviceLineRasterizationFeaturesKHR queryLineFeatures = {
+				.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR,
+				.pNext = nullptr
+			};
+			VkPhysicalDeviceFeatures2 queryFeatures2 = {
+				.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
+				.pNext = &queryLineFeatures
+			};
+			vkGetPhysicalDeviceFeatures2(m_physicalDevice, &queryFeatures2);
+			if (queryLineFeatures.smoothLines == VK_TRUE)
+			{
+				deviceExtensions.push_back(VK_KHR_LINE_RASTERIZATION_EXTENSION_NAME);
+				smoothLinesSupported = true;
+			}
+		}
+	}
+
 	// Create logical device.
 	const VkPhysicalDeviceFeatures features = {
 		.sampleRateShading = VK_TRUE,
@@ -481,6 +506,15 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	};
 
 	headFeature = &mutableDescriptorType;
+
+	const VkPhysicalDeviceLineRasterizationFeaturesKHR lineRasterizationFeatures = {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR,
+		.pNext = (void*)headFeature,
+		.smoothLines = VK_TRUE
+	};
+
+	if (smoothLinesSupported)
+		headFeature = &lineRasterizationFeatures;
 
 	if (desc.aftermath)
 	{
@@ -582,7 +616,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		m_allocator,
 		graphicsQueueIndex,
 		computeQueueIndex,
-		desc.rayTracing);
+		desc.rayTracing,
+		smoothLinesSupported);
 	if (!m_context->create())
 	{
 		log::error << L"Failed to create Vulkan; failed to create context." << Endl;

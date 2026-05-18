@@ -63,7 +63,8 @@ public:
 		VmaAllocator allocator,
 		uint32_t graphicsQueueIndex,
 		uint32_t computeQueueIndex,
-		bool rayTracing
+		bool rayTracing,
+		bool smoothLines
 	);
 
 	virtual ~Context();
@@ -166,6 +167,7 @@ private:
 	uint32_t m_graphicsQueueIndex;
 	uint32_t m_computeQueueIndex;
 	bool m_rayTracing = false;
+	bool m_smoothLines = false;
 	VkPipelineCache m_pipelineCache = 0;
 	VkDescriptorPool m_descriptorPool = 0;
 	int32_t m_views = 0;
