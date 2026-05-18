@@ -345,10 +345,13 @@ void RenderViewVk::close()
 	for (auto& imageAvailableSemaphore : m_imageAvailableSemaphores)
 	{
 		if (imageAvailableSemaphore != 0)
-		{
 			vkDestroySemaphore(m_context->getLogicalDevice(), imageAvailableSemaphore, nullptr);
-			imageAvailableSemaphore = 0;
-		}
+	}
+	m_imageAvailableSemaphores.clear();
+	if (m_imageAvailableSemaphoreFree != 0)
+	{
+		vkDestroySemaphore(m_context->getLogicalDevice(), m_imageAvailableSemaphoreFree, nullptr);
+		m_imageAvailableSemaphoreFree = 0;
 	}
 
 	//// Destroy pipelines.
@@ -587,7 +590,7 @@ bool RenderViewVk::beginFrame()
 		m_context->getLogicalDevice(),
 		m_swapChain,
 		UINT64_MAX,
-		m_imageAvailableSemaphores[m_counter % sizeof_array(m_imageAvailableSemaphores)],
+		m_imageAvailableSemaphoreFree,
 		VK_NULL_HANDLE,
 		&m_currentImageIndex);
 	T_PROFILER_END();
@@ -601,6 +604,13 @@ bool RenderViewVk::beginFrame()
 		log::error << L"Acquired image index greater than allowed number of frames." << Endl;
 		return false;
 	}
+
+	// Swap the freshly signaled spare into the per-image slot and recycle the previous one.
+	// The semaphore previously held in this slot was the wait operand of the prior submission
+	// that produced this image, and the presentation engine having just returned the image
+	// implies that submission has retired — so all pending signal/wait operations on the
+	// recycled semaphore are complete, and it is safe to pass to the next acquire.
+	std::swap(m_imageAvailableSemaphores[m_currentImageIndex], m_imageAvailableSemaphoreFree);
 
 	auto& frame = m_frames[m_currentImageIndex];
 	frame.markers.clear();
@@ -721,7 +731,7 @@ void RenderViewVk::endFrame()
 
 	// Submit graphics command buffer.
 	frame.graphicsCommandBuffer->submit(
-		{ m_imageAvailableSemaphores[m_counter % sizeof_array(m_imageAvailableSemaphores)] },
+		{ m_imageAvailableSemaphores[m_currentImageIndex] },
 		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT },
 		frame.renderFinishedSemaphore);
 
@@ -1820,10 +1830,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		for (auto& imageAvailableSemaphore : m_imageAvailableSemaphores)
 		{
 			if (imageAvailableSemaphore != 0)
-			{
 				m_retiredImageAvailableSemaphores.push_back(imageAvailableSemaphore);
-				imageAvailableSemaphore = 0;
-			}
+		}
+		m_imageAvailableSemaphores.clear();
+		if (m_imageAvailableSemaphoreFree != 0)
+		{
+			m_retiredImageAvailableSemaphores.push_back(m_imageAvailableSemaphoreFree);
+			m_imageAvailableSemaphoreFree = 0;
 		}
 	}
 
@@ -1836,9 +1849,15 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	log::debug << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
-	if (m_imageAvailableSemaphores[0] == 0)
+	// Allocate one binary semaphore per swap chain image plus one spare. The spare is fed
+	// to the next vkAcquireNextImageKHR; after acquire it is swapped with the per-image
+	// slot so the just-signaled semaphore is the one waited on by the graphics submit
+	// (see beginFrame). This recycles each slot only when the swap chain returns its
+	// image, which guarantees the prior signal/wait pair on it has fully completed.
+	if (m_imageAvailableSemaphores.empty())
 	{
-		for (int32_t i = 0; i < sizeof_array(m_imageAvailableSemaphores); ++i)
+		m_imageAvailableSemaphores.resize(imageCount, 0);
+		for (uint32_t i = 0; i < imageCount; ++i)
 		{
 			const VkSemaphoreCreateInfo sci = {
 				.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
@@ -1847,6 +1866,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 				return false;
 			m_context->setObjectDebugName(L"m_imageAvailableSemaphore", (uint64_t)m_imageAvailableSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE);
 		}
+
+		const VkSemaphoreCreateInfo sci = {
+			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
+		};
+		if (vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphoreFree) != VK_SUCCESS)
+			return false;
+		m_context->setObjectDebugName(L"m_imageAvailableSemaphoreFree", (uint64_t)m_imageAvailableSemaphoreFree, VK_OBJECT_TYPE_SEMAPHORE);
 	}
 
 	// If the number of swap chain images changed (rare), throw away any per-image resources that depend on it.

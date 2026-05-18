@@ -172,7 +172,13 @@ private:
 
 	// Swap chain.
 	VkSwapchainKHR m_swapChain = 0;
-	VkSemaphore m_imageAvailableSemaphores[4] = {};
+	// Pool of binary semaphores for vkAcquireNextImageKHR. We hold imageCount+1
+	// semaphores: one in m_imageAvailableSemaphores[image_index] for each swap
+	// chain image (the one consumed by the submit that produced that image's
+	// content) plus a single spare passed to the next acquire. After each
+	// acquire, the per-image slot and the spare are swapped — see beginFrame.
+	AlignedVector< VkSemaphore > m_imageAvailableSemaphores;
+	VkSemaphore m_imageAvailableSemaphoreFree = 0;
 	AlignedVector< VkSemaphore > m_retiredImageAvailableSemaphores;
 	AlignedVector< Frame > m_frames;
 	uint32_t m_currentImageIndex = 0;
