@@ -196,9 +196,9 @@ $Output = vec4(acc, 1.0f);
 				<first>-330</first>
 				<second>534</second>
 			</position>
-			<minFilter>Point</minFilter>
-			<mipFilter>Point</mipFilter>
-			<magFilter>Point</magFilter>
+			<minFilter>Linear</minFilter>
+			<mipFilter>Linear</mipFilter>
+			<magFilter>Linear</magFilter>
 			<addressU>Clamp</addressU>
 			<addressV>Clamp</addressV>
 			<addressW>Clamp</addressW>

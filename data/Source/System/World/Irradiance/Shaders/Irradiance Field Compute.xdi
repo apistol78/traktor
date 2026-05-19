@@ -63,11 +63,14 @@
 			<script><![CDATA[
 const int N = 16;
 const float Far = 70.0f;
-const float TemporalFilter = 0.95f;
+const float TemporalFilter = 0.9f;
+
+
+HWRT_Material m;
+float t;
 
 const ivec3 pt = ivec3(gl_GlobalInvocationID.xyz);
 const vec3 cellPosition = CellToWorldSpace($ViewInverse, pt);
-
 const vec3 Nacc0 = SampleIrradianceField($LastIrradianceField, $LastViewInverse, cellPosition);
 
 vec3 Nacc = vec3(0.0f, 0.0f, 0.0f);
@@ -88,14 +91,10 @@ for (int i = 0; i < N; ++i)
 	const vec3 rayDir = Sphere(rnd);
 	const vec3 rayOrigin = cellPosition + ro;
 
-	HWRT_Material m;
-	float t;
-
 	if (HWRT_Trace($AS, rayOrigin, rayDir, Far, m, t))
 	{
 		const vec3 hit = rayOrigin + rayDir * t;
 		const float attenuate = LightAttenuation(t);
-		
 		for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 		{
 			const $typeof(Lights) light = $Lights[lightIndex];
@@ -111,8 +110,8 @@ for (int i = 0; i < N; ++i)
 		}
 	}
 }
-Nacc /= float(N);
 
+Nacc /= float(N);
 Nacc = Nacc * (1.0f - TemporalFilter) + Nacc0 * TemporalFilter;
 
 imageStore($Output, pt, vec4(Nacc, 0.0f));

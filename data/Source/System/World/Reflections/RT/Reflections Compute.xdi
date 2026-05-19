@@ -130,7 +130,7 @@ const int Nspatial = 16;
 const int K = 8;
 const float NormalThreshold = 0.95f;
 const float DepthThreshold = 10.0f;
-const float Far = 30.0f;
+const float Far = 20.0f;
 const float SpatialFilterRadius = 0.005f;
 const float SpatialFilterCoeff = 0.75f;
 const float Ambient = 0.1f;
@@ -251,7 +251,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 			for (int i = 0; i < N; ++i)
 			{
 				const float roughness = $Roughness;
-				const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.25f;
+				const vec2 jitter = vec2(Hash(rndState++), Hash(rndState++)) * 0.125f;
 
 				const vec2 ruv = Hammersley(i, N) + jitter;
 				const vec2 r = UniformDisc(roughness * roughness, ruv);
@@ -292,14 +292,18 @@ if (pt.x < sz.x && pt.y < sz.y)
 				else
 					Nacc += $Sky.xyz;
 			}
+
+			Nacc /= N;
 		
-			const float w = Reservoir_CalculateProbability(Nacc.xyz / N);
+			float w = Reservoir_CalculateProbability(Nacc);
+			w = clamp(w, 0.0f, 4.0f);
+
 			Reservoir_Update(
 				reservoir,
 				w,
 				$Direction.xyz,
 				$Depth,
-				Nacc / N,
+				Nacc,
 				Hash(rndState++)
 			);
 		}
@@ -752,7 +756,7 @@ $TexCoord = vec4(
 			<name>L_Roughness</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{00F5C6D9-5835-D34A-9D2A-CB519EA88DEB}</id>
 			<comment/>
 			<position>
 				<first>-2266</first>
@@ -761,7 +765,7 @@ $TexCoord = vec4(
 			<parameterDeclaration>{6025A87F-C360-C14D-8B20-F6D989D05434}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{49BE29F2-586C-1A44-93FC-343990FDB0BF}</id>
 			<comment/>
 			<position>
 				<first>-1744</first>
@@ -770,7 +774,7 @@ $TexCoord = vec4(
 			<parameterDeclaration>{C651B846-F51A-CB49-BBAB-10C2A527DE97}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{9B39E600-7A36-2644-A149-86D76C098745}</id>
 			<comment/>
 			<position>
 				<first>-2063</first>
@@ -779,7 +783,7 @@ $TexCoord = vec4(
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{545079D8-D96B-7E4F-AD0F-42C080A7EBC9}</id>
 			<comment/>
 			<position>
 				<first>-2216</first>
@@ -788,7 +792,7 @@ $TexCoord = vec4(
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{5D50DD1B-ACE5-764B-8102-5B6B931A300C}</id>
 			<comment/>
 			<position>
 				<first>-1760</first>
@@ -797,7 +801,7 @@ $TexCoord = vec4(
 			<parameterDeclaration>{1527F0C9-DD5E-5C47-8A6B-5B7932CFD43D}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{09E44AA7-6673-1E4D-A5B4-7F9D8F0603C4}</id>
 			<comment/>
 			<position>
 				<first>-1776</first>
@@ -806,7 +810,7 @@ $TexCoord = vec4(
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{54BA0B66-6A2E-A74D-B27C-D4D0D8CE6880}</id>
 			<comment/>
 			<position>
 				<first>-1808</first>
@@ -815,7 +819,7 @@ $TexCoord = vec4(
 			<parameterDeclaration>{18C69B12-0FE8-5C46-ABC8-38E25A3BD13E}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{CEDFC2CC-9EC9-D24D-B295-23BC3CC021FF}</id>
 			<comment/>
 			<position>
 				<first>-2234</first>
@@ -824,7 +828,7 @@ $TexCoord = vec4(
 			<parameterDeclaration>{69CC271D-2BC6-B845-9896-C3E15BE08E58}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{04F3D47B-E19F-EC48-887B-B0822A2C1CF0}</id>
 			<comment/>
 			<position>
 				<first>-2187</first>
@@ -833,7 +837,7 @@ $TexCoord = vec4(
 			<parameterDeclaration>{B8AE6C9B-745D-ED43-AB69-5814E56BF99B}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{8F7B6B38-E81B-A141-99E3-EF9359E0CF0E}</id>
 			<comment/>
 			<position>
 				<first>-2279</first>
@@ -842,7 +846,7 @@ $TexCoord = vec4(
 			<parameterDeclaration>{18C69B12-0FE8-5C46-ABC8-38E25A3BD13E}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1E677AF3-F87A-9A4E-970B-5D48A477FF44}</id>
 			<comment/>
 			<position>
 				<first>-1704</first>
@@ -851,7 +855,7 @@ $TexCoord = vec4(
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{73508BBA-E0E1-634F-A174-C2FA3DD21B99}</id>
 			<comment/>
 			<position>
 				<first>-1776</first>
@@ -860,7 +864,7 @@ $TexCoord = vec4(
 			<parameterDeclaration>{3C048EC4-ED6A-0847-B08D-95F74407200F}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A6D5B4E0-F9E2-B946-8C39-B8E5448C4E0A}</id>
 			<comment/>
 			<position>
 				<first>-1760</first>
@@ -869,7 +873,7 @@ $TexCoord = vec4(
 			<parameterDeclaration>{8B5D917E-016B-B847-82D9-873D43916888}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{B03050ED-8FA5-7745-AD49-7D111F647496}</id>
 			<comment/>
 			<position>
 				<first>-1792</first>

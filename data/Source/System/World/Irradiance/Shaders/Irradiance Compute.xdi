@@ -872,7 +872,7 @@ imageStore($Output, pt, $Sky);
 			<name>L_TexCoord_NoJitter</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{070F013C-DCA5-A344-8AF7-0EE1A9C8941C}</id>
 			<comment/>
 			<position>
 				<first>-2391</first>
@@ -881,7 +881,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{6025A87F-C360-C14D-8B20-F6D989D05434}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D28F8345-BFD3-4448-BFD6-F8B4CE31CEE4}</id>
 			<comment/>
 			<position>
 				<first>-1889</first>
@@ -890,7 +890,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{C651B846-F51A-CB49-BBAB-10C2A527DE97}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{EA155867-CCBE-AE41-8E20-A35692C309EC}</id>
 			<comment/>
 			<position>
 				<first>-2184</first>
@@ -899,7 +899,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{EC132994-A202-2842-9224-78147F167F31}</id>
 			<comment/>
 			<position>
 				<first>-2184</first>
@@ -908,7 +908,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{44D2E1B0-63B9-AB4D-A605-CAD2530E7A9A}</id>
 			<comment/>
 			<position>
 				<first>-2349</first>
@@ -917,7 +917,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{DB54EE25-ED9B-124F-AC95-5DA524EDF16B}</id>
 			<comment/>
 			<position>
 				<first>-1905</first>
@@ -926,7 +926,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{1527F0C9-DD5E-5C47-8A6B-5B7932CFD43D}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{6449933E-E91D-B94B-8350-DDCF08ECEB50}</id>
 			<comment/>
 			<position>
 				<first>-1921</first>
@@ -935,7 +935,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{494823A2-B94E-A642-9474-42BBA11152AE}</id>
 			<comment/>
 			<position>
 				<first>-2375</first>
@@ -944,7 +944,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{2C06FC6E-5E3E-9442-BD38-EFEAD6DDDCC5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{3E8EFF8F-B68F-2946-BEF7-DEA2B49B6FDB}</id>
 			<comment/>
 			<position>
 				<first>-1937</first>
@@ -953,7 +953,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{2C06FC6E-5E3E-9442-BD38-EFEAD6DDDCC5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{8C1A4BC5-DA48-5941-9A56-BA8AED5DC75C}</id>
 			<comment/>
 			<position>
 				<first>-2359</first>
@@ -962,7 +962,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{69CC271D-2BC6-B845-9896-C3E15BE08E58}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{978D52F3-DF7E-BE40-8748-706FB5664CC2}</id>
 			<comment/>
 			<position>
 				<first>-2755</first>
@@ -971,7 +971,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{725B392B-9889-544A-B651-BBB2FF1DCAD7}</id>
 			<comment/>
 			<position>
 				<first>-2755</first>
@@ -980,7 +980,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{154E6E36-FC97-A44B-8630-3CE40A88DC73}</id>
 			<comment/>
 			<position>
 				<first>-1946</first>
@@ -989,7 +989,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{2C06FC6E-5E3E-9442-BD38-EFEAD6DDDCC5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A5649E31-5C31-174C-B335-8B2B5E423CBF}</id>
 			<comment/>
 			<position>
 				<first>-2327</first>
@@ -998,7 +998,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{B8AE6C9B-745D-ED43-AB69-5814E56BF99B}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{021CD5AC-0B98-B14B-8F91-8CF93B2ADE58}</id>
 			<comment/>
 			<position>
 				<first>-1921</first>
@@ -1007,7 +1007,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{3C048EC4-ED6A-0847-B08D-95F74407200F}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{34E5F4B2-59C3-0A45-98EB-084EFF2CD0A1}</id>
 			<comment/>
 			<position>
 				<first>-1905</first>
@@ -1016,7 +1016,7 @@ imageStore($Output, pt, $Sky);
 			<parameterDeclaration>{8B5D917E-016B-B847-82D9-873D43916888}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A19C9590-61E8-4F4C-9815-A9FA13293BEE}</id>
 			<comment/>
 			<position>
 				<first>-1937</first>
