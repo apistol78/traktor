@@ -117,7 +117,7 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 		}
 	}
 	m_needCameraJitter = (bool)(desc.quality.antiAlias >= Quality::High);
-	m_visualDenominator = (bool)(desc.quality.antiAlias >= Quality::Ultra) ? 1 : 1;
+	m_resolutionScale = (bool)(desc.quality.antiAlias >= Quality::Ultra) ? 1.0f : 0.75f;
 
 	// Create "visual" post processing filter.
 	if (desc.quality.imageProcess > Quality::Disabled)
@@ -160,7 +160,7 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 		return false;
 
 	// Attempt to load XeSS plugin for AA/upscaling.
-	if (desc.quality.antiAlias >= Quality::Ultra)
+	if (desc.quality.antiAlias >= Quality::High)
 	{
 		const TypeInfo* pluginType = TypeInfo::find(L"traktor.render.RenderPluginXeSS");
 		if (pluginType != nullptr)
@@ -215,7 +215,7 @@ void PostProcessPass::setup(
 	igctx.associateTextureTargetSet(ShaderParameter::InputVelocity, velocityTargetSetId, 0);
 	igctx.associateExplicitTexture(ShaderParameter::InputColorGrading, (bool)(m_colorGrading != nullptr) ? m_colorGrading.getResource() : whiteTexture);
 	igctx.setTechniqueFlag(ShaderPermutation::ColorGradingEnable, (bool)(m_colorGrading != nullptr));
-	igctx.setTechniqueFlag(ShaderPermutation::UpscalingEnable, m_visualDenominator > 1);
+	igctx.setTechniqueFlag(ShaderPermutation::UpscalingEnable, (bool)(m_resolutionScale < 1.0f));
 	igctx.setTechniqueFlag(ShaderPermutation::HDR, m_hdr);
 
 	// Expose gamma, exposure and jitter.
@@ -309,7 +309,7 @@ void PostProcessPass::setup(
 			else
 			{
 				// Ensure output depth is in known value if we are using upscaling.
-				if (m_visualDenominator > 1)
+				if (m_resolutionScale < 1.0f)
 				{
 					render::Clear cl;
 					cl.mask = render::CfColor | render::CfDepth;

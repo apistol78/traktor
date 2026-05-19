@@ -12,6 +12,7 @@
 #include "Core/Math/Float.h"
 #include "Core/Math/Log2.h"
 #include "Core/Math/Random.h"
+#include "Core/Math/Rational.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Timer/Profiler.h"
@@ -113,8 +114,8 @@ void WorldRendererDeferred::setup(
 	const bool needJitter = m_postProcessPass->needCameraJitter();
 
 	// Adjust view size to properly reflect our internal resolution.
-	const int32_t visualDenom = (m_postProcessPass != nullptr) ? m_postProcessPass->getVisualDenominator() : 1;
-	worldRenderView.setViewSize(worldRenderView.getViewSize() / visualDenom);
+	const float resolutionScale = (m_postProcessPass != nullptr) ? m_postProcessPass->getResolutionScale() : 1.0f;
+	worldRenderView.setViewSize(worldRenderView.getViewSize() * resolutionScale);
 
 	// Jitter projection for TAA, calculate jitter in clip space.
 	if (needJitter)
@@ -143,13 +144,16 @@ void WorldRendererDeferred::setup(
 	}
 
 	// Add visual target sets.
-	const render::RGTargetSet sharedDepthTargetSetId = (visualDenom <= 1) ? outputTargetSetId : render::RGTargetSet::Invalid;
+	const Rational r = floatToRational(resolutionScale);
+	const render::RGTargetSet sharedDepthTargetSetId = (resolutionScale == 1.0f) ? outputTargetSetId : render::RGTargetSet::Invalid;
 
 	const render::RenderGraphTargetSetDesc rgtsd = {
 		.count = 1,
-		.referenceWidthDenom = visualDenom,
-		.referenceHeightDenom = visualDenom,
-		.createDepthStencil = (bool)(visualDenom >= 2),
+		.referenceWidthMul = (int32_t)r.numerator,
+		.referenceWidthDenom = (int32_t)r.denominator,
+		.referenceHeightMul = (int32_t)r.numerator,
+		.referenceHeightDenom = (int32_t)r.denominator,
+		.createDepthStencil = (bool)(sharedDepthTargetSetId == render::RGTargetSet::Invalid),
 		.targets = { { .colorFormat = render::TfR16G16B16A16F } }
 	};
 	const DoubleBufferedTarget visualTargetSetId = {
@@ -159,8 +163,10 @@ void WorldRendererDeferred::setup(
 
 	const render::RenderGraphTargetSetDesc rgtsd2 = {
 		.count = 1,
-		.referenceWidthDenom = visualDenom,
-		.referenceHeightDenom = visualDenom,
+		.referenceWidthMul = (int32_t)r.numerator,
+		.referenceWidthDenom = (int32_t)r.denominator,
+		.referenceHeightMul = (int32_t)r.numerator,
+		.referenceHeightDenom = (int32_t)r.denominator,
 		.createDepthStencil = false,
 		.targets = { { .colorFormat = render::TfR16G16B16A16F } }
 	};
@@ -538,12 +544,10 @@ void WorldRendererDeferred::setupVisualPass(
 				sharedParams,
 				worldRenderView,
 				IWorldRenderPass::Last,
-				{
-					{ ShaderPermutation::IrradianceEnable, irradianceEnable },
+				{ { ShaderPermutation::IrradianceEnable, irradianceEnable },
 					{ ShaderPermutation::IrradianceSingle, irradianceSingle },
 					{ ShaderPermutation::VolumetricFogEnable, (bool)(fogVolumeTexture != nullptr) },
-					{ ShaderPermutation::RayTracingEnable, (bool)(m_gatheredView.rtWorldTopLevel != nullptr) }
-				});
+					{ ShaderPermutation::RayTracingEnable, (bool)(m_gatheredView.rtWorldTopLevel != nullptr) } });
 
 			for (const auto& r : m_gatheredView.renderables)
 				r.renderer->build(wc, worldRenderView, deferredColorPass, r.renderable);

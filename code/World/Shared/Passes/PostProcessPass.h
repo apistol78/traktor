@@ -65,7 +65,7 @@ public:
 	bool needCameraJitter() const { return m_needCameraJitter; }
 
 	/*! Get the visual denominator if the PP pass are implementing TAAU. */
-	int32_t getVisualDenominator() const { return m_visualDenominator; }
+	float getResolutionScale() const { return m_resolutionScale; }
 
 private:
 	WorldRenderSettings m_settings;
@@ -79,7 +79,7 @@ private:
 	float m_gamma = 2.2f;
 	bool m_hdr = false;
 	bool m_needCameraJitter = false;
-	int32_t m_visualDenominator = 1;
+	float m_resolutionScale = 1.0f;
 
 	Ref< render::IRenderPlugin > m_antiAliasPlugin;
 };

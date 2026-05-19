@@ -184,15 +184,15 @@ for (int i = 0; i < N; ++i)
 		Hash(rndState++)
 	) * 0.5f + 0.5f;
 
-	const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.01f;
-	const vec3 rayDir = normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.1f);
+	const vec3 rayOrigin = $Origin.xyz + $Direction.xyz * 0.1f;
+	const vec3 rayDir = normalize(Hemi($Direction.xyz, r) + $Direction.xyz * 0.01f);
 
 	if (HWRT_TraceShadow($AS, rayOrigin, rayDir, far))
 		occlusions += 1.0f;
 }
 
 const float f = 1.0f - occlusions / float(N);
-$Output = pow(f, 2.0f);
+$Output = pow(f, 1.0f);
 ]]></script>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">

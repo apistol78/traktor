@@ -12,6 +12,7 @@
 #include "Core/Math/Float.h"
 #include "Core/Math/Random.h"
 #include "Core/Math/Range.h"
+#include "Core/Math/Rational.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/Job.h"
@@ -105,8 +106,8 @@ void WorldRendererForward::setup(
 #endif
 
 	// Adjust view size to properly reflect our internal resolution.
-	const int32_t visualDenom = (m_postProcessPass != nullptr) ? m_postProcessPass->getVisualDenominator() : 1;
-	worldRenderView.setViewSize(worldRenderView.getViewSize() / visualDenom);
+	const float resolutionScale = (m_postProcessPass != nullptr) ? m_postProcessPass->getResolutionScale() : 1.0f;
+	worldRenderView.setViewSize(worldRenderView.getViewSize() * resolutionScale);
 
 	// Jitter projection for TAA, calculate jitter in clip space.
 	if (needJitter)
@@ -135,13 +136,16 @@ void WorldRendererForward::setup(
 	}
 
 	// Add visual target sets.
-	const render::RGTargetSet sharedDepthTargetSetId = (visualDenom <= 1) ? outputTargetSetId : render::RGTargetSet::Invalid;
+	const Rational r = floatToRational(resolutionScale);
+	const render::RGTargetSet sharedDepthTargetSetId = (resolutionScale == 1.0f) ? outputTargetSetId : render::RGTargetSet::Invalid;
 
 	const render::RenderGraphTargetSetDesc rgtd = {
 		.count = 1,
-		.referenceWidthDenom = visualDenom,
-		.referenceHeightDenom = visualDenom,
-		.createDepthStencil = (bool)(visualDenom >= 2),
+		.referenceWidthMul = (int32_t)r.numerator,
+		.referenceWidthDenom = (int32_t)r.denominator,
+		.referenceHeightMul = (int32_t)r.numerator,
+		.referenceHeightDenom = (int32_t)r.denominator,
+		.createDepthStencil = (bool)(sharedDepthTargetSetId == render::RGTargetSet::Invalid),
 		.targets = { { .colorFormat = render::TfR11G11B10F } }
 	};
 	const DoubleBufferedTarget visualTargetSetId = {

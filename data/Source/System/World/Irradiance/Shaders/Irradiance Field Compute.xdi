@@ -63,7 +63,7 @@
 			<script><![CDATA[
 const int N = 16;
 const float Far = 70.0f;
-const float TemporalFilter = 0.99f;
+const float TemporalFilter = 0.95f;
 
 const ivec3 pt = ivec3(gl_GlobalInvocationID.xyz);
 const vec3 cellPosition = CellToWorldSpace($ViewInverse, pt);
@@ -73,7 +73,7 @@ const vec3 Nacc0 = SampleIrradianceField($LastIrradianceField, $LastViewInverse,
 vec3 Nacc = vec3(0.0f, 0.0f, 0.0f);
 
 int sampleOffset = int($Random * 256 / N);
-int rndState = int($Random * 768);
+int rndState = int($Random * 2029);
 
 for (int i = 0; i < N; ++i)
 {
