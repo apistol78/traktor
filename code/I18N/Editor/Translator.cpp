@@ -44,7 +44,7 @@ bool Translator::translate(const std::wstring& text, std::wstring& outText) cons
 	Ref< IStream > stream = connection->getStream();
 	T_ASSERT(stream);
 
-	StringReader reader(stream, new Utf8Encoding());
+	StringReader reader(stream, Utf8Encoding::getInstance());
 	std::wstring tmp;
 	bool result = false;
 

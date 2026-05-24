@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,12 +13,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Utf32Encoding", Utf32Encoding, IEncoding)
 
+Utf32Encoding* Utf32Encoding::getInstance()
+{
+	static Utf32Encoding s_instance;
+	return &s_instance;
+}
+
 int32_t Utf32Encoding::translate(const wchar_t* chars, int32_t count, uint8_t* out) const
 {
 	int32_t j = 0;
 	for (int32_t i = 0; i < count; ++i)
 	{
-		wchar_t ch = chars[i];
+		const wchar_t ch = chars[i];
 		out[j++] = uint8_t(ch);
 		out[j++] = uint8_t(ch >> 8);
 #if !defined(_WIN32)

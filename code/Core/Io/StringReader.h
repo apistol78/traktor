@@ -42,11 +42,15 @@ public:
 	/*! Read string from stream until end-of-line or end-of-file. */
 	int64_t readLine(std::wstring& out);
 
+	/*! Read remainder of stream into string, joining lines with '\n'. */
+	int64_t readAll(std::wstring& out);
+
 private:
 	Ref< IStream > m_stream;
 	Ref< IEncoding > m_encoding;
 	uint8_t m_buffer[IEncoding::MaxEncodingSize];
-	int64_t m_count;
+	int32_t m_head;
+	int32_t m_tail;
 };
 
 }

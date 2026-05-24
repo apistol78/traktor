@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,7 +29,7 @@ class T_DLLCLASS Utf8Encoding : public IEncoding
 	T_RTTI_CLASS;
 
 public:
-	Utf8Encoding() = default;
+	static Utf8Encoding* getInstance();
 
 	virtual int translate(const wchar_t* chars, int32_t count, uint8_t* out) const override final;
 

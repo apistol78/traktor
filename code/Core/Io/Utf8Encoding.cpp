@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,12 +13,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Utf8Encoding", Utf8Encoding, IEncoding);
 
+Utf8Encoding* Utf8Encoding::getInstance()
+{
+	static Utf8Encoding s_instance;
+	return &s_instance;
+}
+
 int Utf8Encoding::translate(const wchar_t* chars, int32_t count, uint8_t* out) const
 {
 	int32_t j = 0;
 	for (int32_t i = 0; i < count; ++i)
 	{
-		wchar_t ch = chars[i];
+		const wchar_t ch = chars[i];
 
 		if (ch <= 0x7f)
 		{
@@ -88,6 +94,16 @@ int Utf8Encoding::translate(const uint8_t in[MaxEncodingSize], int32_t count, wc
 {
 	out = 0;
 
+	if (count < 1)
+		return 0;
+
+	// Fast path: ASCII (single byte, high bit clear).
+	if ((in[0] & 0x80) == 0)
+	{
+		out = wchar_t(in[0]);
+		return 1;
+	}
+
 	if ((in[0] & 0xe0) == 0xc0)
 	{
 		if (count < 2)
@@ -136,10 +152,7 @@ int Utf8Encoding::translate(const uint8_t in[MaxEncodingSize], int32_t count, wc
 	}
 #endif
 
-	if (count < 1)
-		return 0;
-
-	T_ASSERT((in[0] & 0x80) == 0x00);
+	// Invalid UTF-8 lead byte; consume one byte to make forward progress.
 	out = wchar_t(in[0]);
 	return 1;
 }
