@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include "Core/Containers/AlignedVector.h"
 
 namespace traktor
@@ -41,6 +42,8 @@ public:
 	SmallSet(const std::initializer_list< Key >& iv)
 	:	m_data(iv)
 	{
+		std::sort(m_data.begin(), m_data.end());
+		m_data.erase(std::unique(m_data.begin(), m_data.end()), m_data.end());
 	}
 
 	iterator begin()

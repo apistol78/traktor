@@ -62,22 +62,26 @@ public:
 
 	bool anyClear() const
 	{
-		for (uint32_t i = 0; i < (Size + 31) / 32; ++i)
+		constexpr uint32_t words = (Size + 31) / 32;
+		constexpr uint32_t lastMask = (Size % 32) ? ((1U << (Size % 32)) - 1U) : ~0U;
+		for (uint32_t i = 0; i + 1 < words; ++i)
 		{
 			if (m_data[i] != ~0U)
 				return true;
 		}
-		return false;
+		return words > 0 && (m_data[words - 1] & lastMask) != lastMask;
 	}
 
 	bool anySet() const
 	{
-		for (uint32_t i = 0; i < (Size + 31) / 32; ++i)
+		constexpr uint32_t words = (Size + 31) / 32;
+		constexpr uint32_t lastMask = (Size % 32) ? ((1U << (Size % 32)) - 1U) : ~0U;
+		for (uint32_t i = 0; i + 1 < words; ++i)
 		{
 			if (m_data[i] != 0U)
 				return true;
 		}
-		return false;
+		return words > 0 && (m_data[words - 1] & lastMask) != 0U;
 	}
 
 	uint32_t size() const
@@ -90,7 +94,7 @@ public:
 		return (m_data[index / 32] & (1U << (index & 31))) != 0;
 	}
 
-	static StaticBitVector< Size > and(const StaticBitVector< Size >& a, StaticBitVector< Size >& b)
+	static StaticBitVector< Size > bitwiseAnd(const StaticBitVector< Size >& a, const StaticBitVector< Size >& b)
 	{
 		StaticBitVector< Size > r;
 		for (uint32_t i = 0; i < (Size + 31) / 32; ++i)

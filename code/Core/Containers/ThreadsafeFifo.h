@@ -32,8 +32,8 @@ public:
 		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
 		if (!m_fifo.empty())
 		{
-			item = m_fifo.back();
-			m_fifo.pop_back();
+			item = m_fifo.front();
+			m_fifo.erase(m_fifo.begin());
 			return true;
 		}
 		else

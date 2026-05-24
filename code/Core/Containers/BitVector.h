@@ -29,8 +29,9 @@ public:
 
 	BitVector(const BitVector& bv)
 	{
-		m_data.reset(new uint32_t[bv.m_size]);
-		for (uint32_t i = 0; i < bv.m_size; ++i)
+		const uint32_t words = (bv.m_size + 31) / 32;
+		m_data.reset(new uint32_t[words]);
+		for (uint32_t i = 0; i < words; ++i)
 			m_data[i] = bv.m_data[i];
 		m_size = bv.m_size;
 	}
@@ -39,6 +40,7 @@ public:
 	{
 		m_data.move(bv.m_data);
 		m_size = bv.m_size;
+		bv.m_size = 0;
 	}
 
 	void assign(uint32_t size, bool initial)
@@ -94,9 +96,11 @@ public:
 
 	BitVector& operator = (const BitVector& bv)
 	{
-		m_data.reset(new uint32_t[bv.m_size]);
-		for (uint32_t i = 0; i < bv.m_size; ++i)
+		const uint32_t words = (bv.m_size + 31) / 32;
+		m_data.reset(new uint32_t[words]);
+		for (uint32_t i = 0; i < words; ++i)
 			m_data[i] = bv.m_data[i];
+		m_size = bv.m_size;
 		return *this;
 	}
 
@@ -104,6 +108,7 @@ public:
 	{
 		m_data.move(bv.m_data);
 		m_size = bv.m_size;
+		bv.m_size = 0;
 		return *this;
 	}
 
