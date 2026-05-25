@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Terrain/Editor/CropTerrainWizardTool.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -13,17 +15,14 @@
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "I18N/Text.h"
-#include "Terrain/Editor/CropTerrainWizardTool.h"
 #include "Terrain/Editor/TerrainAsset.h"
-#include "Ui/NumericEditValidator.h"
 #include "Ui/InputDialog.h"
+#include "Ui/NumericEditValidator.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
-		namespace
-		{
+namespace
+{
 
 Ref< drawing::Image > loadImage(IStream* stream)
 {
@@ -36,7 +35,7 @@ Ref< drawing::Image > loadImage(IStream* stream)
 	return img;
 }
 
-		}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.CropTerrainWizardTool", 0, CropTerrainWizardTool, editor::IWizardTool)
 
@@ -109,8 +108,7 @@ bool CropTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 	}
 	T_ASSERT(originalSize > 0);
 
-	ui::InputDialog::Field fields[] =
-	{
+	ui::InputDialog::Field fields[] = {
 		ui::InputDialog::Field(L"Left", L"0", new ui::NumericEditValidator(false)),
 		ui::InputDialog::Field(L"Top", L"0", new ui::NumericEditValidator(false)),
 		ui::InputDialog::Field(L"Size", toString(originalSize), new ui::NumericEditValidator(false, 1))
@@ -122,8 +120,7 @@ bool CropTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 		i18n::Text(L"CROP_TERRAIN_WIZARDTOOL_TITLE"),
 		i18n::Text(L"CROP_TERRAIN_WIZARDTOOL_MESSAGE"),
 		fields,
-		sizeof_array(fields)
-	);
+		sizeof_array(fields));
 
 	if (inputDialog.showModal() == ui::DialogResult::Cancel)
 		return false;
@@ -200,5 +197,4 @@ bool CropTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 	return true;
 }
 
-	}
 }
