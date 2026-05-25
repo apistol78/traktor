@@ -979,7 +979,7 @@ public:
 
 		// Source slots in [offset, min(offset+count, size)) are alive (moved-from); destroy
 		// them before placement-new. Slots in [size, offset+count) are still raw.
-		const size_t destroyEnd = std::min(offset + count, size);
+		const size_t destroyEnd = std::min< size_t >(offset + count, size);
 		for (size_t i = offset; i < destroyEnd; ++i)
 			Constructor::destroy(m_data[i]);
 
@@ -1024,7 +1024,7 @@ public:
 			}
 		}
 
-		const size_t destroyEnd = std::min(offset + count, size);
+		const size_t destroyEnd = std::min< size_t >(offset + count, size);
 		for (size_t i = offset; i < destroyEnd; ++i)
 			Constructor::destroy(m_data[i]);
 

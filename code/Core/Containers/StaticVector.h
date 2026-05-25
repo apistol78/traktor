@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -551,7 +551,7 @@ public:
 			}
 		}
 
-		const size_t destroyEnd = std::min(offset + count, size);
+		const size_t destroyEnd = std::min< size_t >(offset + count, size);
 		for (size_t i = offset; i < destroyEnd; ++i)
 			Constructor::destroy(m_items[i]);
 
@@ -593,7 +593,7 @@ public:
 			}
 		}
 
-		const size_t destroyEnd = std::min(offset + count, size);
+		const size_t destroyEnd = std::min< size_t >(offset + count, size);
 		for (size_t i = offset; i < destroyEnd; ++i)
 			Constructor::destroy(m_items[i]);
 
