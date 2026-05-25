@@ -76,7 +76,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	os << L"	axis_up=\"Y\"," << Endl;
 	os << L"	use_selection=False," << Endl;
 	os << L"	use_visible=True," << Endl;
-	os << L"	global_scale=0.01," << Endl;
+	os << L"	global_scale=1," << Endl;
 	os << L"	use_custom_props=True," << Endl;
 	os << L"	use_mesh_modifiers=True," << Endl;
 	os << L"    use_mesh_edges=True," << Endl;
