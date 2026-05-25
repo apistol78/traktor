@@ -1,12 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/Editor/EditorPlugin.h"
+#include "Runtime/Editor/RuntimeEditorPlugin.h"
 
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
@@ -144,9 +144,9 @@ Ref< ui::MenuItem > createTweakMenuItem(const std::wstring& text, bool initially
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.EditorPlugin", 0, EditorPlugin, editor::IEditorPlugin)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.RuntimeEditorPlugin", 0, RuntimeEditorPlugin, editor::IEditorPlugin)
 
-bool EditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::IEditorPageSite* site)
+bool RuntimeEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::IEditorPageSite* site)
 {
 	m_editor = editor;
 	m_parent = parent;
@@ -169,7 +169,7 @@ bool EditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::I
 		m_toolBar = new ui::ToolBar();
 		m_toolBar->create(container);
 		m_toolBar->setEnable(false);
-		m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorPlugin::eventToolBarClick);
+		m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &RuntimeEditorPlugin::eventToolBarClick);
 
 		m_toolTargets = new ui::ToolBarDropDown(ui::Command(L"Runtime.Targets"), 120_ut, i18n::Text(L"RUNTIME_TARGETS"));
 		m_toolBar->addItem(m_toolTargets);
@@ -205,14 +205,14 @@ bool EditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::I
 		// Create target configuration list control.
 		m_targetList = new TargetListControl();
 		m_targetList->create(container);
-		m_targetList->addEventHandler< TargetBuildEvent >(this, &EditorPlugin::eventTargetListBuild);
-		m_targetList->addEventHandler< TargetCaptureEvent >(this, &EditorPlugin::eventTargetListShowProfiler);
-		m_targetList->addEventHandler< TargetMigrateEvent >(this, &EditorPlugin::eventTargetListMigrate);
-		m_targetList->addEventHandler< TargetPlayEvent >(this, &EditorPlugin::eventTargetListPlay);
-		m_targetList->addEventHandler< TargetStopEvent >(this, &EditorPlugin::eventTargetListStop);
-		m_targetList->addEventHandler< TargetCommandEvent >(this, &EditorPlugin::eventTargetListCommand);
+		m_targetList->addEventHandler< TargetBuildEvent >(this, &RuntimeEditorPlugin::eventTargetListBuild);
+		m_targetList->addEventHandler< TargetCaptureEvent >(this, &RuntimeEditorPlugin::eventTargetListShowProfiler);
+		m_targetList->addEventHandler< TargetMigrateEvent >(this, &RuntimeEditorPlugin::eventTargetListMigrate);
+		m_targetList->addEventHandler< TargetPlayEvent >(this, &RuntimeEditorPlugin::eventTargetListPlay);
+		m_targetList->addEventHandler< TargetStopEvent >(this, &RuntimeEditorPlugin::eventTargetListStop);
+		m_targetList->addEventHandler< TargetCommandEvent >(this, &RuntimeEditorPlugin::eventTargetListCommand);
 
-		container->addEventHandler< ui::TimerEvent >(this, &EditorPlugin::eventTimer);
+		container->addEventHandler< ui::TimerEvent >(this, &RuntimeEditorPlugin::eventTimer);
 		container->startTimer(30);
 	}
 
@@ -240,7 +240,7 @@ bool EditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::I
 	return true;
 }
 
-void EditorPlugin::destroy()
+void RuntimeEditorPlugin::destroy()
 {
 	if (m_threadTargetActions)
 	{
@@ -277,17 +277,17 @@ void EditorPlugin::destroy()
 	m_editor = nullptr;
 }
 
-int32_t EditorPlugin::getOrdinal() const
+int32_t RuntimeEditorPlugin::getOrdinal() const
 {
 	return 100;
 }
 
-void EditorPlugin::getCommands(std::list< ui::Command >& outCommands) const
+void RuntimeEditorPlugin::getCommands(std::list< ui::Command >& outCommands) const
 {
 	outCommands.push_back(ui::Command(L"Runtime.Editor.LaunchLast"));
 }
 
-bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
+bool RuntimeEditorPlugin::handleCommand(const ui::Command& command, bool result_)
 {
 	if (command == L"Editor.AutoBuild")
 	{
@@ -358,7 +358,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 	return true;
 }
 
-void EditorPlugin::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+void RuntimeEditorPlugin::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 	for (const auto& target : m_targets)
 	{
@@ -371,7 +371,7 @@ void EditorPlugin::handleDatabaseEvent(db::Database* database, const Guid& event
 	}
 }
 
-void EditorPlugin::handleWorkspaceOpened()
+void RuntimeEditorPlugin::handleWorkspaceOpened()
 {
 	updateTargetLists();
 
@@ -397,7 +397,7 @@ void EditorPlugin::handleWorkspaceOpened()
 	updateTargetManagers();
 }
 
-void EditorPlugin::handleWorkspaceClosed()
+void RuntimeEditorPlugin::handleWorkspaceClosed()
 {
 	m_toolTargets->removeAll();
 	m_toolBar->update();
@@ -414,11 +414,11 @@ void EditorPlugin::handleWorkspaceClosed()
 	m_connectionManager = nullptr;
 }
 
-void EditorPlugin::handleEditorClosed()
+void RuntimeEditorPlugin::handleEditorClosed()
 {
 }
 
-void EditorPlugin::updateTargetLists()
+void RuntimeEditorPlugin::updateTargetLists()
 {
 	m_targets.clear();
 	m_targetInstances.clear();
@@ -493,7 +493,7 @@ void EditorPlugin::updateTargetLists()
 	m_targetList->requestUpdate();
 }
 
-void EditorPlugin::updateTargetManagers()
+void RuntimeEditorPlugin::updateTargetManagers()
 {
 	if (m_targetManager)
 	{
@@ -514,7 +514,7 @@ void EditorPlugin::updateTargetManagers()
 	}
 }
 
-Ref< ILogTarget > EditorPlugin::createLogTarget(const std::wstring& name)
+Ref< ILogTarget > RuntimeEditorPlugin::createLogTarget(const std::wstring& name)
 {
 	if (m_logTargets[name] == nullptr)
 	{
@@ -536,7 +536,7 @@ Ref< ILogTarget > EditorPlugin::createLogTarget(const std::wstring& name)
 	return m_logTargets[name];
 }
 
-Ref< PropertyGroup > EditorPlugin::getTweakSettings() const
+Ref< PropertyGroup > RuntimeEditorPlugin::getTweakSettings() const
 {
 	Ref< PropertyGroup > tweakSettings = new PropertyGroup();
 	if (m_toolTweaks->get(0)->isChecked())
@@ -588,7 +588,7 @@ Ref< PropertyGroup > EditorPlugin::getTweakSettings() const
 	return tweakSettings;
 }
 
-void EditorPlugin::launch(TargetInstance* targetInstance)
+void RuntimeEditorPlugin::launch(TargetInstance* targetInstance)
 {
 	// Get selected target host.
 	const int32_t id = targetInstance->getDeployHostId();
@@ -678,7 +678,7 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 	m_lastLaunchedTargetInstance = targetInstance;
 }
 
-void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
+void RuntimeEditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
 {
 	TargetInstance* targetInstance = event->getInstance();
 
@@ -726,7 +726,7 @@ void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
 	m_targetList->requestUpdate();
 }
 
-void EditorPlugin::eventTargetListShowProfiler(TargetCaptureEvent* event)
+void RuntimeEditorPlugin::eventTargetListShowProfiler(TargetCaptureEvent* event)
 {
 	TargetInstance* targetInstance = event->getInstance();
 	const int32_t connectionId = event->getConnectionIndex();
@@ -743,7 +743,7 @@ void EditorPlugin::eventTargetListShowProfiler(TargetCaptureEvent* event)
 	}
 }
 
-void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
+void RuntimeEditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 {
 	TargetInstance* targetInstance = event->getInstance();
 
@@ -821,14 +821,14 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 	m_targetList->requestUpdate();
 }
 
-void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
+void RuntimeEditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 {
 	TargetInstance* targetInstance = event->getInstance();
 	if (targetInstance)
 		launch(targetInstance);
 }
 
-void EditorPlugin::eventTargetListStop(TargetStopEvent* event)
+void RuntimeEditorPlugin::eventTargetListStop(TargetStopEvent* event)
 {
 	TargetInstance* targetInstance = event->getInstance();
 	const int32_t connectionId = event->getConnectionIndex();
@@ -846,7 +846,7 @@ void EditorPlugin::eventTargetListStop(TargetStopEvent* event)
 	m_targetList->requestUpdate();
 }
 
-void EditorPlugin::eventTargetListCommand(TargetCommandEvent* event)
+void RuntimeEditorPlugin::eventTargetListCommand(TargetCommandEvent* event)
 {
 	TargetInstance* targetInstance = event->getInstance();
 	const int32_t connectionId = event->getConnectionIndex();
@@ -863,7 +863,7 @@ void EditorPlugin::eventTargetListCommand(TargetCommandEvent* event)
 	}
 }
 
-void EditorPlugin::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
+void RuntimeEditorPlugin::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 {
 	const int32_t selectedTargetIndex = m_toolTargets->getSelected();
 	if (selectedTargetIndex < 0 || selectedTargetIndex >= int32_t(m_targetInstances.size()))
@@ -881,7 +881,7 @@ void EditorPlugin::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 	m_targetList->requestUpdate();
 }
 
-void EditorPlugin::eventTimer(ui::TimerEvent* event)
+void RuntimeEditorPlugin::eventTimer(ui::TimerEvent* event)
 {
 	if (
 		m_targetManager &&
@@ -894,7 +894,7 @@ void EditorPlugin::eventTimer(ui::TimerEvent* event)
 	}
 }
 
-void EditorPlugin::threadHostEnumerator()
+void RuntimeEditorPlugin::threadHostEnumerator()
 {
 	std::vector< std::wstring > localDeployPlatforms;
 	while (!m_threadHostEnumerator->stopped())
@@ -937,7 +937,7 @@ void EditorPlugin::threadHostEnumerator()
 	}
 }
 
-void EditorPlugin::threadTargetActions()
+void RuntimeEditorPlugin::threadTargetActions()
 {
 	ActionChain chain;
 	while (!m_threadTargetActions->stopped())

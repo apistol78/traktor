@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -59,7 +59,7 @@ class TargetStopEvent;
 /*! Runtime editor plugin.
  * \ingroup Runtime
  */
-class EditorPlugin : public editor::IEditorPlugin
+class RuntimeEditorPlugin : public editor::IEditorPlugin
 {
 	T_RTTI_CLASS;
 
