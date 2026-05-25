@@ -8,13 +8,22 @@
  */
 #pragma once
 
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 
-namespace traktor::scene
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SHAPE_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
 {
+	namespace shape
+	{
 
-/*! Default scene editor profile. */
-class DefaultEditorProfile : public ISceneEditorProfile
+class T_DLLCLASS SceneEditorPlugin : public scene::ISceneEditorPlugin
 {
 	T_RTTI_CLASS;
 
@@ -27,23 +36,23 @@ public:
 		std::set< std::wstring >& outIds
 	) const override final;
 
-	virtual void createEditorPlugins(
-		SceneEditorContext* context,
-		RefArray< ISceneEditorPlugin >& outEditorPlugins
+	virtual void createUIExtensions(
+		scene::SceneEditorContext* context,
+		RefArray< scene::ISceneEditorUIExtension >& outUIExtensions
 	) const override final;
 
 	virtual void createResourceFactories(
-		SceneEditorContext* context,
+		scene::SceneEditorContext* context,
 		RefArray< const resource::IResourceFactory >& outResourceFactories
 	) const override final;
 
 	virtual void createEntityFactories(
-		SceneEditorContext* context,
+		scene::SceneEditorContext* context,
 		RefArray< world::IEntityFactory >& outEntityFactories
 	) const override final;
 
 	virtual void createEntityRenderers(
-		SceneEditorContext* context,
+		scene::SceneEditorContext* context,
 		render::IRenderView* renderView,
 		render::PrimitiveRenderer* primitiveRenderer,
 		const TypeInfo& worldRendererType,
@@ -51,24 +60,24 @@ public:
 	) const override final;
 
 	virtual void createControllerEditorFactories(
-		SceneEditorContext* context,
-		RefArray< const IWorldComponentEditorFactory >& outControllerEditorFactories
-	) const override final;
+		scene::SceneEditorContext* context,
+		RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories	) const override final;
 
 	virtual void createEntityEditorFactories(
-		SceneEditorContext* context,
-		RefArray< const IEntityEditorFactory >& outEntityEditorFactories
+		scene::SceneEditorContext* context,
+		RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 	) const override final;
 
 	virtual void createComponentEditorFactories(
-		SceneEditorContext* context,
-		RefArray< const IComponentEditorFactory >& outComponentEditorFactories
+		scene::SceneEditorContext* context,
+		RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
 	) const override final;
 
 	virtual Ref< world::EntityData > createEntityData(
-		SceneEditorContext* context,
+		scene::SceneEditorContext* context,
 		db::Instance* instance
 	) const override final;
 };
 
+	}
 }

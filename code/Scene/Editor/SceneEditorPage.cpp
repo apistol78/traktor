@@ -50,7 +50,7 @@
 #include "Scene/Editor/Events/PostModifyEvent.h"
 #include "Scene/Editor/Events/PreModifyEvent.h"
 #include "Scene/Editor/Events/SceneSelectionChangeEvent.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/IWorldComponentEditorFactory.h"
 #include "Scene/Editor/SceneAsset.h"
@@ -249,28 +249,28 @@ bool SceneEditorPage::create(ui::Container* parent)
 		physicsManager,
 		scriptContext);
 
-	// Create profiles, plugins, resource factories, entity editors and guide ids.
-	for (auto profileType : type_of< ISceneEditorProfile >().findAllOf())
+	// Create plugins, UI extensions, resource factories, entity editors and guide ids.
+	for (auto pluginType : type_of< ISceneEditorPlugin >().findAllOf())
 	{
-		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >(profileType->createInstance());
-		if (!profile)
+		Ref< ISceneEditorPlugin > plugin = dynamic_type_cast< ISceneEditorPlugin* >(pluginType->createInstance());
+		if (!plugin)
 			continue;
 
-		m_context->addEditorProfile(profile);
+		m_context->addPlugin(plugin);
 
-		RefArray< ISceneEditorPlugin > editorPlugins;
-		profile->createEditorPlugins(m_context, editorPlugins);
+		RefArray< ISceneEditorUIExtension > uiExtensions;
+		plugin->createUIExtensions(m_context, uiExtensions);
 
-		for (auto editorPlugin : editorPlugins)
-			m_context->addEditorPlugin(editorPlugin);
+		for (auto uiExtension : uiExtensions)
+			m_context->addUIExtension(uiExtension);
 
 		RefArray< const resource::IResourceFactory > resourceFactories;
-		profile->createResourceFactories(m_context, resourceFactories);
+		plugin->createResourceFactories(m_context, resourceFactories);
 
 		for (auto resourceFactory : resourceFactories)
 			resourceManager->addFactory(resourceFactory);
 
-		profile->getGuideDrawIds(guideIds);
+		plugin->getGuideDrawIds(guideIds);
 	}
 
 	// Create entity and component editor factories.
@@ -285,10 +285,10 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	// Create scene instance resource factory, used by final render control etc.
 	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
-	for (auto editorProfile : m_context->getEditorProfiles())
+	for (auto plugin : m_context->getPlugins())
 	{
 		RefArray< world::IEntityFactory > entityFactories;
-		editorProfile->createEntityFactories(m_context, entityFactories);
+		plugin->createEntityFactories(m_context, entityFactories);
 		for (auto factory : entityFactories)
 			if (factory->initialize(objectStore))
 				entityFactory->addFactory(factory);
@@ -577,9 +577,9 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 
 	Ref< world::EntityData > entityData;
 
-	// Check profiles if any can convert instance into an entity data.
-	for (auto editorProfile : m_context->getEditorProfiles())
-		if ((entityData = editorProfile->createEntityData(m_context, instance)) != nullptr)
+	// Check plugins if any can convert instance into an entity data.
+	for (auto plugin : m_context->getPlugins())
+		if ((entityData = plugin->createEntityData(m_context, instance)) != nullptr)
 			break;
 
 	if (entityData)
@@ -1074,8 +1074,8 @@ void SceneEditorPage::createControllerEditor()
 			Ref< IWorldComponentEditor > componentEditor;
 
 			// Create world component editor factories.
-			for (auto profile : m_context->getEditorProfiles())
-				profile->createControllerEditorFactories(m_context, componentEditorFactories);
+			for (auto plugin : m_context->getPlugins())
+				plugin->createControllerEditorFactories(m_context, componentEditorFactories);
 
 			for (auto controllerEditorFactory : componentEditorFactories)
 			{

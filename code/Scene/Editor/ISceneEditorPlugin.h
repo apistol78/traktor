@@ -8,8 +8,13 @@
  */
 #pragma once
 
+#include <list>
+#include <set>
+#include <string>
+#include <vector>
 #include "Core/Object.h"
-#include "Ui/Command.h"
+#include "Core/Ref.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,11 +24,41 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::db
+{
+
+class Instance;
+
+}
+
+namespace traktor::render
+{
+
+class IRenderView;
+class PrimitiveRenderer;
+
+}
+
+namespace traktor::resource
+{
+
+class IResourceFactory;
+
+}
+
 namespace traktor::ui
 {
 
-class ToolBar;
-class Widget;
+class Command;
+
+}
+
+namespace traktor::world
+{
+
+class EntityData;
+class IEntityFactory;
+class IEntityRenderer;
 
 }
 
@@ -31,18 +66,121 @@ namespace traktor::scene
 {
 
 class SceneEditorContext;
+class IComponentEditorFactory;
+class ISceneEditorUIExtension;
+class IWorldComponentEditorFactory;
+class IEntityEditorFactory;
 
-/*! Scene editor plugin interface.
+/*! Scene editor plugin.
  * \ingroup Scene
+ *
+ * Plugins are instantiated automatically by the
+ * scene editor and are used to create necessary
+ * factories.
  */
 class T_DLLCLASS ISceneEditorPlugin : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(ui::Widget* parent, ui::ToolBar* toolBar) = 0;
+	/*! Get UI commands.
+	 *
+	 * \param outCommands Output list of commands.
+	 */
+	virtual void getCommands(
+		std::list< ui::Command >& outCommands
+	) const = 0;
 
-	virtual bool handleCommand(const ui::Command& command) = 0;
+	/*! Get guide draw ids.
+	 */
+	virtual void getGuideDrawIds(
+		std::set< std::wstring >& outIds
+	) const = 0;
+
+	/*! Create UI extensions.
+	 *
+	 * \param context Scene editor context.
+	 * \param outUIExtensions UI extensions.
+	 */
+	virtual void createUIExtensions(
+		SceneEditorContext* context,
+		RefArray< ISceneEditorUIExtension >& outUIExtensions
+	) const = 0;
+
+	/*! Create resource factories.
+	 *
+	 * \param context Scene editor context.
+	 * \param outResourceFactories Output array of resource factories.
+	 */
+	virtual void createResourceFactories(
+		SceneEditorContext* context,
+		RefArray< const resource::IResourceFactory >& outResourceFactories
+	) const = 0;
+
+	/*! Create entity factories.
+	 *
+	 * \param context Scene editor context.
+	 * \param outEntityFactories Output array of entity factories.
+	 */
+	virtual void createEntityFactories(
+		SceneEditorContext* context,
+		RefArray< world::IEntityFactory >& outEntityFactories
+	) const = 0;
+
+	/*! Create entity renderers.
+	 *
+	 * \param context Scene editor context.
+	 * \param renderView Scene editor render view.
+	 * \param primitiveRenderer Primitive renderer.
+	 * \param outEntityRenderers Output array of entity renderers.
+	 */
+	virtual void createEntityRenderers(
+		SceneEditorContext* context,
+		render::IRenderView* renderView,
+		render::PrimitiveRenderer* primitiveRenderer,
+		const TypeInfo& worldRendererType,
+		RefArray< world::IEntityRenderer >& outEntityRenderers
+	) const = 0;
+
+	/*! Create scene controller editor factories.
+	 *
+	 * \param context Scene editor context.
+	 * \param outControllerEditorFactories Scene controller editor factories.
+	 */
+	virtual void createControllerEditorFactories(
+		SceneEditorContext* context,
+		RefArray< const IWorldComponentEditorFactory >& outControllerEditorFactories
+	) const = 0;
+
+	/*! Create entity editor factories.
+	 *
+	 * \param context Scene editor context.
+	 * \param outEntityEditorFactories Entity editor factories.
+	 */
+	virtual void createEntityEditorFactories(
+		SceneEditorContext* context,
+		RefArray< const IEntityEditorFactory >& outEntityEditorFactories
+	) const = 0;
+
+	/*! Create entity component editor factories.
+	 *
+	 * \param context Scene editor context.
+	 * \param outComponentEditorFactories Component editor factories.
+	 */
+	virtual void createComponentEditorFactories(
+		SceneEditorContext* context,
+		RefArray< const IComponentEditorFactory >& outComponentEditorFactories
+	) const = 0;
+
+	/*! Create entity from database instance.
+	 *
+	 * \param instance Database instance.
+	 * \return Entity data from instance.
+	 */
+	virtual Ref< world::EntityData > createEntityData(
+		SceneEditorContext* context,
+		db::Instance* instance
+	) const = 0;
 };
 
 }

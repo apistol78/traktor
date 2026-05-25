@@ -8,16 +8,16 @@
  */
 #include "Core/Serialization/ISerializable.h"
 #include "Theater/TheaterEntityFactory.h"
-#include "Theater/Editor/TheaterEditorProfile.h"
+#include "Theater/Editor/TheaterSceneEditorPlugin.h"
 #include "Theater/Editor/TheaterComponentEditorFactory.h"
 #include "Ui/Command.h"
 
 namespace traktor::theater
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterEditorProfile", 0, TheaterEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterSceneEditorPlugin", 0, TheaterSceneEditorPlugin, scene::ISceneEditorPlugin)
 
-void TheaterEditorProfile::getCommands(
+void TheaterSceneEditorPlugin::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
@@ -30,27 +30,27 @@ void TheaterEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Theater.SplitAct"));
 }
 
-void TheaterEditorProfile::getGuideDrawIds(
+void TheaterSceneEditorPlugin::getGuideDrawIds(
 	std::set< std::wstring >& outIds
 ) const
 {
 }
 
-void TheaterEditorProfile::createEditorPlugins(
+void TheaterSceneEditorPlugin::createUIExtensions(
 	scene::SceneEditorContext* context,
-	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
+	RefArray< scene::ISceneEditorUIExtension >& outUIExtensions
 ) const
 {
 }
 
-void TheaterEditorProfile::createResourceFactories(
+void TheaterSceneEditorPlugin::createResourceFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
 }
 
-void TheaterEditorProfile::createEntityFactories(
+void TheaterSceneEditorPlugin::createEntityFactories(
 	scene::SceneEditorContext* context,
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
@@ -58,7 +58,7 @@ void TheaterEditorProfile::createEntityFactories(
 	outEntityFactories.push_back(new TheaterEntityFactory());
 }
 
-void TheaterEditorProfile::createEntityRenderers(
+void TheaterSceneEditorPlugin::createEntityRenderers(
 	scene::SceneEditorContext* context,
 	render::IRenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
@@ -68,28 +68,28 @@ void TheaterEditorProfile::createEntityRenderers(
 {
 }
 
-void TheaterEditorProfile::createControllerEditorFactories(
+void TheaterSceneEditorPlugin::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
 {
 	outComponentEditorFactories.push_back(new TheaterComponentEditorFactory());
 }
 
-void TheaterEditorProfile::createEntityEditorFactories(
+void TheaterSceneEditorPlugin::createEntityEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
 }
 
-void TheaterEditorProfile::createComponentEditorFactories(
+void TheaterSceneEditorPlugin::createComponentEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
 ) const
 {
 }
 
-Ref< world::EntityData > TheaterEditorProfile::createEntityData(
+Ref< world::EntityData > TheaterSceneEditorPlugin::createEntityData(
 	scene::SceneEditorContext* context,
 	db::Instance* instance
 ) const

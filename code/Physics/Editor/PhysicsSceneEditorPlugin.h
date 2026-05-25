@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,7 +21,7 @@
 namespace traktor::physics
 {
 
-class T_DLLCLASS PhysicsEditorProfile : public scene::ISceneEditorProfile
+class T_DLLCLASS PhysicsSceneEditorPlugin : public scene::ISceneEditorPlugin
 {
 	T_RTTI_CLASS;
 
@@ -34,9 +34,9 @@ public:
 		std::set< std::wstring >& outIds
 	) const override final;
 
-	virtual void createEditorPlugins(
+	virtual void createUIExtensions(
 		scene::SceneEditorContext* context,
-		RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
+		RefArray< scene::ISceneEditorUIExtension >& outUIExtensions
 	) const override final;
 
 	virtual void createResourceFactories(

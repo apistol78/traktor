@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,7 +20,7 @@
 #include "Terrain/Editor/MaterialBrush.h"
 #include "Terrain/Editor/NoiseBrush.h"
 #include "Terrain/Editor/SmoothBrush.h"
-#include "Terrain/Editor/TerrainEditorPlugin.h"
+#include "Terrain/Editor/TerrainSceneEditorUIExtension.h"
 #include "Terrain/Editor/TerrainEditModifier.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
@@ -42,15 +42,15 @@
 namespace traktor::terrain
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditorPlugin", TerrainEditorPlugin, scene::ISceneEditorPlugin)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSceneEditorUIExtension", TerrainSceneEditorUIExtension, scene::ISceneEditorUIExtension)
 
-TerrainEditorPlugin::TerrainEditorPlugin(scene::SceneEditorContext* context)
+TerrainSceneEditorUIExtension::TerrainSceneEditorUIExtension(scene::SceneEditorContext* context)
 :	m_context(context)
 ,	m_terrainEditModifier(new TerrainEditModifier(context))
 {
 }
 
-bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
+bool TerrainSceneEditorUIExtension::create(ui::Widget* parent, ui::ToolBar* toolBar)
 {
 	m_parent = parent;
 
@@ -75,14 +75,14 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	m_sliderStrength->create(toolBar);
 	m_sliderStrength->setRange(0, 10);
 	m_sliderStrength->setValue(5);
-	m_sliderStrength->addEventHandler< ui::ContentChangeEvent >(this, &TerrainEditorPlugin::eventSliderStrengthChange);
+	m_sliderStrength->addEventHandler< ui::ContentChangeEvent >(this, &TerrainSceneEditorUIExtension::eventSliderStrengthChange);
 
 	m_toolStrength = new ui::ToolBarEmbed(m_sliderStrength, 100_ut);
 
 	m_colorControl = new ui::ColorControl();
 	m_colorControl->create(toolBar, ui::WsBorder);
 	m_colorControl->setColor(Color4ub(128, 128, 128, 255));
-	m_colorControl->addEventHandler< ui::MouseButtonUpEvent >(this, &TerrainEditorPlugin::eventColorClick);
+	m_colorControl->addEventHandler< ui::MouseButtonUpEvent >(this, &TerrainSceneEditorUIExtension::eventColorClick);
 
 	m_toolColor = new ui::ToolBarEmbed(m_colorControl, 24_ut, 16_ut);
 
@@ -147,11 +147,11 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 
 	updateModifierState();
 
-	m_context->addEventHandler< scene::ModifierChangedEvent >(this, &TerrainEditorPlugin::eventModifierChanged);
+	m_context->addEventHandler< scene::ModifierChangedEvent >(this, &TerrainSceneEditorUIExtension::eventModifierChanged);
 	return true;
 }
 
-bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
+bool TerrainSceneEditorUIExtension::handleCommand(const ui::Command& command)
 {
 	{
 		if (command == L"Terrain.Editor.EditTerrain")
@@ -267,7 +267,7 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 	return false;
 }
 
-void TerrainEditorPlugin::updateModifierState()
+void TerrainSceneEditorUIExtension::updateModifierState()
 {
 	if (m_toolToggleMaterial->isToggled())
 		m_terrainEditModifier->setBrush(type_of< MaterialBrush >());
@@ -308,12 +308,12 @@ void TerrainEditorPlugin::updateModifierState()
 	m_terrainEditModifier->setStrength(m_sliderStrength->getValue() / 10.0f);
 }
 
-void TerrainEditorPlugin::eventSliderStrengthChange(ui::ContentChangeEvent* event)
+void TerrainSceneEditorUIExtension::eventSliderStrengthChange(ui::ContentChangeEvent* event)
 {
 	m_terrainEditModifier->setStrength(m_sliderStrength->getValue() / 10.0f);
 }
 
-void TerrainEditorPlugin::eventColorClick(ui::MouseButtonUpEvent* event)
+void TerrainSceneEditorUIExtension::eventColorClick(ui::MouseButtonUpEvent* event)
 {
 	ui::ColorDialog colorDialog;
 	colorDialog.create(
@@ -336,7 +336,7 @@ void TerrainEditorPlugin::eventColorClick(ui::MouseButtonUpEvent* event)
 	colorDialog.destroy();
 }
 
-void TerrainEditorPlugin::eventModifierChanged(scene::ModifierChangedEvent* event)
+void TerrainSceneEditorUIExtension::eventModifierChanged(scene::ModifierChangedEvent* event)
 {
 	m_toolToggleEditTerrain->setToggled(m_context->getModifier() == m_terrainEditModifier);
 	m_toolGroup->setEnable(m_context->getModifier() == m_terrainEditModifier);

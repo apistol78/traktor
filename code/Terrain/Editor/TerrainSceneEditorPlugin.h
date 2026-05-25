@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,23 +8,20 @@
  */
 #pragma once
 
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_ANIMATION_EDITOR_EXPORT)
+#if defined(T_TERRAIN_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::animation
+namespace traktor::terrain
 {
 
-/*!
- * \ingroup Animation
- */
-class T_DLLCLASS AnimationEditorProfile : public scene::ISceneEditorProfile
+class T_DLLCLASS TerrainSceneEditorPlugin : public scene::ISceneEditorPlugin
 {
 	T_RTTI_CLASS;
 
@@ -37,9 +34,9 @@ public:
 		std::set< std::wstring >& outIds
 	) const override final;
 
-	virtual void createEditorPlugins(
+	virtual void createUIExtensions(
 		scene::SceneEditorContext* context,
-		RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
+		RefArray< scene::ISceneEditorUIExtension >& outUIExtensions
 	) const override final;
 
 	virtual void createResourceFactories(

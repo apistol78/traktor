@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,29 +8,27 @@
  */
 #pragma once
 
-#include "Scene/Editor/ISceneEditorPlugin.h"
+#include "Scene/Editor/ISceneEditorUIExtension.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class ModifierChangedEvent;
 
-	}
+}
 
-	namespace shape
-	{
+namespace traktor::shape
+{
 
-/*! Solid scene editor plugin.
+/*! Solid scene editor UI extension.
  * \ingroup Shape
  */
-class SolidEditorPlugin : public scene::ISceneEditorPlugin
+class SolidSceneEditorUIExtension : public scene::ISceneEditorUIExtension
 {
 	T_RTTI_CLASS;
 
 public:
-	SolidEditorPlugin(scene::SceneEditorContext* context);
+	explicit SolidSceneEditorUIExtension(scene::SceneEditorContext* context);
 
 	virtual bool create(ui::Widget* parent, ui::ToolBar* toolBar) override final;
 
@@ -42,5 +40,4 @@ private:
 	void eventModifierChanged(scene::ModifierChangedEvent* event);
 };
 
-	}
 }

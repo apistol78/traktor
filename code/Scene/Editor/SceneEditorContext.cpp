@@ -31,8 +31,8 @@
 #include "Scene/Editor/IComponentEditorFactory.h"
 #include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/IModifier.h"
+#include "Scene/Editor/ISceneEditorUIExtension.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/Traverser.h"
@@ -121,8 +121,8 @@ void SceneEditorContext::destroy()
 	m_renderSystem = nullptr;
 	m_physicsManager = nullptr;
 
-	m_editorProfiles.clear();
-	m_editorPlugins.clear();
+	m_plugins.clear();
+	m_uiExtensions.clear();
 	m_entityEditorFactories.clear();
 	m_componentEditorFactories.clear();
 	m_controllerEditor = nullptr;
@@ -144,14 +144,14 @@ void SceneEditorContext::destroy()
 	removeAllEventHandlers();
 }
 
-void SceneEditorContext::addEditorProfile(ISceneEditorProfile* editorProfile)
+void SceneEditorContext::addPlugin(ISceneEditorPlugin* plugin)
 {
-	m_editorProfiles.push_back(editorProfile);
+	m_plugins.push_back(plugin);
 }
 
-void SceneEditorContext::addEditorPlugin(ISceneEditorPlugin* editorPlugin)
+void SceneEditorContext::addUIExtension(ISceneEditorUIExtension* uiExtension)
 {
-	m_editorPlugins.push_back(editorPlugin);
+	m_uiExtensions.push_back(uiExtension);
 }
 
 void SceneEditorContext::createEditorFactories()
@@ -159,10 +159,10 @@ void SceneEditorContext::createEditorFactories()
 	m_entityEditorFactories.resize(0);
 	m_componentEditorFactories.resize(0);
 
-	for (auto editorProfile : m_editorProfiles)
+	for (auto plugin : m_plugins)
 	{
-		editorProfile->createEntityEditorFactories(this, m_entityEditorFactories);
-		editorProfile->createComponentEditorFactories(this, m_componentEditorFactories);
+		plugin->createEntityEditorFactories(this, m_entityEditorFactories);
+		plugin->createComponentEditorFactories(this, m_componentEditorFactories);
 	}
 }
 
@@ -460,10 +460,10 @@ void SceneEditorContext::buildEntities(bool rebuildWorld)
 
 		// Create the entity factory.
 		Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
-		for (auto editorProfile : m_editorProfiles)
+		for (auto plugin : m_plugins)
 		{
 			RefArray< world::IEntityFactory > entityFactories;
-			editorProfile->createEntityFactories(this, entityFactories);
+			plugin->createEntityFactories(this, entityFactories);
 			for (auto factory : entityFactories)
 			{
 				if (factory->initialize(objectStore))
@@ -562,10 +562,10 @@ void SceneEditorContext::buildController()
 
 	// Create the entity factory.
 	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
-	for (auto editorProfile : m_editorProfiles)
+	for (auto plugin : m_plugins)
 	{
 		RefArray< world::IEntityFactory > entityFactories;
-		editorProfile->createEntityFactories(this, entityFactories);
+		plugin->createEntityFactories(this, entityFactories);
 		for (auto factory : entityFactories)
 		{
 			if (factory->initialize(objectStore))
@@ -833,12 +833,12 @@ void SceneEditorContext::cloneSelected()
 	raiseSelect(true);
 }
 
-ISceneEditorPlugin* SceneEditorContext::getEditorPluginOf(const TypeInfo& pluginType) const
+ISceneEditorUIExtension* SceneEditorContext::getUIExtensionOf(const TypeInfo& extensionType) const
 {
-	for (auto editorPlugin : m_editorPlugins)
+	for (auto uiExtension : m_uiExtensions)
 	{
-		if (&type_of(editorPlugin) == &pluginType)
-			return editorPlugin;
+		if (&type_of(uiExtension) == &extensionType)
+			return uiExtension;
 	}
 	return nullptr;
 }

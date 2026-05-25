@@ -8,23 +8,20 @@
  */
 #pragma once
 
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_AI_EDITOR_EXPORT)
+#if defined(T_MESH_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::ai
+namespace traktor::mesh
 {
 
-/*! AI scene editor profile.
- * \ingroup AI
- */
-class T_DLLCLASS AiEditorProfile : public scene::ISceneEditorProfile
+class T_DLLCLASS MeshSceneEditorPlugin : public scene::ISceneEditorPlugin
 {
 	T_RTTI_CLASS;
 
@@ -37,9 +34,9 @@ public:
 		std::set< std::wstring >& outIds
 	) const override final;
 
-	virtual void createEditorPlugins(
+	virtual void createUIExtensions(
 		scene::SceneEditorContext* context,
-		RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
+		RefArray< scene::ISceneEditorUIExtension >& outUIExtensions
 	) const override final;
 
 	virtual void createResourceFactories(

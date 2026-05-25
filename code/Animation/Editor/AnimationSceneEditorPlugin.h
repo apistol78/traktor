@@ -8,22 +8,23 @@
  */
 #pragma once
 
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_SHAPE_EDITOR_EXPORT)
+#if defined(T_ANIMATION_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace shape
-	{
 
-class T_DLLCLASS EditorProfile : public scene::ISceneEditorProfile
+/*!
+ * \ingroup Animation
+ */
+class T_DLLCLASS AnimationSceneEditorPlugin : public scene::ISceneEditorPlugin
 {
 	T_RTTI_CLASS;
 
@@ -36,9 +37,9 @@ public:
 		std::set< std::wstring >& outIds
 	) const override final;
 
-	virtual void createEditorPlugins(
+	virtual void createUIExtensions(
 		scene::SceneEditorContext* context,
-		RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
+		RefArray< scene::ISceneEditorUIExtension >& outUIExtensions
 	) const override final;
 
 	virtual void createResourceFactories(
@@ -79,5 +80,4 @@ public:
 	) const override final;
 };
 
-	}
 }

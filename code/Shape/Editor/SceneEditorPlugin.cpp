@@ -10,10 +10,10 @@
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Shape/Editor/EditorProfile.h"
+#include "Shape/Editor/SceneEditorPlugin.h"
 #include "Shape/Editor/EntityFactory.h"
 #include "Shape/Editor/EntityRenderer.h"
-#include "Shape/Editor/Solid/SolidEditorPlugin.h"
+#include "Shape/Editor/Solid/SolidSceneEditorUIExtension.h"
 #include "Shape/Editor/Solid/SolidComponentEditorFactory.h"
 #include "Shape/Editor/Spline/ControlPointComponentEditorFactory.h"
 #include "Shape/Editor/Spline/SplineComponentEditorFactory.h"
@@ -21,9 +21,9 @@
 namespace traktor::shape
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.EditorProfile", 0, EditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SceneEditorPlugin", 0, SceneEditorPlugin, scene::ISceneEditorPlugin)
 
-void EditorProfile::getCommands(
+void SceneEditorPlugin::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
@@ -31,29 +31,29 @@ void EditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Shape.Editor.BrowseMaterial"));
 }
 
-void EditorProfile::getGuideDrawIds(
+void SceneEditorPlugin::getGuideDrawIds(
 	std::set< std::wstring >& outIds
 ) const
 {
 	outIds.insert(L"Shape.Solids");
 }
 
-void EditorProfile::createEditorPlugins(
+void SceneEditorPlugin::createUIExtensions(
 	scene::SceneEditorContext* context,
-	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
+	RefArray< scene::ISceneEditorUIExtension >& outUIExtensions
 ) const
 {
-	outEditorPlugins.push_back(new SolidEditorPlugin(context));
+	outUIExtensions.push_back(new SolidSceneEditorUIExtension(context));
 }
 
-void EditorProfile::createResourceFactories(
+void SceneEditorPlugin::createResourceFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
 }
 
-void EditorProfile::createEntityFactories(
+void SceneEditorPlugin::createEntityFactories(
 	scene::SceneEditorContext* context,
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
@@ -67,7 +67,7 @@ void EditorProfile::createEntityFactories(
 	));
 }
 
-void EditorProfile::createEntityRenderers(
+void SceneEditorPlugin::createEntityRenderers(
 	scene::SceneEditorContext* context,
 	render::IRenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
@@ -78,20 +78,20 @@ void EditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(new EntityRenderer());
 }
 
-void EditorProfile::createControllerEditorFactories(
+void SceneEditorPlugin::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
 {
 }
 
-void EditorProfile::createEntityEditorFactories(
+void SceneEditorPlugin::createEntityEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
 }
 
-void EditorProfile::createComponentEditorFactories(
+void SceneEditorPlugin::createComponentEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
 ) const
@@ -101,7 +101,7 @@ void EditorProfile::createComponentEditorFactories(
 	outComponentEditorFactories.push_back(new SplineComponentEditorFactory());
 }
 
-Ref< world::EntityData > EditorProfile::createEntityData(
+Ref< world::EntityData > SceneEditorPlugin::createEntityData(
 	scene::SceneEditorContext* context,
 	db::Instance* instance
 ) const

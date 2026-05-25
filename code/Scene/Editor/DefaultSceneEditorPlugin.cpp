@@ -8,7 +8,7 @@
  */
 #include "Core/Serialization/ISerializable.h"
 #include "Database/Instance.h"
-#include "Scene/Editor/DefaultEditorProfile.h"
+#include "Scene/Editor/DefaultSceneEditorPlugin.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
 #include "World/Deferred/WorldRendererDeferred.h"
@@ -45,15 +45,15 @@
 namespace traktor::scene
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.DefaultEditorProfile", 0, DefaultEditorProfile, ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.DefaultSceneEditorPlugin", 0, DefaultSceneEditorPlugin, ISceneEditorPlugin)
 
-void DefaultEditorProfile::getCommands(
+void DefaultSceneEditorPlugin::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
 }
 
-void DefaultEditorProfile::getGuideDrawIds(
+void DefaultSceneEditorPlugin::getGuideDrawIds(
 	std::set< std::wstring >& outIds
 ) const
 {
@@ -62,14 +62,14 @@ void DefaultEditorProfile::getGuideDrawIds(
 	outIds.insert(L"Entity.Volumes");
 }
 
-void DefaultEditorProfile::createEditorPlugins(
+void DefaultSceneEditorPlugin::createUIExtensions(
 	SceneEditorContext* context,
-	RefArray< ISceneEditorPlugin >& outEditorPlugins
+	RefArray< ISceneEditorUIExtension >& outUIExtensions
 ) const
 {
 }
 
-void DefaultEditorProfile::createResourceFactories(
+void DefaultSceneEditorPlugin::createResourceFactories(
 	SceneEditorContext* context,
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
@@ -85,7 +85,7 @@ void DefaultEditorProfile::createResourceFactories(
 	outResourceFactories.push_back(new script::ScriptFactory(context->getScriptContext()));
 }
 
-void DefaultEditorProfile::createEntityFactories(
+void DefaultSceneEditorPlugin::createEntityFactories(
 	SceneEditorContext* context,
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
@@ -94,7 +94,7 @@ void DefaultEditorProfile::createEntityFactories(
 	outEntityFactories.push_back(new weather::WeatherFactory());
 }
 
-void DefaultEditorProfile::createEntityRenderers(
+void DefaultSceneEditorPlugin::createEntityRenderers(
 	SceneEditorContext* context,
 	render::IRenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
@@ -111,13 +111,13 @@ void DefaultEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(new weather::SkyRenderer());
 }
 
-void DefaultEditorProfile::createControllerEditorFactories(
+void DefaultSceneEditorPlugin::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
 {
 }
 
-void DefaultEditorProfile::createEntityEditorFactories(
+void DefaultSceneEditorPlugin::createEntityEditorFactories(
 	SceneEditorContext* context,
 	RefArray< const IEntityEditorFactory >& outEntityEditorFactories
 ) const
@@ -125,7 +125,7 @@ void DefaultEditorProfile::createEntityEditorFactories(
 	outEntityEditorFactories.push_back(new DefaultEntityEditorFactory());
 }
 
-void DefaultEditorProfile::createComponentEditorFactories(
+void DefaultSceneEditorPlugin::createComponentEditorFactories(
 	SceneEditorContext* context,
 	RefArray< const IComponentEditorFactory >& outComponentEditorFactories
 ) const
@@ -133,7 +133,7 @@ void DefaultEditorProfile::createComponentEditorFactories(
 	outComponentEditorFactories.push_back(new DefaultComponentEditorFactory());
 }
 
-Ref< world::EntityData > DefaultEditorProfile::createEntityData(
+Ref< world::EntityData > DefaultSceneEditorPlugin::createEntityData(
 	SceneEditorContext* context,
 	db::Instance* instance
 ) const

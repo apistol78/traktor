@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Scene/Editor/ISceneEditorPlugin.h"
+#include "Scene/Editor/ISceneEditorUIExtension.h"
 #include "Ui/Events/AllEvents.h"
 
 namespace traktor::scene
@@ -36,12 +36,12 @@ namespace traktor::terrain
 
 class TerrainEditModifier;
 
-class TerrainEditorPlugin : public scene::ISceneEditorPlugin
+class TerrainSceneEditorUIExtension : public scene::ISceneEditorUIExtension
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit TerrainEditorPlugin(scene::SceneEditorContext* context);
+	explicit TerrainSceneEditorUIExtension(scene::SceneEditorContext* context);
 
 	virtual bool create(ui::Widget* parent, ui::ToolBar* toolBar) override final;
 

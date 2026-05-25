@@ -26,7 +26,7 @@
 #include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Editor/Camera.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
@@ -325,10 +325,10 @@ void FinalRenderControl::updateWorldRenderer()
 
 	// Create entity renderers.
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	for (auto editorProfile : m_context->getEditorProfiles())
+	for (auto plugin : m_context->getPlugins())
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
-		editorProfile->createEntityRenderers(m_context, m_renderView, nullptr, *m_worldRendererType, entityRenderers);
+		plugin->createEntityRenderers(m_context, m_renderView, nullptr, *m_worldRendererType, entityRenderers);
 		for (auto entityRenderer : entityRenderers)
 			worldEntityRenderers->add(entityRenderer);
 	}

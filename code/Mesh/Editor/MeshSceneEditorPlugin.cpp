@@ -13,7 +13,7 @@
 #include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshResourceFactory.h"
 #include "Mesh/Editor/MeshAsset.h"
-#include "Mesh/Editor/MeshEditorProfile.h"
+#include "Mesh/Editor/MeshSceneEditorPlugin.h"
 #include "Resource/Id.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
@@ -22,28 +22,28 @@
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEditorProfile", 0, MeshEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshSceneEditorPlugin", 0, MeshSceneEditorPlugin, scene::ISceneEditorPlugin)
 
-void MeshEditorProfile::getCommands(
+void MeshSceneEditorPlugin::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
 }
 
-void MeshEditorProfile::getGuideDrawIds(
+void MeshSceneEditorPlugin::getGuideDrawIds(
 	std::set< std::wstring >& outIds
 ) const
 {
 }
 
-void MeshEditorProfile::createEditorPlugins(
+void MeshSceneEditorPlugin::createUIExtensions(
 	scene::SceneEditorContext* context,
-	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
+	RefArray< scene::ISceneEditorUIExtension >& outUIExtensions
 ) const
 {
 }
 
-void MeshEditorProfile::createResourceFactories(
+void MeshSceneEditorPlugin::createResourceFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
@@ -51,7 +51,7 @@ void MeshEditorProfile::createResourceFactories(
 	outResourceFactories.push_back(new mesh::MeshResourceFactory(context->getRenderSystem()));
 }
 
-void MeshEditorProfile::createEntityFactories(
+void MeshSceneEditorPlugin::createEntityFactories(
 	scene::SceneEditorContext* context,
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
@@ -59,7 +59,7 @@ void MeshEditorProfile::createEntityFactories(
 	outEntityFactories.push_back(new mesh::MeshEntityFactory());
 }
 
-void MeshEditorProfile::createEntityRenderers(
+void MeshSceneEditorPlugin::createEntityRenderers(
 	scene::SceneEditorContext* context,
 	render::IRenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
@@ -70,27 +70,27 @@ void MeshEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(new mesh::MeshComponentRenderer());
 }
 
-void MeshEditorProfile::createControllerEditorFactories(
+void MeshSceneEditorPlugin::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
 {
 }
 
-void MeshEditorProfile::createEntityEditorFactories(
+void MeshSceneEditorPlugin::createEntityEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
 }
 
-void MeshEditorProfile::createComponentEditorFactories(
+void MeshSceneEditorPlugin::createComponentEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
 ) const
 {
 }
 
-Ref< world::EntityData > MeshEditorProfile::createEntityData(
+Ref< world::EntityData > MeshSceneEditorPlugin::createEntityData(
 	scene::SceneEditorContext* context,
 	db::Instance* instance
 ) const

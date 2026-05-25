@@ -6,58 +6,50 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Serialization/ISerializable.h"
-#include "Physics/PhysicsFactory.h"
-#include "Physics/Editor/PhysicsComponentEditorFactory.h"
-#include "Physics/Editor/PhysicsEditorProfile.h"
-#include "Physics/World/EntityFactory.h"
+#include "Heightfield/HeightfieldFactory.h"
+#include "Heightfield/Editor/HeightfieldSceneEditorPlugin.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Ui/Command.h"
 
-namespace traktor::physics
+namespace traktor::hf
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsEditorProfile", 0, PhysicsEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldSceneEditorPlugin", 0, HeightfieldSceneEditorPlugin, scene::ISceneEditorPlugin)
 
-void PhysicsEditorProfile::getCommands(
+void HeightfieldSceneEditorPlugin::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
-	outCommands.push_back(ui::Command(L"Physics.ToggleMeshTriangles"));
 }
 
-void PhysicsEditorProfile::getGuideDrawIds(
+void HeightfieldSceneEditorPlugin::getGuideDrawIds(
 	std::set< std::wstring >& outIds
 ) const
 {
-	outIds.insert(L"Physics.Joints");
-	outIds.insert(L"Physics.Shapes");
 }
 
-void PhysicsEditorProfile::createEditorPlugins(
+void HeightfieldSceneEditorPlugin::createUIExtensions(
 	scene::SceneEditorContext* context,
-	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
+	RefArray< scene::ISceneEditorUIExtension >& outUIExtensions
 ) const
 {
 }
 
-void PhysicsEditorProfile::createResourceFactories(
+void HeightfieldSceneEditorPlugin::createResourceFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new PhysicsFactory());
+	outResourceFactories.push_back(new HeightfieldFactory());
 }
 
-void PhysicsEditorProfile::createEntityFactories(
+void HeightfieldSceneEditorPlugin::createEntityFactories(
 	scene::SceneEditorContext* context,
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new EntityFactory());
 }
 
-void PhysicsEditorProfile::createEntityRenderers(
+void HeightfieldSceneEditorPlugin::createEntityRenderers(
 	scene::SceneEditorContext* context,
 	render::IRenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
@@ -67,28 +59,27 @@ void PhysicsEditorProfile::createEntityRenderers(
 {
 }
 
-void PhysicsEditorProfile::createControllerEditorFactories(
+void HeightfieldSceneEditorPlugin::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
 {
 }
 
-void PhysicsEditorProfile::createEntityEditorFactories(
+void HeightfieldSceneEditorPlugin::createEntityEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
 }
 
-void PhysicsEditorProfile::createComponentEditorFactories(
+void HeightfieldSceneEditorPlugin::createComponentEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
 ) const
 {
-	outComponentEditorFactories.push_back(new PhysicsComponentEditorFactory());
 }
 
-Ref< world::EntityData > PhysicsEditorProfile::createEntityData(
+Ref< world::EntityData > HeightfieldSceneEditorPlugin::createEntityData(
 	scene::SceneEditorContext* context,
 	db::Instance* instance
 ) const

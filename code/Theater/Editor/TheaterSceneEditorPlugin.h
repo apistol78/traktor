@@ -8,20 +8,22 @@
  */
 #pragma once
 
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_SPRAY_EDITOR_EXPORT)
+#if defined(T_THEATER_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::spray
+namespace traktor::theater
 {
 
-class T_DLLCLASS SprayEditorProfile : public scene::ISceneEditorProfile
+/*!
+ */
+class T_DLLCLASS TheaterSceneEditorPlugin : public scene::ISceneEditorPlugin
 {
 	T_RTTI_CLASS;
 
@@ -34,9 +36,9 @@ public:
 		std::set< std::wstring >& outIds
 	) const override final;
 
-	virtual void createEditorPlugins(
+	virtual void createUIExtensions(
 		scene::SceneEditorContext* context,
-		RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
+		RefArray< scene::ISceneEditorUIExtension >& outUIExtensions
 	) const override final;
 
 	virtual void createResourceFactories(
@@ -59,7 +61,8 @@ public:
 
 	virtual void createControllerEditorFactories(
 		scene::SceneEditorContext* context,
-		RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories	) const override final;
+		RefArray< const scene::IWorldComponentEditorFactory >& outControllerEditorFactories
+	) const override final;
 
 	virtual void createEntityEditorFactories(
 		scene::SceneEditorContext* context,

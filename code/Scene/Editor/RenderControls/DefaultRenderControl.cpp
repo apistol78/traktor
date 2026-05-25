@@ -18,7 +18,7 @@
 #include "I18N/Text.h"
 #include "Render/IRenderSystem.h"
 #include "Scene/Editor/Camera.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/RenderControls/CameraRenderControl.h"
 #include "Scene/Editor/RenderControls/FinalRenderControl.h"
 #include "Scene/Editor/RenderControls/OrthogonalRenderControl.h"

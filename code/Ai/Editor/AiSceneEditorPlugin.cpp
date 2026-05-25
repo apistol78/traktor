@@ -8,7 +8,7 @@
  */
 #include "Ai/NavMeshEntityFactory.h"
 #include "Ai/NavMeshFactory.h"
-#include "Ai/Editor/AiEditorProfile.h"
+#include "Ai/Editor/AiSceneEditorPlugin.h"
 #include "Ai/Editor/NavMeshComponentEditorFactory.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -18,29 +18,29 @@
 namespace traktor::ai
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.AiEditorProfile", 0, AiEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.AiSceneEditorPlugin", 0, AiSceneEditorPlugin, scene::ISceneEditorPlugin)
 
-void AiEditorProfile::getCommands(
+void AiSceneEditorPlugin::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
 }
 
-void AiEditorProfile::getGuideDrawIds(
+void AiSceneEditorPlugin::getGuideDrawIds(
 	std::set< std::wstring >& outIds
 ) const
 {
 	outIds.insert(L"Ai.NavMesh");
 }
 
-void AiEditorProfile::createEditorPlugins(
+void AiSceneEditorPlugin::createUIExtensions(
 	scene::SceneEditorContext* context,
-	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
+	RefArray< scene::ISceneEditorUIExtension >& outUIExtensions
 ) const
 {
 }
 
-void AiEditorProfile::createResourceFactories(
+void AiSceneEditorPlugin::createResourceFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
@@ -48,7 +48,7 @@ void AiEditorProfile::createResourceFactories(
 	outResourceFactories.push_back(new NavMeshFactory());
 }
 
-void AiEditorProfile::createEntityFactories(
+void AiSceneEditorPlugin::createEntityFactories(
 	scene::SceneEditorContext* context,
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
@@ -57,7 +57,7 @@ void AiEditorProfile::createEntityFactories(
 	outEntityFactories.push_back(new NavMeshEntityFactory(!build));
 }
 
-void AiEditorProfile::createEntityRenderers(
+void AiSceneEditorPlugin::createEntityRenderers(
 	scene::SceneEditorContext* context,
 	render::IRenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
@@ -67,28 +67,28 @@ void AiEditorProfile::createEntityRenderers(
 {
 }
 
-void AiEditorProfile::createControllerEditorFactories(
+void AiSceneEditorPlugin::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
 {
 	outComponentEditorFactories.push_back(new NavMeshComponentEditorFactory());
 }
 
-void AiEditorProfile::createEntityEditorFactories(
+void AiSceneEditorPlugin::createEntityEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
 }
 
-void AiEditorProfile::createComponentEditorFactories(
+void AiSceneEditorPlugin::createComponentEditorFactories(
 	scene::SceneEditorContext* context,
 	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
 ) const
 {
 }
 
-Ref< world::EntityData > AiEditorProfile::createEntityData(
+Ref< world::EntityData > AiSceneEditorPlugin::createEntityData(
 	scene::SceneEditorContext* context,
 	db::Instance* instance
 ) const

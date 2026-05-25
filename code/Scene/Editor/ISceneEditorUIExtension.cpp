@@ -6,11 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorUIExtension.h"
 
 namespace traktor::scene
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ISceneEditorProfile", ISceneEditorProfile, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ISceneEditorUIExtension", ISceneEditorUIExtension, Object)
 
 }
