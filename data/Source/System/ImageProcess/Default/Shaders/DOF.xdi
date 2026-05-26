@@ -324,7 +324,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{79B3E1B8-0363-5349-88CC-81DF1328C174}</id>
 			<comment/>
 			<position>
 				<first>377</first>
@@ -333,7 +333,7 @@
 			<parameterDeclaration>{47E54562-59A3-3444-BC33-FCC82C7BC1E0}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{08D0CC67-F712-C94E-8C0E-90B8FA3DA849}</id>
 			<comment/>
 			<position>
 				<first>496</first>
@@ -342,7 +342,7 @@
 			<parameterDeclaration>{265876D8-46FE-3344-9DDE-44598D014F20}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{376F6F45-AEA2-F14E-8A50-0BF4E75B8C42}</id>
 			<comment/>
 			<position>
 				<first>144</first>

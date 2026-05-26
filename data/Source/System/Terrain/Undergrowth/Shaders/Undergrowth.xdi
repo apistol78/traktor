@@ -1522,7 +1522,7 @@
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{3F8DE67C-9E72-BE4B-B33B-15963E1B60D4}</id>
 			<comment/>
 			<position>
 				<first>-335</first>
@@ -1531,7 +1531,7 @@
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{6E7B2938-3123-3641-8D42-F220329F21BD}</id>
 			<comment/>
 			<position>
 				<first>356</first>
@@ -1540,7 +1540,7 @@
 			<parameterDeclaration>{99A8A8CB-D479-8945-8F0D-D0E3D936E5AE}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A0480D66-C345-8447-A25B-33EC89A1CA8B}</id>
 			<comment/>
 			<position>
 				<first>-458</first>
@@ -1549,7 +1549,7 @@
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{90485EB0-F203-4142-8D9D-F38C0F3AD025}</id>
 			<comment/>
 			<position>
 				<first>-1712</first>
@@ -1558,7 +1558,7 @@
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{720F20A3-2A98-0E45-8A8E-352E4EEF3D7D}</id>
 			<comment/>
 			<position>
 				<first>-2011</first>
@@ -1567,7 +1567,7 @@
 			<parameterDeclaration>{B97A6AC6-4FAB-FD40-9D15-B0754EC4A363}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{62A37591-0BB0-3B40-9572-F8B3E227B8BB}</id>
 			<comment/>
 			<position>
 				<first>-1215</first>

@@ -118,7 +118,7 @@ if (index < uint($VertexCount))
 			]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{85CFDB2F-97E0-3542-A76F-64F8665D79C9}</id>
 			<comment/>
 			<position>
 				<first>47</first>
@@ -127,7 +127,7 @@ if (index < uint($VertexCount))
 			<parameterDeclaration>{37D82C15-BAE9-FC4D-9A89-7965CE9E2E3F}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{02FB5442-D081-384E-9D3E-B8CE80922612}</id>
 			<comment/>
 			<position>
 				<first>79</first>
@@ -136,7 +136,7 @@ if (index < uint($VertexCount))
 			<parameterDeclaration>{053878BD-B0DC-B343-AFE6-8015B79B5972}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1C038663-26A5-8A4E-9678-534DA9C401A4}</id>
 			<comment/>
 			<position>
 				<first>95</first>

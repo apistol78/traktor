@@ -96,7 +96,7 @@
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{AD691B5C-625A-B645-874B-59783D217C75}</id>
 			<comment/>
 			<position>
 				<first>181</first>

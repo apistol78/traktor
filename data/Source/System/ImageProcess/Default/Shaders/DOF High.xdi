@@ -484,7 +484,7 @@
 			<name>Radius</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{BFC8B7C4-E116-DA45-A96C-23DF470FC55A}</id>
 			<comment/>
 			<position>
 				<first>384</first>
@@ -493,7 +493,7 @@
 			<parameterDeclaration>{47E54562-59A3-3444-BC33-FCC82C7BC1E0}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{C87BA490-BB8B-E543-9DC5-7AFC6CEAC531}</id>
 			<comment/>
 			<position>
 				<first>488</first>
@@ -502,7 +502,7 @@
 			<parameterDeclaration>{265876D8-46FE-3344-9DDE-44598D014F20}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{84DB21F1-89E5-1F43-A816-0E5624A682FC}</id>
 			<comment/>
 			<position>
 				<first>238</first>
@@ -511,7 +511,7 @@
 			<parameterDeclaration>{983E0A0C-405E-534E-87CF-C617C3D588B8}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1DD8AF82-05C8-2846-A810-A6F9D42B47F3}</id>
 			<comment/>
 			<position>
 				<first>400</first>
@@ -520,7 +520,7 @@
 			<parameterDeclaration>{983E0A0C-405E-534E-87CF-C617C3D588B8}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{B0645681-CDA7-D04A-919C-C93ACDFAB685}</id>
 			<comment/>
 			<position>
 				<first>-290</first>

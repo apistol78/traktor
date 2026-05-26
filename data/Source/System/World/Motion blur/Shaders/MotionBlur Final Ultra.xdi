@@ -189,7 +189,7 @@ $Output = tcl;
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{7098415F-EE9C-6C43-8C29-5C5A5DE6BF1D}</id>
 			<comment/>
 			<position>
 				<first>1010</first>
@@ -198,7 +198,7 @@ $Output = tcl;
 			<parameterDeclaration>{47E54562-59A3-3444-BC33-FCC82C7BC1E0}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A55A3F81-F2A1-C648-AE10-8FA63FFC2295}</id>
 			<comment/>
 			<position>
 				<first>1010</first>

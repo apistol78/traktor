@@ -291,7 +291,7 @@
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{6283C805-7A85-2046-AC55-73BF8FAA70A2}</id>
 			<comment/>
 			<position>
 				<first>1303</first>
@@ -300,7 +300,7 @@
 			<parameterDeclaration>{47E54562-59A3-3444-BC33-FCC82C7BC1E0}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{3E1941CF-58C1-8240-B036-C62292292327}</id>
 			<comment/>
 			<position>
 				<first>578</first>
@@ -309,7 +309,7 @@
 			<parameterDeclaration>{ED2D7CE2-93AC-5B4D-921E-FBDDA67245B3}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D02F50AB-CF75-8A4A-800F-21A8347A8064}</id>
 			<comment/>
 			<position>
 				<first>-183</first>

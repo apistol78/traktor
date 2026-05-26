@@ -158,7 +158,7 @@ $Head[0].alive = alive;
 			</outputPins>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{FD103CE3-1119-1448-B2DC-B2CE9DCE9AA3}</id>
 			<comment/>
 			<position>
 				<first>587</first>
@@ -167,7 +167,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{B7954B25-4B9D-C14C-A958-8076DD039B91}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0C5ACAD3-39D4-9B46-A1BE-5DFD4E48FB15}</id>
 			<comment/>
 			<position>
 				<first>587</first>
@@ -176,7 +176,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{F4DA4FBB-275C-444E-894D-AB5993257966}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{3FE67289-DA23-4549-86F2-E169F7D40EC4}</id>
 			<comment/>
 			<position>
 				<first>539</first>
@@ -185,7 +185,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{99254D74-8041-5547-9D60-47FF4D37ACD4}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{10F45FA3-5710-BC4F-9199-FA542FA3FC22}</id>
 			<comment/>
 			<position>
 				<first>523</first>
@@ -194,7 +194,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{A630987D-6BD0-2B4A-B2CB-5BF815B17839}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{CCCE4DF5-CE41-AB4D-BDCC-874AE2A2C5B3}</id>
 			<comment/>
 			<position>
 				<first>587</first>
@@ -203,7 +203,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{64E10C29-D9CF-644E-AA65-DD16A08D7E20}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0EE96025-93DD-E54D-A167-3802BDB2DB06}</id>
 			<comment/>
 			<position>
 				<first>571</first>
@@ -212,7 +212,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{9ED60852-7F38-0046-87CC-66BF5FDC26AD}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{AD2111BB-5FA2-B44C-9423-7251686A606B}</id>
 			<comment/>
 			<position>
 				<first>587</first>
@@ -221,7 +221,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{F7F1D526-09C3-A448-BF7B-23F5975DDD9D}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D50C6953-0F9C-9E4E-A868-919C7AD24678}</id>
 			<comment/>
 			<position>
 				<first>571</first>
@@ -230,7 +230,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{6939FA2E-A9FB-DC46-AA3A-98A9BF6E5D9A}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0D27750D-32A0-6144-9339-D472A7811E5C}</id>
 			<comment/>
 			<position>
 				<first>571</first>
@@ -239,7 +239,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{738F852E-69D0-384D-9EF5-5D895D482BF9}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{ED636E1E-A43B-B44C-BE1C-28BD37A1905D}</id>
 			<comment/>
 			<position>
 				<first>571</first>
@@ -248,7 +248,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{6D75BDDA-AA0E-B04F-8FDE-72725F3FBB60}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{42771E22-76B0-7943-ADE2-CF22D57D7896}</id>
 			<comment/>
 			<position>
 				<first>571</first>
@@ -257,7 +257,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{06372577-2419-654A-83A6-E40A03C73101}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{3EE6A573-8A59-3B47-B5AA-BD0641200041}</id>
 			<comment/>
 			<position>
 				<first>523</first>
@@ -266,7 +266,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{83C6A7E8-4730-B549-81C5-70CEF30E82B9}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{FEE2EC93-F28C-4345-ACF5-DB12EBC4B562}</id>
 			<comment/>
 			<position>
 				<first>587</first>
@@ -275,7 +275,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{04015FB2-D9F3-B74F-8432-E93578EA7924}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{FFAFB943-21DD-7647-89A5-F85ABCDE180E}</id>
 			<comment/>
 			<position>
 				<first>603</first>
@@ -284,7 +284,7 @@ $Head[0].alive = alive;
 			<parameterDeclaration>{50C8D464-4E3D-0F42-B37B-91A3ED8D1A92}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{2B2026E5-8C7E-9544-B6F0-6D6810D64CE9}</id>
 			<comment/>
 			<position>
 				<first>549</first>

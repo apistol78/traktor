@@ -242,7 +242,7 @@
 			<name>Color</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{B789371A-FF0F-FB40-A88E-77FB3794F5BC}</id>
 			<comment/>
 			<position>
 				<first>-283</first>
@@ -251,7 +251,7 @@
 			<parameterDeclaration>{6D45A613-0233-0E45-BE62-7328C13FA293}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E52DF1A3-ED0A-3649-AA41-7DE481B6AE97}</id>
 			<comment/>
 			<position>
 				<first>711</first>
@@ -260,7 +260,7 @@
 			<parameterDeclaration>{6C26718B-7605-AD47-ADB0-8746547DC081}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{55DFFCDB-CA8C-FB4A-AFBA-6AE415D9DAEE}</id>
 			<comment/>
 			<position>
 				<first>709</first>

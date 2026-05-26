@@ -150,7 +150,7 @@ if ($Index.x < alive)
 			<scope>Global</scope>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{90F61806-1528-204F-A778-384754B8B253}</id>
 			<comment/>
 			<position>
 				<first>146</first>
@@ -159,7 +159,7 @@ if ($Index.x < alive)
 			<parameterDeclaration>{F4DA4FBB-275C-444E-894D-AB5993257966}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{079C1A23-2868-0745-BCF7-FEB592669B0C}</id>
 			<comment/>
 			<position>
 				<first>162</first>
@@ -168,7 +168,7 @@ if ($Index.x < alive)
 			<parameterDeclaration>{50C8D464-4E3D-0F42-B37B-91A3ED8D1A92}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{7E6BBEFB-5498-204B-8D9A-CDB4472BEC33}</id>
 			<comment/>
 			<position>
 				<first>146</first>
@@ -177,7 +177,7 @@ if ($Index.x < alive)
 			<parameterDeclaration>{6AB02FF1-1AC0-8042-980F-F90B5622C96B}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{2FCAC28F-C685-B741-9F57-B85F1736A9B2}</id>
 			<comment/>
 			<position>
 				<first>108</first>

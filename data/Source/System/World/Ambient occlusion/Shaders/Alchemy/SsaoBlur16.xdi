@@ -354,7 +354,7 @@ Shadow; adjusted for msaa.
 			<name>L_N</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F3A082CD-988E-EE47-A5D5-869BF6FE6DB5}</id>
 			<comment/>
 			<position>
 				<first>-317</first>
@@ -363,7 +363,7 @@ Shadow; adjusted for msaa.
 			<parameterDeclaration>{47E54562-59A3-3444-BC33-FCC82C7BC1E0}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{72BB69B7-BF98-4745-9681-CB4FAE167E72}</id>
 			<comment/>
 			<position>
 				<first>-46</first>
@@ -372,7 +372,7 @@ Shadow; adjusted for msaa.
 			<parameterDeclaration>{265876D8-46FE-3344-9DDE-44598D014F20}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E0F30100-65AF-3D4F-920E-BF67D2456D0C}</id>
 			<comment/>
 			<position>
 				<first>961</first>
@@ -381,7 +381,7 @@ Shadow; adjusted for msaa.
 			<parameterDeclaration>{47E54562-59A3-3444-BC33-FCC82C7BC1E0}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{BD85343A-C235-6248-83F3-B2A7A988E1B5}</id>
 			<comment/>
 			<position>
 				<first>157</first>
@@ -390,7 +390,7 @@ Shadow; adjusted for msaa.
 			<parameterDeclaration>{6025A87F-C360-C14D-8B20-F6D989D05434}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{DFBC03BC-6DEE-FC4E-8D56-D9CC7664A002}</id>
 			<comment/>
 			<position>
 				<first>156</first>

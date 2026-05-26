@@ -266,7 +266,7 @@ $Output = CatmullRomFilterSample(
 			<value>0</value>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0100B028-F2B6-424C-86F2-9925B719DB8C}</id>
 			<comment/>
 			<position>
 				<first>771</first>

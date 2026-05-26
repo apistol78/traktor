@@ -1079,7 +1079,7 @@ Reduce min constant
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{7CD6FEBD-9D49-D248-8756-E04B888BFD4B}</id>
 			<comment/>
 			<position>
 				<first>-412</first>
@@ -1088,7 +1088,7 @@ Reduce min constant
 			<parameterDeclaration>{47E54562-59A3-3444-BC33-FCC82C7BC1E0}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{DF9F8CB6-CD6B-F04A-A5B6-DDD71C33A707}</id>
 			<comment/>
 			<position>
 				<first>4523</first>

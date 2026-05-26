@@ -107,7 +107,7 @@
 			<name>Tangent</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{B91ECA5D-DEEF-5847-8759-83E86DCCE67E}</id>
 			<comment/>
 			<position>
 				<first>-71</first>
@@ -116,7 +116,7 @@
 			<parameterDeclaration>{FBB99D96-9427-0440-9A57-9DB5E75275CA}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D115E53A-9133-B647-BB59-BB7D226F8683}</id>
 			<comment/>
 			<position>
 				<first>993</first>

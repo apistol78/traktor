@@ -100,7 +100,7 @@ $Output = average;
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{4BE7CDDA-6D53-FD4B-85B0-BC2984B51090}</id>
 			<comment/>
 			<position>
 				<first>77</first>
@@ -109,7 +109,7 @@ $Output = average;
 			<parameterDeclaration>{05F3B17F-03A6-3346-AC41-256AE1893FCF}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{67008050-EB1C-C84B-AD25-493EB5BB0AE4}</id>
 			<comment/>
 			<position>
 				<first>370</first>
@@ -118,7 +118,7 @@ $Output = average;
 			<parameterDeclaration>{A1238CFC-ACC1-7C40-BFAE-D70B4B370C26}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{34C1F188-CE0F-B642-9E5E-D95C76B17ECD}</id>
 			<comment/>
 			<position>
 				<first>250</first>

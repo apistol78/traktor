@@ -554,7 +554,7 @@ Particle extent
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{014FFD9E-D712-9B49-A347-C094F9898CC9}</id>
 			<comment/>
 			<position>
 				<first>753</first>
@@ -563,7 +563,7 @@ Particle extent
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{C6FAD5DE-5964-A341-AD0E-05A6D803CE59}</id>
 			<comment/>
 			<position>
 				<first>-31</first>

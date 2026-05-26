@@ -756,7 +756,7 @@ Wind amplitude
 			<max>1</max>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D3E12B95-3BD7-F540-92CE-E16E62886864}</id>
 			<comment/>
 			<position>
 				<first>1374</first>
@@ -765,7 +765,7 @@ Wind amplitude
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F800A5ED-8EEA-0745-B3EF-79B38F1D5D62}</id>
 			<comment/>
 			<position>
 				<first>2060</first>
@@ -774,7 +774,7 @@ Wind amplitude
 			<parameterDeclaration>{99A8A8CB-D479-8945-8F0D-D0E3D936E5AE}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{B0BEB409-2244-8D40-9D5C-F4D237BF7673}</id>
 			<comment/>
 			<position>
 				<first>-1954</first>
@@ -783,7 +783,7 @@ Wind amplitude
 			<parameterDeclaration>{ECB06FC9-A2CB-8246-AB88-A106AA39FCAD}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0CE88EBA-EEFC-6D4F-9248-A317BB465CCF}</id>
 			<comment/>
 			<position>
 				<first>-1332</first>
@@ -792,7 +792,7 @@ Wind amplitude
 			<parameterDeclaration>{A988C6AC-07F6-6A4A-898E-CA6253A78759}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{DD6535A4-3270-FB41-86B3-1CEC77D61F7D}</id>
 			<comment/>
 			<position>
 				<first>474</first>

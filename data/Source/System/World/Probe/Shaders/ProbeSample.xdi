@@ -99,7 +99,7 @@ $Mip = clamp(mip, 0, int($Mips) - 1);
 			]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{4A0DF1E7-689B-DA4B-815E-DEC4B7A288D9}</id>
 			<comment/>
 			<position>
 				<first>855</first>
@@ -108,7 +108,7 @@ $Mip = clamp(mip, 0, int($Mips) - 1);
 			<parameterDeclaration>{E3FEEA69-B093-AB4B-95BC-1F4A1D45288D}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{4B4111B1-8D1D-BF4F-8C9F-76C4052545BD}</id>
 			<comment/>
 			<position>
 				<first>413</first>
@@ -117,7 +117,7 @@ $Mip = clamp(mip, 0, int($Mips) - 1);
 			<parameterDeclaration>{CF9799A2-7A56-DC4A-B764-75F8D574FBE5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{CC75942F-D035-1540-AC03-2CB5B8721AA2}</id>
 			<comment/>
 			<position>
 				<first>120</first>

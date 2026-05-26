@@ -631,7 +631,7 @@
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{6590D9D5-6AC4-684E-8E86-C3E612595529}</id>
 			<comment/>
 			<position>
 				<first>-395</first>
@@ -640,7 +640,7 @@
 			<parameterDeclaration>{A99650D2-AADE-6F4D-A5FB-9234CB6A02D5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{6926EBED-4CCB-0F42-B09C-1F65D226A052}</id>
 			<comment/>
 			<position>
 				<first>511</first>
@@ -649,7 +649,7 @@
 			<parameterDeclaration>{3CA06E93-C2C6-0347-8C39-8D3EF7D95027}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{92CEDAB0-C949-E64F-80E4-8FEA452139AB}</id>
 			<comment/>
 			<position>
 				<first>845</first>
@@ -658,7 +658,7 @@
 			<parameterDeclaration>{99A8A8CB-D479-8945-8F0D-D0E3D936E5AE}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{28ECE653-5F0D-254C-A1A1-18FF3B45D6BB}</id>
 			<comment/>
 			<position>
 				<first>783</first>

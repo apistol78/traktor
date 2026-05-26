@@ -84,7 +84,7 @@ if (index < $InstanceCount)
 ]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{60B27525-5369-9C4B-8656-AC9E55EA93AD}</id>
 			<comment/>
 			<position>
 				<first>125</first>
@@ -93,7 +93,7 @@ if (index < $InstanceCount)
 			<parameterDeclaration>{325997C1-F582-1249-9620-EC0ADCA02EC9}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{4BB13CF7-5AA5-6442-9809-B4CC48E7CCB1}</id>
 			<comment/>
 			<position>
 				<first>141</first>
@@ -102,7 +102,7 @@ if (index < $InstanceCount)
 			<parameterDeclaration>{9E8DA99E-1456-634C-AC71-3EDCDE5B8B41}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{739FCC0D-8CEC-D24E-94AF-BCD776195CF0}</id>
 			<comment/>
 			<position>
 				<first>109</first>
@@ -111,7 +111,7 @@ if (index < $InstanceCount)
 			<parameterDeclaration>{39E27A9D-4CCD-0F42-881E-95744149442E}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{59C632A9-8DFC-4E42-945C-80AE5FEFBBA4}</id>
 			<comment/>
 			<position>
 				<first>189</first>
@@ -120,7 +120,7 @@ if (index < $InstanceCount)
 			<parameterDeclaration>{5BD7E68E-843E-5F4C-9DA9-15DB66FA288E}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{916AB0E7-EDCB-7240-867B-675C763CA6EE}</id>
 			<comment/>
 			<position>
 				<first>157</first>

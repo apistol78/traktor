@@ -46,7 +46,7 @@
 			<name>TexCoord</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{6B0EB251-805F-D143-9C45-008874DC4579}</id>
 			<comment/>
 			<position>
 				<first>512</first>
@@ -55,7 +55,7 @@
 			<parameterDeclaration>{6D45A613-0233-0E45-BE62-7328C13FA293}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{ABBD22E4-8CC1-9841-8AA0-BBF500E91ADC}</id>
 			<comment/>
 			<position>
 				<first>316</first>

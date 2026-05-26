@@ -161,7 +161,7 @@ $Output = gl_DrawID;
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{AFA7AC86-631B-E24D-80DA-EAF4AC6E9BBF}</id>
 			<comment/>
 			<position>
 				<first>-39</first>
@@ -170,7 +170,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{39E27A9D-4CCD-0F42-881E-95744149442E}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{FE961F88-4434-E644-86BA-6B3EA65B5D7D}</id>
 			<comment/>
 			<position>
 				<first>233</first>
@@ -179,7 +179,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{A0D2BF02-CAF1-4E4C-829A-3685A08FBDB2}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{50A0AF11-C340-1641-A8FD-DF0B582FE761}</id>
 			<comment/>
 			<position>
 				<first>461</first>
@@ -187,7 +187,7 @@ $Output = gl_DrawID;
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D6234E44-592D-0042-9D7B-CE599C6F75B6}</id>
 			<comment/>
 			<position>
 				<first>847</first>
@@ -196,7 +196,7 @@ $Output = gl_DrawID;
 			<memberName>rotation</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{AE509300-178F-8843-B99D-F3ADFD0C4162}</id>
 			<comment/>
 			<position>
 				<first>847</first>
@@ -205,7 +205,7 @@ $Output = gl_DrawID;
 			<memberName>translation</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{C02F9BA1-9B2F-D640-9328-D85731812F57}</id>
 			<comment/>
 			<position>
 				<first>847</first>
@@ -214,7 +214,7 @@ $Output = gl_DrawID;
 			<memberName>lastRotation</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{28CBF104-9525-E44B-9674-F6D5820B6AE0}</id>
 			<comment/>
 			<position>
 				<first>847</first>
@@ -223,7 +223,7 @@ $Output = gl_DrawID;
 			<memberName>lastTranslation</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{35130D27-204D-A34A-93D6-B87F72F36220}</id>
 			<comment/>
 			<position>
 				<first>847</first>
@@ -232,7 +232,7 @@ $Output = gl_DrawID;
 			<memberName>boundingBoxMin</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1FAF0F2E-FBA9-9C47-A719-36221F54E8F2}</id>
 			<comment/>
 			<position>
 				<first>847</first>

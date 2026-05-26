@@ -1150,7 +1150,7 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition]]>
 			<name>Emissive</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{7BFF8A79-CDEE-7B4D-8973-35B06A804ADC}</id>
 			<comment/>
 			<position>
 				<first>-799</first>
@@ -1159,7 +1159,7 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition]]>
 			<parameterDeclaration>{99A8A8CB-D479-8945-8F0D-D0E3D936E5AE}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{605DBA1D-80AF-FB4F-8999-6ADE95694CEB}</id>
 			<comment/>
 			<position>
 				<first>-1359</first>

@@ -314,7 +314,7 @@ else
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F2C6AA35-BE7B-5348-825D-86AD20E588E6}</id>
 			<comment/>
 			<position>
 				<first>298</first>
@@ -323,7 +323,7 @@ else
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1AEF3C91-5C19-C74B-AA9E-04A54083D0A0}</id>
 			<comment/>
 			<position>
 				<first>298</first>
@@ -332,7 +332,7 @@ else
 			<parameterDeclaration>{C3C700B4-DA39-9948-BF3A-EAFBA244FB6E}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{85DF4C06-CFB2-AB49-966D-F41CE85DC1F5}</id>
 			<comment/>
 			<position>
 				<first>298</first>
@@ -341,7 +341,7 @@ else
 			<parameterDeclaration>{6955EAB5-3D54-A54F-AC16-4340880B9DF7}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{FD92D60D-151F-ED45-8A92-80F87F88A872}</id>
 			<comment/>
 			<position>
 				<first>302</first>
@@ -350,7 +350,7 @@ else
 			<parameterDeclaration>{6955EAB5-3D54-A54F-AC16-4340880B9DF7}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F8E2C246-196E-A043-9188-AC76BB440998}</id>
 			<comment/>
 			<position>
 				<first>302</first>
@@ -359,7 +359,7 @@ else
 			<parameterDeclaration>{C3C700B4-DA39-9948-BF3A-EAFBA244FB6E}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0E73A247-4A4E-0045-A638-A5B69E3E45CA}</id>
 			<comment/>
 			<position>
 				<first>302</first>
@@ -368,7 +368,7 @@ else
 			<parameterDeclaration>{DBCA7570-58DD-D34B-AF57-4812F836CCD8}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{044CCEAA-D841-8549-9BA6-834DCD08C520}</id>
 			<comment/>
 			<position>
 				<first>771</first>
@@ -377,7 +377,7 @@ else
 			<parameterDeclaration>{DC0CBC73-BF03-FF45-9836-601B4AD0138E}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1E09F694-4EAC-FE42-AFBF-DFF0D1A55AAF}</id>
 			<comment/>
 			<position>
 				<first>771</first>
@@ -386,7 +386,7 @@ else
 			<parameterDeclaration>{45E22EE2-58FC-354B-B524-C97292E587E5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{AAEDE120-8F23-454D-BDF0-00A37078956F}</id>
 			<comment/>
 			<position>
 				<first>-356</first>
@@ -395,7 +395,7 @@ else
 			<parameterDeclaration>{BBF47FE0-9CCB-1041-9491-9C3A59823630}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{96F96514-B013-1148-A58E-89BD72DF980B}</id>
 			<comment/>
 			<position>
 				<first>-182</first>
@@ -403,7 +403,7 @@ else
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E82BE976-4A60-0542-95B4-EE4824E2FE9E}</id>
 			<comment/>
 			<position>
 				<first>126</first>
@@ -412,7 +412,7 @@ else
 			<memberName>patchBoundingBoxMn</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{BAFD16D0-A97A-5A4F-8507-DDE51F7EF16C}</id>
 			<comment/>
 			<position>
 				<first>128</first>

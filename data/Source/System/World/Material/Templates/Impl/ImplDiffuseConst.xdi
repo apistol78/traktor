@@ -35,7 +35,7 @@ Tag_DiffuseColor
 			<optional>true</optional>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D846B641-6537-4943-91FD-8E86CD315FD5}</id>
 			<comment/>
 			<position>
 				<first>756</first>

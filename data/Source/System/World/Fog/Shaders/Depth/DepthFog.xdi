@@ -75,7 +75,7 @@
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{FD5C2C12-DB17-4143-B487-51038EF66FB5}</id>
 			<comment/>
 			<position>
 				<first>116</first>
@@ -84,7 +84,7 @@
 			<parameterDeclaration>{4EA758E3-4DD8-E940-8308-105A6AA76314}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{8CBF745E-1534-6E47-8DF4-BC72CE02A144}</id>
 			<comment/>
 			<position>
 				<first>1299</first>

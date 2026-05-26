@@ -157,7 +157,7 @@ atomicAdd($Buffer[$Index].B, 1);
 			]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{C1DAE285-03A3-7C4E-A482-4AC929E0AC4E}</id>
 			<comment/>
 			<position>
 				<first>-744</first>
@@ -166,7 +166,7 @@ atomicAdd($Buffer[$Index].B, 1);
 			<parameterDeclaration>{A480EAAD-ADF1-214D-883B-4207444C3749}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{4E3BF084-F533-F74E-8EE1-285E214585B4}</id>
 			<comment/>
 			<position>
 				<first>978</first>

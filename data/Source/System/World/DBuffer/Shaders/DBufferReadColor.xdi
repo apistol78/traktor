@@ -39,7 +39,7 @@
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{13819B44-2DA9-0949-97B6-F2D41728DB8D}</id>
 			<comment/>
 			<position>
 				<first>974</first>

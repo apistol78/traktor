@@ -300,7 +300,7 @@ $Output = vec4(
 ]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{4EA3DE1B-BEA2-3042-A122-3CA2BA032B02}</id>
 			<comment/>
 			<position>
 				<first>2402</first>
@@ -309,7 +309,7 @@ $Output = vec4(
 			<parameterDeclaration>{284FF359-2F08-6A40-B256-AC194478040A}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E021C547-CC06-8847-840F-467C7B2D5DF0}</id>
 			<comment/>
 			<position>
 				<first>2102</first>
@@ -318,7 +318,7 @@ $Output = vec4(
 			<parameterDeclaration>{58FCBACB-BAAE-6942-B76D-59560F480D14}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{88CE6A51-9DA9-E848-978E-DE9FF5A57A45}</id>
 			<comment/>
 			<position>
 				<first>2202</first>

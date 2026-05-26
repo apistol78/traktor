@@ -122,7 +122,7 @@ Constant bias
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{148363DB-B545-B741-B39B-B560CF7FFADE}</id>
 			<comment/>
 			<position>
 				<first>38</first>
@@ -131,7 +131,7 @@ Constant bias
 			<parameterDeclaration>{4FEFBA69-6A7F-9248-AA30-83EE9978B518}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{45F503E8-EAC9-9748-860A-5157996100B5}</id>
 			<comment/>
 			<position>
 				<first>-860</first>
@@ -140,7 +140,7 @@ Constant bias
 			<parameterDeclaration>{78EDD4CA-15EE-6A42-A3FA-107E473B93AC}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E3E3F1F8-CD0B-2A4B-BF1B-74569E298D42}</id>
 			<comment/>
 			<position>
 				<first>-899</first>

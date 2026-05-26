@@ -72,7 +72,7 @@ $Output = vec4(c,c,c,c);
 			]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F027845A-3921-7F48-A453-884CD4225994}</id>
 			<comment/>
 			<position>
 				<first>42</first>

@@ -1815,7 +1815,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<value>0</value>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{8E4C174D-36DA-FD4F-B308-A6114DEB1A37}</id>
 			<comment/>
 			<position>
 				<first>1713</first>
@@ -1824,7 +1824,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{99A8A8CB-D479-8945-8F0D-D0E3D936E5AE}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{52B79909-8E68-B448-91E9-4A8D0B1B76ED}</id>
 			<comment/>
 			<position>
 				<first>190</first>
@@ -1833,7 +1833,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{6880E795-07C0-5147-8419-284573E746AD}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{CD9EA4E9-6A12-B04C-91AF-2F62EC60AB2F}</id>
 			<comment/>
 			<position>
 				<first>1248</first>
@@ -1842,7 +1842,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A74D6BAE-CB62-0F44-8899-94CDB61D1CAF}</id>
 			<comment/>
 			<position>
 				<first>922</first>
@@ -1851,7 +1851,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{2A0DA34A-4B94-E540-B5AE-651542764CD2}</id>
 			<comment/>
 			<position>
 				<first>5917</first>
@@ -1860,7 +1860,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{BC3A18D6-EED2-5349-A4C2-293663C67028}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A11E3AB3-5892-A948-85E2-9493BF83E7C0}</id>
 			<comment/>
 			<position>
 				<first>5349</first>
@@ -1869,7 +1869,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{EACF4DB8-3B28-D041-8E18-BAD6EA0B5011}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{6B657818-3023-7342-8882-D3F03C96B720}</id>
 			<comment/>
 			<position>
 				<first>5917</first>
@@ -1878,7 +1878,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{C731FB13-3573-1F4A-9263-AED53D6327BF}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{651CDE19-F40B-444A-9E58-EC0259C1E219}</id>
 			<comment/>
 			<position>
 				<first>6624</first>
@@ -1887,7 +1887,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{7505AA48-69EF-4749-8C8F-8E2B0226FB06}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{9CF479F7-BCDA-C841-AD8F-C1B4F6847A90}</id>
 			<comment/>
 			<position>
 				<first>1336</first>
@@ -1896,7 +1896,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{598CAD90-AC40-9142-9A75-1B89549DD416}</id>
 			<comment/>
 			<position>
 				<first>-133</first>
@@ -1905,7 +1905,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{DB8F1259-F30F-B048-86DB-F431D0DA6FC0}</id>
 			<comment/>
 			<position>
 				<first>-145</first>
@@ -1914,7 +1914,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1348A05D-CDD2-1442-A299-D708112D11E2}</id>
 			<comment/>
 			<position>
 				<first>5348</first>
@@ -1923,7 +1923,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{C731FB13-3573-1F4A-9263-AED53D6327BF}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{21F8D99F-F8F8-7846-BFAC-46F5387A0720}</id>
 			<comment/>
 			<position>
 				<first>1304</first>
@@ -1932,7 +1932,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{1EA4BB74-0993-C749-969B-55F145C473AC}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{3707FF84-FF50-2A4F-B336-9A74188E949E}</id>
 			<comment/>
 			<position>
 				<first>483</first>
@@ -1941,7 +1941,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{99A8A8CB-D479-8945-8F0D-D0E3D936E5AE}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{3B6B031A-C1D4-BE41-AA0A-2DCE35B5321D}</id>
 			<comment/>
 			<position>
 				<first>271</first>
@@ -1950,7 +1950,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{01ADCE1F-BB08-7F4D-B38A-3AB41DEA0549}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{845CAF88-3050-1D44-B6CF-1B292F326B34}</id>
 			<comment/>
 			<position>
 				<first>4727</first>
@@ -1959,7 +1959,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<parameterDeclaration>{3C048EC4-ED6A-0847-B08D-95F74407200F}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{8C4FB9AC-F94F-194A-AF72-DE39678B3C09}</id>
 			<comment/>
 			<position>
 				<first>4936</first>
@@ -1967,7 +1967,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1DB7A30A-F25B-A44A-9667-5783428E5167}</id>
 			<comment/>
 			<position>
 				<first>5216</first>
@@ -1976,7 +1976,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<memberName>Type</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{71EB31FA-6969-E74E-BCD4-FF28C5E443E0}</id>
 			<comment/>
 			<position>
 				<first>5216</first>
@@ -1985,7 +1985,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<memberName>RangeRadius</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{B5343F55-D24C-4041-8FB0-9B136D77DA60}</id>
 			<comment/>
 			<position>
 				<first>5216</first>
@@ -1994,7 +1994,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<memberName>Position</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D86007B0-773B-E145-BFE0-EC41847B27CC}</id>
 			<comment/>
 			<position>
 				<first>5216</first>
@@ -2003,7 +2003,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<memberName>Direction</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{96D15CA6-B16C-EE43-A34D-746425068DA5}</id>
 			<comment/>
 			<position>
 				<first>5216</first>

@@ -128,7 +128,7 @@
 			</outputPins>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1731A073-A162-5A47-89AD-2E5A4161300B}</id>
 			<comment/>
 			<position>
 				<first>298</first>
@@ -137,7 +137,7 @@
 			<parameterDeclaration>{47E54562-59A3-3444-BC33-FCC82C7BC1E0}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1F67E484-85C3-2B42-8040-B3F950D9FD14}</id>
 			<comment/>
 			<position>
 				<first>409</first>

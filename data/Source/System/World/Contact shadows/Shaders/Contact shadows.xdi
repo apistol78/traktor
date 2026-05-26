@@ -322,7 +322,7 @@ if (pos.z < 4.0f)
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F426B61E-59F0-A24D-BC66-E56D5B938118}</id>
 			<comment/>
 			<position>
 				<first>-281</first>
@@ -331,7 +331,7 @@ if (pos.z < 4.0f)
 			<parameterDeclaration>{3E3E9AB5-18C7-1D4A-B02F-71C6FC00F817}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{59E9290F-08F3-1B45-96B5-ED88668E63B2}</id>
 			<comment/>
 			<position>
 				<first>-53</first>
@@ -340,7 +340,7 @@ if (pos.z < 4.0f)
 			<parameterDeclaration>{1B7EE70B-CFE2-EF44-A21B-13A748CEAC26}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A59BB65C-F75F-CD40-BB03-1D70542EA4C9}</id>
 			<comment/>
 			<position>
 				<first>-21</first>
@@ -349,7 +349,7 @@ if (pos.z < 4.0f)
 			<parameterDeclaration>{284FF359-2F08-6A40-B256-AC194478040A}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D7AD3DA9-7522-8842-B28C-93C263825B76}</id>
 			<comment/>
 			<position>
 				<first>-117</first>

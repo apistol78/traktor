@@ -501,7 +501,7 @@
 			<name>L_Color</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0907DAE1-4018-8A4B-92FD-AAA221EAC401}</id>
 			<comment/>
 			<position>
 				<first>894</first>
@@ -510,7 +510,7 @@
 			<parameterDeclaration>{DC5AC619-19FF-6E4F-9706-359FEFE5671B}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{8A160626-60B3-E446-AA02-BE02233173A9}</id>
 			<comment/>
 			<position>
 				<first>1756</first>
@@ -519,7 +519,7 @@
 			<parameterDeclaration>{499AB541-E498-C147-92D9-33ACFD67ACE5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{9C7C87B6-991D-464D-959F-F95F1B8CE6C8}</id>
 			<comment/>
 			<position>
 				<first>1202</first>

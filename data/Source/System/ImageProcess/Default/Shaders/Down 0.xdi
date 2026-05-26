@@ -219,7 +219,7 @@
 			<max>2</max>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{83D7D364-959E-B444-A8AE-8DCD7199C47B}</id>
 			<comment/>
 			<position>
 				<first>306</first>
@@ -228,7 +228,7 @@
 			<parameterDeclaration>{47E54562-59A3-3444-BC33-FCC82C7BC1E0}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{93449EEB-A384-BA4F-A163-E139F74C213D}</id>
 			<comment/>
 			<position>
 				<first>-458</first>

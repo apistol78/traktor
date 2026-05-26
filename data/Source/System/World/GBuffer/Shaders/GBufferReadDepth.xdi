@@ -48,7 +48,7 @@
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{244E1368-6B04-4646-9A3C-51CB6E1EB14B}</id>
 			<comment/>
 			<position>
 				<first>765</first>

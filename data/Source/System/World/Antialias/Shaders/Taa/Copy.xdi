@@ -166,7 +166,7 @@ $Output = vec4(v.xyz, 1.0f);
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A7682CB0-82FF-0A44-BD4A-7CC0474453D8}</id>
 			<comment/>
 			<position>
 				<first>96</first>

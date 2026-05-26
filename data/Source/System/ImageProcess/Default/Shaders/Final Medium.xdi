@@ -113,7 +113,7 @@
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{804444F5-E371-1F48-972B-64B244A2B023}</id>
 			<comment/>
 			<position>
 				<first>2079</first>
@@ -122,7 +122,7 @@
 			<parameterDeclaration>{9E7099DC-45C1-7E45-A452-E1B7918A4507}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{96C86CD9-E0A3-D444-A981-EDD47ABE00AD}</id>
 			<comment/>
 			<position>
 				<first>2077</first>

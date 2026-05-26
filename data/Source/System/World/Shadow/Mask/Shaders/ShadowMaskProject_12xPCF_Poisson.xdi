@@ -565,7 +565,7 @@ Shadow map texcoord
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{BAB200A0-2203-F54D-9817-CD5DBB050549}</id>
 			<comment><![CDATA[
 			
 View to light space transform
@@ -578,7 +578,7 @@ View to light space transform
 			<parameterDeclaration>{424B0040-53E3-494C-A6F4-3291873D4156}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{C860C3DC-0959-D747-AD71-EA79BF7D434F}</id>
 			<comment/>
 			<position>
 				<first>1063</first>
@@ -587,7 +587,7 @@ View to light space transform
 			<parameterDeclaration>{78EDD4CA-15EE-6A42-A3FA-107E473B93AC}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{FD54693B-10EB-C343-8C95-298664EF1FE2}</id>
 			<comment/>
 			<position>
 				<first>586</first>

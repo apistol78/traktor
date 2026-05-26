@@ -80,7 +80,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D3BFF798-C97B-9A47-9668-507B00F44F3E}</id>
 			<comment/>
 			<position>
 				<first>218</first>
@@ -89,7 +89,7 @@
 			<parameterDeclaration>{CBB535A3-DC71-9C41-B8F2-8E2F154F824A}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{8BDDAE87-2628-6C40-945F-731BCB21A39E}</id>
 			<comment/>
 			<position>
 				<first>-241</first>
@@ -98,7 +98,7 @@
 			<parameterDeclaration>{0C6DF515-6C87-A94B-96FA-B08354144907}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{B8B24101-DDEE-F047-A414-08B15088FB0C}</id>
 			<comment/>
 			<position>
 				<first>-4</first>
@@ -106,7 +106,7 @@
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{5F190F65-7521-A14B-A453-BE0BA3FB4AD0}</id>
 			<comment/>
 			<position>
 				<first>203</first>
@@ -115,7 +115,7 @@
 			<memberName>Index</memberName>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{8B1F7BE7-518F-9C41-8FCA-266798D77200}</id>
 			<comment/>
 			<position>
 				<first>493</first>
@@ -123,7 +123,7 @@
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{90F11E32-2183-114F-9A03-FB1B42C09913}</id>
 			<comment/>
 			<position>
 				<first>758</first>
@@ -132,7 +132,7 @@
 			<memberName>A</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0B472BBC-2472-3D4A-84F2-ADCFD1B638C3}</id>
 			<comment/>
 			<position>
 				<first>758</first>

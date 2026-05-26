@@ -293,7 +293,7 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{47090A09-6D1B-134F-A8F9-C3A2FB66C421}</id>
 			<comment/>
 			<position>
 				<first>1019</first>
@@ -302,7 +302,7 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<parameterDeclaration>{4D3FA8BB-C1E9-E143-9B75-7830376C4B33}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{B3BAE56A-23DF-4F47-A448-73FBFC3BD97B}</id>
 			<comment/>
 			<position>
 				<first>-361</first>
@@ -311,7 +311,7 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<parameterDeclaration>{276DFEA3-87D7-4E45-8425-812BA399211C}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{CDF7AF06-7DDF-1141-BB02-7B528FDA5838}</id>
 			<comment/>
 			<position>
 				<first>-252</first>
@@ -320,7 +320,7 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<parameterDeclaration>{A2B819CF-CC4F-124C-AC0F-CE2FD5DB1899}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{239DFEDC-2450-E34B-9392-8F22DB126D09}</id>
 			<comment/>
 			<position>
 				<first>-276</first>

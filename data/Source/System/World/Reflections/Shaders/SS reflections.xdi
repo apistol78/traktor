@@ -800,7 +800,7 @@ else
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{CED2A361-6E40-7147-866C-B535B686FF03}</id>
 			<comment/>
 			<position>
 				<first>388</first>
@@ -809,7 +809,7 @@ else
 			<parameterDeclaration>{284FF359-2F08-6A40-B256-AC194478040A}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{76727696-C2A3-564A-957E-7EC4C0F74BBD}</id>
 			<comment/>
 			<position>
 				<first>1014</first>
@@ -818,7 +818,7 @@ else
 			<parameterDeclaration>{53A631D9-EE23-B74D-A6AE-0711FA956671}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{6C21C54A-2CAA-D74C-97A9-F54D9D2EFE38}</id>
 			<comment/>
 			<position>
 				<first>372</first>
@@ -827,7 +827,7 @@ else
 			<parameterDeclaration>{1B7EE70B-CFE2-EF44-A21B-13A748CEAC26}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{7DAA3BCF-EE48-9441-BF2C-B488A6A7163C}</id>
 			<comment/>
 			<position>
 				<first>-77</first>
@@ -836,7 +836,7 @@ else
 			<parameterDeclaration>{41C095E8-1A66-A249-A474-349B74E9CC2D}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{76D5EAF5-7022-AB4B-9B50-0A3EA6CEFF51}</id>
 			<comment/>
 			<position>
 				<first>2594</first>
@@ -845,7 +845,7 @@ else
 			<parameterDeclaration>{ED2D7CE2-93AC-5B4D-921E-FBDDA67245B3}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F0279B2B-94F9-264E-A8C7-3E12832F1A23}</id>
 			<comment/>
 			<position>
 				<first>3471</first>
@@ -854,7 +854,7 @@ else
 			<parameterDeclaration>{3D6323D8-2B64-3349-881E-BABBC0587A3B}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{43F3DB6B-D2CC-914E-A2B2-02D4DF5655C2}</id>
 			<comment/>
 			<position>
 				<first>-1231</first>

@@ -227,7 +227,7 @@ $Output = BlueNoise(seed);
 			<value>100</value>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{B6EA56A1-F5D5-CE40-BF58-399DC73832EB}</id>
 			<comment/>
 			<position>
 				<first>1787</first>
@@ -236,7 +236,7 @@ $Output = BlueNoise(seed);
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{AE6B730B-FF89-FA4F-8847-986BAD1AB126}</id>
 			<comment/>
 			<position>
 				<first>2014</first>
@@ -245,7 +245,7 @@ $Output = BlueNoise(seed);
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F31CCEC0-FDBB-ED43-981E-4C232456F896}</id>
 			<comment/>
 			<position>
 				<first>2014</first>
@@ -254,7 +254,7 @@ $Output = BlueNoise(seed);
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{EAA75572-4053-F64F-AFCE-44D28B88C4CA}</id>
 			<comment/>
 			<position>
 				<first>2272</first>

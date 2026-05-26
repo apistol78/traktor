@@ -462,7 +462,7 @@ $Output = $Input[int($Index)];
 			]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{EC9CF01A-EB8A-DD40-96FE-DBCDA7B13CD7}</id>
 			<comment/>
 			<position>
 				<first>-2132</first>
@@ -471,7 +471,7 @@ $Output = $Input[int($Index)];
 			<parameterDeclaration>{3CA06E93-C2C6-0347-8C39-8D3EF7D95027}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E0A1F415-8BA6-1F46-9725-3F03D1944875}</id>
 			<comment/>
 			<position>
 				<first>-1513</first>
@@ -480,7 +480,7 @@ $Output = $Input[int($Index)];
 			<parameterDeclaration>{99A8A8CB-D479-8945-8F0D-D0E3D936E5AE}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{78F656BF-F498-BE4E-9720-48772EDB3780}</id>
 			<comment/>
 			<position>
 				<first>-3200</first>
@@ -489,7 +489,7 @@ $Output = $Input[int($Index)];
 			<parameterDeclaration>{C5FE5E84-7112-A047-8C1C-10A884ABCF5F}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D5F79833-3CBA-E04E-BF09-A3C466C52267}</id>
 			<comment/>
 			<position>
 				<first>-3430</first>
@@ -498,7 +498,7 @@ $Output = $Input[int($Index)];
 			<parameterDeclaration>{21A96037-3F18-8149-AFBD-59A29263EC5B}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E1AA93C0-8300-4542-9F3C-8E8517BCF909}</id>
 			<comment/>
 			<position>
 				<first>-1597</first>
@@ -507,7 +507,7 @@ $Output = $Input[int($Index)];
 			<parameterDeclaration>{AD59FBB2-8CD5-C340-9DCC-1257D08921C5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E7256431-4935-D24A-8378-008286969291}</id>
 			<comment/>
 			<position>
 				<first>-2435</first>
@@ -516,7 +516,7 @@ $Output = $Input[int($Index)];
 			<parameterDeclaration>{DEA1F60C-1E85-0249-961A-4429A8E82C8F}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{73C13FD2-DA29-784A-96F1-FEDD01934B51}</id>
 			<comment/>
 			<position>
 				<first>-3696</first>

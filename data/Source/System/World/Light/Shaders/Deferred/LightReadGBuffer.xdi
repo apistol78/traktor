@@ -586,7 +586,7 @@
 			<name>Emissive</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0395A1AC-73C5-FA4E-9DF4-99411C5E2871}</id>
 			<comment/>
 			<position>
 				<first>-212</first>

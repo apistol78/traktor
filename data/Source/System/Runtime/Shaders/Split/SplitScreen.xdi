@@ -150,7 +150,7 @@
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D9653727-2D6C-F741-A2B6-F9E4071770AC}</id>
 			<comment/>
 			<position>
 				<first>-117</first>
@@ -159,7 +159,7 @@
 			<parameterDeclaration>{CA38F3C2-A368-124D-B586-30159504BDF5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{B3877C82-4814-F447-BD9E-8A0465A310DF}</id>
 			<comment/>
 			<position>
 				<first>-117</first>

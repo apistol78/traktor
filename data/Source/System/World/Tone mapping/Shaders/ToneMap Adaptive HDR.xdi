@@ -285,7 +285,7 @@ $Output = vec4(
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{589802EE-A67B-6D4D-B13B-F0656D1B03C8}</id>
 			<comment/>
 			<position>
 				<first>-68</first>
@@ -294,7 +294,7 @@ $Output = vec4(
 			<parameterDeclaration>{61140E45-0786-6F41-BB29-907049C1655B}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{5B5B3297-FCF0-8843-83AB-06E87DC2181D}</id>
 			<comment/>
 			<position>
 				<first>-331</first>
@@ -303,7 +303,7 @@ $Output = vec4(
 			<parameterDeclaration>{52AF854A-DA70-814A-91D9-E868AD8C52F6}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{536BF357-8987-E741-9F25-4D6B53D960FF}</id>
 			<comment/>
 			<position>
 				<first>-315</first>
@@ -312,7 +312,7 @@ $Output = vec4(
 			<parameterDeclaration>{A1238CFC-ACC1-7C40-BFAE-D70B4B370C26}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F5CC2F49-A1C8-1D46-BFD4-79D23C3E5119}</id>
 			<comment/>
 			<position>
 				<first>-127</first>
@@ -320,7 +320,7 @@ $Output = vec4(
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{6A97ACA0-5A32-ED40-8B32-9AD921120E03}</id>
 			<comment/>
 			<position>
 				<first>53</first>

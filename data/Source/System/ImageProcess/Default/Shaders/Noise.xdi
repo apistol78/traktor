@@ -99,7 +99,7 @@
 			<type>Texture2D</type>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0700E557-B282-364D-AB8B-5FE991573771}</id>
 			<comment/>
 			<position>
 				<first>174</first>

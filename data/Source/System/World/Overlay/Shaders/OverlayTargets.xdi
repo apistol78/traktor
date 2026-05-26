@@ -2432,7 +2432,7 @@ $Output = m ? 1.0f : 0.0f;
 			<value>0.5</value>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E430A41B-AAD3-0F45-ABDF-497509CA362A}</id>
 			<comment/>
 			<position>
 				<first>230</first>
@@ -2441,7 +2441,7 @@ $Output = m ? 1.0f : 0.0f;
 			<parameterDeclaration>{69B4A045-A02B-3644-B2BE-72B374EA53F7}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{290ED1A7-CDE9-204B-944A-8AB760716215}</id>
 			<comment/>
 			<position>
 				<first>-1036</first>
@@ -2450,7 +2450,7 @@ $Output = m ? 1.0f : 0.0f;
 			<parameterDeclaration>{BE1E3D75-E895-A143-8278-0B8A195CA8AF}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A280E22E-8A6B-F243-BE42-C3983F41B971}</id>
 			<comment/>
 			<position>
 				<first>1853</first>
@@ -2459,7 +2459,7 @@ $Output = m ? 1.0f : 0.0f;
 			<parameterDeclaration>{1A2AAD3E-8C93-414E-AB3D-1B7A727B425A}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{FA3A87D2-DBAD-3A49-A3EB-6FD5C18F35FD}</id>
 			<comment/>
 			<position>
 				<first>-231</first>
@@ -2468,7 +2468,7 @@ $Output = m ? 1.0f : 0.0f;
 			<parameterDeclaration>{B41F7499-04D0-0A4A-83F1-013EFD4D1ACF}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{4B49B812-E368-B948-9D8E-234484572FDD}</id>
 			<comment/>
 			<position>
 				<first>1433</first>
@@ -2477,7 +2477,7 @@ $Output = m ? 1.0f : 0.0f;
 			<parameterDeclaration>{6805965A-5EAB-DA4A-AB16-84EF1BEC53CB}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D739FEFE-2615-0142-A714-E1C4D2990969}</id>
 			<comment/>
 			<position>
 				<first>-881</first>
@@ -2486,7 +2486,7 @@ $Output = m ? 1.0f : 0.0f;
 			<parameterDeclaration>{69B4A045-A02B-3644-B2BE-72B374EA53F7}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0B182D26-6CB1-2A46-BCF1-31FBD34D8BD7}</id>
 			<comment/>
 			<position>
 				<first>-1183</first>

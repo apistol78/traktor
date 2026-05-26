@@ -234,7 +234,7 @@ Shadow map texcoord
 			<parameterName>LastSlice</parameterName>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{54115158-FC0B-DB4E-BBB2-71036881E890}</id>
 			<comment><![CDATA[
 			
 View to light space transform
@@ -247,7 +247,7 @@ View to light space transform
 			<parameterDeclaration>{424B0040-53E3-494C-A6F4-3291873D4156}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{6C35BC56-405D-1A41-A292-1217F9464EEA}</id>
 			<comment/>
 			<position>
 				<first>1068</first>

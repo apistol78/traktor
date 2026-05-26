@@ -48,7 +48,7 @@
 			<name>LastTranslation</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{46EDC588-0A64-BF4A-8ED1-0DD92CC82DC5}</id>
 			<comment/>
 			<position>
 				<first>169</first>
@@ -57,7 +57,7 @@
 			<parameterDeclaration>{8DEF6AB1-75EA-A14B-A46B-E85BD38D215F}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{650A3207-7AA5-E142-AEFA-91E378AEB179}</id>
 			<comment/>
 			<position>
 				<first>140</first>
@@ -66,7 +66,7 @@
 			<parameterDeclaration>{226D8100-9BCC-D44F-9D12-83D438BEDEA8}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{5DBB855B-B647-3A41-B062-8A764AFD8902}</id>
 			<comment/>
 			<position>
 				<first>548</first>
@@ -74,7 +74,7 @@
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{4811D351-ED53-9946-9904-11D487C99EBA}</id>
 			<comment/>
 			<position>
 				<first>548</first>
@@ -83,7 +83,7 @@
 			<memberName>Translation</memberName>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0D72ADFA-A57A-A543-9517-EF9BF1127379}</id>
 			<comment/>
 			<position>
 				<first>548</first>
@@ -91,7 +91,7 @@
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{33C3495C-15C7-5340-A208-71104973C782}</id>
 			<comment/>
 			<position>
 				<first>548</first>
@@ -100,7 +100,7 @@
 			<memberName>Rotation</memberName>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{89FC6661-E5AD-2149-8998-75546B512BB6}</id>
 			<comment/>
 			<position>
 				<first>548</first>
@@ -108,7 +108,7 @@
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{9C522DEB-454F-B540-A98A-728E72BA42DD}</id>
 			<comment/>
 			<position>
 				<first>548</first>
@@ -117,7 +117,7 @@
 			<memberName>Rotation</memberName>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{BEF8E4D7-00DC-0E49-97D0-A7390AA00C36}</id>
 			<comment/>
 			<position>
 				<first>548</first>
@@ -125,7 +125,7 @@
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{37458D40-7718-B74C-8D82-0E5EDD9CC75D}</id>
 			<comment/>
 			<position>
 				<first>548</first>

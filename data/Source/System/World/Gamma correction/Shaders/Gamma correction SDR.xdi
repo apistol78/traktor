@@ -149,7 +149,7 @@
 			<parameterName>World_ColorGradingEnable</parameterName>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{BF94CFFC-6599-214A-B4E8-2101C8B9641D}</id>
 			<comment/>
 			<position>
 				<first>271</first>
@@ -158,7 +158,7 @@
 			<parameterDeclaration>{47E54562-59A3-3444-BC33-FCC82C7BC1E0}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{01493E26-A1D9-1047-BB79-868EE2441379}</id>
 			<comment/>
 			<position>
 				<first>1222</first>
@@ -167,7 +167,7 @@
 			<parameterDeclaration>{0BCF3B93-9A37-974F-825B-0AC4C193B4F8}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{CDBADBC0-B2AD-EC40-92DD-D4F1D353A1DE}</id>
 			<comment/>
 			<position>
 				<first>638</first>

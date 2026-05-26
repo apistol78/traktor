@@ -196,7 +196,7 @@
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{97EC808A-2E51-FF43-91CD-197A2F6D8003}</id>
 			<comment/>
 			<position>
 				<first>72</first>
@@ -205,7 +205,7 @@
 			<parameterDeclaration>{83F4FC7F-8A52-3B42-9401-18E8ADD63883}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{7A1BB8B7-58BE-254E-B454-A0222633D85E}</id>
 			<comment/>
 			<position>
 				<first>66</first>
@@ -214,7 +214,7 @@
 			<parameterDeclaration>{941A1371-421B-0646-BDFB-E63F14E943A3}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{5188C168-C7B8-5245-87F3-EEB0910B8393}</id>
 			<comment/>
 			<position>
 				<first>-730</first>

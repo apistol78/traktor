@@ -154,7 +154,7 @@
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{2B29AE92-12DC-9549-BE54-C66092F331DB}</id>
 			<comment/>
 			<position>
 				<first>159</first>
@@ -163,7 +163,7 @@
 			<parameterDeclaration>{983E0A0C-405E-534E-87CF-C617C3D588B8}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1A726854-33F4-4048-BDBB-9C18266FF3EE}</id>
 			<comment/>
 			<position>
 				<first>293</first>

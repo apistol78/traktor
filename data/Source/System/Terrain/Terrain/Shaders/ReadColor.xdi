@@ -81,7 +81,7 @@
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{255642F4-7123-2E41-80D2-8782D575B6CE}</id>
 			<comment/>
 			<position>
 				<first>-233</first>
@@ -90,7 +90,7 @@
 			<parameterDeclaration>{6D45A613-0233-0E45-BE62-7328C13FA293}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E7D81088-6307-B14B-8D14-05E194E726CF}</id>
 			<comment/>
 			<position>
 				<first>-487</first>
@@ -99,7 +99,7 @@
 			<parameterDeclaration>{25E47BA6-C1E7-0A40-87C9-18E2C48A1B31}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{4BCB1C4E-E431-2F47-9733-48C8EFC3A606}</id>
 			<comment/>
 			<position>
 				<first>478</first>

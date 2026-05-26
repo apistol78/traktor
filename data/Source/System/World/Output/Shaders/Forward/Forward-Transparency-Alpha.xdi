@@ -730,7 +730,7 @@ Eye direction
 			<parameterName>World_IrradianceSingle</parameterName>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{C5796D72-C245-4440-AC84-51910FF0CB6E}</id>
 			<comment/>
 			<position>
 				<first>313</first>
@@ -739,7 +739,7 @@ Eye direction
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{BBAA23DB-0650-7D4A-A259-3537CA4D5869}</id>
 			<comment/>
 			<position>
 				<first>301</first>
@@ -748,7 +748,7 @@ Eye direction
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{0D38BF91-D308-6445-8F6F-A9A866F5AA13}</id>
 			<comment/>
 			<position>
 				<first>603</first>

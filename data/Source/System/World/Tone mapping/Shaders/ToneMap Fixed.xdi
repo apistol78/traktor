@@ -232,7 +232,7 @@ $Output = vec4(
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{8F23FCB1-E1D9-3E49-9384-023846B41EC6}</id>
 			<comment/>
 			<position>
 				<first>550</first>
@@ -241,7 +241,7 @@ $Output = vec4(
 			<parameterDeclaration>{52AF854A-DA70-814A-91D9-E868AD8C52F6}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{9B013499-2C97-0449-8B74-ECDAD1A30895}</id>
 			<comment/>
 			<position>
 				<first>201</first>

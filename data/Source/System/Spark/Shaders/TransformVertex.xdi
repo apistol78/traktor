@@ -236,7 +236,7 @@ $Inside = s.x * s.y;
 			]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{89ECAC6D-8CCB-0646-9E18-8D15D998321E}</id>
 			<comment/>
 			<position>
 				<first>-456</first>
@@ -245,7 +245,7 @@ $Inside = s.x * s.y;
 			<parameterDeclaration>{C15D143D-E36C-4840-A329-EEF664C21F34}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{004ECA4F-6EFF-4C48-AC3C-232FB8008CCA}</id>
 			<comment/>
 			<position>
 				<first>-551</first>
@@ -254,7 +254,7 @@ $Inside = s.x * s.y;
 			<parameterDeclaration>{5CF65EC6-71B4-BA43-9E12-4C0B2E9725DC}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A51E2CBC-C7E0-D14E-901C-7CE38E3B0474}</id>
 			<comment/>
 			<position>
 				<first>199</first>
@@ -263,7 +263,7 @@ $Inside = s.x * s.y;
 			<parameterDeclaration>{886D9375-894C-2C4D-A445-11B012DCF1E7}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{B7DFDA2F-8743-DD46-93C5-A7663A77B16C}</id>
 			<comment/>
 			<position>
 				<first>27</first>

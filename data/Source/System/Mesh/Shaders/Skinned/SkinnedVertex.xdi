@@ -270,7 +270,7 @@ $Output = gl_VertexIndex;
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{557B4CDE-2CD5-EA43-8B75-2353A75C4C4A}</id>
 			<comment/>
 			<position>
 				<first>-432</first>
@@ -279,7 +279,7 @@ $Output = gl_VertexIndex;
 			<parameterDeclaration>{6880E795-07C0-5147-8419-284573E746AD}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F8EF1D50-525F-CF40-95B4-DA4404F45EA9}</id>
 			<comment/>
 			<position>
 				<first>-1480</first>
@@ -288,7 +288,7 @@ $Output = gl_VertexIndex;
 			<parameterDeclaration>{053878BD-B0DC-B343-AFE6-8015B79B5972}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F885C6CB-C506-8841-804F-B37BC598A026}</id>
 			<comment/>
 			<position>
 				<first>-1506</first>
@@ -297,7 +297,7 @@ $Output = gl_VertexIndex;
 			<parameterDeclaration>{797E6BE4-802D-714C-9A96-DAE3B91AAA78}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{69F1F9C9-2198-284B-947B-772BDBD55861}</id>
 			<comment/>
 			<position>
 				<first>-1229</first>
@@ -305,7 +305,7 @@ $Output = gl_VertexIndex;
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{3BE1124B-F428-6645-823F-6BE0B6347CAC}</id>
 			<comment/>
 			<position>
 				<first>-978</first>
@@ -314,7 +314,7 @@ $Output = gl_VertexIndex;
 			<memberName>Position</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{9113C939-0B7C-0146-BED3-9853F9D34835}</id>
 			<comment/>
 			<position>
 				<first>-978</first>
@@ -323,7 +323,7 @@ $Output = gl_VertexIndex;
 			<memberName>Normal</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{87DAC99D-3EC5-904F-9ED0-12FE100201D5}</id>
 			<comment/>
 			<position>
 				<first>-978</first>
@@ -332,7 +332,7 @@ $Output = gl_VertexIndex;
 			<memberName>Tangent</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F6F0C8A2-38BF-0040-99D5-F1538103C27E}</id>
 			<comment/>
 			<position>
 				<first>-978</first>
@@ -341,7 +341,7 @@ $Output = gl_VertexIndex;
 			<memberName>Binormal</memberName>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{34A1E44D-38A7-694E-9FD8-581211AFB6A9}</id>
 			<comment/>
 			<position>
 				<first>-1226</first>
@@ -349,7 +349,7 @@ $Output = gl_VertexIndex;
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{4B9D838D-CA3B-9D4B-9D75-7DE38791AC30}</id>
 			<comment/>
 			<position>
 				<first>-978</first>

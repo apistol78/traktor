@@ -1952,7 +1952,7 @@ $GridWorldCenter = vec4(mn + (mx - mn) * trunc(p) / gs, 1.0f);
 			<name>L_WorldNormal</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{CED58ABA-CC34-6C4E-9F85-991CD7BC5E4E}</id>
 			<comment/>
 			<position>
 				<first>-219</first>
@@ -1961,7 +1961,7 @@ $GridWorldCenter = vec4(mn + (mx - mn) * trunc(p) / gs, 1.0f);
 			<parameterDeclaration>{B5DD3CAE-937A-014D-B369-DB0468FA5DF9}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{EC8040F9-5E3B-9441-B37E-2D66E34CD0F6}</id>
 			<comment/>
 			<position>
 				<first>-219</first>
@@ -1970,7 +1970,7 @@ $GridWorldCenter = vec4(mn + (mx - mn) * trunc(p) / gs, 1.0f);
 			<parameterDeclaration>{F702C3A1-3468-F141-890D-A677B0CF83BB}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{765E6791-9D61-0547-99B9-51A334552555}</id>
 			<comment/>
 			<position>
 				<first>-416</first>

@@ -75,7 +75,7 @@
 			<name>shRGB_8</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{8861696B-7B20-FC45-8103-9CAEB77A4C10}</id>
 			<comment/>
 			<position>
 				<first>153</first>
@@ -84,7 +84,7 @@
 			<parameterDeclaration>{EA77CECB-1DC2-E340-B4CE-3E94B17C8061}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{EC47467D-F66F-2044-8BED-46CCAC83C816}</id>
 			<comment/>
 			<position>
 				<first>457</first>
@@ -92,7 +92,7 @@
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{656DDCAD-3879-4144-B2F9-0DBD071C2687}</id>
 			<comment/>
 			<position>
 				<first>779</first>
@@ -101,7 +101,7 @@
 			<memberName>shR0_3</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{36F77111-0F16-4F40-8448-F0C97DEF7EDF}</id>
 			<comment/>
 			<position>
 				<first>779</first>
@@ -110,7 +110,7 @@
 			<memberName>shR4_7</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{65243E7D-255A-5D41-AB55-A41D5C2905F4}</id>
 			<comment/>
 			<position>
 				<first>779</first>
@@ -119,7 +119,7 @@
 			<memberName>shG0_3</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{47BDF6DA-1455-F24F-9508-21DECB3C2F6B}</id>
 			<comment/>
 			<position>
 				<first>779</first>
@@ -128,7 +128,7 @@
 			<memberName>shG4_7</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{2632CC22-4C35-1C4F-8A38-99ADF974A776}</id>
 			<comment/>
 			<position>
 				<first>779</first>
@@ -137,7 +137,7 @@
 			<memberName>shB0_3</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1A52690E-8C85-ED47-B54B-720B670520EA}</id>
 			<comment/>
 			<position>
 				<first>779</first>
@@ -146,7 +146,7 @@
 			<memberName>shB4_7</memberName>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{DD33EB85-424B-8446-8AFF-C544F5248E05}</id>
 			<comment/>
 			<position>
 				<first>779</first>

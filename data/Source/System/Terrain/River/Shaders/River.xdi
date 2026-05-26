@@ -707,7 +707,7 @@
 			<value>0, 1, 0, 0</value>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{94D1CB36-8324-504B-8714-83D542CFBE05}</id>
 			<comment/>
 			<position>
 				<first>-353</first>
@@ -716,7 +716,7 @@
 			<parameterDeclaration>{C5FE5E84-7112-A047-8C1C-10A884ABCF5F}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A2AEB6E6-698D-9348-A9E3-54EBBCDA6701}</id>
 			<comment/>
 			<position>
 				<first>18</first>
@@ -725,7 +725,7 @@
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{FA961078-4429-A34D-B3F6-D9040E88EB75}</id>
 			<comment/>
 			<position>
 				<first>285</first>

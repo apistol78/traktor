@@ -1207,7 +1207,7 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{10A810C7-5769-5741-8F39-EA354D6C5F4C}</id>
 			<comment/>
 			<position>
 				<first>1499</first>
@@ -1216,7 +1216,7 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 			<parameterDeclaration>{41C095E8-1A66-A249-A474-349B74E9CC2D}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1E7D26B0-B27A-8244-88A3-A8B6427B4FAD}</id>
 			<comment/>
 			<position>
 				<first>-430</first>

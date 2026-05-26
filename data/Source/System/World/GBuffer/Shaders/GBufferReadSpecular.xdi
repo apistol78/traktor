@@ -48,7 +48,7 @@
 			<swizzle>z</swizzle>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{AEFBAC64-64B1-F747-9EA6-401897A7F6DE}</id>
 			<comment/>
 			<position>
 				<first>1328</first>

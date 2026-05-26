@@ -1240,7 +1240,7 @@ $Output = gl_DrawID;
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{28047A33-5ACE-E844-BE68-C7A362CA8F20}</id>
 			<comment/>
 			<position>
 				<first>-570</first>
@@ -1249,7 +1249,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{6C26718B-7605-AD47-ADB0-8746547DC081}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{4C98DB86-DB9A-8547-8C89-778FCEFBDE8C}</id>
 			<comment/>
 			<position>
 				<first>-1602</first>
@@ -1258,7 +1258,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{CF107514-7253-EA4D-BFF7-D391E7EA239F}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{E50D2FD8-13F8-834D-B890-A0889A02A73D}</id>
 			<comment/>
 			<position>
 				<first>-786</first>
@@ -1267,7 +1267,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{CF107514-7253-EA4D-BFF7-D391E7EA239F}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{291651A3-72A9-EB43-AF3E-21B2AAA20B0D}</id>
 			<comment/>
 			<position>
 				<first>-246</first>
@@ -1276,7 +1276,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F7BBE6FF-40AD-A34D-BBDD-EA9137676B99}</id>
 			<comment/>
 			<position>
 				<first>56</first>
@@ -1285,7 +1285,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{99A8A8CB-D479-8945-8F0D-D0E3D936E5AE}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{C7CCCEA2-C0C9-D447-9C33-4447DA846E78}</id>
 			<comment/>
 			<position>
 				<first>653</first>
@@ -1294,7 +1294,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{D16BB7FF-36A0-3945-9588-BC6295417965}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{78A611FD-A0B0-FA45-9215-7C3AC8F441BB}</id>
 			<comment/>
 			<position>
 				<first>-742</first>
@@ -1303,7 +1303,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{DDA9E914-7AB0-D548-BA1B-BED01C2EDC7D}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{C5DD8FD7-197D-924C-92C1-74212B5E4A61}</id>
 			<comment/>
 			<position>
 				<first>-93</first>
@@ -1312,7 +1312,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{B8A2AB0B-8476-A341-AA5F-0C26134A645A}</id>
 			<comment/>
 			<position>
 				<first>1823</first>
@@ -1321,7 +1321,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{68841FC5-B511-F64A-9609-4C39C085207E}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{F084B79C-2472-7E4E-8CA3-1B1E7A65FCBE}</id>
 			<comment/>
 			<position>
 				<first>-750</first>
@@ -1330,7 +1330,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{93966C84-26FB-1F40-B836-35322520C14E}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{ECA73E6F-7F02-0A4E-BF16-6633787D54A2}</id>
 			<comment/>
 			<position>
 				<first>-553</first>
@@ -1339,7 +1339,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{42105ACD-917E-044D-9ED6-5626553B62D1}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{5AD7F99A-0E8A-424C-B237-E10F38F98229}</id>
 			<comment/>
 			<position>
 				<first>-544</first>
@@ -1348,7 +1348,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{40D987A0-29D2-EA43-91B8-2E8A3879C05F}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{7D6122B3-CCB0-B044-B6D1-6513DE316C1F}</id>
 			<comment/>
 			<position>
 				<first>-93</first>
@@ -1357,7 +1357,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{1E57DF1E-5833-1648-9843-5024F94404CB}</id>
 			<comment/>
 			<position>
 				<first>-1827</first>
@@ -1366,7 +1366,7 @@ $Output = gl_DrawID;
 			<parameterDeclaration>{BBF47FE0-9CCB-1041-9491-9C3A59823630}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{48AB790C-9A71-A847-8FDE-5E16324F9A7B}</id>
 			<comment/>
 			<position>
 				<first>-1489</first>
@@ -1374,7 +1374,7 @@ $Output = gl_DrawID;
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{FEC8329B-249A-E646-99F6-6C6E3ACEA96D}</id>
 			<comment/>
 			<position>
 				<first>-1489</first>
@@ -1383,7 +1383,7 @@ $Output = gl_DrawID;
 			<memberName>patchOrigin</memberName>
 		</item>
 		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{5F43FB80-E460-AD43-B506-0B4BA6201016}</id>
 			<comment/>
 			<position>
 				<first>-1491</first>
@@ -1391,7 +1391,7 @@ $Output = gl_DrawID;
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{6F713B2A-7761-6945-9B85-C3F40C8CCFEE}</id>
 			<comment/>
 			<position>
 				<first>-1491</first>

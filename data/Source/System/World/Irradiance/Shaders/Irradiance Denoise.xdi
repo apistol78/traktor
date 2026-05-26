@@ -260,7 +260,7 @@ to further reduce overall noise. ]]></comment>
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{21A5EF27-685B-3B4B-BCF4-400D7E98EFEF}</id>
 			<comment/>
 			<position>
 				<first>-337</first>
@@ -269,7 +269,7 @@ to further reduce overall noise. ]]></comment>
 			<parameterDeclaration>{A480EAAD-ADF1-214D-883B-4207444C3749}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A029BE4A-E089-644F-9BD6-06CD0964BC56}</id>
 			<comment/>
 			<position>
 				<first>-353</first>
@@ -278,7 +278,7 @@ to further reduce overall noise. ]]></comment>
 			<parameterDeclaration>{1B7EE70B-CFE2-EF44-A21B-13A748CEAC26}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{28318116-DEEC-5740-9421-9679FE97D3F9}</id>
 			<comment/>
 			<position>
 				<first>-839</first>

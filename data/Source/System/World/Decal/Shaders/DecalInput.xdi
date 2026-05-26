@@ -282,7 +282,7 @@
 			<name>Alpha</name>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{66F96514-A995-B042-AD31-4EAF1FF742C6}</id>
 			<comment/>
 			<position>
 				<first>358</first>
@@ -291,7 +291,7 @@
 			<parameterDeclaration>{3CA06E93-C2C6-0347-8C39-8D3EF7D95027}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{A03E2208-D809-9042-B249-65BC54CDAA17}</id>
 			<comment/>
 			<position>
 				<first>656</first>
@@ -300,7 +300,7 @@
 			<parameterDeclaration>{99A8A8CB-D479-8945-8F0D-D0E3D936E5AE}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{BC4A46AB-0279-5741-9308-5500B8783993}</id>
 			<comment/>
 			<position>
 				<first>-338</first>

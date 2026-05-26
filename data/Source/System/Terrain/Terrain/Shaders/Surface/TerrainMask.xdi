@@ -823,7 +823,7 @@
 			</outputPins>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{00000000-0000-0000-0000-000000000000}</id>
+			<id>{D74C4E60-3972-1D46-B90F-1EEF74C2DEAE}</id>
 			<comment/>
 			<position>
 				<first>48</first>
