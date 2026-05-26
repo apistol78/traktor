@@ -8,6 +8,7 @@
  */
 #include <libdecor.h>
 #include "Core/Misc/TString.h"
+#include "Ui/Events/CloseEvent.h"
 #include "Ui/Itf/ISystemBitmap.h"
 #include "Ui/ToolForm.h"
 #include "Ui/Wl/ContextWl.h"
@@ -140,7 +141,12 @@ bool ToolFormWl::create(IWidget* parent, const std::wstring& text, int width, in
 		wl_display_roundtrip(m_context->getDisplay());
 
 		m_context->bind(&m_data, WlEvtClose, [this](WlEvent& e) {
+			CloseEvent closeEvent(m_owner);
+			m_owner->raiseEvent(&closeEvent);
+			if (closeEvent.consumed() || closeEvent.cancelled())
+				return;
 			endModal(DialogResult::Cancel);
+			setVisible(false);
 		});
 	}
 	// For popup/floating style the xdg_popup is created in setVisible(true)
@@ -259,6 +265,18 @@ void ToolFormWl::createPopup()
 	xdg_positioner_set_anchor_rect(positioner, lx, ly, 1, 1);
 	xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_TOP_LEFT);
 	xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
+
+	// Wayland never exposes the toplevel's on-screen position, so the desktop-rect
+	// clamp in Menu.cpp cannot keep the popup on screen here. Instead let the
+	// compositor constrain it: slide along both axes and flip vertically when it
+	// would overflow the bottom edge. Resize is deliberately omitted so the menu
+	// keeps its laid-out size rather than clipping items.
+	xdg_positioner_set_constraint_adjustment(
+		positioner,
+		XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X |
+		XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y |
+		XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y
+	);
 
 	m_data.xdgPopup = xdg_surface_get_popup(m_data.xdgSurface, parentXdg->xdgSurface, positioner);
 	xdg_popup_add_listener(m_data.xdgPopup, &s_toolFormXdgPopupListener, this);
