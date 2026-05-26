@@ -138,7 +138,11 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 			if (alpha < 1.0f - FUZZY_EPSILON)
 			{
 				mm.setTransparency(alpha);
-				mm.setBlendOperator(Material::BoAlpha);
+
+				// #fixme Mixamo meshes do have a transmission_factor of zero but
+				// not considered a transparent material. What is the best way of interpret
+				// FBX materials?
+				//mm.setBlendOperator(Material::BoAlpha);
 			}
 		}
 

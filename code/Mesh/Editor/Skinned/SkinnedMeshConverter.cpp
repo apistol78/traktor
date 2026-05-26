@@ -103,9 +103,9 @@ bool SkinnedMeshConverter::convert(
 			if (v.getColor() != model::c_InvalidIndex)
 				writeVertexData(vertexElements, vertex, render::DataUsage::Color, 0, model->getColor(v.getColor()));
 			if (v.getTexCoord(0) != model::c_InvalidIndex)
-				writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 2, model->getTexCoord(v.getTexCoord(0)));
+				writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 0, model->getTexCoord(v.getTexCoord(0)));
 			if (v.getTexCoord(1) != model::c_InvalidIndex)
-				writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 3, model->getTexCoord(v.getTexCoord(1)));
+				writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 1, model->getTexCoord(v.getTexCoord(1)));
 			vertex += vertexSize;
 		}
 
