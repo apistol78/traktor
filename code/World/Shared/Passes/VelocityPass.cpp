@@ -32,6 +32,7 @@ namespace
 {
 
 const resource::Id< render::ImageGraph > c_velocityPrime(L"{CB34E98B-55C9-E447-BD59-5A1D91DCA88E}");
+const resource::Id< render::ImageGraph > c_velocityDilate(L"{8A8AD144-7866-41DB-9E66-AEAE46DACB92}");
 
 }
 
@@ -44,10 +45,15 @@ VelocityPass::VelocityPass(WorldEntityRenderers* entityRenderers)
 
 bool VelocityPass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
-	// Create velocity prime processing.
+	// Create velocity processing.
 	if (!resourceManager->bind(c_velocityPrime, m_velocityPrime))
 	{
 		log::error << L"Unable to create velocity prime process." << Endl;
+		return false;
+	}
+	if (!resourceManager->bind(c_velocityDilate, m_velocityDilate))
+	{
+		log::error << L"Unable to create velocity dilate process." << Endl;
 		return false;
 	}
 
@@ -63,6 +69,7 @@ void VelocityPass::destroy()
 {
 	safeDestroy(m_screenRenderer);
 	m_velocityPrime.clear();
+	m_velocityDilate.clear();
 }
 
 render::RGTargetSet VelocityPass::setup(
@@ -86,71 +93,116 @@ render::RGTargetSet VelocityPass::setup(
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR32G32F;
-	const render::RGTargetSet velocityTargetSetId = renderGraph.addTransientTargetSet(L"Velocity", rgtd, outputTargetSetId, outputTargetSetId);
 
-	// Add Velocity render pass.
-	Ref< render::RenderPass > pass = new render::RenderPass(L"Velocity");
-	pass->addInput(gbufferTargetSetId);
-	pass->setOutput(velocityTargetSetId, render::TfDepth, render::TfColor | render::TfDepth);
+	const render::RGTargetSet velocityInitialTargetSetId = renderGraph.addTransientTargetSet(L"Velocity initial", rgtd, outputTargetSetId, outputTargetSetId);
+	const render::RGTargetSet velocityOutputTargetSetId = renderGraph.addTransientTargetSet(L"Velocity", rgtd, outputTargetSetId, outputTargetSetId);
 
-	if (m_velocityPrime)
+	// Add initial velocity render pass.
 	{
-		render::ImageGraphView view;
-		view.viewFrustum = worldRenderView.getViewFrustum();
-		view.view = worldRenderView.getLastView() * worldRenderView.getView().inverse();
-		view.projection = worldRenderView.getProjection();
-		view.deltaTime = (float)worldRenderView.getDeltaTime();
+		Ref< render::RenderPass > pass = new render::RenderPass(L"Velocity initial");
+		pass->addInput(gbufferTargetSetId);
+		pass->setOutput(velocityInitialTargetSetId, render::TfDepth, render::TfColor | render::TfDepth);
 
-		render::ImageGraphContext igctx;
-		igctx.setTechniqueFlag(ShaderPermutation::RayTracingEnable, rayTracingEnable);
+		if (m_velocityPrime)
+		{
+			render::ImageGraphView view;
+			view.viewFrustum = worldRenderView.getViewFrustum();
+			view.view = worldRenderView.getLastView() * worldRenderView.getView().inverse();
+			view.projection = worldRenderView.getProjection();
+			view.deltaTime = (float)worldRenderView.getDeltaTime();
 
-		auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
-			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
-			params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
-			params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
-			params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
-			params->setVectorParameter(ShaderParameter::Jitter, Vector4(rp.x, -rp.y, rc.x, -rc.y)); // Texture space.
-		};
+			render::ImageGraphContext igctx;
+			igctx.setTechniqueFlag(ShaderPermutation::RayTracingEnable, rayTracingEnable);
 
-		m_velocityPrime->addPasses(
-			m_screenRenderer,
-			renderGraph,
-			pass,
-			igctx,
-			view,
-			setParameters);
+			auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
+				const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+				params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
+				params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
+				params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
+				params->setVectorParameter(ShaderParameter::Jitter, Vector4(rp.x, -rp.y, rc.x, -rc.y)); // Texture space.
+			};
+
+			m_velocityPrime->addPasses(
+				m_screenRenderer,
+				renderGraph,
+				pass,
+				igctx,
+				view,
+				setParameters);
+		}
+
+		pass->addBuild(
+			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+			const WorldBuildContext wc(
+				m_entityRenderers,
+				renderContext);
+
+			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
+			sharedParams->beginParameters(renderContext);
+			sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+			sharedParams->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
+			sharedParams->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
+			sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
+			sharedParams->setVectorParameter(ShaderParameter::Jitter, Vector4(rp.x, -rp.y, rc.x, -rc.y)); // Texture space.
+			sharedParams->endParameters(renderContext);
+
+			const WorldRenderPassShared velocityPass(
+				ShaderTechnique::VelocityWrite,
+				sharedParams,
+				worldRenderView,
+				IWorldRenderPass::None);
+
+			for (auto r : gatheredView.renderables)
+				if (r.state.dynamic)
+					r.renderer->build(wc, worldRenderView, velocityPass, r.renderable);
+
+			for (auto entityRenderer : m_entityRenderers->get())
+				entityRenderer->build(wc, worldRenderView, velocityPass);
+		});
+
+		renderGraph.addPass(pass);
 	}
 
-	pass->addBuild(
-		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-		const WorldBuildContext wc(
-			m_entityRenderers,
-			renderContext);
+	// Add dilate velocity render pass.
+	{
+		Ref< render::RenderPass > pass = new render::RenderPass(L"Velocity dilate");
+		pass->addInput(gbufferTargetSetId);
+		pass->addInput(velocityInitialTargetSetId);
+		pass->setOutput(velocityOutputTargetSetId, render::TfDepth, render::TfColor | render::TfDepth);
 
-		auto sharedParams = renderContext->alloc< render::ProgramParameters >();
-		sharedParams->beginParameters(renderContext);
-		sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
-		sharedParams->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
-		sharedParams->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
-		sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
-		sharedParams->setVectorParameter(ShaderParameter::Jitter, Vector4(rp.x, -rp.y, rc.x, -rc.y)); // Texture space.
-		sharedParams->endParameters(renderContext);
+		if (m_velocityDilate)
+		{
+			render::ImageGraphView view;
+			view.viewFrustum = worldRenderView.getViewFrustum();
+			view.view = worldRenderView.getLastView() * worldRenderView.getView().inverse();
+			view.projection = worldRenderView.getProjection();
+			view.deltaTime = (float)worldRenderView.getDeltaTime();
 
-		const WorldRenderPassShared velocityPass(
-			ShaderTechnique::VelocityWrite,
-			sharedParams,
-			worldRenderView,
-			IWorldRenderPass::None);
+			render::ImageGraphContext igctx;
+			igctx.setTechniqueFlag(ShaderPermutation::RayTracingEnable, rayTracingEnable);
 
-		for (auto r : gatheredView.renderables)
-			if (r.state.dynamic)
-				r.renderer->build(wc, worldRenderView, velocityPass, r.renderable);
+			auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
+				const auto velocityInitialTargetSet = renderGraph.getTargetSet(velocityInitialTargetSetId);
+				const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+				params->setTextureParameter(ShaderParameter::VelocityMap, velocityInitialTargetSet->getColorTexture(0));
+				params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
+				params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
+				params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));
+				params->setVectorParameter(ShaderParameter::Jitter, Vector4(rp.x, -rp.y, rc.x, -rc.y)); // Texture space.
+			};
 
-		for (auto entityRenderer : m_entityRenderers->get())
-			entityRenderer->build(wc, worldRenderView, velocityPass);
-	});
+			m_velocityDilate->addPasses(
+				m_screenRenderer,
+				renderGraph,
+				pass,
+				igctx,
+				view,
+				setParameters);		
+		}
 
-	renderGraph.addPass(pass);
-	return velocityTargetSetId;
+		renderGraph.addPass(pass);
+	}
+	
+	return velocityOutputTargetSetId;
 }
 }

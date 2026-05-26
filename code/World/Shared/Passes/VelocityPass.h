@@ -63,6 +63,7 @@ private:
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::ImageGraph > m_velocityPrime;
+	resource::Proxy< render::ImageGraph > m_velocityDilate;
 };
 
 }

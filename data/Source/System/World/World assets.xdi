@@ -121,5 +121,9 @@
 			<id>{FEDA90CE-25C6-BC4D-9767-EA4B45F4A043}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
+		<item>
+			<id>{8A8AD144-7866-41DB-9E66-AEAE46DACB92}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
 	</dependencies>
 </object>
