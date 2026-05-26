@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -44,22 +44,33 @@ struct DefaultHashFunction3
 
 /*! 3-dimensional grid container.
  * \ingroup Model
+ *
+ * Spatial hash for fast proximity queries over 3D values. Cells are
+ * floor-quantised and indexed into a power-of-two bucket array.
+ * \p HashBuckets is the bucket count and trades memory for fewer hash
+ * collisions; bump it for large grids.
  */
 template
 <
 	typename ValueType,
 	typename PositionAccessor = DefaultPositionAccessor3< ValueType >,
-	typename HashFunction = DefaultHashFunction3
+	typename HashFunction = DefaultHashFunction3,
+	uint32_t HashBuckets = 4096
 >
 class Grid3
 {
 public:
 	static constexpr uint32_t InvalidIndex = ~0U;
-	static constexpr uint32_t HashBuckets = 256;
+	static_assert((HashBuckets & (HashBuckets - 1)) == 0, "HashBuckets must be a power of two.");
 
 	explicit Grid3(float cellSize)
 	:	m_cellSize(cellSize)
+	,	m_invCellSize(1.0f / cellSize)
 	{
+		// Bucket array lives on the heap — inline storage would balloon the
+		// containing object (Model embeds several grids) and overflow the stack
+		// of any function that holds a Grid3 by value.
+		m_indices.resize(HashBuckets);
 	}
 
 	const ValueType& get(uint32_t index, const ValueType& defaultValue = ValueType()) const
@@ -69,52 +80,40 @@ public:
 
 	void set(uint32_t index, const ValueType& v)
 	{
-		uint32_t fromHash, toHash;
+		T_MATH_ALIGN16 int32_t fc[4];
+		cellOf(PositionAccessor::get(m_values[index]), fc);
+		const uint32_t fromBucket = HashFunction::get(fc[0], fc[1], fc[2]) & (HashBuckets - 1);
 
-		// Calculate cell hashes.
+		const Vector4 newPos = PositionAccessor::get(v);
+		T_MATH_ALIGN16 int32_t tc[4];
+		cellOf(newPos, tc);
+		const uint32_t toBucket = HashFunction::get(tc[0], tc[1], tc[2]) & (HashBuckets - 1);
+
+		if (fromBucket != toBucket)
 		{
-			const Vector4 p = PositionAccessor::get(m_values[index]) / m_cellSize;
-
-			T_MATH_ALIGN16 int32_t pe[4];
-			p.storeIntegersAligned(pe);
-
-			fromHash = HashFunction::get(pe[0], pe[1], pe[2]);
-		}
-		{
-			const Vector4 p = PositionAccessor::get(v) / m_cellSize;
-
-			T_MATH_ALIGN16 int32_t pe[4];
-			p.storeIntegersAligned(pe);
-
-			toHash = HashFunction::get(pe[0], pe[1], pe[2]);
-		}
-
-		// Remove index from cell and add to new cell.
-		if (fromHash != toHash)
-		{
-			auto& indices = m_indices[fromHash & (HashBuckets - 1)];
-			if (!indices.empty())
+			auto& indices = m_indices[fromBucket];
+			for (size_t k = 0; k < indices.size(); ++k)
 			{
-				auto it = std::remove(indices.begin(), indices.end(), index);
-				indices.erase(it, indices.end());
+				if (indices[k] == index)
+				{
+					indices[k] = indices.back();
+					indices.pop_back();
+					break;
+				}
 			}
-
-			m_indices[toHash & (HashBuckets - 1)].push_back(index);
+			m_indices[toBucket].push_back(index);
 		}
 
-		// Modify value.
 		m_values[index] = v;
 	}
 
 	uint32_t get(const ValueType& v) const
 	{
 		const Vector4 p = PositionAccessor::get(v);
-		const Vector4 pq = p / m_cellSize;
+		T_MATH_ALIGN16 int32_t c[4];
+		cellOf(p, c);
 
-		T_MATH_ALIGN16 int32_t ipq[4];
-		pq.storeIntegersAligned(ipq);
-
-		const uint32_t hash = HashFunction::get(ipq[0], ipq[1], ipq[2]);
+		const uint32_t hash = HashFunction::get(c[0], c[1], c[2]);
 		for (auto index : m_indices[hash & (HashBuckets - 1)])
 		{
 			const Vector4 pv = PositionAccessor::get(m_values[index]);
@@ -132,31 +131,18 @@ public:
 		const Scalar distance2 = distance * distance;
 
 		const Vector4 p = PositionAccessor::get(v);
-		const Vector4 pq = p / m_cellSize;
+		T_MATH_ALIGN16 int32_t c[4];
+		cellOf(p, c);
 
-		const Vector4 mnpq = pq - distance - 0.5_simd;
-		const Vector4 mxpq = pq + distance + 0.5_simd;
-
-		T_MATH_ALIGN16 int32_t mne[4];
-		mnpq.storeIntegersAligned(mne);
-
-		T_MATH_ALIGN16 int32_t mxe[4];
-		mxpq.storeIntegersAligned(mxe);
-
-		const int32_t mnx = mne[0];
-		const int32_t mny = mne[1];
-		const int32_t mnz = mne[2];
-		const int32_t mxx = mxe[0];
-		const int32_t mxy = mxe[1];
-		const int32_t mxz = mxe[2];
-
-		for (int32_t iz = mnz; iz <= mxz; ++iz)
+		// distance <= cellSize/2 guarantees any candidate is within the
+		// 3x3x3 neighbourhood — no need to compute a wider span.
+		for (int32_t iz = -1; iz <= 1; ++iz)
 		{
-			for (int32_t iy = mny; iy <= mxy; ++iy)
+			for (int32_t iy = -1; iy <= 1; ++iy)
 			{
-				for (int32_t ix = mnx; ix <= mxx; ++ix)
+				for (int32_t ix = -1; ix <= 1; ++ix)
 				{
-					const uint32_t hash = HashFunction::get(ix, iy, iz);
+					const uint32_t hash = HashFunction::get(c[0] + ix, c[1] + iy, c[2] + iz);
 					for (auto index : m_indices[hash & (HashBuckets - 1)])
 					{
 						const Vector4 pv = PositionAccessor::get(m_values[index]);
@@ -172,12 +158,11 @@ public:
 
 	uint32_t add(const ValueType& v)
 	{
-		const Vector4 p = PositionAccessor::get(v) / m_cellSize;
+		const Vector4 p = PositionAccessor::get(v);
+		T_MATH_ALIGN16 int32_t c[4];
+		cellOf(p, c);
 
-		T_MATH_ALIGN16 int32_t pe[4];
-		p.storeIntegersAligned(pe);
-
-		const uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
+		const uint32_t hash = HashFunction::get(c[0], c[1], c[2]);
 		const uint32_t id = (uint32_t)m_values.size();
 
 		m_values.push_back(v);
@@ -220,9 +205,17 @@ public:
 	}
 
 private:
-	AlignedVector< uint32_t > m_indices[HashBuckets];
+	AlignedVector< AlignedVector< uint32_t > > m_indices;
 	AlignedVector< ValueType > m_values;
 	Scalar m_cellSize;
+	Scalar m_invCellSize;
+
+	// Compute integer cell coordinates for a world position, using floor()
+	// so cells are symmetric around the origin (no fat cell at zero).
+	void cellOf(const Vector4& p, int32_t out[4]) const
+	{
+		(p * m_invCellSize).floor().storeIntegersAligned(out);
+	}
 
 	void rehash()
 	{
@@ -231,12 +224,11 @@ private:
 
 		for (uint32_t i = 0; i < (uint32_t)m_values.size(); ++i)
 		{
-			const Vector4 p = PositionAccessor::get(m_values[i]) / m_cellSize;
+			const Vector4 p = PositionAccessor::get(m_values[i]);
+			T_MATH_ALIGN16 int32_t c[4];
+			cellOf(p, c);
 
-			T_MATH_ALIGN16 int32_t pe[4];
-			p.storeIntegersAligned(pe);
-
-			const uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
+			const uint32_t hash = HashFunction::get(c[0], c[1], c[2]);
 			m_indices[hash & (HashBuckets - 1)].push_back(i);
 		}
 	}
