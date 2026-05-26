@@ -138,7 +138,7 @@ const float SpatialNormalThreshold = 0.9f;
 const float SpatialDepthThreshold = 2.0f;
 const float SpatialFilterRadius = 0.025f;
 const float SpatialFilterCoeff = 0.8f;
-const float Boost = 2.0f;
+const float Boost = 1.0f;
 
 const ivec2 sz = imageSize($Output);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
