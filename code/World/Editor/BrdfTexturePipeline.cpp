@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,8 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Math/Quasirandom.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Drawing/Image.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -143,15 +145,31 @@ bool BrdfTexturePipeline::buildOutput(
 	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getRGBAF32(), 512, 512);
 	image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-	for (int32_t y = 0; y < 512; ++y)
-	{
-		const float fy = y / 511.0f;
-		for (int32_t x = 0; x < 512; ++x)
+	RefArray< Job > jobs;
+	jobs.reserve((512 / 32) * (512 / 32));
+
+	for (int32_t jy = 0; jy < 512; jy += 32)
+		for (int32_t jx = 0; jx < 512; jx += 32)
 		{
-			const float fx = x / 511.0f;
-			const Vector4 brdf = integrateBRDF(fx, fy);
-			image->setPixel(x, y, Color4f(brdf.x(), brdf.y(), 0.0f, 0.0f));
+			Ref< Job > job = JobManager::getInstance().add([=]() {
+				for (int32_t y = jy; y < jy + 32; ++y)
+				{
+					for (int32_t x = jx; x < jx + 32; ++x)
+					{
+						const float fy = y / 511.0f;
+						const float fx = x / 511.0f;
+						const Vector4 brdf = integrateBRDF(fx, fy);
+						image->setPixel(x, y, Color4f(brdf.x(), brdf.y(), 0.0f, 0.0f));
+					}
+				}
+			});
+			jobs.push_back(job);
 		}
+
+	for (size_t i = 0; i < jobs.size(); ++i)
+	{
+		jobs[i]->wait();
+		jobs[i] = nullptr;
 	}
 
 	Ref< render::TextureOutput > output = new render::TextureOutput();
