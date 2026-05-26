@@ -281,14 +281,13 @@ bool ConditionalNodeTraits::evaluatePartial(
 				return false;
 			}
 
-			if (result)
-				foldOutputPin = inputOutputPins[2];
-			else
-				foldOutputPin = inputOutputPins[3];
+			foldOutputPin = result ? inputOutputPins[2] : inputOutputPins[3];
 
-			return true;
+			// Only signal a fold if the chosen branch is actually connected; otherwise
+			// we'd inject an edge with a null source pin into the graph.
+			return foldOutputPin != nullptr;
 		}
-		else if (inputOutputPins[2] == inputOutputPins[3])
+		else if (inputOutputPins[2] == inputOutputPins[3] && inputOutputPins[2] != nullptr)
 		{
 			foldOutputPin = inputOutputPins[2];
 			return true;
@@ -329,12 +328,15 @@ bool ConditionalNodeTraits::evaluatePartial(
 				return false;
 			}
 
-			if (result)
-				foldOutputPin = inputOutputPins[2];
-			else
-				foldOutputPin = nullptr;
+			if (!result)
+			{
+				// Comparison fails at compile time → pixel is discarded; we can't
+				// represent "no value" as a folded edge, so leave the node in place.
+				return false;
+			}
 
-			return true;
+			foldOutputPin = inputOutputPins[2];
+			return foldOutputPin != nullptr;
 		}
 	}
 	return false;

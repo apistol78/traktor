@@ -99,9 +99,18 @@ bool TouchShaderGraphsTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 		}
 
 		const std::wstring errorPrefix = L"Error when updating shader graph \"" + instance->getGuid().format() + L"\"; ";
-
 		int32_t nmods = 0;
 
+		for (auto node : shaderGraph->getNodes())
+		{
+			if (node->getId().isNull())
+			{
+				node->setId(Guid::create());
+				nmods++;
+			}
+		}
+
+		/*
 		for (auto readStructNode : shaderGraph->findNodesOf< ReadStruct2 >())
 		{
 			const Edge* edgeStruct = shaderGraph->findEdge(readStructNode->findInputPin(L"Struct"));
@@ -146,6 +155,7 @@ bool TouchShaderGraphsTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 
 			++nmods;
 		}
+		*/
 
 		/*
 		for (auto readStructNode : shaderGraph->findNodesOf< ReadStruct >())

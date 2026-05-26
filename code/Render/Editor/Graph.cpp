@@ -8,6 +8,7 @@
  */
 #include "Render/Editor/Graph.h"
 
+#include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Render/Editor/Edge.h"
@@ -185,28 +186,24 @@ uint32_t Graph::getDestinationCount(const OutputPin* outputPin) const
 
 bool Graph::detach(const Node* node)
 {
-	int32_t removed = 0;
 	for (int32_t i = 0; i < (int32_t)m_edges.size();)
 	{
-		if (m_edges[i]->getSource() == nullptr || m_edges[i]->getDestination() == nullptr || m_edges[i]->getSource()->getNode() == node || m_edges[i]->getDestination()->getNode() == node)
+		const Edge* edge = m_edges[i];
+		if (edge->getSource()->getNode() == node || edge->getDestination()->getNode() == node)
 		{
+			// Keep pin maps in sync for every edge we erase, not just for pins on `node`.
+			// Edges where source is on `node` but destination is on some other node N must
+			// still remove m_inputPinToEdge[N.input] and decrement the source's destination
+			// count, otherwise the maps end up holding stale pointers / counts.
+			m_inputPinToEdge.remove(edge->getDestination());
+			uint32_t& count = m_outputPinDestinationCount[edge->getSource()];
+			if (--count == 0)
+				m_outputPinDestinationCount.remove(edge->getSource());
+
 			m_edges.erase(m_edges.begin() + i);
-			removed++;
 		}
 		else
 			++i;
-	}
-
-	const int32_t inputPinCount = node->getInputPinCount();
-	for (int32_t i = 0; i < inputPinCount; ++i)
-		m_inputPinToEdge.remove(node->getInputPin(i));
-
-	const int32_t outputPinCount = node->getOutputPinCount();
-	for (int32_t i = 0; i < outputPinCount; ++i)
-	{
-		uint32_t& count = m_outputPinDestinationCount[node->getOutputPin(i)];
-		if (--count == 0)
-			m_outputPinDestinationCount.remove(node->getOutputPin(i));
 	}
 
 	return true;
@@ -284,6 +281,23 @@ void Graph::serialize(ISerializer& s)
 
 	if (s.getDirection() == ISerializer::Direction::Read)
 	{
+		// Drop edges whose source or destination pin couldn't be resolved against the
+		// nodes in the graph; downstream code assumes both endpoints are non-null.
+		int32_t discarded = 0;
+		for (int32_t i = 0; i < (int32_t)m_edges.size();)
+		{
+			const Edge* edge = m_edges[i];
+			if (!edge || !edge->getSource() || !edge->getDestination())
+			{
+				m_edges.erase(m_edges.begin() + i);
+				discarded++;
+			}
+			else
+				++i;
+		}
+		if (discarded > 0)
+			log::warning << L"Discarded " << discarded << L" dangling edge(s) when deserializing graph." << Endl;
+
 		updateInputPinToEdge();
 		updateOutputPinDestinationCount();
 	}
@@ -294,8 +308,7 @@ void Graph::updateInputPinToEdge()
 	m_inputPinToEdge.reset();
 	m_inputPinToEdge.reserve(m_edges.size());
 	for (auto edge : m_edges)
-		if (edge && edge->getDestination())
-			m_inputPinToEdge[edge->getDestination()] = edge;
+		m_inputPinToEdge[edge->getDestination()] = edge;
 }
 
 void Graph::updateOutputPinDestinationCount()
@@ -303,8 +316,7 @@ void Graph::updateOutputPinDestinationCount()
 	m_outputPinDestinationCount.reset();
 	m_outputPinDestinationCount.reserve(m_edges.size());
 	for (auto edge : m_edges)
-		if (edge && edge->getDestination())
-			m_outputPinDestinationCount[edge->getSource()]++;
+		m_outputPinDestinationCount[edge->getSource()]++;
 }
 
 }
