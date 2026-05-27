@@ -520,7 +520,7 @@ VkPipeline Context::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout,
 		VkPipelineMultisampleStateCreateInfo mssci = {};
 		mssci.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 		mssci.rasterizationSamples = targetSet->getVkSampleCount();
-		if (multiSampleShading > FUZZY_EPSILON)
+		if (!isLineTopology && multiSampleShading > FUZZY_EPSILON)
 		{
 			mssci.sampleShadingEnable = VK_TRUE;
 			mssci.minSampleShading = multiSampleShading;
