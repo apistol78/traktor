@@ -25,6 +25,7 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
+#include "Drawing/Filters/GammaFilter.h"
 #include "Editor/DataAccessCache.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -387,6 +388,10 @@ bool MeshPipeline::buildOutput(
 				Ref< drawing::Image > image = render::ShaderGraphPreview(m_assetPath, pipelineBuilder->getSourceDatabase()).generate(materialShaderGraph, 128, 128);
 				if (image)
 				{
+					// Convert image into linear color space.
+					const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
+					image->apply(&gammaFilter);
+
 					maps[0].image = image;
 					buildEmbeddedTexture(pipelineBuilder, maps[0], false);
 				}
