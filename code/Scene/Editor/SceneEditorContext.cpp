@@ -20,7 +20,6 @@
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ITexture.h"
-#include "Render/Frame/RenderGraphContext.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
@@ -83,7 +82,6 @@ SceneEditorContext::SceneEditorContext(
 ,	m_sourceDb(sourceDb)
 ,	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
-,	m_renderGraphContext(new render::RenderGraphContext(renderSystem))
 ,	m_physicsManager(physicsManager)
 ,	m_scriptContext(scriptContext)
 ,	m_guideSize(1.0f)
@@ -112,7 +110,6 @@ void SceneEditorContext::destroy()
 	safeDestroy(m_scene);
 	safeDestroy(m_resourceManager);
 	safeDestroy(m_scriptContext);
-	safeDestroy(m_renderGraphContext);
 
 	m_editor = nullptr;
 	m_document = nullptr;
