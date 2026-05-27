@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -66,6 +66,8 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
+	virtual bool allowConcurrentUpdate() const { return false; }
+
 	virtual void update(const world::UpdateParams& update) override final;
 
 	void render(
@@ -74,8 +76,7 @@ public:
 		render::RenderContext* renderContext,
 		PointRenderer* pointRenderer,
 		MeshRenderer* meshRenderer,
-		TrailRenderer* trailRenderer
-	) const;
+		TrailRenderer* trailRenderer) const;
 
 	Aabb3 getWorldBoundingBox() const;
 

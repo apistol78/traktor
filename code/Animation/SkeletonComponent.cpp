@@ -18,7 +18,7 @@
 
 #include <cmath>
 
-#define T_USE_UPDATE_JOBS
+//#define T_USE_UPDATE_JOBS
 
 namespace traktor::animation
 {

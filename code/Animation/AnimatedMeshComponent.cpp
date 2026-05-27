@@ -39,7 +39,7 @@ namespace
 const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 const render::Handle s_handleWorld_ShadowWrite(L"World_ShadowWrite");
 
-const int32_t c_maxRtUpdatesBeforeBuild = 400;
+const int32_t c_maxRtUpdatesBeforeBuild = 800;
 
 }
 
@@ -68,6 +68,10 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 
 	// Create our instance's acceleration structure.
 	m_rtAccelerationStructure = m_mesh->createAccelerationStructure(renderSystem);
+
+	// Randomize start of counter to ensure not every single
+	// component in the world do the same thing at the same frame.
+	m_rtUpdates = std::rand();
 }
 
 void AnimatedMeshComponent::destroy()
@@ -239,14 +243,27 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 			// Update RT geometry and RT instance transform.
 			if (m_rtwInstance)
 			{
-				bool rebuild = false;
-				if (++m_rtUpdates > c_maxRtUpdatesBeforeBuild)
+				bool need = true;
+
+				// Interleave RT updates if they are far away.
+				if (distance > 30.0f)
+					need &= ((m_rtUpdates % 32) == 0);
+				else if (distance > 20.0f)
+					need &= ((m_rtUpdates % 16) == 0);
+				else if (distance > 10.0f)
+					need &= ((m_rtUpdates % 8) == 0);
+
+				if (need)
 				{
-					rebuild = true;
-					m_rtUpdates = 0;
+					bool rebuild = false;
+					if ((m_rtUpdates % c_maxRtUpdatesBeforeBuild) == 0)
+						rebuild = true;
+
+					m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild);
 				}
-				m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild);
+
 				m_rtwInstance->setTransform(worldTransform);
+				++m_rtUpdates;
 			}
 		}
 		else if (isVisible && m_rtwInstance && m_lastWorldTransform[1] != worldTransform)

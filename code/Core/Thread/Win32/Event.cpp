@@ -49,8 +49,15 @@ void Event::pulse(int32_t count)
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	EnterCriticalSection(&in->lock);
 
+	// Invariant: the kernel event handle is set whenever signals != 0 (it is only
+	// reset in wait()/reset() when signals returns to 0). Therefore we only need to
+	// issue the SetEvent system call when transitioning from unsignaled to signaled;
+	// additional pulses while already signaled are redundant. This removes most of
+	// the SetEvent traffic on the hot enqueue path when producers outrun consumers.
+	const bool wasSignaled = (in->signals != 0);
 	in->signals += count;
-	SetEvent(in->handle);
+	if (!wasSignaled)
+		SetEvent(in->handle);
 
 	LeaveCriticalSection(&in->lock);
 }
@@ -60,8 +67,11 @@ void Event::broadcast()
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	EnterCriticalSection(&in->lock);
 
+	// See pulse(); skip the redundant SetEvent when the handle is already signaled.
+	const bool wasSignaled = (in->signals != 0);
 	in->signals = c_broadcast;
-	SetEvent(in->handle);
+	if (!wasSignaled)
+		SetEvent(in->handle);
 
 	LeaveCriticalSection(&in->lock);
 }

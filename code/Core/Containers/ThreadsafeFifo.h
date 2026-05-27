@@ -30,10 +30,26 @@ public:
 	bool get(T& item)
 	{
 		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
-		if (!m_fifo.empty())
+		if (m_head < m_fifo.size())
 		{
-			item = m_fifo.front();
-			m_fifo.erase(m_fifo.begin());
+			// Pop from a moving head index instead of erasing the front element,
+			// which would shift the entire vector (O(n)) on every dequeue.
+			item = m_fifo[m_head];
+			m_fifo[m_head] = T(); // Release the stored element promptly (matches erase semantics).
+			++m_head;
+			if (m_head >= m_fifo.size())
+			{
+				// Fully drained; reset to reuse storage from the front.
+				m_fifo.resize(0);
+				m_head = 0;
+			}
+			else if (m_head >= 64 && m_head * 2 >= m_fifo.size())
+			{
+				// Consumed prefix is large; compact once (amortized O(1)) to bound
+				// memory when producers keep the queue non-empty.
+				m_fifo.erase(m_fifo.begin(), m_fifo.begin() + m_head);
+				m_head = 0;
+			}
 			return true;
 		}
 		else
@@ -44,11 +60,13 @@ public:
 	{
 		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
 		m_fifo.clear();
+		m_head = 0;
 	}
 
 private:
 	SpinLock m_lock;
 	AlignedVector< T > m_fifo;
+	size_t m_head = 0;
 };
 
 }

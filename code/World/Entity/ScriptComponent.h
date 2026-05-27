@@ -53,6 +53,8 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
+	virtual bool allowConcurrentUpdate() const override final { return false; }
+
 	virtual void update(const UpdateParams& update) override final;
 
 	void execute(const char* method);

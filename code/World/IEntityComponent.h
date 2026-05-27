@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -63,6 +63,18 @@ public:
 	 * \return Bounding box.
 	 */
 	virtual Aabb3 getBoundingBox() const = 0;
+
+	/*! Check if this component can be updated
+	 * concurrently.
+	 * 
+	 * Since it's entities are updated concurrently
+	 * and not components within an entity means
+	 * it's safe to access data from within
+	 * the same owner.
+	 * 
+	 * \return True if component can be updated concurrently.
+	 */
+	virtual bool allowConcurrentUpdate() const { return true; }
 
 	/*! Update component
 	 * \param update Update information.
