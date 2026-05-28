@@ -1,15 +1,17 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Spray/GPUBufferPool.h"
+
+#include "Core/Thread/Acquire.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Spray/EmitterInstanceGPU.h"
-#include "Spray/GPUBufferPool.h"
 #include "Spray/Point.h"
 
 namespace traktor::spray
@@ -38,6 +40,7 @@ void GPUBufferPool::destroy()
 
 bool GPUBufferPool::allocBuffers(uint32_t capacity, Ref< render::Buffer >& outHeadBuffer, Ref< render::Buffer >& outPointBuffer)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_FATAL_ASSERT(m_destroyed == false);
 
 	outHeadBuffer = nullptr;
@@ -84,6 +87,7 @@ bool GPUBufferPool::allocBuffers(uint32_t capacity, Ref< render::Buffer >& outHe
 
 void GPUBufferPool::freeBuffers(Ref< render::Buffer >& inoutHeadBuffer, Ref< render::Buffer >& inoutPointBuffer)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_FATAL_ASSERT(m_destroyed == false);
 	T_FATAL_ASSERT(inoutHeadBuffer != nullptr);
 	T_FATAL_ASSERT(inoutPointBuffer != nullptr);

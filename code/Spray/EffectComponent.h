@@ -66,8 +66,6 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual bool allowConcurrentUpdate() const { return false; }
-
 	virtual void update(const world::UpdateParams& update) override final;
 
 	void render(
