@@ -56,6 +56,8 @@
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/EdgeConnectEvent.h"
 #include "Ui/Graph/EdgeDisconnectEvent.h"
+#include "Ui/Graph/AlignNodesLayoutOperation.h"
+#include "Ui/Graph/EvenSpaceLayoutOperation.h"
 #include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/InputNodeShape.h"
 #include "Ui/Graph/Node.h"
@@ -264,37 +266,43 @@ bool GraphEditor::handleCommand(const ui::Command& command)
 	else if (command == L"Sound.Processor.Editor.AlignLeft")
 	{
 		m_document->push();
-		m_graph->alignNodes(ui::GraphControl::AnLeft);
+		const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnLeft);
+		m_graph->apply(&op);
 		m_graph->update();
 	}
 	else if (command == L"Sound.Processor.Editor.AlignRight")
 	{
 		m_document->push();
-		m_graph->alignNodes(ui::GraphControl::AnRight);
+		const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnRight);
+		m_graph->apply(&op);
 		m_graph->update();
 	}
 	else if (command == L"Sound.Processor.Editor.AlignTop")
 	{
 		m_document->push();
-		m_graph->alignNodes(ui::GraphControl::AnTop);
+		const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnTop);
+		m_graph->apply(&op);
 		m_graph->update();
 	}
 	else if (command == L"Sound.Processor.Editor.AlignBottom")
 	{
 		m_document->push();
-		m_graph->alignNodes(ui::GraphControl::AnBottom);
+		const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnBottom);
+		m_graph->apply(&op);
 		m_graph->update();
 	}
 	else if (command == L"Sound.Processor.Editor.EvenSpaceVertically")
 	{
 		m_document->push();
-		m_graph->evenSpace(ui::GraphControl::EsVertically);
+		const ui::EvenSpaceLayoutOperation op(ui::EvenSpaceLayoutOperation::EsVertically);
+		m_graph->apply(&op);
 		m_graph->update();
 	}
 	else if (command == L"Sound.Processor.Editor.EventSpaceHorizontally")
 	{
 		m_document->push();
-		m_graph->evenSpace(ui::GraphControl::EsHorizontally);
+		const ui::EvenSpaceLayoutOperation op(ui::EvenSpaceLayoutOperation::EsHorizontally);
+		m_graph->apply(&op);
 		m_graph->update();
 	}
 	else if (command == L"Sound.Processor.Editor.Play")

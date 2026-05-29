@@ -37,6 +37,8 @@
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/EdgeConnectEvent.h"
 #include "Ui/Graph/EdgeDisconnectEvent.h"
+#include "Ui/Graph/AlignNodesLayoutOperation.h"
+#include "Ui/Graph/EvenSpaceLayoutOperation.h"
 #include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/InputNodeShape.h"
 #include "Ui/Graph/Node.h"
@@ -303,32 +305,38 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"ImageGraph.Editor.AlignLeft")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::GraphControl::AnLeft);
+		const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnLeft);
+		m_editorGraph->apply(&op);
 	}
 	else if (command == L"ImageGraph.Editor.AlignRight")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::GraphControl::AnRight);
+		const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnRight);
+		m_editorGraph->apply(&op);
 	}
 	else if (command == L"ImageGraph.Editor.AlignTop")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::GraphControl::AnTop);
+		const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnTop);
+		m_editorGraph->apply(&op);
 	}
 	else if (command == L"ImageGraph.Editor.AlignBottom")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::GraphControl::AnBottom);
+		const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnBottom);
+		m_editorGraph->apply(&op);
 	}
 	else if (command == L"ImageGraph.Editor.EvenSpaceVertically")
 	{
 		m_document->push();
-		m_editorGraph->evenSpace(ui::GraphControl::EsVertically);
+		const ui::EvenSpaceLayoutOperation op(ui::EvenSpaceLayoutOperation::EsVertically);
+		m_editorGraph->apply(&op);
 	}
 	else if (command == L"ImageGraph.Editor.EvenSpaceHorizontally")
 	{
 		m_document->push();
-		m_editorGraph->evenSpace(ui::GraphControl::EsHorizontally);
+		const ui::EvenSpaceLayoutOperation op(ui::EvenSpaceLayoutOperation::EsHorizontally);
+		m_editorGraph->apply(&op);
 	}
 	else if (command == L"ImageGraph.Editor.AddInput")
 	{

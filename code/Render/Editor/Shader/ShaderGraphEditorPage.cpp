@@ -70,7 +70,10 @@
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/EdgeConnectEvent.h"
 #include "Ui/Graph/EdgeDisconnectEvent.h"
+#include "Ui/Graph/AlignNodesLayoutOperation.h"
+#include "Ui/Graph/EvenSpaceLayoutOperation.h"
 #include "Ui/Graph/GraphControl.h"
+#include "Ui/Graph/PrettifyLayoutOperation.h"
 #include "Ui/Graph/Group.h"
 #include "Ui/Graph/GroupMovedEvent.h"
 #include "Ui/Graph/Node.h"
@@ -275,6 +278,8 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_VERTICALLY"), 4, ui::Command(L"ShaderGraph.Editor.EvenSpaceVertically")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_HORIZONTALLY"), 5, ui::Command(L"ShaderGraph.Editor.EventSpaceHorizontally")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_PRETTIFY"), 3, ui::Command(L"ShaderGraph.Editor.Prettify")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVALUATE_CONNECTED"), 14, ui::Command(L"ShaderGraph.Editor.EvaluateConnected")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVALUATE_TYPE"), 15, ui::Command(L"ShaderGraph.Editor.EvaluateType")));
@@ -780,32 +785,44 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		else if (command == L"ShaderGraph.Editor.AlignLeft")
 		{
 			m_document->push();
-			m_editorGraph->alignNodes(ui::GraphControl::AnLeft);
+			const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnLeft);
+			m_editorGraph->apply(&op);
 		}
 		else if (command == L"ShaderGraph.Editor.AlignRight")
 		{
 			m_document->push();
-			m_editorGraph->alignNodes(ui::GraphControl::AnRight);
+			const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnRight);
+			m_editorGraph->apply(&op);
 		}
 		else if (command == L"ShaderGraph.Editor.AlignTop")
 		{
 			m_document->push();
-			m_editorGraph->alignNodes(ui::GraphControl::AnTop);
+			const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnTop);
+			m_editorGraph->apply(&op);
 		}
 		else if (command == L"ShaderGraph.Editor.AlignBottom")
 		{
 			m_document->push();
-			m_editorGraph->alignNodes(ui::GraphControl::AnBottom);
+			const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnBottom);
+			m_editorGraph->apply(&op);
 		}
 		else if (command == L"ShaderGraph.Editor.EvenSpaceVertically")
 		{
 			m_document->push();
-			m_editorGraph->evenSpace(ui::GraphControl::EsVertically);
+			const ui::EvenSpaceLayoutOperation op(ui::EvenSpaceLayoutOperation::EsVertically);
+			m_editorGraph->apply(&op);
 		}
 		else if (command == L"ShaderGraph.Editor.EvenSpaceHorizontally")
 		{
 			m_document->push();
-			m_editorGraph->evenSpace(ui::GraphControl::EsHorizontally);
+			const ui::EvenSpaceLayoutOperation op(ui::EvenSpaceLayoutOperation::EsHorizontally);
+			m_editorGraph->apply(&op);
+		}
+		else if (command == L"ShaderGraph.Editor.Prettify")
+		{
+			m_document->push();
+			const ui::PrettifyLayoutOperation op;
+			m_editorGraph->apply(&op);
 		}
 		else if (command == L"ShaderGraph.Editor.EvaluateConnected")
 		{
