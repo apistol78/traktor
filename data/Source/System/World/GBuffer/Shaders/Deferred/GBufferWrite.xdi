@@ -5,8 +5,8 @@
 			<id>{DF015B38-4B91-6C48-BB5E-81FC8355D961}</id>
 			<comment/>
 			<position>
-				<first>-101</first>
-				<second>-34</second>
+				<first>-447</first>
+				<second>-35</second>
 			</position>
 			<name>ViewPosition</name>
 			<optional>false</optional>
@@ -15,8 +15,8 @@
 			<id>{30E85928-7B55-E740-9734-68440CE06674}</id>
 			<comment/>
 			<position>
-				<first>-154</first>
-				<second>130</second>
+				<first>-439</first>
+				<second>95</second>
 			</position>
 			<name>ViewNormal</name>
 			<optional>false</optional>
@@ -25,8 +25,8 @@
 			<id>{8D3DC51D-D9AA-DC4F-B3E3-558D3B60192F}</id>
 			<comment/>
 			<position>
-				<first>101</first>
-				<second>640</second>
+				<first>135</first>
+				<second>638</second>
 			</position>
 			<name>Roughness</name>
 			<optional>false</optional>
@@ -35,8 +35,8 @@
 			<id>{A326DE3C-1B9E-7848-9560-7C28ACC9158D}</id>
 			<comment/>
 			<position>
-				<first>169</first>
-				<second>-65</second>
+				<first>-156</first>
+				<second>-35</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -44,16 +44,16 @@
 			<id>{B2E457BD-A3DC-AA49-A8DA-90B28E752AF0}</id>
 			<comment/>
 			<position>
-				<first>338</first>
-				<second>-93</second>
+				<first>127</first>
+				<second>-35</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{FFD206CC-6EDD-B446-9919-0C1E61B9E3D1}</id>
 			<comment/>
 			<position>
-				<first>381</first>
-				<second>53</second>
+				<first>71</first>
+				<second>77</second>
 			</position>
 			<fragmentGuid>{DE7C9D55-4AB8-4749-85C4-43A6E40B9596}</fragmentGuid>
 			<inputPins>
@@ -74,8 +74,8 @@
 			<id>{363C0FA0-DF9F-564E-9671-C530C17B6AAA}</id>
 			<comment/>
 			<position>
-				<first>1310</first>
-				<second>438</second>
+				<first>1352</first>
+				<second>342</second>
 			</position>
 			<technique>World_DeferredGBufferWrite</technique>
 			<priority>
@@ -121,8 +121,8 @@
 			<id>{57731852-250E-7240-B13E-F2E3F9BFD492}</id>
 			<comment/>
 			<position>
-				<first>84</first>
-				<second>304</second>
+				<first>89</first>
+				<second>319</second>
 			</position>
 			<name>SurfaceColor</name>
 			<optional>false</optional>
@@ -131,8 +131,8 @@
 			<id>{B42C4326-75E5-D349-BA09-26F98B16B4D0}</id>
 			<comment/>
 			<position>
-				<first>370</first>
-				<second>324</second>
+				<first>367</first>
+				<second>319</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -140,8 +140,8 @@
 			<id>{54DD8807-808F-3342-BF1E-6AD08820DCFB}</id>
 			<comment/>
 			<position>
-				<first>624</first>
-				<second>645</second>
+				<first>613</first>
+				<second>692</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -152,8 +152,8 @@ Roughness
 			
 			]]></comment>
 			<position>
-				<first>374</first>
-				<second>602</second>
+				<first>405</first>
+				<second>638</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -161,8 +161,8 @@ Roughness
 			<id>{327CBB43-0B18-0F4A-9C61-ADEAD84B701C}</id>
 			<comment/>
 			<position>
-				<first>101</first>
-				<second>676</second>
+				<first>135</first>
+				<second>702</second>
 			</position>
 			<name>Metalness</name>
 			<optional>false</optional>
@@ -175,8 +175,8 @@ Metalness
 			
 			]]></comment>
 			<position>
-				<first>374</first>
-				<second>663</second>
+				<first>405</first>
+				<second>702</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -184,8 +184,8 @@ Metalness
 			<id>{0533A842-649E-41EB-848E-C14E9F7A6DF9}</id>
 			<comment/>
 			<position>
-				<first>1059</first>
-				<second>451</second>
+				<first>1106</first>
+				<second>376</second>
 			</position>
 			<name>Enable</name>
 			<optional>true</optional>
@@ -194,8 +194,8 @@ Metalness
 			<id>{38143377-57B7-4388-9D3F-3AA62077F273}</id>
 			<comment/>
 			<position>
-				<first>131</first>
-				<second>-249</second>
+				<first>65</first>
+				<second>-172</second>
 			</position>
 			<name>Discard</name>
 			<optional>true</optional>
@@ -204,8 +204,8 @@ Metalness
 			<id>{D301496E-DDAC-4860-B8DD-15359A619FF7}</id>
 			<comment/>
 			<position>
-				<first>179</first>
-				<second>-180</second>
+				<first>89</first>
+				<second>-108</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -213,8 +213,8 @@ Metalness
 			<id>{C92A4654-C294-433A-A5B0-B3B0F004122A}</id>
 			<comment/>
 			<position>
-				<first>419</first>
-				<second>-216</second>
+				<first>311</first>
+				<second>-158</second>
 			</position>
 			<operator>CoLess</operator>
 		</item>
@@ -226,8 +226,8 @@ Specular
 			
 			]]></comment>
 			<position>
-				<first>374</first>
-				<second>724</second>
+				<first>405</first>
+				<second>766</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -235,8 +235,8 @@ Specular
 			<id>{E965B68D-2C18-1547-B41D-F4766F74530B}</id>
 			<comment/>
 			<position>
-				<first>117</first>
-				<second>712</second>
+				<first>143</first>
+				<second>766</second>
 			</position>
 			<name>Specular</name>
 			<optional>false</optional>
@@ -245,8 +245,8 @@ Specular
 			<id>{870F030C-C903-46FF-A6D1-1F1A3BBAD32B}</id>
 			<comment/>
 			<position>
-				<first>85</first>
-				<second>748</second>
+				<first>127</first>
+				<second>830</second>
 			</position>
 			<name>DecalResponse</name>
 			<optional>false</optional>
@@ -255,8 +255,8 @@ Specular
 			<id>{F6E2ED06-2482-44DB-8996-3424B5E630CB}</id>
 			<comment/>
 			<position>
-				<first>613</first>
-				<second>37</second>
+				<first>340</first>
+				<second>104</second>
 			</position>
 			<swizzle>0xyz</swizzle>
 		</item>
@@ -264,8 +264,8 @@ Specular
 			<id>{164F9F58-08EA-4C95-A4F8-827B3C3FEC29}</id>
 			<comment/>
 			<position>
-				<first>616</first>
-				<second>-2</second>
+				<first>340</first>
+				<second>40</second>
 			</position>
 			<swizzle>x000</swizzle>
 		</item>
@@ -273,8 +273,8 @@ Specular
 			<id>{DD30262A-EDE3-47F1-811C-0EC30A1075F9}</id>
 			<comment/>
 			<position>
-				<first>826</first>
-				<second>-8</second>
+				<first>577</first>
+				<second>46</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -285,8 +285,8 @@ Decal response
 			
 			]]></comment>
 			<position>
-				<first>374</first>
-				<second>785</second>
+				<first>405</first>
+				<second>830</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -294,16 +294,16 @@ Decal response
 			<id>{C1483727-3AF6-FF46-B4DF-DC8A2066728E}</id>
 			<comment/>
 			<position>
-				<first>730</first>
-				<second>-206</second>
+				<first>585</first>
+				<second>-158</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{EC659490-00AE-0C43-AF97-F020F7E23E12}</id>
 			<comment/>
 			<position>
-				<first>-148</first>
-				<second>369</second>
+				<first>-157</first>
+				<second>338</second>
 			</position>
 			<name>Emissive</name>
 			<optional>false</optional>
@@ -312,8 +312,8 @@ Decal response
 			<id>{D3B5B082-673A-1143-98F4-E350A777CCA3}</id>
 			<comment/>
 			<position>
-				<first>370</first>
-				<second>367</second>
+				<first>367</first>
+				<second>401</second>
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
@@ -321,24 +321,24 @@ Decal response
 			<id>{C98A5BA4-0F0C-4D4C-ACB2-A1DCCEAF2C51}</id>
 			<comment/>
 			<position>
-				<first>604</first>
-				<second>329</second>
+				<first>575</first>
+				<second>334</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{394521EB-E8FA-8A4A-A028-280C5EF72F34}</id>
 			<comment/>
 			<position>
-				<first>118</first>
-				<second>366</second>
+				<first>111</first>
+				<second>383</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{3D1A9C54-6409-4B41-994B-18AB5116257F}</id>
 			<comment/>
 			<position>
-				<first>-100</first>
-				<second>422</second>
+				<first>-133</first>
+				<second>402</second>
 			</position>
 			<value>16</value>
 		</item>
@@ -346,8 +346,8 @@ Decal response
 			<id>{32E22C20-D936-CF40-B24E-D56CE7FDD584}</id>
 			<comment/>
 			<position>
-				<first>107</first>
-				<second>126</second>
+				<first>-169</first>
+				<second>77</second>
 			</position>
 			<name>Validate Normal</name>
 			<technique/>
@@ -709,36 +709,36 @@ else
 			<title>GBufferA</title>
 			<comment/>
 			<position>
-				<first>-206</first>
-				<second>-327</second>
+				<first>-511</first>
+				<second>-268</second>
 			</position>
 			<size>
-				<first>1220</first>
-				<second>570</second>
+				<first>1296</first>
+				<second>468</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
 			<title>GBufferB</title>
 			<comment/>
 			<position>
-				<first>-204</first>
-				<second>256</second>
+				<first>-221</first>
+				<second>223</second>
 			</position>
 			<size>
-				<first>1214</first>
-				<second>233</second>
+				<first>1004</first>
+				<second>294</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
 			<title>GBufferC</title>
 			<comment/>
 			<position>
-				<first>-199</first>
-				<second>516</second>
+				<first>63</first>
+				<second>542</second>
 			</position>
 			<size>
-				<first>1207</first>
-				<second>335</second>
+				<first>726</first>
+				<second>384</second>
 			</size>
 		</item>
 	</groups>
