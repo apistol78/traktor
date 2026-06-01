@@ -55,19 +55,51 @@ bool RenderTargetDepthVk::createPrimary(
 
 bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const wchar_t* const tag)
 {
-	VkFormat format;
+	// Pick the best depth/stencil format the device actually supports for an
+	// optimal-tiled depth/stencil attachment. The preference lists are ordered
+	// to land on a D24-equivalent first, with progressively more permissive
+	// fallbacks (32-bit float, then 16-bit).
+	//
+	// Per the Vulkan spec, every implementation must support at least one of
+	// the first two entries in each list, so selection cannot fail on a
+	// conformant driver — but we still verify to be safe.
+	VkFormat format = VK_FORMAT_UNDEFINED;
 	if (setDesc.ignoreStencil)
-#if defined(__IOS__)
-		format = VK_FORMAT_D16_UNORM;
-#else
-		format = VK_FORMAT_D32_SFLOAT;
-#endif
+	{
+		const VkFormat candidates[] = {
+			VK_FORMAT_X8_D24_UNORM_PACK32,	// 24-bit unorm depth, no stencil — closest match to D24.
+			VK_FORMAT_D32_SFLOAT,			// Higher-precision fallback, ubiquitous on desktop.
+			VK_FORMAT_D16_UNORM				// Mandatory; last-resort fallback for mobile.
+		};
+		format = determineSupportedDepthTargetFormat(
+			m_context->getPhysicalDevice(),
+			candidates,
+			sizeof_array(candidates),
+			setDesc.usingDepthStencilAsTexture
+		);
+	}
 	else
-#if defined(__IOS__)
-		format = VK_FORMAT_D16_UNORM_S8_UINT;
-#else
-		format = VK_FORMAT_D24_UNORM_S8_UINT;
-#endif
+	{
+		const VkFormat candidates[] = {
+			VK_FORMAT_D24_UNORM_S8_UINT,	// 24-bit depth + 8-bit stencil — direct D24S8 match.
+			VK_FORMAT_D32_SFLOAT_S8_UINT,	// Always supported on devices lacking D24S8 (e.g. MoltenVK).
+			VK_FORMAT_D16_UNORM_S8_UINT		// Mobile fallback.
+		};
+		format = determineSupportedDepthTargetFormat(
+			m_context->getPhysicalDevice(),
+			candidates,
+			sizeof_array(candidates),
+			setDesc.usingDepthStencilAsTexture
+		);
+	}
+
+	if (format == VK_FORMAT_UNDEFINED)
+	{
+		log::error << L"Failed to create depth target; no supported depth"
+			<< (setDesc.ignoreStencil ? L"" : L"/stencil")
+			<< L" format on this device." << Endl;
+		return false;
+	}
 
 	m_image = new Image(m_context);
 	if (!m_image->createDepthTarget(

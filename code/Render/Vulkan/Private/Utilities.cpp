@@ -482,6 +482,26 @@ VkFormat determineSupportedTargetFormat(VkPhysicalDevice physicalDevice, Texture
 	return VK_FORMAT_UNDEFINED;
 }
 
+VkFormat determineSupportedDepthTargetFormat(VkPhysicalDevice physicalDevice, const VkFormat* candidates, int32_t candidateCount, bool usedAsTexture)
+{
+	for (int32_t i = 0; i < candidateCount; ++i)
+	{
+		const VkFormat fmt = candidates[i];
+		if (fmt == VK_FORMAT_UNDEFINED)
+			continue;
+
+		VkFormatProperties fp = {};
+		vkGetPhysicalDeviceFormatProperties(physicalDevice, fmt, &fp);
+		if ((fp.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) == 0)
+			continue;
+		if (usedAsTexture && (fp.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == 0)
+			continue;
+
+		return fmt;
+	}
+	return VK_FORMAT_UNDEFINED;
+}
+
 VkPipelineStageFlags getPipelineStageFlags(const VkImageLayout layout)
 {
 	switch (layout)

@@ -416,7 +416,9 @@ bool Image::createDepthTarget(
 	T_FATAL_ASSERT(m_image == 0);
 
 	bool useStencil = false;
-	if (format == VK_FORMAT_D16_UNORM_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT)
+	if (format == VK_FORMAT_D16_UNORM_S8_UINT ||
+		format == VK_FORMAT_D24_UNORM_S8_UINT ||
+		format == VK_FORMAT_D32_SFLOAT_S8_UINT)
 		useStencil = true;
 
 	// Create image.
