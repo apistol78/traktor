@@ -154,6 +154,8 @@ private:
 
 	Ref< PropertyGroup > getTweakSettings() const;
 
+	void saveTweakSettings();
+
 	void launch(TargetInstance* targetInstance);
 
 	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);

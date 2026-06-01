@@ -105,6 +105,32 @@ const struct
 	{ L"RUNTIME_LANGUAGE_CZECH", L"cs" }
 };
 
+// Definitions for the entries in the "tweaks" drop-down. Order must
+// match the index switch in getTweakSettings().
+const struct
+{
+	const wchar_t* text;
+	const wchar_t* settingsKey;
+	bool defaultValue;
+} c_tweakDefs[] = {
+	{ L"Mute Audio", L"Runtime.Editor.Tweak.MuteAudio", false },
+	{ L"Audio \"Write Out\"", L"Runtime.Editor.Tweak.AudioWriteOut", false },
+	{ L"Force Render Thread Off", L"Runtime.Editor.Tweak.ForceRenderThreadOff", false },
+	{ L"Force VBlank Off", L"Runtime.Editor.Tweak.ForceVBlankOff", false },
+	{ L"Physics 2*dT", L"Runtime.Editor.Tweak.PhysicsDoubleStep", false },
+	{ L"Attach Script Debugger", L"Runtime.Editor.Tweak.AttachScriptDebugger", true },
+	{ L"Attach Script Profiler", L"Runtime.Editor.Tweak.AttachScriptProfiler", false },
+	{ L"Disable All DLC", L"Runtime.Editor.Tweak.DisableAllDLC", false },
+	{ L"Disable Adaptive Physics Update", L"Runtime.Editor.Tweak.DisableAdaptivePhysics", false },
+	{ L"Launch With 1/4 Window", L"Runtime.Editor.Tweak.LaunchQuarterWindow", false },
+	{ L"Disable Baked Lighting", L"Runtime.Editor.Tweak.DisableBakedLighting", false },
+	{ L"Validate Rendering", L"Runtime.Editor.Tweak.ValidateRendering", false },
+	{ L"Debug Layer", L"Runtime.Editor.Tweak.DebugLayer", true },
+	{ L"Ray Tracing", L"Runtime.Editor.Tweak.RayTracing", false },
+	{ L"Disable HDR", L"Runtime.Editor.Tweak.DisableHDR", false },
+	{ L"Disable Render Time Interpolation", L"Runtime.Editor.Tweak.DisableRenderTimeInterp", false }
+};
+
 class TargetInstanceProgressListener : public RefCountImpl< ITargetAction::IProgressListener >
 {
 public:
@@ -177,22 +203,14 @@ bool RuntimeEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, ed
 		m_toolBar->addItem(new ui::ToolBarSeparator());
 
 		m_toolTweaks = new ui::ToolBarDropMenu(70_ut, i18n::Text(L"RUNTIME_TWEAKS"), true, i18n::Text(L"RUNTIME_TWEAKS_TOOLTIP"));
-		m_toolTweaks->add(createTweakMenuItem(L"Mute Audio", false));
-		m_toolTweaks->add(createTweakMenuItem(L"Audio \"Write Out\"", false));
-		m_toolTweaks->add(createTweakMenuItem(L"Force Render Thread Off", false));
-		m_toolTweaks->add(createTweakMenuItem(L"Force VBlank Off", false));
-		m_toolTweaks->add(createTweakMenuItem(L"Physics 2*dT", false));
-		m_toolTweaks->add(createTweakMenuItem(L"Attach Script Debugger", true));
-		m_toolTweaks->add(createTweakMenuItem(L"Attach Script Profiler", false));
-		m_toolTweaks->add(createTweakMenuItem(L"Disable All DLC", false));
-		m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Physics Update", false));
-		m_toolTweaks->add(createTweakMenuItem(L"Launch With 1/4 Window", false));
-		m_toolTweaks->add(createTweakMenuItem(L"Disable Baked Lighting", false));
-		m_toolTweaks->add(createTweakMenuItem(L"Validate Rendering", m_editor->getSettings()->getProperty< bool >(L"Editor.RenderValidation", false)));
-		m_toolTweaks->add(createTweakMenuItem(L"Debug Layer", true));
-		m_toolTweaks->add(createTweakMenuItem(L"Ray Tracing", m_editor->getSettings()->getProperty< bool >(L"Editor.RayTracing", false)));
-		m_toolTweaks->add(createTweakMenuItem(L"Disable HDR", false));
-		m_toolTweaks->add(createTweakMenuItem(L"Disable Render Time Interpolation", false));
+		{
+			const Ref< const PropertyGroup > globalSettings = m_editor->getSettings();
+			for (uint32_t i = 0; i < sizeof_array(c_tweakDefs); ++i)
+			{
+				const bool checked = globalSettings->getProperty< bool >(c_tweakDefs[i].settingsKey, c_tweakDefs[i].defaultValue);
+				m_toolTweaks->add(createTweakMenuItem(c_tweakDefs[i].text, checked));
+			}
+		}
 		m_toolBar->addItem(m_toolTweaks);
 
 		m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Runtime.Language"), 85_ut, i18n::Text(L"RUNTIME_LANGUAGE"));
@@ -227,14 +245,12 @@ bool RuntimeEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, ed
 	// Create threads.
 	m_threadHostEnumerator = ThreadManager::getInstance().create([=, this]() {
 		threadHostEnumerator();
-	},
-		L"Host enumerator");
+	}, L"Host enumerator");
 	m_threadHostEnumerator->start();
 
 	m_threadTargetActions = ThreadManager::getInstance().create([=, this]() {
 		threadTargetActions();
-	},
-		L"Targets");
+	}, L"Targets");
 	m_threadTargetActions->start();
 
 	return true;
@@ -762,11 +778,11 @@ void RuntimeEditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 	else
 		log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
 
-		// Resolve absolute output path.
+	// Resolve absolute output path.
 #if defined(_WIN32)
-	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
+	const std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
 #else
-	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathNameNoVolume();
+	const std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathNameNoVolume();
 #endif
 
 	// Set target's state to pending as actions can be queued up to be performed much later.
@@ -863,8 +879,29 @@ void RuntimeEditorPlugin::eventTargetListCommand(TargetCommandEvent* event)
 	}
 }
 
+void RuntimeEditorPlugin::saveTweakSettings()
+{
+	Ref< PropertyGroup > globalSettings = m_editor->checkoutGlobalSettings();
+	if (!globalSettings)
+		return;
+
+	for (uint32_t i = 0; i < sizeof_array(c_tweakDefs); ++i)
+	{
+		const ui::MenuItem* item = m_toolTweaks->get((int32_t)i);
+		globalSettings->setProperty< PropertyBoolean >(c_tweakDefs[i].settingsKey, item != nullptr && item->isChecked());
+	}
+
+	m_editor->commitGlobalSettings();
+}
+
 void RuntimeEditorPlugin::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 {
+	if (event->getItem() == m_toolTweaks)
+	{
+		saveTweakSettings();
+		return;
+	}
+
 	const int32_t selectedTargetIndex = m_toolTargets->getSelected();
 	if (selectedTargetIndex < 0 || selectedTargetIndex >= int32_t(m_targetInstances.size()))
 		return;
