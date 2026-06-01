@@ -596,19 +596,24 @@ void WorldRendererShared::setupLightPass(
 			Matrix44 shadowLightProjection;
 			Frustum shadowFrustum;
 
-			shadowFrustum.buildPerspective(light->getRadius(), 1.0f, 0.1f, light->getFarRange());
-			shadowLightProjection = perspectiveLh(light->getRadius(), 1.0f, 0.1f, light->getFarRange());
+			shadowFrustum.buildPerspective(light->getRadius(), 1.0f, 1.0f, light->getFarRange());
+			shadowLightProjection = perspectiveLh(light->getRadius(), 1.0f, 1.0f, light->getFarRange());
 
 			Vector4 lightAxisX, lightAxisY, lightAxisZ;
 			lightAxisZ = -lightDirection;
-			lightAxisX = cross(viewInverse.axisZ(), lightAxisZ).normalized();
-			lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
+
+			orthogonalFrame(
+				lightAxisZ,
+				lightAxisY,
+				lightAxisX
+			);
 
 			shadowLightView = Matrix44(
 				lightAxisX,
 				lightAxisY,
 				lightAxisZ,
 				lightPosition);
+
 			shadowLightView = shadowLightView.inverse();
 
 			const Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
