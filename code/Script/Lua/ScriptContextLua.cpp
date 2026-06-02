@@ -384,7 +384,7 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 	return returnValue;
 }
 
-ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, bool strict)
+ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State*& luaState, int32_t environmentRef, bool strict)
 :	m_scriptManager(scriptManager)
 ,	m_luaState(luaState)
 ,	m_environmentRef(environmentRef)

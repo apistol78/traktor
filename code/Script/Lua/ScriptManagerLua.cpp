@@ -768,6 +768,9 @@ void ScriptManagerLua::collectGarbageFull()
 
 void ScriptManagerLua::collectGarbageFullNoLock()
 {
+	if (!m_luaState)
+		return;
+
 	// Repeat GC until allocated memory doesn't decrease
 	// further in multiple consecutive GCs.
 	int32_t count = 100;
@@ -781,6 +784,7 @@ void ScriptManagerLua::collectGarbageFullNoLock()
 		else
 			count--;
 	}
+
 	m_lastMemoryUse = m_totalMemoryUse;
 }
 
