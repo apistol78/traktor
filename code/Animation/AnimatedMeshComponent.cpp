@@ -199,6 +199,8 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 	const Scalar interval(worldRenderView.getInterval());
 	const Transform worldTransform = m_transform.get(interval);
 
+	// #fixme "firstInFrame" checks view index; meaning if not in frustum in view 0 then it
+	// doesn't update skin for any other view.
 	const bool firstInFrame = ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0 && worldRenderView.getIndex() == 0);
 	const bool supportTechnique = (m_mesh->supportTechnique(worldRenderPass.getTechnique()));
 
@@ -238,9 +240,12 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 
 			// Ray traced instances skin and rebuild their acceleration structure on the
 			// asynchronous compute queue so it overlaps and is synchronized once, up front,
-			// before any graphics work. Non ray traced instances are skinned synchronously
-			// since their only consumer is rasterization.
-			const bool asynchronous = (m_rtwInstance != nullptr);
+			// before any graphics work.
+			//
+			// #fixme This causes the skinned mesh to be one frame late
+			// because all async work is done end of frame N-1 and synced on graphics
+			// queue in frame N.
+			const bool asynchronous = true;
 
 			// Update skin.
 			std::swap(m_skinBuffer[0], m_skinBuffer[1]);

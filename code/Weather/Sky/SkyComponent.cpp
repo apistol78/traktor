@@ -359,7 +359,7 @@ void SkyComponent::setup(
 				renderBlock->programParams->setFloatParameter(world::ShaderParameter::Time, worldRenderView.getTime());
 				renderBlock->programParams->endParameters(renderContext);
 
-				renderContext->compute(renderBlock);
+				renderContext->computeAsync(renderBlock);
 			});
 			renderGraph.addPass(rp);
 

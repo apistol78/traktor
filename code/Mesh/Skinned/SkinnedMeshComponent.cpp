@@ -102,9 +102,12 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 	{
 		// Ray traced instances skin and rebuild their acceleration structure on the
 		// asynchronous compute queue so it overlaps and is synchronized once, up front,
-		// before any graphics work. Non ray traced instances are skinned synchronously
-		// since their only consumer is rasterization.
-		const bool asynchronous = (m_rtwInstance != nullptr);
+		// before any graphics work.
+		//
+		// #fixme This causes the skinned mesh to be one frame late
+		// because all async work is done end of frame N-1 and synced on graphics
+		// queue in frame N.
+		const bool asynchronous = true;
 
 		std::swap(m_skinBuffer[0], m_skinBuffer[1]);
 		m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0], asynchronous);
