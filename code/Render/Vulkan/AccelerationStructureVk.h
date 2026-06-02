@@ -37,7 +37,7 @@ public:
 
 	static Ref< AccelerationStructureVk > createTopLevel(Context* context, uint32_t numInstances, uint32_t inFlightCount);
 
-	static Ref< AccelerationStructureVk > createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic);
+	static Ref< AccelerationStructureVk > createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic, uint32_t inFlightCount);
 
 	virtual void destroy() override final;
 

@@ -25,11 +25,6 @@ namespace traktor::render
 namespace
 {
 
-// Number of in-flight copies of a dynamic bottom level acceleration structure. Must be
-// at least the swap chain image (frames-in-flight) count so a frame never rebuilds a
-// copy that a still-executing prior frame's ray queries are reading.
-const uint32_t c_dynamicRingCount = 3;
-
 uint32_t getScratchAlignment(Context* context)
 {
 	// Determine alignment requirement of scratch buffer.
@@ -180,7 +175,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 	return as;
 }
 
-Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic)
+Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic, uint32_t inFlightCount)
 {
 	auto commandBuffer = context->getGraphicsQueue()->acquireCommandBuffer(L"AccelerationStructureVk::createBottomLevel");
 
@@ -189,7 +184,7 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 
 	// A dynamic structure is rebuilt every frame so it is ring buffered to the in-flight
 	// count; a static structure is built once and never updated, so a single slot suffices.
-	const uint32_t count = dynamic ? c_dynamicRingCount : 1;
+	const uint32_t count = dynamic ? inFlightCount : 1;
 	as->m_hierarchyBuffers.resize(count);
 	as->m_scratchBuffers.resize(count);
 	as->m_as.resize(count, 0);

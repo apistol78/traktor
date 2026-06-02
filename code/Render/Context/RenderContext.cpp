@@ -180,16 +180,14 @@ void RenderContext::mergeAsyncComputeIntoRender()
 	if (m_asyncComputeQueue.empty())
 		return;
 
-	// Insert a synchronization block followed in front by all asynchronous compute
-	// blocks, so the render queue becomes:
-	//
-	//   [ async compute ... ][ synchronize ][ all other blocks ... ]
-	//
-	// This kicks off the asynchronous compute first in the frame and ensures all
-	// graphics work observes its result.
-	SynchronizeRenderBlock* synchronizeBlock = alloc< SynchronizeRenderBlock >();
-	m_renderQueue.insert(m_renderQueue.begin(), synchronizeBlock);
-	m_renderQueue.insert(m_renderQueue.begin(), m_asyncComputeQueue.begin(), m_asyncComputeQueue.end());
+	// [ async compute ... ][ synchronize ][ all other blocks ... ]
+	//m_renderQueue.insert(m_renderQueue.begin(), alloc< SynchronizeRenderBlock >());
+	//m_renderQueue.insert(m_renderQueue.begin(), m_asyncComputeQueue.begin(), m_asyncComputeQueue.end());
+
+	// [ synchronize ][ all other blocks ... ][ async compute ... ]
+	m_renderQueue.insert(m_renderQueue.begin(), alloc< SynchronizeRenderBlock >());
+	m_renderQueue.insert(m_renderQueue.end(), m_asyncComputeQueue.begin(), m_asyncComputeQueue.end());
+
 	m_asyncComputeQueue.resize(0);
 }
 

@@ -116,7 +116,7 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 				rebuild = true;
 				m_rtUpdates = 0;
 			}
-			m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild, true);
+			m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild, asynchronous);
 			m_rtwInstance->setTransform(worldTransform);
 		}
 	}

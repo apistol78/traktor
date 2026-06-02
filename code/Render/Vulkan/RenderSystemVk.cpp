@@ -943,7 +943,7 @@ Ref< IAccelerationStructure > RenderSystemVk::createTopLevelAccelerationStructur
 Ref< IAccelerationStructure > RenderSystemVk::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic)
 {
 	if (m_rayTracing)
-		return AccelerationStructureVk::createBottomLevel(m_context, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, dynamic);
+		return AccelerationStructureVk::createBottomLevel(m_context, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, dynamic, 3 * 4);
 	else
 		return nullptr;
 }

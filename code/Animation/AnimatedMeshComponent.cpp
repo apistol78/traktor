@@ -249,11 +249,24 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 			// Update RT geometry and RT instance transform.
 			if (m_rtwInstance)
 			{
-				bool rebuild = false;
-				if ((m_rtUpdates % c_maxRtUpdatesBeforeBuild) == 0)
-					rebuild = true;
+				bool need = true;
 
-				m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild, true);
+				// Interleave RT updates if they are far away.
+				if (distance > 30.0f)
+					need &= ((m_rtUpdates % 32) == 0);
+				else if (distance > 20.0f)
+					need &= ((m_rtUpdates % 16) == 0);
+				else if (distance > 10.0f)
+					need &= ((m_rtUpdates % 8) == 0);
+
+				if (need)
+				{
+					bool rebuild = false;
+					if ((m_rtUpdates % c_maxRtUpdatesBeforeBuild) == 0)
+						rebuild = true;
+
+					m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild, asynchronous);
+				}
 
 				m_rtwInstance->setTransform(worldTransform);
 				++m_rtUpdates;
