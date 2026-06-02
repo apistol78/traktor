@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -329,7 +329,7 @@ void RenderViewVrfy::drawIndirect(const IBufferView* vertexBuffer, const IVertex
 	m_renderView->drawIndirect(wrappedVertexView, vl->getWrappedVertexLayout(), wrappedIndexView, indexType, programVrfy->m_program, primitiveType, wrappedDrawView, drawOffset, drawCount);
 }
 
-void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize, bool asynchronous)
+ComputeHandle RenderViewVrfy::compute(IProgram* program, const int32_t* workSize, bool asynchronous)
 {
 	T_CAPTURE_TRACE(L"compute");
 	T_CAPTURE_ASSERT(m_insideFrame, L"Cannot compute outside of beginFrame/endFrame.");
@@ -340,11 +340,11 @@ void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize, bool as
 	T_CAPTURE_ASSERT(programVrfy, L"Incorrect program type.");
 
 	if (!programVrfy)
-		return;
+		return {};
 
 	programVrfy->verify();
 
-	m_renderView->compute(programVrfy->m_program, workSize, asynchronous);
+	return m_renderView->compute(programVrfy->m_program, workSize, asynchronous);
 }
 
 void RenderViewVrfy::computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset)
@@ -370,7 +370,7 @@ void RenderViewVrfy::computeIndirect(IProgram* program, const IBufferView* workB
 	m_renderView->computeIndirect(programVrfy->m_program, wrappedWorldView, workOffset);
 }
 
-void RenderViewVrfy::barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip)
+void RenderViewVrfy::barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip, bool asynchronous)
 {
 	T_CAPTURE_TRACE(L"barrier");
 	T_CAPTURE_ASSERT(m_insideFrame, L"Cannot insert barrier outside of beginFrame/endFrame.");
@@ -385,7 +385,7 @@ void RenderViewVrfy::barrier(Stage from, Stage to, ITexture* written, uint32_t w
 			T_FATAL_ERROR;
 	}
 
-	m_renderView->barrier(from, to, writtenUnwrapped, writtenMip);
+	m_renderView->barrier(from, to, writtenUnwrapped, writtenMip, asynchronous);
 }
 
 void RenderViewVrfy::synchronize()
@@ -394,6 +394,15 @@ void RenderViewVrfy::synchronize()
 	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
 
 	m_renderView->synchronize();
+}
+
+void RenderViewVrfy::waitCompute(ComputeHandle handle)
+{
+	T_CAPTURE_TRACE(L"waitCompute");
+	T_CAPTURE_ASSERT(m_insideFrame, L"Cannot wait for compute outside of beginFrame/endFrame.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
+
+	m_renderView->waitCompute(handle);
 }
 
 bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
@@ -425,7 +434,7 @@ bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinatio
 	return m_renderView->copy(destinationTextureUnwrapped, destinationRegion, sourceTextureUnwrapped, sourceRegion);
 }
 
-void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances)
+ComputeHandle RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances, bool asynchronous)
 {
 	T_CAPTURE_TRACE(L"writeAccelerationStructure");
 	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
@@ -433,11 +442,11 @@ void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelera
 	AccelerationStructureVrfy* as = dynamic_type_cast< AccelerationStructureVrfy* >(accelerationStructure);
 	T_CAPTURE_ASSERT(as != nullptr, L"Invalid acceleration structure (TLAS).");
 	if (!as)
-		return;
+		return {};
 
 	T_CAPTURE_ASSERT(as->getWrappedAS(), L"Cannot write TLAS; TLAS destroyed.");
 	if (!as->getWrappedAS())
-		return;
+		return {};
 
 	AlignedVector< IAccelerationStructure::Instance > unwrappedInstances;
 	unwrappedInstances.reserve(instances.size());
@@ -460,10 +469,10 @@ void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelera
 			instance.transform });
 	}
 
-	m_renderView->writeAccelerationStructure(as->getWrappedAS(), unwrappedInstances);
+	return m_renderView->writeAccelerationStructure(as->getWrappedAS(), unwrappedInstances, asynchronous);
 }
 
-void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild)
+ComputeHandle RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous)
 {
 	T_CAPTURE_TRACE(L"writeAccelerationStructure");
 	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
@@ -471,23 +480,23 @@ void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelera
 	AccelerationStructureVrfy* as = dynamic_type_cast< AccelerationStructureVrfy* >(accelerationStructure);
 	T_CAPTURE_ASSERT(as != nullptr, L"Invalid acceleration structure (TLAS).");
 	if (!as)
-		return;
+		return {};
 
 	T_CAPTURE_ASSERT(as->getWrappedAS(), L"Cannot write TLAS; TLAS destroyed.");
 	if (!as->getWrappedAS())
-		return;
+		return {};
 
 	T_CAPTURE_ASSERT(vertexBuffer, L"Missing vertex buffer.");
 	T_CAPTURE_ASSERT(indexBuffer, L"Missing index buffer.");
 	T_CAPTURE_ASSERT(vertexLayout, L"Missing vertex layout.");
 	if (!vertexBuffer || !indexBuffer || !vertexLayout)
-		return;
+		return {};
 
 	const BufferViewVrfy* vbv = checked_type_cast< const BufferViewVrfy* >(vertexBuffer);
 	const BufferViewVrfy* ibv = checked_type_cast< const BufferViewVrfy* >(indexBuffer);
 	const VertexLayoutVrfy* vl = checked_type_cast< const VertexLayoutVrfy* >(vertexLayout);
 
-	m_renderView->writeAccelerationStructure(as->getWrappedAS(), vbv->getWrappedBufferView(), vl->getWrappedVertexLayout(), ibv->getWrappedBufferView(), indexType, primitives, rebuild);
+	return m_renderView->writeAccelerationStructure(as->getWrappedAS(), vbv->getWrappedBufferView(), vl->getWrappedVertexLayout(), ibv->getWrappedBufferView(), indexType, primitives, rebuild, asynchronous);
 }
 
 int32_t RenderViewVrfy::beginTimeQuery()
@@ -522,22 +531,22 @@ bool RenderViewVrfy::getTimeQuery(int32_t query, bool wait, double& outStart, do
 	return m_renderView->getTimeQuery(query, wait, outStart, outEnd);
 }
 
-void RenderViewVrfy::pushMarker(const std::wstring& marker)
+void RenderViewVrfy::pushMarker(bool asynchronous, const std::wstring& marker)
 {
 	T_CAPTURE_TRACE(L"pushMarker");
-	m_renderView->pushMarker(marker);
+	m_renderView->pushMarker(asynchronous, marker);
 }
 
-void RenderViewVrfy::popMarker()
+void RenderViewVrfy::popMarker(bool asynchronous)
 {
 	T_CAPTURE_TRACE(L"popMarker");
-	m_renderView->popMarker();
+	m_renderView->popMarker(asynchronous);
 }
 
-void RenderViewVrfy::writeMarker(const std::wstring& marker)
+void RenderViewVrfy::writeMarker(bool asynchronous, const std::wstring& marker)
 {
 	T_CAPTURE_TRACE(L"writeMarker");
-	m_renderView->writeMarker(marker);
+	m_renderView->writeMarker(asynchronous, marker);
 }
 
 void RenderViewVrfy::getStatistics(RenderViewStatistics& outStatistics) const

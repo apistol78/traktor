@@ -11,6 +11,7 @@
 #include "Render/Vulkan/Private/ApiBuffer.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/Context.h"
+#include "Render/Vulkan/Private/Queue.h"
 
 namespace traktor::render
 {
@@ -27,7 +28,7 @@ ApiBuffer::~ApiBuffer()
 	T_FATAL_ASSERT_M(m_context == nullptr, L"Buffer not properly destroyed.");
 }
 
-bool ApiBuffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess)
+bool ApiBuffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess, bool concurrent)
 {
 	T_FATAL_ASSERT(m_buffer == 0);
 	T_FATAL_ASSERT(bufferSize > 0);
@@ -36,6 +37,22 @@ bool ApiBuffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, 
 	bci.size = bufferSize;
 	bci.usage = usageBits;
 	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	// When a dedicated (asynchronous) compute queue family is in use, buffers may be
+	// accessed from both the graphics and compute families. Use concurrent sharing so no
+	// explicit queue family ownership transfer is required between them. (The concurrent
+	// argument is retained for callers but sharing is decided by the queue topology.)
+	(void)concurrent;
+	const uint32_t queueFamilyIndices[] = {
+		m_context->getGraphicsQueue()->getQueueIndex(),
+		m_context->getComputeQueue()->getQueueIndex()
+	};
+	if (queueFamilyIndices[0] != queueFamilyIndices[1])
+	{
+		bci.sharingMode = VK_SHARING_MODE_CONCURRENT;
+		bci.queueFamilyIndexCount = sizeof_array(queueFamilyIndices);
+		bci.pQueueFamilyIndices = queueFamilyIndices;
+	}
 
 	VmaAllocationCreateInfo aci = {};
     if (cpuAccess && gpuAccess)

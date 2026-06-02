@@ -156,7 +156,7 @@ void RenderPluginXeSS::render(IRenderView* renderView, ITexture* colorTexture, I
 	CommandBuffer* commandBuffer = rv->getGraphicsCommandBuffer();
 	result = xessVKExecute(m_xessContext, *commandBuffer, &exec_params);
 
-	rv->barrier(Stage::Compute, Stage::Fragment, nullptr, 0);
+	rv->barrier(Stage::Compute, Stage::Fragment, nullptr, 0, false);
 }
 
 }

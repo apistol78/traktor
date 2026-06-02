@@ -236,31 +236,24 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 				m_jointBuffer->unlock();
 			}
 
+			// Ray traced instances skin and rebuild their acceleration structure on the
+			// asynchronous compute queue so it overlaps and is synchronized once, up front,
+			// before any graphics work. Non ray traced instances are skinned synchronously
+			// since their only consumer is rasterization.
+			const bool asynchronous = (m_rtwInstance != nullptr);
+
 			// Update skin.
 			std::swap(m_skinBuffer[0], m_skinBuffer[1]);
-			m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0]);
+			m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0], asynchronous);
 
 			// Update RT geometry and RT instance transform.
 			if (m_rtwInstance)
 			{
-				bool need = true;
+				bool rebuild = false;
+				if ((m_rtUpdates % c_maxRtUpdatesBeforeBuild) == 0)
+					rebuild = true;
 
-				// Interleave RT updates if they are far away.
-				if (distance > 30.0f)
-					need &= ((m_rtUpdates % 32) == 0);
-				else if (distance > 20.0f)
-					need &= ((m_rtUpdates % 16) == 0);
-				else if (distance > 10.0f)
-					need &= ((m_rtUpdates % 8) == 0);
-
-				if (need)
-				{
-					bool rebuild = false;
-					if ((m_rtUpdates % c_maxRtUpdatesBeforeBuild) == 0)
-						rebuild = true;
-
-					m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild);
-				}
+				m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild, true);
 
 				m_rtwInstance->setTransform(worldTransform);
 				++m_rtUpdates;

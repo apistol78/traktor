@@ -310,6 +310,11 @@ void RenderViewVk::close()
 	// Destroy frame resources.
 	for (auto& frame : m_frames)
 	{
+		// Drain any command buffers left flying by synchronize before they are destroyed.
+		for (auto commandBuffer : frame.flyingCommandBuffers)
+			commandBuffer->wait();
+		frame.flyingCommandBuffers.resize(0);
+
 		if (frame.graphicsCommandBuffer)
 			frame.graphicsCommandBuffer->wait();
 		if (frame.computeCommandBuffer)
@@ -433,6 +438,12 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	// size-independent and reused; create() will refresh them if the image count happens to change.
 	for (auto& frame : m_frames)
 	{
+		// The GPU is idle (vkDeviceWaitIdle above); externally mark any flying command
+		// buffers left by synchronize as synced so they can be recycled/destroyed.
+		for (auto commandBuffer : frame.flyingCommandBuffers)
+			commandBuffer->externalSynced();
+		frame.flyingCommandBuffers.resize(0);
+
 		if (frame.graphicsCommandBuffer)
 			frame.graphicsCommandBuffer->externalSynced();
 		if (frame.computeCommandBuffer)
@@ -704,6 +715,10 @@ bool RenderViewVk::beginFrame()
 	m_passCount = 0;
 	m_drawCalls = 0;
 	m_primitiveCount = 0;
+
+	// No asynchronous compute batch open for the new frame.
+	frame.computeRecordValue = 0;
+	frame.computeSubmittedValue = m_timelineSemaphoreValue;
 	return true;
 }
 
@@ -1154,17 +1169,17 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 	m_drawCalls++;
 }
 
-void RenderViewVk::compute(IProgram* program, const int32_t* workSize, bool asynchronous)
+ComputeHandle RenderViewVk::compute(IProgram* program, const int32_t* workSize, bool asynchronous)
 {
 	ProgramVk* p = static_cast< ProgramVk* >(program);
-	const auto& frame = m_frames[m_currentImageIndex];
+	auto& frame = m_frames[m_currentImageIndex];
 	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
 
 	if (!validateComputePipeline(commandBuffer, p))
-		return;
+		return {};
 
 	if (!p->validate(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, nullptr))
-		return;
+		return {};
 
 	const int32_t* lwgs = p->getLocalWorkGroupSize();
 
@@ -1173,6 +1188,11 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize, bool asyn
 		(workSize[0] + lwgs[0] - 1) / lwgs[0],
 		(workSize[1] + lwgs[1] - 1) / lwgs[1],
 		(workSize[2] + lwgs[2] - 1) / lwgs[2]);
+
+	if (!asynchronous)
+		return {};
+
+	return { openComputeBatch(frame) };
 }
 
 void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset)
@@ -1193,9 +1213,10 @@ void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuf
 		wbv->getVkBufferOffset() + workOffset);
 }
 
-void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip)
+void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip, bool asynchronous)
 {
 	const auto& frame = m_frames[m_currentImageIndex];
+	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
 	if (from == Stage::Compute && to == Stage::Indirect)
 	{
 		VkMemoryBarrier mb = {};
@@ -1205,7 +1226,7 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 		mb.dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
 
 		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
+			*commandBuffer,
 			convertStage(from),
 			convertStage(to),
 			0,
@@ -1225,7 +1246,7 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 		mb.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
 		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
+			*commandBuffer,
 			convertStage(from),
 			convertStage(to),
 			0,
@@ -1256,7 +1277,7 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 		imb.subresourceRange.layerCount = 1;
 
 		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
+			*commandBuffer,
 			convertStage(from),
 			convertStage(to),
 			0,
@@ -1276,7 +1297,7 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 		mb.dstAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR;
 
 		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
+			*commandBuffer,
 			convertStage(from),
 			convertStage(to),
 			0,
@@ -1296,7 +1317,7 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 		mb.dstAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR;
 
 		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
+			*commandBuffer,
 			VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
 			VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
 			0,
@@ -1311,7 +1332,7 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 	{
 		// No memory access; only add an execution barrier.
 		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
+			*commandBuffer,
 			convertStage(from),
 			convertStage(to),
 			0,
@@ -1348,6 +1369,83 @@ void RenderViewVk::synchronize()
 
 	// Allocate new command buffers.
 	frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
+	frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
+
+#if defined(T_USE_QUERY)
+	// The query pool reset recorded in beginFrame went into the now submitted graphics
+	// command buffer; re-record a reset of the remaining (unused) queries into the fresh
+	// graphics command buffer so subsequent time stamps target reset queries.
+	if (m_nextQueryIndex < m_lastQueryIndex)
+		vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, m_nextQueryIndex, m_lastQueryIndex - m_nextQueryIndex);
+#endif
+
+	// All asynchronous compute work has been flushed.
+	frame.computeRecordValue = 0;
+	frame.computeSubmittedValue = m_timelineSemaphoreValue;
+}
+
+uint64_t RenderViewVk::openComputeBatch(Frame& frame)
+{
+	// All asynchronous work recorded into the current compute command buffer shares
+	// a single timeline value, reserved lazily here and completing together when the
+	// batch is flushed (in waitCompute, synchronize or endFrame).
+	if (frame.computeRecordValue == 0)
+		frame.computeRecordValue = ++m_timelineSemaphoreValue;
+	return frame.computeRecordValue;
+}
+
+void RenderViewVk::waitCompute(ComputeHandle handle)
+{
+	T_PROFILER_SCOPE(L"RenderViewVk::waitCompute");
+	if (!handle)
+		return;
+
+	auto& frame = m_frames[m_currentImageIndex];
+
+	// When the asynchronous compute queue shares the graphics queue family the two
+	// command buffers are submitted to the same VkQueue in order (compute before
+	// graphics, see endFrame), so a pipeline barrier in the graphics command buffer
+	// is sufficient to make the compute results visible; no queue split or semaphore
+	// is needed.
+	if (m_context->getComputeQueue()->getQueueIndex() == m_context->getGraphicsQueue()->getQueueIndex())
+	{
+		const VkMemoryBarrier mb = {
+			.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
+			.pNext = nullptr,
+			.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT | VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR,
+			.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR
+		};
+		vkCmdPipelineBarrier(
+			*frame.graphicsCommandBuffer,
+			VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT | VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
+			VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+			0,
+			1,
+			&mb,
+			0,
+			nullptr,
+			0,
+			nullptr);
+		return;
+	}
+
+	// Dedicated compute queue; flush the compute batch (if still being recorded)
+	// signalling its timeline value, then split the graphics queue so that all
+	// subsequent graphics work waits on that value.
+	if (handle.value > frame.computeSubmittedValue)
+	{
+		frame.computeCommandBuffer->submitSignal(m_timelineSemaphore, handle.value);
+		frame.flyingCommandBuffers.push_back(frame.computeCommandBuffer);
+		frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
+		frame.computeSubmittedValue = handle.value;
+		frame.computeRecordValue = 0;
+	}
+
+	frame.graphicsCommandBuffer->submitWait(
+		m_timelineSemaphore,
+		handle.value,
+		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
+	frame.flyingCommandBuffers.push_back(frame.graphicsCommandBuffer);
 	frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
 }
 
@@ -1448,16 +1546,30 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 	return true;
 }
 
-void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances)
+ComputeHandle RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances, bool asynchronous)
 {
+	auto& frame = m_frames[m_currentImageIndex];
+	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
 	AccelerationStructureVk* as = mandatory_non_null_type_cast< AccelerationStructureVk* >(accelerationStructure);
-	as->writeInstances(m_frames[m_currentImageIndex].graphicsCommandBuffer, instances);
+	as->writeInstances(commandBuffer, instances);
+
+	if (!asynchronous)
+		return {};
+
+	return { openComputeBatch(frame) };
 }
 
-void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild)
+ComputeHandle RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous)
 {
+	auto& frame = m_frames[m_currentImageIndex];
+	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
 	AccelerationStructureVk* as = mandatory_non_null_type_cast< AccelerationStructureVk* >(accelerationStructure);
-	as->writeGeometry(m_frames[m_currentImageIndex].graphicsCommandBuffer, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, rebuild);
+	as->writeGeometry(commandBuffer, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, rebuild);
+
+	if (!asynchronous)
+		return {};
+
+	return { openComputeBatch(frame) };
 }
 
 int32_t RenderViewVk::beginTimeQuery()
@@ -1505,7 +1617,7 @@ bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, doub
 #endif
 }
 
-void RenderViewVk::pushMarker(const std::wstring& marker)
+void RenderViewVk::pushMarker(bool asynchronous, const std::wstring& marker)
 {
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_haveDebugMarkers)
@@ -1513,13 +1625,14 @@ void RenderViewVk::pushMarker(const std::wstring& marker)
 		auto& frame = m_frames[m_currentImageIndex];
 		if (!marker.empty())
 		{
+			CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
 			frame.markers.push_back(wstombs(marker));
 
 			const VkDebugUtilsLabelEXT dul = {
 				.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
 				.pLabelName = frame.markers.back().c_str()
 			};
-			vkCmdBeginDebugUtilsLabelEXT(*frame.graphicsCommandBuffer, &dul);
+			vkCmdBeginDebugUtilsLabelEXT(*commandBuffer, &dul);
 
 			frame.markerStack.push_back(true);
 		}
@@ -1529,32 +1642,37 @@ void RenderViewVk::pushMarker(const std::wstring& marker)
 #endif
 }
 
-void RenderViewVk::popMarker()
+void RenderViewVk::popMarker(bool asynchronous)
 {
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_haveDebugMarkers)
 	{
 		auto& frame = m_frames[m_currentImageIndex];
 		if (frame.markerStack.back())
-			vkCmdEndDebugUtilsLabelEXT(*frame.graphicsCommandBuffer);
+		{
+			CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
+			vkCmdEndDebugUtilsLabelEXT(*commandBuffer);
+		}
 		frame.markerStack.pop_back();
 	}
 #endif
 }
 
-void RenderViewVk::writeMarker(const std::wstring& marker)
+void RenderViewVk::writeMarker(bool asynchronous, const std::wstring& marker)
 {
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_haveDebugMarkers)
 	{
 		auto& frame = m_frames[m_currentImageIndex];
+		CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
+
 		frame.markers.push_back(wstombs(marker));
 
 		const VkDebugUtilsLabelEXT dul = {
 			.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
 			.pLabelName = frame.markers.back().c_str()
 		};
-		vkCmdInsertDebugUtilsLabelEXT(*frame.graphicsCommandBuffer, &dul);
+		vkCmdInsertDebugUtilsLabelEXT(*commandBuffer, &dul);
 	}
 #endif
 }

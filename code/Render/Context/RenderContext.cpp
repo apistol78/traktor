@@ -88,6 +88,11 @@ void RenderContext::compute(RenderBlock* renderBlock)
 	m_computeQueue.push_back(renderBlock);
 }
 
+void RenderContext::computeAsync(RenderBlock* renderBlock)
+{
+	m_asyncComputeQueue.push_back(renderBlock);
+}
+
 void RenderContext::draw(RenderBlock* renderBlock)
 {
 	m_drawQueue.push_back(renderBlock);
@@ -170,6 +175,24 @@ void RenderContext::mergeComputeIntoRender()
 	m_computeQueue.resize(0);
 }
 
+void RenderContext::mergeAsyncComputeIntoRender()
+{
+	if (m_asyncComputeQueue.empty())
+		return;
+
+	// Insert a synchronization block followed in front by all asynchronous compute
+	// blocks, so the render queue becomes:
+	//
+	//   [ async compute ... ][ synchronize ][ all other blocks ... ]
+	//
+	// This kicks off the asynchronous compute first in the frame and ensures all
+	// graphics work observes its result.
+	SynchronizeRenderBlock* synchronizeBlock = alloc< SynchronizeRenderBlock >();
+	m_renderQueue.insert(m_renderQueue.begin(), synchronizeBlock);
+	m_renderQueue.insert(m_renderQueue.begin(), m_asyncComputeQueue.begin(), m_asyncComputeQueue.end());
+	m_asyncComputeQueue.resize(0);
+}
+
 void RenderContext::mergeDrawIntoRender()
 {
 	// Merge draw blocks into render queue.
@@ -202,12 +225,15 @@ void RenderContext::flush()
 	// As blocks are allocated from a fixed pool we need to manually call destructors.
 	for (auto renderBlock : m_computeQueue)
 		renderBlock->~RenderBlock();
+	for (auto renderBlock : m_asyncComputeQueue)
+		renderBlock->~RenderBlock();
 	for (auto renderBlock : m_drawQueue)
 		renderBlock->~RenderBlock();
 	for (auto renderBlock : m_renderQueue)
 		renderBlock->~RenderBlock();
 
 	m_computeQueue.resize(0);
+	m_asyncComputeQueue.resize(0);
 	m_drawQueue.resize(0);
 	m_renderQueue.resize(0);
 

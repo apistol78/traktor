@@ -35,10 +35,10 @@ class IProgram;
 #define T_USE_RENDER_MARKERS
 
 #if defined(T_USE_RENDER_MARKERS)
-#	define T_RENDER_PUSH_MARKER(renderView, marker) \
-		(renderView)->pushMarker(marker)
-#	define T_RENDER_POP_MARKER(renderView) \
-		(renderView)->popMarker()
+#	define T_RENDER_PUSH_MARKER(renderView, asynchronous, marker) \
+		(renderView)->pushMarker(asynchronous, marker)
+#	define T_RENDER_POP_MARKER(renderView, asynchronous) \
+		(renderView)->popMarker(asynchronous)
 #else
 #	define T_RENDER_PUSH_MARKER(renderView, marker)
 #	define T_RENDER_POP_MARKER(renderView)
@@ -176,8 +176,10 @@ public:
 	/*! Enqueue compute task.
 	 *
 	 * \param workSize Work size, 3 dimensional size.
+	 * \param asynchronous Enqueue onto the asynchronous compute queue.
+	 * \return Handle to the asynchronous work, or an invalid handle if not asynchronous.
 	 */
-	virtual void compute(IProgram* program, const int32_t* workSize, bool asynchronous) = 0;
+	virtual ComputeHandle compute(IProgram* program, const int32_t* workSize, bool asynchronous) = 0;
 
 	/*! Enqueue indirect compute task.
 	 *
@@ -192,11 +194,22 @@ public:
 	 * \param to To pipeline stage.
 	 * \param written Optional written to texture, memory barrier.
 	 * \param writtenMip Mip of written to texture.
+	 * \param asynchronous Record the barrier on the asynchronous compute queue instead of the graphics queue.
 	 */
-	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip) = 0;
+	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip, bool asynchronous) = 0;
 
-	/*! Synchronize asynchronous compute work with graphics queue. */
+	/*! Synchronize all asynchronous compute work with graphics queue. */
 	virtual void synchronize() = 0;
+
+	/*! Make subsequent graphics queue work wait for asynchronous compute to complete.
+	 *
+	 * Inserts a synchronization point on the graphics queue so that any work
+	 * recorded after this call observes the result of the asynchronous compute
+	 * identified by the handle. An invalid handle is ignored.
+	 *
+	 * \param handle Handle returned from an asynchronous compute or acceleration structure build.
+	 */
+	virtual void waitCompute(ComputeHandle handle) = 0;
 
 	/*! Copy texture.
 	 *
@@ -207,11 +220,19 @@ public:
 	 */
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) = 0;
 
-	/*! Write instances into top level acceleration structure. */
-	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances) = 0;
+	/*! Write instances into top level acceleration structure.
+	 *
+	 * \param asynchronous Build on the asynchronous compute queue.
+	 * \return Handle to the asynchronous build, or an invalid handle if not asynchronous.
+	 */
+	virtual ComputeHandle writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances, bool asynchronous) = 0;
 
-	/*! Write geometry data into bottom level acceleration structure. */
-	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild) = 0;
+	/*! Write geometry data into bottom level acceleration structure.
+	 *
+	 * \param asynchronous Build on the asynchronous compute queue.
+	 * \return Handle to the asynchronous build, or an invalid handle if not asynchronous.
+	 */
+	virtual ComputeHandle writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous) = 0;
 
 	/*! \name Time queries. */
 	//@{
@@ -231,13 +252,13 @@ public:
 	//@{
 
 	/*! Write push debug marker to command buffer. */
-	virtual void pushMarker(const std::wstring& marker) = 0;
+	virtual void pushMarker(bool asynchronous, const std::wstring& marker) = 0;
 
 	/*! Write pop debug marker to command buffer. */
-	virtual void popMarker() = 0;
+	virtual void popMarker(bool asynchronous) = 0;
 
 	/*! */
-	virtual void writeMarker(const std::wstring& marker) = 0;
+	virtual void writeMarker(bool asynchronous, const std::wstring& marker) = 0;
 
 	/*! Get render view statistics. */
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const = 0;

@@ -80,13 +80,15 @@ public:
 	void buildSkin(
 		render::RenderContext* renderContext,
 		render::Buffer* jointTransforms,
-		render::Buffer* skinBuffer) const;
+		render::Buffer* skinBuffer,
+		bool asynchronous = false) const;
 
 	void buildAccelerationStructure(
 		render::RenderContext* renderContext,
 		render::Buffer* skinBuffer,
 		render::IAccelerationStructure* accelerationStructure,
-		bool rebuild) const;
+		bool rebuild,
+		bool asynchronous = false) const;
 
 	void build(
 		render::RenderContext* renderContext,

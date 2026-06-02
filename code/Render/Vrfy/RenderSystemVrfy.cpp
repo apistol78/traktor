@@ -7,7 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #if defined(_WIN32) || defined(__LINUX__)
-//#	define T_USE_AFTERMATH
+#	define T_USE_AFTERMATH
 #	define T_USE_RENDERDOC
 #endif
 

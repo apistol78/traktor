@@ -700,6 +700,10 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	}
 #endif
 
+	// All passes have been added; kick off any asynchronous compute first in the frame,
+	// inserting a synchronization before all other render blocks.
+	renderContext->mergeAsyncComputeIntoRender();
+
 	T_FATAL_ASSERT(!renderContext->havePendingComputes());
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 

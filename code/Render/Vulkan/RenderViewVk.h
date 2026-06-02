@@ -108,19 +108,21 @@ public:
 
 	virtual void drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawOffset, uint32_t drawCount) override final;
 
-	virtual void compute(IProgram* program, const int32_t* workSize, bool asynchronous) override final;
+	virtual ComputeHandle compute(IProgram* program, const int32_t* workSize, bool asynchronous) override final;
 
 	virtual void computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset) override final;
 
-	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip) override final;
+	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip, bool asynchronous) override final;
 
 	virtual void synchronize() override final;
 
+	virtual void waitCompute(ComputeHandle handle) override final;
+
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) override final;
 
-	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances) override final;
+	virtual ComputeHandle writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances, bool asynchronous) override final;
 
-	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild) override final;
+	virtual ComputeHandle writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous) override final;
 
 	virtual int32_t beginTimeQuery() override final;
 
@@ -128,11 +130,11 @@ public:
 
 	virtual bool getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const override final;
 
-	virtual void pushMarker(const std::wstring& marker) override final;
+	virtual void pushMarker(bool asynchronous, const std::wstring& marker) override final;
 
-	virtual void popMarker() override final;
+	virtual void popMarker(bool asynchronous) override final;
 
-	virtual void writeMarker(const std::wstring& marker) override final;
+	virtual void writeMarker(bool asynchronous, const std::wstring& marker) override final;
 
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const override final;
 
@@ -155,6 +157,8 @@ private:
 		RefArray< CommandBuffer > flyingCommandBuffers;
 		std::list< std::string > markers;
 		AlignedVector< bool > markerStack;
+		uint64_t computeRecordValue = 0;	//!< Timeline value of the open (not yet submitted) asynchronous compute batch; 0 if none open.
+		uint64_t computeSubmittedValue = 0;	//!< Highest asynchronous compute batch value already submitted to the compute queue this frame.
 	};
 
 	Context* m_context = nullptr;
@@ -227,6 +231,9 @@ private:
 	bool validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt);
 
 	bool validateComputePipeline(CommandBuffer* commandBuffer, const ProgramVk* p);
+
+	//! Reserve (or return the already reserved) timeline value for the current frame's open asynchronous compute batch.
+	uint64_t openComputeBatch(Frame& frame);
 
 #if defined(_WIN32)
 	// \name IWindowListener implementation.

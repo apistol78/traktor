@@ -38,6 +38,23 @@ namespace traktor::render
 /*! \ingroup Render */
 //@{
 
+/*! Handle to enqueued asynchronous compute work.
+ *
+ * Returned by asynchronous compute and acceleration structure builds. Pass the
+ * handle to IRenderView::waitCompute to make subsequent graphics queue work
+ * observe the result of the asynchronous work.
+ *
+ * The value is backend specific (a timeline value on Vulkan) and is only valid
+ * within the frame in which it was produced. A default constructed handle, or a
+ * handle returned from a non-asynchronous call, is invalid and ignored by waitCompute.
+ */
+struct ComputeHandle
+{
+	uint64_t value = 0;	//!< Backend specific completion value; 0 denotes no asynchronous work.
+
+	explicit operator bool() const { return value != 0; }
+};
+
 enum class PrecisionHint
 {
 	Undefined = 0,

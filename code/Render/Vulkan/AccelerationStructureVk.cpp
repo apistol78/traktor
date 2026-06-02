@@ -25,6 +25,11 @@ namespace traktor::render
 namespace
 {
 
+// Number of in-flight copies of a dynamic bottom level acceleration structure. Must be
+// at least the swap chain image (frames-in-flight) count so a frame never rebuilds a
+// copy that a still-executing prior frame's ray queries are reading.
+const uint32_t c_dynamicRingCount = 3;
+
 uint32_t getScratchAlignment(Context* context)
 {
 	// Determine alignment requirement of scratch buffer.
@@ -112,12 +117,15 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 		topLevelMaxPrimitiveCountList.ptr(),
 		&topLevelAccelerationStructureBuildSizesInfo);
 
-	// Create buffer to hold AS hierarchical data.
+	// Create buffer to hold AS hierarchical data. Shared concurrently between graphics
+	// and a dedicated compute queue since the structure is built on compute but read
+	// by graphics (ray queries) when built asynchronously.
 	Ref< ApiBuffer > hierarchyBuffer = new ApiBuffer(context);
 	if (!hierarchyBuffer->create(
 			topLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,
 			VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR,
 			false,
+			true,
 			true))
 	{
 		safeDestroy(instanceBuffer);
@@ -164,10 +172,10 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 	}
 
 	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context, false);
-	as->m_hierarchyBuffer = hierarchyBuffer;
+	as->m_hierarchyBuffers.push_back(hierarchyBuffer);
+	as->m_scratchBuffers.push_back(scratchBuffer);
+	as->m_as.push_back(accelerationStructure);
 	as->m_instanceBuffer = instanceBuffer;
-	as->m_scratchBuffer = scratchBuffer;
-	as->m_as = accelerationStructure;
 	as->m_scratchAlignment = scratchAlignment;
 	return as;
 }
@@ -178,6 +186,15 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 
 	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context, dynamic);
 	as->m_scratchAlignment = getScratchAlignment(context);
+
+	// A dynamic structure is rebuilt every frame so it is ring buffered to the in-flight
+	// count; a static structure is built once and never updated, so a single slot suffices.
+	const uint32_t count = dynamic ? c_dynamicRingCount : 1;
+	as->m_hierarchyBuffers.resize(count);
+	as->m_scratchBuffers.resize(count);
+	as->m_as.resize(count, 0);
+	as->m_index = count - 1;	// First writeGeometry advances to slot 0.
+
 	as->writeGeometry(commandBuffer, vertexBuffer->getBufferView(), vertexLayout, indexBuffer->getBufferView(), indexType, primitives, true);
 
 	commandBuffer->submitAndWait();
@@ -189,16 +206,25 @@ void AccelerationStructureVk::destroy()
 {
 	if (m_context != nullptr)
 	{
-		m_context->addDeferredCleanup(
-			[as = m_as](Context* cx) {
-			vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr);
-			},
-			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
-		m_as = 0;
+		for (VkAccelerationStructureKHR as : m_as)
+		{
+			if (as == 0)
+				continue;
+			m_context->addDeferredCleanup(
+				[as](Context* cx) {
+				vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr);
+				},
+				Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
+		}
 	}
+	m_as.clear();
+	for (auto& hierarchyBuffer : m_hierarchyBuffers)
+		safeDestroy(hierarchyBuffer);
+	m_hierarchyBuffers.clear();
+	for (auto& scratchBuffer : m_scratchBuffers)
+		safeDestroy(scratchBuffer);
+	m_scratchBuffers.clear();
 	safeDestroy(m_instanceBuffer);
-	safeDestroy(m_hierarchyBuffer);
-	safeDestroy(m_scratchBuffer);
 	m_context = nullptr;
 }
 
@@ -261,12 +287,12 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 		.flags = 0,
 		.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
 		.srcAccelerationStructure = VK_NULL_HANDLE,
-		.dstAccelerationStructure = m_as,
+		.dstAccelerationStructure = m_as[m_index],
 		.geometryCount = 1,
 		.pGeometries = &topLevelAccelerationStructureGeometry,
 		.ppGeometries = NULL,
 		.scratchData = {
-			.deviceAddress = alignUp(m_scratchBuffer->getDeviceAddress(), m_scratchAlignment) }
+			.deviceAddress = alignUp(m_scratchBuffers[m_index]->getDeviceAddress(), m_scratchAlignment) }
 	};
 
 	const VkAccelerationStructureBuildRangeInfoKHR topLevelAccelerationStructureBuildRangeInfo = {
@@ -355,35 +381,43 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 		bottomLevelMaxPrimitiveCountList.ptr(),
 		&bottomLevelAccelerationStructureBuildSizesInfo);
 
+	// Advance to the next ring slot so this build does not write a structure that a
+	// prior, still in-flight frame's graphics ray queries may be reading. Dynamic
+	// structures have a multi-slot ring; others have a single slot.
+	m_index = (m_index + 1) % (uint32_t)m_as.size();
+	const uint32_t slot = m_index;
+
 	// Re-create buffer to hold AS hierarchical data.
-	if (m_hierarchyBuffer && m_hierarchyBuffer->getSize() < bottomLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize)
-		safeDestroy(m_hierarchyBuffer);
-	if (!m_hierarchyBuffer)
+	if (m_hierarchyBuffers[slot] && m_hierarchyBuffers[slot]->getSize() < bottomLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize)
+		safeDestroy(m_hierarchyBuffers[slot]);
+	if (!m_hierarchyBuffers[slot])
 	{
-		m_hierarchyBuffer = new ApiBuffer(m_context);
-		if (!m_hierarchyBuffer->create(
+		m_hierarchyBuffers[slot] = new ApiBuffer(m_context);
+		if (!m_hierarchyBuffers[slot]->create(
 				bottomLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,
 				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
 				false,
+				true,
 				true))
 			return false;
 
 		recreateAS = true;
 	}
 
-	// Re-create scratch buffer used when building the hierarchy.
-	if (m_scratchBuffer && m_scratchBuffer->getSize() < bottomLevelAccelerationStructureBuildSizesInfo.buildScratchSize + m_scratchAlignment)
-		safeDestroy(m_scratchBuffer);
-	if (!m_scratchBuffer)
+	// Re-create scratch buffer used when building the hierarchy. Each ring slot has its
+	// own scratch so concurrent in-flight builds do not collide on it.
+	if (m_scratchBuffers[slot] && m_scratchBuffers[slot]->getSize() < bottomLevelAccelerationStructureBuildSizesInfo.buildScratchSize + m_scratchAlignment)
+		safeDestroy(m_scratchBuffers[slot]);
+	if (!m_scratchBuffers[slot])
 	{
-		m_scratchBuffer = new ApiBuffer(m_context);
-		if (!m_scratchBuffer->create(
+		m_scratchBuffers[slot] = new ApiBuffer(m_context);
+		if (!m_scratchBuffers[slot]->create(
 				bottomLevelAccelerationStructureBuildSizesInfo.buildScratchSize + m_scratchAlignment,
 				VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
 				false,
 				true))
 		{
-			safeDestroy(m_hierarchyBuffer);
+			safeDestroy(m_hierarchyBuffers[slot]);
 			return false;
 		}
 
@@ -395,49 +429,50 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
 		.pNext = nullptr,
 		.createFlags = 0,
-		.buffer = *m_hierarchyBuffer,
+		.buffer = *m_hierarchyBuffers[slot],
 		.offset = 0,
 		.size = bottomLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
 		.deviceAddress = 0
 	};
 
-	if (recreateAS && m_as != 0)
+	if (recreateAS && m_as[slot] != 0)
 	{
 		m_context->addDeferredCleanup(
-			[as = m_as](Context* cx) {
+			[as = m_as[slot]](Context* cx) {
 			vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr);
 			},
 			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
-		m_as = 0;
+		m_as[slot] = 0;
 	}
 
-	// If dynamic and the AS object is still valid, perform an in-place update
+	// If dynamic and this slot's AS object is still valid, perform an in-place update
 	// rather than a full rebuild. Requires that the source AS was built with
 	// VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR and that the geometry
-	// topology (primitive counts and layout) is unchanged.
-	const bool updateInPlace = (m_dynamic && !rebuild && !recreateAS && m_as != 0);
+	// topology (primitive counts and layout) is unchanged. Each slot refits its own
+	// (in-flight count frames old) contents using the current vertex data.
+	const bool updateInPlace = (m_dynamic && !rebuild && !recreateAS && m_as[slot] != 0);
 	if (updateInPlace)
 	{
 		bottomLevelAccelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR;
-		bottomLevelAccelerationStructureBuildGeometryInfo.srcAccelerationStructure = m_as;
+		bottomLevelAccelerationStructureBuildGeometryInfo.srcAccelerationStructure = m_as[slot];
 	}
 
 	// Re-create if necessary.
-	if (!m_as)
+	if (!m_as[slot])
 	{
 		result = vkCreateAccelerationStructureKHR(
 			m_context->getLogicalDevice(),
 			&bottomLevelAccelerationStructureCreateInfo,
 			nullptr,
-			&m_as);
+			&m_as[slot]);
 		if (result != VK_SUCCESS)
 			return false;
 	}
 
 	// Build AS.
-	bottomLevelAccelerationStructureBuildGeometryInfo.dstAccelerationStructure = m_as;
-	bottomLevelAccelerationStructureBuildGeometryInfo.scratchData.deviceAddress = alignUp(m_scratchBuffer->getDeviceAddress(), m_scratchAlignment);
+	bottomLevelAccelerationStructureBuildGeometryInfo.dstAccelerationStructure = m_as[slot];
+	bottomLevelAccelerationStructureBuildGeometryInfo.scratchData.deviceAddress = alignUp(m_scratchBuffers[slot]->getDeviceAddress(), m_scratchAlignment);
 
 	AlignedVector< VkAccelerationStructureBuildRangeInfoKHR > buildRanges;
 	for (const auto& rtp : primitives)

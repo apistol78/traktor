@@ -328,11 +328,22 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-	// Select compute queue.
+	// Select compute queue. Prefer a dedicated (asynchronous) compute family, i.e. one
+	// that supports compute but not graphics, so asynchronous compute runs on a separate
+	// queue.
+	//
+	// NOTE (proof of concept): the synchronization point is currently within the same
+	// frame, so there is no real graphics/compute overlap, and asynchronously written /
+	// graphics read resources (skinned vertex buffers, dynamic BLAS) are not yet buffered
+	// to the in-flight count, so the dynamic BLAS in-place update may race the previous
+	// frame's ray query reads and show as visual corruption. Buffers are created with
+	// concurrent sharing (see ApiBuffer) so no queue family ownership transfer is needed.
 	uint32_t computeQueueIndex = ~0;
 	for (uint32_t i = 0; i < queueFamilyCount; ++i)
 	{
-		if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) == VK_QUEUE_COMPUTE_BIT)
+		const VkQueueFlags queueFlags = queueFamilyProperties[i].queueFlags;
+		if ((queueFlags & VK_QUEUE_COMPUTE_BIT) == VK_QUEUE_COMPUTE_BIT &&
+			(queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0)
 		{
 			computeQueueIndex = i;
 			break;
@@ -340,10 +351,19 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 	if (computeQueueIndex == ~0)
 	{
-		// No dedicated compute queue found; use same as graphics since
-		// graphics must support compute.
-		computeQueueIndex = graphicsQueueIndex;
+		// No dedicated compute family; fall back to the first compute capable family
+		// (typically the graphics family, since graphics must support compute).
+		for (uint32_t i = 0; i < queueFamilyCount; ++i)
+		{
+			if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) == VK_QUEUE_COMPUTE_BIT)
+			{
+				computeQueueIndex = i;
+				break;
+			}
+		}
 	}
+	if (computeQueueIndex == ~0)
+		computeQueueIndex = graphicsQueueIndex;
 
 	log::info << L"Using graphics queue " << graphicsQueueIndex << L", compute queue " << computeQueueIndex << L"." << Endl;
 

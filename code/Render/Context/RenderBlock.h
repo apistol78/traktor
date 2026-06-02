@@ -71,6 +71,7 @@ public:
 	ProgramParameters* programParams = nullptr;
 	int32_t workSize[3] = { 1, 1, 1 };
 	bool asynchronous = false;
+	ComputeHandle* outHandle = nullptr;	//!< If set, receives the handle of the (asynchronous) compute work.
 
 	virtual void render(IRenderView* renderView) const override final;
 };
@@ -257,6 +258,39 @@ public:
 	virtual void render(IRenderView* renderView) const override final;
 };
 
+/*! Wait for asynchronous compute block.
+ * \ingroup Render
+ *
+ * Inserts a synchronization point on the graphics queue so subsequent graphics
+ * work observes the result of the asynchronous compute identified by the handle.
+ */
+class T_DLLCLASS WaitComputeRenderBlock : public RenderBlock
+{
+public:
+	const ComputeHandle* handle = nullptr;
+
+	WaitComputeRenderBlock() = default;
+
+	explicit WaitComputeRenderBlock(const ComputeHandle* handle_)
+		: handle(handle_)
+	{
+	}
+
+	virtual void render(IRenderView* renderView) const override final;
+};
+
+/*! Synchronize asynchronous compute with graphics queue block.
+ * \ingroup Render
+ *
+ * Calls IRenderView::synchronize so subsequent graphics work observes the result
+ * of all asynchronous compute kicked off earlier in the frame.
+ */
+class T_DLLCLASS SynchronizeRenderBlock : public RenderBlock
+{
+public:
+	virtual void render(IRenderView* renderView) const override final;
+};
+
 /*! Barrier block.
  * \ingroup Render
  */
@@ -267,14 +301,16 @@ public:
 	Stage to = Stage::Invalid;
 	ITexture* written = nullptr;
 	uint32_t writtenMip = 0;
+	bool asynchronous = false;	//!< Record the barrier on the asynchronous compute queue.
 
 	BarrierRenderBlock() = default;
 
-	explicit BarrierRenderBlock(Stage from_, Stage to_, ITexture* written_, uint32_t writtenMip_)
+	explicit BarrierRenderBlock(Stage from_, Stage to_, ITexture* written_, uint32_t writtenMip_, bool asynchronous_ = false)
 		: from(from_)
 		, to(to_)
 		, written(written_)
 		, writtenMip(writtenMip_)
+		, asynchronous(asynchronous_)
 	{
 	}
 
@@ -288,6 +324,7 @@ class T_DLLCLASS LambdaRenderBlock : public RenderBlock
 {
 public:
 	std::function< void(IRenderView*) > lambda;
+	bool asynchronous = false;	//!< The lambda is expected to work on the asynchronous compute queue.
 
 	LambdaRenderBlock() = default;
 

@@ -78,6 +78,23 @@ public:
 		compute(object);
 	}
 
+	/*! Add block to asynchronous compute queue.
+	 *
+	 * Asynchronous compute blocks are collected separately and, when merged via
+	 * mergeAsyncComputeIntoRender, placed first in the render queue followed by a
+	 * synchronization block. This kicks the work off at the start of the frame on the
+	 * asynchronous compute queue and ensures all subsequent graphics work waits for it.
+	 */
+	void computeAsync(RenderBlock* renderBlock);
+
+	/*! Add block to asynchronous compute queue. */
+	template < typename ObjectType, typename... ArgumentTypes >
+	void computeAsync(ArgumentTypes&&... args)
+	{
+		ObjectType* object = alloc< ObjectType, ArgumentTypes... >(std::forward< ArgumentTypes >(args)...);
+		computeAsync(object);
+	}
+
 	/*! Add a render block to draw queue. */
 	void draw(RenderBlock* renderBlock);
 
@@ -109,6 +126,14 @@ public:
 	/*! Merge compute queues into render queue. */
 	void mergeComputeIntoRender();
 
+	/*! Merge asynchronous compute queue first into render queue.
+	 *
+	 * Inserts all asynchronous compute blocks at the front of the render queue,
+	 * followed by a synchronization block (IRenderView::synchronize), so the work is
+	 * kicked off first in the frame and all other blocks observe its result.
+	 */
+	void mergeAsyncComputeIntoRender();
+
 	/*! Merge draw queues into render queue. */
 	void mergeDrawIntoRender();
 
@@ -132,6 +157,7 @@ private:
 	uint8_t* m_heapEnd;
 	uint8_t* m_heapPtr;
 	AlignedVector< RenderBlock* > m_computeQueue;
+	AlignedVector< RenderBlock* > m_asyncComputeQueue;
 	AlignedVector< DrawableRenderBlock* > m_priorityQueue[6];
 	AlignedVector< RenderBlock* > m_drawQueue;
 	AlignedVector< RenderBlock* > m_renderQueue;

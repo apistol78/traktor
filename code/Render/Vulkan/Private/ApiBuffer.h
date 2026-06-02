@@ -35,7 +35,7 @@ public:
 
 	virtual ~ApiBuffer();
 
-	bool create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess);
+	bool create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess, bool concurrent = false);
 
 	void destroy();
 

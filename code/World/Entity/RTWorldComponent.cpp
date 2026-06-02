@@ -79,7 +79,7 @@ void RTWorldComponent::build(const WorldBuildContext& context)
 		auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"RTWorldComponent");
 		rb->lambda = [=, this](render::IRenderView* renderView)
 		{
-			renderView->writeAccelerationStructure(m_tlas, tlasInstances);
+			renderView->writeAccelerationStructure(m_tlas, tlasInstances, false);
 		};
 		renderContext->compute(rb);
 

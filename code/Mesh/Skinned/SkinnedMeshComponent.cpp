@@ -100,8 +100,14 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 
 	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0 && worldRenderView.getIndex() == 0)
 	{
+		// Ray traced instances skin and rebuild their acceleration structure on the
+		// asynchronous compute queue so it overlaps and is synchronized once, up front,
+		// before any graphics work. Non ray traced instances are skinned synchronously
+		// since their only consumer is rasterization.
+		const bool asynchronous = (m_rtwInstance != nullptr);
+
 		std::swap(m_skinBuffer[0], m_skinBuffer[1]);
-		m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0]);
+		m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0], asynchronous);
 		if (m_rtwInstance)
 		{
 			bool rebuild = false;
@@ -110,7 +116,7 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 				rebuild = true;
 				m_rtUpdates = 0;
 			}
-			m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild);
+			m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild, true);
 			m_rtwInstance->setTransform(worldTransform);
 		}
 	}
