@@ -489,28 +489,25 @@ PACKAGES =
 		license = "MIT"
 	},
 
-	--[[
 	-- nvidia nsight aftermath SDK
 	{
 		type = "GET",
 		name = "aftermath",
 		os = "windows",
-		url = "https://developer.nvidia.com/downloads/assets/tools/secure/nsight-aftermath-sdk/2025_5_0/windows/NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317.zip",
-		url = "https://developer.nvidia.com/downloads/assets/tools/secure/nsight-aftermath-sdk/2025_5_0/windows/NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317.zip"
+		url = "https://developer.nvidia.com/downloads/assets/tools/secure/nsight-aftermath-sdk/2025_5_0/windows_x64/NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317-windows_x64.zip",
 		patch = function()
-			run:execute(UNZIP .. " -qq NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317.zip")
+			run:execute(UNZIP .. " -qq NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317-windows_x64.zip")
 		end
 	},
 	{
 		type = "GET",
 		name = "aftermath",
 		os = "linux",
-		url = "https://developer.nvidia.com/downloads/assets/tools/secure/nsight-aftermath-sdk/2025_5_0/linux/NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317.tgz",
+		url = "https://developer.nvidia.com/downloads/assets/tools/secure/nsight-aftermath-sdk/2025_5_0/linux_x64/NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317-linux_x64.tgz",
 		patch = function()
-			run:execute(TAR .. " -xf NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317.tgz")
+			run:execute(TAR .. " -xf NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317-linux_x64.tgz")
 		end
 	},
-	]]
 	
 	-- Intel XeSS
 	{
