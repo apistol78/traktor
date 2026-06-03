@@ -199,7 +199,7 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 	else
 		m_program->setTextureParameter(handle, nullptr);
 
-	if (m_validHandles.find(handle) != m_validHandles.end())
+	if (m_resource == nullptr || m_validHandles.find(handle) != m_validHandles.end())
 		m_boundTextures[handle] = texture;
 
 	const auto it = m_shadow.find(handle);
@@ -235,7 +235,7 @@ void ProgramVrfy::setImageViewParameter(handle_t handle, ITexture* imageView, in
 	else
 		m_program->setImageViewParameter(handle, nullptr, 0);
 
-	if (m_validHandles.find(handle) != m_validHandles.end())
+	if (m_resource == nullptr || m_validHandles.find(handle) != m_validHandles.end())
 		m_boundImages[handle] = { imageView, mip };
 
 	const auto it = m_shadow.find(handle);
