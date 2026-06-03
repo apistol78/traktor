@@ -98,7 +98,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	Ref< Platform > platform = m_database->getObjectReadOnly< Platform >(m_targetConfiguration->getPlatform());
 	if (!platform)
 	{
-		log::error << L"Unable to get platform object" << Endl;
+		log::error << L"Unable to get platform object \"" << m_targetConfiguration->getPlatform().format() << L"\"." << Endl;
 		return false;
 	}
 
@@ -230,7 +230,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	// Ensure output directory exists.
 	if (!FileSystem::getInstance().makeAllDirectories(m_outputPath))
 	{
-		log::error << L"Unable to create output path \"" << m_outputPath << L"\"" << Endl;
+		log::error << L"Unable to create output path \"" << m_outputPath << L"\"." << Endl;
 		return false;
 	}
 
@@ -246,7 +246,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	}
 	else
 	{
-		log::error << L"Unable to write pipeline configuration" << Endl;
+		log::error << L"Unable to write pipeline configuration \"" << m_outputPath << L"/Pipeline.config\"." << Endl;
 		return false;
 	}
 
@@ -316,7 +316,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	);
 	if (!process)
 	{
-		log::error << L"Failed to launch process \"" << deployTool.getExecutable() << L"\"" << Endl;
+		log::error << L"Failed to launch process \"" << deployTool.getExecutable() << L"\"." << Endl;
 		return false;
 	}
 
@@ -383,16 +383,16 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 			break;
 	}
 
-	//if (!errors.empty())
-	//{
-	//	log::error << L"Unsuccessful build, error(s):" << Endl;
-	//	for (const auto& error : errors)
-	//		log::error << L"\t" << error << Endl;
-	//}
+	if (!errors.empty())
+	{
+		log::error << L"Unsuccessful build, error(s):" << Endl;
+		for (const auto& error : errors)
+			log::error << L"\t" << error << Endl;
+	}
 
 	const int32_t exitCode = process->exitCode();
-	//if (exitCode != 0)
-	//	log::error << L"Process \"" << ss.str() << L"\" failed with exit code " << exitCode << L"." << Endl;
+	if (exitCode != 0)
+		log::error << L"Process \"" << ss.str() << L"\" failed with exit code " << exitCode << L"." << Endl;
 
 	return exitCode == 0;
 }

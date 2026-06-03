@@ -358,7 +358,8 @@ end
 
 
 function main(args)
-	local action = args:get(0)
+	local action < const > = args:get(0)
+
 	if action == "build" then
 		return build(args)
 	elseif action == "deploy" then
@@ -376,5 +377,6 @@ function main(args)
 		stdout:printLn("    launch")
 		stdout:printLn("    migrate")
 	end
+
 	return 1
 end
