@@ -58,7 +58,6 @@ void ScriptContextLua::destroy()
 
 				DO_1(m_luaState, luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_environmentRef));
 				m_environmentRef = LUA_NOREF;
-				m_luaState = nullptr;
 			}
 
 			// Perform a full garbage collect; don't want
