@@ -257,12 +257,12 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 				bool need = true;
 
 				// Interleave RT updates if they are far away.
-				if (distance > 30.0f)
-					need &= ((m_rtUpdates % 32) == 0);
-				else if (distance > 20.0f)
-					need &= ((m_rtUpdates % 16) == 0);
-				else if (distance > 10.0f)
-					need &= ((m_rtUpdates % 8) == 0);
+				// if (distance > 30.0f)
+				// 	need &= ((m_rtUpdates % 32) == 0);
+				// else if (distance > 20.0f)
+				// 	need &= ((m_rtUpdates % 16) == 0);
+				// else if (distance > 10.0f)
+				// 	need &= ((m_rtUpdates % 8) == 0);
 
 				if (need)
 				{
