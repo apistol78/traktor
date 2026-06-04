@@ -389,6 +389,16 @@ bool ShaderPipeline::buildOutput(
 		return false;
 	}
 
+	// Freeze types, get typed permutation.
+	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getTypePermutation");
+	shaderGraph = render::ShaderGraphStatic(shaderGraph, shaderGraphId).getTypePermutation();
+	pipelineBuilder->getProfiler()->end();
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to freeze types." << Endl;
+		return false;
+	}	
+
 	// Remove unused branches from shader graph.
 	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline removeUnusedBranches");
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches(false);

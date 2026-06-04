@@ -62,7 +62,7 @@
 				</item>
 				<item>
 					<id>{E17C87D4-085A-409D-9642-1926DBAADBBC}</id>
-					<name>World position offse</name>
+					<name>World position offset</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>

@@ -117,7 +117,7 @@
 				<first>31</first>
 				<second>362</second>
 			</position>
-			<name>World position offse</name>
+			<name>World position offset</name>
 			<optional>true</optional>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">

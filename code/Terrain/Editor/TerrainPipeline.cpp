@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,12 +33,10 @@
 #include "Terrain/Editor/TerrainAsset.h"
 #include "Terrain/Editor/TerrainPipeline.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_cutsCountThreshold = 10;
 
@@ -47,11 +45,13 @@ const Guid c_guidColorMapSeed(L"{E2A97254-B596-4665-900B-FB70A2267AF7}");
 const Guid c_guidNormalMapSeed(L"{84F74E7F-4D02-40f6-A07A-EE9F5EF3CDB4}");
 const Guid c_guidHeightMapSeed(L"{EA932687-BC1E-477f-BF70-A8715991258D}");
 const Guid c_guidCutMapSeed(L"{CFB69515-9263-4611-93B1-658D8CA6D861}");
+
 const Guid c_guidTerrainShaderSeed(L"{6643B92A-6676-41b9-9427-3569B2EA481B}");
 const Guid c_guidSurfaceShaderSeed(L"{8481FC82-A8E8-49b8-906F-9F8F6365B1F5}");
 const Guid c_guidTerrainShaderTemplate(L"{A6C4532A-0540-4D42-93FC-964C7BFDD1FD}");
 const Guid c_guidSurfaceShaderTemplate(L"{BAD675B3-9799-7D49-A045-BDA471DD5A3E}");
-const Guid c_guidSurfaceShaderPlaceholder(L"{23790224-9E2A-4C43-9C3B-F659BE962E10}");
+
+const Guid c_materialInterface(L"{139CACBD-2A79-5644-B9BC-B113F66D50EA}");
 
 class FragmentReaderAdapter : public render::FragmentLinker::FragmentReaderNoCache
 {
@@ -64,7 +64,7 @@ public:
 
 	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid) const
 	{
-		if (fragmentGuid == c_guidSurfaceShaderPlaceholder)
+		if (fragmentGuid == c_materialInterface)
 			return m_surfaceShaderImpl;
 		else
 			return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
@@ -104,9 +104,9 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 	}
 }
 
-		}
+	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 13, TerrainPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 14, TerrainPipeline, editor::DefaultPipeline)
 
 bool TerrainPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -133,10 +133,10 @@ bool TerrainPipeline::buildDependencies(
 	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(), editor::PdfUse);
 
 	pipelineDepends->addDependency(c_guidTerrainShaderTemplate, editor::PdfUse);
-
 	pipelineDepends->addDependency(c_guidSurfaceShaderTemplate, editor::PdfUse);
-	pipelineDepends->addDependency(c_guidSurfaceShaderPlaceholder, editor::PdfUse);
 
+	pipelineDepends->addDependency(c_materialInterface, editor::PdfUse);
+	
 	// Synthesize ids.
 	Guid normalMapGuid = combineGuids(c_guidNormalMapSeed, outputGuid);
 	Guid heightMapGuid = combineGuids(c_guidHeightMapSeed, outputGuid);
@@ -415,5 +415,4 @@ bool TerrainPipeline::buildOutput(
 	return true;
 }
 
-	}
 }
