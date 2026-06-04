@@ -103,6 +103,26 @@ static const wl_data_offer_listener s_dataOfferListener = {
 	dataOfferNoop2
 };
 
+// Re-express a surface-local point in another widget's local space, via the
+// shared toplevel.  Used to fix up coordinates during capture, since Wayland
+// has no protocol equivalent of XGrabPointer to redirect events.
+static void translateBetweenWidgets(const WidgetData* from, const WidgetData* to, double& x, double& y)
+{
+	if (!from || !to || from == to)
+		return;
+
+	for (const WidgetData* w = from; w != nullptr && !w->topLevel; w = w->parent)
+	{
+		x += w->posX;
+		y += w->posY;
+	}
+	for (const WidgetData* w = to; w != nullptr && !w->topLevel; w = w->parent)
+	{
+		x -= w->posX;
+		y -= w->posY;
+	}
+}
+
 // libdecor interface
 static void libdecorError(libdecor* context, libdecor_error error, const char* message)
 {
@@ -749,12 +769,24 @@ void ContextWl::pointerEnter(void* data, wl_pointer* pointer, uint32_t serial, w
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 	ctx->m_pointerSerial = serial;
 
-	ctx->m_pointerX = wl_fixed_to_double(sx) * ctx->m_outputScale;
-	ctx->m_pointerY = wl_fixed_to_double(sy) * ctx->m_outputScale;
+	double px = wl_fixed_to_double(sx) * ctx->m_outputScale;
+	double py = wl_fixed_to_double(sy) * ctx->m_outputScale;
 
+	WidgetData* enteringWidget = nullptr;
 	auto b = ctx->m_bindings.find(surface);
 	if (b != ctx->m_bindings.end())
-		ctx->m_pointerFocus = b->second.widget;
+	{
+		enteringWidget = b->second.widget;
+		ctx->m_pointerFocus = enteringWidget;
+	}
+
+	// Keep cached coordinates in the grabbed widget's space so a button event
+	// arriving before the next motion still sees the correct position.
+	if (ctx->m_grabbed && enteringWidget && enteringWidget != ctx->m_grabbed)
+		translateBetweenWidgets(enteringWidget, ctx->m_grabbed, px, py);
+
+	ctx->m_pointerX = px;
+	ctx->m_pointerY = py;
 
 	WlEvent e;
 	e.type = WlEvtPointerEnter;
@@ -790,19 +822,28 @@ void ContextWl::pointerMotion(void* data, wl_pointer* pointer, uint32_t time, wl
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 
-	wl_surface* surface = ctx->m_pointerFocus ? ctx->m_pointerFocus->surface : nullptr;
+	WidgetData* target = ctx->m_pointerFocus;
 	if (ctx->m_grabbed)
-		surface = ctx->m_grabbed->surface;
+		target = ctx->m_grabbed;
 
-	if (!surface)
+	if (!target || !target->surface)
 		return;
 
-	ctx->m_pointerX = wl_fixed_to_double(sx) * ctx->m_outputScale;
-	ctx->m_pointerY = wl_fixed_to_double(sy) * ctx->m_outputScale;
+	double px = wl_fixed_to_double(sx) * ctx->m_outputScale;
+	double py = wl_fixed_to_double(sy) * ctx->m_outputScale;
+
+	// During capture, motion can come in via a different surface (the parent
+	// or a sibling) once the cursor leaves the grabbed widget's bounds —
+	// rebase the coordinates into the grabbed widget's space.
+	if (ctx->m_grabbed && ctx->m_pointerFocus && ctx->m_pointerFocus != ctx->m_grabbed)
+		translateBetweenWidgets(ctx->m_pointerFocus, ctx->m_grabbed, px, py);
+
+	ctx->m_pointerX = px;
+	ctx->m_pointerY = py;
 
 	WlEvent e;
 	e.type = WlEvtPointerMotion;
-	e.surface = surface;
+	e.surface = target->surface;
 	e.pointerX = ctx->m_pointerX;
 	e.pointerY = ctx->m_pointerY;
 	e.buttons = ctx->m_buttonMask;
