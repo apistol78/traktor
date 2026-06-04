@@ -73,11 +73,8 @@ render::RGTargetSet GBufferPass::setup(
 	clear.stencil = 0;
 	rp->setOutput(gbufferTargetSetId, clear, render::TfNone, render::TfAll);
 
-	rp->addBuild(
-		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-		const WorldBuildContext wc(
-			m_entityRenderers,
-			renderContext);
+	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+		const WorldBuildContext wc(m_entityRenderers, renderContext);
 
 		auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 		sharedParams->beginParameters(renderContext);
@@ -103,11 +100,12 @@ render::RGTargetSet GBufferPass::setup(
 
 		T_ASSERT(!renderContext->havePendingDraws());
 
-		for (const auto& r : gatheredView.renderables)
-			r.renderer->build(wc, worldRenderView, gbufferPass, r.renderable);
-
-		for (auto entityRenderer : m_entityRenderers->get())
-			entityRenderer->build(wc, worldRenderView, gbufferPass);
+		for (auto it : gatheredView.renderables)
+		{
+			IEntityRenderer* entityRenderer = it.first;
+			const GatherView::Renderable& r = it.second;
+			entityRenderer->build(wc, worldRenderView, gbufferPass, r.objects);
+		}
 	});
 
 	renderGraph.addPass(rp);

@@ -164,7 +164,7 @@ bool WorldRendererShared::create(
 		return false;
 
 	m_gbufferPass = new GBufferPass(m_settings, m_entityRenderers);
-	m_dbufferPass = new DBufferPass(m_settings, m_entityRenderers);
+	m_dbufferPass = new DBufferPass(m_settings);
 
 	m_downScalePass = new DownScalePass();
 	if (!m_downScalePass->create(resourceManager))
@@ -174,7 +174,7 @@ bool WorldRendererShared::create(
 	if (!m_hiZPass->create(resourceManager))
 		return false;
 
-	m_velocityPass = new VelocityPass(m_entityRenderers);
+	m_velocityPass = new VelocityPass();
 	if (!m_velocityPass->create(resourceManager, renderSystem, desc))
 		return false;
 
@@ -238,7 +238,7 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 	T_PROFILER_SCOPE(L"WorldRendererShared::gather");
 	StaticVector< const LightComponent*, LightClusterPass::c_maxLightCount > lights;
 
-	m_gatheredView.renderables.resize(0);
+	m_gatheredView.renderables.reset();
 	m_gatheredView.lights.resize(0);
 	m_gatheredView.probes.resize(0);
 	m_gatheredView.fog = nullptr;
@@ -258,7 +258,12 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 		{
 			IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
 			if (entityRenderer)
-				m_gatheredView.renderables.push_back({ entityRenderer, component, state });
+			{
+				auto& r = m_gatheredView.renderables[entityRenderer];
+				r.objects.push_back(component);
+				if (!state.dynamic)
+					r.staticOnlyObjects.push_back(component);
+			}
 
 			// Filter out components used to setup frame's lighting etc.
 			if (auto lightComponent = dynamic_type_cast< const LightComponent* >(component))
@@ -275,7 +280,10 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 	{
 		IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
 		if (entityRenderer)
-			m_gatheredView.renderables.push_back({ entityRenderer, component, EntityState::All });
+		{
+			auto& r = m_gatheredView.renderables[entityRenderer];
+			r.objects.push_back(component);
+		}
 
 		// Filter out components used to setup frame's lighting etc.
 		if (auto irradianceGridComponent = dynamic_type_cast< const IrradianceGridComponent* >(component))
@@ -552,12 +560,14 @@ void WorldRendererShared::setupLightPass(
 						m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
 					}
 
-					for (const auto& r : m_gatheredView.renderables)
-						if (includeDynamic || !r.state.dynamic)
-							r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
+					for (auto it : m_gatheredView.renderables)
+					{
+						IEntityRenderer* entityRenderer = it.first;
+						const GatherView::Renderable& r = it.second;
 
-					for (auto entityRenderer : m_entityRenderers->get())
-						entityRenderer->build(wc, shadowRenderView, shadowPass);
+						const AlignedVector< Object* >& objects = includeDynamic ? r.objects : r.staticOnlyObjects;
+						entityRenderer->build(wc, shadowRenderView, shadowPass, objects);
+					}
 				});
 			}
 
@@ -697,11 +707,12 @@ void WorldRendererShared::setupLightPass(
 					m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
 				}
 
-				for (const auto& r : m_gatheredView.renderables)
-					r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
-
-				for (auto entityRenderer : m_entityRenderers->get())
-					entityRenderer->build(wc, shadowRenderView, shadowPass);
+				for (auto it : m_gatheredView.renderables)
+				{
+					IEntityRenderer* entityRenderer = it.first;
+					const GatherView::Renderable& r = it.second;
+					entityRenderer->build(wc, shadowRenderView, shadowPass, r.objects);
+				}
 			});
 		}
 

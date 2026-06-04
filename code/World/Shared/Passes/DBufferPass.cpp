@@ -25,17 +25,13 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DBufferPass", DBufferPass, Object)
 
-DBufferPass::DBufferPass(
-	const WorldRenderSettings& settings,
-	WorldEntityRenderers* entityRenderers)
+DBufferPass::DBufferPass(const WorldRenderSettings& settings)
 	: m_settings(settings)
-	, m_entityRenderers(entityRenderers)
 {
 }
 
 void DBufferPass::destroy()
 {
-	m_entityRenderers = nullptr;
 }
 
 render::RGTargetSet DBufferPass::setup(
@@ -73,11 +69,8 @@ render::RGTargetSet DBufferPass::setup(
 	clear.stencil = 0;
 	rp->setOutput(dbufferTargetSetId, clear, render::TfAll, render::TfAll);
 
-	rp->addBuild(
-		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-		const WorldBuildContext wc(
-			m_entityRenderers,
-			renderContext);
+	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+		const WorldBuildContext wc(nullptr, renderContext);
 
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 
@@ -106,11 +99,12 @@ render::RGTargetSet DBufferPass::setup(
 
 		T_ASSERT(!renderContext->havePendingDraws());
 
-		for (auto r : gatheredView.renderables)
-			r.renderer->build(wc, worldRenderView, dbufferPass, r.renderable);
-
-		for (auto entityRenderer : m_entityRenderers->get())
-			entityRenderer->build(wc, worldRenderView, dbufferPass);
+		for (auto it : gatheredView.renderables)
+		{
+			IEntityRenderer* entityRenderer = it.first;
+			const GatherView::Renderable& r = it.second;
+			entityRenderer->build(wc, worldRenderView, dbufferPass, r.objects);
+		}
 	});
 
 	renderGraph.addPass(rp);

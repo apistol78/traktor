@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -46,13 +46,7 @@ const TypeInfoSet EffectRenderer::getRenderableTypes() const
 void EffectRenderer::setup(
 	const world::WorldSetupContext& context,
 	const world::WorldRenderView& worldRenderView,
-	Object* renderable
-)
-{
-}
-
-void EffectRenderer::setup(
-	const world::WorldSetupContext& context
+	const AlignedVector< Object* >& renderables
 )
 {
 }
@@ -61,40 +55,36 @@ void EffectRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
-	Object* renderable
+	const AlignedVector< Object* >& renderables
 )
 {
-	auto effectComponent = static_cast< const EffectComponent* >(renderable);
+	for (Object* renderable : renderables)
+	{
+		auto effectComponent = static_cast< const EffectComponent* >(renderable);
 
-	//const Aabb3 boundingBox = effectComponent->getWorldBoundingBox();
-	//if (boundingBox.empty())
-	//	return;
+		//const Aabb3 boundingBox = effectComponent->getWorldBoundingBox();
+		//if (boundingBox.empty())
+		//	return;
 
-	//// Early out of bounding sphere is outside of frustum.
-	//const Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
-	//const Scalar radius = boundingBox.getExtent().length();
-	//if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
-	//	return;
+		//// Early out of bounding sphere is outside of frustum.
+		//const Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
+		//const Scalar radius = boundingBox.getExtent().length();
+		//if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
+		//	return;
 
-	//const Vector4 cameraPosition = worldRenderView.getEyePosition();
-	//const Plane cameraPlane(worldRenderView.getEyeDirection(), cameraPosition);
+		//const Vector4 cameraPosition = worldRenderView.getEyePosition();
+		//const Plane cameraPlane(worldRenderView.getEyeDirection(), cameraPosition);
 
-	effectComponent->render(
-		worldRenderView,
-		worldRenderPass,
-		context.getRenderContext(),
-		m_pointRenderer,
-		m_meshRenderer,
-		m_trailRenderer
-	);
-}
+		effectComponent->render(
+			worldRenderView,
+			worldRenderPass,
+			context.getRenderContext(),
+			m_pointRenderer,
+			m_meshRenderer,
+			m_trailRenderer
+		);
+	}
 
-void EffectRenderer::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
-{
 	m_pointRenderer->flush(context.getRenderContext(), worldRenderPass);
 	m_meshRenderer->flush(context.getRenderContext(), worldRenderPass);
 	m_trailRenderer->flush(context.getRenderContext(), worldRenderPass);

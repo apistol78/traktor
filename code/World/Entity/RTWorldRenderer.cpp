@@ -1,13 +1,16 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "World/Entity/RTWorldComponent.h"
 #include "World/Entity/RTWorldRenderer.h"
+
+#include "Render/Context/RenderContext.h"
+#include "World/Entity/RTWorldComponent.h"
+#include "World/WorldBuildContext.h"
 
 namespace traktor::world
 {
@@ -27,13 +30,7 @@ const TypeInfoSet RTWorldRenderer::getRenderableTypes() const
 void RTWorldRenderer::setup(
 	const WorldSetupContext& context,
 	const WorldRenderView& worldRenderView,
-	Object* renderable
-)
-{
-}
-
-void RTWorldRenderer::setup(
-	const WorldSetupContext& context
+	const AlignedVector< Object* >& renderables
 )
 {
 }
@@ -42,19 +39,22 @@ void RTWorldRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
-	Object* renderable
+	const AlignedVector< Object* >& renderables
 )
 {
-	auto rtWorldComponent = static_cast< RTWorldComponent* >(renderable);
-	rtWorldComponent->build(context);
-}
+	render::RenderContext* renderContext = context.getRenderContext();
+	T_ASSERT(renderContext);
 
-void RTWorldRenderer::build(
-	const WorldBuildContext& context,
-	const WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass
-)
-{
+	auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"RTWorldRenderer");
+	rb->lambda = [=](render::IRenderView* renderView)
+	{
+		for (Object* renderable : renderables)
+		{
+			auto rtWorldComponent = static_cast< RTWorldComponent* >(renderable);
+			rtWorldComponent->writeAccelerationStructure(renderView);
+		}
+	};
+	renderContext->compute(rb);
 }
 
 }

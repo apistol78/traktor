@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -212,11 +212,8 @@ const TypeInfoSet ProbeRenderer::getRenderableTypes() const
 void ProbeRenderer::setup(
 	const WorldSetupContext& context,
 	const WorldRenderView& worldRenderView,
-	Object* renderable)
-{
-}
-
-void ProbeRenderer::setup(const WorldSetupContext& context)
+	const AlignedVector< Object* >& renderables
+)
 {
 	render::RenderGraph& renderGraph = context.getRenderGraph();
 
@@ -484,40 +481,37 @@ void ProbeRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
-	Object* renderable)
+	const AlignedVector< Object* >& renderables
+)
 {
-	auto probeComponent = static_cast< ProbeComponent* >(renderable);
-
 	// Do not update anything in snapshot mode.
 	if (worldRenderView.getSnapshot())
 		return;
 
-	// Cull local probes to frustum.
-	if (probeComponent->getLocal())
+	for (Object* renderable : renderables)
 	{
-		const Transform& transform = probeComponent->getTransform();
-		const Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
-		const Vector4 center = worldView * probeComponent->getVolume().getCenter().xyz1();
-		const Scalar radius = probeComponent->getVolume().getExtent().length();
-		if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
-			return;
-	}
+		auto probeComponent = static_cast< ProbeComponent* >(renderable);
 
-	// Add to capture queue if probe is "dirty".
-	if ((probeComponent->getDirty() || probeComponent->getRevision() != m_revision) && probeComponent->shouldCapture())
-	{
-		if (std::find(m_captureQueue.begin(), m_captureQueue.end(), probeComponent) == m_captureQueue.end())
-			m_captureQueue.push_back(probeComponent);
-		probeComponent->setDirty(false);
-		probeComponent->setRevision(m_revision);
-	}
-}
+		// Cull local probes to frustum.
+		if (probeComponent->getLocal())
+		{
+			const Transform& transform = probeComponent->getTransform();
+			const Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
+			const Vector4 center = worldView * probeComponent->getVolume().getCenter().xyz1();
+			const Scalar radius = probeComponent->getVolume().getExtent().length();
+			if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
+				return;
+		}
 
-void ProbeRenderer::build(
-	const WorldBuildContext& context,
-	const WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass)
-{
+		// Add to capture queue if probe is "dirty".
+		if ((probeComponent->getDirty() || probeComponent->getRevision() != m_revision) && probeComponent->shouldCapture())
+		{
+			if (std::find(m_captureQueue.begin(), m_captureQueue.end(), probeComponent) == m_captureQueue.end())
+				m_captureQueue.push_back(probeComponent);
+			probeComponent->setDirty(false);
+			probeComponent->setRevision(m_revision);
+		}
+	}
 }
 
 }

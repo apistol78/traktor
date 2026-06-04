@@ -58,12 +58,7 @@ public:
 	virtual void setup(
 		const WorldSetupContext& context,
 		const WorldRenderView& worldRenderView,
-		Object* renderable
-	) = 0;
-
-	/*! Setup pass. */
-	virtual void setup(
-		const WorldSetupContext& context
+		const AlignedVector< Object* >& renderables
 	) = 0;
 
 	/*! Build pass. */
@@ -71,18 +66,7 @@ public:
 		const WorldBuildContext& context,
 		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass,
-		Object* renderable
-	) = 0;
-
-	/*! Build pass.
-	 *
-	 * Flush whatever queues that the entity
-	 * renderer might have used.
-	 */
-	virtual void build(
-		const WorldBuildContext& context,
-		const WorldRenderView& worldRenderView,
-		const IWorldRenderPass& worldRenderPass
+		const AlignedVector< Object* >& renderables
 	) = 0;
 };
 

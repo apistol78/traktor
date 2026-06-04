@@ -32,13 +32,7 @@ const TypeInfoSet ComputeTextureRenderer::getRenderableTypes() const
 void ComputeTextureRenderer::setup(
 	const WorldSetupContext& context,
 	const WorldRenderView& worldRenderView,
-	Object* renderable
-)
-{
-}
-
-void ComputeTextureRenderer::setup(
-	const WorldSetupContext& context
+	const AlignedVector< Object* >& renderables
 )
 {
 	const auto* computeTextureComponent = context.getWorld()->getComponent< ComputeTextureComponent >();
@@ -57,15 +51,7 @@ void ComputeTextureRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
-	Object* renderable
-)
-{
-}
-
-void ComputeTextureRenderer::build(
-	const WorldBuildContext& context,
-	const WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass
+	const AlignedVector< Object* >& renderables
 )
 {
 }

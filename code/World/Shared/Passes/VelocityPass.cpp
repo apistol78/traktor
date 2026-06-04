@@ -38,11 +38,6 @@ const resource::Id< render::ImageGraph > c_velocityDilate(L"{8A8AD144-7866-41DB-
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VelocityPass", VelocityPass, Object)
 
-VelocityPass::VelocityPass(WorldEntityRenderers* entityRenderers)
-	: m_entityRenderers(entityRenderers)
-{
-}
-
 bool VelocityPass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
 	// Create velocity processing.
@@ -133,9 +128,7 @@ render::RGTargetSet VelocityPass::setup(
 
 		pass->addBuild(
 			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-			const WorldBuildContext wc(
-				m_entityRenderers,
-				renderContext);
+			const WorldBuildContext wc(nullptr, renderContext);
 
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
@@ -152,12 +145,12 @@ render::RGTargetSet VelocityPass::setup(
 				worldRenderView,
 				IWorldRenderPass::None);
 
-			for (auto r : gatheredView.renderables)
-				if (r.state.dynamic)
-					r.renderer->build(wc, worldRenderView, velocityPass, r.renderable);
-
-			for (auto entityRenderer : m_entityRenderers->get())
-				entityRenderer->build(wc, worldRenderView, velocityPass);
+			for (auto it : gatheredView.renderables)
+			{
+				IEntityRenderer* entityRenderer = it.first;
+				const GatherView::Renderable& r = it.second;
+				entityRenderer->build(wc, worldRenderView, velocityPass, r.objects);
+			}
 		});
 
 		renderGraph.addPass(pass);

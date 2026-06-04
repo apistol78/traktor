@@ -56,7 +56,7 @@ RTWorldComponent::Instance* RTWorldComponent::createInstance(const AlignedVector
 	return instance;
 }
 
-void RTWorldComponent::build(const WorldBuildContext& context)
+void RTWorldComponent::writeAccelerationStructure(render::IRenderView* renderView)
 {
 	if (m_instanceBufferDirty)
 	{
@@ -72,17 +72,7 @@ void RTWorldComponent::build(const WorldBuildContext& context)
 				});
 			}
 		}
-
-		render::RenderContext* renderContext = context.getRenderContext();
-		T_ASSERT(renderContext);
-
-		auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"RTWorldComponent");
-		rb->lambda = [=, this](render::IRenderView* renderView)
-		{
-			renderView->writeAccelerationStructure(m_tlas, tlasInstances, false);
-		};
-		renderContext->compute(rb);
-
+		renderView->writeAccelerationStructure(m_tlas, tlasInstances, false);
 		m_instanceBufferDirty = false;
 	}
 }

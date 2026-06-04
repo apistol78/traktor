@@ -39,24 +39,14 @@ public:
 	virtual void setup(
 		const WorldSetupContext& context,
 		const WorldRenderView& worldRenderView,
-		Object* renderable
-	) override final;
-
-	virtual void setup(
-		const WorldSetupContext& context
+		const AlignedVector< Object* >& renderables
 	) override final;
 
 	virtual void build(
 		const WorldBuildContext& context,
 		const WorldRenderView& worldRenderView,
 		const IWorldRenderPass& worldRenderPass,
-		Object* renderable
-	) override final;
-
-	virtual void build(
-		const WorldBuildContext& context,
-		const WorldRenderView& worldRenderView,
-		const IWorldRenderPass& worldRenderPass
+		const AlignedVector< Object* >& renderables
 	) override final;
 };
 

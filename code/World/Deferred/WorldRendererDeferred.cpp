@@ -136,11 +136,12 @@ void WorldRendererDeferred::setup(
 		T_PROFILER_SCOPE(L"WorldRendererDeferred setup extra passes");
 		WorldSetupContext context(world, m_entityRenderers, renderGraph, m_visualAttachments);
 
-		for (const auto& r : m_gatheredView.renderables)
-			r.renderer->setup(context, worldRenderView, r.renderable);
-
-		for (auto entityRenderer : m_entityRenderers->get())
-			entityRenderer->setup(context);
+		for (auto it : m_gatheredView.renderables)
+		{
+			IEntityRenderer* entityRenderer = it.first;
+			const GatherView::Renderable& r = it.second;
+			entityRenderer->setup(context, worldRenderView, r.objects);
+		}
 	}
 
 	// Add visual target sets.
@@ -549,11 +550,12 @@ void WorldRendererDeferred::setupVisualPass(
 					{ ShaderPermutation::VolumetricFogEnable, (bool)(fogVolumeTexture != nullptr) },
 					{ ShaderPermutation::RayTracingEnable, (bool)(m_gatheredView.rtWorldTopLevel != nullptr) } });
 
-			for (const auto& r : m_gatheredView.renderables)
-				r.renderer->build(wc, worldRenderView, deferredColorPass, r.renderable);
-
-			for (auto entityRenderer : m_entityRenderers->get())
-				entityRenderer->build(wc, worldRenderView, deferredColorPass);
+			for (auto it : m_gatheredView.renderables)
+			{
+				IEntityRenderer* entityRenderer = it.first;
+				const GatherView::Renderable& r = it.second;
+				entityRenderer->build(wc, worldRenderView, deferredColorPass, r.objects);
+			}
 		});
 
 		renderGraph.addPass(rp);

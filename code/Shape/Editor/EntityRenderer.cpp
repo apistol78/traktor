@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,13 +31,7 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 void EntityRenderer::setup(
 	const world::WorldSetupContext& context,
 	const world::WorldRenderView& worldRenderView,
-	Object* renderable
-)
-{
-}
-
-void EntityRenderer::setup(
-	const world::WorldSetupContext& context
+	const AlignedVector< Object* >& renderables
 )
 {
 }
@@ -46,33 +40,28 @@ void EntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
-	Object* renderable
+	const AlignedVector< Object* >& renderables
 )
 {
-	if (auto solidComponent = dynamic_type_cast< SolidComponent* >(renderable))
+	for (Object* renderable : renderables)
 	{
-		solidComponent->build(
-			context,
-			worldRenderView,
-			worldRenderPass
-		);
+		if (auto solidComponent = dynamic_type_cast< SolidComponent* >(renderable))
+		{
+			solidComponent->build(
+				context,
+				worldRenderView,
+				worldRenderPass
+			);
+		}
+		else if (auto splineComponent = dynamic_type_cast< SplineComponent* >(renderable))
+		{
+			splineComponent->build(
+				context,
+				worldRenderView,
+				worldRenderPass
+			);
+		}
 	}
-	else if (auto splineComponent = dynamic_type_cast< SplineComponent* >(renderable))
-	{
-		splineComponent->build(
-			context,
-			worldRenderView,
-			worldRenderPass
-		);
-	}
-}
-
-void EntityRenderer::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
-{
 }
 
 }

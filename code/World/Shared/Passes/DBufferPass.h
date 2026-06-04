@@ -24,7 +24,6 @@ namespace traktor::world
 {
 
 class World;
-class WorldEntityRenderers;
 class WorldRenderView;
 
 /*!
@@ -34,9 +33,7 @@ class DBufferPass : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit DBufferPass(
-		const WorldRenderSettings& settings,
-		WorldEntityRenderers* entityRenderers);
+	explicit DBufferPass(const WorldRenderSettings& settings);
 
 	void destroy();
 
@@ -49,7 +46,6 @@ public:
 
 private:
 	WorldRenderSettings m_settings;
-	Ref< WorldEntityRenderers > m_entityRenderers;
 };
 
 }
