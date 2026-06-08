@@ -544,7 +544,6 @@ void WorldRendererDeferred::setupVisualPass(
 				ShaderTechnique::DeferredColor,
 				sharedParams,
 				worldRenderView,
-				IWorldRenderPass::Last,
 				{ { ShaderPermutation::IrradianceEnable, irradianceEnable },
 					{ ShaderPermutation::IrradianceSingle, irradianceSingle },
 					{ ShaderPermutation::VolumetricFogEnable, (bool)(fogVolumeTexture != nullptr) },

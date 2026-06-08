@@ -94,7 +94,6 @@ render::RGTargetSet DBufferPass::setup(
 			ShaderTechnique::DBufferWrite,
 			sharedParams,
 			worldRenderView,
-			IWorldRenderPass::None,
 			{});
 
 		T_ASSERT(!renderContext->havePendingDraws());

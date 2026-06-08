@@ -1,15 +1,16 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Spray/EffectComponent.h"
+
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Render/Shader.h"
 #include "Spray/Effect.h"
-#include "Spray/EffectComponent.h"
 #include "Spray/EffectInstance.h"
 #include "Spray/EffectLayer.h"
 #include "Spray/Emitter.h"
@@ -18,20 +19,20 @@
 
 namespace traktor::spray
 {
-	namespace
-	{
+namespace
+{
 
 const float c_maxDeltaTime = 1.0f / 30.0f;
 const uint32_t c_updateDenom = 1;
 Random g_randomSeed;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectComponent", EffectComponent, world::IEntityComponent)
 
 EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect)
-:	m_transform(Transform::identity())
-,	m_effect(effect)
+	: m_transform(Transform::identity())
+	, m_effect(effect)
 {
 	m_effectInstance = m_effect->createInstance();
 	T_FATAL_ASSERT(m_effectInstance != nullptr);
@@ -43,10 +44,10 @@ EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect)
 }
 
 EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect, EffectInstance* effectInstance, const Context& context)
-:	m_transform(Transform::identity())
-,	m_effect(effect)
-,	m_effectInstance(effectInstance)
-,	m_context(context)
+	: m_transform(Transform::identity())
+	, m_effect(effect)
+	, m_effectInstance(effectInstance)
+	, m_context(context)
 {
 	// Do not recreate instance if we've been provided one.
 	if (effectInstance != nullptr)
@@ -121,25 +122,29 @@ void EffectComponent::update(const world::UpdateParams& update)
 	}
 }
 
-void EffectComponent::render(
+void EffectComponent::setup(render::RenderContext* renderContext) const
+{
+	if (m_effectInstance)
+		m_effectInstance->setup(renderContext);
+}
+
+void EffectComponent::build(
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	render::RenderContext* renderContext,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
-	TrailRenderer* trailRenderer
-) const
+	TrailRenderer* trailRenderer) const
 {
 	if (m_effectInstance)
-		m_effectInstance->render(
+		m_effectInstance->build(
 			worldRenderView,
 			worldRenderPass,
 			renderContext,
 			pointRenderer,
 			meshRenderer,
 			trailRenderer,
-			m_transform
-		);
+			m_transform);
 }
 
 Aabb3 EffectComponent::getWorldBoundingBox() const

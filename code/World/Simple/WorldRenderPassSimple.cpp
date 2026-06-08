@@ -1,15 +1,16 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Shader.h"
-#include "Render/Context/ProgramParameters.h"
-#include "World/WorldHandles.h"
 #include "World/Simple/WorldRenderPassSimple.h"
+
+#include "Render/Context/ProgramParameters.h"
+#include "Render/Shader.h"
+#include "World/WorldHandles.h"
 
 namespace traktor::world
 {
@@ -19,23 +20,17 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassSimple", WorldRenderPassSi
 WorldRenderPassSimple::WorldRenderPassSimple(
 	render::handle_t technique,
 	render::ProgramParameters* globalProgramParams,
-	const Matrix44& view
-)
-:	m_technique(technique)
-,	m_globalProgramParams(globalProgramParams)
-,	m_view(view)
-,	m_viewInverse(view.inverse())
+	const Matrix44& view)
+	: m_technique(technique)
+	, m_globalProgramParams(globalProgramParams)
+	, m_view(view)
+	, m_viewInverse(view.inverse())
 {
 }
 
 render::handle_t WorldRenderPassSimple::getTechnique() const
 {
 	return m_technique;
-}
-
-uint32_t WorldRenderPassSimple::getPassFlags() const
-{
-	return IWorldRenderPass::First;
 }
 
 render::Shader::Permutation WorldRenderPassSimple::getPermutation(const render::Shader* shader) const
@@ -51,7 +46,6 @@ void WorldRenderPassSimple::setProgramParameters(render::ProgramParameters* prog
 	programParams->setMatrixParameter(ShaderParameter::ViewInverse, m_viewInverse);
 	programParams->setMatrixParameter(ShaderParameter::World, w);
 	programParams->setMatrixParameter(ShaderParameter::WorldView, m_view * w);
-
 }
 
 void WorldRenderPassSimple::setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const

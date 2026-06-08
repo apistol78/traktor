@@ -95,7 +95,6 @@ render::RGTargetSet GBufferPass::setup(
 			gbufferWriteTechnique,
 			sharedParams,
 			worldRenderView,
-			IWorldRenderPass::First,
 			{});
 
 		T_ASSERT(!renderContext->havePendingDraws());

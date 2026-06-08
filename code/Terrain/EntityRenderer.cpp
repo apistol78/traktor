@@ -60,6 +60,8 @@ void EntityRenderer::setup(
 	{
 		if (auto terrainComponent = dynamic_type_cast< TerrainComponent* >(renderable))
 			terrainComponent->setup(context, worldRenderView, m_terrainDetailDistance, m_terrainCacheSize);
+		else if (auto terrainLayerComponent = dynamic_type_cast< TerrainLayerComponent* >(renderable))
+			terrainLayerComponent->setup(worldRenderView);
 		else if (auto oceanComponent = dynamic_type_cast< OceanComponent* >(renderable))
 			oceanComponent->setup(context, worldRenderView);
 	}

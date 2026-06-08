@@ -308,11 +308,38 @@ bool RenderGraph::validate()
 	}
 
 	// Gather passes in order for each depth.
+	//
+	// Passes are placed in "bands"; build() renders bands high->low, so a higher
+	// band is rendered earlier. Natural (auto-ordered) passes are shifted up by one
+	// to reserve band 0 for "Last" anchored passes, and the top band for "First"
+	// anchored passes, guaranteeing those render strictly after/before everything else.
+	const int32_t firstBand = sizeof_array(m_order) - 1;
+	const int32_t lastBand = 0;
+
+	const auto hasAnchor = [](const RenderPass* pass, RGDependency anchor) {
+		for (const auto& input : pass->getInputs())
+			if (input.resourceId == anchor.get())
+				return true;
+		return false;
+	};
+
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
 		m_order[i].resize(0);
 	for (uint32_t i = 0; i < (uint32_t)m_passes.size(); ++i)
-		if (depths[i] >= 0)
-			m_order[depths[i]].push_back(i);
+	{
+		if (depths[i] < 0)
+			continue;
+
+		int32_t band;
+		if (hasAnchor(m_passes[i], RGDependency::First))
+			band = firstBand;
+		else if (hasAnchor(m_passes[i], RGDependency::Last))
+			band = lastBand;
+		else
+			band = std::min(depths[i] + 1, firstBand - 1);
+
+		m_order[band].push_back(i);
+	}
 
 	// Sort each depth based on output resource.
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)

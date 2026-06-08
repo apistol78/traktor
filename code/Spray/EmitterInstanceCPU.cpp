@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -205,7 +205,11 @@ void EmitterInstanceCPU::update(Context& context, const Transform& transform, bo
 #endif
 }
 
-void EmitterInstanceCPU::render(
+void EmitterInstanceCPU::setup(render::RenderContext* renderContext)
+{
+}
+
+void EmitterInstanceCPU::build(
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	render::RenderContext* renderContext,
@@ -273,7 +277,7 @@ void EmitterInstanceCPU::render(
 
 			const Point& point = m_renderPoints[i];
 
-			m_effectInstances[i]->render(
+			m_effectInstances[i]->build(
 				worldRenderView,
 				worldRenderPass,
 				renderContext,

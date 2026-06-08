@@ -89,6 +89,42 @@ bool ClothComponent::create(
 	return true;
 }
 
+void ClothComponent::setup()
+{
+	synchronize();
+
+	if (!m_updateRequired)
+		return;
+
+	ClothVertex* vertexFront = static_cast< ClothVertex* >(m_vertexBuffer->lock());
+	T_ASSERT(vertexFront);
+
+	for (uint32_t i = 0; i < (uint32_t)m_nodes.size(); ++i)
+	{
+		const Cloth::Node& cn = m_cloth->m_nodes[i];
+		const Node& node = m_nodes[i];
+
+		const Vector4& p = node.position[0];
+
+		Vector4 nf = Vector4::zero();
+		if (cn.east != -1 && cn.north != -1)
+		{
+			const Vector4& nx = m_nodes[cn.east].position[0];
+			const Vector4& ny = m_nodes[cn.north].position[0];
+			nf = cross(ny - p, nx - p).normalized();
+		}
+
+		p.storeUnaligned(vertexFront->position);
+		nf.storeUnaligned(vertexFront->normal);
+		vertexFront->texCoord[0] = node.texCoord.x;
+		vertexFront->texCoord[1] = node.texCoord.y;
+		vertexFront++;
+	}
+
+	m_vertexBuffer->unlock();
+	m_updateRequired = false;
+}
+
 void ClothComponent::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
@@ -97,42 +133,6 @@ void ClothComponent::build(
 {
 	if (!m_shader->hasTechnique(worldRenderPass.getTechnique()))
 		return;
-
-	synchronize();
-
-	if (
-		m_updateRequired &&
-		(worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0
-	)
-	{
-		ClothVertex* vertexFront = static_cast< ClothVertex* >(m_vertexBuffer->lock());
-		T_ASSERT(vertexFront);
-
-		for (uint32_t i = 0; i < (uint32_t)m_nodes.size(); ++i)
-		{
-			const Cloth::Node& cn = m_cloth->m_nodes[i];
-			const Node& node = m_nodes[i];
-
-			const Vector4& p = node.position[0];
-
-			Vector4 nf = Vector4::zero();
-			if (cn.east != -1 && cn.north != -1)
-			{
-				const Vector4& nx = m_nodes[cn.east].position[0];
-				const Vector4& ny = m_nodes[cn.north].position[0];
-				nf = cross(ny - p, nx - p).normalized();
-			}
-
-			p.storeUnaligned(vertexFront->position);
-			nf.storeUnaligned(vertexFront->normal);
-			vertexFront->texCoord[0] = node.texCoord.x;
-			vertexFront->texCoord[1] = node.texCoord.y;
-			vertexFront++;
-		}
-
-		m_vertexBuffer->unlock();
-		m_updateRequired = false;
-	}
 
 	auto sp = worldRenderPass.getProgram(m_shader);
 	if (!sp)

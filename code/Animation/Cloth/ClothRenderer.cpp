@@ -30,6 +30,11 @@ void ClothRenderer::setup(
 	const AlignedVector< Object* >& renderables
 )
 {
+	for (Object* renderable : renderables)
+	{
+		ClothComponent* clothEntity = static_cast< ClothComponent* >(renderable);
+		clothEntity->setup();
+	}
 }
 
 void ClothRenderer::build(
@@ -41,7 +46,7 @@ void ClothRenderer::build(
 {
 	for (Object* renderable : renderables)
 	{
-		auto clothEntity = mandatory_non_null_type_cast< ClothComponent* >(renderable);
+		ClothComponent* clothEntity = static_cast< ClothComponent* >(renderable);
 		clothEntity->build(context, worldRenderView, worldRenderPass);
 	}
 }

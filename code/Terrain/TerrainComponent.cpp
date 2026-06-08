@@ -335,45 +335,9 @@ void TerrainComponent::setup(
 			m_terrain,
 			-worldExtent * 0.5_simd,
 			worldExtent);
-}
-
-void TerrainComponent::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	float detailDistance,
-	uint32_t cacheSize)
-{
-	const int32_t viewIndex = worldRenderView.getIndex();
-	const bool snapshot = worldRenderView.getSnapshot();
-
-	if (!validate(viewIndex, cacheSize))
-		return;
-
-	render::Shader* shader = m_terrain->getTerrainShader();
-
-	auto perm = worldRenderPass.getPermutation(shader);
-
-	shader->setCombination(c_handleTerrain_CutEnable, m_terrain->getCutMap(), perm);
-
-	if (m_visualizeMode >= VmSurfaceLod && m_visualizeMode <= VmPatchLod)
-		shader->setCombination(c_handleTerrain_VisualizeLods, true, perm);
-	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmCutMap)
-		shader->setCombination(c_handleTerrain_VisualizeMap, true, perm);
-
-	render::IProgram* program = shader->getProgram(perm).program;
-	if (!program)
-		return;
-
-	const Vector4& worldExtent = m_heightfield->getWorldExtent();
-	const Vector4 eyePosition = worldRenderView.getEyePosition();
-	const Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
-
-	render::RenderContext* renderContext = context.getRenderContext();
 
 	// Update indirect draw buffers; do this only once per frame
 	// since all draws are the same for other passes.
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
 	{
 		auto draw = (render::IndexedIndirectDraw*)m_drawBuffer->lock();
 		auto data = (DrawData*)m_dataBuffer->lock();
@@ -416,6 +380,41 @@ void TerrainComponent::build(
 		m_drawBuffer->unlock();
 		m_dataBuffer->unlock();
 	}
+}
+
+void TerrainComponent::build(
+	const world::WorldBuildContext& context,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass,
+	float detailDistance,
+	uint32_t cacheSize)
+{
+	const int32_t viewIndex = worldRenderView.getIndex();
+	const bool snapshot = worldRenderView.getSnapshot();
+
+	if (!validate(viewIndex, cacheSize))
+		return;
+
+	render::Shader* shader = m_terrain->getTerrainShader();
+
+	auto perm = worldRenderPass.getPermutation(shader);
+
+	shader->setCombination(c_handleTerrain_CutEnable, m_terrain->getCutMap(), perm);
+
+	if (m_visualizeMode >= VmSurfaceLod && m_visualizeMode <= VmPatchLod)
+		shader->setCombination(c_handleTerrain_VisualizeLods, true, perm);
+	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmCutMap)
+		shader->setCombination(c_handleTerrain_VisualizeMap, true, perm);
+
+	render::IProgram* program = shader->getProgram(perm).program;
+	if (!program)
+		return;
+
+	const Vector4& worldExtent = m_heightfield->getWorldExtent();
+	const Vector4 eyePosition = worldRenderView.getEyePosition();
+	const Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
+
+	render::RenderContext* renderContext = context.getRenderContext();
 
 	// Cull draw buffer to HiZ target; only deferred renderer using HiZ culling.
 	if (!snapshot && worldRenderPass.getTechnique() == world::ShaderTechnique::DeferredGBufferWrite)

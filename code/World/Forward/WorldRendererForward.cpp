@@ -340,7 +340,6 @@ void WorldRendererForward::setupVisualPass(
 			ShaderTechnique::ForwardColor,
 			sharedParams,
 			worldRenderView,
-			IWorldRenderPass::Last,
 			{
 				{ ShaderPermutation::IrradianceEnable, irradianceEnable },
 				{ ShaderPermutation::IrradianceSingle, irradianceSingle },

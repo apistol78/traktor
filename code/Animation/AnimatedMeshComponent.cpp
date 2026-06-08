@@ -194,99 +194,92 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 	mesh::MeshComponent::update(update);
 }
 
-void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
 {
 	const Scalar interval(worldRenderView.getInterval());
 	const Transform worldTransform = m_transform.get(interval);
-
-	// #fixme "firstInFrame" checks view index; meaning if not in frustum in view 0 then it
-	// doesn't update skin for any other view.
-	const bool firstInFrame = ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0 && worldRenderView.getIndex() == 0);
-	const bool supportTechnique = (m_mesh->supportTechnique(worldRenderPass.getTechnique()));
-
-	bool isVisible = false;
 	float distance = 0.0f;
 
-	if (firstInFrame || supportTechnique)
-		isVisible = worldRenderView.isBoxVisible(
-			getBoundingBox(),
-			worldTransform,
-			distance);
+	const bool isVisible = worldRenderView.isBoxVisible(
+		getBoundingBox(),
+		worldTransform,
+		distance);
 
-	if (firstInFrame)
+	m_lastWorldTransform[1] = m_lastWorldTransform[0];
+	m_lastWorldTransform[0] = worldTransform;
+
+	const auto& poseTransformsLastUpdate = m_poseTransforms[1 - m_index];
+	const auto& poseTransformsCurrentUpdate = m_poseTransforms[m_index];
+
+	if (isVisible && m_skinModified)
 	{
-		m_lastWorldTransform[1] = m_lastWorldTransform[0];
-		m_lastWorldTransform[0] = worldTransform;
-
-		const auto& poseTransformsLastUpdate = m_poseTransforms[1 - m_index];
-		const auto& poseTransformsCurrentUpdate = m_poseTransforms[m_index];
-
-		if (isVisible && m_skinModified)
+		// Interpolate between updates to get current build skin transforms.
+		if (poseTransformsCurrentUpdate.size() > 0)
 		{
-			// Interpolate between updates to get current build skin transforms.
-			if (poseTransformsCurrentUpdate.size() > 0)
+			mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)m_jointBuffer->lock();
+			for (uint32_t i = 0; i < poseTransformsCurrentUpdate.size(); ++i)
 			{
-				mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)m_jointBuffer->lock();
-				for (uint32_t i = 0; i < poseTransformsCurrentUpdate.size(); ++i)
-				{
-					const Transform poseTransform = lerp(poseTransformsLastUpdate[i], poseTransformsCurrentUpdate[i], interval);
-					const Transform skinTransform = poseTransform * m_jointInverseTransforms[i];
-					skinTransform.translation().storeAligned(jointData->translation);
-					skinTransform.rotation().e.storeAligned(jointData->rotation);
-					jointData++;
-				}
-				m_jointBuffer->unlock();
+				const Transform poseTransform = lerp(poseTransformsLastUpdate[i], poseTransformsCurrentUpdate[i], interval);
+				const Transform skinTransform = poseTransform * m_jointInverseTransforms[i];
+				skinTransform.translation().storeAligned(jointData->translation);
+				skinTransform.rotation().e.storeAligned(jointData->rotation);
+				jointData++;
 			}
-
-			// Ray traced instances skin and rebuild their acceleration structure on the
-			// asynchronous compute queue so it overlaps and is synchronized once, up front,
-			// before any graphics work.
-			//
-			// #fixme This causes the skinned mesh to be one frame late
-			// because all async work is done end of frame N-1 and synced on graphics
-			// queue in frame N.
-			const bool asynchronous = true;
-
-			// Update skin.
-			std::swap(m_skinBuffer[0], m_skinBuffer[1]);
-			m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0], asynchronous);
-
-			// Update RT geometry and RT instance transform.
-			if (m_rtwInstance)
-			{
-				bool need = true;
-
-				// Interleave RT updates if they are far away.
-				// if (distance > 30.0f)
-				// 	need &= ((m_rtUpdates % 32) == 0);
-				// else if (distance > 20.0f)
-				// 	need &= ((m_rtUpdates % 16) == 0);
-				// else if (distance > 10.0f)
-				// 	need &= ((m_rtUpdates % 8) == 0);
-
-				if (need)
-				{
-					bool rebuild = false;
-					if ((m_rtUpdates % c_maxRtUpdatesBeforeBuild) == 0)
-						rebuild = true;
-
-					m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild, asynchronous);
-				}
-
-				m_rtwInstance->setTransform(worldTransform);
-				++m_rtUpdates;
-			}
+			m_jointBuffer->unlock();
 		}
-		else if (isVisible && m_rtwInstance && m_lastWorldTransform[1] != worldTransform)
+
+		// Ray traced instances skin and rebuild their acceleration structure on the
+		// asynchronous compute queue so it overlaps and is synchronized once, up front,
+		// before any graphics work.
+		//
+		// #fixme This causes the skinned mesh to be one frame late
+		// because all async work is done end of frame N-1 and synced on graphics
+		// queue in frame N.
+		const bool asynchronous = true;
+
+		// Update skin.
+		std::swap(m_skinBuffer[0], m_skinBuffer[1]);
+		m_mesh->buildSkin(renderContext, m_jointBuffer, m_skinBuffer[0], asynchronous);
+
+		// Update RT geometry and RT instance transform.
+		if (m_rtwInstance)
 		{
-			// Update RT instance transform only.
+			bool rebuild = false;
+			if ((m_rtUpdates % c_maxRtUpdatesBeforeBuild) == 0)
+				rebuild = true;
+
+			m_mesh->buildAccelerationStructure(renderContext, m_skinBuffer[0], m_rtAccelerationStructure, rebuild, asynchronous);
+
 			m_rtwInstance->setTransform(worldTransform);
+			++m_rtUpdates;
 		}
-
-		m_skinModified = false;
+	}
+	else if (isVisible && m_rtwInstance && m_lastWorldTransform[1] != worldTransform)
+	{
+		// Update RT instance transform only.
+		m_rtwInstance->setTransform(worldTransform);
 	}
 
-	if (supportTechnique && isVisible)
+	m_skinModified = false;
+	m_lastIsVisible = isVisible;
+}
+
+void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+{
+	const bool supportTechnique = (m_mesh->supportTechnique(worldRenderPass.getTechnique()));
+	if (!supportTechnique)
+		return;
+
+	const Scalar interval(worldRenderView.getInterval());
+	const Transform worldTransform = m_transform.get(interval);
+	float distance = 0.0f;
+
+	const bool isVisible = worldRenderView.isBoxVisible(
+		getBoundingBox(),
+		worldTransform,
+		distance);
+
+	if (isVisible)
 		m_mesh->build(
 			context.getRenderContext(),
 			worldRenderPass,
@@ -296,9 +289,6 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 			m_skinBuffer[0],
 			distance,
 			getParameterCallback());
-
-	if (firstInFrame)
-		m_lastIsVisible = isVisible;
 }
 
 bool AnimatedMeshComponent::getSkinTransform(render::handle_t jointName, Transform& outTransform) const

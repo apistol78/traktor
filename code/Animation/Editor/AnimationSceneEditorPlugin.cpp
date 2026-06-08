@@ -8,7 +8,6 @@
  */
 #include "Animation/Editor/AnimationSceneEditorPlugin.h"
 
-#include "Animation/AnimatedMeshComponentRenderer.h"
 #include "Animation/Animation/RtStateGraphResourceFactory.h"
 #include "Animation/AnimationEntityFactory.h"
 #include "Animation/AnimationResourceFactory.h"
@@ -69,7 +68,6 @@ void AnimationSceneEditorPlugin::createEntityRenderers(
 	const TypeInfo& worldRendererType,
 	RefArray< world::IEntityRenderer >& outEntityRenderers) const
 {
-	outEntityRenderers.push_back(new AnimatedMeshComponentRenderer());
 	outEntityRenderers.push_back(new ClothRenderer());
 }
 

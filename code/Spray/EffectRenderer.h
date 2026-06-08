@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Ref.h"
 #include "World/IEntityRenderer.h"
 
 // import/export mechanism.

@@ -549,8 +549,7 @@ void WorldRendererShared::setupLightPass(
 					const WorldRenderPassShared shadowPass(
 						ShaderTechnique::Shadow,
 						sharedParams,
-						shadowRenderView,
-						IWorldRenderPass::None);
+						shadowRenderView);
 
 					T_ASSERT(!renderContext->havePendingDraws());
 
@@ -696,8 +695,7 @@ void WorldRendererShared::setupLightPass(
 				const WorldRenderPassShared shadowPass(
 					ShaderTechnique::Shadow,
 					sharedParams,
-					shadowRenderView,
-					IWorldRenderPass::None);
+					shadowRenderView);
 
 				T_ASSERT(!renderContext->havePendingDraws());
 

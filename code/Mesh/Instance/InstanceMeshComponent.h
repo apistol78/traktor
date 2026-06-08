@@ -48,6 +48,8 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
+	virtual void setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext) override final;
+
 	virtual void build(
 		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,

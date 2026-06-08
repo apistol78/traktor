@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -85,6 +85,10 @@ void StaticMeshComponent::setTransform(const Transform& transform)
 Aabb3 StaticMeshComponent::getBoundingBox() const
 {
 	return m_mesh->getBoundingBox();
+}
+
+void StaticMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
+{
 }
 
 void StaticMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)

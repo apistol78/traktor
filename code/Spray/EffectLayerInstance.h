@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -68,7 +68,9 @@ public:
 
 	void synchronize();
 
-	void render(
+	void setup(render::RenderContext* renderContext, float time) const;
+
+	void build(
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
 		render::RenderContext* renderContext,

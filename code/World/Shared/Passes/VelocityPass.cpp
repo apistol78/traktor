@@ -142,8 +142,7 @@ render::RGTargetSet VelocityPass::setup(
 			const WorldRenderPassShared velocityPass(
 				ShaderTechnique::VelocityWrite,
 				sharedParams,
-				worldRenderView,
-				IWorldRenderPass::None);
+				worldRenderView);
 
 			for (auto it : gatheredView.renderables)
 			{

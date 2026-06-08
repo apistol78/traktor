@@ -88,6 +88,33 @@ void ForestComponent::update(const world::UpdateParams& update)
 	TerrainLayerComponent::update(update);
 }
 
+void ForestComponent::setup(const world::WorldRenderView& worldRenderView)
+{
+	m_lod0Indices.resize(0);
+	m_lod1Indices.resize(0);
+	m_lod2Indices.resize(0);
+
+	for (uint32_t i = 0; i < (uint32_t)m_trees.size(); ++i)
+	{
+		const auto& tree = m_trees[i];
+
+		float distance = 0.0f;
+		if (!worldRenderView.isBoxVisible(
+			m_boundingBox,
+			Transform(tree.position),
+			distance
+		))
+			continue;
+
+		if (distance < m_data.m_lod0distance)
+			m_lod0Indices.push_back(i);
+		else if (distance < m_data.m_lod1distance)
+			m_lod1Indices.push_back(i);
+		else if (distance < m_data.m_lod2distance)
+			m_lod2Indices.push_back(i);
+	}
+}
+
 void ForestComponent::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
@@ -104,37 +131,8 @@ void ForestComponent::build(
 	const Matrix44& view = worldRenderView.getView();
 	const Vector4 eye = view.inverse().translation();
 
-	if (worldRenderPass.getTechnique() != s_techniqueShadowWrite)
-	{
-		const bool updateClusters = (bool)((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0);
-		if (updateClusters)
-		{
-			m_lod0Indices.resize(0);
-			m_lod1Indices.resize(0);
-			m_lod2Indices.resize(0);
-
-			for (uint32_t i = 0; i < (uint32_t)m_trees.size(); ++i)
-			{
-				const auto& tree = m_trees[i];
-
-				float distance = 0.0f;
-				if (!worldRenderView.isBoxVisible(
-					m_boundingBox,
-					Transform(tree.position),
-					distance
-				))
-					continue;
-
-				if (distance < m_data.m_lod0distance)
-					m_lod0Indices.push_back(i);
-				else if (distance < m_data.m_lod1distance)
-					m_lod1Indices.push_back(i);
-				else if (distance < m_data.m_lod2distance)
-					m_lod2Indices.push_back(i);
-			}
-		}
-	}
-	else
+	// In case we are rendering shadow map then cull from light point of view.
+	if (worldRenderPass.getTechnique() == s_techniqueShadowWrite)
 	{
 		m_lodShadowIndices.resize(0);
 

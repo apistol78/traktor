@@ -93,36 +93,33 @@ Aabb3 SkinnedMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void SkinnedMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
 {
 	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
 	const Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
 
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0 && worldRenderView.getIndex() == 0)
-	{
-		// Ray traced instances skin and rebuild their acceleration structure on the
-		// asynchronous compute queue so it overlaps and is synchronized once, up front,
-		// before any graphics work.
-		//
-		// #fixme This causes the skinned mesh to be one frame late
-		// because all async work is done end of frame N-1 and synced on graphics
-		// queue in frame N.
-		const bool asynchronous = true;
+	const bool asynchronous = true;
 
-		std::swap(m_skinBuffer[0], m_skinBuffer[1]);
-		m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0], asynchronous);
-		if (m_rtwInstance)
+	std::swap(m_skinBuffer[0], m_skinBuffer[1]);
+	m_mesh->buildSkin(renderContext, m_jointBuffer, m_skinBuffer[0], asynchronous);
+
+	if (m_rtwInstance)
+	{
+		bool rebuild = false;
+		if (++m_rtUpdates > c_maxRtUpdatesBeforeBuild)
 		{
-			bool rebuild = false;
-			if (++m_rtUpdates > c_maxRtUpdatesBeforeBuild)
-			{
-				rebuild = true;
-				m_rtUpdates = 0;
-			}
-			m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure, rebuild, asynchronous);
-			m_rtwInstance->setTransform(worldTransform);
+			rebuild = true;
+			m_rtUpdates = 0;
 		}
+		m_mesh->buildAccelerationStructure(renderContext, m_skinBuffer[0], m_rtAccelerationStructure, rebuild, asynchronous);
+		m_rtwInstance->setTransform(worldTransform);
 	}
+}
+
+void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+{
+	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+	const Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
 
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;

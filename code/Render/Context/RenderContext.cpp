@@ -181,12 +181,12 @@ void RenderContext::mergeAsyncComputeIntoRender()
 		return;
 
 	// [ async compute ... ][ synchronize ][ all other blocks ... ]
-	//m_renderQueue.insert(m_renderQueue.begin(), alloc< SynchronizeRenderBlock >());
-	//m_renderQueue.insert(m_renderQueue.begin(), m_asyncComputeQueue.begin(), m_asyncComputeQueue.end());
+	m_renderQueue.insert(m_renderQueue.begin(), alloc< SynchronizeRenderBlock >());
+	m_renderQueue.insert(m_renderQueue.begin(), m_asyncComputeQueue.begin(), m_asyncComputeQueue.end());
 
 	// [ synchronize ][ all other blocks ... ][ async compute ... ]
-	m_renderQueue.insert(m_renderQueue.begin(), alloc< SynchronizeRenderBlock >());
-	m_renderQueue.insert(m_renderQueue.end(), m_asyncComputeQueue.begin(), m_asyncComputeQueue.end());
+	//m_renderQueue.insert(m_renderQueue.begin(), alloc< SynchronizeRenderBlock >());
+	//m_renderQueue.insert(m_renderQueue.end(), m_asyncComputeQueue.begin(), m_asyncComputeQueue.end());
 
 	m_asyncComputeQueue.resize(0);
 }

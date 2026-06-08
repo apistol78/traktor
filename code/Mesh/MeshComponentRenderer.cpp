@@ -6,8 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Mesh/MeshComponent.h"
 #include "Mesh/MeshComponentRenderer.h"
+
+#include "Mesh/MeshComponent.h"
+#include "Render/Frame/RenderGraph.h"
+#include "World/WorldRenderView.h"
+#include "World/WorldSetupContext.h"
 
 namespace traktor::mesh
 {
@@ -27,21 +31,29 @@ const TypeInfoSet MeshComponentRenderer::getRenderableTypes() const
 void MeshComponentRenderer::setup(
 	const world::WorldSetupContext& context,
 	const world::WorldRenderView& worldRenderView,
-	const AlignedVector< Object* >& renderables
-)
+	const AlignedVector< Object* >& renderables)
 {
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Mesh setup");
+	rp->addInput(render::RGDependency::First);
+	rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+		for (Object* renderable : renderables)
+		{
+			MeshComponent* meshComponent = static_cast< MeshComponent* >(renderable);
+			meshComponent->setup(worldRenderView, renderContext);
+		}
+	});
+	context.getRenderGraph().addPass(rp);
 }
 
 void MeshComponentRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
-	const AlignedVector< Object* >& renderables
-)
+	const AlignedVector< Object* >& renderables)
 {
 	for (Object* renderable : renderables)
 	{
-		auto meshComponent = static_cast< MeshComponent* >(renderable);
+		MeshComponent* meshComponent = static_cast< MeshComponent* >(renderable);
 		meshComponent->build(context, worldRenderView, worldRenderPass);
 	}
 }
