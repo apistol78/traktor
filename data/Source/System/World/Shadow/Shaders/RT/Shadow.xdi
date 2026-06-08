@@ -5,8 +5,8 @@
 			<id>{19EFE6E9-FEC4-7144-95C9-51B4E342DD7D}</id>
 			<comment/>
 			<position>
-				<first>2046</first>
-				<second>683</second>
+				<first>2329</first>
+				<second>811</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{E33C3258-EF52-AE43-8182-9B3411A454FD}</id>
 			<comment/>
 			<position>
-				<first>2046</first>
-				<second>738</second>
+				<first>2057</first>
+				<second>791</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -23,8 +23,8 @@
 			<id>{1A6B3F98-A238-8D48-B25F-45191BE25CD3}</id>
 			<comment/>
 			<position>
-				<first>2046</first>
-				<second>887</second>
+				<first>2057</first>
+				<second>919</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -32,24 +32,24 @@
 			<id>{F991BB59-C707-6B43-93AA-032F6383B25F}</id>
 			<comment/>
 			<position>
-				<first>2214</first>
-				<second>890</second>
+				<first>2300</first>
+				<second>977</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{E332433A-7F36-4248-B86C-E3C0645AD21B}</id>
 			<comment/>
 			<position>
-				<first>2214</first>
-				<second>756</second>
+				<first>2300</first>
+				<second>875</second>
 			</position>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{881AB7BB-6BE5-F745-96F4-AE82FA3CA509}</id>
 			<comment/>
 			<position>
-				<first>2562</first>
-				<second>815</second>
+				<first>2566</first>
+				<second>947</second>
 			</position>
 			<name>Raytracing</name>
 			<technique/>
@@ -90,6 +90,10 @@
 					<id>{D05A18C4-5FA4-6746-A960-86CBB0908A76}</id>
 					<name>MaxDistance</name>
 				</item>
+				<item>
+					<id>{0FEBA968-E303-E346-B643-1B2F2B2F4B31}</id>
+					<name>SampleCount</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -99,7 +103,7 @@
 				</item>
 			</outputPins>
 			<script><![CDATA[
-const int N = 8;
+const int N = int($SampleCount);
 
 vec3 u, v;
 OrthogonalFrame($Direction.xyz, u, v);
@@ -134,8 +138,8 @@ $Output = 1.0f - float(nshadowed) / N;
 			<id>{D8EC541E-FBF8-1D43-8A57-76299D502A4F}</id>
 			<comment/>
 			<position>
-				<first>1712</first>
-				<second>707</second>
+				<first>1744</first>
+				<second>759</second>
 			</position>
 			<name>ViewPosition</name>
 			<optional>false</optional>
@@ -144,8 +148,8 @@ $Output = 1.0f - float(nshadowed) / N;
 			<id>{4461C127-EEC1-5944-8802-4227BDDA64A7}</id>
 			<comment/>
 			<position>
-				<first>1712</first>
-				<second>868</second>
+				<first>1744</first>
+				<second>919</second>
 			</position>
 			<name>ViewDirection</name>
 			<optional>false</optional>
@@ -154,8 +158,8 @@ $Output = 1.0f - float(nshadowed) / N;
 			<id>{6C21D078-3BDD-6149-9EE9-86E27876DB1B}</id>
 			<comment/>
 			<position>
-				<first>2854</first>
-				<second>886</second>
+				<first>2864</first>
+				<second>965</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -163,8 +167,8 @@ $Output = 1.0f - float(nshadowed) / N;
 			<id>{A788E533-8EF9-DD41-B73F-03C373F0E887}</id>
 			<comment/>
 			<position>
-				<first>2036</first>
-				<second>1066</second>
+				<first>2052</first>
+				<second>1047</second>
 			</position>
 			<name>Random</name>
 			<technique/>
@@ -203,8 +207,8 @@ $Output = BlueNoise(seed);
 			<id>{44AE64A5-E05F-C047-A013-D291FB572E52}</id>
 			<comment/>
 			<position>
-				<first>1976</first>
-				<second>1184</second>
+				<first>2022</first>
+				<second>1197</second>
 			</position>
 			<name>MaxDistance</name>
 			<optional>true</optional>
@@ -213,16 +217,16 @@ $Output = BlueNoise(seed);
 			<id>{DD9C8674-4169-5A4A-AD61-0ABE2585670A}</id>
 			<comment/>
 			<position>
-				<first>2262</first>
-				<second>1174</second>
+				<first>2324</first>
+				<second>1197</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{5B22F071-43AD-5C40-945A-2F8F0957403E}</id>
 			<comment/>
 			<position>
-				<first>2040</first>
-				<second>1255</second>
+				<first>2054</first>
+				<second>1261</second>
 			</position>
 			<value>100</value>
 		</item>
@@ -230,8 +234,8 @@ $Output = BlueNoise(seed);
 			<id>{B6EA56A1-F5D5-CE40-BF58-399DC73832EB}</id>
 			<comment/>
 			<position>
-				<first>1787</first>
-				<second>1099</second>
+				<first>1771</first>
+				<second>1058</second>
 			</position>
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
 		</item>
@@ -239,8 +243,8 @@ $Output = BlueNoise(seed);
 			<id>{AE6B730B-FF89-FA4F-8847-986BAD1AB126}</id>
 			<comment/>
 			<position>
-				<first>2014</first>
-				<second>939</second>
+				<first>2041</first>
+				<second>983</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -248,8 +252,8 @@ $Output = BlueNoise(seed);
 			<id>{F31CCEC0-FDBB-ED43-981E-4C232456F896}</id>
 			<comment/>
 			<position>
-				<first>2014</first>
-				<second>791</second>
+				<first>2041</first>
+				<second>855</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -257,8 +261,8 @@ $Output = BlueNoise(seed);
 			<id>{EAA75572-4053-F64F-AFCE-44D28B88C4CA}</id>
 			<comment/>
 			<position>
-				<first>2272</first>
-				<second>660</second>
+				<first>2329</first>
+				<second>747</second>
 			</position>
 			<parameterDeclaration>{C651B846-F51A-CB49-BBAB-10C2A527DE97}</parameterDeclaration>
 		</item>
@@ -266,8 +270,8 @@ $Output = BlueNoise(seed);
 			<id>{1664F6E8-0B5F-614A-AC68-3C1FFDAAFC08}</id>
 			<comment/>
 			<position>
-				<first>2008</first>
-				<second>1026</second>
+				<first>2038</first>
+				<second>1133</second>
 			</position>
 			<name>Random</name>
 			<optional>true</optional>
@@ -276,9 +280,36 @@ $Output = BlueNoise(seed);
 			<id>{79A43FC1-734E-8740-9EB1-076A153219A5}</id>
 			<comment/>
 			<position>
-				<first>2262</first>
-				<second>1024</second>
+				<first>2324</first>
+				<second>1079</second>
 			</position>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{7AD8335C-5EA6-E54B-BFC0-5EB4176634AF}</id>
+			<comment/>
+			<position>
+				<first>2022</first>
+				<second>1325</second>
+			</position>
+			<name>SampleCount</name>
+			<optional>true</optional>
+		</item>
+		<item type="traktor.render.Connected" version="traktor.render.Node:1">
+			<id>{B9C6FF76-343A-2C48-AD4C-6E927CA6B194}</id>
+			<comment/>
+			<position>
+				<first>2324</first>
+				<second>1315</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{A1B6D03C-9F5F-764F-A2EB-B9797037DBE7}</id>
+			<comment/>
+			<position>
+				<first>2062</first>
+				<second>1389</second>
+			</position>
+			<value>8</value>
 		</item>
 	</nodes>
 	<edges>
@@ -490,6 +521,46 @@ $Output = BlueNoise(seed);
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<id>{45D32A5E-5CDA-064C-9156-C2EB256BBF3F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{197CC347-3580-4502-8AA1-976E476EA843}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{3F36532A-8A98-4EE7-85ED-2DA35230BC3C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{0FEBA968-E303-E346-B643-1B2F2B2F4B31}</id>
 			</destination>
 		</item>
 	</edges>

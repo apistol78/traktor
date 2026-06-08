@@ -1219,7 +1219,7 @@ Check max shadow distance
 			<id>{149EC022-0F72-3A4E-BB41-D28802FEB9D2}</id>
 			<comment/>
 			<position>
-				<first>376</first>
+				<first>378</first>
 				<second>2821</second>
 			</position>
 			<name>L_ViewPosition</name>
@@ -1253,6 +1253,11 @@ Check max shadow distance
 					<name>Random</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<id>{7AD8335C-5EA6-E54B-BFC0-5EB4176634AF}</id>
+					<name>SampleCount</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -1274,8 +1279,8 @@ Check max shadow distance
 			<id>{F4EFD66B-3CF2-E948-A7B7-58C272549F78}</id>
 			<comment/>
 			<position>
-				<first>366</first>
-				<second>2896</second>
+				<first>368</first>
+				<second>2866</second>
 			</position>
 			<name>Random</name>
 			<technique/>
@@ -1313,8 +1318,8 @@ $Output = BlueNoise(seed);
 			<id>{40B63452-C3C2-1F4F-911E-7D63FECD05B7}</id>
 			<comment/>
 			<position>
-				<first>96</first>
-				<second>2929</second>
+				<first>98</first>
+				<second>2897</second>
 			</position>
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
 		</item>
@@ -1331,8 +1336,8 @@ $Output = BlueNoise(seed);
 			<id>{7BBE8D21-9AC3-43A6-8741-CB5F81A54A4B}</id>
 			<comment/>
 			<position>
-				<first>-242</first>
-				<second>651</second>
+				<first>-241</first>
+				<second>626</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -1365,6 +1370,11 @@ $Output = BlueNoise(seed);
 					<name>Random</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<id>{7AD8335C-5EA6-E54B-BFC0-5EB4176634AF}</id>
+					<name>SampleCount</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -1377,8 +1387,8 @@ $Output = BlueNoise(seed);
 			<id>{18D14FD7-B96F-42DB-AB6C-ED2C9061AB5B}</id>
 			<comment/>
 			<position>
-				<first>-501</first>
-				<second>764</second>
+				<first>-500</first>
+				<second>693</second>
 			</position>
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
 		</item>
@@ -1386,8 +1396,8 @@ $Output = BlueNoise(seed);
 			<id>{CD5C64FC-5DE4-4ADD-8AE6-292B9DFADF4E}</id>
 			<comment/>
 			<position>
-				<first>-252</first>
-				<second>731</second>
+				<first>-251</first>
+				<second>677</second>
 			</position>
 			<name>Random</name>
 			<technique/>
@@ -1425,10 +1435,47 @@ $Output = BlueNoise(seed);
 			<id>{E1C5C365-8588-48AE-8A8A-13C05FA56F0A}</id>
 			<comment/>
 			<position>
-				<first>-258</first>
-				<second>611</second>
+				<first>-257</first>
+				<second>575</second>
 			</position>
 			<name>L_LightDirection</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{FA22A920-B11F-1242-B953-A427C3E095A8}</id>
+			<comment/>
+			<position>
+				<first>-257</first>
+				<second>750</second>
+			</position>
+			<name>L_SampleCount</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{A51369FA-7D70-9141-9C49-8F0E9DBA36E0}</id>
+			<comment/>
+			<position>
+				<first>362</first>
+				<second>2933</second>
+			</position>
+			<name>L_SampleCount</name>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{460AD9B7-35B9-F447-8541-E4F221D3049D}</id>
+			<comment/>
+			<position>
+				<first>-975</first>
+				<second>-800</second>
+			</position>
+			<name>ShadowSampleCount</name>
+			<optional>true</optional>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{66576558-3855-8749-8C91-15AF39052C8D}</id>
+			<comment/>
+			<position>
+				<first>-682</first>
+				<second>-760</second>
+			</position>
+			<name>L_SampleCount</name>
 		</item>
 	</nodes>
 	<edges>
@@ -2720,6 +2767,36 @@ $Output = BlueNoise(seed);
 			<destination>
 				<node ref="/object/nodes/item[39]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[129]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[125]"/>
+				<id>{7AD8335C-5EA6-E54B-BFC0-5EB4176634AF}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[130]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[119]"/>
+				<id>{7AD8335C-5EA6-E54B-BFC0-5EB4176634AF}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[131]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[132]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 	</edges>

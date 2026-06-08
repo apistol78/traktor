@@ -5,8 +5,8 @@
 			<id>{5287CA15-CC7D-F449-9E62-735EFAA12CCC}</id>
 			<comment/>
 			<position>
-				<first>1290</first>
-				<second>199</second>
+				<first>1031</first>
+				<second>197</second>
 			</position>
 			<technique>Default</technique>
 			<localSize>
@@ -19,8 +19,8 @@
 			<id>{0B6344A1-ECF2-6F45-8DF8-10A5AD0A9157}</id>
 			<comment/>
 			<position>
-				<first>1021</first>
-				<second>248</second>
+				<first>771</first>
+				<second>257</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -28,8 +28,8 @@
 			<id>{6EFC1528-9148-F64D-A138-7EF60F2D629C}</id>
 			<comment/>
 			<position>
-				<first>-342</first>
-				<second>-1590</second>
+				<first>-316</first>
+				<second>-1603</second>
 			</position>
 			<value>128</value>
 		</item>
@@ -37,8 +37,8 @@
 			<id>{00395931-E529-AB4E-8200-B1708892049A}</id>
 			<comment/>
 			<position>
-				<first>-1485</first>
-				<second>575</second>
+				<first>-45</first>
+				<second>-12</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -46,8 +46,8 @@
 			<id>{08CCEE66-2163-D54A-B653-C605FB935C34}</id>
 			<comment/>
 			<position>
-				<first>-1244</first>
-				<second>503</second>
+				<first>176</first>
+				<second>-133</second>
 			</position>
 			<fragmentGuid>{83C1284E-627A-5E4D-81DD-0C2E5C34EC17}</fragmentGuid>
 			<inputPins>
@@ -60,6 +60,11 @@
 					<id>{AAF68AA1-6F09-BE4C-978A-5CE8928EBE29}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
+				</item>
+				<item>
+					<id>{460AD9B7-35B9-F447-8541-E4F221D3049D}</id>
+					<name>ShadowSampleCount</name>
+					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -77,16 +82,16 @@
 			<id>{0A305E3E-B340-4A4D-A04A-F55F76A3510C}</id>
 			<comment/>
 			<position>
-				<first>-75</first>
-				<second>-1581</second>
+				<first>-65</first>
+				<second>-1615</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{72062744-61C8-C54F-B4E5-140A44DB6878}</id>
 			<comment/>
 			<position>
-				<first>145</first>
-				<second>-1599</second>
+				<first>137</first>
+				<second>-1597</second>
 			</position>
 			<name>L_FogVolumeSize</name>
 		</item>
@@ -94,16 +99,16 @@
 			<id>{1C3DD9E8-A80D-4E41-8874-7914BD85AE45}</id>
 			<comment/>
 			<position>
-				<first>297</first>
-				<second>185</second>
+				<first>73</first>
+				<second>355</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{234226F3-674F-4751-A731-FF610CF2C728}</id>
 			<comment/>
 			<position>
-				<first>539</first>
-				<second>237</second>
+				<first>307</first>
+				<second>373</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -111,8 +116,8 @@
 			<id>{35E27118-45F7-4B3F-98B8-3984A0EF9A70}</id>
 			<comment/>
 			<position>
-				<first>539</first>
-				<second>321</second>
+				<first>307</first>
+				<second>520</second>
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
@@ -120,16 +125,16 @@
 			<id>{DFAF48A4-324E-476F-8307-09A8C0B49AFD}</id>
 			<comment/>
 			<position>
-				<first>740</first>
-				<second>254</second>
+				<first>515</first>
+				<second>372</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{3BC7A3C5-B101-4BDA-A9D2-FE599E29F3BB}</id>
 			<comment/>
 			<position>
-				<first>-1097</first>
-				<second>78</second>
+				<first>-840</first>
+				<second>-150</second>
 			</position>
 			<fragmentGuid>{3A77B694-1267-9A46-84F5-F8D06EAC5771}</fragmentGuid>
 			<inputPins>
@@ -154,8 +159,8 @@
 			<id>{75E1712E-1B95-4EF4-BD9D-9C73A64BA49E}</id>
 			<comment/>
 			<position>
-				<first>-1285</first>
-				<second>74</second>
+				<first>-1048</first>
+				<second>-132</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -163,16 +168,16 @@
 			<id>{B83ECC7D-0C67-4D95-B530-F22B3097C7FD}</id>
 			<comment/>
 			<position>
-				<first>-580</first>
-				<second>221</second>
+				<first>-324</first>
+				<second>-55</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{A55AC5C9-28F5-44E0-B423-DBD582A7A855}</id>
 			<comment/>
 			<position>
-				<first>-812</first>
-				<second>217</second>
+				<first>-532</first>
+				<second>-20</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -180,8 +185,8 @@
 			<id>{542CF808-CD67-044F-A00E-7EDC425F4820}</id>
 			<comment/>
 			<position>
-				<first>-817</first>
-				<second>308</second>
+				<first>-542</first>
+				<second>-106</second>
 			</position>
 			<fragmentGuid>{AA010A65-F78F-7447-A6BB-8FBE0A238745}</fragmentGuid>
 			<inputPins>
@@ -202,40 +207,40 @@
 			<id>{9F6CE8B4-419B-7E4E-9E2F-55469947E24A}</id>
 			<comment/>
 			<position>
-				<first>-559</first>
-				<second>52</second>
+				<first>-58</first>
+				<second>-178</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{72045BE2-2E7E-D34D-8F47-9195D2959A4C}</id>
 			<comment/>
 			<position>
-				<first>-360</first>
-				<second>740</second>
+				<first>1522</first>
+				<second>-99</second>
 			</position>
 		</item>
 		<item type="traktor.render.Normalize" version="traktor.render.Node:1">
 			<id>{72CE143C-5A1C-2645-9285-30663362B7CB}</id>
 			<comment/>
 			<position>
-				<first>-1349</first>
-				<second>803</second>
+				<first>264</first>
+				<second>-15</second>
 			</position>
 		</item>
 		<item type="traktor.render.Dot" version="traktor.render.Node:1">
 			<id>{A31A0321-4917-9D4F-BFDD-C1D6AC3C6C4B}</id>
 			<comment/>
 			<position>
-				<first>-1176</first>
-				<second>787</second>
+				<first>570</first>
+				<second>-50</second>
 			</position>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{AF10E59E-248D-434D-901A-F22C29885AC2}</id>
 			<comment/>
 			<position>
-				<first>-807</first>
-				<second>803</second>
+				<first>1022</first>
+				<second>-42</second>
 			</position>
 			<name>Mie Scattering Phase</name>
 			<technique/>
@@ -271,16 +276,16 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{F92CF708-FD69-DF40-B1A2-0ED69FE06B53}</id>
 			<comment/>
 			<position>
-				<first>-571</first>
-				<second>740</second>
+				<first>1288</first>
+				<second>-50</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{CABCE1C2-435F-E146-B2BF-C205562C9359}</id>
 			<comment/>
 			<position>
-				<first>-802</first>
-				<second>408</second>
+				<first>1756</first>
+				<second>-81</second>
 			</position>
 			<swizzle>xyzw</swizzle>
 		</item>
@@ -288,16 +293,16 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{43618504-E677-614E-BE28-DBE70E3EDA18}</id>
 			<comment/>
 			<position>
-				<first>301</first>
-				<second>338</second>
+				<first>73</first>
+				<second>502</second>
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{47090A09-6D1B-134F-A8F9-C3A2FB66C421}</id>
 			<comment/>
 			<position>
-				<first>1019</first>
-				<second>206</second>
+				<first>770</first>
+				<second>193</second>
 			</position>
 			<parameterDeclaration>{4D3FA8BB-C1E9-E143-9B75-7830376C4B33}</parameterDeclaration>
 		</item>
@@ -305,8 +310,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{B3BAE56A-23DF-4F47-A448-73FBFC3BD97B}</id>
 			<comment/>
 			<position>
-				<first>-361</first>
-				<second>-1508</second>
+				<first>-353</first>
+				<second>-1539</second>
 			</position>
 			<parameterDeclaration>{276DFEA3-87D7-4E45-8425-812BA399211C}</parameterDeclaration>
 		</item>
@@ -314,8 +319,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{CDF7AF06-7DDF-1141-BB02-7B528FDA5838}</id>
 			<comment/>
 			<position>
-				<first>-252</first>
-				<second>128</second>
+				<first>-527</first>
+				<second>340</second>
 			</position>
 			<parameterDeclaration>{A2B819CF-CC4F-124C-AC0F-CE2FD5DB1899}</parameterDeclaration>
 		</item>
@@ -323,8 +328,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{239DFEDC-2450-E34B-9392-8F22DB126D09}</id>
 			<comment/>
 			<position>
-				<first>-276</first>
-				<second>326</second>
+				<first>-535</first>
+				<second>506</second>
 			</position>
 			<parameterDeclaration>{07D82E61-B43F-0E4B-B371-33ED280DDAA6}</parameterDeclaration>
 		</item>
@@ -332,8 +337,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{172FBF8B-6155-B942-8E4A-3689D269764D}</id>
 			<comment/>
 			<position>
-				<first>-171</first>
-				<second>379</second>
+				<first>-482</first>
+				<second>570</second>
 			</position>
 			<value>100</value>
 		</item>
@@ -341,8 +346,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{8779EDB3-34E0-DB48-9358-4ED73D5C1864}</id>
 			<comment/>
 			<position>
-				<first>-1</first>
-				<second>426</second>
+				<first>-215</first>
+				<second>487</second>
 			</position>
 			<parameterDeclaration>{276DFEA3-87D7-4E45-8425-812BA399211C}</parameterDeclaration>
 		</item>
@@ -350,24 +355,24 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{6AB28B45-ECA0-4641-AD9F-31139EE8C4C4}</id>
 			<comment/>
 			<position>
-				<first>46</first>
-				<second>331</second>
+				<first>-188</first>
+				<second>551</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{0F7C64E7-F9E1-0C45-A6A4-1DB2EB79DE65}</id>
 			<comment/>
 			<position>
-				<first>41</first>
-				<second>124</second>
+				<first>-188</first>
+				<second>321</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{55907F16-29E1-984B-BDED-EB67A550AFDB}</id>
 			<comment/>
 			<position>
-				<first>-162</first>
-				<second>175</second>
+				<first>-474</first>
+				<second>404</second>
 			</position>
 			<value>2</value>
 		</item>
@@ -375,8 +380,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{76C343DC-133E-5542-87EA-EE799081E9B2}</id>
 			<comment/>
 			<position>
-				<first>-351</first>
-				<second>-1373</second>
+				<first>-368</first>
+				<second>-1379</second>
 			</position>
 			<parameterDeclaration>{128A2894-9C6A-6144-AE39-E2F8451ED097}</parameterDeclaration>
 		</item>
@@ -384,8 +389,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{58DC3918-43A1-AC4E-AE40-9A6109F80DDC}</id>
 			<comment/>
 			<position>
-				<first>94</first>
-				<second>-1333</second>
+				<first>112</first>
+				<second>-1347</second>
 			</position>
 			<name>L_FarZ</name>
 		</item>
@@ -393,8 +398,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{74A5D170-E908-944D-A79F-EED7183D6B8D}</id>
 			<comment/>
 			<position>
-				<first>94</first>
-				<second>-1426</second>
+				<first>112</first>
+				<second>-1411</second>
 			</position>
 			<name>L_NearZ</name>
 		</item>
@@ -402,8 +407,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{96974902-6361-1A4C-ACB9-CB3ADFA7CECC}</id>
 			<comment/>
 			<position>
-				<first>-87</first>
-				<second>-1353</second>
+				<first>-96</first>
+				<second>-1347</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -411,8 +416,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{E8A9F4BD-0393-E94A-BB4D-2DA3BF39FAB0}</id>
 			<comment/>
 			<position>
-				<first>-87</first>
-				<second>-1409</second>
+				<first>-96</first>
+				<second>-1411</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -420,8 +425,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{EA7A2C8B-2F6E-F945-8735-6FF859A237EC}</id>
 			<comment/>
 			<position>
-				<first>-1158</first>
-				<second>-598</second>
+				<first>-884</first>
+				<second>-527</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -429,8 +434,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{7695E082-1893-CF45-B0CC-535A2FA6B992}</id>
 			<comment/>
 			<position>
-				<first>-534</first>
-				<second>-744</second>
+				<first>-355</first>
+				<second>-687</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -438,8 +443,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{911C2F45-5FC5-EA4B-8C28-64658E670ADE}</id>
 			<comment/>
 			<position>
-				<first>-886</first>
-				<second>-735</second>
+				<first>-653</first>
+				<second>-705</second>
 			</position>
 			<name>FrustumCellToViewspace</name>
 			<technique/>
@@ -499,8 +504,8 @@ $Output = vec4(vs, 1.0f);
 			<id>{95648535-C8BC-3E4A-AC6A-F51A6193EBD0}</id>
 			<comment/>
 			<position>
-				<first>-1160</first>
-				<second>-782</second>
+				<first>-885</first>
+				<second>-783</second>
 			</position>
 			<name>L_FogVolumeSize</name>
 		</item>
@@ -508,8 +513,8 @@ $Output = vec4(vs, 1.0f);
 			<id>{5D6E05CA-78D3-3849-A6B0-461DA0DB8951}</id>
 			<comment/>
 			<position>
-				<first>-1176</first>
-				<second>-736</second>
+				<first>-893</first>
+				<second>-719</second>
 			</position>
 			<parameterDeclaration>{3BA1C3DB-450E-7446-BC4A-B65117C2C087}</parameterDeclaration>
 		</item>
@@ -517,8 +522,8 @@ $Output = vec4(vs, 1.0f);
 			<id>{AD49E9C9-5A35-C54C-8EFB-26AE17A70CE9}</id>
 			<comment/>
 			<position>
-				<first>-1144</first>
-				<second>-690</second>
+				<first>-877</first>
+				<second>-655</second>
 			</position>
 			<name>L_NearZ</name>
 		</item>
@@ -526,8 +531,8 @@ $Output = vec4(vs, 1.0f);
 			<id>{BFFB9FD9-B5CB-B24B-93D7-23CB7E7197F9}</id>
 			<comment/>
 			<position>
-				<first>-1144</first>
-				<second>-644</second>
+				<first>-877</first>
+				<second>-591</second>
 			</position>
 			<name>L_FarZ</name>
 		</item>
@@ -535,8 +540,8 @@ $Output = vec4(vs, 1.0f);
 			<id>{085CBAD6-593D-964E-AC00-F361B11DF5A8}</id>
 			<comment/>
 			<position>
-				<first>103</first>
-				<second>-536</second>
+				<first>621</first>
+				<second>-467</second>
 			</position>
 			<name>L_FarZ</name>
 		</item>
@@ -544,8 +549,8 @@ $Output = vec4(vs, 1.0f);
 			<id>{24E3F6D1-02E0-BA44-9301-ECCAC4DC40B7}</id>
 			<comment/>
 			<position>
-				<first>103</first>
-				<second>-581</second>
+				<first>621</first>
+				<second>-531</second>
 			</position>
 			<name>L_NearZ</name>
 		</item>
@@ -553,8 +558,8 @@ $Output = vec4(vs, 1.0f);
 			<id>{9546185E-2EA8-A54F-B826-F60B7A02FB64}</id>
 			<comment/>
 			<position>
-				<first>71</first>
-				<second>-626</second>
+				<first>605</first>
+				<second>-595</second>
 			</position>
 			<parameterDeclaration>{3BA1C3DB-450E-7446-BC4A-B65117C2C087}</parameterDeclaration>
 		</item>
@@ -562,8 +567,8 @@ $Output = vec4(vs, 1.0f);
 			<id>{F2B59087-BC0C-754D-83A3-19BD2DB8442E}</id>
 			<comment/>
 			<position>
-				<first>87</first>
-				<second>-671</second>
+				<first>613</first>
+				<second>-659</second>
 			</position>
 			<name>L_FogVolumeSize</name>
 		</item>
@@ -571,8 +576,8 @@ $Output = vec4(vs, 1.0f);
 			<id>{5392FB12-61CC-4244-9B2C-B30F51F5A0BD}</id>
 			<comment/>
 			<position>
-				<first>336</first>
-				<second>-632</second>
+				<first>861</first>
+				<second>-518</second>
 			</position>
 			<name>ViewspaceToFrustumCellNDC</name>
 			<technique/>
@@ -638,8 +643,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{8704347F-90CC-D449-A5BF-6E2C2B6390CC}</id>
 			<comment/>
 			<position>
-				<first>1644</first>
-				<second>-603</second>
+				<first>1643</first>
+				<second>-784</second>
 			</position>
 			<minFilter>Linear</minFilter>
 			<mipFilter>Linear</mipFilter>
@@ -656,8 +661,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{DAECAD3F-1A02-564B-9EB1-7C0AB29A83AB}</id>
 			<comment/>
 			<position>
-				<first>582</first>
-				<second>-471</second>
+				<first>887</first>
+				<second>-710</second>
 			</position>
 			<value>0.5, -0.5, 1, 0</value>
 		</item>
@@ -665,16 +670,16 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{6E7EA468-F1F4-2A41-810C-BAD8EDC27378}</id>
 			<comment/>
 			<position>
-				<first>827</first>
-				<second>-514</second>
+				<first>1175</first>
+				<second>-686</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector" version="traktor.render.Node:1">
 			<id>{7AEEE984-11B4-5847-9FEB-BD495F92CB8A}</id>
 			<comment/>
 			<position>
-				<first>595</first>
-				<second>-427</second>
+				<first>895</first>
+				<second>-646</second>
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
@@ -682,8 +687,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{F7C16B85-3EC4-E54B-84D6-2774068D42C9}</id>
 			<comment/>
 			<position>
-				<first>753</first>
-				<second>-647</second>
+				<first>589</first>
+				<second>-825</second>
 			</position>
 			<parameterDeclaration>{359B350A-D6D9-4D40-9559-EF5BFB5429C1}</parameterDeclaration>
 		</item>
@@ -691,8 +696,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{CA09B361-610F-E741-AD67-FD7A2914FCF1}</id>
 			<comment/>
 			<position>
-				<first>1921</first>
-				<second>-556</second>
+				<first>1909</first>
+				<second>-766</second>
 			</position>
 			<name>L_LastSample</name>
 		</item>
@@ -700,8 +705,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{A0014B66-C07C-1447-93B9-AEE72D335A1C}</id>
 			<comment/>
 			<position>
-				<first>766</first>
-				<second>450</second>
+				<first>528</first>
+				<second>244</second>
 			</position>
 			<name>L_LastSample</name>
 		</item>
@@ -709,16 +714,16 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{F43AD8D0-59CE-2241-AB9D-B4EC72F4C4E1}</id>
 			<comment/>
 			<position>
-				<first>1001</first>
-				<second>375</second>
+				<first>765</first>
+				<second>321</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{7644CCE7-0D6E-7E43-BC61-C024EECAB3AF}</id>
 			<comment/>
 			<position>
-				<first>776</first>
-				<second>504</second>
+				<first>533</first>
+				<second>308</second>
 			</position>
 			<value>0.9</value>
 		</item>
@@ -726,8 +731,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{76E4A1BA-B097-A74D-849F-82DA47BC03EF}</id>
 			<comment/>
 			<position>
-				<first>611</first>
-				<second>-790</second>
+				<first>344</first>
+				<second>-595</second>
 			</position>
 			<parameterDeclaration>{1EA4BB74-0993-C749-969B-55F145C473AC}</parameterDeclaration>
 		</item>
@@ -735,8 +740,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{ED987C35-7132-7D49-A4CE-F84DD6DCCB96}</id>
 			<comment/>
 			<position>
-				<first>225</first>
-				<second>-790</second>
+				<first>83</first>
+				<second>-614</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -744,16 +749,16 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{C746ADAB-9D0B-D641-9B02-9AB965DE1A5C}</id>
 			<comment/>
 			<position>
-				<first>484</first>
-				<second>-902</second>
+				<first>323</first>
+				<second>-697</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E209BF7E-EA23-B144-83E5-895F50A5BA60}</id>
 			<comment/>
 			<position>
-				<first>294</first>
-				<second>-902</second>
+				<first>99</first>
+				<second>-678</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -761,16 +766,16 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{23DC6713-FC02-3D4E-A3A4-C7B5E36EDD6B}</id>
 			<comment/>
 			<position>
-				<first>823</first>
-				<second>-902</second>
+				<first>592</first>
+				<second>-761</second>
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{219308FA-06BC-0045-961D-4BF4627ABCC1}</id>
 			<comment/>
 			<position>
-				<first>-361</first>
-				<second>-1261</second>
+				<first>-317</first>
+				<second>-1254</second>
 			</position>
 			<parameterDeclaration>{4AD3FBC8-EE45-8149-A0A4-9F603736B11E}</parameterDeclaration>
 		</item>
@@ -778,8 +783,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{369E6870-A931-C143-81B6-B3D98AB77019}</id>
 			<comment/>
 			<position>
-				<first>14</first>
-				<second>-1247</second>
+				<first>-29</first>
+				<second>-1254</second>
 			</position>
 			<name>L_FogSliceUpdate</name>
 		</item>
@@ -787,8 +792,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{1060F73C-17DB-F04D-97AE-CB20E1CDA0DC}</id>
 			<comment/>
 			<position>
-				<first>1057</first>
-				<second>653</second>
+				<first>1015</first>
+				<second>551</second>
 			</position>
 			<branch>BrDynamic</branch>
 			<operator>CoEqual</operator>
@@ -797,8 +802,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{F1188BAF-FF3F-204D-B853-3FD2F38AEA4C}</id>
 			<comment/>
 			<position>
-				<first>792</first>
-				<second>647</second>
+				<first>770</first>
+				<second>717</second>
 			</position>
 			<name>L_FogSliceUpdate</name>
 		</item>
@@ -806,8 +811,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{C8D2B61E-4CFC-4F4C-98C2-23576F205513}</id>
 			<comment/>
 			<position>
-				<first>581</first>
-				<second>696</second>
+				<first>521</first>
+				<second>474</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -815,8 +820,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{30254C0A-FCAC-4343-A3E8-33D2687A3A6B}</id>
 			<comment/>
 			<position>
-				<first>808</first>
-				<second>695</second>
+				<first>778</first>
+				<second>503</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -824,8 +829,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{B87B46CA-7B2B-A644-A736-4D0FE34E92FC}</id>
 			<comment/>
 			<position>
-				<first>654</first>
-				<second>941</second>
+				<first>528</first>
+				<second>666</second>
 			</position>
 			<name>L_LastSample</name>
 		</item>
@@ -833,32 +838,32 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{962FC59E-C0C0-6844-9DD5-36D089B5BDC4}</id>
 			<comment/>
 			<position>
-				<first>-986</first>
-				<second>803</second>
+				<first>804</first>
+				<second>-46</second>
 			</position>
 		</item>
 		<item type="traktor.render.TextureSize" version="traktor.render.Node:1">
 			<id>{1DC912BA-0409-4E05-BD47-8FA0E0E166DF}</id>
 			<comment/>
 			<position>
-				<first>1000</first>
-				<second>-706</second>
+				<first>909</first>
+				<second>-860</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{FC1E2FFD-62C0-433D-9C30-A7A267E71A40}</id>
 			<comment/>
 			<position>
-				<first>1182</first>
-				<second>-749</second>
+				<first>1175</first>
+				<second>-834</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{943EBE26-8822-4F1F-A958-B7D4D2244FA5}</id>
 			<comment/>
 			<position>
-				<first>1015</first>
-				<second>-756</second>
+				<first>919</first>
+				<second>-774</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -866,16 +871,16 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{0054741A-91D3-4B2C-9695-D85EAD5F4A51}</id>
 			<comment/>
 			<position>
-				<first>1405</first>
-				<second>-690</second>
+				<first>1409</first>
+				<second>-768</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{1289E8BD-CD8D-4719-8A66-C418C2015F0B}</id>
 			<comment/>
 			<position>
-				<first>637</first>
-				<second>-552</second>
+				<first>1180</first>
+				<second>-484</second>
 			</position>
 			<name>L_LastSampleValid</name>
 		</item>
@@ -883,8 +888,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{6F6E0179-1BEB-4262-AB63-5B5197FBC9FF}</id>
 			<comment/>
 			<position>
-				<first>650</first>
-				<second>859</second>
+				<first>520</first>
+				<second>538</second>
 			</position>
 			<name>L_LastSampleValid</name>
 		</item>
@@ -892,8 +897,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{DC44D604-A506-439E-9E6C-2F0EEE419F94}</id>
 			<comment/>
 			<position>
-				<first>896</first>
-				<second>870</second>
+				<first>749</first>
+				<second>567</second>
 			</position>
 			<branch>BrDynamic</branch>
 			<operator>CoGreater</operator>
@@ -902,10 +907,64 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{370D5F7E-48E4-4C5E-B090-94457C78DD65}</id>
 			<comment/>
 			<position>
-				<first>684</first>
-				<second>896</second>
+				<first>533</first>
+				<second>602</second>
 			</position>
 			<value>0</value>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{3E17BE89-20B3-9F49-A8A3-BD1C4A0A6B00}</id>
+			<comment/>
+			<position>
+				<first>1964</first>
+				<second>-81</second>
+			</position>
+			<name>L_IterInput</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{740B009F-6169-3545-BF8F-4E59E56D36D7}</id>
+			<comment/>
+			<position>
+				<first>-537</first>
+				<second>44</second>
+			</position>
+			<name>L_IterInput</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{87C53B64-3832-5748-BEFC-9A6D691FC360}</id>
+			<comment/>
+			<position>
+				<first>-45</first>
+				<second>52</second>
+			</position>
+			<name>L_IterOutput</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{6109B324-D87A-BC43-A885-D7E464E2E7B5}</id>
+			<comment/>
+			<position>
+				<first>-175</first>
+				<second>423</second>
+			</position>
+			<name>L_IterOutput</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{C857A912-16EA-964F-B571-7012E6A5C8DA}</id>
+			<comment/>
+			<position>
+				<first>1301</first>
+				<second>-114</second>
+			</position>
+			<name>L_IterOutput</name>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{1B5C4CFD-73D8-5C4E-B739-86274B750B63}</id>
+			<comment/>
+			<position>
+				<first>-40</first>
+				<second>-76</second>
+			</position>
+			<value>1</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1041,26 +1100,6 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<id>{48BD0EF3-A583-439B-84D6-00023498BD11}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<id>{48BD0EF3-A583-439B-84D6-00023498BD11}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -1107,16 +1146,6 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<destination>
 				<node ref="/object/nodes/item[22]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[22]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<id>{E878AB3C-E58E-48AD-92D5-75176A2DF7F7}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1729,54 +1758,114 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[80]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[81]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{E878AB3C-E58E-48AD-92D5-75176A2DF7F7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{48BD0EF3-A583-439B-84D6-00023498BD11}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[82]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[83]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[84]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[85]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{460AD9B7-35B9-F447-8541-E4F221D3049D}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
 			<title>Inject light into frustum grid</title>
 			<comment/>
 			<position>
-				<first>-1568</first>
-				<second>-127</second>
+				<first>-1112</first>
+				<second>-274</second>
 			</position>
 			<size>
-				<first>3123</first>
-				<second>1221</second>
+				<first>3258</first>
+				<second>1087</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
 			<title>Configuration</title>
 			<comment/>
 			<position>
-				<first>-495</first>
-				<second>-1717</second>
+				<first>-432</first>
+				<second>-1711</second>
 			</position>
 			<size>
-				<first>909</first>
-				<second>527</second>
+				<first>767</first>
+				<second>553</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
 			<title>Calculate view position of cell</title>
 			<comment/>
 			<position>
-				<first>-1322</first>
-				<second>-948</second>
+				<first>-957</first>
+				<second>-879</second>
 			</position>
 			<size>
-				<first>1038</first>
-				<second>527</second>
+				<first>784</first>
+				<second>448</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
 			<title>Reproject and sample last frame value</title>
 			<comment/>
 			<position>
-				<first>-133</first>
-				<second>-1064</second>
+				<first>19</first>
+				<second>-956</second>
 			</position>
 			<size>
-				<first>2277</first>
-				<second>855</second>
+				<first>2072</first>
+				<second>620</second>
 			</size>
 		</item>
 	</groups>
