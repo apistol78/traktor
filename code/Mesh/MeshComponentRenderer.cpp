@@ -11,6 +11,7 @@
 #include "Mesh/MeshComponent.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
+#include "Render/IRenderView.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
 
@@ -44,8 +45,18 @@ void MeshComponentRenderer::setup(
 		}
 
 		// Synchronize the async compute skinning and RT jobs with the graphics queue.
+		render::ComputeHandle* handle = renderContext->alloc< render::ComputeHandle >();
+
+		renderContext->compute< render::LambdaRenderBlock >([=](render::IRenderView* renderView) {
+			*handle = renderView->signalAsynchronousCompute();
+		});
+
 		// #todo This should be moved closer to the consumer pass to increase overlap.
-		renderContext->compute< render::SynchronizeRenderBlock >();
+		renderContext->compute< render::LambdaRenderBlock >([=](render::IRenderView* renderView) {
+			renderView->waitAsynchronousCompute(*handle);
+		});
+
+		//renderContext->compute< render::SynchronizeRenderBlock >();
 	});
 	context.getRenderGraph().addPass(rp);
 }
