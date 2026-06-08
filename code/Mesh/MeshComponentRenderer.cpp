@@ -9,6 +9,7 @@
 #include "Mesh/MeshComponentRenderer.h"
 
 #include "Mesh/MeshComponent.h"
+#include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
@@ -41,6 +42,10 @@ void MeshComponentRenderer::setup(
 			MeshComponent* meshComponent = static_cast< MeshComponent* >(renderable);
 			meshComponent->setup(worldRenderView, renderContext);
 		}
+
+		// Synchronize the async compute skinning and RT jobs with the graphics queue.
+		// #todo This should be moved closer to the consumer pass to increase overlap.
+		renderContext->compute< render::SynchronizeRenderBlock >();
 	});
 	context.getRenderGraph().addPass(rp);
 }

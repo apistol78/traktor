@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,13 +36,13 @@ void ComputeRenderBlock::render(IRenderView* renderView) const
 	if (programParams)
 		programParams->fixup(program);
 
-	const ComputeHandle handle = renderView->compute(
+	renderView->compute(
 		program,
 		workSize,
 		asynchronous);
 
-	if (outHandle)
-		*outHandle = handle;
+	if (outHandle && asynchronous)
+		*outHandle = renderView->signalAsynchronousCompute();
 
 	T_CONTEXT_POP_MARKER(renderView, asynchronous);
 }
@@ -230,7 +230,7 @@ void WaitComputeRenderBlock::render(IRenderView* renderView) const
 	T_CONTEXT_PUSH_MARKER(renderView, false, name);
 
 	if (handle)
-		renderView->waitCompute(*handle);
+		renderView->waitAsynchronousCompute(*handle);
 
 	T_CONTEXT_POP_MARKER(renderView, false);
 }

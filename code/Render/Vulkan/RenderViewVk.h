@@ -108,7 +108,7 @@ public:
 
 	virtual void drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawOffset, uint32_t drawCount) override final;
 
-	virtual ComputeHandle compute(IProgram* program, const int32_t* workSize, bool asynchronous) override final;
+	virtual void compute(IProgram* program, const int32_t* workSize, bool asynchronous) override final;
 
 	virtual void computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset) override final;
 
@@ -116,13 +116,15 @@ public:
 
 	virtual void synchronize() override final;
 
-	virtual void waitCompute(ComputeHandle handle) override final;
+	virtual ComputeHandle signalAsynchronousCompute() override final;
+
+	virtual void waitAsynchronousCompute(ComputeHandle handle) override final;
 
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) override final;
 
-	virtual ComputeHandle writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances, bool asynchronous) override final;
+	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances, bool asynchronous) override final;
 
-	virtual ComputeHandle writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous) override final;
+	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous) override final;
 
 	virtual int32_t beginTimeQuery() override final;
 
@@ -176,6 +178,7 @@ private:
 
 	// Swap chain.
 	VkSwapchainKHR m_swapChain = 0;
+
 	// Pool of binary semaphores for vkAcquireNextImageKHR. We hold imageCount+1
 	// semaphores: one in m_imageAvailableSemaphores[image_index] for each swap
 	// chain image (the one consumed by the submit that produced that image's

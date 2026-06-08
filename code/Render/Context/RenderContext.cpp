@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -88,11 +88,6 @@ void RenderContext::compute(RenderBlock* renderBlock)
 	m_computeQueue.push_back(renderBlock);
 }
 
-void RenderContext::computeAsync(RenderBlock* renderBlock)
-{
-	m_asyncComputeQueue.push_back(renderBlock);
-}
-
 void RenderContext::draw(RenderBlock* renderBlock)
 {
 	m_drawQueue.push_back(renderBlock);
@@ -175,22 +170,6 @@ void RenderContext::mergeComputeIntoRender()
 	m_computeQueue.resize(0);
 }
 
-void RenderContext::mergeAsyncComputeIntoRender()
-{
-	if (m_asyncComputeQueue.empty())
-		return;
-
-	// [ async compute ... ][ synchronize ][ all other blocks ... ]
-	m_renderQueue.insert(m_renderQueue.begin(), alloc< SynchronizeRenderBlock >());
-	m_renderQueue.insert(m_renderQueue.begin(), m_asyncComputeQueue.begin(), m_asyncComputeQueue.end());
-
-	// [ synchronize ][ all other blocks ... ][ async compute ... ]
-	//m_renderQueue.insert(m_renderQueue.begin(), alloc< SynchronizeRenderBlock >());
-	//m_renderQueue.insert(m_renderQueue.end(), m_asyncComputeQueue.begin(), m_asyncComputeQueue.end());
-
-	m_asyncComputeQueue.resize(0);
-}
-
 void RenderContext::mergeDrawIntoRender()
 {
 	// Merge draw blocks into render queue.
@@ -223,15 +202,12 @@ void RenderContext::flush()
 	// As blocks are allocated from a fixed pool we need to manually call destructors.
 	for (auto renderBlock : m_computeQueue)
 		renderBlock->~RenderBlock();
-	for (auto renderBlock : m_asyncComputeQueue)
-		renderBlock->~RenderBlock();
 	for (auto renderBlock : m_drawQueue)
 		renderBlock->~RenderBlock();
 	for (auto renderBlock : m_renderQueue)
 		renderBlock->~RenderBlock();
 
 	m_computeQueue.resize(0);
-	m_asyncComputeQueue.resize(0);
 	m_drawQueue.resize(0);
 	m_renderQueue.resize(0);
 

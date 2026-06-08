@@ -177,9 +177,8 @@ public:
 	 *
 	 * \param workSize Work size, 3 dimensional size.
 	 * \param asynchronous Enqueue onto the asynchronous compute queue.
-	 * \return Handle to the asynchronous work, or an invalid handle if not asynchronous.
 	 */
-	virtual ComputeHandle compute(IProgram* program, const int32_t* workSize, bool asynchronous) = 0;
+	virtual void compute(IProgram* program, const int32_t* workSize, bool asynchronous) = 0;
 
 	/*! Enqueue indirect compute task.
 	 *
@@ -201,15 +200,21 @@ public:
 	/*! Synchronize all asynchronous compute work with graphics queue. */
 	virtual void synchronize() = 0;
 
+	/*! Insert a signal on the asynchronous compute queue.
+	 * 
+	 * \return Waitable handle which can be used to insert a wait on the graphics queue.
+	 */
+	virtual ComputeHandle signalAsynchronousCompute() = 0;
+
 	/*! Make subsequent graphics queue work wait for asynchronous compute to complete.
 	 *
 	 * Inserts a synchronization point on the graphics queue so that any work
 	 * recorded after this call observes the result of the asynchronous compute
 	 * identified by the handle. An invalid handle is ignored.
 	 *
-	 * \param handle Handle returned from an asynchronous compute or acceleration structure build.
+	 * \param handle Handle returned from signalAsyncCompute.
 	 */
-	virtual void waitCompute(ComputeHandle handle) = 0;
+	virtual void waitAsynchronousCompute(ComputeHandle handle) = 0;
 
 	/*! Copy texture.
 	 *
@@ -223,16 +228,14 @@ public:
 	/*! Write instances into top level acceleration structure.
 	 *
 	 * \param asynchronous Build on the asynchronous compute queue.
-	 * \return Handle to the asynchronous build, or an invalid handle if not asynchronous.
 	 */
-	virtual ComputeHandle writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances, bool asynchronous) = 0;
+	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances, bool asynchronous) = 0;
 
 	/*! Write geometry data into bottom level acceleration structure.
 	 *
 	 * \param asynchronous Build on the asynchronous compute queue.
-	 * \return Handle to the asynchronous build, or an invalid handle if not asynchronous.
 	 */
-	virtual ComputeHandle writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous) = 0;
+	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous) = 0;
 
 	/*! \name Time queries. */
 	//@{

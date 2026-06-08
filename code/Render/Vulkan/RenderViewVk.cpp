@@ -1169,17 +1169,17 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 	m_drawCalls++;
 }
 
-ComputeHandle RenderViewVk::compute(IProgram* program, const int32_t* workSize, bool asynchronous)
+void RenderViewVk::compute(IProgram* program, const int32_t* workSize, bool asynchronous)
 {
 	ProgramVk* p = static_cast< ProgramVk* >(program);
 	auto& frame = m_frames[m_currentImageIndex];
 	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
 
 	if (!validateComputePipeline(commandBuffer, p))
-		return {};
+		return;
 
 	if (!p->validate(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, nullptr))
-		return {};
+		return;
 
 	const int32_t* lwgs = p->getLocalWorkGroupSize();
 
@@ -1189,10 +1189,10 @@ ComputeHandle RenderViewVk::compute(IProgram* program, const int32_t* workSize, 
 		(workSize[1] + lwgs[1] - 1) / lwgs[1],
 		(workSize[2] + lwgs[2] - 1) / lwgs[2]);
 
-	if (!asynchronous)
-		return {};
-
-	return { openComputeBatch(frame) };
+	// Reserve (or extend) the open asynchronous compute batch so a subsequent
+	// signalAsynchronousCompute fences this work with a single timeline value.
+	if (asynchronous)
+		openComputeBatch(frame);
 }
 
 void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset)
@@ -1384,19 +1384,42 @@ void RenderViewVk::synchronize()
 	frame.computeSubmittedValue = m_timelineSemaphoreValue;
 }
 
-uint64_t RenderViewVk::openComputeBatch(Frame& frame)
+ComputeHandle RenderViewVk::signalAsynchronousCompute()
 {
-	// All asynchronous work recorded into the current compute command buffer shares
-	// a single timeline value, reserved lazily here and completing together when the
-	// batch is flushed (in waitCompute, synchronize or endFrame).
+	T_PROFILER_SCOPE(L"RenderViewVk::signalAsynchronousCompute");
+	auto& frame = m_frames[m_currentImageIndex];
+
+	// No asynchronous work recorded since the last fence; nothing new to signal.
+	// Return the most recently submitted value so a subsequent wait still observes
+	// any earlier asynchronous work (an all-zero value is treated as invalid and
+	// ignored by waitAsynchronousCompute).
 	if (frame.computeRecordValue == 0)
-		frame.computeRecordValue = ++m_timelineSemaphoreValue;
-	return frame.computeRecordValue;
+		return { frame.computeSubmittedValue };
+
+	const uint64_t value = frame.computeRecordValue;
+	frame.computeRecordValue = 0;
+	frame.computeSubmittedValue = value;
+
+	// When the asynchronous compute queue shares the graphics queue family the two
+	// command buffers are submitted to the same VkQueue in order (compute before
+	// graphics, see endFrame), so ordering is implicit; waitAsynchronousCompute emits
+	// a pipeline barrier rather than a semaphore wait. Avoid splitting the compute
+	// command buffer in that case.
+	if (m_context->getComputeQueue()->getQueueIndex() != m_context->getGraphicsQueue()->getQueueIndex())
+	{
+		// Dedicated compute queue; flush the open compute batch signalling its timeline
+		// value and continue recording subsequent asynchronous work into a fresh buffer.
+		frame.computeCommandBuffer->submitSignal(m_timelineSemaphore, value);
+		frame.flyingCommandBuffers.push_back(frame.computeCommandBuffer);
+		frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
+	}
+
+	return { value };
 }
 
-void RenderViewVk::waitCompute(ComputeHandle handle)
+void RenderViewVk::waitAsynchronousCompute(ComputeHandle handle)
 {
-	T_PROFILER_SCOPE(L"RenderViewVk::waitCompute");
+	T_PROFILER_SCOPE(L"RenderViewVk::waitAsynchronousCompute");
 	if (!handle)
 		return;
 
@@ -1429,9 +1452,9 @@ void RenderViewVk::waitCompute(ComputeHandle handle)
 		return;
 	}
 
-	// Dedicated compute queue; flush the compute batch (if still being recorded)
-	// signalling its timeline value, then split the graphics queue so that all
-	// subsequent graphics work waits on that value.
+	// Dedicated compute queue. If the requested value has not been signalled yet
+	// (e.g. the handle was produced by an asynchronous build without an explicit
+	// signalAsynchronousCompute), flush the open compute batch signalling it now.
 	if (handle.value > frame.computeSubmittedValue)
 	{
 		frame.computeCommandBuffer->submitSignal(m_timelineSemaphore, handle.value);
@@ -1441,6 +1464,7 @@ void RenderViewVk::waitCompute(ComputeHandle handle)
 		frame.computeRecordValue = 0;
 	}
 
+	// Split the graphics queue so that all subsequent graphics work waits on the value.
 	frame.graphicsCommandBuffer->submitWait(
 		m_timelineSemaphore,
 		handle.value,
@@ -1546,30 +1570,32 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 	return true;
 }
 
-ComputeHandle RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances, bool asynchronous)
+void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances, bool asynchronous)
 {
 	auto& frame = m_frames[m_currentImageIndex];
 	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
+
 	AccelerationStructureVk* as = mandatory_non_null_type_cast< AccelerationStructureVk* >(accelerationStructure);
 	as->writeInstances(commandBuffer, instances);
 
-	if (!asynchronous)
-		return {};
-
-	return { openComputeBatch(frame) };
+	// Reserve (or extend) the open asynchronous compute batch so a subsequent
+	// signalAsynchronousCompute fences this work with a single timeline value.
+	if (asynchronous)
+		openComputeBatch(frame);
 }
 
-ComputeHandle RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous)
+void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous)
 {
 	auto& frame = m_frames[m_currentImageIndex];
 	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
+
 	AccelerationStructureVk* as = mandatory_non_null_type_cast< AccelerationStructureVk* >(accelerationStructure);
 	as->writeGeometry(commandBuffer, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, rebuild);
 
-	if (!asynchronous)
-		return {};
-
-	return { openComputeBatch(frame) };
+	// Reserve (or extend) the open asynchronous compute batch so a subsequent
+	// signalAsynchronousCompute fences this work with a single timeline value.
+	if (asynchronous)
+		openComputeBatch(frame);
 }
 
 int32_t RenderViewVk::beginTimeQuery()
@@ -2156,6 +2182,16 @@ bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const P
 		frame.boundComputePipeline = pipeline;
 	}
 	return true;
+}
+
+uint64_t RenderViewVk::openComputeBatch(Frame& frame)
+{
+	// All asynchronous work recorded into the current compute command buffer shares
+	// a single timeline value, reserved lazily here and completing together when the
+	// batch is flushed (in waitAsynchronousCompute, synchronize or endFrame).
+	if (frame.computeRecordValue == 0)
+		frame.computeRecordValue = ++m_timelineSemaphoreValue;
+	return frame.computeRecordValue;
 }
 
 #if defined(_WIN32)

@@ -65,19 +65,10 @@ void SkinnedMesh::buildSkin(
 	renderBlock->workSize[0] = vertexCount;
 	renderBlock->asynchronous = asynchronous;
 
-	if (asynchronous)
-	{
-		// Skinning is kicked off on the asynchronous compute queue at the start of the
-		// frame; the global synchronize (inserted by mergeAsyncComputeIntoRender) ensures
-		// the graphics rasterization observes the result. The skin -> AS dependency on the
-		// compute queue is handled by buildAccelerationStructure.
-		renderContext->computeAsync(renderBlock);
-	}
-	else
-	{
-		renderContext->compute(renderBlock);
+	renderContext->compute(renderBlock);
+
+	if (!asynchronous)
 		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
-	}
 }
 
 void SkinnedMesh::buildAccelerationStructure(
@@ -107,16 +98,8 @@ void SkinnedMesh::buildAccelerationStructure(
 	};
 	rb->asynchronous = true;
 
-	if (asynchronous)
-	{
-		renderContext->computeAsync(barrier);
-		renderContext->computeAsync(rb);
-	}
-	else
-	{
-		renderContext->compute(barrier);
-		renderContext->compute(rb);
-	}
+	renderContext->compute(barrier);
+	renderContext->compute(rb);
 }
 
 void SkinnedMesh::build(
