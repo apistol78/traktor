@@ -154,6 +154,7 @@ private:
 		Ref< RenderTargetSetVk > primaryTarget;
 		VkPipeline boundGraphicsPipeline = 0;
 		VkPipeline boundComputePipeline = 0;
+		VkPipeline boundAsyncComputePipeline = 0;
 		BufferViewVk boundIndexBuffer;
 		BufferViewVk boundVertexBuffer;
 		RefArray< CommandBuffer > flyingCommandBuffers;
@@ -233,7 +234,7 @@ private:
 
 	bool validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt);
 
-	bool validateComputePipeline(CommandBuffer* commandBuffer, const ProgramVk* p);
+	bool validateComputePipeline(CommandBuffer* commandBuffer, const ProgramVk* p, bool asynchronous);
 
 	//! Reserve (or return the already reserved) timeline value for the current frame's open asynchronous compute batch.
 	uint64_t openComputeBatch(Frame& frame);

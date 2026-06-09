@@ -729,6 +729,7 @@ void RenderViewVk::endFrame()
 
 	frame.boundGraphicsPipeline = 0;
 	frame.boundComputePipeline = 0;
+	frame.boundAsyncComputePipeline = 0;
 	frame.boundIndexBuffer = BufferViewVk();
 	frame.boundVertexBuffer = BufferViewVk();
 
@@ -1175,7 +1176,7 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize, bool asyn
 	auto& frame = m_frames[m_currentImageIndex];
 	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
 
-	if (!validateComputePipeline(commandBuffer, p))
+	if (!validateComputePipeline(commandBuffer, p, asynchronous))
 		return;
 
 	if (!p->validate(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, nullptr))
@@ -1201,7 +1202,7 @@ void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuf
 	ProgramVk* p = static_cast< ProgramVk* >(program);
 	const auto& frame = m_frames[m_currentImageIndex];
 
-	if (!validateComputePipeline(frame.graphicsCommandBuffer, p))
+	if (!validateComputePipeline(frame.graphicsCommandBuffer, p, false))
 		return;
 
 	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, nullptr))
@@ -1371,6 +1372,13 @@ void RenderViewVk::synchronize()
 	frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
 	frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
 
+	// Both command buffers were submitted and replaced; invalidate the graphics bind caches
+	// so subsequent work rebinds into the freshly acquired command buffers. The compute
+	// pipeline cache is command buffer aware (see validateComputePipeline) and rebinds itself.
+	frame.boundGraphicsPipeline = 0;
+	frame.boundIndexBuffer = BufferViewVk();
+	frame.boundVertexBuffer = BufferViewVk();
+
 #if defined(T_USE_QUERY)
 	// The query pool reset recorded in beginFrame went into the now submitted graphics
 	// command buffer; re-record a reset of the remaining (unused) queries into the fresh
@@ -1471,6 +1479,13 @@ void RenderViewVk::waitAsynchronousCompute(ComputeHandle handle)
 		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
 	frame.flyingCommandBuffers.push_back(frame.graphicsCommandBuffer);
 	frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
+
+	// The graphics command buffer was swapped; invalidate the graphics bind caches so the
+	// next draw/pipeline rebinds into the fresh command buffer. The compute pipeline cache
+	// is command buffer aware (see validateComputePipeline) and rebinds itself.
+	frame.boundGraphicsPipeline = 0;
+	frame.boundIndexBuffer = BufferViewVk();
+	frame.boundVertexBuffer = BufferViewVk();
 }
 
 bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
@@ -2111,9 +2126,9 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 			m_context->setObjectDebugName(L"frame.computeFinishedSemaphore", (uint64_t)frame.computeFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
 		}
 
-		// boundGraphicsPipeline/boundComputePipeline is per-swap-chain-image cache and is invalid against the new render targets.
 		frame.boundGraphicsPipeline = 0;
 		frame.boundComputePipeline = 0;
+		frame.boundAsyncComputePipeline = 0;
 		frame.boundIndexBuffer = BufferViewVk();
 		frame.boundVertexBuffer = BufferViewVk();
 
@@ -2169,18 +2184,31 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 	return true;
 }
 
-bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const ProgramVk* p)
+bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const ProgramVk* p, bool asynchronous)
 {
 	VkPipeline pipeline = m_context->validateComputePipeline(p);
 	if (!pipeline)
 		return false;
 
 	auto& frame = m_frames[m_currentImageIndex];
-	if (pipeline != frame.boundComputePipeline)
+
+	if (asynchronous)
 	{
-		vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
-		frame.boundComputePipeline = pipeline;
+		if (pipeline != frame.boundAsyncComputePipeline)
+		{
+			vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+			frame.boundAsyncComputePipeline = pipeline;
+		}
 	}
+	else
+	{
+		if (pipeline != frame.boundComputePipeline)
+		{
+			vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+			frame.boundComputePipeline = pipeline;
+		}
+	}
+
 	return true;
 }
 
