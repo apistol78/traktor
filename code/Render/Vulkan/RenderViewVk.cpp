@@ -433,13 +433,11 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	// Ensure event queue doesn't contain stale events.
 	m_eventQueue.clear();
 
-	// Destroy only the size-dependent per-frame resources: the primary target owns image views onto
-	// the swap chain images and must be rebuilt. Semaphores, command buffers and the query pool are
-	// size-independent and reused; create() will refresh them if the image count happens to change.
+	// Destroy only size-dependent per-frame resources (the primary target owns swap chain image views);
+	// semaphores, command buffers and the query pool are size-independent and reused by create().
 	for (auto& frame : m_frames)
 	{
-		// The GPU is idle (vkDeviceWaitIdle above); externally mark any flying command
-		// buffers left by synchronize as synced so they can be recycled/destroyed.
+		// GPU is idle (vkDeviceWaitIdle above); mark flying command buffers synced so they recycle.
 		for (auto commandBuffer : frame.flyingCommandBuffers)
 			commandBuffer->externalSynced();
 		frame.flyingCommandBuffers.resize(0);
@@ -584,8 +582,7 @@ SystemWindow RenderViewVk::getSystemWindow()
 
 bool RenderViewVk::beginFrame()
 {
-	// Might reach here with a non-created instance, pending reset, so
-	// we need to make sure we have an instance first.
+	// Might reach here with a non-created instance (pending reset); ensure we have an instance first.
 	if (m_lost)
 		return false;
 
@@ -616,22 +613,16 @@ bool RenderViewVk::beginFrame()
 		return false;
 	}
 
-	// Swap the freshly signaled spare into the per-image slot and recycle the previous one.
-	// The semaphore previously held in this slot was the wait operand of the prior submission
-	// that produced this image, and the presentation engine having just returned the image
-	// implies that submission has retired — so all pending signal/wait operations on the
-	// recycled semaphore are complete, and it is safe to pass to the next acquire.
+	// Swap the freshly signaled spare into the per-image slot and recycle the previous one; the present
+	// engine returning this image implies its prior submission (and the recycled semaphore) has retired.
 	std::swap(m_imageAvailableSemaphores[m_currentImageIndex], m_imageAvailableSemaphoreFree);
 
 	auto& frame = m_frames[m_currentImageIndex];
 	frame.markers.clear();
 
 	// Reset command buffers.
-	//
-	// #hack Lazy create since we don't know about rendering thread until beginFrame
-	// is called... This assumes no other thread will perform rendering during the
-	// life time of the render view.
-	//
+	// #hack Lazy create since we don't know the rendering thread until beginFrame; assumes no
+	// other thread performs rendering during the life time of the render view.
 
 	for (auto commandBuffer : frame.flyingCommandBuffers)
 		commandBuffer->wait();
@@ -704,11 +695,8 @@ bool RenderViewVk::beginFrame()
 	T_PROFILER_END();
 
 #if defined(T_USE_QUERY)
-	// Reset time queries. The segment is keyed on the acquired image index (not the
-	// frame counter): it is always in [0, m_frames.size()) so it indexes the pool
-	// directly without wrap-around anomalies, and it matches the per-image command
-	// buffers whose prior GPU work was just waited on above - so the queries we are
-	// about to reset and rewrite are guaranteed to have completed (and been read back).
+	// Reset time queries. Keyed on the acquired image index (always in [0, m_frames.size())) so it indexes
+	// the pool directly and matches the per-image command buffers whose prior GPU work was awaited above.
 	const int32_t queryFrom = (int32_t)m_currentImageIndex * 2 * T_QUERY_SEGMENT_SIZE;
 	vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, queryFrom, 2 * T_QUERY_SEGMENT_SIZE);
 	m_nextQueryIndex = queryFrom;
@@ -1377,9 +1365,8 @@ void RenderViewVk::synchronize()
 	frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
 	frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
 
-	// Both command buffers were submitted and replaced; invalidate the graphics bind caches
-	// so subsequent work rebinds into the freshly acquired command buffers. The compute
-	// pipeline cache is command buffer aware (see validateComputePipeline) and rebinds itself.
+	// Both buffers were submitted and replaced; invalidate the graphics bind caches so work rebinds into
+	// the fresh buffers (the compute pipeline cache is command buffer aware and rebinds itself).
 	frame.boundGraphicsPipeline = 0;
 	frame.boundIndexBuffer = BufferViewVk();
 	frame.boundVertexBuffer = BufferViewVk();
@@ -1398,10 +1385,8 @@ ComputeHandle RenderViewVk::signalAsynchronousCompute()
 	T_PROFILER_SCOPE(L"RenderViewVk::signalAsynchronousCompute");
 	auto& frame = m_frames[m_currentImageIndex];
 
-	// No asynchronous work recorded since the last fence; nothing new to signal.
-	// Return the most recently submitted value so a subsequent wait still observes
-	// any earlier asynchronous work (an all-zero value is treated as invalid and
-	// ignored by waitAsynchronousCompute).
+	// Nothing recorded since the last fence; return the most recently submitted value so a subsequent
+	// wait still observes earlier asynchronous work (an all-zero value is treated as invalid).
 	if (frame.computeRecordValue == 0)
 		return { frame.computeSubmittedValue };
 
@@ -1409,15 +1394,12 @@ ComputeHandle RenderViewVk::signalAsynchronousCompute()
 	frame.computeRecordValue = 0;
 	frame.computeSubmittedValue = value;
 
-	// When the asynchronous compute queue shares the graphics queue family the two
-	// command buffers are submitted to the same VkQueue in order (compute before
-	// graphics, see endFrame), so ordering is implicit; waitAsynchronousCompute emits
-	// a pipeline barrier rather than a semaphore wait. Avoid splitting the compute
-	// command buffer in that case.
+	// Shared graphics/compute queue family: both buffers submit to the same VkQueue in order (compute
+	// before graphics), so ordering is implicit; avoid splitting the compute command buffer here.
 	if (m_context->getComputeQueue()->getQueueIndex() != m_context->getGraphicsQueue()->getQueueIndex())
 	{
-		// Dedicated compute queue; flush the open compute batch signalling its timeline
-		// value and continue recording subsequent asynchronous work into a fresh buffer.
+		// Dedicated compute queue; flush the open compute batch signalling its timeline value and
+		// continue recording subsequent asynchronous work into a fresh buffer.
 		frame.computeCommandBuffer->submitSignal(m_timelineSemaphore, value);
 		frame.flyingCommandBuffers.push_back(frame.computeCommandBuffer);
 		frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
@@ -1434,11 +1416,8 @@ void RenderViewVk::waitAsynchronousCompute(ComputeHandle handle)
 
 	auto& frame = m_frames[m_currentImageIndex];
 
-	// When the asynchronous compute queue shares the graphics queue family the two
-	// command buffers are submitted to the same VkQueue in order (compute before
-	// graphics, see endFrame), so a pipeline barrier in the graphics command buffer
-	// is sufficient to make the compute results visible; no queue split or semaphore
-	// is needed.
+	// Shared graphics/compute queue family: both buffers submit to the same VkQueue in order, so a
+	// pipeline barrier in the graphics buffer suffices to make compute results visible; no split needed.
 	if (m_context->getComputeQueue()->getQueueIndex() == m_context->getGraphicsQueue()->getQueueIndex())
 	{
 		const VkMemoryBarrier mb = {
@@ -1461,9 +1440,8 @@ void RenderViewVk::waitAsynchronousCompute(ComputeHandle handle)
 		return;
 	}
 
-	// Dedicated compute queue. If the requested value has not been signalled yet
-	// (e.g. the handle was produced by an asynchronous build without an explicit
-	// signalAsynchronousCompute), flush the open compute batch signalling it now.
+	// Dedicated compute queue; if the requested value has not been signalled yet, flush the open
+	// compute batch signalling it now.
 	if (handle.value > frame.computeSubmittedValue)
 	{
 		frame.computeCommandBuffer->submitSignal(m_timelineSemaphore, handle.value);
@@ -1481,9 +1459,8 @@ void RenderViewVk::waitAsynchronousCompute(ComputeHandle handle)
 	frame.flyingCommandBuffers.push_back(frame.graphicsCommandBuffer);
 	frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
 
-	// The graphics command buffer was swapped; invalidate the graphics bind caches so the
-	// next draw/pipeline rebinds into the fresh command buffer. The compute pipeline cache
-	// is command buffer aware (see validateComputePipeline) and rebinds itself.
+	// Graphics command buffer swapped; invalidate the graphics bind caches so the next draw rebinds into
+	// the fresh buffer (the compute pipeline cache is command buffer aware and rebinds itself).
 	frame.boundGraphicsPipeline = 0;
 	frame.boundIndexBuffer = BufferViewVk();
 	frame.boundVertexBuffer = BufferViewVk();
@@ -1629,9 +1606,8 @@ int32_t RenderViewVk::beginTimeQuery()
 	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, m_queryPool, query + 0);
 	m_nextQueryIndex += 2;
 
-	// Track the pair as open; its begin timestamp has been written but the end has not.
-	// If the graphics command buffer is split before endTimeQuery, the end-half must be
-	// re-reset into the fresh command buffer (see rerecordTimeQueryReset).
+	// Track the pair as open (begin written, end pending); a split before endTimeQuery must re-reset
+	// the end-half into the fresh command buffer (see rerecordTimeQueryReset).
 	m_openTimeQueries.push_back(query);
 	return query;
 #else
@@ -1989,14 +1965,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		return false;
 	}
 
-	// Destroy previous swap chain. A binary semaphore signaled by a previous
-	// vkAcquireNextImageKHR that was never consumed cannot be reused on a
-	// subsequent acquire (VUID-vkAcquireNextImageKHR-semaphore-01779). Trying
-	// to destroy such a semaphore is also a spec violation since the signal
-	// operation may still be pending. We retire the old image-available
-	// semaphores into a list and defer their destruction until the view is
-	// torn down (where the device is fully idle and the swap chain is gone),
-	// then allocate a fresh set for the new swap chain below.
+	// Destroy previous swap chain. Old image-available semaphores may hold a pending, unconsumed signal
+	// (VUID-vkAcquireNextImageKHR-semaphore-01779), so retire them and defer destruction to teardown (device idle).
 	if (scci.oldSwapchain != 0)
 	{
 		vkDestroySwapchainKHR(m_context->getLogicalDevice(), scci.oldSwapchain, 0);
@@ -2023,11 +1993,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	log::debug << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
-	// Allocate one binary semaphore per swap chain image plus one spare. The spare is fed
-	// to the next vkAcquireNextImageKHR; after acquire it is swapped with the per-image
-	// slot so the just-signaled semaphore is the one waited on by the graphics submit
-	// (see beginFrame). This recycles each slot only when the swap chain returns its
-	// image, which guarantees the prior signal/wait pair on it has fully completed.
+	// One binary semaphore per swap chain image plus a spare fed to the next acquire, then swapped into the
+	// per-image slot (see beginFrame); slots recycle only when the swap chain returns the image.
 	if (m_imageAvailableSemaphores.empty())
 	{
 		m_imageAvailableSemaphores.resize(imageCount, 0);
@@ -2089,11 +2056,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
 			return false;
 
-		// Validation considers freshly created queries "uninitialized" until a reset has been
-		// queue-submitted and observed; ProfileReportRenderBlock reads results inline during render
-		// context execution (before endFrame submits the per-frame reset), so we need an up-front
-		// reset that has been completed before any read can happen. This only runs once per pool
-		// (re)creation rather than on every reset(), so the optimization vs. the original code stands.
+		// Freshly created queries are "uninitialized" until a reset is queue-submitted and observed, but
+		// ProfileReportRenderBlock reads results inline before endFrame's reset; do one up-front reset here.
 		{
 			Ref< CommandBuffer > commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"RenderViewVk::create");
 			vkCmdResetQueryPool(*commandBuffer, m_queryPool, 0, imageCount * 2 * T_QUERY_SEGMENT_SIZE);
@@ -2122,8 +2086,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 			L"Primary Depth"))
 		return false;
 
-	// Create / refresh frame resources. Per-frame semaphores are kept across resets; only the primary target
-	// (which owns the swap chain image view) gets rebuilt with the new dimensions.
+	// Create / refresh frame resources; per-frame semaphores are kept across resets, only the primary
+	// target (which owns the swap chain image view) is rebuilt with the new dimensions.
 	const bool freshFrames = m_frames.empty();
 	m_frames.resize(imageCount);
 	for (uint32_t i = 0; i < imageCount; ++i)
@@ -2229,9 +2193,8 @@ bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const P
 
 uint64_t RenderViewVk::openComputeBatch(Frame& frame)
 {
-	// All asynchronous work recorded into the current compute command buffer shares
-	// a single timeline value, reserved lazily here and completing together when the
-	// batch is flushed (in waitAsynchronousCompute, synchronize or endFrame).
+	// All async work in the current compute buffer shares one timeline value, reserved lazily here and
+	// completing together when the batch is flushed (waitAsynchronousCompute, synchronize or endFrame).
 	if (frame.computeRecordValue == 0)
 		frame.computeRecordValue = ++m_timelineSemaphoreValue;
 	return frame.computeRecordValue;
@@ -2240,16 +2203,8 @@ uint64_t RenderViewVk::openComputeBatch(Frame& frame)
 void RenderViewVk::rerecordTimeQueryReset(Frame& frame)
 {
 #if defined(T_USE_QUERY)
-	// A mid-frame queue split submitted the graphics command buffer that carried the
-	// time query reset recorded in beginFrame, and acquired a fresh one. The validation
-	// layer only considers a query reset when it is observed in the same submitted command
-	// buffer stream as the write, so re-record the resets of every query that has not yet
-	// been written into the fresh command buffer:
-	//  - the end-half of each still-open pair (its begin was already written into the now
-	//    submitted command buffer, so only the end remains and it will land here), and
-	//  - the remaining unused queries reserved for pairs opened after the split.
-	// The begin-half of an open pair is intentionally left untouched; resetting it would
-	// discard the timestamp already recorded in the submitted command buffer.
+	// A split submitted the buffer holding beginFrame's reset, which the layer only honours in the write's own stream.
+	// Re-reset the not-yet-written queries: each open pair's end-half (not its already-submitted begin) plus the unused tail.
 	for (const int32_t query : m_openTimeQueries)
 		vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, query + 1, 1);
 	if (m_nextQueryIndex < m_lastQueryIndex)
