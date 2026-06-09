@@ -704,11 +704,16 @@ bool RenderViewVk::beginFrame()
 	T_PROFILER_END();
 
 #if defined(T_USE_QUERY)
-	// Reset time queries.
-	const int32_t queryFrom = ((m_counter - 1) % m_frames.size()) * 2 * T_QUERY_SEGMENT_SIZE;
+	// Reset time queries. The segment is keyed on the acquired image index (not the
+	// frame counter): it is always in [0, m_frames.size()) so it indexes the pool
+	// directly without wrap-around anomalies, and it matches the per-image command
+	// buffers whose prior GPU work was just waited on above - so the queries we are
+	// about to reset and rewrite are guaranteed to have completed (and been read back).
+	const int32_t queryFrom = (int32_t)m_currentImageIndex * 2 * T_QUERY_SEGMENT_SIZE;
 	vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, queryFrom, 2 * T_QUERY_SEGMENT_SIZE);
 	m_nextQueryIndex = queryFrom;
 	m_lastQueryIndex = queryFrom + 2 * T_QUERY_SEGMENT_SIZE;
+	m_openTimeQueries.resize(0);
 #endif
 
 	// Reset misc counters.
@@ -1380,11 +1385,7 @@ void RenderViewVk::synchronize()
 	frame.boundVertexBuffer = BufferViewVk();
 
 #if defined(T_USE_QUERY)
-	// The query pool reset recorded in beginFrame went into the now submitted graphics
-	// command buffer; re-record a reset of the remaining (unused) queries into the fresh
-	// graphics command buffer so subsequent time stamps target reset queries.
-	if (m_nextQueryIndex < m_lastQueryIndex)
-		vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, m_nextQueryIndex, m_lastQueryIndex - m_nextQueryIndex);
+	rerecordTimeQueryReset(frame);
 #endif
 
 	// All asynchronous compute work has been flushed.
@@ -1486,6 +1487,10 @@ void RenderViewVk::waitAsynchronousCompute(ComputeHandle handle)
 	frame.boundGraphicsPipeline = 0;
 	frame.boundIndexBuffer = BufferViewVk();
 	frame.boundVertexBuffer = BufferViewVk();
+
+#if defined(T_USE_QUERY)
+	rerecordTimeQueryReset(frame);
+#endif
 }
 
 bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
@@ -1623,6 +1628,11 @@ int32_t RenderViewVk::beginTimeQuery()
 	const int32_t query = m_nextQueryIndex;
 	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, m_queryPool, query + 0);
 	m_nextQueryIndex += 2;
+
+	// Track the pair as open; its begin timestamp has been written but the end has not.
+	// If the graphics command buffer is split before endTimeQuery, the end-half must be
+	// re-reset into the fresh command buffer (see rerecordTimeQueryReset).
+	m_openTimeQueries.push_back(query);
 	return query;
 #else
 	return 0;
@@ -1634,6 +1644,11 @@ void RenderViewVk::endTimeQuery(int32_t query)
 #if defined(T_USE_QUERY)
 	auto& frame = m_frames[m_currentImageIndex];
 	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 1);
+
+	// Pair closed; both halves written so a subsequent split no longer needs to reset it.
+	const auto it = std::find(m_openTimeQueries.begin(), m_openTimeQueries.end(), query);
+	if (it != m_openTimeQueries.end())
+		m_openTimeQueries.erase(it);
 #endif
 }
 
@@ -2220,6 +2235,26 @@ uint64_t RenderViewVk::openComputeBatch(Frame& frame)
 	if (frame.computeRecordValue == 0)
 		frame.computeRecordValue = ++m_timelineSemaphoreValue;
 	return frame.computeRecordValue;
+}
+
+void RenderViewVk::rerecordTimeQueryReset(Frame& frame)
+{
+#if defined(T_USE_QUERY)
+	// A mid-frame queue split submitted the graphics command buffer that carried the
+	// time query reset recorded in beginFrame, and acquired a fresh one. The validation
+	// layer only considers a query reset when it is observed in the same submitted command
+	// buffer stream as the write, so re-record the resets of every query that has not yet
+	// been written into the fresh command buffer:
+	//  - the end-half of each still-open pair (its begin was already written into the now
+	//    submitted command buffer, so only the end remains and it will land here), and
+	//  - the remaining unused queries reserved for pairs opened after the split.
+	// The begin-half of an open pair is intentionally left untouched; resetting it would
+	// discard the timestamp already recorded in the submitted command buffer.
+	for (const int32_t query : m_openTimeQueries)
+		vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, query + 1, 1);
+	if (m_nextQueryIndex < m_lastQueryIndex)
+		vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, m_nextQueryIndex, m_lastQueryIndex - m_nextQueryIndex);
+#endif
 }
 
 #if defined(_WIN32)

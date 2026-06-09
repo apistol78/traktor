@@ -225,6 +225,7 @@ private:
 	bool m_cursorVisible = true;
 	int32_t m_nextQueryIndex = 0;
 	int32_t m_lastQueryIndex = 0;
+	AlignedVector< int32_t > m_openTimeQueries;
 	uint32_t m_counter = -1;
 	uint32_t m_passCount = 0;
 	uint32_t m_drawCalls = 0;
@@ -238,6 +239,9 @@ private:
 
 	//! Reserve (or return the already reserved) timeline value for the current frame's open asynchronous compute batch.
 	uint64_t openComputeBatch(Frame& frame);
+
+	//! Re-record time query resets into the fresh graphics command buffer after a mid-frame queue split.
+	void rerecordTimeQueryReset(Frame& frame);
 
 #if defined(_WIN32)
 	// \name IWindowListener implementation.
