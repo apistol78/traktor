@@ -43,7 +43,7 @@ void ComputeTextureRenderer::setup(
 	{
 		const render::RGDependency dependency = texture->setup(context.getRenderGraph());
 		if (dependency != render::RGDependency::Invalid)
-			context.addVisualAttachment(dependency.get());
+			context.addVisualAttachment(dependency);
 	}
 }
 

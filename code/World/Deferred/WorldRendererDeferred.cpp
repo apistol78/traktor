@@ -176,23 +176,24 @@ void WorldRendererDeferred::setup(
 	// Add Hi-Z texture.
 	const render::RGTexture hizTextureId = m_hiZPass->addTexture(worldRenderView, renderGraph);
 
-	render::RGTargetSet shadowMapAtlasTargetSetId;
-	setupLightPass(
-		worldRenderView,
-		renderGraph,
-		shadowMapAtlasTargetSetId);
-
 	const render::Buffer* lightSBuffer = m_state[worldRenderView.getIndex()].lightSBuffer;
 	const render::Buffer* tileSBuffer = m_lightClusterPass->getTileSBuffer();
 	const render::Buffer* lightIndexSBuffer = m_lightClusterPass->getLightIndexSBuffer();
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
+	
+	// ... using gathered renderables.
 	const auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::DeferredGBufferWrite, renderGraph, hizTextureId, visualTargetSetId.current);
 	const auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
+	const auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
+	const auto shadowMapAtlasTargetSetId = setupLightPass(worldRenderView, renderGraph);
+
+	// ... using gbuffer only.
 	const auto halfResDepthTextureId = m_downScalePass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId, hizTextureId);
-	const auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
+
+	// ... using RT TLAS.
 	const auto irradianceTargetSetId = m_irradiancePass->setup(worldRenderView, m_gatheredView, lightSBuffer, needJitter, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
 	const auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
 	const auto fogVolumeTextureId = m_volumetricFogPass->setup(worldRenderView, m_gatheredView, lightSBuffer, tileSBuffer, lightIndexSBuffer, m_whiteTexture, count, m_slicePositions, renderGraph, shadowMapAtlasTargetSetId);

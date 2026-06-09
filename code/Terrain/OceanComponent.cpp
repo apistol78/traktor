@@ -426,7 +426,7 @@ void OceanComponent::setup(
 		context.getRenderGraph().addPass(rp);
 	}
 
-	context.addVisualAttachment(computeDependency.get());
+	context.addVisualAttachment(computeDependency);
 }
 
 void OceanComponent::build(

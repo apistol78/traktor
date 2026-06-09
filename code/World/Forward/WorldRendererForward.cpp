@@ -154,23 +154,24 @@ void WorldRendererForward::setup(
 		renderGraph.addPersistentTargetSet(L"Current", s_handleVisualTargetSet[(count + 1) % 2], false, rgtd, sharedDepthTargetSetId, outputTargetSetId)
 	};
 
-	render::RGTargetSet shadowMapAtlasTargetSetId;
-	setupLightPass(
-		worldRenderView,
-		renderGraph,
-		shadowMapAtlasTargetSetId);
-
 	const render::Buffer* lightSBuffer = m_state[worldRenderView.getIndex()].lightSBuffer;
 	const render::Buffer* tileSBuffer = m_lightClusterPass->getTileSBuffer();
 	const render::Buffer* lightIndexSBuffer = m_lightClusterPass->getLightIndexSBuffer();
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
+
+	// ... using gathered renderables.
 	const auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::ForwardGBufferWrite, renderGraph, render::RGTexture::Invalid, visualTargetSetId.current);
 	const auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
-	const auto halfResDepthTextureId = m_downScalePass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
-	// m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	const auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
+	const auto shadowMapAtlasTargetSetId = setupLightPass(worldRenderView, renderGraph);
+
+	// ... using gbuffer only.
+	const auto halfResDepthTextureId = m_downScalePass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
+
+	// ... using RT TLAS.
+	// m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	const auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
 	const auto fogVolumeTextureId = m_volumetricFogPass->setup(worldRenderView, m_gatheredView, lightSBuffer, tileSBuffer, lightIndexSBuffer, m_whiteTexture, count, m_slicePositions, renderGraph, shadowMapAtlasTargetSetId);
 	const auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, m_blackCubeTexture, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, render::RGTexture::Invalid, visualTargetSetId.current);

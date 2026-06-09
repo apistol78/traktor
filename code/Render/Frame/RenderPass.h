@@ -75,12 +75,6 @@ public:
 
 	//! \{
 
-	/*! Add input to render pass.
-	 *
-	 * \param resourceId ID of input resource.
-	 */
-	void addInput(handle_t resourceId);
-
 	/*! Add target set input to render pass.
 	 *
 	 * \param targetSet Handle to target set.

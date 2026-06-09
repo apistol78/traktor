@@ -48,7 +48,7 @@ public:
 		const World* world,
 		const WorldEntityRenderers* entityRenderers,
 		render::RenderGraph& renderGraph,
-		AlignedVector< render::handle_t >& visualAttachments
+		AlignedVector< render::RGDependency >& visualAttachments
 	);
 
 	const World* getWorld() const { return m_world; }
@@ -57,13 +57,13 @@ public:
 
 	render::RenderGraph& getRenderGraph() const { return m_renderGraph; }
 
-	void addVisualAttachment(render::handle_t visualAttachment) const { m_visualAttachments.push_back(visualAttachment); }
+	void addVisualAttachment(render::RGDependency visualAttachment) const { m_visualAttachments.push_back(visualAttachment); }
 
 private:
 	const World* m_world;
 	const WorldEntityRenderers* m_entityRenderers;
 	render::RenderGraph& m_renderGraph;
-	AlignedVector< render::handle_t >& m_visualAttachments;
+	AlignedVector< render::RGDependency >& m_visualAttachments;
 };
 
 }

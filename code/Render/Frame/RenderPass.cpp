@@ -31,12 +31,6 @@ void RenderPass::setName(const std::wstring& name)
 	m_name = name;
 }
 
-void RenderPass::addInput(handle_t resourceId)
-{
-	auto& input = m_inputs.push_back();
-	input.resourceId = resourceId;
-}
-
 void RenderPass::addInput(RGTargetSet targetSet)
 {
 	// Just ignore invalid target set; convenient when setting up passes to be able to add null inputs.

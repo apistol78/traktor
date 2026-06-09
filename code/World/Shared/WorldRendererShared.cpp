@@ -335,10 +335,9 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 	}
 }
 
-void WorldRendererShared::setupLightPass(
+render::RGTargetSet WorldRendererShared::setupLightPass(
 	const WorldRenderView& worldRenderView,
-	render::RenderGraph& renderGraph,
-	render::RGTargetSet& outShadowMapAtlasTargetSetId)
+	render::RenderGraph& renderGraph)
 {
 	T_PROFILER_SCOPE(L"WorldRendererShared setupLightPass");
 
@@ -351,7 +350,9 @@ void WorldRendererShared::setupLightPass(
 
 	LightShaderData* lightShaderData = (LightShaderData*)m_state[worldRenderView.getIndex()].lightSBuffer->lock();
 	if (!lightShaderData)
-		return;
+		return render::RGTargetSet::Invalid;
+
+	render::RGTargetSet shadowMapAtlasTargetSetId;
 
 	// Reset this frame's atlas packer.
 	auto shadowAtlasPacker = m_shadowAtlasPacker;
@@ -433,7 +434,7 @@ void WorldRendererShared::setupLightPass(
 		rgtd.createDepthStencil = true;
 		rgtd.usingDepthStencilAsTexture = true;
 		rgtd.ignoreStencil = true;
-		outShadowMapAtlasTargetSetId = renderGraph.addPersistentTargetSet(
+		shadowMapAtlasTargetSetId = renderGraph.addPersistentTargetSet(
 			L"Shadow map atlas",
 			ShaderParameter::TargetShadowMap[worldRenderView.getIndex()],
 			false,
@@ -441,7 +442,7 @@ void WorldRendererShared::setupLightPass(
 
 		// Add shadow map render passes.
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow map");
-		rp->setOutput(outShadowMapAtlasTargetSetId, render::TfNone, render::TfDepth);
+		rp->setOutput(shadowMapAtlasTargetSetId, render::TfNone, render::TfDepth);
 
 		if (m_gatheredView.cascadingDirectionalLight != nullptr)
 		{
@@ -640,7 +641,7 @@ void WorldRendererShared::setupLightPass(
 			if (!shadowAtlasPacker->insert(atlasSize, atlasSize, atlasRect))
 			{
 				state.lightSBuffer->unlock();
-				return;
+				return render::RGTargetSet::Invalid;
 			}
 
 			// Write atlas coordinates to shaders.
@@ -718,6 +719,7 @@ void WorldRendererShared::setupLightPass(
 	}
 
 	state.lightSBuffer->unlock();
+	return shadowMapAtlasTargetSetId;
 }
 
 }

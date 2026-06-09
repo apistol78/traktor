@@ -70,7 +70,7 @@ private:
 	Ref< render::ITexture > m_depthTexture;
 	const render::IAccelerationStructure* m_gatheredTLAS;
 	SmallMap< IEntityRenderer*, Renderable > m_gathered;
-	AlignedVector< render::handle_t > m_visualAttachments;
+	AlignedVector< render::RGDependency > m_visualAttachments;
 };
 
 }

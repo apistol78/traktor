@@ -342,7 +342,7 @@ void SkyComponent::setup(
 				renderBlock->workSize[0] = 1024 * 2;
 				renderBlock->workSize[1] = 256 * 2;
 				renderBlock->workSize[2] = 1;
-				renderBlock->asynchronous = true;
+				//renderBlock->asynchronous = true;
 
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->programParams->beginParameters(renderContext);

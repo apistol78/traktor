@@ -122,15 +122,14 @@ protected:
 
 	GatherView m_gatheredView;
 	Ref< Packer > m_shadowAtlasPacker;
-	AlignedVector< render::handle_t > m_visualAttachments;
+	AlignedVector< render::RGDependency > m_visualAttachments;
 	State m_state[4];
 
 	void gather(const World* world, const std::function< bool(const EntityState& state) >& filter);
 
-	void setupLightPass(
+	render::RGTargetSet setupLightPass(
 		const WorldRenderView& worldRenderView,
-		render::RenderGraph& renderGraph,
-		render::RGTargetSet& outShadowMapAtlasTargetSetId);
+		render::RenderGraph& renderGraph);
 
 	render::RGTexture setupVolumetricFog(
 		const WorldRenderView& worldRenderView,

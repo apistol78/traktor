@@ -130,7 +130,7 @@ void ImageGraph::addPasses(
 	{
 		RenderPass* rp = imagePass->addRenderGraphPasses(this, context, view, targetSetIds, sbufferIds, parametersFn, screenRenderer, renderGraph);
 		for (auto input : pass->getInputs())
-			rp->addInput(input.resourceId);
+			rp->addInput(render::RGDependency(input.resourceId));
 	}
 
 	// Override pass name with our root node's name.
