@@ -87,8 +87,9 @@ Aabb3 StaticMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void StaticMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
+bool StaticMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
 {
+	return false;
 }
 
 void StaticMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)

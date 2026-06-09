@@ -38,25 +38,30 @@ void MeshComponentRenderer::setup(
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Mesh setup");
 	rp->addInput(render::RGDependency::First);
 	rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+
+		bool needSynchronization = false;
 		for (Object* renderable : renderables)
 		{
 			MeshComponent* meshComponent = static_cast< MeshComponent* >(renderable);
-			meshComponent->setup(worldRenderView, renderContext);
+			needSynchronization |= meshComponent->setup(worldRenderView, renderContext);
 		}
 
 		// Synchronize the async compute skinning and RT jobs with the graphics queue.
-		render::ComputeHandle* handle = renderContext->alloc< render::ComputeHandle >();
+		if (needSynchronization)
+		{
+			render::ComputeHandle* handle = renderContext->alloc< render::ComputeHandle >();
 
-		renderContext->compute< render::LambdaRenderBlock >([=](render::IRenderView* renderView) {
-			*handle = renderView->signalAsynchronousCompute();
-		});
+			renderContext->compute< render::LambdaRenderBlock >([=](render::IRenderView* renderView) {
+				*handle = renderView->signalAsynchronousCompute();
+			});
 
-		// #todo This should be moved closer to the consumer pass to increase overlap.
-		renderContext->compute< render::LambdaRenderBlock >([=](render::IRenderView* renderView) {
-			renderView->waitAsynchronousCompute(*handle);
-		});
+			// #todo This should be moved closer to the consumer pass to increase overlap.
+			renderContext->compute< render::LambdaRenderBlock >([=](render::IRenderView* renderView) {
+				renderView->waitAsynchronousCompute(*handle);
+			});
 
-		//renderContext->compute< render::SynchronizeRenderBlock >();
+			//renderContext->compute< render::SynchronizeRenderBlock >();
+		}
 	});
 	context.getRenderGraph().addPass(rp);
 }

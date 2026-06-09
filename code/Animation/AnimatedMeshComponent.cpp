@@ -194,11 +194,12 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 	mesh::MeshComponent::update(update);
 }
 
-void AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
+bool AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
 {
 	const Scalar interval(worldRenderView.getInterval());
 	const Transform worldTransform = m_transform.get(interval);
 	float distance = 0.0f;
+	bool result = false;
 
 	const bool isVisible = worldRenderView.isBoxVisible(
 		getBoundingBox(),
@@ -253,6 +254,8 @@ void AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView,
 			m_rtwInstance->setTransform(worldTransform);
 			++m_rtUpdates;
 		}
+
+		result |= asynchronous;
 	}
 	else if (isVisible && m_rtwInstance && m_lastWorldTransform[1] != worldTransform)
 	{
@@ -262,6 +265,8 @@ void AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView,
 
 	m_skinModified = false;
 	m_lastIsVisible = isVisible;
+
+	return result;
 }
 
 void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
