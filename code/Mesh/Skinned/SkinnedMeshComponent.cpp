@@ -33,9 +33,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshComponent", SkinnedMeshComponen
 SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, render::IRenderSystem* renderSystem)
 	: m_mesh(mesh)
 {
+	//const auto& jointMap = m_mesh->getJointMap();
+	const uint32_t skinJointCount = m_mesh->getJointCount();
+
 	// Create buffer to contain the joint matrix palette.
-	const auto& jointMap = m_mesh->getJointMap();
-	m_jointBuffer = SkinnedMesh::createJointBuffer(renderSystem, (uint32_t)jointMap.size());
+	m_jointBuffer = SkinnedMesh::createJointBuffer(renderSystem, skinJointCount);
 
 	// Create skin buffers.
 	m_skinBuffer[0] = m_mesh->createSkinBuffer(renderSystem);
@@ -43,6 +45,10 @@ SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >&
 
 	// Create our instance's acceleration structure.
 	m_rtAccelerationStructure = m_mesh->createAccelerationStructure(renderSystem);
+
+	// Randomize start of counter to ensure not every single
+	// component in the world do the same thing at the same frame.
+	m_rtUpdates = std::rand();
 }
 
 void SkinnedMeshComponent::destroy()

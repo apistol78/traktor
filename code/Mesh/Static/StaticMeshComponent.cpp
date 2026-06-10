@@ -87,11 +87,6 @@ Aabb3 StaticMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-bool StaticMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
-{
-	return false;
-}
-
 void StaticMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	const StaticMesh::techniqueParts_t* techniqueParts = m_mesh->findTechniqueParts(worldRenderPass.getTechnique());

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,24 +8,15 @@
  */
 #include "Animation/AnimatedMeshComponent.h"
 
-#include "Animation/IPoseController.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonComponent.h"
-#include "Animation/SkeletonUtils.h"
-#include "Core/Misc/SafeDestroy.h"
-#include "Core/Thread/JobManager.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Render/Buffer.h"
-#include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
-#include "Render/IAccelerationStructure.h"
 #include "Render/IRenderSystem.h"
-#include "Render/IRenderView.h"
-#include "Render/Mesh/Mesh.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
-#include "World/World.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
@@ -33,56 +24,21 @@
 
 namespace traktor::animation
 {
-namespace
-{
 
-const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
-const render::Handle s_handleWorld_ShadowWrite(L"World_ShadowWrite");
-
-const int32_t c_maxRtUpdatesBeforeBuild = 800;
-
-}
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponent", AnimatedMeshComponent, mesh::MeshComponent)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponent", AnimatedMeshComponent, mesh::SkinnedMeshComponent)
 
 AnimatedMeshComponent::AnimatedMeshComponent(
 	const Transform& transform,
 	const resource::Proxy< mesh::SkinnedMesh >& mesh,
 	render::IRenderSystem* renderSystem)
-	: mesh::MeshComponent()
-	, m_mesh(mesh)
+	: mesh::SkinnedMeshComponent(mesh, renderSystem)
 	, m_index(0)
 {
 	const uint32_t skinJointCount = m_mesh->getJointCount();
 
-	// Create buffer to contain the joint matrix palette.
-	m_jointBuffer = mesh::SkinnedMesh::createJointBuffer(renderSystem, skinJointCount);
-
-	// Create skin buffers.
-	m_skinBuffer[0] = m_mesh->createSkinBuffer(renderSystem);
-	m_skinBuffer[1] = m_mesh->createSkinBuffer(renderSystem);
-
 	m_jointInverseTransforms.resize(skinJointCount, Transform::identity());
 	m_poseTransforms[0].resize(skinJointCount, Transform::identity());
 	m_poseTransforms[1].resize(skinJointCount, Transform::identity());
-
-	// Create our instance's acceleration structure.
-	m_rtAccelerationStructure = m_mesh->createAccelerationStructure(renderSystem);
-
-	// Randomize start of counter to ensure not every single
-	// component in the world do the same thing at the same frame.
-	m_rtUpdates = std::rand();
-}
-
-void AnimatedMeshComponent::destroy()
-{
-	m_mesh.clear();
-	safeDestroy(m_jointBuffer);
-	safeDestroy(m_skinBuffer[0]);
-	safeDestroy(m_skinBuffer[1]);
-	safeDestroy(m_rtwInstance);
-	safeDestroy(m_rtAccelerationStructure);
-	mesh::MeshComponent::destroy();
 }
 
 void AnimatedMeshComponent::setOwner(world::Entity* owner)
@@ -116,38 +72,6 @@ void AnimatedMeshComponent::setOwner(world::Entity* owner)
 			}
 		}
 	}
-}
-
-void AnimatedMeshComponent::setWorld(world::World* world)
-{
-	safeDestroy(m_rtwInstance);
-	m_world = world;
-}
-
-void AnimatedMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren)
-{
-	const bool visible = (m_world != nullptr) && state.visible;
-	if (visible)
-	{
-		if (!m_rtwInstance)
-		{
-			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
-			if (rtw != nullptr)
-			{
-				m_rtwInstance = rtw->createInstance(m_rtAccelerationStructure, m_mesh->getRTVertexAttributes());
-				m_rtwInstance->setTransform(m_transform.get0());
-			}
-		}
-	}
-	else
-	{
-		safeDestroy(m_rtwInstance);
-	}
-}
-
-void AnimatedMeshComponent::setTransform(const Transform& transform)
-{
-	MeshComponent::setTransform(transform);
 }
 
 Aabb3 AnimatedMeshComponent::getBoundingBox() const
@@ -191,7 +115,7 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 		m_index = 1 - m_index;
 	}
 
-	mesh::MeshComponent::update(update);
+	mesh::SkinnedMeshComponent::update(update);
 }
 
 bool AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
@@ -229,33 +153,7 @@ bool AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView,
 			m_jointBuffer->unlock();
 		}
 
-		// Ray traced instances skin and rebuild their acceleration structure on the
-		// asynchronous compute queue so it overlaps and is synchronized once, up front,
-		// before any graphics work.
-		//
-		// #fixme This causes the skinned mesh to be one frame late
-		// because all async work is done end of frame N-1 and synced on graphics
-		// queue in frame N.
-		const bool asynchronous = true;
-
-		// Update skin.
-		std::swap(m_skinBuffer[0], m_skinBuffer[1]);
-		m_mesh->buildSkin(renderContext, m_jointBuffer, m_skinBuffer[0], asynchronous);
-
-		// Update RT geometry and RT instance transform.
-		if (m_rtwInstance)
-		{
-			bool rebuild = false;
-			if ((m_rtUpdates % c_maxRtUpdatesBeforeBuild) == 0)
-				rebuild = true;
-
-			m_mesh->buildAccelerationStructure(renderContext, m_skinBuffer[0], m_rtAccelerationStructure, rebuild, asynchronous);
-
-			m_rtwInstance->setTransform(worldTransform);
-			++m_rtUpdates;
-		}
-
-		result |= asynchronous;
+		result |= mesh::SkinnedMeshComponent::setup(worldRenderView, renderContext);
 	}
 	else if (isVisible && m_rtwInstance && m_lastWorldTransform[1] != worldTransform)
 	{
@@ -264,8 +162,6 @@ bool AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView,
 	}
 
 	m_skinModified = false;
-	m_lastIsVisible = isVisible;
-
 	return result;
 }
 
@@ -294,6 +190,8 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 			m_skinBuffer[0],
 			distance,
 			getParameterCallback());
+
+	m_lastIsVisible = isVisible;
 }
 
 bool AnimatedMeshComponent::getSkinTransform(render::handle_t jointName, Transform& outTransform) const

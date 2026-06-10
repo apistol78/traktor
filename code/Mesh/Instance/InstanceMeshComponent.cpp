@@ -92,11 +92,6 @@ Aabb3 InstanceMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-bool InstanceMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
-{
-	return false;
-}
-
 void InstanceMeshComponent::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,

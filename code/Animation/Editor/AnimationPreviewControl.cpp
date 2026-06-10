@@ -28,6 +28,7 @@
 #include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshResourceFactory.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
+#include "Mesh/Skinned/SkinnedMeshComponentRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraphFactory.h"
@@ -266,6 +267,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
+	worldEntityRenderers->add(new mesh::SkinnedMeshComponentRenderer());
 	worldEntityRenderers->add(new weather::SkyRenderer());
 	worldEntityRenderers->add(new world::CullingRenderer());
 	worldEntityRenderers->add(new world::ProbeRenderer(

@@ -58,8 +58,6 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override;
 
-	virtual bool setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext) = 0;
-
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) = 0;
 
 	/*! Set parameter callback.

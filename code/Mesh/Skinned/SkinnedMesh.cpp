@@ -81,7 +81,7 @@ void SkinnedMesh::buildAccelerationStructure(
 	// Wait for skinning data to be ready before building AS. When asynchronous this
 	// barrier is recorded on the compute queue, ordering it after the asynchronous
 	// skinning dispatch on the same queue.
-	auto barrier = renderContext->allocNamed< render::BarrierRenderBlock >(L"SkinnedMesh wait skin", render::Stage::Compute, render::Stage::AccelerationStructureUpdate, nullptr, 0, asynchronous);
+	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::AccelerationStructureUpdate, nullptr, 0, asynchronous);
 
 	// Rebuild acceleration structure.
 	auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"SkinnedMesh update AS");
@@ -97,8 +97,6 @@ void SkinnedMesh::buildAccelerationStructure(
 			asynchronous);
 	};
 	rb->asynchronous = true;
-
-	renderContext->compute(barrier);
 	renderContext->compute(rb);
 }
 

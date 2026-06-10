@@ -46,23 +46,23 @@ class T_DLLCLASS SkinnedMeshComponent : public MeshComponent
 public:
 	explicit SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, render::IRenderSystem* renderSystem);
 
-	virtual void destroy() override final;
+	virtual void destroy() override;
 
-	virtual void setWorld(world::World* world) override final;
+	virtual void setWorld(world::World* world) override;
 
-	virtual void setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren) override final;
+	virtual void setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren) override;
 
-	virtual void setTransform(const Transform& transform) override final;
+	virtual void setTransform(const Transform& transform) override;
 
-	virtual Aabb3 getBoundingBox() const override final;
+	virtual Aabb3 getBoundingBox() const override;
 
-	virtual bool setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext) override final;
+	virtual bool setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext);
 
-	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
+	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override;
 
 	void setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms);
 
-private:
+protected:
 	resource::Proxy< SkinnedMesh > m_mesh;
 	world::World* m_world = nullptr;
 	Ref< render::Buffer > m_jointBuffer;
