@@ -50,6 +50,12 @@ void ProbeComponent::setOwner(Entity* owner)
 
 void ProbeComponent::update(const UpdateParams& update)
 {
+	//const int32_t t = (int32_t)(update.totalTime * 2.0f);
+	//if (t != m_auto)
+	//{
+	//	m_dirty = true;
+	//	m_auto = t;
+	//}
 }
 
 void ProbeComponent::setTransform(const Transform& transform)

@@ -93,6 +93,7 @@ private:
 	bool m_capture = false;
 	bool m_dirty = false;
 	int32_t m_revision = 0;
+	int32_t m_auto = 0;
 };
 
 }

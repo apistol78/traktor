@@ -217,6 +217,10 @@ void ProbeRenderer::setup(
 {
 	render::RenderGraph& renderGraph = context.getRenderGraph();
 
+	// Skip first couple of frames in order to sky etc. to stabilize.
+	if (worldRenderView.getTime() < 0.2f)
+		return;
+
 	// In case shader has been modified we need to re-capture all probes.
 	if (m_filterShader.changed())
 	{
@@ -268,7 +272,7 @@ void ProbeRenderer::setup(
 		world::WorldCreateDesc wcd;
 		wcd.worldRenderSettings = &wrs;
 		wcd.entityRenderers = probeEntityRenderers;
-		wcd.quality.toneMap = world::Quality::Medium;
+		wcd.quality.toneMap = world::Quality::Disabled;
 		wcd.quality.motionBlur = world::Quality::Disabled;
 		wcd.quality.reflections = world::Quality::Disabled;
 		wcd.quality.shadows = world::Quality::Disabled;
@@ -327,17 +331,17 @@ void ProbeRenderer::setup(
 		view = view * translate(pivot).inverse();
 
 		// Render entities.
-		world::WorldRenderView worldRenderView;
-		worldRenderView.setSnapshot(true);
-		worldRenderView.setPerspective(
+		world::WorldRenderView captureWorldRenderView;
+		captureWorldRenderView.setSnapshot(true);
+		captureWorldRenderView.setPerspective(
 			c_faceSize,
 			c_faceSize,
 			1.0f,
 			deg2rad(90.0f),
 			0.01f,
 			10000.0f);
-		worldRenderView.setTimes(0.0f, 1.0f / 60.0f, 0.0f);
-		worldRenderView.setView(view, view);
+		captureWorldRenderView.setTimes(worldRenderView.getTime(), 1.0f / 60.0f, 0.0f);
+		captureWorldRenderView.setView(view, view);
 
 		// Create intermediate target.
 		render::RenderGraphTargetSetDesc rgtsd;
@@ -356,7 +360,7 @@ void ProbeRenderer::setup(
 		// Render world to intermediate target.
 		m_worldRenderer->setup(
 			context.getWorld(),
-			worldRenderView,
+			captureWorldRenderView,
 			renderGraph,
 			faceTargetSetId,
 			[](const EntityState& state) {
@@ -388,7 +392,7 @@ void ProbeRenderer::setup(
 
 				renderView->copy(probeTexture, dr, faceTargetSet->getColorTexture(0), sr);
 			};
-			renderContext->draw(lrb);
+			renderContext->compute(lrb);
 		});
 		renderGraph.addPass(rp);
 

@@ -21,11 +21,7 @@
 #include "Render/ITexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
-#include "World/IEntityRenderer.h"
 #include "World/IWorldRenderer.h"
-#include "World/Shared/WorldRenderPassShared.h"
-#include "World/WorldBuildContext.h"
-#include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 
@@ -34,6 +30,7 @@ namespace traktor::world
 namespace
 {
 
+const resource::Id< render::ImageGraph > c_toneMapDisabled(L"{EBF935B7-9A18-9F44-B049-04E8B01DB877}");
 const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
 const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{BE19DE90-E010-A74D-AA3B-87FAC2A56946}");
 const resource::Id< render::ImageGraph > c_motionBlurMedium(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}");
@@ -89,6 +86,14 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 	{
 		resource::Id< render::ImageGraph > toneMap = getToneMapId(m_settings.exposureMode);
 		if (!resourceManager->bind(toneMap, m_toneMap))
+		{
+			log::error << L"Unable to create tone map process." << Endl;
+			return false;
+		}
+	}
+	else
+	{
+		if (!resourceManager->bind(c_toneMapDisabled, m_toneMap))
 		{
 			log::error << L"Unable to create tone map process." << Endl;
 			return false;
