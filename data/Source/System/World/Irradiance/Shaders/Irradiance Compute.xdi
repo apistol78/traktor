@@ -138,7 +138,7 @@ const float SpatialNormalThreshold = 0.9f;
 const float SpatialDepthThreshold = 2.0f;
 const float SpatialFilterRadius = 0.025f;
 const float SpatialFilterCoeff = 0.8f;
-const float Boost = 1.0f;
+const float Boost = 0.0f;
 
 const ivec2 sz = imageSize($Output);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
@@ -249,8 +249,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 				{
 					const vec3 hit = rayOrigin + rayDir * t;
 					const float attenuate = LightAttenuation(t);
-					
-/*
+#if 0
 					for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 					{
 						const $typeof(Lights) light = $Lights[lightIndex];
@@ -264,12 +263,12 @@ if (pt.x < sz.x && pt.y < sz.y)
 						);
 						Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
 					}
-*/
+#else
 					{
 						const vec3 incident = SampleIrradianceField($IrradianceField, $ViewInverse, hit);
-						Nacc += (m.albedo * incident * attenuate * phi * PI).xyz;
+						Nacc += (m.albedo * incident * attenuate * phi * PI * 2.0f).xyz;
 					}
-
+#endif
 					Nacc += m.albedo * m.emissive * attenuate * phi * PI;
 
 #if USE_SECOND_BOUNCE
@@ -307,7 +306,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 */
 							{
 								const vec3 incident = SampleIrradianceField($IrradianceField, $ViewInverse, hit2);
-								Sacc += (m2.albedo * incident * attenuate2 * phi * PI).xyz;
+								Sacc += (m2.albedo * incident * attenuate2 * phi * PI * 2.0f).xyz;
 							}		
 
 							Sacc += m2.albedo * m2.emissive * attenuate2 * phi * PI;
@@ -351,7 +350,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 		vec4(1.0f, 0.0f, 0.0f, 1.0f);
 #endif
 
-	imageStore($Output, pt, acc * Boost);
+	imageStore($Output, pt, acc * (1.0f + Boost) - Boost / 2.0f);
 	$ReservoirOutput[index] = reservoir;
 }
 
