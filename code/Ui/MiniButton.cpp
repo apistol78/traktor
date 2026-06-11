@@ -105,11 +105,13 @@ void MiniButton::eventButtonUp(MouseButtonUpEvent* event)
 
 void MiniButton::eventPaint(PaintEvent* event)
 {
+	const StyleSheet* ss = getStyleSheet();
+	const bool enabled = isEnable(true);
+
 	Canvas& canvas = event->getCanvas();
 	Rect rcInner = getInnerRect();
-	const StyleSheet* ss = getStyleSheet();
 
-	if (isEnable(true))
+	if (enabled)
 	{
 		if (m_background && m_pushed)
 			canvas.setBackground(ss->getColor(getParent(), L"background-color-pushed"));
@@ -155,7 +157,9 @@ void MiniButton::eventPaint(PaintEvent* event)
 			Point(0, 0),
 			size,
 			m_image,
-			BlendMode::Alpha
+			BlendMode::Alpha,
+			Filter::Linear,
+			enabled ? 255 : 80
 		);
 	}
 	else

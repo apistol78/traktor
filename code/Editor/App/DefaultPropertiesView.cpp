@@ -196,36 +196,37 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 			raiseEvent(&event);
 		}
 	}
+	else if (cmd == L"Property.Clear")
+	{
+		ui::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::BrowsePropertyItem* >(event->getItem());
+		if (browseItem)
+		{
+			browseItem->setValue(Guid());
+			m_propertyList->apply();
+
+			ui::ContentChangeEvent event(this);
+			raiseEvent(&event);
+		}
+	}
 	else if (cmd == L"Property.Browse")
 	{
 		ui::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::BrowsePropertyItem* >(event->getItem());
 		if (browseItem)
 		{
-			if (browseItem->getValue().isNull())
+			Ref< db::Instance > instance;
+			if (browseItem->getFilterType())
 			{
-				Ref< db::Instance > instance;
-				if (browseItem->getFilterType())
-				{
-					const TypeInfo* filterType = browseItem->getFilterType();
-					T_ASSERT(filterType);
+				const TypeInfo* filterType = browseItem->getFilterType();
+				T_ASSERT(filterType);
 
-					instance = m_editor->browseInstance(*filterType);
-				}
-				else
-					instance = m_editor->browseInstance();
-
-				if (instance)
-				{
-					browseItem->setValue(instance->getGuid());
-					m_propertyList->apply();
-
-					ui::ContentChangeEvent event(this);
-					raiseEvent(&event);
-				}
+				instance = m_editor->browseInstance(*filterType);
 			}
 			else
+				instance = m_editor->browseInstance();
+
+			if (instance)
 			{
-				browseItem->setValue(Guid());
+				browseItem->setValue(instance->getGuid());
 				m_propertyList->apply();
 
 				ui::ContentChangeEvent event(this);

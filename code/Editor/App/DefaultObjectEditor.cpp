@@ -6,20 +6,21 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Editor/App/DefaultObjectEditor.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Editor/IEditor.h"
-#include "Editor/App/DefaultObjectEditor.h"
 #include "Editor/App/TextEditorDialog.h"
+#include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
+#include "Ui/ColorPicker/ColorDialog.h"
 #include "Ui/Event.h"
 #include "Ui/FileDialog.h"
 #include "Ui/PathDialog.h"
-#include "Ui/ColorPicker/ColorDialog.h"
 #include "Ui/PropertyList/ArrayPropertyItem.h"
 #include "Ui/PropertyList/BrowsePropertyItem.h"
 #include "Ui/PropertyList/ColorPropertyItem.h"
@@ -30,13 +31,13 @@
 
 namespace traktor
 {
-	namespace editor
-	{
+namespace editor
+{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DefaultObjectEditor", DefaultObjectEditor, IObjectEditor)
 
 DefaultObjectEditor::DefaultObjectEditor(IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -74,7 +75,6 @@ bool DefaultObjectEditor::handleCommand(const ui::Command& command)
 	if (command == L"Editor.Copy")
 		return m_propertyList->copy();
 	else if (command == L"Editor.Paste")
-	{
 		if (m_propertyList->paste())
 		{
 			m_propertyList->apply();
@@ -82,7 +82,6 @@ bool DefaultObjectEditor::handleCommand(const ui::Command& command)
 		}
 		else
 			return false;
-	}
 	else
 		return false;
 }
@@ -128,7 +127,7 @@ void DefaultObjectEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 					}
 				}
 			}
-			else	// Non-complex array; just apply and refresh.
+			else // Non-complex array; just apply and refresh.
 			{
 				m_propertyList->apply();
 				m_propertyList->refresh();
@@ -145,33 +144,34 @@ void DefaultObjectEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 			m_propertyList->apply();
 		}
 	}
+	else if (cmd == L"Property.Clear")
+	{
+		ui::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::BrowsePropertyItem* >(event->getItem());
+		if (browseItem)
+		{
+			browseItem->setValue(Guid());
+			m_propertyList->apply();
+		}
+	}
 	else if (cmd == L"Property.Browse")
 	{
 		ui::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::BrowsePropertyItem* >(event->getItem());
 		if (browseItem)
 		{
-			if (browseItem->getValue().isNull())
+			Ref< db::Instance > instance;
+			if (browseItem->getFilterType())
 			{
-				Ref< db::Instance > instance;
-				if (browseItem->getFilterType())
-				{
-					const TypeInfo* filterType = browseItem->getFilterType();
-					T_ASSERT(filterType);
+				const TypeInfo* filterType = browseItem->getFilterType();
+				T_ASSERT(filterType);
 
-					instance = m_editor->browseInstance(*filterType);
-				}
-				else
-					instance = m_editor->browseInstance();
-
-				if (instance)
-				{
-					browseItem->setValue(instance->getGuid());
-					m_propertyList->apply();
-				}
+				instance = m_editor->browseInstance(*filterType);
 			}
 			else
+				instance = m_editor->browseInstance();
+
+			if (instance)
 			{
-				browseItem->setValue(Guid());
+				browseItem->setValue(instance->getGuid());
 				m_propertyList->apply();
 			}
 		}
@@ -290,5 +290,5 @@ void DefaultObjectEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 	m_propertyList->update();
 }
 
-	}
+}
 }
