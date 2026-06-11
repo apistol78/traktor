@@ -2,6 +2,6 @@
 <object type="traktor.render.ParameterDeclaration">
 	<type>StructBuffer</type>
 	<length>0</length>
-	<frequency>Once</frequency>
+	<frequency>Frame</frequency>
 	<structDeclaration>{86E147CA-B18B-544E-A278-64ABC36DBA11}</structDeclaration>
 </object>

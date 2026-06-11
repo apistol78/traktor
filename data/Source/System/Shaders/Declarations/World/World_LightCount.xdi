@@ -2,5 +2,5 @@
 <object type="traktor.render.UniformDeclaration">
 	<type>Scalar</type>
 	<length>0</length>
-	<frequency>Draw</frequency>
+	<frequency>Frame</frequency>
 </object>
