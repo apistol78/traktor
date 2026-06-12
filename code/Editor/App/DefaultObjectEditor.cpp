@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -158,16 +158,19 @@ void DefaultObjectEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 		ui::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::BrowsePropertyItem* >(event->getItem());
 		if (browseItem)
 		{
+			Ref< db::Instance > currentInstance = m_editor->getSourceDatabase()->getInstance(browseItem->getValue());
+			Ref< db::Group > currentGroup = currentInstance ? currentInstance->getParent() : m_instance->getParent();
+
 			Ref< db::Instance > instance;
 			if (browseItem->getFilterType())
 			{
 				const TypeInfo* filterType = browseItem->getFilterType();
 				T_ASSERT(filterType);
 
-				instance = m_editor->browseInstance(*filterType);
+				instance = m_editor->browseInstance(*filterType, currentGroup);
 			}
 			else
-				instance = m_editor->browseInstance();
+				instance = m_editor->browseInstance(nullptr, currentGroup);
 
 			if (instance)
 			{

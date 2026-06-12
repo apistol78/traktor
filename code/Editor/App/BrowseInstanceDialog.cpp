@@ -6,8 +6,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Settings/PropertyInteger.h"
+#include "Editor/App/BrowseInstanceDialog.h"
+
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyObject.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadPool.h"
@@ -16,27 +18,26 @@
 #include "Database/Instance.h"
 #include "Editor/IBrowseFilter.h"
 #include "Editor/IBrowsePreview.h"
-#include "Editor/App/BrowseInstanceDialog.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/HierarchicalState.h"
-#include "Ui/Static.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/TableLayout.h"
-#include "Ui/Splitter.h"
 #include "Ui/MiniButton.h"
 #include "Ui/PreviewList/PreviewItem.h"
 #include "Ui/PreviewList/PreviewItems.h"
 #include "Ui/PreviewList/PreviewList.h"
+#include "Ui/Splitter.h"
+#include "Ui/Static.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/TableLayout.h"
 #include "Ui/TreeView/TreeView.h"
 #include "Ui/TreeView/TreeViewItem.h"
 
-#pragma warning(disable: 4344)
+#pragma warning(disable : 4344)
 
 namespace traktor::editor
 {
-	namespace
-	{
+namespace
+{
 
 bool recursiveIncludeGroup(db::Group* group, const IBrowseFilter* filter)
 {
@@ -45,46 +46,41 @@ bool recursiveIncludeGroup(db::Group* group, const IBrowseFilter* filter)
 
 	// Does this group contain a valid instance?
 	for (auto childInstance : childInstances)
-	{
 		if (filter->acceptable(childInstance))
 			return true;
-	}
 
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
 
 	// No instances at this level, check if any child group contains valid instances.
 	for (auto childGroup : childGroups)
-	{
 		if (recursiveIncludeGroup(childGroup, filter))
 			return true;
-	}
 
 	// No instances found at any level from this group and below.
 	return false;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.BrowseInstanceDialog", BrowseInstanceDialog, ui::ConfigDialog)
 
 BrowseInstanceDialog::BrowseInstanceDialog(IEditor* editor, PropertyGroup* settings)
-:	m_editor(editor)
-,	m_settings(settings)
-,	m_threadGeneratePreview(nullptr)
+	: m_editor(editor)
+	, m_settings(settings)
+	, m_threadGeneratePreview(nullptr)
 {
 }
 
-bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, const IBrowseFilter* filter)
+bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, const IBrowseFilter* filter, const db::Group* initialGroup)
 {
 	if (!ui::ConfigDialog::create(
-		parent,
-		i18n::Text(L"BROWSE_INSTANCE_TITLE"),
-		640_ut,
-		500_ut,
-		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
-		new ui::TableLayout(L"100%", L"100%,*", 4_ut, 4_ut)
-	))
+			parent,
+			i18n::Text(L"BROWSE_INSTANCE_TITLE"),
+			640_ut,
+			500_ut,
+			ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
+			new ui::TableLayout(L"100%", L"100%,*", 4_ut, 4_ut)))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
@@ -131,38 +127,39 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 
 	// Spawn preview generator thread.
 	ThreadPool::getInstance().spawn(
-		[=, this](){ threadGeneratePreview(); },
-		m_threadGeneratePreview
-	);
+		[=, this]() {
+		threadGeneratePreview();
+	},
+		m_threadGeneratePreview);
 
 	// Traverse database and filter out items.
 	ui::TreeViewItem* groupRoot = buildGroupItems(
 		m_treeDatabase,
 		nullptr,
 		database->getRootGroup(),
-		filter
-	);
+		filter);
 
 	if (groupRoot)
 		groupRoot->sort(true);
-
-	// Expand all groups until a group with multiple children is found.
-	ui::TreeViewItem* expandGroup = groupRoot;
-	while (expandGroup)
-	{
-		expandGroup->expand();
-
-		const RefArray< ui::TreeViewItem >& children = expandGroup->getChildren();
-		if (children.size() == 1)
-			expandGroup = children[0];
-		else
-			break;
-	}
 
 	// Restore last state.
 	Ref< ui::HierarchicalState > state = dynamic_type_cast< ui::HierarchicalState* >(m_settings->getProperty< Ref< ISerializable > >(L"Editor.BrowseInstanceTreeState"));
 	if (state)
 		m_treeDatabase->applyState(state);
+
+	// Select initial group.
+	if (initialGroup != nullptr)
+	{
+		ui::TreeViewItem* initialGroupView = m_treeDatabase->find([&](const ui::TreeViewItem* item) {
+			return item->getData(L"GROUP") == initialGroup;
+		});
+		if (initialGroupView != nullptr)
+		{
+			initialGroupView->select();
+			initialGroupView->expand();
+			initialGroupView->show();
+		}
+	}
 
 	updatePreviewList();
 	return true;
@@ -220,6 +217,7 @@ ui::TreeViewItem* BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, 
 		}
 	}
 
+	groupItem->setData(L"GROUP", group);
 	groupItem->setData(L"INSTANCE_ITEMS", instanceItems);
 	return groupItem;
 }
@@ -244,7 +242,9 @@ void BrowseInstanceDialog::updatePreviewList()
 				ui::PreviewItem* item = previewItems->get(i);
 				if (!item->getImage())
 				{
-					m_previewTasks.put([=, this](){ taskGeneratePreview(item); });
+					m_previewTasks.put([=, this]() {
+						taskGeneratePreview(item);
+					});
 					m_previewTaskEvent.pulse();
 				}
 			}
@@ -287,8 +287,7 @@ void BrowseInstanceDialog::taskGeneratePreview(ui::PreviewItem* item)
 		{
 			item->setImage((*i)->generate(
 				m_editor,
-				instance
-			));
+				instance));
 			m_listInstances->requestUpdate();
 			break;
 		}

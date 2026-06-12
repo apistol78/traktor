@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -106,10 +106,10 @@ public:
 	virtual Ref< db::Group > browseGroup() = 0;
 
 	/*! Browse database instance. */
-	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType) = 0;
+	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType, const db::Group* initialGroup = nullptr) = 0;
 
 	/*! Browse database instance. */
-	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter = 0) = 0;
+	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter = nullptr, const db::Group* initialGroup = nullptr) = 0;
 
 	/*! Open instance in appropriate editor. */
 	virtual bool openEditor(db::Instance* instance) = 0;

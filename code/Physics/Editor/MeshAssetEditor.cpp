@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
+#include "Physics/Editor/MeshAssetEditor.h"
+
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
@@ -15,8 +16,8 @@
 #include "Core/Settings/PropertyVector.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
-#include "Database/Instance.h"
 #include "Database/Group.h"
+#include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "I18N/Format.h"
 #include "I18N/Text.h"
@@ -24,27 +25,28 @@
 #include "Model/ModelCache.h"
 #include "Physics/Editor/Material.h"
 #include "Physics/Editor/MeshAsset.h"
-#include "Physics/Editor/MeshAssetEditor.h"
 #include "Ui/Application.h"
 #include "Ui/Button.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
-#include "Ui/Edit.h"
-#include "Ui/NumericEditValidator.h"
-#include "Ui/Slider.h"
-#include "Ui/Static.h"
-#include "Ui/TableLayout.h"
 #include "Ui/DropDown.h"
+#include "Ui/Edit.h"
 #include "Ui/FileDialog.h"
-#include "Ui/InputDialog.h"
-#include "Ui/MessageBox.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridView.h"
+#include "Ui/InputDialog.h"
+#include "Ui/MessageBox.h"
+#include "Ui/NumericEditValidator.h"
+#include "Ui/Slider.h"
+#include "Ui/Static.h"
+#include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+
+#include <algorithm>
 
 namespace traktor::physics
 {
@@ -52,10 +54,10 @@ namespace traktor::physics
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.MeshAssetEditor", MeshAssetEditor, editor::IObjectEditor)
 
 MeshAssetEditor::MeshAssetEditor(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 	m_assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath");
-	m_modelCachePath =  m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
+	m_modelCachePath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 }
 
 bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
@@ -159,7 +161,7 @@ void MeshAssetEditor::destroy()
 void MeshAssetEditor::apply()
 {
 	m_asset->setFileName(m_editFileName->getText());
-	//m_asset->setImportFilter(m_editImportFilter->getText());
+	// m_asset->setImportFilter(m_editImportFilter->getText());
 	m_asset->setCalculateConvexHull(m_checkHull->isChecked());
 	m_asset->setMargin(parseString< float >(m_editMargin->getText()));
 
@@ -190,8 +192,7 @@ ui::Size MeshAssetEditor::getPreferredSize() const
 {
 	return ui::Size(
 		800,
-		600
-	);
+		600);
 }
 
 void MeshAssetEditor::updateModel()
@@ -263,7 +264,7 @@ void MeshAssetEditor::browseMaterial()
 	if (!selectedItem)
 		return;
 
-	Ref< db::Instance > materialTemplateInstance = m_editor->browseInstance(type_of< Material >());
+	Ref< db::Instance > materialTemplateInstance = m_editor->browseInstance(type_of< Material >(), m_instance->getParent());
 	if (materialTemplateInstance)
 	{
 		selectedItem->set(1, new ui::GridItem(materialTemplateInstance->getName()));

@@ -138,7 +138,7 @@ Ref< ISerializable > PrefabComponentPipeline::buildProduct(
 
 		// Create and build a new mesh asset referencing the modified model.
 		Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-		outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+		outputMeshAsset->setMeshType(mesh::MeshAsset::MeshType::Static);
 		if (meshAsset)
 		{
 			outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());

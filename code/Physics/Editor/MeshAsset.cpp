@@ -1,27 +1,36 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Physics/Editor/MeshAsset.h"
+
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Physics/Editor/Material.h"
-#include "Physics/Editor/MeshAsset.h"
 
 namespace traktor::physics
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.MeshAsset", 7, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.MeshAsset", 8, MeshAsset, editor::Asset)
 
 void MeshAsset::serialize(ISerializer& s)
 {
+	const MemberEnum< CenterMode >::Key c_CenterMode_Keys[] = {
+		{ L"None", CenterMode::None },
+		{ L"XZ", CenterMode::XZ },
+		{ L"XYZ", CenterMode::XYZ },
+		{ 0 }
+	};
+
 	editor::Asset::serialize(s);
 
 	if (s.getVersion< MeshAsset >() >= 4)
@@ -45,8 +54,17 @@ void MeshAsset::serialize(ISerializer& s)
 	if (s.getVersion< MeshAsset >() >= 6)
 		s >> Member< float >(L"reduce", m_reduce, AttributeRange(0.0f, 1.0f));
 
-	if (s.getVersion< MeshAsset >() >= 5)
-		s >> Member< bool >(L"center", m_center);
+	if (s.getVersion< MeshAsset >() >= 8)
+	{
+		if (s.getVersion() >= 26)
+			s >> MemberEnum< CenterMode >(L"center", m_center, c_CenterMode_Keys);
+		else
+		{
+			bool center;
+			s >> Member< bool >(L"center", center);
+			m_center = center ? CenterMode::XYZ : CenterMode::None;
+		}
+	}
 
 	if (s.getVersion< MeshAsset >() >= 5)
 		s >> Member< bool >(L"grounded", m_grounded);

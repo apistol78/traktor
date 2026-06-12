@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Sound/Editor/SoundAssetEditor.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/ObjectStore.h"
@@ -17,28 +19,27 @@
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
-#include "Sound/Sound.h"
-#include "Sound/StreamAudioBuffer.h"
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
 #include "Sound/Decoders/TssStreamDecoder.h"
 #include "Sound/Decoders/WavStreamDecoder.h"
 #include "Sound/Editor/SoundAsset.h"
-#include "Sound/Editor/SoundAssetEditor.h"
 #include "Sound/Player/SoundHandle.h"
 #include "Sound/Player/SoundPlayer.h"
+#include "Sound/Sound.h"
+#include "Sound/StreamAudioBuffer.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
 #include "Ui/PathDialog.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/TableLayout.h"
 #include "Ui/PropertyList/ArrayPropertyItem.h"
 #include "Ui/PropertyList/BrowsePropertyItem.h"
 #include "Ui/PropertyList/FilePropertyItem.h"
 #include "Ui/PropertyList/ObjectPropertyItem.h"
 #include "Ui/PropertyList/PropertyCommandEvent.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -49,7 +50,7 @@ namespace traktor::sound
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundAssetEditor", SoundAssetEditor, editor::IObjectEditor)
 
 SoundAssetEditor::SoundAssetEditor(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -116,8 +117,7 @@ ui::Size SoundAssetEditor::getPreferredSize() const
 {
 	return ui::Size(
 		500,
-		400
-	);
+		400);
 }
 
 void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
@@ -207,7 +207,7 @@ void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 					}
 				}
 			}
-			else	// Non-complex array; just apply and refresh.
+			else // Non-complex array; just apply and refresh.
 			{
 				m_propertyList->apply();
 				m_propertyList->refresh();
@@ -238,16 +238,19 @@ void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 		ui::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::BrowsePropertyItem* >(event->getItem());
 		if (browseItem)
 		{
+			Ref< db::Instance > currentInstance = m_editor->getSourceDatabase()->getInstance(browseItem->getValue());
+			Ref< db::Group > currentGroup = currentInstance ? currentInstance->getParent() : m_instance->getParent();
+
 			Ref< db::Instance > instance;
 			if (browseItem->getFilterType())
 			{
 				const TypeInfo* filterType = browseItem->getFilterType();
 				T_ASSERT(filterType);
 
-				instance = m_editor->browseInstance(*filterType);
+				instance = m_editor->browseInstance(*filterType, currentGroup);
 			}
 			else
-				instance = m_editor->browseInstance();
+				instance = m_editor->browseInstance(nullptr, currentGroup);
 
 			if (instance)
 			{
@@ -341,33 +344,33 @@ void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 			m_editor->openEditor(instance);
 		}
 
-/*
-		ui::TextPropertyItem* textItem = dynamic_type_cast< ui::TextPropertyItem* >(event->getItem());
-		if (textItem)
-		{
-			TextEditorDialog textEditorDialog;
-			textEditorDialog.create(m_propertyList, textItem->getValue());
-			if (textEditorDialog.showModal() == ui::DialogResult::Ok)
-			{
-				textItem->setValue(textEditorDialog.getText());
-				m_propertyList->apply();
-			}
-			textEditorDialog.destroy();
-		}
+		/*
+				ui::TextPropertyItem* textItem = dynamic_type_cast< ui::TextPropertyItem* >(event->getItem());
+				if (textItem)
+				{
+					TextEditorDialog textEditorDialog;
+					textEditorDialog.create(m_propertyList, textItem->getValue());
+					if (textEditorDialog.showModal() == ui::DialogResult::Ok)
+					{
+						textItem->setValue(textEditorDialog.getText());
+						m_propertyList->apply();
+					}
+					textEditorDialog.destroy();
+				}
 
-		ui::ColorPropertyItem* colorItem = dynamic_type_cast< ui::ColorPropertyItem* >(event->getItem());
-		if (colorItem)
-		{
-			ui::ColorDialog colorDialog;
-			colorDialog.create(m_propertyList, i18n::Text(L"COLOR_DIALOG_TEXT"), ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha, colorItem->getValue());
-			if (colorDialog.showModal() == ui::DialogResult::Ok)
-			{
-				colorItem->setValue(colorDialog.getColor());
-				m_propertyList->apply();
-			}
-			colorDialog.destroy();
-		}
-*/
+				ui::ColorPropertyItem* colorItem = dynamic_type_cast< ui::ColorPropertyItem* >(event->getItem());
+				if (colorItem)
+				{
+					ui::ColorDialog colorDialog;
+					colorDialog.create(m_propertyList, i18n::Text(L"COLOR_DIALOG_TEXT"), ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha, colorItem->getValue());
+					if (colorDialog.showModal() == ui::DialogResult::Ok)
+					{
+						colorItem->setValue(colorDialog.getColor());
+						m_propertyList->apply();
+					}
+					colorDialog.destroy();
+				}
+		*/
 	}
 	m_propertyList->update();
 }

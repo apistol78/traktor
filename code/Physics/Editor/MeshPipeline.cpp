@@ -134,10 +134,24 @@ bool MeshPipeline::buildOutput(
 		scale(meshAsset->getScaleFactor())
 	));
 
-	if (meshAsset->getCenter())
+	switch (meshAsset->getCenter())
 	{
-		const Aabb3 boundingBox = model->getBoundingBox();
-		model->apply(model::Transform(translate(-boundingBox.getCenter())));
+	case MeshAsset::CenterMode::XZ:
+		{
+			const Aabb3 boundingBox = model->getBoundingBox();
+			model->apply(model::Transform(translate(-boundingBox.getCenter() * Vector4(1.0f, 0.0f, 1.0f))));
+		}
+		break;
+
+	case MeshAsset::CenterMode::XYZ:
+		{
+			const Aabb3 boundingBox = model->getBoundingBox();
+			model->apply(model::Transform(translate(-boundingBox.getCenter())));
+		}
+		break;
+
+	default:
+		break;
 	}
 
 	if (meshAsset->getGrounded())

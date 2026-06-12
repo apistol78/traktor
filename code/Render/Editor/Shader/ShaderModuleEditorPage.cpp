@@ -356,7 +356,7 @@ void ShaderModuleEditorPage::eventScriptButtonUp(ui::MouseButtonUpEvent* event)
 	{
 		if (menuItem->getCommand() == L"Script.Editor.AddUsingStatement")
 		{
-			Ref< db::Instance > instance = m_editor->browseInstance(type_of< ShaderModule >());
+			Ref< db::Instance > instance = m_editor->browseInstance(type_of< ShaderModule >(), m_document->getInstance(0)->getParent());
 			if (instance)
 			{
 				m_document->push(new PropertyInteger(m_edit->getCaretOffset()));

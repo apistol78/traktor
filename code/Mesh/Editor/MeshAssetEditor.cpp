@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,14 +22,12 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Editor/IEditor.h"
-#include "I18N/Format.h"
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetRasterizer.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/ITexture.h"
 #include "Ui/Application.h"
@@ -161,10 +159,6 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_checkRenormalize->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_RENORMALIZE")))
 		return false;
 
-	m_checkCenter = new ui::CheckBox();
-	if (!m_checkCenter->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_CENTER")))
-		return false;
-
 	m_checkGrounded = new ui::CheckBox();
 	if (!m_checkGrounded->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_GROUNDED")))
 		return false;
@@ -180,7 +174,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	staticScaleFactor->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_SCALE_FACTOR"));
 
 	Ref< ui::Container > containerScaleFactor = new ui::Container();
-	containerScaleFactor->create(containerRight, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0_ut, 4_ut));
+	containerScaleFactor->create(containerRight, ui::WsNone, new ui::TableLayout(L"60,60,60", L"*", 0_ut, 4_ut));
 
 	m_editScaleFactor[0] = new ui::Edit();
 	m_editScaleFactor[0]->create(containerScaleFactor, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
@@ -188,6 +182,17 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_editScaleFactor[1]->create(containerScaleFactor, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
 	m_editScaleFactor[2] = new ui::Edit();
 	m_editScaleFactor[2]->create(containerScaleFactor, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
+
+	Ref< ui::Static > staticCenter = new ui::Static();
+	staticCenter->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_CENTER"));
+
+	m_dropCenter = new ui::DropDown();
+	if (!m_dropCenter->create(containerRight))
+		return false;
+
+	m_dropCenter->add(i18n::Text(L"MESHASSET_EDITOR_CENTER_NONE"));
+	m_dropCenter->add(i18n::Text(L"MESHASSET_EDITOR_CENTER_XZ"));
+	m_dropCenter->add(i18n::Text(L"MESHASSET_EDITOR_CENTER_XYZ"));
 
 	Ref< ui::Static > staticPreviewAngle = new ui::Static();
 	staticPreviewAngle->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_PREVIEW_ANGLE"));
@@ -260,7 +265,7 @@ void MeshAssetEditor::apply()
 	m_asset->setImportFilter(m_editImportFilter->getText());
 	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected()));
 	m_asset->setRenormalize(m_checkRenormalize->isChecked());
-	m_asset->setCenter(m_checkCenter->isChecked());
+	m_asset->setCenter(MeshAsset::CenterMode(m_dropCenter->getSelected()));
 	m_asset->setGrounded(m_checkGrounded->isChecked());
 	m_asset->setDecalResponse(m_checkDecalResponse->isChecked());
 	m_asset->setScaleFactor(Vector4(
@@ -334,9 +339,9 @@ void MeshAssetEditor::updateFile()
 
 	m_editFileName->setText(assetRelPath.getPathName());
 	m_editImportFilter->setText(m_asset->getImportFilter());
-	m_dropMeshType->select(m_asset->getMeshType());
+	m_dropMeshType->select((int32_t)m_asset->getMeshType());
 	m_checkRenormalize->setChecked(m_asset->getRenormalize());
-	m_checkCenter->setChecked(m_asset->getCenter());
+	m_dropCenter->select((int32_t)m_asset->getCenter());
 	m_checkGrounded->setChecked(m_asset->getGrounded());
 	m_checkDecalResponse->setChecked(m_asset->getDecalResponse());
 	m_editScaleFactor[0]->setText(toString(m_asset->getScaleFactor().x()));
@@ -595,7 +600,7 @@ void MeshAssetEditor::browseMaterialShader()
 	if (!selectedItem)
 		return;
 
-	Ref< db::Instance > materialShaderInstance = m_editor->browseInstance(type_of< render::ShaderGraph >());
+	Ref< db::Instance > materialShaderInstance = m_editor->browseInstance(type_of< render::ShaderGraph >(), m_instance->getParent());
 	if (materialShaderInstance)
 	{
 		selectedItem->set(1, new ui::GridItem(materialShaderInstance->getName()));
@@ -625,7 +630,7 @@ void MeshAssetEditor::browseMaterialTexture()
 	if (!selectedItem)
 		return;
 
-	Ref< db::Instance > materialTextureInstance = m_editor->browseInstance(type_of< render::ITexture >());
+	Ref< db::Instance > materialTextureInstance = m_editor->browseInstance(type_of< render::ITexture >(), m_instance->getParent());
 	if (materialTextureInstance)
 	{
 		selectedItem->set(1, new ui::GridItem(materialTextureInstance->getName()));

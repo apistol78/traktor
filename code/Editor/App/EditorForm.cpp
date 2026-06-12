@@ -965,7 +965,7 @@ Ref< db::Group > EditorForm::browseGroup()
 	return group;
 }
 
-Ref< db::Instance > EditorForm::browseInstance(const TypeInfo& filterType)
+Ref< db::Instance > EditorForm::browseInstance(const TypeInfo& filterType, const db::Group* initialGroup)
 {
 	TypeInfoSet browseTypes;
 
@@ -991,15 +991,15 @@ Ref< db::Instance > EditorForm::browseInstance(const TypeInfo& filterType)
 		browseTypes.insert(&filterType);
 
 	editor::TypeBrowseFilter filter(browseTypes);
-	return browseInstance(&filter);
+	return browseInstance(&filter, initialGroup);
 }
 
-Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
+Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter, const db::Group* initialGroup)
 {
 	Ref< db::Instance > instance;
 
 	BrowseInstanceDialog dlgBrowse(this, m_mergedSettings);
-	if (dlgBrowse.create(this, m_sourceDatabase, filter))
+	if (dlgBrowse.create(this, m_sourceDatabase, filter, initialGroup))
 	{
 		if (dlgBrowse.showModal() == ui::DialogResult::Ok)
 			instance = dlgBrowse.getInstance();

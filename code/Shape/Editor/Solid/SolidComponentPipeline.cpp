@@ -127,7 +127,7 @@ Ref< ISerializable > SolidComponentPipeline::buildProduct(
 
 		// Build output mesh from merged model.
 		Ref< mesh::MeshAsset > visualMeshAsset = new mesh::MeshAsset();
-		visualMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+		visualMeshAsset->setMeshType(mesh::MeshAsset::MeshType::Static);
 		pipelineBuilder->buildAdHocOutput(
 			visualMeshAsset,
 			outputRenderMeshPath,

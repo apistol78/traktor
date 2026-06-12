@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -67,7 +67,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 			parent,
 			i18n::Text(L"GAMEENTITY_WIZARD_DIALOG_TITLE"),
 			700_ut,
-			450_ut,
+			500_ut,
 			ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 			new ui::TableLayout(L"100%", L"*", 8_ut, 8_ut)))
 		return false;
@@ -145,6 +145,17 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	Ref< ui::Button > buttonCopyCollisionMesh = new ui::Button();
 	buttonCopyCollisionMesh->create(containerMesh, L"Copy");
 	buttonCopyCollisionMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventCopyCollisionMeshClick);
+
+	// Import filter
+	Ref< ui::Container > containerFilter = new ui::Container();
+	containerFilter->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0_ut, 8_ut));
+
+	Ref< ui::Static > staticFilter = new ui::Static();
+	staticFilter->create(containerFilter, i18n::Text(L"GAMEENTITY_WIZARD_IMPORT_FILTER"));
+
+	m_editFilter = new ui::Edit();
+	m_editFilter->create(containerFilter);
+	m_editFilter->addEventHandler< ui::ContentChangeEvent >(this, &GameEntityWizardDialog::eventNameChange);
 
 	// Type of entity.
 	Ref< ui::Container > containerType = new ui::Container();
@@ -354,6 +365,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 		const std::wstring skeletonMesh = m_editSkeletonMesh->getText();
 		const std::wstring animationMesh = m_editAnimationMesh->getText();
 		const std::wstring collisionMesh = m_editCollisionMesh->getText();
+		const std::wstring filter = m_editFilter->getText();
 		const int32_t entityType = m_dropEntityType->getSelected();
 		const float scale = parseString< float >(m_editScale->getText());
 
@@ -484,11 +496,15 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create visual mesh asset.
 			Ref< mesh::MeshAsset > meshAsset = new mesh::MeshAsset();
 			meshAsset->setFileName(visualMesh);
+			meshAsset->setImportFilter(filter);
 			meshAsset->setScaleFactor(Vector4(scale, scale, scale, 1.0f));
 			if (entityType == 3 || entityType == 4)
-				meshAsset->setMeshType(mesh::MeshAsset::MtSkinned);
+				meshAsset->setMeshType(mesh::MeshAsset::MeshType::Skinned);
 			else
-				meshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+				meshAsset->setMeshType(mesh::MeshAsset::MeshType::Static);
+
+			if (!filter.empty())
+				meshAsset->setCenter(mesh::MeshAsset::CenterMode::XZ);
 
 			// Create asset instance.
 			Ref< db::Instance > meshAssetInstance = m_group->createInstance(
@@ -551,9 +567,13 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			// Create physics mesh asset.
 			Ref< physics::MeshAsset > meshAsset = new physics::MeshAsset();
 			meshAsset->setFileName(collisionMesh);
+			meshAsset->setImportFilter(filter);
 			meshAsset->setScaleFactor(Vector4(scale, scale, scale, 1.0f));
 			meshAsset->setCalculateConvexHull(entityType == 2);
 			meshAsset->setMargin((entityType == 2) ? 0.04f : 0.0f);
+
+			if (!filter.empty())
+				meshAsset->setCenter(physics::MeshAsset::CenterMode::XZ);
 
 			// Create asset instance.
 			Ref< db::Instance > meshAssetInstance = m_group->createInstance(

@@ -1,22 +1,22 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <stack>
-#include "Core/Log/Log.h"
-#include "Core/Misc/String.h"
+#include "Ui/TreeView/TreeView.h"
+
 #include "Ui/Edit.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/StyleBitmap.h"
-#include "Ui/TreeView/TreeView.h"
 #include "Ui/TreeView/TreeViewContentChangeEvent.h"
 #include "Ui/TreeView/TreeViewEditEvent.h"
 #include "Ui/TreeView/TreeViewItem.h"
 #include "Ui/TreeView/TreeViewItemActivateEvent.h"
+
+#include <stack>
 
 namespace traktor::ui
 {
@@ -145,6 +145,14 @@ RefArray< TreeViewItem > TreeView::getItems(uint32_t flags) const
 	return items;
 }
 
+TreeViewItem* TreeView::find(const std::function< bool(const TreeViewItem*) >& predicate) const
+{
+	for (auto item : getItems(GfDescendants))
+		if (predicate(item))
+			return item;
+	return nullptr;
+}
+
 void TreeView::deselectAll()
 {
 	for (auto selectedItem : getItems(TreeView::GfDescendants | TreeView::GfSelectedOnly))
@@ -155,13 +163,10 @@ Ref< HierarchicalState > TreeView::captureState() const
 {
 	Ref< HierarchicalState > state = new HierarchicalState();
 	for (auto item : getItems(GfDescendants))
-	{
 		state->addState(
 			item->getPath(),
 			item->isExpanded(),
-			item->isSelected()
-		);
-	}
+			item->isSelected());
 	return state;
 }
 

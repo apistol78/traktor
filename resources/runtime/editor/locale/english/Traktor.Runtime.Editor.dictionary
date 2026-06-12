@@ -146,6 +146,10 @@
 			<second>Select mesh</second>
 		</item>
 		<item>
+			<first>GAMEENTITY_WIZARD_IMPORT_FILTER</first>
+			<second>Import filter</second>
+		</item>
+		<item>
 			<first>GAMEENTITY_WIZARD_FRICTION</first>
 			<second>Friction</second>
 		</item>

@@ -634,7 +634,7 @@ void ScriptEditorPage::eventScriptButtonUp(ui::MouseButtonUpEvent* event)
 	{
 		if (menuItem->getCommand() == L"Script.Editor.AddUsingStatement")
 		{
-			Ref< db::Instance > instance = m_editor->browseInstance(type_of< Script >());
+			Ref< db::Instance > instance = m_editor->browseInstance(type_of< Script >(), m_document->getInstance(0)->getParent());
 			if (instance)
 			{
 				int32_t offset = m_edit->getCaretOffset();

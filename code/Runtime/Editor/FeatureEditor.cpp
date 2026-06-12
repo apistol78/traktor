@@ -100,7 +100,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	Ref< ui::Button > buttonAdd = new ui::Button();
 	buttonAdd->create(containerPlatformsAddRemove, i18n::Text(L"RUNTIME_FEATURE_ADD"));
 	buttonAdd->addEventHandler< ui::ButtonClickEvent >([&](ui::ButtonClickEvent* event) {
-		Ref< db::Instance > platformInstance = m_editor->browseInstance(type_of< Platform >());
+		Ref< db::Instance > platformInstance = m_editor->browseInstance(type_of< Platform >(), m_instance->getParent());
 		if (platformInstance)
 		{
 			Feature::Platform fp;
@@ -117,7 +117,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 		if (!m_selectedPlatform)
 			return;
 
-		Ref< db::Instance > platformInstance = m_editor->browseInstance(type_of< Platform >());
+		Ref< db::Instance > platformInstance = m_editor->browseInstance(type_of< Platform >(), m_instance->getParent());
 		if (!platformInstance)
 			return;
 

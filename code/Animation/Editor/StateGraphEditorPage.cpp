@@ -454,13 +454,13 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"StateGraph.Editor.BrowseMesh")
 	{
-		Ref< db::Instance > meshInstance = m_editor->browseInstance(type_of< mesh::MeshAsset >());
+		Ref< db::Instance > meshInstance = m_editor->browseInstance(type_of< mesh::MeshAsset >(), m_document->getInstance(0)->getParent());
 		if (meshInstance)
 			m_previewControl->setMesh(resource::Id< mesh::SkinnedMesh >(meshInstance->getGuid()));
 	}
 	else if (command == L"StateGraph.Editor.BrowseSkeleton")
 	{
-		Ref< db::Instance > skeletonInstance = m_editor->browseInstance(type_of< animation::SkeletonAsset >());
+		Ref< db::Instance > skeletonInstance = m_editor->browseInstance(type_of< animation::SkeletonAsset >(), m_document->getInstance(0)->getParent());
 		if (skeletonInstance)
 			m_previewControl->setSkeleton(resource::Id< Skeleton >(skeletonInstance->getGuid()));
 	}

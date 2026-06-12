@@ -97,13 +97,13 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 {
 	switch (meshType)
 	{
-	case MeshAsset::MtInstance:
+	case MeshAsset::MeshType::Instance:
 		return Guid(L"{A714A83F-8442-6F48-A2A7-6EFA95EB75F3}");
 
-	case MeshAsset::MtSkinned:
+	case MeshAsset::MeshType::Skinned:
 		return Guid(L"{69A3CF2E-9B63-0440-9410-70AB4AE127CE}");
 
-	case MeshAsset::MtStatic:
+	case MeshAsset::MeshType::Static:
 		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
 
 	default:
@@ -260,15 +260,15 @@ bool MeshPipeline::buildOutput(
 	Ref< IMeshConverter > converter;
 	switch (asset->getMeshType())
 	{
-	case MeshAsset::MtInstance:
+	case MeshAsset::MeshType::Instance:
 		converter = new InstanceMeshConverter();
 		break;
 
-	case MeshAsset::MtSkinned:
+	case MeshAsset::MeshType::Skinned:
 		converter = new SkinnedMeshConverter();
 		break;
 
-	case MeshAsset::MtStatic:
+	case MeshAsset::MeshType::Static:
 		converter = new StaticMeshConverter();
 		break;
 
@@ -338,11 +338,24 @@ bool MeshPipeline::buildOutput(
 
 	model->apply(operations);
 
-	// Merge all materials into a single list (duplicates will be overridden).
-	if (asset->getCenter())
+	switch (asset->getCenter())
 	{
-		const Aabb3 boundingBox = model->getBoundingBox();
-		model->apply(model::Transform(translate(-boundingBox.getCenter())));
+	case MeshAsset::CenterMode::XZ:
+		{
+			const Aabb3 boundingBox = model->getBoundingBox();
+			model->apply(model::Transform(translate(-boundingBox.getCenter() * Vector4(1.0f, 0.0f, 1.0f))));
+		}
+		break;
+
+	case MeshAsset::CenterMode::XYZ:
+		{
+			const Aabb3 boundingBox = model->getBoundingBox();
+			model->apply(model::Transform(translate(-boundingBox.getCenter())));
+		}
+		break;
+
+	default:
+		break;
 	}
 
 	if (asset->getGrounded())

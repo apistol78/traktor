@@ -213,16 +213,19 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 		ui::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::BrowsePropertyItem* >(event->getItem());
 		if (browseItem)
 		{
+			Ref< db::Instance > currentInstance = m_editor->getSourceDatabase()->getInstance(browseItem->getValue());
+			Ref< db::Group > currentGroup = currentInstance ? currentInstance->getParent() : nullptr;
+
 			Ref< db::Instance > instance;
 			if (browseItem->getFilterType())
 			{
 				const TypeInfo* filterType = browseItem->getFilterType();
 				T_ASSERT(filterType);
 
-				instance = m_editor->browseInstance(*filterType);
+				instance = m_editor->browseInstance(*filterType, currentGroup);
 			}
 			else
-				instance = m_editor->browseInstance();
+				instance = m_editor->browseInstance(nullptr, currentGroup);
 
 			if (instance)
 			{
