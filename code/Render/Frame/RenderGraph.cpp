@@ -395,7 +395,11 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	for (auto id : m_sharedDepthTargets)
 	{
 		auto& target = m_targets[id];
-		target.persistentHandle = ~0U;
+		// Promote transient shared-depth targets to frame lifetime, but never
+		// downgrade a target the caller made persistent; doing so would route it
+		// to the shared ~0U pool and discard its preserved (double-buffered) content.
+		if (target.persistentHandle == 0)
+			target.persistentHandle = ~0U;
 		if (!acquire(target))
 		{
 			cleanup();

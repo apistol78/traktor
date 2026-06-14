@@ -93,11 +93,11 @@ vec3 P0 = $ViewPosition.xyz;
 vec3 N = normalize($ViewNormal.xyz);
 vec3 R = reflect(normalize(P0), N);
 
-const float kMaxDistance = 50.0f;   // max view-space march distance
+const float kMaxDistance = 70.0f;   // max view-space march distance
 const int   kSteps = 64;            // screen-space march samples
-const int   kRefine = 8;            // binary-search refinement iterations
-const float kBias = 0.1f;           // depth bias to avoid self-intersection (view units)
-const float kThickness = 1.0f;      // max depth-behind accepted as a hit (view units)
+const int   kRefine = 4;            // binary-search refinement iterations
+const float kBias = 0.05f;           // depth bias to avoid self-intersection (view units)
+const float kThickness = 0.1f;      // max depth-behind accepted as a hit (view units)
 const float kZMin = 0.05f;          // keep the ray in front of the camera
 
 // March end point in view space, clamped to stay in front of the near plane.
@@ -678,7 +678,7 @@ else
 				<first>4301</first>
 				<second>-1184</second>
 			</position>
-			<value>0.1</value>
+			<value>0.3</value>
 		</item>
 		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
 			<id>{741CB9CC-3D3C-471E-8E6E-B50589AC5329}</id>
@@ -1443,8 +1443,8 @@ else
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+				<node ref="/object/nodes/item[25]"/>
+				<id>{E6DBE5B6-98AA-419A-92EA-B7D3E76D207C}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
