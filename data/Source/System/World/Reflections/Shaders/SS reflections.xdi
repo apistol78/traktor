@@ -88,41 +88,78 @@
 				</item>
 			</outputPins>
 			<script><![CDATA[
-			
-const vec3 viewDirection = normalize($ViewPosition.xyz);
-const vec3 viewNormal = normalize($ViewNormal.xyz);
-const vec3 viewTraceDirection = reflect(viewDirection, viewNormal);
+// Screen-space reflection trace (perspective-correct DDA).
+vec3 P0 = $ViewPosition.xyz;
+vec3 N = normalize($ViewNormal.xyz);
+vec3 R = reflect(normalize(P0), N);
 
-const float bias = $Random.x * 0.1f;
+const float kMaxDistance = 50.0f;   // max view-space march distance
+const int   kSteps = 64;            // screen-space march samples
+const int   kRefine = 8;            // binary-search refinement iterations
+const float kBias = 0.1f;           // depth bias to avoid self-intersection (view units)
+const float kThickness = 1.0f;      // max depth-behind accepted as a hit (view units)
+const float kZMin = 0.05f;          // keep the ray in front of the camera
+
+// March end point in view space, clamped to stay in front of the near plane.
+vec3 P1 = P0 + R * kMaxDistance;
+if (P1.z < kZMin)
+	P1 = mix(P0, P1, (kZMin - P0.z) / (P1.z - P0.z));
+
+// Project the segment to screen UV; interpolate UV linearly and 1/z
+// perspective-correctly in screen space.
+vec4 c0 = $Projection * vec4(P0, 1.0f);
+vec4 c1 = $Projection * vec4(P1, 1.0f);
+vec2 uv0 = (c0.xy / c0.w) * vec2(0.5f, -0.5f) + vec2(0.5f, 0.5f);
+vec2 uv1 = (c1.xy / c1.w) * vec2(0.5f, -0.5f) + vec2(0.5f, 0.5f);
+float iz0 = 1.0f / P0.z;
+float iz1 = 1.0f / P1.z;
+
+float jitter = $Random.x;
 
 $Hit = vec4(0.0f);
 
-for (int i = 0; i < 64; ++i)
+bool prevBehind = false;
+float prevJ = 0.0f;
+for (int i = 1; i <= kSteps; ++i)
 {
-	const float f = i / 64.0f;
-	const vec3 viewStepPosition = $ViewPosition.xyz + viewTraceDirection * (f + bias) * 30.0f;
+	float j = (float(i) - 0.5f + jitter) / float(kSteps);
+	vec2 uv = mix(uv0, uv1, j);
+	if (uv.x < 0.0f || uv.x > 1.0f || uv.y < 0.0f || uv.y > 1.0f)
+		break; // ray left the screen.
 
-	vec4 t = $Projection * vec4(viewStepPosition, 1.0f);
-	t.xy /= t.w;
-	t.xy *= vec2(0.5f, -0.5f);
-	t.xy += vec2(0.5f, 0.5f);
+	float rayZ = 1.0f / mix(iz0, iz1, j);
+	float sceneZ = texture(sampler2D($DepthMap, $DepthMapState), uv).x;
+	bool behind = (rayZ - sceneZ) > kBias;
 
-	const float depth = texture(sampler2D($DepthMap, $DepthMapState), t.xy).x;
-
-	const float d = (depth - viewStepPosition.z);
-	if (d < -0.1f)
+	// First transition from in-front to behind the surface is a candidate hit.
+	if (behind && !prevBehind && i > 1)
 	{
-		// Edge attenuation.
-		float a = t.x * (1.0f - t.x) * t.y * (1.0f - t.y);
-		a = clamp(a * 256.0f, 0.0f, 1.0f);
-
-		// Output UV coordinate of hit.
-		$Hit = vec4(t.xy, a, 0.0f);
-		break;
+		float a = prevJ;
+		float b = j;
+		for (int k = 0; k < kRefine; ++k)
+		{
+			float m = 0.5f * (a + b);
+			float rzm = 1.0f / mix(iz0, iz1, m);
+			float szm = texture(sampler2D($DepthMap, $DepthMapState), mix(uv0, uv1, m)).x;
+			if (rzm - szm > kBias) b = m; else a = m;
+		}
+		vec2 fuv = mix(uv0, uv1, b);
+		float fdiff = (1.0f / mix(iz0, iz1, b)) - texture(sampler2D($DepthMap, $DepthMapState), fuv).x;
+		if (fdiff <= kThickness)
+		{
+			// Edge attenuation.
+			float att = fuv.x * (1.0f - fuv.x) * fuv.y * (1.0f - fuv.y);
+			att = clamp(att * 256.0f, 0.0f, 1.0f);
+			$Hit = vec4(fuv, att, 1.0f);
+			break;
+		}
+		// Otherwise the ray is occluded by foreground geometry; keep marching.
 	}
+
+	prevBehind = behind;
+	prevJ = j;
 }
-			
-			]]></script>
+]]></script>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{FEDCD6A4-7031-4964-9A6E-36888684E1A9}</id>
@@ -1066,16 +1103,6 @@ else
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[25]"/>
-				<id>{E6DBE5B6-98AA-419A-92EA-B7D3E76D207C}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[26]"/>
 				<id>{4B2822D0-4D9A-4BBB-9956-A996493EE672}</id>
 			</source>
@@ -1412,6 +1439,16 @@ else
 			<destination>
 				<node ref="/object/nodes/item[53]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[44]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>
