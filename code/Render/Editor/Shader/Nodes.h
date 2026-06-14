@@ -103,6 +103,12 @@ class T_DLLCLASS BundleUnite : public Node
 public:
 	BundleUnite();
 
+	/*! Set the bundle channel names; these become the node's named input pins
+	 * (in addition to the fixed "Input" pin). */
+	void setNames(const AlignedVector< std::wstring >& names);
+
+	const AlignedVector< std::wstring >& getNames() const { return m_names; }
+
 	virtual int getInputPinCount() const override final;
 
 	virtual const InputPin* getInputPin(int index) const override final;
@@ -128,6 +134,12 @@ class T_DLLCLASS BundleSplit : public Node
 
 public:
 	BundleSplit();
+
+	/*! Set the bundle channel names; these become the node's output pins
+	 * (the single "Input" pin is fixed). */
+	void setNames(const AlignedVector< std::wstring >& names);
+
+	const AlignedVector< std::wstring >& getNames() const { return m_names; }
 
 	virtual int getInputPinCount() const override final;
 
@@ -430,7 +442,7 @@ public:
 };
 
 /*! Fetch value from array uniform. */
-class T_DLLCLASS IndexedUniform : public ImmutableNode
+class T_DLLCLASS T_DEPRECATED IndexedUniform : public ImmutableNode
 {
 	T_RTTI_CLASS;
 
@@ -861,7 +873,7 @@ public:
 };
 
 /*! Read [indexed] element from struct buffer. */
-class T_DLLCLASS ReadStruct : public ImmutableNode
+class T_DLLCLASS T_DEPRECATED ReadStruct : public ImmutableNode
 {
 	T_RTTI_CLASS;
 
@@ -881,7 +893,7 @@ private:
 };
 
 /*! Read [indexed] element from struct buffer. */
-class T_DLLCLASS ReadStruct2 : public Node
+class T_DLLCLASS T_DEPRECATED ReadStruct2 : public Node
 {
 	T_RTTI_CLASS;
 
@@ -1019,7 +1031,7 @@ public:
 };
 
 /*! Define struct. */
-class T_DLLCLASS Struct : public ImmutableNode
+class T_DLLCLASS T_DEPRECATED Struct : public ImmutableNode
 {
 	T_RTTI_CLASS;
 
@@ -1258,7 +1270,7 @@ public:
 };
 
 /*! Fetch parameter value. */
-class T_DLLCLASS Uniform : public ImmutableNode
+class T_DLLCLASS T_DEPRECATED Uniform : public ImmutableNode
 {
 	T_RTTI_CLASS;
 

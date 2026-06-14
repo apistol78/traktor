@@ -12,6 +12,14 @@
 #include "Render/Editor/Shader/Constant.h"
 #include "Render/Editor/Shader/PinType.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RENDER_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor::render
 {
 
@@ -30,7 +38,7 @@ class ShaderGraph;
  * order to have those steps independent
  * of node types.
  */
-class INodeTraits : public Object
+class T_DLLCLASS INodeTraits : public Object
 {
 	T_RTTI_CLASS;
 

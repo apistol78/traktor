@@ -392,6 +392,12 @@ BundleUnite::BundleUnite()
 	updatePins();
 }
 
+void BundleUnite::setNames(const AlignedVector< std::wstring >& names)
+{
+	m_names = names;
+	updatePins();
+}
+
 int BundleUnite::getInputPinCount() const
 {
 	return (int)m_inputPins.size();
@@ -446,6 +452,12 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.BundleSplit", 0, BundleSplit, No
 
 BundleSplit::BundleSplit()
 {
+	updatePins();
+}
+
+void BundleSplit::setNames(const AlignedVector< std::wstring >& names)
+{
+	m_names = names;
 	updatePins();
 }
 
