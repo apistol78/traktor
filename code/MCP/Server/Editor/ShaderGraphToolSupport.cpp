@@ -15,6 +15,9 @@
 #include "Core/Misc/String.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/ReflectionMember.h"
+#include "Core/Reflection/RfmArray.h"
+#include "Core/Reflection/RfmCompound.h"
+#include "Core/Reflection/RfmEnum.h"
 #include "Core/Reflection/RfmPrimitive.h"
 #include "Core/Rtti/TypeInfo.h"
 #include "Database/Database.h"
@@ -130,7 +133,7 @@ bool isReservedMember(const std::wstring& name)
 	return name == L"id" || name == L"comment" || name == L"position" || name == L"fragmentGuid";
 }
 
-/*! Convert a primitive reflection member to a JSON value (null if unsupported). */
+/*! Convert a primitive or enum reflection member to a JSON value (null if unsupported). */
 Ref< Json > primitiveMemberToJson(const ReflectionMember* member)
 {
 	if (auto m = dynamic_type_cast< const RfmPrimitiveBoolean* >(member))
@@ -159,10 +162,38 @@ Ref< Json > primitiveMemberToJson(const ReflectionMember* member)
 		return Json::createString(m->get());
 	if (auto m = dynamic_type_cast< const RfmPrimitiveGuid* >(member))
 		return Json::createString(m->get().format());
+	// Enums (incl. bitmasks) reflect as RfmEnum; emit the key string so render/
+	// sampler state (blend, depth, cull, filters, ...) survives a round-trip.
+	if (auto m = dynamic_type_cast< const RfmEnum* >(member))
+		return Json::createString(m->get());
 	return nullptr;
 }
 
-/*! Reflect a node's primitive value members into a JSON "properties" object. */
+/*! Convert a reflection member to JSON: primitive, enum, or nested compound
+ * (render/sampler state, bitmasks). Arrays are left to node-specific paths; null if unsupported. */
+Ref< Json > memberToJson(const ReflectionMember* member)
+{
+	// RfmArray derives from RfmCompound, so exclude arrays before the compound case.
+	if (dynamic_type_cast< const RfmArray* >(member))
+		return nullptr;
+	if (auto compound = dynamic_type_cast< const RfmCompound* >(member))
+	{
+		Ref< Json > object = Json::createObject();
+		for (uint32_t i = 0; i < compound->getMemberCount(); ++i)
+		{
+			const ReflectionMember* sub = compound->getMember(i);
+			if (sub->getName() == nullptr)
+				continue;
+			Ref< Json > value = memberToJson(sub);
+			if (value)
+				object->set(sub->getName(), value);
+		}
+		return object;
+	}
+	return primitiveMemberToJson(member);
+}
+
+/*! Reflect a node's primitive and enum value members into a JSON "properties" object. */
 Ref< Json > reflectNodeProperties(const render::Node* node)
 {
 	Ref< Reflection > reflection = Reflection::create(node);
@@ -176,14 +207,14 @@ Ref< Json > reflectNodeProperties(const render::Node* node)
 		const std::wstring name = member->getName();
 		if (isReservedMember(name))
 			continue;
-		Ref< Json > value = primitiveMemberToJson(member);
+		Ref< Json > value = memberToJson(member);
 		if (value)
 			properties->set(name, value);
 	}
 	return properties;
 }
 
-/*! Set a primitive reflection member from a JSON value; false if type unsupported. */
+/*! Set a primitive or enum reflection member from a JSON value; false if type unsupported. */
 bool setPrimitiveMemberFromJson(ReflectionMember* member, const Json* value)
 {
 	if (auto m = dynamic_type_cast< RfmPrimitiveBoolean* >(member)) { m->set(value->getBoolean()); return true; }
@@ -199,7 +230,31 @@ bool setPrimitiveMemberFromJson(ReflectionMember* member, const Json* value)
 	if (auto m = dynamic_type_cast< RfmPrimitiveDouble* >(member)) { m->set(value->getReal()); return true; }
 	if (auto m = dynamic_type_cast< RfmPrimitiveWideString* >(member)) { m->set(value->getString()); return true; }
 	if (auto m = dynamic_type_cast< RfmPrimitiveGuid* >(member)) { m->set(Guid(value->getString())); return true; }
+	if (auto m = dynamic_type_cast< RfmEnum* >(member)) { m->set(value->getString()); return true; }
 	return false;
+}
+
+/*! Apply a JSON value to a reflection member, recursing into nested compounds
+ * (render/sampler state, bitmasks). Arrays are left to node-specific paths. */
+bool applyMemberFromJson(ReflectionMember* member, const Json* value)
+{
+	if (dynamic_type_cast< RfmArray* >(member))
+		return false;
+	if (auto compound = dynamic_type_cast< RfmCompound* >(member))
+	{
+		if (!value || !value->isObject())
+			return false;
+		for (uint32_t i = 0; i < compound->getMemberCount(); ++i)
+		{
+			ReflectionMember* sub = compound->getMember(i);
+			if (sub->getName() == nullptr)
+				continue;
+			if (const Json* subValue = value->getMember(sub->getName()))
+				applyMemberFromJson(sub, subValue);
+		}
+		return true;
+	}
+	return setPrimitiveMemberFromJson(member, value);
 }
 
 /*! Apply a JSON "properties" object onto a node via reflection. */
@@ -231,7 +286,7 @@ void applyNodeProperties(render::Node* node, const Json* properties, Json* warni
 
 		if (!member)
 			warnings->push(Json::createString(L"Unknown property '" + name + L"' on node type " + shortTypeName(type_name(node))));
-		else if (!setPrimitiveMemberFromJson(member, value))
+		else if (!applyMemberFromJson(member, value))
 			warnings->push(Json::createString(L"Unsupported property type for '" + name + L"' (only scalars, strings and guids are settable)."));
 	}
 
@@ -330,6 +385,20 @@ Ref< render::Node > nodeFromIr(const Json* nodeJson, std::wstring& outError, Jso
 	{
 		if (const Json* domain = nodeJson->getMember(L"domain"))
 			script->setDomain(parseScriptDomain(domain->getString()));
+
+			// Restore #include references (guids of ShaderModule instances); not a
+			// primitive member, so they are carried in a dedicated "includes" field.
+			if (const Json* includes = nodeJson->getMember(L"includes"); includes && includes->isArray())
+			{
+				AlignedVector< Guid > includeIds;
+				for (uint32_t i = 0; i < includes->size(); ++i)
+				{
+					const Guid g(includes->at(i)->getString());
+					if (g.isValid())
+						includeIds.push_back(g);
+				}
+				script->setIncludes(includeIds);
+			}
 
 		if (const Json* inputs = nodeJson->getMember(L"inputs"); inputs && inputs->isArray())
 		{
@@ -601,6 +670,17 @@ Ref< Json > buildGraphIr(const render::ShaderGraph* shaderGraph, db::Database* d
 			}
 			nodeJson->set(L"outputs", typedOutputs);
 			nodeJson->setString(L"domain", scriptDomainName(script->getDomain()));
+
+			// #include references are guids of ShaderModule instances; not a
+			// primitive member, so surface them explicitly to survive a round-trip.
+			const AlignedVector< Guid >& includes = script->getIncludes();
+			if (!includes.empty())
+			{
+				Ref< Json > includesJson = Json::createArray();
+				for (const auto& include : includes)
+					includesJson->push(Json::createString(include.format()));
+				nodeJson->set(L"includes", includesJson);
+			}
 		}
 
 		// Color/Vector nodes store their value in a composite (Color4f/Vector4)

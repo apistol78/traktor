@@ -68,6 +68,8 @@ public:
 
 	const AlignedVector< Guid >& getIncludes() const;
 
+	void setIncludes(const AlignedVector< Guid >& includes);
+
 	void setScript(const std::wstring& script);
 
 	const std::wstring& getScript() const;

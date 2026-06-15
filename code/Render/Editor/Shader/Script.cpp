@@ -273,6 +273,11 @@ const AlignedVector< Guid >& Script::getIncludes() const
 	return m_includes;
 }
 
+void Script::setIncludes(const AlignedVector< Guid >& includes)
+{
+	m_includes = includes;
+}
+
 void Script::setScript(const std::wstring& script)
 {
 	m_script = script;
