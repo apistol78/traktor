@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <utility>
 #include "Core/Class/Any.h"
 #include "Core/Misc/String.h"
 #include "Core/Math/Scalar.h"
@@ -476,6 +477,26 @@ struct CastAny < Type, true >
 			return static_cast< Type >(value.getObjectUnsafe());
 		else
 			return nullptr;
+	}
+};
+
+template < typename ... ArgumentTypes >
+struct AcceptAny
+{
+	template < std::size_t ... Is >
+	static bool acceptArguments(const Any* argv, std::index_sequence< Is ... >) {
+		bool accepted = true;
+		int __dummy__[(sizeof ... (ArgumentTypes)) + 1] = {
+			(accepted = accepted && CastAny< ArgumentTypes >::accept(argv[Is]), 0) ...
+		};
+		(void)__dummy__;
+		return accepted;
+	}
+
+	static bool accept(uint32_t argc, const Any* argv) {
+		if (argc < sizeof ... (ArgumentTypes))
+			return false;
+		return acceptArguments(argv, std::make_index_sequence< sizeof ... (ArgumentTypes) >());
 	}
 };
 

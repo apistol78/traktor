@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,6 +29,11 @@ public:
 #if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual void signature(OutputStream& os) const override final {}
 #endif
+
+	virtual bool accept(uint32_t argc, const Any* argv) const override final
+	{
+		return AcceptAny< ArgumentTypes ... >::accept(argc, argv);
+	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -64,6 +69,11 @@ public:
 #if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual void signature(OutputStream& os) const override final {}
 #endif
+
+	virtual bool accept(uint32_t argc, const Any* argv) const override final
+	{
+		return AcceptAny< ArgumentTypes ... >::accept(argc, argv);
+	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
