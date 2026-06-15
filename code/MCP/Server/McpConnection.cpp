@@ -11,7 +11,6 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/String.h"
-#include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
 #include "Net/Http/HttpRequest.h"
 #include "MCP/Server/Json.h"
@@ -24,6 +23,7 @@ namespace traktor::mcp
 	{
 
 const size_t c_maxHeaderSize = 64 * 1024;
+const int32_t c_readTimeout = 10000;
 
 void encodeUtf8(const std::wstring& text, AlignedVector< uint8_t >& out)
 {
@@ -92,10 +92,12 @@ McpConnection::McpConnection(net::TcpSocket* clientSocket)
 
 void McpConnection::process(McpServer* server)
 {
-	net::SocketStream clientStream(m_socket, true, true, 10000);
-
 	// Read raw request bytes ourselves rather than through a text reader; this
 	// avoids any look-ahead stranding or consuming part of the request body.
+	// We pull whatever is currently available with each read instead of trying
+	// to fill a fixed-size buffer: an HTTP request has no length known up front,
+	// so a fill-the-buffer read would block on the socket timeout once the client
+	// has sent the whole request and is waiting for our response.
 	AlignedVector< uint8_t > buffer;
 	uint8_t chunk[1024];
 
@@ -103,7 +105,7 @@ void McpConnection::process(McpServer* server)
 	int64_t headerEnd = -1;
 	for (;;)
 	{
-		const int64_t n = clientStream.read(chunk, sizeof(chunk));
+		const int64_t n = readSome(chunk, sizeof(chunk));
 		if (n <= 0)
 			break;
 
@@ -149,7 +151,7 @@ void McpConnection::process(McpServer* server)
 	const size_t bodyStart = (size_t)headerEnd + 4;
 	while ((int64_t)(buffer.size() - bodyStart) < contentLength)
 	{
-		const int64_t n = clientStream.read(chunk, sizeof(chunk));
+		const int64_t n = readSome(chunk, sizeof(chunk));
 		if (n <= 0)
 			break;
 		append(buffer, chunk, (size_t)n);
@@ -171,6 +173,16 @@ void McpConnection::process(McpServer* server)
 	}
 
 	sendResponse(200, L"OK", L"application/json", responseText);
+}
+
+int64_t McpConnection::readSome(uint8_t* data, size_t size)
+{
+	// A single select + recv returns whatever bytes are currently buffered (up
+	// to "size"), rather than blocking until "size" bytes have arrived. Returns
+	// the byte count, 0 on graceful close, or -1 on timeout/error.
+	if (m_socket->select(true, false, false, c_readTimeout) <= 0)
+		return -1;
+	return (int64_t)m_socket->recv(data, (int)size);
 }
 
 bool McpConnection::sendAll(const uint8_t* data, size_t size)

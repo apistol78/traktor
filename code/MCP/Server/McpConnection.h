@@ -41,6 +41,8 @@ public:
 private:
 	Ref< net::TcpSocket > m_socket;
 
+	int64_t readSome(uint8_t* data, size_t size);
+
 	bool sendAll(const uint8_t* data, size_t size);
 
 	void sendResponse(int32_t status, const std::wstring& statusText, const std::wstring& contentType, const std::wstring& body);
