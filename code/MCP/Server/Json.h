@@ -40,10 +40,11 @@ namespace traktor::mcp
  * (JSON-RPC 2.0) messages.
  *
  * \note
- * Traktor's json module (rapidjson backed) is used for \em parsing, but its
- * writer is not RFC 8259 compliant (emits "nil" for null and performs no
- * string escaping). This type provides a correctly escaping, compact writer
- * suitable for protocol responses containing arbitrary text.
+ * Traktor's json module (rapidjson backed) is used for \em parsing. This type
+ * is retained over the json module's own DOM purely for ergonomics: a typed
+ * builder API (set/push/typed getters) and a compact writer tailored for wire
+ * messages. The json module's writer is itself RFC 8259 compliant; it just
+ * pretty-prints, which is unnecessary for protocol responses.
  */
 class T_DLLCLASS Json : public Object
 {

@@ -321,45 +321,7 @@ bool JsonDocument::saveToStream(IStream* stream)
 		if (i != get().begin())
 			os << L"," << Endl;
 
-		switch (i->getType())
-		{
-		case Any::Type::Void:
-			os << L"nil" << Endl;
-			break;
-
-		case Any::Type::Boolean:
-			os << (i->getBooleanUnsafe() ? L"true" : L"false");
-			break;
-
-		case Any::Type::Int32:
-			os << i->getInt32Unsafe();
-			break;
-
-		case Any::Type::Int64:
-			os << i->getInt64Unsafe();
-			break;
-
-		case Any::Type::Float:
-			os << i->getFloatUnsafe();
-			break;
-
-		case Any::Type::Double:
-			os << i->getDoubleUnsafe();
-			break;
-
-		case Any::Type::String:
-			os << L"\"" << i->getWideString() << L"\"";
-			break;
-
-		case Any::Type::Object:
-			{
-				if (auto node = dynamic_type_cast< const JsonNode* >(i->getObjectUnsafe()))
-					node->write(os);
-				else
-					os << L"nil" << Endl;
-			}
-			break;
-		}
+		writeValue(os, *i);
 	}
 	os << Endl;
 	return true;
