@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Object.h"
 #include "Core/Class/Config.h"
 
@@ -40,12 +39,6 @@ public:
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const = 0;
 
-	/*! Check if dispatch accept given arguments.
-	 *
-	 * Used to discriminate between dispatches sharing the same
-	 * number of arguments but expecting different argument types.
-	 * Default implementation accept any arguments.
-	 */
 	virtual bool accept(uint32_t /*argc*/, const Any* /*argv*/) const { return true; }
 };
 
