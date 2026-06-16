@@ -36,6 +36,7 @@
 #include "MCP/Server/Editor/ShaderGraphValidateTool.h"
 #include "MCP/Server/Editor/ShaderNodeCatalogTool.h"
 #include "MCP/Server/Editor/ShaderNodeDescribeTool.h"
+#include "MCP/Server/Editor/SkillTools.h"
 
 namespace traktor::mcp
 {
@@ -82,6 +83,13 @@ bool McpServerEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, 
 	m_server->addTool(new ShaderGraphValidateTool(m_editor));
 	m_server->addTool(new ShaderGraphCreateTool(m_editor));
 	m_server->addTool(new ShaderGraphUpdateTool(m_editor));
+
+	// AI skills: authorable, publishable procedures exposed as MCP prompts.
+	m_server->addTool(new SkillCreateTool(m_editor));
+	m_server->addTool(new SkillListTool(m_editor));
+	m_server->addTool(new SkillGetTool(m_editor));
+	m_server->addTool(new SkillPublishTool(m_editor));
+	m_server->addPromptProvider(new SkillPromptProvider(m_editor));
 
 	m_threadServer = ThreadManager::getInstance().create([this]() { threadServer(); }, L"MCP server");
 	m_threadServer->start();

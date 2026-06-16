@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mcp.SkillAsset">
+	<name>create-mesh-from-geometry</name>
+	<description>Author a render mesh from procedurally generated vertices via create_mesh_from_geometry.</description>
+	<whenToUse><![CDATA[Need a custom mesh from generated geometry (winding, UVs, textured material, static or skinned).]]></whenToUse>
+	<body><![CDATA[# Create a render mesh from raw geometry
+
+Author a static (or skinned) render mesh "{{name}}" from procedurally generated vertices with `create_mesh_from_geometry`, material "{{material}}".
+
+## Tool arguments
+- `path`, `fileName` (writes a `.tmd` under `Assets/`), `guid` (reused on re-run → the asset guid stays stable).
+- `positions` `[[x,y,z]…]`, `polygons` `[[i0,i1,i2,(i3)]…]` (quads or tris), `normals` (optional — computed if omitted), `texCoords` `[[u,v]…]` (parallel to `positions`).
+- `material` (model-material name), `triangulate: true`.
+- `maps` `{diffuse, normal, roughness, specular, metalness, emissive → texture guid}` — auto-builds a textured material from the bound textures.
+- `meshType`: `"static"` (default) or `"skinned"` (add `joints`, `jointIndices`, `animations`).
+
+Then `build_asset {guid, rebuild:true, wait:true}`.
+
+## Gotchas
+- **Winding**: front face = **clockwise**. Auto-orient each quad: if `dot(cross(p1−p0, p2−p0), outwardNormal) > 0`, reverse the order.
+- **Tiling UVs**: project world coordinates onto the face plane and divide by a tile size (X-face → `(z,y)/tile`, Y-face → `(x,z)/tile`, Z-face → `(x,y)/tile`) for seamless tiling across adjacent pieces.
+- **Stable guid**: re-running with the same `path` + `guid` keeps the guid, so entities that reference the mesh pick up new geometry on rebuild with no scene edit.
+- **Hard vs smooth edges**: give each face its own vertices with the face normal for hard edges; average normals across shared vertices for smooth ones.
+]]></body>
+	<engineVersion/>
+	<published>true</published>
+	<parameters>
+		<item type="traktor.mcp.SkillParameter">
+			<name>name</name>
+			<description>Mesh asset name</description>
+			<defaultValue>Mesh</defaultValue>
+		</item>
+		<item type="traktor.mcp.SkillParameter">
+			<name>material</name>
+			<description>Material name</description>
+			<defaultValue>Material</defaultValue>
+		</item>
+	</parameters>
+</object>

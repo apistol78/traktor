@@ -13,6 +13,7 @@
 #include "Net/SocketAddress.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/TcpSocket.h"
+#include "MCP/Server/IMcpPromptProvider.h"
 #include "MCP/Server/IMcpTool.h"
 #include "MCP/Server/Json.h"
 #include "MCP/Server/McpConnection.h"
@@ -71,6 +72,7 @@ void McpServer::destroy()
 		m_serverSocket = nullptr;
 	}
 	m_tools.clear();
+	m_promptProviders.clear();
 }
 
 bool McpServer::update()
@@ -98,6 +100,12 @@ void McpServer::addTool(IMcpTool* tool)
 {
 	if (tool)
 		m_tools.push_back(tool);
+}
+
+void McpServer::addPromptProvider(IMcpPromptProvider* provider)
+{
+	if (provider)
+		m_promptProviders.push_back(provider);
 }
 
 void McpServer::setServerInfo(const std::wstring& name, const std::wstring& version)
@@ -206,6 +214,16 @@ Ref< Json > McpServer::handleMessage(const Json* message, bool& outResponse)
 			return makeError(id, c_errorInvalidParams, error);
 		return makeResult(id, result);
 	}
+	else if (methodName == L"prompts/list")
+		return makeResult(id, handlePromptsList());
+	else if (methodName == L"prompts/get")
+	{
+		std::wstring error;
+		Ref< Json > result = handlePromptsGet(message->getMember(L"params"), error);
+		if (!error.empty())
+			return makeError(id, c_errorInvalidParams, error);
+		return makeResult(id, result);
+	}
 
 	return makeError(id, c_errorMethodNotFound, L"Method not found: " + methodName);
 }
@@ -221,8 +239,12 @@ Ref< Json > McpServer::handleInitialize(const Json* params)
 	Ref< Json > toolsCapability = Json::createObject();
 	toolsCapability->setBoolean(L"listChanged", false);
 
+	Ref< Json > promptsCapability = Json::createObject();
+	promptsCapability->setBoolean(L"listChanged", false);
+
 	Ref< Json > capabilities = Json::createObject();
 	capabilities->set(L"tools", toolsCapability);
+	capabilities->set(L"prompts", promptsCapability);
 
 	Ref< Json > serverInfo = Json::createObject();
 	serverInfo->setString(L"name", m_name);
@@ -254,6 +276,50 @@ Ref< Json > McpServer::handleToolsList()
 	Ref< Json > result = Json::createObject();
 	result->set(L"tools", tools);
 	return result;
+}
+
+Ref< Json > McpServer::handlePromptsList()
+{
+	Ref< Json > prompts = Json::createArray();
+	for (auto provider : m_promptProviders)
+		provider->listPrompts(prompts);
+
+	Ref< Json > result = Json::createObject();
+	result->set(L"prompts", prompts);
+	return result;
+}
+
+Ref< Json > McpServer::handlePromptsGet(const Json* params, std::wstring& outError)
+{
+	if (!params || !params->isObject())
+	{
+		outError = L"Invalid params";
+		return nullptr;
+	}
+
+	Json* name = params->getMember(L"name");
+	if (!name || !name->isString() || name->getString().empty())
+	{
+		outError = L"Missing prompt name";
+		return nullptr;
+	}
+
+	const Json* arguments = params->getMember(L"arguments");
+	for (auto provider : m_promptProviders)
+	{
+		std::wstring error;
+		Ref< Json > result = provider->getPrompt(name->getString(), arguments, error);
+		if (result)
+			return result;
+		if (!error.empty())
+		{
+			outError = error;
+			return nullptr;
+		}
+	}
+
+	outError = L"Unknown prompt: " + name->getString();
+	return nullptr;
 }
 
 Ref< Json > McpServer::handleToolsCall(const Json* params, std::wstring& outError)

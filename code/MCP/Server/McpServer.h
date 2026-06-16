@@ -32,6 +32,7 @@ namespace traktor::mcp
 {
 
 class IMcpTool;
+class IMcpPromptProvider;
 class Json;
 
 /*! Model Context Protocol server.
@@ -69,6 +70,9 @@ public:
 	/*! Register a tool; tools must be added before clients connect. */
 	void addTool(IMcpTool* tool);
 
+	/*! Register a prompt provider; providers must be added before clients connect. */
+	void addPromptProvider(IMcpPromptProvider* provider);
+
 	/*! Set the identity reported to clients in "initialize". */
 	void setServerInfo(const std::wstring& name, const std::wstring& version);
 
@@ -87,6 +91,7 @@ public:
 private:
 	Ref< net::TcpSocket > m_serverSocket;
 	RefArray< IMcpTool > m_tools;
+	RefArray< IMcpPromptProvider > m_promptProviders;
 	std::wstring m_name = L"Traktor";
 	std::wstring m_version = L"1.0.0";
 
@@ -99,6 +104,10 @@ private:
 	Ref< Json > handleToolsList();
 
 	Ref< Json > handleToolsCall(const Json* params, std::wstring& outError);
+
+	Ref< Json > handlePromptsList();
+
+	Ref< Json > handlePromptsGet(const Json* params, std::wstring& outError);
 
 	Ref< Json > makeResult(Json* id, Json* result);
 
