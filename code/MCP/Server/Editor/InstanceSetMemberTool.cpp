@@ -51,7 +51,20 @@ Ref< Json > InstanceSetMemberTool::getInputSchema() const
 	memberProperty->setString(L"type", L"string");
 	memberProperty->setString(L"description", L"Dotted/indexed path to the member to set (e.g. \"grounded\", \"a.b[2].c\").");
 
+	// "value" is polymorphic (bool/number/string/array/object/null). It MUST
+	// declare a type: a typeless property is delivered by some MCP clients as a
+	// raw string, which silently breaks numeric, boolean and array members.
+	Ref< Json > valueType = Json::createArray();
+	valueType->push(Json::createString(L"boolean"));
+	valueType->push(Json::createString(L"integer"));
+	valueType->push(Json::createString(L"number"));
+	valueType->push(Json::createString(L"string"));
+	valueType->push(Json::createString(L"array"));
+	valueType->push(Json::createString(L"object"));
+	valueType->push(Json::createString(L"null"));
+
 	Ref< Json > valueProperty = Json::createObject();
+	valueProperty->set(L"type", valueType);
 	valueProperty->setString(L"description", L"New value: bool, number, string (also enum key, guid or path), or array of numbers (vector/color/quaternion).");
 
 	Ref< Json > properties = Json::createObject();

@@ -12,12 +12,13 @@ Wire WASD/Space input, drive a `CharacterComponent` on "{{character}}", follow i
 - The editor graph relies on **shared object identity** → author the whole instance with **`import_instance_from_xml`** (so `ref=` ids become shared references). `set_instance_member` alone leaves the graph unwired.
 
 ## Script (LUA `Stage`)
+- **Setup**: put `import(traktor)` at the top so types resolve unqualified (`Vector4`, `Quaternion`, `Transform`), and pass component types directly — they auto-box into a `BoxedType`. See the *traktor-lua-scripting* skill.
 - **Read**: `self:getEnvironment().input.inputMapping:getStateValue("STATE_MOVE_Z" / "STATE_MOVE_X")`; `:isStatePressed("STATE_JUMP")`.
-- **Resolve**: `world = self.world.world`; `world:getEntity("{{character}}")`; `entity:getComponent(traktor.TypeInfo.find("traktor.physics.CharacterComponent"))`.
+- **Resolve**: `world = self.world.world`; `world:getEntity("{{character}}")`; `entity:getComponent(traktor.physics.CharacterComponent)`.
 - **Turn**: `heading += moveX * {{turnRate}} * dt`; `character.headAngle = heading`.
-- **Move**: `forward = traktor.Quaternion.fromEulerAngles(heading,0,0) * traktor.Vector4(0,0,1,0)`; `character:move(forward * (moveZ * {{speed}}), false)`.
+- **Move**: `forward = Quaternion.fromEulerAngles(heading,0,0) * Vector4(0,0,1,0)`; `character:move(forward * (moveZ * {{speed}}), false)`.
 - **Jump**: `if pressed then character:jump() end` (grounded-only).
-- **Rubberband camera**: `desired = charPos + fromEulerAngles(heading,0,0) * Vector4(0,2.5,-4.5,0)`; `newPos = Vector4.lerp(curPos, desired, math.min(1, k*dt))`; `camera.transform = traktor.Transform.lookAt(newPos, charPos + up, traktor.Vector4(0,1,0,0))`.
+- **Rubberband camera**: `desired = charPos + Quaternion.fromEulerAngles(heading,0,0) * Vector4(0,2.5,-4.5,0)`; `newPos = Vector4.lerp(curPos, desired, math.min(1, k*dt))`; `camera.transform = Transform.lookAt(newPos, charPos + up, Vector4(0,1,0,0))`.
 - **Animation**: `skeletonComp.poseController:setParameterValue("moving", isMoving)` each frame.
 
 ## Gotchas

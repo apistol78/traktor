@@ -34,4 +34,19 @@ class Json;
  */
 Ref< db::Instance > resolveInstance(db::Database* database, const Json* arguments, std::wstring& outError);
 
+/*! Coerce JSON-encoded string arguments back into structured JSON.
+ * \ingroup MCP
+ *
+ * Some MCP clients deliver array/object tool arguments as a JSON-encoded string
+ * (a parameter with no single concrete JSON type tends to be stringified).
+ * Returns a shallow copy of \a arguments in which every top-level member that is
+ * such a string - one that decodes to a JSON array or object - is replaced by
+ * the decoded value; all other members (and non-parseable strings) are shared
+ * unchanged. Returns \a arguments wrapped unchanged when it is not an object.
+ *
+ * Call this once at the top of invoke() in any tool that reads array/object
+ * parameters, then read members from the returned object as usual.
+ */
+Ref< Json > coerceStructuredArguments(const Json* arguments);
+
 }

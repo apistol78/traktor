@@ -83,6 +83,23 @@ bool setLeafFromJson(ReflectionMember* member, const Json* value, std::wstring& 
 		return false;
 	}
 
+	// Defense-in-depth: some MCP clients deliver the value as a JSON-encoded
+	// string (e.g. "[1,0,0,0]" or "true") for non-string leaves. Re-parse so
+	// numeric, boolean and vector members still receive structured data; string
+	// family leaves (wide/narrow string, path, enum, guid) keep the literal.
+	Ref< Json > reparsed;
+	if (value->isString() &&
+		!is_a< RfmPrimitiveWideString >(member) &&
+		!is_a< RfmPrimitiveString >(member) &&
+		!is_a< RfmPrimitivePath >(member) &&
+		!is_a< RfmEnum >(member) &&
+		!is_a< RfmPrimitiveGuid >(member))
+	{
+		reparsed = Json::parse(value->getString());
+		if (reparsed)
+			value = reparsed;
+	}
+
 	if (auto m = dynamic_type_cast< RfmPrimitiveBoolean* >(member)) { m->set(value->getBoolean()); return true; }
 	if (auto m = dynamic_type_cast< RfmPrimitiveInt8* >(member)) { m->set((int8_t)value->getNumber()); return true; }
 	if (auto m = dynamic_type_cast< RfmPrimitiveUInt8* >(member)) { m->set((uint8_t)value->getNumber()); return true; }
@@ -291,6 +308,20 @@ Ref< ISerializable > buildObjectFromSpec(db::Database* database, const Json* spe
  */
 bool assignValue(db::Database* database, ReflectionMember* target, const Json* spec, std::wstring& outError, bool append)
 {
+	// Defense-in-depth: some MCP clients deliver the value as a JSON-encoded
+	// string (the "value" parameter has no single JSON type). Array, map and
+	// object members never take a bare string at the top level, so a string
+	// here is a mis-encoded array/object spec; re-parse it into real JSON.
+	// (Primitive string leaves are routed to setLeafFromJson instead, so they
+	// are never reached here and keep their literal value.)
+	Ref< Json > reparsed;
+	if (spec && spec->isString() && (is_a< RfmArray >(target) || is_a< RfmObject >(target)))
+	{
+		reparsed = Json::parse(spec->getString());
+		if (reparsed)
+			spec = reparsed;
+	}
+
 	// RfmArray derives from RfmCompound, so test it first.
 	if (auto arr = dynamic_type_cast< RfmArray* >(target))
 	{

@@ -12,6 +12,7 @@
 #include "Editor/IEditor.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "MCP/Server/Json.h"
+#include "MCP/Server/Editor/McpToolSupport.h"
 #include "MCP/Server/Editor/ShaderGraphToolSupport.h"
 #include "MCP/Server/Editor/ShaderGraphCreateTool.h"
 
@@ -78,6 +79,10 @@ Ref< Json > ShaderGraphCreateTool::invoke(const Json* arguments, std::wstring& o
 		outError = L"No source database is currently open.";
 		return nullptr;
 	}
+
+	// Recover any structured arguments a client delivered as JSON-encoded strings.
+	Ref< Json > coerced = coerceStructuredArguments(arguments);
+	arguments = coerced;
 
 	const std::wstring path = (arguments && arguments->getMember(L"path")) ? arguments->getMember(L"path")->getString() : L"";
 	if (path.empty())

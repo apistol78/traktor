@@ -31,6 +31,7 @@
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Transform.h"
 #include "MCP/Server/Json.h"
+#include "MCP/Server/Editor/McpToolSupport.h"
 #include "MCP/Server/Editor/CreateMeshFromGeometryTool.h"
 
 namespace traktor::mcp
@@ -110,6 +111,10 @@ Ref< Json > CreateMeshFromGeometryTool::invoke(const Json* arguments, std::wstri
 		outError = L"No source database is currently open.";
 		return nullptr;
 	}
+
+	// Recover any structured arguments a client delivered as JSON-encoded strings.
+	Ref< Json > coerced = coerceStructuredArguments(arguments);
+	arguments = coerced;
 
 	const std::wstring path = (arguments && arguments->getMember(L"path")) ? arguments->getMember(L"path")->getString() : L"";
 	const std::wstring fileName = (arguments && arguments->getMember(L"fileName")) ? arguments->getMember(L"fileName")->getString() : L"";

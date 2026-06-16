@@ -42,4 +42,28 @@ Ref< db::Instance > resolveInstance(db::Database* database, const Json* argument
 	return nullptr;
 }
 
+Ref< Json > coerceStructuredArguments(const Json* arguments)
+{
+	if (!arguments || !arguments->isObject())
+		return const_cast< Json* >(arguments);
+
+	Ref< Json > result = Json::createObject();
+	for (uint32_t i = 0; i < arguments->getMemberCount(); ++i)
+	{
+		const std::wstring name = arguments->getMemberName(i);
+		Json* value = const_cast< Json* >(arguments->getMemberValue(i));
+		if (value && value->isString())
+		{
+			// Only structured values (array/object) are recovered; a bare
+			// string that happens to look like a number/bool is left alone so
+			// genuine string parameters keep their literal value.
+			Ref< Json > parsed = Json::parse(value->getString());
+			if (parsed && (parsed->isArray() || parsed->isObject()))
+				value = parsed;
+		}
+		result->set(name, value);
+	}
+	return result;
+}
+
 }

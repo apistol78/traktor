@@ -30,7 +30,7 @@ model `.tmd` (geometry + joints + weights + animations) → `SkeletonAsset` + on
 - **Winding**: Traktor's front face is **clockwise** — the right-handed face normal points *opposite* the outward surface normal. Auto-orient every quad: if `dot(cross(p1−p0, p2−p0), outwardNormal) > 0`, reverse the vertex order.
 - **Weights**: the skinned converter keeps the top-4 influences and normalizes them (a single-bone vertex is left unnormalized = 1). Use rigid single-bone binds unless you need blending.
 - **Every keyframe must set EVERY joint**: `model::Pose` returns identity for any joint absent from a keyframe, so a non-moving joint must still carry its **bind** local transform in each keyframe or it snaps to the origin.
-- **Drive the graph from script with `poseController:setParameterValue(name, bool)`** — `setState(...)` is a no-op stub.
+- **Drive the graph from script with `poseController:setParameterValue(name, bool)`** — `setState(...)` is a no-op stub. For script setup (`import(traktor)`, passing component types directly to `getComponent`), see the *traktor-lua-scripting* skill.
 - A `"moving"` transition and a `"!moving"` transition share one boolean parameter `moving`.
 - The editor state-graph view relies on shared object identity (`ref=` ids); only `import_instance_from_xml` produces those — `set_instance_member` leaves the graph unwired.
 ]]></body>
