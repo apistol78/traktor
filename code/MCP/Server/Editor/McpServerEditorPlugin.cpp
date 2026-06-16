@@ -16,6 +16,11 @@
 #include "Editor/IEditor.h"
 #include "MCP/Server/McpServer.h"
 #include "MCP/Server/Editor/DatabaseListInstancesTool.h"
+#include "MCP/Server/Editor/GetWorkspaceInfoTool.h"
+#include "MCP/Server/Editor/CreateMeshFromGeometryTool.h"
+#include "MCP/Server/Editor/BuildAssetTool.h"
+#include "MCP/Server/Editor/InstanceDeleteTool.h"
+#include "MCP/Server/Editor/ImportTextureFromDataTool.h"
 #include "MCP/Server/Editor/InstanceCloneTool.h"
 #include "MCP/Server/Editor/InstanceCreateTool.h"
 #include "MCP/Server/Editor/InstanceInspectTool.h"
@@ -57,6 +62,11 @@ bool McpServerEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, 
 
 	// Register tools exposing the editor workspace.
 	m_server->addTool(new DatabaseListInstancesTool(m_editor));
+	m_server->addTool(new GetWorkspaceInfoTool(m_editor));
+	m_server->addTool(new ImportTextureFromDataTool(m_editor));
+	m_server->addTool(new BuildAssetTool(m_editor));
+	m_server->addTool(new CreateMeshFromGeometryTool(m_editor));
+	m_server->addTool(new InstanceDeleteTool(m_editor));
 	m_server->addTool(new InstanceInspectTool(m_editor));
 	m_server->addTool(new InstanceSetMemberTool(m_editor));
 	m_server->addTool(new InstanceCreateTool(m_editor));

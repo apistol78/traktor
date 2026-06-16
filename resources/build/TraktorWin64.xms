@@ -22426,6 +22426,11 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[11]/project"/>
 				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[9]/project"/>
+				</item>
 			</dependencies>
 		</item>
 	</projects>
