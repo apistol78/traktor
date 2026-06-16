@@ -21,6 +21,7 @@
 #include "MCP/Server/Editor/BuildAssetTool.h"
 #include "MCP/Server/Editor/InstanceDeleteTool.h"
 #include "MCP/Server/Editor/ImportTextureFromDataTool.h"
+#include "MCP/Server/Editor/ImportInstanceFromXmlTool.h"
 #include "MCP/Server/Editor/InstanceCloneTool.h"
 #include "MCP/Server/Editor/InstanceCreateTool.h"
 #include "MCP/Server/Editor/InstanceInspectTool.h"
@@ -69,6 +70,7 @@ bool McpServerEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, 
 	m_server->addTool(new InstanceDeleteTool(m_editor));
 	m_server->addTool(new InstanceInspectTool(m_editor));
 	m_server->addTool(new InstanceSetMemberTool(m_editor));
+	m_server->addTool(new ImportInstanceFromXmlTool(m_editor));
 	m_server->addTool(new InstanceCreateTool(m_editor));
 	m_server->addTool(new InstanceCloneTool(m_editor));
 	m_server->addTool(new MeshAssetGetTool(m_editor));

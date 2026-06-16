@@ -34,7 +34,7 @@ std::wstring InstanceSetMemberTool::getName() const
 
 std::wstring InstanceSetMemberTool::getDescription() const
 {
-	return L"Set a member value on any database instance via reflection. \"member\" is a dotted/indexed path that may descend through nested object references and arrays (e.g. \"grounded\", \"components[0].entityData[1].transform.translation\"); \"value\" is the new value. For primitive/enum leaves: a bool/number/string, enum key, or number array (vector/color/quaternion). For object members: { \"$clone\": \"<guid|path>\" } or { \"$type\": \"<typename>\", \"set\": { member: value, ... } }, or null. For (object-element) array members: a JSON array of those object specs (replaces the array). The change is applied and committed. Use inspect_instance first to discover member names and types.";
+	return L"Set a member value on any database instance via reflection. \"member\" is a dotted/indexed path that may descend through nested object references and arrays (e.g. \"grounded\", \"components[0].entityData[1].transform.translation\"); \"value\" is the new value. For primitive/enum leaves: a bool/number/string, enum key, or number array (vector/color/quaternion). For object members: { \"$clone\": \"<guid|path>\" } or { \"$type\": \"<typename>\", \"set\": { member: value, ... } }, or null. For array members: a JSON array of element specs (object specs, or guid strings for resource::Id sets); replaces the array, or pass \"append\":true to add the element(s) to the existing array (existing elements preserved). For map (SmallMap) members pass a JSON object { key: valueSpec, ... } to set entries (value is an object spec, guid string, or null). To grow a typed vector (struct/enum/primitive elements) pass { \"$grow\": N }, then set each element by index path (e.g. \"entries[0].mul\"). The change is applied and committed. Use inspect_instance first to discover member names and types.";
 }
 
 Ref< Json > InstanceSetMemberTool::getInputSchema() const
@@ -58,7 +58,12 @@ Ref< Json > InstanceSetMemberTool::getInputSchema() const
 	properties->set(L"guid", guidProperty);
 	properties->set(L"path", pathProperty);
 	properties->set(L"member", memberProperty);
+	Ref< Json > appendProperty = Json::createObject();
+	appendProperty->setString(L"type", L"boolean");
+	appendProperty->setString(L"description", L"For array members, add the given element(s) to the existing array instead of replacing it (default false).");
+
 	properties->set(L"value", valueProperty);
+	properties->set(L"append", appendProperty);
 
 	Ref< Json > required = Json::createArray();
 	required->push(Json::createString(L"member"));
@@ -112,7 +117,8 @@ Ref< Json > InstanceSetMemberTool::invoke(const Json* arguments, std::wstring& o
 	if (!tokenizePath(memberPath, steps, outError))
 		return nullptr;
 
-	if (!setMemberThroughPath(database, object, steps, 0, value, outError))
+	const bool append = arguments && arguments->getMember(L"append") && arguments->getMember(L"append")->getBoolean();
+	if (!setMemberThroughPath(database, object, steps, 0, value, outError, append))
 		return nullptr;
 
 	if (!instance->checkout())

@@ -45,7 +45,7 @@ bool tokenizePath(const std::wstring& path, AlignedVector< PathStep >& outSteps,
 
 /*! Set the member at \a steps to \a spec, descending through object references
  * and applying bottom-up onto \a object and each crossed nested object. */
-bool setMemberThroughPath(db::Database* database, ISerializable* object, const AlignedVector< PathStep >& steps, size_t start, const Json* spec, std::wstring& outError);
+bool setMemberThroughPath(db::Database* database, ISerializable* object, const AlignedVector< PathStep >& steps, size_t start, const Json* spec, std::wstring& outError, bool append = false);
 
 /*! Read-only: describe the member at \a steps, descending through object refs. */
 Ref< Json > describeMemberAtPath(ISerializable* object, const AlignedVector< PathStep >& steps, size_t start);

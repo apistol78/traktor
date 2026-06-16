@@ -289,18 +289,64 @@ Ref< ISerializable > buildObjectFromSpec(db::Database* database, const Json* spe
  * buildObjectFromSpec) or null; array members take a JSON array whose elements
  * are object specs (object-element arrays).
  */
-bool assignValue(db::Database* database, ReflectionMember* target, const Json* spec, std::wstring& outError)
+bool assignValue(db::Database* database, ReflectionMember* target, const Json* spec, std::wstring& outError, bool append)
 {
 	// RfmArray derives from RfmCompound, so test it first.
 	if (auto arr = dynamic_type_cast< RfmArray* >(target))
 	{
+		// Grow mode: { "$grow": N } inserts N default-typed elements (for struct/enum/primitive vectors; set them afterwards by index path).
+		if (spec && spec->isObject() && spec->getMember(L"$grow"))
+		{
+			const int32_t n = (int32_t)spec->getMember(L"$grow")->getNumber();
+			if (!append)
+				while (arr->getMemberCount() > 0)
+					arr->removeMember(arr->getMember(0));
+			for (int32_t i = 0; i < n; ++i)
+				arr->insertDefault();
+			return true;
+		}
+		// Map mode: a JSON object { key: valueSpec, ... } builds first/second pair elements (SmallMap members).
+		if (spec && spec->isObject())
+		{
+			if (!append)
+				while (arr->getMemberCount() > 0)
+					arr->removeMember(arr->getMember(0));
+			for (uint32_t i = 0; i < spec->getMemberCount(); ++i)
+			{
+				const std::wstring key = spec->getMemberName(i);
+				const Json* valueSpec = spec->getMemberValue(i);
+				RfmCompound* pair = new RfmCompound(L"item", nullptr);
+				pair->addMember(new RfmPrimitiveWideString(L"first", key, nullptr));
+				if (valueSpec && valueSpec->isObject() && (valueSpec->getMember(L"$type") || valueSpec->getMember(L"$clone")))
+				{
+					Ref< ISerializable > object = buildObjectFromSpec(database, valueSpec, outError);
+					if (!object)
+						return false;
+					pair->addMember(new RfmObject(L"second", object, nullptr));
+				}
+				else if (valueSpec && valueSpec->isString() && Guid(valueSpec->getString()).isValid())
+					pair->addMember(new RfmPrimitiveGuid(L"second", Guid(valueSpec->getString()), nullptr));
+				else if (!valueSpec || valueSpec->isNull())
+					pair->addMember(new RfmObject(L"second", (ISerializable*)nullptr, nullptr));
+				else
+				{
+					outError = L"Map value for key '" + key + L"' must be an object spec ($type/$clone), guid string, or null.";
+					return false;
+				}
+				arr->addMember(pair);
+			}
+			return true;
+		}
 		if (!spec || !spec->isArray())
 		{
 			outError = L"Array member '" + std::wstring(target->getName() ? target->getName() : L"") + L"' requires a JSON array value.";
 			return false;
 		}
-		while (arr->getMemberCount() > 0)
-			arr->removeMember(arr->getMember(0));
+		if (!append)
+		{
+			while (arr->getMemberCount() > 0)
+				arr->removeMember(arr->getMember(0));
+		}
 		for (uint32_t i = 0; i < spec->size(); ++i)
 		{
 			const Json* element = spec->at(i);
@@ -311,9 +357,14 @@ bool assignValue(db::Database* database, ReflectionMember* target, const Json* s
 					return false;
 				arr->addMember(new RfmObject(L"item", object, nullptr));
 			}
+			else if (element && element->isString() && Guid(element->getString()).isValid())
+			{
+				// Guid-string element, e.g. a resource::Id set such as physics collision groups.
+				arr->addMember(new RfmPrimitiveGuid(L"item", Guid(element->getString()), nullptr));
+			}
 			else
 			{
-				outError = L"Only object-element arrays are supported for set; each element must be an object with \"$type\" or \"$clone\".";
+				outError = L"Array elements must be object specs (\"$type\"/\"$clone\") or guid strings.";
 				return false;
 			}
 		}
@@ -476,7 +527,7 @@ bool tokenizePath(const std::wstring& path, AlignedVector< PathStep >& outSteps,
 	return true;
 }
 
-bool setMemberThroughPath(db::Database* database, ISerializable* object, const AlignedVector< PathStep >& steps, size_t start, const Json* spec, std::wstring& outError)
+bool setMemberThroughPath(db::Database* database, ISerializable* object, const AlignedVector< PathStep >& steps, size_t start, const Json* spec, std::wstring& outError, bool append)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 	if (!reflection)
@@ -499,13 +550,13 @@ bool setMemberThroughPath(db::Database* database, ISerializable* object, const A
 			outError = L"Cannot descend into a null object reference along the path.";
 			return false;
 		}
-		if (!setMemberThroughPath(database, nested, steps, next, spec, outError))
+		if (!setMemberThroughPath(database, nested, steps, next, spec, outError, append))
 			return false;
 		descend->set(nested);
 		return reflection->apply(object);
 	}
 
-	if (!assignValue(database, member, spec, outError))
+	if (!assignValue(database, member, spec, outError, append))
 		return false;
 	return reflection->apply(object);
 }
