@@ -47,21 +47,45 @@ Ref< Json > coerceStructuredArguments(const Json* arguments)
 	if (!arguments || !arguments->isObject())
 		return const_cast< Json* >(arguments);
 
+	// Detect members delivered as a JSON-encoded string of an array/object.
+	// (A bare string that merely looks like a number/bool is left alone so
+	// genuine string parameters keep their literal value.)
+	bool needsCoerce = false;
+	for (uint32_t i = 0; i < arguments->getMemberCount() && !needsCoerce; ++i)
+	{
+		const Json* value = arguments->getMemberValue(i);
+		if (value && value->isString())
+		{
+			Ref< Json > parsed = Json::parse(value->getString());
+			if (parsed && (parsed->isArray() || parsed->isObject()))
+				needsCoerce = true;
+		}
+	}
+
+	// Common case: nothing to recover - return the original arguments unchanged.
+	// NOTE: never return a wrapper that *shares* the original child nodes; that
+	// creates double ownership and crashes on teardown.
+	if (!needsCoerce)
+		return const_cast< Json* >(arguments);
+
+	// Build a fully INDEPENDENT arguments object (no child shared with the
+	// original): deep-copy each member via serialization, replacing any
+	// stringified array/object member with its parsed form.
 	Ref< Json > result = Json::createObject();
 	for (uint32_t i = 0; i < arguments->getMemberCount(); ++i)
 	{
 		const std::wstring name = arguments->getMemberName(i);
-		Json* value = const_cast< Json* >(arguments->getMemberValue(i));
+		const Json* value = arguments->getMemberValue(i);
+		Ref< Json > copy;
 		if (value && value->isString())
 		{
-			// Only structured values (array/object) are recovered; a bare
-			// string that happens to look like a number/bool is left alone so
-			// genuine string parameters keep their literal value.
 			Ref< Json > parsed = Json::parse(value->getString());
 			if (parsed && (parsed->isArray() || parsed->isObject()))
-				value = parsed;
+				copy = parsed;
 		}
-		result->set(name, value);
+		if (!copy && value)
+			copy = Json::parse(value->toString());
+		result->set(name, copy);
 	}
 	return result;
 }

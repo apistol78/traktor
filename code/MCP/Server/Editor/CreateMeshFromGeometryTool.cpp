@@ -64,7 +64,7 @@ std::wstring CreateMeshFromGeometryTool::getName() const
 
 std::wstring CreateMeshFromGeometryTool::getDescription() const
 {
-	return L"Generate a mesh from raw geometry. \"positions\" is an array of [x,y,z] vertex positions; \"polygons\" is an array of polygons, each an array of indices into positions (clockwise winding for front faces; triangles, quads or n-gons). Optional \"normals\" and \"texCoords\" are per-position ([x,y,z] / [u,v], parallel to positions); smooth normals are computed when omitted. The model is triangulated (unless \"triangulate\"=false), written to a model file under the asset path (\"fileName\", e.g. \"Models/Foo.tmd\"; tmd/obj/gltf/fbx by extension) and a traktor.mesh.MeshAsset (Static) is created at \"path\". Optional \"maps\" binds material textures (keys \"diffuse\"/\"normal\"/\"roughness\"/\"specular\"/\"metalness\"/\"emissive\", each a texture instance guid; requires \"texCoords\") so the pipeline auto-generates a textured PBR material shader. Pass \"meshType\":\"skinned\" with \"joints\" (skeleton), \"jointIndices\" (per-position rigid skin weights) and \"animations\" (keyframed full poses) to author a skinned, animated mesh whose .tmd can drive a SkeletonAsset + AnimationAsset. Build it (build_asset) before use.";
+	return L"Generate a mesh from raw geometry. \"positions\" is an array of [x,y,z] vertex positions; \"polygons\" is an array of polygons, each an array of indices into positions (clockwise winding for front faces; triangles, quads or n-gons). Optional \"normals\" and \"texCoords\" are per-position ([x,y,z] / [u,v], parallel to positions); smooth normals are computed when omitted. The model is triangulated (unless \"triangulate\"=false), written to a model file under the asset path (\"fileName\", e.g. \"Models/Foo.tmd\"; tmd/obj/gltf/fbx by extension) and a traktor.mesh.MeshAsset (Static) is created at \"path\". Optional \"maps\" binds material textures (keys \"diffuse\"/\"normal\"/\"roughness\"/\"specular\"/\"metalness\"/\"emissive\", each a texture instance guid; requires \"texCoords\") so the pipeline auto-generates a textured PBR material shader. Pass an empty string instead of a guid to declare a named-but-unbound map, then bind the texture on the MeshAsset via materialTextures (keyed by the map name) instead of embedding it in the model. Pass \"meshType\":\"skinned\" with \"joints\" (skeleton), \"jointIndices\" (per-position rigid skin weights) and \"animations\" (keyframed full poses) to author a skinned, animated mesh whose .tmd can drive a SkeletonAsset + AnimationAsset. Build it (build_asset) before use.";
 }
 
 Ref< Json > CreateMeshFromGeometryTool::getInputSchema() const
@@ -87,7 +87,7 @@ Ref< Json > CreateMeshFromGeometryTool::getInputSchema() const
 	properties->set(L"joints", arr(L"Optional skeleton joints (order = joint index); each { name, parent (joint index or -1 for root), translation [x,y,z], rotation [x,y,z,w], length }."));
 	properties->set(L"jointIndices", arr(L"Optional per-position joint index (parallel to positions) for rigid skinning (weight 1.0; -1 = none)."));
 	properties->set(L"animations", arr(L"Optional animations; each { name, keyframes:[{ time, pose:[[tx,ty,tz,qx,qy,qz,qw], ...one full local transform per joint] }] }."));
-	properties->set(L"maps", obj(L"Optional material texture maps; keys \"diffuse\"/\"normal\"/\"roughness\"/\"specular\"/\"metalness\"/\"emissive\", each a texture instance guid. Requires \"texCoords\"; the pipeline auto-generates a PBR material shader sampling them."));
+	properties->set(L"maps", obj(L"Optional material texture maps; keys \"diffuse\"/\"normal\"/\"roughness\"/\"specular\"/\"metalness\"/\"emissive\". Each value is a texture instance guid (embeds it in the model) or an empty string (declares a named-but-unbound map, bound on the MeshAsset via materialTextures by map name). Requires \"texCoords\"; the pipeline auto-generates a PBR material shader sampling them."));
 	properties->set(L"guid", str(L"Optional explicit guid for the new instance."));
 
 	Ref< Json > required = Json::createArray();
@@ -160,21 +160,22 @@ Ref< Json > CreateMeshFromGeometryTool::invoke(const Json* arguments, std::wstri
 			outError = L"\"maps\" requires \"texCoords\" so the material can be sampled.";
 			return nullptr;
 		}
+		// A map entry creates a named material map. A valid guid embeds the
+		// texture directly in the model; an empty/invalid value leaves the map
+		// unbound (name only), so it can be bound at the asset level through
+		// MeshAsset.materialTextures (keyed by the map name, e.g. "diffuse").
 		auto bindMap = [&](const wchar_t* key) -> model::Material::Map {
 			const Json* m = maps->getMember(key);
 			if (!m)
 				return model::Material::Map();
-			const Guid g(m->getString());
-			if (!g.isValid())
-				return model::Material::Map();
-			return model::Material::Map(key, texCoordChannel, false, g);
+			return model::Material::Map(key, texCoordChannel, false, Guid(m->getString()));
 		};
-		const model::Material::Map dm = bindMap(L"diffuse"); if (dm.texture.isNotNull()) material.setDiffuseMap(dm);
-		const model::Material::Map nm = bindMap(L"normal"); if (nm.texture.isNotNull()) material.setNormalMap(nm);
-		const model::Material::Map rm = bindMap(L"roughness"); if (rm.texture.isNotNull()) material.setRoughnessMap(rm);
-		const model::Material::Map sm = bindMap(L"specular"); if (sm.texture.isNotNull()) material.setSpecularMap(sm);
-		const model::Material::Map mm = bindMap(L"metalness"); if (mm.texture.isNotNull()) material.setMetalnessMap(mm);
-		const model::Material::Map em = bindMap(L"emissive"); if (em.texture.isNotNull()) material.setEmissiveMap(em);
+		const model::Material::Map dm = bindMap(L"diffuse"); if (!dm.name.empty()) material.setDiffuseMap(dm);
+		const model::Material::Map nm = bindMap(L"normal"); if (!nm.name.empty()) material.setNormalMap(nm);
+		const model::Material::Map rm = bindMap(L"roughness"); if (!rm.name.empty()) material.setRoughnessMap(rm);
+		const model::Material::Map sm = bindMap(L"specular"); if (!sm.name.empty()) material.setSpecularMap(sm);
+		const model::Material::Map mm = bindMap(L"metalness"); if (!mm.name.empty()) material.setMetalnessMap(mm);
+		const model::Material::Map em = bindMap(L"emissive"); if (!em.name.empty()) material.setEmissiveMap(em);
 	}
 	const uint32_t materialIndex = mdl->addMaterial(material);
 

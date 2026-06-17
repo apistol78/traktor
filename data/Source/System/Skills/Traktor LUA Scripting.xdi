@@ -5,35 +5,8 @@
 	<whenToUse><![CDATA[Writing or editing a LUA Stage/script in traktor (e.g. Scripts/Main), or wiring entity/component logic from script.]]></whenToUse>
 	<body><![CDATA[# Authoring traktor LUA scripts
 
-Conventions and gotchas for writing a LUA `Stage` script (e.g. `Scripts/Main`). These are style/idiom rules, not a task — apply them whenever you author or edit a script.
-
-## Namespace import
-- Put `import(traktor)` at the top of the script (after the `#using` directives). It pulls the `traktor` namespace's types into local scope, so you write `Vector4`, `Quaternion`, `Transform`, `TypeInfo`, … instead of `traktor.Vector4`, etc.
-- Only the **top-level** `traktor.*` types are flattened. Types in a sub-namespace are still referenced by their full path, e.g. `traktor.physics.CharacterComponent`, `traktor.animation.SkeletonComponent`.
-
-## Reference types directly — don't look them up by string
-- Where an API wants a type (e.g. `entity:getComponent(...)`), pass the **type itself**; it auto-boxes into a `BoxedType`:
-  - `entity:getComponent(traktor.physics.CharacterComponent)`
-  - `entity:getComponent(traktor.animation.SkeletonComponent)`
-- Avoid the string-lookup form `getComponent(TypeInfo.find("traktor.physics.CharacterComponent"))` — it is verbose, unchecked (a typo'd string fails silently at runtime), and unnecessary.
-- Reserve type-name **strings** for cases that genuinely need a string identifier, not for resolving a type you can name directly.
-
-## `#using` dependencies
-- `#using \{<guid>}` includes another script/asset (e.g. the `Stage` base class, UiKit widgets) so its symbols are available. List one per dependency at the very top, before `import(traktor)`.
-
-## Stage lifecycle (the common script shape)
-- Declare the class idempotently: `Main = Main or class("Main", Stage)`.
-- `function Main:new(params, environment)` — call `Stage.new(self, params, environment)` first, then set up UI/state.
-- `function Main:finalize()` — tear down what `new` created (remove frames, nil references).
-- `function Main:update(info)` — per-frame; `info.simulationTime`, `info.frameDeltaTime`.
-- Resolve world entities lazily and cache them: `local world = self.world.world` (may be nil early); `world:getEntity("Name")`; guard every lookup with a nil check and only cache once found.
-
-## Gotchas
-- `world` (`self.world.world`) can be nil for the first frames — bail out of `update` cleanly until it resolves.
-- Drive an animation state graph with `poseController:setParameterValue(name, value)`; `setState(...)` is a no-op stub.
-- `CharacterComponent:move(velocity, vertical)` — pass `false` for horizontal locomotion; the controller applies gravity itself. Set body yaw via `headAngle`, and don't also write the entity rotation from script.
-]]></body>
+Conventions and gotchas for writing a LUA `Stage` script (e.g. `Scripts/Main`). These are style/idiom rules, not a task — apply them whenever you author or edit a script.]]></body>
 	<engineVersion/>
-	<published>false</published>
+	<published>true</published>
 	<parameters/>
 </object>
