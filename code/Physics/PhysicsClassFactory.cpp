@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -353,6 +353,7 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classCharacterComponent = new AutoRuntimeClass< CharacterComponent >();
 	classCharacterComponent->addProperty("grounded", &CharacterComponent::grounded);
 	classCharacterComponent->addProperty("velocity", &CharacterComponent::setVelocity, &CharacterComponent::getVelocity);
+	classCharacterComponent->addProperty("maxVelocity", &CharacterComponent::setMaxVelocity, &CharacterComponent::getMaxVelocity);
 	classCharacterComponent->addProperty("headAngle", &CharacterComponent::setHeadAngle, &CharacterComponent::getHeadAngle);
 	classCharacterComponent->addMethod("move", &CharacterComponent::move);
 	classCharacterComponent->addMethod("jump", &CharacterComponent::jump);

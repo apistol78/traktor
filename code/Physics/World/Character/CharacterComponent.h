@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -94,6 +94,12 @@ public:
 	/*! Character current velocity. */
 	const Vector4& getVelocity() const;
 
+	/*!*/
+	void setMaxVelocity(float maxVelocity) { m_maxVelocity = maxVelocity; }
+
+	/*!*/
+	float getMaxVelocity() const { return m_maxVelocity; }
+
 private:
 	world::Entity* m_owner;
 	Ref< PhysicsManager > m_physicsManager;
@@ -102,6 +108,7 @@ private:
 	Ref< Body > m_bodySlim;
 	uint32_t m_traceInclude;
 	uint32_t m_traceIgnore;
+	float m_maxVelocity;
 	float m_headAngle;
 	Vector4 m_velocity;
 	Vector4 m_impulse;
