@@ -23,7 +23,7 @@ namespace traktor::ai
 namespace
 {
 
-const float c_searchExtents[3] = { 32.0f, 0.1f, 32.0f };
+const float c_searchExtents[3] = { 32.0f, 1.0f, 32.0f };
 
 float random()
 {
