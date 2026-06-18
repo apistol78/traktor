@@ -32,6 +32,7 @@
 
 #define T_USE_ALLOCATOR 1
 #define T_LOG_OBJECT_GC 0
+#define T_SCRIPT_LUA_USE_GENERATIONAL_COLLECTOR
 
 namespace traktor::script
 {
