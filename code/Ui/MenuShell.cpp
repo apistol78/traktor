@@ -148,6 +148,17 @@ void MenuShell::eventMouseMove(MouseMoveEvent* event)
 	MenuItem* item = getItem(event->getPosition());
 	if (item != m_trackItem)
 	{
+		// The pointer must cross the shell's border (the 1px frame around the
+		// items, where getItem returns null) to reach an open sub menu. On X11
+		// and Win32 the sub menu window is stacked on top and overlaps that
+		// border, so the parent shell never sees the crossing; on Wayland the
+		// sub menu is a separate, non-overlapping popup surface, so the parent
+		// does get a move event over its own border and would tear the sub menu
+		// down right as the user reaches for it. Keep an open sub menu alive
+		// until the pointer settles on a genuinely different item.
+		if (item == nullptr && m_trackSubMenu != nullptr)
+			return;
+
 		safeDestroy(m_trackSubMenu);
 
 		if ((m_trackItem = item) != nullptr)
