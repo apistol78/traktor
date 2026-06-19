@@ -145,14 +145,6 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverXAudio2", 0, AudioDriverXAudio2, IAudioDriver)
 
 AudioDriverXAudio2::AudioDriverXAudio2()
-	: m_engineCallback(nullptr)
-	, m_voiceCallback(nullptr)
-	, m_masteringVoice(nullptr)
-	, m_sourceVoice(nullptr)
-	, m_eventNotify(NULL)
-	, m_hResult(S_OK)
-	, m_bufferSize(0)
-	, m_nextSubmitBuffer(0)
 {
 	std::memset(&m_wfx, 0, sizeof(m_wfx));
 	for (uint32_t i = 0; i < sizeof_array(m_buffers); ++i)
@@ -203,6 +195,7 @@ bool AudioDriverXAudio2::create(const SystemApplication& sysapp, const AudioDriv
 	if (!reset())
 		return false;
 
+	m_failed = 0;
 	return true;
 }
 
@@ -332,6 +325,9 @@ bool AudioDriverXAudio2::reset()
 		m_masteringVoice = nullptr;
 	}
 
+	if (m_failed > 10)
+		return false;
+
 	if (!m_audio)
 	{
 		UINT32 flags = 0;
@@ -342,6 +338,7 @@ bool AudioDriverXAudio2::reset()
 		if (FAILED(hr))
 		{
 			log::error << L"Unable to create XAudio2 sound driver; XAudio2Create failed (" << int32_t(hr) << L")." << Endl;
+			m_failed++;
 			return false;
 		}
 
@@ -358,6 +355,7 @@ bool AudioDriverXAudio2::reset()
 	if (FAILED(hr))
 	{
 		log::error << L"Unable to create XAudio2 sound driver; CreateMasteringVoice failed (" << m_desc.hwChannels << L" channels, " << int32_t(hr) << L")." << Endl;
+		m_failed++;
 		return false;
 	}
 
@@ -388,6 +386,7 @@ bool AudioDriverXAudio2::reset()
 		break;
 	default:
 		log::error << L"Unable to create XAudio2 sound driver; Incorrect number of channels." << Endl;
+		m_failed++;
 		return false;
 	}
 
@@ -429,6 +428,7 @@ bool AudioDriverXAudio2::reset()
 		if (FAILED(hr))
 		{
 			log::error << L"Unable to create XAudio2 sound driver; CreateSourceVoice failed (" << int32_t(hr) << L")." << Endl;
+			m_failed++;
 			return false;
 		}
 	}
@@ -437,6 +437,7 @@ bool AudioDriverXAudio2::reset()
 	m_sourceVoice->Start(0);
 
 	m_hResult = S_OK;
+	m_failed = 0;
 	return true;
 }
 
