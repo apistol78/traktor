@@ -18,6 +18,7 @@
 namespace traktor
 {
 
+class Aabb3;
 class ISerializable;
 
 }
@@ -45,5 +46,16 @@ std::wstring meshTypeName(mesh::MeshAsset::MeshType type);
 
 /*! JSON Schema { guid, path } properties for a mesh asset tool. */
 Ref< Json > meshTargetProperties();
+
+/*! Human-readable description of where the asset origin sits within a box.
+ *
+ * e.g. "base, horizontally centered" (a piece that rests on the ground) or
+ * "mid-height, horizontally offset". Useful for reasoning about how a kit piece
+ * snaps to a grid. */
+std::wstring pivotLabel(const Aabb3& bbox);
+
+/*! Build a JSON description of a model-space bounding box: size (per axis),
+ * min/max/center, and the pivot (origin position within the box + label). */
+Ref< Json > boundingBoxToJson(const Aabb3& bbox);
 
 }

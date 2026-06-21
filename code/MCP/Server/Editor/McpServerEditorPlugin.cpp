@@ -29,6 +29,7 @@
 #include "MCP/Server/Editor/McpServerEditorPlugin.h"
 #include "MCP/Server/Editor/MeshAssetGetTool.h"
 #include "MCP/Server/Editor/MeshAssetSetMaterialShaderTool.h"
+#include "MCP/Server/Editor/RenderMeshPreviewTool.h"
 #include "MCP/Server/Editor/ShaderGraphCreateTool.h"
 #include "MCP/Server/Editor/ShaderGraphDependenciesTool.h"
 #include "MCP/Server/Editor/ShaderGraphGetTool.h"
@@ -76,6 +77,7 @@ bool McpServerEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, 
 	m_server->addTool(new InstanceCloneTool(m_editor));
 	m_server->addTool(new MeshAssetGetTool(m_editor));
 	m_server->addTool(new MeshAssetSetMaterialShaderTool(m_editor));
+	m_server->addTool(new RenderMeshPreviewTool(m_editor));
 	m_server->addTool(new ShaderNodeCatalogTool());
 	m_server->addTool(new ShaderNodeDescribeTool());
 	m_server->addTool(new ShaderGraphGetTool(m_editor));

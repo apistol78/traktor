@@ -365,6 +365,16 @@ Ref< Json > McpServer::handleToolsCall(const Json* params, std::wstring& outErro
 		return result;
 	}
 
+	// A tool may return a pre-built MCP content array (e.g. a mix of text and
+	// image blocks); pass it through verbatim. Object and string results take
+	// the default text wrapping below.
+	if (value && value->isArray())
+	{
+		result->set(L"content", value);
+		result->setBoolean(L"isError", false);
+		return result;
+	}
+
 	const std::wstring text = (value && value->isString()) ? value->getString() : (value ? value->toString() : L"");
 	Ref< Json > block = Json::createObject();
 	block->setString(L"type", L"text");

@@ -36,22 +36,31 @@ int32_t wrap(int32_t v, int32_t l)
 	return (c < 0) ? c + l : c;
 }
 
-	}
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshAssetRasterizer", MeshAssetRasterizer, Object)
-
-bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsset* asset, drawing::Image* outImage) const
+/*! Load the asset's source model from the model cache (no triangulation or
+ * material binding). Cheap path for callers that only need geometry, e.g. the
+ * bounding box. Returns null if the model file cannot be read. */
+Ref< model::Model > loadModel(const editor::IEditor* editor, const MeshAsset* asset)
 {
 	const std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	const std::wstring modelCachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 
 	const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
-	Ref< model::Model > model = model::ModelCache::getInstance().getMutable(modelCachePath, fileName, asset->getImportFilter());
+	return model::ModelCache::getInstance().getMutable(modelCachePath, fileName, asset->getImportFilter());
+}
+
+/*! Load the asset's model and bind its material maps (shader-graph previews and
+ * texture images) ready for rasterization. Shared by both generate() overloads.
+ * Returns null if the model file cannot be read. */
+Ref< model::Model > prepareModel(const editor::IEditor* editor, const MeshAsset* asset)
+{
+	Ref< model::Model > model = loadModel(editor, asset);
 	if (!model)
-		return false;
+		return nullptr;
 
 	if (!model->apply(model::Triangulate()))
-		return false;
+		return nullptr;
+
+	const std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 	const auto& materialTextures = asset->getMaterialTextures();
 	const auto& materialShaders = asset->getMaterialShaders();
@@ -80,13 +89,13 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 			const Ref< render::ShaderGraph > materialShaderGraph = editor->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(it->second);
 			if (!materialShaderGraph)
 				continue;
-		
+
 			Ref< drawing::Image > image = render::ShaderGraphPreview(editor).generate(materialShaderGraph, 128, 128);
 			if (!image)
 				continue;
 
-			
-			diffuseMap.image = image;			
+
+			diffuseMap.image = image;
 		}
 
 		if (diffuseMap.image == nullptr && diffuseMap.texture.isNotNull())
@@ -107,7 +116,7 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 					{
 						// Convert to gamma color space.
 						const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
-						image->apply(&gammaFilter);							
+						image->apply(&gammaFilter);
 					}
 					images[filePath] = image;
 				}
@@ -119,12 +128,55 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 		material.setDiffuseMap(diffuseMap);
 	}
 
+	return model;
+}
+
+	}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshAssetRasterizer", MeshAssetRasterizer, Object)
+
+bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsset* asset, drawing::Image* outImage) const
+{
+	Ref< model::Model > model = prepareModel(editor, asset);
+	if (!model)
+		return false;
+
 	// Rasterize model.
 	const Aabb3 boundingBox = model->getBoundingBox();
 	const Scalar maxExtent = (boundingBox.getExtent() * Vector4(1.0f, 1.0f, 0.0f, 0.0f)).max();
 	const Scalar invMaxExtent = 1.0_simd / maxExtent;
 	const Matrix44 modelView = translate(0.0f, 0.0f, 2.5f) * scale(invMaxExtent, invMaxExtent, invMaxExtent) * rotateY(asset->getPreviewAngle()) * translate(-boundingBox.getCenter());
 	return model::ModelRasterizer().generate(model, modelView, outImage);
+}
+
+bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsset* asset, float yaw, float pitch, drawing::Image* outImage) const
+{
+	Ref< model::Model > model = prepareModel(editor, asset);
+	if (!model)
+		return false;
+
+	// Frame using the largest extent across all three axes so the model stays
+	// inside the view at any yaw/pitch (the single-angle path above only turns
+	// about Y, so it can frame on the X/Y silhouette alone).
+	const Aabb3 boundingBox = model->getBoundingBox();
+	const Scalar maxExtent = (boundingBox.getExtent() * Vector4(1.0f, 1.0f, 1.0f, 0.0f)).max();
+	const Scalar invMaxExtent = 1.0_simd / maxExtent;
+	// Negate pitch so a positive pitch tilts the camera to look DOWN onto the
+	// model's top (+Y). With +pitch the model tips toward the viewer's underside,
+	// and single-sided geometry (e.g. floor tiles with up-facing triangles only)
+	// is backface-culled, leaving the view nearly empty.
+	const Matrix44 modelView = translate(0.0f, 0.0f, 2.5f) * scale(invMaxExtent, invMaxExtent, invMaxExtent) * rotateX(-pitch) * rotateY(yaw) * translate(-boundingBox.getCenter());
+	return model::ModelRasterizer().generate(model, modelView, outImage);
+}
+
+bool MeshAssetRasterizer::getBoundingBox(const editor::IEditor* editor, const MeshAsset* asset, Aabb3& outBoundingBox) const
+{
+	Ref< model::Model > model = loadModel(editor, asset);
+	if (!model)
+		return false;
+
+	outBoundingBox = model->getBoundingBox();
+	return !outBoundingBox.empty();
 }
 
 }
