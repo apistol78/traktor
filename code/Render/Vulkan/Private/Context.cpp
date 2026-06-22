@@ -536,8 +536,8 @@ VkPipeline Context::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout,
 			.passOp = c_stencilOperations[(int)rs.stencilPass],
 			.depthFailOp = c_stencilOperations[(int)rs.stencilZFail],
 			.compareOp = c_compareOperations[(int)rs.stencilFunction],
-			.compareMask = rs.stencilMask,
-			.writeMask = rs.stencilMask,
+			.compareMask = (uint32_t)~0U, //rs.stencilMask,
+			.writeMask = (uint32_t)~0U, //rs.stencilMask,
 			.reference = rs.stencilReference
 		};
 
