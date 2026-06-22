@@ -16,6 +16,7 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
@@ -217,6 +218,21 @@ int32_t InputServer::reconfigure(const PropertyGroup* settings)
 			m_rumbleEffectPlayer = nullptr;
 		}
 		result |= CrAccepted;
+	}
+
+	// Propagate the current render output size so absolute controls (e.g. mouse
+	// position) scale correctly when the window is resized.
+	if (m_inputSystem)
+	{
+		const bool fullscreen = settings->getProperty< bool >(L"Render.FullScreen", false);
+		const int32_t width = fullscreen
+			? settings->getProperty< int32_t >(L"Render.DisplayMode/Width", 0)
+			: settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Width", 0);
+		const int32_t height = fullscreen
+			? settings->getProperty< int32_t >(L"Render.DisplayMode/Height", 0)
+			: settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Height", 0);
+		if (width > 0 && height > 0)
+			m_inputSystem->setSize(width, height);
 	}
 
 	return result;

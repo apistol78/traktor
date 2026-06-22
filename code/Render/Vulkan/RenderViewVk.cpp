@@ -114,13 +114,13 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 		return false;
 	}
 #elif defined(__LINUX__) || defined(__RPI__)
-	VkXlibSurfaceCreateInfoKHR sci = {};
-	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-	sci.dpy = m_window->getDisplay();
-	sci.window = m_window->getWindow();
-	if (vkCreateXlibSurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface) != VK_SUCCESS)
+	VkWaylandSurfaceCreateInfoKHR sci = {};
+	sci.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
+	sci.display = m_window->getDisplay();
+	sci.surface = m_window->getSurface();
+	if (vkCreateWaylandSurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface) != VK_SUCCESS)
 	{
-		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface." << Endl;
+		log::error << L"Failed to create Vulkan; unable to create Wayland renderable surface." << Endl;
 		return false;
 	}
 #elif defined(__MAC__)
@@ -516,11 +516,19 @@ bool RenderViewVk::isFullScreen() const
 void RenderViewVk::showCursor()
 {
 	m_cursorVisible = true;
+#if defined(__LINUX__) || defined(__RPI__)
+	if (m_window)
+		m_window->showCursor();
+#endif
 }
 
 void RenderViewVk::hideCursor()
 {
 	m_cursorVisible = false;
+#if defined(__LINUX__) || defined(__RPI__)
+	if (m_window)
+		m_window->hideCursor();
+#endif
 }
 
 bool RenderViewVk::isCursorVisible() const
@@ -572,7 +580,7 @@ SystemWindow RenderViewVk::getSystemWindow()
 #if defined(_WIN32)
 	return SystemWindow(*m_window);
 #elif defined(__LINUX__) || defined(__RPI__)
- 	return SystemWindow::fromX11(m_window->getDisplay(), m_window->getWindow());
+ 	return SystemWindow::fromWayland(m_window->getDisplay(), (unsigned long)m_window->getSurface(), m_window->getWidth(), m_window->getHeight());
 #elif defined(__MAC__)
 	return SystemWindow(m_window->getView());
 #else

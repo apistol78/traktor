@@ -77,6 +77,17 @@ public:
 	 * \return Update result.
 	 */
 	virtual UpdateResult update() = 0;
+
+	/*! Notify driver of the render output (client window) size.
+	 *
+	 * Used to scale absolute controls such as mouse position when the window
+	 * is resized. The default implementation does nothing; drivers that report
+	 * absolute, window-relative controls should override it.
+	 *
+	 * \param width Width of output in pixels.
+	 * \param height Height of output in pixels.
+	 */
+	virtual void setSize(int32_t width, int32_t height) {}
 };
 
 }

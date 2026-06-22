@@ -53,6 +53,9 @@ public:
 
 	void setExclusive(bool exclusive);
 
+	//! Notify all drivers of the render output (client window) size.
+	void setSize(int32_t width, int32_t height);
+
 	bool update();
 
 private:

@@ -17067,13 +17067,16 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(VULKAN_SDK)/include</item>
+						<item>`pkg-config --cflags wayland-client wayland-cursor libdecor-0`</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>`pkg-config --libs wayland-client wayland-cursor libdecor-0`</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17096,13 +17099,16 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(VULKAN_SDK)/include</item>
+						<item>`pkg-config --cflags wayland-client wayland-cursor libdecor-0`</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>`pkg-config --libs wayland-client wayland-cursor libdecor-0`</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17125,13 +17131,16 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(VULKAN_SDK)/include</item>
+						<item>`pkg-config --cflags wayland-client wayland-cursor libdecor-0`</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>`pkg-config --libs wayland-client wayland-cursor libdecor-0`</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17154,13 +17163,16 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(VULKAN_SDK)/include</item>
+						<item>`pkg-config --cflags wayland-client wayland-cursor libdecor-0`</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>`pkg-config --libs wayland-client wayland-cursor libdecor-0`</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -18817,12 +18829,16 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>`pkg-config --cflags wayland-client xkbcommon`</item>
+					</includePaths>
 					<definitions>
 						<item>T_INPUT_LINUX_EXPORT</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>`pkg-config --libs wayland-client xkbcommon`</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -18843,12 +18859,16 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>`pkg-config --cflags wayland-client xkbcommon`</item>
+					</includePaths>
 					<definitions>
 						<item>T_INPUT_LINUX_EXPORT</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>`pkg-config --libs wayland-client xkbcommon`</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -18869,10 +18889,14 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>`pkg-config --cflags wayland-client xkbcommon`</item>
+					</includePaths>
 					<definitions/>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>`pkg-config --libs wayland-client xkbcommon`</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -18893,10 +18917,14 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>`pkg-config --cflags wayland-client xkbcommon`</item>
+					</includePaths>
 					<definitions/>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>`pkg-config --libs wayland-client xkbcommon`</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>

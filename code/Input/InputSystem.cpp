@@ -85,6 +85,12 @@ void InputSystem::setExclusive(bool exclusive)
 		device->setExclusive(exclusive);
 }
 
+void InputSystem::setSize(int32_t width, int32_t height)
+{
+	for (auto driver : m_drivers)
+		driver->setSize(width, height);
+}
+
 bool InputSystem::update()
 {
 	T_PROFILER_SCOPE(L"InputSystem update");
