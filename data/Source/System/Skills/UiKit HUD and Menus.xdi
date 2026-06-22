@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mcp.SkillAsset">
+	<name>uikit-hud-menus</name>
+	<description>Build HUD labels and interactive menus (buttons, modal dialogs, pause) in a traktor Stage script with UiKit.</description>
+	<whenToUse><![CDATA[Asked to add on-screen UI: a HUD/score/health readout, a button, a dialog/modal, a pause or game-over menu, or any clickable in-game UI.]]></whenToUse>
+	<body><![CDATA[# UiKit HUD and menus
+
+Build on-screen UI (HUD labels, buttons, modal menus) from a LUA `Stage` using UiKit.
+
+## Setup
+- `#using \{FC4400A2-BDB6-BA45-9A22-12B9676E71FA}` (the UiKit umbrella) — one import exposes `Widget`, `Frame`, `Container`, `Static`, `PushButton`, `Dialog`, `TableLayout`, `StackLayout`, etc.
+- Once, in `Stage:new`: `Widget.initialize(environment.resource.resourceManager, { "<UiKit movie guid>" })` (the resource bundle that defines `MC_Static`, `MC_PushButton`, `MC_Dialog`, …). Create widgets only after this.
+
+## Frame + HUD
+- `local root = self.ui.root`; `self._frame = Frame(root, vw, vh, layout)` — a virtual canvas that auto-scales to the screen. Call `self._frame:update()` after building.
+- Labels: `Static(self._frame, "text")`; update with `:setText(...)`. Also `:setTextSize`, `:setTextColor`, `:setTextOutlineColor`, `:setHorizontalAlign/:setVerticalAlign(Widget.ALIGN_CENTER)`.
+
+## Layouts
+- `TableLayout(cdef, rdef, hmargin, vmargin, hpad, vpad)` — `cdef`/`rdef` are arrays: **`0` = auto** (use child preferred size), **`>0` = proportional weight**. Children fill cells row-major.
+  - One full-weight cell `TableLayout({100},{100},…)` + a `Static` with `ALIGN_CENTER` = a centered banner (the game-over pattern).
+  - One column, N auto rows `TableLayout({0},{0,0},…)` = a vertical stack (e.g. title over button).
+- `StackLayout(margin, pad)` lays children **horizontally**.
+
+## Buttons
+- `local b = PushButton(parent, "Caption")`; `b:setOnClick(function(self) … end)` — fires on mouse-release inside. Also `:setColor/:setDownColor/:setHoverColor/:setTextColor/:setTextSize/:setMinimumWidth/:setEnable`.
+
+## Modal dialog (menus)
+- `local d = Dialog(parentFrame, layout)` — a panel that **auto-centers on its ancestor** and is `FLOAT` (excluded from the parent's layout, so adding it to your HUD `Frame` won't disturb HUD labels). Theme via `:setColor`/`:setBorderColor`.
+- Fill it via its layout, e.g. `Dialog(frame, TableLayout({0},{0,0},24,24,0,16))` then add a `Static` title and a `PushButton`.
+- `d:show()` (visible + modal + recenters) / `d:hide()` (hidden + releases modal).
+
+## Pause-menu pattern
+- Build the dialog hidden in `new`. Each frame in `update`: `if mapping:isStatePressed("STATE_PAUSE") then self:_setPaused(not self._paused) end` (edge-triggered — see *input-mapping*).
+- `_setPaused(true)` → `dialog:show()` + `inputSystem:setExclusive(false)` (free the cursor to click); `false` → `dialog:hide()` + `setExclusive(true)`.
+- While paused, **early-return from `Stage:update`** to freeze gameplay; have each `ScriptComponent` bail on `context._paused` too (it receives the Stage as `context`).
+
+## Gotchas (hard-won)
+- **The UI ticks on its own `enterFrame`, independent of `Stage:update`.** So a paused Stage that early-returns still has a fully live, clickable menu — you do **not** need to keep updating from script to make the button work.
+- A `Dialog` needs a parent **Widget with a placement** (a `Frame`) to center against — parent it to your HUD frame, not the raw `root`.
+- `Widget.initialize` must run before constructing any widget, or resources won't resolve.
+- Clean up in `Stage:finalize`: `:remove()` the dialog/frame.
+- For script idioms (namespace `import`, lifecycle, `self.environment`) see *traktor-lua-scripting*.
+]]></body>
+	<engineVersion/>
+	<published>true</published>
+	<parameters/>
+</object>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.db.LocalInstanceMeta" version="2">
+	<guid>{985F9949-E1BF-B143-AC49-478A4BBB356D}</guid>
+	<primaryType>traktor.mcp.SkillAsset</primaryType>
+	<blobs/>
+</object>
