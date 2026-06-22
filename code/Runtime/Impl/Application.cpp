@@ -712,8 +712,9 @@ bool Application::update()
 			// this is quite a bad situation.
 			m_updateInfo.m_simulationTime += dT * (updateCountNoClamp - updateCount);
 
-			// Calculate interval value; interval is only required if simulation runs slower than render framerate.
-			if (m_renderTimeInterpolation && dT > dFT + 0.01)
+			// Calculate interval value; interpolation is engaged whenever the render
+			// rate is meaningfully faster than the simulation rate (dT > dFT).
+			if (m_renderTimeInterpolation && dT > dFT * 1.01)
 				m_updateInfo.m_interval = (float)((m_updateInfo.m_stateTime - m_updateInfo.m_simulationTime) / m_updateInfo.m_simulationDeltaTime);
 			else
 				m_updateInfo.m_interval = 1.0f;
