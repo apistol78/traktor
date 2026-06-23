@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.animation.SkeletonAsset" version="4">
+	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Examples/Animation/Humanoid.tmd</fileName>
+	<offset>0, 0, 0, 1</offset>
+	<scale>1, 1, 1, 1</scale>
+	<radius>0.08</radius>
+	<invertX>false</invertX>
+	<invertZ>false</invertZ>
+</object>

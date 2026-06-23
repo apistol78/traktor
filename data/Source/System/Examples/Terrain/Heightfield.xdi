@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.hf.HeightfieldAsset" version="8">
+	<worldExtent>512, 128, 512, 0</worldExtent>
+	<erosionEnable>false</erosionEnable>
+	<erodeIterations>100000</erodeIterations>
+</object>

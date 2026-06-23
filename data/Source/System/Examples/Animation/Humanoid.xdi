@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.world.EntityData" version="2">
+	<id>{D1D1E4BC-77DF-654B-B17F-1A102277B0CF}</id>
+	<name>Humanoid</name>
+	<state>
+		<visible>true</visible>
+		<dynamic>false</dynamic>
+		<locked>false</locked>
+	</state>
+	<transform>
+		<translation>0, 0, 0, 0</translation>
+		<rotation>0, 0, 0, 1</rotation>
+	</transform>
+	<components>
+		<item type="traktor.animation.SkeletonComponentData">
+			<skeleton>{1E9C2788-505E-6C43-BB3D-527228721118}</skeleton>
+			<poseController type="traktor.animation.AnimationGraphPoseControllerData">
+				<stateGraph>{E562D421-7442-9C4F-A782-6F6A6F2CD7B4}</stateGraph>
+				<transformTime/>
+			</poseController>
+		</item>
+		<item type="traktor.animation.AnimatedMeshComponentData" version="3">
+			<mesh>{6D04B565-BC28-F046-8B7D-35971F4285EB}</mesh>
+		</item>
+	</components>
+</object>

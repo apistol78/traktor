@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.animation.StateGraph">
+	<states>
+		<item type="traktor.animation.StateNodeAnimation">
+			<name>Idle</name>
+			<position>
+				<first>416</first>
+				<second>177</second>
+			</position>
+			<animation>{D3CD74E4-505F-F647-AECB-99B29EE6B168}</animation>
+		</item>
+		<item type="traktor.animation.StateNodeAnimation">
+			<name>Walk</name>
+			<position>
+				<first>420</first>
+				<second>47</second>
+			</position>
+			<animation>{1C368269-DC23-6D4F-B8E8-A7DEB71888DA}</animation>
+		</item>
+	</states>
+	<transitions>
+		<item type="traktor.animation.StateTransition">
+			<from ref="/object/states/item"/>
+			<to ref="/object/states/item[1]"/>
+			<duration>0.2</duration>
+			<moment>Immediately</moment>
+			<condition>moving</condition>
+		</item>
+		<item type="traktor.animation.StateTransition">
+			<from ref="/object/states/item[1]"/>
+			<to ref="/object/states/item"/>
+			<duration>0.2</duration>
+			<moment>Immediately</moment>
+			<condition>!moving</condition>
+		</item>
+		<item type="traktor.animation.StateTransition">
+			<from ref="/object/states/item[1]"/>
+			<to ref="/object/states/item[1]"/>
+			<duration>0</duration>
+			<moment>End</moment>
+			<condition>moving</condition>
+		</item>
+		<item type="traktor.animation.StateTransition">
+			<from ref="/object/states/item"/>
+			<to ref="/object/states/item"/>
+			<duration>0</duration>
+			<moment>End</moment>
+			<condition>!moving</condition>
+		</item>
+	</transitions>
+	<rootState ref="/object/states/item"/>
+	<previewSkeleton>{BF8F752F-80D1-444D-9ED6-C77109A70506}</previewSkeleton>
+	<previewMesh>{6D04B565-BC28-F046-8B7D-35971F4285EB}</previewMesh>
+	<previewPosition>0.175001, -2, 3.474987, 1</previewPosition>
+	<previewAngles>4.334998, -0.165, 0, 0</previewAngles>
+</object>
