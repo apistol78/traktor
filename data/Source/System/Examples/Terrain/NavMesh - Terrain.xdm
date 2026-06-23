@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.db.LocalInstanceMeta" version="2">
+	<guid>{3ACC5150-E8BE-4242-A315-A07FB0AF1B31}</guid>
+	<primaryType>traktor.ai.NavMeshAsset</primaryType>
+	<blobs/>
+</object>

@@ -56,7 +56,11 @@
 		</imageProcess>
 		<colorGrading>{3DEEC673-EDF5-364A-B796-BAC7EF575258}</colorGrading>
 	</worldRenderSettings>
-	<worldComponents/>
+	<worldComponents>
+		<item type="traktor.ai.NavMeshComponentData">
+			<navMesh>{3ACC5150-E8BE-4242-A315-A07FB0AF1B31}</navMesh>
+		</item>
+	</worldComponents>
 	<layers>
 		<item type="traktor.world.EntityData" version="2">
 			<id>{2FE794AA-EF51-6449-A41A-B01ADD08DF11}</id>
@@ -228,6 +232,30 @@
 										<gamma>0.5</gamma>
 										<shortWavesFade>0.08</shortWavesFade>
 									</spectrum>
+								</item>
+								<item type="traktor.physics.RigidBodyComponentData" version="1">
+									<bodyDesc type="traktor.physics.StaticBodyDesc" version="5">
+										<shape type="traktor.physics.HeightfieldShapeDesc" version="6,traktor.physics.ShapeDesc:6">
+											<localTransform>
+												<translation>0, 0, 0, 0</translation>
+												<rotation>0, 0, 0, 1</rotation>
+											</localTransform>
+											<collisionGroup>
+												<item>{F9805131-50C2-504C-9421-13C99E44616C}</item>
+											</collisionGroup>
+											<collisionMask>
+												<item>{09CB1141-1924-3349-934A-CEB9728D7A61}</item>
+												<item>{F9805131-50C2-504C-9421-13C99E44616C}</item>
+											</collisionMask>
+											<material>0</material>
+											<heightfield>{FE7175C9-600E-D84D-BD15-7D04E66C7BD3}</heightfield>
+										</shape>
+										<friction>0.75</friction>
+										<restitution>0</restitution>
+										<kinematic>false</kinematic>
+									</bodyDesc>
+									<eventCollide/>
+									<transformFilter>0</transformFilter>
 								</item>
 							</components>
 						</item>
