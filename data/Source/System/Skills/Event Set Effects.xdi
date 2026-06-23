@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mcp.SkillAsset">
+	<name>event-set-effects</name>
+	<description>Spawn effects/sound/decals on an entity by raising named events from script via an EventSetComponent.</description>
+	<whenToUse><![CDATA[Asked to spawn a particle effect (blood, sparks, dust), sound, or decal at an entity on a gameplay trigger (hit, death, pickup) — fired on demand from a LUA script.]]></whenToUse>
+	<body><![CDATA[# Spawn effects via an EventSetComponent
+
+Attach a set of *named* entity events to an entity, then `raise` one by name from script to spawn a transient effect/sound/decal at that entity — on a gameplay trigger (being hit, dying, picking up). The spawned instance is managed and self-terminating; you do not remove it.
+
+## Author the component (on the entity asset, not the scene reference)
+Add an `traktor.world.EventSetComponentData` to the entity's `components`. Its `eventData` member is a **map** of `name -> IEntityEventData`:
+
+```
+set_instance_member { guid:<entity>, member:"components", append:true, value:[
+  { "$type":"traktor.world.EventSetComponentData", "set": {
+      "eventData": {
+        "{{event}}": { "$type":"traktor.spray.SpawnEffectEventData", "set": {
+            "effect":"<Effect guid>", "follow": true, "useRotation": true } }
+      } } } ] }
+```
+
+- **Put it on the shared entity asset** (e.g. `Entities/Humanoid/Humanoid`), not on an `ExternalEntityData` placement in the scene — the component then travels with every instance of that entity.
+- `SpawnEffectEventData` fields: `effect` (`Id<Effect>`), `transform` (offset, identity by default), `follow` (effect tracks the entity as it moves), `useRotation` (orient by the entity's rotation).
+- Build the entity asset after editing.
+
+### Other event types (same map, different `$type`)
+`traktor.spray.SoundEventData` (play a sound), `traktor.world.DecalEventData` (project a decal), `traktor.spray.Feedback.*FeedbackEventData` (camera/rumble). Any number of named entries can share one `EventSetComponentData`.
+
+## Raise from script
+```lua
+-- resolve & cache once (component lives on the entity)
+self._events = entity:getComponent(traktor.world.EventSetComponent)
+...
+self._events:raise("{{event}}")            -- spawn at the entity
+self._events:raise("{{event}}", offset)    -- spawn at a Transform offset
+```
+- `raise` is edge/one-shot: each call spawns **one** fresh instance. For a continuous effect (e.g. bleeding while attacked) call it on a timer (every ~0.3 s) for as long as the condition holds — let the effect's own duration overlap.
+- Returns an `IEntityEventInstance` (or `nil`); you can `:cancelImmediate()` / `:cancelEnd()` it, but usually just let it finish.
+
+## Gotchas (hard-won)
+- **`raise` needs an `EventManagerComponent` in the world**, or it silently returns `nil` and nothing spawns. The engine's `World` adds one automatically (`EventManagerComponent(512)`), so it works out of the box — but that 512 cap is the max concurrent instances; don't raise every frame.
+- **Prefer this over a permanent `EffectComponentData`** when the effect is event-driven: an `EffectComponent` is enabled by default and auto-plays once on spawn (a stray puff at scene start), and script only exposes `reset()`. An event spawns strictly on `raise`, with no initial play.
+- The spawned effect inherits the entity's transform; bake any height offset into the effect's *source position* (or pass a `raise` offset) rather than moving the entity.
+- For a non-looping burst effect, set the `EffectData` `loopEnd = 0`; see the effect-authoring details and the *traktor-lua-scripting* skill for the script side (`import(traktor)`, direct component types, `getComponent`).
+]]></body>
+	<engineVersion/>
+	<published>true</published>
+	<parameters/>
+</object>
