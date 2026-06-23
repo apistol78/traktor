@@ -99,7 +99,7 @@ void ObjectPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const 
 {
 	const StyleSheet* ss = getPropertyList()->getStyleSheet();
 	canvas.setForeground(ss->getColor(this, L"color-typename"));
-	canvas.drawText(rc.inflate(-2, 0), str(L"{ %S }", type_name(m_object)), AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(-2, 0), str(L"{ %ls }", type_name(m_object)), AnLeft, AnCenter);
 }
 
 bool ObjectPropertyItem::copy()
