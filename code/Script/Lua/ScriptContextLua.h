@@ -55,6 +55,7 @@ private:
 	ScriptManagerLua* m_scriptManager;
 	lua_State*& m_luaState;
 	int32_t m_environmentRef;
+	int32_t m_errorFunctionRef;
 	bool m_strict;
 	const Object* m_lastSelf;
 	SmallSet< std::string > m_globals;

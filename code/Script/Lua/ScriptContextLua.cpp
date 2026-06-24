@@ -60,6 +60,13 @@ void ScriptContextLua::destroy()
 				m_environmentRef = LUA_NOREF;
 			}
 
+			// Release cached runtime-error message handler closure.
+			if (m_errorFunctionRef != LUA_NOREF)
+			{
+				luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_errorFunctionRef);
+				m_errorFunctionRef = LUA_NOREF;
+			}
+
 			// Perform a full garbage collect; don't want
 			// lingering objects.
 			scriptManager->collectGarbageFullNoLock();
@@ -204,8 +211,7 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 	{
 		CHECK_LUA_STACK(m_luaState, 0);
 
-		lua_pushlightuserdata(m_luaState, (void*)this);
-		lua_pushcclosure(m_luaState, runtimeError, 1);
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_errorFunctionRef);
 		const int32_t errfunc = lua_gettop(m_luaState);
 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
@@ -231,7 +237,7 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 					else if (any.isFloat())
 						lua_pushnumber(m_luaState, any.getFloatUnsafe());
 					else if (any.isString())
-						lua_pushstring(m_luaState, any.getStringUnsafe().c_str());
+						lua_pushstring(m_luaState, any.getCStringUnsafe());
 					else if (any.isObject())
 						m_scriptManager->pushObject(any.getObjectUnsafe());
 					else
@@ -268,8 +274,7 @@ Any ScriptContextLua::executeDelegate(ScriptDelegateLua* delegate, uint32_t argc
 		CHECK_LUA_STACK(m_luaState, 0);
 
 		// Push error function.
-		lua_pushlightuserdata(m_luaState, (void*)this);
-		lua_pushcclosure(m_luaState, runtimeError, 1);
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_errorFunctionRef);
 		const int32_t errfunc = lua_gettop(m_luaState);
 
 		delegate->push();
@@ -291,7 +296,7 @@ Any ScriptContextLua::executeDelegate(ScriptDelegateLua* delegate, uint32_t argc
 				else if (any.isFloat())
 					lua_pushnumber(m_luaState, any.getFloatUnsafe());
 				else if (any.isString())
-					lua_pushstring(m_luaState, any.getStringUnsafe().c_str());
+					lua_pushstring(m_luaState, any.getCStringUnsafe());
 				else if (any.isObject())
 					m_scriptManager->pushObject(any.getObjectUnsafe());
 				else
@@ -326,8 +331,7 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 		CHECK_LUA_STACK(m_luaState, 0);
 
 		// Push error function.
-		lua_pushlightuserdata(m_luaState, (void*)this);
-		lua_pushcclosure(m_luaState, runtimeError, 1);
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_errorFunctionRef);
 		const int32_t errfunc = lua_gettop(m_luaState);
 
 		// Push LUA function to call.
@@ -354,7 +358,7 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 				else if (any.isFloat())
 					lua_pushnumber(m_luaState, any.getFloatUnsafe());
 				else if (any.isString())
-					lua_pushstring(m_luaState, any.getStringUnsafe().c_str());
+					lua_pushstring(m_luaState, any.getCStringUnsafe());
 				else if (any.isObject())
 					m_scriptManager->pushObject(any.getObjectUnsafe());
 				else
@@ -387,9 +391,14 @@ ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State*& 
 :	m_scriptManager(scriptManager)
 ,	m_luaState(luaState)
 ,	m_environmentRef(environmentRef)
+,	m_errorFunctionRef(LUA_NOREF)
 ,	m_strict(strict)
 ,	m_lastSelf(nullptr)
 {
+	// Create and cache the runtime-error message handler closure.
+	lua_pushlightuserdata(m_luaState, (void*)this);
+	lua_pushcclosure(m_luaState, runtimeError, 1);
+	m_errorFunctionRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 }
 
 int32_t ScriptContextLua::runtimeError(lua_State* luaState)

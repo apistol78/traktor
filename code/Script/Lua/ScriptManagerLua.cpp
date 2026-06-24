@@ -810,7 +810,7 @@ void ScriptManagerLua::collectGarbagePartial()
 	int32_t targetSteps = int32_t(m_collectTargetSteps);
 	while (m_collectSteps < targetSteps)
 	{
-		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
+		lua_gc(m_luaState, LUA_GCSTEP, 0);
 		++m_collectSteps;
 	}
 
