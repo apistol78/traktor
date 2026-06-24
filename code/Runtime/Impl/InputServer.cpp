@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Runtime/Impl/InputServer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -162,7 +163,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 void InputServer::destroy()
 {
 	m_rumbleEffectPlayer = nullptr;
-	m_inputSystem = nullptr;
+	safeDestroy(m_inputSystem);
 }
 
 int32_t InputServer::reconfigure(const PropertyGroup* settings)

@@ -37,15 +37,17 @@ class T_DLLCLASS InputDriverLinux : public IInputDriver
 public:
 	virtual ~InputDriverLinux();
 
-	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories) override;
+	virtual void destroy() override final;
 
-	virtual int getDeviceCount() override;
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories) override final;
 
-	virtual Ref< IInputDevice > getDevice(int index) override;
+	virtual int getDeviceCount() override final;
 
-	virtual UpdateResult update() override;
+	virtual Ref< IInputDevice > getDevice(int index) override final;
 
-	virtual void setSize(int32_t width, int32_t height) override;
+	virtual UpdateResult update() override final;
+
+	virtual void setSize(int32_t width, int32_t height) override final;
 
 private:
 	// Wayland connection (display + surface are borrowed from the renderer).

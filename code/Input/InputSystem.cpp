@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,6 +15,18 @@ namespace traktor::input
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputSystem", InputSystem, Object)
+
+void InputSystem::destroy()
+{
+	for (auto device : m_devices)
+		device->destroy();
+
+	for (auto driver : m_drivers)
+		driver->destroy();
+
+	m_devices.clear();
+	m_drivers.clear();
+}
 
 void InputSystem::addDriver(IInputDriver* inputDriver)
 {

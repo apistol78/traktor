@@ -93,34 +93,78 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverLinux", 0, InputDriver
 
 InputDriverLinux::~InputDriverLinux()
 {
+	destroy();
+}
+
+void InputDriverLinux::destroy()
+{
 	if (m_lockedPointer)
+	{
 		zwp_locked_pointer_v1_destroy(m_lockedPointer);
+		m_lockedPointer = nullptr;
+	}
 	if (m_relativePointer)
+	{
 		zwp_relative_pointer_v1_destroy(m_relativePointer);
+		m_relativePointer = nullptr;
+	}
 	if (m_pointerConstraints)
+	{
 		zwp_pointer_constraints_v1_destroy(m_pointerConstraints);
+		m_pointerConstraints = nullptr;
+	}
 	if (m_relativePointerManager)
+	{
 		zwp_relative_pointer_manager_v1_destroy(m_relativePointerManager);
+		m_relativePointerManager = nullptr;
+	}
 	if (m_pointer)
+	{
 		wl_pointer_destroy(m_pointer);
+		m_pointer = nullptr;
+	}
 	if (m_keyboard)
+	{
 		wl_keyboard_destroy(m_keyboard);
+		m_keyboard = nullptr;
+	}
 	if (m_seat)
+	{
 		wl_seat_destroy(m_seat);
+		m_seat = nullptr;
+	}
 	if (m_registry)
+	{
 		wl_registry_destroy(m_registry);
+		m_registry = nullptr;
+	}
 	if (m_xkbState)
+	{
 		xkb_state_unref(m_xkbState);
+		m_xkbState = nullptr;
+	}
 	if (m_xkbKeymap)
+	{
 		xkb_keymap_unref(m_xkbKeymap);
+		m_xkbKeymap = nullptr;
+	}
 	if (m_xkbContext)
+	{
 		xkb_context_unref(m_xkbContext);
+		m_xkbContext = nullptr;
+	}
 
 	// Note: the wl_display is owned by the renderer and must not be disconnected.
 	if (m_display && m_eventQueue)
+	{
 		wl_display_flush(m_display);
+		m_display = nullptr;
+	}
 	if (m_eventQueue)
+	{
 		wl_event_queue_destroy(m_eventQueue);
+		m_eventQueue = nullptr;
+	}
 }
 
 bool InputDriverLinux::create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories)
