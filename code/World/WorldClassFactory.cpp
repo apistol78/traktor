@@ -76,6 +76,16 @@ RefArray< Entity > World_getEntities_2(World* self, const std::wstring& name)
 	return self->getEntities(name);
 }
 
+RefArray< Entity > World_getEntitiesWithinRange_1(World* self, const Vector4& position, float range)
+{
+	return self->getEntitiesWithinRange(position, range);
+}
+
+RefArray< Entity > World_getEntitiesWithinRange_2(World* self, const std::wstring& name, const Vector4& position, float range)
+{
+	return self->getEntitiesWithinRange(name, position, range);
+}
+
 void IEntityEventInstance_cancelImmediate(IEntityEventInstance* self)
 {
 	self->cancel(Cancel::Immediate);
@@ -194,7 +204,8 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorld->addMethod("getEntity", &World_getEntity_2);
 	classWorld->addMethod("getEntities", &World_getEntities_1);
 	classWorld->addMethod("getEntities", &World_getEntities_2);
-	classWorld->addMethod("getEntitiesWithinRange", &World::getEntitiesWithinRange);
+	classWorld->addMethod("getEntitiesWithinRange", &World_getEntitiesWithinRange_1);
+	classWorld->addMethod("getEntitiesWithinRange", &World_getEntitiesWithinRange_2);
 	registrar->registerClass(classWorld);
 
 	auto classIEntityEventInstance = new AutoRuntimeClass< IEntityEventInstance >();

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,6 +26,7 @@ const render::Handle ShaderTechnique::Shadow(L"World_ShadowWrite");
 // Permutations
 const render::Handle ShaderPermutation::IrradianceEnable(L"World_IrradianceEnable");
 const render::Handle ShaderPermutation::IrradianceSingle(L"World_IrradianceSingle");
+const render::Handle ShaderPermutation::IrradianceFieldEnable(L"World_IrradianceFieldEnable");
 const render::Handle ShaderPermutation::VolumetricFogEnable(L"World_VolumetricFogEnable");
 const render::Handle ShaderPermutation::ColorGradingEnable(L"World_ColorGradingEnable");
 const render::Handle ShaderPermutation::RayTracingEnable(L"World_RayTracingEnable");

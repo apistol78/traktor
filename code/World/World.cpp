@@ -155,6 +155,21 @@ RefArray< Entity > World::getEntitiesWithinRange(const Vector4& position, float 
 	return entities;
 }
 
+RefArray< Entity > World::getEntitiesWithinRange(const std::wstring& name, const Vector4& position, float range) const
+{
+	RefArray< Entity > entities;
+	for (auto entity : m_entities)
+	{
+		if (entity->getName() == name)
+		{
+			const Scalar distance = (entity->getTransform().translation() - position).xyz0().length();
+			if (distance <= range)
+				entities.push_back(entity);
+		}
+	}
+	return entities;
+}
+
 void World::update(const UpdateParams& update)
 {
 	// Update all world components.
