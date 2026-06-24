@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mcp.SkillAsset">
+	<name>stage-transitions-and-menus</name>
+	<description>Build worldless startup/menu stages and wire transitions between traktor runtime stages (boot config, transition map, async stage loading).</description>
+	<whenToUse><![CDATA[Asked to add a start/menu/splash/loading/level-select screen, switch between stages (e.g. a "back to menu" or "exit" button), choose which stage the game boots into, or otherwise navigate between traktor.runtime.StageData stages from script.]]></whenToUse>
+	<body><![CDATA[# Stage transitions and menu stages
+
+How to add stages, switch between them from script, and build a worldless startup/menu stage in traktor. A *stage* (`traktor.runtime.StageData`) is one high-level app state — an ordered list of `layers`, a `class` script, and a `transitions` map. For widgets inside a stage see *uikit-hud-menus*; for script idioms see *traktor-lua-scripting*.]]></body>
+	<engineVersion/>
+	<published>true</published>
+	<parameters/>
+</object>
