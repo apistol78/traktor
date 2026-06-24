@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -89,24 +89,32 @@ public:
 
 	/*! Get math operator. */
 	virtual const IRuntimeDispatch* getOperatorDispatch(Operator op) const = 0;
+
+	/*! Check if instances are immutable value types.
+	 *
+	 * Value types don't require reference identity nor script-side field
+	 * attachment and may therefore be represented more efficiently in
+	 * script land.
+	 */
+	virtual bool isValueType() const = 0;
 };
 
-/*! \brief
+/*!
  * \ingroup Core
  */
 Ref< ITypedObject > T_DLLCLASS createRuntimeClassInstance(const IRuntimeClass* runtimeClass, ITypedObject* self, uint32_t argc, const Any* argv);
 
-/*! \brief
+/*!
  * \ingroup Core
  */
 const IRuntimeDispatch T_DLLCLASS * findRuntimeClassMethod(const IRuntimeClass* runtimeClass, const std::string& methodName);
 
-/*! \brief
+/*!
  * \ingroup Core
  */
 std::string T_DLLCLASS findRuntimeClassMethodName(const IRuntimeClass* runtimeClass, const IRuntimeDispatch* methodDispatch);
 
-/*! \brief
+/*!
  * \ingroup Core
  */
 std::string T_DLLCLASS findRuntimeClassPropertyName(const IRuntimeClass* runtimeClass, const IRuntimeDispatch* propertyDispatch);

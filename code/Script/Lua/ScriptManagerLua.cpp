@@ -44,24 +44,53 @@ Timer s_timer;
 const int32_t c_tableKey_class = -1;
 const int32_t c_tableKey_instance = -2;
 
+// Extract the native object from an instance at the given index. Reference types
+// are stored as tables (pointer in c_tableKey_instance), value types as full
+// userdata whose payload is the boxed object pointer itself. The caller must
+// already know the value at the index is one of our instances (e.g. self in a
+// method call); use isNativeInstance() when the value may be foreign.
 inline ITypedObject* toTypedObject(lua_State* luaState, int32_t index)
 {
-	lua_rawgeti(luaState, index, c_tableKey_instance);
-	if (!lua_islightuserdata(luaState, -1))
+	const int type = lua_type(luaState, index);
+	if (type == LUA_TUSERDATA)
 	{
-		lua_pop(luaState, 1);
-		return nullptr;
+		void* ud = lua_touserdata(luaState, index);
+		return ud ? *(ITypedObject**)ud : nullptr;
 	}
-
-	ITypedObject* object = (ITypedObject*)lua_touserdata(luaState, -1);
-	if (!object)
+	else if (type == LUA_TTABLE)
 	{
+		lua_rawgeti(luaState, index, c_tableKey_instance);
+		ITypedObject* object = lua_islightuserdata(luaState, -1) ? (ITypedObject*)lua_touserdata(luaState, -1) : nullptr;
 		lua_pop(luaState, 1);
-		return nullptr;
+		return object;
 	}
+	return nullptr;
+}
 
-	lua_pop(luaState, 1);
-	return object;
+// Determine whether the value at index is one of our native instances. Safe to
+// call on arbitrary values (foreign userdata, numbers, etc.).
+inline bool isNativeInstance(lua_State* luaState, int32_t index)
+{
+	const int type = lua_type(luaState, index);
+	if (type == LUA_TTABLE)
+	{
+		lua_rawgeti(luaState, index, c_tableKey_instance);
+		const bool result = (lua_islightuserdata(luaState, -1) != 0);
+		lua_pop(luaState, 1);
+		return result;
+	}
+	else if (type == LUA_TUSERDATA)
+	{
+		// Native value boxes carry the runtime class as a light-userdata
+		// marker (c_tableKey_class) in their metatable.
+		if (!lua_getmetatable(luaState, index))
+			return false;
+		lua_rawgeti(luaState, -1, c_tableKey_class);
+		const bool result = (lua_islightuserdata(luaState, -1) != 0);
+		lua_pop(luaState, 2);
+		return result;
+	}
+	return false;
 }
 
 inline void getObjectRef(lua_State* L, int32_t objectTableRef, ITypedObject* object)
@@ -205,6 +234,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 
 	RegisteredClass& rc = m_classRegistry.push_back();
 	rc.runtimeClass = runtimeClass;
+	rc.isValueType = runtimeClass->isValueType();
 
 	// Create new class.
 	lua_getglobal(m_luaState, "class");
@@ -234,13 +264,29 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	lua_pushcfunction(m_luaState, classGc);
 	lua_setfield(m_luaState, -2, "__gc");
 
-	// Create "new" callback to be able to instantiate C++ object when creating from script side.
+	// Create constructor callback to instantiate the C++ object from script side.
+	// Value types build a userdata directly via an overridden "__call" metamethod;
+	// reference types use a "new" callback that populates the instance table
+	// created by the Lua "class" helper.
 	if (runtimeClass->getConstructorDispatch())
 	{
-		lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getConstructorDispatch());
-		lua_pushinteger(m_luaState, classRegistryIndex);
-		lua_pushcclosure(m_luaState, classNew, 2);
-		lua_setfield(m_luaState, -2, "new");
+		if (rc.isValueType)
+		{
+			lua_getmetatable(m_luaState, -1);
+			T_FATAL_ASSERT(lua_istable(m_luaState, -1));
+			lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getConstructorDispatch());
+			lua_pushinteger(m_luaState, classRegistryIndex);
+			lua_pushcclosure(m_luaState, classNewValue, 2);
+			lua_setfield(m_luaState, -2, "__call");
+			lua_pop(m_luaState, 1);
+		}
+		else
+		{
+			lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getConstructorDispatch());
+			lua_pushinteger(m_luaState, classRegistryIndex);
+			lua_pushcclosure(m_luaState, classNew, 2);
+			lua_setfield(m_luaState, -2, "new");
+		}
 	}
 
 	// Add static methods.
@@ -515,12 +561,6 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 		return;
 	}
 
-	// Get cached script-land table of this instance.
-	getObjectRef(m_luaState, m_objectTableRef, object);
-	if (lua_istable(m_luaState, -1))
-		return;
-	lua_pop(m_luaState, 1);
-
 	// Get class index.
 	uint32_t classId = 0;
 	if (objectType.getTag() != 0)
@@ -532,6 +572,25 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 	}
 
 	const RegisteredClass& rc = m_classRegistry[classId];
+
+	// Value types are represented as full userdata holding the boxed pointer.
+	// They carry no script-side identity, so we skip the weak instance cache
+	// and the table allocation entirely.
+	if (rc.isValueType)
+	{
+		ITypedObject** ud = (ITypedObject**)lua_newuserdatauv(m_luaState, sizeof(ITypedObject*), 0);
+		*ud = object;
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef);
+		lua_setmetatable(m_luaState, -2);
+		T_SAFE_ADDREF(object);
+		return;
+	}
+
+	// Get cached script-land table of this instance.
+	getObjectRef(m_luaState, m_objectTableRef, object);
+	if (lua_istable(m_luaState, -1))
+		return;
+	lua_pop(m_luaState, 1);
 
 	// Create table to act as object instance in script-land.
 	lua_newtable(m_luaState);
@@ -641,6 +700,25 @@ Any ScriptManagerLua::toAny(int32_t index)
 		return Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));
 	case LUA_TSTRING:
 		return Any::fromString(lua_tostring(m_luaState, index));
+	case LUA_TUSERDATA:
+		{
+			// Native value-type instance (full userdata holding the boxed pointer).
+			const int32_t aindex = lua_absindex(m_luaState, index);
+			if (lua_getmetatable(m_luaState, aindex))
+			{
+				lua_rawgeti(m_luaState, -1, c_tableKey_class);
+				const bool ours = (lua_islightuserdata(m_luaState, -1) != 0);
+				lua_pop(m_luaState, 2);
+				if (ours)
+				{
+					void* ud = lua_touserdata(m_luaState, aindex);
+					ITypedObject* object = ud ? *(ITypedObject**)ud : nullptr;
+					if (object)
+						return Any::fromObject(object);
+				}
+			}
+			break;
+		}
 	case LUA_TTABLE:
 		{
 			// Get associated native object.
@@ -706,6 +784,28 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 			break;
 		case LUA_TSTRING:
 			outAnys[i] = Any::fromString(lua_tostring(m_luaState, index));
+			break;
+		case LUA_TUSERDATA:
+			{
+				// Native value-type instance (full userdata holding the boxed pointer).
+				const int32_t aindex = lua_absindex(m_luaState, index);
+				if (lua_getmetatable(m_luaState, aindex))
+				{
+					lua_rawgeti(m_luaState, -1, c_tableKey_class);
+					const bool ours = (lua_islightuserdata(m_luaState, -1) != 0);
+					lua_pop(m_luaState, 2);
+					if (ours)
+					{
+						void* ud = lua_touserdata(m_luaState, aindex);
+						ITypedObject* object = ud ? *(ITypedObject**)ud : nullptr;
+						if (object)
+						{
+							outAnys[i] = Any::fromObject(object);
+							continue;
+						}
+					}
+				}
+			}
 			break;
 		case LUA_TTABLE:
 			{
@@ -954,6 +1054,48 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 	return 0;
 }
 
+int ScriptManagerLua::classNewValue(lua_State* luaState)
+{
+	const int32_t classId = (int32_t)lua_tointeger(luaState, lua_upvalueindex(2));
+	const RegisteredClass& rc = ms_instance->m_classRegistry[classId];
+
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT(runtimeDispatch);
+
+	// Invoked as the class table's "__call"; argument 1 is the class table,
+	// constructor arguments follow.
+	const int32_t top = lua_gettop(luaState);
+
+	Any argv[8];
+	ms_instance->toAny(2, top - 1, argv);
+
+#if T_VERIFY_USING_EXCEPTIONS
+	try
+#endif
+	{
+		Ref< ITypedObject > object = runtimeDispatch->invoke(0, top - 1, argv).getObject();
+		if (!object) [[unlikely]]
+			return 0;
+
+		// Represent the value type as full userdata holding the boxed pointer.
+		ITypedObject** ud = (ITypedObject**)lua_newuserdatauv(luaState, sizeof(ITypedObject*), 0);
+		*ud = object.ptr();
+		lua_rawgeti(luaState, LUA_REGISTRYINDEX, rc.classTableRef);
+		lua_setmetatable(luaState, -2);
+		T_SAFE_ANONYMOUS_ADDREF(object);
+		return 1;
+	}
+#if T_VERIFY_USING_EXCEPTIONS
+	catch(const RuntimeException& x)
+	{
+		log::error << L"Unhandled RuntimeException occurred when calling constructor, class " << rc.runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
+		ms_instance->breakDebugger(luaState);
+	}
+#endif
+
+	return 0;
+}
+
 int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 {
 	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
@@ -1151,12 +1293,12 @@ int ScriptManagerLua::classAdd(lua_State* luaState)
 	ITypedObject* object = nullptr;
 	Any arg;
 
-	if (lua_istable(luaState, 1))
+	if (isNativeInstance(luaState, 1))
 	{
 		object = toTypedObject(luaState, 1);
 		arg = ms_instance->toAny(2);
 	}
-	else if (lua_isuserdata(luaState, 2))
+	else if (isNativeInstance(luaState, 2))
 	{
 		object = toTypedObject(luaState, 2);
 		arg = ms_instance->toAny(1);
@@ -1199,7 +1341,7 @@ int ScriptManagerLua::classSubtract(lua_State* luaState)
 	if (top < 1) [[unlikely]]
 		return 0;
 
-	ITypedObject* object = toTypedObject(luaState, 1);
+	ITypedObject* object = isNativeInstance(luaState, 1) ? toTypedObject(luaState, 1) : nullptr;
 	if (!object) [[unlikely]]
 	{
 		log::error << L"Unable to call subtract operator, class " << runtimeClass->getExportType().getName() << L"; null object" << Endl;
@@ -1242,12 +1384,12 @@ int ScriptManagerLua::classMultiply(lua_State* luaState)
 	ITypedObject* object = nullptr;
 	Any arg;
 
-	if (lua_istable(luaState, 1))
+	if (isNativeInstance(luaState, 1))
 	{
 		object = toTypedObject(luaState, 1);
 		arg = ms_instance->toAny(2);
 	}
-	else if (lua_isuserdata(luaState, 2))
+	else if (isNativeInstance(luaState, 2))
 	{
 		object = toTypedObject(luaState, 2);
 		arg = ms_instance->toAny(1);
@@ -1290,7 +1432,7 @@ int ScriptManagerLua::classDivide(lua_State* luaState)
 	if (top < 1) [[unlikely]]
 		return 0;
 
-	ITypedObject* object = toTypedObject(luaState, 1);
+	ITypedObject* object = isNativeInstance(luaState, 1) ? toTypedObject(luaState, 1) : nullptr;
 	if (!object) [[unlikely]]
 	{
 		log::error << L"Unable to call divide operator, class " << runtimeClass->getExportType().getName() << L"; null object" << Endl;
@@ -1340,6 +1482,10 @@ int ScriptManagerLua::classNewIndex(lua_State* luaState)
 		return 1;
 	}
 	DO_1(luaState, lua_pop(luaState, 2)							);
+
+	// Value-type instances are userdata and cannot carry arbitrary fields.
+	if (lua_isuserdata(luaState, 1))
+		return luaL_error(luaState, "Cannot assign field to value type instance");
 
 	// Associate value on instance table.
 	DO_1(luaState, lua_rawset(luaState, -3)						);

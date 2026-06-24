@@ -105,6 +105,7 @@ private:
 	{
 		Ref< const IRuntimeClass > runtimeClass;
 		int32_t classTableRef;
+		bool isValueType;
 	};
 
 	lua_State* m_luaState;
@@ -139,6 +140,8 @@ private:
 	static int classGc(lua_State* luaState);
 
 	static int classNew(lua_State* luaState);
+
+	static int classNewValue(lua_State* luaState);
 
 	static int classCallUnknownMethod(lua_State* luaState);
 

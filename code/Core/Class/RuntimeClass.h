@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,6 +31,12 @@ public:
 	T_NO_COPY_CLASS(RuntimeClass);
 
 	RuntimeClass() = default;
+
+	/*! Mark instances of this class as immutable value types. */
+	void setValueType(bool valueType = true);
+
+	/*! */
+	virtual bool isValueType() const override final;
 
 	/*! \name Constants */
 	/*! \{ */
@@ -90,6 +96,7 @@ protected:
 		Ref< IRuntimeDispatch > getter;
 	};
 
+	bool m_valueType = false;
 	uint32_t m_constructorArgc = 0;
 	Ref< IRuntimeDispatch > m_constructor;
 	AlignedVector< ConstInfo > m_consts;
