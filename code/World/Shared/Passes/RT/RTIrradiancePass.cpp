@@ -108,7 +108,14 @@ bool RTIrradiancePass::create(resource::IResourceManager* resourceManager, rende
 	m_persistentReservoirBuffers[1] = render::Handle(render::getParameterHandle(std::wstring(L"World_Reservoir_Odd_") + id));
 
 	// Use half-resolution output if high quality or less.
-	m_halfResolution = (bool)(desc.quality.irradiance <= Quality::High);
+	//
+	//        | Half res | Irr field
+	// Medium |   Yes    |    Yes
+	// High   |    No    |    Yes
+	// Ultra  |    No    |     No
+	//
+	m_halfResolution = (bool)(desc.quality.irradiance <= Quality::Medium);
+	m_useIrradianceField = (bool)(desc.quality.irradiance <= Quality::High);
 	return true;
 }
 
@@ -267,6 +274,7 @@ render::RGTargetSet RTIrradiancePass::setup(
 			render::Shader::Permutation perm(s_handleTechniqueIrradiance_RT);
 			m_irradianceComputeShader->setCombination(ShaderPermutation::IrradianceEnable, irradianceEnable, perm);
 			m_irradianceComputeShader->setCombination(ShaderPermutation::IrradianceSingle, irradianceSingle, perm);
+			m_irradianceComputeShader->setCombination(ShaderPermutation::IrradianceFieldEnable, m_useIrradianceField, perm);
 
 			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Irradiance compute");
 			renderBlock->program = m_irradianceComputeShader->getProgram(perm).program;

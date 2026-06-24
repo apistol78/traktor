@@ -21,7 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.IrradiancePass", IrradiancePass, Object)
 
 bool IrradiancePass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
-	if (desc.quality.irradiance >= Quality::High && desc.rt && renderSystem->supportRayTracing())
+	if (desc.quality.irradiance >= Quality::Medium && desc.rt && renderSystem->supportRayTracing())
 	{
 		m_rt = new RTIrradiancePass();
 		if (!m_rt->create(resourceManager, renderSystem, desc))

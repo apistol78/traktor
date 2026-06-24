@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>-2129</first>
-				<second>-2407</second>
+				<second>-2405</second>
 			</position>
 			<fragmentGuid>{18AC659A-8AB8-5C45-8FBF-BC2B344BFE87}</fragmentGuid>
 			<inputPins>
@@ -33,7 +33,7 @@
 			<comment/>
 			<position>
 				<first>-2369</first>
-				<second>-2289</second>
+				<second>-2291</second>
 			</position>
 			<name>L_TexCoord</name>
 		</item>
@@ -41,8 +41,8 @@
 			<id>{5AA873C8-99FE-0F49-873A-EAC0E36A656A}</id>
 			<comment/>
 			<position>
-				<first>-1552</first>
-				<second>-967</second>
+				<first>-1547</first>
+				<second>-886</second>
 			</position>
 			<name>Raytracing</name>
 			<technique>World_ComputeIrradiance_RT</technique>
@@ -118,6 +118,10 @@
 				<item>
 					<id>{F16CFD45-549F-8C44-9075-C99984FCD8B8}</id>
 					<name>IrradianceField</name>
+				</item>
+				<item>
+					<id>{67B9FFAB-C0DA-41C8-9615-B700B99D057A}</id>
+					<name>UseIrradianceField</name>
 				</item>
 			</inputPins>
 			<outputPins/>
@@ -249,26 +253,29 @@ if (pt.x < sz.x && pt.y < sz.y)
 				{
 					const vec3 hit = rayOrigin + rayDir * t;
 					const float attenuate = LightAttenuation(t);
-#if 0
-					for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
+
+					if ($UseIrradianceField == 0)
 					{
-						const $typeof(Lights) light = $Lights[lightIndex];
-						const vec4 incident = HWRT_Light_CalculateIncidentLight(
-							$AS,
-							$ViewInverse,
-							light,
-							hit,
-							m.normal.xyz,
-							true
-						);
-						Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
+						for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
+						{
+							const $typeof(Lights) light = $Lights[lightIndex];
+							const vec4 incident = HWRT_Light_CalculateIncidentLight(
+								$AS,
+								$ViewInverse,
+								light,
+								hit,
+								m.normal.xyz,
+								true
+							);
+							Nacc += (m.albedo * incident.xyz * attenuate * phi * PI).xyz;
+						}
 					}
-#else
+					else
 					{
 						const vec3 incident = SampleIrradianceField($IrradianceField, $ViewInverse, hit);
 						Nacc += (m.albedo * incident * attenuate * phi * PI * 2.0f).xyz;
 					}
-#endif
+
 					Nacc += m.albedo * m.emissive * attenuate * phi * PI;
 
 #if USE_SECOND_BOUNCE
@@ -285,25 +292,27 @@ if (pt.x < sz.x && pt.y < sz.y)
 							const vec3 hit2 = hit + secondRayDir * t;
 							const float attenuate2 = LightAttenuation(t2);
 	
-/*
-							for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
+							if ($UseIrradianceField == 0)
 							{
-								const float pdfRandomLight = 1.0f; // 1.0f / max($LightCount, 1);
-								//const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
-								const $typeof(Lights) light = $Lights[lightIndex];
-			
-								const vec4 incident = HWRT_Light_CalculateIncidentLight(
-									$AS,
-									$ViewInverse,
-									light,
-									hit2,
-									m2.normal.xyz,
-									true
-								);
-			
-								Sacc += (m2.albedo * incident.xyz * attenuate2 * phi * PI / pdfRandomLight).xyz;
+								for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
+								{
+									const float pdfRandomLight = 1.0f; // 1.0f / max($LightCount, 1);
+									//const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
+									const $typeof(Lights) light = $Lights[lightIndex];
+				
+									const vec4 incident = HWRT_Light_CalculateIncidentLight(
+										$AS,
+										$ViewInverse,
+										light,
+										hit2,
+										m2.normal.xyz,
+										true
+									);
+				
+									Sacc += (m2.albedo * incident.xyz * attenuate2 * phi * PI / pdfRandomLight).xyz;
+								}
 							}
-*/
+							else
 							{
 								const vec3 incident = SampleIrradianceField($IrradianceField, $ViewInverse, hit2);
 								Sacc += (m2.albedo * incident * attenuate2 * phi * PI * 2.0f).xyz;
@@ -361,15 +370,15 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<comment/>
 			<position>
 				<first>-1829</first>
-				<second>-1263</second>
+				<second>-1239</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{72B0215A-07BF-7E4E-ADEA-9D796B9EB0CD}</id>
 			<comment/>
 			<position>
-				<first>-2064</first>
-				<second>-1243</second>
+				<first>-2069</first>
+				<second>-1221</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -377,8 +386,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{456643BE-2442-B544-8561-9DA08E681109}</id>
 			<comment/>
 			<position>
-				<first>-2296</first>
-				<second>-1243</second>
+				<first>-2301</first>
+				<second>-1221</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -387,15 +396,15 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<comment/>
 			<position>
 				<first>-1829</first>
-				<second>-1161</second>
+				<second>-1140</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{9D74B05E-EC09-E342-839C-006F965973B9}</id>
 			<comment/>
 			<position>
-				<first>-2064</first>
-				<second>-1115</second>
+				<first>-2069</first>
+				<second>-1093</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -403,8 +412,8 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<id>{86D624E3-EEF3-E146-BA93-139506322BE9}</id>
 			<comment/>
 			<position>
-				<first>-2296</first>
-				<second>-1115</second>
+				<first>-2301</first>
+				<second>-1093</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -413,7 +422,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 			<comment/>
 			<position>
 				<first>-1805</first>
-				<second>-1059</second>
+				<second>-1041</second>
 			</position>
 			<name>Random</name>
 			<technique/>
@@ -449,8 +458,8 @@ $Output = BlueNoise(seed);
 			<id>{17849A29-E1D2-C24C-A0E0-3395541637C2}</id>
 			<comment/>
 			<position>
-				<first>-2064</first>
-				<second>-987</second>
+				<first>-2069</first>
+				<second>-965</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -459,7 +468,7 @@ $Output = BlueNoise(seed);
 			<comment/>
 			<position>
 				<first>-1655</first>
-				<second>-2321</second>
+				<second>-2323</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -468,7 +477,7 @@ $Output = BlueNoise(seed);
 			<comment/>
 			<position>
 				<first>-1863</first>
-				<second>-2321</second>
+				<second>-2323</second>
 			</position>
 			<swizzle>yzw</swizzle>
 		</item>
@@ -477,7 +486,7 @@ $Output = BlueNoise(seed);
 			<comment/>
 			<position>
 				<first>-2129</first>
-				<second>-2305</second>
+				<second>-2306</second>
 			</position>
 			<minFilter>Point</minFilter>
 			<mipFilter>Point</mipFilter>
@@ -495,7 +504,7 @@ $Output = BlueNoise(seed);
 			<comment/>
 			<position>
 				<first>-1655</first>
-				<second>-2389</second>
+				<second>-2388</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -504,7 +513,7 @@ $Output = BlueNoise(seed);
 			<comment/>
 			<position>
 				<first>-1863</first>
-				<second>-2389</second>
+				<second>-2388</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -551,7 +560,7 @@ $TexCoord = vec4(
 			<id>{A927EB94-B689-714F-BFAC-F202DAF2F8AA}</id>
 			<comment/>
 			<position>
-				<first>-1671</first>
+				<first>-1655</first>
 				<second>-2615</second>
 			</position>
 			<name>L_TexCoord</name>
@@ -560,8 +569,8 @@ $TexCoord = vec4(
 			<id>{766B8B3D-F012-7041-B805-D59CE2D64887}</id>
 			<comment/>
 			<position>
-				<first>-2120</first>
-				<second>-1970</second>
+				<first>-2112</first>
+				<second>-1972</second>
 			</position>
 			<value>-0.5, 0.5, 0, 0</value>
 		</item>
@@ -570,7 +579,7 @@ $TexCoord = vec4(
 			<comment/>
 			<position>
 				<first>-2122</first>
-				<second>-2104</second>
+				<second>-2101</second>
 			</position>
 			<minFilter>Linear</minFilter>
 			<mipFilter>Linear</mipFilter>
@@ -588,7 +597,7 @@ $TexCoord = vec4(
 			<comment/>
 			<position>
 				<first>-1856</first>
-				<second>-2054</second>
+				<second>-2052</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
@@ -596,7 +605,7 @@ $TexCoord = vec4(
 			<comment/>
 			<position>
 				<first>-1622</first>
-				<second>-2036</second>
+				<second>-2035</second>
 			</position>
 			<name>L_Velocity</name>
 		</item>
@@ -605,7 +614,7 @@ $TexCoord = vec4(
 			<comment/>
 			<position>
 				<first>-1800</first>
-				<second>-589</second>
+				<second>-459</second>
 			</position>
 			<name>L_Velocity</name>
 		</item>
@@ -632,7 +641,7 @@ $TexCoord = vec4(
 			<comment/>
 			<position>
 				<first>-1478</first>
-				<second>-1734</second>
+				<second>-1732</second>
 			</position>
 			<parameterName>World_IrradianceEnable</parameterName>
 		</item>
@@ -641,7 +650,7 @@ $TexCoord = vec4(
 			<comment/>
 			<position>
 				<first>-2308</first>
-				<second>-1793</second>
+				<second>-1791</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
@@ -649,7 +658,7 @@ $TexCoord = vec4(
 			<comment/>
 			<position>
 				<first>-2308</first>
-				<second>-1665</second>
+				<second>-1663</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -711,7 +720,7 @@ $TexCoord = vec4(
 			<comment/>
 			<position>
 				<first>-1742</first>
-				<second>-1644</second>
+				<second>-1646</second>
 			</position>
 			<color>0, 0, 0, 1</color>
 			<linear>false</linear>
@@ -721,7 +730,7 @@ $TexCoord = vec4(
 			<comment/>
 			<position>
 				<first>-2042</first>
-				<second>-1793</second>
+				<second>-1791</second>
 			</position>
 			<fragmentGuid>{1F5FB15A-CCA0-264F-A150-7EDEAD93E644}</fragmentGuid>
 			<inputPins>
@@ -743,7 +752,7 @@ $TexCoord = vec4(
 			<comment/>
 			<position>
 				<first>-1744</first>
-				<second>-1774</second>
+				<second>-1771</second>
 			</position>
 			<parameterName>World_IrradianceSingle</parameterName>
 		</item>
@@ -761,7 +770,7 @@ $TexCoord = vec4(
 			<comment/>
 			<position>
 				<first>-1800</first>
-				<second>-525</second>
+				<second>-395</second>
 			</position>
 			<name>L_Sky</name>
 		</item>
@@ -778,8 +787,8 @@ $TexCoord = vec4(
 			<id>{B46D8DBA-7927-4F74-B9A5-D85117428DF8}</id>
 			<comment/>
 			<position>
-				<first>-1595</first>
-				<second>-332</second>
+				<first>-1564</first>
+				<second>-82</second>
 			</position>
 			<name>Pass</name>
 			<technique>World_ComputeIrradiance</technique>
@@ -812,8 +821,8 @@ imageStore($Output, pt, $Sky);
 			<id>{62BCF65D-1878-41FF-A232-221EE0CA6CDD}</id>
 			<comment/>
 			<position>
-				<first>-1827</first>
-				<second>-258</second>
+				<first>-1804</first>
+				<second>-11</second>
 			</position>
 			<name>L_Sky</name>
 		</item>
@@ -821,8 +830,8 @@ imageStore($Output, pt, $Sky);
 			<id>{8E7139B2-A610-4147-9C76-1E482363ED13}</id>
 			<comment/>
 			<position>
-				<first>-2132</first>
-				<second>-2603</second>
+				<first>-2124</first>
+				<second>-2605</second>
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
@@ -830,8 +839,8 @@ imageStore($Output, pt, $Sky);
 			<id>{7C02A07C-F6D9-0E40-8E5A-FD9E647D6F78}</id>
 			<comment/>
 			<position>
-				<first>-1908</first>
-				<second>-2633</second>
+				<first>-1892</first>
+				<second>-2632</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
@@ -839,7 +848,7 @@ imageStore($Output, pt, $Sky);
 			<comment/>
 			<position>
 				<first>-1655</first>
-				<second>-2257</second>
+				<second>-2259</second>
 			</position>
 			<name>L_Depth</name>
 		</item>
@@ -848,7 +857,7 @@ imageStore($Output, pt, $Sky);
 			<comment/>
 			<position>
 				<first>-1863</first>
-				<second>-2257</second>
+				<second>-2259</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -857,7 +866,7 @@ imageStore($Output, pt, $Sky);
 			<comment/>
 			<position>
 				<first>-1800</first>
-				<second>-461</second>
+				<second>-331</second>
 			</position>
 			<name>L_Depth</name>
 		</item>
@@ -865,8 +874,8 @@ imageStore($Output, pt, $Sky);
 			<id>{C476352F-E139-804E-BF81-9693BBF1CBE6}</id>
 			<comment/>
 			<position>
-				<first>-1911</first>
-				<second>-2697</second>
+				<first>-1895</first>
+				<second>-2696</second>
 			</position>
 			<name>L_TexCoord_NoJitter</name>
 		</item>
@@ -875,7 +884,7 @@ imageStore($Output, pt, $Sky);
 			<comment/>
 			<position>
 				<first>-2401</first>
-				<second>-2353</second>
+				<second>-2355</second>
 			</position>
 			<parameterDeclaration>{6025A87F-C360-C14D-8B20-F6D989D05434}</parameterDeclaration>
 		</item>
@@ -884,7 +893,7 @@ imageStore($Output, pt, $Sky);
 			<comment/>
 			<position>
 				<first>-1800</first>
-				<second>-1327</second>
+				<second>-1303</second>
 			</position>
 			<parameterDeclaration>{C651B846-F51A-CB49-BBAB-10C2A527DE97}</parameterDeclaration>
 		</item>
@@ -892,8 +901,8 @@ imageStore($Output, pt, $Sky);
 			<id>{EA155867-CCBE-AE41-8E20-A35692C309EC}</id>
 			<comment/>
 			<position>
-				<first>-2080</first>
-				<second>-1179</second>
+				<first>-2085</first>
+				<second>-1157</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -901,8 +910,8 @@ imageStore($Output, pt, $Sky);
 			<id>{EC132994-A202-2842-9224-78147F167F31}</id>
 			<comment/>
 			<position>
-				<first>-2080</first>
-				<second>-1051</second>
+				<first>-2085</first>
+				<second>-1029</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -910,8 +919,8 @@ imageStore($Output, pt, $Sky);
 			<id>{44D2E1B0-63B9-AB4D-A605-CAD2530E7A9A}</id>
 			<comment/>
 			<position>
-				<first>-2304</first>
-				<second>-987</second>
+				<first>-2309</first>
+				<second>-965</second>
 			</position>
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
 		</item>
@@ -920,7 +929,7 @@ imageStore($Output, pt, $Sky);
 			<comment/>
 			<position>
 				<first>-1808</first>
-				<second>-909</second>
+				<second>-893</second>
 			</position>
 			<parameterDeclaration>{1527F0C9-DD5E-5C47-8A6B-5B7932CFD43D}</parameterDeclaration>
 		</item>
@@ -929,7 +938,7 @@ imageStore($Output, pt, $Sky);
 			<comment/>
 			<position>
 				<first>-1816</first>
-				<second>-845</second>
+				<second>-715</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -937,8 +946,8 @@ imageStore($Output, pt, $Sky);
 			<id>{494823A2-B94E-A642-9474-42BBA11152AE}</id>
 			<comment/>
 			<position>
-				<first>-2401</first>
-				<second>-2678</second>
+				<first>-2417</first>
+				<second>-2679</second>
 			</position>
 			<parameterDeclaration>{2C06FC6E-5E3E-9442-BD38-EFEAD6DDDCC5}</parameterDeclaration>
 		</item>
@@ -946,8 +955,8 @@ imageStore($Output, pt, $Sky);
 			<id>{3E8EFF8F-B68F-2946-BEF7-DEA2B49B6FDB}</id>
 			<comment/>
 			<position>
-				<first>-1824</first>
-				<second>-653</second>
+				<first>-1832</first>
+				<second>-523</second>
 			</position>
 			<parameterDeclaration>{2C06FC6E-5E3E-9442-BD38-EFEAD6DDDCC5}</parameterDeclaration>
 		</item>
@@ -982,8 +991,8 @@ imageStore($Output, pt, $Sky);
 			<id>{154E6E36-FC97-A44B-8630-3CE40A88DC73}</id>
 			<comment/>
 			<position>
-				<first>-1851</first>
-				<second>-322</second>
+				<first>-1836</first>
+				<second>-75</second>
 			</position>
 			<parameterDeclaration>{2C06FC6E-5E3E-9442-BD38-EFEAD6DDDCC5}</parameterDeclaration>
 		</item>
@@ -991,8 +1000,8 @@ imageStore($Output, pt, $Sky);
 			<id>{A5649E31-5C31-174C-B335-8B2B5E423CBF}</id>
 			<comment/>
 			<position>
-				<first>-2377</first>
-				<second>-2603</second>
+				<first>-2385</first>
+				<second>-2605</second>
 			</position>
 			<parameterDeclaration>{B8AE6C9B-745D-ED43-AB69-5814E56BF99B}</parameterDeclaration>
 		</item>
@@ -1001,7 +1010,7 @@ imageStore($Output, pt, $Sky);
 			<comment/>
 			<position>
 				<first>-1816</first>
-				<second>-973</second>
+				<second>-957</second>
 			</position>
 			<parameterDeclaration>{3C048EC4-ED6A-0847-B08D-95F74407200F}</parameterDeclaration>
 		</item>
@@ -1010,7 +1019,7 @@ imageStore($Output, pt, $Sky);
 			<comment/>
 			<position>
 				<first>-1808</first>
-				<second>-781</second>
+				<second>-651</second>
 			</position>
 			<parameterDeclaration>{8B5D917E-016B-B847-82D9-873D43916888}</parameterDeclaration>
 		</item>
@@ -1019,7 +1028,7 @@ imageStore($Output, pt, $Sky);
 			<comment/>
 			<position>
 				<first>-1824</first>
-				<second>-717</second>
+				<second>-587</second>
 			</position>
 			<parameterDeclaration>{1EA8D019-E2CB-F14E-806E-39E74AFAB00E}</parameterDeclaration>
 		</item>
@@ -1028,9 +1037,36 @@ imageStore($Output, pt, $Sky);
 			<comment/>
 			<position>
 				<first>-1840</first>
-				<second>-397</second>
+				<second>-267</second>
 			</position>
 			<parameterDeclaration>{3E83158A-0056-F54E-94B0-C23DF1573D3B}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Branch" version="traktor.render.Node:1">
+			<id>{36EFD7FD-50DF-4482-8018-5DE5E52FB161}</id>
+			<comment/>
+			<position>
+				<first>-1845</first>
+				<second>-829</second>
+			</position>
+			<parameterName>World_IrradianceFieldEnable</parameterName>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{8CFD7CC5-3796-4251-B2ED-53CCD06D8D67}</id>
+			<comment/>
+			<position>
+				<first>-2064</first>
+				<second>-804</second>
+			</position>
+			<value>1</value>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{B7E547C0-CDF5-4C72-8B7A-63A44914D669}</id>
+			<comment/>
+			<position>
+				<first>-2064</first>
+				<second>-740</second>
+			</position>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1634,6 +1670,36 @@ imageStore($Output, pt, $Sky);
 				<id>{F16CFD45-549F-8C44-9075-C99984FCD8B8}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[65]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[64]"/>
+				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[66]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[64]"/>
+				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[64]"/>
+				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{67B9FFAB-C0DA-41C8-9615-B700B99D057A}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -1641,23 +1707,23 @@ imageStore($Output, pt, $Sky);
 			<comment/>
 			<position>
 				<first>-2820</first>
-				<second>-2793</second>
+				<second>-2792</second>
 			</position>
 			<size>
 				<first>1998</first>
-				<second>1282</second>
+				<second>1281</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
 			<title>Calculate irradiance GI</title>
 			<comment/>
 			<position>
-				<first>-2368</first>
-				<second>-1423</second>
+				<first>-2373</first>
+				<second>-1399</second>
 			</position>
 			<size>
-				<first>1088</first>
-				<second>1261</second>
+				<first>1098</first>
+				<second>1484</second>
 			</size>
 		</item>
 	</groups>
