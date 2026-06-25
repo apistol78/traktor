@@ -8,8 +8,9 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Ref.h"
+
+#include <string>
 
 namespace traktor::db
 {

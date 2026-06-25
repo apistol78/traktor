@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "MCP/Server/Editor/McpServerEditorPlugin.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -14,20 +16,18 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Editor/IEditor.h"
-#include "MCP/Server/McpServer.h"
+#include "MCP/Server/Editor/BuildAssetTool.h"
+#include "MCP/Server/Editor/CreateMeshFromGeometryTool.h"
 #include "MCP/Server/Editor/DatabaseListInstancesTool.h"
 #include "MCP/Server/Editor/GetWorkspaceInfoTool.h"
 #include "MCP/Server/Editor/HeightfieldQueryTool.h"
-#include "MCP/Server/Editor/CreateMeshFromGeometryTool.h"
-#include "MCP/Server/Editor/BuildAssetTool.h"
-#include "MCP/Server/Editor/InstanceDeleteTool.h"
-#include "MCP/Server/Editor/ImportTextureFromDataTool.h"
 #include "MCP/Server/Editor/ImportInstanceFromXmlTool.h"
+#include "MCP/Server/Editor/ImportTextureFromDataTool.h"
 #include "MCP/Server/Editor/InstanceCloneTool.h"
 #include "MCP/Server/Editor/InstanceCreateTool.h"
+#include "MCP/Server/Editor/InstanceDeleteTool.h"
 #include "MCP/Server/Editor/InstanceInspectTool.h"
 #include "MCP/Server/Editor/InstanceSetMemberTool.h"
-#include "MCP/Server/Editor/McpServerEditorPlugin.h"
 #include "MCP/Server/Editor/MeshAssetGetTool.h"
 #include "MCP/Server/Editor/MeshAssetSetMaterialShaderTool.h"
 #include "MCP/Server/Editor/RenderMeshPreviewTool.h"
@@ -39,6 +39,7 @@
 #include "MCP/Server/Editor/ShaderNodeCatalogTool.h"
 #include "MCP/Server/Editor/ShaderNodeDescribeTool.h"
 #include "MCP/Server/Editor/SkillTools.h"
+#include "MCP/Server/McpServer.h"
 
 namespace traktor::mcp
 {
@@ -95,7 +96,9 @@ bool McpServerEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, 
 	m_server->addTool(new SkillPublishTool(m_editor));
 	m_server->addPromptProvider(new SkillPromptProvider(m_editor));
 
-	m_threadServer = ThreadManager::getInstance().create([this]() { threadServer(); }, L"MCP server");
+	m_threadServer = ThreadManager::getInstance().create([this]() {
+		threadServer();
+	}, L"MCP server");
 	m_threadServer->start();
 
 	log::info << L"MCP server listening on http://127.0.0.1:" << m_server->getListenPort() << L"/ (" << (int32_t)m_server->getToolCount() << L" tool(s))." << Endl;

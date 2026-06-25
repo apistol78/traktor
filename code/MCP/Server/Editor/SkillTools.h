@@ -8,10 +8,11 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Ref.h"
 #include "MCP/Server/IMcpPromptProvider.h"
 #include "MCP/Server/IMcpTool.h"
+
+#include <string>
 
 namespace traktor::editor
 {
@@ -34,8 +35,11 @@ public:
 	explicit SkillCreateTool(editor::IEditor* editor);
 
 	virtual std::wstring getName() const override final;
+
 	virtual std::wstring getDescription() const override final;
+
 	virtual Ref< Json > getInputSchema() const override final;
+
 	virtual Ref< Json > invoke(const Json* arguments, std::wstring& outError) override final;
 
 private:
@@ -51,8 +55,11 @@ public:
 	explicit SkillListTool(editor::IEditor* editor);
 
 	virtual std::wstring getName() const override final;
+
 	virtual std::wstring getDescription() const override final;
+
 	virtual Ref< Json > getInputSchema() const override final;
+
 	virtual Ref< Json > invoke(const Json* arguments, std::wstring& outError) override final;
 
 private:
@@ -68,8 +75,11 @@ public:
 	explicit SkillGetTool(editor::IEditor* editor);
 
 	virtual std::wstring getName() const override final;
+
 	virtual std::wstring getDescription() const override final;
+
 	virtual Ref< Json > getInputSchema() const override final;
+
 	virtual Ref< Json > invoke(const Json* arguments, std::wstring& outError) override final;
 
 private:
@@ -85,8 +95,11 @@ public:
 	explicit SkillPublishTool(editor::IEditor* editor);
 
 	virtual std::wstring getName() const override final;
+
 	virtual std::wstring getDescription() const override final;
+
 	virtual Ref< Json > getInputSchema() const override final;
+
 	virtual Ref< Json > invoke(const Json* arguments, std::wstring& outError) override final;
 
 private:
@@ -102,6 +115,7 @@ public:
 	explicit SkillPromptProvider(editor::IEditor* editor);
 
 	virtual void listPrompts(Json* outPrompts) override final;
+
 	virtual Ref< Json > getPrompt(const std::wstring& name, const Json* arguments, std::wstring& outError) override final;
 
 private:

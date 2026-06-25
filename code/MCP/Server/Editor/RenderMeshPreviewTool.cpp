@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <vector>
+#include "MCP/Server/Editor/RenderMeshPreviewTool.h"
+
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Math/Aabb3.h"
@@ -19,17 +20,18 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Editor/IEditor.h"
-#include "Mesh/Editor/MeshAsset.h"
-#include "Mesh/Editor/MeshAssetRasterizer.h"
-#include "MCP/Server/Json.h"
 #include "MCP/Server/Editor/McpToolSupport.h"
 #include "MCP/Server/Editor/MeshAssetSupport.h"
-#include "MCP/Server/Editor/RenderMeshPreviewTool.h"
+#include "MCP/Server/Json.h"
+#include "Mesh/Editor/MeshAsset.h"
+#include "Mesh/Editor/MeshAssetRasterizer.h"
+
+#include <vector>
 
 namespace traktor::mcp
 {
-	namespace
-	{
+namespace
+{
 
 // One render per quadrant of the 2x2 contact sheet, row-major. Angles in
 // radians (yaw turns about the vertical axis, pitch tilts the camera down).
@@ -47,10 +49,10 @@ const Color4f c_background(0.22f, 0.22f, 0.24f, 1.0f);
 
 // Fallback used when the bounding box is unavailable: classic four views.
 const View c_defaultViews[] = {
-	{ L"front",         0.0f,            0.0f },
-	{ L"right",         c_halfPi,        0.0f },
-	{ L"top-down",      0.0f,            1.40f },
-	{ L"three-quarter", 0.7854f,         0.45f }
+	{ L"front", 0.0f, 0.0f },
+	{ L"right", c_halfPi, 0.0f },
+	{ L"top-down", 0.0f, 1.40f },
+	{ L"three-quarter", 0.7854f, 0.45f }
 };
 
 /*! Pick four camera angles that present the model well for its proportions.
@@ -71,30 +73,30 @@ std::vector< View > chooseViews(const Aabb3& bbox)
 	{
 		// Thinnest vertically (lies flat: floor tile, rug, debris). The footprint
 		// is the hero; tilt the rest up so the thin profile still reads.
-		views.push_back({ L"top-down",        0.0f,     1.40f });
-		views.push_back({ L"high 3/4",        0.61f,    0.92f });
-		views.push_back({ L"high 3/4 (alt)",  c_halfPi, 0.92f });
-		views.push_back({ L"low profile",     0.0f,     0.26f });
+		views.push_back({ L"top-down", 0.0f, 1.40f });
+		views.push_back({ L"high 3/4", 0.61f, 0.92f });
+		views.push_back({ L"high 3/4 (alt)", c_halfPi, 0.92f });
+		views.push_back({ L"low profile", 0.0f, 0.26f });
 	}
 	else
 	{
 		// Thinnest along X or Z: look along that axis so the broad face fills the
 		// frame, then rotate/tilt for depth and footprint.
 		const float faceYaw = (sx < sz) ? c_halfPi : 0.0f;
-		views.push_back({ L"face",            faceYaw,             0.0f });
-		views.push_back({ L"three-quarter",   faceYaw + 0.61f,     0.42f });
-		views.push_back({ L"profile",         faceYaw + c_halfPi,  0.0f });
-		views.push_back({ L"top-down",        faceYaw,             1.40f });
+		views.push_back({ L"face", faceYaw, 0.0f });
+		views.push_back({ L"three-quarter", faceYaw + 0.61f, 0.42f });
+		views.push_back({ L"profile", faceYaw + c_halfPi, 0.0f });
+		views.push_back({ L"top-down", faceYaw, 1.40f });
 	}
 	return views;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.RenderMeshPreviewTool", RenderMeshPreviewTool, IMcpTool)
 
 RenderMeshPreviewTool::RenderMeshPreviewTool(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -207,8 +209,10 @@ Ref< Json > RenderMeshPreviewTool::invoke(const Json* arguments, std::wstring& o
 	// directions and reason about scale.
 	std::wstring text =
 		L"Multi-view render of mesh '" + instance->getName() + L"' (" + instance->getGuid().format() + L"). "
-		L"2x2 contact sheet, each cell " + toString(cell) + L"px. Views, row-major: "
-		L"top-left=" + views[0].label + L", top-right=" + views[1].label +
+																									   L"2x2 contact sheet, each cell " +
+		toString(cell) + L"px. Views, row-major: "
+						 L"top-left=" +
+		views[0].label + L", top-right=" + views[1].label +
 		L", bottom-left=" + views[2].label + L", bottom-right=" + views[3].label + L". ";
 
 	if (haveBox)

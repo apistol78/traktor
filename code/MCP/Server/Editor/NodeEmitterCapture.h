@@ -44,4 +44,3 @@ const std::map< std::wstring, std::wstring >& nodeEmitterSummary();
 const std::set< std::wstring >& nodeDeprecatedTypes();
 
 }
-

@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "MCP/Server/Editor/ImportTextureFromDataTool.h"
+
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Guid.h"
 #include "Core/Io/File.h"
@@ -18,9 +20,8 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
-#include "Render/Editor/Texture/TextureAsset.h"
 #include "MCP/Server/Json.h"
-#include "MCP/Server/Editor/ImportTextureFromDataTool.h"
+#include "Render/Editor/Texture/TextureAsset.h"
 
 namespace traktor::mcp
 {
@@ -28,7 +29,7 @@ namespace traktor::mcp
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.ImportTextureFromDataTool", ImportTextureFromDataTool, IMcpTool)
 
 ImportTextureFromDataTool::ImportTextureFromDataTool(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 

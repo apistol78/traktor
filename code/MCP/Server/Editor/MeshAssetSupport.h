@@ -8,12 +8,13 @@
  */
 #pragma once
 
-#include <string>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Guid.h"
 #include "Core/Ref.h"
-#include "Core/Containers/SmallMap.h"
-#include "Mesh/Editor/MeshAsset.h"
 #include "MCP/Server/Editor/McpToolSupport.h"
+#include "Mesh/Editor/MeshAsset.h"
+
+#include <string>
 
 namespace traktor
 {

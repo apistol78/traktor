@@ -8,9 +8,10 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Ref.h"
 #include "MCP/Server/IMcpTool.h"
+
+#include <string>
 
 namespace traktor::editor
 {
@@ -35,8 +36,11 @@ public:
 	explicit ShaderGraphDependenciesTool(editor::IEditor* editor);
 
 	virtual std::wstring getName() const override final;
+
 	virtual std::wstring getDescription() const override final;
+
 	virtual Ref< Json > getInputSchema() const override final;
+
 	virtual Ref< Json > invoke(const Json* arguments, std::wstring& outError) override final;
 
 private:

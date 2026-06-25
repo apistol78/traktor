@@ -6,15 +6,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "MCP/Server/Editor/ShaderGraphUpdateTool.h"
+
 #include "Core/Guid.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
-#include "MCP/Server/Json.h"
 #include "MCP/Server/Editor/McpToolSupport.h"
 #include "MCP/Server/Editor/ShaderGraphToolSupport.h"
-#include "MCP/Server/Editor/ShaderGraphUpdateTool.h"
+#include "MCP/Server/Json.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 
 namespace traktor::mcp
 {
@@ -22,7 +23,7 @@ namespace traktor::mcp
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.ShaderGraphUpdateTool", ShaderGraphUpdateTool, IMcpTool)
 
 ShaderGraphUpdateTool::ShaderGraphUpdateTool(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 

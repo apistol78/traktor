@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "MCP/Server/Editor/DatabaseListInstancesTool.h"
+
 #include "Core/Guid.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -13,7 +15,6 @@
 #include "Database/Traverse.h"
 #include "Editor/IEditor.h"
 #include "MCP/Server/Json.h"
-#include "MCP/Server/Editor/DatabaseListInstancesTool.h"
 
 namespace traktor::mcp
 {
@@ -21,7 +22,7 @@ namespace traktor::mcp
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.DatabaseListInstancesTool", DatabaseListInstancesTool, IMcpTool)
 
 DatabaseListInstancesTool::DatabaseListInstancesTool(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -97,7 +98,9 @@ Ref< Json > DatabaseListInstancesTool::invoke(const Json* arguments, std::wstrin
 	}
 
 	RefArray< db::Instance > instances;
-	db::recursiveFindChildInstances(rootGroup, [](db::Instance*) { return true; }, instances);
+	db::recursiveFindChildInstances(rootGroup, [](db::Instance*) {
+		return true;
+	}, instances);
 
 	Ref< Json > list = Json::createArray();
 	int32_t count = 0;

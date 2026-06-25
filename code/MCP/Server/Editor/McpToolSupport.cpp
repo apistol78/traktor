@@ -6,11 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "MCP/Server/Editor/McpToolSupport.h"
+
 #include "Core/Guid.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "MCP/Server/Json.h"
-#include "MCP/Server/Editor/McpToolSupport.h"
 
 namespace traktor::mcp
 {

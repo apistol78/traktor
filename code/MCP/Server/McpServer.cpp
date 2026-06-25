@@ -9,20 +9,21 @@
 #if !defined(_WIN32)
 #	include <csignal>
 #endif
+#include "MCP/Server/McpServer.h"
+
 #include "Core/Log/Log.h"
-#include "Net/SocketAddress.h"
-#include "Net/SocketAddressIPv4.h"
-#include "Net/TcpSocket.h"
 #include "MCP/Server/IMcpPromptProvider.h"
 #include "MCP/Server/IMcpTool.h"
 #include "MCP/Server/Json.h"
 #include "MCP/Server/McpConnection.h"
-#include "MCP/Server/McpServer.h"
+#include "Net/SocketAddress.h"
+#include "Net/SocketAddressIPv4.h"
+#include "Net/TcpSocket.h"
 
 namespace traktor::mcp
 {
-	namespace
-	{
+namespace
+{
 
 // JSON-RPC 2.0 error codes.
 const int32_t c_errorParse = -32700;
@@ -30,7 +31,7 @@ const int32_t c_errorInvalidRequest = -32600;
 const int32_t c_errorMethodNotFound = -32601;
 const int32_t c_errorInvalidParams = -32602;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.McpServer", McpServer, Object)
 
@@ -158,10 +159,8 @@ std::wstring McpServer::dispatch(const Json* request)
 IMcpTool* McpServer::findTool(const std::wstring& name) const
 {
 	for (auto tool : m_tools)
-	{
 		if (tool->getName() == name)
 			return tool;
-	}
 	return nullptr;
 }
 

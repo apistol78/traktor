@@ -6,10 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "MCP/Server/Editor/CreateMeshFromGeometryTool.h"
+
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Guid.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Path.h"
+#include "Core/Math/Quaternion.h"
+#include "Core/Math/Transform.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -17,27 +21,24 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
+#include "MCP/Server/Editor/McpToolSupport.h"
+#include "MCP/Server/Json.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Model/Animation.h"
+#include "Model/Joint.h"
 #include "Model/Material.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
-#include "Model/Polygon.h"
-#include "Model/Vertex.h"
 #include "Model/Operations/CalculateNormals.h"
 #include "Model/Operations/Triangulate.h"
-#include "Model/Animation.h"
-#include "Model/Joint.h"
+#include "Model/Polygon.h"
 #include "Model/Pose.h"
-#include "Core/Math/Quaternion.h"
-#include "Core/Math/Transform.h"
-#include "MCP/Server/Json.h"
-#include "MCP/Server/Editor/McpToolSupport.h"
-#include "MCP/Server/Editor/CreateMeshFromGeometryTool.h"
+#include "Model/Vertex.h"
 
 namespace traktor::mcp
 {
-	namespace
-	{
+namespace
+{
 
 bool readVec(const Json* arr, int32_t n, float* out)
 {
@@ -48,12 +49,12 @@ bool readVec(const Json* arr, int32_t n, float* out)
 	return true;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.CreateMeshFromGeometryTool", CreateMeshFromGeometryTool, IMcpTool)
 
 CreateMeshFromGeometryTool::CreateMeshFromGeometryTool(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -69,10 +70,30 @@ std::wstring CreateMeshFromGeometryTool::getDescription() const
 
 Ref< Json > CreateMeshFromGeometryTool::getInputSchema() const
 {
-	auto str = [](const wchar_t* d) { Ref< Json > p = Json::createObject(); p->setString(L"type", L"string"); p->setString(L"description", d); return p; };
-	auto arr = [](const wchar_t* d) { Ref< Json > p = Json::createObject(); p->setString(L"type", L"array"); p->setString(L"description", d); return p; };
-	auto boolean = [](const wchar_t* d) { Ref< Json > p = Json::createObject(); p->setString(L"type", L"boolean"); p->setString(L"description", d); return p; };
-	auto obj = [](const wchar_t* d) { Ref< Json > p = Json::createObject(); p->setString(L"type", L"object"); p->setString(L"description", d); return p; };
+	auto str = [](const wchar_t* d) {
+		Ref< Json > p = Json::createObject();
+		p->setString(L"type", L"string");
+		p->setString(L"description", d);
+		return p;
+	};
+	auto arr = [](const wchar_t* d) {
+		Ref< Json > p = Json::createObject();
+		p->setString(L"type", L"array");
+		p->setString(L"description", d);
+		return p;
+	};
+	auto boolean = [](const wchar_t* d) {
+		Ref< Json > p = Json::createObject();
+		p->setString(L"type", L"boolean");
+		p->setString(L"description", d);
+		return p;
+	};
+	auto obj = [](const wchar_t* d) {
+		Ref< Json > p = Json::createObject();
+		p->setString(L"type", L"object");
+		p->setString(L"description", d);
+		return p;
+	};
 
 	Ref< Json > properties = Json::createObject();
 	properties->set(L"path", str(L"Database path for the new MeshAsset (e.g. \"Models/Foo\")."));
@@ -170,12 +191,24 @@ Ref< Json > CreateMeshFromGeometryTool::invoke(const Json* arguments, std::wstri
 				return model::Material::Map();
 			return model::Material::Map(key, texCoordChannel, false, Guid(m->getString()));
 		};
-		const model::Material::Map dm = bindMap(L"diffuse"); if (!dm.name.empty()) material.setDiffuseMap(dm);
-		const model::Material::Map nm = bindMap(L"normal"); if (!nm.name.empty()) material.setNormalMap(nm);
-		const model::Material::Map rm = bindMap(L"roughness"); if (!rm.name.empty()) material.setRoughnessMap(rm);
-		const model::Material::Map sm = bindMap(L"specular"); if (!sm.name.empty()) material.setSpecularMap(sm);
-		const model::Material::Map mm = bindMap(L"metalness"); if (!mm.name.empty()) material.setMetalnessMap(mm);
-		const model::Material::Map em = bindMap(L"emissive"); if (!em.name.empty()) material.setEmissiveMap(em);
+		const model::Material::Map dm = bindMap(L"diffuse");
+		if (!dm.name.empty())
+			material.setDiffuseMap(dm);
+		const model::Material::Map nm = bindMap(L"normal");
+		if (!nm.name.empty())
+			material.setNormalMap(nm);
+		const model::Material::Map rm = bindMap(L"roughness");
+		if (!rm.name.empty())
+			material.setRoughnessMap(rm);
+		const model::Material::Map sm = bindMap(L"specular");
+		if (!sm.name.empty())
+			material.setSpecularMap(sm);
+		const model::Material::Map mm = bindMap(L"metalness");
+		if (!mm.name.empty())
+			material.setMetalnessMap(mm);
+		const model::Material::Map em = bindMap(L"emissive");
+		if (!em.name.empty())
+			material.setEmissiveMap(em);
 	}
 	const uint32_t materialIndex = mdl->addMaterial(material);
 

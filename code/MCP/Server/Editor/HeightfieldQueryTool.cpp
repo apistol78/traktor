@@ -6,22 +6,23 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "MCP/Server/Editor/HeightfieldQueryTool.h"
+
 #include "Core/Io/IStream.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
+#include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
-#include "Heightfield/Editor/HeightfieldAsset.h"
-#include "MCP/Server/Json.h"
-#include "MCP/Server/Editor/HeightfieldQueryTool.h"
 #include "MCP/Server/Editor/McpToolSupport.h"
+#include "MCP/Server/Json.h"
 
 namespace traktor::mcp
 {
-	namespace
+namespace
 {
 
 const wchar_t* const c_heightfieldAssetTypeName = L"traktor.hf.HeightfieldAsset";
@@ -66,7 +67,7 @@ bool readPoint(const Json* point, float& outX, float& outZ)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.HeightfieldQueryTool", HeightfieldQueryTool, IMcpTool)
 
 HeightfieldQueryTool::HeightfieldQueryTool(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -155,8 +156,7 @@ Ref< Json > HeightfieldQueryTool::invoke(const Json* arguments, std::wstring& ou
 
 	Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
 		sourceData,
-		asset->getWorldExtent()
-	);
+		asset->getWorldExtent());
 	sourceData->close();
 	sourceData = nullptr;
 

@@ -6,10 +6,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <functional>
-#include <map>
-#include "Core/Guid.h"
+#include "MCP/Server/Editor/ShaderGraphToolSupport.h"
+
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Guid.h"
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Misc/String.h"
@@ -22,70 +22,101 @@
 #include "Core/Rtti/TypeInfo.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "MCP/Server/Editor/NodeEmitterCapture.h"
+#include "MCP/Server/Json.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/Node.h"
 #include "Render/Editor/OutputPin.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphTypePropagation.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ParameterLinker.h"
 #include "Render/Editor/Shader/PinType.h"
+#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/UniformLinker.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphTypePropagation.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 #include "Render/Types.h"
-#include "MCP/Server/Json.h"
-#include "MCP/Server/Editor/NodeEmitterCapture.h"
-#include "MCP/Server/Editor/ShaderGraphToolSupport.h"
+
+#include <functional>
+#include <map>
 
 namespace traktor::mcp
 {
-	namespace
-	{
+namespace
+{
 
 /*! Name of a resolved pin type. */
 std::wstring pinTypeName(render::PinType type)
 {
 	switch (type)
 	{
-	case render::PinType::Void: return L"Void";
-	case render::PinType::Scalar1: return L"Scalar1";
-	case render::PinType::Scalar2: return L"Scalar2";
-	case render::PinType::Scalar3: return L"Scalar3";
-	case render::PinType::Scalar4: return L"Scalar4";
-	case render::PinType::Matrix: return L"Matrix";
-	case render::PinType::Texture2D: return L"Texture2D";
-	case render::PinType::Texture3D: return L"Texture3D";
-	case render::PinType::TextureCube: return L"TextureCube";
-	case render::PinType::StructBuffer: return L"StructBuffer";
-	case render::PinType::Image2D: return L"Image2D";
-	case render::PinType::Image3D: return L"Image3D";
-	case render::PinType::ImageCube: return L"ImageCube";
-	case render::PinType::State: return L"State";
-	case render::PinType::Bundle: return L"Bundle";
-	case render::PinType::Array: return L"Array";
-	case render::PinType::Struct: return L"Struct";
-	default: return L"Void";
+	case render::PinType::Void:
+		return L"Void";
+	case render::PinType::Scalar1:
+		return L"Scalar1";
+	case render::PinType::Scalar2:
+		return L"Scalar2";
+	case render::PinType::Scalar3:
+		return L"Scalar3";
+	case render::PinType::Scalar4:
+		return L"Scalar4";
+	case render::PinType::Matrix:
+		return L"Matrix";
+	case render::PinType::Texture2D:
+		return L"Texture2D";
+	case render::PinType::Texture3D:
+		return L"Texture3D";
+	case render::PinType::TextureCube:
+		return L"TextureCube";
+	case render::PinType::StructBuffer:
+		return L"StructBuffer";
+	case render::PinType::Image2D:
+		return L"Image2D";
+	case render::PinType::Image3D:
+		return L"Image3D";
+	case render::PinType::ImageCube:
+		return L"ImageCube";
+	case render::PinType::State:
+		return L"State";
+	case render::PinType::Bundle:
+		return L"Bundle";
+	case render::PinType::Array:
+		return L"Array";
+	case render::PinType::Struct:
+		return L"Struct";
+	default:
+		return L"Void";
 	}
 }
 
 /*! Map a Script output pin's ParameterType to/from its IR string name. */
 render::ParameterType parseParameterType(const std::wstring& name, render::ParameterType defaultType)
 {
-	if (name == L"Scalar") return render::ParameterType::Scalar;
-	if (name == L"Vector") return render::ParameterType::Vector;
-	if (name == L"Matrix") return render::ParameterType::Matrix;
-	if (name == L"Texture2D") return render::ParameterType::Texture2D;
-	if (name == L"Texture3D") return render::ParameterType::Texture3D;
-	if (name == L"TextureCube") return render::ParameterType::TextureCube;
-	if (name == L"StructBuffer") return render::ParameterType::StructBuffer;
-	if (name == L"Image2D") return render::ParameterType::Image2D;
-	if (name == L"Image3D") return render::ParameterType::Image3D;
-	if (name == L"ImageCube") return render::ParameterType::ImageCube;
-	if (name == L"AccelerationStructure") return render::ParameterType::AccelerationStructure;
+	if (name == L"Scalar")
+		return render::ParameterType::Scalar;
+	if (name == L"Vector")
+		return render::ParameterType::Vector;
+	if (name == L"Matrix")
+		return render::ParameterType::Matrix;
+	if (name == L"Texture2D")
+		return render::ParameterType::Texture2D;
+	if (name == L"Texture3D")
+		return render::ParameterType::Texture3D;
+	if (name == L"TextureCube")
+		return render::ParameterType::TextureCube;
+	if (name == L"StructBuffer")
+		return render::ParameterType::StructBuffer;
+	if (name == L"Image2D")
+		return render::ParameterType::Image2D;
+	if (name == L"Image3D")
+		return render::ParameterType::Image3D;
+	if (name == L"ImageCube")
+		return render::ParameterType::ImageCube;
+	if (name == L"AccelerationStructure")
+		return render::ParameterType::AccelerationStructure;
 	return defaultType;
 }
 
@@ -93,26 +124,40 @@ std::wstring parameterTypeName(render::ParameterType type)
 {
 	switch (type)
 	{
-	case render::ParameterType::Vector: return L"Vector";
-	case render::ParameterType::Matrix: return L"Matrix";
-	case render::ParameterType::Texture2D: return L"Texture2D";
-	case render::ParameterType::Texture3D: return L"Texture3D";
-	case render::ParameterType::TextureCube: return L"TextureCube";
-	case render::ParameterType::StructBuffer: return L"StructBuffer";
-	case render::ParameterType::Image2D: return L"Image2D";
-	case render::ParameterType::Image3D: return L"Image3D";
-	case render::ParameterType::ImageCube: return L"ImageCube";
-	case render::ParameterType::AccelerationStructure: return L"AccelerationStructure";
-	default: return L"Scalar";
+	case render::ParameterType::Vector:
+		return L"Vector";
+	case render::ParameterType::Matrix:
+		return L"Matrix";
+	case render::ParameterType::Texture2D:
+		return L"Texture2D";
+	case render::ParameterType::Texture3D:
+		return L"Texture3D";
+	case render::ParameterType::TextureCube:
+		return L"TextureCube";
+	case render::ParameterType::StructBuffer:
+		return L"StructBuffer";
+	case render::ParameterType::Image2D:
+		return L"Image2D";
+	case render::ParameterType::Image3D:
+		return L"Image3D";
+	case render::ParameterType::ImageCube:
+		return L"ImageCube";
+	case render::ParameterType::AccelerationStructure:
+		return L"AccelerationStructure";
+	default:
+		return L"Scalar";
 	}
 }
 
 /*! Map a Script domain to/from its IR string name. */
 render::Script::Domain parseScriptDomain(const std::wstring& name)
 {
-	if (name == L"Vertex") return render::Script::Vertex;
-	if (name == L"Pixel") return render::Script::Pixel;
-	if (name == L"Compute") return render::Script::Compute;
+	if (name == L"Vertex")
+		return render::Script::Vertex;
+	if (name == L"Pixel")
+		return render::Script::Pixel;
+	if (name == L"Compute")
+		return render::Script::Compute;
 	return render::Script::Undefined;
 }
 
@@ -120,10 +165,14 @@ std::wstring scriptDomainName(render::Script::Domain domain)
 {
 	switch (domain)
 	{
-	case render::Script::Vertex: return L"Vertex";
-	case render::Script::Pixel: return L"Pixel";
-	case render::Script::Compute: return L"Compute";
-	default: return L"Undefined";
+	case render::Script::Vertex:
+		return L"Vertex";
+	case render::Script::Pixel:
+		return L"Pixel";
+	case render::Script::Compute:
+		return L"Compute";
+	default:
+		return L"Undefined";
 	}
 }
 
@@ -217,20 +266,76 @@ Ref< Json > reflectNodeProperties(const render::Node* node)
 /*! Set a primitive or enum reflection member from a JSON value; false if type unsupported. */
 bool setPrimitiveMemberFromJson(ReflectionMember* member, const Json* value)
 {
-	if (auto m = dynamic_type_cast< RfmPrimitiveBoolean* >(member)) { m->set(value->getBoolean()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveInt8* >(member)) { m->set((int8_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveUInt8* >(member)) { m->set((uint8_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveInt16* >(member)) { m->set((int16_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveUInt16* >(member)) { m->set((uint16_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveInt32* >(member)) { m->set((int32_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveUInt32* >(member)) { m->set((uint32_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveInt64* >(member)) { m->set(value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveUInt64* >(member)) { m->set((uint64_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveFloat* >(member)) { m->set((float)value->getReal()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveDouble* >(member)) { m->set(value->getReal()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveWideString* >(member)) { m->set(value->getString()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveGuid* >(member)) { m->set(Guid(value->getString())); return true; }
-	if (auto m = dynamic_type_cast< RfmEnum* >(member)) { m->set(value->getString()); return true; }
+	if (auto m = dynamic_type_cast< RfmPrimitiveBoolean* >(member))
+	{
+		m->set(value->getBoolean());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveInt8* >(member))
+	{
+		m->set((int8_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveUInt8* >(member))
+	{
+		m->set((uint8_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveInt16* >(member))
+	{
+		m->set((int16_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveUInt16* >(member))
+	{
+		m->set((uint16_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveInt32* >(member))
+	{
+		m->set((int32_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveUInt32* >(member))
+	{
+		m->set((uint32_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveInt64* >(member))
+	{
+		m->set(value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveUInt64* >(member))
+	{
+		m->set((uint64_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveFloat* >(member))
+	{
+		m->set((float)value->getReal());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveDouble* >(member))
+	{
+		m->set(value->getReal());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveWideString* >(member))
+	{
+		m->set(value->getString());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveGuid* >(member))
+	{
+		m->set(Guid(value->getString()));
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmEnum* >(member))
+	{
+		m->set(value->getString());
+		return true;
+	}
 	return false;
 }
 
@@ -386,19 +491,19 @@ Ref< render::Node > nodeFromIr(const Json* nodeJson, std::wstring& outError, Jso
 		if (const Json* domain = nodeJson->getMember(L"domain"))
 			script->setDomain(parseScriptDomain(domain->getString()));
 
-			// Restore #include references (guids of ShaderModule instances); not a
-			// primitive member, so they are carried in a dedicated "includes" field.
-			if (const Json* includes = nodeJson->getMember(L"includes"); includes && includes->isArray())
+		// Restore #include references (guids of ShaderModule instances); not a
+		// primitive member, so they are carried in a dedicated "includes" field.
+		if (const Json* includes = nodeJson->getMember(L"includes"); includes && includes->isArray())
+		{
+			AlignedVector< Guid > includeIds;
+			for (uint32_t i = 0; i < includes->size(); ++i)
 			{
-				AlignedVector< Guid > includeIds;
-				for (uint32_t i = 0; i < includes->size(); ++i)
-				{
-					const Guid g(includes->at(i)->getString());
-					if (g.isValid())
-						includeIds.push_back(g);
-				}
-				script->setIncludes(includeIds);
+				const Guid g(includes->at(i)->getString());
+				if (g.isValid())
+					includeIds.push_back(g);
 			}
+			script->setIncludes(includeIds);
+		}
 
 		if (const Json* inputs = nodeJson->getMember(L"inputs"); inputs && inputs->isArray())
 		{
@@ -479,7 +584,7 @@ Ref< render::Node > nodeFromIr(const Json* nodeJson, std::wstring& outError, Jso
 	return node;
 }
 
-	}
+}
 
 std::wstring shortTypeName(const std::wstring& fullName)
 {

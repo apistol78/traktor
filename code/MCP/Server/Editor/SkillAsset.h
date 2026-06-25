@@ -8,9 +8,10 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
+
+#include <string>
 
 namespace traktor::mcp
 {

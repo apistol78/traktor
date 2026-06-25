@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "MCP/Server/Json.h"
+
 #include "Core/Class/Any.h"
 #include "Core/Io/OutputStream.h"
 #include "Core/Io/StringOutputStream.h"
@@ -13,12 +15,11 @@
 #include "Json/JsonDocument.h"
 #include "Json/JsonMember.h"
 #include "Json/JsonObject.h"
-#include "MCP/Server/Json.h"
 
 namespace traktor::mcp
 {
-	namespace
-	{
+namespace
+{
 
 void writeEscaped(OutputStream& os, const std::wstring& str)
 {
@@ -112,7 +113,7 @@ Ref< Json > fromAny(const Any& any)
 	}
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.Json", Json, Object)
 
@@ -261,10 +262,8 @@ Json* Json::setString(const std::wstring& key, const std::wstring& value)
 Json* Json::getMember(const std::wstring& key) const
 {
 	for (size_t i = 0; i < m_memberNames.size(); ++i)
-	{
 		if (m_memberNames[i] == key)
 			return m_memberValues[i];
-	}
 	return nullptr;
 }
 

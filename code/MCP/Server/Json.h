@@ -8,11 +8,12 @@
  */
 #pragma once
 
-#include <string>
-#include <vector>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
+
+#include <string>
+#include <vector>
 
 // import/export mechanism.
 #undef T_DLLCLASS

@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "MCP/Server/Editor/SkillTools.h"
+
 #include "Core/Guid.h"
 #include "Core/Rtti/TypeInfo.h"
 #include "Core/Serialization/ISerializable.h"
@@ -14,15 +16,14 @@
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
 #include "Editor/IEditor.h"
-#include "MCP/Server/Json.h"
 #include "MCP/Server/Editor/McpToolSupport.h"
 #include "MCP/Server/Editor/SkillAsset.h"
-#include "MCP/Server/Editor/SkillTools.h"
+#include "MCP/Server/Json.h"
 
 namespace traktor::mcp
 {
-	namespace
-	{
+namespace
+{
 
 std::wstring argStr(const Json* arguments, const wchar_t* key, const std::wstring& def = L"")
 {
@@ -48,11 +49,10 @@ void findSkillInstances(db::Database* database, RefArray< db::Instance >& outIns
 	db::recursiveFindChildInstances(
 		rootGroup,
 		[](db::Instance* instance) {
-			const TypeInfo* t = instance->getPrimaryType();
-			return t != nullptr && is_type_of(type_of< SkillAsset >(), *t);
-		},
-		outInstances
-	);
+		const TypeInfo* t = instance->getPrimaryType();
+		return t != nullptr && is_type_of(type_of< SkillAsset >(), *t);
+	},
+		outInstances);
 }
 
 Ref< db::Instance > findSkill(db::Database* database, const std::wstring& nameOrGuid, Ref< SkillAsset >& outSkill)
@@ -145,14 +145,14 @@ Ref< Json > boolProperty(const std::wstring& description)
 	return p;
 }
 
-	}
+}
 
 // ---------------------------------------------------------------------------
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.SkillCreateTool", SkillCreateTool, IMcpTool)
 
 SkillCreateTool::SkillCreateTool(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -291,7 +291,7 @@ Ref< Json > SkillCreateTool::invoke(const Json* arguments, std::wstring& outErro
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.SkillListTool", SkillListTool, IMcpTool)
 
 SkillListTool::SkillListTool(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -354,7 +354,7 @@ Ref< Json > SkillListTool::invoke(const Json* arguments, std::wstring& outError)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.SkillGetTool", SkillGetTool, IMcpTool)
 
 SkillGetTool::SkillGetTool(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -414,7 +414,7 @@ Ref< Json > SkillGetTool::invoke(const Json* arguments, std::wstring& outError)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.SkillPublishTool", SkillPublishTool, IMcpTool)
 
 SkillPublishTool::SkillPublishTool(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -494,7 +494,7 @@ Ref< Json > SkillPublishTool::invoke(const Json* arguments, std::wstring& outErr
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.SkillPromptProvider", SkillPromptProvider, IMcpPromptProvider)
 
 SkillPromptProvider::SkillPromptProvider(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 

@@ -6,11 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "MCP/Server/Editor/SkillAsset.h"
+
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "MCP/Server/Editor/SkillAsset.h"
 
 namespace traktor::mcp
 {

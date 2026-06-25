@@ -8,9 +8,10 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS

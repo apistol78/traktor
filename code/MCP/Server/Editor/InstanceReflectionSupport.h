@@ -8,10 +8,11 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Ref.h"
 #include "MCP/Server/Editor/McpToolSupport.h"
+
+#include <string>
 
 namespace traktor
 {

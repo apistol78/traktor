@@ -8,9 +8,10 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Ref.h"
 #include "MCP/Server/Editor/McpToolSupport.h"
+
+#include <string>
 
 namespace traktor
 {

@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "MCP/Server/Editor/ImportInstanceFromXmlTool.h"
+
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/TString.h"
@@ -14,10 +16,9 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
-#include "Xml/XmlDeserializer.h"
-#include "MCP/Server/Json.h"
-#include "MCP/Server/Editor/ImportInstanceFromXmlTool.h"
 #include "MCP/Server/Editor/McpToolSupport.h"
+#include "MCP/Server/Json.h"
+#include "Xml/XmlDeserializer.h"
 
 namespace traktor::mcp
 {
@@ -25,7 +26,7 @@ namespace traktor::mcp
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.ImportInstanceFromXmlTool", ImportInstanceFromXmlTool, IMcpTool)
 
 ImportInstanceFromXmlTool::ImportInstanceFromXmlTool(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 

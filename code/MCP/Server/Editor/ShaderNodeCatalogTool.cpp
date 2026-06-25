@@ -6,15 +6,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "MCP/Server/Editor/ShaderNodeCatalogTool.h"
+
 #include "Core/Misc/String.h"
 #include "Core/Rtti/TypeInfo.h"
+#include "MCP/Server/Editor/NodeEmitterCapture.h"
+#include "MCP/Server/Editor/ShaderGraphToolSupport.h"
+#include "MCP/Server/Json.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/Node.h"
 #include "Render/Editor/OutputPin.h"
-#include "MCP/Server/Json.h"
-#include "MCP/Server/Editor/NodeEmitterCapture.h"
-#include "MCP/Server/Editor/ShaderGraphToolSupport.h"
-#include "MCP/Server/Editor/ShaderNodeCatalogTool.h"
 
 namespace traktor::mcp
 {

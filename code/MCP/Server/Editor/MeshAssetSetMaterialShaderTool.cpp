@@ -6,17 +6,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Guid.h"
+#include "MCP/Server/Editor/MeshAssetSetMaterialShaderTool.h"
+
 #include "Core/Containers/SmallMap.h"
+#include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
-#include "Mesh/Editor/MeshAsset.h"
-#include "MCP/Server/Json.h"
 #include "MCP/Server/Editor/McpToolSupport.h"
-#include "MCP/Server/Editor/MeshAssetSetMaterialShaderTool.h"
 #include "MCP/Server/Editor/MeshAssetSupport.h"
+#include "MCP/Server/Json.h"
+#include "Mesh/Editor/MeshAsset.h"
 
 namespace traktor::mcp
 {
@@ -24,7 +25,7 @@ namespace traktor::mcp
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.MeshAssetSetMaterialShaderTool", MeshAssetSetMaterialShaderTool, IMcpTool)
 
 MeshAssetSetMaterialShaderTool::MeshAssetSetMaterialShaderTool(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 

@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "MCP/Server/Editor/InstanceDeleteTool.h"
+
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
 #include "Database/Database.h"
@@ -13,12 +15,11 @@
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "MCP/Server/Json.h"
-#include "MCP/Server/Editor/InstanceDeleteTool.h"
 
 namespace traktor::mcp
 {
-	namespace
-	{
+namespace
+{
 
 /*! Remove a single instance (checkout, remove, commit). */
 bool removeInstance(db::Instance* instance)
@@ -40,10 +41,8 @@ bool removeGroupRecursive(db::Group* group, int32_t& outRemovedInstances)
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
 	for (auto childGroup : childGroups)
-	{
 		if (!removeGroupRecursive(childGroup, outRemovedInstances))
 			return false;
-	}
 
 	RefArray< db::Instance > childInstances;
 	group->getChildInstances(childInstances);
@@ -57,12 +56,12 @@ bool removeGroupRecursive(db::Group* group, int32_t& outRemovedInstances)
 	return group->remove();
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.InstanceDeleteTool", InstanceDeleteTool, IMcpTool)
 
 InstanceDeleteTool::InstanceDeleteTool(editor::IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 

@@ -6,21 +6,23 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
+#include "MCP/Server/McpConnection.h"
+
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/String.h"
-#include "Net/TcpSocket.h"
-#include "Net/Http/HttpRequest.h"
 #include "MCP/Server/Json.h"
-#include "MCP/Server/McpConnection.h"
 #include "MCP/Server/McpServer.h"
+#include "Net/Http/HttpRequest.h"
+#include "Net/TcpSocket.h"
+
+#include <cstring>
 
 namespace traktor::mcp
 {
-	namespace
-	{
+namespace
+{
 
 const size_t c_maxHeaderSize = 64 * 1024;
 const int32_t c_readTimeout = 10000;
@@ -51,10 +53,8 @@ int64_t findHeaderEnd(const AlignedVector< uint8_t >& buffer)
 		return -1;
 	const uint8_t* p = buffer.c_ptr();
 	for (size_t i = 0; i + 3 < buffer.size(); ++i)
-	{
 		if (p[i] == '\r' && p[i + 1] == '\n' && p[i + 2] == '\r' && p[i + 3] == '\n')
 			return (int64_t)i;
-	}
 	return -1;
 }
 
@@ -83,10 +83,10 @@ int32_t parseContentLength(const std::wstring& headers)
 	return parseString< int32_t >(trim(value), 0);
 }
 
-	}
+}
 
 McpConnection::McpConnection(net::TcpSocket* clientSocket)
-:	m_socket(clientSocket)
+	: m_socket(clientSocket)
 {
 }
 

@@ -6,20 +6,21 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Guid.h"
+#include "MCP/Server/Editor/MeshAssetSupport.h"
+
 #include "Core/Containers/SmallMap.h"
+#include "Core/Guid.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Database/Instance.h"
-#include "Mesh/Editor/MeshAsset.h"
 #include "MCP/Server/Json.h"
-#include "MCP/Server/Editor/MeshAssetSupport.h"
+#include "Mesh/Editor/MeshAsset.h"
 
 namespace traktor::mcp
 {
-	namespace
-	{
+namespace
+{
 
 const wchar_t* const c_meshAssetTypeName = L"traktor.mesh.MeshAsset";
 
@@ -45,7 +46,7 @@ Ref< Json > vec3ToJson(float x, float y, float z)
 	return arr;
 }
 
-	}
+}
 
 mesh::MeshAsset* loadMeshAsset(db::Instance* instance, Ref< ISerializable >& outObject, std::wstring& outError)
 {
@@ -78,10 +79,14 @@ std::wstring meshTypeName(mesh::MeshAsset::MeshType type)
 {
 	switch (type)
 	{
-	case mesh::MeshAsset::MeshType::Instance: return L"Instance";
-	case mesh::MeshAsset::MeshType::Skinned: return L"Skinned";
-	case mesh::MeshAsset::MeshType::Static: return L"Static";
-	default: return L"Unknown";
+	case mesh::MeshAsset::MeshType::Instance:
+		return L"Instance";
+	case mesh::MeshAsset::MeshType::Skinned:
+		return L"Skinned";
+	case mesh::MeshAsset::MeshType::Static:
+		return L"Static";
+	default:
+		return L"Unknown";
 	}
 }
 

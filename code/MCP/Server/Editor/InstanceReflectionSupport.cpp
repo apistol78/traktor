@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cwchar>
+#include "MCP/Server/Editor/InstanceReflectionSupport.h"
+
 #include "Core/Guid.h"
 #include "Core/Io/Path.h"
 #include "Core/Math/Color4f.h"
@@ -28,12 +29,13 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "MCP/Server/Json.h"
-#include "MCP/Server/Editor/InstanceReflectionSupport.h"
+
+#include <cwchar>
 
 namespace traktor::mcp
 {
-	namespace
-	{
+namespace
+{
 
 /*! ASCII-simplified narrow/wide conversion for the rare std::string member. */
 std::wstring widen(const std::string& s)
@@ -100,22 +102,86 @@ bool setLeafFromJson(ReflectionMember* member, const Json* value, std::wstring& 
 			value = reparsed;
 	}
 
-	if (auto m = dynamic_type_cast< RfmPrimitiveBoolean* >(member)) { m->set(value->getBoolean()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveInt8* >(member)) { m->set((int8_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveUInt8* >(member)) { m->set((uint8_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveInt16* >(member)) { m->set((int16_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveUInt16* >(member)) { m->set((uint16_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveInt32* >(member)) { m->set((int32_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveUInt32* >(member)) { m->set((uint32_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveInt64* >(member)) { m->set(value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveUInt64* >(member)) { m->set((uint64_t)value->getNumber()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveFloat* >(member)) { m->set((float)value->getReal()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveDouble* >(member)) { m->set(value->getReal()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveWideString* >(member)) { m->set(value->getString()); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveString* >(member)) { m->set(narrow(value->getString())); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitivePath* >(member)) { m->set(Path(value->getString())); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveScalar* >(member)) { m->set(Scalar((float)value->getReal())); return true; }
-	if (auto m = dynamic_type_cast< RfmEnum* >(member)) { m->set(value->getString()); return true; }
+	if (auto m = dynamic_type_cast< RfmPrimitiveBoolean* >(member))
+	{
+		m->set(value->getBoolean());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveInt8* >(member))
+	{
+		m->set((int8_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveUInt8* >(member))
+	{
+		m->set((uint8_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveInt16* >(member))
+	{
+		m->set((int16_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveUInt16* >(member))
+	{
+		m->set((uint16_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveInt32* >(member))
+	{
+		m->set((int32_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveUInt32* >(member))
+	{
+		m->set((uint32_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveInt64* >(member))
+	{
+		m->set(value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveUInt64* >(member))
+	{
+		m->set((uint64_t)value->getNumber());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveFloat* >(member))
+	{
+		m->set((float)value->getReal());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveDouble* >(member))
+	{
+		m->set(value->getReal());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveWideString* >(member))
+	{
+		m->set(value->getString());
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveString* >(member))
+	{
+		m->set(narrow(value->getString()));
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitivePath* >(member))
+	{
+		m->set(Path(value->getString()));
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveScalar* >(member))
+	{
+		m->set(Scalar((float)value->getReal()));
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmEnum* >(member))
+	{
+		m->set(value->getString());
+		return true;
+	}
 	if (auto m = dynamic_type_cast< RfmPrimitiveGuid* >(member))
 	{
 		const std::wstring s = value->getString();
@@ -128,11 +194,46 @@ bool setLeafFromJson(ReflectionMember* member, const Json* value, std::wstring& 
 		m->set(g);
 		return true;
 	}
-	if (auto m = dynamic_type_cast< RfmPrimitiveVector4* >(member)) { float v[4]; if (!readFloatArray(value, v, 4, outError)) return false; m->set(Vector4(v[0], v[1], v[2], v[3])); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveVector2* >(member)) { float v[2]; if (!readFloatArray(value, v, 2, outError)) return false; m->set(Vector2(v[0], v[1])); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveColor4f* >(member)) { float v[4]; if (!readFloatArray(value, v, 4, outError)) return false; m->set(Color4f(v[0], v[1], v[2], v[3])); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveColor4ub* >(member)) { float v[4]; if (!readFloatArray(value, v, 4, outError)) return false; m->set(Color4ub((uint8_t)v[0], (uint8_t)v[1], (uint8_t)v[2], (uint8_t)v[3])); return true; }
-	if (auto m = dynamic_type_cast< RfmPrimitiveQuaternion* >(member)) { float v[4]; if (!readFloatArray(value, v, 4, outError)) return false; m->set(Quaternion(v[0], v[1], v[2], v[3])); return true; }
+	if (auto m = dynamic_type_cast< RfmPrimitiveVector4* >(member))
+	{
+		float v[4];
+		if (!readFloatArray(value, v, 4, outError))
+			return false;
+		m->set(Vector4(v[0], v[1], v[2], v[3]));
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveVector2* >(member))
+	{
+		float v[2];
+		if (!readFloatArray(value, v, 2, outError))
+			return false;
+		m->set(Vector2(v[0], v[1]));
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveColor4f* >(member))
+	{
+		float v[4];
+		if (!readFloatArray(value, v, 4, outError))
+			return false;
+		m->set(Color4f(v[0], v[1], v[2], v[3]));
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveColor4ub* >(member))
+	{
+		float v[4];
+		if (!readFloatArray(value, v, 4, outError))
+			return false;
+		m->set(Color4ub((uint8_t)v[0], (uint8_t)v[1], (uint8_t)v[2], (uint8_t)v[3]));
+		return true;
+	}
+	if (auto m = dynamic_type_cast< RfmPrimitiveQuaternion* >(member))
+	{
+		float v[4];
+		if (!readFloatArray(value, v, 4, outError))
+			return false;
+		m->set(Quaternion(v[0], v[1], v[2], v[3]));
+		return true;
+	}
 
 	if (is_a< RfmCompound >(member))
 	{
@@ -374,10 +475,8 @@ bool assignValue(db::Database* database, ReflectionMember* target, const Json* s
 			return false;
 		}
 		if (!append)
-		{
 			while (arr->getMemberCount() > 0)
 				arr->removeMember(arr->getMember(0));
-		}
 		for (uint32_t i = 0; i < spec->size(); ++i)
 		{
 			const Json* element = spec->at(i);
@@ -422,7 +521,7 @@ bool assignValue(db::Database* database, ReflectionMember* target, const Json* s
 	return setLeafFromJson(target, spec, outError);
 }
 
-	}
+}
 
 Ref< Json > describeMember(const ReflectionMember* member, int32_t depth)
 {
@@ -436,10 +535,8 @@ Ref< Json > describeMember(const ReflectionMember* member, int32_t depth)
 		j->setString(L"kind", L"array");
 		Ref< Json > elements = Json::createArray();
 		if (depth > 0)
-		{
 			for (uint32_t i = 0; i < arr->getMemberCount(); ++i)
 				elements->push(describeMember(arr->getMember(i), depth - 1));
-		}
 		j->set(L"elements", elements);
 		return j;
 	}
@@ -448,10 +545,8 @@ Ref< Json > describeMember(const ReflectionMember* member, int32_t depth)
 		j->setString(L"kind", L"compound");
 		Ref< Json > members = Json::createArray();
 		if (depth > 0)
-		{
 			for (uint32_t i = 0; i < cmp->getMemberCount(); ++i)
 				members->push(describeMember(cmp->getMember(i), depth - 1));
-		}
 		j->set(L"members", members);
 		return j;
 	}
@@ -471,10 +566,8 @@ Ref< Json > describeMember(const ReflectionMember* member, int32_t depth)
 			Ref< Reflection > sub = Reflection::create(o);
 			Ref< Json > members = Json::createArray();
 			if (sub)
-			{
 				for (uint32_t i = 0; i < sub->getMemberCount(); ++i)
 					members->push(describeMember(sub->getMember(i), depth - 1));
-			}
 			j->set(L"members", members);
 		}
 		return j;
@@ -487,29 +580,133 @@ Ref< Json > describeMember(const ReflectionMember* member, int32_t depth)
 	}
 
 	j->setString(L"kind", L"primitive");
-	if (auto m = dynamic_type_cast< const RfmPrimitiveBoolean* >(member)) { j->setString(L"type", L"bool"); j->set(L"value", Json::createBoolean(m->get())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveInt8* >(member)) { j->setString(L"type", L"int8"); j->set(L"value", Json::createNumber(m->get())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveUInt8* >(member)) { j->setString(L"type", L"uint8"); j->set(L"value", Json::createNumber(m->get())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveInt16* >(member)) { j->setString(L"type", L"int16"); j->set(L"value", Json::createNumber(m->get())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveUInt16* >(member)) { j->setString(L"type", L"uint16"); j->set(L"value", Json::createNumber(m->get())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveInt32* >(member)) { j->setString(L"type", L"int32"); j->set(L"value", Json::createNumber(m->get())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveUInt32* >(member)) { j->setString(L"type", L"uint32"); j->set(L"value", Json::createNumber((int64_t)m->get())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveInt64* >(member)) { j->setString(L"type", L"int64"); j->set(L"value", Json::createNumber(m->get())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveUInt64* >(member)) { j->setString(L"type", L"uint64"); j->set(L"value", Json::createNumber((int64_t)m->get())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveFloat* >(member)) { j->setString(L"type", L"float"); j->set(L"value", Json::createReal(m->get())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveDouble* >(member)) { j->setString(L"type", L"double"); j->set(L"value", Json::createReal(m->get())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveWideString* >(member)) { j->setString(L"type", L"wstring"); j->set(L"value", Json::createString(m->get())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveString* >(member)) { j->setString(L"type", L"string"); j->set(L"value", Json::createString(widen(m->get()))); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveGuid* >(member)) { j->setString(L"type", L"guid"); j->set(L"value", Json::createString(m->get().format())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitivePath* >(member)) { j->setString(L"type", L"path"); j->set(L"value", Json::createString(m->get().getOriginal())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveScalar* >(member)) { j->setString(L"type", L"scalar"); j->set(L"value", Json::createReal((float)m->get())); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveColor4ub* >(member)) { j->setString(L"type", L"color4ub"); const Color4ub c = m->get(); const float v[4] = { (float)c.r, (float)c.g, (float)c.b, (float)c.a }; j->set(L"value", floatArray(v, 4)); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveColor4f* >(member)) { j->setString(L"type", L"color4f"); float v[4]; m->get().storeUnaligned(v); j->set(L"value", floatArray(v, 4)); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveVector2* >(member)) { j->setString(L"type", L"vector2"); const Vector2 v = m->get(); const float a[2] = { v.x, v.y }; j->set(L"value", floatArray(a, 2)); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveVector4* >(member)) { j->setString(L"type", L"vector4"); float v[4]; m->get().storeUnaligned(v); j->set(L"value", floatArray(v, 4)); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveQuaternion* >(member)) { j->setString(L"type", L"quaternion"); float v[4]; m->get().e.storeUnaligned(v); j->set(L"value", floatArray(v, 4)); }
-	else if (auto m = dynamic_type_cast< const RfmPrimitiveMatrix44* >(member)) { j->setString(L"type", L"matrix44"); float v[16]; m->get().storeUnaligned(v); j->set(L"value", floatArray(v, 16)); }
-	else { j->setString(L"type", type_name(member)); j->set(L"value", Json::createNull()); }
+	if (auto m = dynamic_type_cast< const RfmPrimitiveBoolean* >(member))
+	{
+		j->setString(L"type", L"bool");
+		j->set(L"value", Json::createBoolean(m->get()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveInt8* >(member))
+	{
+		j->setString(L"type", L"int8");
+		j->set(L"value", Json::createNumber(m->get()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveUInt8* >(member))
+	{
+		j->setString(L"type", L"uint8");
+		j->set(L"value", Json::createNumber(m->get()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveInt16* >(member))
+	{
+		j->setString(L"type", L"int16");
+		j->set(L"value", Json::createNumber(m->get()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveUInt16* >(member))
+	{
+		j->setString(L"type", L"uint16");
+		j->set(L"value", Json::createNumber(m->get()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveInt32* >(member))
+	{
+		j->setString(L"type", L"int32");
+		j->set(L"value", Json::createNumber(m->get()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveUInt32* >(member))
+	{
+		j->setString(L"type", L"uint32");
+		j->set(L"value", Json::createNumber((int64_t)m->get()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveInt64* >(member))
+	{
+		j->setString(L"type", L"int64");
+		j->set(L"value", Json::createNumber(m->get()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveUInt64* >(member))
+	{
+		j->setString(L"type", L"uint64");
+		j->set(L"value", Json::createNumber((int64_t)m->get()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveFloat* >(member))
+	{
+		j->setString(L"type", L"float");
+		j->set(L"value", Json::createReal(m->get()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveDouble* >(member))
+	{
+		j->setString(L"type", L"double");
+		j->set(L"value", Json::createReal(m->get()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveWideString* >(member))
+	{
+		j->setString(L"type", L"wstring");
+		j->set(L"value", Json::createString(m->get()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveString* >(member))
+	{
+		j->setString(L"type", L"string");
+		j->set(L"value", Json::createString(widen(m->get())));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveGuid* >(member))
+	{
+		j->setString(L"type", L"guid");
+		j->set(L"value", Json::createString(m->get().format()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitivePath* >(member))
+	{
+		j->setString(L"type", L"path");
+		j->set(L"value", Json::createString(m->get().getOriginal()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveScalar* >(member))
+	{
+		j->setString(L"type", L"scalar");
+		j->set(L"value", Json::createReal((float)m->get()));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveColor4ub* >(member))
+	{
+		j->setString(L"type", L"color4ub");
+		const Color4ub c = m->get();
+		const float v[4] = { (float)c.r, (float)c.g, (float)c.b, (float)c.a };
+		j->set(L"value", floatArray(v, 4));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveColor4f* >(member))
+	{
+		j->setString(L"type", L"color4f");
+		float v[4];
+		m->get().storeUnaligned(v);
+		j->set(L"value", floatArray(v, 4));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveVector2* >(member))
+	{
+		j->setString(L"type", L"vector2");
+		const Vector2 v = m->get();
+		const float a[2] = { v.x, v.y };
+		j->set(L"value", floatArray(a, 2));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveVector4* >(member))
+	{
+		j->setString(L"type", L"vector4");
+		float v[4];
+		m->get().storeUnaligned(v);
+		j->set(L"value", floatArray(v, 4));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveQuaternion* >(member))
+	{
+		j->setString(L"type", L"quaternion");
+		float v[4];
+		m->get().e.storeUnaligned(v);
+		j->set(L"value", floatArray(v, 4));
+	}
+	else if (auto m = dynamic_type_cast< const RfmPrimitiveMatrix44* >(member))
+	{
+		j->setString(L"type", L"matrix44");
+		float v[16];
+		m->get().storeUnaligned(v);
+		j->set(L"value", floatArray(v, 16));
+	}
+	else
+	{
+		j->setString(L"type", type_name(member));
+		j->set(L"value", Json::createNull());
+	}
 	return j;
 }
 

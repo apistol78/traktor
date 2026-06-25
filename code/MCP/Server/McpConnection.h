@@ -8,9 +8,10 @@
  */
 #pragma once
 
+#include "Core/Ref.h"
+
 #include <cstdint>
 #include <string>
-#include "Core/Ref.h"
 
 namespace traktor::net
 {
