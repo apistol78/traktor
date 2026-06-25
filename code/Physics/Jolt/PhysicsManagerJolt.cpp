@@ -72,6 +72,7 @@
 #include <Jolt/Physics/Collision/Shape/HeightFieldShape.h>
 #include <Jolt/Physics/Collision/Shape/MeshShape.h>
 #include <Jolt/Physics/Collision/Shape/MutableCompoundShape.h>
+#include <Jolt/Physics/Collision/Shape/RotatedTranslatedShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
 #include <Jolt/Physics/Collision/ShapeCast.h>
 #include <Jolt/Physics/Constraints/HingeConstraint.h>
@@ -737,13 +738,29 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 	{
 		const float radius = capsuleShape->getRadius();
 		const float halfHeight = std::max(0.0f, capsuleShape->getLength() * 0.5f - radius);
-		JPH::CapsuleShapeSettings shapeSettings(halfHeight, radius);
+		JPH::CapsuleShapeSettings capsuleSettings(halfHeight, radius);
+		capsuleSettings.SetEmbedded();
+		// Traktor capsules are defined along the Z axis (matching Bullet's btCapsuleShapeZ),
+		// whereas Jolt's capsule is aligned along Y. Rotate it onto Z so the shape's local
+		// transform (e.g. the character controller's upright rotation) orients it identically
+		// across physics backends; without this the capsule ends up on its side.
+		JPH::RotatedTranslatedShapeSettings shapeSettings(
+			JPH::Vec3::sZero(),
+			JPH::Quat::sRotation(JPH::Vec3::sAxisX(), 0.5f * JPH::JPH_PI),
+			&capsuleSettings);
 		shapeSettings.SetEmbedded();
 		return createBodyFromShape(shapeSettings, shapeDesc, desc, 0.0f, Vector4::zero(), mergedCollisionGroup, mergedCollisionMask, resource::Proxy< Mesh >(), tag);
 	}
 	else if (auto cylinderShape = dynamic_type_cast< const CylinderShapeDesc* >(shapeDesc))
 	{
-		JPH::CylinderShapeSettings shapeSettings(cylinderShape->getLength() * 0.5f, cylinderShape->getRadius());
+		JPH::CylinderShapeSettings cylinderSettings(cylinderShape->getLength() * 0.5f, cylinderShape->getRadius());
+		cylinderSettings.SetEmbedded();
+		// As with the capsule, Traktor cylinders are defined along the Z axis (Bullet's
+		// btCylinderShapeZ); Jolt's cylinder is Y-aligned, so rotate it onto Z for parity.
+		JPH::RotatedTranslatedShapeSettings shapeSettings(
+			JPH::Vec3::sZero(),
+			JPH::Quat::sRotation(JPH::Vec3::sAxisX(), 0.5f * JPH::JPH_PI),
+			&cylinderSettings);
 		shapeSettings.SetEmbedded();
 		return createBodyFromShape(shapeSettings, shapeDesc, desc, 0.0f, Vector4::zero(), mergedCollisionGroup, mergedCollisionMask, resource::Proxy< Mesh >(), tag);
 	}
@@ -1053,7 +1070,11 @@ bool PhysicsManagerJolt::queryRay(
 		settings.mBackFaceModeTriangles = JPH::EBackFaceMode::CollideWithBackFaces;
 		settings.mBackFaceModeConvex = JPH::EBackFaceMode::CollideWithBackFaces;
 	}
-	settings.mTreatConvexAsSolid = true;
+	// Do NOT treat convex shapes as solid: when the ray origin is inside a convex body
+	// (e.g. a perception ray cast from an actor's own eye height, inside its own capsule)
+	// Jolt would otherwise report a spurious hit at fraction 0 and short-circuit the ray.
+	// Bullet's ray test has no such behaviour, so disabling this keeps the backends in sync.
+	settings.mTreatConvexAsSolid = false;
 
 	RayCollector collector(this, ray, queryFilter, QtAll, outResult);
 	m_physicsSystem->GetNarrowPhaseQuery().CastRay(ray, settings, collector);
