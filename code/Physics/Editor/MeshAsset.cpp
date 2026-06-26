@@ -20,7 +20,7 @@
 namespace traktor::physics
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.MeshAsset", 8, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.MeshAsset", 9, MeshAsset, editor::Asset)
 
 void MeshAsset::serialize(ISerializer& s)
 {
@@ -56,7 +56,7 @@ void MeshAsset::serialize(ISerializer& s)
 
 	if (s.getVersion< MeshAsset >() >= 8)
 	{
-		if (s.getVersion() >= 26)
+		if (s.getVersion() >= 9)
 			s >> MemberEnum< CenterMode >(L"center", m_center, c_CenterMode_Keys);
 		else
 		{
