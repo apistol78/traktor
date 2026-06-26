@@ -136,7 +136,7 @@ bool AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView,
 	const auto& poseTransformsLastUpdate = m_poseTransforms[1 - m_index];
 	const auto& poseTransformsCurrentUpdate = m_poseTransforms[m_index];
 
-	if (isVisible && m_skinModified)
+	if ((isVisible && m_skinModified) || m_firstSetup)
 	{
 		// Interpolate between updates to get current build skin transforms.
 		if (poseTransformsCurrentUpdate.size() > 0)
@@ -162,6 +162,7 @@ bool AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView,
 	}
 
 	m_skinModified = false;
+	m_firstSetup = false;
 	return result;
 }
 

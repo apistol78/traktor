@@ -64,6 +64,7 @@ private:
 	int32_t m_revision = -1;
 	bool m_skinModified = false;
 	bool m_lastIsVisible = false;
+	bool m_firstSetup = true;
 };
 
 }
