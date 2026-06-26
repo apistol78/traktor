@@ -106,7 +106,11 @@ void WorldLayer::preUpdate(const UpdateInfo& info)
 		m_scene.consume();
 
 		// Get initial camera.
-		m_cameraEntity = m_scene->getWorld()->getEntity(L"Camera0");
+		if (m_cameraEntityId.isNull())
+		{
+			m_cameraEntity = m_scene->getWorld()->getEntity(L"Camera0");
+			m_cameraEntityId = (m_cameraEntity != nullptr) ? m_cameraEntity->getId() : Guid();
+		}
 	}
 
 	// Re-create world renderer.
@@ -115,6 +119,13 @@ void WorldLayer::preUpdate(const UpdateInfo& info)
 		m_worldRenderer = m_environment->getWorld()->createWorldRenderer(m_scene->getWorldRenderSettings());
 		if (!m_worldRenderer)
 			return;
+	}
+
+	// Get camera if we have id but no entity.
+	if (!m_cameraEntity && m_cameraEntityId.isNotNull())
+	{
+		if ((m_cameraEntity = m_scene->getWorld()->getEntity(m_cameraEntityId)) == nullptr)
+			m_cameraEntityId = Guid();
 	}
 
 	// Get render view dimensions.

@@ -142,6 +142,7 @@ private:
 	double m_deltaTime = 0.0;
 	float m_fieldOfView = 70.0f;
 	SmallMap< Guid, Transform > m_entityTransforms;
+	Guid m_cameraEntityId[2];
 };
 
 }
