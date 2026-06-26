@@ -55,6 +55,11 @@ void RTWorldRenderer::build(
 		}
 	};
 	renderContext->compute(rb);
+
+	// Fence the top level acceleration structure build (graphics queue) ahead of the ray tracing
+	// passes that read it. Without this the RT passes can sample the previous frame's TLAS, which
+	// shows up as the ray traced geometry lagging the rasterized mesh while it moves.
+	renderContext->compute< render::BarrierRenderBlock >(render::Stage::AccelerationStructureUpdate, render::Stage::Vertex | render::Stage::Fragment | render::Stage::Compute, nullptr, 0, false);
 }
 
 }

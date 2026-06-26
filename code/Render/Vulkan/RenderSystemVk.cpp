@@ -935,7 +935,7 @@ Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTarget
 Ref< IAccelerationStructure > RenderSystemVk::createTopLevelAccelerationStructure(uint32_t numInstances)
 {
 	if (m_rayTracing)
-		return AccelerationStructureVk::createTopLevel(m_context, numInstances, 3 * 4);
+		return AccelerationStructureVk::createTopLevel(m_context, numInstances, 4);
 	else
 		return nullptr;
 }
@@ -943,7 +943,7 @@ Ref< IAccelerationStructure > RenderSystemVk::createTopLevelAccelerationStructur
 Ref< IAccelerationStructure > RenderSystemVk::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic)
 {
 	if (m_rayTracing)
-		return AccelerationStructureVk::createBottomLevel(m_context, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, dynamic, 3 * 4);
+		return AccelerationStructureVk::createBottomLevel(m_context, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, dynamic, 4);
 	else
 		return nullptr;
 }

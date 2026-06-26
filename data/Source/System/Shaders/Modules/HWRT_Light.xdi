@@ -42,6 +42,8 @@ vec4 HWRT_Light_CalculateIncidentLight(
 		lightAttenuation = r * LightAttenuation(lightDistance, light.RangeRadius.y);
 	}
 
+	lightAttenuation *= max(dot(lightDirection, normal), 0.0f);
+
 	[[branch]]
 	if (lightAttenuation > 0.0f)
 	{
@@ -53,9 +55,8 @@ vec4 HWRT_Light_CalculateIncidentLight(
 		);
 		if (!shadowed)
 		{
-			const float phi = clamp(dot(lightDirection, normal), 0.0f, 1.0f);
 			return vec4(
-				(phi * light.Color).xyz * lightAttenuation,
+				light.Color.xyz * lightAttenuation,
 				1.0f
 			);
 		}

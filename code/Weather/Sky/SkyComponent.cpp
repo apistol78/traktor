@@ -342,7 +342,6 @@ void SkyComponent::setup(
 				renderBlock->workSize[0] = 1024 * 2;
 				renderBlock->workSize[1] = 256 * 2;
 				renderBlock->workSize[2] = 1;
-				//renderBlock->asynchronous = true;
 
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->programParams->beginParameters(renderContext);
@@ -351,6 +350,7 @@ void SkyComponent::setup(
 				renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud2D, m_cloudTextures[0]);
 				renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud3D, m_cloudTextures[1]);
 				renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRadius, worldRenderView.getViewFrustum().getFarZ() - 10.0f);
+				renderBlock->programParams->setFloatParameter(s_handleWeather_SkyIntensity, m_data.m_intensity);
 				renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunColor, sunColor);
 				renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
 				renderBlock->programParams->setVectorParameter(s_handleWeather_SkyCloudAmbientTop, m_data.m_cloudAmbientTop);

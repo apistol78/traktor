@@ -1310,8 +1310,12 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 			0,
 			nullptr);
 	}
-	else if (from == Stage::AccelerationStructureUpdate && to == Stage::Compute)
+	else if (from == Stage::AccelerationStructureUpdate)
 	{
+		// Acceleration structure build (top or bottom level) made visible to subsequent reads
+		// in the destination shader stage(s). Used to fence a TLAS/BLAS build on the graphics
+		// queue ahead of the ray tracing passes that read it; without this a consumer can read
+		// the previous frame's structure.
 		VkMemoryBarrier mb = {};
 		mb.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
 		mb.pNext = nullptr;
@@ -1321,7 +1325,7 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 		vkCmdPipelineBarrier(
 			*commandBuffer,
 			VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
-			VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+			convertStage(to),
 			0,
 			1,
 			&mb,

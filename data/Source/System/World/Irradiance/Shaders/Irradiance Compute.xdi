@@ -273,7 +273,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 					else
 					{
 						const vec3 incident = SampleIrradianceField($IrradianceField, $ViewInverse, hit);
-						Nacc += (m.albedo * incident * attenuate * phi * PI * 2.0f).xyz;
+						Nacc += (m.albedo * incident * attenuate * phi * PI).xyz;
 					}
 
 					Nacc += m.albedo * m.emissive * attenuate * phi * PI;
@@ -292,12 +292,10 @@ if (pt.x < sz.x && pt.y < sz.y)
 							const vec3 hit2 = hit + secondRayDir * t;
 							const float attenuate2 = LightAttenuation(t2);
 	
-							if ($UseIrradianceField == 0)
+							if (false && $UseIrradianceField == 0)
 							{
 								for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 								{
-									const float pdfRandomLight = 1.0f; // 1.0f / max($LightCount, 1);
-									//const int lightIndex = int(Hash(rndState++) * $LightCount) % int($LightCount);
 									const $typeof(Lights) light = $Lights[lightIndex];
 				
 									const vec4 incident = HWRT_Light_CalculateIncidentLight(
@@ -309,13 +307,13 @@ if (pt.x < sz.x && pt.y < sz.y)
 										true
 									);
 				
-									Sacc += (m2.albedo * incident.xyz * attenuate2 * phi * PI / pdfRandomLight).xyz;
+									Sacc += (m2.albedo * incident.xyz * attenuate2 * phi * PI).xyz;
 								}
 							}
 							else
 							{
 								const vec3 incident = SampleIrradianceField($IrradianceField, $ViewInverse, hit2);
-								Sacc += (m2.albedo * incident * attenuate2 * phi * PI * 2.0f).xyz;
+								Sacc += (m2.albedo * incident * attenuate2 * phi * PI).xyz;
 							}		
 
 							Sacc += m2.albedo * m2.emissive * attenuate2 * phi * PI;
