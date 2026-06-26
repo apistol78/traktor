@@ -9,18 +9,12 @@
 #include "Script/Lua/ScriptDebuggerLua.h"
 
 #include "Core/Class/IObjectInspector.h"
-#include "Core/Guid.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Core/Reflection/Reflection.h"
-#include "Core/Reflection/RfmEnum.h"
-#include "Core/Reflection/RfmObject.h"
-#include "Core/Reflection/RfmPrimitive.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
-#include "Core/Timer/Timer.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
@@ -30,14 +24,34 @@
 #include "Script/Variable.h"
 
 #include <cstring>
-#include <map>
 
 namespace traktor::script
 {
 namespace
 {
 
+const int32_t c_tableKey_class = -1;
 const int32_t c_tableKey_instance = -2;
+
+// Extract the native object from a value-type instance.
+ITypedObject* toBoxedObject(lua_State* L, int32_t index)
+{
+	if (lua_type(L, index) != LUA_TUSERDATA)
+		return nullptr;
+
+	const int32_t aindex = lua_absindex(L, index);
+	if (!lua_getmetatable(L, aindex))
+		return nullptr;
+
+	lua_rawgeti(L, -1, c_tableKey_class);
+	const bool ours = (lua_islightuserdata(L, -1) != 0);
+	lua_pop(L, 2);
+	if (!ours)
+		return nullptr;
+
+	void* ud = lua_touserdata(L, aindex);
+	return ud ? *(ITypedObject**)ud : nullptr;
+}
 
 bool describeObject(const ITypedObject* object, std::wstring& outDescription)
 {
@@ -194,6 +208,19 @@ bool ScriptDebuggerLua::captureLocals(uint32_t depth, RefArray< Variable >& outL
 					variable->setValue(new ValueObject(objectRef));
 				}
 			}
+			else if (lua_type(L, -1) == LUA_TUSERDATA)
+			{
+				ITypedObject* object = toBoxedObject(L, -1);
+				if (object)
+					variable->setTypeName(type_name(object));
+
+				const uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+
+				if (object && describeObject(object, objectDescription))
+					variable->setValue(new ValueObject(objectRef, objectDescription));
+				else
+					variable->setValue(new ValueObject(objectRef));
+			}
 			else
 				lua_pop(L, 1);
 
@@ -262,6 +289,19 @@ bool ScriptDebuggerLua::captureLocals(uint32_t depth, RefArray< Variable >& outL
 						variable->setValue(new ValueObject(objectRef));
 					}
 				}
+				else if (lua_type(L, -1) == LUA_TUSERDATA)
+				{
+					ITypedObject* object = toBoxedObject(L, -1);
+					if (object)
+						variable->setTypeName(type_name(object));
+
+					const uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+
+					if (object && describeObject(object, objectDescription))
+						variable->setValue(new ValueObject(objectRef, objectDescription));
+					else
+						variable->setValue(new ValueObject(objectRef));
+				}
 				else
 					lua_pop(L, 1);
 
@@ -288,7 +328,6 @@ bool ScriptDebuggerLua::captureObject(uint32_t object, RefArray< Variable >& out
 	T_ANONYMOUS_VAR(UnwindStack)(L);
 
 	lua_rawgeti(L, LUA_REGISTRYINDEX, object);
-	T_ASSERT(lua_istable(L, -1));
 
 	if (lua_getmetatable(L, -1))
 	{
@@ -297,6 +336,11 @@ bool ScriptDebuggerLua::captureObject(uint32_t object, RefArray< Variable >& out
 		variable->setValue(new ValueObject(objectRef));
 		outMembers.push_back(variable);
 	}
+
+	// Value types are full userdata holding the boxed pointer; they have no
+	// iterable script-side members so there is nothing further to expand.
+	if (!lua_istable(L, -1))
+		return true;
 
 	lua_pushnil(L);
 	while (lua_next(L, -2))
@@ -362,6 +406,20 @@ bool ScriptDebuggerLua::captureObject(uint32_t object, RefArray< Variable >& out
 
 			const uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 			variable->setValue(new ValueObject(objectRef));
+		}
+		else if (lua_type(L, -1) == LUA_TUSERDATA)
+		{
+			std::wstring objectDescription;
+			ITypedObject* object = toBoxedObject(L, -1);
+			if (object)
+				variable->setTypeName(type_name(object));
+
+			const uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+
+			if (object && describeObject(object, objectDescription))
+				variable->setValue(new ValueObject(objectRef, objectDescription));
+			else
+				variable->setValue(new ValueObject(objectRef));
 		}
 		else
 			lua_pop(L, 1);
