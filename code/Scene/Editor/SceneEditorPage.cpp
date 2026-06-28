@@ -65,6 +65,7 @@
 #include "Ui/BackgroundWorkerDialog.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
+#include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridColumnClickEvent.h"
@@ -169,6 +170,18 @@ bool filterIncludeEntity(const TypeInfo& entityOrComponentType, EntityAdapter* e
 
 	for (auto child : entityAdapter->getChildren())
 		if (filterIncludeEntity(entityOrComponentType, child))
+			return true;
+
+	return false;
+}
+
+bool filterIncludeEntityByName(const std::wstring& filterLowerCase, EntityAdapter* entityAdapter)
+{
+	if (toLower(entityAdapter->getName()).find(filterLowerCase) != std::wstring::npos)
+		return true;
+
+	for (auto child : entityAdapter->getChildren())
+		if (filterIncludeEntityByName(filterLowerCase, child))
 			return true;
 
 	return false;
@@ -319,7 +332,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	// Create entity panel.
 	m_entityPanel = new ui::Container();
-	m_entityPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
+	m_entityPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 0_ut, 4_ut));
 	m_entityPanel->setText(i18n::Text(L"SCENE_EDITOR_ENTITIES"));
 
 	m_entityMenuDefault = new ui::Menu();
@@ -366,6 +379,11 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->addItem(new ui::ToolBarSeparator());
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_NEW_LAYER"), 5, ui::Command(L"Scene.Editor.NewLayer")));
 	m_entityToolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &SceneEditorPage::eventEntityToolClick);
+
+	// Filter text field; placed between the toolbar and the entity grid.
+	m_entityFilterEdit = new ui::Edit();
+	m_entityFilterEdit->create(m_entityPanel, L"", ui::WsNone);
+	m_entityFilterEdit->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorPage::eventEntityFilterChange);
 
 	m_imageStatic = new ui::StyleBitmap(L"Scene.LayerStatic");
 	m_imageDynamic = new ui::StyleBitmap(L"Scene.LayerDynamic");
@@ -1112,9 +1130,47 @@ void SceneEditorPage::updateScene()
 	m_context->enqueueRedraw(nullptr);
 }
 
-Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityAdapter)
+bool SceneEditorPage::isEntityFilteredOut(EntityAdapter* entityAdapter) const
 {
 	if (m_entityFilterType && !filterIncludeEntity(*m_entityFilterType, entityAdapter))
+		return true;
+
+	if (!m_entityFilter.empty() && !filterIncludeEntityByName(m_entityFilter, entityAdapter))
+		return true;
+
+	return false;
+}
+
+void SceneEditorPage::applyEntityFilter()
+{
+	// Store filter text in lower-case for case-insensitive matching.
+	m_entityFilter = toLower(m_entityFilterEdit->getText());
+
+	// De-select any selected entity which is no longer visible due to the filter.
+	bool selectionChanged = false;
+	for (auto entityAdapter : m_context->getEntities(SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly))
+	{
+		if (isEntityFilteredOut(entityAdapter))
+		{
+			m_context->selectEntity(entityAdapter, false);
+			selectionChanged = true;
+		}
+	}
+
+	// Rebuild grid according to the new filter.
+	createInstanceGrid();
+
+	// Reflect the changed selection in the rest of the editor (property view, scene, etc).
+	if (selectionChanged)
+	{
+		m_context->raiseSelect(false);
+		m_context->enqueueRedraw(nullptr);
+	}
+}
+
+Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityAdapter)
+{
+	if (isEntityFilteredOut(entityAdapter))
 		return nullptr;
 
 	// Assume root entities are layers.
@@ -1531,6 +1587,11 @@ void SceneEditorPage::eventEntityToolClick(ui::ToolBarButtonClickEvent* event)
 	handleCommand(event->getCommand());
 }
 
+void SceneEditorPage::eventEntityFilterChange(ui::ContentChangeEvent* event)
+{
+	applyEntityFilter();
+}
+
 void SceneEditorPage::eventGuideClick(ui::GridColumnClickEvent* event)
 {
 	if (event->getColumn() == 1)
@@ -1609,30 +1670,39 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 	EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 	T_ASSERT(entityAdapter);
 
-	bool shouldUpdate = true;
-	if (event->getColumn() == 1)
-	{
-		const bool wasDynamic = entityAdapter->isDynamic(false);
-		entityAdapter->setDynamic(!wasDynamic);
-	}
-	else if (event->getColumn() == 2)
-	{
-		const bool wasVisible = entityAdapter->isVisible(false);
-		entityAdapter->setVisible(!wasVisible);
-	}
-	else if (event->getColumn() == 3)
-	{
-		const bool wasLocked = entityAdapter->isLocked(false);
-		entityAdapter->setLocked(!wasLocked);
-	}
-	else
-		shouldUpdate = false;
+	const int32_t column = event->getColumn();
+	if (column != c_instanceGridDynamic && column != c_instanceGridVisible && column != c_instanceGridLocked)
+		return;
 
-	if (shouldUpdate)
+	// Determine the new state from the clicked entity.
+	bool newState = false;
+	if (column == c_instanceGridDynamic)
+		newState = !entityAdapter->isDynamic(false);
+	else if (column == c_instanceGridVisible)
+		newState = !entityAdapter->isVisible(false);
+	else if (column == c_instanceGridLocked)
+		newState = !entityAdapter->isLocked(false);
+
+	// Apply the new state to all selected entities when the clicked entity is part of the
+	// selection; otherwise only to the clicked entity.
+	RefArray< EntityAdapter > targets;
+	if (entityAdapter->isSelected())
+		targets = m_context->getEntities(SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly);
+	else
+		targets.push_back(entityAdapter);
+
+	for (auto target : targets)
 	{
-		updateInstanceGrid(false);
-		m_context->enqueueRedraw(nullptr);
+		if (column == c_instanceGridDynamic)
+			target->setDynamic(newState);
+		else if (column == c_instanceGridVisible)
+			target->setVisible(newState);
+		else if (column == c_instanceGridLocked)
+			target->setLocked(newState);
 	}
+
+	updateInstanceGrid(false);
+	m_context->enqueueRedraw(nullptr);
 }
 
 void SceneEditorPage::eventInstanceRename(ui::GridItemContentChangeEvent* event)

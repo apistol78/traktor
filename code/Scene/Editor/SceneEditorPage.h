@@ -43,6 +43,7 @@ namespace traktor::ui
 class Container;
 class ContentChangeEvent;
 class ContentChangingEvent;
+class Edit;
 class Font;
 class IBitmap;
 class Menu;
@@ -121,6 +122,8 @@ private:
 	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::ToolBar > m_entityToolBar;
 	Ref< ui::ToolBarButton > m_buttonFilterEntity;
+	Ref< ui::Edit > m_entityFilterEdit;
+	std::wstring m_entityFilter;
 	Ref< ui::IBitmap > m_imageStatic;
 	Ref< ui::IBitmap > m_imageDynamic;
 	Ref< ui::IBitmap > m_imageHidden;
@@ -138,6 +141,10 @@ private:
 	void createControllerEditor();
 
 	void updateScene();
+
+	bool isEntityFilteredOut(EntityAdapter* entityAdapter) const;
+
+	void applyEntityFilter();
 
 	Ref< ui::GridRow > createInstanceGridRow(EntityAdapter* entityAdapter);
 
@@ -168,6 +175,8 @@ private:
 	void placeOnGround();
 
 	void eventEntityToolClick(ui::ToolBarButtonClickEvent* event);
+
+	void eventEntityFilterChange(ui::ContentChangeEvent* event);
 
 	void eventGuideClick(ui::GridColumnClickEvent* event);
 
