@@ -1235,7 +1235,49 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 	return true;
 }
 
-bool EditorForm::openInNewEditor(db::Instance* instance)
+bool EditorForm::isEditorOpen(const db::Instance* instance) const
+{
+	for (auto tab : m_tabGroups)
+	{
+		for (int i = 0; i < tab->getPageCount(); ++i)
+		{
+			Ref< ui::TabPage > tabPage = tab->getPage(i);
+			T_ASSERT(tabPage);
+
+			Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+			if (document && document->containInstance(instance))
+				return true;
+		}
+	}
+	return false;
+}
+
+bool EditorForm::closeEditor(const db::Instance* instance, bool forceCloseIfUnsaved)
+{
+	for (auto tab : m_tabGroups)
+	{
+		for (int i = 0; i < tab->getPageCount(); ++i)
+		{
+			Ref< ui::TabPage > tabPage = tab->getPage(i);
+			T_ASSERT(tabPage);
+
+			Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+			if (document && document->containInstance(instance))
+			{
+				// Check if document is unsaved; just leave if so
+				// instead of trying to close so we don't show
+				// message box.
+				if (!forceCloseIfUnsaved && isModified(tabPage))
+					return false;
+
+				return closeEditor(tabPage, forceCloseIfUnsaved);
+			}
+		}
+	}
+	return false;
+}
+
+bool EditorForm::openInNewEditorProcess(db::Instance* instance)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
 		[=, this]() {
@@ -2307,7 +2349,7 @@ void EditorForm::saveAllDocuments()
 	checkModified();
 }
 
-bool EditorForm::closeEditor(ui::TabPage* tabPage)
+bool EditorForm::closeEditor(ui::TabPage* tabPage, bool forceCloseIfUnsaved)
 {
 	// Prevent focus events being fired while we're shutting down editor,
 	// focus events are designed to swap active page which we don't want atm.
@@ -2327,7 +2369,7 @@ bool EditorForm::closeEditor(ui::TabPage* tabPage)
 	Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
 
 	// Ask user when trying to close an editor which contains unsaved data.
-	if (isModified(tabPage))
+	if (!forceCloseIfUnsaved && isModified(tabPage))
 	{
 		ui::DialogResult result = ui::MessageBox::show(
 			this,
@@ -2407,7 +2449,7 @@ void EditorForm::closeCurrentEditor()
 	Ref< ui::TabPage > tabPage = getActiveTabPage();
 	T_ASSERT(tabPage);
 	T_ASSERT(tabPage->getData(L"EDITORPAGE") == m_activeEditorPage);
-	closeEditor(tabPage);
+	closeEditor(tabPage, false);
 }
 
 void EditorForm::closeAllEditors()
@@ -2422,7 +2464,7 @@ void EditorForm::closeAllEditors()
 		}
 	}
 	for (auto tabPage : closePages)
-		closeEditor(tabPage);
+		closeEditor(tabPage, false);
 }
 
 void EditorForm::closeAllOtherEditors()
@@ -2445,7 +2487,7 @@ void EditorForm::closeAllOtherEditors()
 		}
 	}
 	for (auto tabPage : closePages)
-		closeEditor(tabPage);
+		closeEditor(tabPage, false);
 }
 
 void EditorForm::findInDatabase()
@@ -2879,7 +2921,7 @@ void EditorForm::eventTabSelChange(ui::TabSelectionChangeEvent* event)
 
 void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 {
-	if (!closeEditor(event->getTabPage()))
+	if (!closeEditor(event->getTabPage(), false))
 	{
 		event->consume();
 		event->cancel();

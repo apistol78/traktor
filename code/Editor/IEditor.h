@@ -117,8 +117,14 @@ public:
 	/*! Open instance using default editor. */
 	virtual bool openDefaultEditor(db::Instance* instance) = 0;
 
+	/*! Check if instance is already opened. */
+	virtual bool isEditorOpen(const db::Instance* instance) const = 0;
+
+	/*! Close instance editor. */
+	virtual bool closeEditor(const db::Instance* instance, bool forceCloseIfUnsaved) = 0;
+
 	/*! Open instance in a new editor. */
-	virtual bool openInNewEditor(db::Instance* instance) = 0;
+	virtual bool openInNewEditorProcess(db::Instance* instance) = 0;
 
 	/*! Open tool. */
 	virtual bool openTool(const std::wstring& toolType, const PropertyGroup* param) = 0;

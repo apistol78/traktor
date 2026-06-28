@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,7 +25,7 @@ public:
 
 	virtual void editInstance(db::Instance* instance, ISerializable* object) override final;
 
-	virtual bool containInstance(db::Instance* instance) const override final;
+	virtual bool containInstance(const db::Instance* instance) const override final;
 
 	virtual uint32_t getInstanceCount() const override final;
 

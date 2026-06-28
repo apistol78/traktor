@@ -925,7 +925,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		}
 		else if (command == L"Editor.OpenInNewEditor") // Open in new editor.
 		{
-			m_editor->openInNewEditor(instance);
+			m_editor->openInNewEditorProcess(instance);
 		}
 		else if (command == L"Editor.Database.FilterInstanceType") // Filter on type.
 		{

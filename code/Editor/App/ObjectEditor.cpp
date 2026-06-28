@@ -131,9 +131,19 @@ bool ObjectEditor::openDefaultEditor(db::Instance* instance)
 	return m_editor->openDefaultEditor(instance);
 }
 
-bool ObjectEditor::openInNewEditor(db::Instance* instance)
+bool ObjectEditor::isEditorOpen(const db::Instance* instance) const
 {
-	return m_editor->openInNewEditor(instance);
+	return m_editor->isEditorOpen(instance);
+}
+
+bool ObjectEditor::closeEditor(const db::Instance* instance, bool forceCloseIfUnsaved)
+{
+	return m_editor->closeEditor(instance, forceCloseIfUnsaved);
+}
+
+bool ObjectEditor::openInNewEditorProcess(db::Instance* instance)
+{
+	return m_editor->openInNewEditorProcess(instance);
 }
 
 bool ObjectEditor::openTool(const std::wstring& toolType, const PropertyGroup* param)

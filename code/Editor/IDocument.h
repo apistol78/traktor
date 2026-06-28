@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -71,7 +71,7 @@ public:
 	 * \param instance Database instance.
 	 * \return True if it belongs to this document.
 	 */
-	virtual bool containInstance(db::Instance* instance) const = 0;
+	virtual bool containInstance(const db::Instance* instance) const = 0;
 
 	/*! Get number of editing instances.
 	 *

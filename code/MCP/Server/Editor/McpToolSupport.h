@@ -10,6 +10,7 @@
 
 #include "Core/Ref.h"
 
+#include <functional>
 #include <string>
 
 namespace traktor::db
@@ -34,6 +35,22 @@ class Json;
  * found, so callers can supply their own "not found" message.
  */
 Ref< db::Instance > resolveInstance(db::Database* database, const Json* arguments, std::wstring& outError);
+
+/*! Run a function on the editor's UI (main) thread and block until it completes.
+ * \ingroup MCP
+ *
+ * MCP tools run on the server's worker thread, but editor operations that touch
+ * UI widgets or open database transactions (opening/closing editors, inspecting
+ * open documents) are bound to the main thread - calling them from the worker
+ * thread trips a fatal transaction-thread assertion. This marshals \a fn onto the
+ * UI thread via ui::Application::defer() and waits for it to run, so a tool can
+ * perform such work and still return its result synchronously.
+ *
+ * Returns true when \a fn ran, false if it did not complete within \a timeoutMs
+ * (e.g. the UI thread is blocked) or there is no running application. The work is
+ * held alive independently of this call, so a timeout never leaves \a fn dangling.
+ */
+bool runOnUiThread(const std::function< void() >& fn, int32_t timeoutMs = 8000);
 
 /*! Coerce JSON-encoded string arguments back into structured JSON.
  * \ingroup MCP

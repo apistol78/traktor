@@ -17,6 +17,7 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Editor/IEditor.h"
 #include "MCP/Server/Editor/BuildAssetTool.h"
+#include "MCP/Server/Editor/CloseEditorTool.h"
 #include "MCP/Server/Editor/CreateMeshFromGeometryTool.h"
 #include "MCP/Server/Editor/DatabaseListInstancesTool.h"
 #include "MCP/Server/Editor/GetWorkspaceInfoTool.h"
@@ -28,8 +29,10 @@
 #include "MCP/Server/Editor/InstanceDeleteTool.h"
 #include "MCP/Server/Editor/InstanceInspectTool.h"
 #include "MCP/Server/Editor/InstanceSetMemberTool.h"
+#include "MCP/Server/Editor/IsEditorOpenTool.h"
 #include "MCP/Server/Editor/MeshAssetGetTool.h"
 #include "MCP/Server/Editor/MeshAssetSetMaterialShaderTool.h"
+#include "MCP/Server/Editor/OpenEditorTool.h"
 #include "MCP/Server/Editor/RenderMeshPreviewTool.h"
 #include "MCP/Server/Editor/ShaderGraphCreateTool.h"
 #include "MCP/Server/Editor/ShaderGraphDependenciesTool.h"
@@ -78,6 +81,9 @@ bool McpServerEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, 
 	m_server->addTool(new ImportInstanceFromXmlTool(m_editor));
 	m_server->addTool(new InstanceCreateTool(m_editor));
 	m_server->addTool(new InstanceCloneTool(m_editor));
+	m_server->addTool(new OpenEditorTool(m_editor));
+	m_server->addTool(new IsEditorOpenTool(m_editor));
+	m_server->addTool(new CloseEditorTool(m_editor));
 	m_server->addTool(new MeshAssetGetTool(m_editor));
 	m_server->addTool(new MeshAssetSetMaterialShaderTool(m_editor));
 	m_server->addTool(new RenderMeshPreviewTool(m_editor));

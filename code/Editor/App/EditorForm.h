@@ -136,7 +136,11 @@ public:
 
 	virtual bool openDefaultEditor(db::Instance* instance) override final;
 
-	virtual bool openInNewEditor(db::Instance* instance) override final;
+	virtual bool isEditorOpen(const db::Instance* instance) const override final;
+
+	virtual bool closeEditor(const db::Instance* instance, bool forceCloseIfUnsaved) override final;
+
+	virtual bool openInNewEditorProcess(db::Instance* instance) override final;
 
 	virtual bool openTool(const std::wstring& toolType, const PropertyGroup* param) override final;
 
@@ -275,7 +279,7 @@ private:
 
 	void saveAllDocuments();
 
-	bool closeEditor(ui::TabPage* tabPage);
+	bool closeEditor(ui::TabPage* tabPage, bool forceCloseIfUnsaved);
 
 	void closeCurrentEditor();
 

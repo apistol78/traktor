@@ -11,6 +11,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
+#include "Core/Thread/Semaphore.h"
 
 #include <string>
 
@@ -35,6 +36,7 @@ namespace traktor::mcp
 class IMcpTool;
 class IMcpPromptProvider;
 class Json;
+class McpConnection;
 
 /*! Model Context Protocol server.
  * \ingroup MCP
@@ -45,9 +47,13 @@ class Json;
  * implementations.
  *
  * The connection logic mirrors other Traktor servers (e.g. avalanche::Server):
- * \a create binds the listening socket, \a update accepts and services a single
- * pending connection and is expected to be driven from a dedicated thread, and
- * \a destroy releases the socket.
+ * \a create binds the listening socket, \a update accepts pending connections and
+ * reaps completed ones and is expected to be driven from a dedicated thread, and
+ * \a destroy releases the socket. Each accepted connection is serviced on its own
+ * pooled worker thread, so a slow request never blocks the accept loop or other
+ * connections; \a dispatch is therefore re-entrant across threads, and tool/prompt
+ * invocation is serialized internally to keep individual tools free of concurrency
+ * concerns.
  */
 class T_DLLCLASS McpServer : public Object
 {
@@ -62,7 +68,10 @@ public:
 
 	void destroy();
 
-	/*! Accept and service a single pending connection.
+	/*! Accept pending connections and reap completed ones.
+	 *
+	 * Accepted connections are serviced on their own worker threads; this call
+	 * does not block on request processing.
 	 *
 	 * \return False if the server is no longer listening.
 	 */
@@ -91,8 +100,10 @@ public:
 
 private:
 	Ref< net::TcpSocket > m_serverSocket;
+	RefArray< McpConnection > m_connections;
 	RefArray< IMcpTool > m_tools;
 	RefArray< IMcpPromptProvider > m_promptProviders;
+	Semaphore m_invokeLock;
 	std::wstring m_name = L"Traktor";
 	std::wstring m_version = L"1.0.0";
 

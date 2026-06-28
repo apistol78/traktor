@@ -9,12 +9,46 @@
 #include "MCP/Server/Editor/McpToolSupport.h"
 
 #include "Core/Guid.h"
+#include "Core/Thread/Signal.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "MCP/Server/Json.h"
+#include "Ui/Application.h"
+
+#include <memory>
 
 namespace traktor::mcp
 {
+namespace
+{
+
+// Heap-held work item, kept alive by both the deferred lambda and this call, so a
+// timed-out wait never leaves the deferred function referencing freed state.
+struct UiWork
+{
+	std::function< void() > fn;
+	Signal done;
+};
+
+}
+
+bool runOnUiThread(const std::function< void() >& fn, int32_t timeoutMs)
+{
+	ui::Application* application = ui::Application::getInstance();
+	if (!application)
+		return false;
+
+	std::shared_ptr< UiWork > work = std::make_shared< UiWork >();
+	work->fn = fn;
+
+	application->defer([work]() {
+		if (work->fn)
+			work->fn();
+		work->done.set();
+	});
+
+	return work->done.wait(timeoutMs);
+}
 
 Ref< db::Instance > resolveInstance(db::Database* database, const Json* arguments, std::wstring& outError)
 {

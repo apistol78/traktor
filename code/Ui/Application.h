@@ -134,6 +134,15 @@ public:
 	/*! Defer execution onto UI thread. */
 	void defer(const std::function< void() >& fn);
 
+	/*! Run any pending deferred functions now (must be called on the UI thread).
+	 *
+	 * Deferred work is normally drained from the idle handler, but on event loops
+	 * that only fire idle events after input activity this can stall when the
+	 * application is otherwise idle. The event loop calls this each iteration so
+	 * work posted from other threads runs promptly regardless of input.
+	 */
+	void flushDeferred();
+
 private:
 	Ref< IEventLoop > m_eventLoop;
 	Ref< IWidgetFactory > m_widgetFactory;

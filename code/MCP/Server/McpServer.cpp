@@ -12,6 +12,7 @@
 #include "MCP/Server/McpServer.h"
 
 #include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "MCP/Server/IMcpPromptProvider.h"
 #include "MCP/Server/IMcpTool.h"
 #include "MCP/Server/Json.h"
@@ -19,6 +20,8 @@
 #include "Net/SocketAddress.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/TcpSocket.h"
+
+#include <algorithm>
 
 namespace traktor::mcp
 {
@@ -48,11 +51,15 @@ bool McpServer::create(int32_t port)
 #endif
 
 	// Bind to the loopback interface only; the MCP endpoint should never be
-	// reachable from outside the local machine.
+	// reachable from outside the local machine. TcpSocket::bind is exclusive (no
+	// SO_REUSEPORT), so if another instance (e.g. another editor, or a leftover
+	// runtime) already holds the port this fails and is reported here, rather than
+	// silently sharing the port and having the kernel load-balance half the client
+	// connections into a process that never answers them.
 	Ref< net::TcpSocket > serverSocket = new net::TcpSocket();
 	if (!serverSocket->bind(net::SocketAddressIPv4(L"127.0.0.1", (uint16_t)port), true))
 	{
-		log::error << L"MCP server; unable to bind to 127.0.0.1:" << port << L"." << Endl;
+		log::error << L"MCP server; unable to bind to 127.0.0.1:" << port << L" (port already in use?)." << Endl;
 		return false;
 	}
 	if (!serverSocket->listen())
@@ -72,6 +79,8 @@ void McpServer::destroy()
 		m_serverSocket->close();
 		m_serverSocket = nullptr;
 	}
+	// Tear down any in-flight connections; each destructor stops its worker.
+	m_connections.clear();
 	m_tools.clear();
 	m_promptProviders.clear();
 }
@@ -81,19 +90,28 @@ bool McpServer::update()
 	if (!m_serverSocket)
 		return false;
 
-	// Wait briefly for an incoming connection; keep the timeout short so the
-	// driving thread can observe a stop request promptly.
-	if (m_serverSocket->select(true, false, false, 100) <= 0)
-		return true;
+	// Accept a pending connection (if any) and hand it off to a worker thread,
+	// so request processing never blocks this accept loop. The timeout is kept
+	// short so the driving thread can observe a stop request promptly.
+	if (m_serverSocket->select(true, false, false, 100) > 0)
+	{
+		Ref< net::TcpSocket > clientSocket = m_serverSocket->accept();
+		if (clientSocket)
+		{
+			clientSocket->setNoDelay(true);
 
-	Ref< net::TcpSocket > clientSocket = m_serverSocket->accept();
-	if (!clientSocket)
-		return true;
+			Ref< McpConnection > connection = new McpConnection(clientSocket);
+			if (connection->create(this))
+				m_connections.push_back(connection);
+		}
+	}
 
-	clientSocket->setNoDelay(true);
+	// Reap connections that have finished servicing their request.
+	auto it = std::remove_if(m_connections.begin(), m_connections.end(), [](McpConnection* connection) {
+		return !connection->update();
+	});
+	m_connections.erase(it, m_connections.end());
 
-	McpConnection connection(clientSocket);
-	connection.process(this);
 	return true;
 }
 
@@ -304,6 +322,9 @@ Ref< Json > McpServer::handlePromptsGet(const Json* params, std::wstring& outErr
 	}
 
 	const Json* arguments = params->getMember(L"arguments");
+
+	// Serialized for the same reason as tool invocation (see handleToolsCall).
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_invokeLock);
 	for (auto provider : m_promptProviders)
 	{
 		std::wstring error;
@@ -345,8 +366,16 @@ Ref< Json > McpServer::handleToolsCall(const Json* params, std::wstring& outErro
 
 	const Json* arguments = params->getMember(L"arguments");
 
+	// Connections are serviced on separate threads, but tools are not written to
+	// run concurrently (they read/mutate shared editor and database state), so
+	// serialize the actual invocation. Protocol methods and request/response I/O
+	// remain fully concurrent.
 	std::wstring toolError;
-	Ref< Json > value = tool->invoke(arguments, toolError);
+	Ref< Json > value;
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_invokeLock);
+		value = tool->invoke(arguments, toolError);
+	}
 
 	// Build a tool result. Execution failures are reported as a result with
 	// "isError" set (so the model can read them), not as a protocol error.

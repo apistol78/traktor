@@ -12,6 +12,8 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/String.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadPool.h"
 #include "MCP/Server/Json.h"
 #include "MCP/Server/McpServer.h"
 #include "Net/Http/HttpRequest.h"
@@ -85,9 +87,45 @@ int32_t parseContentLength(const std::wstring& headers)
 
 }
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mcp.McpConnection", McpConnection, Object)
+
 McpConnection::McpConnection(net::TcpSocket* clientSocket)
 	: m_socket(clientSocket)
+	, m_finished(false)
 {
+}
+
+McpConnection::~McpConnection()
+{
+	if (m_thread)
+	{
+		// Close the socket first so a worker blocked in a read/write returns
+		// promptly, then reclaim the pooled thread.
+		if (m_socket)
+			m_socket->close();
+		ThreadPool::getInstance().stop(m_thread);
+		m_thread = nullptr;
+	}
+}
+
+bool McpConnection::create(McpServer* server)
+{
+	auto fn = [this, server]() {
+		process(server);
+		m_finished = true;
+	};
+	if (!ThreadPool::getInstance().spawn(fn, m_thread))
+	{
+		// No worker available; service the request inline rather than dropping it.
+		fn();
+		return true;
+	}
+	return true;
+}
+
+bool McpConnection::update() const
+{
+	return !m_finished;
 }
 
 void McpConnection::process(McpServer* server)

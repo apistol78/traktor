@@ -9,6 +9,7 @@
 #include <poll.h>
 #include <libdecor.h>
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/IdleEvent.h"
 #include "Ui/Wl/ContextWl.h"
@@ -71,6 +72,10 @@ bool EventLoopWl::process(EventSubject* owner)
 	// Process deferred redraws queued by update(!immediate).
 	m_context->processPendingExposes();
 
+	// Run work posted onto the UI thread (see execute() for rationale).
+	if (Application* application = Application::getInstance())
+		application->flushDeferred();
+
 	const double dt = m_timer.getDeltaTime();
 	Timers::getInstance().update(dt);
 
@@ -117,6 +122,12 @@ int32_t EventLoopWl::execute(EventSubject* owner)
 
 		// Process deferred redraws.
 		m_context->processPendingExposes();
+
+		// Run work posted onto the UI thread (e.g. from other threads). Done every
+		// iteration, not only on idle, since idle events here fire only after input
+		// activity and would otherwise stall deferred work while the app sits idle.
+		if (Application* application = Application::getInstance())
+			application->flushDeferred();
 
 		if (idle)
 		{
