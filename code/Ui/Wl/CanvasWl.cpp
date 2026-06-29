@@ -387,8 +387,7 @@ int32_t CanvasWl::getAdvance(wchar_t ch, wchar_t next) const
 
 		cairo_text_extents_t tx;
 		cairo_text_extents(m_cr, (const char*)uc, &tx);
-
-		return (int32_t)tx.x_advance;
+		return (int32_t)(tx.x_advance + 0.5);
 	}
 	else
 		return 0;

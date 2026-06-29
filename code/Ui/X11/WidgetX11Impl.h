@@ -491,8 +491,7 @@ public:
 
 		cairo_text_extents_t tx;
 		cairo_text_extents(m_cairo, (const char*)uc, &tx);
-
-		return (int32_t)tx.x_advance;
+		return (int32_t)(tx.x_advance + 0.5);
 	}
 
 	virtual int32_t getLineSpacing() const override
