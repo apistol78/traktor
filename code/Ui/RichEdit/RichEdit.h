@@ -278,11 +278,13 @@ private:
 
 	void deleteCharacters();
 
-	void insertCharacter(wchar_t ch, bool issueEvents, int32_t keyState);
+	void insertCharacter(wchar_t ch, bool issueEvents, int32_t keyState, bool deferUpdate = false);
 
 	void deleteAt(int32_t offset);
 
-	void insertAt(int32_t offset, wchar_t ch);
+	void insertCharacterAt(int32_t offset, wchar_t ch);
+
+	void insertAt(int32_t offset, wchar_t ch, bool deferUpdate = false);
 
 	void scrollToCaret();
 

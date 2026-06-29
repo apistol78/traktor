@@ -379,8 +379,17 @@ void RichEdit::insert(const std::wstring& text)
 		return;
 
 	const std::wstring tmp = traktor::replaceAll(text, L"\r\n", L"\n");
+
+	// Insert all characters first with the per-character content/width/sanity
+	// passes deferred; running them once after the whole batch keeps a large
+	// paste from being O(n^2) (each character would otherwise re-highlight and
+	// re-measure the entire document).
 	for (auto ch : tmp)
-		insertCharacter(ch, false, 0);
+		insertCharacter(ch, false, 0, true);
+
+	contentModified();
+	updateCharacterWidths();
+	santiyCheck();
 
 	CaretEvent caretEvent(this);
 	raiseEvent(&caretEvent);
@@ -857,14 +866,14 @@ void RichEdit::deleteCharacters()
 	raiseEvent(&contentChangeEvent);
 }
 
-void RichEdit::insertCharacter(wchar_t ch, bool issueEvents, int32_t keyState)
+void RichEdit::insertCharacter(wchar_t ch, bool issueEvents, int32_t keyState, bool deferUpdate)
 {
 	if (ch == L'\n' || ch == L'\r')
 	{
 		if (m_selectionStart >= 0)
 			deleteCharacters();
 
-		insertAt(m_caret++, L'\n');
+		insertAt(m_caret++, L'\n', deferUpdate);
 
 		if (issueEvents)
 		{
@@ -920,7 +929,7 @@ void RichEdit::insertCharacter(wchar_t ch, bool issueEvents, int32_t keyState)
 				deleteCharacters();
 		}
 
-		insertAt(m_caret++, L'\t');
+		insertAt(m_caret++, L'\t', deferUpdate);
 
 		if (issueEvents)
 		{
@@ -936,7 +945,7 @@ void RichEdit::insertCharacter(wchar_t ch, bool issueEvents, int32_t keyState)
 		if (m_selectionStart >= 0)
 			deleteCharacters();
 
-		insertAt(m_caret++, ch);
+		insertAt(m_caret++, ch, deferUpdate);
 
 		if (issueEvents)
 		{
@@ -988,7 +997,7 @@ void RichEdit::deleteAt(int32_t offset)
 	}
 }
 
-void RichEdit::insertAt(int32_t offset, wchar_t ch)
+void RichEdit::insertCharacterAt(int32_t offset, wchar_t ch)
 {
 	m_text.insert(m_text.begin() + offset, Character(ch));
 
@@ -1027,10 +1036,21 @@ void RichEdit::insertAt(int32_t offset, wchar_t ch)
 			}
 		}
 	}
+}
 
-	contentModified();
-	updateCharacterWidths();
-	santiyCheck();
+void RichEdit::insertAt(int32_t offset, wchar_t ch, bool deferUpdate)
+{
+	insertCharacterAt(offset, ch);
+
+	// When inserting a batch (e.g. a paste) the caller defers these passes and
+	// runs them once after the whole batch; they are O(document) each so calling
+	// them per character would be quadratic.
+	if (!deferUpdate)
+	{
+		contentModified();
+		updateCharacterWidths();
+		santiyCheck();
+	}
 }
 
 void RichEdit::scrollToCaret()
