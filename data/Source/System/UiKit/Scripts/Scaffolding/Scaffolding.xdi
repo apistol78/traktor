@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.script.Script" version="2">
-	<text>
-	<![CDATA[
+	<text><![CDATA[
+	
 #using \{FC4400A2-BDB6-BA45-9A22-12B9676E71FA}
 
 Scaffolding = Scaffolding or class("Scaffolding")
@@ -32,7 +32,7 @@ function Scaffolding:new(database, resourceManager, root, width, height)
 end
 
 function Scaffolding:getResourceKits()
-	return { "\{5ABEAE05-EB26-934F-932F-7F3C7C582383}" }
+	return { "\{B45977D0-3D89-4FA7-BE4C-FAA9ED63A942}", "\{5ABEAE05-EB26-934F-932F-7F3C7C582383}" }
 end
 
 function Scaffolding:setup(frame)
@@ -49,6 +49,6 @@ function Scaffolding:remove()
 		self._frame = nil
 	end
 end
-	]]>
-	</text>
+	
+	]]></text>
 </object>
