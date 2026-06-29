@@ -19,6 +19,20 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::db
+{
+
+class Instance;
+
+}
+
+namespace traktor::drawing
+{
+
+class Image;
+
+}
+
 namespace traktor::editor
 {
 
@@ -102,6 +116,8 @@ private:
 	void updateMaterialList();
 
 	void createMaterialShader();
+
+	Ref< db::Instance > createEmbeddedTexture(const std::wstring& textureName, drawing::Image* image, bool normalMap);
 
 	void browseMaterialShader();
 

@@ -10,6 +10,7 @@
 
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
@@ -29,6 +30,7 @@
 #include "Model/ModelCache.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/ITexture.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -538,7 +540,9 @@ void MeshAssetEditor::createMaterialShader()
 		return;
 	}
 
-	// Set textures specified in MeshAsset into material.
+	// Bind textures into the material. Prefer a texture instance already assigned
+	// in the MeshAsset; otherwise create a texture asset from the model's embedded
+	// image so the generated material samples the texture instead of a flat color.
 	const auto& materialTextures = m_asset->getMaterialTextures();
 	{
 		model::Material::Map maps[] = {
@@ -551,12 +555,35 @@ void MeshAssetEditor::createMaterialShader()
 			material.getReflectiveMap(),
 			material.getNormalMap()
 		};
+		const bool normalMaps[] = { false, false, false, false, false, false, false, true };
 
-		for (auto& map : maps)
+		SmallMap< std::wstring, Ref< db::Instance > > createdTextures;
+
+		for (uint32_t i = 0; i < sizeof_array(maps); ++i)
 		{
+			model::Material::Map& map = maps[i];
+			if (map.name.empty())
+				continue;
+
+			// Already assigned a texture instance in the MeshAsset.
 			auto it = materialTextures.find(map.name);
 			if (it != materialTextures.end())
+			{
 				map.texture = it->second;
+				continue;
+			}
+
+			// Embedded image with no bound instance; create (or reuse) a texture asset.
+			if (map.texture.isNotNull() || map.image == nullptr)
+				continue;
+
+			auto ct = createdTextures.find(map.name);
+			Ref< db::Instance > textureInstance = (ct != createdTextures.end()) ? ct->second : createEmbeddedTexture(map.name, map.image, normalMaps[i]);
+			if (textureInstance)
+			{
+				map.texture = textureInstance->getGuid();
+				createdTextures[map.name] = textureInstance;
+			}
 		}
 
 		material.setDiffuseMap(maps[0]);
@@ -567,6 +594,23 @@ void MeshAssetEditor::createMaterialShader()
 		material.setEmissiveMap(maps[5]);
 		material.setReflectiveMap(maps[6]);
 		material.setNormalMap(maps[7]);
+
+		// Reflect newly-created textures in the material texture list so the binding
+		// is shown and persisted (apply() collects assignments from the grid rows).
+		if (!createdTextures.empty())
+		{
+			for (auto textureItem : m_materialTextureList->getRows())
+			{
+				auto ct = createdTextures.find(textureItem->get(0)->getText());
+				if (ct != createdTextures.end() && textureItem->getData< db::Instance >(L"INSTANCE") == nullptr)
+				{
+					textureItem->set(1, new ui::GridItem(ct->second->getName()));
+					textureItem->setData(L"INSTANCE", ct->second);
+				}
+			}
+			m_materialTextureList->requestUpdate();
+			m_editor->updateDatabaseView();
+		}
 	}
 
 	// Generate shader.
@@ -592,6 +636,63 @@ void MeshAssetEditor::createMaterialShader()
 			}
 		}
 	}
+}
+
+Ref< db::Instance > MeshAssetEditor::createEmbeddedTexture(const std::wstring& textureName, drawing::Image* image, bool normalMap)
+{
+	if (!image)
+		return nullptr;
+
+	// Reuse an existing texture instance with the same name (e.g. created by a
+	// previous "Create material"), so re-running is idempotent and never clobbers
+	// an instance the user may have edited.
+	if (Ref< db::Instance > existing = m_instance->getParent()->getInstance(textureName))
+		return existing;
+
+	Ref< const PropertyGroup > settings = m_editor->getSettings();
+	const std::wstring assetPath = settings ? settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"") : L"";
+	if (assetPath.empty())
+	{
+		log::error << L"Unable to create embedded texture; Pipeline.AssetPath is not configured." << Endl;
+		return nullptr;
+	}
+
+	// Write the embedded image to a source file, namespaced by the mesh asset so
+	// distinct meshes don't share texture source files.
+	const std::wstring relativeFileName = L"Textures/" + m_instance->getName() + L"/" + textureName + L".png";
+	const Path absolutePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath), Path(relativeFileName));
+	if (!FileSystem::getInstance().makeAllDirectories(absolutePath.getPathOnly()))
+	{
+		log::error << L"Unable to create directory \"" << absolutePath.getPathOnly() << L"\" for embedded texture." << Endl;
+		return nullptr;
+	}
+	if (!image->save(absolutePath))
+	{
+		log::error << L"Unable to write embedded texture image \"" << absolutePath.getPathName() << L"\"." << Endl;
+		return nullptr;
+	}
+
+	// Create a texture asset referencing the written file.
+	Ref< render::TextureAsset > textureAsset = new render::TextureAsset();
+	textureAsset->setFileName(Path(relativeFileName));
+	textureAsset->m_output.m_textureType = render::Tt2D;
+	textureAsset->m_output.m_normalMap = normalMap;
+	textureAsset->m_output.m_inverseNormalMapY = normalMap;
+
+	Ref< db::Instance > textureInstance = m_instance->getParent()->createInstance(textureName);
+	if (!textureInstance)
+	{
+		log::error << L"Unable to create texture instance \"" << textureName << L"\"." << Endl;
+		return nullptr;
+	}
+	if (!textureInstance->setObject(textureAsset) || !textureInstance->commit())
+	{
+		textureInstance->revert();
+		log::error << L"Unable to commit texture instance \"" << textureName << L"\"." << Endl;
+		return nullptr;
+	}
+
+	return textureInstance;
 }
 
 void MeshAssetEditor::browseMaterialShader()
