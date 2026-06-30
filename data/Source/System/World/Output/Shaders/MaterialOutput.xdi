@@ -59,8 +59,8 @@
 			<id>{1D3D4A99-643E-234C-BBB3-F1F72EDF15DB}</id>
 			<comment/>
 			<position>
-				<first>-1923</first>
-				<second>578</second>
+				<first>-1909</first>
+				<second>404</second>
 			</position>
 			<name>V_Discard</name>
 		</item>
@@ -179,8 +179,8 @@ World_ForwardColor
 			<id>{DCB390A4-43B6-E347-95D4-26DB333EDC8D}</id>
 			<comment/>
 			<position>
-				<first>-1923</first>
-				<second>778</second>
+				<first>-1909</first>
+				<second>774</second>
 			</position>
 			<name>V_Specular</name>
 		</item>
@@ -236,8 +236,8 @@ Opaque
 			
 			]]></comment>
 			<position>
-				<first>-364</first>
-				<second>468</second>
+				<first>-377</first>
+				<second>492</second>
 			</position>
 			<name>E_Opaque</name>
 		</item>
@@ -254,8 +254,8 @@ Opaque
 			<id>{358DABAD-79DD-0A4F-968D-3D939A5F680F}</id>
 			<comment/>
 			<position>
-				<first>-364</first>
-				<second>410</second>
+				<first>-377</first>
+				<second>364</second>
 			</position>
 			<name>V_SurfaceColor</name>
 		</item>
@@ -293,8 +293,8 @@ World_SimpleColor
 			
 			]]></comment>
 			<position>
-				<first>-182</first>
-				<second>404</second>
+				<first>-169</first>
+				<second>396</second>
 			</position>
 			<fragmentGuid>{6CFFC4E2-474E-4CEA-9812-C59AEDD8FF6E}</fragmentGuid>
 			<inputPins>
@@ -302,6 +302,11 @@ World_SimpleColor
 					<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
+				</item>
+				<item>
+					<id>{3198BD0F-DF28-4897-9398-F1DB4813B994}</id>
+					<name>Discard</name>
+					<optional>true</optional>
 				</item>
 				<item>
 					<id>{72048415-F7D0-42B2-BF26-7F7F4D97A902}</id>
@@ -315,8 +320,8 @@ World_SimpleColor
 			<id>{2053B95F-C7B5-9B48-88FB-CD91B35D73A2}</id>
 			<comment/>
 			<position>
-				<first>-1923</first>
-				<second>698</second>
+				<first>-1909</first>
+				<second>700</second>
 			</position>
 			<name>V_Metalness</name>
 		</item>
@@ -342,8 +347,8 @@ World_SimpleColor
 			<id>{D9EEE7CE-271E-514A-997E-E8E87BCBB209}</id>
 			<comment/>
 			<position>
-				<first>-1923</first>
-				<second>738</second>
+				<first>-1909</first>
+				<second>737</second>
 			</position>
 			<name>V_Roughness</name>
 		</item>
@@ -360,8 +365,8 @@ World_SimpleColor
 			<id>{F1550B86-789C-0D43-80AE-52D39CF27234}</id>
 			<comment/>
 			<position>
-				<first>-1923</first>
-				<second>378</second>
+				<first>-1909</first>
+				<second>441</second>
 			</position>
 			<name>V_SurfaceColor</name>
 		</item>
@@ -451,8 +456,8 @@ Opaque
 			
 			]]></comment>
 			<position>
-				<first>-1923</first>
-				<second>658</second>
+				<first>-1909</first>
+				<second>663</second>
 			</position>
 			<name>E_Opaque</name>
 		</item>
@@ -775,8 +780,8 @@ Opaque
 			<id>{D2088F77-9A70-4C68-97D8-179F0EE05405}</id>
 			<comment/>
 			<position>
-				<first>-1955</first>
-				<second>418</second>
+				<first>-1941</first>
+				<second>478</second>
 			</position>
 			<name>V_ViewNormalDetail</name>
 		</item>
@@ -930,8 +935,8 @@ Opaque
 			<id>{687F94B1-8EFC-DF4E-9BEE-6DFD8124EBCB}</id>
 			<comment/>
 			<position>
-				<first>-1923</first>
-				<second>498</second>
+				<first>-1909</first>
+				<second>552</second>
 			</position>
 			<name>V_ViewPosition</name>
 		</item>
@@ -979,11 +984,16 @@ World_DeferredGBufferWrite
 			
 			]]></comment>
 			<position>
-				<first>-1700</first>
-				<second>475</second>
+				<first>-1690</first>
+				<second>482</second>
 			</position>
 			<fragmentGuid>{B02CB855-C540-492F-B6E6-1ECEE2498127}</fragmentGuid>
 			<inputPins>
+				<item>
+					<id>{C9E7EC8E-27BE-B148-8B22-54895036386B}</id>
+					<name>Discard</name>
+					<optional>false</optional>
+				</item>
 				<item>
 					<id>{FA893653-9994-4A8E-BDE0-55917C5B2AF7}</id>
 					<name>SurfaceColor</name>
@@ -1002,11 +1012,6 @@ World_DeferredGBufferWrite
 				<item>
 					<id>{7CA9EEB0-2748-4926-BEC8-603482ACA31F}</id>
 					<name>DecalResponse</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{C9E7EC8E-27BE-B148-8B22-54895036386B}</id>
-					<name>Discard</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -1041,8 +1046,8 @@ World_DeferredGBufferWrite
 			<id>{37DBD815-2118-FD44-B51A-9FD5C110F635}</id>
 			<comment/>
 			<position>
-				<first>-1987</first>
-				<second>458</second>
+				<first>-1957</first>
+				<second>515</second>
 			</position>
 			<name>V_ViewNormalGeometry</name>
 		</item>
@@ -1134,8 +1139,8 @@ World_DeferredGBufferWrite
 			<id>{236AD9C6-45CE-4F37-8EB3-8DBCC303AE35}</id>
 			<comment/>
 			<position>
-				<first>-1939</first>
-				<second>538</second>
+				<first>-1925</first>
+				<second>589</second>
 			</position>
 			<name>V_DecalResponse</name>
 		</item>
@@ -1152,8 +1157,8 @@ World_DeferredGBufferWrite
 			<id>{84A600DF-C423-8246-972C-B1C778842532}</id>
 			<comment/>
 			<position>
-				<first>-1923</first>
-				<second>618</second>
+				<first>-1909</first>
+				<second>626</second>
 			</position>
 			<name>V_Emissive</name>
 		</item>
@@ -1261,6 +1266,15 @@ World_DeferredGBufferWrite
 				<first>-3121</first>
 				<second>840</second>
 			</position>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{A2143889-06B1-4B86-A87E-4F4378A5D917}</id>
+			<comment/>
+			<position>
+				<first>-377</first>
+				<second>428</second>
+			</position>
+			<name>V_Discard</name>
 		</item>
 	</nodes>
 	<edges>
@@ -1886,16 +1900,6 @@ World_DeferredGBufferWrite
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[68]"/>
-				<id>{C9E7EC8E-27BE-B148-8B22-54895036386B}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -2142,6 +2146,26 @@ World_DeferredGBufferWrite
 			<destination>
 				<node ref="/object/nodes/item[42]"/>
 				<id>{06C92643-3818-6941-A548-5D306BC2AEF6}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[93]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{3198BD0F-DF28-4897-9398-F1DB4813B994}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[68]"/>
+				<id>{C9E7EC8E-27BE-B148-8B22-54895036386B}</id>
 			</destination>
 		</item>
 	</edges>

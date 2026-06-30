@@ -198,7 +198,7 @@ Metalness
 				<second>-172</second>
 			</position>
 			<name>Discard</name>
-			<optional>true</optional>
+			<optional>false</optional>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{D301496E-DDAC-4860-B8DD-15359A619FF7}</id>
@@ -695,8 +695,8 @@ else
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{291502CF-D8D7-4CEC-8457-E867D70CD04E}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[21]"/>
