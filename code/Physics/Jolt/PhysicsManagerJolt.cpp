@@ -162,9 +162,8 @@ public:
 	}
 };
 
-// Filters by traktor's collision group/mask bitmasks. The body's GroupID stores
-// the merged collision-group bits, the SubGroupID stores the merged collision-mask
-// bits. Two bodies collide only if each appears in the other's mask.
+// GroupID holds the merged collision-group bits, SubGroupID the mask bits; two
+// bodies collide only if each appears in the other's mask.
 class GroupFilterImpl : public JPH::GroupFilter
 {
 public:
@@ -200,7 +199,10 @@ public:
 		return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
 	}
 
-	virtual void OnContactAdded(const JPH::Body& body1, const JPH::Body& body2, const JPH::ContactManifold& manifold, JPH::ContactSettings& ioSettings) override
+	// Apply per-triangle material friction/restitution. Jolt resets ioSettings to the
+	// body-level combine before every callback, so this must run on both Added and
+	// Persisted, else per-material restitution on meshes is lost on persisted contacts.
+	static void applyMaterialSettings(const JPH::Body& body1, const JPH::Body& body2, const JPH::ContactManifold& manifold, JPH::ContactSettings& ioSettings)
 	{
 		BodyJolt* b1 = (BodyJolt*)body1.GetUserData();
 		BodyJolt* b2 = (BodyJolt*)body2.GetUserData();
@@ -215,6 +217,16 @@ public:
 
 		ioSettings.mCombinedFriction = friction1 * friction2;
 		ioSettings.mCombinedRestitution = restitution1 * restitution2;
+	}
+
+	virtual void OnContactAdded(const JPH::Body& body1, const JPH::Body& body2, const JPH::ContactManifold& manifold, JPH::ContactSettings& ioSettings) override
+	{
+		BodyJolt* b1 = (BodyJolt*)body1.GetUserData();
+		BodyJolt* b2 = (BodyJolt*)body2.GetUserData();
+		if (!b1 || !b2)
+			return;
+
+		applyMaterialSettings(body1, body2, manifold, ioSettings);
 
 		std::lock_guard< std::mutex > lock(m_mutex);
 
@@ -232,7 +244,10 @@ public:
 		m_pending.push_back(pc);
 	}
 
-	virtual void OnContactPersisted(const JPH::Body&, const JPH::Body&, const JPH::ContactManifold&, JPH::ContactSettings&) override {}
+	virtual void OnContactPersisted(const JPH::Body& body1, const JPH::Body& body2, const JPH::ContactManifold& manifold, JPH::ContactSettings& ioSettings) override
+	{
+		applyMaterialSettings(body1, body2, manifold, ioSettings);
+	}
 
 	virtual void OnContactRemoved(const JPH::SubShapeIDPair& subShapePair) override
 	{
@@ -375,6 +390,11 @@ bool buildBodyCreationSettings(const BodyDesc* desc, JPH::ShapeRefC shape, JPH::
 		outSettings.mFriction = dynamicDesc->getFriction();
 		outSettings.mRestitution = dynamicDesc->getRestitution();
 		outSettings.mAllowSleeping = dynamicDesc->getAutoDeactivate();
+		// Use the authored mass, deriving inertia from the shape (like Bullet's
+		// calculateLocalInertia). Otherwise Jolt defaults to volume * density
+		// (1000 kg/m^3) and ignores getMass(), producing far too heavy bodies.
+		outSettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
+		outSettings.mMassPropertiesOverride.mMass = dynamicDesc->getMass();
 		return true;
 	}
 	return false;
@@ -475,9 +495,20 @@ protected:
 		if (!unwrappedBody || unwrappedBody == m_ignoreBody || !passesQueryFilter(unwrappedBody, m_queryFilter))
 			return false;
 
+		// Surface normal, pointing from the hit surface back towards the swept shape.
+		const Vector4 normal = convertFromJolt(-result.mPenetrationAxis.Normalized(), 0.0f);
+
+		// Only report surfaces the sweep moves *into*. Jolt reports a fraction-0 hit
+		// whenever the shape starts in contact regardless of direction, which wedges
+		// the character controller against anything it touches (can't slide or pass
+		// through openings). Skip those, matching Bullet's btGjkConvexCast.
+		const Vector4 direction = convertFromJolt(m_shapeCast.mDirection, 0.0f);
+		if (dot3(direction, normal) >= 0.0_simd)
+			return false;
+
 		outResult.body = unwrappedBody;
 		outResult.position = convertFromJolt(m_shapeCast.GetPointOnRay(result.mFraction), 1.0f);
-		outResult.normal = convertFromJolt(-result.mPenetrationAxis.Normalized(), 0.0f);
+		outResult.normal = normal;
 		outResult.fraction = result.mFraction;
 		outResult.material = unwrappedBody->getMaterial();
 		return true;
@@ -726,13 +757,13 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 	{
 		JPH::BoxShapeSettings shapeSettings(convertToJolt(boxShape->getExtent()), boxShape->getMargin());
 		shapeSettings.SetEmbedded();
-		return createBodyFromShape(shapeSettings, shapeDesc, desc, 0.0f, Vector4::zero(), mergedCollisionGroup, mergedCollisionMask, resource::Proxy< Mesh >(), tag);
+		return createBodyFromShape(shapeSettings, shapeDesc, desc, Vector4::zero(), mergedCollisionGroup, mergedCollisionMask, resource::Proxy< Mesh >(), tag);
 	}
 	else if (auto sphereShape = dynamic_type_cast< const SphereShapeDesc* >(shapeDesc))
 	{
 		JPH::SphereShapeSettings shapeSettings(sphereShape->getRadius());
 		shapeSettings.SetEmbedded();
-		return createBodyFromShape(shapeSettings, shapeDesc, desc, 0.0f, Vector4::zero(), mergedCollisionGroup, mergedCollisionMask, resource::Proxy< Mesh >(), tag);
+		return createBodyFromShape(shapeSettings, shapeDesc, desc, Vector4::zero(), mergedCollisionGroup, mergedCollisionMask, resource::Proxy< Mesh >(), tag);
 	}
 	else if (auto capsuleShape = dynamic_type_cast< const CapsuleShapeDesc* >(shapeDesc))
 	{
@@ -740,29 +771,26 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		const float halfHeight = std::max(0.0f, capsuleShape->getLength() * 0.5f - radius);
 		JPH::CapsuleShapeSettings capsuleSettings(halfHeight, radius);
 		capsuleSettings.SetEmbedded();
-		// Traktor capsules are defined along the Z axis (matching Bullet's btCapsuleShapeZ),
-		// whereas Jolt's capsule is aligned along Y. Rotate it onto Z so the shape's local
-		// transform (e.g. the character controller's upright rotation) orients it identically
-		// across physics backends; without this the capsule ends up on its side.
+		// Traktor capsules are Z-axis (Bullet's btCapsuleShapeZ); Jolt's are Y-axis, so
+		// rotate onto Z so shape local transforms orient identically across backends.
 		JPH::RotatedTranslatedShapeSettings shapeSettings(
 			JPH::Vec3::sZero(),
 			JPH::Quat::sRotation(JPH::Vec3::sAxisX(), 0.5f * JPH::JPH_PI),
 			&capsuleSettings);
 		shapeSettings.SetEmbedded();
-		return createBodyFromShape(shapeSettings, shapeDesc, desc, 0.0f, Vector4::zero(), mergedCollisionGroup, mergedCollisionMask, resource::Proxy< Mesh >(), tag);
+		return createBodyFromShape(shapeSettings, shapeDesc, desc, Vector4::zero(), mergedCollisionGroup, mergedCollisionMask, resource::Proxy< Mesh >(), tag);
 	}
 	else if (auto cylinderShape = dynamic_type_cast< const CylinderShapeDesc* >(shapeDesc))
 	{
 		JPH::CylinderShapeSettings cylinderSettings(cylinderShape->getLength() * 0.5f, cylinderShape->getRadius());
 		cylinderSettings.SetEmbedded();
-		// As with the capsule, Traktor cylinders are defined along the Z axis (Bullet's
-		// btCylinderShapeZ); Jolt's cylinder is Y-aligned, so rotate it onto Z for parity.
+		// As the capsule: Traktor cylinders are Z-axis (btCylinderShapeZ), Jolt's Y-axis.
 		JPH::RotatedTranslatedShapeSettings shapeSettings(
 			JPH::Vec3::sZero(),
 			JPH::Quat::sRotation(JPH::Vec3::sAxisX(), 0.5f * JPH::JPH_PI),
 			&cylinderSettings);
 		shapeSettings.SetEmbedded();
-		return createBodyFromShape(shapeSettings, shapeDesc, desc, 0.0f, Vector4::zero(), mergedCollisionGroup, mergedCollisionMask, resource::Proxy< Mesh >(), tag);
+		return createBodyFromShape(shapeSettings, shapeDesc, desc, Vector4::zero(), mergedCollisionGroup, mergedCollisionMask, resource::Proxy< Mesh >(), tag);
 	}
 	else if (auto meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 	{
@@ -799,7 +827,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 			size);
 		shapeSettings.SetEmbedded();
 
-		return createBodyFromShape(shapeSettings, shapeDesc, desc, 0.0f, Vector4::zero(), mergedCollisionGroup, mergedCollisionMask, resource::Proxy< Mesh >(), tag);
+		return createBodyFromShape(shapeSettings, shapeDesc, desc, Vector4::zero(), mergedCollisionGroup, mergedCollisionMask, resource::Proxy< Mesh >(), tag);
 	}
 
 	log::error << L"Unsupported shape type \"" << type_name(shapeDesc) << L"\"." << Endl;
@@ -1070,10 +1098,9 @@ bool PhysicsManagerJolt::queryRay(
 		settings.mBackFaceModeTriangles = JPH::EBackFaceMode::CollideWithBackFaces;
 		settings.mBackFaceModeConvex = JPH::EBackFaceMode::CollideWithBackFaces;
 	}
-	// Do NOT treat convex shapes as solid: when the ray origin is inside a convex body
-	// (e.g. a perception ray cast from an actor's own eye height, inside its own capsule)
-	// Jolt would otherwise report a spurious hit at fraction 0 and short-circuit the ray.
-	// Bullet's ray test has no such behaviour, so disabling this keeps the backends in sync.
+	// Don't treat convex shapes as solid: a ray starting inside a body (e.g. an
+	// eye-height perception ray inside its own capsule) would otherwise hit at
+	// fraction 0. Matches Bullet.
 	settings.mTreatConvexAsSolid = false;
 
 	RayCollector collector(this, ray, queryFilter, QtAll, outResult);
@@ -1338,10 +1365,9 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 				triangle.indices[0],
 				triangle.material < materialCount ? triangle.material : 0));
 
-		// Jolt requires mMaterials to be populated for any non-zero per-triangle
-		// material index. The actual friction/restitution come from the contact
-		// callback (which reads our Mesh::Material table), so we just hand Jolt
-		// a parallel list of placeholder PhysicsMaterials of the right size.
+		// Jolt needs mMaterials sized for the per-triangle indices; the real
+		// friction/restitution come from the contact callback (applyMaterialSettings),
+		// so these are placeholders.
 		JPH::PhysicsMaterialList joltMaterials;
 		joltMaterials.reserve(materialCount);
 		for (uint32_t i = 0; i < materialCount; ++i)
@@ -1350,7 +1376,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		JPH::MeshShapeSettings shapeSettings(vertexList, triangleList, std::move(joltMaterials));
 		shapeSettings.SetEmbedded();
 
-		return createBodyFromShape(shapeSettings, shapeDesc, desc, 0.0f, centerOfGravity, collisionGroup, collisionMask, meshProxy, tag);
+		return createBodyFromShape(shapeSettings, shapeDesc, desc, centerOfGravity, collisionGroup, collisionMask, meshProxy, tag);
 	}
 	else if (auto dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
 	{
@@ -1364,13 +1390,10 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 
 		JPH::Array< JPH::Vec3 > vertexList;
 		vertexList.reserve(hullIndices.size());
-
-		Aabb3 boundingBox;
 		for (const auto& hullIndex : hullIndices)
 		{
 			const Vector4& vertex = vertices[hullIndex];
 			vertexList.push_back(JPH::Vec3(vertex.x(), vertex.y(), vertex.z()));
-			boundingBox.contain(vertex);
 		}
 
 		JPH::ConvexHullShapeSettings shapeSettings(vertexList);
@@ -1378,23 +1401,21 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 
 		JPH::ShapeRefC shape = wrapWithLocalTransform(shapeSettings, shapeDesc->getLocalTransform());
 
+		// Mass/inertia set by buildBodyCreationSettings (CalculateInertia on the hull).
 		JPH::BodyCreationSettings settings;
 		if (!buildBodyCreationSettings(desc, shape, settings))
 			return nullptr;
 
-		const float mass = dynamicDesc->getMass();
-		const Vector4 boxSize = boundingBox.getExtent() * 2.0_simd;
-		const float volume = std::max< float >(boxSize.x() * boxSize.y() * boxSize.z(), 0.001f);
-
-		settings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
-		settings.mMassPropertiesOverride.SetMassAndInertiaOfSolidBox(convertToJolt(boxSize), mass / volume);
 		settings.mCollisionGroup = JPH::CollisionGroup(m_groupFilter, collisionGroup, collisionMask);
 
 		JPH::Body* body = m_physicsSystem->GetBodyInterface().CreateBody(settings);
 		if (!body)
 			return nullptr;
 
-		Ref< BodyJolt > bj = new BodyJolt(tag, this, m_physicsSystem.ptr(), body, 1.0f / mass, centerOfGravity, collisionGroup, collisionMask, shapeDesc->getMaterial(), meshProxy);
+		const float mass = dynamicDesc->getMass();
+		const float inverseMass = mass > 0.0f ? 1.0f / mass : 0.0f;
+
+		Ref< BodyJolt > bj = new BodyJolt(tag, this, m_physicsSystem.ptr(), body, inverseMass, centerOfGravity, collisionGroup, collisionMask, shapeDesc->getMaterial(), meshProxy);
 		m_bodies.push_back(bj);
 		return bj;
 	}
@@ -1403,7 +1424,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 	return nullptr;
 }
 
-Ref< Body > PhysicsManagerJolt::createBodyFromShape(JPH::ShapeSettings& shapeSettings, const ShapeDesc* shapeDesc, const BodyDesc* desc, float inverseMass, const Vector4& centerOfGravity, uint32_t collisionGroup, uint32_t collisionMask, const resource::Proxy< Mesh >& mesh, const wchar_t* const tag)
+Ref< Body > PhysicsManagerJolt::createBodyFromShape(JPH::ShapeSettings& shapeSettings, const ShapeDesc* shapeDesc, const BodyDesc* desc, const Vector4& centerOfGravity, uint32_t collisionGroup, uint32_t collisionMask, const resource::Proxy< Mesh >& mesh, const wchar_t* const tag)
 {
 	JPH::ShapeRefC shape = wrapWithLocalTransform(shapeSettings, shapeDesc->getLocalTransform());
 
@@ -1416,6 +1437,15 @@ Ref< Body > PhysicsManagerJolt::createBodyFromShape(JPH::ShapeSettings& shapeSet
 	JPH::Body* body = m_physicsSystem->GetBodyInterface().CreateBody(settings);
 	if (!body)
 		return nullptr;
+
+	// Keep the wrapper's inverse mass in sync with Jolt; getInverseMass() is used by
+	// gameplay (e.g. VehicleComponent).
+	float inverseMass = 0.0f;
+	if (auto dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
+	{
+		const float mass = dynamicDesc->getMass();
+		inverseMass = mass > 0.0f ? 1.0f / mass : 0.0f;
+	}
 
 	Ref< BodyJolt > bj = new BodyJolt(tag, this, m_physicsSystem.ptr(), body, inverseMass, centerOfGravity, collisionGroup, collisionMask, shapeDesc->getMaterial(), mesh);
 	m_bodies.push_back(bj);
@@ -1440,18 +1470,27 @@ void PhysicsManagerJolt::destroyBody(BodyJolt* body)
 void PhysicsManagerJolt::destroyConstraint(Joint* joint, JPH::Constraint* constraint)
 {
 	if (m_physicsSystem.c_ptr())
-		m_physicsSystem->RemoveConstraint(constraint);
+		removeConstraint(constraint);
 	const bool removed = m_joints.remove(joint);
 	T_FATAL_ASSERT(removed);
 }
 
 void PhysicsManagerJolt::insertConstraint(JPH::Constraint* constraint)
 {
-	m_physicsSystem->AddConstraint(constraint);
+	// Add once: a joint's constraint is registered by both bodies, so inserts arrive
+	// once per enabled body.
+	if (m_activeConstraints.insert(constraint))
+		m_physicsSystem->AddConstraint(constraint);
 }
 
 void PhysicsManagerJolt::removeConstraint(JPH::Constraint* constraint)
 {
+	// Remove once (mirrors insertConstraint); removing a constraint Jolt no longer
+	// holds would corrupt its ConstraintManager.
+	auto it = m_activeConstraints.find(constraint);
+	if (it == m_activeConstraints.end())
+		return;
+	m_activeConstraints.erase(it);
 	m_physicsSystem->RemoveConstraint(constraint);
 }
 

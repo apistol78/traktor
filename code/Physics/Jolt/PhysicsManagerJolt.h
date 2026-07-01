@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Containers/SmallSet.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/Jolt/Types.h"
 #include "Resource/Proxy.h"
@@ -25,6 +26,7 @@ namespace JPH
 {
 
 class BroadPhaseLayerInterface;
+class Constraint;
 class ContactListener;
 class GroupFilter;
 class JobSystemThreadPool;
@@ -160,6 +162,7 @@ private:
 	JPH::GroupFilter* m_groupFilter = nullptr;
 	RefArray< BodyJolt > m_bodies;
 	RefArray< Joint > m_joints;
+	SmallSet< JPH::Constraint* > m_activeConstraints;
 	float m_timeScale = 1.0f;
 	int32_t m_collisionSteps = 1;
 	mutable uint32_t m_queryCount = 0;
@@ -167,7 +170,7 @@ private:
 
 	Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const Mesh* mesh, uint32_t collisionGroup, uint32_t collisionMask, const wchar_t* const tag);
 
-	Ref< Body > createBodyFromShape(JPH::ShapeSettings& shapeSettings, const ShapeDesc* shapeDesc, const BodyDesc* desc, float inverseMass, const Vector4& centerOfGravity, uint32_t collisionGroup, uint32_t collisionMask, const resource::Proxy< Mesh >& mesh, const wchar_t* const tag);
+	Ref< Body > createBodyFromShape(JPH::ShapeSettings& shapeSettings, const ShapeDesc* shapeDesc, const BodyDesc* desc, const Vector4& centerOfGravity, uint32_t collisionGroup, uint32_t collisionMask, const resource::Proxy< Mesh >& mesh, const wchar_t* const tag);
 
 	// IWorldCallback
 
