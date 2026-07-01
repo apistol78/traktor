@@ -1,49 +1,54 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
+#include "Terrain/UndergrowthComponent.h"
+
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Heightfield/Heightfield.h"
-#include "Resource/IResourceManager.h"
 #include "Render/Buffer.h"
+#include "Render/Context/RenderContext.h"
 #include "Render/IRenderSystem.h"
 #include "Render/VertexElement.h"
-#include "Render/Context/RenderContext.h"
+#include "Resource/IResourceManager.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainSurfaceCache.h"
-#include "Terrain/UndergrowthComponent.h"
 #include "Terrain/UndergrowthComponentData.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
+#include <limits>
+
 namespace traktor::terrain
 {
-	namespace
-	{
+namespace
+{
 
 const int32_t c_maxInstanceCount = 180;
 
 #pragma pack(1)
+
 struct Vertex
 {
 	float position[2];
 	half_t texCoord[2];
 };
+
 #pragma pack()
 
 #pragma pack(1)
+
 struct PlantData
 {
 	float positionX;
@@ -55,6 +60,7 @@ struct PlantData
 	float dummy2;
 	float dummy3;
 };
+
 #pragma pack()
 
 const render::Handle s_handleTerrain_Normals(L"Terrain_Normals");
@@ -76,15 +82,14 @@ Vertex packVertex(const Vector4& position, float u, float v)
 	return vtx;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.UndergrowthComponent", UndergrowthComponent, TerrainLayerComponent)
 
 bool UndergrowthComponent::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	const UndergrowthComponentData& layerData
-)
+	const UndergrowthComponentData& layerData)
 {
 	m_layerData = layerData;
 
@@ -100,8 +105,8 @@ bool UndergrowthComponent::create(
 	m_vertexBuffer = renderSystem->createBuffer(
 		render::BuVertex,
 		4 * sizeof(Vertex),
-		false
-	);
+		false,
+		T_FILE_LINE_W);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -123,8 +128,8 @@ bool UndergrowthComponent::create(
 	m_indexBuffer = renderSystem->createBuffer(
 		render::BuIndex,
 		3 * 2 * 2 * sizeof(uint16_t),
-		false
-	);
+		false,
+		T_FILE_LINE_W);
 	if (!m_indexBuffer)
 		return 0;
 
@@ -177,11 +182,71 @@ void UndergrowthComponent::update(const world::UpdateParams& update)
 	TerrainLayerComponent::update(update);
 }
 
+void UndergrowthComponent::setup(const world::WorldRenderView& worldRenderView)
+{
+	if (!m_plantsCount)
+		return;
+
+	const Matrix44 view = worldRenderView.getView();
+	const Matrix44 viewInv = view.inverse();
+	const Vector4 eye = viewInv.translation();
+
+	// Get plant state for current view.
+	ViewState& vs = m_viewState[worldRenderView.getIndex()];
+	if (vs.plantBuffer == nullptr || vs.plantBuffer->getBufferSize() / sizeof(PlantData) != m_plantsCount)
+	{
+		vs.plantBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_plantsCount * sizeof(PlantData), true, T_FILE_LINE_W);
+		vs.orderBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_plantsCount * sizeof(int32_t), true, T_FILE_LINE_W);
+	}
+
+	Frustum viewFrustum = worldRenderView.getViewFrustum();
+	viewFrustum.setFarZ(Scalar(m_layerData.m_spreadDistance + m_clusterSize));
+
+	vs.drawInstanceCount = 0;
+
+	PlantData* plantData = (PlantData*)vs.plantBuffer->lock();
+	int32_t* orderPtr = (int32_t*)vs.orderBuffer->lock();
+
+	const Scalar clusterSize(m_clusterSize);
+	for (uint32_t i = 0; i < m_clusters.size(); ++i)
+	{
+		const Cluster& cluster = m_clusters[i];
+
+		if (viewFrustum.inside(view * cluster.center, clusterSize) == Frustum::Result::Outside)
+			continue;
+
+		RandomGeometry random(int32_t(cluster.center.x() * 919.0f + cluster.center.z() * 463.0f));
+		for (int32_t j = cluster.from; j < cluster.to; ++j)
+		{
+			const Vector2 ruv = Quasirandom::hammersley(j - cluster.from, cluster.to - cluster.from, random);
+
+			const float dx = (ruv.x * 2.2f - 1.1f) * m_clusterSize;
+			const float dz = (ruv.y * 2.2f - 1.1f) * m_clusterSize;
+
+			const float px = cluster.center.x() + dx;
+			const float pz = cluster.center.z() + dz;
+
+			auto& pd = plantData[j];
+			pd.positionX = px;
+			pd.positionZ = pz;
+			pd.plant = float(cluster.plant);
+			pd.scale = cluster.plantScale * (random.nextFloat() * 0.5f + 0.5f);
+			pd.random = random.nextFloat();
+
+			*orderPtr++ = j;
+		}
+
+		vs.drawInstanceCount += cluster.to - cluster.from;
+	}
+
+	vs.plantBuffer->unlock();
+	vs.orderBuffer->unlock();
+}
+
 void UndergrowthComponent::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
+	const world::IWorldRenderPass& worldRenderPass)
 {
 	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
 	if (!terrainComponent)
@@ -192,73 +257,15 @@ void UndergrowthComponent::build(
 
 	const auto& terrain = terrainComponent->getTerrain();
 
-	// Update clusters at first pass from eye pow.
-	bool updateClusters = (bool)((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0);
-
 	const Matrix44 view = worldRenderView.getView();
 	const Matrix44 viewInv = view.inverse();
 	const Vector4 eye = viewInv.translation();
 
-	// Get plant state for current view.
-	ViewState& vs = m_viewState[worldRenderView.getIndex()];
-	if (vs.plantBuffer == nullptr || vs.plantBuffer->getBufferSize() / sizeof(PlantData) != m_plantsCount)
-	{
-		vs.plantBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_plantsCount * sizeof(PlantData), true);
-		vs.orderBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_plantsCount * sizeof(int32_t), true);
-		updateClusters = true;
-	}
-
-	if (updateClusters)
-	{
-		Frustum viewFrustum = worldRenderView.getViewFrustum();
-		viewFrustum.setFarZ(Scalar(m_layerData.m_spreadDistance + m_clusterSize));
-
-		vs.drawInstanceCount = 0;
-
-		PlantData* plantData = (PlantData*)vs.plantBuffer->lock();
-		int32_t* orderPtr = (int32_t*)vs.orderBuffer->lock();
-
-		// Only perform "replanting" half of clusters each frame.
-		const Scalar clusterSize(m_clusterSize);
-		//for (uint32_t i = vs.count % 2; i < m_clusters.size(); i += 2)
-		for (uint32_t i = 0; i < m_clusters.size(); ++i)
-		{
-			const Cluster& cluster = m_clusters[i];
-
-			if (viewFrustum.inside(view * cluster.center, clusterSize) == Frustum::Result::Outside)
-				continue;
-
-			RandomGeometry random(int32_t(cluster.center.x() * 919.0f + cluster.center.z() * 463.0f));
-			for (int32_t j = cluster.from; j < cluster.to; ++j)
-			{
-				const Vector2 ruv = Quasirandom::hammersley(j - cluster.from, cluster.to - cluster.from, random);
-
-				const float dx = (ruv.x * 2.2f - 1.1f) * m_clusterSize;
-				const float dz = (ruv.y * 2.2f - 1.1f) * m_clusterSize;
-
-				const float px = cluster.center.x() + dx;
-				const float pz = cluster.center.z() + dz;
-
-				auto& pd = plantData[j];
-				pd.positionX = px;
-				pd.positionZ = pz;
-				pd.plant = float(cluster.plant);
-				pd.scale = cluster.plantScale * (random.nextFloat() * 0.5f + 0.5f);
-				pd.random = random.nextFloat();
-
-				*orderPtr++ = j;
-			}
-
-			vs.drawInstanceCount += cluster.to - cluster.from;
-		}
-
-		vs.plantBuffer->unlock();
-		vs.orderBuffer->unlock();
-	}
-
 	auto sp = worldRenderPass.getProgram(m_shader);
 	if (!sp)
 		return;
+
+	ViewState& vs = m_viewState[worldRenderView.getIndex()];
 
 	render::RenderContext* renderContext = context.getRenderContext();
 
@@ -289,8 +296,7 @@ void UndergrowthComponent::build(
 
 	renderContext->draw(
 		sp.priority,
-		renderBlock
-	);
+		renderBlock);
 }
 
 void UndergrowthComponent::updatePatches()

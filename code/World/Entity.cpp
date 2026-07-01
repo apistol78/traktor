@@ -94,6 +94,16 @@ Aabb3 Entity::getBoundingBox() const
 	return boundingBox;
 }
 
+bool Entity::allowConcurrentUpdate() const
+{
+	for (auto component : m_components)
+	{
+		if (!component->allowConcurrentUpdate())
+			return false;
+	}
+	return true;
+}
+
 void Entity::update(const UpdateParams& update)
 {
 	T_FATAL_ASSERT(m_world != nullptr);

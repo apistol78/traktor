@@ -40,6 +40,10 @@ public:
 
 	bool submit(const StaticVector< VkSemaphore, 2 >& waitSemaphores, const StaticVector< VkPipelineStageFlags, 2 >& waitStageFlags, VkSemaphore signalSemaphore);
 
+	bool submitSignal(VkSemaphore semaphore, uint64_t semaphoreValue);
+
+	bool submitWait(VkSemaphore semaphore, uint64_t semaphoreValue, VkPipelineStageFlags stages);
+
 	bool wait();
 
 	bool submitAndWait();

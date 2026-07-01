@@ -1,20 +1,22 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Image2/ImageGraphPipeline.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Database/Instance.h"
-#include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
 #include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/Image2/ImageGraphAsset.h"
 #include "Render/Editor/Image2/ImageGraphPermutations.h"
-#include "Render/Editor/Image2/ImageGraphPipeline.h"
+#include "Render/Editor/Image2/ImgBindTexture.h"
 #include "Render/Editor/Image2/ImgInput.h"
 #include "Render/Editor/Image2/ImgOutput.h"
 #include "Render/Editor/Image2/ImgPass.h"
@@ -25,7 +27,6 @@
 #include "Render/Editor/Image2/ImgStepSimple.h"
 #include "Render/Editor/Image2/ImgStructBuffer.h"
 #include "Render/Editor/Image2/ImgTargetSet.h"
-#include "Render/Editor/Image2/ImgTexture.h"
 #include "Render/Image2/AmbientOcclusionData.h"
 #include "Render/Image2/ComputeData.h"
 #include "Render/Image2/DirectionalBlurData.h"
@@ -40,7 +41,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 19, ImageGraphPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 22, ImageGraphPipeline, editor::IPipeline)
 
 bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -71,8 +72,7 @@ bool ImageGraphPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	const ImageGraphAsset* asset = mandatory_non_null_type_cast< const ImageGraphAsset* >(sourceAsset);
 
@@ -86,12 +86,10 @@ bool ImageGraphPipeline::buildDependencies(
 
 	// Traverse nodes starting from output node; collect
 	// all resources used by image graph.
-	GraphTraverse(asset, outputs.front()).preorder([&](const Node* node)
-	{
+	GraphTraverse(asset, outputs.front()).preorder([&](const Node* node) {
 		if (auto pass = dynamic_type_cast< const ImgPass* >(node))
 		{
 			for (auto step : pass->getSteps())
-			{
 				if (auto ambientOcclusionStep = dynamic_type_cast< const ImgStepAmbientOcclusion* >(step))
 					pipelineDepends->addDependency(ambientOcclusionStep->m_shader, editor::PdfBuild | editor::PdfResource);
 				else if (auto computeStep = dynamic_type_cast< const ImgStepCompute* >(step))
@@ -102,9 +100,8 @@ bool ImageGraphPipeline::buildDependencies(
 					pipelineDepends->addDependency(shadowProjectStep->m_shader, editor::PdfBuild | editor::PdfResource);
 				else if (auto simpleStep = dynamic_type_cast< const ImgStepSimple* >(step))
 					pipelineDepends->addDependency(simpleStep->m_shader, editor::PdfBuild | editor::PdfResource);
-			}
 		}
-		else if (auto texture = dynamic_type_cast< const ImgTexture* >(node))
+		else if (auto texture = dynamic_type_cast< const ImgBindTexture* >(node))
 			pipelineDepends->addDependency(texture->m_texture, editor::PdfBuild | editor::PdfResource);
 		return true;
 	});
@@ -121,8 +118,7 @@ bool ImageGraphPipeline::buildOutput(
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
-	uint32_t reason
-) const
+	uint32_t reason) const
 {
 	const ImageGraphAsset* asset = mandatory_non_null_type_cast< const ImageGraphAsset* >(sourceAsset);
 	const ImageGraphPermutations permutations(asset);
@@ -139,12 +135,9 @@ bool ImageGraphPipeline::buildOutput(
 
 	const auto& parameterNames = permutations.getParameterNames();
 	for (uint32_t i = 0; i < parameterNames.size(); ++i)
-	{
 		data->m_permutationBits.insert(
 			parameterNames[i],
-			1 << i
-		);
-	}
+			1 << i);
 
 	for (uint32_t i = 0; i < permutationCount; ++i)
 	{
@@ -161,11 +154,10 @@ bool ImageGraphPipeline::buildOutput(
 
 		// Collect nodes starting from output node.
 		RefArray< const Node > nodes;
-		GraphTraverse(permutation, outputs.front()).preorder([&](const Node* node)
-			{
-				nodes.push_back(node);
-				return true;
-			});
+		GraphTraverse(permutation, outputs.front()).preorder([&](const Node* node) {
+			nodes.push_back(node);
+			return true;
+		});
 		T_ASSERT(is_a< ImgOutput >(nodes.front()));
 		nodes.pop_front();
 
@@ -181,14 +173,13 @@ bool ImageGraphPipeline::buildOutput(
 		convertAssetPassToSteps(
 			permutation,
 			rootPass,
-			pd.steps
-		);
+			pd.steps);
 
 		// Convert all textures and target sets so they are known
 		// when we convert all other nodes.
 		for (size_t i = 1; i < nodes.size(); ++i)
 		{
-			if (auto sbufferNode = dynamic_type_cast<const ImgStructBuffer*>(nodes[i]))
+			if (auto sbufferNode = dynamic_type_cast< const ImgStructBuffer* >(nodes[i]))
 			{
 				Ref< ImageStructBufferData > sbd = new ImageStructBufferData();
 				sbd->m_id = sbufferNode->getId().format();
@@ -197,22 +188,36 @@ bool ImageGraphPipeline::buildOutput(
 				sbd->m_bufferSize = sbufferNode->m_elementCount * sbufferNode->m_elementSize;
 				pd.sbuffers.push_back(sbd);
 			}
-			else if (auto textureNode = dynamic_type_cast<const ImgTexture*>(nodes[i]))
+			else if (auto textureNode = dynamic_type_cast< const ImgBindTexture* >(nodes[i]))
 			{
 				Ref< ImageTextureData > td = new ImageTextureData();
 				td->m_textureId = textureNode->getId().format();
 				td->m_texture = textureNode->m_texture;
 				pd.textures.push_back(td);
 			}
-			else if (auto targetSetNode = dynamic_type_cast<const ImgTargetSet*>(nodes[i]))
+			else if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(nodes[i]))
 			{
 				Ref< ImageTargetSetData > tsd = new ImageTargetSetData();
-				tsd->m_targetSetId = targetSetNode->getTargetSetId();
+				tsd->m_targetSetId = targetSetNode->getId().format();
 				if (targetSetNode->getPersistent())
 					tsd->m_persistentHandle = Guid::create().format();
 				for (int32_t i = 0; i < targetSetNode->getTextureCount(); ++i)
-					tsd->m_textureIds[i] = targetSetNode->getTargetSetId() + L"/" + targetSetNode->getTextureId(i);
+					tsd->m_textureIds[i] = targetSetNode->getId().format() + L"/" + targetSetNode->getTextureId(i);
 				tsd->m_targetSetDesc = targetSetNode->getRenderGraphTargetSetDesc();
+
+				const OutputPin* referenceOutputPin = permutation->findSourcePin(targetSetNode->getInputPin(1));
+				if (referenceOutputPin)
+				{
+					const ImgInput* referenceInputNode = dynamic_type_cast< const ImgInput* >(referenceOutputPin->getNode());
+					if (!referenceInputNode)
+					{
+						log::error << L"Image graph pipeline failed; target reference must be connected to an input node." << Endl;
+						return false;
+					}
+
+					tsd->m_referenceTextureId = referenceInputNode->getTextureId();
+				}
+
 				pd.targetSets.push_back(tsd);
 			}
 		}
@@ -220,7 +225,7 @@ bool ImageGraphPipeline::buildOutput(
 		// Convert rest of nodes.
 		for (size_t i = 1; i < nodes.size(); ++i)
 		{
-			if (auto pass = dynamic_type_cast<const ImgPass*>(nodes[i]))
+			if (auto pass = dynamic_type_cast< const ImgPass* >(nodes[i]))
 			{
 				AlignedVector< const InputPin* > destinationPins = permutation->findDestinationPins(pass->getOutputPin(0));
 				if (destinationPins.size() != 1)
@@ -229,7 +234,7 @@ bool ImageGraphPipeline::buildOutput(
 					return false;
 				}
 
-				if (auto targetSet = dynamic_type_cast<const ImgTargetSet*>(destinationPins[0]->getNode()))
+				if (auto targetSet = dynamic_type_cast< const ImgTargetSet* >(destinationPins[0]->getNode()))
 				{
 					Ref< ImagePassData > passData = new ImagePassData();
 					passData->m_name = pass->getName();
@@ -256,7 +261,7 @@ bool ImageGraphPipeline::buildOutput(
 
 					pd.passes.push_back(passData);
 				}
-				else if (auto sbuffer = dynamic_type_cast<const ImgStructBuffer*>(destinationPins[0]->getNode()))
+				else if (auto sbuffer = dynamic_type_cast< const ImgStructBuffer* >(destinationPins[0]->getNode()))
 				{
 					Ref< ImagePassData > passData = new ImagePassData();
 					passData->m_name = pass->getName();
@@ -303,8 +308,7 @@ Ref< ISerializable > ImageGraphPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const Object* buildParams
-) const
+	const Object* buildParams) const
 {
 	T_FATAL_ERROR;
 	return nullptr;
@@ -328,7 +332,7 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 
 		if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(destinationPins.front()->getNode()))
 		{
-			const std::wstring textureId = targetSetNode->getTargetSetId() + L"/" + outputPin->getName();
+			const std::wstring textureId = targetSetNode->getId().format() + L"/" + outputPin->getName();
 			if (!targetSetNode->getPersistent())
 				log::info << L"\tOutput into transient target \"" << textureId << L"\"." << Endl;
 			else
@@ -442,14 +446,14 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 			{
 				// Reading texture from transient target set.
 				auto& sourceData = opData->m_textureSources.push_back();
-				sourceData.id = targetSetNode->getTargetSetId() + L"/" + sourcePin->getName();
+				sourceData.id = targetSetNode->getId().format() + L"/" + sourcePin->getName();
 				sourceData.shaderParameter = input;
 				if (!targetSetNode->getPersistent())
 					log::info << L"\t\tParameter \"" << sourceData.shaderParameter << L"\" = transient target \"" << sourceData.id << L"\"." << Endl;
 				else
 					log::info << L"\t\tParameter \"" << sourceData.shaderParameter << L"\" = persistent target \"" << sourceData.id << L"\"." << Endl;
 			}
-			else if (auto textureNode = dynamic_type_cast< const ImgTexture* >(sourcePin->getNode()))
+			else if (auto textureNode = dynamic_type_cast< const ImgBindTexture* >(sourcePin->getNode()))
 			{
 				// Reading texture resource.
 				auto& sourceData = opData->m_textureSources.push_back();

@@ -103,12 +103,11 @@ struct GatherView
 {
 	struct Renderable
 	{
-		IEntityRenderer* renderer = nullptr;
-		Object* renderable = nullptr;
-		EntityState state;
+		AlignedVector< Object* > objects;
+		AlignedVector< Object* > staticOnlyObjects;
 	};
 
-	AlignedVector< Renderable > renderables;
+	SmallMap< IEntityRenderer*, Renderable > renderables;
 	AlignedVector< const LightComponent* > lights;
 	AlignedVector< const ProbeComponent* > probes;
 	const LightComponent* cascadingDirectionalLight = nullptr;

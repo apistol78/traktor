@@ -80,9 +80,6 @@ bool PreviewEditor::create(ui::Container* parent)
 
 void PreviewEditor::destroy()
 {
-	if (m_previewControl)
-		m_previewControl->setScaffolding(nullptr);
-
 	safeDestroy(m_previewControl);
 }
 

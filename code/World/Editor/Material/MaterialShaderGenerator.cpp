@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -64,15 +64,15 @@ const Guid c_implMetalnessMap(L"{FDC79CBC-D1EF-2844-9C17-47EE92A06713}");
 const Guid c_implTexCoordSelect0(L"{D235FD2F-5ED9-5B49-B3F0-14F03B6D8748}");
 const Guid c_implTexCoordSelect1(L"{0269F15C-2543-6D4A-ADC0-4DC584976AAF}");
 
-class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
+class FragmentReaderAdapter : public render::FragmentLinker::FragmentReaderNoCache
 {
 public:
-	FragmentReaderAdapter(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve)
+	explicit FragmentReaderAdapter(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve)
 		: m_resolve(resolve)
 	{
 	}
 
-	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid) const
+	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid) const override final
 	{
 		return m_resolve(fragmentGuid);
 	}

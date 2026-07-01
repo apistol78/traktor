@@ -1,29 +1,28 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Terrain/Editor/ColorBrush.h"
+
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Drawing/Image.h"
-#include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/IFallOff.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.ColorBrush", ColorBrush, IBrush)
 
 ColorBrush::ColorBrush(drawing::Image* colorImage)
-:	m_colorImage(colorImage)
-,	m_radius(0)
-,	m_fallOff(0)
-,	m_strength(0.0f)
+	: m_colorImage(colorImage)
+	, m_radius(0)
+	, m_fallOff(0)
+	, m_strength(0.0f)
 {
 }
 
@@ -65,5 +64,4 @@ void ColorBrush::end(float x, float y)
 {
 }
 
-	}
 }

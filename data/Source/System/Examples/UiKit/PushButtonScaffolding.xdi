@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text><![CDATA[
+	
+#using \{218D113A-66DC-9049-8424-701FF60F2BC4}
+#using \{FC4400A2-BDB6-BA45-9A22-12B9676E71FA}
+
+PushButtonScaffolding = PushButtonScaffolding or class("PushButtonScaffolding", Scaffolding)
+
+function PushButtonScaffolding:setup(frame)
+	local ct = Container(frame, TableLayout({0}, {0}, 4, 4, 4, 16))
+
+	Border(ct)
+
+	CheckBox(ct)
+
+	DropDown(ct, {
+		"A", "B", "C", "D", "E", "F", "G"
+	})
+
+	local lb = ListBox(ct)
+	lb:add("A")
+	lb:add("B")
+	lb:add("C")
+	lb:add("D")
+
+	Static(ct, "A Static Text")
+
+	PushButton(ct, "Light", PushButton.Toggle):setMinimumWidth(0)
+	PushButton(ct, "Regular"):setMinimumWidth(0)
+
+	Slider(ct)
+end
+	
+	]]></text>
+</object>

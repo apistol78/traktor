@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <initializer_list>
 #include <iterator>
 #include "Core/Config.h"
@@ -281,7 +282,7 @@ public:
 	explicit StaticVector(size_t size)
 	:	m_size(size)
 	{
-		T_ASSERT(m_size < Capacity);
+		T_ASSERT(m_size <= Capacity);
 	}
 
 	explicit StaticVector(size_t size, const_reference init)
@@ -357,6 +358,8 @@ public:
 	/*! Clear vector. */
 	void clear()
 	{
+		for (size_t i = 0; i < m_size; ++i)
+			Constructor::destroy(m_items[i]);
 		m_size = 0;
 	}
 
@@ -367,7 +370,9 @@ public:
 	 */
 	void assign(size_t size, const ItemType& value)
 	{
-		T_ASSERT(size < Capacity);
+		T_ASSERT(size <= Capacity);
+		for (size_t i = 0; i < m_size; ++i)
+			Constructor::destroy(m_items[i]);
 		m_size = size;
 		for (size_t i = 0; i < m_size; ++i)
 			Constructor::construct(m_items[i], value);
@@ -494,14 +499,17 @@ public:
 		m_size++;
 		T_ASSERT(m_size <= Capacity);
 
-		// Initialize grown item.
-		Constructor::construct(m_items[size]);
+		if (offset < size)
+		{
+			Constructor::move(m_items[size], m_items[size - 1]);
+			for (size_t i = size - 1; i > offset; --i)
+			{
+				Constructor::destroy(m_items[i]);
+				Constructor::move(m_items[i], m_items[i - 1]);
+			}
+			Constructor::destroy(m_items[offset]);
+		}
 
-		// Move items to make space for new item.
-		for (size_t i = size; i > offset; --i)
-			move(i, i - 1);
-
-		// Copy insert item into location.
 		Constructor::construct(m_items[offset], item);
 
 		return iterator(&m_items[offset]);
@@ -524,23 +532,29 @@ public:
 		const size_t offset = size_t(where.m_ptr - m_items);
 		const size_t count = size_t(tptr - fptr);
 
+		if (count == 0)
+			return iterator(&m_items[offset]);
+
 		m_size += count;
 		T_ASSERT(m_size <= Capacity);
 
-		// Initialize grown items.
-		for (size_t i = 0; i < count; ++i)
-			Constructor::construct(m_items[i + size]);
-
-		// Move items to make room for items to be inserted.
-		const int32_t mv = (int32_t)(size - offset);
-		for (int32_t i = mv - 1; i >= 0; --i)
+		for (size_t k = 0; k < size - offset; ++k)
 		{
-			T_ASSERT(i + offset < size);
-			T_ASSERT(i + offset + count < m_size);
-			move(i + offset + count, i + offset);
+			const size_t p = size - 1 - k;
+			const size_t d = p + count;
+			if (d >= size)
+				Constructor::move(m_items[d], m_items[p]);
+			else
+			{
+				Constructor::destroy(m_items[d]);
+				Constructor::move(m_items[d], m_items[p]);
+			}
 		}
 
-		// Copy insert items into location.
+		const size_t destroyEnd = std::min< size_t >(offset + count, size);
+		for (size_t i = offset; i < destroyEnd; ++i)
+			Constructor::destroy(m_items[i]);
+
 		for (size_t i = 0; i < count; ++i)
 			Constructor::construct(m_items[i + offset], fptr[i]);
 
@@ -560,23 +574,29 @@ public:
 		const size_t offset = size_t(where.m_ptr - m_items);
 		const size_t count = size_t(to - from);
 
+		if (count == 0)
+			return iterator(&m_items[offset]);
+
 		m_size += count;
 		T_ASSERT(m_size <= Capacity);
 
-		// Initialize grown items.
-		for (size_t i = 0; i < count; ++i)
-			Constructor::construct(m_items[i + size]);
-
-		// Move items to make room for items to be inserted.
-		const int32_t mv = (int32_t)(size - offset);
-		for (int32_t i = mv - 1; i >= 0; --i)
+		for (size_t k = 0; k < size - offset; ++k)
 		{
-			T_ASSERT(i + offset < size);
-			T_ASSERT(i + offset + count < m_size);
-			move(i + offset + count, i + offset);
+			const size_t p = size - 1 - k;
+			const size_t d = p + count;
+			if (d >= size)
+				Constructor::move(m_items[d], m_items[p]);
+			else
+			{
+				Constructor::destroy(m_items[d]);
+				Constructor::move(m_items[d], m_items[p]);
+			}
 		}
 
-		// Copy insert items into location.
+		const size_t destroyEnd = std::min< size_t >(offset + count, size);
+		for (size_t i = offset; i < destroyEnd; ++i)
+			Constructor::destroy(m_items[i]);
+
 		for (size_t i = 0; i < count; ++i)
 			Constructor::construct(m_items[i + offset], from[i]);
 
@@ -594,7 +614,10 @@ public:
 		const size_t offset = size_t(where.m_ptr - m_items);
 
 		for (size_t i = offset; i < m_size - 1; ++i)
+		{
+			Constructor::destroy(m_items[i]);
 			move(i, i + 1);
+		}
 
 		Constructor::destroy(m_items[m_size - 1]);
 		m_size--;
@@ -619,7 +642,10 @@ public:
 		if (count > 0)
 		{
 			for (size_t i = offset; i < m_size - count; ++i)
+			{
+				Constructor::destroy(m_items[i]);
 				move(i, i + count);
+			}
 
 			for (size_t i = m_size - count; i < m_size; ++i)
 				Constructor::destroy(m_items[i]);
@@ -648,7 +674,7 @@ public:
 	 */
 	ItemType& operator [] (size_t index)
 	{
-		T_ASSERT(index < Capacity);
+		T_ASSERT(index < m_size);
 		return m_items[index];
 	}
 
@@ -656,7 +682,7 @@ public:
 	 */
 	const ItemType& operator [] (size_t index) const
 	{
-		T_ASSERT(index < Capacity);
+		T_ASSERT(index < m_size);
 		return m_items[index];
 	}
 

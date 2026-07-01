@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -50,6 +50,7 @@
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ParameterLinker.h"
 #include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderModule.h"
@@ -66,11 +67,12 @@ namespace traktor::render
 namespace
 {
 
-class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
+class FragmentReaderAdapter : public FragmentLinker::FragmentReaderTransientCache
 {
 public:
-	explicit FragmentReaderAdapter(editor::IPipelineCommon* pipeline)
-		: m_pipeline(pipeline)
+	explicit FragmentReaderAdapter(SmallMap< Key, Ref< ShaderGraph > >& cache, editor::IPipelineCommon* pipeline)
+		: FragmentLinker::FragmentReaderTransientCache(cache)
+		, m_pipeline(pipeline)
 	{
 	}
 
@@ -109,9 +111,28 @@ uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 	return priority;
 }
 
+void writeErrorShaderGraph(db::Database* database, const ShaderGraph* shaderGraph, /* const Node* errorNode,*/ const std::wstring& path)
+{
+	// Do not write errors found in already broken shaders.
+	if (startsWith(path, L"Errors/"))
+		return;
+
+	// if (errorNode)
+	// {
+	// 	const_cast< Node* >(errorNode)->setComment(L"FAILED");
+	// }
+
+	Ref< db::Instance > instance = database->createInstance(L"Errors/" + path);
+	if (instance)
+	{
+		instance->setObject(shaderGraph);
+		instance->commit();
+	}
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 122, ShaderPipeline, editor::IPipeline)
+}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 123, ShaderPipeline, editor::IPipeline)
 
 bool ShaderPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -210,7 +231,13 @@ bool ShaderPipeline::buildDependencies(
 	// Add declaration, fragment, texture and text dependencies.
 	for (auto node : shaderGraph->getNodes())
 	{
-		if (const auto uniformNode = dynamic_type_cast< Uniform* >(node))
+		if (const auto parameterNode = dynamic_type_cast< Parameter* >(node))
+		{
+			const Guid& declarationGuid = parameterNode->m_parameterDeclaration;
+			if (declarationGuid.isNotNull())
+				pipelineDepends->addDependency(declarationGuid, editor::PdfUse);
+		}
+		else if (const auto uniformNode = dynamic_type_cast< Uniform* >(node))
 		{
 			const Guid& declarationGuid = uniformNode->getDeclaration();
 			if (declarationGuid.isNotNull())
@@ -267,24 +294,35 @@ bool ShaderPipeline::buildOutput(
 	Ref< ShaderResource > shaderResource = new ShaderResource();
 	uint32_t parameterBit = 1;
 
-	// Resolve all variables.
-	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getVariableResolved");
-	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getVariableResolved();
-	pipelineBuilder->getProfiler()->end();
-	if (!shaderGraph)
-	{
-		log::error << L"ShaderPipeline failed; unable to resolve variables." << Endl;
-		return false;
-	}
-
 	// Link shader fragments.
 	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline link fragments");
-	FragmentReaderAdapter fragmentReader(pipelineBuilder);
+	FragmentReaderAdapter fragmentReader(m_linkerCache, pipelineBuilder);
 	shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true);
 	pipelineBuilder->getProfiler()->end();
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to link shader fragments." << Endl;
+		return false;
+	}
+
+	// Link parameter declarations.
+	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline link parameter declarations");
+	const auto parameterDeclarationReader = [&](const Guid& declarationId) -> ParameterLinker::named_decl_t {
+		Ref< db::Instance > declarationInstance = pipelineBuilder->getSourceDatabase()->getInstance(declarationId);
+		if (declarationInstance != nullptr)
+			return { declarationInstance->getName(), pipelineBuilder->getObjectReadOnly(declarationId) };
+		else
+			return { L"", nullptr };
+	};
+	Ref< ShaderGraph > mutableShaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
+	if (ParameterLinker(parameterDeclarationReader).resolve(mutableShaderGraph))
+		shaderGraph = mutableShaderGraph;
+	else
+		shaderGraph = nullptr;
+	pipelineBuilder->getProfiler()->end();
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to link parameter declarations." << Endl;
 		return false;
 	}
 
@@ -297,7 +335,6 @@ bool ShaderPipeline::buildOutput(
 		else
 			return { L"", nullptr };
 	};
-	Ref< ShaderGraph > mutableShaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
 	if (UniformLinker(uniformDeclarationReader).resolve(mutableShaderGraph))
 		shaderGraph = mutableShaderGraph;
 	else
@@ -352,6 +389,16 @@ bool ShaderPipeline::buildOutput(
 		return false;
 	}
 
+	// Freeze types, get typed permutation.
+	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getTypePermutation");
+	shaderGraph = render::ShaderGraphStatic(shaderGraph, shaderGraphId).getTypePermutation();
+	pipelineBuilder->getProfiler()->end();
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to freeze types." << Endl;
+		return false;
+	}	
+
 	// Remove unused branches from shader graph.
 	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline removeUnusedBranches");
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches(false);
@@ -363,7 +410,7 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Generate shader graphs from techniques and combinations.
-	ShaderGraphTechniques techniques(shaderGraph, shaderGraphId);
+	ShaderGraphTechniques techniques(shaderGraph, shaderGraphId, false);
 	if (!techniques.valid())
 		return false;
 
@@ -539,6 +586,36 @@ bool ShaderPipeline::buildOutput(
 					return;
 				}
 
+				// Extract parameter initial values and add to initialization block in shader resource.
+				for (const auto parameterNode : programGraph->findNodesOf< Parameter >())
+				{
+					const OutputPin* outputPin = programGraph->findSourcePin(parameterNode->getInputPin(0));
+					if (!outputPin)
+						continue;
+
+					const Node* outputNode = outputPin->getNode();
+					T_ASSERT(outputNode);
+
+					if (const Scalar* scalarNode = dynamic_type_cast< const Scalar* >(outputNode))
+					{
+						shaderCombination.initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar(parameterNode->getParameterName(), scalarNode->get()));
+					}
+					else if (const Vector* vectorNode = dynamic_type_cast< const Vector* >(outputNode))
+					{
+						shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(parameterNode->getParameterName(), vectorNode->get()));
+					}
+					else if (const Color* colorNode = dynamic_type_cast< const Color* >(outputNode))
+					{
+						shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(parameterNode->getParameterName(), colorNode->getColor()));
+					}
+					else
+					{
+						log::error << L"ShaderPipeline failed; initial value of parameter \"" << parameterNode->getParameterName() << L"\" must be constant." << Endl;
+						status = false;
+						return;
+					}
+				}
+
 				// Extract uniform initial values and add to initialization block in shader resource.
 				for (const auto uniformNode : programGraph->findNodesOf< Uniform >())
 				{
@@ -591,19 +668,19 @@ bool ShaderPipeline::buildOutput(
 						shaderCombination.textures.push_back(textureGuid);
 					}
 
-					Ref< Uniform > textureUniform = new Uniform(
+					Ref< Parameter > textureParameter = new Parameter(
 						getParameterNameFromTextureReferenceIndex(textureIndex),
 						textureNode->getParameterType(),
 						UpdateFrequency::Once);
 
-					const OutputPin* textureUniformOutput = textureUniform->getOutputPin(0);
-					T_ASSERT(textureUniformOutput);
+					const OutputPin* textureParameterOutput = textureParameter->getOutputPin(0);
+					T_ASSERT(textureParameterOutput);
 
 					const OutputPin* textureNodeOutput = textureNode->getOutputPin(0);
 					T_ASSERT(textureNodeOutput);
 
-					programGraph->addNode(textureUniform);
-					programGraph->rewire(textureNodeOutput, textureUniformOutput);
+					programGraph->addNode(textureParameter);
+					programGraph->rewire(textureNodeOutput, textureParameterOutput);
 				}
 
 				// Resolve shader modules.
@@ -648,7 +725,7 @@ bool ShaderPipeline::buildOutput(
 
 					pipelineBuilder->getProfiler()->end();
 					return programResource;
-					});
+				});
 				if (!programResource)
 				{
 					log::error << L"ShaderPipeline failed; unable to compile shader \"" << path << L"\"." << Endl;
@@ -673,6 +750,9 @@ bool ShaderPipeline::buildOutput(
 			log::error << L"-----------------------------------------------------" << Endl;
 			log::error << error.error.message << Endl;
 			log::error << L"-----------------------------------------------------" << Endl;
+
+			if (error.programGraph)
+				writeErrorShaderGraph(pipelineBuilder->getSourceDatabase(), error.programGraph, path);
 		}
 
 		if (!status)

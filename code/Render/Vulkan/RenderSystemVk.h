@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -65,7 +65,7 @@ public:
 
 	virtual Ref< IRenderView > createRenderView(const RenderViewEmbeddedDesc& desc) override final;
 
-	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic) override final;
+	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic, const wchar_t* const tag) override final;
 
 	virtual Ref< const IVertexLayout > createVertexLayout(const AlignedVector< VertexElement >& vertexElements) override final;
 
@@ -79,7 +79,7 @@ public:
 
 	virtual Ref< IAccelerationStructure > createTopLevelAccelerationStructure(uint32_t numInstances) override final;
 
-	virtual Ref< IAccelerationStructure > createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives, bool dynamic) override final;
+	virtual Ref< IAccelerationStructure > createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic) override final;
 
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) override final;
 
@@ -88,6 +88,8 @@ public:
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const override final;
 
 	virtual void* getInternalHandle() const override final;
+
+	virtual Ref< IRenderPlugin > createPlugin(const TypeInfo& pluginType) override final;
 
 private:
 #if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__)
@@ -108,6 +110,7 @@ private:
 	Ref< Context > m_context;
 	Ref< ShaderModuleCache > m_shaderModuleCache;
 	Ref< PipelineLayoutCache > m_pipelineLayoutCache;
+	SmallSet< const TypeInfo* > m_enabledPlugins;
 	VmaAllocator m_allocator = 0;
 	int32_t m_maxAnisotropy = 0;
 	float m_mipBias = 0.0f;

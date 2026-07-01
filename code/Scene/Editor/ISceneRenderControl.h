@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,12 +8,14 @@
  */
 #pragma once
 
-#include <vector>
-#include "Core/Object.h"
 #include "Core/Math/Frustum.h"
+#include "Core/Object.h"
 #include "Render/Types.h"
 #include "Ui/Rect.h"
+#include "World/IWorldRenderer.h"
 #include "World/WorldTypes.h"
+
+#include <vector>
 
 namespace traktor::ui
 {
@@ -51,14 +53,7 @@ public:
 
 	virtual void setAspect(float aspect) = 0;
 
-	virtual void setQuality(
-		world::Quality imageProcess,
-		world::Quality shadows,
-		world::Quality reflections,
-		world::Quality motionBlur,
-		world::Quality ambientOcclusion,
-		world::Quality antiAlias
-	) = 0;
+	virtual void setQuality(const world::QualitySettings& qualitySettings) = 0;
 
 	virtual void setDebugOverlay(world::IDebugOverlay* overlay) = 0;
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/Node.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 #include "Render/Editor/Shader/External.h"
@@ -126,21 +127,40 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 
 Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const RefArray< External >& externalNodes, bool fullResolve, const Guid* optionalShaderGraphGuid) const
 {
+	// Check if we already have a cached, linked, shader graph.
+	uint32_t hash = ShaderGraphHash(true, true).calculate(shaderGraph);
+	for (auto externalNode : externalNodes)
+		hash += ShaderGraphHash(false, false).calculate(externalNode);
+
+	const Key key(hash, 0, 0, fullResolve ? 1 : 0);
+
+	Ref< const ShaderGraph > linkedGraph = m_fragmentReader->get(key);
+	if (linkedGraph)
+	{
+		// Found cached shader graph.
+		return DeepClone(linkedGraph).create< ShaderGraph >();
+	}
+
+	// Create error prefix string.
 	std::wstring errorPrefix;
 	if (optionalShaderGraphGuid)
 		errorPrefix = L"Fragment linkage of \"" + optionalShaderGraphGuid->format() + L"\" failed; ";
 	else
 		errorPrefix = L"Fragment linkage failed; ";
 
-	Ref< ShaderGraph > mutableShaderGraph = new ShaderGraph(
-		shaderGraph->getNodes(),
-		shaderGraph->getEdges());
+	// Connect all variables first.
+	Ref< ShaderGraph > mutableShaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getVariableResolved();
+	if (!mutableShaderGraph)
+	{
+		log::error << errorPrefix << L"unable to resolve variables." << Endl;
+		return nullptr;
+	}
 	T_VALIDATE_SHADERGRAPH(mutableShaderGraph);
 
+	// Resolve each external fragment.
 	for (auto externalNode : externalNodes)
 	{
 		const Guid& fragmentId = externalNode->getFragmentGuid();
-		log::debug << L"Resolving external fragment \"" << fragmentId.format() << L"\"..." << Endl;
 
 		// Read fragment shader.
 		Ref< const ShaderGraph > fragmentShaderGraph = m_fragmentReader->read(fragmentId);
@@ -242,38 +262,66 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 	}
 
 	// Re-wire edges which has been temporarily connected to a "port connection" node.
-	for (auto connector : mutableShaderGraph->findNodesOf< PortConnector >())
+	RefArray< PortConnector > connectors = mutableShaderGraph->findNodesOf< PortConnector >();
+	for (auto connector : connectors)
 	{
-		const OutputPin* sourcePin = mutableShaderGraph->findSourcePin(connector->getInputPin(0));
-		if (!sourcePin)
-		{
-			mutableShaderGraph->removeNode(connector);
+		Ref< Edge > sourceEdge = mutableShaderGraph->findEdge(connector->getInputPin(0));
+		if (!sourceEdge)
 			continue;
-		}
 
-		AlignedVector< const InputPin* > destinationPins = mutableShaderGraph->findDestinationPins(connector->getOutputPin(0));
-		for (auto destinationPin : destinationPins)
+		const OutputPin* sourcePin = sourceEdge->getSource();
+		if (!sourcePin)
+			continue;
+
+		const RefArray< Edge > edges = mutableShaderGraph->findEdges(connector->getOutputPin(0));
+		mutableShaderGraph->removeEdges(edges);
+
+		for (auto edge : edges)
 		{
+			const InputPin* destinationPin = edge->getDestination();
 			T_FATAL_ASSERT(destinationPin->getNode() != sourcePin->getNode());
-
-			Edge* existingEdge = mutableShaderGraph->findEdge(destinationPin);
-			if (existingEdge)
-				mutableShaderGraph->removeEdge(existingEdge);
 
 			mutableShaderGraph->addEdge(new Edge(
 				sourcePin,
 				destinationPin));
 		}
-
-		mutableShaderGraph->removeNode(connector);
 	}
+	mutableShaderGraph->removeNodes((RefArray< Node >&)connectors);
 
 	// Create a unique clone of the resolved shader before returning.
 	mutableShaderGraph = DeepClone(mutableShaderGraph).create< ShaderGraph >();
 	T_VALIDATE_SHADERGRAPH(mutableShaderGraph);
 	T_FATAL_ASSERT(mutableShaderGraph->findNodesOf< PortConnector >().empty());
 
+	// Add finished shader graph to cache.
+	m_fragmentReader->put(key, mutableShaderGraph);
+
 	return mutableShaderGraph;
+}
+
+Ref< const ShaderGraph > FragmentLinker::FragmentReaderNoCache::get(const Key& key) const
+{
+	return nullptr;
+}
+
+void FragmentLinker::FragmentReaderNoCache::put(const Key& key, const ShaderGraph* shaderGraph) const
+{
+}
+
+FragmentLinker::FragmentReaderTransientCache::FragmentReaderTransientCache(SmallMap< Key, Ref< ShaderGraph > >& cache)
+	: m_cache(cache)
+{
+}
+
+Ref< const ShaderGraph > FragmentLinker::FragmentReaderTransientCache::get(const Key& key) const
+{
+	const auto it = m_cache.find(key);
+	return it != m_cache.end() ? it->second : nullptr;
+}
+
+void FragmentLinker::FragmentReaderTransientCache::put(const Key& key, const ShaderGraph* shaderGraph) const
+{
+	m_cache.insert(key, DeepClone(shaderGraph).create< ShaderGraph >());
 }
 
 }

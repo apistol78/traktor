@@ -844,8 +844,7 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 	{
 		const uint32_t srcOffset = (size.cy - y - 1) * size.cx;
 		const uint32_t dstOffset = y * size.cx;
-		for (int32_t x = 0; x < size.cx; ++x)
-			bits[dstOffset + x] = colorBits[srcOffset + x];
+		std::memcpy(&bits[dstOffset], &colorBits[srcOffset], size.cx * sizeof(uint32_t));
 	}
 
 	const D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, bmw32->haveAlpha() ? D2D1_ALPHA_MODE_PREMULTIPLIED : D2D1_ALPHA_MODE_IGNORE);

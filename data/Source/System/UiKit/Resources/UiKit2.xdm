@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.db.LocalInstanceMeta" version="2">
+	<guid>{B45977D0-3D89-4FA7-BE4C-FAA9ED63A942}</guid>
+	<primaryType>traktor.spark.MovieAsset</primaryType>
+	<blobs/>
+</object>

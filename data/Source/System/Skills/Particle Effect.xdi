@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mcp.SkillAsset">
+	<name>particle-effect</name>
+	<description>Author a Spray particle EffectData (clone an example, recolor the particle shader, tune source/modifiers/loop).</description>
+	<whenToUse><![CDATA[Need a particle effect — blood, sparks, smoke, dust, fire, magic — as a reusable EffectData asset, whether played by an EffectComponent or spawned via an event.]]></whenToUse>
+	<body><![CDATA[# Author a Spray particle effect
+
+Create a `traktor.spray.EffectData` "{{name}}". Authoring an emitter graph from scratch is fiddly (it needs a point-sprite **shader** to render) — **clone a working example and tweak it** instead.
+
+## Start by cloning an example
+The engine ships ready effects under `System/Spray/Examples` — each carries a valid particle shader:
+- `Example - Point` `{023214E0-E75D-DF43-BB51-76D8A26970A6}` — omni point burst (best general starting point).
+- `Example - Nozzle`, `Example - Surface`, `Example - XZ` — directional / surface / planar variants.
+
+`clone_instance` it to your project (e.g. `Effects/{{name}}`). The clone already has: one `EffectLayerData` → `EmitterData` → `PointSourceData` + an `IntegrateModifier` + a shader.
+
+## Structure (what you are tuning)
+- **EffectData**: `duration`, `loopStart`, `loopEnd`, `layers[]`. **`loopStart == loopEnd` (e.g. both 0) = one-shot** (plays `0..duration`, then `isFinished`); `loopStart 0, loopEnd 1` = loops the whole duration (continuous).
+- **EffectLayerData**: `name`, `time` (start offset), `duration`, `emitter`.
+- **EmitterData**: `source`, `modifiers[]`, `shader` (`Id<Shader>` — the point-sprite material), `worldSpace` (true = particles stay in world as the emitter moves), `gpu` (true = GPU sim), `capacity`, `sort`, cull/`middleAge` tuning.
+- **SourceData** (base: `constantRate` = particles/sec, `velocityRate` = extra per emitter-speed). `PointSourceData` adds `position` and `Range` fields `velocity`, `orientation`, `angularVelocity`, `age` (lifetime, sec), `mass`, `size`. Other sources: `Cone` (adds `normal`,`angle1/2` for a directional spray), `Disc`, `Box`, `Sphere`, `Line`, `Quad`, `DirectionalPoint`.
+- **Modifiers** (`layers[0].emitter.modifiers`): `Integrate` (**required** — advances position by velocity; without it particles never move), `Gravity`, `Drag`, `Size` (grow/shrink over life), `Brownian`, `CurlNoise`, `Vortex`, `PlaneCollision`.
+
+## Recolor the particle (its own colour, not the surface)
+Particle colour comes from the emitter **shader**, a fragment with an `EmitterPoint` node, an `Output`, and a `Color` node. To recolor: `clone_instance` the shader, set the Color node, and point `layers[0].emitter.shader` at the clone.
+```
+set_instance_member { guid:<clonedShader>, member:"nodes[N].color", value:[r,g,b,a] }   -- N = index of the Color node
+```
+(The shader's PixelState is already additive/alpha-blended for sprites — leave it.)
+
+## Typical tuning (blood-spurt example)
+- `loopEnd = 0` (one-shot burst), `duration = 0.5`.
+- `layers[0].emitter.shader` → recolored red shader.
+- `...source.position = [0,1,0,1]` (emit at chest height), `...source.constantRate = 70`.
+- `...source.velocity.max = 3`, `...source.age` `0.2..0.5` (short-lived). Set `Range` **leaves individually** (`velocity.min`, `velocity.max`) — a compound can't be set whole.
+
+Then `build_asset` the effect (its shader/mesh deps build with it).
+
+## Use it
+- Play continuously / on an entity: a `traktor.spray.EffectComponentData { effect:<guid> }` (auto-plays on spawn; script exposes only `reset()`).
+- Spawn on a trigger (hit/death): raise it through an `EventSetComponent` — see the *event-set-effects* skill (no auto-play, fires on demand).
+
+## Gotchas (hard-won)
+- **No `Integrate` modifier ⇒ frozen particles** at the source.
+- **`shader` is mandatory** to render; that's why cloning (which brings one) beats building blank.
+- **`worldSpace = true`** so a moving emitter leaves a trail in the world rather than dragging particles with it.
+- A looping effect on an always-enabled `EffectComponent` emits forever — use `loopEnd = 0` + event/`reset()` triggering for bursts.
+- Keep `capacity` and `constantRate` sane; GPU emitters are cheap but the manager and draw cost still scale with live particle count.
+]]></body>
+	<engineVersion/>
+	<published>true</published>
+	<parameters/>
+</object>

@@ -99,6 +99,9 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_checkBoxRenderDoc = new ui::CheckBox();
 	m_checkBoxRenderDoc->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_RENDERDOC"), false);
 
+	m_checkBoxAftermath = new ui::CheckBox();
+	m_checkBoxAftermath->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_NSIGHT_AFTERMATH"), false);
+
 	const std::wstring renderSystemType = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
 	for (auto type : type_of< render::IRenderSystem >().findAllOf(false))
 	{
@@ -125,6 +128,7 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editClampSize->setText(toString(settings->getProperty< int32_t >(L"TexturePipeline.ClampSize", 0)));
 	m_checkBoxValidation->setChecked(settings->getProperty< bool >(L"Editor.RenderValidation", true));
 	m_checkBoxRenderDoc->setChecked(settings->getProperty< bool >(L"Editor.UseRenderDoc", false));
+	m_checkBoxAftermath->setChecked(settings->getProperty< bool >(L"Editor.UseNsightAftermath", false));
 	m_checkRayTracing->setChecked(settings->getProperty< bool >(L"Editor.RayTracing", false));
 	m_checkHDR->setChecked(settings->getProperty< bool >(L"Editor.HDR", true));
 
@@ -148,6 +152,7 @@ bool RenderSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyInteger >(L"TexturePipeline.ClampSize", parseString< int32_t >(m_editClampSize->getText()));
 	settings->setProperty< PropertyBoolean >(L"Editor.RenderValidation", m_checkBoxValidation->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.UseRenderDoc", m_checkBoxRenderDoc->isChecked());
+	settings->setProperty< PropertyBoolean >(L"Editor.UseNsightAftermath", m_checkBoxAftermath->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.RayTracing", m_checkRayTracing->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.HDR", m_checkHDR->isChecked());
 	return true;

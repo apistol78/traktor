@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -55,21 +55,20 @@ class BrowseInstanceDialog : public ui::ConfigDialog
 public:
 	explicit BrowseInstanceDialog(IEditor* editor, PropertyGroup* settings);
 
-	bool create(ui::Widget* parent, db::Database* database, const IBrowseFilter* filter);
+	bool create(ui::Widget* parent, db::Database* database, const IBrowseFilter* filter, const db::Group* initialGroup);
 
 	virtual void destroy() override final;
 
 	Ref< db::Instance > getInstance();
 
 private:
-	IEditor* m_editor;
+	IEditor* m_editor = nullptr;
 	Ref< PropertyGroup > m_settings;
 	Ref< ui::TreeView > m_treeDatabase;
 	Ref< ui::PreviewList > m_listInstances;
 	RefArray< const IBrowsePreview > m_browsePreview;
 	Ref< db::Instance > m_instance;
-
-	Thread* m_threadGeneratePreview;
+	Thread* m_threadGeneratePreview = nullptr;
 	ThreadsafeFifo< std::function< void() > > m_previewTasks;
 	Event m_previewTaskEvent;
 

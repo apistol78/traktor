@@ -36,12 +36,14 @@ typedef traktor::ui::WidgetFactoryWin32 WidgetFactoryImpl;
 typedef traktor::ui::WidgetFactoryCocoa WidgetFactoryImpl;
 #elif defined(__LINUX__) || defined(__RPI__)
 #	include "Ui/X11/WidgetFactoryX11.h"
-typedef traktor::ui::WidgetFactoryX11 WidgetFactoryImpl;
+#	include "Ui/Wl/WidgetFactoryWl.h"
+#elif defined(__LINUX__)
+typedef traktor::ui::WidgetFactoryWl WidgetFactoryImpl;
 #endif
 
-#if defined(__LINUX__) || defined(__RPI__)
-#	include <X11/Xlib.h>
-#endif
+// #if defined(__LINUX__) || defined(__RPI__)
+// #	include <X11/Xlib.h>
+// #endif
 
 using namespace traktor;
 
@@ -87,10 +89,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	const CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
 
-#if defined(__LINUX__) || defined(__RPI__)
-	// Initialize X11 thread primitives; thus must be performed very early.
-	XInitThreads();
-#endif
+// #if defined(__LINUX__) || defined(__RPI__)
+// 	// Initialize X11 thread primitives; thus must be performed very early.
+// 	XInitThreads();
+// #endif
 
 	// Ensure temporary folder exist.
 	const std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Logs";
@@ -181,10 +183,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", cwd.getPathNameOS());
 	}
 
+#if defined(__LINUX__) || defined(__RPI__)
+	if (cmdLine.hasOption(L"x11"))
+	{
+		ui::Application::getInstance()->initialize(
+			new traktor::ui::WidgetFactoryX11(),
+			nullptr
+		);
+	}
+	else
+	{
+		ui::Application::getInstance()->initialize(
+			new traktor::ui::WidgetFactoryWl(),
+			nullptr
+		);
+	}
+#else
 	ui::Application::getInstance()->initialize(
 		new WidgetFactoryImpl(),
 		nullptr
 	);
+#endif
 
 	net::Network::initialize();
 

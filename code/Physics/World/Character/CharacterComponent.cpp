@@ -1,27 +1,28 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Physics/World/Character/CharacterComponent.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/Body.h"
 #include "Physics/PhysicsManager.h"
-#include "Physics/World/Character/CharacterComponent.h"
 #include "Physics/World/Character/CharacterComponentData.h"
 #include "World/Entity.h"
 
 namespace traktor::physics
 {
-	namespace
-	{
+namespace
+{
 
 const Vector4 c_101(1.0f, 0.0f, 1.0f);
 const Vector4 c_010(0.0f, 1.0f, 0.0f);
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.CharacterComponent", CharacterComponent, world::IEntityComponent)
 
@@ -31,19 +32,19 @@ CharacterComponent::CharacterComponent(
 	Body* bodyWide,
 	Body* bodySlim,
 	uint32_t traceInclude,
-	uint32_t traceIgnore
-)
-:	m_owner(nullptr)
-,	m_physicsManager(physicsManager)
-,	m_data(data)
-,	m_bodyWide(bodyWide)
-,	m_bodySlim(bodySlim)
-,	m_traceInclude(traceInclude)
-,	m_traceIgnore(traceIgnore)
-,	m_headAngle(0.0f)
-,	m_velocity(Vector4::zero())
-,	m_impulse(Vector4::zero())
-,	m_grounded(false)
+	uint32_t traceIgnore)
+	: m_owner(nullptr)
+	, m_physicsManager(physicsManager)
+	, m_data(data)
+	, m_bodyWide(bodyWide)
+	, m_bodySlim(bodySlim)
+	, m_traceInclude(traceInclude)
+	, m_traceIgnore(traceIgnore)
+	, m_maxVelocity(data->getMaxVelocity())
+	, m_headAngle(0.0f)
+	, m_velocity(Vector4::zero())
+	, m_impulse(Vector4::zero())
+	, m_grounded(false)
 {
 }
 
@@ -88,9 +89,9 @@ void CharacterComponent::update(const world::UpdateParams& update)
 
 	// Add user impulses.
 	m_velocity += m_impulse;
-	
+
 	// Clamp X/Z velocity.
-	const Scalar maxVelocity(m_data->getMaxVelocity());
+	const Scalar maxVelocity(m_maxVelocity);
 	const Scalar currentVelocity = (m_velocity * c_101).length();
 	if (currentVelocity > maxVelocity)
 		m_velocity *= (c_101 * maxVelocity / currentVelocity + c_010);
@@ -145,13 +146,11 @@ void CharacterComponent::update(const world::UpdateParams& update)
 
 	m_bodyWide->setTransform(Transform(
 		position,
-		rotation
-	));
+		rotation));
 	if (m_owner)
 		m_owner->setTransform(Transform(
 			position - Vector4(0.0f, m_data->getHeight() / 2.0f, 0.0f),
-			rotation
-		));
+			rotation));
 }
 
 void CharacterComponent::setHeadAngle(float headAngle)
@@ -218,14 +217,13 @@ bool CharacterComponent::stepVertical(float motion, Vector4& inoutPosition) cons
 	QueryResult result;
 
 	if (m_physicsManager->querySweep(
-		m_bodySlim,
-		Quaternion::identity(),
-		inoutPosition,
-		Vector4(0.0f, direction, 0.0f),
-		std::abs(motion),
-		physics::QueryFilter(m_traceInclude, m_traceIgnore),
-		result
-	))
+			m_bodySlim,
+			Quaternion::identity(),
+			inoutPosition,
+			Vector4(0.0f, direction, 0.0f),
+			std::abs(motion),
+			physics::QueryFilter(m_traceInclude, m_traceIgnore),
+			result))
 	{
 		inoutPosition += Vector4(0.0f, motion * result.fraction, 0.0f);
 		anyCollision = true;
@@ -253,14 +251,13 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 	for (int32_t i = 0; i < 16 && motionLength > FUZZY_EPSILON; ++i)
 	{
 		if (m_physicsManager->querySweep(
-			m_bodyWide,
-			Quaternion::identity(),
-			inoutPosition,
-			motion,
-			motionLength,
-			physics::QueryFilter(m_traceInclude, m_traceIgnore),
-			result
-		))
+				m_bodyWide,
+				Quaternion::identity(),
+				inoutPosition,
+				motion,
+				motionLength,
+				physics::QueryFilter(m_traceInclude, m_traceIgnore),
+				result))
 		{
 			const Scalar move = Scalar(motionLength * result.fraction);
 			inoutPosition += motion * move;

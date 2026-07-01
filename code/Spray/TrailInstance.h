@@ -54,7 +54,7 @@ public:
 
 	void update(Context& context, const Transform& transform, bool enable);
 
-	void render(const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass, TrailRenderer* trailRenderer, const Transform& transform);
+	void build(const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass, TrailRenderer* trailRenderer, const Transform& transform);
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 

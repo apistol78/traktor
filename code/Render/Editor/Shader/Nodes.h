@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,7 +13,7 @@
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Editor/ImmutableNode.h"
-#include "Render/Editor/Shader/StructDeclaration.h"
+#include "Render/Editor/Shader/ParameterDeclaration.h"
 #include "Render/Types.h"
 
 #include <string>
@@ -103,6 +103,12 @@ class T_DLLCLASS BundleUnite : public Node
 public:
 	BundleUnite();
 
+	/*! Set the bundle channel names; these become the node's named input pins
+	 * (in addition to the fixed "Input" pin). */
+	void setNames(const AlignedVector< std::wstring >& names);
+
+	const AlignedVector< std::wstring >& getNames() const { return m_names; }
+
 	virtual int getInputPinCount() const override final;
 
 	virtual const InputPin* getInputPin(int index) const override final;
@@ -115,7 +121,7 @@ public:
 
 private:
 	AlignedVector< std::wstring > m_names;
-	StaticVector< InputPin, 32 > m_inputPins;
+	StaticVector< InputPin, 64 > m_inputPins;
 	OutputPin m_outputPin;
 
 	void updatePins();
@@ -128,6 +134,12 @@ class T_DLLCLASS BundleSplit : public Node
 
 public:
 	BundleSplit();
+
+	/*! Set the bundle channel names; these become the node's output pins
+	 * (the single "Input" pin is fixed). */
+	void setNames(const AlignedVector< std::wstring >& names);
+
+	const AlignedVector< std::wstring >& getNames() const { return m_names; }
 
 	virtual int getInputPinCount() const override final;
 
@@ -142,7 +154,7 @@ public:
 private:
 	AlignedVector< std::wstring > m_names;
 	InputPin m_inputPin;
-	StaticVector< OutputPin, 32 > m_outputPins;
+	StaticVector< OutputPin, 64 > m_outputPins;
 
 	void updatePins();
 };
@@ -430,7 +442,7 @@ public:
 };
 
 /*! Fetch value from array uniform. */
-class T_DLLCLASS IndexedUniform : public ImmutableNode
+class T_DLLCLASS T_DEPRECATED IndexedUniform : public ImmutableNode
 {
 	T_RTTI_CLASS;
 
@@ -861,7 +873,7 @@ public:
 };
 
 /*! Read [indexed] element from struct buffer. */
-class T_DLLCLASS ReadStruct : public ImmutableNode
+class T_DLLCLASS T_DEPRECATED ReadStruct : public ImmutableNode
 {
 	T_RTTI_CLASS;
 
@@ -881,7 +893,7 @@ private:
 };
 
 /*! Read [indexed] element from struct buffer. */
-class T_DLLCLASS ReadStruct2 : public Node
+class T_DLLCLASS T_DEPRECATED ReadStruct2 : public Node
 {
 	T_RTTI_CLASS;
 
@@ -1019,7 +1031,7 @@ public:
 };
 
 /*! Define struct. */
-class T_DLLCLASS Struct : public ImmutableNode
+class T_DLLCLASS T_DEPRECATED Struct : public ImmutableNode
 {
 	T_RTTI_CLASS;
 
@@ -1042,6 +1054,7 @@ public:
 
 private:
 	friend class ListUniformsTool;
+	friend class TouchShaderGraphsTool;
 	friend class UniformLinker;
 
 	Guid m_structDeclaration;
@@ -1257,7 +1270,7 @@ public:
 };
 
 /*! Fetch parameter value. */
-class T_DLLCLASS Uniform : public ImmutableNode
+class T_DLLCLASS T_DEPRECATED Uniform : public ImmutableNode
 {
 	T_RTTI_CLASS;
 
@@ -1394,6 +1407,81 @@ public:
 private:
 	std::wstring m_technique;
 	PrecisionHint m_precisionHint;
+};
+
+// EXPERIMENTAL
+
+class T_DLLCLASS Parameter : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Parameter();
+
+	explicit Parameter(const Guid& parameterDeclaration);
+
+	explicit Parameter(
+		const std::wstring& parameterName,
+		ParameterType type,
+		UpdateFrequency frequency);
+
+	const Guid& getDeclarationId() const { return m_parameterDeclaration; }
+
+	const ParameterDeclaration& getDeclaration() const { T_FATAL_ASSERT(m_linked); return m_declaration; }
+
+	const std::wstring& getParameterName() const { return m_parameterName; }
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	friend class ParameterLinker;
+	friend class ShaderPipeline;
+	friend class TouchShaderGraphsTool;
+
+	Guid m_parameterDeclaration;
+
+	//!\group Linker
+	//!\{
+	std::wstring m_parameterName;
+	ParameterDeclaration m_declaration;
+	bool m_explicit = false;
+	bool m_linked = false;
+	//!\}
+};
+
+class T_DLLCLASS ArrayElement : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	ArrayElement();
+};
+
+class T_DLLCLASS ArrayLength : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	ArrayLength();
+};
+
+class T_DLLCLASS MemberValue : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	MemberValue();
+
+	void setMemberName(const std::wstring& memberName) { m_memberName = memberName; }
+
+	const std::wstring& getMemberName() const { return m_memberName; }
+
+	virtual std::wstring getInformation() const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	std::wstring m_memberName;
 };
 
 //@}

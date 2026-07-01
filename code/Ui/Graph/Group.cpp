@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -64,7 +64,7 @@ bool Group::hitTitle(const UnitPoint& p) const
 int32_t Group::hitAnchor(const UnitPoint& p) const
 {
 	const UnitRect rc = calculateRect();
-	const UnitSize sz(16_ut, 16_ut);
+	const UnitSize sz(32_ut, 32_ut);
 
 	if (UnitRect(rc.getTopLeft(), sz).inside(p))
 		return 0;
@@ -107,6 +107,8 @@ void Group::setAnchorPosition(int32_t anchor, const UnitPoint& position)
 		m_size.cy += dp.cy;
 		break;
 	}
+	m_size.cx = std::max(m_size.cx, 200_ut);
+	m_size.cy = std::max(m_size.cy, 200_ut);
 }
 
 UnitPoint Group::getAnchorPosition(int32_t anchor) const

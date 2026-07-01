@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 20222-204 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,7 +17,7 @@ namespace traktor::world
 class PackerImpl
 {
 public:
-	explicit PackerImpl(int32_t width, int32_t height)
+	explicit PackerImpl(int32_t width, int32_t height) noexcept
 	:	m_width(width)
 	,	m_height(height)
 	{
@@ -33,7 +33,7 @@ public:
 		delete[] m_nodes;
 	}
 
-	bool insert(int32_t width, int32_t height, Packer::Rectangle& outRectangle)
+	bool insert(int32_t width, int32_t height, Packer::Rectangle& outRectangle) noexcept
 	{
 		stbrp_rect r = { 0 };
 		r.w = width;
@@ -48,7 +48,7 @@ public:
 			return false;
 	}
 
-	void reset()
+	void reset() noexcept
 	{
 		stbrp_init_target(m_packer, m_width, m_height, m_nodes, m_width);
 	}

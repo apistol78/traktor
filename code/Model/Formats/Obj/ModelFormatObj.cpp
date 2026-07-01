@@ -39,7 +39,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, const std::wstring& filt
 		return nullptr;
 
 	BufferedStream bs(stream);
-	StringReader sr(&bs, new AnsiEncoding());
+	StringReader sr(&bs, AnsiEncoding::getInstance());
 	AlignedVector< float > fvalues;
 	std::wstring str;
 

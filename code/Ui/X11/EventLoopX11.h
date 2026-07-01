@@ -26,7 +26,7 @@ namespace traktor::ui
 
 class Assoc;
 
-class T_DLLCLASS EventLoopX11 : public IEventLoop
+class T_DLLCLASS EventLoopX11 : public RefCountImpl< IEventLoop >
 {
 public:
 	explicit EventLoopX11(Context* context);

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,6 +17,7 @@
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
@@ -40,6 +41,7 @@
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
+#include "World/Shared/Passes/VolumetricFogPass.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/SMProj/UniformShadowProjection.h"
 #include "World/World.h"
@@ -108,6 +110,7 @@ bool WorldRendererShared::create(
 	// Store settings.
 	m_settings = *desc.worldRenderSettings;
 	m_shadowsQuality = desc.quality.shadows;
+	m_rayTracingEnabled = desc.rt;
 
 	// Create screen renderer.
 	m_screenRenderer = new render::ScreenRenderer();
@@ -116,8 +119,14 @@ bool WorldRendererShared::create(
 
 	// Create default value textures.
 	m_blackTexture = create1x1Texture(renderSystem, 0x00000000);
+	if (!m_blackTexture)
+		return false;
 	m_whiteTexture = create1x1Texture(renderSystem, 0xffffffff);
+	if (!m_whiteTexture)
+		return false;
 	m_blackCubeTexture = createCubeTexture(renderSystem, 0x00000000);
+	if (!m_blackCubeTexture)
+		return false;
 
 	// Lights struct buffer.
 	for (int32_t i = 0; i < sizeof_array(m_state); ++i)
@@ -125,7 +134,8 @@ bool WorldRendererShared::create(
 		m_state[i].lightSBuffer = renderSystem->createBuffer(
 			render::BuStructured,
 			(LightClusterPass::c_maxLightCount + 3) * sizeof(LightShaderData),
-			true);
+			true,
+			T_FILE_LINE_W);
 		if (!m_state[i].lightSBuffer)
 			return false;
 	}
@@ -154,7 +164,7 @@ bool WorldRendererShared::create(
 		return false;
 
 	m_gbufferPass = new GBufferPass(m_settings, m_entityRenderers);
-	m_dbufferPass = new DBufferPass(m_settings, m_entityRenderers);
+	m_dbufferPass = new DBufferPass(m_settings);
 
 	m_downScalePass = new DownScalePass();
 	if (!m_downScalePass->create(resourceManager))
@@ -164,7 +174,7 @@ bool WorldRendererShared::create(
 	if (!m_hiZPass->create(resourceManager))
 		return false;
 
-	m_velocityPass = new VelocityPass(m_entityRenderers);
+	m_velocityPass = new VelocityPass();
 	if (!m_velocityPass->create(resourceManager, renderSystem, desc))
 		return false;
 
@@ -174,6 +184,10 @@ bool WorldRendererShared::create(
 
 	m_ambientOcclusionPass = new AmbientOcclusionPass();
 	if (!m_ambientOcclusionPass->create(resourceManager, renderSystem, desc))
+		return false;
+
+	m_volumetricFogPass = new VolumetricFogPass(m_settings);
+	if (!m_volumetricFogPass->create(resourceManager, renderSystem, desc))
 		return false;
 
 	m_contactShadowsPass = new ContactShadowsPass();
@@ -194,24 +208,29 @@ bool WorldRendererShared::create(
 void WorldRendererShared::destroy()
 {
 	safeDestroy(m_screenRenderer);
+	safeDestroy(m_blackCubeTexture);
 	safeDestroy(m_blackTexture);
 	safeDestroy(m_whiteTexture);
 
 	for (int32_t i = 0; i < sizeof_array(m_state); ++i)
 		safeDestroy(m_state[i].lightSBuffer);
 
-	m_postProcessPass = nullptr;
-	m_reflectionsPass = nullptr;
-	m_contactShadowsPass = nullptr;
-	m_ambientOcclusionPass = nullptr;
-	m_irradiancePass = nullptr;
-	m_velocityPass = nullptr;
-	m_hiZPass = nullptr;
-	m_downScalePass = nullptr;
-	m_dbufferPass = nullptr;
-	m_gbufferPass = nullptr;
-
+	safeDestroy(m_postProcessPass);
+	safeDestroy(m_reflectionsPass);
+	safeDestroy(m_contactShadowsPass);
+	safeDestroy(m_volumetricFogPass);
+	safeDestroy(m_ambientOcclusionPass);
+	safeDestroy(m_irradiancePass);
+	safeDestroy(m_velocityPass);
+	safeDestroy(m_hiZPass);
+	safeDestroy(m_downScalePass);
+	safeDestroy(m_dbufferPass);
+	safeDestroy(m_gbufferPass);
 	safeDestroy(m_lightClusterPass);
+
+	m_entityRenderers = nullptr;
+	m_clearDepthShader.clear();
+	m_gatheredView = {};
 }
 
 void WorldRendererShared::gather(const World* world, const std::function< bool(const EntityState& state) >& filter)
@@ -219,25 +238,12 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 	T_PROFILER_SCOPE(L"WorldRendererShared::gather");
 	StaticVector< const LightComponent*, LightClusterPass::c_maxLightCount > lights;
 
-	m_gatheredView.renderables.resize(0);
+	m_gatheredView.renderables.reset();
 	m_gatheredView.lights.resize(0);
 	m_gatheredView.probes.resize(0);
 	m_gatheredView.fog = nullptr;
 	m_gatheredView.irradianceGrid = nullptr;
 	m_gatheredView.rtWorldTopLevel = nullptr;
-
-	for (auto component : world->getComponents())
-	{
-		IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
-		if (entityRenderer)
-			m_gatheredView.renderables.push_back({ entityRenderer, component, EntityState::All });
-
-		// Filter out components used to setup frame's lighting etc.
-		if (auto irradianceGridComponent = dynamic_type_cast< const IrradianceGridComponent* >(component))
-			m_gatheredView.irradianceGrid = irradianceGridComponent->getIrradianceGrid();
-		else if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
-			m_gatheredView.rtWorldTopLevel = rtWorldComponent->getTopLevel();
-	}
 
 	for (auto entity : world->getEntities())
 	{
@@ -252,7 +258,12 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 		{
 			IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
 			if (entityRenderer)
-				m_gatheredView.renderables.push_back({ entityRenderer, component, state });
+			{
+				auto& r = m_gatheredView.renderables[entityRenderer];
+				r.objects.push_back(component);
+				if (!state.dynamic)
+					r.staticOnlyObjects.push_back(component);
+			}
 
 			// Filter out components used to setup frame's lighting etc.
 			if (auto lightComponent = dynamic_type_cast< const LightComponent* >(component))
@@ -262,8 +273,29 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 			}
 			else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(component))
 				m_gatheredView.probes.push_back(probeComponent);
-			else if (auto fogComponent = dynamic_type_cast< const FogComponent* >(component))
-				m_gatheredView.fog = fogComponent;
+		}
+	}
+
+	for (auto component : world->getComponents())
+	{
+		IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
+		if (entityRenderer)
+		{
+			auto& r = m_gatheredView.renderables[entityRenderer];
+			r.objects.push_back(component);
+		}
+
+		// Filter out components used to setup frame's lighting etc.
+		if (auto irradianceGridComponent = dynamic_type_cast< const IrradianceGridComponent* >(component))
+			m_gatheredView.irradianceGrid = irradianceGridComponent->getIrradianceGrid();
+		else if (auto fogComponent = dynamic_type_cast< const FogComponent* >(component))
+			m_gatheredView.fog = fogComponent;
+		// If world raytracing is enabled we gather TLAS; if no TLAS
+		// paths should assume no RT is enabled.
+		else if (m_rayTracingEnabled)
+		{
+			if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
+				m_gatheredView.rtWorldTopLevel = rtWorldComponent->getTopLevel();
 		}
 	}
 
@@ -303,11 +335,9 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 	}
 }
 
-void WorldRendererShared::setupLightPass(
+render::RGTargetSet WorldRendererShared::setupLightPass(
 	const WorldRenderView& worldRenderView,
-	render::RenderGraph& renderGraph,
-	render::RGTargetSet outputTargetSetId,
-	render::RGTargetSet& outShadowMapAtlasTargetSetId)
+	render::RenderGraph& renderGraph)
 {
 	T_PROFILER_SCOPE(L"WorldRendererShared setupLightPass");
 
@@ -315,9 +345,14 @@ void WorldRendererShared::setupLightPass(
 	const bool shadowMapEnable = (bool)(m_shadowsQuality != Quality::Disabled && m_gatheredView.rtWorldTopLevel == nullptr);
 	const UniformShadowProjection shadowProjection(shadowSettings.resolution);
 
+	T_FATAL_ASSERT(worldRenderView.getIndex() < sizeof_array(m_state));
+	State& state = m_state[worldRenderView.getIndex()];
+
 	LightShaderData* lightShaderData = (LightShaderData*)m_state[worldRenderView.getIndex()].lightSBuffer->lock();
 	if (!lightShaderData)
-		return;
+		return render::RGTargetSet::Invalid;
+
+	render::RGTargetSet shadowMapAtlasTargetSetId;
 
 	// Reset this frame's atlas packer.
 	auto shadowAtlasPacker = m_shadowAtlasPacker;
@@ -328,8 +363,8 @@ void WorldRendererShared::setupLightPass(
 	const Matrix44 viewInverse = worldRenderView.getView().inverse();
 	const Frustum viewFrustum = worldRenderView.getViewFrustum();
 
-	Frustum* shadowSlices = m_state[worldRenderView.getIndex()].shadowSlices;
-	Matrix44* shadowLightViews = m_state[worldRenderView.getIndex()].shadowLightViews;
+	Frustum* shadowSlices = state.shadowSlices;
+	Matrix44* shadowLightViews = state.shadowLightViews;
 
 	// Find atlas shadow lights.
 	StaticVector< int32_t, 32 > lightAtlasIndices;
@@ -344,42 +379,40 @@ void WorldRendererShared::setupLightPass(
 	}
 
 	// Write all lights to sbuffer; without shadow map information.
+	for (int32_t i = 0; i < (int32_t)m_gatheredView.lights.size(); ++i)
 	{
-		for (int32_t i = 0; i < (int32_t)m_gatheredView.lights.size(); ++i)
-		{
-			const auto& light = m_gatheredView.lights[i];
-			auto* lsd = &lightShaderData[i];
+		const auto& light = m_gatheredView.lights[i];
+		auto* lsd = &lightShaderData[i];
 
-			lsd->type = (float)light->getLightType();
-			lsd->rangeRadius[0] = light->getNearRange();
-			lsd->rangeRadius[1] = light->getFarRange();
-			lsd->rangeRadius[2] = std::cos((light->getRadius() - deg2rad(16.0f)) / 2.0f);
-			lsd->rangeRadius[3] = std::cos(light->getRadius() / 2.0f);
+		lsd->type = (float)light->getLightType();
+		lsd->rangeRadius[0] = light->getNearRange();
+		lsd->rangeRadius[1] = light->getFarRange();
+		lsd->rangeRadius[2] = std::cos((light->getRadius() - deg2rad(16.0f)) / 2.0f);
+		lsd->rangeRadius[3] = std::cos(light->getRadius() / 2.0f);
 
-			const Matrix44 lightTransform = view * light->getTransform().toMatrix44();
-			lightTransform.translation().xyz1().storeUnaligned(lsd->position);
-			lightTransform.axisY().xyz0().storeUnaligned(lsd->direction);
-			(light->getColor() * light->getFlickerCoeff()).storeUnaligned(lsd->color);
+		const Matrix44 lightTransform = view * light->getTransform().toMatrix44();
+		lightTransform.translation().xyz1().storeUnaligned(lsd->position);
+		lightTransform.axisY().xyz0().storeUnaligned(lsd->direction);
+		(light->getColor() * light->getFlickerCoeff()).storeUnaligned(lsd->color);
 
-			Vector4::zero().storeUnaligned(lsd->viewToLight0);
-			Vector4::zero().storeUnaligned(lsd->viewToLight1);
-			Vector4::zero().storeUnaligned(lsd->viewToLight2);
-			Vector4::zero().storeUnaligned(lsd->viewToLight3);
-			Vector4::zero().storeUnaligned(lsd->atlasTransform);
-		}
+		Vector4::zero().storeUnaligned(lsd->viewToLight0);
+		Vector4::zero().storeUnaligned(lsd->viewToLight1);
+		Vector4::zero().storeUnaligned(lsd->viewToLight2);
+		Vector4::zero().storeUnaligned(lsd->viewToLight3);
+		Vector4::zero().storeUnaligned(lsd->atlasTransform);
+	}
 
-		for (int32_t i = (int32_t)m_gatheredView.lights.size(); i < (int32_t)m_gatheredView.lights.size() + 3; ++i)
-		{
-			auto* lsd = &lightShaderData[i];
+	for (int32_t i = (int32_t)m_gatheredView.lights.size(); i < (int32_t)m_gatheredView.lights.size() + 3; ++i)
+	{
+		auto* lsd = &lightShaderData[i];
 
-			lsd->type = 0.0f;
+		lsd->type = 0.0f;
 
-			Vector4::zero().storeUnaligned(lsd->viewToLight0);
-			Vector4::zero().storeUnaligned(lsd->viewToLight1);
-			Vector4::zero().storeUnaligned(lsd->viewToLight2);
-			Vector4::zero().storeUnaligned(lsd->viewToLight3);
-			Vector4::zero().storeUnaligned(lsd->atlasTransform);
-		}
+		Vector4::zero().storeUnaligned(lsd->viewToLight0);
+		Vector4::zero().storeUnaligned(lsd->viewToLight1);
+		Vector4::zero().storeUnaligned(lsd->viewToLight2);
+		Vector4::zero().storeUnaligned(lsd->viewToLight3);
+		Vector4::zero().storeUnaligned(lsd->atlasTransform);
 	}
 
 	// If shadow casting directional light found add cascade shadow map pass
@@ -391,6 +424,7 @@ void WorldRendererShared::setupLightPass(
 		const int32_t shmh = shadowSettings.resolution;
 		const int32_t sliceDim = shadowSettings.resolution;
 		const int32_t atlasOffset = shadowSettings.resolution * cascadingSlices;
+		int32_t shadowMapIndex = 0;
 
 		// Add shadow map target.
 		render::RenderGraphTargetSetDesc rgtd;
@@ -400,7 +434,7 @@ void WorldRendererShared::setupLightPass(
 		rgtd.createDepthStencil = true;
 		rgtd.usingDepthStencilAsTexture = true;
 		rgtd.ignoreStencil = true;
-		outShadowMapAtlasTargetSetId = renderGraph.addPersistentTargetSet(
+		shadowMapAtlasTargetSetId = renderGraph.addPersistentTargetSet(
 			L"Shadow map atlas",
 			ShaderParameter::TargetShadowMap[worldRenderView.getIndex()],
 			false,
@@ -408,7 +442,7 @@ void WorldRendererShared::setupLightPass(
 
 		// Add shadow map render passes.
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow map");
-		rp->setOutput(outShadowMapAtlasTargetSetId, render::TfNone, render::TfDepth);
+		rp->setOutput(shadowMapAtlasTargetSetId, render::TfNone, render::TfDepth);
 
 		if (m_gatheredView.cascadingDirectionalLight != nullptr)
 		{
@@ -438,7 +472,7 @@ void WorldRendererShared::setupLightPass(
 					const Matrix44 viewDelta = view * lastView.inverse();
 					if (includeDynamic)
 					{
-						const int32_t force = (m_state[worldRenderView.getIndex()].count % (shadowSettings.cascadingSlices - 1)) + 1;
+						const int32_t force = (state.count % (shadowSettings.cascadingSlices - 1)) + 1;
 						if (slice != force && shadowSlices[i].inside(viewDelta, sliceViewFrustum) == Frustum::Result::Inside)
 							continue;
 					}
@@ -472,6 +506,8 @@ void WorldRendererShared::setupLightPass(
 
 				shadowLightViews[slice] = shadowLightProjection * shadowLightView;
 
+				const int32_t passShadowMapIndex = shadowMapIndex++;
+
 				rp->addBuild(
 					[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 					WorldBuildContext wc(
@@ -481,7 +517,7 @@ void WorldRendererShared::setupLightPass(
 					// Render shadow map.
 					WorldRenderView shadowRenderView;
 					shadowRenderView.setIndex(worldRenderView.getIndex());
-					shadowRenderView.setCascade(slice);
+					shadowRenderView.setShadowMapIndex(passShadowMapIndex);
 					shadowRenderView.setProjection(shadowLightProjection);
 					shadowRenderView.setView(shadowLightView, shadowLightView);
 					shadowRenderView.setViewFrustum(shadowFrustum);
@@ -514,8 +550,7 @@ void WorldRendererShared::setupLightPass(
 					const WorldRenderPassShared shadowPass(
 						ShaderTechnique::Shadow,
 						sharedParams,
-						shadowRenderView,
-						IWorldRenderPass::None);
+						shadowRenderView);
 
 					T_ASSERT(!renderContext->havePendingDraws());
 
@@ -525,12 +560,14 @@ void WorldRendererShared::setupLightPass(
 						m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
 					}
 
-					for (const auto& r : m_gatheredView.renderables)
-						if (includeDynamic || !r.state.dynamic)
-							r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
+					for (auto it : m_gatheredView.renderables)
+					{
+						IEntityRenderer* entityRenderer = it.first;
+						const GatherView::Renderable& r = it.second;
 
-					for (auto entityRenderer : m_entityRenderers->get())
-						entityRenderer->build(wc, shadowRenderView, shadowPass);
+						const AlignedVector< Object* >& objects = includeDynamic ? r.objects : r.staticOnlyObjects;
+						entityRenderer->build(wc, shadowRenderView, shadowPass, objects);
+					}
 				});
 			}
 
@@ -569,19 +606,24 @@ void WorldRendererShared::setupLightPass(
 			Matrix44 shadowLightProjection;
 			Frustum shadowFrustum;
 
-			shadowFrustum.buildPerspective(light->getRadius(), 1.0f, 0.1f, light->getFarRange());
-			shadowLightProjection = perspectiveLh(light->getRadius(), 1.0f, 0.1f, light->getFarRange());
+			shadowFrustum.buildPerspective(light->getRadius(), 1.0f, 1.0f, light->getFarRange());
+			shadowLightProjection = perspectiveLh(light->getRadius(), 1.0f, 1.0f, light->getFarRange());
 
 			Vector4 lightAxisX, lightAxisY, lightAxisZ;
 			lightAxisZ = -lightDirection;
-			lightAxisX = cross(viewInverse.axisZ(), lightAxisZ).normalized();
-			lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
+
+			orthogonalFrame(
+				lightAxisZ,
+				lightAxisY,
+				lightAxisX
+			);
 
 			shadowLightView = Matrix44(
 				lightAxisX,
 				lightAxisY,
 				lightAxisZ,
 				lightPosition);
+
 			shadowLightView = shadowLightView.inverse();
 
 			const Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
@@ -597,7 +639,10 @@ void WorldRendererShared::setupLightPass(
 
 			Packer::Rectangle atlasRect;
 			if (!shadowAtlasPacker->insert(atlasSize, atlasSize, atlasRect))
-				return;
+			{
+				state.lightSBuffer->unlock();
+				return render::RGTargetSet::Invalid;
+			}
 
 			// Write atlas coordinates to shaders.
 			Vector4(
@@ -607,6 +652,8 @@ void WorldRendererShared::setupLightPass(
 				(float)atlasRect.height / shmh)
 				.storeUnaligned(lsd->atlasTransform);
 
+			const int32_t passShadowMapIndex = shadowMapIndex++;
+
 			rp->addBuild(
 				[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 				const WorldBuildContext wc(
@@ -614,10 +661,9 @@ void WorldRendererShared::setupLightPass(
 					renderContext);
 
 				// Render shadow map.
-				// #todo Cascade?
 				WorldRenderView shadowRenderView;
 				shadowRenderView.setIndex(worldRenderView.getIndex());
-				// shadowRenderView.setCascade(slice);
+				shadowRenderView.setShadowMapIndex(passShadowMapIndex);
 				shadowRenderView.setProjection(shadowLightProjection);
 				shadowRenderView.setView(shadowLightView, shadowLightView);
 				shadowRenderView.setViewFrustum(shadowFrustum);
@@ -650,8 +696,7 @@ void WorldRendererShared::setupLightPass(
 				const WorldRenderPassShared shadowPass(
 					ShaderTechnique::Shadow,
 					sharedParams,
-					shadowRenderView,
-					IWorldRenderPass::None);
+					shadowRenderView);
 
 				T_ASSERT(!renderContext->havePendingDraws());
 
@@ -661,18 +706,20 @@ void WorldRendererShared::setupLightPass(
 					m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
 				}
 
-				for (const auto& r : m_gatheredView.renderables)
-					r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
-
-				for (auto entityRenderer : m_entityRenderers->get())
-					entityRenderer->build(wc, shadowRenderView, shadowPass);
+				for (auto it : m_gatheredView.renderables)
+				{
+					IEntityRenderer* entityRenderer = it.first;
+					const GatherView::Renderable& r = it.second;
+					entityRenderer->build(wc, shadowRenderView, shadowPass, r.objects);
+				}
 			});
 		}
 
 		renderGraph.addPass(rp);
 	}
 
-	m_state[worldRenderView.getIndex()].lightSBuffer->unlock();
+	state.lightSBuffer->unlock();
+	return shadowMapAtlasTargetSetId;
 }
 
 }

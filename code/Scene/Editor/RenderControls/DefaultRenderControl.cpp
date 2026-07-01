@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Scene/Editor/RenderControls/DefaultRenderControl.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -14,14 +16,14 @@
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
+#include "Render/IRenderSystem.h"
 #include "Scene/Editor/Camera.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/RenderControls/CameraRenderControl.h"
-#include "Scene/Editor/RenderControls/DefaultRenderControl.h"
 #include "Scene/Editor/RenderControls/FinalRenderControl.h"
 #include "Scene/Editor/RenderControls/OrthogonalRenderControl.h"
 #include "Scene/Editor/RenderControls/PerspectiveRenderControl.h"
+#include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/Menu.h"
@@ -40,13 +42,12 @@
 
 namespace traktor::scene
 {
-	namespace
-	{
+namespace
+{
 
 const wchar_t* c_worldRendererTypes[] = { L"traktor.world.WorldRendererSimple", L"traktor.world.WorldRendererForward", L"traktor.world.WorldRendererDeferred" };
 
-const float c_aspects[] =
-{
+const float c_aspects[] = {
 	0.0f,
 	1.0f,
 	4.0f / 3.0f,
@@ -61,10 +62,8 @@ const float c_aspects[] =
 ui::MenuItem* getChecked(ui::MenuItem* menu)
 {
 	for (int i = 0; i < menu->count(); ++i)
-	{
 		if (menu->get(i)->isChecked())
 			return menu->get(i);
-	}
 	return nullptr;
 }
 
@@ -74,13 +73,13 @@ std::wstring getOverlayText(const TypeInfo* overlayType)
 	return i18n::Text(id, overlayType->getName());
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultRenderControl", DefaultRenderControl, ISceneRenderControl)
 
 DefaultRenderControl::DefaultRenderControl()
-:	m_cameraId(0)
-,	m_viewId(0)
+	: m_cameraId(0)
+	, m_viewId(0)
 {
 }
 
@@ -116,6 +115,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGrid"));
 	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGuide"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleRayTracing"));
 
 	m_toolView = new ui::ToolBarDropDown(ui::Command(L"Scene.Editor.View"), 100_ut, i18n::Text(L"SCENE_EDITOR_VIEW_MODE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE"));
@@ -133,15 +133,21 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		i18n::Text(L"SCENE_EDITOR_TOGGLE_GRID"),
 		0,
 		ui::Command(1, L"Scene.Editor.ToggleGrid"),
-		gridEnable ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle
-	);
+		gridEnable ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle);
 
 	m_toolToggleGuide = new ui::ToolBarButton(
 		i18n::Text(L"SCENE_EDITOR_TOGGLE_GUIDE"),
 		1,
 		ui::Command(1, L"Scene.Editor.ToggleGuide"),
-		guideEnable ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle
-	);
+		guideEnable ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle);
+
+	const bool supportRayTracing = m_context->getRenderSystem()->supportRayTracing();
+	m_toolToggleRayTracing = new ui::ToolBarButton(
+		i18n::Text(L"SCENE_EDITOR_TOGGLE_RAYTRACING"),
+		2,
+		ui::Command(1, L"Scene.Editor.ToggleRayTracing"),
+		supportRayTracing ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle);
+	m_toolToggleRayTracing->setEnable(supportRayTracing);
 
 	m_toolAspect = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), 70_ut, i18n::Text(L"SCENE_EDITOR_ASPECT"));
 	m_toolAspect->add(L"Full");
@@ -193,6 +199,15 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuReflections->get(settings->getProperty< int32_t >(L"SceneEditor.ReflectionsQuality", 4))->setChecked(true);
 	m_toolQualityMenu->add(m_menuReflections);
 
+	m_menuIrradiance = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_IRRADIANCE"));
+	m_menuIrradiance->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.IrradianceQuality"), L"Disabled", true, 0));
+	m_menuIrradiance->add(new ui::MenuItem(ui::Command(1, L"Scene.Editor.IrradianceQuality"), L"Low", true, 0));
+	m_menuIrradiance->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.IrradianceQuality"), L"Medium", true, 0));
+	m_menuIrradiance->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.IrradianceQuality"), L"High", true, 0));
+	m_menuIrradiance->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.IrradianceQuality"), L"Ultra", true, 0));
+	m_menuIrradiance->get(settings->getProperty< int32_t >(L"SceneEditor.IrradianceQuality", 4))->setChecked(true);
+	m_toolQualityMenu->add(m_menuIrradiance);
+
 	m_menuAO = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_AO"));
 	m_menuAO->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.AmbientOcclusionQuality"), L"Disabled", true, 0));
 	m_menuAO->add(new ui::MenuItem(ui::Command(1, L"Scene.Editor.AmbientOcclusionQuality"), L"Low", true, 0));
@@ -218,20 +233,16 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	const std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererForward");
 	for (int32_t i = 0; i < 3; ++i)
-	{
 		if (worldRendererTypeName == c_worldRendererTypes[i])
 			m_toolWorldRenderer->select(i);
-	}
 
 	m_toolDebugOverlay = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.DebugOverlay"), 140_ut, i18n::Text(L"SCENE_EDITOR_DEBUG_OVERLAY"));
 	m_toolDebugOverlay->add(L"None");
-	
+
 	const TypeInfoSet overlayTypes = type_of< world::IDebugOverlay >().findAllOf(false);
 	for (const TypeInfo* overlayType : overlayTypes)
-	{
 		if (overlayType->isInstantiable())
 			m_overlayTypes.push_back(overlayType);
-	}
 	std::sort(m_overlayTypes.begin(), m_overlayTypes.end(), [](const TypeInfo* lh, const TypeInfo* rh) {
 		return getOverlayText(lh) < getOverlayText(rh);
 	});
@@ -247,7 +258,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_sliderDebugAlpha->setValue(100);
 	m_sliderDebugAlpha->addEventHandler< ui::ContentChangeEvent >(this, &DefaultRenderControl::eventSliderDebugChange);
 
-	m_sliderDebugMip= new ui::Slider();
+	m_sliderDebugMip = new ui::Slider();
 	m_sliderDebugMip->create(m_toolBar);
 	m_sliderDebugMip->setRange(0, 100);
 	m_sliderDebugMip->setValue(100);
@@ -256,6 +267,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(m_toolView);
 	m_toolBar->addItem(m_toolToggleGrid);
 	m_toolBar->addItem(m_toolToggleGuide);
+	m_toolBar->addItem(m_toolToggleRayTracing);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolAspect);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
@@ -282,6 +294,7 @@ void DefaultRenderControl::destroy()
 
 	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_viewId), m_toolToggleGrid->isToggled());
 	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_viewId), m_toolToggleGuide->isToggled());
+	settings->setProperty< PropertyBoolean >(L"Scene.Editor.RayTracingEnable" + toString(m_viewId), m_toolToggleRayTracing->isToggled());
 
 	m_context->getEditor()->commitGlobalSettings();
 	m_toolView = nullptr;
@@ -302,17 +315,10 @@ void DefaultRenderControl::setAspect(float aspect)
 		m_renderControl->setAspect(aspect);
 }
 
-void DefaultRenderControl::setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias)
+void DefaultRenderControl::setQuality(const world::QualitySettings& qualitySettings)
 {
 	if (m_renderControl)
-		m_renderControl->setQuality(
-			imageProcess,
-			shadows,
-			reflections,
-			motionBlur,
-			ambientOcclusion,
-			antiAlias
-		);
+		m_renderControl->setQuality(qualitySettings);
 }
 
 void DefaultRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
@@ -403,7 +409,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		}
 		break;
 
-	case 1:	// Front
+	case 1: // Front
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
 			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveZ, m_cameraId, *worldRendererType))
@@ -412,7 +418,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		}
 		break;
 
-	case 2:	// Back
+	case 2: // Back
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
 			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeZ, m_cameraId, *worldRendererType))
@@ -421,7 +427,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		}
 		break;
 
-	case 3:	// Top
+	case 3: // Top
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
 			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveY, m_cameraId, *worldRendererType))
@@ -430,7 +436,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		}
 		break;
 
-	case 4:	// Bottom
+	case 4: // Bottom
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
 			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeY, m_cameraId, *worldRendererType))
@@ -439,7 +445,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		}
 		break;
 
-	case 5:	// Left
+	case 5: // Left
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
 			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveX, m_cameraId, *worldRendererType))
@@ -448,7 +454,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		}
 		break;
 
-	case 6:	// Right
+	case 6: // Right
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
 			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeX, m_cameraId, *worldRendererType))
@@ -457,7 +463,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		}
 		break;
 
-	case 7:	// Camera
+	case 7: // Camera
 		{
 			Ref< CameraRenderControl > renderControl = new CameraRenderControl();
 			if (!renderControl->create(m_container, m_context, *worldRendererType))
@@ -496,14 +502,20 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	else
 		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGuide"));
 
-	m_renderControl->setQuality(
-		(world::Quality)getChecked(m_menuPostProcess)->getCommand().getId(),
-		(world::Quality)getChecked(m_menuShadows)->getCommand().getId(),
-		(world::Quality)getChecked(m_menuReflections)->getCommand().getId(),
-		(world::Quality)getChecked(m_menuMotionBlur)->getCommand().getId(),
-		(world::Quality)getChecked(m_menuAO)->getCommand().getId(),
-		(world::Quality)getChecked(m_menuAA)->getCommand().getId()
-	);
+	if (m_toolToggleRayTracing->isToggled())
+		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableRayTracing"));
+	else
+		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableRayTracing"));
+
+	world::QualitySettings qualitySettings;
+	qualitySettings.imageProcess = (world::Quality)getChecked(m_menuPostProcess)->getCommand().getId();
+	qualitySettings.shadows = (world::Quality)getChecked(m_menuShadows)->getCommand().getId();
+	qualitySettings.reflections = (world::Quality)getChecked(m_menuReflections)->getCommand().getId();
+	qualitySettings.irradiance = (world::Quality)getChecked(m_menuIrradiance)->getCommand().getId();
+	qualitySettings.motionBlur = (world::Quality)getChecked(m_menuMotionBlur)->getCommand().getId();
+	qualitySettings.ambientOcclusion = (world::Quality)getChecked(m_menuAO)->getCommand().getId();
+	qualitySettings.antiAlias = (world::Quality)getChecked(m_menuAA)->getCommand().getId();
+	m_renderControl->setQuality(qualitySettings);
 
 	{
 		Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
@@ -533,7 +545,7 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 
 	if (event->getCommand() == L"Scene.Editor.View")
 	{
-		int32_t selected = m_toolView->getSelected();
+		const int32_t selected = m_toolView->getSelected();
 		T_ASSERT(selected >= 0);
 		createRenderControl(selected);
 	}
@@ -551,43 +563,56 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 		else
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGuide"));
 	}
+	else if (event->getCommand() == L"Scene.Editor.ToggleRayTracing")
+	{
+		if (m_toolToggleRayTracing->isToggled())
+			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableRayTracing"));
+		else
+			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableRayTracing"));
+	}
 	else if (event->getCommand() == L"Scene.Editor.Aspect")
 	{
 		m_renderControl->setAspect(c_aspects[m_toolAspect->getSelected()]);
 	}
 	else if (event->getCommand() == L"Scene.Editor.PostProcessQuality")
 	{
-		for (int i = 0; i < m_menuPostProcess->count(); ++i)
+		for (int32_t i = 0; i < m_menuPostProcess->count(); ++i)
 			m_menuPostProcess->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}
 	else if (event->getCommand() == L"Scene.Editor.MotionBlurQuality")
 	{
-		for (int i = 0; i < m_menuMotionBlur->count(); ++i)
+		for (int32_t i = 0; i < m_menuMotionBlur->count(); ++i)
 			m_menuMotionBlur->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}
 	else if (event->getCommand() == L"Scene.Editor.ShadowQuality")
 	{
-		for (int i = 0; i < m_menuShadows->count(); ++i)
+		for (int32_t i = 0; i < m_menuShadows->count(); ++i)
 			m_menuShadows->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}
 	else if (event->getCommand() == L"Scene.Editor.ReflectionsQuality")
 	{
-		for (int i = 0; i < m_menuReflections->count(); ++i)
+		for (int32_t i = 0; i < m_menuReflections->count(); ++i)
 			m_menuReflections->get(i)->setChecked(bool(i == event->getCommand().getId()));
+		updateQuality = true;
+	}
+	else if (event->getCommand() == L"Scene.Editor.IrradianceQuality")
+	{
+		for (int32_t i = 0; i < m_menuIrradiance->count(); ++i)
+			m_menuIrradiance->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}
 	else if (event->getCommand() == L"Scene.Editor.AmbientOcclusionQuality")
 	{
-		for (int i = 0; i < m_menuAO->count(); ++i)
+		for (int32_t i = 0; i < m_menuAO->count(); ++i)
 			m_menuAO->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}
 	else if (event->getCommand() == L"Scene.Editor.AntiAliasQuality")
 	{
-		for (int i = 0; i < m_menuAA->count(); ++i)
+		for (int32_t i = 0; i < m_menuAA->count(); ++i)
 			m_menuAA->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}
@@ -618,14 +643,15 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 
 	if (updateQuality)
 	{
-		m_renderControl->setQuality(
-			(world::Quality)getChecked(m_menuPostProcess)->getCommand().getId(),
-			(world::Quality)getChecked(m_menuShadows)->getCommand().getId(),
-			(world::Quality)getChecked(m_menuReflections)->getCommand().getId(),
-			(world::Quality)getChecked(m_menuMotionBlur)->getCommand().getId(),
-			(world::Quality)getChecked(m_menuAO)->getCommand().getId(),
-			(world::Quality)getChecked(m_menuAA)->getCommand().getId()
-		);
+		world::QualitySettings qualitySettings;
+		qualitySettings.imageProcess = (world::Quality)getChecked(m_menuPostProcess)->getCommand().getId();
+		qualitySettings.shadows = (world::Quality)getChecked(m_menuShadows)->getCommand().getId();
+		qualitySettings.reflections = (world::Quality)getChecked(m_menuReflections)->getCommand().getId();
+		qualitySettings.irradiance = (world::Quality)getChecked(m_menuIrradiance)->getCommand().getId();
+		qualitySettings.motionBlur = (world::Quality)getChecked(m_menuMotionBlur)->getCommand().getId();
+		qualitySettings.ambientOcclusion = (world::Quality)getChecked(m_menuAO)->getCommand().getId();
+		qualitySettings.antiAlias = (world::Quality)getChecked(m_menuAA)->getCommand().getId();
+		m_renderControl->setQuality(qualitySettings);
 	}
 
 	m_context->enqueueRedraw(this);

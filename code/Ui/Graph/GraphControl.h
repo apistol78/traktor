@@ -25,12 +25,16 @@
 namespace traktor::ui
 {
 
+class AlignNodesLayoutOperation;
 class Edge;
+class EvenSpaceLayoutOperation;
 class Group;
 class IBitmap;
+class IGraphLayoutOperation;
 class INodeShape;
 class Node;
 class Pin;
+class PrettifyLayoutOperation;
 
 /*! Graph control.
  * \ingroup UI
@@ -39,22 +43,12 @@ class T_DLLCLASS GraphControl : public Widget
 {
 	T_RTTI_CLASS;
 
+	friend class AlignNodesLayoutOperation;
+	friend class EvenSpaceLayoutOperation;
+	friend class PrettifyLayoutOperation;
+
 public:
 	constexpr static uint32_t WsEdgeSelectable = WsUser;
-
-	enum Alignment
-	{
-		AnLeft,
-		AnTop,
-		AnRight,
-		AnBottom
-	};
-
-	enum EvenSpace
-	{
-		EsHorizontally,
-		EsVertically
-	};
 
 	GraphControl();
 
@@ -153,9 +147,12 @@ public:
 
 	void center(bool selectedOnly = false);
 
-	void alignNodes(Alignment align);
-
-	void evenSpace(EvenSpace space);
+	/*! Apply a layout operation to this graph.
+	 *
+	 * The operation encapsulates the algorithm (alignment, even spacing,
+	 * prettify, …). Pass any IGraphLayoutOperation subclass.
+	 */
+	void apply(const IGraphLayoutOperation* operation);
 
 	Size getOffset() const;
 

@@ -1,16 +1,17 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Entity/ScriptComponent.h"
+
+#include "Core/Class/Boxes/BoxedTransform.h"
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeDispatch.h"
-#include "Core/Class/Boxes/BoxedTransform.h"
 #include "World/Entity.h"
-#include "World/Entity/ScriptComponent.h"
 
 namespace traktor::world
 {
@@ -18,9 +19,8 @@ namespace traktor::world
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ScriptComponent", ScriptComponent, IEntityComponent)
 
 ScriptComponent::ScriptComponent(const resource::Proxy< IRuntimeClass >& clazz, const PropertyGroup* properties)
-:	m_owner(nullptr)
-,	m_class(clazz)
-,	m_properties(properties)
+	: m_class(clazz)
+	, m_properties(properties)
 {
 }
 
@@ -32,6 +32,7 @@ ScriptComponent::~ScriptComponent()
 void ScriptComponent::destroy()
 {
 	m_owner = nullptr;
+	m_world = nullptr;
 	m_class.clear();
 	m_object = nullptr;
 	m_methodSetTransform = nullptr;
@@ -41,6 +42,14 @@ void ScriptComponent::destroy()
 void ScriptComponent::setOwner(Entity* owner)
 {
 	m_owner = owner;
+	m_object = nullptr;
+	m_methodSetTransform = nullptr;
+	m_methodUpdate = nullptr;
+}
+
+void ScriptComponent::setWorld(World* world)
+{
+	m_world = world;
 	m_object = nullptr;
 	m_methodSetTransform = nullptr;
 	m_methodUpdate = nullptr;
@@ -78,8 +87,7 @@ void ScriptComponent::update(const UpdateParams& update)
 	// Invoke update method if available.
 	if (m_methodUpdate != nullptr)
 	{
-		const Any argv[] =
-		{
+		const Any argv[] = {
 			Any::fromObject(update.contextObject),
 			Any::fromFloat((float)update.totalTime),
 			Any::fromFloat((float)update.deltaTime)

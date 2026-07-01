@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mcp.SkillAsset">
+	<name>traktor-lua-scripting</name>
+	<description>Idioms and gotchas for authoring traktor LUA Stage scripts (namespace import, direct type references, #using, Stage lifecycle).</description>
+	<whenToUse><![CDATA[Writing or editing a LUA Stage/script in traktor (e.g. Scripts/Main), or wiring entity/component logic from script.]]></whenToUse>
+	<body><![CDATA[# Authoring traktor LUA scripts
+
+Conventions and gotchas for writing traktor LUA scripts — both `Stage` scripts (e.g. `Scripts/Main`) and `ScriptComponent` scripts attached to entities. These are style/idiom rules, not a task — apply them whenever you author or edit a script.
+
+## Namespace & types
+
+- Put `import(traktor)` at the top of the script. It pulls the `traktor` namespace into local scope, so you can write `Vector4`, `Quaternion`, `Transform`, `Color4f` unqualified, and reach sub-namespaces as `traktor.physics.X`, `traktor.animation.X`, `traktor.ai.X`, `traktor.render.X`, etc.
+- Reference a component type **directly** when fetching it — `entity:getComponent(traktor.animation.SkeletonComponent)`. Do **not** use `TypeInfo.find("traktor.animation.SkeletonComponent")`; the direct type reference is the idiom.
+- `#using \{GUID\}` lines at the very top declare dependencies on other script resources (e.g. UiKit fragments) so their globals are available.
+
+## Stage scripts
+
+- Subclass with `Main = Main or class("Main", Stage)` (the `X = X or` guard makes hot-reload idempotent).
+- `Main:new(params, environment)` **must** call `Stage.new(self, params, environment)` first.
+- Lifecycle methods: `Main:new`, `Main:finalize` (tear down UI/handles), `Main:update(info)` where `info.frameDeltaTime` and `info.simulationTime` are the per-frame deltas.
+- Reach the runtime environment via the `self.environment` property: `self.environment.input.inputMapping`, `self.environment.physics.physicsManager`, `self.environment.resource.resourceManager`. (`self:getEnvironment()` also works, but the property is cleaner.)
+- Reach the world via `self.world.world` (a `World`): `world:getEntity(name [, index])`, `world:removeEntity(entity)`, `world:getComponent(traktor.ai.NavMeshComponent)`.
+
+## ScriptComponent scripts (entity logic)
+
+- Subclass the native component: `Enemy = Enemy or class("Enemy", traktor.world.ScriptComponent)`. The instance exposes `self.owner` (the `Entity` it is attached to) and `self.world` (the `World` directly — not wrapped like the Stage's `self.world.world`).
+- Update signature is `function X:update(context, totalTime, deltaTime)`. **`context` is the runtime `Stage` instance** (`WorldTypes.h`: `UpdateParams.contextObject` is set to `getStage()`). So a component can reach the very same environment the Stage has — e.g. `context.environment.physics.physicsManager` for ray queries — with no need to stash anything in a global. Prefer this over publishing shared state from the Stage.
+- Optional `X:setTransform(transform)` is invoked when the owner moves.
+
+## Per-instance shader parameters (tinting at runtime)
+
+- Add a `traktor.mesh.MeshParameterComponent` to the entity (alongside its mesh component — it auto-registers onto the sibling `MeshComponent`/`SkinnedMeshComponent`).
+- From script: `meshParam:setVectorParameter(traktor.render.IRenderSystem.getParameterHandle("World_MaterialDiffuseColor"), Vector4(r,g,b,1))`. This overrides the material's standard diffuse uniform for that instance only — a cheap way to recolor one entity without a per-variant material or mesh. Call it only on change, not every frame; the override persists.
+
+## Deferred (async) results
+
+- Some engine calls return a `Result` subclass instead of blocking — e.g. `NavMesh:createMoveQuery(from, to)` returns a `MoveQueryResult`.
+- Poll the non-blocking `result.ready` **property** before calling `result:get()`. `get()` internally calls `wait()` and will **block the update thread** if the result is not ready yet. Keep using the previous result until `.ready` is true.]]></body>
+	<engineVersion/>
+	<published>true</published>
+	<parameters/>
+</object>

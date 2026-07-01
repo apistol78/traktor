@@ -14,6 +14,7 @@ export TRAKTOR_HOME
 export RPI_SYSROOT=$TRAKTOR_HOME/3rdp-restricted/raspberry-sysroot
 export MOLTEN_SDK=$TRAKTOR_HOME/3rdp-restricted/vulkan/vulkansdk-macos-1.2.154.0/MoltenVK 
 
+export AFTERMATH_SDK=$TRAKTOR_HOME/3rdp/aftermath
 export AGG_SDK=$TRAKTOR_HOME/3rdp/agg-2.6
 export ASTCENC_SDK=$TRAKTOR_HOME/3rdp/astc-encoder
 export BULLET_SDK=$TRAKTOR_HOME/3rdp/bullet3
@@ -21,15 +22,14 @@ export EXPAT_SDK=$TRAKTOR_HOME/3rdp/libexpat/expat
 export FLAC_SDK=$TRAKTOR_HOME/3rdp/flac
 export FREETYPE_SDK=$TRAKTOR_HOME/3rdp/freetype
 export JPEG_SDK=$TRAKTOR_HOME/3rdp/jpeg/jpeg-9e
-export LUA_SDK=$TRAKTOR_HOME/3rdp/lua/lua-5.4.8
+export LUA_SDK=$TRAKTOR_HOME/3rdp/lua/lua-5.5.0
 export LZF_SDK=$TRAKTOR_HOME/3rdp/liblzf/liblzf-3.6
 export MIKKTSPACE_SDK=$TRAKTOR_HOME/3rdp/MikkTSpace
 export OGG_SDK=$TRAKTOR_HOME/3rdp/ogg
-#export P4_SDK=$TRAKTOR_HOME/3rdp/p4api-linux/p4api
 export PNG_SDK=$TRAKTOR_HOME/3rdp/libpng
 export RAPIDJSON_SDK=$TRAKTOR_HOME/3rdp/rapidjson
 export RECAST_SDK=$TRAKTOR_HOME/3rdp/recastnavigation
-export RENDERDOC_SDK=$TRAKTOR_HOME/3rdp/renderdoc/renderdoc_1.36
+export RENDERDOC_SDK=$TRAKTOR_HOME/3rdp/renderdoc/renderdoc_1.43
 export RG_ETC1_SDK=$TRAKTOR_HOME/3rdp/rg-etc1
 export STB_SDK=$TRAKTOR_HOME/3rdp/stb
 export STEAMWORKS_SDK=$TRAKTOR_HOME/3rdp/steamworks/sdk
@@ -45,6 +45,7 @@ export MINIMP3_SDK=$TRAKTOR_HOME/3rdp/minimp3
 export MIMALLOC_SDK=$TRAKTOR_HOME/3rdp/mimalloc
 export UFBX_SDK=$TRAKTOR_HOME/3rdp/ufbx
 export JOLT_SDK=$TRAKTOR_HOME/3rdp/JoltPhysics
+export LEMON_SDK=$TRAKTOR_HOME/3rdp/lemon
 
 # Vulkan SDK
 # - cleanup Extern and add Extern.vulkan which contain all paths,

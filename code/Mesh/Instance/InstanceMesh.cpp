@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,6 +34,7 @@ render::Handle s_handleDraw(L"InstanceMesh_Draw");
 render::Handle s_handleIndexCount(L"InstanceMesh_IndexCount");
 render::Handle s_handleFirstIndex(L"InstanceMesh_FirstIndex");
 render::Handle s_handleInstanceOffset(L"InstanceMesh_InstanceOffset");
+render::Handle s_handleInstanceCount(L"InstanceMesh_InstanceCount");
 
 }
 
@@ -63,7 +64,12 @@ void InstanceMesh::getTechniques(SmallSet< render::handle_t >& outHandles) const
 		outHandles.insert(part.first);
 }
 
-void InstanceMesh::build(
+const render::Buffer* InstanceMesh::getRTVertexAttributes() const
+{
+	return m_renderMesh->getAuxBuffer(c_fccRayTracingVertexAttributes);
+}
+
+void InstanceMesh::cullableBuild(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
@@ -79,7 +85,7 @@ void InstanceMesh::build(
 	render::RenderContext* renderContext = context.getRenderContext();
 
 	const AlignedVector< Part >& parts = it->second;
-	const auto& meshParts = m_renderMesh->getParts();
+	const auto& meshPrimitives = m_renderMesh->getPrimitives();
 
 	// Lazy create the buffers.
 	const uint32_t bufferItemCount = (uint32_t)alignUp(count, 16);
@@ -89,13 +95,14 @@ void InstanceMesh::build(
 		m_allocatedCount = count;
 	}
 
-	const uint32_t peakCascade = worldRenderView.getCascade();
+	const int32_t peakShadowMapIndex = worldRenderView.getShadowMapIndex();
 	const uint32_t dbSize = (uint32_t)m_drawBuffers.size();
-	for (uint32_t i = dbSize; i < (peakCascade + 1) * parts.size(); ++i)
+	for (uint32_t i = dbSize; i < (peakShadowMapIndex + 1) * parts.size(); ++i)
 		m_drawBuffers.push_back(m_renderSystem->createBuffer(
 			render::BufferUsage::BuStructured | render::BufferUsage::BuIndirect,
 			bufferItemCount * sizeof(render::IndexedIndirectDraw),
-			false));
+			false,
+			T_FILE_LINE_W));
 
 	// Create draw buffers from visibility buffer.
 	// Compute blocks are executed before render pass, so draws for shadow map rendering all cascades
@@ -110,12 +117,12 @@ void InstanceMesh::build(
 		if (!sp)
 			continue;
 
-		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getCascade() * parts.size() + i];
+		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getShadowMapIndex() * parts.size() + i];
 
-		const auto& primitives = meshParts[part.meshPart].primitives;
+		const auto& primitives = meshPrimitives[part.meshPart];
 
 		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
-			str(L"InstanceMesh draw commands %d %d", worldRenderView.getCascade(), i));
+			str(L"InstanceMesh draw commands %d %d", worldRenderView.getShadowMapIndex(), i));
 
 		renderBlock->program = m_shaderDraw->getProgram().program;
 
@@ -124,6 +131,7 @@ void InstanceMesh::build(
 		renderBlock->programParams->setFloatParameter(s_handleIndexCount, primitives.getVertexCount() + 0.5f);
 		renderBlock->programParams->setFloatParameter(s_handleFirstIndex, primitives.offset + 0.5f);
 		renderBlock->programParams->setFloatParameter(s_handleInstanceOffset, start + 0.5f);
+		renderBlock->programParams->setFloatParameter(s_handleInstanceCount, count + 0.5f);
 		renderBlock->programParams->setBufferViewParameter(world::ShaderParameter::Visibility, visibilityBuffer->getBufferView());
 		renderBlock->programParams->setBufferViewParameter(s_handleDraw, drawBuffer->getBufferView());
 		renderBlock->programParams->endParameters(renderContext);
@@ -146,10 +154,10 @@ void InstanceMesh::build(
 		if (!sp)
 			continue;
 
-		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getCascade() * parts.size() + i];
+		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getShadowMapIndex() * parts.size() + i];
 
 		auto renderBlock = renderContext->allocNamed< render::IndirectRenderBlock >(
-			str(L"InstanceMesh draw %d %d", worldRenderView.getCascade(), i));
+			str(L"InstanceMesh draw %d %d", worldRenderView.getShadowMapIndex(), i));
 		renderBlock->distance = 10000.0f;
 		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -157,7 +165,7 @@ void InstanceMesh::build(
 		renderBlock->indexType = m_renderMesh->getIndexType();
 		renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer()->getBufferView();
 		renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
-		renderBlock->primitive = meshParts[part.meshPart].primitives.type;
+		renderBlock->primitive = meshPrimitives[part.meshPart].type;
 		renderBlock->drawBuffer = drawBuffer->getBufferView();
 		renderBlock->drawCount = (uint32_t)count;
 
@@ -177,11 +185,6 @@ void InstanceMesh::build(
 
 		renderContext->draw(sp.priority, renderBlock);
 	}
-}
-
-const render::Buffer* InstanceMesh::getRTVertexAttributes() const
-{
-	return m_renderMesh->getAuxBuffer(c_fccRayTracingVertexAttributes);
 }
 
 }

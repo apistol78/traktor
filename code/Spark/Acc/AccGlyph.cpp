@@ -81,11 +81,12 @@ bool AccGlyph::create(
 	m_vertexBuffer = renderSystem->createBuffer(
 		render::BuVertex,
 		c_glyphCount * sizeof_array(c_glyphTemplate) * sizeof(Vertex),
-		true);
+		true,
+		T_FILE_LINE_W);
 	if (!m_vertexBuffer)
 		return false;
 
-	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, c_glyphCount * 6 * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, c_glyphCount * 6 * sizeof(uint16_t), false, T_FILE_LINE_W);
 	if (!m_indexBuffer)
 		return false;
 

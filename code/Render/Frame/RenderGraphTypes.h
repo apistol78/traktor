@@ -178,6 +178,12 @@ class T_DLLCLASS RGDependency : public RGHandle
 public:
 	const static RGDependency Invalid;
 
+	//! Anchor ordering a pass before all auto-ordered passes (rendered first).
+	const static RGDependency First;
+
+	//! Anchor ordering a pass after all auto-ordered passes (rendered last).
+	const static RGDependency Last;
+
 	RGDependency() = default;
 
 	explicit RGDependency(handle_t data)

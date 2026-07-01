@@ -2,6 +2,7 @@
 #	include <Windows.h>
 #endif
 
+#include <Core/Io/BufferedStream.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/IStream.h>
 #include <Core/Io/StringReader.h>
@@ -177,8 +178,8 @@ void MainForm::eventTimer(ui::TimerEvent* event)
 			Ref< traktor::IStream > stream = FileSystem::getInstance().open(m_fileName, File::FmRead);
 			if (stream)
 			{
-				Utf8Encoding utf8;
-				StringReader reader(stream, &utf8);
+				BufferedStream bs(stream);
+				StringReader reader(&bs, Utf8Encoding::getInstance());
 
 				std::wstring line;
 				while (reader.readLine(line) >= 0)

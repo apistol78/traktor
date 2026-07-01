@@ -24,7 +24,7 @@ namespace traktor::ui
 /*!
  * \ingroup UIW32
  */
-class T_DLLCLASS WidgetFactoryWin32 : public IWidgetFactory
+class T_DLLCLASS WidgetFactoryWin32 : public RefCountImpl< IWidgetFactory >
 {
 public:
 	virtual IEventLoop* createEventLoop(EventSubject* owner) override final;

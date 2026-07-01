@@ -42,7 +42,7 @@ bool ScreenRenderer::create(IRenderSystem* renderSystem)
 	if (!m_vertexLayout)
 		return false;
 
-	m_vertexBuffer = renderSystem->createBuffer(BuVertex, 6 * sizeof(ScreenVertex), false);
+	m_vertexBuffer = renderSystem->createBuffer(BuVertex, 6 * sizeof(ScreenVertex), false, T_FILE_LINE_W);
 	if (!m_vertexBuffer)
 		return false;
 

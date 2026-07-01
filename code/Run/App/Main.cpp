@@ -421,9 +421,8 @@ int main(int argc, const char** argv)
 			return 1;
 		}
 
-		Utf8Encoding encoding;
 		BufferedStream stream(file);
-		StringReader reader(&stream, &encoding);
+		StringReader reader(&stream, Utf8Encoding::getInstance());
 		StringOutputStream ss;
 
 		std::wstring tmp;

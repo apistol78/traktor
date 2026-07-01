@@ -1,29 +1,35 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Vulkan/Private/Context.h"
 
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"
+#include "Core/Thread/CriticalSection.h"
 #include "Core/Timer/Profiler.h"
-#include "Render/Vulkan/ProgramVk.h"
-#include "Render/Vulkan/RenderTargetSetVk.h"
-#include "Render/Vulkan/VertexLayoutVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
-#include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Queue.h"
 #include "Render/Vulkan/Private/UniformBufferPool.h"
 #include "Render/Vulkan/Private/Utilities.h"
+#include "Render/Vulkan/ProgramVk.h"
+#include "Render/Vulkan/RenderTargetSetVk.h"
+#include "Render/Vulkan/VertexLayoutVk.h"
+
+#include <cstring>
+#include <sstream>
+#include <string>
 
 namespace traktor::render
 {
@@ -31,20 +37,25 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Context", Context, Object)
 
 Context::Context(
+	VkInstance instance,
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
 	VmaAllocator allocator,
 	uint32_t graphicsQueueIndex,
-	uint32_t computeQueueIndex
-)
-:	m_physicalDevice(physicalDevice)
-,	m_logicalDevice(logicalDevice)
-,	m_allocator(allocator)
-,	m_graphicsQueueIndex(graphicsQueueIndex)
-,	m_computeQueueIndex(computeQueueIndex)
-,	m_sampledResourceIndexAllocator(0, MaxBindlessResources - 1)
-,	m_storageResourceIndexAllocator(0, MaxBindlessResources - 1)
-,	m_bufferResourceIndexAllocator(0, MaxBindlessResources - 1)
+	uint32_t computeQueueIndex,
+	bool rayTracing,
+	bool smoothLines)
+	: m_instance(instance)
+	, m_physicalDevice(physicalDevice)
+	, m_logicalDevice(logicalDevice)
+	, m_allocator(allocator)
+	, m_graphicsQueueIndex(graphicsQueueIndex)
+	, m_computeQueueIndex(computeQueueIndex)
+	, m_rayTracing(rayTracing)
+	, m_smoothLines(smoothLines)
+	, m_sampledResourceIndexAllocator(0, MaxBindlessResources - 1)
+	, m_storageResourceIndexAllocator(0, MaxBindlessResources - 1)
+	, m_bufferResourceIndexAllocator(0, MaxBindlessResources - 1)
 {
 }
 
@@ -68,6 +79,12 @@ Context::~Context()
 		vkDestroyDescriptorPool(m_logicalDevice, m_descriptorPool, nullptr);
 		m_descriptorPool = 0;
 	}
+
+#if !defined(__ANDROID__) && !defined(__APPLE__)
+	for (char* name : m_debugNames)
+		free(name);
+	m_debugNames.clear();
+#endif
 }
 
 bool Context::create()
@@ -76,7 +93,10 @@ bool Context::create()
 
 	// Create queues.
 	m_graphicsQueue = Queue::create(this, m_graphicsQueueIndex);
-	m_computeQueue = Queue::create(this, m_computeQueueIndex);
+	if (m_computeQueueIndex == m_graphicsQueueIndex)
+		m_computeQueue = m_graphicsQueue;
+	else
+		m_computeQueue = Queue::create(this, m_computeQueueIndex);
 
 	// Create pipeline cache.
 	VkPipelineCacheCreateInfo pcci = {};
@@ -95,10 +115,10 @@ bool Context::create()
 	Ref< IStream > file = FileSystem::getInstance().open(ss.str(), File::FmRead);
 	if (file)
 	{
-	 	const uint32_t size = (uint32_t)file->available();
+		const uint32_t size = (uint32_t)file->available();
 		buffer.resize(size);
-	 	file->read(buffer.ptr(), size);
-	 	file->close();
+		file->read(buffer.ptr(), size);
+		file->close();
 
 		pcci.initialDataSize = size;
 		pcci.pInitialData = buffer.c_ptr();
@@ -112,11 +132,10 @@ bool Context::create()
 		m_logicalDevice,
 		&pcci,
 		nullptr,
-		&m_pipelineCache
-	);
+		&m_pipelineCache);
 
 	// Create descriptor set pool.
-	VkDescriptorPoolSize dps[6];
+	VkDescriptorPoolSize dps[7];
 	dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
 	dps[0].descriptorCount = 80000;
 	dps[1].type = VK_DESCRIPTOR_TYPE_SAMPLER;
@@ -129,22 +148,23 @@ bool Context::create()
 	dps[4].descriptorCount = MaxBindlessResources;
 	dps[5].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 	dps[5].descriptorCount = MaxBindlessResources;
+	dps[6].type = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR;
+	dps[6].descriptorCount = 8000;
 
-	const VkDescriptorPoolCreateInfo dpci =
-	{
+	const VkDescriptorPoolCreateInfo dpci = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT,
 		.maxSets = 32000,
-		.poolSizeCount = sizeof_array(dps),
+		.poolSizeCount = (uint32_t)(m_rayTracing ? 7 : 6),	// Only include last entry if RT enabled.
 		.pPoolSizes = dps
 	};
 
 	vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_descriptorPool);
 
 	// Create uniform buffer pools.
-	m_uniformBufferPools[0] = new UniformBufferPool(this,   1000, L"Once");
-	m_uniformBufferPools[1] = new UniformBufferPool(this,  10000, L"Frame");
+	m_uniformBufferPools[0] = new UniformBufferPool(this, 1000, L"Once");
+	m_uniformBufferPools[1] = new UniformBufferPool(this, 10000, L"Frame");
 	m_uniformBufferPools[2] = new UniformBufferPool(this, 100000, L"Draw");
 
 	// Bindless resources.
@@ -155,21 +175,19 @@ bool Context::create()
 
 	for (int32_t i = 0; i < sizeof_array(bindings); ++i)
 	{
-		const VkDescriptorBindingFlags bindlessFlags = 
+		const VkDescriptorBindingFlags bindlessFlags =
 			VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT |
 			VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT |
-			VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT;/* |
-			VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT_EXT;*/
+			VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT |
+			VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT_EXT;
 
-		const VkDescriptorSetLayoutBindingFlagsCreateInfoEXT extendedInfo =
-		{
+		const VkDescriptorSetLayoutBindingFlagsCreateInfoEXT extendedInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT,
 			.bindingCount = 1,
 			.pBindingFlags = &bindlessFlags
 		};
 
-		const VkDescriptorSetLayoutBinding binding =
-		{
+		const VkDescriptorSetLayoutBinding binding = {
 			.binding = bindings[i],
 			.descriptorType = descriptorTypes[i],
 			.descriptorCount = MaxBindlessResources,
@@ -177,8 +195,7 @@ bool Context::create()
 			.pImmutableSamplers = nullptr
 		};
 
-		const VkDescriptorSetLayoutCreateInfo layoutInfo =
-		{
+		const VkDescriptorSetLayoutCreateInfo layoutInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 			.pNext = &extendedInfo,
 			.flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT,
@@ -195,15 +212,13 @@ bool Context::create()
 		// Create descriptor set.
 		const uint32_t maxBinding = MaxBindlessResources - 1;
 
-		const VkDescriptorSetVariableDescriptorCountAllocateInfoEXT countInfo =
-		{
+		const VkDescriptorSetVariableDescriptorCountAllocateInfoEXT countInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT,
 			.descriptorSetCount = 1,
-			.pDescriptorCounts = &maxBinding	// This number is the max allocatable count.
+			.pDescriptorCounts = &maxBinding // This number is the max allocatable count.
 		};
 
-		const VkDescriptorSetAllocateInfo allocInfo =
-		{
+		const VkDescriptorSetAllocateInfo allocInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = &countInfo,
 			.descriptorPool = m_descriptorPool,
@@ -216,7 +231,6 @@ bool Context::create()
 		{
 			log::error << L"Failed to create Vulkan; failed to create bindless descriptor set. " << getHumanResult(result) << Endl;
 			return false;
-
 		}
 	}
 
@@ -236,13 +250,9 @@ void Context::decrementViews()
 void Context::addDeferredCleanup(const cleanup_fn_t& fn, uint32_t cleanupFlags)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
-
-	// In case there are no render views which can perform cleanup
-	// after each frame, we do this immediately.
-	if (m_views > 0)
-		m_cleanupFns.push_back({ fn, cleanupFlags });
-	else
-		fn(this);
+	m_cleanupFns.push_back({ fn, cleanupFlags });
+	if (m_views <= 0)
+		performCleanup();
 }
 
 void Context::addCleanupListener(ICleanupListener* cleanupListener)
@@ -268,6 +278,7 @@ void Context::performCleanup()
 		T_PROFILER_SCOPE(L"Context::performCleanup");
 
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_graphicsQueue->m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_computeQueue->m_lock);
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
 
 		bool gpuIdle = false;
@@ -293,10 +304,42 @@ void Context::performCleanup()
 
 		// Only call cleanup listeners to free descriptors.
 		if (freeDescriptors)
-		{
 			for (auto cleanupListener : m_cleanupListeners)
 				cleanupListener->postCleanup();
-		}
+	}
+}
+
+void Context::addDeferredUpload(const upload_fn_t& fn)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_updateLock);
+	m_uploadFns.push_back(fn);
+	if (m_views <= 0)
+		performUploads();
+}
+
+void Context::performUploads()
+{
+	if (m_uploadFns.empty())
+		return;
+
+	{
+		T_PROFILER_SCOPE(L"Context::performUploads");
+
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_graphicsQueue->m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_computeQueue->m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_updateLock);
+
+		auto commandBuffer = m_graphicsQueue->acquireCommandBuffer(L"Context::performUploads");
+		if (!commandBuffer)
+			return;
+
+		for (const upload_fn_t& fn : m_uploadFns)
+			fn(this, commandBuffer);
+
+		commandBuffer->submitAndWait();
+		commandBuffer = nullptr;
+
+		m_uploadFns.resize(0);
 	}
 }
 
@@ -334,7 +377,7 @@ bool Context::savePipelineCache()
 
 	file->write(buffer.c_ptr(), size);
 	file->close();
-	
+
 	log::debug << L"Pipeline cache \"" << ss.str() << L"\" saved successfully." << Endl;
 	return true;
 }
@@ -378,8 +421,6 @@ void Context::freeBufferResourceIndex(uint32_t resourceIndex)
 	m_bufferResourceIndexAllocator.free(resourceIndex);
 }
 
-
-
 VkPipeline Context::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt, uint32_t targetRenderPassHash, const RenderTargetSetVk* targetSet, VkRenderPass targetRenderPass, float multiSampleShading)
 {
 	// Calculate pipeline key.
@@ -393,7 +434,7 @@ VkPipeline Context::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout,
 	auto it = m_pipelines.find(key);
 	if (it != m_pipelines.end())
 	{
-		it->second.lastAcquired = /*m_counter*/0;
+		it->second.lastAcquired = /*m_counter*/ 0;
 		pipeline = it->second.pipeline;
 	}
 	else
@@ -450,8 +491,20 @@ VkPipeline Context::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout,
 			.pName = "main",
 			.pSpecializationInfo = nullptr });
 
+		const bool isLineTopology = (pt == PrimitiveType::Lines || pt == PrimitiveType::LineStrip);
+
+		const VkPipelineRasterizationLineStateCreateInfoKHR lineStateCreateInfo = {
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_KHR,
+			.pNext = nullptr,
+			.lineRasterizationMode = VK_LINE_RASTERIZATION_MODE_RECTANGULAR_SMOOTH_KHR,
+			.stippledLineEnable = VK_FALSE,
+			.lineStippleFactor = 0,
+			.lineStipplePattern = 0
+		};
+
 		const VkPipelineRasterizationStateCreateInfo rsci = {
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+			.pNext = (m_smoothLines && isLineTopology) ? (const void*)&lineStateCreateInfo : nullptr,
 			.depthClampEnable = VK_FALSE,
 			.rasterizerDiscardEnable = VK_FALSE,
 			.polygonMode = rs.wireframe ? VK_POLYGON_MODE_LINE : VK_POLYGON_MODE_FILL,
@@ -467,7 +520,7 @@ VkPipeline Context::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout,
 		VkPipelineMultisampleStateCreateInfo mssci = {};
 		mssci.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 		mssci.rasterizationSamples = targetSet->getVkSampleCount();
-		if (multiSampleShading > FUZZY_EPSILON)
+		if (!isLineTopology && multiSampleShading > FUZZY_EPSILON)
 		{
 			mssci.sampleShadingEnable = VK_TRUE;
 			mssci.minSampleShading = multiSampleShading;
@@ -483,8 +536,8 @@ VkPipeline Context::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout,
 			.passOp = c_stencilOperations[(int)rs.stencilPass],
 			.depthFailOp = c_stencilOperations[(int)rs.stencilZFail],
 			.compareOp = c_compareOperations[(int)rs.stencilFunction],
-			.compareMask = rs.stencilMask,
-			.writeMask = rs.stencilMask,
+			.compareMask = (uint32_t)~0U, //rs.stencilMask,
+			.writeMask = (uint32_t)~0U, //rs.stencilMask,
 			.reference = rs.stencilReference
 		};
 
@@ -574,7 +627,7 @@ VkPipeline Context::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout,
 			return 0;
 		}
 
-		m_pipelines[key] = { /*m_counter*/0, pipeline };
+		m_pipelines[key] = { /*m_counter*/ 0, pipeline };
 #if defined(_DEBUG)
 		log::debug << L"Graphics pipeline created (" << program->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
 #endif
@@ -596,7 +649,7 @@ VkPipeline Context::validateComputePipeline(const ProgramVk* p)
 	auto it = m_pipelines.find(key);
 	if (it != m_pipelines.end())
 	{
-		it->second.lastAcquired = 0/*m_counter*/;
+		it->second.lastAcquired = 0 /*m_counter*/;
 		pipeline = it->second.pipeline;
 	}
 	else
@@ -632,13 +685,41 @@ VkPipeline Context::validateComputePipeline(const ProgramVk* p)
 			return 0;
 		}
 
-		m_pipelines[key] = { 0/*m_counter*/, pipeline };
+		m_pipelines[key] = { 0 /*m_counter*/, pipeline };
 #if defined(_DEBUG)
 		log::debug << L"Compute pipeline created (" << p->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
 #endif
 	}
 
 	return pipeline;
+}
+
+void Context::setObjectDebugName(const wchar_t* const tag, uint64_t object, VkObjectType objectType)
+{
+#if !defined(__ANDROID__) && !defined(__APPLE__)
+	static CriticalSection s_debugNameLock;
+	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(s_debugNameLock);
+
+	static SmallMap< VkObjectType, uint32_t > s_objectCount;
+	uint32_t& count = s_objectCount[objectType];
+
+	std::stringstream ss;
+	if (tag)
+		ss << wstombs(tag) << " [" << count << "]";
+	else
+		ss << "<unnamed> [" << count << "]";
+	++count;
+
+	m_debugNames.push_back(strdup(ss.str().c_str()));
+
+	const VkDebugUtilsObjectNameInfoEXT ni = {
+		.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
+		.objectType = objectType,
+		.objectHandle = object,
+		.pObjectName = m_debugNames.back()
+	};
+	vkSetDebugUtilsObjectNameEXT(m_logicalDevice, &ni);
+#endif
 }
 
 }

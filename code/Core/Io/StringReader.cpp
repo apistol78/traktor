@@ -18,7 +18,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.StringReader", StringReader, Object)
 StringReader::StringReader(IStream* stream, IEncoding* encoding)
 :	m_stream(stream)
 ,	m_encoding(encoding)
-,	m_count(0)
+,	m_head(0)
+,	m_tail(0)
 {
 }
 
@@ -26,25 +27,50 @@ wchar_t StringReader::readChar()
 {
 	wchar_t ch;
 
-	if (m_count < sizeof(m_buffer))
+	if (m_tail - m_head < (int32_t)sizeof(m_buffer))
 	{
-		int64_t result = m_stream->read(&m_buffer[m_count], sizeof(m_buffer) - m_count);
+		// Buffer's tail reached the end; slide unread bytes to the front so
+		// we can refill. This only happens once every ~sizeof(m_buffer) chars
+		// instead of on every character decode.
+		if (m_tail == (int32_t)sizeof(m_buffer) && m_head > 0)
+		{
+			std::memmove(&m_buffer[0], &m_buffer[m_head], m_tail - m_head);
+			m_tail -= m_head;
+			m_head = 0;
+		}
+
+		const int64_t result = m_stream->read(&m_buffer[m_tail], sizeof(m_buffer) - m_tail);
 		if (result > 0)
-			m_count += result;
-		else if (m_count <= 0)
+			m_tail += (int32_t)result;
+		else if (m_tail - m_head <= 0)
 			return 0;
 	}
 
-	T_ASSERT(m_count > 0);
+	T_ASSERT(m_tail - m_head > 0);
 
-	int32_t result = m_encoding->translate(m_buffer, (int)m_count, ch);
+	const int32_t result = m_encoding->translate(&m_buffer[m_head], m_tail - m_head, ch);
 	if (result <= 0)
 		return 0;
 
-	std::memmove(&m_buffer[0], &m_buffer[result], m_count - result);
-	m_count -= result;
-
+	m_head += result;
 	return ch;
+}
+
+int64_t StringReader::readAll(std::wstring& out)
+{
+	out.resize(0);
+
+	std::wstring line;
+	bool any = false;
+	while (readLine(line) >= 0)
+	{
+		if (any)
+			out.push_back(L'\n');
+		out.append(line);
+		any = true;
+	}
+
+	return any ? (int64_t)out.length() : -1;
 }
 
 int64_t StringReader::readLine(std::wstring& out)
@@ -56,39 +82,46 @@ int64_t StringReader::readLine(std::wstring& out)
 
 	for (;;)
 	{
-		if (m_count < sizeof(m_buffer))
+		if (m_tail - m_head < (int32_t)sizeof(m_buffer))
 		{
+			// Compact when the buffer tail has reached the end.
+			if (m_tail == (int32_t)sizeof(m_buffer) && m_head > 0)
+			{
+				std::memmove(&m_buffer[0], &m_buffer[m_head], m_tail - m_head);
+				m_tail -= m_head;
+				m_head = 0;
+			}
+
 			int64_t result = -1;
 			if (m_stream)
 			{
-				result = m_stream->read(&m_buffer[m_count], sizeof(m_buffer) - m_count);
+				result = m_stream->read(&m_buffer[m_tail], sizeof(m_buffer) - m_tail);
 				if (result < 0)
 					m_stream = nullptr;
 			}
 			if (result > 0)
-				m_count += result;
-			else if (m_count <= 0 && out.empty())
+				m_tail += (int32_t)result;
+			else if (m_tail - m_head <= 0 && out.empty())
 			{
 				out.clear();
 				return -1;
 			}
 		}
 
-		if (m_count <= 0)
+		if (m_tail - m_head <= 0)
 			break;
 
-		int32_t result = m_encoding->translate(m_buffer, (int)m_count, ch);
+		const int32_t result = m_encoding->translate(&m_buffer[m_head], m_tail - m_head, ch);
 		if (result <= 0)
 		{
-			// Need more characters in buffer; read another byte.
-			if (m_stream != nullptr && m_count < sizeof(m_buffer))
+			// Need more bytes in buffer; loop to read another byte if room remains.
+			if (m_stream != nullptr && (m_tail - m_head) < (int32_t)sizeof(m_buffer))
 				continue;
 			else
 				return -1;
 		}
 
-		std::memmove(&m_buffer[0], &m_buffer[result], m_count - result);
-		m_count -= result;
+		m_head += result;
 
 		if (ch == L'\n')
 			break;

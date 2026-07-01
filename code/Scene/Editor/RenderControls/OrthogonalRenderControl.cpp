@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,9 +27,8 @@
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/CameraMesh.h"
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/IModifier.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
@@ -84,13 +83,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRend
 
 OrthogonalRenderControl::OrthogonalRenderControl()
 	: m_worldRendererType(nullptr)
-	, m_shadowQuality(world::Quality::Disabled)
-	, m_reflectionsQuality(world::Quality::Disabled)
-	, m_motionBlurQuality(world::Quality::Disabled)
-	, m_ambientOcclusionQuality(world::Quality::Disabled)
-	, m_antiAliasQuality(world::Quality::Disabled)
-	, m_gridEnable(true)
-	, m_guideEnable(true)
 	, m_multiSample(0)
 	, m_viewPlane(PositiveX)
 	, m_viewFarZ(0.0f)
@@ -134,7 +126,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	}
 
 	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
-	m_renderGraph = new render::RenderGraph(m_context->getRenderGraphContext(), m_multiSample);
+	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem(), m_multiSample);
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
@@ -204,13 +196,9 @@ void OrthogonalRenderControl::setAspect(float aspect)
 {
 }
 
-void OrthogonalRenderControl::setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias)
+void OrthogonalRenderControl::setQuality(const world::QualitySettings& qualitySettings)
 {
-	m_shadowQuality = shadows;
-	m_reflectionsQuality = reflections;
-	m_motionBlurQuality = motionBlur;
-	m_ambientOcclusionQuality = ambientOcclusion;
-	m_antiAliasQuality = antiAlias;
+	m_worldQuality = qualitySettings;
 	safeDestroy(m_worldRenderer);
 }
 
@@ -248,6 +236,16 @@ bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
 		m_guideEnable = true;
 	else if (command == L"Scene.Editor.DisableGuide")
 		m_guideEnable = false;
+	else if (command == L"Scene.Editor.EnableRayTracing")
+	{
+		m_rayTracingEnable = true;
+		updateWorldRenderer();
+	}
+	else if (command == L"Scene.Editor.DisableRayTracing")
+	{
+		m_rayTracingEnable = false;
+		updateWorldRenderer();
+	}
 
 	return result;
 }
@@ -346,10 +344,10 @@ void OrthogonalRenderControl::updateWorldRenderer()
 
 	// Create entity renderers; every renderer is wrapped in a custom renderer in order to check flags etc.
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	for (auto editorProfile : m_context->getEditorProfiles())
+	for (auto plugin : m_context->getPlugins())
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
-		editorProfile->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
+		plugin->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
 		for (auto entityRenderer : entityRenderers)
 			worldEntityRenderers->add(entityRenderer);
 	}
@@ -365,13 +363,10 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = worldRenderSettings;
 	wcd.entityRenderers = worldEntityRenderers;
-	wcd.quality.motionBlur = m_motionBlurQuality;
-	wcd.quality.shadows = m_shadowQuality;
-	wcd.quality.reflections = m_reflectionsQuality;
-	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
-	wcd.quality.antiAlias = m_antiAliasQuality;
+	wcd.quality = m_worldQuality;
 	wcd.multiSample = m_multiSample;
 	wcd.hdr = m_renderView->isHDR();
+	wcd.rt = m_rayTracingEnable;
 
 	// Prevent ultra AA quality since jitter cause orthogonal projection to be broken.
 	if (wcd.quality.antiAlias == world::Quality::Ultra)
@@ -381,7 +376,10 @@ void OrthogonalRenderControl::updateWorldRenderer()
 			m_context->getResourceManager(),
 			m_context->getRenderSystem(),
 			wcd))
+	{
+		safeDestroy(worldRenderer);
 		return;
+	}
 
 	m_viewFarZ = worldRenderSettings->viewFarZ;
 	m_worldRenderer = worldRenderer;

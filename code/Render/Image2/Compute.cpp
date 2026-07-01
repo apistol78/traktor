@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -130,21 +130,24 @@ void Compute::build(
 		break;
 	}
 
-	bindSources(context, renderGraph, pp);
+	const bool bindResult = bindSources(context, renderGraph, pp);
 
 	pp->endParameters(renderContext);
 
-	Shader::Permutation permutation;
-	context.applyTechniqueFlags(m_shader, permutation);
-	IProgram* program = m_shader->getProgram(permutation).program;
-	if (!program)
-		return;
+	if (bindResult)
+	{
+		Shader::Permutation permutation;
+		context.applyTechniqueFlags(m_shader, permutation);
+		IProgram* program = m_shader->getProgram(permutation).program;
+		if (!program)
+			return;
 
-	rb->program = program;
-	rb->programParams = pp;
-	renderContext->compute(rb);
+		rb->program = program;
+		rb->programParams = pp;
+		renderContext->compute(rb);
 
-	renderContext->compute< BarrierRenderBlock >(Stage::Compute, Stage::Fragment | Stage::Compute, nullptr, 0);
+		renderContext->compute< BarrierRenderBlock >(Stage::Compute, Stage::Fragment | Stage::Compute, nullptr, 0);
+	}
 }
 
 }

@@ -1,20 +1,21 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Model/Operations/CleanDuplicates.h"
+
 #include "Core/Math/Const.h"
 #include "Core/Misc/Murmur3.h"
 #include "Model/Model.h"
-#include "Model/Operations/CleanDuplicates.h"
 
 namespace traktor::model
 {
-	namespace
-	{
+namespace
+{
 
 uint32_t polygonHash(const Polygon& p)
 {
@@ -29,12 +30,12 @@ uint32_t polygonHash(const Polygon& p)
 	return hash.get();
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CleanDuplicates", CleanDuplicates, IModelOperation)
 
 CleanDuplicates::CleanDuplicates(float positionDistance)
-:	m_positionDistance(positionDistance)
+	: m_positionDistance(positionDistance)
 {
 }
 
@@ -49,6 +50,8 @@ bool CleanDuplicates::apply(Model& model) const
 
 	for (const auto& channel : model.getTexCoordChannels())
 		cleaned.addUniqueTexCoordChannel(channel);
+
+	addedPolygonHashes.reserve(model.getPolygons().size());
 
 	for (const auto& polygon : model.getPolygons())
 	{

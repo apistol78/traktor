@@ -38,6 +38,24 @@ namespace traktor::render
 /*! \ingroup Render */
 //@{
 
+/*! Handle to a fence signalled on the asynchronous compute queue.
+ *
+ * Returned by IRenderView::signalAsynchronousCompute and asynchronous acceleration
+ * structure builds. Pass the handle to IRenderView::waitAsynchronousCompute to make
+ * subsequent graphics queue work observe the result of the asynchronous work.
+ *
+ * The value is backend specific (a timeline value on Vulkan) and is only valid
+ * within the frame in which it was produced. A default constructed handle, or a
+ * handle returned from a non-asynchronous call, is invalid and ignored by
+ * waitAsynchronousCompute.
+ */
+struct ComputeHandle
+{
+	uint64_t value = 0;	//!< Backend specific completion value; 0 denotes no asynchronous work.
+
+	explicit operator bool() const { return value != 0; }
+};
+
 enum class PrecisionHint
 {
 	Undefined = 0,
@@ -497,6 +515,7 @@ struct RenderSystemDesc
 	float mipBias = 0.0f;
 	int32_t maxAnisotropy = 1;
 	bool rayTracing = false;
+	bool aftermath = false;
 	bool validation = false;
 	bool programCache = true;
 	bool verbose = false;
@@ -657,6 +676,13 @@ struct Primitives
 		const static uint32_t c_primitiveAdd[] = { 0, 0, 0, 2, 0 };
 		return count * c_primitiveMul[(int32_t)type] + c_primitiveAdd[(int32_t)type];
 	}
+};
+
+/*! Raytracing primitives. */
+struct RaytracingPrimitives
+{
+	Primitives primitives;
+	bool opaque;
 };
 
 /*! Copy region. */

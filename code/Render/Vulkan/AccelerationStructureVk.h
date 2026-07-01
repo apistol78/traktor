@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,22 +37,27 @@ public:
 
 	static Ref< AccelerationStructureVk > createTopLevel(Context* context, uint32_t numInstances, uint32_t inFlightCount);
 
-	static Ref< AccelerationStructureVk > createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives, bool dynamic);
+	static Ref< AccelerationStructureVk > createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic, uint32_t inFlightCount);
 
 	virtual void destroy() override final;
 
 	bool writeInstances(CommandBuffer* commandBuffer, const AlignedVector< Instance >& instances);
 
-	bool writeGeometry(CommandBuffer* commandBuffer, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives);
+	bool writeGeometry(CommandBuffer* commandBuffer, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild);
 
-	const VkAccelerationStructureKHR& getVkAccelerationStructureKHR() const { return m_as; }
+	const VkAccelerationStructureKHR& getVkAccelerationStructureKHR() const { return m_as[m_index]; }
 
 protected:
 	Context* m_context = nullptr;
 	Ref< BufferDynamicVk > m_instanceBuffer;
-	Ref< ApiBuffer > m_hierarchyBuffer;
-	Ref< ApiBuffer > m_scratchBuffer;
-	VkAccelerationStructureKHR m_as = 0;
+	// Ring of acceleration structures. A dynamic bottom level structure is rebuilt every
+	// frame on the asynchronous compute queue while prior frames' graphics ray queries
+	// still read it, so it is buffered to the in-flight count; each frame writes a fresh
+	// slot. Top level and static bottom level structures use a single slot.
+	AlignedVector< Ref< ApiBuffer > > m_hierarchyBuffers;
+	AlignedVector< Ref< ApiBuffer > > m_scratchBuffers;
+	AlignedVector< VkAccelerationStructureKHR > m_as;
+	uint32_t m_index = 0;
 	uint32_t m_scratchAlignment = 0;
 	bool m_dynamic = false;
 

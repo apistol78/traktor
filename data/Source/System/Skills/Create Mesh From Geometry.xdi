@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mcp.SkillAsset">
+	<name>create-mesh-from-geometry</name>
+	<description>Author a render mesh from procedurally generated vertices via create_mesh_from_geometry.</description>
+	<whenToUse><![CDATA[Need a custom mesh from generated geometry (winding, UVs, textured material, static or skinned).]]></whenToUse>
+	<body><![CDATA[# Create a render mesh from raw geometry
+
+Author a static (or skinned) render mesh "{{name}}" from procedurally generated vertices with `create_mesh_from_geometry`, material "{{material}}".
+
+## Tool arguments
+- `path`, `fileName` (writes a `.tmd` under `Assets/`), `guid` (reused on re-run → the asset guid stays stable).
+- `positions` `[[x,y,z]…]`, `polygons` `[[i0,i1,i2,(i3)]…]` (quads or tris), `normals` (optional — computed if omitted), `texCoords` `[[u,v]…]` (parallel to `positions`).
+- `material` (model-material name), `triangulate: true`.
+- `maps` `{diffuse, normal, roughness, specular, metalness, emissive → value}` — declares named material maps (requires `texCoords`). A **texture guid** embeds the texture in the model; an **empty string `""`** declares a named-but-unbound map to bind on the MeshAsset instead (preferred — see below).
+- `meshType`: `"static"` (default) or `"skinned"` (add `joints`, `jointIndices`, `animations`).
+
+Then `build_asset {guid, rebuild:true, wait:true}`.
+
+## Bind textures on the asset (preferred)
+Bind textures on the MeshAsset rather than baking them into the `.tmd`, so the model can be re-skinned without rebuilding geometry:
+1. Create the mesh with **unbound** slots — `maps: { "diffuse": "" }` (with `texCoords`): a named `diffuse` map carrying no embedded texture.
+2. Bind by map name on the asset — `set_instance_member { guid:<mesh>, member:"materialTextures", value:{ "diffuse":"<texture guid>" } }`. `create_mesh_from_geometry` overwrites the asset, so set `materialTextures` **after** (re)creating the mesh, then `build_asset`. The pipeline resolves `materialTextures[name]` onto the model's matching named map at build time.
+
+Pass a real texture **guid** in `maps` only when you deliberately want it baked into the model.
+
+## Gotchas
+- **Winding**: front face = **clockwise**. Auto-orient each quad: if `dot(cross(p1−p0, p2−p0), outwardNormal) > 0`, reverse the order.
+- **Tiling UVs**: project world coordinates onto the face plane and divide by a tile size (X-face → `(z,y)/tile`, Y-face → `(x,z)/tile`, Z-face → `(x,y)/tile`) for seamless tiling across adjacent pieces.
+- **Stable guid**: re-running with the same `path` + `guid` keeps the guid, so entities that reference the mesh pick up new geometry on rebuild with no scene edit.
+- **Hard vs smooth edges**: give each face its own vertices with the face normal for hard edges; average normals across shared vertices for smooth ones.
+- **materialTextures keys = map names**: the binding key must match the map name declared in `maps` (e.g. `diffuse`, `normal`), and the map must exist (declare it unbound with `""`) for the binding to take effect.
+]]></body>
+	<engineVersion/>
+	<published>true</published>
+	<parameters>
+		<item type="traktor.mcp.SkillParameter">
+			<name>name</name>
+			<description>Mesh asset name</description>
+			<defaultValue>Mesh</defaultValue>
+		</item>
+		<item type="traktor.mcp.SkillParameter">
+			<name>material</name>
+			<description>Material name</description>
+			<defaultValue>Material</defaultValue>
+		</item>
+	</parameters>
+</object>

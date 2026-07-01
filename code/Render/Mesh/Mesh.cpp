@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,9 +48,14 @@ void Mesh::setAuxBuffers(const SmallMap< FourCC, Ref< Buffer > >& auxBuffers)
 	m_auxBuffers = auxBuffers;
 }
 
-void Mesh::setParts(const AlignedVector< Part >& parts)
+void Mesh::setPrimitives(const AlignedVector< Primitives >& primitives)
 {
-	m_parts = parts;
+	m_primitives = primitives;
+}
+
+void Mesh::setRaytracingPrimitives(const AlignedVector< RaytracingPrimitives >& primitives)
+{
+	m_raytracingPrimitives = primitives;
 }
 
 void Mesh::setBoundingBox(const Aabb3& boundingBox)

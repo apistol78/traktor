@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2025 Anders Pistol.
+ * Copyright (c) 2023-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,19 +9,19 @@
 #include "World/Shared/Passes/PostProcessPass.h"
 
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
+#include "Render/IRenderPlugin.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/ITexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
-#include "World/IEntityRenderer.h"
 #include "World/IWorldRenderer.h"
-#include "World/Shared/WorldRenderPassShared.h"
-#include "World/WorldBuildContext.h"
-#include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 
@@ -30,6 +30,7 @@ namespace traktor::world
 namespace
 {
 
+const resource::Id< render::ImageGraph > c_toneMapDisabled(L"{EBF935B7-9A18-9F44-B049-04E8B01DB877}");
 const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
 const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{BE19DE90-E010-A74D-AA3B-87FAC2A56946}");
 const resource::Id< render::ImageGraph > c_motionBlurMedium(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}");
@@ -90,6 +91,14 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 			return false;
 		}
 	}
+	else
+	{
+		if (!resourceManager->bind(c_toneMapDisabled, m_toneMap))
+		{
+			log::error << L"Unable to create tone map process." << Endl;
+			return false;
+		}
+	}
 
 	// Create motion blur processing.
 	if (desc.quality.motionBlur > Quality::Disabled)
@@ -112,7 +121,8 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 			return false;
 		}
 	}
-	m_needCameraJitter = (bool)(desc.quality.antiAlias >= Quality::Ultra);
+	m_needCameraJitter = (bool)(desc.quality.antiAlias >= Quality::High);
+	m_resolutionScale = (bool)(desc.quality.antiAlias == Quality::Disabled || desc.quality.antiAlias >= Quality::Ultra) ? 1.0f : 0.75f;
 
 	// Create "visual" post processing filter.
 	if (desc.quality.imageProcess > Quality::Disabled)
@@ -154,14 +164,38 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
 
+	// Attempt to load XeSS plugin for AA/upscaling.
+	if (desc.quality.antiAlias >= Quality::High)
+	{
+		const TypeInfo* pluginType = TypeInfo::find(L"traktor.render.RenderPluginXeSS");
+		if (pluginType != nullptr)
+		{
+			m_antiAliasPlugin = renderSystem->createPlugin(*pluginType);
+			m_needCameraJitter = true;
+		}
+	}
+
 	m_hdr = desc.hdr;
 	return true;
+}
+
+void PostProcessPass::destroy()
+{
+	safeDestroy(m_antiAliasPlugin);
+	safeDestroy(m_screenRenderer);
+	m_toneMap.clear();
+	m_motionBlur.clear();
+	m_antiAlias.clear();
+	m_visual.clear();
+	m_gammaCorrection.clear();
+	m_colorGrading.clear();
 }
 
 void PostProcessPass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
 	uint32_t frameCount,
+	render::ITexture* whiteTexture,
 	render::RenderGraph& renderGraph,
 	render::RGTargetSet gbufferTargetSetId,
 	render::RGTargetSet velocityTargetSetId,
@@ -184,29 +218,31 @@ void PostProcessPass::setup(
 	igctx.associateTextureTargetSet(ShaderParameter::InputDepth, gbufferTargetSetId, 0);
 	igctx.associateTextureTargetSet(ShaderParameter::InputNormal, gbufferTargetSetId, 1);
 	igctx.associateTextureTargetSet(ShaderParameter::InputVelocity, velocityTargetSetId, 0);
-	igctx.associateExplicitTexture(ShaderParameter::InputColorGrading, m_colorGrading);
+	igctx.associateExplicitTexture(ShaderParameter::InputColorGrading, (bool)(m_colorGrading != nullptr) ? m_colorGrading.getResource() : whiteTexture);
 	igctx.setTechniqueFlag(ShaderPermutation::ColorGradingEnable, (bool)(m_colorGrading != nullptr));
+	igctx.setTechniqueFlag(ShaderPermutation::UpscalingEnable, (bool)(m_resolutionScale < 1.0f));
 	igctx.setTechniqueFlag(ShaderPermutation::HDR, m_hdr);
 
 	// Expose gamma, exposure and jitter.
 	const float time = (float)worldRenderView.getTime();
 	const Vector2 rc = jitter(frameCount) / worldRenderView.getViewSize();
 	const Vector2 rp = jitter(frameCount - 1) / worldRenderView.getViewSize();
+	const Vector4 jtr = Vector4(rp.x, -rp.y, rc.x, -rc.y);
 	auto setParameters = [=, this](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		params->setFloatParameter(ShaderParameter::Time, time);
 		params->setFloatParameter(ShaderParameter::Gamma, m_gamma);
 		params->setFloatParameter(ShaderParameter::GammaInverse, 1.0f / m_gamma);
 		params->setFloatParameter(ShaderParameter::Exposure, std::pow(2.0f, m_settings.exposure));
-		params->setVectorParameter(ShaderParameter::Jitter, Vector4(rp.x, -rp.y, rc.x, -rc.y)); // Texture space.
+		params->setVectorParameter(ShaderParameter::Jitter, jtr); // Texture space.
 		if (gatheredView.rtWorldTopLevel != nullptr)
 			params->setAccelerationStructureParameter(ShaderParameter::TLAS, gatheredView.rtWorldTopLevel);
 	};
 
 	StaticVector< render::ImageGraph*, 5 > processes;
-	if (m_toneMap)
-		processes.push_back(m_toneMap);
 	if (m_antiAlias)
 		processes.push_back(m_antiAlias);
+	if (m_toneMap)
+		processes.push_back(m_toneMap);
 	if (m_motionBlur)
 		processes.push_back(m_motionBlur);
 	if (m_visual)
@@ -214,41 +250,95 @@ void PostProcessPass::setup(
 	if (m_gammaCorrection)
 		processes.push_back(m_gammaCorrection);
 
+	render::RGTargetSet sizeReferenceTargetSetId = visualTargetSetId.current;
+
 	render::RGTargetSet intermediateTargetSetId;
 	for (size_t i = 0; i < processes.size(); ++i)
 	{
 		auto process = processes[i];
 		const bool next = (bool)((i + 1) < processes.size());
 
+		// Output of AA and after is referenced to native output target.
+		if (process == m_antiAlias.getResource())
+			sizeReferenceTargetSetId = outputTargetSetId;
+
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Process");
 
-		if (next)
+		if (m_antiAliasPlugin != nullptr && process == m_antiAlias.getResource())
 		{
+			const render::RGTargetSet colorTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputColor);
+			const render::RGTargetSet depthTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputDepth);
+			const render::RGTargetSet velocityTargetSetId = igctx.findTextureTargetSetId(ShaderParameter::InputVelocity);
+
 			render::RenderGraphTargetSetDesc rgtd;
 			rgtd.count = 1;
 			rgtd.createDepthStencil = false;
 			rgtd.referenceWidthDenom = 1;
 			rgtd.referenceHeightDenom = 1;
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, render::RGTargetSet::Invalid, outputTargetSetId);
+			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, render::RGTargetSet::Invalid, sizeReferenceTargetSetId);
 
-			rp->setOutput(intermediateTargetSetId, render::TfColor, render::TfColor);
+			rp->setOutput(intermediateTargetSetId);
+
+			rp->addInput(colorTargetSetId);
+			rp->addInput(depthTargetSetId);
+			rp->addInput(velocityTargetSetId);
+
+			rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+				render::ITexture* colorTexture = renderGraph.getTargetSet(colorTargetSetId)->getColorTexture(0);
+				render::ITexture* depthTexture = renderGraph.getTargetSet(depthTargetSetId)->getColorTexture(0);
+				render::ITexture* velocityTexture = renderGraph.getTargetSet(velocityTargetSetId)->getColorTexture(0);
+				render::ITexture* outputTexture = renderGraph.getTargetSet(intermediateTargetSetId)->getColorTexture(0);
+
+				auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"XeSS");
+				rb->lambda = [=](render::IRenderView* renderView) {
+					m_antiAliasPlugin->render(renderView, colorTexture, depthTexture, velocityTexture, outputTexture, jtr);
+				};
+				renderContext->draw(rb);
+			});
 		}
 		else
 		{
-			render::Clear cl;
-			cl.mask = render::CfColor;
-			cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-			rp->setOutput(outputTargetSetId, cl, render::TfDepth, render::TfColor | render::TfDepth);
-		}
+			if (next)
+			{
+				render::RenderGraphTargetSetDesc rgtd;
+				rgtd.count = 1;
+				rgtd.createDepthStencil = false;
+				rgtd.referenceWidthDenom = 1;
+				rgtd.referenceHeightDenom = 1;
+				rgtd.targets[0].colorFormat = render::TfR11G11B10F;
+				intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, render::RGTargetSet::Invalid, sizeReferenceTargetSetId);
 
-		process->addPasses(
-			m_screenRenderer,
-			renderGraph,
-			rp,
-			igctx,
-			view,
-			setParameters);
+				rp->setOutput(intermediateTargetSetId, render::TfColor, render::TfColor);
+			}
+			else
+			{
+				// Ensure output depth is in known value if we are using upscaling.
+				if (m_resolutionScale < 1.0f)
+				{
+					render::Clear cl;
+					cl.mask = render::CfColor | render::CfDepth;
+					cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+					cl.depth = 1.0f;
+					rp->setOutput(outputTargetSetId, cl, render::TfNone, render::TfColor | render::TfDepth);
+				}
+				else
+				{
+					render::Clear cl;
+					cl.mask = render::CfColor;
+					cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+					rp->setOutput(outputTargetSetId, cl, render::TfDepth, render::TfColor | render::TfDepth);
+				}
+			}
+
+			process->addPasses(
+				m_screenRenderer,
+				renderGraph,
+				rp,
+				igctx,
+				view,
+				setParameters);
+		}
 
 		if (next)
 			igctx.associateTextureTargetSet(ShaderParameter::InputColor, intermediateTargetSetId, 0);

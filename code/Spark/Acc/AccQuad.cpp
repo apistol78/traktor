@@ -68,7 +68,7 @@ bool AccQuad::create(
 	T_ASSERT(render::getVertexSize(vertexElements) == sizeof(Vertex));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, 2 * 3 * sizeof(Vertex), false);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, 2 * 3 * sizeof(Vertex), false, T_FILE_LINE_W);
 	if (!m_vertexBuffer)
 		return false;
 

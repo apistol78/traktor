@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,13 +28,12 @@ class Buffer;
 class IAccelerationStructure;
 class IProgram;
 class IRenderSystem;
+class IRenderView;
 
 }
 
 namespace traktor::world
 {
-
-class WorldBuildContext;
 
 /*! Ray tracing world.
  * \ingroup World
@@ -83,7 +82,7 @@ public:
 
 	Instance* createInstance(const AlignedVector< Part >& parts);
 
-	void build(const WorldBuildContext& context);
+	void writeAccelerationStructure(render::IRenderView* renderView);
 
 	const render::IAccelerationStructure* getTopLevel() const { return m_tlas; }
 
@@ -91,7 +90,7 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IAccelerationStructure > m_tlas;
 	AlignedVector< Instance* > m_instances;
-	bool m_instanceBufferDirty = false;
+	bool m_instanceBufferDirty = true;
 
 	void destroyInstance(Instance* instance);
 };

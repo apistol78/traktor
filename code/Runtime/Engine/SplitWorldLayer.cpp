@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2024 Anders Pistol.
+ * Copyright (c) 2023-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyFloat.h"
@@ -119,8 +120,14 @@ void SplitWorldLayer::preUpdate(const UpdateInfo& info)
 		m_scene.consume();
 
 		// Get initial cameras.
-		m_cameraEntities[0] = m_scene->getWorld()->getEntity(L"Camera0");
-		m_cameraEntities[1] = m_scene->getWorld()->getEntity(L"Camera1");
+		for (int32_t i = 0; i < 2; ++i)
+		{
+			if (m_cameraEntityId[i].isNull())
+			{
+				m_cameraEntities[i] = m_scene->getWorld()->getEntity(str(L"Camera%d", i));
+				m_cameraEntityId[i] = (m_cameraEntities[i] != nullptr) ? m_cameraEntities[i]->getId() : Guid();
+			}
+		}
 	}
 
 	// Re-create world renderer.
@@ -129,6 +136,16 @@ void SplitWorldLayer::preUpdate(const UpdateInfo& info)
 		m_worldRenderer = m_environment->getWorld()->createWorldRenderer(m_scene->getWorldRenderSettings());
 		if (!m_worldRenderer)
 			return;
+	}
+
+	// Get camera if we have id but no entity.
+	for (int32_t i = 0; i < 2; ++i)
+	{
+		if (!m_cameraEntities[i] && m_cameraEntityId[i].isNotNull())
+		{
+			if ((m_cameraEntities[i] = m_scene->getWorld()->getEntity(m_cameraEntityId[i])) == nullptr)
+				m_cameraEntityId[i] = Guid();
+		}
 	}
 
 	// Get render view dimensions.
@@ -355,6 +372,10 @@ void SplitWorldLayer::hotReload()
 			if (auto persistentIdComponent = entity->getComponent< world::PersistentIdComponent >())
 				m_entityTransforms[persistentIdComponent->getId()] = entity->getTransform();
 	}
+
+	// Drop camera entities so we can recover new one after hot reload.
+	m_cameraEntities[0] = nullptr;
+	m_cameraEntities[1] = nullptr;
 }
 
 scene::Scene* SplitWorldLayer::getScene() const
@@ -464,7 +485,10 @@ double SplitWorldLayer::getAlternateTime() const
 
 void SplitWorldLayer::setCamera(int32_t split, const world::Entity* cameraEntity)
 {
-	m_cameraEntities[split] = cameraEntity;
+	if ((m_cameraEntities[split] = cameraEntity) != nullptr)
+		m_cameraEntityId[split] = m_cameraEntities[split]->getId();
+	else
+		m_cameraEntityId[split] = Guid();
 }
 
 const world::Entity* SplitWorldLayer::getCamera(int32_t split) const

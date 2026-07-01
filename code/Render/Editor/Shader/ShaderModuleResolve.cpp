@@ -10,6 +10,8 @@
 
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/StringSplit.h"
 #include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderModule.h"
@@ -26,7 +28,27 @@ void pushUnique(AlignedVector< T >& inoutArr, const T& value)
 	if (it == inoutArr.end())
 		inoutArr.push_back(value);
 }
+	
+std::wstring trimEmptyLines(const std::wstring& text)
+{
+	AlignedVector< std::wstring > lns;
+	;
+	for (auto ln : StringSplit< std::wstring >(text, L"\n"))
+		lns.push_back(rtrim(ln));
 
+	while (!lns.empty() && lns.front().empty())
+		lns.erase(lns.begin());
+
+	while (!lns.empty() && lns.back().empty())
+		lns.erase(lns.end() - 1);
+
+	StringOutputStream ss;
+	for (const auto& ln : lns)
+		ss << ln << Endl;
+
+	return ss.str();
+}
+	
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderModuleResolve", ShaderModuleResolve, Object)
@@ -63,7 +85,7 @@ Ref< ShaderModule > ShaderModuleResolve::resolve(const ShaderGraph* shaderGraph)
 		if (!m_preprocessor.evaluate(unprocessedText, processedText, usings))
 			return nullptr;
 
-		text << processedText << Endl;
+		text << trimEmptyLines(processedText) << Endl;
 		samplers.insert(shaderModule->getSamplers().begin(), shaderModule->getSamplers().end());
 
 		for (const Guid& structId : shaderModule->getStructDeclarations())

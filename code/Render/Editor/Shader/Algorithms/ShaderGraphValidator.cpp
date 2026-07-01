@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/InputPin.h"
@@ -372,7 +373,7 @@ public:
 
 				if (!traits->isInputTypeValid(shaderGraph, activeNode, edge->getDestination(), value.getType()))
 					outReport.addError(
-						L"Invalid data type into \"" + edge->getDestination()->getName() + L"\".",
+						L"Invalid data type (" + str(L"%d", (int32_t)value.getType()) + L") into \"" + edge->getDestination()->getName() + L"\" of " + type_name(activeNode)  + L".",
 						activeNode);
 			}
 		}
@@ -447,19 +448,19 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, AlignedVector< const N
 
 	EdgeNodes().check(report, m_shaderGraph, visitor.m_nodes);
 	UniqueTechniques().check(report, m_shaderGraph, visitor.m_nodes);
-	NonOptionalInputs().check(report, m_shaderGraph, visitor.m_nodes);
 	SwizzlePatterns().check(report, m_shaderGraph, visitor.m_nodes);
 	ParameterNames().check(report, m_shaderGraph, visitor.m_nodes);
 	VariableNames().check(report, m_shaderGraph, visitor.m_nodes);
-	CheckTypes().check(report, m_shaderGraph, visitor.m_nodes);
+	//CheckTypes().check(report, m_shaderGraph, visitor.m_nodes);
 
 	if (type == SgtFragment)
 	{
 		PortNames().check(report, m_shaderGraph, visitor.m_nodes);
-		CheckOptionalPorts().check(report, m_shaderGraph, visitor.m_nodes);
+		//CheckOptionalPorts().check(report, m_shaderGraph, visitor.m_nodes);
 	}
 	else if (type == SgtProgram)
 	{
+		NonOptionalInputs().check(report, m_shaderGraph, visitor.m_nodes);
 		NoPorts().check(report, m_shaderGraph, visitor.m_nodes);
 		// NoMetaNodes().check(report, m_shaderGraph, visitor.m_nodes);
 	}

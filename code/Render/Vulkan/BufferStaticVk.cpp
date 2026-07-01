@@ -82,17 +82,9 @@ void BufferStaticVk::unlock()
 		&bc
 	);
 
-	commandBuffer->submit({}, {}, VK_NULL_HANDLE);
+	commandBuffer->submitAndWait();
 
-	m_context->addDeferredCleanup(
-		[commandBuffer, stageBuffer = m_stageBuffer](Context* cx) {
-			commandBuffer->wait();
-			stageBuffer->destroy();
-		},
-		Context::CleanupNone
-	);
-
-	m_stageBuffer = nullptr;
+	safeDestroy(m_stageBuffer);
 }
 
 const IBufferView* BufferStaticVk::getBufferView() const

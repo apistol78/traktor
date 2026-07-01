@@ -30,17 +30,19 @@ const wchar_t* c_castFormat[10][10] = {
 
 }
 
-GlslVariable::GlslVariable(const Node* node, const std::wstring& name, GlslType type)
+GlslVariable::GlslVariable(const Node* node, const std::wstring& name, GlslType type, bool array)
 	: m_node(node)
 	, m_name(name)
 	, m_type(type)
+	, m_array(array)
 {
 }
 
-GlslVariable::GlslVariable(const Node* node, const std::wstring& name, const std::wstring& typeName, GlslType type)
+GlslVariable::GlslVariable(const Node* node, const std::wstring& name, const std::wstring& structTypeName, const StructDeclaration& structDeclaration, GlslType type)
 	: m_node(node)
 	, m_name(name)
-	, m_typeName(typeName)
+	, m_structTypeName(structTypeName)
+	, m_structDeclaration(structDeclaration)
 	, m_type(type)
 {
 }
@@ -59,8 +61,10 @@ GlslVariable& GlslVariable::operator=(const GlslVariable& other)
 {
 	m_node = other.m_node;
 	m_name = other.m_name;
-	m_typeName = other.m_typeName;
+	m_structTypeName = other.m_structTypeName;
+	m_structDeclaration = other.m_structDeclaration;
 	m_type = other.m_type;
+	m_array = other.m_array;
 	return *this;
 }
 

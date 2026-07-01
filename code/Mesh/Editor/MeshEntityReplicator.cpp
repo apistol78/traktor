@@ -82,7 +82,7 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 
 	// Create a mesh asset; used by bake pipeline to set appropriate materials.
 	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+	outputMeshAsset->setMeshType(mesh::MeshAsset::MeshType::Static);
 	outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
 
 	const auto& materialTextures = meshAsset->getMaterialTextures();

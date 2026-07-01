@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2025 Anders Pistol.
+ * Copyright (c) 2023-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,7 +35,6 @@ namespace traktor::world
 struct GatherView;
 struct WorldCreateDesc;
 
-class WorldEntityRenderers;
 class WorldRenderView;
 
 /*!
@@ -45,21 +44,22 @@ class VelocityPass : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit VelocityPass(WorldEntityRenderers* entityRenderers);
-
 	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc);
+
+	void destroy();
 
 	render::RGTargetSet setup(
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
+		uint32_t frameCount,
 		render::RenderGraph& renderGraph,
 		render::RGTargetSet gbufferTargetSetId,
 		render::RGTargetSet outputTargetSetId) const;
 
 private:
-	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::ImageGraph > m_velocityPrime;
+	resource::Proxy< render::ImageGraph > m_velocityDilate;
 };
 
 }

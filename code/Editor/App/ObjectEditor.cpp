@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Editor/App/ObjectEditor.h"
+
 #include "Ui/Dialog.h"
 
 namespace traktor::editor
@@ -15,8 +16,8 @@ namespace traktor::editor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.ObjectEditor", ObjectEditor, Object)
 
 ObjectEditor::ObjectEditor(IEditor* editor, ui::Dialog* parent)
-:	m_editor(editor)
-,	m_parent(parent)
+	: m_editor(editor)
+	, m_parent(parent)
 {
 }
 
@@ -104,18 +105,18 @@ Ref< db::Group > ObjectEditor::browseGroup()
 	return browsedGroup;
 }
 
-Ref< db::Instance > ObjectEditor::browseInstance(const TypeInfo& filterType)
+Ref< db::Instance > ObjectEditor::browseInstance(const TypeInfo& filterType, const db::Group* initialGroup)
 {
 	m_parent->setEnable(false);
-	Ref< db::Instance > browsedInstance = m_editor->browseInstance(filterType);
+	Ref< db::Instance > browsedInstance = m_editor->browseInstance(filterType, initialGroup);
 	m_parent->setEnable(true);
 	return browsedInstance;
 }
 
-Ref< db::Instance > ObjectEditor::browseInstance(const IBrowseFilter* filter)
+Ref< db::Instance > ObjectEditor::browseInstance(const IBrowseFilter* filter, const db::Group* initialGroup)
 {
 	m_parent->setEnable(false);
-	Ref< db::Instance > browsedInstance = m_editor->browseInstance(filter);
+	Ref< db::Instance > browsedInstance = m_editor->browseInstance(filter, initialGroup);
 	m_parent->setEnable(true);
 	return browsedInstance;
 }
@@ -130,9 +131,19 @@ bool ObjectEditor::openDefaultEditor(db::Instance* instance)
 	return m_editor->openDefaultEditor(instance);
 }
 
-bool ObjectEditor::openInNewEditor(db::Instance* instance)
+bool ObjectEditor::isEditorOpen(const db::Instance* instance) const
 {
-	return m_editor->openInNewEditor(instance);
+	return m_editor->isEditorOpen(instance);
+}
+
+bool ObjectEditor::closeEditor(const db::Instance* instance, bool forceCloseIfUnsaved)
+{
+	return m_editor->closeEditor(instance, forceCloseIfUnsaved);
+}
+
+bool ObjectEditor::openInNewEditorProcess(db::Instance* instance)
+{
+	return m_editor->openInNewEditorProcess(instance);
 }
 
 bool ObjectEditor::openTool(const std::wstring& toolType, const PropertyGroup* param)
@@ -180,7 +191,7 @@ bool ObjectEditor::isBuilding() const
 	return m_editor->isBuilding();
 }
 
-Ref< IPipelineDepends> ObjectEditor::createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth)
+Ref< IPipelineDepends > ObjectEditor::createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth)
 {
 	return m_editor->createPipelineDepends(dependencySet, recursionDepth);
 }

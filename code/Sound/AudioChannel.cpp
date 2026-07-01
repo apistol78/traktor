@@ -307,23 +307,24 @@ bool AudioChannel::getBlock(const IAudioMixer* mixer, AudioBlock& outBlock)
 		}
 		else
 		{
+			const uint32_t samplesCount = alignUp(block.samplesCount, 4);
 			for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
 			{
 				const float* inputSamples = block.samples[i];
 				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
-				T_ASSERT(m_outputSamplesIn + block.samplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
+				T_ASSERT(m_outputSamplesIn + samplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
 
 				if (inputSamples)
 					mixer->mulConst(
 						outputSamples,
 						inputSamples,
-						block.samplesCount,
+						samplesCount,
 						m_volume * ss.volume
 					);
 				else
-					mixer->mute(outputSamples, block.samplesCount);
+					mixer->mute(outputSamples, samplesCount);
 			}
-			m_outputSamplesIn += block.samplesCount;
+			m_outputSamplesIn += samplesCount;
 		}
 	}
 

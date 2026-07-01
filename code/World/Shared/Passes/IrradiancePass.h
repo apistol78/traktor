@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024-2025 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,6 +40,9 @@ struct WorldCreateDesc;
 class WorldEntityRenderers;
 class WorldRenderView;
 
+class RTIrradiancePass;
+class SSIrradiancePass;
+
 /*!
  */
 class IrradiancePass : public Object
@@ -48,6 +51,8 @@ class IrradiancePass : public Object
 
 public:
 	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc);
+
+	void destroy();
 
 	render::RGTargetSet setup(
 		const WorldRenderView& worldRenderView,
@@ -62,9 +67,8 @@ public:
 		render::RGTargetSet outputTargetSetId) const;
 
 private:
-	Ref< render::ScreenRenderer > m_screenRenderer;
-	resource::Proxy< render::Shader > m_irradianceComputeShader;
-	resource::Proxy< render::ImageGraph > m_irradianceDenoise;
+	Ref< SSIrradiancePass > m_ss;
+	Ref< RTIrradiancePass > m_rt;
 };
 
 }

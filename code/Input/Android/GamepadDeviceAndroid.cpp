@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,29 +13,27 @@
 #include "Core/Math/MathUtils.h"
 #include "Input/Android/GamepadDeviceAndroid.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 const struct ControlMap
 {
 	const wchar_t* name;
-	InputDefaultControlType controlType;
+	DefaultControl controlType;
 	bool analogue;
 	bool stable;
 }
 c_controlMap[] =
 {
-	{ L"Left X axis", DtThumbLeftX, true, true },
-	{ L"Left Y axis", DtThumbLeftY, true, true },
-	{ L"Right X axis", DtThumbRightX, true, true },
-	{ L"Right Y axis", DtThumbRightY, true, true }
+	{ L"Left X axis", DefaultControl::ThumbLeftX, true, true },
+	{ L"Left Y axis", DefaultControl::ThumbLeftY, true, true },
+	{ L"Right X axis", DefaultControl::ThumbRightX, true, true },
+	{ L"Right Y axis", DefaultControl::ThumbRightY, true, true }
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.GamepadDeviceAndroid", GamepadDeviceAndroid, IInputDevice)
 
@@ -52,7 +50,7 @@ std::wstring GamepadDeviceAndroid::getName() const
 
 InputCategory GamepadDeviceAndroid::getCategory() const
 {
-	return CtJoystick;
+	return InputCategory::Joystick;
 }
 
 bool GamepadDeviceAndroid::isConnected() const
@@ -83,13 +81,13 @@ bool GamepadDeviceAndroid::isControlStable(int32_t control) const
 float GamepadDeviceAndroid::getControlValue(int32_t control)
 {
 	const ControlMap& mc = c_controlMap[control];
-	if (mc.controlType == DtThumbLeftX)
+	if (mc.controlType == DefaultControl::ThumbLeftX)
 	 	return m_thumbLeftAxisX;
-	else if (mc.controlType == DtThumbLeftY)
+	else if (mc.controlType == DefaultControl::ThumbLeftY)
 	 	return m_thumbLeftAxisY;
-	else if (mc.controlType == DtThumbRightX)
+	else if (mc.controlType == DefaultControl::ThumbRightX)
 		return m_thumbRightAxisX;
-	else if (mc.controlType == DtThumbRightY)
+	else if (mc.controlType == DefaultControl::ThumbRightY)
 	 	return m_thumbRightAxisY;
 	else
 		return 0.0f;
@@ -102,7 +100,7 @@ bool GamepadDeviceAndroid::getControlRange(int32_t control, float& outMin, float
 	return true;
 }
 
-bool GamepadDeviceAndroid::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool GamepadDeviceAndroid::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	for (uint32_t i = 0; i < sizeof_array(c_controlMap); ++i)
 	{
@@ -273,5 +271,4 @@ void GamepadDeviceAndroid::handleInput(AInputEvent* event)
 	}
 }
 
-	}
 }

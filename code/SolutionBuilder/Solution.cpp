@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "SolutionBuilder/Aggregation.h"
@@ -19,7 +20,7 @@
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.Solution", 5, Solution, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.Solution", 6, Solution, ISerializable)
 
 void Solution::setName(const std::wstring& name)
 {
@@ -78,6 +79,10 @@ void Solution::removeProject(Project* project)
 		}
 		project->setDependencies(dependencies);
 	}
+
+	// Remove as startup project.
+	if (m_startupProject == project)
+		m_startupProject = nullptr;
 }
 
 void Solution::setProjects(const RefArray< Project >& projects)
@@ -90,15 +95,25 @@ const RefArray< Project >& Solution::getProjects() const
 	return m_projects;
 }
 
+void Solution::setStartupProject(Project* project)
+{
+	m_startupProject = project;
+}
+
+Project* Solution::getStartupProject() const
+{
+	return m_startupProject;
+}
+
 void Solution::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"rootPath", m_rootPath);
 
-	if (s.getVersion() >= 4)
+	if (s.getVersion< Solution >() >= 4)
 		s >> Member< std::wstring >(L"aggregateOutputPath", m_aggregateOutputPath);
 
-	if (s.getVersion() >= 1 && s.getVersion() <= 2)
+	if (s.getVersion< Solution >() >= 1 && s.getVersion< Solution >() <= 2)
 	{
 		std::vector< std::wstring > definitions;
 		s >> MemberStlVector< std::wstring >(L"definitions", definitions);
@@ -106,11 +121,14 @@ void Solution::serialize(ISerializer& s)
 
 	s >> MemberRefArray< Project >(L"projects", m_projects);
 
-	if (s.getVersion() >= 2 && s.getVersion< Solution >() < 5)
+	if (s.getVersion< Solution >() >= 2 && s.getVersion< Solution >() < 5)
 	{
 		RefArray< Aggregation > aggregations;
 		s >> MemberRefArray< Aggregation >(L"aggregations", aggregations);
 	}
+
+	if (s.getVersion< Solution >() >= 6)
+		s >> MemberRef< Project >(L"startupProject", m_startupProject);
 }
 
 }

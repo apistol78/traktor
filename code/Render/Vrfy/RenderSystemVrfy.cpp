@@ -1,23 +1,40 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #if defined(_WIN32) || defined(__LINUX__)
+#	define T_USE_AFTERMATH
+#	define T_USE_RENDERDOC
+#endif
+
+#if defined(T_USE_AFTERMATH)
+#	include <GFSDK_Aftermath.h>
+#	include <GFSDK_Aftermath_GpuCrashDump.h>
+#	include <GFSDK_Aftermath_GpuCrashDumpDecoding.h>
+#endif
+#if defined(T_USE_RENDERDOC)
 #	include <renderdoc_app.h>
 #endif
 #include "Render/Vrfy/RenderSystemVrfy.h"
 
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Library/Library.h"
+#include "Core/Misc/String.h"
+#include "Core/System/OS.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Semaphore.h"
 #include "Render/VertexElement.h"
 #include "Render/Vrfy/AccelerationStructureVrfy.h"
 #include "Render/Vrfy/BufferVrfy.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ProgramResourceVrfy.h"
 #include "Render/Vrfy/ProgramVrfy.h"
+#include "Render/Vrfy/RenderPluginVrfy.h"
 #include "Render/Vrfy/RenderTargetSetVrfy.h"
 #include "Render/Vrfy/RenderViewVrfy.h"
 #include "Render/Vrfy/ResourceTracker.h"
@@ -26,11 +43,57 @@
 
 namespace traktor::render
 {
+namespace
+{
+
+#if defined(T_USE_AFTERMATH)
+
+Semaphore s_aftermathLock;
+
+void aftermathGpuCrashDumpCallback(const void* crashDump, const uint32_t crashDumpSize, void* userData)
+{
+	const std::wstring filename = OS::getInstance().getWritableFolderPath() + L"/Traktor/traktor_gpu_crash.nv-gpudmp";
+	log::error << L"GPU crash detected! Writing GPU crash dump \"" << filename << L"\"..." << Endl;
+
+	Ref< IStream > f = FileSystem::getInstance().open(filename, File::FmWrite);
+	if (f)
+	{
+		f->write(crashDump, crashDumpSize);
+		f->close();
+		f = nullptr;
+	}
+	else
+		log::error << L"Unable to create GPU crash dump file!" << Endl;
+}
+
+void aftermathShaderDebugInfo(const void* shaderDebugInfo, const uint32_t shaderDebugInfoSize, void* userData)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_aftermathLock);
+
+	GFSDK_Aftermath_ShaderDebugInfoIdentifier identifier = {};
+	GFSDK_Aftermath_GetShaderDebugInfoIdentifier(GFSDK_Aftermath_Version_API, shaderDebugInfo, shaderDebugInfoSize, &identifier);
+
+	const std::wstring filename = OS::getInstance().getWritableFolderPath() + L"/Traktor/" + str(L"%016x%016x", identifier.id[0], identifier.id[1]);
+	Ref< IStream > f = FileSystem::getInstance().open(filename, File::FmWrite);
+	if (f)
+	{
+		f->write(shaderDebugInfo, shaderDebugInfoSize);
+		f->close();
+		f = nullptr;
+	}
+	else
+		log::error << L"Unable to create shader debug information file!" << Endl;
+}
+
+#endif
+
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVrfy", 0, RenderSystemVrfy, IRenderSystem)
 
-RenderSystemVrfy::RenderSystemVrfy(bool useRenderDoc)
+RenderSystemVrfy::RenderSystemVrfy(bool useRenderDoc, bool useAftermath)
 	: m_useRenderDoc(useRenderDoc)
+	, m_useAftermath(useAftermath)
 {
 }
 
@@ -39,7 +102,35 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	if ((m_renderSystem = desc.capture) == nullptr)
 		return false;
 
-#if defined(_WIN32) || defined(__LINUX__)
+#if defined(T_USE_AFTERMATH)
+	if (m_useAftermath)
+	{
+		// Load NVidia aftermath.
+		const GFSDK_Aftermath_Result result = GFSDK_Aftermath_EnableGpuCrashDumps(
+			GFSDK_Aftermath_Version_API,
+			GFSDK_Aftermath_GpuCrashDumpWatchedApiFlags_Vulkan,
+			GFSDK_Aftermath_GpuCrashDumpFeatureFlags_Default,
+			aftermathGpuCrashDumpCallback, // Register callback for GPU crash dumps.
+			aftermathShaderDebugInfo,	   // Register callback for shader debug information.
+			nullptr,					   // Register callback for GPU crash dump description.
+			nullptr,					   // Register callback for marker resolution (R495 or later NVIDIA graphics driver).
+			nullptr);
+		if (result == GFSDK_Aftermath_Result_Success)
+		{
+			log::info << L"NV Aftermath integration initialized." << Endl;
+
+			// We cannot have RD enabled if we are using the aftermath SDK; not compatible.
+			m_useRenderDoc = false;
+		}
+		else
+		{
+			log::warning << L"NV Aftermath integration failed." << Endl;
+			m_useAftermath = false;
+		}
+	}
+#endif
+
+#if defined(T_USE_RENDERDOC)
 	// Try to load RenderDoc capture.
 	if (m_useRenderDoc)
 	{
@@ -53,23 +144,28 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 		if (m_libRenderDoc->open(renderDocDLL.c_str()))
 		{
 			pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)m_libRenderDoc->find(L"RENDERDOC_GetAPI");
-			const int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_6_0, (void**)&m_apiRenderDoc);
+			const int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_7_0, (void**)&m_apiRenderDoc);
 			if (ret != 1)
 				m_apiRenderDoc = nullptr;
 		}
 		else
+		{
 			m_libRenderDoc = nullptr;
+			m_useRenderDoc = false;
+		}
 
 		if (m_apiRenderDoc)
 		{
-			m_apiRenderDoc->SetCaptureTitle("Traktor");
-			m_apiRenderDoc->MaskOverlayBits(eRENDERDOC_Overlay_All, eRENDERDOC_Overlay_Default);
+			((RENDERDOC_API_1_7_0*)m_apiRenderDoc)->SetCaptureTitle("Traktor");
+			((RENDERDOC_API_1_7_0*)m_apiRenderDoc)->MaskOverlayBits(eRENDERDOC_Overlay_All, eRENDERDOC_Overlay_Default);
 			log::info << L"RenderDoc integration initialized." << Endl;
 		}
 	}
 #endif
 
-	if (!m_renderSystem->create(desc))
+	RenderSystemDesc mutableDesc = desc;
+	mutableDesc.aftermath = m_useAftermath;
+	if (!m_renderSystem->create(mutableDesc))
 		return false;
 
 	m_resourceTracker = new ResourceTracker();
@@ -78,7 +174,7 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 
 void RenderSystemVrfy::destroy()
 {
-	m_resourceTracker->alive();
+	m_resourceTracker->alive(type_of< Object >(), false);
 	m_renderSystem->destroy();
 }
 
@@ -141,32 +237,30 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 	if (!renderView)
 		return nullptr;
 
-#if defined(_WIN32)
+#if defined(T_USE_RENDERDOC)
+#	if defined(_WIN32)
 	if (m_apiRenderDoc)
-		m_apiRenderDoc->SetActiveWindow(
-			m_renderSystem->getInternalHandle(),
-			desc.syswin.hWnd);
-#elif defined(__LINUX__)
-	if (m_apiRenderDoc)
-		m_apiRenderDoc->SetActiveWindow(
-			m_renderSystem->getInternalHandle(),
-			(RENDERDOC_WindowHandle)desc.syswin.window);
+		((RENDERDOC_API_1_7_0*)m_apiRenderDoc)->SetActiveWindow(m_renderSystem->getInternalHandle(), desc.syswin.hWnd);
+#	elif defined(__LINUX__)
+	// if (m_apiRenderDoc)
+	// 	((RENDERDOC_API_1_7_0*)m_apiRenderDoc)->SetActiveWindow(m_renderSystem->getInternalHandle(), (RENDERDOC_WindowHandle)desc.syswin.window);
+#	endif
 #endif
 
 	return new RenderViewVrfy(desc, m_renderSystem, renderView);
 }
 
-Ref< Buffer > RenderSystemVrfy::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic)
+Ref< Buffer > RenderSystemVrfy::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic, const wchar_t* const tag)
 {
 	T_CAPTURE_TRACE(L"createBuffer");
 	T_CAPTURE_ASSERT(usage != 0, L"Invalid usage.");
 	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid buffer size.");
 
-	Ref< Buffer > buffer = m_renderSystem->createBuffer(usage, bufferSize, dynamic);
+	Ref< Buffer > buffer = m_renderSystem->createBuffer(usage, bufferSize, dynamic, tag);
 	if (!buffer)
 		return nullptr;
 
-	return new BufferVrfy(m_resourceTracker, buffer, bufferSize);
+	return new BufferVrfy(m_resourceTracker, buffer, bufferSize, tag);
 }
 
 Ref< const IVertexLayout > RenderSystemVrfy::createVertexLayout(const AlignedVector< VertexElement >& vertexElements)
@@ -304,7 +398,7 @@ Ref< IAccelerationStructure > RenderSystemVrfy::createTopLevelAccelerationStruct
 	return new AccelerationStructureVrfy(as);
 }
 
-Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives, bool dynamic)
+Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic)
 {
 	T_CAPTURE_TRACE(L"createAccelerationStructure");
 
@@ -341,21 +435,7 @@ Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programRe
 	if (!program)
 		return nullptr;
 
-	Ref< ProgramVrfy > programVrfy = new ProgramVrfy(m_resourceTracker, program, tag);
-
-	if (resource != nullptr)
-	{
-		for (const auto& uniform : resource->m_uniforms)
-		{
-			const handle_t handle = getParameterHandle(uniform.name);
-			programVrfy->m_shadow[handle].name = uniform.name;
-			programVrfy->m_shadow[handle].type = uniform.type;
-			programVrfy->m_shadow[handle].length = uniform.length;
-			programVrfy->m_shadow[handle].set = false;
-		}
-	}
-
-	return programVrfy;
+	return new ProgramVrfy(m_resourceTracker, resource, program, tag);
 }
 
 void RenderSystemVrfy::purge()
@@ -366,11 +446,31 @@ void RenderSystemVrfy::purge()
 void RenderSystemVrfy::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 	m_renderSystem->getStatistics(outStatistics);
+
+	outStatistics.buffers = m_resourceTracker->count(type_of< BufferVrfy >());
+	outStatistics.renderTargetSets = m_resourceTracker->count(type_of< RenderTargetSetVrfy >());
+	outStatistics.programs = m_resourceTracker->count(type_of< ProgramVrfy >());
+
+	static int32_t dump = 0;
+	if (dump == 1)
+		m_resourceTracker->snapshot();
+	else if (dump == 2)
+		m_resourceTracker->alive(type_of< BufferVrfy >(), true);
+	dump = 0;
 }
 
 void* RenderSystemVrfy::getInternalHandle() const
 {
 	return m_renderSystem->getInternalHandle();
+}
+
+Ref< IRenderPlugin > RenderSystemVrfy::createPlugin(const TypeInfo& pluginType)
+{
+	Ref< IRenderPlugin > plugin = m_renderSystem->createPlugin(pluginType);
+	if (plugin)
+		return new RenderPluginVrfy(plugin);
+	else
+		return nullptr;
 }
 
 }

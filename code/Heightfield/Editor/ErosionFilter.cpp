@@ -234,6 +234,7 @@ g is gravity that accelerates the flows.
 			heightfield->setGridHeight(x, y, heightfield->worldToUnit(h));
 		}
 	}
+	heightfield->updateCellBounds();
 }
 
 }

@@ -60,17 +60,17 @@ public:
 		const std::function< bool(const EntityState& state) >& filter) override final;
 
 private:
-	struct Gather
+	struct Renderable
 	{
-		IEntityRenderer* entityRenderer;
-		Object* renderable;
+		AlignedVector< Object* > objects;
+		AlignedVector< Object* > staticOnlyObjects;
 	};
 
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< render::ITexture > m_depthTexture;
 	const render::IAccelerationStructure* m_gatheredTLAS;
-	AlignedVector< Gather > m_gathered;
-	AlignedVector< render::handle_t > m_visualAttachments;
+	SmallMap< IEntityRenderer*, Renderable > m_gathered;
+	AlignedVector< render::RGDependency > m_visualAttachments;
 };
 
 }

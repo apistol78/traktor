@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,31 +11,29 @@
 #include "Resource/Proxy.h"
 #include "Terrain/Editor/IBrush.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class Image;
 
-	}
+}
 
-	namespace hf
-	{
+namespace traktor::hf
+{
 
 class Heightfield;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class ElevateBrush : public IBrush
 {
 	T_RTTI_CLASS;
 
 public:
-	ElevateBrush(const resource::Proxy< hf::Heightfield >& heightfield, drawing::Image* splatImage);
+	explicit ElevateBrush(const resource::Proxy< hf::Heightfield >& heightfield, drawing::Image* splatImage);
 
 	virtual uint32_t begin(float x, float y, const State& state) override final;
 
@@ -52,6 +50,4 @@ private:
 	int32_t m_attribute;
 };
 
-	}
 }
-

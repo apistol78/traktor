@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,7 +35,7 @@ class T_DLLCLASS ExclusiveResourceHandle : public ResourceHandle
 public:
 	explicit ExclusiveResourceHandle(const TypeInfo& type);
 
-	virtual void release(void* owner) const override final;
+	virtual void release(void* owner) const noexcept override final;
 
 	/*! Get the type of resource, ie product type. */
 	const TypeInfo& getProductType() const { return m_resourceType; }

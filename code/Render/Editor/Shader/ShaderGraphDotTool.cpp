@@ -81,7 +81,7 @@ bool ShaderGraphDotTool::launch(ui::Widget* parent, editor::IEditor* editor, con
 			continue;
 		}
 
-		const bool program = (bool)(ShaderGraphValidator(shaderGraph).estimateType() == ShaderGraphValidator::SgtProgram);
+		const bool program = (bool)(ShaderGraphValidator(shaderGraph, instances[i]->getGuid()).estimateType() == ShaderGraphValidator::SgtProgram);
 		
 		os << L"\t\t<node id=\"n" << id << L"\">" << Endl;
 		os << L"\t\t\t<data key=\"label\">" << instances[i]->getName() << L"</data>" << Endl;

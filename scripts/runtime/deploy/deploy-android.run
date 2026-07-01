@@ -9,6 +9,10 @@
 import(traktor)
 import(traktor.drawing)
 
+local ARCHITECTURE < const > = "x86_64"
+local ABI < const > = "x86_64"
+local APILEVEL < const > = "37"
+
 --[[
 Load common script.
 ]]
@@ -22,7 +26,7 @@ Check if any device (not emulator) is connected.
 ]]
 local function isDeviceConnected()
 	run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb get-state", nil)
-	local s = run:stdOut():trim()
+	local s = run.stdOut:trim()
 	return s == "device"
 end
 
@@ -41,12 +45,6 @@ local function linkApplication()
 		stderr:printLn("Android NDK installation not valid, no NDK root path; ensure Android NDK is properly installed and try again.")
 		return false
 	end
-
-	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL")
-	if apilevel == nil or apilevel == "" then apilevel = "29" end
-
-	local architecture = "armv7a" -- "aarch64"
-	local abi = "armeabi-v7a" -- "arm64-v8a"
 
 	-- Determine tool suitable for os.
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
@@ -72,8 +70,8 @@ local function linkApplication()
 
 	-- Generate paths to NDK.
 	local toolpath = ndk .. "/toolchains/llvm/prebuilt/" .. host .."/bin"
---	local cl = toolpath .. "/" .. architecture .. "-linux-android" .. apilevel .. "-clang++"
-	local cl = toolpath .. "/" .. architecture .. "-linux-androideabi" .. apilevel .. "-clang++"
+	local cl = toolpath .. "/" .. ARCHITECTURE .. "-linux-android" .. APILEVEL .. "-clang++"
+--	local cl = toolpath .. "/" .. ARCHITECTURE .. "-linux-androideabi" .. APILEVEL .. "-clang++"
 	if host == "windows-x86_64" then
 		cl = cl .. ".cmd"
 	end
@@ -192,11 +190,7 @@ function deploy(args)
 	end
 
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
-	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL")
-	if apilevel == nil or apilevel == "" then apilevel = "29" end
 
-	local architecture = "armv7a" -- "aarch64"
-	local abi = "armeabi-v7a" -- "arm64-v8a"
 	local validations = {
 		"libVkLayer_core_validation.so",
 		"libVkLayer_khronos_validation.so",
@@ -208,7 +202,7 @@ function deploy(args)
 
 	-- Create android project.
 	run:mkdir("assets")
-	run:mkdir("lib/" .. abi)
+	run:mkdir("lib/" .. ABI)
 	run:mkdir("res/values")
 	run:mkdir("res/drawable")
 	run:mkdir("res/drawable-hdpi")
@@ -216,9 +210,9 @@ function deploy(args)
 	run:mkdir("res/drawable-mdpi")
 	run:mkdir("res/drawable-xhdpi")
 	run:replace("Application.config", "assets/Application.config")
-	run:replace("libApplication.so", "lib/" .. abi .. "/libApplication.so")
-	run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/" .. abi .. "/libc++_shared.so", "lib/" .. abi .. "/libc++_shared.so")
-	run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/platforms/android-" .. apilevel .. "/arch-arm/usr/lib/libOpenSLES.so", "lib/" .. abi .. "/libOpenSLES.so")
+	run:replace("libApplication.so", "lib/" .. ABI .. "/libApplication.so")
+	run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/" .. ABI .. "/libc++_shared.so", "lib/" .. ABI .. "/libc++_shared.so")
+	--run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/platforms/android-" .. APILEVEL .. "/arch-arm/usr/lib/libOpenSLES.so", "lib/" .. ABI .. "/libOpenSLES.so")
 	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/AndroidManifest.xml.template\"", "AndroidManifest.xml")
 	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_drawable.xml.template\"", "res/drawable/splash_drawable.xml")
 	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_theme.xml.template\"", "res/values/splash_theme.xml")
@@ -227,7 +221,7 @@ function deploy(args)
 	-- Include Vulkan validation layers.
 	if debug then
 		for _, validation in ipairs(validations) do
-			run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/third_party/vulkan/src/build-android/jniLibs/" .. abi .. "/" .. validation, "lib/" .. abi .. "/" .. validation)
+			run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/third_party/vulkan/src/build-android/jniLibs/" .. ABI .. "/" .. validation, "lib/" .. ABI .. "/" .. validation)
 		end
 	end
 
@@ -264,36 +258,36 @@ function deploy(args)
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		result = true
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar\" -F \"" .. apk .. ".unsigned.apk\"") == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/libOpenSLES.so", nil) == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" assets/Application.config", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt.exe\" package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-" .. APILEVEL .. "/android.jar\" -F \"" .. apk .. ".unsigned.apk\"") == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. ABI .. "/libApplication.so", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. ABI .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. ABI .. "/libOpenSLES.so", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" assets/Application.config", nil) == 0)
 
 		if debug then
 			for _, validation in ipairs(validations) do
-				result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/" .. validation, nil) == 0)
+				result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. ABI .. "/" .. validation, nil) == 0)
 			end
 		end
 
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign.exe\" -f -p 4 \"" .. apk .. ".unsigned.apk\" \"" .. apk .. ".aligned.apk\"", nil) == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner.bat\" sign --ks \"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks\" --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"" .. apk .. ".apk\" \"" .. apk .. ".aligned.apk\"", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/zipalign.exe\" -f -p 4 \"" .. apk .. ".unsigned.apk\" \"" .. apk .. ".aligned.apk\"", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/apksigner.bat\" sign --ks \"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks\" --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"" .. apk .. ".apk\" \"" .. apk .. ".aligned.apk\"", nil) == 0)
 	elseif host == "linux" or host == "osx" then
 		result = true
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar -F " .. apk .. ".unsigned.apk") == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk lib/" .. abi .. "/libApplication.so", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk lib/" .. abi .. "/libc++_shared.so", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk lib/" .. abi .. "/libOpenSLES.so", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk assets/Application.config", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-" .. APILEVEL .. "/android.jar -F " .. apk .. ".unsigned.apk") == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt add " .. apk .. ".unsigned.apk lib/" .. ABI .. "/libApplication.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt add " .. apk .. ".unsigned.apk lib/" .. ABI .. "/libc++_shared.so", nil) == 0)
+--		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt add " .. apk .. ".unsigned.apk lib/" .. ABI .. "/libOpenSLES.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt add " .. apk .. ".unsigned.apk assets/Application.config", nil) == 0)
 
 		if debug then
 			for _, validation in ipairs(validations) do
-				result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/" .. validation, nil) == 0)
+				result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt add \"" .. apk .. ".unsigned.apk\" lib/" .. ABI .. "/" .. validation, nil) == 0)
 			end
 		end
 		
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign -f -p 4 " .. apk .. ".unsigned.apk " .. apk .. ".aligned.apk", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out " .. apk .. ".apk " .. apk .. ".aligned.apk", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/zipalign -f -p 4 " .. apk .. ".unsigned.apk " .. apk .. ".aligned.apk", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/apksigner sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out " .. apk .. ".apk " .. apk .. ".aligned.apk", nil) == 0)
 	else
 		stderr:printLn("Unsupported host OS (" .. host .. ").")
 		return 1
@@ -378,15 +372,9 @@ function migrate(args)
 		return 1
 	end
 
-	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL")
-	if apilevel == nil or apilevel == "" then apilevel = "29" end
-
-	local architecture = "armv7a" -- "aarch64"
-	local abi = "armeabi-v7a" -- "arm64-v8a"
-
 	-- Create android project.
 	run:mkdir("assets")
-	run:mkdir("lib/" .. abi)
+	run:mkdir("lib/" .. ABI)
 	run:mkdir("res/values")
 	run:mkdir("res/drawable")
 	run:mkdir("res/drawable-hdpi")
@@ -395,8 +383,8 @@ function migrate(args)
 	run:mkdir("res/drawable-xhdpi")
 	run:replace("Application.config", "assets/Application.config")
 	run:replace("Content.compact", "assets/Content.compact")
-	run:replace("libApplication.so", "lib/" .. abi .. "/libApplication.so")
-	run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/" .. abi .. "/libc++_shared.so", "lib/" .. abi .. "/libc++_shared.so")
+	run:replace("libApplication.so", "lib/" .. ABI .. "/libApplication.so")
+	run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/" .. ABI .. "/libc++_shared.so", "lib/" .. ABI .. "/libc++_shared.so")
 	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/AndroidManifest.xml.template\"", "AndroidManifest.xml")
 	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_drawable.xml.template\"", "res/drawable/splash_drawable.xml")
 	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_theme.xml.template\"", "res/values/splash_theme.xml")
@@ -435,22 +423,22 @@ function migrate(args)
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		result = true
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar\" -F \"" .. apk .. ".unsigned.apk\"") == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" assets/Application.config", nil) == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" assets/Content.compact", nil) == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign.exe\" -f -p 4 \"" .. apk .. ".unsigned.apk\" \"" .. apk .. ".aligned.apk\"", nil) == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner.bat\" sign --ks \"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks\" --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"" .. apk .. ".apk\" \"" .. apk .. ".aligned.apk\"", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt.exe\" package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-" .. APILEVEL .. "/android.jar\" -F \"" .. apk .. ".unsigned.apk\"") == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. ABI .. "/libApplication.so", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abABIi .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" assets/Application.config", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" assets/Content.compact", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/zipalign.exe\" -f -p 4 \"" .. apk .. ".unsigned.apk\" \"" .. apk .. ".aligned.apk\"", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/apksigner.bat\" sign --ks \"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks\" --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"" .. apk .. ".apk\" \"" .. apk .. ".aligned.apk\"", nil) == 0)
 	elseif host == "linux" or host == "osx" then
 		result = true
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar -F " .. apk .. ".unsigned.apk") == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk lib/" .. abi .. "/libApplication.so", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk lib/" .. abi .. "/libc++_shared.so", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk assets/Application.config", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk assets/Content.compact", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign -f -p 4 " .. apk .. ".unsigned.apk " .. apk .. ".aligned.apk", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out " .. apk .. ".apk " .. apk .. ".aligned.apk") == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-" .. APILEVEL .. "/android.jar -F " .. apk .. ".unsigned.apk") == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt add " .. apk .. ".unsigned.apk lib/" .. ABI .. "/libApplication.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt add " .. apk .. ".unsigned.apk lib/" .. ABI .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt add " .. apk .. ".unsigned.apk assets/Application.config", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/aapt add " .. apk .. ".unsigned.apk assets/Content.compact", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/zipalign -f -p 4 " .. apk .. ".unsigned.apk " .. apk .. ".aligned.apk", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/37.0.0/apksigner sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out " .. apk .. ".apk " .. apk .. ".aligned.apk") == 0)
 	else
 		stderr:printLn("Unsupported host OS (" .. host .. ").")
 		return 1

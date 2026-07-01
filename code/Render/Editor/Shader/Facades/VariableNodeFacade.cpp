@@ -1,20 +1,22 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/Facades/VariableNodeFacade.h"
+
+#include "I18N/Text.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/Facades/VariableNodeFacade.h"
 #include "Ui/Application.h"
 #include "Ui/Edit.h"
 #include "Ui/Graph/GraphControl.h"
-#include "Ui/Graph/Node.h"
 #include "Ui/Graph/InOutNodeShape.h"
+#include "Ui/Graph/Node.h"
 
 namespace traktor::render
 {
@@ -28,8 +30,7 @@ VariableNodeFacade::VariableNodeFacade()
 
 Ref< Node > VariableNodeFacade::createShaderNode(
 	const TypeInfo* nodeType,
-	editor::IEditor* editor
-)
+	editor::IEditor* editor)
 {
 	return new Variable();
 }
@@ -38,20 +39,21 @@ Ref< ui::Node > VariableNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	const Variable* variableShaderNode = mandatory_non_null_type_cast< const Variable* >(shaderNode);
 
+	std::wstring information = variableShaderNode->getInformation();
+	if (information.empty())
+		information = i18n::Text(L"SHADERGRAPH_NONE");
+
 	Ref< ui::Node > editorNode = graphControl->createNode(
 		L"",
-		shaderNode->getInformation(),
+		information,
 		ui::UnitPoint(
 			ui::Unit(shaderNode->getPosition().first),
-			ui::Unit(shaderNode->getPosition().second)
-		),
-		m_nodeShape
-	);
+			ui::Unit(shaderNode->getPosition().second)),
+		m_nodeShape);
 
 	for (int32_t j = 0; j < shaderNode->getInputPinCount(); ++j)
 	{
@@ -60,8 +62,7 @@ Ref< ui::Node > VariableNodeFacade::createEditorNode(
 			inputPin->getName(),
 			inputPin->getId(),
 			!inputPin->isOptional(),
-			false
-		);
+			false);
 	}
 
 	for (int32_t j = 0; j < shaderNode->getOutputPinCount(); ++j)
@@ -69,8 +70,7 @@ Ref< ui::Node > VariableNodeFacade::createEditorNode(
 		const OutputPin* outputPin = shaderNode->getOutputPin(j);
 		editorNode->createOutputPin(
 			outputPin->getName(),
-			outputPin->getId()
-		);
+			outputPin->getId());
 	}
 
 	editorNode->setComment(shaderNode->getComment());
@@ -83,14 +83,12 @@ void VariableNodeFacade::editShaderNode(
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
 	const ui::Rect rcEditVirtual = graphControl->pixel(editorNode->calculateRect());
 	const ui::Rect rcEdit(
 		graphControl->virtualToClient(rcEditVirtual.getTopLeft()),
-		graphControl->virtualToClient(rcEditVirtual.getBottomRight())
-	);
+		graphControl->virtualToClient(rcEditVirtual.getBottomRight()));
 
 	m_editEditorNode = editorNode;
 	m_editShaderNode = mandatory_non_null_type_cast< Variable* >(shaderNode);
@@ -100,31 +98,27 @@ void VariableNodeFacade::editShaderNode(
 		m_edit = new ui::Edit();
 		m_edit->create(graphControl);
 		m_edit->addEventHandler< ui::FocusEvent >(
-			[=, this](ui::FocusEvent* event)
+			[=, this](ui::FocusEvent* event) {
+			if (m_edit->isVisible(false) && event->lostFocus())
 			{
-				if (m_edit->isVisible(false) && event->lostFocus())
-				{
-					m_editEditorNode->setInfo(m_edit->getText());
-					m_editShaderNode->setName(m_edit->getText());
-					m_edit->setVisible(false);
-				}
+				m_editEditorNode->setInfo(m_edit->getText());
+				m_editShaderNode->setName(m_edit->getText());
+				m_edit->setVisible(false);
 			}
-		);
+		});
 		m_edit->addEventHandler< ui::KeyDownEvent >(
-			[=, this](ui::KeyDownEvent* event)
+			[=, this](ui::KeyDownEvent* event) {
+			if (event->getVirtualKey() == ui::VkReturn)
 			{
-				if (event->getVirtualKey() == ui::VkReturn)
-				{
-					m_editEditorNode->setInfo(m_edit->getText());
-					m_editShaderNode->setName(m_edit->getText());
-					m_edit->setVisible(false);
-				}
-				else if (event->getVirtualKey() == ui::VkEscape)
-				{
-					m_edit->setVisible(false);
-				}
+				m_editEditorNode->setInfo(m_edit->getText());
+				m_editShaderNode->setName(m_edit->getText());
+				m_edit->setVisible(false);
 			}
-		);
+			else if (event->getVirtualKey() == ui::VkEscape)
+			{
+				m_edit->setVisible(false);
+			}
+		});
 	}
 
 	m_edit->setText(m_editShaderNode->getName());
@@ -139,17 +133,19 @@ void VariableNodeFacade::refreshEditorNode(
 	ui::GraphControl* graphControl,
 	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
-	Node* shaderNode
-)
+	Node* shaderNode)
 {
+	std::wstring information = shaderNode->getInformation();
+	if (information.empty())
+		information = i18n::Text(L"SHADERGRAPH_NONE");
+
 	editorNode->setComment(shaderNode->getComment());
-	editorNode->setInfo(shaderNode->getInformation());
+	editorNode->setInfo(information);
 }
 
 void VariableNodeFacade::setValidationIndicator(
 	ui::Node* editorNode,
-	bool validationSucceeded
-)
+	bool validationSucceeded)
 {
 	editorNode->setState(validationSucceeded ? 0 : 1);
 }

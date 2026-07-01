@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,7 +26,7 @@
 #include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Editor/Camera.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
@@ -67,16 +67,9 @@ const float c_deltaAdjustSmall = 0.01f;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.FinalRenderControl", FinalRenderControl, ISceneRenderControl)
 
 FinalRenderControl::FinalRenderControl()
-	: m_imageProcessQuality(world::Quality::Disabled)
-	, m_shadowQuality(world::Quality::Disabled)
-	, m_reflectionsQuality(world::Quality::Disabled)
-	, m_motionBlurQuality(world::Quality::Disabled)
-	, m_ambientOcclusionQuality(world::Quality::Disabled)
-	, m_antiAliasQuality(world::Quality::Disabled)
-	, m_fieldOfView(c_defaultFieldOfView)
+	: m_fieldOfView(c_defaultFieldOfView)
 	, m_mouseWheelRate(c_defaultMouseWheelRate)
 	, m_multiSample(c_defaultMultiSample)
-	, m_invertPanY(false)
 	, m_dirtySize(0, 0)
 {
 }
@@ -135,7 +128,7 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	}
 
 	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
-	m_renderGraph = new render::RenderGraph(m_context->getRenderGraphContext(), m_multiSample);
+	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem(), m_multiSample);
 
 	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(m_context->getRenderSystem()))
@@ -207,14 +200,9 @@ void FinalRenderControl::setAspect(float aspect)
 	m_containerAspect->update();
 }
 
-void FinalRenderControl::setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias)
+void FinalRenderControl::setQuality(const world::QualitySettings& qualitySettings)
 {
-	m_imageProcessQuality = imageProcess;
-	m_shadowQuality = shadows;
-	m_reflectionsQuality = reflections;
-	m_motionBlurQuality = motionBlur;
-	m_ambientOcclusionQuality = ambientOcclusion;
-	m_antiAliasQuality = antiAlias;
+	m_worldQuality = qualitySettings;
 	safeDestroy(m_worldRenderer);
 }
 
@@ -245,6 +233,17 @@ bool FinalRenderControl::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.SettingsChanged")
 		updateSettings();
+	else if (command == L"Scene.Editor.EnableRayTracing")
+	{
+		m_rayTracingEnable = true;
+		safeDestroy(m_worldRenderer);
+	}
+	else if (command == L"Scene.Editor.DisableRayTracing")
+	{
+		m_rayTracingEnable = false;
+		safeDestroy(m_worldRenderer);
+	}
+
 	return false;
 }
 
@@ -326,10 +325,10 @@ void FinalRenderControl::updateWorldRenderer()
 
 	// Create entity renderers.
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	for (auto editorProfile : m_context->getEditorProfiles())
+	for (auto plugin : m_context->getPlugins())
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
-		editorProfile->createEntityRenderers(m_context, m_renderView, nullptr, *m_worldRendererType, entityRenderers);
+		plugin->createEntityRenderers(m_context, m_renderView, nullptr, *m_worldRendererType, entityRenderers);
 		for (auto entityRenderer : entityRenderers)
 			worldEntityRenderers->add(entityRenderer);
 	}
@@ -344,19 +343,18 @@ void FinalRenderControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = &m_worldRenderSettings;
 	wcd.entityRenderers = worldEntityRenderers;
-	wcd.quality.motionBlur = m_motionBlurQuality;
-	wcd.quality.shadows = m_shadowQuality;
-	wcd.quality.reflections = m_reflectionsQuality;
-	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
-	wcd.quality.antiAlias = m_antiAliasQuality;
-	wcd.quality.imageProcess = m_imageProcessQuality;
+	wcd.quality = m_worldQuality;
 	wcd.multiSample = m_multiSample;
+	wcd.rt = m_rayTracingEnable;
 
 	if (!worldRenderer->create(
 			m_context->getResourceManager(),
 			m_context->getRenderSystem(),
 			wcd))
+	{
+		safeDestroy(worldRenderer);
 		return;
+	}
 
 	m_worldRenderer = worldRenderer;
 	m_worldRendererHash = DeepHash(m_sceneInstance->getWorldRenderSettings()).get();
@@ -457,7 +455,7 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	// Reload scene if changed.
 	if (m_sceneInstance.changed())
 	{
-		m_worldRenderer = nullptr;
+		safeDestroy(m_worldRenderer);
 		m_sceneInstance.consume();
 	}
 

@@ -218,6 +218,10 @@
 			<second>Delete</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_DEPRECATED</first>
+			<second>Deprecated</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_EVEN_HORIZONTALLY</first>
 			<second>Even horizonally</second>
 		</item>
@@ -280,6 +284,14 @@
 		<item>
 			<first>SHADERGRAPH_NODE_ARCUSTAN</first>
 			<second>Arcus tan</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_NODE_ARRAYELEMENT</first>
+			<second>Array Element</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_NODE_ARRAYLENGTH</first>
+			<second>Array Length</second>
 		</item>
 		<item>
 			<first>SHADERGRAPH_NODE_BRANCH</first>
@@ -418,6 +430,10 @@
 			<second>Max</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_NODE_MEMBERVALUE</first>
+			<second>Member Value</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_NODE_MIN</first>
 			<second>Min</second>
 		</item>
@@ -448,6 +464,10 @@
 		<item>
 			<first>SHADERGRAPH_NODE_OUTPUTPORT</first>
 			<second>Output port</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_NODE_PARAMETER</first>
+			<second>Parameter</second>
 		</item>
 		<item>
 			<first>SHADERGRAPH_NODE_PIXELOUTPUT</first>
@@ -608,6 +628,10 @@
 		<item>
 			<first>SHADERGRAPH_NODE_VERTEXOUTPUT</first>
 			<second>Vertex output</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_NONE</first>
+			<second>&lt; None &gt;</second>
 		</item>
 		<item>
 			<first>SHADERGRAPH_PERMUTATION</first>
@@ -794,19 +818,19 @@
 			<second>Data</second>
 		</item>
 		<item>
-			<first>SHADERGRAPH_UNIFORMS</first>
-			<second>Uniforms</second>
+			<first>SHADERGRAPH_PARAMETERS</first>
+			<second>Parameters</second>
 		</item>
 		<item>
-			<first>SHADERGRAPH_UNIFORMS_FREQUENCY</first>
+			<first>SHADERGRAPH_PARAMETERS_FREQUENCY</first>
 			<second>Frequency</second>
 		</item>
 		<item>
-			<first>SHADERGRAPH_UNIFORMS_NAME</first>
+			<first>SHADERGRAPH_PARAMETERS_NAME</first>
 			<second>Name</second>
 		</item>
 		<item>
-			<first>SHADERGRAPH_UNIFORMS_TYPE</first>
+			<first>SHADERGRAPH_PARAMETERS_TYPE</first>
 			<second>Type</second>
 		</item>
 		<item>
@@ -926,8 +950,8 @@
 			<second>Target set</second>
 		</item>
 		<item>
-			<first>IMAGEGRAPH_CREATE_TEXTURE</first>
-			<second>Texture</second>
+			<first>IMAGEGRAPH_CREATE_BIND_TEXTURE</first>
+			<second>Bind texture</second>
 		</item>
 		<item>
 			<first>IMAGEGRAPH_DELETE</first>

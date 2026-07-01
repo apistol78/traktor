@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mcp.SkillAsset">
+	<name>input-mapping</name>
+	<description>Author/edit a traktor InputMappingAsset: keyboard &amp; mouse/gamepad sources, states, and how to read them from script.</description>
+	<whenToUse><![CDATA[Adding or changing controls — a new key/button/axis, mouse-look, a pause key, strafe, or any new input state read from a LUA script.]]></whenToUse>
+	<body><![CDATA[# Author a traktor input mapping
+
+Add or change controls on an `traktor.input.InputMappingAsset` (sources → states), then read the states from a LUA `Stage`/`ScriptComponent`.
+
+## Asset structure (four members)
+- **`inputNodes`** — the editor node graph: `InReadValue { valueId }` (reads one source id) and `InCombine { entries:[{source, mul, add}], operator: CoAdd }` (e.g. an axis from two keys: A `mul 1`, D `mul -1`).
+- **`positions`** — editor x/y layout; each entry wraps either a `ref=` to an `inputNodes` item or an inline `InputStateData { source }`.
+- **`sourceData`** (`InputMappingSourceData`) — maps a string id → an `IInputSourceData` (the physical control).
+- **`stateData`** (`InputMappingStateData`) — maps a STATE name → the `InputStateData` read at runtime.
+
+**Author with `import_instance_from_xml`, not `set_instance_member`.** The editor graph relies on shared object identity (`ref="/object/inputNodes/item[n]"`); only the XML deserializer resolves those into shared references. `set_instance_member` leaves the graph unwired.
+
+## Source-data types
+- **Keyboard** — `traktor.input.KeyboardInputSourceData version=1 { controlTypes:[<DefaultControl key>] }`.
+- **Mouse / gamepad axis** — `traktor.input.GenericInputSourceData version=4 { category, controlType, analogue, normalize, index }`. For a mouse turn axis: `{ category: Mouse, controlType: AxisX, analogue: true, normalize: false, index: -1 }`.
+
+### Control-type / category enum keys (version 4)
+- Keys: `KeyA`, `KeyW`, `KeyS`, `KeyD`, `KeySpace`, `KeyEscape`, … (the bare names — **not** the old `DtKeyW`).
+- Mouse: category `Mouse`; `AxisX`/`AxisY` = **relative per-frame delta**, `PositionX`/`PositionY` = absolute cursor.
+- Categories: `Keyboard`, `Mouse`, `Joystick`, `Wheel`, `Touch`, …
+- `GenericInputSourceData` **must be version 4** for these keys; version ≤3 uses the old `DtKeyW` / `CtMouse` tables and will mis-deserialize.
+
+## Adding a state (recipe)
+1. Append an `InReadValue { valueId: ID_X }` (or an `InCombine`) to `inputNodes`.
+2. Append a `sourceData` item `ID_X` → the source-data object.
+3. Append two `positions` entries: a `ref=` to the new node, and an inline `InputStateData { source ref=<that node> }`.
+4. Append a `stateData` item `STATE_X` → `ref="/object/positions/item[k]/object"` (the `InputStateData`).
+
+## Reading from script
+- `local mapping = self.environment.input.inputMapping`
+- **Analog**: `mapping:getStateValue("STATE_MOVE_X")` (e.g. a −1..1 axis, or raw mouse pixels).
+- **Digital edges**: `isStateDown` (held), `isStatePressed` (down **this** frame only), `isStateReleased` (up this frame). Use `isStatePressed` for one-shot toggles (pause, jump).
+
+## Gotchas (hard-won)
+- **Mouse `AxisX`/`AxisY` is a per-frame pixel delta** — apply it as `heading += delta * sensitivity`; do **not** multiply by `dt` (it is already per-frame, not a rate).
+- **Mouse capture**: continuous turning (cursor recentered every frame) only happens when the window is exclusive. Toggle it with `self.environment.input.inputSystem:setExclusive(true/false)` — release it to free the cursor for menus, re-enable for play.
+- **State activation**: a digital state goes "active" only after both its previous and current values have been released once — a key held from the very first frame won't register until released.
+- **Strafe vs turn** (when consuming a movement axis in script): `forward = Quaternion.fromEulerAngles(heading,0,0) * Vector4(0,0,1,0)`, `right = … * Vector4(1,0,0,0)`; turn adds to `heading`, strafe adds `right * amount`.
+- For wiring the script side (namespace import, direct component types, Stage/ScriptComponent lifecycle) see the *traktor-lua-scripting* skill; for a full movement+camera example see *third-person-controller*.
+]]></body>
+	<engineVersion/>
+	<published>true</published>
+	<parameters/>
+</object>

@@ -1,6 +1,13 @@
-#include <set>
-
+/*
+ * TRAKTOR
+ * Copyright (c) 2026 Anders Pistol.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 #include <ft2build.h>
+#include <set>
 #include FT_FREETYPE_H
 #include FT_OUTLINE_H
 #include FT_BBOX_H
@@ -11,23 +18,23 @@
 #include "Core/Math/Bezier3rd.h"
 #include "Core/Misc/TString.h"
 #include "Database/Instance.h"
+#include "Spark/Editor/ConvertFont.h"
+#include "Spark/Editor/MovieAsset.h"
 #include "Spark/Font.h"
 #include "Spark/Movie.h"
 #include "Spark/Shape.h"
-#include "Spark/Editor/ConvertFont.h"
-#include "Spark/Editor/MovieAsset.h"
 
 namespace traktor::spark
 {
-	namespace
-	{
+namespace
+{
 
 Vector2i cast(const Vector2& p)
 {
 	return Vector2i((int32_t)p.x, (int32_t)p.y);
 }
 
-	}
+}
 
 uint16_t convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAsset, Movie* movie)
 {
@@ -48,8 +55,7 @@ uint16_t convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fon
 		library,
 		wstombs(filePath.getPathNameOS()).c_str(),
 		0,
-		&face
-	);
+		&face);
 	if (error)
 	{
 		log::error << L"Unable to load font." << Endl;
@@ -108,17 +114,21 @@ uint16_t convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fon
 		{
 			Matrix33 transform;
 			Path path;
-		}
-		ud;
+		} ud;
 
 		// Transformation.
 		const Vector2 mn((float)face->bbox.xMin, (float)face->bbox.yMin);
 		const Vector2 mx((float)face->bbox.xMax, (float)face->bbox.yMax);
 		ud.transform = Matrix33(
-			scale, 0.0f, 0.0f,
-			0.0f, -scale, 0.0f,
-			0.0f, 0.0f, 1.0f
-		);
+			scale,
+			0.0f,
+			0.0f,
+			0.0f,
+			-scale,
+			0.0f,
+			0.0f,
+			0.0f,
+			1.0f);
 
 		// Create curves from font outline.
 		FT_Outline_Funcs callbacks = {};
@@ -173,10 +183,10 @@ uint16_t convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fon
 		advanceTable.push_back((int16_t)(slot->metrics.horiAdvance * scale));
 
 		// Save bounding box.
-		//FT_BBox boundingBox;
-		//FT_Outline_Get_BBox(&outline, &boundingBox);
-		//const Vector2 mn((float)boundingBox.xMin, (float)boundingBox.yMin);
-		//const Vector2 mx((float)boundingBox.xMax, (float)boundingBox.yMax);
+		// FT_BBox boundingBox;
+		// FT_Outline_Get_BBox(&outline, &boundingBox);
+		// const Vector2 mn((float)boundingBox.xMin, (float)boundingBox.yMin);
+		// const Vector2 mx((float)boundingBox.xMax, (float)boundingBox.yMax);
 		boundsTable.push_back(Aabb2(Vector2::zero(), Vector2::zero())); //  mn* scale, mx* scale));
 
 		const Aabb2 bounds = ud.path.getBounds();
@@ -204,15 +214,13 @@ uint16_t convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fon
 		boundsTable,
 		kerningLookup,
 		codeTable,
-		Font::CtEMSquare
-	);
+		Font::CtEMSquare);
 
 	const uint16_t fontId = movie->nextFontId();
 
 	movie->defineFont(
 		fontId,
-		font
-	);
+		font);
 
 	return fontId;
 }

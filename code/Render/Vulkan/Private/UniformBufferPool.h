@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,7 +37,7 @@ private:
 	const wchar_t* const m_name;
 	Context* m_context = nullptr;
 	SmallMap< uint32_t, RefArray< UniformBufferChain > > m_chains;	//!< Map of chains; map size of block to chain.
-	AlignedVector< UniformBufferRange > m_frees[16];
+	AlignedVector< UniformBufferRange > m_frees[4];
 	uint32_t m_blockCount = 0;
 	uint32_t m_count = 0;
 

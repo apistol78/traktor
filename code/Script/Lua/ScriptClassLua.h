@@ -31,6 +31,8 @@ public:
 
 	virtual const TypeInfo& getExportType() const override final;
 
+	virtual bool isValueType() const override final;
+
 	virtual const IRuntimeDispatch* getConstructorDispatch() const override final;
 
 	virtual uint32_t getConstantCount() const override final;

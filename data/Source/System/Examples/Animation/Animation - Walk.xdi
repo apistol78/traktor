@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.animation.AnimationAsset" version="8">
+	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Examples/Animation/Humanoid.tmd</fileName>
+	<targetSkeleton>{00000000-0000-0000-0000-000000000000}</targetSkeleton>
+	<take>Walk</take>
+	<scale>1, 1, 1, 1</scale>
+	<translate>0, 0, 0, 0</translate>
+	<removeLocomotion>false</removeLocomotion>
+</object>

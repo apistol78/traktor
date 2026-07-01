@@ -28,15 +28,18 @@
 	}
 
 T_DEFINE_VK(vkCreateInstance);
+T_DEFINE_VK(vkDestroyInstance);
 T_DEFINE_VK(vkEnumerateInstanceLayerProperties);
 T_DEFINE_VK(vkEnumerateInstanceExtensionProperties);
 T_DEFINE_VK(vkEnumeratePhysicalDevices);
 T_DEFINE_VK(vkGetPhysicalDeviceProperties);
 T_DEFINE_VK(vkGetPhysicalDeviceProperties2);
+T_DEFINE_VK(vkGetPhysicalDeviceFeatures2);
 T_DEFINE_VK(vkGetPhysicalDeviceQueueFamilyProperties);
 T_DEFINE_VK(vkGetPhysicalDeviceMemoryProperties);
 T_DEFINE_VK(vkGetPhysicalDeviceFormatProperties);
 T_DEFINE_VK(vkCreateDevice);
+T_DEFINE_VK(vkDestroyDevice);
 T_DEFINE_VK(vkGetDeviceQueue);
 T_DEFINE_VK(vkGetDeviceProcAddr);
 T_DEFINE_VK(vkGetInstanceProcAddr);
@@ -68,6 +71,7 @@ T_DEFINE_VK(vkGetImageMemoryRequirements);
 T_DEFINE_VK(vkBindImageMemory);
 T_DEFINE_VK(vkCreateRenderPass);
 T_DEFINE_VK(vkCreateFramebuffer);
+T_DEFINE_VK(vkDestroyFramebuffer);
 T_DEFINE_VK(vkCmdEndRenderPass);
 T_DEFINE_VK(vkCmdBindVertexBuffers);
 T_DEFINE_VK(vkCmdDraw);
@@ -140,6 +144,7 @@ T_DEFINE_VK(vkAcquireNextImageKHR);
 T_DEFINE_VK(vkQueuePresentKHR);
 T_DEFINE_VK(vkDestroySwapchainKHR);
 T_DEFINE_VK(vkCreateDebugUtilsMessengerEXT);
+T_DEFINE_VK(vkDestroyDebugUtilsMessengerEXT);
 T_DEFINE_VK(vkSetDebugUtilsObjectNameEXT);
 T_DEFINE_VK(vkCmdBeginDebugUtilsLabelEXT);
 T_DEFINE_VK(vkCmdEndDebugUtilsLabelEXT);
@@ -177,15 +182,18 @@ bool initializeVulkanApi()
 	}
 
 	T_RESOLVE_VK(vkCreateInstance);
+	T_RESOLVE_VK(vkDestroyInstance);
 	T_RESOLVE_VK(vkEnumerateInstanceLayerProperties);
 	T_RESOLVE_VK(vkEnumerateInstanceExtensionProperties);
 	T_RESOLVE_VK(vkEnumeratePhysicalDevices);
 	T_RESOLVE_VK(vkGetPhysicalDeviceProperties);
 	T_RESOLVE_VK(vkGetPhysicalDeviceProperties2);
+	T_RESOLVE_VK(vkGetPhysicalDeviceFeatures2);
 	T_RESOLVE_VK(vkGetPhysicalDeviceQueueFamilyProperties);
 	T_RESOLVE_VK(vkGetPhysicalDeviceMemoryProperties);
 	T_RESOLVE_VK(vkGetPhysicalDeviceFormatProperties);
 	T_RESOLVE_VK(vkCreateDevice);
+	T_RESOLVE_VK(vkDestroyDevice);
 	T_RESOLVE_VK(vkGetDeviceQueue);
 	T_RESOLVE_VK(vkGetDeviceProcAddr);
 	T_RESOLVE_VK(vkGetInstanceProcAddr);
@@ -217,6 +225,7 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkBindImageMemory);
 	T_RESOLVE_VK(vkCreateRenderPass);
 	T_RESOLVE_VK(vkCreateFramebuffer);
+	T_RESOLVE_VK(vkDestroyFramebuffer);
 	T_RESOLVE_VK(vkCmdEndRenderPass);
 	T_RESOLVE_VK(vkCmdBindVertexBuffers);
 	T_RESOLVE_VK(vkCmdDraw);
@@ -293,6 +302,7 @@ bool initializeVulkanExtensions(VkInstance instance)
 	T_RESOLVE_VK_EXT(vkQueuePresentKHR);
 	T_RESOLVE_VK_EXT(vkDestroySwapchainKHR);
 	T_RESOLVE_VK_EXT(vkCreateDebugUtilsMessengerEXT);
+	T_RESOLVE_VK_EXT(vkDestroyDebugUtilsMessengerEXT);
 	T_RESOLVE_VK_EXT(vkSetDebugUtilsObjectNameEXT);
 	T_RESOLVE_VK_EXT(vkCmdBeginDebugUtilsLabelEXT);
 	T_RESOLVE_VK_EXT(vkCmdEndDebugUtilsLabelEXT);

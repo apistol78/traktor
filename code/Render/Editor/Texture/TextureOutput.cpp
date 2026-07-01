@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,7 +15,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 20, TextureOutput, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 21, TextureOutput, ISerializable)
 
 void TextureOutput::serialize(ISerializer& s)
 {
@@ -160,6 +160,9 @@ void TextureOutput::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 10)
 		s >> Member< bool >(L"systemTexture", m_systemTexture);
+
+	if (s.getVersion() >= 21)
+		s >> Member< std::wstring >(L"swizzle", m_swizzle);
 }
 
 }

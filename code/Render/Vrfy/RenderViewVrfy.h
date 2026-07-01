@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -99,15 +99,19 @@ public:
 
 	virtual void computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset) override final;
 
-	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip) override final;
+	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip, bool asynchronous) override final;
 
 	virtual void synchronize() override final;
 
+	virtual ComputeHandle signalAsynchronousCompute() override final;
+
+	virtual void waitAsynchronousCompute(ComputeHandle handle) override final;
+
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) override final;
 
-	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances) override final;
+	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances, bool asynchronous) override final;
 
-	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives) override final;
+	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous) override final;
 
 	virtual int32_t beginTimeQuery() override final;
 
@@ -115,13 +119,15 @@ public:
 
 	virtual bool getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const override final;
 
-	virtual void pushMarker(const std::wstring& marker) override final;
+	virtual void pushMarker(bool asynchronous, const std::wstring& marker) override final;
 
-	virtual void popMarker() override final;
+	virtual void popMarker(bool asynchronous) override final;
 
-	virtual void writeMarker(const std::wstring& marker) override final;
+	virtual void writeMarker(bool asynchronous, const std::wstring& marker) override final;
 
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const override final;
+
+	IRenderView* getRenderView() const { return m_renderView; }
 
 private:
 	struct ProfileVrfy

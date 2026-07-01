@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
@@ -22,15 +23,14 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Editor/IEditor.h"
-#include "I18N/Format.h"
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetRasterizer.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/ITexture.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -161,10 +161,6 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_checkRenormalize->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_RENORMALIZE")))
 		return false;
 
-	m_checkCenter = new ui::CheckBox();
-	if (!m_checkCenter->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_CENTER")))
-		return false;
-
 	m_checkGrounded = new ui::CheckBox();
 	if (!m_checkGrounded->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_GROUNDED")))
 		return false;
@@ -180,7 +176,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	staticScaleFactor->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_SCALE_FACTOR"));
 
 	Ref< ui::Container > containerScaleFactor = new ui::Container();
-	containerScaleFactor->create(containerRight, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0_ut, 4_ut));
+	containerScaleFactor->create(containerRight, ui::WsNone, new ui::TableLayout(L"60,60,60", L"*", 0_ut, 4_ut));
 
 	m_editScaleFactor[0] = new ui::Edit();
 	m_editScaleFactor[0]->create(containerScaleFactor, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
@@ -188,6 +184,17 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_editScaleFactor[1]->create(containerScaleFactor, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
 	m_editScaleFactor[2] = new ui::Edit();
 	m_editScaleFactor[2]->create(containerScaleFactor, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
+
+	Ref< ui::Static > staticCenter = new ui::Static();
+	staticCenter->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_CENTER"));
+
+	m_dropCenter = new ui::DropDown();
+	if (!m_dropCenter->create(containerRight))
+		return false;
+
+	m_dropCenter->add(i18n::Text(L"MESHASSET_EDITOR_CENTER_NONE"));
+	m_dropCenter->add(i18n::Text(L"MESHASSET_EDITOR_CENTER_XZ"));
+	m_dropCenter->add(i18n::Text(L"MESHASSET_EDITOR_CENTER_XYZ"));
 
 	Ref< ui::Static > staticPreviewAngle = new ui::Static();
 	staticPreviewAngle->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_PREVIEW_ANGLE"));
@@ -260,7 +267,7 @@ void MeshAssetEditor::apply()
 	m_asset->setImportFilter(m_editImportFilter->getText());
 	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected()));
 	m_asset->setRenormalize(m_checkRenormalize->isChecked());
-	m_asset->setCenter(m_checkCenter->isChecked());
+	m_asset->setCenter(MeshAsset::CenterMode(m_dropCenter->getSelected()));
 	m_asset->setGrounded(m_checkGrounded->isChecked());
 	m_asset->setDecalResponse(m_checkDecalResponse->isChecked());
 	m_asset->setScaleFactor(Vector4(
@@ -334,9 +341,9 @@ void MeshAssetEditor::updateFile()
 
 	m_editFileName->setText(assetRelPath.getPathName());
 	m_editImportFilter->setText(m_asset->getImportFilter());
-	m_dropMeshType->select(m_asset->getMeshType());
+	m_dropMeshType->select((int32_t)m_asset->getMeshType());
 	m_checkRenormalize->setChecked(m_asset->getRenormalize());
-	m_checkCenter->setChecked(m_asset->getCenter());
+	m_dropCenter->select((int32_t)m_asset->getCenter());
 	m_checkGrounded->setChecked(m_asset->getGrounded());
 	m_checkDecalResponse->setChecked(m_asset->getDecalResponse());
 	m_editScaleFactor[0]->setText(toString(m_asset->getScaleFactor().x()));
@@ -533,7 +540,9 @@ void MeshAssetEditor::createMaterialShader()
 		return;
 	}
 
-	// Set textures specified in MeshAsset into material.
+	// Bind textures into the material. Prefer a texture instance already assigned
+	// in the MeshAsset; otherwise create a texture asset from the model's embedded
+	// image so the generated material samples the texture instead of a flat color.
 	const auto& materialTextures = m_asset->getMaterialTextures();
 	{
 		model::Material::Map maps[] = {
@@ -546,12 +555,35 @@ void MeshAssetEditor::createMaterialShader()
 			material.getReflectiveMap(),
 			material.getNormalMap()
 		};
+		const bool normalMaps[] = { false, false, false, false, false, false, false, true };
 
-		for (auto& map : maps)
+		SmallMap< std::wstring, Ref< db::Instance > > createdTextures;
+
+		for (uint32_t i = 0; i < sizeof_array(maps); ++i)
 		{
+			model::Material::Map& map = maps[i];
+			if (map.name.empty())
+				continue;
+
+			// Already assigned a texture instance in the MeshAsset.
 			auto it = materialTextures.find(map.name);
 			if (it != materialTextures.end())
+			{
 				map.texture = it->second;
+				continue;
+			}
+
+			// Embedded image with no bound instance; create (or reuse) a texture asset.
+			if (map.texture.isNotNull() || map.image == nullptr)
+				continue;
+
+			auto ct = createdTextures.find(map.name);
+			Ref< db::Instance > textureInstance = (ct != createdTextures.end()) ? ct->second : createEmbeddedTexture(map.name, map.image, normalMaps[i]);
+			if (textureInstance)
+			{
+				map.texture = textureInstance->getGuid();
+				createdTextures[map.name] = textureInstance;
+			}
 		}
 
 		material.setDiffuseMap(maps[0]);
@@ -562,6 +594,23 @@ void MeshAssetEditor::createMaterialShader()
 		material.setEmissiveMap(maps[5]);
 		material.setReflectiveMap(maps[6]);
 		material.setNormalMap(maps[7]);
+
+		// Reflect newly-created textures in the material texture list so the binding
+		// is shown and persisted (apply() collects assignments from the grid rows).
+		if (!createdTextures.empty())
+		{
+			for (auto textureItem : m_materialTextureList->getRows())
+			{
+				auto ct = createdTextures.find(textureItem->get(0)->getText());
+				if (ct != createdTextures.end() && textureItem->getData< db::Instance >(L"INSTANCE") == nullptr)
+				{
+					textureItem->set(1, new ui::GridItem(ct->second->getName()));
+					textureItem->setData(L"INSTANCE", ct->second);
+				}
+			}
+			m_materialTextureList->requestUpdate();
+			m_editor->updateDatabaseView();
+		}
 	}
 
 	// Generate shader.
@@ -589,13 +638,70 @@ void MeshAssetEditor::createMaterialShader()
 	}
 }
 
+Ref< db::Instance > MeshAssetEditor::createEmbeddedTexture(const std::wstring& textureName, drawing::Image* image, bool normalMap)
+{
+	if (!image)
+		return nullptr;
+
+	// Reuse an existing texture instance with the same name (e.g. created by a
+	// previous "Create material"), so re-running is idempotent and never clobbers
+	// an instance the user may have edited.
+	if (Ref< db::Instance > existing = m_instance->getParent()->getInstance(textureName))
+		return existing;
+
+	Ref< const PropertyGroup > settings = m_editor->getSettings();
+	const std::wstring assetPath = settings ? settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"") : L"";
+	if (assetPath.empty())
+	{
+		log::error << L"Unable to create embedded texture; Pipeline.AssetPath is not configured." << Endl;
+		return nullptr;
+	}
+
+	// Write the embedded image to a source file, namespaced by the mesh asset so
+	// distinct meshes don't share texture source files.
+	const std::wstring relativeFileName = L"Textures/" + m_instance->getName() + L"/" + textureName + L".png";
+	const Path absolutePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath), Path(relativeFileName));
+	if (!FileSystem::getInstance().makeAllDirectories(absolutePath.getPathOnly()))
+	{
+		log::error << L"Unable to create directory \"" << absolutePath.getPathOnly() << L"\" for embedded texture." << Endl;
+		return nullptr;
+	}
+	if (!image->save(absolutePath))
+	{
+		log::error << L"Unable to write embedded texture image \"" << absolutePath.getPathName() << L"\"." << Endl;
+		return nullptr;
+	}
+
+	// Create a texture asset referencing the written file.
+	Ref< render::TextureAsset > textureAsset = new render::TextureAsset();
+	textureAsset->setFileName(Path(relativeFileName));
+	textureAsset->m_output.m_textureType = render::Tt2D;
+	textureAsset->m_output.m_normalMap = normalMap;
+	textureAsset->m_output.m_inverseNormalMapY = normalMap;
+
+	Ref< db::Instance > textureInstance = m_instance->getParent()->createInstance(textureName);
+	if (!textureInstance)
+	{
+		log::error << L"Unable to create texture instance \"" << textureName << L"\"." << Endl;
+		return nullptr;
+	}
+	if (!textureInstance->setObject(textureAsset) || !textureInstance->commit())
+	{
+		textureInstance->revert();
+		log::error << L"Unable to commit texture instance \"" << textureName << L"\"." << Endl;
+		return nullptr;
+	}
+
+	return textureInstance;
+}
+
 void MeshAssetEditor::browseMaterialShader()
 {
 	Ref< ui::GridRow > selectedItem = m_materialShaderList->getSelectedRow();
 	if (!selectedItem)
 		return;
 
-	Ref< db::Instance > materialShaderInstance = m_editor->browseInstance(type_of< render::ShaderGraph >());
+	Ref< db::Instance > materialShaderInstance = m_editor->browseInstance(type_of< render::ShaderGraph >(), m_instance->getParent());
 	if (materialShaderInstance)
 	{
 		selectedItem->set(1, new ui::GridItem(materialShaderInstance->getName()));
@@ -625,7 +731,7 @@ void MeshAssetEditor::browseMaterialTexture()
 	if (!selectedItem)
 		return;
 
-	Ref< db::Instance > materialTextureInstance = m_editor->browseInstance(type_of< render::ITexture >());
+	Ref< db::Instance > materialTextureInstance = m_editor->browseInstance(type_of< render::ITexture >(), m_instance->getParent());
 	if (materialTextureInstance)
 	{
 		selectedItem->set(1, new ui::GridItem(materialTextureInstance->getName()));

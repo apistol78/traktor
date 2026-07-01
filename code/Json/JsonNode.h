@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <string>
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -21,6 +22,7 @@
 namespace traktor
 {
 
+class Any;
 class OutputStream;
 
 }
@@ -42,6 +44,24 @@ public:
 	 * \return True if successfully written.
 	 */
 	virtual bool write(OutputStream& os) const = 0;
+
+protected:
+	/*! Write a string as an RFC 8259 compliant, escaped JSON string literal.
+	 *
+	 * Emits the enclosing double quotes and escapes control characters and the
+	 * reserved \" and \\ characters.
+	 *
+	 * \param os Output stream.
+	 * \param str String to write.
+	 */
+	static void writeString(OutputStream& os, const std::wstring& str);
+
+	/*! Write a scalar or node value as RFC 8259 compliant JSON.
+	 *
+	 * \param os Output stream.
+	 * \param value Value to write.
+	 */
+	static void writeValue(OutputStream& os, const Any& value);
 };
 
 }

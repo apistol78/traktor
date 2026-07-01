@@ -56,6 +56,12 @@ public:
 	 */
 	void removeNode(Node* node);
 
+	/*! Remove nodes from graph.
+	 *
+	 * \param nodes Nodes to remove.
+	 */
+	void removeNodes(const RefArray< Node >& nodes);
+
 	/*! Add edge to graph.
 	 *
 	 * \param edge Edge to add.
@@ -66,7 +72,13 @@ public:
 	 *
 	 * \param edge Edge to remove.
 	 */
-	void removeEdge(Edge* edge);
+	bool removeEdge(Edge* edge);
+
+	/*! Remove edges from graph.
+	 *
+	 * \param edges Edges to remove.
+	 */
+	void removeEdges(const RefArray< Edge >& edges);
 
 	/*!
 	 */

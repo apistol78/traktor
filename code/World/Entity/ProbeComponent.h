@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,6 +23,7 @@ namespace traktor::render
 {
 
 class ITexture;
+class ProgramParameters;
 
 }
 
@@ -58,6 +59,8 @@ public:
 
 	Transform getTransform() const;
 
+	static void setupSharedParameters(const ProbeComponent* probe, render::ITexture* blackCubeTexture, render::ProgramParameters* parameters);
+
 	bool hasOwner() const { return m_owner != nullptr; }
 
 	void setTexture(const resource::Proxy< render::ITexture >& texture) { m_texture = texture; }
@@ -90,6 +93,7 @@ private:
 	bool m_capture = false;
 	bool m_dirty = false;
 	int32_t m_revision = 0;
+	int32_t m_auto = 0;
 };
 
 }

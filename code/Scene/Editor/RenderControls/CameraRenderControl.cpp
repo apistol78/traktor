@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,9 +30,8 @@
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/IModifier.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
@@ -65,15 +64,7 @@ const int32_t c_defaultMultiSample = 0;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CameraRenderControl", CameraRenderControl, ISceneRenderControl)
 
 CameraRenderControl::CameraRenderControl()
-	: m_imageProcessQuality(world::Quality::Disabled)
-	, m_shadowQuality(world::Quality::Disabled)
-	, m_reflectionsQuality(world::Quality::Disabled)
-	, m_motionBlurQuality(world::Quality::Disabled)
-	, m_ambientOcclusionQuality(world::Quality::Disabled)
-	, m_antiAliasQuality(world::Quality::Disabled)
-	, m_gridEnable(true)
-	, m_guideEnable(true)
-	, m_multiSample(c_defaultMultiSample)
+	: m_multiSample(c_defaultMultiSample)
 	, m_invertPanY(false)
 	, m_dirtySize(0, 0)
 {
@@ -118,7 +109,7 @@ bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context
 	}
 
 	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
-	m_renderGraph = new render::RenderGraph(m_context->getRenderGraphContext(), m_multiSample);
+	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem(), m_multiSample);
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
@@ -161,14 +152,9 @@ void CameraRenderControl::setAspect(float aspect)
 	m_containerAspect->update();
 }
 
-void CameraRenderControl::setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias)
+void CameraRenderControl::setQuality(const world::QualitySettings& qualitySettings)
 {
-	m_imageProcessQuality = imageProcess;
-	m_shadowQuality = shadows;
-	m_reflectionsQuality = reflections;
-	m_motionBlurQuality = motionBlur;
-	m_ambientOcclusionQuality = ambientOcclusion;
-	m_antiAliasQuality = antiAlias;
+	m_worldQuality = qualitySettings;
 	safeDestroy(m_worldRenderer);
 }
 
@@ -206,6 +192,16 @@ bool CameraRenderControl::handleCommand(const ui::Command& command)
 		m_guideEnable = true;
 	else if (command == L"Scene.Editor.DisableGuide")
 		m_guideEnable = false;
+	else if (command == L"Scene.Editor.EnableRayTracing")
+	{
+		m_rayTracingEnable = true;
+		updateWorldRenderer();
+	}
+	else if (command == L"Scene.Editor.DisableRayTracing")
+	{
+		m_rayTracingEnable = false;
+		updateWorldRenderer();
+	}
 
 	return result;
 }
@@ -251,10 +247,10 @@ void CameraRenderControl::updateWorldRenderer()
 
 	// Create entity renderers.
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	for (auto profile : m_context->getEditorProfiles())
+	for (auto plugin : m_context->getPlugins())
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
-		profile->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
+		plugin->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
 		for (auto entityRenderer : entityRenderers)
 			worldEntityRenderers->add(entityRenderer);
 	}
@@ -269,20 +265,19 @@ void CameraRenderControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = &m_worldRenderSettings;
 	wcd.entityRenderers = worldEntityRenderers;
-	wcd.quality.motionBlur = m_motionBlurQuality;
-	wcd.quality.reflections = m_reflectionsQuality;
-	wcd.quality.shadows = m_shadowQuality;
-	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
-	wcd.quality.antiAlias = m_antiAliasQuality;
-	wcd.quality.imageProcess = m_imageProcessQuality;
+	wcd.quality = m_worldQuality;
 	wcd.multiSample = m_multiSample;
 	wcd.hdr = m_renderView->isHDR();
+	wcd.rt = m_rayTracingEnable;
 
 	if (!worldRenderer->create(
 			m_context->getResourceManager(),
 			m_context->getRenderSystem(),
 			wcd))
+	{
+		safeDestroy(worldRenderer);
 		return;
+	}
 
 	m_worldRenderer = worldRenderer;
 	m_worldRendererHash = DeepHash(sceneInstance->getWorldRenderSettings()).get();

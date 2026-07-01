@@ -1,19 +1,20 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/Traits/StructNodeTraits.h"
+
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/Traits/StructNodeTraits.h"
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 PinType pinTypeFromDataType(DataType dataType)
 {
@@ -48,16 +49,16 @@ PinType pinTypeFromDataType(DataType dataType)
 	}
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.StructNodeTraits", 0, StructNodeTraits, INodeTraits)
 
 TypeInfoSet StructNodeTraits::getNodeTypes() const
 {
 	return makeTypeInfoSet<
+		MemberValue,
 		ReadStruct,
-		ReadStruct2
-	>();
+		ReadStruct2 >();
 }
 
 bool StructNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
@@ -69,41 +70,86 @@ bool StructNodeTraits::isInputTypeValid(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const InputPin* inputPin,
-	const PinType pinType
-) const
+	const PinType pinType) const
 {
-	if (inputPin->getName() == L"Struct")
-		return isPinTypeStructBuffer(pinType);
+	if (const MemberValue* memberValue = dynamic_type_cast< const MemberValue* >(node))
+	{
+		return isPinTypeStruct(pinType);
+	}
 	else
-		return isPinTypeScalar(pinType);
+	{
+		if (inputPin->getName() == L"Struct")
+			return isPinTypeStructBuffer(pinType);
+		else
+			return isPinTypeScalar(pinType);
+	}
 }
 
 PinType StructNodeTraits::getOutputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
-	const PinType* inputPinTypes
-) const
+	const PinType* inputPinTypes) const
 {
-	const OutputPin* strctOutputPin = shaderGraph->findSourcePin(node->findInputPin(L"Struct"));
-	if (!strctOutputPin)
-		return PinType::Void;
-
-	const Struct* strct = dynamic_type_cast< const Struct* >(strctOutputPin->getNode());
-	if (!strct)
-		return PinType::Void;
-
-	if (const ReadStruct* readStruct = dynamic_type_cast< const ReadStruct * >(node))
+	if (const MemberValue* memberValue = dynamic_type_cast< const MemberValue* >(node))
 	{
-		auto elementName = readStruct->getName();
-		auto elementType = strct->getElementType(elementName);
+		const OutputPin* prmOutputPin = shaderGraph->findSourcePin(memberValue->findInputPin(L"Input"));
+		if (!prmOutputPin)
+			return PinType::Void;
+
+		// If source node is an "array element" we need to traverse further to get the parameter node.
+		if (const ArrayElement* arrayElement = dynamic_type_cast< const ArrayElement* >(prmOutputPin->getNode()))
+		{
+			prmOutputPin = shaderGraph->findSourcePin(arrayElement->findInputPin(L"Input"));
+			if (!prmOutputPin)
+				return PinType::Void;
+		}
+
+		const Parameter* prm = dynamic_type_cast< const Parameter* >(prmOutputPin->getNode());
+		if (!prm)
+			return PinType::Void;
+
+		const StructDeclaration& strctDeclaration = prm->getDeclaration().getStructDeclaration();
+		const DataType elementType = strctDeclaration.getElementType(memberValue->getMemberName());
 		return pinTypeFromDataType(elementType);
 	}
-	else if (const ReadStruct2* readStruct2 = dynamic_type_cast< const ReadStruct2* >(node))
+	else
 	{
-		auto elementName = outputPin->getName();
-		auto elementType = strct->getElementType(elementName);
-		return pinTypeFromDataType(elementType);
+		const OutputPin* strctOutputPin = shaderGraph->findSourcePin(node->findInputPin(L"Struct"));
+		if (!strctOutputPin)
+			return PinType::Void;
+
+		if (const Struct* strct = dynamic_type_cast< const Struct* >(strctOutputPin->getNode()))
+		{
+			if (const ReadStruct* readStruct = dynamic_type_cast< const ReadStruct* >(node))
+			{
+				auto elementName = readStruct->getName();
+				auto elementType = strct->getElementType(elementName);
+				return pinTypeFromDataType(elementType);
+			}
+			else if (const ReadStruct2* readStruct2 = dynamic_type_cast< const ReadStruct2* >(node))
+			{
+				auto elementName = outputPin->getName();
+				auto elementType = strct->getElementType(elementName);
+				return pinTypeFromDataType(elementType);
+			}
+		}
+		else if (const Parameter* prm = dynamic_type_cast< const Parameter* >(strctOutputPin->getNode()))
+		{
+			const StructDeclaration& strctDeclaration = prm->getDeclaration().getStructDeclaration();
+			if (const ReadStruct* readStruct = dynamic_type_cast< const ReadStruct* >(node))
+			{
+				auto elementName = readStruct->getName();
+				const DataType elementType = strctDeclaration.getElementType(elementName);
+				return pinTypeFromDataType(elementType);
+			}
+			else if (const ReadStruct2* readStruct2 = dynamic_type_cast< const ReadStruct2* >(node))
+			{
+				auto elementName = outputPin->getName();
+				const DataType elementType = strctDeclaration.getElementType(elementName);
+				return pinTypeFromDataType(elementType);
+			}
+		}
 	}
 	return PinType::Void;
 }
@@ -113,22 +159,21 @@ PinType StructNodeTraits::getInputPinType(
 	const Node* node,
 	const InputPin* inputPin,
 	const PinType* inputPinTypes,
-	const PinType* outputPinTypes
-) const
+	const PinType* outputPinTypes) const
 {
-	if (inputPin->getName() == L"Buffer")
+	if (const MemberValue* memberValue = dynamic_type_cast< const MemberValue* >(node))
+		return PinType::Struct;
+	else if (inputPin->getName() == L"Buffer")
 		return PinType::StructBuffer;
 	else if (inputPin->getName() == L"Index")
 		return PinType::Scalar1;
-	else
-		return PinType::Void;
+	return PinType::Void;
 }
 
 int32_t StructNodeTraits::getInputPinGroup(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
-	const InputPin* inputPin
-) const
+	const InputPin* inputPin) const
 {
 	return 0;
 }
@@ -138,8 +183,7 @@ bool StructNodeTraits::evaluatePartial(
 	const Node* node,
 	const OutputPin* nodeOutputPin,
 	const Constant* inputConstants,
-	Constant& outputConstant
-) const
+	Constant& outputConstant) const
 {
 	return false;
 }
@@ -150,8 +194,7 @@ bool StructNodeTraits::evaluatePartial(
 	const OutputPin* nodeOutputPin,
 	const OutputPin** inputOutputPins,
 	const Constant* inputConstants,
-	const OutputPin*& foldOutputPin
-) const
+	const OutputPin*& foldOutputPin) const
 {
 	return false;
 }
@@ -160,8 +203,7 @@ PinOrder StructNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrder* inputPinOrders
-) const
+	const PinOrder* inputPinOrders) const
 {
 	return PinOrder::NonLinear;
 }

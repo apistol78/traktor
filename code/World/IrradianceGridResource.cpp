@@ -46,8 +46,8 @@ Ref< IrradianceGrid > IrradianceGridResource::createInstance(IStream* stream, re
 	Ref< render::Buffer > buffer = renderSystem->createBuffer(
 		render::BuStructured,
 		size[0] * size[1] * size[2] * sizeof(IrradianceGridData),
-		false
-	);
+		false,
+		T_FILE_LINE_W);
 	if (!buffer)
 		return nullptr;
 

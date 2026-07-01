@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -43,6 +43,7 @@ namespace traktor::ui
 class Container;
 class ContentChangeEvent;
 class ContentChangingEvent;
+class Edit;
 class Font;
 class IBitmap;
 class Menu;
@@ -79,6 +80,7 @@ class PostBuildEvent;
 class PostFrameEvent;
 class PostModifyEvent;
 class SceneAsset;
+class SceneSelectionChangeEvent;
 class SceneEditorContext;
 class ScenePreviewControl;
 
@@ -120,6 +122,8 @@ private:
 	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::ToolBar > m_entityToolBar;
 	Ref< ui::ToolBarButton > m_buttonFilterEntity;
+	Ref< ui::Edit > m_entityFilterEdit;
+	std::wstring m_entityFilter;
 	Ref< ui::IBitmap > m_imageStatic;
 	Ref< ui::IBitmap > m_imageDynamic;
 	Ref< ui::IBitmap > m_imageHidden;
@@ -138,13 +142,17 @@ private:
 
 	void updateScene();
 
+	bool isEntityFilteredOut(EntityAdapter* entityAdapter) const;
+
+	void applyEntityFilter();
+
 	Ref< ui::GridRow > createInstanceGridRow(EntityAdapter* entityAdapter);
 
 	void createInstanceGrid();
 
 	void updateInstanceGridRow(ui::GridRow* row);
 
-	void updateInstanceGrid();
+	void updateInstanceGrid(bool ensureSelectedVisible);
 
 	void updatePropertyObject();
 
@@ -168,6 +176,8 @@ private:
 
 	void eventEntityToolClick(ui::ToolBarButtonClickEvent* event);
 
+	void eventEntityFilterChange(ui::ContentChangeEvent* event);
+
 	void eventGuideClick(ui::GridColumnClickEvent* event);
 
 	void eventInstanceSelect(ui::SelectionChangeEvent* event);
@@ -186,7 +196,7 @@ private:
 
 	void eventContextPostBuild(PostBuildEvent* event);
 
-	void eventContextSelect(ui::SelectionChangeEvent* event);
+	void eventContextSelect(SceneSelectionChangeEvent* event);
 
 	void eventContextPreModify(PreModifyEvent* event);
 

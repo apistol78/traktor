@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -424,6 +424,13 @@ bool TextureOutputPipeline::buildOutput(
 
 	// Data is stored in big endian as GPUs are big endian machines.
 	pixelFormat = pixelFormat.endianSwapped();
+
+	// Apply swizzle if necessary.
+	if (toUpper(textureOutput->m_swizzle) != L"RGBA")
+	{
+		const drawing::SwizzleFilter swizzleFilter(textureOutput->m_swizzle);
+		image->apply(&swizzleFilter);
+	}
 
 	// Flip image if necessary.
 	if (textureOutput->m_flipX || textureOutput->m_flipY)

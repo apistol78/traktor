@@ -3,17 +3,17 @@
 local moduleName = os:getEnvironment("WIZARD_NAME")
 
 --!><?xml version="1.0" encoding="utf-8"?>
-<object type="Solution" version="4">
+<object type="traktor.sb.Solution" version="4">
 	<name><!-- output:print(moduleName) --!> Win64</name>
 	<rootPath>build/win64</rootPath>
 	<aggregateOutputPath>bin/latest/win64</aggregateOutputPath>
 	<projects>
-		<item type="Project" version="1">
+		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
 			<name><!-- output:print(moduleName) --!>.Editor</name>
 			<sourcePath>code/Editor</sourcePath>
 			<configurations>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -34,22 +34,22 @@ local moduleName = os:getEnvironment("WIZARD_NAME")
 					<debugEnvironment/>
 					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile><!-- output:print(moduleName) --!>.Editor.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile><!-- output:print(moduleName) --!>.Editor.dll</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile><!-- output:print(moduleName) --!>.Editor.pdb</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugshared</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -70,22 +70,22 @@ local moduleName = os:getEnvironment("WIZARD_NAME")
 					<debugEnvironment/>
 					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile><!-- output:print(moduleName) --!>.Editor.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile><!-- output:print(moduleName) --!>.Editor.dll</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile><!-- output:print(moduleName) --!>.Editor.pdb</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releaseshared</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -106,18 +106,18 @@ local moduleName = os:getEnvironment("WIZARD_NAME")
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile><!-- output:print(moduleName) --!>.Editor.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile><!-- output:print(moduleName) --!>.Editor.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
-				<item type="Configuration" version="5">
+				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -138,11 +138,11 @@ local moduleName = os:getEnvironment("WIZARD_NAME")
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile><!-- output:print(moduleName) --!>.Editor.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
-						<item type="AggregationItem">
+						<item type="traktor.sb.AggregationItem">
 							<sourceFile><!-- output:print(moduleName) --!>.Editor.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
@@ -151,33 +151,33 @@ local moduleName = os:getEnvironment("WIZARD_NAME")
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="traktor.sb.File">
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
 			</items>
 			<dependencies>
-				<item type="ExternalDependency" version="3">
+				<item type="traktor.sb.ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
 					<projectName>Traktor.Core</projectName>
 				</item>
-				<item type="ExternalDependency" version="3">
+				<item type="traktor.sb.ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
 					<projectName>Traktor.Editor</projectName>
 				</item>
-				<item type="ProjectDependency" version="3">
+				<item type="traktor.sb.ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project type="Project" version="1">
+					<project type="traktor.sb.Project" version="1">
 						<enable>true</enable>
 						<name><!-- output:print(moduleName) --!>.Shared</name>
 						<sourcePath>code/Shared</sourcePath>
 						<configurations>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>DebugShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -198,22 +198,22 @@ local moduleName = os:getEnvironment("WIZARD_NAME")
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile><!-- output:print(moduleName) --!>.Shared.lib</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile><!-- output:print(moduleName) --!>.Shared.dll</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile><!-- output:print(moduleName) --!>.Shared.pdb</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugshared</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>ReleaseShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -234,22 +234,22 @@ local moduleName = os:getEnvironment("WIZARD_NAME")
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile><!-- output:print(moduleName) --!>.Shared.lib</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile><!-- output:print(moduleName) --!>.Shared.dll</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile><!-- output:print(moduleName) --!>.Shared.pdb</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>releaseshared</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -270,18 +270,18 @@ local moduleName = os:getEnvironment("WIZARD_NAME")
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile><!-- output:print(moduleName) --!>.Shared.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile><!-- output:print(moduleName) --!>.Shared.pdb</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
-							<item type="Configuration" version="5">
+							<item type="traktor.sb.Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -302,11 +302,11 @@ local moduleName = os:getEnvironment("WIZARD_NAME")
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile><!-- output:print(moduleName) --!>.Shared.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
-									<item type="AggregationItem">
+									<item type="traktor.sb.AggregationItem">
 										<sourceFile><!-- output:print(moduleName) --!>.Shared.pdb</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
@@ -315,13 +315,13 @@ local moduleName = os:getEnvironment("WIZARD_NAME")
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="traktor.sb.File">
 								<fileName>*.*</fileName>
 								<items/>
 							</item>
 						</items>
 						<dependencies>
-							<item type="ExternalDependency" version="3">
+							<item type="traktor.sb.ExternalDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
 								<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>

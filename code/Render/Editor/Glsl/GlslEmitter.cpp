@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/Murmur3.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Render/Editor/Glsl/GlslAccelerationStructure.h"
@@ -49,12 +50,41 @@ bool compareSamplerState(const SamplerState& lh, const SamplerState& rh, bool ne
 		lh.useAnisotropic == rh.useAnisotropic;
 }
 
+bool isInteger(float v)
+{
+	return (v - std::floor(v)) < FUZZY_EPSILON;
+}
+
 std::wstring formatFloat(float v)
 {
 	std::wstring s = toString(v);
+	if (s.empty())
+		return L"0.0f";
 	if (s.find(L'.') == s.npos)
-		s += L".0f";
+		s += L".0";
+	if (s.back() != L'f')
+		s += L'f';
 	return s;
+}
+
+std::wstring trimEmptyLines(const std::wstring& text)
+{
+	AlignedVector< std::wstring > lns;
+	;
+	for (auto ln : StringSplit< std::wstring >(text, L"\n"))
+		lns.push_back(rtrim(ln));
+
+	while (!lns.empty() && lns.front().empty())
+		lns.erase(lns.begin());
+
+	while (!lns.empty() && lns.back().empty())
+		lns.erase(lns.end() - 1);
+
+	StringOutputStream ss;
+	for (const auto& ln : lns)
+		ss << ln << Endl;
+
+	return ss.str();
 }
 
 std::wstring expandScalar(float v, GlslType type)
@@ -150,10 +180,15 @@ bool emitAdd(GlslContext& cx, Add* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
 	{
-		cx.pushError(L"Inputs not connected.");
+		cx.pushError(L"Input1 not connected.");
+		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
 		return false;
 	}
 
@@ -257,23 +292,17 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		return false;
 	}
 
-	const Node* storage = cx.getInputNode(node, L"Storage");
-	if (!storage)
+	const GlslVariable* storage = cx.emitInput(node, L"Storage");
+	if (storage)
 	{
-		cx.pushError(L"Storage not connected.");
-		return false;
-	}
-
-	if (const Uniform* storageUniformNode = dynamic_type_cast< const Uniform* >(storage))
-	{
-		if (!(storageUniformNode->getParameterType() >= ParameterType::Image2D && storageUniformNode->getParameterType() <= ParameterType::ImageCube))
+		if (storage->getType() != GlslType::Image2D && storage->getType() != GlslType::Image3D && storage->getType() != GlslType::ImageCube)
 		{
-			cx.pushError(L"Incorrect parameter type.");
+			cx.pushError(L"Incorrect parameter type on Storage, must be an image.");
 			return false;
 		}
 
 		// Check if image needs to be defined.
-		const auto existing = cx.getLayout().getByName(storageUniformNode->getParameterName());
+		const auto existing = cx.getLayout().getByName(storage->getName());
 		if (existing != nullptr)
 		{
 			auto existingImage = dynamic_type_cast< GlslImage* >(existing);
@@ -290,42 +319,121 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			// Image do not exist; add new image resource.
 			cx.getLayout().addBindless(
 				new GlslImage(
-					storageUniformNode->getParameterName(),
+					storage->getName(),
 					GlslResource::Set::Default,
 					GlslResource::BsCompute,
-					glsl_from_parameter_type(storageUniformNode->getParameterType()),
+					storage->getType(),
 					false));
 		}
 
-		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-		if (storageUniformNode->getParameterType() == ParameterType::Image2D)
-			f << L"imageStore(__bindlessImages2D__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer2) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
-		else if (storageUniformNode->getParameterType() == ParameterType::Image3D)
-			f << L"imageStore(__bindlessImages3D__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
-		else
-			f << L"imageStore(__bindlessImagesCube__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
-
 		// Image parameter; since resource index is passed to shader we define an integer uniform.
-		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw"); // c_uniformBufferNames[(int32_t)node->getFrequency()]);
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw");
 		ub->addStage(cx.getBindStage());
-		if (!ub->add(storageUniformNode->getParameterName(), GlslType::Integer, 1))
+		if (!ub->add(storage->getName(), GlslType::Integer, 1))
 		{
 			cx.pushError(L"Failed to register uniform.");
 			return false;
 		}
 
-		// Define parameter in context.
-		cx.addParameter(
-			storageUniformNode->getParameterName(),
-			storageUniformNode->getParameterType(),
-			1,
-			UpdateFrequency::Draw);
+		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+		if (storage->getType() == GlslType::Image2D)
+		{
+			f << L"imageStore(__bindlessImages2D__[" << storage->getName() << L"], " << offset->cast(GlslType::Integer2) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+			cx.addParameter(
+				storage->getName(),
+				ParameterType::Image2D,
+				1,
+				UpdateFrequency::Draw);
+		}
+		else if (storage->getType() == GlslType::Image3D)
+		{
+			f << L"imageStore(__bindlessImages3D__[" << storage->getName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+			cx.addParameter(
+				storage->getName(),
+				ParameterType::Image3D,
+				1,
+				UpdateFrequency::Draw);
+		}
+		else
+		{
+			f << L"imageStore(__bindlessImagesCube__[" << storage->getName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+			cx.addParameter(
+				storage->getName(),
+				ParameterType::ImageCube,
+				1,
+				UpdateFrequency::Draw);
+		}
 	}
-	else
-	{
-		cx.pushError(L"Unsupported storage type.");
-		return false;
-	}
+
+	// const Node* storage = cx.getInputNode(node, L"Storage");
+	// if (!storage)
+	//{
+	//	cx.pushError(L"Storage not connected.");
+	//	return false;
+	// }
+
+	// if (const Uniform* storageUniformNode = dynamic_type_cast< const Uniform* >(storage))
+	//{
+	//	if (!(storageUniformNode->getParameterType() >= ParameterType::Image2D && storageUniformNode->getParameterType() <= ParameterType::ImageCube))
+	//	{
+	//		cx.pushError(L"Incorrect parameter type.");
+	//		return false;
+	//	}
+
+	//	// Check if image needs to be defined.
+	//	const auto existing = cx.getLayout().getByName(storageUniformNode->getParameterName());
+	//	if (existing != nullptr)
+	//	{
+	//		auto existingImage = dynamic_type_cast< GlslImage* >(existing);
+	//		if (!existingImage)
+	//		{
+	//			cx.pushError(L"Image do not exist.");
+	//			return false;
+	//		}
+
+	//		existingImage->addStage(GlslResource::BsCompute);
+	//	}
+	//	else
+	//	{
+	//		// Image do not exist; add new image resource.
+	//		cx.getLayout().addBindless(
+	//			new GlslImage(
+	//				storageUniformNode->getParameterName(),
+	//				GlslResource::Set::Default,
+	//				GlslResource::BsCompute,
+	//				glsl_from_parameter_type(storageUniformNode->getParameterType()),
+	//				false));
+	//	}
+
+	//	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	//	if (storageUniformNode->getParameterType() == ParameterType::Image2D)
+	//		f << L"imageStore(__bindlessImages2D__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer2) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+	//	else if (storageUniformNode->getParameterType() == ParameterType::Image3D)
+	//		f << L"imageStore(__bindlessImages3D__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+	//	else
+	//		f << L"imageStore(__bindlessImagesCube__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+
+	//	// Image parameter; since resource index is passed to shader we define an integer uniform.
+	//	auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw"); // c_uniformBufferNames[(int32_t)node->getFrequency()]);
+	//	ub->addStage(cx.getBindStage());
+	//	if (!ub->add(storageUniformNode->getParameterName(), GlslType::Integer, 1))
+	//	{
+	//		cx.pushError(L"Failed to register uniform.");
+	//		return false;
+	//	}
+
+	//	// Define parameter in context.
+	//	cx.addParameter(
+	//		storageUniformNode->getParameterName(),
+	//		storageUniformNode->getParameterType(),
+	//		1,
+	//		UpdateFrequency::Draw);
+	//}
+	// else
+	//{
+	//	cx.pushError(L"Unsupported storage type.");
+	//	return false;
+	//}
 
 	cx.requirements().localSize[0] = node->getLocalSize()[0];
 	cx.requirements().localSize[1] = node->getLocalSize()[1];
@@ -482,10 +590,15 @@ bool emitCross(GlslContext& cx, Cross* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
 	{
-		cx.pushError(L"Input1 or Input2 not connected.");
+		cx.pushError(L"Input1 not connected.");
+		return false;
+	}
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
 		return false;
 	}
 
@@ -522,6 +635,7 @@ bool emitDerivative(GlslContext& cx, Derivative* node)
 		break;
 
 	default:
+		cx.pushError(L"Axis incorrect.");
 		return false;
 	}
 
@@ -617,10 +731,15 @@ bool emitDiv(GlslContext& cx, Div* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
 	{
-		cx.pushError(L"Input1 or Input2 not connected.");
+		cx.pushError(L"Input1 not connected.");
+		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
 		return false;
 	}
 
@@ -639,10 +758,15 @@ bool emitDot(GlslContext& cx, Dot* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
 	{
-		cx.pushError(L"Input1 or Input2 not connected.");
+		cx.pushError(L"Input1 not connected.");
+		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
 		return false;
 	}
 
@@ -807,7 +931,10 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 		ub->add(node->getParameterName(), out->getType(), node->getLength());
 	}
 	else
+	{
+		cx.pushError(L"Output incorrect type.");
 		return false;
+	}
 
 	// Define parameter in context.
 	cx.addParameter(
@@ -1040,7 +1167,10 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 		cx.getInputNode(node, L"Input3") != nullptr ? cx.emitOutput(node, L"Output3", GlslType::Void) : nullptr,
 	};
 	if (!out[0])
+	{
+		cx.pushError(L"No output.");
 		return false;
+	}
 
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
@@ -1089,6 +1219,7 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 		{
 			cx.getShader().popScope();
 			cx.getShader().popOutputStream(GlslShader::BtBody);
+			cx.pushError(L"No body.");
 			return false;
 		}
 
@@ -1218,7 +1349,10 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 
 	Ref< GlslVariable > input = cx.emitInput(node, L"Input");
 	if (!input)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	// Emit post condition if connected; break iteration if condition is false.
 	Ref< GlslVariable > condition = cx.emitInput(node, L"Condition");
@@ -1283,7 +1417,10 @@ bool emitLength(GlslContext& cx, Length* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 
@@ -1298,9 +1435,17 @@ bool emitLerp(GlslContext& cx, Lerp* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
+	{
+		cx.pushError(L"Input1 not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
+		return false;
+	}
 
 	GlslType type = glsl_promote_to_float(glsl_precedence(in1->getType(), in2->getType()));
 	if (type == GlslType::Void)
@@ -1324,7 +1469,10 @@ bool emitLog(GlslContext& cx, Log* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 
@@ -1377,7 +1525,10 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	comment(f, node);
 
@@ -1405,9 +1556,17 @@ bool emitMax(GlslContext& cx, Max* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
+	{
+		cx.pushError(L"Input1 not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -1423,9 +1582,17 @@ bool emitMin(GlslContext& cx, Min* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
+	{
+		cx.pushError(L"Input1 not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -1521,7 +1688,10 @@ bool emitMixOut(GlslContext& cx, MixOut* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	comment(f, node);
 	switch (in->getType())
@@ -1586,9 +1756,17 @@ bool emitMul(GlslContext& cx, Mul* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
+	{
+		cx.pushError(L"Input1 not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -1604,10 +1782,23 @@ bool emitMulAdd(GlslContext& cx, MulAdd* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	Ref< GlslVariable > in3 = cx.emitInput(node, L"Input3");
-	if (!in1 || !in2 || !in3)
+	if (!in1)
+	{
+		cx.pushError(L"Input1 not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
+		return false;
+	}
+	Ref< GlslVariable > in3 = cx.emitInput(node, L"Input3");
+	if (!in3)
+	{
+		cx.pushError(L"Input3 not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(glsl_precedence(in1->getType(), in2->getType()), in3->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -1624,7 +1815,10 @@ bool emitNeg(GlslContext& cx, Neg* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -1640,7 +1834,10 @@ bool emitNormalize(GlslContext& cx, Normalize* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -1690,7 +1887,10 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 		in[i] = cx.emitInput(node, inputs[i]);
 
 	if (!in[0])
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	if (rs.colorWriteMask != 0)
 	{
@@ -1718,9 +1918,17 @@ bool emitPolynomial(GlslContext& cx, Polynomial* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > x = cx.emitInput(node, L"X");
-	Ref< GlslVariable > coeffs = cx.emitInput(node, L"Coefficients");
-	if (!x || !coeffs)
+	if (!x)
+	{
+		cx.pushError(L"X not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > coeffs = cx.emitInput(node, L"Coefficients");
+	if (!coeffs)
+	{
+		cx.pushError(L"Coefficients not connected.");
+		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 
@@ -1757,9 +1965,17 @@ bool emitPow(GlslContext& cx, Pow* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > exponent = cx.emitInput(node, L"Exponent");
-	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
-	if (!exponent || !in)
+	if (!exponent)
+	{
+		cx.pushError(L"Exponent not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
+	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(exponent->getType(), in->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -1776,19 +1992,32 @@ bool emitReadStruct(GlslContext& cx, ReadStruct* node)
 
 	Ref< GlslVariable > strct = cx.emitInput(node, L"Struct");
 	if (!strct || strct->getType() != GlslType::StructBuffer)
+	{
+		cx.pushError(L"Struct not connected or incorrect type.");
 		return false;
+	}
 
-	const Struct* sn = mandatory_non_null_type_cast< const Struct* >(strct->getNode());
-	const DataType type = sn->getElementType(node->getName());
+	const StructDeclaration& decl = strct->getStructDeclaration();
+
+	if (!decl.haveElement(node->getName()))
+	{
+		cx.pushError(L"No such elements.");
+		return false;
+	}
+
+	const DataType type = decl.getElementType(node->getName());
 
 	Ref< GlslVariable > index = cx.emitInput(node, L"Index");
 	if (!index)
+	{
+		cx.pushError(L"Index not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", glsl_from_data_type(type));
 
 	comment(f, node);
-	f << L"const " << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L"[" << index->cast(GlslType::Integer) << L"]." << node->getName() << L");" << Endl;
+	f << L"const " << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L".data[" << index->cast(GlslType::Integer) << L"]." << node->getName() << L");" << Endl;
 
 	return true;
 }
@@ -1808,17 +2037,20 @@ bool emitReadStruct2(GlslContext& cx, ReadStruct2* node)
 	if (!index)
 		return false;
 
-	const Struct* sn = mandatory_non_null_type_cast< const Struct* >(strct->getNode());
+	const StructDeclaration& decl = strct->getStructDeclaration();
 	for (int32_t i = 0; i < node->getOutputPinCount(); ++i)
 	{
 		const OutputPin* outputPin = node->getOutputPin(i);
 		if (!cx.isConnected(outputPin))
 			continue;
 
-		const DataType type = sn->getElementType(outputPin->getName());
+		if (!decl.haveElement(outputPin->getName()))
+			return false;
+
+		const DataType type = decl.getElementType(outputPin->getName());
 		Ref< GlslVariable > out = cx.emitOutput(node, outputPin->getName(), glsl_from_data_type(type));
 		comment(f, node);
-		f << L"const " << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L"[" << index->cast(GlslType::Integer) << L"]." << outputPin->getName() << L");" << Endl;
+		f << L"const " << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L".data[" << index->cast(GlslType::Integer) << L"]." << outputPin->getName() << L");" << Endl;
 	}
 
 	return true;
@@ -1829,9 +2061,17 @@ bool emitReflect(GlslContext& cx, Reflect* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > normal = cx.emitInput(node, L"Normal");
-	Ref< GlslVariable > direction = cx.emitInput(node, L"Direction");
-	if (!normal || !direction)
+	if (!normal)
+	{
+		cx.pushError(L"Normal not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > direction = cx.emitInput(node, L"Direction");
+	if (!direction)
+	{
+		cx.pushError(L"Direction not connected.");
+		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", direction->getType());
 
@@ -1847,7 +2087,10 @@ bool emitRecipSqrt(GlslContext& cx, RecipSqrt* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -1897,7 +2140,10 @@ bool emitRepeat(GlslContext& cx, Repeat* node)
 
 		Ref< GlslVariable > input = cx.emitInput(node, L"Input");
 		if (!input)
+		{
+			cx.pushError(L"Input not connected.");
 			return false;
+		}
 
 		inputName = input->getName();
 
@@ -1941,7 +2187,10 @@ bool emitRound(GlslContext& cx, Round* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -1956,12 +2205,23 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > texture = cx.emitInput(node, L"Texture");
-	if (!texture || texture->getType() < GlslType::Texture2D)
+	if (!texture)
+	{
+		cx.pushError(L"Texture not connected or incorrect type.");
 		return false;
+	}
+	if (texture->getType() < GlslType::Texture2D || texture->getType() > GlslType::TextureCube)
+	{
+		cx.pushError(L"Texture input incorrect type (\"" + texture->getName() + L"\" " + glsl_type_name(texture->getType()) + L").");
+		return false;
+	}
 
 	Ref< GlslVariable > texCoord = cx.emitInput(node, L"TexCoord");
 	if (!texCoord || texCoord->getType() < GlslType::Integer || texCoord->getType() > GlslType::Float4)
+	{
+		cx.pushError(L"TexCoord not connected or incorrect type.");
 		return false;
+	}
 
 	Ref< GlslVariable > mip = cx.emitInput(node, L"Mip");
 
@@ -1981,7 +2241,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	for (auto sampler : cx.getLayout().get< GlslSampler >())
 	{
 		const auto& rh = sampler->getState();
-		if (compareSamplerState(rh, samplerState, texture->getType() == GlslType::Texture2D))
+		if (compareSamplerState(rh, samplerState, texture->getType() != GlslType::Texture2D))
 		{
 			samplerName = sampler->getName();
 			sampler->addStage(cx.getBindStage());
@@ -2162,7 +2422,7 @@ bool emitScalar(GlslContext& cx, Scalar* node)
 	comment(f, node);
 
 	const float v = std::abs(node->get());
-	if ((v - std::floor(v)) < FUZZY_EPSILON)
+	if (isInteger(v))
 	{
 		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Integer);
 		f << L"const int " << out->getName() << L" = " << (int32_t)node->get() << L";" << Endl;
@@ -2182,7 +2442,10 @@ bool emitSign(GlslContext& cx, Sign* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -2224,7 +2487,10 @@ bool emitScript(GlslContext& cx, Script* node)
 
 	std::wstring script = node->getScript();
 	if (script.empty())
+	{
+		cx.pushError(L"Script empty.");
 		return false;
+	}
 
 	// Emit input and outputs.
 	const int32_t inputPinCount = node->getInputPinCount();
@@ -2363,10 +2629,8 @@ bool emitScript(GlslContext& cx, Script* node)
 			break;
 
 		case GlslType::StructBuffer:
-			{
-				reps.push_back({ variableName, ins[i]->getName() });
-				reps.push_back({ typeOfName, ins[i]->getTypeName() });
-			}
+			reps.push_back({ variableName, ins[i]->getName() + L".data" });
+			reps.push_back({ typeOfName, ins[i]->getStructTypeName() });
 			break;
 
 		default:
@@ -2392,7 +2656,7 @@ bool emitScript(GlslContext& cx, Script* node)
 
 	f << L"{" << Endl;
 	f << IncreaseIndent;
-	f << script << Endl;
+	f << trimEmptyLines(script);
 	f << DecreaseIndent;
 	f << L"}" << Endl;
 
@@ -2407,7 +2671,10 @@ bool emitSin(GlslContext& cx, Sin* node)
 
 	Ref< GlslVariable > theta = cx.emitInput(node, L"Theta");
 	if (!theta || theta->getType() != GlslType::Float)
+	{
+		cx.pushError(L"Theta not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 
@@ -2423,7 +2690,10 @@ bool emitSqrt(GlslContext& cx, Sqrt* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -2438,9 +2708,17 @@ bool emitStep(GlslContext& cx, Step* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Edge");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"X");
-	if (!in1 || !in2)
+	if (!in1)
+	{
+		cx.pushError(L"Edge not connected.");
 		return false;
+	}	
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"X");
+	if (!in2)
+	{
+		cx.pushError(L"X not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -2455,8 +2733,9 @@ bool emitStruct(GlslContext& cx, Struct* node)
 {
 	Ref< GlslVariable > out = cx.getShader().createStructVariable(
 		node->findOutputPin(L"Output"),
-		node->getParameterName() + L".data",
-		node->getStructTypeName());
+		node->getParameterName(),
+		node->getStructTypeName(),
+		node->getStructDeclaration());
 
 	// Add structure definition.
 	const std::wstring& structTypeName = node->getStructTypeName();
@@ -2504,9 +2783,17 @@ bool emitSub(GlslContext& cx, Sub* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
-	if (!in1 || !in2)
+	if (!in1)
+	{
+		cx.pushError(L"Input1 not connected.");
 		return false;
+	}
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	if (!in2)
+	{
+		cx.pushError(L"Input2 not connected.");
+		return false;
+	}
 
 	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -2549,7 +2836,10 @@ bool emitSum(GlslContext& cx, Sum* node)
 	{
 		Ref< GlslVariable > input = cx.emitInput(node, L"Input");
 		if (!input)
+		{
+			cx.pushError(L"Input not connected.");
 			return false;
+		}
 
 		inputName = input->getName();
 
@@ -2587,37 +2877,239 @@ bool emitSum(GlslContext& cx, Sum* node)
 
 bool emitSwizzle(GlslContext& cx, Swizzle* node)
 {
+	const GlslType integerTypes[] = { GlslType::Integer, GlslType::Integer2, GlslType::Integer3, GlslType::Integer4 };
+	const GlslType floatTypes[] = { GlslType::Float, GlslType::Float2, GlslType::Float3, GlslType::Float4 };
+
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	const std::wstring map = toLower(node->get());
 	if (map.length() == 0)
 		return false;
 
+	bool haveNumeric = false;
+	bool haveX = false;
+	bool haveYZW = false;
+	for (size_t i = 0; i < map.length(); ++i)
+	{
+		switch (map[i])
+		{
+		case L'x':
+			haveX = true;
+			break;
+		case L'y':
+		case L'z':
+		case L'w':
+			haveYZW = true;
+			break;
+		case L'0':
+		case L'1':
+			haveNumeric = true;
+			break;
+		default:
+			return false;
+		}
+	}
+
+	// Only need to generate a constant?
+	if (haveNumeric && !haveX && !haveYZW)
+	{
+		const GlslType type = integerTypes[map.length() - 1];
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
+
+		if (map.length() > 1)
+		{
+			StringOutputStream ss;
+			ss << glsl_type_name(type) << L"(";
+			for (size_t i = 0; i < map.length(); ++i)
+			{
+				if (i > 0)
+					ss << L", ";
+				ss << map[i];
+			}
+			ss << L")";
+			assign(f, out) << ss.str() << L";" << Endl;
+		}
+		else // == 1
+			assign(f, out) << map[0] << L";" << Endl;
+
+		return true;
+	}
+
+	const Node* inputNode = cx.getInputNode(node, L"Input");
+	if (!inputNode)
+	{
+		cx.pushError(L"Input not connected.");
+		return false;
+	}
+
+	// If input is a vector node we can rearrange it to output proper GLSL type.
+	// Since vector node is always considered 4 element wide we can make to GLSL
+	// less verbose if we hade this explicitly.
+	// Also the type propagation optimization step ensure vector nodes have
+	// a swizzle node after it if it's width are less than four.
+	if (const Vector* vectorInputNode = dynamic_type_cast< const Vector* >(inputNode))
+	{
+		float T_MATH_ALIGN16 v[4];
+		vectorInputNode->get().storeAligned(v);
+
+		// Check if all values can be represented as integers.
+		bool allIntegers = true;
+		for (size_t i = 0; i < map.length(); ++i)
+		{
+			switch (map[i])
+			{
+			case L'x':
+				allIntegers &= isInteger(v[0]);
+				break;
+			case L'y':
+				allIntegers &= isInteger(v[1]);
+				break;
+			case L'z':
+				allIntegers &= isInteger(v[2]);
+				break;
+			case L'w':
+				allIntegers &= isInteger(v[3]);
+				break;
+			}
+		}
+
+		if (allIntegers)
+		{
+			const GlslType type = integerTypes[map.length() - 1];
+			Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
+
+			if (map.length() > 1)
+			{
+				StringOutputStream ss;
+				ss << glsl_type_name(type) << L"(";
+				for (size_t i = 0; i < map.length(); ++i)
+				{
+					if (i > 0)
+						ss << L", ";
+					switch (map[i])
+					{
+					case L'x':
+						ss << (int32_t)v[0];
+						break;
+					case L'y':
+						ss << (int32_t)v[1];
+						break;
+					case L'z':
+						ss << (int32_t)v[2];
+						break;
+					case L'w':
+						ss << (int32_t)v[3];
+						break;
+					case L'0':
+						ss << L"0";
+						break;
+					case L'1':
+						ss << L"1";
+						break;
+					}
+				}
+				ss << L")";
+				assign(f, out) << ss.str() << L";" << Endl;
+			}
+			else // == 1
+			{
+				switch (map[0])
+				{
+				case L'x':
+					assign(f, out) << (int32_t)v[0] << L";" << Endl;
+					break;
+				case L'y':
+					assign(f, out) << (int32_t)v[1] << L";" << Endl;
+					break;
+				case L'z':
+					assign(f, out) << (int32_t)v[2] << L";" << Endl;
+					break;
+				case L'w':
+					assign(f, out) << (int32_t)v[3] << L";" << Endl;
+					break;
+				}
+			}
+		}
+		else
+		{
+			const GlslType type = floatTypes[map.length() - 1];
+			Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
+
+			if (map.length() > 1)
+			{
+				StringOutputStream ss;
+				ss << glsl_type_name(type) << L"(";
+				for (size_t i = 0; i < map.length(); ++i)
+				{
+					if (i > 0)
+						ss << L", ";
+					switch (map[i])
+					{
+					case L'x':
+						ss << formatFloat(v[0]);
+						break;
+					case L'y':
+						ss << formatFloat(v[1]);
+						break;
+					case L'z':
+						ss << formatFloat(v[2]);
+						break;
+					case L'w':
+						ss << formatFloat(v[3]);
+						break;
+					case L'0':
+						ss << L"0.0f";
+						break;
+					case L'1':
+						ss << L"1.0f";
+						break;
+					}
+				}
+				ss << L")";
+				assign(f, out) << ss.str() << L";" << Endl;
+			}
+			else // == 1
+			{
+				switch (map[0])
+				{
+				case L'x':
+					assign(f, out) << formatFloat(v[0]) << L";" << Endl;
+					break;
+				case L'y':
+					assign(f, out) << formatFloat(v[1]) << L";" << Endl;
+					break;
+				case L'z':
+					assign(f, out) << formatFloat(v[2]) << L";" << Endl;
+					break;
+				case L'w':
+					assign(f, out) << formatFloat(v[3]) << L";" << Endl;
+					break;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	// Not constant input; use univeral swizzle path.
+
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	GlslType type = GlslType::Void;
 	if (in->getType() >= GlslType::Integer && in->getType() <= GlslType::Integer4)
-	{
-		const GlslType types[] = { GlslType::Integer, GlslType::Integer2, GlslType::Integer3, GlslType::Integer4 };
-		type = types[map.length() - 1];
-	}
+		type = integerTypes[map.length() - 1];
 	else
-	{
-		const GlslType types[] = { GlslType::Float, GlslType::Float2, GlslType::Float3, GlslType::Float4 };
-		type = types[map.length() - 1];
-	}
+		type = floatTypes[map.length() - 1];
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
-	bool containConstant = false;
-	for (size_t i = 0; i < map.length() && !containConstant; ++i)
-		if (map[i] == L'0' || map[i] == L'1')
-			containConstant = true;
-
 	StringOutputStream ss;
-	if (containConstant || (map.length() > 1 && in->getType() == GlslType::Float))
+	if (haveNumeric || (map.length() > 1 && in->getType() == GlslType::Float))
 	{
 		ss << glsl_type_name(type) << L"(";
 		for (size_t i = 0; i < map.length(); ++i)
@@ -2626,22 +3118,22 @@ bool emitSwizzle(GlslContext& cx, Swizzle* node)
 				ss << L", ";
 			switch (map[i])
 			{
-			case 'x':
+			case L'x':
 				if (in->getType() == GlslType::Float)
 				{
 					ss << in->getName();
 					break;
 				}
 				// Don't break, multidimensional source.
-			case 'y':
-			case 'z':
-			case 'w':
+			case L'y':
+			case L'z':
+			case L'w':
 				ss << in->getName() << L'.' << map[i];
 				break;
-			case '0':
+			case L'0':
 				ss << L"0.0";
 				break;
-			case '1':
+			case L'1':
 				ss << L"1.0";
 				break;
 			}
@@ -2673,7 +3165,10 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Select");
 	if (!in)
+	{
+		cx.pushError(L"Select not connected.");
 		return false;
+	}
 
 	const auto& cases = node->getCases();
 	const int32_t width = node->getWidth();
@@ -2840,7 +3335,10 @@ bool emitTan(GlslContext& cx, Tan* node)
 
 	Ref< GlslVariable > theta = cx.emitInput(node, L"Theta");
 	if (!theta || theta->getType() != GlslType::Float)
+	{
+		cx.pushError(L"Theta not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 
@@ -2869,7 +3367,10 @@ bool emitTextureSize(GlslContext& cx, TextureSize* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	const std::wstring textureName = in->getName();
 	Ref< GlslVariable > out;
@@ -2904,9 +3405,18 @@ bool emitTransform(GlslContext& cx, Transform* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
-	Ref< GlslVariable > transform = cx.emitInput(node, L"Transform");
-	if (!in || !transform)
+	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
+
+	Ref< GlslVariable > transform = cx.emitInput(node, L"Transform");
+	if (!transform)
+	{
+		cx.pushError(L"Transform not connected.");
+		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float4);
 
@@ -2922,7 +3432,10 @@ bool emitTranspose(GlslContext& cx, Transpose* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -2938,7 +3451,10 @@ bool emitTruncate(GlslContext& cx, Truncate* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	const GlslType type = glsl_degrade_to_integer(in->getType());
 	if (type == GlslType::Void)
@@ -3089,8 +3605,7 @@ bool emitVector(GlslContext& cx, Vector* node)
 
 	bool integer = true;
 	for (int32_t i = 0; i < 4; ++i)
-		if ((e[i] - std::floor(e[i])) >= FUZZY_EPSILON)
-			integer = false;
+		integer &= isInteger(e[i]);
 
 	if (integer)
 	{
@@ -3240,6 +3755,351 @@ bool emitVertexOutput(GlslContext& cx, VertexOutput* node)
 	return true;
 }
 
+// EXPERIMENTAL
+
+bool emitParameter(GlslContext& cx, Parameter* node)
+{
+	const ParameterDeclaration& decl = node->getDeclaration();
+
+	const std::wstring parameterName = node->getParameterName();
+	if (parameterName.empty())
+	{
+		cx.pushError(L"Empty parameter name.");
+		return false;
+	}
+
+	// Scalar parameter.
+	if (decl.getParameterType() == ParameterType::Scalar || decl.getParameterType() == ParameterType::Vector || decl.getParameterType() == ParameterType::Matrix)
+	{
+		const int32_t length = std::max(decl.getLength(), 1);
+
+		// Add to uniform buffer.
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(c_uniformBufferNames[(int32_t)decl.getFrequency()]);
+		ub->addStage(cx.getBindStage());
+		if (!ub->add(parameterName, glsl_from_parameter_type(decl.getParameterType()), length))
+		{
+			cx.pushError(L"Unable to add parameter to uniform buffer.");
+			return false;
+		}
+
+		// Define parameter in context.
+		cx.addParameter(
+			parameterName,
+			decl.getParameterType(),
+			length,
+			decl.getFrequency());
+
+		// Create variable.
+		Ref< GlslVariable > out;
+		if (length <= 1)
+			out = cx.getShader().createVariable(
+				node->findOutputPin(L"Output"),
+				parameterName,
+				glsl_from_parameter_type(decl.getParameterType()));
+		else
+			out = cx.getShader().createArrayVariable(
+				node->findOutputPin(L"Output"),
+				parameterName,
+				glsl_from_parameter_type(decl.getParameterType()));
+		if (!out)
+		{
+			cx.pushError(L"Unable to create parameter variable.");
+			return false;
+		}
+	}
+	// Texture parameter.
+	else if (decl.getParameterType() == ParameterType::Texture2D || decl.getParameterType() == ParameterType::Texture3D || decl.getParameterType() == ParameterType::TextureCube)
+	{
+		// Add texture to layout.
+		const auto existing = cx.getLayout().getByName(parameterName);
+		if (existing != nullptr)
+		{
+			if (auto existingTexture = dynamic_type_cast< GlslTexture* >(existing))
+			{
+				// Texture already exist; ensure type match.
+				if (existingTexture->getUniformType() != glsl_from_parameter_type(decl.getParameterType()))
+				{
+					cx.pushError(L"Parameter texture already defined with another texture type.");
+					return false;
+				}
+				existingTexture->addStage(cx.getBindStage());
+			}
+			else
+			{
+				// Resource already exist but is not a texture.
+				cx.pushError(L"Parameter already exist with another type.");
+				return false;
+			}
+		}
+		else
+		{
+			// Texture do not exist; add new texture resource.
+			cx.getLayout().addBindless(
+				new GlslTexture(
+					parameterName,
+					GlslResource::Set::Default,
+					cx.getBindStage(),
+					glsl_from_parameter_type(decl.getParameterType()),
+					false));
+		}
+
+		// Texture parameter; since resource index is passed to shader we define an integer uniform.
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw");
+		ub->addStage(cx.getBindStage());
+		if (!ub->add(parameterName, GlslType::Integer, 1))
+		{
+			cx.pushError(L"Unable to add parameter to uniform buffer.");
+			return false;
+		}
+
+		// Define parameter in context.
+		cx.addParameter(
+			parameterName,
+			decl.getParameterType(),
+			1,
+			decl.getFrequency());
+
+		// Create variable.
+		Ref< GlslVariable > out = cx.getShader().createVariable(
+			node->findOutputPin(L"Output"),
+			parameterName,
+			glsl_from_parameter_type(decl.getParameterType()));
+		if (!out)
+		{
+			cx.pushError(L"Unable to create parameter variable.");
+			return false;
+		}
+	}
+	// Image parameter.
+	else if (decl.getParameterType() == ParameterType::Image2D || decl.getParameterType() == ParameterType::Image3D || decl.getParameterType() == ParameterType::ImageCube)
+	{
+		const auto existing = cx.getLayout().getByName(parameterName);
+		if (existing != nullptr)
+		{
+			if (auto existingImage = dynamic_type_cast< GlslImage* >(existing))
+			{
+				// Image already exist; ensure type match.
+				if (existingImage->getUniformType() != glsl_from_parameter_type(decl.getParameterType()))
+				{
+					cx.pushError(L"Parameter image already defined with another image type.");
+					return false;
+				}
+				existingImage->addStage(cx.getBindStage());
+			}
+			else
+			{
+				// Resource already exist but is not an image.
+				cx.pushError(L"Parameter already exist with another type.");
+				return false;
+			}
+		}
+		else
+		{
+			// Image do not exist; add new image resource.
+			cx.getLayout().addBindless(
+				new GlslImage(
+					parameterName,
+					GlslResource::Set::Default,
+					cx.getBindStage(),
+					glsl_from_parameter_type(decl.getParameterType()),
+					false));
+		}
+
+		// Image parameter; since resource index is passed to shader we define an integer uniform.
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw");
+		ub->addStage(cx.getBindStage());
+		if (!ub->add(parameterName, GlslType::Integer, 1))
+		{
+			cx.pushError(L"Unable to add parameter to uniform buffer.");
+			return false;
+		}
+
+		// Define parameter in context.
+		cx.addParameter(
+			parameterName,
+			decl.getParameterType(),
+			1,
+			decl.getFrequency());
+
+		// Create variable.
+		Ref< GlslVariable > out = cx.getShader().createVariable(
+			node->findOutputPin(L"Output"),
+			parameterName,
+			glsl_from_parameter_type(decl.getParameterType()));
+		if (!out)
+		{
+			cx.pushError(L"Unable to create parameter variable.");
+			return false;
+		}
+	}
+	// Struct array parameter.
+	else if (decl.getParameterType() == ParameterType::StructBuffer)
+	{
+		// Add structure declaration.
+		cx.addStructure(decl.getStructType(), decl.getStructDeclaration());
+
+		// Add buffer to layout.
+		const auto existing = cx.getLayout().getByName(parameterName);
+		if (existing != nullptr)
+		{
+			if (auto existingStorageBuffer = dynamic_type_cast< GlslStorageBuffer* >(existing))
+			{
+				// Storage buffer already exist; \tbd ensure elements match.
+				existingStorageBuffer->addStage(cx.getBindStage());
+			}
+			else
+			{
+				// Resource already exist but is not a storage buffer.
+				cx.pushError(L"Parameter already exist with another type.");
+				return false;
+			}
+		}
+		else
+		{
+			// Storage buffer do not exist; add new storage buffer resource.
+			Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(
+				parameterName,
+				decl.getStructType(),
+				GlslResource::Set::Default,
+				cx.getBindStage(),
+				false);
+			cx.getLayout().add(storageBuffer);
+		}
+
+		// Define parameter in context.
+		cx.addParameter(
+			parameterName,
+			ParameterType::StructBuffer,
+			1,
+			UpdateFrequency::Draw);
+
+		// Create variable.
+		Ref< GlslVariable > out = cx.getShader().createStructVariable(
+			node->findOutputPin(L"Output"),
+			parameterName,
+			decl.getStructType(),
+			decl.getStructDeclaration());
+		if (!out)
+		{
+			cx.pushError(L"Unable to create parameter variable.");
+			return false;
+		}
+	}
+	// RT acceleration structure parameter.
+	else if (decl.getParameterType() == ParameterType::AccelerationStructure)
+	{
+		// Add RT AS to layout.
+		const auto existing = cx.getLayout().getByName(parameterName);
+		if (existing != nullptr)
+		{
+			if (auto existingAS = dynamic_type_cast< GlslAccelerationStructure* >(existing))
+			{
+				// Acceleration structure already exist.
+				existingAS->addStage(cx.getBindStage());
+			}
+			else
+			{
+				// Resource already exist but is not an acceleration structure.
+				cx.pushError(L"Parameter already exist with another type.");
+				return false;
+			}
+		}
+		else
+		{
+			// Acceleration structure do not exist; add new AS resource.
+			cx.getLayout().add(
+				new GlslAccelerationStructure(
+					parameterName,
+					GlslResource::Set::Default,
+					cx.getBindStage()));
+		}
+
+		// Define parameter in context.
+		cx.addParameter(
+			parameterName,
+			decl.getParameterType(),
+			1,
+			decl.getFrequency());
+
+		// Create variable.
+		Ref< GlslVariable > out = cx.getShader().createVariable(
+			node->findOutputPin(L"Output"),
+			parameterName,
+			glsl_from_parameter_type(decl.getParameterType()));
+		if (!out)
+		{
+			cx.pushError(L"Unable to create parameter variable.");
+			return false;
+		}
+	}
+	else
+	{
+		cx.pushError(L"Unsupported parameter type.");
+		return false;
+	}
+
+	return true;
+}
+
+bool emitArrayElement(GlslContext& cx, ArrayElement* node)
+{
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	Ref< GlslVariable > inp = cx.emitInput(node, L"Input");
+	if (!inp)
+	{
+		cx.pushError(L"Input not connected.");
+		return false;
+	}
+
+	Ref< GlslVariable > index = cx.emitInput(node, L"Index");
+	if (!index)
+	{
+		cx.pushError(L"Index not connected.");
+		return false;
+	}
+
+	if (inp->getType() == GlslType::StructBuffer)
+	{
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Struct);
+		out->setStructTypeName(inp->getStructTypeName());
+		out->setStructDeclaration(inp->getStructDeclaration());
+		f << L"const " << inp->getStructTypeName() << L" " << out->getName() << L" = " << inp->getName() << L".data[" << index->cast(GlslType::Integer) << L"];" << Endl;
+	}
+	else if (inp->isArray())
+	{
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", inp->getType());
+		assign(f, out) << inp->getName() << L"[" << index->cast(GlslType::Integer) << L"];" << Endl;
+	}
+	else
+		return false;
+
+	return true;
+}
+
+bool emitMemberValue(GlslContext& cx, MemberValue* node)
+{
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	Ref< GlslVariable > strct = cx.emitInput(node, L"Input");
+	if (!strct || strct->getType() != GlslType::Struct)
+	{
+		cx.pushError(L"Input not connected or incorrect type.");
+		return false;
+	}
+
+	const DataType memberType = strct->getStructDeclaration().getElementType(node->getMemberName());
+
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", glsl_from_data_type(memberType));
+	if (!out)
+		return false;
+
+	comment(f, node);
+	f << L"const " << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << strct->getName() << L"." << node->getMemberName() << L";" << Endl;
+
+	return true;
+}
+
 }
 
 struct Emitter
@@ -3290,7 +4150,6 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);
 	m_emitters[&type_of< FragmentPosition >()] = new EmitterCast< FragmentPosition >(emitFragmentPosition);
 	m_emitters[&type_of< FrontFace >()] = new EmitterCast< FrontFace >(emitFrontFace);
-	m_emitters[&type_of< IndexedUniform >()] = new EmitterCast< IndexedUniform >(emitIndexedUniform);
 	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
 	m_emitters[&type_of< Iterate >()] = new EmitterCast< Iterate >(emitIterate);
@@ -3312,8 +4171,6 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Polynomial >()] = new EmitterCast< Polynomial >(emitPolynomial);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
-	m_emitters[&type_of< ReadStruct >()] = new EmitterCast< ReadStruct >(emitReadStruct);
-	m_emitters[&type_of< ReadStruct2 >()] = new EmitterCast< ReadStruct2 >(emitReadStruct2);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
 	m_emitters[&type_of< Repeat >()] = new EmitterCast< Repeat >(emitRepeat);
@@ -3325,7 +4182,6 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);
 	m_emitters[&type_of< Step >()] = new EmitterCast< Step >(emitStep);
-	m_emitters[&type_of< Struct >()] = new EmitterCast< Struct >(emitStruct);
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);
 	m_emitters[&type_of< Sum >()] = new EmitterCast< Sum >(emitSum);
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
@@ -3336,10 +4192,21 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
 	m_emitters[&type_of< Truncate >()] = new EmitterCast< Truncate >(emitTruncate);
-	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);
 	m_emitters[&type_of< Vector >()] = new EmitterCast< Vector >(emitVector);
 	m_emitters[&type_of< VertexInput >()] = new EmitterCast< VertexInput >(emitVertexInput);
 	m_emitters[&type_of< VertexOutput >()] = new EmitterCast< VertexOutput >(emitVertexOutput);
+
+	// DEPRECATED
+	m_emitters[&type_of< IndexedUniform >()] = new EmitterCast< IndexedUniform >(emitIndexedUniform);
+	m_emitters[&type_of< ReadStruct >()] = new EmitterCast< ReadStruct >(emitReadStruct);
+	m_emitters[&type_of< ReadStruct2 >()] = new EmitterCast< ReadStruct2 >(emitReadStruct2);
+	m_emitters[&type_of< Struct >()] = new EmitterCast< Struct >(emitStruct);
+	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);
+
+	// EXPERIMENTAL
+	m_emitters[&type_of< Parameter >()] = new EmitterCast< Parameter >(emitParameter);
+	m_emitters[&type_of< ArrayElement >()] = new EmitterCast< ArrayElement >(emitArrayElement);
+	m_emitters[&type_of< MemberValue >()] = new EmitterCast< MemberValue >(emitMemberValue);
 }
 
 GlslEmitter::~GlslEmitter()

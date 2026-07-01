@@ -335,45 +335,9 @@ void TerrainComponent::setup(
 			m_terrain,
 			-worldExtent * 0.5_simd,
 			worldExtent);
-}
-
-void TerrainComponent::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	float detailDistance,
-	uint32_t cacheSize)
-{
-	const int32_t viewIndex = worldRenderView.getIndex();
-	const bool snapshot = worldRenderView.getSnapshot();
-
-	if (!validate(viewIndex, cacheSize))
-		return;
-
-	render::Shader* shader = m_terrain->getTerrainShader();
-
-	auto perm = worldRenderPass.getPermutation(shader);
-
-	shader->setCombination(c_handleTerrain_CutEnable, m_terrain->getCutMap(), perm);
-
-	if (m_visualizeMode >= VmSurfaceLod && m_visualizeMode <= VmPatchLod)
-		shader->setCombination(c_handleTerrain_VisualizeLods, true, perm);
-	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmCutMap)
-		shader->setCombination(c_handleTerrain_VisualizeMap, true, perm);
-
-	render::IProgram* program = shader->getProgram(perm).program;
-	if (!program)
-		return;
-
-	const Vector4& worldExtent = m_heightfield->getWorldExtent();
-	const Vector4 eyePosition = worldRenderView.getEyePosition();
-	const Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
-
-	render::RenderContext* renderContext = context.getRenderContext();
 
 	// Update indirect draw buffers; do this only once per frame
 	// since all draws are the same for other passes.
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
 	{
 		auto draw = (render::IndexedIndirectDraw*)m_drawBuffer->lock();
 		auto data = (DrawData*)m_dataBuffer->lock();
@@ -416,6 +380,41 @@ void TerrainComponent::build(
 		m_drawBuffer->unlock();
 		m_dataBuffer->unlock();
 	}
+}
+
+void TerrainComponent::build(
+	const world::WorldBuildContext& context,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass,
+	float detailDistance,
+	uint32_t cacheSize)
+{
+	const int32_t viewIndex = worldRenderView.getIndex();
+	const bool snapshot = worldRenderView.getSnapshot();
+
+	if (!validate(viewIndex, cacheSize))
+		return;
+
+	render::Shader* shader = m_terrain->getTerrainShader();
+
+	auto perm = worldRenderPass.getPermutation(shader);
+
+	shader->setCombination(c_handleTerrain_CutEnable, m_terrain->getCutMap(), perm);
+
+	if (m_visualizeMode >= VmSurfaceLod && m_visualizeMode <= VmPatchLod)
+		shader->setCombination(c_handleTerrain_VisualizeLods, true, perm);
+	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmCutMap)
+		shader->setCombination(c_handleTerrain_VisualizeMap, true, perm);
+
+	render::IProgram* program = shader->getProgram(perm).program;
+	if (!program)
+		return;
+
+	const Vector4& worldExtent = m_heightfield->getWorldExtent();
+	const Vector4 eyePosition = worldRenderView.getEyePosition();
+	const Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
+
+	render::RenderContext* renderContext = context.getRenderContext();
 
 	// Cull draw buffer to HiZ target; only deferred renderer using HiZ culling.
 	if (!snapshot && worldRenderPass.getTechnique() == world::ShaderTechnique::DeferredGBufferWrite)
@@ -655,7 +654,8 @@ bool TerrainComponent::createPatches()
 	m_vertexBuffer = m_renderSystem->createBuffer(
 		render::BuVertex,
 		patchVertexCount * vertexSize,
-		false);
+		false,
+		T_FILE_LINE_W);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -804,7 +804,8 @@ bool TerrainComponent::createPatches()
 	m_indexBuffer = m_renderSystem->createBuffer(
 		render::BuIndex,
 		(uint32_t)m_indices.size() * sizeof(uint32_t),
-		false);
+		false,
+		T_FILE_LINE_W);
 	if (!m_indexBuffer)
 		return false;
 
@@ -821,21 +822,24 @@ bool TerrainComponent::createPatches()
 	m_drawBuffer = m_renderSystem->createBuffer(
 		render::BuStructured | render::BuIndirect,
 		alignedPatchCount * sizeof(render::IndexedIndirectDraw),
-		true);
+		true,
+		T_FILE_LINE_W);
 	if (!m_drawBuffer)
 		return false;
 
 	m_culledDrawBuffer = m_renderSystem->createBuffer(
 		render::BuStructured | render::BuIndirect,
 		alignedPatchCount * sizeof(render::IndexedIndirectDraw),
-		false);
+		false,
+		T_FILE_LINE_W);
 	if (!m_culledDrawBuffer)
 		return false;
 
 	m_dataBuffer = m_renderSystem->createBuffer(
 		render::BuStructured,
 		alignedPatchCount * sizeof(DrawData),
-		true);
+		true,
+		T_FILE_LINE_W);
 	if (!m_dataBuffer)
 		return false;
 
@@ -868,12 +872,6 @@ bool TerrainComponent::createRayTracingPatches()
 	const Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
 	Vector4 patchTopLeft = (-worldExtent * 0.5_simd).xyz1();
 
-	// for (auto& part : m_rtParts)
-	//{
-	//	safeDestroy(part.perVertexData);
-	//	safeDestroy(part.blas);
-	// }
-
 	safeDestroy(m_rtwInstance);
 
 	m_rtVertexBuffers.resize(m_patchCount * m_patchCount);
@@ -895,7 +893,8 @@ bool TerrainComponent::createRayTracingPatches()
 			m_rtVertexBuffers[patchId] = m_renderSystem->createBuffer(
 				render::BuVertex,
 				patchVertexCount * vertexSize,
-				false);
+				false,
+				T_FILE_LINE_W);
 			if (!m_rtVertexBuffers[patchId])
 				return false;
 
@@ -931,12 +930,17 @@ bool TerrainComponent::createRayTracingPatches()
 			// Create "per-vertex" attribute buffer.
 			const uint32_t vertexAttribCount = m_primitives[1].count * 3;
 
-			Ref< render::Buffer > perVertexData = m_renderSystem->createBuffer(
-				render::BuStructured,
-				vertexAttribCount * sizeof(world::HWRT_Material),
-				false);
+			Ref< render::Buffer > perVertexData = const_cast< render::Buffer* >(m_rtParts[patchId].perVertexData.ptr());
 			if (!perVertexData)
-				return false;
+			{
+				perVertexData = m_renderSystem->createBuffer(
+					render::BuStructured,
+					vertexAttribCount * sizeof(world::HWRT_Material),
+					false,
+					T_FILE_LINE_W);
+				if (!perVertexData)
+					return false;
+			}
 
 			world::HWRT_Material* va = static_cast< world::HWRT_Material* >(perVertexData->lock());
 			T_ASSERT_M(va, L"Unable to lock vertex attribute buffer");
@@ -944,8 +948,8 @@ bool TerrainComponent::createRayTracingPatches()
 			{
 				const uint32_t index = m_indices[m_primitives[1].offset + i];
 
-				int32_t ix = index % patchDim;
-				int32_t iz = index / patchDim;
+				const int32_t ix = index % patchDim;
+				const int32_t iz = index / patchDim;
 
 				const float fx = float(ix) / (patchDim - 1);
 				const float fz = float(iz) / (patchDim - 1);
@@ -974,7 +978,7 @@ bool TerrainComponent::createRayTracingPatches()
 			m_rtParts[patchId].perVertexData = perVertexData;
 
 			// Create bottom level acceleration structure.
-			m_rtParts[patchId].blas = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_indexBuffer, render::IndexType::UInt32, { m_primitives[1] }, false);
+			m_rtParts[patchId].blas = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_indexBuffer, render::IndexType::UInt32, { { m_primitives[1], true } }, false);
 			if (!m_rtParts[patchId].blas)
 				return false;
 

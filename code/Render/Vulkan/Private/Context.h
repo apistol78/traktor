@@ -20,6 +20,7 @@
 namespace traktor::render
 {
 
+class CommandBuffer;
 class ProgramVk;
 class RenderTargetSetVk;
 class Queue;
@@ -48,6 +49,7 @@ public:
 	constexpr static uint32_t CleanupFreeDescriptorSets = 2;
 
 	typedef std::function< void(Context*) > cleanup_fn_t;
+	typedef std::function< void(Context*, CommandBuffer*) > upload_fn_t;
 
 	struct ICleanupListener
 	{
@@ -55,11 +57,14 @@ public:
 	};
 
 	explicit Context(
+		VkInstance instance,
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
 		VmaAllocator allocator,
 		uint32_t graphicsQueueIndex,
-		uint32_t computeQueueIndex
+		uint32_t computeQueueIndex,
+		bool rayTracing,
+		bool smoothLines
 	);
 
 	virtual ~Context();
@@ -84,9 +89,15 @@ public:
 
 	void performCleanup();
 
+	void addDeferredUpload(const upload_fn_t& fn);
+
+	void performUploads();
+
 	void recycle();
 
 	bool savePipelineCache();
+
+	VkInstance getInstance() const { return m_instance; }
 
 	VkPhysicalDevice getPhysicalDevice() const { return m_physicalDevice; }
 
@@ -132,6 +143,8 @@ public:
 
 	VkPipeline validateComputePipeline(const ProgramVk* p);
 
+	void setObjectDebugName(const wchar_t* const tag, uint64_t object, VkObjectType objectType);
+
 private:
 	struct DeferredCleanup
 	{
@@ -147,11 +160,14 @@ private:
 
 	typedef std::tuple< uint8_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
 
+	VkInstance m_instance;
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
 	uint32_t m_graphicsQueueIndex;
 	uint32_t m_computeQueueIndex;
+	bool m_rayTracing = false;
+	bool m_smoothLines = false;
 	VkPipelineCache m_pipelineCache = 0;
 	VkDescriptorPool m_descriptorPool = 0;
 	int32_t m_views = 0;
@@ -159,9 +175,11 @@ private:
 	Ref< Queue > m_computeQueue;
 	Ref< UniformBufferPool > m_uniformBufferPools[3];
 	Semaphore m_cleanupLock;
+	Semaphore m_updateLock;
 	Semaphore m_resourceIndexLock;
 	AlignedVector< DeferredCleanup > m_cleanupFns;
 	AlignedVector< ICleanupListener* > m_cleanupListeners;
+	AlignedVector< upload_fn_t > m_uploadFns;
 	VkDescriptorSetLayout m_bindlessTexturesDescriptorLayout = 0;
 	VkDescriptorSet m_bindlessTexturesDescriptorSet = 0;
 	VkDescriptorSetLayout m_bindlessImagesDescriptorLayout = 0;
@@ -172,6 +190,10 @@ private:
 	IdAllocator m_storageResourceIndexAllocator;
 	IdAllocator m_bufferResourceIndexAllocator;
 	SmallMap< pipeline_key_t, PipelineEntry > m_pipelines;
+
+#if !defined(__ANDROID__) && !defined(__APPLE__)
+	AlignedVector< char* > m_debugNames;
+#endif
 };
 
 }

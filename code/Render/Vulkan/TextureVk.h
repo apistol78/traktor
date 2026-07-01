@@ -10,6 +10,7 @@
 
 #include "Core/Ref.h"
 #include "Render/ITexture.h"
+#include "Render/Types.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor::render

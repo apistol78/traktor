@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <cwctype>
 #include "Core/Log/Log.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -118,38 +119,125 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 {
 	const StyleSheet* ss = getStyleSheet();
 
-	// Ensure text fit within boundaries.
-	std::wstring text = m_text;
-
-	Size textExtent = canvas.getFontMetric().getExtent(text);
-	Size subTextExtent = !m_subText.empty() ? canvas.getFontMetric().getExtent(m_subText) : Size(0, 0);
+	const Size textExtent = canvas.getFontMetric().getExtent(m_text);
+	const Size subTextExtent = !m_subText.empty() ? canvas.getFontMetric().getExtent(m_subText) : Size(0, 0);
 
 	m_textRect = rect;
 
+	std::wstring line1 = m_text;
+	std::wstring line2;
+	bool twoLines = false;
+
 	if (textExtent.cx > m_textRect.getWidth())
 	{
-		if (!isSelected())
+		// Text doesn't fit on a single line; word-wrap into two lines.
+		twoLines = true;
+
+		// Find the latest split boundary (space, '-', '_', or lower->upper case
+		// transition) where the first line still fits. A case-transition split
+		// gets a trailing '-' appended to the first line.
+		size_t line1End = std::wstring::npos;
+		size_t line2Start = std::wstring::npos;
+		bool line1AddHyphen = false;
+		for (size_t i = 1; i < m_text.length(); ++i)
 		{
-			// Item not selected; cut text and add trailing ...
-			while (!text.empty())
+			size_t candidateEnd = 0;
+			size_t candidateStart = 0;
+			bool valid = false;
+			bool addHyphen = false;
+
+			if (m_text[i] == L' ')
 			{
-				text = text.substr(0, text.length() - 1);
-				textExtent = canvas.getFontMetric().getExtent(text + L"...");
-				if (textExtent.cx <= m_textRect.getWidth())
-					break;
+				candidateEnd = i;
+				candidateStart = i + 1;
+				valid = true;
 			}
-			text += L"...";
+			else if (m_text[i] == L'-' || m_text[i] == L'_')
+			{
+				candidateEnd = i + 1;
+				candidateStart = i + 1;
+				valid = true;
+			}
+			else if (std::iswupper(m_text[i]) && std::iswlower(m_text[i - 1]))
+			{
+				candidateEnd = i;
+				candidateStart = i;
+				valid = true;
+				addHyphen = true;
+			}
+
+			if (valid)
+			{
+				const std::wstring base = m_text.substr(0, candidateEnd);
+				const Size baseExt = canvas.getFontMetric().getExtent(base);
+				if (baseExt.cx > m_textRect.getWidth())
+					break;
+
+				const Size ext = addHyphen ? canvas.getFontMetric().getExtent(base + L"-") : baseExt;
+				if (ext.cx <= m_textRect.getWidth())
+				{
+					line1End = candidateEnd;
+					line2Start = candidateStart;
+					line1AddHyphen = addHyphen;
+				}
+			}
+		}
+
+		if (line1End != std::wstring::npos && line1End > 0)
+		{
+			line1 = m_text.substr(0, line1End);
+			if (line1AddHyphen)
+				line1 += L"-";
+			line2 = m_text.substr(line2Start);
 		}
 		else
 		{
-			// Item is selected; enlarge text rectangle.
-			const int32_t excess = textExtent.cx - m_textRect.getWidth();
-			m_textRect.left -= excess / 2 + 5;
-			m_textRect.right += (excess + 1) / 2 + 5;
+			// No suitable word break; fall back to character-level split.
+			size_t cutPos = 1;
+			for (size_t i = 1; i <= m_text.length(); ++i)
+			{
+				const Size ext = canvas.getFontMetric().getExtent(m_text.substr(0, i));
+				if (ext.cx > m_textRect.getWidth())
+				{
+					cutPos = (i > 1) ? i - 1 : 1;
+					break;
+				}
+			}
+			line1 = m_text.substr(0, cutPos);
+			line2 = m_text.substr(cutPos);
+		}
+
+		const Size line1Extent = canvas.getFontMetric().getExtent(line1);
+		const Size line2Extent = canvas.getFontMetric().getExtent(line2);
+
+		if (line2Extent.cx > m_textRect.getWidth())
+		{
+			if (!isSelected())
+			{
+				// Truncate second line with trailing "...".
+				while (!line2.empty())
+				{
+					line2 = line2.substr(0, line2.length() - 1);
+					const Size ext = canvas.getFontMetric().getExtent(line2 + L"...");
+					if (ext.cx <= m_textRect.getWidth())
+						break;
+				}
+				line2 += L"...";
+			}
+			else
+			{
+				// Item is selected; enlarge text rectangle to fit longest line.
+				const int32_t maxLineWidth = std::max(line1Extent.cx, line2Extent.cx);
+				const int32_t excess = maxLineWidth - m_textRect.getWidth();
+				m_textRect.left -= excess / 2 + 5;
+				m_textRect.right += (excess + 1) / 2 + 5;
+			}
 		}
 	}
 
-	m_textRect.top = m_textRect.bottom - textExtent.cy - pixel(4_ut);
+	const int32_t textHeight = twoLines ? textExtent.cy * 2 : textExtent.cy;
+
+	m_textRect.top = m_textRect.bottom - textHeight - pixel(4_ut);
 	if (!m_subText.empty())
 		m_textRect.top -= subTextExtent.cy - pixel(4_ut);
 
@@ -190,24 +278,33 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 	}
 
 	canvas.setForeground(ss->getColor(this, isSelected() ? L"color-selected" : L"color"));
-	canvas.drawText(
-		m_textRect,
-		text,
-		AnCenter,
-		AnTop
-	);
+	if (twoLines)
+	{
+		Rect line1Rect = m_textRect;
+		line1Rect.bottom = line1Rect.top + textExtent.cy;
+		canvas.drawText(line1Rect, line1, AnCenter, AnTop);
+
+		Rect line2Rect = m_textRect;
+		line2Rect.top += textExtent.cy;
+		line2Rect.bottom = line2Rect.top + textExtent.cy;
+		canvas.drawText(line2Rect, line2, AnCenter, AnTop);
+	}
+	else
+	{
+		canvas.drawText(m_textRect, line1, AnCenter, AnTop);
+	}
 
 	if (!m_subText.empty())
 	{
 		const Font originalFont = getWidget()->getFont();
-		
+
 		Font font = originalFont;
 		font.setSize((font.getSize()) * 2_ut / 3_ut);
 		canvas.setFont(font);
 
 		Rect subTextRect = m_textRect;
-		subTextRect.top += textExtent.cy + pixel(2_ut);
-		
+		subTextRect.top += textHeight + pixel(2_ut);
+
 		canvas.setForeground(ss->getColor(this, isSelected() ? L"color-selected" : L"color-subtext"));
 		canvas.drawText(
 			subTextRect,

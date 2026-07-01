@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Spark/Editor/EditorPage.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Math/Format.h"
@@ -20,9 +22,16 @@
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
+#include "I18N/Text.h"
+#include "Render/IRenderSystem.h"
+#include "Render/Resource/ShaderFactory.h"
+#include "Resource/ResourceManager.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Spark/Button.h"
 #include "Spark/ButtonInstance.h"
 #include "Spark/Context.h"
+#include "Spark/Editor/MovieAsset.h"
+#include "Spark/Editor/PreviewControl.h"
 #include "Spark/Frame.h"
 #include "Spark/Movie.h"
 #include "Spark/MoviePlayer.h"
@@ -32,21 +41,13 @@
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 #include "Spark/Swf/SwfTypes.h"
-#include "Spark/Editor/EditorPage.h"
-#include "Spark/Editor/MovieAsset.h"
-#include "Spark/Editor/PreviewControl.h"
-#include "I18N/Text.h"
-#include "Render/IRenderSystem.h"
-#include "Render/Resource/ShaderFactory.h"
-#include "Resource/ResourceManager.h"
-#include "Sound/Player/SoundPlayer.h"
 #include "Ui/Application.h"
-#include "Ui/Container.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/TableLayout.h"
 #include "Ui/AspectLayout.h"
 #include "Ui/CenterLayout.h"
+#include "Ui/Container.h"
 #include "Ui/Splitter.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -54,17 +55,15 @@
 #include "Ui/TreeView/TreeView.h"
 #include "Ui/TreeView/TreeViewItem.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.EditorPage", EditorPage, editor::IEditorPage)
 
 EditorPage::EditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
-:	m_editor(editor)
-,	m_site(site)
-,	m_document(document)
+	: m_editor(editor)
+	, m_site(site)
+	, m_document(document)
 {
 }
 
@@ -193,10 +192,10 @@ void EditorPage::updateTreeCharacter(ui::TreeViewItem* parentItem, CharacterInst
 	characterItem->setImage(0, 0);
 	characterItem->setData(L"CHARACTER", characterInstance);
 
-	//const SwfCxTransform& cxform = characterInstance->getColorTransform();
-	//ss.reset();
-	//ss << L"Color transform: [*] = {" << cxform.red[0] << L", " << cxform.green[0] << L", " << cxform.blue[0] << L", " << cxform.alpha[0] << L"}, [+] = {" << cxform.red[1] << L", " << cxform.green[1] << L", " << cxform.blue[1] << L", " << cxform.alpha[1] << L"}";
-	//m_treeMovie->createItem(characterItem, ss.str());
+	// const SwfCxTransform& cxform = characterInstance->getColorTransform();
+	// ss.reset();
+	// ss << L"Color transform: [*] = {" << cxform.red[0] << L", " << cxform.green[0] << L", " << cxform.blue[0] << L", " << cxform.alpha[0] << L"}, [+] = {" << cxform.red[1] << L", " << cxform.green[1] << L", " << cxform.blue[1] << L", " << cxform.alpha[1] << L"}";
+	// m_treeMovie->createItem(characterItem, ss.str());
 
 	ss.reset();
 	ss << L"Blend mode: ";
@@ -445,5 +444,4 @@ void EditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 	m_previewControl->update();
 }
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,12 +12,10 @@
 #include "Core/Log/Log.h"
 #include "Input/Android/KeyboardDeviceAndroid.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 void displayKeyboard(ANativeActivity* activity, bool pShow)
 {
@@ -120,7 +118,7 @@ int getUnicodeChar(ANativeActivity* activity, int eventType, int keyCode, int me
 	return unicodeKey;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceAndroid", KeyboardDeviceAndroid, IInputDevice)
 
@@ -138,7 +136,7 @@ std::wstring KeyboardDeviceAndroid::getName() const
 
 InputCategory KeyboardDeviceAndroid::getCategory() const
 {
-	return CtKeyboard;
+	return InputCategory::Keyboard;
 }
 
 bool KeyboardDeviceAndroid::isConnected() const
@@ -176,7 +174,7 @@ bool KeyboardDeviceAndroid::getControlRange(int32_t control, float& outMin, floa
 	return false;
 }
 
-bool KeyboardDeviceAndroid::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool KeyboardDeviceAndroid::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	return false;
 }
@@ -237,14 +235,14 @@ void KeyboardDeviceAndroid::handleInput(AInputEvent* event)
 		int32_t meta = AKeyEvent_getMetaState(event);
 		wchar_t ch = getUnicodeChar(ms_activity, AKEY_EVENT_ACTION_DOWN, key, meta);
 
-		ke.type = KtDown;
+		ke.type = KeyEventType::Down;
 		ke.keyCode = key;
 		ke.character = ch;
 		m_keyEvents.push_back(ke);
 
 		if (ch)
 		{
-			ke.type = KtCharacter;
+			ke.type = KeyEventType::Character;
 			ke.keyCode = key;
 			ke.character = ch;
 			m_keyEvents.push_back(ke);
@@ -256,12 +254,11 @@ void KeyboardDeviceAndroid::handleInput(AInputEvent* event)
 		int32_t meta = AKeyEvent_getMetaState(event);
 		wchar_t ch = getUnicodeChar(ms_activity, AKEY_EVENT_ACTION_DOWN, key, meta);
 
-		ke.type = KtUp;
+		ke.type = KeyEventType::Up;
 		ke.keyCode = key;
 		ke.character = ch;
 		m_keyEvents.push_back(ke);
 	}
 }
 
-	}
 }

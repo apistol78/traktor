@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mcp.SkillAsset">
+	<name>create-procedural-texture</name>
+	<description>Generate a tileable texture (color/normal) as TGA, import it, and bind it to a mesh.</description>
+	<whenToUse><![CDATA[Asked for a generated/procedural texture or to re-skin a surface (pebbles, brick, noise).]]></whenToUse>
+	<body><![CDATA[# Generate and apply a procedural texture
+
+Generate a tileable texture "{{name}}" ({{size}}×{{size}} px) in code, import it, and bind it to a mesh.
+
+## Steps
+1. **Generate pixels** — e.g. tileable Voronoi/cellular (pebbles), brick, or noise. For tileability, wrap sample coordinates toroidally (and any seed grid).
+2. **Encode as 24-bit uncompressed TGA**: 18-byte header (`imageType = 2`; width/height little-endian at offsets 12/14; `bpp = 24`; `imageDescriptor = 0x20` for top-left origin), then **BGR** bytes. Base64-encode the buffer.
+3. `import_texture_from_data { path, fileName: "Textures/{{name}}.tga", data: <base64> }` → returns a `TextureAsset` guid.
+4. **Normal maps**: `set_instance_member` `normalMap = true` and `assumeLinearGamma = true`. Colour maps stay sRGB (`assumeLinearGamma = false`, the default).
+5. `build_asset` each texture.
+6. **Apply**: regenerate the target mesh with `maps {diffuse: colourGuid, normal: normalGuid}` (see *create-mesh-from-geometry*) and `build_asset` it. The mesh guid is unchanged, so the scene picks it up without an edit.
+
+## Gotchas
+- **Normal from a height field `h`**: `nx=(h[x-1]-h[x+1])*strength`, `ny=(h[y-1]-h[y+1])*strength`, `nz=1`, normalize, encode `(n*0.5+0.5)*255`. If bumps look inverted, flip Y (or toggle the asset's `inverseNormalMapY`).
+- Keep per-pixel noise small, or it breaks tileability at the seam (the structured pattern tiles; unstructured noise does not).
+]]></body>
+	<engineVersion/>
+	<published>true</published>
+	<parameters>
+		<item type="traktor.mcp.SkillParameter">
+			<name>name</name>
+			<description>Texture name</description>
+			<defaultValue>Texture</defaultValue>
+		</item>
+		<item type="traktor.mcp.SkillParameter">
+			<name>size</name>
+			<description>Texture size in pixels</description>
+			<defaultValue>256</defaultValue>
+		</item>
+	</parameters>
+</object>

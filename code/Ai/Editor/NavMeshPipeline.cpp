@@ -1,19 +1,15 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
-#include <limits>
-#include <Recast.h>
-#include <DetourNavMesh.h>
-#include <DetourNavMeshBuilder.h>
-#include "Ai/NavMeshResource.h"
-#include "Ai/Editor/NavMeshAsset.h"
 #include "Ai/Editor/NavMeshPipeline.h"
+
+#include "Ai/Editor/NavMeshAsset.h"
+#include "Ai/NavMeshResource.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -30,18 +26,24 @@
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/Triangulate.h"
-#include "World/Editor/IEntityReplicator.h"
 #include "Scene/Editor/Traverser.h"
 #include "Terrain/OceanComponentData.h"
-#include "World/EntityData.h"
+#include "World/Editor/IEntityReplicator.h"
 #include "World/Editor/ResolveExternal.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/VolumeComponentData.h"
+#include "World/EntityData.h"
+
+#include <cstring>
+#include <DetourNavMesh.h>
+#include <DetourNavMeshBuilder.h>
+#include <limits>
+#include <Recast.h>
 
 namespace traktor::ai
 {
-	namespace
-	{
+namespace
+{
 
 const float c_oceanThreshold = 0.25f;
 
@@ -62,8 +64,8 @@ struct NavMeshSourceModel
 	NavMeshSourceModel() = default;
 
 	NavMeshSourceModel(const model::Model* model_, const Transform& transform_)
-	:	model(model_)
-	,	transform(transform_)
+		: model(model_)
+		, transform(transform_)
 	{
 	}
 };
@@ -75,7 +77,7 @@ void copyUnaligned3(float out[3], const Vector4& source)
 	out[2] = source.z();
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 13, NavMeshPipeline, editor::DefaultPipeline)
 
@@ -90,7 +92,7 @@ bool NavMeshPipeline::create(const editor::IPipelineSettings* settings, db::Data
 	{
 		Ref< world::IEntityReplicator > entityReplicator = mandatory_non_null_type_cast< world::IEntityReplicator* >(entityReplicatorType->createInstance());
 		if (!entityReplicator->create(settings))
-			return false;	
+			return false;
 
 		auto supportedTypes = entityReplicator->getSupportedTypes();
 		for (auto supportedType : supportedTypes)
@@ -115,8 +117,7 @@ bool NavMeshPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	const NavMeshAsset* asset = mandatory_non_null_type_cast< const NavMeshAsset* >(sourceAsset);
 	pipelineDepends->addDependency(asset->m_source, editor::PdfUse);
@@ -132,8 +133,7 @@ bool NavMeshPipeline::buildOutput(
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
-	uint32_t reason
-) const
+	uint32_t reason) const
 {
 	const NavMeshAsset* asset = mandatory_non_null_type_cast< const NavMeshAsset* >(sourceAsset);
 
@@ -156,20 +156,18 @@ bool NavMeshPipeline::buildOutput(
 
 	sourceData = world::resolveExternal(
 		[&](const Guid& objectId) -> Ref< const ISerializable > {
-			return pipelineBuilder->getObjectReadOnly(objectId);
-		},
+		return pipelineBuilder->getObjectReadOnly(objectId);
+	},
 		sourceData,
 		Guid::null,
-		nullptr
-	);
+		nullptr);
 
 	AlignedVector< NavMeshSourceModel > navModels;
 	Aabb3 navMaximumBounds;
 	float oceanHeight = -std::numeric_limits< float >::max();
 	bool oceanClip = false;
 
-	scene::Traverser::visit(sourceData, [&](const world::EntityData* entityData) -> scene::Traverser::Result
-	{
+	scene::Traverser::visit(sourceData, [&](const world::EntityData* entityData) -> scene::Traverser::Result {
 		// Dynamic layers do not get included in nav.
 		if (!entityData->getState().visible || entityData->getState().dynamic)
 			return scene::Traverser::Result::Skip;
@@ -191,7 +189,7 @@ bool NavMeshPipeline::buildOutput(
 		{
 			oceanHeight = max< float >(oceanHeight, entityData->getTransform().translation().y());
 			oceanClip = true;
-		}			
+		}
 
 		// Check for explicit volume bounds.
 		if (auto volumeComponentData = entityData->getComponent< world::VolumeComponentData >())
@@ -205,8 +203,7 @@ bool NavMeshPipeline::buildOutput(
 			model->apply(model::Triangulate());
 			navModels.push_back(NavMeshSourceModel(
 				model,
-				entityData->getTransform()
-			));
+				entityData->getTransform()));
 		}
 
 		return scene::Traverser::Result::Continue;
@@ -279,7 +276,7 @@ bool NavMeshPipeline::buildOutput(
 	// Allocate array that can hold triangle area types.
 	// If you have multiple meshes you need to process, allocate
 	// and array which can hold the max number of triangles you need to process.
-	AutoArrayPtr< uint8_t > triAreas(new uint8_t [navModelsTriangleCount]);
+	AutoArrayPtr< uint8_t > triAreas(new uint8_t[navModelsTriangleCount]);
 	if (!triAreas.c_ptr())
 	{
 		log::error << L"NavMesh pipeline failed; unable to allocate memory." << Endl;
@@ -297,7 +294,7 @@ bool NavMeshPipeline::buildOutput(
 			int32_t vertexCount = navModel.model->getVertexCount();
 			int32_t triangleCount = navModel.model->getPolygonCount();
 
-			AutoArrayPtr< float > vertices(new float [3 * vertexCount]);
+			AutoArrayPtr< float > vertices(new float[3 * vertexCount]);
 			for (int32_t j = 0; j < vertexCount; ++j)
 			{
 				const Vector4& position = navModel.model->getVertexPosition(j);
@@ -383,8 +380,8 @@ bool NavMeshPipeline::buildOutput(
 	}
 
 	//// (Optional) Mark areas.
-	//const ConvexVolume* vols = m_geom->getConvexVolumes();
-	//for (int i  = 0; i < m_geom->getConvexVolumeCount(); ++i)
+	// const ConvexVolume* vols = m_geom->getConvexVolumes();
+	// for (int i  = 0; i < m_geom->getConvexVolumeCount(); ++i)
 	//	rcMarkConvexPolyArea(ctx, vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, *chf);
 
 	const bool c_monotonePartitioning = false;
@@ -479,10 +476,8 @@ bool NavMeshPipeline::buildOutput(
 	//
 
 	for (int i = 0; i < pmesh->npolys; ++i)
-	{
 		if (pmesh->areas[i] == RC_WALKABLE_AREA)
 			pmesh->flags[i] = 0xffff;
-	}
 
 	dtNavMeshCreateParams params;
 	std::memset(&params, 0, sizeof(params));
@@ -521,8 +516,7 @@ bool NavMeshPipeline::buildOutput(
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
 		outputPath,
-		outputGuid
-	);
+		outputGuid);
 	if (!outputInstance)
 	{
 		log::error << L"NavMesh pipeline failed; unable to create output instance." << Endl;
@@ -571,10 +565,8 @@ bool NavMeshPipeline::buildOutput(
 
 			int32_t nvp = 0;
 			for (; nvp < pmesh->nvp; ++nvp)
-			{
 				if (p[nvp] == RC_MESH_NULL_IDX)
 					break;
-			}
 
 			w << uint8_t(nvp);
 			for (uint32_t j = 0; j < (uint32_t)nvp; ++j)
@@ -605,8 +597,7 @@ bool NavMeshPipeline::buildOutput(
 				pmesh->bmin[0] + pmesh->verts[i * 3 + 0] * pmesh->cs,
 				pmesh->bmin[1] + pmesh->verts[i * 3 + 1] * pmesh->ch,
 				pmesh->bmin[2] + pmesh->verts[i * 3 + 2] * pmesh->cs,
-				1.0f
-			));
+				1.0f));
 			pmeshModel->addVertex(model::Vertex(i));
 		}
 

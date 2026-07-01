@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -43,8 +43,7 @@ public:
 	bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		const UndergrowthComponentData& layerData
-	);
+		const UndergrowthComponentData& layerData);
 
 	virtual void destroy() override final;
 
@@ -56,11 +55,12 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
+	virtual void setup(const world::WorldRenderView& worldRenderView) override final;
+
 	virtual void build(
 		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
-		const world::IWorldRenderPass& worldRenderPass
-	) override final;
+		const world::IWorldRenderPass& worldRenderPass) override final;
 
 	virtual void updatePatches() override final;
 

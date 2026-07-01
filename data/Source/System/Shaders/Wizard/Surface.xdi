@@ -26,6 +26,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{69D2DC0A-88A3-6B47-BFD0-2417B8C08B41}</id>
+					<name>Emissive</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{5E226B83-0061-4026-B5B7-ED42DBF63446}</id>
 					<name>Inherit</name>
 					<optional>true</optional>
@@ -41,6 +46,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{8315F0AB-D0D8-9E46-975D-AF292733C022}</id>
+					<name>Opaque</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{90D3E596-1415-4837-89CF-F3507AAAE050}</id>
 					<name>Roughness</name>
 					<optional>true</optional>
@@ -52,7 +62,7 @@
 				</item>
 				<item>
 					<id>{E17C87D4-085A-409D-9642-1926DBAADBBC}</id>
-					<name>World position offse</name>
+					<name>World position offset</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>

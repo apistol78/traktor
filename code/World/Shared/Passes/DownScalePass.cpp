@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -49,6 +49,11 @@ bool DownScalePass::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
+void DownScalePass::destroy()
+{
+	m_downScaleShader.clear();
+}
+
 render::RGTexture DownScalePass::setup(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
@@ -62,7 +67,7 @@ render::RGTexture DownScalePass::setup(
 		.mipCount = 1,
 		.format = render::TfR16G16B16A16F
 	};
-	const render::RGTexture downScaleTextureId = renderGraph.addTransientTexture(L"DownScale", rgtxd);
+	const render::RGTexture downScaleTextureId = renderGraph.addTransientTexture(L"DownScale", rgtxd, gbufferTargetSetId);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"DownScale");
 	rp->addInput(gbufferTargetSetId);

@@ -841,7 +841,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 				{
 					for (int32_t u = 0; u < size; ++u)
 					{
-						const float height = hf->getGridHeightNearest(u, v);
+						const float height = hf->getGridHeightNearestUnsafe(u, v);
 						*ptr++ = height;
 					}
 				}

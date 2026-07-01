@@ -26,8 +26,8 @@
 #include "Scene/Editor/Events/ModifierChangedEvent.h"
 #include "Scene/Editor/Events/RedrawEvent.h"
 #include "Scene/Editor/IEntityEditor.h"
+#include "Scene/Editor/ISceneEditorUIExtension.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/Modifiers/RotateModifier.h"
 #include "Scene/Editor/Modifiers/TranslateModifier.h"
@@ -123,9 +123,9 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(new ui::ToolBarSeparator());
 	m_toolBarActions->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ScenePreviewControl::eventToolBarActionClicked);
 
-	// Let plugins create additional toolbar items.
-	for (auto editorPlugin : context->getEditorPlugins())
-		editorPlugin->create(this, m_toolBarActions);
+	// Let UI extensions create additional toolbar items.
+	for (auto uiExtension : context->getUIExtensions())
+		uiExtension->create(this, m_toolBarActions);
 
 	m_context = context;
 	m_context->addEventHandler< ModifierChangedEvent >(this, &ScenePreviewControl::eventModifierChanged);
@@ -223,7 +223,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		m_context->setTime(0.0f);
 		m_context->setPlaying(false);
 		m_context->setPhysicsEnable(false);
-		m_context->buildEntities();
+		m_context->buildEntities(false);
 	}
 	else if (command == L"Scene.Editor.Play")
 	{
@@ -234,7 +234,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	{
 		m_context->setPlaying(false);
 		m_context->setPhysicsEnable(false);
-		m_context->buildEntities();
+		m_context->buildEntities(false);
 	}
 	else if (command == L"Scene.Editor.TogglePlay")
 	{
@@ -268,10 +268,10 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	{
 		result = false;
 
-		// Propagate command to plug-ins.
-		for (auto editorPlugin : m_context->getEditorPlugins())
+		// Propagate command to UI extensions.
+		for (auto uiExtension : m_context->getUIExtensions())
 		{
-			result = editorPlugin->handleCommand(command);
+			result = uiExtension->handleCommand(command);
 			if (result)
 				break;
 		}
@@ -298,9 +298,9 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		// Update settings in all entity editors.
 		if (command == L"Editor.SettingsChanged")
 		{
-			for (auto entity : m_context->getEntities(SceneEditorContext::GfDescendants))
+			for (auto entityAdapter : m_context->getEntities(SceneEditorContext::GfDescendants))
 			{
-				const Ref< IEntityEditor > entityEditor = entity->getEntityEditor();
+				const Ref< IEntityEditor > entityEditor = entityAdapter->getEntityEditor();
 				if (entityEditor)
 					entityEditor->handleCommand(command);
 			}
@@ -308,9 +308,9 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		// Propagate command to selected entity editors if render control has focus.
 		else if (!result && containFocus())
 		{
-			for (auto entity : m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
+			for (auto entityAdapter : m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
 			{
-				const Ref< IEntityEditor > entityEditor = entity->getEntityEditor();
+				const Ref< IEntityEditor > entityEditor = entityAdapter->getEntityEditor();
 				if (entityEditor)
 				{
 					result = entityEditor->handleCommand(command);

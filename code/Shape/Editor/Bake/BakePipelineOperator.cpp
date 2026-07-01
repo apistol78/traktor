@@ -689,7 +689,7 @@ bool BakePipelineOperator::build(
 								return nullptr;
 
 							// Prepare model for baking.
-							model->clear(model::Model::CfColors | model::Model::CfJoints);
+							model->clear(model::Model::CfJoints);
 							model->apply(model::Triangulate());
 							model->apply(model::CalculateNormals(false));
 
@@ -833,7 +833,7 @@ bool BakePipelineOperator::build(
 
 							// Create and build a new mesh asset referencing the modified model.
 							Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-							outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+							outputMeshAsset->setMeshType(mesh::MeshAsset::MeshType::Static);
 							if (meshAsset)
 							{
 								outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());

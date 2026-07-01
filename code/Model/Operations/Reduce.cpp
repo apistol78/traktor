@@ -112,14 +112,13 @@ Vector4 triangleTipPoint(const Model& model, const ModelAdjacency& adjacency, ui
 	const Vector4 normal = triangleNormal(model, triangleId);
 	const Vector4 midPoint = triangleMidPoint(model, triangleId);
 
-	ModelAdjacency::share_vector_t sharedEdges;
 	Vector4 tipPoint = Vector4::zero();
 	int32_t count = 0;
 
 	for (uint32_t j = 0; j < 3; ++j)
 	{
-		sharedEdges = adjacency.getSharedEdges(triangleId, j);
-		if (sharedEdges.size() > 0)
+		const auto sharedEdges = adjacency.getSharedEdges(triangleId, j);
+		if (sharedEdges.count > 0)
 		{
 			const uint32_t sharedTriangleId = adjacency.getPolygon(sharedEdges[0]);
 
@@ -163,11 +162,10 @@ void triangleEdgeNeighbors(const Model& model, const ModelAdjacency& adjacency, 
 		return;
 
 	// Get edge neighbors.
-	ModelAdjacency::share_vector_t sharedEdges;
 	for (uint32_t j = 0; j < 3; ++j)
 	{
-		sharedEdges = adjacency.getSharedEdges(triangleId, j);
-		if (sharedEdges.size() > 0)
+		const auto sharedEdges = adjacency.getSharedEdges(triangleId, j);
+		if (sharedEdges.count > 0)
 		{
 			const uint32_t sharedTriangleId = adjacency.getPolygon(sharedEdges[0]);
 			outNeighborTriangleIds.push_back(sharedTriangleId);
@@ -238,11 +236,10 @@ float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, u
 	);
 
 	// Accumulate volume errors of edge sharing triangles.
-	ModelAdjacency::share_vector_t sharedEdges;
 	for (uint32_t j = 0; j < 3; ++j)
 	{
-		sharedEdges = adjacency.getSharedEdges(triangleId, j);
-		if (sharedEdges.size() > 0)
+		const auto sharedEdges = adjacency.getSharedEdges(triangleId, j);
+		if (sharedEdges.count > 0)
 		{
 			const uint32_t sharedTriangleId = adjacency.getPolygon(sharedEdges[0]);
 			const Polygon& sharedTriangle = model.getPolygon(sharedTriangleId);

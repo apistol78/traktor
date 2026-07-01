@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,8 +34,8 @@ class T_DLLCLASS Cloth : public ISerializable
 public:
 	struct Node
 	{
-		Vector4 position;
-		Vector2 texCoord;
+		Vector4 position = Vector4::zero();
+		Vector2 texCoord = Vector2::zero();
 		float invMass = 0.0f;
 		int32_t east = -1;
 		int32_t north = -1;

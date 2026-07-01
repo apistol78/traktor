@@ -39,6 +39,8 @@
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/EdgeConnectEvent.h"
 #include "Ui/Graph/EdgeDisconnectEvent.h"
+#include "Ui/Graph/AlignNodesLayoutOperation.h"
+#include "Ui/Graph/EvenSpaceLayoutOperation.h"
 #include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/NodeMovedEvent.h"
@@ -417,42 +419,48 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"StateGraph.Editor.AlignLeft")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::GraphControl::AnLeft);
+		const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnLeft);
+		m_editorGraph->apply(&op);
 	}
 	else if (command == L"StateGraph.Editor.AlignRight")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::GraphControl::AnRight);
+		const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnRight);
+		m_editorGraph->apply(&op);
 	}
 	else if (command == L"StateGraph.Editor.AlignTop")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::GraphControl::AnTop);
+		const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnTop);
+		m_editorGraph->apply(&op);
 	}
 	else if (command == L"StateGraph.Editor.AlignBottom")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::GraphControl::AnBottom);
+		const ui::AlignNodesLayoutOperation op(ui::AlignNodesLayoutOperation::AnBottom);
+		m_editorGraph->apply(&op);
 	}
 	else if (command == L"StateGraph.Editor.EvenSpaceVertically")
 	{
 		m_document->push();
-		m_editorGraph->evenSpace(ui::GraphControl::EsVertically);
+		const ui::EvenSpaceLayoutOperation op(ui::EvenSpaceLayoutOperation::EsVertically);
+		m_editorGraph->apply(&op);
 	}
 	else if (command == L"StateGraph.Editor.EventSpaceHorizontally")
 	{
 		m_document->push();
-		m_editorGraph->evenSpace(ui::GraphControl::EsHorizontally);
+		const ui::EvenSpaceLayoutOperation op(ui::EvenSpaceLayoutOperation::EsHorizontally);
+		m_editorGraph->apply(&op);
 	}
 	else if (command == L"StateGraph.Editor.BrowseMesh")
 	{
-		Ref< db::Instance > meshInstance = m_editor->browseInstance(type_of< mesh::MeshAsset >());
+		Ref< db::Instance > meshInstance = m_editor->browseInstance(type_of< mesh::MeshAsset >(), m_document->getInstance(0)->getParent());
 		if (meshInstance)
 			m_previewControl->setMesh(resource::Id< mesh::SkinnedMesh >(meshInstance->getGuid()));
 	}
 	else if (command == L"StateGraph.Editor.BrowseSkeleton")
 	{
-		Ref< db::Instance > skeletonInstance = m_editor->browseInstance(type_of< animation::SkeletonAsset >());
+		Ref< db::Instance > skeletonInstance = m_editor->browseInstance(type_of< animation::SkeletonAsset >(), m_document->getInstance(0)->getParent());
 		if (skeletonInstance)
 			m_previewControl->setSkeleton(resource::Id< Skeleton >(skeletonInstance->getGuid()));
 	}

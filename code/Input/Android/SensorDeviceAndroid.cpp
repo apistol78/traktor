@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,29 +12,27 @@
 #include "Core/Math/MathUtils.h"
 #include "Input/Android/SensorDeviceAndroid.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 const struct SensorControlMap
 {
 	const wchar_t* name;
-	InputDefaultControlType controlType;
+	DefaultControl controlType;
 	bool analogue;
 	bool stable;
 	int32_t index;
 }
 c_sensorControlMap[] =
 {
-	{ L"X axis", DtAxisX, true, false, 0 },
-	{ L"Y axis", DtAxisY, true, false, 1 },
-	{ L"Z axis", DtAxisZ, true, false, 2 }
+	{ L"X axis", DefaultControl::AxisX, true, false, 0 },
+	{ L"Y axis", DefaultControl::AxisY, true, false, 1 },
+	{ L"Z axis", DefaultControl::AxisZ, true, false, 2 }
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.SensorDeviceAndroid", SensorDeviceAndroid, IInputDevice)
 
@@ -90,7 +88,7 @@ bool SensorDeviceAndroid::getControlRange(int32_t control, float& outMin, float&
 	return false;
 }
 
-bool SensorDeviceAndroid::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool SensorDeviceAndroid::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	for (uint32_t i = 0; i < sizeof_array(c_sensorControlMap); ++i)
 	{
@@ -135,13 +133,13 @@ void SensorDeviceAndroid::setExclusive(bool exclusive)
 
 void SensorDeviceAndroid::handleInput(const ASensorEvent& data)
 {
-	if (m_category == CtAcceleration && data.type == ASENSOR_TYPE_ACCELEROMETER)
+	if (m_category == InputCategory::Acceleration && data.type == ASENSOR_TYPE_ACCELEROMETER)
 	{
 		m_values[0] = data.acceleration.x;
 		m_values[1] = data.acceleration.y;
 		m_values[2] = data.acceleration.z;
 	}
-	else if (m_category == CtOrientation && data.type == ASENSOR_TYPE_GYROSCOPE)
+	else if (m_category == InputCategory::Orientation && data.type == ASENSOR_TYPE_GYROSCOPE)
 	{
 		m_values[0] = data.magnetic.x;
 		m_values[1] = data.magnetic.y;
@@ -149,5 +147,4 @@ void SensorDeviceAndroid::handleInput(const ASensorEvent& data)
 	}
 }
 
-	}
 }

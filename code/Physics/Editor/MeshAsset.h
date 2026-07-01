@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,6 +29,13 @@ class T_DLLCLASS MeshAsset : public editor::Asset
 	T_RTTI_CLASS;
 
 public:
+	enum class CenterMode
+	{
+		None = 0,
+		XZ = 1,
+		XYZ = 2
+	};
+
 	virtual void serialize(ISerializer& s) override final;
 
 	void setImportFilter(const std::wstring& importFilter) { m_importFilter = importFilter; }
@@ -56,10 +63,10 @@ public:
 	float getReduce() const { return m_reduce; }
 	
 	/*! Set if model should be centered around origo before converted. */
-	void setCenter(bool center) { m_center = center; }
+	void setCenter(CenterMode center) { m_center = center; }
 
 	/*! Check if model should be centered around origo. */
-	bool getCenter() const { return m_center; }
+	CenterMode getCenter() const { return m_center; }
 
 	/*! */
 	void setGrounded(bool grounded) { m_grounded = grounded; }
@@ -79,7 +86,7 @@ private:
 	float m_margin = 0.04f;
 	Vector4 m_scaleFactor = Vector4::one();
 	float m_reduce = 1.0f;
-	bool m_center = false;
+	CenterMode m_center = CenterMode::None;
 	bool m_grounded = false;
 	SmallMap< std::wstring, Guid > m_materials;	//!< References to Material instances.
 };

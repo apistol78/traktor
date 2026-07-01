@@ -177,7 +177,7 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 
 	// Create a mesh asset; used by bake pipeline to set appropriate materials.
 	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+	outputMeshAsset->setMeshType(mesh::MeshAsset::MeshType::Static);
 	outputMeshAsset->setMaterialShaders(materialShaders);
 	outputModel->setProperty< PropertyObject >(type_name(outputMeshAsset), outputMeshAsset);
 

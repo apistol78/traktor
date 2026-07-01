@@ -153,7 +153,7 @@ HlslVariable* HlslContext::emitInput(const InputPin* inputPin)
 			// Format chain to properly indicate source of error.
 			StringOutputStream ss;
 			for (std::list< Scope >::const_reverse_iterator i = m_emitScope.rbegin(); i != m_emitScope.rend(); ++i)
-				ss << getClassNameOnly(i->outputPin->getNode()) << L"[" << i->outputPin->getName() << L"] <-- [" << i->inputPin->getName() << L"]";
+				ss << getClassNameOnly(i->outputPin->getNode()) << L"[" << i->outputPin->getName() << L"] -> [" << i->inputPin->getName() << L"]";
 			ss << getClassNameOnly(m_emitScope.front().inputPin->getNode());
 			m_error = ss.str();
 		}

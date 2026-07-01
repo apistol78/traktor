@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,30 +12,28 @@
 #include "Core/Math/MathUtils.h"
 #include "Input/Android/MouseDeviceAndroid.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 const struct MouseControlMap
 {
 	const wchar_t* name;
-	InputDefaultControlType controlType;
+	DefaultControl controlType;
 	bool analogue;
 	bool stable;
 }
 c_mouseControlMap[] =
 {
-	{ L"Mouse button", DtButton1, false, true },
-	{ L"Mouse X axis", DtAxisX, true, true },
-	{ L"Mouse Y axis", DtAxisY, true, true },
-	{ L"Mouse X axis", DtPositionX, true, false },
-	{ L"Mouse Y axis", DtPositionY, true, false }
+	{ L"Mouse button", DefaultControl::Button1, false, true },
+	{ L"Mouse X axis", DefaultControl::AxisX, true, true },
+	{ L"Mouse Y axis", DefaultControl::AxisY, true, true },
+	{ L"Mouse X axis", DefaultControl::PositionX, true, false },
+	{ L"Mouse Y axis", DefaultControl::PositionY, true, false }
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceAndroid", MouseDeviceAndroid, IInputDevice)
 
@@ -57,7 +55,7 @@ std::wstring MouseDeviceAndroid::getName() const
 
 InputCategory MouseDeviceAndroid::getCategory() const
 {
-	return CtMouse;
+	return InputCategory::Mouse;
 }
 
 bool MouseDeviceAndroid::isConnected() const
@@ -88,15 +86,15 @@ bool MouseDeviceAndroid::isControlStable(int32_t control) const
 float MouseDeviceAndroid::getControlValue(int32_t control)
 {
 	const MouseControlMap& mc = c_mouseControlMap[control];
-	if (mc.controlType == DtAxisX)
+	if (mc.controlType == DefaultControl::AxisX)
 		return m_axisX;
-	else if (mc.controlType == DtAxisY)
+	else if (mc.controlType == DefaultControl::AxisY)
 		return m_axisY;
-	else if (mc.controlType == DtPositionX)
+	else if (mc.controlType == DefaultControl::PositionX)
 		return m_positionX;
-	else if (mc.controlType == DtPositionY)
+	else if (mc.controlType == DefaultControl::PositionY)
 		return m_positionY;
-	else if (mc.controlType == DtButton1)
+	else if (mc.controlType == DefaultControl::Button1)
 		return m_button ? 1.0f : 0.0f;
 	else
 		return 0.0f;
@@ -105,13 +103,13 @@ float MouseDeviceAndroid::getControlValue(int32_t control)
 bool MouseDeviceAndroid::getControlRange(int32_t control, float& outMin, float& outMax) const
 {
 	const MouseControlMap& mc = c_mouseControlMap[control];
-	if (mc.controlType == DtPositionX)
+	if (mc.controlType == DefaultControl::PositionX)
 	{
 		outMin = 0.0f;
 		outMax = ANativeWindow_getWidth(*m_syswim.window);
 		return true;
 	}
-	else if (mc.controlType == DtPositionY)
+	else if (mc.controlType == DefaultControl::PositionY)
 	{
 		outMin = 0.0f;
 		outMax = ANativeWindow_getHeight(*m_syswim.window);
@@ -121,7 +119,7 @@ bool MouseDeviceAndroid::getControlRange(int32_t control, float& outMin, float& 
 		return false;
 }
 
-bool MouseDeviceAndroid::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool MouseDeviceAndroid::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	for (uint32_t i = 0; i < sizeof_array(c_mouseControlMap); ++i)
 	{
@@ -199,5 +197,4 @@ void MouseDeviceAndroid::handleInput(AInputEvent* event)
 	m_positionY = positionY;
 }
 
-	}
 }

@@ -89,7 +89,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BvhDocument", BvhDocument, Object)
 Ref< BvhDocument > BvhDocument::parse(IStream* stream)
 {
 	BufferedStream bs(stream);
-	StringReader sr(&bs, new AnsiEncoding());
+	StringReader sr(&bs, AnsiEncoding::getInstance());
 	std::wstring str;
 
 	if (sr.readLine(str) <= 0 || str != L"HIERARCHY")

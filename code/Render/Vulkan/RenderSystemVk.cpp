@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -43,12 +43,17 @@
 
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/Window.h"
+#	define HAVE_VULKAN_XESS_PLUGIN
 #elif defined(__LINUX__) || defined(__RPI__)
 #	include "Render/Vulkan/Linux/Window.h"
 #elif defined(__ANDROID__)
 #	include "Core/System/Android/DelegateInstance.h"
 #elif defined(__IOS__)
 #	include "Render/Vulkan/iOS/Utilities.h"
+#endif
+
+#if defined(HAVE_VULKAN_XESS_PLUGIN)
+#	include "Render/Vulkan/XeSS/RenderPluginXeSS.h"
 #endif
 
 // https://github.com/WilliamLewww/vulkan_ray_tracing_minimal_abstraction/blob/master/headless/src/main.cpp
@@ -60,9 +65,9 @@ namespace
 
 const char* c_validationLayerNames[] = { "VK_LAYER_KHRONOS_validation", nullptr };
 #if defined(_WIN32)
-const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2", "VK_EXT_swapchain_colorspace" };
 #elif defined(__LINUX__) || defined(__RPI__)
-const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_KHR_wayland_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2", "VK_EXT_swapchain_colorspace" };
 #elif defined(__ANDROID__)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_android_surface" };
 #elif defined(__MAC__)
@@ -73,6 +78,13 @@ const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils", "VK_KHR_g
 
 #if defined(__ANDROID__) || defined(__RPI__)
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
+const char* c_deviceExtensionsRayTracing[] = {
+	// Ray tracing
+	"VK_KHR_deferred_host_operations",
+	"VK_KHR_ray_tracing_pipeline",
+	"VK_KHR_acceleration_structure",
+	"VK_KHR_ray_query"
+};
 #else
 const char* c_deviceExtensions[] = {
 	"VK_KHR_swapchain",
@@ -84,7 +96,7 @@ const char* c_deviceExtensions[] = {
 	"VK_EXT_shader_subgroup_ballot",
 	"VK_EXT_memory_budget",
 	"VK_EXT_descriptor_indexing",
-	"VK_KHR_buffer_device_address",
+	"VK_KHR_buffer_device_address"
 };
 const char* c_deviceExtensionsRayTracing[] = {
 	// Ray tracing
@@ -201,6 +213,15 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 			log::warning << L"No validation layers found; validation disabled." << Endl;
 	}
 
+	// Get extensions.
+	AlignedVector< const char* > extensions;
+	for (int32_t i = 0; i < sizeof_array(c_extensions); ++i)
+		extensions.push_back(c_extensions[i]);
+
+#if defined(HAVE_VULKAN_XESS_PLUGIN)
+	RenderPluginXeSS::getExtensions(extensions);
+#endif
+
 	// Create Vulkan instance.
 	const VkApplicationInfo applicationInfo = {
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -216,8 +237,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.pApplicationInfo = &applicationInfo,
 		.enabledLayerCount = (uint32_t)validationLayers.size(),
 		.ppEnabledLayerNames = validationLayers.c_ptr(),
-		.enabledExtensionCount = sizeof_array(c_extensions),
-		.ppEnabledExtensionNames = c_extensions
+		.enabledExtensionCount = (uint32_t)extensions.size(),
+		.ppEnabledExtensionNames = extensions.c_ptr()
 	};
 
 	if ((result = vkCreateInstance(&instanceCreateInfo, 0, &m_instance)) != VK_SUCCESS)
@@ -307,11 +328,22 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-	// Select compute queue.
+	// Select compute queue. Prefer a dedicated (asynchronous) compute family, i.e. one
+	// that supports compute but not graphics, so asynchronous compute runs on a separate
+	// queue.
+	//
+	// NOTE (proof of concept): the synchronization point is currently within the same
+	// frame, so there is no real graphics/compute overlap, and asynchronously written /
+	// graphics read resources (skinned vertex buffers, dynamic BLAS) are not yet buffered
+	// to the in-flight count, so the dynamic BLAS in-place update may race the previous
+	// frame's ray query reads and show as visual corruption. Buffers are created with
+	// concurrent sharing (see ApiBuffer) so no queue family ownership transfer is needed.
 	uint32_t computeQueueIndex = ~0;
 	for (uint32_t i = 0; i < queueFamilyCount; ++i)
 	{
-		if ((queueFamilyProperties[i].queueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT)) == VK_QUEUE_COMPUTE_BIT)
+		const VkQueueFlags queueFlags = queueFamilyProperties[i].queueFlags;
+		if ((queueFlags & VK_QUEUE_COMPUTE_BIT) == VK_QUEUE_COMPUTE_BIT &&
+			(queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0)
 		{
 			computeQueueIndex = i;
 			break;
@@ -319,11 +351,28 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 	if (computeQueueIndex == ~0)
 	{
-		log::error << L"Failed to create Vulkan; no suitable compute queue found." << Endl;
-		return false;
+		// No dedicated compute family; fall back to the first compute capable family
+		// (typically the graphics family, since graphics must support compute).
+		for (uint32_t i = 0; i < queueFamilyCount; ++i)
+		{
+			if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) == VK_QUEUE_COMPUTE_BIT)
+			{
+				computeQueueIndex = i;
+				break;
+			}
+		}
 	}
+	if (computeQueueIndex == ~0)
+		computeQueueIndex = graphicsQueueIndex;
 
 	log::info << L"Using graphics queue " << graphicsQueueIndex << L", compute queue " << computeQueueIndex << L"." << Endl;
+
+	// Get available extensions from the physical device.
+	uint32_t availableExtensionCount = 0;
+	vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &availableExtensionCount, nullptr);
+
+	AlignedVector< VkExtensionProperties > availableExtensions(availableExtensionCount);
+	vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &availableExtensionCount, availableExtensions.ptr());
 
 	// Build array of required extensions.
 	AlignedVector< const char* > deviceExtensions;
@@ -333,55 +382,77 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		for (int32_t i = 0; i < sizeof_array(c_deviceExtensionsRayTracing); ++i)
 			deviceExtensions.push_back(c_deviceExtensionsRayTracing[i]);
 
+#if defined(HAVE_VULKAN_XESS_PLUGIN)
+	// Get required extensions for plugins.
+	AlignedVector< const char* > pluginDeviceExtensions;
+	RenderPluginXeSS::getDeviceExtensions(m_instance, m_physicalDevice, pluginDeviceExtensions);
+
+	// Check if all plugin extensions are supported; if so merge into requested extensions and enable plugin.
+	bool pluginSupported = true;
+	for (const char* pluginDeviceExtension : pluginDeviceExtensions)
+	{
+		const auto it = std::find_if(availableExtensions.begin(), availableExtensions.end(), [&](const VkExtensionProperties& ext){
+			return std::strcmp(pluginDeviceExtension, ext.extensionName) == 0;
+			});
+		if (it == availableExtensions.end())
+		{
+			log::debug << L"Plugin \"RenderPluginXeSS\" require \"" << mbstows(pluginDeviceExtension) << L"\" but is not supported on device; plugin disabled." << Endl;
+			pluginSupported = false;
+			break;
+		}
+	}
+
+	// Merge plugin extensions into required extensions.
+	if (pluginSupported)
+	{
+		deviceExtensions.insert(deviceExtensions.end(), pluginDeviceExtensions.begin(), pluginDeviceExtensions.end());
+		m_enabledPlugins.insert(&type_of< RenderPluginXeSS >());
+	}
+#endif
+
+	if (desc.aftermath)
+		deviceExtensions.push_back(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME);
+
+	// Check if smooth line rasterization is supported.
+	bool smoothLinesSupported = false;
+	{
+		const auto it = std::find_if(availableExtensions.begin(), availableExtensions.end(), [](const VkExtensionProperties& ext) {
+			return std::strcmp(VK_KHR_LINE_RASTERIZATION_EXTENSION_NAME, ext.extensionName) == 0;
+		});
+		if (it != availableExtensions.end())
+		{
+			VkPhysicalDeviceLineRasterizationFeaturesKHR queryLineFeatures = {
+				.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR,
+				.pNext = nullptr
+			};
+			VkPhysicalDeviceFeatures2 queryFeatures2 = {
+				.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
+				.pNext = &queryLineFeatures
+			};
+			vkGetPhysicalDeviceFeatures2(m_physicalDevice, &queryFeatures2);
+			if (queryLineFeatures.smoothLines == VK_TRUE)
+			{
+				deviceExtensions.push_back(VK_KHR_LINE_RASTERIZATION_EXTENSION_NAME);
+				smoothLinesSupported = true;
+			}
+		}
+	}
+
 	// Create logical device.
 	const VkPhysicalDeviceFeatures features = {
 		.sampleRateShading = VK_TRUE,
 		.multiDrawIndirect = VK_TRUE,
 		.samplerAnisotropy = VK_TRUE,
+		.shaderStorageImageWriteWithoutFormat = VK_TRUE,
 		.shaderClipDistance = VK_TRUE
 	};
 
 	const void* headFeature = nullptr;
 
 #if !defined(__ANDROID__) && !defined(__RPI__)
-	const VkPhysicalDevice8BitStorageFeaturesKHR features8bitStorage = {
-		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR,
-		.pNext = nullptr,
-		.storageBuffer8BitAccess = VK_FALSE,
-		.uniformAndStorageBuffer8BitAccess = VK_TRUE,
-		.storagePushConstant8 = VK_FALSE
-	};
-
-	const VkPhysicalDeviceFloat16Int8FeaturesKHR features16bitFloat = {
-		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR,
-		.pNext = (void*)&features8bitStorage,
-		.shaderFloat16 = VK_FALSE,
-		.shaderInt8 = VK_TRUE
-	};
-
-	// Bindless textures.
-	const VkPhysicalDeviceDescriptorIndexingFeatures featuresDescriptorIndexing = {
-		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES,
-		.pNext = (void*)&features16bitFloat,
-		.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE,
-		.descriptorBindingStorageImageUpdateAfterBind = VK_TRUE,
-		.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE,
-		.descriptorBindingPartiallyBound = VK_TRUE,
-		.descriptorBindingVariableDescriptorCount = VK_TRUE,
-		.runtimeDescriptorArray = VK_TRUE
-	};
-
-	const VkPhysicalDeviceBufferDeviceAddressFeatures featuresBufferDeviceAddress{
-		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
-		.pNext = (void*)&featuresDescriptorIndexing,
-		.bufferDeviceAddress = VK_TRUE,
-		.bufferDeviceAddressCaptureReplay = VK_FALSE,
-		.bufferDeviceAddressMultiDevice = VK_FALSE
-	};
-
 	const VkPhysicalDeviceVulkan11Features featuresVulkan1_1 = {
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
-		.pNext = (void*)&featuresBufferDeviceAddress,
+		.pNext = nullptr,
 		.storageBuffer16BitAccess = VK_TRUE,
 		.uniformAndStorageBuffer16BitAccess = VK_TRUE,
 		.storagePushConstant16 = VK_FALSE,
@@ -396,41 +467,91 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.shaderDrawParameters = VK_TRUE
 	};
 
-	headFeature = &featuresVulkan1_1;
+	const VkPhysicalDeviceVulkan12Features featuresVulkan1_2 = {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
+		.pNext = (void*)&featuresVulkan1_1,
+		.storageBuffer8BitAccess = VK_FALSE,
+		.uniformAndStorageBuffer8BitAccess = VK_TRUE,
+		.storagePushConstant8 = VK_FALSE,
+		.shaderFloat16 = VK_TRUE,
+		.shaderInt8 = VK_TRUE,
+		.descriptorIndexing = VK_TRUE,
+		.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE,
+		.descriptorBindingStorageImageUpdateAfterBind = VK_TRUE,
+		.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE,
+		.descriptorBindingUpdateUnusedWhilePending = VK_TRUE,
+		.descriptorBindingPartiallyBound = VK_TRUE,
+		.descriptorBindingVariableDescriptorCount = VK_TRUE,
+		.runtimeDescriptorArray = VK_TRUE,
+		.timelineSemaphore = VK_TRUE,
+		.bufferDeviceAddress = VK_TRUE,
+		.bufferDeviceAddressCaptureReplay = VK_FALSE,
+		.bufferDeviceAddressMultiDevice = VK_FALSE
+	};
+
+	headFeature = &featuresVulkan1_2;
+
+	const VkPhysicalDeviceAccelerationStructureFeaturesKHR featuresAccelerationStructure = {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR,
+		.pNext = (void*)headFeature,
+		.accelerationStructure = VK_TRUE,
+		.accelerationStructureCaptureReplay = VK_FALSE,
+		.accelerationStructureIndirectBuild = VK_FALSE,
+		.accelerationStructureHostCommands = VK_FALSE,
+		.descriptorBindingAccelerationStructureUpdateAfterBind = VK_FALSE
+	};
+
+	const VkPhysicalDeviceRayQueryFeaturesKHR featuresRayQuery = {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR,
+		.pNext = (void*)&featuresAccelerationStructure,
+		.rayQuery = VK_TRUE
+	};
 
 	if (desc.rayTracing)
-	{
-		static const VkPhysicalDeviceAccelerationStructureFeaturesKHR featuresAccelerationStructure = {
-			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR,
-			.pNext = (void*)&featuresVulkan1_1,
-			.accelerationStructure = VK_TRUE,
-			.accelerationStructureCaptureReplay = VK_FALSE,
-			.accelerationStructureIndirectBuild = VK_FALSE,
-			.accelerationStructureHostCommands = VK_FALSE,
-			.descriptorBindingAccelerationStructureUpdateAfterBind = VK_FALSE
-		};
-
-		// static const VkPhysicalDeviceRayTracingPipelineFeaturesKHR featuresRayTracingPipeline =
-		//{
-		//	.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
-		//	.pNext = (void*)&featuresAccelerationStructure,
-		//	.rayTracingPipeline = VK_TRUE,
-		//	.rayTracingPipelineShaderGroupHandleCaptureReplay = VK_FALSE,
-		//	.rayTracingPipelineShaderGroupHandleCaptureReplayMixed = VK_FALSE,
-		//	.rayTracingPipelineTraceRaysIndirect = VK_FALSE,
-		//	.rayTraversalPrimitiveCulling = VK_FALSE
-		// };
-
-		static const VkPhysicalDeviceRayQueryFeaturesKHR featuresRayQuery = {
-			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR,
-			//.pNext = (void*)&featuresRayTracingPipeline,
-			.pNext = (void*)&featuresAccelerationStructure,
-			.rayQuery = VK_TRUE
-		};
-
 		headFeature = &featuresRayQuery;
-	}
 #endif
+
+	const VkPhysicalDeviceShaderIntegerDotProductFeaturesKHR deviceShaderIntegerDotProduct = {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES_KHR,
+		.pNext = (void*)headFeature,
+		.shaderIntegerDotProduct = VK_TRUE
+	};
+
+	headFeature = &deviceShaderIntegerDotProduct;
+
+	const VkPhysicalDeviceMutableDescriptorTypeFeaturesEXT mutableDescriptorType = {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MUTABLE_DESCRIPTOR_TYPE_FEATURES_EXT,
+		.pNext = (void*)headFeature,
+		.mutableDescriptorType = VK_TRUE
+	};
+
+	headFeature = &mutableDescriptorType;
+
+	const VkPhysicalDeviceLineRasterizationFeaturesKHR lineRasterizationFeatures = {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR,
+		.pNext = (void*)headFeature,
+		.smoothLines = VK_TRUE
+	};
+
+	if (smoothLinesSupported)
+		headFeature = &lineRasterizationFeatures;
+
+	if (desc.aftermath)
+	{
+		const VkDeviceDiagnosticsConfigFlagsNV aftermathFlags =
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_AUTOMATIC_CHECKPOINTS_BIT_NV | // Enable automatic call stack checkpoints.
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_RESOURCE_TRACKING_BIT_NV |	   // Enable tracking of resources.
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_DEBUG_INFO_BIT_NV |	   // Generate debug information for shaders.
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_ERROR_REPORTING_BIT_NV; // Enable additional runtime shader error reporting.
+
+		static const VkDeviceDiagnosticsConfigCreateInfoNV aftermathInfo = {
+			.sType = VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV,
+			.pNext = (void*)headFeature,
+			.flags = aftermathFlags
+		};
+
+		headFeature = &aftermathInfo;
+	}
 
 	const float queuePriorities[] = { 1.0f, 1.0f };
 
@@ -491,10 +612,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	VmaAllocatorCreateInfo aci = {};
 #if !defined(__RPI__) && !defined(__ANDROID__) && !defined(__IOS__)
-	// \note Disabled for now, not clear if we need it and until we do let's leave it disabled.
 	// if (memoryAllocatorFunctions.vkGetBufferMemoryRequirements2KHR != nullptr && memoryAllocatorFunctions.vkGetImageMemoryRequirements2KHR != nullptr)
-	//	aci.vulkanApiVersion = VK_API_VERSION_1_2;
-
+	// 	aci.vulkanApiVersion = VK_API_VERSION_1_2;
 	aci.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT | VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
 #endif
 	aci.physicalDevice = m_physicalDevice;
@@ -511,11 +630,14 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 	m_context = new Context(
+		m_instance,
 		m_physicalDevice,
 		m_logicalDevice,
 		m_allocator,
 		graphicsQueueIndex,
-		computeQueueIndex);
+		computeQueueIndex,
+		desc.rayTracing,
+		smoothLinesSupported);
 	if (!m_context->create())
 	{
 		log::error << L"Failed to create Vulkan; failed to create context." << Endl;
@@ -537,6 +659,30 @@ void RenderSystemVk::destroy()
 	m_shaderModuleCache = nullptr;
 	m_pipelineLayoutCache = nullptr;
 	m_context = nullptr;
+
+	if (m_allocator != 0)
+	{
+		vmaDestroyAllocator(m_allocator);
+		m_allocator = 0;
+	}
+#if !defined(__ANDROID__)
+	if (m_debugMessenger != 0)
+	{
+		vkDestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
+		m_debugMessenger = 0;
+	}
+#endif
+	if (m_logicalDevice != 0)
+	{
+		vkDestroyDevice(m_logicalDevice, nullptr);
+		m_logicalDevice = 0;
+	}
+	if (m_instance != 0)
+	{
+		vkDestroyInstance(m_instance, nullptr);
+		m_instance = 0;
+	}
+
 	finalizeVulkanApi();
 }
 
@@ -632,7 +778,7 @@ DisplayMode RenderSystemVk::getCurrentDisplayMode(uint32_t display) const
 	dm.width = dmgl.dmPelsWidth;
 	dm.height = dmgl.dmPelsHeight;
 	dm.dpi = 96;
-	dm.refreshRate = dmgl.dmDisplayFrequency;
+	dm.refreshRate = (float)dmgl.dmDisplayFrequency;
 	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
 #elif defined(__LINUX__) || defined(__RPI__)
 	const int screen = DefaultScreen(m_display);
@@ -667,9 +813,7 @@ float RenderSystemVk::getDisplayAspectRatio(uint32_t display) const
 
 Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc& desc)
 {
-	Ref< RenderViewVk > renderView = new RenderViewVk(
-		m_context,
-		m_instance);
+	Ref< RenderViewVk > renderView = new RenderViewVk(m_context);
 	if (renderView->create(desc))
 		return renderView;
 	else
@@ -678,16 +822,14 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 
 Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
-	Ref< RenderViewVk > renderView = new RenderViewVk(
-		m_context,
-		m_instance);
+	Ref< RenderViewVk > renderView = new RenderViewVk(m_context);
 	if (renderView->create(desc))
 		return renderView;
 	else
 		return nullptr;
 }
 
-Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic)
+Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic, const wchar_t* const tag)
 {
 	uint32_t usageBits = 0;
 	if ((usage & BuVertex) != 0)
@@ -793,15 +935,15 @@ Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTarget
 Ref< IAccelerationStructure > RenderSystemVk::createTopLevelAccelerationStructure(uint32_t numInstances)
 {
 	if (m_rayTracing)
-		return AccelerationStructureVk::createTopLevel(m_context, numInstances, 3 * 4);
+		return AccelerationStructureVk::createTopLevel(m_context, numInstances, 4);
 	else
 		return nullptr;
 }
 
-Ref< IAccelerationStructure > RenderSystemVk::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives, bool dynamic)
+Ref< IAccelerationStructure > RenderSystemVk::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic)
 {
 	if (m_rayTracing)
-		return AccelerationStructureVk::createBottomLevel(m_context, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, dynamic);
+		return AccelerationStructureVk::createBottomLevel(m_context, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, dynamic, 4);
 	else
 		return nullptr;
 }
@@ -845,6 +987,19 @@ void RenderSystemVk::getStatistics(RenderSystemStatistics& outStatistics) const
 void* RenderSystemVk::getInternalHandle() const
 {
 	return (*((void**)(m_instance)));
+}
+
+Ref< IRenderPlugin > RenderSystemVk::createPlugin(const TypeInfo& pluginType)
+{
+	if (m_enabledPlugins.find(&pluginType) == m_enabledPlugins.end())
+		return nullptr;
+
+#if defined(HAVE_VULKAN_XESS_PLUGIN)
+	if (&pluginType == &type_of< RenderPluginXeSS >())
+		return new RenderPluginXeSS();
+#endif
+
+	return nullptr;
 }
 
 }

@@ -90,6 +90,7 @@ public:
 
 	void pop_back()
 	{
+		T_ASSERT(!empty());
 		m_back = (m_back > 0) ? m_back - 1 : N - 1;
 	}
 
@@ -137,9 +138,9 @@ public:
 	const ItemType& offset(int32_t index) const
 	{
 		if (index < 0)
-			return m_items[(m_back + index) % N];
+			return m_items[((int32_t)m_back + index + N) % N];
 		else
-			return m_items[(m_front + index) % N];
+			return m_items[((int32_t)m_front + index) % N];
 	}
 
 	const ItemType& operator [] (uint32_t index) const

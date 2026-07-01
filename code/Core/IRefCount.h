@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,9 +30,9 @@ class T_DLLCLASS IRefCount
 public:
 	virtual ~IRefCount() = default;
 
-	virtual void addRef(void* owner) const = 0;
+	virtual void addRef(void* owner) const noexcept = 0;
 
-	virtual void release(void* owner) const = 0;
+	virtual void release(void* owner) const noexcept = 0;
 };
 
 /*! Reference counted implementation.
@@ -54,12 +54,12 @@ public:
 		// Do not move reference count.
 	}
 
-	virtual void addRef(void* owner) const override
+	virtual void addRef(void* owner) const noexcept override
 	{
 		++m_refCount;
 	}
 
-	virtual void release(void* owner) const override
+	virtual void release(void* owner) const noexcept override
 	{
 		T_ASSERT(m_refCount > 0);
 		if (--m_refCount == 0)

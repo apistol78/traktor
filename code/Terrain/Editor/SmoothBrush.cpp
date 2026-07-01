@@ -77,6 +77,12 @@ void SmoothBrush::apply(float x, float y)
 			hf->setGridHeight(gx, gy, lerp(h, height, a));
 		}
 	}
+
+	const int32_t x0 = (int32_t)(x - m_radius);
+	const int32_t y0 = (int32_t)(y - m_radius);
+	const int32_t x1 = (int32_t)(x + m_radius);
+	const int32_t y1 = (int32_t)(y + m_radius);
+	hf->updateCellBounds(x0, y0, x1, y1);
 }
 
 void SmoothBrush::end(float x, float y)

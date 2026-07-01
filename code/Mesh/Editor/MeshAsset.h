@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,11 +32,18 @@ class T_DLLCLASS MeshAsset : public editor::Asset
 	T_RTTI_CLASS;
 
 public:
-	enum MeshType
+	enum class MeshType
 	{
-		MtInstance = 0,
-		MtSkinned = 1,
-		MtStatic = 2
+		Instance = 0,
+		Skinned = 1,
+		Static = 2
+	};
+
+	enum class CenterMode
+	{
+		None = 0,
+		XZ = 1,
+		XYZ = 2
 	};
 
 	virtual void serialize(ISerializer& s) override final;
@@ -84,10 +91,10 @@ public:
 	bool getRenormalize() const { return m_renormalize; }
 
 	/*! Set if model should be centered around origo before converted. */
-	void setCenter(bool center) { m_center = center; }
+	void setCenter(CenterMode center) { m_center = center; }
 
 	/*! Check if model should be centered around origo. */
-	bool getCenter() const { return m_center; }
+	CenterMode getCenter() const { return m_center; }
 
 	/*! */
 	void setGrounded(bool grounded) { m_grounded = grounded; }
@@ -115,13 +122,13 @@ public:
 
 private:
 	std::wstring m_importFilter;
-	MeshType m_meshType = MtStatic;
+	MeshType m_meshType = MeshType::Static;
 	SmallMap< std::wstring, Guid > m_materialShaders;
 	SmallMap< std::wstring, Guid > m_materialTextures;
 	Vector4 m_scaleFactor = Vector4::one();
 	Vector4 m_offset = Vector4::zero();
 	bool m_renormalize = false;
-	bool m_center = false;
+	CenterMode m_center = CenterMode::None;
 	bool m_grounded = false;
 	bool m_decalResponse = true;
 	float m_reduce = 1.0f;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -67,7 +67,7 @@ public:
 
 	virtual void setAspect(float aspect) override final;
 
-	virtual void setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias) override final;
+	virtual void setQuality(const world::QualitySettings& qualitySettings) override final;
 
 	virtual void setDebugOverlay(world::IDebugOverlay* overlay) override final;
 
@@ -101,12 +101,7 @@ private:
 	uint32_t m_worldRendererHash = 0;
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;
-	world::Quality m_imageProcessQuality;
-	world::Quality m_shadowQuality;
-	world::Quality m_reflectionsQuality;
-	world::Quality m_motionBlurQuality;
-	world::Quality m_ambientOcclusionQuality;
-	world::Quality m_antiAliasQuality;
+	world::QualitySettings m_worldQuality;
 	RenderControlModel m_model;
 	Ref< world::IDebugOverlay > m_overlay;
 	float m_overlayAlpha = 1.0f;
@@ -115,7 +110,8 @@ private:
 	float m_fieldOfView;
 	float m_mouseWheelRate;
 	int32_t m_multiSample;
-	bool m_invertPanY;
+	bool m_invertPanY = false;
+	bool m_rayTracingEnable = true;
 	Timer m_timer;
 	Ref< Camera > m_camera;
 	ui::Size m_dirtySize;

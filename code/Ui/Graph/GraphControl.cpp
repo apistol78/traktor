@@ -18,6 +18,7 @@
 #include "Ui/Graph/GraphCanvas.h"
 #include "Ui/Graph/Group.h"
 #include "Ui/Graph/GroupMovedEvent.h"
+#include "Ui/Graph/IGraphLayoutOperation.h"
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/NodeActivateEvent.h"
 #include "Ui/Graph/NodeMovedEvent.h"
@@ -447,122 +448,10 @@ void GraphControl::center(bool selectedOnly)
 	m_offset.cy = -(pixel(bounds.top + bounds.getHeight() / 2_ut) - (int32_t)(inner.getHeight() / m_scale) / 2);
 }
 
-void GraphControl::alignNodes(Alignment align)
+void GraphControl::apply(const IGraphLayoutOperation* operation)
 {
-	RefArray< Node > nodes = getSelectedNodes();
-
-	UnitRect bounds(
-		Unit(std::numeric_limits< int32_t >::max()),
-		Unit(std::numeric_limits< int32_t >::max()),
-		Unit(-std::numeric_limits< int32_t >::max()),
-		Unit(-std::numeric_limits< int32_t >::max()));
-	for (auto node : nodes)
-	{
-		const UnitRect rc = node->calculateRect();
-		bounds.left = std::min(bounds.left, rc.left);
-		bounds.right = std::max(bounds.right, rc.right);
-		bounds.top = std::min(bounds.top, rc.top);
-		bounds.bottom = std::max(bounds.bottom, rc.bottom);
-	}
-
-	for (auto node : nodes)
-	{
-		const UnitRect rc = node->calculateRect();
-		UnitPoint pt = rc.getTopLeft();
-
-		switch (align)
-		{
-		case AnLeft:
-			pt.x = bounds.left;
-			break;
-
-		case AnTop:
-			pt.y = bounds.top;
-			break;
-
-		case AnRight:
-			pt.x = bounds.right - rc.getWidth();
-			break;
-
-		case AnBottom:
-			pt.y = bounds.bottom - rc.getHeight();
-			break;
-		}
-
-		if (pt != node->getPosition())
-		{
-			node->setPosition(pt);
-			NodeMovedEvent event(this, node);
-			raiseEvent(&event);
-		}
-	}
-}
-
-void GraphControl::evenSpace(EvenSpace space)
-{
-	RefArray< Node > nodes = getSelectedNodes();
-
-	if (nodes.size() <= 1)
-		return;
-
-	nodes.sort([&](const Node* n1, const Node* n2) {
-		const UnitPoint pt1 = n1->calculateRect().getTopLeft();
-		const UnitPoint pt2 = n2->calculateRect().getTopLeft();
-		return space == GraphControl::EsHorizontally ? pt1.x < pt2.x : pt1.y < pt2.y;
-	});
-
-	UnitRect bounds(
-		Unit(std::numeric_limits< int32_t >::max()),
-		Unit(std::numeric_limits< int32_t >::max()),
-		Unit(-std::numeric_limits< int32_t >::max()),
-		Unit(-std::numeric_limits< int32_t >::max()));
-
-	Unit totalWidth = 0_ut, totalHeight = 0_ut;
-
-	for (auto node : nodes)
-	{
-		const UnitRect rc = node->calculateRect();
-
-		bounds.left = std::min(bounds.left, rc.left);
-		bounds.right = std::max(bounds.right, rc.right);
-		bounds.top = std::min(bounds.top, rc.top);
-		bounds.bottom = std::max(bounds.bottom, rc.bottom);
-
-		totalWidth += rc.getWidth();
-		totalHeight += rc.getHeight();
-	}
-
-	const Unit spaceHoriz = (bounds.getWidth() - totalWidth) / Unit((int32_t)nodes.size() - 1);
-	const Unit spaceVert = (bounds.getHeight() - totalHeight) / Unit((int32_t)nodes.size() - 1);
-
-	Unit x = bounds.left, y = bounds.top;
-
-	for (auto node : nodes)
-	{
-		const UnitRect rc = node->calculateRect();
-		UnitPoint pt = rc.getTopLeft();
-
-		switch (space)
-		{
-		case EsHorizontally:
-			pt.x = x;
-			break;
-
-		case EsVertically:
-			pt.y = y;
-			break;
-		}
-
-		if (pt != node->getPosition())
-		{
-			node->setPosition(pt);
-			NodeMovedEvent event(this, node);
-			raiseEvent(&event);
-		}
-
-		x += rc.getWidth() + spaceHoriz;
-		y += rc.getHeight() + spaceVert;
-	}
+	if (operation)
+		operation->apply(this);
 }
 
 Size GraphControl::getOffset() const

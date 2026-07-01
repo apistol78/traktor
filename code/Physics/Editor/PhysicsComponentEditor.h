@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,8 +35,6 @@ class PhysicsComponentEditor : public scene::IComponentEditor
 
 public:
 	explicit PhysicsComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
-
-	virtual void transformModified(scene::EntityAdapter* entityAdapter, scene::EntityAdapter* modifiedEntityAdapter) override final;
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 

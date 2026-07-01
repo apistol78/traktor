@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -63,6 +63,13 @@ public:
 	 */
 	void setComponent(IWorldComponent* component);
 
+	/*! Remove component from world.
+	 *
+	 * \param component Component instance.
+	 * \return True if component removed.
+	 */
+	bool removeComponent(IWorldComponent* component);
+
 	/*! Get component of type.
 	 *
 	 * \param componentType Type of component.
@@ -110,6 +117,9 @@ public:
 
 	/*! Get all entities within distance. */
 	RefArray< Entity > getEntitiesWithinRange(const Vector4& position, float range) const;
+
+	/*! Get all named entities within distance. */
+	RefArray< Entity > getEntitiesWithinRange(const std::wstring& name, const Vector4& position, float range) const;
 
 	/*! Update all entities in this world. */
 	void update(const UpdateParams& update);

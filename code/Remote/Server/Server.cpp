@@ -60,9 +60,10 @@ bool Server::create(const std::wstring& scratchPath, const std::wstring& keyword
 		return false;
 	}
 
-	// Create server socket.
+	// Create server socket. A listen port <= 0 means let the OS assign a free
+	// ephemeral port (bind to port 0); the actual port is read back below.
 	m_serverSocket = new net::TcpSocket();
-	if (!m_serverSocket->bind(net::SocketAddressIPv4(listenPort)))
+	if (!m_serverSocket->bind(net::SocketAddressIPv4(listenPort > 0 ? (uint16_t)listenPort : 0)))
 	{
 		log::error << L"Unable to bind server socket." << Endl;
 		return false;

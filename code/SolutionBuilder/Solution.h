@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string>
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -51,6 +52,10 @@ public:
 
 	const RefArray< Project >& getProjects() const;
 
+	void setStartupProject(Project* project);
+
+	Project* getStartupProject() const;
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -59,6 +64,7 @@ private:
 	std::wstring m_aggregateOutputPath;
 	RefArray< Configuration > m_configurations;
 	RefArray< Project > m_projects;
+	Ref< Project > m_startupProject;
 };
 
 }

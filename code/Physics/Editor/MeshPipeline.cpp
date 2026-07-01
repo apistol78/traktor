@@ -134,10 +134,24 @@ bool MeshPipeline::buildOutput(
 		scale(meshAsset->getScaleFactor())
 	));
 
-	if (meshAsset->getCenter())
+	switch (meshAsset->getCenter())
 	{
-		const Aabb3 boundingBox = model->getBoundingBox();
-		model->apply(model::Transform(translate(-boundingBox.getCenter())));
+	case MeshAsset::CenterMode::XZ:
+		{
+			const Aabb3 boundingBox = model->getBoundingBox();
+			model->apply(model::Transform(translate(-boundingBox.getCenter() * Vector4(1.0f, 0.0f, 1.0f))));
+		}
+		break;
+
+	case MeshAsset::CenterMode::XYZ:
+		{
+			const Aabb3 boundingBox = model->getBoundingBox();
+			model->apply(model::Transform(translate(-boundingBox.getCenter())));
+		}
+		break;
+
+	default:
+		break;
 	}
 
 	if (meshAsset->getGrounded())
@@ -204,6 +218,8 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Convert source triangles into collision mesh resource.
+	meshShapeTriangles.reserve(model->getPolygonCount());
+	normals.reserve(model->getPolygonCount());
 	for (const auto& triangle : model->getPolygons())
 	{
 		T_ASSERT(triangle.getVertices().size() == 3);
@@ -234,6 +250,7 @@ bool MeshPipeline::buildOutput(
 		hull.apply(model::CalculateConvexHull());
 
 		// Extract hull triangles.
+		meshHullTriangles.reserve(hull.getPolygonCount());
 		for (const auto& triangle : hull.getPolygons())
 		{
 			T_ASSERT(triangle.getVertices().size() == 3);
@@ -253,12 +270,14 @@ bool MeshPipeline::buildOutput(
 
 		// Extract hull indices.
 		SmallSet< uint32_t > uniqueIndices;
+		uniqueIndices.reserve(hull.getPolygonCount() * 3);
 		for (const auto& triangle : hull.getPolygons())
 		{
 			uniqueIndices.insert(hull.getVertex(triangle.getVertex(0)).getPosition());
 			uniqueIndices.insert(hull.getVertex(triangle.getVertex(1)).getPosition());
 			uniqueIndices.insert(hull.getVertex(triangle.getVertex(2)).getPosition());
 		}
+		meshHullIndices.reserve(uniqueIndices.size());
 		for (const auto uniqueIndex : uniqueIndices)
 			meshHullIndices.push_back(uniqueIndex);
 

@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Physics/Editor/PhysicsEntityReplicator.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -16,16 +18,16 @@
 #include "Editor/IPipelineCommon.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/ConvertHeightfield.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/HeightfieldFormat.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
+#include "Physics/BoxShapeDesc.h"
+#include "Physics/Editor/MeshAsset.h"
 #include "Physics/HeightfieldShapeDesc.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
-#include "Physics/Editor/MeshAsset.h"
-#include "Physics/Editor/PhysicsEntityReplicator.h"
 #include "Physics/World/RigidBodyComponentData.h"
 #include "World/EntityData.h"
 
@@ -43,13 +45,12 @@ bool PhysicsEntityReplicator::create(const editor::IPipelineSettings* settings)
 
 TypeInfoSet PhysicsEntityReplicator::getSupportedTypes() const
 {
-    return makeTypeInfoSet< RigidBodyComponentData >();
+	return makeTypeInfoSet< RigidBodyComponentData >();
 }
 
 RefArray< const world::IEntityComponentData > PhysicsEntityReplicator::getDependentComponents(
 	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
-) const
+	const world::IEntityComponentData* componentData) const
 {
 	RefArray< const world::IEntityComponentData > dependentComponentData;
 	dependentComponentData.push_back(componentData);
@@ -60,8 +61,7 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData,
-	Usage usage
-) const
+	Usage usage) const
 {
 	if (usage != Usage::Collision)
 		return nullptr;
@@ -71,6 +71,44 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 	auto bodyDesc = dynamic_type_cast< const StaticBodyDesc* >(rigidBodyComponentData->getBodyDesc());
 	if (!bodyDesc)
 		return nullptr;
+
+	auto boxShape = dynamic_type_cast< const BoxShapeDesc* >(rigidBodyComponentData->getBodyDesc()->getShape());
+	if (boxShape)
+	{
+		Vector4 vertices[8];
+		Aabb3(-boxShape->getExtent(), boxShape->getExtent()).getExtents(vertices);
+
+		Ref< model::Model > m = new model::Model();
+
+		for (uint32_t i = 0; i < 6; ++i)
+		{
+			const Vector4* normals = Aabb3::getNormals();
+			const int* face = Aabb3::getFaces() + i * 4;
+
+			uint32_t vi[4];
+			uint32_t ni = m->addUniqueNormal(normals[i]);
+
+			for (int32_t j = 0; j < 4; ++j)
+			{
+				const Vector4& P = vertices[face[3 - j]];
+
+				model::Vertex vx;
+				vx.setPosition(m->addUniquePosition(P));
+				vx.setNormal(ni);
+				vi[j] = m->addUniqueVertex(vx);
+			}
+
+			model::Polygon pol;
+			pol.setNormal(ni);
+			pol.addVertex(vi[0]);
+			pol.addVertex(vi[1]);
+			pol.addVertex(vi[2]);
+			pol.addVertex(vi[3]);
+			m->addPolygon(pol);
+		}
+
+		return m;
+	}
 
 	auto meshShape = dynamic_type_cast< const MeshShapeDesc* >(rigidBodyComponentData->getBodyDesc()->getShape());
 	if (meshShape)
@@ -87,10 +125,10 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 			return nullptr;
 
 		// Attach information about the collision shape into the model.
- 		Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
- 		outputShapeMeshAsset->setCalculateConvexHull(false);
+		Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
+		outputShapeMeshAsset->setCalculateConvexHull(false);
 		outputShapeMeshAsset->setMargin(meshAsset->getMargin());
- 		outputShapeMeshAsset->setMaterials(meshAsset->getMaterials());
+		outputShapeMeshAsset->setMaterials(meshAsset->getMaterials());
 		shapeModel->setProperty< PropertyObject >(type_name(outputShapeMeshAsset), outputShapeMeshAsset);
 
 		Ref< physics::ShapeDesc > outputShapeDesc = new physics::ShapeDesc();
@@ -124,8 +162,7 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 
 		Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
 			sourceData,
-			heightfieldAsset->getWorldExtent()
-		);
+			heightfieldAsset->getWorldExtent());
 		if (!heightfield)
 			return nullptr;
 

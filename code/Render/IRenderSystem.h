@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,6 +27,7 @@ namespace traktor::render
 class Buffer;
 class IAccelerationStructure;
 class IProgram;
+class IRenderPlugin;
 class IRenderTargetSet;
 class IRenderView;
 class IVertexLayout;
@@ -119,7 +120,7 @@ public:
 	 * \param bufferSize Size of buffer in bytes.
 	 * \param dynamic If index buffer is frequently updated.
 	 */
-	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic) = 0;
+	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic, const wchar_t* const tag) = 0;
 
 	/*! Create vertex layout. */
 	virtual Ref< const IVertexLayout > createVertexLayout(const AlignedVector< VertexElement >& vertexElements) = 0;
@@ -151,7 +152,7 @@ public:
 	virtual Ref< IAccelerationStructure > createTopLevelAccelerationStructure(uint32_t numInstances) = 0;
 
 	/*! */
-	virtual Ref< IAccelerationStructure > createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives, bool dynamic) = 0;
+	virtual Ref< IAccelerationStructure > createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic) = 0;
 
 	/*! Create program from program resource.
 	 *
@@ -173,7 +174,11 @@ public:
 
 	//@}
 
+	/*! */
 	virtual void* getInternalHandle() const = 0;
+
+	/*! */
+	virtual Ref< IRenderPlugin > createPlugin(const TypeInfo& pluginType) = 0;
 };
 
 }

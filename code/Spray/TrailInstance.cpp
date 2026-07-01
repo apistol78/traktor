@@ -120,7 +120,7 @@ void TrailInstance::update(Context& context, const Transform& transform, bool en
 		m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
 }
 
-void TrailInstance::render(const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass, TrailRenderer* trailRenderer, const Transform& transform)
+void TrailInstance::build(const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass, TrailRenderer* trailRenderer, const Transform& transform)
 {
 	if (m_shader->hasTechnique(worldRenderPass.getTechnique()))
 		trailRenderer->render(

@@ -1,21 +1,21 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Misc/String.h"
 #include "Render/Editor/Glsl/GlslType.h"
+
+#include "Core/Misc/String.h"
 
 namespace traktor::render
 {
 
 std::wstring glsl_type_name(GlslType type)
 {
-	const wchar_t* c[] =
-	{
+	const wchar_t* c[] = {
 		L"void",
 		L"bool",
 		L"int",
@@ -27,14 +27,15 @@ std::wstring glsl_type_name(GlslType type)
 		L"vec3",
 		L"vec4",
 		L"mat4",
-		L"tex",			// Texture2D
+		L"tex", // Texture2D
 		L"tex",
-		L"tex",			// TextureCube
-		L"",			// StructBuffer
-		L"image2D",		// Image2D
+		L"tex",		// TextureCube
+		L"",		// Struct
+		L"",		// StructBuffer
+		L"image2D", // Image2D
 		L"image3D",
-		L"imageCube",	// ImageCube
-		L""				// AccelerationStructure
+		L"imageCube", // ImageCube
+		L""			  // AccelerationStructure
 	};
 	T_FATAL_ASSERT((int32_t)type < sizeof_array(c));
 	return c[(int32_t)type];
@@ -42,8 +43,7 @@ std::wstring glsl_type_name(GlslType type)
 
 int32_t glsl_type_width(GlslType type)
 {
-	const int32_t w[] =
-	{
+	const int32_t w[] = {
 		0,	// Void
 		0,	// Boolean
 		1,	// Integer
@@ -54,10 +54,11 @@ int32_t glsl_type_width(GlslType type)
 		2,	// Float2
 		3,	// Float3
 		4,	// Float4
-		16,	// Float4x4
+		16, // Float4x4
 		0,	// Texture2D
 		0,	// Texture3D
 		0,	// TextureCube
+		0,	// Struct
 		0,	// StructBuffer
 		0,	// Image2D
 		0,	// Image3D
@@ -70,8 +71,7 @@ int32_t glsl_type_width(GlslType type)
 
 GlslType glsl_promote_to_float(GlslType type)
 {
-	const GlslType w[] =
-	{
+	const GlslType w[] = {
 		GlslType::Void,		// Void
 		GlslType::Float,	// Boolean
 		GlslType::Float,	// Integer
@@ -82,10 +82,11 @@ GlslType glsl_promote_to_float(GlslType type)
 		GlslType::Float2,	// Float2
 		GlslType::Float3,	// Float3
 		GlslType::Float4,	// Float4
-		GlslType::Float4x4,	// Float4x4
+		GlslType::Float4x4, // Float4x4
 		GlslType::Void,		// Texture2D
 		GlslType::Void,		// Texture3D
 		GlslType::Void,		// TextureCube
+		GlslType::Void,		// Struct
 		GlslType::Void,		// StructBuffer
 		GlslType::Void,		// Image2D
 		GlslType::Void,		// Image3D
@@ -98,22 +99,22 @@ GlslType glsl_promote_to_float(GlslType type)
 
 GlslType glsl_degrade_to_integer(GlslType type)
 {
-	const GlslType w[] =
-	{
+	const GlslType w[] = {
 		GlslType::Void,		// Void
 		GlslType::Integer,	// Boolean
 		GlslType::Integer,	// Integer
-		GlslType::Integer2,	// Integer2
-		GlslType::Integer3,	// Integer3
-		GlslType::Integer4,	// Integer4
+		GlslType::Integer2, // Integer2
+		GlslType::Integer3, // Integer3
+		GlslType::Integer4, // Integer4
 		GlslType::Integer,	// Float
-		GlslType::Integer2,	// Float2
-		GlslType::Integer3,	// Float3
-		GlslType::Integer4,	// Float4
+		GlslType::Integer2, // Float2
+		GlslType::Integer3, // Float3
+		GlslType::Integer4, // Float4
 		GlslType::Void,		// Float4x4
 		GlslType::Void,		// Texture2D
 		GlslType::Void,		// Texture3D
 		GlslType::Void,		// TextureCube
+		GlslType::Void,		// Struct
 		GlslType::Void,		// StructBuffer
 		GlslType::Void,		// Image2D
 		GlslType::Void,		// Image3D
@@ -121,7 +122,7 @@ GlslType glsl_degrade_to_integer(GlslType type)
 		GlslType::Void		// AccelerationStructure
 	};
 	T_FATAL_ASSERT((int32_t)type < sizeof_array(w));
-	return w[(int32_t)type];	
+	return w[(int32_t)type];
 }
 
 GlslType glsl_precedence(GlslType typeA, GlslType typeB)
@@ -139,23 +140,22 @@ GlslType glsl_precedence(GlslType typeA, GlslType typeB)
 
 GlslType glsl_from_data_type(DataType type)
 {
-	const GlslType c[] =
-	{
+	const GlslType c[] = {
 		GlslType::Float,	// DtFloat1
 		GlslType::Float2,	// DtFloat2
 		GlslType::Float3,	// DtFloat3
 		GlslType::Float4,	// DtFloat4
-		GlslType::Integer4,	// DtByte4
+		GlslType::Integer4, // DtByte4
 		GlslType::Float4,	// DtByte4N
-		GlslType::Integer2,	// DtShort2
-		GlslType::Integer4,	// DtShort4
+		GlslType::Integer2, // DtShort2
+		GlslType::Integer4, // DtShort4
 		GlslType::Float2,	// DtShort2N
 		GlslType::Float4,	// DtShort4N
 		GlslType::Float2,	// DtHalf2
 		GlslType::Float4,	// DtHalf4,
 		GlslType::Integer,	// DtInteger1
-		GlslType::Integer2,	// DtInteger2
-		GlslType::Integer3,	// DtInteger3
+		GlslType::Integer2, // DtInteger2
+		GlslType::Integer3, // DtInteger3
 		GlslType::Integer4	// DtInteger4
 	};
 	return c[type];
@@ -163,8 +163,7 @@ GlslType glsl_from_data_type(DataType type)
 
 GlslType glsl_from_parameter_type(ParameterType type)
 {
-	const GlslType c[] =
-	{
+	const GlslType c[] = {
 		GlslType::Float,
 		GlslType::Float4,
 		GlslType::Float4x4,
@@ -183,15 +182,14 @@ GlslType glsl_from_parameter_type(ParameterType type)
 
 std::wstring glsl_storage_type(DataType type)
 {
-	const wchar_t* c[] =
-	{
+	const wchar_t* c[] = {
 		L"float",
 		L"vec2",
 		L"vec3",
 		L"vec4",
-		L"u8vec4",	// GL_EXT_shader_8bit_storage
+		L"u8vec4", // GL_EXT_shader_8bit_storage
 		L"u8vec4",
-		L"i16vec2",	// GL_EXT_shader_16bit_storage
+		L"i16vec2", // GL_EXT_shader_16bit_storage
 		L"i16vec4",
 		L"i16vec2",
 		L"i16vec4",
@@ -207,8 +205,7 @@ std::wstring glsl_storage_type(DataType type)
 
 std::wstring glsl_vertex_attribute_name(DataUsage usage, int32_t index)
 {
-	const wchar_t* s[] =
-	{
+	const wchar_t* s[] = {
 		L"Position",
 		L"Normal",
 		L"Tangent",
@@ -222,8 +219,7 @@ std::wstring glsl_vertex_attribute_name(DataUsage usage, int32_t index)
 
 int32_t glsl_vertex_attribute_location(DataUsage usage, int32_t index)
 {
-	const int32_t base[] =
-	{
+	const int32_t base[] = {
 		0,
 		1,
 		2,

@@ -23,6 +23,7 @@
 #	define T_FORCE_INLINE __forceinline
 #	define T_ALIGN16 __declspec(align(16))
 #	define T_NOEXCEPT noexcept
+#	define T_DEPRECATED
 #elif defined(__GNUC__) || defined(__ANDROID__)
 #	if !defined(T_STATIC)
 #		define T_DLLIMPORT __attribute__((visibility("default")))
@@ -34,6 +35,7 @@
 #	if !defined(__APPLE__)
 #		define T_NOEXCEPT noexcept
 #	endif
+#	define T_DEPRECATED [[deprecated]]
 #endif
 
 #if !defined(T_DLLIMPORT)

@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <initializer_list>
 #include <iterator>
 #include "Core/Config.h"
@@ -87,7 +88,7 @@ public:
 			return const_iterator(m_ptr + offset);
 		}
 
-#if !defined(__ANDROID__) && !defined(__RPI__)
+#if !defined(__RPI__)
 		const_iterator operator + (size_t offset) const
 		{
 			return const_iterator(m_ptr + offset);
@@ -104,7 +105,7 @@ public:
 			return const_iterator(m_ptr - offset);
 		}
 
-#if !defined(__ANDROID__) && !defined(__RPI__)
+#if !defined(__RPI__)
 		const_iterator operator - (size_t offset) const
 		{
 			return const_iterator(m_ptr - offset);
@@ -229,7 +230,7 @@ public:
 			return iterator(_O::m_ptr + offset);
 		}		
 
-#if !defined(__ANDROID__) && !defined(__RPI__)
+#if !defined(__RPI__)
 		iterator operator + (size_t offset) const
 		{
 			return iterator(_O::m_ptr + offset);
@@ -246,7 +247,7 @@ public:
 			return iterator(_O::m_ptr - offset);
 		}
 
-#if !defined(__ANDROID__) && !defined(__RPI__)
+#if !defined(__RPI__)
 		iterator operator - (size_t offset) const
 		{
 			return iterator(_O::m_ptr - offset);
@@ -673,7 +674,10 @@ public:
 			if (m_data)
 			{
 				for (size_t i = 0; i < m_size; ++i)
+				{
 					Constructor::move(data[i], m_data[i]);
+					Constructor::destroy(m_data[i]);
+				}
 				getAllocator()->free(m_data);
 			}
 
@@ -860,7 +864,10 @@ public:
 		const size_t offset = size_t(where.m_ptr - m_data);
 
 		for (size_t i = offset; i < m_size - 1; ++i)
+		{
+			Constructor::destroy(m_data[i]);
 			move(i, i + 1);
+		}
 
 		Constructor::destroy(m_data[m_size - 1]);
 		shrink(1);
@@ -884,9 +891,15 @@ public:
 
 		if (count > 0)
 		{
+			// Shift later elements down; destination is alive (either an erased
+			// slot or a previously moved-from slot), so destroy before placement-new.
 			for (size_t i = offset; i < m_size - count; ++i)
+			{
+				Constructor::destroy(m_data[i]);
 				move(i, i + count);
+			}
 
+			// Destroy any erased-but-not-shifted-over elements plus the moved-from tail.
 			for (size_t i = m_size - count; i < m_size; ++i)
 				Constructor::destroy(m_data[i]);
 
@@ -909,14 +922,22 @@ public:
 
 		grow(1);
 
-		// Initialize grown item.
-		Constructor::construct(m_data[size]);
+		if (offset < size)
+		{
+			// Move last existing element into newly-grown raw slot.
+			Constructor::move(m_data[size], m_data[size - 1]);
 
-		// Move items to make space for new item.
-		for (size_t i = size; i > offset; --i)
-			move(i, i - 1);
+			// Shift interior right by one; destination is moved-from-but-alive, destroy first.
+			for (size_t i = size - 1; i > offset; --i)
+			{
+				Constructor::destroy(m_data[i]);
+				Constructor::move(m_data[i], m_data[i - 1]);
+			}
 
-		// Copy insert item into location.
+			// m_data[offset] is moved-from; destroy before placement-new.
+			Constructor::destroy(m_data[offset]);
+		}
+
 		Constructor::construct(m_data[offset], item);
 
 		return iterator(&m_data[offset]);
@@ -936,22 +957,32 @@ public:
 		const size_t offset = size_t(where.m_ptr - m_data);
 		const size_t count = std::distance(from, to);
 
+		if (count == 0)
+			return iterator(&m_data[offset]);
+
 		grow(count);
 
-		// Initialize grown items.
-		for (size_t i = 0; i < count; ++i)
-			Constructor::construct(m_data[i + size]);
-
-		// Move items to make room for items to be inserted.
-		const int32_t mv = (int32_t)(size - offset);
-		for (int32_t i = mv - 1; i >= 0; --i)
+		// Shift elements [offset, size) right by `count`.
+		// Destinations >= size are raw (newly grown); destinations < size are alive — destroy first.
+		for (size_t k = 0; k < size - offset; ++k)
 		{
-			T_ASSERT(i + offset < size);
-			T_ASSERT(i + offset + count < m_size);
-			move(i + offset + count, i + offset);
+			const size_t p = size - 1 - k;
+			const size_t d = p + count;
+			if (d >= size)
+				Constructor::move(m_data[d], m_data[p]);
+			else
+			{
+				Constructor::destroy(m_data[d]);
+				Constructor::move(m_data[d], m_data[p]);
+			}
 		}
 
-		// Copy insert items into location.
+		// Source slots in [offset, min(offset+count, size)) are alive (moved-from); destroy
+		// them before placement-new. Slots in [size, offset+count) are still raw.
+		const size_t destroyEnd = std::min< size_t >(offset + count, size);
+		for (size_t i = offset; i < destroyEnd; ++i)
+			Constructor::destroy(m_data[i]);
+
 		IteratorType mutfrom = from;
 		for (size_t i = 0; i < count; ++i)
 		{
@@ -975,22 +1006,28 @@ public:
 		const size_t offset = size_t(where.m_ptr - m_data);
 		const size_t count = size_t(to - from);
 
+		if (count == 0)
+			return iterator(&m_data[offset]);
+
 		grow(count);
 
-		// Initialize grown items.
-		for (size_t i = 0; i < count; ++i)
-			Constructor::construct(m_data[i + size]);
-
-		// Move items to make room for items to be inserted.
-		const int32_t mv = (int32_t)(size - offset);
-		for (int32_t i = mv - 1; i >= 0; --i)
+		for (size_t k = 0; k < size - offset; ++k)
 		{
-			T_ASSERT(i + offset < size);
-			T_ASSERT(i + offset + count < m_size);
-			move(i + offset + count, i + offset);
+			const size_t p = size - 1 - k;
+			const size_t d = p + count;
+			if (d >= size)
+				Constructor::move(m_data[d], m_data[p]);
+			else
+			{
+				Constructor::destroy(m_data[d]);
+				Constructor::move(m_data[d], m_data[p]);
+			}
 		}
 
-		// Copy insert items into location.
+		const size_t destroyEnd = std::min< size_t >(offset + count, size);
+		for (size_t i = offset; i < destroyEnd; ++i)
+			Constructor::destroy(m_data[i]);
+
 		for (size_t i = 0; i < count; ++i)
 			Constructor::construct(m_data[i + offset], from[i]);
 

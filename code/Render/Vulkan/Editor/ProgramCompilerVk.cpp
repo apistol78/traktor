@@ -8,6 +8,8 @@
  */
 #include "Render/Vulkan/Editor/ProgramCompilerVk.h"
 
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/Murmur3.h"
@@ -17,6 +19,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/System/OS.h"
 #include "Render/Editor/Glsl/GlslAccelerationStructure.h"
 #include "Render/Editor/Glsl/GlslContext.h"
 #include "Render/Editor/Glsl/GlslImage.h"
@@ -250,6 +253,24 @@ const std::wstring& lookupCompareFunctionName(CompareFunction compareFunction)
 	return names[(int32_t)compareFunction];
 }
 
+void writeShaderBinaryFile(uint32_t hash, const AlignedVector< uint32_t >& shader)
+{
+	if (shader.empty())
+		return;
+
+	const Path filename = OS::getInstance().getWritableFolderPath() + L"/Traktor/ShaderBinaries/" + str(L"%08x.shb", hash);
+
+	FileSystem::getInstance().makeAllDirectories(filename.getPathOnly());
+
+	Ref< IStream > f = FileSystem::getInstance().open(filename, File::FmWrite);
+	if (f)
+	{
+		f->write(shader.c_ptr(), shader.size() * sizeof(uint32_t));
+		f->close();
+		f = nullptr;
+	}
+}
+
 }
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerVk", 0, ProgramCompilerVk, IProgramCompiler)
@@ -316,15 +337,20 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 	{
 		const auto defaultBuiltInResource = getDefaultBuiltInResource();
+		bool result;
 
 		// Emit shader code by traversing from output nodes.
-		cx.getEmitter().emit(cx, pixelOutputs[0]);
-		cx.getEmitter().emit(cx, vertexOutputs[0]);
-
-		const std::wstring errorReport = cx.getErrorReport();
-		if (!errorReport.empty())
+		result = cx.getEmitter().emit(cx, pixelOutputs[0]);
+		if (!result)
 		{
-			log::error << errorReport;
+			outErrors.push_back({ L"Emit pixel shader failed.", cx.getErrorReport() });
+			return nullptr;
+		}
+
+		result = cx.getEmitter().emit(cx, vertexOutputs[0]);
+		if (!result)
+		{
+			outErrors.push_back({ L"Emit vertex shader failed.", cx.getErrorReport() });
 			return nullptr;
 		}
 
@@ -382,17 +408,17 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (computeOutputs.size() >= 1 || scriptOutputs[Script::Compute].size() >= 1)
 	{
 		const auto defaultBuiltInResource = getDefaultBuiltInResource();
+		bool result = true;
 
 		// Emit shader code by traversing from output nodes.
 		for (auto computeOutput : computeOutputs)
-			cx.getEmitter().emit(cx, computeOutput);
+			result &= cx.getEmitter().emit(cx, computeOutput);
 		for (auto scriptOutput : scriptOutputs[Script::Compute])
-			cx.getEmitter().emit(cx, scriptOutput);
+			result &= cx.getEmitter().emit(cx, scriptOutput);
 
-		const std::wstring errorReport = cx.getErrorReport();
-		if (!errorReport.empty())
+		if (!result)
 		{
-			log::error << errorReport;
+			outErrors.push_back({ L"Emit compute shader failed.", cx.getErrorReport() });
 			return nullptr;
 		}
 
@@ -778,6 +804,11 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		programResource->m_layoutHash = checksum.get();
 	}
 
+	// Write shader binaries for debugging.
+	writeShaderBinaryFile(programResource->m_vertexShaderHash, programResource->m_vertexShader);
+	writeShaderBinaryFile(programResource->m_fragmentShaderHash, programResource->m_fragmentShader);
+	writeShaderBinaryFile(programResource->m_computeShaderHash, programResource->m_computeShader);
+
 	// #note Need to delete program before shaders due to glslang weirdness.
 	delete program;
 	delete fragmentShader;
@@ -821,12 +852,25 @@ bool ProgramCompilerVk::generate(
 
 	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 	{
-		bool result = true;
-		result &= cx.getEmitter().emit(cx, pixelOutputs[0]);
-		result &= cx.getEmitter().emit(cx, vertexOutputs[0]);
+		bool result;
+		
+		result = cx.getEmitter().emit(cx, pixelOutputs[0]);
 		if (!result)
 		{
-			log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
+			log::error << L"Unable to generate Vulkan GLSL pixel shader (" << name << L"); GLSL emitter failed." << Endl;
+			const std::wstring errorReport = cx.getErrorReport();
+			if (!errorReport.empty())
+				log::error << errorReport;
+			return false;
+		}
+
+		result = cx.getEmitter().emit(cx, vertexOutputs[0]);
+		if (!result)
+		{
+			log::error << L"Unable to generate Vulkan GLSL vertex shader (" << name << L"); GLSL emitter failed." << Endl;
+			const std::wstring errorReport = cx.getErrorReport();
+			if (!errorReport.empty())
+				log::error << errorReport;
 			return false;
 		}
 	}
@@ -840,7 +884,10 @@ bool ProgramCompilerVk::generate(
 			result &= cx.getEmitter().emit(cx, scriptOutput);
 		if (!result)
 		{
-			log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
+			log::error << L"Unable to generate Vulkan GLSL compute shader (" << name << L"); GLSL emitter failed." << Endl;
+			const std::wstring errorReport = cx.getErrorReport();
+			if (!errorReport.empty())
+				log::error << errorReport;
 			return false;
 		}
 	}

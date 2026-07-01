@@ -20,8 +20,6 @@
 namespace traktor::render
 {
 
-CriticalSection s_debugNameLock;
-
 const VkCullModeFlagBits c_cullMode[] = {
 	VK_CULL_MODE_NONE,
 	VK_CULL_MODE_FRONT_BIT,
@@ -464,29 +462,6 @@ std::wstring getHumanResult(VkResult result)
 	}
 }
 
-void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t object, VkObjectType objectType)
-{
-#if !defined(__ANDROID__) && !defined(__APPLE__)
-	{
-		T_ANONYMOUS_VAR(Acquire< CriticalSection >)(s_debugNameLock);
-
-		static std::map< VkObjectType, uint32_t > s_objectCount;
-		uint32_t& count = s_objectCount[objectType];
-
-		std::stringstream ss;
-		ss << wstombs(tag) << " [" << count << "]";
-		++count;
-
-		VkDebugUtilsObjectNameInfoEXT ni = {};
-		ni.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-		ni.objectType = objectType;
-		ni.objectHandle = object;
-		ni.pObjectName = tag ? ss.str().c_str() : "Unnamed";
-		vkSetDebugUtilsObjectNameEXT(device, &ni);
-	}
-#endif
-}
-
 VkFormat determineSupportedTargetFormat(VkPhysicalDevice physicalDevice, TextureFormat textureFormat, bool sRGB)
 {
 	const auto& fc = sRGB ? c_vkTargetFormats_sRGB[textureFormat] : c_vkTargetFormats[textureFormat];
@@ -503,6 +478,26 @@ VkFormat determineSupportedTargetFormat(VkPhysicalDevice physicalDevice, Texture
 			continue;
 
 		return fc.formats[i];
+	}
+	return VK_FORMAT_UNDEFINED;
+}
+
+VkFormat determineSupportedDepthTargetFormat(VkPhysicalDevice physicalDevice, const VkFormat* candidates, int32_t candidateCount, bool usedAsTexture)
+{
+	for (int32_t i = 0; i < candidateCount; ++i)
+	{
+		const VkFormat fmt = candidates[i];
+		if (fmt == VK_FORMAT_UNDEFINED)
+			continue;
+
+		VkFormatProperties fp = {};
+		vkGetPhysicalDeviceFormatProperties(physicalDevice, fmt, &fp);
+		if ((fp.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) == 0)
+			continue;
+		if (usedAsTexture && (fp.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == 0)
+			continue;
+
+		return fmt;
 	}
 	return VK_FORMAT_UNDEFINED;
 }

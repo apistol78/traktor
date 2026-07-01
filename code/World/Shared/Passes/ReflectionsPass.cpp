@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,11 @@
  */
 #include "World/Shared/Passes/ReflectionsPass.h"
 
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
 #include "World/IWorldRenderer.h"
-#include "World/Shared/Passes/RTReflectionsPass.h"
-#include "World/Shared/Passes/SSReflectionsPass.h"
+#include "World/Shared/Passes/RT/RTReflectionsPass.h"
+#include "World/Shared/Passes/SS/SSReflectionsPass.h"
 
 namespace traktor::world
 {
@@ -20,7 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ReflectionsPass", ReflectionsPass, Object
 
 bool ReflectionsPass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
-	if (desc.quality.reflections >= Quality::High && renderSystem->supportRayTracing())
+	if (desc.quality.reflections >= Quality::High && desc.rt && renderSystem->supportRayTracing())
 	{
 		m_rt = new RTReflectionsPass();
 		if (!m_rt->create(resourceManager, renderSystem, desc))
@@ -41,10 +42,17 @@ bool ReflectionsPass::create(resource::IResourceManager* resourceManager, render
 	return true;
 }
 
+void ReflectionsPass::destroy()
+{
+	safeDestroy(m_rt);
+	safeDestroy(m_ss);
+}
+
 render::RGTargetSet ReflectionsPass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
 	const render::Buffer* lightSBuffer,
+	render::ITexture* blackCubeTexture,
 	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
@@ -56,7 +64,7 @@ render::RGTargetSet ReflectionsPass::setup(
 	render::RGTargetSet outputTargetSetId) const
 {
 	if (m_rt != nullptr)
-		return m_rt->setup(worldRenderView, gatheredView, lightSBuffer, needJitter, frameCount, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, outputTargetSetId);
+		return m_rt->setup(worldRenderView, gatheredView, lightSBuffer, blackCubeTexture, needJitter, frameCount, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, outputTargetSetId);
 	else if (m_ss != nullptr)
 		return m_ss->setup(worldRenderView, gatheredView, lightSBuffer, needJitter, frameCount, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualReadTargetSetId, velocityTargetSetId, outputTargetSetId);
 	else

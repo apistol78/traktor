@@ -92,16 +92,27 @@ void ImageGraph::addPasses(
 	targetSetIds.resize(permutation->targetSets.size());
 	for (int32_t i = 0; i < (int32_t)permutation->targetSets.size(); ++i)
 	{
+		RGTargetSet referenceTargetSetId = RGTargetSet::Output;
+
+		// Find referencing target set for size calculations; assuming
+		// only referencing input targets which has already been associated.
+		if (permutation->targetSets[i]->getReferenceTextureId() != 0)
+			referenceTargetSetId = context.findTextureTargetSetId(permutation->targetSets[i]->getReferenceTextureId());
+
 		if (permutation->targetSets[i]->getPersistentHandle() != 0)
 			targetSetIds[i] = renderGraph.addPersistentTargetSet(
 				permutation->targetSets[i]->getName().c_str(),
 				permutation->targetSets[i]->getPersistentHandle(),
 				true,
-				permutation->targetSets[i]->getTargetSetDesc());
+				permutation->targetSets[i]->getTargetSetDesc(),
+				RGTargetSet::Invalid,
+				referenceTargetSetId);
 		else
 			targetSetIds[i] = renderGraph.addTransientTargetSet(
 				permutation->targetSets[i]->getName().c_str(),
-				permutation->targetSets[i]->getTargetSetDesc());
+				permutation->targetSets[i]->getTargetSetDesc(),
+				RGTargetSet::Invalid,
+				referenceTargetSetId);
 
 		// Associate each target in the set.
 		const auto& desc = permutation->targetSets[i]->getTargetSetDesc();
@@ -119,7 +130,7 @@ void ImageGraph::addPasses(
 	{
 		RenderPass* rp = imagePass->addRenderGraphPasses(this, context, view, targetSetIds, sbufferIds, parametersFn, screenRenderer, renderGraph);
 		for (auto input : pass->getInputs())
-			rp->addInput(input.resourceId);
+			rp->addInput(render::RGDependency(input.resourceId));
 	}
 
 	// Override pass name with our root node's name.

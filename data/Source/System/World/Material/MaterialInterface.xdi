@@ -24,8 +24,8 @@
 			<id>{EAB86259-9DA5-4260-8E53-B29D56F4DDEF}</id>
 			<comment/>
 			<position>
-				<first>561</first>
-				<second>146</second>
+				<first>556</first>
+				<second>133</second>
 			</position>
 			<fragmentGuid>{0524A94E-4377-42AC-8A13-26FFE3491CC3}</fragmentGuid>
 			<inputPins>
@@ -65,6 +65,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{8315F0AB-D0D8-9E46-975D-AF292733C022}</id>
+					<name>Opaque</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{90D3E596-1415-4837-89CF-F3507AAAE050}</id>
 					<name>Roughness</name>
 					<optional>true</optional>
@@ -76,7 +81,7 @@
 				</item>
 				<item>
 					<id>{E17C87D4-085A-409D-9642-1926DBAADBBC}</id>
-					<name>World position offse</name>
+					<name>World position offset</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>

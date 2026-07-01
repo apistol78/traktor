@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,9 +48,7 @@ class RenderViewVk
 	T_RTTI_CLASS;
 
 public:
-	explicit RenderViewVk(
-		Context* context,
-		VkInstance instance);
+	explicit RenderViewVk(Context* context);
 
 	virtual ~RenderViewVk();
 
@@ -114,15 +112,19 @@ public:
 
 	virtual void computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset) override final;
 
-	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip) override final;
+	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip, bool asynchronous) override final;
 
 	virtual void synchronize() override final;
 
+	virtual ComputeHandle signalAsynchronousCompute() override final;
+
+	virtual void waitAsynchronousCompute(ComputeHandle handle) override final;
+
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) override final;
 
-	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances) override final;
+	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances, bool asynchronous) override final;
 
-	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives) override final;
+	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous) override final;
 
 	virtual int32_t beginTimeQuery() override final;
 
@@ -130,13 +132,17 @@ public:
 
 	virtual bool getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const override final;
 
-	virtual void pushMarker(const std::wstring& marker) override final;
+	virtual void pushMarker(bool asynchronous, const std::wstring& marker) override final;
 
-	virtual void popMarker() override final;
+	virtual void popMarker(bool asynchronous) override final;
 
-	virtual void writeMarker(const std::wstring& marker) override final;
+	virtual void writeMarker(bool asynchronous, const std::wstring& marker) override final;
 
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const override final;
+
+	Context* getContext() const { return m_context; }
+
+	CommandBuffer* getGraphicsCommandBuffer();
 
 private:
 	struct Frame
@@ -146,16 +152,19 @@ private:
 		VkSemaphore renderFinishedSemaphore;
 		VkSemaphore computeFinishedSemaphore;
 		Ref< RenderTargetSetVk > primaryTarget;
-		VkPipeline boundPipeline = 0;
+		VkPipeline boundGraphicsPipeline = 0;
+		VkPipeline boundComputePipeline = 0;
+		VkPipeline boundAsyncComputePipeline = 0;
 		BufferViewVk boundIndexBuffer;
 		BufferViewVk boundVertexBuffer;
 		RefArray< CommandBuffer > flyingCommandBuffers;
 		std::list< std::string > markers;
 		AlignedVector< bool > markerStack;
+		uint64_t computeRecordValue = 0;	//!< Timeline value of the open (not yet submitted) asynchronous compute batch; 0 if none open.
+		uint64_t computeSubmittedValue = 0;	//!< Highest asynchronous compute batch value already submitted to the compute queue this frame.
 	};
 
 	Context* m_context = nullptr;
-	VkInstance m_instance = 0;
 #if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__) || defined(__MAC__)
 	Ref< Window > m_window;
 #endif
@@ -170,7 +179,15 @@ private:
 
 	// Swap chain.
 	VkSwapchainKHR m_swapChain = 0;
-	VkSemaphore m_imageAvailableSemaphores[4] = {};
+
+	// Pool of binary semaphores for vkAcquireNextImageKHR. We hold imageCount+1
+	// semaphores: one in m_imageAvailableSemaphores[image_index] for each swap
+	// chain image (the one consumed by the submit that produced that image's
+	// content) plus a single spare passed to the next acquire. After each
+	// acquire, the per-image slot and the spare are swapped — see beginFrame.
+	AlignedVector< VkSemaphore > m_imageAvailableSemaphores;
+	VkSemaphore m_imageAvailableSemaphoreFree = 0;
+	AlignedVector< VkSemaphore > m_retiredImageAvailableSemaphores;
 	AlignedVector< Frame > m_frames;
 	uint32_t m_currentImageIndex = 0;
 	uint32_t m_multiSample = 0;
@@ -178,6 +195,13 @@ private:
 	int32_t m_vblanks = 0;
 	bool m_allowHDR = false;
 	bool m_hdr = false;
+
+	// Cached surface state, populated lazily on first create() and kept across reset().
+	bool m_surfaceCacheValid = false;
+	VkFormat m_colorFormat = VK_FORMAT_UNDEFINED;
+	VkColorSpaceKHR m_colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+	VkPresentModeKHR m_presentMode = VK_PRESENT_MODE_FIFO_KHR;
+	uint32_t m_presentQueueFamilyIndex = ~0u;
 
 	// Event queue.
 	std::list< RenderEvent > m_eventQueue;
@@ -192,11 +216,16 @@ private:
 	VkFramebuffer m_targetFrameBuffer = 0;
 	uint32_t m_targetRenderPassHash = 0;
 
+	// Cross queue synchronization.
+	VkSemaphore m_timelineSemaphore = VK_NULL_HANDLE;
+	uint64_t m_timelineSemaphoreValue = 0;
+
 	// Stats.
 	bool m_haveDebugMarkers = false;
 	bool m_cursorVisible = true;
 	int32_t m_nextQueryIndex = 0;
 	int32_t m_lastQueryIndex = 0;
+	AlignedVector< int32_t > m_openTimeQueries;
 	uint32_t m_counter = -1;
 	uint32_t m_passCount = 0;
 	uint32_t m_drawCalls = 0;
@@ -206,7 +235,13 @@ private:
 
 	bool validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt);
 
-	bool validateComputePipeline(CommandBuffer* commandBuffer, const ProgramVk* p);
+	bool validateComputePipeline(CommandBuffer* commandBuffer, const ProgramVk* p, bool asynchronous);
+
+	//! Reserve (or return the already reserved) timeline value for the current frame's open asynchronous compute batch.
+	uint64_t openComputeBatch(Frame& frame);
+
+	//! Re-record time query resets into the fresh graphics command buffer after a mid-frame queue split.
+	void rerecordTimeQueryReset(Frame& frame);
 
 #if defined(_WIN32)
 	// \name IWindowListener implementation.

@@ -23,19 +23,62 @@ namespace traktor::model
 namespace
 {
 
-std::wstring getTextureName(const cgltf_texture* texture, const std::wstring& defaultName)
+std::wstring getTextureName(const cgltf_data* data, const cgltf_texture* texture, const std::wstring& defaultName)
 {
-	if (texture->name)
+	if (texture->name && texture->name[0])
 		return mbstows(texture->name);
-	else if (texture->image && texture->image->name)
+	else if (texture->image && texture->image->name && texture->image->name[0])
 		return mbstows(texture->image->name);
 	else if (texture->image && texture->image->uri)
 	{
 		const Path texturePath(mbstows(texture->image->uri));
 		return texturePath.getFileNameNoExtension();
 	}
+	else if (texture->image)
+	{
+		// Unnamed embedded image: derive a stable, unique name from the image's
+		// index. Without this every material's unnamed embedded texture of a given
+		// type collapses onto the same default name (e.g. "base_color_texture"), so
+		// distinct textures from different materials are deduplicated into one in the
+		// MeshAsset (only the first material's textures end up shown/imported). Keying
+		// on the image index also lets textures that genuinely share an image still
+		// dedup to a single name.
+		return defaultName + L"_" + toString((int32_t)cgltf_image_index(data, texture->image));
+	}
 	else
 		return defaultName;
+}
+
+// Determine the image codec from the glTF mime type (embedded images) or the
+// URI extension, defaulting to PNG. The previous code always assumed PNG, so
+// JPEG-embedded textures failed to decode.
+std::wstring getImageFormat(const cgltf_image* image)
+{
+	std::string mime = image->mime_type ? image->mime_type : "";
+	if (mime.empty() && image->uri)
+	{
+		const std::string uri = image->uri;
+		if (uri.compare(0, 5, "data:") == 0)
+		{
+			const size_t e = uri.find_first_of(";,", 5);
+			if (e != std::string::npos)
+				mime = uri.substr(5, e - 5);
+		}
+	}
+
+	if (mime == "image/jpeg")
+		return L"jpg";
+	else if (mime == "image/png")
+		return L"png";
+
+	if (image->uri && std::string(image->uri).compare(0, 5, "data:") != 0)
+	{
+		const std::wstring ext = Path(mbstows(image->uri)).getExtension();
+		if (!ext.empty())
+			return toLower(ext);
+	}
+
+	return L"png";
 }
 
 Ref< drawing::Image > loadTextureImage(const cgltf_texture* texture, const Path& basePath)
@@ -52,7 +95,7 @@ Ref< drawing::Image > loadTextureImage(const cgltf_texture* texture, const Path&
 		if (bufferView->buffer && bufferView->buffer->data)
 		{
 			const uint8_t* data = (const uint8_t*)bufferView->buffer->data + bufferView->offset;
-			return drawing::Image::load(data, bufferView->size, L"png");
+			return drawing::Image::load(data, bufferView->size, getImageFormat(image));
 		}
 	}
 
@@ -93,7 +136,7 @@ Ref< drawing::Image > loadTextureImage(const cgltf_texture* texture, const Path&
 					if (result == cgltf_result_success && decodedData)
 					{
 						// Load image from decoded data
-						Ref< drawing::Image > loadedImage = drawing::Image::load((const uint8_t*)decodedData, outSize, L"png");
+						Ref< drawing::Image > loadedImage = drawing::Image::load((const uint8_t*)decodedData, outSize, getImageFormat(image));
 
 						// Free the decoded data
 						if (options.memory.free_func)
@@ -186,17 +229,20 @@ bool convertMaterials(
 			// Base color texture (diffuse)
 			if (pbr->base_color_texture.texture)
 			{
-				const std::wstring textureName = getTextureName(pbr->base_color_texture.texture, L"base_color_texture");
+				const std::wstring textureName = getTextureName(data, pbr->base_color_texture.texture, L"base_color_texture");
 				const uint32_t channel = getTextureCoordChannel(&pbr->base_color_texture, outModel);
 				Ref< drawing::Image > image = loadTextureImage(pbr->base_color_texture.texture, basePath);
 
 				material.setDiffuseMap(Material::Map(textureName, channel, true, Guid(), image));
+
+				if (gltfMaterial->alpha_mode == cgltf_alpha_mode_blend || gltfMaterial->alpha_mode == cgltf_alpha_mode_mask)
+					material.setTransparencyMap(Material::Map(textureName, channel, true, Guid(), image));
 			}
 
 			// Metallic-roughness texture
 			if (pbr->metallic_roughness_texture.texture)
 			{
-				const std::wstring textureName = getTextureName(pbr->metallic_roughness_texture.texture, L"metallic_roughness_texture");
+				const std::wstring textureName = getTextureName(data, pbr->metallic_roughness_texture.texture, L"metallic_roughness_texture");
 				const uint32_t channel = getTextureCoordChannel(&pbr->metallic_roughness_texture, outModel);
 				Ref< drawing::Image > metallicRoughnessImage = loadTextureImage(pbr->metallic_roughness_texture.texture, basePath);
 
@@ -228,7 +274,7 @@ bool convertMaterials(
 		// Normal texture
 		if (gltfMaterial->normal_texture.texture)
 		{
-			const std::wstring textureName = getTextureName(gltfMaterial->normal_texture.texture, L"normal_texture");
+			const std::wstring textureName = getTextureName(data, gltfMaterial->normal_texture.texture, L"normal_texture");
 			const uint32_t channel = getTextureCoordChannel(&gltfMaterial->normal_texture, outModel);
 			Ref< drawing::Image > image = loadTextureImage(gltfMaterial->normal_texture.texture, basePath);
 
@@ -238,7 +284,7 @@ bool convertMaterials(
 		// Occlusion texture
 		if (gltfMaterial->occlusion_texture.texture)
 		{
-			const std::wstring textureName = getTextureName(gltfMaterial->occlusion_texture.texture, L"occlusion_texture");
+			const std::wstring textureName = getTextureName(data, gltfMaterial->occlusion_texture.texture, L"occlusion_texture");
 			const uint32_t channel = getTextureCoordChannel(&gltfMaterial->occlusion_texture, outModel);
 			Ref< drawing::Image > image = loadTextureImage(gltfMaterial->occlusion_texture.texture, basePath);
 
@@ -258,7 +304,7 @@ bool convertMaterials(
 
 		if (gltfMaterial->emissive_texture.texture)
 		{
-			const std::wstring textureName = getTextureName(gltfMaterial->emissive_texture.texture, L"emissive_texture");
+			const std::wstring textureName = getTextureName(data, gltfMaterial->emissive_texture.texture, L"emissive_texture");
 			const uint32_t channel = getTextureCoordChannel(&gltfMaterial->emissive_texture, outModel);
 			Ref< drawing::Image > image = loadTextureImage(gltfMaterial->emissive_texture.texture, basePath);
 
@@ -272,7 +318,7 @@ bool convertMaterials(
 		}
 		else if (gltfMaterial->alpha_mode == cgltf_alpha_mode_mask)
 		{
-			material.setBlendOperator(Material::BoAlpha);
+			material.setBlendOperator(Material::BoAlphaTest);
 			// Alpha cutoff could be stored in transparency if needed
 		}
 
@@ -293,7 +339,7 @@ bool convertMaterials(
 
 			if (specGloss->diffuse_texture.texture)
 			{
-				const std::wstring textureName = getTextureName(specGloss->diffuse_texture.texture, L"diffuse_texture");
+				const std::wstring textureName = getTextureName(data, specGloss->diffuse_texture.texture, L"diffuse_texture");
 				const uint32_t channel = getTextureCoordChannel(&specGloss->diffuse_texture, outModel);
 				Ref< drawing::Image > image = loadTextureImage(specGloss->diffuse_texture.texture, basePath);
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include "Render/Image2/ImagePassStep.h"
 
+#include "Core/Log/Log.h"
 #include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
@@ -35,18 +36,31 @@ void ImagePassStep::addInputs(const ImageGraphContext& context, RenderPass& pass
 	}
 }
 
-void ImagePassStep::bindSources(const ImageGraphContext& context, const RenderGraph& renderGraph, ProgramParameters* programParameters) const
+bool ImagePassStep::bindSources(const ImageGraphContext& context, const RenderGraph& renderGraph, ProgramParameters* programParameters) const
 {
 	for (const auto& source : m_textureSources)
 	{
-		auto texture = context.findTexture(renderGraph, source.id);
-		programParameters->setTextureParameter(source.shaderParameter, texture);
+		ITexture* texture = context.findTexture(renderGraph, source.id);
+		if (texture)
+			programParameters->setTextureParameter(source.shaderParameter, texture);
+		else
+		{
+			log::error << L"Image graph dependent texure \"" << getParameterName(source.id) << L"\" not set." << Endl;
+			return false;
+		}
 	}
 	for (const auto& source : m_sbufferSources)
 	{
-		auto sbuffer = context.findSBuffer(renderGraph, source.id);
-		programParameters->setBufferViewParameter(source.shaderParameter, (sbuffer != nullptr) ? sbuffer->getBufferView() : nullptr);
+		Buffer* sbuffer = context.findSBuffer(renderGraph, source.id);
+		if (sbuffer)
+			programParameters->setBufferViewParameter(source.shaderParameter, (sbuffer != nullptr) ? sbuffer->getBufferView() : nullptr);
+		else
+		{
+			log::error << L"Image graph dependent structured buffer \"" << getParameterName(source.id) << L"\" not set." << Endl;
+			return false;
+		}
 	}
+	return true;
 }
 
 }

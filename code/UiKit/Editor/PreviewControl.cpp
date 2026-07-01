@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,6 +17,7 @@
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
@@ -46,6 +47,7 @@
 #include "Ui/Application.h"
 #include "Ui/Itf/IWidget.h"
 #include "UiKit/Editor/Scaffolding.h"
+#include "Render/Compute/ComputeTextureFactory.h"
 #include "Video/VideoFactory.h"
 
 namespace traktor::uikit
@@ -142,6 +144,7 @@ bool PreviewControl::create(ui::Widget* parent)
 	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
 	m_resourceManager->addFactory(new script::ScriptFactory(scriptManager));
 	m_resourceManager->addFactory(new spark::MovieResourceFactory());
+	m_resourceManager->addFactory(new render::ComputeTextureFactory(renderSystem));
 	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
 
 	// Create an empty flash movie.
@@ -213,11 +216,18 @@ bool PreviewControl::create(ui::Widget* parent)
 
 void PreviewControl::destroy()
 {
-	m_threadProcessTicks->stop();
-	ThreadManager::getInstance().destroy(m_threadProcessTicks);
-	m_threadProcessTicks = nullptr;
+	if (m_threadProcessTicks)
+	{
+		m_threadProcessTicks->stop();
+		ThreadManager::getInstance().destroy(m_threadProcessTicks);
+		m_threadProcessTicks = nullptr;
+	}
 
 	ui::Application::getInstance()->removeEventHandler(m_idleEventHandler);
+
+	m_scaffoldingObject = nullptr;
+	m_scaffolding = nullptr;
+	m_scaffoldingClass.clear();
 
 	safeDestroy(m_displayRenderer);
 	safeDestroy(m_renderGraph);
@@ -264,57 +274,61 @@ void PreviewControl::threadProcessTicks()
 		if (!m_eventProcessTickStart.wait(100))
 			continue;
 
-		// Got process event.
-		const ui::Size sz = getInnerRect().getSize();
-		const float scale = std::max(dpi() / 96.0f, 1.0f);
-
-		// Initialize scaffolding.
-		if (m_scaffoldingClass.changed())
 		{
-			// Create scaffolding object.
-			if (m_scaffoldingClass)
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockProcess);
+
+			// Got process event.
+			const ui::Size sz = getInnerRect().getSize();
+			const float scale = std::max(dpi() / 96.0f, 1.0f);
+
+			// Initialize scaffolding.
+			if (m_scaffoldingClass.changed())
 			{
-				// Remove previous scaffolding.
-				if (m_scaffoldingObject)
+				// Create scaffolding object.
+				if (m_scaffoldingClass)
 				{
-					const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "remove");
-					if (method != nullptr)
-						method->invoke(m_scaffoldingObject, 0, nullptr);
+					// Remove previous scaffolding.
+					if (m_scaffoldingObject)
+					{
+						const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "remove");
+						if (method != nullptr)
+							method->invoke(m_scaffoldingObject, 0, nullptr);
+					}
+
+					// Construct new scaffolding.
+					const Any argv[] = {
+						Any::fromObject(m_editor->getSourceDatabase()),
+						Any::fromObject(m_resourceManager),
+						Any::fromObject(m_moviePlayer->getMovieInstance()),
+						Any::fromInt32((int32_t)(sz.cx / scale)),
+						Any::fromInt32((int32_t)(sz.cy / scale))
+					};
+					m_scaffoldingObject = createRuntimeClassInstance(m_scaffoldingClass, nullptr, sizeof_array(argv), argv);
+				}
+				else
+					m_scaffoldingObject = nullptr;
+
+				m_scaffoldingClass.consume();
+			}
+
+			if (m_scaffoldingObject)
+			{
+				const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "update");
+				if (method != nullptr)
+					method->invoke(m_scaffoldingObject, 0, nullptr);
+			}
+
+			if (m_moviePlayer)
+			{
+				if (m_resized)
+				{
+					m_moviePlayer->postViewResize((int32_t)(sz.cx / scale), (int32_t)(sz.cy / scale));
+					m_resized = false;
 				}
 
-				// Construct new scaffolding.
-				const Any argv[] = {
-					Any::fromObject(m_editor->getSourceDatabase()),
-					Any::fromObject(m_resourceManager),
-					Any::fromObject(m_moviePlayer->getMovieInstance()),
-					Any::fromInt32((int32_t)(sz.cx / scale)),
-					Any::fromInt32((int32_t)(sz.cy / scale))
-				};
-				m_scaffoldingObject = createRuntimeClassInstance(m_scaffoldingClass, nullptr, sizeof_array(argv), argv);
+				const float deltaTime = (float)m_timer.getDeltaTime();
+				m_moviePlayer->progress(deltaTime, nullptr);
 			}
-			else
-				m_scaffoldingObject = nullptr;
-
-			m_scaffoldingClass.consume();
-		}
-
-		if (m_scaffoldingObject)
-		{
-			const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "update");
-			if (method != nullptr)
-				method->invoke(m_scaffoldingObject, 0, nullptr);
-		}
-
-		if (m_moviePlayer)
-		{
-			if (m_resized)
-			{
-				m_moviePlayer->postViewResize((int32_t)(sz.cx / scale), (int32_t)(sz.cy / scale));
-				m_resized = false;
-			}
-
-			const float deltaTime = (float)m_timer.getDeltaTime();
-			m_moviePlayer->progress(deltaTime, nullptr);
 		}
 
 		m_eventProcessTickDone.broadcast();
@@ -357,9 +371,12 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 		log::debug << L"processTick timeout; logic stuck" << Endl;
 
 	// Add passes to render graph.
-	m_displayRenderer->beginSetup(m_renderGraph);
-	m_moviePlayer->render(m_movieRenderer);
-	m_displayRenderer->endSetup();
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockProcess);
+		m_displayRenderer->beginSetup(m_renderGraph);
+		m_moviePlayer->render(m_movieRenderer);
+		m_displayRenderer->endSetup();
+	}
 
 	// Render debug wires.
 	if (m_debugWires)

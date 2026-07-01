@@ -1,19 +1,21 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <cmath>
+
+#include "Scene/Editor/Modifiers/RotateModifier.h"
+
 #include "Core/Math/Const.h"
 #include "Core/Math/Line2.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/IModifierAnchor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
-#include "Scene/Editor/Modifiers/RotateModifier.h"
 #include "Ui/Application.h"
 #include "Ui/Command.h"
 
@@ -53,19 +55,19 @@ void RotateModifier::deactivate()
 
 void RotateModifier::selectionChanged()
 {
-	m_entityAdapters = m_context->getEntities(SceneEditorContext::GfDefault | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
+	m_anchors = m_context->getModifierAnchors();
 
 	m_baseTransforms.clear();
 
 	m_center = Vector4::zero();
-	for (auto entityAdapter : m_entityAdapters)
+	for (auto anchor : m_anchors)
 	{
-		const Transform T = entityAdapter->getTransform();
+		const Transform T = anchor->getTransform();
 		m_baseTransforms.push_back(T);
 		m_center += T.translation();
 	}
-	if (!m_entityAdapters.empty())
-		m_center /= Scalar(float(m_entityAdapters.size()));
+	if (!m_anchors.empty())
+		m_center /= Scalar(float(m_anchors.size()));
 	m_center = m_center.xyz1();
 
 	if (m_baseTransforms.size() == 1)
@@ -91,7 +93,7 @@ IModifier::CursorMovedResult RotateModifier::cursorMoved(
 	const Vector4& worldRayDirection
 )
 {
-	if (m_entityAdapters.empty())
+	if (m_anchors.empty())
 		return { false, false };
 
 	const Matrix44 mh = rotateY(m_baseHead + m_deltaHead);
@@ -195,14 +197,14 @@ bool RotateModifier::handleCommand(const ui::Command& command)
 	if ((m_axisEnable & 4) != 0)
 		m_deltaBank += rotate;
 
-	if (m_entityAdapters.size() == 1)
+	if (m_anchors.size() == 1)
 	{
 		const Quaternion Q = Quaternion::fromEulerAngles(m_baseHead + m_deltaHead, m_basePitch + m_deltaPitch, m_baseBank + m_deltaBank);
 
-		const Transform T = m_entityAdapters.front()->getTransform();
+		const Transform T = m_anchors.front()->getTransform();
 		const Transform Tn(T.translation(), Q);
 
-		m_entityAdapters.front()->setTransform(Tn);
+		m_anchors.front()->setTransform(Tn);
 	}
 	else
 	{
@@ -211,12 +213,12 @@ bool RotateModifier::handleCommand(const ui::Command& command)
 		const Transform Tc(m_center.xyz1());
 		const Transform Tci(-m_center.xyz1());
 
-		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
+		for (uint32_t i = 0; i < m_anchors.size(); ++i)
 		{
 			const Transform T0 = Tci * m_baseTransforms[i];
 			const Transform T1 = Transform(Q) * T0;
 			const Transform T2 = Tc * T1;
-			m_entityAdapters[i]->setTransform(T2);
+			m_anchors[i]->setTransform(T2);
 		}
 	}
 
@@ -261,7 +263,7 @@ void RotateModifier::apply(
 	m_deltaPitch += dPitch;
 	m_deltaBank += dBank;
 
-	if (m_entityAdapters.size() == 1)
+	if (m_anchors.size() == 1)
 	{
 		float head = m_baseHead + m_deltaHead;
 		float pitch = m_basePitch + m_deltaPitch;
@@ -283,7 +285,7 @@ void RotateModifier::apply(
 		const Transform T = m_baseTransforms.front();
 		const Transform Tn(T.translation(), Q);
 
-		m_entityAdapters.front()->setTransform(Tn);
+		m_anchors.front()->setTransform(Tn);
 	}
 	else
 	{
@@ -292,12 +294,12 @@ void RotateModifier::apply(
 		const Transform Tc(m_center.xyz1());
 		const Transform Tci(-m_center.xyz1());
 
-		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
+		for (uint32_t i = 0; i < m_anchors.size(); ++i)
 		{
 			const Transform T0 = Tci * m_baseTransforms[i];
 			const Transform T1 = Transform(Q) * T0;
 			const Transform T2 = Tc * T1;
-			m_entityAdapters[i]->setTransform(T2);
+			m_anchors[i]->setTransform(T2);
 		}
 	}
 }
@@ -305,9 +307,9 @@ void RotateModifier::apply(
 void RotateModifier::end(const TransformChain& transformChain)
 {
 	m_baseTransforms.clear();
-	for (auto entityAdapter : m_entityAdapters)
+	for (auto anchor : m_anchors)
 	{
-		const Transform T = entityAdapter->getTransform();
+		const Transform T = anchor->getTransform();
 		m_baseTransforms.push_back(T);
 	}
 
@@ -327,7 +329,7 @@ void RotateModifier::end(const TransformChain& transformChain)
 
 void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer, bool orthogonal) const
 {
-	if (m_entityAdapters.empty())
+	if (m_anchors.empty())
 		return;
 
 	const Vector4 eye = primitiveRenderer->getView().inverse().translation();

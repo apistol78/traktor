@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,13 +27,7 @@ const TypeInfoSet CullingRenderer::getRenderableTypes() const
 void CullingRenderer::setup(
 	const WorldSetupContext& context,
 	const WorldRenderView& worldRenderView,
-	Object* renderable
-)
-{
-}
-
-void CullingRenderer::setup(
-	const WorldSetupContext& context
+	const AlignedVector< Object* >& renderables
 )
 {
 }
@@ -42,19 +36,14 @@ void CullingRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
-	Object* renderable
+	const AlignedVector< Object* >& renderables
 )
 {
-	auto cullingComponent = static_cast< CullingComponent* >(renderable);
-	cullingComponent->build(context, worldRenderView, worldRenderPass);
-}
-
-void CullingRenderer::build(
-	const WorldBuildContext& context,
-	const WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass
-)
-{
+	for (Object* renderable : renderables)
+	{
+		auto cullingComponent = static_cast< CullingComponent* >(renderable);
+		cullingComponent->build(context, worldRenderView, worldRenderPass);
+	}
 }
 
 }

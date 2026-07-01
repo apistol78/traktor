@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,12 +12,12 @@
 #include "Render/IRenderView.h"
 
 // #if defined(_DEBUG)
-#define T_CONTEXT_PUSH_MARKER(renderView, name) T_RENDER_PUSH_MARKER(renderView, name)
-#define T_CONTEXT_POP_MARKER(renderView) T_RENDER_POP_MARKER(renderView)
+#define T_CONTEXT_PUSH_MARKER(renderView, asynchronous, name) T_RENDER_PUSH_MARKER(renderView, asynchronous, name)
+#define T_CONTEXT_POP_MARKER(renderView, asynchronous) T_RENDER_POP_MARKER(renderView, asynchronous)
 
 // #else
-// #	define T_CONTEXT_PUSH_MARKER(renderView, name)
-// #	define T_CONTEXT_POP_MARKER(renderView)
+// #	define T_CONTEXT_PUSH_MARKER(renderView, asynchronous, name)
+// #	define T_CONTEXT_POP_MARKER(renderView, asynchronous)
 // #endif
 
 namespace traktor::render
@@ -31,7 +31,7 @@ void NullRenderBlock::render(IRenderView* renderView) const
 
 void ComputeRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, asynchronous, name);
 
 	if (programParams)
 		programParams->fixup(program);
@@ -41,12 +41,15 @@ void ComputeRenderBlock::render(IRenderView* renderView) const
 		workSize,
 		asynchronous);
 
-	T_CONTEXT_POP_MARKER(renderView);
+	if (outHandle && asynchronous)
+		*outHandle = renderView->signalAsynchronousCompute();
+
+	T_CONTEXT_POP_MARKER(renderView, asynchronous);
 }
 
 void IndirectComputeRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
 
 	if (programParams)
 		programParams->fixup(program);
@@ -56,12 +59,12 @@ void IndirectComputeRenderBlock::render(IRenderView* renderView) const
 		workBuffer,
 		workOffset);
 
-	T_CONTEXT_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView, false);
 }
 
 void SimpleRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
 
 	if (programParams)
 		programParams->fixup(program);
@@ -75,12 +78,12 @@ void SimpleRenderBlock::render(IRenderView* renderView) const
 		primitives,
 		1);
 
-	T_CONTEXT_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView, false);
 }
 
 void InstancingRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
 
 	if (programParams)
 		programParams->fixup(program);
@@ -94,12 +97,12 @@ void InstancingRenderBlock::render(IRenderView* renderView) const
 		primitives,
 		count);
 
-	T_CONTEXT_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView, false);
 }
 
 void IndexedInstancingRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
 
 	if (programParams)
 		programParams->fixup(program);
@@ -113,12 +116,12 @@ void IndexedInstancingRenderBlock::render(IRenderView* renderView) const
 		Primitives::setIndexed(primitive, offset, count),
 		instanceCount);
 
-	T_CONTEXT_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView, false);
 }
 
 void NonIndexedRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
 
 	if (programParams)
 		programParams->fixup(program);
@@ -132,12 +135,12 @@ void NonIndexedRenderBlock::render(IRenderView* renderView) const
 		Primitives::setNonIndexed(primitive, offset, count),
 		1);
 
-	T_CONTEXT_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView, false);
 }
 
 void IndexedRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
 
 	if (programParams)
 		programParams->fixup(program);
@@ -151,12 +154,12 @@ void IndexedRenderBlock::render(IRenderView* renderView) const
 		Primitives::setIndexed(primitive, offset, count),
 		1);
 
-	T_CONTEXT_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView, false);
 }
 
 void IndirectRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
 
 	if (programParams)
 		programParams->fixup(program);
@@ -172,12 +175,12 @@ void IndirectRenderBlock::render(IRenderView* renderView) const
 		drawOffset,
 		drawCount);
 
-	T_CONTEXT_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView, false);
 }
 
 void BeginPassRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
 
 	if (renderTargetSet)
 		if (renderTargetIndex >= 0)
@@ -192,50 +195,71 @@ void EndPassRenderBlock::render(IRenderView* renderView) const
 {
 	renderView->endPass();
 
-	T_CONTEXT_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView, false);
 }
 
 void PresentRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
 
 	renderView->present();
 
-	T_CONTEXT_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView, false);
 }
 
 void SetViewportRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
 
 	renderView->setViewport(viewport);
 
-	T_CONTEXT_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView, false);
 }
 
 void SetScissorRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
+	
 	renderView->setScissor(scissor);
-	T_CONTEXT_POP_MARKER(renderView);
+
+	T_CONTEXT_POP_MARKER(renderView, false);
+}
+
+void WaitComputeRenderBlock::render(IRenderView* renderView) const
+{
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
+
+	if (handle)
+		renderView->waitAsynchronousCompute(*handle);
+
+	T_CONTEXT_POP_MARKER(renderView, false);
+}
+
+void SynchronizeRenderBlock::render(IRenderView* renderView) const
+{
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
+
+	renderView->synchronize();
+
+	T_CONTEXT_POP_MARKER(renderView, false);
 }
 
 void BarrierRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, asynchronous, name);
 
-	renderView->barrier(from, to, written, writtenMip);
+	renderView->barrier(from, to, written, writtenMip, asynchronous);
 
-	T_CONTEXT_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView, asynchronous);
 }
 
 void LambdaRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, asynchronous, name);
 
 	lambda(renderView);
 
-	T_CONTEXT_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView, asynchronous);
 }
 
 void ProfileBeginRenderBlock::render(IRenderView* renderView) const

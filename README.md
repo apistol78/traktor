@@ -45,6 +45,7 @@ See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binar
 - Formalized pipeline/flow to cook assets to runtime optimized data; highly parallized and easy to add new pipelines.
 - Quick iterative build times, only build and reload modified assets.
 - Light, dark and more themes, easily customizable.
+- Built in MCP server for AI integration. Able to create, query and update all assets (shader graphs, entities, scenes, textures etc) exposed in the project's database.
 
 ## Rendering
 
@@ -58,6 +59,7 @@ See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binar
 - ReSTIR based global illumination.
 - Easy to use graph based image processing system for fullscreen effects.
 - Multithreaded and API agnostic.
+- Support for thirdparty upscalers; XeSS support implemented.
 
 ## Scripting
 - LUA as primary scripting language.

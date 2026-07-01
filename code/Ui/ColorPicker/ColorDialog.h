@@ -56,6 +56,7 @@ private:
 	Ref< ColorSliderControl > m_sliderAlphaControl;
 	Ref< ColorControl > m_colorControl;
 	Ref< Edit > m_editColor[5];
+	Ref< Edit > m_editHex;
 	Ref< ColorGradient > m_colorGradient;
 	Ref< AlphaGradient > m_alphaGradient;
 	Color4f m_color;
@@ -68,6 +69,8 @@ private:
 	void eventSliderColorSelect(ColorEvent* event);
 
 	void eventSliderAlphaSelect(ColorEvent* event);
+
+	void eventEditContentChange(ContentChangeEvent* event);
 
 	void eventEditFocus(FocusEvent* event);
 };

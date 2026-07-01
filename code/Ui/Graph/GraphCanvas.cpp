@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -56,6 +56,11 @@ Rect operator * (const Rect& rc, float scale)
 	);
 }
 
+int32_t applyScale(int32_t value, float scale)
+{
+	return std::max((int32_t)std::ceil(value * scale), 1);
+}
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GraphCanvas", GraphCanvas, Object)
@@ -84,7 +89,7 @@ void GraphCanvas::setFont(const Font& font)
 
 	m_scaledFont = font;
 	m_scaledFont.setSize(
-		Unit((int32_t)std::ceil(font.getSize().get() * m_scale))
+		Unit(applyScale(font.getSize().get(), m_scale))
 	);
 
 	m_canvas->setFont(m_scaledFont);
@@ -92,7 +97,7 @@ void GraphCanvas::setFont(const Font& font)
 
 void GraphCanvas::drawLine(const Point& start, const Point& end, int32_t thickness)
 {
-	m_canvas->setPenThickness((int32_t)std::ceil(thickness * m_scale));
+	m_canvas->setPenThickness(applyScale(thickness, m_scale));
 	m_canvas->drawLine(
 		start * m_scale,
 		end * m_scale
@@ -108,14 +113,14 @@ void GraphCanvas::drawLines(const AlignedVector< Point >& pnts, int32_t thicknes
 	for (const auto& pnt : pnts)
 		tpnts.push_back(pnt * m_scale);
 
-	m_canvas->setPenThickness((int32_t)std::ceil(thickness * m_scale));
+	m_canvas->setPenThickness(applyScale(thickness, m_scale));
 	m_canvas->drawLines(tpnts);
 	m_canvas->setPenThickness(1);
 }
 
 void GraphCanvas::drawCurve(const Point& start, const Point& control, const Point& end, int32_t thickness)
 {
-	m_canvas->setPenThickness((int32_t)std::ceil(thickness * m_scale));
+	m_canvas->setPenThickness(applyScale(thickness, m_scale));
 	m_canvas->drawCurve(start * m_scale, control * m_scale, end * m_scale);
 	m_canvas->setPenThickness(1);
 }
@@ -128,7 +133,7 @@ void GraphCanvas::drawSpline(const AlignedVector< Point >& pnts, int32_t thickne
 	for (const auto& pnt : pnts)
 		tpnts.push_back(pnt * m_scale);
 
-	m_canvas->setPenThickness((int32_t)std::ceil(thickness * m_scale));
+	m_canvas->setPenThickness(applyScale(thickness, m_scale));
 	m_canvas->drawSpline(tpnts);
 	m_canvas->setPenThickness(1);
 }
@@ -176,8 +181,12 @@ void GraphCanvas::drawText(const Rect& rc, const std::wstring& text, Align halig
 	if (m_scaledFont.getSize() < 4_ut)
 		return;
 
+	const Rect src = rc * m_scale;
+	if (src.area() <= 0)
+		return;
+
 	m_canvas->drawText(
-		rc * m_scale,
+		src,
 		text,
 		halign,
 		valign
@@ -202,6 +211,9 @@ void GraphCanvas::draw9gridBitmap(const Point& dstAt, const Size& dstSize, IBitm
 		(int32_t)std::floor(dstSize.cy * m_scale + 1.0f)
 	);
 
+	if (sdstSize.cx * sdstSize.cy <= 0)
+		return;
+
 	const int32_t tw = sz.cx / 3;
 	const int32_t th = sz.cy / 3;
 
@@ -214,6 +226,9 @@ void GraphCanvas::draw9gridBitmap(const Point& dstAt, const Size& dstSize, IBitm
 	const int32_t stw = (int32_t)std::floor(tw * m_scale);
 	const int32_t sth = (int32_t)std::floor(th * m_scale);
 
+	if (stw * sth <= 0)
+		return;
+
 	const int32_t dx[] = { 0, stw, dw - stw, dw };
 	const int32_t dy[] = { 0, sth, dh - sth, dh };
 
@@ -221,9 +236,13 @@ void GraphCanvas::draw9gridBitmap(const Point& dstAt, const Size& dstSize, IBitm
 	{
 		for (int32_t ix = 0; ix < 3; ++ix)
 		{
+			const Size tileSize(dx[ix + 1] - dx[ix], dy[iy + 1] - dy[iy]);
+			if (tileSize.cx * tileSize.cy <= 0)
+				continue;
+
 			m_canvas->drawBitmap(
 				sdstAt + Size(dx[ix], dy[iy]),
-				Size(dx[ix + 1] - dx[ix], dy[iy + 1] - dy[iy]),
+				tileSize,
 				Point(sx[ix], sy[iy]),
 				Size(sx[ix + 1] - sx[ix], sy[iy + 1] - sy[iy]),
 				bitmap,

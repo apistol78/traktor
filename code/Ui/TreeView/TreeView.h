@@ -1,12 +1,14 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #pragma once
+
+#include <functional>
 
 #include "Core/RefArray.h"
 #include "Ui/Auto/AutoWidget.h"
@@ -63,6 +65,8 @@ public:
 	void removeAllItems();
 
 	RefArray< TreeViewItem > getItems(uint32_t flags) const;
+
+	TreeViewItem* find(const std::function< bool(const TreeViewItem*) >& predicate) const;
 
 	void deselectAll();
 

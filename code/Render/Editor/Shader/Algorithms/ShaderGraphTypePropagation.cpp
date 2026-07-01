@@ -77,9 +77,10 @@ void ShaderGraphTypePropagation::initialize(const RefArray< Node >& roots, const
 			if (!nodeTraits)
 				return true;
 
-			PinType inputPinTypes[16];
+			PinType inputPinTypes[64];
 
 			const uint32_t inputPinCount = node->getInputPinCount();
+			T_FATAL_ASSERT(inputPinCount < sizeof_array(inputPinTypes));
 			for (uint32_t i = 0; i < inputPinCount; ++i)
 			{
 				const InputPin* inputPin = node->getInputPin(i);
@@ -119,8 +120,8 @@ void ShaderGraphTypePropagation::initialize(const RefArray< Node >& roots, const
 		nodeSetInput.insert(node);
 
 	// Iteratively solve types until all types are stable.
-	PinType currentInputPinTypes[32];
-	PinType outputPinTypes[32];
+	PinType currentInputPinTypes[64];
+	PinType outputPinTypes[64];
 	uint32_t iterationCount = 0;
 	for (;;)
 	{

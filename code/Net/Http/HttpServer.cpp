@@ -87,7 +87,10 @@ public:
 			SocketStream clientStream(clientSocket, true, true, 100);
 
 			// Read request until two blank lines.
-			StringReader clientReader(&clientStream, new Utf8Encoding());
+			// NOTE: do NOT wrap clientStream in BufferedStream here; the body is
+			// later read directly from clientStream (see StreamStream below) and
+			// any read-ahead bytes would be stranded in the buffer.
+			StringReader clientReader(&clientStream, Utf8Encoding::getInstance());
 			StringOutputStream ss;
 			for (;;)
 			{

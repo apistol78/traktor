@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Mesh/Editor/MeshAsset.h"
+
 #include "Core/Serialization/AttributeNoHash.h"
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
@@ -13,28 +15,26 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberSmallMap.h"
-#include "Mesh/Editor/MeshAsset.h"
 #include "Render/Editor/Texture/TextureSet.h"
 
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 25, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 26, MeshAsset, editor::Asset)
 
 void MeshAsset::serialize(ISerializer& s)
 {
-	const MemberEnum< MeshType >::Key c_MeshType_Keys[] =
-	{
-		{ L"MtInstance", MtInstance },
-		{ L"MtSkinned", MtSkinned },
-		{ L"MtStatic", MtStatic },
+	const MemberEnum< MeshType >::Key c_MeshType_Keys[] = {
+		{ L"MtInstance", MeshType::Instance },
+		{ L"MtSkinned", MeshType::Skinned },
+		{ L"MtStatic", MeshType::Static },
+		{ 0 }
+	};
 
-		// deprecated
-		{ L"MtBlend", MtStatic },
-		{ L"MtIndoor", MtStatic },
-		{ L"MtLod", MtStatic },
-		{ L"MtPartition", MtStatic },
-
+	const MemberEnum< CenterMode >::Key c_CenterMode_Keys[] = {
+		{ L"None", CenterMode::None },
+		{ L"XZ", CenterMode::XZ },
+		{ L"XYZ", CenterMode::XYZ },
 		{ 0 }
 	};
 
@@ -76,17 +76,26 @@ void MeshAsset::serialize(ISerializer& s)
 		s >> Member< bool >(L"renormalize", m_renormalize);
 
 	if (s.getVersion() >= 13)
-		s >> Member< bool >(L"center", m_center);
+	{
+		if (s.getVersion() >= 26)
+			s >> MemberEnum< CenterMode >(L"center", m_center, c_CenterMode_Keys);
+		else
+		{
+			bool center;
+			s >> Member< bool >(L"center", center);
+			m_center = center ? CenterMode::XYZ : CenterMode::None;
+		}
+	}
 
 	if (s.getVersion() >= 21)
 		s >> Member< bool >(L"grounded", m_grounded);
 
 	if (s.getVersion() >= 23)
-		s >> Member< bool>(L"decalResponse", m_decalResponse);
+		s >> Member< bool >(L"decalResponse", m_decalResponse);
 
 	if (s.getVersion() >= 2 && s.getVersion() < 14)
 		s >> ObsoleteMember< bool >(L"bakeOcclusion");
-	
+
 	if (s.getVersion() >= 3 && s.getVersion() < 15)
 		s >> ObsoleteMember< bool >(L"cullDistantFaces");
 

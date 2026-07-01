@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,36 +28,28 @@ const TypeInfoSet SkyRenderer::getRenderableTypes() const
 void SkyRenderer::setup(
 	const world::WorldSetupContext& context,
 	const world::WorldRenderView& worldRenderView,
-	Object* renderable
+	const AlignedVector< Object* >& renderables
 )
 {
-	auto skyComponent = static_cast< SkyComponent* >(renderable);
-	skyComponent->setup(context, worldRenderView);
-}
-
-void SkyRenderer::setup(
-	const world::WorldSetupContext& context
-)
-{
+	for (Object* renderable : renderables)
+	{
+		auto skyComponent = static_cast< SkyComponent* >(renderable);
+		skyComponent->setup(context, worldRenderView);
+	}
 }
 
 void SkyRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
-	Object* renderable
+	const AlignedVector< Object* >& renderables
 )
 {
-	auto skyComponent = static_cast< SkyComponent* >(renderable);
-	skyComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
-}
-
-void SkyRenderer::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
-{
+	for (Object* renderable : renderables)
+	{
+		auto skyComponent = static_cast< SkyComponent* >(renderable);
+		skyComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
+	}
 }
 
 }

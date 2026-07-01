@@ -54,6 +54,8 @@ public:
 
 	uint32_t getState() const { return m_state; }
 
+	void ensureExpanded();
+
 	void setBackground(const ColorReference& background);
 
 	const ColorReference& getBackground() const { return m_background; }
@@ -75,6 +77,8 @@ public:
 	uint32_t add(IBitmap* image);
 
 	void set(uint32_t index, GridItem* item);
+
+	void set(uint32_t index, const std::wstring& text);
 
 	void set(uint32_t index, IBitmap* image);
 

@@ -96,7 +96,7 @@ bool Source::getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluat
 bool Source::getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	SourceCursor* sourceCursor = static_cast< SourceCursor* >(cursor);
-	if (!sourceCursor)
+	if (!sourceCursor || !m_sound)
 		return false;
 
 	T_ASSERT(sourceCursor->m_soundBuffer);

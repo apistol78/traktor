@@ -86,20 +86,14 @@ bool ScriptProcessor::prepare(const std::wstring& fileName)
 	if (!file)
 		return false;
 
-	Utf8Encoding encoding;
 	BufferedStream stream(file);
-	StringReader reader(&stream, &encoding);
+	StringReader reader(&stream, Utf8Encoding::getInstance());
 	StringOutputStream ss;
 
-	std::wstring tmp;
-	while (reader.readLine(tmp) >= 0)
-		ss << tmp << Endl;
+	std::wstring source;
+	reader.readAll(source);
 
 	file->close();
-
-	// Keep source from stream.
-	const std::wstring source = ss.str();
-	ss.reset();
 
 	// Transform generator script into pure code script.
 	size_t offset = 0;

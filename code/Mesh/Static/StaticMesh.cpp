@@ -55,7 +55,7 @@ void StaticMesh::build(
 	programParams->endParameters(renderContext);
 
 	// Draw each technique part.
-	const auto& meshParts = m_renderMesh->getParts();
+	const auto& meshPrimitives = m_renderMesh->getPrimitives();
 	for (uint32_t i = techniqueParts.first; i < techniqueParts.second; ++i)
 	{
 		const auto& part = m_parts[i];
@@ -74,7 +74,7 @@ void StaticMesh::build(
 		renderBlock->indexType = m_renderMesh->getIndexType();
 		renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer()->getBufferView();
 		renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
-		renderBlock->primitives = meshParts[part.meshPart].primitives;
+		renderBlock->primitives = meshPrimitives[part.meshPart];
 
 		renderContext->draw(
 			sp.priority,

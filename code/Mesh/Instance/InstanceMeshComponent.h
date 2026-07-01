@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,9 +29,7 @@ class InstanceMesh;
 /*! Instancing mesh component.
  * \ingroup Mesh
  */
-class T_DLLCLASS InstanceMeshComponent
-:	public MeshComponent
-,	public world::CullingComponent::ICullable
+class T_DLLCLASS InstanceMeshComponent : public MeshComponent
 {
 	T_RTTI_CLASS;
 
@@ -57,20 +55,6 @@ public:
 	) override final;
 
 	inline resource::Proxy< InstanceMesh >& getMesh() { return m_mesh; }
-
-	/* world::CullingComponent::ICullable */
-
-	virtual Aabb3 cullableGetBoundingBox() const override final { return getBoundingBox(); }
-
-	virtual void cullableBuild(
-		const world::WorldBuildContext& context,
-		const world::WorldRenderView& worldRenderView,
-		const world::IWorldRenderPass& worldRenderPass,
-		render::Buffer* instanceBuffer,
-		render::Buffer* visibilityBuffer,
-		uint32_t start,
-		uint32_t count
-	) override final;
 
 private:
 	resource::Proxy< InstanceMesh > m_mesh;

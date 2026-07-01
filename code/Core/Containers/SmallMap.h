@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <string>
 #include <utility>
 #include "Core/Containers/AlignedVector.h"
@@ -70,6 +71,12 @@ public:
 	SmallMap(const std::initializer_list< pair_t >& iv) noexcept
 	{
 		m_data = AlignedVector< pair_t >(iv);
+		std::sort(m_data.begin(), m_data.end(), [](const pair_t& a, const pair_t& b) {
+			return a.first < b.first;
+		});
+		m_data.erase(std::unique(m_data.begin(), m_data.end(), [](const pair_t& a, const pair_t& b) {
+			return a.first == b.first;
+		}), m_data.end());
 	}
 
 	void swap(SmallMap& src)
@@ -160,7 +167,7 @@ public:
 		return end();
 	}
 
-	void insert(const pair_t& pair)
+	bool insert(const pair_t& pair)
 	{
 		size_t is = 0;
 		size_t ie = m_data.size();
@@ -173,16 +180,17 @@ public:
 			else if (pair.first > m_data[i].first)
 				is = i + 1;
 			else if (pair.first == m_data[i].first)
-				return;
+				return false;
 		}
 
 		T_ASSERT(is <= m_data.size());
 		m_data.insert(m_data.begin() + is, pair);
+		return true;
 	}
 
-	void insert(const view_type_t& key, const Item& item)
+	bool insert(const view_type_t& key, const Item& item)
 	{
-		insert(std::make_pair(Key(key), item));
+		return insert(std::make_pair(Key(key), item));
 	}
 
 	void insert(const const_iterator& first, const const_iterator& last)

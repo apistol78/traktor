@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mesh.MeshAsset" version="26">
+	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Examples/Animation/Humanoid.tmd</fileName>
+	<importFilter/>
+	<meshType>MtSkinned</meshType>
+	<materialShaders>
+		<item>
+			<first>HumanoidMat</first>
+			<second>{D14A9C31-34CC-4F08-A361-D5C894CA4CBF}</second>
+		</item>
+	</materialShaders>
+	<materialTextures/>
+	<scaleFactor>1, 1, 1, 1</scaleFactor>
+	<offset>0, 0, 0, 0</offset>
+	<renormalize>false</renormalize>
+	<center>None</center>
+	<grounded>false</grounded>
+	<decalResponse>true</decalResponse>
+	<reduce>1</reduce>
+	<previewAngle>0</previewAngle>
+</object>

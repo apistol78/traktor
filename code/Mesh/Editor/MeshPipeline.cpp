@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,6 +25,8 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
+#include "Drawing/Filters/GammaFilter.h"
+#include "Editor/DataAccessCache.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
@@ -51,6 +53,7 @@
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ParameterLinker.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphPreview.h"
 #include "Render/Editor/Texture/TextureOutput.h"
@@ -64,26 +67,18 @@ namespace traktor::mesh
 namespace
 {
 
-class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
+class FragmentReaderAdapter : public render::FragmentLinker::FragmentReaderTransientCache
 {
 public:
-	explicit FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
-		: m_pipelineBuilder(pipelineBuilder)
+	explicit FragmentReaderAdapter(SmallMap< Key, Ref< render::ShaderGraph > >& cache, editor::IPipelineBuilder* pipelineBuilder)
+		: render::FragmentLinker::FragmentReaderTransientCache(cache)
+		, m_pipelineBuilder(pipelineBuilder)
 	{
 	}
 
 	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid) const
 	{
-		Ref< const render::ShaderGraph > shaderGraph = m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
-		if (!shaderGraph)
-			return nullptr;
-
-		// if (render::ShaderGraphValidator(shaderGraph, fragmentGuid).validateIntegrity())
-		// 	return shaderGraph;
-		// else
-		// 	return nullptr;
-
-		return shaderGraph;
+		return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
 	}
 
 private:
@@ -102,13 +97,13 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 {
 	switch (meshType)
 	{
-	case MeshAsset::MtInstance:
+	case MeshAsset::MeshType::Instance:
 		return Guid(L"{A714A83F-8442-6F48-A2A7-6EFA95EB75F3}");
 
-	case MeshAsset::MtSkinned:
+	case MeshAsset::MeshType::Skinned:
 		return Guid(L"{69A3CF2E-9B63-0440-9410-70AB4AE127CE}");
 
-	case MeshAsset::MtStatic:
+	case MeshAsset::MeshType::Static:
 		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
 
 	default:
@@ -129,6 +124,7 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 	Ref< render::TextureOutput > output = new render::TextureOutput();
 	output->m_textureType = render::Tt2D;
 	output->m_normalMap = normalMap;
+	output->m_inverseNormalMapY = normalMap;
 
 	if (!pipelineBuilder->buildAdHocOutput(
 			output,
@@ -147,7 +143,7 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 59, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 61, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 	: m_promoteHalf(false)
@@ -264,15 +260,15 @@ bool MeshPipeline::buildOutput(
 	Ref< IMeshConverter > converter;
 	switch (asset->getMeshType())
 	{
-	case MeshAsset::MtInstance:
+	case MeshAsset::MeshType::Instance:
 		converter = new InstanceMeshConverter();
 		break;
 
-	case MeshAsset::MtSkinned:
+	case MeshAsset::MeshType::Skinned:
 		converter = new SkinnedMeshConverter();
 		break;
 
-	case MeshAsset::MtStatic:
+	case MeshAsset::MeshType::Static:
 		converter = new StaticMeshConverter();
 		break;
 
@@ -342,11 +338,24 @@ bool MeshPipeline::buildOutput(
 
 	model->apply(operations);
 
-	// Merge all materials into a single list (duplicates will be overridden).
-	if (asset->getCenter())
+	switch (asset->getCenter())
 	{
-		const Aabb3 boundingBox = model->getBoundingBox();
-		model->apply(model::Transform(translate(-boundingBox.getCenter())));
+	case MeshAsset::CenterMode::XZ:
+		{
+			const Aabb3 boundingBox = model->getBoundingBox();
+			model->apply(model::Transform(translate(-boundingBox.getCenter() * Vector4(1.0f, 0.0f, 1.0f))));
+		}
+		break;
+
+	case MeshAsset::CenterMode::XYZ:
+		{
+			const Aabb3 boundingBox = model->getBoundingBox();
+			model->apply(model::Transform(translate(-boundingBox.getCenter())));
+		}
+		break;
+
+	default:
+		break;
 	}
 
 	if (asset->getGrounded())
@@ -392,6 +401,10 @@ bool MeshPipeline::buildOutput(
 				Ref< drawing::Image > image = render::ShaderGraphPreview(m_assetPath, pipelineBuilder->getSourceDatabase()).generate(materialShaderGraph, 128, 128);
 				if (image)
 				{
+					// Convert image into linear color space.
+					const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
+					image->apply(&gammaFilter);
+
 					maps[0].image = image;
 					buildEmbeddedTexture(pipelineBuilder, maps[0], false);
 				}
@@ -490,7 +503,7 @@ bool MeshPipeline::buildOutput(
 	{
 		const std::wstring& materialName = m.getName();
 
-		Ref< const render::ShaderGraph > materialShaderGraph;
+		Ref< render::ShaderGraph > materialShaderGraph;
 		Guid materialShaderGraphId;
 
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateSurface");
@@ -567,19 +580,9 @@ bool MeshPipeline::buildOutput(
 			}
 		}
 
-		// Resolve all variables.
-		pipelineBuilder->getProfiler()->begin(L"MeshPipeline getVariableResolved");
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getVariableResolved();
-		pipelineBuilder->getProfiler()->end();
-		if (!materialShaderGraph)
-		{
-			log::error << L"MeshPipeline failed; unable to resolve variables." << Endl;
-			return false;
-		}
-
 		// Link shader fragments.
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline link fragments");
-		FragmentReaderAdapter fragmentReader(pipelineBuilder);
+		FragmentReaderAdapter fragmentReader(m_linkerCache, pipelineBuilder);
 		materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
 		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
@@ -587,6 +590,22 @@ bool MeshPipeline::buildOutput(
 			log::error << L"MeshPipeline failed; unable to link shader fragments, material shader \"" << materialName << L"\"." << Endl;
 			return false;
 		}
+
+		// Link parameter declarations.
+		pipelineBuilder->getProfiler()->begin(L"MeshPipeline getTypePermutation");
+		const auto parameterDeclarationReader = [&](const Guid& declarationId) -> render::ParameterLinker::named_decl_t {
+			Ref< db::Instance > declarationInstance = pipelineBuilder->getSourceDatabase()->getInstance(declarationId);
+			if (declarationInstance != nullptr)
+				return { declarationInstance->getName(), pipelineBuilder->getObjectReadOnly(declarationId) };
+			else
+				return { L"", nullptr };
+		};
+		if (!render::ParameterLinker(parameterDeclarationReader).resolve(materialShaderGraph))
+		{
+			log::error << L"MeshPipeline failed; unable to link parameters." << Endl;
+			return false;
+		}
+		pipelineBuilder->getProfiler()->end();
 
 		// Resolve all bundles.
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline getBundleResolved");
@@ -668,7 +687,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Extract each material technique.
-		render::ShaderGraphTechniques techniques(materialShaderGraph, materialShaderGraphId);
+		render::ShaderGraphTechniques techniques(materialShaderGraph, materialShaderGraphId, false);
 		if (!techniques.valid())
 		{
 			log::error << L"MeshPipeline failed; unable to generate techniques, material \"" << materialName << L"\"." << Endl;

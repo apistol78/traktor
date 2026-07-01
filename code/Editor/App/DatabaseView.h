@@ -102,6 +102,7 @@ private:
 	Ref< ui::ToolBarButton > m_toolFilterShow;
 	Ref< ui::ToolBarButton > m_toolFavoritesShow;
 	Ref< ui::ToolBarDropDown > m_toolViewMode;
+	Ref< ui::ToolBarDropDown > m_toolViewSize;
 	Ref< ui::Edit > m_editFilter;
 	Ref< ui::Splitter > m_splitter;
 	Ref< ui::TreeView > m_treeDatabase;

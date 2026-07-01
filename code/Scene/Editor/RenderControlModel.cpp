@@ -197,7 +197,7 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 						context->selectEntity(intersectingEntity, false);
 				}
 
-				context->raiseSelect();
+				context->raiseSelect(true);
 			}
 		}
 		else
@@ -220,7 +220,7 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 					else
 						context->selectEntity(entityAdapter, !entityAdapter->isSelected());
 
-					context->raiseSelect();
+					context->raiseSelect(true);
 				}
 			}
 		}

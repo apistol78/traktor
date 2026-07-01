@@ -13,8 +13,8 @@
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Editor/IEditor.h"
+#include "Scene/Editor/ISceneEditorUIExtension.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorPage.h"
 #include "Scene/Editor/SceneEditorPageFactory.h"
@@ -127,12 +127,12 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Scene.Editor.RenameAllEntityIds"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.PlaceOnGround"));
 
-	// Add profile commands.
-	for (auto profileType : type_of< ISceneEditorProfile >().findAllOf())
+	// Add plugin commands.
+	for (auto pluginType : type_of< ISceneEditorPlugin >().findAllOf())
 	{
-		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >(profileType->createInstance());
-		if (profile)
-			profile->getCommands(outCommands);
+		Ref< ISceneEditorPlugin > plugin = dynamic_type_cast< ISceneEditorPlugin* >(pluginType->createInstance());
+		if (plugin)
+			plugin->getCommands(outCommands);
 	}
 }
 

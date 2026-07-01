@@ -88,7 +88,7 @@ bool Animation::getPose(float at, Pose& outPose) const
 			if (at < Tkey0)
 				index1 = index;
 			else if (at > Tkey1)
-				index0 = index;
+				index0 = index + 1;
 			else
 				break;
 		}

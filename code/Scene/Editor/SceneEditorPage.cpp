@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -49,7 +49,8 @@
 #include "Scene/Editor/Events/PostFrameEvent.h"
 #include "Scene/Editor/Events/PostModifyEvent.h"
 #include "Scene/Editor/Events/PreModifyEvent.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/Events/SceneSelectionChangeEvent.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/IWorldComponentEditorFactory.h"
 #include "Scene/Editor/SceneAsset.h"
@@ -64,6 +65,7 @@
 #include "Ui/BackgroundWorkerDialog.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
+#include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridColumnClickEvent.h"
@@ -173,6 +175,18 @@ bool filterIncludeEntity(const TypeInfo& entityOrComponentType, EntityAdapter* e
 	return false;
 }
 
+bool filterIncludeEntityByName(const std::wstring& filterLowerCase, EntityAdapter* entityAdapter)
+{
+	if (toLower(entityAdapter->getName()).find(filterLowerCase) != std::wstring::npos)
+		return true;
+
+	for (auto child : entityAdapter->getChildren())
+		if (filterIncludeEntityByName(filterLowerCase, child))
+			return true;
+
+	return false;
+}
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorPage", SceneEditorPage, editor::IEditorPage)
@@ -248,28 +262,28 @@ bool SceneEditorPage::create(ui::Container* parent)
 		physicsManager,
 		scriptContext);
 
-	// Create profiles, plugins, resource factories, entity editors and guide ids.
-	for (auto profileType : type_of< ISceneEditorProfile >().findAllOf())
+	// Create plugins, UI extensions, resource factories, entity editors and guide ids.
+	for (auto pluginType : type_of< ISceneEditorPlugin >().findAllOf())
 	{
-		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >(profileType->createInstance());
-		if (!profile)
+		Ref< ISceneEditorPlugin > plugin = dynamic_type_cast< ISceneEditorPlugin* >(pluginType->createInstance());
+		if (!plugin)
 			continue;
 
-		m_context->addEditorProfile(profile);
+		m_context->addPlugin(plugin);
 
-		RefArray< ISceneEditorPlugin > editorPlugins;
-		profile->createEditorPlugins(m_context, editorPlugins);
+		RefArray< ISceneEditorUIExtension > uiExtensions;
+		plugin->createUIExtensions(m_context, uiExtensions);
 
-		for (auto editorPlugin : editorPlugins)
-			m_context->addEditorPlugin(editorPlugin);
+		for (auto uiExtension : uiExtensions)
+			m_context->addUIExtension(uiExtension);
 
 		RefArray< const resource::IResourceFactory > resourceFactories;
-		profile->createResourceFactories(m_context, resourceFactories);
+		plugin->createResourceFactories(m_context, resourceFactories);
 
 		for (auto resourceFactory : resourceFactories)
 			resourceManager->addFactory(resourceFactory);
 
-		profile->getGuideDrawIds(guideIds);
+		plugin->getGuideDrawIds(guideIds);
 	}
 
 	// Create entity and component editor factories.
@@ -284,10 +298,10 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	// Create scene instance resource factory, used by final render control etc.
 	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
-	for (auto editorProfile : m_context->getEditorProfiles())
+	for (auto plugin : m_context->getPlugins())
 	{
 		RefArray< world::IEntityFactory > entityFactories;
-		editorProfile->createEntityFactories(m_context, entityFactories);
+		plugin->createEntityFactories(m_context, entityFactories);
 		for (auto factory : entityFactories)
 			if (factory->initialize(objectStore))
 				entityFactory->addFactory(factory);
@@ -318,7 +332,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	// Create entity panel.
 	m_entityPanel = new ui::Container();
-	m_entityPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
+	m_entityPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 0_ut, 4_ut));
 	m_entityPanel->setText(i18n::Text(L"SCENE_EDITOR_ENTITIES"));
 
 	m_entityMenuDefault = new ui::Menu();
@@ -365,6 +379,11 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->addItem(new ui::ToolBarSeparator());
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_NEW_LAYER"), 5, ui::Command(L"Scene.Editor.NewLayer")));
 	m_entityToolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &SceneEditorPage::eventEntityToolClick);
+
+	// Filter text field; placed between the toolbar and the entity grid.
+	m_entityFilterEdit = new ui::Edit();
+	m_entityFilterEdit->create(m_entityPanel, L"", ui::WsNone);
+	m_entityFilterEdit->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorPage::eventEntityFilterChange);
 
 	m_imageStatic = new ui::StyleBitmap(L"Scene.LayerStatic");
 	m_imageDynamic = new ui::StyleBitmap(L"Scene.LayerDynamic");
@@ -485,7 +504,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	// Context event handlers.
 	m_context->addEventHandler< PostBuildEvent >(this, &SceneEditorPage::eventContextPostBuild);
-	m_context->addEventHandler< ui::SelectionChangeEvent >(this, &SceneEditorPage::eventContextSelect);
+	m_context->addEventHandler< SceneSelectionChangeEvent >(this, &SceneEditorPage::eventContextSelect);
 	m_context->addEventHandler< PreModifyEvent >(this, &SceneEditorPage::eventContextPreModify);
 	m_context->addEventHandler< PostModifyEvent >(this, &SceneEditorPage::eventContextPostModify);
 	m_context->addEventHandler< CameraMovedEvent >(this, &SceneEditorPage::eventContextCameraMoved);
@@ -576,9 +595,9 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 
 	Ref< world::EntityData > entityData;
 
-	// Check profiles if any can convert instance into an entity data.
-	for (auto editorProfile : m_context->getEditorProfiles())
-		if ((entityData = editorProfile->createEntityData(m_context, instance)) != nullptr)
+	// Check plugins if any can convert instance into an entity data.
+	for (auto plugin : m_context->getPlugins())
+		if ((entityData = plugin->createEntityData(m_context, instance)) != nullptr)
 			break;
 
 	if (entityData)
@@ -638,7 +657,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		// Select entity.
 		m_context->selectAllEntities(false);
 		m_context->selectEntity(entityAdapter);
-		m_context->raiseSelect();
+		m_context->raiseSelect(true);
 	}
 	else
 		return false;
@@ -662,7 +681,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		updateScene();
 		createInstanceGrid();
 
-		m_context->raiseSelect();
+		m_context->raiseSelect(false);
 	}
 	else if (command == L"Editor.Redo")
 	{
@@ -673,7 +692,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		updateScene();
 		createInstanceGrid();
 
-		m_context->raiseSelect();
+		m_context->raiseSelect(false);
 	}
 	else if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
@@ -710,7 +729,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			updateScene();
 			createInstanceGrid();
 
-			m_context->raiseSelect();
+			m_context->raiseSelect(false);
 		}
 	}
 	else if (command == L"Editor.Paste")
@@ -748,7 +767,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		updateScene();
 		createInstanceGrid();
 
-		m_context->raiseSelect();
+		m_context->raiseSelect(false);
 	}
 	else if (command == L"Editor.Delete")
 	{
@@ -789,19 +808,19 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			updateScene();
 			createInstanceGrid();
 
-			m_context->raiseSelect();
+			m_context->raiseSelect(false);
 		}
 	}
 	else if (command == L"Editor.SelectAll")
 	{
 		m_context->selectAllEntities(true);
-		m_context->raiseSelect();
+		m_context->raiseSelect(false);
 		m_context->enqueueRedraw(nullptr);
 	}
 	else if (command == L"Editor.Unselect")
 	{
 		m_context->selectAllEntities(false);
-		m_context->raiseSelect();
+		m_context->raiseSelect(false);
 		m_context->enqueueRedraw(nullptr);
 	}
 	else if (command == L"Editor.Rename")
@@ -1073,8 +1092,8 @@ void SceneEditorPage::createControllerEditor()
 			Ref< IWorldComponentEditor > componentEditor;
 
 			// Create world component editor factories.
-			for (auto profile : m_context->getEditorProfiles())
-				profile->createControllerEditorFactories(m_context, componentEditorFactories);
+			for (auto plugin : m_context->getPlugins())
+				plugin->createControllerEditorFactories(m_context, componentEditorFactories);
 
 			for (auto controllerEditorFactory : componentEditorFactories)
 			{
@@ -1107,13 +1126,51 @@ void SceneEditorPage::createControllerEditor()
 
 void SceneEditorPage::updateScene()
 {
-	m_context->buildEntities();
+	m_context->buildEntities(false);
 	m_context->enqueueRedraw(nullptr);
+}
+
+bool SceneEditorPage::isEntityFilteredOut(EntityAdapter* entityAdapter) const
+{
+	if (m_entityFilterType && !filterIncludeEntity(*m_entityFilterType, entityAdapter))
+		return true;
+
+	if (!m_entityFilter.empty() && !filterIncludeEntityByName(m_entityFilter, entityAdapter))
+		return true;
+
+	return false;
+}
+
+void SceneEditorPage::applyEntityFilter()
+{
+	// Store filter text in lower-case for case-insensitive matching.
+	m_entityFilter = toLower(m_entityFilterEdit->getText());
+
+	// De-select any selected entity which is no longer visible due to the filter.
+	bool selectionChanged = false;
+	for (auto entityAdapter : m_context->getEntities(SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly))
+	{
+		if (isEntityFilteredOut(entityAdapter))
+		{
+			m_context->selectEntity(entityAdapter, false);
+			selectionChanged = true;
+		}
+	}
+
+	// Rebuild grid according to the new filter.
+	createInstanceGrid();
+
+	// Reflect the changed selection in the rest of the editor (property view, scene, etc).
+	if (selectionChanged)
+	{
+		m_context->raiseSelect(false);
+		m_context->enqueueRedraw(nullptr);
+	}
 }
 
 Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityAdapter)
 {
-	if (m_entityFilterType && !filterIncludeEntity(*m_entityFilterType, entityAdapter))
+	if (isEntityFilteredOut(entityAdapter))
 		return nullptr;
 
 	// Assume root entities are layers.
@@ -1226,20 +1283,30 @@ void SceneEditorPage::updateInstanceGridRow(ui::GridRow* row)
 		updateInstanceGridRow(childRow);
 }
 
-void SceneEditorPage::updateInstanceGrid()
+void SceneEditorPage::updateInstanceGrid(bool ensureSelectedVisible)
 {
 	for (auto row : m_instanceGrid->getRows())
 		updateInstanceGridRow(row);
+
+	if (ensureSelectedVisible)
+	{
+		ui::GridRow* selectedRow = m_instanceGrid->getSelectedRow();
+		if (selectedRow)
+		{
+			selectedRow->ensureExpanded();
+			m_instanceGrid->scrollToRow(selectedRow);
+		}
+	}
 
 	m_instanceGrid->requestUpdate();
 }
 
 void SceneEditorPage::updatePropertyObject()
 {
-	RefArray< EntityAdapter > entityAdapters = m_context->getEntities(SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly);
+	const RefArray< EntityAdapter > entityAdapters = m_context->getEntities(SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly);
 	if (entityAdapters.size() == 1)
 	{
-		Ref< EntityAdapter > entityAdapter = entityAdapters.front();
+		const EntityAdapter* entityAdapter = entityAdapters.front();
 		T_ASSERT(entityAdapter);
 
 		m_propertiesView->setPropertyObject(entityAdapter->getEntityData());
@@ -1253,15 +1320,15 @@ void SceneEditorPage::updateStatusBar()
 	const Camera* camera = m_context->getCamera(0);
 	T_ASSERT(camera);
 
-	Vector4 position = camera->getPosition();
-	Vector4 angles = camera->getOrientation().toEulerAngles();
+	const Vector4 position = camera->getPosition();
+	const Vector4 angles = camera->getOrientation().toEulerAngles();
 
 	m_statusBar->setText(c_statusBarPosition, str(L"%.1f, %.1f, %.1f", (float)position.x(), (float)position.y(), (float)position.z()));
 	m_statusBar->setText(c_statusBarOrientation, str(L"%.1f, %.1f, %.1f", rad2deg(angles.x()), rad2deg(angles.y()), rad2deg(angles.z())));
 	m_statusBar->setText(c_statusBarEntityCount, str(L"%d entities", m_context->getEntityCount()));
 	m_statusBar->setText(c_statusBarTime, str(L"%.1f (%.1f)", m_context->getTime(), m_context->getTimeScale()));
 
-	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	const RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 	if (selectedEntities.size() == 1)
 		m_statusBar->setText(c_statusBarSelectedEntity, selectedEntities[0]->getPath() /* + L" " + selectedEntities[0]->getEntityData()->getId().format()*/);
 	else
@@ -1273,7 +1340,7 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 	Ref< EntityAdapter > parentGroupAdapter;
 
 	// Get selected entity, must be a single item.
-	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	const RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 	if (selectedEntities.size() == 1)
 		parentGroupAdapter = selectedEntities[0]->getParentGroup();
 
@@ -1417,7 +1484,7 @@ bool SceneEditorPage::resolveExternal()
 
 bool SceneEditorPage::moveToEntity()
 {
-	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	const RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 	if (selectedEntities.size() == 1)
 		m_context->moveToEntityAdapter(selectedEntities[0]);
 	else
@@ -1520,6 +1587,11 @@ void SceneEditorPage::eventEntityToolClick(ui::ToolBarButtonClickEvent* event)
 	handleCommand(event->getCommand());
 }
 
+void SceneEditorPage::eventEntityFilterChange(ui::ContentChangeEvent* event)
+{
+	applyEntityFilter();
+}
+
 void SceneEditorPage::eventGuideClick(ui::GridColumnClickEvent* event)
 {
 	if (event->getColumn() == 1)
@@ -1555,7 +1627,7 @@ void SceneEditorPage::eventInstanceSelect(ui::SelectionChangeEvent* event)
 	}
 
 	// Raise context select event and the ensure scene is redrawn.
-	m_context->raiseSelect();
+	m_context->raiseSelect(false);
 	m_context->enqueueRedraw(nullptr);
 }
 
@@ -1598,30 +1670,39 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 	EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 	T_ASSERT(entityAdapter);
 
-	bool shouldUpdate = true;
-	if (event->getColumn() == 1)
-	{
-		const bool wasDynamic = entityAdapter->isDynamic(false);
-		entityAdapter->setDynamic(!wasDynamic);
-	}
-	else if (event->getColumn() == 2)
-	{
-		const bool wasVisible = entityAdapter->isVisible(false);
-		entityAdapter->setVisible(!wasVisible);
-	}
-	else if (event->getColumn() == 3)
-	{
-		const bool wasLocked = entityAdapter->isLocked(false);
-		entityAdapter->setLocked(!wasLocked);
-	}
-	else
-		shouldUpdate = false;
+	const int32_t column = event->getColumn();
+	if (column != c_instanceGridDynamic && column != c_instanceGridVisible && column != c_instanceGridLocked)
+		return;
 
-	if (shouldUpdate)
+	// Determine the new state from the clicked entity.
+	bool newState = false;
+	if (column == c_instanceGridDynamic)
+		newState = !entityAdapter->isDynamic(false);
+	else if (column == c_instanceGridVisible)
+		newState = !entityAdapter->isVisible(false);
+	else if (column == c_instanceGridLocked)
+		newState = !entityAdapter->isLocked(false);
+
+	// Apply the new state to all selected entities when the clicked entity is part of the
+	// selection; otherwise only to the clicked entity.
+	RefArray< EntityAdapter > targets;
+	if (entityAdapter->isSelected())
+		targets = m_context->getEntities(SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly);
+	else
+		targets.push_back(entityAdapter);
+
+	for (auto target : targets)
 	{
-		updateInstanceGrid();
-		m_context->enqueueRedraw(nullptr);
+		if (column == c_instanceGridDynamic)
+			target->setDynamic(newState);
+		else if (column == c_instanceGridVisible)
+			target->setVisible(newState);
+		else if (column == c_instanceGridLocked)
+			target->setLocked(newState);
 	}
+
+	updateInstanceGrid(false);
+	m_context->enqueueRedraw(nullptr);
 }
 
 void SceneEditorPage::eventInstanceRename(ui::GridItemContentChangeEvent* event)
@@ -1658,14 +1739,13 @@ void SceneEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 	const ui::PropertyContentChangeEvent* propChange = dynamic_type_cast< const ui::PropertyContentChangeEvent* >(event);
 	const bool trivialChange = (selectedEntities.size() == 1 && propChange != nullptr && is_a< ui::NumericPropertyItem >(propChange->getItem()));
+	const bool rebuildWorld = selectedEntities.empty();
 
-	if (trivialChange)
+	m_context->buildEntities(rebuildWorld);
+	m_context->enqueueRedraw(nullptr);
+
+	if (!trivialChange)
 	{
-		updateScene();
-	}
-	else
-	{
-		updateScene();
 		createInstanceGrid();
 
 		// Notify controller editor as well.
@@ -1684,9 +1764,9 @@ void SceneEditorPage::eventContextPostBuild(PostBuildEvent* event)
 	updateStatusBar();
 }
 
-void SceneEditorPage::eventContextSelect(ui::SelectionChangeEvent* event)
+void SceneEditorPage::eventContextSelect(SceneSelectionChangeEvent* event)
 {
-	updateInstanceGrid();
+	updateInstanceGrid(event->shouldEnsureEntityVisible());
 	updatePropertyObject();
 	updateStatusBar();
 }

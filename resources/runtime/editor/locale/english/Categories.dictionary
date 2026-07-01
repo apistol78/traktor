@@ -54,6 +54,10 @@
 			<second>UI movie</second>
 		</item>
 		<item>
+			<first>TRAKTOR_SPARK_EMPTYMOVIEASSET</first>
+			<second>Empty UI movie</second>
+		</item>
+		<item>
 			<first>TRAKTOR_HF_HEIGHTFIELDASSET</first>
 			<second>Heightfield</second>
 		</item>
@@ -224,7 +228,19 @@
 		<item>
 			<first>TRAKTOR_INPUT_RUMBLEEFFECT</first>
 			<second>Rumble effect</second>
-		</item>		
+		</item>
+		<item>
+			<first>TRAKTOR_RENDER_PARAMETERDECLARATION</first>
+			<second>Parameter declaration</second>
+		</item>
+		<item>
+			<first>TRAKTOR_ONLINE_LANGAMECONFIGURATION</first>
+			<second>LAN game configuration</second>
+		</item>
+		<item>
+			<first>TRAKTOR_RENDER_STRUCTDECLARATION</first>
+			<second>Struct declaration</second>
+		</item>
 <!--
 		<item>
 			<first>TRAKTOR_</first>

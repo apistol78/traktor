@@ -68,7 +68,7 @@ bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db
 	// Create source asset.
 	Ref< MeshAsset > asset = new MeshAsset();
 	asset->setFileName(fileName);
-	asset->setMeshType(MeshAsset::MtStatic);
+	asset->setMeshType(MeshAsset::MeshType::Static);
 
 	// Create asset instance.
 	Ref< db::Instance > assetInstance = group->createInstance(

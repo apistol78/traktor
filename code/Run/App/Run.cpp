@@ -470,20 +470,17 @@ bool Run::loadScript(const std::wstring& fileName)
 		return false;
 	}
 
-	Utf8Encoding encoding;
 	BufferedStream stream(file);
-	StringReader reader(&stream, &encoding);
-	StringOutputStream ss;
+	StringReader reader(&stream, Utf8Encoding::getInstance());
 
-	std::wstring tmp;
-	while (reader.readLine(tmp) >= 0)
-		ss << tmp << Endl;
+	std::wstring source;
+	reader.readAll(source);
 
 	safeClose(file);
 
 	Ref< script::IScriptBlob > blob = m_scriptCompiler->compile(
 		fileName,
-		ss.str(),
+		source,
 		nullptr);
 	if (!blob)
 		return false;
@@ -521,18 +518,13 @@ std::wstring Run::evaluate(const std::wstring& fileName)
 		return L"";
 	}
 
-	Utf8Encoding encoding;
 	BufferedStream stream(file);
-	StringReader reader(&stream, &encoding);
+	StringReader reader(&stream, Utf8Encoding::getInstance());
 
-	std::wstring tmp;
-	while (reader.readLine(tmp) >= 0)
-		ss << tmp << Endl;
+	std::wstring text;
+	reader.readAll(text);
 
 	safeClose(file);
-
-	std::wstring text = ss.str();
-	ss.reset();
 
 	// Create template script function and load into context.
 	Ref< ProduceOutput > o = new ProduceOutput();

@@ -124,6 +124,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 {
 	ufbx_load_opts opts = {};
 	opts.load_external_files = true;
+	opts.target_unit_meters = (ufbx_real)1;
 	ufbx_scene* scene = ufbx_load_file(wstombs(filePath.getPathNameOS()).c_str(), &opts, nullptr);
 	if (!scene)
 		return nullptr;

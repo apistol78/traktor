@@ -72,7 +72,9 @@ public:
 
 	GlslVariable* createVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type);
 
-	GlslVariable* createStructVariable(const OutputPin* outputPin, const std::wstring& variableName, const std::wstring& structTypeName);
+	GlslVariable* createArrayVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type);
+
+	GlslVariable* createStructVariable(const OutputPin* outputPin, const std::wstring& variableName, const std::wstring& structTypeName, const StructDeclaration& structDeclaration);
 
 	GlslVariable* createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type);
 

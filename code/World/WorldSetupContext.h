@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,7 +48,7 @@ public:
 		const World* world,
 		const WorldEntityRenderers* entityRenderers,
 		render::RenderGraph& renderGraph,
-		AlignedVector< render::handle_t >& visualAttachments
+		AlignedVector< render::RGDependency >& visualAttachments
 	);
 
 	const World* getWorld() const { return m_world; }
@@ -57,16 +57,13 @@ public:
 
 	render::RenderGraph& getRenderGraph() const { return m_renderGraph; }
 
-	AlignedVector< render::handle_t >& getVisualAttachments() const { return m_visualAttachments; }
-
-	//#remove
-	mutable render::IAccelerationStructure::Instance tlasInstance;
+	void addVisualAttachment(render::RGDependency visualAttachment) const { m_visualAttachments.push_back(visualAttachment); }
 
 private:
 	const World* m_world;
 	const WorldEntityRenderers* m_entityRenderers;
 	render::RenderGraph& m_renderGraph;
-	AlignedVector< render::handle_t >& m_visualAttachments;
+	AlignedVector< render::RGDependency >& m_visualAttachments;
 };
 
 }

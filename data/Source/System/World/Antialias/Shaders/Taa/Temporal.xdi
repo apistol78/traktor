@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderModule" version="1">
+<object type="traktor.render.ShaderModule" version="2">
 	<text><![CDATA[#using \{935D9DEF-A5F9-4D4B-85BE-9F2E059662BB}
 
 #define TAPS 16
 
 bool Clipped(vec2 uv)
 {
-	return uv.x < 0.0f || uv.y < 0.0f || uv.x > 1.0f || uv.y > 1.0f;
+	return any(notEqual(uv, clamp(uv, 0.0f, 1.0f)));
 }
 
 vec4 ColorClamp(in texture2D currentFrame, in sampler currentSampler, vec4 currentColor, vec4 historyColor, vec2 uv)
@@ -45,27 +45,29 @@ vec4 TemporalAntiAlias(
 )
 {
 	const float f = 1.0f / TAPS;
+	const vec2 puv = uv;
+	const vec2 cuv = uv;
 
 	// Get velocity of current pixel, in NDC space.
-	const vec2 v = texture(sampler2D(velocity, __pointSampler__), uv).xy;
+	const vec2 v = texture(sampler2D(velocity, __linearSampler__), cuv).xy;
 
 	// Convert velocity to UV space.
 	const vec2 Vuv = v * vec2(-0.5f, 0.5f);
 
 	// Sample current colour.
-	const vec4 cc = texture(sampler2D(currentFrame, __pointSampler__), uv);
+	const vec4 cc = texture(sampler2D(currentFrame, __linearSampler__), cuv);
 
 	// Blend with previous colour.
 	if (!Clipped(uv - Vuv))
 	{
 		// Get velocity of previous pixel, in NDC space.
-		const vec2 pv = texture(sampler2D(velocity, __linearSampler__), uv - Vuv).xy;
+		const vec2 pv = texture(sampler2D(velocity, __linearSampler__), cuv - Vuv).xy;
 		
 		// Sample previous colour,
-		const vec4 cp = CatmullRomFilterSample(previousFrame, __linearSampler__, uv - Vuv); // + jitter.xy);
+		const vec4 cp = CatmullRomFilterSample(previousFrame, __linearSampler__, puv - Vuv);
 
 		// Clamp previous colour to current color neighbourhood.
-		vec4 ccp = ColorClamp(currentFrame, __pointSampler__, cc, cp, uv);
+		vec4 ccp = ColorClamp(currentFrame, __linearSampler__, cc, cp, cuv);
 
 		// Compare velocities; if wastly different then don't merge samples.
 		const float fr = clamp(length(pv - v) * 40.0f, 0.0f, 1.0f);
@@ -111,4 +113,5 @@ vec4 TemporalAntiAlias(
 			</second>
 		</item>
 	</samplers>
+	<structDeclarations/>
 </object>

@@ -34,9 +34,16 @@ uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFla
 
 std::wstring getHumanResult(VkResult result);
 
-void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t object, VkObjectType objectType);
-
 VkFormat determineSupportedTargetFormat(VkPhysicalDevice physicalDevice, TextureFormat textureFormat, bool sRGB);
+
+/*! Pick the first depth (or depth/stencil) format from \a candidates that the
+ * device supports as a depth/stencil attachment with optimal tiling. Pass
+ * \a usedAsTexture to additionally require sampled-image support.
+ *
+ * Returns VK_FORMAT_UNDEFINED if no candidate is supported (should not happen
+ * for the depth formats mandated by the Vulkan spec).
+ */
+VkFormat determineSupportedDepthTargetFormat(VkPhysicalDevice physicalDevice, const VkFormat* candidates, int32_t candidateCount, bool usedAsTexture);
 
 VkPipelineStageFlags getPipelineStageFlags(const VkImageLayout layout);
 

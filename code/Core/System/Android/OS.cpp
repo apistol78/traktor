@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,8 @@
  */
 #include "Core/System/OS.h"
 
+#include "Core/Io/File.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
@@ -206,7 +208,7 @@ bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
 	return false;
 }
 
-bool OS::whereIs(const std::wstring& executable, Path& outPath) const
+bool OS::whereIs(const std::wstring& executable, std::wstring& outPath) const
 {
 	std::wstring paths;
 
@@ -220,7 +222,7 @@ bool OS::whereIs(const std::wstring& executable, Path& outPath) const
 		Ref< File > file = FileSystem::getInstance().get(path + L"/" + executable);
 		if (file)
 		{
-			outPath = file->getPath();
+			outPath = file->getPath().getPathName();
 			return true;
 		}
 	}
@@ -228,7 +230,7 @@ bool OS::whereIs(const std::wstring& executable, Path& outPath) const
 	return false;
 }
 
-bool OS::getAssociatedExecutable(const std::wstring& extension, Path& outPath) const
+bool OS::getAssociatedExecutable(const std::wstring& extension, std::wstring& outPath) const
 {
 	return false;
 }

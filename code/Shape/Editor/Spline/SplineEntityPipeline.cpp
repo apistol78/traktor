@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,6 +16,8 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -37,6 +39,7 @@
 #include "Render/Editor/Shader/Algorithms/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
+#include "Render/Editor/Shader/ParameterLinker.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "Render/Shader.h"
@@ -58,7 +61,7 @@ namespace
 
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-9A17-899B44D5414E}"));
 
-class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
+class FragmentReaderAdapter : public render::FragmentLinker::FragmentReaderNoCache
 {
 public:
 	explicit FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
@@ -203,7 +206,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				const uint32_t materialHash = DeepHash(&material).get();
 				const Guid outputGuid = Guid(L"{8BB018D2-7AAC-4F9D-A5A4-DE396604862C}").permutation(materialHash);
 
-				Ref< const render::ShaderGraph > materialShaderGraph;
+				Ref< render::ShaderGraph > materialShaderGraph;
 
 				// Generate surface shader from material.
 				buildEmbeddedTexture(pipelineBuilder, material.getDiffuseMap(), false);
@@ -257,14 +260,6 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 						Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}"));
 				}
 
-				// Resolve all variables.
-				materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, outputGuid).getVariableResolved();
-				if (!materialShaderGraph)
-				{
-					log::error << L"SplineEntityPipeline failed; unable to resolve variables." << Endl;
-					return nullptr;
-				}
-
 				// Link shader fragments.
 				FragmentReaderAdapter fragmentReader(pipelineBuilder);
 				materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
@@ -304,6 +299,20 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				if (!materialShaderGraph)
 				{
 					log::error << L"SplineEntityPipeline failed; unable to get renderer permutation." << Endl;
+					return nullptr;
+				}
+
+				// Link parameter declarations.
+				const auto parameterDeclarationReader = [&](const Guid& declarationId) -> render::ParameterLinker::named_decl_t {
+					Ref< db::Instance > declarationInstance = pipelineBuilder->getSourceDatabase()->getInstance(declarationId);
+					if (declarationInstance != nullptr)
+						return { declarationInstance->getName(), pipelineBuilder->getObjectReadOnly(declarationId) };
+					else
+						return { L"", nullptr };
+				};
+				if (!render::ParameterLinker(parameterDeclarationReader).resolve(materialShaderGraph))
+				{
+					log::error << L"SplineEntityPipeline failed; unable to link parameters." << Endl;
 					return nullptr;
 				}
 

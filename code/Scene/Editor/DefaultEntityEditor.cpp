@@ -1,12 +1,15 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <limits>
+
+#include "Scene/Editor/DefaultEntityEditor.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Reflection/Reflection.h"
@@ -16,7 +19,6 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Scene/Editor/DefaultEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -29,44 +31,6 @@
 
 namespace traktor::scene
 {
-	namespace
-	{
-
-template < typename ComponentDataType >
-ComponentDataType* getComponentOf(const world::EntityData* entityData)
-{
-	for (auto component : entityData->getComponents())
-	{
-		if (auto typedComponent = dynamic_type_cast< ComponentDataType* >(component))
-			return typedComponent;
-	}
-	return nullptr;
-}
-
-bool projectSphere(const Vector4& center, const Scalar& radius, const Scalar& znear, const Scalar& P00, const Scalar& P11, Vector4& aabb)
-{
-	if (center.z() < radius + znear)
-		return false;
-
-	Vector4 cr = center * radius;
-	Scalar czr2 = center.z() * center.z() - radius * radius;
-
-	Scalar vx = squareRoot(center.x() * center.x() + czr2);
-	Scalar minx = (vx * center.x() - cr.z()) / (vx * center.z() + cr.x());
-	Scalar maxx = (vx * center.x() + cr.z()) / (vx * center.z() - cr.x());
-
-	Scalar vy = squareRoot(center.y() * center.y() + czr2);
-	Scalar miny = (vy * center.y() - cr.z()) / (vy * center.z() + cr.y());
-	Scalar maxy = (vy * center.y() + cr.z()) / (vy * center.z() - cr.y());
-
-	aabb = Vector4(minx * P00, miny * P11, maxx * P00, maxy * P11);
-	//aabb = aabb.xwzy * vec4(0.5f, -0.5f, 0.5f, -0.5f) + vec4(0.5f); // clip space -> uv space
-	aabb = aabb.shuffle< 0, 3, 2, 1 >() * Vector4(0.5f, -0.5f, 0.5f, -0.5f) + Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-
-	return true;
-}
-
-	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultEntityEditor", DefaultEntityEditor, IEntityEditor)
 
@@ -81,7 +45,7 @@ DefaultEntityEditor::DefaultEntityEditor(SceneEditorContext* context, EntityAdap
 bool DefaultEntityEditor::isPickable() const
 {
 	const world::EntityData* entityData = m_entityAdapter->getEntityData();
-	if (getComponentOf< world::VolumeComponentData >(entityData) != nullptr)
+	if (entityData->getComponent< world::VolumeComponentData >() != nullptr)
 		return false;
 
 	return !isGroup();
@@ -90,9 +54,9 @@ bool DefaultEntityEditor::isPickable() const
 bool DefaultEntityEditor::isGroup() const
 {
 	const world::EntityData* entityData = m_entityAdapter->getEntityData();
-	if (getComponentOf< world::GroupComponentData >(entityData) != nullptr)
+	if (entityData->getComponent< world::GroupComponentData >() != nullptr)
 		return true;
-	else if (getComponentOf< world::FacadeComponentData >(entityData) != nullptr)
+	else if (entityData->getComponent< world::FacadeComponentData >() != nullptr)
 		return true;
 	else
 		return false;
@@ -106,7 +70,7 @@ bool DefaultEntityEditor::isChildrenPrivate() const
 bool DefaultEntityEditor::addChildEntity(EntityAdapter* insertAfterEntityAdapter, EntityAdapter* childEntityAdapter) const
 {
 	world::EntityData* entityData = m_entityAdapter->getEntityData();
-	if (auto groupComponentData = getComponentOf< world::GroupComponentData >(entityData))
+	if (auto groupComponentData = entityData->getComponent< world::GroupComponentData >())
 	{
 		groupComponentData->addEntityData(
 			insertAfterEntityAdapter ? insertAfterEntityAdapter->getEntityData() : nullptr,
@@ -243,70 +207,6 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 		else
 			primitiveRenderer->drawWireAabb(boundingBox, 1.0f, m_colorBoundingBox);
 		primitiveRenderer->popWorld();
-
-		// if (m_entityAdapter->isSelected())
-		// {
-		// 	Vector4 center = (boundingBox.mn + boundingBox.mx) / 2.0_simd;
-		// 	//Scalar radius = ((boundingBox.mx - boundingBox.mn) / 2.0_simd).length();
-
-		// 	Scalar radius = max(boundingBox.mx.length(), boundingBox.mn.length());
-
-		// 	Vector4 worldCenter = transform.translation() + center;
-		// 	Vector4 viewCenter = primitiveRenderer->getView() * worldCenter.xyz1();
-
-		// 	Scalar znear = 0.1_simd;
-		// 	Scalar P00 = primitiveRenderer->getProjection().get(0, 0);
-		// 	Scalar P11 = primitiveRenderer->getProjection().get(1, 1);
-
-		// 	Vector4 aabb;
-		// 	if (projectSphere(viewCenter, radius, znear, P00, P11, aabb))
-		// 	{
-		// 		Matrix44 proj = primitiveRenderer->getProjection();
-
-		// 		primitiveRenderer->pushWorld(Matrix44::identity());
-		// 		primitiveRenderer->pushView(Matrix44::identity());
-
-		// 		// Setup projection as UV space.
-		// 		primitiveRenderer->setProjection(orthoLh(
-		// 			-1.0f, 1.0f,
-		// 			1.0f, -1.0f,
-		// 			-1.0f, 1.0f
-		// 		) * translate(-1.0f, -1.0f, 0.0f) * scale(2.0f, 2.0f, 1.0f));
-
-		// 		const float w = (aabb.z() - aabb.x()) * clientSize.cx;
-		// 		const float h = (aabb.w() - aabb.y()) * clientSize.cy;
-
-		// 		const int32_t level = int32_t(std::floor(std::log2(std::max(w, h))));
-		// 		const float step = 4096.0f / std::max(4096 >> level, 1);
-		// 		for (float y = 0.0f; y < clientSize.cy; y += step)
-		// 		{
-		// 			const float fy = float(y) / clientSize.cy;
-		// 			primitiveRenderer->drawLine(
-		// 				Vector4(0.0f, fy, 0.0f, 1.0f),
-		// 				Vector4(1.0f, fy, 0.0f, 1.0f),
-		// 				Color4ub(255, 255, 0, 120)
-		// 			);
-		// 		}
-		// 		for (float x = 0.0f; x < clientSize.cx; x += step)
-		// 		{
-		// 			const float fx = float(x) / clientSize.cx;
-		// 			primitiveRenderer->drawLine(
-		// 				Vector4(fx, 0.0f, 0.0f, 1.0f),
-		// 				Vector4(fx, 1.0f, 0.0f, 1.0f),
-		// 				Color4ub(255, 255, 0, 120)
-		// 			);
-		// 		}
-
-		// 		primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.y(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
-		// 		primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.w(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
-		// 		primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.x(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
-		// 		primitiveRenderer->drawLine(Vector4(aabb.z(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
-
-		// 		primitiveRenderer->setProjection(proj);
-		// 		primitiveRenderer->popView();
-		// 		primitiveRenderer->popWorld();
-		// 	}
-		// }
 
 		if (m_entityAdapter->isSelected() && m_context->getSnapMode() == SceneEditorContext::SmNeighbour)
 		{

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -128,15 +128,19 @@ public:
 
 	virtual Ref< db::Group > browseGroup() override final;
 
-	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType) override final;
+	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType, const db::Group* initialGroup) override final;
 
-	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter) override final;
+	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter, const db::Group* initialGroup) override final;
 
 	virtual bool openEditor(db::Instance* instance) override final;
 
 	virtual bool openDefaultEditor(db::Instance* instance) override final;
 
-	virtual bool openInNewEditor(db::Instance* instance) override final;
+	virtual bool isEditorOpen(const db::Instance* instance) const override final;
+
+	virtual bool closeEditor(const db::Instance* instance, bool forceCloseIfUnsaved) override final;
+
+	virtual bool openInNewEditorProcess(db::Instance* instance) override final;
 
 	virtual bool openTool(const std::wstring& toolType, const PropertyGroup* param) override final;
 
@@ -275,7 +279,7 @@ private:
 
 	void saveAllDocuments();
 
-	bool closeEditor(ui::TabPage* tabPage);
+	bool closeEditor(ui::TabPage* tabPage, bool forceCloseIfUnsaved);
 
 	void closeCurrentEditor();
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,24 +11,22 @@
 #include "Resource/Proxy.h"
 #include "Terrain/Editor/IBrush.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class Heightfield;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class CutBrush : public IBrush
 {
 	T_RTTI_CLASS;
 
 public:
-	CutBrush(const resource::Proxy< hf::Heightfield >& heightfield);
+	explicit CutBrush(const resource::Proxy< hf::Heightfield >& heightfield);
 
 	virtual uint32_t begin(float x, float y, const State& state) override final;
 
@@ -43,6 +41,4 @@ private:
 	float m_strength;
 };
 
-	}
 }
-

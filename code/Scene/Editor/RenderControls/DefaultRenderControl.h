@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,8 @@
 #pragma once
 
 #include "Scene/Editor/ISceneRenderControl.h"
+#include "Ui/Events/ContentChangeEvent.h"
+#include "Ui/Events/SizeEvent.h"
 
 namespace traktor::ui
 {
@@ -45,12 +47,12 @@ public:
 
 	virtual void setAspect(float aspect) override final;
 
-	virtual void setQuality(world::Quality imageProcess, world::Quality shadows, world::Quality reflections, world::Quality motionBlur, world::Quality ambientOcclusion, world::Quality antiAlias) override final;
+	virtual void setQuality(const world::QualitySettings& qualitySettings) override final;
 
 	virtual void setDebugOverlay(world::IDebugOverlay* overlay) override final;
 
 	virtual void setDebugOverlayAlpha(float alpha, float mip) override final;
-	
+
 	virtual bool handleCommand(const ui::Command& command) override final;
 
 	virtual void update() override final;
@@ -74,6 +76,7 @@ private:
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::ToolBarButton > m_toolToggleGrid;
 	Ref< ui::ToolBarButton > m_toolToggleGuide;
+	Ref< ui::ToolBarButton > m_toolToggleRayTracing;
 	Ref< ui::ToolBarDropDown > m_toolView;
 	Ref< ui::ToolBarDropDown > m_toolAspect;
 	Ref< ui::ToolBarDropMenu > m_toolQualityMenu;
@@ -85,6 +88,7 @@ private:
 	Ref< ui::MenuItem > m_menuMotionBlur;
 	Ref< ui::MenuItem > m_menuShadows;
 	Ref< ui::MenuItem > m_menuReflections;
+	Ref< ui::MenuItem > m_menuIrradiance;
 	Ref< ui::MenuItem > m_menuAO;
 	Ref< ui::MenuItem > m_menuAA;
 	Ref< ISceneRenderControl > m_renderControl;

@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <algorithm>
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
@@ -29,7 +30,8 @@ Ref< Dictionary > DictionaryFormatCSV::read(IStream* stream, int32_t keyColumn, 
 {
 	Ref< Dictionary > dictionary = new Dictionary();
 
-	StringReader sr(stream, new Utf8Encoding());
+	BufferedStream bs(stream);
+	StringReader sr(&bs, Utf8Encoding::getInstance());
 	std::wstring line;
 
 	while (sr.readLine(line) >= 0)

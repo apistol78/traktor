@@ -9,6 +9,7 @@
 #include "Ui/Win32/ToolFormWin32.h"
 
 #include "Core/Log/Log.h"
+#include "Ui/Events/CloseEvent.h"
 #include "Ui/Events/NcMouseButtonDownEvent.h"
 #include "Ui/Events/NcMouseButtonUpEvent.h"
 #include "Ui/Events/NcMouseMoveEvent.h"
@@ -67,6 +68,7 @@ bool ToolFormWin32::create(IWidget* parent, const std::wstring& text, int width,
 	m_hWnd.registerMessageHandler(WM_NCRBUTTONUP, new MethodMessageHandler< ToolFormWin32 >(this, &ToolFormWin32::eventNcButtonUp));
 	m_hWnd.registerMessageHandler(WM_NCMOUSEMOVE, new MethodMessageHandler< ToolFormWin32 >(this, &ToolFormWin32::eventNcMouseMove));
 	m_hWnd.registerMessageHandler(WM_MOUSEACTIVATE, new MethodMessageHandler< ToolFormWin32 >(this, &ToolFormWin32::eventMouseActivate));
+	m_hWnd.registerMessageHandler(WM_CLOSE, new MethodMessageHandler< ToolFormWin32 >(this, &ToolFormWin32::eventClose));
 	m_hWnd.registerMessageHandler(WM_ENDMODAL, new MethodMessageHandler< ToolFormWin32 >(this, &ToolFormWin32::eventEndModal));
 
 	m_ownCursor = true;
@@ -269,6 +271,17 @@ LRESULT ToolFormWin32::eventNcMouseMove(HWND hWnd, UINT message, WPARAM wParam, 
 LRESULT ToolFormWin32::eventMouseActivate(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
 	return MA_NOACTIVATE;
+}
+
+LRESULT ToolFormWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
+{
+	CloseEvent closeEvent(m_owner);
+	m_owner->raiseEvent(&closeEvent);
+	if (closeEvent.consumed() || closeEvent.cancelled())
+		return 0;
+	// Fall through to DefWindowProc which will destroy the window.
+	pass = true;
+	return 0;
 }
 
 LRESULT ToolFormWin32::eventEndModal(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)

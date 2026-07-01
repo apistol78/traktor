@@ -178,11 +178,19 @@ bool SolutionBuilderMsvc::generate(const Solution* solution, const Path& solutio
 	if (!FileSystem::getInstance().makeAllDirectories(solution->getRootPath()))
 		return false;
 
+	// Get all projects; ensure startup project being first.
+	RefArray< Project > projects = solution->getProjects();
+	if (solution->getStartupProject() != nullptr)
+	{
+		projects.remove(solution->getStartupProject());
+		projects.insert(projects.begin(), solution->getStartupProject());
+	}
+
 	// Generate projects.
 	std::map< const Project*, std::wstring > projectGuids;
 	RefSet< Solution > externalSolutions;
 
-	for (auto project : solution->getProjects())
+	for (auto project : projects)
 	{
 		// Skip disabled projects.
 		if (!project->getEnable())
@@ -227,7 +235,7 @@ bool SolutionBuilderMsvc::generate(const Solution* solution, const Path& solutio
 	os << L"Microsoft Visual Studio Solution File, Format Version " << m_settings->getSLNVersion() << Endl;
 	os << L"# Visual Studio " << m_settings->getVSVersion() << Endl;
 
-	for (auto project : solution->getProjects())
+	for (auto project : projects)
 	{
 		// Skip disabled projects.
 		if (!project->getEnable())
@@ -382,7 +390,7 @@ bool SolutionBuilderMsvc::generate(const Solution* solution, const Path& solutio
 	std::wstring platform = m_settings->getProject()->getPlatform();
 
 	std::set< std::wstring > availableConfigurations;
-	for (auto project : solution->getProjects())
+	for (auto project : projects)
 	{
 		// Skip disabled projects.
 		if (!project->getEnable())
@@ -402,7 +410,7 @@ bool SolutionBuilderMsvc::generate(const Solution* solution, const Path& solutio
 	os << L"GlobalSection(ProjectConfigurationPlatforms) = postSolution" << Endl;
 	os << IncreaseIndent;
 
-	for (auto project : solution->getProjects())
+	for (auto project : projects)
 	{
 		// Skip disabled projects.
 		if (!project->getEnable())

@@ -965,7 +965,7 @@ Ref< db::Group > EditorForm::browseGroup()
 	return group;
 }
 
-Ref< db::Instance > EditorForm::browseInstance(const TypeInfo& filterType)
+Ref< db::Instance > EditorForm::browseInstance(const TypeInfo& filterType, const db::Group* initialGroup)
 {
 	TypeInfoSet browseTypes;
 
@@ -991,15 +991,15 @@ Ref< db::Instance > EditorForm::browseInstance(const TypeInfo& filterType)
 		browseTypes.insert(&filterType);
 
 	editor::TypeBrowseFilter filter(browseTypes);
-	return browseInstance(&filter);
+	return browseInstance(&filter, initialGroup);
 }
 
-Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
+Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter, const db::Group* initialGroup)
 {
 	Ref< db::Instance > instance;
 
 	BrowseInstanceDialog dlgBrowse(this, m_mergedSettings);
-	if (dlgBrowse.create(this, m_sourceDatabase, filter))
+	if (dlgBrowse.create(this, m_sourceDatabase, filter, initialGroup))
 	{
 		if (dlgBrowse.showModal() == ui::DialogResult::Ok)
 			instance = dlgBrowse.getInstance();
@@ -1109,7 +1109,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 		// Create tab page container.
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
-		if (!tabPage->create(m_tabGroupLastFocus, instance->getName(), iconIndex, new ui::FloodLayout()))
+		if (!tabPage->create(m_tabGroupLastFocus, instance->getName(), instance->getPath(), iconIndex, new ui::FloodLayout()))
 		{
 			log::error << L"Failed to create editor; unable to create tab page." << Endl;
 			instance->revert();
@@ -1235,7 +1235,49 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 	return true;
 }
 
-bool EditorForm::openInNewEditor(db::Instance* instance)
+bool EditorForm::isEditorOpen(const db::Instance* instance) const
+{
+	for (auto tab : m_tabGroups)
+	{
+		for (int i = 0; i < tab->getPageCount(); ++i)
+		{
+			Ref< ui::TabPage > tabPage = tab->getPage(i);
+			T_ASSERT(tabPage);
+
+			Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+			if (document && document->containInstance(instance))
+				return true;
+		}
+	}
+	return false;
+}
+
+bool EditorForm::closeEditor(const db::Instance* instance, bool forceCloseIfUnsaved)
+{
+	for (auto tab : m_tabGroups)
+	{
+		for (int i = 0; i < tab->getPageCount(); ++i)
+		{
+			Ref< ui::TabPage > tabPage = tab->getPage(i);
+			T_ASSERT(tabPage);
+
+			Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+			if (document && document->containInstance(instance))
+			{
+				// Check if document is unsaved; just leave if so
+				// instead of trying to close so we don't show
+				// message box.
+				if (!forceCloseIfUnsaved && isModified(tabPage))
+					return false;
+
+				return closeEditor(tabPage, forceCloseIfUnsaved);
+			}
+		}
+	}
+	return false;
+}
+
+bool EditorForm::openInNewEditorProcess(db::Instance* instance)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
 		[=, this]() {
@@ -2128,8 +2170,11 @@ void EditorForm::moveNewTabGroup()
 	tab->addEventHandler< ui::ChildEvent >(this, &EditorForm::eventTabChild);
 	m_tabGroups.push_back(tab);
 
+	std::wstring toolTip;
+	activeTabPage->getToolTip(toolTip);
+
 	Ref< ui::TabPage > tabPage = new ui::TabPage();
-	tabPage->create(tab, activeTabPage->getText(), activeTabPage->getImageIndex(), new ui::FloodLayout());
+	tabPage->create(tab, activeTabPage->getText(), toolTip, activeTabPage->getImageIndex(), new ui::FloodLayout());
 	tabPage->copyData(activeTabPage);
 
 	tab->addPage(tabPage);
@@ -2304,7 +2349,7 @@ void EditorForm::saveAllDocuments()
 	checkModified();
 }
 
-bool EditorForm::closeEditor(ui::TabPage* tabPage)
+bool EditorForm::closeEditor(ui::TabPage* tabPage, bool forceCloseIfUnsaved)
 {
 	// Prevent focus events being fired while we're shutting down editor,
 	// focus events are designed to swap active page which we don't want atm.
@@ -2324,7 +2369,7 @@ bool EditorForm::closeEditor(ui::TabPage* tabPage)
 	Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
 
 	// Ask user when trying to close an editor which contains unsaved data.
-	if (isModified(tabPage))
+	if (!forceCloseIfUnsaved && isModified(tabPage))
 	{
 		ui::DialogResult result = ui::MessageBox::show(
 			this,
@@ -2404,7 +2449,7 @@ void EditorForm::closeCurrentEditor()
 	Ref< ui::TabPage > tabPage = getActiveTabPage();
 	T_ASSERT(tabPage);
 	T_ASSERT(tabPage->getData(L"EDITORPAGE") == m_activeEditorPage);
-	closeEditor(tabPage);
+	closeEditor(tabPage, false);
 }
 
 void EditorForm::closeAllEditors()
@@ -2419,7 +2464,7 @@ void EditorForm::closeAllEditors()
 		}
 	}
 	for (auto tabPage : closePages)
-		closeEditor(tabPage);
+		closeEditor(tabPage, false);
 }
 
 void EditorForm::closeAllOtherEditors()
@@ -2442,7 +2487,7 @@ void EditorForm::closeAllOtherEditors()
 		}
 	}
 	for (auto tabPage : closePages)
-		closeEditor(tabPage);
+		closeEditor(tabPage, false);
 }
 
 void EditorForm::findInDatabase()
@@ -2876,7 +2921,7 @@ void EditorForm::eventTabSelChange(ui::TabSelectionChangeEvent* event)
 
 void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 {
-	if (!closeEditor(event->getTabPage()))
+	if (!closeEditor(event->getTabPage(), false))
 	{
 		event->consume();
 		event->cancel();
@@ -3133,6 +3178,7 @@ void EditorForm::threadAssetMonitor()
 	RefArray< const File > modifiedFiles;
 	RefArray< File > files;
 	AlignedVector< Guid > modifiedAssets;
+	DateTime beforeWaiting = DateTime::now();
 
 	while (!m_threadAssetMonitor->stopped())
 	{
@@ -3148,6 +3194,14 @@ void EditorForm::threadAssetMonitor()
 				assetInstances);
 
 			const std::wstring assetPath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+
+#if defined(_WIN32) || defined(__LINUX__)
+			// Wait for any asset file change.
+			m_lockBuild.release();
+			if (!OS::getInstance().waitUntilAnyFileChange(assetPath, 1000))
+				continue;
+			m_lockBuild.wait();
+#endif
 
 			// Find all assets which have archive flag set.
 			modifiedFiles.resize(0);
@@ -3166,8 +3220,7 @@ void EditorForm::threadAssetMonitor()
 				files = FileSystem::getInstance().find(fileName);
 				for (auto file : files)
 				{
-					const uint32_t flags = file->getFlags();
-					if ((flags & (File::FfReadOnly | File::FfArchive)) == File::FfArchive)
+					if (file->getLastWriteTime() > beforeWaiting)
 					{
 						log::info << L"Source asset \"" << file->getPath().getPathName() << L"\" modified." << Endl;
 						modifiedFiles.push_back(file);
@@ -3175,6 +3228,9 @@ void EditorForm::threadAssetMonitor()
 					}
 				}
 			}
+
+			// Capture time before building any modified assets.
+			beforeWaiting = DateTime::now();
 
 			m_lockBuild.release();
 
@@ -3186,10 +3242,6 @@ void EditorForm::threadAssetMonitor()
 			// Build assets.
 			if (!modifiedAssets.empty())
 			{
-				// Reset archive flag on all found assets.
-				for (auto modifiedFile : modifiedFiles)
-					FileSystem::getInstance().modify(modifiedFile->getPath(), modifiedFile->getFlags() & ~File::FfArchive);
-
 				log::info << L"Modified source asset(s) detected; building asset(s)..." << Endl;
 				buildAssets(modifiedAssets, false);
 
@@ -3198,8 +3250,10 @@ void EditorForm::threadAssetMonitor()
 					editorPluginSite->handleCommand(ui::Command(L"Editor.AutoBuild"), false);
 			}
 		}
-
-		m_threadAssetMonitor->sleep(1000);
+#if defined(_WIN32) || defined(__LINUX__)
+		else
+#endif
+			m_threadAssetMonitor->sleep(1000);
 	}
 }
 

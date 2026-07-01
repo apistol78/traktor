@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,34 +27,28 @@ const TypeInfoSet ClothRenderer::getRenderableTypes() const
 void ClothRenderer::setup(
 	const world::WorldSetupContext& context,
 	const world::WorldRenderView& worldRenderView,
-	Object* renderable
+	const AlignedVector< Object* >& renderables
 )
 {
-}
-
-void ClothRenderer::setup(
-	const world::WorldSetupContext& context
-)
-{
+	for (Object* renderable : renderables)
+	{
+		ClothComponent* clothEntity = static_cast< ClothComponent* >(renderable);
+		clothEntity->setup();
+	}
 }
 
 void ClothRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
-	Object* renderable
+	const AlignedVector< Object* >& renderables
 )
 {
-	auto clothEntity = mandatory_non_null_type_cast< ClothComponent* >(renderable);
-	clothEntity->build(context, worldRenderView, worldRenderPass);
-}
-
-void ClothRenderer::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
-{
+	for (Object* renderable : renderables)
+	{
+		ClothComponent* clothEntity = static_cast< ClothComponent* >(renderable);
+		clothEntity->build(context, worldRenderView, worldRenderPass);
+	}
 }
 
 }

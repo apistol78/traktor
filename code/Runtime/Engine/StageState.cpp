@@ -56,7 +56,7 @@ StageState::StageState(
 
 StageState::~StageState()
 {
-	safeDestroy(m_renderGraph);
+	leave();
 }
 
 void StageState::enter()

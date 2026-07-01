@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class GamepadDeviceAndroid;
 class KeyboardDeviceAndroid;
@@ -43,7 +41,7 @@ public:
 
 	virtual ~InputDriverAndroid();
 
-	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) override final;
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories) override final;
 
 	virtual int getDeviceCount() override final;
 
@@ -67,6 +65,4 @@ private:
 	RefArray< IInputDevice > m_devices;
 };
 
-	}
 }
-

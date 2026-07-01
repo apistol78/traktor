@@ -194,6 +194,10 @@
 			<second>Renderer</second>
 		</item>
 		<item>
+			<first>EDITOR_SETTINGS_RENDERER_NSIGHT_AFTERMATH</first>
+			<second>Enable Nsight Aftermath integration</second>
+		</item>
+		<item>
 			<first>EDITOR_SETTINGS_RENDERER_MAX_ANISOTROPY</first>
 			<second>Max anisotropy</second>
 		</item>

@@ -150,11 +150,11 @@ void RenderTargetSetVk::setDebugName(const wchar_t* name)
 {
 	for (auto colorTarget : m_colorTargets)
 	{
-		setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)colorTarget->getImageTarget()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
-		setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)colorTarget->getImageResolved()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+		m_context->setObjectDebugName(name, (uint64_t)colorTarget->getImageTarget()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+		m_context->setObjectDebugName(name, (uint64_t)colorTarget->getImageResolved()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 	}
 	if (m_depthTarget)
-		setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)m_depthTarget->getImage()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+		m_context->setObjectDebugName(name, (uint64_t)m_depthTarget->getImage()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 }
 
 bool RenderTargetSetVk::prepareAsTarget(
@@ -165,11 +165,30 @@ bool RenderTargetSetVk::prepareAsTarget(
 	VkFramebuffer& outFrameBuffer
 )
 {
-	auto& frameBuffer = m_frameBuffers[renderPass];
-	if (frameBuffer == 0)
+	const VkImageView currentPrimaryDepthView = (!m_depthTarget && m_setDesc.usingPrimaryDepthStencil && primaryDepthTarget)
+		? primaryDepthTarget->getImage()->getVkImageView()
+		: VK_NULL_HANDLE;
+
+	auto& cachedFrameBuffer = m_frameBuffers[renderPass];
+
+	// If the primary depth view has been recreated (e.g. swap chain resize), the
+	// cached framebuffer references a now-destroyed image view and must be rebuilt.
+	if (cachedFrameBuffer.frameBuffer != 0 && cachedFrameBuffer.primaryDepthView != currentPrimaryDepthView)
+	{
+		VkFramebuffer staleFrameBuffer = cachedFrameBuffer.frameBuffer;
+		m_context->addDeferredCleanup(
+			[staleFrameBuffer](Context* ctx) {
+				vkDestroyFramebuffer(ctx->getLogicalDevice(), staleFrameBuffer, nullptr);
+			},
+			Context::CleanupNeedFlushGPU
+		);
+		cachedFrameBuffer.frameBuffer = 0;
+	}
+
+	if (cachedFrameBuffer.frameBuffer == 0)
 	{
  		StaticVector< VkImageView, RenderTargetSetCreateDesc::MaxTargets + 1 > fba;
-		
+
 		if (colorIndex >= 0)
 		{
 			fba.push_back(m_colorTargets[colorIndex]->getImageTarget()->getVkImageView());
@@ -189,7 +208,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 		if (m_depthTarget)
 			fba.push_back(m_depthTarget->getImage()->getVkImageView());
 		else if (m_setDesc.usingPrimaryDepthStencil)
-			fba.push_back(primaryDepthTarget->getImage()->getVkImageView());
+			fba.push_back(currentPrimaryDepthView);
 
 		const VkFramebufferCreateInfo fbci =
 		{
@@ -201,8 +220,10 @@ bool RenderTargetSetVk::prepareAsTarget(
 			.height = (uint32_t)m_setDesc.height,
 			.layers = 1
 		};
-		if (vkCreateFramebuffer(m_context->getLogicalDevice(), &fbci, nullptr, &frameBuffer) != VK_SUCCESS)
+		if (vkCreateFramebuffer(m_context->getLogicalDevice(), &fbci, nullptr, &cachedFrameBuffer.frameBuffer) != VK_SUCCESS)
 			return false;
+
+		cachedFrameBuffer.primaryDepthView = currentPrimaryDepthView;
 	}
 
 	if (colorIndex >= 0)
@@ -218,7 +239,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 	else if (m_setDesc.usingPrimaryDepthStencil)
 		primaryDepthTarget->prepareAsTarget(commandBuffer);
 
-	outFrameBuffer = frameBuffer;
+	outFrameBuffer = cachedFrameBuffer.frameBuffer;
 	return true;
 }
 

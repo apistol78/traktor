@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,16 +48,17 @@ public:
 private:
 	AudioDriverCreateDesc m_desc;
 	ComRef< IXAudio2 > m_audio;
-	IXAudio2EngineCallback* m_engineCallback;
-	IXAudio2VoiceCallback* m_voiceCallback;
-	IXAudio2MasteringVoice* m_masteringVoice;
-	IXAudio2SourceVoice* m_sourceVoice;
+	IXAudio2EngineCallback* m_engineCallback = nullptr;
+	IXAudio2VoiceCallback* m_voiceCallback = nullptr;
+	IXAudio2MasteringVoice* m_masteringVoice = nullptr;
+	IXAudio2SourceVoice* m_sourceVoice = nullptr;
 	WAVEFORMATEXTENSIBLE m_wfx;
-	HANDLE m_eventNotify;
-	HRESULT m_hResult;
-	uint32_t m_bufferSize;
+	HANDLE m_eventNotify = NULL;
+	HRESULT m_hResult = S_OK;
+	uint32_t m_bufferSize = 0;
 	uint8_t* m_buffers[3];
-	uint32_t m_nextSubmitBuffer;
+	uint32_t m_nextSubmitBuffer = 0;
+	int32_t m_failed = 0;
 
 	bool reset();
 };

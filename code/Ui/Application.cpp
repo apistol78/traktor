@@ -85,8 +85,9 @@ bool Application::initialize(IWidgetFactory* widgetFactory, const StyleSheet* st
 void Application::finalize()
 {
 	removeAllEventHandlers();
-	safeDestroy(m_clipboard);
-	safeDestroy(m_eventLoop);
+	m_properties = nullptr;
+	m_styleSheet = nullptr;
+	m_clipboard = nullptr;
 	m_widgetFactory = nullptr;
 	m_eventLoop = nullptr;
 }
@@ -183,12 +184,23 @@ void Application::defer(const std::function< void() >& fn)
 	m_deferred.push_back(fn);
 }
 
+void Application::flushDeferred()
+{
+	// Swap the queue out under the lock, then run the functions unlocked: a
+	// deferred function may itself call defer() (e.g. opening an editor), which
+	// would otherwise deadlock re-acquiring the lock on this same thread.
+	AlignedVector< std::function< void() > > deferred;
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_deferredLock);
+		deferred.swap(m_deferred);
+	}
+	for (const auto& fn : deferred)
+		fn();
+}
+
 void Application::executeDeferred(IdleEvent* event)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_deferredLock);
-	for (const auto& fn : m_deferred)
-		fn();
-	m_deferred.resize(0);
+	flushDeferred();
 }
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,9 @@
  */
 #pragma once
 
+#include "Core/Containers/SmallMap.h"
 #include "Core/Guid.h"
+#include "Core/Misc/Key.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
@@ -41,9 +43,18 @@ class T_DLLCLASS FragmentLinker : public Object
 	T_RTTI_CLASS;
 
 public:
-	struct IFragmentReader
+	class IFragmentReader
 	{
+	public:
 		virtual ~IFragmentReader() = default;
+
+		/*!
+		 */
+		virtual Ref< const ShaderGraph > get(const Key& key) const = 0;
+
+		/*!
+		 */
+		virtual void put(const Key& key, const ShaderGraph* shaderGraph) const = 0;
 
 		/*! Read callback.
 		 *
@@ -51,6 +62,27 @@ public:
 		 * Will automatically be resolved.
 		 */
 		virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) const = 0;
+	};
+
+	class T_DLLCLASS FragmentReaderNoCache : public IFragmentReader
+	{
+	public:
+		virtual Ref< const ShaderGraph > get(const Key& key) const override final;
+
+		virtual void put(const Key& key, const ShaderGraph* shaderGraph) const override final;
+	};
+
+	class T_DLLCLASS FragmentReaderTransientCache : public IFragmentReader
+	{
+	public:
+		explicit FragmentReaderTransientCache(SmallMap< Key, Ref< ShaderGraph > >& cache);
+
+		virtual Ref< const ShaderGraph > get(const Key& key) const override final;
+
+		virtual void put(const Key& key, const ShaderGraph* shaderGraph) const override final;
+
+	private:
+		SmallMap< Key, Ref< ShaderGraph > >& m_cache;
 	};
 
 	FragmentLinker() = default;
@@ -87,7 +119,7 @@ public:
 	Ref< ShaderGraph > resolve(const ShaderGraph* shaderGraph, const RefArray< External >& externalNodes, bool fullResolve, const Guid* optionalShaderGraphGuid = nullptr) const;
 
 private:
-	class LambdaFragmentReader : public IFragmentReader
+	class LambdaFragmentReader : public FragmentReaderNoCache
 	{
 	public:
 		explicit LambdaFragmentReader(const std::function< Ref< const ShaderGraph >(const Guid&) >& lambda)

@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Spray/EffectInstance.h"
+
 #include "Spray/Effect.h"
 #include "Spray/EffectLayer.h"
 #include "Spray/EffectLayerInstance.h"
@@ -18,8 +19,8 @@ namespace traktor::spray
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectInstance", EffectInstance, Object)
 
 EffectInstance::EffectInstance(const Effect* effect)
-:	m_effect(effect)
-,	m_time(0.0f)
+	: m_effect(effect)
+	, m_time(0.0f)
 {
 	m_loopEnable = effect->getLoopEnd() > effect->getLoopStart();
 }
@@ -47,19 +48,23 @@ void EffectInstance::synchronize()
 		layerInstance->synchronize();
 }
 
-void EffectInstance::render(
+void EffectInstance::setup(render::RenderContext* renderContext) const
+{
+	for (auto layerInstance : m_layerInstances)
+		layerInstance->setup(renderContext, m_time);
+}
+
+void EffectInstance::build(
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	render::RenderContext* renderContext,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer,
-	const Transform& transform
-) const
+	const Transform& transform) const
 {
 	for (auto layerInstance : m_layerInstances)
-	{
-		layerInstance->render(
+		layerInstance->build(
 			worldRenderView,
 			worldRenderPass,
 			renderContext,
@@ -67,9 +72,7 @@ void EffectInstance::render(
 			meshRenderer,
 			trailRenderer,
 			transform,
-			m_time
-		);
-	}
+			m_time);
 }
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,9 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
+#include "Core/Math/Random.h"
 #include "Core/Math/Range.h"
+#include "Core/Math/Rational.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/Job.h"
@@ -35,12 +37,14 @@
 #include "World/IrradianceGrid.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
 #include "World/Shared/Passes/DBufferPass.h"
+#include "World/Shared/Passes/DownScalePass.h"
 #include "World/Shared/Passes/GBufferPass.h"
 #include "World/Shared/Passes/HiZPass.h"
 #include "World/Shared/Passes/LightClusterPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
+#include "World/Shared/Passes/VolumetricFogPass.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
@@ -59,6 +63,8 @@ const render::Handle s_handleVisualTargetSet[] = {
 	render::Handle(L"World_VisualTargetSet_Even"),
 	render::Handle(L"World_VisualTargetSet_Odd")
 };
+
+Random s_random;
 
 }
 
@@ -99,13 +105,19 @@ void WorldRendererForward::setup(
 	}
 #endif
 
+	// Adjust view size to properly reflect our internal resolution.
+	const float resolutionScale = (m_postProcessPass != nullptr) ? m_postProcessPass->getResolutionScale() : 1.0f;
+	worldRenderView.setViewSize(worldRenderView.getViewSize() * resolutionScale);
+
 	// Jitter projection for TAA, calculate jitter in clip space.
 	if (needJitter)
 	{
-		const Vector2 ndc = (jitter(count) * 2.0f) / worldRenderView.getViewSize();
-		Matrix44 proj = immutableWorldRenderView.getProjection();
-		proj = translate(ndc.x, ndc.y, 0.0f) * proj;
-		worldRenderView.setProjection(proj);
+		const Matrix44 originalProjection = worldRenderView.getProjection();
+
+		const Vector2 ndcc = (jitter(count) * 2.0f) / worldRenderView.getViewSize();
+		const Matrix44 currentProjection = translate(ndcc.x, ndcc.y, 0.0f) * originalProjection;
+
+		worldRenderView.setProjection(currentProjection);
 	}
 
 	// Gather active renderables for this frame.
@@ -116,43 +128,53 @@ void WorldRendererForward::setup(
 		T_PROFILER_SCOPE(L"WorldRendererForward setup extra passes");
 		WorldSetupContext context(world, m_entityRenderers, renderGraph, m_visualAttachments);
 
-		for (const auto& r : m_gatheredView.renderables)
-			r.renderer->setup(context, worldRenderView, r.renderable);
-
-		for (auto entityRenderer : m_entityRenderers->get())
-			entityRenderer->setup(context);
+		for (auto it : m_gatheredView.renderables)
+		{
+			IEntityRenderer* entityRenderer = it.first;
+			const GatherView::Renderable& r = it.second;
+			entityRenderer->setup(context, worldRenderView, r.objects);
+		}
 	}
 
 	// Add visual target sets.
+	const Rational r = floatToRational(resolutionScale);
+	const render::RGTargetSet sharedDepthTargetSetId = (resolutionScale == 1.0f) ? outputTargetSetId : render::RGTargetSet::Invalid;
+
 	const render::RenderGraphTargetSetDesc rgtd = {
 		.count = 1,
-		.referenceWidthDenom = 1,
-		.referenceHeightDenom = 1,
-		.createDepthStencil = false,
+		.referenceWidthMul = (int32_t)r.numerator,
+		.referenceWidthDenom = (int32_t)r.denominator,
+		.referenceHeightMul = (int32_t)r.numerator,
+		.referenceHeightDenom = (int32_t)r.denominator,
+		.createDepthStencil = (bool)(sharedDepthTargetSetId == render::RGTargetSet::Invalid),
 		.targets = { { .colorFormat = render::TfR11G11B10F } }
 	};
 	const DoubleBufferedTarget visualTargetSetId = {
-		renderGraph.addPersistentTargetSet(L"Previous", s_handleVisualTargetSet[count % 2], false, rgtd, outputTargetSetId, outputTargetSetId),
-		renderGraph.addPersistentTargetSet(L"Current", s_handleVisualTargetSet[(count + 1) % 2], false, rgtd, outputTargetSetId, outputTargetSetId)
+		renderGraph.addPersistentTargetSet(L"Previous", s_handleVisualTargetSet[count % 2], false, rgtd, sharedDepthTargetSetId, outputTargetSetId),
+		renderGraph.addPersistentTargetSet(L"Current", s_handleVisualTargetSet[(count + 1) % 2], false, rgtd, sharedDepthTargetSetId, outputTargetSetId)
 	};
 
 	const render::Buffer* lightSBuffer = m_state[worldRenderView.getIndex()].lightSBuffer;
+	const render::Buffer* tileSBuffer = m_lightClusterPass->getTileSBuffer();
+	const render::Buffer* lightIndexSBuffer = m_lightClusterPass->getLightIndexSBuffer();
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
-	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::ForwardGBufferWrite, renderGraph, render::RGTexture::Invalid, outputTargetSetId);
-	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	// m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
-	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, render::RGTexture::Invalid, outputTargetSetId);
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, render::RGTexture::Invalid, outputTargetSetId);
 
-	render::RGTargetSet shadowMapAtlasTargetSetId;
-	setupLightPass(
-		worldRenderView,
-		renderGraph,
-		outputTargetSetId,
-		shadowMapAtlasTargetSetId);
+	// ... using gathered renderables.
+	const auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::ForwardGBufferWrite, renderGraph, render::RGTexture::Invalid, visualTargetSetId.current);
+	const auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
+	const auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
+	const auto shadowMapAtlasTargetSetId = setupLightPass(worldRenderView, renderGraph);
+
+	// ... using gbuffer only.
+	const auto halfResDepthTextureId = m_downScalePass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
+
+	// ... using RT TLAS.
+	// m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
+	const auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
+	const auto fogVolumeTextureId = m_volumetricFogPass->setup(worldRenderView, m_gatheredView, lightSBuffer, tileSBuffer, lightIndexSBuffer, m_whiteTexture, count, m_slicePositions, renderGraph, shadowMapAtlasTargetSetId);
+	const auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, m_blackCubeTexture, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, render::RGTexture::Invalid, visualTargetSetId.current);
 
 	setupVisualPass(
 		worldRenderView,
@@ -162,9 +184,10 @@ void WorldRendererForward::setup(
 		gbufferTargetSetId,
 		ambientOcclusionTargetSetId,
 		reflectionsTargetSetId,
-		shadowMapAtlasTargetSetId);
+		shadowMapAtlasTargetSetId,
+		fogVolumeTextureId);
 
-	m_postProcessPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
+	m_postProcessPass->setup(worldRenderView, m_gatheredView, count, m_whiteTexture, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
 
 	m_state[worldRenderView.getIndex()].count++;
 }
@@ -177,7 +200,8 @@ void WorldRendererForward::setupVisualPass(
 	render::RGTargetSet gbufferTargetSetId,
 	render::RGTargetSet ambientOcclusionTargetSetId,
 	render::RGTargetSet reflectionsTargetSetId,
-	render::RGTargetSet shadowMapAtlasTargetSetId)
+	render::RGTargetSet shadowMapAtlasTargetSetId,
+	render::RGTexture fogVolumeTextureId)
 {
 	T_PROFILER_SCOPE(L"WorldRendererForward setupVisualPass");
 
@@ -209,6 +233,8 @@ void WorldRendererForward::setupVisualPass(
 	if (shadowsEnable)
 		rp->addInput(shadowMapAtlasTargetSetId);
 
+	rp->addInput(fogVolumeTextureId);
+
 	for (auto attachment : m_visualAttachments)
 		rp->addInput(attachment);
 
@@ -230,20 +256,29 @@ void WorldRendererForward::setupVisualPass(
 		const auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
 		const auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 		const auto visualCopyTargetSet = renderGraph.getTargetSet(visualReadTargetSetId);
+		const auto fogVolumeTexture = renderGraph.getTexture(fogVolumeTextureId);
+
+		const auto& view = worldRenderView.getView();
+		const auto& projection = worldRenderView.getProjection();
 
 		const float viewNearZ = worldRenderView.getViewFrustum().getNearZ();
 		const float viewFarZ = worldRenderView.getViewFrustum().getFarZ();
 		const float viewSliceScale = ClusterDimZ / std::log(viewFarZ / viewNearZ);
 		const float viewSliceBias = ClusterDimZ * std::log(viewNearZ) / std::log(viewFarZ / viewNearZ) - 0.001f;
 
+		const Scalar p11 = projection.get(0, 0);
+		const Scalar p22 = projection.get(1, 1);
+
 		auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 		sharedParams->beginParameters(wc.getRenderContext());
 		sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+		sharedParams->setFloatParameter(ShaderParameter::Random, s_random.nextFloat());
 		sharedParams->setVectorParameter(ShaderParameter::ViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
 		sharedParams->setVectorParameter(ShaderParameter::SlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
-		sharedParams->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
-		sharedParams->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
-		sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
+		sharedParams->setMatrixParameter(ShaderParameter::Projection, projection);
+		sharedParams->setMatrixParameter(ShaderParameter::View, view);
+		sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, view.inverse());
+		sharedParams->setVectorParameter(ShaderParameter::MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 
 		if (m_gatheredView.irradianceGrid)
 		{
@@ -258,41 +293,11 @@ void WorldRendererForward::setupVisualPass(
 		sharedParams->setBufferViewParameter(ShaderParameter::LightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
 		sharedParams->setBufferViewParameter(ShaderParameter::LightSBuffer, lightSBuffer->getBufferView());
 
-		if (probe)
-		{
-			sharedParams->setFloatParameter(ShaderParameter::ProbeIntensity, probe->getIntensity());
-			sharedParams->setFloatParameter(ShaderParameter::ProbeTextureMips, (float)probe->getTexture()->getSize().mips);
-			sharedParams->setTextureParameter(ShaderParameter::ProbeTexture, probe->getTexture());
-		}
-		else
-		{
-			sharedParams->setFloatParameter(ShaderParameter::ProbeIntensity, 0.0f);
-			sharedParams->setFloatParameter(ShaderParameter::ProbeTextureMips, 0.0f);
-			sharedParams->setTextureParameter(ShaderParameter::ProbeTexture, m_blackCubeTexture);
-		}
+		ProbeComponent::setupSharedParameters(probe, m_blackCubeTexture, sharedParams);
+		VolumetricFogPass::setupSharedParameters(m_gatheredView, viewNearZ, viewFarZ, sharedParams);
 
-		if (fog)
-		{
-			const Vector4 fogRange(
-				viewNearZ,
-				std::min< float >(viewFarZ, fog->getMaxDistance()),
-				fog->getMaxScattering(),
-				0.0f);
-
-			// Distance fog.
-			sharedParams->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4(fog->m_fogDistance, fog->m_fogDensity, fog->m_fogDensityMax, 0.0f));
-			sharedParams->setVectorParameter(ShaderParameter::FogColor, fog->m_fogColor);
-
-			// Volumetric fog.
-			sharedParams->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)fog->getSliceCount());
-			sharedParams->setVectorParameter(ShaderParameter::FogVolumeRange, fogRange);
-			sharedParams->setTextureParameter(ShaderParameter::FogVolumeTexture, fog->getFogVolumeTexture());
-		}
-		else
-		{
-			sharedParams->setVectorParameter(ShaderParameter::FogDistanceAndDensity, Vector4::zero());
-			sharedParams->setVectorParameter(ShaderParameter::FogColor, Vector4::zero());
-		}
+		if (fogVolumeTexture != nullptr)
+			sharedParams->setTextureParameter(ShaderParameter::FogVolumeTexture, fogVolumeTexture);
 
 		if (shadowAtlasTargetSet != nullptr)
 		{
@@ -336,18 +341,21 @@ void WorldRendererForward::setupVisualPass(
 			ShaderTechnique::ForwardColor,
 			sharedParams,
 			worldRenderView,
-			IWorldRenderPass::Last,
-			{ { ShaderPermutation::IrradianceEnable, irradianceEnable },
+			{
+				{ ShaderPermutation::IrradianceEnable, irradianceEnable },
 				{ ShaderPermutation::IrradianceSingle, irradianceSingle },
-				{ ShaderPermutation::VolumetricFogEnable, (bool)(fog != nullptr && fog->m_volumetricFogEnable) } });
+				{ ShaderPermutation::VolumetricFogEnable, (bool)(fogVolumeTexture != nullptr) },
+				{ ShaderPermutation::RayTracingEnable, (bool)(m_gatheredView.rtWorldTopLevel != nullptr) },
+			});
 
 		T_ASSERT(!wc.getRenderContext()->havePendingDraws());
 
-		for (const auto& r : m_gatheredView.renderables)
-			r.renderer->build(wc, worldRenderView, defaultPass, r.renderable);
-
-		for (auto entityRenderer : m_entityRenderers->get())
-			entityRenderer->build(wc, worldRenderView, defaultPass);
+		for (auto it : m_gatheredView.renderables)
+		{
+			IEntityRenderer* entityRenderer = it.first;
+			const GatherView::Renderable& r = it.second;
+			entityRenderer->build(wc, worldRenderView, defaultPass, r.objects);
+		}
 	});
 
 	renderGraph.addPass(rp);

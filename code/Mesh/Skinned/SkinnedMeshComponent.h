@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -46,29 +46,30 @@ class T_DLLCLASS SkinnedMeshComponent : public MeshComponent
 public:
 	explicit SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, render::IRenderSystem* renderSystem);
 
-	virtual void destroy() override final;
+	virtual void destroy() override;
 
-	virtual void setWorld(world::World* world) override final;
+	virtual void setWorld(world::World* world) override;
 
-	virtual void setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren) override final;
+	virtual void setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren) override;
 
-	virtual void setTransform(const Transform& transform) override final;
+	virtual void setTransform(const Transform& transform) override;
 
-	virtual Aabb3 getBoundingBox() const override final;
+	virtual Aabb3 getBoundingBox() const override;
 
-	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
+	virtual bool setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext);
+
+	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override;
 
 	void setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms);
 
-private:
+protected:
 	resource::Proxy< SkinnedMesh > m_mesh;
 	world::World* m_world = nullptr;
-
 	Ref< render::Buffer > m_jointBuffer;
 	Ref< render::Buffer > m_skinBuffer[2];
-
 	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
+	int32_t m_rtUpdates = 0;
 };
 
 }

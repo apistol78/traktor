@@ -1,24 +1,26 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstdlib>
+#include "Core/Memory/MemoryConfig.h"
+
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/DebugAllocator.h"
-#include "Core/Memory/FastAllocator.h"
+#include "Core/Memory/DynamicFastAllocator.h"
 #include "Core/Memory/StdAllocator.h"
-#include "Core/Memory/MemoryConfig.h"
 #include "Core/Memory/SystemConstruct.h"
 #include "Core/Memory/TrackAllocator.h"
 
+#include <cstdlib>
+
 namespace traktor
 {
-	namespace
-	{
+namespace
+{
 
 IAllocator* s_stdAllocator = nullptr;
 IAllocator* s_allocator = nullptr;
@@ -36,7 +38,7 @@ void destroyAllocator()
 }
 #endif
 
-	}
+}
 
 IAllocator* getAllocator()
 {
@@ -49,14 +51,14 @@ IAllocator* getAllocator()
 
 #elif defined(__LINUX__)
 #	if !defined(_DEBUG)
-		s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
+		s_allocator = allocConstruct< DynamicFastAllocator >(s_stdAllocator);
 #	else
 		s_allocator = allocConstruct< TrackAllocator >(s_stdAllocator);
 #	endif
 
 #elif defined(_WIN32)
 #	if !defined(_DEBUG)
-		s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
+		s_allocator = allocConstruct< DynamicFastAllocator >(s_stdAllocator);
 #	else
 		s_allocator = allocConstruct< TrackAllocator >(s_stdAllocator);
 #	endif

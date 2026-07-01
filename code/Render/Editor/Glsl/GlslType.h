@@ -41,11 +41,12 @@ enum class GlslType
 	Texture2D = 11,
 	Texture3D = 12,
 	TextureCube = 13,
-	StructBuffer = 14,
-	Image2D = 15,
-	Image3D = 16,
-	ImageCube = 17,
-	AccelerationStructure = 18
+	Struct = 14,
+	StructBuffer = 15,
+	Image2D = 16,
+	Image3D = 17,
+	ImageCube = 18,
+	AccelerationStructure = 19
 };
 
 struct GlslRequirements

@@ -34,6 +34,7 @@ public:
 private:
 	DialogResult m_result;
 	bool m_modal;
+	Atom m_atomWmDeleteWindow = 0;
 };
 
 }

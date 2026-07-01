@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include "Core/Object.h"
-#include "Core/Math/Vector4.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Object.h"
 #include "Heightfield/HeightfieldTypes.h"
 
 // import/export mechanism.
@@ -34,8 +34,7 @@ class T_DLLCLASS Heightfield : public Object
 public:
 	explicit Heightfield(
 		int32_t size,
-		const Vector4& worldExtent
-	);
+		const Vector4& worldExtent);
 
 	void setGridHeight(int32_t gridX, int32_t gridZ, float unitY);
 
@@ -44,6 +43,8 @@ public:
 	void setGridAttribute(int32_t gridX, int32_t gridZ, uint8_t attribute);
 
 	float getGridHeightNearest(int32_t gridX, int32_t gridZ) const;
+
+	float getGridHeightNearestUnsafe(int32_t gridX, int32_t gridZ) const { return m_heights[gridX + gridZ * m_size] / 65535.0f; }
 
 	float getGridHeightBilinear(float gridX, float gridZ) const;
 
@@ -91,13 +92,23 @@ public:
 
 	const uint8_t* getAttributes() const { return m_attributes.c_ptr(); }
 
+	int32_t gridToCell(int32_t grid) const;
+
+	void updateCellBounds();
+
+	void updateCellBounds(int32_t gridX, int32_t gridZ);
+
+	void updateCellBounds(int32_t gridX0, int32_t gridY0, int32_t gridX1, int32_t gridY1);
+
 private:
 	int32_t m_size;
+	int32_t m_cellBoundsPitch;
 	Vector4 m_worldExtent;
 	float m_worldExtentFloats[4];
 	AutoArrayPtr< height_t > m_heights;
 	AutoArrayPtr< uint8_t > m_cuts;
 	AutoArrayPtr< uint8_t > m_attributes;
+	AutoArrayPtr< Aabb3 > m_cellBounds;
 };
 
 }

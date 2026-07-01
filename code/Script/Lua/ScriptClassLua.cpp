@@ -173,6 +173,11 @@ const TypeInfo& ScriptClassLua::getExportType() const
 	return type_of< Object >();
 }
 
+bool ScriptClassLua::isValueType() const
+{
+	return false;
+}
+
 const IRuntimeDispatch* ScriptClassLua::getConstructorDispatch() const
 {
 	return m_constructor;

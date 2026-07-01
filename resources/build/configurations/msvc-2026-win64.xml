@@ -109,6 +109,10 @@
 								<name>BasicRuntimeChecks</name>
 								<value>EnableFastChecks</value>
 							</item>
+							<item>
+								<name>EnableEnhancedInstructionSet</name>
+								<value>AdvancedVectorExtensions</value>
+							</item>
 						</options>
 					</item>
 					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
@@ -188,6 +192,10 @@
 							<item>
 								<name>BasicRuntimeChecks</name>
 								<value>EnableFastChecks</value>
+							</item>
+							<item>
+								<name>EnableEnhancedInstructionSet</name>
+								<value>AdvancedVectorExtensions</value>
 							</item>
 						</options>
 					</item>
@@ -323,6 +331,10 @@
 								<name>BasicRuntimeChecks</name>
 								<value>EnableFastChecks</value>
 							</item>
+							<item>
+								<name>EnableEnhancedInstructionSet</name>
+								<value>AdvancedVectorExtensions</value>
+							</item>
 						</options>
 					</item>
 					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
@@ -452,6 +464,10 @@
 							<item>
 								<name>BasicRuntimeChecks</name>
 								<value>EnableFastChecks</value>
+							</item>
+							<item>
+								<name>EnableEnhancedInstructionSet</name>
+								<value>AdvancedVectorExtensions</value>
 							</item>
 						</options>
 					</item>
@@ -609,6 +625,10 @@
 								<name>LanguageStandard</name>
 								<value>stdcpp20</value>
 							</item>
+							<item>
+								<name>EnableEnhancedInstructionSet</name>
+								<value>AdvancedVectorExtensions</value>
+							</item>
 						</options>
 					</item>
 					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
@@ -708,6 +728,10 @@
 							<item>
 								<name>LanguageStandard</name>
 								<value>stdcpp20</value>
+							</item>
+							<item>
+								<name>EnableEnhancedInstructionSet</name>
+								<value>AdvancedVectorExtensions</value>
 							</item>
 						</options>
 					</item>
@@ -863,6 +887,10 @@
 								<name>LanguageStandard</name>
 								<value>stdcpp20</value>
 							</item>
+							<item>
+								<name>EnableEnhancedInstructionSet</name>
+								<value>AdvancedVectorExtensions</value>
+							</item>
 						</options>
 					</item>
 					<item type="traktor.sb.SolutionBuilderMsvcVCXDefinition" version="1">
@@ -1012,6 +1040,10 @@
 							<item>
 								<name>LanguageStandard</name>
 								<value>stdcpp20</value>
+							</item>
+							<item>
+								<name>EnableEnhancedInstructionSet</name>
+								<value>AdvancedVectorExtensions</value>
 							</item>
 						</options>
 					</item>

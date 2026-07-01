@@ -12,6 +12,7 @@
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Ui/Events/CloseEvent.h"
 #include "Ui/Itf/ISystemBitmap.h"
 #include "Ui/ToolForm.h"
 
@@ -82,7 +83,24 @@ bool ToolFormX11::create(IWidget* parent, const std::wstring& text, int width, i
 		XSetTransientForHint(m_context->getDisplay(), window, parentData->window);
 	}
 
-	return WidgetX11Impl< IToolForm >::create(parent, style, window, Rect(0, 0, width, height), false, true);
+	// Subscribe to WM_DELETE_WINDOW so the close button can be intercepted.
+	m_atomWmDeleteWindow = XInternAtom(m_context->getDisplay(), "WM_DELETE_WINDOW", False);
+	XSetWMProtocols(m_context->getDisplay(), window, &m_atomWmDeleteWindow, 1);
+
+	if (!WidgetX11Impl< IToolForm >::create(parent, style, window, Rect(0, 0, width, height), false, true))
+		return false;
+
+	m_context->bind(&m_data, ClientMessage, [&](XEvent& xe){
+		if ((Atom)xe.xclient.data.l[0] == m_atomWmDeleteWindow)
+		{
+			CloseEvent closeEvent(m_owner);
+			m_owner->raiseEvent(&closeEvent);
+			if (!closeEvent.consumed() && !closeEvent.cancelled())
+				destroy();
+		}
+	});
+
+	return true;
 }
 
 void ToolFormX11::destroy()

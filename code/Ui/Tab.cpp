@@ -1,19 +1,24 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
+#include "Ui/Tab.h"
+
+#include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
-#include "Ui/StyleSheet.h"
-#include "Ui/StyleBitmap.h"
-#include "Ui/Tab.h"
-#include "Ui/TabPage.h"
 #include "Ui/Font.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
+#include "Ui/TabPage.h"
+#include "Ui/ToolTip.h"
+#include "Ui/ToolTipEvent.h"
+
+#include <algorithm>
 
 namespace traktor::ui
 {
@@ -21,12 +26,12 @@ namespace traktor::ui
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Tab", Tab, Widget)
 
 Tab::Tab()
-:	m_imageWidth(0)
-,	m_imageHeight(0)
-,	m_closeButton(false)
-,	m_drawBorder(false)
-,	m_drawLine(false)
-,	m_bottom(false)
+	: m_imageWidth(0)
+	, m_imageHeight(0)
+	, m_closeButton(false)
+	, m_drawBorder(false)
+	, m_drawLine(false)
+	, m_bottom(false)
 {
 }
 
@@ -51,7 +56,18 @@ bool Tab::create(Widget* parent, uint32_t style)
 
 	m_bitmapClose = new StyleBitmap(L"UI.TabClose");
 	m_tabHeight = getFont().getSize() + 12_ut;
+
+	m_toolTip = new ToolTip();
+	m_toolTip->create(this);
+	m_toolTip->addEventHandler< ToolTipEvent >(this, &Tab::eventShowTip);
+
 	return true;
+}
+
+void Tab::destroy()
+{
+	safeDestroy(m_toolTip);
+	Widget::destroy();
 }
 
 Rect Tab::getInnerRect() const
@@ -127,10 +143,8 @@ TabPage* Tab::getPageAt(const Point& position) const
 		return nullptr;
 
 	for (const auto& ps : m_pages)
-	{
 		if (position.x <= ps.right)
 			return ps.page;
-	}
 
 	return nullptr;
 }
@@ -185,10 +199,8 @@ void Tab::setActivePage(TabPage* page)
 
 		int32_t depth = state->depth;
 		for (auto& ps : m_pages)
-		{
 			if (ps.depth <= depth)
 				ps.depth++;
-		}
 
 		state->depth = 0;
 
@@ -212,18 +224,14 @@ TabPage* Tab::cycleActivePage(bool forward)
 	if (forward)
 	{
 		for (auto& ps : m_pages)
-		{
 			if (--ps.depth < 0)
 				ps.depth = maxDepth;
-		}
 	}
 	else
 	{
 		for (auto& ps : m_pages)
-		{
 			if (++ps.depth > maxDepth)
 				ps.depth = 0;
-		}
 	}
 
 	if (m_selectedPage)
@@ -251,6 +259,22 @@ Size Tab::getPreferredSize(const Size& hint) const
 	return Size(256, 256);
 }
 
+Tab::PageState* Tab::findPageState(const TabPage* page)
+{
+	for (auto& ps : m_pages)
+		if (ps.page == page)
+			return &ps;
+	return nullptr;
+}
+
+Tab::PageState* Tab::findPageState(int32_t depth)
+{
+	for (auto& ps : m_pages)
+		if (ps.depth == depth)
+			return &ps;
+	return nullptr;
+}
+
 void Tab::eventMouseTrack(MouseTrackEvent* event)
 {
 	if (!event->entered())
@@ -260,6 +284,8 @@ void Tab::eventMouseTrack(MouseTrackEvent* event)
 			m_hoverPage = nullptr;
 			update();
 		}
+
+		m_toolTip->hide();
 	}
 }
 
@@ -286,9 +312,22 @@ void Tab::eventMouseMove(MouseMoveEvent* event)
 		if (hoverPage != m_hoverPage)
 		{
 			m_hoverPage = hoverPage;
+
+			// Update tooltip if it's visible.
+			if (m_toolTip->isVisible(false))
+			{
+				std::wstring toolTip;
+				if (hoverPage != nullptr && hoverPage->getToolTip(toolTip))
+					m_toolTip->show(event->getPosition(), toolTip);
+				else
+					m_toolTip->hide();
+			}
+
 			update();
 		}
 	}
+	else
+		m_toolTip->hide();
 }
 
 void Tab::eventButtonDown(MouseButtonDownEvent* event)
@@ -347,10 +386,8 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 			if ((m_selectedPage = selectedPageState->page) != nullptr)
 			{
 				for (auto& ps : m_pages)
-				{
 					if (ps.depth < selectedPageState->depth)
 						ps.depth++;
-				}
 				selectedPageState->depth = 0;
 				m_selectedPage->setVisible(true);
 				m_selectedPage->setRect(m_innerRect);
@@ -441,8 +478,7 @@ void Tab::eventPaint(PaintEvent* event)
 					left,
 					rcTabs.top,
 					left + tabWidth,
-					rcTabs.bottom
-				);
+					rcTabs.bottom);
 				if (m_drawLine)
 				{
 					if (!m_bottom)
@@ -473,8 +509,7 @@ void Tab::eventPaint(PaintEvent* event)
 						Point(page->getImageIndex() * bitmapSize.cy, 0),
 						Size(bitmapSize.cy, bitmapSize.cy),
 						m_bitmapImages,
-						BlendMode::Alpha
-					);
+						BlendMode::Alpha);
 					textOffset += bitmapSize.cy + pixel(2_ut);
 				}
 
@@ -487,8 +522,7 @@ void Tab::eventPaint(PaintEvent* event)
 						Point(0, 0),
 						closeSize,
 						m_bitmapClose,
-						BlendMode::Alpha
-					);
+						BlendMode::Alpha);
 				}
 
 				// Draw text.
@@ -496,8 +530,7 @@ void Tab::eventPaint(PaintEvent* event)
 					left + textOffset + pixel(4_ut),
 					rcTab.top,
 					left + textOffset + pixel(4_ut) + sizText.cx,
-					rcTab.bottom
-				);
+					rcTab.bottom);
 				if (isEnable(true))
 				{
 					canvas.setForeground(ss->getColor(this, (page == m_selectedPage || page == m_hoverPage) ? L"tab-color-active" : L"tab-color-inactive"));
@@ -520,8 +553,7 @@ void Tab::eventPaint(PaintEvent* event)
 			rcInner.left,
 			m_bottom ? rcInner.top : rcInner.top + pixel(m_tabHeight),
 			rcInner.right,
-			m_bottom ? rcInner.bottom - pixel(m_tabHeight) : rcInner.bottom
-		);
+			m_bottom ? rcInner.bottom - pixel(m_tabHeight) : rcInner.bottom);
 		canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
 		canvas.fillRect(rcTabItem);
 	}
@@ -552,32 +584,23 @@ void Tab::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-Tab::PageState* Tab::findPageState(const TabPage* page)
+void Tab::eventShowTip(ToolTipEvent* event)
 {
-	for (auto& ps : m_pages)
+	Ref< TabPage > page = getPageAt(event->getPosition());
+	if (page)
 	{
-		if (ps.page == page)
-			return &ps;
+		std::wstring toolTip;
+		if (page->getToolTip(toolTip))
+			m_toolTip->show(event->getPosition(), toolTip);
 	}
-	return nullptr;
-}
-
-Tab::PageState* Tab::findPageState(int32_t depth)
-{
-	for (auto& ps : m_pages)
-	{
-		if (ps.depth == depth)
-			return &ps;
-	}
-	return nullptr;
 }
 
 Tab::PageState::PageState(TabPage* page_)
-:	page(page_)
+	: page(page_)
 {
 }
 
-bool Tab::PageState::operator == (const Tab::PageState& rh) const
+bool Tab::PageState::operator==(const Tab::PageState& rh) const
 {
 	return page == rh.page;
 }

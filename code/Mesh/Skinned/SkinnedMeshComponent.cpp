@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,6 +24,8 @@ namespace
 
 const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 
+const int32_t c_maxRtUpdatesBeforeBuild = 400;
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshComponent", SkinnedMeshComponent, MeshComponent)
@@ -31,9 +33,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshComponent", SkinnedMeshComponen
 SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, render::IRenderSystem* renderSystem)
 	: m_mesh(mesh)
 {
+	//const auto& jointMap = m_mesh->getJointMap();
+	const uint32_t skinJointCount = m_mesh->getJointCount();
+
 	// Create buffer to contain the joint matrix palette.
-	const auto& jointMap = m_mesh->getJointMap();
-	m_jointBuffer = SkinnedMesh::createJointBuffer(renderSystem, (uint32_t)jointMap.size());
+	m_jointBuffer = SkinnedMesh::createJointBuffer(renderSystem, skinJointCount);
 
 	// Create skin buffers.
 	m_skinBuffer[0] = m_mesh->createSkinBuffer(renderSystem);
@@ -41,6 +45,10 @@ SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >&
 
 	// Create our instance's acceleration structure.
 	m_rtAccelerationStructure = m_mesh->createAccelerationStructure(renderSystem);
+
+	// Randomize start of counter to ensure not every single
+	// component in the world do the same thing at the same frame.
+	m_rtUpdates = std::rand();
 }
 
 void SkinnedMeshComponent::destroy()
@@ -84,9 +92,6 @@ void SkinnedMeshComponent::setState(const world::EntityState& state, const world
 void SkinnedMeshComponent::setTransform(const Transform& transform)
 {
 	MeshComponent::setTransform(transform);
-
-	if (m_rtwInstance)
-		m_rtwInstance->setTransform(transform);
 }
 
 Aabb3 SkinnedMeshComponent::getBoundingBox() const
@@ -94,24 +99,38 @@ Aabb3 SkinnedMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
+bool SkinnedMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
+{
+	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+	const Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
+
+	const bool asynchronous = true;
+
+	std::swap(m_skinBuffer[0], m_skinBuffer[1]);
+	m_mesh->buildSkin(renderContext, m_jointBuffer, m_skinBuffer[0], asynchronous);
+
+	if (m_rtwInstance)
+	{
+		bool rebuild = false;
+		if (++m_rtUpdates > c_maxRtUpdatesBeforeBuild)
+		{
+			rebuild = true;
+			m_rtUpdates = 0;
+		}
+		m_mesh->buildAccelerationStructure(renderContext, m_skinBuffer[0], m_rtAccelerationStructure, rebuild, asynchronous);
+		m_rtwInstance->setTransform(worldTransform);
+	}
+
+	return asynchronous;
+}
+
 void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0 && worldRenderView.getIndex() == 0)
-	{
-		std::swap(m_skinBuffer[0], m_skinBuffer[1]);
-		m_mesh->buildSkin(context.getRenderContext(), m_jointBuffer, m_skinBuffer[0]);
-		if (m_rtwInstance)
-		{
-			m_mesh->buildAccelerationStructure(context.getRenderContext(), m_skinBuffer[0], m_rtAccelerationStructure);
-			m_rtwInstance->setDirty();
-		}
-	}
+	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+	const Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
 
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
-
-	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
-	const Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
 
 	// Skip rendering velocities if mesh hasn't moved since last frame.
 	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)

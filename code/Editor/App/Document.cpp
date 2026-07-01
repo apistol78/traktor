@@ -37,7 +37,7 @@ void Document::editInstance(db::Instance* instance, ISerializable* object)
 	m_objectHashes.push_back(DeepHash(object).get());
 }
 
-bool Document::containInstance(db::Instance* instance) const
+bool Document::containInstance(const db::Instance* instance) const
 {
 	const auto it = std::find(m_instances.begin(), m_instances.end(), instance);
 	return it != m_instances.end();

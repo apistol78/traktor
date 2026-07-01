@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,6 +19,7 @@
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Mesh/MeshComponentRenderer.h"
+#include "Mesh/Skinned/SkinnedMeshComponentRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
@@ -338,6 +339,7 @@ void EffectPreviewControl::updateWorldRenderer()
 	// Create entity renderers.
 	Ref< world::WorldEntityRenderers > entityRenderers = new world::WorldEntityRenderers();
 	entityRenderers->add(new mesh::MeshComponentRenderer());
+	entityRenderers->add(new mesh::SkinnedMeshComponentRenderer());
 	entityRenderers->add(new EffectRenderer(m_renderSystem, 10000.0f, 10000.0f));
 	entityRenderers->add(new weather::PrecipitationRenderer());
 	entityRenderers->add(new weather::SkyRenderer());
@@ -359,14 +361,19 @@ void EffectPreviewControl::updateWorldRenderer()
 	wcd.quality.ambientOcclusion = world::Quality::Disabled;
 	wcd.quality.antiAlias = world::Quality::Disabled;
 	wcd.quality.imageProcess = world::Quality::Ultra;
+	wcd.quality.irradiance = world::Quality::Ultra;
 	wcd.multiSample = 0;
 	wcd.hdr = m_renderView->isHDR();
+	wcd.rt = false;
 
 	if (!worldRenderer->create(
 			m_resourceManager,
 			m_renderSystem,
 			wcd))
+	{
+		safeDestroy(worldRenderer);
 		return;
+	}
 
 	m_worldRenderer = worldRenderer;
 }

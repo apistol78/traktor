@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,18 +20,18 @@
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ITexture.h"
-#include "Render/Frame/RenderGraphContext.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/DefaultEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityAdapterBuilder.h"
+#include "Scene/Editor/EntityTransformAnchor.h"
 #include "Scene/Editor/IComponentEditorFactory.h"
 #include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/IModifier.h"
+#include "Scene/Editor/ISceneEditorUIExtension.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/Traverser.h"
@@ -44,6 +44,7 @@
 #include "Scene/Editor/Events/PostModifyEvent.h"
 #include "Scene/Editor/Events/PreModifyEvent.h"
 #include "Scene/Editor/Events/RedrawEvent.h"
+#include "Scene/Editor/Events/SceneSelectionChangeEvent.h"
 #include "Script/IScriptContext.h"
 #include "Ui/Events/SelectionChangeEvent.h"
 #include "World/Entity.h"
@@ -81,7 +82,6 @@ SceneEditorContext::SceneEditorContext(
 ,	m_sourceDb(sourceDb)
 ,	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
-,	m_renderGraphContext(new render::RenderGraphContext(renderSystem))
 ,	m_physicsManager(physicsManager)
 ,	m_scriptContext(scriptContext)
 ,	m_guideSize(1.0f)
@@ -110,7 +110,6 @@ void SceneEditorContext::destroy()
 	safeDestroy(m_scene);
 	safeDestroy(m_resourceManager);
 	safeDestroy(m_scriptContext);
-	safeDestroy(m_renderGraphContext);
 
 	m_editor = nullptr;
 	m_document = nullptr;
@@ -119,8 +118,8 @@ void SceneEditorContext::destroy()
 	m_renderSystem = nullptr;
 	m_physicsManager = nullptr;
 
-	m_editorProfiles.clear();
-	m_editorPlugins.clear();
+	m_plugins.clear();
+	m_uiExtensions.clear();
 	m_entityEditorFactories.clear();
 	m_componentEditorFactories.clear();
 	m_controllerEditor = nullptr;
@@ -142,14 +141,14 @@ void SceneEditorContext::destroy()
 	removeAllEventHandlers();
 }
 
-void SceneEditorContext::addEditorProfile(ISceneEditorProfile* editorProfile)
+void SceneEditorContext::addPlugin(ISceneEditorPlugin* plugin)
 {
-	m_editorProfiles.push_back(editorProfile);
+	m_plugins.push_back(plugin);
 }
 
-void SceneEditorContext::addEditorPlugin(ISceneEditorPlugin* editorPlugin)
+void SceneEditorContext::addUIExtension(ISceneEditorUIExtension* uiExtension)
 {
-	m_editorPlugins.push_back(editorPlugin);
+	m_uiExtensions.push_back(uiExtension);
 }
 
 void SceneEditorContext::createEditorFactories()
@@ -157,10 +156,10 @@ void SceneEditorContext::createEditorFactories()
 	m_entityEditorFactories.resize(0);
 	m_componentEditorFactories.resize(0);
 
-	for (auto editorProfile : m_editorProfiles)
+	for (auto plugin : m_plugins)
 	{
-		editorProfile->createEntityEditorFactories(this, m_entityEditorFactories);
-		editorProfile->createComponentEditorFactories(this, m_componentEditorFactories);
+		plugin->createEntityEditorFactories(this, m_entityEditorFactories);
+		plugin->createComponentEditorFactories(this, m_componentEditorFactories);
 	}
 }
 
@@ -264,7 +263,7 @@ Camera* SceneEditorContext::getCamera(int index) const
 	return m_cameras[index];
 }
 
-void SceneEditorContext::moveToEntityAdapter(EntityAdapter* entityAdapter)
+void SceneEditorContext::moveToEntityAdapter(const EntityAdapter* entityAdapter)
 {
 	if (!entityAdapter)
 		return;
@@ -433,7 +432,7 @@ const IComponentEditorFactory* SceneEditorContext::findComponentEditorFactory(co
 	return foundComponentEditorFactory;
 }
 
-void SceneEditorContext::buildEntities()
+void SceneEditorContext::buildEntities(bool rebuildWorld)
 {
 	// Reset physics before creating entities in case
 	// a new body is created with an initial velocity etc.
@@ -458,10 +457,10 @@ void SceneEditorContext::buildEntities()
 
 		// Create the entity factory.
 		Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
-		for (auto editorProfile : m_editorProfiles)
+		for (auto plugin : m_plugins)
 		{
 			RefArray< world::IEntityFactory > entityFactories;
-			editorProfile->createEntityFactories(this, entityFactories);
+			plugin->createEntityFactories(this, entityFactories);
 			for (auto factory : entityFactories)
 			{
 				if (factory->initialize(objectStore))
@@ -472,7 +471,7 @@ void SceneEditorContext::buildEntities()
 		}
 
 		Ref< world::World > world = m_scene ? m_scene->getWorld() : nullptr;
-		if (world)
+		if (!rebuildWorld && world)
 		{
 			// Remove all entities from world, will get re-added.
 			RefArray< world::Entity > entities = world->getEntities();
@@ -481,8 +480,10 @@ void SceneEditorContext::buildEntities()
 		}
 		else
 		{
-			// Create world and it's components.
+			// No world created yet (or need to be rebuilt); create new world.
 			world = new world::World(getResourceManager(), getRenderSystem());
+
+			// Create new set of world components.
 			for (auto worldComponentData : m_sceneAsset->getWorldComponents())
 			{
 				Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityFactory, world, nullptr);
@@ -558,10 +559,10 @@ void SceneEditorContext::buildController()
 
 	// Create the entity factory.
 	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
-	for (auto editorProfile : m_editorProfiles)
+	for (auto plugin : m_plugins)
 	{
 		RefArray< world::IEntityFactory > entityFactories;
-		editorProfile->createEntityFactories(this, entityFactories);
+		plugin->createEntityFactories(this, entityFactories);
 		for (auto factory : entityFactories)
 		{
 			if (factory->initialize(objectStore))
@@ -650,6 +651,18 @@ RefArray< EntityAdapter > SceneEditorContext::getEntities(uint32_t flags) const
 	return std::move(entityAdapters);
 }
 
+RefArray< IModifierAnchor > SceneEditorContext::getModifierAnchors() const
+{
+	const RefArray< EntityAdapter > entityAdapters = getEntities(GfDefault | GfSelectedOnly | GfNoExternalChild);
+
+	RefArray< IModifierAnchor > anchors;
+	anchors.reserve(entityAdapters.size());
+	for (auto entityAdapter : entityAdapters)
+		anchors.push_back(new EntityTransformAnchor(entityAdapter));
+
+	return anchors;
+}
+
 uint32_t SceneEditorContext::findAdaptersOfType(const TypeInfo& entityType, RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags) const
 {
 	typedef std::pair< RefArray< EntityAdapter >::const_iterator, RefArray< EntityAdapter >::const_iterator > range_t;
@@ -672,7 +685,7 @@ uint32_t SceneEditorContext::findAdaptersOfType(const TypeInfo& entityType, RefA
 
 			if (
 				is_type_of(entityType, type_of(entityAdapter->getEntity())) ||
-				entityAdapter->getComponent(entityType) != 0
+				entityAdapter->getComponent(entityType) != nullptr
 			)
 			{
 				bool include = true;
@@ -813,16 +826,16 @@ void SceneEditorContext::cloneSelected()
 		clonedEntityAdapter->m_selected = true;
 	}
 
-	buildEntities();
-	raiseSelect();
+	buildEntities(false);
+	raiseSelect(true);
 }
 
-ISceneEditorPlugin* SceneEditorContext::getEditorPluginOf(const TypeInfo& pluginType) const
+ISceneEditorUIExtension* SceneEditorContext::getUIExtensionOf(const TypeInfo& extensionType) const
 {
-	for (auto editorPlugin : m_editorPlugins)
+	for (auto uiExtension : m_uiExtensions)
 	{
-		if (&type_of(editorPlugin) == &pluginType)
-			return editorPlugin;
+		if (&type_of(uiExtension) == &extensionType)
+			return uiExtension;
 	}
 	return nullptr;
 }
@@ -851,14 +864,14 @@ void SceneEditorContext::raisePostBuild()
 	raiseEvent(&postBuildEvent);
 }
 
-void SceneEditorContext::raiseSelect()
+void SceneEditorContext::raiseSelect(bool ensureEntityVisible)
 {
 	// Notify modifier about selection change.
 	if (m_modifier)
 		m_modifier->selectionChanged();
 
 	// Notify selection change event listeners.
-	ui::SelectionChangeEvent selectionChangeEvent(this);
+	SceneSelectionChangeEvent selectionChangeEvent(this, ensureEntityVisible);
 	raiseEvent(&selectionChangeEvent);
 }
 

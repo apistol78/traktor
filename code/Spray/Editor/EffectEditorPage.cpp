@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -73,18 +73,6 @@
 #include "World/EntityFactory.h"
 #include "World/WorldResourceFactory.h"
 #include "World/Entity/WorldEntityFactory.h"
-
-// Resources
-#include "Resources/BrowseBackground.h"
-#include "Resources/BrowseImageProcess.h"
-#include "Resources/LayerDelete.h"
-#include "Resources/LayerHidden.h"
-#include "Resources/LayerVisible.h"
-#include "Resources/Playback.h"
-#include "Resources/Randomize.h"
-#include "Resources/ToggleGroundClip.h"
-#include "Resources/ToggleGuideLines.h"
-#include "Resources/ToggleMoveEmitter.h"
 
 namespace traktor::spray
 {

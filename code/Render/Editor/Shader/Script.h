@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,7 +48,7 @@ public:
 		Compute = 3
 	};
 
-	Script();
+	Script() = default;
 
 	void setName(const std::wstring& name);
 
@@ -67,6 +67,8 @@ public:
 	bool useRayTracing() const;
 
 	const AlignedVector< Guid >& getIncludes() const;
+
+	void setIncludes(const AlignedVector< Guid >& includes);
 
 	void setScript(const std::wstring& script);
 
@@ -102,7 +104,7 @@ private:
 	std::wstring m_name;
 	std::wstring m_technique;
 	Domain m_domain = Undefined;
-	int32_t m_localSize[3];
+	int32_t m_localSize[3] = { 1, 1, 1 };
 	bool m_useRayTracing = false;
 	AlignedVector< Guid > m_includes;
 	StaticVector< InputPin, 64 > m_inputPins;

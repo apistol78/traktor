@@ -132,6 +132,19 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 				mm.setBlendOperator(Material::BoAlpha);
 			}
 		}
+		if (material->pbr.transmission_factor.has_value)
+		{
+			const float alpha = 1.0f - material->pbr.transmission_factor.value_real;
+			if (alpha < 1.0f - FUZZY_EPSILON)
+			{
+				mm.setTransparency(alpha);
+
+				// #fixme Mixamo meshes do have a transmission_factor of zero but
+				// not considered a transparent material. What is the best way of interpret
+				// FBX materials?
+				//mm.setBlendOperator(Material::BoAlpha);
+			}
+		}
 
 		if (material->pbr.base_color.texture)
 		{
@@ -143,6 +156,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 				true,
 				Guid(),
 				diffuseImage));
+			mm.setColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 		}
 
 		if (material->pbr.specular_color.texture)
@@ -235,6 +249,17 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		// Get custom properties on material.
 		// scanCustomProperties(meshNode, mm);
 		// scanCustomProperties(material, mm);
+
+		for (uint32_t j = 0; j < material->props.props.count; ++j)
+		{
+			const ufbx_prop& prop = material->props.props.data[j];
+			const std::wstring name = mbstows(prop.name.data);
+			if (compareIgnoreCase(name, L"Traktor_DoubleSided") == 0)
+			{
+				if (prop.value_real > 0.5f)
+					mm.setDoubleSided(true);
+			}
+		}
 
 		outMaterialMap[i] = outModel.addUniqueMaterial(mm);
 	}

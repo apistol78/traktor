@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -59,22 +59,12 @@ public:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgTargetSet", 1, ImgTargetSet, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgTargetSet", 3, ImgTargetSet, Node)
 
 ImgTargetSet::ImgTargetSet()
-:	m_persistent(false)
-,	m_width(0)
-,	m_height(0)
-,	m_screenWidthDenom(0)
-,	m_screenHeightDenom(0)
-,	m_maxWidth(0)
-,	m_maxHeight(0)
-,	m_createDepthStencil(false)
-,	m_ignoreStencil(false)
-,	m_generateMips(false)
 {
-	const Guid inputId(L"{e75f63fe-8cb0-4f01-b559-5b3bfb149271}");
-	m_inputPins.push_back(new InputPin(this, inputId, L"Input", false));
+	m_inputPins.push_back(new InputPin(this, Guid(L"{e75f63fe-8cb0-4f01-b559-5b3bfb149271}"), L"Input", false));
+	m_inputPins.push_back(new InputPin(this, Guid(L"{ddb00201-e818-429b-b3fb-e313b3c1679c}"), L"Reference", true));
 }
 
 ImgTargetSet::~ImgTargetSet()
@@ -85,9 +75,9 @@ ImgTargetSet::~ImgTargetSet()
 		delete outputPin;
 }
 
-const std::wstring& ImgTargetSet::getTargetSetId() const
+const std::wstring& ImgTargetSet::getName() const
 {
-	return m_targetSetId;
+	return m_name;
 }
 
 bool ImgTargetSet::getPersistent() const
@@ -112,8 +102,8 @@ RenderGraphTargetSetDesc ImgTargetSet::getRenderGraphTargetSetDesc() const
 	desc.count = (int32_t)m_targets.size();
 	desc.width = m_width;
 	desc.height = m_height;
-	desc.referenceWidthDenom = m_screenWidthDenom;
-	desc.referenceHeightDenom = m_screenHeightDenom;
+	desc.referenceWidthDenom = m_referenceWidthDenom;
+	desc.referenceHeightDenom = m_referenceHeightDenom;
 	desc.maxWidth = m_maxWidth;
 	desc.maxHeight = m_maxHeight;
 	desc.createDepthStencil = m_createDepthStencil;
@@ -153,15 +143,26 @@ void ImgTargetSet::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 	
-	s >> Member< std::wstring >(L"targetSetId", m_targetSetId);
+	if (s.getVersion< ImgTargetSet >() >= 3)
+		s >> Member< std::wstring >(L"name", m_name);
+	else
+		s >> Member< std::wstring >(L"targetSetId", m_name);
 
 	if (s.getVersion< ImgTargetSet >() >= 1)
 		s >> Member< bool >(L"persistent", m_persistent);
 
 	s >> Member< int32_t >(L"width", m_width);
 	s >> Member< int32_t >(L"height", m_height);
-	s >> Member< int32_t >(L"screenWidthDenom", m_screenWidthDenom);
-	s >> Member< int32_t >(L"screenHeightDenom", m_screenHeightDenom);
+	if (s.getVersion< ImgTargetSet >() >= 2)
+	{
+		s >> Member< int32_t >(L"referenceWidthDenom", m_referenceWidthDenom);
+		s >> Member< int32_t >(L"referenceHeightDenom", m_referenceHeightDenom);
+	}
+	else
+	{
+		s >> Member< int32_t >(L"screenWidthDenom", m_referenceWidthDenom);
+		s >> Member< int32_t >(L"screenHeightDenom", m_referenceHeightDenom);
+	}
 	s >> Member< int32_t >(L"maxWidth", m_maxWidth);
 	s >> Member< int32_t >(L"maxHeight", m_maxHeight);
 	s >> Member< bool >(L"createDepthStencil", m_createDepthStencil);

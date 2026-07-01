@@ -1,19 +1,24 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/World.h"
+
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Render/IRenderSystem.h"
 #include "World/Entity.h"
-#include "World/IWorldComponent.h"
-#include "World/World.h"
 #include "World/Entity/CullingComponent.h"
 #include "World/Entity/EventManagerComponent.h"
 #include "World/Entity/IrradianceGridComponent.h"
 #include "World/Entity/RTWorldComponent.h"
+#include "World/IWorldComponent.h"
+
+#define T_USE_UPDATE_JOBS
 
 namespace traktor::world
 {
@@ -48,7 +53,7 @@ void World::destroy()
 
 void World::setComponent(IWorldComponent* component)
 {
-	T_FATAL_ASSERT (component);
+	T_FATAL_ASSERT(component);
 
 	// Replace existing component of same type.
 	for (auto comp : m_components)
@@ -64,13 +69,16 @@ void World::setComponent(IWorldComponent* component)
 	m_components.push_back(component);
 }
 
+bool World::removeComponent(IWorldComponent* component)
+{
+	return m_components.remove(component);
+}
+
 IWorldComponent* World::getComponent(const TypeInfo& componentType) const
 {
 	for (auto component : m_components)
-	{
 		if (is_type_of(componentType, type_of(component)))
 			return component;
-	}
 	return nullptr;
 }
 
@@ -86,9 +94,6 @@ void World::addEntity(Entity* entity)
 
 void World::removeEntity(Entity* entity)
 {
-	if (entity->getWorld() == nullptr)
-		return;
-
 	T_FATAL_ASSERT(entity->getWorld() == this);
 	if (m_update)
 		m_deferredRemove.push_back(entity);
@@ -111,10 +116,8 @@ bool World::haveEntity(const Entity* entity) const
 Entity* World::getEntity(const Guid& id) const
 {
 	for (auto entity : m_entities)
-	{
 		if (entity->getId() == id)
 			return entity;
-	}
 	return nullptr;
 }
 
@@ -135,10 +138,8 @@ RefArray< Entity > World::getEntities(const std::wstring& name) const
 {
 	RefArray< Entity > entities;
 	for (auto entity : m_entities)
-	{
 		if (entity->getName() == name)
 			entities.push_back(entity);
-	}
 	return entities;
 }
 
@@ -154,6 +155,21 @@ RefArray< Entity > World::getEntitiesWithinRange(const Vector4& position, float 
 	return entities;
 }
 
+RefArray< Entity > World::getEntitiesWithinRange(const std::wstring& name, const Vector4& position, float range) const
+{
+	RefArray< Entity > entities;
+	for (auto entity : m_entities)
+	{
+		if (entity->getName() == name)
+		{
+			const Scalar distance = (entity->getTransform().translation() - position).xyz0().length();
+			if (distance <= range)
+				entities.push_back(entity);
+		}
+	}
+	return entities;
+}
+
 void World::update(const UpdateParams& update)
 {
 	// Update all world components.
@@ -162,13 +178,36 @@ void World::update(const UpdateParams& update)
 
 	// Update all entities.
 	m_update = true;
+
+#if defined(T_USE_UPDATE_JOBS)
+	AlignedVector< Job::task_t > jobs;
+	jobs.reserve(m_entities.size());
+
+	for (auto entity : m_entities)
+	{
+		if (entity->getWorld() != nullptr && entity->allowConcurrentUpdate())
+			jobs.push_back([&, entity](){
+				entity->update(update);
+			});
+	}
+
+	JobManager::getInstance().fork(jobs.c_ptr(), jobs.size());
+
+	for (auto entity : m_entities)
+	{
+		if (entity->getWorld() != nullptr && !entity->allowConcurrentUpdate())
+			entity->update(update);
+	}
+#else
 	for (auto entity : m_entities)
 	{
 		if (entity->getWorld() != nullptr)
 			entity->update(update);
 	}
+#endif
+
 	m_update = false;
-	
+
 	// Add entities which has been added during entity update.
 	if (!m_deferredAdd.empty())
 	{

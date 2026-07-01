@@ -31,12 +31,6 @@ void RenderPass::setName(const std::wstring& name)
 	m_name = name;
 }
 
-void RenderPass::addInput(handle_t resourceId)
-{
-	auto& input = m_inputs.push_back();
-	input.resourceId = resourceId;
-}
-
 void RenderPass::addInput(RGTargetSet targetSet)
 {
 	// Just ignore invalid target set; convenient when setting up passes to be able to add null inputs.
@@ -83,12 +77,22 @@ void RenderPass::addWeakInput(RGTexture texture)
 	// we need to revisit this to ensure resource life time.
 }
 
+void RenderPass::setOutput(RGTargetSet targetSet)
+{
+	m_output.resourceId = targetSet.get();
+	m_output.clear.mask = 0;
+	m_output.load = 0;
+	m_output.store = 0;
+	m_output.pass = false;
+}
+
 void RenderPass::setOutput(RGTargetSet targetSet, uint32_t load, uint32_t store)
 {
 	m_output.resourceId = targetSet.get();
 	m_output.clear.mask = 0;
 	m_output.load = load;
 	m_output.store = store;
+	m_output.pass = true;
 }
 
 void RenderPass::setOutput(RGTargetSet targetSet, const Clear& clear, uint32_t load, uint32_t store)
@@ -97,6 +101,7 @@ void RenderPass::setOutput(RGTargetSet targetSet, const Clear& clear, uint32_t l
 	m_output.clear = clear;
 	m_output.load = load;
 	m_output.store = store;
+	m_output.pass = true;
 }
 
 void RenderPass::setOutput(RGBuffer buffer)
@@ -105,6 +110,7 @@ void RenderPass::setOutput(RGBuffer buffer)
 	m_output.clear.mask = 0;
 	m_output.load = 0;
 	m_output.store = 0;
+	m_output.pass = false;
 }
 
 void RenderPass::setOutput(RGTexture texture)
@@ -113,6 +119,7 @@ void RenderPass::setOutput(RGTexture texture)
 	m_output.clear.mask = 0;
 	m_output.load = 0;
 	m_output.store = 0;
+	m_output.pass = false;
 }
 
 void RenderPass::setOutput(RGDependency dependency)
@@ -121,6 +128,7 @@ void RenderPass::setOutput(RGDependency dependency)
 	m_output.clear.mask = 0;
 	m_output.load = 0;
 	m_output.store = 0;
+	m_output.pass = false;
 }
 
 void RenderPass::addBuild(const fn_build_t& build)

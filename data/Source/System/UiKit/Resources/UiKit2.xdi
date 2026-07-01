@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.spark.MovieAsset" version="2">
+	<fileName>$(TRAKTOR_HOME)/data/Assets/System/UiKit/Resources/UiKit2.svg</fileName>
+	<staticMovie>false</staticMovie>
+	<fonts>
+		<item>
+			<name>Arial</name>
+			<fileName>$(TRAKTOR_HOME)/data/Assets/System/UiKit/Resources/HelveticaNeueBold.ttf</fileName>
+		</item>
+	</fonts>
+</object>

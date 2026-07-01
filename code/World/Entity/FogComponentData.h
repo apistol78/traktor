@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,7 @@
 
 #include "Core/Math/Color4f.h"
 #include "Resource/Id.h"
-#include "World/IEntityComponentData.h"
+#include "World/IWorldComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -43,37 +43,30 @@ class FogComponent;
 /*!
  * \ingroup World
  */
-class T_DLLCLASS FogComponentData : public IEntityComponentData
+class T_DLLCLASS FogComponentData : public IWorldComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	Ref< FogComponent > createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
-
-	const resource::Id< render::Shader >& getShader() const;
-
-	virtual int32_t getOrdinal() const override final;
-
-	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
+	Ref< FogComponent > createComponent() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	friend class FogComponent;
 
+	Color4f m_mediumColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	float m_mediumDensity = 0.2f;
+
 	// Distance fog.
+	bool m_distanceFogEnable = false;
 	float m_fogDistance = 90.0f;
-	float m_fogDensity = 0.0f;
-	float m_fogDensityMax = 1.0f;
-	Color4f m_fogColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	float m_fogElevation = 0.0f;
 
 	// Volumetric fog.
 	bool m_volumetricFogEnable = false;
 	float m_maxDistance = 100.0f;
 	float m_maxScattering = 10.0f;
-	int32_t m_sliceCount = 128;
-	Color4f m_mediumColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	float m_mediumDensity = 0.2f;
 };
 
 }

@@ -59,6 +59,12 @@ void FlattenBrush::apply(float x, float y)
 			m_heightfield->setGridHeight(gx, gy, lerp(h, m_height, a));
 		}
 	}
+
+	const int32_t x0 = (int32_t)(x - m_radius);
+	const int32_t y0 = (int32_t)(y - m_radius);
+	const int32_t x1 = (int32_t)(x + m_radius);
+	const int32_t y1 = (int32_t)(y + m_radius);
+	m_heightfield->updateCellBounds(x0, y0, x1, y1);
 }
 
 void FlattenBrush::end(float x, float y)

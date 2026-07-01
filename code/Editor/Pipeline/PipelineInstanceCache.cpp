@@ -69,6 +69,32 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 	const std::wstring cachedFileName = instanceGuid.format();
 	const std::wstring cachedPathName = m_cacheDirectory + L"/" + cachedFileName + L".bin";
 
+#if defined(__LINUX__)
+	// Read from cache; discard cached item if not matching time stamp.
+	Ref< IStream > fs = FileSystem::getInstance().open(cachedPathName, File::FmRead);
+	if (fs)
+	{
+		uint64_t cachedLastModifyDate = 0;
+		uint32_t cachedHash = 0;
+
+		Reader(fs) >> cachedLastModifyDate;
+		Reader(fs) >> cachedHash;
+
+		if (cachedLastModifyDate == lastModifyDate)
+		{
+			Ref< ISerializable > object = BinarySerializer(fs).readObject();
+			if (object)
+			{
+				m_readCache[instanceGuid].object = object;
+				m_readCache[instanceGuid].hash = cachedHash;
+				return object;
+			}
+		}
+
+		fs->close();
+		fs = nullptr;
+	}
+#else
 	// Read from cache; discard cached item if not matching time stamp.
 	Ref< IMappedFile > mf = FileSystem::getInstance().map(cachedPathName);
 	if (mf)
@@ -94,6 +120,7 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 
 		mf = nullptr;
 	}
+#endif
 
 	// Either the instance isn't cached yet or not up-to-date; read from database and write a shadow copy in cache.
 	Ref< ISerializable > object = instance->getObject();

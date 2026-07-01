@@ -383,6 +383,7 @@ void Widget::setChildRects(const WidgetRect* childRects, uint32_t count, bool re
 {
 	T_ASSERT(m_widget);
 	StaticVector< IWidgetRect, 32 > internalChildRects;
+	internalChildRects.resize(32);
 	for (uint32_t i = 0; i < count; i += 32)
 	{
 		const uint32_t slice = std::min< uint32_t >(count - i, 32);

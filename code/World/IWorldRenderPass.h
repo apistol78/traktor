@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -39,18 +39,8 @@ class T_DLLCLASS IWorldRenderPass : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum PassFlag
-	{
-		None = 0,
-		First = 1 << 0,		//!< First pass for this frame.
-		Last = 1 << 1		//!< Last pass for this frame.
-	};
-
 	/*! Get shader technique. */
 	virtual render::handle_t getTechnique() const = 0;
-
-	/*! Return flags of pass. */
-	virtual uint32_t getPassFlags() const = 0;
 
 	/*! Get shader permutation. */
 	virtual render::Shader::Permutation getPermutation(const render::Shader* shader) const = 0;

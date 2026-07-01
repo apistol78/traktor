@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,7 +35,9 @@ enum class PinType : int32_t
 	ImageCube = 12,
 	State = 13,
 	Bundle = 14,
-	Any = (Bundle)
+	Array = 15,
+	Struct = 16,
+	Any = (Struct)
 };
 
 /*! Return true if type is a scalar.
@@ -70,6 +72,22 @@ inline bool isPinTypeImage(PinType pinType)
 	return pinType >= PinType::Image2D && pinType <= PinType::ImageCube;
 }
 
+/*! Return true if type is an arrat.
+ * \ingroup Render
+ */
+inline bool isPinTypeArray(PinType pinType)
+{
+	return pinType == PinType::Array;
+}
+
+/*! Return true if type is a struct.
+ * \ingroup Render
+ */
+inline bool isPinTypeStruct(PinType pinType)
+{
+	return pinType == PinType::Struct;
+}
+
 /*! Return true if type is a state.
  * \ingroup Render
  */
@@ -98,7 +116,7 @@ enum class PinOrder : int32_t
 
 inline PinOrder pinOrderAdd(PinOrder pinOrder1, PinOrder pinOrder2)
 {
-	PinOrder pinOrder = (PinOrder)((int32_t)pinOrder1 + (int32_t)pinOrder2);
+	const PinOrder pinOrder = (PinOrder)((int32_t)pinOrder1 + (int32_t)pinOrder2);
 	return pinOrder <= PinOrder::NonLinear ? pinOrder : PinOrder::NonLinear;
 }
 

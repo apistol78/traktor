@@ -33,6 +33,7 @@
 				<item>View velocity</item>
 				<item>View detail normal</item>
 				<item>Decal response</item>
+				<item>Opaque</item>
 			</names>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
@@ -48,7 +49,7 @@
 			<id>{137D9147-04AD-C747-893E-4E4D56A5DEEF}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
+				<first>1185</first>
 				<second>666</second>
 			</position>
 			<name>SurfaceColor</name>
@@ -57,8 +58,8 @@
 			<id>{003C21D6-AFF1-0048-900B-DFE055758556}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>716</second>
+				<first>1185</first>
+				<second>715</second>
 			</position>
 			<name>Alpha</name>
 		</item>
@@ -66,8 +67,8 @@
 			<id>{7D5923A1-7F40-5C47-871B-26682C888BA9}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>766</second>
+				<first>1185</first>
+				<second>764</second>
 			</position>
 			<name>Cast shadows</name>
 		</item>
@@ -75,8 +76,8 @@
 			<id>{B7926DDF-2470-7548-A80B-113CBE457E74}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>816</second>
+				<first>1185</first>
+				<second>813</second>
 			</position>
 			<name>Emissive</name>
 		</item>
@@ -84,8 +85,8 @@
 			<id>{3B119B14-C425-7843-AD6D-3574711CA32B}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>866</second>
+				<first>1185</first>
+				<second>862</second>
 			</position>
 			<name>Irradiance</name>
 		</item>
@@ -93,8 +94,8 @@
 			<id>{AF555F92-8FAD-7F41-A068-A525F26A603C}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>916</second>
+				<first>1185</first>
+				<second>911</second>
 			</position>
 			<name>Metalness</name>
 		</item>
@@ -102,8 +103,8 @@
 			<id>{FBCFD5AA-B4CD-634B-B2BD-2F5A9645D17B}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>966</second>
+				<first>1185</first>
+				<second>960</second>
 			</position>
 			<name>Roughness</name>
 		</item>
@@ -111,8 +112,8 @@
 			<id>{F9477810-50AC-FD42-8BE5-25D82B5BD6F4}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>1016</second>
+				<first>1185</first>
+				<second>1009</second>
 			</position>
 			<name>Specular</name>
 		</item>
@@ -120,8 +121,8 @@
 			<id>{E7D14A28-1B94-1B4B-A075-CF32CF64378C}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>1066</second>
+				<first>1185</first>
+				<second>1058</second>
 			</position>
 			<name>Discard</name>
 		</item>
@@ -129,8 +130,8 @@
 			<id>{C6F116A7-670F-8747-A9D3-86405E0E0AB9}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>1116</second>
+				<first>1185</first>
+				<second>1107</second>
 			</position>
 			<name>View normal</name>
 		</item>
@@ -138,8 +139,8 @@
 			<id>{646BE047-05F9-2543-A6E5-DC7E7CB10239}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>1166</second>
+				<first>1185</first>
+				<second>1156</second>
 			</position>
 			<name>View position</name>
 		</item>
@@ -147,8 +148,8 @@
 			<id>{0A86412B-CB6C-C542-8C77-708DD3C63737}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>1216</second>
+				<first>1185</first>
+				<second>1205</second>
 			</position>
 			<name>View velocity</name>
 		</item>
@@ -156,8 +157,8 @@
 			<id>{473EC7EE-A55A-7B47-9E8A-00869E419708}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>1266</second>
+				<first>1185</first>
+				<second>1254</second>
 			</position>
 			<name>View detail normal</name>
 		</item>
@@ -166,9 +167,18 @@
 			<comment/>
 			<position>
 				<first>1185</first>
-				<second>1316</second>
+				<second>1303</second>
 			</position>
 			<name>Decal response</name>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{86177FDB-61BC-D64C-9FA9-475634A090F8}</id>
+			<comment/>
+			<position>
+				<first>1185</first>
+				<second>1352</second>
+			</position>
+			<name>Opaque</name>
 		</item>
 	</nodes>
 	<edges>
@@ -329,6 +339,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[16]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{D596E4E4-1A78-4D80-CB6B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>

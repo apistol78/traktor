@@ -141,6 +141,7 @@ private:
 	double m_controllerTime = -1.0;
 	float m_fieldOfView = 70.0f;
 	SmallMap< Guid, Transform > m_entityTransforms;
+	Guid m_cameraEntityId;
 };
 
 }

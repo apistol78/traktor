@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,14 +27,20 @@ LightClusterPass::LightClusterPass(
 {
 }
 
+LightClusterPass::~LightClusterPass()
+{
+	T_FATAL_ASSERT(m_lightIndexSBuffer == nullptr);
+	T_FATAL_ASSERT(m_tileSBuffer == nullptr);
+}
+
 bool LightClusterPass::create(render::IRenderSystem* renderSystem)
 {
 	// Tile light index array buffer.
 	m_lightIndexSBuffer = renderSystem->createBuffer(
 		render::BuStructured,
 		ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster * sizeof(LightIndexShaderData),
-		true
-	);
+		true,
+		T_FILE_LINE_W);
 	if (!m_lightIndexSBuffer)
 		return false;
 
@@ -42,8 +48,8 @@ bool LightClusterPass::create(render::IRenderSystem* renderSystem)
 	m_tileSBuffer = renderSystem->createBuffer(
 		render::BuStructured,
 		ClusterDimXY * ClusterDimXY * ClusterDimZ * sizeof(TileShaderData),
-		true
-	);
+		true,
+		T_FILE_LINE_W);
 	if (!m_tileSBuffer)
 		return false;
 
@@ -113,6 +119,7 @@ void LightClusterPass::setup(
 			const Vector4 d = tl + vx * fx + vy * (fy + dy);
 
 			auto& tileFrustum = tileFrustums[x + y * ClusterDimXY];
+			tileFrustum.planes.resize(6);
 			tileFrustum.planes[Frustum::Left] = Plane(Vector4::zero(), d, a);
 			tileFrustum.planes[Frustum::Right] = Plane(Vector4::zero(), b, c);
 			tileFrustum.planes[Frustum::Bottom] = Plane(Vector4::zero(), c, d);
@@ -135,6 +142,7 @@ void LightClusterPass::setup(
 			const auto light = gatheredView.lights[i];
 			if (light->getLightType() == LightType::Directional)
 			{
+				T_FATAL_ASSERT(!sliceLights.full());
 				sliceLights.push_back(i);
 			}
 			else if (light->getLightType() == LightType::Point)
@@ -142,7 +150,10 @@ void LightClusterPass::setup(
 				const Scalar lr = light->getFarRange();
 				const Scalar lz = lightPositions[i].z();
 				if (lz + lr >= snz && lz - lr <= sfz)
+				{
+					T_FATAL_ASSERT(!sliceLights.full());
 					sliceLights.push_back(i);
+				}
 			}
 			else if (light->getLightType() == LightType::Spot)
 			{
@@ -179,7 +190,10 @@ void LightClusterPass::setup(
 						bb.max = max(bb.max, p[i].z());
 					}
 					if (Range< Scalar >::intersection(bb, Range< Scalar >(snz, sfz)).delta() >= 0.0_simd)
+					{
+						T_FATAL_ASSERT(!sliceLights.full());
 						sliceLights.push_back(i);
+					}
 				}
 			}
 		}

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,17 +14,15 @@
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/MergeCoplanarAdjacents.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 const float c_planarAngleThreshold = deg2rad(0.1f);
 const float c_vertexDistanceThreshold = 0.001f;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.MergeCoplanarAdjacents", MergeCoplanarAdjacents, IModelOperation)
 
@@ -52,7 +50,6 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 
 	// Build model adjacency information.
 	ModelAdjacency adjacency(&model, ModelAdjacency::Mode::ByPosition);
-	ModelAdjacency::share_vector_t sharedEdges;
 	AlignedVector< uint32_t > removeIndices;
 
 	// Keep iterating until no more polygons are merged.
@@ -64,11 +61,11 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 			Polygon& leftPolygon = polygons[i];
 			for (size_t j = 0; j < leftPolygon.getVertexCount(); ++j)
 			{
-				sharedEdges = adjacency.getSharedEdges(i, j);
-				if (sharedEdges.size() != 1)
+				const auto sharedEdges = adjacency.getSharedEdges(i, j);
+				if (sharedEdges.count != 1)
 					continue;
 
-				const uint32_t sharedEdge = sharedEdges.front();
+				const uint32_t sharedEdge = sharedEdges[0];
 				const uint32_t sharedPolygon = adjacency.getPolygon(sharedEdge);
 
 				if (sharedPolygon <= i)
@@ -169,5 +166,4 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 	return true;
 }
 
-	}
 }

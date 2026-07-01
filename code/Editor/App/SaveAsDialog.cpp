@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,15 +23,10 @@
 #include "Ui/TreeView/TreeView.h"
 #include "Ui/TreeView/TreeViewItem.h"
 
-// Resources
-#include "Resources/Folders.h"
-
 #pragma warning(disable: 4344)
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.SaveAsDialog", SaveAsDialog, ui::ConfigDialog)
 
@@ -129,5 +124,4 @@ void SaveAsDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)
 		m_group = nullptr;
 }
 
-	}
 }

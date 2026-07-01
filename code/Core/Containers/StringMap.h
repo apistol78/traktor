@@ -69,7 +69,7 @@ public:
 		return m_buckets[hash][str];
 	}
 
-	const value_t& operator [] (const string_t& str) const
+	value_t operator [] (const string_t& str) const
 	{
 		uint32_t hash = shash(str) & (BucketCount - 1);
 		return m_buckets[hash][str];

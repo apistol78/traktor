@@ -57,7 +57,6 @@ namespace traktor::render
 {
 
 class IRenderSystem;
-class RenderGraphContext;
 
 }
 
@@ -84,9 +83,10 @@ class EntityAdapter;
 class IComponentEditorFactory;
 class IEntityEditorFactory;
 class IModifier;
+class IModifierAnchor;
 class IWorldComponentEditor;
+class ISceneEditorUIExtension;
 class ISceneEditorPlugin;
-class ISceneEditorProfile;
 class ISceneRenderControl;
 class Scene;
 class SceneAsset;
@@ -136,9 +136,9 @@ public:
 
 	void destroy();
 
-	void addEditorProfile(ISceneEditorProfile* editorProfile);
+	void addPlugin(ISceneEditorPlugin* plugin);
 
-	void addEditorPlugin(ISceneEditorPlugin* editorPlugin);
+	void addUIExtension(ISceneEditorUIExtension* uiExtension);
 
 	void createEditorFactories();
 
@@ -185,7 +185,7 @@ public:
 	 */
 	Camera* getCamera(int index) const;
 
-	void moveToEntityAdapter(EntityAdapter* entityAdapter);
+	void moveToEntityAdapter(const EntityAdapter* entityAdapter);
 
 	//@}
 
@@ -225,7 +225,7 @@ public:
 
 	const IComponentEditorFactory* findComponentEditorFactory(const TypeInfo& componentDataType) const;
 
-	void buildEntities();
+	void buildEntities(bool rebuildWorld);
 
 	void buildController();
 
@@ -235,6 +235,9 @@ public:
 
 	/*! Get entities. */
 	RefArray< EntityAdapter > getEntities(uint32_t flags = GfDefault) const;
+
+	/*! Get modifier anchors for selected entities. */
+	RefArray< IModifierAnchor > getModifierAnchors() const;
 
 	uint32_t findAdaptersOfType(const TypeInfo& entityType, RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags = GfDefault) const;
 
@@ -249,12 +252,12 @@ public:
 	/*! \name Plugin access. */
 	//@{
 
-	ISceneEditorPlugin* getEditorPluginOf(const TypeInfo& pluginType) const;
+	ISceneEditorUIExtension* getUIExtensionOf(const TypeInfo& extensionType) const;
 
-	template < typename PluginType >
-	PluginType* getEditorPluginOf() const
+	template < typename ExtensionType >
+	ExtensionType* getUIExtensionOf() const
 	{
-		return dynamic_type_cast< PluginType* >(getEditorPluginOf(type_of< PluginType >()));
+		return dynamic_type_cast< ExtensionType* >(getUIExtensionOf(type_of< ExtensionType >()));
 	}
 
 	//@}
@@ -274,15 +277,13 @@ public:
 
 	render::IRenderSystem* getRenderSystem() const { return m_renderSystem; }
 
-	render::RenderGraphContext* getRenderGraphContext() const { return m_renderGraphContext; }
-
 	physics::PhysicsManager* getPhysicsManager() const { return m_physicsManager; }
 
 	script::IScriptContext* getScriptContext() const { return m_scriptContext; }
 
-	RefArray< ISceneEditorProfile >& getEditorProfiles() { return m_editorProfiles; }
+	RefArray< ISceneEditorPlugin >& getPlugins() { return m_plugins; }
 
-	RefArray< ISceneEditorPlugin >& getEditorPlugins() { return m_editorPlugins; }
+	RefArray< ISceneEditorUIExtension >& getUIExtensions() { return m_uiExtensions; }
 
 	Ref< IWorldComponentEditor >& getControllerEditor() { return m_controllerEditor; }
 
@@ -307,7 +308,7 @@ public:
 
 	void raisePostBuild();
 
-	void raiseSelect();
+	void raiseSelect(bool ensureEntityVisible);
 
 	void raiseCameraMoved();
 
@@ -326,11 +327,10 @@ private:
 	Ref< db::Database > m_sourceDb;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	Ref< render::RenderGraphContext > m_renderGraphContext;
 	Ref< physics::PhysicsManager > m_physicsManager;
 	Ref< script::IScriptContext > m_scriptContext;
-	RefArray< ISceneEditorProfile > m_editorProfiles;
-	RefArray< ISceneEditorPlugin > m_editorPlugins;
+	RefArray< ISceneEditorPlugin > m_plugins;
+	RefArray< ISceneEditorUIExtension > m_uiExtensions;
 	RefArray< const IEntityEditorFactory > m_entityEditorFactories;
 	RefArray< const IComponentEditorFactory > m_componentEditorFactories;
 	Ref< IWorldComponentEditor > m_controllerEditor;

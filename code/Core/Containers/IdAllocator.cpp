@@ -27,8 +27,10 @@ uint32_t IdAllocator::alloc()
 {
 	Interval& f = m_free.front();
 	const uint32_t freeId = f.left;
-	if (++f.left > f.right)
+	if (f.left == f.right)
 		m_free.erase(m_free.begin());
+	else
+		++f.left;
 	return freeId;
 }
 
@@ -40,10 +42,11 @@ uint32_t IdAllocator::allocSequential(uint32_t span)
 		if ((span - 1) <= (it->right - it->left))
 		{
 			const uint32_t freeId = it->left;
-			
-			it->left += span;
-			if (it->left > it->right)
+
+			if ((span - 1) == (it->right - it->left))
 				m_free.erase(it);
+			else
+				it->left += span;
 
 			return freeId;
 		}

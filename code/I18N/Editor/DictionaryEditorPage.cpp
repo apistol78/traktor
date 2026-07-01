@@ -1,126 +1,197 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "I18N/Editor/DictionaryEditorPage.h"
+
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "I18N/Dictionary.h"
-#include "I18N/Text.h"
-#include "I18N/Editor/DictionaryEditorPage.h"
 #include "I18N/Editor/IDictionaryFormat.h"
 #include "I18N/Editor/Translator.h"
+#include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
-#include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
-#include "Ui/InputDialog.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridItemContentChangeEvent.h"
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridRowDoubleClickEvent.h"
 #include "Ui/GridView/GridView.h"
+#include "Ui/InputDialog.h"
+#include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor::i18n
 {
-	namespace
-	{
-
-const wchar_t* c_languages[] =
+namespace
 {
-	L"Swedish", L"sv",
-	L"Afrikaans", L"af",
-	L"Albanian", L"sq",
-	L"Arabic", L"ar",
-	L"Armenian", L"hy",
-	L"Azerbaijani", L"az",
-	L"Basque", L"eu",
-	L"Bengali; bangla", L"bn",
-	L"Bosnian", L"bs",
-	L"Bulgarian", L"bg",
-	L"Cebuano", L"ceb",
-	L"Czech", L"cs",
-	L"Danish", L"da",
-	L"Dutch", L"nl",
-	L"English", L"en",
-	L"Esperanto", L"eo",
-	L"Estonian", L"et",
-	L"Filipino", L"tl",
-	L"Finnish", L"fi",
-	L"French", L"fr",
-	L"Galician", L"gl",
-	L"Georgian", L"ka",
-	L"German", L"de",
-	L"Greek", L"el",
-	L"Gujarati", L"gu",
-	L"Haitian", L"ht",
-	L"Hebrew", L"iw",
-	L"Hindi", L"hi",
-	L"Hmong", L"hmn",
-	L"Indonesian", L"id",
-	L"Irish", L"ga",
-	L"Icelandic", L"is",
-	L"Italian", L"it",
-	L"Japanese", L"ja",
-	L"Javanese", L"jw",
-	L"Yiddish", L"yi",
-	L"kanaresiska", L"kn",
-	L"Catalan", L"ca",
-	L"Khmer", L"km",
-	L"Chinese", L"zh-CN",
-	L"Korean", L"ko",
-	L"Croatian", L"hr",
-	L"Lao", L"lo",
-	L"Latin", L"la",
-	L"Latvian", L"lv",
-	L"Lithuanian", L"lt",
-	L"Macedonian", L"mk",
-	L"Malay", L"ms",
-	L"Maltese", L"mt",
-	L"Marathi", L"mr",
-	L"Norwegian", L"no",
-	L"Persian", L"fa",
-	L"Polish", L"pl",
-	L"Portuguese", L"pt",
-	L"Romanian", L"ro",
-	L"Russian", L"ru",
-	L"Serbian", L"sr",
-	L"Slovak", L"sk",
-	L"Slovenian", L"sl",
-	L"Spanish", L"es",
-	L"Swahili", L"sw",
-	L"Tamil", L"ta",
-	L"telugu", L"te",
-	L"Thai", L"th",
-	L"Turkish", L"tr",
-	L"Ukrainian", L"uk",
-	L"Hungarian", L"hu",
-	L"Urdu", L"ur",
-	L"Vietnamese", L"vi",
-	L"Belarusian", L"be",
-	L"Welsh", L"cy",
+
+const wchar_t* c_languages[] = {
+	L"Swedish",
+	L"sv",
+	L"Afrikaans",
+	L"af",
+	L"Albanian",
+	L"sq",
+	L"Arabic",
+	L"ar",
+	L"Armenian",
+	L"hy",
+	L"Azerbaijani",
+	L"az",
+	L"Basque",
+	L"eu",
+	L"Bengali; bangla",
+	L"bn",
+	L"Bosnian",
+	L"bs",
+	L"Bulgarian",
+	L"bg",
+	L"Cebuano",
+	L"ceb",
+	L"Czech",
+	L"cs",
+	L"Danish",
+	L"da",
+	L"Dutch",
+	L"nl",
+	L"English",
+	L"en",
+	L"Esperanto",
+	L"eo",
+	L"Estonian",
+	L"et",
+	L"Filipino",
+	L"tl",
+	L"Finnish",
+	L"fi",
+	L"French",
+	L"fr",
+	L"Galician",
+	L"gl",
+	L"Georgian",
+	L"ka",
+	L"German",
+	L"de",
+	L"Greek",
+	L"el",
+	L"Gujarati",
+	L"gu",
+	L"Haitian",
+	L"ht",
+	L"Hebrew",
+	L"iw",
+	L"Hindi",
+	L"hi",
+	L"Hmong",
+	L"hmn",
+	L"Indonesian",
+	L"id",
+	L"Irish",
+	L"ga",
+	L"Icelandic",
+	L"is",
+	L"Italian",
+	L"it",
+	L"Japanese",
+	L"ja",
+	L"Javanese",
+	L"jw",
+	L"Yiddish",
+	L"yi",
+	L"kanaresiska",
+	L"kn",
+	L"Catalan",
+	L"ca",
+	L"Khmer",
+	L"km",
+	L"Chinese",
+	L"zh-CN",
+	L"Korean",
+	L"ko",
+	L"Croatian",
+	L"hr",
+	L"Lao",
+	L"lo",
+	L"Latin",
+	L"la",
+	L"Latvian",
+	L"lv",
+	L"Lithuanian",
+	L"lt",
+	L"Macedonian",
+	L"mk",
+	L"Malay",
+	L"ms",
+	L"Maltese",
+	L"mt",
+	L"Marathi",
+	L"mr",
+	L"Norwegian",
+	L"no",
+	L"Persian",
+	L"fa",
+	L"Polish",
+	L"pl",
+	L"Portuguese",
+	L"pt",
+	L"Romanian",
+	L"ro",
+	L"Russian",
+	L"ru",
+	L"Serbian",
+	L"sr",
+	L"Slovak",
+	L"sk",
+	L"Slovenian",
+	L"sl",
+	L"Spanish",
+	L"es",
+	L"Swahili",
+	L"sw",
+	L"Tamil",
+	L"ta",
+	L"telugu",
+	L"te",
+	L"Thai",
+	L"th",
+	L"Turkish",
+	L"tr",
+	L"Ukrainian",
+	L"uk",
+	L"Hungarian",
+	L"hu",
+	L"Urdu",
+	L"ur",
+	L"Vietnamese",
+	L"vi",
+	L"Belarusian",
+	L"be",
+	L"Welsh",
+	L"cy",
 	0
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.DictionaryEditorPage", DictionaryEditorPage, editor::IEditorPage)
 
 DictionaryEditorPage::DictionaryEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
-:	m_editor(editor)
-,	m_site(site)
-,	m_document(document)
+	: m_editor(editor)
+	, m_site(site)
+	, m_document(document)
 {
 }
 
@@ -269,20 +340,17 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	}
 	else if (cmd == L"I18N.Editor.Translate")
 	{
-		ui::InputDialog::Field fields[] =
-		{
+		ui::InputDialog::Field fields[] = {
 			ui::InputDialog::Field(
 				Text(L"DICTIONARY_EDITOR_FROM_LANGUAGE"),
 				L"",
 				nullptr,
-				new ui::InputDialog::KeyValueArrayEnumerator(c_languages)
-			),
+				new ui::InputDialog::KeyValueArrayEnumerator(c_languages)),
 			ui::InputDialog::Field(
 				Text(L"DICTIONARY_EDITOR_TO_LANGUAGE"),
 				L"",
 				nullptr,
-				new ui::InputDialog::KeyValueArrayEnumerator(c_languages)
-			)
+				new ui::InputDialog::KeyValueArrayEnumerator(c_languages))
 		};
 
 		ui::InputDialog inputDialog;
@@ -291,8 +359,7 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 			Text(L"DICTIONARY_EDITOR_TRANSLATE"),
 			Text(L"DICTIONARY_EDITOR_AUTO_TRANSLATE_WORDS"),
 			fields,
-			sizeof_array(fields)
-		);
+			sizeof_array(fields));
 		if (inputDialog.showModal() == ui::DialogResult::Ok)
 		{
 			m_document->push();
@@ -307,8 +374,7 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 				{
 					m_dictionary->set(
 						selectedRow->get(0)->getText(),
-						out
-					);
+						out);
 					selectedRow->get(1)->setText(out);
 				}
 			}
@@ -336,7 +402,7 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	}
 	else if (cmd == L"I18N.Editor.SelectReferenceDictionary")
 	{
-		Ref< db::Instance > referenceInstance = m_editor->browseInstance(type_of< Dictionary >());
+		Ref< db::Instance > referenceInstance = m_editor->browseInstance(type_of< Dictionary >(), m_document->getInstance(0)->getParent());
 		if (referenceInstance)
 		{
 			m_referenceDictionary = referenceInstance->getObject< Dictionary >();
@@ -382,8 +448,7 @@ void DictionaryEditorPage::eventGridItemChange(ui::GridItemContentChangeEvent* e
 	m_document->push();
 	m_dictionary->set(
 		row->get(0)->getText(),
-		row->get(1)->getText()
-	);
+		row->get(1)->getText());
 
 	event->consume();
 }

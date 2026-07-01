@@ -82,7 +82,7 @@ const HeaderScanner::Includes* HeaderScanner::scan(const std::wstring& fileName)
 	auto filePath = Path(fileName).getPathOnly();
 
 	BufferedStream bufferedFile(file);
-	StringReader sr(&bufferedFile, new AnsiEncoding());
+	StringReader sr(&bufferedFile, AnsiEncoding::getInstance());
 
 	std::wstring line;
 	while (sr.readLine(line) >= 0)

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2025 Anders Pistol.
+ * Copyright (c) 2023-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,6 +17,7 @@ namespace traktor::render
 {
 
 class ImageGraph;
+class IRenderPlugin;
 class IRenderSystem;
 class RenderGraph;
 class ScreenRenderer;
@@ -48,10 +49,13 @@ public:
 
 	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc);
 
+	void destroy();
+
 	void setup(
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
 		uint32_t frameCount,
+		render::ITexture* whiteTexture,
 		render::RenderGraph& renderGraph,
 		render::RGTargetSet gbufferTargetSetId,
 		render::RGTargetSet velocityTargetSetId,
@@ -59,6 +63,9 @@ public:
 		render::RGTargetSet outputTargetSetId) const;
 
 	bool needCameraJitter() const { return m_needCameraJitter; }
+
+	/*! Get the visual denominator if the PP pass are implementing TAAU. */
+	float getResolutionScale() const { return m_resolutionScale; }
 
 private:
 	WorldRenderSettings m_settings;
@@ -72,6 +79,9 @@ private:
 	float m_gamma = 2.2f;
 	bool m_hdr = false;
 	bool m_needCameraJitter = false;
+	float m_resolutionScale = 1.0f;
+
+	Ref< render::IRenderPlugin > m_antiAliasPlugin;
 };
 
 }

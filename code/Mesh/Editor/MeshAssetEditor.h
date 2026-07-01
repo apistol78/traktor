@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,6 +18,20 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
+
+namespace traktor::db
+{
+
+class Instance;
+
+}
+
+namespace traktor::drawing
+{
+
+class Image;
+
+}
 
 namespace traktor::editor
 {
@@ -84,7 +98,7 @@ private:
 	Ref< ui::Container > m_containerMaterials;
 	Ref< ui::DropDown > m_dropMeshType;
 	Ref< ui::CheckBox > m_checkRenormalize;
-	Ref< ui::CheckBox > m_checkCenter;
+	Ref< ui::DropDown > m_dropCenter;
 	Ref< ui::CheckBox > m_checkGrounded;
 	Ref< ui::CheckBox > m_checkDecalResponse;
 	Ref< ui::Edit > m_editScaleFactor[3];
@@ -102,6 +116,8 @@ private:
 	void updateMaterialList();
 
 	void createMaterialShader();
+
+	Ref< db::Instance > createEmbeddedTexture(const std::wstring& textureName, drawing::Image* image, bool normalMap);
 
 	void browseMaterialShader();
 

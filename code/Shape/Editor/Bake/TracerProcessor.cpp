@@ -20,6 +20,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
+#include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
@@ -279,8 +280,10 @@ TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, const std::wstri
 		m_queue = &JobManager::getInstance().getQueue();
 	else
 	{
+		const int32_t coreCount = OS::getInstance().getCPUCoreCount();
+
 		m_queue = new JobQueue();
-		m_queue->create(4, Thread::Lowest);
+		m_queue->create(max(coreCount / 2, 1), Thread::Lowest);
 	}
 }
 
@@ -575,9 +578,9 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		const Vector4 worldSize = boundingBox.getExtent() * 2.0_simd;
 
-		const int32_t gridX = clamp((int32_t)(worldSize.x() * gridDensity.x() + 0.5f), 2, 128);
-		const int32_t gridY = clamp((int32_t)(worldSize.y() * gridDensity.y() + 0.5f), 2, 128);
-		const int32_t gridZ = clamp((int32_t)(worldSize.z() * gridDensity.z() + 0.5f), 2, 128);
+		const int32_t gridX = clamp((int32_t)(worldSize.x() * gridDensity.x() + 0.5f), 2, 512);
+		const int32_t gridY = clamp((int32_t)(worldSize.y() * gridDensity.y() + 0.5f), 2, 512);
+		const int32_t gridZ = clamp((int32_t)(worldSize.z() * gridDensity.z() + 0.5f), 2, 512);
 
 		log::debug << L"Irradiance bounding box " << boundingBox.mn << L" -> " << boundingBox.mx << Endl;
 		log::debug << L"Grid size " << gridX << L", " << gridY << L", " << gridZ << Endl;
@@ -610,7 +613,7 @@ bool TracerProcessor::process(const TracerTask* task)
 					jobs.push_back(job);
 
 					// Keep number of pending jobs at a reasonable level.
-					while (jobs.size() > 32)
+					while (jobs.size() > 256)
 					{
 						m_queue->waitCurrent();
 						auto it = std::remove_if(jobs.begin(), jobs.end(), [](Job* job) {

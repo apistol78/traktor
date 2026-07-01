@@ -76,7 +76,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	os << L"	axis_up=\"Y\"," << Endl;
 	os << L"	use_selection=False," << Endl;
 	os << L"	use_visible=True," << Endl;
-	os << L"	global_scale=0.01," << Endl;
+	os << L"	global_scale=1," << Endl;
 	os << L"	use_custom_props=True," << Endl;
 	os << L"	use_mesh_modifiers=True," << Endl;
 	os << L"    use_mesh_edges=True," << Endl;
@@ -91,7 +91,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	file = nullptr;
 
 	// Execute export script through headless blender process.
-	Path blenderPath;
+	std::wstring blenderPath;
 	if (!OS::getInstance().getAssociatedExecutable(L"blend", blenderPath))
 	{
 		// No file association registered; try find executable in environment.
@@ -104,7 +104,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	}
 
 	const Path filePathAbs = FileSystem::getInstance().getAbsolutePath(filePath);
-	const std::wstring commandLine = L"\"" + blenderPath.getPathNameOS() + L"\" -b \"" + filePathAbs.getPathNameOS() + L"\" -P " + scratchPath + L"/__export__.py";
+	const std::wstring commandLine = blenderPath + L" -b \"" + filePathAbs.getPathNameOS() + L"\" -P " + scratchPath + L"/__export__.py";
 
 	Ref< IProcess > process = OS::getInstance().execute(
 		commandLine,

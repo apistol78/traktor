@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -121,7 +121,7 @@ ProbeRenderer::ProbeRenderer(
 	T_ASSERT_M(render::getVertexSize(vertexElements) == sizeof(Vertex), L"Incorrect size of vertex");
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, (4 + 8) * sizeof(Vertex), false);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, (4 + 8) * sizeof(Vertex), false, T_FILE_LINE_W);
 	T_ASSERT_M(m_vertexBuffer, L"Unable to create vertex buffer");
 
 	Vector4 extents[8];
@@ -156,7 +156,7 @@ ProbeRenderer::ProbeRenderer(
 
 	m_vertexBuffer->unlock();
 
-	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, (2 * 3 + 6 * 2 * 3) * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, (2 * 3 + 6 * 2 * 3) * sizeof(uint16_t), false, T_FILE_LINE_W);
 	T_ASSERT_M(m_indexBuffer, L"Unable to create index buffer");
 
 	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
@@ -212,13 +212,14 @@ const TypeInfoSet ProbeRenderer::getRenderableTypes() const
 void ProbeRenderer::setup(
 	const WorldSetupContext& context,
 	const WorldRenderView& worldRenderView,
-	Object* renderable)
-{
-}
-
-void ProbeRenderer::setup(const WorldSetupContext& context)
+	const AlignedVector< Object* >& renderables
+)
 {
 	render::RenderGraph& renderGraph = context.getRenderGraph();
+
+	// Skip first couple of frames in order to sky etc. to stabilize.
+	if (worldRenderView.getTime() < 0.2f)
+		return;
 
 	// In case shader has been modified we need to re-capture all probes.
 	if (m_filterShader.changed())
@@ -271,13 +272,14 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		world::WorldCreateDesc wcd;
 		wcd.worldRenderSettings = &wrs;
 		wcd.entityRenderers = probeEntityRenderers;
-		wcd.quality.toneMap = world::Quality::Medium;
+		wcd.quality.toneMap = world::Quality::Disabled;
 		wcd.quality.motionBlur = world::Quality::Disabled;
 		wcd.quality.reflections = world::Quality::Disabled;
 		wcd.quality.shadows = world::Quality::Disabled;
 		wcd.quality.ambientOcclusion = world::Quality::Disabled;
 		wcd.quality.antiAlias = world::Quality::Disabled;
 		wcd.quality.imageProcess = world::Quality::Disabled;
+		wcd.quality.irradiance = world::Quality::Disabled;
 		wcd.multiSample = 0;
 		wcd.gamma = 1.0f;
 		wcd.hdr = true;
@@ -329,17 +331,17 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		view = view * translate(pivot).inverse();
 
 		// Render entities.
-		world::WorldRenderView worldRenderView;
-		worldRenderView.setSnapshot(true);
-		worldRenderView.setPerspective(
+		world::WorldRenderView captureWorldRenderView;
+		captureWorldRenderView.setSnapshot(true);
+		captureWorldRenderView.setPerspective(
 			c_faceSize,
 			c_faceSize,
 			1.0f,
 			deg2rad(90.0f),
 			0.01f,
 			10000.0f);
-		worldRenderView.setTimes(0.0f, 1.0f / 60.0f, 0.0f);
-		worldRenderView.setView(view, view);
+		captureWorldRenderView.setTimes(worldRenderView.getTime(), 1.0f / 60.0f, 0.0f);
+		captureWorldRenderView.setView(view, view);
 
 		// Create intermediate target.
 		render::RenderGraphTargetSetDesc rgtsd;
@@ -358,7 +360,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		// Render world to intermediate target.
 		m_worldRenderer->setup(
 			context.getWorld(),
-			worldRenderView,
+			captureWorldRenderView,
 			renderGraph,
 			faceTargetSetId,
 			[](const EntityState& state) {
@@ -390,7 +392,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 
 				renderView->copy(probeTexture, dr, faceTargetSet->getColorTexture(0), sr);
 			};
-			renderContext->draw(lrb);
+			renderContext->compute(lrb);
 		});
 		renderGraph.addPass(rp);
 
@@ -483,40 +485,37 @@ void ProbeRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
-	Object* renderable)
+	const AlignedVector< Object* >& renderables
+)
 {
-	auto probeComponent = static_cast< ProbeComponent* >(renderable);
-
 	// Do not update anything in snapshot mode.
 	if (worldRenderView.getSnapshot())
 		return;
 
-	// Cull local probes to frustum.
-	if (probeComponent->getLocal())
+	for (Object* renderable : renderables)
 	{
-		const Transform& transform = probeComponent->getTransform();
-		const Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
-		const Vector4 center = worldView * probeComponent->getVolume().getCenter().xyz1();
-		const Scalar radius = probeComponent->getVolume().getExtent().length();
-		if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
-			return;
-	}
+		auto probeComponent = static_cast< ProbeComponent* >(renderable);
 
-	// Add to capture queue if probe is "dirty".
-	if ((probeComponent->getDirty() || probeComponent->getRevision() != m_revision) && probeComponent->shouldCapture())
-	{
-		if (std::find(m_captureQueue.begin(), m_captureQueue.end(), probeComponent) == m_captureQueue.end())
-			m_captureQueue.push_back(probeComponent);
-		probeComponent->setDirty(false);
-		probeComponent->setRevision(m_revision);
-	}
-}
+		// Cull local probes to frustum.
+		if (probeComponent->getLocal())
+		{
+			const Transform& transform = probeComponent->getTransform();
+			const Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
+			const Vector4 center = worldView * probeComponent->getVolume().getCenter().xyz1();
+			const Scalar radius = probeComponent->getVolume().getExtent().length();
+			if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
+				return;
+		}
 
-void ProbeRenderer::build(
-	const WorldBuildContext& context,
-	const WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass)
-{
+		// Add to capture queue if probe is "dirty".
+		if ((probeComponent->getDirty() || probeComponent->getRevision() != m_revision) && probeComponent->shouldCapture())
+		{
+			if (std::find(m_captureQueue.begin(), m_captureQueue.end(), probeComponent) == m_captureQueue.end())
+				m_captureQueue.push_back(probeComponent);
+			probeComponent->setDirty(false);
+			probeComponent->setRevision(m_revision);
+		}
+	}
 }
 
 }

@@ -1,19 +1,20 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Io/StringOutputStream.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/MiniButton.h"
 #include "Ui/PropertyList/ObjectPropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
@@ -96,9 +97,9 @@ void ObjectPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 
 void ObjectPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
-	StringOutputStream ss;
-	ss << L"{ " << type_name(m_object) << L" }";
-	canvas.drawText(rc.inflate(-2, 0), ss.str(), AnLeft, AnCenter);
+	const StyleSheet* ss = getPropertyList()->getStyleSheet();
+	canvas.setForeground(ss->getColor(this, L"color-typename"));
+	canvas.drawText(rc.inflate(-2, 0), str(L"{ %ls }", type_name(m_object)), AnLeft, AnCenter);
 }
 
 bool ObjectPropertyItem::copy()

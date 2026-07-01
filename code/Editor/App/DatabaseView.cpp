@@ -413,6 +413,14 @@ bool DatabaseView::create(ui::Widget* parent)
 		m_editor->getSettings()->getProperty< int32_t >(L"Editor.DatabaseView", 1));
 	m_toolSelection->addItem(m_toolViewMode);
 
+	m_toolViewSize = new ui::ToolBarDropDown(ui::Command(L"Database.ViewSize"), 80_ut, i18n::Text(L"DATABASE_VIEW_MODE"));
+	m_toolViewSize->add(i18n::Text(L"DATABASE_VIEW_SIZE_SMALL"));
+	m_toolViewSize->add(i18n::Text(L"DATABASE_VIEW_SIZE_NORMAL"));
+	m_toolViewSize->add(i18n::Text(L"DATABASE_VIEW_SIZE_LARGE"));
+	m_toolViewSize->select(
+		m_editor->getSettings()->getProperty< int32_t >(L"Editor.DatabaseViewSize", 2));
+	m_toolSelection->addItem(m_toolViewSize);
+
 	m_toolSelection->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DatabaseView::eventToolSelectionClicked);
 
 	m_splitter = new ui::Splitter();
@@ -579,16 +587,34 @@ void DatabaseView::setDatabase(db::Database* db)
 	// Expand root items by default after setting a new database.
 	for (auto item : m_treeDatabase->getItems(ui::TreeView::GfDefault))
 		item->expand();
+	m_treeDatabase->requestUpdate();
 }
 
 void DatabaseView::updateView()
 {
 	const int32_t viewMode = m_toolViewMode->getSelected();
+	const int32_t viewSize = m_toolViewSize->getSelected();
 	Ref< ui::HierarchicalState > treeState = m_treeDatabase->captureState();
 
 	m_treeDatabase->removeAllItems();
 	m_listInstances->setItems(nullptr);
 	m_listInstances->setVisible(false);
+
+	switch (viewSize)
+	{
+	case 0:
+		m_listInstances->setScalingFactor(0.75f);
+		break;
+
+	default:
+	case 1:
+		m_listInstances->setScalingFactor(1.0f);
+		break;
+
+	case 2:
+		m_listInstances->setScalingFactor(1.25f);
+		break;
+	}
 
 	if (m_db)
 	{
@@ -805,6 +831,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			}
 
 			updateView();
+			highlight(instanceClone);
 		}
 		else if (command == L"Editor.Database.DefaultEditInstance") // Default edit instance
 		{
@@ -898,7 +925,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		}
 		else if (command == L"Editor.OpenInNewEditor") // Open in new editor.
 		{
-			m_editor->openInNewEditor(instance);
+			m_editor->openInNewEditorProcess(instance);
 		}
 		else if (command == L"Editor.Database.FilterInstanceType") // Filter on type.
 		{
@@ -1101,6 +1128,10 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				}
 
 				updateView();
+
+				// If only one instance pasted then highlight it after paste.
+				if (pasteInstances.size() == 1)
+					highlight(instanceCopy);
 			}
 		}
 		else if (command == L"Editor.Database.FavoriteEntireGroup" || command == L"Editor.Database.UnFavoriteEntireGroup")
@@ -1336,6 +1367,7 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 	const bool showFavorites = m_toolFavoritesShow->isToggled();
 
 	Ref< ui::PreviewItems > previewItems = new ui::PreviewItems();
+	Ref< ui::PreviewItem > previewShowItem = nullptr;
 
 	for (auto childInstance : childInstances)
 	{
@@ -1367,8 +1399,11 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 		item->setData(L"GROUP", childInstance->getParent());
 		item->setData(L"INSTANCE", childInstance);
 
-		if (highlightInstance)
-			item->setSelected(highlightInstance == childInstance);
+		if (highlightInstance != nullptr && highlightInstance == childInstance)
+		{
+			item->setSelected(true);
+			previewShowItem = item;
+		}
 
 		previewItems->add(item);
 
@@ -1403,6 +1438,7 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 	}
 
 	m_listInstances->setItems(previewItems);
+	m_listInstances->show(previewShowItem);
 }
 
 void DatabaseView::filterType(db::Instance* instance)
@@ -1645,6 +1681,11 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 	{
 		const int32_t viewMode = m_toolViewMode->getSelected();
 		m_editor->checkoutGlobalSettings()->setProperty< PropertyInteger >(L"Editor.DatabaseView", viewMode);
+	}
+	else if (cmd == L"Database.ViewSize")
+	{
+		const int32_t viewSize = m_toolViewSize->getSelected();
+		m_editor->checkoutGlobalSettings()->setProperty< PropertyInteger >(L"Editor.DatabaseViewSize", viewSize);
 	}
 
 	updateView();

@@ -25,9 +25,10 @@ namespace traktor::world
 namespace
 {
 
-const resource::Id< render::Shader > c_shaderInstanceMeshCull(L"{37998131-BDA1-DE45-B175-35B088FEE61C}");
+const resource::Id< render::Shader > c_shaderInstanceMeshCull(L"{37998131-BDA1-DE45-B175-35B088FEE61C}");	// World/Culling/Visibility
 
-render::Handle s_handleInstanceWorld(L"InstanceWorld");
+static const render::Handle s_handleInstanceWorld(L"InstanceWorld");
+static const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 
 }
 
@@ -47,6 +48,7 @@ void CullingComponent::destroy()
 		if (visibilityBuffer)
 			visibilityBuffer->destroy();
 	m_visibilityBuffers.resize(0);
+	m_shaderCull.clear();
 	m_renderSystem = nullptr;
 }
 
@@ -68,23 +70,23 @@ void CullingComponent::build(
 	// Lazy create the buffers if necessary.
 	if (!m_instanceBuffer || bufferItemCount > m_instanceAllocatedCount)
 	{
-		m_instanceBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, bufferItemCount * sizeof(InstanceRenderData), true);
+		m_instanceBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, bufferItemCount * sizeof(InstanceRenderData), true, T_FILE_LINE_W);
 		m_visibilityBuffers.resize(0);
 		m_instanceAllocatedCount = bufferItemCount;
 		m_instanceBufferDirty = true;
 	}
 
 	// Ensure we have visibility buffers for all cascades.
-	const uint32_t peakCascade = worldRenderView.getCascade();
+	const int32_t peakShadowMapIndex = worldRenderView.getShadowMapIndex();
 	const uint32_t vbSize = (uint32_t)m_visibilityBuffers.size();
-	for (uint32_t i = vbSize; i < peakCascade + 1; ++i)
-		m_visibilityBuffers.push_back(m_renderSystem->createBuffer(render::BufferUsage::BuStructured, bufferItemCount * sizeof(float), false));
+	for (uint32_t i = vbSize; i < peakShadowMapIndex + 1; ++i)
+		m_visibilityBuffers.push_back(m_renderSystem->createBuffer(render::BufferUsage::BuStructured, bufferItemCount * sizeof(float), false, T_FILE_LINE_W));
 
 	// Update buffer is any instance has moved.
 	if (m_instanceBufferDirty)
 	{
 		auto ptr = (InstanceRenderData*)m_instanceBuffer->lock();
-		for (const auto& instance : m_instances)
+		for (auto& instance : m_instances)
 		{
 			InstanceRenderData& ird = *ptr++;
 			instance->transform.rotation().e.storeAligned(ird.rotation);
@@ -93,12 +95,21 @@ void CullingComponent::build(
 			instance->lastTransform.translation().storeAligned(ird.lastTranslation);
 			instance->boundingBox.mn.storeAligned(ird.boundingBoxMin);
 			instance->boundingBox.mx.storeAligned(ird.boundingBoxMax);
+			instance->lastTransform = instance->transform;
 		}
 		m_instanceBuffer->unlock();
 		m_instanceBufferDirty = false;
 	}
 
-	render::Buffer* visibilityBuffer = m_visibilityBuffers[worldRenderView.getCascade()];
+	// In case no instance has been moved we don't render at all for velocity technique.
+	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
+	{
+		if (!m_velocityDirty)
+			return;
+		m_velocityDirty = false;
+	}
+
+	render::Buffer* visibilityBuffer = m_visibilityBuffers[worldRenderView.getShadowMapIndex()];
 
 	// Cull instances, output are visibility buffer.
 	// Compute blocks are executed before render pass, so for shadow map rendering all cascades
@@ -116,7 +127,7 @@ void CullingComponent::build(
 		const Vector2 viewSize = worldRenderView.getViewSize();
 
 		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
-			str(L"Cull %d", worldRenderView.getCascade()));
+			str(L"Cull %d", worldRenderView.getShadowMapIndex()));
 
 		render::Shader::Permutation perm;
 		if (worldRenderPass.getTechnique() == ShaderTechnique::DeferredGBufferWrite)
@@ -211,6 +222,7 @@ void CullingComponent::Instance::setTransform(const Transform& transform)
 	this->transform = transform;
 	this->boundingBox = this->cullable->cullableGetBoundingBox().transform(transform);
 	this->owner->m_instanceBufferDirty = true;
+	this->owner->m_velocityDirty = true;
 }
 
 }

@@ -28,6 +28,7 @@
 #include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshResourceFactory.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
+#include "Mesh/Skinned/SkinnedMeshComponentRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraphFactory.h"
@@ -47,7 +48,6 @@
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Entity.h"
 #include "World/Entity/CullingRenderer.h"
-#include "World/Entity/FogRenderer.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeRenderer.h"
@@ -267,9 +267,9 @@ void AnimationPreviewControl::updateWorldRenderer()
 
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
+	worldEntityRenderers->add(new mesh::SkinnedMeshComponentRenderer());
 	worldEntityRenderers->add(new weather::SkyRenderer());
 	worldEntityRenderers->add(new world::CullingRenderer());
-	worldEntityRenderers->add(new world::FogRenderer());
 	worldEntityRenderers->add(new world::ProbeRenderer(
 		m_resourceManager,
 		m_renderSystem,
@@ -289,6 +289,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 	wcd.quality.reflections = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.ReflectionsQuality", 4);
 	wcd.quality.ambientOcclusion = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.AmbientOcclusionQuality", 4);
 	wcd.quality.antiAlias = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.AntiAliasQuality", 4);
+	wcd.quality.irradiance = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.IrradianceQuality", 4);
 
 	wcd.hdr = m_renderView->isHDR();
 
@@ -297,7 +298,10 @@ void AnimationPreviewControl::updateWorldRenderer()
 			m_resourceManager,
 			m_renderSystem,
 			wcd))
+	{
+		safeDestroy(worldRenderer);
 		return;
+	}
 
 	m_worldRenderer = worldRenderer;
 }

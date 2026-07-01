@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,6 +35,8 @@ class T_DLLCLASS InputSystem : public Object
 	T_RTTI_CLASS;
 
 public:
+	void destroy();
+
 	void addDriver(IInputDriver* inputDriver);
 
 	void removeDriver(IInputDriver* inputDriver);
@@ -52,6 +54,9 @@ public:
 	IInputDevice* getDevice(InputCategory category, int32_t index, bool connected);
 
 	void setExclusive(bool exclusive);
+
+	//! Notify all drivers of the render output (client window) size.
+	void setSize(int32_t width, int32_t height);
 
 	bool update();
 

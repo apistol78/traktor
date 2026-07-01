@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,7 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderView", WorldRenderView, Object
 
 WorldRenderView::WorldRenderView()
 :	m_index(0)
-,	m_cascade(0)
+,	m_shadowMapIndex(0)
 ,	m_snapshot(false)
 ,	m_projection(Matrix44::identity())
 ,	m_lastView(Matrix44::identity())
@@ -33,9 +33,9 @@ void WorldRenderView::setIndex(int32_t index)
 	m_index = index;
 }
 
-void WorldRenderView::setCascade(int32_t cascade)
+void WorldRenderView::setShadowMapIndex(int32_t shadowMapIndex)
 {
-	m_cascade = cascade;
+	m_shadowMapIndex = shadowMapIndex;
 }
 
 void WorldRenderView::setSnapshot(bool snapshot)

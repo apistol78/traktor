@@ -1,28 +1,95 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <sstream>
+#include "Ui/ColorPicker/ColorDialog.h"
+
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
+#include "Ui/ColorPicker/ColorControl.h"
+#include "Ui/ColorPicker/ColorEvent.h"
+#include "Ui/ColorPicker/ColorGradientControl.h"
+#include "Ui/ColorPicker/ColorSliderControl.h"
+#include "Ui/ColorPicker/ColorUtilities.h"
 #include "Ui/Edit.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/ColorPicker/ColorDialog.h"
-#include "Ui/ColorPicker/ColorGradientControl.h"
-#include "Ui/ColorPicker/ColorSliderControl.h"
-#include "Ui/ColorPicker/ColorControl.h"
-#include "Ui/ColorPicker/ColorEvent.h"
-#include "Ui/ColorPicker/ColorUtilities.h"
+
+#include <sstream>
 
 namespace traktor::ui
 {
+namespace
+{
+
+const struct
+{
+	const wchar_t* name;
+	Color4f color;
+} c_colorTable[] = {
+	L"black",
+	Color4f(0.0f, 0.0f, 0.0f, 1.0f),
+	L"red",
+	Color4f(1.0f, 0.0f, 0.0f, 1.0f),
+	L"green",
+	Color4f(0.0f, 1.0f, 0.0f, 1.0f),
+	L"blue",
+	Color4f(0.0f, 0.0f, 1.0f, 1.0f),
+	L"yellow",
+	Color4f(1.0f, 1.0f, 0.0f, 1.0f),
+	L"white",
+	Color4f(1.0f, 1.0f, 1.0f, 1.0f),
+	L"lime",
+	Color4f(0.25f, 0.5f, 1.0f, 1.0f)
+};
+
+bool parseColor(const std::wstring& color, Color4f& outColor)
+{
+	if (startsWith(color, L"#"))
+	{
+		int32_t red, green, blue, alpha = 255;
+		if (color.size() == 7)
+			swscanf(color.c_str(), L"#%02x%02x%02x", &red, &green, &blue);
+		else if (color.size() >= 9)
+			swscanf(color.c_str(), L"#%02x%02x%02x%02x", &red, &green, &blue, &alpha);
+		outColor = Color4f(red / 255.0f, green / 255.0f, blue / 255.0f, alpha / 255.0f);
+		return true;
+	}
+	else if (startsWith(color, L"rgb("))
+	{
+		int32_t red, green, blue;
+		swscanf(color.c_str(), L"rgb(%d,%d,%d)", &red, &green, &blue);
+		outColor = Color4f(red / 255.0f, green / 255.0f, blue / 255.0f, 1.0f);
+		return true;
+	}
+	else if (startsWith(color, L"rgba("))
+	{
+		int32_t red, green, blue, alpha;
+		swscanf(color.c_str(), L"rgba(%d,%d,%d,%d)", &red, &green, &blue, &alpha);
+		outColor = Color4f(red / 255.0f, green / 255.0f, blue / 255.0f, alpha / 255.0f);
+		return true;
+	}
+	else if (toLower(color) == L"none")
+		return false;
+
+	for (int32_t i = 0; i < sizeof(c_colorTable) / sizeof(c_colorTable[0]); ++i)
+	{
+		if (toLower(color) == c_colorTable[i].name)
+		{
+			outColor = c_colorTable[i].color;
+			return true;
+		}
+	}
+	return false;
+}
+
+}
 
 struct ColorGradient : public ColorSliderControl::IGradient
 {
@@ -37,7 +104,7 @@ struct ColorGradient : public ColorSliderControl::IGradient
 			rgb[i] += d;
 			if ((d < 0 && rgb[i] <= 0) || (d > 0 && rgb[i] >= 255))
 			{
-				rgb[i] = std::max(  0, rgb[i]);
+				rgb[i] = std::max(0, rgb[i]);
 				rgb[i] = std::min(255, rgb[i]);
 
 				i = (i + 1) % 3;
@@ -64,13 +131,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ColorDialog", ColorDialog, ConfigDialog)
 bool ColorDialog::create(Widget* parent, const std::wstring& text, uint32_t style, const Color4f& initialColor)
 {
 	if (!ConfigDialog::create(
-		parent,
-		text,
-		500_ut,
-		400_ut,
-		style,
-		new TableLayout(L"*,*,*,*", L"*", 4_ut, 4_ut)
-	))
+			parent,
+			text,
+			500_ut,
+			400_ut,
+			style,
+			new TableLayout(L"*,*,*,*", L"*", 4_ut, 4_ut)))
 		return false;
 
 	m_gradientControl = new ColorGradientControl();
@@ -100,21 +166,21 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, uint32_t styl
 
 	m_editColor[0] = new Edit();
 	m_editColor[0]->create(container, L"0", WsTabStop, new NumericEditValidator(false, 0, 255, 0));
-	m_editColor[0]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
+	m_editColor[0]->addEventHandler< ContentChangeEvent >(this, &ColorDialog::eventEditContentChange);
 
 	Ref< Static > labelG = new Static();
 	labelG->create(container, L"G:");
 
 	m_editColor[1] = new Edit();
 	m_editColor[1]->create(container, L"0", WsTabStop, new NumericEditValidator(false, 0, 255, 0));
-	m_editColor[1]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
+	m_editColor[1]->addEventHandler< ContentChangeEvent >(this, &ColorDialog::eventEditContentChange);
 
 	Ref< Static > labelB = new Static();
 	labelB->create(container, L"B:");
 
 	m_editColor[2] = new Edit();
 	m_editColor[2]->create(container, L"0", WsTabStop, new NumericEditValidator(false, 0, 255, 0));
-	m_editColor[2]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
+	m_editColor[2]->addEventHandler< ContentChangeEvent >(this, &ColorDialog::eventEditContentChange);
 
 	if (style & WsAlpha)
 	{
@@ -123,7 +189,7 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, uint32_t styl
 
 		m_editColor[3] = new Edit();
 		m_editColor[3]->create(container, L"255", WsTabStop, new NumericEditValidator(false, 0, 255, 0));
-		m_editColor[3]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
+		m_editColor[3]->addEventHandler< ContentChangeEvent >(this, &ColorDialog::eventEditContentChange);
 	}
 
 	if (style & WsHDR)
@@ -133,7 +199,16 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, uint32_t styl
 
 		m_editColor[4] = new Edit();
 		m_editColor[4]->create(container, L"0", WsTabStop, new NumericEditValidator(false, -10, 10, 0));
-		m_editColor[4]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
+		m_editColor[4]->addEventHandler< ContentChangeEvent >(this, &ColorDialog::eventEditContentChange);
+	}
+	else
+	{
+		Ref< Static > labelHEX = new Static();
+		labelHEX->create(container, L"");
+
+		m_editHex = new Edit();
+		m_editHex->create(container, (style & WsAlpha) ? L"#00000000" : L"#000000", WsTabStop);
+		m_editHex->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
 	}
 
 	m_colorControl = new ColorControl();
@@ -163,6 +238,16 @@ void ColorDialog::setColor(const Color4f& color)
 
 	if (m_editColor[4])
 		m_editColor[4]->setText(toString< int32_t >(int32_t(m_ev + 0.5_simd)));
+
+	if (m_editHex)
+	{
+		std::wstring hex;
+		if (m_editColor[3])
+			hex = str(L"#%02x%02x%02x%02x", cl.r, cl.g, cl.b, cl.a);
+		else
+			hex = str(L"#%02x%02x%02x", cl.r, cl.g, cl.b);
+		m_editHex->setText(hex);
+	}
 
 	// Figure out primary color.
 	float hsv[3];
@@ -212,6 +297,16 @@ void ColorDialog::updateTextControls()
 
 	if (m_editColor[4])
 		m_editColor[4]->setText(toString< int32_t >(int32_t(m_color.getEV() + 0.5f)));
+
+	if (m_editHex)
+	{
+		std::wstring hex;
+		if (m_editColor[3])
+			hex = str(L"#%02x%02x%02x%02x", club.r, club.g, club.b, club.a);
+		else
+			hex = str(L"#%02x%02x%02x", club.r, club.g, club.b);
+		m_editHex->setText(hex);
+	}
 }
 
 void ColorDialog::eventGradientColorSelect(ColorEvent* event)
@@ -295,17 +390,14 @@ void ColorDialog::eventSliderAlphaSelect(ColorEvent* event)
 	updateTextControls();
 }
 
-void ColorDialog::eventEditFocus(FocusEvent* event)
+void ColorDialog::eventEditContentChange(ContentChangeEvent* event)
 {
-	if (!event->lostFocus())
-		return;
-
 	const int32_t r = parseString< int32_t >(m_editColor[0]->getText());
 	const int32_t g = parseString< int32_t >(m_editColor[1]->getText());
 	const int32_t b = parseString< int32_t >(m_editColor[2]->getText());
 	const int32_t a = m_editColor[3] ? parseString< int32_t >(m_editColor[3]->getText()) : 255;
-	const float ev = m_editColor[4] ? (float)parseString< int32_t >(m_editColor[4]->getText()) : 0.0f;
 
+	const float ev = m_editColor[4] ? (float)parseString< int32_t >(m_editColor[4]->getText()) : 0.0f;
 	const Color4ub color(r, g, b, a);
 
 	// Figure out primary color.
@@ -334,6 +426,55 @@ void ColorDialog::eventEditFocus(FocusEvent* event)
 
 	m_colorControl->setColor(color);
 	m_colorControl->update();
+
+	updateTextControls();
+}
+
+void ColorDialog::eventEditFocus(FocusEvent* event)
+{
+	if (event->lostFocus() && event->getSender() == m_editHex)
+	{
+		Color4f clr;
+		if (!parseColor(m_editHex->getText(), clr))
+			return;
+
+		const int32_t r = clr.toColor4ub().r;
+		const int32_t g = clr.toColor4ub().g;
+		const int32_t b = clr.toColor4ub().b;
+		const int32_t a = m_editColor[3] ? clr.toColor4ub().a : 255;
+
+		const float ev = m_editColor[4] ? (float)parseString< int32_t >(m_editColor[4]->getText()) : 0.0f;
+		const Color4ub color(r, g, b, a);
+
+		// Figure out primary color.
+		float hsv[3];
+		RGBtoHSV(Color4f::fromColor4ub(color), hsv);
+		hsv[1] = 1.0f;
+		hsv[2] = 1.0f;
+		Color4f tmp;
+		HSVtoRGB(hsv, tmp);
+		Color4ub primaryColor = tmp.toColor4ub();
+
+		// Update cursors in widgets.
+		m_gradientControl->setPrimaryColor(primaryColor);
+		m_gradientControl->setCursorColor(color);
+		m_gradientControl->update();
+
+		m_color = Color4f::fromColor4ub(color);
+		m_ev = Scalar(ev);
+
+		if (m_alphaGradient)
+		{
+			m_alphaGradient->color = color;
+			m_sliderAlphaControl->updateGradient();
+			m_sliderAlphaControl->update();
+		}
+
+		m_colorControl->setColor(color);
+		m_colorControl->update();
+
+		updateTextControls();
+	}
 }
 
 }

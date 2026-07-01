@@ -119,9 +119,9 @@ PACKAGES =
 	{
 		type = "GET",
 		name = "lua",
-		url = "https://lua.org/ftp/lua-5.4.8.tar.gz",
+		url = "https://lua.org/ftp/lua-5.5.0.tar.gz",
 		patch = function()
-			run:execute(TAR .. " -xzf lua-5.4.8.tar.gz")
+			run:execute(TAR .. " -xzf lua-5.5.0.tar.gz")
 		end,
 		license = "MIT"
 	},
@@ -306,11 +306,11 @@ PACKAGES =
 		name = "vulkan-windows",
 		os = "windows",
 		-- url = "https://sdk.lunarg.com/sdk/download/latest/windows/vulkan-sdk.exe",
-		url = "https://sdk.lunarg.com/sdk/download/1.4.313.2/windows/vulkansdk-windows-X64-1.4.313.2.exe",
+		url = "https://sdk.lunarg.com/sdk/download/1.4.328.1/windows/vulkansdk-windows-X64-1.4.328.1.exe",
 		target = "vulkan-sdk.exe",
 		check = function()
 			-- If HAVE_SYSTEM_VULKAN_SDK is set then we assume there are already a SDK installed.
-			return (run:resolve("$(HAVE_SYSTEM_VULKAN_SDK)") == "")
+			return (run:resolve("$(HAVE_SYSTEM_VULKAN_SDK)") == "false")
 		end,
 		patch = function()
 			local p = run.cwd .. "/vulkan-sdk"
@@ -321,27 +321,6 @@ PACKAGES =
 				true
 			)
 		end
-	},
-
-	-- SPIRV tools
-	{
-		type = "GET",
-		name = "spirv-tools",
-		os = "linux",		
-		url = "https://storage.googleapis.com/spirv-tools/badges/build_link_linux_gcc_release.html",
-		patch = function()
-			run:execute(UNZIP .. " -qq install.zip")
-		end,
-	},
-	{
-		type = "GET",
-		name = "spirv-tools",
-		os = "windows",
-		-- url = "https://storage.googleapis.com/spirv-tools/badges/build_link_windows_vs2019_release.html"
-		url = "https://storage.googleapis.com/spirv-tools/artifacts/prod/graphics_shader_compiler/spirv-tools/windows-msvc-2019-release/continuous/515/20240924-081643/install.zip",
-		patch = function()
-			run:execute(UNZIP .. " -qq install.zip")
-		end,
 	},
 
 	-- Vulkan Memory Allocator
@@ -377,7 +356,10 @@ PACKAGES =
 				{
 					"#/bin/sh",
 					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. platform-tools",
-					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle"
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle",
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. \"platforms;android-37\"",
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. \"build-tools;37.0.0\"",
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. \"system-images;android-37.0;google_apis_ps16k;x86_64\"",
 				}
 			)
 			run:execute("sh ./install.sh")
@@ -395,7 +377,10 @@ PACKAGES =
 				"install.bat",
 				{
 					"./cmdline-tools/bin/sdkmanager --sdk_root=. platform-tools",
-					"./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle"
+					"./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle",
+					"./cmdline-tools/bin/sdkmanager --sdk_root=. \"platforms;android-37\"",
+					"./cmdline-tools/bin/sdkmanager --sdk_root=. \"build-tools;37.0.0\"",
+					"./cmdline-tools/bin/sdkmanager --sdk_root=. \"system-images;android-37.0;google_apis_ps16k;x86_64\"",
 				}
 			)
 			run:execute("./install.bat")
@@ -404,8 +389,13 @@ PACKAGES =
 
 	-- Lemon
 	{
-		type = "GIT",
-		url = "https://github.com/compiler-dept/lemon.git",
+		type = "GET",
+		name = "lemon",
+		url =
+		{
+			{ url = "https://sqlite.org/src/raw/3fdc16b23f1ea0c91c049b518fc3f75c71843dbfe2b447fcb3cd92d9e4f219f8?at=lemon.c", target = "lemon.c" },
+			{ url = "https://sqlite.org/src/raw/b57e1780bf8098dd4a9a5bba537f994276ea825a420f6165153e5894dc2dfb07?at=lempar.c", target = "lempar.c" }
+		},
 		license = "SQLITE"
 	},
 
@@ -433,18 +423,18 @@ PACKAGES =
 		type = "GET",
 		name = "renderdoc",
 		os = "linux",
-		url = "https://renderdoc.org/stable/1.36/renderdoc_1.36.tar.gz",
+		url = "https://renderdoc.org/stable/1.43/renderdoc_1.43.tar.gz",
 		patch = function()
-			run:execute(TAR .. " -xf renderdoc_1.36.tar.gz")
+			run:execute(TAR .. " -xf renderdoc_1.43.tar.gz")
 		end
 	},
 	{
 		type = "GET",
 		name = "renderdoc",
 		os = "windows",
-		url = "https://renderdoc.org/stable/1.36/RenderDoc_1.36_64.zip",
+		url = "https://renderdoc.org/stable/1.43/RenderDoc_1.43_64.zip",
 		patch = function()
-			run:execute(UNZIP .. " -qq RenderDoc_1.36_64.zip")
+			run:execute(UNZIP .. " -qq RenderDoc_1.43_64.zip")
 		end
 	},
 
@@ -498,4 +488,32 @@ PACKAGES =
 		url = "https://github.com/jrouwe/JoltPhysics.git",
 		license = "MIT"
 	},
+
+	-- nvidia nsight aftermath SDK
+	{
+		type = "GET",
+		name = "aftermath",
+		os = "windows",
+		url = "https://developer.nvidia.com/downloads/assets/tools/secure/nsight-aftermath-sdk/2025_5_0/windows_x64/NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317-windows_x64.zip",
+		patch = function()
+			run:execute(UNZIP .. " -qq NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317-windows_x64.zip")
+		end
+	},
+	{
+		type = "GET",
+		name = "aftermath",
+		os = "linux",
+		url = "https://developer.nvidia.com/downloads/assets/tools/secure/nsight-aftermath-sdk/2025_5_0/linux_x64/NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317-linux_x64.tgz",
+		patch = function()
+			run:execute(TAR .. " -xf NVIDIA_Nsight_Aftermath_SDK_2025.5.0.25317-linux_x64.tgz")
+		end
+	},
+	
+	-- Intel XeSS
+	{
+		type = "GIT",
+		name = "XeSS",
+		os = "windows",
+		url = "https://github.com/intel/xess.git"
+	},	
 }

@@ -15,7 +15,7 @@
 namespace traktor::scene
 {
 
-class EntityAdapter;
+class IModifierAnchor;
 class SceneEditorContext;
 
 /*! Rotation modifier. */
@@ -82,7 +82,7 @@ public:
 
 private:
 	SceneEditorContext* m_context;
-	RefArray< EntityAdapter > m_entityAdapters;
+	RefArray< IModifierAnchor > m_anchors;
 	AlignedVector< Transform > m_baseTransforms;
 	Vector4 m_center;
 	float m_baseHead;

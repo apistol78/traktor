@@ -79,6 +79,11 @@ Transform AnimatedMeshComponent_getSkinTransform(AnimatedMeshComponent* self, co
 	return transform;
 }
 
+bool AnimationGraphPoseController_setParameterValue(AnimationGraphPoseController* self, const std::wstring& name, bool value)
+{
+	return self->setParameterValue(render::Handle(name.c_str()), value);
+}
+
 }
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationClassFactory", 0, AnimationClassFactory, IRuntimeClassFactory)
@@ -118,6 +123,7 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classStatePoseController->addProperty("time", &AnimationGraphPoseController::setTime, &AnimationGraphPoseController::getTime);
 	classStatePoseController->addProperty("timeFactor", &AnimationGraphPoseController::setTimeFactor, &AnimationGraphPoseController::getTimeFactor);
 	classStatePoseController->addMethod("setState", &AnimationGraphPoseController::setState);
+	classStatePoseController->addMethod("setParameterValue", &AnimationGraphPoseController_setParameterValue);
 	// classStatePoseController->addMethod("setCondition", &AnimationGraphPoseController::setCondition);
 	registrar->registerClass(classStatePoseController);
 

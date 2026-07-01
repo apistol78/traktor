@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,6 +21,7 @@ namespace traktor::mesh
 namespace
 {
 
+const render::Handle s_handleSkinVertexCount(L"Mesh_SkinVertexCount");
 const render::Handle s_handleSkinBuffer(L"Mesh_SkinBuffer");
 const render::Handle s_handleSkinBufferLast(L"Mesh_SkinBufferLast");
 const render::Handle s_handleSkinBufferOutput(L"Mesh_SkinBufferOutput");
@@ -45,51 +46,57 @@ bool SkinnedMesh::supportTechnique(render::handle_t technique) const
 void SkinnedMesh::buildSkin(
 	render::RenderContext* renderContext,
 	render::Buffer* jointTransforms,
-	render::Buffer* skinBuffer) const
+	render::Buffer* skinBuffer,
+	bool asynchronous) const
 {
 	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferSize() / (6 * 4 * sizeof(float));
 
 	auto programParams = renderContext->alloc< render::ProgramParameters >();
 	programParams->beginParameters(renderContext);
+	programParams->setFloatParameter(s_handleSkinVertexCount, vertexCount + 0.5f);
 	programParams->setBufferViewParameter(s_handleSkinBuffer, m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferView());
 	programParams->setBufferViewParameter(s_handleSkinBufferOutput, skinBuffer->getBufferView());
 	programParams->setBufferViewParameter(s_handleJoints, jointTransforms->getBufferView());
 	programParams->endParameters(renderContext);
 
-	auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >();
+	auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"SkinnedMesh update skin");
 	renderBlock->program = m_shaderUpdateSkin->getProgram().program;
 	renderBlock->programParams = programParams;
 	renderBlock->workSize[0] = vertexCount;
+	renderBlock->asynchronous = asynchronous;
+
 	renderContext->compute(renderBlock);
 
-	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
+	if (!asynchronous)
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
 }
 
 void SkinnedMesh::buildAccelerationStructure(
 	render::RenderContext* renderContext,
 	render::Buffer* skinBuffer,
-	render::IAccelerationStructure* accelerationStructure) const
+	render::IAccelerationStructure* accelerationStructure,
+	bool rebuild,
+	bool asynchronous) const
 {
-	// Wait for data to be ready for building AS.
-	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::AccelerationStructureUpdate, nullptr, 0);
+	// Wait for skinning data to be ready before building AS. When asynchronous this
+	// barrier is recorded on the compute queue, ordering it after the asynchronous
+	// skinning dispatch on the same queue.
+	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::AccelerationStructureUpdate, nullptr, 0, asynchronous);
 
 	// Rebuild acceleration structure.
 	auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"SkinnedMesh update AS");
 	rb->lambda = [=, this](render::IRenderView* renderView) {
-		const auto& part = m_mesh->getParts().back();
-		T_FATAL_ASSERT(part.name == L"__RT__");
-
-		AlignedVector< render::Primitives > primitives;
-		primitives.push_back(part.primitives);
-
 		renderView->writeAccelerationStructure(
 			accelerationStructure,
 			skinBuffer->getBufferView(),
 			m_rtVertexLayout,
 			m_mesh->getIndexBuffer()->getBufferView(),
 			m_mesh->getIndexType(),
-			primitives);
+			m_mesh->getRaytracingPrimitives(),
+			rebuild,
+			asynchronous);
 	};
+	rb->asynchronous = true;
 	renderContext->compute(rb);
 }
 
@@ -124,7 +131,7 @@ void SkinnedMesh::build(
 	programParams->endParameters(renderContext);
 
 	// Draw each technique part.
-	const auto& meshParts = m_mesh->getParts();
+	const auto& meshPrimitives = m_mesh->getPrimitives();
 	for (const auto& part : it->second)
 	{
 		auto permutation = worldRenderPass.getPermutation(m_shader);
@@ -141,7 +148,7 @@ void SkinnedMesh::build(
 		renderBlock->indexType = m_mesh->getIndexType();
 		renderBlock->vertexBuffer = (m_mesh->getVertexBuffer() != nullptr) ? m_mesh->getVertexBuffer()->getBufferView() : nullptr;
 		renderBlock->vertexLayout = m_mesh->getVertexLayout();
-		renderBlock->primitives = meshParts[part.meshPart].primitives;
+		renderBlock->primitives = meshPrimitives[part.meshPart];
 
 		renderContext->draw(
 			sp.priority,
@@ -162,14 +169,14 @@ const SmallMap< std::wstring, int >& SkinnedMesh::getJointMap() const
 Ref< render::Buffer > SkinnedMesh::createSkinBuffer(render::IRenderSystem* renderSystem) const
 {
 	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferSize() / (6 * 4 * sizeof(float));
-	return renderSystem->createBuffer(render::BuStructured, vertexCount * 6 * 4 * sizeof(float), false);
+	return renderSystem->createBuffer(render::BuStructured, vertexCount * 6 * 4 * sizeof(float), false, T_FILE_LINE_W);
 }
 
 Ref< render::Buffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount)
 {
 	jointCount = std::max< uint32_t >(jointCount, 1);
 
-	Ref< render::Buffer > jointBuffer = renderSystem->createBuffer(render::BuStructured, jointCount * sizeof(JointData), true);
+	Ref< render::Buffer > jointBuffer = renderSystem->createBuffer(render::BuStructured, jointCount * sizeof(JointData), true, T_FILE_LINE_W);
 	if (!jointBuffer)
 		return nullptr;
 
@@ -190,18 +197,12 @@ Ref< render::IAccelerationStructure > SkinnedMesh::createAccelerationStructure(r
 	if (!renderSystem->supportRayTracing())
 		return nullptr;
 
-	const auto& part = m_mesh->getParts().back();
-	T_FATAL_ASSERT(part.name == L"__RT__");
-
-	AlignedVector< render::Primitives > primitives;
-	primitives.push_back(part.primitives);
-
 	return renderSystem->createAccelerationStructure(
 		m_mesh->getAuxBuffer(SkinnedMesh::c_fccSkinPosition),
 		m_rtVertexLayout,
 		m_mesh->getIndexBuffer(),
 		m_mesh->getIndexType(),
-		primitives,
+		m_mesh->getRaytracingPrimitives(),
 		true);
 }
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,11 +11,13 @@
 #include "Runtime/Impl/InputServer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
@@ -161,7 +163,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 void InputServer::destroy()
 {
 	m_rumbleEffectPlayer = nullptr;
-	m_inputSystem = nullptr;
+	safeDestroy(m_inputSystem);
 }
 
 int32_t InputServer::reconfigure(const PropertyGroup* settings)
@@ -217,6 +219,21 @@ int32_t InputServer::reconfigure(const PropertyGroup* settings)
 			m_rumbleEffectPlayer = nullptr;
 		}
 		result |= CrAccepted;
+	}
+
+	// Propagate the current render output size so absolute controls (e.g. mouse
+	// position) scale correctly when the window is resized.
+	if (m_inputSystem)
+	{
+		const bool fullscreen = settings->getProperty< bool >(L"Render.FullScreen", false);
+		const int32_t width = fullscreen
+			? settings->getProperty< int32_t >(L"Render.DisplayMode/Width", 0)
+			: settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Width", 0);
+		const int32_t height = fullscreen
+			? settings->getProperty< int32_t >(L"Render.DisplayMode/Height", 0)
+			: settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Height", 0);
+		if (width > 0 && height > 0)
+			m_inputSystem->setSize(width, height);
 	}
 
 	return result;

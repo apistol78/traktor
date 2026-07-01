@@ -109,6 +109,13 @@ vec3 Hemi(vec3 direction, vec2 rnd)
 	return ot;
 }
 
+vec2 UniformDisc(float radius, vec2 uv)
+{
+	const float theta = 2.0f * 3.142f * uv.x;
+	const float r = radius * sqrt(uv.y);
+	return vec2(r * cos(theta), r * sin(theta));
+}
+
 vec3 LambertianDirection(vec3 direction, vec2 uv)
 {
 #if 1
@@ -135,7 +142,6 @@ vec3 LambertianDirection(vec3 direction, vec2 uv)
    return normalize(direction + spherePoint);
 #endif
 }
-
 
 float LightAttenuation(float distance)
 {

@@ -117,6 +117,14 @@ public:
 	 */
 	Aabb3 getBoundingBox() const;
 
+	/*! Check if this entity can be updated
+	 * concurrently. All entities which can be updated
+	 * concurrently are updated before all who cannot.
+	 * 
+	 * \return True if entity can be updated concurrently.
+	 */
+	bool allowConcurrentUpdate() const;
+
 	/*! Update entity.
 	 *
 	 * \param update Update parameters.

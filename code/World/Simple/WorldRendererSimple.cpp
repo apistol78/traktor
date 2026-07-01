@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -76,18 +76,8 @@ void WorldRendererSimple::setup(
 	{
 		T_PROFILER_SCOPE(L"WorldRendererSimple gather");
 
-		m_gathered.resize(0);
+		m_gathered.reset();
 		m_gatheredTLAS = nullptr;
-
-		for (auto component : world->getComponents())
-		{
-			IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
-			if (entityRenderer)
-				m_gathered.push_back({ entityRenderer, component });
-
-			if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
-				m_gatheredTLAS = rtWorldComponent->getTopLevel();
-		}
 
 		for (auto entity : world->getEntities())
 		{
@@ -102,9 +92,27 @@ void WorldRendererSimple::setup(
 			{
 				IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
 				if (entityRenderer)
-					m_gathered.push_back({ entityRenderer, component });
+				{
+					auto& r = m_gathered[entityRenderer];
+					r.objects.push_back(component);
+					if (!state.dynamic)
+						r.staticOnlyObjects.push_back(component);
+				}
 			}
 		}
+	}
+
+	for (auto component : world->getComponents())
+	{
+		IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
+		if (entityRenderer)
+		{
+			auto& r = m_gathered[entityRenderer];
+			r.objects.push_back(component);
+		}
+
+		if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
+			m_gatheredTLAS = rtWorldComponent->getTopLevel();
 	}
 
 	// Add additional passes by entity renderers.
@@ -112,11 +120,12 @@ void WorldRendererSimple::setup(
 		T_PROFILER_SCOPE(L"WorldRendererSimple setup extra passes");
 		const WorldSetupContext context(world, m_entityRenderers, renderGraph, m_visualAttachments);
 
-		for (auto gathered : m_gathered)
-			gathered.entityRenderer->setup(context, worldRenderView, gathered.renderable);
-
-		for (auto entityRenderer : m_entityRenderers->get())
-			entityRenderer->setup(context);
+		for (auto it : m_gathered)
+		{
+			IEntityRenderer* entityRenderer = it.first;
+			const Renderable& r = it.second;
+			entityRenderer->setup(context, worldRenderView, r.objects);
+		}
 	}
 
 	// Add passes to render graph.
@@ -154,10 +163,7 @@ void WorldRendererSimple::setup(
 			worldRenderView.getView());
 
 		for (auto gathered : m_gathered)
-			gathered.entityRenderer->build(wc, worldRenderView, defaultPass, gathered.renderable);
-
-		for (auto entityRenderer : m_entityRenderers->get())
-			entityRenderer->build(wc, worldRenderView, defaultPass);
+			gathered.first->build(wc, worldRenderView, defaultPass, gathered.second.objects);
 	});
 	renderGraph.addPass(rp);
 }

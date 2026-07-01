@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Object.h"
 #include "Core/Class/Config.h"
 
@@ -39,6 +38,8 @@ public:
 #endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const = 0;
+
+	virtual bool accept(uint32_t /*argc*/, const Any* /*argv*/) const { return true; }
 };
 
 }

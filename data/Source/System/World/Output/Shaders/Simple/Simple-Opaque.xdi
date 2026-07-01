@@ -5,8 +5,8 @@
 			<id>{E6FE72A5-B871-0A4C-AC4A-A2FD90779FF0}</id>
 			<comment/>
 			<position>
-				<first>216</first>
-				<second>-57</second>
+				<first>462</first>
+				<second>-4</second>
 			</position>
 			<technique>World_SimpleColor</technique>
 			<priority>
@@ -52,8 +52,8 @@
 			<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
 			<comment/>
 			<position>
-				<first>-723</first>
-				<second>63</second>
+				<first>-594</first>
+				<second>83</second>
 			</position>
 			<name>SurfaceColor</name>
 			<optional>false</optional>
@@ -62,8 +62,8 @@
 			<id>{72048415-F7D0-42B2-BF26-7F7F4D97A902}</id>
 			<comment/>
 			<position>
-				<first>-81</first>
-				<second>-38</second>
+				<first>206</first>
+				<second>-13</second>
 			</position>
 			<name>Enable</name>
 			<optional>true</optional>
@@ -72,8 +72,8 @@
 			<id>{6D722E55-DD93-064C-AE1B-9AB93797FEFA}</id>
 			<comment/>
 			<position>
-				<first>-505</first>
-				<second>8</second>
+				<first>-559</first>
+				<second>19</second>
 			</position>
 			<swizzle>xxx1</swizzle>
 		</item>
@@ -81,27 +81,55 @@
 			<id>{871167FD-0AC6-6047-A706-AD5BBD38BD33}</id>
 			<comment/>
 			<position>
-				<first>-288</first>
-				<second>8</second>
+				<first>-316</first>
+				<second>26</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{CBA313E0-474F-324A-A55C-721D9BBCFFF8}</id>
 			<comment/>
 			<position>
-				<first>-722</first>
-				<second>-13</second>
+				<first>-792</first>
+				<second>19</second>
 			</position>
-			<value>0.45</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{18EB0C0D-D6B4-4B45-BFED-4459E3CCE610}</id>
 			<comment/>
 			<position>
-				<first>-26</first>
-				<second>11</second>
+				<first>-31</first>
+				<second>-13</second>
 			</position>
 			<swizzle>xyz</swizzle>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{3198BD0F-DF28-4897-9398-F1DB4813B994}</id>
+			<comment/>
+			<position>
+				<first>-50</first>
+				<second>115</second>
+			</position>
+			<name>Discard</name>
+			<optional>true</optional>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{6142B2AE-8216-4AEC-B69F-21A0D2F77EF3}</id>
+			<comment/>
+			<position>
+				<first>-26</first>
+				<second>51</second>
+			</position>
+			<value>0.5</value>
+		</item>
+		<item type="traktor.render.Discard" version="traktor.render.Node:1">
+			<id>{382A6588-37BD-4B70-ADE9-C25EFC0FD18C}</id>
+			<comment/>
+			<position>
+				<first>196</first>
+				<second>51</second>
+			</position>
+			<operator>CoLess</operator>
 		</item>
 	</nodes>
 	<edges>
@@ -157,12 +185,42 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{52792682-A02B-4627-81A2-C83D24BE7143}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[6]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{2A4105A4-A10B-4669-AE99-DE69647E09D7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{291502CF-D8D7-4CEC-8457-E867D70CD04E}</id>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{5438A442-AF6D-45EB-8163-DF351C6DBF4B}</id>
 			</destination>
 		</item>
 	</edges>
@@ -171,12 +229,12 @@
 			<title>Output</title>
 			<comment/>
 			<position>
-				<first>-829</first>
-				<second>-165</second>
+				<first>-856</first>
+				<second>-109</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1542</first>
+				<second>321</second>
 			</size>
 		</item>
 	</groups>

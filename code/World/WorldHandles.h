@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,11 +41,13 @@ struct T_DLLCLASS ShaderPermutation
 {
 	static const render::Handle IrradianceEnable;
 	static const render::Handle IrradianceSingle;
+	static const render::Handle IrradianceFieldEnable;
 	static const render::Handle VolumetricFogEnable;
 	static const render::Handle ColorGradingEnable;
 	static const render::Handle RayTracingEnable;
 	static const render::Handle CullingHiZ;
 	static const render::Handle HDR;
+	static const render::Handle UpscalingEnable;
 };
 
 // Shader parameters.
@@ -61,6 +63,7 @@ struct T_DLLCLASS ShaderParameter
 	static const render::Handle GammaInverse;
 	static const render::Handle LastWorld;
 	static const render::Handle LastView;
+	static const render::Handle LastViewInverse;
 	static const render::Handle LastWorldView;
 	static const render::Handle LightIndexSBuffer;
 	static const render::Handle LightMap;
@@ -125,7 +128,7 @@ struct T_DLLCLASS ShaderParameter
 	static const render::Handle FogVolumeTexture;
 	static const render::Handle FogVolumeRange;
 	static const render::Handle FogVolumeSliceCount;
-	static const render::Handle FogVolumeSliceCurrent;
+	static const render::Handle FogVolumeSliceUpdate;
 	static const render::Handle FogVolumeMediumColor;
 	static const render::Handle FogVolumeMediumDensity;
 

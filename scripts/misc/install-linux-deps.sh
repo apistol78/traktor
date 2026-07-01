@@ -10,6 +10,9 @@ PACKAGES="
     libasound2-dev
     libopenal-dev
     libpulse-dev
+    libxi-dev
+    libxrandr-dev
+    libcairo2-dev
     mesa-vulkan-drivers
     clang
     lld

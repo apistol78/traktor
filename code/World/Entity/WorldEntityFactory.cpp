@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
+#include "Render/Compute/ComputeTexture.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
@@ -42,6 +43,8 @@
 #include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/VolumeComponent.h"
 #include "World/Entity/VolumeComponentData.h"
+#include "World/Entity/ComputeTextureComponent.h"
+#include "World/Entity/ComputeTextureComponentData.h"
 #include "World/Entity/FogComponent.h"
 #include "World/Entity/FogComponentData.h"
 #include "World/Entity/WorldEntityFactory.h"
@@ -90,13 +93,16 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< ProbeComponentData >();
 	typeSet.insert< ScriptComponentData >();
 	typeSet.insert< VolumeComponentData >();
-	typeSet.insert< FogComponentData >();
 	return typeSet;
 }
 
 const TypeInfoSet WorldEntityFactory::getWorldComponentTypes() const
 {
-	return makeTypeInfoSet< IrradianceGridComponentData >();
+	return makeTypeInfoSet<
+		ComputeTextureComponentData,
+		FogComponentData,
+		IrradianceGridComponentData
+	>();
 }
 
 Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, const EntityData& entityData) const
@@ -308,14 +314,29 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const IEntityB
 	if (auto volumeComponentData = dynamic_type_cast< const VolumeComponentData* >(&entityComponentData))
 		return new VolumeComponent(volumeComponentData);
 
-	if (auto fogComponentData = dynamic_type_cast< const FogComponentData* >(&entityComponentData))
-		return fogComponentData->createComponent(m_resourceManager, m_renderSystem);
-
 	return nullptr;
 }
 
 Ref< IWorldComponent > WorldEntityFactory::createWorldComponent(const IEntityBuilder* builder, const IWorldComponentData& worldComponentData) const
 {
+	if (auto computeTextureComponentData = dynamic_type_cast< const ComputeTextureComponentData* >(&worldComponentData))
+	{
+		Ref< ComputeTextureComponent > component = new ComputeTextureComponent();
+
+		for (const auto& textureId : computeTextureComponentData->getTextures())
+		{
+			resource::Proxy< render::ITexture > texture;
+			if (!m_resourceManager->bind(textureId, texture))
+				return nullptr;
+
+			auto* computeTexture = dynamic_type_cast< render::ComputeTexture* >(texture.getResource());
+			if (computeTexture)
+				component->add(computeTexture);
+		}
+
+		return component;
+	}
+
 	if (auto irradianceGridComponentData = dynamic_type_cast< const IrradianceGridComponentData* >(&worldComponentData))
 	{
 		resource::Proxy< IrradianceGrid > irradianceGrid;
@@ -324,6 +345,10 @@ Ref< IWorldComponent > WorldEntityFactory::createWorldComponent(const IEntityBui
 
 		return new IrradianceGridComponent(irradianceGrid);
 	}
+
+	if (auto fogComponentData = dynamic_type_cast< const FogComponentData* >(&worldComponentData))
+		return fogComponentData->createComponent();
+		
 	return nullptr;
 }
 

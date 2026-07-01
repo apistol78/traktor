@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -53,44 +53,38 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 void EntityRenderer::setup(
 	const world::WorldSetupContext& context,
 	const world::WorldRenderView& worldRenderView,
-	Object* renderable
+	const AlignedVector< Object* >& renderables
 )
 {
-	if (auto terrainComponent = dynamic_type_cast< TerrainComponent* >(renderable))
-		terrainComponent->setup(context, worldRenderView, m_terrainDetailDistance, m_terrainCacheSize);
-	else if (auto oceanComponent = dynamic_type_cast< OceanComponent* >(renderable))
-		oceanComponent->setup(context, worldRenderView);
-}
-
-void EntityRenderer::setup(
-	const world::WorldSetupContext& context
-)
-{
+	for (Object* renderable : renderables)
+	{
+		if (auto terrainComponent = dynamic_type_cast< TerrainComponent* >(renderable))
+			terrainComponent->setup(context, worldRenderView, m_terrainDetailDistance, m_terrainCacheSize);
+		else if (auto terrainLayerComponent = dynamic_type_cast< TerrainLayerComponent* >(renderable))
+			terrainLayerComponent->setup(worldRenderView);
+		else if (auto oceanComponent = dynamic_type_cast< OceanComponent* >(renderable))
+			oceanComponent->setup(context, worldRenderView);
+	}
 }
 
 void EntityRenderer::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
-	Object* renderable
+	const AlignedVector< Object* >& renderables
 )
 {
-	if (auto terrainComponent = dynamic_type_cast< TerrainComponent* >(renderable))
-		terrainComponent->build(context, worldRenderView, worldRenderPass, m_terrainDetailDistance, m_terrainCacheSize);
-	else if (auto terrainLayerComponent = dynamic_type_cast< TerrainLayerComponent* >(renderable))
-		terrainLayerComponent->build(context, worldRenderView, worldRenderPass);
-	else if (auto oceanComponent = dynamic_type_cast< OceanComponent* >(renderable))
-		oceanComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
-	else if (auto riverComponent = dynamic_type_cast< RiverComponent* >(renderable))
-		riverComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
-}
-
-void EntityRenderer::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
-{
+	for (Object* renderable : renderables)
+	{
+		if (auto terrainComponent = dynamic_type_cast< TerrainComponent* >(renderable))
+			terrainComponent->build(context, worldRenderView, worldRenderPass, m_terrainDetailDistance, m_terrainCacheSize);
+		else if (auto terrainLayerComponent = dynamic_type_cast< TerrainLayerComponent* >(renderable))
+			terrainLayerComponent->build(context, worldRenderView, worldRenderPass);
+		else if (auto oceanComponent = dynamic_type_cast< OceanComponent* >(renderable))
+			oceanComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
+		else if (auto riverComponent = dynamic_type_cast< RiverComponent* >(renderable))
+			riverComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
+	}
 }
 
 }

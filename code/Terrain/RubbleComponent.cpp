@@ -1,34 +1,36 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
+#include "Terrain/RubbleComponent.h"
+
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Heightfield/Heightfield.h"
-#include "Render/ITexture.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/ITexture.h"
 #include "Resource/IResourceManager.h"
+#include "Terrain/RubbleComponentData.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainSurfaceCache.h"
-#include "Terrain/RubbleComponent.h"
-#include "Terrain/RubbleComponentData.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
+#include <limits>
+
 namespace traktor::terrain
 {
-	namespace
-	{
+namespace
+{
 
 const render::Handle s_handleTerrain_Normals(L"Terrain_Normals");
 const render::Handle s_handleTerrain_Heightfield(L"Terrain_Heightfield");
@@ -38,15 +40,14 @@ const render::Handle s_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
 const render::Handle s_handleRubble_Eye(L"Rubble_Eye");
 const render::Handle s_handleRubble_MaxDistance(L"Rubble_MaxDistance");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.RubbleComponent", RubbleComponent, TerrainLayerComponent)
 
 bool RubbleComponent::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	const RubbleComponentData& data
-)
+	const RubbleComponentData& data)
 {
 	m_rubble.resize(data.m_rubble.size());
 	for (size_t i = 0; i < m_rubble.size(); ++i)
@@ -89,11 +90,7 @@ void RubbleComponent::update(const world::UpdateParams& update)
 	TerrainLayerComponent::update(update);
 }
 
-void RubbleComponent::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
+void RubbleComponent::setup(const world::WorldRenderView& worldRenderView)
 {
 	// Get terrain from owner.
 	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
@@ -108,73 +105,89 @@ void RubbleComponent::build(
 	if (!heightfield)
 		return;
 
-	// Update clusters at first pass from eye pow.
-	const bool updateClusters = (bool)((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0);
-
 	const Matrix44 view = worldRenderView.getView();
 	const Vector4 eye = view.inverse().translation();
 	const Vector4 fwd = view.axisZ();
 
-	if (updateClusters)
+	if (
+		(eye - m_eye).length() >= m_clusterSize / 2.0f ||
+		dot3(fwd, m_fwd) < cos(deg2rad(2.0f)))
 	{
-		if (
-			(eye - m_eye).length() >= m_clusterSize / 2.0f ||
-			dot3(fwd, m_fwd) < cos(deg2rad(2.0f))
-		)
+		Frustum viewFrustum = worldRenderView.getViewFrustum();
+		viewFrustum.setFarZ(Scalar(m_data.m_spreadDistance + m_clusterSize));
+
+		m_eye = eye;
+		m_fwd = fwd;
+
+		for (auto& cluster : m_clusters)
 		{
-			Frustum viewFrustum = worldRenderView.getViewFrustum();
-			viewFrustum.setFarZ(Scalar(m_data.m_spreadDistance + m_clusterSize));
+			cluster.distance = (cluster.center - eye).length();
 
-			m_eye = eye;
-			m_fwd = fwd;
+			const bool visible = cluster.visible;
+			cluster.visible = (bool)(viewFrustum.inside(view * cluster.center, Scalar(m_clusterSize)) != Frustum::Result::Outside);
+			if (!cluster.visible)
+				continue;
+			if (cluster.visible && visible)
+				continue;
 
-			for (auto& cluster : m_clusters)
+			const float randomScaleAmount = cluster.rubbleDef->randomScaleAmount;
+			const float randomTilt = cluster.rubbleDef->randomTilt;
+			const float upness = cluster.rubbleDef->upness;
+
+			RandomGeometry random(cluster.seed);
+			for (int32_t j = cluster.from; j < cluster.to; ++j)
 			{
-				cluster.distance = (cluster.center - eye).length();
+				const float dx = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
+				const float dz = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
 
-				const bool visible = cluster.visible;
-				cluster.visible = (bool)(viewFrustum.inside(view * cluster.center, Scalar(m_clusterSize)) != Frustum::Result::Outside);
-				if (!cluster.visible)
-					continue;
-				if (cluster.visible && visible)
-					continue;
+				// Calculate world position.
+				const float px = cluster.center.x() + dx;
+				const float pz = cluster.center.z() + dz;
+				const float py = terrain->getHeightfield()->getWorldHeight(px, pz);
 
-				const float randomScaleAmount = cluster.rubbleDef->randomScaleAmount;
-				const float randomTilt = cluster.rubbleDef->randomTilt;
-				const float upness = cluster.rubbleDef->upness;
+				// Get ground normal.
+				float gx, gz;
+				heightfield->worldToGrid(px, pz, gx, gz);
+				const Vector4 normal = heightfield->normalAt(gx, gz);
 
-				RandomGeometry random(cluster.seed);
-				for (int32_t j = cluster.from; j < cluster.to; ++j)
-				{
-					const float dx = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
-					const float dz = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
+				// Calculate rotation.
+				const float rx = (random.nextFloat() * 2.0f - 1.0f) * randomTilt;
+				const float rz = (random.nextFloat() * 2.0f - 1.0f) * randomTilt;
+				const float head = random.nextFloat() * TWO_PI;
+				const Quaternion Qu = slerp(Quaternion(Vector4(0.0f, 1.0f, 0.0f), normal), Quaternion::identity(), upness);
+				const Quaternion Qr = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f), rx) * Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f), rz);
+				const Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f), head);
 
-					// Calculate world position.
-					const float px = cluster.center.x() + dx;
-					const float pz = cluster.center.z() + dz;
-					const float py = terrain->getHeightfield()->getWorldHeight(px, pz);
-
-					// Get ground normal.
-					float gx, gz;
-					heightfield->worldToGrid(px, pz, gx, gz);
-					const Vector4 normal = heightfield->normalAt(gx, gz);
-
-					// Calculate rotation.
-					const float rx = (random.nextFloat() * 2.0f - 1.0f) * randomTilt;
-					const float rz = (random.nextFloat() * 2.0f - 1.0f) * randomTilt;
-					const float head = random.nextFloat() * TWO_PI;
-					const Quaternion Qu = slerp(Quaternion(Vector4(0.0f, 1.0f, 0.0f), normal), Quaternion::identity(), upness);
-					const Quaternion Qr = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f), rx) * Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f), rz);
-					const Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f), head);
-
-					// Update instance data.
-					m_instances[j].position = Vector4(px, py, pz, 0.0f);
-					m_instances[j].rotation = Qr * Qu * Qh;
-					m_instances[j].scale = random.nextFloat() * randomScaleAmount + (1.0f - randomScaleAmount);
-				}
+				// Update instance data.
+				m_instances[j].position = Vector4(px, py, pz, 0.0f);
+				m_instances[j].rotation = Qr * Qu * Qh;
+				m_instances[j].scale = random.nextFloat() * randomScaleAmount + (1.0f - randomScaleAmount);
 			}
 		}
 	}
+}
+
+void RubbleComponent::build(
+	const world::WorldBuildContext& context,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass)
+{
+	// Get terrain from owner.
+	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
+	if (!terrainComponent)
+		return;
+
+	const auto& terrain = terrainComponent->getTerrain();
+	if (!terrain)
+		return;
+
+	const auto& heightfield = terrain->getHeightfield();
+	if (!heightfield)
+		return;
+
+	const Matrix44 view = worldRenderView.getView();
+	const Vector4 eye = view.inverse().translation();
+	const Vector4 fwd = view.axisZ();
 
 	render::RenderContext* renderContext = context.getRenderContext();
 
@@ -189,35 +202,35 @@ void RubbleComponent::build(
 	extraParameters->setVectorParameter(s_handleRubble_Eye, eye);
 	extraParameters->setFloatParameter(s_handleRubble_MaxDistance, m_data.m_spreadDistance + m_clusterSize);
 	extraParameters->endParameters(renderContext);
-/*
-	for (const auto& cluster : m_clusters)
-	{
-		if (!cluster.visible)
-			continue;
-
-		const int32_t count = cluster.to - cluster.from;
-		for (int32_t j = 0; j < count; )
+	/*
+		for (const auto& cluster : m_clusters)
 		{
-			const int32_t batch = std::min< int32_t >(count - j, mesh::InstanceMesh::MaxInstanceCount);
+			if (!cluster.visible)
+				continue;
 
-			m_instanceData.resize(batch);
-			for (int32_t k = 0; k < batch; ++k, ++j)
+			const int32_t count = cluster.to - cluster.from;
+			for (int32_t j = 0; j < count; )
 			{
-				m_instances[j + cluster.from].position.storeAligned( m_instanceData[k].data.translation );
-				m_instances[j + cluster.from].rotation.e.storeAligned( m_instanceData[k].data.rotation );
-				m_instanceData[k].data.scale = m_instances[j + cluster.from].scale;
-				m_instanceData[k].distance = cluster.distance;
-			}
+				const int32_t batch = std::min< int32_t >(count - j, mesh::InstanceMesh::MaxInstanceCount);
 
-			cluster.rubbleDef->mesh->build(
-				renderContext,
-				worldRenderPass,
-				m_instanceData,
-				extraParameters
-			);
+				m_instanceData.resize(batch);
+				for (int32_t k = 0; k < batch; ++k, ++j)
+				{
+					m_instances[j + cluster.from].position.storeAligned( m_instanceData[k].data.translation );
+					m_instances[j + cluster.from].rotation.e.storeAligned( m_instanceData[k].data.rotation );
+					m_instanceData[k].data.scale = m_instances[j + cluster.from].scale;
+					m_instanceData[k].distance = cluster.distance;
+				}
+
+				cluster.rubbleDef->mesh->build(
+					renderContext,
+					worldRenderPass,
+					m_instanceData,
+					extraParameters
+				);
+			}
 		}
-	}
-*/
+	*/
 }
 
 void RubbleComponent::updatePatches()

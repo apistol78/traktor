@@ -25,7 +25,7 @@ namespace traktor::ui
 /*!
  * \ingroup UIW32
  */
-class T_DLLCLASS EventLoopWin32 : public IEventLoop
+class T_DLLCLASS EventLoopWin32 : public RefCountImpl< IEventLoop >
 {
 public:
 	EventLoopWin32();

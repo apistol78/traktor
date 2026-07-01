@@ -8,6 +8,7 @@ if %TRAKTOR_HOME:~-1%==\ set TRAKTOR_HOME=%TRAKTOR_HOME:~0,-1%
 set RPI_SYSROOT=%TRAKTOR_HOME%\3rdp-restricted\raspberry-sysroot
 set MOLTEN_SDK=%TRAKTOR_HOME%\3rdp-restricted\vulkan\vulkansdk-macos-1.2.154.0\MoltenVK 
 
+set AFTERMATH_SDK=%TRAKTOR_HOME%\3rdp\aftermath
 set AGG_SDK=%TRAKTOR_HOME%\3rdp\agg-2.6
 set ASTCENC_SDK=%TRAKTOR_HOME%\3rdp\astc-encoder
 set BULLET_SDK=%TRAKTOR_HOME%\3rdp\bullet3
@@ -16,15 +17,14 @@ set EXPAT_SDK=%TRAKTOR_HOME%\3rdp\libexpat\expat
 set FLAC_SDK=%TRAKTOR_HOME%\3rdp\flac
 set FREETYPE_SDK=%TRAKTOR_HOME%\3rdp\freetype
 set JPEG_SDK=%TRAKTOR_HOME%\3rdp\jpeg\jpeg-9e
-set LUA_SDK=%TRAKTOR_HOME%\3rdp\lua\lua-5.4.8
+set LUA_SDK=%TRAKTOR_HOME%\3rdp\lua\lua-5.5.0
 set LZF_SDK=%TRAKTOR_HOME%\3rdp\liblzf\liblzf-3.6
 set MIKKTSPACE_SDK=%TRAKTOR_HOME%\3rdp\MikkTSpace
 set OGG_SDK=%TRAKTOR_HOME%\3rdp\ogg
-::set P4_SDK=%TRAKTOR_HOME%\3rdp\p4api-linux\p4api-2022.1.2305383
 set PNG_SDK=%TRAKTOR_HOME%\3rdp\libpng
 set RAPIDJSON_SDK=%TRAKTOR_HOME%\3rdp\rapidjson
 set RECAST_SDK=%TRAKTOR_HOME%\3rdp\recastnavigation
-set RENDERDOC_SDK=%TRAKTOR_HOME%\3rdp\renderdoc\RenderDoc_1.36_64
+set RENDERDOC_SDK=%TRAKTOR_HOME%\3rdp\renderdoc\RenderDoc_1.43_64
 set RG_ETC1_SDK=%TRAKTOR_HOME%\3rdp\rg-etc1
 set STB_SDK=%TRAKTOR_HOME%\3rdp\stb
 set STEAMWORKS_SDK=%TRAKTOR_HOME%\3rdp\steamworks\sdk
@@ -41,19 +41,22 @@ set MINIMP3_SDK=%TRAKTOR_HOME%\3rdp\minimp3
 set MIMALLOC_SDK=%TRAKTOR_HOME%\3rdp\mimalloc
 set UFBX_SDK=%TRAKTOR_HOME%\3rdp\ufbx
 set JOLT_SDK=%TRAKTOR_HOME%\3rdp\JoltPhysics
+set LEMON_SDK=%TRAKTOR_HOME%\3rdp\lemon
+set XESS_SDK=%TRAKTOR_HOME%\3rdp\xess
 
 :: Vulkan SDK
-if ("%VULKAN_SDK%"=="") (
-	echo No system Vulkan SDK found; using local.
-	set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan-windows\vulkan-sdk
-	set HAVE_SYSTEM_VULKAN_SDK=
+if not defined VULKAN_SDK (
+    echo No system Vulkan SDK found; using local.
+    set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan-windows\vulkan-sdk
+    set HAVE_SYSTEM_VULKAN_SDK=false
 ) else (
-	echo Using Vulkan SDK "%VULKAN_SDK%".
-	set HAVE_SYSTEM_VULKAN_SDK="true"
+    echo Using Vulkan SDK "%VULKAN_SDK%".
+    set HAVE_SYSTEM_VULKAN_SDK=true
 )
 
-:: SPIRV tools
-set SPIRVTOOLS_SDK=%TRAKTOR_HOME%\3rdp\spirv-tools\install
+:: SPIRV tools (use Vulkan SDK since it ships spirv-tools)
+::set SPIRVTOOLS_SDK=%TRAKTOR_HOME%\3rdp\spirv-tools\install
+set SPIRVTOOLS_SDK=%VULKAN_SDK%
 
 :: Vulkan Memory Allocator
 set VMA_SDK=%TRAKTOR_HOME%\3rdp\VulkanMemoryAllocator

@@ -102,19 +102,19 @@
 						<item>
 							<first>Glsl.Vulkan.Ballot</first>
 							<second type="traktor.PropertyBoolean">
-								<value>false</value>
+								<value>true</value>
 							</second>
 						</item>
 						<item>
 							<first>Glsl.Vulkan.ControlFlowAttributes</first>
 							<second type="traktor.PropertyBoolean">
-								<value>false</value>
+								<value>true</value>
 							</second>
 						</item>
 						<item>
 							<first>Glsl.Vulkan.ExplicitArithmeticTypes</first>
 							<second type="traktor.PropertyBoolean">
-								<value>false</value>
+								<value>true</value>
 							</second>
 						</item>
 						<item>

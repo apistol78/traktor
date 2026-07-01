@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -53,18 +53,6 @@ namespace traktor::render
 namespace
 {
 
-bool presentationModeSupported(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkPresentModeKHR presentationMode)
-{
-	uint32_t presentModeCount = 0;
-	vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, 0);
-	AutoArrayPtr< VkPresentModeKHR > presentModes(new VkPresentModeKHR[presentModeCount]);
-	vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes.ptr());
-	for (uint32_t i = 0; i < presentModeCount; ++i)
-		if (presentModes[i] == presentationMode)
-			return true;
-	return false;
-}
-
 VkPipelineStageFlagBits convertStage(Stage st)
 {
 	uint32_t ps = 0;
@@ -85,11 +73,8 @@ VkPipelineStageFlagBits convertStage(Stage st)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVk", RenderViewVk, IRenderView)
 
-RenderViewVk::RenderViewVk(
-	Context* context,
-	VkInstance instance)
+RenderViewVk::RenderViewVk(Context* context)
 	: m_context(context)
-	, m_instance(instance)
 {
 	m_context->incrementViews();
 }
@@ -123,19 +108,19 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	sci.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 	sci.hinstance = GetModuleHandle(nullptr);
 	sci.hwnd = (HWND)*m_window;
-	if (vkCreateWin32SurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	if (vkCreateWin32SurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface." << Endl;
 		return false;
 	}
 #elif defined(__LINUX__) || defined(__RPI__)
-	VkXlibSurfaceCreateInfoKHR sci = {};
-	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-	sci.dpy = m_window->getDisplay();
-	sci.window = m_window->getWindow();
-	if (vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	VkWaylandSurfaceCreateInfoKHR sci = {};
+	sci.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
+	sci.display = m_window->getDisplay();
+	sci.surface = m_window->getSurface();
+	if (vkCreateWaylandSurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface) != VK_SUCCESS)
 	{
-		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface." << Endl;
+		log::error << L"Failed to create Vulkan; unable to create Wayland renderable surface." << Endl;
 		return false;
 	}
 #elif defined(__MAC__)
@@ -146,7 +131,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	VkMetalSurfaceCreateInfoEXT sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
 	sci.pLayer = getMetalLayer(m_window->getView());
-	if (vkCreateMetalSurfaceEXT(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	if (vkCreateMetalSurfaceEXT(m_context->getInstance(), &sci, nullptr, &m_surface) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create macOS renderable surface." << Endl;
 		return false;
@@ -171,7 +156,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	sci.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 	sci.hinstance = GetModuleHandle(nullptr);
 	sci.hwnd = (HWND)desc.syswin.hWnd;
-	if ((result = vkCreateWin32SurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	if ((result = vkCreateWin32SurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
@@ -184,28 +169,55 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	height = (int32_t)(rc.bottom - rc.top);
 
 #elif defined(__LINUX__) || defined(__RPI__)
-	VkXlibSurfaceCreateInfoKHR sci = {};
-	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-	sci.dpy = (::Display*)desc.syswin.display;
-	sci.window = desc.syswin.window;
-	if ((result = vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	if (desc.syswin.x11_display != nullptr)
 	{
-		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface (" << getHumanResult(result) << L")." << Endl;
+		VkXlibSurfaceCreateInfoKHR sci = {};
+		sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+		sci.dpy = (::Display*)desc.syswin.x11_display;
+		sci.window = desc.syswin.x11_window;
+		if ((result = vkCreateXlibSurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
+		{
+			log::error << L"Failed to create Vulkan; unable to create X11 renderable surface (" << getHumanResult(result) << L")." << Endl;
+			return false;
+		}
+
+		// Get size of surface.
+		VkSurfaceCapabilitiesKHR sc;
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &sc);
+		width = sc.currentExtent.width;
+		height = sc.currentExtent.height;
+	}
+	else if (desc.syswin.wl_display != nullptr)
+	{
+		const VkWaylandSurfaceCreateInfoKHR sci =
+		{
+			.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR,
+			.pNext = nullptr,
+			.flags = 0,
+			.display = (struct wl_display*)desc.syswin.wl_display,
+			.surface = (struct wl_surface*)desc.syswin.wl_surface
+		};
+
+		if ((result = vkCreateWaylandSurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
+		{
+			log::error << L"Failed to create Vulkan; unable to create Wayland renderable surface (" << getHumanResult(result) << L")." << Endl;
+			return false;
+		}
+
+		width = std::max(desc.syswin.width, 16);
+		height = std::max(desc.syswin.height, 16);
+	}
+	else
+	{
+		log::error << L"Failed to create Vulkan; no valid syswin." << Endl;
 		return false;
 	}
-
-	// Get size of surface.
-	VkSurfaceCapabilitiesKHR sc;
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &sc);
-	width = sc.currentExtent.width;
-	height = sc.currentExtent.height;
-
 #elif defined(__ANDROID__)
 	VkAndroidSurfaceCreateInfoKHR sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
 	sci.flags = 0;
 	sci.window = *desc.syswin.window;
-	if ((result = vkCreateAndroidSurfaceKHR(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	if ((result = vkCreateAndroidSurfaceKHR(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create Android renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
@@ -223,7 +235,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	VkMetalSurfaceCreateInfoEXT sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
 	sci.pLayer = getMetalLayer(desc.syswin.view);
-	if ((result = vkCreateMetalSurfaceEXT(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	if ((result = vkCreateMetalSurfaceEXT(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create macOS renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
@@ -238,7 +250,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	VkIOSSurfaceCreateInfoMVK sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK;
 	sci.pView = desc.syswin.view;
-	if ((result = vkCreateIOSSurfaceMVK(m_instance, &sci, nullptr, &m_surface)) != VK_SUCCESS)
+	if ((result = vkCreateIOSSurfaceMVK(m_context->getInstance(), &sci, nullptr, &m_surface)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create iOS renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
@@ -298,6 +310,11 @@ void RenderViewVk::close()
 	// Destroy frame resources.
 	for (auto& frame : m_frames)
 	{
+		// Drain any command buffers left flying by synchronize before they are destroyed.
+		for (auto commandBuffer : frame.flyingCommandBuffers)
+			commandBuffer->wait();
+		frame.flyingCommandBuffers.resize(0);
+
 		if (frame.graphicsCommandBuffer)
 			frame.graphicsCommandBuffer->wait();
 		if (frame.computeCommandBuffer)
@@ -311,6 +328,13 @@ void RenderViewVk::close()
 		frame.computeCommandBuffer = nullptr;
 	}
 	m_frames.clear();
+
+	// Destroy cross queue synchronization.
+	if (m_timelineSemaphore != 0)
+	{
+		vkDestroySemaphore(m_context->getLogicalDevice(), m_timelineSemaphore, nullptr);
+		m_timelineSemaphore = 0;
+	}
 
 	// More pending cleanups since frames own render targets.
 	m_context->performCleanup();
@@ -326,16 +350,19 @@ void RenderViewVk::close()
 	for (auto& imageAvailableSemaphore : m_imageAvailableSemaphores)
 	{
 		if (imageAvailableSemaphore != 0)
-		{
 			vkDestroySemaphore(m_context->getLogicalDevice(), imageAvailableSemaphore, nullptr);
-			imageAvailableSemaphore = 0;
-		}
+	}
+	m_imageAvailableSemaphores.clear();
+	if (m_imageAvailableSemaphoreFree != 0)
+	{
+		vkDestroySemaphore(m_context->getLogicalDevice(), m_imageAvailableSemaphoreFree, nullptr);
+		m_imageAvailableSemaphoreFree = 0;
 	}
 
 	//// Destroy pipelines.
-	//for (auto& pipeline : m_pipelines)
+	// for (auto& pipeline : m_pipelines)
 	//	vkDestroyPipeline(m_context->getLogicalDevice(), pipeline.second.pipeline, nullptr);
-	//m_pipelines.clear();
+	// m_pipelines.clear();
 
 	// Destroy previous swap chain.
 	if (m_swapChain != 0)
@@ -344,10 +371,21 @@ void RenderViewVk::close()
 		m_swapChain = 0;
 	}
 
+	// Destroy any image-available semaphores retired from prior swap chain rebuilds.
+	// Done after the swap chain destruction above so the present engine has released them.
+	for (VkSemaphore retired : m_retiredImageAvailableSemaphores)
+		vkDestroySemaphore(m_context->getLogicalDevice(), retired, nullptr);
+	m_retiredImageAvailableSemaphores.clear();
+
+	// Invalidate cached surface-static state since we're tearing down the surface.
+	m_surfaceCacheValid = false;
+	m_colorFormat = VK_FORMAT_UNDEFINED;
+	m_presentQueueFamilyIndex = ~0u;
+
 	// Destroy surface.
 	if (m_surface != 0)
 	{
-		vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
+		vkDestroySurfaceKHR(m_context->getInstance(), m_surface, nullptr);
 		m_surface = 0;
 	}
 
@@ -390,50 +428,32 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 {
 	vkDeviceWaitIdle(m_context->getLogicalDevice());
 
-	// Ensure any pending cleanups are performed before closing render view.
-	m_context->performCleanup();
 	m_lost = true;
 
 	// Ensure event queue doesn't contain stale events.
 	m_eventQueue.clear();
 
-	// Destroy frame resources.
+	// Destroy only size-dependent per-frame resources (the primary target owns swap chain image views);
+	// semaphores, command buffers and the query pool are size-independent and reused by create().
 	for (auto& frame : m_frames)
 	{
+		// GPU is idle (vkDeviceWaitIdle above); mark flying command buffers synced so they recycle.
+		for (auto commandBuffer : frame.flyingCommandBuffers)
+			commandBuffer->externalSynced();
+		frame.flyingCommandBuffers.resize(0);
+
 		if (frame.graphicsCommandBuffer)
 			frame.graphicsCommandBuffer->externalSynced();
 		if (frame.computeCommandBuffer)
 			frame.computeCommandBuffer->externalSynced();
-
-		frame.primaryTarget->destroy();
-		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
-		vkDestroySemaphore(m_context->getLogicalDevice(), frame.computeFinishedSemaphore, nullptr);
-	}
-	m_frames.clear();
-
-#if defined(T_USE_QUERY)
-	if (m_queryPool != 0)
-	{
-		vkDestroyQueryPool(m_context->getLogicalDevice(), m_queryPool, nullptr);
-		m_queryPool = 0;
-	}
-#endif
-
-	for (auto& imageAvailableSemaphore : m_imageAvailableSemaphores)
-	{
-		if (imageAvailableSemaphore != 0)
+		if (frame.primaryTarget)
 		{
-			vkDestroySemaphore(m_context->getLogicalDevice(), imageAvailableSemaphore, nullptr);
-			imageAvailableSemaphore = 0;
+			frame.primaryTarget->destroy();
+			frame.primaryTarget = nullptr;
 		}
 	}
 
-	//// Destroy pipelines.
-	//for (auto& pipeline : m_pipelines)
-	//	vkDestroyPipeline(m_context->getLogicalDevice(), pipeline.second.pipeline, nullptr);
-	//m_pipelines.clear();
-
-	// More pending cleanups since frames own render targets.
+	// Frames hold render-target references that need to drain via the deferred cleanup queue.
 	m_context->performCleanup();
 	m_counter = -1;
 
@@ -496,11 +516,19 @@ bool RenderViewVk::isFullScreen() const
 void RenderViewVk::showCursor()
 {
 	m_cursorVisible = true;
+#if defined(__LINUX__) || defined(__RPI__)
+	if (m_window)
+		m_window->showCursor();
+#endif
 }
 
 void RenderViewVk::hideCursor()
 {
 	m_cursorVisible = false;
+#if defined(__LINUX__) || defined(__RPI__)
+	if (m_window)
+		m_window->hideCursor();
+#endif
 }
 
 bool RenderViewVk::isCursorVisible() const
@@ -552,7 +580,7 @@ SystemWindow RenderViewVk::getSystemWindow()
 #if defined(_WIN32)
 	return SystemWindow(*m_window);
 #elif defined(__LINUX__) || defined(__RPI__)
-	return SystemWindow(m_window->getDisplay(), m_window->getWindow());
+ 	return SystemWindow::fromWayland(m_window->getDisplay(), (unsigned long)m_window->getSurface(), m_window->getWidth(), m_window->getHeight());
 #elif defined(__MAC__)
 	return SystemWindow(m_window->getView());
 #else
@@ -562,8 +590,7 @@ SystemWindow RenderViewVk::getSystemWindow()
 
 bool RenderViewVk::beginFrame()
 {
-	// Might reach here with a non-created instance, pending reset, so
-	// we need to make sure we have an instance first.
+	// Might reach here with a non-created instance (pending reset); ensure we have an instance first.
 	if (m_lost)
 		return false;
 
@@ -579,22 +606,31 @@ bool RenderViewVk::beginFrame()
 		m_context->getLogicalDevice(),
 		m_swapChain,
 		UINT64_MAX,
-		m_imageAvailableSemaphores[m_counter % sizeof_array(m_imageAvailableSemaphores)],
+		m_imageAvailableSemaphoreFree,
 		VK_NULL_HANDLE,
 		&m_currentImageIndex);
 	T_PROFILER_END();
-	if (result != VK_SUCCESS || m_currentImageIndex >= m_frames.size())
+	if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+	{
+		log::error << L"vkAcquireNextImageKHR failed; result = " << getHumanResult(result) << Endl;
 		return false;
+	}
+	if (m_currentImageIndex >= m_frames.size())
+	{
+		log::error << L"Acquired image index greater than allowed number of frames." << Endl;
+		return false;
+	}
+
+	// Swap the freshly signaled spare into the per-image slot and recycle the previous one; the present
+	// engine returning this image implies its prior submission (and the recycled semaphore) has retired.
+	std::swap(m_imageAvailableSemaphores[m_currentImageIndex], m_imageAvailableSemaphoreFree);
 
 	auto& frame = m_frames[m_currentImageIndex];
 	frame.markers.clear();
 
 	// Reset command buffers.
-	//
-	// #hack Lazy create since we don't know about rendering thread until beginFrame
-	// is called... This assumes no other thread will perform rendering during the
-	// life time of the render view.
-	//
+	// #hack Lazy create since we don't know the rendering thread until beginFrame; assumes no
+	// other thread performs rendering during the life time of the render view.
 
 	for (auto commandBuffer : frame.flyingCommandBuffers)
 		commandBuffer->wait();
@@ -611,17 +647,25 @@ bool RenderViewVk::beginFrame()
 			evt.type = RenderEventType::Lost;
 			m_eventQueue.push_back(evt);
 			m_lost = true;
+
+			log::error << L"Timeout while waiting on graphics command buffer to complete." << Endl;
 			return false;
 		}
 
 		if (!frame.graphicsCommandBuffer->reset())
+		{
+			log::error << L"Failed to reset graphics command buffer." << Endl;
 			return false;
+		}
 	}
 	else
 	{
 		frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
 		if (!frame.graphicsCommandBuffer)
+		{
+			log::error << L"Failed to acquire command buffer from graphics queue." << Endl;
 			return false;
+		}
 	}
 	T_PROFILER_END();
 
@@ -636,32 +680,46 @@ bool RenderViewVk::beginFrame()
 			evt.type = RenderEventType::Lost;
 			m_eventQueue.push_back(evt);
 			m_lost = true;
+
+			log::error << L"Timeout while waiting on compute command buffer to complete." << Endl;
 			return false;
 		}
 
 		if (!frame.computeCommandBuffer->reset())
+		{
+			log::error << L"Failed to reset compute command buffer." << Endl;
 			return false;
+		}
 	}
 	else
 	{
 		frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
 		if (!frame.computeCommandBuffer)
+		{
+			log::error << L"Failed to acquire command buffer from compute queue." << Endl;
 			return false;
+		}
 	}
 	T_PROFILER_END();
 
 #if defined(T_USE_QUERY)
-	// Reset time queries.
-	const int32_t queryFrom = ((m_counter - 1) % m_frames.size()) * 2 * T_QUERY_SEGMENT_SIZE;
+	// Reset time queries. Keyed on the acquired image index (always in [0, m_frames.size())) so it indexes
+	// the pool directly and matches the per-image command buffers whose prior GPU work was awaited above.
+	const int32_t queryFrom = (int32_t)m_currentImageIndex * 2 * T_QUERY_SEGMENT_SIZE;
 	vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, queryFrom, 2 * T_QUERY_SEGMENT_SIZE);
 	m_nextQueryIndex = queryFrom;
 	m_lastQueryIndex = queryFrom + 2 * T_QUERY_SEGMENT_SIZE;
+	m_openTimeQueries.resize(0);
 #endif
 
 	// Reset misc counters.
 	m_passCount = 0;
 	m_drawCalls = 0;
 	m_primitiveCount = 0;
+
+	// No asynchronous compute batch open for the new frame.
+	frame.computeRecordValue = 0;
+	frame.computeSubmittedValue = m_timelineSemaphoreValue;
 	return true;
 }
 
@@ -670,9 +728,14 @@ void RenderViewVk::endFrame()
 	T_PROFILER_SCOPE(L"RenderViewVk::endFrame");
 	auto& frame = m_frames[m_currentImageIndex];
 
-	frame.boundPipeline = 0;
+	frame.boundGraphicsPipeline = 0;
+	frame.boundComputePipeline = 0;
+	frame.boundAsyncComputePipeline = 0;
 	frame.boundIndexBuffer = BufferViewVk();
 	frame.boundVertexBuffer = BufferViewVk();
+
+	// Submit any upload command buffers.
+	m_context->performUploads();
 
 	// Prepare primary color for presentation.
 	frame.primaryTarget->getColorTargetVk(0)->prepareForPresentation(frame.graphicsCommandBuffer);
@@ -685,7 +748,7 @@ void RenderViewVk::endFrame()
 
 	// Submit graphics command buffer.
 	frame.graphicsCommandBuffer->submit(
-		{ m_imageAvailableSemaphores[m_counter % sizeof_array(m_imageAvailableSemaphores)] },
+		{ m_imageAvailableSemaphores[m_currentImageIndex] },
 		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT },
 		frame.renderFinishedSemaphore);
 
@@ -710,7 +773,6 @@ void RenderViewVk::present()
 	T_PROFILER_SCOPE(L"RenderViewVk::present");
 
 	auto& frame = m_frames[m_currentImageIndex];
-	VkResult result;
 
 	// Queue presentation of current primary target.
 	const VkSemaphore waitSemaphores[] = { frame.computeFinishedSemaphore, frame.renderFinishedSemaphore };
@@ -723,7 +785,8 @@ void RenderViewVk::present()
 		.pImageIndices = &m_currentImageIndex,
 		.pResults = nullptr
 	};
-	if ((result = m_presentQueue->present(pi)) != VK_SUCCESS)
+	VkResult result = m_presentQueue->present(pi);
+	if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 	{
 		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (3)." << Endl;
 
@@ -1111,10 +1174,10 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 void RenderViewVk::compute(IProgram* program, const int32_t* workSize, bool asynchronous)
 {
 	ProgramVk* p = static_cast< ProgramVk* >(program);
-	const auto& frame = m_frames[m_currentImageIndex];
+	auto& frame = m_frames[m_currentImageIndex];
 	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
 
-	if (!validateComputePipeline(commandBuffer, p))
+	if (!validateComputePipeline(commandBuffer, p, asynchronous))
 		return;
 
 	if (!p->validate(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, nullptr))
@@ -1127,6 +1190,11 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize, bool asyn
 		(workSize[0] + lwgs[0] - 1) / lwgs[0],
 		(workSize[1] + lwgs[1] - 1) / lwgs[1],
 		(workSize[2] + lwgs[2] - 1) / lwgs[2]);
+
+	// Reserve (or extend) the open asynchronous compute batch so a subsequent
+	// signalAsynchronousCompute fences this work with a single timeline value.
+	if (asynchronous)
+		openComputeBatch(frame);
 }
 
 void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuffer, uint32_t workOffset)
@@ -1135,7 +1203,7 @@ void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuf
 	ProgramVk* p = static_cast< ProgramVk* >(program);
 	const auto& frame = m_frames[m_currentImageIndex];
 
-	if (!validateComputePipeline(frame.graphicsCommandBuffer, p))
+	if (!validateComputePipeline(frame.graphicsCommandBuffer, p, false))
 		return;
 
 	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, nullptr))
@@ -1147,9 +1215,10 @@ void RenderViewVk::computeIndirect(IProgram* program, const IBufferView* workBuf
 		wbv->getVkBufferOffset() + workOffset);
 }
 
-void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip)
+void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip, bool asynchronous)
 {
 	const auto& frame = m_frames[m_currentImageIndex];
+	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
 	if (from == Stage::Compute && to == Stage::Indirect)
 	{
 		VkMemoryBarrier mb = {};
@@ -1159,7 +1228,7 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 		mb.dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
 
 		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
+			*commandBuffer,
 			convertStage(from),
 			convertStage(to),
 			0,
@@ -1179,7 +1248,7 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 		mb.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
 		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
+			*commandBuffer,
 			convertStage(from),
 			convertStage(to),
 			0,
@@ -1210,7 +1279,7 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 		imb.subresourceRange.layerCount = 1;
 
 		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
+			*commandBuffer,
 			convertStage(from),
 			convertStage(to),
 			0,
@@ -1230,8 +1299,32 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 		mb.dstAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR;
 
 		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
+			*commandBuffer,
 			convertStage(from),
+			convertStage(to),
+			0,
+			1,
+			&mb,
+			0,
+			nullptr,
+			0,
+			nullptr);
+	}
+	else if (from == Stage::AccelerationStructureUpdate)
+	{
+		// Acceleration structure build (top or bottom level) made visible to subsequent reads
+		// in the destination shader stage(s). Used to fence a TLAS/BLAS build on the graphics
+		// queue ahead of the ray tracing passes that read it; without this a consumer can read
+		// the previous frame's structure.
+		VkMemoryBarrier mb = {};
+		mb.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+		mb.pNext = nullptr;
+		mb.srcAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR;
+		mb.dstAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR;
+
+		vkCmdPipelineBarrier(
+			*commandBuffer,
+			VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
 			convertStage(to),
 			0,
 			1,
@@ -1245,7 +1338,7 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 	{
 		// No memory access; only add an execution barrier.
 		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
+			*commandBuffer,
 			convertStage(from),
 			convertStage(to),
 			0,
@@ -1263,17 +1356,18 @@ void RenderViewVk::synchronize()
 	T_PROFILER_SCOPE(L"RenderViewVk::synchronize");
 	auto& frame = m_frames[m_currentImageIndex];
 
+	++m_timelineSemaphoreValue;
+
 	// Submit compute command buffer.
-	frame.computeCommandBuffer->submit(
-		{},
-		{},
-		frame.computeFinishedSemaphore);
+	frame.computeCommandBuffer->submitSignal(
+		m_timelineSemaphore,
+		m_timelineSemaphoreValue);
 
 	// Submit graphics command buffer; wait until compute queue has finished.
-	frame.graphicsCommandBuffer->submit(
-		{ frame.computeFinishedSemaphore },
-		{ VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT },
-		VK_NULL_HANDLE);
+	frame.graphicsCommandBuffer->submitWait(
+		m_timelineSemaphore,
+		m_timelineSemaphoreValue,
+		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
 
 	// Defer release at end of frame.
 	frame.flyingCommandBuffers.push_back(frame.computeCommandBuffer);
@@ -1282,6 +1376,110 @@ void RenderViewVk::synchronize()
 	// Allocate new command buffers.
 	frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
 	frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
+
+	// Both buffers were submitted and replaced; invalidate the graphics bind caches so work rebinds into
+	// the fresh buffers (the compute pipeline cache is command buffer aware and rebinds itself).
+	frame.boundGraphicsPipeline = 0;
+	frame.boundIndexBuffer = BufferViewVk();
+	frame.boundVertexBuffer = BufferViewVk();
+
+#if defined(T_USE_QUERY)
+	rerecordTimeQueryReset(frame);
+#endif
+
+	// All asynchronous compute work has been flushed.
+	frame.computeRecordValue = 0;
+	frame.computeSubmittedValue = m_timelineSemaphoreValue;
+}
+
+ComputeHandle RenderViewVk::signalAsynchronousCompute()
+{
+	T_PROFILER_SCOPE(L"RenderViewVk::signalAsynchronousCompute");
+	auto& frame = m_frames[m_currentImageIndex];
+
+	// Nothing recorded since the last fence; return the most recently submitted value so a subsequent
+	// wait still observes earlier asynchronous work (an all-zero value is treated as invalid).
+	if (frame.computeRecordValue == 0)
+		return { frame.computeSubmittedValue };
+
+	const uint64_t value = frame.computeRecordValue;
+	frame.computeRecordValue = 0;
+	frame.computeSubmittedValue = value;
+
+	// Shared graphics/compute queue family: both buffers submit to the same VkQueue in order (compute
+	// before graphics), so ordering is implicit; avoid splitting the compute command buffer here.
+	if (m_context->getComputeQueue()->getQueueIndex() != m_context->getGraphicsQueue()->getQueueIndex())
+	{
+		// Dedicated compute queue; flush the open compute batch signalling its timeline value and
+		// continue recording subsequent asynchronous work into a fresh buffer.
+		frame.computeCommandBuffer->submitSignal(m_timelineSemaphore, value);
+		frame.flyingCommandBuffers.push_back(frame.computeCommandBuffer);
+		frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
+	}
+
+	return { value };
+}
+
+void RenderViewVk::waitAsynchronousCompute(ComputeHandle handle)
+{
+	T_PROFILER_SCOPE(L"RenderViewVk::waitAsynchronousCompute");
+	if (!handle)
+		return;
+
+	auto& frame = m_frames[m_currentImageIndex];
+
+	// Shared graphics/compute queue family: both buffers submit to the same VkQueue in order, so a
+	// pipeline barrier in the graphics buffer suffices to make compute results visible; no split needed.
+	if (m_context->getComputeQueue()->getQueueIndex() == m_context->getGraphicsQueue()->getQueueIndex())
+	{
+		const VkMemoryBarrier mb = {
+			.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
+			.pNext = nullptr,
+			.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT | VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR,
+			.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR
+		};
+		vkCmdPipelineBarrier(
+			*frame.graphicsCommandBuffer,
+			VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT | VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
+			VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+			0,
+			1,
+			&mb,
+			0,
+			nullptr,
+			0,
+			nullptr);
+		return;
+	}
+
+	// Dedicated compute queue; if the requested value has not been signalled yet, flush the open
+	// compute batch signalling it now.
+	if (handle.value > frame.computeSubmittedValue)
+	{
+		frame.computeCommandBuffer->submitSignal(m_timelineSemaphore, handle.value);
+		frame.flyingCommandBuffers.push_back(frame.computeCommandBuffer);
+		frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
+		frame.computeSubmittedValue = handle.value;
+		frame.computeRecordValue = 0;
+	}
+
+	// Split the graphics queue so that all subsequent graphics work waits on the value.
+	frame.graphicsCommandBuffer->submitWait(
+		m_timelineSemaphore,
+		handle.value,
+		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
+	frame.flyingCommandBuffers.push_back(frame.graphicsCommandBuffer);
+	frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
+
+	// Graphics command buffer swapped; invalidate the graphics bind caches so the next draw rebinds into
+	// the fresh buffer (the compute pipeline cache is command buffer aware and rebinds itself).
+	frame.boundGraphicsPipeline = 0;
+	frame.boundIndexBuffer = BufferViewVk();
+	frame.boundVertexBuffer = BufferViewVk();
+
+#if defined(T_USE_QUERY)
+	rerecordTimeQueryReset(frame);
+#endif
 }
 
 bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
@@ -1381,16 +1579,32 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 	return true;
 }
 
-void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances)
+void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const AlignedVector< IAccelerationStructure::Instance >& instances, bool asynchronous)
 {
+	auto& frame = m_frames[m_currentImageIndex];
+	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
+
 	AccelerationStructureVk* as = mandatory_non_null_type_cast< AccelerationStructureVk* >(accelerationStructure);
-	as->writeInstances(m_frames[m_currentImageIndex].graphicsCommandBuffer, instances);
+	as->writeInstances(commandBuffer, instances);
+
+	// Reserve (or extend) the open asynchronous compute batch so a subsequent
+	// signalAsynchronousCompute fences this work with a single timeline value.
+	if (asynchronous)
+		openComputeBatch(frame);
 }
 
-void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
+void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous)
 {
+	auto& frame = m_frames[m_currentImageIndex];
+	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
+
 	AccelerationStructureVk* as = mandatory_non_null_type_cast< AccelerationStructureVk* >(accelerationStructure);
-	as->writeGeometry(m_frames[m_currentImageIndex].graphicsCommandBuffer, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives);
+	as->writeGeometry(commandBuffer, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, rebuild);
+
+	// Reserve (or extend) the open asynchronous compute batch so a subsequent
+	// signalAsynchronousCompute fences this work with a single timeline value.
+	if (asynchronous)
+		openComputeBatch(frame);
 }
 
 int32_t RenderViewVk::beginTimeQuery()
@@ -1403,6 +1617,10 @@ int32_t RenderViewVk::beginTimeQuery()
 	const int32_t query = m_nextQueryIndex;
 	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, m_queryPool, query + 0);
 	m_nextQueryIndex += 2;
+
+	// Track the pair as open (begin written, end pending); a split before endTimeQuery must re-reset
+	// the end-half into the fresh command buffer (see rerecordTimeQueryReset).
+	m_openTimeQueries.push_back(query);
 	return query;
 #else
 	return 0;
@@ -1414,6 +1632,11 @@ void RenderViewVk::endTimeQuery(int32_t query)
 #if defined(T_USE_QUERY)
 	auto& frame = m_frames[m_currentImageIndex];
 	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 1);
+
+	// Pair closed; both halves written so a subsequent split no longer needs to reset it.
+	const auto it = std::find(m_openTimeQueries.begin(), m_openTimeQueries.end(), query);
+	if (it != m_openTimeQueries.end())
+		m_openTimeQueries.erase(it);
 #endif
 }
 
@@ -1438,7 +1661,7 @@ bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, doub
 #endif
 }
 
-void RenderViewVk::pushMarker(const std::wstring& marker)
+void RenderViewVk::pushMarker(bool asynchronous, const std::wstring& marker)
 {
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_haveDebugMarkers)
@@ -1446,13 +1669,14 @@ void RenderViewVk::pushMarker(const std::wstring& marker)
 		auto& frame = m_frames[m_currentImageIndex];
 		if (!marker.empty())
 		{
+			CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
 			frame.markers.push_back(wstombs(marker));
 
 			const VkDebugUtilsLabelEXT dul = {
 				.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
 				.pLabelName = frame.markers.back().c_str()
 			};
-			vkCmdBeginDebugUtilsLabelEXT(*frame.graphicsCommandBuffer, &dul);
+			vkCmdBeginDebugUtilsLabelEXT(*commandBuffer, &dul);
 
 			frame.markerStack.push_back(true);
 		}
@@ -1462,32 +1686,37 @@ void RenderViewVk::pushMarker(const std::wstring& marker)
 #endif
 }
 
-void RenderViewVk::popMarker()
+void RenderViewVk::popMarker(bool asynchronous)
 {
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_haveDebugMarkers)
 	{
 		auto& frame = m_frames[m_currentImageIndex];
 		if (frame.markerStack.back())
-			vkCmdEndDebugUtilsLabelEXT(*frame.graphicsCommandBuffer);
+		{
+			CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
+			vkCmdEndDebugUtilsLabelEXT(*commandBuffer);
+		}
 		frame.markerStack.pop_back();
 	}
 #endif
 }
 
-void RenderViewVk::writeMarker(const std::wstring& marker)
+void RenderViewVk::writeMarker(bool asynchronous, const std::wstring& marker)
 {
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_haveDebugMarkers)
 	{
 		auto& frame = m_frames[m_currentImageIndex];
+		CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
+
 		frame.markers.push_back(wstombs(marker));
 
 		const VkDebugUtilsLabelEXT dul = {
 			.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
 			.pLabelName = frame.markers.back().c_str()
 		};
-		vkCmdInsertDebugUtilsLabelEXT(*frame.graphicsCommandBuffer, &dul);
+		vkCmdInsertDebugUtilsLabelEXT(*commandBuffer, &dul);
 	}
 #endif
 }
@@ -1499,10 +1728,14 @@ void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
 	outStatistics.primitiveCount = m_primitiveCount;
 }
 
+CommandBuffer* RenderViewVk::getGraphicsCommandBuffer()
+{
+	auto& frame = m_frames[m_currentImageIndex];
+	return frame.graphicsCommandBuffer;
+}
+
 bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks, bool allowHDR)
 {
-	vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &m_deviceProperties);
-
 	log::debug << L"Vulkan; Render view create:" << Endl;
 	log::debug << L"\twidth " << width << Endl;
 	log::debug << L"\theight " << height << Endl;
@@ -1510,7 +1743,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	log::debug << L"\tmultiSampleShading " << multiSampleShading << Endl;
 	log::debug << L"\tvblanks " << vblanks << Endl;
 	log::debug << L"\tallowHDR " << allowHDR << Endl;
-	log::debug << L"\ttimestampPeriod " << m_deviceProperties.limits.timestampPeriod << Endl;
 
 	// In case we fail to create make sure we're lost.
 	m_lost = true;
@@ -1518,7 +1750,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	m_multiSampleShading = multiSampleShading;
 	m_vblanks = vblanks;
 	m_allowHDR = allowHDR;
-	m_hdr = false;
 
 	// Do not fail if requested size, assume it will get reset later.
 	if (width == 0 || height == 0)
@@ -1527,7 +1758,161 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		return true;
 	}
 
-	// Clamp surface size to physical device limits.
+	// Populate cached surface-static state once per surface; subsequent resets reuse it.
+	if (!m_surfaceCacheValid)
+	{
+		vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &m_deviceProperties);
+		log::debug << L"\ttimestampPeriod " << m_deviceProperties.limits.timestampPeriod << Endl;
+
+		// Find present queue family.
+		uint32_t queueFamilyCount = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(m_context->getPhysicalDevice(), &queueFamilyCount, 0);
+
+		uint32_t presentQueueIndex = ~0u;
+		for (uint32_t i = 0; i < queueFamilyCount; ++i)
+		{
+			VkBool32 supportsPresent = VK_FALSE;
+			vkGetPhysicalDeviceSurfaceSupportKHR(m_context->getPhysicalDevice(), i, m_surface, &supportsPresent);
+			if (supportsPresent)
+			{
+				presentQueueIndex = i;
+				break;
+			}
+		}
+		if (presentQueueIndex == ~0u)
+		{
+			log::error << L"Failed to create Vulkan; no suitable present queue found." << Endl;
+			return false;
+		}
+		m_presentQueueFamilyIndex = presentQueueIndex;
+
+		if (m_context->getGraphicsQueue()->getQueueIndex() != presentQueueIndex)
+			m_presentQueue = Queue::create(m_context, presentQueueIndex);
+		else
+			m_presentQueue = m_context->getGraphicsQueue();
+
+		// Determine primary target color format/space.
+		uint32_t surfaceFormatCount = 0;
+		vkGetPhysicalDeviceSurfaceFormatsKHR(m_context->getPhysicalDevice(), m_surface, &surfaceFormatCount, nullptr);
+		if (surfaceFormatCount == 0)
+		{
+			log::error << L"Failed to create Vulkan; no surface formats." << Endl;
+			return false;
+		}
+
+		AutoArrayPtr< VkSurfaceFormatKHR > surfaceFormats(new VkSurfaceFormatKHR[surfaceFormatCount]);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(m_context->getPhysicalDevice(), m_surface, &surfaceFormatCount, surfaceFormats.ptr());
+
+		VkFormat colorFormat = VK_FORMAT_UNDEFINED;
+		VkColorSpaceKHR colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+		bool hdr = false;
+		if (allowHDR)
+		{
+			for (uint32_t i = 0; i < surfaceFormatCount; ++i)
+			{
+				if (surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_ST2084_EXT || surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_HLG_EXT)
+				{
+					log::debug << L"Using HDR swap chain color space." << Endl;
+					colorFormat = surfaceFormats[i].format;
+					colorSpace = surfaceFormats[i].colorSpace;
+					hdr = true;
+					break;
+				}
+			}
+		}
+		if (colorFormat == VK_FORMAT_UNDEFINED)
+		{
+			for (uint32_t i = 0; i < surfaceFormatCount; ++i)
+			{
+				if (surfaceFormats[i].format == VK_FORMAT_R8G8B8A8_UNORM || surfaceFormats[i].format == VK_FORMAT_B8G8R8A8_UNORM)
+				{
+					log::debug << L"Using SDR swap chain color space." << Endl;
+					colorFormat = surfaceFormats[i].format;
+					colorSpace = surfaceFormats[i].colorSpace;
+					hdr = false;
+					break;
+				}
+			}
+		}
+		if (colorFormat == VK_FORMAT_UNDEFINED)
+		{
+			if (surfaceFormatCount > 0)
+			{
+				log::debug << L"Using SDR swap chain color space." << Endl;
+				colorFormat = surfaceFormats[0].format;
+				colorSpace = surfaceFormats[0].colorSpace;
+				hdr = false;
+			}
+		}
+		m_colorFormat = colorFormat;
+		m_colorSpace = colorSpace;
+		m_hdr = hdr;
+
+		// Determine presentation mode by enumerating once.
+		uint32_t presentModeCount = 0;
+		vkGetPhysicalDeviceSurfacePresentModesKHR(m_context->getPhysicalDevice(), m_surface, &presentModeCount, nullptr);
+		AutoArrayPtr< VkPresentModeKHR > presentModes(new VkPresentModeKHR[presentModeCount]);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(m_context->getPhysicalDevice(), m_surface, &presentModeCount, presentModes.ptr());
+
+		const auto hasMode = [&](VkPresentModeKHR m) {
+			for (uint32_t i = 0; i < presentModeCount; ++i)
+				if (presentModes[i] == m)
+					return true;
+			return false;
+		};
+
+		VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;
+#if defined(__IOS__)
+		if (hasMode(VK_PRESENT_MODE_MAILBOX_KHR))
+			presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
+#else
+		if (vblanks <= 0)
+		{
+			if (hasMode(VK_PRESENT_MODE_MAILBOX_KHR))
+				presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
+			else if (hasMode(VK_PRESENT_MODE_FIFO_RELAXED_KHR))
+				presentationMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
+		}
+#endif
+		if (vblanks <= 0)
+		{
+			if (hasMode(VK_PRESENT_MODE_IMMEDIATE_KHR))
+				presentationMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+		}
+
+		if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
+			log::debug << L"Using FIFO presentation mode." << Endl;
+		else if (presentationMode == VK_PRESENT_MODE_FIFO_RELAXED_KHR)
+			log::debug << L"Using FIFO (relaxed) presentation mode." << Endl;
+		else if (presentationMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
+			log::debug << L"Using IMMEDIATE presentation mode." << Endl;
+		else if (presentationMode == VK_PRESENT_MODE_MAILBOX_KHR)
+			log::debug << L"Using MAILBOX presentation mode." << Endl;
+
+		m_presentMode = presentationMode;
+
+		// Check if debug marker extension is available; this also never changes for the device.
+		m_haveDebugMarkers = false;
+#if !defined(__ANDROID__) && !defined(__IOS__)
+		uint32_t extensionCount;
+		vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, nullptr);
+		AlignedVector< VkExtensionProperties > extensions(extensionCount);
+		vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, extensions.ptr());
+		for (auto extension : extensions)
+		{
+			if (std::strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
+			{
+				T_DEBUG(L"Found debug marker extension; debug markers enabled.");
+				m_haveDebugMarkers = true;
+				break;
+			}
+		}
+#endif
+
+		m_surfaceCacheValid = true;
+	}
+
+	// Clamp surface size to physical device limits (capabilities can change per resize, so always re-query).
 	VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &surfaceCapabilities);
 
@@ -1535,78 +1920,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	width = std::min(surfaceCapabilities.maxImageExtent.width, width);
 	height = std::max(surfaceCapabilities.minImageExtent.height, height);
 	height = std::min(surfaceCapabilities.maxImageExtent.height, height);
-
-	// Find present queue.
-	uint32_t queueFamilyCount = 0;
-	vkGetPhysicalDeviceQueueFamilyProperties(m_context->getPhysicalDevice(), &queueFamilyCount, 0);
-
-	AutoArrayPtr< VkQueueFamilyProperties > queueFamilyProperties(new VkQueueFamilyProperties[queueFamilyCount]);
-	vkGetPhysicalDeviceQueueFamilyProperties(m_context->getPhysicalDevice(), &queueFamilyCount, queueFamilyProperties.ptr());
-
-	uint32_t presentQueueIndex = ~0;
-	for (uint32_t i = 0; i < queueFamilyCount; ++i)
-	{
-		VkBool32 supportsPresent = VK_FALSE;
-		vkGetPhysicalDeviceSurfaceSupportKHR(m_context->getPhysicalDevice(), i, m_surface, &supportsPresent);
-		if (supportsPresent)
-		{
-			presentQueueIndex = i;
-			break;
-		}
-	}
-	if (presentQueueIndex == ~0)
-	{
-		log::error << L"Failed to create Vulkan; no suitable present queue found." << Endl;
-		return false;
-	}
-
-	if (m_context->getGraphicsQueue()->getQueueIndex() != presentQueueIndex)
-		m_presentQueue = Queue::create(m_context, presentQueueIndex);
-	else
-		m_presentQueue = m_context->getGraphicsQueue();
-
-	// Determine primary target color format/space.
-	uint32_t surfaceFormatCount = 0;
-	vkGetPhysicalDeviceSurfaceFormatsKHR(m_context->getPhysicalDevice(), m_surface, &surfaceFormatCount, nullptr);
-	if (surfaceFormatCount == 0)
-	{
-		log::error << L"Failed to create Vulkan; no surface formats." << Endl;
-		return false;
-	}
-
-	AutoArrayPtr< VkSurfaceFormatKHR > surfaceFormats(new VkSurfaceFormatKHR[surfaceFormatCount]);
-	vkGetPhysicalDeviceSurfaceFormatsKHR(m_context->getPhysicalDevice(), m_surface, &surfaceFormatCount, surfaceFormats.ptr());
-
-	VkFormat colorFormat = VK_FORMAT_UNDEFINED;
-	VkColorSpaceKHR colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-	if (allowHDR)
-	{
-		for (uint32_t i = 0; i < surfaceFormatCount; ++i)
-		{
-			if (surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_ST2084_EXT || surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_HLG_EXT)
-			{
-				log::info << L"Using HDR swap chain color space." << Endl;
-				colorFormat = surfaceFormats[i].format;
-				colorSpace = surfaceFormats[i].colorSpace;
-				m_hdr = true;
-				break;
-			}
-		}
-	}
-	if (colorFormat == VK_FORMAT_UNDEFINED)
-	{
-		for (uint32_t i = 0; i < surfaceFormatCount; ++i)
-		{
-			if (surfaceFormats[i].format != VK_FORMAT_B8G8R8A8_SRGB)
-			{
-				log::info << L"Using SDR swap chain color space." << Endl;
-				colorFormat = surfaceFormats[i].format;
-				colorSpace = surfaceFormats[i].colorSpace;
-				m_hdr = false;
-				break;
-			}
-		}
-	}
 
 	VkExtent2D surfaceResolution = surfaceCapabilities.currentExtent;
 	if (surfaceResolution.width <= -1)
@@ -1619,39 +1932,9 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	if (surfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR)
 		preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
 
-	// Determine presentation mode and desired number of images.
-	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;
-
-#if defined(__IOS__)
-	if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
-	{
-		presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
-		desiredImageCount = 3;
-	}
-#else
-	if (vblanks <= 0)
-	{
-		if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
-			presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
-		else if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_FIFO_RELAXED_KHR))
-			presentationMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
-	}
-#endif
-
-	if (vblanks <= 0)
-	{
-		if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_IMMEDIATE_KHR))
-			presentationMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
-	}
-
-	if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
-		log::debug << L"Using FIFO presentation mode." << Endl;
-	else if (presentationMode == VK_PRESENT_MODE_FIFO_RELAXED_KHR)
-		log::debug << L"Using FIFO (relaxed) presentation mode." << Endl;
-	else if (presentationMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
-		log::debug << L"Using IMMEDIATE presentation mode." << Endl;
-	else if (presentationMode == VK_PRESENT_MODE_MAILBOX_KHR)
-		log::debug << L"Using MAILBOX presentation mode." << Endl;
+	const VkFormat colorFormat = m_colorFormat;
+	const VkColorSpaceKHR colorSpace = m_colorSpace;
+	const VkPresentModeKHR presentationMode = m_presentMode;
 
 	// Check so desired image count is supported.
 	uint32_t desiredImageCount = 3;
@@ -1694,9 +1977,24 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		return false;
 	}
 
-	// Destroy previous swap chain.
+	// Destroy previous swap chain. Old image-available semaphores may hold a pending, unconsumed signal
+	// (VUID-vkAcquireNextImageKHR-semaphore-01779), so retire them and defer destruction to teardown (device idle).
 	if (scci.oldSwapchain != 0)
+	{
 		vkDestroySwapchainKHR(m_context->getLogicalDevice(), scci.oldSwapchain, 0);
+
+		for (auto& imageAvailableSemaphore : m_imageAvailableSemaphores)
+		{
+			if (imageAvailableSemaphore != 0)
+				m_retiredImageAvailableSemaphores.push_back(imageAvailableSemaphore);
+		}
+		m_imageAvailableSemaphores.clear();
+		if (m_imageAvailableSemaphoreFree != 0)
+		{
+			m_retiredImageAvailableSemaphores.push_back(m_imageAvailableSemaphoreFree);
+			m_imageAvailableSemaphoreFree = 0;
+		}
+	}
 
 	// Get primary color images.
 	uint32_t imageCount = 0;
@@ -1707,37 +2005,84 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	log::debug << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
-	for (int32_t i = 0; i < sizeof_array(m_imageAvailableSemaphores); ++i)
+	// One binary semaphore per swap chain image plus a spare fed to the next acquire, then swapped into the
+	// per-image slot (see beginFrame); slots recycle only when the swap chain returns the image.
+	if (m_imageAvailableSemaphores.empty())
 	{
+		m_imageAvailableSemaphores.resize(imageCount, 0);
+		for (uint32_t i = 0; i < imageCount; ++i)
+		{
+			const VkSemaphoreCreateInfo sci = {
+				.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
+			};
+			if (vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS)
+				return false;
+			m_context->setObjectDebugName(L"m_imageAvailableSemaphore", (uint64_t)m_imageAvailableSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE);
+		}
+
 		const VkSemaphoreCreateInfo sci = {
 			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
 		};
-		if (vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS)
+		if (vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphoreFree) != VK_SUCCESS)
 			return false;
-		setObjectDebugName(m_context->getLogicalDevice(), L"m_imageAvailableSemaphore", (uint64_t)m_imageAvailableSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE);
+		m_context->setObjectDebugName(L"m_imageAvailableSemaphoreFree", (uint64_t)m_imageAvailableSemaphoreFree, VK_OBJECT_TYPE_SEMAPHORE);
+	}
+
+	// If the number of swap chain images changed (rare), throw away any per-image resources that depend on it.
+	if (!m_frames.empty() && m_frames.size() != imageCount)
+	{
+		for (auto& frame : m_frames)
+		{
+			if (frame.graphicsCommandBuffer)
+				frame.graphicsCommandBuffer->externalSynced();
+			if (frame.computeCommandBuffer)
+				frame.computeCommandBuffer->externalSynced();
+			if (frame.primaryTarget)
+				frame.primaryTarget->destroy();
+			if (frame.renderFinishedSemaphore)
+				vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
+			if (frame.computeFinishedSemaphore)
+				vkDestroySemaphore(m_context->getLogicalDevice(), frame.computeFinishedSemaphore, nullptr);
+		}
+		m_frames.clear();
+
+#if defined(T_USE_QUERY)
+		if (m_queryPool != 0)
+		{
+			vkDestroyQueryPool(m_context->getLogicalDevice(), m_queryPool, nullptr);
+			m_queryPool = 0;
+		}
+#endif
 	}
 
 #if defined(T_USE_QUERY)
-	// Create time query pool.
-	const VkQueryPoolCreateInfo qpci = {
-		.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO,
-		.pNext = nullptr,
-		.queryType = VK_QUERY_TYPE_TIMESTAMP,
-		.queryCount = imageCount * 2 * T_QUERY_SEGMENT_SIZE
-	};
-	if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
-		return false;
-
-	// Ensure all queries are reset to silence validation layer.
+	// Create time query pool sized to imageCount; reused across resets unless imageCount changes.
+	if (m_queryPool == 0)
 	{
-		Ref< CommandBuffer > commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"RenderViewVk::create");
-		vkCmdResetQueryPool(*commandBuffer, m_queryPool, 0, imageCount * 2 * T_QUERY_SEGMENT_SIZE);
-		if (!commandBuffer->submitAndWait())
+		const VkQueryPoolCreateInfo qpci = {
+			.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO,
+			.pNext = nullptr,
+			.queryType = VK_QUERY_TYPE_TIMESTAMP,
+			.queryCount = imageCount * 2 * T_QUERY_SEGMENT_SIZE
+		};
+		if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
 			return false;
+
+		// Freshly created queries are "uninitialized" until a reset is queue-submitted and observed, but
+		// ProfileReportRenderBlock reads results inline before endFrame's reset; do one up-front reset here.
+		{
+			Ref< CommandBuffer > commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"RenderViewVk::create");
+			vkCmdResetQueryPool(*commandBuffer, m_queryPool, 0, imageCount * 2 * T_QUERY_SEGMENT_SIZE);
+			if (!commandBuffer->submitAndWait())
+				return false;
+		}
+
+		m_nextQueryIndex = 0;
+		m_lastQueryIndex = 0;
 	}
 #endif
 
-	// Create primary depth target.
+	// Create primary depth target (size-dependent, always rebuilt).
 	Ref< RenderTargetDepthVk > primaryDepth = new RenderTargetDepthVk(m_context);
 	if (!primaryDepth->createPrimary(
 			width,
@@ -1753,19 +2098,30 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 			L"Primary Depth"))
 		return false;
 
-	// Create frame resources.
+	// Create / refresh frame resources; per-frame semaphores are kept across resets, only the primary
+	// target (which owns the swap chain image view) is rebuilt with the new dimensions.
+	const bool freshFrames = m_frames.empty();
 	m_frames.resize(imageCount);
 	for (uint32_t i = 0; i < imageCount; ++i)
 	{
 		auto& frame = m_frames[i];
 
-		const VkSemaphoreCreateInfo sci = {
-			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
-		};
-		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.renderFinishedSemaphore);
-		setObjectDebugName(m_context->getLogicalDevice(), L"frame.renderFinishedSemaphore", (uint64_t)frame.renderFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
-		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.computeFinishedSemaphore);
-		setObjectDebugName(m_context->getLogicalDevice(), L"frame.computeFinishedSemaphore", (uint64_t)frame.computeFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
+		if (freshFrames || frame.renderFinishedSemaphore == 0)
+		{
+			const VkSemaphoreCreateInfo createInfo = {
+				.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
+			};
+			vkCreateSemaphore(m_context->getLogicalDevice(), &createInfo, nullptr, &frame.renderFinishedSemaphore);
+			m_context->setObjectDebugName(L"frame.renderFinishedSemaphore", (uint64_t)frame.renderFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
+			vkCreateSemaphore(m_context->getLogicalDevice(), &createInfo, nullptr, &frame.computeFinishedSemaphore);
+			m_context->setObjectDebugName(L"frame.computeFinishedSemaphore", (uint64_t)frame.computeFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
+		}
+
+		frame.boundGraphicsPipeline = 0;
+		frame.boundComputePipeline = 0;
+		frame.boundAsyncComputePipeline = 0;
+		frame.boundIndexBuffer = BufferViewVk();
+		frame.boundVertexBuffer = BufferViewVk();
 
 		static uint32_t primaryInstances = 0;
 		frame.primaryTarget = new RenderTargetSetVk(m_context, primaryInstances);
@@ -1780,27 +2136,26 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 			return false;
 	}
 
-	// Check if debug marker extension is available.
-	m_haveDebugMarkers = false;
-#if !defined(__ANDROID__) && !defined(__IOS__)
-	uint32_t extensionCount;
-	vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, nullptr);
-	AlignedVector< VkExtensionProperties > extensions(extensionCount);
-	vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, extensions.ptr());
-	for (auto extension : extensions)
+	// Timeline semaphore for synchronizing async compute and graphics queues; size-independent.
+	if (m_timelineSemaphore == VK_NULL_HANDLE)
 	{
-		if (std::strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
-		{
-			T_DEBUG(L"Found debug marker extension; debug markers enabled.");
-			m_haveDebugMarkers = true;
-			break;
-		}
+		const VkSemaphoreTypeCreateInfo typeInfo = {
+			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO,
+			.semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE,
+			.initialValue = 0
+		};
+		const VkSemaphoreCreateInfo createInfo = {
+			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+			.pNext = &typeInfo
+		};
+		vkCreateSemaphore(m_context->getLogicalDevice(), &createInfo, nullptr, &m_timelineSemaphore);
+		m_timelineSemaphoreValue = 0;
 	}
-#endif
 
-	m_renderPassCache = new RenderPassCache(m_context->getLogicalDevice());
-	m_nextQueryIndex = 0;
-	m_lastQueryIndex = 0;
+	// Render pass cache is keyed by attachment format hashes and is independent of size.
+	if (!m_renderPassCache)
+		m_renderPassCache = new RenderPassCache(m_context->getLogicalDevice());
+
 	m_lost = false;
 	return true;
 }
@@ -1812,22 +2167,61 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		return false;
 
 	auto& frame = m_frames[m_currentImageIndex];
-	if (pipeline != frame.boundPipeline)
+	if (pipeline != frame.boundGraphicsPipeline)
 	{
 		vkCmdBindPipeline(*frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-		frame.boundPipeline = pipeline;
+		frame.boundGraphicsPipeline = pipeline;
 	}
 	return true;
 }
 
-bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const ProgramVk* p)
+bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const ProgramVk* p, bool asynchronous)
 {
 	VkPipeline pipeline = m_context->validateComputePipeline(p);
 	if (!pipeline)
 		return false;
 
-	vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+	auto& frame = m_frames[m_currentImageIndex];
+
+	if (asynchronous)
+	{
+		if (pipeline != frame.boundAsyncComputePipeline)
+		{
+			vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+			frame.boundAsyncComputePipeline = pipeline;
+		}
+	}
+	else
+	{
+		if (pipeline != frame.boundComputePipeline)
+		{
+			vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+			frame.boundComputePipeline = pipeline;
+		}
+	}
+
 	return true;
+}
+
+uint64_t RenderViewVk::openComputeBatch(Frame& frame)
+{
+	// All async work in the current compute buffer shares one timeline value, reserved lazily here and
+	// completing together when the batch is flushed (waitAsynchronousCompute, synchronize or endFrame).
+	if (frame.computeRecordValue == 0)
+		frame.computeRecordValue = ++m_timelineSemaphoreValue;
+	return frame.computeRecordValue;
+}
+
+void RenderViewVk::rerecordTimeQueryReset(Frame& frame)
+{
+#if defined(T_USE_QUERY)
+	// A split submitted the buffer holding beginFrame's reset, which the layer only honours in the write's own stream.
+	// Re-reset the not-yet-written queries: each open pair's end-half (not its already-submitted begin) plus the unused tail.
+	for (const int32_t query : m_openTimeQueries)
+		vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, query + 1, 1);
+	if (m_nextQueryIndex < m_lastQueryIndex)
+		vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, m_nextQueryIndex, m_lastQueryIndex - m_nextQueryIndex);
+#endif
 }
 
 #if defined(_WIN32)

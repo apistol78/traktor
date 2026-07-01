@@ -1,0 +1,957 @@
+/*
+ * TRAKTOR
+ * Copyright (c) 2026 Anders Pistol.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+#pragma once
+
+#include <cstring>
+#include <wayland-client.h>
+#include <wayland-cursor.h>
+#include <xkbcommon/xkbcommon.h>
+#include <cairo.h>
+#include <libdecor.h>
+#include <linux/input-event-codes.h>
+#include "xdg-decoration-client-protocol.h"
+#include "Core/Io/Utf8Encoding.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Ui/Application.h"
+#include "Ui/Canvas.h"
+#include "Ui/EventSubject.h"
+#include "Ui/Events/AllEvents.h"
+#include "Ui/Itf/IFontMetric.h"
+#include "Ui/Itf/IWidget.h"
+#include "Ui/Wl/ContextWl.h"
+#include "Ui/Wl/CanvasWl.h"
+#include "Ui/Wl/ShmPoolWl.h"
+#include "Ui/Wl/Timers.h"
+#include "Ui/Wl/TypesWl.h"
+#include "Ui/Wl/UtilitiesWl.h"
+
+namespace traktor::ui
+{
+
+class EventSubject;
+
+/*
+ * All coordinates exposed through the IWidget interface (setRect, getRect,
+ * getInnerRect, pointer events, SizeEvent, etc.) are in **device pixels**,
+ * matching the X11 backend.  Conversion to/from Wayland logical coordinates
+ * happens exclusively inside this template at the Wayland API boundary.
+ */
+
+template < typename ControlType >
+class WidgetWlImpl
+:	public ControlType
+,	public IFontMetric
+{
+public:
+	explicit WidgetWlImpl(ContextWl* context, EventSubject* owner)
+	:	m_context(context)
+	,	m_owner(owner)
+	,	m_shmPool(context->getShm())
+	{
+	}
+
+	virtual ~WidgetWlImpl()
+	{
+		T_FATAL_ASSERT(m_timer < 0);
+		T_FATAL_ASSERT(m_surface == nullptr);
+		T_FATAL_ASSERT(m_cairo == nullptr);
+		T_FATAL_ASSERT(m_data.grabbed == false);
+	}
+
+	virtual void destroy() override
+	{
+		stopTimer();
+		releaseCapture();
+
+		if (m_context != nullptr)
+		{
+			m_context->unbind(&m_data);
+
+			// Detach from parent's children list so a later parent resize
+			// doesn't walk into freed memory.
+			if (m_data.parent != nullptr)
+			{
+				auto& siblings = m_data.parent->children;
+				auto it = std::find(siblings.begin(), siblings.end(), &m_data);
+				if (it != siblings.end())
+					siblings.erase(it);
+			}
+
+			// A surviving widget tree shouldn't have us as their parent. If it
+			// does there's a destruction-order bug — flag rather than crash.
+			T_FATAL_ASSERT(m_data.children.empty());
+
+			if (m_cairo != nullptr)
+			{
+				cairo_destroy(m_cairo);
+				m_cairo = nullptr;
+			}
+
+			if (m_surface != nullptr)
+			{
+				cairo_surface_destroy(m_surface);
+				m_surface = nullptr;
+			}
+
+			// m_shmPool releases the wl_buffer / wl_shm_pool / mmap in its destructor.
+
+			// libdecor owns the xdg_surface, xdg_toplevel and decoration when
+			// using CSD; unref the frame and the owned objects go with it.
+			// SSD path destroys decoration before toplevel before surface.
+			if (m_data.frame != nullptr)
+			{
+				libdecor_frame_unref(m_data.frame);
+				m_data.frame = nullptr;
+				m_data.xdgToplevel = nullptr;
+				m_data.xdgSurface = nullptr;
+				m_data.decoration = nullptr;
+			}
+
+			if (m_data.decoration != nullptr)
+			{
+				zxdg_toplevel_decoration_v1_destroy(m_data.decoration);
+				m_data.decoration = nullptr;
+			}
+
+			if (m_data.xdgToplevel != nullptr)
+			{
+				xdg_toplevel_destroy(m_data.xdgToplevel);
+				m_data.xdgToplevel = nullptr;
+			}
+
+			if (m_data.xdgPopup != nullptr)
+			{
+				xdg_popup_destroy(m_data.xdgPopup);
+				m_data.xdgPopup = nullptr;
+			}
+
+			if (m_data.xdgSurface != nullptr)
+			{
+				xdg_surface_destroy(m_data.xdgSurface);
+				m_data.xdgSurface = nullptr;
+			}
+
+			if (m_data.renderViewport != nullptr)
+			{
+				wp_viewport_destroy(m_data.renderViewport);
+				m_data.renderViewport = nullptr;
+			}
+
+			if (m_data.renderSubsurface != nullptr)
+			{
+				wl_subsurface_destroy(m_data.renderSubsurface);
+				m_data.renderSubsurface = nullptr;
+			}
+
+			if (m_data.renderSurface != nullptr)
+			{
+				wl_surface_destroy(m_data.renderSurface);
+				m_data.renderSurface = nullptr;
+			}
+
+			if (m_data.viewport != nullptr)
+			{
+				wp_viewport_destroy(m_data.viewport);
+				m_data.viewport = nullptr;
+			}
+
+			if (m_data.subsurface != nullptr)
+			{
+				wl_subsurface_destroy(m_data.subsurface);
+				m_data.subsurface = nullptr;
+			}
+
+			if (m_data.surface != nullptr)
+			{
+				wl_surface_destroy(m_data.surface);
+				m_data.surface = nullptr;
+			}
+
+			m_context = nullptr;
+			m_data.parent = nullptr;
+
+			delete this;
+		}
+	}
+
+	virtual void setParent(IWidget* parent) override
+	{
+		WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
+
+		// Remove from old parent's children list before reparenting.
+		if (m_data.parent != nullptr)
+		{
+			auto& siblings = m_data.parent->children;
+			auto it = std::find(siblings.begin(), siblings.end(), &m_data);
+			if (it != siblings.end())
+				siblings.erase(it);
+		}
+
+		if (m_data.subsurface != nullptr)
+		{
+			wl_subsurface_destroy(m_data.subsurface);
+			m_data.subsurface = nullptr;
+		}
+
+		if (parentData->surface != nullptr)
+		{
+			m_data.subsurface = wl_subcompositor_get_subsurface(
+				m_context->getSubcompositor(),
+				m_data.surface,
+				parentData->surface
+			);
+			wl_subsurface_set_desync(m_data.subsurface);
+		}
+
+		m_data.parent = parentData;
+		parentData->children.push_back(&m_data);
+
+		// Viewport is bound to m_data.surface, which is unchanged, so the
+		// existing wp_viewport is still valid. Re-apply clip against the new
+		// ancestor chain.
+		m_context->applyClip(&m_data);
+	}
+
+	virtual void setText(const std::wstring& text) override { m_text = text; }
+	
+	virtual std::wstring getText() const override { return m_text; }
+
+	virtual void setForeground() override { }
+
+	virtual bool isForeground() const override { return false; }
+
+	virtual void setVisible(bool visible) override
+	{
+		if (visible == m_data.visible)
+			return;
+
+		m_data.visible = visible;
+
+		if (visible)
+		{
+			if (!m_data.mapped && m_rect.area() > 0)
+			{
+				if (m_data.subsurface)
+					m_context->applyClip(&m_data);
+
+				m_data.mapped = (m_data.topLevel && m_data.xdgToplevel) || m_data.subsurface;
+			}
+
+			SizeEvent sizeEvent(m_owner, m_rect.getSize());
+			m_owner->raiseEvent(&sizeEvent);
+
+			if (m_data.mapped)
+				draw(nullptr);
+		}
+		else if (m_data.mapped)
+		{
+			wl_surface_attach(m_data.surface, nullptr, 0, 0);
+			wl_surface_commit(m_data.surface);
+			m_data.mapped = false;
+		}
+
+		ShowEvent showEvent(m_owner, visible);
+		m_owner->raiseEvent(&showEvent);
+	}
+
+	virtual bool isVisible() const override { return m_data.visible; }
+
+	virtual void setEnable(bool enable) override { m_data.enable = enable; }
+
+	virtual bool isEnable() const override { return m_data.enable; }
+
+	virtual bool hasFocus() const override
+	{
+		return m_context->getInternalFocus() == &m_data;
+	}
+
+	virtual void setFocus() override
+	{
+		m_context->setInternalFocus(&m_data);
+	}
+
+	virtual bool hasCapture() const override { return m_data.grabbed; }
+
+	virtual void setCapture() override
+	{
+		if (!m_data.grabbed)
+			m_context->grab(&m_data);
+	}
+
+	virtual void releaseCapture() override
+	{
+		if (m_data.grabbed)
+			m_context->ungrab(&m_data);
+	}
+
+	virtual void startTimer(int interval) override
+	{
+		stopTimer();
+		m_timer = Timers::getInstance().bind(interval, [=, this](){
+			if (!isVisible())
+				return;
+			TimerEvent timerEvent(m_owner);
+			m_owner->raiseEvent(&timerEvent);
+		});
+	}
+
+	virtual void stopTimer() override
+	{
+		if (m_timer >= 0)
+		{
+			Timers::getInstance().unbind(m_timer);
+			m_timer = -1;
+		}
+	}
+
+	// rect is in device coordinates.
+	virtual void setRect(const Rect& rect) override
+	{
+		if (m_rect == rect)
+			return;
+
+		const Size fromSize = m_rect.getSize();
+
+		m_rect = rect;
+		m_data.posX = rect.left;
+		m_data.posY = rect.top;
+		m_data.width = m_rect.getWidth();
+		m_data.height = m_rect.getHeight();
+
+		if (!m_data.visible)
+			return;
+
+		if (m_rect.area() > 0)
+		{
+			// applyClipRecursive sets subsurface position + viewport for this
+			// widget and every descendant, since both position and size may
+			// have changed and that cascades down the tree.
+			if (m_data.subsurface)
+				m_context->applyClipRecursive(&m_data);
+			else if (m_data.topLevel)
+			{
+				// Toplevel itself isn't subsurface'd, but every descendant's
+				// clip depends on its size — propagate to children.
+				for (auto* child : m_data.children)
+					m_context->applyClipRecursive(child);
+			}
+			m_data.mapped = true;
+		}
+		else if (m_data.mapped)
+		{
+			wl_surface_attach(m_data.surface, nullptr, 0, 0);
+			wl_surface_commit(m_data.surface);
+			m_data.mapped = false;
+		}
+
+		if (m_rect.getSize() != fromSize)
+		{
+			SizeEvent sizeEvent(m_owner, m_rect.getSize());
+			m_owner->raiseEvent(&sizeEvent);
+		}
+
+		if (m_data.mapped && m_rect.area() > 0)
+			m_context->queueExpose(&m_data);
+	}
+
+	// All rects returned in device coordinates.
+	virtual Rect getRect() const override { return m_rect; }
+
+	virtual Rect getInnerRect() const override { return Rect(0, 0, m_rect.getWidth(), m_rect.getHeight()); }
+
+	virtual Rect getNormalRect() const override { return Rect(0, 0, m_rect.getWidth(), m_rect.getHeight()); }
+
+	virtual void setFont(const Font& font) override
+	{
+		m_font = font;
+		if (m_cairo)
+		{
+			cairo_select_font_face(
+				m_cairo,
+				wstombs(m_font.getFace()).c_str(),
+				CAIRO_FONT_SLANT_NORMAL,
+				m_font.isBold() ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL
+			);
+			cairo_set_font_size(m_cairo, dpi96(m_font.getSize().get()));
+		}
+	}
+
+	virtual Font getFont() const override { return m_font; }
+
+	virtual const IFontMetric* getFontMetric() const override { return this; }
+
+	virtual void setCursor(Cursor cursor) override
+	{
+		const char* cursorName = nullptr;
+		switch (cursor)
+		{
+		default:
+		case Cursor::Arrow:
+		    cursorName = "left_ptr";
+			break;
+		case Cursor::Hand:
+		    cursorName = "hand2";
+			break;
+		case Cursor::IBeam:
+		    cursorName = "xterm";
+			break;
+		case Cursor::SizeNS:
+		    cursorName = "sb_v_double_arrow";
+			break;
+		case Cursor::SizeWE:
+		    cursorName = "sb_h_double_arrow";
+			break;
+		case Cursor::SizeNESW:
+			cursorName = "bottom_left_corner";
+			break;
+		case Cursor::SizeNWSE:
+			cursorName = "bottom_right_corner";
+			break;
+		case Cursor::Cross:
+			cursorName = "crosshair";
+			break;
+		case Cursor::Wait:
+			cursorName = "watch";
+			break;
+		case Cursor::ArrowWait:
+			cursorName = "left_ptr_watch";
+			break;
+		case Cursor::Sizing:
+			cursorName = "fleur";
+			break;
+		}
+
+		if (!cursorName)
+			return;
+
+		wl_pointer* pointer = m_context->getPointer();
+		wl_cursor_theme* theme = m_context->getCursorTheme();
+		wl_surface* cursorSurface = m_context->getCursorSurface();
+		if (!pointer || !theme || !cursorSurface)
+			return;
+
+		wl_cursor* wlCursor = wl_cursor_theme_get_cursor(theme, cursorName);
+		if (!wlCursor || wlCursor->image_count < 1)
+			return;
+
+		wl_cursor_image* image = wlCursor->images[0];
+		wl_buffer* buffer = wl_cursor_image_get_buffer(image);
+
+		wl_surface_attach(cursorSurface, buffer, 0, 0);
+		wl_surface_damage(cursorSurface, 0, 0, image->width, image->height);
+		wl_surface_commit(cursorSurface);
+
+		wl_pointer_set_cursor(
+			pointer,
+			m_context->getPointerSerial(),
+			cursorSurface,
+			image->hotspot_x,
+			image->hotspot_y
+		);
+	}
+
+	// Returns device coordinates.
+	virtual Point getMousePosition(bool relative) const override
+	{
+		if (relative)
+			return m_lastPointerPos;
+		else
+			return clientToScreen(m_lastPointerPos);
+	}
+
+	virtual Point screenToClient(const Point& pt) const override
+	{
+		// Walk up the parent chain to accumulate offsets from this
+		// widget all the way to the toplevel, mirroring what
+		// XTranslateCoordinates does on X11.
+		int32_t ox = 0, oy = 0;
+		for (const WidgetData* w = &m_data; w != nullptr && !w->topLevel; w = w->parent)
+		{
+			ox += w->posX;
+			oy += w->posY;
+		}
+		return Point(pt.x - ox, pt.y - oy);
+	}
+
+	virtual Point clientToScreen(const Point& pt) const override
+	{
+		int32_t ox = 0, oy = 0;
+		for (const WidgetData* w = &m_data; w != nullptr && !w->topLevel; w = w->parent)
+		{
+			ox += w->posX;
+			oy += w->posY;
+		}
+		return Point(pt.x + ox, pt.y + oy);
+	}
+
+	virtual bool hitTest(const Point& pt) const override
+	{
+		return getInnerRect().inside(screenToClient(pt));
+	}
+
+	virtual void setChildRects(const IWidgetRect* childRects, uint32_t count, bool redraw) override
+	{
+		for (uint32_t i = 0; i < count; ++i)
+		{
+			if (childRects[i].widget)
+				childRects[i].widget->setRect(childRects[i].rect);
+		}
+	}
+
+	virtual Size getMinimumSize() const override { return Size(0, 0); }
+
+	virtual Size getPreferredSize(const Size& hint) const override { return Size(dpi96(128), dpi96(64)); }
+
+	virtual Size getMaximumSize() const override { return Size(65535, 65535); }
+
+	virtual void update(const Rect* rc, bool immediate) override
+	{
+		if (!m_data.visible || !m_data.mapped)
+			return;
+
+		if (immediate)
+			draw(rc);
+		else
+			m_context->queueExpose(&m_data);
+	}
+
+	virtual int32_t dpi96(int32_t measure) const override
+	{
+		const int32_t dpiw = m_context->getSystemDPI();
+		return (dpiw * measure) / 96;
+	}
+
+	virtual int32_t invdpi96(int32_t measure) const override
+	{
+		const int32_t dpiw = m_context->getSystemDPI();
+		return (96 * measure) / (dpiw > 0 ? dpiw : 96);
+	}
+
+	virtual void* getInternalHandle() override { return (void*)&m_data; }
+
+	virtual SystemWindow getSystemWindow() override
+	{
+		// Create a dedicated child surface for Vulkan/GL rendering.
+		// The NVIDIA Vulkan driver activates wp_linux_drm_syncobj (explicit sync)
+		// on the surface, which requires that ONLY dmabuf buffers are committed
+		// to it. A separate surface prevents the UI code from accidentally
+		// committing SHM or null buffers to the render surface.
+		if (!m_data.renderSurface)
+		{
+			m_data.renderSurface = wl_compositor_create_surface(m_context->getCompositor());
+			m_data.renderSubsurface = wl_subcompositor_get_subsurface(
+				m_context->getSubcompositor(),
+				m_data.renderSurface,
+				m_data.surface
+			);
+			wl_subsurface_set_desync(m_data.renderSubsurface);
+			wl_subsurface_set_position(m_data.renderSubsurface, 0, 0);
+
+			// Tell the compositor that the Vulkan buffer is at device-pixel
+			// resolution so it maps to the correct logical size on screen.
+			const int32_t scale = m_context->getOutputScale();
+			wl_surface_set_buffer_scale(m_data.renderSurface, scale);
+
+			// Crop the dmabuf render output to the widget's visible region —
+			// otherwise a partially-clipped 3D view leaks past its parent.
+			if (m_context->getViewporter() != nullptr)
+			{
+				m_data.renderViewport = wp_viewporter_get_viewport(
+					m_context->getViewporter(),
+					m_data.renderSurface
+				);
+			}
+
+			// Register the render surface as an input alias so that
+			// pointer events on it are routed to this widget.
+			m_context->bindRenderSurface(&m_data);
+
+			// Apply the current clip so the render viewport is initialised
+			// rather than starting at "no crop, full buffer".
+			m_context->applyClip(&m_data);
+		}
+
+		return SystemWindow::fromWayland(
+			m_context->getDisplay(),
+			(unsigned long)(uintptr_t)m_data.renderSurface,
+			m_rect.getWidth(),
+			m_rect.getHeight()
+		);
+	}
+
+	// IFontMetric
+
+	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const override
+	{
+		T_FATAL_ASSERT(m_surface != nullptr);
+		cairo_font_extents_t x;
+		cairo_font_extents(m_cairo, &x);
+		outAscent = (int32_t)x.ascent;
+		outDescent = (int32_t)x.descent;
+	}
+
+	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const override
+	{
+		T_FATAL_ASSERT(m_surface != nullptr);
+		uint8_t uc[IEncoding::MaxEncodingSize + 1] = { 0 };
+		int32_t nuc = Utf8Encoding().translate(&ch, 1, uc);
+		if (nuc <= 0)
+			return 0;
+		cairo_text_extents_t tx;
+		cairo_text_extents(m_cairo, (const char*)uc, &tx);
+		return (int32_t)(tx.x_advance + 0.5);
+	}
+
+	virtual int32_t getLineSpacing() const override
+	{
+		T_FATAL_ASSERT(m_surface != nullptr);
+		cairo_font_extents_t x;
+		cairo_font_extents(m_cairo, &x);
+		return (int32_t)x.height;
+	}
+
+	virtual Size getExtent(const std::wstring& text) const override
+	{
+		T_FATAL_ASSERT(m_surface != nullptr);
+		cairo_font_extents_t fx;
+		cairo_text_extents_t tx;
+		cairo_font_extents(m_cairo, &fx);
+		cairo_text_extents(m_cairo, wstombs(text).c_str(), &tx);
+		return Size(tx.width, fx.height);
+	}
+
+	ContextWl* getContextWl() const { return m_context; }
+
+protected:
+	Ref< ContextWl > m_context;
+	EventSubject* m_owner = nullptr;
+	WidgetData m_data;
+	Rect m_rect;			// Device coordinates.
+	Font m_font;
+	cairo_surface_t* m_surface = nullptr;
+	cairo_t* m_cairo = nullptr;
+	ShmPoolWl m_shmPool;
+	std::wstring m_text;
+	int32_t m_timer = -1;
+	int32_t m_lastMouseButton = 0;
+	double m_lastMousePress = 0.0;
+	Point m_lastPointerPos;		// Device coordinates.
+
+	// --- Coordinate helpers ---
+
+	int32_t toLogical(int32_t device) const
+	{
+		const int32_t s = m_context->getOutputScale();
+		return (s > 1) ? device / s : device;
+	}
+
+	int32_t toDevice(int32_t logical) const
+	{
+		const int32_t s = m_context->getOutputScale();
+		return logical * s;
+	}
+
+	// --- Creation ---
+
+	bool create(IWidget* parent, int32_t style, bool visible, bool topLevel)
+	{
+		m_data.parent = (parent != nullptr ? static_cast< WidgetData* >(parent->getInternalHandle()) : nullptr);
+		m_data.topLevel = topLevel;
+		m_data.visible = visible;
+		m_data.mapped = false;
+
+		// Mirror m_rect into the WidgetData fields up-front — computeVisibleRect
+		// walks the parent chain via WidgetData and must see the right pos+size
+		// from the first applyClip onward.
+		m_data.posX = m_rect.left;
+		m_data.posY = m_rect.top;
+		m_data.width = m_rect.getWidth();
+		m_data.height = m_rect.getHeight();
+
+		// Track in parent's children list so a parent resize re-clips us.
+		if (m_data.parent != nullptr)
+			m_data.parent->children.push_back(&m_data);
+
+		m_data.surface = wl_compositor_create_surface(m_context->getCompositor());
+		if (!m_data.surface)
+			return false;
+
+		if (!topLevel && m_data.parent && m_data.parent->surface)
+		{
+			m_data.subsurface = wl_subcompositor_get_subsurface(
+				m_context->getSubcompositor(),
+				m_data.surface,
+				m_data.parent->surface
+			);
+			if (m_data.subsurface)
+			{
+				wl_subsurface_set_desync(m_data.subsurface);
+
+				// Create the wp_viewport up-front so applyClip can crop without
+				// branching every call.
+				if (m_context->getViewporter() != nullptr)
+				{
+					m_data.viewport = wp_viewporter_get_viewport(
+						m_context->getViewporter(),
+						m_data.surface
+					);
+				}
+
+				m_context->applyClip(&m_data);
+			}
+		}
+
+		if ((style & WsNoCanvas) == 0)
+		{
+			ensureSurface();
+			setFont(Font(L"Ubuntu Regular", 11_ut));
+		}
+
+		// Focus events
+		m_context->bind(&m_data, WlEvtFocusIn, [=, this](WlEvent& e) {
+			FocusEvent focusEvent(m_owner, true);
+			m_owner->raiseEvent(&focusEvent);
+		});
+
+		m_context->bind(&m_data, WlEvtFocusOut, [=, this](WlEvent& e) {
+			FocusEvent focusEvent(m_owner, false);
+			m_owner->raiseEvent(&focusEvent);
+		});
+
+		// Key press/release — coordinates already in device via preTranslate/event queue.
+		m_context->bind(&m_data, WlEvtKeyboardKey, [=, this](WlEvent& e) {
+			T_FATAL_ASSERT(m_data.enable);
+
+			xkb_state* xkbState = m_context->getXkbState();
+			if (!xkbState)
+				return;
+
+			const uint32_t keycode = e.key + 8;
+			const xkb_keysym_t sym = xkb_state_key_get_one_sym(xkbState, keycode);
+			VirtualKey vk = translateToVirtualKey(sym);
+
+			if (e.keyState == WL_KEYBOARD_KEY_STATE_PRESSED)
+			{
+				if (vk != VkNull)
+				{
+					KeyDownEvent keyDownEvent(m_owner, vk, e.key, 0);
+					m_owner->raiseEvent(&keyDownEvent);
+				}
+				if (m_owner)
+				{
+					char buf[8] = { 0 };
+					int n = xkb_state_key_get_utf8(xkbState, keycode, buf, sizeof(buf));
+					if (n > 0)
+					{
+						wchar_t wch = 0;
+						if (Utf8Encoding().translate((const uint8_t*)buf, n, wch) > 0)
+						{
+							KeyEvent keyEvent(m_owner, vk, e.key, wch);
+							m_owner->raiseEvent(&keyEvent);
+						}
+					}
+				}
+			}
+			else
+			{
+				if (vk != VkNull)
+				{
+					KeyUpEvent keyUpEvent(m_owner, vk, e.key, 0, false);
+					m_owner->raiseEvent(&keyUpEvent);
+				}
+			}
+		});
+
+		// Pointer events — pointerX/Y are already in device coords (scaled in ContextWl).
+		m_context->bind(&m_data, WlEvtPointerMotion, [=, this](WlEvent& e) {
+			T_FATAL_ASSERT(m_data.enable);
+			m_lastPointerPos = Point((int)e.pointerX, (int)e.pointerY);
+			MouseMoveEvent mouseMoveEvent(m_owner, e.buttons, m_lastPointerPos);
+			m_owner->raiseEvent(&mouseMoveEvent);
+		});
+
+		m_context->bind(&m_data, WlEvtPointerEnter, [=, this](WlEvent& e) {
+			m_lastPointerPos = Point((int)e.pointerX, (int)e.pointerY);
+			MouseTrackEvent mouseTrackEvent(m_owner, true);
+			m_owner->raiseEvent(&mouseTrackEvent);
+		});
+
+		m_context->bind(&m_data, WlEvtPointerLeave, [=, this](WlEvent& e) {
+			MouseTrackEvent mouseTrackEvent(m_owner, false);
+			m_owner->raiseEvent(&mouseTrackEvent);
+		});
+
+		m_context->bind(&m_data, WlEvtPointerButton, [=, this](WlEvent& e) {
+			T_FATAL_ASSERT(m_data.enable);
+
+			const int32_t button = translateMouseButton(e.button);
+			if (button == 0)
+				return;
+
+			if (e.buttonState == WL_POINTER_BUTTON_STATE_PRESSED)
+			{
+				if ((style & WsFocus) != 0)
+					setFocus();
+
+				const double now = e.stamp;
+				const double delta = now - m_lastMousePress;
+
+				if (delta <= 0.2 && m_lastMouseButton == button)
+				{
+					MouseDoubleClickEvent mouseDoubleClickEvent(m_owner, button, m_lastPointerPos);
+					m_owner->raiseEvent(&mouseDoubleClickEvent);
+				}
+				else
+				{
+					MouseButtonDownEvent mouseButtonDownEvent(m_owner, button, m_lastPointerPos);
+					m_owner->raiseEvent(&mouseButtonDownEvent);
+				}
+
+				m_lastMousePress = now;
+				m_lastMouseButton = button;
+			}
+			else
+			{
+				MouseButtonUpEvent mouseButtonUpEvent(m_owner, button, m_lastPointerPos);
+				m_owner->raiseEvent(&mouseButtonUpEvent);
+			}
+		});
+
+		m_context->bind(&m_data, WlEvtPointerAxis, [=, this](WlEvent& e) {
+			if (e.axisType == WL_POINTER_AXIS_VERTICAL_SCROLL)
+			{
+				int32_t rotation = (e.axisValue < 0.0) ? 1 : -1;
+				MouseWheelEvent mouseWheelEvent(m_owner, rotation, clientToScreen(m_lastPointerPos));
+				m_owner->raiseEvent(&mouseWheelEvent);
+			}
+		});
+
+		m_context->bind(&m_data, WlEvtExpose, [this](WlEvent& e) {
+			draw(nullptr);
+		});
+
+		if (visible && m_rect.area() > 0)
+		{
+			wl_surface_commit(m_data.surface);
+			m_data.mapped = true;
+		}
+
+		return true;
+	}
+
+	// --- Buffer / surface ---
+
+	void ensureSurface()
+	{
+		// m_rect is in device pixels — buffer matches exactly.
+		const int32_t w = std::max(m_rect.getWidth(), 1);
+		const int32_t h = std::max(m_rect.getHeight(), 1);
+		const int32_t stride = w * 4;
+
+		void* data = nullptr;
+		if (m_shmPool.acquire(w, h, stride, &data) == nullptr)
+			return;
+
+		// Rebind cairo when the slot's data pointer or geometry changes
+		// (slot rotation under double-buffering, or mmap moved on grow).
+		if (m_surface != nullptr)
+		{
+			const int32_t cw = cairo_image_surface_get_width(m_surface);
+			const int32_t ch = cairo_image_surface_get_height(m_surface);
+			unsigned char* cd = cairo_image_surface_get_data(m_surface);
+			if (cw == w && ch == h && cd == static_cast< unsigned char* >(data))
+				return;
+
+			cairo_destroy(m_cairo);
+			m_cairo = nullptr;
+			cairo_surface_destroy(m_surface);
+			m_surface = nullptr;
+		}
+
+		m_surface = cairo_image_surface_create_for_data(
+			static_cast< unsigned char* >(data),
+			CAIRO_FORMAT_ARGB32,
+			w, h, stride
+		);
+		m_cairo = cairo_create(m_surface);
+
+		// Buffer is in device pixels; tell compositor the scale so it
+		// maps to the correct logical size on screen.
+		const int32_t scale = m_context->getOutputScale();
+		wl_surface_set_buffer_scale(m_data.surface, scale);
+
+		// Re-apply font on the new cairo context.
+		if (!m_font.getFace().empty())
+		{
+			cairo_select_font_face(
+				m_cairo,
+				wstombs(m_font.getFace()).c_str(),
+				CAIRO_FONT_SLANT_NORMAL,
+				m_font.isBold() ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL
+			);
+			cairo_set_font_size(m_cairo, dpi96(m_font.getSize().get()));
+		}
+	}
+
+	// --- Drawing ---
+
+	void draw(const Rect* rc)
+	{
+		if (!m_data.visible || !m_data.mapped)
+			return;
+
+		const Size sz = m_rect.getSize();
+		if (sz.cx <= 0 || sz.cy <= 0)
+			return;
+
+		ensureSurface();
+
+		if (m_cairo != nullptr)
+		{
+			cairo_push_group_with_content(m_cairo, CAIRO_CONTENT_COLOR);
+
+			CanvasWl canvasImpl(m_cairo, m_context->getSystemDPI());
+			Canvas canvas(&canvasImpl, reinterpret_cast< Widget* >(m_owner));
+
+			PaintEvent paintEvent(
+				m_owner, canvas,
+				rc != nullptr ? *rc : Rect(Point(0, 0), sz)
+			);
+			m_owner->raiseEvent(&paintEvent);
+
+			OverlayPaintEvent overlayPaintEvent(
+				m_owner, canvas,
+				rc != nullptr ? *rc : Rect(Point(0, 0), sz)
+			);
+			m_owner->raiseEvent(&overlayPaintEvent);
+
+			cairo_pop_group_to_source(m_cairo);
+			cairo_paint(m_cairo);
+			cairo_surface_flush(m_surface);
+
+			// Damage in buffer coordinates (device pixels).
+			wl_surface_attach(m_data.surface, m_shmPool.getBuffer(), 0, 0);
+			wl_surface_damage_buffer(m_data.surface, 0, 0, sz.cx, sz.cy);
+			wl_surface_commit(m_data.surface);
+			m_shmPool.markCommitted();
+		}
+		else
+		{
+			Canvas canvas(nullptr, reinterpret_cast< Widget* >(m_owner));
+			PaintEvent p(
+				m_owner, canvas,
+				rc != nullptr ? *rc : Rect(Point(0, 0), sz)
+			);
+			m_owner->raiseEvent(&p);
+		}
+	}
+};
+
+}

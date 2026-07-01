@@ -113,5 +113,21 @@
 			<id>{22777807-DD5F-1D47-8266-84EAA1EF024F}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
+		<item>
+			<id>{593A522F-206C-9046-B8A1-25488BEA362A}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{FEDA90CE-25C6-BC4D-9767-EA4B45F4A043}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{8A8AD144-7866-41DB-9E66-AEAE46DACB92}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{EBF935B7-9A18-9F44-B049-04E8B01DB877}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
 	</dependencies>
 </object>

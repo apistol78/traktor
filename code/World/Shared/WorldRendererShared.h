@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -43,6 +43,7 @@ class PostProcessPass;
 class ProbeComponent;
 class ReflectionsPass;
 class VelocityPass;
+class VolumetricFogPass;
 class WorldEntityRenderers;
 
 /*! World renderer shared implementation.
@@ -94,6 +95,7 @@ protected:
 	WorldRenderSettings m_settings;
 	Quality m_shadowsQuality = Quality::Disabled;
 	float m_slicePositions[MaxSliceCount + 1];
+	bool m_rayTracingEnabled = true;
 
 	/*! \name Render passes. */
 	//@{
@@ -105,6 +107,7 @@ protected:
 	Ref< VelocityPass > m_velocityPass;
 	Ref< IrradiancePass > m_irradiancePass;
 	Ref< AmbientOcclusionPass > m_ambientOcclusionPass;
+	Ref< VolumetricFogPass > m_volumetricFogPass;
 	Ref< ContactShadowsPass > m_contactShadowsPass;
 	Ref< ReflectionsPass > m_reflectionsPass;
 	Ref< PostProcessPass > m_postProcessPass;
@@ -119,16 +122,19 @@ protected:
 
 	GatherView m_gatheredView;
 	Ref< Packer > m_shadowAtlasPacker;
-	AlignedVector< render::handle_t > m_visualAttachments;
+	AlignedVector< render::RGDependency > m_visualAttachments;
 	State m_state[4];
 
 	void gather(const World* world, const std::function< bool(const EntityState& state) >& filter);
 
-	void setupLightPass(
+	render::RGTargetSet setupLightPass(
+		const WorldRenderView& worldRenderView,
+		render::RenderGraph& renderGraph);
+
+	render::RGTexture setupVolumetricFog(
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
-		render::RGTargetSet outputTargetSetId,
-		render::RGTargetSet& outShadowMapAtlasTargetSetId);
+		render::RGTargetSet shadowMapAtlasTargetSetId);
 };
 
 }

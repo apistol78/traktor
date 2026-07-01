@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,38 +19,36 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Database;
 
-	}
+}
 
-	namespace drawing
-	{
+namespace traktor::drawing
+{
 
 class Image;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IEditor;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 class IRenderTargetSet;
@@ -59,17 +57,17 @@ class RenderContext;
 class RenderGraph;
 class Shader;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
 class SoundPlayer;
 
-	}
+}
 
-	namespace spark
-	{
+namespace traktor::spark
+{
 
 class AccDisplayRenderer;
 class Movie;
@@ -90,8 +88,7 @@ public:
 		db::Database* database,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		sound::SoundPlayer* soundPlayer
-	);
+		sound::SoundPlayer* soundPlayer);
 
 	virtual void destroy() override final;
 
@@ -149,5 +146,4 @@ private:
 	void eventMouseWheel(ui::MouseWheelEvent* event);
 };
 
-	}
 }

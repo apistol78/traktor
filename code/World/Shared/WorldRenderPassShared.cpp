@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,12 +23,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassShared", WorldRenderPassSh
 WorldRenderPassShared::WorldRenderPassShared(
 	render::handle_t technique,
 	render::ProgramParameters* sharedParams,
-	const WorldRenderView& worldRenderView,
-	uint32_t passFlags)
+	const WorldRenderView& worldRenderView)
 	: m_technique(technique)
 	, m_sharedParams(sharedParams)
 	, m_worldRenderView(worldRenderView)
-	, m_passFlags(passFlags)
 {
 }
 
@@ -36,12 +34,10 @@ WorldRenderPassShared::WorldRenderPassShared(
 	render::handle_t technique,
 	render::ProgramParameters* sharedParams,
 	const WorldRenderView& worldRenderView,
-	uint32_t passFlags,
 	const std::initializer_list< TechniqueFlag >& techniqueFlags)
 	: m_technique(technique)
 	, m_sharedParams(sharedParams)
 	, m_worldRenderView(worldRenderView)
-	, m_passFlags(passFlags)
 	, m_techniqueFlags(techniqueFlags)
 {
 }
@@ -49,11 +45,6 @@ WorldRenderPassShared::WorldRenderPassShared(
 render::handle_t WorldRenderPassShared::getTechnique() const
 {
 	return m_technique;
-}
-
-uint32_t WorldRenderPassShared::getPassFlags() const
-{
-	return m_passFlags;
 }
 
 render::Shader::Permutation WorldRenderPassShared::getPermutation(const render::Shader* shader) const

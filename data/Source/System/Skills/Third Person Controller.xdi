@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mcp.SkillAsset">
+	<name>third-person-controller</name>
+	<description>Wire WASD/Space input, drive a CharacterComponent from a LUA script, and follow with a rubberband camera.</description>
+	<whenToUse><![CDATA[Asked to make a character playable / add third-person movement, jump, or a follow camera.]]></whenToUse>
+	<body><![CDATA[# Third-person character controller (input + script + camera)
+
+Wire WASD/Space input, drive a `CharacterComponent` on "{{character}}", follow it with a rubberband camera, and switch idle/walk. Move speed {{speed}} m/s, turn rate {{turnRate}}.
+
+## Input mapping
+- `InputMappingAsset` holds: `sourceData` (id → `KeyboardInputSourceData { controlTypes:[DefaultControl keys, e.g. "KeyW" ] }`), `stateData` (name → `InputStateData { source }`), and the editor `inputNodes` graph (`InReadValue`, `InCombine { entries:[{source, mul, add}], operator }`).
+- The editor graph relies on **shared object identity** → author the whole instance with **`import_instance_from_xml`** (so `ref=` ids become shared references). `set_instance_member` alone leaves the graph unwired.
+
+## Script (LUA `Stage`)
+- **Setup**: put `import(traktor)` at the top so types resolve unqualified (`Vector4`, `Quaternion`, `Transform`), and pass component types directly — they auto-box into a `BoxedType`. See the *traktor-lua-scripting* skill.
+- **Read**: `self:getEnvironment().input.inputMapping:getStateValue("STATE_MOVE_Z" / "STATE_MOVE_X")`; `:isStatePressed("STATE_JUMP")`.
+- **Resolve**: `world = self.world.world`; `world:getEntity("{{character}}")`; `entity:getComponent(traktor.physics.CharacterComponent)`.
+- **Turn**: `heading += moveX * {{turnRate}} * dt`; `character.headAngle = heading`.
+- **Move**: `forward = Quaternion.fromEulerAngles(heading,0,0) * Vector4(0,0,1,0)`; `character:move(forward * (moveZ * {{speed}}), false)`.
+- **Jump**: `if pressed then character:jump() end` (grounded-only).
+- **Rubberband camera**: `desired = charPos + Quaternion.fromEulerAngles(heading,0,0) * Vector4(0,2.5,-4.5,0)`; `newPos = Vector4.lerp(curPos, desired, math.min(1, k*dt))`; `camera.transform = Transform.lookAt(newPos, charPos + up, Vector4(0,1,0,0))`.
+- **Animation**: `skeletonComp.poseController:setParameterValue("moving", isMoving)` each frame.
+
+## Gotchas
+- `character:move(velocity, vertical)` — second arg is "vertical"; pass `false` for horizontal locomotion. The controller applies gravity itself.
+- `headAngle` sets body yaw; the controller writes the entity rotation each update — don't also set it from script.
+- **Use `Transform.lookAt(pos, target, up)` with an explicit up axis.** Building the camera rotation from a direction delta (e.g. `Quaternion(from,to)`) rolls the camera around its view axis.
+]]></body>
+	<engineVersion/>
+	<published>true</published>
+	<parameters>
+		<item type="traktor.mcp.SkillParameter">
+			<name>character</name>
+			<description>Controlled entity name</description>
+			<defaultValue>Humanoid</defaultValue>
+		</item>
+		<item type="traktor.mcp.SkillParameter">
+			<name>speed</name>
+			<description>Move speed (m/s)</description>
+			<defaultValue>3</defaultValue>
+		</item>
+		<item type="traktor.mcp.SkillParameter">
+			<name>turnRate</name>
+			<description>Turn rate</description>
+			<defaultValue>4.5</defaultValue>
+		</item>
+	</parameters>
+</object>

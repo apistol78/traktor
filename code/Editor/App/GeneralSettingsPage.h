@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,10 @@
  */
 #pragma once
 
+#include <string>
+
+#include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Editor/ISettingsPage.h"
 
 namespace traktor::ui
@@ -37,6 +41,12 @@ public:
 	virtual bool apply(PropertyGroup* settings) override final;
 
 private:
+	struct StyleSheetName
+	{
+		std::wstring name;
+		std::wstring path;
+	};
+
 	Ref< ui::Edit > m_editDictionary;
 	Ref< ui::DropDown > m_dropStyleSheet;
 	Ref< ui::DropDown > m_dropFonts;
@@ -48,6 +58,8 @@ private:
 	Ref< ui::CheckBox > m_checkBuildAfterBrowseInstance;
 	Ref< ui::CheckBox > m_checkShowNewLogTargets;
 	Ref< ui::CheckBox > m_checkVerboseResourceLoading;
+
+	AlignedVector< StyleSheetName > m_styleSheets;
 };
 
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderModule" version="2">
 	<text><![CDATA[
+const float FireflyClamp = 1000.0f;
 
 void Reservoir_Empty(out World_Reservoir_Type r)
 {
@@ -13,7 +14,7 @@ void Reservoir_Empty(out World_Reservoir_Type r)
 
 bool Reservoir_IsEmpty(World_Reservoir_Type r)
 {
-	return r.W_sum <= 0.0f;
+	return r.M <= 0.0f;
 }
 
 void Reservoir_Update(
@@ -25,6 +26,12 @@ void Reservoir_Update(
 	float rnd01
 )
 {
+	if (w <= 0.0f)
+	{
+		reservoir.M += 1.0f;
+		return;
+	}
+
 	reservoir.W_sum += w;
 	reservoir.M += 1.0f;
 	
@@ -38,15 +45,15 @@ void Reservoir_Update(
 
 float Reservoir_CalculateProbability(vec3 radiance)
 {
-	return dot(radiance, vec3(1.0f));
+	return dot(radiance, vec3(0.2126f, 0.7152f, 0.0722f));
 }
 
 vec3 Reservoir_GetRadiance(World_Reservoir_Type r)
 {
 	const float P_hat = Reservoir_CalculateProbability(r.radiance);
 	const float w = 
-		(P_hat > 0.0f) ?
-		(1.0f / P_hat) * (r.W_sum / r.M) :
+		(P_hat > 0.0f && r.M > 0.0f) ?
+		clamp(1.0f / P_hat, 0.0f, FireflyClamp) * (r.W_sum / r.M) :
 		0.0f;
 	return r.radiance * w;
 }

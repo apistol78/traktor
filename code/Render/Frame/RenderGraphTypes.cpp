@@ -21,4 +21,8 @@ const RGTexture RGTexture::Invalid(~0U);
 
 const RGDependency RGDependency::Invalid(~0U);
 
+const RGDependency RGDependency::First(~0U - 1);
+
+const RGDependency RGDependency::Last(~0U - 2);
+
 }

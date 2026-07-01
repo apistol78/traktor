@@ -1,27 +1,29 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <DetourNavMeshQuery.h>
+#include "Ai/NavMesh.h"
+
 #include "Ai/MoveQuery.h"
 #include "Ai/MoveQueryResult.h"
-#include "Ai/NavMesh.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Random.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 
+#include <DetourNavMeshQuery.h>
+
 namespace traktor::ai
 {
-	namespace
-	{
+namespace
+{
 
-const float c_searchExtents[3] = { 32.0f, 32.0f, 32.0f };
+const float c_searchExtents[3] = { 32.0f, 1.0f, 32.0f };
 
 float random()
 {
@@ -29,7 +31,7 @@ float random()
 	return s_rnd.nextFloat();
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMesh", NavMesh, Object)
 
@@ -41,7 +43,7 @@ NavMesh::~NavMesh()
 Ref< MoveQueryResult > NavMesh::createMoveQuery(const Vector4& startPosition, const Vector4& endPosition)
 {
 	Ref< MoveQueryResult > result = new MoveQueryResult();
-	JobManager::getInstance().add([=](){
+	JobManager::getInstance().add([=]() {
 		T_ANONYMOUS_VAR(Ref< NavMesh >)(this);
 
 		dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
@@ -75,8 +77,7 @@ Ref< MoveQueryResult > NavMesh::createMoveQuery(const Vector4& startPosition, co
 			c_searchExtents,
 			outputQuery->m_filter,
 			&startRef,
-			startPosN
-		);
+			startPosN);
 		if (dtStatusFailed(status))
 		{
 			result->fail();
@@ -88,8 +89,7 @@ Ref< MoveQueryResult > NavMesh::createMoveQuery(const Vector4& startPosition, co
 			c_searchExtents,
 			outputQuery->m_filter,
 			&endRef,
-			endPosN
-		);
+			endPosN);
 		if (dtStatusFailed(status))
 		{
 			result->fail();
@@ -107,8 +107,7 @@ Ref< MoveQueryResult > NavMesh::createMoveQuery(const Vector4& startPosition, co
 			outputQuery->m_filter,
 			outputQuery->m_path,
 			&outputQuery->m_pathCount,
-			sizeof_array(outputQuery->m_path)
-		);
+			sizeof_array(outputQuery->m_path));
 		if (dtStatusFailed(status) || outputQuery->m_pathCount <= 0)
 		{
 			// Failed to create navmesh path; most probably no valid route exists.
@@ -130,8 +129,7 @@ Ref< MoveQueryResult > NavMesh::createMoveQuery(const Vector4& startPosition, co
 			nullptr,
 			nullptr,
 			&steerPathCount,
-			256
-		);
+			256);
 		if (dtStatusFailed(status) || steerPathCount <= 0)
 		{
 			// Failed to create navmesh path; most probably no valid route exists.
@@ -174,8 +172,7 @@ bool NavMesh::findClosestPoint(const Vector4& searchFrom, Vector4& outPoint) con
 		c_searchExtents,
 		filter.ptr(),
 		&startRef,
-		startPosN
-	);
+		startPosN);
 	if (dtStatusFailed(status))
 	{
 		dtFreeNavMeshQuery(navQuery);
@@ -207,8 +204,7 @@ bool NavMesh::findRandomPoint(Vector4& outPoint) const
 		filter.ptr(),
 		&random,
 		&randomRef,
-		randomPosN
-	);
+		randomPosN);
 	if (dtStatusFailed(status))
 	{
 		dtFreeNavMeshQuery(navQuery);
@@ -244,8 +240,7 @@ bool NavMesh::findRandomPoint(const Vector4& center, float radius, Vector4& outP
 		c_searchExtents,
 		filter.ptr(),
 		&startRef,
-		startPosN
-	);
+		startPosN);
 
 	dtPolyRef randomRef;
 	float T_MATH_ALIGN16 randomPosN[4];
@@ -257,8 +252,7 @@ bool NavMesh::findRandomPoint(const Vector4& center, float radius, Vector4& outP
 		filter.ptr(),
 		&random,
 		&randomRef,
-		randomPosN
-	);
+		randomPosN);
 	if (dtStatusFailed(status))
 	{
 		dtFreeNavMeshQuery(navQuery);

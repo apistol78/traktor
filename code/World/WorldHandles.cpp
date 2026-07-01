@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,11 +26,13 @@ const render::Handle ShaderTechnique::Shadow(L"World_ShadowWrite");
 // Permutations
 const render::Handle ShaderPermutation::IrradianceEnable(L"World_IrradianceEnable");
 const render::Handle ShaderPermutation::IrradianceSingle(L"World_IrradianceSingle");
+const render::Handle ShaderPermutation::IrradianceFieldEnable(L"World_IrradianceFieldEnable");
 const render::Handle ShaderPermutation::VolumetricFogEnable(L"World_VolumetricFogEnable");
 const render::Handle ShaderPermutation::ColorGradingEnable(L"World_ColorGradingEnable");
 const render::Handle ShaderPermutation::RayTracingEnable(L"World_RayTracingEnable");
 const render::Handle ShaderPermutation::CullingHiZ(L"World_CullingHiZ");
 const render::Handle ShaderPermutation::HDR(L"World_HDR");
+const render::Handle ShaderPermutation::UpscalingEnable(L"World_UpscalingEnable");
 
 // Shader parameters.
 const render::Handle ShaderParameter::DecalParamsA(L"World_DecalParamsA");
@@ -43,6 +45,7 @@ const render::Handle ShaderParameter::Gamma(L"World_Gamma");
 const render::Handle ShaderParameter::GammaInverse(L"World_GammaInverse");
 const render::Handle ShaderParameter::LastWorld(L"World_LastWorld");
 const render::Handle ShaderParameter::LastView(L"World_LastView");
+const render::Handle ShaderParameter::LastViewInverse(L"World_LastViewInverse");
 const render::Handle ShaderParameter::LastWorldView(L"World_LastWorldView");
 const render::Handle ShaderParameter::LightIndexSBuffer(L"World_LightIndexSBuffer");
 const render::Handle ShaderParameter::LightMap(L"World_LightMap");
@@ -107,7 +110,7 @@ const render::Handle ShaderParameter::FogVolume(L"World_FogVolume");
 const render::Handle ShaderParameter::FogVolumeTexture(L"World_FogVolumeTexture");
 const render::Handle ShaderParameter::FogVolumeRange(L"World_FogVolumeRange");
 const render::Handle ShaderParameter::FogVolumeSliceCount(L"World_FogVolumeSliceCount");
-const render::Handle ShaderParameter::FogVolumeSliceCurrent(L"World_FogVolumeSliceCurrent");
+const render::Handle ShaderParameter::FogVolumeSliceUpdate(L"World_FogVolumeSliceUpdate");
 const render::Handle ShaderParameter::FogVolumeMediumColor(L"World_FogVolumeMediumColor");
 const render::Handle ShaderParameter::FogVolumeMediumDensity(L"World_FogVolumeMediumDensity");
 

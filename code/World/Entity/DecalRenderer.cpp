@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -53,15 +53,9 @@ const TypeInfoSet DecalRenderer::getRenderableTypes() const
 }
 
 void DecalRenderer::setup(
-	const WorldSetupContext& context
-)
-{
-}
-
-void DecalRenderer::setup(
 	const WorldSetupContext& context,
 	const WorldRenderView& worldRenderView,
-	Object* renderable
+	const AlignedVector< Object* >& renderables
 )
 {
 }
@@ -70,33 +64,30 @@ void DecalRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
-	Object* renderable
+	const AlignedVector< Object* >& renderables
 )
 {
-	const DecalComponent* decalComponent = static_cast< const DecalComponent* >(renderable);
-	const Transform& transform = decalComponent->getTransform();
+	// Cull decals.
+	for (Object* renderable : renderables)
+	{
+		const DecalComponent* decalComponent = static_cast< const DecalComponent* >(renderable);
+		const Transform& transform = decalComponent->getTransform();
 
-	const Vector2& s = decalComponent->getSize();
-	const float t = decalComponent->getThickness();
-	const float d = decalComponent->getCullDistance();
+		const Vector2& s = decalComponent->getSize();
+		const float t = decalComponent->getThickness();
+		const float d = decalComponent->getCullDistance();
 
-	const Vector4 center = worldRenderView.getView() * transform.translation().xyz1();
-	if (center.length2() > d * d)
-		return;
+		const Vector4 center = worldRenderView.getView() * transform.translation().xyz1();
+		if (center.length2() > d * d)
+			return;
 
-	const Scalar radius = Scalar(std::sqrt(s.x * s.x + s.y * s.y + t * t));
-	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
-		return;
+		const Scalar radius = Scalar(std::sqrt(s.x * s.x + s.y * s.y + t * t));
+		if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
+			return;
 
-	m_decalComponents.push_back(decalComponent);
-}
+		m_decalComponents.push_back(decalComponent);
+	}
 
-void DecalRenderer::build(
-	const WorldBuildContext& context,
-	const WorldRenderView& worldRenderView,
-	const IWorldRenderPass& worldRenderPass
-)
-{
 	render::RenderContext* renderContext = context.getRenderContext();
 	T_ASSERT(renderContext);
 
@@ -177,7 +168,7 @@ bool DecalRenderer::initialize(render::IRenderSystem* renderSystem)
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(Vertex), L"Incorrect size of vertex");
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, 8 * sizeof(Vertex), false);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, 8 * sizeof(Vertex), false, T_FILE_LINE_W);
 	T_ASSERT_M (m_vertexBuffer, L"Unable to create vertex buffer");
 
 	Vector4 extents[8];
@@ -196,7 +187,7 @@ bool DecalRenderer::initialize(render::IRenderSystem* renderSystem)
 
 	m_vertexBuffer->unlock();
 
-	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, 6 * 2 * 3 * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, 6 * 2 * 3 * sizeof(uint16_t), false, T_FILE_LINE_W);
 	T_ASSERT_M (m_indexBuffer, L"Unable to create index buffer");
 
 	const int32_t* faces = Aabb3::getFaces();

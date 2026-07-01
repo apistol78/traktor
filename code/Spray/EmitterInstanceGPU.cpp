@@ -1,17 +1,18 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Spray/EmitterInstanceGPU.h"
+
 #include "Render/Buffer.h"
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Spray/Emitter.h"
-#include "Spray/EmitterInstanceGPU.h"
 #include "Spray/GPUBufferPool.h"
 #include "Spray/Modifier.h"
 #include "Spray/PointRenderer.h"
@@ -22,9 +23,9 @@
 
 namespace traktor::spray
 {
-	namespace
-	{
-	
+namespace
+{
+
 const resource::Id< render::Shader > c_shaderLifetime(L"{A83B0679-4DA7-7B4C-92F4-7A17738B8804}");
 const resource::Id< render::Shader > c_shaderEvolve(L"{BAA7E3FC-7E27-4FD9-96D8-DC8CDD084E4C}");
 
@@ -36,7 +37,7 @@ const render::Handle s_handleTransform(L"Spray_Transform");
 const render::Handle s_handleHead(L"Spray_Head");
 const render::Handle s_handlePoints(L"Spray_Points");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstanceGPU", EmitterInstanceGPU, IEmitterInstance)
 
@@ -125,116 +126,107 @@ void EmitterInstanceGPU::update(Context& context, const Transform& transform, bo
 				const int32_t emitExtra = (int32_t)m_emitFraction;
 				m_emitFraction -= emitExtra;
 
-				m_updates.push_back({
-					context.deltaTime,
-					(int32_t)emitTotal + emitExtra,
-					(int32_t)context.random.next()
-				});
+				if (context.deltaTime > 0.0f || emitTotal + emitExtra > 0)
+					m_updates.push_back({ context.deltaTime,
+						(int32_t)emitTotal + emitExtra,
+						(int32_t)context.random.next() });
 			}
 			else
 			{
-				m_emitFraction = 0.0f;
-				m_updates.push_back({
-					context.deltaTime,
-					(int32_t)source->getConstantRate(),
-					(int32_t)context.random.next()
-				});
+				const int32_t emitConstant = source->getConstantRate();
+				if (emitConstant > 0)
+					m_updates.push_back({ context.deltaTime,
+						emitConstant,
+						(int32_t)context.random.next() });
 			}
 		}
 	}
-	else
+	else if (context.deltaTime > 0.0f)
 	{
 		m_emitFraction = 0.0f;
-		m_updates.push_back({
-			context.deltaTime,
+		m_updates.push_back({ context.deltaTime,
 			0,
-			(int32_t)context.random.next()
-		});
+			(int32_t)context.random.next() });
 	}
 }
 
-void EmitterInstanceGPU::render(
+void EmitterInstanceGPU::setup(render::RenderContext* renderContext)
+{
+	for (const auto& update : m_updates)
+	{
+		// Update life time of points; prepare indirect compute.
+		{
+			auto rb = renderContext->alloc< render::ComputeRenderBlock >();
+			rb->program = m_shaderLifetime->getProgram().program;
+			rb->programParams = renderContext->alloc< render::ProgramParameters >();
+			rb->programParams->beginParameters(renderContext);
+			rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
+			rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
+			rb->programParams->endParameters(renderContext);
+			renderContext->compute(rb);
+		}
+
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
+
+		// Evolve points; prepare indirect draw.
+		{
+			auto rb = renderContext->alloc< render::IndirectComputeRenderBlock >();
+			rb->program = m_shaderEvolve->getProgram().program;
+			rb->programParams = renderContext->alloc< render::ProgramParameters >();
+			rb->programParams->beginParameters(renderContext);
+			rb->programParams->setFloatParameter(s_handleSeed, (float)update.seed);
+			rb->programParams->setFloatParameter(s_handleDeltaTime, update.deltaTime);
+			rb->programParams->setFloatParameter(s_handleMiddleAge, m_emitter->getMiddleAge());
+			rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
+			rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
+			rb->programParams->endParameters(renderContext);
+			rb->workBuffer = m_headBuffer->getBufferView();
+			rb->workOffset = offsetof(Head, indirectCompute);
+			renderContext->compute(rb);
+		}
+
+		// Emit new points.
+		if (m_emitter->getSource() && m_shaderSource && update.emit > 0)
+		{
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
+
+			auto rb = renderContext->alloc< render::ComputeRenderBlock >();
+			rb->program = m_shaderSource->getProgram().program;
+			rb->programParams = renderContext->alloc< render::ProgramParameters >();
+			rb->programParams->beginParameters(renderContext);
+			rb->programParams->setFloatParameter(s_handleSeed, (float)update.seed);
+			rb->programParams->setFloatParameter(s_handleDeltaTime, update.deltaTime);
+			rb->programParams->setFloatParameter(s_handleEmitCount, (float)update.emit);
+			rb->programParams->setMatrixParameter(s_handleTransform, m_transform.toMatrix44());
+			rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
+			rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
+			m_emitter->getSource()->setShaderParameters(rb->programParams);
+			rb->programParams->endParameters(renderContext);
+			renderContext->compute(rb);
+		}
+
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute | render::Stage::Vertex | render::Stage::Indirect, nullptr, 0);
+	}
+
+	m_updates.resize(0);
+}
+
+void EmitterInstanceGPU::build(
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	render::RenderContext* renderContext,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer,
-	const Transform& transform
-)
+	const Transform& transform)
 {
 	const float distance = 0.0f;
-
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
-	{
-		for (const auto& update : m_updates)
-		{
-			// Update life time of points; prepare indirect compute.
-			{
-				auto rb = renderContext->alloc< render::ComputeRenderBlock >();
-				rb->program = m_shaderLifetime->getProgram().program;
-				rb->programParams = renderContext->alloc< render::ProgramParameters >();
-				rb->programParams->beginParameters(renderContext);
-				rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
-				rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
-				rb->programParams->endParameters(renderContext);
-				renderContext->compute(rb);
-			}
-
-			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
-
-			// Evolve points; prepare indirect draw.
-			{
-				auto rb = renderContext->alloc< render::IndirectComputeRenderBlock >();
-				rb->program = m_shaderEvolve->getProgram().program;
-				rb->programParams = renderContext->alloc< render::ProgramParameters >();
-				rb->programParams->beginParameters(renderContext);
-				rb->programParams->setFloatParameter(s_handleSeed, (float)update.seed);
-				rb->programParams->setFloatParameter(s_handleDeltaTime, update.deltaTime);
-				rb->programParams->setFloatParameter(s_handleMiddleAge, m_emitter->getMiddleAge());
-				rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
-				rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
-				rb->programParams->endParameters(renderContext);
-				rb->workBuffer = m_headBuffer->getBufferView();
-				rb->workOffset = offsetof(Head, indirectCompute);
-				renderContext->compute(rb);
-			}
-
-			// Emit new points.
-			if (m_emitter->getSource() && m_shaderSource && update.emit > 0)
-			{
-				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
-
-				auto rb = renderContext->alloc< render::ComputeRenderBlock >();
-				rb->program = m_shaderSource->getProgram().program;
-				rb->programParams = renderContext->alloc< render::ProgramParameters >();
-				rb->programParams->beginParameters(renderContext);
-				rb->programParams->setFloatParameter(s_handleSeed, (float)update.seed);
-				rb->programParams->setFloatParameter(s_handleDeltaTime, update.deltaTime);
-				rb->programParams->setFloatParameter(s_handleEmitCount, (float)update.emit);
-				rb->programParams->setMatrixParameter(s_handleTransform, m_transform.toMatrix44());
-				rb->programParams->setBufferViewParameter(s_handleHead, m_headBuffer->getBufferView());
-				rb->programParams->setBufferViewParameter(s_handlePoints, m_pointBuffer->getBufferView());
-				m_emitter->getSource()->setShaderParameters(rb->programParams);
-				rb->programParams->endParameters(renderContext);
-				renderContext->compute(rb);
-			}
-
-			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex | render::Stage::Indirect, nullptr, 0);
-		}
-
-		m_updates.resize(0);
-	}
-
 	if (m_emitter->getShader()->hasTechnique(worldRenderPass.getTechnique()))
-	{
 		pointRenderer->batchUntilFlush(
 			m_emitter->getShader(),
 			m_headBuffer,
 			m_pointBuffer,
-			distance
-		);
-	}
+			distance);
 }
 
 void EmitterInstanceGPU::synchronize() const
@@ -242,7 +234,7 @@ void EmitterInstanceGPU::synchronize() const
 }
 
 EmitterInstanceGPU::EmitterInstanceGPU(const Emitter* emitter)
-:	m_emitter(emitter)
+	: m_emitter(emitter)
 {
 }
 

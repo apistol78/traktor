@@ -77,6 +77,8 @@ bool NewHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edito
 		}
 	}
 
+	heightfield->updateCellBounds();
+
 	Ref< IStream > file = heightfieldInstance->writeData(L"Data");
 	if (!file)
 		return false;

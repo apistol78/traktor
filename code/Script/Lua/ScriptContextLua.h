@@ -53,13 +53,14 @@ private:
 	friend class ScriptManagerLua;
 
 	ScriptManagerLua* m_scriptManager;
-	lua_State* m_luaState;
+	lua_State*& m_luaState;
 	int32_t m_environmentRef;
+	int32_t m_errorFunctionRef;
 	bool m_strict;
 	const Object* m_lastSelf;
 	SmallSet< std::string > m_globals;
 
-	explicit ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, bool strict);
+	explicit ScriptContextLua(ScriptManagerLua* scriptManager, lua_State*& luaState, int32_t environmentRef, bool strict);
 
 	static int32_t runtimeError(lua_State* luaState);
 
