@@ -1390,10 +1390,13 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 
 		JPH::Array< JPH::Vec3 > vertexList;
 		vertexList.reserve(hullIndices.size());
+
+		Aabb3 boundingBox;
 		for (const auto& hullIndex : hullIndices)
 		{
 			const Vector4& vertex = vertices[hullIndex];
 			vertexList.push_back(JPH::Vec3(vertex.x(), vertex.y(), vertex.z()));
+			boundingBox.contain(vertex);
 		}
 
 		JPH::ConvexHullShapeSettings shapeSettings(vertexList);
@@ -1401,10 +1404,16 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 
 		JPH::ShapeRefC shape = wrapWithLocalTransform(shapeSettings, shapeDesc->getLocalTransform());
 
-		// Mass/inertia set by buildBodyCreationSettings (CalculateInertia on the hull).
 		JPH::BodyCreationSettings settings;
 		if (!buildBodyCreationSettings(desc, shape, settings))
 			return nullptr;
+
+		// Approximate the inertia as a solid box of the hull's AABB.
+		const float mass = dynamicDesc->getMass();
+		const Vector4 boxSize = boundingBox.getExtent() * 2.0_simd;
+		const float volume = std::max< float >(boxSize.x() * boxSize.y() * boxSize.z(), 0.001f);
+		settings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
+		settings.mMassPropertiesOverride.SetMassAndInertiaOfSolidBox(convertToJolt(boxSize), mass / volume);
 
 		settings.mCollisionGroup = JPH::CollisionGroup(m_groupFilter, collisionGroup, collisionMask);
 
@@ -1412,7 +1421,6 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		if (!body)
 			return nullptr;
 
-		const float mass = dynamicDesc->getMass();
 		const float inverseMass = mass > 0.0f ? 1.0f / mass : 0.0f;
 
 		Ref< BodyJolt > bj = new BodyJolt(tag, this, m_physicsSystem.ptr(), body, inverseMass, centerOfGravity, collisionGroup, collisionMask, shapeDesc->getMaterial(), meshProxy);
