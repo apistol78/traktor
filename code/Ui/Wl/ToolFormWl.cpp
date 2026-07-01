@@ -79,6 +79,7 @@ bool ToolFormWl::create(IWidget* parent, const std::wstring& text, int width, in
 		return false;
 
 	m_listenerCtx = { m_context, this };
+	toplevelSetupFractionalScale(&m_listenerCtx, &m_data);
 
 	if ((style & ToolForm::WsDefault) != 0)
 	{
@@ -254,11 +255,10 @@ void ToolFormWl::createPopup()
 	xdg_surface_add_listener(m_data.xdgSurface, &s_toplevelXdgSurfaceListener, &m_listenerCtx);
 
 	// Convert device-pixel rect to Wayland logical coordinates for the positioner.
-	const int32_t scale = m_context->getOutputScale();
-	const int32_t lx = m_rect.left / scale;
-	const int32_t ly = m_rect.top / scale;
-	const int32_t lw = m_rect.getWidth() / scale;
-	const int32_t lh = m_rect.getHeight() / scale;
+	const int32_t lx = m_context->toLogical(m_rect.left);
+	const int32_t ly = m_context->toLogical(m_rect.top);
+	const int32_t lw = m_context->toLogical(m_rect.getWidth());
+	const int32_t lh = m_context->toLogical(m_rect.getHeight());
 
 	xdg_positioner* positioner = xdg_wm_base_create_positioner(m_context->getXdgWmBase());
 	xdg_positioner_set_size(positioner, lw, lh);

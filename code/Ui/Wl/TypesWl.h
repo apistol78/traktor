@@ -12,6 +12,7 @@
 #include "Core/Containers/AlignedVector.h"
 #include "xdg-shell-client-protocol.h"
 #include "viewporter-client-protocol.h"
+#include "fractional-scale-v1-client-protocol.h"
 
 struct xdg_surface;
 struct xdg_toplevel;
@@ -27,7 +28,8 @@ struct WidgetData
 	AlignedVector< WidgetData* > children;		//!< Direct children; maintained so a parent resize can propagate clip recomputation.
 	wl_surface* surface = nullptr;
 	wl_subsurface* subsurface = nullptr;
-	wp_viewport* viewport = nullptr;			//!< Crops m_data.surface to the visible region within the ancestor chain.
+	wp_viewport* viewport = nullptr;			//!< Crops m_data.surface to the visible region within the ancestor chain. For toplevels (fractional mode) this instead scales the whole buffer to logical size.
+	wp_fractional_scale_v1* fractionalScale = nullptr;	//!< Toplevel only: receives the compositor's preferred fractional scale.
 	wl_surface* renderSurface = nullptr;		//!< Dedicated child surface for Vulkan/GL rendering.
 	wl_subsurface* renderSubsurface = nullptr;
 	wp_viewport* renderViewport = nullptr;		//!< Crops the render surface to the same visible region as the parent widget.
@@ -48,6 +50,8 @@ struct WidgetData
 	int32_t height = 0;
 	int32_t pendingWidth = 0;
 	int32_t pendingHeight = 0;
+	int32_t logicalWidth = 0;	//!< Toplevel only: last configured size in logical pixels, re-applied when the fractional scale changes.
+	int32_t logicalHeight = 0;
 };
 
 }

@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <sys/mman.h>
 #include <unistd.h>
@@ -553,11 +554,6 @@ void ContextWl::applyClip(WidgetData* widget) const
 		return;
 
 	const Rect visible = computeVisibleRect(widget);
-	const int32_t scale = m_outputScale > 0 ? m_outputScale : 1;
-
-	auto toLogical = [scale](int32_t device) {
-		return (scale > 1) ? device / scale : device;
-	};
 
 	const int32_t vw = visible.getWidth();
 	const int32_t vh = visible.getHeight();
@@ -590,14 +586,38 @@ void ContextWl::applyClip(WidgetData* widget) const
 	const int32_t dw = std::max< int32_t >(toLogical(vw), 1);
 	const int32_t dh = std::max< int32_t >(toLogical(vh), 1);
 
+	// The wp_viewport source rectangle is in the surface content-area space, which is
+	// buffer_size / buffer_scale.
+	//  - Legacy integer mode sets buffer_scale = output scale, so the content area is
+	//    logical and the source must be logical too (device pixels would overflow it on
+	//    HiDPI and raise wp_viewport out_of_buffer, leaving the surface unmapped).
+	//  - Fractional mode sets buffer_scale = 1, so the content area is the full device
+	//    buffer; the source is in device pixels and the destination alone downscales to
+	//    the logical size.
+	int32_t srcX, srcY, srcW, srcH;
+	if (m_fractionalScaling)
+	{
+		srcX = visible.left;
+		srcY = visible.top;
+		srcW = vw;
+		srcH = vh;
+	}
+	else
+	{
+		srcX = toLogical(visible.left);
+		srcY = toLogical(visible.top);
+		srcW = dw;
+		srcH = dh;
+	}
+
 	if (widget->viewport != nullptr)
 	{
 		wp_viewport_set_source(
 			widget->viewport,
-			wl_fixed_from_int(visible.left),
-			wl_fixed_from_int(visible.top),
-			wl_fixed_from_int(vw),
-			wl_fixed_from_int(vh)
+			wl_fixed_from_int(srcX),
+			wl_fixed_from_int(srcY),
+			wl_fixed_from_int(srcW),
+			wl_fixed_from_int(srcH)
 		);
 		wp_viewport_set_destination(widget->viewport, dw, dh);
 	}
@@ -609,10 +629,10 @@ void ContextWl::applyClip(WidgetData* widget) const
 		// cropped cairo content.
 		wp_viewport_set_source(
 			widget->renderViewport,
-			wl_fixed_from_int(visible.left),
-			wl_fixed_from_int(visible.top),
-			wl_fixed_from_int(vw),
-			wl_fixed_from_int(vh)
+			wl_fixed_from_int(srcX),
+			wl_fixed_from_int(srcY),
+			wl_fixed_from_int(srcW),
+			wl_fixed_from_int(srcH)
 		);
 		wp_viewport_set_destination(widget->renderViewport, dw, dh);
 	}
@@ -654,6 +674,35 @@ void ContextWl::setInternalFocus(WidgetData* widget)
 int32_t ContextWl::getSystemDPI() const
 {
 	return m_dpi;
+}
+
+int32_t ContextWl::toLogical(int32_t device) const
+{
+	if (m_fractionalScaling)
+		return (int32_t)std::lround(device / m_scale);
+	// Legacy integer path: floor so a viewport source rectangle never exceeds the
+	// buffer content area (buffer_size / buffer_scale).
+	return (m_outputScale > 1) ? device / m_outputScale : device;
+}
+
+int32_t ContextWl::toDevice(int32_t logical) const
+{
+	if (m_fractionalScaling)
+		return (int32_t)std::lround(logical * m_scale);
+	return logical * m_outputScale;
+}
+
+bool ContextWl::applyFractionalScale(uint32_t scale120)
+{
+	if (scale120 == 0)
+		return false;
+	const float s = scale120 / 120.0f;
+	if (m_fractionalScaling && std::abs(s - m_scale) < 0.001f)
+		return false;
+	m_scale = s;
+	m_fractionalScaling = true;
+	m_dpi = (int32_t)std::lround(96.0f * s);
+	return true;
 }
 
 void ContextWl::dispatch(wl_surface* surface, int32_t eventType, bool always, WlEvent& e)
@@ -708,6 +757,8 @@ void ContextWl::registryGlobal(void* data, wl_registry* registry, uint32_t name,
 		ctx->m_subcompositor = static_cast< wl_subcompositor* >(wl_registry_bind(registry, name, &wl_subcompositor_interface, 1));
 	else if (std::strcmp(interface, wp_viewporter_interface.name) == 0)
 		ctx->m_viewporter = static_cast< wp_viewporter* >(wl_registry_bind(registry, name, &wp_viewporter_interface, 1));
+	else if (std::strcmp(interface, wp_fractional_scale_manager_v1_interface.name) == 0)
+		ctx->m_fractionalScaleManager = static_cast< wp_fractional_scale_manager_v1* >(wl_registry_bind(registry, name, &wp_fractional_scale_manager_v1_interface, 1));
 	else if (std::strcmp(interface, wl_shm_interface.name) == 0)
 		ctx->m_shm = static_cast< wl_shm* >(wl_registry_bind(registry, name, &wl_shm_interface, 1));
 	else if (std::strcmp(interface, xdg_wm_base_interface.name) == 0)
@@ -769,8 +820,8 @@ void ContextWl::pointerEnter(void* data, wl_pointer* pointer, uint32_t serial, w
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 	ctx->m_pointerSerial = serial;
 
-	double px = wl_fixed_to_double(sx) * ctx->m_outputScale;
-	double py = wl_fixed_to_double(sy) * ctx->m_outputScale;
+	double px = wl_fixed_to_double(sx) * ctx->getScale();
+	double py = wl_fixed_to_double(sy) * ctx->getScale();
 
 	WidgetData* enteringWidget = nullptr;
 	auto b = ctx->m_bindings.find(surface);
@@ -829,8 +880,8 @@ void ContextWl::pointerMotion(void* data, wl_pointer* pointer, uint32_t time, wl
 	if (!target || !target->surface)
 		return;
 
-	double px = wl_fixed_to_double(sx) * ctx->m_outputScale;
-	double py = wl_fixed_to_double(sy) * ctx->m_outputScale;
+	double px = wl_fixed_to_double(sx) * ctx->getScale();
+	double py = wl_fixed_to_double(sy) * ctx->getScale();
 
 	// During capture, motion can come in via a different surface (the parent
 	// or a sibling) once the cursor leaves the grabbed widget's bounds —
@@ -1139,10 +1190,17 @@ void ContextWl::outputScale(void* data, wl_output* output, int32_t factor)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 	ctx->m_outputScale = factor;
-	// Set effective DPI so dpi96() returns scale-adjusted values.
-	// This is needed by code that rasterizes bitmaps/SVGs at the
-	// correct physical resolution (e.g. StyleBitmap).
-	ctx->m_dpi = 96 * factor;
+	// In legacy (integer buffer_scale) mode the effective scale tracks the output
+	// scale. When wp_fractional_scale_v1 is driving the scale, leave m_scale/m_dpi
+	// alone — the fractional preferred scale is authoritative.
+	if (!ctx->m_fractionalScaling)
+	{
+		ctx->m_scale = (float)factor;
+		// Set effective DPI so dpi96() returns scale-adjusted values.
+		// This is needed by code that rasterizes bitmaps/SVGs at the
+		// correct physical resolution (e.g. StyleBitmap).
+		ctx->m_dpi = 96 * factor;
+	}
 }
 
 // Data device

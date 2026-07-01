@@ -134,6 +134,8 @@ public:
 
 	wp_viewporter* getViewporter() const { return m_viewporter; }
 
+	wp_fractional_scale_manager_v1* getFractionalScaleManager() const { return m_fractionalScaleManager; }
+
 	wl_shm* getShm() const { return m_shm; }
 
 	xdg_wm_base* getXdgWmBase() const { return m_xdgWmBase; }
@@ -184,6 +186,26 @@ public:
 	uint32_t getKeyboardModifiers() const { return m_keyboardModifiers; }
 
 	int32_t getOutputScale() const { return m_outputScale; }
+
+	//! Effective scale factor. Fractional when the compositor supports
+	//! wp_fractional_scale_v1, otherwise equal to the integer output scale.
+	float getScale() const { return m_scale; }
+
+	//! True when rendering at the effective scale via buffer_scale=1 + wp_viewport
+	//! (the only way to render a fractional scale); false uses integer buffer_scale.
+	bool isFractionalScaling() const { return m_fractionalScaling; }
+
+	//! Convert a device-pixel measure to Wayland logical pixels (rounds in fractional
+	//! mode, floors in legacy integer mode to stay within the buffer content area).
+	int32_t toLogical(int32_t device) const;
+
+	//! Convert a Wayland logical-pixel measure to device pixels.
+	int32_t toDevice(int32_t logical) const;
+
+	//! Apply a compositor-preferred fractional scale (in 1/120 units); enables
+	//! fractional scaling and updates the effective scale and DPI. Returns true
+	//! if the scale actually changed (caller should relayout/redraw).
+	bool applyFractionalScale(uint32_t scale120);
 
 	//! Output dimensions in logical pixels (from wl_output::mode).
 	int32_t getOutputWidth() const { return m_outputWidth; }
@@ -238,6 +260,7 @@ private:
 	wl_compositor* m_compositor = nullptr;
 	wl_subcompositor* m_subcompositor = nullptr;
 	wp_viewporter* m_viewporter = nullptr;
+	wp_fractional_scale_manager_v1* m_fractionalScaleManager = nullptr;
 	wl_shm* m_shm = nullptr;
 	wl_seat* m_seat = nullptr;
 	wl_pointer* m_pointer = nullptr;
@@ -263,6 +286,8 @@ private:
 
 	int32_t m_dpi = 96;
 	int32_t m_outputScale = 1;
+	float m_scale = 1.0f;				//!< Effective (possibly fractional) scale; == m_outputScale in legacy mode.
+	bool m_fractionalScaling = false;	//!< True once a wp_fractional_scale_v1 preferred scale has been applied.
 	int32_t m_outputWidth = 1920;
 	int32_t m_outputHeight = 1080;
 	uint32_t m_pointerSerial = 0;

@@ -35,9 +35,14 @@ inline void applyToplevelConfiguredSize(ContextWl* context, IWidget* widget, int
 	if (logicalWidth <= 0 || logicalHeight <= 0)
 		return;
 
-	const int32_t scale = context->getOutputScale();
+	// Remember the logical size so we can re-derive the device rect if the
+	// fractional scale changes later (e.g. the window moves to another output).
+	WidgetData* wd = static_cast< WidgetData* >(widget->getInternalHandle());
+	wd->logicalWidth = logicalWidth;
+	wd->logicalHeight = logicalHeight;
+
 	const Rect prev = widget->getRect();
-	const Rect next(prev.left, prev.top, prev.left + logicalWidth * scale, prev.top + logicalHeight * scale);
+	const Rect next(prev.left, prev.top, prev.left + context->toDevice(logicalWidth), prev.top + context->toDevice(logicalHeight));
 
 	// setRect queues an expose; the event loop drains it at the end of the
 	// current iteration. Draining synchronously here would force a full
@@ -91,9 +96,8 @@ inline void toplevelLibdecorConfigure(libdecor_frame* frame, libdecor_configurat
 	if (!libdecor_configuration_get_content_size(configuration, frame, &width, &height))
 	{
 		const Rect rc = lctx->widget->getRect();
-		const int32_t scale = lctx->context->getOutputScale();
-		width = rc.getWidth() / scale;
-		height = rc.getHeight() / scale;
+		width = lctx->context->toLogical(rc.getWidth());
+		height = lctx->context->toLogical(rc.getHeight());
 	}
 
 	libdecor_state* state = libdecor_state_new(width, height);
@@ -123,6 +127,39 @@ inline void toplevelLibdecorCommit(libdecor_frame*, void* userData)
 
 inline void toplevelLibdecorDismissPopup(libdecor_frame*, const char*, void*)
 {
+}
+
+//! Compositor-preferred fractional scale changed (units of 1/120). Update the
+//! context's effective scale/DPI and, if the size is already known, re-derive the
+//! device rect at the new scale — setRect drives the relayout + redraw, which
+//! re-commits buffers at buffer_scale=1 and updates the toplevel viewport.
+inline void toplevelFractionalPreferredScale(void* data, wp_fractional_scale_v1*, uint32_t scale)
+{
+	auto* lctx = static_cast< ToplevelListenerCtx* >(data);
+	if (!lctx->context->applyFractionalScale(scale))
+		return;
+
+	WidgetData* wd = static_cast< WidgetData* >(lctx->widget->getInternalHandle());
+	if (wd->configured && wd->logicalWidth > 0 && wd->logicalHeight > 0)
+		applyToplevelConfiguredSize(lctx->context, lctx->widget, wd->logicalWidth, wd->logicalHeight);
+}
+
+inline const wp_fractional_scale_v1_listener s_toplevelFractionalScaleListener = {
+	toplevelFractionalPreferredScale
+};
+
+//! Attach a wp_fractional_scale_v1 to a toplevel surface if the compositor supports
+//! the protocol. No-op otherwise (legacy integer buffer_scale path stays in effect).
+inline void toplevelSetupFractionalScale(ToplevelListenerCtx* lctx, WidgetData* wd)
+{
+	wp_fractional_scale_manager_v1* manager = lctx->context->getFractionalScaleManager();
+	// Fractional scaling is done via buffer_scale=1 + wp_viewport, so both protocols
+	// must be present; without the viewporter, stay on the legacy integer path.
+	if (manager == nullptr || lctx->context->getViewporter() == nullptr || wd->surface == nullptr || wd->fractionalScale != nullptr)
+		return;
+
+	wd->fractionalScale = wp_fractional_scale_manager_v1_get_fractional_scale(manager, wd->surface);
+	wp_fractional_scale_v1_add_listener(wd->fractionalScale, &s_toplevelFractionalScaleListener, lctx);
 }
 
 inline const xdg_surface_listener s_toplevelXdgSurfaceListener = {

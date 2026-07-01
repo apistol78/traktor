@@ -69,6 +69,7 @@ bool DialogWl::create(IWidget* parent, const std::wstring& text, int width, int 
 		return false;
 
 	m_listenerCtx = { m_context, this };
+	toplevelSetupFractionalScale(&m_listenerCtx, &m_data);
 
 	const bool wantDecorations = (style & (WsResizable | WsCaption | WsSystemBox | WsMinimizeBox | WsMaximizeBox)) != 0;
 
@@ -85,11 +86,10 @@ bool DialogWl::create(IWidget* parent, const std::wstring& text, int width, int 
 		{
 			// Wayland disallows absolute toplevel positioning; use an xdg_popup
 			// anchored to the parent to center the dialog on the output.
-			const int32_t scale = m_context->getOutputScale();
-			const int32_t pw = m_context->getOutputWidth() / scale;
-			const int32_t ph = m_context->getOutputHeight() / scale;
-			const int32_t dw = m_rect.getWidth() / scale;
-			const int32_t dh = m_rect.getHeight() / scale;
+			const int32_t pw = m_context->toLogical(m_context->getOutputWidth());
+			const int32_t ph = m_context->toLogical(m_context->getOutputHeight());
+			const int32_t dw = m_context->toLogical(m_rect.getWidth());
+			const int32_t dh = m_context->toLogical(m_rect.getHeight());
 			const int32_t cx = (pw - dw) / 2;
 			const int32_t cy = (ph - dh) / 2;
 
@@ -231,9 +231,8 @@ void DialogWl::endModal(DialogResult result)
 
 void DialogWl::setMinSize(const Size& minSize)
 {
-	const int32_t scale = m_context->getOutputScale();
-	const int32_t lw = minSize.cx / scale;
-	const int32_t lh = minSize.cy / scale;
+	const int32_t lw = m_context->toLogical(minSize.cx);
+	const int32_t lh = m_context->toLogical(minSize.cy);
 
 	if (m_data.frame)
 		libdecor_frame_set_min_content_size(m_data.frame, lw, lh);

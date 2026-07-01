@@ -40,6 +40,7 @@ bool FormWl::create(IWidget* parent, const std::wstring& text, int width, int he
 		return false;
 
 	m_listenerCtx = { m_context, this };
+	toplevelSetupFractionalScale(&m_listenerCtx, &m_data);
 
 	if (m_context->hasServerSideDecorations())
 	{

@@ -156,6 +156,12 @@ public:
 				m_data.renderSurface = nullptr;
 			}
 
+			if (m_data.fractionalScale != nullptr)
+			{
+				wp_fractional_scale_v1_destroy(m_data.fractionalScale);
+				m_data.fractionalScale = nullptr;
+			}
+
 			if (m_data.viewport != nullptr)
 			{
 				wp_viewport_destroy(m_data.viewport);
@@ -554,10 +560,11 @@ public:
 			wl_subsurface_set_desync(m_data.renderSubsurface);
 			wl_subsurface_set_position(m_data.renderSubsurface, 0, 0);
 
-			// Tell the compositor that the Vulkan buffer is at device-pixel
-			// resolution so it maps to the correct logical size on screen.
-			const int32_t scale = m_context->getOutputScale();
-			wl_surface_set_buffer_scale(m_data.renderSurface, scale);
+			// Tell the compositor how the device-pixel Vulkan buffer maps to logical
+			// size. Fractional mode uses buffer_scale=1 and lets the renderViewport
+			// (see ContextWl::applyClip) perform the down-scale; legacy mode uses the
+			// integer output scale directly.
+			wl_surface_set_buffer_scale(m_data.renderSurface, m_context->isFractionalScaling() ? 1 : m_context->getOutputScale());
 
 			// Crop the dmabuf render output to the widget's visible region —
 			// otherwise a partially-clipped 3D view leaks past its parent.
@@ -648,14 +655,12 @@ protected:
 
 	int32_t toLogical(int32_t device) const
 	{
-		const int32_t s = m_context->getOutputScale();
-		return (s > 1) ? device / s : device;
+		return m_context->toLogical(device);
 	}
 
 	int32_t toDevice(int32_t logical) const
 	{
-		const int32_t s = m_context->getOutputScale();
-		return logical * s;
+		return m_context->toDevice(logical);
 	}
 
 	// --- Creation ---
@@ -882,10 +887,25 @@ protected:
 		);
 		m_cairo = cairo_create(m_surface);
 
-		// Buffer is in device pixels; tell compositor the scale so it
-		// maps to the correct logical size on screen.
-		const int32_t scale = m_context->getOutputScale();
-		wl_surface_set_buffer_scale(m_data.surface, scale);
+		// Buffer is in device pixels. Fractional mode uses buffer_scale=1 and a
+		// wp_viewport to map the whole buffer to its logical size; legacy mode tells
+		// the compositor the integer scale directly.
+		if (m_context->isFractionalScaling())
+		{
+			wl_surface_set_buffer_scale(m_data.surface, 1);
+
+			// Surfaces with no subsurface (toplevels and popups) are skipped by
+			// applyClip, so they get no clip viewport. Give them their own viewport
+			// solely to down-scale the whole device buffer to its logical size.
+			if (m_data.subsurface == nullptr && m_context->getViewporter() != nullptr)
+			{
+				if (m_data.viewport == nullptr)
+					m_data.viewport = wp_viewporter_get_viewport(m_context->getViewporter(), m_data.surface);
+				wp_viewport_set_destination(m_data.viewport, m_context->toLogical(w), m_context->toLogical(h));
+			}
+		}
+		else
+			wl_surface_set_buffer_scale(m_data.surface, m_context->getOutputScale());
 
 		// Re-apply font on the new cairo context.
 		if (!m_font.getFace().empty())
