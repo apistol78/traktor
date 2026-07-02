@@ -30,6 +30,8 @@ class ProgramParameters;
 namespace traktor::world
 {
 
+class VolumeComponent;
+
 /*! Reflection probe component.
  * \ingroup World
  */
@@ -41,8 +43,6 @@ public:
 	explicit ProbeComponent(
 		const resource::Proxy< render::ITexture >& texture,
 		float intensity,
-		const Aabb3& volume,
-		bool local,
 		bool capture,
 		bool dirty
 	);
@@ -69,9 +69,7 @@ public:
 
 	float getIntensity() const { return m_intensity; }
 
-	bool getLocal() const { return m_local; }
-
-	const Aabb3& getVolume() const { return m_volume; }
+	VolumeComponent* getLocal() const { return m_local; }
 
 	bool shouldCapture() const { return m_capture; }
 
@@ -87,9 +85,8 @@ private:
 	Entity* m_owner = nullptr;
 	resource::Proxy< render::ITexture > m_texture;
 	float m_intensity = 0.0f;
-	Aabb3 m_volume;
+	VolumeComponent* m_local = nullptr;
 	Vector4 m_last = Vector4::zero();
-	bool m_local = false;
 	bool m_capture = false;
 	bool m_dirty = false;
 	int32_t m_revision = 0;

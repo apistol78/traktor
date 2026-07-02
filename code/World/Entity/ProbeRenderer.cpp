@@ -22,6 +22,7 @@
 #include "Render/VertexElement.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity/ProbeComponent.h"
+#include "World/Entity/VolumeComponent.h"
 #include "World/IWorldRenderer.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
@@ -497,12 +498,14 @@ void ProbeRenderer::build(
 		auto probeComponent = static_cast< ProbeComponent* >(renderable);
 
 		// Cull local probes to frustum.
-		if (probeComponent->getLocal())
+		const VolumeComponent* local = probeComponent->getLocal();
+		if (local != nullptr)
 		{
+			const Aabb3 volumeBounds = local->getBoundingBox();
 			const Transform& transform = probeComponent->getTransform();
 			const Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
-			const Vector4 center = worldView * probeComponent->getVolume().getCenter().xyz1();
-			const Scalar radius = probeComponent->getVolume().getExtent().length();
+			const Vector4 center = worldView * volumeBounds.getCenter().xyz1();
+			const Scalar radius = volumeBounds.getExtent().length();
 			if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
 				return;
 		}

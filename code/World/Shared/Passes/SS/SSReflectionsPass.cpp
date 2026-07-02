@@ -21,6 +21,7 @@
 #include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity/ProbeComponent.h"
+#include "World/Entity/VolumeComponent.h"
 #include "World/IEntityRenderer.h"
 #include "World/IWorldRenderer.h"
 #include "World/Shared/WorldRenderPassShared.h"
@@ -233,13 +234,15 @@ render::RGTargetSet SSReflectionsPass::setup(
 	{
 		for (auto p : gatheredView.probes)
 		{
-			if (p->getLocal() && p->getTexture() != nullptr)
+			const VolumeComponent* local = p->getLocal();
+			if (local != nullptr && p->getTexture() != nullptr)
 			{
+				const Aabb3 volumeBounds = local->getBoundingBox();
 				const Transform& transform = p->getTransform();
 				const Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
 
 				float distance;
-				if (!worldRenderView.isBoxVisible(p->getVolume(), p->getTransform(), distance))
+				if (!worldRenderView.isBoxVisible(volumeBounds, p->getTransform(), distance))
 					continue;
 
 				const Aabb3 worldVolume = p->getBoundingBox();

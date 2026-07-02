@@ -12,6 +12,7 @@
 #include "Render/Context/ProgramParameters.h"
 #include "World/Entity.h"
 #include "World/WorldHandles.h"
+#include "World/Entity/VolumeComponent.h"
 
 namespace traktor::world
 {
@@ -21,17 +22,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeComponent", ProbeComponent, IEntityC
 ProbeComponent::ProbeComponent(
 	const resource::Proxy< render::ITexture >& texture,
 	float intensity,
-	const Aabb3& volume,
-	bool local,
 	bool capture,
 	bool dirty
 )
 :	m_owner(nullptr)
 ,	m_texture(texture)
 ,	m_intensity(intensity)
-,	m_volume(volume)
 ,	m_last(Vector4::zero())
-,	m_local(local)
 ,	m_capture(capture)
 ,	m_dirty(dirty)
 {
@@ -50,12 +47,7 @@ void ProbeComponent::setOwner(Entity* owner)
 
 void ProbeComponent::update(const UpdateParams& update)
 {
-	//const int32_t t = (int32_t)(update.totalTime * 2.0f);
-	//if (t != m_auto)
-	//{
-	//	m_dirty = true;
-	//	m_auto = t;
-	//}
+	m_local = m_owner ? m_owner->getComponent< VolumeComponent >() : nullptr;
 }
 
 void ProbeComponent::setTransform(const Transform& transform)
@@ -69,7 +61,7 @@ void ProbeComponent::setTransform(const Transform& transform)
 
 Aabb3 ProbeComponent::getBoundingBox() const
 {
-	return m_volume;
+	return Aabb3();
 }
 
 Transform ProbeComponent::getTransform() const

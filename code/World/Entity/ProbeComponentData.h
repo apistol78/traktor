@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include "Core/Math/Aabb3.h"
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
 
@@ -32,6 +31,9 @@ namespace traktor::world
 
 /*! Reflection probe component.
  * \ingroup World
+ *
+ * \note A reflection probe is considered local if the
+ * owner entity also contain a VolumeComponent.
  */
 class T_DLLCLASS ProbeComponentData : public IEntityComponentData
 {
@@ -52,19 +54,9 @@ public:
 
 	float getIntensity() const { return m_intensity; }
 
-	void setLocal(bool local) { m_local = local; }
-
-	bool getLocal() const { return m_local; }
-
-	void setVolume(const Aabb3& volume) { m_volume = volume; }
-
-	const Aabb3& getVolume() const { return m_volume; }
-
 private:
 	resource::Id< render::ITexture > m_texture;
 	float m_intensity = 1.0f;
-	bool m_local = false;
-	Aabb3 m_volume = Aabb3(Vector4::zero(), Vector4::zero());
 };
 
 }
