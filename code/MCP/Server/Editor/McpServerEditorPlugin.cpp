@@ -32,6 +32,15 @@
 #include "MCP/Server/Editor/IsEditorOpenTool.h"
 #include "MCP/Server/Editor/MeshAssetGetTool.h"
 #include "MCP/Server/Editor/MeshAssetSetMaterialShaderTool.h"
+#include "MCP/Server/Editor/ModelApplyOperationTool.h"
+#include "MCP/Server/Editor/ModelCloseTool.h"
+#include "MCP/Server/Editor/ModelEditTool.h"
+#include "MCP/Server/Editor/ModelGetElementsTool.h"
+#include "MCP/Server/Editor/ModelInspectTool.h"
+#include "MCP/Server/Editor/ModelListTool.h"
+#include "MCP/Server/Editor/ModelOpenTool.h"
+#include "MCP/Server/Editor/ModelSaveTool.h"
+#include "MCP/Server/Editor/ModelSession.h"
 #include "MCP/Server/Editor/OpenEditorTool.h"
 #include "MCP/Server/Editor/RenderMeshPreviewTool.h"
 #include "MCP/Server/Editor/ShaderGraphCreateTool.h"
@@ -94,6 +103,18 @@ bool McpServerEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, 
 	m_server->addTool(new ShaderGraphValidateTool(m_editor));
 	m_server->addTool(new ShaderGraphCreateTool(m_editor));
 	m_server->addTool(new ShaderGraphUpdateTool(m_editor));
+
+	// Model tools: read/create/inspect/edit/operate on model::Model instances,
+	// backed by an in-memory handle store shared across the tools.
+	m_session = new ModelSession();
+	m_server->addTool(new ModelOpenTool(m_editor, m_session));
+	m_server->addTool(new ModelListTool(m_editor, m_session));
+	m_server->addTool(new ModelCloseTool(m_editor, m_session));
+	m_server->addTool(new ModelInspectTool(m_editor, m_session));
+	m_server->addTool(new ModelGetElementsTool(m_editor, m_session));
+	m_server->addTool(new ModelEditTool(m_editor, m_session));
+	m_server->addTool(new ModelApplyOperationTool(m_editor, m_session));
+	m_server->addTool(new ModelSaveTool(m_editor, m_session));
 
 	// AI skills: authorable, publishable procedures exposed as MCP prompts.
 	m_server->addTool(new SkillCreateTool(m_editor));

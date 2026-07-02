@@ -29,6 +29,7 @@ namespace traktor::mcp
 {
 
 class McpServer;
+class ModelSession;
 
 /*! MCP server editor plugin.
  * \ingroup MCP
@@ -64,6 +65,7 @@ private:
 	editor::IEditor* m_editor = nullptr;
 	Thread* m_threadServer = nullptr;
 	Ref< McpServer > m_server;
+	Ref< ModelSession > m_session;
 
 	void threadServer();
 };
