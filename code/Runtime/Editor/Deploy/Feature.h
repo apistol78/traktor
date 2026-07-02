@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -56,6 +56,10 @@ public:
 
 	const std::wstring& getDescription() const { return m_description; }
 
+	void setExclusiveIdentifier(const std::wstring& exclusiveIdentifier);
+
+	const std::wstring& getExclusiveIdentifier() const { return m_exclusiveIdentifier; }
+
 	void setPriority(int32_t priority);
 
 	int32_t getPriority() const { return m_priority; }
@@ -86,6 +90,7 @@ public:
 
 private:
 	std::wstring m_description;
+	std::wstring m_exclusiveIdentifier;
 	int32_t m_priority;
 	std::list< Platform > m_platforms;
 	Ref< PropertyGroup > m_pipelineProperties;

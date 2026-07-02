@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.runtime.Feature" version="8">
+<object type="traktor.runtime.Feature" version="9">
 	<description>Physics - Bullet</description>
+	<exclusiveIdentifier>Physics</exclusiveIdentifier>
 	<priority>0</priority>
 	<platforms>
 		<item>

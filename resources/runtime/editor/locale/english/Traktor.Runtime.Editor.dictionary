@@ -267,6 +267,10 @@
 			<second>Description</second>
 		</item>
 		<item>
+			<first>RUNTIME_FEATURE_EXCLUSIVE_IDENTIFIER</first>
+			<second>Exclusive identifier</second>
+		</item>		
+		<item>
 			<first>RUNTIME_FEATURE_PRIORITY</first>
 			<second>Priority</second>
 		</item>

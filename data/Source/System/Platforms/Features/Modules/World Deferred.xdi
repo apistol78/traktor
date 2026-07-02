@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.runtime.Feature" version="8">
+<object type="traktor.runtime.Feature" version="9">
 	<description>World - Deferred Rendering</description>
+	<exclusiveIdentifier>WorldRenderer</exclusiveIdentifier>
 	<priority>0</priority>
 	<platforms>
 		<item>
@@ -679,6 +680,8 @@
 				<first>ShaderPipeline.IncludeOnlyTechniques</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
+						<item>World_ComputeIrradiance</item>
+						<item>World_ComputeIrradiance_RT</item>
 						<item>World_DBufferWrite</item>
 						<item>World_DeferredColor</item>
 						<item>World_DeferredGBufferWrite</item>
@@ -687,9 +690,7 @@
 						<item>World_ReflectionWrite</item>
 						<item>World_ShadowWrite</item>
 						<item>World_VelocityWrite</item>
-                        <item>World_ComputeIrradiance</item>
-                        <item>World_ComputeIrradiance_RT</item>
-                    </value>
+					</value>
 				</second>
 			</item>
 		</value>

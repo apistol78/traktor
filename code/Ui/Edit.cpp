@@ -219,6 +219,9 @@ void Edit::cut()
 		std::wstring current = getText();
 		current = current.substr(0, m_selectionStart) + current.substr(m_selectionEnd);
 		setText(current);
+
+		ContentChangeEvent contentChangeEvent(this);
+		raiseEvent(&contentChangeEvent);
 	}
 }
 
@@ -228,7 +231,12 @@ void Edit::paste()
 	if (clipboard != nullptr)
 	{
 		if (clipboard->getContentType() == ClipboardContent::Text)
+		{
 			insert(clipboard->getText());
+
+			ContentChangeEvent contentChangeEvent(this);
+			raiseEvent(&contentChangeEvent);
+		}
 	}
 }
 

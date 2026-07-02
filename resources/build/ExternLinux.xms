@@ -6043,21 +6043,6 @@
 					</items>
 				</item>
 				<item type="traktor.sb.Filter">
-					<name>TriangleGrouper</name>
-					<items>
-						<item type="traktor.sb.File" version="1">
-							<fileName>TriangleGrouper/*.cpp</fileName>
-							<excludeFilter/>
-							<items/>
-						</item>
-						<item type="traktor.sb.File" version="1">
-							<fileName>TriangleGrouper/*.h</fileName>
-							<excludeFilter/>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="traktor.sb.Filter">
 					<name>TriangleSplitter</name>
 					<items>
 						<item type="traktor.sb.File" version="1">

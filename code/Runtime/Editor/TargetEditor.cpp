@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -279,14 +279,12 @@ void TargetEditor::updateTargetConfigurations()
 {
 	m_listBoxTargetConfigurations->removeAll();
 
-	int32_t selected = m_listBoxTargetConfigurations->getSelected();
-
-	const RefArray< TargetConfiguration >& configurations = m_editTarget->getConfigurations();
-	for (RefArray< TargetConfiguration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	const int32_t selected = m_listBoxTargetConfigurations->getSelected();
+	for (auto configuration : m_editTarget->getConfigurations())
 	{
 		m_listBoxTargetConfigurations->add(
-			(*i)->getName(),
-			*i
+			configuration->getName(),
+			configuration
 		);
 	}
 
@@ -302,7 +300,7 @@ void TargetEditor::updateAvailableFeatures()
 	{
 		for (const auto& feature : m_features)
 		{
-			if (feature.feature != 0 && feature.feature->getPlatform(targetConfiguration->getPlatform()) != nullptr)
+			if (feature.feature != nullptr && feature.feature->getPlatform(targetConfiguration->getPlatform()) != nullptr)
 			{
 				if (targetConfiguration->haveFeature(feature.featureInstance->getGuid()))
 					continue;
@@ -415,13 +413,13 @@ void TargetEditor::updateIcon()
 	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 	if (targetConfiguration)
 	{
-		Path projectPath = FileSystem::getInstance().getCurrentVolumeAndDirectory();
-		Path iconPath = targetConfiguration->getIcon();
+		const Path projectPath = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+		const Path iconPath = targetConfiguration->getIcon();
 
 		Ref< drawing::Image > iconImage = drawing::Image::load(projectPath + iconPath);
 		if (iconImage)
 		{
-			drawing::ScaleFilter scaleFilter(128, 128, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
+			const drawing::ScaleFilter scaleFilter(128, 128, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
 			iconImage->apply(&scaleFilter);
 
 			m_imageIcon->setImage(new ui::Bitmap(iconImage), true);
@@ -673,11 +671,29 @@ void TargetEditor::eventButtonAddFeatureClick(ui::ButtonClickEvent* event)
 	std::vector< int32_t > s;
 	m_listBoxAvailFeatures->getSelected(s);
 
-	for (std::vector< int32_t >::const_iterator i = s.begin(); i != s.end(); ++i)
+	for (auto idx : s)
 	{
-		Ref< db::Instance > featureInstance = m_listBoxAvailFeatures->getData< db::Instance >(*i);
+		Ref< db::Instance > featureInstance = m_listBoxAvailFeatures->getData< db::Instance >(idx);
 		if (featureInstance)
+		{
+			const std::wstring exclusiveId = featureInstance->getObject< Feature >()->getExclusiveIdentifier();
+			if (!exclusiveId.empty())
+			{
+				// Remove all features from target configuration which have same ID; only
+				// the one to be added can remain.
+				AlignedVector< Guid > removeFeatureIds;
+				for (const auto& featureId : targetConfiguration->getFeatures())
+				{
+					Ref< const Feature > feature = m_editor->getSourceDatabase()->getObjectReadOnly< Feature >(featureId);
+					if (feature && feature->getExclusiveIdentifier() == exclusiveId)
+						removeFeatureIds.push_back(featureId);
+				}
+				for (const auto& removeFeatureId : removeFeatureIds)
+					targetConfiguration->removeFeature(removeFeatureId);
+			}
+
 			targetConfiguration->addFeature(featureInstance->getGuid());
+		}
 	}
 
 	updateAvailableFeatures();
@@ -693,9 +709,9 @@ void TargetEditor::eventButtonRemoveFeatureClick(ui::ButtonClickEvent* event)
 	std::vector< int32_t > s;
 	m_listBoxUsedFeatures->getSelected(s);
 
-	for (std::vector< int32_t >::const_iterator i = s.begin(); i != s.end(); ++i)
+	for (auto idx : s)
 	{
-		Ref< db::Instance > featureInstance = m_listBoxUsedFeatures->getData< db::Instance >(*i);
+		Ref< db::Instance > featureInstance = m_listBoxUsedFeatures->getData< db::Instance >(idx);
 		if (featureInstance)
 			targetConfiguration->removeFeature(featureInstance->getGuid());
 	}

@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Runtime/Editor/Deploy/Feature.h"
+
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -14,13 +16,12 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyStringSet.h"
-#include "Runtime/Editor/Deploy/Feature.h"
 #include "Runtime/Editor/Deploy/Platform.h"
 
 namespace traktor::runtime
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.runtime.Feature", 8, Feature, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.runtime.Feature", 9, Feature, ISerializable)
 
 Feature::Feature()
 :	m_priority(0)
@@ -30,6 +31,11 @@ Feature::Feature()
 void Feature::setDescription(const std::wstring& description)
 {
 	m_description = description;
+}
+
+void Feature::setExclusiveIdentifier(const std::wstring& exclusiveIdentifier)
+{
+	m_exclusiveIdentifier = exclusiveIdentifier;
 }
 
 void Feature::setPriority(int32_t priority)
@@ -81,6 +87,10 @@ void Feature::serialize(ISerializer& s)
 	T_ASSERT(s.getVersion() >= 4);
 
 	s >> Member< std::wstring >(L"description", m_description);
+
+	if (s.getVersion() >= 9)
+		s >> Member< std::wstring >(L"exclusiveIdentifier", m_exclusiveIdentifier);
+
 	s >> Member< int32_t >(L"priority", m_priority);
 	s >> MemberStlList< Platform, MemberComposite< Platform > >(L"platforms", m_platforms);
 	s >> MemberRef< PropertyGroup >(L"pipelineProperties", m_pipelineProperties);

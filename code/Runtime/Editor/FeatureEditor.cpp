@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -60,6 +60,15 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	m_editName->create(containerName, m_feature->getDescription());
 	m_editName->addEventHandler< ui::ContentChangeEvent >([&](ui::ContentChangeEvent* event) {
 		m_feature->setDescription(m_editName->getText());
+	});
+
+	Ref< ui::Static > staticExclusiveId = new ui::Static();
+	staticExclusiveId->create(containerName, i18n::Text(L"RUNTIME_FEATURE_EXCLUSIVE_IDENTIFIER"));
+
+	m_editExclusiveId = new ui::Edit();
+	m_editExclusiveId->create(containerName, m_feature->getExclusiveIdentifier());
+	m_editExclusiveId->addEventHandler< ui::ContentChangeEvent >([&](ui::ContentChangeEvent* event) {
+		m_feature->setExclusiveIdentifier(m_editExclusiveId->getText());
 	});
 
 	Ref< ui::Static > staticPriority = new ui::Static();

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -61,6 +61,7 @@ private:
 	Ref< db::Instance > m_instance;
 	Ref< Feature > m_feature;
 	Ref< ui::Edit > m_editName;
+	Ref< ui::Edit > m_editExclusiveId;
 	Ref< ui::Edit > m_editPriority;
 	Ref< ui::ListBox > m_listPlatforms;
 	Ref< ui::Edit > m_editExecutable;
