@@ -12,6 +12,7 @@
 #include "Animation/Animation/AnimationGraphPoseController.h"
 #include "Animation/Animation/RtStateGraphResourceFactory.h"
 #include "Animation/AnimationResourceFactory.h"
+#include "Animation/Editor/SkeletonRenderer.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonComponent.h"
@@ -462,6 +463,13 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 				Vector4(10.0f, 0.0f, float(x), 1.0f),
 				(x == 0) ? 1.0f : 0.0f,
 				m_colorGrid);
+		}
+
+		// Draw skeleton current pose.
+		if (m_entity)
+		{
+			if (const SkeletonComponent* skeletonComponent = m_entity->getComponent< SkeletonComponent >())
+				drawSkeleton(m_primitiveRenderer, skeletonComponent, Matrix44::identity(), false, true);
 		}
 
 		m_primitiveRenderer->end(0);
