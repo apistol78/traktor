@@ -15,6 +15,7 @@
 namespace traktor
 {
 
+class Transform;
 class Vector2;
 class Vector4;
 
@@ -29,6 +30,7 @@ class Joint;
 class Material;
 class Model;
 class Polygon;
+class Pose;
 class Vertex;
 
 }
@@ -59,6 +61,9 @@ bool jsonToVec3(const Json* arr, Vector4& out, float w = 1.0f);	//!< [x,y,z] -> 
 bool jsonToVec4(const Json* arr, Vector4& out);					//!< [x,y,z,w]
 bool jsonToVec2(const Json* arr, Vector2& out);					//!< [u,v]
 
+Ref< Json > transformToJson(const Transform& transform);		//!< { translation:[x,y,z], rotation:[x,y,z,w] }
+Transform transformFromJson(const Json* obj);					//!< reads translation:[x,y,z] and rotation:[x,y,z,w] (defaults: origin/identity)
+
 // \}
 
 // \name Model element -> JSON (read).
@@ -79,6 +84,10 @@ model::Material materialFromJson(const Json* obj);
 model::Joint jointFromJson(const Json* obj);
 model::Polygon polygonFromJson(const Json* obj);
 model::Vertex vertexFromJson(const Json* obj);
+
+/*! Build a Pose from { "jointTransforms": [ { translation, rotation }, ... ] }.
+ * Array position is the joint id. Returns an empty pose for a missing/empty array. */
+Ref< model::Pose > poseFromJson(const Json* obj);
 
 // \}
 

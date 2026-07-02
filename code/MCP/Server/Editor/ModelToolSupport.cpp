@@ -24,6 +24,7 @@
 #include "Model/Material.h"
 #include "Model/Model.h"
 #include "Model/Polygon.h"
+#include "Model/Pose.h"
 #include "Model/Vertex.h"
 #include "Model/Operations/BakeVertexColors.h"
 #include "Model/Operations/Boolean.h"
@@ -213,6 +214,27 @@ bool jsonToVec2(const Json* arr, Vector2& out)
 	return true;
 }
 
+Ref< Json > transformToJson(const Transform& transform)
+{
+	Ref< Json > obj = Json::createObject();
+	obj->set(L"translation", vec3ToJson(transform.translation()));
+	obj->set(L"rotation", vec4ToJson(transform.rotation().e));
+	return obj;
+}
+
+Transform transformFromJson(const Json* obj)
+{
+	Vector4 t = Vector4::zero();
+	jsonToVec3(obj ? obj->getMember(L"translation") : nullptr, t, 1.0f);
+
+	Vector4 r = Vector4::zero();
+	Quaternion q = Quaternion::identity();
+	if (jsonToVec4(obj ? obj->getMember(L"rotation") : nullptr, r))
+		q = Quaternion(r.x(), r.y(), r.z(), r.w());
+
+	return Transform(t, q);
+}
+
 Ref< Json > materialToJson(const model::Material& material)
 {
 	Ref< Json > obj = Json::createObject();
@@ -258,12 +280,9 @@ Ref< Json > materialToJson(const model::Material& material)
 
 Ref< Json > jointToJson(const model::Joint& joint)
 {
-	Ref< Json > obj = Json::createObject();
+	Ref< Json > obj = transformToJson(joint.getTransform());
 	obj->setString(L"name", joint.getName());
 	obj->set(L"parent", indexJson(joint.getParent()));
-	const traktor::Transform& t = joint.getTransform();
-	obj->set(L"translation", vec3ToJson(t.translation()));
-	obj->set(L"rotation", vec4ToJson(t.rotation().e));
 	obj->set(L"length", Json::createReal(joint.getLength()));
 	return obj;
 }
@@ -359,17 +378,8 @@ model::Joint jointFromJson(const Json* obj)
 {
 	const std::wstring name = (obj && obj->getMember(L"name")) ? obj->getMember(L"name")->getString() : L"joint";
 	const uint32_t parent = jsonIndex(obj ? obj->getMember(L"parent") : nullptr);
-
-	Vector4 t = Vector4::zero();
-	jsonToVec3(obj ? obj->getMember(L"translation") : nullptr, t, 1.0f);
-
-	Vector4 r = Vector4::zero();
-	Quaternion q = Quaternion::identity();
-	if (jsonToVec4(obj ? obj->getMember(L"rotation") : nullptr, r))
-		q = Quaternion(r.x(), r.y(), r.z(), r.w());
-
 	const float length = (float)memberReal(obj, L"length", 0.1);
-	return model::Joint(parent, name, traktor::Transform(t, q), length);
+	return model::Joint(parent, name, transformFromJson(obj), length);
 }
 
 model::Polygon polygonFromJson(const Json* obj)
@@ -420,6 +430,18 @@ model::Vertex vertexFromJson(const Json* obj)
 	}
 
 	return vertex;
+}
+
+Ref< model::Pose > poseFromJson(const Json* obj)
+{
+	Ref< model::Pose > pose = new model::Pose();
+	const Json* jointTransforms = obj ? obj->getMember(L"jointTransforms") : nullptr;
+	if (jointTransforms && jointTransforms->isArray())
+	{
+		for (uint32_t i = 0; i < jointTransforms->size(); ++i)
+			pose->setJointTransform(i, transformFromJson(jointTransforms->at(i)));
+	}
+	return pose;
 }
 
 uint32_t clearFlagsFromJson(const Json* flagsArray, std::wstring& outError)

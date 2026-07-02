@@ -42,6 +42,14 @@ public:
 
 	const traktor::Transform& getJointTransform(uint32_t jointId) const;
 
+	/*! Number of joint transforms explicitly stored by this pose.
+	 *
+	 * The pose stores a dense array indexed by joint id; ids at or beyond this
+	 * count default to identity (i.e. use the joint's rest/bind transform). May
+	 * be fewer than the skeleton's joint count.
+	 */
+	uint32_t getJointTransformCount() const { return (uint32_t)m_jointTransforms.size(); }
+
 	/*! Evaluate global joint transformation.
 	 *         Traverse chain of joints to concate the global joint transform (in object space).
 	 *

@@ -10,16 +10,19 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Quaternion.h"
+#include "Core/Math/Transform.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
 #include "MCP/Server/Editor/McpToolSupport.h"
 #include "MCP/Server/Editor/ModelSession.h"
 #include "MCP/Server/Editor/ModelToolSupport.h"
 #include "MCP/Server/Json.h"
+#include "Model/Animation.h"
 #include "Model/Joint.h"
 #include "Model/Material.h"
 #include "Model/Model.h"
 #include "Model/Polygon.h"
+#include "Model/Pose.h"
 #include "Model/Vertex.h"
 
 namespace traktor::mcp
@@ -45,6 +48,7 @@ std::wstring ModelEditTool::getDescription() const
 		L"- set in place: setPosition {index,value:[x,y,z]}, setVertex {index,...}, setPolygon {index,...}, setJointRotation {index,value:[x,y,z,w]}, setBlendTargetPosition {blendTarget,position,value:[x,y,z]}.\n"
 		L"- bulk replace (enables removal by omitting elements): setPositions/setNormals {values:[[x,y,z]...]}, setColors {values:[[r,g,b,a]...]}, setTexCoords {values:[[u,v]...]}, setVertices/setPolygons/setJoints/setMaterials {values:[{...}...]}.\n"
 		L"- remove: removeMaterial {index}, removePolygons {indices:[...]}, clear {flags:[Materials,Vertices,Polygons,Positions,Colors,Normals,TexCoords,Joints] (omit for All)}.\n"
+		L"- animation/pose: addAnimation {name} (returns \"index\"), setAnimationName {animation,name}, addKeyFrame {animation,time,pose} (appends a key frame, returns its \"index\"; keep times ascending), setKeyFrameTime {animation,keyFrame,time}, setKeyFramePose {animation,keyFrame,pose}, setPoseJoint {animation,keyFrame,joint,translation,rotation} (edits a single joint in a key frame's pose, translation/rotation optional). A \"pose\" is { \"jointTransforms\": [ { \"translation\":[x,y,z], \"rotation\":[x,y,z,w] }, ... ] } where array position is the joint id; joints beyond the array keep their skeleton bind transform. Read poses back with model_get_elements kind=pose. The Model API has no removeAnimation/removeKeyFrame.\n"
 		L"Note: the Model API has no per-vertex/per-polygon delete beyond these; remove elements with removePolygons, removeMaterial, clear, bulk set (send the survivors), or the cleanup operations in model_apply_operation. Edits apply in order; on error, edits before the failing one have already been applied. Returns { handle, results, summary }.";
 }
 
@@ -301,6 +305,86 @@ Ref< Json > ModelEditTool::invoke(const Json* arguments, std::wstring& outError)
 			const uint32_t flags = clearFlagsFromJson(edit->getMember(L"flags"), outError);
 			if (!outError.empty()) { outError = L"edits[" + std::to_wstring(i) + L"]: " + outError; return nullptr; }
 			model->clear(flags);
+		}
+		else if (op == L"addAnimation")
+		{
+			Ref< model::Animation > animation = new model::Animation();
+			if (edit->getMember(L"name"))
+				animation->setName(edit->getMember(L"name")->getString());
+			r->set(L"index", Json::createNumber((int64_t)model->addAnimation(animation)));
+		}
+		else if (op == L"setAnimationName" || op == L"addKeyFrame" || op == L"setKeyFrameTime" || op == L"setKeyFramePose" || op == L"setPoseJoint")
+		{
+			// All of these ops address an existing animation. getAnimations() indexing
+			// yields a mutable Animation (const RefArray only pins the array, not its
+			// elements), which addAnimation/getAnimation-const alone would not give us.
+			uint32_t animIndex;
+			if (!memberIndex(L"animation", animIndex) || animIndex >= model->getAnimationCount()) { fail(L"missing/out-of-range \"animation\"."); return nullptr; }
+			model::Animation* animation = model->getAnimations()[animIndex];
+
+			if (op == L"setAnimationName")
+			{
+				animation->setName(edit->getMember(L"name") ? edit->getMember(L"name")->getString() : L"");
+			}
+			else if (op == L"addKeyFrame")
+			{
+				// pose is optional; an absent/empty pose yields an empty pose (all joints at bind).
+				const Json* timeJson = edit->getMember(L"time");
+				animation->insertKeyFrame(timeJson ? (float)timeJson->getReal() : 0.0f, poseFromJson(edit->getMember(L"pose")));
+				r->set(L"index", Json::createNumber((int64_t)(animation->getKeyFrameCount() - 1)));
+			}
+			else
+			{
+				// Remaining ops address an existing key frame within the animation.
+				uint32_t keyFrame;
+				if (!memberIndex(L"keyFrame", keyFrame) || keyFrame >= animation->getKeyFrameCount()) { fail(L"missing/out-of-range \"keyFrame\"."); return nullptr; }
+
+				if (op == L"setKeyFrameTime")
+				{
+					const Json* timeJson = edit->getMember(L"time");
+					if (!timeJson) { fail(L"missing \"time\"."); return nullptr; }
+					animation->setKeyFrameTime(keyFrame, (float)timeJson->getReal());
+				}
+				else if (op == L"setKeyFramePose")
+				{
+					animation->setKeyFramePose(keyFrame, poseFromJson(edit->getMember(L"pose")));
+				}
+				else // setPoseJoint
+				{
+					uint32_t joint;
+					if (!memberIndex(L"joint", joint)) { fail(L"missing \"joint\"."); return nullptr; }
+
+					// A key frame pose is immutable (Ref< const Pose >), so clone it,
+					// override one joint, and replace. Gaps opened up past the pose's
+					// current stored count are filled with the skeleton bind transform
+					// so those joints keep their bind relationship rather than collapsing
+					// to identity.
+					const model::Pose* current = animation->getKeyFramePose(keyFrame);
+					const uint32_t existing = current ? current->getJointTransformCount() : 0;
+
+					Ref< model::Pose > pose = new model::Pose();
+					for (uint32_t k = 0; k < existing; ++k)
+						pose->setJointTransform(k, current->getJointTransform(k));
+					for (uint32_t k = existing; k < joint; ++k)
+						pose->setJointTransform(k, k < model->getJointCount() ? model->getJoint(k).getTransform() : Transform::identity());
+
+					// Start from the joint's current pose transform (bind if beyond the
+					// stored count) and apply whichever of translation/rotation was given.
+					Transform base = (joint < existing)
+						? current->getJointTransform(joint)
+						: (joint < model->getJointCount() ? model->getJoint(joint).getTransform() : Transform::identity());
+					Vector4 t = base.translation();
+					Quaternion q = base.rotation();
+					Vector4 tv;
+					if (jsonToVec3(edit->getMember(L"translation"), tv, 1.0f)) t = tv;
+					Vector4 rv;
+					if (jsonToVec4(edit->getMember(L"rotation"), rv)) q = Quaternion(rv.x(), rv.y(), rv.z(), rv.w());
+					pose->setJointTransform(joint, Transform(t, q));
+
+					animation->setKeyFramePose(keyFrame, pose);
+					r->set(L"jointTransformCount", Json::createNumber((int64_t)pose->getJointTransformCount()));
+				}
+			}
 		}
 		else
 		{

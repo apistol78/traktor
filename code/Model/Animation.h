@@ -44,6 +44,8 @@ public:
 
 	float getKeyFrameTime(uint32_t keyFrame) const;
 
+	void setKeyFrameTime(uint32_t keyFrame, float time);
+
 	void setKeyFramePose(uint32_t keyFrame, const Pose* pose);
 
 	const Pose* getKeyFramePose(uint32_t keyFrame) const;

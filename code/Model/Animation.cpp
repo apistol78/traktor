@@ -46,6 +46,11 @@ float Animation::getKeyFrameTime(uint32_t keyFrame) const
 	return m_keyFrames[keyFrame].time;
 }
 
+void Animation::setKeyFrameTime(uint32_t keyFrame, float time)
+{
+	m_keyFrames[keyFrame].time = time;
+}
+
 void Animation::setKeyFramePose(uint32_t keyFrame, const Pose* pose)
 {
 	m_keyFrames[keyFrame].pose = pose;

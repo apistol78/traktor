@@ -13,7 +13,10 @@
 #include "MCP/Server/Editor/ModelSession.h"
 #include "MCP/Server/Editor/ModelToolSupport.h"
 #include "MCP/Server/Json.h"
+#include "Model/Animation.h"
+#include "Model/Joint.h"
 #include "Model/Model.h"
+#include "Model/Pose.h"
 
 namespace traktor::mcp
 {
@@ -40,7 +43,8 @@ std::wstring ModelGetElementsTool::getName() const
 
 std::wstring ModelGetElementsTool::getDescription() const
 {
-	return L"Read a page of one of a model's raw element arrays. Args: \"handle\", \"kind\" (one of positions, normals, colors, texCoords, vertices, polygons, joints), optional \"offset\" (default 0) and \"count\" (default 256, capped at 4096). Returns { kind, total, offset, count, elements }. positions/normals are [x,y,z]; colors are [r,g,b,a]; texCoords are [u,v]; vertices/polygons/joints are objects (indices into the position/normal/... arrays). Page with offset+count for large meshes.";
+	return L"Read a page of one of a model's raw element arrays. Args: \"handle\", \"kind\" (one of positions, normals, colors, texCoords, vertices, polygons, joints, pose), optional \"offset\" (default 0) and \"count\" (default 256, capped at 4096). Returns { kind, total, offset, count, elements }. positions/normals are [x,y,z]; colors are [r,g,b,a]; texCoords are [u,v]; vertices/polygons/joints are objects (indices into the position/normal/... arrays). Page with offset+count for large meshes.\n"
+		L"kind \"pose\" reads a keyframe's joint transforms and additionally requires \"animation\" and \"keyFrame\" (indices); each element is { joint, name, translation:[x,y,z], rotation:[x,y,z,w] } for joint id offset+i. \"total\" is the pose's stored joint-transform count (may be fewer than the skeleton's jointCount; missing joints keep their bind transform). The result also carries \"time\" and \"skeletonJointCount\". Write poses with model_edit (addAnimation/addKeyFrame/setKeyFramePose/setPoseJoint).";
 }
 
 Ref< Json > ModelGetElementsTool::getInputSchema() const
@@ -51,7 +55,7 @@ Ref< Json > ModelGetElementsTool::getInputSchema() const
 
 	Ref< Json > kind = Json::createObject();
 	kind->setString(L"type", L"string");
-	kind->setString(L"description", L"positions | normals | colors | texCoords | vertices | polygons | joints");
+	kind->setString(L"description", L"positions | normals | colors | texCoords | vertices | polygons | joints | pose");
 
 	Ref< Json > offset = Json::createObject();
 	offset->setString(L"type", L"integer");
@@ -61,11 +65,21 @@ Ref< Json > ModelGetElementsTool::getInputSchema() const
 	count->setString(L"type", L"integer");
 	count->setString(L"description", L"Number of elements to return (default 256, max 4096).");
 
+	Ref< Json > animation = Json::createObject();
+	animation->setString(L"type", L"integer");
+	animation->setString(L"description", L"Animation index (required when kind=pose).");
+
+	Ref< Json > keyFrame = Json::createObject();
+	keyFrame->setString(L"type", L"integer");
+	keyFrame->setString(L"description", L"Key frame index within the animation (required when kind=pose).");
+
 	Ref< Json > properties = Json::createObject();
 	properties->set(L"handle", handle);
 	properties->set(L"kind", kind);
 	properties->set(L"offset", offset);
 	properties->set(L"count", count);
+	properties->set(L"animation", animation);
+	properties->set(L"keyFrame", keyFrame);
 
 	Ref< Json > required = Json::createArray();
 	required->push(Json::createString(L"handle"));
@@ -92,6 +106,66 @@ Ref< Json > ModelGetElementsTool::invoke(const Json* arguments, std::wstring& ou
 		return nullptr;
 	}
 
+	const int64_t offsetArg = arguments->getMember(L"offset") ? arguments->getMember(L"offset")->getNumber() : 0;
+	const uint32_t offset = offsetArg < 0 ? 0 : (uint32_t)offsetArg;
+	uint32_t count = arguments->getMember(L"count") ? (uint32_t)arguments->getMember(L"count")->getNumber(c_defaultCount) : c_defaultCount;
+	if (count > c_maxCount)
+		count = c_maxCount;
+
+	// Poses are addressed by (animation, keyFrame) and page over the pose's stored
+	// joint transforms, so they are read separately from the flat model arrays.
+	if (kind == L"pose")
+	{
+		const Json* animArg = arguments->getMember(L"animation");
+		const Json* kfArg = arguments->getMember(L"keyFrame");
+		if (!animArg || !animArg->isNumber() || !kfArg || !kfArg->isNumber())
+		{
+			outError = L"kind \"pose\" requires integer \"animation\" and \"keyFrame\".";
+			return nullptr;
+		}
+		const int64_t animIndex = animArg->getNumber();
+		if (animIndex < 0 || animIndex >= (int64_t)model->getAnimationCount())
+		{
+			outError = L"\"animation\" out of range (model has " + std::to_wstring(model->getAnimationCount()) + L").";
+			return nullptr;
+		}
+		const model::Animation* animation = model->getAnimation((uint32_t)animIndex);
+		const int64_t keyFrame = kfArg->getNumber();
+		if (keyFrame < 0 || keyFrame >= (int64_t)animation->getKeyFrameCount())
+		{
+			outError = L"\"keyFrame\" out of range (animation has " + std::to_wstring(animation->getKeyFrameCount()) + L").";
+			return nullptr;
+		}
+		const model::Pose* pose = animation->getKeyFramePose((uint32_t)keyFrame);
+
+		const uint32_t total = pose ? pose->getJointTransformCount() : 0;
+		const uint32_t begin = offset < total ? offset : total;
+		const uint32_t end = (begin + count < total) ? begin + count : total;
+
+		Ref< Json > elements = Json::createArray();
+		for (uint32_t i = begin; i < end; ++i)
+		{
+			Ref< Json > e = transformToJson(pose->getJointTransform(i));
+			e->set(L"joint", Json::createNumber((int64_t)i));
+			if (i < model->getJointCount())
+				e->setString(L"name", model->getJoint(i).getName());
+			elements->push(e);
+		}
+
+		Ref< Json > result = Json::createObject();
+		result->set(L"handle", Json::createNumber((int64_t)handle));
+		result->setString(L"kind", kind);
+		result->set(L"animation", Json::createNumber(animIndex));
+		result->set(L"keyFrame", Json::createNumber(keyFrame));
+		result->set(L"time", Json::createReal(animation->getKeyFrameTime((uint32_t)keyFrame)));
+		result->set(L"skeletonJointCount", Json::createNumber((int64_t)model->getJointCount()));
+		result->set(L"total", Json::createNumber((int64_t)total));
+		result->set(L"offset", Json::createNumber((int64_t)begin));
+		result->set(L"count", Json::createNumber((int64_t)elements->size()));
+		result->set(L"elements", elements);
+		return result;
+	}
+
 	// Total count for the requested kind.
 	uint32_t total = 0;
 	if (kind == L"positions") total = model->getPositionCount();
@@ -103,15 +177,9 @@ Ref< Json > ModelGetElementsTool::invoke(const Json* arguments, std::wstring& ou
 	else if (kind == L"joints") total = model->getJointCount();
 	else
 	{
-		outError = L"Unknown \"kind\" \"" + kind + L"\". Valid: positions, normals, colors, texCoords, vertices, polygons, joints.";
+		outError = L"Unknown \"kind\" \"" + kind + L"\". Valid: positions, normals, colors, texCoords, vertices, polygons, joints, pose.";
 		return nullptr;
 	}
-
-	const int64_t offsetArg = arguments->getMember(L"offset") ? arguments->getMember(L"offset")->getNumber() : 0;
-	const uint32_t offset = offsetArg < 0 ? 0 : (uint32_t)offsetArg;
-	uint32_t count = arguments->getMember(L"count") ? (uint32_t)arguments->getMember(L"count")->getNumber(c_defaultCount) : c_defaultCount;
-	if (count > c_maxCount)
-		count = c_maxCount;
 
 	const uint32_t begin = offset < total ? offset : total;
 	const uint32_t end = (begin + count < total) ? begin + count : total;
