@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mcp.SkillAsset">
+	<name>edit-skinned-rig</name>
+	<description>Add or modify joints, geometry, skin weights and animation-take poses on an existing skinned character in place, without regenerating it.</description>
+	<whenToUse><![CDATA[Asked to extend or edit an existing skinned/animated character or creature — add joints (e.g. forearms, hands, feet), re-skin part of the mesh, or add joints to existing animation takes — while preserving the current geometry and animation clips. For building a character from scratch, use create-animated-character instead.]]></whenToUse>
+	<body><![CDATA[# Edit an existing skinned rig in place
+
+Extend or modify the skinned character "{{mesh}}" — add joints, re-skin geometry, and/or add joints to its animation takes — **without regenerating it**, so existing geometry and clips are preserved. This is the in-place counterpart to *create-animated-character* (use that to build one from scratch); it relies on the `model_*` tools, which read/write an existing `.tmd` directly.
+
+## Golden rule
+Edit the model **in place** (open → mutate → save `overwriteSource`). Do NOT rebuild via `create_mesh_from_geometry`: that path cannot read back existing keyframe poses, so it silently destroys hand-made animation. Only the `model_*` tools can extend a rig non-destructively.
+
+## Pipeline
+`model_open {meshAsset}` → `model_get_elements` (read) / `model_edit` (mutate) / `model_apply_operation` → `model_save {overwriteSource}` → `build_asset` the mesh + SkeletonAsset + every AnimationAsset.
+
+## 1. Open and map the existing rig
+- `model_open { "meshAsset": "{{mesh}}" }` → `handle`. `model_inspect` for counts + joint/animation lists.
+- `model_get_elements` kinds `joints`, `positions`, `vertices`, `polygons`, and `pose` (needs `animation`+`keyFrame`). A box-man is **one rigid box per joint**: 24 vertices (6 faces × 4) + 6 quads, each vertex weight 1.0 to a single joint. Box *k* usually occupies positions/vertices `24k..24k+23` and polygons `12k..12k+11` (verify).
+
+## 2. Add joints (`model_edit` `addJoint`)
+- Joints are **appended** at the end (indices keep growing); existing pose/vertex data indexed 0..n-1 stays valid.
+- `translation` is **LOCAL** = `worldChild − worldParent`; `rotation` `[0,0,0,1]`; `parent` = an existing joint index.
+- Make new joints **children of the joints already animated** (forearm→upper-arm, foot→shin) so existing takes still carry them along — *after* you key them (step 4).
+
+## 3. Re-skin so new joints deform the mesh (optional)
+Rigid box-man workflow, all additive:
+- `removePolygons {indices}` for the box(es) you're replacing. Orphaned positions/vertices are harmless (unreferenced = not drawn).
+- Append new boxes: `addPosition` (8 corners), `addNormal` (reuse 6 face normals ±X/±Y/±Z), `addVertex` (24: `position`,`normal`,`jointInfluences:[{joint,weight:1.0}]`), `addPolygon` (6 quads, `material:0`, `normal:-1`).
+- **Winding**: Traktor's front face is **clockwise seen from outside** — the triangle's right-hand normal must point *inward*. Auto-orient each face: if `dot(cross(p1−p0, p2−p0), outwardNormal) > 0`, reverse the vertex order.
+- Polygons store `normal:-1`; lighting uses per-vertex normals, so give each vertex the true **outward** normal.
+- `model_apply_operation` `Triangulate` after adding quads.
+- Indices are deterministic (appends start at the current counts). Add in batches positions→normals→vertices→polygons and check the returned counts between batches; generate the arrays with a script to avoid index/winding mistakes.
+
+## 4. Add joints to the animation takes — REQUIRED if you added joints
+**Every keyframe must carry an entry for every joint.** A joint absent from a keyframe is baked as **identity**, not bind — verified in engine source (`Model/Pose.cpp` `getJointTransform` returns `Transform::identity()`; `AnimationPipeline.cpp` bakes `pose.getJointTransform(k)` per skeleton joint). Identity local = zero offset from parent, so the limb **collapses onto its parent's origin** at runtime.
+- For each take and each keyframe, `model_edit` `setPoseJoint {animation, keyFrame, joint, translation, rotation}` for each new joint, in **ascending joint order** (the pose is a dense array indexed by joint id; ascending appends fill it with no gaps).
+- For a new joint that shouldn't move on its own, pass its **bind local** transform (the joint's `translation`, rotation `[0,0,0,1]`). Motion then comes entirely from the animated parent. To actually articulate it, key real rotations instead.
+- `setPoseJoint` only edits the named joint, so joints 0..n-1 keep their exact curves. Read a pose back with `model_get_elements kind=pose` to confirm (`total` should reach the skeleton joint count).
+
+## 5. Verify, then commit
+- Save to a **throwaway** asset first: `model_save { meshAsset: { path:"Models/X_check", fileName:"Models/X_check.tmd", meshType:"skinned" } }` → `build_asset` → `render_mesh_preview` to check shape/winding (this renders the **bind pose** only).
+- When good, `model_save { overwriteSource: true }` to write the real `.tmd`. Delete the temp instance (`delete_instance`) and its file.
+
+## 6. Rebuild
+`build_asset` (rebuild) the mesh, the `SkeletonAsset`, and **each** `AnimationAsset` — they all import from the `.tmd`, so new joints and pose entries only reach runtime after rebuilding.
+
+## Gotchas (hard-won)
+- **Absent pose joint → identity → limb snaps to origin** (see step 4). This is the #1 trap; render preview won't catch it because it only shows bind pose.
+- **Skeleton↔take matching is by joint NAME** in the pipeline (`findJointIndex`); a rename or typo logs `No such joint` and drops it. Keep names stable and consistent between skeleton and takes.
+- **No `removeAnimation`/`removeKeyFrame`** in the Model API — you can only add/edit poses and keyframes.
+- **Winding/weights** as in step 3 — same rules as *create-animated-character*.
+- `render_mesh_preview` needs a MeshAsset and shows only the static bind pose; there is no MCP tool to render an animated frame, and `Traktor.Run.App` does not link the animation/database classes — so runtime animation must be checked by launching the game from the editor.
+]]></body>
+	<engineVersion/>
+	<published>true</published>
+	<parameters>
+		<item type="traktor.mcp.SkillParameter">
+			<name>mesh</name>
+			<description>MeshAsset path or guid of the character to edit</description>
+			<defaultValue>Models/Humanoid</defaultValue>
+		</item>
+	</parameters>
+</object>
