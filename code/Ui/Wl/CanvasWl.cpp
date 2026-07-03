@@ -274,7 +274,7 @@ void CanvasWl::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& si
 	}
 
 	cairo_set_source_rgba(m_cr, m_currentSourceColor.e[0] / 255.0, m_currentSourceColor.e[1] / 255.0, m_currentSourceColor.e[2] / 255.0, m_currentSourceColor.e[3] / 255.0);
-	cairo_set_operator(m_cr, CAIRO_OPERATOR_SOURCE);
+	cairo_set_operator(m_cr, CAIRO_OPERATOR_OVER);
 }
 
 void CanvasWl::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter, uint8_t alpha)
@@ -318,7 +318,7 @@ void CanvasWl::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& 
 
 	cairo_identity_matrix(m_cr);
 	cairo_set_source_rgba(m_cr, m_currentSourceColor.e[0] / 255.0, m_currentSourceColor.e[1] / 255.0, m_currentSourceColor.e[2] / 255.0, m_currentSourceColor.e[3] / 255.0);
-	cairo_set_operator(m_cr, CAIRO_OPERATOR_SOURCE);
+	cairo_set_operator(m_cr, CAIRO_OPERATOR_OVER);
 }
 
 void CanvasWl::drawText(const Point& at, const std::wstring& text)
