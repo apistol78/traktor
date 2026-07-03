@@ -84,7 +84,7 @@ inline void toplevelXdgToplevelClose(void* data, xdg_toplevel*)
 	WlEvent e;
 	e.type = WlEvtClose;
 	e.surface = wd->surface;
-	lctx->context->dispatch(e);
+	lctx->context->enqueueEvent(e);
 }
 
 inline void toplevelLibdecorConfigure(libdecor_frame* frame, libdecor_configuration* configuration, void* userData)
@@ -115,7 +115,7 @@ inline void toplevelLibdecorClose(libdecor_frame*, void* userData)
 	WlEvent e;
 	e.type = WlEvtClose;
 	e.surface = wd->surface;
-	lctx->context->dispatch(e);
+	lctx->context->enqueueEvent(e);
 }
 
 inline void toplevelLibdecorCommit(libdecor_frame*, void* userData)
