@@ -236,8 +236,8 @@ void XMLCALL XmlPullParserImpl::characterData(void* userData, const XML_Char* s,
 	T_ASSERT(len > 0);
 
 	const std::wstring ws = xmltows(s, &s[len]);
-	const wchar_t* ss = &ws[0];
-	const wchar_t* es = &ws[len];
+	const wchar_t* ss = ws.data();
+	const wchar_t* es = ss + ws.size();
 	pp->m_cdata.insert(pp->m_cdata.end(), ss, es);
 }
 
