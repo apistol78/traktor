@@ -282,15 +282,12 @@
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
 			<id>{E93269F0-28B4-0444-8FF4-1690FA5BA48E}</id>
 			<comment><![CDATA[
-			
 MeshVertexInterface are replaced by
 a concrete implementation depending
-on type of mesh.
-			
-			]]></comment>
+on type of mesh.]]></comment>
 			<position>
-				<first>-953</first>
-				<second>39</second>
+				<first>-889</first>
+				<second>66</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
