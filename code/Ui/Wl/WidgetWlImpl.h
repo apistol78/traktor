@@ -82,6 +82,11 @@ public:
 				auto it = std::find(siblings.begin(), siblings.end(), &m_data);
 				if (it != siblings.end())
 					siblings.erase(it);
+
+				// If we were on screen, the parent needs to repaint the region
+				// we vacated (queued now, drawn after our surface is gone).
+				if (m_data.mapped)
+					exposeParent();
 			}
 
 			// A surviving widget tree shouldn't have us as their parent. If it
@@ -261,6 +266,9 @@ public:
 			wl_surface_attach(m_data.surface, nullptr, 0, 0);
 			wl_surface_commit(m_data.surface);
 			m_data.mapped = false;
+
+			// Uncovering the parent — Wayland won't refresh it on its own.
+			exposeParent();
 		}
 
 		ShowEvent showEvent(m_owner, visible);
@@ -355,6 +363,9 @@ public:
 			wl_surface_attach(m_data.surface, nullptr, 0, 0);
 			wl_surface_commit(m_data.surface);
 			m_data.mapped = false;
+
+			// Uncovering the parent — Wayland won't refresh it on its own.
+			exposeParent();
 		}
 
 		if (m_rect.getSize() != fromSize)
@@ -921,6 +932,18 @@ protected:
 	}
 
 	// --- Drawing ---
+
+	// Wayland, unlike X11, does not synthesize an expose on the parent when a
+	// child subsurface is unmapped or destroyed. The region the child occupied
+	// keeps showing the parent's stale, last-committed content until the parent
+	// surface is committed again — which is why an unrelated resize appears to
+	// "fix" it. Queue a parent repaint so the uncovered region refreshes now,
+	// mirroring the automatic Expose the X server delivers on child destroy.
+	void exposeParent()
+	{
+		if (m_data.parent != nullptr)
+			m_context->queueExpose(m_data.parent);
+	}
 
 	void draw(const Rect* rc)
 	{
