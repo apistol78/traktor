@@ -6,11 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Editor/SH/RenderControl.h"
+#include "Render/Editor/RenderControl.h"
 
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/Editor/SH/RenderControlEvent.h"
+#include "Render/Editor/RenderControlEvent.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"

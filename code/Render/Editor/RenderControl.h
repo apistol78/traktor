@@ -50,6 +50,13 @@ public:
 
 	virtual void destroy() override final;
 
+protected:
+	resource::IResourceManager* getResourceManager() const { return m_resourceManager; }
+
+	PrimitiveRenderer* getPrimitiveRenderer() const { return m_primitiveRenderer; }
+
+	IRenderView* getRenderView() const { return m_renderView; }
+
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< IRenderView > m_renderView;

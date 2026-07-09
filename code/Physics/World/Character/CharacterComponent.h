@@ -100,6 +100,18 @@ public:
 	/*!*/
 	float getMaxVelocity() const { return m_maxVelocity; }
 
+	/*! Enable or disable the character controller.
+	 *
+	 * When disabled the controller stops simulating entirely (no gravity,
+	 * stepping or owner transform updates) and its collision body is removed
+	 * from the world, so another system - such as a rag doll - can take over
+	 * the entity without the controller fighting it.
+	 */
+	void setEnable(bool enable);
+
+	/*! Return true if the character controller is enabled. */
+	bool isEnable() const { return m_enabled; }
+
 private:
 	world::Entity* m_owner;
 	Ref< PhysicsManager > m_physicsManager;
@@ -113,6 +125,7 @@ private:
 	Vector4 m_velocity;
 	Vector4 m_impulse;
 	bool m_grounded;
+	bool m_enabled;
 
 	bool stepVertical(float motion, Vector4& inoutPosition) const;
 

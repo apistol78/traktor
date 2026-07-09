@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,7 +15,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.SkeletonAsset", 4, SkeletonAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.SkeletonAsset", 5, SkeletonAsset, editor::Asset)
 
 void SkeletonAsset::serialize(ISerializer& s)
 {
@@ -35,9 +35,12 @@ void SkeletonAsset::serialize(ISerializer& s)
 		}
 
 		if (s.getVersion() >= 2)
-			s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
+		{
+			if (s.getVersion() < 5)
+				s >> ObsoleteMember< float >(L"radius");
+		}
 		else
-			s >> Member< float >(L"boneRadius", m_radius, AttributeRange(0.0f));
+			s >> ObsoleteMember< float >(L"boneRadius");
 
 		s >> Member< bool >(L"invertX", m_invertX);
 		s >> Member< bool >(L"invertZ", m_invertZ);

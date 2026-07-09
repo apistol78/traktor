@@ -36,6 +36,21 @@ class T_DLLCLASS IPoseController : public Object
 public:
 	virtual void destroy() = 0;
 
+	/*! Reset controller to match a given pose.
+	 *
+	 * Called when a controller becomes active so it can initialize itself from the
+	 * currently evaluated pose. Default implementation does nothing; physics-based
+	 * controllers (e.g. rag doll) override this to snap their state to \a poseTransforms.
+	 *
+	 * \param worldTransform World transform of owner entity.
+	 * \param skeleton Skeleton being posed.
+	 * \param poseTransforms Object space joint transforms of the pose to match.
+	 */
+	virtual void reset(
+		const Transform& worldTransform,
+		const Skeleton* skeleton,
+		const AlignedVector< Transform >& poseTransforms) {}
+
 	virtual void setTransform(const Transform& transform) = 0;
 
 	/*! Evaluate pose through pose controller.

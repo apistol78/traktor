@@ -2699,6 +2699,16 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="traktor.sb.Filter">
+					<name>RagDoll</name>
+					<items>
+						<item type="traktor.sb.File" version="1">
+							<fileName>RagDoll/*.*</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="traktor.sb.ProjectDependency" version="3">

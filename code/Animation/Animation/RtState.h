@@ -40,6 +40,11 @@ class T_DLLCLASS RtState : public Object
 public:
 	bool prepare(StateContext& outContext) const;
 
+	void reset(
+		const Transform& worldTransform,
+		const Skeleton* skeleton,
+		const AlignedVector< Transform >& poseTransforms) const;
+
 	void evaluate(
 		const StateContext& context,
 		float deltaTime,

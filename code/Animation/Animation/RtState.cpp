@@ -45,6 +45,17 @@ bool RtState::prepare(StateContext& outContext) const
 	return true;
 }
 
+void RtState::reset(
+	const Transform& worldTransform,
+	const Skeleton* skeleton,
+	const AlignedVector< Transform >& poseTransforms) const
+{
+	// Let the pose controller (e.g. rag doll) initialize itself from the pose the graph
+	// is transitioning away from, so it starts matching the current pose.
+	if (m_poseController)
+		m_poseController->reset(worldTransform, skeleton, poseTransforms);
+}
+
 void RtState::evaluate(
 	const StateContext& context,
 	float deltaTime,

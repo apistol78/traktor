@@ -40,55 +40,38 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 
 	if (skeletonComponent)
 	{
-		const resource::Proxy< Skeleton >& skeleton = skeletonComponent->getSkeleton();
-		const auto& jointTransforms = skeletonComponent->getJointTransforms();
-
 		// Draw pose controllers.
 		if (m_context->shouldDrawGuide(L"Animation.Controller"))
 		{
 			primitiveRenderer->pushWorld(Matrix44::identity());
 			primitiveRenderer->pushDepthState(false, false, false);
 
-			if (auto ragDollPoseController = dynamic_type_cast<const RagDollPoseController*>(skeletonComponent->getPoseController()))
+			if (auto ragDollPoseController = dynamic_type_cast< const RagDollPoseController* >(skeletonComponent->getPoseController()))
 			{
-				const auto& limbs = ragDollPoseController->getLimbs();
+				// Draw each limb's collision shape at its current body transform.
+				const RefArray< physics::Body >& limbs = ragDollPoseController->getLimbs();
+				const RefArray< const physics::ShapeDesc >& limbShapes = ragDollPoseController->getLimbShapes();
 
-				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+				for (uint32_t i = 0; i < limbs.size(); ++i)
 				{
-					const Joint* joint = skeleton->getJoint(i);
-					T_ASSERT(joint);
-
-					const int32_t parent = joint->getParent();
-					if (parent < 0)
+					if (!limbs[i] || i >= limbShapes.size() || !limbShapes[i])
 						continue;
 
-					const Vector4 start = jointTransforms[parent].translation();
-					const Vector4 end = jointTransforms[i].translation();
-
-					float length = (end - start).length();
-					float radius = joint->getRadius();
-					if (radius > length / 2.0f)
-						radius = length / 2.0f;
-
-					if (!limbs[i])
-						continue;
-
-					const Transform limbTransform[]{ limbs[i]->getTransform(), limbs[i]->getTransform() };
-
-					physics::CapsuleShapeDesc shapeDesc;
-					shapeDesc.setRadius(radius);
-					shapeDesc.setLength(length);
-
+					const Transform bodyTransform[] = { limbs[i]->getTransform(), limbs[i]->getTransform() };
 					m_physicsRenderer.draw(
 						m_context->getResourceManager(),
 						primitiveRenderer,
-						limbTransform,
-						&shapeDesc
+						bodyTransform,
+						limbShapes[i]
 					);
 				}
 
+				// Draw constraint joints between connected limbs.
 				for (auto joint : ragDollPoseController->getJoints())
 				{
+					if (!joint || !joint->getBody1() || !joint->getBody2())
+						continue;
+
 					primitiveRenderer->drawLine(
 						joint->getBody1()->getTransform().translation().xyz1(),
 						joint->getBody2()->getTransform().translation().xyz1(),
@@ -96,9 +79,7 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 					);
 
 					if (auto ballJoint = dynamic_type_cast< const physics::BallJoint* >(joint))
-					{
-						primitiveRenderer->drawSolidPoint(ballJoint->getAnchor(), 8.0f, Color4ub(0, 0, 255, 255));
-					}
+						primitiveRenderer->drawSolidPoint(ballJoint->getAnchor().xyz1(), 8.0f, Color4ub(0, 0, 255, 255));
 				}
 			}
 

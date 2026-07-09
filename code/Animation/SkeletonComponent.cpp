@@ -65,6 +65,8 @@ void SkeletonComponent::setTransform(const Transform& transform)
 
 Aabb3 SkeletonComponent::getBoundingBox() const
 {
+	const Scalar c_radius = 0.5_simd;
+
 	synchronize();
 
 	Aabb3 boundingBox;
@@ -73,8 +75,7 @@ Aabb3 SkeletonComponent::getBoundingBox() const
 		for (uint32_t i = 0; i < uint32_t(m_poseTransforms.size()); ++i)
 		{
 			const Joint* joint = m_skeleton->getJoint(i);
-			const Scalar radius = joint->getRadius();
-			boundingBox.contain(m_poseTransforms[i].translation().xyz1(), radius);
+			boundingBox.contain(m_poseTransforms[i].translation().xyz1(), c_radius);
 		}
 	}
 

@@ -61,6 +61,14 @@ class IWorldRenderer;
 
 }
 
+namespace traktor::physics
+{
+
+class Body;
+class PhysicsManager;
+
+}
+
 namespace traktor::animation
 {
 
@@ -95,6 +103,9 @@ public:
 
 	void setPoseController(IPoseController* poseController);
 
+	//! Physics manager stepped each preview frame; drives physics-based pose controllers (rag doll).
+	void setPhysicsManager(physics::PhysicsManager* physicsManager);
+
 	void setParameterValue(const std::wstring& parameterName, bool value);
 
 	void setView(const View& view);
@@ -104,6 +115,9 @@ public:
 	void updateSettings();
 
 	resource::IResourceManager* getResourceManager() const { return m_resourceManager; }
+
+	//! Currently bound preview skeleton (object space), or null if none.
+	const Skeleton* getSkeleton() const;
 
 private:
 	editor::IEditor* m_editor = nullptr;
@@ -120,6 +134,8 @@ private:
 	resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseController > m_poseController;
+	physics::PhysicsManager* m_physicsManager = nullptr;
+	Ref< physics::Body > m_floorBody;
 	Ref< world::Entity > m_entity;
 	Color4ub m_colorClear;
 	Color4ub m_colorGrid;

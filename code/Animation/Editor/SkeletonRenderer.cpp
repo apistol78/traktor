@@ -11,6 +11,7 @@
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonComponent.h"
+#include "Animation/SkeletonUtils.h"
 #include "Render/PrimitiveRenderer.h"
 
 namespace traktor::animation
@@ -28,86 +29,91 @@ void drawSkeleton(
 	if (!skeleton)
 		return;
 
-	const auto& jointTransforms = skeletonComponent->getJointTransforms();
+	if (drawBind)
+	{
+		const Color4ub color(0, 255, 0, 250);
+		drawSkeleton(
+			primitiveRenderer,
+			skeleton,
+			worldTransform,
+			skeletonComponent->getJointTransforms(),
+			color
+		);
+	}
+	if (drawPose)
+	{
+		const Color4ub color(255, 255, 0, 250);
+		drawSkeleton(
+			primitiveRenderer,
+			skeleton,
+			worldTransform,
+			skeletonComponent->getPoseTransforms(),
+			color
+		);
+	}
+}
 
+void drawSkeleton(
+	render::PrimitiveRenderer* primitiveRenderer,
+	const Skeleton* skeleton,
+	const Matrix44& worldTransform,
+	const Color4ub& color
+)
+{
+	AlignedVector< Transform > jointTransforms;
+	calculateJointTransforms(skeleton, jointTransforms);
+
+	drawSkeleton(
+		primitiveRenderer,
+		skeleton,
+		worldTransform,
+		jointTransforms,
+		color
+	);
+}
+
+void drawSkeleton(
+	render::PrimitiveRenderer* primitiveRenderer,
+	const Skeleton* skeleton,
+	const Matrix44& worldTransform,
+	const AlignedVector< Transform >& transforms,
+	const Color4ub& color
+)
+{
 	primitiveRenderer->pushWorld(worldTransform);
 	primitiveRenderer->pushDepthState(false, false, false);
 
-	if (drawBind)
+	if (transforms.size() == skeleton->getJointCount())
 	{
-		if (jointTransforms.size() == skeleton->getJointCount())
+		for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 		{
-			const Color4ub color(0, 255, 0, 250);
-			for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+			const Joint* joint = skeleton->getJoint(i);
+
+			// primitiveRenderer->drawWireFrame(transforms[i].toMatrix44(), 0.5f);
+
+			if (joint->getParent() >= 0)
 			{
-				const Joint* joint = skeleton->getJoint(i);
+				const Joint* parent = skeleton->getJoint(joint->getParent());
+				T_FATAL_ASSERT(parent != nullptr);
 
-				primitiveRenderer->drawWireFrame(jointTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
+				const Vector4 f = transforms[joint->getParent()].translation().xyz1();
+				const Vector4 t = transforms[i].translation().xyz1();
 
-				if (joint->getParent() >= 0)
-				{
-					const Joint* parent = skeleton->getJoint(joint->getParent());
-					T_FATAL_ASSERT(parent != nullptr);
+				const Scalar ln = min((t - f).length() * 0.8_simd, 0.1_simd);
+				const Vector4 c = t - (t - f).normalized() * ln;
 
-					const Vector4 f = jointTransforms[joint->getParent()].translation().xyz1();
-					const Vector4 t = jointTransforms[i].translation().xyz1();
-
-					const Scalar ln = min((t - f).length() * 0.8_simd, 0.1_simd);
-					const Vector4 c = t - (t - f).normalized() * ln;
-
-					primitiveRenderer->drawLine(
-						f,
-						c,
-						1.0f,
-						color
-					);
-					primitiveRenderer->drawArrowHead(
-						c,
-						t,
-						0.8f,
-						color
-					);
-				}
-			}
-		}
-	}
-
-	if (drawPose)
-	{
-		const AlignedVector< Transform >& poseTransforms = skeletonComponent->getPoseTransforms();
-		if (poseTransforms.size() == skeleton->getJointCount())
-		{
-			const Color4ub color(255, 255, 0, 250);
-			for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
-			{
-				const Joint* joint = skeleton->getJoint(i);
-
-				primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
-
-				if (joint->getParent() >= 0)
-				{
-					const Joint* parent = skeleton->getJoint(joint->getParent());
-					T_FATAL_ASSERT(parent != nullptr);
-
-					const Vector4 f = poseTransforms[joint->getParent()].translation().xyz1();
-					const Vector4 t = poseTransforms[i].translation().xyz1();
-
-					const Scalar ln = min((t - f).length() * 0.8_simd, 0.1_simd);
-					const Vector4 c = t - (t - f).normalized() * ln;
-
-					primitiveRenderer->drawLine(
-						f,
-						c,
-						1.0f,
-						color
-					);
-					primitiveRenderer->drawArrowHead(
-						c,
-						t,
-						0.8f,
-						color
-					);
-				}
+				primitiveRenderer->drawLine(
+					f,
+					c,
+					1.0f,
+					color
+				);
+				primitiveRenderer->drawArrowHead(
+					c,
+					t,
+					0.8f,
+					color
+				);
 			}
 		}
 	}

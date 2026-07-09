@@ -8,7 +8,10 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Color4ub.h"
 #include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,6 +31,7 @@ class PrimitiveRenderer;
 namespace traktor::animation
 {
 
+class Skeleton;
 class SkeletonComponent;
 
 /*! \ingroup Animation */
@@ -47,6 +51,36 @@ void T_DLLCLASS drawSkeleton(
 	const Matrix44& worldTransform,
 	bool drawBind,
 	bool drawPose
+);
+
+/*! Draw skeleton for debugging.
+ *
+ * \param primitiveRenderer Renderer used to draw the debug primitives.
+ * \param skeleton Skeleton
+ * \param worldTransform World transform applied to the drawn primitives.
+ * \param color Color for drawing.
+ */
+void T_DLLCLASS drawSkeleton(
+	render::PrimitiveRenderer* primitiveRenderer,
+	const Skeleton* skeleton,
+	const Matrix44& worldTransform,
+	const Color4ub& color
+);
+
+/*! Draw skeleton for debugging.
+ *
+ * \param primitiveRenderer Renderer used to draw the debug primitives.
+ * \param skeleton Skeleton
+ * \param worldTransform World transform applied to the drawn primitives.
+ * \param transforms Skeleton joint transforms.
+ * \param color Color for drawing.
+ */
+void T_DLLCLASS drawSkeleton(
+	render::PrimitiveRenderer* primitiveRenderer,
+	const Skeleton* skeleton,
+	const Matrix44& worldTransform,
+	const AlignedVector< Transform >& transforms,
+	const Color4ub& color
 );
 
 //@}

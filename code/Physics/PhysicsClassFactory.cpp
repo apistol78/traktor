@@ -355,6 +355,7 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacterComponent->addProperty("velocity", &CharacterComponent::setVelocity, &CharacterComponent::getVelocity);
 	classCharacterComponent->addProperty("maxVelocity", &CharacterComponent::setMaxVelocity, &CharacterComponent::getMaxVelocity);
 	classCharacterComponent->addProperty("headAngle", &CharacterComponent::setHeadAngle, &CharacterComponent::getHeadAngle);
+	classCharacterComponent->addProperty("enabled", &CharacterComponent::setEnable, &CharacterComponent::isEnable);
 	classCharacterComponent->addMethod("move", &CharacterComponent::move);
 	classCharacterComponent->addMethod("jump", &CharacterComponent::jump);
 	registrar->registerClass(classCharacterComponent);

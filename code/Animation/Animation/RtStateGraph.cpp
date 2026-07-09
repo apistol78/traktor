@@ -68,6 +68,9 @@ bool RtStateGraph::evaluate(
 		{
 			if (!m_currentState->prepare(m_currentStateContext))
 				return false;
+			// No prior pose on the initial state; initialize from the incoming (bind/rest)
+			// joint transforms.
+			m_currentState->reset(worldTransform, skeleton, jointTransforms);
 		}
 		m_nextState = nullptr;
 		m_blendState = 0.0f;
@@ -234,15 +237,14 @@ bool RtStateGraph::evaluate(
 		}
 
 		// Still no transition, repeat current state if we're at the end.
-		/*
 		if (selectedTransition == nullptr && timeLeft <= FUZZY_EPSILON)
 			selectedTransition = new RtStateTransition(m_currentState, m_currentState);
-		*/
 
 		// Begin transition to found state.
 		if (selectedTransition != nullptr)
 		{
 			m_nextState = selectedTransition->getTo();
+			m_nextState->reset(worldTransform, skeleton, outPoseTransforms);
 			m_nextState->prepare(m_nextStateContext);
 			m_blendState = 0.0f;
 			m_blendDuration = selectedTransition->getDuration();

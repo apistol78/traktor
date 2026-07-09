@@ -20,7 +20,11 @@ namespace traktor::animation
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RtStateData", 0, RtStateData, ISerializable)
 
-Ref< RtState > RtStateData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< RtState > RtStateData::createInstance(
+	resource::IResourceManager* resourceManager,
+	physics::PhysicsManager* physicsManager,
+	const Skeleton* skeleton,
+	const Transform& worldTransform) const
 {
 	Ref< RtState > instance = new RtState();
 	if (m_animation)
@@ -30,7 +34,7 @@ Ref< RtState > RtStateData::createInstance(resource::IResourceManager* resourceM
 	}
 	else if (m_poseController)
 	{
-		instance->m_poseController = m_poseController->createInstance(resourceManager, nullptr, nullptr, Transform::identity());
+		instance->m_poseController = m_poseController->createInstance(resourceManager, physicsManager, skeleton, worldTransform);
 		if (instance->m_poseController)
 			return instance;
 	}

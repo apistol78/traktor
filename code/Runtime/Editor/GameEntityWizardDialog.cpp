@@ -535,25 +535,9 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			}
 			else if (entityType == 4)
 			{
-				SmallSet< resource::Id< physics::CollisionSpecification > > group;
-				SmallSet< resource::Id< physics::CollisionSpecification > > mask;
-
-				auto groupInstance = m_dropCollisionGroup->getSelectedData< db::Instance >();
-				if (groupInstance)
-					group.insert(resource::Id< physics::CollisionSpecification >(groupInstance->getGuid()));
-
-				std::vector< int32_t > selectedMasks;
-				m_dropCollisionMask->getSelected(selectedMasks);
-				for (auto selectedMask : selectedMasks)
-				{
-					auto maskInstance = m_dropCollisionMask->getData< db::Instance >(selectedMask);
-					if (maskInstance)
-						mask.insert(resource::Id< physics::CollisionSpecification >(maskInstance->getGuid()));
-				}
-
 				entityData->setComponent(new animation::SkeletonComponentData(
 					resource::Id< animation::Skeleton >(skeletonAssetInstance->getGuid()),
-					new animation::RagDollPoseControllerData(group, mask)));
+					new animation::RagDollPoseControllerData()));
 				entityData->setComponent(new animation::AnimatedMeshComponentData(
 					resource::Id< mesh::SkinnedMesh >(meshAssetInstance->getGuid())));
 			}

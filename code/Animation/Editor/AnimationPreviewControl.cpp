@@ -13,11 +13,15 @@
 #include "Animation/Animation/RtStateGraphResourceFactory.h"
 #include "Animation/AnimationResourceFactory.h"
 #include "Animation/Editor/SkeletonRenderer.h"
+#include "Animation/RagDoll/RagDollResourceFactory.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonComponent.h"
 #include "Animation/SkeletonUtils.h"
+#include "Core/Containers/SmallSet.h"
+#include "Core/Guid.h"
 #include "Core/Math/Plane.h"
+#include "Core/Math/Transform.h"
 #include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -27,6 +31,12 @@
 #include "Editor/IEditor.h"
 #include "Mesh/MeshComponentRenderer.h"
 #include "Mesh/MeshEntityFactory.h"
+#include "Physics/Body.h"
+#include "Physics/BoxShapeDesc.h"
+#include "Physics/CollisionSpecification.h"
+#include "Physics/PhysicsManager.h"
+#include "Physics/PhysicsFactory.h"
+#include "Physics/StaticBodyDesc.h"
 #include "Mesh/MeshResourceFactory.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshComponentRenderer.h"
@@ -111,8 +121,10 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	entityFactory->addFactory(initializeFactory(new mesh::MeshEntityFactory(), objectStore));
 
 	m_resourceManager->addFactory(new AnimationResourceFactory());
+	m_resourceManager->addFactory(new RagDollResourceFactory());
 	m_resourceManager->addFactory(new RtStateGraphResourceFactory());
 	m_resourceManager->addFactory(new mesh::MeshResourceFactory(m_renderSystem));
+	m_resourceManager->addFactory(new physics::PhysicsFactory());
 	m_resourceManager->addFactory(new render::AliasTextureFactory());
 	m_resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(m_renderSystem, 0));
@@ -170,6 +182,9 @@ void AnimationPreviewControl::destroy()
 	m_poseController = nullptr;
 	m_entity = nullptr;
 
+	safeDestroy(m_floorBody);
+	m_physicsManager = nullptr;
+
 	safeDestroy(m_primitiveRenderer);
 	safeDestroy(m_resourceManager);
 	safeDestroy(m_renderGraph);
@@ -195,6 +210,49 @@ void AnimationPreviewControl::setPoseController(IPoseController* poseController)
 {
 	m_poseController = poseController;
 	updatePreview();
+}
+
+void AnimationPreviewControl::setPhysicsManager(physics::PhysicsManager* physicsManager)
+{
+	m_physicsManager = physicsManager;
+
+	// Add a static floor so physics-driven states (rag doll) have ground to rest on.
+	// Uses the engine "Default"/"Interactable" collision specifications so it collides
+	// with typical dynamic bodies (the rag doll limbs are in the "Default" group).
+	if (m_physicsManager != nullptr && m_floorBody == nullptr)
+	{
+		const resource::Id< physics::CollisionSpecification > c_default(Guid(L"{F9805131-50C2-504C-9421-13C99E44616C}"));
+		const resource::Id< physics::CollisionSpecification > c_interactable(Guid(L"{09CB1141-1924-3349-934A-CEB9728D7A61}"));
+
+		SmallSet< resource::Id< physics::CollisionSpecification > > group;
+		group.insert(c_default);
+
+		SmallSet< resource::Id< physics::CollisionSpecification > > mask;
+		mask.insert(c_default);
+		mask.insert(c_interactable);
+
+		Ref< physics::BoxShapeDesc > shapeDesc = new physics::BoxShapeDesc();
+		shapeDesc->setExtent(Vector4(20.0f, 0.5f, 20.0f, 0.0f));
+		shapeDesc->setMargin(0.04f);
+		shapeDesc->setCollisionGroup(group);
+		shapeDesc->setCollisionMask(mask);
+
+		Ref< physics::StaticBodyDesc > bodyDesc = new physics::StaticBodyDesc();
+		bodyDesc->setShape(shapeDesc);
+
+		m_floorBody = m_physicsManager->createBody(m_resourceManager, bodyDesc, T_FILE_LINE_W);
+		if (m_floorBody != nullptr)
+		{
+			// Position the box so its top surface is at y = 0.
+			m_floorBody->setTransform(Transform(Vector4(0.0f, -0.5f, 0.0f, 1.0f)));
+			m_floorBody->setEnable(true);
+		}
+	}
+}
+
+const Skeleton* AnimationPreviewControl::getSkeleton() const
+{
+	return m_skeleton;
 }
 
 void AnimationPreviewControl::setParameterValue(const std::wstring& parameterName, bool value)
@@ -402,14 +460,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	m_colorClear.getRGBA32F(tmp);
 	const Color4f clearColor(tmp[0], tmp[1], tmp[2], tmp[3]);
 
-	const float aspect = float(sz.cx) / sz.cy;
-
 	const Matrix44 viewTransform = translate(m_view.position) * rotateX(m_view.pitch) * rotateY(m_view.head);
-	const Matrix44 projectionTransform = perspectiveLh(
-		65.0f * PI / 180.0f,
-		aspect,
-		0.1f,
-		1000.0f);
 
 	const Matrix44 viewInverse = viewTransform.inverse();
 	const Plane cameraPlane(
@@ -419,6 +470,17 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	// Temporarily add mesh entity to world.
 	if (m_entity)
 		m_sceneInstance->getWorld()->addEntity(m_entity);
+
+	// Step the physics simulation before evaluating entities so physics-driven pose
+	// controllers (e.g. rag doll) read up-to-date body transforms. Clamp the step so a
+	// stall (paused editor) doesn't explode the simulation.
+	if (m_physicsManager)
+	{
+		double stepDeltaTime = deltaTime;
+		if (stepDeltaTime > 1.0 / 30.0)
+			stepDeltaTime = 1.0 / 30.0;
+		m_physicsManager->update((float)stepDeltaTime, false);
+	}
 
 	// Update scene entities.
 	world::UpdateParams update;
@@ -448,8 +510,11 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
 	rp->setOutput(render::RGTargetSet::Output, render::TfAll, render::TfAll);
 	rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
-		m_primitiveRenderer->begin(0, projectionTransform);
-		m_primitiveRenderer->pushView(viewTransform);
+		// Use the same projection and view as the world (mesh) render so the debug
+		// skeleton aligns with the mesh. Previously the primitive renderer used a
+		// different field-of-view (65 vs 70 deg) and near/far, offsetting the overlay.
+		m_primitiveRenderer->begin(0, m_worldRenderView.getProjection());
+		m_primitiveRenderer->pushView(m_worldRenderView.getView());
 
 		for (int x = -10; x <= 10; ++x)
 		{

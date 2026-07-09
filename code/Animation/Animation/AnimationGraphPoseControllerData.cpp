@@ -12,6 +12,7 @@
 #include "Animation/Animation/AnimationGraphPoseController.h"
 #include "Animation/Animation/ITransformTimeData.h"
 #include "Animation/Animation/RtStateGraph.h"
+#include "Animation/Animation/RtStateGraphData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Resource/IResourceManager.h"
@@ -22,16 +23,22 @@ namespace traktor::animation
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationGraphPoseControllerData", 0, AnimationGraphPoseControllerData, IPoseControllerData)
 
-AnimationGraphPoseControllerData::AnimationGraphPoseControllerData(const resource::Id< RtStateGraph >& stateGraph)
+AnimationGraphPoseControllerData::AnimationGraphPoseControllerData(const resource::Id< RtStateGraphData >& stateGraph)
 	: m_stateGraph(stateGraph)
 {
 }
 
 Ref< IPoseController > AnimationGraphPoseControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform) const
 {
-	// Load state graph through resource manager.
-	resource::Proxy< RtStateGraph > stateGraph;
-	if (!resourceManager->bind(m_stateGraph, stateGraph))
+	// Load the (shared, immutable) compiled state graph data through the resource manager.
+	resource::Proxy< RtStateGraphData > stateGraphData;
+	if (!resourceManager->bind(m_stateGraph, stateGraphData))
+		return nullptr;
+
+	// Build a per-instance runtime state graph; passing physics/skeleton/transform lets
+	// physics-driven states (e.g. rag doll) create their pose controllers properly.
+	Ref< RtStateGraph > stateGraph = stateGraphData->createInstance(resourceManager, physicsManager, skeleton, worldTransform);
+	if (!stateGraph)
 		return nullptr;
 
 	Ref< ITransformTime > transformTime;
@@ -41,12 +48,12 @@ Ref< IPoseController > AnimationGraphPoseControllerData::createInstance(resource
 			return nullptr;
 	}
 
-	return new AnimationGraphPoseController(stateGraph, transformTime);
+	return new AnimationGraphPoseController(resource::Proxy< RtStateGraph >(stateGraph), transformTime);
 }
 
 void AnimationGraphPoseControllerData::serialize(ISerializer& s)
 {
-	s >> resource::Member< RtStateGraph >(L"stateGraph", m_stateGraph);
+	s >> resource::Member< RtStateGraphData >(L"stateGraph", m_stateGraph);
 	s >> MemberRef< const ITransformTimeData >(L"transformTime", m_transformTime);
 }
 

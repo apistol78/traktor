@@ -84,7 +84,8 @@ IWorldComponent* World::getComponent(const TypeInfo& componentType) const
 
 void World::addEntity(Entity* entity)
 {
-	T_FATAL_ASSERT(entity->getWorld() == nullptr);
+	if (entity->getWorld() != nullptr)
+		return;
 	if (m_update)
 		m_deferredAdd.push_back(entity);
 	else
@@ -94,7 +95,8 @@ void World::addEntity(Entity* entity)
 
 void World::removeEntity(Entity* entity)
 {
-	T_FATAL_ASSERT(entity->getWorld() == this);
+	if (entity->getWorld() != this)
+		return;
 	if (m_update)
 		m_deferredRemove.push_back(entity);
 	else

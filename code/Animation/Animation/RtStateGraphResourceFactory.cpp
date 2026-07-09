@@ -8,7 +8,6 @@
  */
 #include "Animation/Animation/RtStateGraphResourceFactory.h"
 
-#include "Animation/Animation/RtStateGraph.h"
 #include "Animation/Animation/RtStateGraphData.h"
 #include "Database/Instance.h"
 
@@ -29,21 +28,19 @@ const TypeInfoSet RtStateGraphResourceFactory::getResourceTypes() const
 
 const TypeInfoSet RtStateGraphResourceFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	return makeTypeInfoSet(resourceType);
+	return makeTypeInfoSet< RtStateGraphData >();
 }
 
 bool RtStateGraphResourceFactory::isCacheable(const TypeInfo& productType) const
 {
-	return false;
+	// The compiled state graph data is immutable and shareable; the mutable runtime
+	// RtStateGraph is created per instance (with physics/skeleton) by the caller.
+	return true;
 }
 
 Ref< Object > RtStateGraphResourceFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< const Object > object = instance->getObject();
-	if (const RtStateGraphData* stateGraphData = dynamic_type_cast< const RtStateGraphData* >(object))
-		return stateGraphData->createInstance(resourceManager);
-	else
-		return nullptr;
+	return instance->getObject< RtStateGraphData >();
 }
 
 void RtStateGraphResourceFactory::destroy(Object* resource) const

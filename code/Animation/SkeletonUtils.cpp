@@ -82,17 +82,17 @@ void calculatePoseTransforms(
 
 Aabb3 calculateBoundingBox(const Skeleton* skeleton)
 {
-	Aabb3 boundingBox;
+	const Scalar c_radius = 0.5_simd;
 
 	AlignedVector< Transform > jointTransforms;
 	calculateJointTransforms(skeleton, jointTransforms);
-
+	
+	Aabb3 boundingBox;
 	for (uint32_t i = 0; i < uint32_t(jointTransforms.size()); ++i)
 	{
 		const Joint* joint = skeleton->getJoint(i);
-		float radius = joint->getRadius();
 
-		const Aabb3 jointLocalAabb(Vector4(-radius, -radius, -radius), Vector4(radius, radius, radius));
+		const Aabb3 jointLocalAabb(Vector4(-c_radius, -c_radius, -c_radius), Vector4(c_radius, c_radius, c_radius));
 		const Aabb3 jointAabb = jointLocalAabb.transform(jointTransforms[i]);
 
 		boundingBox.contain(jointAabb);
@@ -103,17 +103,17 @@ Aabb3 calculateBoundingBox(const Skeleton* skeleton)
 
 Aabb3 calculateBoundingBox(const Skeleton* skeleton, const Pose* pose)
 {
-	Aabb3 boundingBox;
+	const Scalar c_radius = 0.5_simd;
 
 	AlignedVector< Transform > poseTransforms;
 	calculatePoseTransforms(skeleton, pose, poseTransforms);
-
+	
+	Aabb3 boundingBox;
 	for (uint32_t i = 0; i < uint32_t(poseTransforms.size()); ++i)
 	{
 		const Joint* joint = skeleton->getJoint(i);
-		float radius = joint->getRadius();
 
-		const Aabb3 jointLocalAabb(Vector4(-radius, -radius, -radius), Vector4(radius, radius, radius));
+		const Aabb3 jointLocalAabb(Vector4(-c_radius, -c_radius, -c_radius), Vector4(c_radius, c_radius, c_radius));
 		const Aabb3 jointAabb = jointLocalAabb.transform(poseTransforms[i]);
 
 		boundingBox.contain(jointAabb);

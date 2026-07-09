@@ -45,6 +45,7 @@ CharacterComponent::CharacterComponent(
 	, m_velocity(Vector4::zero())
 	, m_impulse(Vector4::zero())
 	, m_grounded(false)
+	, m_enabled(true)
 {
 }
 
@@ -82,8 +83,39 @@ Aabb3 CharacterComponent::getBoundingBox() const
 	return Aabb3();
 }
 
+void CharacterComponent::setEnable(bool enable)
+{
+	if (enable == m_enabled)
+		return;
+
+	m_enabled = enable;
+
+	// Add/remove the collision body so a disabled controller neither collides
+	// nor is simulated.
+	if (m_bodyWide)
+		m_bodyWide->setEnable(enable);
+
+	if (enable)
+	{
+		// Re-sync the collision body to the owner after having been disabled.
+		if (m_owner)
+			m_bodyWide->setTransform(m_owner->getTransform() * Transform(Vector4(0.0f, m_data->getHeight() / 2.0f, 0.0f)));
+	}
+	else
+	{
+		// Stop dead so nothing lingers when the controller is re-enabled.
+		m_velocity = Vector4::zero();
+		m_impulse = Vector4::zero();
+	}
+}
+
 void CharacterComponent::update(const world::UpdateParams& update)
 {
+	// A disabled controller does not simulate nor drive the owner transform,
+	// leaving the entity free to be positioned by another system (e.g. rag doll).
+	if (!m_enabled)
+		return;
+
 	const Scalar dT(update.deltaTime);
 	Vector4 position = m_bodyWide->getTransform().translation();
 

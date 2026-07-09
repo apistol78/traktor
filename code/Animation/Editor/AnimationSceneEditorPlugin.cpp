@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,6 +15,7 @@
 #include "Animation/Cloth/ClothResourceFactory.h"
 #include "Animation/Editor/AnimationComponentEditorFactory.h"
 #include "Animation/Editor/Cloth/ClothEntityEditorFactory.h"
+#include "Animation/RagDoll/RagDollResourceFactory.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
@@ -51,6 +52,7 @@ void AnimationSceneEditorPlugin::createResourceFactories(
 {
 	outResourceFactories.push_back(new AnimationResourceFactory());
 	outResourceFactories.push_back(new ClothResourceFactory());
+	outResourceFactories.push_back(new RagDollResourceFactory());
 	outResourceFactories.push_back(new RtStateGraphResourceFactory());
 }
 

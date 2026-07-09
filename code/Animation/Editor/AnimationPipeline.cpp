@@ -186,7 +186,9 @@ bool AnimationPipeline::buildOutput(
 			const uint32_t k = modelAnimation->findJointIndex(name);
 			if (k == model::c_InvalidIndex)
 			{
-				log::warning << L"No \"" << name << L"\" joint in animation skeleton." << Endl;
+				// Joint is missing from the source animation (already warned about above);
+				// keep it at the target skeleton's bind pose rather than collapsing to identity.
+				kp.pose.setJointTransform(j, skeletonMeshJoints[j].getTransform());
 				continue;
 			}
 

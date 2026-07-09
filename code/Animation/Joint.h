@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -74,25 +74,12 @@ public:
 	 */
 	const Transform& getTransform() const { return m_transform; }
 
-	/*! Set joint radius.
-	 *
-	 * \param radius New joint radius.
-	 */
-	void setRadius(const Scalar& radius) { m_radius = radius; }
-
-	/*! Get joint radius.
-	 *
-	 * \return Joint radius.
-	 */
-	const Scalar& getRadius() const { return m_radius; }
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	int32_t m_parent;
 	std::wstring m_name;
 	Transform m_transform;
-	Scalar m_radius;
 };
 
 }

@@ -43,13 +43,7 @@ bool PoseControllerPipeline::buildDependencies(
 		pipelineDepends->addDependency(retargetPoseControllerData->getPoseController());
 	}
 	else if (auto ragDollPoseContollerData = dynamic_type_cast< const RagDollPoseControllerData* >(sourceAsset))
-	{
-		pipelineDepends->addDependency(ragDollPoseContollerData->getTrackPoseController());
-		for (const auto& id : ragDollPoseContollerData->getCollisionGroup())
-			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
-		for (const auto& id : ragDollPoseContollerData->getCollisionMask())
-			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
-	}
+		pipelineDepends->addDependency(ragDollPoseContollerData->getSkeleton(), editor::PdfBuild | editor::PdfResource);
 	else if (auto simpleControllerData = dynamic_type_cast< const SimpleAnimationControllerData* >(sourceAsset))
 		pipelineDepends->addDependency(simpleControllerData->getAnimation(), editor::PdfBuild | editor::PdfResource);
 	else

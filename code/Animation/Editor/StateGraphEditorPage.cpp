@@ -22,7 +22,11 @@
 #include "Animation/Editor/StateNodeAny.h"
 #include "Animation/Editor/StateNodeController.h"
 #include "Animation/Editor/StateTransition.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Transform.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
@@ -30,6 +34,7 @@
 #include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Physics/PhysicsManager.h"
 #include "Resource/IResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/AspectLayout.h"
@@ -133,6 +138,31 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 		.head = m_stateGraph->getPreviewAngles().x(),
 		.pitch = m_stateGraph->getPreviewAngles().y() });
 
+	// Create a physics manager so physics-driven preview states (e.g. rag doll) can be
+	// instantiated and simulated in the preview.
+	{
+		const std::wstring physicsManagerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"SceneEditor.PhysicsManager");
+		const TypeInfo* physicsManagerType = TypeInfo::find(physicsManagerTypeName.c_str());
+		if (physicsManagerType != nullptr)
+		{
+			physics::PhysicsCreateDesc pcd;
+			pcd.timeScale = 1.0f;
+			pcd.solverIterations = 10;
+
+			Ref< physics::PhysicsManager > physicsManager = checked_type_cast< physics::PhysicsManager* >(physicsManagerType->createInstance());
+			if (physicsManager != nullptr && physicsManager->create(pcd))
+			{
+				physicsManager->setGravity(Vector4(0.0f, -9.81f, 0.0f, 0.0f));
+				m_physicsManager = physicsManager;
+				m_previewControl->setPhysicsManager(m_physicsManager);
+			}
+			else
+				log::warning << L"Unable to create physics manager for state graph preview." << Endl;
+		}
+		else
+			log::warning << L"No physics manager type configured (SceneEditor.PhysicsManager); rag doll preview disabled." << Endl;
+	}
+
 	m_previewConditions = new ui::Container();
 	m_previewConditions->create(m_containerPreview, ui::WsNone, new ui::TableLayout(L"50%,50%", L"*", 0_ut, 0_ut));
 
@@ -164,6 +194,7 @@ void StateGraphEditorPage::destroy()
 	safeDestroy(m_propertiesView);
 	safeDestroy(m_containerPreview);
 	safeDestroy(m_editorGraph);
+	safeDestroy(m_physicsManager);
 
 	m_site = nullptr;
 }
@@ -188,7 +219,7 @@ bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 	{
 		Ref< StateNodeController > state = new StateNodeController(
 			instance->getName(),
-			new AnimationGraphPoseControllerData(resource::Id< RtStateGraph >(instance->getGuid())));
+			new AnimationGraphPoseControllerData(resource::Id< RtStateGraphData >(instance->getGuid())));
 		state->setPosition(std::pair< int, int >(absolutePosition.x, absolutePosition.y));
 		m_stateGraph->addState(state);
 
@@ -565,7 +596,11 @@ void StateGraphEditorPage::updatePreview(const StateGraph* stateGraph)
 	Ref< const RtStateGraphData > rtsgd = StateGraphCompiler().compile(stateGraph ? stateGraph : m_stateGraph);
 	if (rtsgd)
 	{
-		Ref< RtStateGraph > rtsg = rtsgd->createInstance(m_previewControl->getResourceManager());
+		Ref< RtStateGraph > rtsg = rtsgd->createInstance(
+			m_previewControl->getResourceManager(),
+			m_physicsManager,
+			m_previewControl->getSkeleton(),
+			Transform::identity());
 		if (rtsg)
 			m_previewControl->setPoseController(new AnimationGraphPoseController(resource::Proxy< RtStateGraph >(rtsg), nullptr));
 	}

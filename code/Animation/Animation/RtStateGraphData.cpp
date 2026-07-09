@@ -22,7 +22,11 @@ namespace traktor::animation
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RtStateGraphData", 0, RtStateGraphData, ISerializable)
 
-Ref< RtStateGraph > RtStateGraphData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< RtStateGraph > RtStateGraphData::createInstance(
+	resource::IResourceManager* resourceManager,
+	physics::PhysicsManager* physicsManager,
+	const Skeleton* skeleton,
+	const Transform& worldTransform) const
 {
 	Ref< RtStateGraph > instance = new RtStateGraph();
 
@@ -30,7 +34,7 @@ Ref< RtStateGraph > RtStateGraphData::createInstance(resource::IResourceManager*
 	instance->m_states.reserve(m_states.size());
 	for (auto stateData : m_states)
 	{
-		Ref< RtState > state = stateData->createInstance(resourceManager);
+		Ref< RtState > state = stateData->createInstance(resourceManager, physicsManager, skeleton, worldTransform);
 		if (state)
 		{
 			instance->m_states.push_back(state);

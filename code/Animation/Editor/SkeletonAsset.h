@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,8 +38,6 @@ public:
 
 	const Vector4& getScale() const { return m_scale; }
 
-	float getRadius() const { return m_radius; }
-
 	bool getInvertX() const { return m_invertX; }
 
 	bool getInvertZ() const { return m_invertZ; }
@@ -47,7 +45,6 @@ public:
 private:
 	Vector4 m_offset = Vector4::origo();
 	Vector4 m_scale = Vector4::one();
-	float m_radius = 0.25f;
 	bool m_invertX = false;
 	bool m_invertZ = false;
 };

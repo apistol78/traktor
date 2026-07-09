@@ -103,7 +103,6 @@ bool SkeletonPipeline::buildOutput(
 
 		joint->setName(modelJoint.getName());
 		joint->setTransform(modelJoint.getTransform());
-		joint->setRadius(Scalar(skeletonAsset->getRadius()));
 
 		skeleton->addJoint(joint);
 	}

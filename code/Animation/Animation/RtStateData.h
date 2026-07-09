@@ -20,6 +20,20 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor
+{
+
+class Transform;
+
+}
+
+namespace traktor::physics
+{
+
+class PhysicsManager;
+
+}
+
 namespace traktor::resource
 {
 
@@ -32,6 +46,7 @@ namespace traktor::animation
 
 class IPoseControllerData;
 class RtState;
+class Skeleton;
 
 /*!
  * \ingroup Animation
@@ -41,7 +56,11 @@ class T_DLLCLASS RtStateData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Ref< RtState > createInstance(resource::IResourceManager* resourceManager) const;
+	Ref< RtState > createInstance(
+		resource::IResourceManager* resourceManager,
+		physics::PhysicsManager* physicsManager,
+		const Skeleton* skeleton,
+		const Transform& worldTransform) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

@@ -23,7 +23,7 @@ namespace traktor::animation
 {
 
 class ITransformTimeData;
-class RtStateGraph;
+class RtStateGraphData;
 
 /*! Animation evaluation controller data.
  * \ingroup Animation
@@ -35,7 +35,7 @@ class T_DLLCLASS AnimationGraphPoseControllerData : public IPoseControllerData
 public:
 	AnimationGraphPoseControllerData() = default;
 
-	explicit AnimationGraphPoseControllerData(const resource::Id< RtStateGraph >& stateGraph);
+	explicit AnimationGraphPoseControllerData(const resource::Id< RtStateGraphData >& stateGraph);
 
 	virtual Ref< IPoseController > createInstance(
 		resource::IResourceManager* resourceManager,
@@ -45,10 +45,10 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	inline const resource::Id< RtStateGraph >& getStateGraph() const { return m_stateGraph; }
+	inline const resource::Id< RtStateGraphData >& getStateGraph() const { return m_stateGraph; }
 
 private:
-	resource::Id< RtStateGraph > m_stateGraph;
+	resource::Id< RtStateGraphData > m_stateGraph;
 	Ref< const ITransformTimeData > m_transformTime;
 };
 
