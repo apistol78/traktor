@@ -24,6 +24,7 @@
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfmPrimitive.h"
 #include "Core/Rtti/TypeInfo.h"
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Database/Database.h"
@@ -77,7 +78,7 @@ bool readFloatArray(const Json* value, float* out, int32_t count, std::wstring& 
 }
 
 /*! Set a primitive/enum leaf member from a JSON value. */
-bool setLeafFromJson(ReflectionMember* member, const Json* value, std::wstring& outError)
+bool setLeafFromJson(db::Database* database, ReflectionMember* member, const Json* value, std::wstring& outError)
 {
 	if (!value)
 	{
@@ -190,6 +191,21 @@ bool setLeafFromJson(ReflectionMember* member, const Json* value, std::wstring& 
 		{
 			outError = L"Invalid guid value: " + s;
 			return false;
+		}
+		// Guard resource references. A resource::Id< T > member is reflected as a guid
+		// carrying an AttributeType (T, the resource's product type); a plain Guid member
+		// (e.g. an entity id) carries none. When such a reference is set to a non-null
+		// guid, require it to resolve to an existing source-database instance, so a typo
+		// or stale guid is rejected at write time rather than silently dangling.
+		if (g.isNotNull() && database != nullptr)
+		{
+			const Attribute* attributes = m->getAttributes();
+			const AttributeType* resourceType = (attributes != nullptr) ? attributes->find< AttributeType >() : nullptr;
+			if (resourceType != nullptr && !database->getInstance(g))
+			{
+				outError = L"Resource reference not found in database: " + s + L" (member \"" + std::wstring(m->getName()) + L"\" expects a " + std::wstring(resourceType->getMemberType().getName()) + L" resource).";
+				return false;
+			}
 		}
 		m->set(g);
 		return true;
@@ -518,7 +534,7 @@ bool assignValue(db::Database* database, ReflectionMember* target, const Json* s
 		outError = L"Target member is a compound (struct); set its leaf members individually (e.g. \"" + std::wstring(target->getName() ? target->getName() : L"x") + L".field\").";
 		return false;
 	}
-	return setLeafFromJson(target, spec, outError);
+	return setLeafFromJson(database, target, spec, outError);
 }
 
 }

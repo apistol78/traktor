@@ -31,7 +31,6 @@
 #include "MCP/Server/Editor/InstanceSetMemberTool.h"
 #include "MCP/Server/Editor/IsEditorOpenTool.h"
 #include "MCP/Server/Editor/MeshAssetGetTool.h"
-#include "MCP/Server/Editor/MeshAssetSetMaterialShaderTool.h"
 #include "MCP/Server/Editor/ModelApplyOperationTool.h"
 #include "MCP/Server/Editor/ModelCloseTool.h"
 #include "MCP/Server/Editor/ModelEditTool.h"
@@ -94,7 +93,6 @@ bool McpServerEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, 
 	m_server->addTool(new IsEditorOpenTool(m_editor));
 	m_server->addTool(new CloseEditorTool(m_editor));
 	m_server->addTool(new MeshAssetGetTool(m_editor));
-	m_server->addTool(new MeshAssetSetMaterialShaderTool(m_editor));
 	m_server->addTool(new RenderMeshPreviewTool(m_editor));
 	m_server->addTool(new ShaderNodeCatalogTool());
 	m_server->addTool(new ShaderNodeDescribeTool());
