@@ -63,6 +63,11 @@ void SkeletonComponent::setTransform(const Transform& transform)
 		m_poseController->setTransform(transform);
 }
 
+IPoseController* SkeletonComponent::getActivePoseController() const
+{
+	return m_poseController ? m_poseController->getActivePoseController() : nullptr;
+}
+
 Aabb3 SkeletonComponent::getBoundingBox() const
 {
 	const Scalar c_radius = 0.5_simd;

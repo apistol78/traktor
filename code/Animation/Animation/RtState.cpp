@@ -56,6 +56,11 @@ void RtState::reset(
 		m_poseController->reset(worldTransform, skeleton, poseTransforms);
 }
 
+IPoseController* RtState::getActivePoseController() const
+{
+	return m_poseController ? m_poseController->getActivePoseController() : nullptr;
+}
+
 void RtState::evaluate(
 	const StateContext& context,
 	float deltaTime,

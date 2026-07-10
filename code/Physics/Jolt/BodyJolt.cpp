@@ -228,7 +228,9 @@ void BodyJolt::addForceAt(const Vector4& at, const Vector4& force, bool localSpa
 		wforce = transform * force;
 	}
 
-	m_body->AddForce(convertToJolt(wforce), convertToJolt(wat));
+	// Via the body interface so an inactive body is woken; the raw Body::AddForce does
+	// not activate and its contribution would be lost on a sleeping body.
+	m_physicsSystem->GetBodyInterface().AddForce(m_body->GetID(), convertToJolt(wforce), convertToJolt(wat));
 }
 
 void BodyJolt::addTorque(const Vector4& torque, bool localSpace)
@@ -240,7 +242,7 @@ void BodyJolt::addTorque(const Vector4& torque, bool localSpace)
 	if (localSpace)
 		wtorque = getTransform() * torque;
 
-	m_body->AddTorque(convertToJolt(wtorque));
+	m_physicsSystem->GetBodyInterface().AddTorque(m_body->GetID(), convertToJolt(wtorque));
 }
 
 void BodyJolt::addLinearImpulse(const Vector4& linearImpulse, bool localSpace)
@@ -252,7 +254,9 @@ void BodyJolt::addLinearImpulse(const Vector4& linearImpulse, bool localSpace)
 	if (localSpace)
 		wimpulse = getTransform() * linearImpulse;
 
-	m_body->AddImpulse(convertToJolt(wimpulse));
+	// Via the body interface so a sleeping body is woken; the raw Body::AddImpulse does
+	// not activate and its impulse would be lost on an inactive body.
+	m_physicsSystem->GetBodyInterface().AddImpulse(m_body->GetID(), convertToJolt(wimpulse));
 }
 
 void BodyJolt::addAngularImpulse(const Vector4& angularImpulse, bool localSpace)
@@ -264,7 +268,7 @@ void BodyJolt::addAngularImpulse(const Vector4& angularImpulse, bool localSpace)
 	if (localSpace)
 		wimpulse = getTransform() * angularImpulse;
 
-	m_body->AddAngularImpulse(convertToJolt(wimpulse));
+	m_physicsSystem->GetBodyInterface().AddAngularImpulse(m_body->GetID(), convertToJolt(wimpulse));
 }
 
 void BodyJolt::addImpulse(const Vector4& at, const Vector4& impulse, bool localSpace)
@@ -281,7 +285,7 @@ void BodyJolt::addImpulse(const Vector4& at, const Vector4& impulse, bool localS
 		wimpulse = transform * impulse;
 	}
 
-	m_body->AddImpulse(convertToJolt(wimpulse), convertToJolt(wat));
+	m_physicsSystem->GetBodyInterface().AddImpulse(m_body->GetID(), convertToJolt(wimpulse), convertToJolt(wat));
 }
 
 void BodyJolt::setLinearVelocity(const Vector4& linearVelocity)

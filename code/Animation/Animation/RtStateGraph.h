@@ -27,6 +27,7 @@
 namespace traktor::animation
 {
 
+class IPoseController;
 class RtState;
 class RtStateTransition;
 class Skeleton;
@@ -50,6 +51,9 @@ public:
 		const Skeleton* skeleton,
 		const AlignedVector< Transform >& jointTransforms,
 		AlignedVector< Transform >& outPoseTransforms);
+
+	/*! Active pose controller = the current state's pose controller (may be null). */
+	IPoseController* getActivePoseController() const;
 
 private:
 	friend class RtStateGraphData;

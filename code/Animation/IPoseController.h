@@ -71,6 +71,15 @@ public:
 		const AlignedVector< Transform >& jointTransforms,
 		AlignedVector< Transform >& outPoseTransforms
 	) = 0;
+
+	/*! Return the pose controller actually driving the pose right now.
+	 *
+	 * Most controllers are themselves the active one and return \c this. A controller
+	 * that delegates (e.g. the animation state graph) returns the sub-controller of its
+	 * current state, so callers can reach a physics controller (e.g. rag doll) that is
+	 * only active in some states. May be null when the current state has no controller.
+	 */
+	virtual IPoseController* getActivePoseController() { return this; }
 };
 
 }

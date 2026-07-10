@@ -92,6 +92,7 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 {
 	auto classSkeletonComponent = new AutoRuntimeClass< SkeletonComponent >();
 	classSkeletonComponent->addProperty("poseController", &SkeletonComponent::setPoseController, &SkeletonComponent::getPoseController);
+	classSkeletonComponent->addProperty("activePoseController", &SkeletonComponent::getActivePoseController);
 	classSkeletonComponent->addMethod("getJointTransform", &SkeletonComponent_getJointTransform);
 	classSkeletonComponent->addMethod("getPoseTransform", &SkeletonComponent_getPoseTransform);
 	classSkeletonComponent->addMethod("setPoseTransform", &SkeletonComponent_setPoseTransform);
@@ -115,6 +116,8 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	registrar->registerClass(classPoseController);
 
 	auto classRagDollPoseController = new AutoRuntimeClass< RagDollPoseController >();
+	classRagDollPoseController->addMethod("addImpulse", &RagDollPoseController::addImpulse);
+	classRagDollPoseController->addMethod("addImpulseAt", &RagDollPoseController::addImpulseAt);
 	registrar->registerClass(classRagDollPoseController);
 
 	auto classStatePoseController = new AutoRuntimeClass< AnimationGraphPoseController >();

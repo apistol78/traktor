@@ -71,4 +71,12 @@ bool AnimationGraphPoseController::evaluate(
 	return m_stateGraph ? m_stateGraph->evaluate(time, deltaTime, worldTransform, skeleton, jointTransforms, outPoseTransforms) : false;
 }
 
+IPoseController* AnimationGraphPoseController::getActivePoseController()
+{
+	// Delegate to the graph's current state; that resolves to the state's own controller
+	// (e.g. the rag doll controller in the "dead" state), or null when the current state
+	// is a plain animation with no sub-controller.
+	return m_stateGraph ? m_stateGraph->getActivePoseController() : this;
+}
+
 }

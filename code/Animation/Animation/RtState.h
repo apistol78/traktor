@@ -53,6 +53,8 @@ public:
 		const AlignedVector< Transform >& jointTransforms,
 		Pose& outPose) const;
 
+	IPoseController* getActivePoseController() const;
+
 private:
 	friend class RtStateData;
 

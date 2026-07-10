@@ -10,6 +10,7 @@
 
 #include "Animation/IPoseController.h"
 #include "Core/RefArray.h"
+#include "Core/Math/Vector4.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -82,6 +83,24 @@ public:
 		const AlignedVector< Transform >& boneTransforms,
 		AlignedVector< Transform >& outPoseTransforms
 	) override final;
+
+	/*! Apply an impulse to the rag doll, distributed across its limbs by mass.
+	 *
+	 * The world-space \a impulse is split among the dynamic limbs in proportion to their
+	 * mass, so the net momentum change equals \a impulse and every limb receives the same
+	 * velocity change (\a impulse / total mass) - equivalent to applying the impulse at the
+	 * rag doll's centre of mass: a coherent whole-body push, with no spurious spin from an
+	 * arbitrary application point and no single limb torn away from its joints.
+	 */
+	void addImpulse(const Vector4& impulse);
+
+	/*! Apply an impulse at a world-space point, to the nearest limb.
+	 *
+	 * Unlike addImpulse (a uniform whole-body shove), this applies \a impulse at the world
+	 * point \a at on the closest limb, so that limb gains both linear and angular velocity
+	 * - a localized hit - and drags the rest of the rag doll along through the joints.
+	 */
+	void addImpulseAt(const Vector4& at, const Vector4& impulse);
 
 	const RefArray< physics::Body >& getLimbs() const { return m_limbs; }
 

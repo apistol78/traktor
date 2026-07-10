@@ -62,6 +62,8 @@ public:
 		const AlignedVector< Transform >& jointTransforms,
 		AlignedVector< Transform >& outPoseTransforms) override final;
 
+	virtual IPoseController* getActivePoseController() override final;
+
 private:
 	resource::Proxy< RtStateGraph > m_stateGraph;
 };

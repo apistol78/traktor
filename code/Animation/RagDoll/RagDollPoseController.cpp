@@ -88,6 +88,64 @@ void RagDollPoseController::setTransform(const Transform& transform)
 	m_worldTransform = transform;
 }
 
+void RagDollPoseController::addImpulse(const Vector4& impulse)
+{
+	// Total mass of the dynamic limbs (inverse mass of 0 => static/kinematic; skipped).
+	Scalar totalMass = 0.0_simd;
+	for (auto limb : m_limbs)
+	{
+		if (!limb)
+			continue;
+		const float invMass = limb->getInverseMass();
+		if (invMass > 0.0f)
+			totalMass += Scalar(1.0f / invMass);
+	}
+	if (totalMass <= 0.0_simd)
+		return;
+
+	// Distribute the impulse across the limbs in proportion to their mass: each limb gets
+	// impulse * (m / totalMass), so the momentum change sums to exactly 'impulse' and every
+	// limb receives the same velocity change (impulse / totalMass). That is equivalent to
+	// applying the impulse at the rag doll's centre of mass - a coherent whole-body push.
+	for (auto limb : m_limbs)
+	{
+		if (!limb)
+			continue;
+		const float invMass = limb->getInverseMass();
+		if (invMass <= 0.0f)
+			continue;
+		const Scalar mass(1.0f / invMass);
+		limb->addLinearImpulse(impulse * (mass / totalMass), false);
+		limb->setActive(true);
+	}
+}
+
+void RagDollPoseController::addImpulseAt(const Vector4& at, const Vector4& impulse)
+{
+	// Apply the impulse at a world-space point to the nearest limb, so it gains both
+	// linear and angular velocity (a localized hit); the joints then drag the rest of
+	// the rag doll along. Contrast with addImpulse, which shoves the whole body
+	// uniformly with no point of application.
+	physics::Body* nearest = nullptr;
+	Scalar nearestDistanceSq = 0.0_simd;
+	for (auto limb : m_limbs)
+	{
+		if (!limb)
+			continue;
+		const Scalar distanceSq = (limb->getTransform().translation() - at).xyz0().length2();
+		if (nearest == nullptr || distanceSq < nearestDistanceSq)
+		{
+			nearest = limb;
+			nearestDistanceSq = distanceSq;
+		}
+	}
+	if (nearest != nullptr)
+	{
+		nearest->addImpulse(at.xyz1(), impulse.xyz0(), false);
+		nearest->setActive(true);
+	}
+}
+
 bool RagDollPoseController::evaluate(
 	float time,
 	float deltaTime,

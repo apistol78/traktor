@@ -46,6 +46,11 @@ bool RtStateGraph::getParameterValue(const render::Handle& handle) const
 		return false;
 }
 
+IPoseController* RtStateGraph::getActivePoseController() const
+{
+	return m_currentState ? m_currentState->getActivePoseController() : nullptr;
+}
+
 bool RtStateGraph::evaluate(
 	float time,
 	float deltaTime,
