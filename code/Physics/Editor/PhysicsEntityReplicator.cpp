@@ -10,6 +10,7 @@
 
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
@@ -24,12 +25,15 @@
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Physics/BoxShapeDesc.h"
+#include "Physics/CylinderShapeDesc.h"
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/HeightfieldShapeDesc.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/World/RigidBodyComponentData.h"
 #include "World/EntityData.h"
+
+#include <cmath>
 
 namespace traktor::physics
 {
@@ -106,6 +110,72 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 			pol.addVertex(vi[3]);
 			m->addPolygon(pol);
 		}
+
+		return m;
+	}
+
+	auto cylinderShape = dynamic_type_cast< const CylinderShapeDesc* >(rigidBodyComponentData->getBodyDesc()->getShape());
+	if (cylinderShape)
+	{
+		const float radius = cylinderShape->getRadius();
+		const float halfLength = cylinderShape->getLength() * 0.5f;
+		const int32_t segments = 32;
+
+		Ref< model::Model > m = new model::Model();
+
+		for (int32_t i = 0; i < segments; ++i)
+		{
+			const float a0 = (float)i / segments * TWO_PI;
+			const float a1 = (float)(i + 1) / segments * TWO_PI;
+			const float am = ((float)i + 0.5f) / segments * TWO_PI;
+
+			const Vector4 P[] = {
+				Vector4(radius * std::cos(a0), radius * std::sin(a0), -halfLength, 1.0f),
+				Vector4(radius * std::cos(a0), radius * std::sin(a0),  halfLength, 1.0f),
+				Vector4(radius * std::cos(a1), radius * std::sin(a1),  halfLength, 1.0f),
+				Vector4(radius * std::cos(a1), radius * std::sin(a1), -halfLength, 1.0f)
+			};
+
+			const uint32_t ni = m->addUniqueNormal(Vector4(std::cos(am), std::sin(am), 0.0f, 0.0f));
+
+			model::Polygon pol;
+			pol.setNormal(ni);
+			for (int32_t j = 0; j < 4; ++j)
+			{
+				model::Vertex vx;
+				vx.setPosition(m->addUniquePosition(P[j]));
+				vx.setNormal(ni);
+				pol.addVertex(m->addUniqueVertex(vx));
+			}
+			m->addPolygon(pol);
+		}
+
+		const uint32_t topNormal = m->addUniqueNormal(Vector4(0.0f, 0.0f, 1.0f, 0.0f));
+		const uint32_t bottomNormal = m->addUniqueNormal(Vector4(0.0f, 0.0f, -1.0f, 0.0f));
+
+		model::Polygon top;
+		top.setNormal(topNormal);
+
+		model::Polygon bottom;
+		bottom.setNormal(bottomNormal);
+
+		for (int32_t i = 0; i < segments; ++i)
+		{
+			const float at = (float)(segments - i) / segments * TWO_PI;
+			model::Vertex tv;
+			tv.setPosition(m->addUniquePosition(Vector4(radius * std::cos(at), radius * std::sin(at), halfLength, 1.0f)));
+			tv.setNormal(topNormal);
+			top.addVertex(m->addUniqueVertex(tv));
+
+			const float ab = (float)i / segments * TWO_PI;
+			model::Vertex bv;
+			bv.setPosition(m->addUniquePosition(Vector4(radius * std::cos(ab), radius * std::sin(ab), -halfLength, 1.0f)));
+			bv.setNormal(bottomNormal);
+			bottom.addVertex(m->addUniqueVertex(bv));
+		}
+
+		m->addPolygon(top);
+		m->addPolygon(bottom);
 
 		return m;
 	}
