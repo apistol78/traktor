@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Transform.h"
+#include "Core/RefArray.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -54,6 +55,8 @@ public:
 		Pose& outPose) const;
 
 	IPoseController* getActivePoseController() const;
+
+	void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const;
 
 private:
 	friend class RtStateData;

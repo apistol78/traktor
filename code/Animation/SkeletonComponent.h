@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 
 #include "Animation/Pose.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/RefArray.h"
 #include "Core/Thread/Job.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
@@ -78,6 +79,9 @@ public:
 	/*! The pose controller currently driving the pose (e.g. the rag doll controller while
 	 * in a rag doll state), or null. See IPoseController::getActivePoseController. */
 	IPoseController* getActivePoseController() const;
+
+	/*! */
+	void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const;
 
 	/*! Get all joint base transforms. */
 	const AlignedVector< Transform >& getJointTransforms() const { return m_jointTransforms; }

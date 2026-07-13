@@ -68,12 +68,12 @@ public:
 
 	virtual void destroy() override final;
 
+	virtual void setTransform(const Transform& transform) override final;
+
 	virtual void reset(
 		const Transform& worldTransform,
 		const Skeleton* skeleton,
 		const AlignedVector< Transform >& poseTransforms) override final;
-
-	virtual void setTransform(const Transform& transform) override final;
 
 	virtual bool evaluate(
 		float time,
@@ -83,6 +83,10 @@ public:
 		const AlignedVector< Transform >& boneTransforms,
 		AlignedVector< Transform >& outPoseTransforms
 	) override final;
+
+	virtual IPoseController* getActivePoseController() override final;
+
+	virtual void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) override final;
 
 	/*! Apply an impulse to the rag doll, distributed across its limbs by mass.
 	 *

@@ -24,6 +24,7 @@
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedTransform.h"
+#include "Core/Class/Boxes/BoxedTypeInfo.h"
 #include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Class/IRuntimeDelegate.h"
@@ -70,6 +71,13 @@ bool SkeletonComponent_concatenatePoseTransform(SkeletonComponent* self, const s
 		inclusive);
 }
 
+RefArray< IPoseController > SkeletonComponent_getPoseControllersOf(SkeletonComponent* self, const TypeInfo& controllerType)
+{
+	RefArray< IPoseController > controllers;
+	self->getPoseControllersOf(controllerType, controllers);
+	return controllers;
+}
+
 Transform AnimatedMeshComponent_getSkinTransform(AnimatedMeshComponent* self, const std::wstring& jointName)
 {
 	Transform transform;
@@ -97,6 +105,7 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classSkeletonComponent->addMethod("getPoseTransform", &SkeletonComponent_getPoseTransform);
 	classSkeletonComponent->addMethod("setPoseTransform", &SkeletonComponent_setPoseTransform);
 	classSkeletonComponent->addMethod("concatenatePoseTransform", &SkeletonComponent_concatenatePoseTransform);
+	classSkeletonComponent->addMethod("getPoseControllersOf", &SkeletonComponent_getPoseControllersOf);
 	registrar->registerClass(classSkeletonComponent);
 
 	auto classAnimatedMeshComponent = new AutoRuntimeClass< AnimatedMeshComponent >();

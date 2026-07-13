@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -128,6 +128,19 @@ bool RetargetPoseController::evaluate(
 	// Combine all delta transforms into final pose transforms.
 	calculatePoseTransforms(skeleton, m_deltaPoseTransforms, outPoseTransforms);
 	return result;
+}
+
+IPoseController* RetargetPoseController::getActivePoseController()
+{
+	return this;
+}
+
+void RetargetPoseController::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers)
+{
+	if (is_type_of< RetargetPoseController >(type))
+		outControllers.push_back(this);
+	else if (m_poseController)
+		m_poseController->getPoseControllersOf(type, outControllers);
 }
 
 }

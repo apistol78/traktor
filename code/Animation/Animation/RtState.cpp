@@ -61,6 +61,12 @@ IPoseController* RtState::getActivePoseController() const
 	return m_poseController ? m_poseController->getActivePoseController() : nullptr;
 }
 
+void RtState::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const
+{
+	if (m_poseController != nullptr)
+		m_poseController->getPoseControllersOf(type, outControllers);
+}
+
 void RtState::evaluate(
 	const StateContext& context,
 	float deltaTime,

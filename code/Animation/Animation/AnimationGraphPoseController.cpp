@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -73,10 +73,15 @@ bool AnimationGraphPoseController::evaluate(
 
 IPoseController* AnimationGraphPoseController::getActivePoseController()
 {
-	// Delegate to the graph's current state; that resolves to the state's own controller
-	// (e.g. the rag doll controller in the "dead" state), or null when the current state
-	// is a plain animation with no sub-controller.
 	return m_stateGraph ? m_stateGraph->getActivePoseController() : this;
+}
+
+void AnimationGraphPoseController::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers)
+{
+	if (is_type_of< AnimationGraphPoseController >(type))
+		outControllers.push_back(this);
+	else if (m_stateGraph)
+		m_stateGraph->getPoseControllersOf(type, outControllers);
 }
 
 }

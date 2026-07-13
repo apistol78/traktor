@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Transform.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,6 +37,8 @@ class T_DLLCLASS IPoseController : public Object
 public:
 	virtual void destroy() = 0;
 
+	virtual void setTransform(const Transform& transform) = 0;
+
 	/*! Reset controller to match a given pose.
 	 *
 	 * Called when a controller becomes active so it can initialize itself from the
@@ -50,8 +53,6 @@ public:
 		const Transform& worldTransform,
 		const Skeleton* skeleton,
 		const AlignedVector< Transform >& poseTransforms) {}
-
-	virtual void setTransform(const Transform& transform) = 0;
 
 	/*! Evaluate pose through pose controller.
 	 *
@@ -79,7 +80,10 @@ public:
 	 * current state, so callers can reach a physics controller (e.g. rag doll) that is
 	 * only active in some states. May be null when the current state has no controller.
 	 */
-	virtual IPoseController* getActivePoseController() { return this; }
+	virtual IPoseController* getActivePoseController() = 0;
+
+	/*! */
+	virtual void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) = 0;
 };
 
 }

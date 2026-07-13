@@ -68,6 +68,12 @@ IPoseController* SkeletonComponent::getActivePoseController() const
 	return m_poseController ? m_poseController->getActivePoseController() : nullptr;
 }
 
+void SkeletonComponent::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const
+{
+	if (m_poseController)
+		m_poseController->getPoseControllersOf(type, outControllers);
+}
+
 Aabb3 SkeletonComponent::getBoundingBox() const
 {
 	const Scalar c_radius = 0.5_simd;

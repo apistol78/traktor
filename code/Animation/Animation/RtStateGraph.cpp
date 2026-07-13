@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -44,11 +44,6 @@ bool RtStateGraph::getParameterValue(const render::Handle& handle) const
 		return m_values[it->second];
 	else
 		return false;
-}
-
-IPoseController* RtStateGraph::getActivePoseController() const
-{
-	return m_currentState ? m_currentState->getActivePoseController() : nullptr;
 }
 
 bool RtStateGraph::evaluate(
@@ -257,6 +252,17 @@ bool RtStateGraph::evaluate(
 	}
 
 	return continous;
+}
+
+IPoseController* RtStateGraph::getActivePoseController() const
+{
+	return m_currentState ? m_currentState->getActivePoseController() : nullptr;
+}
+
+void RtStateGraph::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const
+{
+	if (m_currentState != nullptr)
+		m_currentState->getPoseControllersOf(type, outControllers);
 }
 
 }

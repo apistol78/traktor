@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -74,6 +74,17 @@ bool SimpleAnimationController::evaluate(
 
 	// Assume animation is not continous when wrapping.
 	return !wrapped;
+}
+
+IPoseController* SimpleAnimationController::getActivePoseController()
+{
+	return this;
+}
+
+void SimpleAnimationController::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers)
+{
+	if (is_type_of< SimpleAnimationController >(type))
+		outControllers.push_back(this);
 }
 
 }
