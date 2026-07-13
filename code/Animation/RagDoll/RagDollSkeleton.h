@@ -8,10 +8,12 @@
  */
 #pragma once
 
-#include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Transform.h"
+#include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
