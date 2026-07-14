@@ -485,6 +485,17 @@ void ContextWl::queueExpose(WidgetData* widget)
 	m_pendingExposes.push_back(widget);
 }
 
+void ContextWl::queueExposeRecursive(WidgetData* widget)
+{
+	if (widget == nullptr || !widget->visible)
+		return;
+
+	queueExpose(widget);
+
+	for (auto* child : widget->children)
+		queueExposeRecursive(child);
+}
+
 bool ContextWl::processPendingExposes()
 {
 	if (m_pendingExposes.empty())

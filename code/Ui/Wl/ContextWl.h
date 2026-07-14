@@ -224,6 +224,12 @@ public:
 	//! Queue a widget for deferred redraw (processed in event loop).
 	void queueExpose(WidgetData* widget);
 
+	//! Queue a widget and all its visible descendants for deferred redraw. Used when
+	//! a subtree becomes visible: Wayland (unlike X11) delivers no expose on map, and
+	//! descendants whose geometry is unchanged are not re-exposed by re-layout, so
+	//! they must be repainted explicitly or they keep a detached (blank) buffer.
+	void queueExposeRecursive(WidgetData* widget);
+
 	//! Process all pending expose requests; returns true if any were processed.
 	bool processPendingExposes();
 

@@ -247,6 +247,8 @@ public:
 
 		if (visible)
 		{
+			const bool wasMapped = m_data.mapped;
+
 			if (!m_data.mapped && m_rect.area() > 0)
 			{
 				if (m_data.subsurface)
@@ -259,7 +261,20 @@ public:
 			m_owner->raiseEvent(&sizeEvent);
 
 			if (m_data.mapped)
+			{
 				draw(nullptr);
+
+				// On the unmapped->mapped edge the whole subtree is (re)appearing.
+				// Wayland delivers no expose on map (unlike X11), and descendants whose
+				// geometry is unchanged since they were hidden are not re-exposed by
+				// re-layout - a fixed-size child (e.g. a left-column label) keeps a
+				// detached buffer and would never repaint. Re-expose the subtree.
+				if (!wasMapped)
+				{
+					for (auto* child : m_data.children)
+						m_context->queueExposeRecursive(child);
+				}
+			}
 		}
 		else if (m_data.mapped)
 		{
@@ -332,6 +347,7 @@ public:
 			return;
 
 		const Size fromSize = m_rect.getSize();
+		const bool wasMapped = m_data.mapped;
 
 		m_rect = rect;
 		m_data.posX = rect.left;
@@ -375,7 +391,23 @@ public:
 		}
 
 		if (m_data.mapped && m_rect.area() > 0)
+		{
 			m_context->queueExpose(&m_data);
+
+			// A widget laid out while an ancestor was hidden (e.g. an inactive tab
+			// page) becomes mapped here once it is given a real rect. Wayland delivers
+			// no expose on map, and the re-layout above only re-exposes descendants
+			// whose geometry actually changed - a fixed-size child (such as a left
+			// column label) keeps an unchanged rect and a detached buffer, so it would
+			// never repaint. Re-expose the whole subtree on the unmapped->mapped edge;
+			// the deferred exposes run after this layout completes, so each descendant
+			// repaints with correct geometry.
+			if (!wasMapped)
+			{
+				for (auto* child : m_data.children)
+					m_context->queueExposeRecursive(child);
+			}
+		}
 	}
 
 	// All rects returned in device coordinates.
