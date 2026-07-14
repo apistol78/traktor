@@ -4,7 +4,7 @@
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>1000</viewFarZ>
 		<exposureMode>Adaptive</exposureMode>
-		<exposure>0</exposure>
+		<exposure>-0.15</exposure>
 		<shadowSettings>
 			<disabled>
 				<farZ>0</farZ>
@@ -60,6 +60,16 @@
 		<item type="traktor.ai.NavMeshComponentData">
 			<navMesh>{3ACC5150-E8BE-4242-A315-A07FB0AF1B31}</navMesh>
 		</item>
+		<item type="traktor.world.FogComponentData" version="2">
+			<mediumColor>0.356863, 0.505882, 0.635294, 1</mediumColor>
+			<mediumDensity>0.005</mediumDensity>
+			<distanceFogEnable>true</distanceFogEnable>
+			<fogDistance>100</fogDistance>
+			<fogElevation>38.299999</fogElevation>
+			<volumetricFogEnable>false</volumetricFogEnable>
+			<maxDistance>0</maxDistance>
+			<maxScattering>0</maxScattering>
+		</item>
 	</worldComponents>
 	<layers>
 		<item type="traktor.world.EntityData" version="2">
@@ -103,8 +113,8 @@
 								</item>
 								<item type="traktor.world.LightComponentData" version="12">
 									<lightType>Directional</lightType>
-									<color>1, 1, 1, 0</color>
-									<intensity>2</intensity>
+									<color>0.996078, 0.94902, 0.878431, 0</color>
+									<intensity>5</intensity>
 									<castShadow>true</castShadow>
 									<nearRange>0</nearRange>
 									<farRange>20</farRange>
@@ -128,14 +138,9 @@
 								<rotation>0, 0, 0, 1</rotation>
 							</transform>
 							<components>
-								<item type="traktor.world.ProbeComponentData">
+								<item type="traktor.world.ProbeComponentData" version="1">
 									<texture>{00000000-0000-0000-0000-000000000000}</texture>
 									<intensity>1</intensity>
-									<local>false</local>
-									<volume>
-										<mn>0, 0, 0, 1</mn>
-										<mx>0, 0, 0, 1</mx>
-									</volume>
 								</item>
 							</components>
 						</item>
@@ -159,20 +164,6 @@
 									<height>1</height>
 								</item>
 							</components>
-						</item>
-						<item type="traktor.world.EntityData" version="2">
-							<id>{C22A6A8D-53C9-FD45-81A4-C6315A573B3D}</id>
-							<name/>
-							<state>
-								<visible>true</visible>
-								<dynamic>false</dynamic>
-								<locked>false</locked>
-							</state>
-							<transform>
-								<translation>0, 0, 0, 0</translation>
-								<rotation>0, 0, 0, 1</rotation>
-							</transform>
-							<components/>
 						</item>
 					</entityData>
 				</item>
@@ -218,19 +209,19 @@
 								<item type="traktor.terrain.OceanComponentData" version="5">
 									<shaderWave>{3ABA4673-C5A5-404E-8563-CE8A6E043AC4}</shaderWave>
 									<shader>{FB9B7138-B7B2-E341-82EB-453BE2B558A8}</shader>
-									<shallowTint>0.482353, 0.564706, 0.886275, 1</shallowTint>
-									<deepColor>0, 0.443137, 0.419608, 1</deepColor>
-									<opacity>0.04</opacity>
-									<elevation>7.8</elevation>
+									<shallowTint>0.65098, 0.776471, 0.878431, 1</shallowTint>
+									<deepColor>0.172549, 0.282353, 0.262745, 1</deepColor>
+									<opacity>0.2</opacity>
+									<elevation>15.500001</elevation>
 									<spectrum>
-										<scale>0.075</scale>
+										<scale>0.05</scale>
 										<angle>-1.570796</angle>
 										<spreadBlend>0.8</spreadBlend>
 										<swell>0.35</swell>
 										<alpha>0.2</alpha>
 										<peakOmega>1</peakOmega>
 										<gamma>0.5</gamma>
-										<shortWavesFade>0.08</shortWavesFade>
+										<shortWavesFade>0.02</shortWavesFade>
 									</spectrum>
 								</item>
 								<item type="traktor.physics.RigidBodyComponentData" version="1">

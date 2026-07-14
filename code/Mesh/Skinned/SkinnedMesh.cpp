@@ -96,7 +96,7 @@ void SkinnedMesh::buildAccelerationStructure(
 			rebuild,
 			asynchronous);
 	};
-	rb->asynchronous = true;
+	rb->asynchronous = asynchronous;
 	renderContext->compute(rb);
 }
 

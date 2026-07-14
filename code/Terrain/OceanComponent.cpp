@@ -75,8 +75,7 @@ struct OceanVertex
 
 #pragma pack()
 
-const uint32_t c_gridSize = 32;
-const uint32_t c_gridInfSize = c_gridSize / 8;
+const uint32_t c_gridSize = 256;
 const uint32_t c_gridCells = (c_gridSize - 1) * (c_gridSize - 1);
 
 const uint32_t c_spectrumSize = 1024;
