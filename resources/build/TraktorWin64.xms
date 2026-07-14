@@ -22104,7 +22104,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libTraktor.MCP.Editor.so</sourceFile>
+							<sourceFile>Traktor.MCP.Editor.lib</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.MCP.Editor.dll</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.MCP.Editor.pdb</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -22133,7 +22141,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libTraktor.MCP.Editor.so</sourceFile>
+							<sourceFile>Traktor.MCP.Editor.lib</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.MCP.Editor.dll</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.MCP.Editor.pdb</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -22162,7 +22178,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libTraktor.MCP.Editor.a</sourceFile>
+							<sourceFile>Traktor.MCP.Editor.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.MCP.Editor.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -22191,7 +22211,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libTraktor.MCP.Editor.a</sourceFile>
+							<sourceFile>Traktor.MCP.Editor.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.MCP.Editor.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
