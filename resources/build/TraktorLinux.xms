@@ -20945,8 +20945,8 @@
 		<item ref="/object/projects/item[12]/dependencies/item[16]/project"/>
 		<item type="traktor.sb.Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.MCP.Server</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/MCP/Server</sourcePath>
+			<name>Traktor.MCP.Editor</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/MCP/Editor</sourcePath>
 			<configurations>
 				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugShared</name>
@@ -20957,7 +20957,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_MCP_SERVER_EXPORT</item>
+						<item>T_MCP_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -20971,7 +20971,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libTraktor.MCP.Server.so</sourceFile>
+							<sourceFile>libTraktor.MCP.Editor.so</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -20986,7 +20986,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_MCP_SERVER_EXPORT</item>
+						<item>T_MCP_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -21000,7 +21000,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libTraktor.MCP.Server.so</sourceFile>
+							<sourceFile>libTraktor.MCP.Editor.so</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -21029,7 +21029,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libTraktor.MCP.Server.a</sourceFile>
+							<sourceFile>libTraktor.MCP.Editor.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -21058,7 +21058,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libTraktor.MCP.Server.a</sourceFile>
+							<sourceFile>libTraktor.MCP.Editor.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -21070,6 +21070,16 @@
 					<fileName>*.*</fileName>
 					<excludeFilter/>
 					<items/>
+				</item>
+				<item type="traktor.sb.Filter">
+					<name>Tools</name>
+					<items>
+						<item type="traktor.sb.File" version="1">
+							<fileName>Tools/*.*</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>
@@ -21093,143 +21103,6 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
-			</dependencies>
-		</item>
-		<item type="traktor.sb.Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.MCP.Server.Editor</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/MCP/Server/Editor</sourcePath>
-			<configurations>
-				<item type="traktor.sb.Configuration" version="5">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_MCP_SERVER_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libTraktor.MCP.Server.Editor.so</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
-				</item>
-				<item type="traktor.sb.Configuration" version="5">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_MCP_SERVER_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libTraktor.MCP.Server.Editor.so</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
-				</item>
-				<item type="traktor.sb.Configuration" version="5">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libTraktor.MCP.Server.Editor.a</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugstatic</consumerLibraryPath>
-				</item>
-				<item type="traktor.sb.Configuration" version="5">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libTraktor.MCP.Server.Editor.a</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releasestatic</consumerLibraryPath>
-				</item>
-			</configurations>
-			<items>
-				<item type="traktor.sb.File" version="1">
-					<fileName>*.*</fileName>
-					<excludeFilter/>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="traktor.sb.ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item/project"/>
-				</item>
 				<item type="traktor.sb.ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
@@ -21239,16 +21112,6 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="traktor.sb.ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="traktor.sb.ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[104]"/>
 				</item>
 				<item type="traktor.sb.ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>

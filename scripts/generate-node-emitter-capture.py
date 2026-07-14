@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate code/MCP/Server/Editor/NodeEmitterCapture.cpp: source-derived shader
+Generate code/MCP/Editor/NodeEmitterCapture.cpp: source-derived shader
 node metadata for the MCP server, so it can be exposed at runtime WITHOUT the
 Traktor source tree being present.
 
@@ -21,7 +21,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "code/Render/Editor/Glsl/GlslEmitter.cpp")
-OUT = os.path.join(ROOT, "code/MCP/Server/Editor/NodeEmitterCapture.cpp")
+OUT = os.path.join(ROOT, "code/MCP/Editor/NodeEmitterCapture.cpp")
 # Headers that declare shader graph node classes; scanned for T_DEPRECATED tags.
 NODE_HEADER_GLOBS = [
     "code/Render/Editor/Shader/*.h",
@@ -177,7 +177,7 @@ def main():
     out.append("// GENERATED FILE - DO NOT EDIT.")
     out.append("// Produced by scripts/generate-node-emitter-capture.py from")
     out.append("// code/Render/Editor/Glsl/GlslEmitter.cpp and the shader node headers.")
-    out.append('#include "MCP/Server/Editor/NodeEmitterCapture.h"')
+    out.append('#include "MCP/Editor/NodeEmitterCapture.h"')
     out.append("")
     out.append("namespace traktor::mcp")
     out.append("{")
