@@ -44,6 +44,8 @@ struct WidgetData
 	bool enable = true;
 	bool grabbed = false;
 	bool configured = false;
+	bool maximized = false;		//!< Toplevel only: compositor-confirmed maximized state, updated from the xdg/libdecor configure (covers caption-bar maximize/restore).
+	bool minimized = false;		//!< Toplevel only: set when minimize is requested; cleared on the next configure, as neither xdg-shell nor libdecor report a minimized state.
 	int32_t posX = 0;			//!< Widget position (device coords), kept in sync with m_rect for parent chain walks.
 	int32_t posY = 0;
 	int32_t width = 0;			//!< Widget size (device coords), needed by descendants for ancestor-chain clip.

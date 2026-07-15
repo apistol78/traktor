@@ -42,8 +42,6 @@ public:
 
 private:
 	ToplevelListenerCtx m_listenerCtx;
-	bool m_maximized = false;
-	bool m_minimized = false;
 };
 
 }

@@ -117,8 +117,10 @@ void FormWl::maximize()
 		libdecor_frame_set_maximized(m_data.frame);
 	else if (m_data.xdgToplevel)
 		xdg_toplevel_set_maximized(m_data.xdgToplevel);
-	m_maximized = true;
-	m_minimized = false;
+	// Optimistic; the compositor confirms (or corrects) via the configure handler,
+	// which is also what keeps this in sync when the user maximizes from the caption bar.
+	m_data.maximized = true;
+	m_data.minimized = false;
 }
 
 void FormWl::minimize()
@@ -127,7 +129,7 @@ void FormWl::minimize()
 		libdecor_frame_set_minimized(m_data.frame);
 	else if (m_data.xdgToplevel)
 		xdg_toplevel_set_minimized(m_data.xdgToplevel);
-	m_minimized = true;
+	m_data.minimized = true;
 }
 
 void FormWl::restore()
@@ -136,18 +138,18 @@ void FormWl::restore()
 		libdecor_frame_unset_maximized(m_data.frame);
 	else if (m_data.xdgToplevel)
 		xdg_toplevel_unset_maximized(m_data.xdgToplevel);
-	m_maximized = false;
-	m_minimized = false;
+	m_data.maximized = false;
+	m_data.minimized = false;
 }
 
 bool FormWl::isMaximized() const
 {
-	return m_maximized;
+	return m_data.maximized;
 }
 
 bool FormWl::isMinimized() const
 {
-	return m_minimized;
+	return m_data.minimized;
 }
 
 void FormWl::hideProgress()

@@ -69,12 +69,31 @@ inline void toplevelXdgSurfaceConfigure(void* data, xdg_surface* xdgSurface, uin
 	}
 }
 
-inline void toplevelXdgToplevelConfigure(void* data, xdg_toplevel*, int32_t width, int32_t height, wl_array*)
+inline void toplevelXdgToplevelConfigure(void* data, xdg_toplevel*, int32_t width, int32_t height, wl_array* states)
 {
 	auto* lctx = static_cast< ToplevelListenerCtx* >(data);
 	WidgetData* wd = static_cast< WidgetData* >(lctx->widget->getInternalHandle());
 	wd->pendingWidth = width;
 	wd->pendingHeight = height;
+
+	// Track compositor-driven window state, e.g. maximize/restore performed via the
+	// caption bar rather than through maximize()/restore(). (wl_array_for_each is not
+	// C++-friendly, so iterate the uint32_t state list manually.) xdg-shell has no
+	// minimized state, and a configure means the surface is being shown, so clear the
+	// request-only minimized flag.
+	bool maximized = false;
+	if (states != nullptr)
+	{
+		const uint32_t* first = static_cast< const uint32_t* >(states->data);
+		const uint32_t* last = first + states->size / sizeof(uint32_t);
+		for (const uint32_t* s = first; s != last; ++s)
+		{
+			if (*s == XDG_TOPLEVEL_STATE_MAXIMIZED)
+				maximized = true;
+		}
+	}
+	wd->maximized = maximized;
+	wd->minimized = false;
 }
 
 inline void toplevelXdgToplevelClose(void* data, xdg_toplevel*)
@@ -103,6 +122,14 @@ inline void toplevelLibdecorConfigure(libdecor_frame* frame, libdecor_configurat
 	libdecor_state* state = libdecor_state_new(width, height);
 	libdecor_frame_commit(frame, state, configuration);
 	libdecor_state_free(state);
+
+	// Track compositor-driven window state (maximize/restore via the caption bar).
+	// libdecor reports no minimized state, and a configure means the surface is being
+	// shown, so clear the request-only minimized flag.
+	enum libdecor_window_state windowState = LIBDECOR_WINDOW_STATE_NONE;
+	if (libdecor_configuration_get_window_state(configuration, &windowState))
+		wd->maximized = (windowState & LIBDECOR_WINDOW_STATE_MAXIMIZED) != 0;
+	wd->minimized = false;
 
 	wd->configured = true;
 	applyToplevelConfiguredSize(lctx->context, lctx->widget, width, height);
