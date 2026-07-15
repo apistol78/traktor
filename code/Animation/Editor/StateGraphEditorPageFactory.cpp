@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,7 +24,7 @@ const TypeInfoSet StateGraphEditorPageFactory::getEditableTypes() const
 
 bool StateGraphEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
-	outDependencies.insert(Guid(L"{84ADD065-E963-9D4D-A28D-FF44BD616B0F}"));
+	outDependencies.insert(Guid(L"{02ABDE03-E9F2-45A8-8FAA-3772EC7568ED}"));
 	outDependencies.insert(Guid(L"{{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}"));	// Primitive
 	outDependencies.insert(Guid(L"{30D10D11-475A-C646-9433-23533E43EDAC}"));	// World assets
 	return true;

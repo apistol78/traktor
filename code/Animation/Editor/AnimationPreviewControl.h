@@ -103,9 +103,6 @@ public:
 
 	void setPoseController(IPoseController* poseController);
 
-	//! Physics manager stepped each preview frame; drives physics-based pose controllers (rag doll).
-	void setPhysicsManager(physics::PhysicsManager* physicsManager);
-
 	void setParameterValue(const std::wstring& parameterName, bool value);
 
 	void setView(const View& view);
@@ -116,13 +113,15 @@ public:
 
 	resource::IResourceManager* getResourceManager() const { return m_resourceManager; }
 
-	//! Currently bound preview skeleton (object space), or null if none.
+	physics::PhysicsManager* getPhysicsManager() const { return m_physicsManager; }
+
 	const Skeleton* getSkeleton() const;
 
 private:
 	editor::IEditor* m_editor = nullptr;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< physics::PhysicsManager > m_physicsManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderContext > m_renderContext;
@@ -134,8 +133,6 @@ private:
 	resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseController > m_poseController;
-	physics::PhysicsManager* m_physicsManager = nullptr;
-	Ref< physics::Body > m_floorBody;
 	Ref< world::Entity > m_entity;
 	Color4ub m_colorClear;
 	Color4ub m_colorGrid;

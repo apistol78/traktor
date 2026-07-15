@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,6 +28,7 @@
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "Mesh/MeshComponentRenderer.h"
 #include "Mesh/MeshEntityFactory.h"
@@ -37,6 +38,7 @@
 #include "Physics/PhysicsManager.h"
 #include "Physics/PhysicsFactory.h"
 #include "Physics/StaticBodyDesc.h"
+#include "Physics/World/EntityFactory.h"
 #include "Mesh/MeshResourceFactory.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshComponentRenderer.h"
@@ -75,7 +77,7 @@ namespace traktor::animation
 namespace
 {
 
-const resource::Id< scene::Scene > c_previewScene(L"{84ADD065-E963-9D4D-A28D-FF44BD616B0F}");
+const resource::Id< scene::Scene > c_previewScene(L"{02ABDE03-E9F2-45A8-8FAA-3772EC7568ED}");
 
 const float c_deltaMoveScale = 0.025f;
 const float c_deltaScaleHead = 0.015f;
@@ -110,15 +112,35 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 
 	m_resourceManager = new resource::ResourceManager(resourceDatabase, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 
+	const std::wstring physicsManagerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"SceneEditor.PhysicsManager");
+	const TypeInfo* physicsManagerType = TypeInfo::find(physicsManagerTypeName.c_str());
+	if (!physicsManagerType)
+		return false;
+
+	physics::PhysicsCreateDesc pcd;
+	pcd.timeScale = 1.0f;
+	pcd.solverIterations = 10;
+
+	m_physicsManager = checked_type_cast< physics::PhysicsManager* >(physicsManagerType->createInstance());
+	if (!m_physicsManager)
+		return false;
+
+	if (!m_physicsManager->create(pcd))
+		return false;
+
+	m_physicsManager->setGravity(Vector4(0.0f, -9.81f, 0.0f, 0.0f));
+
 	// Setup object store with relevant systems.
 	ObjectStore objectStore;
 	objectStore.set(m_resourceManager);
+	objectStore.set(m_physicsManager);
 	objectStore.set(m_renderSystem);
 
 	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
 	entityFactory->addFactory(initializeFactory(new world::WorldEntityFactory(true), objectStore));
 	entityFactory->addFactory(initializeFactory(new weather::WeatherFactory(), objectStore));
 	entityFactory->addFactory(initializeFactory(new mesh::MeshEntityFactory(), objectStore));
+	entityFactory->addFactory(initializeFactory(new physics::EntityFactory(), objectStore));
 
 	m_resourceManager->addFactory(new AnimationResourceFactory());
 	m_resourceManager->addFactory(new RagDollResourceFactory());
@@ -182,9 +204,7 @@ void AnimationPreviewControl::destroy()
 	m_poseController = nullptr;
 	m_entity = nullptr;
 
-	safeDestroy(m_floorBody);
-	m_physicsManager = nullptr;
-
+	safeDestroy(m_physicsManager);
 	safeDestroy(m_primitiveRenderer);
 	safeDestroy(m_resourceManager);
 	safeDestroy(m_renderGraph);
@@ -210,44 +230,6 @@ void AnimationPreviewControl::setPoseController(IPoseController* poseController)
 {
 	m_poseController = poseController;
 	updatePreview();
-}
-
-void AnimationPreviewControl::setPhysicsManager(physics::PhysicsManager* physicsManager)
-{
-	m_physicsManager = physicsManager;
-
-	// Add a static floor so physics-driven states (rag doll) have ground to rest on.
-	// Uses the engine "Default"/"Interactable" collision specifications so it collides
-	// with typical dynamic bodies (the rag doll limbs are in the "Default" group).
-	if (m_physicsManager != nullptr && m_floorBody == nullptr)
-	{
-		const resource::Id< physics::CollisionSpecification > c_default(Guid(L"{F9805131-50C2-504C-9421-13C99E44616C}"));
-		const resource::Id< physics::CollisionSpecification > c_interactable(Guid(L"{09CB1141-1924-3349-934A-CEB9728D7A61}"));
-
-		SmallSet< resource::Id< physics::CollisionSpecification > > group;
-		group.insert(c_default);
-
-		SmallSet< resource::Id< physics::CollisionSpecification > > mask;
-		mask.insert(c_default);
-		mask.insert(c_interactable);
-
-		Ref< physics::BoxShapeDesc > shapeDesc = new physics::BoxShapeDesc();
-		shapeDesc->setExtent(Vector4(20.0f, 0.5f, 20.0f, 0.0f));
-		shapeDesc->setMargin(0.04f);
-		shapeDesc->setCollisionGroup(group);
-		shapeDesc->setCollisionMask(mask);
-
-		Ref< physics::StaticBodyDesc > bodyDesc = new physics::StaticBodyDesc();
-		bodyDesc->setShape(shapeDesc);
-
-		m_floorBody = m_physicsManager->createBody(m_resourceManager, bodyDesc, T_FILE_LINE_W);
-		if (m_floorBody != nullptr)
-		{
-			// Position the box so its top surface is at y = 0.
-			m_floorBody->setTransform(Transform(Vector4(0.0f, -0.5f, 0.0f, 1.0f)));
-			m_floorBody->setEnable(true);
-		}
-	}
 }
 
 const Skeleton* AnimationPreviewControl::getSkeleton() const
@@ -471,9 +453,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	if (m_entity)
 		m_sceneInstance->getWorld()->addEntity(m_entity);
 
-	// Step the physics simulation before evaluating entities so physics-driven pose
-	// controllers (e.g. rag doll) read up-to-date body transforms. Clamp the step so a
-	// stall (paused editor) doesn't explode the simulation.
+	// Step the physics simulation.
 	if (m_physicsManager)
 	{
 		double stepDeltaTime = deltaTime;

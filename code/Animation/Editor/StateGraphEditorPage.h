@@ -33,13 +33,6 @@ class PropertiesView;
 
 }
 
-namespace traktor::physics
-{
-
-class PhysicsManager;
-
-}
-
 namespace traktor::ui
 {
 
@@ -99,7 +92,6 @@ private:
 	Ref< ui::Container > m_containerPreview;
 	Ref< ui::ToolBar > m_toolBarPreview;
 	Ref< AnimationPreviewControl > m_previewControl;
-	Ref< physics::PhysicsManager > m_physicsManager;
 	Ref< ui::Container > m_previewConditions;
 
 	void createEditorNodes(const RefArray< StateNode >& states, const RefArray< StateTransition >& transitions);
