@@ -492,7 +492,19 @@ Ref< IProcess > OS::execute(
 
 		spawnAttrp = new posix_spawnattr_t;
 		posix_spawnattr_init(spawnAttrp);
-		posix_spawnattr_setflags(spawnAttrp, POSIX_SPAWN_SETPGROUP);
+
+		// Reset signal mask and dispositions in the child; we block SIGCHLD
+		// process-wide (see OS::OS) and must not leak that blocked mask into
+		// spawned processes, or tools relying on SIGCHLD delivery (e.g. cmake)
+		// will hang waiting on their own children.
+		sigset_t emptyMask;
+		sigemptyset(&emptyMask);
+		posix_spawnattr_setsigmask(spawnAttrp, &emptyMask);
+		sigset_t defaultSignals;
+		sigemptyset(&defaultSignals);
+		sigaddset(&defaultSignals, SIGCHLD);
+		posix_spawnattr_setsigdefault(spawnAttrp, &defaultSignals);
+		posix_spawnattr_setflags(spawnAttrp, POSIX_SPAWN_SETPGROUP | POSIX_SPAWN_SETSIGMASK | POSIX_SPAWN_SETSIGDEF);
 
 		fileActions = new posix_spawn_file_actions_t;
 		posix_spawn_file_actions_init(fileActions);
@@ -507,13 +519,25 @@ Ref< IProcess > OS::execute(
 		posix_spawn_file_actions_addclose(fileActions, childStdErr[1]);
 
 		// Spawn process.
-		err = posix_spawnp(&pid, argv[0], fileActions, 0, argv.ptr(), env ? envv.ptr() : environ);
+		err = posix_spawnp(&pid, argv[0], fileActions, spawnAttrp, argv.ptr(), env ? envv.ptr() : environ);
 	}
 	else
 	{
 		spawnAttrp = new posix_spawnattr_t;
 		posix_spawnattr_init(spawnAttrp);
-		posix_spawnattr_setflags(spawnAttrp, POSIX_SPAWN_SETPGROUP);
+
+		// Reset signal mask and dispositions in the child; we block SIGCHLD
+		// process-wide (see OS::OS) and must not leak that blocked mask into
+		// spawned processes, or tools relying on SIGCHLD delivery (e.g. cmake)
+		// will hang waiting on their own children.
+		sigset_t emptyMask;
+		sigemptyset(&emptyMask);
+		posix_spawnattr_setsigmask(spawnAttrp, &emptyMask);
+		sigset_t defaultSignals;
+		sigemptyset(&defaultSignals);
+		sigaddset(&defaultSignals, SIGCHLD);
+		posix_spawnattr_setsigdefault(spawnAttrp, &defaultSignals);
+		posix_spawnattr_setflags(spawnAttrp, POSIX_SPAWN_SETPGROUP | POSIX_SPAWN_SETSIGMASK | POSIX_SPAWN_SETSIGDEF);
 
 		fileActions = new posix_spawn_file_actions_t;
 		posix_spawn_file_actions_init(fileActions);
@@ -521,7 +545,7 @@ Ref< IProcess > OS::execute(
 		posix_spawn_file_actions_addchdir_np(fileActions, cwd);
 #endif
 		// Spawn process.
-		err = posix_spawnp(&pid, argv[0], fileActions, 0, argv.ptr(), env ? envv.ptr() : environ);
+		err = posix_spawnp(&pid, argv[0], fileActions, spawnAttrp, argv.ptr(), env ? envv.ptr() : environ);
 	}
 
 	// Free arguments.
