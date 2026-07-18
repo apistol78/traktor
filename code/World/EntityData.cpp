@@ -120,6 +120,12 @@ bool EntityData::removeComponent(const IEntityComponentData* component)
 		return false;
 }
 
+bool EntityData::removeComponent(const TypeInfo& componentType)
+{
+	const IEntityComponentData* component = getComponent(componentType);
+	return removeComponent(component);
+}
+
 IEntityComponentData* EntityData::getComponent(const TypeInfo& componentType) const
 {
 	for (auto component : m_components)

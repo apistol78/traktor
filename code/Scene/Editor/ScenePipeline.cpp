@@ -18,6 +18,7 @@
 #include "Editor/Pipeline/PipelineProfiler.h"
 #include "Scene/SceneResource.h"
 #include "Scene/Editor/ExternalOperationData.h"
+#include "Scene/Editor/ISceneOperationData.h"
 #include "Scene/Editor/IScenePipelineOperator.h"
 #include "Scene/Editor/ScenePipeline.h"
 #include "Scene/Editor/SceneAsset.h"
@@ -97,12 +98,12 @@ bool ScenePipeline::buildDependencies(
 	Ref< SceneAsset > mutableSceneAsset = DeepClone(sceneAsset).create< SceneAsset >();
 	for (const auto op : sceneAsset->getOperationData())
 	{
-		Ref< const ISerializable > operationData = op;
+		Ref< const ISceneOperationData > operationData = op;
 
 		// Check if external data is references; if so add dependency and resolve external data.
 		if (const ExternalOperationData* externalOperationData = dynamic_type_cast< const ExternalOperationData* >(operationData))
 		{
-			operationData = pipelineDepends->getObjectReadOnly(externalOperationData->getExternalDataId());
+			operationData = pipelineDepends->getObjectReadOnly< ISceneOperationData >(externalOperationData->getExternalDataId());
 			if (!operationData)
 			{
 				log::error << L"Scene pipeline failed; unable to read operation data " << externalOperationData->getExternalDataId().format() << L"." << Endl;

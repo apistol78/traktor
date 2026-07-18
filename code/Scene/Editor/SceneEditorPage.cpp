@@ -51,6 +51,7 @@
 #include "Scene/Editor/Events/PreModifyEvent.h"
 #include "Scene/Editor/Events/SceneSelectionChangeEvent.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
+#include "Scene/Editor/ISceneOperationData.h"
 #include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/IWorldComponentEditorFactory.h"
 #include "Scene/Editor/SceneAsset.h"
@@ -117,33 +118,6 @@ constexpr int32_t c_instanceGridName = 0;
 constexpr int32_t c_instanceGridDynamic = 1;
 constexpr int32_t c_instanceGridVisible = 2;
 constexpr int32_t c_instanceGridLocked = 3;
-
-void renameIds(ISerializable* object, const SmallMap< Guid, Guid >& renamedMap)
-{
-	Ref< Reflection > reflection = Reflection::create(object);
-
-	// Rename all id;s in this object first.
-	RefArray< ReflectionMember > idMembers;
-	reflection->findMembers(RfpMemberType(type_of< RfmPrimitiveGuid >()), idMembers);
-	for (auto idMember : idMembers)
-	{
-		auto id = static_cast< RfmPrimitiveGuid* >(idMember.ptr());
-		auto it = renamedMap.find(id->get());
-		if (it != renamedMap.end())
-			id->set(it->second);
-	}
-
-	// Recurse with child objects.
-	RefArray< ReflectionMember > objectMembers;
-	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-	for (auto objectMember : objectMembers)
-	{
-		auto object = static_cast< RfmObject* >(objectMember.ptr());
-		renameIds(object->get(), renamedMap);
-	}
-
-	reflection->apply(object);
-}
 
 bool isChildEntitySelected(const EntityAdapter* entityAdapter)
 {
@@ -976,20 +950,11 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	{
 		if (ui::MessageBox::show(m_editControl, i18n::Text(L"SCENE_EDITOR_RENAME_ALL_ENTITY_IDS_MESSAGE"), i18n::Text(L"SCENE_EDITOR_RENAME_ALL_ENTITY_IDS_TITLE"), ui::MbIconExclamation | ui::MbYesNo) == ui::DialogResult::Yes)
 		{
-			SmallMap< Guid, Guid > renamedMap;
-
-			// Create new IDs for each entity.
 			for (auto entity : m_context->getEntities(SceneEditorContext::GfDescendants))
 			{
-				Guid newEntityId = Guid::create();
-				if (entity->getEntityData()->getId().isNotNull())
-					renamedMap.insert(entity->getEntityData()->getId(), newEntityId);
+				const Guid newEntityId = Guid::create();
 				entity->getEntityData()->setId(newEntityId);
 			}
-
-			// Also ensure attached data contain updated entity identities.
-			for (auto operationData : m_context->getSceneAsset()->getOperationData())
-				renameIds(operationData, renamedMap);
 		}
 	}
 	else if (command == L"Scene.Editor.PlaceOnGround")

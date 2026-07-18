@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Serialization/ISerializable.h"
+#include "Scene/Editor/ISceneOperationData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,7 +23,7 @@
 namespace traktor::shape
 {
 
-class T_DLLCLASS BakeConfiguration : public ISerializable
+class T_DLLCLASS BakeConfiguration : public scene::ISceneOperationData
 {
 	T_RTTI_CLASS;
 

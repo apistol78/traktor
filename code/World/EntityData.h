@@ -101,6 +101,24 @@ public:
 	 */
 	bool removeComponent(const IEntityComponentData* component);
 
+	/*! Remove component of type.
+	 *
+	 * \param componentType Type of component.
+	 * \return True if component removed.
+	 */
+	bool removeComponent(const TypeInfo& componentType);
+
+	/*! Remove component of type.
+	 *
+	 * \param ComponentDataType Type of component.
+	 * \return True if component removed.
+	 */
+	template < typename ComponentDataType >
+	bool removeComponent()
+	{
+		return removeComponent(type_of< ComponentDataType >());
+	}
+
 	/*! Get component of type.
 	 *
 	 * \param componentType Type of component.

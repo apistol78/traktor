@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2026 Anders Pistol.
+ * Copyright (c) 2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,7 @@
  */
 #pragma once
 
-#include "Core/Guid.h"
-#include "Scene/Editor/ISceneOperationData.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,17 +21,9 @@
 namespace traktor::scene
 {
 
-class T_DLLCLASS ExternalOperationData : public ISceneOperationData
+class T_DLLCLASS ISceneOperationData : public ISerializable
 {
 	T_RTTI_CLASS;
-
-public:
-	const Guid& getExternalDataId() const { return m_externalDataId; }
-
-	virtual void serialize(ISerializer& s) override final;
-
-private:
-	Guid m_externalDataId;
 };
 
 }

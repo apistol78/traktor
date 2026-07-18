@@ -15,6 +15,7 @@
 #include "Editor/IEditor.h"
 #include "Scene/Editor/ISceneEditorUIExtension.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
+#include "Scene/Editor/ISceneOperationData.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorPage.h"
 #include "Scene/Editor/SceneEditorPageFactory.h"
@@ -24,37 +25,6 @@
 
 namespace traktor::scene
 {
-	namespace
-	{
-
-void renameIds(ISerializable* object, const SmallMap< Guid, Guid >& renamedMap)
-{
-	Ref< Reflection > reflection = Reflection::create(object);
-
-	// Rename all id;s in this object first.
-	RefArray< ReflectionMember > idMembers;
-	reflection->findMembers(RfpMemberType(type_of< RfmPrimitiveGuid >()), idMembers);
-	for (auto idMember : idMembers)
-	{
-		auto id = static_cast< RfmPrimitiveGuid* >(idMember.ptr());
-		auto it = renamedMap.find(id->get());
-		if (it != renamedMap.end())
-			id->set(it->second);
-	}
-
-	// Recurse with child objects.
-	RefArray< ReflectionMember > objectMembers;
-	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-	for (auto objectMember : objectMembers)
-	{
-		auto object = static_cast< RfmObject* >(objectMember.ptr());
-		renameIds(object->get(), renamedMap);
-	}
-
-	reflection->apply(object);
-}
-
-	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneEditorPageFactory", 0, SceneEditorPageFactory, editor::IEditorPageFactory)
 
@@ -144,36 +114,21 @@ Ref< ISerializable > SceneEditorPageFactory::cloneAsset(const ISerializable* ass
 
 	if (auto mutableSceneAsset = dynamic_type_cast< SceneAsset* >(mutableAsset))
 	{
-		SmallMap< Guid, Guid > renamedMap;
-
-		// Rename all entities.
 		Traverser::visit(mutableSceneAsset, [&](Ref< world::EntityData >& inoutEntityData) -> Traverser::Result {
-			Guid newEntityId = Guid::create();
-			if (inoutEntityData->getId().isNotNull())
-				renamedMap.insert(inoutEntityData->getId(), newEntityId);
+			const Guid newEntityId = Guid::create();
 			inoutEntityData->setId(newEntityId);
 			return Traverser::Result::Continue;
 		});
-
-		// Also ensure attached data contain updated entity identities.
-		for (auto operationData : mutableSceneAsset->getOperationData())
-			renameIds(operationData, renamedMap);
 	}
 	else if (auto mutableEntityData = dynamic_type_cast< world::EntityData* >(mutableAsset))
 	{
-		SmallMap< Guid, Guid > renamedMap;
-
 		// Rename root entity data.
-		Guid newEntityId = Guid::create();
-		if (mutableEntityData->getId().isNotNull())
-			renamedMap.insert(mutableEntityData->getId(), newEntityId);
+		const Guid newEntityId = Guid::create();
 		mutableEntityData->setId(newEntityId);
 
 		// Rename all entities.
 		Traverser::visit(mutableEntityData, [&](Ref< world::EntityData >& inoutEntityData) -> Traverser::Result {
-			Guid newEntityId = Guid::create();
-			if (inoutEntityData->getId().isNotNull())
-				renamedMap.insert(inoutEntityData->getId(), newEntityId);
+			const Guid newEntityId = Guid::create();
 			inoutEntityData->setId(newEntityId);
 			return Traverser::Result::Continue;
 		});		

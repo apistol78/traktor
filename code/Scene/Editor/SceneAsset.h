@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,6 +32,8 @@ class WorldRenderSettings;
 
 namespace traktor::scene
 {
+
+class ISceneOperationData;
 
 class T_DLLCLASS SceneAsset : public ISerializable
 {
@@ -72,9 +74,9 @@ public:
 
 	const RefArray< world::EntityData >& getLayers() const;
 
-	void setOperationData(const RefArray< ISerializable >& operationData);
+	void setOperationData(const RefArray< ISceneOperationData >& operationData);
 
-	const RefArray< ISerializable >& getOperationData() const;
+	const RefArray< ISceneOperationData >& getOperationData() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -82,7 +84,7 @@ private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	RefArray< world::IWorldComponentData > m_worldComponents;
 	RefArray< world::EntityData > m_layers;
-	RefArray< ISerializable > m_operationData;
+	RefArray< ISceneOperationData > m_operationData;
 };
 
 }
