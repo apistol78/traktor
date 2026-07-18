@@ -88,6 +88,7 @@ protected:
 	{
 		Ref< render::Buffer > lightSBuffer;
 		Frustum shadowSlices[4];
+		Matrix44 sliceViews[4];			//!< View transform of the frame each slice was last rendered; used to test whether the cached slice still covers the current view.
 		Matrix44 shadowLightViews[4];
 		uint32_t count = 0;
 	};

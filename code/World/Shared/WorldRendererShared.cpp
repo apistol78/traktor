@@ -59,6 +59,14 @@ namespace
 
 const resource::Id< render::Shader > c_clearDepthShader(L"{0135F7CC-FC65-4FD9-BBD5-CCE0C003B540}");
 
+// Margin (world units) by which a cached shadow slice is expanded before it is rendered,
+// so the camera can move a little before the cached slice no longer covers the view and
+// must be re-rendered. Scaled with the slice's far distance - far cascades are low
+// resolution, so a larger margin is invisible there but lets more frames be skipped -
+// with a floor so near slices keep a small but non-zero margin.
+const Scalar c_shadowSliceMarginFactor(0.02f);
+const Scalar c_shadowSliceMarginMin(1.0f);
+
 Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, uint32_t value)
 {
 	render::SimpleTextureCreateDesc stcd = {};
@@ -358,12 +366,12 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 	auto shadowAtlasPacker = m_shadowAtlasPacker;
 	shadowAtlasPacker->reset();
 
-	const Matrix44 lastView = worldRenderView.getLastView();
 	const Matrix44 view = worldRenderView.getView();
 	const Matrix44 viewInverse = worldRenderView.getView().inverse();
 	const Frustum viewFrustum = worldRenderView.getViewFrustum();
 
 	Frustum* shadowSlices = state.shadowSlices;
+	Matrix44* sliceViews = state.sliceViews;
 	Matrix44* shadowLightViews = state.shadowLightViews;
 
 	// Find atlas shadow lights.
@@ -464,29 +472,39 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 				sliceViewFrustum.setNearZ(zn);
 				sliceViewFrustum.setFarZ(zf);
 
-#if 0
-				// Check if this slice is still inside
-				// the expanded slice frustum.
+#if 1
+				// Check if this slice is still inside the expanded slice frustum that
+				// was rendered into the atlas. shadowSlices[i] is expressed in the view
+				// space of the frame it was last rendered (sliceViews[i]); transform the
+				// current slice frustum from the current view space into that space so
+				// the containment test measures the full accumulated camera motion, not
+				// just the delta since the previous frame.
 				if (slice != 0)
 				{
-					const Matrix44 viewDelta = view * lastView.inverse();
+					const Matrix44 toStored = sliceViews[i] * viewInverse;
 					if (includeDynamic)
 					{
-						const int32_t force = (state.count % (shadowSettings.cascadingSlices - 1)) + 1;
-						if (slice != force && shadowSlices[i].inside(viewDelta, sliceViewFrustum) == Frustum::Result::Inside)
+						// Force one dynamic slice to refresh each frame (round-robin) so
+						// moving entities are picked up even when the camera is still. The
+						// last slice is static-only (handled below), so rotate only over
+						// the dynamic slices 1 .. cascadingSlices-2.
+						const int32_t dynamicSlices = std::max< int32_t >(shadowSettings.cascadingSlices - 2, 1);
+						const int32_t force = (state.count % dynamicSlices) + 1;
+						if (slice != force && shadowSlices[i].inside(toStored, sliceViewFrustum) == Frustum::Result::Inside)
 							continue;
 					}
 					else
 					{
 						// Slices with no dynamic entities should be safe to always ignore if camera is stationary.
-						if (shadowSlices[i].inside(viewDelta, sliceViewFrustum) == Frustum::Result::Inside)
+						if (shadowSlices[i].inside(toStored, sliceViewFrustum) == Frustum::Result::Inside)
 							continue;
 					}
-					sliceViewFrustum.scale(1.0_simd);
+					sliceViewFrustum.scale(max(c_shadowSliceMarginMin, zf * c_shadowSliceMarginFactor));
 				}
 #endif
 
 				shadowSlices[i] = sliceViewFrustum;
+				sliceViews[i] = view;
 
 				// Calculate shadow map projection.
 				Matrix44 shadowLightView;
