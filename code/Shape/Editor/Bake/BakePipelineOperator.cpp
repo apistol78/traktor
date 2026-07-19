@@ -425,7 +425,7 @@ void BakePipelineOperator::addDependencies(editor::IPipelineDepends* pipelineDep
 }
 
 bool BakePipelineOperator::transform(
-	editor::IPipelineCommon* pipelineCommon,
+	const scene::IScenePipelineOperator::TransformContext& context,
 	const ISerializable* operatorData,
 	scene::SceneAsset* inoutSceneAsset
 ) const
@@ -454,7 +454,7 @@ bool BakePipelineOperator::transform(
 		// entities which are inlines in scene, only those referenced from an external entity should be re-assigned IDs.
 		Ref< world::EntityData > flattenedLayer = checked_type_cast< world::EntityData* >(world::resolveExternal(
 			[&](const Guid& objectId) -> Ref< const ISerializable > {
-				return pipelineCommon->getObjectReadOnly(objectId);
+				return context.getObjectReadOnly(objectId);
 			},
 			layer,
 			Guid::null,

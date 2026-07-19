@@ -204,10 +204,12 @@ void CullingComponent::destroyInstance(Instance* instance)
 {
 	T_FATAL_ASSERT(instance->owner == this);
 	auto it = std::find(m_instances.begin(), m_instances.end(), instance);
-	T_FATAL_ASSERT(it != m_instances.end());
-	m_instances.erase(it);
-	m_instanceBufferDirty = true;
-	delete instance;
+	if (it != m_instances.end())
+	{
+		m_instances.erase(it);
+		m_instanceBufferDirty = true;
+		delete instance;
+	}
 }
 
 void CullingComponent::Instance::destroy()

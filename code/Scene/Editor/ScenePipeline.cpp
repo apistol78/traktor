@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,13 +13,13 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineCommon.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
 #include "Scene/SceneResource.h"
 #include "Scene/Editor/ExternalOperationData.h"
 #include "Scene/Editor/ISceneOperationData.h"
-#include "Scene/Editor/IScenePipelineOperator.h"
 #include "Scene/Editor/ScenePipeline.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/Traverser.h"
@@ -30,6 +30,38 @@
 
 namespace traktor::scene
 {
+namespace
+{
+
+/*! Scene transform context backed by a pipeline common interface.
+ *
+ * Provides read only object/database access to operators running at pipeline
+ * time. No live ground sampler is supplied; terrain aware operators construct
+ * their own sampler from the source data (getSourceDatabase/getObjectReadOnly).
+ */
+class PipelineTransformContext : public IScenePipelineOperator::TransformContext
+{
+public:
+	explicit PipelineTransformContext(editor::IPipelineCommon* pipelineCommon)
+	:	m_pipelineCommon(pipelineCommon)
+	{
+	}
+
+	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) const override final
+	{
+		return m_pipelineCommon->getObjectReadOnly(instanceGuid);
+	}
+
+	virtual db::Database* getSourceDatabase() const override final
+	{
+		return m_pipelineCommon->getSourceDatabase();
+	}
+
+private:
+	editor::IPipelineCommon* m_pipelineCommon;
+};
+
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 20, ScenePipeline, editor::IPipeline)
 
@@ -95,6 +127,7 @@ bool ScenePipeline::buildDependencies(
 	const SceneAsset* sceneAsset = mandatory_non_null_type_cast< const SceneAsset* >(sourceAsset);
 
 	// Transform, or filter, scene asset through operators.
+	PipelineTransformContext context(pipelineDepends);
 	Ref< SceneAsset > mutableSceneAsset = DeepClone(sceneAsset).create< SceneAsset >();
 	for (const auto op : sceneAsset->getOperationData())
 	{
@@ -122,7 +155,7 @@ bool ScenePipeline::buildDependencies(
 
 		spo->addDependencies(pipelineDepends);
 
-		if (!spo->transform(pipelineDepends, operationData, mutableSceneAsset))
+		if (!spo->transform(context, operationData, mutableSceneAsset))
 		{
 			log::error << L"Scene pipeline failed; operator transform failed." << Endl;
 			return false;
@@ -174,6 +207,14 @@ bool ScenePipeline::buildOutput(
 	T_FATAL_ASSERT (sceneAsset != nullptr);
 
 	const bool rebuild = (bool)((reason & editor::PbrForced) != 0);
+
+	// Apply geometric scene transforms first; keeps the runtime output consistent
+	// with the scene product (navigation mesh) and the editor preview.
+	{
+		PipelineTransformContext context(pipelineBuilder);
+		if (!applyTransforms(sceneAsset, context))
+			return false;
+	}
 
 	// Execute operations on scene.
 	log::info << L"Executing scene operations..." << Endl;
@@ -289,7 +330,17 @@ Ref< ISerializable > ScenePipeline::buildProduct(
 	const Object* buildParams
 ) const
 {
-	return DeepClone(sourceAsset).create< SceneAsset >();
+	Ref< SceneAsset > sceneAsset = DeepClone(sourceAsset).create< SceneAsset >();
+	if (!sceneAsset)
+		return nullptr;
+
+	// Apply geometric scene transforms so that consumers building from the scene
+	// product (e.g. the navigation mesh pipeline) observe the transformed scene.
+	PipelineTransformContext context(pipelineBuilder);
+	if (!applyTransforms(sceneAsset, context))
+		return nullptr;
+
+	return sceneAsset;
 }
 
 const IScenePipelineOperator* ScenePipeline::findOperator(const TypeInfo& operationType) const
@@ -303,6 +354,43 @@ const IScenePipelineOperator* ScenePipeline::findOperator(const TypeInfo& operat
 		}
 	}
 	return nullptr;
+}
+
+bool ScenePipeline::applyTransforms(SceneAsset* inoutSceneAsset, const IScenePipelineOperator::TransformContext& context) const
+{
+	for (const auto op : inoutSceneAsset->getOperationData())
+	{
+		Ref< const ISerializable > operationData = op;
+
+		// Resolve external operation data if referenced.
+		if (const ExternalOperationData* externalOperationData = dynamic_type_cast< const ExternalOperationData* >(operationData))
+		{
+			operationData = context.getObjectReadOnly(externalOperationData->getExternalDataId());
+			if (!operationData)
+			{
+				log::error << L"Scene pipeline failed; unable to read operation data " << externalOperationData->getExternalDataId().format() << L"." << Endl;
+				return false;
+			}
+		}
+
+		const IScenePipelineOperator* spo = findOperator(type_of(operationData));
+		if (!spo)
+		{
+			log::error << L"Scene pipeline failed; no operator found supporting data type " << type_name(operationData) << L"." << Endl;
+			return false;
+		}
+
+		// Only geometric transforms contribute to the shared scene seen by all consumers.
+		if (!spo->isGeometricTransform())
+			continue;
+
+		if (!spo->transform(context, operationData, inoutSceneAsset))
+		{
+			log::error << L"Scene pipeline failed; operator transform failed." << Endl;
+			return false;
+		}
+	}
+	return true;
 }
 
 }

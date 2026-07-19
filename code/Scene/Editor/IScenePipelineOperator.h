@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Guid.h"
 #include "Core/Ref.h"
 
 // import/export mechanism.
@@ -29,6 +30,7 @@ class ISerializable;
 namespace traktor::db
 {
 
+class Database;
 class Instance;
 
 }
@@ -37,7 +39,6 @@ namespace traktor::editor
 {
 
 class IPipelineBuilder;
-class IPipelineCommon;
 class IPipelineDepends;
 class IPipelineSettings;
 
@@ -56,6 +57,19 @@ class T_DLLCLASS IScenePipelineOperator : public Object
 	T_RTTI_CLASS;
 
 public:
+	class T_DLLCLASS TransformContext : public Object
+	{
+	public:
+		virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) const = 0;
+
+		template < typename ObjectType >
+		Ref< const ObjectType > getObjectReadOnly(const Guid& instanceGuid) const {
+			return dynamic_type_cast< const ObjectType* >(getObjectReadOnly(instanceGuid));
+		}
+
+		virtual db::Database* getSourceDatabase() const = 0;
+	};
+
 	virtual bool create(const editor::IPipelineSettings* settings) = 0;
 
 	virtual void destroy() = 0;
@@ -65,9 +79,24 @@ public:
 	/*! Add dependencies which might get used by operator. */
 	virtual void addDependencies(editor::IPipelineDepends* pipelineDepends) const = 0;
 
+	/*! Whether transform() performs a geometric scene mutation.
+	 *
+	 * A geometric transform moves, adds or removes entities such that every
+	 * consumer of the scene - the runtime scene resource, the navigation mesh
+	 * and the editor preview - must observe the result. When this returns true
+	 * the pipeline applies transform() when producing the scene product
+	 * (buildProduct) and the runtime output (buildOutput), not only during
+	 * dependency analysis.
+	 *
+	 * When false (default) the operator only participates in dependency scanning
+	 * and its own build() step, preserving legacy behaviour (e.g. lightmap bake
+	 * preparation which must not alter the scene seen by the navigation mesh).
+	 */
+	virtual bool isGeometricTransform() const { return false; }
+
 	/*! Transform scene asset. */
 	virtual bool transform(
-		editor::IPipelineCommon* pipelineCommon,
+		const TransformContext& context,
 		const ISerializable* operatorData,
 		SceneAsset* inoutSceneAsset
 	) const = 0;

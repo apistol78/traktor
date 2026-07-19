@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,33 +8,29 @@
  */
 #pragma once
 
-#include <string>
-#include "Core/Ref.h"
-#include "Core/RefArray.h"
-#include "Core/Containers/SmallMap.h"
 #include "Scene/Editor/IScenePipelineOperator.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_SHAPE_EDITOR_EXPORT)
+#if defined(T_TERRAIN_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::world
+namespace traktor::terrain
 {
 
-class IEntityReplicator;
-
-}
-
-namespace traktor::shape
-{
-
-class TracerProcessor;
-
-class T_DLLCLASS BakePipelineOperator : public scene::IScenePipelineOperator
+/*! Scene operator which vertically aligns entities to the terrain surface.
+ *
+ * A geometric transform: it snaps the position (and, optionally, the
+ * orientation) of the targeted entities onto the terrain heightfield. Because
+ * all work happens in transform(), the result is observed consistently by the
+ * runtime scene, the navigation mesh and the editor preview.
+ *
+ * \ingroup Terrain
+ */
+class T_DLLCLASS AlignToTerrainOperator : public scene::IScenePipelineOperator
 {
 	T_RTTI_CLASS;
 
@@ -47,12 +43,14 @@ public:
 
 	virtual void addDependencies(editor::IPipelineDepends* pipelineDepends) const override final;
 
+	virtual bool isGeometricTransform() const override final;
+
 	virtual bool transform(
 		const scene::IScenePipelineOperator::TransformContext& context,
 		const ISerializable* operatorData,
 		scene::SceneAsset* inoutSceneAsset
 	) const override final;
-	
+
 	virtual bool build(
 		editor::IPipelineBuilder* pipelineBuilder,
 		const ISerializable* operatorData,
@@ -60,22 +58,6 @@ public:
 		scene::SceneAsset* inoutSceneAsset,
 		bool rebuild
 	) const override final;
-
-	static void setTracerProcessor(TracerProcessor* tracerProcessor);
-
-	static TracerProcessor* getTracerProcessor();
-
-private:
-	static Ref< TracerProcessor > ms_tracerProcessor;
-
-	std::wstring m_assetPath;
-	std::wstring m_modelCachePath;
-	const TypeInfo* m_tracerType = nullptr;
-	std::wstring m_compressionMethod;
-	bool m_asynchronous = false;
-	bool m_traceIrradianceGrid = false;
-	bool m_traceCameras = false;
-	SmallMap< const TypeInfo*, Ref< const world::IEntityReplicator > > m_entityReplicators;
 };
 
 }

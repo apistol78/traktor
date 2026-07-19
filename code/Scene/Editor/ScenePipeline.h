@@ -10,6 +10,7 @@
 
 #include "Core/RefArray.h"
 #include "Editor/IPipeline.h"
+#include "Scene/Editor/IScenePipelineOperator.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,6 +24,7 @@ namespace traktor::scene
 {
 
 class IScenePipelineOperator;
+class SceneAsset;
 
 class T_DLLCLASS ScenePipeline : public editor::IPipeline
 {
@@ -76,6 +78,16 @@ private:
 	RefArray< IScenePipelineOperator > m_operators;
 
 	const IScenePipelineOperator* findOperator(const TypeInfo& operationType) const;
+
+	/*! Apply geometric scene transforms to a scene asset.
+	 *
+	 * Runs, in order, the transform of every operation data whose operator
+	 * reports isGeometricTransform(). This is the canonical "scene after PCG"
+	 * that is shared by the scene product (navigation mesh etc.) and the runtime
+	 * output. Non-geometric operators (e.g. lightmap bake) are skipped here and
+	 * handled through their build() step instead.
+	 */
+	bool applyTransforms(SceneAsset* inoutSceneAsset, const IScenePipelineOperator::TransformContext& context) const;
 };
 
 }
