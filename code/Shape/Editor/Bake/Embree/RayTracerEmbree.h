@@ -36,7 +36,7 @@ class RayTracerEmbree : public IRayTracer
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const BakeConfiguration* configuration) override final;
+	virtual bool create(const BakeOperationData* configuration) override final;
 
 	virtual void destroy() override final;
 
@@ -69,7 +69,7 @@ private:
 		operator const Vector4& () const { return position; }
 	};
 
-	const BakeConfiguration* m_configuration = nullptr;
+	const BakeOperationData* m_configuration = nullptr;
 	Ref< const IProbe > m_environment;
 	AlignedVector< Vector2 > m_shadowSampleOffsets;
 	AlignedVector< Light > m_lights;

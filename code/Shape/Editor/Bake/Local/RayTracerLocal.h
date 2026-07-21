@@ -22,7 +22,7 @@ class RayTracerLocal : public IRayTracer
     T_RTTI_CLASS;
 
 public:
-    virtual bool create(const BakeConfiguration* configuration) override final;
+    virtual bool create(const BakeOperationData* configuration) override final;
 
     virtual void destroy() override final;
 
@@ -46,7 +46,7 @@ private:
 		Color4f albedo;
 	};
 
-	const BakeConfiguration* m_configuration;
+	const BakeOperationData* m_configuration;
 	SahTree m_sah;
 	AlignedVector< Light > m_lights;
 	AlignedVector< Winding3 > m_windings;

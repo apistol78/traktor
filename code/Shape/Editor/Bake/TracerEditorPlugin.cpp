@@ -11,7 +11,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Shape/Editor/Bake/BakePipelineOperator.h"
+#include "Shape/Editor/Bake/BakeOperator.h"
 #include "Shape/Editor/Bake/TracerEditorPlugin.h"
 #include "Shape/Editor/Bake/TracerPanel.h"
 #include "Shape/Editor/Bake/TracerProcessor.h"
@@ -64,7 +64,7 @@ void TracerEditorPlugin::handleDatabaseEvent(db::Database* database, const Guid&
 
 void TracerEditorPlugin::handleWorkspaceOpened()
 {
-	const std::wstring tracerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
+	const std::wstring tracerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"BakeOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
 	if (tracerTypeName.empty())
 		return;
 
@@ -72,7 +72,7 @@ void TracerEditorPlugin::handleWorkspaceOpened()
 	if (!tracerType)
 		return;
 
-    BakePipelineOperator::setTracerProcessor(new TracerProcessor(
+    BakeOperator::setTracerProcessor(new TracerProcessor(
 		tracerType,
 		L"FP16",
 		true
@@ -81,7 +81,7 @@ void TracerEditorPlugin::handleWorkspaceOpened()
 
 void TracerEditorPlugin::handleWorkspaceClosed()
 {
-	BakePipelineOperator::setTracerProcessor(nullptr);
+	BakeOperator::setTracerProcessor(nullptr);
 }
 
 void TracerEditorPlugin::handleEditorClosed()

@@ -24,6 +24,7 @@
 #include "Heightfield/HeightfieldFormat.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
+#include "Model/Operations/Transform.h"
 #include "Physics/BoxShapeDesc.h"
 #include "Physics/CylinderShapeDesc.h"
 #include "Physics/Editor/MeshAsset.h"
@@ -76,6 +77,12 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 	if (!bodyDesc)
 		return nullptr;
 
+	auto shape = dynamic_type_cast< const ShapeDesc* >(rigidBodyComponentData->getBodyDesc()->getShape());
+	if (!shape)
+		return nullptr;
+
+	const Transform localTransform = shape->getLocalTransform();
+
 	auto boxShape = dynamic_type_cast< const BoxShapeDesc* >(rigidBodyComponentData->getBodyDesc()->getShape());
 	if (boxShape)
 	{
@@ -110,6 +117,10 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 			pol.addVertex(vi[3]);
 			m->addPolygon(pol);
 		}
+
+		m->apply(model::Transform(
+			localTransform.toMatrix44()
+		));
 
 		return m;
 	}
@@ -177,6 +188,10 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 		m->addPolygon(top);
 		m->addPolygon(bottom);
 
+		m->apply(model::Transform(
+			localTransform.toMatrix44()
+		));
+
 		return m;
 	}
 
@@ -212,6 +227,10 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 		outputBodyDesc->setRestitution(bodyDesc->getRestitution());
 		shapeModel->setProperty< PropertyObject >(type_name(outputBodyDesc), outputBodyDesc);
 
+		shapeModel->apply(model::Transform(
+			localTransform.toMatrix44()
+		));
+
 		return shapeModel;
 	}
 
@@ -238,7 +257,7 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 
 		safeClose(sourceData);
 
-		return hf::ConvertHeightfield().convert(heightfield, 4);
+		return hf::ConvertHeightfield().convert(heightfield, 2);
 	}
 
 	return nullptr;

@@ -11,7 +11,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Shape/Editor/Bake/GBuffer.h"
-#include "Shape/Editor/Bake/BakeConfiguration.h"
+#include "Shape/Editor/Bake/BakeOperationData.h"
 #include "Shape/Editor/Bake/Local/RayTracerLocal.h"
 
 namespace traktor::shape
@@ -59,7 +59,7 @@ Scalar attenuation(const Scalar& distance, const Scalar& range)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.RayTracerLocal", 0, RayTracerLocal, IRayTracer)
 
-bool RayTracerLocal::create(const BakeConfiguration* configuration)
+bool RayTracerLocal::create(const BakeOperationData* configuration)
 {
 	m_configuration = configuration;
     m_maxDistance = 100.0f;

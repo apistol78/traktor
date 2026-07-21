@@ -57,7 +57,7 @@ Guid findTerrainInScene(scene::SceneAsset* sceneAsset)
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.AlignToTerrainOperator", 0, AlignToTerrainOperator, scene::IScenePipelineOperator)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.AlignToTerrainOperator", 0, AlignToTerrainOperator, scene::ISceneOperator)
 
 bool AlignToTerrainOperator::create(const editor::IPipelineSettings* settings)
 {
@@ -73,7 +73,10 @@ TypeInfoSet AlignToTerrainOperator::getOperatorTypes() const
 	return makeTypeInfoSet< AlignToTerrainOperationData >();
 }
 
-void AlignToTerrainOperator::addDependencies(editor::IPipelineDepends* pipelineDepends) const
+void AlignToTerrainOperator::addDependencies(
+	editor::IPipelineDepends* pipelineDepends,
+	const ISerializable* operatorData
+) const
 {
 }
 
@@ -83,7 +86,7 @@ bool AlignToTerrainOperator::isGeometricTransform() const
 }
 
 bool AlignToTerrainOperator::transform(
-	const scene::IScenePipelineOperator::TransformContext& context,
+	const scene::ISceneOperator::TransformContext& context,
 	const ISerializable* operatorData,
 	scene::SceneAsset* inoutSceneAsset
 ) const
@@ -97,7 +100,10 @@ bool AlignToTerrainOperator::transform(
 		return true;
 	}
 
-
+	// #fixme
+	// Should probably give access to Scene instance from scene editor to
+	// allow querying terrain component without going through the database.
+	//
 	Ref< const TerrainAsset > terrainAsset = context.getObjectReadOnly< TerrainAsset >(terrainId);
 	if (!terrainAsset)
 		return true;
@@ -121,7 +127,7 @@ bool AlignToTerrainOperator::transform(
 	safeClose(sourceData);
 	if (!heightfield)
 		return true;
-
+	// #fixme
 
 	const AlignedVector< std::wstring >& layerFilters = data->getLayers();
 
@@ -143,7 +149,6 @@ bool AlignToTerrainOperator::transform(
 			if (!entityData)
 				continue;
 
-			// Never align the terrain entity itself.
 			if (entityData->getComponent< TerrainComponentData >() != nullptr)
 				continue;
 
@@ -159,12 +164,11 @@ bool AlignToTerrainOperator::transform(
 				float gridX, gridZ;
 				heightfield->worldToGrid(worldX, worldZ, gridX, gridZ);
 				const Vector4 normal = heightfield->normalAt(gridX, gridZ);
-				const Quaternion Qalign = slerp(
+				rotation = slerp(
 					Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), normal),
 					Quaternion::identity(),
 					data->getUpness()
 				);
-				rotation = Qalign * rotation;
 			}
 
 			entityData->setTransform(Transform(
@@ -175,7 +179,7 @@ bool AlignToTerrainOperator::transform(
 		}
 	}
 
-	log::info << L"AlignToTerrain; aligned " << aligned << L" entities to terrain." << Endl;
+	log::debug << L"AlignToTerrain; aligned " << aligned << L" entities to terrain." << Endl;
 	return true;
 }
 

@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Scene/Editor/ScenePreviewTransformExtension.h"
+#include "Scene/Editor/SceneOperatorPreviewExtension.h"
 
 #include "Core/Containers/SmallMap.h"
 #include "Core/Log/Log.h"
@@ -22,7 +22,7 @@
 #include "Scene/Editor/Events/PostModifyEvent.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/SceneTransformChain.h"
+#include "Scene/Editor/SceneOperatorChain.h"
 #include "Scene/Editor/Traverser.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
@@ -36,7 +36,7 @@ const Scalar c_positionEpsilon(1e-4f);
 
 /*! Editor-side transform context: reads source objects from the source database
  *  and provides a live (in-memory) ground sampler. */
-class EditorTransformContext : public IScenePipelineOperator::TransformContext
+class EditorTransformContext : public ISceneOperator::TransformContext
 {
 public:
 	explicit EditorTransformContext(db::Database* database)
@@ -60,35 +60,35 @@ private:
 
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ScenePreviewTransformExtension", ScenePreviewTransformExtension, ISceneEditorUIExtension)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneOperatorPreviewExtension", SceneOperatorPreviewExtension, ISceneEditorUIExtension)
 
-ScenePreviewTransformExtension::ScenePreviewTransformExtension(SceneEditorContext* context)
+SceneOperatorPreviewExtension::SceneOperatorPreviewExtension(SceneEditorContext* context)
 :	m_context(context)
 {
 }
 
-bool ScenePreviewTransformExtension::create(ui::Widget* parent, ui::ToolBar* toolBar)
+bool SceneOperatorPreviewExtension::create(ui::Widget* parent, ui::ToolBar* toolBar)
 {
 	// Instantiate the geometric operator chain used for live preview.
 	editor::PipelineSettings settings(m_context->getEditor()->getSettings());
-	m_chain = new SceneTransformChain();
+	m_chain = new SceneOperatorChain();
 	if (!m_chain->create(&settings))
 	{
 		log::warning << L"Scene preview transform disabled; unable to create operator chain." << Endl;
 		m_chain = nullptr;
 	}
 
-	m_context->addEventHandler< PostBuildEvent >(this, &ScenePreviewTransformExtension::eventPostBuild);
-	m_context->addEventHandler< PostModifyEvent >(this, &ScenePreviewTransformExtension::eventPostModify);
+	m_context->addEventHandler< PostBuildEvent >(this, &SceneOperatorPreviewExtension::eventPostBuild);
+	m_context->addEventHandler< PostModifyEvent >(this, &SceneOperatorPreviewExtension::eventPostModify);
 	return true;
 }
 
-bool ScenePreviewTransformExtension::handleCommand(const ui::Command& command)
+bool SceneOperatorPreviewExtension::handleCommand(const ui::Command& command)
 {
 	return false;
 }
 
-void ScenePreviewTransformExtension::apply()
+void SceneOperatorPreviewExtension::apply()
 {
 	if (!m_chain || m_chain->empty())
 		return;
@@ -112,8 +112,6 @@ void ScenePreviewTransformExtension::apply()
 	SmallMap< Guid, Transform > transforms;
 	for (auto layer : working->getLayers())
 	{
-		if (!layer)
-			continue;
 		Traverser::visit(layer, [&](const world::EntityData* entityData) -> Traverser::Result {
 			const Guid& id = entityData->getId();
 			if (id.isNotNull())
@@ -147,12 +145,12 @@ void ScenePreviewTransformExtension::apply()
 		m_context->enqueueRedraw(nullptr);
 }
 
-void ScenePreviewTransformExtension::eventPostBuild(PostBuildEvent* event)
+void SceneOperatorPreviewExtension::eventPostBuild(PostBuildEvent* event)
 {
 	apply();
 }
 
-void ScenePreviewTransformExtension::eventPostModify(PostModifyEvent* event)
+void SceneOperatorPreviewExtension::eventPostModify(PostModifyEvent* event)
 {
 	apply();
 }

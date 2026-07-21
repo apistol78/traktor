@@ -24,7 +24,7 @@
 namespace traktor::shape
 {
 
-class BakeConfiguration;
+class BakeOperationData;
 class TracerCamera;
 class TracerEnvironment;
 class TracerIrradiance;
@@ -37,11 +37,11 @@ class T_DLLCLASS TracerTask : public Object
     T_RTTI_CLASS;
 
 public:
-    explicit TracerTask(const Guid& sceneId, const BakeConfiguration* configuration);
+    explicit TracerTask(const Guid& sceneId, const BakeOperationData* configuration);
 
 	const Guid& getSceneId() const { return m_sceneId; }
 
-    const BakeConfiguration* getConfiguration() const { return m_configuration; }
+    const BakeOperationData* getConfiguration() const { return m_configuration; }
 
 	void addTracerEnvironment(const TracerEnvironment* tracerEnvironment);
 
@@ -69,7 +69,7 @@ public:
 
 private:
     Guid m_sceneId;
-    Ref< const BakeConfiguration > m_configuration;
+    Ref< const BakeOperationData > m_configuration;
 	RefArray< const TracerEnvironment > m_tracerEnvironments;
     RefArray< const TracerLight > m_tracerLights;
     RefArray< const TracerModel > m_tracerModels;

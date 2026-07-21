@@ -10,7 +10,7 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Scene/Editor/IScenePipelineOperator.h"
+#include "Scene/Editor/ISceneOperator.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,22 +30,22 @@ class IPipelineSettings;
 namespace traktor::scene
 {
 
-class IScenePipelineOperator;
+class ISceneOperator;
 class SceneAsset;
 
 /*! Chain of geometric scene operators.
  *
- * Instantiates the geometric scene pipeline operators (those reporting
+ * Instantiates the geometric scene operators (those reporting
  * isGeometricTransform()) and applies their transforms to a scene asset. This
  * mirrors the geometric-transform pass the ScenePipeline runs at build time,
- * letting the editor produce the same "scene after PCG" for live preview.
+ * letting the editor produce the same "scene after operators" for preview.
  *
  * Non-geometric operators (e.g. lightmap bake) are intentionally excluded; they
  * are a build-time only concern and must not affect the interactive scene.
  *
  * \ingroup Scene
  */
-class T_DLLCLASS SceneTransformChain : public Object
+class T_DLLCLASS SceneOperatorChain : public Object
 {
 	T_RTTI_CLASS;
 
@@ -54,14 +54,14 @@ public:
 
 	void destroy();
 
-	bool apply(SceneAsset* inoutSceneAsset, const IScenePipelineOperator::TransformContext& context) const;
+	bool apply(SceneAsset* inoutSceneAsset, const ISceneOperator::TransformContext& context) const;
 
 	bool empty() const { return m_operators.empty(); }
 
 private:
-	RefArray< IScenePipelineOperator > m_operators;
+	RefArray< ISceneOperator > m_operators;
 
-	const IScenePipelineOperator* findOperator(const TypeInfo& operationType) const;
+	const ISceneOperator* findOperator(const TypeInfo& operationType) const;
 };
 
 }

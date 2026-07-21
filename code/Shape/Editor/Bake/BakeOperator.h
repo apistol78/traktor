@@ -12,7 +12,7 @@
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
-#include "Scene/Editor/IScenePipelineOperator.h"
+#include "Scene/Editor/ISceneOperator.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,7 +34,7 @@ namespace traktor::shape
 
 class TracerProcessor;
 
-class T_DLLCLASS BakePipelineOperator : public scene::IScenePipelineOperator
+class T_DLLCLASS BakeOperator : public scene::ISceneOperator
 {
 	T_RTTI_CLASS;
 
@@ -45,10 +45,13 @@ public:
 
 	virtual TypeInfoSet getOperatorTypes() const override final;
 
-	virtual void addDependencies(editor::IPipelineDepends* pipelineDepends) const override final;
+	virtual void addDependencies(
+		editor::IPipelineDepends* pipelineDepends,
+		const ISerializable* operatorData
+	) const override final;
 
 	virtual bool transform(
-		const scene::IScenePipelineOperator::TransformContext& context,
+		const scene::ISceneOperator::TransformContext& context,
 		const ISerializable* operatorData,
 		scene::SceneAsset* inoutSceneAsset
 	) const override final;

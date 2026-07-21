@@ -43,7 +43,7 @@
 #include "Render/Editor/Texture/UnCompressor.h"
 #include "Render/Resource/TextureResource.h"
 #include "Render/SH/SHCoeffs.h"
-#include "Shape/Editor/Bake/BakeConfiguration.h"
+#include "Shape/Editor/Bake/BakeOperationData.h"
 #include "Shape/Editor/Bake/GBuffer.h"
 #include "Shape/Editor/Bake/IRayTracer.h"
 #include "Shape/Editor/Bake/TracerCamera.h"

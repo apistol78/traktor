@@ -57,7 +57,7 @@
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ScenePreviewControl.h"
-#include "Scene/Editor/ScenePreviewTransformExtension.h"
+#include "Scene/Editor/SceneOperatorPreviewExtension.h"
 #include "Scene/Editor/Utilities.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneFactory.h"
@@ -262,7 +262,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	}
 
 	// Create our "own" extensions.
-	m_context->addUIExtension(new ScenePreviewTransformExtension(m_context));
+	m_context->addUIExtension(new SceneOperatorPreviewExtension(m_context));
 
 	// Create entity and component editor factories.
 	m_context->createEditorFactories();

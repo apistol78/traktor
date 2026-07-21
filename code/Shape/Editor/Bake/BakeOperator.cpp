@@ -68,8 +68,8 @@
 #include "World/Editor/IEntityReplicator.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/Traverser.h"
-#include "Shape/Editor/Bake/BakeConfiguration.h"
-#include "Shape/Editor/Bake/BakePipelineOperator.h"
+#include "Shape/Editor/Bake/BakeOperationData.h"
+#include "Shape/Editor/Bake/BakeOperator.h"
 #include "Shape/Editor/Bake/IblProbe.h"
 #include "Shape/Editor/Bake/SkyProbe.h"
 #include "Shape/Editor/Bake/TracerCamera.h"
@@ -355,22 +355,22 @@ void addSky(
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.BakePipelineOperator", 0, BakePipelineOperator, scene::IScenePipelineOperator)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.BakeOperator", 0, BakeOperator, scene::ISceneOperator)
 
-Ref< TracerProcessor > BakePipelineOperator::ms_tracerProcessor = nullptr;
+Ref< TracerProcessor > BakeOperator::ms_tracerProcessor = nullptr;
 
-bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
+bool BakeOperator::create(const editor::IPipelineSettings* settings)
 {
 	// Read all settings first so pipeline hash is consistent.
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path", L"");
-	m_compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"BakePipelineOperator.CompressionMethod", L"FP16");
+	m_compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"BakeOperator.CompressionMethod", L"FP16");
 	m_asynchronous = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false) && !settings->getPropertyExcludeHash< bool >(L"Pipeline.TargetEditor.Build", false);
-	m_traceIrradianceGrid = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.TraceIrradianceGrid", true);
-	m_traceCameras = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.TraceImages", false);
+	m_traceIrradianceGrid = settings->getPropertyIncludeHash< bool >(L"BakeOperator.TraceIrradianceGrid", true);
+	m_traceCameras = settings->getPropertyIncludeHash< bool >(L"BakeOperator.TraceImages", false);
 
 	// Instantiate raytracer implementation.
-	const std::wstring tracerTypeName = settings->getPropertyIncludeHash< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
+	const std::wstring tracerTypeName = settings->getPropertyIncludeHash< std::wstring >(L"BakeOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
 	m_tracerType = TypeInfo::find(tracerTypeName.c_str());
 	if (!m_tracerType)
 	{
@@ -379,7 +379,7 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	}
 
 	// Do this last since we want to ensure asynchronous flag is properly set.
-	const bool tracerEnable = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.Enable", true);
+	const bool tracerEnable = settings->getPropertyIncludeHash< bool >(L"BakeOperator.Enable", true);
 	if (!tracerEnable)
 	{
 		m_tracerType = nullptr;
@@ -405,7 +405,7 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	return true;
 }
 
-void BakePipelineOperator::destroy()
+void BakeOperator::destroy()
 {
 	if (!m_asynchronous && ms_tracerProcessor)
 	{
@@ -414,23 +414,26 @@ void BakePipelineOperator::destroy()
 	}
 }
 
-TypeInfoSet BakePipelineOperator::getOperatorTypes() const
+TypeInfoSet BakeOperator::getOperatorTypes() const
 {
-	return makeTypeInfoSet< BakeConfiguration >();
+	return makeTypeInfoSet< BakeOperationData >();
 }
 
-void BakePipelineOperator::addDependencies(editor::IPipelineDepends* pipelineDepends) const
+void BakeOperator::addDependencies(
+	editor::IPipelineDepends* pipelineDepends,
+	const ISerializable* operatorData
+) const
 {
 	pipelineDepends->addDependency(c_lightmapProxyId, editor::PdfBuild);
 }
 
-bool BakePipelineOperator::transform(
-	const scene::IScenePipelineOperator::TransformContext& context,
+bool BakeOperator::transform(
+	const scene::ISceneOperator::TransformContext& context,
 	const ISerializable* operatorData,
 	scene::SceneAsset* inoutSceneAsset
 ) const
 {
-	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
+	const auto configuration = mandatory_non_null_type_cast< const BakeOperationData* >(operatorData);
 
 	// Skip transforming all together if no tracer type specified.
 	if (!m_tracerType || !ms_tracerProcessor)
@@ -505,7 +508,7 @@ bool BakePipelineOperator::transform(
 	return true;
 }
 
-bool BakePipelineOperator::build(
+bool BakeOperator::build(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* operatorData,
 	const db::Instance* sourceInstance,
@@ -513,7 +516,7 @@ bool BakePipelineOperator::build(
 	bool rebuild
 ) const
 {
-	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
+	const auto configuration = mandatory_non_null_type_cast< const BakeOperationData* >(operatorData);
 
 	// Skip baking all to gather if no tracer type specified.
 	if (!m_tracerType || !ms_tracerProcessor)
@@ -937,7 +940,7 @@ bool BakePipelineOperator::build(
 		);
 		if (!outputInstance)
 		{
-			log::error << L"BakePipelineOperator failed; unable to create output instance." << Endl;
+			log::error << L"BakeOperator failed; unable to create output instance." << Endl;
 			return false;
 		}
 
@@ -948,7 +951,7 @@ bool BakePipelineOperator::build(
 		Ref< IStream > stream = outputInstance->writeData(L"Data");
 		if (!stream)
 		{
-			log::error << L"BakePipelineOperator failed; unable to create irradiance data stream." << Endl;
+			log::error << L"BakeOperator failed; unable to create irradiance data stream." << Endl;
 			outputInstance->revert();
 			return false;
 		}
@@ -976,7 +979,7 @@ bool BakePipelineOperator::build(
 
 		if (!outputInstance->commit())
 		{
-			log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
+			log::error << L"BakeOperator failed; unable to commit output instance." << Endl;
 			return false;
 		}
 
@@ -1005,12 +1008,12 @@ bool BakePipelineOperator::build(
 	return true;
 }
 
-void BakePipelineOperator::setTracerProcessor(TracerProcessor* tracerProcessor)
+void BakeOperator::setTracerProcessor(TracerProcessor* tracerProcessor)
 {
 	ms_tracerProcessor = tracerProcessor;
 }
 
-TracerProcessor* BakePipelineOperator::getTracerProcessor()
+TracerProcessor* BakeOperator::getTracerProcessor()
 {
 	return ms_tracerProcessor;
 }

@@ -13,7 +13,7 @@ namespace traktor::shape
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerTask", TracerTask, Object)
 
-TracerTask::TracerTask(const Guid& sceneId, const BakeConfiguration* configuration)
+TracerTask::TracerTask(const Guid& sceneId, const BakeOperationData* configuration)
 :   m_sceneId(sceneId)
 ,   m_configuration(configuration)
 {

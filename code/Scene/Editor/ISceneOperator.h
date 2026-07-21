@@ -52,11 +52,16 @@ class SceneAsset;
 /*!
  * \ingroup Scene
  */
-class T_DLLCLASS IScenePipelineOperator : public Object
+class T_DLLCLASS ISceneOperator : public Object
 {
 	T_RTTI_CLASS;
 
 public:
+	enum class TransformMode
+	{
+		Pipeline
+	};
+
 	class T_DLLCLASS TransformContext : public Object
 	{
 	public:
@@ -77,21 +82,12 @@ public:
 	virtual TypeInfoSet getOperatorTypes() const = 0;
 
 	/*! Add dependencies which might get used by operator. */
-	virtual void addDependencies(editor::IPipelineDepends* pipelineDepends) const = 0;
+	virtual void addDependencies(
+		editor::IPipelineDepends* pipelineDepends,
+		const ISerializable* operatorData
+	) const = 0;
 
-	/*! Whether transform() performs a geometric scene mutation.
-	 *
-	 * A geometric transform moves, adds or removes entities such that every
-	 * consumer of the scene - the runtime scene resource, the navigation mesh
-	 * and the editor preview - must observe the result. When this returns true
-	 * the pipeline applies transform() when producing the scene product
-	 * (buildProduct) and the runtime output (buildOutput), not only during
-	 * dependency analysis.
-	 *
-	 * When false (default) the operator only participates in dependency scanning
-	 * and its own build() step, preserving legacy behaviour (e.g. lightmap bake
-	 * preparation which must not alter the scene seen by the navigation mesh).
-	 */
+	/*! Whether transform performs a geometric scene mutation. */
 	virtual bool isGeometricTransform() const { return false; }
 
 	/*! Transform scene asset. */

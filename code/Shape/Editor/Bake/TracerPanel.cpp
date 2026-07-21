@@ -12,7 +12,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/LogView.h"
 #include "I18N/Text.h"
-#include "Shape/Editor/Bake/BakePipelineOperator.h"
+#include "Shape/Editor/Bake/BakeOperator.h"
 #include "Shape/Editor/Bake/TracerPanel.h"
 #include "Shape/Editor/Bake/TracerProcessor.h"
 #include "Shape/Editor/Bake/TracerTask.h"
@@ -55,7 +55,7 @@ bool TracerPanel::create(ui::Widget* parent)
 	m_buttonAbort = new ui::Button();
 	m_buttonAbort->create(container, i18n::Text(L"SHAPE_EDITOR_TRACER_ABORT"));
 	m_buttonAbort->addEventHandler< ui::ButtonClickEvent >([&](ui::ButtonClickEvent* event) {
-		auto processor = BakePipelineOperator::getTracerProcessor();
+		auto processor = BakeOperator::getTracerProcessor();
 		if (processor)
 		{
 			m_log << L"Trace cancelled." << Endl;
@@ -67,7 +67,7 @@ bool TracerPanel::create(ui::Widget* parent)
 	m_log.setGlobalTarget(log->getLogTarget());
 
 	addEventHandler< ui::TimerEvent >([&](ui::TimerEvent* event) {
-		auto processor = BakePipelineOperator::getTracerProcessor();
+		auto processor = BakeOperator::getTracerProcessor();
 		if (processor)
 		{
 			auto status = processor->getStatus();

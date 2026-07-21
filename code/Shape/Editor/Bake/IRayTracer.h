@@ -44,7 +44,7 @@ namespace traktor::shape
 {
 
 struct Light;
-class BakeConfiguration;
+class BakeOperationData;
 class GBuffer;
 class IProbe;
 
@@ -56,7 +56,7 @@ class IRayTracer : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const BakeConfiguration* configuration) = 0;
+	virtual bool create(const BakeOperationData* configuration) = 0;
 
 	virtual void destroy() = 0;
 

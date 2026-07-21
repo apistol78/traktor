@@ -576,7 +576,7 @@ Ref< PropertyGroup > RuntimeEditorPlugin::getTweakSettings() const
 	if (m_toolTweaks->get(9)->isChecked())
 		tweakSettings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/DefaultDenominator", 4);
 	if (m_toolTweaks->get(10)->isChecked())
-		tweakSettings->setProperty< PropertyBoolean >(L"BakePipelineOperator.Enable", false);
+		tweakSettings->setProperty< PropertyBoolean >(L"BakeOperator.Enable", false);
 	if (m_toolTweaks->get(11)->isChecked())
 	{
 		// Use low level render API validation.

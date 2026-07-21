@@ -19,7 +19,7 @@
 #include "Model/Operations/MergeModel.h"
 #include "Render/SH/SHEngine.h"
 #include "Render/SH/SHFunction.h"
-#include "Shape/Editor/Bake/BakeConfiguration.h"
+#include "Shape/Editor/Bake/BakeOperationData.h"
 #include "Shape/Editor/Bake/GBuffer.h"
 #include "Shape/Editor/Bake/IProbe.h"
 
@@ -151,7 +151,7 @@ float wrap(float n)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.RayTracerEmbree", 0, RayTracerEmbree, IRayTracer)
 
-bool RayTracerEmbree::create(const BakeConfiguration* configuration)
+bool RayTracerEmbree::create(const BakeOperationData* configuration)
 {
 	m_configuration = configuration;
 

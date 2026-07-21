@@ -25,6 +25,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
+#include "Model/Operations/MergeModel.h"
 #include "Model/Operations/Triangulate.h"
 #include "Scene/Editor/Traverser.h"
 #include "Terrain/OceanComponentData.h"
@@ -208,6 +209,17 @@ bool NavMeshPipeline::buildOutput(
 
 		return scene::Traverser::Result::Continue;
 	});
+
+#if 0
+	// Create a merged debug mesh.
+	Ref< model::Model > debugModel = new model::Model();
+	for (const auto& nm : navModels)
+	{
+		const model::MergeModel mrg(*nm.model, nm.transform, 0.0001f);
+		debugModel->apply(mrg);
+	}
+	model::ModelFormat::writeAny(Path(L"NavMesh.obj"), debugModel);
+#endif
 
 	// Calculate aabb and count.
 	Aabb3 navModelsAabb;

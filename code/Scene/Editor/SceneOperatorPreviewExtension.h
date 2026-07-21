@@ -17,15 +17,15 @@ namespace traktor::scene
 class PostBuildEvent;
 class PostModifyEvent;
 class SceneEditorContext;
-class SceneTransformChain;
+class SceneOperatorChain;
 
 /*! */
-class ScenePreviewTransformExtension : public ISceneEditorUIExtension
+class SceneOperatorPreviewExtension : public ISceneEditorUIExtension
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit ScenePreviewTransformExtension(SceneEditorContext* context);
+	explicit SceneOperatorPreviewExtension(SceneEditorContext* context);
 
 	virtual bool create(ui::Widget* parent, ui::ToolBar* toolBar) override final;
 
@@ -33,7 +33,7 @@ public:
 
 private:
 	SceneEditorContext* m_context;
-	Ref< scene::SceneTransformChain > m_chain;
+	Ref< scene::SceneOperatorChain > m_chain;
 
 	void apply();
 

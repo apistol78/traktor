@@ -10,7 +10,7 @@
 
 #include "Core/RefArray.h"
 #include "Editor/IPipeline.h"
-#include "Scene/Editor/IScenePipelineOperator.h"
+#include "Scene/Editor/ISceneOperator.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,7 +23,7 @@
 namespace traktor::scene
 {
 
-class IScenePipelineOperator;
+class ISceneOperator;
 class SceneAsset;
 
 class T_DLLCLASS ScenePipeline : public editor::IPipeline
@@ -75,9 +75,9 @@ private:
 	bool m_suppressImageProcess = false;
 	int32_t m_shadowMapSizeDenom = 1;
 	int32_t m_shadowMapMaxSlices = 0;
-	RefArray< IScenePipelineOperator > m_operators;
+	RefArray< ISceneOperator > m_operators;
 
-	const IScenePipelineOperator* findOperator(const TypeInfo& operationType) const;
+	const ISceneOperator* findOperator(const TypeInfo& operationType) const;
 
 	/*! Apply geometric scene transforms to a scene asset.
 	 *
@@ -87,7 +87,7 @@ private:
 	 * output. Non-geometric operators (e.g. lightmap bake) are skipped here and
 	 * handled through their build() step instead.
 	 */
-	bool applyTransforms(SceneAsset* inoutSceneAsset, const IScenePipelineOperator::TransformContext& context) const;
+	bool applyTransforms(SceneAsset* inoutSceneAsset, const ISceneOperator::TransformContext& context) const;
 };
 
 }

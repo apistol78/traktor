@@ -23,7 +23,7 @@
 namespace traktor::shape
 {
 
-class T_DLLCLASS BakeConfiguration : public scene::ISceneOperationData
+class T_DLLCLASS BakeOperationData : public scene::ISceneOperationData
 {
 	T_RTTI_CLASS;
 

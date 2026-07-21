@@ -18,7 +18,6 @@
 #include "Editor/IPipelineSettings.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
 #include "Scene/SceneResource.h"
-#include "Scene/Editor/ExternalOperationData.h"
 #include "Scene/Editor/ISceneOperationData.h"
 #include "Scene/Editor/ScenePipeline.h"
 #include "Scene/Editor/SceneAsset.h"
@@ -39,7 +38,7 @@ namespace
  * time. No live ground sampler is supplied; terrain aware operators construct
  * their own sampler from the source data (getSourceDatabase/getObjectReadOnly).
  */
-class PipelineTransformContext : public IScenePipelineOperator::TransformContext
+class PipelineTransformContext : public ISceneOperator::TransformContext
 {
 public:
 	explicit PipelineTransformContext(editor::IPipelineCommon* pipelineCommon)
@@ -75,9 +74,9 @@ bool ScenePipeline::create(const editor::IPipelineSettings* settings, db::Databa
 	m_shadowMapMaxSlices = settings->getPropertyIncludeHash< int32_t >(L"ScenePipeline.ShadowMapMaxSlices", 0);
 
 	// Instantiate scene pipeline operators.
-	for (auto operatorType : type_of< IScenePipelineOperator >().findAllOf(false))
+	for (auto operatorType : type_of< ISceneOperator >().findAllOf(false))
 	{
-		Ref< IScenePipelineOperator > spo = dynamic_type_cast< IScenePipelineOperator* >(operatorType->createInstance());
+		Ref< ISceneOperator > spo = dynamic_type_cast< ISceneOperator* >(operatorType->createInstance());
 		if (!spo)
 		{
 			log::error << L"Failed to create scene pipeline; unable to instantiate operator \"" << operatorType->getName() << L"\"." << Endl;
@@ -129,31 +128,16 @@ bool ScenePipeline::buildDependencies(
 	// Transform, or filter, scene asset through operators.
 	PipelineTransformContext context(pipelineDepends);
 	Ref< SceneAsset > mutableSceneAsset = DeepClone(sceneAsset).create< SceneAsset >();
-	for (const auto op : sceneAsset->getOperationData())
+	for (const auto operationData : sceneAsset->getOperationData())
 	{
-		Ref< const ISceneOperationData > operationData = op;
-
-		// Check if external data is references; if so add dependency and resolve external data.
-		if (const ExternalOperationData* externalOperationData = dynamic_type_cast< const ExternalOperationData* >(operationData))
-		{
-			operationData = pipelineDepends->getObjectReadOnly< ISceneOperationData >(externalOperationData->getExternalDataId());
-			if (!operationData)
-			{
-				log::error << L"Scene pipeline failed; unable to read operation data " << externalOperationData->getExternalDataId().format() << L"." << Endl;
-				return false;
-			}
-
-			pipelineDepends->addDependency(externalOperationData->getExternalDataId(), editor::PdfUse);
-		}
-
-		const IScenePipelineOperator* spo = findOperator(type_of(operationData));
+		const ISceneOperator* spo = findOperator(type_of(operationData));
 		if (!spo)
 		{
 			log::error << L"Scene pipeline failed; no operator found supporting data type " << type_name(operationData) << L"." << Endl;
 			return false;
 		}
 
-		spo->addDependencies(pipelineDepends);
+		spo->addDependencies(pipelineDepends, operationData);
 
 		if (!spo->transform(context, operationData, mutableSceneAsset))
 		{
@@ -208,35 +192,22 @@ bool ScenePipeline::buildOutput(
 
 	const bool rebuild = (bool)((reason & editor::PbrForced) != 0);
 
-	// Apply geometric scene transforms first; keeps the runtime output consistent
-	// with the scene product (navigation mesh) and the editor preview.
-	{
-		PipelineTransformContext context(pipelineBuilder);
-		if (!applyTransforms(sceneAsset, context))
-			return false;
-	}
+	// Apply geometric scene transforms first.
+	PipelineTransformContext context(pipelineBuilder);
+	if (!applyTransforms(sceneAsset, context))
+		return false;
 
-	// Execute operations on scene.
+	// Execute build operations on scene.
 	log::info << L"Executing scene operations..." << Endl;
 	log::info << IncreaseIndent;
-	for (const auto op : sceneAsset->getOperationData())
+	for (const auto operationData : sceneAsset->getOperationData())
 	{
-		Ref< const ISerializable > operationData = op;
-
-		// Check if external data is referenced; if so resolve external data.
-		if (const ExternalOperationData* externalOperationData = dynamic_type_cast< const ExternalOperationData* >(operationData))
-		{
-			operationData = pipelineBuilder->getObjectReadOnly(externalOperationData->getExternalDataId());
-			if (!operationData)
-				return false;
-		}
-
-		const IScenePipelineOperator* spo = findOperator(type_of(operationData));
-		if (!spo)
+		const ISceneOperator* sceneOperator = findOperator(type_of(operationData));
+		if (!sceneOperator)
 			return false;
 
-		pipelineBuilder->getProfiler()->begin(type_of(spo));
-		bool result = spo->build(pipelineBuilder, operationData, sourceInstance, sceneAsset, rebuild);
+		pipelineBuilder->getProfiler()->begin(type_of(sceneOperator));
+		const bool result = sceneOperator->build(pipelineBuilder, operationData, sourceInstance, sceneAsset, rebuild);
 		pipelineBuilder->getProfiler()->end();
 
 		if (!result)
@@ -267,10 +238,7 @@ bool ScenePipeline::buildOutput(
 				if (outputEntityData)
 				{
 					// Move dynamic state from layer to child.
-					outputEntityData->setState(
-						layer->getState(),
-						world::EntityState::Dynamic
-					);
+					outputEntityData->setState(layer->getState(), world::EntityState::Dynamic);
 					groupComponentData->addEntityData(outputEntityData);
 				}
 			}
@@ -334,8 +302,6 @@ Ref< ISerializable > ScenePipeline::buildProduct(
 	if (!sceneAsset)
 		return nullptr;
 
-	// Apply geometric scene transforms so that consumers building from the scene
-	// product (e.g. the navigation mesh pipeline) observe the transformed scene.
 	PipelineTransformContext context(pipelineBuilder);
 	if (!applyTransforms(sceneAsset, context))
 		return nullptr;
@@ -343,7 +309,7 @@ Ref< ISerializable > ScenePipeline::buildProduct(
 	return sceneAsset;
 }
 
-const IScenePipelineOperator* ScenePipeline::findOperator(const TypeInfo& operationType) const
+const ISceneOperator* ScenePipeline::findOperator(const TypeInfo& operationType) const
 {
 	for (const auto sop : m_operators)
 	{
@@ -356,35 +322,21 @@ const IScenePipelineOperator* ScenePipeline::findOperator(const TypeInfo& operat
 	return nullptr;
 }
 
-bool ScenePipeline::applyTransforms(SceneAsset* inoutSceneAsset, const IScenePipelineOperator::TransformContext& context) const
+bool ScenePipeline::applyTransforms(SceneAsset* inoutSceneAsset, const ISceneOperator::TransformContext& context) const
 {
 	for (const auto op : inoutSceneAsset->getOperationData())
 	{
-		Ref< const ISerializable > operationData = op;
-
-		// Resolve external operation data if referenced.
-		if (const ExternalOperationData* externalOperationData = dynamic_type_cast< const ExternalOperationData* >(operationData))
-		{
-			operationData = context.getObjectReadOnly(externalOperationData->getExternalDataId());
-			if (!operationData)
-			{
-				log::error << L"Scene pipeline failed; unable to read operation data " << externalOperationData->getExternalDataId().format() << L"." << Endl;
-				return false;
-			}
-		}
-
-		const IScenePipelineOperator* spo = findOperator(type_of(operationData));
+		const ISceneOperator* spo = findOperator(type_of(op));
 		if (!spo)
 		{
-			log::error << L"Scene pipeline failed; no operator found supporting data type " << type_name(operationData) << L"." << Endl;
+			log::error << L"Scene pipeline failed; no operator found supporting data type " << type_name(op) << L"." << Endl;
 			return false;
 		}
 
-		// Only geometric transforms contribute to the shared scene seen by all consumers.
 		if (!spo->isGeometricTransform())
 			continue;
 
-		if (!spo->transform(context, operationData, inoutSceneAsset))
+		if (!spo->transform(context, op, inoutSceneAsset))
 		{
 			log::error << L"Scene pipeline failed; operator transform failed." << Endl;
 			return false;
