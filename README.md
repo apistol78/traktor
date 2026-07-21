@@ -61,6 +61,15 @@ See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binar
 - Multithreaded and API agnostic.
 - Support for thirdparty upscalers; XeSS support implemented.
 
+## Animation
+
+- Skeletal skinned meshes.
+- State graph system for game play driven entities.
+- Rag doll system with custom editor for easy setup of physics vs animation skeletons, and limb constraints.
+- Simple iterative IK solver.
+- Basic entity procedural motion components (rotator, boids, path etc).
+- Global scene keyframe animation system (called Theater).
+
 ## Scripting
 - LUA as primary scripting language.
 - Integrated script debugger and profiler.
