@@ -54,6 +54,7 @@ bool ActionRemoveAllData::execute(Context& context)
 		log::error << L"Unable to open \"" << instanceMetaPath.getPathName() << L"\" for edit." << Endl;
 		return false;
 	}
+	m_editMeta = true;
 
 	instanceMeta->removeAllBlobs();
 
@@ -78,8 +79,12 @@ bool ActionRemoveAllData::undo(Context& context)
 	m_renamedFiles.clear();
 
 	// Rollback meta also since it contain named references to blobs.
-	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
-	fileStore->rollback(instanceMetaPath);
+	if (m_editMeta)
+	{
+		const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+		fileStore->rollback(instanceMetaPath);
+		m_editMeta = false;
+	}
 	return true;
 }
 
@@ -88,6 +93,12 @@ void ActionRemoveAllData::clean(Context& context)
 	IFileStore* fileStore = context.getFileStore();
 	for (const auto& renamedFile : m_renamedFiles)
 		fileStore->clean(renamedFile);
+
+	if (m_editMeta)
+	{
+		const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+		fileStore->clean(instanceMetaPath);
+	}
 }
 
 bool ActionRemoveAllData::redundant(const Action* action) const

@@ -28,6 +28,8 @@ ActionWriteData::ActionWriteData(const Path& instancePath, const std::wstring& d
 :	m_instancePath(instancePath)
 ,	m_dataName(dataName)
 ,	m_existingBlob(false)
+,	m_editData(false)
+,	m_editMeta(false)
 {
 	m_dataMemory = new ChunkMemory();
 }
@@ -55,6 +57,7 @@ bool ActionWriteData::execute(Context& context)
 			log::error << L"Unable to open \"" << instanceDataPath.getPathName() << L"\" for edit." << Endl;
 			return false;
 		}
+		m_editData = true;
 	}
 
 	// Create output, physical, stream. Retry one time if initially locked.
@@ -102,6 +105,7 @@ bool ActionWriteData::execute(Context& context)
 		log::error << L"Unable to open \"" << instanceMetaPath.getPathName() << L"\" for edit." << Endl;
 		return false;
 	}
+	m_editMeta = true;
 
 	instanceMeta->setBlob(m_dataName);
 
@@ -130,10 +134,13 @@ bool ActionWriteData::undo(Context& context)
 	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 	const Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
 
-	if (m_existingBlob)
+	if (m_editData)
 		fileStore->rollback(instanceDataPath);
-	else
+	if (m_editMeta)
 		fileStore->rollback(instanceMetaPath);
+
+	m_editData =
+	m_editMeta = false;
 
 	return true;
 }
@@ -144,9 +151,9 @@ void ActionWriteData::clean(Context& context)
 	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 	const Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
 
-	if (m_existingBlob)
+	if (m_editData)
 		fileStore->clean(instanceDataPath);
-	else
+	if (m_editMeta)
 		fileStore->clean(instanceMetaPath);
 }
 

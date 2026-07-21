@@ -42,6 +42,7 @@ public:
 private:
 	Path m_instancePath;
 	std::vector< std::wstring > m_renamedFiles;
+	bool m_editMeta = false;
 };
 
 }

@@ -51,6 +51,8 @@ private:
 	std::wstring m_dataName;
 	Ref< ChunkMemory > m_dataMemory;
 	bool m_existingBlob;
+	bool m_editData;
+	bool m_editMeta;
 };
 
 }
