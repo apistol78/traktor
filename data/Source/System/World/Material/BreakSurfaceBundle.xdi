@@ -5,8 +5,8 @@
 			<id>{CE356640-AA3B-4438-A964-6D331A68DFEA}</id>
 			<comment/>
 			<position>
-				<first>448</first>
-				<second>102</second>
+				<first>423</first>
+				<second>120</second>
 			</position>
 			<names>
 				<item>Albedo</item>
@@ -19,14 +19,15 @@
 				<item>World position offset</item>
 				<item>Emissive</item>
 				<item>Opaque</item>
+				<item>VertexAttributes</item>
 			</names>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D55AC672-5F6E-429B-9759-E8CFD9383F73}</id>
 			<comment/>
 			<position>
-				<first>146</first>
-				<second>137</second>
+				<first>121</first>
+				<second>155</second>
 			</position>
 			<name>SurfaceAttributes</name>
 			<optional>false</optional>
@@ -45,7 +46,7 @@
 			<comment/>
 			<position>
 				<first>787</first>
-				<second>56</second>
+				<second>57</second>
 			</position>
 			<name>Metalness</name>
 		</item>
@@ -54,7 +55,7 @@
 			<comment/>
 			<position>
 				<first>787</first>
-				<second>91</second>
+				<second>93</second>
 			</position>
 			<name>Roughness</name>
 		</item>
@@ -63,7 +64,7 @@
 			<comment/>
 			<position>
 				<first>787</first>
-				<second>126</second>
+				<second>129</second>
 			</position>
 			<name>Specular</name>
 		</item>
@@ -72,7 +73,7 @@
 			<comment/>
 			<position>
 				<first>787</first>
-				<second>161</second>
+				<second>165</second>
 			</position>
 			<name>Normal</name>
 		</item>
@@ -81,7 +82,7 @@
 			<comment/>
 			<position>
 				<first>787</first>
-				<second>196</second>
+				<second>201</second>
 			</position>
 			<name>Alpha</name>
 		</item>
@@ -90,7 +91,7 @@
 			<comment/>
 			<position>
 				<first>787</first>
-				<second>231</second>
+				<second>237</second>
 			</position>
 			<name>Decal response</name>
 		</item>
@@ -99,7 +100,7 @@
 			<comment/>
 			<position>
 				<first>787</first>
-				<second>266</second>
+				<second>273</second>
 			</position>
 			<name>World position offset</name>
 		</item>
@@ -108,7 +109,7 @@
 			<comment/>
 			<position>
 				<first>787</first>
-				<second>301</second>
+				<second>309</second>
 			</position>
 			<name>Emissive</name>
 		</item>
@@ -117,9 +118,18 @@
 			<comment/>
 			<position>
 				<first>787</first>
-				<second>336</second>
+				<second>345</second>
 			</position>
 			<name>Opaque</name>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{6273D970-BDAA-48E6-96DE-5DB4268034E4}</id>
+			<comment/>
+			<position>
+				<first>791</first>
+				<second>381</second>
+			</position>
+			<name>VertexAttributes</name>
 		</item>
 	</nodes>
 	<edges>
@@ -230,6 +240,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{D596E4E4-1A78-4D80-C76B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>

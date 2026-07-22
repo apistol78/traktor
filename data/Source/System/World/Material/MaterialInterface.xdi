@@ -5,8 +5,8 @@
 			<id>{7B5B03E8-DA14-FB4E-B761-E801FE9A0268}</id>
 			<comment/>
 			<position>
-				<first>-101</first>
-				<second>190</second>
+				<first>242</first>
+				<second>274</second>
 			</position>
 			<name>VertexAttributes</name>
 			<optional>false</optional>
@@ -15,8 +15,8 @@
 			<id>{FC36C352-F0F8-0448-8453-A512A453938E}</id>
 			<comment/>
 			<position>
-				<first>952</first>
-				<second>211</second>
+				<first>928</first>
+				<second>173</second>
 			</position>
 			<name>SurfaceAttributes</name>
 		</item>
@@ -80,6 +80,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{ECADF42E-FB90-4F53-9B99-7129FF825B9A}</id>
+					<name>VertexAttributes</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{E17C87D4-085A-409D-9642-1926DBAADBBC}</id>
 					<name>World position offset</name>
 					<optional>true</optional>
@@ -102,6 +107,16 @@
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{ECADF42E-FB90-4F53-9B99-7129FF825B9A}</id>
 			</destination>
 		</item>
 	</edges>

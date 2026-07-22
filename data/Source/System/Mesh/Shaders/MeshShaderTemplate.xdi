@@ -628,19 +628,14 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition]]>
 			<id>{8FCFEEF4-AC40-4B42-9ED6-B5C59B0EC62F}</id>
 			<comment/>
 			<position>
-				<first>427</first>
-				<second>429</second>
+				<first>423</first>
+				<second>406</second>
 			</position>
 			<fragmentGuid>{FEFB2C4F-E67D-440F-BD2A-4D826932F8A3}</fragmentGuid>
 			<inputPins>
 				<item>
 					<id>{8C2CC5B1-F74E-45FA-8731-D76E9DF42F3C}</id>
 					<name>SurfaceAttributes</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{B8338FE6-467F-4214-BCFA-F9BB4973ECCA}</id>
-					<name>VertexAttributes</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
@@ -655,19 +650,10 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition]]>
 			<id>{38A9C4DC-E16E-4112-AC6B-B2A8D6B5804E}</id>
 			<comment/>
 			<position>
-				<first>203</first>
-				<second>422</second>
+				<first>199</first>
+				<second>399</second>
 			</position>
 			<name>SurfaceAttributes</name>
-		</item>
-		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
-			<id>{8099FA77-C264-4312-9297-FCB84B046D3F}</id>
-			<comment/>
-			<position>
-				<first>203</first>
-				<second>486</second>
-			</position>
-			<name>VertexAttributes</name>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{1914209C-0F83-42B4-85F0-BA181653CA1D}</id>
@@ -720,6 +706,10 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition]]>
 				<item>
 					<id>{4798B70B-BF13-4668-A68B-F0FFCE76CCD3}</id>
 					<name>Specular</name>
+				</item>
+				<item>
+					<id>{6273D970-BDAA-48E6-96DE-5DB4268034E4}</id>
+					<name>VertexAttributes</name>
 				</item>
 				<item>
 					<id>{DF78B7B0-0EB7-40B5-944B-D65C92485A86}</id>
@@ -1255,38 +1245,18 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition]]>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[45]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[43]"/>
-				<id>{B8338FE6-467F-4214-BCFA-F9BB4973ECCA}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[43]"/>
 				<id>{AA103899-AD77-4F67-9CE4-B686A23CE959}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<id>{D55AC672-5F6E-429B-9759-E8CFD9383F73}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<id>{7F0CC4A4-5B4D-4280-98AF-E6FB2B233C5A}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[50]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[46]"/>
-				<id>{8FA83300-1866-49F4-A5D5-5539C850E0C9}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[49]"/>
@@ -1295,18 +1265,8 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition]]>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[46]"/>
-				<id>{2F33C345-06B1-8848-81B5-E6E45FC2265D}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[47]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[46]"/>
-				<id>{DF78B7B0-0EB7-40B5-944B-D65C92485A86}</id>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{8FA83300-1866-49F4-A5D5-5539C850E0C9}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[48]"/>
@@ -1315,11 +1275,21 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition]]>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[61]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{2F33C345-06B1-8848-81B5-E6E45FC2265D}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[46]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{DF78B7B0-0EB7-40B5-944B-D65C92485A86}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[47]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
@@ -1329,13 +1299,13 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition]]>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[59]"/>
+				<node ref="/object/nodes/item[61]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[57]"/>
+				<node ref="/object/nodes/item[59]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
@@ -1349,23 +1319,23 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition]]>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[55]"/>
+				<node ref="/object/nodes/item[57]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[54]"/>
+				<node ref="/object/nodes/item[55]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[53]"/>
+				<node ref="/object/nodes/item[54]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[51]"/>
+				<node ref="/object/nodes/item[53]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
@@ -1375,18 +1345,18 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition]]>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[46]"/>
-				<id>{BE9CBFE6-2C95-4FD5-981F-79DD3BFDFD5B}</id>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[61]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+				<node ref="/object/nodes/item[51]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[46]"/>
-				<id>{FF21298E-FCDC-4239-8465-31F94AC4F39A}</id>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{BE9CBFE6-2C95-4FD5-981F-79DD3BFDFD5B}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[60]"/>
@@ -1395,41 +1365,51 @@ In case WPO is used then we need to calculate ViewPosition from WorldPosition]]>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{FF21298E-FCDC-4239-8465-31F94AC4F39A}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[45]"/>
 				<id>{098603B0-CE71-49AB-B118-67720BFCD6FA}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[57]"/>
+				<node ref="/object/nodes/item[56]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<id>{4798B70B-BF13-4668-A68B-F0FFCE76CCD3}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[54]"/>
+				<node ref="/object/nodes/item[53]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<id>{48CAC832-6EB6-CF48-AB6A-DE7EB3382F86}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[51]"/>
+				<node ref="/object/nodes/item[50]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<id>{D118C611-C6C0-4145-AD0E-4B395E161044}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[56]"/>
+				<node ref="/object/nodes/item[55]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>

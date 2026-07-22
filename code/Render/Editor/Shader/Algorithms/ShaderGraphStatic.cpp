@@ -302,24 +302,34 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 
 		PinType inputType = evaluator.evaluate(node, L"Type");
 
-		const InputPin* inputPin = nullptr;
+		const wchar_t* inputPinName = nullptr;
 
 		if (isPinTypeScalar(inputType))
 			if (getPinTypeWidth(inputType) <= 1)
-				inputPin = node->findInputPin(L"Scalar");
+				inputPinName = L"Scalar";
 			else
-				inputPin = node->findInputPin(L"Vector");
+				inputPinName = L"Vector";
 		else if (inputType == PinType::Matrix)
-			inputPin = node->findInputPin(L"Matrix");
+			inputPinName = L"Matrix";
 		else if (isPinTypeTexture(inputType))
-			inputPin = node->findInputPin(L"Texture");
+			inputPinName = L"Texture";
 		else if (isPinTypeState(inputType))
-			inputPin = node->findInputPin(L"State");
+			inputPinName = L"State";
 		else if (inputType == PinType::Void)
-			inputPin = node->findInputPin(L"Default");
+			inputPinName = L"Default";
 
-		if (!inputPin)
+		if (!inputPinName)
+		{
+			log::error << L"Shader type permutation error; cannot determine input pin name (" << (int32_t)inputType << L")." << Endl;
 			return nullptr;
+		}
+
+		const InputPin* inputPin = node->findInputPin(inputPinName);
+		if (!inputPin)
+		{
+			log::error << L"Shader type permutation error; no input pin \"" << inputPinName << L"\"." << Endl;
+			return nullptr;
+		}
 
 		Ref< Edge > sourceEdge = shaderGraph->findEdge(inputPin);
 		if (!sourceEdge)
@@ -329,7 +339,10 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 
 			sourceEdge = shaderGraph->findEdge(inputPin);
 			if (!sourceEdge)
+			{
+				log::error << L"Shader type permutation error; input pin \"" << inputPinName << L"\" not connected (nor \"Default\")." << Endl;
 				return nullptr;
+			}
 		}
 
 		RefArray< Edge > destinationEdges = shaderGraph->findEdges(outputPin);
