@@ -1422,10 +1422,12 @@ bool emitLength(GlslContext& cx, Length* node)
 		return false;
 	}
 
+	const GlslType type = glsl_promote_to_float(in->getType());
+
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 
 	comment(f, node);
-	assign(f, out) << L"length(" << in->getName() << L");" << Endl;
+	assign(f, out) << L"length(" << in->cast(type) << L");" << Endl;
 
 	return true;
 }
