@@ -42,6 +42,9 @@ public:
 	/*! Whether entity orientation is aligned to the terrain surface normal. */
 	bool getAlignOrientation() const { return m_alignOrientation; }
 
+	/*! Apply random local heading angle to entity. */
+	bool getRandomHeadingAngle() const { return m_randomHeadingAngle; }
+
 	/*! Blend of the surface normal toward straight up; 0 = follow normal, 1 = upright. */
 	float getUpness() const { return m_upness; }
 
@@ -53,6 +56,7 @@ public:
 private:
 	AlignedVector< std::wstring > m_layers;
 	bool m_alignOrientation = false;
+	bool m_randomHeadingAngle = false;
 	float m_upness = 1.0f;
 	float m_offset = 0.0f;
 };

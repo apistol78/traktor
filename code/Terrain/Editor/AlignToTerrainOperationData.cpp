@@ -16,12 +16,16 @@
 namespace traktor::terrain
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.AlignToTerrainOperationData", 0, AlignToTerrainOperationData, scene::ISceneOperationData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.AlignToTerrainOperationData", 1, AlignToTerrainOperationData, scene::ISceneOperationData)
 
 void AlignToTerrainOperationData::serialize(ISerializer& s)
 {
 	s >> MemberAlignedVector< std::wstring >(L"layers", m_layers);
 	s >> Member< bool >(L"alignOrientation", m_alignOrientation);
+
+	if (s.getVersion< AlignToTerrainOperationData >() >= 1)
+		s >> Member< bool >(L"randomHeadingAngle", m_randomHeadingAngle);
+
 	s >> Member< float >(L"upness", m_upness, AttributeRange(0.0f, 1.0f));
 	s >> Member< float >(L"offset", m_offset);
 }

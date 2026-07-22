@@ -11,6 +11,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Quaternion.h"
+#include "Core/Math/Random.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -130,6 +131,7 @@ bool AlignToTerrainOperator::transform(
 	// #fixme
 
 	const AlignedVector< std::wstring >& layerFilters = data->getLayers();
+	Random rndm;
 
 	uint32_t aligned = 0;
 	for (auto layer : inoutSceneAsset->getLayers())
@@ -159,6 +161,7 @@ bool AlignToTerrainOperator::transform(
 			const float worldY = heightfield->getWorldHeight(worldX, worldZ) + data->getOffset();
 
 			Quaternion rotation = current.rotation();
+
 			if (data->getAlignOrientation())
 			{
 				float gridX, gridZ;
@@ -169,6 +172,12 @@ bool AlignToTerrainOperator::transform(
 					Quaternion::identity(),
 					data->getUpness()
 				);
+			}
+
+			if (data->getRandomHeadingAngle())
+			{
+				const float rnd = rndm.nextFloat() * TWO_PI;
+				rotation = rotation * Quaternion::fromEulerAngles(rnd, 0.0f, 0.0f);
 			}
 
 			entityData->setTransform(Transform(
