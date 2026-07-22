@@ -86,7 +86,7 @@ bool ToolFormWl::create(IWidget* parent, const std::wstring& text, int width, in
 		if (m_context->hasServerSideDecorations())
 		{
 			// SSD path.
-			m_data.xdgSurface = xdg_wm_base_get_xdg_surface(m_context->getXdgWmBase(), m_data.surface);
+			m_data.xdgSurface = m_context->createXdgSurface(m_data.surface);
 			xdg_surface_add_listener(m_data.xdgSurface, &s_toplevelXdgSurfaceListener, &m_listenerCtx);
 
 			m_data.xdgToplevel = xdg_surface_get_toplevel(m_data.xdgSurface);
@@ -251,7 +251,7 @@ void ToolFormWl::createPopup()
 		return;
 
 	// Popups have no decorations — use a raw xdg_surface (not libdecor).
-	m_data.xdgSurface = xdg_wm_base_get_xdg_surface(m_context->getXdgWmBase(), m_data.surface);
+	m_data.xdgSurface = m_context->createXdgSurface(m_data.surface);
 	xdg_surface_add_listener(m_data.xdgSurface, &s_toplevelXdgSurfaceListener, &m_listenerCtx);
 
 	// Convert device-pixel rect to Wayland logical coordinates for the positioner.

@@ -7,8 +7,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <algorithm>
+#include <cerrno>
 #include <cmath>
 #include <cstring>
+#include <poll.h>
 #include <sys/mman.h>
 #include <unistd.h>
 #include "Core/Assert.h"
@@ -16,6 +18,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/KeyDownEvent.h"
 #include "Ui/Events/KeyEvent.h"
@@ -140,6 +144,25 @@ ContextWl::ContextWl()
 
 ContextWl::~ContextWl()
 {
+	// Stop the ping watchdog before tearing down any Wayland state: it reads from
+	// m_display and dispatches m_pingQueue on its own thread. stop() sets the stop
+	// flag and joins (the thread re-checks it at least every poll timeout).
+	if (m_watchdogThread)
+	{
+		m_watchdogThread->stop();
+		ThreadManager::getInstance().destroy(m_watchdogThread);
+		m_watchdogThread = nullptr;
+	}
+	if (m_pingQueue)
+	{
+		// Move the wm_base off the queue we are about to destroy so nothing
+		// references freed memory during the remaining teardown.
+		if (m_xdgWmBase)
+			wl_proxy_set_queue((wl_proxy*)m_xdgWmBase, nullptr);
+		wl_event_queue_destroy(m_pingQueue);
+		m_pingQueue = nullptr;
+	}
+
 	if (m_xkbState)
 		xkb_state_unref(m_xkbState);
 	if (m_xkbKeymap)
@@ -189,6 +212,13 @@ bool ContextWl::initialize()
 		return false;
 	}
 
+	// Dedicated event queue for xdg_wm_base ping events. m_xdgWmBase is assigned
+	// to it in registryGlobal(), and a watchdog thread dispatches it so pings are
+	// answered even while the UI thread is busy or CPU-starved (otherwise the
+	// compositor deems the window unresponsive and drops it). Created before the
+	// registry roundtrips so it exists when the wm_base global is bound.
+	m_pingQueue = wl_display_create_queue(m_display);
+
 	m_xkbContext = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
 	if (!m_xkbContext)
 	{
@@ -231,7 +261,86 @@ bool ContextWl::initialize()
 	if (m_cursorTheme)
 		m_cursorSurface = wl_compositor_create_surface(m_compositor);
 
+	// Start the ping watchdog. Only meaningful if the ping queue exists and the
+	// wm_base was actually moved onto it (see registryGlobal); otherwise ping
+	// handling falls back to the UI event loop as before.
+	if (m_pingQueue)
+	{
+		m_watchdogThread = ThreadManager::getInstance().create(
+			[this]() { watchdogThread(); },
+			L"Wayland ping watchdog"
+		);
+		if (m_watchdogThread)
+			m_watchdogThread->start(Thread::Above);
+	}
+
 	return true;
+}
+
+void ContextWl::watchdogThread()
+{
+	Thread* thread = ThreadManager::getInstance().getCurrentThread();
+
+	// This thread spends essentially all its time asleep in poll(), so the
+	// scheduler wakes it promptly even when every core is saturated by worker
+	// threads -- which is exactly the situation in which the UI thread would
+	// otherwise miss the ping deadline. It touches only m_pingQueue (the
+	// xdg_wm_base proxy); every other proxy is dispatched on the UI thread.
+	while (!thread->stopped())
+	{
+		// Push out any pong queued by a previous iteration. When the UI thread
+		// is starved this is the only flush the compositor sees, so the pong
+		// must be flushed from here.
+		if (wl_display_flush(m_display) < 0 && errno != EAGAIN)
+			break;
+
+		// Register read intent on the ping queue. prepare_read requires the
+		// queue to be empty, so drain it first if it still holds events.
+		bool prepared = false;
+		while (!thread->stopped())
+		{
+			if (wl_display_prepare_read_queue(m_display, m_pingQueue) == 0)
+			{
+				prepared = true;
+				break;
+			}
+			if (wl_display_dispatch_queue_pending(m_display, m_pingQueue) < 0)
+				return;		// Display in error; give up (the UI loop reports it).
+		}
+		if (!prepared)
+			break;			// Stop requested while draining.
+
+		// Short timeout so the stop flag is re-checked roughly every 100 ms;
+		// wl_display_dispatch_queue() would block indefinitely and defeat clean
+		// shutdown. After a successful prepare_read we must always pair it with
+		// exactly one read_events()/cancel_read() or the UI thread's own reader
+		// would stall.
+		pollfd pfd = {};
+		pfd.fd = wl_display_get_fd(m_display);
+		pfd.events = POLLIN;
+
+		const int r = poll(&pfd, 1, 100);
+		if (r > 0 && (pfd.revents & POLLIN) != 0)
+		{
+			if (wl_display_read_events(m_display) < 0)
+				break;
+			if (wl_display_dispatch_queue_pending(m_display, m_pingQueue) < 0)
+				break;
+		}
+		else
+			wl_display_cancel_read(m_display);
+	}
+}
+
+xdg_surface* ContextWl::createXdgSurface(wl_surface* surface)
+{
+	xdg_surface* xdgSurface = xdg_wm_base_get_xdg_surface(m_xdgWmBase, surface);
+	// The new proxy inherited m_xdgWmBase's ping queue; move it (and thus the
+	// toplevel/popup created from it next) back to the default queue so its
+	// configure events are dispatched on the UI thread.
+	if (xdgSurface && m_pingQueue)
+		wl_proxy_set_queue((wl_proxy*)xdgSurface, nullptr);
+	return xdgSurface;
 }
 
 void ContextWl::bind(WidgetData* widget, int32_t eventType, const std::function< void(WlEvent& e) >& fn)
@@ -776,6 +885,11 @@ void ContextWl::registryGlobal(void* data, wl_registry* registry, uint32_t name,
 	{
 		ctx->m_xdgWmBase = static_cast< xdg_wm_base* >(wl_registry_bind(registry, name, &xdg_wm_base_interface, 1));
 		xdg_wm_base_add_listener(ctx->m_xdgWmBase, &s_xdgWmBaseListener, ctx);
+		// Route ping events to the dedicated queue so the watchdog thread can
+		// answer them independently of the UI event loop. Surfaces created from
+		// this wm_base are moved back to the default queue (see createXdgSurface).
+		if (ctx->m_pingQueue)
+			wl_proxy_set_queue((wl_proxy*)ctx->m_xdgWmBase, ctx->m_pingQueue);
 	}
 	else if (std::strcmp(interface, wl_seat_interface.name) == 0)
 	{

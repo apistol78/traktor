@@ -45,7 +45,7 @@ bool FormWl::create(IWidget* parent, const std::wstring& text, int width, int he
 	if (m_context->hasServerSideDecorations())
 	{
 		// SSD path — compositor provides title bar / close button.
-		m_data.xdgSurface = xdg_wm_base_get_xdg_surface(m_context->getXdgWmBase(), m_data.surface);
+		m_data.xdgSurface = m_context->createXdgSurface(m_data.surface);
 		xdg_surface_add_listener(m_data.xdgSurface, &s_toplevelXdgSurfaceListener, &m_listenerCtx);
 
 		m_data.xdgToplevel = xdg_surface_get_toplevel(m_data.xdgSurface);

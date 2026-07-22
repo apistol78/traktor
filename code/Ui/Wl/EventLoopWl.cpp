@@ -6,9 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <cerrno>
+#include <cstring>
 #include <poll.h>
 #include <libdecor.h>
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Ui/Application.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/IdleEvent.h"
@@ -62,6 +65,11 @@ bool EventLoopWl::process(EventSubject* owner)
 	// Dispatch newly-read events (again populates the context event queue).
 	wl_display_dispatch_pending(m_context->getDisplay());
 
+	// Bail out cleanly if the compositor dropped us or a protocol error occurred,
+	// rather than silently spinning forever on a dead display.
+	if (checkConnectionError())
+		return false;
+
 	// Dispatch libdecor events (decoration configure/close/commit).
 	if (m_context->getLibdecor())
 		libdecor_dispatch(m_context->getLibdecor(), 0);
@@ -113,6 +121,11 @@ int32_t EventLoopWl::execute(EventSubject* owner)
 		// Dispatch newly-read events.
 		wl_display_dispatch_pending(m_context->getDisplay());
 
+		// Bail out cleanly if the compositor dropped us or a protocol error
+		// occurred, rather than silently spinning forever on a dead display.
+		if (checkConnectionError())
+			break;
+
 		// Dispatch libdecor events.
 		if (m_context->getLibdecor())
 			libdecor_dispatch(m_context->getLibdecor(), 0);
@@ -142,6 +155,38 @@ int32_t EventLoopWl::execute(EventSubject* owner)
 	}
 
 	return m_exitCode;
+}
+
+bool EventLoopWl::checkConnectionError()
+{
+	if (m_terminated)
+		return true;
+
+	wl_display* display = m_context->getDisplay();
+	const int err = wl_display_get_error(display);
+	if (err == 0)
+		return false;
+
+	// A non-zero error is unrecoverable: the socket to the compositor is gone.
+	// libwayland turns every subsequent call into a no-op, so without this check
+	// the process would keep running with no window (the "ghost process" symptom)
+	// instead of exiting.
+	if (err == EPROTO)
+	{
+		const wl_interface* iface = nullptr;
+		uint32_t id = 0;
+		const uint32_t code = wl_display_get_protocol_error(display, &iface, &id);
+		log::error << L"Wayland connection lost: protocol error " << code
+			<< L" on interface '" << (iface ? mbstows(iface->name) : std::wstring(L"?"))
+			<< L"' (object " << id << L"). Terminating UI event loop." << Endl;
+	}
+	else
+		log::error << L"Wayland connection lost: " << mbstows(std::strerror(err))
+			<< L" (errno " << err << L"). Terminating UI event loop." << Endl;
+
+	m_exitCode = 1;
+	m_terminated = true;
+	return true;
 }
 
 void EventLoopWl::exit(int32_t exitCode)

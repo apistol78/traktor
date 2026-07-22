@@ -23,7 +23,10 @@
 #include "Ui/Wl/viewporter-client-protocol.h"
 
 struct xdg_wm_base;
+struct xdg_surface;
 struct zxdg_decoration_manager_v1;
+
+namespace traktor { class Thread; }
 
 namespace traktor::ui
 {
@@ -94,6 +97,15 @@ public:
 	//! Register a widget's render surface as an input alias so pointer
 	//! events on the render surface are routed to the owning widget.
 	void bindRenderSurface(WidgetData* widget);
+
+	//! Create an xdg_surface from the shared xdg_wm_base for the given wl_surface.
+	//! m_xdgWmBase lives on a dedicated ping queue (see watchdogThread) so its
+	//! ping events can be answered off the UI thread; because new proxies inherit
+	//! their factory's queue, this moves the surface (and hence any xdg_toplevel /
+	//! xdg_popup created from it) back to the default queue that the UI event loop
+	//! dispatches. All toplevel/popup creation must go through here, never call
+	//! xdg_wm_base_get_xdg_surface() directly.
+	xdg_surface* createXdgSurface(wl_surface* surface);
 
 	//! Push a popup onto the active popup stack (called from createPopup).
 	void pushPopup(WidgetData* widget);
@@ -274,6 +286,8 @@ private:
 	wl_cursor_theme* m_cursorTheme = nullptr;
 	wl_surface* m_cursorSurface = nullptr;
 	xdg_wm_base* m_xdgWmBase = nullptr;
+	wl_event_queue* m_pingQueue = nullptr;	//!< Dedicated queue carrying only xdg_wm_base ping events.
+	Thread* m_watchdogThread = nullptr;		//!< Answers compositor pings off the (possibly busy) UI thread.
 	libdecor* m_libdecor = nullptr;
 	zxdg_decoration_manager_v1* m_decorationManager = nullptr;
 	wl_data_device_manager* m_dataDeviceManager = nullptr;
@@ -323,6 +337,10 @@ private:
 	void dispatch(wl_surface* surface, int32_t eventType, bool always, WlEvent& e);
 
 	bool preTranslateEvent(EventSubject* owner, WlEvent& e);
+
+	//! Dedicated thread body: dispatches m_pingQueue so xdg_wm_base pings are
+	//! answered even while the UI thread is CPU-starved or busy in a long task.
+	void watchdogThread();
 
 public:
 	// Registry listener

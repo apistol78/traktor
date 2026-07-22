@@ -76,7 +76,7 @@ bool DialogWl::create(IWidget* parent, const std::wstring& text, int width, int 
 	if (!wantDecorations)
 	{
 		// Decoration-less dialog (e.g. splash screen).
-		m_data.xdgSurface = xdg_wm_base_get_xdg_surface(m_context->getXdgWmBase(), m_data.surface);
+		m_data.xdgSurface = m_context->createXdgSurface(m_data.surface);
 		xdg_surface_add_listener(m_data.xdgSurface, &s_toplevelXdgSurfaceListener, &m_listenerCtx);
 
 		WidgetData* parentData = (parent != nullptr) ? static_cast< WidgetData* >(parent->getInternalHandle()) : nullptr;
@@ -119,7 +119,7 @@ bool DialogWl::create(IWidget* parent, const std::wstring& text, int width, int 
 	else if (m_context->hasServerSideDecorations())
 	{
 		// SSD path.
-		m_data.xdgSurface = xdg_wm_base_get_xdg_surface(m_context->getXdgWmBase(), m_data.surface);
+		m_data.xdgSurface = m_context->createXdgSurface(m_data.surface);
 		xdg_surface_add_listener(m_data.xdgSurface, &s_toplevelXdgSurfaceListener, &m_listenerCtx);
 
 		m_data.xdgToplevel = xdg_surface_get_toplevel(m_data.xdgSurface);

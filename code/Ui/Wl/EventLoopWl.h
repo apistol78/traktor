@@ -52,6 +52,12 @@ private:
 	Timer m_timer;
 	bool m_terminated;
 	int32_t m_exitCode;
+
+	//! Check whether the Wayland connection has entered a fatal error state
+	//! (compositor disconnect or protocol error). Logs a diagnostic and marks
+	//! the loop terminated so we exit cleanly instead of spinning on a dead
+	//! display. Returns true when an error was detected.
+	bool checkConnectionError();
 };
 
 }
