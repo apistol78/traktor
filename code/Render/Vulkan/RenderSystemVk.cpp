@@ -244,6 +244,31 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	if ((result = vkCreateInstance(&instanceCreateInfo, 0, &m_instance)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan instance (" << getHumanResult(result) << L")." << Endl;
+		if (result == VK_ERROR_EXTENSION_NOT_PRESENT)
+		{
+			const auto isExtensionAvailable = [](const char* extensionName, const char* layerName) -> bool {
+				uint32_t availableCount = 0;
+				if (vkEnumerateInstanceExtensionProperties(layerName, &availableCount, nullptr) != VK_SUCCESS)
+					return false;
+				AlignedVector< VkExtensionProperties > available(availableCount);
+				if (vkEnumerateInstanceExtensionProperties(layerName, &availableCount, available.ptr()) != VK_SUCCESS)
+					return false;
+				for (const auto& ext : available)
+					if (strcmp(ext.extensionName, extensionName) == 0)
+						return true;
+				return false;
+			};
+			for (auto extension : extensions)
+			{
+				// An extension can be provided by the implementation (nullptr) or by any enabled layer.
+				bool found = isExtensionAvailable(extension, nullptr);
+				for (auto layer : validationLayers)
+					found |= isExtensionAvailable(extension, layer);
+
+				if (!found)
+					log::error << L"\t... requested Vulkan instance extension \"" << mbstows(extension) << L"\" is not available." << Endl;
+			}
+		}
 		return false;
 	}
 
