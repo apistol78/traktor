@@ -325,6 +325,7 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 {
 	Scalar k;
 	Scalar kIn, kOut;
+	Winding3 w;
 
 	const Aabb3 boundingBox(-m_worldExtent * 0.5_simd, m_worldExtent * 0.5_simd);
 	if (!boundingBox.intersectRay(worldRayOrigin, worldRayDirection, kIn, kOut))
@@ -333,6 +334,7 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 	bool foundIntersection = false;
 
 	outDistance = Scalar(std::numeric_limits< float >::max());
+	w.resize(3);
 
 	for (int32_t cz = 0; cz < m_size; cz += c_cellSize)
 	{
@@ -372,7 +374,10 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 						Vector4(x2w, yw[3], z2w, 1.0f)
 					};
 
-					if (Winding3(vw[0], vw[1], vw[2]).rayIntersection(worldRayOrigin, worldRayDirection, k))
+					w[0] = vw[0];
+					w[1] = vw[1];
+					w[2] = vw[2];
+					if (w.rayIntersection(worldRayOrigin, worldRayDirection, k))
 					{
 						if (k < outDistance)
 						{
@@ -381,7 +386,10 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 						}
 					}
 
-					if (Winding3(vw[1], vw[3], vw[2]).rayIntersection(worldRayOrigin, worldRayDirection, k))
+					w[0] = vw[1];
+					w[1] = vw[3];
+					w[2] = vw[2];
+					if (w.rayIntersection(worldRayOrigin, worldRayDirection, k))
 					{
 						if (k < outDistance)
 						{
