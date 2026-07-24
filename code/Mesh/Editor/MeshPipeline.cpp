@@ -56,6 +56,7 @@
 #include "Render/Editor/Shader/ParameterLinker.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphPreview.h"
+#include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "Render/Editor/Texture/TextureSet.h"
 #include "World/Editor/Material/MaterialShaderGenerator.h"
@@ -143,7 +144,7 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 61, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 63, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 	: m_promoteHalf(false)
@@ -473,6 +474,40 @@ bool MeshPipeline::buildOutput(
 			buildEmbeddedTexture(pipelineBuilder, m.getEmissiveMap(), false);
 			buildEmbeddedTexture(pipelineBuilder, m.getReflectiveMap(), false);
 			buildEmbeddedTexture(pipelineBuilder, m.getNormalMap(), true);
+		}
+	}
+
+	// Ensure alpha tested materials have their diffuse coverage mask available in memory;
+	// the mesh converters cut the ray tracing geometry to this mask. Embedded/file textures
+	// already carry an image, but externally referenced textures must be loaded here.
+	for (model::Material& m : modelMaterials)
+	{
+		if (m.getBlendOperator() != model::Material::BoAlphaTest)
+			continue;
+
+		model::Material::Map diffuseMap = m.getDiffuseMap();
+		if (diffuseMap.image != nullptr || diffuseMap.texture.isNull())
+			continue;
+
+		Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
+		if (!textureAsset)
+			continue;
+
+		const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + textureAsset->getFileName());
+		Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
+		if (!file)
+		{
+			log::warning << L"Mesh pipeline; unable to open coverage mask \"" << textureAsset->getFileName().getOriginal() << L"\" for alpha tested material \"" << m.getName() << L"\"; ray tracing geometry will not be cut." << Endl;
+			continue;
+		}
+
+		Ref< drawing::Image > image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
+		file->close();
+
+		if (image)
+		{
+			diffuseMap.image = image;
+			m.setDiffuseMap(diffuseMap);
 		}
 	}
 

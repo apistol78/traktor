@@ -14,6 +14,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Mesh/Editor/IndexRange.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
+#include "Mesh/Editor/RayTracingMeshGeometry.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshResource.h"
 #include "Model/Model.h"
@@ -37,6 +38,59 @@ namespace
 {
 
 const resource::Id< render::Shader > c_shaderUpdateSkin(L"{E520B46A-24BC-764C-A3E2-819DB57B7515}");
+
+/*! Write a single skinning vertex (6 x float4: position, normal, tangent, binormal, blend indices, blend weights).
+ *
+ * \a influences is the (joint, weight) list for the vertex; it is sorted in place, reduced to the four
+ * strongest joints and normalized before being written.
+ */
+void writeSkinVertex(
+	float*& aux,
+	const Vector4& position,
+	const Vector4& normal,
+	const Vector4& tangent,
+	const Vector4& binormal,
+	AlignedVector< std::pair< uint32_t, float > >& influences)
+{
+	std::sort(influences.begin(), influences.end(), [](const std::pair< uint32_t, float >& lh, const std::pair< uint32_t, float >& rh) {
+		return lh.second > rh.second;
+	});
+
+	const uint32_t jointCount = std::min< uint32_t >(4, (uint32_t)influences.size());
+
+	float totalInfluence = 0.0f;
+	for (uint32_t i = 0; i < jointCount; ++i)
+		totalInfluence += influences[i].second;
+
+	float blendIndices[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float blendWeights[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+	if (std::abs(totalInfluence) > FUZZY_EPSILON)
+	{
+		// Don't normalize single bone vertices; skinned with world.
+		if (jointCount <= 1)
+			totalInfluence = 1.0f;
+
+		for (uint32_t i = 0; i < jointCount; ++i)
+		{
+			blendIndices[i] = (float)influences[i].first;
+			blendWeights[i] = influences[i].second / totalInfluence;
+		}
+	}
+
+	position.storeUnaligned(aux);
+	aux += 4;
+	normal.storeUnaligned(aux);
+	aux += 4;
+	tangent.storeUnaligned(aux);
+	aux += 4;
+	binormal.storeUnaligned(aux);
+	aux += 4;
+	std::memcpy(aux, blendIndices, 4 * sizeof(float));
+	aux += 4;
+	std::memcpy(aux, blendWeights, 4 * sizeof(float));
+	aux += 4;
+}
 
 }
 
@@ -67,13 +121,29 @@ bool SkinnedMeshConverter::convert(
 	// Create render mesh.
 	const uint32_t vertexSize = render::getVertexSize(vertexElements);
 
-	const bool useLargeIndices = (bool)(model->getVertexCount() >= 65536);
+	const uint32_t modelVertexCount = (uint32_t)model->getVertices().size();
+	const uint32_t polygonCount = (uint32_t)model->getPolygons().size();
+
+	// Build ray tracing geometry; surfaces using alpha tested materials are cut and
+	// tessellated to their coverage mask so ray tracing shaders don't need to perform
+	// any alpha testing. Generated vertices are appended after the model's own vertices
+	// in the skinning buffer so they get deformed along with the rest of the mesh.
+	AlignedVector< resource::Id< render::ITexture > > albedoTextures;
+	RayTracingGeometry rtGeometry;
+	buildRayTracingGeometry(model, materialTechniqueMap, modelVertexCount, albedoTextures, rtGeometry);
+
+	const uint32_t rtVertexCount = (uint32_t)rtGeometry.extraVertexSources.size();
+	const uint32_t totalSkinVertexCount = modelVertexCount + rtVertexCount;
+
+	const bool useLargeIndices = (bool)(totalSkinVertexCount >= 65536);
 	const uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
 
-	const uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
-	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
-	const uint32_t auxBufferSize = (uint32_t)(model->getVertices().size() * (6 * 4 * sizeof(float)));
-	const uint32_t rtVertexAttributesSize = (uint32_t)(model->getPolygons().size() * 3 * sizeof(world::HWRT_Material));
+	// The raster vertex buffer only holds the model's own vertices; ray tracing reads
+	// deformed positions from the (larger) skinning buffer instead.
+	const uint32_t vertexBufferSize = modelVertexCount * vertexSize;
+	const uint32_t indexBufferSize = (polygonCount * 3 + (uint32_t)rtGeometry.indices.size()) * indexSize;
+	const uint32_t auxBufferSize = (uint32_t)(totalSkinVertexCount * (6 * 4 * sizeof(float)));
+	const uint32_t rtVertexAttributesSize = (uint32_t)rtGeometry.materials.size() * sizeof(world::HWRT_Material);
 
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
@@ -109,8 +179,8 @@ bool SkinnedMeshConverter::convert(
 			vertex += vertexSize;
 		}
 
-		// Gather joints and write weights to vertex.
-		uint32_t jointCount = model->getJointCount();
+		// Gather joint influences and write the skinning vertex.
+		const uint32_t jointCount = model->getJointCount();
 
 		jointInfluences.resize(0);
 		for (uint32_t i = 0; i < jointCount; ++i)
@@ -120,59 +190,58 @@ bool SkinnedMeshConverter::convert(
 				jointInfluences.push_back(std::make_pair(i, w));
 		}
 
-		std::sort(jointInfluences.begin(), jointInfluences.end(), [](const std::pair< int, float >& lh, const std::pair< int, float >& rh) {
-			return lh.second > rh.second;
-		});
+		const Vector4 position = model->getPosition(v.getPosition());
+		const Vector4 normal = (v.getNormal() != model::c_InvalidIndex) ? model->getNormal(v.getNormal()) : Vector4::zero();
+		const Vector4 tangent = (v.getTangent() != model::c_InvalidIndex) ? model->getNormal(v.getTangent()) : Vector4::zero();
+		const Vector4 binormal = (v.getBinormal() != model::c_InvalidIndex) ? model->getNormal(v.getBinormal()) : Vector4::zero();
 
-		jointCount = (uint32_t)jointInfluences.size();
-		jointCount = std::min< uint32_t >(4, jointCount);
+		writeSkinVertex(aux, position, normal, tangent, binormal, jointInfluences);
+	}
 
-		float totalInfluence = 0.0f;
-		for (uint32_t j = 0; j < jointCount; ++j)
-			totalInfluence += jointInfluences[j].second;
+	// Append skinning vertices generated by the ray tracing coverage clipping; their
+	// attributes are the barycentric blend of the originating triangle's vertices so
+	// they deform together with the surface.
+	{
+		const uint32_t jointCount = model->getJointCount();
 
-		float blendIndices[4], blendWeights[4];
-		if (std::abs(totalInfluence) > FUZZY_EPSILON)
+		AlignedVector< float > jointAccum;
+		jointAccum.resize(jointCount);
+
+		for (const auto& source : rtGeometry.extraVertexSources)
 		{
-			// Don't normalize single bone vertices; skinned with world.
-			if (jointCount <= 1)
-				totalInfluence = 1.0f;
+			Vector4 position = Vector4::zero();
+			Vector4 normal = Vector4::zero();
+			Vector4 tangent = Vector4::zero();
+			Vector4 binormal = Vector4::zero();
 
 			for (uint32_t i = 0; i < jointCount; ++i)
+				jointAccum[i] = 0.0f;
+
+			for (int32_t k = 0; k < 3; ++k)
 			{
-				blendIndices[i] = (float)jointInfluences[i].first;
-				blendWeights[i] = jointInfluences[i].second / totalInfluence;
+				const Scalar w(source.weights[k]);
+				const auto& sv = model->getVertex(source.vertices[k]);
+
+				position += model->getPosition(sv.getPosition()) * w;
+				if (sv.getNormal() != model::c_InvalidIndex)
+					normal += model->getNormal(sv.getNormal()) * w;
+				if (sv.getTangent() != model::c_InvalidIndex)
+					tangent += model->getNormal(sv.getTangent()) * w;
+				if (sv.getBinormal() != model::c_InvalidIndex)
+					binormal += model->getNormal(sv.getBinormal()) * w;
+
+				for (uint32_t i = 0; i < jointCount; ++i)
+					jointAccum[i] += source.weights[k] * sv.getJointInfluence(i);
 			}
 
-			for (uint32_t i = jointCount; i < 4; ++i)
-				blendIndices[i] =
-					blendWeights[i] = 0.0f;
-		}
-		else
-		{
-			for (uint32_t i = jointCount; i < 4; ++i)
-				blendIndices[i] =
-					blendWeights[i] = 0.0f;
-		}
+			jointInfluences.resize(0);
+			for (uint32_t i = 0; i < jointCount; ++i)
+			{
+				if (std::abs(jointAccum[i]) > FUZZY_EPSILON)
+					jointInfluences.push_back(std::make_pair(i, jointAccum[i]));
+			}
 
-		// Write aux data.
-		{
-			const Vector4 position = model->getPosition(v.getPosition());
-			const Vector4 normal = (v.getNormal() != model::c_InvalidIndex) ? model->getNormal(v.getNormal()) : Vector4::zero();
-			const Vector4 tangent = (v.getTangent() != model::c_InvalidIndex) ? model->getNormal(v.getTangent()) : Vector4::zero();
-			const Vector4 binormal = (v.getBinormal() != model::c_InvalidIndex) ? model->getNormal(v.getBinormal()) : Vector4::zero();
-			position.storeUnaligned(aux);
-			aux += 4;
-			normal.storeUnaligned(aux);
-			aux += 4;
-			tangent.storeUnaligned(aux);
-			aux += 4;
-			binormal.storeUnaligned(aux);
-			aux += 4;
-			std::memcpy(aux, blendIndices, 4 * sizeof(float));
-			aux += 4;
-			std::memcpy(aux, blendWeights, 4 * sizeof(float));
-			aux += 4;
+			writeSkinVertex(aux, position, normal, tangent, binormal, jointInfluences);
 		}
 	}
 
@@ -220,6 +289,18 @@ bool SkinnedMeshConverter::convert(
 		}
 	}
 
+	// Append ray tracing indices after the raster indices.
+	const uint32_t rtIndexOffset = (uint32_t)(index - indexFirst) / indexSize;
+	for (uint32_t i = 0; i < (uint32_t)rtGeometry.indices.size(); ++i)
+	{
+		if (useLargeIndices)
+			*(uint32_t*)index = rtGeometry.indices[i];
+		else
+			*(uint16_t*)index = (uint16_t)rtGeometry.indices[i];
+
+		index += indexSize;
+	}
+
 	mesh->getIndexBuffer()->unlock();
 
 	// Build parts.
@@ -260,80 +341,18 @@ bool SkinnedMeshConverter::convert(
 		}
 	}
 
-	// Add ray tracing part.
+	// Add ray tracing part; primitives reference the appended ray tracing index range,
+	// and the vertex attributes match the acceleration structure primitive order.
 	AlignedVector< render::RaytracingPrimitives > meshRaytracingPrimitives;
-	AlignedVector< resource::Id< render::ITexture > > albedoTextures;
+	meshRaytracingPrimitives.push_back() = { render::Primitives::setIndexed(
+		render::PrimitiveType::Triangles,
+		rtIndexOffset,
+		(uint32_t)rtGeometry.indices.size() / 3), true };
+
+	if (rtVertexAttributesSize > 0)
 	{
-		meshRaytracingPrimitives.push_back() = { render::Primitives::setIndexed(
-			render::PrimitiveType::Triangles,
-			0,
-			(uint32_t)model->getPolygons().size()), true };
-
 		world::HWRT_Material* vptr = (world::HWRT_Material*)mesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
-
-		for (const auto& mt : materialTechniqueMap)
-		{
-			const uint32_t materialId = model->findMaterial(mt.first);
-			if (materialId == model::c_InvalidIndex)
-				continue;
-
-			const auto& material = model->getMaterial(materialId);
-
-			// Look up index of albedo map, if map doesn't exist add a new reference.
-			int32_t albedoMapId = -1;
-			if (material.getDiffuseMap().texture.isNotNull())
-			{
-				const auto it = std::find(albedoTextures.begin(), albedoTextures.end(), resource::Id< render::ITexture >(material.getDiffuseMap().texture));
-				if (it != albedoTextures.end())
-					albedoMapId = (int32_t)std::distance(albedoTextures.begin(), it);
-				else
-				{
-					albedoMapId = (int32_t)albedoTextures.size();
-					albedoTextures.push_back(resource::Id< render::ITexture >(material.getDiffuseMap().texture));
-				}
-			}
-
-			for (const auto& polygon : model->getPolygonsByMaterial(materialId))
-			{
-				Vector4 albedo = material.getColor();
-				for (const auto& vertex : polygon.getVertices())
-				{
-					const uint32_t colorId = model->getVertex(vertex).getColor();
-					if (colorId != model::c_InvalidIndex)
-					{
-						albedo = model->getColor(colorId);
-						break;
-					}
-				}
-
-				for (uint32_t j = 0; j < 3; ++j)
-				{
-					const auto& vertex = model->getVertex(polygon.getVertex(j));
-
-					model->getNormal(vertex.getNormal()).storeUnaligned3(vptr->normal);
-
-					if (vertex.getColor() != model::c_InvalidIndex)
-						model->getColor(vertex.getColor()).storeUnaligned3(vptr->albedo);
-					else
-						albedo.storeUnaligned3(vptr->albedo);
-
-					vptr->emissive = material.getEmissive();
-
-					vptr->texCoord[0] = vptr->texCoord[1] = 0.0f;
-					if (vertex.getTexCoord(0) != model::c_InvalidIndex)
-					{
-						const Vector2 texCoord = model->getTexCoord(vertex.getTexCoord(0));
-						vptr->texCoord[0] = texCoord.x;
-						vptr->texCoord[1] = texCoord.y;
-					}
-
-					vptr->albedoMap = albedoMapId;
-
-					++vptr;
-				}
-			}
-		}
-
+		std::memcpy(vptr, rtGeometry.materials.c_ptr(), rtGeometry.materials.size() * sizeof(world::HWRT_Material));
 		mesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->unlock();
 	}
 

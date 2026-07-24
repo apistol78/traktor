@@ -14,6 +14,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Mesh/Editor/IndexRange.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
+#include "Mesh/Editor/RayTracingMeshGeometry.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshResource.h"
 #include "Model/Model.h"
@@ -67,13 +68,26 @@ bool InstanceMeshConverter::convert(
 	const uint32_t vertexSize = render::getVertexSize(vertexElements);
 	T_ASSERT(vertexSize > 0);
 
-	const bool useLargeIndices = (bool)(model->getVertexCount() >= 65536);
+	const uint32_t modelVertexCount = (uint32_t)model->getVertices().size();
+	const uint32_t polygonCount = (uint32_t)model->getPolygons().size();
+
+	// Build ray tracing geometry; surfaces using alpha tested materials are cut and
+	// tessellated to their coverage mask so ray tracing shaders don't need to perform
+	// any alpha testing. The generated geometry is appended after the raster geometry
+	// into the same vertex and index buffers.
+	AlignedVector< resource::Id< render::ITexture > > albedoTextures;
+	RayTracingGeometry rtGeometry;
+	buildRayTracingGeometry(model, materialTechniqueMap, modelVertexCount, albedoTextures, rtGeometry);
+
+	const uint32_t totalVertexCount = modelVertexCount + (uint32_t)rtGeometry.extraPositions.size();
+
+	const bool useLargeIndices = (bool)(totalVertexCount >= 65536);
 	const uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
 
 	// Create render mesh.
-	const uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
-	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
-	const uint32_t rtVertexAttributesSize = (uint32_t)(model->getPolygons().size() * 3 * sizeof(world::HWRT_Material));
+	const uint32_t vertexBufferSize = totalVertexCount * vertexSize;
+	const uint32_t indexBufferSize = (polygonCount * 3 + (uint32_t)rtGeometry.indices.size()) * indexSize;
+	const uint32_t rtVertexAttributesSize = (uint32_t)rtGeometry.materials.size() * sizeof(world::HWRT_Material);
 
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
@@ -102,6 +116,13 @@ bool InstanceMeshConverter::convert(
 		if (v.getTexCoord(1) != model::c_InvalidIndex)
 			writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 1, model->getTexCoord(v.getTexCoord(1)));
 
+		vertex += vertexSize;
+	}
+
+	// Append ray tracing vertices; only positions are needed to build the acceleration structure.
+	for (const auto& position : rtGeometry.extraPositions)
+	{
+		writeVertexData(vertexElements, vertex, render::DataUsage::Position, 0, position);
 		vertex += vertexSize;
 	}
 
@@ -148,6 +169,18 @@ bool InstanceMeshConverter::convert(
 		}
 	}
 
+	// Append ray tracing indices after the raster indices.
+	const uint32_t rtIndexOffset = (uint32_t)(index - indexFirst) / indexSize;
+	for (uint32_t i = 0; i < (uint32_t)rtGeometry.indices.size(); ++i)
+	{
+		if (useLargeIndices)
+			*(uint32_t*)index = rtGeometry.indices[i];
+		else
+			*(uint16_t*)index = (uint16_t)rtGeometry.indices[i];
+
+		index += indexSize;
+	}
+
 	renderMesh->getIndexBuffer()->unlock();
 
 	// Build parts.
@@ -188,80 +221,18 @@ bool InstanceMeshConverter::convert(
 		}
 	}
 
-	// Add ray tracing part.
+	// Add ray tracing part; primitives reference the appended ray tracing index range,
+	// and the vertex attributes match the acceleration structure primitive order.
 	AlignedVector< render::RaytracingPrimitives > meshRaytracingPrimitives;
-	AlignedVector< resource::Id< render::ITexture > > albedoTextures;
+	meshRaytracingPrimitives.push_back() = { render::Primitives::setIndexed(
+		render::PrimitiveType::Triangles,
+		rtIndexOffset,
+		(uint32_t)rtGeometry.indices.size() / 3), true };
+
+	if (rtVertexAttributesSize > 0)
 	{
-		meshRaytracingPrimitives.push_back() = { render::Primitives::setIndexed(
-			render::PrimitiveType::Triangles,
-			0,
-			(uint32_t)model->getPolygons().size()), true };
-
 		world::HWRT_Material* vptr = (world::HWRT_Material*)renderMesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->lock();
-
-		for (const auto& mt : materialTechniqueMap)
-		{
-			const uint32_t materialId = model->findMaterial(mt.first);
-			if (materialId == model::c_InvalidIndex)
-				continue;
-
-			const auto& material = model->getMaterial(materialId);
-
-			// Look up index of albedo map, if map doesn't exist add a new reference.
-			int32_t albedoMapId = -1;
-			if (material.getDiffuseMap().texture.isNotNull())
-			{
-				const auto it = std::find(albedoTextures.begin(), albedoTextures.end(), resource::Id< render::ITexture >(material.getDiffuseMap().texture));
-				if (it != albedoTextures.end())
-					albedoMapId = (int32_t)std::distance(albedoTextures.begin(), it);
-				else
-				{
-					albedoMapId = (int32_t)albedoTextures.size();
-					albedoTextures.push_back(resource::Id< render::ITexture >(material.getDiffuseMap().texture));
-				}
-			}
-
-			for (const auto& polygon : model->getPolygonsByMaterial(materialId))
-			{
-				Vector4 albedo = material.getColor();
-				for (const auto& vertex : polygon.getVertices())
-				{
-					const uint32_t colorId = model->getVertex(vertex).getColor();
-					if (colorId != model::c_InvalidIndex)
-					{
-						albedo = model->getColor(colorId);
-						break;
-					}
-				}
-
-				for (uint32_t j = 0; j < 3; ++j)
-				{
-					const auto& vertex = model->getVertex(polygon.getVertex(j));
-
-					model->getNormal(vertex.getNormal()).storeUnaligned3(vptr->normal);
-
-					if (vertex.getColor() != model::c_InvalidIndex)
-						model->getColor(vertex.getColor()).storeUnaligned3(vptr->albedo);
-					else
-						albedo.storeUnaligned3(vptr->albedo);
-
-					vptr->emissive = material.getEmissive();
-
-					vptr->texCoord[0] = vptr->texCoord[1] = 0.0f;
-					if (vertex.getTexCoord(0) != model::c_InvalidIndex)
-					{
-						const Vector2 texCoord = model->getTexCoord(vertex.getTexCoord(0));
-						vptr->texCoord[0] = texCoord.x;
-						vptr->texCoord[1] = texCoord.y;
-					}
-
-					vptr->albedoMap = albedoMapId;
-
-					++vptr;
-				}
-			}
-		}
-
+		std::memcpy(vptr, rtGeometry.materials.c_ptr(), rtGeometry.materials.size() * sizeof(world::HWRT_Material));
 		renderMesh->getAuxBuffer(IMesh::c_fccRayTracingVertexAttributes)->unlock();
 	}
 
