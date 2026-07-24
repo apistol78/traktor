@@ -16,6 +16,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/System/OS.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Timer/Timer.h"
@@ -622,6 +623,16 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 
 uint32_t PipelineBuilder::calculateInclusiveHash(const ISerializable* sourceAsset) const
 {
+	const uint32_t assetHash = DeepHash(sourceAsset).get();
+
+	// Check if asset already have been deeply hashed.
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_inclusiveHashCacheLock);
+		const auto it = m_inclusiveHashCache.find(assetHash);
+		if (it != m_inclusiveHashCache.end())
+			return it->second;
+	}
+
 	// Scan dependencies of source asset.
 	PipelineDependencySet dependencySet;
 	PipelineDependsIncremental pipelineDepends(m_pipelineFactory, m_sourceDatabase, m_outputDatabase, &dependencySet, m_pipelineDb, m_instanceCache);
@@ -629,7 +640,7 @@ uint32_t PipelineBuilder::calculateInclusiveHash(const ISerializable* sourceAsse
 	pipelineDepends.waitUntilFinished();
 
 	// Calculate hash of source and append hashes of all it's dependencies.
-	uint32_t hash = DeepHash(sourceAsset).get();
+	uint32_t hash = assetHash;
 	for (uint32_t i = 0; i < dependencySet.size(); ++i)
 	{
 		const PipelineDependency* dependency = dependencySet.get(i);
@@ -639,6 +650,11 @@ uint32_t PipelineBuilder::calculateInclusiveHash(const ISerializable* sourceAsse
 		hash += dependency->sourceAssetHash;
 		hash += dependency->sourceDataHash;
 		hash += dependency->filesHash;
+	}
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_inclusiveHashCacheLock);
+		m_inclusiveHashCache[assetHash] = hash;
 	}
 
 	return hash;

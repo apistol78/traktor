@@ -11,7 +11,9 @@
 #include <list>
 #include <map>
 #include <set>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Io/Path.h"
+#include "Core/Thread/Semaphore.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/PipelineTypes.h"
 
@@ -120,6 +122,8 @@ private:
 	const PipelineDependencySet* m_dependencySet;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
+	mutable Semaphore m_inclusiveHashCacheLock;
+	mutable SmallMap< uint32_t, uint32_t > m_inclusiveHashCache;
 	std::set< Guid > m_adHocBuilds;
 	RefArray< db::Instance > m_builtInstances;
 	AlignedVector< CacheKey > m_builtAdHocKeys;

@@ -556,6 +556,7 @@ bool BakeOperator::build(
 
 			// Resolve all external entities, initial seed is null since we don't want to modify entity ID on those
 			// entities which are inline in scene, only those referenced from an external entity should be re-assigned IDs.
+			pipelineBuilder->getProfiler()->begin(L"BakeOperator resolveExternal");
 			Ref< world::EntityData > flattenedLayer = checked_type_cast< world::EntityData* >(world::resolveExternal(
 				[&](const Guid& objectId) -> Ref< const ISerializable > {
 					return pipelineBuilder->getObjectReadOnly(objectId);
@@ -564,11 +565,13 @@ bool BakeOperator::build(
 				Guid::null,
 				nullptr
 			));
+			pipelineBuilder->getProfiler()->end();
 			if (!flattenedLayer)
 				return false;
 
 			// Collect all entities from layer which we will include in bake.
 			RefArray< world::EntityData > bakeEntityData;
+			pipelineBuilder->getProfiler()->begin(L"BakeOperator collect entities");
 			scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::Result
 			{
 				// Check if we should include entity.
@@ -604,10 +607,12 @@ bool BakeOperator::build(
 
 				return scene::Traverser::Result::Continue;
 			});
+			pipelineBuilder->getProfiler()->end();
 
 			log::info << L"Found " << bakeEntityData.size() << L" entities to include in bake from layer \"" << layer->getName() << L"\"." << Endl;
 
 			// Traverse and visit all entities in layer.
+			pipelineBuilder->getProfiler()->begin(L"BakeOperator build tracer world");
 			for (auto inoutEntityData : bakeEntityData)
 			{
 				// Add light source.
@@ -676,10 +681,12 @@ bool BakeOperator::build(
 						continue;
 
 					// Calculate hashes.
+					pipelineBuilder->getProfiler()->begin(L"BakeOperator calculate component hash");
 					uint32_t componentDataHash = 0;
 					for (auto cd : dependentComponentData)
 						componentDataHash += pipelineBuilder->calculateInclusiveHash(cd);
 					const uint32_t modelHash = configurationHash + componentDataHash;
+					pipelineBuilder->getProfiler()->end();
 
 					// Create models.
 					Ref< model::Model > visualModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
@@ -757,20 +764,24 @@ bool BakeOperator::build(
 						}
 					);
 
-					Ref< model::Model > collisionModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
-						Key(0x00000030, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
-						[&]() -> Ref< model::Model > {
-							pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
-							Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Collision);
-							pipelineBuilder->getProfiler()->end();
-							if (!model)
-								return nullptr;
+					Ref< model::Model > collisionModel;
+					if (configuration->getEnableLightmaps())
+					{
+						collisionModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
+							Key(0x00000030, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
+							[&]() -> Ref< model::Model > {
+								pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
+								Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Collision);
+								pipelineBuilder->getProfiler()->end();
+								if (!model)
+									return nullptr;
 
-							// Attach an unique ID for this mesh; since collision model is cached this will get reused automatically.
-							model->setProperty< PropertyString >(L"ID", Guid::create().format());
-							return model;
-						}
-					);
+								// Attach an unique ID for this mesh; since collision model is cached this will get reused automatically.
+								model->setProperty< PropertyString >(L"ID", Guid::create().format());
+								return model;
+							}
+						);
+					}
 
 					// Remove components from entity which was used to create the models.
 					inoutEntityData->removeComponent(componentData);
@@ -915,6 +926,7 @@ bool BakeOperator::build(
 					lightmapDiffuseId.permutate();
 				}
 			}
+			pipelineBuilder->getProfiler()->end();
 
 			// Replace with modified layer in output scene.
 			layers.push_back(flattenedLayer);
