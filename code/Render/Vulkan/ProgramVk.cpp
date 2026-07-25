@@ -104,7 +104,7 @@ ProgramVk::ProgramVk(Context* context, uint32_t& instances)
 
 ProgramVk::~ProgramVk()
 {
-	destroy();
+	teardown();
 	m_context->removeCleanupListener(this);
 	Atomic::decrement((int32_t&)m_instances);
 }
@@ -495,6 +495,14 @@ bool ProgramVk::validate(
 
 void ProgramVk::destroy()
 {
+	// Only relinquish ownership; the program is bound, and its descriptor sets
+	// validated, when a render context which references it is rendered. Teardown
+	// is performed by the destructor which runs once the retirement fence has
+	// been passed. \sa ResourceMorgue
+}
+
+void ProgramVk::teardown()
+{
 	for (uint32_t i = 0; i < 3; ++i)
 	{
 		if (m_uniformBuffers[i].range.ptr)
@@ -507,7 +515,7 @@ void ProgramVk::destroy()
 			[descriptorSet = it.second](Context* cx) {
 			vkFreeDescriptorSets(cx->getLogicalDevice(), cx->getDescriptorPool(), 1, &descriptorSet);
 		},
-			Context::CleanupNeedFlushGPU);
+			Context::CleanupNone);
 	m_descriptorSets.clear();
 
 	m_vertexShaderModule = 0;

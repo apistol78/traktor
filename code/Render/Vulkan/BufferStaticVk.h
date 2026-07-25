@@ -43,6 +43,8 @@ public:
 	const ApiBuffer* getApiBuffer() const { return m_buffer; }
 
 private:
+	void teardown();
+
 	Ref< ApiBuffer > m_buffer;
 	Ref< ApiBuffer > m_stageBuffer;
 	BufferViewVk m_bufferView;

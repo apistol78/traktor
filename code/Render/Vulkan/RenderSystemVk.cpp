@@ -18,6 +18,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
+#include "Render/ResourceMorgue.h"
 #include "Render/VertexElement.h"
 #include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferDynamicVk.h"
@@ -681,6 +682,10 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 void RenderSystemVk::destroy()
 {
+	// All views are gone by now so nothing can advance the fence any more; drain
+	// whatever is still retired before the device is torn down.
+	ResourceMorgue::getInstance().flush();
+
 	m_shaderModuleCache = nullptr;
 	m_pipelineLayoutCache = nullptr;
 	m_context = nullptr;

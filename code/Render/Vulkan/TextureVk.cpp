@@ -37,7 +37,7 @@ TextureVk::TextureVk(Context* context, uint32_t& instances)
 
 TextureVk::~TextureVk()
 {
-	destroy();
+	teardown();
 	Atomic::decrement((int32_t&)m_instances);
 }
 
@@ -384,6 +384,14 @@ bool TextureVk::create(
 }
 
 void TextureVk::destroy()
+{
+	// Only relinquish ownership; the image is still resolved by ProgramVk when a
+	// render context which references this texture is rendered. Teardown is
+	// performed by the destructor which runs once the retirement fence has been
+	// passed. \sa ResourceMorgue
+}
+
+void TextureVk::teardown()
 {
 	safeDestroy(m_stagingBuffer);
 	safeDestroy(m_textureImage);

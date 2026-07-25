@@ -45,7 +45,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.AccelerationStructureVk", AccelerationSt
 
 AccelerationStructureVk::~AccelerationStructureVk()
 {
-	destroy();
+	teardown();
 }
 
 Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* context, uint32_t numInstances, uint32_t inFlightCount)
@@ -199,6 +199,14 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 
 void AccelerationStructureVk::destroy()
 {
+	// Only relinquish ownership; the structure is still bound by render blocks in
+	// contexts which have not yet been rendered. Teardown is performed by the
+	// destructor which runs once the retirement fence has been passed.
+	// \sa ResourceMorgue
+}
+
+void AccelerationStructureVk::teardown()
+{
 	if (m_context != nullptr)
 	{
 		for (VkAccelerationStructureKHR as : m_as)
@@ -209,7 +217,7 @@ void AccelerationStructureVk::destroy()
 				[as](Context* cx) {
 				vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr);
 				},
-				Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
+				Context::CleanupFreeDescriptorSets);
 		}
 	}
 	m_as.clear();
@@ -437,7 +445,7 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 			[as = m_as[slot]](Context* cx) {
 			vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr);
 			},
-			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
+			Context::CleanupFreeDescriptorSets);
 		m_as[slot] = 0;
 	}
 

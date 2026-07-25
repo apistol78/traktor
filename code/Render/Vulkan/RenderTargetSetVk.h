@@ -103,6 +103,8 @@ private:
 	Ref< RenderTargetDepthVk > m_depthTarget;
 	SmallMap< VkRenderPass, CachedFrameBuffer > m_frameBuffers;
 	bool m_depthTargetShared = false;
+
+	void teardown();
 };
 
 }

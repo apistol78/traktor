@@ -17,6 +17,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/ResourceMorgue.h"
 #include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
@@ -77,12 +78,17 @@ RenderViewVk::RenderViewVk(Context* context)
 	: m_context(context)
 {
 	m_context->incrementViews();
+	ResourceMorgue::getInstance().addView();
 }
 
 RenderViewVk::~RenderViewVk()
 {
 	close();
+
+	// Drop the view from the context first; whatever the final drain releases can
+	// then be cleaned up right away instead of waiting for a view which is gone.
 	m_context->decrementViews();
+	ResourceMorgue::getInstance().removeView();
 }
 
 bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
@@ -300,8 +306,10 @@ void RenderViewVk::close()
 	vkDeviceWaitIdle(m_context->getLogicalDevice());
 
 	// Ensure any pending cleanups are performed before closing render view.
+	// Rendering is idle so retired resources can be destroyed right away.
 	m_context->savePipelineCache();
-	m_context->performCleanup();
+	ResourceMorgue::getInstance().flush();
+	m_context->performCleanupAll();
 	m_lost = true;
 
 	// Ensure event queue doesn't contain stale events.
@@ -337,7 +345,8 @@ void RenderViewVk::close()
 	}
 
 	// More pending cleanups since frames own render targets.
-	m_context->performCleanup();
+	ResourceMorgue::getInstance().flush();
+	m_context->performCleanupAll();
 
 #if defined(T_USE_QUERY)
 	if (m_queryPool != 0)
@@ -453,8 +462,10 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 		}
 	}
 
-	// Frames hold render-target references that need to drain via the deferred cleanup queue.
-	m_context->performCleanup();
+	// Frames hold render-target references that need to drain via the retirement
+	// and deferred cleanup queues; rendering is idle so both can run right away.
+	ResourceMorgue::getInstance().flush();
+	m_context->performCleanupAll();
 	m_counter = -1;
 
 	if (create(width, height, m_multiSample, m_multiSampleShading, m_vblanks, m_allowHDR))
@@ -593,6 +604,12 @@ bool RenderViewVk::beginFrame()
 	// Might reach here with a non-created instance (pending reset); ensure we have an instance first.
 	if (m_lost)
 		return false;
+
+	// Advance the retirement fence; resources released a couple of frames ago are
+	// destroyed here, from the thread which consumes the render contexts. Done
+	// before anything else so the GPU objects they in turn release are picked up
+	// by the deferred cleanup at endFrame.
+	ResourceMorgue::getInstance().advance();
 
 	// Do this first so we remember, count number of frames.
 	m_counter++;
@@ -798,7 +815,8 @@ void RenderViewVk::present()
 		return;
 	}
 
-	// Cleanup destroyed resources.
+	// Cleanup destroyed resources whose submissions the GPU has consumed; the rest
+	// are held back until a later frame rather than stalling the device here.
 	m_context->performCleanup();
 
 	// Recycle uniform buffers.
@@ -2045,6 +2063,11 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 				vkDestroySemaphore(m_context->getLogicalDevice(), frame.computeFinishedSemaphore, nullptr);
 		}
 		m_frames.clear();
+
+		// Primary targets wrap swap chain images; their views must be gone before
+		// the old swap chain is. Rendering is idle here so drain immediately.
+		ResourceMorgue::getInstance().flush();
+		m_context->performCleanupAll();
 
 #if defined(T_USE_QUERY)
 		if (m_queryPool != 0)

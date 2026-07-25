@@ -25,7 +25,7 @@ BufferStaticVk::BufferStaticVk(Context* context, uint32_t bufferSize, uint32_t& 
 
 BufferStaticVk::~BufferStaticVk()
 {
-	destroy();
+	teardown();
 }
 
 bool BufferStaticVk::create(uint32_t usageBits)
@@ -44,6 +44,14 @@ bool BufferStaticVk::create(uint32_t usageBits)
 }
 
 void BufferStaticVk::destroy()
+{
+	// Only relinquish ownership; the buffer view handed out to render blocks has
+	// to stay valid until every context which might reference it has been
+	// rendered. Teardown is performed by the destructor which runs once the
+	// retirement fence has been passed. \sa ResourceMorgue
+}
+
+void BufferStaticVk::teardown()
 {
 	safeDestroy(m_buffer);
 	safeDestroy(m_stageBuffer);

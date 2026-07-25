@@ -30,7 +30,7 @@ RenderTargetVk::RenderTargetVk(Context* context)
 
 RenderTargetVk::~RenderTargetVk()
 {
-	destroy();
+	teardown();
 }
 
 bool RenderTargetVk::createPrimary(
@@ -130,6 +130,12 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 }
 
 void RenderTargetVk::destroy()
+{
+	// Only relinquish ownership; teardown is performed by the destructor which
+	// runs once the retirement fence has been passed. \sa ResourceMorgue
+}
+
+void RenderTargetVk::teardown()
 {
 	safeDestroy(m_imageTarget);
 	safeDestroy(m_imageResolved);

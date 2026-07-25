@@ -39,6 +39,8 @@ public:
 	virtual const IBufferView* getBufferView() const override final;
 
 private:
+	void teardown();
+
 	Ref< ApiBuffer > m_buffer;
 	BufferViewVk* m_bufferViews = nullptr;
 	uint32_t m_inFlightCount = 0;

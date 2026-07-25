@@ -77,12 +77,15 @@ bool CommandBuffer::submit(const StaticVector< VkSemaphore, 2 >& waitSemaphores,
 		si.pSignalSemaphores = &signalSemaphore;
 	}
 
+	const uint64_t epoch = m_context->beginSubmission(m_inFlight);
 	if ((result = m_queue->submit(si, m_inFlight)) != VK_SUCCESS)
 	{
+		m_context->endSubmission(epoch);
 		log::error << L"Unable to submit command buffer, \"" << getHumanResult(result) << L"\"." << Endl;
 		return false;
 	}
 
+	m_epoch = epoch;
 	m_submitted = true;
 	return true;
 }
@@ -110,12 +113,15 @@ bool CommandBuffer::submitSignal(VkSemaphore semaphore, uint64_t semaphoreValue)
 		.pSignalSemaphores = &semaphore
 	};
 
+	const uint64_t epoch = m_context->beginSubmission(m_inFlight);
 	if ((result = m_queue->submit(submitInfo, m_inFlight)) != VK_SUCCESS)
 	{
+		m_context->endSubmission(epoch);
 		log::error << L"Unable to submit command buffer, \"" << getHumanResult(result) << L"\"." << Endl;
 		return false;
 	}
 
+	m_epoch = epoch;
 	m_submitted = true;
 	return true;
 }
@@ -144,12 +150,15 @@ bool CommandBuffer::submitWait(VkSemaphore semaphore, uint64_t semaphoreValue, V
 		.pCommandBuffers = &m_commandBuffer
 	};
 
+	const uint64_t epoch = m_context->beginSubmission(m_inFlight);
 	if ((result = m_queue->submit(submitInfo, m_inFlight)) != VK_SUCCESS)
 	{
+		m_context->endSubmission(epoch);
 		log::error << L"Unable to submit command buffer, \"" << getHumanResult(result) << L"\"." << Endl;
 		return false;
 	}
 
+	m_epoch = epoch;
 	m_submitted = true;
 	return true;
 }
@@ -162,6 +171,7 @@ bool CommandBuffer::wait()
 	const bool result = (vkWaitForFences(m_context->getLogicalDevice(), 1, &m_inFlight, VK_TRUE, UINT64_MAX) == VK_SUCCESS);
 	vkResetFences(m_context->getLogicalDevice(), 1, &m_inFlight);
 
+	m_context->endSubmission(m_epoch);
 	m_submitted = false;
 	return result;
 }
@@ -180,6 +190,7 @@ void CommandBuffer::externalSynced()
 	if (m_submitted)
 	{
 		vkResetFences(m_context->getLogicalDevice(), 1, &m_inFlight);
+		m_context->endSubmission(m_epoch);
 		m_submitted = false;
 	}
 }

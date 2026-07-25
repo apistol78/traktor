@@ -27,6 +27,7 @@
 #include "Render/Vulkan/RenderTargetSetVk.h"
 #include "Render/Vulkan/VertexLayoutVk.h"
 
+#include <algorithm>
 #include <cstring>
 #include <sstream>
 #include <string>
@@ -249,10 +250,15 @@ void Context::decrementViews()
 
 void Context::addDeferredCleanup(const cleanup_fn_t& fn, uint32_t cleanupFlags)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
-	m_cleanupFns.push_back({ fn, cleanupFlags });
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
+
+		// The resource is being destroyed thus nothing can record new work with it;
+		// only the submissions already issued have to be waited for.
+		m_cleanupFns.push_back({ fn, cleanupFlags, m_nextSubmissionEpoch - 1 });
+	}
 	if (m_views <= 0)
-		performCleanup();
+		performCleanupAll();
 }
 
 void Context::addCleanupListener(ICleanupListener* cleanupListener)
@@ -274,6 +280,10 @@ void Context::performCleanup()
 	if (m_cleanupFns.empty())
 		return;
 
+	// Read before taking the locks; should further submissions be issued in the
+	// meantime this is merely conservative, never premature.
+	const uint64_t completedEpoch = getCompletedEpoch();
+
 	{
 		T_PROFILER_SCOPE(L"Context::performCleanup");
 
@@ -281,7 +291,56 @@ void Context::performCleanup()
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_computeQueue->m_lock);
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
 
-		bool gpuIdle = false;
+		bool freeDescriptors = false;
+		for (;;)
+		{
+			// Take over vector in case more resources are added for cleanup from callbacks.
+			AlignedVector< DeferredCleanup > cleanupFns;
+			cleanupFns.swap(m_cleanupFns);
+
+			bool performed = false;
+			for (const DeferredCleanup& cleanupFn : cleanupFns)
+			{
+				// Submissions which might still be reading the resource have not been
+				// consumed yet; retain the cleanup for a later frame.
+				if (cleanupFn.waitEpoch > completedEpoch)
+				{
+					m_cleanupFns.push_back(cleanupFn);
+					continue;
+				}
+
+				freeDescriptors |= (bool)((cleanupFn.flags & CleanupFreeDescriptorSets) != 0);
+				cleanupFn.fn(this);
+				performed = true;
+			}
+
+			if (!performed)
+				break;
+		}
+
+		// Only call cleanup listeners to free descriptors.
+		if (freeDescriptors)
+			for (auto cleanupListener : m_cleanupListeners)
+				cleanupListener->postCleanup();
+	}
+}
+
+void Context::performCleanupAll()
+{
+	if (m_cleanupFns.empty())
+		return;
+
+	{
+		T_PROFILER_SCOPE(L"Context::performCleanupAll");
+
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_graphicsQueue->m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_computeQueue->m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
+
+		// Caller needs every resource gone when we return, so wait the device out
+		// instead of waiting for the submissions each cleanup is held back by.
+		vkDeviceWaitIdle(m_logicalDevice);
+
 		bool freeDescriptors = false;
 		while (!m_cleanupFns.empty())
 		{
@@ -289,14 +348,8 @@ void Context::performCleanup()
 			AlignedVector< DeferredCleanup > cleanupFns;
 			cleanupFns.swap(m_cleanupFns);
 
-			// Invoke cleanups, flush GPU if necessary.
 			for (const DeferredCleanup& cleanupFn : cleanupFns)
 			{
-				if (!gpuIdle && (cleanupFn.flags & CleanupNeedFlushGPU) != 0)
-				{
-					vkDeviceWaitIdle(m_logicalDevice);
-					gpuIdle = true;
-				}
 				freeDescriptors |= (bool)((cleanupFn.flags & CleanupFreeDescriptorSets) != 0);
 				cleanupFn.fn(this);
 			}
@@ -307,6 +360,49 @@ void Context::performCleanup()
 			for (auto cleanupListener : m_cleanupListeners)
 				cleanupListener->postCleanup();
 	}
+}
+
+uint64_t Context::beginSubmission(VkFence fence)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_submissionLock);
+	const uint64_t epoch = m_nextSubmissionEpoch++;
+	m_inFlightSubmissions.push_back({ epoch, fence });
+	return epoch;
+}
+
+void Context::endSubmission(uint64_t epoch)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_submissionLock);
+	for (auto it = m_inFlightSubmissions.begin(); it != m_inFlightSubmissions.end(); ++it)
+	{
+		if (it->epoch == epoch)
+		{
+			m_inFlightSubmissions.erase(it);
+			break;
+		}
+	}
+}
+
+uint64_t Context::getCompletedEpoch()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_submissionLock);
+
+	// Retire signalled submissions from the front. A view which stops rendering
+	// never gets around to waiting on its last command buffer, and that must not
+	// hold every cleanup back for as long as it stays idle.
+	while (!m_inFlightSubmissions.empty())
+	{
+		if (vkGetFenceStatus(m_logicalDevice, m_inFlightSubmissions.front().fence) != VK_SUCCESS)
+			break;
+		m_inFlightSubmissions.erase(m_inFlightSubmissions.begin());
+	}
+
+	// Epochs are handed out, and appended, in increasing order so the front is the
+	// oldest submission still in flight; everything before it has been consumed.
+	if (!m_inFlightSubmissions.empty())
+		return m_inFlightSubmissions.front().epoch - 1;
+	else
+		return m_nextSubmissionEpoch - 1;
 }
 
 void Context::addDeferredUpload(const upload_fn_t& fn)

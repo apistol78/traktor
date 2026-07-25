@@ -497,14 +497,14 @@ void Image::destroy()
 			[image = m_image, allocation = m_allocation](Context* cx) {
 			vmaDestroyImage(cx->getAllocator(), image, allocation);
 			},
-			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
+			Context::CleanupFreeDescriptorSets);
 
 	if (m_imageView != 0)
 		m_context->addDeferredCleanup(
 			[imageView = m_imageView](Context* cx) {
 			vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
 			},
-			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
+			Context::CleanupFreeDescriptorSets);
 
 	if (!m_storageImageViews.empty())
 	{
@@ -517,7 +517,7 @@ void Image::destroy()
 				[imageView = storageImageView](Context* cx) {
 				vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
 				},
-				Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
+				Context::CleanupFreeDescriptorSets);
 		}
 	}
 
@@ -529,7 +529,7 @@ void Image::destroy()
 			if (storageResourceIndex != ~0U)
 				cx->freeStorageResourceIndex(storageResourceIndex, span);
 			},
-			Context::CleanupNeedFlushGPU | Context::CleanupFreeDescriptorSets);
+			Context::CleanupFreeDescriptorSets);
 
 	m_allocation = 0;
 	m_image = 0;

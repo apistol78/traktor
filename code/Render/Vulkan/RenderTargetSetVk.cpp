@@ -35,7 +35,7 @@ RenderTargetSetVk::RenderTargetSetVk(Context* context, uint32_t& instances)
 
 RenderTargetSetVk::~RenderTargetSetVk()
 {
-	destroy();
+	teardown();
 	Atomic::decrement((int32_t&)m_instances);
 }
 
@@ -106,19 +106,19 @@ bool RenderTargetSetVk::create(
 
 void RenderTargetSetVk::destroy()
 {
-	// Destroy color target textures.
-	for (auto colorTarget : m_colorTargets)
-	{
-		if (colorTarget)
-			colorTarget->destroy();
-	}
-	m_colorTargets.resize(0);
+	// Only relinquish ownership; the targets are still bound by render blocks in
+	// contexts which have not yet been rendered. Teardown is performed by the
+	// destructor which runs once the retirement fence has been passed, and the
+	// targets are in turn retired when this set releases them.
+	// \sa ResourceMorgue
+}
 
-	// Only destroy depth target texture if not being shared, else just release reference.
-	if (!m_depthTargetShared)
-		safeDestroy(m_depthTarget);
-	else
-		m_depthTarget = nullptr;
+void RenderTargetSetVk::teardown()
+{
+	// Releasing is enough; a shared depth target stays alive until the set which
+	// owns it is retired as well.
+	m_colorTargets.resize(0);
+	m_depthTarget = nullptr;
 }
 
 int32_t RenderTargetSetVk::getWidth() const
@@ -180,7 +180,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 			[staleFrameBuffer](Context* ctx) {
 				vkDestroyFramebuffer(ctx->getLogicalDevice(), staleFrameBuffer, nullptr);
 			},
-			Context::CleanupNeedFlushGPU
+			Context::CleanupNone
 		);
 		cachedFrameBuffer.frameBuffer = 0;
 	}

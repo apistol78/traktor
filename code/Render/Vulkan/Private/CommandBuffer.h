@@ -62,6 +62,7 @@ private:
 	VkCommandBuffer m_commandBuffer = 0;
 	VkFence m_inFlight = 0;
 	Thread* m_thread = nullptr;
+	uint64_t m_epoch = 0;	//!< Submission epoch, valid while submitted; \sa Context::beginSubmission.
 	bool m_submitted = false;
 
 	explicit CommandBuffer(Context* context, Queue* queue, VkCommandPool commandPool, VkCommandBuffer commandBuffer);

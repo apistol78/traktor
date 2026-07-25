@@ -64,6 +64,8 @@ public:
 	Image* getImage() const { return m_textureImage; }
 
 private:
+	void teardown();
+
 	Context* m_context = nullptr;
 	uint32_t& m_instances;
 	Ref< ApiBuffer > m_stagingBuffer;

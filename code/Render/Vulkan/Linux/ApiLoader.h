@@ -39,6 +39,7 @@ extern PFN_vkEndCommandBuffer vkEndCommandBuffer;
 extern PFN_vkQueueSubmit vkQueueSubmit;
 extern PFN_vkWaitForFences vkWaitForFences;
 extern PFN_vkResetFences vkResetFences;
+extern PFN_vkGetFenceStatus vkGetFenceStatus;
 extern PFN_vkResetCommandBuffer vkResetCommandBuffer;
 extern PFN_vkCreateImageView vkCreateImageView;
 extern PFN_vkDestroyImageView vkDestroyImageView;

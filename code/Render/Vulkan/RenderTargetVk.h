@@ -85,6 +85,8 @@ private:
 	int32_t m_width = 0;
 	int32_t m_height = 0;
 
+	void teardown();
+
 	void prepareAsTarget(CommandBuffer* commandBuffer);
 
 	void prepareAsTexture(CommandBuffer* commandBuffer);

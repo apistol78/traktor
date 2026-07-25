@@ -62,6 +62,9 @@ protected:
 	bool m_dynamic = false;
 
 	explicit AccelerationStructureVk(Context* context, bool dynamic);
+
+private:
+	void teardown();
 };
 
 }

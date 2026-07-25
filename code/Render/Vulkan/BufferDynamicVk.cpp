@@ -22,7 +22,7 @@ BufferDynamicVk::BufferDynamicVk(Context* context, uint32_t bufferSize, uint32_t
 
 BufferDynamicVk::~BufferDynamicVk()
 {
-	destroy();
+	teardown();
 }
 
 bool BufferDynamicVk::create(uint32_t usageBits, int32_t inFlightCount)
@@ -63,6 +63,14 @@ bool BufferDynamicVk::create(uint32_t usageBits, int32_t inFlightCount)
 }
 
 void BufferDynamicVk::destroy()
+{
+	// Only relinquish ownership; the buffer views handed out to render blocks
+	// have to stay valid until every context which might reference them has been
+	// rendered. Teardown is performed by the destructor which runs once the
+	// retirement fence has been passed. \sa ResourceMorgue
+}
+
+void BufferDynamicVk::teardown()
 {
 	if (m_bufferViews)
 	{

@@ -29,7 +29,7 @@ RenderTargetDepthVk::RenderTargetDepthVk(Context* context)
 
 RenderTargetDepthVk::~RenderTargetDepthVk()
 {
-	destroy();
+	teardown();
 }
 
 bool RenderTargetDepthVk::createPrimary(
@@ -122,6 +122,12 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 }
 
 void RenderTargetDepthVk::destroy()
+{
+	// Only relinquish ownership; teardown is performed by the destructor which
+	// runs once the retirement fence has been passed. \sa ResourceMorgue
+}
+
+void RenderTargetDepthVk::teardown()
 {
 	safeDestroy(m_image);
 	m_context = nullptr;

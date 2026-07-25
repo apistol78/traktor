@@ -181,6 +181,8 @@ private:
 
 	bool validateDescriptorSet();
 
+	void teardown();
+
 	virtual void postCleanup() override final;
 };
 
