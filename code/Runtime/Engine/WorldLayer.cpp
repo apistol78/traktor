@@ -93,6 +93,16 @@ void WorldLayer::transition(Layer* fromLayer)
 
 		// Also need to ensure scene change doesn't reset world renderer.
 		m_scene.consume();
+
+		// Consuming the scene change also skips preUpdate's initial camera acquisition,
+		// since that happens inside its m_scene.changed() branch. Left alone this layer
+		// would never get a camera at all: postUpdate would sample no transform, preSetup
+		// would never update the view, and the render view inherited just above would stay
+		// frozen where the outgoing camera left it. So carry the camera binding across as
+		// well; preUpdate resolves the entity from this id against our own world. Carrying
+		// the id rather than re-looking up "Camera0" keeps an explicit setCamera intact.
+		if (m_cameraEntityId.isNull())
+			m_cameraEntityId = fromWorldLayer->m_cameraEntityId;
 	}
 }
 
