@@ -17,7 +17,7 @@ Build on-screen UI (HUD labels, buttons, modal menus) from a LUA `Stage` using U
 
 ## Layouts
 - `TableLayout(cdef, rdef, hmargin, vmargin, hpad, vpad)` — `cdef`/`rdef` are arrays: **`0` = auto** (use child preferred size), **`>0` = proportional weight**. Children fill cells row-major.
-  - One full-weight cell `TableLayout({100},{100},…)` + a `Static` with `ALIGN_CENTER` = a centered banner (the game-over pattern).
+  - One full-weight cell `TableLayout({100},{100},…)` + a `Static` with `ALIGN_CENTER` = a banner centered in its parent. (A game-over screen is *not* this: it is a `Dialog` in the HUD frame — see Gotchas below.)
   - One column, N auto rows `TableLayout({0},{0,0},…)` = a vertical stack (e.g. title over button).
 - `StackLayout(margin, pad)` lays children **horizontally**.
 
@@ -35,8 +35,10 @@ Build on-screen UI (HUD labels, buttons, modal menus) from a LUA `Stage` using U
 - While paused, **early-return from `Stage:update`** to freeze gameplay; have each `ScriptComponent` bail on `context._paused` too (it receives the Stage as `context`).
 
 ## Gotchas (hard-won)
+- **Exactly ONE `Frame` per `Stage`; parent every `Dialog` to it.** A second `Frame` under `self.ui.root` gets a **silently dead** widget tree — its buttons never fire, with no error and nothing in the log. `Frame` is constructed with `parent = nil`, so each one is its own tree, but the stale-mask flag `Widget._eventMaskDirty` is **global** while `Widget:_dispatchEvent` refreshes only `self:getAncestor():_updateEventFilter()` before clearing it. Whichever tree dispatches first (the always-visible HUD) refreshes itself and clears the shared flag, so every other tree keeps its initial `_eventFilter = 0x00000000` and fails the `(self._eventFilter & eventType.mask)` test for every event forever. Symptom signature: the menu under the HUD frame works, a menu in its own frame is inert. A second `Frame` buys nothing anyway — see the `Dialog` note below.
 - **The UI ticks on its own `enterFrame`, independent of `Stage:update`.** So a paused Stage that early-returns still has a fully live, clickable menu — you do **not** need to keep updating from script to make the button work.
-- A `Dialog` needs a parent **Widget with a placement** (a `Frame`) to center against — parent it to your HUD frame, not the raw `root`.
+- A `Dialog` needs a parent **Widget with a placement** (a `Frame`) to center against — parent it to your HUD frame, not the raw `root`. Since it is `FLOAT` and auto-centers on its ancestor, a full-screen banner + menu belongs in the HUD frame; it needs no frame of its own.
+- A `Dialog` is **already hidden** when constructed (`Dialog:_initialize` ends in `setVisible(false)`), so building one hidden in `new` needs no explicit `:hide()`.
 - `Widget.initialize` must run before constructing any widget, or resources won't resolve.
 - Clean up in `Stage:finalize`: `:remove()` the dialog/frame.
 - For script idioms (namespace `import`, lifecycle, `self.environment`) see *traktor-lua-scripting*.
