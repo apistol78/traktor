@@ -34,7 +34,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 16, AnimationPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 17, AnimationPipeline, editor::IPipeline)
 
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -168,12 +168,22 @@ bool AnimationPipeline::buildOutput(
 
 	Ref< Animation > anim = new Animation();
 
+	// Optionally cut the take short; key frames later than the maximum duration are
+	// discarded. Measured from the take's first key frame, so takes which do not start
+	// at zero are cut after the same amount of animation. A maximum duration of zero
+	// means no limit; the first key frame is always kept.
+	const float maxDuration = animationAsset->getMaxDuration();
+	const float takeAt = (ma->getKeyFrameCount() > 0) ? ma->getKeyFrameTime(0) : 0.0f;
+
 	// Generate key poses; retarget animations onto skeleton mesh.
 	const AlignedVector< model::Joint >& skeletonMeshJoints = modelSkeleton->getJoints();
 	const AlignedVector< model::Joint >& skeletonAnimJoints = modelAnimation->getJoints();
 	for (uint32_t i = 0; i < ma->getKeyFrameCount(); ++i)
 	{
 		const float time = ma->getKeyFrameTime(i);
+		if (maxDuration > 0.0f && time - takeAt > maxDuration)
+			continue;
+
 		const model::Pose* mp = ma->getKeyFramePose(i);
 
 		Animation::KeyPose kp;
@@ -201,6 +211,12 @@ bool AnimationPipeline::buildOutput(
 		}
 
 		anim->addKeyPose(kp);
+	}
+
+	if (maxDuration > 0.0f && anim->getKeyPoseCount() < ma->getKeyFrameCount())
+	{
+		log::info << L"Animation cut at " << maxDuration << L" second(s); kept " << anim->getKeyPoseCount() <<
+			L" of " << ma->getKeyFrameCount() << L" key frame(s)." << Endl;
 	}
 
 	// Remove locomotion from animation.

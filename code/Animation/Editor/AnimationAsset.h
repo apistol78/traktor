@@ -45,12 +45,15 @@ public:
 
 	bool getRemoveLocomotion() const { return m_removeLocomotion; }
 
+	float getMaxDuration() const { return m_maxDuration; }
+
 private:
 	Guid m_targetSkeleton;					//!< Target skeleton onto animation are retargeted; if no skeleton provided then assuming to be same as animation skeleton.
 	std::wstring m_take = L"";
 	Vector4 m_scale = Vector4::one();
 	Vector4 m_translate = Vector4::zero();
 	bool m_removeLocomotion = true;
+	float m_maxDuration = 0.0f;				//!< Cut animation at this many seconds from its first key frame; 0 keeps the entire take.
 };
 
 }

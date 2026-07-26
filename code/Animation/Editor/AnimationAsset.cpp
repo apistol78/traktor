@@ -9,14 +9,16 @@
 #include "Animation/Editor/AnimationAsset.h"
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Core/Serialization/AttributePoint.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 8, AnimationAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 9, AnimationAsset, editor::Asset)
 
 void AnimationAsset::serialize(ISerializer& s)
 {
@@ -45,6 +47,9 @@ void AnimationAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 6)
 		s >> Member< bool >(L"removeLocomotion", m_removeLocomotion);
+
+	if (s.getVersion() >= 9)
+		s >> Member< float >(L"maxDuration", m_maxDuration, AttributeRange(0.0f) | AttributeUnit(UnitType::Seconds));
 }
 
 }
