@@ -25,8 +25,8 @@ namespace
 {
 
 const float c_alphaThreshold = 0.5f;		/*!< Alpha coverage threshold; texels with alpha below this are considered cut away. */
-const float c_targetTexelsPerCell = 2.0f;	/*!< Target size, in texels, of a single tessellation cell along the longest UV edge. */
-const int32_t c_maxSubdivisions = 32;		/*!< Upper bound on triangle subdivision to keep the generated geometry bounded. */
+const float c_targetTexelsPerCell = 16.0f;	/*!< Target size, in texels, of a single tessellation cell along the longest UV edge. */
+const int32_t c_maxSubdivisions = 4;		/*!< Upper bound on triangle subdivision to keep the generated geometry bounded. */
 
 /*! Interpolated triangle corner used while clipping. */
 struct RTCorner
