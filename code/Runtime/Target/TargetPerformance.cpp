@@ -78,16 +78,16 @@ bool TpsRuntime::check(const TargetPerfSet& old) const
 	const TpsRuntime& o = (const TpsRuntime&)old;
 	return	
 		std::abs(fps - o.fps) >= 0.2f ||
-		std::abs(update - o.update) >= 0.0001f ||
-		std::abs(build - o.build) >= 0.0001f ||
-		std::abs(renderCPU - o.renderCPU) >= 0.0001f ||
-		std::abs(renderGPU - o.renderGPU) >= 0.0001f ||
-		std::abs(physics - o.physics) >= 0.0001f ||
-		std::abs(input - o.input) >= 0.0001f ||
-		std::abs(garbageCollect - o.garbageCollect) >= 0.001f ||
+		std::abs(update - o.update) >= 0.001f ||
+		std::abs(build - o.build) >= 0.001f ||
+		std::abs(renderCPU - o.renderCPU) >= 0.001f ||
+		std::abs(renderGPU - o.renderGPU) >= 0.001f ||
+		std::abs(physics - o.physics) >= 0.001f ||
+		std::abs(input - o.input) >= 0.001f ||
+		std::abs(garbageCollect - o.garbageCollect) >= 0.01f ||
 		steps != o.steps ||
-		std::abs(simulationInterval - o.simulationInterval) >= 0.01f ||
-		std::abs(renderInterval - o.renderInterval) >= 0.01f ||
+		std::abs(simulationInterval - o.simulationInterval) >= 0.02f ||
+		std::abs(renderInterval - o.renderInterval) >= 0.02f ||
 		collisions != o.collisions;
 }
 
@@ -195,7 +195,7 @@ void TargetPerformance::publish(net::BidirectionalObjectTransport* transport, co
 	const auto it = m_last.find(&performanceType);
 	if (it != m_last.end())
 	{
-		if ((time - it->second.sent) < 1.0 / 10.0)
+		if ((time - it->second.sent) < 1.0 / 5.0)
 			return;
 		if ((time - it->second.sent) < 4.0 && performance.check(*it->second.perfSet) == false)
 			return;
