@@ -18,6 +18,8 @@
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/Range.h"
 #include "Core/Math/Winding3.h"
+#include "Core/Containers/SmallMap.h"
+#include "Core/Misc/Key.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
@@ -544,6 +546,24 @@ bool BakeOperator::build(
 		RefArray< world::EntityData > layers;
 		SmallMap< Path, Ref< drawing::Image > > images;
 
+		// Entities placed from the same prefab resolve to an identical model, and both
+		// TracerModel and TracerOutput only ever read it, so a single instance is shared
+		// between them. The data access cache memoizes the expensive creation but hands
+		// back a freshly deserialized copy per read; a scene placing hundreds of instances
+		// of one prefab would otherwise retain hundreds of copies for the whole bake.
+		SmallMap< Key, Ref< model::Model > > sharedModels;
+
+		const auto readSharedModel = [&](const Key& key, const std::function< Ref< model::Model >() >& create) -> Ref< model::Model >
+		{
+			const auto it = sharedModels.find(key);
+			if (it != sharedModels.end())
+				return it->second;
+
+			Ref< model::Model > model = pipelineBuilder->getDataAccessCache()->read< model::Model >(key, create);
+			sharedModels[key] = model;
+			return model;
+		};
+
 		// Find all static meshes and lights; replace external referenced entities with local if necessary.
 		for (const auto layer : inoutSceneAsset->getLayers())
 		{
@@ -689,7 +709,7 @@ bool BakeOperator::build(
 					pipelineBuilder->getProfiler()->end();
 
 					// Create models.
-					Ref< model::Model > visualModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
+					Ref< model::Model > visualModel = readSharedModel(
 						Key(0x00000020, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
 						[&]() -> Ref< model::Model > {
 							pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
@@ -767,7 +787,7 @@ bool BakeOperator::build(
 					Ref< model::Model > collisionModel;
 					if (configuration->getEnableLightmaps())
 					{
-						collisionModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
+						collisionModel = readSharedModel(
 							Key(0x00000030, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
 							[&]() -> Ref< model::Model > {
 								pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
@@ -937,6 +957,9 @@ bool BakeOperator::build(
 			inoutSceneAsset->setLayers(layers);
 
 		images.clear();
+
+		// Collection is finished; the tracer task holds on to the models it needs.
+		sharedModels.clear();
 	}
 
 	// Create irradiance grid task.
