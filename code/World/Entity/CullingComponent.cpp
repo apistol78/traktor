@@ -30,6 +30,15 @@ const resource::Id< render::Shader > c_shaderInstanceMeshCull(L"{37998131-BDA1-D
 static const render::Handle s_handleInstanceWorld(L"InstanceWorld");
 static const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 
+/*! Local work group size of the culling shader.
+ *
+ * The dispatch is rounded up to whole work groups and the shader writes its
+ * visibility slot unconditionally, so the padding threads of the last group write
+ * past the instance count. The buffers are sized to cover them; keep this in sync
+ * with the local size declared in World/Culling/Visibility.
+ */
+constexpr uint32_t c_cullWorkGroupSize = 16;
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.CullingComponent", CullingComponent, IWorldComponent)
@@ -65,7 +74,7 @@ void CullingComponent::build(
 		return;
 
 	render::RenderContext* renderContext = context.getRenderContext();
-	const uint32_t bufferItemCount = (uint32_t)alignUp(m_instances.size(), 16);
+	const uint32_t bufferItemCount = (uint32_t)alignUp(m_instances.size(), c_cullWorkGroupSize);
 
 	// Lazy create the buffers if necessary.
 	if (!m_instanceBuffer || bufferItemCount > m_instanceAllocatedCount)
@@ -110,6 +119,19 @@ void CullingComponent::build(
 	}
 
 	render::Buffer* visibilityBuffer = m_visibilityBuffers[worldRenderView.getShadowMapIndex()];
+
+	// Every pass which culls (g-buffer, shadow, velocity, ...) reuses the same set of
+	// visibility, draw command and compaction buffers - they are only keyed by cascade,
+	// and the primary view shares cascade 0 with the first shadow slice. The render graph
+	// does not put any barrier between passes, so without this the culling of one pass
+	// would be free to overwrite buffers that the previous pass' indirect draws and vertex
+	// shaders are still reading, which shows up as whole batches blinking out for a frame.
+	// A write-after-read hazard only needs an execution dependency, no cache flush.
+	renderContext->compute< render::BarrierRenderBlock >(
+		render::Stage::Compute | render::Stage::Vertex | render::Stage::Indirect,
+		render::Stage::Compute,
+		nullptr,
+		0);
 
 	// Cull instances, output are visibility buffer.
 	// Compute blocks are executed before render pass, so for shadow map rendering all cascades
@@ -158,7 +180,10 @@ void CullingComponent::build(
 		renderBlock->workSize[0] = (int32_t)m_instances.size();
 
 		renderContext->compute(renderBlock);
-		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Indirect, nullptr, 0);
+
+		// The visibility buffer is consumed by the cullables' own compute passes,
+		// not by an indirect read, so this has to be a shader read barrier.
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
 	}
 
 	// Batch draw instances; assumes m_instances are sorted by "ordinal" so we can scan for run length.

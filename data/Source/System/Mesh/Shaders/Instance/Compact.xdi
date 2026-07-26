@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{821345E7-9675-470A-A70F-C51B3767082F}</id>
+			<comment/>
+			<position>
+				<first>189</first>
+				<second>265</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.DispatchIndex" version="1,traktor.render.Node:1">
+			<id>{4F33712B-1744-4C8F-92A3-68CC21F31946}</id>
+			<comment/>
+			<position>
+				<first>-73</first>
+				<second>265</second>
+			</position>
+			<scope>Global</scope>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{DA742C50-A24C-4D24-B85D-9FBC49F78860}</id>
+			<comment/>
+			<position>
+				<first>437</first>
+				<second>316</second>
+			</position>
+			<name>Compact</name>
+			<technique>Default</technique>
+			<domain>Compute</domain>
+			<localSize>
+				<X>32</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{89BC9FF3-734F-401B-816E-65A6AB6E95EE}</id>
+					<name>DrawBuffer</name>
+				</item>
+				<item>
+					<id>{F190C6A1-C6E8-4D06-8685-2130E0BF27F9}</id>
+					<name>CompactBuffer</name>
+				</item>
+				<item>
+					<id>{BAA8DE24-5C73-4586-B40A-89D468928257}</id>
+					<name>VisibilityBuffer</name>
+				</item>
+				<item>
+					<id>{3D587CD1-9285-41A1-B62C-2CF2D9575414}</id>
+					<name>Index</name>
+				</item>
+				<item>
+					<id>{D55402E6-5D54-4756-B24F-36E64CF788F9}</id>
+					<name>InstanceOffset</name>
+				</item>
+				<item>
+					<id>{1DE52FD9-1E3B-45DD-9A07-81D562D5C403}</id>
+					<name>InstanceCount</name>
+				</item>
+				<item>
+					<id>{283BC503-0ED5-479C-95DD-75D7F00A5A25}</id>
+					<name>PartCount</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script><![CDATA[
+
+// Append the visible instances of this batch to a dense list so the batch can be
+// drawn with a single indirect command per part instead of one command per
+// instance. The vertex shader reads CompactBuffer[gl_InstanceIndex] to recover
+// which instance it is drawing.
+// InstanceCount is handed over biased by +0.5 so that int() lands on the exact
+// value, which means it must be truncated before being compared - comparing the
+// int index against the raw float would let index == count through and compact
+// the first instance of the *next* batch into this one.
+const int index = int($Index);
+if (index < int($InstanceCount))
+{
+	const int offset = int($InstanceOffset);
+	if ($VisibilityBuffer[index + offset].visible != 0.0f)
+	{
+		// Part 0's instance count doubles as the allocation counter; every part
+		// draws the same compacted list so they all end up with the same count.
+		const int slot = atomicAdd($DrawBuffer[0].instanceCount, 1);
+		$CompactBuffer[slot].index = float(index);
+
+		const int partCount = int($PartCount);
+		for (int i = 1; i < partCount; ++i)
+			atomicAdd($DrawBuffer[i].instanceCount, 1);
+	}
+}
+]]></script>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{DCE4ABDE-2D7C-4809-975A-D53C6D55B8FC}</id>
+			<comment/>
+			<position>
+				<first>173</first>
+				<second>201</second>
+			</position>
+			<parameterDeclaration>{2F1BFD3B-182C-FE45-BE1B-C87D5FDAE15F}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{3346B043-828C-45DC-ADB9-B13E03058690}</id>
+			<comment/>
+			<position>
+				<first>165</first>
+				<second>329</second>
+			</position>
+			<parameterDeclaration>{181F88C6-D41E-4A1A-835D-97ED11490858}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{68041F16-9D20-431B-8671-13ED7CE38EED}</id>
+			<comment/>
+			<position>
+				<first>181</first>
+				<second>393</second>
+			</position>
+			<parameterDeclaration>{5BD7E68E-843E-5F4C-9DA9-15DB66FA288E}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{5EA1CD19-43D0-482B-9759-C0A947214D25}</id>
+			<comment/>
+			<position>
+				<first>149</first>
+				<second>457</second>
+			</position>
+			<parameterDeclaration>{39E27A9D-4CCD-0F42-881E-95744149442E}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{B5AA6658-13CB-4FE8-98BC-0F02FF112F44}</id>
+			<comment/>
+			<position>
+				<first>149</first>
+				<second>521</second>
+			</position>
+			<parameterDeclaration>{636BD145-F27A-0A45-9DE8-9574E4DB5683}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{64B14D2E-87A4-46E3-BA55-FB098C3AAFDA}</id>
+			<comment/>
+			<position>
+				<first>157</first>
+				<second>585</second>
+			</position>
+			<parameterDeclaration>{71A347DB-5D26-4CB1-9AF0-CE95EE86A619}</parameterDeclaration>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{AAE82FD3-522F-43C6-A594-2E13D126E5DB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{3D587CD1-9285-41A1-B62C-2CF2D9575414}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{89BC9FF3-734F-401B-816E-65A6AB6E95EE}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{F190C6A1-C6E8-4D06-8685-2130E0BF27F9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{BAA8DE24-5C73-4586-B40A-89D468928257}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{D55402E6-5D54-4756-B24F-36E64CF788F9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{1DE52FD9-1E3B-45DD-9A07-81D562D5C403}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{283BC503-0ED5-479C-95DD-75D7F00A5A25}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>

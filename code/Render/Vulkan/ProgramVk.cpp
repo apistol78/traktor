@@ -90,6 +90,20 @@ bool storeIfNotEqual(const Vector4* source, int32_t length, float* dest)
 	return false;
 }
 
+bool storeIfNotEqual(const Matrix44* source, int32_t length, float* dest)
+{
+	for (int32_t i = 0; i < length; ++i)
+	{
+		if (Matrix44::loadAligned(&dest[i * 16]) != source[i])
+		{
+			for (; i < length; ++i)
+				source[i].storeAligned(&dest[i * 16]);
+			return true;
+		}
+	}
+	return false;
+}
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVk", ProgramVk, IProgram)
@@ -571,13 +585,7 @@ void ProgramVk::setVectorArrayParameter(handle_t handle, const Vector4* param, i
 
 void ProgramVk::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	auto i = m_parameterMap.find(handle);
-	if (i != m_parameterMap.end())
-	{
-		auto& ub = m_uniformBuffers[i->second.ubuffer];
-		param.storeAligned(&ub.data[i->second.ubufferOffset]);
-		ub.dirty = true;
-	}
+	setMatrixArrayParameter(handle, &param, 1);
 }
 
 void ProgramVk::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
@@ -585,11 +593,9 @@ void ProgramVk::setMatrixArrayParameter(handle_t handle, const Matrix44* param, 
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT(length * 16 <= (int)i->second.ubufferSize);
 		auto& ub = m_uniformBuffers[i->second.ubuffer];
-		for (int j = 0; j < length; ++j)
-			param[j].storeAligned(&ub.data[i->second.ubufferOffset + j * 16]);
-		ub.dirty = true;
+		if (storeIfNotEqual(param, length, &ub.data[i->second.ubufferOffset]))
+			ub.dirty = true;
 	}
 }
 

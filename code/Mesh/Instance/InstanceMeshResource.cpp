@@ -31,6 +31,7 @@ namespace
 {
 
 const resource::Id< render::Shader > c_shaderInstanceMeshDraw(L"{A8FDE33C-D75B-4D4E-848F-7D7CF97F11D0}");
+const resource::Id< render::Shader > c_shaderInstanceMeshCompact(L"{F46125D0-6321-4A7D-90BC-08C36ED9163C}");
 
 }
 
@@ -49,7 +50,11 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 	if (!resourceManager->bind(c_shaderInstanceMeshDraw, shaderDraw))
 		return nullptr;
 
-	Ref< InstanceMesh > instanceMesh = new InstanceMesh(renderSystem, shaderDraw);
+	resource::Proxy< render::Shader > shaderCompact;
+	if (!resourceManager->bind(c_shaderInstanceMeshCompact, shaderCompact))
+		return nullptr;
+
+	Ref< InstanceMesh > instanceMesh = new InstanceMesh(renderSystem, shaderDraw, shaderCompact);
 
 	instanceMesh->m_albedoTextures.resize(m_albedoTextures.size());
 	for (size_t i = 0; i < m_albedoTextures.size(); ++i)

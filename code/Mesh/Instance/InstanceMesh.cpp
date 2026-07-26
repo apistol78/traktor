@@ -31,10 +31,13 @@ namespace
 
 render::Handle s_handleInstanceWorld(L"InstanceWorld");
 render::Handle s_handleDraw(L"InstanceMesh_Draw");
+render::Handle s_handleCompact(L"InstanceMesh_Compact");
 render::Handle s_handleIndexCount(L"InstanceMesh_IndexCount");
 render::Handle s_handleFirstIndex(L"InstanceMesh_FirstIndex");
 render::Handle s_handleInstanceOffset(L"InstanceMesh_InstanceOffset");
 render::Handle s_handleInstanceCount(L"InstanceMesh_InstanceCount");
+render::Handle s_handlePartIndex(L"InstanceMesh_PartIndex");
+render::Handle s_handlePartCount(L"InstanceMesh_PartCount");
 
 }
 
@@ -42,9 +45,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, IMesh)
 
 InstanceMesh::InstanceMesh(
 	render::IRenderSystem* renderSystem,
-	const resource::Proxy< render::Shader >& shaderDraw)
+	const resource::Proxy< render::Shader >& shaderDraw,
+	const resource::Proxy< render::Shader >& shaderCompact)
 	: m_renderSystem(renderSystem)
 	, m_shaderDraw(shaderDraw)
+	, m_shaderCompact(shaderCompact)
 {
 }
 
@@ -86,25 +91,46 @@ void InstanceMesh::cullableBuild(
 
 	const AlignedVector< Part >& parts = it->second;
 	const auto& meshPrimitives = m_renderMesh->getPrimitives();
+	const int32_t shadowMapIndex = worldRenderView.getShadowMapIndex();
 
 	// Lazy create the buffers.
 	const uint32_t bufferItemCount = (uint32_t)alignUp(count, 16);
 	if (count > m_allocatedCount)
 	{
 		m_drawBuffers.resize(0);
+		m_compactBuffers.resize(0);
 		m_allocatedCount = count;
 	}
 
-	const int32_t peakShadowMapIndex = worldRenderView.getShadowMapIndex();
-	const uint32_t dbSize = (uint32_t)m_drawBuffers.size();
-	for (uint32_t i = dbSize; i < (peakShadowMapIndex + 1) * parts.size(); ++i)
+	// One indirect command per part; the visible instances are compacted into a
+	// dense list so each part is drawn by a single instanced command rather than
+	// one command per instance. The buffers are shared by every technique, so size
+	// them for whichever technique has the most parts.
+	uint32_t maxPartCount = 0;
+	for (const auto& technique : m_parts)
+		maxPartCount = std::max(maxPartCount, (uint32_t)technique.second.size());
+
+	const int32_t peakShadowMapIndex = shadowMapIndex;
+	for (uint32_t i = (uint32_t)m_drawBuffers.size(); i < (uint32_t)peakShadowMapIndex + 1; ++i)
+	{
 		m_drawBuffers.push_back(m_renderSystem->createBuffer(
 			render::BufferUsage::BuStructured | render::BufferUsage::BuIndirect,
-			bufferItemCount * sizeof(render::IndexedIndirectDraw),
+			maxPartCount * sizeof(render::IndexedIndirectDraw),
 			false,
 			T_FILE_LINE_W));
+		m_compactBuffers.push_back(m_renderSystem->createBuffer(
+			render::BufferUsage::BuStructured,
+			bufferItemCount * sizeof(float),
+			false,
+			T_FILE_LINE_W));
+	}
 
-	// Create draw buffers from visibility buffer.
+	render::Buffer* drawBuffer = m_drawBuffers[shadowMapIndex];
+	render::Buffer* compactBuffer = m_compactBuffers[shadowMapIndex];
+
+	// Initialize the indirect command of each part with the static geometry range
+	// and a zeroed instance count; the compaction pass below accumulates that count
+	// with atomics, so this must be dispatched first.
 	// Compute blocks are executed before render pass, so draws for shadow map rendering all cascades
 	// are dispatched at the same time.
 	for (uint32_t i = 0; i < parts.size(); ++i)
@@ -117,12 +143,10 @@ void InstanceMesh::cullableBuild(
 		if (!sp)
 			continue;
 
-		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getShadowMapIndex() * parts.size() + i];
-
 		const auto& primitives = meshPrimitives[part.meshPart];
 
 		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
-			str(L"InstanceMesh draw commands %d %d", worldRenderView.getShadowMapIndex(), i));
+			str(L"InstanceMesh draw command %d %d", shadowMapIndex, i));
 
 		renderBlock->program = m_shaderDraw->getProgram().program;
 
@@ -130,10 +154,33 @@ void InstanceMesh::cullableBuild(
 		renderBlock->programParams->beginParameters(renderContext);
 		renderBlock->programParams->setFloatParameter(s_handleIndexCount, primitives.getVertexCount() + 0.5f);
 		renderBlock->programParams->setFloatParameter(s_handleFirstIndex, primitives.offset + 0.5f);
+		renderBlock->programParams->setFloatParameter(s_handlePartIndex, i + 0.5f);
+		renderBlock->programParams->setBufferViewParameter(s_handleDraw, drawBuffer->getBufferView());
+		renderBlock->programParams->endParameters(renderContext);
+
+		renderBlock->workSize[0] = 1;
+
+		renderContext->compute(renderBlock);
+	}
+
+	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
+
+	// Compact the visible instances of this batch into a dense list, and accumulate
+	// the instance count shared by every part's command.
+	{
+		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
+			str(L"InstanceMesh compact %d", shadowMapIndex));
+
+		renderBlock->program = m_shaderCompact->getProgram().program;
+
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams->beginParameters(renderContext);
 		renderBlock->programParams->setFloatParameter(s_handleInstanceOffset, start + 0.5f);
 		renderBlock->programParams->setFloatParameter(s_handleInstanceCount, count + 0.5f);
+		renderBlock->programParams->setFloatParameter(s_handlePartCount, parts.size() + 0.5f);
 		renderBlock->programParams->setBufferViewParameter(world::ShaderParameter::Visibility, visibilityBuffer->getBufferView());
 		renderBlock->programParams->setBufferViewParameter(s_handleDraw, drawBuffer->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(s_handleCompact, compactBuffer->getBufferView());
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderBlock->workSize[0] = (int32_t)count;
@@ -143,7 +190,7 @@ void InstanceMesh::cullableBuild(
 
 	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Indirect, nullptr, 0);
 
-	// Add indirect draw for each mesh part.
+	// Add a single indirect draw for each mesh part.
 	for (uint32_t i = 0; i < parts.size(); ++i)
 	{
 		const auto& part = parts[i];
@@ -154,10 +201,8 @@ void InstanceMesh::cullableBuild(
 		if (!sp)
 			continue;
 
-		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getShadowMapIndex() * parts.size() + i];
-
 		auto renderBlock = renderContext->allocNamed< render::IndirectRenderBlock >(
-			str(L"InstanceMesh draw %d %d", worldRenderView.getShadowMapIndex(), i));
+			str(L"InstanceMesh draw %d %d", shadowMapIndex, i));
 		renderBlock->distance = 10000.0f;
 		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -167,7 +212,8 @@ void InstanceMesh::cullableBuild(
 		renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
 		renderBlock->primitive = meshPrimitives[part.meshPart].type;
 		renderBlock->drawBuffer = drawBuffer->getBufferView();
-		renderBlock->drawCount = (uint32_t)count;
+		renderBlock->drawOffset = i * (uint32_t)sizeof(render::IndexedIndirectDraw);
+		renderBlock->drawCount = 1;
 
 		renderBlock->programParams->beginParameters(renderContext);
 
@@ -181,6 +227,7 @@ void InstanceMesh::cullableBuild(
 
 		renderBlock->programParams->setFloatParameter(s_handleInstanceOffset, start + 0.5f);
 		renderBlock->programParams->setBufferViewParameter(s_handleInstanceWorld, instanceBuffer->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(s_handleCompact, compactBuffer->getBufferView());
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(sp.priority, renderBlock);

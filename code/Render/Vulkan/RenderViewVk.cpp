@@ -1079,12 +1079,17 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, targetSize))
 		return;
 
-	if (vbv != nullptr && frame.boundVertexBuffer != *vbv)
+	// Only forget the bound vertex buffer when the draw doesn't use one; keeping the
+	// cache when the same buffer is drawn again is the entire point of tracking it.
+	if (vbv != nullptr)
 	{
-		const VkBuffer buffer = vbv->getVkBuffer();
-		const VkDeviceSize offset = vbv->getVkBufferOffset();
-		vkCmdBindVertexBuffers(*frame.graphicsCommandBuffer, 0, 1, &buffer, &offset);
-		frame.boundVertexBuffer = *vbv;
+		if (frame.boundVertexBuffer != *vbv)
+		{
+			const VkBuffer buffer = vbv->getVkBuffer();
+			const VkDeviceSize offset = vbv->getVkBufferOffset();
+			vkCmdBindVertexBuffers(*frame.graphicsCommandBuffer, 0, 1, &buffer, &offset);
+			frame.boundVertexBuffer = *vbv;
+		}
 	}
 	else
 		frame.boundVertexBuffer = BufferViewVk();
@@ -1144,12 +1149,16 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, targetSize))
 		return;
 
-	if (vbv != nullptr && frame.boundVertexBuffer != *vbv)
+	// \sa draw
+	if (vbv != nullptr)
 	{
-		const VkBuffer buffer = vbv->getVkBuffer();
-		const VkDeviceSize offset = vbv->getVkBufferOffset();
-		vkCmdBindVertexBuffers(*frame.graphicsCommandBuffer, 0, 1, &buffer, &offset);
-		frame.boundVertexBuffer = *vbv;
+		if (frame.boundVertexBuffer != *vbv)
+		{
+			const VkBuffer buffer = vbv->getVkBuffer();
+			const VkDeviceSize offset = vbv->getVkBufferOffset();
+			vkCmdBindVertexBuffers(*frame.graphicsCommandBuffer, 0, 1, &buffer, &offset);
+			frame.boundVertexBuffer = *vbv;
+		}
 	}
 	else
 		frame.boundVertexBuffer = BufferViewVk();

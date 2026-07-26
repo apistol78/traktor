@@ -74,7 +74,8 @@ public:
 
 	explicit InstanceMesh(
 		render::IRenderSystem* renderSystem,
-		const resource::Proxy< render::Shader >& shaderDraw);
+		const resource::Proxy< render::Shader >& shaderDraw,
+		const resource::Proxy< render::Shader >& shaderCompact);
 
 	const Aabb3& getBoundingBox() const;
 
@@ -116,7 +117,12 @@ private:
 	// #todo All instances are bookkeep;ed in InstanceMesh which should be a resource.
 	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< render::Shader > m_shaderDraw;
+	resource::Proxy< render::Shader > m_shaderCompact;
+
+	// One indirect command per part, and one compacted instance index list, per
+	// shadow map cascade (index 0 being the primary view). \sa cullableBuild
 	RefArray< render::Buffer > m_drawBuffers;
+	RefArray< render::Buffer > m_compactBuffers;
 	uint32_t m_allocatedCount = 0;
 };
 

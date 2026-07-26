@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>189</first>
-				<second>312</second>
+				<second>275</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{0C63324D-D49B-7C44-BE53-17ECD5DBE92E}</id>
 			<comment/>
 			<position>
-				<first>-32</first>
-				<second>289</second>
+				<first>-65</first>
+				<second>275</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -23,8 +23,8 @@
 			<id>{EF3C22BB-6DAD-ED47-B381-BF0850063421}</id>
 			<comment/>
 			<position>
-				<first>397</first>
-				<second>271</second>
+				<first>429</first>
+				<second>277</second>
 			</position>
 			<name>WriteOut</name>
 			<technique>Default</technique>
@@ -42,12 +42,12 @@
 					<name>DrawBuffer</name>
 				</item>
 				<item>
-					<id>{13DDFE53-988C-FE40-B343-7FE23D25E253}</id>
-					<name>VisibilityBuffer</name>
-				</item>
-				<item>
 					<id>{89D6EAF6-DAAD-C647-B640-7F86B233A509}</id>
 					<name>Index</name>
+				</item>
+				<item>
+					<id>{4B89A265-8175-47B0-BCC8-525EE8A0CEC9}</id>
+					<name>PartIndex</name>
 				</item>
 				<item>
 					<id>{788C47C3-E973-CF48-9A12-5A2751107996}</id>
@@ -57,29 +57,23 @@
 					<id>{618C459F-DE31-4E4D-A0ED-6D01AF8C87AF}</id>
 					<name>PrimFirstIndex</name>
 				</item>
-				<item>
-					<id>{7BC3CE94-B279-F442-A983-DD2FA6DFBDD4}</id>
-					<name>InstanceOffset</name>
-				</item>
-				<item>
-					<id>{4A8B3345-4152-724E-A1AC-DCD55E20AB05}</id>
-					<name>InstanceCount</name>
-				</item>
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
-			
+
+// Write the static half of this part's indirect command. The instance count is
+// left at zero; the compaction pass accumulates it with atomics, so this pass
+// doubles as the per-frame reset of that counter and must run before it.
 const int index = int($Index);
-if (index < $InstanceCount)
+if (index == 0)
 {
-	const int offset = int($InstanceOffset);
-	const bool visible = ($VisibilityBuffer[index + offset].visible != 0.0f);
-	
-	$DrawBuffer[index].indexCount = int($PrimIndexCount);
-	$DrawBuffer[index].instanceCount = visible ? 1 : 0;
-	$DrawBuffer[index].firstIndex = int($PrimFirstIndex);
-	$DrawBuffer[index].vertexOffset = 0;
-	$DrawBuffer[index].firstInstance = 0;
+	const int part = int($PartIndex);
+
+	$DrawBuffer[part].indexCount = int($PrimIndexCount);
+	$DrawBuffer[part].instanceCount = 0;
+	$DrawBuffer[part].firstIndex = int($PrimFirstIndex);
+	$DrawBuffer[part].vertexOffset = 0;
+	$DrawBuffer[part].firstInstance = 0;
 }
 ]]></script>
 		</item>
@@ -87,8 +81,8 @@ if (index < $InstanceCount)
 			<id>{60B27525-5369-9C4B-8656-AC9E55EA93AD}</id>
 			<comment/>
 			<position>
-				<first>125</first>
-				<second>366</second>
+				<first>157</first>
+				<second>339</second>
 			</position>
 			<parameterDeclaration>{325997C1-F582-1249-9620-EC0ADCA02EC9}</parameterDeclaration>
 		</item>
@@ -96,46 +90,28 @@ if (index < $InstanceCount)
 			<id>{4BB13CF7-5AA5-6442-9809-B4CC48E7CCB1}</id>
 			<comment/>
 			<position>
-				<first>141</first>
-				<second>420</second>
+				<first>157</first>
+				<second>403</second>
 			</position>
 			<parameterDeclaration>{9E8DA99E-1456-634C-AC71-3EDCDE5B8B41}</parameterDeclaration>
-		</item>
-		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{739FCC0D-8CEC-D24E-94AF-BCD776195CF0}</id>
-			<comment/>
-			<position>
-				<first>109</first>
-				<second>474</second>
-			</position>
-			<parameterDeclaration>{39E27A9D-4CCD-0F42-881E-95744149442E}</parameterDeclaration>
-		</item>
-		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{59C632A9-8DFC-4E42-945C-80AE5FEFBBA4}</id>
-			<comment/>
-			<position>
-				<first>189</first>
-				<second>258</second>
-			</position>
-			<parameterDeclaration>{5BD7E68E-843E-5F4C-9DA9-15DB66FA288E}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{916AB0E7-EDCB-7240-867B-675C763CA6EE}</id>
 			<comment/>
 			<position>
-				<first>157</first>
-				<second>204</second>
+				<first>173</first>
+				<second>211</second>
 			</position>
 			<parameterDeclaration>{2F1BFD3B-182C-FE45-BE1B-C87D5FDAE15F}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{0856DB50-BD57-EF49-84CD-8266637886FC}</id>
+			<id>{739FCC0D-8CEC-D24E-94AF-BCD776195CF0}</id>
 			<comment/>
 			<position>
-				<first>109</first>
-				<second>528</second>
+				<first>157</first>
+				<second>467</second>
 			</position>
-			<parameterDeclaration>{636BD145-F27A-0A45-9DE8-9574E4DB5683}</parameterDeclaration>
+			<parameterDeclaration>{E9BA2B1B-1054-46AD-8715-C6F85F1CCECE}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -186,7 +162,7 @@ if (index < $InstanceCount)
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
-				<id>{7BC3CE94-B279-F442-A983-DD2FA6DFBDD4}</id>
+				<id>{AF60E34F-9E23-4E4B-8874-3FCB33F46C2F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -196,27 +172,7 @@ if (index < $InstanceCount)
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
-				<id>{13DDFE53-988C-FE40-B343-7FE23D25E253}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{AF60E34F-9E23-4E4B-8874-3FCB33F46C2F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{4A8B3345-4152-724E-A1AC-DCD55E20AB05}</id>
+				<id>{4B89A265-8175-47B0-BCC8-525EE8A0CEC9}</id>
 			</destination>
 		</item>
 	</edges>

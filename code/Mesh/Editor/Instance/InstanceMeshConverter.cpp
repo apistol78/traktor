@@ -37,6 +37,7 @@ namespace
 {
 
 const Guid c_shaderInstanceMeshDraw(L"{A8FDE33C-D75B-4D4E-848F-7D7CF97F11D0}");
+const Guid c_shaderInstanceMeshCompact(L"{F46125D0-6321-4A7D-90BC-08C36ED9163C}");
 
 }
 
@@ -254,6 +255,7 @@ bool InstanceMeshConverter::convert(
 void InstanceMeshConverter::addDependencies(editor::IPipelineDepends* pipelineDepends)
 {
 	pipelineDepends->addDependency(c_shaderInstanceMeshDraw, editor::PdfBuild);
+	pipelineDepends->addDependency(c_shaderInstanceMeshCompact, editor::PdfBuild);
 }
 
 }

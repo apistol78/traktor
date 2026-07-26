@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{18988E2C-BD86-44EB-A52F-71E457E484E0}</id>
+			<comment><![CDATA[
+
+Transform vector by a quaternion, via a rotation matrix.
+
+Drop in replacement for QuatTransform. Prefer this one whenever several vectors
+are rotated by the same quaternion; the matrix is built once and shared, which
+is a lot cheaper than a q * v * conj(q) sandwich per vector.
+
+			]]></comment>
+			<position>
+				<first>-75</first>
+				<second>148</second>
+			</position>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{D35CA76D-463D-4DFE-83C6-CEBB38A9D52D}</id>
+			<comment/>
+			<position>
+				<first>-232</first>
+				<second>291</second>
+			</position>
+			<name>Input</name>
+			<optional>false</optional>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{221F57A6-00D9-433E-8463-899A952C6A82}</id>
+			<comment><![CDATA[
+
+As quaternion
+
+			]]></comment>
+			<position>
+				<first>-240</first>
+				<second>365</second>
+			</position>
+			<name>Rotation</name>
+			<optional>false</optional>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{283C92E9-1536-4746-984F-45FC1FD05271}</id>
+			<comment/>
+			<position>
+				<first>506</first>
+				<second>292</second>
+			</position>
+			<name>Translation</name>
+			<optional>true</optional>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{91CB8682-7771-4E8F-99D2-7D8365FB81DB}</id>
+			<comment/>
+			<position>
+				<first>6</first>
+				<second>355</second>
+			</position>
+			<name>QuatToMatrix</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{31CC8653-A7E4-4169-8396-761A8400FEB2}</id>
+					<name>Rotation</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{59CCFF2A-4E1C-4A70-B0C0-A19CAC4AD515}</id>
+					<name>Output</name>
+					<type>Matrix</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[
+
+// Rotation matrix of a unit quaternion; same basis as Quaternion::toMatrix44, so
+// Output * vec4(v, 0) equals the q * v * conj(q) that QuatTransform computes.
+// Written as columns since Transform emits "matrix * vector" and mat4 is column
+// major.
+const vec4 q = $Rotation;
+
+const float x2 = q.x + q.x;
+const float y2 = q.y + q.y;
+const float z2 = q.z + q.z;
+
+const float xx = q.x * x2;
+const float xy = q.x * y2;
+const float xz = q.x * z2;
+const float yy = q.y * y2;
+const float yz = q.y * z2;
+const float zz = q.z * z2;
+const float wx = q.w * x2;
+const float wy = q.w * y2;
+const float wz = q.w * z2;
+
+$Output = mat4(
+	vec4(1.0f - (yy + zz), xy + wz,          xz - wy,          0.0f),
+	vec4(xy - wz,          1.0f - (xx + zz), yz + wx,          0.0f),
+	vec4(xz + wy,          yz - wx,          1.0f - (xx + yy), 0.0f),
+	vec4(0.0f,             0.0f,             0.0f,             1.0f));
+
+]]></script>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{FAA733DE-172D-4193-9464-E11D20E24427}</id>
+			<comment/>
+			<position>
+				<first>19</first>
+				<second>291</second>
+			</position>
+			<swizzle>xyz0</swizzle>
+		</item>
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{0D851785-F7E1-49CF-BD98-AFDD5D59AF90}</id>
+			<comment/>
+			<position>
+				<first>240</first>
+				<second>307</second>
+			</position>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{07A42559-D532-45A2-8B4A-1D3685131409}</id>
+			<comment/>
+			<position>
+				<first>533</first>
+				<second>356</second>
+			</position>
+			<swizzle>xyz0</swizzle>
+		</item>
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{36A19BA3-5573-4E61-BD67-21A80B8034E2}</id>
+			<comment/>
+			<position>
+				<first>768</first>
+				<second>316</second>
+			</position>
+		</item>
+		<item type="traktor.render.Type" version="traktor.render.Node:1">
+			<id>{E23109BA-CE32-4B11-A8B5-0B2D9797C7B2}</id>
+			<comment/>
+			<position>
+				<first>1002</first>
+				<second>286</second>
+			</position>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{1B4C1D22-0CC6-4D84-8B4D-6FC545A89D87}</id>
+			<comment/>
+			<position>
+				<first>1236</first>
+				<second>303</second>
+			</position>
+			<name>Output</name>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{31CC8653-A7E4-4169-8396-761A8400FEB2}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{59CCFF2A-4E1C-4A70-B0C0-A19CAC4AD515}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{71A0310C-3928-44C3-8D4F-7D9AFF9EAE70}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{324A6471-CD60-4928-A4E2-2B085856B91C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{C458F1E6-5144-4289-ADF4-C07453D38038}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{1B4A2BC3-42EE-4852-B198-6390A449A0F5}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{4EE768A0-1734-4FC2-B15E-6CD78C14933C}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>

@@ -94,7 +94,7 @@
 				<first>47</first>
 				<second>756</second>
 			</position>
-			<name>gl_DrawID</name>
+			<name>gl_InstanceIndex</name>
 			<technique/>
 			<domain>Undefined</domain>
 			<localSize>
@@ -113,9 +113,9 @@
 				</item>
 			</outputPins>
 			<script><![CDATA[
-			
-$Output = gl_DrawID;
-			
+
+$Output = gl_InstanceIndex;
+
 			]]></script>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
@@ -240,6 +240,32 @@ $Output = gl_DrawID;
 			</position>
 			<memberName>boundingBoxMax</memberName>
 		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{F42EFE5F-C716-4CA4-BEA2-4A4BCED4429C}</id>
+			<comment/>
+			<position>
+				<first>-39</first>
+				<second>700</second>
+			</position>
+			<parameterDeclaration>{181F88C6-D41E-4A1A-835D-97ED11490858}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
+			<id>{DE72F727-D74E-477F-ADDC-82F07F065DC4}</id>
+			<comment/>
+			<position>
+				<first>150</first>
+				<second>700</second>
+			</position>
+		</item>
+		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
+			<id>{7EA22DCA-7325-40F2-ABA0-6736FD0655FC}</id>
+			<comment/>
+			<position>
+				<first>150</first>
+				<second>756</second>
+			</position>
+			<memberName>index</memberName>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -326,6 +352,36 @@ $Output = gl_DrawID;
 			<source>
 				<node ref="/object/nodes/item[10]"/>
 				<id>{897E2C02-E5A3-A643-AAF8-1507B49AC1C3}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{B0B4B6F6-BAD2-452F-9E41-0E1A50D2C629}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{C7A7D7C7-5832-4AA0-A820-6A102A6D1D91}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{C1D22077-14AD-48ED-BDE5-601BEABF62CD}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[27]"/>
+				<id>{EDAE5319-818A-4FFC-8E0D-85CA003EE199}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<id>{E0CC277C-5538-4F0E-82FC-CC85217F4E53}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
