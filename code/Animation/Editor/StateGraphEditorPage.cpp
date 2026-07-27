@@ -575,7 +575,7 @@ void StateGraphEditorPage::updatePreview(const StateGraph* stateGraph)
 			m_previewControl->getSkeleton(),
 			Transform::identity());
 		if (rtsg)
-			m_previewControl->setPoseController(new AnimationGraphPoseController(resource::Proxy< RtStateGraph >(rtsg), nullptr));
+			m_previewControl->setPoseController(new AnimationGraphPoseController(resource::Proxy< RtStateGraph >(rtsg)));
 	}
 }
 

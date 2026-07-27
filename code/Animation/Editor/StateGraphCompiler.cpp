@@ -50,6 +50,7 @@ Ref< RtStateGraphData > StateGraphCompiler::compile(const StateGraph* stateGraph
 		{
 			Ref< RtStateData > rts = new RtStateData();
 			rts->m_animation = stateAnimation->getAnimation();
+			rts->m_transformTime = stateAnimation->getTransformTime();
 			rtsg->m_states.push_back(rts);
 			stateToIndex.insert(state, (int32_t)rtsg->m_states.size() - 1);
 		}

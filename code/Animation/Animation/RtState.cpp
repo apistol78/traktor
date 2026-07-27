@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include "Animation/Animation/RtState.h"
 
 #include "Animation/Animation/Animation.h"
+#include "Animation/Animation/ITransformTime.h"
 #include "Animation/Animation/StateContext.h"
 #include "Animation/IPoseController.h"
 #include "Animation/Joint.h"
@@ -75,13 +76,24 @@ void RtState::evaluate(
 	const AlignedVector< Transform >& jointTransforms,
 	Pose& outPose) const
 {
+	float time = context.getTime();
+
+	if (m_transformTime && m_animation)
+		m_transformTime->calculateTime(
+			m_animation,
+			worldTransform,
+			time,
+			deltaTime
+		);
+
 	if (m_animation)
-		m_animation->getPose(context.getTime(), outPose);
+		m_animation->getPose(time, outPose);
+
 	if (m_poseController)
 	{
 		AlignedVector< Transform > poseTransforms;
 		m_poseController->evaluate(
-			context.getTime(),
+			time,
 			deltaTime,
 			worldTransform,
 			skeleton,

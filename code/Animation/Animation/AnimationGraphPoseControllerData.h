@@ -22,7 +22,6 @@
 namespace traktor::animation
 {
 
-class ITransformTimeData;
 class RtStateGraphData;
 
 /*! Animation evaluation controller data.
@@ -49,7 +48,6 @@ public:
 
 private:
 	resource::Id< RtStateGraphData > m_stateGraph;
-	Ref< const ITransformTimeData > m_transformTime;
 };
 
 }

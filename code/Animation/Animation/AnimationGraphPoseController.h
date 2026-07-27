@@ -26,7 +26,6 @@ namespace traktor::animation
 {
 
 class RtStateGraph;
-class ITransformTime;
 
 /*! Animation pose evaluation controller.
  * \ingroup Animation
@@ -36,7 +35,7 @@ class T_DLLCLASS AnimationGraphPoseController : public IPoseController
 	T_RTTI_CLASS;
 
 public:
-	explicit AnimationGraphPoseController(const resource::Proxy< RtStateGraph >& stateGraph, ITransformTime* transformTime);
+	explicit AnimationGraphPoseController(const resource::Proxy< RtStateGraph >& stateGraph);
 
 	bool setState(const std::wstring& stateName);
 

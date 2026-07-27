@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,7 +21,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationGraphPoseControllerData", 0, AnimationGraphPoseControllerData, IPoseControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationGraphPoseControllerData", 1, AnimationGraphPoseControllerData, IPoseControllerData)
 
 AnimationGraphPoseControllerData::AnimationGraphPoseControllerData(const resource::Id< RtStateGraphData >& stateGraph)
 	: m_stateGraph(stateGraph)
@@ -41,20 +41,18 @@ Ref< IPoseController > AnimationGraphPoseControllerData::createInstance(resource
 	if (!stateGraph)
 		return nullptr;
 
-	Ref< ITransformTime > transformTime;
-	if (m_transformTime)
-	{
-		if ((transformTime = m_transformTime->createInstance()) == nullptr)
-			return nullptr;
-	}
-
-	return new AnimationGraphPoseController(resource::Proxy< RtStateGraph >(stateGraph), transformTime);
+	return new AnimationGraphPoseController(resource::Proxy< RtStateGraph >(stateGraph));
 }
 
 void AnimationGraphPoseControllerData::serialize(ISerializer& s)
 {
 	s >> resource::Member< RtStateGraphData >(L"stateGraph", m_stateGraph);
-	s >> MemberRef< const ITransformTimeData >(L"transformTime", m_transformTime);
+
+	if (s.getVersion() < 1)
+	{
+		Ref< const ITransformTimeData > transformTime;
+		s >> MemberRef< const ITransformTimeData >(L"transformTime", transformTime);
+	}
 }
 
 }

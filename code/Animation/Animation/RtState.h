@@ -27,6 +27,7 @@ namespace traktor::animation
 
 class Animation;
 class IPoseController;
+class ITransformTime;
 class Pose;
 class StateContext;
 class Skeleton;
@@ -63,6 +64,7 @@ private:
 
 	resource::Proxy< Animation > m_animation;
 	Ref< IPoseController > m_poseController;
+	Ref< ITransformTime > m_transformTime;
 };
 
 }

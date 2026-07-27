@@ -15,7 +15,7 @@ namespace traktor::animation
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationGraphPoseController", AnimationGraphPoseController, IPoseController)
 
-AnimationGraphPoseController::AnimationGraphPoseController(const resource::Proxy< RtStateGraph >& stateGraph, ITransformTime* transformTime)
+AnimationGraphPoseController::AnimationGraphPoseController(const resource::Proxy< RtStateGraph >& stateGraph)
 	: m_stateGraph(stateGraph)
 {
 }

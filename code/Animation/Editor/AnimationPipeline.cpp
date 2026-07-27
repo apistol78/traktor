@@ -34,7 +34,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 17, AnimationPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 18, AnimationPipeline, editor::IPipeline)
 
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -262,13 +262,14 @@ bool AnimationPipeline::buildOutput(
 			Vector4 previousTarget = origin.translation();
 			for (uint32_t i = 1; i < keyPoseCount; ++i)
 			{
+				const Vector4 c_locomotionAxies(0.0f, 0.0f, 1.0f);
 				auto& keyPose = anim->getKeyPose(i);
 
 				AlignedVector< Transform > targetPoseTransforms;
 				calculatePoseTransforms(skeleton, &keyPose.pose, targetPoseTransforms);
 
 				const Transform target = targetPoseTransforms[jointIndex];
-				const Vector4 locomotion = (target.translation() - origin.translation()) * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
+				const Vector4 locomotion = (target.translation() - origin.translation()) * c_locomotionAxies;
 
 				for (uint32_t i = 0; i < skeletonMeshJoints.size(); ++i)
 					targetPoseTransforms[i] = Transform(-locomotion) * targetPoseTransforms[i];
@@ -282,7 +283,7 @@ bool AnimationPipeline::buildOutput(
 				}
 
 				// Accumulate locomotion distance.
-				const Vector4 deltaLocomotion = (target.translation() - previousTarget) * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
+				const Vector4 deltaLocomotion = (target.translation() - previousTarget) * c_locomotionAxies;
 				locomotionDistance += deltaLocomotion.length();
 				totalLocomotion += deltaLocomotion;
 				previousTarget = target.translation();

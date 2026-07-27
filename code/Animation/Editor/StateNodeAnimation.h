@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Animation/Editor/StateNode.h"
+#include "Core/Ref.h"
 #include "Resource/Id.h"
 
 // import/export mechanism.
@@ -23,6 +24,7 @@ namespace traktor::animation
 {
 
 class Animation;
+class ITransformTimeData;
 
 /*! Animation state node.
  * \ingroup Animation
@@ -40,8 +42,11 @@ public:
 
 	const resource::Id< Animation >& getAnimation() const { return m_animation; }
 
+	const ITransformTimeData* getTransformTime() const { return m_transformTime; }
+
 private:
 	resource::Id< Animation > m_animation;
+	Ref< const ITransformTimeData > m_transformTime;
 };
 
 }

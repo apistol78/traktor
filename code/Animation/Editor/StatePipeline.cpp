@@ -20,7 +20,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePipeline", 0, StatePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePipeline", 1, StatePipeline, editor::DefaultPipeline)
 
 TypeInfoSet StatePipeline::getAssetTypes() const
 {

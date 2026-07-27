@@ -45,6 +45,7 @@ namespace traktor::animation
 {
 
 class IPoseControllerData;
+class ITransformTimeData;
 class RtState;
 class Skeleton;
 
@@ -69,6 +70,7 @@ private:
 
 	resource::Id< Animation > m_animation;
 	Ref< const IPoseControllerData > m_poseController;
+	Ref< const ITransformTimeData > m_transformTime;
 };
 
 }
