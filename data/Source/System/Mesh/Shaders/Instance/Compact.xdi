@@ -81,7 +81,7 @@ const int index = int($Index);
 if (index < int($InstanceCount))
 {
 	const int offset = int($InstanceOffset);
-	if ($VisibilityBuffer[index + offset].visible != 0.0f)
+	if ($VisibilityBuffer[index + offset].visible != 0)
 	{
 		// Part 0's instance count doubles as the allocation counter; every part
 		// draws the same compacted list so they all end up with the same count.

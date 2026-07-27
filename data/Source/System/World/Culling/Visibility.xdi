@@ -130,12 +130,9 @@ $Output = (inside0 && inside1) ? 1.0f : 0.0f;
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
-			
 const int index = int($Index);
-
-$Buffer[index].visible = $Input;
-			
-			]]></script>
+$Buffer[index].visible = int($Input > 0.5f ? 1 : 0);
+]]></script>
 		</item>
 		<item type="traktor.render.IndexedUniform" version="4,traktor.render.Node:1">
 			<id>{91A8C6C3-38AF-0E49-9137-BEB73CB41DD4}</id>

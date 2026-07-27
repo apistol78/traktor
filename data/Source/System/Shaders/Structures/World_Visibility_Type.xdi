@@ -3,7 +3,7 @@
 	<elements>
 		<item>
 			<name>visible</name>
-			<type>Float1</type>
+			<type>Integer1</type>
 			<length>0</length>
 		</item>
 	</elements>
