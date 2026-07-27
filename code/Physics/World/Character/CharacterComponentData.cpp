@@ -26,7 +26,7 @@
 namespace traktor::physics
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.CharacterComponentData", 4, CharacterComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.CharacterComponentData", 5, CharacterComponentData, world::IEntityComponentData)
 
 Ref< CharacterComponent > CharacterComponentData::createComponent(
 	const world::IEntityBuilder* entityBuilder,
@@ -117,6 +117,9 @@ void CharacterComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 	s >> Member< float >(L"height", m_height, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 	s >> Member< float >(L"step", m_step, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+
+	if (s.getVersion< CharacterComponentData >() >= 5)
+		s >> Member< float >(L"maxSlopeAngle", m_maxSlopeAngle, AttributeRange(0.0f, 90.0f) | AttributeUnit(UnitType::Degrees));
 
 	if (s.getVersion< CharacterComponentData >() >= 1)
 		s >> Member< float >(L"jumpImpulse", m_jumpImpulse, AttributeRange(0.0f) | AttributeUnit(UnitType::NewtonSecond));

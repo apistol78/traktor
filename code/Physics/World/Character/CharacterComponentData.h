@@ -76,6 +76,9 @@ public:
 	/*! Get character step height. */
 	float getStep() const { return m_step; }
 
+	/*! Get maximum slope angle, in degrees, character is able to walk up. */
+	float getMaxSlopeAngle() const { return m_maxSlopeAngle; }
+
 	/*! Get character jump impulse. */
 	float getJumpImpulse() const { return m_jumpImpulse; }
 
@@ -99,6 +102,7 @@ private:
 	float m_radius = 1.0f;
 	float m_height = 2.0f;
 	float m_step = 0.5f;
+	float m_maxSlopeAngle = 45.0f;
 	float m_jumpImpulse = 1.0f;
 	float m_maxVelocity = 2.0f;
 	float m_velocityDamping = 1.0f;

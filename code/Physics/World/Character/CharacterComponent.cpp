@@ -8,6 +8,8 @@
  */
 #include "Physics/World/Character/CharacterComponent.h"
 
+#include "Core/Math/Const.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/Body.h"
 #include "Physics/PhysicsManager.h"
@@ -21,6 +23,11 @@ namespace
 
 const Vector4 c_101(1.0f, 0.0f, 1.0f);
 const Vector4 c_010(0.0f, 1.0f, 0.0f);
+
+/*! Distance, in fractions of character radius, ahead of character used when
+ * probing if character is standing on the edge of a step.
+ */
+const float c_stepForwardTest = 0.5f;
 
 }
 
@@ -41,9 +48,11 @@ CharacterComponent::CharacterComponent(
 	, m_traceInclude(traceInclude)
 	, m_traceIgnore(traceIgnore)
 	, m_maxVelocity(data->getMaxVelocity())
+	, m_minGroundNormalY(std::cos(deg2rad(clamp(data->getMaxSlopeAngle(), 0.0f, 90.0f))))
 	, m_headAngle(0.0f)
 	, m_velocity(Vector4::zero())
 	, m_impulse(Vector4::zero())
+	, m_groundNormal(Vector4::zero())
 	, m_grounded(false)
 	, m_enabled(true)
 {
@@ -143,36 +152,66 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	// Reset user impulses.
 	m_impulse = Vector4::zero();
 
-	// Step up.
 	const Vector4 movement = m_velocity * dT;
-	float stepUpLength = m_data->getStep();
-	if (movement.y() > 0.0f)
-		stepUpLength += movement.y();
 
-	if (stepVertical(stepUpLength, position))
+	// Step "assist" enable character to climb steps, and to stay attached to ground
+	// when walking down steps. Only applied when character is standing on ground as
+	// a character in mid air should neither climb steps nor be snapped to ground.
+	const float stepHeight = m_grounded ? m_data->getStep() : 0.0f;
+
+	Vector4 movedPosition = position;
+	MoveResult moveResult;
+	moveStep(movement, stepHeight, stepHeight, movedPosition, moveResult);
+
+	bool grounded = moveResult.footContact && walkable(moveResult.groundNormal);
+
+	// If the step assist ended up placing the character on a surface which is too steep to
+	// stand on then it has most likely climbed a wall. As the contact normal is unreliable
+	// when standing on the edge of a step we probe the surface a bit further ahead before
+	// discarding the movement.
+	if (
+		moveResult.footContact &&
+		!grounded &&
+		movedPosition.y() > position.y() + FUZZY_EPSILON)
 	{
-		// Head hit; cancel out up motion.
-		m_velocity *= c_101;
+		const Vector4 movementXZ = movement * c_101;
+		const Scalar movementLength = movementXZ.length();
+
+		// Character is standing on the edge of a step if the surface a bit further
+		// ahead is flat enough to stand on.
+		const bool onStep =
+			movementLength > FUZZY_EPSILON &&
+			probeGround(
+				moveResult.steppedPosition + (movementXZ / movementLength) * Scalar(c_stepForwardTest * m_data->getRadius()),
+				m_data->getStep());
+
+		if (onStep)
+			grounded = true;
+		else
+		{
+			// Redo the movement without any step assist so character slide along
+			// the wall instead of climbing it.
+			movedPosition = position;
+			moveResult = MoveResult();
+			moveStep(movement, 0.0f, stepHeight, movedPosition, moveResult);
+			grounded = moveResult.footContact && walkable(moveResult.groundNormal);
+		}
 	}
 
-	// Step forward.
-	const Vector4 movementXZ = movement * c_101;
-	if (movementXZ.length() > FUZZY_EPSILON)
-		step(movementXZ, position);
+	position = movedPosition;
 
-	// Step down, step further down to simulate falling.
-	float stepDownLength = m_data->getStep();
-	if (movement.y() < 0.0f)
-		stepDownLength += -movement.y();
-
-	if (stepVertical(-stepDownLength, position))
-	{
-		// Foot hit; cancel out up motion.
+	// Head hit; cancel out up motion.
+	if (moveResult.headContact)
 		m_velocity *= c_101;
-		m_grounded = true;
-	}
-	else
-		m_grounded = false;
+
+	// Character is only grounded when standing on a surface which isn't too steep;
+	// steep surfaces are slid down along as if falling.
+	m_groundNormal = moveResult.footContact ? moveResult.groundNormal : Vector4::zero();
+	m_grounded = grounded;
+
+	// Foot hit; cancel out down motion.
+	if (m_grounded)
+		m_velocity *= c_101;
 
 	const Quaternion rotation = Quaternion::fromEulerAngles(m_headAngle, 0.0f, 0.0f);
 
@@ -239,7 +278,58 @@ const Vector4& CharacterComponent::getVelocity() const
 	return m_velocity;
 }
 
-bool CharacterComponent::stepVertical(float motion, Vector4& inoutPosition) const
+bool CharacterComponent::walkable(const Vector4& normal) const
+{
+	return normal.y() >= Scalar(m_minGroundNormalY - FUZZY_EPSILON);
+}
+
+void CharacterComponent::moveStep(const Vector4& movement, float stepUpHeight, float stepDownHeight, Vector4& inoutPosition, MoveResult& outResult) const
+{
+	Vector4 normal;
+
+	// Step up.
+	float stepUpLength = stepUpHeight;
+	if (movement.y() > 0.0f)
+		stepUpLength += movement.y();
+
+	if (stepVertical(stepUpLength, inoutPosition, normal))
+		outResult.headContact = true;
+
+	// Step forward.
+	const Vector4 movementXZ = movement * c_101;
+	if (movementXZ.length() > FUZZY_EPSILON)
+		step(movementXZ, inoutPosition);
+
+	outResult.steppedPosition = inoutPosition;
+
+	// Fall; slide along surfaces which are too steep to stand on.
+	if (movement.y() < 0.0f)
+	{
+		if (stepFall(-movement.y(), inoutPosition, normal))
+		{
+			outResult.footContact = true;
+			outResult.groundNormal = normal;
+		}
+	}
+
+	// Step down, so character is able to walk down steps without leaving ground.
+	if (stepDownHeight > 0.0f && stepVertical(-stepDownHeight, inoutPosition, normal))
+	{
+		outResult.footContact = true;
+		outResult.groundNormal = normal;
+	}
+}
+
+bool CharacterComponent::probeGround(Vector4 position, float distance) const
+{
+	Vector4 normal;
+	if (!stepVertical(-distance, position, normal))
+		return false;
+
+	return walkable(normal);
+}
+
+bool CharacterComponent::stepVertical(float motion, Vector4& inoutPosition, Vector4& outNormal) const
 {
 	if (std::abs(motion) <= FUZZY_EPSILON)
 		return false;
@@ -258,11 +348,61 @@ bool CharacterComponent::stepVertical(float motion, Vector4& inoutPosition) cons
 			result))
 	{
 		inoutPosition += Vector4(0.0f, motion * result.fraction, 0.0f);
+		outNormal = result.normal;
 		anyCollision = true;
 	}
 	else
 	{
 		inoutPosition += Vector4(0.0f, motion, 0.0f);
+	}
+
+	return anyCollision;
+}
+
+bool CharacterComponent::stepFall(float motion, Vector4& inoutPosition, Vector4& outNormal) const
+{
+	if (motion <= FUZZY_EPSILON)
+		return false;
+
+	Vector4 direction = -c_010;
+	Scalar motionLength(motion);
+
+	bool anyCollision = false;
+	QueryResult result;
+
+	for (int32_t i = 0; i < 4 && motionLength > FUZZY_EPSILON; ++i)
+	{
+		if (!m_physicsManager->querySweep(
+				m_bodySlim,
+				Quaternion::identity(),
+				inoutPosition,
+				direction,
+				motionLength,
+				physics::QueryFilter(m_traceInclude, m_traceIgnore),
+				result))
+		{
+			inoutPosition += direction * motionLength;
+			break;
+		}
+
+		const Scalar move = motionLength * Scalar(result.fraction);
+		inoutPosition += direction * move;
+
+		outNormal = result.normal;
+		anyCollision = true;
+
+		// Landed on a surface which is flat enough to stand on.
+		if (walkable(result.normal))
+			break;
+
+		// Surface is too steep to stand on; continue falling along the surface, using
+		// same over compensation as when stepping in order to not get stuck.
+		const Scalar k = abs(dot3(-direction, result.normal)) * 1.01_simd;
+		direction += result.normal * k;
+		if (direction.normalize() <= FUZZY_EPSILON)
+			break;
+
+		motionLength -= move + 0.01_simd;
 	}
 
 	return anyCollision;
@@ -294,10 +434,21 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 			const Scalar move = Scalar(motionLength * result.fraction);
 			inoutPosition += motion * move;
 
+			// Surfaces which are too steep to walk on are treated as vertical walls,
+			// i.e. character slide along them instead of being pushed up.
+			Vector4 normal = result.normal;
+			if (!walkable(normal))
+			{
+				normal *= c_101;
+				if (normal.length() <= FUZZY_EPSILON)
+					break;
+				normal = normal.normalized();
+			}
+
 			// Adjust movement vector; this contain a couple of magic constants
 			// which is to compensate for unwanted jitter when unable to solve movement.
-			const Scalar k = abs(dot3(-motion, result.normal)) * 1.01_simd;
-			motion += result.normal * k;
+			const Scalar k = abs(dot3(-motion, normal)) * 1.01_simd;
+			motion += normal * k;
 			if (motion.normalize() <= FUZZY_EPSILON)
 				break;
 

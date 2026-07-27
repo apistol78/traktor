@@ -85,8 +85,19 @@ public:
 	 */
 	bool jump();
 
-	/*! Return true if character is grounded. */
+	/*! Return true if character is grounded.
+	 *
+	 * Character is only considered grounded when standing on a surface
+	 * which isn't steeper than the max slope angle specified in the
+	 * character data.
+	 */
 	bool grounded() const;
+
+	/*! Normal of surface character is standing on.
+	 *
+	 * Zero if character isn't in contact with any surface.
+	 */
+	const Vector4& getGroundNormal() const { return m_groundNormal; }
 
 	/*!*/
 	void setVelocity(const Vector4& velocity);
@@ -113,6 +124,15 @@ public:
 	bool isEnable() const { return m_enabled; }
 
 private:
+	/*! Result from a single movement pass. */
+	struct MoveResult
+	{
+		bool headContact = false;
+		bool footContact = false;
+		Vector4 groundNormal = Vector4::zero();
+		Vector4 steppedPosition = Vector4::zero();	//!< Position after step up and horizontal movement, i.e. before stepping down again.
+	};
+
 	world::Entity* m_owner;
 	Ref< PhysicsManager > m_physicsManager;
 	Ref< const CharacterComponentData > m_data;
@@ -121,13 +141,33 @@ private:
 	uint32_t m_traceInclude;
 	uint32_t m_traceIgnore;
 	float m_maxVelocity;
+	float m_minGroundNormalY;
 	float m_headAngle;
 	Vector4 m_velocity;
 	Vector4 m_impulse;
+	Vector4 m_groundNormal;
 	bool m_grounded;
 	bool m_enabled;
 
-	bool stepVertical(float motion, Vector4& inoutPosition) const;
+	/*! Return true if a surface is flat enough to walk on. */
+	bool walkable(const Vector4& normal) const;
+
+	/*! Move character; step up, forward and finally down again.
+	 *
+	 * \param movement Movement of character.
+	 * \param stepUpHeight Height of step "assist", i.e. how high steps character is able to climb.
+	 * \param stepDownHeight Height character is snapped down to ground, i.e. how high steps character is able to walk down.
+	 * \param inoutPosition Position of character.
+	 * \param outResult Result from movement.
+	 */
+	void moveStep(const Vector4& movement, float stepUpHeight, float stepDownHeight, Vector4& inoutPosition, MoveResult& outResult) const;
+
+	/*! Return true if there is a surface flat enough to stand on below a given position. */
+	bool probeGround(Vector4 position, float distance) const;
+
+	bool stepVertical(float motion, Vector4& inoutPosition, Vector4& outNormal) const;
+
+	bool stepFall(float motion, Vector4& inoutPosition, Vector4& outNormal) const;
 
 	bool step(Vector4 motion, Vector4& inoutPosition) const;
 };
