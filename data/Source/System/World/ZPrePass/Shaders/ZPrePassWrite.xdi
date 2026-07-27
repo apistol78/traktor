@@ -2,13 +2,13 @@
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
-			<id>{E3A514E5-7A9B-D74D-A9D4-8B6A7F69FFF1}</id>
+			<id>{1B92BC54-C3EA-4F3C-A65C-DB9B95C1005A}</id>
 			<comment/>
 			<position>
 				<first>585</first>
 				<second>515</second>
 			</position>
-			<technique>World_ShadowWrite</technique>
+			<technique>World_ZPrePassWrite</technique>
 			<priority>
 				<setup>false</setup>
 				<opaque>false</opaque>
@@ -17,7 +17,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>Never</cullMode>
+			<cullMode>ClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -46,10 +46,10 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{D5D4BB0D-373C-A84B-BF44-76F51286AB94}</id>
+			<id>{2659CD0A-286B-40A4-B98D-F215ACC1222F}</id>
 			<comment/>
 			<position>
 				<first>74</first>
@@ -58,7 +58,7 @@
 			<value>0</value>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
-			<id>{1E4CDB6E-7BF6-4A07-B523-90C1C4E9C379}</id>
+			<id>{03F559CF-9952-4BF9-9764-28189CFF19B8}</id>
 			<comment/>
 			<position>
 				<first>282</first>
@@ -68,7 +68,7 @@
 			<optional>false</optional>
 		</item>
 		<item type="traktor.render.Discard" version="traktor.render.Node:1">
-			<id>{D3098DBA-1D58-FE43-A644-125882D1BB22}</id>
+			<id>{AB02C5B7-AF11-440D-B99E-F14429F9D1F9}</id>
 			<comment/>
 			<position>
 				<first>275</first>
@@ -77,7 +77,7 @@
 			<operator>CoLess</operator>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{DF884627-B36A-3145-AF46-2CD4023B4035}</id>
+			<id>{23887E69-0661-4161-B3E1-472FE35BB8FB}</id>
 			<comment/>
 			<position>
 				<first>74</first>
@@ -86,7 +86,7 @@
 			<value>0.5</value>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
-			<id>{80219DDE-09DB-C048-A166-6BBAA2D77549}</id>
+			<id>{C3A8CA26-37FA-4D98-BE6D-63D44FAE268B}</id>
 			<comment/>
 			<position>
 				<first>26</first>

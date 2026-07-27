@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2026 Anders Pistol.
+ * Copyright (c) 2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,31 +25,28 @@ namespace traktor::world
 class WorldEntityRenderers;
 class WorldRenderView;
 
-/*!
+/*! Z pre-pass; renders depth only of all opaque geometry.
+ *
+ * The pass writes into the depth buffer shared with the following
+ * geometry passes so they can rely on early-z rejection instead of
+ * shading fragments which end up being occluded.
  */
-class GBufferPass : public Object
+class ZPrePass : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit GBufferPass(
+	explicit ZPrePass(
 		const WorldRenderSettings& settings,
 		WorldEntityRenderers* entityRenderers);
 
 	void destroy();
 
-	/*! Setup g-buffer pass.
-	 *
-	 * \param zprepassTargetSetId Target set written by the z pre-pass; if valid the
-	 *                            depth of that pass is inherited instead of cleared.
-	 */
 	render::RGTargetSet setup(
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
-		render::handle_t gbufferWriteTechnique,
 		render::RenderGraph& renderGraph,
 		render::RGTexture hiZTextureId,
-		render::RGTargetSet zprepassTargetSetId,
 		render::RGTargetSet outputTargetSetId) const;
 
 private:

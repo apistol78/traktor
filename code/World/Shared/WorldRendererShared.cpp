@@ -42,6 +42,7 @@
 #include "World/Shared/Passes/ReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
 #include "World/Shared/Passes/VolumetricFogPass.h"
+#include "World/Shared/Passes/ZPrePass.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/SMProj/UniformShadowProjection.h"
 #include "World/World.h"
@@ -171,6 +172,7 @@ bool WorldRendererShared::create(
 	if (!m_lightClusterPass->create(renderSystem))
 		return false;
 
+	m_zPrePass = new ZPrePass(m_settings, m_entityRenderers);
 	m_gbufferPass = new GBufferPass(m_settings, m_entityRenderers);
 	m_dbufferPass = new DBufferPass(m_settings);
 
@@ -234,6 +236,7 @@ void WorldRendererShared::destroy()
 	safeDestroy(m_downScalePass);
 	safeDestroy(m_dbufferPass);
 	safeDestroy(m_gbufferPass);
+	safeDestroy(m_zPrePass);
 	safeDestroy(m_lightClusterPass);
 
 	m_entityRenderers = nullptr;

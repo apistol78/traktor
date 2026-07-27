@@ -690,6 +690,7 @@
 						<item>World_ReflectionWrite</item>
 						<item>World_ShadowWrite</item>
 						<item>World_VelocityWrite</item>
+						<item>World_ZPrePassWrite</item>
 					</value>
 				</second>
 			</item>

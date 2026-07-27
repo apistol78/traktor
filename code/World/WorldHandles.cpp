@@ -21,6 +21,7 @@ const render::Handle ShaderTechnique::SimpleColor(L"World_SimpleColor");
 const render::Handle ShaderTechnique::DBufferWrite(L"World_DBufferWrite");
 const render::Handle ShaderTechnique::ReflectionWrite(L"World_ReflectionWrite");
 const render::Handle ShaderTechnique::VelocityWrite(L"World_VelocityWrite");
+const render::Handle ShaderTechnique::ZPrePassWrite(L"World_ZPrePassWrite");
 const render::Handle ShaderTechnique::Shadow(L"World_ShadowWrite");
 
 // Permutations

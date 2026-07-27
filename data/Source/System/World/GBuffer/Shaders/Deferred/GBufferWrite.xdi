@@ -102,7 +102,7 @@
 			</colorWriteMask>
 			<depthEnable>true</depthEnable>
 			<depthWriteEnable>true</depthWriteEnable>
-			<depthFunction>CfLessEqual</depthFunction>
+			<depthFunction>CfEqual</depthFunction>
 			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
@@ -372,6 +372,14 @@ else
 	$Output = vec4(0.0f, 0.0f, 1.0f, 0.0f);
 
 ]]></script>
+		</item>
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{50FD480C-50A2-4B89-8BEA-5119196C1921}</id>
+			<comment><![CDATA[Assuming zprepass so discard is not necessary as long as depth test is set the "equal".]]></comment>
+			<position>
+				<first>144</first>
+				<second>-228</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -647,22 +655,22 @@ else
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{291502CF-D8D7-4CEC-8457-E867D70CD04E}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<id>{3FC8275C-094C-DD40-B5F6-B690D4CFBBB3}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>

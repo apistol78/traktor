@@ -46,6 +46,7 @@
 #include "World/Shared/Passes/ReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
 #include "World/Shared/Passes/VolumetricFogPass.h"
+#include "World/Shared/Passes/ZPrePass.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
@@ -184,7 +185,8 @@ void WorldRendererDeferred::setup(
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
 	
 	// ... using gathered renderables.
-	const auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::DeferredGBufferWrite, renderGraph, hizTextureId, visualTargetSetId.current);
+	const auto zprepassTargetSetId = m_zPrePass->setup(worldRenderView, m_gatheredView, renderGraph, hizTextureId, visualTargetSetId.current);
+	const auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::DeferredGBufferWrite, renderGraph, hizTextureId, zprepassTargetSetId, visualTargetSetId.current);
 	const auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
 	const auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
 	const auto shadowMapAtlasTargetSetId = setupLightPass(worldRenderView, renderGraph);

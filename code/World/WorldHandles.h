@@ -33,6 +33,7 @@ struct T_DLLCLASS ShaderTechnique
 	static const render::Handle DBufferWrite;
 	static const render::Handle ReflectionWrite;
 	static const render::Handle VelocityWrite;
+	static const render::Handle ZPrePassWrite;
 	static const render::Handle Shadow;
 };
 

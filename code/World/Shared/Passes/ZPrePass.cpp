@@ -1,12 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2026 Anders Pistol.
+ * Copyright (c) 2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "World/Shared/Passes/GBufferPass.h"
+#include "World/Shared/Passes/ZPrePass.h"
 
 #include "Core/Timer/Profiler.h"
 #include "Render/Context/RenderContext.h"
@@ -21,9 +21,9 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GBufferPass", GBufferPass, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ZPrePass", ZPrePass, Object)
 
-GBufferPass::GBufferPass(
+ZPrePass::ZPrePass(
 	const WorldRenderSettings& settings,
 	WorldEntityRenderers* entityRenderers)
 	: m_settings(settings)
@@ -31,53 +31,39 @@ GBufferPass::GBufferPass(
 {
 }
 
-void GBufferPass::destroy()
+void ZPrePass::destroy()
 {
 	m_entityRenderers = nullptr;
 }
 
-render::RGTargetSet GBufferPass::setup(
+render::RGTargetSet ZPrePass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
-	render::handle_t gbufferWriteTechnique,
 	render::RenderGraph& renderGraph,
 	render::RGTexture hiZTextureId,
-	render::RGTargetSet zprepassTargetSetId,
 	render::RGTargetSet outputTargetSetId) const
 {
-	T_PROFILER_SCOPE(L"GBufferPass::setup");
-	const float clearZ = m_settings.viewFarZ;
+	T_PROFILER_SCOPE(L"ZPrePass::setup");
 
-	// If a z pre-pass has run it has already populated the shared depth buffer;
-	// inherit it instead of clearing so early-z can reject occluded fragments.
-	const bool inheritDepth = (bool)(zprepassTargetSetId != render::RGTargetSet::Invalid);
-
-	// Add GBuffer target set.
+	// Add Z pre-pass target set; depth only, shared with target set of
+	// following geometry passes so they inherit the depth written here.
 	render::RenderGraphTargetSetDesc rgtd;
-	rgtd.count = 3;
+	rgtd.count = 0;
 	rgtd.createDepthStencil = false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F; // (GBufferA) Depth (R), Normal (GBA)
-	rgtd.targets[1].colorFormat = render::TfR8G8B8A8;	   // (GBufferB) Albedo (RGB), Specular (A)
-	rgtd.targets[1].sRGB = true;
-	rgtd.targets[2].colorFormat = render::TfR8G8B8A8; // (GBufferC) Roughness (R), Metalness (G), Specular (B), Decal Response (A)
 
-	auto gbufferTargetSetId = renderGraph.addTransientTargetSet(L"GBuffer", rgtd, outputTargetSetId, outputTargetSetId);
+	const render::RGTargetSet zprepassTargetSetId = renderGraph.addTransientTargetSet(L"ZPrePass", rgtd, outputTargetSetId, outputTargetSetId);
 
-	// Add GBuffer render pass.
-	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
+	// Add Z pre-pass render pass.
+	Ref< render::RenderPass > rp = new render::RenderPass(L"ZPrePass");
 	rp->addWeakInput(hiZTextureId);
-	rp->addInput(zprepassTargetSetId);
 
 	render::Clear clear;
-	clear.mask = inheritDepth ? render::CfColor : (render::CfColor | render::CfDepth | render::CfStencil);
-	clear.colors[0] = Color4f(clearZ, 0.0f, 0.0f, -1.0f);
-	clear.colors[1] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-	clear.colors[2] = Color4f(0.8f, 0.0f, 0.0f, 0.0f);
+	clear.mask = render::CfDepth | render::CfStencil;
 	clear.depth = 1.0f;
 	clear.stencil = 0;
-	rp->setOutput(gbufferTargetSetId, clear, inheritDepth ? render::TfDepth : render::TfNone, render::TfAll);
+	rp->setOutput(zprepassTargetSetId, clear, render::TfNone, render::TfDepth);
 
 	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		const WorldBuildContext wc(m_entityRenderers, renderContext);
@@ -89,6 +75,8 @@ render::RGTargetSet GBufferPass::setup(
 		sharedParams->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());
 		sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, worldRenderView.getView().inverse());
 
+		// Cull using same HiZ texture as the g-buffer pass so both passes render
+		// the exact same set of geometry.
 		if (hiZTextureId != render::RGTexture::Invalid)
 		{
 			auto hiZTexture = renderGraph.getTexture(hiZTextureId);
@@ -97,8 +85,8 @@ render::RGTargetSet GBufferPass::setup(
 
 		sharedParams->endParameters(renderContext);
 
-		const WorldRenderPassShared gbufferPass(
-			gbufferWriteTechnique,
+		const WorldRenderPassShared zprepass(
+			ShaderTechnique::ZPrePassWrite,
 			sharedParams,
 			worldRenderView,
 			{});
@@ -109,12 +97,12 @@ render::RGTargetSet GBufferPass::setup(
 		{
 			IEntityRenderer* entityRenderer = it.first;
 			const GatherView::Renderable& r = it.second;
-			entityRenderer->build(wc, worldRenderView, gbufferPass, r.objects);
+			entityRenderer->build(wc, worldRenderView, zprepass, r.objects);
 		}
 	});
 
 	renderGraph.addPass(rp);
-	return gbufferTargetSetId;
+	return zprepassTargetSetId;
 }
 
 }

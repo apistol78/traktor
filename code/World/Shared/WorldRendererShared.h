@@ -45,6 +45,7 @@ class ReflectionsPass;
 class VelocityPass;
 class VolumetricFogPass;
 class WorldEntityRenderers;
+class ZPrePass;
 
 /*! World renderer shared implementation.
  * \ingroup World
@@ -101,6 +102,7 @@ protected:
 	/*! \name Render passes. */
 	//@{
 	Ref< LightClusterPass > m_lightClusterPass;
+	Ref< ZPrePass > m_zPrePass;
 	Ref< GBufferPass > m_gbufferPass;
 	Ref< DBufferPass > m_dbufferPass;
 	Ref< DownScalePass > m_downScalePass;

@@ -162,7 +162,7 @@ void WorldRendererForward::setup(
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
 
 	// ... using gathered renderables.
-	const auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::ForwardGBufferWrite, renderGraph, render::RGTexture::Invalid, visualTargetSetId.current);
+	const auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::ForwardGBufferWrite, renderGraph, render::RGTexture::Invalid, render::RGTargetSet::Invalid, visualTargetSetId.current);
 	const auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
 	const auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
 	const auto shadowMapAtlasTargetSetId = setupLightPass(worldRenderView, renderGraph);

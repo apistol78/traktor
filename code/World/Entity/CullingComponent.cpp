@@ -152,9 +152,13 @@ void CullingComponent::build(
 			str(L"Cull %d", worldRenderView.getShadowMapIndex()));
 
 		render::Shader::Permutation perm;
-		if (worldRenderPass.getTechnique() == ShaderTechnique::DeferredGBufferWrite)
+		if (
+			worldRenderPass.getTechnique() == ShaderTechnique::ZPrePassWrite ||
+			worldRenderPass.getTechnique() == ShaderTechnique::DeferredGBufferWrite)
 		{
-			// Deferred g-buffer pass has access to HiZ texture.
+			// Z pre-pass and deferred g-buffer pass have access to HiZ texture; both
+			// must cull identically so the depth written by the pre-pass matches the
+			// depth the g-buffer pass expects.
 			m_shaderCull->setCombination(ShaderPermutation::CullingHiZ, true, perm);
 		}
 		else
