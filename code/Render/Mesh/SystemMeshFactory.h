@@ -32,6 +32,8 @@ public:
 	virtual Ref< Mesh > createMesh(
 		const AlignedVector< VertexElement >& vertexElements,
 		uint32_t vertexBufferSize,
+		const AlignedVector< VertexElement >& depthVertexElements,
+		uint32_t depthVertexBufferSize,
 		IndexType indexType,
 		uint32_t indexBufferSize,
 		const SmallMap< FourCC, uint32_t >& auxBufferSizes

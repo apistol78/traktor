@@ -23,6 +23,8 @@ RenderMeshFactory::RenderMeshFactory(IRenderSystem* renderSystem)
 Ref< Mesh > RenderMeshFactory::createMesh(
 	const AlignedVector< VertexElement >& vertexElements,
 	uint32_t vertexBufferSize,
+	const AlignedVector< VertexElement >& depthVertexElements,
+	uint32_t depthVertexBufferSize,
 	IndexType indexType,
 	uint32_t indexBufferSize,
 	const SmallMap< FourCC, uint32_t >& auxBufferSizes
@@ -30,6 +32,8 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 {
 	Ref< const IVertexLayout > vertexLayout;
 	Ref< Buffer > vertexBuffer;
+	Ref< const IVertexLayout > depthVertexLayout;
+	Ref< Buffer > depthVertexBuffer;
 	Ref< Buffer > indexBuffer;
 	Ref< Buffer > auxBuffer;
 
@@ -45,6 +49,21 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 
 		vertexBuffer = m_renderSystem->createBuffer(BuVertex, vertexBufferSize, false, T_FILE_LINE_W);
 		if (!vertexBuffer)
+			return nullptr;
+	}
+
+	if (depthVertexBufferSize > 0)
+	{
+		const uint32_t depthVertexSize = getVertexSize(depthVertexElements);
+		if (depthVertexSize == 0)
+			return nullptr;
+
+		depthVertexLayout = m_renderSystem->createVertexLayout(depthVertexElements);
+		if (!depthVertexLayout)
+			return nullptr;
+
+		depthVertexBuffer = m_renderSystem->createBuffer(BuVertex, depthVertexBufferSize, false, T_FILE_LINE_W);
+		if (!depthVertexBuffer)
 			return nullptr;
 	}
 
@@ -68,6 +87,9 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 	mesh->setVertexElements(vertexElements);
 	mesh->setVertexLayout(vertexLayout);
 	mesh->setVertexBuffer(vertexBuffer);
+	mesh->setDepthVertexElements(depthVertexElements);
+	mesh->setDepthVertexLayout(depthVertexLayout);
+	mesh->setDepthVertexBuffer(depthVertexBuffer);
 	mesh->setIndexType(indexType);
 	mesh->setIndexBuffer(indexBuffer);
 	mesh->setAuxBuffers(auxBuffers);

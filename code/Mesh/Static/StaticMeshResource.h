@@ -44,6 +44,7 @@ public:
 	{
 		std::wstring shaderTechnique; //!< Shader technique when rendering this part.
 		uint32_t meshPart;			  //!< Index into render mesh parts.
+		bool depthStream = false;	  //!< Render this part from the mesh's depth-only vertex stream.
 
 		void serialize(ISerializer& s);
 	};

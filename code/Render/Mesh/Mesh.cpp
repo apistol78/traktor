@@ -28,6 +28,21 @@ void Mesh::setVertexBuffer(Buffer* vertexBuffer)
 	m_vertexBuffer = vertexBuffer;
 }
 
+void Mesh::setDepthVertexElements(const AlignedVector< VertexElement >& vertexElements)
+{
+	m_depthVertexElements = vertexElements;
+}
+
+void Mesh::setDepthVertexLayout(const IVertexLayout* vertexLayout)
+{
+	m_depthVertexLayout = vertexLayout;
+}
+
+void Mesh::setDepthVertexBuffer(Buffer* vertexBuffer)
+{
+	m_depthVertexBuffer = vertexBuffer;
+}
+
 void Mesh::setIndexType(IndexType indexType)
 {
 	m_indexType = indexType;

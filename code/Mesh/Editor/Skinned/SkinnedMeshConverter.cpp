@@ -132,6 +132,7 @@ bool SkinnedMeshConverter::convert(
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const AlignedVector< render::VertexElement >& vertexElements,
+	const AlignedVector< render::VertexElement >& depthVertexElements,
 	MeshResource* meshResource,
 	IStream* meshResourceStream) const
 {
@@ -165,6 +166,8 @@ bool SkinnedMeshConverter::convert(
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
+		{},
+		0,
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize,
 		{ { SkinnedMesh::c_fccSkinPosition, auxBufferSize },

@@ -35,9 +35,16 @@ class T_DLLCLASS MeshFactory : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! Create mesh.
+	 *
+	 * \param depthVertexElements Declaration of the optional depth-only vertex stream; empty for no such stream.
+	 * \param depthVertexBufferSize Size of the optional depth-only vertex stream; zero for no such stream.
+	 */
 	virtual Ref< Mesh > createMesh(
 		const AlignedVector< VertexElement >& vertexElements,
 		uint32_t vertexBufferSize,
+		const AlignedVector< VertexElement >& depthVertexElements,
+		uint32_t depthVertexBufferSize,
 		IndexType indexType,
 		uint32_t indexBufferSize,
 		const SmallMap< FourCC, uint32_t >& auxBufferSizes

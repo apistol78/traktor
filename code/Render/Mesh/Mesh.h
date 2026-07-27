@@ -44,6 +44,22 @@ public:
 
 	void setVertexBuffer(Buffer* vertexBuffer);
 
+	//! \name Depth stream.
+	//! Optional, tightly packed, stream containing only the vertex attributes
+	//! consumed by depth-only techniques (shadow and z pre-pass). Rendering those
+	//! techniques from this stream instead of the full vertex buffer cuts the
+	//! amount of vertex data fetched, and lets a cache line cover several
+	//! vertices instead of a fraction of one.
+	//! \{
+
+	void setDepthVertexElements(const AlignedVector< VertexElement >& vertexElements);
+
+	void setDepthVertexLayout(const IVertexLayout* vertexLayout);
+
+	void setDepthVertexBuffer(Buffer* vertexBuffer);
+
+	//! \}
+
 	void setIndexType(IndexType indexType);
 
 	void setIndexBuffer(Buffer* indexBuffer);
@@ -64,6 +80,12 @@ public:
 
 	Buffer* getVertexBuffer() const { return m_vertexBuffer; }
 
+	const AlignedVector< VertexElement >& getDepthVertexElements() const { return m_depthVertexElements; }
+
+	const IVertexLayout* getDepthVertexLayout() const { return m_depthVertexLayout; }
+
+	Buffer* getDepthVertexBuffer() const { return m_depthVertexBuffer; }
+
 	IndexType getIndexType() const { return m_indexType; }
 
 	Buffer* getIndexBuffer() const { return m_indexBuffer; }
@@ -82,6 +104,9 @@ private:
 	AlignedVector< VertexElement > m_vertexElements;
 	Ref< const IVertexLayout > m_vertexLayout;
 	Ref< Buffer > m_vertexBuffer;
+	AlignedVector< VertexElement > m_depthVertexElements;
+	Ref< const IVertexLayout > m_depthVertexLayout;
+	Ref< Buffer > m_depthVertexBuffer;
 	IndexType m_indexType;
 	Ref< Buffer > m_indexBuffer;
 	SmallMap< FourCC, Ref< Buffer > > m_auxBuffers;

@@ -142,9 +142,54 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 	return true;
 }
 
+/*! World techniques which render depth only.
+ *
+ * Parts of those techniques are rendered from the mesh's depth vertex stream instead of
+ * the full one; they read a fraction of the attributes so streaming the rest is waste.
+ */
+bool isDepthOnlyTechnique(const std::wstring& worldTechnique)
+{
+	return worldTechnique == L"World_ShadowWrite" || worldTechnique == L"World_ZPrePassWrite";
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 65, MeshPipeline, editor::IPipeline)
+/*! Derive declaration of the depth vertex stream.
+ *
+ * \param vertexElements Full vertex declaration of the mesh.
+ * \param depthVertexInputs Vertex inputs read by any depth-only technique.
+ * \return Those elements of the full declaration which are read, tightly packed; empty
+ *         if there is no position to render depth from.
+ */
+AlignedVector< render::VertexElement > getDepthVertexElements(
+	const AlignedVector< render::VertexElement >& vertexElements,
+	const std::set< std::pair< render::DataUsage, int32_t > >& depthVertexInputs)
+{
+	AlignedVector< render::VertexElement > depthVertexElements;
+	uint32_t offset = 0;
+	for (const auto& vertexElement : vertexElements)
+	{
+		if (depthVertexInputs.find(std::make_pair(vertexElement.getDataUsage(), vertexElement.getIndex())) == depthVertexInputs.end())
+			continue;
+
+		// Same data type as in the full stream; a z pre-pass must produce bit exact the
+		// same position as the passes testing against its depth.
+		depthVertexElements.push_back(render::VertexElement(
+			vertexElement.getDataUsage(),
+			vertexElement.getDataType(),
+			offset,
+			vertexElement.getIndex()));
+
+		offset += vertexElement.getSize();
+	}
+
+	if (render::findVertexElement(depthVertexElements, render::DataUsage::Position, 0) == depthVertexElements.end())
+		depthVertexElements.resize(0);
+
+	return depthVertexElements;
+}
+
+}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 67, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 	: m_promoteHalf(false)
@@ -515,6 +560,8 @@ bool MeshPipeline::buildOutput(
 	AlignedVector< render::VertexElement > vertexElements;
 	uint32_t vertexElementOffset = 0;
 
+	std::set< std::pair< render::DataUsage, int32_t > > depthVertexInputs; //< Vertex inputs read by depth-only techniques of any material.
+
 	std::map< uint32_t, Ref< render::ShaderGraph > > materialTechniqueShaderGraphs;	   //< Collection of all material technique fragments; later merged into single shader.
 	std::map< std::wstring, std::list< MeshMaterialTechnique > > materialTechniqueMap; //< Map from model material to technique fragments. ["Model material":["Default":hash0, "Depth":hash1, ...]]
 
@@ -762,13 +809,25 @@ bool MeshPipeline::buildOutput(
 
 			materialTechniqueShaderGraphs[hash] = materialTechniqueShaderGraph;
 
+			// Depth-only techniques are rendered from a separate, tightly packed, vertex
+			// stream. Collect which attributes they actually read; the stream must carry
+			// all of them since a vertex shader input without a matching attribute is
+			// invalid, but nothing more or the saving is lost.
+			const bool depthStream = isDepthOnlyTechnique(materialTechniqueName);
+			if (depthStream)
+			{
+				for (auto vertexInputNode : materialTechniqueShaderGraph->findNodesOf< render::VertexInput >())
+					depthVertexInputs.insert(std::make_pair(vertexInputNode->getDataUsage(), vertexInputNode->getIndex()));
+			}
+
 			MeshMaterialTechnique mt;
 			mt.worldTechnique = materialTechniqueName;
 			mt.shaderTechnique = shaderTechniqueName;
 			mt.hash = hash;
+			mt.depthStream = depthStream;
 			materialTechniqueMap[materialName].push_back(mt);
 
-			log::info << L"\t\"" << materialTechniqueName << L"\"\t\t(" << shaderTechniqueName << L")" << Endl;
+			log::info << L"\t\"" << materialTechniqueName << L"\"\t\t(" << shaderTechniqueName << L")" << (depthStream ? L"\t[depth stream]" : L"") << Endl;
 		}
 
 		// Build vertex declaration from shader vertex inputs.
@@ -829,6 +888,12 @@ bool MeshPipeline::buildOutput(
 		vertexElementOffset += vertexElement.getSize();
 	}
 	log::info << L"Mesh using " << vertexElements.size() << L" vertex elements." << Endl;
+
+	// Derive declaration of the depth vertex stream from the attributes the depth-only
+	// techniques read.
+	const AlignedVector< render::VertexElement > depthVertexElements = getDepthVertexElements(vertexElements, depthVertexInputs);
+	if (!depthVertexElements.empty())
+		log::info << L"Mesh using " << depthVertexElements.size() << L" depth vertex elements (" << render::getVertexSize(depthVertexElements) << L" of " << vertexElementOffset << L" bytes)." << Endl;
 
 	// Merge all shader technique fragments into a single material shader.
 	Ref< render::ShaderGraph > materialShaderGraph = new render::ShaderGraph();
@@ -894,6 +959,7 @@ bool MeshPipeline::buildOutput(
 			materialGuid,
 			materialTechniqueMap,
 			vertexElements,
+			depthVertexElements,
 			resource,
 			stream))
 	{

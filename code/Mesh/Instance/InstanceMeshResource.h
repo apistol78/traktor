@@ -44,6 +44,7 @@ public:
 	{
 		std::wstring shaderTechnique;
 		uint32_t meshPart = 0;
+		bool depthStream = false; //!< Render this part from the mesh's depth-only vertex stream.
 
 		void serialize(ISerializer& s);
 	};

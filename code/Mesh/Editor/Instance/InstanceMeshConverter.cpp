@@ -29,6 +29,7 @@
 #include "World/WorldTypes.h"
 
 #include <cstring>
+#include <set>
 #include <limits>
 
 namespace traktor::mesh
@@ -62,6 +63,7 @@ bool InstanceMeshConverter::convert(
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const AlignedVector< render::VertexElement >& vertexElements,
+	const AlignedVector< render::VertexElement >& depthVertexElements,
 	MeshResource* meshResource,
 	IStream* meshResourceStream) const
 {
@@ -85,14 +87,21 @@ bool InstanceMeshConverter::convert(
 	const bool useLargeIndices = (bool)(totalVertexCount >= 65536);
 	const uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
 
+	// Depth-only techniques are rendered from a separate, tightly packed, stream which
+	// carry only the attributes they read; the pipeline derive its declaration.
+	const uint32_t depthVertexSize = render::getVertexSize(depthVertexElements);
+
 	// Create render mesh.
 	const uint32_t vertexBufferSize = totalVertexCount * vertexSize;
+	const uint32_t depthVertexBufferSize = totalVertexCount * depthVertexSize;
 	const uint32_t indexBufferSize = (polygonCount * 3 + (uint32_t)rtGeometry.indices.size()) * indexSize;
 	const uint32_t rtVertexAttributesSize = (uint32_t)rtGeometry.materials.size() * sizeof(world::HWRT_Material);
 
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
+		depthVertexElements,
+		depthVertexBufferSize,
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize,
 		{ { IMesh::c_fccRayTracingVertexAttributes, rtVertexAttributesSize } });
@@ -101,23 +110,42 @@ bool InstanceMeshConverter::convert(
 	uint8_t* vertex = (uint8_t*)renderMesh->getVertexBuffer()->lock();
 	std::memset(vertex, 0, vertexBufferSize);
 
+	uint8_t* depthVertex = nullptr;
+	if (depthVertexBufferSize > 0)
+	{
+		depthVertex = (uint8_t*)renderMesh->getDepthVertexBuffer()->lock();
+		std::memset(depthVertex, 0, depthVertexBufferSize);
+	}
+
+	// Both streams are written through this; attributes absent from a declaration are
+	// skipped, so the depth stream automatically get its subset and the two cannot
+	// disagree on the attributes they share.
+	const auto writeVertex = [&](const AlignedVector< render::VertexElement >& elements, uint8_t* vertex, const model::Vertex& v) {
+		writeVertexData(elements, vertex, render::DataUsage::Position, 0, model->getPosition(v.getPosition()));
+		if (v.getNormal() != model::c_InvalidIndex)
+			writeVertexData(elements, vertex, render::DataUsage::Normal, 0, model->getNormal(v.getNormal()));
+		if (v.getTangent() != model::c_InvalidIndex)
+			writeVertexData(elements, vertex, render::DataUsage::Tangent, 0, model->getNormal(v.getTangent()));
+		if (v.getBinormal() != model::c_InvalidIndex)
+			writeVertexData(elements, vertex, render::DataUsage::Binormal, 0, model->getNormal(v.getBinormal()));
+		if (v.getColor() != model::c_InvalidIndex)
+			writeVertexData(elements, vertex, render::DataUsage::Color, 0, model->getColor(v.getColor()));
+		if (v.getTexCoord(0) != model::c_InvalidIndex)
+			writeVertexData(elements, vertex, render::DataUsage::Custom, 0, model->getTexCoord(v.getTexCoord(0)));
+		if (v.getTexCoord(1) != model::c_InvalidIndex)
+			writeVertexData(elements, vertex, render::DataUsage::Custom, 1, model->getTexCoord(v.getTexCoord(1)));
+	};
+
 	for (const auto& v : model->getVertices())
 	{
-		writeVertexData(vertexElements, vertex, render::DataUsage::Position, 0, model->getPosition(v.getPosition()));
-		if (v.getNormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DataUsage::Normal, 0, model->getNormal(v.getNormal()));
-		if (v.getTangent() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DataUsage::Tangent, 0, model->getNormal(v.getTangent()));
-		if (v.getBinormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DataUsage::Binormal, 0, model->getNormal(v.getBinormal()));
-		if (v.getColor() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DataUsage::Color, 0, model->getColor(v.getColor()));
-		if (v.getTexCoord(0) != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 0, model->getTexCoord(v.getTexCoord(0)));
-		if (v.getTexCoord(1) != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 1, model->getTexCoord(v.getTexCoord(1)));
-
+		writeVertex(vertexElements, vertex, v);
 		vertex += vertexSize;
+
+		if (depthVertex != nullptr)
+		{
+			writeVertex(depthVertexElements, depthVertex, v);
+			depthVertex += depthVertexSize;
+		}
 	}
 
 	// Append ray tracing vertices; only positions are needed to build the acceleration structure.
@@ -125,9 +153,17 @@ bool InstanceMeshConverter::convert(
 	{
 		writeVertexData(vertexElements, vertex, render::DataUsage::Position, 0, position);
 		vertex += vertexSize;
+
+		if (depthVertex != nullptr)
+		{
+			writeVertexData(depthVertexElements, depthVertex, render::DataUsage::Position, 0, position);
+			depthVertex += depthVertexSize;
+		}
 	}
 
 	renderMesh->getVertexBuffer()->unlock();
+	if (depthVertexBufferSize > 0)
+		renderMesh->getDepthVertexBuffer()->unlock();
 
 	// Create index buffer.
 	std::map< std::wstring, AlignedVector< IndexRange > > techniqueRanges;
@@ -188,6 +224,13 @@ bool InstanceMeshConverter::convert(
 	AlignedVector< render::Primitives > meshPrimitives;
 	SmallMap< std::wstring, InstanceMeshResource::parts_t > parts;
 
+	// World techniques which the pipeline determined can be rendered from the depth stream.
+	std::set< std::wstring > depthStreamTechniques;
+	for (const auto& mt : materialTechniqueMap)
+		for (const auto& mtt : mt.second)
+			if (mtt.depthStream)
+				depthStreamTechniques.insert(mtt.worldTechnique);
+
 	for (const auto& techniqueRange : techniqueRanges)
 	{
 		std::wstring worldTechnique, shaderTechnique;
@@ -198,6 +241,7 @@ bool InstanceMeshConverter::convert(
 			InstanceMeshResource::Part part;
 			part.shaderTechnique = shaderTechnique;
 			part.meshPart = (uint32_t)meshPrimitives.size();
+			part.depthStream = (bool)(depthStreamTechniques.find(worldTechnique) != depthStreamTechniques.end());
 
 			for (uint32_t k = 0; k < (uint32_t)meshPrimitives.size(); ++k)
 			{

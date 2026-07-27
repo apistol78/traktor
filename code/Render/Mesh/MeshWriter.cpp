@@ -21,7 +21,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 {
 	Writer writer(stream);
 
-	writer << (uint32_t)9;
+	writer << (uint32_t)10;
 
 	// Write vertex buffer.
 	const auto& vertexElements = mesh->getVertexElements();
@@ -37,6 +37,21 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 
 	const uint32_t vertexBufferSize = (mesh->getVertexBuffer() != nullptr) ? mesh->getVertexBuffer()->getBufferSize() : 0;
 	writer << vertexBufferSize;
+
+	// Write depth vertex buffer.
+	const auto& depthVertexElements = mesh->getDepthVertexElements();
+	writer << (uint32_t)depthVertexElements.size();
+
+	for (const auto& vertexElement : depthVertexElements)
+	{
+		writer << (uint32_t)vertexElement.getDataUsage();
+		writer << (uint32_t)vertexElement.getDataType();
+		writer << (uint32_t)vertexElement.getOffset();
+		writer << (uint32_t)vertexElement.getIndex();
+	}
+
+	const uint32_t depthVertexBufferSize = (mesh->getDepthVertexBuffer() != nullptr) ? mesh->getDepthVertexBuffer()->getBufferSize() : 0;
+	writer << depthVertexBufferSize;
 
 	// Write index buffer.
 	IndexType indexType = IndexType::UInt16;
@@ -118,6 +133,14 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 			i += getVertexSize(vertexElements);
 		}
 		mesh->getVertexBuffer()->unlock();
+	}
+
+	// Write the depth vertex buffer verbatim; it's tightly packed and read back as such.
+	if (depthVertexBufferSize > 0)
+	{
+		uint8_t* vertex = static_cast< uint8_t* >(mesh->getDepthVertexBuffer()->lock());
+		writer.write(vertex, depthVertexBufferSize);
+		mesh->getDepthVertexBuffer()->unlock();
 	}
 
 	if (indexBufferSize > 0)

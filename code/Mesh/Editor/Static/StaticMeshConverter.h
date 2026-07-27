@@ -26,6 +26,7 @@ public:
 		const Guid& materialGuid,
 		const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 		const AlignedVector< render::VertexElement >& vertexElements,
+		const AlignedVector< render::VertexElement >& depthVertexElements,
 		MeshResource* meshResource,
 		IStream* meshResourceStream
 	) const override final;

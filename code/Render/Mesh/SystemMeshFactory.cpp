@@ -40,12 +40,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SystemMeshFactory", SystemMeshFactory, M
 Ref< Mesh > SystemMeshFactory::createMesh(
 	const AlignedVector< VertexElement >& vertexElements,
 	uint32_t vertexBufferSize,
+	const AlignedVector< VertexElement >& depthVertexElements,
+	uint32_t depthVertexBufferSize,
 	IndexType indexType,
 	uint32_t indexBufferSize,
 	const SmallMap< FourCC, uint32_t >& auxBufferSizes
 ) const
 {
 	Ref< Buffer > vertexBuffer;
+	Ref< Buffer > depthVertexBuffer;
 	Ref< Buffer > indexBuffer;
 	Ref< Buffer > auxBuffer;
 
@@ -55,6 +58,14 @@ Ref< Mesh > SystemMeshFactory::createMesh(
 		if (vertexSize == 0)
 			return nullptr;
 		vertexBuffer = new InternalBuffer(vertexBufferSize);
+	}
+
+	if (depthVertexBufferSize > 0)
+	{
+		const uint32_t depthVertexSize = getVertexSize(depthVertexElements);
+		if (depthVertexSize == 0)
+			return nullptr;
+		depthVertexBuffer = new InternalBuffer(depthVertexBufferSize);
 	}
 
 	if (indexBufferSize > 0)
@@ -67,6 +78,8 @@ Ref< Mesh > SystemMeshFactory::createMesh(
 	Ref< Mesh > mesh = new Mesh();
 	mesh->setVertexElements(vertexElements);
 	mesh->setVertexBuffer(vertexBuffer);
+	mesh->setDepthVertexElements(depthVertexElements);
+	mesh->setDepthVertexBuffer(depthVertexBuffer);
 	mesh->setIndexType(indexType);
 	mesh->setIndexBuffer(indexBuffer);
 	mesh->setAuxBuffers(auxBuffers);

@@ -70,6 +70,7 @@ public:
 	{
 		render::handle_t shaderTechnique;
 		uint32_t meshPart;
+		bool depthStream; //!< Render from the mesh's depth-only vertex stream.
 	};
 
 	explicit InstanceMesh(

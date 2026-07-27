@@ -35,7 +35,7 @@ const resource::Id< render::Shader > c_shaderInstanceMeshCompact(L"{F46125D0-632
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 9, InstanceMeshResource, MeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 10, InstanceMeshResource, MeshResource)
 
 Ref< IMesh > InstanceMeshResource::createMesh(
 	const std::wstring& name,
@@ -94,6 +94,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 			InstanceMesh::Part part;
 			part.shaderTechnique = render::getParameterHandle(j->shaderTechnique);
 			part.meshPart = j->meshPart;
+			part.depthStream = j->depthStream;
 			instanceMesh->m_parts[worldTechnique].push_back(part);
 		}
 	}
@@ -119,7 +120,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 
 void InstanceMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 9, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 10, L"Incorrect version");
 
 	MeshResource::serialize(s);
 
@@ -137,6 +138,7 @@ void InstanceMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
+	s >> Member< bool >(L"depthStream", depthStream);
 }
 
 }

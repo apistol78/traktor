@@ -35,7 +35,7 @@ Ref< Mesh > MeshReader::read(IStream* stream, const AlignedVector< AuxPatch >& p
 
 	uint32_t version;
 	reader >> version;
-	if (version != 9)
+	if (version != 10)
 		return nullptr;
 
 	// Read vertex declaration.
@@ -62,6 +62,30 @@ Ref< Mesh > MeshReader::read(IStream* stream, const AlignedVector< AuxPatch >& p
 	uint32_t vertexBufferSize;
 	reader >> vertexBufferSize;
 
+	// Read depth vertex declaration.
+	uint32_t depthVertexElementCount;
+	reader >> depthVertexElementCount;
+
+	AlignedVector< VertexElement > depthVertexElements;
+	depthVertexElements.reserve(depthVertexElementCount);
+	for (uint32_t i = 0; i < depthVertexElementCount; ++i)
+	{
+		uint32_t usage, type, offset, index;
+		reader >> usage;
+		reader >> type;
+		reader >> offset;
+		reader >> index;
+		depthVertexElements.push_back(VertexElement(
+			(DataUsage)usage,
+			(DataType)type,
+			offset,
+			index));
+	}
+
+	// Read depth vertex buffer size.
+	uint32_t depthVertexBufferSize;
+	reader >> depthVertexBufferSize;
+
 	// Read index declaration.
 	uint32_t indexType;
 	reader >> indexType;
@@ -87,6 +111,8 @@ Ref< Mesh > MeshReader::read(IStream* stream, const AlignedVector< AuxPatch >& p
 	Ref< Mesh > mesh = m_meshFactory->createMesh(
 		vertexElements,
 		vertexBufferSize,
+		depthVertexElements,
+		depthVertexBufferSize,
 		(IndexType)indexType,
 		indexBufferSize,
 		auxBufferSizes);
@@ -100,6 +126,15 @@ Ref< Mesh > MeshReader::read(IStream* stream, const AlignedVector< AuxPatch >& p
 			return nullptr;
 		reader.read(vertex, vertexBufferSize);
 		mesh->getVertexBuffer()->unlock();
+	}
+
+	if (depthVertexBufferSize > 0)
+	{
+		uint8_t* vertex = static_cast< uint8_t* >(mesh->getDepthVertexBuffer()->lock());
+		if (!vertex)
+			return nullptr;
+		reader.read(vertex, depthVertexBufferSize);
+		mesh->getDepthVertexBuffer()->unlock();
 	}
 
 	if (indexBufferSize > 0)

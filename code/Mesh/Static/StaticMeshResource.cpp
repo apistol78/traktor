@@ -27,7 +27,7 @@
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", 7, StaticMeshResource, MeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", 8, StaticMeshResource, MeshResource)
 
 StaticMeshResource::StaticMeshResource()
 	: m_haveRenderMesh(false)
@@ -65,6 +65,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 			StaticMesh::Part& part = staticMesh->m_parts.push_back();
 			part.shaderTechnique = render::getParameterHandle(resourcePart.shaderTechnique);
 			part.meshPart = resourcePart.meshPart;
+			part.depthStream = resourcePart.depthStream;
 		}
 
 		r.second = (uint32_t)staticMesh->m_parts.size();
@@ -116,7 +117,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 
 void StaticMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 7, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 8, L"Incorrect version");
 
 	MeshResource::serialize(s);
 
@@ -134,5 +135,6 @@ void StaticMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
+	s >> Member< bool >(L"depthStream", depthStream);
 }
 }

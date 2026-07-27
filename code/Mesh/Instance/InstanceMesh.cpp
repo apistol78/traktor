@@ -208,8 +208,11 @@ void InstanceMesh::cullableBuild(
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_renderMesh->getIndexBuffer()->getBufferView();
 		renderBlock->indexType = m_renderMesh->getIndexType();
-		renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer()->getBufferView();
-		renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
+		// Parts of depth-only techniques are rendered from the packed depth stream; it
+		// carry the same positions but only a fraction of the vertex data.
+		const bool depthStream = part.depthStream && m_renderMesh->getDepthVertexBuffer() != nullptr;
+		renderBlock->vertexBuffer = depthStream ? m_renderMesh->getDepthVertexBuffer()->getBufferView() : m_renderMesh->getVertexBuffer()->getBufferView();
+		renderBlock->vertexLayout = depthStream ? m_renderMesh->getDepthVertexLayout() : m_renderMesh->getVertexLayout();
 		renderBlock->primitive = meshPrimitives[part.meshPart].type;
 		renderBlock->drawBuffer = drawBuffer->getBufferView();
 		renderBlock->drawOffset = i * (uint32_t)sizeof(render::IndexedIndirectDraw);
