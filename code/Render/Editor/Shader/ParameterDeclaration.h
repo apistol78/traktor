@@ -42,6 +42,8 @@ public:
 
 	UpdateFrequency getFrequency() const { return m_frequency; }
 
+	const Guid& getStructDeclarationId() const { return m_structDeclaration; }
+
 	const std::wstring& getStructType() const { return m_structType; }
 
 	const StructDeclaration& getStructDeclaration() const { return m_declaration; }

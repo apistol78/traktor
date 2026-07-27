@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -45,7 +45,7 @@ const resource::Id< render::Shader > c_shaderUpdateSkin(L"{E520B46A-24BC-764C-A3
  * strongest joints and normalized before being written.
  */
 void writeSkinVertex(
-	float*& aux,
+	uint8_t*& aux,
 	const Vector4& position,
 	const Vector4& normal,
 	const Vector4& tangent,
@@ -62,7 +62,7 @@ void writeSkinVertex(
 	for (uint32_t i = 0; i < jointCount; ++i)
 		totalInfluence += influences[i].second;
 
-	float blendIndices[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	int32_t blendIndices[4] = { 0, 0, 0, 0 };
 	float blendWeights[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	if (std::abs(totalInfluence) > FUZZY_EPSILON)
@@ -73,23 +73,40 @@ void writeSkinVertex(
 
 		for (uint32_t i = 0; i < jointCount; ++i)
 		{
-			blendIndices[i] = (float)influences[i].first;
+			blendIndices[i] = influences[i].first;
 			blendWeights[i] = influences[i].second / totalInfluence;
 		}
 	}
 
-	position.storeUnaligned(aux);
-	aux += 4;
-	normal.storeUnaligned(aux);
-	aux += 4;
-	tangent.storeUnaligned(aux);
-	aux += 4;
-	binormal.storeUnaligned(aux);
-	aux += 4;
-	std::memcpy(aux, blendIndices, 4 * sizeof(float));
-	aux += 4;
-	std::memcpy(aux, blendWeights, 4 * sizeof(float));
-	aux += 4;
+	SkinnedMesh::SkinBuffer* at = (SkinnedMesh::SkinBuffer*)aux;
+	position.xyz1().storeUnaligned(at->Position);
+	
+	at->Normal[0] = floatToHalf(normal.x());
+	at->Normal[1] = floatToHalf(normal.y());
+	at->Normal[2] = floatToHalf(normal.z());
+	at->Normal[3] = floatToHalf(0.0f);
+
+	at->Tangent[0] = floatToHalf(tangent.x());
+	at->Tangent[1] = floatToHalf(tangent.y());
+	at->Tangent[2] = floatToHalf(tangent.z());
+	at->Tangent[3] = floatToHalf(0.0f);
+
+	at->Binormal[0] = floatToHalf(binormal.x());
+	at->Binormal[1] = floatToHalf(binormal.y());
+	at->Binormal[2] = floatToHalf(binormal.z());
+	at->Binormal[3] = floatToHalf(0.0f);
+
+	at->BlendWeights[0] = floatToHalf(blendWeights[0]);
+	at->BlendWeights[1] = floatToHalf(blendWeights[1]);
+	at->BlendWeights[2] = floatToHalf(blendWeights[2]);
+	at->BlendWeights[3] = floatToHalf(blendWeights[3]);
+
+	at->BlendIndices[0] = blendIndices[0];
+	at->BlendIndices[1] = blendIndices[1];
+	at->BlendIndices[2] = blendIndices[2];
+	at->BlendIndices[3] = blendIndices[3];
+
+	aux += sizeof(SkinnedMesh::SkinBuffer);
 }
 
 }
@@ -142,7 +159,7 @@ bool SkinnedMeshConverter::convert(
 	// deformed positions from the (larger) skinning buffer instead.
 	const uint32_t vertexBufferSize = modelVertexCount * vertexSize;
 	const uint32_t indexBufferSize = (polygonCount * 3 + (uint32_t)rtGeometry.indices.size()) * indexSize;
-	const uint32_t auxBufferSize = (uint32_t)(totalSkinVertexCount * (6 * 4 * sizeof(float)));
+	const uint32_t auxBufferSize = (uint32_t)(totalSkinVertexCount * sizeof(SkinnedMesh::SkinBuffer));
 	const uint32_t rtVertexAttributesSize = (uint32_t)rtGeometry.materials.size() * sizeof(world::HWRT_Material);
 
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
@@ -161,7 +178,7 @@ bool SkinnedMeshConverter::convert(
 		std::memset(vertex, 0, vertexBufferSize);
 	}
 
-	float* aux = static_cast< float* >(mesh->getAuxBuffer(SkinnedMesh::c_fccSkinPosition)->lock());
+	uint8_t* aux = static_cast< uint8_t* >(mesh->getAuxBuffer(SkinnedMesh::c_fccSkinPosition)->lock());
 	std::memset(aux, 0, auxBufferSize);
 
 	AlignedVector< std::pair< uint32_t, float > > jointInfluences;

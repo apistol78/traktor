@@ -10,6 +10,7 @@
 
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
+#include "Core/Math/Half.h"
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
@@ -60,13 +61,23 @@ class T_DLLCLASS SkinnedMesh : public IMesh
 
 public:
 #pragma pack(1)
-
 	struct JointData
 	{
 		float translation[4];
 		float rotation[4];
 	};
+#pragma pack()
 
+#pragma pack(1)
+	struct SkinBuffer
+	{
+		float Position[4];
+		half_t Normal[4];
+		half_t Tangent[4];
+		half_t Binormal[4];
+		half_t BlendWeights[4];
+		int32_t BlendIndices[4];
+	};
 #pragma pack()
 
 	static const FourCC c_fccSkinPosition;

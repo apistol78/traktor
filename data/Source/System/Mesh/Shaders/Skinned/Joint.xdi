@@ -5,8 +5,8 @@
 			<id>{23B954F1-7E1C-664E-9B7F-ED616D26D9B3}</id>
 			<comment/>
 			<position>
-				<first>189</first>
-				<second>278</second>
+				<first>119</first>
+				<second>243</second>
 			</position>
 			<name>Index</name>
 			<optional>false</optional>
@@ -15,8 +15,8 @@
 			<id>{495B7968-9833-264F-9E07-00BC25DE8093}</id>
 			<comment/>
 			<position>
-				<first>780</first>
-				<second>188</second>
+				<first>809</first>
+				<second>194</second>
 			</position>
 			<name>Translation</name>
 		</item>
@@ -24,8 +24,8 @@
 			<id>{DFB49558-B602-D747-BB05-FFB29423D121}</id>
 			<comment/>
 			<position>
-				<first>780</first>
-				<second>104</second>
+				<first>817</first>
+				<second>95</second>
 			</position>
 			<name>Rotation</name>
 		</item>
@@ -33,8 +33,8 @@
 			<id>{6137CE6D-B159-E445-9C2C-D14300DB527C}</id>
 			<comment/>
 			<position>
-				<first>780</first>
-				<second>327</second>
+				<first>809</first>
+				<second>293</second>
 			</position>
 			<name>LastRotation</name>
 		</item>
@@ -42,8 +42,8 @@
 			<id>{3339C073-C325-AE47-A9E2-5211D3B927AB}</id>
 			<comment/>
 			<position>
-				<first>780</first>
-				<second>411</second>
+				<first>801</first>
+				<second>392</second>
 			</position>
 			<name>LastTranslation</name>
 		</item>
@@ -51,8 +51,8 @@
 			<id>{46EDC588-0A64-BF4A-8ED1-0DD92CC82DC5}</id>
 			<comment/>
 			<position>
-				<first>169</first>
-				<second>146</second>
+				<first>130</first>
+				<second>144</second>
 			</position>
 			<parameterDeclaration>{8DEF6AB1-75EA-A14B-A46B-E85BD38D215F}</parameterDeclaration>
 		</item>
@@ -60,8 +60,8 @@
 			<id>{650A3207-7AA5-E142-AEFA-91E378AEB179}</id>
 			<comment/>
 			<position>
-				<first>140</first>
-				<second>380</second>
+				<first>122</first>
+				<second>342</second>
 			</position>
 			<parameterDeclaration>{226D8100-9BCC-D44F-9D12-83D438BEDEA8}</parameterDeclaration>
 		</item>
@@ -69,16 +69,16 @@
 			<id>{5DBB855B-B647-3A41-B062-8A764AFD8902}</id>
 			<comment/>
 			<position>
-				<first>548</first>
-				<second>169</second>
+				<first>349</first>
+				<second>177</second>
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
 			<id>{4811D351-ED53-9946-9904-11D487C99EBA}</id>
 			<comment/>
 			<position>
-				<first>548</first>
-				<second>169</second>
+				<first>567</first>
+				<second>162</second>
 			</position>
 			<memberName>Translation</memberName>
 		</item>
@@ -86,16 +86,16 @@
 			<id>{0D72ADFA-A57A-A543-9517-EF9BF1127379}</id>
 			<comment/>
 			<position>
-				<first>548</first>
-				<second>54</second>
+				<first>349</first>
+				<second>78</second>
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
 			<id>{33C3495C-15C7-5340-A208-71104973C782}</id>
 			<comment/>
 			<position>
-				<first>548</first>
-				<second>54</second>
+				<first>567</first>
+				<second>63</second>
 			</position>
 			<memberName>Rotation</memberName>
 		</item>
@@ -103,16 +103,16 @@
 			<id>{89FC6661-E5AD-2149-8998-75546B512BB6}</id>
 			<comment/>
 			<position>
-				<first>548</first>
-				<second>284</second>
+				<first>349</first>
+				<second>276</second>
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
 			<id>{9C522DEB-454F-B540-A98A-728E72BA42DD}</id>
 			<comment/>
 			<position>
-				<first>548</first>
-				<second>284</second>
+				<first>567</first>
+				<second>261</second>
 			</position>
 			<memberName>Rotation</memberName>
 		</item>
@@ -120,16 +120,16 @@
 			<id>{BEF8E4D7-00DC-0E49-97D0-A7390AA00C36}</id>
 			<comment/>
 			<position>
-				<first>548</first>
-				<second>399</second>
+				<first>349</first>
+				<second>375</second>
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
 			<id>{37458D40-7718-B74C-8D82-0E5EDD9CC75D}</id>
 			<comment/>
 			<position>
-				<first>548</first>
-				<second>399</second>
+				<first>567</first>
+				<second>360</second>
 			</position>
 			<memberName>Translation</memberName>
 		</item>

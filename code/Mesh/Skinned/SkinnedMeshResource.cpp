@@ -94,12 +94,16 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 	skinnedMesh->m_jointMap = m_jointMap;
 	skinnedMesh->m_jointCount = jointMaxIndex + 1;
 
-	skinnedMesh->m_rtVertexLayout = renderSystem->createVertexLayout({ render::VertexElement(render::DataUsage::Position, render::DtFloat4, 0 * 4 * sizeof(float)),
-		render::VertexElement(render::DataUsage::Normal, render::DtFloat4, 1 * 4 * sizeof(float)),
-		render::VertexElement(render::DataUsage::Tangent, render::DtFloat4, 2 * 4 * sizeof(float)),
-		render::VertexElement(render::DataUsage::Binormal, render::DtFloat4, 3 * 4 * sizeof(float)),
-		render::VertexElement(render::DataUsage::Custom, render::DtFloat4, 4 * 4 * sizeof(float)),
-		render::VertexElement(render::DataUsage::Custom, render::DtFloat4, 5 * 4 * sizeof(float), 1) });
+	skinnedMesh->m_rtVertexLayout = renderSystem->createVertexLayout({
+		render::VertexElement(render::DataUsage::Position, render::DtFloat4, offsetof(SkinnedMesh::SkinBuffer, Position)),
+		render::VertexElement(render::DataUsage::Normal, render::DtHalf4, offsetof(SkinnedMesh::SkinBuffer, Normal)),
+		render::VertexElement(render::DataUsage::Tangent, render::DtHalf4, offsetof(SkinnedMesh::SkinBuffer, Tangent)),
+		render::VertexElement(render::DataUsage::Binormal, render::DtHalf4, offsetof(SkinnedMesh::SkinBuffer, Binormal)),
+		// Following are not used by RT update; just added to make sure the pitch
+		// of the buffer is correct.
+		render::VertexElement(render::DataUsage::Custom, render::DtHalf4, offsetof(SkinnedMesh::SkinBuffer, BlendWeights)),
+		render::VertexElement(render::DataUsage::Custom, render::DtInteger4, offsetof(SkinnedMesh::SkinBuffer, BlendIndices), 1)
+	});
 
 #if defined(_DEBUG)
 	skinnedMesh->m_name = wstombs(name);

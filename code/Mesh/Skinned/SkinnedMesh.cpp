@@ -49,7 +49,7 @@ void SkinnedMesh::buildSkin(
 	render::Buffer* skinBuffer,
 	bool asynchronous) const
 {
-	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferSize() / (6 * 4 * sizeof(float));
+	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferSize() / sizeof(SkinBuffer);
 
 	auto programParams = renderContext->alloc< render::ProgramParameters >();
 	programParams->beginParameters(renderContext);
@@ -168,8 +168,8 @@ const SmallMap< std::wstring, int >& SkinnedMesh::getJointMap() const
 
 Ref< render::Buffer > SkinnedMesh::createSkinBuffer(render::IRenderSystem* renderSystem) const
 {
-	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferSize() / (6 * 4 * sizeof(float));
-	return renderSystem->createBuffer(render::BuStructured, vertexCount * 6 * 4 * sizeof(float), false, T_FILE_LINE_W);
+	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferSize() / sizeof(SkinBuffer);
+	return renderSystem->createBuffer(render::BuStructured, vertexCount * sizeof(SkinBuffer), false, T_FILE_LINE_W);
 }
 
 Ref< render::Buffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount)

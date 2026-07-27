@@ -50,6 +50,7 @@
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ParameterDeclaration.h"
 #include "Render/Editor/Shader/ParameterLinker.h"
 #include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
@@ -235,7 +236,21 @@ bool ShaderPipeline::buildDependencies(
 		{
 			const Guid& declarationGuid = parameterNode->m_parameterDeclaration;
 			if (declarationGuid.isNotNull())
+			{
 				pipelineDepends->addDependency(declarationGuid, editor::PdfUse);
+
+				// A parameter declaration reference its struct layout by ID only; since
+				// the declaration's own hash therefore doesn't change when the layout
+				// change we must add the layout as an explicit dependency. Without it a
+				// changed layout will not rebuild shaders reading through it, leaving
+				// them with a stale stride and thus reading outside of the buffer.
+				if (const auto parameterDeclaration = pipelineDepends->getObjectReadOnly< ParameterDeclaration >(declarationGuid))
+				{
+					const Guid& structDeclarationGuid = parameterDeclaration->getStructDeclarationId();
+					if (structDeclarationGuid.isNotNull())
+						pipelineDepends->addDependency(structDeclarationGuid, editor::PdfUse);
+				}
+			}
 		}
 		else if (const auto uniformNode = dynamic_type_cast< Uniform* >(node))
 		{

@@ -48,7 +48,7 @@ if (index < uint($VertexCount))
 	vec4 tangent = $SkinBufferInput[index].Tangent;
 	vec4 binormal = $SkinBufferInput[index].Binormal;
 	
-	ivec4 blendIndices = ivec4($SkinBufferInput[index].BlendIndices);
+	ivec4 blendIndices = $SkinBufferInput[index].BlendIndices;
 	vec4 blendWeights = $SkinBufferInput[index].BlendWeights;
 	
 	vec4 t0 = $Joints[blendIndices.x].Translation;
@@ -111,9 +111,9 @@ if (index < uint($VertexCount))
 		binormal * k;
 	
 	$SkinBufferOutput[index].Position = vec4(p.xyz, 1.0f);
-	$SkinBufferOutput[index].Normal = n;
-	$SkinBufferOutput[index].Tangent = tn;
-	$SkinBufferOutput[index].Binormal = bn;
+	$SkinBufferOutput[index].Normal = f16vec4(n);
+	$SkinBufferOutput[index].Tangent = f16vec4(tn);
+	$SkinBufferOutput[index].Binormal = f16vec4(bn);
 }
 			]]></script>
 		</item>

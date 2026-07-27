@@ -71,10 +71,7 @@
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script><![CDATA[
-			
-$Output = gl_VertexIndex;
-			
+			<script><![CDATA[$Output = gl_VertexIndex;
 			]]></script>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">

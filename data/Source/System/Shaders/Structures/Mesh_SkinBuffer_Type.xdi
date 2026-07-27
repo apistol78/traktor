@@ -8,27 +8,27 @@
 		</item>
 		<item>
 			<name>Normal</name>
-			<type>Float4</type>
+			<type>Half4</type>
 			<length>0</length>
 		</item>
 		<item>
 			<name>Tangent</name>
-			<type>Float4</type>
+			<type>Half4</type>
 			<length>0</length>
 		</item>
 		<item>
 			<name>Binormal</name>
-			<type>Float4</type>
-			<length>0</length>
-		</item>
-		<item>
-			<name>BlendIndices</name>
-			<type>Float4</type>
+			<type>Half4</type>
 			<length>0</length>
 		</item>
 		<item>
 			<name>BlendWeights</name>
-			<type>Float4</type>
+			<type>Half4</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>BlendIndices</name>
+			<type>Integer4</type>
 			<length>0</length>
 		</item>
 	</elements>
