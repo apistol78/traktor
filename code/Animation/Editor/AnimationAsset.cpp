@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,7 +18,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 9, AnimationAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 10, AnimationAsset, editor::Asset)
 
 void AnimationAsset::serialize(ISerializer& s)
 {
@@ -47,6 +47,9 @@ void AnimationAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 6)
 		s >> Member< bool >(L"removeLocomotion", m_removeLocomotion);
+
+	if (s.getVersion() >= 10)
+		s >> Member< std::wstring >(L"removeLocomotionJoint", m_removeLocomotionJoint);
 
 	if (s.getVersion() >= 9)
 		s >> Member< float >(L"maxDuration", m_maxDuration, AttributeRange(0.0f) | AttributeUnit(UnitType::Seconds));

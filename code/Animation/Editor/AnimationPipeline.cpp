@@ -220,11 +220,6 @@ bool AnimationPipeline::buildOutput(
 	}
 
 	// Remove locomotion from animation.
-	//
-	// \notes
-	//   Currently assumes joint 0 is root joint and are
-	//   used to measure locomotion.
-	//
 	if (animationAsset->getRemoveLocomotion())
 	{
 		const uint32_t keyPoseCount = anim->getKeyPoseCount();
@@ -245,6 +240,18 @@ bool AnimationPipeline::buildOutput(
 				skeleton->addJoint(joint);
 			}
 
+			// Get joint handle for reference joint; if none named
+			// then assume first joint for reference.
+			uint32_t jointIndex = 0;
+			if (!animationAsset->getRemoveLocomotionJoint().empty())
+			{
+				if (!skeleton->findJoint(render::getParameterHandle(animationAsset->getRemoveLocomotionJoint()), jointIndex))
+				{
+					log::error << L"AnimationPipeline failed; unable to remove locomotion, no such joint \"" << animationAsset->getRemoveLocomotionJoint() << L"\"." << Endl;
+					return false;
+				}
+			}
+
 			AlignedVector< Transform > poseTransforms;
 			calculatePoseTransforms(skeleton, &anim->getKeyPose(0).pose, poseTransforms);
 
@@ -260,7 +267,7 @@ bool AnimationPipeline::buildOutput(
 				AlignedVector< Transform > targetPoseTransforms;
 				calculatePoseTransforms(skeleton, &keyPose.pose, targetPoseTransforms);
 
-				const Transform target = targetPoseTransforms[0];
+				const Transform target = targetPoseTransforms[jointIndex];
 				const Vector4 locomotion = (target.translation() - origin.translation()) * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
 
 				for (uint32_t i = 0; i < skeletonMeshJoints.size(); ++i)

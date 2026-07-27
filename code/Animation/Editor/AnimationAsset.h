@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -45,6 +45,8 @@ public:
 
 	bool getRemoveLocomotion() const { return m_removeLocomotion; }
 
+	const std::wstring& getRemoveLocomotionJoint() const { return m_removeLocomotionJoint; }
+
 	float getMaxDuration() const { return m_maxDuration; }
 
 private:
@@ -53,6 +55,7 @@ private:
 	Vector4 m_scale = Vector4::one();
 	Vector4 m_translate = Vector4::zero();
 	bool m_removeLocomotion = true;
+	std::wstring m_removeLocomotionJoint = L"";
 	float m_maxDuration = 0.0f;				//!< Cut animation at this many seconds from its first key frame; 0 keeps the entire take.
 };
 
