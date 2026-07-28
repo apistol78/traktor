@@ -117,19 +117,19 @@ public:
 	 */
 	Aabb3 getBoundingBox() const;
 
-	/*! Check if this entity can be updated
+	/*! Check if this entity need to be updated
 	 * concurrently. All entities which can be updated
 	 * concurrently are updated before all who cannot.
 	 * 
-	 * \return True if entity can be updated concurrently.
+	 * \return True if entity need to be updated concurrently.
 	 */
-	bool allowConcurrentUpdate() const;
+	bool needConcurrentUpdate() const;
 
 	/*! Update entity.
 	 *
 	 * \param update Update parameters.
 	 */
-	void update(const UpdateParams& update);
+	void update(const UpdateParams& update, bool concurrent);
 
 	/*! Set component in entity.
 	 *

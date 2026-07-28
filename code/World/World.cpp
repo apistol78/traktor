@@ -187,9 +187,9 @@ void World::update(const UpdateParams& update)
 
 	for (auto entity : m_entities)
 	{
-		if (entity->getWorld() != nullptr && entity->allowConcurrentUpdate())
+		if (entity->getWorld() != nullptr && entity->needConcurrentUpdate())
 			jobs.push_back([&, entity](){
-				entity->update(update);
+				entity->update(update, true);
 			});
 	}
 
@@ -197,14 +197,17 @@ void World::update(const UpdateParams& update)
 
 	for (auto entity : m_entities)
 	{
-		if (entity->getWorld() != nullptr && !entity->allowConcurrentUpdate())
-			entity->update(update);
+		if (entity->getWorld() != nullptr)
+			entity->update(update, false);
 	}
 #else
 	for (auto entity : m_entities)
 	{
 		if (entity->getWorld() != nullptr)
-			entity->update(update);
+		{
+			entity->update(update, true);
+			entity->update(update, false);
+		}
 	}
 #endif
 

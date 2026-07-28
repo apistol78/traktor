@@ -166,15 +166,6 @@ IEntityEventInstance* EventSetComponent_raise_2(EventSetComponent* self, const s
 	return self->raise(name, offset);
 }
 
-void Entity_update(Entity* self, double totalTime, double deltaTime)
-{
-	UpdateParams up;
-	up.totalTime = totalTime;
-	up.deltaTime = deltaTime;
-	up.alternateTime = totalTime;
-	self->update(up);
-}
-
 IEntityComponentData* EntityData_getComponent(EntityData* self, const TypeInfo& componentDataType)
 {
 	return self->getComponent(componentDataType);
@@ -256,7 +247,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEntity->addProperty("transform", &Entity_setTransform, &Entity_getTransform);
 	classEntity->addProperty("boundingBox", &Entity::getBoundingBox);
 	classEntity->addMethod("destroy", &Entity::destroy);
-	classEntity->addMethod("update", &Entity_update);
 	classEntity->addMethod("setComponent", &Entity::setComponent);
 	classEntity->addMethod("getComponent", &Entity_getComponent);
 	registrar->registerClass(classEntity);

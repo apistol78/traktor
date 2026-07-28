@@ -38,7 +38,7 @@ bool DecalEventInstance::update(world::World* world, const UpdateParams& update)
 {
 	if (m_entity)
 	{
-		m_entity->update(update);
+		m_entity->update(update, true);
 		if (m_entity->getComponent< DecalComponent >()->getAlpha() > FUZZY_EPSILON)
 			return true;
 	}
