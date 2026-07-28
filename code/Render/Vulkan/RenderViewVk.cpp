@@ -2217,7 +2217,7 @@ bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const P
 
 	if (asynchronous)
 	{
-		if (pipeline != frame.boundAsyncComputePipeline)
+		// if (pipeline != frame.boundAsyncComputePipeline)
 		{
 			vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
 			frame.boundAsyncComputePipeline = pipeline;
@@ -2225,7 +2225,7 @@ bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const P
 	}
 	else
 	{
-		if (pipeline != frame.boundComputePipeline)
+		// if (pipeline != frame.boundComputePipeline)
 		{
 			vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
 			frame.boundComputePipeline = pipeline;
