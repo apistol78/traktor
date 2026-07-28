@@ -99,12 +99,12 @@ Aabb3 SkinnedMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-bool SkinnedMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
+bool SkinnedMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank)
 {
 	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
 	const Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
 
-	const bool asynchronous = true;
+	const bool asynchronous = false;
 
 	std::swap(m_skinBuffer[0], m_skinBuffer[1]);
 	m_mesh->buildSkin(renderContext, m_jointBuffer, m_skinBuffer[0], asynchronous);

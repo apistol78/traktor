@@ -29,6 +29,7 @@ namespace traktor::animation
 {
 
 class Skeleton;
+class SkeletonComponent;
 
 /*! Animated mesh entity.
  * \ingroup Animation
@@ -49,7 +50,7 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	virtual bool setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext) override final;
+	virtual bool setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank) override final;
 
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
@@ -59,16 +60,23 @@ public:
 	/*! Get closest culling distance across all views. */
 	float getLastDistance() const { return m_lastDistance; }
 
+	/*! Get number of updates between pose evaluations. \sa SkeletonComponent::setUpdatePeriod */
+	int32_t getUpdatePeriod() const { return m_updatePeriod; }
+
 private:
+	SkeletonComponent* m_skeletonComponent = nullptr;
 	AlignedVector< int32_t > m_jointRemap;
 	AlignedVector< Transform > m_jointInverseTransforms;
-	AlignedVector< Transform > m_poseTransforms[2];
+	AlignedVector< Transform > m_poseTransforms[2];	//!< Pose of two last updates; m_index refer to the most recent.
 	Transform m_lastWorldTransform[2];
 	std::atomic< int32_t > m_index;
 	int32_t m_revision = -1;
 	bool m_skinModified = false;
-	bool m_lastIsVisible = false;
+	bool m_skinBuilt = false;	//!< Skin has been rebuilt this frame, thus previous skin buffer is valid.
 	bool m_firstSetup = true;
+	bool m_visibleThisFrame = false;	//!< Visible in any pass, of any view, this frame.
+	bool m_visibleLastFrame = true;
+	int32_t m_updatePeriod = 1;
 	float m_lastDistance = std::numeric_limits< float >::max();
 };
 

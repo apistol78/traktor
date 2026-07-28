@@ -38,6 +38,14 @@ class T_DLLCLASS SkeletonComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
+	/*! Largest supported pose evaluation period.
+	 *
+	 * Also the wrap of the interleave counter, thus every period used should be a
+	 * divisor of this value in order to keep the evaluation rate even across the wrap.
+	 * \sa setUpdatePeriod
+	 */
+	const static int32_t c_maxUpdatePeriod = 16;
+
 	explicit SkeletonComponent(
 		const Transform& transform,
 		const resource::Proxy< Skeleton >& skeleton,
@@ -90,10 +98,29 @@ public:
 	const AlignedVector< Transform >& getPoseTransforms() const { return m_poseTransforms; }
 
 	/*! Set all joint pose transforms. */
-	void setPoseTransforms(const AlignedVector< Transform >& poseTransforms) { m_poseTransforms = poseTransforms; }
+	void setPoseTransforms(const AlignedVector< Transform >& poseTransforms)
+	{
+		m_poseTransforms = poseTransforms;
+		m_revision++;
+	}
 
 	/*! Get update revision. */
 	int32_t getRevision() const { return m_revision; }
+
+	/*! Set pose evaluation period.
+	 *
+	 * Number of updates between each pose controller evaluation; 1, the default, evaluate
+	 * the pose every update. Used to evaluate distant skeletons at a reduced rate. Time of
+	 * skipped updates is accumulated so the animation still progress at the correct rate.
+	 * Clamped to [1, c_maxUpdatePeriod].
+	 */
+	void setUpdatePeriod(int32_t updatePeriod)
+	{
+		m_updatePeriod = (updatePeriod < 1) ? 1 : ((updatePeriod > c_maxUpdatePeriod) ? c_maxUpdatePeriod : updatePeriod);
+	}
+
+	/*! Get pose evaluation period. */
+	int32_t getUpdatePeriod() const { return m_updatePeriod; }
 
 private:
 	Transform m_transform;
@@ -103,6 +130,12 @@ private:
 	AlignedVector< Transform > m_poseTransforms;
 	mutable Ref< Job > m_updatePoseControllerJob;
 	std::atomic< int32_t > m_revision;
+	mutable Aabb3 m_boundingBox;
+	mutable int32_t m_boundingBoxRevision = -1;
+	std::atomic< int32_t > m_updatePeriod = 1;
+	int32_t m_updatePhase = 0;
+	int32_t m_updateCount = 0;
+	double m_deferredDeltaTime = 0.0;
 
 	void updatePoseController(double time, double deltaTime);
 };

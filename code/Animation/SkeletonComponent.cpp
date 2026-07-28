@@ -9,7 +9,6 @@
 #include "Animation/SkeletonComponent.h"
 
 #include "Animation/IPoseController.h"
-#include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -17,6 +16,7 @@
 #include "World/Entity.h"
 
 #include <cmath>
+#include <cstdlib>
 
 //#define T_USE_UPDATE_JOBS
 
@@ -34,6 +34,10 @@ SkeletonComponent::SkeletonComponent(
 	, m_poseController(poseController)
 	, m_revision(0)
 {
+	// Randomize phase of interleaved updates so not every single skeleton in the
+	// world evaluate its pose on the same update.
+	m_updatePhase = std::rand() % c_maxUpdatePeriod;
+
 	if (m_skeleton)
 	{
 		calculateJointTransforms(
@@ -80,17 +84,20 @@ Aabb3 SkeletonComponent::getBoundingBox() const
 
 	synchronize();
 
-	Aabb3 boundingBox;
-	if (!m_poseTransforms.empty())
+	// Bounding box is derived from the current pose; recalculate only when the pose
+	// has actually changed since this is queried several times per frame, once per
+	// render pass which need to cull the owner entity.
+	if (m_boundingBoxRevision != m_revision)
 	{
-		for (uint32_t i = 0; i < uint32_t(m_poseTransforms.size()); ++i)
-		{
-			const Joint* joint = m_skeleton->getJoint(i);
-			boundingBox.contain(m_poseTransforms[i].translation().xyz1(), c_radius);
-		}
+		Aabb3 boundingBox;
+		for (const auto& poseTransform : m_poseTransforms)
+			boundingBox.contain(poseTransform.translation().xyz1(), c_radius);
+
+		m_boundingBox = boundingBox;
+		m_boundingBoxRevision = m_revision;
 	}
 
-	return boundingBox;
+	return m_boundingBox;
 }
 
 void SkeletonComponent::update(const world::UpdateParams& update)
@@ -113,12 +120,29 @@ void SkeletonComponent::update(const world::UpdateParams& update)
 		m_revision++;
 	}
 
+	// Accumulate time of all updates so a reduced rate evaluation still progress the
+	// animation at the correct rate; else distant skeletons would animate in slow motion.
+	m_deferredDeltaTime += update.deltaTime;
+
+	// Evaluate pose at a reduced rate when distant; interleaved through a per instance
+	// phase so all skeletons of the same period doesn't evaluate on the same update.
+	// Counter wrap at c_maxUpdatePeriod, which every period is a divisor of in order to
+	// keep the rate even across the wrap.
+	const int32_t updatePeriod = m_updatePeriod;
+	const int32_t updateCount = m_updateCount;
+	m_updateCount = (m_updateCount + 1) % c_maxUpdatePeriod;
+	if (updatePeriod > 1 && ((updateCount + m_updatePhase) % updatePeriod) != 0)
+		return;
+
+	const double deltaTime = m_deferredDeltaTime;
+	m_deferredDeltaTime = 0.0;
+
 #if defined(T_USE_UPDATE_JOBS)
 	m_updatePoseControllerJob = JobManager::getInstance().add([=, this]() {
-		updatePoseController(update.alternateTime, update.deltaTime);
+		updatePoseController(update.alternateTime, deltaTime);
 	});
 #else
-	updatePoseController(update.alternateTime, update.deltaTime);
+	updatePoseController(update.alternateTime, deltaTime);
 #endif
 }
 

@@ -8,7 +8,7 @@
  */
 #include "Animation/IK/FootPlacementComponent.h"
 
-#include "Animation/AnimatedMeshComponent.h""
+#include "Animation/AnimatedMeshComponent.h"
 #include "Animation/SkeletonComponent.h"
 #include "Core/Containers/StaticVector.h"
 #include "Physics/PhysicsManager.h"

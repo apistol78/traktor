@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "World/IEntityRenderer.h"
 
 // import/export mechanism.
@@ -20,6 +21,8 @@
 
 namespace traktor::mesh
 {
+
+class SkinnedMeshComponent;
 
 /*! Skinned mesh component renderer.
  * \ingroup Mesh
@@ -46,6 +49,14 @@ public:
 		const AlignedVector< Object* >& renderables
 	) override final;
 
+private:
+	struct Ranked
+	{
+		float distance;
+		SkinnedMeshComponent* meshComponent;
+	};
+
+	AlignedVector< Ranked > m_ranked;
 };
 
 }

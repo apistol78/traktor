@@ -15,6 +15,8 @@
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
 
+#include <algorithm>
+
 namespace traktor::mesh
 {
 
@@ -37,15 +39,28 @@ void SkinnedMeshComponentRenderer::setup(
 {
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Skinned mesh setup");
 	rp->addInput(render::RGDependency::First);
-	rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
-		bool needSynchronization = false;
+	rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+		const Vector4 eyePosition = worldRenderView.getEyePosition();
 
-		// Setup all skinned meshes; compute new skin and BLAS if necessary.
+		m_ranked.resize(0);
+		m_ranked.reserve(renderables.size());
+
 		for (Object* renderable : renderables)
 		{
 			SkinnedMeshComponent* meshComponent = static_cast< SkinnedMeshComponent* >(renderable);
-			needSynchronization |= meshComponent->setup(worldRenderView, renderContext);
+			const Transform worldTransform = meshComponent->getTransform().get();
+			const Scalar distance = (worldTransform.translation() - eyePosition).xyz0().length();
+			m_ranked.push_back({ distance, meshComponent });
 		}
+
+		std::sort(m_ranked.begin(), m_ranked.end(), [](const Ranked& lh, const Ranked& rh) {
+			return lh.distance < rh.distance;
+		});
+
+		// Setup all skinned meshes; compute new skin and BLAS if necessary.
+		bool needSynchronization = false;
+		for (int32_t i = 0; i < (int32_t)m_ranked.size(); ++i)
+			needSynchronization |= m_ranked[i].meshComponent->setup(worldRenderView, renderContext, i);
 
 		// Synchronize the async compute skinning and RT jobs with the graphics queue.
 		if (needSynchronization)
