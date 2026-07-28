@@ -60,6 +60,15 @@ public:
 	 */
 	void setSnapshot(bool snapshot);
 
+	/*! Set static only requirement.
+	 *
+	 * Some passes, such as the last shadow cascade, are only
+	 * refreshed when the view has moved and must therefore not
+	 * contain anything which belong to a dynamic entity since
+	 * it would leave a stale result behind.
+	 */
+	void setStaticOnly(bool staticOnly);
+
 	void setOrthogonal(float width, float height, float nearZ, float farZ);
 
 	void setPerspective(float width, float height, float aspect, float fov, float nearZ, float farZ);
@@ -90,6 +99,10 @@ public:
 
 	T_FORCE_INLINE bool getSnapshot() const {
 		return m_snapshot;
+	}
+
+	T_FORCE_INLINE bool getStaticOnly() const {
+		return m_staticOnly;
 	}
 
 	T_FORCE_INLINE const Frustum& getViewFrustum() const {
@@ -140,6 +153,7 @@ private:
 	int32_t m_index;
 	int32_t m_shadowMapIndex;
 	bool m_snapshot;
+	bool m_staticOnly;
 	Frustum m_viewFrustum;
 	Frustum m_cullFrustum;
 	Matrix44 m_projection;

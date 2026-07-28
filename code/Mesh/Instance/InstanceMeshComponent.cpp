@@ -51,6 +51,8 @@ void InstanceMeshComponent::setWorld(world::World* world)
 
 void InstanceMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren)
 {
+	m_dynamic = state.dynamic;
+
 	const bool visible = (m_world != nullptr) && state.visible;
 	if (visible)
 	{
@@ -66,9 +68,11 @@ void InstanceMeshComponent::setState(const world::EntityState& state, const worl
 		if (!m_cullingInstance)
 		{
 			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
-			m_cullingInstance = culling->createInstance(m_mesh, (intptr_t)m_mesh.getResource());
+			m_cullingInstance = culling->createInstance(m_mesh, (intptr_t)m_mesh.getResource(), m_dynamic);
 			m_cullingInstance->setTransform(m_transform.get0());
 		}
+		else
+			m_cullingInstance->setDynamic(m_dynamic);
 	}
 	else
 	{
@@ -116,7 +120,7 @@ void InstanceMeshComponent::build(
 			safeDestroy(m_cullingInstance);
 
 			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
-			m_cullingInstance = culling->createInstance(m_mesh, (intptr_t)m_mesh.getResource());
+			m_cullingInstance = culling->createInstance(m_mesh, (intptr_t)m_mesh.getResource(), m_dynamic);
 			m_cullingInstance->setTransform(m_transform.get0());
 		}
 		m_mesh.consume();

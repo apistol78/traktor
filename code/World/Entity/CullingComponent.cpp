@@ -39,6 +39,20 @@ static const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
  */
 constexpr uint32_t c_cullWorkGroupSize = 16;
 
+/*! Order of instances in the instance buffer.
+ *
+ * Primarily sorted by ordinal so all instances of a single mesh form one run which
+ * can be drawn with a single batch. Within such a run static instances are placed
+ * before dynamic ones so a static only pass just need to shorten the run.
+ */
+bool instanceSortPredicate(const CullingComponent::Instance* lh, const CullingComponent::Instance* rh)
+{
+	if (lh->ordinal != rh->ordinal)
+		return lh->ordinal < rh->ordinal;
+	else
+		return (int32_t)lh->dynamic < (int32_t)rh->dynamic;
+}
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.CullingComponent", CullingComponent, IWorldComponent)
@@ -191,6 +205,7 @@ void CullingComponent::build(
 	}
 
 	// Batch draw instances; assumes m_instances are sorted by "ordinal" so we can scan for run length.
+	const bool staticOnly = worldRenderView.getStaticOnly();
 	for (uint32_t i = 0; i < (uint32_t)m_instances.size();)
 	{
 		uint32_t j = i + 1;
@@ -198,34 +213,44 @@ void CullingComponent::build(
 			if (m_instances[i]->ordinal != m_instances[j]->ordinal)
 				break;
 
-		m_instances[i]->cullable->cullableBuild(
-			context,
-			worldRenderView,
-			worldRenderPass,
-			m_instanceBuffer,
-			visibilityBuffer,
-			i,
-			(j - i));
+		// Instances are sorted static before dynamic within each run so a static only
+		// pass need only draw the leading part of the run.
+		uint32_t k = j;
+		if (staticOnly)
+		{
+			for (k = i; k < j; ++k)
+				if (m_instances[k]->dynamic)
+					break;
+		}
+
+		if (k > i)
+		{
+			m_instances[i]->cullable->cullableBuild(
+				context,
+				worldRenderView,
+				worldRenderPass,
+				m_instanceBuffer,
+				visibilityBuffer,
+				i,
+				(k - i));
+		}
 
 		i = j;
 	}
 }
 
-CullingComponent::Instance* CullingComponent::createInstance(ICullable* cullable, intptr_t ordinal)
+CullingComponent::Instance* CullingComponent::createInstance(ICullable* cullable, intptr_t ordinal, bool dynamic)
 {
 	Instance* instance = new Instance();
 	instance->owner = this;
 	instance->cullable = cullable;
 	instance->ordinal = ordinal;
+	instance->dynamic = dynamic;
 	instance->transform = Transform::identity();
 	instance->lastTransform = Transform::identity();
 	instance->boundingBox = cullable->cullableGetBoundingBox();
 
-	// Insert instance sorted by ordinal so we can calculate run length when building.
-	auto it = std::upper_bound(m_instances.begin(), m_instances.end(), instance, [=](Instance* lh, Instance* rh) {
-		return lh->ordinal < rh->ordinal;
-	});
-	m_instances.insert(it, instance);
+	insertInstance(instance);
 	return instance;
 }
 
@@ -241,6 +266,16 @@ void CullingComponent::destroyInstance(Instance* instance)
 	}
 }
 
+void CullingComponent::insertInstance(Instance* instance)
+{
+	// Insert instance sorted so we can calculate run length when building.
+	auto it = std::upper_bound(m_instances.begin(), m_instances.end(), instance, instanceSortPredicate);
+	m_instances.insert(it, instance);
+
+	// All instances following the inserted one have shifted position in the buffer.
+	m_instanceBufferDirty = true;
+}
+
 void CullingComponent::Instance::destroy()
 {
 	T_FATAL_ASSERT(this->owner);
@@ -254,6 +289,21 @@ void CullingComponent::Instance::setTransform(const Transform& transform)
 	this->boundingBox = this->cullable->cullableGetBoundingBox().transform(transform);
 	this->owner->m_instanceBufferDirty = true;
 	this->owner->m_velocityDirty = true;
+}
+
+void CullingComponent::Instance::setDynamic(bool dynamic)
+{
+	if (dynamic == this->dynamic)
+		return;
+
+	this->dynamic = dynamic;
+
+	// Sort order depend on dynamic state; re-insert instance at it's new position.
+	AlignedVector< Instance* >& instances = this->owner->m_instances;
+	const auto it = std::find(instances.begin(), instances.end(), this);
+	T_FATAL_ASSERT(it != instances.end());
+	instances.erase(it);
+	this->owner->insertInstance(this);
 }
 
 }

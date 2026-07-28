@@ -970,7 +970,7 @@
 			<script><![CDATA[
 			
 const vec4 sp = $SlicePositions;
-const float vz = $Input.z;
+const float vz = mix($Input.z, length($Input.xyz), 0.25f);
 
 if (vz >= sp.z)
 	$Output = 3;

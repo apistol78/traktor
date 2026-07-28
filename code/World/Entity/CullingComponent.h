@@ -85,6 +85,7 @@ public:
 		CullingComponent* owner = nullptr;
 		ICullable* cullable = nullptr;
 		intptr_t ordinal = 0;
+		bool dynamic = false;
 		Transform transform;
 		Transform lastTransform;
 		Aabb3 boundingBox;
@@ -92,6 +93,12 @@ public:
 		void destroy();
 
 		void setTransform(const Transform& transform);
+
+		/*! Set if instance belong to a dynamic entity.
+		 *
+		 * Dynamic instances are not rendered in static only passes.
+		 */
+		void setDynamic(bool dynamic);
 	};
 
 	explicit CullingComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
@@ -106,7 +113,7 @@ public:
 		const IWorldRenderPass& worldRenderPass
 	);
 
-	Instance* createInstance(ICullable* cullable, intptr_t ordinal);
+	Instance* createInstance(ICullable* cullable, intptr_t ordinal, bool dynamic);
 
 private:
 	Ref< render::IRenderSystem > m_renderSystem;
@@ -119,6 +126,8 @@ private:
 	bool m_velocityDirty = false;
 
 	void destroyInstance(Instance* instance);
+
+	void insertInstance(Instance* instance);
 };
 
 }

@@ -294,6 +294,7 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 		{
 			auto& r = m_gatheredView.renderables[entityRenderer];
 			r.objects.push_back(component);
+			r.staticOnlyObjects.push_back(component);
 		}
 
 		// Filter out components used to setup frame's lighting etc.
@@ -301,8 +302,6 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 			m_gatheredView.irradianceGrid = irradianceGridComponent->getIrradianceGrid();
 		else if (auto fogComponent = dynamic_type_cast< const FogComponent* >(component))
 			m_gatheredView.fog = fogComponent;
-		// If world raytracing is enabled we gather TLAS; if no TLAS
-		// paths should assume no RT is enabled.
 		else if (m_rayTracingEnabled)
 		{
 			if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
@@ -468,7 +467,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 				const int32_t slice = i;
 				const Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
 				const Scalar zf(min(m_slicePositions[slice + 1], shadowSettings.farZ));
-				const bool includeDynamic = bool(slice < shadowSettings.cascadingSlices - 1);
+				const bool staticOnly = bool(slice >= shadowSettings.cascadingSlices - 2);
 
 				// Create sliced view frustum.
 				Frustum sliceViewFrustum = viewFrustum;
@@ -485,7 +484,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 				if (slice != 0)
 				{
 					const Matrix44 toStored = sliceViews[i] * viewInverse;
-					if (includeDynamic)
+					if (!staticOnly)
 					{
 						// Force one dynamic slice to refresh each frame (round-robin) so
 						// moving entities are picked up even when the camera is still. The
@@ -539,6 +538,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 					WorldRenderView shadowRenderView;
 					shadowRenderView.setIndex(worldRenderView.getIndex());
 					shadowRenderView.setShadowMapIndex(passShadowMapIndex);
+					shadowRenderView.setStaticOnly(staticOnly);
 					shadowRenderView.setProjection(shadowLightProjection);
 					shadowRenderView.setView(shadowLightView, shadowLightView);
 					shadowRenderView.setViewFrustum(shadowFrustum);
@@ -586,7 +586,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 						IEntityRenderer* entityRenderer = it.first;
 						const GatherView::Renderable& r = it.second;
 
-						const AlignedVector< Object* >& objects = includeDynamic ? r.objects : r.staticOnlyObjects;
+						const AlignedVector< Object* >& objects = staticOnly ? r.staticOnlyObjects : r.objects;
 						entityRenderer->build(wc, shadowRenderView, shadowPass, objects);
 					}
 				});

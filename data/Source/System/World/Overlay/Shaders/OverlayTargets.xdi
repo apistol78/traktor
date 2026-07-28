@@ -1556,7 +1556,7 @@
 			<script><![CDATA[
 			
 const vec4 sp = $SlicePositions;
-const float vz = $Input.z;
+const float vz = mix($Input.z, length($Input.xyz), 1.0f);
 
 if (vz >= sp.z)
 	$Output = 3;
@@ -1573,8 +1573,8 @@ else
 			<id>{8068FA17-483E-4040-9F93-0667AB67B99A}</id>
 			<comment/>
 			<position>
-				<first>436</first>
-				<second>2730</second>
+				<first>389</first>
+				<second>2721</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
@@ -1600,8 +1600,8 @@ else
 			<id>{975F41D1-4095-074F-86A5-6445682C1378}</id>
 			<comment/>
 			<position>
-				<first>705</first>
-				<second>2715</second>
+				<first>658</first>
+				<second>2706</second>
 			</position>
 			<swizzle>x0</swizzle>
 		</item>

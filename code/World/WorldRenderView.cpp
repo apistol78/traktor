@@ -18,6 +18,7 @@ WorldRenderView::WorldRenderView()
 :	m_index(0)
 ,	m_shadowMapIndex(0)
 ,	m_snapshot(false)
+,	m_staticOnly(false)
 ,	m_projection(Matrix44::identity())
 ,	m_lastView(Matrix44::identity())
 ,	m_view(Matrix44::identity())
@@ -41,6 +42,11 @@ void WorldRenderView::setShadowMapIndex(int32_t shadowMapIndex)
 void WorldRenderView::setSnapshot(bool snapshot)
 {
 	m_snapshot = snapshot;
+}
+
+void WorldRenderView::setStaticOnly(bool staticOnly)
+{
+	m_staticOnly = staticOnly;
 }
 
 void WorldRenderView::setOrthogonal(float width, float height, float nearZ, float farZ)
