@@ -40,6 +40,8 @@ class T_DLLCLASS RtState : public Object
 	T_RTTI_CLASS;
 
 public:
+	void destroy();
+
 	bool prepare(StateContext& outContext) const;
 
 	void reset(

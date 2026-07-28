@@ -41,7 +41,7 @@ Ref< IPoseController > AnimationGraphPoseControllerData::createInstance(resource
 	if (!stateGraph)
 		return nullptr;
 
-	return new AnimationGraphPoseController(resource::Proxy< RtStateGraph >(stateGraph));
+	return new AnimationGraphPoseController(stateGraph);
 }
 
 void AnimationGraphPoseControllerData::serialize(ISerializer& s)

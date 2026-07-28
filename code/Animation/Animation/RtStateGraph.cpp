@@ -33,6 +33,13 @@ float easeInOutCubic(float f)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RtStateGraph", RtStateGraph, Object)
 
+void RtStateGraph::destroy()
+{
+	for (auto state : m_states)
+		state->destroy();
+	m_states.clear();
+}
+
 bool RtStateGraph::setParameterValue(const render::Handle& handle, bool value)
 {
 	const auto it = m_parameters.find(handle);

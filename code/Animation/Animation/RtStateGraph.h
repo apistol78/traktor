@@ -40,6 +40,8 @@ class T_DLLCLASS RtStateGraph : public Object
 	T_RTTI_CLASS;
 
 public:
+	void destroy();
+
 	bool setParameterValue(const render::Handle& handle, bool value);
 
 	bool getParameterValue(const render::Handle& handle) const;

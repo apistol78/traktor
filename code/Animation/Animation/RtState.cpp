@@ -14,6 +14,7 @@
 #include "Animation/IPoseController.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
+#include "Core/Misc/SafeDestroy.h"
 
 #include <limits>
 
@@ -21,6 +22,13 @@ namespace traktor::animation
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RtState", RtState, Object)
+
+void RtState::destroy()
+{
+	m_animation.clear();
+	safeDestroy(m_poseController);
+	m_transformTime = nullptr;
+}
 
 bool RtState::prepare(StateContext& outContext) const
 {

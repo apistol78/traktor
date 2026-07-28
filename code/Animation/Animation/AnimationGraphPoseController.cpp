@@ -9,13 +9,14 @@
 #include "Animation/Animation/AnimationGraphPoseController.h"
 
 #include "Animation/Animation/RtStateGraph.h"
+#include "Core/Misc/SafeDestroy.h"
 
 namespace traktor::animation
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationGraphPoseController", AnimationGraphPoseController, IPoseController)
 
-AnimationGraphPoseController::AnimationGraphPoseController(const resource::Proxy< RtStateGraph >& stateGraph)
+AnimationGraphPoseController::AnimationGraphPoseController(RtStateGraph* stateGraph)
 	: m_stateGraph(stateGraph)
 {
 }
@@ -53,7 +54,7 @@ float AnimationGraphPoseController::getTimeFactor() const
 
 void AnimationGraphPoseController::destroy()
 {
-	m_stateGraph.clear();
+	safeDestroy(m_stateGraph);
 }
 
 void AnimationGraphPoseController::setTransform(const Transform& transform)

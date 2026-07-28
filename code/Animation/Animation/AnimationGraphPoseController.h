@@ -9,8 +9,8 @@
 #pragma once
 
 #include "Animation/IPoseController.h"
+#include "Core/Ref.h"
 #include "Render/Types.h"
-#include "Resource/Proxy.h"
 
 #include <string>
 
@@ -35,7 +35,7 @@ class T_DLLCLASS AnimationGraphPoseController : public IPoseController
 	T_RTTI_CLASS;
 
 public:
-	explicit AnimationGraphPoseController(const resource::Proxy< RtStateGraph >& stateGraph);
+	explicit AnimationGraphPoseController(RtStateGraph* stateGraph);
 
 	bool setState(const std::wstring& stateName);
 
@@ -66,7 +66,7 @@ public:
 	virtual void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) override final;
 
 private:
-	resource::Proxy< RtStateGraph > m_stateGraph;
+	Ref< RtStateGraph > m_stateGraph;
 };
 
 }
