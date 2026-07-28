@@ -15,11 +15,20 @@
 #include "Drawing/PixelFormat.h"
 #include "Render/Editor/Texture/Bc6hCompressor.h"
 
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 #	define BC6H_ENC_IMPLEMENTATION
 #endif
 #define BC6H_SSE_INTRINSICS
+// The encoder uses F16C intrinsics (_mm_cvtph_ps) which are not part of our
+// baseline -march; GCC rejects them unless the enclosing functions opt in.
+#if defined(BC6H_ENC_IMPLEMENTATION) && defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC push_options
+#	pragma GCC target("f16c")
+#endif
 #include "bc6h_enc.h"
+#if defined(BC6H_ENC_IMPLEMENTATION) && defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC pop_options
+#endif
 
 namespace traktor::render
 {

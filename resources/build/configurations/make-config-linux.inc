@@ -27,7 +27,10 @@ AR_FLAGS_RELEASE_STATIC=$(AR_FLAGS_COMMON)
 AR_FLAG_OUTPUT=
 
 LINK=ccache c++
-LINK_FLAGS_COMMON=-Wl,-rpath=\$$ORIGIN -Wl,-gc-sections
+# -z now  : resolve all relocations at load time instead of on first call, so a
+#           missing symbol surfaces as a load failure rather than a late crash.
+# --no-undefined : promote that load failure to a link error at build time.
+LINK_FLAGS_COMMON=-Wl,-rpath=\$$ORIGIN -Wl,-gc-sections -Wl,-z,now -Wl,--no-undefined
 LINK_FLAGS_DEBUG_SHARED=$(LINK_FLAGS_COMMON) -g -shared -fsanitize=address
 LINK_FLAGS_RELEASE_SHARED=$(LINK_FLAGS_COMMON) -g1 -shared 
 LINK_FLAGS_DEBUG_STATIC=$(LINK_FLAGS_COMMON) -g -fsanitize=address

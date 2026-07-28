@@ -7248,6 +7248,11 @@
 									</dependencies>
 								</project>
 							</item>
+							<item type="traktor.sb.ProjectDependency" version="3">
+								<inheritIncludePaths>true</inheritIncludePaths>
+								<link>LnkYes</link>
+								<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
+							</item>
 						</dependencies>
 					</project>
 				</item>
@@ -7498,6 +7503,16 @@
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
 								<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+							</item>
+							<item type="traktor.sb.ProjectDependency" version="3">
+								<inheritIncludePaths>true</inheritIncludePaths>
+								<link>LnkYes</link>
+								<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+							</item>
+							<item type="traktor.sb.ProjectDependency" version="3">
+								<inheritIncludePaths>true</inheritIncludePaths>
+								<link>LnkYes</link>
+								<project ref="/object/projects/item/dependencies/item[1]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -7893,6 +7908,31 @@
 											<link>LnkYes</link>
 											<project ref="/object/projects/item[1]/dependencies/item[12]/project"/>
 										</item>
+										<item type="traktor.sb.ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item/dependencies/item[5]/project/dependencies/item[4]/project"/>
+										</item>
+										<item type="traktor.sb.ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[13]/project/dependencies/item[6]/project/dependencies/item[6]/project"/>
+										</item>
+										<item type="traktor.sb.ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item/dependencies/item[1]/project"/>
+										</item>
+										<item type="traktor.sb.ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[13]/project"/>
+										</item>
+										<item type="traktor.sb.ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item/dependencies/item[2]/project"/>
+										</item>
 									</dependencies>
 								</project>
 							</item>
@@ -7903,6 +7943,26 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item/dependencies/item[5]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[13]/project/dependencies/item[6]/project/dependencies/item[6]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[13]/project/dependencies/item[6]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[5]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[7]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -9590,6 +9650,16 @@
 					<solutionFileName>ExternLinux.xms</solutionFileName>
 					<projectName>Extern.freetype</projectName>
 				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[10]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[13]/dependencies/item[6]/project"/>
@@ -10954,6 +11024,16 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item/dependencies/item[2]/project"/>
 				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[5]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[7]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[8]/project"/>
@@ -11463,8 +11543,43 @@
 								<link>LnkYes</link>
 								<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 							</item>
+							<item type="traktor.sb.ProjectDependency" version="3">
+								<inheritIncludePaths>true</inheritIncludePaths>
+								<link>LnkYes</link>
+								<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
+							</item>
+							<item type="traktor.sb.ProjectDependency" version="3">
+								<inheritIncludePaths>true</inheritIncludePaths>
+								<link>LnkYes</link>
+								<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+							</item>
+							<item type="traktor.sb.ProjectDependency" version="3">
+								<inheritIncludePaths>true</inheritIncludePaths>
+								<link>LnkYes</link>
+								<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project"/>
+							</item>
 						</dependencies>
 					</project>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[13]/project/dependencies/item[6]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item[1]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[13]/project/dependencies/item[6]/project/dependencies/item[6]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -11789,6 +11904,16 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[3]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -12996,6 +13121,11 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -16720,6 +16850,26 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[17]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[10]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[32]"/>
+				</item>
 			</dependencies>
 		</item>
 		<item type="traktor.sb.Project" version="1">
@@ -17065,7 +17215,7 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>`pkg-config --libs wayland-client wayland-cursor libdecor-0`</item>
+						<item>`pkg-config --libs wayland-client wayland-cursor libdecor-0 x11`</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -17097,7 +17247,7 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>`pkg-config --libs wayland-client wayland-cursor libdecor-0`</item>
+						<item>`pkg-config --libs wayland-client wayland-cursor libdecor-0 x11`</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -17129,7 +17279,7 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>`pkg-config --libs wayland-client wayland-cursor libdecor-0`</item>
+						<item>`pkg-config --libs wayland-client wayland-cursor libdecor-0 x11`</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -17161,7 +17311,7 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>`pkg-config --libs wayland-client wayland-cursor libdecor-0`</item>
+						<item>`pkg-config --libs wayland-client wayland-cursor libdecor-0 x11`</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -18943,6 +19093,11 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[18]"/>
+				</item>
+			<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -21117,6 +21272,31 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[13]/project/dependencies/item[6]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[13]/project/dependencies/item[6]/project/dependencies/item[6]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[12]/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item[5]/project/dependencies/item[4]/project"/>
 				</item>
 			</dependencies>
 		</item>

@@ -36,7 +36,7 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
 		if (readlink("/proc/self/exe", exepath, PATH_MAX) != -1)
 		{
 			std::wstring library = mbstows(dirname(exepath)) + L"/" + resolved;
-			m_handle = dlopen(wstombs(library).c_str(), RTLD_LAZY | RTLD_GLOBAL);
+			m_handle = dlopen(wstombs(library).c_str(), RTLD_NOW | RTLD_GLOBAL);
 			if (m_handle)
 			{
 				T_DEBUG(L"Library \"" << library << L"\" loaded");
@@ -51,7 +51,7 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
 	for (std::vector< Path >::const_iterator i = searchPaths.begin(); i != searchPaths.end(); ++i)
 	{
 		std::wstring library = i->getPathNameNoVolume() + L"/" + resolved;
-		m_handle = dlopen(wstombs(library).c_str(), RTLD_LAZY | RTLD_GLOBAL);
+		m_handle = dlopen(wstombs(library).c_str(), RTLD_NOW | RTLD_GLOBAL);
 		if (m_handle)
 		{
 			T_DEBUG(L"Library \"" << library << L"\" loaded");
@@ -64,7 +64,7 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
 	// Try default search paths.
 	{
 		std::wstring library = resolved;
-		m_handle = dlopen(wstombs(library).c_str(), RTLD_LAZY | RTLD_GLOBAL);
+		m_handle = dlopen(wstombs(library).c_str(), RTLD_NOW | RTLD_GLOBAL);
 		if (m_handle)
 		{
 			T_DEBUG(L"Library \"" << library << L"\" loaded");

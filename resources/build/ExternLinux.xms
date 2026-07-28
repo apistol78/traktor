@@ -711,7 +711,6 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(FREETYPE_SDK)/build/include</item>
 						<item>$(FREETYPE_SDK)/include</item>
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
@@ -736,7 +735,6 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(FREETYPE_SDK)/build/include</item>
 						<item>$(FREETYPE_SDK)/include</item>
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
@@ -761,7 +759,6 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(FREETYPE_SDK)/build/include</item>
 						<item>$(FREETYPE_SDK)/include</item>
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
@@ -791,7 +788,6 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(FREETYPE_SDK)/build/include</item>
 						<item>$(FREETYPE_SDK)/include</item>
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
