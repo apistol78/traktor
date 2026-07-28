@@ -21,6 +21,14 @@ namespace
 
 Random s_random;
 
+float easeInOutCubic(float f)
+{
+	if (f < 0.5f)
+		return 4.0f * f * f * f;
+	const float p = 2.0f * f - 2.0f;
+	return 0.5f * p * p * p + 1.0f;
+}
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RtStateGraph", RtStateGraph, Object)
@@ -80,14 +88,6 @@ bool RtStateGraph::evaluate(
 	if (!m_currentState)
 		return false;
 
-	// Transform, or remap, time.
-	// if (m_transformTime && m_currentState)
-	// {
-	// 	const Animation* animation = m_currentState->getAnimation();
-	// 	if (animation)
-	// 		m_transformTime->calculateTime(animation, worldTransform, time, deltaTime);
-	// }
-
 	// Evaluate current state.
 	m_currentState->evaluate(
 		m_currentStateContext,
@@ -106,14 +106,6 @@ bool RtStateGraph::evaluate(
 		{
 			Pose nextPose, blendPose;
 
-			// Transform, or remap, time.
-			// if (m_transformTime && m_nextState)
-			// {
-			// 	const Animation* animation = m_nextState->getAnimation();
-			// 	if (animation)
-			// 		m_transformTime->calculateTime(animation, worldTransform, time, deltaTime);
-			// }
-
 			m_nextState->evaluate(
 				m_nextStateContext,
 				deltaTime * m_timeFactor,
@@ -123,7 +115,7 @@ bool RtStateGraph::evaluate(
 				nextPose);
 			m_nextStateContext.setTime(m_nextStateContext.getTime() + deltaTime * m_timeFactor);
 
-			const Scalar blend = Scalar(sinf((m_blendState / m_blendDuration) * PI / 2.0f));
+			const Scalar blend = Scalar(easeInOutCubic(m_blendState / m_blendDuration));
 
 			blendPoses(
 				&m_evaluatePose,

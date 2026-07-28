@@ -24,7 +24,8 @@ void TimeFromLocomotion::calculateTime(const Animation* animation, const Transfo
 		return;
 	locomotionDirection /= locomotionDistance;
 	
-	const float distance = dot3(locomotionDirection, (worldTransform.translation() - m_transform.translation()) * Vector4(1.0f, 0.0f, 1.0f));
+	const Vector4 c_locomotionMask(1.0f, 1.0f, 1.0f);
+	const float distance = dot3(locomotionDirection, (worldTransform.translation() - m_transform.translation()) * c_locomotionMask);
 
 	outDeltaTime = std::abs(animation->getTimePerDistance() * distance);
     inoutTime = m_time;

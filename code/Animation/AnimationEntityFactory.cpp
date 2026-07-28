@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,6 +17,8 @@
 #include "Animation/Boids/BoidsComponentData.h"
 #include "Animation/Cloth/ClothComponent.h"
 #include "Animation/Cloth/ClothComponentData.h"
+#include "Animation/IK/FootPlacementComponent.h"
+#include "Animation/IK/FootPlacementComponentData.h"
 #include "Animation/IK/IKComponent.h"
 #include "Animation/IK/IKComponentData.h"
 #include "Animation/PathEntity/PathComponentData.h"
@@ -48,6 +50,7 @@ const TypeInfoSet AnimationEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< AnimatedMeshComponentData >();
 	typeSet.insert< BoidsComponentData >();
 	typeSet.insert< ClothComponentData >();
+	typeSet.insert< FootPlacementComponentData >();
 	typeSet.insert< IKComponentData >();
 	typeSet.insert< JointBindingComponentData >();
 	typeSet.insert< OrientateComponentData >();
@@ -67,6 +70,8 @@ Ref< world::IEntityComponent > AnimationEntityFactory::createEntityComponent(con
 		return boidsComponentData->createComponent();
 	else if (auto clothComponentData = dynamic_type_cast< const ClothComponentData* >(&entityComponentData))
 		return clothComponentData->createComponent(m_resourceManager, m_renderSystem);
+	else if (auto footPlacementComponentData = dynamic_type_cast< const FootPlacementComponentData* >(&entityComponentData))
+		return footPlacementComponentData->createComponent(m_resourceManager, m_physicsManager);
 	else if (auto ikComponentData = dynamic_type_cast< const IKComponentData* >(&entityComponentData))
 		return ikComponentData->createComponent();
 	else if (auto jointBindingComponentData = dynamic_type_cast< const JointBindingComponentData* >(&entityComponentData))
