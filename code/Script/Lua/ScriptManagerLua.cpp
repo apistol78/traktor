@@ -896,23 +896,23 @@ void ScriptManagerLua::collectGarbagePartial()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 #	endif
 
-	if (m_collectSteps < 0)
-	{
-		lua_gc(m_luaState, LUA_GCSTOP, 0);
-		lua_gc(m_luaState, LUA_GCGEN, 0);
-		m_collectSteps = 0;
-	}
+	// if (m_collectSteps < 0)
+	// {
+	// 	lua_gc(m_luaState, LUA_GCSTOP, 0);
+	// 	lua_gc(m_luaState, LUA_GCGEN, 0);
+	// 	m_collectSteps = 0;
+	// }
 
-	T_ASSERT(lua_gc(m_luaState, LUA_GCISRUNNING, 0) == 0);
+	// T_ASSERT(lua_gc(m_luaState, LUA_GCISRUNNING, 0) == 0);
 
-	m_collectTargetSteps += float(s_timer.getDeltaTime() * m_collectStepFrequency);
+	// m_collectTargetSteps += float(s_timer.getDeltaTime() * m_collectStepFrequency);
 
-	int32_t targetSteps = int32_t(m_collectTargetSteps);
-	while (m_collectSteps < targetSteps)
-	{
-		lua_gc(m_luaState, LUA_GCSTEP, 0);
-		++m_collectSteps;
-	}
+	// int32_t targetSteps = int32_t(m_collectTargetSteps);
+	// while (m_collectSteps < targetSteps)
+	// {
+	// 	lua_gc(m_luaState, LUA_GCSTEP, 0);
+	// 	++m_collectSteps;
+	// }
 
 #else
 
