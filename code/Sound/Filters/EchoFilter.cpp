@@ -140,6 +140,8 @@ Ref< IAudioFilterInstance > EchoFilter::createInstance() const
 void EchoFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	EchoFilterInstance* efi = static_cast< EchoFilterInstance* >(instance);
+	if (efi->m_size == 0)
+		return;
 
 	const int32_t nechos = min(int32_t(1.0f / m_decay), c_maxEchos);
 	const int32_t delay = int32_t(m_delay * outBlock.sampleRate);
