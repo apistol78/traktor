@@ -13,6 +13,8 @@
 #include "Physics/World/JointComponentData.h"
 #include "Physics/World/RigidBodyComponent.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Physics/World/Character/AiCharacterComponent.h"
+#include "Physics/World/Character/AiCharacterComponentData.h"
 #include "Physics/World/Character/CharacterComponent.h"
 #include "Physics/World/Character/CharacterComponentData.h"
 #include "Physics/World/Vehicle/VehicleComponent.h"
@@ -34,6 +36,7 @@ bool EntityFactory::initialize(const ObjectStore& objectStore)
 const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 {
 	return makeTypeInfoSet<
+		AiCharacterComponentData,
 		CharacterComponentData,
 		JointComponentData,
 		RigidBodyComponentData,
@@ -43,7 +46,9 @@ const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 
 Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	if (auto characterComponentData = dynamic_type_cast< const CharacterComponentData* >(&entityComponentData))
+	if (auto aiCharacterComponentData = dynamic_type_cast< const AiCharacterComponentData* >(&entityComponentData))
+		return aiCharacterComponentData->createComponent(builder, m_resourceManager, m_physicsManager);
+	else if (auto characterComponentData = dynamic_type_cast< const CharacterComponentData* >(&entityComponentData))
 		return characterComponentData->createComponent(builder, m_resourceManager, m_physicsManager);
 	else if (auto jointComponentData = dynamic_type_cast< const JointComponentData* >(&entityComponentData))
 		return jointComponentData->createComponent(m_physicsManager);

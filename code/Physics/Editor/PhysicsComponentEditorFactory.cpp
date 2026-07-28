@@ -11,6 +11,7 @@
 #include "Physics/Editor/PhysicsComponentEditorFactory.h"
 #include "Physics/World/JointComponentData.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Physics/World/Character/AiCharacterComponentData.h"
 #include "Physics/World/Character/CharacterComponentData.h"
 #include "Physics/World/Vehicle/VehicleComponentData.h"
 
@@ -22,6 +23,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsComponentEditorFactory", Physics
 const TypeInfoSet PhysicsComponentEditorFactory::getComponentDataTypes() const
 {
 	TypeInfoSet typeInfoSet;
+	typeInfoSet.insert< AiCharacterComponentData >();
 	typeInfoSet.insert< CharacterComponentData >();
 	typeInfoSet.insert< JointComponentData >();
 	typeInfoSet.insert< RigidBodyComponentData >();
@@ -31,7 +33,7 @@ const TypeInfoSet PhysicsComponentEditorFactory::getComponentDataTypes() const
 
 bool PhysicsComponentEditorFactory::alwaysRebuild(const world::IEntityComponentData* componentData) const
 {
-	if (is_a< CharacterComponentData >(componentData) || is_a< JointComponentData >(componentData) || is_a< VehicleComponentData >(componentData))
+	if (is_a< AiCharacterComponentData >(componentData) || is_a< CharacterComponentData >(componentData) || is_a< JointComponentData >(componentData) || is_a< VehicleComponentData >(componentData))
 		return true;
 	else if (auto rbc = dynamic_type_cast< const RigidBodyComponentData* >(componentData))
 	{

@@ -24,6 +24,7 @@
 #include "Physics/PhysicsManager.h"
 #include "Physics/World/JointComponent.h"
 #include "Physics/World/RigidBodyComponent.h"
+#include "Physics/World/Character/AiCharacterComponent.h"
 #include "Physics/World/Character/CharacterComponent.h"
 #include "Physics/World/Vehicle/VehicleComponent.h"
 #include "Physics/World/Vehicle/Wheel.h"
@@ -360,6 +361,16 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacterComponent->addMethod("move", &CharacterComponent::move);
 	classCharacterComponent->addMethod("jump", &CharacterComponent::jump);
 	registrar->registerClass(classCharacterComponent);
+
+	auto classAiCharacterComponent = new AutoRuntimeClass< AiCharacterComponent >();
+	classAiCharacterComponent->addProperty("grounded", &AiCharacterComponent::grounded);
+	classAiCharacterComponent->addProperty("velocity", &AiCharacterComponent::setVelocity, &AiCharacterComponent::getVelocity);
+	classAiCharacterComponent->addProperty("maxVelocity", &AiCharacterComponent::setMaxVelocity, &AiCharacterComponent::getMaxVelocity);
+	classAiCharacterComponent->addProperty("headAngle", &AiCharacterComponent::setHeadAngle, &AiCharacterComponent::getHeadAngle);
+	classAiCharacterComponent->addProperty("enabled", &AiCharacterComponent::setEnable, &AiCharacterComponent::isEnable);
+	classAiCharacterComponent->addMethod("move", &AiCharacterComponent::move);
+	classAiCharacterComponent->addMethod("jump", &AiCharacterComponent::jump);
+	registrar->registerClass(classAiCharacterComponent);
 
 	auto classJointComponent = new AutoRuntimeClass< JointComponent >();
 	registrar->registerClass(classJointComponent);

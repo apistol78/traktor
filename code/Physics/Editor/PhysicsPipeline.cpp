@@ -13,6 +13,7 @@
 #include "Physics/HeightfieldShapeDesc.h"
 #include "Physics/Editor/PhysicsPipeline.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Physics/World/Character/AiCharacterComponentData.h"
 #include "Physics/World/Character/CharacterComponentData.h"
 #include "Physics/World/Vehicle/VehicleComponentData.h"
 #include "Editor/IPipelineDepends.h"
@@ -35,6 +36,7 @@ void PhysicsPipeline::destroy()
 TypeInfoSet PhysicsPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert< AiCharacterComponentData >();
 	typeSet.insert< BodyDesc >();
 	typeSet.insert< CharacterComponentData >();
 	typeSet.insert< RigidBodyComponentData >();
@@ -85,6 +87,17 @@ bool PhysicsPipeline::buildDependencies(
 		for (auto id : characterData->getTraceInclude())
 			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
 		for (auto id : characterData->getTraceIgnore())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
+	}
+	else if (auto aiCharacterData = dynamic_type_cast< const AiCharacterComponentData* >(sourceAsset))
+	{
+		for (auto id : aiCharacterData->getCollisionGroup())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
+		for (auto id : aiCharacterData->getCollisionMask())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
+		for (auto id : aiCharacterData->getTraceInclude())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
+		for (auto id : aiCharacterData->getTraceIgnore())
 			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
 	}
 	else if (auto rigidBodyData = dynamic_type_cast< const RigidBodyComponentData* >(sourceAsset))

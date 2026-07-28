@@ -1,0 +1,110 @@
+/*
+ * TRAKTOR
+ * Copyright (c) 2022-2026 Anders Pistol.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+#pragma once
+
+#include "Core/Containers/SmallSet.h"
+#include "Core/Ref.h"
+#include "Resource/Id.h"
+#include "World/IEntityComponentData.h"
+
+#undef T_DLLCLASS
+#if defined(T_PHYSICS_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor::resource
+{
+
+class IResourceManager;
+
+}
+
+namespace traktor::world
+{
+
+class Entity;
+class IEntityBuilder;
+
+}
+
+namespace traktor::physics
+{
+
+class AiCharacterComponent;
+class CollisionSpecification;
+class PhysicsManager;
+class ShapeDesc;
+
+/*! AI character component data.
+ * \ingroup Physics
+ *
+ * \sa AiCharacterComponent
+ */
+class T_DLLCLASS AiCharacterComponentData : public world::IEntityComponentData
+{
+	T_RTTI_CLASS;
+
+public:
+	/*! Create instance of AI character component. */
+	Ref< AiCharacterComponent > createComponent(
+		const world::IEntityBuilder* entityBuilder,
+		resource::IResourceManager* resourceManager,
+		PhysicsManager* physicsManager
+	) const;
+
+	Ref< ShapeDesc > getShapeDesc(float epsilon) const;
+
+	const SmallSet< resource::Id< CollisionSpecification > >& getCollisionGroup() const { return m_collisionGroup; }
+
+	const SmallSet< resource::Id< CollisionSpecification > >& getCollisionMask() const { return m_collisionMask; }
+
+	const SmallSet< resource::Id< CollisionSpecification > >& getTraceInclude() const { return m_traceInclude; }
+
+	const SmallSet< resource::Id< CollisionSpecification > >& getTraceIgnore() const { return m_traceIgnore; }
+
+	/*! Get character radius. */
+	float getRadius() const { return m_radius; }
+
+	/*! Get character height. */
+	float getHeight() const { return m_height; }
+
+	/*! Get character step height. */
+	float getStep() const { return m_step; }
+
+	/*! Get character jump impulse. */
+	float getJumpImpulse() const { return m_jumpImpulse; }
+
+	/*! Get character max velocity. */
+	float getMaxVelocity() const { return m_maxVelocity; }
+
+	/*! Get velocity damping coefficient. */
+	float getVelocityDamping() const { return m_velocityDamping; }
+
+	virtual int32_t getOrdinal() const override final;
+
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	SmallSet< resource::Id< CollisionSpecification > > m_collisionGroup;
+	SmallSet< resource::Id< CollisionSpecification > > m_collisionMask;
+	SmallSet< resource::Id< CollisionSpecification > > m_traceInclude;
+	SmallSet< resource::Id< CollisionSpecification > > m_traceIgnore;
+	float m_radius = 1.0f;
+	float m_height = 2.0f;
+	float m_step = 0.5f;
+	float m_jumpImpulse = 1.0f;
+	float m_maxVelocity = 2.0f;
+	float m_velocityDamping = 1.0f;
+};
+
+}

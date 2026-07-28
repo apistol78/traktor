@@ -12,6 +12,8 @@
 #include "Physics/ShapeDesc.h"
 #include "Physics/World/JointComponentData.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Physics/World/Character/AiCharacterComponent.h"
+#include "Physics/World/Character/AiCharacterComponentData.h"
 #include "Physics/World/Character/CharacterComponent.h"
 #include "Physics/World/Character/CharacterComponentData.h"
 #include "Physics/World/Vehicle/VehicleComponent.h"
@@ -55,6 +57,14 @@ void PhysicsComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 
 			body1Transform[0] = body1Transform[0] * Transform(Vector4(0.0f, characterComponent->getHeight() / 2.0f, 0.0f));
 			body1Transform[1] = body1Transform[1] * Transform(Vector4(0.0f, characterComponent->getHeight() / 2.0f, 0.0f));
+		}
+
+		if (const AiCharacterComponentData* aiCharacterComponent = dynamic_type_cast< const AiCharacterComponentData* >(m_componentData))
+		{
+			shapeDesc = aiCharacterComponent->getShapeDesc(0.0f);
+
+			body1Transform[0] = body1Transform[0] * Transform(Vector4(0.0f, aiCharacterComponent->getHeight() / 2.0f, 0.0f));
+			body1Transform[1] = body1Transform[1] * Transform(Vector4(0.0f, aiCharacterComponent->getHeight() / 2.0f, 0.0f));
 		}
 
 		if (const VehicleComponentData* vehicleComponent = dynamic_type_cast< const VehicleComponentData* >(m_componentData))
