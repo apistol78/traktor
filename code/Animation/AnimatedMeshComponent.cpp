@@ -122,7 +122,7 @@ bool AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView,
 {
 	const Scalar interval(worldRenderView.getInterval());
 	const Transform worldTransform = m_transform.get(interval);
-	float distance = 0.0f;
+	float distance = std::numeric_limits< float >::max();
 	bool result = false;
 
 	const bool isVisible = worldRenderView.isBoxVisible(
@@ -163,6 +163,7 @@ bool AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView,
 
 	m_skinModified = false;
 	m_firstSetup = false;
+	m_lastDistance = (worldRenderView.getIndex() == 0) ? distance : std::min(m_lastDistance, distance);
 	return result;
 }
 

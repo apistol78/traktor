@@ -15,6 +15,7 @@
 #include "Resource/Proxy.h"
 
 #include <atomic>
+#include <limits>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -55,6 +56,9 @@ public:
 	/*! Get skin transform of joint in delta space. */
 	bool getSkinTransform(render::handle_t jointName, Transform& outTransform) const;
 
+	/*! Get closest culling distance across all views. */
+	float getLastDistance() const { return m_lastDistance; }
+
 private:
 	AlignedVector< int32_t > m_jointRemap;
 	AlignedVector< Transform > m_jointInverseTransforms;
@@ -65,6 +69,7 @@ private:
 	bool m_skinModified = false;
 	bool m_lastIsVisible = false;
 	bool m_firstSetup = true;
+	float m_lastDistance = std::numeric_limits< float >::max();
 };
 
 }

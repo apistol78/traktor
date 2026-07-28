@@ -8,12 +8,9 @@
  */
 #include "Animation/IK/FootPlacementComponent.h"
 
-#include "Animation/Joint.h"
-#include "Animation/Skeleton.h"
+#include "Animation/AnimatedMeshComponent.h""
 #include "Animation/SkeletonComponent.h"
 #include "Core/Containers/StaticVector.h"
-#include "Core/Log/Log.h"
-#include "Core/Math/Format.h"
 #include "Physics/PhysicsManager.h"
 #include "World/Entity.h"
 
@@ -60,13 +57,21 @@ Aabb3 FootPlacementComponent::getBoundingBox() const
 
 void FootPlacementComponent::update(const world::UpdateParams& update)
 {
-	const Transform ownerTransform = m_owner->getTransform();
-	const Transform ownerTransformInv = ownerTransform.inverse();
-	Transform footTransform;
-
 	auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
 	if (!skeletonComponent)
 		return;
+
+	auto animatedMeshComponent = m_owner->getComponent< AnimatedMeshComponent >();
+	if (!animatedMeshComponent)
+		return;
+
+	// Do not evaluate foot placement on entities which are too far away.
+	if (animatedMeshComponent->getLastDistance() >= 10.0f)
+		return;
+
+	const Transform ownerTransform = m_owner->getTransform();
+	const Transform ownerTransformInv = ownerTransform.inverse();
+	Transform footTransform;
 
 	for (const auto footJoint : m_footJoints)
 	{
