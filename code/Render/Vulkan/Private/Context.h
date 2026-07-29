@@ -102,17 +102,32 @@ public:
 	 * Every command buffer submission is tagged with a monotonically increasing
 	 * epoch, which lets deferred cleanups tell whether the submissions that could
 	 * still be reading their resource have been consumed by the GPU.
+	 *
+	 * A registered fence is polled from any thread performing cleanups, not only
+	 * from the thread owning the command buffer, so the submission lock doubles as
+	 * the external synchronization of host access to those fences; every host
+	 * operation on a registered fence must be issued through these methods.
 	 */
 	//@{
 
-	/*! Register a submission about to be issued; \sa endSubmission.
+	/*! Register a submission about to be issued; \sa submissionIssued, \sa endSubmission.
+	 *
+	 * The fence is not polled until the submission has been reported as issued, as
+	 * handing it to vkQueueSubmit is itself a host access to the fence.
 	 *
 	 * \param fence Fence signalled when the submission has been consumed.
 	 */
 	uint64_t beginSubmission(VkFence fence);
 
-	/*! Register a submission as consumed by the GPU. */
-	void endSubmission(uint64_t epoch);
+	/*! Register a submission as issued to its queue, thus its fence can be polled. */
+	void submissionIssued(uint64_t epoch);
+
+	/*! Register a submission as consumed by the GPU; also resets its fence.
+	 *
+	 * \param epoch Submission epoch, from beginSubmission.
+	 * \param fence Fence to reset, or VK_NULL_HANDLE to leave it as-is.
+	 */
+	void endSubmission(uint64_t epoch, VkFence fence);
 
 	/*! Get the epoch up until, and including, which all submissions are consumed. */
 	uint64_t getCompletedEpoch();
@@ -187,6 +202,7 @@ private:
 	{
 		uint64_t epoch;
 		VkFence fence;
+		bool issued;	//!< Submission has been handed to its queue, thus fence can be polled.
 	};
 
 	struct PipelineEntry

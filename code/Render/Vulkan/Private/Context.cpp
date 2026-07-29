@@ -342,23 +342,31 @@ void Context::performCleanupAll()
 		vkDeviceWaitIdle(m_logicalDevice);
 
 		bool freeDescriptors = false;
-		while (!m_cleanupFns.empty())
+		for (;;)
 		{
-			// Take over vector in case more resources are added for cleanup from callbacks.
-			AlignedVector< DeferredCleanup > cleanupFns;
-			cleanupFns.swap(m_cleanupFns);
-
-			for (const DeferredCleanup& cleanupFn : cleanupFns)
+			while (!m_cleanupFns.empty())
 			{
-				freeDescriptors |= (bool)((cleanupFn.flags & CleanupFreeDescriptorSets) != 0);
-				cleanupFn.fn(this);
-			}
-		}
+				// Take over vector in case more resources are added for cleanup from callbacks.
+				AlignedVector< DeferredCleanup > cleanupFns;
+				cleanupFns.swap(m_cleanupFns);
 
-		// Only call cleanup listeners to free descriptors.
-		if (freeDescriptors)
+				for (const DeferredCleanup& cleanupFn : cleanupFns)
+				{
+					freeDescriptors |= (bool)((cleanupFn.flags & CleanupFreeDescriptorSets) != 0);
+					cleanupFn.fn(this);
+				}
+			}
+
+			// Only call cleanup listeners to free descriptors.
+			if (!freeDescriptors)
+				break;
+
+			// Listeners drop their cached descriptor sets by adding cleanups of their
+			// own; caller expects every resource gone so those are drained as well.
+			freeDescriptors = false;
 			for (auto cleanupListener : m_cleanupListeners)
 				cleanupListener->postCleanup();
+		}
 	}
 }
 
@@ -366,13 +374,32 @@ uint64_t Context::beginSubmission(VkFence fence)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_submissionLock);
 	const uint64_t epoch = m_nextSubmissionEpoch++;
-	m_inFlightSubmissions.push_back({ epoch, fence });
+	m_inFlightSubmissions.push_back({ epoch, fence, false });
 	return epoch;
 }
 
-void Context::endSubmission(uint64_t epoch)
+void Context::submissionIssued(uint64_t epoch)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_submissionLock);
+	for (auto& submission : m_inFlightSubmissions)
+	{
+		if (submission.epoch == epoch)
+		{
+			submission.issued = true;
+			break;
+		}
+	}
+}
+
+void Context::endSubmission(uint64_t epoch, VkFence fence)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_submissionLock);
+
+	// Reset the fence from within the lock; until the submission is erased below
+	// getCompletedEpoch may be polling the very same fence from another thread.
+	if (fence != VK_NULL_HANDLE)
+		vkResetFences(m_logicalDevice, 1, &fence);
+
 	for (auto it = m_inFlightSubmissions.begin(); it != m_inFlightSubmissions.end(); ++it)
 	{
 		if (it->epoch == epoch)
@@ -392,6 +419,10 @@ uint64_t Context::getCompletedEpoch()
 	// hold every cleanup back for as long as it stays idle.
 	while (!m_inFlightSubmissions.empty())
 	{
+		// A submission still on its way into a queue owns its fence until
+		// vkQueueSubmit has returned; nothing is known about it either way.
+		if (!m_inFlightSubmissions.front().issued)
+			break;
 		if (vkGetFenceStatus(m_logicalDevice, m_inFlightSubmissions.front().fence) != VK_SUCCESS)
 			break;
 		m_inFlightSubmissions.erase(m_inFlightSubmissions.begin());

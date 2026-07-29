@@ -884,9 +884,27 @@ void ProgramVk::postCleanup()
 {
 	// Since some resource has been cleaned up we cannot guarantee integrity
 	// of our cached descriptor sets, thus we need to rebuild every set.
+	AlignedVector< VkDescriptorSet > descriptorSets;
+	descriptorSets.reserve(m_descriptorSets.size());
 	for (auto it : m_descriptorSets)
-		vkFreeDescriptorSets(m_context->getLogicalDevice(), m_context->getDescriptorPool(), 1, &it.second);
+		descriptorSets.push_back(it.second);
+
+	// Drop the cache before the sets are handed over for cleanup; adding a
+	// cleanup can, when no view is rendering, perform every pending cleanup
+	// right away and thus call us again.
 	m_descriptorSets.reset();
+	m_descriptorSet = 0;
+
+	if (descriptorSets.empty())
+		return;
+
+	// Sets bound in a submission the GPU hasn't consumed yet must not be freed
+	// until it has; \sa Context::addDeferredCleanup.
+	m_context->addDeferredCleanup(
+		[descriptorSets = std::move(descriptorSets)](Context* cx) {
+		vkFreeDescriptorSets(cx->getLogicalDevice(), cx->getDescriptorPool(), (uint32_t)descriptorSets.size(), descriptorSets.c_ptr());
+	},
+		Context::CleanupNone);
 }
 
 bool ProgramVk::DescriptorSetKey::operator<(const DescriptorSetKey& rh) const

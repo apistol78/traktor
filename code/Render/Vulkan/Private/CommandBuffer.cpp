@@ -80,10 +80,11 @@ bool CommandBuffer::submit(const StaticVector< VkSemaphore, 2 >& waitSemaphores,
 	const uint64_t epoch = m_context->beginSubmission(m_inFlight);
 	if ((result = m_queue->submit(si, m_inFlight)) != VK_SUCCESS)
 	{
-		m_context->endSubmission(epoch);
+		m_context->endSubmission(epoch, m_inFlight);
 		log::error << L"Unable to submit command buffer, \"" << getHumanResult(result) << L"\"." << Endl;
 		return false;
 	}
+	m_context->submissionIssued(epoch);
 
 	m_epoch = epoch;
 	m_submitted = true;
@@ -116,10 +117,11 @@ bool CommandBuffer::submitSignal(VkSemaphore semaphore, uint64_t semaphoreValue)
 	const uint64_t epoch = m_context->beginSubmission(m_inFlight);
 	if ((result = m_queue->submit(submitInfo, m_inFlight)) != VK_SUCCESS)
 	{
-		m_context->endSubmission(epoch);
+		m_context->endSubmission(epoch, m_inFlight);
 		log::error << L"Unable to submit command buffer, \"" << getHumanResult(result) << L"\"." << Endl;
 		return false;
 	}
+	m_context->submissionIssued(epoch);
 
 	m_epoch = epoch;
 	m_submitted = true;
@@ -153,10 +155,11 @@ bool CommandBuffer::submitWait(VkSemaphore semaphore, uint64_t semaphoreValue, V
 	const uint64_t epoch = m_context->beginSubmission(m_inFlight);
 	if ((result = m_queue->submit(submitInfo, m_inFlight)) != VK_SUCCESS)
 	{
-		m_context->endSubmission(epoch);
+		m_context->endSubmission(epoch, m_inFlight);
 		log::error << L"Unable to submit command buffer, \"" << getHumanResult(result) << L"\"." << Endl;
 		return false;
 	}
+	m_context->submissionIssued(epoch);
 
 	m_epoch = epoch;
 	m_submitted = true;
@@ -169,9 +172,11 @@ bool CommandBuffer::wait()
 		return true;
 
 	const bool result = (vkWaitForFences(m_context->getLogicalDevice(), 1, &m_inFlight, VK_TRUE, UINT64_MAX) == VK_SUCCESS);
-	vkResetFences(m_context->getLogicalDevice(), 1, &m_inFlight);
 
-	m_context->endSubmission(m_epoch);
+	// Fence is reset from within the context as it, until the submission has been
+	// ended, might be polled from another thread; \sa Context::endSubmission.
+	m_context->endSubmission(m_epoch, m_inFlight);
+
 	m_submitted = false;
 	return result;
 }
@@ -189,8 +194,7 @@ void CommandBuffer::externalSynced()
 {
 	if (m_submitted)
 	{
-		vkResetFences(m_context->getLogicalDevice(), 1, &m_inFlight);
-		m_context->endSubmission(m_epoch);
+		m_context->endSubmission(m_epoch, m_inFlight);
 		m_submitted = false;
 	}
 }
