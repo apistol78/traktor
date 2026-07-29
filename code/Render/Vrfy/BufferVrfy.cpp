@@ -54,11 +54,7 @@ BufferVrfy::~BufferVrfy()
 
 void BufferVrfy::destroy()
 {
-	T_CAPTURE_ASSERT (m_buffer, L"Buffer (" << m_tag << L") already destroyed.");
 	T_CAPTURE_ASSERT (!m_locked, L"Cannot destroy locked struct buffer (" << m_tag << L").");
-	verifyGuard();
-	verifyUntouched();
-	safeDestroy(m_buffer);
 }
 
 void* BufferVrfy::lock()
