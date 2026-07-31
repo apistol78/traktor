@@ -90,7 +90,7 @@
 				<first>-808</first>
 				<second>366</second>
 			</position>
-			<value>0.615</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{E0B72036-11E6-4932-9508-3906F676978C}</id>
