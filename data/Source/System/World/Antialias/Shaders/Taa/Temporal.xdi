@@ -2,37 +2,98 @@
 <object type="traktor.render.ShaderModule" version="2">
 	<text><![CDATA[#using \{935D9DEF-A5F9-4D4B-85BE-9F2E059662BB}
 
-#define TAPS 16
+// Temporal antialiasing.
+//
+// History is reprojected with the velocity buffer, reconstructed with a
+// Catmull-Rom filter, then constrained to the current frame's local colour
+// distribution before it is blended in.
+//
+// That constraint is what governs ghosting. Rather than clamping to the
+// plain RGB min/max of the neighbourhood - a box so permissive that a stale
+// history can sit inside it for many frames - the history is clipped
+// against a YCoCg variance box (Salvi) intersected with a rounded
+// neighbourhood box (Karis). The box collapses over flat pixels, which is
+// exactly where a stale history reads as a ghost, and stays wide over
+// genuinely busy pixels where a tight box would eat detail instead.
+//
+// How far the history had to be moved to re-enter that box is then reused
+// as a confidence measure.
+//
+// Convergence is variable rate rather than a fixed blend weight. The alpha
+// channel of the history carries the number of samples that history is
+// worth, and the incoming sample is weighted 1/N against it. Rejection
+// discards samples rather than lowering a weight for a single frame, so the
+// tail adapts on its own: a pixel that keeps disagreeing settles at a short
+// tail, and a freshly disoccluded one reconverges over a handful of frames
+// instead of fading its ghost out over the full length of the filter.
+//
+// The fixed point of that feedback is N = 1 / (1 - confidence), so a pixel
+// at 90% confidence keeps a 10 sample tail, one at 50% keeps 2, and one that
+// is fully rejected keeps none.
+
+// Most samples a history is allowed to represent. The converged history
+// weight is 1 - 1/MAX_ACCUM, so 16 reproduces the tail of the fixed weight
+// blend this replaced. Raise it for a smoother converged image at the cost
+// of slower recovery.
+#define MAX_ACCUM 16.0f
+
+// Half width of the variance box, in standard deviations. Lower is more
+// aggressive against ghosting and softer on edges.
+#define VARIANCE_GAMMA 1.25f
+
+// Velocity difference tolerated before a pixel is called disoccluded, in
+// pixels. Scaled by the speed so that a smoothly varying field - a rotating
+// camera - is not mistaken for a discontinuity.
+#define VELOCITY_TOLERANCE 2.0f
+#define VELOCITY_TOLERANCE_SCALE 0.25f
 
 bool Clipped(vec2 uv)
 {
 	return any(notEqual(uv, clamp(uv, 0.0f, 1.0f)));
 }
 
-vec4 ColorClamp(in texture2D currentFrame, in sampler currentSampler, vec4 currentColor, vec4 historyColor, vec2 uv)
+// The history target is acquired from a pool, so its contents are undefined
+// on the first frame, and an HDR scene can overflow to Inf or NaN at any
+// point. Either sticks permanently once it is in the history, because it
+// survives every arithmetic path back into it - including a mix() at full
+// weight, since both NaN * 0 and Inf * 0 are NaN. Comparisons against NaN are
+// always false and Inf fails the magnitude test, so one select rejects both.
+vec3 Sanitize(vec3 c)
 {
-	const vec4 n[] =
-	{
-		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2(-1, 0)),
-		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2( 1, 0)),
-		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2(0, -1)),
-		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2(0,  1)),
-		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2(-1,  1)),
-		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2( 1,  1)),
-		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2(-1, -1)),
-		textureOffset(sampler2D(currentFrame, currentSampler), uv, ivec2( 1, -1))
-	};
+	return mix(vec3(0.0f), c, lessThan(abs(c), vec3(65504.0f)));
+}
 
-	vec4 bmn = currentColor;
-	vec4 bmx = currentColor;
+// Clipping in YCoCg rather than RGB keeps the box tight on the two chroma
+// axes, which is what stops a ghost of a differently coloured object from
+// surviving inside an otherwise plausible luma range.
+vec3 RgbToYCoCg(vec3 c)
+{
+	return vec3(
+		 0.25f * c.r + 0.5f * c.g + 0.25f * c.b,
+		 0.5f  * c.r              - 0.5f  * c.b,
+		-0.25f * c.r + 0.5f * c.g - 0.25f * c.b);
+}
 
-	for (int i = 0; i < 8; ++i)
-	{
-		bmn = min(bmn, n[i]);
-		bmx = max(bmx, n[i]);
-	}
+vec3 YCoCgToRgb(vec3 c)
+{
+	return vec3(
+		c.x + c.y - c.z,
+		c.x       + c.z,
+		c.x - c.y - c.z);
+}
 
-	return clamp(historyColor, bmn, bmx);
+// Pull a sample onto the surface of an AABB along the line through the box
+// centre. Clamping each channel on its own leaves the sample in a corner of
+// the box and shifts its hue; scaling the whole offset preserves the colour
+// and rejects harder.
+vec3 ClipToAABB(vec3 c, vec3 mn, vec3 mx)
+{
+	const vec3 centre = 0.5f * (mx + mn);
+	const vec3 extent = 0.5f * (mx - mn) + 0.0001f;
+	const vec3 offset = c - centre;
+	const vec3 unit = abs(offset / extent);
+	const float u = max(unit.x, max(unit.y, unit.z));
+	return (u > 1.0f) ? (centre + offset / u) : c;
 }
 
 vec4 TemporalAntiAlias(
@@ -44,39 +105,112 @@ vec4 TemporalAntiAlias(
 	vec2 uv
 )
 {
-	const float f = 1.0f / TAPS;
-	const vec2 puv = uv;
-	const vec2 cuv = uv;
-
-	// Get velocity of current pixel, in NDC space.
-	const vec2 v = texture(sampler2D(velocity, __linearSampler__), cuv).xy;
-
-	// Convert velocity to UV space.
-	const vec2 Vuv = v * vec2(-0.5f, 0.5f);
+	const vec2 texSize = vec2(textureSize(sampler2D(currentFrame, __pointSampler__), 0));
 
 	// Sample current colour.
-	const vec4 cc = texture(sampler2D(currentFrame, __linearSampler__), cuv);
+	const vec4 cc = texture(sampler2D(currentFrame, __linearSampler__), uv);
 
-	// Blend with previous colour.
-	if (!Clipped(uv - Vuv))
+	// Velocity is point sampled deliberately. It has already been dilated to
+	// the closest depth of its neighbourhood by the velocity pass, and
+	// filtering it here averages the foreground and background velocities
+	// back together along a silhouette - which is precisely what drags a
+	// trail behind a moving object.
+	const vec2 v = texture(sampler2D(velocity, __pointSampler__), uv).xy;
+
+	// Convert velocity to UV space, and reproject.
+	const vec2 Vuv = v * vec2(-0.5f, 0.5f);
+	const vec2 huv = uv - Vuv;
+
+	// Nothing to reproject from beyond the frame edge; start accumulating.
+	if (Clipped(huv))
+		return vec4(cc.rgb, 1.0f);
+
+	// Current frame neighbourhood, in YCoCg. Texel offsets have to be
+	// constant expressions, so the taps are written out; index 4 is centre
+	// and the odd indices are the cross.
+	const vec3 n[] =
 	{
-		// Get velocity of previous pixel, in NDC space.
-		const vec2 pv = texture(sampler2D(velocity, __linearSampler__), cuv - Vuv).xy;
-		
-		// Sample previous colour,
-		const vec4 cp = CatmullRomFilterSample(previousFrame, __linearSampler__, puv - Vuv);
+		RgbToYCoCg(textureOffset(sampler2D(currentFrame, __linearSampler__), uv, ivec2(-1, -1)).rgb),
+		RgbToYCoCg(textureOffset(sampler2D(currentFrame, __linearSampler__), uv, ivec2( 0, -1)).rgb),
+		RgbToYCoCg(textureOffset(sampler2D(currentFrame, __linearSampler__), uv, ivec2( 1, -1)).rgb),
+		RgbToYCoCg(textureOffset(sampler2D(currentFrame, __linearSampler__), uv, ivec2(-1,  0)).rgb),
+		RgbToYCoCg(cc.rgb),
+		RgbToYCoCg(textureOffset(sampler2D(currentFrame, __linearSampler__), uv, ivec2( 1,  0)).rgb),
+		RgbToYCoCg(textureOffset(sampler2D(currentFrame, __linearSampler__), uv, ivec2(-1,  1)).rgb),
+		RgbToYCoCg(textureOffset(sampler2D(currentFrame, __linearSampler__), uv, ivec2( 0,  1)).rgb),
+		RgbToYCoCg(textureOffset(sampler2D(currentFrame, __linearSampler__), uv, ivec2( 1,  1)).rgb)
+	};
 
-		// Clamp previous colour to current color neighbourhood.
-		vec4 ccp = ColorClamp(currentFrame, __linearSampler__, cc, cp, cuv);
+	vec3 mnBox = n[0];
+	vec3 mxBox = n[0];
+	vec3 m1 = vec3(0.0f);
+	vec3 m2 = vec3(0.0f);
 
-		// Compare velocities; if wastly different then don't merge samples.
-		const float fr = clamp(length(pv - v) * 40.0f, 0.0f, 1.0f);
-		ccp = cc * fr + ccp * (1.0f - fr);
-
-		return cc * f + ccp * (1.0f - f);
+	for (int i = 0; i < 9; ++i)
+	{
+		mnBox = min(mnBox, n[i]);
+		mxBox = max(mxBox, n[i]);
+		m1 += n[i];
+		m2 += n[i] * n[i];
 	}
 
-	return cc;
+	// Round the box off against the five tap cross, so that a single bright
+	// diagonal neighbour cannot inflate it.
+	const vec3 mnCross = min(n[4], min(min(n[1], n[3]), min(n[5], n[7])));
+	const vec3 mxCross = max(n[4], max(max(n[1], n[3]), max(n[5], n[7])));
+
+	mnBox = 0.5f * (mnBox + mnCross);
+	mxBox = 0.5f * (mxBox + mxCross);
+
+	// Variance box from the first two colour moments.
+	const vec3 mu = m1 / 9.0f;
+	const vec3 sigma = sqrt(max(m2 / 9.0f - mu * mu, vec3(0.0f)));
+
+	// Intersect the two, then re-admit the current colour so the box can
+	// never come out empty.
+	vec3 mn = max(mnBox, mu - VARIANCE_GAMMA * sigma);
+	vec3 mx = min(mxBox, mu + VARIANCE_GAMMA * sigma);
+
+	mn = min(mn, n[4]);
+	mx = max(mx, n[4]);
+
+	// Sample previous colour. Catmull-Rom stops the history softening a
+	// little more every frame, but its negative lobes can undershoot.
+	vec4 cp = CatmullRomFilterSample(previousFrame, __linearSampler__, huv);
+	cp.rgb = max(Sanitize(cp.rgb), vec3(0.0f));
+
+	const vec3 history = RgbToYCoCg(cp.rgb);
+	const vec3 clipped = ClipToAABB(history, mn, mx);
+
+	// Distance the history had to travel, relative to the box width. A
+	// merely noisy history barely moves; a stale one moves a long way.
+	const float clipDistance = clamp(abs(history.x - clipped.x) / max(mx.x - mn.x, 0.0001f), 0.0f, 1.0f);
+
+	// Velocity where the history came from. A hard mismatch means this pixel
+	// was almost certainly occluded last frame, so its history is worthless.
+	const vec2 pv = texture(sampler2D(velocity, __pointSampler__), huv).xy;
+	const float deltaPixels = length((pv - v) * 0.5f * texSize);
+	const float speedPixels = length(v * 0.5f * texSize);
+	const float tolerance = VELOCITY_TOLERANCE + VELOCITY_TOLERANCE_SCALE * speedPixels;
+	const float disocclusion = clamp((deltaPixels - tolerance) / tolerance, 0.0f, 1.0f);
+
+	// Samples the history was worth. Taken with a plain bilinear tap rather
+	// than through the Catmull-Rom filter, whose negative lobes would let the
+	// count ring upward across a disocclusion boundary - the one direction
+	// that would cost us, since it hands a fresh pixel a tail it never earned.
+	// The range test rejects both an uninitialised target and a NaN.
+	const float a = texture(sampler2D(previousFrame, __linearSampler__), huv).a;
+	const float historyCount = (a > 0.0f && a <= MAX_ACCUM) ? a : 0.0f;
+
+	// Both rejection signals reduce how many of those samples still count.
+	const float confidence = (1.0f - clipDistance) * (1.0f - disocclusion);
+
+	// The incoming sample is always worth one, so the count can never reach
+	// zero and alpha stays inside [1/MAX_ACCUM, 1].
+	const float count = clamp(historyCount * confidence + 1.0f, 1.0f, MAX_ACCUM);
+	const float alpha = 1.0f / count;
+
+	return vec4(YCoCgToRgb(mix(clipped, n[4], alpha)), count);
 }
 
 	

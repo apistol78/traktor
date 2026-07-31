@@ -155,7 +155,7 @@
 				<first>3217</first>
 				<second>90</second>
 			</position>
-			<swizzle>xyz</swizzle>
+			<swizzle>xyzw</swizzle>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{146C235B-3AB3-B04E-B8E6-CC0BE3659346}</id>
