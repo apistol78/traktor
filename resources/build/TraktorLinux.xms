@@ -11267,7 +11267,7 @@
 										<targetPath>debugshared</targetPath>
 									</item>
 									<item type="traktor.sb.AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/lib/*.*</sourceFile>
+										<sourceFile>$(EMBREE_SDK)/lib64/*.*</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
 									<item type="traktor.sb.AggregationItem">
@@ -11304,7 +11304,7 @@
 										<targetPath>releaseshared</targetPath>
 									</item>
 									<item type="traktor.sb.AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/lib/*.*</sourceFile>
+										<sourceFile>$(EMBREE_SDK)/lib64/*.*</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
 									<item type="traktor.sb.AggregationItem">
@@ -11341,7 +11341,7 @@
 										<targetPath>debugstatic</targetPath>
 									</item>
 									<item type="traktor.sb.AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/lib/*.*</sourceFile>
+										<sourceFile>$(EMBREE_SDK)/lib64/*.*</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 									<item type="traktor.sb.AggregationItem">
@@ -11378,7 +11378,7 @@
 										<targetPath>releasestatic</targetPath>
 									</item>
 									<item type="traktor.sb.AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/lib/*.*</sourceFile>
+										<sourceFile>$(EMBREE_SDK)/lib64/*.*</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 									<item type="traktor.sb.AggregationItem">

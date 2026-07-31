@@ -4460,7 +4460,7 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(EMBREE_SDK)/lib</item>
+						<item>$(EMBREE_SDK)/lib64</item>
 					</libraryPaths>
 					<libraries>
 						<item>embree4</item>
@@ -4487,7 +4487,7 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(EMBREE_SDK)/lib</item>
+						<item>$(EMBREE_SDK)/lib64</item>
 					</libraryPaths>
 					<libraries>
 						<item>embree4</item>
@@ -4514,7 +4514,7 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(EMBREE_SDK)/lib</item>
+						<item>$(EMBREE_SDK)/lib64</item>
 					</libraryPaths>
 					<libraries>
 						<item>embree4</item>
@@ -4541,7 +4541,7 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(EMBREE_SDK)/lib</item>
+						<item>$(EMBREE_SDK)/lib64</item>
 					</libraryPaths>
 					<libraries>
 						<item>embree4</item>
