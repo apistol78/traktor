@@ -140,6 +140,7 @@ struct T_DLLCLASS ShaderParameter
 	static const render::Handle InputColor;
 	static const render::Handle InputColorLast;
 	static const render::Handle InputDepth;
+	static const render::Handle InputHalfResDepth;
 	static const render::Handle InputNormal;
 	static const render::Handle InputVelocity;
 	static const render::Handle InputColorGrading;

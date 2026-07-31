@@ -2,48 +2,48 @@
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
-			<id>{40B8A6E7-4412-4258-9665-0DF8DBF1DFA6}</id>
+			<id>{357D7128-4B88-4627-A455-637E0ECC0A5F}</id>
 			<comment/>
 			<position>
-				<first>-1000</first>
+				<first>-932</first>
 				<second>-40</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
 			<outputPins>
 				<item>
-					<id>{DD7B3644-0DBB-42FE-92F7-2E2ED67E2B2E}</id>
+					<id>{848FF591-2EC1-4581-9632-580289F5121E}</id>
 					<name>Position</name>
 				</item>
 				<item>
-					<id>{3CB64F39-0830-4D57-A4C6-1A345DC83641}</id>
+					<id>{F333BFBE-D969-40F9-87D8-665D9DCEC4BA}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
-			<id>{2A01750C-9DD6-4920-BF03-2B0E7E38F979}</id>
+			<id>{5EDE4AB0-4BAB-43D8-9EB7-895EE78A35DE}</id>
 			<comment/>
 			<position>
-				<first>-800</first>
-				<second>0</second>
+				<first>-679</first>
+				<second>-23</second>
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{1BA01D69-E3D4-4E12-AB51-7A204A666B0E}</id>
+			<id>{8F57ED0E-20B9-4367-A4D3-A6C9D0F53F1F}</id>
 			<comment/>
 			<position>
-				<first>-820</first>
-				<second>80</second>
+				<first>-805</first>
+				<second>46</second>
 			</position>
 			<parameterDeclaration>{983E0A0C-405E-534E-87CF-C617C3D588B8}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
-			<id>{1AD250AC-AAEA-4994-98CE-E8A422131FC6}</id>
+			<id>{404D48CA-E97D-4B89-B70A-01FDF93EE157}</id>
 			<comment/>
 			<position>
-				<first>-820</first>
-				<second>140</second>
+				<first>-804</first>
+				<second>110</second>
 			</position>
 			<minFilter>Point</minFilter>
 			<mipFilter>Point</mipFilter>
@@ -57,76 +57,76 @@
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{ED28F623-E1DC-44BB-A501-75FD8B07A7BB}</id>
+			<id>{523D6CA8-EF03-4B84-A1E7-C9BB8A53DA39}</id>
 			<comment/>
 			<position>
-				<first>-820</first>
-				<second>200</second>
+				<first>-813</first>
+				<second>174</second>
 			</position>
 			<parameterDeclaration>{99A8A8CB-D479-8945-8F0D-D0E3D936E5AE}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{4D38C120-2A5B-47A9-9AF1-9F2797A7EECC}</id>
+			<id>{74F161AA-523C-4899-B838-2F4B7B967FF2}</id>
 			<comment/>
 			<position>
-				<first>-820</first>
-				<second>260</second>
+				<first>-805</first>
+				<second>238</second>
 			</position>
 			<parameterDeclaration>{41C095E8-1A66-A249-A474-349B74E9CC2D}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{F25324FC-1E50-4DDD-A8A2-CE0C9F820E09}</id>
-			<comment><![CDATA[World space radius of the obscurance disc.]]></comment>
+			<id>{B366F0FD-EAA1-4454-8C96-F018546CF284}</id>
+			<comment><![CDATA[World space radius of the occlusion search.]]></comment>
 			<position>
-				<first>-820</first>
-				<second>330</second>
-			</position>
-			<value>0.7</value>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{34731D44-FB25-463C-B457-690EA5BD1DE7}</id>
-			<comment><![CDATA[Depth scaled bias subtracted from the occluder height.]]></comment>
-			<position>
-				<first>-820</first>
-				<second>390</second>
-			</position>
-			<value>-0.001</value>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{94D0C567-6269-4FE8-8620-7C9B31E51BB7}</id>
-			<comment><![CDATA[Obscurance intensity, sigma in the Alchemy paper.]]></comment>
-			<position>
-				<first>-820</first>
-				<second>450</second>
+				<first>-800</first>
+				<second>302</second>
 			</position>
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{7B712058-9135-4D72-A54D-929B3B15D464}</id>
-			<comment><![CDATA[Contrast exponent applied to the obscurance.]]></comment>
+			<id>{0B814E02-1269-496E-A790-3AF872DD72E5}</id>
+			<comment><![CDATA[Fraction of the radius over which an occluder fades out.]]></comment>
 			<position>
-				<first>-820</first>
-				<second>510</second>
+				<first>-808</first>
+				<second>366</second>
 			</position>
-			<value>1</value>
+			<value>0.615</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{2760A2D7-DAD5-4687-A8EB-3005519F2B8D}</id>
-			<comment><![CDATA[Samples per pixel; lower this for cheaper quality tiers.]]></comment>
+			<id>{E0B72036-11E6-4932-9508-3906F676978C}</id>
+			<comment><![CDATA[World space bias of the origin along the normal.]]></comment>
 			<position>
-				<first>-820</first>
-				<second>570</second>
+				<first>-808</first>
+				<second>430</second>
 			</position>
-			<value>32</value>
+			<value>0.02</value>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{07A100DF-33B4-4667-9F33-F15A017D38BA}</id>
+			<comment><![CDATA[Upper bound of the search radius, in depth map pixels.]]></comment>
+			<position>
+				<first>-800</first>
+				<second>494</second>
+			</position>
+			<value>64</value>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{23A74BD5-38FF-426D-AA8A-6B5BC48B2A9F}</id>
+			<comment><![CDATA[Contrast applied to the final visibility.]]></comment>
+			<position>
+				<first>-800</first>
+				<second>558</second>
+			</position>
+			<value>0.5</value>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
-			<id>{26E49500-59EE-4E83-94C0-E8764D39049F}</id>
+			<id>{559F8C73-142C-491E-86C1-B8508FA386A3}</id>
 			<comment/>
 			<position>
-				<first>-420</first>
-				<second>100</second>
+				<first>-506</first>
+				<second>180</second>
 			</position>
-			<name>Alchemy</name>
+			<name>GTAO</name>
 			<technique/>
 			<domain>Undefined</domain>
 			<localSize>
@@ -135,144 +135,185 @@
 				<Z>1</Z>
 			</localSize>
 			<useRayTracing>false</useRayTracing>
-			<include>
-				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
-			</include>
+			<include/>
 			<inputPins>
 				<item>
-					<id>{C3E4899C-43B2-43B9-982E-12F796E7508F}</id>
+					<id>{1F52C315-635E-48F5-80F6-A9F732848B4A}</id>
 					<name>UV</name>
 				</item>
 				<item>
-					<id>{FF4CB111-4EF0-49CF-93CA-0E493C699832}</id>
+					<id>{1BC49998-D0B9-4AF8-80B8-091DBCEE5ED3}</id>
 					<name>DepthMap</name>
 				</item>
 				<item>
-					<id>{20B6A896-434C-4669-9117-037B049F8C53}</id>
+					<id>{543E8B76-A86E-4D20-8EC1-D1399D39F80D}</id>
 					<name>DepthMapState</name>
 				</item>
 				<item>
-					<id>{95200ED8-43D9-40BD-B9EA-5859E369F2BC}</id>
+					<id>{5CCBA565-7630-4BEB-B8B2-C3D198C6FF9B}</id>
 					<name>Projection</name>
 				</item>
 				<item>
-					<id>{A7472442-48AC-4758-ACC3-5B4234EB5C5E}</id>
+					<id>{A060293D-3562-4C63-BAAE-5BE710C75677}</id>
 					<name>Random</name>
 				</item>
 				<item>
-					<id>{77E55501-885C-4DA5-AD8A-E3EFFDDD8444}</id>
+					<id>{C2018D9C-F56A-428F-A589-116EEF67A35F}</id>
 					<name>Radius</name>
 				</item>
 				<item>
-					<id>{FFCC8431-B1E3-4626-BA8C-8F3914C599D4}</id>
+					<id>{DB409E1F-41DF-44C5-B4B7-743F43B5E374}</id>
+					<name>FalloffRange</name>
+				</item>
+				<item>
+					<id>{DF0BBECB-DA0D-4919-BF12-51907965AF4E}</id>
 					<name>Bias</name>
 				</item>
 				<item>
-					<id>{AAB33CB3-7CA5-4AC4-86AD-4C7302380C13}</id>
-					<name>Intensity</name>
+					<id>{57ABE42A-9F02-4B33-9DEA-18E90DE3ED22}</id>
+					<name>MaxRadiusPixels</name>
 				</item>
 				<item>
-					<id>{A40C6100-B767-4885-AC30-0BC0FD4B62B5}</id>
-					<name>Contrast</name>
-				</item>
-				<item>
-					<id>{3071B941-2F85-4BBB-9269-0D27AD99E54C}</id>
-					<name>SampleCount</name>
+					<id>{DF53A75F-004C-47D3-8382-5731EE259A0C}</id>
+					<name>Power</name>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{301B2200-962F-4196-ACD9-49373D0E0984}</id>
+					<id>{2A84E3D1-B618-411F-A7A6-5F3BD99D32E4}</id>
 					<name>AO</name>
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script><![CDATA[// Alchemy ambient obscurance (McGuire et al. 2011) - the estimator this
-// engine has shipped as its Alchemy AO shader, reimplemented as a single
-// script node so the sampling loop reads as code and every tunable is a
-// graph input.
+			<script><![CDATA[// Ground truth ambient occlusion, Activision (Jimenez et al. 2016).
 //
-// $DepthMap is whatever depth+normal buffer the image graph binds to the
-// pass' Depth parameter; view depth in R and the view space normal in GBA.
-// The full resolution GBuffer and the half resolution copy both work.
+// Visibility is integrated over a number of slices through the view vector.
+// Within each slice the horizon is searched in both directions and the
+// cosine weighted visibility of the remaining arc is integrated
+// analytically, which tracks a reference occlusion far closer than the
+// hemisphere point sampling of the Alchemy estimator.
+//
+// $DepthMap is the half resolution GBuffer copy; view depth in R and the
+// view space normal in GBA.
 
-const float c_epsilon = 0.001f;
+const int c_sliceCount = 4;
+const int c_stepCount = 12;
 const float c_pi = 3.14159265f;
-const float c_twoPi = 6.28318531f;
-
-const int sampleCount = int($SampleCount);
+const float c_halfPi = 1.57079633f;
 
 const mat4 proj = $Projection;
 const vec2 magicCoeffs = vec2(1.0f / proj[0][0], 1.0f / proj[1][1]);
+const vec2 size = vec2(textureSize(sampler2D($DepthMap, $DepthMapState), 0));
+const vec2 texelSize = 1.0f / size;
 
 // Centre view position and normal.
 const vec4 centre = texture(sampler2D($DepthMap, $DepthMapState), $UV);
 const vec3 P = vec3((($UV * 2.0f - 1.0f) * vec2(1.0f, -1.0f) * magicCoeffs) * centre.x, centre.x);
 const vec3 N = normalize(centre.yzw);
+const vec3 V = normalize(-P);
 
-// Radius of the sampling disc in texture space. This keeps the original
-// shader's radius/depth convention, which folds the field of view into
-// $Radius rather than deriving it from the projection - it is what the
-// shipped tuning of $Radius was picked against.
-const float discRadius = $Radius / max(centre.x, c_epsilon);
+// Origin nudged off the surface; the half resolution depth is minimum
+// filtered, so an unbiased origin lets flat geometry shadow itself.
+const vec3 O = P + N * $Bias;
 
-// Rotate the whole pattern per pixel, and per frame, trading banding for
-// noise that the AO blur and TAA can resolve.
-const float randomAngle = Hash13(vec3(gl_FragCoord.xy, $Random.x)) * c_twoPi;
+// World space radius projected into pixels of the depth map; once the
+// footprint collapses below a pixel there is nothing left to gather.
+const float radiusPixels = min($Radius * proj[0][0] / max(centre.x, 0.001f) * size.x * 0.5f, $MaxRadiusPixels);
 
-float obscurance = 0.0f;
+$AO = 1.0f;
 
-for (int i = 0; i < sampleCount; ++i)
+if (radiusPixels >= 1.0f)
 {
-	// Hammersley point; the radical inverse (van der Corput, base 2) in y.
-	uint b = uint(i);
-	b = (b << 16u) | (b >> 16u);
-	b = ((b & 0x55555555u) << 1u) | ((b & 0xAAAAAAAAu) >> 1u);
-	b = ((b & 0x33333333u) << 2u) | ((b & 0xCCCCCCCCu) >> 2u);
-	b = ((b & 0x0F0F0F0Fu) << 4u) | ((b & 0xF0F0F0F0u) >> 4u);
-	b = ((b & 0x00FF00FFu) << 8u) | ((b & 0xFF00FF00u) >> 8u);
-	const vec2 hammersley = vec2(float(i) / float(sampleCount), float(b) * 2.3283064365386963e-10f);
+	const float falloffRange = max($FalloffRange, 0.01f) * $Radius;
 
-	// Spiral over the disc. The radius sweeps +1 -> -1 across the sample
-	// set and a negative radius mirrors the direction, so the disc ends up
-	// covered twice at opposing angles.
-	const float theta = randomAngle + hammersley.y * c_twoPi;
-	const vec2 uv = $UV + vec2(cos(theta), sin(theta)) * (cos(hammersley.x * c_pi) * discRadius);
+	// 4x4 spatial dither of slice direction and step offset, rotated per frame.
+	const ivec2 pixel = ivec2(gl_FragCoord.xy);
+	const float noiseDirection = fract((1.0f / 16.0f) * float((((pixel.x + pixel.y) & 3) << 2) + (pixel.x & 3)) + $Random.x);
+	const float noiseOffset = fract(0.25f * float((pixel.y - pixel.x) & 3) + $Random.y);
 
-	const float z = texture(sampler2D($DepthMap, $DepthMapState), uv).x;
-	const vec3 v = vec3(((uv * 2.0f - 1.0f) * vec2(1.0f, -1.0f) * magicCoeffs) * z, z) - P;
-	const float sqrLen = dot(v, v);
+	float visibility = 0.0f;
 
-	// Drop occluders beyond the radius, and samples that fell off screen.
-	const float inRange = (sqrLen <= $Radius * $Radius) ? 1.0f : 0.0f;
-	const float onScreen = (uv.x >= 0.0f && uv.x <= 1.0f && uv.y >= 0.0f && uv.y <= 1.0f) ? 1.0f : 0.0f;
+	for (int i = 0; i < c_sliceCount; ++i)
+	{
+		const float phi = (float(i) + noiseDirection) * (c_pi / float(c_sliceCount));
+		const vec2 direction = vec2(cos(phi), sin(phi));
 
-	// Height of the occluder over the tangent plane. $Bias scales with
-	// depth, which is what keeps flat surfaces from shadowing themselves.
-	const float height = max(dot(v, N) + centre.x * $Bias, 0.0f);
+		// The same direction in view space; the texture V axis points down.
+		const vec3 sliceDirection = vec3(direction.x, -direction.y, 0.0f);
+		const vec3 orthoDirection = sliceDirection - dot(sliceDirection, V) * V;
+		const vec3 axis = normalize(cross(orthoDirection, V));
 
-	obscurance += (height * inRange * onScreen) / (sqrLen + c_epsilon);
+		// Normal projected into the slice plane, and its signed angle from V.
+		const vec3 projectedNormal = N - axis * dot(N, axis);
+		const float projectedNormalLength = length(projectedNormal);
+		if (projectedNormalLength < 0.0001f)
+			continue;
+
+		const float cosN = clamp(dot(projectedNormal, V) / projectedNormalLength, -1.0f, 1.0f);
+		const float signN = (dot(orthoDirection, projectedNormal) < 0.0f) ? -1.0f : 1.0f;
+		const float n = signN * acos(cosN);
+
+		// Horizon search along both halves of the slice.
+		float horizonCosNegative = -1.0f;
+		float horizonCosPositive = -1.0f;
+
+		for (int j = 0; j < c_stepCount; ++j)
+		{
+			// A quadratic distribution concentrates samples near the centre.
+			const float t = (float(j) + noiseOffset) / float(c_stepCount);
+			const vec2 offset = direction * max(t * t * radiusPixels, 1.0f) * texelSize;
+
+			const vec2 uvn = $UV - offset;
+			const vec2 uvp = $UV + offset;
+
+			const float zn = texture(sampler2D($DepthMap, $DepthMapState), uvn).x;
+			const float zp = texture(sampler2D($DepthMap, $DepthMapState), uvp).x;
+
+			const vec3 dn = vec3(((uvn * 2.0f - 1.0f) * vec2(1.0f, -1.0f) * magicCoeffs) * zn, zn) - O;
+			const vec3 dp = vec3(((uvp * 2.0f - 1.0f) * vec2(1.0f, -1.0f) * magicCoeffs) * zp, zp) - O;
+
+			const float ln = max(length(dn), 0.0001f);
+			const float lp = max(length(dp), 0.0001f);
+
+			// Fade an occluder out as it approaches the edge of the radius.
+			const float wn = clamp(($Radius - ln) / falloffRange, 0.0f, 1.0f);
+			const float wp = clamp(($Radius - lp) / falloffRange, 0.0f, 1.0f);
+
+			horizonCosNegative = max(horizonCosNegative, mix(-1.0f, dot(dn, V) / ln, wn));
+			horizonCosPositive = max(horizonCosPositive, mix(-1.0f, dot(dp, V) / lp, wp));
+		}
+
+		// Clamp both horizons into the hemisphere around the projected normal.
+		const float h0 = n + max(-acos(clamp(horizonCosNegative, -1.0f, 1.0f)) - n, -c_halfPi);
+		const float h1 = n + min(acos(clamp(horizonCosPositive, -1.0f, 1.0f)) - n, c_halfPi);
+		const float sinN = sin(n);
+
+		// Analytic integral of the cosine weighted visible arc, equation 7.
+		const float arc0 = cosN + 2.0f * h0 * sinN - cos(2.0f * h0 - n);
+		const float arc1 = cosN + 2.0f * h1 * sinN - cos(2.0f * h1 - n);
+
+		visibility += projectedNormalLength * 0.25f * (arc0 + arc1);
+	}
+
+	$AO = pow(clamp(visibility / float(c_sliceCount), 0.0f, 1.0f), $Power);
 }
-
-// AO = 1 - ((2 sigma / N) * sum) raised to the contrast exponent.
-$AO = clamp(1.0f - pow(obscurance * $Intensity * 2.0f / float(sampleCount), $Contrast), 0.0f, 1.0f);
 ]]></script>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{6FD49B77-501F-4501-B1D0-BFE91CF11881}</id>
+			<id>{E9C7FA3D-816D-4B1A-8268-07F108411288}</id>
 			<comment/>
 			<position>
-				<first>-100</first>
-				<second>120</second>
+				<first>-176</first>
+				<second>197</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
-			<id>{F95CCB9B-77CE-4059-A1C4-579B67F776EF}</id>
+			<id>{F0A09928-0425-4AED-B729-3147481FF493}</id>
 			<comment/>
 			<position>
-				<first>100</first>
-				<second>100</second>
+				<first>32</first>
+				<second>150</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -319,7 +360,7 @@ $AO = clamp(1.0f - pow(obscurance * $Intensity * 2.0f / float(sampleCount), $Con
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item"/>
-				<id>{3CB64F39-0830-4D57-A4C6-1A345DC83641}</id>
+				<id>{F333BFBE-D969-40F9-87D8-665D9DCEC4BA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
@@ -333,17 +374,7 @@ $AO = clamp(1.0f - pow(obscurance * $Intensity * 2.0f / float(sampleCount), $Con
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<id>{C3E4899C-43B2-43B9-982E-12F796E7508F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{FF4CB111-4EF0-49CF-93CA-0E493C699832}</id>
+				<id>{1F52C315-635E-48F5-80F6-A9F732848B4A}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -353,7 +384,7 @@ $AO = clamp(1.0f - pow(obscurance * $Intensity * 2.0f / float(sampleCount), $Con
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<id>{20B6A896-434C-4669-9117-037B049F8C53}</id>
+				<id>{543E8B76-A86E-4D20-8EC1-D1399D39F80D}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -363,7 +394,7 @@ $AO = clamp(1.0f - pow(obscurance * $Intensity * 2.0f / float(sampleCount), $Con
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<id>{95200ED8-43D9-40BD-B9EA-5859E369F2BC}</id>
+				<id>{5CCBA565-7630-4BEB-B8B2-C3D198C6FF9B}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -373,7 +404,7 @@ $AO = clamp(1.0f - pow(obscurance * $Intensity * 2.0f / float(sampleCount), $Con
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<id>{A7472442-48AC-4758-ACC3-5B4234EB5C5E}</id>
+				<id>{A060293D-3562-4C63-BAAE-5BE710C75677}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -383,7 +414,7 @@ $AO = clamp(1.0f - pow(obscurance * $Intensity * 2.0f / float(sampleCount), $Con
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<id>{77E55501-885C-4DA5-AD8A-E3EFFDDD8444}</id>
+				<id>{C2018D9C-F56A-428F-A589-116EEF67A35F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -393,7 +424,7 @@ $AO = clamp(1.0f - pow(obscurance * $Intensity * 2.0f / float(sampleCount), $Con
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<id>{FFCC8431-B1E3-4626-BA8C-8F3914C599D4}</id>
+				<id>{DB409E1F-41DF-44C5-B4B7-743F43B5E374}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -403,7 +434,7 @@ $AO = clamp(1.0f - pow(obscurance * $Intensity * 2.0f / float(sampleCount), $Con
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<id>{AAB33CB3-7CA5-4AC4-86AD-4C7302380C13}</id>
+				<id>{DF0BBECB-DA0D-4919-BF12-51907965AF4E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -413,7 +444,7 @@ $AO = clamp(1.0f - pow(obscurance * $Intensity * 2.0f / float(sampleCount), $Con
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<id>{A40C6100-B767-4885-AC30-0BC0FD4B62B5}</id>
+				<id>{57ABE42A-9F02-4B33-9DEA-18E90DE3ED22}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -423,13 +454,13 @@ $AO = clamp(1.0f - pow(obscurance * $Intensity * 2.0f / float(sampleCount), $Con
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<id>{3071B941-2F85-4BBB-9269-0D27AD99E54C}</id>
+				<id>{DF53A75F-004C-47D3-8382-5731EE259A0C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[11]"/>
-				<id>{301B2200-962F-4196-ACD9-49373D0E0984}</id>
+				<id>{2A84E3D1-B618-411F-A7A6-5F3BD99D32E4}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
@@ -444,6 +475,16 @@ $AO = clamp(1.0f - pow(obscurance * $Intensity * 2.0f / float(sampleCount), $Con
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{1BC49998-D0B9-4AF8-80B8-091DBCEE5ED3}</id>
 			</destination>
 		</item>
 	</edges>

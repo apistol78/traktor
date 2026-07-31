@@ -122,6 +122,7 @@ const render::Handle ShaderParameter::ContactLightDirection(L"World_ContactLight
 const render::Handle ShaderParameter::InputColor(L"InputColor");
 const render::Handle ShaderParameter::InputColorLast(L"InputColorLast");
 const render::Handle ShaderParameter::InputDepth(L"InputDepth");
+const render::Handle ShaderParameter::InputHalfResDepth(L"InputHalfResDepth");
 const render::Handle ShaderParameter::InputNormal(L"InputNormal");
 const render::Handle ShaderParameter::InputVelocity(L"InputVelocity");
 const render::Handle ShaderParameter::InputColorGrading(L"InputColorGrading");
