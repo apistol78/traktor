@@ -9,6 +9,7 @@
 #include "Scene/Editor/SceneOperatorChain.h"
 
 #include "Core/Log/Log.h"
+#include "Scene/Editor/ExternalOperationData.h"
 #include "Scene/Editor/ISceneOperationData.h"
 #include "Scene/Editor/ISceneOperator.h"
 #include "Scene/Editor/SceneAsset.h"
@@ -50,11 +51,21 @@ bool SceneOperatorChain::apply(SceneAsset* inoutSceneAsset, const ISceneOperator
 {
 	for (const auto op : inoutSceneAsset->getOperationData())
 	{
-		const ISceneOperator* spo = findOperator(type_of(op));
+		// Resolve external operation data if referenced.
+		Ref< const ISceneOperationData > operationData = op;
+		if (const ExternalOperationData* externalOperationData = dynamic_type_cast< const ExternalOperationData* >(op))
+		{
+			operationData = context.getObjectReadOnly< ISceneOperationData >(externalOperationData->getExternalDataId());
+			if (!operationData)
+				continue;
+		}
+
+		// Skip operation data without a matching geometric operator (e.g. bake configuration).
+		const ISceneOperator* spo = findOperator(type_of(operationData));
 		if (!spo)
 			continue;
 
-		if (!spo->transform(context, op, inoutSceneAsset))
+		if (!spo->transform(context, operationData, inoutSceneAsset))
 		{
 			log::error << L"Scene transform chain; operator transform failed." << Endl;
 			return false;
