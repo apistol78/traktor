@@ -212,6 +212,14 @@ render::RGTexture VolumetricFogPass::setup(
 		// integration pass scales it by each froxel's real thickness, so it must
 		// not be pre-divided by the slice count here.
 		renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeMediumDensity, fog->m_mediumDensity);
+		// Two lobe phase function; g is clamped short of one because the forward
+		// denominator is (1 - g)^2 and the phase diverges there.
+		renderBlock->programParams->setVectorParameter(ShaderParameter::FogVolumePhase, Vector4(
+			clamp(fog->m_phaseForward, -0.95f, 0.95f),
+			clamp(fog->m_phaseBackward, -0.95f, 0.95f),
+			clamp(fog->m_phaseBlend, 0.0f, 1.0f),
+			0.0f));
+
 		renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)c_sliceCount);
 
 		renderBlock->programParams->endParameters(renderContext);
@@ -254,7 +262,7 @@ void VolumetricFogPass::setupSharedParameters(const GatherView& gatheredView, fl
 		const Vector4 fogRange(
 			viewNearZ,
 			std::min< float >(viewFarZ, gatheredView.fog->m_maxDistance),
-			gatheredView.fog->m_maxScattering,
+			0.0f,
 			0.0f);
 
 		// Distance fog.

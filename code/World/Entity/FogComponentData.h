@@ -66,7 +66,14 @@ private:
 	// Volumetric fog.
 	bool m_volumetricFogEnable = false;
 	float m_maxDistance = 100.0f;
-	float m_maxScattering = 10.0f;
+
+	// Phase function; two Henyey-Greenstein lobes mixed by phaseBlend. The
+	// asymmetry g is the mean cosine of the scattering angle - 0 isotropic,
+	// positive forward, negative backward - and decides how much brighter fog
+	// reads looking into a light than away from it.
+	float m_phaseForward = 0.7f;
+	float m_phaseBackward = -0.4f;
+	float m_phaseBlend = 0.2f;
 };
 
 }

@@ -52,7 +52,11 @@ private:
 	// Volumetric fog.
 	bool m_volumetricFogEnable = false;
 	float m_maxDistance = 0.0f;
-	float m_maxScattering = 0.0f;
+
+	// Phase function.
+	float m_phaseForward = 0.7f;
+	float m_phaseBackward = -0.4f;
+	float m_phaseBlend = 0.2f;
 };
 
 }

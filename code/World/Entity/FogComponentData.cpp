@@ -16,7 +16,7 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.FogComponentData", 2, FogComponentData, IWorldComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.FogComponentData", 4, FogComponentData, IWorldComponentData)
 
 Ref< FogComponent > FogComponentData::createComponent() const
 {
@@ -44,7 +44,16 @@ void FogComponentData::serialize(ISerializer& s)
 
 	s >> Member< bool >(L"volumetricFogEnable", m_volumetricFogEnable);
 	s >> Member< float >(L"maxDistance", m_maxDistance, AttributeRange(0.0f));
-	s >> Member< float >(L"maxScattering", m_maxScattering, AttributeRange(0.0f));
+
+	if (s.getVersion< FogComponentData >() < 4)
+		s >> ObsoleteMember< float >(L"maxScattering");
+
+	if (s.getVersion< FogComponentData >() >= 3)
+	{
+		s >> Member< float >(L"phaseForward", m_phaseForward, AttributeRange(-0.95f, 0.95f));
+		s >> Member< float >(L"phaseBackward", m_phaseBackward, AttributeRange(-0.95f, 0.95f));
+		s >> Member< float >(L"phaseBlend", m_phaseBlend, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
+	}
 	
 	if (s.getVersion< FogComponentData >() < 1)
 		s >> ObsoleteMember< int32_t >(L"sliceCount");

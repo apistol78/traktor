@@ -26,7 +26,10 @@ FogComponent::FogComponent(const FogComponentData* data)
 
 	m_volumetricFogEnable = data->m_volumetricFogEnable;
 	m_maxDistance = data->m_maxDistance;
-	m_maxScattering = data->m_maxScattering;
+
+	m_phaseForward = data->m_phaseForward;
+	m_phaseBackward = data->m_phaseBackward;
+	m_phaseBlend = data->m_phaseBlend;
 }
 
 void FogComponent::destroy()

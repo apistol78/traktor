@@ -156,7 +156,7 @@ const float w = clamp(ndc.z - 0.5f / sliceCount, 0.0f, 1.0f);
 
 const vec4 fog = texture(sampler3D($Volume, $VolumeState), vec3(uv, w));
 
-const vec3 inScattering = min(fog.rgb, vec3($FogVolumeRange.z));
+const vec3 inScattering = fog.rgb;
 const float transmittance = clamp(fog.a, 0.0f, 1.0f);
 
 $Output = vec4($Color.rgb * transmittance + inScattering, $Color.a);
