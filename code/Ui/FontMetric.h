@@ -54,7 +54,7 @@ public:
 	Size getExtent(const std::wstring& text) const;
 
 private:
-	const IFontMetric* m_metric;
+	const IFontMetric* m_metric = nullptr;
 };
 
 }

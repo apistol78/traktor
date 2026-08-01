@@ -59,6 +59,8 @@ void BodyJolt::destroy()
 	if (!m_callback)
 		return;
 
+	Ref< BodyJolt > self = this;
+
 	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
 	const JPH::BodyID bodyID = m_body->GetID();
 

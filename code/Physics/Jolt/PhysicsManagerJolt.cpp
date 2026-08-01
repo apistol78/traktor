@@ -705,10 +705,16 @@ bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 
 void PhysicsManagerJolt::destroy()
 {
+	T_ANONYMOUS_VAR(RefArray< Joint >)(m_joints);
+	T_ANONYMOUS_VAR(RefArray< BodyJolt >)(m_bodies);
+
 	while (!m_joints.empty())
 		m_joints.front()->destroy();
 	while (!m_bodies.empty())
 		m_bodies.front()->destroy();
+
+	m_joints.clear();
+	m_bodies.clear();
 
 	if (m_groupFilter)
 	{
