@@ -21,6 +21,7 @@
 #include "Resource/IResourceManager.h"
 #include "World/Entity/FogComponent.h"
 #include "World/IEntityRenderer.h"
+#include "World/IrradianceGrid.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
@@ -33,6 +34,7 @@ namespace
 {
 
 const resource::Id< render::Shader > c_injectShader(Guid(L"{FEDA90CE-25C6-BC4D-9767-EA4B45F4A043}"));
+const resource::Id< render::Shader > c_integrateShader(Guid(L"{3C960DFE-C220-460C-9CF9-0182B798D4CB}"));
 const int32_t c_sliceCount = 128;
 
 Random s_random;
@@ -50,6 +52,8 @@ bool VolumetricFogPass::create(resource::IResourceManager* resourceManager, rend
 {
 	if (!resourceManager->bind(c_injectShader, m_injectShader))
 		return false;
+	if (!resourceManager->bind(c_integrateShader, m_integrateShader))
+		return false;
 
 	const render::VolumeTextureCreateDesc vtcd = {
 		.width = 128,
@@ -65,6 +69,8 @@ bool VolumetricFogPass::create(resource::IResourceManager* resourceManager, rend
 		return false;
 	if ((m_volumeTextures[1] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
 		return false;
+	if ((m_integratedTexture = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
+		return false;
 
 	m_shadowsQuality = desc.quality.shadows;
 	return true;
@@ -74,7 +80,9 @@ void VolumetricFogPass::destroy()
 {
 	safeDestroy(m_volumeTextures[0]);
 	safeDestroy(m_volumeTextures[1]);
+	safeDestroy(m_integratedTexture);
 	m_injectShader.clear();
+	m_integrateShader.clear();
 }
 
 render::RGTexture VolumetricFogPass::setup(
@@ -99,9 +107,10 @@ render::RGTexture VolumetricFogPass::setup(
 
 	const auto fogVolumeInputTextureId = renderGraph.addExplicitTexture(L"Fog volume input", m_volumeTextures[frameCount & 1]);
 	const auto fogVolumeOutputTextureId = renderGraph.addExplicitTexture(L"Fog volume output", m_volumeTextures[1 - (frameCount & 1)]);
+	const auto fogVolumeIntegratedTextureId = renderGraph.addExplicitTexture(L"Fog volume integrated", m_integratedTexture);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Volumetric fog");
-	rp->setOutput(fogVolumeOutputTextureId);
+	rp->setOutput(fogVolumeIntegratedTextureId);
 	rp->addInput(fogVolumeInputTextureId);
 	rp->addInput(shadowMapAtlasTargetSetId);
 
@@ -110,11 +119,20 @@ render::RGTexture VolumetricFogPass::setup(
 		const auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 		const auto fogVolumeInputTexture = renderGraph.getTexture(fogVolumeInputTextureId);
 		const auto fogVolumeOutputTexture = renderGraph.getTexture(fogVolumeOutputTextureId);
+		const auto fogVolumeIntegratedTexture = renderGraph.getTexture(fogVolumeIntegratedTextureId);
 
+		// Ambient in-scattering comes from the irradiance grid, so a scene without
+		// one compiles the term out rather than sampling an absent grid 2M times
+		// per frame.
 		render::Shader::Permutation perm;
 		m_injectShader->setCombination(ShaderPermutation::RayTracingEnable, (bool)(gatheredView.rtWorldTopLevel != nullptr), perm);
+		m_injectShader->setCombination(ShaderPermutation::IrradianceEnable, (bool)(gatheredView.irradianceGrid != nullptr), perm);
 		const auto injectLightsProgram = m_injectShader->getProgram(perm);
 		if (!injectLightsProgram)
+			return;
+
+		const auto integrateProgram = m_integrateShader->getProgram();
+		if (!integrateProgram)
 			return;
 
 		const auto& lastView = worldRenderView.getLastView();
@@ -174,25 +192,59 @@ render::RGTexture VolumetricFogPass::setup(
 		if (gatheredView.rtWorldTopLevel != nullptr)
 			renderBlock->programParams->setAccelerationStructureParameter(ShaderParameter::TLAS, gatheredView.rtWorldTopLevel);
 
+		// Same grid the surface lighting samples, so fog ambient matches surfaces.
+		if (gatheredView.irradianceGrid)
+		{
+			const auto size = gatheredView.irradianceGrid->getSize();
+			renderBlock->programParams->setVectorParameter(ShaderParameter::IrradianceGridSize, Vector4((float)size[0] + 0.5f, (float)size[1] + 0.5f, (float)size[2] + 0.5f, 0.0f));
+			renderBlock->programParams->setVectorParameter(ShaderParameter::IrradianceGridBoundsMin, gatheredView.irradianceGrid->getBoundingBox().mn);
+			renderBlock->programParams->setVectorParameter(ShaderParameter::IrradianceGridBoundsMax, gatheredView.irradianceGrid->getBoundingBox().mx);
+			renderBlock->programParams->setBufferViewParameter(ShaderParameter::IrradianceGridSBuffer, gatheredView.irradianceGrid->getBuffer()->getBufferView());
+		}
+
 		renderBlock->programParams->setTextureParameter(ShaderParameter::FogVolumeTexture, fogVolumeInputTexture);
 		renderBlock->programParams->setImageViewParameter(ShaderParameter::FogVolume, fogVolumeOutputTexture, 0);
 
 		renderBlock->programParams->setVectorParameter(ShaderParameter::FogVolumeRange, fogRange);
 		renderBlock->programParams->setVectorParameter(ShaderParameter::MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 		renderBlock->programParams->setVectorParameter(ShaderParameter::FogVolumeMediumColor, fog->m_mediumColor);
-		renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeMediumDensity, fog->m_mediumDensity / c_sliceCount);
+		// Extinction per world unit, straight from the authored density. The
+		// integration pass scales it by each froxel's real thickness, so it must
+		// not be pre-divided by the slice count here.
+		renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeMediumDensity, fog->m_mediumDensity);
 		renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)c_sliceCount);
-		renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeSliceUpdate, (float)(frameCount % c_sliceCount));
 
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->compute(renderBlock);
-		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, fogVolumeOutputTexture, 0);
+
+		// The integration reads every froxel the injection just wrote.
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, fogVolumeOutputTexture, 0);
+
+		// Walk each froxel column front to back, turning the per froxel source
+		// term and extinction into accumulated in-scattering and transmittance.
+		// One thread per column, so the dispatch is flat in z.
+		auto integrateBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Volumetric fog, integrate");
+
+		integrateBlock->program = integrateProgram.program;
+		integrateBlock->workSize[0] = 128;
+		integrateBlock->workSize[1] = 128;
+		integrateBlock->workSize[2] = 1;
+
+		integrateBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		integrateBlock->programParams->beginParameters(renderContext);
+		integrateBlock->programParams->setTextureParameter(ShaderParameter::FogVolumeTexture, fogVolumeOutputTexture);
+		integrateBlock->programParams->setImageViewParameter(ShaderParameter::FogVolume, fogVolumeIntegratedTexture, 0);
+		integrateBlock->programParams->setVectorParameter(ShaderParameter::FogVolumeRange, fogRange);
+		integrateBlock->programParams->endParameters(renderContext);
+
+		renderContext->compute(integrateBlock);
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, fogVolumeIntegratedTexture, 0);
 	});
 
 	renderGraph.addPass(rp);
 
-	return fogVolumeOutputTextureId;
+	return fogVolumeIntegratedTextureId;
 }
 
 void VolumetricFogPass::setupSharedParameters(const GatherView& gatheredView, float viewNearZ, float viewFarZ, render::ProgramParameters* parameters)

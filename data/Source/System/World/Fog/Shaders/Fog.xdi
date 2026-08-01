@@ -5,8 +5,8 @@
 			<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
 			<comment/>
 			<position>
-				<first>1907</first>
-				<second>1442</second>
+				<first>1825</first>
+				<second>1439</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -14,16 +14,16 @@
 			<id>{40422772-1B41-403C-AA95-E9B3F4A21B15}</id>
 			<comment/>
 			<position>
-				<first>1626</first>
-				<second>1406</second>
+				<first>1591</first>
+				<second>1422</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{F168E193-D179-43D9-BA69-677B60CF95E0}</id>
 			<comment/>
 			<position>
-				<first>1428</first>
-				<second>1414</second>
+				<first>1383</first>
+				<second>1399</second>
 			</position>
 			<swizzle>000w</swizzle>
 		</item>
@@ -31,8 +31,8 @@
 			<id>{BD905A28-341A-44D7-BA54-D0AA4F5DB6BA}</id>
 			<comment/>
 			<position>
-				<first>811</first>
-				<second>1397</second>
+				<first>1130</first>
+				<second>1399</second>
 			</position>
 			<name>L_InputColor</name>
 		</item>
@@ -40,17 +40,17 @@
 			<id>{40A5DD0D-5F8B-4522-B715-AD2548F7DD44}</id>
 			<comment/>
 			<position>
-				<first>1428</first>
-				<second>1456</second>
+				<first>1383</first>
+				<second>1495</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
 		<item type="traktor.render.Branch" version="traktor.render.Node:1">
 			<id>{A7820AE1-D35B-44B5-AB8E-61578F65FF64}</id>
-			<comment/>
+			<comment><![CDATA[With the volume enabled the distance fog has already been applied over the far range, so all that is left is to add the volume's in-scattering.]]></comment>
 			<position>
-				<first>1089</first>
-				<second>1450</second>
+				<first>1085</first>
+				<second>1463</second>
 			</position>
 			<parameterName>World_VolumetricFogEnable</parameterName>
 		</item>
@@ -58,8 +58,8 @@
 			<id>{F44AEA6B-1A54-4CFE-A4DD-1D63BD652E16}</id>
 			<comment/>
 			<position>
-				<first>795</first>
-				<second>1456</second>
+				<first>861</first>
+				<second>1424</second>
 			</position>
 			<name>L_VolumetricFog</name>
 		</item>
@@ -67,8 +67,8 @@
 			<id>{F0C3D2BF-5188-4A87-9BD7-114F69753A59}</id>
 			<comment/>
 			<position>
-				<first>779</first>
-				<second>1515</second>
+				<first>861</first>
+				<second>1488</second>
 			</position>
 			<name>L_SimpleDepthFog</name>
 		</item>
@@ -76,8 +76,8 @@
 			<id>{6D9C5BED-2B3B-3546-B807-CD618017F552}</id>
 			<comment/>
 			<position>
-				<first>1186</first>
-				<second>756</second>
+				<first>1204</first>
+				<second>742</second>
 			</position>
 			<name>ViewPosition</name>
 			<optional>false</optional>
@@ -86,8 +86,8 @@
 			<id>{AB99160D-F70B-4822-9B63-D706C5C1A590}</id>
 			<comment/>
 			<position>
-				<first>1501</first>
-				<second>728</second>
+				<first>1482</first>
+				<second>742</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -95,8 +95,8 @@
 			<id>{EC9AE568-7089-4B8D-9874-73DE5599266E}</id>
 			<comment/>
 			<position>
-				<first>1234</first>
-				<second>695</second>
+				<first>1252</first>
+				<second>682</second>
 			</position>
 			<name>Color</name>
 			<optional>false</optional>
@@ -105,8 +105,8 @@
 			<id>{C360D5E3-3E9F-4972-B038-99BC140BDB79}</id>
 			<comment/>
 			<position>
-				<first>1501</first>
-				<second>670</second>
+				<first>1482</first>
+				<second>682</second>
 			</position>
 			<name>L_InputColor</name>
 		</item>
@@ -114,8 +114,8 @@
 			<id>{5DEDED52-0BE6-4694-B0DC-8CFD799C63B6}</id>
 			<comment/>
 			<position>
-				<first>1604</first>
-				<second>934</second>
+				<first>1631</first>
+				<second>965</second>
 			</position>
 			<name>L_SimpleDepthFog</name>
 		</item>
@@ -123,25 +123,30 @@
 			<id>{97212322-59DB-6B4A-B04F-9DCCC0960D59}</id>
 			<comment/>
 			<position>
-				<first>1291</first>
-				<second>885</second>
+				<first>1333</first>
+				<second>948</second>
 			</position>
 			<fragmentGuid>{D2F9DC59-6D32-4F4A-9C84-689849C25897}</fragmentGuid>
 			<inputPins>
 				<item>
-					<id>{DCB98B38-69AF-F640-B75E-99EC7EA2D285}</id>
+					<id>{5BBF95AB-FBF5-4B5F-8E21-1EF33CB53ADB}</id>
 					<name>Color</name>
 					<optional>false</optional>
 				</item>
 				<item>
-					<id>{C0183ABA-B1EE-1B42-BD22-D9203854AB80}</id>
+					<id>{805D6A09-96BD-41D7-BED1-284A706FAC3E}</id>
+					<name>StartDistance</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{34207EAD-C841-48EE-BA6B-459E52C22C03}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{CCC98877-74A3-BB48-A972-448902805009}</id>
+					<id>{CF777831-6F3B-4C7E-87CD-DAFDC950EC29}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -150,8 +155,8 @@
 			<id>{F91CDC89-5C04-9D4C-97BC-855DE857BFD0}</id>
 			<comment/>
 			<position>
-				<first>1066</first>
-				<second>879</second>
+				<first>1080</first>
+				<second>889</second>
 			</position>
 			<name>L_InputColor</name>
 		</item>
@@ -159,34 +164,34 @@
 			<id>{ECEB6EC7-82AC-9645-A30E-39863ACF1C9A}</id>
 			<comment/>
 			<position>
-				<first>1071</first>
-				<second>959</second>
+				<first>1080</first>
+				<second>1067</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{B8D53C83-DFFA-8C48-A5D0-4356D110542C}</id>
-			<comment/>
+			<comment><![CDATA[Adds the volume's in-scattering on top of the already far-fogged colour. The volume sits in front of the far range, so it is not attenuated by it.]]></comment>
 			<position>
-				<first>1284</first>
-				<second>1066</second>
+				<first>1314</first>
+				<second>1163</second>
 			</position>
 			<fragmentGuid>{BF83F770-E001-2F4A-BC65-99BD090A8EA5}</fragmentGuid>
 			<inputPins>
 				<item>
-					<id>{7A2F080F-74F7-6E41-B1D5-0D0001A48A9A}</id>
+					<id>{39120839-8722-4C69-8617-555F5D96DEF7}</id>
 					<name>Color</name>
 					<optional>false</optional>
 				</item>
 				<item>
-					<id>{4F431F8A-9B2E-704F-9DC3-4A29EC6BD0DB}</id>
+					<id>{059A20C4-AF2C-494F-A7F8-6E7D53617B63}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{B13ABE65-F2F3-F04F-9CD1-40D1CBDA2DA4}</id>
+					<id>{EB67D9F5-5157-4503-A8DD-3C1CA2D0D7DE}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -195,17 +200,17 @@
 			<id>{00C2631D-DA0C-5745-822A-76C3C689B39A}</id>
 			<comment/>
 			<position>
-				<first>1076</first>
-				<second>1050</second>
+				<first>1090</first>
+				<second>1156</second>
 			</position>
-			<name>L_InputColor</name>
+			<name>L_SimpleDepthFog</name>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{6F3AD76F-31AA-A748-B8FE-3E13D9ACABBD}</id>
 			<comment/>
 			<position>
-				<first>1077</first>
-				<second>1112</second>
+				<first>1098</first>
+				<second>1220</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -213,10 +218,95 @@
 			<id>{FFE4F3B3-C20E-D14A-B4A3-C3BF6255773C}</id>
 			<comment/>
 			<position>
-				<first>1611</first>
-				<second>1102</second>
+				<first>1612</first>
+				<second>1180</second>
 			</position>
 			<name>L_VolumetricFog</name>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{E5750540-5799-491D-B6B3-03EB2D11BCB5}</id>
+			<comment><![CDATA[Where the view ray leaves the volumetric fog volume.]]></comment>
+			<position>
+				<first>705</first>
+				<second>929</second>
+			</position>
+			<name>VolumeFarDistance</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{F65E248D-A78D-4872-8006-94C0E7F2556C}</id>
+					<name>ViewPosition</name>
+				</item>
+				<item>
+					<id>{12299C96-2351-4ABC-98AD-CC41BEFBD06B}</id>
+					<name>FogVolumeRange</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{303AAFB0-23C3-4C0A-A8F6-521F14A90CF9}</id>
+					<name>Output</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[// Distance along the view ray at which it leaves the volumetric fog volume,
+// which is where the distance fog has to take over.
+//
+// The volume's far bound is a plane at a constant view z, not a sphere, so the
+// ray crosses it at farZ / D.z for a normalised ray direction D - equivalently
+// farZ * len / vp.z. Clamped to the ray itself so that geometry inside the
+// volume yields the whole ray and leaves nothing for the distance fog.
+
+const vec3 vp = $ViewPosition.xyz;
+const float len = length(vp);
+const float farZ = $FogVolumeRange.y;
+
+$Output = clamp(farZ * len / max(vp.z, 0.0001f), 0.0f, len);
+]]></script>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{1ADCF2A8-6E31-4453-B931-0E8680E8295A}</id>
+			<comment/>
+			<position>
+				<first>433</first>
+				<second>946</second>
+			</position>
+			<parameterDeclaration>{128A2894-9C6A-6144-AE39-E2F8451ED097}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{A86ED884-77C6-4856-8B1E-4A22490EE378}</id>
+			<comment/>
+			<position>
+				<first>465</first>
+				<second>1010</second>
+			</position>
+			<name>L_ViewPosition</name>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{563BABCC-79F9-4601-B272-92881446FD70}</id>
+			<comment><![CDATA[No volume, so the distance fog covers the whole ray.]]></comment>
+			<position>
+				<first>771</first>
+				<second>1028</second>
+			</position>
+			<value>0</value>
+		</item>
+		<item type="traktor.render.Branch" version="traktor.render.Node:1">
+			<id>{D693FC37-7578-43FA-8116-1910702C2A4F}</id>
+			<comment><![CDATA[Hand-over distance: the volume's far plane when it is enabled, otherwise the camera.]]></comment>
+			<position>
+				<first>1035</first>
+				<second>953</second>
+			</position>
+			<parameterName>World_VolumetricFogEnable</parameterName>
 		</item>
 	</nodes>
 	<edges>
@@ -313,7 +403,7 @@
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[13]"/>
-				<id>{CCC98877-74A3-BB48-A972-448902805009}</id>
+				<id>{CF777831-6F3B-4C7E-87CD-DAFDC950EC29}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
@@ -327,37 +417,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
-				<id>{DCB98B38-69AF-F640-B75E-99EC7EA2D285}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{7A2F080F-74F7-6E41-B1D5-0D0001A48A9A}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{4F431F8A-9B2E-704F-9DC3-4A29EC6BD0DB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{B13ABE65-F2F3-F04F-9CD1-40D1CBDA2DA4}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+				<id>{5BBF95AB-FBF5-4B5F-8E21-1EF33CB53ADB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -367,7 +427,87 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
-				<id>{C0183ABA-B1EE-1B42-BD22-D9203854AB80}</id>
+				<id>{34207EAD-C841-48EE-BA6B-459E52C22C03}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{805D6A09-96BD-41D7-BED1-284A706FAC3E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{12299C96-2351-4ABC-98AD-CC41BEFBD06B}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{F65E248D-A78D-4872-8006-94C0E7F2556C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{303AAFB0-23C3-4C0A-A8F6-521F14A90CF9}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[24]"/>
+				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[24]"/>
+				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{39120839-8722-4C69-8617-555F5D96DEF7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{059A20C4-AF2C-494F-A7F8-6E7D53617B63}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{EB67D9F5-5157-4503-A8DD-3C1CA2D0D7DE}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 	</edges>

@@ -111,21 +111,21 @@
 			<include/>
 			<inputPins>
 				<item>
-					<id>{86BFF8D8-7B18-5A4E-8277-6C6223F5A448}</id>
+					<id>{7EA62CDE-55A9-4838-AEB7-1A0C02143160}</id>
 					<name>Distance</name>
 				</item>
 				<item>
-					<id>{E6A3EC88-1573-4846-9CA5-3CE0EF69A0AF}</id>
+					<id>{66EA8578-6EE5-45DA-83D6-AC81CB57A124}</id>
 					<name>Density</name>
 				</item>
 				<item>
-					<id>{DFB224AC-B176-9B40-9EEA-85B05AC2423D}</id>
+					<id>{2C6B1D34-7E6C-4B30-89AB-4FD952CB36E2}</id>
 					<name>Clamp</name>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{3002126B-3EA9-ED4D-AA78-64F5C94F8E2B}</id>
+					<id>{6B6BADC6-F11B-42DA-B348-CFA90E59CCF7}</id>
 					<name>Output</name>
 					<type>Scalar</type>
 				</item>
@@ -165,58 +165,70 @@ $Output = clamp(t, 0.0f, $Clamp);
 			</include>
 			<inputPins>
 				<item>
-					<id>{03C27333-2F23-4376-A052-5A0167C72D13}</id>
+					<id>{F13981A1-89AC-4108-B179-C1112AFEC0A0}</id>
 					<name>ViewPosition</name>
 				</item>
 				<item>
-					<id>{DE365FE3-041D-47E1-A903-B4268C6850D1}</id>
+					<id>{EFA84A34-47F8-4EF1-ACAC-A57AB42D1FD2}</id>
 					<name>ViewInverse</name>
 				</item>
 				<item>
-					<id>{72BF7B03-F275-434F-B46D-6DA3C8EFBC88}</id>
+					<id>{B681FE29-04F7-4E8D-B71D-44019D9F450C}</id>
 					<name>FogElevation</name>
 				</item>
 				<item>
-					<id>{78BE4748-F803-4AC1-B93D-44C06B78906E}</id>
+					<id>{21FE2F04-3344-4B01-83B9-6BCE6033D639}</id>
 					<name>View</name>
+				</item>
+				<item>
+					<id>{AF62A0C7-8339-4D58-B0CE-52C00E71E1E7}</id>
+					<name>StartDistance</name>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{F782C7E5-1D93-4A57-ACAA-7BBA23174D83}</id>
+					<id>{41DA406A-9D77-45A8-A635-F858DDBD3792}</id>
 					<name>Output</name>
 					<type>Scalar</type>
 				</item>
 			</outputPins>
-			<script><![CDATA[
-// Get world positions to check against fog elevation.
+			<script><![CDATA[// Length of the ray that lies inside the fog slab - everything below
+// FogElevation - restricted to the part beyond StartDistance.
+//
+// StartDistance is how the volumetric fog hands over. The froxel volume only
+// reaches its own far plane, so the distance fog must account for what is left
+// beyond that and nothing nearer, or the near range ends up fogged twice.
+//
+// Parameterise the ray as s in [0,1] from the camera to the surface. The slab
+// is a half space, so the part of the ray inside it is one contiguous interval
+// [sLo, sHi]; clipping the handover away is then just raising sLo.
+
+const vec3 vp = $ViewPosition.xyz;
+const float len = length(vp);
+
 const vec4 worldOrigin = $ViewInverse[3];
-const vec4 worldPosition = $ViewInverse * vec4($ViewPosition.xyz, 1.0f);
+const vec4 worldPosition = $ViewInverse * vec4(vp, 1.0f);
 
-if (worldOrigin.y > $FogElevation && worldPosition.y <= $FogElevation)
-{
-	// "Down into"
-	const float f = ($FogElevation - worldPosition.y) / abs(worldOrigin.y - worldPosition.y);
-	$Output = length($ViewPosition.xyz) * f;
-}
-else if (worldOrigin.y <= $FogElevation && worldPosition.y <= $FogElevation)
-{
-	// "All into"
-	$Output = length($ViewPosition.xyz);
-}
-else if (worldOrigin.y <= $FogElevation && worldPosition.y > $FogElevation)
-{
-	// "Out of"
-	const float f = ($FogElevation - worldOrigin.y) / abs(worldOrigin.y - worldPosition.y);
-	$Output = length($ViewPosition.xyz) * f;
-}
-else
-{
-	// "All above"
-	$Output = 0.0f;
-}
+const float oy = worldOrigin.y;
+const float py = worldPosition.y;
 
+float sLo = 0.0f;
+float sHi = 1.0f;
 
+if (abs(py - oy) > 0.0001f)
+{
+	const float sE = ($FogElevation - oy) / (py - oy);
+	if (py < oy)
+		sLo = max(sE, 0.0f);	// Descending; inside from the crossing onwards.
+	else
+		sHi = min(sE, 1.0f);	// Ascending; inside up to the crossing.
+}
+else if (oy > $FogElevation)
+	sHi = 0.0f;					// Level with the plane and above it.
+
+sLo = max(sLo, $StartDistance / max(len, 0.0001f));
+
+$Output = max(sHi - sLo, 0.0f) * len;
 ]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
@@ -236,6 +248,16 @@ else
 				<second>6</second>
 			</position>
 			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{429F0454-93B0-4344-A450-8CCFACCCCDE1}</id>
+			<comment><![CDATA[Distance along the ray already accounted for by the volumetric fog; 0 to fog the whole ray.]]></comment>
+			<position>
+				<first>421</first>
+				<second>52</second>
+			</position>
+			<name>StartDistance</name>
+			<optional>false</optional>
 		</item>
 	</nodes>
 	<edges>
@@ -306,7 +328,7 @@ else
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
-				<id>{E6A3EC88-1573-4846-9CA5-3CE0EF69A0AF}</id>
+				<id>{66EA8578-6EE5-45DA-83D6-AC81CB57A124}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -316,7 +338,7 @@ else
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
-				<id>{DFB224AC-B176-9B40-9EEA-85B05AC2423D}</id>
+				<id>{2C6B1D34-7E6C-4B30-89AB-4FD952CB36E2}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -326,7 +348,7 @@ else
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
-				<id>{03C27333-2F23-4376-A052-5A0167C72D13}</id>
+				<id>{F13981A1-89AC-4108-B179-C1112AFEC0A0}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -336,7 +358,7 @@ else
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
-				<id>{DE365FE3-041D-47E1-A903-B4268C6850D1}</id>
+				<id>{EFA84A34-47F8-4EF1-ACAC-A57AB42D1FD2}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -346,13 +368,23 @@ else
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
-				<id>{78BE4748-F803-4AC1-B93D-44C06B78906E}</id>
+				<id>{21FE2F04-3344-4B01-83B9-6BCE6033D639}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{AF62A0C7-8339-4D58-B0CE-52C00E71E1E7}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[10]"/>
-				<id>{3002126B-3EA9-ED4D-AA78-64F5C94F8E2B}</id>
+				<id>{6B6BADC6-F11B-42DA-B348-CFA90E59CCF7}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
@@ -362,11 +394,11 @@ else
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[12]"/>
-				<id>{F782C7E5-1D93-4A57-ACAA-7BBA23174D83}</id>
+				<id>{41DA406A-9D77-45A8-A635-F858DDBD3792}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
-				<id>{86BFF8D8-7B18-5A4E-8277-6C6223F5A448}</id>
+				<id>{7EA62CDE-55A9-4838-AEB7-1A0C02143160}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -386,22 +418,9 @@ else
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
-				<id>{72BF7B03-F275-434F-B46D-6DA3C8EFBC88}</id>
+				<id>{B681FE29-04F7-4E8D-B71D-44019D9F450C}</id>
 			</destination>
 		</item>
 	</edges>
-	<groups>
-		<item type="traktor.render.Group">
-			<title/>
-			<comment/>
-			<position>
-				<first>76</first>
-				<second>-331</second>
-			</position>
-			<size>
-				<first>2106</first>
-				<second>409</second>
-			</size>
-		</item>
-	</groups>
+	<groups/>
 </object>

@@ -71,7 +71,11 @@ private:
 	WorldRenderSettings m_settings;
 	Quality m_shadowsQuality = Quality::Disabled;
 	resource::Proxy< render::Shader > m_injectShader;
+	resource::Proxy< render::Shader > m_integrateShader;
+	//! Per froxel source term and extinction, double buffered for temporal reprojection.
 	Ref< render::ITexture > m_volumeTextures[2];
+	//! Accumulated in-scattering and transmittance; consumed in the same frame, so single buffered.
+	Ref< render::ITexture > m_integratedTexture;
 };
 
 }

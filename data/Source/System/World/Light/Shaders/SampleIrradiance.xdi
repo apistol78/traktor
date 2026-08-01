@@ -2135,27 +2135,7 @@ $Output = BlueNoise(seed);
 				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[88]"/>
-				<id>{98BF7CC4-A80C-43DA-B7FD-21BA4C039E28}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[88]"/>
-				<id>{D74E3627-9E70-4BAD-A6CE-2087D41D6ED7}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[86]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[90]"/>
-				<id>{D74E3627-9E70-4BAD-A6CE-2087D41D6ED7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[89]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
@@ -2165,8 +2145,8 @@ $Output = BlueNoise(seed);
 				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[90]"/>
-				<id>{98BF7CC4-A80C-43DA-B7FD-21BA4C039E28}</id>
+				<node ref="/object/nodes/item[89]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">

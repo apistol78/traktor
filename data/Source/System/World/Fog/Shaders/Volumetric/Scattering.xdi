@@ -5,8 +5,8 @@
 			<id>{5287CA15-CC7D-F449-9E62-735EFAA12CCC}</id>
 			<comment/>
 			<position>
-				<first>1031</first>
-				<second>197</second>
+				<first>509</first>
+				<second>680</second>
 			</position>
 			<technique>Default</technique>
 			<localSize>
@@ -19,8 +19,8 @@
 			<id>{0B6344A1-ECF2-6F45-8DF8-10A5AD0A9157}</id>
 			<comment/>
 			<position>
-				<first>771</first>
-				<second>257</second>
+				<first>153</first>
+				<second>837</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -37,8 +37,8 @@
 			<id>{00395931-E529-AB4E-8200-B1708892049A}</id>
 			<comment/>
 			<position>
-				<first>-45</first>
-				<second>-12</second>
+				<first>-1043</first>
+				<second>260</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -46,8 +46,8 @@
 			<id>{08CCEE66-2163-D54A-B653-C605FB935C34}</id>
 			<comment/>
 			<position>
-				<first>176</first>
-				<second>-133</second>
+				<first>445</first>
+				<second>-70</second>
 			</position>
 			<fragmentGuid>{83C1284E-627A-5E4D-81DD-0C2E5C34EC17}</fragmentGuid>
 			<inputPins>
@@ -99,16 +99,16 @@
 			<id>{1C3DD9E8-A80D-4E41-8874-7914BD85AE45}</id>
 			<comment/>
 			<position>
-				<first>73</first>
-				<second>355</second>
+				<first>-481</first>
+				<second>565</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{234226F3-674F-4751-A731-FF610CF2C728}</id>
 			<comment/>
 			<position>
-				<first>307</first>
-				<second>373</second>
+				<first>-186</first>
+				<second>555</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -116,8 +116,8 @@
 			<id>{35E27118-45F7-4B3F-98B8-3984A0EF9A70}</id>
 			<comment/>
 			<position>
-				<first>307</first>
-				<second>520</second>
+				<first>-186</first>
+				<second>419</second>
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
@@ -125,16 +125,16 @@
 			<id>{DFAF48A4-324E-476F-8307-09A8C0B49AFD}</id>
 			<comment/>
 			<position>
-				<first>515</first>
-				<second>372</second>
+				<first>147</first>
+				<second>244</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{3BC7A3C5-B101-4BDA-A9D2-FE599E29F3BB}</id>
 			<comment/>
 			<position>
-				<first>-840</first>
-				<second>-150</second>
+				<first>-779</first>
+				<second>79</second>
 			</position>
 			<fragmentGuid>{3A77B694-1267-9A46-84F5-F8D06EAC5771}</fragmentGuid>
 			<inputPins>
@@ -159,8 +159,8 @@
 			<id>{75E1712E-1B95-4EF4-BD9D-9C73A64BA49E}</id>
 			<comment/>
 			<position>
-				<first>-1048</first>
-				<second>-132</second>
+				<first>-1043</first>
+				<second>96</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -168,16 +168,16 @@
 			<id>{B83ECC7D-0C67-4D95-B530-F22B3097C7FD}</id>
 			<comment/>
 			<position>
-				<first>-324</first>
-				<second>-55</second>
+				<first>-215</first>
+				<second>185</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{A55AC5C9-28F5-44E0-B423-DBD582A7A855}</id>
 			<comment/>
 			<position>
-				<first>-532</first>
-				<second>-20</second>
+				<first>-463</first>
+				<second>274</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -185,8 +185,8 @@
 			<id>{542CF808-CD67-044F-A00E-7EDC425F4820}</id>
 			<comment/>
 			<position>
-				<first>-542</first>
-				<second>-106</second>
+				<first>-473</first>
+				<second>190</second>
 			</position>
 			<fragmentGuid>{AA010A65-F78F-7447-A6BB-8FBE0A238745}</fragmentGuid>
 			<inputPins>
@@ -207,40 +207,40 @@
 			<id>{9F6CE8B4-419B-7E4E-9E2F-55469947E24A}</id>
 			<comment/>
 			<position>
-				<first>-58</first>
-				<second>-178</second>
+				<first>147</first>
+				<second>17</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{72045BE2-2E7E-D34D-8F47-9195D2959A4C}</id>
 			<comment/>
 			<position>
-				<first>1522</first>
-				<second>-99</second>
+				<first>1573</first>
+				<second>387</second>
 			</position>
 		</item>
 		<item type="traktor.render.Normalize" version="traktor.render.Node:1">
 			<id>{72CE143C-5A1C-2645-9285-30663362B7CB}</id>
 			<comment/>
 			<position>
-				<first>264</first>
-				<second>-15</second>
+				<first>517</first>
+				<second>187</second>
 			</position>
 		</item>
 		<item type="traktor.render.Dot" version="traktor.render.Node:1">
 			<id>{A31A0321-4917-9D4F-BFDD-C1D6AC3C6C4B}</id>
 			<comment/>
 			<position>
-				<first>570</first>
-				<second>-50</second>
+				<first>823</first>
+				<second>262</second>
 			</position>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{AF10E59E-248D-434D-901A-F22C29885AC2}</id>
 			<comment/>
 			<position>
-				<first>1022</first>
-				<second>-42</second>
+				<first>1073</first>
+				<second>389</second>
 			</position>
 			<name>Mie Scattering Phase</name>
 			<technique/>
@@ -276,16 +276,16 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{F92CF708-FD69-DF40-B1A2-0ED69FE06B53}</id>
 			<comment/>
 			<position>
-				<first>1288</first>
-				<second>-50</second>
+				<first>1339</first>
+				<second>435</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{CABCE1C2-435F-E146-B2BF-C205562C9359}</id>
 			<comment/>
 			<position>
-				<first>1756</first>
-				<second>-81</second>
+				<first>1807</first>
+				<second>404</second>
 			</position>
 			<swizzle>xyzw</swizzle>
 		</item>
@@ -293,16 +293,16 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{43618504-E677-614E-BE28-DBE70E3EDA18}</id>
 			<comment/>
 			<position>
-				<first>73</first>
-				<second>502</second>
+				<first>-481</first>
+				<second>402</second>
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{47090A09-6D1B-134F-A8F9-C3A2FB66C421}</id>
 			<comment/>
 			<position>
-				<first>770</first>
-				<second>193</second>
+				<first>144</first>
+				<second>773</second>
 			</position>
 			<parameterDeclaration>{4D3FA8BB-C1E9-E143-9B75-7830376C4B33}</parameterDeclaration>
 		</item>
@@ -319,8 +319,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{CDF7AF06-7DDF-1141-BB02-7B528FDA5838}</id>
 			<comment/>
 			<position>
-				<first>-527</first>
-				<second>340</second>
+				<first>-1091</first>
+				<second>527</second>
 			</position>
 			<parameterDeclaration>{A2B819CF-CC4F-124C-AC0F-CE2FD5DB1899}</parameterDeclaration>
 		</item>
@@ -328,8 +328,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{239DFEDC-2450-E34B-9392-8F22DB126D09}</id>
 			<comment/>
 			<position>
-				<first>-535</first>
-				<second>506</second>
+				<first>-1099</first>
+				<second>388</second>
 			</position>
 			<parameterDeclaration>{07D82E61-B43F-0E4B-B371-33ED280DDAA6}</parameterDeclaration>
 		</item>
@@ -337,8 +337,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{172FBF8B-6155-B942-8E4A-3689D269764D}</id>
 			<comment/>
 			<position>
-				<first>-482</first>
-				<second>570</second>
+				<first>-1046</first>
+				<second>324</second>
 			</position>
 			<value>100</value>
 		</item>
@@ -346,8 +346,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{8779EDB3-34E0-DB48-9358-4ED73D5C1864}</id>
 			<comment/>
 			<position>
-				<first>-215</first>
-				<second>487</second>
+				<first>-774</first>
+				<second>341</second>
 			</position>
 			<parameterDeclaration>{276DFEA3-87D7-4E45-8425-812BA399211C}</parameterDeclaration>
 		</item>
@@ -355,24 +355,24 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{6AB28B45-ECA0-4641-AD9F-31139EE8C4C4}</id>
 			<comment/>
 			<position>
-				<first>-188</first>
-				<second>551</second>
+				<first>-747</first>
+				<second>242</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{0F7C64E7-F9E1-0C45-A6A4-1DB2EB79DE65}</id>
 			<comment/>
 			<position>
-				<first>-188</first>
-				<second>321</second>
+				<first>-747</first>
+				<second>469</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{55907F16-29E1-984B-BDED-EB67A550AFDB}</id>
 			<comment/>
 			<position>
-				<first>-474</first>
-				<second>404</second>
+				<first>-1038</first>
+				<second>463</second>
 			</position>
 			<value>2</value>
 		</item>
@@ -425,8 +425,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{EA7A2C8B-2F6E-F945-8735-6FF859A237EC}</id>
 			<comment/>
 			<position>
-				<first>-884</first>
-				<second>-527</second>
+				<first>-979</first>
+				<second>-495</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -434,8 +434,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{7695E082-1893-CF45-B0CC-535A2FA6B992}</id>
 			<comment/>
 			<position>
-				<first>-355</first>
-				<second>-687</second>
+				<first>-466</first>
+				<second>-692</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -443,8 +443,8 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{911C2F45-5FC5-EA4B-8C28-64658E670ADE}</id>
 			<comment/>
 			<position>
-				<first>-653</first>
-				<second>-705</second>
+				<first>-748</first>
+				<second>-709</second>
 			</position>
 			<name>FrustumCellToViewspace</name>
 			<technique/>
@@ -479,6 +479,10 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 					<id>{D5630BB7-FC83-7640-9DB2-CFB485EFD5A6}</id>
 					<name>Cell</name>
 				</item>
+				<item>
+					<id>{51CEE10C-679B-4168-997D-D496FBCF2A56}</id>
+					<name>Jitter</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -494,7 +498,14 @@ vsf.magicCoeffs = $MagicCoeffs.xy;
 vsf.nearZ = $NearZ;
 vsf.farZ = $FarZ;
 
-const vec3 ndc = FrustumCellToNDC(vsf, $Cell.xyz);
+// Sample the froxel at its centre in x and y rather than at its minimum
+// corner, and dither the depth within the froxel from frame to frame. The
+// temporal blend then averages those samples towards the slice's true mean,
+// which is what removes the banding a fixed corner sample leaves along z.
+// A jitter of [0,1) added to the cell index has its expectation at the centre.
+const vec3 cell = $Cell.xyz + vec3(0.5f, 0.5f, fract($Jitter));
+
+const vec3 ndc = FrustumCellToNDC(vsf, cell);
 const vec3 vs = NDCToViewspace(vsf, ndc);
 $Output = vec4(vs, 1.0f);
 
@@ -504,8 +515,8 @@ $Output = vec4(vs, 1.0f);
 			<id>{95648535-C8BC-3E4A-AC6A-F51A6193EBD0}</id>
 			<comment/>
 			<position>
-				<first>-885</first>
-				<second>-783</second>
+				<first>-980</first>
+				<second>-815</second>
 			</position>
 			<name>L_FogVolumeSize</name>
 		</item>
@@ -513,8 +524,8 @@ $Output = vec4(vs, 1.0f);
 			<id>{5D6E05CA-78D3-3849-A6B0-461DA0DB8951}</id>
 			<comment/>
 			<position>
-				<first>-893</first>
-				<second>-719</second>
+				<first>-988</first>
+				<second>-751</second>
 			</position>
 			<parameterDeclaration>{3BA1C3DB-450E-7446-BC4A-B65117C2C087}</parameterDeclaration>
 		</item>
@@ -522,8 +533,8 @@ $Output = vec4(vs, 1.0f);
 			<id>{AD49E9C9-5A35-C54C-8EFB-26AE17A70CE9}</id>
 			<comment/>
 			<position>
-				<first>-877</first>
-				<second>-655</second>
+				<first>-972</first>
+				<second>-623</second>
 			</position>
 			<name>L_NearZ</name>
 		</item>
@@ -531,8 +542,8 @@ $Output = vec4(vs, 1.0f);
 			<id>{BFFB9FD9-B5CB-B24B-93D7-23CB7E7197F9}</id>
 			<comment/>
 			<position>
-				<first>-877</first>
-				<second>-591</second>
+				<first>-972</first>
+				<second>-559</second>
 			</position>
 			<name>L_FarZ</name>
 		</item>
@@ -705,8 +716,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{A0014B66-C07C-1447-93B9-AEE72D335A1C}</id>
 			<comment/>
 			<position>
-				<first>528</first>
-				<second>244</second>
+				<first>-186</first>
+				<second>619</second>
 			</position>
 			<name>L_LastSample</name>
 		</item>
@@ -714,16 +725,16 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{F43AD8D0-59CE-2241-AB9D-B4EC72F4C4E1}</id>
 			<comment/>
 			<position>
-				<first>765</first>
-				<second>321</second>
+				<first>147</first>
+				<second>901</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{7644CCE7-0D6E-7E43-BC61-C024EECAB3AF}</id>
 			<comment/>
 			<position>
-				<first>533</first>
-				<second>308</second>
+				<first>-181</first>
+				<second>926</second>
 			</position>
 			<value>0.9</value>
 		</item>
@@ -792,8 +803,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{1060F73C-17DB-F04D-97AE-CB20E1CDA0DC}</id>
 			<comment/>
 			<position>
-				<first>1015</first>
-				<second>551</second>
+				<first>807</first>
+				<second>376</second>
 			</position>
 			<branch>BrDynamic</branch>
 			<operator>CoEqual</operator>
@@ -802,8 +813,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{F1188BAF-FF3F-204D-B853-3FD2F38AEA4C}</id>
 			<comment/>
 			<position>
-				<first>770</first>
-				<second>717</second>
+				<first>514</first>
+				<second>311</second>
 			</position>
 			<name>L_FogSliceUpdate</name>
 		</item>
@@ -811,8 +822,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{C8D2B61E-4CFC-4F4C-98C2-23576F205513}</id>
 			<comment/>
 			<position>
-				<first>521</first>
-				<second>474</second>
+				<first>153</first>
+				<second>343</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -820,8 +831,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{30254C0A-FCAC-4343-A3E8-33D2687A3A6B}</id>
 			<comment/>
 			<position>
-				<first>778</first>
-				<second>503</second>
+				<first>522</first>
+				<second>439</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -829,8 +840,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{B87B46CA-7B2B-A644-A736-4D0FE34E92FC}</id>
 			<comment/>
 			<position>
-				<first>528</first>
-				<second>666</second>
+				<first>160</first>
+				<second>535</second>
 			</position>
 			<name>L_LastSample</name>
 		</item>
@@ -839,7 +850,7 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<comment/>
 			<position>
 				<first>804</first>
-				<second>-46</second>
+				<second>-197</second>
 			</position>
 		</item>
 		<item type="traktor.render.TextureSize" version="traktor.render.Node:1">
@@ -888,8 +899,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{6F6E0179-1BEB-4262-AB63-5B5197FBC9FF}</id>
 			<comment/>
 			<position>
-				<first>520</first>
-				<second>538</second>
+				<first>152</first>
+				<second>407</second>
 			</position>
 			<name>L_LastSampleValid</name>
 		</item>
@@ -897,8 +908,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{DC44D604-A506-439E-9E6C-2F0EEE419F94}</id>
 			<comment/>
 			<position>
-				<first>749</first>
-				<second>567</second>
+				<first>493</first>
+				<second>503</second>
 			</position>
 			<branch>BrDynamic</branch>
 			<operator>CoGreater</operator>
@@ -907,8 +918,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{370D5F7E-48E4-4C5E-B090-94457C78DD65}</id>
 			<comment/>
 			<position>
-				<first>533</first>
-				<second>602</second>
+				<first>165</first>
+				<second>471</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -916,8 +927,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{3E17BE89-20B3-9F49-A8A3-BD1C4A0A6B00}</id>
 			<comment/>
 			<position>
-				<first>1964</first>
-				<second>-81</second>
+				<first>2015</first>
+				<second>404</second>
 			</position>
 			<name>L_IterInput</name>
 		</item>
@@ -925,8 +936,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{740B009F-6169-3545-BF8F-4E59E56D36D7}</id>
 			<comment/>
 			<position>
-				<first>-537</first>
-				<second>44</second>
+				<first>-468</first>
+				<second>338</second>
 			</position>
 			<name>L_IterInput</name>
 		</item>
@@ -934,8 +945,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{87C53B64-3832-5748-BEFC-9A6D691FC360}</id>
 			<comment/>
 			<position>
-				<first>-45</first>
-				<second>52</second>
+				<first>160</first>
+				<second>180</second>
 			</position>
 			<name>L_IterOutput</name>
 		</item>
@@ -943,8 +954,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{6109B324-D87A-BC43-A885-D7E464E2E7B5}</id>
 			<comment/>
 			<position>
-				<first>-175</first>
-				<second>423</second>
+				<first>-734</first>
+				<second>632</second>
 			</position>
 			<name>L_IterOutput</name>
 		</item>
@@ -952,8 +963,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{C857A912-16EA-964F-B571-7012E6A5C8DA}</id>
 			<comment/>
 			<position>
-				<first>1301</first>
-				<second>-114</second>
+				<first>1352</first>
+				<second>371</second>
 			</position>
 			<name>L_IterOutput</name>
 		</item>
@@ -961,10 +972,327 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{1B5C4CFD-73D8-5C4E-B739-86274B750B63}</id>
 			<comment/>
 			<position>
-				<first>-40</first>
-				<second>-76</second>
+				<first>165</first>
+				<second>-111</second>
 			</position>
 			<value>1</value>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{B2C4A8E8-FF2E-4447-8948-D5A86DDE03B5}</id>
+			<comment/>
+			<position>
+				<first>-247</first>
+				<second>762</second>
+			</position>
+			<name>Medium</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{6192DB33-6937-4704-807C-D96231D47B72}</id>
+					<name>MediumColor</name>
+				</item>
+				<item>
+					<id>{A729CE37-A211-4BD4-A7F9-CEF50ECEC08F}</id>
+					<name>MediumDensity</name>
+				</item>
+				<item>
+					<id>{71716AB0-1418-4DD8-AE26-DDA8371BA427}</id>
+					<name>InScatter</name>
+				</item>
+				<item>
+					<id>{E76BB877-FB76-4A13-9E66-0F7CE4D04DD9}</id>
+					<name>Ambient</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{0C3E7A11-9D5B-4E3C-8F6A-2B47D1905E84}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[// Medium properties for this froxel, as intensive quantities so that the
+// integration pass can weight them by each froxel's real world space
+// thickness, and so that temporal reprojection stays valid.
+//
+// rgb is the in-scattered source term per unit length. It has to carry the
+// scattering coefficient, which is proportional to density - denser fog
+// scatters more - otherwise the integral saturates at source/extinction and
+// raising the density would make the fog dimmer instead of brighter.
+//
+// a is the extinction coefficient per unit length, straight from the authored
+// density. Deliberately not divided by the slice count: what a froxel absorbs
+// depends on how thick it is in metres, which only the integration pass knows.
+
+$Output = vec4($MediumColor.rgb * $MediumDensity * ($InScatter.rgb + $Ambient.rgb), $MediumDensity);
+]]></script>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{D7F1C4B0-58E2-4A16-9C7D-3F2B806E519A}</id>
+			<comment><![CDATA[Per frame dither of the froxel sample position.]]></comment>
+			<position>
+				<first>-980</first>
+				<second>-687</second>
+			</position>
+			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{AC01E3A1-4B63-4D41-92CD-6453BCD401F4}</id>
+			<comment/>
+			<position>
+				<first>83</first>
+				<second>599</second>
+			</position>
+			<name>TemporalBlend</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{8F4BFB54-EF3E-4DBF-A46B-A7B7D101F31C}</id>
+					<name>Fresh</name>
+				</item>
+				<item>
+					<id>{B0FAC123-6FEA-4450-B8D0-50C5D2A0CA02}</id>
+					<name>History</name>
+				</item>
+				<item>
+					<id>{0519480B-5A3D-49E7-BAF6-642020C28F79}</id>
+					<name>HistoryNDC</name>
+				</item>
+				<item>
+					<id>{9C59542D-226C-4B2C-89FB-B198B2364552}</id>
+					<name>HistoryViewPosition</name>
+				</item>
+				<item>
+					<id>{7CE2FCAB-2A4D-4AFA-95DD-C8867AC710E1}</id>
+					<name>NearZ</name>
+				</item>
+				<item>
+					<id>{223E525F-5CB9-4FEC-A599-B94DC239428F}</id>
+					<name>FarZ</name>
+				</item>
+				<item>
+					<id>{023B9249-84A3-4723-A23E-5E880B8B122F}</id>
+					<name>VolumeSize</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{6E0A4F71-3C5D-4A88-9B12-70E1D5C4A833}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[// Blend the reprojected history in, but only where the reprojection actually
+// landed inside the previous frame's volume.
+//
+// The history sampler clamps, so a lookup that fell outside returns an edge
+// froxel. Accepting that unconditionally - which is what happened while this
+// check sat disconnected from the graph - drags edge froxels inwards every time
+// the camera turns. The volume is also pool allocated and never cleared, so on
+// the first frame the history is whatever was in memory, and a non finite value
+// there would survive at 90% weight forever.
+//
+// Validity is tested on the reprojected position, not on the NDC alone, because
+// ViewspaceToNDC clamps the depth fraction and so cannot report a position that
+// fell out of the volume in z.
+
+const vec4 fresh = $Fresh;
+const vec4 history = $History;
+
+const vec2 ndcXY = $HistoryNDC.xy;
+const float k = ($HistoryViewPosition.z - $NearZ) / max($FarZ - $NearZ, 0.0001f);
+
+// One froxel of margin in x and y, so trilinear filtering never reaches past
+// the edge of the previous volume.
+const vec2 margin = 1.0f / max(vec2($VolumeSize.xy), vec2(1.0f));
+
+bool inside =
+	all(greaterThanEqual(ndcXY, -1.0f + margin)) &&
+	all(lessThanEqual(ndcXY, 1.0f - margin)) &&
+	k >= 0.0f && k <= 1.0f;
+
+bool finite = all(lessThan(abs(history), vec4(65504.0f)));
+
+if (!inside || !finite)
+	$Output = fresh;
+else
+{
+	// Where the history disagrees strongly with what this froxel now scatters it
+	// is stale rather than merely noisy, so shorten its tail. A flat 90% history
+	// needs around 22 frames to catch up with a light switching on.
+	const float f = dot(fresh.rgb, vec3(1.0f));
+	const float h = dot(history.rgb, vec3(1.0f));
+	const float disagreement = clamp(abs(h - f) / max(max(h, f), 0.0001f), 0.0f, 1.0f);
+
+	$Output = mix(fresh, history, mix(0.9f, 0.5f, disagreement));
+}
+]]></script>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{5F3D8A17-4C29-4B60-9E81-A2704D6BC395}</id>
+			<comment/>
+			<position>
+				<first>-620</first>
+				<second>560</second>
+			</position>
+			<parameterDeclaration>{EA77CECB-1DC2-E340-B4CE-3E94B17C8061}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{B8E73A29-177B-4407-9884-6CC25245AA77}</id>
+			<comment/>
+			<position>
+				<first>-300</first>
+				<second>560</second>
+			</position>
+			<name>IrradianceAmbient</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{6CB2FF98-BAD2-43F8-8478-38E770E0563D}</id>
+					<name>Grid</name>
+				</item>
+				<item>
+					<id>{69989B50-2621-46B9-8B61-9D184E7CF59C}</id>
+					<name>WorldPosition</name>
+				</item>
+				<item>
+					<id>{01EBE9A6-CFA9-4D00-862F-4A707C203794}</id>
+					<name>GridBoundsMin</name>
+				</item>
+				<item>
+					<id>{68A5E9F6-A0D5-468E-B9E5-9DD4CC806F3E}</id>
+					<name>GridBoundsMax</name>
+				</item>
+				<item>
+					<id>{4705B506-9404-4ECD-B3A8-DAD522CB6552}</id>
+					<name>GridSize</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{4A7CC092-4332-4B28-8E2B-CD6D1F68F25B}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[// Ambient in-scattering from the irradiance grid.
+//
+// Without this a froxel no analytic light reaches scatters nothing, so fog goes
+// black in shadow. The grid is the same data the surface lighting samples, so
+// fog ambient and surfaces agree by construction, and because it is spatial the
+// fog correctly dims under a canopy or indoors.
+//
+// Only the band 0 coefficient is taken. For a normalised SH basis that term IS
+// the average radiance over the sphere, which is exactly the isotropic ambient
+// wanted here - evaluating the full SH against some chosen normal would instead
+// give the cosine weighted irradiance from that one direction. It is also far
+// cheaper: three scalar loads per cell rather than the whole 28 float record,
+// and no SH evaluation at all.
+//
+// The phase function is normalised, so a field of uniform radiance L in-scatters
+// exactly L; this therefore adds straight into the analytic light sum.
+
+const vec3 wp = $WorldPosition.xyz;
+const vec3 mn = $GridBoundsMin.xyz;
+const vec3 mx = $GridBoundsMax.xyz;
+
+// The grid size is uploaded biased by half a unit, so truncate to recover it.
+const vec3 gs = trunc($GridSize.xyz);
+
+const vec3 t = clamp((wp - mn) / max(mx - mn, vec3(0.0001f)), vec3(0.0f), vec3(1.0f));
+const vec3 p = t * gs;
+const vec3 gp = trunc(p);
+const vec3 f = fract(p);
+
+// Cell index is x * (gy * gz) + y * gz + z; the stride is the index delta to
+// the next cell along each axis, clamped so the far edge does not wrap.
+const vec3 factors = vec3(gs.y * gs.z, gs.z, 1.0f);
+const float base = dot(gp, factors);
+const vec3 stride = (min(gp + vec3(1.0f), gs - vec3(1.0f)) - gp) * factors;
+
+// Trilinear over the eight surrounding cells, same footprint the surface
+// lighting uses, so the ambient does not read as blocky.
+vec3 dc = vec3(0.0f);
+for (int i = 0; i < 8; ++i)
+{
+	const vec3 o = vec3(float(i & 1), float((i >> 1) & 1), float((i >> 2) & 1));
+	const vec3 wv = mix(vec3(1.0f) - f, f, o);
+	const int j = int(base + dot(o, stride));
+	dc += (wv.x * wv.y * wv.z) * vec3($Grid[j].shR0_3.x, $Grid[j].shG0_3.x, $Grid[j].shB0_3.x);
+}
+
+// Band 0 of the normalised basis is 1 / (2 sqrt(pi)).
+$Output = vec4(dc * 0.2820947917738781f, 1.0f);
+]]></script>
+		</item>
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{0A5C93E1-64BD-4F7A-8C26-D1E4970B58F3}</id>
+			<comment>No irradiance grid in the scene; no ambient in-scattering.</comment>
+			<position>
+				<first>-300</first>
+				<second>700</second>
+			</position>
+			<value>0, 0, 0, 0</value>
+		</item>
+		<item type="traktor.render.Branch" version="traktor.render.Node:1">
+			<id>{B3E7D52A-08C4-4916-A7F1-6C205E8B94D7}</id>
+			<comment/>
+			<position>
+				<first>-40</first>
+				<second>620</second>
+			</position>
+			<parameterName>World_IrradianceEnable</parameterName>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{2E9C4B08-71DA-4F35-8C60-19A7E5D3B842}</id>
+			<comment/>
+			<position>
+				<first>-620</first>
+				<second>620</second>
+			</position>
+			<parameterDeclaration>{B5DD3CAE-937A-014D-B369-DB0468FA5DF9}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{7A16C5F3-2D48-4E09-B571-C4980E62A3D1}</id>
+			<comment/>
+			<position>
+				<first>-620</first>
+				<second>660</second>
+			</position>
+			<parameterDeclaration>{F702C3A1-3468-F141-890D-A677B0CF83BB}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{C08B394E-6F52-4A7D-9218-3D5E1BA0C764}</id>
+			<comment/>
+			<position>
+				<first>-620</first>
+				<second>700</second>
+			</position>
+			<parameterDeclaration>{BE897B94-B1E4-6E49-94F9-1E2F10BFC5A3}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -1470,8 +1798,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{0C3E7A11-9D5B-4E3C-8F6A-2B47D1905E84}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[57]"/>
@@ -1602,16 +1930,6 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<source>
 				<node ref="/object/nodes/item[19]"/>
 				<id>{73A3DE7A-6D35-4844-BF53-55E239F553F1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[71]"/>
-				<id>{98BF7CC4-A80C-43DA-B7FD-21BA4C039E28}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[71]"/>
-				<id>{D74E3627-9E70-4BAD-A6CE-2087D41D6ED7}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
@@ -1750,8 +2068,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{0D78442F-AA88-4B95-A497-E86A86E07FB8}</id>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{6E0A4F71-3C5D-4A88-9B12-70E1D5C4A833}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
@@ -1818,18 +2136,208 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 				<id>{460AD9B7-35B9-F447-8541-E4F221D3049D}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{6192DB33-6937-4704-807C-D96231D47B72}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{A729CE37-A211-4BD4-A7F9-CEF50ECEC08F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[83]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{71716AB0-1418-4DD8-AE26-DDA8371BA427}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[87]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<id>{51CEE10C-679B-4168-997D-D496FBCF2A56}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{0C3E7A11-9D5B-4E3C-8F6A-2B47D1905E84}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{8F4BFB54-EF3E-4DBF-A46B-A7B7D101F31C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[56]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{B0FAC123-6FEA-4450-B8D0-50C5D2A0CA02}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{72D7AC3C-9B4B-5142-93FB-40DC055DDADE}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{0519480B-5A3D-49E7-BAF6-642020C28F79}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[63]"/>
+				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{9C59542D-226C-4B2C-89FB-B198B2364552}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[46]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{7CE2FCAB-2A4D-4AFA-95DD-C8867AC710E1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{223E525F-5CB9-4FEC-A599-B94DC239428F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[48]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{023B9249-84A3-4723-A23E-5E880B8B122F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[91]"/>
+				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{E76BB877-FB76-4A13-9E66-0F7CE4D04DD9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[89]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{6CB2FF98-BAD2-43F8-8478-38E770E0563D}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[61]"/>
+				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{69989B50-2621-46B9-8B61-9D184E7CF59C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[93]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{01EBE9A6-CFA9-4D00-862F-4A707C203794}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[94]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{68A5E9F6-A0D5-468E-B9E5-9DD4CC806F3E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[95]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{4705B506-9404-4ECD-B3A8-DAD522CB6552}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{4A7CC092-4332-4B28-8E2B-CD6D1F68F25B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
 			<title>Inject light into frustum grid</title>
 			<comment/>
 			<position>
-				<first>-1112</first>
-				<second>-274</second>
+				<first>-1163</first>
+				<second>-293</second>
 			</position>
 			<size>
-				<first>3258</first>
-				<second>1087</second>
+				<first>3360</first>
+				<second>1340</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
@@ -1848,12 +2356,12 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<title>Calculate view position of cell</title>
 			<comment/>
 			<position>
-				<first>-957</first>
-				<second>-879</second>
+				<first>-1052</first>
+				<second>-911</second>
 			</position>
 			<size>
-				<first>784</first>
-				<second>448</second>
+				<first>768</first>
+				<second>512</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">

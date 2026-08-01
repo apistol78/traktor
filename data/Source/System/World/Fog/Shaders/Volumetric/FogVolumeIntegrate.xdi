@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{4E93447D-78B3-403E-AC99-2BB925D46329}</id>
+			<comment><![CDATA[Per froxel source term and extinction written by Scattering.]]></comment>
+			<position>
+				<first>-700</first>
+				<second>0</second>
+			</position>
+			<parameterDeclaration>{359B350A-D6D9-4D40-9559-EF5BFB5429C1}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
+			<id>{2A406B40-EFDA-4C15-B653-EA52B7C4D145}</id>
+			<comment/>
+			<position>
+				<first>-700</first>
+				<second>60</second>
+			</position>
+			<minFilter>Point</minFilter>
+			<mipFilter>Point</mipFilter>
+			<magFilter>Point</magFilter>
+			<addressU>Clamp</addressU>
+			<addressV>Clamp</addressV>
+			<addressW>Clamp</addressW>
+			<compare>None</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>true</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{3353A807-6C6C-475D-A954-6E5564B064BF}</id>
+			<comment><![CDATA[Accumulated in-scattering and transmittance.]]></comment>
+			<position>
+				<first>-700</first>
+				<second>120</second>
+			</position>
+			<parameterDeclaration>{4D3FA8BB-C1E9-E143-9B75-7830376C4B33}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{7034166F-082B-485A-9762-488EDB0CEB22}</id>
+			<comment/>
+			<position>
+				<first>-700</first>
+				<second>180</second>
+			</position>
+			<parameterDeclaration>{128A2894-9C6A-6144-AE39-E2F8451ED097}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{CFD2A1F8-4609-481B-896D-CAF38B113751}</id>
+			<comment/>
+			<position>
+				<first>-300</first>
+				<second>60</second>
+			</position>
+			<name>Integrate</name>
+			<technique>Default</technique>
+			<domain>Compute</domain>
+			<localSize>
+				<X>8</X>
+				<Y>8</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include>
+				<item>{328E6693-7B5B-5B4F-AC6B-987ECADAE330}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{70831A59-FE68-4E46-870C-1E4D46949CDF}</id>
+					<name>Scattering</name>
+				</item>
+				<item>
+					<id>{F08E6167-414E-425B-96DF-EB0CB5F4BE02}</id>
+					<name>ScatteringState</name>
+				</item>
+				<item>
+					<id>{05EA8DCD-BB20-410D-B194-1F678051EB06}</id>
+					<name>Volume</name>
+				</item>
+				<item>
+					<id>{BB06E839-B701-47D4-96AD-10F0BCAF6298}</id>
+					<name>FogVolumeRange</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script><![CDATA[// Front to back integration of the fog volume, once per froxel column.
+//
+// Scattering writes each froxel as an intensive pair: rgb is the in-scattered
+// source term per unit length and a is the extinction coefficient per unit
+// length. Neither depends on how thick the froxel happens to be, which is what
+// lets them be temporally reprojected and lets this pass weight them by the
+// froxel's real world space thickness.
+//
+// Each thread owns one (x,y) column and walks z, so the accumulation is
+// sequential and race free. What lands in froxel n is the integral from the
+// camera through the FAR boundary of slice n, paired with the transmittance to
+// that same point - so the apply pass is one trilinear tap and a lerp.
+
+const ivec3 size = imageSize($Volume);
+const ivec2 column = ivec2(gl_GlobalInvocationID.xy);
+
+if (column.x >= size.x || column.y >= size.y)
+	return;
+
+VSFrustum vsf;
+vsf.volumeSize = size;
+vsf.magicCoeffs = vec2(0.0f);	// Unused by the depth distribution.
+vsf.nearZ = $FogVolumeRange.x;
+vsf.farZ = $FogVolumeRange.y;
+
+vec3 scatteringAccum = vec3(0.0f);
+float transmittance = 1.0f;
+
+// Near boundary of the first slice.
+float sliceNearZ = FractionToViewZ(vsf, 0.0f);
+
+for (int z = 0; z < size.z; ++z)
+{
+	const float sliceFarZ = FractionToViewZ(vsf, float(z + 1) / float(size.z));
+	const float thickness = max(sliceFarZ - sliceNearZ, 0.0f);
+	sliceNearZ = sliceFarZ;
+
+	const vec4 medium = texelFetch(sampler3D($Scattering, $ScatteringState), ivec3(column, z), 0);
+	const vec3 source = medium.rgb;
+	const float extinction = max(medium.a, 0.0f);
+
+	// Transmittance across this slice.
+	const float sliceTransmittance = exp(-extinction * thickness);
+
+	// Analytic integral of the source term over the slice with extinction
+	// applied along it (Hillaire). Written this way the result stops depending
+	// on the slice count; the naive source * thickness over estimates thick
+	// slices badly. Degenerates to source * thickness as extinction goes to
+	// zero, which is the limit the branch covers.
+	vec3 sliceScattering;
+	if (extinction > 0.000001f)
+		sliceScattering = source * (1.0f - sliceTransmittance) / extinction;
+	else
+		sliceScattering = source * thickness;
+
+	// Light scattered in this slice still has to cross everything nearer, so
+	// it is attenuated by the transmittance accumulated so far. This is what
+	// makes the fog self occlude.
+	scatteringAccum += transmittance * sliceScattering;
+	transmittance *= sliceTransmittance;
+
+	imageStore($Volume, ivec3(column, z), vec4(scatteringAccum, transmittance));
+}
+]]></script>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{70831A59-FE68-4E46-870C-1E4D46949CDF}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{82C966B2-7B19-48B2-8FE0-B85FF4E3C504}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{F08E6167-414E-425B-96DF-EB0CB5F4BE02}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{05EA8DCD-BB20-410D-B194-1F678051EB06}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{BB06E839-B701-47D4-96AD-10F0BCAF6298}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>

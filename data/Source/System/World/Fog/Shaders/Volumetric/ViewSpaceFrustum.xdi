@@ -39,7 +39,12 @@ vec3 NDCToViewspace(const VSFrustum vsf, const vec3 ndc)
 vec3 ViewspaceToNDC(const VSFrustum vsf, const vec3 vs)
 {
 	const vec2 nxy = vs.xy / (vsf.magicCoeffs * vs.z);
-	const float k = (vs.z - vsf.nearZ) / (vsf.farZ - vsf.nearZ);
+	// Clamped before the root. A position outside the volume - anything the
+	// camera has moved past, or a surface beyond the far plane - would otherwise
+	// raise a negative base to a fractional power, and that NaN propagates into
+	// whatever the caller does with the result. Clamping resolves such a
+	// position to the volume's near or far face instead.
+	const float k = clamp((vs.z - vsf.nearZ) / max(vsf.farZ - vsf.nearZ, 0.0001f), 0.0f, 1.0f);
 	const float nz = pow(k, 1.0f / SLICE_DISTRIBUTION_EXPONENT);
 	return vec3(nxy, nz);
 }

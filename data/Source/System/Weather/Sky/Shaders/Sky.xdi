@@ -399,6 +399,11 @@
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{429F0454-93B0-4344-A450-8CCFACCCCDE1}</id>
+					<name>StartDistance</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<id>{C0183ABA-B1EE-1B42-BD22-D9203854AB80}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
@@ -1217,8 +1222,54 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 				<second>846</second>
 			</position>
 		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{5B0F7A2E-6C41-4F0D-9E8A-31C6A7D4E902}</id>
+			<comment><![CDATA[Sky is beyond the fog volume, so the distance fog covers the whole ray.]]></comment>
+			<position>
+				<first>-1186</first>
+				<second>960</second>
+			</position>
+			<value>0</value>
+		</item>
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
+			<id>{06870F3A-5FD3-4290-9B1F-EC3011424824}</id>
+			<comment/>
+			<position>
+				<first>2502</first>
+				<second>838</second>
+			</position>
+			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{AFF255D0-F99A-7B4E-BB42-5C8D3D7B7336}</id>
+					<name>Color</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{6D9C5BED-2B3B-3546-B807-CD618017F552}</id>
+					<name>ViewPosition</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+		</item>
 	</nodes>
 	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[91]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{429F0454-93B0-4344-A450-8CCFACCCCDE1}</id>
+			</destination>
+		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
@@ -1637,16 +1688,6 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[29]"/>
 				<id>{8760B263-C70C-46BA-9E97-A3D6B08941E9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[20]"/>
-				<id>{CCC98877-74A3-BB48-A972-448902805009}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[51]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -2147,6 +2188,36 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[27]"/>
 				<id>{FA94D259-22C0-4243-9837-74F3B1664F1F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[82]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{6D9C5BED-2B3B-3546-B807-CD618017F552}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<id>{8F2140B5-F4E2-4E8F-8121-13C980250D3C}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{AFF255D0-F99A-7B4E-BB42-5C8D3D7B7336}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>
