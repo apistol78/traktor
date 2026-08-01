@@ -457,7 +457,7 @@
 				<first>4513</first>
 				<second>-2731</second>
 			</position>
-			<value>0</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{F80182CB-D7C2-1C4C-9C94-2DFFA45AE72F}</id>
