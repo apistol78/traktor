@@ -855,6 +855,14 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 					<id>{E76BB877-FB76-4A13-9E66-0F7CE4D04DD9}</id>
 					<name>Ambient</name>
 				</item>
+				<item>
+					<id>{2B5F91C4-8E07-4A63-9D18-70C4E2A5B3F9}</id>
+					<name>WorldPosition</name>
+				</item>
+				<item>
+					<id>{D0417E8B-63A9-4C25-BE71-58F3A906C142}</id>
+					<name>Elevation</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -863,20 +871,41 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 					<type>Vector</type>
 				</item>
 			</outputPins>
-			<script><![CDATA[// Medium properties for this froxel, as intensive quantities so that the
-// integration pass can weight them by each froxel's real world space
-// thickness, and so that temporal reprojection stays valid.
+			<script><![CDATA[// Medium properties for this froxel, as intensive quantities so the integration
+// pass can weight them by each froxel's real world space thickness, and so that
+// temporal reprojection stays valid.
 //
-// rgb is the in-scattered source term per unit length. It has to carry the
-// scattering coefficient, which is proportional to density - denser fog
-// scatters more - otherwise the integral saturates at source/extinction and
-// raising the density would make the fog dimmer instead of brighter.
+// rgb is the in-scattered source term per unit length; it carries the scattering
+// coefficient, which is proportional to density - denser fog scatters more -
+// otherwise the integral saturates at source/extinction and raising the density
+// would make the fog dimmer.
 //
-// a is the extinction coefficient per unit length, straight from the authored
-// density. Deliberately not divided by the slice count: what a froxel absorbs
-// depends on how thick it is in metres, which only the integration pass knows.
+// a is the extinction coefficient per unit length. Deliberately not divided by
+// the slice count: what a froxel absorbs depends on how thick it is in metres,
+// which only the integration pass knows.
 
-$Output = vec4($MediumColor.rgb * $MediumDensity * ($InScatter.rgb + $Ambient.rgb), $MediumDensity);
+// Height attenuation. The fog has a top: the distance fog only accumulates below
+// FogElevation, so the volume has to agree with it or fog would fill the frustum
+// above the plane while the distance fog correctly leaves it clear.
+//
+// Smoothstepped over a short band rather than cut hard, because a hard plane
+// quantises to the froxel grid - far slices are metres thick under the quadratic
+// depth distribution - and would stair-step visibly where the plane crosses.
+//
+// This is also where heterogeneous density belongs. Anything that modulates the
+// medium per froxel - 3D noise, a density texture, an artist placed volume -
+// multiplies into 'attenuation', since the froxel's world position is already to
+// hand here.
+const float c_elevationFalloff = 2.0f;
+
+const float height = $WorldPosition.y - $Elevation;
+const float attenuation = 1.0f - smoothstep(0.0f, c_elevationFalloff, height);
+
+// Scattering and extinction fall off together, keeping the albedo constant, so
+// the medium simply thins out above the plane rather than changing character.
+const float extinction = $MediumDensity * attenuation;
+
+$Output = vec4($MediumColor.rgb * extinction * ($InScatter.rgb + $Ambient.rgb), extinction);
 ]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
@@ -1245,6 +1274,15 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 				<second>63</second>
 			</position>
 			<parameterDeclaration>{61ECECC2-6BE8-40AD-9BDB-F913C07DD712}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{A75C2E10-4B86-49DF-8C03-16E9D74B052A}</id>
+			<comment>Top of the fog, world space.</comment>
+			<position>
+				<first>-60</first>
+				<second>500</second>
+			</position>
+			<parameterDeclaration>{84DB5F00-D485-4005-8024-04345325CF79}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -2076,6 +2114,26 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<destination>
 				<node ref="/object/nodes/item[65]"/>
 				<id>{E76BB877-FB76-4A13-9E66-0F7CE4D04DD9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[65]"/>
+				<id>{2B5F91C4-8E07-4A63-9D18-70C4E2A5B3F9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[87]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[65]"/>
+				<id>{D0417E8B-63A9-4C25-BE71-58F3A906C142}</id>
 			</destination>
 		</item>
 	</edges>

@@ -212,6 +212,11 @@ render::RGTexture VolumetricFogPass::setup(
 		// integration pass scales it by each froxel's real thickness, so it must
 		// not be pre-divided by the slice count here.
 		renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeMediumDensity, fog->m_mediumDensity);
+		// Top of the fog, in world space. Uploaded regardless of whether the
+		// distance fog is enabled - the volume has its own reason to respect it -
+		// unlike the shared FogDistanceAndDensity which zeroes when it is off.
+		renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeElevation, fog->m_fogElevation);
+
 		// Two lobe phase function; g is clamped short of one because the forward
 		// denominator is (1 - g)^2 and the phase diverges there.
 		renderBlock->programParams->setVectorParameter(ShaderParameter::FogVolumePhase, Vector4(

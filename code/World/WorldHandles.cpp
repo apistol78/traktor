@@ -110,6 +110,7 @@ const render::Handle ShaderParameter::ProbeFilterCorners(L"World_ProbeFilterCorn
 const render::Handle ShaderParameter::FogVolume(L"World_FogVolume");
 const render::Handle ShaderParameter::FogVolumeTexture(L"World_FogVolumeTexture");
 const render::Handle ShaderParameter::FogVolumePhase(L"World_FogVolumePhase");
+const render::Handle ShaderParameter::FogVolumeElevation(L"World_FogVolumeElevation");
 const render::Handle ShaderParameter::FogVolumeRange(L"World_FogVolumeRange");
 const render::Handle ShaderParameter::FogVolumeSliceCount(L"World_FogVolumeSliceCount");
 const render::Handle ShaderParameter::FogVolumeSliceUpdate(L"World_FogVolumeSliceUpdate");
