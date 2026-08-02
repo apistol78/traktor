@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -60,6 +60,35 @@ namespace traktor::shape
 {
 	namespace
 	{
+
+/*! Destroy ray tracer when leaving scope.
+ *
+ * The traced world holds on to all models, vertex buffers and acceleration
+ * structures of the entire scene, so it must be released as soon as the task
+ * is finished regardless of which path we leave through.
+ */
+class ScopedRayTracer
+{
+public:
+	explicit ScopedRayTracer(IRayTracer* rayTracer)
+		: m_rayTracer(rayTracer)
+	{
+	}
+
+	ScopedRayTracer(const ScopedRayTracer&) = delete;
+
+	~ScopedRayTracer()
+	{
+		safeDestroy(m_rayTracer);
+	}
+
+	ScopedRayTracer& operator = (const ScopedRayTracer&) = delete;
+
+	IRayTracer* operator -> () const { return m_rayTracer; }
+
+private:
+	Ref< IRayTracer > m_rayTracer;
+};
 
 Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap, bool directional)
 {
@@ -421,7 +450,7 @@ bool TracerProcessor::process(const TracerTask* task)
 	m_status.description = str(L"Preparing (%d models, %d lights)...", task->getTracerModels().size(), task->getTracerLights().size());
 
    	// Create raytracer implementation.
-	Ref< IRayTracer > rayTracer = mandatory_non_null_type_cast< IRayTracer* >(m_rayTracerType->createInstance());
+	ScopedRayTracer rayTracer(mandatory_non_null_type_cast< IRayTracer* >(m_rayTracerType->createInstance()));
 	if (!rayTracer->create(configuration))
 		return false;
 

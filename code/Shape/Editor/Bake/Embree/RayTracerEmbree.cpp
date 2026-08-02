@@ -8,6 +8,7 @@
  */
 #include "Shape/Editor/Bake/Embree/RayTracerEmbree.h"
 
+#include "Core/Containers/SmallMap.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Matrix44.h"
@@ -44,6 +45,7 @@ const Scalar p(1.0f / (2.0f * PI));
 const Scalar c_emissiveBoost(2.0f);
 const float c_epsilonOffset = 0.00001f;
 const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+const RTCFeatureFlags c_featureFlags = (RTCFeatureFlags)(RTC_FEATURE_FLAG_TRIANGLE | RTC_FEATURE_FLAG_INSTANCE);
 
 class WrappedSHFunction : public render::SHFunction
 {
@@ -132,6 +134,8 @@ void constructRayHit16(const Vector4& position, const Vector4& direction, float 
 	outRayHit.hit.instID[0][index] = RTC_INVALID_GEOMETRY_ID;
 }
 
+// Note; embree reports Ng in the space of the instanced geometry, so a hit on an
+// instance need to be rotated by the instance transform to become world space.
 Vector4 getHitNormal(const RTCRayHit& rayHit)
 {
 	return Vector4::loadAligned(&rayHit.hit.Ng_x).xyz0().normalized();
@@ -182,9 +186,31 @@ bool RayTracerEmbree::create(const BakeOperationData* configuration)
 void RayTracerEmbree::destroy()
 {
 	m_shEngine = nullptr;
-	for (auto buffer : m_buffers)
-		Alloc::freeAlign(buffer);
-	m_buffers.clear();
+
+	for (auto geometry : m_geometries)
+	{
+		if (geometry->mesh != nullptr)
+			rtcReleaseGeometry(geometry->mesh);
+		if (geometry->scene != nullptr)
+			rtcReleaseScene(geometry->scene);
+		for (auto buffer : geometry->buffers)
+			Alloc::freeAlign(buffer);
+		delete geometry;
+	}
+	m_geometries.clear();
+	m_instances.clear();
+	m_placements.clear();
+
+	if (m_scene != nullptr)
+	{
+		rtcReleaseScene(m_scene);
+		m_scene = nullptr;
+	}
+	if (m_device != nullptr)
+	{
+		rtcReleaseDevice(m_device);
+		m_device = nullptr;
+	}
 }
 
 void RayTracerEmbree::addEnvironment(const IProbe* environment)
@@ -202,105 +228,82 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 	if (model->getPolygonCount() == 0)
 		return;
 
-	const uint32_t vertexCount = model->getVertexCount();
-
-	// Allocate buffers with positions and texCoords.
-	float* positions = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float), 16, T_FILE_LINE);
-	float* normals = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float), 16, T_FILE_LINE);
-	float* texCoords = (float*)Alloc::acquireAlign(vertexCount * 2 * sizeof(float), 16, T_FILE_LINE); // Allocating tuples of 3 instead of two; seems embree read outside of range.
-	float* colors = (float*)Alloc::acquireAlign(vertexCount * 4 * sizeof(float), 16, T_FILE_LINE);
-
-	m_buffers.push_back(positions);
-	m_buffers.push_back(normals);
-	m_buffers.push_back(texCoords);
-	m_buffers.push_back(colors);
-
-	// Copy positions, normals and texCoords.
-	float* pp = positions;
-	float* pn = normals;
-	float* pt = texCoords;
-	float* pc = colors;
-	for (uint32_t i = 0; i < vertexCount; ++i)
-	{
-		const auto& vertex = model->getVertex(i);
-		T_FATAL_ASSERT(vertex.getNormal() != model::c_InvalidIndex);
-
-		const Vector4 p = transform * model->getPosition(vertex.getPosition()).xyz1();
-		*pp++ = p.x();
-		*pp++ = p.y();
-		*pp++ = p.z();
-
-		const Vector4 n = transform.rotation() * model->getNormal(vertex.getNormal()).xyz0();
-		*pn++ = n.x();
-		*pn++ = n.y();
-		*pn++ = n.z();
-
-		const Vector2 uv = (vertex.getTexCoord(0) != model::c_InvalidIndex) ? model->getTexCoord(vertex.getTexCoord(0)) : Vector2::zero();
-		*pt++ = uv.x;
-		*pt++ = uv.y;
-
-		const Vector4 cl = (vertex.getColor() != model::c_InvalidIndex) ? model->getColor(vertex.getColor()).xyz1() : Vector4::zero();
-		*pc++ = cl.x();
-		*pc++ = cl.y();
-		*pc++ = cl.z();
-		*pc++ = cl.w();
-
-		m_boundingBox.contain(p);
-	}
-
-	RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
-	rtcSetGeometryVertexAttributeCount(mesh, 3);
-
-	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, positions, 0, 3 * sizeof(float), vertexCount);
-	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, RTC_FORMAT_FLOAT3, normals, 0, 3 * sizeof(float), vertexCount);
-	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 1, RTC_FORMAT_FLOAT2, texCoords, 0, 2 * sizeof(float), vertexCount);
-	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 2, RTC_FORMAT_FLOAT4, colors, 0, 4 * sizeof(float), vertexCount);
-
-	uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), model->getPolygons().size());
-	for (const auto& polygon : model->getPolygons())
-	{
-		T_FATAL_ASSERT(polygon.getVertexCount() == 3);
-		*triangles++ = polygon.getVertex(2);
-		*triangles++ = polygon.getVertex(1);
-		*triangles++ = polygon.getVertex(0);
-	}
-
-	// Add filter functions if model contain alpha-test material.
-	for (const auto& material : model->getMaterials())
-	{
-		// if (
-		//	material.getBlendOperator() == model::Material::BoAlphaTest &&
-		//	material.getDiffuseMap().image != nullptr
-		//)
-		//{
-		//	rtcSetGeometryOccludedFilterFunction(mesh, alphaTestFilter);
-		//	rtcSetGeometryIntersectFilterFunction(mesh, alphaTestFilter);
-		// }
-
-		if (material.getBlendOperator() != model::Material::BoDecal)
-			rtcSetGeometryOccludedFilterFunction(mesh, shadowOccluded);
-	}
-
-	// Attach this class as user data to geometry.
-	rtcSetGeometryUserData(mesh, this);
-
-	rtcCommitGeometry(mesh);
-	const uint32_t geomID = rtcAttachGeometry(m_scene, mesh);
-	rtcReleaseGeometry(mesh);
-
-	// Create a flatten list of materials to reduce number of indirections while tracing.
-	m_materialOffset.push_back((uint32_t)m_materials.size());
-	for (const auto& polygon : model->getPolygons())
-	{
-		const auto& material = model->getMaterial(polygon.getMaterial());
-		m_materials.push_back(&material);
-	}
-
-	m_models.push_back(model);
+	// Only record the placement; the actual geometry cannot be created until all
+	// placements are known since that determines if a model should be instanced.
+	m_placements.push_back({ model, transform });
 }
 
 void RayTracerEmbree::commit()
 {
+	// Count number of placements per model. A model placed more than once is built
+	// into a scene of its own which is then instanced for each placement, so both
+	// vertex buffers and BVH are shared. A model placed only once has nothing to
+	// share, thus it's baked into world space and attached directly to the top
+	// level scene to avoid paying for the instancing indirection while tracing.
+	SmallMap< const model::Model*, uint32_t > placementCounts;
+	for (const auto& placement : m_placements)
+		placementCounts[placement.model]++;
+
+	SmallMap< const model::Model*, Geometry* > instancedGeometries;
+
+	m_instances.resize(m_placements.size());
+
+	for (const auto& placement : m_placements)
+	{
+		Instance instance;
+		uint32_t geometryID;
+
+		if (placementCounts[placement.model] <= 1)
+		{
+			instance.geometry = createGeometry(placement.model, placement.transform);
+			geometryID = rtcAttachGeometry(m_scene, instance.geometry->mesh);
+
+			m_boundingBox.contain(instance.geometry->boundingBox);
+		}
+		else
+		{
+			Geometry*& geometry = instancedGeometries[placement.model];
+			if (geometry == nullptr)
+			{
+				geometry = createGeometry(placement.model, Transform::identity());
+				geometry->scene = rtcNewScene(m_device);
+				rtcSetSceneBuildQuality(geometry->scene, RTC_BUILD_QUALITY_HIGH);
+				rtcAttachGeometry(geometry->scene, geometry->mesh);
+				rtcCommitScene(geometry->scene);
+			}
+
+			// Our transforms are rigid so the affine 3x4 matrix expected by embree is
+			// simply the rotated basis vectors followed by the translation.
+			const Matrix44 m = placement.transform.toMatrix44();
+			float xfm[12];
+			m.axisX().storeUnaligned3(&xfm[0]);
+			m.axisY().storeUnaligned3(&xfm[3]);
+			m.axisZ().storeUnaligned3(&xfm[6]);
+			m.translation().storeUnaligned3(&xfm[9]);
+
+			RTCGeometry instanceMesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_INSTANCE);
+			rtcSetGeometryInstancedScene(instanceMesh, geometry->scene);
+			rtcSetGeometryTransform(instanceMesh, 0, RTC_FORMAT_FLOAT3X4_COLUMN_MAJOR, xfm);
+			rtcCommitGeometry(instanceMesh);
+
+			geometryID = rtcAttachGeometry(m_scene, instanceMesh);
+			rtcReleaseGeometry(instanceMesh);
+
+			instance.geometry = geometry;
+			instance.rotation = placement.transform.rotation();
+
+			m_boundingBox.contain(geometry->boundingBox.transform(placement.transform));
+		}
+
+		if (geometryID >= m_instances.size())
+			m_instances.resize(geometryID + 1);
+		m_instances[geometryID] = instance;
+	}
+
+	log::info << L"Ray trace world; " << (uint32_t)m_placements.size() << L" placement(s) of " << (uint32_t)m_geometries.size() << L" unique model(s), " << (uint32_t)instancedGeometries.size() << L" instanced." << Endl;
+
+	m_placements.clear();
+
 	rtcCommitScene(m_scene);
 
 	const RTCError error = rtcGetDeviceError(m_device);
@@ -374,7 +377,7 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 
 	RTCIntersectArguments iargs;
 	rtcInitIntersectArguments(&iargs);
-	iargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+	iargs.feature_mask = c_featureFlags;
 	rtcIntersect1(m_scene, &rh, &iargs);
 
 	if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
@@ -386,18 +389,19 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 			return Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
-	const RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
+	const Instance& instance = getInstance(rh.hit.instID[0], rh.hit.geomID);
+	const RTCGeometry geometry = instance.geometry->mesh;
 	rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, normal, 3);
 	rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 2, color, 4);
 
-	// Get position and normal of hit.
+	// Get position and normal of hit; interpolated attributes are in the space of
+	// the instanced geometry so the normal need to be rotated into world space.
 	const Vector4 hitPosition = position + direction * Scalar(rh.ray.tfar - 0.001f);
-	const Vector4 hitNormal = Vector4::loadAligned(normal).xyz0().normalized();
+	const Vector4 hitNormal = (instance.rotation * Vector4::loadAligned(normal).xyz0()).normalized();
 	const Vector4 hitColor = Vector4::loadAligned(color);
 
 	// Get material as hit.
-	const uint32_t offset = m_materialOffset[rh.hit.geomID];
-	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
+	const auto& hitMaterial = *instance.geometry->materials[rh.hit.primID];
 
 	Color4f hitMaterialColor = lerp(hitMaterial.getColor().linear(), Color4f(hitColor), hitColor.w());
 
@@ -436,6 +440,111 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 	return output;
 }
 
+RayTracerEmbree::Geometry* RayTracerEmbree::createGeometry(const model::Model* model, const Transform& transform)
+{
+	const uint32_t vertexCount = model->getVertexCount();
+
+	Geometry* geometry = new Geometry();
+	geometry->model = model;
+
+	// Allocate buffers with positions and texCoords.
+	float* positions = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float), 16, T_FILE_LINE);
+	float* normals = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float), 16, T_FILE_LINE);
+	float* texCoords = (float*)Alloc::acquireAlign(vertexCount * 2 * sizeof(float), 16, T_FILE_LINE); // Allocating tuples of 3 instead of two; seems embree read outside of range.
+	float* colors = (float*)Alloc::acquireAlign(vertexCount * 4 * sizeof(float), 16, T_FILE_LINE);
+
+	geometry->buffers.push_back(positions);
+	geometry->buffers.push_back(normals);
+	geometry->buffers.push_back(texCoords);
+	geometry->buffers.push_back(colors);
+
+	// Copy positions, normals and texCoords.
+	float* pp = positions;
+	float* pn = normals;
+	float* pt = texCoords;
+	float* pc = colors;
+	for (uint32_t i = 0; i < vertexCount; ++i)
+	{
+		const auto& vertex = model->getVertex(i);
+		T_FATAL_ASSERT(vertex.getNormal() != model::c_InvalidIndex);
+
+		const Vector4 p = transform * model->getPosition(vertex.getPosition()).xyz1();
+		*pp++ = p.x();
+		*pp++ = p.y();
+		*pp++ = p.z();
+
+		const Vector4 n = transform.rotation() * model->getNormal(vertex.getNormal()).xyz0();
+		*pn++ = n.x();
+		*pn++ = n.y();
+		*pn++ = n.z();
+
+		const Vector2 uv = (vertex.getTexCoord(0) != model::c_InvalidIndex) ? model->getTexCoord(vertex.getTexCoord(0)) : Vector2::zero();
+		*pt++ = uv.x;
+		*pt++ = uv.y;
+
+		const Vector4 cl = (vertex.getColor() != model::c_InvalidIndex) ? model->getColor(vertex.getColor()).xyz1() : Vector4::zero();
+		*pc++ = cl.x();
+		*pc++ = cl.y();
+		*pc++ = cl.z();
+		*pc++ = cl.w();
+
+		geometry->boundingBox.contain(p);
+	}
+
+	RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
+	rtcSetGeometryVertexAttributeCount(mesh, 3);
+
+	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, positions, 0, 3 * sizeof(float), vertexCount);
+	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, RTC_FORMAT_FLOAT3, normals, 0, 3 * sizeof(float), vertexCount);
+	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 1, RTC_FORMAT_FLOAT2, texCoords, 0, 2 * sizeof(float), vertexCount);
+	rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 2, RTC_FORMAT_FLOAT4, colors, 0, 4 * sizeof(float), vertexCount);
+
+	uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), model->getPolygons().size());
+	for (const auto& polygon : model->getPolygons())
+	{
+		T_FATAL_ASSERT(polygon.getVertexCount() == 3);
+		*triangles++ = polygon.getVertex(2);
+		*triangles++ = polygon.getVertex(1);
+		*triangles++ = polygon.getVertex(0);
+	}
+
+	// Create a flatten list of materials to reduce number of indirections while tracing.
+	geometry->materials.reserve(model->getPolygonCount());
+	for (const auto& polygon : model->getPolygons())
+	{
+		const auto& material = model->getMaterial(polygon.getMaterial());
+		geometry->materials.push_back(&material);
+	}
+
+	// Add filter functions if model contain alpha-test material.
+	for (const auto& material : model->getMaterials())
+	{
+		// if (
+		//	material.getBlendOperator() == model::Material::BoAlphaTest &&
+		//	material.getDiffuseMap().image != nullptr
+		//)
+		//{
+		//	rtcSetGeometryOccludedFilterFunction(mesh, alphaTestFilter);
+		//	rtcSetGeometryIntersectFilterFunction(mesh, alphaTestFilter);
+		// }
+
+		if (material.getBlendOperator() != model::Material::BoDecal)
+			rtcSetGeometryOccludedFilterFunction(mesh, shadowOccluded);
+	}
+
+	// Attach geometry as user data; filter functions resolve materials through it.
+	rtcSetGeometryUserData(mesh, geometry);
+
+	rtcCommitGeometry(mesh);
+
+	// Keep the handle instead of resolving it through rtcGetGeometry while tracing;
+	// rtcGetGeometry isn't thread safe and we interpolate attributes from all threads.
+	geometry->mesh = mesh;
+
+	m_geometries.push_back(geometry);
+	return geometry;
+}
+
 Color4f RayTracerEmbree::tracePath0(
 	const Vector4& origin,
 	const Vector4& normal,
@@ -468,7 +577,7 @@ Color4f RayTracerEmbree::tracePath0(
 
 		RTCIntersectArguments iargs;
 		rtcInitIntersectArguments(&iargs);
-		iargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+		iargs.feature_mask = c_featureFlags;
 		rtcIntersect16(c_valid, m_scene, &rhv, &iargs);
 
 		for (int32_t j = 0; j < SampleBatch; ++j)
@@ -483,7 +592,8 @@ Color4f RayTracerEmbree::tracePath0(
 				continue;
 			}
 
-			const RTCGeometry geometry = rtcGetGeometry(m_scene, rhv.hit.geomID[j]);
+			const Instance& instance = getInstance(rhv.hit.instID[0][j], rhv.hit.geomID[j]);
+			const RTCGeometry geometry = instance.geometry->mesh;
 
 			const Scalar hitDistance = Scalar(rhv.ray.tfar[j]);
 			const Vector4 hitOrigin = (origin + direction * hitDistance).xyz1();
@@ -491,11 +601,12 @@ Color4f RayTracerEmbree::tracePath0(
 			rtcInterpolate0(geometry, rhv.hit.primID[j], rhv.hit.u[j], rhv.hit.v[j], RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, normalTmp, 3);
 			rtcInterpolate0(geometry, rhv.hit.primID[j], rhv.hit.u[j], rhv.hit.v[j], RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 2, colorTmp, 4);
 
-			const Vector4 hitNormal = Vector4::loadAligned(normalTmp).xyz0();
+			// Interpolated attributes are in the space of the instanced geometry
+			// so the normal need to be rotated into world space.
+			const Vector4 hitNormal = instance.rotation * Vector4::loadAligned(normalTmp).xyz0();
 			const Vector4 hitColor = Vector4::loadAligned(colorTmp);
 
-			const uint32_t offset = m_materialOffset[rhv.hit.geomID[j]];
-			const auto& hitMaterial = *m_materials[offset + rhv.hit.primID[j]];
+			const auto& hitMaterial = *instance.geometry->materials[rhv.hit.primID[j]];
 
 			Color4f hitMaterialColor = lerp(hitMaterial.getColor().linear(), Color4f(hitColor), hitColor.w());
 
@@ -565,7 +676,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 
 	RTCIntersectArguments iargs;
 	rtcInitIntersectArguments(&iargs);
-	iargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+	iargs.feature_mask = c_featureFlags;
 	rtcIntersect1(m_scene, &rh, &iargs);
 
 	if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
@@ -577,7 +688,8 @@ Color4f RayTracerEmbree::traceSinglePath(
 			return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
-	const RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
+	const Instance& instance = getInstance(rh.hit.instID[0], rh.hit.geomID);
+	const RTCGeometry geometry = instance.geometry->mesh;
 
 	const Scalar hitDistance = Scalar(rh.ray.tfar);
 	const Vector4 hitOrigin = (origin + direction * hitDistance).xyz1();
@@ -585,11 +697,12 @@ Color4f RayTracerEmbree::traceSinglePath(
 	rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, normalTmp, 3);
 	rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 2, colorTmp, 4);
 
-	const Vector4 hitNormal = Vector4::loadAligned(normalTmp).xyz0().normalized();
+	// Interpolated attributes are in the space of the instanced geometry so the
+	// normal need to be rotated into world space.
+	const Vector4 hitNormal = (instance.rotation * Vector4::loadAligned(normalTmp).xyz0()).normalized();
 	const Vector4 hitColor = Vector4::loadAligned(colorTmp);
 
-	const uint32_t offset = m_materialOffset[rh.hit.geomID];
-	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
+	const auto& hitMaterial = *instance.geometry->materials[rh.hit.primID];
 
 	Color4f hitMaterialColor = lerp(hitMaterial.getColor().linear(), Color4f(hitColor), hitColor.w());
 
@@ -654,7 +767,7 @@ Scalar RayTracerEmbree::traceOcclusion(
 		// Intersect test all rays using ray streams.
 		RTCOccludedArguments oargs;
 		rtcInitOccludedArguments(&oargs);
-		oargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+		oargs.feature_mask = c_featureFlags;
 		rtcOccluded16(c_valid, m_scene, &rv, &oargs);
 
 		// Count number of occluded rays.
@@ -719,7 +832,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 
 						RTCOccludedArguments oargs;
 						rtcInitOccludedArguments(&oargs);
-						oargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+						oargs.feature_mask = c_featureFlags;
 						rtcOccluded1(m_scene, &r, &oargs);
 
 						if (r.tfar < 0.0f)
@@ -774,7 +887,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 
 						RTCOccludedArguments oargs;
 						rtcInitOccludedArguments(&oargs);
-						oargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+						oargs.feature_mask = c_featureFlags;
 						rtcOccluded1(m_scene, &r, &oargs);
 
 						if (r.tfar < 0.0f)
@@ -834,7 +947,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 
 						RTCOccludedArguments oargs;
 						rtcInitOccludedArguments(&oargs);
-						oargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+						oargs.feature_mask = c_featureFlags;
 						rtcOccluded1(m_scene, &r, &oargs);
 
 						if (r.tfar < 0.0f)
@@ -856,7 +969,7 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 	if (args->context == nullptr)
 		return;
 
-	RayTracerEmbree* self = (RayTracerEmbree*)args->geometryUserPtr;
+	const Geometry* geometry = (const Geometry*)args->geometryUserPtr;
 	RTCHitN* hits = args->hit;
 	Color4f color;
 
@@ -865,11 +978,8 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 		if (args->valid[i] != -1)
 			continue;
 
-		const uint32_t geomID = RTCHitN_geomID(hits, args->N, i);
 		const uint32_t primID = RTCHitN_primID(hits, args->N, i);
-
-		const uint32_t offset = self->m_materialOffset[geomID];
-		const auto& hitMaterial = *self->m_materials[offset + primID];
+		const auto& hitMaterial = *geometry->materials[primID];
 
 		if (hitMaterial.getBlendOperator() != model::Material::BoAlphaTest)
 			continue;
@@ -883,8 +993,7 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 			const float u = RTCHitN_u(hits, args->N, i);
 			const float v = RTCHitN_v(hits, args->N, i);
 
-			RTCGeometry geometry = rtcGetGeometry(self->m_scene, geomID);
-			rtcInterpolate0(geometry, primID, u, v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+			rtcInterpolate0(geometry->mesh, primID, u, v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
 			if (image->getPixel(
 					(int32_t)(wrap(texCoord[0]) * image->getWidth()),
@@ -903,7 +1012,7 @@ void RayTracerEmbree::shadowOccluded(const RTCFilterFunctionNArguments* args)
 	if (args->context == nullptr)
 		return;
 
-	RayTracerEmbree* self = (RayTracerEmbree*)args->geometryUserPtr;
+	const Geometry* geometry = (const Geometry*)args->geometryUserPtr;
 	RTCHitN* hits = args->hit;
 
 	// Only rays occluded by opaque material are valid.
@@ -912,11 +1021,8 @@ void RayTracerEmbree::shadowOccluded(const RTCFilterFunctionNArguments* args)
 		if (args->valid[i] != -1)
 			continue;
 
-		const uint32_t geomID = RTCHitN_geomID(hits, args->N, i);
 		const uint32_t primID = RTCHitN_primID(hits, args->N, i);
-
-		const uint32_t offset = self->m_materialOffset[geomID];
-		const auto& hitMaterial = *self->m_materials[offset + primID];
+		const auto& hitMaterial = *geometry->materials[primID];
 
 		if (hitMaterial.getBlendOperator() != model::Material::BoDecal)
 			args->valid[i] = 0;
