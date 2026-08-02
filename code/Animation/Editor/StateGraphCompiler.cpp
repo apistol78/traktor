@@ -95,7 +95,7 @@ Ref< RtStateGraphData > StateGraphCompiler::compile(const StateGraph* stateGraph
 		}
 		else
 		{
-			// Since from is "any" node we need to create a transition from every transition.
+			// Since from is "any" node we need to create a transition from every other state.
 			for (auto state : stateGraph->getStates())
 			{
 				if (!is_a< StateNodeAny >(state))

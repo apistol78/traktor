@@ -178,6 +178,12 @@ bool Pipeline::buildOutput(
 			sprite);
 	}
 
+	if (!movie)
+	{
+		log::error << L"Failed to import Spark movie." << Endl;
+		return false;
+	}
+
 	// Show some information about the Flash.
 	log::info << L"Spark movie successfully loaded," << Endl;
 	log::info << IncreaseIndent;
