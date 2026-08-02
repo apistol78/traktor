@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mcp.SkillAsset">
+	<name>custom-uikit-widget</name>
+	<description>Author a bespoke UiKit widget whose art is an SVG imported as a Spark movie, and preview it with a Scaffolding test page.</description>
+	<whenToUse><![CDATA[Asked for on-screen UI that the stock UiKit widgets cannot express — a health/stamina bar with real art, an animated icon, a gauge, a custom meter — or asked to give a widget bespoke art, or to make a live preview/test page for a widget. For HUD labels, buttons and modal menus from stock widgets, use uikit-hud-menus instead.]]></whenToUse>
+	<body><![CDATA[# Custom UiKit widget from SVG art
+
+Build a `Widget` subclass whose graphics are authored as an **SVG imported as a Spark `MovieAsset`**, then animate the named sprites inside it. Use this when `Static`/`PushButton`/`ProgressBar`/`Image` cannot express the element. For stock HUD labels, buttons and modal menus see *uikit-hud-menus*; for script idioms see *traktor-lua-scripting*.
+
+## 1. Author the SVG
+
+A `MovieAsset` whose `fileName` ends in `.svg` is imported by `ConvertSvg`, which turns every element carrying a **`traktor:sprite`** attribute (plus an `id`) into a sprite character:
+
+- **top level** → exported under its id: this is what `Widget._createResource(parent, "{{resource}}")` instantiates;
+- **nested** → placed on its parent's frame under its id: this is what `mc:getMember("fill")` returns, i.e. the parts you animate.
+
+An element with `traktor:sprite` but no `id` is silently skipped, along with its whole subtree.
+
+```xml
+<svg width="460" height="56" viewBox="0 0 460 56"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:traktor="http://traktor/svg">
+  <g id="{{resource}}" traktor:sprite="1" style="display:inline">
+    <g id="plate" traktor:sprite="1">
+      <polygon points="66,12 446,12 454,20" style="fill:#1e1e24"/>
+    </g>
+    <g id="fill" traktor:sprite="1">
+      <rect x="62" y="16" width="388" height="24" style="fill:#a8a8a8"/>
+    </g>
+  </g>
+</svg>
+```
+
+Rules the importer imposes on the authoring:
+
+- **Put every drawable inside a named child sprite.** Shapes owned directly by a sprite are placed on its frame *after* its child sprites, so they would cover them. With one sprite per layer, depth order is document order.
+- `viewBox="0 0 W H"` with matching `width`/`height` gives 1 SVG unit = 1 pixel of widget space.
+- **Author each exported widget at the origin.** Coordinates end up absolute in movie space, so a widget authored at x=470 would draw 470px off. Several widgets in one file therefore overlap; toggle `display:none` per layer to edit them, exactly as `data/Assets/System/UiKit/Resources/UiKit2.svg` does.
+- **Style is not inherited from `<g>`** — every drawable needs its own `style="fill:#rrggbb;fill-opacity:0.45"`. A `fill=` *attribute* makes the parser ignore `style` entirely, so use one or the other. Colours must be 6-digit hex.
+- Geometry: `rect` (with `rx`/`ry`), `circle`, `ellipse`, `polygon`, `polyline`, `path` (`M L H V C S Q T Z`; **`A` degenerates to a straight line**), `image`, `text`.
+- `<text id="caption_tb">` becomes an `Edit` field, but only if the font is listed in the MovieAsset's `fonts`. Parenting a UiKit `Static` to the widget is usually simpler and matches the rest of the UI.
+
+## 2. Import and register it
+
+- Create a `traktor.spark.MovieAsset`, `fileName` relative to `Pipeline.AssetPath` (e.g. `UI/Hud.svg`).
+- Add its guid to `Widget.initialize(resourceManager, { ... })` in **every stage that uses the widget**, keeping UiKit's own movie in the list (`Static`, `Dialog`, … come from there). `Widget._createResource` searches the kits in order.
+
+## 3. The widget class
+
+```lua
+{{name}} = {{name}} or class("{{name}}", Widget)
+
+{{name}}:setStyle("resource", "{{resource}}")
+
+local W < const > = 460   -- must match the SVG
+local H < const > = 56
+
+function {{name}}:new(parent, skin)
+	local mc < const > = Widget._createResource(parent, skin or self:getStyle().resource)
+	assert(mc ~= nil, "{{name}}; no such movie resource, is the movie in the resource kits?")
+	self:_initialize(parent, mc)
+end
+
+function {{name}}:getPreferredSize()
+	return { width = W, height = H }
+end
+
+function {{name}}:_initialize(parent, mc)
+	Widget._initialize(self, parent, mc)
+
+	-- Fixed size art: never let a layout stretch the placement past it.
+	self._halign = Widget.ALIGN_CENTER
+	self._valign = Widget.ALIGN_CENTER
+
+	self._fill_mc = mc:getMember("fill")
+	assert(self._fill_mc ~= nil, "{{name}}; movie resource is missing its parts")
+end
+```
+
+A plain `Widget` lays out **no** children, so a `Static` parented to it must be placed by hand in `place()` — and again whenever its text changes, or it keeps the position it was centred at.
+
+## 4. Animate it
+
+Drive transforms and colour only; never rebuild geometry at runtime.
+
+- `mc.X` / `mc.Y` (pixels), `mc.xScale` / `mc.yScale` / `mc.scale` (**percent**, `Vector2`), `mc.visible`, `mc.alpha` (0..1), `mc.colorTransform = traktor.spark.ColorTransform(mul, add)`.
+- **Tint trick**: author the art greyscale and recolour it per frame with a colour transform — one call restyles a whole shaded bar (e.g. green → amber → red by health).
+- Expose an `:update(dt)` and call it from the `Stage` each frame. Calling it above the paused/game-over early-returns lets animations settle while the game is frozen.
+
+**PIVOT GOTCHA.** Because the importer bakes shapes at absolute movie coordinates, a child sprite's origin is the *movie's* origin, not its art's — scaling one pushes it away from that origin. Translate back to pin a pivot:
+
+```lua
+-- Horizontal scale about the vertical line x = px (bar fills).
+local function scaleX(mc, px, s)
+	mc.xScale = s * 100
+	mc.X = px * (1 - s)
+end
+
+-- Uniform scale about (px, py) (icons that pulse in place).
+local function scaleAbout(mc, px, py, s)
+	mc.scale = Vector2(s * 100, s * 100)
+	mc.X = px * (1 - s)
+	mc.Y = py * (1 - s)
+end
+```
+
+Never scale to exactly 0 — that leaves a degenerate transform behind. Hide the clip instead.
+
+## 5. Preview it with a Scaffolding page
+
+`traktor.uikit.Scaffolding` gives a live editor preview that rebuilds whenever a script or the art is saved — the fastest loop for widget work, and it needs no game running.
+
+- Create a `traktor.uikit.Scaffolding` instance whose `scaffoldingClass` is the guid of a script defining a `Scaffolding` subclass (`#using \{218D113A-66DC-9049-8424-701FF60F2BC4}`).
+
+```lua
+{{name}}Scaffolding = {{name}}Scaffolding or class("{{name}}Scaffolding", Scaffolding)
+
+function {{name}}Scaffolding:getResourceKits()
+	return { "\{<your movie guid>}", "\{<UiKit movie guid>}" }
+end
+
+function {{name}}Scaffolding:setup(frame)
+	self._widget = {{name}}(Panel(frame, TableLayout({ 0 }, { 0 }, 24, 24, 0, 14)))
+end
+
+function {{name}}Scaffolding:update()
+	Scaffolding.update(self)
+	self._widget:update(1 / 60)   -- plus whatever drives the widget's state
+end
+```
+
+- The editor's preview control constructs the class with `(database, resourceManager, root, width, height)` and calls `update()` every tick, so scripted state changes belong there. Show a few instances at fixed values next to one driven through its whole state loop, so every animation path is exercised.
+- Examples to copy: `System/Examples/UiKit`.
+
+## Gotchas (hard-won)
+
+- **`--` is illegal inside an XML comment.** A malformed SVG fails the import with `XML parse error at line N` — and has been seen to take the *editor* down, so validate the file before building it.
+- The importer's number scanner **skips a leading `.`**, so `.5` reads as `5`. Always emit a leading digit (`0.5`), and never scientific notation.
+- **Build the movie headlessly first** to keep a bad SVG away from the editor: `LD_LIBRARY_PATH=<bin> Traktor.Pipeline.App -n -v -f "{movie guid}"` from a sandbox whose settings point at a `binary=false` output database. The converted movie is then XML you can read directly — check `exports`, the character tree (nested sprite names) and the shapes' fill colours before trusting anything.
+- `Container:getPreferredSize` **memoizes** `_cachedEstimate`, cleared only when a child is added/removed or the container is placed at a different size. A widget whose preferred size follows its content therefore never triggers a re-layout. Prefer a fixed-size widget and re-place its own text, or clear the caches up the parent chain and call `getAncestor():update()` yourself.
+- The dynamic canvas API (`SpriteInstance:createCanvas`, `traktor.spark.Canvas`) is exposed to script and looks like an easy way to draw widget art, but it has not been exercised in a long time — prefer imported movie art.
+- Generating the SVG from a small script keeps chamfers, hexagons and curves exact and re-tunable; the result is still a normal SVG that can be edited in Inkscape afterwards.
+]]></body>
+	<engineVersion/>
+	<published>false</published>
+	<parameters>
+		<item type="traktor.mcp.SkillParameter">
+			<name>name</name>
+			<description>Widget class name</description>
+			<defaultValue>HealthBar</defaultValue>
+		</item>
+		<item type="traktor.mcp.SkillParameter">
+			<name>resource</name>
+			<description>Exported sprite id in the SVG</description>
+			<defaultValue>MC_HealthBar</defaultValue>
+		</item>
+	</parameters>
+</object>
