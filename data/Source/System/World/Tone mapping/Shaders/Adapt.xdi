@@ -31,10 +31,10 @@
 			<outputPins/>
 			<script><![CDATA[
 			
-const float AdapationRate = 0.03f;
+const float AdapationRate = 0.1f;
 
-const float MinIllum = 0.2f;
-const float MaxIllum = 0.8f;
+const float MinIllum = 0.03f;
+const float MaxIllum = 100.0f;
 
 const float last = $Buffer[0].value.x;
 $Buffer[0].value.x = clamp($Current * AdapationRate + last * (1.0f - AdapationRate), MinIllum, MaxIllum);

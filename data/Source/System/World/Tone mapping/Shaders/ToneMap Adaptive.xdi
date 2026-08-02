@@ -193,7 +193,7 @@ W
 				<first>1078</first>
 				<second>379</second>
 			</position>
-			<value>0.55</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{BD1C6E6B-7984-4A48-A9FC-40254FD2885D}</id>
@@ -265,8 +265,8 @@ vec3 x = max($Input.xyz, vec3(0.0f));
 float a = 3.0f;
 float b = 0.1f;
 float c = 1.25f;
-float d = 1.3f;
-float e = 0.5f;
+float d = 1.4f;
+float e = 0.6f;
 $Output = vec4(
 	clamp((x * (a * x + b)) / (x * (c * x + d) + e), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f)),
 	1.0f
