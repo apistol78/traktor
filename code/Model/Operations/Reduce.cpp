@@ -7,7 +7,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <limits>
-#include "Core/Containers/StaticSet.h"
+#include "Core/Containers/SmallSet.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
 #include "Model/Model.h"
@@ -19,6 +20,19 @@
 
 // Loosely based on following paper
 // http://www.jofcis.com/publishedpapers/2013_9_11_4271_4279.pdf
+
+// The volume-error metric below decides which triangle collapses next, and the greedy
+// loop is sensitive to the exact floating-point result. The Win64 release build compiles
+// with /fp:fast, which lets MSVC reassociate and FMA-contract this math; that breaks the
+// bit-exact symmetry between mirrored triangles that the Linux build (no fast-math)
+// preserves, so on a symmetric model the loop drains one side first and strips, for
+// example, every leaf on one half of a tree through the X=0 plane. Pin this translation
+// unit to precise IEEE semantics so the reduction is deterministic across compilers. All
+// of the metric's Vector4/Scalar/Plane math is header-inlined, so it is covered here.
+#if defined(_MSC_VER)
+#	pragma float_control(precise, on, push)
+#	pragma fp_contract(off)
+#endif
 
 namespace traktor::model
 {
@@ -306,8 +320,13 @@ bool Reduce::apply(Model& model) const
 	}
 
 	StaticVector< uint32_t, 4 > errorTrianglePositionIds;
-	StaticVector< uint32_t, 64 > modifiedPolygons;
-	StaticSet< uint32_t, 64 > modifiedPositions;
+	// These grow with the valence of the collapsed vertex and are not bounded by any small
+	// constant, so they must be dynamically sized. Fixed-capacity containers here overflowed
+	// the stack for dense meshes (silently in release, where the capacity assert is compiled
+	// out), which corrupted adjacent locals differently per compiler and made the reduction
+	// diverge between the VS and GCC builds.
+	AlignedVector< uint32_t > modifiedPolygons;
+	SmallSet< uint32_t > modifiedPositions;
 
 	// Iterate and discard triangles until target is meet.
 	const uint32_t targetPolygonCount = (int32_t)(model.getPolygonCount() * m_target + 0.5f);
@@ -416,3 +435,7 @@ bool Reduce::apply(Model& model) const
 }
 
 }
+
+#if defined(_MSC_VER)
+#	pragma float_control(pop)
+#endif

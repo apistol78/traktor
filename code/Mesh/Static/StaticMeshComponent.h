@@ -47,7 +47,9 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
+	void setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView);
+
+	void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass);
 
 private:
 	resource::Proxy< StaticMesh > m_mesh;

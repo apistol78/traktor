@@ -71,7 +71,7 @@ void ModelAdjacency::remove(uint32_t polygon, bool reindex)
 	const uint32_t firstEdge = m_polygonToFirstEdge[polygon];
 	T_FATAL_ASSERT(firstEdge != c_InvalidIndex);
 
-	for (uint32_t i = firstEdge; m_edges[i].polygon == polygon; ++i)
+	for (uint32_t i = firstEdge; i < m_edges.size() && m_edges[i].polygon == polygon; ++i)
 	{
 		Edge& edge = m_edges[i];
 
@@ -122,7 +122,7 @@ void ModelAdjacency::update(uint32_t polygon)
 	T_FATAL_ASSERT(firstEdge != c_InvalidIndex);
 
 	// Remove references to this polygon's edges from sharing edges.
-	for (uint32_t i = firstEdge; m_edges[i].polygon == polygon; ++i)
+	for (uint32_t i = firstEdge; i < m_edges.size() && m_edges[i].polygon == polygon; ++i)
 	{
 		Edge& edge = m_edges[i];
 		for (uint32_t o = 0; o < edge.shareDataCount; ++o)
@@ -173,7 +173,7 @@ uint32_t ModelAdjacency::getEdge(uint32_t polygon, uint32_t polygonEdge) const
 	const uint32_t firstEdge = m_polygonToFirstEdge[polygon];
 	T_FATAL_ASSERT(firstEdge != c_InvalidIndex);
 
-	for (uint32_t i = firstEdge; m_edges[i].polygon == polygon; ++i)
+	for (uint32_t i = firstEdge; i < m_edges.size() && m_edges[i].polygon == polygon; ++i)
 	{
 		const Edge& edge = m_edges[i];
 		if (edge.polygon == polygon && edge.polygonEdge == polygonEdge)
@@ -267,7 +267,7 @@ ModelAdjacency::ShareView ModelAdjacency::getSharedEdges(uint32_t polygon, uint3
 	const uint32_t firstEdge = m_polygonToFirstEdge[polygon];
 	T_FATAL_ASSERT(firstEdge != c_InvalidIndex);
 
-	for (uint32_t i = firstEdge; m_edges[i].polygon == polygon; ++i)
+	for (uint32_t i = firstEdge; i < m_edges.size() && m_edges[i].polygon == polygon; ++i)
 	{
 		const Edge& edge = m_edges[i];
 		if (edge.polygon == polygon && edge.polygonEdge == polygonEdge)
@@ -287,7 +287,7 @@ uint32_t ModelAdjacency::getSharedEdgeCount(uint32_t polygon, uint32_t polygonEd
 	const uint32_t firstEdge = m_polygonToFirstEdge[polygon];
 	T_FATAL_ASSERT(firstEdge != c_InvalidIndex);
 
-	for (uint32_t i = firstEdge; m_edges[i].polygon == polygon; ++i)
+	for (uint32_t i = firstEdge; i < m_edges.size() && m_edges[i].polygon == polygon; ++i)
 	{
 		const Edge& edge = m_edges[i];
 		if (edge.polygon == polygon && edge.polygonEdge == polygonEdge)
@@ -373,7 +373,13 @@ void ModelAdjacency::shareDataPushBack(Edge& edge, uint32_t value)
 		edge.shareDataCapacity += 16;
 		const uint32_t newOffset = m_shareData.size();
 
-		m_shareData.reserve(newOffset + 16);
+		// Reserve the whole appended region up front. The copy loop below reads from
+		// m_shareData while pushing into it, so a reallocation mid-loop would leave the
+		// source (an argument reference into the old, freed buffer) dangling - undefined
+		// behaviour that read back differently on MSVC vs GCC and made adjacency, and thus
+		// the Reduce operation, diverge between platforms. Reserving the full count keeps
+		// every source reference valid for the duration of the loops.
+		m_shareData.reserve(newOffset + edge.shareDataCapacity);
 		for (uint32_t i = 0; i < edge.shareDataCount; ++i)
 			m_shareData.push_back(m_shareData[edge.shareDataOffset + i]);
 		for (uint32_t i = edge.shareDataCount; i < edge.shareDataCapacity; ++i)

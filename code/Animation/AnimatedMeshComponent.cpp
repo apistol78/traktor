@@ -37,9 +37,9 @@ const struct
 	int32_t updatePeriod;
 }
 c_updatePeriods[] = {
-	{ 10.0f, 4, 1 },
-	{ 20.0f, 8, 2 },
-	{ 30.0f, 16, 4 },
+	{ 20.0f, 10, 1 },
+	{ 40.0f, 30, 2 },
+	{ 60.0f, 50, 4 },
 	{ std::numeric_limits< float >::max(), std::numeric_limits< int32_t >::max(), 8 }
 };
 

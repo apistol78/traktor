@@ -48,11 +48,11 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual void build(
+	void build(
 		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
-	) override final;
+	);
 
 	inline resource::Proxy< InstanceMesh >& getMesh() { return m_mesh; }
 

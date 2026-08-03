@@ -61,9 +61,9 @@
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
-const int N = 16;
+const int N = 4;
 const float Far = 70.0f;
-const float TemporalFilter = 0.9f;
+const float TemporalFilter = 0.925f;
 
 
 HWRT_Material m;

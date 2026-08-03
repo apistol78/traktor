@@ -120,6 +120,8 @@ render::RGTargetSet RTAmbientOcclusionPass::setup(
 
 	render::ImageGraphContext igctx;
 	igctx.setTechniqueFlag(ShaderPermutation::RayTracingEnable, true);
+	igctx.associateTextureTargetSet(ShaderParameter::InputDepth, gbufferTargetSetId, 0);
+	igctx.associateTexture(ShaderParameter::InputHalfResDepth, halfResDepthTextureId);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
 	rp->addInput(gbufferTargetSetId);

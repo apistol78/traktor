@@ -111,13 +111,22 @@ bool SkinnedMeshComponent::setup(const world::WorldRenderView& worldRenderView, 
 
 	if (m_rtwInstance)
 	{
-		bool rebuild = false;
-		if (++m_rtUpdates > c_maxRtUpdatesBeforeBuild)
+		const Vector4 eyePosition = worldRenderView.getEyePosition();
+		const Scalar farDistance = worldRenderView.getViewFrustum().getFarZ();
+		const Scalar cullDistance = farDistance * 0.5_simd;
+
+		const Scalar distance = (worldTransform.translation().xyz0() - eyePosition.xyz0()).length();
+		if (distance <= cullDistance)
 		{
-			rebuild = true;
-			m_rtUpdates = 0;
+			bool rebuild = false;
+			if (++m_rtUpdates > c_maxRtUpdatesBeforeBuild)
+			{
+				rebuild = true;
+				m_rtUpdates = 0;
+			}
+			m_mesh->buildAccelerationStructure(renderContext, m_skinBuffer[0], m_rtAccelerationStructure, rebuild, asynchronous);
 		}
-		m_mesh->buildAccelerationStructure(renderContext, m_skinBuffer[0], m_rtAccelerationStructure, rebuild, asynchronous);
+
 		m_rtwInstance->setTransform(worldTransform);
 	}
 

@@ -11,11 +11,12 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Database/Instance.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Mesh/Instance/InstanceMeshComponentRenderer.h"
 #include "Mesh/MeshComponentData.h"
-#include "Mesh/MeshComponentRenderer.h"
 #include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshResourceFactory.h"
 #include "Mesh/Skinned/SkinnedMeshComponentRenderer.h"
+#include "Mesh/Static/StaticMeshComponentRenderer.h"
 #include "Resource/Id.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
@@ -63,7 +64,8 @@ void MeshSceneEditorPlugin::createEntityRenderers(
 	const TypeInfo& worldRendererType,
 	RefArray< world::IEntityRenderer >& outEntityRenderers) const
 {
-	outEntityRenderers.push_back(new mesh::MeshComponentRenderer());
+	outEntityRenderers.push_back(new mesh::InstanceMeshComponentRenderer());
+	outEntityRenderers.push_back(new mesh::StaticMeshComponentRenderer());
 	outEntityRenderers.push_back(new mesh::SkinnedMeshComponentRenderer());
 }
 

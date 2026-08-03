@@ -58,8 +58,6 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override;
 
-	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) = 0;
-
 	/*! Set parameter callback.
 	 * 
 	 * Callback is invoked each time a piece of a

@@ -77,14 +77,18 @@ void StaticMeshComponent::setState(const world::EntityState& state, const world:
 void StaticMeshComponent::setTransform(const Transform& transform)
 {
 	MeshComponent::setTransform(transform);
-
-	if (m_rtwInstance)
-		m_rtwInstance->setTransform(transform);
 }
 
 Aabb3 StaticMeshComponent::getBoundingBox() const
 {
 	return m_mesh->getBoundingBox();
+}
+
+void StaticMeshComponent::setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView)
+{
+	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+	if (m_rtwInstance && worldTransform != m_lastTransform)
+		m_rtwInstance->setTransform(worldTransform);
 }
 
 void StaticMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)

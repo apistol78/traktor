@@ -2354,7 +2354,7 @@ const std::map< std::wstring, std::wstring >& nodeEmitterCapture()
 
 	return true;
 })NODESRC" },
-		{ L"Sampler", LR"NODESRC(bool emitSampler(GlslContext& cx, Sampler* node)
+/*		{ L"Sampler", LR"NODESRC(bool emitSampler(GlslContext& cx, Sampler* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
@@ -2568,7 +2568,7 @@ const std::map< std::wstring, std::wstring >& nodeEmitterCapture()
 	}
 
 	return true;
-})NODESRC" },
+})NODESRC" },*/
 		{ L"Scalar", LR"NODESRC(bool emitScalar(GlslContext& cx, Scalar* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);

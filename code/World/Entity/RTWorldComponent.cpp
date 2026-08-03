@@ -6,6 +6,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <algorithm>
+
+#include "Core/Math/Const.h"
+#include "Core/Misc/Align.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IAccelerationStructure.h"
 #include "Render/IRenderSystem.h"
@@ -16,13 +20,21 @@
 
 namespace traktor::world
 {
+namespace
+{
+
+// Top level instance capacity is grown in multiples of this so small fluctuations in the
+// instance count do not trigger a reallocation of the structure every frame.
+const uint32_t c_tlasCapacityGranularity = 1024;
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.RTWorldComponent", RTWorldComponent, IWorldComponent)
 
 RTWorldComponent::RTWorldComponent(render::IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
 {
-	m_tlas = renderSystem->createTopLevelAccelerationStructure(1024);
+	ensureTopLevelCapacity(0);
 }
 
 void RTWorldComponent::destroy()
@@ -53,16 +65,35 @@ RTWorldComponent::Instance* RTWorldComponent::createInstance(const AlignedVector
 	m_instances.push_back(instance);
 	m_instanceBufferDirty = true;
 
+	// Grow the top level structure here, on the instance-mutation path, so the (possibly
+	// recreated) structure is in place before the world renderer gathers it for the frame.
+	ensureTopLevelCapacity(countInstances());
+
 	return instance;
 }
 
-void RTWorldComponent::writeAccelerationStructure(render::IRenderView* renderView)
+void RTWorldComponent::writeAccelerationStructure(render::IRenderView* renderView, const Vector4& eyePosition, float farDistance)
 {
+	// Distance culling depends on the camera, so re-dirty when the eye moves; otherwise the
+	// culled set would never refresh on a static scene with a moving camera.
+	const Scalar movmentGranularity = 0.5_simd;
+	if ((eyePosition - m_lastEyePosition).length() > movmentGranularity)
+	{
+		m_lastEyePosition = eyePosition;
+		m_instanceBufferDirty = true;
+	}
+
 	if (m_instanceBufferDirty)
 	{
+		const Scalar cullDistance(farDistance * 0.5f);
+
 		AlignedVector< render::IAccelerationStructure::Instance > tlasInstances;
 		for (const auto& instance : m_instances)
 		{
+			const Scalar distance = (instance->transform.translation().xyz0() - eyePosition.xyz0()).length();
+			if (distance > cullDistance)
+				continue;
+
 			for (auto part : instance->parts)
 			{
 				tlasInstances.push_back({
@@ -72,6 +103,7 @@ void RTWorldComponent::writeAccelerationStructure(render::IRenderView* renderVie
 				});
 			}
 		}
+
 		renderView->writeAccelerationStructure(m_tlas, tlasInstances, false);
 		m_instanceBufferDirty = false;
 	}
@@ -88,6 +120,34 @@ void RTWorldComponent::destroyInstance(Instance* instance)
 	m_instanceBufferDirty = true;
 
 	delete instance;
+}
+
+uint32_t RTWorldComponent::countInstances() const
+{
+	uint32_t count = 0;
+	for (const auto& instance : m_instances)
+		count += (uint32_t)instance->parts.size();
+	return count;
+}
+
+void RTWorldComponent::ensureTopLevelCapacity(uint32_t numInstances)
+{
+	if (m_tlas != nullptr && numInstances <= m_tlasCapacity)
+		return;
+
+	// Round up so the structure has headroom and does not need to be recreated for every
+	// added instance. The previous structure, if any, is retired safely (deferred until its
+	// retirement fence has passed) so in-flight frames keep a valid one.
+	const uint32_t capacity = alignUp(std::max(numInstances, c_tlasCapacityGranularity), c_tlasCapacityGranularity);
+
+	Ref< render::IAccelerationStructure > tlas = m_renderSystem->createTopLevelAccelerationStructure(capacity);
+	if (!tlas)
+		return;
+
+	safeDestroy(m_tlas);
+	m_tlas = tlas;
+	m_tlasCapacity = capacity;
+	m_instanceBufferDirty = true;
 }
 
 void RTWorldComponent::Instance::destroy()

@@ -9,8 +9,10 @@
 #include "World/Entity/RTWorldRenderer.h"
 
 #include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "World/Entity/RTWorldComponent.h"
-#include "World/WorldBuildContext.h"
+#include "World/WorldRenderView.h"
+#include "World/WorldSetupContext.h"
 
 namespace traktor::world
 {
@@ -30,36 +32,34 @@ const TypeInfoSet RTWorldRenderer::getRenderableTypes() const
 void RTWorldRenderer::setup(
 	const WorldSetupContext& context,
 	const WorldRenderView& worldRenderView,
-	const AlignedVector< Object* >& renderables
-)
+	const AlignedVector< Object* >& renderables)
 {
+	const Vector4 eyePosition = worldRenderView.getEyePosition();
+	const float farDistance = worldRenderView.getViewFrustum().getFarZ();
+
+	Ref< render::RenderPass > rp = new render::RenderPass(L"RT world setup");
+	rp->addInput(render::RGDependency::First);
+	rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+		auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"RTWorldRenderer");
+		rb->lambda = [=](render::IRenderView* renderView) {
+			for (Object* renderable : renderables)
+			{
+				auto rtWorldComponent = static_cast< RTWorldComponent* >(renderable);
+				rtWorldComponent->writeAccelerationStructure(renderView, eyePosition, farDistance);
+			}
+		};
+		renderContext->compute(rb);
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::AccelerationStructureUpdate, render::Stage::Vertex | render::Stage::Fragment | render::Stage::Compute, nullptr, 0, false);
+	});
+	context.getRenderGraph().addPass(rp);
 }
 
 void RTWorldRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
-	const AlignedVector< Object* >& renderables
-)
+	const AlignedVector< Object* >& renderables)
 {
-	render::RenderContext* renderContext = context.getRenderContext();
-	T_ASSERT(renderContext);
-
-	auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"RTWorldRenderer");
-	rb->lambda = [=](render::IRenderView* renderView)
-	{
-		for (Object* renderable : renderables)
-		{
-			auto rtWorldComponent = static_cast< RTWorldComponent* >(renderable);
-			rtWorldComponent->writeAccelerationStructure(renderView);
-		}
-	};
-	renderContext->compute(rb);
-
-	// Fence the top level acceleration structure build (graphics queue) ahead of the ray tracing
-	// passes that read it. Without this the RT passes can sample the previous frame's TLAS, which
-	// shows up as the ray traced geometry lagging the rasterized mesh while it moves.
-	renderContext->compute< render::BarrierRenderBlock >(render::Stage::AccelerationStructureUpdate, render::Stage::Vertex | render::Stage::Fragment | render::Stage::Compute, nullptr, 0, false);
 }
 
 }

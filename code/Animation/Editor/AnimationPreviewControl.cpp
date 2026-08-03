@@ -13,8 +13,8 @@
 #include "Animation/Animation/RtStateGraphResourceFactory.h"
 #include "Animation/AnimationResourceFactory.h"
 #include "Animation/Editor/SkeletonRenderer.h"
-#include "Animation/RagDoll/RagDollResourceFactory.h"
 #include "Animation/Joint.h"
+#include "Animation/RagDoll/RagDollResourceFactory.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonComponent.h"
 #include "Animation/SkeletonUtils.h"
@@ -30,18 +30,18 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
-#include "Mesh/MeshComponentRenderer.h"
 #include "Mesh/MeshEntityFactory.h"
-#include "Physics/Body.h"
-#include "Physics/BoxShapeDesc.h"
-#include "Physics/CollisionSpecification.h"
-#include "Physics/PhysicsManager.h"
-#include "Physics/PhysicsFactory.h"
-#include "Physics/StaticBodyDesc.h"
-#include "Physics/World/EntityFactory.h"
 #include "Mesh/MeshResourceFactory.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshComponentRenderer.h"
+#include "Mesh/Static/StaticMeshComponentRenderer.h"
+#include "Physics/Body.h"
+#include "Physics/BoxShapeDesc.h"
+#include "Physics/CollisionSpecification.h"
+#include "Physics/PhysicsFactory.h"
+#include "Physics/PhysicsManager.h"
+#include "Physics/StaticBodyDesc.h"
+#include "Physics/World/EntityFactory.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraphFactory.h"
@@ -307,7 +307,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 	safeDestroy(m_worldRenderer);
 
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
+	worldEntityRenderers->add(new mesh::StaticMeshComponentRenderer());
 	worldEntityRenderers->add(new mesh::SkinnedMeshComponentRenderer());
 	worldEntityRenderers->add(new weather::SkyRenderer());
 	worldEntityRenderers->add(new world::CullingRenderer());

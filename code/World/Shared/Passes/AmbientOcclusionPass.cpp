@@ -21,7 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.AmbientOcclusionPass", AmbientOcclusionPa
 
 bool AmbientOcclusionPass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
-	if (desc.quality.ambientOcclusion >= Quality::High && desc.rt && renderSystem->supportRayTracing())
+	/*if (desc.quality.ambientOcclusion >= Quality::High && desc.rt && renderSystem->supportRayTracing())
 	{
 		m_rt = new RTAmbientOcclusionPass();
 		if (!m_rt->create(resourceManager, renderSystem, desc))
@@ -30,7 +30,7 @@ bool AmbientOcclusionPass::create(resource::IResourceManager* resourceManager, r
 			return false;
 		}
 	}
-	else if (desc.quality.ambientOcclusion > Quality::Disabled)
+	else*/ if (desc.quality.ambientOcclusion > Quality::Disabled)
 	{
 		m_ss = new SSAmbientOcclusionPass();
 		if (!m_ss->create(resourceManager, renderSystem, desc))

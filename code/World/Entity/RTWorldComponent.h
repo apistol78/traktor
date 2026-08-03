@@ -11,6 +11,7 @@
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Math/Transform.h"
+#include "Core/Math/Vector4.h"
 #include "World/IWorldComponent.h"
 
 // import/export mechanism.
@@ -82,7 +83,7 @@ public:
 
 	Instance* createInstance(const AlignedVector< Part >& parts);
 
-	void writeAccelerationStructure(render::IRenderView* renderView);
+	void writeAccelerationStructure(render::IRenderView* renderView, const Vector4& eyePosition, float farDistance);
 
 	const render::IAccelerationStructure* getTopLevel() const { return m_tlas; }
 
@@ -90,9 +91,19 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IAccelerationStructure > m_tlas;
 	AlignedVector< Instance* > m_instances;
+	Vector4 m_lastEyePosition = Vector4::zero();
+	uint32_t m_tlasCapacity = 0;
 	bool m_instanceBufferDirty = true;
 
 	void destroyInstance(Instance* instance);
+
+	//! Ensure the top level structure can hold at least the given number of instances,
+	//! recreating it at a larger capacity if required. Growth is handled here rather than
+	//! in the renderer backend so backends only ever implement a fixed-capacity build.
+	void ensureTopLevelCapacity(uint32_t numInstances);
+
+	//! Total number of top level instances (summed across all instances' parts).
+	uint32_t countInstances() const;
 };
 
 }

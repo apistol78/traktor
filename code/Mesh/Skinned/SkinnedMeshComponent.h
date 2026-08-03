@@ -58,7 +58,7 @@ public:
 
 	virtual bool setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank);
 
-	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override;
+	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass);
 
 	void setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms);
 
