@@ -37,8 +37,10 @@ vec4 HWRT_Light_CalculateIncidentLight(
 		lightDirection = lightPosition - position;
 		lightDistance = length(lightDirection);
 		lightDirection /= lightDistance;
+		// RangeRadius z and w are the cosines of the half angle of the inner and the
+		// outer cone; ramp from unlit at the outer cone to fully lit at the inner.
 		const float k = dot((viewInverse * light.Direction).xyz, lightDirection);
-		const float r = (k - light.RangeRadius.z) / (light.RangeRadius.z - light.RangeRadius.w);
+		const float r = clamp((k - light.RangeRadius.w) / (light.RangeRadius.z - light.RangeRadius.w), 0.0f, 1.0f);
 		lightAttenuation = r * LightAttenuation(lightDistance, light.RangeRadius.y);
 	}
 

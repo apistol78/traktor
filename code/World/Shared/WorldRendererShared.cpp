@@ -397,7 +397,8 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 		lsd->type = (float)light->getLightType();
 		lsd->rangeRadius[0] = light->getNearRange();
 		lsd->rangeRadius[1] = light->getFarRange();
-		lsd->rangeRadius[2] = std::cos((light->getRadius() - deg2rad(16.0f)) / 2.0f);
+		// Cosine of the half angle of the inner, fully lit, and the outer cone of a spot light.
+		lsd->rangeRadius[2] = std::cos((light->getRadius() - deg2rad(c_spotLightPenumbraAngle)) / 2.0f);
 		lsd->rangeRadius[3] = std::cos(light->getRadius() / 2.0f);
 
 		const Matrix44 lightTransform = view * light->getTransform().toMatrix44();

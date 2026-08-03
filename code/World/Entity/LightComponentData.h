@@ -60,6 +60,12 @@ public:
 
 	const Color4f& getColor() const { return m_color; }
 
+	/*! Set intensity of light.
+	 *
+	 * Radiant flux, in watt, for point and spot lights; irradiance, in watt per
+	 * square metre, for directional lights. Same convention as Blender, i.e. a
+	 * light of equal intensity illuminate a surface equally in both.
+	 */
 	void setIntensity(float intensity) { m_intensity = intensity; }
 
 	float getIntensity() const { return m_intensity; }
@@ -93,7 +99,7 @@ public:
 private:
 	LightType m_lightType = LightType::Disabled;
 	Color4f m_color = Color4f(1.0f, 1.0f, 1.0f, 0.0f);
-	float m_intensity = 10.0f;
+	float m_intensity = 1000.0f;
 	bool m_castShadow = true;
 	float m_nearRange = 0.0f;
 	float m_farRange = 10.0f;

@@ -143,19 +143,52 @@ vec3 LambertianDirection(vec3 direction, vec2 uv)
 #endif
 }
 
+/*! Radius of a light source, in metres.
+ *
+ * Bounds the inverse square falloff near the light; without it irradiance
+ * goes to infinity as the distance approach zero. Matches the default size
+ * of a light in Blender.
+ */
+const float c_lightSourceRadius = 0.1f;
+
+/*! Convert radiant flux of a punctual light into irradiance at given distance.
+ *
+ * Radiant intensity of a point light emitting uniformly in all directions is
+ * I = P / 4pi, and irradiance perpendicular to the surface at distance d is
+ * E = I / d^2; hence a light authored in watts yield E = P / (4pi * d^2).
+ *
+ * This match Cycles' convention so a light of equal power in Blender and in
+ * Traktor illuminate a surface equally.
+ */
 float LightAttenuation(float distance)
 {
-	const float a = 0.0f;
-	const float b = 0.01f;
-	const float c = 0.05f;
-	return clamp(1.0f / (a + b * distance + c * distance * distance), 0.0f, 1.0f);
+	const float d2 = max(distance * distance, c_lightSourceRadius * c_lightSourceRadius);
+	return 1.0f / (4.0f * PI * d2);
 }
 
+/*! Irradiance, windowed to reach exactly zero at the light's far range.
+ *
+ * Since inverse square never reach zero we need to fade it out in order to
+ * be able to cull the light; window is squared to get a smooth derivative
+ * at the cutoff.
+ */
 float LightAttenuation(float distance, float maxDistance)
 {
 	const float a = LightAttenuation(distance);
 	const float b = clamp(1.0f - pow(distance / maxDistance, 4.0f), 0.0f, 1.0f);
-	return a * b;
+	return a * b * b;
+}
+
+/*! Fade out indirect contribution with the length of the traced ray.
+ *
+ * Not physical; radiance doesn't attenuate along a ray. It exist to hide the
+ * horizon where traced rays are cut off, and is the curve punctual lights used
+ * before they became physical. Should be replaced with an explicit fade over
+ * the trace distance of each effect.
+ */
+float IndirectRangeFallOff(float distance)
+{
+	return clamp(1.0f / (0.01f * distance + 0.05f * distance * distance), 0.0f, 1.0f);
 }
 	]]></text>
 	<samplers/>

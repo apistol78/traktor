@@ -39,7 +39,8 @@ enum class UnitType
 	Percent,
 	Pixels,
 	Hertz,
-	EV
+	EV,
+	Watts
 };
 
 /*! Member unit attribute.

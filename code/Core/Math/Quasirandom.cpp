@@ -11,6 +11,8 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Random.h"
 
+#include <cmath>
+
 namespace traktor
 {
 
@@ -28,9 +30,15 @@ Vector2 Quasirandom::hammersley(uint32_t i, uint32_t numSamples)
 
 Vector2 Quasirandom::hammersley(uint32_t i, uint32_t numSamples, Random& rnd)
 {
-	const float rx = rnd.nextFloat() * 0.1f;
-	const float ry = rnd.nextFloat() * 0.1f;
-	return hammersley(i, numSamples) * 0.9f + Vector2(rx, ry);
+	return hammersley(i, numSamples, Vector2(rnd.nextFloat(), rnd.nextFloat()));
+}
+
+Vector2 Quasirandom::hammersley(uint32_t i, uint32_t numSamples, const Vector2& shift)
+{
+	const Vector2 h = hammersley(i, numSamples) + shift;
+	return Vector2(
+		h.x - std::floor(h.x),
+		h.y - std::floor(h.y));
 }
 
 Vector4 Quasirandom::uniformSphere(const Vector2& uv)

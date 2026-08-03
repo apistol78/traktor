@@ -115,6 +115,8 @@ NumericPropertyItem::Representation findRepresentation(const MemberType& m)
 			return NumericPropertyItem::RpNewton;
 		else if (unit->getUnit() == UnitType::NewtonSecond)
 			return NumericPropertyItem::RpNewtonSecond;
+		else if (unit->getUnit() == UnitType::Watts)
+			return NumericPropertyItem::RpWatts;
 	}
 	return NumericPropertyItem::RpNormal;
 }

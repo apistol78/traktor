@@ -252,7 +252,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 				if (HWRT_Trace($AS, rayOrigin, rayDir, Far, m, t))
 				{
 					const vec3 hit = rayOrigin + rayDir * t;
-					const float attenuate = LightAttenuation(t);
+					const float attenuate = IndirectRangeFallOff(t);
 
 					if ($UseIrradianceField == 0)
 					{
@@ -290,7 +290,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 						if (HWRT_Trace($AS, hit, secondRayDir, FarSecond, m2, t2))
 						{
 							const vec3 hit2 = hit + secondRayDir * t;
-							const float attenuate2 = LightAttenuation(t2);
+							const float attenuate2 = IndirectRangeFallOff(t2);
 	
 							if (false && $UseIrradianceField == 0)
 							{

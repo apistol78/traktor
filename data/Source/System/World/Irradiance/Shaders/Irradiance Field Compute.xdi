@@ -94,7 +94,7 @@ for (int i = 0; i < N; ++i)
 	if (HWRT_Trace($AS, rayOrigin, rayDir, Far, m, t))
 	{
 		const vec3 hit = rayOrigin + rayDir * t;
-		const float attenuate = LightAttenuation(t);
+		const float attenuate = IndirectRangeFallOff(t);
 		for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 		{
 			const $typeof(Lights) light = $Lights[lightIndex];

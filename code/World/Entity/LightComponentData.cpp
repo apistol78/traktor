@@ -20,7 +20,22 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 12, LightComponentData, IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 13, LightComponentData, IEntityComponentData)
+
+namespace
+{
+
+/*! Convert legacy, arbitrary, intensity into radiant flux.
+ *
+ * Punctual lights used to be attenuated by clamp(1 / (0.01d + 0.05d^2), 0, 1)
+ * which, beyond a few metres, is equivalent to 20/d^2. Physical attenuation is
+ * P / (4pi * d^2), thus P = 80pi * I preserve the brightness of existing content
+ * at a distance; nearby surfaces become brighter since the old curve was clamped,
+ * and no longer fall off at all, within 4.4 metres of the light.
+ */
+const float c_legacyIntensityToWatt = 80.0f * PI;
+
+}
 
 int32_t LightComponentData::getOrdinal() const
 {
@@ -76,7 +91,9 @@ void LightComponentData::serialize(ISerializer& s)
 	}
 
 	if (s.getVersion< LightComponentData >() >= 7)
-		s >> Member< float >(L"intensity", m_intensity, AttributeRange(0.0f) | AttributeUnit(UnitType::Lumens));
+		s >> Member< float >(L"intensity", m_intensity, AttributeRange(0.0f) | AttributeUnit(UnitType::Watts));
+	else
+		m_intensity = 10.0f;	// Implicit intensity before it became a member.
 
 	if (s.getVersion< LightComponentData >() >= 1 && s.getVersion< LightComponentData >() < 8)
 	{
@@ -136,6 +153,15 @@ void LightComponentData::serialize(ISerializer& s)
 			{ 0 }
 		};
 		s >> MemberEnum< LightBakeMode >(L"bakeMode", m_bakeMode, c_LightBakeMode_Keys);
+	}
+
+	if (s.getVersion< LightComponentData >() < 13)
+	{
+		// Intensity is radiant flux, in watt, since version 13; directional lights
+		// are already irradiance, in watt per square metre, so only punctual lights
+		// need converting.
+		if (m_lightType == LightType::Point || m_lightType == LightType::Spot)
+			m_intensity *= c_legacyIntensityToWatt;
 	}
 }
 

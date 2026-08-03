@@ -73,6 +73,14 @@ enum class LightType
 	Spot = 3
 };
 
+/*! Angular width of the penumbra of a spot light, in degrees.
+ *
+ * A spot light is fully lit within its radius less this, and fade to nothing
+ * over the remainder. Used both when feeding lights to the shaders and when
+ * baking them, hence shared.
+ */
+constexpr float c_spotLightPenumbraAngle = 16.0f;
+
 /*!
  */
 struct T_DLLCLASS EntityState

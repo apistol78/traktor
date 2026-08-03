@@ -206,6 +206,8 @@ void NumericPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const
 			ss << value << L" Ns";
 		else if (m_representation == RpSeconds)
 			ss << value << L" s";
+		else if (m_representation == RpWatts)
+			ss << value << L" W";
 		else
 			ss << value;
 	}

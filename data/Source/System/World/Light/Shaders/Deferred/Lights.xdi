@@ -2831,12 +2831,15 @@ $Output = vec4(
 				</item>
 			</outputPins>
 			<script><![CDATA[
+// Phi is the cosine of the angle towards the axis of the light; Radius and
+// RadiusFallOff are the cosines of the half angle of the inner and the outer
+// cone respectively. Ramp from unlit at the outer cone to fully lit at the inner.
+$FallOff = clamp(($Phi - $RadiusFallOff) / ($Radius - $RadiusFallOff), 0.0f, 1.0f);
+
+// Coordinate into the falloff ramp; one at the inner cone, approaching zero
+// towards the axis of the light.
 const float a = $Phi - $Radius;
-
-const float f = clamp(a / ($Radius - $RadiusFallOff), 0.0f, 1.0f);
 const float d = clamp(PI * a / $Radius, 0.0f, 1.0f);
-
-$FallOff = clamp(f, 0.0f, 1.0f);
 $U = 1.0f - d;
 ]]></script>
 		</item>

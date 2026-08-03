@@ -24,7 +24,21 @@ class T_DLLCLASS Quasirandom
 public:
 	static Vector2 hammersley(uint32_t i, uint32_t numSamples);
 
+	/*! Hammersley point, randomly shifted on the unit torus.
+	 *
+	 * Each call get an independent shift; use the overload taking an explicit
+	 * shift when estimating an integral, since a shared shift keep the low
+	 * discrepancy of the sequence and thus converge far quicker.
+	 */
 	static Vector2 hammersley(uint32_t i, uint32_t numSamples, Random& rnd);
+
+	/*! Hammersley point, shifted on the unit torus by a given offset.
+	 *
+	 * Cranley-Patterson rotation; shifting an entire set of samples by the same
+	 * offset decorrelate the set from other sets without disturbing neither the
+	 * uniformity nor the stratification within it.
+	 */
+	static Vector2 hammersley(uint32_t i, uint32_t numSamples, const Vector2& shift);
 
 	static Vector4 uniformSphere(const Vector2& uv);
 

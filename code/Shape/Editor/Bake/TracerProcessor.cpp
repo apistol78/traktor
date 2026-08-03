@@ -573,6 +573,11 @@ bool TracerProcessor::process(const TracerTask* task)
 			if (configuration->getEnableDenoise())
 				lightmapDiffuse = denoise(gbuffer, lightmapDiffuse, false);
 
+			if (lightmapDiffuse->save(L"lightmap.exr"))
+				log::info << L"Debug lightmap saved successfully." << Endl;
+			else
+				log::error << L"Debug lightmap failed to save." << Endl;
+
 			const bool result = writeTexture(
 				tracerOutput->getLightmapDiffuseInstance(),
 				m_compressionMethod,

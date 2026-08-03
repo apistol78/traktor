@@ -23,6 +23,7 @@
 #include "Shape/Editor/Bake/BakeOperationData.h"
 #include "Shape/Editor/Bake/GBuffer.h"
 #include "Shape/Editor/Bake/IProbe.h"
+#include "World/WorldTypes.h"
 
 #include <embree4/rtcore.h>
 #include <embree4/rtcore_ray.h>
@@ -43,6 +44,7 @@ namespace
 
 const Scalar p(1.0f / (2.0f * PI));
 const Scalar c_emissiveBoost(2.0f);
+const Scalar c_lightSourceRadius(0.1f);
 const float c_epsilonOffset = 0.00001f;
 const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 const RTCFeatureFlags c_featureFlags = (RTCFeatureFlags)(RTC_FEATURE_FLAG_TRIANGLE | RTC_FEATURE_FLAG_INSTANCE);
@@ -64,19 +66,38 @@ private:
 	std::function< Vector4(const Vector4&) > m_fn;
 };
 
+/*! Convert radiant flux of a punctual light into irradiance at given distance.
+ *
+ * Must be kept in sync with LightAttenuation in the Utilities shader module,
+ * {0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}, so baked and dynamic lighting agree.
+ */
 Scalar attenuation(const Scalar& distance)
 {
-	const Scalar a = 0.0_simd;
-	const Scalar b = 0.01_simd;
-	const Scalar c = 0.05_simd;
-	return clamp(1.0_simd / (a + b * distance + c * distance * distance), 0.0_simd, 1.0_simd);
+	const Scalar d2 = max(distance * distance, c_lightSourceRadius * c_lightSourceRadius);
+	return 1.0_simd / (4.0_simd * Scalar(PI) * d2);
 }
 
 Scalar attenuation(const Scalar& distance, const Scalar& range)
 {
 	const Scalar a = attenuation(distance);
 	const Scalar b = clamp(1.0_simd - power(distance / range, 4.0_simd), 0.0_simd, 1.0_simd);
-	return a * b;
+	return a * b * b;
+}
+
+/*! Cone of a spot light; ramp from unlit at the outer cone to fully lit at the inner.
+ *
+ * \param cosAngle Cosine of the angle between the axis of the light and the surface.
+ * \param coneAngle Full angle of the outer cone, in radians.
+ *
+ * Must be kept in sync with the SpotFallOff script in the deferred lights shader,
+ * {707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}, and HWRT_Light_CalculateIncidentLight,
+ * so baked and dynamic lighting agree.
+ */
+Scalar spotConeFallOff(float cosAngle, float coneAngle)
+{
+	const float outer = std::cos(coneAngle / 2.0f);
+	const float inner = std::cos((coneAngle - deg2rad(world::c_spotLightPenumbraAngle)) / 2.0f);
+	return clamp(Scalar((cosAngle - outer) / (inner - outer)), 0.0_simd, 1.0_simd);
 }
 
 void constructRay(const Vector4& position, const Vector4& direction, float far, RTCRay& outRay)
@@ -346,7 +367,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 			const auto& originPolygon = polygons[e.polygon];
 			const auto& originMaterial = materials[originPolygon.getMaterial()];
 
-			const Color4f emittance = originMaterial.getColor().linear() * c_emissiveBoost * Scalar(originMaterial.getEmissive());
+			const Color4f emittance = originMaterial.getColor() * c_emissiveBoost * Scalar(originMaterial.getEmissive());
 
 			// Trace IBL and indirect illumination.
 			const Color4f incoming = tracePath0(e.position, e.normal, random, 0);
@@ -357,11 +378,11 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 				occlusion = (1.0_simd - ambientOcclusion) + ambientOcclusion * traceOcclusion(e.position, e.normal, 1.0f, random);
 
 			// Trace sky occlusion.
-			const Scalar skyOcclusion = power(traceOcclusion(e.position, Vector4(0.0f, 1.0f, 0.0f), 1000.0f, random), 0.25_simd);
+			// const Scalar skyOcclusion = power(traceOcclusion(e.position, Vector4(0.0f, 1.0f, 0.0f), 1000.0f, random), 0.25_simd);
 
 			// Combine and write final lumel.
 			const Color4f lightmapColor = emittance + incoming * occlusion;
-			lightmapDiffuse->setPixel(x, y, lightmapColor.rgb0() + Color4f(0.0f, 0.0f, 0.0f, skyOcclusion));
+			lightmapDiffuse->setPixel(x, y, lightmapColor.rgb1()); // lightmapColor.rgb0() + Color4f(0.0f, 0.0f, 0.0f, skyOcclusion));
 		}
 	}
 }
@@ -403,7 +424,7 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 	// Get material as hit.
 	const auto& hitMaterial = *instance.geometry->materials[rh.hit.primID];
 
-	Color4f hitMaterialColor = lerp(hitMaterial.getColor().linear(), Color4f(hitColor), hitColor.w());
+	Color4f hitMaterialColor = lerp(hitMaterial.getColor(), Color4f(hitColor), hitColor.w());
 
 	const auto& image = hitMaterial.getDiffuseMap().image;
 	if (image)
@@ -565,12 +586,16 @@ Color4f RayTracerEmbree::tracePath0(
 	RTCRayHit16 T_ALIGN64 rhv;
 	Vector4 directions[SampleBatch];
 
+	// One shift for the entire set of samples; decorrelate this lumel from its
+	// neighbours without breaking the stratification within the set.
+	const Vector2 shift(random.nextFloat(), random.nextFloat());
+
 	// Sample across hemisphere.
 	for (int32_t i = 0; i < sampleCount; i += SampleBatch)
 	{
 		for (int32_t j = 0; j < SampleBatch; ++j)
 		{
-			const Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
+			const Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, shift);
 			directions[j] = Quasirandom::uniformHemiSphere(uv, normal);
 			constructRayHit16(origin, directions[j], m_configuration->getMaxPathDistance(), j, rhv);
 		}
@@ -608,7 +633,7 @@ Color4f RayTracerEmbree::tracePath0(
 
 			const auto& hitMaterial = *instance.geometry->materials[rhv.hit.primID[j]];
 
-			Color4f hitMaterialColor = lerp(hitMaterial.getColor().linear(), Color4f(hitColor), hitColor.w());
+			Color4f hitMaterialColor = lerp(hitMaterial.getColor(), Color4f(hitColor), hitColor.w());
 
 			const auto& image = hitMaterial.getDiffuseMap().image;
 			if (image)
@@ -621,19 +646,22 @@ Color4f RayTracerEmbree::tracePath0(
 					(int32_t)(wrap(texCoord[0]) * image->getWidth()),
 					(int32_t)(wrap(texCoord[1]) * image->getHeight()),
 					hitMaterialColor);
-				hitMaterialColor = hitMaterialColor.linear();
 			}
 			const Color4f emittance = hitMaterialColor * c_emissiveBoost * Scalar(hitMaterial.getEmissive());
-			const Color4f BRDF = hitMaterialColor; // / Scalar(PI);
 
 			const Vector2 uv(random.nextFloat(), random.nextFloat());
 
 #if !defined(USE_LAMBERTIAN_DIRECTION)
+			// Uniformly distributed direction; pdf is 1/2pi so the estimate of the
+			// irradiance integral need the cosine at the hit, and 2pi from the pdf
+			// cancelled against the 1/pi of the lambertian BRDF.
 			const Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
-			const Scalar cosPhi = clamp(dot3(-direction, hitNormal), 0.0_simd, 1.0_simd);
+			const Scalar weight = 2.0_simd * clamp(dot3(newDirection, hitNormal), 0.0_simd, 1.0_simd);
 #else
+			// Cosine distributed direction; pdf is cos/pi which cancel both the
+			// cosine and the 1/pi of the lambertian BRDF exactly.
 			const Vector4 newDirection = Quasirandom::lambertian(uv, hitNormal);
-			const Scalar cosPhi = 0.5_simd;
+			const Scalar weight = 1.0_simd;
 #endif
 
 			const Color4f incoming = traceSinglePath(hitOrigin, newDirection, m_configuration->getMaxPathDistance(), random, extraLightMask, 1);
@@ -644,15 +672,21 @@ Color4f RayTracerEmbree::tracePath0(
 				Light::LmIndirect | extraLightMask,
 				true);
 
-			const Color4f output = emittance / hitDistance + (incoming + direct) * BRDF * cosPhi;
-			color += output;
+			// Radiance leaving the hit surface towards our lumel; direct is irradiance
+			// so it need the 1/pi of the lambertian BRDF, indirect already got it folded
+			// into the sample weight. Emittance is radiance, invariant along the ray.
+			const Color4f radiance = emittance + hitMaterialColor * (direct / Scalar(PI) + incoming * weight);
+
+			color += radiance * clamp(dot3(direction, normal), 0.0_simd, 1.0_simd);
 		}
 	}
 
-	color /= Scalar((float)sampleCount);
+	// Hemisphere is uniformly sampled, pdf 1/2pi, so irradiance is (2pi/N) * sum;
+	// we accumulate irradiance divided by pi, as expected by the shaders, hence 2/N.
+	color = (color * 2.0_simd) / Scalar((float)sampleCount);
 
-	// Sample direct lighting from analytical lights.
-	color += sampleAnalyticalLights(random, origin, normal, Light::LmDirect | extraLightMask, false);
+	// Sample direct lighting from analytical lights; irradiance, so divide by pi as above.
+	color += sampleAnalyticalLights(random, origin, normal, Light::LmDirect | extraLightMask, false) / Scalar(PI);
 
 	return color;
 }
@@ -704,7 +738,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 
 	const auto& hitMaterial = *instance.geometry->materials[rh.hit.primID];
 
-	Color4f hitMaterialColor = lerp(hitMaterial.getColor().linear(), Color4f(hitColor), hitColor.w());
+	Color4f hitMaterialColor = lerp(hitMaterial.getColor(), Color4f(hitColor), hitColor.w());
 
 	const auto& image = hitMaterial.getDiffuseMap().image;
 	if (image)
@@ -717,19 +751,22 @@ Color4f RayTracerEmbree::traceSinglePath(
 			(int32_t)(wrap(texCoord[0]) * image->getWidth()),
 			(int32_t)(wrap(texCoord[1]) * image->getHeight()),
 			hitMaterialColor);
-		hitMaterialColor = hitMaterialColor.linear();
 	}
 	const Color4f emittance = hitMaterialColor * c_emissiveBoost * Scalar(hitMaterial.getEmissive());
-	const Color4f BRDF = hitMaterialColor; // / Scalar(PI);
 
 	const Vector2 uv(random.nextFloat(), random.nextFloat());
 
 #if !defined(USE_LAMBERTIAN_DIRECTION)
+	// Uniformly distributed direction; pdf is 1/2pi so the estimate of the
+	// irradiance integral need the cosine at the hit, and 2pi from the pdf
+	// cancelled against the 1/pi of the lambertian BRDF.
 	const Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
-	const Scalar cosPhi = clamp(dot3(-direction, hitNormal), 0.0_simd, 1.0_simd);
+	const Scalar weight = 2.0_simd * clamp(dot3(newDirection, hitNormal), 0.0_simd, 1.0_simd);
 #else
+	// Cosine distributed direction; pdf is cos/pi which cancel both the
+	// cosine and the 1/pi of the lambertian BRDF exactly.
 	const Vector4 newDirection = Quasirandom::lambertian(uv, hitNormal);
-	const Scalar cosPhi = 0.5_simd;
+	const Scalar weight = 1.0_simd;
 #endif
 
 	const Color4f incoming = traceSinglePath(hitOrigin, newDirection, maxDistance - hitDistance, random, extraLightMask, depth + 1);
@@ -740,8 +777,8 @@ Color4f RayTracerEmbree::traceSinglePath(
 		Light::LmIndirect | extraLightMask,
 		true);
 
-	const Color4f output = emittance / hitDistance + (incoming + direct) * BRDF * cosPhi;
-	return output;
+	// Radiance leaving the hit surface back along the incident ray.
+	return emittance + hitMaterialColor * (direct / Scalar(PI) + incoming * weight);
 }
 
 Scalar RayTracerEmbree::traceOcclusion(
@@ -754,11 +791,14 @@ Scalar RayTracerEmbree::traceOcclusion(
 	RTCRay16 T_ALIGN64 rv;
 	int32_t unoccluded = 0;
 
+	// One shift for the entire set of samples; see tracePath0.
+	const Vector2 shift(random.nextFloat(), random.nextFloat());
+
 	for (int32_t i = 0; i < sampleCount; i += 16)
 	{
 		for (int32_t j = 0; j < 16; ++j)
 		{
-			const Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
+			const Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, shift);
 			const Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
 			T_FATAL_ASSERT(dot3(direction, normal) >= 0.0_simd);
 			constructRay16(origin, direction, maxDistance, j, rv);
@@ -896,7 +936,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					shadowAttenuate = Scalar(1.0f - float(shadowCount) / shadowSampleCount);
 				}
 
-				contribution += light.color * phi * min(f, 1.0_simd) * shadowAttenuate * lightAttenution;
+				contribution += light.color * phi * f * shadowAttenuate * lightAttenution;
 			}
 			break;
 
@@ -908,7 +948,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					break;
 
 				const float alpha = clamp< float >(dot3(light.direction, lightToPoint), -1.0f, 1.0f);
-				const Scalar k0 = Scalar(1.0f - std::acos(alpha) / (light.radius / 2.0f));
+				const Scalar k0 = spotConeFallOff(alpha, light.radius);
 				if (k0 <= 0.0_simd)
 					break;
 

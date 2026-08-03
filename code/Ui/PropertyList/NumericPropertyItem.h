@@ -49,7 +49,8 @@ public:
 		RpEV,
 		RpNewton,
 		RpNewtonSecond,
-		RpSeconds
+		RpSeconds,
+		RpWatts
 	};
 
 	explicit NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint, bool hex, Representation representation);

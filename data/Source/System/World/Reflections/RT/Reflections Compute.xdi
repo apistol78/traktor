@@ -267,7 +267,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 				if (HWRT_Trace($AS, rayOrigin, rayDir, Far, m, t))
 				{
 					const vec3 hit = rayOrigin + rayDir * t;
-					const float attenuate = LightAttenuation(t);
+					const float attenuate = IndirectRangeFallOff(t);
 					
 					vec3 Tincident = vec3(0.0f);
 					for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
