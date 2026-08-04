@@ -50,7 +50,7 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	virtual bool setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank) override final;
+	virtual bool setupSkin(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank) override final;
 
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 

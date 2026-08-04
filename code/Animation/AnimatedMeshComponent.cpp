@@ -37,9 +37,10 @@ const struct
 	int32_t updatePeriod;
 }
 c_updatePeriods[] = {
-	{ 20.0f, 10, 1 },
-	{ 40.0f, 30, 2 },
-	{ 60.0f, 50, 4 },
+	{ 20.0f, 8, 1 },
+	{ 40.0f, 16, 2 },
+	{ 60.0f, 32, 3 },
+	{ 80.0f, 64, 4 },
 	{ std::numeric_limits< float >::max(), std::numeric_limits< int32_t >::max(), 8 }
 };
 
@@ -152,8 +153,12 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 	mesh::SkinnedMeshComponent::update(update);
 }
 
-bool AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank)
+bool AnimatedMeshComponent::setupSkin(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank)
 {
+	// Reset here; the base setupSkin sets it when we actually (re)build the skin, and the
+	// inherited setupAccelerationStructure reads it to decide whether to build the BLAS.
+	m_setupBuiltSkin = false;
+
 	const Scalar interval(worldRenderView.getInterval());
 	const Transform worldTransform = m_transform.get(interval);
 	float distance = std::numeric_limits< float >::max();
@@ -223,7 +228,7 @@ bool AnimatedMeshComponent::setup(const world::WorldRenderView& worldRenderView,
 		}
 		m_skinModified = false;
 
-		result |= mesh::SkinnedMeshComponent::setup(worldRenderView, renderContext, lodRank);
+		result |= mesh::SkinnedMeshComponent::setupSkin(worldRenderView, renderContext, lodRank);
 	}
 	else if (m_rtwInstance && m_lastWorldTransform[1] != worldTransform)
 	{

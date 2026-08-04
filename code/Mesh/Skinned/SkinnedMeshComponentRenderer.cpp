@@ -40,27 +40,31 @@ void SkinnedMeshComponentRenderer::setup(
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Skinned mesh setup");
 	rp->addInput(render::RGDependency::First);
 	rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
-		const Vector4 eyePosition = worldRenderView.getEyePosition();
-
 		m_ranked.resize(0);
 		m_ranked.reserve(renderables.size());
 
 		for (Object* renderable : renderables)
 		{
 			SkinnedMeshComponent* meshComponent = static_cast< SkinnedMeshComponent* >(renderable);
-			const Transform worldTransform = meshComponent->getTransform().get();
-			const Scalar distance = (worldTransform.translation() - eyePosition).xyz0().length();
-			m_ranked.push_back({ distance, meshComponent });
+			const Transform& worldTransform = meshComponent->getTransform().get();
+
+			const Scalar distance = dot3(worldRenderView.getEyeDirection(), worldTransform.translation() - worldRenderView.getEyePosition());
+			if (distance >= 0.0_simd)
+				m_ranked.push_back({ distance, meshComponent });
+			else
+				m_ranked.push_back({ std::numeric_limits< float >::max(), meshComponent });
 		}
 
 		std::sort(m_ranked.begin(), m_ranked.end(), [](const Ranked& lh, const Ranked& rh) {
 			return lh.distance < rh.distance;
 		});
 
-		// Setup all skinned meshes; compute new skin and BLAS if necessary.
+		// Setup all skinned meshes; skin for every component first, then the ray tracing acceleration structures.
 		bool needSynchronization = false;
 		for (int32_t i = 0; i < (int32_t)m_ranked.size(); ++i)
-			needSynchronization |= m_ranked[i].meshComponent->setup(worldRenderView, renderContext, i);
+			needSynchronization |= m_ranked[i].meshComponent->setupSkin(worldRenderView, renderContext, i);
+		for (int32_t i = 0; i < (int32_t)m_ranked.size(); ++i)
+			needSynchronization |= m_ranked[i].meshComponent->setupAccelerationStructure(worldRenderView, renderContext, i);
 
 		// Synchronize the async compute skinning and RT jobs with the graphics queue.
 		if (needSynchronization)

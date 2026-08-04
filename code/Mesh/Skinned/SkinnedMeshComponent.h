@@ -56,7 +56,9 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override;
 
-	virtual bool setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank);
+	virtual bool setupSkin(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank);
+
+	virtual bool setupAccelerationStructure(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank);
 
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass);
 
@@ -70,6 +72,7 @@ protected:
 	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
 	int32_t m_rtUpdates = 0;
+	bool m_setupBuiltSkin = false;
 };
 
 }

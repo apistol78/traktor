@@ -99,18 +99,26 @@ Aabb3 SkinnedMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-bool SkinnedMeshComponent::setup(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank)
+bool SkinnedMeshComponent::setupSkin(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank)
 {
-	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
-	const Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
-
 	const bool asynchronous = false;
 
 	std::swap(m_skinBuffer[0], m_skinBuffer[1]);
 	m_mesh->buildSkin(renderContext, m_jointBuffer, m_skinBuffer[0], asynchronous);
+	m_setupBuiltSkin = true;
 
-	if (m_rtwInstance)
+	return asynchronous;
+}
+
+bool SkinnedMeshComponent::setupAccelerationStructure(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank)
+{
+	const bool asynchronous = false;
+
+	// Only build when the skin was (re)built this setup; the acceleration structure reads the
+	// skinned vertex buffer, so there is nothing new to build otherwise.
+	if (m_setupBuiltSkin && m_rtwInstance)
 	{
+		const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
 		const Vector4 eyePosition = worldRenderView.getEyePosition();
 		const Scalar farDistance = worldRenderView.getViewFrustum().getFarZ();
 		const Scalar cullDistance = farDistance * 0.5_simd;
