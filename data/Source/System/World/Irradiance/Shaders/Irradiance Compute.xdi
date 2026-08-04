@@ -126,15 +126,15 @@
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
-#define USE_SECOND_BOUNCE 1
+#define USE_SECOND_BOUNCE 0
 #define USE_TEMPORAL_FILTER 1
 #define USE_SPATIAL_FILTER 1
 
-const int N = 2;
-const int Ndisclose = 16;
+const int N = 1;
+const int Ndisclose = 4;
 const int Nspatial = 4;
 const int K = 10;
-const float Far = 10.0f;
+const float Far = 6.0f;
 const float FarSecond = 8.0f;
 const float TemporalNormalThreshold = 0.1f;
 const float TemporalDepthThreshold = 4.0f;

@@ -48,8 +48,8 @@
 			<technique>Default</technique>
 			<domain>Compute</domain>
 			<localSize>
-				<X>1</X>
-				<Y>1</Y>
+				<X>16</X>
+				<Y>16</Y>
 				<Z>1</Z>
 			</localSize>
 			<useRayTracing>true</useRayTracing>
@@ -153,16 +153,14 @@
 #define USE_TEMPORAL_FILTER 0
 #define USE_SPATIAL_FILTER 0
 
-const int N = 4;
-const int Ndisclose = 16;
-const int Nspatial = 16;
+const int N = 1;
+const int Ndisclose = 4;
 const int K = 8;
 const float NormalThreshold = 0.95f;
 const float DepthThreshold = 10.0f;
 const float Far = 20.0f;
 const float SpatialFilterRadius = 0.005f;
 const float SpatialFilterCoeff = 0.75f;
-const float Ambient = 0.1f;
 
 const ivec2 sz = imageSize($Output);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
@@ -185,10 +183,11 @@ if (pt.x < sz.x && pt.y < sz.y)
 	// 3. Sample generation.
 	if ($Roughness < 0.4f)
 	{
-		// Screen space reflection first; only fall back to ray tracing where the screen
-		// space ray finds no on-screen hit. Reuses the shared SSR_Trace marcher.
+		// Screen space reflection first, fallback to RT if no hit.
 		vec2 ssUV;
 		float ssAtt;
+
+		[[branch]]
 		if (SSR_Trace($ViewPosition.xyz, $ViewNormal.xyz, $Projection, $DepthMap, $DepthMapState, Hash(rndState++), ssUV, ssAtt))
 		{
 			const vec3 ssColor = texture(sampler2D($SceneColor, $SceneColorState), ssUV).xyz;
@@ -212,7 +211,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 			u = R * u;
 			v = R * v;
 
-			const int sampleN = (reservoir.M > K) ? N : Ndisclose;
+			const int sampleN = (reservoir.M >= K) ? N : Ndisclose;
 		
 			for (int I = 0; I < sampleN; I += N)
 			{
@@ -239,22 +238,24 @@ if (pt.x < sz.x && pt.y < sz.y)
 						const float attenuate = IndirectRangeFallOff(t);
 						
 						vec3 Tincident = vec3(0.0f);
-						for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
+						if (attenuate > 0.0f)
 						{
-							const $typeof(Lights) light = $Lights[lightIndex];
-							const vec4 incident = HWRT_Light_CalculateIncidentLight(
-								$AS,
-								$ViewInverse,
-								light,
-								hit,
-								m.normal.xyz,
-								true
-							);
-							Tincident += (incident.xyz * attenuate * phi * PI).xyz;
+							for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
+							{
+								const $typeof(Lights) light = $Lights[lightIndex];
+								const vec4 incident = HWRT_Light_CalculateIncidentLight(
+									$AS,
+									$ViewInverse,
+									light,
+									hit,
+									m.normal.xyz,
+									true
+								);
+								Tincident += (incident.xyz * attenuate * phi * PI).xyz;
+							}
 						}
-			
+
 						Tincident += m.emissive * attenuate * phi * PI;
-						Tincident += Ambient;
 
 						Nacc += m.albedo * Tincident;
 					}
