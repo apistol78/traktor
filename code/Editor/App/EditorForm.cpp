@@ -1832,6 +1832,10 @@ void EditorForm::buildAssetsThread(AlignedVector< Guid > assetGuids, bool rebuil
 
 	log::info << DecreaseIndent;
 
+	// Result of this build; a failed dependency collection or any failed asset build
+	// clears it. Read by buildSucceeded() once the build thread has been joined.
+	m_buildSucceeded = false;
+
 	const bool result = pipelineDepends->waitUntilFinished();
 	if (result)
 	{
@@ -1859,7 +1863,7 @@ void EditorForm::buildAssetsThread(AlignedVector< Guid > assetGuids, bool rebuil
 
 		log::info << IncreaseIndent;
 
-		pipelineBuilder->build(&dependencySet, rebuild);
+		m_buildSucceeded = pipelineBuilder->build(&dependencySet, rebuild);
 
 		const double elapsedTotal = timerBuild.getElapsedTime();
 
@@ -1990,6 +1994,11 @@ void EditorForm::buildWaitUntilFinished()
 bool EditorForm::isBuilding() const
 {
 	return (bool)(m_threadBuild != nullptr);
+}
+
+bool EditorForm::buildSucceeded() const
+{
+	return m_buildSucceeded;
 }
 
 Ref< IPipelineDepends > EditorForm::createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth)

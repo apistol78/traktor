@@ -191,6 +191,11 @@ bool ObjectEditor::isBuilding() const
 	return m_editor->isBuilding();
 }
 
+bool ObjectEditor::buildSucceeded() const
+{
+	return m_editor->buildSucceeded();
+}
+
 Ref< IPipelineDepends > ObjectEditor::createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth)
 {
 	return m_editor->createPipelineDepends(dependencySet, recursionDepth);

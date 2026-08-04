@@ -92,6 +92,8 @@ public:
 	
 	virtual bool isBuilding() const override final;
 
+	virtual bool buildSucceeded() const override final;
+
 	virtual Ref< IPipelineDepends> createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth) override final;
 
 	virtual ObjectStore* getObjectStore() override final;

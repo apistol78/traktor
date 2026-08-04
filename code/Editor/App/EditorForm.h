@@ -160,6 +160,8 @@ public:
 
 	virtual bool isBuilding() const override final;
 
+	virtual bool buildSucceeded() const override final;
+
 	virtual Ref< IPipelineDepends> createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth) override final;
 
 	virtual ObjectStore* getObjectStore() override final;
@@ -225,6 +227,7 @@ private:
 	Ref< PropertyGroup > m_mergedSettings;		//!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config + <Application>.workspace
 	int32_t m_buildStep = 0;
 	std::wstring m_buildStepMessage;
+	bool m_buildSucceeded = false;	//!< Result of the most recently finished build; written by the build thread, read after it is joined.
 	Semaphore m_buildStepMessageLock;
 	std::vector< std::pair< db::Database*, Guid > > m_eventIds;
 	bool m_suppressTabFocusEvent = false;

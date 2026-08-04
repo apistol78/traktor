@@ -32,7 +32,7 @@ std::wstring BuildAssetTool::getName() const
 
 std::wstring BuildAssetTool::getDescription() const
 {
-	return L"Build (compile) a source asset through the editor pipeline into the output database so it becomes usable at runtime. Identify the asset by \"guid\" (preferred) or \"path\". Pass \"rebuild\"=true to force a full rebuild ignoring caches (default false), and \"wait\"=false to return immediately instead of blocking until the build finishes (default true).";
+	return L"Build (compile) a source asset through the editor pipeline into the output database so it becomes usable at runtime. Identify the asset by \"guid\" (preferred) or \"path\". Pass \"rebuild\"=true to force a full rebuild ignoring caches (default false), and \"wait\"=false to return immediately instead of blocking until the build finishes (default true). Returns \"built\": true only when the build finished with no failed assets; on failure \"built\" is false and a \"message\" describes it. When \"wait\"=false the build is still running so \"built\" is always false; poll separately.";
 }
 
 Ref< Json > BuildAssetTool::getInputSchema() const
@@ -88,15 +88,25 @@ Ref< Json > BuildAssetTool::invoke(const Json* arguments, std::wstring& outError
 	const bool wait = !arguments || !arguments->getMember(L"wait") || arguments->getMember(L"wait")->getBoolean();
 
 	m_editor->buildAsset(guid, rebuild);
+
+	// "built" reflects whether the build actually succeeded, which is only known once the
+	// build has finished; when not waiting the build is still running so it cannot be
+	// reported as succeeded yet.
+	bool built = false;
 	if (wait)
+	{
 		m_editor->buildWaitUntilFinished();
+		built = m_editor->buildSucceeded();
+	}
 
 	Ref< Json > result = Json::createObject();
 	result->setString(L"guid", guid.format());
 	result->setString(L"path", instance->getPath());
 	result->setBoolean(L"rebuild", rebuild);
 	result->setBoolean(L"waited", wait);
-	result->setBoolean(L"built", true);
+	result->setBoolean(L"built", built);
+	if (wait && !built)
+		result->setString(L"message", L"Build failed; see editor build log for pipeline errors.");
 	return result;
 }
 

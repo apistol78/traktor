@@ -153,6 +153,9 @@ public:
 	/*! Check if building. */
 	virtual bool isBuilding() const = 0;
 
+	/*! Result of the most recently finished build; true if it built without any failed assets. */
+	virtual bool buildSucceeded() const = 0;
+
 	/*! Create an instance of pipeline dependency walker.
 	 *
 	 * \return Pipeline dependency walker.
