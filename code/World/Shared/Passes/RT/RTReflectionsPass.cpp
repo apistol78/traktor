@@ -51,6 +51,7 @@ const resource::Id< render::Shader > c_reflectionsComputeShader(L"{64878605-942D
 const resource::Id< render::ImageGraph > c_reflectionsDenoise(L"{22777807-DD5F-1D47-8266-84EAA1EF024F}");
 
 const render::Handle s_handleReflectionsOutput(L"World_ReflectionsOutput");
+const render::Handle s_handleReflectionsInputColor(L"World_ReflectionsInputColor");
 
 static Random s_random;
 
@@ -102,6 +103,7 @@ render::RGTargetSet RTReflectionsPass::setup(
 	render::RenderGraph& renderGraph,
 	render::RGTargetSet gbufferTargetSetId,
 	render::RGTargetSet velocityTargetSetId,
+	render::RGTargetSet visualReadTargetSetId,
 	render::RGTexture halfResDepthTextureId,
 	render::RGTargetSet outputTargetSetId) const
 {
@@ -161,6 +163,12 @@ render::RGTargetSet RTReflectionsPass::setup(
 	auto setParameters = [=, this](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 		const auto halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
+		const auto visualReadTargetSet = renderGraph.getTargetSet(visualReadTargetSetId);
+
+		// Previously rendered scene color, sampled where a screen space reflection ray hits
+		// before falling back to ray tracing.
+		if (visualReadTargetSet != nullptr)
+			params->setTextureParameter(s_handleReflectionsInputColor, visualReadTargetSet->getColorTexture(0));
 
 		params->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
 		params->setVectorParameter(ShaderParameter::Jitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
@@ -203,6 +211,7 @@ render::RGTargetSet RTReflectionsPass::setup(
 		rp->addInput(halfResDepthTextureId);
 		rp->addInput(gbufferTargetSetId);
 		rp->addInput(velocityTargetSetId);
+		rp->addInput(visualReadTargetSetId);
 		rp->addInput(reservoirBufferId.previous);
 		rp->addInput(reservoirBufferId.current);
 		rp->setOutput(reflectionsTextureId);

@@ -62,6 +62,7 @@ public:
 		render::RenderGraph& renderGraph,
 		render::RGTargetSet gbufferTargetSetId,
 		render::RGTargetSet velocityTargetSetId,
+		render::RGTargetSet visualReadTargetSetId,
 		render::RGTexture halfResDepthTextureId,
 		render::RGTargetSet outputTargetSetId) const;
 

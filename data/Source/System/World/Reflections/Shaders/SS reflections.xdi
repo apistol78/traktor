@@ -53,7 +53,9 @@
 				<Z>1</Z>
 			</localSize>
 			<useRayTracing>false</useRayTracing>
-			<include/>
+			<include>
+				<item>{B0DD317D-C0CA-C643-BB47-F779870ECA5F}</item>
+			</include>
 			<inputPins>
 				<item>
 					<id>{8E56F1F6-7778-46DF-B30D-4D4180A7D754}</id>
@@ -88,77 +90,14 @@
 				</item>
 			</outputPins>
 			<script><![CDATA[
-// Screen-space reflection trace (perspective-correct DDA).
-vec3 P0 = $ViewPosition.xyz;
-vec3 N = normalize($ViewNormal.xyz);
-vec3 R = reflect(normalize(P0), N);
-
-const float kMaxDistance = 70.0f;   // max view-space march distance
-const int   kSteps = 64;            // screen-space march samples
-const int   kRefine = 4;            // binary-search refinement iterations
-const float kBias = 0.05f;           // depth bias to avoid self-intersection (view units)
-const float kThickness = 0.1f;      // max depth-behind accepted as a hit (view units)
-const float kZMin = 0.05f;          // keep the ray in front of the camera
-
-// March end point in view space, clamped to stay in front of the near plane.
-vec3 P1 = P0 + R * kMaxDistance;
-if (P1.z < kZMin)
-	P1 = mix(P0, P1, (kZMin - P0.z) / (P1.z - P0.z));
-
-// Project the segment to screen UV; interpolate UV linearly and 1/z
-// perspective-correctly in screen space.
-vec4 c0 = $Projection * vec4(P0, 1.0f);
-vec4 c1 = $Projection * vec4(P1, 1.0f);
-vec2 uv0 = (c0.xy / c0.w) * vec2(0.5f, -0.5f) + vec2(0.5f, 0.5f);
-vec2 uv1 = (c1.xy / c1.w) * vec2(0.5f, -0.5f) + vec2(0.5f, 0.5f);
-float iz0 = 1.0f / P0.z;
-float iz1 = 1.0f / P1.z;
-
-float jitter = $Random.x;
-
-$Hit = vec4(0.0f);
-
-bool prevBehind = false;
-float prevJ = 0.0f;
-for (int i = 1; i <= kSteps; ++i)
-{
-	float j = (float(i) - 0.5f + jitter) / float(kSteps);
-	vec2 uv = mix(uv0, uv1, j);
-	if (uv.x < 0.0f || uv.x > 1.0f || uv.y < 0.0f || uv.y > 1.0f)
-		break; // ray left the screen.
-
-	float rayZ = 1.0f / mix(iz0, iz1, j);
-	float sceneZ = texture(sampler2D($DepthMap, $DepthMapState), uv).x;
-	bool behind = (rayZ - sceneZ) > kBias;
-
-	// First transition from in-front to behind the surface is a candidate hit.
-	if (behind && !prevBehind && i > 1)
-	{
-		float a = prevJ;
-		float b = j;
-		for (int k = 0; k < kRefine; ++k)
-		{
-			float m = 0.5f * (a + b);
-			float rzm = 1.0f / mix(iz0, iz1, m);
-			float szm = texture(sampler2D($DepthMap, $DepthMapState), mix(uv0, uv1, m)).x;
-			if (rzm - szm > kBias) b = m; else a = m;
-		}
-		vec2 fuv = mix(uv0, uv1, b);
-		float fdiff = (1.0f / mix(iz0, iz1, b)) - texture(sampler2D($DepthMap, $DepthMapState), fuv).x;
-		if (fdiff <= kThickness)
-		{
-			// Edge attenuation.
-			float att = fuv.x * (1.0f - fuv.x) * fuv.y * (1.0f - fuv.y);
-			att = clamp(att * 256.0f, 0.0f, 1.0f);
-			$Hit = vec4(fuv, att, 1.0f);
-			break;
-		}
-		// Otherwise the ray is occluded by foreground geometry; keep marching.
-	}
-
-	prevBehind = behind;
-	prevJ = j;
-}
+// Screen-space reflection trace; the marcher lives in the shared SSRTrace module so
+// this pass and the ray traced reflections pass use one implementation.
+vec2 hitUV;
+float att;
+if (SSR_Trace($ViewPosition.xyz, $ViewNormal.xyz, $Projection, $DepthMap, $DepthMapState, $Random.x, hitUV, att))
+	$Hit = vec4(hitUV, att, 1.0f);
+else
+	$Hit = vec4(0.0f);
 ]]></script>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">

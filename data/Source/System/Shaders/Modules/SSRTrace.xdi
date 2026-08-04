@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule" version="2">
+	<text><![CDATA[
+// Screen-space reflection trace (perspective-correct DDA).
+//
+// Shared by the screen space reflections pass and the ray traced reflections pass;
+// the latter uses it to resolve on-screen reflections before falling back to tracing
+// the acceleration structure. Marches the reflection ray in view space, returning the
+// hit UV and an edge attenuation factor when it finds an on-screen intersection.
+//
+// The depth map is passed as a separate texture + sampler (rather than a combined
+// sampler2D) because Vulkan GLSL only allows the sampler2D() constructor at the point of
+// a texture lookup, not as a function argument.
+//
+//   P0          View-space position of the reflecting surface.
+//   viewNormal  View-space normal of the reflecting surface.
+//   projection  Projection matrix (view -> clip).
+//   depthMap    Linear view-space depth in the red channel.
+//   depthState  Sampler state for depthMap.
+//   jitter      [0,1) per-pixel jitter to hide banding.
+//   hitUV       (out) Texture coordinate of the hit.
+//   att         (out) Edge attenuation [0,1], fades reflections toward screen borders.
+//
+// Returns true on hit; false when the ray leaves the screen or is occluded.
+bool SSR_Trace(vec3 P0, vec3 viewNormal, mat4 projection, texture2D depthMap, sampler depthState, float jitter, out vec2 hitUV, out float att)
+{
+	hitUV = vec2(0.0f);
+	att = 0.0f;
+
+	const vec3 N = normalize(viewNormal);
+	const vec3 R = reflect(normalize(P0), N);
+
+	const float kMaxDistance = 70.0f;   // max view-space march distance
+	const int   kSteps = 64;            // screen-space march samples
+	const int   kRefine = 4;            // binary-search refinement iterations
+	const float kBias = 0.05f;          // depth bias to avoid self-intersection (view units)
+	const float kThickness = 0.1f;      // max depth-behind accepted as a hit (view units)
+	const float kZMin = 0.05f;          // keep the ray in front of the camera
+
+	// March end point in view space, clamped to stay in front of the near plane.
+	vec3 P1 = P0 + R * kMaxDistance;
+	if (P1.z < kZMin)
+		P1 = mix(P0, P1, (kZMin - P0.z) / (P1.z - P0.z));
+
+	// Project the segment to screen UV; interpolate UV linearly and 1/z
+	// perspective-correctly in screen space.
+	const vec4 c0 = projection * vec4(P0, 1.0f);
+	const vec4 c1 = projection * vec4(P1, 1.0f);
+	const vec2 uv0 = (c0.xy / c0.w) * vec2(0.5f, -0.5f) + vec2(0.5f, 0.5f);
+	const vec2 uv1 = (c1.xy / c1.w) * vec2(0.5f, -0.5f) + vec2(0.5f, 0.5f);
+	const float iz0 = 1.0f / P0.z;
+	const float iz1 = 1.0f / P1.z;
+
+	bool prevBehind = false;
+	float prevJ = 0.0f;
+	for (int i = 1; i <= kSteps; ++i)
+	{
+		const float j = (float(i) - 0.5f + jitter) / float(kSteps);
+		const vec2 uv = mix(uv0, uv1, j);
+		if (uv.x < 0.0f || uv.x > 1.0f || uv.y < 0.0f || uv.y > 1.0f)
+			break; // ray left the screen.
+
+		const float rayZ = 1.0f / mix(iz0, iz1, j);
+		const float sceneZ = texture(sampler2D(depthMap, depthState), uv).x;
+		const bool behind = (rayZ - sceneZ) > kBias;
+
+		// First transition from in-front to behind the surface is a candidate hit.
+		if (behind && !prevBehind && i > 1)
+		{
+			float a = prevJ;
+			float b = j;
+			for (int k = 0; k < kRefine; ++k)
+			{
+				const float m = 0.5f * (a + b);
+				const float rzm = 1.0f / mix(iz0, iz1, m);
+				const float szm = texture(sampler2D(depthMap, depthState), mix(uv0, uv1, m)).x;
+				if (rzm - szm > kBias)
+					b = m;
+				else
+					a = m;
+			}
+			const vec2 fuv = mix(uv0, uv1, b);
+			const float fdiff = (1.0f / mix(iz0, iz1, b)) - texture(sampler2D(depthMap, depthState), fuv).x;
+			if (fdiff <= kThickness)
+			{
+				// Edge attenuation.
+				const float e = fuv.x * (1.0f - fuv.x) * fuv.y * (1.0f - fuv.y);
+				hitUV = fuv;
+				att = clamp(e * 256.0f, 0.0f, 1.0f);
+				return true;
+			}
+			// Otherwise the ray is occluded by foreground geometry; keep marching.
+		}
+
+		prevBehind = behind;
+		prevJ = j;
+	}
+
+	return false;
+}
+]]></text>
+	<samplers/>
+	<structDeclarations/>
+</object>
