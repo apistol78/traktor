@@ -267,12 +267,16 @@ bool JsonDocument::loadFromStream(IStream* stream)
 		JsonReaderHandler< rapidjson::UTF32< > > handler(this);
 		rapidjson::GenericReader< rapidjson::UTF8< >, rapidjson::UTF32< > > r;
 		r.Parse(ss, handler);
+		if (r.HasParseError())
+			return false;
 	}
 	else if (sizeof(wchar_t) == 2)
 	{
 		JsonReaderHandler< rapidjson::UTF16< > > handler(this);
 		rapidjson::GenericReader< rapidjson::UTF8< >, rapidjson::UTF16< > > r;
 		r.Parse(ss, handler);
+		if (r.HasParseError())
+			return false;
 	}
 	return true;
 }
@@ -291,6 +295,8 @@ bool JsonDocument::loadFromText(const std::wstring& text)
 		JsonReaderHandler< rapidjson::UTF32< > > handler(this);
 		rapidjson::GenericReader< rapidjson::UTF32< >, rapidjson::UTF32< > > r;
 		r.Parse(ss, handler);
+		if (r.HasParseError())
+			return false;
 	}
 	else if (sizeof(wchar_t) == 2)
 	{
@@ -298,6 +304,8 @@ bool JsonDocument::loadFromText(const std::wstring& text)
 		JsonReaderHandler< rapidjson::UTF16< > > handler(this);
 		rapidjson::GenericReader< rapidjson::UTF16< >, rapidjson::UTF16< > > r;
 		r.Parse(ss, handler);
+		if (r.HasParseError())
+			return false;
 	}
 	return true;
 }
