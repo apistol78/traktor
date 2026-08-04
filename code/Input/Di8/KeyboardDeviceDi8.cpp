@@ -1,15 +1,16 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Input/Di8/KeyboardDeviceDi8.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Input/Di8/KeyboardDeviceDi8.h"
 #include "Input/Di8/TypesDi8.h"
 
 namespace traktor::input
@@ -18,10 +19,10 @@ namespace traktor::input
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceDi8", KeyboardDeviceDi8, IInputDevice)
 
 KeyboardDeviceDi8::KeyboardDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& device, const DIDEVICEINSTANCE* deviceInstance)
-:	m_hWnd(hWnd)
-,	m_pWndProc(nullptr)
-,	m_device(device)
-,	m_connected(false)
+	: m_hWnd(hWnd)
+	, m_pWndProc(nullptr)
+	, m_device(device)
+	, m_connected(false)
 {
 	// Subclass window to get access to window events.
 	m_pWndProc = (WNDPROC)GetWindowLongPtr(m_hWnd, GWLP_WNDPROC);
@@ -46,6 +47,13 @@ void KeyboardDeviceDi8::destroy()
 	{
 		SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG_PTR)m_pWndProc);
 		m_pWndProc = nullptr;
+	}
+
+	if (m_device)
+	{
+		m_device->Unacquire();
+		m_device->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+		m_connected = false;
 	}
 }
 
@@ -115,9 +123,18 @@ std::wstring KeyboardDeviceDi8::getControlName(int32_t control)
 
 			switch (c_di8ControlKeys[control])
 			{
-			case DIK_LEFT: case DIK_UP: case DIK_RIGHT: case DIK_DOWN:
-			case DIK_PRIOR: case DIK_NEXT: case DIK_END: case DIK_HOME:
-			case DIK_INSERT: case DIK_DELETE: case DIK_DIVIDE: case DIK_NUMLOCK:
+			case DIK_LEFT:
+			case DIK_UP:
+			case DIK_RIGHT:
+			case DIK_DOWN:
+			case DIK_PRIOR:
+			case DIK_NEXT:
+			case DIK_END:
+			case DIK_HOME:
+			case DIK_INSERT:
+			case DIK_DELETE:
+			case DIK_DIVIDE:
+			case DIK_NUMLOCK:
 				scanCode |= 0x100;
 				break;
 			}

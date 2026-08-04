@@ -1,21 +1,22 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Input/Di8/JoystickDeviceDi8.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Input/Di8/JoystickDeviceDi8.h"
 #include "Input/Di8/TypesDi8.h"
 
 namespace traktor::input
 {
-	namespace
-	{
+namespace
+{
 
 float adjustDeadZone(float value)
 {
@@ -39,14 +40,14 @@ T readStateValueByOffset(const DIJOYSTATE2& state, uint32_t offset)
 	return *(T*)(((uint8_t*)&state) + offset);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.JoystickDeviceDi8", JoystickDeviceDi8, IInputDevice)
 
 JoystickDeviceDi8::JoystickDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& device, const DIDEVICEINSTANCE* deviceInstance)
-:	m_hWnd(hWnd)
-,	m_device(device)
-,	m_connected(false)
+	: m_hWnd(hWnd)
+	, m_device(device)
+	, m_connected(false)
 {
 	m_device->SetDataFormat(&c_dfDIJoystick2);
 	m_name = tstows(deviceInstance->tszInstanceName);
@@ -55,6 +56,15 @@ JoystickDeviceDi8::JoystickDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice
 
 	HRESULT hr = device->Acquire();
 	m_connected = SUCCEEDED(hr);
+}
+
+JoystickDeviceDi8::~JoystickDeviceDi8()
+{
+	if (m_device)
+	{
+		m_device->Unacquire();
+		m_device->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	}
 }
 
 std::wstring JoystickDeviceDi8::getName() const
@@ -104,8 +114,7 @@ float JoystickDeviceDi8::getControlValue(int32_t control)
 	case DefaultControl::Up:
 		if (
 			povInRange(m_state.rgdwPOV[0], 31500, 36000) ||
-			povInRange(m_state.rgdwPOV[0], 0, 4500)
-		)
+			povInRange(m_state.rgdwPOV[0], 0, 4500))
 			return 1.0f;
 		else
 			return 0.0f;
@@ -250,9 +259,7 @@ void JoystickDeviceDi8::collectControls(IDirectInputDevice8* device)
 		uint32_t offset;
 		bool analogue;
 		bool inverted;
-	}
-	c_controlTemplates[] =
-	{
+	} c_controlTemplates[] = {
 		{ DefaultControl::Up, DIJOFS_POV(0), false, false },
 		{ DefaultControl::Down, DIJOFS_POV(0), false, false },
 		{ DefaultControl::Left, DIJOFS_POV(0), false, false },

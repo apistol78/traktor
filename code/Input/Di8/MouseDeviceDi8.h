@@ -31,6 +31,8 @@ class T_DLLCLASS MouseDeviceDi8 : public IInputDevice
 public:
 	explicit MouseDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& diDevice, const DIDEVICEINSTANCE* deviceInstance);
 
+	virtual ~MouseDeviceDi8();
+
 	virtual std::wstring getName() const;
 
 	virtual InputCategory getCategory() const;

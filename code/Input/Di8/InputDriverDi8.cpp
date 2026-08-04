@@ -1,25 +1,27 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <wbemidl.h>
-#include <oleauto.h>
-#include "Core/Platform.h"
+#include "Input/Di8/InputDriverDi8.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
-#include "Input/Di8/InputDriverDi8.h"
+#include "Core/Platform.h"
 #include "Input/Di8/JoystickDeviceDi8.h"
 #include "Input/Di8/KeyboardDeviceDi8.h"
 #include "Input/Di8/MouseDeviceDi8.h"
 
+#include <oleauto.h>
+#include <wbemidl.h>
+
 namespace traktor::input
 {
-	namespace
-	{
+namespace
+{
 
 #define SAFE_RELEASE(instance) \
 	if (instance) \
@@ -41,7 +43,7 @@ BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 {
 	IWbemLocator* pIWbemLocator = NULL;
 	IEnumWbemClassObject* pEnumDevices = NULL;
-	IWbemClassObject* pDevices[20] = {0};
+	IWbemClassObject* pDevices[20] = { 0 };
 	IWbemServices* pIWbemServices = NULL;
 	BSTR bstrNamespace = NULL;
 	BSTR bstrDeviceID = NULL;
@@ -62,8 +64,7 @@ BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 		NULL,
 		CLSCTX_INPROC_SERVER,
 		__uuidof(IWbemLocator),
-		(LPVOID*)&pIWbemLocator
-	);
+		(LPVOID*)&pIWbemLocator);
 	if (FAILED(hr) || pIWbemLocator == NULL)
 		goto LCleanup;
 
@@ -86,8 +87,7 @@ BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 		0L,
 		NULL,
 		NULL,
-		&pIWbemServices
-	);
+		&pIWbemServices);
 	if (FAILED(hr) || pIWbemServices == NULL)
 		goto LCleanup;
 
@@ -100,8 +100,7 @@ BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 		RPC_C_AUTHN_LEVEL_CALL,
 		RPC_C_IMP_LEVEL_IMPERSONATE,
 		NULL,
-		EOAC_NONE
-	);
+		EOAC_NONE);
 
 	hr = pIWbemServices->CreateInstanceEnum(bstrClassName, 0, NULL, &pEnumDevices);
 	if (FAILED(hr) || pEnumDevices == NULL)
@@ -121,7 +120,7 @@ BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 		{
 			// For each device, get its device ID
 			hr = pDevices[iDevice]->Get(bstrDeviceID, 0L, &var, NULL, NULL);
-			if (SUCCEEDED( hr ) && var.vt == VT_BSTR && var.bstrVal != NULL)
+			if (SUCCEEDED(hr) && var.vt == VT_BSTR && var.bstrVal != NULL)
 			{
 				// Check if the device ID contains "IG_".  If it does, then it's an XInput device
 				// This information can not be found from DirectInput
@@ -196,7 +195,7 @@ HWND getMyProcessWindow()
 	return hWnd;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverDi8", 0, InputDriverDi8, IInputDriver)
 
@@ -208,10 +207,8 @@ InputDriverDi8::~InputDriverDi8()
 void InputDriverDi8::destroy()
 {
 	for (auto device : m_devices)
-	{
 		if (KeyboardDeviceDi8* keyboardDevice = dynamic_type_cast< KeyboardDeviceDi8* >(device))
 			keyboardDevice->destroy();
-	}
 	m_devices.clear();
 	m_directInput.release();
 }
@@ -303,9 +300,7 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 	if ((inputCategory & m_inputCategories) == InputCategory::Invalid)
 		return true;
 
-	log::info << L"Found DI8 device;" << Endl <<
-		L"\tInstance name \"" << deviceInstance->tszInstanceName << L"\"" << Endl <<
-		L"\tProduct name \"" << deviceInstance->tszProductName << L"\"" << Endl;
+	log::info << L"Found DI8 device;" << Endl << L"\tInstance name \"" << deviceInstance->tszInstanceName << L"\"" << Endl << L"\tProduct name \"" << deviceInstance->tszProductName << L"\"" << Endl;
 
 	hr = m_directInput->CreateDevice(deviceInstance->guidInstance, &device.getAssign(), NULL);
 	if (FAILED(hr))

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,9 +9,11 @@
 #pragma once
 
 #define DIRECTINPUT_VERSION 0x0800
-#include <dinput.h>
-#include "Input/IInputDevice.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Misc/ComRef.h"
+#include "Input/IInputDevice.h"
+
+#include <dinput.h>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,6 +32,8 @@ class T_DLLCLASS JoystickDeviceDi8 : public IInputDevice
 
 public:
 	explicit JoystickDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& diDevice, const DIDEVICEINSTANCE* deviceInstance);
+
+	virtual ~JoystickDeviceDi8();
 
 	virtual std::wstring getName() const;
 
@@ -78,7 +82,7 @@ private:
 	std::wstring m_name;
 	DIJOYSTATE2 m_state;
 	bool m_connected;
-	std::vector< ControlInfo > m_controlInfo;
+	AlignedVector< ControlInfo > m_controlInfo;
 
 	void collectControls(IDirectInputDevice8* device);
 };

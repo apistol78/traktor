@@ -1,22 +1,23 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Input/Di8/MouseDeviceDi8.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Input/Di8/MouseDeviceDi8.h"
 #include "Input/Di8/TypesDi8.h"
 
 namespace traktor::input
 {
-	namespace
-	{
+namespace
+{
 
 const struct MouseControlMap
 {
@@ -25,9 +26,7 @@ const struct MouseControlMap
 	bool analogue;
 	bool stable;
 	int32_t index;
-}
-c_mouseControlMap[] =
-{
+} c_mouseControlMap[] = {
 	{ L"Left mouse button", DefaultControl::Button1, false, true, 0 },
 	{ L"Right mouse button", DefaultControl::Button2, false, true, 1 },
 	{ L"Middle mouse button", DefaultControl::Button3, false, true, 2 },
@@ -45,15 +44,15 @@ c_mouseControlMap[] =
 
 const float c_mouseDeltaLimit = 100.0f;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceDi8", MouseDeviceDi8, IInputDevice)
 
 MouseDeviceDi8::MouseDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& device, const DIDEVICEINSTANCE* deviceInstance)
-:	m_hWnd(hWnd)
-,	m_device(device)
-,	m_connected(false)
-,	m_exclusive(false)
+	: m_hWnd(hWnd)
+	, m_device(device)
+	, m_connected(false)
+	, m_exclusive(false)
 {
 	m_device->SetDataFormat(&c_dfDIMouse2);
 	m_name = tstows(deviceInstance->tszInstanceName);
@@ -62,6 +61,15 @@ MouseDeviceDi8::MouseDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& d
 
 	HRESULT hr = device->Acquire();
 	m_connected = SUCCEEDED(hr);
+}
+
+MouseDeviceDi8::~MouseDeviceDi8()
+{
+	if (m_device)
+	{
+		m_device->Unacquire();
+		m_device->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	}
 }
 
 std::wstring MouseDeviceDi8::getName() const
@@ -144,7 +152,7 @@ bool MouseDeviceDi8::getControlRange(int32_t control, float& outMin, float& outM
 	if (mc.index == 8 || mc.index == 9)
 	{
 		outMin = -100.0f;
-		outMax =  100.0f;
+		outMax = 100.0f;
 		return true;
 	}
 	else if (mc.index == 11)
